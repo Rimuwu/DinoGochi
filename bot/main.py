@@ -9,11 +9,97 @@ import io
 from io import BytesIO
 from functions import functions
 import time
+import os
+import threading
 
 bot = telebot.TeleBot(config.TOKEN)
 
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
+
+def user_dino_pn(user):
+    if len(user['dinos'].keys()) == 0:
+        return '1'
+    else:
+        id_list = []
+        for i in user['dinos'].keys():
+            try:
+                id_list.append(int(i))
+            except:
+                pass
+        return str(max(id_list))
+
+def random_dino(user, dino_id_remove):
+    dino_id = random.choice(json_f['data']['dino'])
+    dino = json_f['elements'][str(dino_id)]
+    del user['dinos'][dino_id_remove]
+    user['dinos'][user_dino_pn(user)] = {"status": 'dino_child', 'name': None, 'stats':  {"heal": 100, "eat": 100, 'game': 100, 'mood': 100, "unv": 100}}
+
+    users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos']}} )
+
+
+def notifications_manager(notification, user, arg = None):
+    if user['settings']['notifications'] == True:
+        chat = bot.get_chat(user['userid'])
+
+        if notification == "5_min_incub":
+
+            if user['language_code'] == 'ru':
+                text = f'🥚 | {chat.first_name}, ваш динозавр вылупится через 5 минут!'
+            else:
+                text = f'🥚 | {chat.first_name}, your dinosaur will hatch in 5 minutes!'
+
+            bot.send_message(user['userid'], text)
+
+        if notification == "incub":
+
+            if user['language_code'] == 'ru':
+                text = f'🦖 | {chat.first_name}, динозавр вылупился!!'
+            else:
+                text = f'🦖 | {chat.first_name}, the dinosaur has hatched!!'
+
+            bot.send_message(user['userid'], text)
+
+def check(): #проверка каждые 10 секунд
+    while True:
+        time.sleep(5)
+
+        members = users.find({ })
+        for user in members:
+
+            for dino_id in user['dinos'].keys():
+                dino = user['dinos'][dino_id]
+                if dino['status'] == 'incubation': #инкубация
+                    if dino['incubation_time'] - int(time.time()) <= 60*5 and dino['incubation_time'] - int(time.time()) > 0: #уведомление за 5 минут
+
+                        if 'inc_notification' in list(user['notifications'].keys()):
+
+                            if user['notifications']['inc_notification'] == False:
+                                notifications_manager("5_min_incub", user, dino)
+
+                                user['notifications']['inc_notification'] = True
+                                users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications']}} )
+
+                        else:
+                            user['notifications']['inc_notification'] = True
+                            users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications']}} )
+
+                            notifications_manager("5_min_incub", user, dino_id)
+
+
+                    elif dino['incubation_time'] - int(time.time()) <= 0:
+
+                        if 'inc_notification' in list(user['notifications'].keys()):
+                            del user['notifications']['inc_notification']
+                            users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications']}} )
+
+                        random_dino(user, dino_id)
+                        notifications_manager("incub", user, dino_id)
+                        break
+
+
+thr1 = threading.Thread(target = check, daemon=True)
+
 
 with open('../images/dino_data.json') as f:
     json_f = json.load(f)
@@ -103,7 +189,7 @@ def on_message(message):
                 else:
                     text = '🥚 | Choose a dinosaur egg!'
 
-                users.insert_one({'userid': user.id, 'dinos': {}, 'eggs': []})
+                users.insert_one({'userid': user.id, 'dinos': {}, 'eggs': [], 'notifications': {}, 'settings': {'notifications': True}, 'language_code': user.language_code})
 
                 markup_inline = types.InlineKeyboardMarkup()
                 item_1 = types.InlineKeyboardButton( text = '🥚 1', callback_data = 'egg_answer_1')
@@ -124,7 +210,7 @@ def on_message(message):
         if bd_user != None:
 
             def egg_profile(bd_user, user):
-                egg_id = list(bd_user['dinos'].keys())[0]
+                egg_id = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['egg_id']
                 lang = user.language_code
                 time = int(t_incub)
                 time_end = functions.time_end(time, True)
@@ -152,6 +238,8 @@ def on_message(message):
                 if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['status'] == 'incubation':
 
                     t_incub = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['incubation_time'] - time.time()
+                    if t_incub < 0:
+                        t_incub = 0
                     profile = egg_profile(bd_user, user)
                     bot.send_photo(message.chat.id, profile)
 
@@ -159,9 +247,8 @@ def on_message(message):
                         os.remove('profile.png')
                     except Exception:
                         pass
-
-
-
+            else:
+                pass
 
 
 @bot.callback_query_handler(func = lambda call: True)
@@ -170,10 +257,12 @@ def answer(call):
     if call.data in ['egg_answer_1', 'egg_answer_2', 'egg_answer_3']:
         user = call.from_user
         bd_user = users.find_one({"userid": user.id})
+
         if 'eggs' in list(bd_user.keys()):
             egg_n = call.data[11:]
-            dino = json_f['elements'][ bd_user['eggs'][int(egg_n)-1] ]
-            bd_user['dinos'][ bd_user['eggs'][int(egg_n)-1] ] = {'status': 'incubation', 'incubation_time': time.time() + 60 * 30}
+
+            bd_user['dinos'][ user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 60 * 30, 'egg_id': bd_user['eggs'][int(egg_n)-1]}
+
             users.update_one( {"userid": user.id}, {"$unset": {'eggs': 1}} )
             users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
 
@@ -190,4 +279,6 @@ def answer(call):
 
 
 print(f'Бот {bot.get_me().first_name} запущен!')
+thr1.start()
+
 bot.infinity_polling(none_stop = True)
