@@ -30,10 +30,29 @@ def user_dino_pn(user):
         return str(max(id_list))
 
 def random_dino(user, dino_id_remove):
-    dino_id = random.choice(json_f['data']['dino'])
+    r_q = random.randint(1, 10000)
+    if r_q in list(range(1, 5001)):
+        quality = 'com'
+    elif r_q in list(range(5001, 7501)):
+        quality = 'unc'
+    elif r_q in list(range(7501, 9001)):
+        quality = 'rar'
+    elif r_q in list(range(9001, 9801)):
+        quality = 'myt'
+    else:
+        quality = 'leg'
+
+    dino_id = None
+
+    while dino_id == None:
+        p_var = random.choice(json_f['data']['dino'])
+        dino = json_f['elements'][str(p_var)]
+        if dino['image'][5:8] == quality:
+            dino_id = p_var
+
     dino = json_f['elements'][str(dino_id)]
     del user['dinos'][dino_id_remove]
-    user['dinos'][user_dino_pn(user)] = {"status": 'dino_child', 'name': None, 'stats':  {"heal": 100, "eat": 100, 'game': 100, 'mood': 100, "unv": 100}}
+    user['dinos'][user_dino_pn(user)] = {'dino_id': dino_id, "status": 'dino', 'name': dino['name'], 'stats':  {"heal": 100, "eat": 100, 'game': 100, 'mood': 100, "unv": 100}}
 
     users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos']}} )
 
@@ -200,10 +219,6 @@ def on_message(message):
                 photo, id_l = photo()
                 bot.send_photo(message.chat.id, photo, text, reply_markup = markup_inline)
                 users.update_one( {"userid": user.id}, {"$set": {'eggs': id_l}} )
-                try:
-                    os.remove('eggs.png')
-                except Exception:
-                    pass
 
     if message.text in ['🦖 Динозавр', '🦖 Dinosaur']:
         bd_user = users.find_one({"userid": user.id})
@@ -211,42 +226,103 @@ def on_message(message):
 
             def egg_profile(bd_user, user):
                 egg_id = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['egg_id']
-                lang = user.language_code
-                time = int(t_incub)
-                time_end = functions.time_end(time, True)
+
+                if user.language_code == 'ru':
+                    lang = user.language_code
+                else:
+                    lang = 'en'
+
+                t_incub = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['incubation_time'] - time.time()
+                if t_incub < 0:
+                    t_incub = 0
+
+                time_end = functions.time_end(t_incub, True)
+                if len(time_end) >= 18:
+                    time_end = time_end[:-6]
 
                 bg_p = Image.open(f"../images/remain/egg_profile_{lang}.png")
-                egg = Image.open("../images/"+str(json_f['elements'][egg_id]['image']))
+                egg = Image.open("../images/" + str(json_f['elements'][egg_id]['image']))
+                egg = egg.resize((290, 290), Image.ANTIALIAS)
 
-                bg_img = bg_p
-                fg_img = egg
-                img = trans_paste(fg_img, bg_img, 1.0, (-95,-50))
+                img = trans_paste(egg, bg_p, 1.0, (-50, 40))
 
                 idraw = ImageDraw.Draw(img)
-                line1 = ImageFont.truetype("../fonts/FloraC.ttf", size = 35)
+                line1 = ImageFont.truetype("../fonts/Comic Sans MS.ttf", size = 35)
 
-                idraw.text((390,100), time_end, font = line1)
+                idraw.text((430, 220), time_end, font = line1)
 
                 img.save('profile.png')
                 profile = open(f"profile.png", 'rb')
+
+                return profile, time_end
+
+            def dino_profile(bd_user, user):
+
+                dino_id = str(bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['dino_id'])
+
+                if user.language_code == 'ru':
+                    lang = user.language_code
+                else:
+                    lang = 'en'
+
+                dino = json_f['elements'][dino_id]
+                if 'class' in list(dino.keys()):
+                    bg_p = Image.open(f"../images/remain/{dino['class']}_icon.png")
+                else:
+                    bg_p = Image.open(f"../images/remain/None_icon.png")
+
+                class_ = dino['image'][5:8]
+
+                panel_i = Image.open(f"../images/remain/{class_}_profile_{lang}.png")
+
+                img = trans_paste(panel_i, bg_p, 1.0)
+
+                dino_image = Image.open("../images/"+str(json_f['elements'][dino_id]['image']))
+
+                sz = 412
+                dino_image = dino_image.resize((sz, sz), Image.ANTIALIAS)
+
+                xy = -80
+                x2 = 80
+                img = trans_paste(dino_image, img, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
+
+
+                idraw = ImageDraw.Draw(img)
+                line1 = ImageFont.truetype("../fonts/Comic Sans MS.ttf", size = 35)
+
+                # idraw.text((430, 220), time_end, font = line1)
+
+                img.save('profile.png')
+                profile = open(f"profile.png", 'rb')
+
                 return profile
 
             if len(bd_user['dinos'].keys()) == 0:
                 pass
 
             elif len(bd_user['dinos'].keys()) == 1:
+
+
                 if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['status'] == 'incubation':
 
-                    t_incub = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['incubation_time'] - time.time()
-                    if t_incub < 0:
-                        t_incub = 0
-                    profile = egg_profile(bd_user, user)
-                    bot.send_photo(message.chat.id, profile)
+                    profile, time_end  = egg_profile(bd_user, user)
+                    if user.language_code == 'ru':
+                        text = f'🥚 | Яйцо инкубируется, осталось: {time_end}'
+                    else:
+                        text = f'🥚 | The egg is incubated, left: {time_end}'
 
-                    try:
-                        os.remove('profile.png')
-                    except Exception:
-                        pass
+                    bot.send_photo(message.chat.id, profile, text)
+
+                if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['status'] == 'dino':
+
+                    profile = dino_profile(bd_user, user)
+                    if user.language_code == 'ru':
+                        text = f'🦖 | '
+                    else:
+                        text = f'🦖 | '
+
+                    bot.send_photo(message.chat.id, profile, text)
+
             else:
                 pass
 
@@ -261,7 +337,7 @@ def answer(call):
         if 'eggs' in list(bd_user.keys()):
             egg_n = call.data[11:]
 
-            bd_user['dinos'][ user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 60 * 30, 'egg_id': bd_user['eggs'][int(egg_n)-1]}
+            bd_user['dinos'][ user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 30 * 60, 'egg_id': bd_user['eggs'][int(egg_n)-1]}
 
             users.update_one( {"userid": user.id}, {"$unset": {'eggs': 1}} )
             users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
