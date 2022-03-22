@@ -72,10 +72,17 @@ def dino_profile():
 
 
     idraw = ImageDraw.Draw(img)
-    line1 = ImageFont.truetype("../fonts/Comic Sans MS.ttf", size = 35)
+    line1 = ImageFont.truetype("../fonts/Comic Sans MS.ttf", size = 45)
 
-    # idraw.text((430, 220), time_end, font = line1)
+    idraw.text((530, 100), "100", font = line1)
+    idraw.text((530, 185), "100", font = line1)
+
+    idraw.text((750, 100), "100", font = line1)
+    idraw.text((750, 185), "100", font = line1)
+    idraw.text((750, 265), "100", font = line1)
+
+
     img.show()
-    img.save('profile.png')
+    # img.save('profile.png')
 
 dino_profile()

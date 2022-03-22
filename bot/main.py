@@ -52,7 +52,7 @@ def random_dino(user, dino_id_remove):
 
     dino = json_f['elements'][str(dino_id)]
     del user['dinos'][dino_id_remove]
-    user['dinos'][user_dino_pn(user)] = {'dino_id': dino_id, "status": 'dino', 'name': dino['name'], 'stats':  {"heal": 100, "eat": 100, 'game': 100, 'mood': 100, "unv": 100}}
+    user['dinos'][user_dino_pn(user)] = {'dino_id': dino_id, "status": 'dino', 'name': dino['name'], 'stats':  {"heal": 100, "eat": random.randint(70, 100), 'game': random.randint(50, 100), 'mood': random.randint(7, 100), "unv": 100}}
 
     users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos']}} )
 
@@ -81,7 +81,7 @@ def notifications_manager(notification, user, arg = None):
 
 def check(): #проверка каждые 10 секунд
     while True:
-        time.sleep(5)
+        time.sleep(10)
 
         members = users.find({ })
         for user in members:
@@ -115,6 +115,84 @@ def check(): #проверка каждые 10 секунд
                         random_dino(user, dino_id)
                         notifications_manager("incub", user, dino_id)
                         break
+
+                if dino['status'] == 'dino': #дино
+
+                    #
+                    if random.randint(1, 55) == 1: #eat
+                        user['dinos'][dino_id]['stats']['eat'] -= random.randint(1,2)
+
+                    if random.randint(1, 28) == 1: #game
+                        user['dinos'][dino_id]['stats']['game'] -= random.randint(1,2)
+
+                    if random.randint(1, 130) == 1: #unv
+                        user['dinos'][dino_id]['stats']['unv'] -= random.randint(1,2)
+
+                    #
+                    if user['dinos'][dino_id]['stats']['game'] > 90:
+                        if dino['stats']['mood'] < 100:
+                            if random.randint(1,30) == 1:
+                                user['dinos'][dino_id]['stats']['mood'] += random.randint(1,2)
+
+                    if user['dinos'][dino_id]['stats']['game'] < 60 and user['dinos'][dino_id]['stats']['game'] > 10:
+                        if dino['stats']['mood'] > 0:
+                            if random.randint(1,30) == 1:
+                                user['dinos'][dino_id]['stats']['mood'] -= random.randint(1,2)
+
+                    if user['dinos'][dino_id]['stats']['game'] < 10:
+                        if dino['stats']['mood'] > 0:
+                            if random.randint(1,15) == 1:
+                                user['dinos'][dino_id]['stats']['mood'] -= 5
+
+                    if user['dinos'][dino_id]['stats']['unv'] <= 20 and user['dinos'][dino_id]['stats']['unv'] != 0:
+                        if dino['stats']['mood'] > 0:
+                            if random.randint(1,30) == 1:
+                                user['dinos'][dino_id]['stats']['mood'] -= random.randint(1,2)
+
+                        if dino['stats']['heal'] > 0:
+                            if random.randint(1,60) == 1:
+                                user['dinos'][dino_id]['stats']['heal'] -= 1
+
+                    if user['dinos'][dino_id]['stats']['unv'] == 0:
+                        if random.randint(1,30) == 1:
+                            user['dinos'][dino_id]['stats']['heal'] -= 5
+
+                    if user['dinos'][dino_id]['stats']['eat'] > 90:
+                        if dino['stats']['mood'] < 100:
+                            if random.randint(1,30) == 1:
+                                user['dinos'][dino_id]['stats']['mood'] += random.randint(1,2)
+
+                    if user['dinos'][dino_id]['stats']['eat'] < 30 and user['dinos'][dino_id]['stats']['eat'] != 0:
+                        if dino['stats']['mood'] > 0:
+                            if random.randint(1,30) == 1:
+                                user['dinos'][dino_id]['stats']['mood'] -= random.randint(1,2)
+
+                        if dino['stats']['heal'] > 0:
+                            if random.randint(1,30) == 1:
+                                user['dinos'][dino_id]['stats']['heal'] -= random.randint(1,2)
+
+                    if user['dinos'][dino_id]['stats']['eat'] == 0:
+                        if dino['stats']['heal'] > 0:
+                            if random.randint(1,30) == 1:
+                                user['dinos'][dino_id]['stats']['heal'] -= 5
+
+                    if user['dinos'][dino_id]['stats']['unv'] > 100:
+                        user['dinos'][dino_id]['stats']['unv'] = 100
+                    if user['dinos'][dino_id]['stats']['eat'] > 100:
+                        user['dinos'][dino_id]['stats']['eat'] = 100
+                    if user['dinos'][dino_id]['stats']['game'] > 100:
+                        user['dinos'][dino_id]['stats']['game'] = 100
+
+                    if user['dinos'][dino_id]['stats']['unv'] < 0:
+                        user['dinos'][dino_id]['stats']['unv'] = 0
+                    if user['dinos'][dino_id]['stats']['eat'] < 0:
+                        user['dinos'][dino_id]['stats']['eat'] = 0
+                    if user['dinos'][dino_id]['stats']['game'] < 0:
+                        user['dinos'][dino_id]['stats']['game'] = 0
+
+
+                    users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
+
 
 
 thr1 = threading.Thread(target = check, daemon=True)
@@ -256,9 +334,9 @@ def on_message(message):
 
                 return profile, time_end
 
-            def dino_profile(bd_user, user):
+            def dino_profile(bd_user, user, dino_user_id):
 
-                dino_id = str(bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['dino_id'])
+                dino_id = str(bd_user['dinos'][ dino_user_id ]['dino_id'])
 
                 if user.language_code == 'ru':
                     lang = user.language_code
@@ -290,7 +368,12 @@ def on_message(message):
                 idraw = ImageDraw.Draw(img)
                 line1 = ImageFont.truetype("../fonts/Comic Sans MS.ttf", size = 35)
 
-                # idraw.text((430, 220), time_end, font = line1)
+                idraw.text((530, 110), str(bd_user['dinos'][dino_user_id]['stats']['heal']), font = line1)
+                idraw.text((530, 190), str(bd_user['dinos'][dino_user_id]['stats']['eat']), font = line1)
+
+                idraw.text((750, 110), str(bd_user['dinos'][dino_user_id]['stats']['game']), font = line1)
+                idraw.text((750, 190), str(bd_user['dinos'][dino_user_id]['stats']['mood']), font = line1)
+                idraw.text((750, 270), str(bd_user['dinos'][dino_user_id]['stats']['unv']), font = line1)
 
                 img.save('profile.png')
                 profile = open(f"profile.png", 'rb')
@@ -314,12 +397,87 @@ def on_message(message):
                     bot.send_photo(message.chat.id, profile, text)
 
                 if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['status'] == 'dino':
+                    bd_dino = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]
 
-                    profile = dino_profile(bd_user, user)
+                    profile = dino_profile(bd_user, user, dino_user_id = list(bd_user['dinos'].keys())[0] )
+
                     if user.language_code == 'ru':
-                        text = f'🦖 | '
+
+                        if bd_dino['stats']['heal'] >= 60:
+                            h_text = '❤ | Динозавр здоров'
+                        elif bd_dino['stats']['heal'] < 60 and bd_dino['stats']['heal'] > 10:
+                            h_text = '❤ | Динозавр в плохом состоянии'
+                        elif bd_dino['stats']['heal'] <= 10:
+                            h_text = '❤ | Динозавр в крайне плохом состоянии!'
+
+                        if bd_dino['stats']['eat'] >= 60:
+                            e_text = '🍕 | Динозавр сыт'
+                        elif bd_dino['stats']['eat'] < 60 and bd_dino['stats']['eat'] > 10:
+                            e_text = '🍕 | Динозавр голоден'
+                        elif bd_dino['stats']['eat'] <= 10:
+                            e_text = '🍕 | Динозавр умирает от голода!'
+
+                        if bd_dino['stats']['game'] >= 60:
+                            g_text = '🎮 | Динозавр не хочет играть'
+                        elif bd_dino['stats']['game'] < 60 and bd_dino['stats']['game'] > 10:
+                            g_text = '🎮 | Динозавр скучает...'
+                        elif bd_dino['stats']['game'] <= 10:
+                            g_text = '🎮 | Динозавр умерает от скуки!'
+
+                        if bd_dino['stats']['mood'] >= 60:
+                            m_text = '🎈 | Динозавр в хорошем настроении'
+                        elif bd_dino['stats']['mood'] < 60 and bd_dino['stats']['mood'] > 10:
+                            m_text = '🎈 | У динозавра нормальное настроение'
+                        elif bd_dino['stats']['mood'] <= 10:
+                            m_text = '🎈 | Динозавр грустит!'
+
+                        if bd_dino['stats']['unv'] >= 60:
+                            u_text = '🌙 | Динозавр полон сил'
+                        elif bd_dino['stats']['unv'] < 60 and bd_dino['stats']['unv'] > 10:
+                            u_text = '🌙 | У динозавра есть силы'
+                        elif bd_dino['stats']['unv'] <= 10:
+                            u_text = '🌙 | Динозавр устал!'
+
+
+                        text = f'🦖 | Имя: {bd_dino["name"]}\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
                     else:
-                        text = f'🦖 | '
+
+                        if bd_dino['stats']['heal'] >= 60:
+                            h_text = '❤ | The dinosaur is healthy'
+                        elif bd_dino['stats']['heal'] < 60 and bd_dino['stats']['heal'] > 10:
+                            h_text = '❤ | Dinosaur in bad condition'
+                        elif bd_dino['stats']['heal'] <= 10:
+                            h_text = '❤ | The dinosaur is in extremely bad condition!'
+
+                        if bd_dino['stats']['eat'] >= 60:
+                            e_text = '🍕 | The dinosaur is full'
+                        elif bd_dino['stats']['eat'] < 60 and bd_dino['stats']['eat'] > 10:
+                            e_text = '🍕 | The dinosaur is hungry'
+                        elif bd_dino['stats']['eat'] <= 10:
+                            e_text = '🍕 | The dinosaur is starving!'
+
+                        if bd_dino['stats']['game'] >= 60:
+                            g_text = "🎮 | The dinosaur doesn't want to play"
+                        elif bd_dino['stats']['game'] < 60 and bd_dino['stats']['game'] > 10:
+                            g_text = '🎮 | The dinosaur is bored...'
+                        elif bd_dino['stats']['game'] <= 10:
+                            g_text = '🎮 | The dinosaur is dying of boredom!'
+
+                        if bd_dino['stats']['mood'] >= 60:
+                            m_text = '🎈 | The dinosaur is in a good mood'
+                        elif bd_dino['stats']['mood'] < 60 and bd_dino['stats']['mood'] > 10:
+                            m_text = '🎈 | The dinosaur has a normal mood'
+                        elif bd_dino['stats']['mood'] <= 10:
+                            m_text = '🎈 | The dinosaur is sad!'
+
+                        if bd_dino['stats']['unv'] >= 60:
+                            u_text = '🌙 | The dinosaur is full of energy'
+                        elif bd_dino['stats']['unv'] < 60 and bd_dino['stats']['unv'] > 10:
+                            u_text = '🌙 | The dinosaur has powers'
+                        elif bd_dino['stats']['unv'] <= 10:
+                            u_text = '🌙 | The dinosaur is tired!'
+
+                        text = f'🦖 | Name: {bd_dino["name"]}\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
 
                     bot.send_photo(message.chat.id, profile, text)
 
