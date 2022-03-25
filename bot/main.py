@@ -327,7 +327,7 @@ def markup(element = 1, user = None):
         if user.language_code == 'ru':
             nl = ['🦖 Динозавр', '🕹 Действия', '🎢 Рейтинг', '🔧 Настройки']
         else:
-            nl = ['🦖 Dinosaur', '🕹 Actions', '🎢 Rating', ' 🔧 Settings']
+            nl = ['🦖 Dinosaur', '🕹 Actions', '🎢 Rating', '🔧 Settings']
 
         item1 = types.KeyboardButton(nl[0])
         item2 = types.KeyboardButton(nl[1])
@@ -345,6 +345,36 @@ def markup(element = 1, user = None):
         item1 = types.KeyboardButton(nl[0])
 
         markup.add(item1)
+
+    elif element == "settings":
+        bd_user = users.find_one({"userid": user.id})
+
+        if user.language_code == 'ru':
+            nl = []
+
+            if bd_user['settings']['notifications'] == True:
+                nl.append('❗ Уведомления: ❎')
+            else:
+                nl.append('❗ Уведомления: ✅')
+
+            nl.append('↪ Назад')
+
+        else:
+            nl = []
+
+            if bd_user['settings']['notifications'] == True:
+                nl.append('❗ Notifications: ❎')
+            else:
+                nl.append('❗ Notifications: ✅')
+
+            nl.append('↪ Back')
+
+
+        item1 = types.KeyboardButton(nl[0])
+        item2 = types.KeyboardButton(nl[1])
+
+        markup.add(item1, item2)
+
 
 
     return markup
@@ -603,6 +633,59 @@ def on_message(message):
 
             else:
                 pass
+
+    if message.text in ['🔧 Настройки', '🔧 Settings']:
+        bd_user = users.find_one({"userid": user.id})
+
+        if bd_user != None:
+
+            if user.language_code == 'ru':
+                text = '🔧 Меню настроек активировано'
+            else:
+                text = '🔧 The settings menu is activated'
+
+
+            bot.send_message(message.chat.id, text, reply_markup = markup('settings', user))
+
+    if message.text in ['↪ Назад', '↪ Back']:
+
+        if user.language_code == 'ru':
+            text = '↪ Возврат в главное меню'
+        else:
+            text = '↪ Return to the main menu'
+
+        bot.send_message(message.chat.id, text, reply_markup = markup(1, user))
+
+    if message.text in ['❗ Notifications: ✅', '❗ Уведомления: ✅']:
+        bd_user = users.find_one({"userid": user.id})
+        if bd_user != None:
+            if bd_user['settings']['notifications'] == False:
+                bd_user['settings']['notifications'] = True
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+
+                if user.language_code == 'ru':
+                    text = '🔧 Настройки изменены!'
+                else:
+                    text = '🔧 Settings changed!'
+
+                bot.send_message(message.chat.id, text, reply_markup = markup("settings", user))
+
+    if message.text in ['❗ Notifications: ❎', '❗ Уведомления: ❎']:
+        bd_user = users.find_one({"userid": user.id})
+        if bd_user != None:
+            if bd_user['settings']['notifications'] == True:
+                bd_user['settings']['notifications'] = False
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+
+                if user.language_code == 'ru':
+                    text = '🔧 Настройки изменены!'
+                else:
+                    text = '🔧 Settings changed!'
+
+                bot.send_message(message.chat.id, text, reply_markup = markup("settings", user))
+
+
+
 
 
 @bot.callback_query_handler(func = lambda call: True)
