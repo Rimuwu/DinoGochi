@@ -16,6 +16,7 @@ bot = telebot.TeleBot(config.TOKEN)
 
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
+items = client.bot.items
 
 def user_dino_pn(user):
     if len(user['dinos'].keys()) == 0:
@@ -124,6 +125,35 @@ def notifications_manager(notification, user, arg = None):
 
             bot.send_message(user['userid'], text)
 
+        elif notification == "woke_up":
+
+            if user['language_code'] == 'ru':
+                text = f'🌙 | {chat.first_name}, ваш динозавр проснулся и полон сил!'
+            else:
+                text = f'💥 | {chat.first_name}, your dinosaur is awake and full of energy!'
+
+            bot.send_message(user['userid'], text)
+
+        elif notification == "walk_end":
+
+            if user['language_code'] == 'ru':
+
+                text = f'🦖 | Ваш динозавр вернулся с прогулки!\nВот что произошло пока он гулял:\n'
+                n = 1
+                for el in arg:
+                    text += f'{n}. {el}\n'
+                    n += 1
+            else:
+
+                text = f"🦖 | Your dinosaur is back from a walk!\nHere's what happened while he was walking:\n"
+
+                n = 1
+                for el in arg:
+                    text += f'{n}. {el}\n'
+                    n += 1
+
+            bot.send_message(user['userid'], text)
+
 def check(): #проверка каждые 10 секунд
     while True:
         time.sleep(10)
@@ -189,6 +219,7 @@ def check(): #проверка каждые 10 секунд
                             if dino['stats']['heal'] > 0:
                                 if random.randint(1,60) == 1:
                                     user['dinos'][dino_id]['stats']['heal'] -= 1
+                                    user['dinos'][dino_id]['stats']['mood'] -= random.randint(1,10)
 
                     if dino['activ_status'] == 'sleep':
 
@@ -196,12 +227,36 @@ def check(): #проверка каждые 10 секунд
                             if random.randint(1,45) == 1:
                                 user['dinos'][dino_id]['stats']['unv'] += random.randint(1,2)
 
-                    if user['dinos'][dino_id]['stats']['game'] < 60 and user['dinos'][dino_id]['stats']['game'] > 10:
+                        if user['dinos'][dino_id]['stats']['unv'] >= 100:
+                            user['dinos'][dino_id]['activ_status'] = 'pass_active'
+                            notifications_manager("woke_up", user)
+
+                    if dino['activ_status'] == 'walk':
+
+                        if int(dino['walk_time']-time.time()) <= 0:
+                            user['dinos'][dino_id]['activ_status'] = 'pass_active'
+
+                            notifications_manager("walk_end", user, user['dinos'][ dino_id ]['walk_log'])
+
+                            del user['dinos'][ dino_id ]['walk_time']
+                            del user['dinos'][ dino_id ]['walk_log']
+
+                        if random.randint(1,60) == 1:
+                            if random.randint(1,2) == 1:
+                                event = 'положительное событие'
+                                user['dinos'][ dino_id ]['walk_log'].append(event)
+
+                            else:
+                                event = 'отрицательное событие'
+                                user['dinos'][ dino_id ]['walk_log'].append(event)
+
+
+                    if user['dinos'][dino_id]['stats']['game'] < 40 and user['dinos'][dino_id]['stats']['game'] > 10:
                         if dino['stats']['mood'] > 0:
                             if random.randint(1,30) == 1:
                                 user['dinos'][dino_id]['stats']['mood'] -= random.randint(1,2)
 
-                    if user['dinos'][dino_id]['stats']['game'] < 10:
+                    if user['dinos'][dino_id]['stats']['game'] < 20:
                         if dino['stats']['mood'] > 0:
                             if random.randint(1,15) == 1:
                                 user['dinos'][dino_id]['stats']['mood'] -= 5
@@ -215,7 +270,7 @@ def check(): #проверка каждые 10 секунд
                             if random.randint(1,30) == 1:
                                 user['dinos'][dino_id]['stats']['mood'] += random.randint(1,2)
 
-                    if user['dinos'][dino_id]['stats']['eat'] <= 30 and user['dinos'][dino_id]['stats']['eat'] != 0:
+                    if user['dinos'][dino_id]['stats']['eat'] <= 40 and user['dinos'][dino_id]['stats']['eat'] != 0:
                         if dino['stats']['mood'] > 0:
                             if random.randint(1,30) == 1:
                                 user['dinos'][dino_id]['stats']['mood'] -= random.randint(1,2)
@@ -286,7 +341,7 @@ def check(): #проверка каждые 10 секунд
                     if user['dinos'][dino_id]['stats']['game'] < 0:
                         user['dinos'][dino_id]['stats']['game'] = 0
 
-                    if user['dinos'][dino_id]['stats']['game'] <= 70:
+                    if user['dinos'][dino_id]['stats']['game'] <= 50:
                         if 'need_game' not in list(user['notifications'].keys()) or user['notifications']['need_game'] == False:
                             notifications_manager("need_game", user, user['dinos'][dino_id]['stats']['game'])
                             user['notifications']['need_game'] = True
@@ -375,6 +430,60 @@ def markup(element = 1, user = None):
 
         markup.add(item1, item2)
 
+    elif element == 'actions' and users.find_one({"userid": user.id}) != None:
+        markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
+
+        bd_user = users.find_one({"userid": user.id})
+
+        if user.language_code == 'ru':
+            nl = ['🎮 Поиграть', '🍣 Покормить', '🔪 Поохотиться', '↪ Назад']
+
+            if len(bd_user['dinos']) == 1:
+                dino = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]
+
+                if dino['activ_status'] == 'walk':
+                    nl.insert(2, '🎑 Позвать')
+                else:
+                    nl.insert(2, '🎑 Погулять')
+
+                if dino['activ_status'] == 'sleep':
+                    nl.insert(3, '🌙 Пробудить')
+                else:
+                    nl.insert(3, '🌙 Уложить спать')
+
+            else:
+                pass
+        else:
+            nl = ['🎮 Play', '🍣 Feed', '🔪 To hunt', '↪ Back']
+
+            if len(bd_user['dinos']) == 1:
+                dino = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]
+
+                if dino['activ_status'] == 'walk':
+                    nl.insert(2, '🎑 Call')
+                else:
+                    nl.insert(2, '🎑 Walk')
+
+                if dino['activ_status'] == 'sleep':
+                    nl.insert(3, '🌙 Awaken')
+                else:
+                    nl.insert(3, '🌙 Put to bed')
+
+            else:
+                pass
+
+        item1 = types.KeyboardButton(nl[0])
+        item2 = types.KeyboardButton(nl[1])
+        item3 = types.KeyboardButton(nl[2])
+        item4 = types.KeyboardButton(nl[3])
+        item5 = types.KeyboardButton(nl[4])
+        item6 = types.KeyboardButton(nl[5])
+
+        markup.add(item1, item2, item3, item4, item5, item6)
+
+    else:
+        print(f'{element}\n{user}')
+
 
 
     return markup
@@ -436,7 +545,7 @@ def on_message(message):
                 else:
                     text = '🥚 | Choose a dinosaur egg!'
 
-                users.insert_one({'userid': user.id, 'dinos': {}, 'eggs': [], 'notifications': {}, 'settings': {'notifications': True}, 'language_code': user.language_code})
+                users.insert_one({'userid': user.id, 'dinos': {}, 'eggs': [], 'notifications': {}, 'settings': {'notifications': True}, 'language_code': user.language_code, 'inventory': [], 'coins': 0})
 
                 markup_inline = types.InlineKeyboardMarkup()
                 item_1 = types.InlineKeyboardButton( text = '🥚 1', callback_data = 'egg_answer_1')
@@ -553,6 +662,17 @@ def on_message(message):
 
                     if user.language_code == 'ru':
 
+                        if bd_dino['activ_status'] == 'pass_active':
+                            st_t = 'ничего не делает 💭'
+                        elif bd_dino['activ_status'] == 'sleep':
+                            st_t = 'спит 🌙'
+                        elif bd_dino['activ_status'] == 'game':
+                            st_t = 'играет 🎮'
+                        elif bd_dino['activ_status'] == 'walk':
+                            st_t = 'гуляет 🎴'
+                        elif bd_dino['activ_status'] == 'hunt':
+                            st_t = 'охотится 🔪'
+
                         if bd_dino['stats']['heal'] >= 60:
                             h_text = '❤ | Динозавр здоров'
                         elif bd_dino['stats']['heal'] < 60 and bd_dino['stats']['heal'] > 10:
@@ -589,8 +709,25 @@ def on_message(message):
                             u_text = '🌙 | Динозавр устал!'
 
 
-                        text = f'🦖 | Имя: {bd_dino["name"]}\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
+                        text = f'🦖 | Имя: {bd_dino["name"]}\n👁‍🗨 | Статус: {st_t} \n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
+
+                        if bd_dino['activ_status'] == 'walk':
+                            w_t = bd_dino['walk_time'] - time.time()
+                            if w_t < 0:
+                                w_t = 0
+                            text += f"\n\n🌳 | Прогулка: \n·  Осталось: { functions.time_end(w_t) }"
                     else:
+
+                        if bd_dino['activ_status'] == 'pass_active':
+                            st_t = 'does nothing 💭'
+                        elif bd_dino['activ_status'] == 'sleep':
+                            st_t = 'sleeping 🌙'
+                        elif bd_dino['activ_status'] == 'game':
+                            st_t = 'playing 🎮'
+                        elif bd_dino['activ_status'] == 'walk':
+                            st_t = 'walking 🎴'
+                        elif bd_dino['activ_status'] == 'hunt':
+                            st_t = 'hunting 🔪'
 
                         if bd_dino['stats']['heal'] >= 60:
                             h_text = '❤ | The dinosaur is healthy'
@@ -627,7 +764,7 @@ def on_message(message):
                         elif bd_dino['stats']['unv'] <= 10:
                             u_text = '🌙 | The dinosaur is tired!'
 
-                        text = f'🦖 | Name: {bd_dino["name"]}\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
+                        text = f'🦖 | Name: {bd_dino["name"]}\n👁‍🗨 | Status: {st_t}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
 
                     bot.send_photo(message.chat.id, profile, text, reply_markup = markup(user = user) )
 
@@ -684,6 +821,155 @@ def on_message(message):
 
                 bot.send_message(message.chat.id, text, reply_markup = markup("settings", user))
 
+    if message.text in ['🕹 Действия', '🕹 Actions']:
+        bd_user = users.find_one({"userid": user.id})
+        if bd_user != None:
+
+            if user.language_code == 'ru':
+                text = '🕹 Панель действий открыта!'
+            else:
+                text = '🕹 The action panel is open!'
+
+            bot.send_message(message.chat.id, text, reply_markup = markup("actions", user))
+
+    # nl = ['🎮 Поиграть', '🍣 Покормить', '🎑 Погулять', '🔪 Поохотиться', '🌙 Уложить спать', '↪ Назад']
+    #
+    # nl = ['🎮 Play', '🍣 Feed', '🎑 Walk', '🔪 To hunt', '🌙 Put to bed', '↪ Back']
+
+    if message.text in ['🌙 Уложить спать', '🌙 Put to bed']:
+        bd_user = users.find_one({"userid": user.id})
+        if bd_user != None:
+            if len(bd_user['dinos']) == 1:
+                dino = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]
+                if dino['activ_status'] == 'pass_active':
+                    if dino['stats']['unv'] >= 90:
+
+                        if user.language_code == 'ru':
+                            text = '🌙 Динозавр не хочет спать!'
+                        else:
+                            text = "🌙 The dinosaur doesn't want to sleep!"
+
+                        bot.send_message(message.chat.id, text, reply_markup = markup("actions", user))
+
+                    else:
+
+                        bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['activ_status'] = 'sleep'
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+
+                        if user.language_code == 'ru':
+                            text = '🌙 Вы уложили динозавра спать!'
+                        else:
+                            text = "🌙 You put the dinosaur to sleep!"
+
+                        bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+
+            else:
+                pass
+
+    if message.text in ['🌙 Пробудить', '🌙 Awaken']:
+        bd_user = users.find_one({"userid": user.id})
+        if bd_user != None:
+            if len(bd_user['dinos']) == 1:
+                dino = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]
+                if dino['activ_status'] == 'sleep':
+                    r_n = random.randint(0, 20)
+
+                    bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['activ_status'] = 'pass_active'
+                    bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['stats']['mood'] -= r_n
+
+                    if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['stats']['mood'] < 0:
+                        bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['stats']['mood'] = 0
+
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+
+                    if user.language_code == 'ru':
+                        text = f'🌙 Ваш динозавр пробудился. Он сильно не доволен что вы его разбудили!n\Динозавр потерял {r_n}% настроения.'
+                    else:
+                        text = f"🌙 Your dinosaur has awakened. He is very unhappy that you woke him up!n\Dinosaur lost {r_n}% of mood."
+
+                    bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+
+
+    if message.text in ['🎑 Погулять', '🎑 Walk']:
+        bd_user = users.find_one({"userid": user.id})
+        if bd_user != None:
+            if len(bd_user['dinos']) == 1:
+                dino = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]
+                if dino['activ_status'] == 'pass_active':
+                    markup_inline = types.InlineKeyboardMarkup()
+
+                    if user.language_code == 'ru':
+                        text = '🌳 На какое время отпустить динозавра погулять?'
+
+                        item_0 = types.InlineKeyboardButton( text = '10 мин.', callback_data = f"10min_walk_{list(bd_user['dinos'].keys())[0]}")
+
+                        item_1 = types.InlineKeyboardButton( text = '30 мин.', callback_data = f"30min_walk_{list(bd_user['dinos'].keys())[0]}")
+
+                        item_2 = types.InlineKeyboardButton( text = '60 мин.', callback_data = f"60min_walk_{list(bd_user['dinos'].keys())[0]}")
+
+                        item_3 = types.InlineKeyboardButton( text = '90 мин.', callback_data = f"90min_walk_{list(bd_user['dinos'].keys())[0]}")
+
+                    else:
+                        text = "🌳 How long should I let the dinosaur go for a walk?"
+
+                        item_0 = types.InlineKeyboardButton( text = '10 min.', callback_data = f"10min_walk_{list(bd_user['dinos'].keys())[0]}")
+
+                        item_1 = types.InlineKeyboardButton( text = '30 min.', callback_data = f"30min_walk_{list(bd_user['dinos'].keys())[0]}")
+
+                        item_2 = types.InlineKeyboardButton( text = '60 min.', callback_data = f"60min_walk_{list(bd_user['dinos'].keys())[0]}")
+
+                        item_3 = types.InlineKeyboardButton( text = '90 min.', callback_data = f"90min_walk_{list(bd_user['dinos'].keys())[0]}")
+
+                    markup_inline.add(item_0, item_1, item_2, item_3)
+
+                    bot.send_message(message.chat.id, text, reply_markup = markup_inline)
+
+        else:
+            pass
+
+    if message.text in ['🎑 Позвать', '🎑 Call']:
+        bd_user = users.find_one({"userid": user.id})
+        if bd_user != None:
+            if len(bd_user['dinos']) == 1:
+                dino = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]
+                if dino['activ_status'] == 'walk':
+                    if random.randint(1,2) == 1:
+
+                        if user.language_code == 'ru':
+                            text = f'🦖 | Вы позвали динозавра и он успешно вернулся!\nВот что произошло пока он гулял:\n'
+                            n = 0
+                            for el in bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['walk_log']:
+                                text += f'{n}. {el}\n'
+
+                        else:
+                            text = f"🦖 | You called the dinosaur and it successfully returned!\nHere's what happened while he was walking:\n"
+
+                            n = 0
+                            for el in bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['walk_log']:
+                                text += f'{n}. {el}\n'
+
+                        bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['activ_status'] = 'pass_active'
+                        del bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['walk_time']
+                        del bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['walk_log']
+
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+
+                        bot.send_message(message.chat.id, text, reply_markup = markup('actions', user))
+
+
+                    else:
+                        if user.language_code == 'ru':
+                            text = f'🔇 | Ваш голос не слышен динозавру, попробуйте ещё раз!'
+                        else:
+                            text = f"🔇 | Your voice is not audible to the dinosaur, try again!"
+
+                        bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+
+
+
+            else:
+                pass
+
 
 
 
@@ -700,7 +986,7 @@ def answer(call):
 
             bd_user['dinos'][ user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 30 * 60, 'egg_id': bd_user['eggs'][int(egg_n)-1]}
 
-            users.update_one( {"userid": user.id}, {"$unset": {'eggs': 1}} )
+            users.update_one( {"userid": user.id}, {"$unset": {'eggs': None}} )
             users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
 
             if user.language_code == 'ru':
@@ -712,6 +998,26 @@ def answer(call):
 
             bot.edit_message_caption(text, call.message.chat.id, call.message.message_id)
             bot.send_message(call.message.chat.id, text2, parse_mode = 'html', reply_markup = markup(1, user))
+
+    if call.data[:10] in ['90min_walk', '60min_walk', '30min_walk', '10min_walk']:
+        user = call.from_user
+        bd_user = users.find_one({"userid": user.id})
+
+        bd_user['dinos'][ call.data[11:] ]['activ_status'] = 'walk'
+        bd_user['dinos'][ call.data[11:] ]['walk_time'] = time.time() + 60 * int(call.data[:2])
+        bd_user['dinos'][ call.data[11:] ]['walk_log'] = []
+        users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
+
+        if user.language_code == 'ru':
+            text = f'🎈 | Если у динозавра хорошее настроение, он может принести обратно какие то вещи.\n\n🧶 | Если на прогулке случится какая то неожиданная ситуация, у динозавра может повысится или понизится настроение.'
+            text2 = f'🌳 | Вы отправили динозавра в свободную прогулку на {call.data[:2]} минут.'
+
+        else:
+            text = f"🎈 | If the dinosaur is in a good mood, he can bring back some things.\n\n🧶 | If some unexpected situation happens on a walk, the dinosaur's mood may rise or fall."
+            text2 = f"🌳 | You sent the dinosaur for a free walk for {call.data[:2]} minutes."
+
+        bot.edit_message_text(text2, call.message.chat.id, call.message.message_id)
+        bot.send_message(call.message.chat.id, text, parse_mode = 'html', reply_markup = markup("actions", user))
 
 
 
