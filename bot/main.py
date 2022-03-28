@@ -59,7 +59,7 @@ def dino_answer(message):
             rmk.add( f"{dii}# {bd_user['dinos'][dii]['name']}" )
             dino_l.append(f"{dii}# {bd_user['dinos'][dii]['name']}")
 
-        if user.language_code == 'ru':
+        if bd_user['language_code'] == 'ru':
             rmk.add("❌ Отмена")
             text = '🦖 | Выберите динозавра > '
         else:
@@ -68,6 +68,53 @@ def dino_answer(message):
 
         msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
         bot.register_next_step_handler(msg, ret)
+        while a == []:
+            pass
+        return a[0]
+
+def vars_answer(message, text_l:list, answers_l:list, cansel_l = ['❌ Отмена', '❌ Exit']):
+    global ans
+    a = []
+    ans = []
+
+    user = message.from_user
+    bd_user = users.find_one({"userid": user.id})
+
+    def ret(message):
+        global ans
+        if message.text in cansel_l:
+            a.append(None)
+            return False
+        else:
+            if message.text in ans:
+                a.append(message.text)
+            else:
+                a.append(None)
+                return False
+        return False
+
+    rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+    if len(answers_l) == 0:
+        return None
+
+    elif len(answers_l) == 1:
+        return answers_l[0]
+
+    else:
+        for dii in answers_l:
+            rmk.add( dii )
+            ans.append(dii)
+
+        if bd_user['language_code'] == 'ru':
+            rmk.add(cansel_l[0])
+            text = text_l[0]
+        else:
+            rmk.add(cansel_l[1])
+            text = text_l[1]
+
+        msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+        bot.register_next_step_handler(msg, ret)
+
         while a == []:
             pass
         return a[0]
@@ -704,7 +751,7 @@ def markup(element = 1, user = None):
 
     elif element == 1:
         try:
-            if user.language_code == 'ru':
+            if bd_user['language_code'] == 'ru':
                 nl = ['🍡 Начать играть']
             else:
                 nl = ['🍡 Start playing']
@@ -718,39 +765,27 @@ def markup(element = 1, user = None):
     elif element == "settings" and bd_user != None:
 
         if bd_user['language_code'] == 'ru':
-            nl = []
-
-            if bd_user['settings']['notifications'] == True:
-                nl.append('❗ Уведомления: ❎')
-            else:
-                nl.append('❗ Уведомления: ✅')
-
-            nl.append('↪ Назад')
+            nl = ['❗ Уведомления', "👅 Язык", '💬 Переименовать', '↪ Назад']
 
         else:
-            nl = []
-
-            if bd_user['settings']['notifications'] == True:
-                nl.append('❗ Notifications: ❎')
-            else:
-                nl.append('❗ Notifications: ✅')
-
-            nl.append('↪ Back')
-
+            nl = ['❗ Notifications', "👅 Language", '💬 Rename', '↪ Back']
 
         item1 = types.KeyboardButton(nl[0])
         item2 = types.KeyboardButton(nl[1])
+        item3 = types.KeyboardButton(nl[2])
+        item4 = types.KeyboardButton(nl[3])
 
-        markup.add(item1, item2)
+        markup.add(item1, item2, item3, item4)
 
     elif element == 'actions' and bd_user != None:
         markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
 
         if bd_user['language_code'] == 'ru':
-            nl = ['🎮 Поиграть', '🍣 Покормить', '🔪 Поохотиться', '↪ Назад']
+            nl = ['🎮 Развлечения', '🍣 Покормить', '🔪 Охота', '↪ Назад']
 
             if len(bd_user['dinos']) == 1:
                 nid_dino = list(bd_user['dinos'].keys())[0]
+                dino = bd_user['dinos'][ str(nid_dino) ]
 
             if len(bd_user['dinos']) > 1:
                 if 'dino_id' not in bd_user['settings']:
@@ -765,7 +800,7 @@ def markup(element = 1, user = None):
                     users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
                     dino = bd_user['dinos'][ str(nid_dino) ]
 
-            else:
+            if len(bd_user['dinos']) == 0:
                 return markup
 
             if dino['activ_status'] == 'journey':
@@ -801,7 +836,7 @@ def markup(element = 1, user = None):
                 markup.add(item1, item2, item3, item4, item5, item6)
 
         else:
-            nl = ['🎮 Play', '🍣 Feed', '🔪 To hunt', '↪ Back']
+            nl = ['🎮 Entertainments', '🍣 Feed', '🔪 To hunt', '↪ Back']
 
             if len(bd_user['dinos']) == 1:
                 nid_dino = list(bd_user['dinos'].keys())[0]
@@ -853,15 +888,28 @@ def markup(element = 1, user = None):
 
                 markup.add(item1, item2, item3, item4, item5, item6)
 
+    elif element == 'games' and bd_user != None:
+        markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
+
+        if bd_user['language_code'] == 'ru':
+            nl = ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '↪ Назад']
+        else:
+            nl = ['🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball', '↪ Back']
+
+        item1 = types.KeyboardButton(nl[0])
+        item2 = types.KeyboardButton(nl[1])
+        item3 = types.KeyboardButton(nl[2])
+        item4 = types.KeyboardButton(nl[3])
+        item5 = types.KeyboardButton(nl[4])
+
+        markup.add(item1, item2, item3, item4, item5)
+
 
 
     else:
         print(f'{element}\n{user}')
 
-
-
     return markup
-
 
 @bot.message_handler(commands=['start', 'help'])
 def on_start(message):
@@ -919,7 +967,12 @@ def on_message(message):
                 else:
                     text = '🥚 | Choose a dinosaur egg!'
 
-                users.insert_one({'userid': user.id, 'dinos': {}, 'eggs': [], 'notifications': {}, 'settings': {'notifications': True}, 'language_code': user.language_code, 'inventory': [], 'coins': 0, 'lvl': 1, 'activ_items': {'game': None, 'hunt': None, 'journey': None, 'unv': None}, 'friends': {} })
+                if user.language_code == 'ru':
+                    lg = "ru"
+                else:
+                    lg = 'en'
+
+                users.insert_one({'userid': user.id, 'dinos': {}, 'eggs': [], 'notifications': {}, 'settings': {'notifications': True, 'dino_id': '1'}, 'language_code': lg, 'inventory': [], 'coins': 0, 'lvl': 1, 'activ_items': {'game': None, 'hunt': None, 'journey': None, 'unv': None}, 'friends': {} })
 
                 markup_inline = types.InlineKeyboardMarkup()
                 item_1 = types.InlineKeyboardButton( text = '🥚 1', callback_data = 'egg_answer_1')
@@ -938,8 +991,8 @@ def on_message(message):
             def egg_profile(bd_user, user):
                 egg_id = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['egg_id']
 
-                if user.language_code == 'ru':
-                    lang = user.language_code
+                if bd_user['language_code'] == 'ru':
+                    lang = bd_user['language_code']
                 else:
                     lang = 'en'
 
@@ -971,8 +1024,8 @@ def on_message(message):
 
                 dino_id = str(bd_user['dinos'][ dino_user_id ]['dino_id'])
 
-                if user.language_code == 'ru':
-                    lang = user.language_code
+                if bd_user['language_code'] == 'ru':
+                    lang = bd_user['language_code']
                 else:
                     lang = 'en'
 
@@ -1022,7 +1075,7 @@ def on_message(message):
                 if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['status'] == 'incubation':
 
                     profile, time_end  = egg_profile(bd_user, user)
-                    if user.language_code == 'ru':
+                    if bd_user['language_code'] == 'ru':
                         text = f'🥚 | Яйцо инкубируется, осталось: {time_end}'
                     else:
                         text = f'🥚 | The egg is incubated, left: {time_end}'
@@ -1032,19 +1085,27 @@ def on_message(message):
                 if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['status'] == 'dino':
                     bd_dino = dino_answer(message)
 
+                    # if bd_user['language_code'] == 'ru':
+                    #     text = f'🦖 | Динозавр выбран!'
+                    # else:
+                    #     text = f'🦖 | The dinosaur is selected!'
+                    #
+                    # if bd_dino == None:
+                    #     text = f'❌'
+                    #
+                    # bot.send_message(message.chat.id, text, reply_markup = markup(1, user))
+
+                    if bd_dino == None:
+                        bot.send_message(message.chat.id, f'❌', reply_markup = markup(1, user))
+                        return
+
                     for i in bd_user['dinos'].keys():
                         if bd_user['dinos'][i] == bd_dino:
                             dino_user_id = i
 
-                    if user.language_code == 'ru':
-                        text = f'🦖 | Динозавр выбран!'
-                    else:
-                        text = f'🦖 | The dinosaur is selected!'
-                    bot.send_message(message.chat.id, text, reply_markup = markup(1, user))
-
                     profile = dino_profile(bd_user, user, dino_user_id = dino_user_id )
 
-                    if user.language_code == 'ru':
+                    if bd_user['language_code'] == 'ru':
 
                         if bd_dino['activ_status'] == 'pass_active':
                             st_t = 'ничего не делает 💭'
@@ -1164,7 +1225,7 @@ def on_message(message):
 
         if bd_user != None:
 
-            if user.language_code == 'ru':
+            if bd_user['language_code'] == 'ru':
                 text = '🔧 Меню настроек активировано'
             else:
                 text = '🔧 The settings menu is activated'
@@ -1173,66 +1234,104 @@ def on_message(message):
             bot.send_message(message.chat.id, text, reply_markup = markup('settings', user))
 
     if message.text in ['↪ Назад', '↪ Back']:
+        bd_user = users.find_one({"userid": user.id})
 
-        if user.language_code == 'ru':
+        if bd_user['language_code'] == 'ru':
             text = '↪ Возврат в главное меню'
         else:
             text = '↪ Return to the main menu'
 
         bot.send_message(message.chat.id, text, reply_markup = markup(1, user))
 
-    if message.text in ['❗ Notifications: ✅', '❗ Уведомления: ✅']:
+    if message.text in ['❗ Notifications', '❗ Уведомления']:
         bd_user = users.find_one({"userid": user.id})
         if bd_user != None:
-            if bd_user['settings']['notifications'] == False:
+
+            if bd_user['language_code'] == 'ru':
+                ans = ['✅ Включить', '❌ Выключить']
+            else:
+                ans = ['✅ Enable', '❌ Disable']
+
+            res = vars_answer(message, text_l = ['❗ Взаимодействие с настройкой уведомлений, выберите активность уведомлений >', '❗ Interaction with notification settings, select notification activity >'], answers_l = ans)
+
+            if res == None:
+                bot.send_message(message.chat.id, f'❌', reply_markup = markup('settings', user))
+                return
+
+            if res in ['✅ Enable', '✅ Включить']:
+
                 bd_user['settings']['notifications'] = True
                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
 
-                if user.language_code == 'ru':
-                    text = '🔧 Настройки изменены!'
+                if bd_user['language_code'] == 'ru':
+                    text = '🔧 Уведомления были активированы!'
                 else:
-                    text = '🔧 Settings changed!'
+                    text = '🔧 Notifications have been activated!'
 
                 bot.send_message(message.chat.id, text, reply_markup = markup("settings", user))
 
-    if message.text in ['❗ Notifications: ❎', '❗ Уведомления: ❎']:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
-            if bd_user['settings']['notifications'] == True:
+            if res in ['❌ Disable', '❌ Выключить']:
+
                 bd_user['settings']['notifications'] = False
                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
 
-                if user.language_code == 'ru':
-                    text = '🔧 Настройки изменены!'
+                if bd_user['language_code'] == 'ru':
+                    text = '🔧 Уведомления были отключены!'
                 else:
-                    text = '🔧 Settings changed!'
+                    text = '🔧 Notifications have been disabled!'
 
                 bot.send_message(message.chat.id, text, reply_markup = markup("settings", user))
+
+            else:
+                return
+
+    if message.text in ["👅 Язык", "👅 Language"]:
+        bd_user = users.find_one({"userid": user.id})
+        if bd_user != None:
+
+            ans = ['🇬🇧 English', '🇷🇺 Русский']
+
+            res = vars_answer(message, text_l = ['❗ Взаимодействие с настройкой языка, выберите язык >', '❗ Interaction with the language setting, select the language >'], answers_l = ans)
+
+            if res == None:
+                bot.send_message(message.chat.id, f'❌', reply_markup = markup('settings', user))
+                return
+
+            if res == ans[0]:
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {'language_code': 'en' }} )
+            if res == ans[1]:
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {'language_code': 'ru' }} )
+            bd_user = users.find_one({"userid": user.id})
+
+            if bd_user['language_code'] == 'ru':
+                text = '🔧 Язык установлен на 🇷🇺 Русский!'
+            else:
+                text = '🔧 The language is set to 🇬🇧 English!'
+
+            bot.send_message(message.chat.id, text, reply_markup = markup("settings", user))
+
 
     if message.text in ['🕹 Действия', '🕹 Actions']:
         bd_user = users.find_one({"userid": user.id})
         if bd_user != None:
 
-            if user.language_code == 'ru':
+            if bd_user['language_code'] == 'ru':
                 text = '🕹 Панель действий открыта!'
             else:
                 text = '🕹 The action panel is open!'
 
             bot.send_message(message.chat.id, text, reply_markup = markup("actions", user))
 
-    # nl = ['🎮 Поиграть', '🍣 Покормить', '🎑 Погулять', '🔪 Поохотиться', '🌙 Уложить спать', '↪ Назад']
-    #
-    # nl = ['🎮 Play', '🍣 Feed', '🎑 Walk', '🔪 To hunt', '🌙 Put to bed', '↪ Back']
-
     if message.text in ['🌙 Уложить спать', '🌙 Put to bed']:
         bd_user = users.find_one({"userid": user.id})
         if bd_user != None:
-            dino = dino_answer(message)
+            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+
             if dino != None:
                 if dino['activ_status'] == 'pass_active':
                     if dino['stats']['unv'] >= 90:
 
-                        if user.language_code == 'ru':
+                        if bd_user['language_code'] == 'ru':
                             text = '🌙 Динозавр не хочет спать!'
                         else:
                             text = "🌙 The dinosaur doesn't want to sleep!"
@@ -1244,24 +1343,22 @@ def on_message(message):
                         bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['activ_status'] = 'sleep'
                         users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
 
-                        if user.language_code == 'ru':
+                        if bd_user['language_code'] == 'ru':
                             text = '🌙 Вы уложили динозавра спать!'
                         else:
                             text = "🌙 You put the dinosaur to sleep!"
 
                         bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
 
+            else:
+                bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
+                return
+
 
     if message.text in ['🌙 Пробудить', '🌙 Awaken']:
         bd_user = users.find_one({"userid": user.id})
         if bd_user != None:
-            dino = dino_answer(message)
-
-            if user.language_code == 'ru':
-                text = f'🦖 | Динозавр выбран!'
-            else:
-                text = f'🦖 | The dinosaur is selected!'
-            bot.send_message(message.chat.id, text, reply_markup = markup('actions', user))
+            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
 
             if dino['activ_status'] == 'sleep' and dino != None:
                 r_n = random.randint(0, 20)
@@ -1274,29 +1371,28 @@ def on_message(message):
 
                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
 
-                if user.language_code == 'ru':
+                if bd_user['language_code'] == 'ru':
                     text = f'🌙 Ваш динозавр пробудился. Он сильно не доволен что вы его разбудили!n\Динозавр потерял {r_n}% настроения.'
                 else:
                     text = f"🌙 Your dinosaur has awakened. He is very unhappy that you woke him up!n\Dinosaur lost {r_n}% of mood."
 
                 bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
 
+            else:
+                bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
+                return
+
+
 
     if message.text in ['🎑 Путешествие', '🎑 Journey']:
         bd_user = users.find_one({"userid": user.id})
         if bd_user != None:
-            dino = dino_answer(message)
-
-            if user.language_code == 'ru':
-                text = f'🦖 | Динозавр выбран!'
-            else:
-                text = f'🦖 | The dinosaur is selected!'
-            bot.send_message(message.chat.id, text, reply_markup = markup('actions', user))
+            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
 
             if dino['activ_status'] == 'pass_active' and dino != None:
                 markup_inline = types.InlineKeyboardMarkup()
 
-                if user.language_code == 'ru':
+                if bd_user['language_code'] == 'ru':
                     text = '🌳 На какое время отправить динозавра в путешествие?'
 
                     item_0 = types.InlineKeyboardButton( text = '10 мин.', callback_data = f"10min_journey_{list(bd_user['dinos'].keys())[0]}")
@@ -1322,21 +1418,20 @@ def on_message(message):
 
                 bot.send_message(message.chat.id, text, reply_markup = markup_inline)
 
+            else:
+                bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
+                return
+
+
     if message.text in ['🎑 Вернуть', '🎑 Call']:
         bd_user = users.find_one({"userid": user.id})
         if bd_user != None:
-            dino = dino_answer(message)
-
-            if user.language_code == 'ru':
-                text = f'🦖 | Динозавр выбран!'
-            else:
-                text = f'🦖 | The dinosaur is selected!'
-            bot.send_message(message.chat.id, text, reply_markup = markup('actions', user))
+            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
 
             if dino['activ_status'] == 'journey' and dino != None:
                 if random.randint(1,2) == 1:
 
-                    if user.language_code == 'ru':
+                    if bd_user['language_code'] == 'ru':
                         text = f'🦖 | Вы вернули динозавра из путешествия!\nВот что произошло в его путешествии:\n'
 
                         if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log'] == []:
@@ -1346,8 +1441,6 @@ def on_message(message):
                             for el in bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log']:
                                 text += f'<b>{n}.</b> {el}\n\n'
                                 n += 1
-
-
                     else:
                         text = f"🦖 | Turned the dinosaur out of the journey!\nHere's what happened on his journey:\n"
 
@@ -1370,17 +1463,25 @@ def on_message(message):
 
 
                 else:
-                    if user.language_code == 'ru':
+                    if bd_user['language_code'] == 'ru':
                         text = f'🔇 | Вы попробовали вернуть динозавра, но что-то пошло не так...'
                     else:
                         text = f"🔇 | You tried to bring the dinosaur back, but something went wrong..."
 
                     bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+            else:
+                bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
+                return
 
-    if message.text[:11] in ['🦖 Динозавр:', '🦖 Dino:']:
+
+    if message.text[:11] in ['🦖 Динозавр:'] or message.text[:7] in [ '🦖 Dino:']:
         bd_user = users.find_one({"userid": user.id})
         if bd_user != None:
-            did = int(message.text[12:])
+            if bd_user['language_code'] == 'ru':
+                did = int(message.text[12:])
+            else:
+                did = int(message.text[8:])
+
             if did == int(bd_user['settings']['dino_id']):
                 ll = list(bd_user['dinos'].keys())
                 ind = list(bd_user['dinos'].keys()).index(str(did))
@@ -1392,12 +1493,90 @@ def on_message(message):
                     bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[int(ll[did-1])]
                     users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
 
-                if user.language_code == 'ru':
-                    text = f"Вы выбрали динозавра {bd_user['settings']['dino_id']}"
+                if bd_user['language_code'] == 'ru':
+                    text = f"Вы выбрали динозавра {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
                 else:
-                    text = f"You have chosen a dinosaur {bd_user['settings']['dino_id']}"
+                    text = f"You have chosen a dinosaur {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
 
                 bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+
+    if message.text in ['💬 Переименовать', '💬 Rename']:
+        bd_user = users.find_one({"userid": user.id})
+        if bd_user != None:
+            dino = dino_answer(message)
+            if dino == None:
+                bot.send_message(message.chat.id, f'❌', reply_markup = markup('settings', user))
+                return
+
+            else:
+                a = []
+                def ret(message):
+                    a.append(message.text)
+
+                if bd_user['language_code'] == 'ru':
+                    text = f"🦖 | Введите новое имя для {dino['name']}\nРазмер: не более 20-ти символов\n>"
+                else:
+                    text = f"🦖 | Enter a new name for {dino['name']}\nSize: no more than 20 characters\n>"
+
+                msg = bot.send_message(message.chat.id, text)
+                bot.register_next_step_handler(msg, ret)
+
+                while a == []:
+                    pass
+                dino_name = a[0]
+                if dino_name == None:
+                    return
+
+                if len(dino_name) > 20:
+
+                    if bd_user['language_code'] == 'ru':
+                        text = f"🦖 | Новое имя больше 20-ти символов!"
+                    else:
+                        text = f"🦖 | The new name is more than 20 characters!"
+
+                    msg = bot.send_message(message.chat.id, text)
+
+                else:
+                    if bd_user['language_code'] == 'ru':
+                        text = f"🦖 | Переименовать {dino['name']} > {dino_name}?"
+                        ans_text = ['✅ Подтверждаю', '']
+                    else:
+                        text = f"🦖 | Rename {dino['name']} > {dino_name}?"
+                        ans_text = ['✅ Confirm', '']
+
+                    res = vars_answer(message, text_l = ['❗ Подтвердите действие', '❗ Confirm the action'], answers_l = ans_text)
+
+                    if res == None:
+                        bot.send_message(message.chat.id, f'❌', reply_markup = markup('settings', user))
+                        return
+
+                    if res in ['✅ Confirm', '✅ Подтверждаю']:
+                        for i in bd_user['dinos'].keys():
+                            if bd_user['dinos'][i] == dino:
+                                dino_user_id = i
+
+                        bd_user['dinos'][str(dino_user_id)]['name'] = dino_name
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+
+                        bot.send_message(message.chat.id, f'✅', reply_markup = markup('settings', user))
+
+    if message.text in ['🎮 Развлечения', '🎮 Entertainments']:
+        bd_user = users.find_one({"userid": user.id})
+        if bd_user != None:
+            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+            if dino == None:
+                bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
+                return
+            else:
+
+                if bd_user['language_code'] == 'ru':
+                    text = f"🎮 | Перенаправление в меню развлечений!"
+
+                else:
+                    text = f"🎮 | Redirecting to the entertainment menu!"
+
+                bot.send_message(message.chat.id, text, reply_markup = markup('games', user))
+
 
 
 
@@ -1416,7 +1595,7 @@ def answer(call):
             users.update_one( {"userid": user.id}, {"$unset": {'eggs': None}} )
             users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
 
-            if user.language_code == 'ru':
+            if bd_user['language_code'] == 'ru':
                 text = f'🥚 | Выберите яйцо с динозавром!\n🦖 | Вы выбрали яйцо 🥚{egg_n}!'
                 text2 = f'Поздравляем, у вас появился свой первый динозавр!\nВ данный момент яйцо инкубируется, а через 30 минут из него вылупится динозаврик!\nЧтобы посмотреть актуальную информацию о яйце, нажмите кнопку <b>🦖 Динозавр</b>!'
             else:
@@ -1435,7 +1614,7 @@ def answer(call):
         bd_user['dinos'][ call.data[14:] ]['journey_log'] = []
         users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
 
-        if user.language_code == 'ru':
+        if bd_user['language_code'] == 'ru':
             text = f'🎈 | Если у динозавра хорошее настроение, он может принести обратно какие то вещи.\n\n🧶 | Во время путешествия, могут произойти разные ситуации, от них зависит результат путешествия.'
             text2 = f'🌳 | Вы отправили динозавра в путешествие на {call.data[:2]} минут.'
 
@@ -1445,7 +1624,6 @@ def answer(call):
 
         bot.edit_message_text(text2, call.message.chat.id, call.message.message_id)
         bot.send_message(call.message.chat.id, text, parse_mode = 'html', reply_markup = markup("actions", user))
-
 
 
 print(f'Бот {bot.get_me().first_name} запущен!')
