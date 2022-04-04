@@ -794,18 +794,33 @@ def markup(element = 1, user = None):
 
     if element == 1 and bd_user != None:
 
-        if bd_user['language_code'] == 'ru':
-            nl = ['🦖 Динозавр', '🕹 Действия', '🎢 Рейтинг', '🔧 Настройки', '👥 Друзья']
+        if len(list(bd_user['dinos'])) == 1 and bd_user['dinos']['1']['status'] == 'incubation':
+
+            if bd_user['language_code'] == 'ru':
+                nl = ['🦖 Динозавр', '🔧 Настройки', '👥 Друзья']
+            else:
+                nl = ['🦖 Dinosaur', '🔧 Settings', '👥 Friends']
+
+            item1 = types.KeyboardButton(nl[0])
+            item2 = types.KeyboardButton(nl[1])
+            item3 = types.KeyboardButton(nl[2])
+
+            markup.add(item1, item2, item3)
+
         else:
-            nl = ['🦖 Dinosaur', '🕹 Actions', '🎢 Rating', '🔧 Settings', '👥 Friends']
 
-        item1 = types.KeyboardButton(nl[0])
-        item2 = types.KeyboardButton(nl[1])
-        item3 = types.KeyboardButton(nl[2])
-        item4 = types.KeyboardButton(nl[3])
-        item5 = types.KeyboardButton(nl[4])
+            if bd_user['language_code'] == 'ru':
+                nl = ['🦖 Динозавр', '🕹 Действия', '🎢 Рейтинг', '🔧 Настройки', '👥 Друзья']
+            else:
+                nl = ['🦖 Dinosaur', '🕹 Actions', '🎢 Rating', '🔧 Settings', '👥 Friends']
 
-        markup.add(item1, item2, item3, item4, item5)
+            item1 = types.KeyboardButton(nl[0])
+            item2 = types.KeyboardButton(nl[1])
+            item3 = types.KeyboardButton(nl[2])
+            item4 = types.KeyboardButton(nl[3])
+            item5 = types.KeyboardButton(nl[4])
+
+            markup.add(item1, item2, item3, item4, item5)
 
     elif element == 1:
         try:
@@ -855,7 +870,7 @@ def markup(element = 1, user = None):
         markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
 
         if bd_user['language_code'] == 'ru':
-            nl = ['🎮 Развлечения', '🍣 Покормить', '🔪 Охота', '↪ Назад']
+            nl = ['🎮 Развлечения', '🍣 Покормить', '↪ Назад']
 
             if len(bd_user['dinos']) == 1:
                 nid_dino = list(bd_user['dinos'].keys())[0]
@@ -887,6 +902,12 @@ def markup(element = 1, user = None):
             else:
                 nl.insert(3, '🌙 Уложить спать')
 
+            if dino['activ_status'] != 'hunting':
+                nl.insert(4, '🍕 Сбор пищи')
+
+            else:
+                nl.insert(4, '🍕 Остановить')
+
             if len(bd_user['dinos']) > 1:
                 item0 = types.KeyboardButton(f'🦖 Динозавр: {nid_dino}')
                 item1 = types.KeyboardButton(nl[0])
@@ -910,7 +931,7 @@ def markup(element = 1, user = None):
                 markup.add(item1, item2, item3, item4, item5, item6)
 
         else:
-            nl = ['🎮 Entertainments', '🍣 Feed', '🔪 To hunt', '↪ Back']
+            nl = ['🎮 Entertainments', '🍣 Feed', '↪ Back']
 
             if len(bd_user['dinos']) == 1:
                 nid_dino = list(bd_user['dinos'].keys())[0]
@@ -940,6 +961,12 @@ def markup(element = 1, user = None):
                 nl.insert(3, '🌙 Awaken')
             else:
                 nl.insert(3, '🌙 Put to bed')
+
+            if dino['activ_status'] != 'hunting':
+                nl.insert(4, '🍕 Collecting food')
+
+            else:
+                nl.insert(4, '🍕 Stop')
 
             if len(bd_user['dinos']) > 1:
                 item0 = types.KeyboardButton(f'🦖 Dino: {nid_dino}')
@@ -1018,8 +1045,6 @@ def on_start(message):
 def on_message(message):
     user = message.from_user
 
-    # print(message)
-
     def trans_paste(fg_img,bg_img,alpha=10,box=(0,0)):
         fg_img_trans = Image.new("RGBA",fg_img.size)
         fg_img_trans = Image.blend(fg_img_trans,fg_img,alpha)
@@ -1028,1194 +1053,1505 @@ def on_message(message):
 
     if message.chat.type == 'private':
 
-        if message.text in ['🍡 Начать играть', '🍡 Start playing']:
-            if users.find_one({"userid": user.id}) == None:
-
-                def photo():
-                    global json_f
-                    bg_p = Image.open(f"../images/remain/{random.choice(['back', 'back2'])}.png")
-                    eg_l = []
-                    id_l = []
-
-                    for i in range(3):
-                        rid = str(random.choice(list(json_f['data']['egg'])))
-                        image = Image.open('../images/'+str(json_f['elements'][rid]['image']))
-                        eg_l.append(image)
-                        id_l.append(rid)
-
-                    for i in range(3):
-                        bg_img = bg_p
-                        fg_img = eg_l[i]
-                        img = trans_paste(fg_img, bg_img, 1.0, (i*512,0))
-
-                    img.save('eggs.png')
-                    photo = open(f"eggs.png", 'rb')
-
-                    return photo, id_l
-
-                if user.language_code == 'ru':
-                    text = '🥚 | Выберите яйцо с динозавром!'
-                else:
-                    text = '🥚 | Choose a dinosaur egg!'
-
-                if user.language_code == 'ru':
-                    lg = "ru"
-                else:
-                    lg = 'en'
-
-                users.insert_one({'userid': user.id, 'dinos': {}, 'eggs': [], 'notifications': {}, 'settings': {'notifications': True, 'dino_id': '1'}, 'language_code': lg, 'inventory': [], 'coins': 0, 'lvl': 1, 'activ_items': {'game': None, 'hunt': None, 'journey': None, 'unv': None}, 'friends': { 'friends_list': [], 'requests': [] } })
-
-                markup_inline = types.InlineKeyboardMarkup()
-                item_1 = types.InlineKeyboardButton( text = '🥚 1', callback_data = 'egg_answer_1')
-                item_2 = types.InlineKeyboardButton( text = '🥚 2', callback_data = 'egg_answer_2')
-                item_3 = types.InlineKeyboardButton( text = '🥚 3', callback_data = 'egg_answer_3')
-                markup_inline.add(item_1, item_2, item_3)
-
-                photo, id_l = photo()
-                bot.send_photo(message.chat.id, photo, text, reply_markup = markup_inline)
-                users.update_one( {"userid": user.id}, {"$set": {'eggs': id_l}} )
-
-    if message.text in ['🦖 Динозавр', '🦖 Dinosaur']:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
-
-            def egg_profile(bd_user, user):
-                egg_id = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['egg_id']
-
-                if bd_user['language_code'] == 'ru':
-                    lang = bd_user['language_code']
-                else:
-                    lang = 'en'
-
-                t_incub = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['incubation_time'] - time.time()
-                if t_incub < 0:
-                    t_incub = 0
-
-                time_end = functions.time_end(t_incub, True)
-                if len(time_end) >= 18:
-                    time_end = time_end[:-6]
-
-                bg_p = Image.open(f"../images/remain/egg_profile_{lang}.png")
-                egg = Image.open("../images/" + str(json_f['elements'][egg_id]['image']))
-                egg = egg.resize((290, 290), Image.ANTIALIAS)
-
-                img = trans_paste(egg, bg_p, 1.0, (-50, 40))
-
-                idraw = ImageDraw.Draw(img)
-                line1 = ImageFont.truetype("../fonts/Comic Sans MS.ttf", size = 35)
-
-                idraw.text((430, 220), time_end, font = line1)
-
-                img.save('profile.png')
-                profile = open(f"profile.png", 'rb')
-
-                return profile, time_end
-
-            def dino_profile(bd_user, user, dino_user_id):
-
-                dino_id = str(bd_user['dinos'][ dino_user_id ]['dino_id'])
-
-                if bd_user['language_code'] == 'ru':
-                    lang = bd_user['language_code']
-                else:
-                    lang = 'en'
-
-                dino = json_f['elements'][dino_id]
-                if 'class' in list(dino.keys()):
-                    bg_p = Image.open(f"../images/remain/{dino['class']}_icon.png")
-                else:
-                    bg_p = Image.open(f"../images/remain/None_icon.png")
-
-                class_ = dino['image'][5:8]
-
-                panel_i = Image.open(f"../images/remain/{class_}_profile_{lang}.png")
-
-                img = trans_paste(panel_i, bg_p, 1.0)
-
-                dino_image = Image.open("../images/"+str(json_f['elements'][dino_id]['image']))
-
-                sz = 412
-                dino_image = dino_image.resize((sz, sz), Image.ANTIALIAS)
-
-                xy = -80
-                x2 = 80
-                img = trans_paste(dino_image, img, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
-
-
-                idraw = ImageDraw.Draw(img)
-                line1 = ImageFont.truetype("../fonts/Comic Sans MS.ttf", size = 35)
-
-                idraw.text((530, 110), str(bd_user['dinos'][dino_user_id]['stats']['heal']), font = line1)
-                idraw.text((530, 190), str(bd_user['dinos'][dino_user_id]['stats']['eat']), font = line1)
-
-                idraw.text((750, 110), str(bd_user['dinos'][dino_user_id]['stats']['game']), font = line1)
-                idraw.text((750, 190), str(bd_user['dinos'][dino_user_id]['stats']['mood']), font = line1)
-                idraw.text((750, 270), str(bd_user['dinos'][dino_user_id]['stats']['unv']), font = line1)
-
-                img.save('profile.png')
-                profile = open(f"profile.png", 'rb')
-
-                return profile
-
-            if len(bd_user['dinos'].keys()) == 0:
-                pass
-
-            elif len(bd_user['dinos'].keys()) > 0:
-
-
-                if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['status'] == 'incubation':
-
-                    profile, time_end  = egg_profile(bd_user, user)
-                    if bd_user['language_code'] == 'ru':
-                        text = f'🥚 | Яйцо инкубируется, осталось: {time_end}'
-                    else:
-                        text = f'🥚 | The egg is incubated, left: {time_end}'
-
-                    bot.send_photo(message.chat.id, profile, text, reply_markup = markup(user = user))
-
-                if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['status'] == 'dino':
-                    bd_dino = dino_answer(message)
-
-                    if bd_dino == None:
-                        bot.send_message(message.chat.id, f'❌', reply_markup = markup(1, user))
-                        return
-
-                    for i in bd_user['dinos'].keys():
-                        if bd_user['dinos'][i] == bd_dino:
-                            dino_user_id = i
-
-                    profile = dino_profile(bd_user, user, dino_user_id = dino_user_id )
-
-                    if bd_user['language_code'] == 'ru':
-
-                        if bd_dino['activ_status'] == 'pass_active':
-                            st_t = 'ничего не делает 💭'
-                        elif bd_dino['activ_status'] == 'sleep':
-                            st_t = 'спит 🌙'
-                        elif bd_dino['activ_status'] == 'game':
-                            st_t = 'играет 🎮'
-                        elif bd_dino['activ_status'] == 'journey':
-                            st_t = 'путешествует 🎴'
-                        elif bd_dino['activ_status'] == 'hunt':
-                            st_t = 'охотится 🔪'
-
-                        if bd_dino['stats']['heal'] >= 60:
-                            h_text = '❤ | Динозавр здоров'
-                        elif bd_dino['stats']['heal'] < 60 and bd_dino['stats']['heal'] > 10:
-                            h_text = '❤ | Динозавр в плохом состоянии'
-                        elif bd_dino['stats']['heal'] <= 10:
-                            h_text = '❤ | Динозавр в крайне плохом состоянии!'
-
-                        if bd_dino['stats']['eat'] >= 60:
-                            e_text = '🍕 | Динозавр сыт'
-                        elif bd_dino['stats']['eat'] < 60 and bd_dino['stats']['eat'] > 10:
-                            e_text = '🍕 | Динозавр голоден'
-                        elif bd_dino['stats']['eat'] <= 10:
-                            e_text = '🍕 | Динозавр умирает от голода!'
-
-                        if bd_dino['stats']['game'] >= 60:
-                            g_text = '🎮 | Динозавр не хочет играть'
-                        elif bd_dino['stats']['game'] < 60 and bd_dino['stats']['game'] > 10:
-                            g_text = '🎮 | Динозавр скучает...'
-                        elif bd_dino['stats']['game'] <= 10:
-                            g_text = '🎮 | Динозавр умерает от скуки!'
-
-                        if bd_dino['stats']['mood'] >= 60:
-                            m_text = '🎈 | Динозавр в хорошем настроении'
-                        elif bd_dino['stats']['mood'] < 60 and bd_dino['stats']['mood'] > 10:
-                            m_text = '🎈 | У динозавра нормальное настроение'
-                        elif bd_dino['stats']['mood'] <= 10:
-                            m_text = '🎈 | Динозавр грустит!'
-
-                        if bd_dino['stats']['unv'] >= 60:
-                            u_text = '🌙 | Динозавр полон сил'
-                        elif bd_dino['stats']['unv'] < 60 and bd_dino['stats']['unv'] > 10:
-                            u_text = '🌙 | У динозавра есть силы'
-                        elif bd_dino['stats']['unv'] <= 10:
-                            u_text = '🌙 | Динозавр устал!'
-
-
-                        text = f'🦖 | Имя: {bd_dino["name"]}\n👁‍🗨 | Статус: {st_t} \n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
-
-                        if bd_dino['activ_status'] == 'journey':
-                            w_t = bd_dino['journey_time'] - time.time()
-                            if w_t < 0:
-                                w_t = 0
-                            text += f"\n\n🌳 | Путешествие: \n·  Осталось: { functions.time_end(w_t) }"
-                    else:
-
-                        if bd_dino['activ_status'] == 'pass_active':
-                            st_t = 'does nothing 💭'
-                        elif bd_dino['activ_status'] == 'sleep':
-                            st_t = 'sleeping 🌙'
-                        elif bd_dino['activ_status'] == 'game':
-                            st_t = 'playing 🎮'
-                        elif bd_dino['activ_status'] == 'journey':
-                            st_t = 'travels 🎴'
-                        elif bd_dino['activ_status'] == 'hunt':
-                            st_t = 'hunting 🔪'
-
-                        if bd_dino['stats']['heal'] >= 60:
-                            h_text = '❤ | The dinosaur is healthy'
-                        elif bd_dino['stats']['heal'] < 60 and bd_dino['stats']['heal'] > 10:
-                            h_text = '❤ | Dinosaur in bad condition'
-                        elif bd_dino['stats']['heal'] <= 10:
-                            h_text = '❤ | The dinosaur is in extremely bad condition!'
-
-                        if bd_dino['stats']['eat'] >= 60:
-                            e_text = '🍕 | The dinosaur is full'
-                        elif bd_dino['stats']['eat'] < 60 and bd_dino['stats']['eat'] > 10:
-                            e_text = '🍕 | The dinosaur is hungry'
-                        elif bd_dino['stats']['eat'] <= 10:
-                            e_text = '🍕 | The dinosaur is starving!'
-
-                        if bd_dino['stats']['game'] >= 60:
-                            g_text = "🎮 | The dinosaur doesn't want to play"
-                        elif bd_dino['stats']['game'] < 60 and bd_dino['stats']['game'] > 10:
-                            g_text = '🎮 | The dinosaur is bored...'
-                        elif bd_dino['stats']['game'] <= 10:
-                            g_text = '🎮 | The dinosaur is dying of boredom!'
-
-                        if bd_dino['stats']['mood'] >= 60:
-                            m_text = '🎈 | The dinosaur is in a good mood'
-                        elif bd_dino['stats']['mood'] < 60 and bd_dino['stats']['mood'] > 10:
-                            m_text = '🎈 | The dinosaur has a normal mood'
-                        elif bd_dino['stats']['mood'] <= 10:
-                            m_text = '🎈 | The dinosaur is sad!'
-
-                        if bd_dino['stats']['unv'] >= 60:
-                            u_text = '🌙 | The dinosaur is full of energy'
-                        elif bd_dino['stats']['unv'] < 60 and bd_dino['stats']['unv'] > 10:
-                            u_text = '🌙 | The dinosaur has powers'
-                        elif bd_dino['stats']['unv'] <= 10:
-                            u_text = '🌙 | The dinosaur is tired!'
-
-                        text = f'🦖 | Name: {bd_dino["name"]}\n👁‍🗨 | Status: {st_t}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
-
-                        if bd_dino['activ_status'] == 'journey':
-                            w_t = bd_dino['journey_time'] - time.time()
-                            if w_t < 0:
-                                w_t = 0
-                            text += f"\n\n🌳 | Journey: \n·  Left: { functions.time_end(w_t, True) }"
-
-                    bot.send_photo(message.chat.id, profile, text, reply_markup = markup(user = user) )
-
-
-    if message.text in ['🔧 Настройки', '🔧 Settings']:
-        bd_user = users.find_one({"userid": user.id})
-
-        if bd_user != None:
-
-            if bd_user['language_code'] == 'ru':
-                text = '🔧 Меню настроек активировано'
-            else:
-                text = '🔧 The settings menu is activated'
-
-
-            bot.send_message(message.chat.id, text, reply_markup = markup('settings', user))
-
-    if message.text in ['↪ Назад', '↪ Back']:
-        bd_user = users.find_one({"userid": user.id})
-
-        if bd_user['language_code'] == 'ru':
-            text = '↪ Возврат в главное меню'
-        else:
-            text = '↪ Return to the main menu'
-
-        bot.send_message(message.chat.id, text, reply_markup = markup(1, user))
-
-    if message.text in ['↩ Назад', '↩ Back']:
-        bd_user = users.find_one({"userid": user.id})
-
-        if bd_user['language_code'] == 'ru':
-            text = '↩ Возврат в меню активностей'
-        else:
-            text = '↩ Возврат в меню активностей'
-
-        bot.send_message(message.chat.id, text, reply_markup = markup('actions', user))
-
-    if message.text in ['👥 Друзья', '👥 Friends']:
-        bd_user = users.find_one({"userid": user.id})
-
-        if bd_user['language_code'] == 'ru':
-            text = '👥 | Перенаправление в меню друзей!'
-        else:
-            text = '👥 | Redirecting to the friends menu!'
-
-        bot.send_message(message.chat.id, text, reply_markup = markup("friends-menu", user))
-
-
-    if message.text in ['❗ Notifications', '❗ Уведомления']:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
-
-            if bd_user['language_code'] == 'ru':
-                ans = ['✅ Включить', '❌ Выключить']
-            else:
-                ans = ['✅ Enable', '❌ Disable']
-
-            res = vars_answer(message, text_l = ['❗ Взаимодействие с настройкой уведомлений, выберите активность уведомлений >', '❗ Interaction with notification settings, select notification activity >'], answers_l = ans)
-
-            if res == None:
-                bot.send_message(message.chat.id, f'❌', reply_markup = markup('settings', user))
-                return
-
-            if res in ['✅ Enable', '✅ Включить']:
-
-                bd_user['settings']['notifications'] = True
-                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
-
-                if bd_user['language_code'] == 'ru':
-                    text = '🔧 Уведомления были активированы!'
-                else:
-                    text = '🔧 Notifications have been activated!'
-
-                bot.send_message(message.chat.id, text, reply_markup = markup("settings", user))
-
-            if res in ['❌ Disable', '❌ Выключить']:
-
-                bd_user['settings']['notifications'] = False
-                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
-
-                if bd_user['language_code'] == 'ru':
-                    text = '🔧 Уведомления были отключены!'
-                else:
-                    text = '🔧 Notifications have been disabled!'
-
-                bot.send_message(message.chat.id, text, reply_markup = markup("settings", user))
-
-            else:
-                return
-
-    if message.text in ["👅 Язык", "👅 Language"]:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
-
-            ans = ['🇬🇧 English', '🇷🇺 Русский']
-
-            res = vars_answer(message, text_l = ['❗ Взаимодействие с настройкой языка, выберите язык >', '❗ Interaction with the language setting, select the language >'], answers_l = ans)
-
-            if res == None:
-                bot.send_message(message.chat.id, f'❌', reply_markup = markup('settings', user))
-                return
-
-            if res == ans[0]:
-                users.update_one( {"userid": bd_user['userid']}, {"$set": {'language_code': 'en' }} )
-            if res == ans[1]:
-                users.update_one( {"userid": bd_user['userid']}, {"$set": {'language_code': 'ru' }} )
+        if users.find_one({"userid": user.id}) != None and bot.get_chat_member(-1001673242031, user.id).status == 'left':
             bd_user = users.find_one({"userid": user.id})
+            r = bot.get_chat_member(-1001673242031, user.id)
 
             if bd_user['language_code'] == 'ru':
-                text = '🔧 Язык установлен на 🇷🇺 Русский!'
+                text = f'📜 | Уважаемый пользователь!\n\n*•* Для получения новостей и важных уведомлений по поводу бота, мы просим вас подписаться на телеграм канал бота!\n\n🔴 | Нажмите на кнопку *"Подписаться"* для перехода в канал, а после на кнопку *"Проверить"*, для продолжения работы!'
+                b1 = "🦖 | Подписаться"
+                b2 = "🔄 | Проверить"
             else:
-                text = '🔧 The language is set to 🇬🇧 English!'
+                text = f"📜 | Dear user!\n\n*•* To receive news and important notifications about the bot, we ask you to subscribe to the bot's telegram channel!\n\n🔴 | Click on the *'Subscribe'* button to go to the channel, and then on the *'Check'*, to continue working!"
+                b1 = "🦖 | Subscribe"
+                b2 = "🔄 | Check"
 
-            bot.send_message(message.chat.id, text, reply_markup = markup("settings", user))
+            markup_inline = types.InlineKeyboardMarkup()
+            markup_inline.add( types.InlineKeyboardButton(text= b1, url="https://t.me/DinoGochi"))
+            markup_inline.add( types.InlineKeyboardButton(text= b2, callback_data = 'checking_the_user_in_the_channel') )
+
+            bot.reply_to(message, text, reply_markup = markup_inline, parse_mode="Markdown")
 
 
-    if message.text in ['🕹 Действия', '🕹 Actions']:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
+        else:
 
-            if bd_user['language_code'] == 'ru':
-                text = '🕹 Панель действий открыта!'
-            else:
-                text = '🕹 The action panel is open!'
+            if message.text in ['🍡 Начать играть', '🍡 Start playing']:
+                if users.find_one({"userid": user.id}) == None:
 
-            bot.send_message(message.chat.id, text, reply_markup = markup("actions", user))
+                    bd_user = users.find_one({"userid": user.id})
+                    r = bot.get_chat_member(-1001673242031, user.id)
 
-    if message.text in ['🌙 Уложить спать', '🌙 Put to bed']:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
-            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+                    if r.status == 'left':
 
-            if dino != None:
-                if dino['activ_status'] == 'pass_active':
-                    if dino['stats']['unv'] >= 90:
+                        if user.language_code == 'ru':
+                            text = f'📜 | Уважаемый пользователь!\n\n*•* Для получения новостей и важных уведомлений по поводу бота, мы просим вас подписаться на телеграм канал бота!\n\n🔴 | Нажмите на кнопку *"Подписаться"* для перехода в канал, а после на кнопку *"Проверить"*, для продолжения работы!'
+                            b1 = "🦖 | Подписаться"
+                            b2 = "🔄 | Проверить"
+                        else:
+                            text = f"📜 | Dear user!\n\n*•* To receive news and important notifications about the bot, we ask you to subscribe to the bot's telegram channel!\n\n🔴 | Click on the *'Subscribe'* button to go to the channel, and then on the *'Check'*, to continue working!"
+                            b1 = "🦖 | Subscribe"
+                            b2 = "🔄 | Check"
+
+                        markup_inline = types.InlineKeyboardMarkup()
+                        markup_inline.add( types.InlineKeyboardButton(text= b1, url="https://t.me/DinoGochi"))
+                        markup_inline.add( types.InlineKeyboardButton(text= b2, callback_data = 'start') )
+
+                        bot.reply_to(message, text, reply_markup = markup_inline, parse_mode="Markdown")
+
+                    else:
+
+                        if user.language_code == 'ru':
+                            text = f'🎍 | Захватывающий мир приключений ждёт, ты готов стать владельцем динозавра и сразиться в рейтинге с другими пользователями?!\n\nЕсли да, то скорее нажимай на кнопку снизу!'
+                            b1 = "🎋 | Начать!"
+                        else:
+                            text = f"🎍 | An exciting world of adventures awaits, are you ready to become the owner of a dinosaur and compete in the ranking with other users?!\n\nIf yes, then rather press the button from below!"
+                            b1 = "🎋 | Start!"
+
+
+                        markup_inline = types.InlineKeyboardMarkup()
+                        markup_inline.add( types.InlineKeyboardButton(text= b1, callback_data = 'start') )
+
+                        bot.reply_to(message, text, reply_markup = markup_inline, parse_mode="Markdown")
+
+            if message.text in ['🦖 Динозавр', '🦖 Dinosaur']:
+                bd_user = users.find_one({"userid": user.id})
+                if bd_user != None:
+
+                    def egg_profile(bd_user, user):
+                        egg_id = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['egg_id']
 
                         if bd_user['language_code'] == 'ru':
-                            text = '🌙 Динозавр не хочет спать!'
+                            lang = bd_user['language_code']
                         else:
-                            text = "🌙 The dinosaur doesn't want to sleep!"
+                            lang = 'en'
 
-                        bot.send_message(message.chat.id, text, reply_markup = markup("actions", user))
+                        t_incub = bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['incubation_time'] - time.time()
+                        if t_incub < 0:
+                            t_incub = 0
 
-                    else:
+                        time_end = functions.time_end(t_incub, True)
+                        if len(time_end) >= 18:
+                            time_end = time_end[:-6]
 
-                        bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['activ_status'] = 'sleep'
-                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                        bg_p = Image.open(f"../images/remain/egg_profile_{lang}.png")
+                        egg = Image.open("../images/" + str(json_f['elements'][egg_id]['image']))
+                        egg = egg.resize((290, 290), Image.ANTIALIAS)
+
+                        img = trans_paste(egg, bg_p, 1.0, (-50, 40))
+
+                        idraw = ImageDraw.Draw(img)
+                        line1 = ImageFont.truetype("../fonts/Comic Sans MS.ttf", size = 35)
+
+                        idraw.text((430, 220), time_end, font = line1)
+
+                        img.save('profile.png')
+                        profile = open(f"profile.png", 'rb')
+
+                        return profile, time_end
+
+                    def dino_profile(bd_user, user, dino_user_id):
+
+                        dino_id = str(bd_user['dinos'][ dino_user_id ]['dino_id'])
 
                         if bd_user['language_code'] == 'ru':
-                            text = '🌙 Вы уложили динозавра спать!'
+                            lang = bd_user['language_code']
                         else:
-                            text = "🌙 You put the dinosaur to sleep!"
+                            lang = 'en'
 
-                        bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
-
-            else:
-                bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
-                return
-
-
-    if message.text in ['🌙 Пробудить', '🌙 Awaken']:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
-            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
-
-            if dino['activ_status'] == 'sleep' and dino != None:
-                r_n = random.randint(0, 20)
-
-                bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['activ_status'] = 'pass_active'
-                bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['stats']['mood'] -= r_n
-
-                if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['stats']['mood'] < 0:
-                    bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['stats']['mood'] = 0
-
-                users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
-
-                if bd_user['language_code'] == 'ru':
-                    text = f'🌙 Ваш динозавр пробудился. Он сильно не доволен что вы его разбудили!n\Динозавр потерял {r_n}% настроения.'
-                else:
-                    text = f"🌙 Your dinosaur has awakened. He is very unhappy that you woke him up!n\Dinosaur lost {r_n}% of mood."
-
-                bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
-
-            else:
-                bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
-                return
-
-    if message.text in ['🎑 Путешествие', '🎑 Journey']:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
-            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
-
-            if dino['activ_status'] == 'pass_active' and dino != None:
-                markup_inline = types.InlineKeyboardMarkup()
-
-                if bd_user['language_code'] == 'ru':
-                    text = '🌳 На какое время отправить динозавра в путешествие?'
-
-                    item_0 = types.InlineKeyboardButton( text = '10 мин.', callback_data = f"10min_journey_{str(bd_user['settings']['dino_id'])}")
-
-                    item_1 = types.InlineKeyboardButton( text = '30 мин.', callback_data = f"30min_journey_{str(bd_user['settings']['dino_id'])}")
-
-                    item_2 = types.InlineKeyboardButton( text = '60 мин.', callback_data = f"60min_journey_{str(bd_user['settings']['dino_id'])}")
-
-                    item_3 = types.InlineKeyboardButton( text = '90 мин.', callback_data = f"90min_journey_{str(bd_user['settings']['dino_id'])}")
-
-                else:
-                    text = "🌳 How long to send a dinosaur on a journey?"
-
-                    item_0 = types.InlineKeyboardButton( text = '10 min.', callback_data = f"10min_journey_{str(bd_user['settings']['dino_id'])}")
-
-                    item_1 = types.InlineKeyboardButton( text = '30 min.', callback_data = f"30min_journey_{str(bd_user['settings']['dino_id'])}")
-
-                    item_2 = types.InlineKeyboardButton( text = '60 min.', callback_data = f"60min_journey_{str(bd_user['settings']['dino_id'])}")
-
-                    item_3 = types.InlineKeyboardButton( text = '90 min.', callback_data = f"90min_journey_{str(bd_user['settings']['dino_id'])}")
-
-                markup_inline.add(item_0, item_1, item_2, item_3)
-
-                bot.send_message(message.chat.id, text, reply_markup = markup_inline)
-
-            else:
-                bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
-                return
-
-
-    if message.text in ['🎑 Вернуть', '🎑 Call']:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
-            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
-
-            if dino['activ_status'] == 'journey' and dino != None:
-                if random.randint(1,2) == 1:
-
-                    if bd_user['language_code'] == 'ru':
-                        text = f'🦖 | Вы вернули динозавра из путешествия!\nВот что произошло в его путешествии:\n'
-
-                        if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log'] == []:
-                            text += 'Ничего не произошло!'
+                        dino = json_f['elements'][dino_id]
+                        if 'class' in list(dino.keys()):
+                            bg_p = Image.open(f"../images/remain/{dino['class']}_icon.png")
                         else:
-                            n = 1
-                            for el in bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log']:
-                                text += f'<b>{n}.</b> {el}\n\n'
-                                n += 1
-                    else:
-                        text = f"🦖 | Turned the dinosaur out of the journey!\nHere's what happened on his journey:\n"
+                            bg_p = Image.open(f"../images/remain/None_icon.png")
 
-                        if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log'] == []:
-                            text += 'Nothing happened!'
-                        else:
-                            n = 1
-                            for el in bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log']:
-                                text += f'<b>{n}.</b> {el}\n\n'
-                                n += 1
+                        class_ = dino['image'][5:8]
 
+                        panel_i = Image.open(f"../images/remain/{class_}_profile_{lang}.png")
 
-                    bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['activ_status'] = 'pass_active'
-                    del bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_time']
-                    del bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log']
+                        img = trans_paste(panel_i, bg_p, 1.0)
 
-                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                        dino_image = Image.open("../images/"+str(json_f['elements'][dino_id]['image']))
 
-                    bot.send_message(message.chat.id, text, reply_markup = markup('actions', user), parse_mode = 'html')
+                        sz = 412
+                        dino_image = dino_image.resize((sz, sz), Image.ANTIALIAS)
+
+                        xy = -80
+                        x2 = 80
+                        img = trans_paste(dino_image, img, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
 
 
-                else:
+                        idraw = ImageDraw.Draw(img)
+                        line1 = ImageFont.truetype("../fonts/Comic Sans MS.ttf", size = 35)
+
+                        idraw.text((530, 110), str(bd_user['dinos'][dino_user_id]['stats']['heal']), font = line1)
+                        idraw.text((530, 190), str(bd_user['dinos'][dino_user_id]['stats']['eat']), font = line1)
+
+                        idraw.text((750, 110), str(bd_user['dinos'][dino_user_id]['stats']['game']), font = line1)
+                        idraw.text((750, 190), str(bd_user['dinos'][dino_user_id]['stats']['mood']), font = line1)
+                        idraw.text((750, 270), str(bd_user['dinos'][dino_user_id]['stats']['unv']), font = line1)
+
+                        img.save('profile.png')
+                        profile = open(f"profile.png", 'rb')
+
+                        return profile
+
+                    if len(bd_user['dinos'].keys()) == 0:
+                        pass
+
+                    elif len(bd_user['dinos'].keys()) > 0:
+
+
+                        if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['status'] == 'incubation':
+
+                            profile, time_end  = egg_profile(bd_user, user)
+                            if bd_user['language_code'] == 'ru':
+                                text = f'🥚 | Яйцо инкубируется, осталось: {time_end}'
+                            else:
+                                text = f'🥚 | The egg is incubated, left: {time_end}'
+
+                            bot.send_photo(message.chat.id, profile, text, reply_markup = markup(user = user))
+
+                        if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['status'] == 'dino':
+                            bd_dino = dino_answer(message)
+
+                            if bd_dino == None:
+                                bot.send_message(message.chat.id, f'❌', reply_markup = markup(1, user))
+                                return
+
+                            for i in bd_user['dinos'].keys():
+                                if bd_user['dinos'][i] == bd_dino:
+                                    dino_user_id = i
+
+                            profile = dino_profile(bd_user, user, dino_user_id = dino_user_id )
+
+                            if bd_user['language_code'] == 'ru':
+
+                                if bd_dino['activ_status'] == 'pass_active':
+                                    st_t = 'ничего не делает 💭'
+                                elif bd_dino['activ_status'] == 'sleep':
+                                    st_t = 'спит 🌙'
+                                elif bd_dino['activ_status'] == 'game':
+                                    st_t = 'играет 🎮'
+                                elif bd_dino['activ_status'] == 'journey':
+                                    st_t = 'путешествует 🎴'
+                                elif bd_dino['activ_status'] == 'hunt':
+                                    st_t = 'охотится 🔪'
+
+                                if bd_dino['stats']['heal'] >= 60:
+                                    h_text = '❤ | Динозавр здоров'
+                                elif bd_dino['stats']['heal'] < 60 and bd_dino['stats']['heal'] > 10:
+                                    h_text = '❤ | Динозавр в плохом состоянии'
+                                elif bd_dino['stats']['heal'] <= 10:
+                                    h_text = '❤ | Динозавр в крайне плохом состоянии!'
+
+                                if bd_dino['stats']['eat'] >= 60:
+                                    e_text = '🍕 | Динозавр сыт'
+                                elif bd_dino['stats']['eat'] < 60 and bd_dino['stats']['eat'] > 10:
+                                    e_text = '🍕 | Динозавр голоден'
+                                elif bd_dino['stats']['eat'] <= 10:
+                                    e_text = '🍕 | Динозавр умирает от голода!'
+
+                                if bd_dino['stats']['game'] >= 60:
+                                    g_text = '🎮 | Динозавр не хочет играть'
+                                elif bd_dino['stats']['game'] < 60 and bd_dino['stats']['game'] > 10:
+                                    g_text = '🎮 | Динозавр скучает...'
+                                elif bd_dino['stats']['game'] <= 10:
+                                    g_text = '🎮 | Динозавр умерает от скуки!'
+
+                                if bd_dino['stats']['mood'] >= 60:
+                                    m_text = '🎈 | Динозавр в хорошем настроении'
+                                elif bd_dino['stats']['mood'] < 60 and bd_dino['stats']['mood'] > 10:
+                                    m_text = '🎈 | У динозавра нормальное настроение'
+                                elif bd_dino['stats']['mood'] <= 10:
+                                    m_text = '🎈 | Динозавр грустит!'
+
+                                if bd_dino['stats']['unv'] >= 60:
+                                    u_text = '🌙 | Динозавр полон сил'
+                                elif bd_dino['stats']['unv'] < 60 and bd_dino['stats']['unv'] > 10:
+                                    u_text = '🌙 | У динозавра есть силы'
+                                elif bd_dino['stats']['unv'] <= 10:
+                                    u_text = '🌙 | Динозавр устал!'
+
+
+                                text = f'🦖 | Имя: {bd_dino["name"]}\n👁‍🗨 | Статус: {st_t} \n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
+
+                                if bd_dino['activ_status'] == 'journey':
+                                    w_t = bd_dino['journey_time'] - time.time()
+                                    if w_t < 0:
+                                        w_t = 0
+                                    text += f"\n\n🌳 | Путешествие: \n·  Осталось: { functions.time_end(w_t) }"
+                            else:
+
+                                if bd_dino['activ_status'] == 'pass_active':
+                                    st_t = 'does nothing 💭'
+                                elif bd_dino['activ_status'] == 'sleep':
+                                    st_t = 'sleeping 🌙'
+                                elif bd_dino['activ_status'] == 'game':
+                                    st_t = 'playing 🎮'
+                                elif bd_dino['activ_status'] == 'journey':
+                                    st_t = 'travels 🎴'
+                                elif bd_dino['activ_status'] == 'hunt':
+                                    st_t = 'hunting 🔪'
+
+                                if bd_dino['stats']['heal'] >= 60:
+                                    h_text = '❤ | The dinosaur is healthy'
+                                elif bd_dino['stats']['heal'] < 60 and bd_dino['stats']['heal'] > 10:
+                                    h_text = '❤ | Dinosaur in bad condition'
+                                elif bd_dino['stats']['heal'] <= 10:
+                                    h_text = '❤ | The dinosaur is in extremely bad condition!'
+
+                                if bd_dino['stats']['eat'] >= 60:
+                                    e_text = '🍕 | The dinosaur is full'
+                                elif bd_dino['stats']['eat'] < 60 and bd_dino['stats']['eat'] > 10:
+                                    e_text = '🍕 | The dinosaur is hungry'
+                                elif bd_dino['stats']['eat'] <= 10:
+                                    e_text = '🍕 | The dinosaur is starving!'
+
+                                if bd_dino['stats']['game'] >= 60:
+                                    g_text = "🎮 | The dinosaur doesn't want to play"
+                                elif bd_dino['stats']['game'] < 60 and bd_dino['stats']['game'] > 10:
+                                    g_text = '🎮 | The dinosaur is bored...'
+                                elif bd_dino['stats']['game'] <= 10:
+                                    g_text = '🎮 | The dinosaur is dying of boredom!'
+
+                                if bd_dino['stats']['mood'] >= 60:
+                                    m_text = '🎈 | The dinosaur is in a good mood'
+                                elif bd_dino['stats']['mood'] < 60 and bd_dino['stats']['mood'] > 10:
+                                    m_text = '🎈 | The dinosaur has a normal mood'
+                                elif bd_dino['stats']['mood'] <= 10:
+                                    m_text = '🎈 | The dinosaur is sad!'
+
+                                if bd_dino['stats']['unv'] >= 60:
+                                    u_text = '🌙 | The dinosaur is full of energy'
+                                elif bd_dino['stats']['unv'] < 60 and bd_dino['stats']['unv'] > 10:
+                                    u_text = '🌙 | The dinosaur has powers'
+                                elif bd_dino['stats']['unv'] <= 10:
+                                    u_text = '🌙 | The dinosaur is tired!'
+
+                                text = f'🦖 | Name: {bd_dino["name"]}\n👁‍🗨 | Status: {st_t}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
+
+                                if bd_dino['activ_status'] == 'journey':
+                                    w_t = bd_dino['journey_time'] - time.time()
+                                    if w_t < 0:
+                                        w_t = 0
+                                    text += f"\n\n🌳 | Journey: \n·  Left: { functions.time_end(w_t, True) }"
+
+                            bot.send_photo(message.chat.id, profile, text, reply_markup = markup(user = user) )
+
+
+            if message.text in ['🔧 Настройки', '🔧 Settings']:
+                bd_user = users.find_one({"userid": user.id})
+
+                if bd_user != None:
+
                     if bd_user['language_code'] == 'ru':
-                        text = f'🔇 | Вы попробовали вернуть динозавра, но что-то пошло не так...'
+                        text = '🔧 Меню настроек активировано'
                     else:
-                        text = f"🔇 | You tried to bring the dinosaur back, but something went wrong..."
-
-                    bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
-            else:
-                bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
-                return
+                        text = '🔧 The settings menu is activated'
 
 
-    if message.text[:11] in ['🦖 Динозавр:'] or message.text[:7] in [ '🦖 Dino:']:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
-            if bd_user['language_code'] == 'ru':
-                did = int(message.text[12:])
-            else:
-                did = int(message.text[8:])
+                    bot.send_message(message.chat.id, text, reply_markup = markup('settings', user))
 
-            if did == int(bd_user['settings']['dino_id']):
-                ll = list(bd_user['dinos'].keys())
-                ind = list(bd_user['dinos'].keys()).index(str(did))
-
-                if ind + 1 == len(ll):
-                    bd_user['settings']['dino_id'] = ll[0]
-                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
-                else:
-                    bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[int(ll[did-1])]
-                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+            if message.text in ['↪ Назад', '↪ Back']:
+                bd_user = users.find_one({"userid": user.id})
 
                 if bd_user['language_code'] == 'ru':
-                    text = f"Вы выбрали динозавра {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
+                    text = '↪ Возврат в главное меню'
                 else:
-                    text = f"You have chosen a dinosaur {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
+                    text = '↪ Return to the main menu'
 
-                bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+                bot.send_message(message.chat.id, text, reply_markup = markup(1, user))
 
-    if message.text in ['💬 Переименовать', '💬 Rename']:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
-            dino = dino_answer(message)
-            if dino == None:
-                bot.send_message(message.chat.id, f'❌', reply_markup = markup('settings', user))
-                return
-
-            else:
-                a = []
-                def ret(message):
-                    a.append(message.text)
+            if message.text in ['↩ Назад', '↩ Back']:
+                bd_user = users.find_one({"userid": user.id})
 
                 if bd_user['language_code'] == 'ru':
-                    text = f"🦖 | Введите новое имя для {dino['name']}\nРазмер: не более 20-ти символов\n>"
+                    text = '↩ Возврат в меню активностей'
                 else:
-                    text = f"🦖 | Enter a new name for {dino['name']}\nSize: no more than 20 characters\n>"
+                    text = '↩ Return to the activity menu'
 
-                msg = bot.send_message(message.chat.id, text)
-                bot.register_next_step_handler(msg, ret)
+                bot.send_message(message.chat.id, text, reply_markup = markup('actions', user))
 
-                while a == []:
-                    pass
-                dino_name = a[0]
-                if dino_name == None:
-                    return
+            if message.text in ['👥 Друзья', '👥 Friends']:
+                bd_user = users.find_one({"userid": user.id})
 
-                if len(dino_name) > 20:
+                if bd_user['language_code'] == 'ru':
+                    text = '👥 | Перенаправление в меню друзей!'
+                else:
+                    text = '👥 | Redirecting to the friends menu!'
+
+                bot.send_message(message.chat.id, text, reply_markup = markup("friends-menu", user))
+
+
+            if message.text in ['❗ Notifications', '❗ Уведомления']:
+                bd_user = users.find_one({"userid": user.id})
+                if bd_user != None:
 
                     if bd_user['language_code'] == 'ru':
-                        text = f"🦖 | Новое имя больше 20-ти символов!"
+                        ans = ['✅ Включить', '❌ Выключить']
                     else:
-                        text = f"🦖 | The new name is more than 20 characters!"
+                        ans = ['✅ Enable', '❌ Disable']
 
-                    msg = bot.send_message(message.chat.id, text)
-
-                else:
-                    if bd_user['language_code'] == 'ru':
-                        text = f"🦖 | Переименовать {dino['name']} > {dino_name}?"
-                        ans_text = ['✅ Подтверждаю', '']
-                    else:
-                        text = f"🦖 | Rename {dino['name']} > {dino_name}?"
-                        ans_text = ['✅ Confirm', '']
-
-                    res = vars_answer(message, text_l = ['❗ Подтвердите действие', '❗ Confirm the action'], answers_l = ans_text)
+                    res = vars_answer(message, text_l = ['❗ Взаимодействие с настройкой уведомлений, выберите активность уведомлений >', '❗ Interaction with notification settings, select notification activity >'], answers_l = ans)
 
                     if res == None:
                         bot.send_message(message.chat.id, f'❌', reply_markup = markup('settings', user))
                         return
 
-                    if res in ['✅ Confirm', '✅ Подтверждаю']:
-                        for i in bd_user['dinos'].keys():
-                            if bd_user['dinos'][i] == dino:
-                                dino_user_id = i
+                    if res in ['✅ Enable', '✅ Включить']:
 
-                        bd_user['dinos'][str(dino_user_id)]['name'] = dino_name
-                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
-
-                        bot.send_message(message.chat.id, f'✅', reply_markup = markup('settings', user))
-
-    if message.text in ['🎮 Развлечения', '🎮 Entertainments']:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
-            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
-
-            if bd_user['language_code'] == 'ru':
-                text = f"🎮 | Перенаправление в меню развлечений!"
-
-            else:
-                text = f"🎮 | Redirecting to the entertainment menu!"
-
-            bot.send_message(message.chat.id, text, reply_markup = markup('games', user))
-
-    if message.text in ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball']:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
-            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
-            if dino['activ_status'] == 'pass_active':
-
-                markup_inline = types.InlineKeyboardMarkup(row_width=2)
-
-                if bd_user['language_code'] == 'ru':
-                    text = ['25 - 60 мин.', '60 - 90 мин.', '90 - 120 мин.']
-                    m_text = '🎮 Укажите разрешённое время игры > '
-                else:
-                    text = ['25 - 60 min.', '60 - 90 min.', '90 - 120 min.']
-                    m_text = '🎮 Specify the allowed game time >'
-
-                if message.text in ['🎮 Консоль', '🎮 Console']:
-                    g = 'con'
-                elif message.text in ['🪁 Змей', '🪁 Snake']:
-                    g = 'sna'
-                elif message.text in ['🏓 Пинг-понг', '🏓 Ping Pong']:
-                    g = 'pin'
-                elif message.text in ['🏐 Мяч', '🏐 Ball']:
-                    g = 'bal'
-
-                item_1 = types.InlineKeyboardButton( text = text[0], callback_data = f"1_{g}_game_{str(bd_user['settings']['dino_id'])}")
-                item_2 = types.InlineKeyboardButton( text = text[1], callback_data = f"2_{g}_game_{str(bd_user['settings']['dino_id'])}")
-                item_3 = types.InlineKeyboardButton( text = text[2], callback_data = f"3_{g}_game_{str(bd_user['settings']['dino_id'])}")
-                markup_inline.add(item_1, item_2, item_3)
-
-                bot.send_message(message.chat.id, m_text, reply_markup = markup_inline)
-
-    if message.text in ['❌ Остановить игру', '❌ Stop the game']:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
-            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
-            if dino['activ_status'] == 'game':
-
-                if dino['game_%'] == 1:
-                    rt = random.randint(1,3)
-
-                if dino['game_%'] == 0.5:
-                    rt = 1
-
-                if dino['game_%'] == 0.9:
-                    rt = random.randint(1,2)
-
-                if rt == 1:
-
-                    if dino['game_%'] == 1:
-                        bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['stats']['mood'] -= 20
+                        bd_user['settings']['notifications'] = True
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
 
                         if bd_user['language_code'] == 'ru':
-                            text = f"🎮 | Динозавру нравилось играть, но вы его остановили, его настроение снижено на 20%!"
-
+                            text = '🔧 Уведомления были активированы!'
                         else:
-                            text = f"🎮 | The dinosaur liked to play, but you stopped him, his mood is reduced by 20%!"
+                            text = '🔧 Notifications have been activated!'
 
-                    if dino['game_%'] == 0.5:
+                        bot.send_message(message.chat.id, text, reply_markup = markup("settings", user))
+
+                    if res in ['❌ Disable', '❌ Выключить']:
+
+                        bd_user['settings']['notifications'] = False
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
 
                         if bd_user['language_code'] == 'ru':
-                            text = f"🎮 | Динозавру не особо нравилось играть, он не теряет настроение..."
-
+                            text = '🔧 Уведомления были отключены!'
                         else:
-                            text = f"🎮 | The dinosaur didn't really like playing, he doesn't lose his mood..."
+                            text = '🔧 Notifications have been disabled!'
 
-                    if dino['game_%'] == 0.9:
-                        bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['stats']['mood'] -= 5
+                        bot.send_message(message.chat.id, text, reply_markup = markup("settings", user))
 
-                        if bd_user['language_code'] == 'ru':
-                            text = f"🎮 | Динозавр немного расстроен что вы его отвлекли, он теряет 5% настроения..."
+                    else:
+                        return
 
-                        else:
-                            text = f"🎮 | The dinosaur is a little upset that you distracted him, he loses 5% of his mood..."
+            if message.text in ["👅 Язык", "👅 Language"]:
+                bd_user = users.find_one({"userid": user.id})
+                if bd_user != None:
 
-                    bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['activ_status'] = 'pass_active'
-                    del bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['game_time']
-                    del bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['game_%']
+                    ans = ['🇬🇧 English', '🇷🇺 Русский']
 
+                    res = vars_answer(message, text_l = ['❗ Взаимодействие с настройкой языка, выберите язык >', '❗ Interaction with the language setting, select the language >'], answers_l = ans)
 
-                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
-                    bot.send_message(message.chat.id, text, reply_markup = markup('games', user))
+                    if res == None:
+                        bot.send_message(message.chat.id, f'❌', reply_markup = markup('settings', user))
+                        return
 
-                else:
+                    if res == ans[0]:
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'language_code': 'en' }} )
+                    if res == ans[1]:
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'language_code': 'ru' }} )
+                    bd_user = users.find_one({"userid": user.id})
 
                     if bd_user['language_code'] == 'ru':
-                        text = f"🎮 | Динозавра невозможно оторвать от игры, попробуйте ещё раз. Имейте ввиду, динозавр будет расстроен."
+                        text = '🔧 Язык установлен на 🇷🇺 Русский!'
+                    else:
+                        text = '🔧 The language is set to 🇬🇧 English!'
+
+                    bot.send_message(message.chat.id, text, reply_markup = markup("settings", user))
+
+            if message.text in ['💬 Переименовать', '💬 Rename']:
+                bd_user = users.find_one({"userid": user.id})
+                if bd_user != None:
+                    dino = dino_answer(message)
+                    if dino == None:
+                        bot.send_message(message.chat.id, f'❌', reply_markup = markup('settings', user))
+                        return
 
                     else:
-                        text = f"🎮 | It is impossible to tear the dinosaur away from the game, try again. Keep in mind, the dinosaur will be upset."
-
-                    bot.send_message(message.chat.id, text, reply_markup = markup('games', user))
-
-    if message.text in ["➕ Добавить", "➕ Add"]:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
-
-            res = vars_answer(message, text_l = ['➡ | Перешлите мне любое сообщение от человека, с которым вы хотите стать друзьями.\nВажно! Ваш друг должен быть зарегистрирован в боте!', '➡ | Forward me any message from the person you want to become friends with.\nImportant! Your friend must be registered in the bot!'], answers_l = ['', ''], content = False)
-
-            if res == None or res.forward_from == None:
-                bot.send_message(message.chat.id, f'❌', reply_markup = markup('friends-menu', user))
-
-
-            else:
-                two_user = users.find_one({"userid": res.forward_from.id})
-                if two_user == None:
-
-                    bot.send_message(message.chat.id, f'❌', reply_markup = markup('friends-menu', user))
-
-                else:
-
-                    if 'friends_list' not in bd_user['friends']:
-                        bd_user['friends']['friends_list'] = []
-                        bd_user['friends']['requests'] = []
-                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'friends': bd_user['friends'] }} )
-
-                    if 'friends_list' not in two_user['friends']:
-                        two_user['friends']['friends_list'] = []
-                        two_user['friends']['requests'] = []
-                        users.update_one( {"userid": two_user['userid']}, {"$set": {'friends': two_user['friends'] }} )
-
-                    if bd_user['userid'] not in two_user['friends']['requests'] and bd_user['userid'] not in bd_user['friends']['friends_list']:
-
-                        two_user['friends']['requests'].append(bd_user['userid'])
-                        users.update_one( {"userid": two_user['userid']}, {"$set": {'friends': two_user['friends'] }} )
-
-                        bot.send_message(message.chat.id, f'✔', reply_markup = markup('friends-menu', user))
-                        notifications_manager('friend_request', two_user)
-
-                    else:
+                        a = []
+                        def ret(message):
+                            a.append(message.text)
 
                         if bd_user['language_code'] == 'ru':
-                            text = f"📜 | Данный пользователь уже в друзьях / получил запрос от вас!"
-
+                            text = f"🦖 | Введите новое имя для {dino['name']}\nРазмер: не более 20-ти символов\n>"
                         else:
-                            text = f"📜 | This user is already a friend / has received a request from you!"
+                            text = f"🦖 | Enter a new name for {dino['name']}\nSize: no more than 20 characters\n>"
 
-                        bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
+                        msg = bot.send_message(message.chat.id, text)
+                        bot.register_next_step_handler(msg, ret)
 
-    if message.text in ["📜 Список", "📜 List"]:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
+                        while a == []:
+                            pass
+                        dino_name = a[0]
+                        if dino_name == None:
+                            return
 
-            friends_id = bd_user['friends']['friends_list']
-            page = 1
+                        if len(dino_name) > 20:
 
-            def chunks(lst, n):
-                for i in range(0, len(lst), n):
-                    yield lst[i:i + n]
-
-            def work_pr(message, friends_id, page):
-                global pages
-                a = []
-
-                def ret(message):
-                    if message.text in ['↪ Назад', '↪ Back']:
-                        a.append(None)
-                        return False
-                    else:
-                        a.append(message.text)
-                        return False
-
-                if bd_user['language_code'] == 'ru':
-                    text = "📜 | Обновление..."
-                else:
-                    text = "📜 | Update..."
-
-                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
-                friends_name = []
-
-                for i in friends_id:
-                    fr_name = bot.get_chat(int(i)).first_name
-                    friends_name.append(fr_name)
-
-                friends_chunks = list(chunks(list(chunks(friends_name, 2)), 3))
-
-                if friends_chunks == []:
-
-                    if bd_user['language_code'] == 'ru':
-                        text = "👥 | Список пуст!"
-                    else:
-                        text = "👥 | The list is empty!"
-
-                    bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
-                    return '34'
-
-                else:
-
-                    for el in friends_chunks[page-1]:
-                        if len(el) == 2:
-                            rmk.add(el[0], el[1])
-                        else:
-                            rmk.add(el[0], ' ')
-
-                    if 3 - len(friends_chunks[page-1]) != 0:
-                        for i in list(range(3 - len(friends_chunks[page-1]))):
-                            rmk.add(' ', ' ')
-
-                    if len(friends_chunks) > 1:
-                        if bd_user['language_code'] == 'ru':
-                            com_buttons = ['◀', '↪ Назад', '▶']
-                        else:
-                            com_buttons = ['◀', '↪ Back', '▶']
-
-                        rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
-                    else:
-                        if bd_user['language_code'] == 'ru':
-                            com_buttons = '↪ Назад'
-                        else:
-                            com_buttons = '↪ Back'
-
-                        rmk.add(com_buttons)
-
-                    msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
-                    bot.register_next_step_handler(msg, ret)
-
-                    while a == []:
-                        pass
-
-                    if a[0] == None:
-                        if bd_user['language_code'] == 'ru':
-                            text = "👥 | Возвращение в меню друзей!"
-                        else:
-                            text = "👥 | Return to the friends menu!"
-
-                        bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
-                        return '12'
-                    else:
-                        if a[0] == '◀':
-                            if page - 1 == 0:
-                                page = 1
+                            if bd_user['language_code'] == 'ru':
+                                text = f"🦖 | Новое имя больше 20-ти символов!"
                             else:
-                                page -= 1
+                                text = f"🦖 | The new name is more than 20 characters!"
 
-                        if a[0] == '▶':
-                            if page + 1 > len(friends_chunks):
-                                page = len(friends_chunks)
+                            msg = bot.send_message(message.chat.id, text)
+
+                        else:
+                            if bd_user['language_code'] == 'ru':
+                                text = f"🦖 | Переименовать {dino['name']} > {dino_name}?"
+                                ans_text = ['✅ Подтверждаю', '']
                             else:
-                                page += 1
+                                text = f"🦖 | Rename {dino['name']} > {dino_name}?"
+                                ans_text = ['✅ Confirm', '']
 
-                        work_pr(message, friends_id, page)
+                            res = vars_answer(message, text_l = ['❗ Подтвердите действие', '❗ Confirm the action'], answers_l = ans_text)
 
-            work_pr(message, friends_id, page)
+                            if res == None:
+                                bot.send_message(message.chat.id, f'❌', reply_markup = markup('settings', user))
+                                return
 
-    if message.text in ["💌 Запросы", "💌 Inquiries"]:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
-            if 'requests' in bd_user['friends']:
-                id_friends = bd_user['friends']['requests']
+                            if res in ['✅ Confirm', '✅ Подтверждаю']:
+                                for i in bd_user['dinos'].keys():
+                                    if bd_user['dinos'][i] == dino:
+                                        dino_user_id = i
 
-                if bd_user['language_code'] == 'ru':
-                    text = "💌 | Меню запросов открыто!"
-                else:
-                    text = "💌 | The query menu is open!"
+                                bd_user['dinos'][str(dino_user_id)]['name'] = dino_name
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
 
-                msg = bot.send_message(message.chat.id, text)
+                                bot.send_message(message.chat.id, f'✅', reply_markup = markup('settings', user))
 
-                def work_pr(message, id_friends):
-                    global pages, pagen
-                    a = []
+            if message.text in ["➕ Добавить", "➕ Add"]:
+                bd_user = users.find_one({"userid": user.id})
+                if bd_user != None:
 
-                    id_names = {}
-                    friends = []
-                    for i in id_friends:
-                        userr = bot.get_chat(int(i))
-                        id_names[userr.first_name] = int(i)
-                        friends.append(userr.first_name)
+                    res = vars_answer(message, text_l = ['➡ | Перешлите мне любое сообщение от человека, с которым вы хотите стать друзьями.\nВажно! Ваш друг должен быть зарегистрирован в боте!', '➡ | Forward me any message from the person you want to become friends with.\nImportant! Your friend must be registered in the bot!'], answers_l = ['', ''], content = False)
+
+                    if res == None or res.forward_from == None:
+                        bot.send_message(message.chat.id, f'❌', reply_markup = markup('friends-menu', user))
+
+
+                    else:
+                        two_user = users.find_one({"userid": res.forward_from.id})
+                        if two_user == None:
+
+                            bot.send_message(message.chat.id, f'❌', reply_markup = markup('friends-menu', user))
+
+                        else:
+
+                            if 'friends_list' not in bd_user['friends']:
+                                bd_user['friends']['friends_list'] = []
+                                bd_user['friends']['requests'] = []
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'friends': bd_user['friends'] }} )
+
+                            if 'friends_list' not in two_user['friends']:
+                                two_user['friends']['friends_list'] = []
+                                two_user['friends']['requests'] = []
+                                users.update_one( {"userid": two_user['userid']}, {"$set": {'friends': two_user['friends'] }} )
+
+                            if bd_user['userid'] not in two_user['friends']['requests'] and bd_user['userid'] not in bd_user['friends']['friends_list']:
+
+                                two_user['friends']['requests'].append(bd_user['userid'])
+                                users.update_one( {"userid": two_user['userid']}, {"$set": {'friends': two_user['friends'] }} )
+
+                                bot.send_message(message.chat.id, f'✔', reply_markup = markup('friends-menu', user))
+                                notifications_manager('friend_request', two_user)
+
+                            else:
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = f"📜 | Данный пользователь уже в друзьях / получил запрос от вас!"
+
+                                else:
+                                    text = f"📜 | This user is already a friend / has received a request from you!"
+
+                                bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
+
+            if message.text in ["📜 Список", "📜 List"]:
+                bd_user = users.find_one({"userid": user.id})
+                if bd_user != None:
+
+                    friends_id = bd_user['friends']['friends_list']
+                    page = 1
 
                     def chunks(lst, n):
                         for i in range(0, len(lst), n):
                             yield lst[i:i + n]
 
-                    fr_pages = list(chunks(friends, 3))
-                    page = 1
+                    def work_pr(message, friends_id, page):
+                        global pages
+                        a = []
 
-                    pages_buttons = []
-                    for i in range(len(fr_pages)):
-                        pages_buttons.append([])
-
-                    page_n = 0
-                    for el in fr_pages:
-                        for i in el:
-                            pages_buttons[page_n].append([f"✅ {i}", f'❌ {i}'])
-                        page_n += 1
-
-                    def ret(message):
-                        global pages, pagen
-                        if message.text in ['↪ Назад', '↪ Back']:
-                            a.append(None)
-                            return False
-                        else:
-                            if message.text in pages or message.text in ['◀', '▶']:
-                                a.append(message.text)
-
-                            else:
+                        def ret(message):
+                            if message.text in ['↪ Назад', '↪ Back']:
                                 a.append(None)
                                 return False
+                            else:
+                                a.append(message.text)
+                                return False
 
-                        return False
-
-                    if bd_user['language_code'] == 'ru':
-
-                        com_buttons = ['◀', '↪ Назад', '▶']
-                    else:
-
-                        com_buttons = ['◀', '↪ Back', '▶']
-
-                    rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
-
-                    if pages_buttons != []:
-                        for i in pages_buttons[page-1]:
-                            rmk.add( i[0], i[1] )
-
-                        for nn in range(3 - int(len(pages_buttons[page-1]))):
-                            rmk.add( ' ', ' ')
-
-                    else:
-                        for i in range(3):
-                            rmk.add( ' ', ' ')
-
-                    if len(pages_buttons) > 1:
-                        rmk.add( com_buttons[0], com_buttons[1], com_buttons[2] )
-                    else:
-                        rmk.add( com_buttons[1] )
-
-                    pages = []
-                    if pages_buttons != []:
-                        for ii in pages_buttons[page-1]:
-                            for iii in ii:
-                                pages.append(iii)
-
-                    pagen = page
-
-                    if bd_user['language_code'] == 'ru':
-                        text = "💌 | Обновление..."
-                    else:
-                        text = "💌 | Update..."
-
-                    msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
-                    bot.register_next_step_handler(msg, ret)
-
-                    while a == []:
-                        pass
-                    if a[0] == None:
                         if bd_user['language_code'] == 'ru':
-                            text = "👥 | Возвращение в меню друзей!"
+                            text = "📜 | Обновление..."
                         else:
-                            text = "👥 | Return to the friends menu!"
+                            text = "📜 | Update..."
 
-                        bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
-                        return None
-                    else:
-                        if a[0] == '◀':
-                            if page - 1 == 0:
-                                page = 1
-                            else:
-                                page -= 1
+                        rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+                        friends_name = []
 
-                        if a[0] == '▶':
-                            if page + 1 > len(pages_buttons):
-                                page = len(pages_buttons)
+                        for i in friends_id:
+                            fr_name = bot.get_chat(int(i)).first_name
+                            friends_name.append(fr_name)
+
+                        friends_chunks = list(chunks(list(chunks(friends_name, 2)), 3))
+
+                        if friends_chunks == []:
+
+                            if bd_user['language_code'] == 'ru':
+                                text = "👥 | Список пуст!"
                             else:
-                                page += 1
+                                text = "👥 | The list is empty!"
+
+                            bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
+                            return '34'
 
                         else:
-                            uid = id_names[a[0][2:]]
 
-                            if list(a[0])[0] == '❌':
-                                notifications_manager("friend_rejection", users.find_one({"userid": int(uid) }), user.first_name)
-
-                                if bd_user['language_code'] == 'ru':
-                                    text = "👥 | Запрос в друзья отклонён!"
+                            for el in friends_chunks[page-1]:
+                                if len(el) == 2:
+                                    rmk.add(el[0], el[1])
                                 else:
-                                    text = "👥 | Friend request rejected!"
+                                    rmk.add(el[0], ' ')
 
-                                bot.send_message(message.chat.id, text)
+                            if 3 - len(friends_chunks[page-1]) != 0:
+                                for i in list(range(3 - len(friends_chunks[page-1]))):
+                                    rmk.add(' ', ' ')
 
-                                bd_user['friends']['requests'].remove(uid)
-                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'friends': bd_user['friends'] }} )
-
-
-                            if list(a[0])[0] == '✅':
-                                notifications_manager("friend_accept", users.find_one({"userid": int(uid) }), user.first_name)
-
+                            if len(friends_chunks) > 1:
                                 if bd_user['language_code'] == 'ru':
-                                    text = "👥 | Запрос в друзья одобрен!"
+                                    com_buttons = ['◀', '↪ Назад', '▶']
                                 else:
-                                    text = "👥 | The friend request is approved!"
+                                    com_buttons = ['◀', '↪ Back', '▶']
 
-                                bot.send_message(message.chat.id, text)
+                                rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
+                            else:
+                                if bd_user['language_code'] == 'ru':
+                                    com_buttons = '↪ Назад'
+                                else:
+                                    com_buttons = '↪ Back'
 
-                                bd_user['friends']['requests'].remove(uid)
-                                bd_user['friends']['friends_list'].append(uid)
-                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'friends': bd_user['friends'] }} )
+                                rmk.add(com_buttons)
 
-                                two_user = users.find_one({"userid": int(uid) })
-                                two_user['friends']['friends_list'].append(bd_user['userid'])
-                                users.update_one( {"userid": int(uid) }, {"$set": {'friends': two_user['friends'] }} )
+                            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                            bot.register_next_step_handler(msg, ret)
+
+                            while a == []:
+                                pass
+
+                            if a[0] == None:
+                                if bd_user['language_code'] == 'ru':
+                                    text = "👥 | Возвращение в меню друзей!"
+                                else:
+                                    text = "👥 | Return to the friends menu!"
+
+                                bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
+                                return '12'
+                            else:
+                                if a[0] == '◀':
+                                    if page - 1 == 0:
+                                        page = 1
+                                    else:
+                                        page -= 1
+
+                                if a[0] == '▶':
+                                    if page + 1 > len(friends_chunks):
+                                        page = len(friends_chunks)
+                                    else:
+                                        page += 1
+
+                                work_pr(message, friends_id, page)
+
+                    work_pr(message, friends_id, page)
+
+            if message.text in ["💌 Запросы", "💌 Inquiries"]:
+                bd_user = users.find_one({"userid": user.id})
+                if bd_user != None:
+                    if 'requests' in bd_user['friends']:
+                        id_friends = bd_user['friends']['requests']
+
+                        if bd_user['language_code'] == 'ru':
+                            text = "💌 | Меню запросов открыто!"
+                        else:
+                            text = "💌 | The query menu is open!"
+
+                        msg = bot.send_message(message.chat.id, text)
+
+                        def work_pr(message, id_friends):
+                            global pages, pagen
+                            a = []
+
+                            id_names = {}
+                            friends = []
+                            for i in id_friends:
+                                userr = bot.get_chat(int(i))
+                                id_names[userr.first_name] = int(i)
+                                friends.append(userr.first_name)
+
+                            def chunks(lst, n):
+                                for i in range(0, len(lst), n):
+                                    yield lst[i:i + n]
+
+                            fr_pages = list(chunks(friends, 3))
+                            page = 1
+
+                            pages_buttons = []
+                            for i in range(len(fr_pages)):
+                                pages_buttons.append([])
+
+                            page_n = 0
+                            for el in fr_pages:
+                                for i in el:
+                                    pages_buttons[page_n].append([f"✅ {i}", f'❌ {i}'])
+                                page_n += 1
+
+                            def ret(message):
+                                global pages, pagen
+                                if message.text in ['↪ Назад', '↪ Back']:
+                                    a.append(None)
+                                    return False
+                                else:
+                                    if message.text in pages or message.text in ['◀', '▶']:
+                                        a.append(message.text)
+
+                                    else:
+                                        a.append(None)
+                                        return False
+
+                                return False
+
+                            if bd_user['language_code'] == 'ru':
+
+                                com_buttons = ['◀', '↪ Назад', '▶']
+                            else:
+
+                                com_buttons = ['◀', '↪ Back', '▶']
+
+                            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+
+                            if pages_buttons != []:
+                                for i in pages_buttons[page-1]:
+                                    rmk.add( i[0], i[1] )
+
+                                for nn in range(3 - int(len(pages_buttons[page-1]))):
+                                    rmk.add( ' ', ' ')
+
+                            else:
+                                for i in range(3):
+                                    rmk.add( ' ', ' ')
+
+                            if len(pages_buttons) > 1:
+                                rmk.add( com_buttons[0], com_buttons[1], com_buttons[2] )
+                            else:
+                                rmk.add( com_buttons[1] )
+
+                            pages = []
+                            if pages_buttons != []:
+                                for ii in pages_buttons[page-1]:
+                                    for iii in ii:
+                                        pages.append(iii)
+
+                            pagen = page
+
+                            if bd_user['language_code'] == 'ru':
+                                text = "💌 | Обновление..."
+                            else:
+                                text = "💌 | Update..."
+
+                            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                            bot.register_next_step_handler(msg, ret)
+
+                            while a == []:
+                                pass
+                            if a[0] == None:
+                                if bd_user['language_code'] == 'ru':
+                                    text = "👥 | Возвращение в меню друзей!"
+                                else:
+                                    text = "👥 | Return to the friends menu!"
+
+                                bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
+                                return None
+                            else:
+                                if a[0] == '◀':
+                                    if page - 1 == 0:
+                                        page = 1
+                                    else:
+                                        page -= 1
+
+                                if a[0] == '▶':
+                                    if page + 1 > len(pages_buttons):
+                                        page = len(pages_buttons)
+                                    else:
+                                        page += 1
+
+                                else:
+                                    uid = id_names[a[0][2:]]
+
+                                    if list(a[0])[0] == '❌':
+                                        notifications_manager("friend_rejection", users.find_one({"userid": int(uid) }), user.first_name)
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = "👥 | Запрос в друзья отклонён!"
+                                        else:
+                                            text = "👥 | Friend request rejected!"
+
+                                        bot.send_message(message.chat.id, text)
+
+                                        bd_user['friends']['requests'].remove(uid)
+                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'friends': bd_user['friends'] }} )
+
+
+                                    if list(a[0])[0] == '✅':
+                                        notifications_manager("friend_accept", users.find_one({"userid": int(uid) }), user.first_name)
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = "👥 | Запрос в друзья одобрен!"
+                                        else:
+                                            text = "👥 | The friend request is approved!"
+
+                                        bot.send_message(message.chat.id, text)
+
+                                        bd_user['friends']['requests'].remove(uid)
+                                        bd_user['friends']['friends_list'].append(uid)
+                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'friends': bd_user['friends'] }} )
+
+                                        two_user = users.find_one({"userid": int(uid) })
+                                        two_user['friends']['friends_list'].append(bd_user['userid'])
+                                        users.update_one( {"userid": int(uid) }, {"$set": {'friends': two_user['friends'] }} )
+
+                                work_pr(message, id_friends)
 
                         work_pr(message, id_friends)
 
-                work_pr(message, id_friends)
+            if message.text in ['➖ Удалить', '➖ Delete']:
+                bd_user = users.find_one({"userid": user.id})
+                if bd_user != None:
 
-    if message.text in ['➖ Удалить', '➖ Delete']:
-        bd_user = users.find_one({"userid": user.id})
-        if bd_user != None:
+                    friends_id = bd_user['friends']['friends_list']
+                    page = 1
 
-            friends_id = bd_user['friends']['friends_list']
-            page = 1
-
-            if friends_id != []:
-                if bd_user['language_code'] == 'ru':
-                    text = "➖ | Выберите пользователя для удаления из друзей > "
-                else:
-                    text = "➖ | Select the user to remove from friends >"
-                bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
-
-            def work_pr(message, friends_id, page):
-                global pages
-                a = []
-
-                def ret(message):
-                    if message.text in ['↪ Назад', '↪ Back']:
-                        a.append(None)
-                        return False
-                    else:
-                        a.append(message.text)
-
-                    return False
-
-                if bd_user['language_code'] == 'ru':
-                    text = "💌 | Обновление..."
-                else:
-                    text = "💌 | Update..."
-
-                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
-                friends_name = []
-                id_names = {}
-
-                def chunks(lst, n):
-                    for i in range(0, len(lst), n):
-                        yield lst[i:i + n]
-
-                for i in friends_id:
-                    fr_name = bot.get_chat(int(i)).first_name
-                    friends_name.append(fr_name)
-                    id_names[bot.get_chat(int(i)).first_name] = i
-
-                friends_chunks = list(chunks(list(chunks(friends_name, 2)), 3))
-
-                if friends_chunks == []:
-
-                    if bd_user['language_code'] == 'ru':
-                        text = "👥 | Список пуст!"
-                    else:
-                        text = "👥 | The list is empty!"
-
-                    bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
-                    return
-
-                else:
-
-                    for el in friends_chunks[page-1]:
-                        if len(el) == 2:
-                            rmk.add(el[0], el[1])
-                        else:
-                            rmk.add(el[0], ' ')
-
-                    if 3 - len(friends_chunks[page-1]) != 0:
-                        for i in list(range(3 - len(friends_chunks[page-1]))):
-                            rmk.add(' ', ' ')
-
-                    if len(friends_chunks) > 1:
+                    if friends_id != []:
                         if bd_user['language_code'] == 'ru':
-                            com_buttons = ['◀', '↪ Назад', '▶']
+                            text = "➖ | Выберите пользователя для удаления из друзей > "
                         else:
-                            com_buttons = ['◀', '↪ Back', '▶']
-
-                        rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
-                    else:
-                        if bd_user['language_code'] == 'ru':
-                            com_buttons = '↪ Назад'
-                        else:
-                            com_buttons = '↪ Back'
-
-                        rmk.add(com_buttons)
-
-                    msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
-                    bot.register_next_step_handler(msg, ret)
-
-                    while a == []:
-                        pass
-                    if a[0] == None:
-                        if bd_user['language_code'] == 'ru':
-                            text = "👥 | Возвращение в меню друзей!"
-                        else:
-                            text = "👥 | Return to the friends menu!"
-
+                            text = "➖ | Select the user to remove from friends >"
                         bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
-                        return None
-                    else:
-                        if a[0] == '◀':
-                            if page - 1 == 0:
-                                page = 1
-                            else:
-                                page -= 1
 
-                        if a[0] == '▶':
-                            if page + 1 > len(friends_chunks):
-                                page = len(friends_chunks)
-                            else:
-                                page += 1
+                    def work_pr(message, friends_id, page):
+                        global pages
+                        a = []
 
+                        def ret(message):
+                            if message.text in ['↪ Назад', '↪ Back']:
+                                a.append(None)
+                                return False
+                            else:
+                                a.append(message.text)
+
+                            return False
+
+                        if bd_user['language_code'] == 'ru':
+                            text = "💌 | Обновление..."
                         else:
-                            uid = id_names[a[0]]
+                            text = "💌 | Update..."
+
+                        rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+                        friends_name = []
+                        id_names = {}
+
+                        def chunks(lst, n):
+                            for i in range(0, len(lst), n):
+                                yield lst[i:i + n]
+
+                        for i in friends_id:
+                            fr_name = bot.get_chat(int(i)).first_name
+                            friends_name.append(fr_name)
+                            id_names[bot.get_chat(int(i)).first_name] = i
+
+                        friends_chunks = list(chunks(list(chunks(friends_name, 2)), 3))
+
+                        if friends_chunks == []:
 
                             if bd_user['language_code'] == 'ru':
-                                text = "👥 | Пользователь удалён из друзей!"
+                                text = "👥 | Список пуст!"
                             else:
-                                text = "👥 | The user has been removed from friends!"
+                                text = "👥 | The list is empty!"
 
-                            bd_user['friends']['friends_list'].remove(uid)
-                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'friends': bd_user['friends'] }} )
+                            bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
+                            return
 
-                            two_user = users.find_one({"userid": uid})
-                            two_user['friends']['friends_list'].remove(bd_user['userid'])
-                            users.update_one( {"userid": two_user['userid']}, {"$set": {'friends': two_user['friends'] }} )
+                        else:
 
-                            if bd_user['friends']['friends_list'] == []:
+                            for el in friends_chunks[page-1]:
+                                if len(el) == 2:
+                                    rmk.add(el[0], el[1])
+                                else:
+                                    rmk.add(el[0], ' ')
+
+                            if 3 - len(friends_chunks[page-1]) != 0:
+                                for i in list(range(3 - len(friends_chunks[page-1]))):
+                                    rmk.add(' ', ' ')
+
+                            if len(friends_chunks) > 1:
+                                if bd_user['language_code'] == 'ru':
+                                    com_buttons = ['◀', '↪ Назад', '▶']
+                                else:
+                                    com_buttons = ['◀', '↪ Back', '▶']
+
+                                rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
+                            else:
+                                if bd_user['language_code'] == 'ru':
+                                    com_buttons = '↪ Назад'
+                                else:
+                                    com_buttons = '↪ Back'
+
+                                rmk.add(com_buttons)
+
+                            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                            bot.register_next_step_handler(msg, ret)
+
+                            while a == []:
+                                pass
+                            if a[0] == None:
+                                if bd_user['language_code'] == 'ru':
+                                    text = "👥 | Возвращение в меню друзей!"
+                                else:
+                                    text = "👥 | Return to the friends menu!"
+
                                 bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
-                                return
+                                return None
                             else:
-                                bot.send_message(message.chat.id, text)
+                                if a[0] == '◀':
+                                    if page - 1 == 0:
+                                        page = 1
+                                    else:
+                                        page -= 1
+
+                                if a[0] == '▶':
+                                    if page + 1 > len(friends_chunks):
+                                        page = len(friends_chunks)
+                                    else:
+                                        page += 1
+
+                                else:
+                                    uid = id_names[a[0]]
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = "👥 | Пользователь удалён из друзей!"
+                                    else:
+                                        text = "👥 | The user has been removed from friends!"
+
+                                    bd_user['friends']['friends_list'].remove(uid)
+                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'friends': bd_user['friends'] }} )
+
+                                    two_user = users.find_one({"userid": uid})
+                                    two_user['friends']['friends_list'].remove(bd_user['userid'])
+                                    users.update_one( {"userid": two_user['userid']}, {"$set": {'friends': two_user['friends'] }} )
+
+                                    if bd_user['friends']['friends_list'] == []:
+                                        bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
+                                        return
+                                    else:
+                                        bot.send_message(message.chat.id, text)
 
 
-                        work_pr(message, friends_id, page)
+                                work_pr(message, friends_id, page)
 
-            work_pr(message, friends_id, page)
+                    work_pr(message, friends_id, page)
+
+            bd_user = users.find_one({"userid": user.id})
+            tr_c = False
+            if bd_user != None and len(list(bd_user['dinos'])) > 0:
+                if len(list(bd_user['dinos'])) > 1:
+                    tr_c = True
+
+                else:
+                    if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['status'] == 'dino':
+                        tr_c = True
+
+            if tr_c == True:
+
+                if message.text in ['🕹 Действия', '🕹 Actions']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = '🕹 Панель действий открыта!'
+                        else:
+                            text = '🕹 The action panel is open!'
+
+                        bot.send_message(message.chat.id, text, reply_markup = markup("actions", user))
+
+                if message.text in ['🌙 Уложить спать', '🌙 Put to bed']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+                        dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+
+                        if dino != None:
+                            if dino['activ_status'] == 'pass_active':
+                                if dino['stats']['unv'] >= 90:
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = '🌙 Динозавр не хочет спать!'
+                                    else:
+                                        text = "🌙 The dinosaur doesn't want to sleep!"
+
+                                    bot.send_message(message.chat.id, text, reply_markup = markup("actions", user))
+
+                                else:
+
+                                    bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['activ_status'] = 'sleep'
+                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = '🌙 Вы уложили динозавра спать!'
+                                    else:
+                                        text = "🌙 You put the dinosaur to sleep!"
+
+                                    bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+
+                        else:
+                            bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
+                            return
+
+
+                if message.text in ['🌙 Пробудить', '🌙 Awaken']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+                        dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+
+                        if dino['activ_status'] == 'sleep' and dino != None:
+                            r_n = random.randint(0, 20)
+
+                            bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['activ_status'] = 'pass_active'
+                            bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['stats']['mood'] -= r_n
+
+                            if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['stats']['mood'] < 0:
+                                bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['stats']['mood'] = 0
+
+                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+
+                            if bd_user['language_code'] == 'ru':
+                                text = f'🌙 Ваш динозавр пробудился. Он сильно не доволен что вы его разбудили!n\Динозавр потерял {r_n}% настроения.'
+                            else:
+                                text = f"🌙 Your dinosaur has awakened. He is very unhappy that you woke him up!n\Dinosaur lost {r_n}% of mood."
+
+                            bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+
+                        else:
+                            bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
+                            return
+
+                if message.text in ['🎑 Путешествие', '🎑 Journey']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+                        dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+
+                        if dino['activ_status'] == 'pass_active' and dino != None:
+                            markup_inline = types.InlineKeyboardMarkup()
+
+                            if bd_user['language_code'] == 'ru':
+                                text = '🌳 На какое время отправить динозавра в путешествие?'
+
+                                item_0 = types.InlineKeyboardButton( text = '10 мин.', callback_data = f"10min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                                item_1 = types.InlineKeyboardButton( text = '30 мин.', callback_data = f"30min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                                item_2 = types.InlineKeyboardButton( text = '60 мин.', callback_data = f"60min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                                item_3 = types.InlineKeyboardButton( text = '90 мин.', callback_data = f"90min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                            else:
+                                text = "🌳 How long to send a dinosaur on a journey?"
+
+                                item_0 = types.InlineKeyboardButton( text = '10 min.', callback_data = f"10min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                                item_1 = types.InlineKeyboardButton( text = '30 min.', callback_data = f"30min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                                item_2 = types.InlineKeyboardButton( text = '60 min.', callback_data = f"60min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                                item_3 = types.InlineKeyboardButton( text = '90 min.', callback_data = f"90min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                            markup_inline.add(item_0, item_1, item_2, item_3)
+
+                            bot.send_message(message.chat.id, text, reply_markup = markup_inline)
+
+                        else:
+                            bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
+                            return
+
+
+                if message.text in ['🎑 Вернуть', '🎑 Call']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+                        dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+
+                        if dino['activ_status'] == 'journey' and dino != None:
+                            if random.randint(1,2) == 1:
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = f'🦖 | Вы вернули динозавра из путешествия!\nВот что произошло в его путешествии:\n'
+
+                                    if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log'] == []:
+                                        text += 'Ничего не произошло!'
+                                    else:
+                                        n = 1
+                                        for el in bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log']:
+                                            text += f'<b>{n}.</b> {el}\n\n'
+                                            n += 1
+                                else:
+                                    text = f"🦖 | Turned the dinosaur out of the journey!\nHere's what happened on his journey:\n"
+
+                                    if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log'] == []:
+                                        text += 'Nothing happened!'
+                                    else:
+                                        n = 1
+                                        for el in bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log']:
+                                            text += f'<b>{n}.</b> {el}\n\n'
+                                            n += 1
+
+
+                                bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['activ_status'] = 'pass_active'
+                                del bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_time']
+                                del bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log']
+
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+
+                                bot.send_message(message.chat.id, text, reply_markup = markup('actions', user), parse_mode = 'html')
+
+
+                            else:
+                                if bd_user['language_code'] == 'ru':
+                                    text = f'🔇 | Вы попробовали вернуть динозавра, но что-то пошло не так...'
+                                else:
+                                    text = f"🔇 | You tried to bring the dinosaur back, but something went wrong..."
+
+                                bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+                        else:
+                            bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
+                            return
+
+
+                if message.text[:11] in ['🦖 Динозавр:'] or message.text[:7] in [ '🦖 Dino:']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+                        if bd_user['language_code'] == 'ru':
+                            did = int(message.text[12:])
+                        else:
+                            did = int(message.text[8:])
+
+                        if did == int(bd_user['settings']['dino_id']):
+                            ll = list(bd_user['dinos'].keys())
+                            ind = list(bd_user['dinos'].keys()).index(str(did))
+
+                            if ind + 1 == len(ll):
+                                bd_user['settings']['dino_id'] = ll[0]
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+                            else:
+                                bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[int(ll[did-1])]
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+
+                            if bd_user['language_code'] == 'ru':
+                                text = f"Вы выбрали динозавра {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
+                            else:
+                                text = f"You have chosen a dinosaur {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
+
+                            bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+
+
+                if message.text in ['🎮 Развлечения', '🎮 Entertainments']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+                        dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f"🎮 | Перенаправление в меню развлечений!"
+
+                        else:
+                            text = f"🎮 | Redirecting to the entertainment menu!"
+
+                        bot.send_message(message.chat.id, text, reply_markup = markup('games', user))
+
+                if message.text in ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+                        dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+                        if dino['activ_status'] == 'pass_active':
+
+                            markup_inline = types.InlineKeyboardMarkup(row_width=2)
+
+                            if bd_user['language_code'] == 'ru':
+                                text = ['25 - 60 мин.', '60 - 90 мин.', '90 - 120 мин.']
+                                m_text = '🎮 Укажите разрешённое время игры > '
+                            else:
+                                text = ['25 - 60 min.', '60 - 90 min.', '90 - 120 min.']
+                                m_text = '🎮 Specify the allowed game time >'
+
+                            if message.text in ['🎮 Консоль', '🎮 Console']:
+                                g = 'con'
+                            elif message.text in ['🪁 Змей', '🪁 Snake']:
+                                g = 'sna'
+                            elif message.text in ['🏓 Пинг-понг', '🏓 Ping Pong']:
+                                g = 'pin'
+                            elif message.text in ['🏐 Мяч', '🏐 Ball']:
+                                g = 'bal'
+
+                            item_1 = types.InlineKeyboardButton( text = text[0], callback_data = f"1_{g}_game_{str(bd_user['settings']['dino_id'])}")
+                            item_2 = types.InlineKeyboardButton( text = text[1], callback_data = f"2_{g}_game_{str(bd_user['settings']['dino_id'])}")
+                            item_3 = types.InlineKeyboardButton( text = text[2], callback_data = f"3_{g}_game_{str(bd_user['settings']['dino_id'])}")
+                            markup_inline.add(item_1, item_2, item_3)
+
+                            bot.send_message(message.chat.id, m_text, reply_markup = markup_inline)
+
+                if message.text in ['❌ Остановить игру', '❌ Stop the game']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+                        dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+                        if dino['activ_status'] == 'game':
+
+                            if dino['game_%'] == 1:
+                                rt = random.randint(1,3)
+
+                            if dino['game_%'] == 0.5:
+                                rt = 1
+
+                            if dino['game_%'] == 0.9:
+                                rt = random.randint(1,2)
+
+                            if rt == 1:
+
+                                if dino['game_%'] == 1:
+                                    bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['stats']['mood'] -= 20
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = f"🎮 | Динозавру нравилось играть, но вы его остановили, его настроение снижено на 20%!"
+
+                                    else:
+                                        text = f"🎮 | The dinosaur liked to play, but you stopped him, his mood is reduced by 20%!"
+
+                                if dino['game_%'] == 0.5:
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = f"🎮 | Динозавру не особо нравилось играть, он не теряет настроение..."
+
+                                    else:
+                                        text = f"🎮 | The dinosaur didn't really like playing, he doesn't lose his mood..."
+
+                                if dino['game_%'] == 0.9:
+                                    bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['stats']['mood'] -= 5
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = f"🎮 | Динозавр немного расстроен что вы его отвлекли, он теряет 5% настроения..."
+
+                                    else:
+                                        text = f"🎮 | The dinosaur is a little upset that you distracted him, he loses 5% of his mood..."
+
+                                bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['activ_status'] = 'pass_active'
+                                del bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['game_time']
+                                del bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['game_%']
+
+
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                                bot.send_message(message.chat.id, text, reply_markup = markup('games', user))
+
+                            else:
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = f"🎮 | Динозавра невозможно оторвать от игры, попробуйте ещё раз. Имейте ввиду, динозавр будет расстроен."
+
+                                else:
+                                    text = f"🎮 | It is impossible to tear the dinosaur away from the game, try again. Keep in mind, the dinosaur will be upset."
+
+                                bot.send_message(message.chat.id, text, reply_markup = markup('games', user))
+
+                if message.text in ['🍣 Покормить', '🍣 Feed']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+
+                        def chunks(lst, n):
+                            for i in range(0, len(lst), n):
+                                yield lst[i:i + n]
+
+                        items = bd_user['inventory']
+                        items_id = {}
+                        page = 1
+                        items_names = []
+
+                        if bd_user['language_code'] == 'ru':
+                            lg = "nameru"
+                        else:
+                            lg = "nameen"
+
+                        for i in items:
+                            items_id[ items_f['items'][str(i)][lg] ] = i
+                            items_names.append( items_f['items'][str(i)][lg] )
+
+                        items_sort = []
+                        d_it_sort = {}
+                        ind_sort_it = {}
+
+                        for i in items_names:
+                            if i in list(d_it_sort.keys()):
+                                d_it_sort[i] += 1
+                            else:
+                                d_it_sort[i] = 1
+
+                        for n in list(d_it_sort.keys()):
+                            col = d_it_sort[n]
+                            name = n
+                            items_sort.append(f'{n} x{col}')
+                            ind_sort_it[f'{n} x{col}'] = n
+
+                        pages = list(chunks(list(chunks(items_sort, 2)), 3))
+
+                        for i in pages:
+                            for ii in i:
+                                if len(ii) == 1:
+                                    ii.append(' ')
+
+                            if len(i) != 3:
+                                for iii in range(3 - len(i)):
+                                    i.append([' ', ' '])
+
+
+
+                        def work_pr(message, pages, page, items_id, ind_sort_it):
+                            global l_pages, l_page, l_ind_sort_it
+                            a = []
+                            l_pages = pages
+                            l_page = page
+                            l_ind_sort_it = ind_sort_it
+
+                            def ret(message):
+                                global l_pages, l_page, l_ind_sort_it
+                                if message.text in ['↩ Назад', '↩ Back']:
+                                    a.append(None)
+                                    return False
+                                else:
+                                    if message.text in list(l_ind_sort_it.keys()) or message.text in ['◀', '▶']:
+                                        a.append(message.text)
+                                    else:
+                                        a.append(None)
+                                    return False
+
+                            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+                            for i in pages[page-1]:
+                                rmk.add(i[0], i[1])
+
+                            if len(pages) > 1:
+                                if bd_user['language_code'] == 'ru':
+                                    com_buttons = ['◀', '↩ Назад', '▶']
+                                    textt = '🍕 | Выберите чем вы хотите покормить динозавра > '
+                                else:
+                                    com_buttons = ['◀', '↩ Back', '▶']
+                                    textt = '🍕 | Choose what you want to feed the dinosaur >'
+
+                                rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
+
+                            else:
+                                if bd_user['language_code'] == 'ru':
+                                    com_buttons = '↩ Назад'
+                                    textt = '🍕 | Выберите чем вы хотите покормить динозавра > '
+                                else:
+                                    textt = '🍕 | Choose what you want to feed the dinosaur >'
+                                    com_buttons = '↩ Back'
+
+                                rmk.add(com_buttons)
+
+                            msg = bot.send_message(message.chat.id, textt, reply_markup = rmk)
+                            bot.register_next_step_handler(msg, ret)
+
+                            while a == []:
+                                pass
+
+                            if a[0] == None:
+                                if bd_user['language_code'] == 'ru':
+                                    text = "👥 | Возвращение в меню активностей!"
+                                else:
+                                    text = "👥 | Return to the friends menu!"
+
+                                bot.send_message(message.chat.id, text, reply_markup = markup('actions', user))
+                                return '12'
+                            else:
+                                if a[0] == '◀':
+                                    if page - 1 == 0:
+                                        page = 1
+                                    else:
+                                        page -= 1
+
+                                    work_pr(message, pages, page, items_id, ind_sort_it)
+
+                                elif a[0] == '▶':
+                                    if page + 1 > len(l_pages):
+                                        page = len(l_pages)
+                                    else:
+                                        page += 1
+
+                                    work_pr(message, pages, page, items_id, ind_sort_it)
+
+                                else:
+                                    item_id = items_id[ l_ind_sort_it[a[0]] ]
+                                    item = items_f['items'][item_id]
+                                    bd_dino = bd_user['dinos'][ bd_user['settings']['dino_id'] ]
+                                    d_dino = json_f['elements'][ str(bd_dino['dino_id']) ]
+                                    if item['type'] == '+eat':
+
+                                        if bd_user['language_code'] == 'ru':
+                                            if item['class'] == 'ALL':
+                                                text = f"🍕 | Динозавр с удовольствием съел {item['nameru']}!"
+                                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] += item['act']
+
+                                            elif item['class'] == d_dino['class']:
+                                                text = f"🍕 | Динозавр с удовольствием съел {item['nameru']}!"
+                                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] += item['act']
+
+                                            else:
+                                                eatr = random.randint( 0, int(item['act'] / 2) )
+                                                moodr = random.randint( 1, 10 )
+                                                text = f"🍕 | Динозавру не по вкусу {item['nameru']}, он теряет {eatr}% сытости и {moodr}% настрояния!"
+
+                                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] -= eatr
+                                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= moodr
+
+                                        else:
+                                            if item['class'] == 'ALL':
+                                                text = f"🍕 | The dinosaur ate it with pleasure {item['nameen']}!"
+                                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] += item['act']
+
+                                            elif item['class'] == d_dino['class']:
+                                                text = f"🍕 | The dinosaur ate it with pleasure {item['nameen']}!"
+                                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] += item['act']
+
+                                            else:
+                                                eatr = random.randint( 0, int(item['act'] / 2) )
+                                                moodr = random.randint( 1, 10 )
+                                                text = f"🍕 | The dinosaur doesn't like {item['nameen']}, it loses {eatr}% satiety and {mood}% mood!"
+
+                                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] -= eatr
+                                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= moodr
+
+                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+
+                                        bd_user['inventory'].remove(item_id)
+                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+                                        bot.send_message(message.chat.id, text, reply_markup = markup('actions', user))
+
+                                    else:
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = "❌ | Это невозможно съесть или предмет не имеет эффекта пополнять пищу!"
+                                        else:
+                                            text = "❌ | It is impossible to eat or the item has no effect to replenish food!"
+
+                                        bot.send_message(message.chat.id, text, reply_markup = markup('actions', user))
+
+                        work_pr(message, pages, page, items_id, ind_sort_it)
+
+                if message.text in ['🍕 Сбор пищи', '🍕 Collecting food']:
+                    if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] == 'pass_active':
+                        if bd_user['language_code'] == 'ru':
+                            bbt = ['🌿 | Собирательство', '🍖 | Охота', '🍤 | Рыбалка', '🥗 | Все вместе']
+                        else:
+                            bbt = ['🌿 | Collecting', '🍖 | Hunting', '🍤 | Fishing', '🥗 | All together']
+
+                        res = vars_answer(message, text_l = ['🌴 | Выберите способ добычи продовольствия >', '🌴 | Choose a way to get food >'], cansel_l = ['↩ Назад', '↩ Back'], answers_l = bbt, content = True)
+
+                        if res == None or res.forward_from == None:
+                            if bd_user['language_code'] == 'ru':
+                                text = '↩ Возврат в меню активностей'
+                            else:
+                                text = '↩ Return to the activity menu'
+
+                            bot.send_message(message.chat.id, text, reply_markup = markup('actions', user))
+
+
+                        else:
+                            if res == bbt[0]:
+                                pass
+                            if res == bbt[1]:
+                                pass
+                            if res == bbt[2]:
+                                pass
+                            if res == bbt[3]:
+                                pass
+                            print(res)
 
 
 @bot.callback_query_handler(func = lambda call: True)
 def answer(call):
     user = call.from_user
     bd_user = users.find_one({"userid": user.id})
+
+    if call.data == 'start':
+        if bot.get_chat_member(-1001673242031, user.id).status != 'left' and bd_user == None:
+            message = call
+            message.chat = bot.get_chat(user.id)
+
+            if user.language_code == 'ru':
+                text = f'📜 | Приятной игры!'
+            else:
+                text = f"📜 | Have a nice game!"
+
+            bot.edit_message_text(text, call.message.chat.id, call.message.message_id, parse_mode = 'Markdown')
+
+            def trans_paste(fg_img,bg_img,alpha=10,box=(0,0)):
+                fg_img_trans = Image.new("RGBA",fg_img.size)
+                fg_img_trans = Image.blend(fg_img_trans,fg_img,alpha)
+                bg_img.paste(fg_img_trans,box,fg_img_trans)
+                return bg_img
+
+            def photo():
+                global json_f
+                bg_p = Image.open(f"../images/remain/{random.choice(['back', 'back2'])}.png")
+                eg_l = []
+                id_l = []
+
+                for i in range(3):
+                    rid = str(random.choice(list(json_f['data']['egg'])))
+                    image = Image.open('../images/'+str(json_f['elements'][rid]['image']))
+                    eg_l.append(image)
+                    id_l.append(rid)
+
+                for i in range(3):
+                    bg_img = bg_p
+                    fg_img = eg_l[i]
+                    img = trans_paste(fg_img, bg_img, 1.0, (i*512,0))
+
+                img.save('eggs.png')
+                photo = open(f"eggs.png", 'rb')
+
+                return photo, id_l
+
+            if user.language_code == 'ru':
+                text = '🥚 | Выберите яйцо с динозавром!'
+            else:
+                text = '🥚 | Choose a dinosaur egg!'
+
+            if user.language_code == 'ru':
+                lg = "ru"
+            else:
+                lg = 'en'
+
+            users.insert_one({'userid': user.id, 'dinos': {}, 'eggs': [], 'notifications': {}, 'settings': {'notifications': True, 'dino_id': '1'}, 'language_code': lg, 'inventory': [], 'coins': 0, 'lvl': 1, 'activ_items': {'game': None, 'hunt': None, 'journey': None, 'unv': None}, 'friends': { 'friends_list': [], 'requests': [] } })
+
+            markup_inline = types.InlineKeyboardMarkup()
+            item_1 = types.InlineKeyboardButton( text = '🥚 1', callback_data = 'egg_answer_1')
+            item_2 = types.InlineKeyboardButton( text = '🥚 2', callback_data = 'egg_answer_2')
+            item_3 = types.InlineKeyboardButton( text = '🥚 3', callback_data = 'egg_answer_3')
+            markup_inline.add(item_1, item_2, item_3)
+
+            photo, id_l = photo()
+            bot.send_photo(message.chat.id, photo, text, reply_markup = markup_inline)
+            users.update_one( {"userid": user.id}, {"$set": {'eggs': id_l}} )
+
+    if call.data == 'checking_the_user_in_the_channel':
+        if bot.get_chat_member(-1001673242031, user.id).status != 'left':
+
+            if bd_user['language_code'] == 'ru':
+                text = f'📜 | Уважаемый пользователь!\n\n*•* Для получения новостей и важных уведомлений по поводу бота, мы просим вас подписаться на телеграм канал бота!\n\n🟢 | Спасибо за понимание, приятного использования бота!'
+            else:
+                text = f"📜 | Dear user!\n\n*•* To receive news and important notifications about the bot, we ask you to subscribe to the bot's telegram channel!\n\n🟢 | Thank you for understanding, enjoy using the bot!"
+
+            bot.edit_message_text(text, call.message.chat.id, call.message.message_id, parse_mode = 'Markdown')
+
 
     if call.data in ['egg_answer_1', 'egg_answer_2', 'egg_answer_3']:
 
