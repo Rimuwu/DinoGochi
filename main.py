@@ -1672,6 +1672,10 @@ def on_message(message):
                 bd_user = users.find_one({"userid": user.id})
                 if bd_user != None:
 
+                    def chunks(lst, n):
+                        for i in range(0, len(lst), n):
+                            yield lst[i:i + n]
+
                     friends_id = bd_user['friends']['friends_list']
                     page = 1
 
@@ -1682,10 +1686,6 @@ def on_message(message):
                         friends_name.append(fr_name)
 
                     friends_chunks = list(chunks(list(chunks(friends_name, 2)), 3))
-
-                    def chunks(lst, n):
-                        for i in range(0, len(lst), n):
-                            yield lst[i:i + n]
 
                     def work_pr(message, friends_id, page, friends_chunks):
                         global pages
