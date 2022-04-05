@@ -11,16 +11,19 @@ from functions import functions
 import time
 import os
 import threading
+import sys
 
 bot = telebot.TeleBot(config.TOKEN)
 
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
 
+from items import items
+items_f = items
 
-json_f = eval(list(open('../images/dino_data.json', 'r', encoding="utf-8"))[0])
-
-items_f = eval(list(open('items.json', 'r', encoding="utf-8"))[0])
+sys.path.append("../images")
+from dino_data import dino_data
+json_f = dino_data
 
 def dino_answer(message):
     global dino_l
