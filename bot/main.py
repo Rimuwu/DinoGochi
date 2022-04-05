@@ -11,14 +11,13 @@ from functions import functions
 import time
 import os
 import threading
-from pprint import pprint
 
 bot = telebot.TeleBot(config.TOKEN)
 
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
 
-with open('../images/dino_data.json', encoding='utf-8') as f:
+with open('dino_data.json', encoding='utf-8') as f:
     json_f = json.load(f)
 
 with open('items.json', encoding='utf-8') as ff:
