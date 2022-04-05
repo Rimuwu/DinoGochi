@@ -13,10 +13,15 @@ import os
 import threading
 import sys
 
+try:
+    sys.path.append("bot")
+except:
+    pass
+
 print(0, os.listdir('..'))
 print(0.1, os.listdir('.'))
-print(1, os.listdir('bot/images'))
-print(2, os.listdir('bot/images/remain'))
+print(1, os.listdir('images'))
+print(2, os.listdir('images/remain'))
 
 bot = telebot.TeleBot(config.TOKEN)
 
