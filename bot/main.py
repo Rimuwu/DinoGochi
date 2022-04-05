@@ -303,8 +303,17 @@ def notifications_manager(notification, user, arg = None):
 
             bot.send_message(user['userid'], text)
 
+        elif notification == "hunting_end":
+
+            if user['language_code'] == 'ru':
+                text = f'🍕 | {chat.first_name}, ваш динозавр вернулся со сбора пищи!'
+            else:
+                text = f'🍕 | {chat.first_name}, your dinosaur is back from collecting food!'
+
+            bot.send_message(user['userid'], text)
+
         else:
-            print(notification)
+            print(notification, 'notification')
 
 def check(): #проверка каждые 10 секунд
     while True:
@@ -402,6 +411,36 @@ def check(): #проверка каждые 10 секунд
 
                             del user['dinos'][ dino_id ]['game_time']
                             del user['dinos'][ dino_id ]['game_%']
+
+                    if dino['activ_status'] == 'hunting':
+                        r = random.randint(1, 15)
+                        if r == 1:
+
+                            if dino['h_type'] == 'all':
+                                items = [2, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+
+                            if dino['h_type'] == 'collecting':
+                                items = [6, 9, 11]
+
+                            if dino['h_type'] == 'hunting':
+                                items = [5, 8, 12]
+
+                            if dino['h_type'] == 'fishing':
+                                items = [7, 10, 13]
+
+                            item = random.choice(items)
+                            i_count = random.randint(1, 2)
+                            for i in list(range(i_count)):
+                                user['inventory'].append(str(item))
+                                dino['target'][0] += 1
+
+                            if dino['target'][0] >= dino['target'][1]:
+                                del user['dinos'][ dino_id ]['target']
+                                del user['dinos'][ dino_id ]['h_type']
+                                user['dinos'][dino_id]['activ_status'] = 'pass_active'
+
+                                notifications_manager("hunting_end", user)
+
 
                     if dino['activ_status'] == 'journey':
 
@@ -810,9 +849,9 @@ def markup(element = 1, user = None):
         else:
 
             if bd_user['language_code'] == 'ru':
-                nl = ['🦖 Динозавр', '🕹 Действия', '🎢 Рейтинг', '🔧 Настройки', '👥 Друзья']
+                nl = ['🦖 Динозавр', '🕹 Действия', '👁‍🗨 Профиль', '🔧 Настройки', '👥 Друзья']
             else:
-                nl = ['🦖 Dinosaur', '🕹 Actions', '🎢 Rating', '🔧 Settings', '👥 Friends']
+                nl = ['🦖 Dinosaur', '🕹 Actions', '👁‍🗨 Profile', '🔧 Settings', '👥 Friends']
 
             item1 = types.KeyboardButton(nl[0])
             item2 = types.KeyboardButton(nl[1])
@@ -906,7 +945,7 @@ def markup(element = 1, user = None):
                 nl.insert(4, '🍕 Сбор пищи')
 
             else:
-                nl.insert(4, '🍕 Остановить')
+                nl.insert(4, '🍕 Прогресс')
 
             if len(bd_user['dinos']) > 1:
                 item0 = types.KeyboardButton(f'🦖 Динозавр: {nid_dino}')
@@ -966,7 +1005,7 @@ def markup(element = 1, user = None):
                 nl.insert(4, '🍕 Collecting food')
 
             else:
-                nl.insert(4, '🍕 Stop')
+                nl.insert(4, '🍕 Progress')
 
             if len(bd_user['dinos']) > 1:
                 item0 = types.KeyboardButton(f'🦖 Dino: {nid_dino}')
@@ -1020,6 +1059,21 @@ def markup(element = 1, user = None):
             item5 = types.KeyboardButton(nl[4])
 
             markup.add(item1, item2, item3, item4, item5)
+
+    elif element == "profile" and bd_user != None:
+
+        if bd_user['language_code'] == 'ru':
+            nl = ['📜 Информация', '🎮 Инвентарь', '🎢 Рейтинг', '↪ Назад']
+
+        else:
+            nl = ['📜 Information', '🎮 Inventory', '🎢 Rating', '↪ Back']
+
+        item1 = types.KeyboardButton(nl[0])
+        item2 = types.KeyboardButton(nl[1])
+        item3 = types.KeyboardButton(nl[2])
+        item4 = types.KeyboardButton(nl[3])
+
+        markup.add(item1, item2, item3, item4)
 
 
     else:
@@ -1956,6 +2010,300 @@ def on_message(message):
 
                     work_pr(message, friends_id, page)
 
+            if message.text in ['👁‍🗨 Профиль', '👁‍🗨 Profile']:
+                bd_user = users.find_one({"userid": user.id})
+                if bd_user != None:
+
+                    if bd_user['language_code'] == 'ru':
+                        text = '👁‍🗨 | Панель профиля открыта!'
+                    else:
+                        text = '👁‍🗨 | The profile panel is open!'
+
+                    bot.send_message(message.chat.id, text, reply_markup = markup("profile", user))
+
+            # nl = ['📜 Информация', '🎮 Инвентарь', '🎢 Рейтинг', '↪ Назад']
+            # nl = ['📜 Information', '🎮 Inventory', '🎢 Rating', '↪ Back']
+
+            if message.text in ['🎢 Рейтинг', '🎢 Rating']:
+
+                if bd_user['language_code'] == 'ru':
+                    text = '🎢 | Рейтинг временно отключён.'
+                else:
+                    text = '🎢 | The rating is temporarily disabled.'
+
+                bot.send_message(message.chat.id, text)
+
+            if message.text in ['🎮 Инвентарь', '🎮 Inventory']:
+                bd_user = users.find_one({"userid": user.id})
+                if bd_user != None:
+
+                    def chunks(lst, n):
+                        for i in range(0, len(lst), n):
+                            yield lst[i:i + n]
+
+                    data_items = items_f['items']
+                    items = bd_user['inventory']
+                    items_id = {}
+                    page = 1
+                    items_names = []
+
+                    if bd_user['language_code'] == 'ru':
+                        lg = "nameru"
+                    else:
+                        lg = "nameen"
+
+                    for i in items:
+                        items_id[ items_f['items'][str(i)][lg] ] = i
+                        items_names.append( items_f['items'][str(i)][lg] )
+
+                    items_sort = []
+                    d_it_sort = {}
+                    ind_sort_it = {}
+
+                    for i in items_names:
+                        if i in list(d_it_sort.keys()):
+                            d_it_sort[i] += 1
+                        else:
+                            d_it_sort[i] = 1
+
+                    for n in list(d_it_sort.keys()):
+                        col = d_it_sort[n]
+                        name = n
+                        items_sort.append(f'{n} x{col}')
+                        ind_sort_it[f'{n} x{col}'] = n
+
+                    pages = list(chunks(list(chunks(items_sort, 2)), 3))
+
+                    for i in pages:
+                        for ii in i:
+                            if len(ii) == 1:
+                                ii.append(' ')
+
+                        if len(i) != 3:
+                            for iii in range(3 - len(i)):
+                                i.append([' ', ' '])
+
+                    if bd_user['language_code'] == 'ru':
+                        textt = '🎈 | Инвентарь открыт'
+                    else:
+                        textt = '🎈 | Inventory is open'
+
+                    bot.send_message(message.chat.id, textt)
+
+                    def work_pr(message, pages, page, items_id, ind_sort_it):
+                        global l_pages, l_page, l_ind_sort_it
+                        a = []
+                        l_pages = pages
+                        l_page = page
+                        l_ind_sort_it = ind_sort_it
+
+                        def ret(message):
+                            global l_pages, l_page, l_ind_sort_it
+                            if message.text in ['↪ Назад', '↪ Back']:
+                                a.append(None)
+                                return False
+                            else:
+                                if message.text in list(l_ind_sort_it.keys()) or message.text in ['◀', '▶']:
+                                    a.append(message.text)
+                                else:
+                                    a.append(None)
+                                return False
+
+                        rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+                        for i in pages[page-1]:
+                            rmk.add(i[0], i[1])
+
+                        if len(pages) > 1:
+                            if bd_user['language_code'] == 'ru':
+                                com_buttons = ['◀', '↪ Назад', '▶']
+                                textt = '🎈 | Обновление...'
+                            else:
+                                com_buttons = ['◀', '↪ Back', '▶']
+                                textt = '🎈 | Update...'
+
+                            rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
+
+                        else:
+                            if bd_user['language_code'] == 'ru':
+                                com_buttons = '↪ Назад'
+                                textt = '🎈 | Обновление...'
+                            else:
+                                textt = '🎈 | Update...'
+                                com_buttons = '↪ Back'
+
+                            rmk.add(com_buttons)
+
+                        msg = bot.send_message(message.chat.id, textt, reply_markup = rmk)
+                        bot.register_next_step_handler(msg, ret)
+
+                        while a == []:
+                            pass
+
+                        if a[0] == None:
+                            if bd_user['language_code'] == 'ru':
+                                text = "👥 | Возвращение в меню профиля!"
+                            else:
+                                text = "👥 | Return to the profile menu!"
+
+                            bot.send_message(message.chat.id, text, reply_markup = markup('profile', user))
+                            return '12'
+                        else:
+                            if a[0] == '◀':
+                                if page - 1 == 0:
+                                    page = 1
+                                else:
+                                    page -= 1
+
+                                work_pr(message, pages, page, items_id, ind_sort_it)
+
+                            elif a[0] == '▶':
+                                if page + 1 > len(l_pages):
+                                    page = len(l_pages)
+                                else:
+                                    page += 1
+
+                                work_pr(message, pages, page, items_id, ind_sort_it)
+
+                            else:
+                                item_id = items_id[ l_ind_sort_it[a[0]] ]
+                                item = items_f['items'][item_id]
+
+                                if bd_user['language_code'] == 'ru':
+                                    if item['type'] == '+heal':
+                                        type = 'лекарство'
+                                        d_text = f"*└* Эффективность: {item['act']}"
+
+                                    elif item['type'] == '+eat':
+                                        type = 'еда'
+                                        d_text = f"*└* Эффективность: {item['act']}"
+
+                                    elif item['type'] == 'egg':
+                                        type = 'яйцо динозавра'
+                                        d_text = f"*└* Инкубация: {item['incub_time']}{item['time_tag']}"
+
+                                    elif item['type'] == 'game_ac':
+                                        type = 'активный предмет'
+                                        d_text = f"*└* Эффективность: {item['max_n']}"
+
+                                    text =  f"*┌* *🎴 Информация о предмете*\n"
+                                    text += f"*├* Название: {item['nameru']}\n"
+                                    text += f"*├* Тип: {type}\n"
+                                    text += d_text
+
+                                else:
+                                    if item['type'] == '+heal':
+                                        type = 'medicine'
+                                        d_text = f"*└* Effectiveness: {item['act']}"
+
+                                    elif item['type'] == '+eat':
+                                        type = 'eat'
+                                        d_text = f"*└* Effectiveness: {item['act']}"
+
+                                    elif item['type'] == 'egg':
+                                        type = 'dinosaur egg'
+                                        d_text = f"*└* Incubation: {item['incub_time']}{item['time_tag']}"
+
+                                    elif item['type'] == 'game_ac':
+                                        type = 'active game item'
+                                        d_text = f"*└* Effectiveness: {item['max_n']}"
+
+                                    text =  f"*┌* *🎴 Subject information*\n"
+                                    text += f"*├* Name: {item['nameen']}\n"
+                                    text += f"*├* Type: {type}\n"
+                                    text += d_text
+
+
+                                bot.send_message(message.chat.id, text, reply_markup = markup('profile', user), parse_mode = 'Markdown')
+
+
+
+                    work_pr(message, pages, page, items_id, ind_sort_it)
+
+            if message.text in ['📜 Информация', '📜 Information']:
+                bd_user = users.find_one({"userid": user.id})
+                if bd_user != None:
+                    expp = 5 * bd_user['lvl'][0] * bd_user['lvl'][0] + 50 * bd_user['lvl'][0] + 100
+                    n_d = len(list(bd_user['dinos']))
+                    t_dinos = ''
+                    for k in bd_user['dinos']:
+
+                        if list( bd_user['dinos']) [ len(bd_user['dinos']) - 1 ] == k:
+                            n = '└'
+
+                        else:
+                            n = '├'
+
+                        i = bd_user['dinos'][k]
+                        stat = i['activ_status']
+                        if bd_user['language_code'] == 'ru':
+
+                            if i['activ_status'] == 'pass_active':
+                                stat = 'ничего не делает'
+                            elif i['activ_status'] == 'sleep':
+                                stat = 'спит'
+                            elif i['activ_status'] == 'game':
+                                stat = 'играет'
+                            elif i['activ_status'] == 'hunting':
+                                stat = 'собирает еду'
+                            elif i['activ_status'] == 'journey':
+                                stat = 'путешествует'
+
+                            t_dinos += f"\n   *{n}* {i['name']}\n      *└* Статус: {stat}\n"
+
+                        else:
+
+                            if i['activ_status'] == 'pass_active':
+                                stat = 'does nothing'
+                            elif i['activ_status'] == 'sleep':
+                                stat = 'sleeping'
+                            elif i['activ_status'] == 'game':
+                                stat = 'is playing'
+                            elif i['activ_status'] == 'hunting':
+                                stat = 'collects food'
+                            elif i['activ_status'] == 'journey':
+                                stat = 'travels'
+
+                            t_dinos += f"\n   *{n}* {i['name']}\n      *└* Status: {stat}\n"
+
+                    if bd_user['language_code'] == 'ru':
+                        text =  f"*┌* *🎴 Профиль пользователя*\n"
+                        text += f"*├* Имя: {user.first_name}\n"
+                        text += f"*└* ID: `{user.id}`\n\n"
+                        text += f"*┌* Уровень: {bd_user['lvl'][0]}\n"
+                        text += f"*├* Опыт: {bd_user['lvl'][1]} / {expp}\n"
+                        text += f"*└* Монеты: {bd_user['coins']}"
+                        text += f'\n\n'
+                        text += f"*┌* *🦖 Динозавры*\n"
+                        text += f"*├* Количсетво: {n_d}\n"
+                        text += f"*├* Динозавры:\n{t_dinos}"
+                        text += f'\n\n'
+                        text += f"*┌* *👥 Друзья*\n"
+                        text += f"*└* Количсетво: {len(bd_user['friends']['friends_list'])}"
+                        text += f'\n\n'
+                        text += f"*┌* *🎈 Инвентарь*\n"
+                        text += f"*└* Предметов: {len(bd_user['inventory'])}"
+
+                    else:
+                        text =  f"*┌**🎴 User profile*\n"
+                        text += f"*├* Name: {user.first_name}\n"
+                        text += f"*└* ID: `{user.id}`\n\n"
+                        text += f"*┌* Level: {bd_user['lvl'][0]}\n"
+                        text += f"*├* Experience: {bd_user['lvl'][1]} / {expp}\n"
+                        text += f"*└* Coins: {bd_user['coins']}"
+                        text += f'\n\n'
+                        text += f"*┌**🦖 Dinosaurs*\n"
+                        text += f"*├* Number: {n_d}\n"
+                        text += f"*├* Dinosaurs:\n{t_dinos}"
+                        text += f'\n\n'
+                        text += f"*┌**👥 Friends*\n"
+                        text += f"*└* Quantity: {len(bd_user['friends']['friends_list'])}"
+                        text += f'\n\n'
+                        text += f"*┌* *🎈 Inventory*\n"
+                        text += f"*└* Items: {len(bd_user['inventory'])}"
+
+                    bot.send_message(message.chat.id, text, parse_mode = 'Markdown')
+
+
             bd_user = users.find_one({"userid": user.id})
             tr_c = False
             if bd_user != None and len(list(bd_user['dinos'])) > 0:
@@ -2269,10 +2617,16 @@ def on_message(message):
                             for i in range(0, len(lst), n):
                                 yield lst[i:i + n]
 
-                        items = bd_user['inventory']
+                        nitems = bd_user['inventory']
+                        data_items = items_f['items']
+                        items = []
                         items_id = {}
                         page = 1
                         items_names = []
+
+                        for i in nitems:
+                            if data_items[str(i)]['type'] == "+eat":
+                                items.append(i)
 
                         if bd_user['language_code'] == 'ru':
                             lg = "nameru"
@@ -2309,8 +2663,6 @@ def on_message(message):
                             if len(i) != 3:
                                 for iii in range(3 - len(i)):
                                     i.append([' ', ' '])
-
-
 
                         def work_pr(message, pages, page, items_id, ind_sort_it):
                             global l_pages, l_page, l_ind_sort_it
@@ -2391,57 +2743,47 @@ def on_message(message):
                                     item = items_f['items'][item_id]
                                     bd_dino = bd_user['dinos'][ bd_user['settings']['dino_id'] ]
                                     d_dino = json_f['elements'][ str(bd_dino['dino_id']) ]
-                                    if item['type'] == '+eat':
 
-                                        if bd_user['language_code'] == 'ru':
-                                            if item['class'] == 'ALL':
-                                                text = f"🍕 | Динозавр с удовольствием съел {item['nameru']}!"
-                                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] += item['act']
+                                    if bd_user['language_code'] == 'ru':
+                                        if item['class'] == 'ALL':
+                                            text = f"🍕 | Динозавр с удовольствием съел {item['nameru']}!"
+                                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] += item['act']
 
-                                            elif item['class'] == d_dino['class']:
-                                                text = f"🍕 | Динозавр с удовольствием съел {item['nameru']}!"
-                                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] += item['act']
-
-                                            else:
-                                                eatr = random.randint( 0, int(item['act'] / 2) )
-                                                moodr = random.randint( 1, 10 )
-                                                text = f"🍕 | Динозавру не по вкусу {item['nameru']}, он теряет {eatr}% сытости и {moodr}% настрояния!"
-
-                                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] -= eatr
-                                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= moodr
+                                        elif item['class'] == d_dino['class']:
+                                            text = f"🍕 | Динозавр с удовольствием съел {item['nameru']}!"
+                                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] += item['act']
 
                                         else:
-                                            if item['class'] == 'ALL':
-                                                text = f"🍕 | The dinosaur ate it with pleasure {item['nameen']}!"
-                                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] += item['act']
+                                            eatr = random.randint( 0, int(item['act'] / 2) )
+                                            moodr = random.randint( 1, 10 )
+                                            text = f"🍕 | Динозавру не по вкусу {item['nameru']}, он теряет {eatr}% сытости и {moodr}% настрояния!"
 
-                                            elif item['class'] == d_dino['class']:
-                                                text = f"🍕 | The dinosaur ate it with pleasure {item['nameen']}!"
-                                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] += item['act']
-
-                                            else:
-                                                eatr = random.randint( 0, int(item['act'] / 2) )
-                                                moodr = random.randint( 1, 10 )
-                                                text = f"🍕 | The dinosaur doesn't like {item['nameen']}, it loses {eatr}% satiety and {mood}% mood!"
-
-                                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] -= eatr
-                                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= moodr
-
-                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
-
-                                        bd_user['inventory'].remove(item_id)
-                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
-
-                                        bot.send_message(message.chat.id, text, reply_markup = markup('actions', user))
+                                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] -= eatr
+                                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= moodr
 
                                     else:
+                                        if item['class'] == 'ALL':
+                                            text = f"🍕 | The dinosaur ate it with pleasure {item['nameen']}!"
+                                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] += item['act']
 
-                                        if bd_user['language_code'] == 'ru':
-                                            text = "❌ | Это невозможно съесть или предмет не имеет эффекта пополнять пищу!"
+                                        elif item['class'] == d_dino['class']:
+                                            text = f"🍕 | The dinosaur ate it with pleasure {item['nameen']}!"
+                                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] += item['act']
+
                                         else:
-                                            text = "❌ | It is impossible to eat or the item has no effect to replenish food!"
+                                            eatr = random.randint( 0, int(item['act'] / 2) )
+                                            moodr = random.randint( 1, 10 )
+                                            text = f"🍕 | The dinosaur doesn't like {item['nameen']}, it loses {eatr}% satiety and {mood}% mood!"
 
-                                        bot.send_message(message.chat.id, text, reply_markup = markup('actions', user))
+                                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] -= eatr
+                                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= moodr
+
+                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+
+                                    bd_user['inventory'].remove(item_id)
+                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+                                    bot.send_message(message.chat.id, text, reply_markup = markup('actions', user))
 
                         work_pr(message, pages, page, items_id, ind_sort_it)
 
@@ -2454,7 +2796,7 @@ def on_message(message):
 
                         res = vars_answer(message, text_l = ['🌴 | Выберите способ добычи продовольствия >', '🌴 | Choose a way to get food >'], cansel_l = ['↩ Назад', '↩ Back'], answers_l = bbt, content = True)
 
-                        if res == None or res.forward_from == None:
+                        if res == None:
                             if bd_user['language_code'] == 'ru':
                                 text = '↩ Возврат в меню активностей'
                             else:
@@ -2464,15 +2806,82 @@ def on_message(message):
 
 
                         else:
-                            if res == bbt[0]:
-                                pass
-                            if res == bbt[1]:
-                                pass
-                            if res == bbt[2]:
-                                pass
-                            if res == bbt[3]:
-                                pass
-                            print(res)
+                            number = vars_answer(message, text_l = ['🍽 | Введите число продуктов, которое должен собрать динозавр >', '🍽 | Enter the number of products that the dinosaur must collect >'], cansel_l = ['↩ Назад', '↩ Back'], answers_l = [''], content = True)
+
+                            try:
+                                number = int(number)
+                                if number <= 0 or number >= 101:
+                                    if bd_user['language_code'] == 'ru':
+                                        text = '0️⃣1️⃣0️⃣ | Введите число от 1 до 100!'
+                                    else:
+                                        text = '0️⃣1️⃣0️⃣ | Enter a number from 1 to 100!'
+
+                                    bot.send_message(message.chat.id, text)
+                                    number = None
+                            except:
+                                number = None
+
+                            if number == None:
+                                if bd_user['language_code'] == 'ru':
+                                    text = '↩ Возврат в меню активностей'
+                                else:
+                                    text = '↩ Return to the activity menu'
+
+                                bot.send_message(message.chat.id, text, reply_markup = markup('actions', user))
+
+                            else:
+                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] = 'hunting'
+                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['target'] = [0, number]
+
+                                if res == bbt[0]:
+                                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['h_type'] = 'collecting'
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = f'🌿 | Сбор ягод и трав начат!\n♻ | Текущий прогресс: 0%\n🎲 | Цель: {number}'
+                                    else:
+                                        text = f'🌿 | The gathering of berries and herbs has begun!\n♻ | Current progress: 0%\n🎲 | Goal: {number}'
+
+                                if res == bbt[1]:
+                                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['h_type'] = 'hunting'
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = f'🍖 | Охота началась!\n♻ | Текущий прогресс: 0%\n🎲 | Цель: {number}'
+                                    else:
+                                        text = f'🍖 | The hunt has begun!\n♻ | Current progress: 0%\n🎲 | Goal: {number}'
+
+                                if res == bbt[2]:
+                                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['h_type'] = 'fishing'
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = f'🍣 | Рыбалка началась!\n♻ | Текущий прогресс: 0%\n🎲 | Цель: {number}'
+                                    else:
+                                        text = f'🍣 | Fishing has begun!\n♻ | Current progress: 0%\n🎲 | Goal: {number}'
+
+                                if res == bbt[3]:
+                                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['h_type'] = 'all'
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = f'🍱 | Общий сбор пищи начат!\n♻ | Текущий прогресс: 0%\n🎲 | Цель: {number}'
+                                    else:
+                                        text = f'🍱 | The general food collection has begun!\n♻ | Current progress: 0%\n🎲 | Goal: {number}'
+
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                                bot.send_message(message.chat.id, text, reply_markup = markup('actions', user))
+
+
+                if message.text in ['🍕 Прогресс', '🍕 Progress']:
+                    if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] == 'hunting':
+                        number = bd_user['dinos'][ bd_user['settings']['dino_id'] ]['target'][0]
+                        tnumber = bd_user['dinos'][ bd_user['settings']['dino_id'] ]['target'][1]
+                        prog = number * (tnumber / 100)
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f'🍱 | Текущий прогресс: {int( prog )}%\n🎲 | Цель: {tnumber}'
+                        else:
+                            text = f'🍱 | Current progress: {int( prog )}%\n🎲 | Goal: {tnumber}'
+
+                        bot.send_message(message.chat.id, text)
+
 
 
 @bot.callback_query_handler(func = lambda call: True)
@@ -2530,7 +2939,7 @@ def answer(call):
             else:
                 lg = 'en'
 
-            users.insert_one({'userid': user.id, 'dinos': {}, 'eggs': [], 'notifications': {}, 'settings': {'notifications': True, 'dino_id': '1'}, 'language_code': lg, 'inventory': [], 'coins': 0, 'lvl': 1, 'activ_items': {'game': None, 'hunt': None, 'journey': None, 'unv': None}, 'friends': { 'friends_list': [], 'requests': [] } })
+            users.insert_one({'userid': user.id, 'dinos': {}, 'eggs': [], 'notifications': {}, 'settings': {'notifications': True, 'dino_id': '1'}, 'language_code': lg, 'inventory': [], 'coins': 0, 'lvl': [1, 0], 'activ_items': {'game': None, 'hunt': None, 'journey': None, 'unv': None}, 'friends': { 'friends_list': [], 'requests': [] } })
 
             markup_inline = types.InlineKeyboardMarkup()
             item_1 = types.InlineKeyboardButton( text = '🥚 1', callback_data = 'egg_answer_1')
