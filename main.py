@@ -1185,6 +1185,7 @@ def on_message(message):
 
 
         else:
+            bd_user = users.find_one({"userid": user.id})
 
             if message.text in ['🍡 Начать играть', '🍡 Start playing']:
                 if users.find_one({"userid": user.id}) == None:
