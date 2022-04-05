@@ -14,7 +14,7 @@ import threading
 import sys
 
 try:
-    sys.path.append("bot")
+    sys.path.append("bot/")
 except:
     pass
 
