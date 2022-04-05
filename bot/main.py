@@ -21,7 +21,6 @@ users = client.bot.users
 from items import items
 items_f = items
 
-sys.path.append("../images")
 from dino_data import dino_data
 json_f = dino_data
 
