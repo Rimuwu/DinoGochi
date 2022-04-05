@@ -324,7 +324,7 @@ def check_memory():
 
 thr2 = threading.Thread(target = check_memory, daemon=True)
 
-def check(): #проверка каждые 20 секунд
+def check(): #проверка каждые 10 секунд
     while True:
         time.sleep(10)
         t_st = int(time.time())
@@ -1294,6 +1294,7 @@ def on_message(message):
                             profile = dino_profile(bd_user, user, dino_user_id = dino_user_id )
 
                             if bd_user['language_code'] == 'ru':
+                                st_t = bd_dino['activ_status']
 
                                 if bd_dino['activ_status'] == 'pass_active':
                                     st_t = 'ничего не делает 💭'
@@ -1303,7 +1304,7 @@ def on_message(message):
                                     st_t = 'играет 🎮'
                                 elif bd_dino['activ_status'] == 'journey':
                                     st_t = 'путешествует 🎴'
-                                elif bd_dino['activ_status'] == 'hunt':
+                                elif bd_dino['activ_status'] in ['hunt', 'hunting']:
                                     st_t = 'охотится 🔪'
 
                                 if bd_dino['stats']['heal'] >= 60:
