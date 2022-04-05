@@ -13,28 +13,16 @@ import os
 import threading
 import sys
 
-print(0, os.listdir('..'))
-print(0.1, os.listdir('.'))
-# try:
-sys.path.append("bot")
-# except:
-#     pass
-
-print(0, os.listdir('..'))
-print(0.1, os.listdir('.'))
-print(1, os.listdir('images'))
-print(2, os.listdir('images/remain'))
-
 bot = telebot.TeleBot(config.TOKEN)
 
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
 
-from items import items
-items_f = items
+with open('items.json', encoding='utf-8') as f:
+    items_f = json.load(f)
 
-from dino_data import dino_data
-json_f = dino_data
+with open('dino_data.json', encoding='utf-8') as f:
+    json_f = json.load(f)
 
 def dino_answer(message):
     global dino_l
