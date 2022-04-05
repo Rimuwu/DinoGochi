@@ -13,10 +13,12 @@ import os
 import threading
 import sys
 
-try:
-    sys.path.append("bot/")
-except:
-    pass
+print(0, os.listdir('..'))
+print(0.1, os.listdir('.'))
+# try:
+sys.path.append("bot")
+# except:
+#     pass
 
 print(0, os.listdir('..'))
 print(0.1, os.listdir('.'))
