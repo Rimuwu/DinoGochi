@@ -3077,6 +3077,7 @@ def answer(call):
 
         bd_user['dinos'][ dino_id ]['games'].append(game)
         games = bd_user['dinos'][ dino_id ]['games'].copy()
+        bd_user['dinos'][ dino_id ]['game_%'] = 1
 
         if len(games) == 1:
             bd_user['dinos'][ dino_id ]['game_%'] = 1
