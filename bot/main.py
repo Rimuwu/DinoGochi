@@ -13,6 +13,11 @@ import os
 import threading
 import sys
 
+print(0, os.listdir('..'))
+print(0.1, os.listdir('.'))
+print(1, os.listdir('images'))
+print(2, os.listdir('images/remain'))
+
 bot = telebot.TeleBot(config.TOKEN)
 
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
