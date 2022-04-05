@@ -353,7 +353,7 @@ def check(): #проверка каждые 10 секунд
                         notifications_manager("incub", user, dino_id)
                         break
 
-                if dino['status'] == 'dino': #дино
+                elif dino['status'] == 'dino': #дино
                 #stats  - pass_active (ничего) sleep - (сон) journey - (путешествиеф)
 
                     #
@@ -2048,6 +2048,18 @@ def on_message(message):
 
                     data_items = items_f['items']
                     items = bd_user['inventory']
+
+                    if items == []:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = 'Инвентарь пуст.'
+                        else:
+                            text = 'Inventory is empty.'
+
+                        bot.send_message(message.chat.id, text)
+
+                        return
+
                     items_id = {}
                     page = 1
                     items_names = []
@@ -3046,6 +3058,7 @@ def answer(call):
         games = bd_user['dinos'][ dino_id ]['games'].copy()
 
         if len(games) == 1:
+            bd_user['dinos'][ dino_id ]['game_%'] = 1
 
             if bd_user['language_code'] == 'ru':
                 text2 = f'🎮 | {e_text[2][0][0]}'
@@ -3056,6 +3069,7 @@ def answer(call):
         if len(games) == 2:
 
             if games[0] == games[1]:
+                bd_user['dinos'][ dino_id ]['game_%'] = 0.5
                 if bd_user['language_code'] == 'ru':
                     text2 = f"🎮 | {e_text[0][0][0]}, он получает штраф {bd_user['dinos'][ dino_id ]['game_%']}% в получении удовольствия от игры!"
 
@@ -3063,6 +3077,7 @@ def answer(call):
                     text2 = f"🎮 | {e_text[0][1][0]}, he gets a {bd_user['dinos'][ dino_id ]['game_%']}% penalty in enjoying the game!"
 
             if games[0] != games[1]:
+                bd_user['dinos'][ dino_id ]['game_%'] = 1
 
                 if bd_user['language_code'] == 'ru':
                     text2 = f'🎮 | {e_text[2][0][0]}'
