@@ -17,10 +17,10 @@ bot = telebot.TeleBot(config.TOKEN)
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
 
-with open('dino_data.json', encoding='utf-8') as f:
+with open('../images/dino_data.json', 'r', encoding='utf-8') as f:
     json_f = json.load(f)
 
-with open('items.json', encoding='utf-8') as ff:
+with open('items.json', 'r', encoding='utf-8') as ff:
     items_f = json.load(ff)
 
 def dino_answer(message):
