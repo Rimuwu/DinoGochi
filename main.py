@@ -12,6 +12,8 @@ import time
 import os
 import threading
 import sys
+from memory_profiler import memory_usage
+
 
 bot = telebot.TeleBot(config.TOKEN)
 
@@ -315,10 +317,10 @@ def notifications_manager(notification, user, arg = None):
         else:
             print(notification, 'notification')
 
-def check(): #проверка каждые 10 секунд
+def check(): #проверка каждые 20 секунд
     while True:
-        t_st = int(time.time())
         time.sleep(10)
+        t_st = int(time.time())
 
         members = users.find({ })
         for user in members:
@@ -821,6 +823,7 @@ def check(): #проверка каждые 10 секунд
                     users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
 
         print(f'Проверка - {int(time.time()) - t_st}s')
+        memory_usage()
 
 thr1 = threading.Thread(target = check, daemon=True)
 
@@ -2635,6 +2638,16 @@ def on_message(message):
                                 yield lst[i:i + n]
 
                         nitems = bd_user['inventory']
+
+                        if nitems == []:
+
+                            if bd_user['language_code'] == 'ru':
+                                text = 'Инвентарь пуст.'
+                            else:
+                                text = 'Inventory is empty.'
+
+                            bot.send_message(message.chat.id, text)
+
                         data_items = items_f['items']
                         items = []
                         items_id = {}
