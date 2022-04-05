@@ -409,15 +409,17 @@ def check(): #проверка каждые 10 секунд
                 elif dino['status'] == 'dino': #дино
                 #stats  - pass_active (ничего) sleep - (сон) journey - (путешествиеф)
 
-                    #
+
                     if random.randint(1, 55) == 1: #eat
                         user['dinos'][dino_id]['stats']['eat'] -= random.randint(1,2)
 
-                    if random.randint(1, 28) == 1: #game
-                        user['dinos'][dino_id]['stats']['game'] -= random.randint(1,2)
+                    if dino['activ_status'] != 'game':
+                        if random.randint(1, 28) == 1: #game
+                            user['dinos'][dino_id]['stats']['game'] -= random.randint(1,2)
 
-                    if random.randint(1, 130) == 1: #unv
-                        user['dinos'][dino_id]['stats']['unv'] -= random.randint(1,2)
+                    if dino['activ_status'] != 'unv':
+                        if random.randint(1, 130) == 1: #unv
+                            user['dinos'][dino_id]['stats']['unv'] -= random.randint(1,2)
 
                     if dino['activ_status'] == 'pass_active':
 
@@ -456,7 +458,7 @@ def check(): #проверка каждые 10 секунд
                     if dino['activ_status'] == 'game':
 
                         if user['dinos'][dino_id]['stats']['game'] < 100:
-                            if random.randint(1,150) == 1:
+                            if random.randint(1,50) == 1:
                                 user['dinos'][dino_id]['stats']['unv'] += int(random.randint(10,50) * user['dinos'][dino_id]['game_%'])
 
                         if int(dino['game_time']-time.time()) <= 0:
@@ -507,7 +509,7 @@ def check(): #проверка каждые 10 секунд
                             del user['dinos'][ dino_id ]['journey_time']
                             del user['dinos'][ dino_id ]['journey_log']
 
-                        r_e_j = random.randint(1,60)
+                        r_e_j = random.randint(1,30)
                         if r_e_j == 1:
                             if random.randint(1,3) != 1:
 
@@ -873,7 +875,7 @@ def check(): #проверка каждые 10 секунд
                     users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
                     users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
 
-        print(f'Проверка - {int(time.time()) - t_st}s\n{nn}')
+        print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
         memory_usage()
 
 thr1 = threading.Thread(target = check, daemon=True)
@@ -1672,6 +1674,8 @@ def on_message(message):
                                 bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
 
             if message.text in ["📜 Список", "📜 List"]:
+                bot.send_message(message.chat.id, 'Временно отключено.', reply_markup = markup('friends-menu', user))
+                return
                 bd_user = users.find_one({"userid": user.id})
                 if bd_user != None:
 
