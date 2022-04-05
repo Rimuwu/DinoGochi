@@ -3198,6 +3198,6 @@ def answer(call):
 
 print(f'Бот {bot.get_me().first_name} запущен!')
 thr1.start()
-thr2.start()
+# thr2.start()
 
 bot.infinity_polling()
