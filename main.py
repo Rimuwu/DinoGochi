@@ -176,7 +176,10 @@ def notifications_manager(notification, user, arg = None):
             else:
                 text = f'🥚 | {chat.first_name}, your dinosaur will hatch in 5 minutes!'
 
-            bot.send_message(user['userid'], text)
+            try:
+                bot.send_message(user['userid'], text)
+            except:
+                pass
 
         elif notification == "incub":
 
@@ -185,7 +188,10 @@ def notifications_manager(notification, user, arg = None):
             else:
                 text = f'🦖 | {chat.first_name}, the dinosaur has hatched! 🎉'
 
-            bot.send_message(user['userid'], text)
+            try:
+                bot.send_message(user['userid'], text)
+            except:
+                pass
 
         elif notification == "need_eat":
 
@@ -194,7 +200,10 @@ def notifications_manager(notification, user, arg = None):
             else:
                 text = f'🍕 | {chat.first_name}, the dinosaur wants to eat, his need for food has dropped to {arg}%!'
 
-            bot.send_message(user['userid'], text)
+            try:
+                bot.send_message(user['userid'], text)
+            except:
+                pass
 
         elif notification == "need_game":
 
@@ -203,7 +212,10 @@ def notifications_manager(notification, user, arg = None):
             else:
                 text = f'🎮 | {chat.first_name}, The dinosaur wants to play, his need for the game has dropped to {arg}%!'
 
-            bot.send_message(user['userid'], text)
+            try:
+                bot.send_message(user['userid'], text)
+            except:
+                pass
 
         elif notification == "need_mood":
 
@@ -212,7 +224,10 @@ def notifications_manager(notification, user, arg = None):
             else:
                 text = f'🦖 | {chat.first_name}, the dinosaur is in a bad mood, his mood has sunk to {arg}%!'
 
-            bot.send_message(user['userid'], text)
+            try:
+                bot.send_message(user['userid'], text)
+            except:
+                pass
 
         elif notification == "need_unv":
 
@@ -221,7 +236,10 @@ def notifications_manager(notification, user, arg = None):
             else:
                 text = f'🌙 | {chat.first_name}, the dinosaur wants to sleep, his sleep characteristic dropped to {arg}%!'
 
-            bot.send_message(user['userid'], text)
+            try:
+                bot.send_message(user['userid'], text)
+            except:
+                pass
 
         elif notification == "dead":
 
@@ -230,7 +248,10 @@ def notifications_manager(notification, user, arg = None):
             else:
                 text = f'💥 | {chat.first_name}, your dinosaur.... Died...'
 
-            bot.send_message(user['userid'], text)
+            try:
+                bot.send_message(user['userid'], text)
+            except:
+                pass
 
         elif notification == "woke_up":
 
@@ -239,7 +260,10 @@ def notifications_manager(notification, user, arg = None):
             else:
                 text = f'🌙 | {chat.first_name}, your dinosaur is awake and full of energy!'
 
-            bot.send_message(user['userid'], text)
+            try:
+                bot.send_message(user['userid'], text)
+            except:
+                pass
 
         elif notification == "game_end":
 
@@ -248,7 +272,10 @@ def notifications_manager(notification, user, arg = None):
             else:
                 text = f'🎮 | {chat.first_name}, your dinosaur has stopped playing!'
 
-            bot.send_message(user['userid'], text)
+            try:
+                bot.send_message(user['userid'], text)
+            except:
+                pass
 
 
         elif notification == "journey_end":
@@ -276,7 +303,10 @@ def notifications_manager(notification, user, arg = None):
                         text += f'<b>{n}.</b> {el}\n\n'
                         n += 1
 
-            bot.send_message(user['userid'], text, parse_mode = 'html')
+            try:
+                bot.send_message(user['userid'], text, parse_mode = 'html')
+            except:
+                pass
 
         elif notification == "friend_request":
 
@@ -285,7 +315,10 @@ def notifications_manager(notification, user, arg = None):
             else:
                 text = f'💬 | {chat.first_name}, you have received a friend request!'
 
-            bot.send_message(user['userid'], text)
+            try:
+                bot.send_message(user['userid'], text)
+            except:
+                pass
 
         elif notification == "friend_accept":
 
@@ -294,7 +327,10 @@ def notifications_manager(notification, user, arg = None):
             else:
                 text = f'💬 | {chat.first_name}, {arg} accepted a friend request!'
 
-            bot.send_message(user['userid'], text)
+            try:
+                bot.send_message(user['userid'], text)
+            except:
+                pass
 
         elif notification == "friend_rejection":
 
@@ -303,7 +339,10 @@ def notifications_manager(notification, user, arg = None):
             else:
                 text = f'💬 | {chat.first_name}, your friend request {arg} has been rejected...'
 
-            bot.send_message(user['userid'], text)
+            try:
+                bot.send_message(user['userid'], text)
+            except:
+                pass
 
         elif notification == "hunting_end":
 
@@ -312,7 +351,10 @@ def notifications_manager(notification, user, arg = None):
             else:
                 text = f'🍕 | {chat.first_name}, your dinosaur is back from collecting food!'
 
-            bot.send_message(user['userid'], text)
+            try:
+                bot.send_message(user['userid'], text)
+            except:
+                pass
 
         else:
             print(notification, 'notification')
@@ -1633,11 +1675,19 @@ def on_message(message):
                     friends_id = bd_user['friends']['friends_list']
                     page = 1
 
+                    friends_name = []
+
+                    for i in friends_id:
+                        fr_name = bot.get_chat(int(i)).first_name
+                        friends_name.append(fr_name)
+
+                    friends_chunks = list(chunks(list(chunks(friends_name, 2)), 3))
+
                     def chunks(lst, n):
                         for i in range(0, len(lst), n):
                             yield lst[i:i + n]
 
-                    def work_pr(message, friends_id, page):
+                    def work_pr(message, friends_id, page, friends_chunks):
                         global pages
                         a = []
 
@@ -1655,13 +1705,6 @@ def on_message(message):
                             text = "📜 | Update..."
 
                         rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
-                        friends_name = []
-
-                        for i in friends_id:
-                            fr_name = bot.get_chat(int(i)).first_name
-                            friends_name.append(fr_name)
-
-                        friends_chunks = list(chunks(list(chunks(friends_name, 2)), 3))
 
                         if friends_chunks == []:
 
@@ -1671,7 +1714,6 @@ def on_message(message):
                                 text = "👥 | The list is empty!"
 
                             bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
-                            return '34'
 
                         else:
 
@@ -1713,7 +1755,7 @@ def on_message(message):
                                     text = "👥 | Return to the friends menu!"
 
                                 bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
-                                return '12'
+
                             else:
                                 if a[0] == '◀':
                                     if page - 1 == 0:
@@ -1727,9 +1769,9 @@ def on_message(message):
                                     else:
                                         page += 1
 
-                                work_pr(message, friends_id, page)
+                                work_pr(message, friends_id, page, friends_chunks)
 
-                    work_pr(message, friends_id, page)
+                    work_pr(message, friends_id, page, friends_chunks)
 
             if message.text in ["💌 Запросы", "💌 Inquiries"]:
                 bd_user = users.find_one({"userid": user.id})
