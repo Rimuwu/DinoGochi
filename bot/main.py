@@ -1187,14 +1187,14 @@ def on_message(message):
                         if len(time_end) >= 18:
                             time_end = time_end[:-6]
 
-                        bg_p = Image.open(f"../images/remain/egg_profile_{lang}.png")
-                        egg = Image.open("../images/" + str(json_f['elements'][egg_id]['image']))
+                        bg_p = Image.open(f"images/remain/egg_profile_{lang}.png")
+                        egg = Image.open("images/" + str(json_f['elements'][egg_id]['image']))
                         egg = egg.resize((290, 290), Image.ANTIALIAS)
 
                         img = trans_paste(egg, bg_p, 1.0, (-50, 40))
 
                         idraw = ImageDraw.Draw(img)
-                        line1 = ImageFont.truetype("../fonts/Comic Sans MS.ttf", size = 35)
+                        line1 = ImageFont.truetype("fonts/Comic Sans MS.ttf", size = 35)
 
                         idraw.text((430, 220), time_end, font = line1)
 
@@ -1214,17 +1214,17 @@ def on_message(message):
 
                         dino = json_f['elements'][dino_id]
                         if 'class' in list(dino.keys()):
-                            bg_p = Image.open(f"../images/remain/{dino['class']}_icon.png")
+                            bg_p = Image.open(f"images/remain/{dino['class']}_icon.png")
                         else:
-                            bg_p = Image.open(f"../images/remain/None_icon.png")
+                            bg_p = Image.open(f"images/remain/None_icon.png")
 
                         class_ = dino['image'][5:8]
 
-                        panel_i = Image.open(f"../images/remain/{class_}_profile_{lang}.png")
+                        panel_i = Image.open(f"images/remain/{class_}_profile_{lang}.png")
 
                         img = trans_paste(panel_i, bg_p, 1.0)
 
-                        dino_image = Image.open("../images/"+str(json_f['elements'][dino_id]['image']))
+                        dino_image = Image.open("images/"+str(json_f['elements'][dino_id]['image']))
 
                         sz = 412
                         dino_image = dino_image.resize((sz, sz), Image.ANTIALIAS)
@@ -1235,7 +1235,7 @@ def on_message(message):
 
 
                         idraw = ImageDraw.Draw(img)
-                        line1 = ImageFont.truetype("../fonts/Comic Sans MS.ttf", size = 35)
+                        line1 = ImageFont.truetype("fonts/Comic Sans MS.ttf", size = 35)
 
                         idraw.text((530, 110), str(bd_user['dinos'][dino_user_id]['stats']['heal']), font = line1)
                         idraw.text((530, 190), str(bd_user['dinos'][dino_user_id]['stats']['eat']), font = line1)
@@ -2909,13 +2909,13 @@ def answer(call):
 
             def photo():
                 global json_f
-                bg_p = Image.open(f"../images/remain/{random.choice(['back', 'back2'])}.png")
+                bg_p = Image.open(f"images/remain/{random.choice(['back', 'back2'])}.png")
                 eg_l = []
                 id_l = []
 
                 for i in range(3):
                     rid = str(random.choice(list(json_f['data']['egg'])))
-                    image = Image.open('../images/'+str(json_f['elements'][rid]['image']))
+                    image = Image.open('images/'+str(json_f['elements'][rid]['image']))
                     eg_l.append(image)
                     id_l.append(rid)
 
