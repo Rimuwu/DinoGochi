@@ -317,6 +317,13 @@ def notifications_manager(notification, user, arg = None):
         else:
             print(notification, 'notification')
 
+def check_memory():
+    while True:
+        time.sleep(5)
+        print(int(memory_usage()[0]), 'mb')
+
+thr2 = threading.Thread(target = check_memory, daemon=True)
+
 def check(): #проверка каждые 20 секунд
     while True:
         time.sleep(10)
@@ -3146,5 +3153,6 @@ def answer(call):
 
 print(f'Бот {bot.get_me().first_name} запущен!')
 thr1.start()
+thr2.start()
 
 bot.infinity_polling()
