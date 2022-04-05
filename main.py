@@ -368,11 +368,13 @@ thr2 = threading.Thread(target = check_memory, daemon=True)
 
 def check(): #проверка каждые 10 секунд
     while True:
+        nn = 0
         time.sleep(10)
         t_st = int(time.time())
 
         members = users.find({ })
         for user in members:
+            nn += 1
 
             for dino_id in user['dinos'].keys():
                 dino = user['dinos'][dino_id]
@@ -871,7 +873,7 @@ def check(): #проверка каждые 10 секунд
                     users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
                     users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
 
-        print(f'Проверка - {int(time.time()) - t_st}s')
+        print(f'Проверка - {int(time.time()) - t_st}s\n{nn}')
         memory_usage()
 
 thr1 = threading.Thread(target = check, daemon=True)
