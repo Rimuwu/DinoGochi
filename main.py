@@ -375,7 +375,8 @@ def check(): #проверка каждые 10 секунд
         members = users.find({ })
         for user in members:
             nn += 1
-            try:
+            # try:
+            if True:
 
                 for dino_id in user['dinos'].keys():
                     dino = user['dinos'][dino_id]
@@ -875,8 +876,8 @@ def check(): #проверка каждые 10 секунд
                         users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications'] }} )
                         users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
                         users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
-            except:
-                pass
+            # except:
+            #     pass
 
         print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
         memory_usage()
