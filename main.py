@@ -1378,6 +1378,20 @@ def on_message(message):
                                     if bd_user['language_code'] == 'ru':
                                         st_t = bd_dino['activ_status']
 
+                                        dino = json_f['elements'][str(bd_dino['dino_id'])]
+                                        pre_qual = dino['image'][5:8]
+                                        qual = ''
+                                        if pre_qual == 'com':
+                                            qual = 'Обычный'
+                                        if pre_qual == 'unc':
+                                            qual = 'Необычный'
+                                        if pre_qual == 'rar':
+                                            qual = 'Редкий'
+                                        if pre_qual == 'myt':
+                                            qual = 'Мистический'
+                                        if pre_qual == 'leg':
+                                            qual = 'Легендарный'
+
                                         if bd_dino['activ_status'] == 'pass_active':
                                             st_t = 'ничего не делает 💭'
                                         elif bd_dino['activ_status'] == 'sleep':
@@ -1425,7 +1439,7 @@ def on_message(message):
                                             u_text = '🌙 | Динозавр устал!'
 
 
-                                        text = f'🦖 | Имя: {bd_dino["name"]}\n👁‍🗨 | Статус: {st_t} \n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
+                                        text = f'🦖 | Имя: {bd_dino["name"]}\n👁‍🗨 | Статус: {st_t}\n🧿 | Редкость: {qual}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
 
                                         if bd_dino['activ_status'] == 'journey':
                                             w_t = bd_dino['journey_time'] - time.time()
@@ -1433,6 +1447,20 @@ def on_message(message):
                                                 w_t = 0
                                             text += f"\n\n🌳 | Путешествие: \n·  Осталось: { functions.time_end(w_t) }"
                                     else:
+
+                                        dino = json_f['elements'][str(bd_dino['dino_id'])]
+                                        pre_qual = dino['image'][5:8]
+                                        qual = ''
+                                        if pre_qual == 'com':
+                                            qual = 'Сommon'
+                                        if pre_qual == 'unc':
+                                            qual = 'Unusual'
+                                        if pre_qual == 'rar':
+                                            qual = 'Rare'
+                                        if pre_qual == 'myt':
+                                            qual = 'Mystical'
+                                        if pre_qual == 'leg':
+                                            qual = 'Legendary'
 
                                         if bd_dino['activ_status'] == 'pass_active':
                                             st_t = 'does nothing 💭'
@@ -1480,7 +1508,7 @@ def on_message(message):
                                         elif bd_dino['stats']['unv'] <= 10:
                                             u_text = '🌙 | The dinosaur is tired!'
 
-                                        text = f'🦖 | Name: {bd_dino["name"]}\n👁‍🗨 | Status: {st_t}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
+                                        text = f'🦖 | Name: {bd_dino["name"]}\n👁‍🗨 | Status: {st_t}\n🧿 | Rare: {qual}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
 
                                         if bd_dino['activ_status'] == 'journey':
                                             w_t = bd_dino['journey_time'] - time.time()
