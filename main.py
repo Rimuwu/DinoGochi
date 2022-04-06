@@ -355,7 +355,7 @@ def check(): #проверка каждые 10 секунд
                             user['dinos'][dino_id]['stats']['eat'] -= random.randint(1,2)
 
                         if dino['activ_status'] != 'game':
-                            if random.randint(1, 28) == 1: #game
+                            if random.randint(1, 60) == 1: #game
                                 user['dinos'][dino_id]['stats']['game'] -= random.randint(1,2)
 
                         if dino['activ_status'] != 'unv':
@@ -400,7 +400,7 @@ def check(): #проверка каждые 10 секунд
 
                             if user['dinos'][dino_id]['stats']['game'] < 100:
                                 if random.randint(1,30) == 1:
-                                    user['dinos'][dino_id]['stats']['game'] += int(random.randint(2,10) * user['dinos'][dino_id]['game_%'])
+                                    user['dinos'][dino_id]['stats']['game'] += int(random.randint(2,15) * user['dinos'][dino_id]['game_%'])
 
                             if int(dino['game_time']-time.time()) <= 0:
                                 user['dinos'][dino_id]['activ_status'] = 'pass_active'
@@ -1075,6 +1075,93 @@ def markup(element = 1, user = None):
 
     return markup
 
+def member_profile(mem_id, lang):
+    try:
+        user = bot.get_chat(int(mem_id))
+        bd_user = users.find_one({"userid": user.id})
+        expp = 5 * bd_user['lvl'][0] * bd_user['lvl'][0] + 50 * bd_user['lvl'][0] + 100
+        n_d = len(list(bd_user['dinos']))
+        t_dinos = ''
+        for k in bd_user['dinos']:
+
+            if list( bd_user['dinos']) [ len(bd_user['dinos']) - 1 ] == k:
+                n = '└'
+
+            else:
+                n = '├'
+
+            i = bd_user['dinos'][k]
+            stat = i['activ_status']
+            if lang == 'ru':
+
+                if i['activ_status'] == 'pass_active':
+                    stat = 'ничего не делает'
+                elif i['activ_status'] == 'sleep':
+                    stat = 'спит'
+                elif i['activ_status'] == 'game':
+                    stat = 'играет'
+                elif i['activ_status'] == 'hunting':
+                    stat = 'собирает еду'
+                elif i['activ_status'] == 'journey':
+                    stat = 'путешествует'
+
+                t_dinos += f"\n   *{n}* {i['name']}\n      *└* Статус: {stat}\n"
+
+            else:
+
+                if i['activ_status'] == 'pass_active':
+                    stat = 'does nothing'
+                elif i['activ_status'] == 'sleep':
+                    stat = 'sleeping'
+                elif i['activ_status'] == 'game':
+                    stat = 'is playing'
+                elif i['activ_status'] == 'hunting':
+                    stat = 'collects food'
+                elif i['activ_status'] == 'journey':
+                    stat = 'travels'
+
+                t_dinos += f"\n   *{n}* {i['name']}\n      *└* Status: {stat}\n"
+
+        if lang == 'ru':
+            text =  f"*┌* *🎴 Профиль пользователя*\n"
+            text += f"*├* Имя: {user.first_name}\n"
+            text += f"*└* ID: `{user.id}`\n\n"
+            text += f"*┌* Уровень: {bd_user['lvl'][0]}\n"
+            text += f"*├* Опыт: {bd_user['lvl'][1]} / {expp}\n"
+            text += f"*└* Монеты: {bd_user['coins']}"
+            text += f'\n\n'
+            text += f"*┌* *🦖 Динозавры*\n"
+            text += f"*├* Количсетво: {n_d}\n"
+            text += f"*├* Динозавры:\n{t_dinos}"
+            text += f'\n\n'
+            text += f"*┌* *👥 Друзья*\n"
+            text += f"*└* Количсетво: {len(bd_user['friends']['friends_list'])}"
+            text += f'\n\n'
+            text += f"*┌* *🎈 Инвентарь*\n"
+            text += f"*└* Предметов: {len(bd_user['inventory'])}"
+
+        else:
+            text =  f"*┌**🎴 User profile*\n"
+            text += f"*├* Name: {user.first_name}\n"
+            text += f"*└* ID: `{user.id}`\n\n"
+            text += f"*┌* Level: {bd_user['lvl'][0]}\n"
+            text += f"*├* Experience: {bd_user['lvl'][1]} / {expp}\n"
+            text += f"*└* Coins: {bd_user['coins']}"
+            text += f'\n\n'
+            text += f"*┌**🦖 Dinosaurs*\n"
+            text += f"*├* Number: {n_d}\n"
+            text += f"*├* Dinosaurs:\n{t_dinos}"
+            text += f'\n\n'
+            text += f"*┌**👥 Friends*\n"
+            text += f"*└* Quantity: {len(bd_user['friends']['friends_list'])}"
+            text += f'\n\n'
+            text += f"*┌* *🎈 Inventory*\n"
+            text += f"*└* Items: {len(bd_user['inventory'])}"
+    except:
+        text = 'KMk456 jr5uhsd7489 lkjs47609485\n               ERRoR'
+
+    return text
+
 @bot.message_handler(commands=['start', 'help'])
 def on_start(message):
     user = message.from_user
@@ -1710,17 +1797,19 @@ def on_message(message):
                     page = 1
 
                     friends_name = []
+                    friends_id_d = {}
 
                     for i in friends_id:
                         try:
                             fr_name = bot.get_chat(int(i)).first_name
                             friends_name.append(fr_name)
+                            friends_id_d[fr_name] = i
                         except:
                             pass
 
                     friends_chunks = list(chunks(list(chunks(friends_name, 2)), 3))
 
-                    def work_pr(message, friends_id, page, friends_chunks):
+                    def work_pr(message, friends_id, page, friends_chunks, friends_id_d, mms = None):
                         global pages
 
                         if bd_user['language_code'] == 'ru':
@@ -1766,7 +1855,7 @@ def on_message(message):
 
                                 rmk.add(com_buttons)
 
-                            def ret(message, bd_user, page, friends_chunks, friends_id):
+                            def ret(message, bd_user, page, friends_chunks, friends_id, friends_id_d):
                                 if message.text in ['↪ Назад', '↪ Back']:
                                     res = None
                                 else:
@@ -1781,6 +1870,7 @@ def on_message(message):
                                     bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
 
                                 else:
+                                    mms = None
                                     if res == '◀':
                                         if page - 1 == 0:
                                             page = 1
@@ -1793,12 +1883,21 @@ def on_message(message):
                                         else:
                                             page += 1
 
-                                    work_pr(message, friends_id, page, friends_chunks)
+                                    else:
+                                        if res in list(friends_id_d.keys()):
+                                            fr_id = friends_id_d[res]
+                                            text = member_profile(fr_id, bd_user['language_code'])
+                                            mms = bot.send_message(message.chat.id, text, parse_mode = 'Markdown')
 
-                            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
-                            bot.register_next_step_handler(msg, ret, bd_user, page, friends_chunks, friends_id)
+                                    work_pr(message, friends_id, page, friends_chunks, friends_id_d, mms = mms)
 
-                    work_pr(message, friends_id, page, friends_chunks)
+                            if mms == None:
+                                msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                            else:
+                                msg = mms
+                            bot.register_next_step_handler(msg, ret, bd_user, page, friends_chunks, friends_id, friends_id_d)
+
+                    work_pr(message, friends_id, page, friends_chunks, friends_id_d)
 
             if message.text in ["💌 Запросы", "💌 Inquiries"]:
                 bd_user = users.find_one({"userid": user.id})
@@ -2319,85 +2418,7 @@ def on_message(message):
             if message.text in ['📜 Информация', '📜 Information']:
                 bd_user = users.find_one({"userid": user.id})
                 if bd_user != None:
-                    expp = 5 * bd_user['lvl'][0] * bd_user['lvl'][0] + 50 * bd_user['lvl'][0] + 100
-                    n_d = len(list(bd_user['dinos']))
-                    t_dinos = ''
-                    for k in bd_user['dinos']:
-
-                        if list( bd_user['dinos']) [ len(bd_user['dinos']) - 1 ] == k:
-                            n = '└'
-
-                        else:
-                            n = '├'
-
-                        i = bd_user['dinos'][k]
-                        stat = i['activ_status']
-                        if bd_user['language_code'] == 'ru':
-
-                            if i['activ_status'] == 'pass_active':
-                                stat = 'ничего не делает'
-                            elif i['activ_status'] == 'sleep':
-                                stat = 'спит'
-                            elif i['activ_status'] == 'game':
-                                stat = 'играет'
-                            elif i['activ_status'] == 'hunting':
-                                stat = 'собирает еду'
-                            elif i['activ_status'] == 'journey':
-                                stat = 'путешествует'
-
-                            t_dinos += f"\n   *{n}* {i['name']}\n      *└* Статус: {stat}\n"
-
-                        else:
-
-                            if i['activ_status'] == 'pass_active':
-                                stat = 'does nothing'
-                            elif i['activ_status'] == 'sleep':
-                                stat = 'sleeping'
-                            elif i['activ_status'] == 'game':
-                                stat = 'is playing'
-                            elif i['activ_status'] == 'hunting':
-                                stat = 'collects food'
-                            elif i['activ_status'] == 'journey':
-                                stat = 'travels'
-
-                            t_dinos += f"\n   *{n}* {i['name']}\n      *└* Status: {stat}\n"
-
-                    if bd_user['language_code'] == 'ru':
-                        text =  f"*┌* *🎴 Профиль пользователя*\n"
-                        text += f"*├* Имя: {user.first_name}\n"
-                        text += f"*└* ID: `{user.id}`\n\n"
-                        text += f"*┌* Уровень: {bd_user['lvl'][0]}\n"
-                        text += f"*├* Опыт: {bd_user['lvl'][1]} / {expp}\n"
-                        text += f"*└* Монеты: {bd_user['coins']}"
-                        text += f'\n\n'
-                        text += f"*┌* *🦖 Динозавры*\n"
-                        text += f"*├* Количсетво: {n_d}\n"
-                        text += f"*├* Динозавры:\n{t_dinos}"
-                        text += f'\n\n'
-                        text += f"*┌* *👥 Друзья*\n"
-                        text += f"*└* Количсетво: {len(bd_user['friends']['friends_list'])}"
-                        text += f'\n\n'
-                        text += f"*┌* *🎈 Инвентарь*\n"
-                        text += f"*└* Предметов: {len(bd_user['inventory'])}"
-
-                    else:
-                        text =  f"*┌**🎴 User profile*\n"
-                        text += f"*├* Name: {user.first_name}\n"
-                        text += f"*└* ID: `{user.id}`\n\n"
-                        text += f"*┌* Level: {bd_user['lvl'][0]}\n"
-                        text += f"*├* Experience: {bd_user['lvl'][1]} / {expp}\n"
-                        text += f"*└* Coins: {bd_user['coins']}"
-                        text += f'\n\n'
-                        text += f"*┌**🦖 Dinosaurs*\n"
-                        text += f"*├* Number: {n_d}\n"
-                        text += f"*├* Dinosaurs:\n{t_dinos}"
-                        text += f'\n\n'
-                        text += f"*┌**👥 Friends*\n"
-                        text += f"*└* Quantity: {len(bd_user['friends']['friends_list'])}"
-                        text += f'\n\n'
-                        text += f"*┌* *🎈 Inventory*\n"
-                        text += f"*└* Items: {len(bd_user['inventory'])}"
-
+                    text = member_profile(user.id, lang = bd_user['language_code'])
                     bot.send_message(message.chat.id, text, parse_mode = 'Markdown')
 
 
@@ -3158,6 +3179,9 @@ def answer(call):
             time_m = random.randint(60, 90) * 60
         if n_s == 3:
             time_m = random.randint(90, 120) * 60
+
+        if bd_user['dinos'][dino_id]['activ_status'] != 'pass_active':
+            return
 
         game = call.data[:5][-3:]
 
