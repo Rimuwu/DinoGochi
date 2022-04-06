@@ -364,10 +364,10 @@ def check(): #проверка каждые 10 секунд
 
                         if dino['activ_status'] == 'pass_active':
 
-                            if user['dinos'][dino_id]['stats']['game'] > 90:
+                            if user['dinos'][dino_id]['stats']['game'] > 70:
                                 if dino['stats']['mood'] < 100:
-                                    if random.randint(1,30) == 1:
-                                        user['dinos'][dino_id]['stats']['mood'] += random.randint(1,2)
+                                    if random.randint(1,15) == 1:
+                                        user['dinos'][dino_id]['stats']['mood'] += random.randint(1,15)
 
                                     if random.randint(1,60) == 1:
                                         user['coins'] += random.randint(0,100)
@@ -714,10 +714,10 @@ def check(): #проверка каждые 10 секунд
                             if random.randint(1,30) == 1:
                                 user['dinos'][dino_id]['stats']['heal'] -= 5
 
-                        if user['dinos'][dino_id]['stats']['eat'] > 90:
+                        if user['dinos'][dino_id]['stats']['eat'] > 80:
                             if dino['stats']['mood'] < 100:
-                                if random.randint(1,30) == 1:
-                                    user['dinos'][dino_id]['stats']['mood'] += random.randint(1,2)
+                                if random.randint(1,15) == 1:
+                                    user['dinos'][dino_id]['stats']['mood'] += random.randint(1,10)
 
                         if user['dinos'][dino_id]['stats']['eat'] <= 40 and user['dinos'][dino_id]['stats']['eat'] != 0:
                             if dino['stats']['mood'] > 0:
@@ -2004,8 +2004,6 @@ def on_message(message):
                                         else:
                                             res = None
 
-                                    print(res)
-
                                     if res == None:
                                         if bd_user['language_code'] == 'ru':
                                             text = "👥 | Возвращение в меню друзей!"
@@ -3142,7 +3140,7 @@ def answer(call):
 
             if bd_user['language_code'] == 'ru':
                 text = f'🥚 | Выберите яйцо с динозавром!\n🦖 | Вы выбрали яйцо 🥚{egg_n}!'
-                text2 = f'Поздравляем, у вас появился свой первый динозавр!\nВ данный момент яйцо инкубируется, а через 30 минут из него вылупится динозаврик!\nЧтобы посмотреть актуальную информацию о яйце, нажмите кнопку <b>🦖 Динозавр</b>!'
+                text2 = f'Поздравляем, у вас появился свой первый динозавр!\nВ данный момент яйцо инкубируется, а через 30 минут из него вылупится динозаврик!\nЧтобы посмотреть актуальную информацию о яйце, нажмите кнопку <b>🦖 Динозавр</b>!\n\n'
             else:
                 text = f'🥚 | Choose a dinosaur egg!\n🦖 | You have chosen an egg 🥚{egg_n}!'
                 text2 = f'Congratulations, you have your first dinosaur!\n At the moment the egg is incubating, and after 12 hours a dinosaur will hatch out of it!To view up-to-date information about the egg, click <b>🦖 Dinosaur</b>!'
