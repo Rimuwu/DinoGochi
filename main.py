@@ -833,30 +833,32 @@ def markup(element = 1, user = None):
         if len(list(bd_user['dinos'])) == 1 and bd_user['dinos']['1']['status'] == 'incubation':
 
             if bd_user['language_code'] == 'ru':
-                nl = ['🦖 Динозавр', '🔧 Настройки', '👥 Друзья']
+                nl = ['🦖 Динозавр', '🔧 Настройки', '👥 Друзья', '❗ FAQ']
             else:
-                nl = ['🦖 Dinosaur', '🔧 Settings', '👥 Friends']
+                nl = ['🦖 Dinosaur', '🔧 Settings', '👥 Friends', '❗ FAQ']
 
             item1 = types.KeyboardButton(nl[0])
             item2 = types.KeyboardButton(nl[1])
             item3 = types.KeyboardButton(nl[2])
+            item4 = types.KeyboardButton(nl[3])
 
-            markup.add(item1, item2, item3)
+            markup.add(item1, item2, item3, item4)
 
         else:
 
             if bd_user['language_code'] == 'ru':
-                nl = ['🦖 Динозавр', '🕹 Действия', '👁‍🗨 Профиль', '🔧 Настройки', '👥 Друзья']
+                nl = ['🦖 Динозавр', '🕹 Действия', '👁‍🗨 Профиль', '🔧 Настройки', '👥 Друзья', '❗ FAQ']
             else:
-                nl = ['🦖 Dinosaur', '🕹 Actions', '👁‍🗨 Profile', '🔧 Settings', '👥 Friends']
+                nl = ['🦖 Dinosaur', '🕹 Actions', '👁‍🗨 Profile', '🔧 Settings', '👥 Friends', '❗ FAQ']
 
             item1 = types.KeyboardButton(nl[0])
             item2 = types.KeyboardButton(nl[1])
             item3 = types.KeyboardButton(nl[2])
             item4 = types.KeyboardButton(nl[3])
             item5 = types.KeyboardButton(nl[4])
+            item6 = types.KeyboardButton(nl[5])
 
-            markup.add(item1, item2, item3, item4, item5)
+            markup.add(item1, item2, item3, item4, item5, item6)
 
     elif element == 1:
         try:
@@ -1553,6 +1555,45 @@ def on_message(message):
                         text = '👥 | Redirecting to the friends menu!'
 
                     bot.send_message(message.chat.id, text, reply_markup = markup("friends-menu", user))
+
+                if message.text in ['❗ FAQ']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+
+                        if bd_user['language_code'] == 'ru':
+                            text2  = '*❗ FAQ*\n\n'
+                            text2 += "*┌* *Редкости 🎈*\n\n"
+                            text2 += "*├* События и динозавры делятся на редкости.\nЧем больше редкость, тем слаще награда.\n\n"
+                            text2 += "*├*  1. Обычная - 50%\n*├*  2. Необычная - 25%\n*├*  3. Редкая - 15%\n*├*  4. Мистическая - 9%\n*└*  5. Легендарная - 1%\n\n"
+                            text2 += "*┌* *Взаимодейтвия 🕹*\n\n"
+                            text2 += "*├* Для взаимодействия с динозарвом передите в `🕹 Действия`.\n\n"
+                            text2 += "*├*  1. Для того что бы покормить динозавра, вам требуется добыть пищу, нажмите на `🕹 Действия` > `🍕 Сбор пищи` и следуйте инструкциям.\n\n"
+                            text2 += "*├*  2. Для того чтобы покормить динозавра нажмите на `🕹 Действия` > `🍣 Покормить` и выберите подходящую пищу.\n\n"
+                            text2 += "*├*  3. Для повышения настроения динозавра треубется времени от времени развлекать динозавра. Перейдите `🕹 Действия` > `🎮 Развлечения` и следуйте указаниям.\n\n"
+                            text2 += "*├*  4. Чтобы возобновить силы динозавра, отправляйте его спать, `🕹 Действия` > `🌙 Уложить спать`\n\n"
+                            text2 += "*└*  5. Для повышения настроения, требуется держать потребность в еде, игры, сна в норме.\n\n"
+                            text2 += "*┌* *Профиль 🎮*\n"
+                            text2 += "*└*  Чтобы посмотреть инвентарь или узнать свою статистику, перейдите в `👁‍🗨 Профиль`\n\n"
+                            text2 += "*┌* *Настройки 🔧*\n\n"
+                            text2 += "*└*  В настройках вы можете переименовать динозавра, отключить уведомления или переключить язык.\n\n"
+                        else:
+                            text2  = '*❗ FAQ*\n\n'
+                            text2 += "*┌* *Rarities 🎈*\n\n"
+                            text2 += "*├* Events and dinosaurs are divided into rarities.The greater the rarity, the sweeter the reward.\n\n"
+                            text2 += "*├* 1. Normal - 50%\n*├* 2. Unusual - 25%\n*├* 3. Rare - 15%\n*├* 4. Mystical - 9%\n*└* 5. Legendary - 1%\n\n"
+                            text2 += "*┌* *Interaction 🕹*\n\n"
+                            text2 += "*├* To interact with dinozarv, pass in `🕹 Actions`.\n\n"
+                            text2 += "*├* 1. In order to feed the dinosaur, you need to get food, click on `🕹 Actions` > `🍕 Food Collection` and follow the instructions.\n\n"
+                            text2 += "*├*  2. To feed the dinosaur, click on `🕹 Actions` > `🍣 Feed` and choose the appropriate food.\n\n"
+                            text2 += "*├* 3. To improve the mood of the dinosaur, it is necessary to entertain the dinosaur from time to time. Go to `🕹 Actions` > `🎮 Entertainment` and follow the instructions.\n\n"
+                            text2 += "*├* 4. To renew the dinosaur's powers, send it to sleep, `🕹 Action` > `🌙 Put to bed`\n\n"
+                            text2 += "*└* 5. To improve mood, it is required to keep the need for iodine, games, sleep normal.\n\n"
+                            text2 += "*┌* *Profile 🎮*\n"
+                            text2 += "*└* To view inventory or find out your statistics, go to `👁 Profile`\n\n"
+                            text2 += "*┌* *Settings 🔧*\n\n"
+                            text2 += "*└*  In the settings, you can rename the dinosaur, disable notifications, or switch the language.\n\n"
+
+                        bot.send_message(message.chat.id, text2, parse_mode = 'Markdown')
 
 
                 if message.text in ['❗ Notifications', '❗ Уведомления']:
@@ -3140,13 +3181,46 @@ def answer(call):
 
             if bd_user['language_code'] == 'ru':
                 text = f'🥚 | Выберите яйцо с динозавром!\n🦖 | Вы выбрали яйцо 🥚{egg_n}!'
-                text2 = f'Поздравляем, у вас появился свой первый динозавр!\nВ данный момент яйцо инкубируется, а через 30 минут из него вылупится динозаврик!\nЧтобы посмотреть актуальную информацию о яйце, нажмите кнопку <b>🦖 Динозавр</b>!\n\n'
+                text2 = f'Поздравляем, у вас появился свой первый динозавр!\nВ данный момент яйцо инкубируется, а через 30 минут из него вылупится динозаврик!\nЧтобы посмотреть актуальную информацию о яйце, нажмите кнопку *🦖 Динозавр*!'
+                text2 += "\n\n*Новичок!*\nДавай немного расскажу тебе об этом мире и как устроен бот!\n"
             else:
                 text = f'🥚 | Choose a dinosaur egg!\n🦖 | You have chosen an egg 🥚{egg_n}!'
-                text2 = f'Congratulations, you have your first dinosaur!\n At the moment the egg is incubating, and after 12 hours a dinosaur will hatch out of it!To view up-to-date information about the egg, click <b>🦖 Dinosaur</b>!'
+                text2 = f'Congratulations, you have your first dinosaur!\n At the moment the egg is incubating, and after 12 hours a dinosaur will hatch out of it!To view up-to-date information about the egg, click *🦖 Dinosaur*!'
+                text2 += '\n\n**Newbie!*\let me tell you a little about this world and how the bot works!\n'
+
+            if bd_user['language_code'] == 'ru':
+                text2 += "*┌* *Редкости 🎈*\n\n"
+                text2 += "*├* События и динозавры делятся на редкости.\nЧем больше редкость, тем слаще награда.\n\n"
+                text2 += "*├*  1. Обычная - 50%\n*├*  2. Необычная - 25%\n*├*  3. Редкая - 15%\n*├*  4. Мистическая - 9%\n*└*  5. Легендарная - 1%\n\n"
+                text2 += "*┌* *Взаимодейтвия 🕹*\n\n"
+                text2 += "*├* Для взаимодействия с динозарвом передите в `🕹 Действия`.\n\n"
+                text2 += "*├*  1. Для того что бы покормить динозавра, вам требуется добыть пищу, нажмите на `🕹 Действия` > `🍕 Сбор пищи` и следуйте инструкциям.\n\n"
+                text2 += "*├*  2. Для того чтобы покормить динозавра нажмите на `🕹 Действия` > `🍣 Покормить` и выберите подходящую пищу.\n\n"
+                text2 += "*├*  3. Для повышения настроения динозавра треубется времени от времени развлекать динозавра. Перейдите `🕹 Действия` > `🎮 Развлечения` и следуйте указаниям.\n\n"
+                text2 += "*├*  4. Чтобы возобновить силы динозавра, отправляйте его спать, `🕹 Действия` > `🌙 Уложить спать`\n\n"
+                text2 += "*└*  5. Для повышения настроения, требуется держать потребность в еде, игры, сна в норме.\n\n"
+                text2 += "*┌* *Профиль 🎮*\n"
+                text2 += "*└*  Чтобы посмотреть инвентарь или узнать свою статистику, перейдите в `👁‍🗨 Профиль`\n\n"
+                text2 += "*┌* *Настройки 🔧*\n\n"
+                text2 += "*└*  В настройках вы можете переименовать динозавра, отключить уведомления или переключить язык.\n\n"
+            else:
+                text2 += "*┌* *Rarities 🎈*\n\n"
+                text2 += "*├* Events and dinosaurs are divided into rarities.The greater the rarity, the sweeter the reward.\n\n"
+                text2 += "*├* 1. Normal - 50%\n*├* 2. Unusual - 25%\n*├* 3. Rare - 15%\n*├* 4. Mystical - 9%\n*└* 5. Legendary - 1%\n\n"
+                text2 += "*┌* *Interaction 🕹*\n\n"
+                text2 += "*├* To interact with dinozarv, pass in `🕹 Actions`.\n\n"
+                text2 += "*├* 1. In order to feed the dinosaur, you need to get food, click on `🕹 Actions` > `🍕 Food Collection` and follow the instructions.\n\n"
+                text2 += "*├*  2. To feed the dinosaur, click on `🕹 Actions` > `🍣 Feed` and choose the appropriate food.\n\n"
+                text2 += "*├* 3. To improve the mood of the dinosaur, it is necessary to entertain the dinosaur from time to time. Go to `🕹 Actions` > `🎮 Entertainment` and follow the instructions.\n\n"
+                text2 += "*├* 4. To renew the dinosaur's powers, send it to sleep, `🕹 Action` > `🌙 Put to bed`\n\n"
+                text2 += "*└* 5. To improve mood, it is required to keep the need for iodine, games, sleep normal.\n\n"
+                text2 += "*┌* *Profile 🎮*\n"
+                text2 += "*└* To view inventory or find out your statistics, go to `👁 Profile`\n\n"
+                text2 += "*┌* *Settings 🔧*\n\n"
+                text2 += "*└*  In the settings, you can rename the dinosaur, disable notifications, or switch the language.\n\n"
 
             bot.edit_message_caption(text, call.message.chat.id, call.message.message_id)
-            bot.send_message(call.message.chat.id, text2, parse_mode = 'html', reply_markup = markup(1, user))
+            bot.send_message(call.message.chat.id, text2, parse_mode = 'Markdown', reply_markup = markup(1, user))
 
     if call.data[:13] in ['90min_journey', '60min_journey', '30min_journey', '10min_journey']:
 
