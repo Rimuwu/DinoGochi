@@ -169,6 +169,9 @@ def notifications_manager(notification, user, arg = None):
     if user['settings']['notifications'] == True:
         chat = bot.get_chat(user['userid'])
 
+        user['notifications'][notification] = True
+        users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications'] }} )
+
         if notification == "5_min_incub":
 
             if user['language_code'] == 'ru':
@@ -406,7 +409,6 @@ def check(): #проверка каждые 10 секунд
 
                             random_dino(user, dino_id)
                             notifications_manager("incub", user, dino_id)
-                            break
 
                     elif dino['status'] == 'dino': #дино
                     #stats  - pass_active (ничего) sleep - (сон) journey - (путешествиеф)
@@ -845,7 +847,6 @@ def check(): #проверка каждые 10 секунд
                         if user['dinos'][dino_id]['stats']['eat'] <= 40:
                             if 'need_eat' not in list(user['notifications'].keys()) or user['notifications']['need_eat'] == False:
                                 notifications_manager("need_eat", user, user['dinos'][dino_id]['stats']['eat'])
-                                user['notifications']['need_eat'] = True
 
                         if user['dinos'][dino_id]['stats']['game'] < 0:
                             user['dinos'][dino_id]['stats']['game'] = 0
@@ -853,7 +854,6 @@ def check(): #проверка каждые 10 секунд
                         if user['dinos'][dino_id]['stats']['game'] <= 50:
                             if 'need_game' not in list(user['notifications'].keys()) or user['notifications']['need_game'] == False:
                                 notifications_manager("need_game", user, user['dinos'][dino_id]['stats']['game'])
-                                user['notifications']['need_game'] = True
 
                         if user['dinos'][dino_id]['stats']['mood'] < 0:
                             user['dinos'][dino_id]['stats']['mood'] = 0
@@ -861,7 +861,6 @@ def check(): #проверка каждые 10 секунд
                         if user['dinos'][dino_id]['stats']['mood'] <= 70:
                             if 'need_mood' not in list(user['notifications'].keys()) or user['notifications']['need_mood'] == False:
                                 notifications_manager("need_mood", user, user['dinos'][dino_id]['stats']['mood'])
-                                user['notifications']['need_mood'] = True
 
                         if user['dinos'][dino_id]['stats']['heal'] <= 0:
                             user['dinos'][dino_id]['stats']['heal'] = 0
@@ -869,11 +868,9 @@ def check(): #проверка каждые 10 секунд
 
                             if 'dead' not in list(user['notifications'].keys()) or user['notifications']['dead'] == False:
                                 notifications_manager("dead", user)
-                                user['notifications']['dead'] = True
 
 
                         users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
-                        users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications'] }} )
                         users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
                         users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
             # except:
