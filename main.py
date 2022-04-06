@@ -876,8 +876,7 @@ def check(): #проверка каждые 10 секунд
                         users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
                         users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
             except:
-                uchat = bot.get_chat(1191252229)
-                bot.send_message(chat.id, f'Уведомление об ошибке в проверке')
+                pass
 
         print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
         memory_usage()
