@@ -458,8 +458,8 @@ def check(): #проверка каждые 10 секунд
                     if dino['activ_status'] == 'game':
 
                         if user['dinos'][dino_id]['stats']['game'] < 100:
-                            if random.randint(1,50) == 1:
-                                user['dinos'][dino_id]['stats']['unv'] += int(random.randint(10,50) * user['dinos'][dino_id]['game_%'])
+                            if random.randint(1,30) == 1:
+                                user['dinos'][dino_id]['stats']['game'] += int(random.randint(2,10) * user['dinos'][dino_id]['game_%'])
 
                         if int(dino['game_time']-time.time()) <= 0:
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
@@ -975,9 +975,6 @@ def markup(element = 1, user = None):
                 dino = bd_user['dinos'][ str(nid_dino) ]
 
             if len(bd_user['dinos']) > 1:
-                if 'dino_id' not in bd_user['settings']:
-                    bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[0]
-                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
                 try:
                     nid_dino = bd_user['settings']['dino_id']
                     dino = bd_user['dinos'][ str(nid_dino) ]
@@ -1674,8 +1671,6 @@ def on_message(message):
                                 bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
 
             if message.text in ["📜 Список", "📜 List"]:
-                bot.send_message(message.chat.id, 'Временно отключено.', reply_markup = markup('friends-menu', user))
-                return
                 bd_user = users.find_one({"userid": user.id})
                 if bd_user != None:
 
