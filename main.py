@@ -308,7 +308,7 @@ thr2 = threading.Thread(target = check_memory, daemon=True)
 def check(): #проверка каждые 10 секунд
     while True:
         nn = 0
-        # time.sleep(10)
+        time.sleep(10)
         t_st = int(time.time())
 
         members = users.find({ })
