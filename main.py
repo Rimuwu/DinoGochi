@@ -2421,7 +2421,33 @@ def on_message(message):
                                 else:
                                     text += f"*└* #{n} *{i['mn']}*:\n      *└* Монеты {i['coins']}\n"
                     else:
-                        text = '🎢 | The rating is temporarily disabled.'
+                        text =  f'*┌* 🎢 Rating by level:\n'
+                        text += f"*├* Your place in the ranking: #{lv_l.index(bd_user)+1}\n\n"
+
+                        n = 0
+                        for i in du_lv:
+                            n += 1
+                            if i == {}:
+                                pass
+                            else:
+                                if n != 3:
+                                    text += f"*├* #{n} *{i['mn']}*:\n      *└* lvl {i['lvl']} (Total experience {i['exp']})\n"
+                                else:
+                                    text += f"*└* #{n} *{i['mn']}*:\n      *└* lvl {i['lvl']} (Total experience {i['exp']})\n"
+
+                        text += f'\n\n*┌* 🎢 Coin Rating:\n'
+                        text += f"*├* Your place in the ranking: #{mr_l.index(bd_user)+1}\n\n"
+
+                        n = 0
+                        for i in du_mc:
+                            n += 1
+                            if i == {}:
+                                pass
+                            else:
+                                if n != 3:
+                                    text += f"*├* #{n} *{i['mn']}*:\n      *└* Coins {i['coins']}\n"
+                                else:
+                                    text += f"*└* #{n} *{i['mn']}*:\n      *└* Coins {i['coins']}\n"
 
                     bot.send_message(message.chat.id, text, parse_mode = "Markdown")
 
