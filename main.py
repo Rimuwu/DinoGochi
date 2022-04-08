@@ -747,7 +747,7 @@ def check(): #проверка каждые 10 секунд
                                 user['dinos'][dino_id]['stats']['heal'] -= random.randint(1,2)
 
                         if user['dinos'][dino_id]['stats']['eat'] <= 20:
-                            if ser['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
+                            if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
                                 pass
                             else:
                                 if random.randint(1,40) == 1:
@@ -2391,10 +2391,6 @@ def on_message(message):
                                 us_i_m.append(lv_l[i]['userid'])
                             except:
                                 pass
-
-                    pprint.pprint(du_mc)
-                    pprint.pprint(du_lv)
-
 
                     if bd_user['language_code'] == 'ru':
                         text =  f'*┌* 🎢 Рейтинг по уровню:\n'
