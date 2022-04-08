@@ -188,7 +188,7 @@ def notifications_manager(notification, user, arg = None):
                 text = f'💥 | {chat.first_name}, your dinosaur.... Died...'
 
             try:
-                bot.send_message(user['userid'], text)
+                bot.send_message(user['userid'], text, reply_markup = markup(1, user))
             except:
                 pass
 
@@ -355,7 +355,7 @@ def check(): #проверка каждые 10 секунд
                             if random.randint(1, 55) == 1: #eat
                                 user['dinos'][dino_id]['stats']['eat'] -= random.randint(1,2)
                         else:
-                            if random.randint(1, 110) == 1: #eat
+                            if random.randint(1, 80) == 1: #eat
                                 user['dinos'][dino_id]['stats']['eat'] -= random.randint(1,2)
 
                         if dino['activ_status'] != 'game':
@@ -400,10 +400,10 @@ def check(): #проверка каждые 10 секунд
                                     user['dinos'][dino_id]['stats']['mood'] += random.randint(1,2)
 
                             if user['dinos'][dino_id]['stats']['heal'] < 100:
-                                if user['dinos'][dino_id]['stats']['eat'] > 40:
+                                if user['dinos'][dino_id]['stats']['eat'] > 50:
                                     if random.randint(1,45) == 1:
-                                        user['dinos'][dino_id]['stats']['mood'] += random.randint(1,2)
-                                        user['dinos'][dino_id]['stats']['eat'] += random.randint(0,1)
+                                        user['dinos'][dino_id]['stats']['heal'] += random.randint(1,2)
+                                        user['dinos'][dino_id]['stats']['eat'] -= random.randint(0,1)
 
                             if user['dinos'][dino_id]['stats']['unv'] >= 100:
                                 user['dinos'][dino_id]['activ_status'] = 'pass_active'
@@ -411,7 +411,7 @@ def check(): #проверка каждые 10 секунд
 
                         if dino['activ_status'] == 'game':
 
-                            if random.randint(1, 45) == 1: #unv
+                            if random.randint(1, 65) == 1: #unv
                                 user['dinos'][dino_id]['stats']['unv'] -= random.randint(0,2)
 
                             if random.randint(1, 45) == 1: #unv
@@ -430,7 +430,7 @@ def check(): #проверка каждые 10 секунд
 
                         if dino['activ_status'] == 'hunting':
 
-                            if random.randint(1, 45) == 1: #unv
+                            if random.randint(1, 65) == 1: #unv
                                 user['dinos'][dino_id]['stats']['unv'] -= random.randint(0,2)
 
                             if random.randint(1, 45) == 1: #unv
@@ -467,7 +467,7 @@ def check(): #проверка каждые 10 секунд
 
                         if dino['activ_status'] == 'journey':
 
-                            if random.randint(1, 45) == 1: #unv
+                            if random.randint(1, 65) == 1: #unv
                                 user['dinos'][dino_id]['stats']['unv'] -= random.randint(0,2)
 
                             if random.randint(1, 45) == 1: #unv
@@ -567,7 +567,7 @@ def check(): #проверка каждые 10 секунд
                                                 event = '❌ | The mystical event has been canceled due to a bad mood!'
 
                                     elif event == 'egg':
-                                        eggs = ["3"]
+                                        eggs = ["3", '20', '21', '22', '23', '24']
                                         egg = random.choice(eggs)
                                         if mood_n == True:
                                             user['inventory'].append(egg)
@@ -756,12 +756,11 @@ def check(): #проверка каждые 10 секунд
                                     user['dinos'][dino_id]['stats']['mood'] -= random.randint(1,2)
 
 
-                        if user['dinos'][dino_id]['stats']['eat'] > 80 and user['dinos'][dino_id]['stats']['unv'] > 70 and user['dinos'][dino_id]['stats']['game'] > 70 and user['dinos'][dino_id]['stats']['mood'] > 50:
+                        if user['dinos'][dino_id]['stats']['eat'] > 80 and user['dinos'][dino_id]['stats']['unv'] > 70 and user['dinos'][dino_id]['stats']['mood'] > 50:
 
                             if random.randint(1,6) == 1:
                                 user['dinos'][dino_id]['stats']['heal'] += random.randint(1,4)
                                 user['dinos'][dino_id]['stats']['eat'] -= random.randint(0,1)
-                                user['dinos'][dino_id]['stats']['unv'] -= random.randint(0,1)
 
 
                         if user['dinos'][dino_id]['stats']['unv'] >= 100:
@@ -838,7 +837,7 @@ def check(): #проверка каждые 10 секунд
                             user['lvl'][0] += 1
                             user['lvl'][1] = user['lvl'][1] - expp
 
-                            users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
+                        users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
             # except:
             #     pass
 
@@ -1216,7 +1215,12 @@ def member_profile(mem_id, lang):
 
     return text
 
-@bot.message_handler(commands=['start', 'help'])
+@bot.message_handler(commands=['emulate_not'])
+def command(message):
+    user = message.from_user
+    notifications_manager(message.text[13:], users.find_one({"userid": user.id}))
+
+@bot.message_handler(commands=['start', 'main-menu'])
 def on_start(message):
     user = message.from_user
     if users.find_one({"userid": user.id}) == None:
@@ -2441,6 +2445,7 @@ def on_message(message):
                                 else:
                                     item_id = items_id[ l_ind_sort_it[res] ]
                                     item = items_f['items'][item_id]
+                                    type = item['type']
 
                                     if bd_user['language_code'] == 'ru':
                                         if item['type'] == '+heal':
@@ -2452,12 +2457,20 @@ def on_message(message):
                                             d_text = f"*└* Эффективность: {item['act']}"
 
                                         elif item['type'] == 'egg':
-                                            type = 'яйцо динозавра'
-                                            d_text = f"*└* Инкубация: {item['incub_time']}{item['time_tag']}"
+                                            if item['inc_type'] == 'random': eg_q = 'рандом'
+                                            if item['inc_type'] == 'com': eg_q = 'обычная'
+                                            if item['inc_type'] == 'unc': eg_q = 'необычная'
+                                            if item['inc_type'] == 'rare': eg_q = 'редкая'
+                                            if item['inc_type'] == 'myt': eg_q = 'мистическая'
+                                            if item['inc_type'] == 'legendary': eg_q = 'легендарная'
 
-                                        elif item['type'] == 'game_ac':
+                                            type = 'яйцо динозавра'
+                                            d_text = f"*├* Инкубация: {item['incub_time']}{item['time_tag']}\n"
+                                            d_text += f"*└* Редкость яйца: {eg_q}"
+
+                                        elif item['type'] in ['game_ac', 'unv_ac', 'journey_ac', 'hunt_ac']:
                                             type = 'активный предмет'
-                                            d_text = f"*└* Эффективность: {item['max_n']}"
+                                            d_text = f"*└* Эффективность: {item['act']}"
 
                                         text =  f"*┌* *🎴 Информация о предмете*\n"
                                         text += f"*├* Название: {item['nameru']}\n"
@@ -2474,12 +2487,19 @@ def on_message(message):
                                             d_text = f"*└* Effectiveness: {item['act']}"
 
                                         elif item['type'] == 'egg':
+                                            if item['inc_type'] == 'random': eg_q = 'random'
+                                            if item['inc_type'] == 'com': eg_q = 'common'
+                                            if item['inc_type'] == 'unc': eg_q = 'uncommon'
+                                            if item['inc_type'] == 'rare': eg_q = 'rare'
+                                            if item['inc_type'] == 'myt': eg_q = 'mystical'
+                                            if item['inc_type'] == 'legendary': eg_q = 'legendary'
+
                                             type = 'dinosaur egg'
                                             d_text = f"*└* Incubation: {item['incub_time']}{item['time_tag']}"
 
-                                        elif item['type'] == 'game_ac':
+                                        elif item['type'] in ['game_ac', 'unv_ac', 'journey_ac', 'hunt_ac']:
                                             type = 'active game item'
-                                            d_text = f"*└* Effectiveness: {item['max_n']}"
+                                            d_text = f"*└* Effectiveness: {item['act']}"
 
                                         text =  f"*┌* *🎴 Subject information*\n"
                                         text += f"*├* Name: {item['nameen']}\n"
