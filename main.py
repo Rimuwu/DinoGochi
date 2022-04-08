@@ -3647,6 +3647,6 @@ def answer(call):
 print(f'Бот {bot.get_me().first_name} запущен!')
 if bot.get_me().first_name == 'DinoGochi':
     thr1.start()
-# thr2.start()
+thr2.start()
 
 bot.infinity_polling()
