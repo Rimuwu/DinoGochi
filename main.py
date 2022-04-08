@@ -13,6 +13,7 @@ import os
 import threading
 import sys
 from memory_profiler import memory_usage
+import pprint
 
 
 bot = telebot.TeleBot(config.TOKEN)
@@ -171,7 +172,7 @@ def notifications_manager(notification, user, arg = None):
         elif notification == "need_unv":
 
             if user['language_code'] == 'ru':
-                text = f'🌙 | {chat.first_name}, динозавра хочет спать, его харрактеристика сна опустилось до {arg}%!'
+                text = f'🌙 | {chat.first_name}, динозавр хочет спать, его харрактеристика сна опустилось до {arg}%!'
             else:
                 text = f'🌙 | {chat.first_name}, the dinosaur wants to sleep, his sleep characteristic dropped to {arg}%!'
 
@@ -531,7 +532,7 @@ def check(): #проверка каждые 10 секунд
                                             event = f"💭 | Динозавр смог вздремнуть по дороге."
 
                                     elif event == 'random_items':
-                                        items = ["1", "2"]
+                                        items = ["1", "2", '18', '19', '25']
                                         item = random.choice(items)
                                         if mood_n == True:
                                             user['inventory'].append(item)
@@ -744,6 +745,13 @@ def check(): #проверка каждые 10 секунд
                         if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
                             if random.randint(1,30) == 1:
                                 user['dinos'][dino_id]['stats']['heal'] -= random.randint(1,2)
+
+                        if user['dinos'][dino_id]['stats']['eat'] <= 20:
+                            if ser['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
+                                pass
+                            else:
+                                if random.randint(1,40) == 1:
+                                    user['dinos'][dino_id]['stats']['heal'] -= random.randint(0,1)
 
                         if user['dinos'][dino_id]['stats']['eat'] > 80:
                             if dino['stats']['mood'] < 100:
@@ -2304,12 +2312,124 @@ def on_message(message):
             if message.text in ['🎢 Рейтинг', '🎢 Rating']:
                 if bd_user != None:
 
+                    def f_m(x):
+                        return 5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100
+
+                    mr_l = list(sorted(list(users.find({})), key=lambda x: x['coins'], reverse=True))
+                    lv_l = list(sorted(list(users.find({})), key=lambda x: (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], reverse=True))
+
+                    du_mc, du_lv = [{}, {}, {}], [{}, {}, {}]
+
+
+                    i = -1
+                    us_i_l = []
+                    while du_mc[0] == {} or du_mc[1] == {} or du_mc[2] == {}:
+                        i += 1
+                        if i >= len(mr_l):
+                            break
+
+                        if du_mc[0] == {} and mr_l[i]['userid'] not in us_i_l:
+                            try:
+                                m = bot.get_chat(mr_l[i]['userid'])
+                                du_mc[0] = {'ui': mr_l[i]['userid'], 'coins': mr_l[i]['coins'], 'mn': m.first_name}
+
+                                us_i_l.append(mr_l[i]['userid'])
+                            except:
+                                pass
+
+                        if du_mc[1] == {} and mr_l[i]['userid'] not in us_i_l:
+                            try:
+                                m = bot.get_chat(mr_l[i]['userid'])
+                                du_mc[1] = {'ui': mr_l[i]['userid'], 'coins': mr_l[i]['coins'], 'mn': m.first_name}
+
+                                us_i_l.append(mr_l[i]['userid'])
+                            except:
+                                pass
+
+                        if du_mc[2] == {} and mr_l[i]['userid'] not in us_i_l:
+                            try:
+                                m = bot.get_chat(mr_l[i]['userid'])
+                                du_mc[2] = {'ui': mr_l[i]['userid'], 'coins': mr_l[i]['coins'], 'mn': m.first_name}
+
+                                us_i_l.append(mr_l[i]['userid'])
+                            except:
+                                pass
+
+                    i = -1
+                    us_i_m = []
+                    while du_lv[0] == {} or du_lv[1] == {} or du_lv[2] == {}:
+                        i += 1
+                        if i >= len(lv_l):
+                            break
+
+                        if du_lv[0] == {} and lv_l[i]['userid'] not in us_i_m:
+                            try:
+                                m = bot.get_chat(lv_l[i]['userid'])
+                                x = lv_l[i]
+                                du_lv[0] = {'ui': lv_l[i]['userid'], 'lvl': lv_l[i]['lvl'][0], 'exp': (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], 'mn': m.first_name }
+
+                                us_i_m.append(lv_l[i]['userid'])
+                            except:
+                                pass
+
+                        if du_lv[1] == {} and lv_l[i]['userid'] not in us_i_m:
+                            try:
+                                m = bot.get_chat(lv_l[i]['userid'])
+                                x = lv_l[i]
+                                du_lv[1] = {'ui': lv_l[i]['userid'], 'lvl': lv_l[i]['lvl'][0], 'exp': (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], 'mn': m.first_name }
+
+                                us_i_m.append(lv_l[i]['userid'])
+                            except:
+                                pass
+
+                        if du_lv[2] == {} and lv_l[i]['userid'] not in us_i_m:
+                            try:
+                                m = bot.get_chat(lv_l[i]['userid'])
+                                x = lv_l[i]
+                                du_lv[2] = {'ui': lv_l[i]['userid'], 'lvl': lv_l[i]['lvl'][0], 'exp': (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], 'mn': m.first_name }
+
+                                us_i_m.append(lv_l[i]['userid'])
+                            except:
+                                pass
+
+                    pprint.pprint(du_mc)
+                    pprint.pprint(du_lv)
+
+
                     if bd_user['language_code'] == 'ru':
-                        text = '🎢 | Рейтинг временно отключён.'
+                        text =  f'*┌* 🎢 Рейтинг по уровню:\n'
+                        text += f"*├* Ваше место в рейтинге: #{lv_l.index(bd_user)+1}\n\n"
+
+                        n = 0
+                        for i in du_lv:
+                            n += 1
+                            if i == {}:
+                                pass
+                            else:
+                                if n != 3:
+                                    text += f"*├* #{n} *{i['mn']}*:\n      *└* Ур. {i['lvl']} (Всего опыта {i['exp']})\n"
+                                else:
+                                    text += f"*└* #{n} *{i['mn']}*:\n      *└* Ур. {i['lvl']} (Всего опыта {i['exp']})\n"
+
+                        text += f'\n\n*┌* 🎢 Рейтинг по монетам:\n'
+                        text += f"*├* Ваше место в рейтинге: #{mr_l.index(bd_user)+1}\n\n"
+
+                        n = 0
+                        for i in du_mc:
+                            n += 1
+                            if i == {}:
+                                pass
+                            else:
+                                if n != 3:
+                                    text += f"*├* #{n} *{i['mn']}*:\n      *└* Монеты {i['coins']}\n"
+                                else:
+                                    text += f"*└* #{n} *{i['mn']}*:\n      *└* Монеты {i['coins']}\n"
                     else:
                         text = '🎢 | The rating is temporarily disabled.'
 
-                    bot.send_message(message.chat.id, text)
+                    bot.send_message(message.chat.id, text, parse_mode = "Markdown")
+
+
 
             if message.text in ['🎮 Инвентарь', '🎮 Inventory']:
                 bd_user = users.find_one({"userid": user.id})
@@ -2475,6 +2595,10 @@ def on_message(message):
                                             type = 'активный предмет'
                                             d_text = f"*└* Эффективность: {item['act']}"
 
+                                        elif item['type'] == 'None':
+                                            type = 'пустышка'
+                                            d_text = f"*└* Ничего не делает и не для чего не нужна"
+
                                         text =  f"*┌* *🎴 Информация о предмете*\n"
                                         text += f"*├* Название: {item['nameru']}\n"
                                         text += f"*├* Тип: {type}\n"
@@ -2498,11 +2622,16 @@ def on_message(message):
                                             if item['inc_type'] == 'legendary': eg_q = 'legendary'
 
                                             type = 'dinosaur egg'
-                                            d_text = f"*└* Incubation: {item['incub_time']}{item['time_tag']}"
+                                            d_text = f"*└* Incubation: {item['incub_time']}{item['time_tag']}\n"
+                                            d_text += f"*└* The rarity of eggs: {eg_q}"
 
                                         elif item['type'] in ['game_ac', 'unv_ac', 'journey_ac', 'hunt_ac']:
                                             type = 'active game item'
                                             d_text = f"*└* Effectiveness: {item['act']}"
+
+                                        elif item['type'] == 'None':
+                                            type = 'dummy'
+                                            d_text = f"*└* Does nothing and is not needed for anything"
 
                                         text =  f"*┌* *🎴 Subject information*\n"
                                         text += f"*├* Name: {item['nameen']}\n"
