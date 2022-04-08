@@ -1217,8 +1217,11 @@ def member_profile(mem_id, lang):
 
 @bot.message_handler(commands=['emulate_not'])
 def command(message):
+    print('emulate_not')
+    time.sleep(60)
     user = message.from_user
-    notifications_manager(message.text[13:], users.find_one({"userid": user.id}))
+    bd_user = users.find_one({"userid": user.id})
+    notifications_manager(message.text[13:][:-3], bd_user, message.text[-2:])
 
 @bot.message_handler(commands=['start', 'main-menu'])
 def on_start(message):
@@ -3647,6 +3650,6 @@ def answer(call):
 print(f'Бот {bot.get_me().first_name} запущен!')
 if bot.get_me().first_name == 'DinoGochi':
     thr1.start()
-thr2.start()
+# thr2.start()
 
 bot.infinity_polling()
