@@ -18,6 +18,7 @@ sys.path.append("Cogs")
 from functions import functions
 from checks import checks
 
+checks_data = {'memory': [0, time.time()], 'incub': [0, time.time()], 'notif': [0, time.time()], 'main': [0, time.time()]}
 
 bot = telebot.TeleBot(config.TOKEN)
 
@@ -32,8 +33,9 @@ with open('dino_data.json', encoding='utf-8') as f:
 
 def check_memory():
     while True:
-        time.sleep(5)
-        print(int(memory_usage()[0]), 'mb')
+        checks_data['memory'][0] = int(memory_usage()[0])
+        checks_data['memory'][1] = int(time.time())
+        time.sleep(10)
 
 thr2 = threading.Thread(target = check_memory, daemon=True)
 
@@ -63,6 +65,9 @@ def check_incub(): #проверка каждые 5 секунд
 
                         functions.random_dino(user, dino_id)
                         functions.notifications_manager(bot, "incub", user, dino_id)
+
+        checks_data['incub'][0] = int(int(time.time()) - t_st)
+        checks_data['incub'][1] = int(time.time())
 
 thr_icub = threading.Thread(target = check_incub, daemon=True)
 
@@ -142,7 +147,11 @@ def check_notif(): #проверка каждые 5 секунд
                 if user['dinos'][dino_id]['stats']['unv'] >= 40:
                     functions.notifications_manager(bot, 'need_unv', user,dino_id = dino_id, met = 'delete')
 
+            users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
+
         # print(f'Проверка уведомлений - {int(time.time()) - t_st}s {nn}u')
+        checks_data['notif'][0] = int(int(time.time()) - t_st)
+        checks_data['incub'][1] = int(time.time())
 
 thr_notif = threading.Thread(target = check_notif, daemon=True)
 
@@ -290,6 +299,8 @@ def check(): #проверка каждые 10 секунд
         users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
 
         # print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
+        checks_data['main'][0] = int(int(time.time()) - t_st)
+        checks_data['main'][1] = int(time.time())
 
 thr1 = threading.Thread(target = check, daemon=True)
 
@@ -662,6 +673,17 @@ def member_profile(mem_id, lang):
         text = 'KMk456 jr5uhsd7489 lkjs47609485\n               ERRoR'
 
     return text
+
+@bot.message_handler(commands=['stats'])
+def command(message):
+    user = message.from_user
+
+    text = 'STATS\n\n'
+    text += f"Memory: {checks_data['memory'][0]}mb Last {int(time.time() - checks_data['memory'][1])}\n"
+    text += f"Incub check: {checks_data['incub'][0]}s Last {int(time.time() - checks_data['incub'][1])}\n"
+    text += f"Notifications check: {checks_data['notif'][0]}s Last {int(time.time() - checks_data['notif'][1])}\n"
+    text += f"Main check: {checks_data['main'][0]}s Last {int(time.time() - checks_data['main'][1])}\n"
+    bot.send_message(user.id, text)
 
 @bot.message_handler(commands=['emulate_not'])
 def command(message):
@@ -3348,10 +3370,10 @@ def answer(call):
 
 
 print(f'Бот {bot.get_me().first_name} запущен!')
-if bot.get_me().first_name == 'DinoGochi':
+if bot.get_me().first_name != 'DinoGochi':
     thr1.start()
     thr_icub.start()
     thr_notif.start()
-# thr2.start()
+    thr2.start()
 
 bot.infinity_polling()
