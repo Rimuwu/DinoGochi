@@ -689,7 +689,7 @@ def on_start(message):
 def on_message(message):
     user = message.from_user
 
-    print(user.first_name, message.text)
+    # print(user.first_name, message.text)
 
     def trans_paste(fg_img,bg_img,alpha=10,box=(0,0)):
         fg_img_trans = Image.new("RGBA",fg_img.size)
@@ -3247,43 +3247,103 @@ def answer(call):
 
     if call.data[:5] == 'item_':
 
-        def us_item(message, item, bd_user, dino_id):
-            print('i')
-            pass
+        def us_item(message, item, dino_dict, bd_user, it_id, sl):
+            if sl == 2:
+                dino, dii = dino_dict[message.text][0], dino_dict[message.text][1]
+            if sl == 1:
+                dino, dii = dino_dict[0], dino_dict[1]
 
+            if item['type'] == '+heal':
+                dino['stats']['heal'] += item['act']
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'❤ | Вы восстановили {item["act"]}% здоровья динозавра!'
+                else:
+                    text = f"❤ | You have restored {item['act']}% of the dinosaur's health!"
+
+                bd_user['dinos'][dii] = dino
+                bd_user['inventory'].remove(it_id)
+                users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
+                users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+            elif item['type'] == '+eat':
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'❗ | Перейдите в меню действий и выберите покормить!'
+                else:
+                    text = f"❗ | Go to the action menu and select feed!"
+
+            elif item['type'] == 'egg':
+
+                if bd_user['lvl'][0] < 25:
+
+                    if bd_user['language_code'] == 'ru':
+                        text = f'🔔 | Вам недоступна данная технология!'
+                    else:
+                        text = f"🔔 | This technology is not available to you!"
+
+                else:
+                    if int(bd_user['lvl'][0] / 25) > len(bd_user['dinos']):
+
+                        if item['time_tag'] == 'h':
+                            inc_time = time.time() + item['incub_time'] * 3600
+
+                        if item['time_tag'] == 'm':
+                            inc_time = time.time() + item['incub_time'] * 60
+
+                        if item['time_tag'] == 's':
+                            inc_time = time.time() + item['incub_time']
+
+                        egg_n = str(random.choice(list(json_f['data']['egg'])))
+
+                        bd_user['dinos'][ functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': inc_time, 'egg_id': egg_n}
+                        bd_user['inventory'].remove(it_id)
+                        users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
+                        users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f'🥚 | Яйцо отправлено на инкубацию!'
+                        else:
+                            text = f"🥚 | The egg has been sent for incubation!"
+
+                    else:
+                        if bd_user['language_code'] == 'ru':
+                            text = f"🔔 | Вам доступна только {int(bd_user['lvl'][0] / 25)} динозавров!"
+                        else:
+                            text = f"🔔 | Only {int(bd_user['lvl'][0] / 25)} dinosaurs are available to you!"
+
+
+            else:
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'❗ | Данный предмет пока что недоступен для использования!'
+                else:
+                    text = f"❗ | This item is not yet available for use!"
+
+            bot.send_message(user.id, text, parse_mode = 'Markdown')
 
 
         user = call.from_user
         bd_user = users.find_one({"userid": user.id})
-        print(call.data[5:])
         it_id = str(call.data[5:])
         if it_id in bd_user['inventory']:
             item = items_f['items'][it_id]
 
             n_dp, dp_a = functions.dino_pre_answer(bot, call)
-            print(n_dp, dp_a)
             if n_dp == 1:
                 bot.send_message(user.id, f'❌')
 
             if n_dp == 2:
-                bd_dino = dp_a
+                dino_dict = [dp_a, list(bd_user['dinos'].keys())[0] ]
+                us_item(call, item, dino_dict, bd_user, it_id, 1)
 
             if n_dp == 3:
                 rmk = dp_a[0]
                 text = dp_a[1]
                 dino_dict = dp_a[2]
 
-                def ret(message, dino_dict, user, bd_user):
-
-                    us_item(message, item, bd_user, dino_id)
-
                 msg = bot.send_message(user.id, text, reply_markup = rmk)
-                bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)
-
-
-            if item['type'] == '+heal':
-                pass
-
+                bot.register_next_step_handler(msg, us_item, item, dino_dict, bd_user, it_id, 2)
 
 
 
