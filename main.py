@@ -315,44 +315,40 @@ def check_incub(): #проверка каждые 5 секунд
         members = users.find({ })
         for user in members:
             nn += 1
-            # try:
-            if True:
-                dns_l = list(user['dinos'].keys()).copy()
+            dns_l = list(user['dinos'].keys()).copy()
 
-                for dino_id in dns_l:
-                    dino = user['dinos'][dino_id]
-                    if dino['status'] == 'incubation': #инкубация
-                        if dino['incubation_time'] - int(time.time()) <= 60*5 and dino['incubation_time'] - int(time.time()) > 0: #уведомление за 5 минут
+            for dino_id in dns_l:
+                dino = user['dinos'][dino_id]
+                if dino['status'] == 'incubation': #инкубация
+                    if dino['incubation_time'] - int(time.time()) <= 60*5 and dino['incubation_time'] - int(time.time()) > 0: #уведомление за 5 минут
 
-                            if 'inc_notification' in list(user['notifications'].keys()):
+                        if 'inc_notification' in list(user['notifications'].keys()):
 
-                                if user['notifications']['inc_notification'] == False:
-                                    notifications_manager("5_min_incub", user, dino)
+                            if user['notifications']['inc_notification'] == False:
+                                notifications_manager("5_min_incub", user, dino)
 
-                                    user['notifications']['inc_notification'] = True
-                                    users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications']}} )
-
-                            else:
                                 user['notifications']['inc_notification'] = True
                                 users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications']}} )
 
-                                notifications_manager("5_min_incub", user, dino_id)
+                        else:
+                            user['notifications']['inc_notification'] = True
+                            users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications']}} )
+
+                            notifications_manager("5_min_incub", user, dino_id)
 
 
-                        elif dino['incubation_time'] - int(time.time()) <= 0:
+                    elif dino['incubation_time'] - int(time.time()) <= 0:
 
-                            if 'inc_notification' in list(user['notifications'].keys()):
-                                del user['notifications']['inc_notification']
-                                users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications']}} )
+                        if 'inc_notification' in list(user['notifications'].keys()):
+                            del user['notifications']['inc_notification']
+                            users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications']}} )
 
-                            random_dino(user, dino_id)
-                            notifications_manager("incub", user, dino_id)
-
-        print(f'Проверка инкубации - {int(time.time()) - t_st}s {nn}u')
+                        random_dino(user, dino_id)
+                        notifications_manager("incub", user, dino_id)
 
 thr_icub = threading.Thread(target = check_incub, daemon=True)
 
-def check_sleep(): #проверка каждые 10 секунд
+def check(): #проверка каждые 10 секунд
     while True:
         nn = 0
         time.sleep(10)
@@ -369,6 +365,41 @@ def check_sleep(): #проверка каждые 10 секунд
                     dino = user['dinos'][dino_id]
 
                     if dino['status'] == 'dino': #дино
+                    #stats  - pass_active (ничего) sleep - (сон) journey - (путешествиеф)
+
+                        if dino['activ_status'] != 'sleep':
+                            if random.randint(1, 55) == 1: #eat
+                                user['dinos'][dino_id]['stats']['eat'] -= random.randint(1,2)
+                        else:
+                            if random.randint(1, 80) == 1: #eat
+                                user['dinos'][dino_id]['stats']['eat'] -= random.randint(1,2)
+
+                        if dino['activ_status'] != 'game':
+                            if random.randint(1, 60) == 1: #game
+                                user['dinos'][dino_id]['stats']['game'] -= random.randint(1,2)
+
+                        if dino['activ_status'] != 'sleep':
+                            if random.randint(1, 130) == 1: #unv
+                                user['dinos'][dino_id]['stats']['unv'] -= random.randint(1,2)
+
+                        if dino['activ_status'] == 'pass_active':
+
+                            if user['dinos'][dino_id]['stats']['game'] > 60:
+                                if dino['stats']['mood'] < 100:
+                                    if random.randint(1,15) == 1:
+                                        user['dinos'][dino_id]['stats']['mood'] += random.randint(1,15)
+
+                                    if random.randint(1,60) == 1:
+                                        user['coins'] += random.randint(0,100)
+
+                            if user['dinos'][dino_id]['stats']['mood'] > 80:
+                                if random.randint(1,60) == 1:
+                                    user['coins'] += random.randint(0,100)
+
+                            if user['dinos'][dino_id]['stats']['unv'] <= 20 and user['dinos'][dino_id]['stats']['unv'] != 0:
+                                if dino['stats']['mood'] > 0:
+                                    if random.randint(1,30) == 1:
+                                        user['dinos'][dino_id]['stats']['mood'] -= random.randint(1,2)
 
                         if dino['activ_status'] == 'sleep':
 
@@ -394,30 +425,6 @@ def check_sleep(): #проверка каждые 10 секунд
                                 user['dinos'][dino_id]['activ_status'] = 'pass_active'
                                 notifications_manager("woke_up", user)
 
-                users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
-
-        print(f'Проверка сна - {int(time.time()) - t_st}s {nn}u')
-
-thr_sleep = threading.Thread(target = check_sleep, daemon=True)
-
-def check_game(): #проверка каждые 10 секунд
-    while True:
-        nn = 0
-        time.sleep(10)
-        t_st = int(time.time())
-
-        members = users.find({ })
-        for user in members:
-            nn += 1
-            # try:
-            if True:
-                dns_l = list(user['dinos'].keys()).copy()
-
-                for dino_id in dns_l:
-                    dino = user['dinos'][dino_id]
-
-                    if dino['status'] == 'dino': #дино
-
                         if dino['activ_status'] == 'game':
 
                             if random.randint(1, 65) == 1: #unv
@@ -437,30 +444,6 @@ def check_game(): #проверка каждые 10 секунд
                                 del user['dinos'][ dino_id ]['game_time']
                                 del user['dinos'][ dino_id ]['game_%']
 
-                users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
-            users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
-
-        print(f'Проверка игры - {int(time.time()) - t_st}s {nn}u')
-
-thr_game = threading.Thread(target = check_game, daemon=True)
-
-def check_hunt(): #проверка каждые 10 секунд
-    while True:
-        nn = 0
-        time.sleep(10)
-        t_st = int(time.time())
-
-        members = users.find({ })
-        for user in members:
-            nn += 1
-            # try:
-            if True:
-                dns_l = list(user['dinos'].keys()).copy()
-
-                for dino_id in dns_l:
-                    dino = user['dinos'][dino_id]
-
-                    if dino['status'] == 'dino': #дино
                         if dino['activ_status'] == 'hunting':
 
                             if random.randint(1, 65) == 1: #unv
@@ -497,31 +480,6 @@ def check_hunt(): #проверка каждые 10 секунд
 
                                     notifications_manager("hunting_end", user)
 
-                users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
-            users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
-            users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
-
-        print(f'Проверка сбора пищи - {int(time.time()) - t_st}s {nn}u')
-
-thr_hunt = threading.Thread(target = check_hunt, daemon=True)
-
-def check_journey(): #проверка каждые 10 секунд
-    while True:
-        nn = 0
-        time.sleep(10)
-        t_st = int(time.time())
-
-        members = users.find({ })
-        for user in members:
-            nn += 1
-            # try:
-            if True:
-                dns_l = list(user['dinos'].keys()).copy()
-
-                for dino_id in dns_l:
-                    dino = user['dinos'][dino_id]
-
-                    if dino['status'] == 'dino': #дино
 
                         if dino['activ_status'] == 'journey':
 
@@ -788,68 +746,6 @@ def check_journey(): #проверка каждые 10 секунд
 
                                     user['dinos'][ dino_id ]['journey_log'].append(event)
 
-                users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
-            users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
-            users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
-            users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
-
-        print(f'Проверка путешествие - {int(time.time()) - t_st}s {nn}u')
-
-thr_journey = threading.Thread(target = check_journey, daemon=True)
-
-def check(): #проверка каждые 10 секунд
-    while True:
-        nn = 0
-        time.sleep(10)
-        t_st = int(time.time())
-
-        members = users.find({ })
-        for user in members:
-            nn += 1
-            # try:
-            if True:
-                dns_l = list(user['dinos'].keys()).copy()
-
-                for dino_id in dns_l:
-                    dino = user['dinos'][dino_id]
-
-                    if dino['status'] == 'dino': #дино
-                    #stats  - pass_active (ничего) sleep - (сон) journey - (путешествиеф)
-
-
-                        if dino['activ_status'] != 'sleep':
-                            if random.randint(1, 55) == 1: #eat
-                                user['dinos'][dino_id]['stats']['eat'] -= random.randint(1,2)
-                        else:
-                            if random.randint(1, 80) == 1: #eat
-                                user['dinos'][dino_id]['stats']['eat'] -= random.randint(1,2)
-
-                        if dino['activ_status'] != 'game':
-                            if random.randint(1, 60) == 1: #game
-                                user['dinos'][dino_id]['stats']['game'] -= random.randint(1,2)
-
-                        if dino['activ_status'] != 'sleep':
-                            if random.randint(1, 130) == 1: #unv
-                                user['dinos'][dino_id]['stats']['unv'] -= random.randint(1,2)
-
-                        if dino['activ_status'] == 'pass_active':
-
-                            if user['dinos'][dino_id]['stats']['game'] > 60:
-                                if dino['stats']['mood'] < 100:
-                                    if random.randint(1,15) == 1:
-                                        user['dinos'][dino_id]['stats']['mood'] += random.randint(1,15)
-
-                                    if random.randint(1,60) == 1:
-                                        user['coins'] += random.randint(0,100)
-
-                            if user['dinos'][dino_id]['stats']['mood'] > 80:
-                                if random.randint(1,60) == 1:
-                                    user['coins'] += random.randint(0,100)
-
-                            if user['dinos'][dino_id]['stats']['unv'] <= 20 and user['dinos'][dino_id]['stats']['unv'] != 0:
-                                if dino['stats']['mood'] > 0:
-                                    if random.randint(1,30) == 1:
-                                        user['dinos'][dino_id]['stats']['mood'] -= random.randint(1,2)
 
                         if user['dinos'][dino_id]['stats']['game'] < 40 and user['dinos'][dino_id]['stats']['game'] > 10:
                             if dino['stats']['mood'] > 0:
@@ -956,6 +852,7 @@ def check(): #проверка каждые 10 секунд
 
 
                         users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
+                        users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
                         users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
 
                         expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
@@ -3922,10 +3819,6 @@ print(f'Бот {bot.get_me().first_name} запущен!')
 if bot.get_me().first_name == 'DinoGochi':
     thr1.start()
     thr_icub.start()
-    thr_sleep.start()
-    thr_game.start()
-    thr_hunt.start()
-    thr_journey.start()
 # thr2.start()
 
 bot.infinity_polling()
