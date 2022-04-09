@@ -142,7 +142,7 @@ def check_notif(): #проверка каждые 5 секунд
                 if user['dinos'][dino_id]['stats']['unv'] >= 40:
                     functions.notifications_manager(bot, 'need_unv', user,dino_id = dino_id, met = 'delete')
 
-        print(f'Проверка уведомлений - {int(time.time()) - t_st}s {nn}u')
+        # print(f'Проверка уведомлений - {int(time.time()) - t_st}s {nn}u')
 
 thr_notif = threading.Thread(target = check_notif, daemon=True)
 
@@ -197,7 +197,7 @@ def check(): #проверка каждые 10 секунд
 
                     elif dino['activ_status'] == 'journey':
 
-                        user = checks.journey(user, dino_id, dino)
+                        user = checks.journey(user, dino_id, dino, items_f)
 
                     if user['dinos'][dino_id]['stats']['game'] < 40 and user['dinos'][dino_id]['stats']['game'] > 10:
                         if dino['stats']['mood'] > 0:
@@ -289,7 +289,7 @@ def check(): #проверка каждые 10 секунд
 
         users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
 
-        print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
+        # print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
 
 thr1 = threading.Thread(target = check, daemon=True)
 
@@ -1962,7 +1962,7 @@ def on_message(message):
 
                     bot.send_message(message.chat.id, textt)
 
-                    def work_pr(message, pages, page, items_id, ind_sort_it):
+                    def work_pr(message, pages, page, items_id, ind_sort_it, mms = None):
                         a = []
                         l_pages = pages
                         l_page = page
@@ -2032,6 +2032,7 @@ def on_message(message):
                                     item = items_f['items'][item_id]
                                     type = item['type']
 
+
                                     if bd_user['language_code'] == 'ru':
                                         if item['type'] == '+heal':
                                             type = 'лекарство'
@@ -2065,6 +2066,7 @@ def on_message(message):
                                         text += f"*├* Название: {item['nameru']}\n"
                                         text += f"*├* Тип: {type}\n"
                                         text += d_text
+                                        in_text = '🔮 | Использовать'
 
                                     else:
                                         if item['type'] == '+heal':
@@ -2099,11 +2101,18 @@ def on_message(message):
                                         text += f"*├* Name: {item['nameen']}\n"
                                         text += f"*├* Type: {type}\n"
                                         text += d_text
+                                        in_text = '🔮 | Use'
 
+                                    markup_inline = types.InlineKeyboardMarkup()
+                                    markup_inline.add( types.InlineKeyboardButton( text = in_text, callback_data = f"item_{item_id}") )
 
-                                    bot.send_message(message.chat.id, text, reply_markup = markup('profile', user), parse_mode = 'Markdown')
+                                    mms = bot.send_message(message.chat.id, text, reply_markup = markup_inline, parse_mode = 'Markdown')
+                                    work_pr(message, pages, page, items_id, ind_sort_it, mms)
 
-                        msg = bot.send_message(message.chat.id, textt, reply_markup = rmk)
+                        if mms == None:
+                            msg = bot.send_message(message.chat.id, textt, reply_markup = rmk)
+                        else:
+                            msg = mms
                         bot.register_next_step_handler(msg, ret, l_pages, l_page, l_ind_sort_it, pages, page, items_id, ind_sort_it, bd_user, user)
 
 
@@ -3236,7 +3245,45 @@ def answer(call):
 
             bot.send_message(user.id, text, parse_mode = 'Markdown', reply_markup = markup(1, user))
 
-    # if call.data[:5] == 'item_':
+    if call.data[:5] == 'item_':
+
+        def us_item(message, item, bd_user, dino_id):
+            print('i')
+            pass
+
+
+
+        user = call.from_user
+        bd_user = users.find_one({"userid": user.id})
+        print(call.data[5:])
+        it_id = str(call.data[5:])
+        if it_id in bd_user['inventory']:
+            item = items_f['items'][it_id]
+
+            n_dp, dp_a = functions.dino_pre_answer(bot, call)
+            print(n_dp, dp_a)
+            if n_dp == 1:
+                bot.send_message(user.id, f'❌')
+
+            if n_dp == 2:
+                bd_dino = dp_a
+
+            if n_dp == 3:
+                rmk = dp_a[0]
+                text = dp_a[1]
+                dino_dict = dp_a[2]
+
+                def ret(message, dino_dict, user, bd_user):
+
+                    us_item(message, item, bd_user, dino_id)
+
+                msg = bot.send_message(user.id, text, reply_markup = rmk)
+                bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)
+
+
+            if item['type'] == '+heal':
+                pass
+
 
 
 

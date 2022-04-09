@@ -92,7 +92,7 @@ class checks:
         return user
 
     @staticmethod
-    def journey(user, dino_id, dino):
+    def journey(user, dino_id, dino, items_f):
 
         if random.randint(1, 65) == 1: #unv
             user['dinos'][dino_id]['stats']['unv'] -= random.randint(0,1)
