@@ -863,7 +863,7 @@ def check(): #проверка каждые 10 секунд
             users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
 
 
-        print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
+        # print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
 
 thr1 = threading.Thread(target = check, daemon=True)
 
@@ -1263,7 +1263,7 @@ def on_start(message):
 def on_message(message):
     user = message.from_user
 
-    print(user.first_name, message.text)
+    # print(user.first_name, message.text)
 
     def trans_paste(fg_img,bg_img,alpha=10,box=(0,0)):
         fg_img_trans = Image.new("RGBA",fg_img.size)
