@@ -7,13 +7,16 @@ import pymongo
 from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageSequence, ImageFilter
 import io
 from io import BytesIO
-from functions import functions
 import time
 import os
 import threading
 import sys
 from memory_profiler import memory_usage
 import pprint
+
+sys.path.append("Cogs")
+from functions import functions
+from checks import checks
 
 
 bot = telebot.TeleBot(config.TOKEN)
@@ -26,278 +29,6 @@ with open('items.json', encoding='utf-8') as f:
 
 with open('dino_data.json', encoding='utf-8') as f:
     json_f = json.load(f)
-
-def dino_pre_answer(message):
-    id_dino = {}
-
-    user = message.from_user
-    bd_user = users.find_one({"userid": user.id})
-
-    if bd_user == None:
-        return 1, None
-
-    rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
-
-    if len(bd_user['dinos'].keys()) == 0:
-        return 1, None
-
-    elif len(bd_user['dinos'].keys()) == 1:
-        return 2, bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]
-
-    else:
-        for dii in bd_user['dinos']:
-            rmk.add( f"{dii}# {bd_user['dinos'][dii]['name']}" )
-            id_dino[f"{dii}# {bd_user['dinos'][dii]['name']}"] = [bd_user['dinos'][dii], dii]
-
-        if bd_user['language_code'] == 'ru':
-            rmk.add('↪ Назад')
-            text = '🦖 | Выберите динозавра > '
-        else:
-            rmk.add('↪ Back')
-            text = '🦖 | Choose a dinosaur >'
-
-        return 3, [rmk, text, id_dino]
-
-
-def user_dino_pn(user):
-    if len(user['dinos'].keys()) == 0:
-        return '1'
-    else:
-        id_list = []
-        for i in user['dinos'].keys():
-            try:
-                id_list.append(int(i))
-            except:
-                pass
-        return str(max(id_list) + 1)
-
-def random_dino(user, dino_id_remove):
-    r_q = random.randint(1, 10000)
-    if r_q in list(range(1, 5001)):
-        quality = 'com'
-    elif r_q in list(range(5001, 7501)):
-        quality = 'unc'
-    elif r_q in list(range(7501, 9001)):
-        quality = 'rar'
-    elif r_q in list(range(9001, 9801)):
-        quality = 'myt'
-    else:
-        quality = 'leg'
-
-    dino_id = None
-
-    while dino_id == None:
-        p_var = random.choice(json_f['data']['dino'])
-        dino = json_f['elements'][str(p_var)]
-        if dino['image'][5:8] == quality:
-            dino_id = p_var
-
-    dino = json_f['elements'][str(dino_id)]
-    del user['dinos'][dino_id_remove]
-    user['dinos'][user_dino_pn(user)] = {'dino_id': dino_id, "status": 'dino', 'activ_status': 'pass_active', 'name': dino['name'], 'stats':  {"heal": 100, "eat": random.randint(70, 100), 'game': random.randint(50, 100), 'mood': random.randint(7, 100), "unv": 100}, 'games': []}
-
-    users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos']}} )
-
-
-def notifications_manager(notification, user, arg = None):
-    user['notifications'][notification] = True
-    users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications'] }} )
-
-    if user['settings']['notifications'] == True:
-        try:
-            chat = bot.get_chat(user['userid'])
-        except:
-            return False
-
-        if notification == "5_min_incub":
-
-            if user['language_code'] == 'ru':
-                text = f'🥚 | {chat.first_name}, ваш динозавр вылупится через 5 минут!'
-            else:
-                text = f'🥚 | {chat.first_name}, your dinosaur will hatch in 5 minutes!'
-
-            try:
-                bot.send_message(user['userid'], text)
-            except:
-                pass
-
-        elif notification == "incub":
-
-            if user['language_code'] == 'ru':
-                text = f'🦖 | {chat.first_name}, динозавр вылупился! 🎉'
-            else:
-                text = f'🦖 | {chat.first_name}, the dinosaur has hatched! 🎉'
-
-            try:
-                bot.send_message(user['userid'], text)
-            except:
-                pass
-
-        elif notification == "need_eat":
-
-            if user['language_code'] == 'ru':
-                text = f'🍕 | {chat.first_name}, динозавр хочет кушать, его потребность в еде опустилась до {arg}%!'
-            else:
-                text = f'🍕 | {chat.first_name}, the dinosaur wants to eat, his need for food has dropped to {arg}%!'
-
-            try:
-                bot.send_message(user['userid'], text)
-            except:
-                pass
-
-        elif notification == "need_game":
-
-            if user['language_code'] == 'ru':
-                text = f'🎮 | {chat.first_name}, динозавр хочет играть, его потребность в игре опустилось до {arg}%!'
-            else:
-                text = f'🎮 | {chat.first_name}, The dinosaur wants to play, his need for the game has dropped to {arg}%!'
-
-            try:
-                bot.send_message(user['userid'], text)
-            except:
-                pass
-
-        elif notification == "need_mood":
-
-            if user['language_code'] == 'ru':
-                text = f'🦖 | {chat.first_name}, у динозавра плохое настроение, его настроение опустилось до {arg}%!'
-            else:
-                text = f'🦖 | {chat.first_name}, the dinosaur is in a bad mood, his mood has sunk to {arg}%!'
-
-            try:
-                bot.send_message(user['userid'], text)
-            except:
-                pass
-
-        elif notification == "need_unv":
-
-            if user['language_code'] == 'ru':
-                text = f'🌙 | {chat.first_name}, динозавр хочет спать, его харрактеристика сна опустилось до {arg}%!'
-            else:
-                text = f'🌙 | {chat.first_name}, the dinosaur wants to sleep, his sleep characteristic dropped to {arg}%!'
-
-            try:
-                bot.send_message(user['userid'], text)
-            except:
-                pass
-
-        elif notification == "dead":
-
-            if user['language_code'] == 'ru':
-                text = f'💥 | {chat.first_name}, ваш динозаврик.... Умер...'
-            else:
-                text = f'💥 | {chat.first_name}, your dinosaur.... Died...'
-
-            try:
-                bot.send_message(user['userid'], text, reply_markup = markup(1, user))
-            except:
-                pass
-
-        elif notification == "woke_up":
-
-            if user['language_code'] == 'ru':
-                text = f'🌙 | {chat.first_name}, ваш динозавр проснулся и полон сил!'
-            else:
-                text = f'🌙 | {chat.first_name}, your dinosaur is awake and full of energy!'
-
-            try:
-                bot.send_message(user['userid'], text)
-            except:
-                pass
-
-        elif notification == "game_end":
-
-            if user['language_code'] == 'ru':
-                text = f'🎮 | {chat.first_name}, ваш динозавр прекратил играть!'
-            else:
-                text = f'🎮 | {chat.first_name}, your dinosaur has stopped playing!'
-
-            try:
-                bot.send_message(user['userid'], text)
-            except:
-                pass
-
-
-        elif notification == "journey_end":
-
-            if user['language_code'] == 'ru':
-
-                text = f'🦖 | Ваш динозавр вернулся из путешествия!\nВот что произошло в его путешествии:\n'
-
-                if user['dinos'][ list(user['dinos'].keys())[0] ]['journey_log'] == []:
-                    text += 'Ничего не произошло!'
-                else:
-                    n = 1
-                    for el in user['dinos'][ list(user['dinos'].keys())[0] ]['journey_log']:
-                        text += f'<b>{n}.</b> {el}\n\n'
-                        n += 1
-            else:
-
-                text = f"🦖 | Your dinosaur has returned from a journey!\nHere's what happened on his journey:\n"
-
-                if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log'] == []:
-                    text += 'Nothing happened!'
-                else:
-                    n = 1
-                    for el in bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log']:
-                        text += f'<b>{n}.</b> {el}\n\n'
-                        n += 1
-
-            try:
-                bot.send_message(user['userid'], text, parse_mode = 'html')
-            except:
-                pass
-
-        elif notification == "friend_request":
-
-            if user['language_code'] == 'ru':
-                text = f'💬 | {chat.first_name}, вам поступил запрос в друзья!'
-            else:
-                text = f'💬 | {chat.first_name}, you have received a friend request!'
-
-            try:
-                bot.send_message(user['userid'], text)
-            except:
-                pass
-
-        elif notification == "friend_accept":
-
-            if user['language_code'] == 'ru':
-                text = f'💬 | {chat.first_name}, {arg} приянл запрос в друзья!'
-            else:
-                text = f'💬 | {chat.first_name}, {arg} accepted a friend request!'
-
-            try:
-                bot.send_message(user['userid'], text)
-            except:
-                pass
-
-        elif notification == "friend_rejection":
-
-            if user['language_code'] == 'ru':
-                text = f'💬 | {chat.first_name}, ваш запрос в друзья {arg}, был отклонён...'
-            else:
-                text = f'💬 | {chat.first_name}, your friend request {arg} has been rejected...'
-
-            try:
-                bot.send_message(user['userid'], text)
-            except:
-                pass
-
-        elif notification == "hunting_end":
-
-            if user['language_code'] == 'ru':
-                text = f'🍕 | {chat.first_name}, ваш динозавр вернулся со сбора пищи!'
-            else:
-                text = f'🍕 | {chat.first_name}, your dinosaur is back from collecting food!'
-
-            try:
-                bot.send_message(user['userid'], text)
-            except:
-                pass
-
-        else:
-            print(notification, 'notification')
 
 def check_memory():
     while True:
@@ -322,31 +53,98 @@ def check_incub(): #проверка каждые 5 секунд
                 if dino['status'] == 'incubation': #инкубация
                     if dino['incubation_time'] - int(time.time()) <= 60*5 and dino['incubation_time'] - int(time.time()) > 0: #уведомление за 5 минут
 
-                        if 'inc_notification' in list(user['notifications'].keys()):
-
-                            if user['notifications']['inc_notification'] == False:
-                                notifications_manager("5_min_incub", user, dino)
-
-                                user['notifications']['inc_notification'] = True
-                                users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications']}} )
-
-                        else:
-                            user['notifications']['inc_notification'] = True
-                            users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications']}} )
-
-                            notifications_manager("5_min_incub", user, dino_id)
+                        if functions.notifications_manager(bot, '5_min_incub', user, None, dino_id, 'check') == False:
+                            functions.notifications_manager(bot, "5_min_incub", user, dino, dino_id)
 
 
                     elif dino['incubation_time'] - int(time.time()) <= 0:
 
-                        if 'inc_notification' in list(user['notifications'].keys()):
-                            del user['notifications']['inc_notification']
-                            users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications']}} )
+                        functions.notifications_manager(bot, "5_min_incub", user, dino, dino_id, met = 'delete')
 
-                        random_dino(user, dino_id)
-                        notifications_manager("incub", user, dino_id)
+                        functions.random_dino(user, dino_id)
+                        functions.notifications_manager(bot, "incub", user, dino_id)
 
 thr_icub = threading.Thread(target = check_incub, daemon=True)
+
+def check_notif(): #проверка каждые 5 секунд
+    while True:
+        nn = 0
+        time.sleep(5)
+        t_st = int(time.time())
+
+        members = users.find({ })
+        for user in members:
+            nn += 1
+            dns_l = list(user['dinos'].keys()).copy()
+
+            for dino_id in dns_l:
+                dino = user['dinos'][dino_id]
+
+                if dino['activ_status'] == 'sleep':
+
+                    if user['dinos'][dino_id]['stats']['unv'] >= 100:
+                        user['dinos'][dino_id]['activ_status'] = 'pass_active'
+                        functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'check')
+
+                if dino['activ_status'] == 'game':
+
+                    if int(dino['game_time']-time.time()) <= 0:
+                        user['dinos'][dino_id]['activ_status'] = 'pass_active'
+                        functions.notifications_manager(bot, 'game_end', user, None, dino_id, 'check')
+
+                        del user['dinos'][ dino_id ]['game_time']
+                        del user['dinos'][ dino_id ]['game_%']
+
+                if dino['activ_status'] == 'journey':
+
+                    if int(dino['journey_time']-time.time()) <= 0:
+                        user['dinos'][dino_id]['activ_status'] = 'pass_active'
+
+                        functions.notifications_manager(bot, "journey_end", user, user['dinos'][ dino_id ]['journey_log'], dino_id = dino_id)
+
+                        del user['dinos'][ dino_id ]['journey_time']
+                        del user['dinos'][ dino_id ]['journey_log']
+
+                if dino['activ_status'] == 'hunting':
+
+                    if dino['target'][0] >= dino['target'][1]:
+                        del user['dinos'][ dino_id ]['target']
+                        del user['dinos'][ dino_id ]['h_type']
+                        user['dinos'][dino_id]['activ_status'] = 'pass_active'
+
+                        functions.notifications_manager(bot, "hunting_end", user, dino_id = dino_id)
+
+                if user['dinos'][dino_id]['stats']['mood'] <= 70:
+                    if functions.notifications_manager(bot, "need_mood", user, dino_id = dino_id, met = 'check') == False:
+                        functions.notifications_manager(bot, "need_mood", user, user['dinos'][dino_id]['stats']['mood'], dino_id = dino_id)
+
+                if user['dinos'][dino_id]['stats']['game'] <= 50:
+                    if functions.notifications_manager(bot, "need_game", user, dino_id = dino_id, met = 'check') == False:
+                        functions.notifications_manager(bot, "need_game", user, user['dinos'][dino_id]['stats']['game'], dino_id = dino_id)
+
+                if user['dinos'][dino_id]['stats']['eat'] <= 40:
+                    if functions.notifications_manager(bot, "need_eat", user, dino_id = dino_id, met = 'check') == False:
+                        functions.notifications_manager(bot, "need_eat", user, user['dinos'][dino_id]['stats']['eat'], dino_id = dino_id)
+
+                if user['dinos'][dino_id]['stats']['unv'] <= 30:
+                    if functions.notifications_manager(bot, "need_unv", user, dino_id = dino_id, met = 'check') == False:
+                        functions.notifications_manager(bot, "need_unv", user, user['dinos'][dino_id]['stats']['unv'], dino_id = dino_id)
+
+                if user['dinos'][dino_id]['stats']['mood'] >= 80:
+                    functions.notifications_manager(bot, 'need_mood', user, dino_id = dino_id, met = 'delete')
+
+                if user['dinos'][dino_id]['stats']['game'] >= 80:
+                    functions.notifications_manager(bot, 'need_game', user,dino_id = dino_id, met = 'delete')
+
+                if user['dinos'][dino_id]['stats']['eat'] >= 50:
+                    functions.notifications_manager(bot, 'need_eat', user,dino_id = dino_id, met = 'delete')
+
+                if user['dinos'][dino_id]['stats']['unv'] >= 40:
+                    functions.notifications_manager(bot, 'need_unv', user,dino_id = dino_id, met = 'delete')
+
+        print(f'Проверка уведомлений - {int(time.time()) - t_st}s {nn}u')
+
+thr_notif = threading.Thread(target = check_notif, daemon=True)
 
 def check(): #проверка каждые 10 секунд
     while True:
@@ -356,514 +154,142 @@ def check(): #проверка каждые 10 секунд
 
         members = users.find({ })
         for user in members:
+
             nn += 1
-            # try:
-            if True:
-                dns_l = list(user['dinos'].keys()).copy()
+            dns_l = list(user['dinos'].keys()).copy()
 
-                for dino_id in dns_l:
-                    dino = user['dinos'][dino_id]
+            for dino_id in dns_l:
+                dino = user['dinos'][dino_id]
 
-                    if dino['status'] == 'dino': #дино
-                    #stats  - pass_active (ничего) sleep - (сон) journey - (путешествиеф)
+                if dino['status'] == 'dino': #дино
+                #stats  - pass_active (ничего) sleep - (сон) journey - (путешествиеф)
 
-                        if dino['activ_status'] != 'sleep':
-                            if random.randint(1, 55) == 1: #eat
-                                user['dinos'][dino_id]['stats']['eat'] -= random.randint(1,2)
-                        else:
-                            if random.randint(1, 80) == 1: #eat
-                                user['dinos'][dino_id]['stats']['eat'] -= random.randint(1,2)
+                    if dino['activ_status'] != 'sleep':
+                        if random.randint(1, 55) == 1: #eat
+                            user['dinos'][dino_id]['stats']['eat'] -= random.randint(1,2)
+                    else:
+                        if random.randint(1, 80) == 1: #eat
+                            user['dinos'][dino_id]['stats']['eat'] -= random.randint(1,2)
 
-                        if dino['activ_status'] != 'game':
-                            if random.randint(1, 60) == 1: #game
-                                user['dinos'][dino_id]['stats']['game'] -= random.randint(1,2)
+                    if dino['activ_status'] != 'game':
+                        if random.randint(1, 60) == 1: #game
+                            user['dinos'][dino_id]['stats']['game'] -= random.randint(1,2)
 
-                        if dino['activ_status'] != 'sleep':
-                            if random.randint(1, 130) == 1: #unv
-                                user['dinos'][dino_id]['stats']['unv'] -= random.randint(1,2)
+                    if dino['activ_status'] != 'sleep':
+                        if random.randint(1, 130) == 1: #unv
+                            user['dinos'][dino_id]['stats']['unv'] -= random.randint(1,2)
 
-                        if dino['activ_status'] == 'pass_active':
+                    if dino['activ_status'] == 'pass_active':
 
-                            if user['dinos'][dino_id]['stats']['game'] > 60:
-                                if dino['stats']['mood'] < 100:
-                                    if random.randint(1,15) == 1:
-                                        user['dinos'][dino_id]['stats']['mood'] += random.randint(1,15)
+                        user = checks.pass_active(user, dino_id, dino)
 
-                                    if random.randint(1,60) == 1:
-                                        user['coins'] += random.randint(0,100)
+                    elif dino['activ_status'] == 'sleep':
 
-                            if user['dinos'][dino_id]['stats']['mood'] > 80:
-                                if random.randint(1,60) == 1:
-                                    user['coins'] += random.randint(0,100)
+                        user = checks.sleep(user, dino_id, dino)
 
-                            if user['dinos'][dino_id]['stats']['unv'] <= 20 and user['dinos'][dino_id]['stats']['unv'] != 0:
-                                if dino['stats']['mood'] > 0:
-                                    if random.randint(1,30) == 1:
-                                        user['dinos'][dino_id]['stats']['mood'] -= random.randint(1,2)
+                    elif dino['activ_status'] == 'game':
 
-                        if dino['activ_status'] == 'sleep':
+                        user = checks.game(user, dino_id, dino)
 
-                            if user['dinos'][dino_id]['stats']['unv'] < 100:
-                                if random.randint(1,45) == 1:
-                                    user['dinos'][dino_id]['stats']['unv'] += random.randint(1,2)
+                    elif dino['activ_status'] == 'hunting':
 
-                            if user['dinos'][dino_id]['stats']['game'] < 40:
-                                if random.randint(1,45) == 1:
-                                    user['dinos'][dino_id]['stats']['game'] += random.randint(1,2)
+                        user = checks.hunting(user, dino_id, dino)
 
-                            if user['dinos'][dino_id]['stats']['mood'] < 50:
-                                if random.randint(1,45) == 1:
-                                    user['dinos'][dino_id]['stats']['mood'] += random.randint(1,2)
+                    elif dino['activ_status'] == 'journey':
 
-                            if user['dinos'][dino_id]['stats']['heal'] < 100:
-                                if user['dinos'][dino_id]['stats']['eat'] > 50:
-                                    if random.randint(1,45) == 1:
-                                        user['dinos'][dino_id]['stats']['heal'] += random.randint(1,2)
-                                        user['dinos'][dino_id]['stats']['eat'] -= random.randint(0,1)
+                        user = checks.journey(user, dino_id, dino)
 
-                            if user['dinos'][dino_id]['stats']['unv'] >= 100:
-                                user['dinos'][dino_id]['activ_status'] = 'pass_active'
-                                notifications_manager("woke_up", user)
-
-                        if dino['activ_status'] == 'game':
-
-                            if random.randint(1, 65) == 1: #unv
-                                user['dinos'][dino_id]['stats']['unv'] -= random.randint(0,2)
-
-                            if random.randint(1, 45) == 1: #unv
-                                user['lvl'][1] += random.randint(0,20)
-
-                            if user['dinos'][dino_id]['stats']['game'] < 100:
-                                if random.randint(1,30) == 1:
-                                    user['dinos'][dino_id]['stats']['game'] += int(random.randint(2,15) * user['dinos'][dino_id]['game_%'])
-
-                            if int(dino['game_time']-time.time()) <= 0:
-                                user['dinos'][dino_id]['activ_status'] = 'pass_active'
-                                notifications_manager("game_end", user)
-
-                                del user['dinos'][ dino_id ]['game_time']
-                                del user['dinos'][ dino_id ]['game_%']
-
-                        if dino['activ_status'] == 'hunting':
-
-                            if random.randint(1, 65) == 1: #unv
-                                user['dinos'][dino_id]['stats']['unv'] -= random.randint(0,2)
-
-                            if random.randint(1, 45) == 1: #unv
-                                user['lvl'][1] += random.randint(0,20)
-
-                            r = random.randint(1, 15)
-                            if r == 1:
-
-                                if dino['h_type'] == 'all':
-                                    items = [2, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-
-                                if dino['h_type'] == 'collecting':
-                                    items = [6, 9, 11]
-
-                                if dino['h_type'] == 'hunting':
-                                    items = [5, 8, 12]
-
-                                if dino['h_type'] == 'fishing':
-                                    items = [7, 10, 13]
-
-                                item = random.choice(items)
-                                i_count = random.randint(1, 2)
-                                for i in list(range(i_count)):
-                                    user['inventory'].append(str(item))
-                                    dino['target'][0] += 1
-
-                                if dino['target'][0] >= dino['target'][1]:
-                                    del user['dinos'][ dino_id ]['target']
-                                    del user['dinos'][ dino_id ]['h_type']
-                                    user['dinos'][dino_id]['activ_status'] = 'pass_active'
-
-                                    notifications_manager("hunting_end", user)
-
-
-                        if dino['activ_status'] == 'journey':
-
-                            if random.randint(1, 65) == 1: #unv
-                                user['dinos'][dino_id]['stats']['unv'] -= random.randint(0,2)
-
-                            if random.randint(1, 45) == 1: #unv
-                                user['lvl'][1] += random.randint(0,20)
-
-                            if int(dino['journey_time']-time.time()) <= 0:
-                                user['dinos'][dino_id]['activ_status'] = 'pass_active'
-
-                                notifications_manager("journey_end", user, user['dinos'][ dino_id ]['journey_log'])
-
-                                del user['dinos'][ dino_id ]['journey_time']
-                                del user['dinos'][ dino_id ]['journey_log']
-
-                            r_e_j = random.randint(1,30)
-                            if r_e_j == 1:
-                                if random.randint(1,3) != 1:
-
-                                    if dino['stats']['mood'] >= 55:
-                                        mood_n = True
-                                    else:
-                                        mood_n = False
-
-                                    r_event = random.randint(1, 100)
-                                    if r_event in list(range(1,51)): #обычное соб
-                                        events = ['sunny', 'm_coins']
-                                    elif r_event in list(range(51,76)): #необычное соб
-                                        events = ['+eat', 'sleep', 'u_coins']
-                                    elif r_event in list(range(76,91)): #редкое соб
-                                        events = ['random_items', 'b_coins']
-                                    elif r_event in list(range(91,100)): #мистическое соб
-                                        events = ['random_items_leg', 'y_coins']
-                                    else: #легендарное соб
-                                        events = ['egg', 'l_coins']
-
-                                    event = random.choice(events)
-                                    if event == 'sunny':
-                                        mood = random.randint(1, 15)
-                                        user['dinos'][dino_id]['stats']['mood'] += mood
-
-                                        if user['language_code'] == 'ru':
-                                            event = f'☀ | Солнечно, настроение динозавра повысилось на {mood}%'
-                                        else:
-                                            event = f"☀ | Sunny, the dinosaur's mood has increased by {mood}%"
-
-                                    elif event == '+eat':
-                                        eat = random.randint(1, 10)
-                                        user['dinos'][dino_id]['stats']['eat'] += eat
-
-                                        if user['language_code'] == 'ru':
-                                            event = f'🥞 | Динозавр нашёл что-то вкусненькое и съел это!'
-                                        else:
-                                            event = f"🥞 | The dinosaur found something delicious and ate it!"
-
-                                    elif event == 'sleep':
-                                        unv = random.randint(1, 5)
-                                        user['dinos'][dino_id]['stats']['unv'] += unv
-
-                                        if user['language_code'] == 'ru':
-                                            event = f'💭 | Динозавр смог вздремнуть по дороге.'
-                                        else:
-                                            event = f"💭 | Динозавр смог вздремнуть по дороге."
-
-                                    elif event == 'random_items':
-                                        items = ["1", "2", '17', '18', '19', '25', '25']
-                                        item = random.choice(items)
-                                        if mood_n == True:
-                                            user['inventory'].append(item)
-
-                                            if user['language_code'] == 'ru':
-                                                event = f"🧸 | Бегая по лесам, динозавр видит что-то похожее на сундук.\n>  Открыв его, он находит: {items_f['items'][item]['nameru']}!"
-                                            else:
-                                                event = f"🧸 | Running through the woods, the dinosaur sees something that looks like a chest.\n> Opening it, he finds: {items_f['items'][item]['nameen']}!"
-
-                                        if mood_n == False:
-
-                                            if user['language_code'] == 'ru':
-                                                event = '❌ | Редкое событие отменено из-за плохого настроения!'
-                                            else:
-                                                event = '❌ | A rare event has been canceled due to a bad mood!'
-
-                                    elif event == 'random_items_leg':
-                                        items = ["4", "13", "15", "16"]
-                                        item = random.choice(items)
-                                        if mood_n == True:
-                                            user['inventory'].append(item)
-
-                                            if user['language_code'] == 'ru':
-                                                event = f"🧸 | Бегая по горам, динозавр видит что-то похожее на сундук.\n>  Открыв его, он находит: {items_f['items'][item]['nameru']}!"
-                                            else:
-                                                event = f"🧸 | Running through the mountains, the dinosaur sees something similar to a chest.\n> Opening it, he finds: {items_f['items'][item]['nameen']}!"
-
-                                        if mood_n == False:
-
-                                            if user['language_code'] == 'ru':
-                                                event = '❌ | Мистическое событие отменено из-за плохого настроения!'
-                                            else:
-                                                event = '❌ | The mystical event has been canceled due to a bad mood!'
-
-                                    elif event == 'egg':
-                                        eggs = ["3", '20', '21', '22', '23', '24']
-                                        egg = random.choice(eggs)
-                                        if mood_n == True:
-                                            user['inventory'].append(egg)
-
-                                            if user['language_code'] == 'ru':
-                                                event = f"🧸 | Бегая по по пещерам, динозавр видит что-то похожее на сундук.\n>  Открыв его, он находит: {items_f['items'][egg]['nameru']}!"
-                                            else:
-                                                event = f"🧸 | Running through the caves, the dinosaur sees something similar to a chest.\n> Opening it, he finds: {items_f['items'][egg]['nameen']}!"
-
-                                        if mood_n == False:
-
-                                            if user['language_code'] == 'ru':
-                                                event = '❌ | Легендарное событие отменено из-за плохого настроения!'
-                                            else:
-                                                event = '❌ | The legendary event has been canceled due to a bad mood!'
-
-                                    elif event[2:] == 'coins':
-
-                                        if mood_n == True:
-                                            if event[:1] == 'm':
-                                                coins = random.randint(1, 10)
-                                            if event[:1] == 'u':
-                                                coins = random.randint(10, 50)
-                                            if event[:1] == 'b':
-                                                coins = random.randint(50, 100)
-                                            if event[:1] == 'y':
-                                                coins = random.randint(100, 300)
-                                            if event[:1] == 'l':
-                                                coins = random.randint(300, 500)
-
-                                            user['coins'] += coins
-
-                                            if user['language_code'] == 'ru':
-                                                event = f'💎 | Ходя по тропинкам, динозавр находит мешочек c монетками.\n>   Вы получили {coins} монет.'
-                                            else:
-                                                event = f'💎 | Walking along the paths, the dinosaur finds a bag with coins.\n> You have received {coins} coins.'
-
-                                        if mood_n == False:
-                                            if user['language_code'] == 'ru':
-                                                event = '❌ | Cобытие отменено из-за плохого настроения!'
-                                            else:
-                                                event = '❌ | Event has been canceled due to a bad mood!'
-
-                                    user['dinos'][ dino_id ]['journey_log'].append(event)
-
-                                else:
-                                    if dino['stats']['mood'] >= 55:
-                                        mood_n = False
-                                    else:
-                                        mood_n = True
-
-                                    r_event = random.randint(1, 100)
-                                    if r_event in list(range(1,51)): #обычное соб
-                                        events = ['rain', 'm_coins']
-                                    elif r_event in list(range(51,76)): #необычное соб
-                                        events = ['fight', '-eat', 'u_coins']
-                                    elif r_event in list(range(76,91)): #редкое соб
-                                        events = ['b_coins']
-                                    elif r_event in list(range(91,100)): #мистическое соб
-                                        events = ['toxic_rain', 'y_coins']
-                                    else: #легендарное соб
-                                        events = ['lose_item', 'l_coins']
-
-
-                                    event = random.choice(events)
-                                    if event == 'rain':
-                                        mood = random.randint(1, 15)
-                                        user['dinos'][dino_id]['stats']['mood'] -= mood
-
-                                        if user['language_code'] == 'ru':
-                                            event = f'🌨 | Прошёлся дождь, настроение понижено на {mood}%'
-                                        else:
-                                            event = f"🌨 | It has rained, the mood is lowered by {mood}%"
-
-                                    elif event == '-eat':
-                                        eat = random.randint(1, 10)
-                                        heal = random.randint(1, 3)
-                                        user['dinos'][dino_id]['stats']['eat'] -= eat
-                                        user['dinos'][dino_id]['stats']['heal'] -= heal
-
-                                        if user['language_code'] == 'ru':
-                                            event = f'🍤 | Динозавр нашёл что-то вкусненькое и съел это, еда оказалась испорчена. Динозавр теряет {eat}% еды и {heal}% здоровья.'
-                                        else:
-                                            event = f"🍤 | The dinosaur found something delicious and ate it, the food was spoiled. Dinosaur loses {eat}% of food and {heal}% health."
-
-                                    elif event == 'toxic_rain':
-                                        heal = random.randint(1, 5)
-                                        user['dinos'][dino_id]['stats']['heal'] -= heal
-
-                                        if user['language_code'] == 'ru':
-                                            event = f"⛈ | Динозавр попал под токсичный дождь!"
-                                        else:
-                                            event = f"⛈ | The dinosaur got caught in the toxic rain!"
-
-
-                                    elif event == 'fight':
-                                        unv = random.randint(1, 10)
-                                        user['dinos'][dino_id]['stats']['unv'] -= unv
-
-                                        if random.randint(1,2) == 1:
-                                            heal = random.randint(1, 5)
-                                            user['dinos'][dino_id]['stats']['heal'] -= heal
-                                            textru = f'\nДинозавр не смог избежать ран, он теряет {heal}% здоровья.'
-                                            texten = f"\nThe dinosaur couldn't escape the wounds, it loses {heal}% health."
-                                        else:
-                                            textru = f'\nДинозавр смог избежать ран, он не теряет здоровья.'
-                                            texten = f"\nThe dinosaur was able to avoid wounds, he does not lose health."
-
-                                        if user['language_code'] == 'ru':
-                                            event = f'⚔ | Динозавр нарвался на драку, он теряет {unv}% сил.'
-                                            event += textru
-                                        else:
-                                            event = f"⚔ | The dinosaur ran into a fight, he loses {unv}% of his strength."
-                                            event += texten
-
-                                    elif event == 'lose_items':
-                                        items = user['inventory']
-                                        item = random.choice(items)
-                                        if mood_n == True:
-                                            user['inventory'].remove(item)
-
-                                            if user['language_code'] == 'ru':
-                                                event = f"❗ | Бегая по лесам, динозавр обранил {items_f['items'][item]['nameru']}\n>  Предмет потерян!"
-                                            else:
-                                                event = f"🧸 | Running through the woods, the dinosaur sees something that looks like a chest.\n> Opening it, he finds: {items_f['items'][item]['nameen']}!"
-
-                                        if mood_n == False:
-
-                                            if user['language_code'] == 'ru':
-                                                event = '🍭 | Отрицательное событие отменено из-за хорошего настроения!'
-                                            else:
-                                                event = '🍭 | Negative event canceled due to good mood!'
-
-                                    elif event[2:] == 'coins':
-
-                                        if mood_n == True:
-                                            if event[:1] == 'm':
-                                                coins = random.randint(1, 2)
-                                            if event[:1] == 'u':
-                                                coins = random.randint(5, 10)
-                                            if event[:1] == 'b':
-                                                coins = random.randint(10, 50)
-                                            if event[:1] == 'y':
-                                                coins = random.randint(50, 100)
-                                            if event[:1] == 'l':
-                                                coins = random.randint(100, 150)
-
-                                            user['coins'] += coins
-
-                                            if user['language_code'] == 'ru':
-                                                event = f'💎 | Ходя по тропинкам, динозавр обронил несколько монет из рюкзака\n>   Вы потеряли {coins} монет.'
-                                            else:
-                                                event = f'💎 | Walking along the paths, the dinosaur dropped some coins from his backpack.   You have lost {coins} coins.'
-
-                                        if mood_n == False:
-                                            if user['language_code'] == 'ru':
-                                                event = '🍭 | Отрицательное событие отменено из-за хорошего настроения!'
-                                            else:
-                                                event = '🍭 | Negative event canceled due to good mood!'
-
-                                    user['dinos'][ dino_id ]['journey_log'].append(event)
-
-
-                        if user['dinos'][dino_id]['stats']['game'] < 40 and user['dinos'][dino_id]['stats']['game'] > 10:
-                            if dino['stats']['mood'] > 0:
-                                if random.randint(1,30) == 1:
-                                    user['dinos'][dino_id]['stats']['mood'] -= random.randint(1,2)
-
-                        if user['dinos'][dino_id]['stats']['game'] < 10:
-                            if dino['stats']['mood'] > 0:
-                                if random.randint(1,15) == 1:
-                                    user['dinos'][dino_id]['stats']['mood'] -= 3
-
-                        if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
+                    if user['dinos'][dino_id]['stats']['game'] < 40 and user['dinos'][dino_id]['stats']['game'] > 10:
+                        if dino['stats']['mood'] > 0:
                             if random.randint(1,30) == 1:
-                                user['dinos'][dino_id]['stats']['heal'] -= random.randint(1,2)
+                                user['dinos'][dino_id]['stats']['mood'] -= random.randint(1,2)
 
-                        if user['dinos'][dino_id]['stats']['eat'] <= 20:
-                            if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
-                                pass
-                            else:
-                                if random.randint(1,40) == 1:
-                                    user['dinos'][dino_id]['stats']['heal'] -= random.randint(0,1)
+                    if user['dinos'][dino_id]['stats']['game'] < 10:
+                        if dino['stats']['mood'] > 0:
+                            if random.randint(1,15) == 1:
+                                user['dinos'][dino_id]['stats']['mood'] -= 3
 
-                        if user['dinos'][dino_id]['stats']['eat'] > 80:
-                            if dino['stats']['mood'] < 100:
-                                if random.randint(1,15) == 1:
-                                    user['dinos'][dino_id]['stats']['mood'] += random.randint(1,10)
+                    if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
+                        if random.randint(1,30) == 1:
+                            user['dinos'][dino_id]['stats']['heal'] -= random.randint(1,2)
 
-                        if user['dinos'][dino_id]['stats']['eat'] <= 40 and user['dinos'][dino_id]['stats']['eat'] != 0:
-                            if dino['stats']['mood'] > 0:
-                                if random.randint(1,30) == 1:
-                                    user['dinos'][dino_id]['stats']['mood'] -= random.randint(1,2)
+                    if user['dinos'][dino_id]['stats']['eat'] <= 20:
+                        if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
+                            pass
+                        else:
+                            if random.randint(1,40) == 1:
+                                user['dinos'][dino_id]['stats']['heal'] -= random.randint(0,1)
 
+                    if user['dinos'][dino_id]['stats']['eat'] > 80:
+                        if dino['stats']['mood'] < 100:
+                            if random.randint(1,15) == 1:
+                                user['dinos'][dino_id]['stats']['mood'] += random.randint(1,10)
 
-                        if user['dinos'][dino_id]['stats']['eat'] > 80 and user['dinos'][dino_id]['stats']['unv'] > 70 and user['dinos'][dino_id]['stats']['mood'] > 50:
+                    if user['dinos'][dino_id]['stats']['eat'] <= 40 and user['dinos'][dino_id]['stats']['eat'] != 0:
+                        if dino['stats']['mood'] > 0:
+                            if random.randint(1,30) == 1:
+                                user['dinos'][dino_id]['stats']['mood'] -= random.randint(1,2)
 
-                            if random.randint(1,6) == 1:
-                                user['dinos'][dino_id]['stats']['heal'] += random.randint(1,4)
-                                user['dinos'][dino_id]['stats']['eat'] -= random.randint(0,1)
+                    if user['dinos'][dino_id]['stats']['eat'] > 80 and user['dinos'][dino_id]['stats']['unv'] > 70 and user['dinos'][dino_id]['stats']['mood'] > 50:
 
-
-                        if user['dinos'][dino_id]['stats']['unv'] >= 100:
-                            user['dinos'][dino_id]['stats']['unv'] = 100
-
-                        if user['dinos'][dino_id]['stats']['unv'] >= 40:
-                            user['notifications']['need_unv'] = False
-
-                        if user['dinos'][dino_id]['stats']['eat'] >= 100:
-                            user['dinos'][dino_id]['stats']['eat'] = 100
-
-                        if user['dinos'][dino_id]['stats']['eat'] >= 50:
-                            user['notifications']['need_eat'] = False
-
-                        if user['dinos'][dino_id]['stats']['game'] >= 100:
-                            user['dinos'][dino_id]['stats']['game'] = 100
-
-                        if user['dinos'][dino_id]['stats']['game'] >= 80:
-                            user['notifications']['need_game'] = False
-
-                        if user['dinos'][dino_id]['stats']['heal'] >= 100:
-                            user['dinos'][dino_id]['stats']['heal'] = 100
-
-                        if user['dinos'][dino_id]['stats']['mood'] >= 100:
-                            user['dinos'][dino_id]['stats']['mood'] = 100
-
-                        if user['dinos'][dino_id]['stats']['mood'] >= 80:
-                            user['notifications']['need_mood'] = False
+                        if random.randint(1,6) == 1:
+                            user['dinos'][dino_id]['stats']['heal'] += random.randint(1,4)
+                            user['dinos'][dino_id]['stats']['eat'] -= random.randint(0,1)
 
 
+                    if user['dinos'][dino_id]['stats']['unv'] > 100:
+                        user['dinos'][dino_id]['stats']['unv'] = 100
+
+                    if user['dinos'][dino_id]['stats']['eat'] > 100:
+                        user['dinos'][dino_id]['stats']['eat'] = 100
+
+                    if user['dinos'][dino_id]['stats']['game'] > 100:
+                        user['dinos'][dino_id]['stats']['game'] = 100
+
+                    if user['dinos'][dino_id]['stats']['heal'] > 100:
+                        user['dinos'][dino_id]['stats']['heal'] = 100
+
+                    if user['dinos'][dino_id]['stats']['mood'] > 100:
+                        user['dinos'][dino_id]['stats']['mood'] = 100
+
+
+                    if dino['stats']['unv'] < 0 or dino['stats']['eat'] < 0 or dino['stats']['game'] < 0 or dino['stats']['mood'] < 0 or dino['stats']['heal'] < 0:
                         if user['dinos'][dino_id]['stats']['unv'] < 0:
                             user['dinos'][dino_id]['stats']['unv'] = 0
 
-                        if user['dinos'][dino_id]['stats']['unv'] <= 30:
-                            if 'need_unv' not in list(user['notifications'].keys()) or user['notifications']['need_unv'] == False:
-                                notifications_manager("need_unv", user, user['dinos'][dino_id]['stats']['unv'])
-                                user['notifications']['need_unv'] = True
 
                         if user['dinos'][dino_id]['stats']['eat'] < 0:
                             user['dinos'][dino_id]['stats']['eat'] = 0
 
-                        if user['dinos'][dino_id]['stats']['eat'] <= 40:
-                            if 'need_eat' not in list(user['notifications'].keys()) or user['notifications']['need_eat'] == False:
-                                notifications_manager("need_eat", user, user['dinos'][dino_id]['stats']['eat'])
 
                         if user['dinos'][dino_id]['stats']['game'] < 0:
                             user['dinos'][dino_id]['stats']['game'] = 0
 
-                        if user['dinos'][dino_id]['stats']['game'] <= 50:
-                            if 'need_game' not in list(user['notifications'].keys()) or user['notifications']['need_game'] == False:
-                                notifications_manager("need_game", user, user['dinos'][dino_id]['stats']['game'])
 
                         if user['dinos'][dino_id]['stats']['mood'] < 0:
                             user['dinos'][dino_id]['stats']['mood'] = 0
 
-                        if user['dinos'][dino_id]['stats']['mood'] <= 70:
-                            if 'need_mood' not in list(user['notifications'].keys()) or user['notifications']['need_mood'] == False:
-                                notifications_manager("need_mood", user, user['dinos'][dino_id]['stats']['mood'])
 
                         if user['dinos'][dino_id]['stats']['heal'] <= 0:
                             user['dinos'][dino_id]['stats']['heal'] = 0
                             del user['dinos'][dino_id]
 
-                            if 'dead' not in list(user['notifications'].keys()) or user['notifications']['dead'] == False:
-                                notifications_manager("dead", user)
+                            if functions.notifications_manager(bot, "dead", user, dino_id = dino_id, met = 'check') == False:
+                                functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
 
 
-                users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
-            users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
-            users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
+            users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
+        users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
+        users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
 
-            expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
-            if user['lvl'][1] >= expp:
-                user['lvl'][0] += 1
-                user['lvl'][1] = user['lvl'][1] - expp
+        expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
+        if user['lvl'][1] >= expp:
+            user['lvl'][0] += 1
+            user['lvl'][1] = user['lvl'][1] - expp
 
-            users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
+        users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
 
-
-        # print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
+        print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
 
 thr1 = threading.Thread(target = check, daemon=True)
 
@@ -877,7 +303,7 @@ def markup(element = 1, user = None):
     markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
     bd_user = users.find_one({"userid": userid})
 
-    if bd_user != None and len(bd_user['dinos']) == 0 and 'dead' in bd_user['notifications'] and bd_user['notifications']['dead'] == True:
+    if bd_user != None and len(bd_user['dinos']) == 0 and functions.notifications_manager(bot, 'dead', bd_user, dino_id = '0', met = 'check') == True and bd_user['notifications']['dead'] == True:
 
         if bd_user['language_code'] == 'ru':
             nl = "🧩 Проект: Возрождение"
@@ -1243,7 +669,7 @@ def command(message):
     time.sleep(60)
     user = message.from_user
     bd_user = users.find_one({"userid": user.id})
-    notifications_manager(message.text[13:][:-3], bd_user, message.text[-2:])
+    functions.notifications_manager(bot, message.text[13:][:-3], bd_user, message.text[-2:], dino_id = '0')
 
 @bot.message_handler(commands=['start', 'main-menu'])
 def on_start(message):
@@ -1263,7 +689,7 @@ def on_start(message):
 def on_message(message):
     user = message.from_user
 
-    # print(user.first_name, message.text)
+    print(user.first_name, message.text)
 
     def trans_paste(fg_img,bg_img,alpha=10,box=(0,0)):
         fg_img_trans = Image.new("RGBA",fg_img.size)
@@ -1634,7 +1060,7 @@ def on_message(message):
 
                                 bot.send_photo(message.chat.id, profile, text, reply_markup = markup(user = user) )
 
-                        n_dp, dp_a = dino_pre_answer(message)
+                        n_dp, dp_a = functions.dino_pre_answer(bot, message)
                         if n_dp == 1:
 
                             bot.send_message(message.chat.id, f'❌', reply_markup = markup(1, user))
@@ -1881,7 +1307,7 @@ def on_message(message):
                                     users.update_one( {"userid": two_user['userid']}, {"$set": {'friends': two_user['friends'] }} )
 
                                     bot.send_message(message.chat.id, f'✔', reply_markup = markup('friends-menu', user))
-                                    notifications_manager('friend_request', two_user)
+                                    functions.notifications_manager(bot, 'friend_request', two_user)
 
                                 else:
 
@@ -2129,7 +1555,7 @@ def on_message(message):
                                         uid = id_names[res[2:]]
 
                                         if list(res)[0] == '❌':
-                                            notifications_manager("friend_rejection", users.find_one({"userid": int(uid) }), user.first_name)
+                                            functions.notifications_manager(bot, "friend_rejection", users.find_one({"userid": int(uid) }), user.first_name)
 
                                             if bd_user['language_code'] == 'ru':
                                                 text = "👥 | Запрос в друзья отклонён!"
@@ -2143,7 +1569,7 @@ def on_message(message):
 
 
                                         if list(res)[0] == '✅':
-                                            notifications_manager("friend_accept", users.find_one({"userid": int(uid) }), user.first_name)
+                                            functions.notifications_manager(bot, "friend_accept", users.find_one({"userid": int(uid) }), user.first_name)
 
                                             if bd_user['language_code'] == 'ru':
                                                 text = "👥 | Запрос в друзья одобрен!"
@@ -2716,7 +2142,7 @@ def on_message(message):
                 if message.text in ['💬 Переименовать', '💬 Rename']:
                     bd_user = users.find_one({"userid": user.id})
                     if bd_user != None:
-                        n_dp, dp_a = dino_pre_answer(message)
+                        n_dp, dp_a = functions.dino_pre_answer(bot, message)
 
                         def rename(message, bd_user, user, dino_user_id, dino):
                             if bd_user['language_code'] == 'ru':
@@ -3520,7 +2946,7 @@ def answer(call):
         if 'eggs' in list(bd_user.keys()):
             egg_n = call.data[11:]
 
-            bd_user['dinos'][ user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 10 * 60, 'egg_id': bd_user['eggs'][int(egg_n)-1]}
+            bd_user['dinos'][ functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 10 * 60, 'egg_id': bd_user['eggs'][int(egg_n)-1]}
 
             users.update_one( {"userid": user.id}, {"$unset": {'eggs': None}} )
             users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
@@ -3789,10 +3215,10 @@ def answer(call):
         user = call.from_user
         bd_user = users.find_one({"userid": user.id})
 
-        if bd_user != None and len(bd_user['dinos']) == 0 and 'dead' in bd_user['notifications'] and bd_user['notifications']['dead'] == True:
+        if bd_user != None and len(bd_user['dinos']) == 0 and functions.notifications_manager(bot, 'dead', bd_user, dino_id = '0', met = 'check') == True and bd_user['notifications']['dead'] == True:
             egg_n = str(random.choice(list(json_f['data']['egg'])))
 
-            bd_user['dinos'][ user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 30 * 60, 'egg_id': egg_n}
+            bd_user['dinos'][ functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 30 * 60, 'egg_id': egg_n}
             bd_user['notifications']['dead'] = False
             bd_user['coins'] -= int(bd_user['notifications']['ans_dead'])
             del bd_user['notifications']['ans_dead']
@@ -3818,6 +3244,7 @@ print(f'Бот {bot.get_me().first_name} запущен!')
 if bot.get_me().first_name == 'DinoGochi':
     thr1.start()
     thr_icub.start()
+    thr_notif.start()
 # thr2.start()
 
 bot.infinity_polling()

@@ -27,9 +27,9 @@
 
  "13": {"nameru": "🦪 Мелкая рыба", "nameen": "🦪 Small fish", "type": "+eat", "act": 20, "class": "Flying"},
 
- "14": {"nameru": "🧥 Походная экипировка", "nameen": "🧥 Hiking equipment", "type": "hunt_ac", "act": 15},
+ "14": {"nameru": "🧥 Экипировка", "nameen": "🧥 Equipment", "type": "hunt_ac", "act": 15},
 
- "15": {"nameru": "⚔ Экипировка путешественника", "nameen": "⚔ Traveler's equipment", "type": "journey_ac", "act": 5},
+ "15": {"nameru": "⚔ Экипировка", "nameen": "⚔ Equipment", "type": "journey_ac", "act": 5},
 
  "16": {"nameru": "🧸 Мишка", "nameen": "🧸 Bear", "type": "unv_ac", "act": 5},
 
@@ -47,7 +47,9 @@
 
  "23": {"nameru": "🥚 Мистическое яйцо", "nameen": "🥚 Rare egg", "type": "egg", "incub_time": 72, "time_tag": "h", "inc_type": "myt"},
 
- "24": {"nameru": "🥚 Легендарное яйцо", "nameen": "🥚 Legendary Egg", "type": "egg", "incub_time": 110, "time_tag": "h", "inc_type": "leg"}
+ "24": {"nameru": "🥚 Легендарное яйцо", "nameen": "🥚 Legendary Egg", "type": "egg", "incub_time": 110, "time_tag": "h", "inc_type": "leg"},
+
+ "25": {"nameru": "📄 Пустая бумажка", "nameen": "📄 An empty piece of paper", "type": "None"}
 
 }
 }
