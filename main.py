@@ -547,7 +547,7 @@ def check(): #проверка каждые 10 секунд
                                             event = f"💭 | Динозавр смог вздремнуть по дороге."
 
                                     elif event == 'random_items':
-                                        items = ["1", "2", '18', '19', '25', '25']
+                                        items = ["1", "2", '17', '18', '19', '25', '25']
                                         item = random.choice(items)
                                         if mood_n == True:
                                             user['inventory'].append(item)
@@ -565,7 +565,7 @@ def check(): #проверка каждые 10 секунд
                                                 event = '❌ | A rare event has been canceled due to a bad mood!'
 
                                     elif event == 'random_items_leg':
-                                        items = ["4", "13", "14", "15", "16"]
+                                        items = ["4", "13", "15", "16"]
                                         item = random.choice(items)
                                         if mood_n == True:
                                             user['inventory'].append(item)
@@ -851,18 +851,17 @@ def check(): #проверка каждые 10 секунд
                                 notifications_manager("dead", user)
 
 
-                        users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
-                        users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
-                        users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
+                users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
+            users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
+            users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
 
-                        expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
-                        if user['lvl'][1] >= expp:
-                            user['lvl'][0] += 1
-                            user['lvl'][1] = user['lvl'][1] - expp
+            expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
+            if user['lvl'][1] >= expp:
+                user['lvl'][0] += 1
+                user['lvl'][1] = user['lvl'][1] - expp
 
-                        users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
-            # except:
-            #     pass
+            users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
+
 
         print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
 
