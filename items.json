@@ -1,6 +1,6 @@
 {"items": {
 
- "1": {"nameru": "🍯 Лечебная баночка мёда", "nameen": "🍯 Medicinal jar of honey", "type": "+heal", "act": 15},
+ "1": {"nameru": "🍯 Баночка мёда", "nameen": "🍯 Jar of honey", "type": "+heal", "act": 15},
 
  "2": {"nameru": "🍪 Печенье", "nameen": "🍪 Cookies", "type": "+eat", "act": 5, "class": "ALL"},
 
