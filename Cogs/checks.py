@@ -63,11 +63,11 @@ class checks:
     @staticmethod
     def hunting(user, dino_id, dino):
 
+        if random.randint(1, 45) == 1:
+            user['lvl'][1] += random.randint(0,20)
+
         if random.randint(1, 65) == 1: #unv
             user['dinos'][dino_id]['stats']['unv'] -= random.randint(0,1)
-
-            if random.randint(1, 45) == 1: #unv
-                user['lvl'][1] += random.randint(0,20)
 
             r = random.randint(1, 15)
             if r == 1:
@@ -168,7 +168,7 @@ class checks:
                             event = '❌ | A rare event has been canceled due to a bad mood!'
 
                 elif event == 'random_items_leg':
-                    items = ["4", "13", "15", "16"]
+                    items = ["4", '14', "15", "16"]
                     item = random.choice(items)
                     if mood_n == True:
                         user['inventory'].append(item)
