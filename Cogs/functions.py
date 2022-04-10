@@ -348,11 +348,16 @@ class functions:
 
                     if user['language_code'] == 'ru':
                         text = f'💥 | {chat.first_name}, ваш динозаврик.... Умер...'
+                        nl = "🧩 Проект: Возрождение"
                     else:
                         text = f'💥 | {chat.first_name}, your dinosaur.... Died...'
+                        nl = '🧩 Project: Rebirth'
+
+                    markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                    markup.add(nl)
 
                     try:
-                        bot.send_message(user['userid'], text, reply_markup = markup(1, user))
+                        bot.send_message(user['userid'], text, reply_markup = markup)
                     except:
                         pass
 
