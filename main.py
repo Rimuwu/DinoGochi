@@ -1935,7 +1935,7 @@ def on_message(message):
                                             if item['inc_type'] == 'unc': eg_q = 'необычная'
                                             if item['inc_type'] == 'rare': eg_q = 'редкая'
                                             if item['inc_type'] == 'myt': eg_q = 'мистическая'
-                                            if item['inc_type'] == 'legendary': eg_q = 'легендарная'
+                                            if item['inc_type'] == 'leg': eg_q = 'легендарная'
 
                                             type = 'яйцо динозавра'
                                             d_text = f"*├* Инкубация: {item['incub_time']}{item['time_tag']}\n"
@@ -1970,7 +1970,7 @@ def on_message(message):
                                             if item['inc_type'] == 'unc': eg_q = 'uncommon'
                                             if item['inc_type'] == 'rare': eg_q = 'rare'
                                             if item['inc_type'] == 'myt': eg_q = 'mystical'
-                                            if item['inc_type'] == 'legendary': eg_q = 'legendary'
+                                            if item['inc_type'] == 'leg': eg_q = 'legendary'
 
                                             type = 'dinosaur egg'
                                             d_text = f"*└* Incubation: {item['incub_time']}{item['time_tag']}\n"

@@ -142,7 +142,7 @@ class checks:
                         if random.randint(1, 45) == 1: #unv
                             user['lvl'][1] += random.randint(0,20)
 
-                        r_e_j = random.randint(1,30)
+                        r_e_j = random.randint(1,60)
                         if r_e_j == 1:
                             if random.randint(1,3) != 1:
 
@@ -352,9 +352,9 @@ class checks:
                                         user['inventory'].remove(item)
 
                                         if user['language_code'] == 'ru':
-                                            event = f"❗ | Бегая по лесам, динозавр обранил {items_f['items'][item]['nameru']}\n>  Предмет потерян!"
+                                            event = f"❗ | Бегая по лесам, динозавр обронил {items_f['items'][item]['nameru']}\n>  Предмет потерян!"
                                         else:
-                                            event = f"🧸 | Running through the woods, the dinosaur sees something that looks like a chest.\n> Opening it, he finds: {items_f['items'][item]['nameen']}!"
+                                            event = f"❗ | Running through the woods, the dinosaur dropped {items_f['items'][item]['nameen']}\n>  The item is lost!"
 
                                     if mood_n == False:
 
