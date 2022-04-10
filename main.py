@@ -84,68 +84,69 @@ def check_notif(): #проверка каждые 5 секунд
 
             for dino_id in dns_l:
                 dino = user['dinos'][dino_id]
+                if dino['status'] == 'dino': #дино
 
-                if dino['activ_status'] == 'sleep':
+                    if dino['activ_status'] == 'sleep':
 
-                    if user['dinos'][dino_id]['stats']['unv'] >= 100:
-                        user['dinos'][dino_id]['activ_status'] = 'pass_active'
-                        functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'check')
+                        if user['dinos'][dino_id]['stats']['unv'] >= 100:
+                            user['dinos'][dino_id]['activ_status'] = 'pass_active'
+                            functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'check')
 
-                if dino['activ_status'] == 'game':
+                    if dino['activ_status'] == 'game':
 
-                    if int(dino['game_time']-time.time()) <= 0:
-                        user['dinos'][dino_id]['activ_status'] = 'pass_active'
-                        functions.notifications_manager(bot, 'game_end', user, None, dino_id, 'check')
+                        if int(dino['game_time']-time.time()) <= 0:
+                            user['dinos'][dino_id]['activ_status'] = 'pass_active'
+                            functions.notifications_manager(bot, 'game_end', user, None, dino_id, 'check')
 
-                        del user['dinos'][ dino_id ]['game_time']
-                        del user['dinos'][ dino_id ]['game_%']
+                            del user['dinos'][ dino_id ]['game_time']
+                            del user['dinos'][ dino_id ]['game_%']
 
-                if dino['activ_status'] == 'journey':
+                    if dino['activ_status'] == 'journey':
 
-                    if int(dino['journey_time']-time.time()) <= 0:
-                        user['dinos'][dino_id]['activ_status'] = 'pass_active'
+                        if int(dino['journey_time']-time.time()) <= 0:
+                            user['dinos'][dino_id]['activ_status'] = 'pass_active'
 
-                        functions.notifications_manager(bot, "journey_end", user, user['dinos'][ dino_id ]['journey_log'], dino_id = dino_id)
+                            functions.notifications_manager(bot, "journey_end", user, user['dinos'][ dino_id ]['journey_log'], dino_id = dino_id)
 
-                        del user['dinos'][ dino_id ]['journey_time']
-                        del user['dinos'][ dino_id ]['journey_log']
+                            del user['dinos'][ dino_id ]['journey_time']
+                            del user['dinos'][ dino_id ]['journey_log']
 
-                if dino['activ_status'] == 'hunting':
+                    if dino['activ_status'] == 'hunting':
 
-                    if dino['target'][0] >= dino['target'][1]:
-                        del user['dinos'][ dino_id ]['target']
-                        del user['dinos'][ dino_id ]['h_type']
-                        user['dinos'][dino_id]['activ_status'] = 'pass_active'
+                        if dino['target'][0] >= dino['target'][1]:
+                            del user['dinos'][ dino_id ]['target']
+                            del user['dinos'][ dino_id ]['h_type']
+                            user['dinos'][dino_id]['activ_status'] = 'pass_active'
 
-                        functions.notifications_manager(bot, "hunting_end", user, dino_id = dino_id)
+                            functions.notifications_manager(bot, "hunting_end", user, dino_id = dino_id)
 
-                if user['dinos'][dino_id]['stats']['mood'] <= 70:
-                    if functions.notifications_manager(bot, "need_mood", user, dino_id = dino_id, met = 'check') == False:
-                        functions.notifications_manager(bot, "need_mood", user, user['dinos'][dino_id]['stats']['mood'], dino_id = dino_id)
+                    if user['dinos'][dino_id]['stats']['mood'] <= 70:
+                        if functions.notifications_manager(bot, "need_mood", user, dino_id = dino_id, met = 'check') == False:
+                            functions.notifications_manager(bot, "need_mood", user, user['dinos'][dino_id]['stats']['mood'], dino_id = dino_id)
 
-                if user['dinos'][dino_id]['stats']['game'] <= 50:
-                    if functions.notifications_manager(bot, "need_game", user, dino_id = dino_id, met = 'check') == False:
-                        functions.notifications_manager(bot, "need_game", user, user['dinos'][dino_id]['stats']['game'], dino_id = dino_id)
+                    if user['dinos'][dino_id]['stats']['game'] <= 50:
+                        if functions.notifications_manager(bot, "need_game", user, dino_id = dino_id, met = 'check') == False:
+                            functions.notifications_manager(bot, "need_game", user, user['dinos'][dino_id]['stats']['game'], dino_id = dino_id)
 
-                if user['dinos'][dino_id]['stats']['eat'] <= 40:
-                    if functions.notifications_manager(bot, "need_eat", user, dino_id = dino_id, met = 'check') == False:
-                        functions.notifications_manager(bot, "need_eat", user, user['dinos'][dino_id]['stats']['eat'], dino_id = dino_id)
+                    if user['dinos'][dino_id]['stats']['eat'] <= 40:
+                        if functions.notifications_manager(bot, "need_eat", user, dino_id = dino_id, met = 'check') == False:
+                            functions.notifications_manager(bot, "need_eat", user, user['dinos'][dino_id]['stats']['eat'], dino_id = dino_id)
 
-                if user['dinos'][dino_id]['stats']['unv'] <= 30:
-                    if functions.notifications_manager(bot, "need_unv", user, dino_id = dino_id, met = 'check') == False:
-                        functions.notifications_manager(bot, "need_unv", user, user['dinos'][dino_id]['stats']['unv'], dino_id = dino_id)
+                    if user['dinos'][dino_id]['stats']['unv'] <= 30:
+                        if functions.notifications_manager(bot, "need_unv", user, dino_id = dino_id, met = 'check') == False:
+                            functions.notifications_manager(bot, "need_unv", user, user['dinos'][dino_id]['stats']['unv'], dino_id = dino_id)
 
-                if user['dinos'][dino_id]['stats']['mood'] >= 80:
-                    functions.notifications_manager(bot, 'need_mood', user, dino_id = dino_id, met = 'delete')
+                    if user['dinos'][dino_id]['stats']['mood'] >= 80:
+                        functions.notifications_manager(bot, 'need_mood', user, dino_id = dino_id, met = 'delete')
 
-                if user['dinos'][dino_id]['stats']['game'] >= 80:
-                    functions.notifications_manager(bot, 'need_game', user,dino_id = dino_id, met = 'delete')
+                    if user['dinos'][dino_id]['stats']['game'] >= 80:
+                        functions.notifications_manager(bot, 'need_game', user,dino_id = dino_id, met = 'delete')
 
-                if user['dinos'][dino_id]['stats']['eat'] >= 50:
-                    functions.notifications_manager(bot, 'need_eat', user,dino_id = dino_id, met = 'delete')
+                    if user['dinos'][dino_id]['stats']['eat'] >= 50:
+                        functions.notifications_manager(bot, 'need_eat', user,dino_id = dino_id, met = 'delete')
 
-                if user['dinos'][dino_id]['stats']['unv'] >= 40:
-                    functions.notifications_manager(bot, 'need_unv', user,dino_id = dino_id, met = 'delete')
+                    if user['dinos'][dino_id]['stats']['unv'] >= 40:
+                        functions.notifications_manager(bot, 'need_unv', user,dino_id = dino_id, met = 'delete')
 
             users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
 
@@ -3372,7 +3373,7 @@ def answer(call):
 
 
 print(f'Бот {bot.get_me().first_name} запущен!')
-if bot.get_me().first_name == 'DinoGochi':
+if bot.get_me().first_name != 'DinoGochi':
     thr1.start()
     thr_icub.start()
     thr_notif.start()
