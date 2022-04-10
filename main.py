@@ -24,6 +24,7 @@ bot = telebot.TeleBot(config.TOKEN)
 
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
+referal_system = client.bot.referal_system
 
 with open('items.json', encoding='utf-8') as f:
     items_f = json.load(f)
@@ -63,7 +64,10 @@ def check_incub(): #проверка каждые 5 секунд
 
                         functions.notifications_manager(bot, "5_min_incub", user, dino, dino_id, met = 'delete')
 
-                        functions.random_dino(user, dino_id)
+                        if 'quality' in dino.keys():
+                            functions.random_dino(user, dino_id, dino['quality'])
+                        else:
+                            functions.random_dino(user, dino_id)
                         functions.notifications_manager(bot, "incub", user, dino_id)
 
         checks_data['incub'][0] = int(time.time() - t_st)
@@ -184,7 +188,7 @@ def markup(element = 1, user = None):
     markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
     bd_user = users.find_one({"userid": userid})
 
-    if bd_user != None and len(bd_user['dinos']) == 0 and functions.notifications_manager(bot, 'dead', bd_user, dino_id = '0', met = 'check') == True and bd_user['notifications']['dead'] == True:
+    if bd_user != None and len(bd_user['dinos']) == 0 and functions.notifications_manager(bot, 'dead', bd_user, dino_id = '1', met = 'check') == True:
 
         if bd_user['language_code'] == 'ru':
             nl = "🧩 Проект: Возрождение"
@@ -257,9 +261,11 @@ def markup(element = 1, user = None):
     elif element == "friends-menu" and bd_user != None:
 
         if bd_user['language_code'] == 'ru':
+            #nl = ["➕ Добавить", '📜 Список', '➖ Удалить', '💌 Запросы', '🤍 Пригласи друга', '↪ Назад']
             nl = ["➕ Добавить", '📜 Список', '➖ Удалить', '💌 Запросы', '↪ Назад']
 
         else:
+            #nl = ["➕ Add", '📜 List', '➖ Delete', '💌 Inquiries', '🤍 Invite a friend', '↪ Back']
             nl = ["➕ Add", '📜 List', '➖ Delete', '💌 Inquiries', '↪ Back']
 
         item1 = types.KeyboardButton(nl[0])
@@ -267,8 +273,43 @@ def markup(element = 1, user = None):
         item3 = types.KeyboardButton(nl[2])
         item4 = types.KeyboardButton(nl[3])
         item5 = types.KeyboardButton(nl[4])
+        item6 = types.KeyboardButton(nl[5])
 
         markup.add(item1, item2, item3, item4, item5)
+        markup.add(item6)
+
+    elif element == "referal-system" and bd_user != None:
+
+        if 'referal_system' in bd_user.keys():
+
+            if bd_user['language_code'] == 'ru':
+                nl = [f'🎲 Код: {bd_user["referal_system"]["my_cod"]}', '👥 Меню друзей']
+
+                if bd_user["referal_system"]["friend_cod"] == None:
+                    nl.insert(1, '🎞 Ввести код')
+                else:
+                    nl.insert(1, f'🎞 Друг: {bd_user["referal_system"]["friend_cod"]}')
+            else:
+                nl = [f'🎲 Code: {bd_user["referal_system"]["my_cod"]}', '👥 Friends Menu']
+
+                if bd_user["referal_system"]["friend_cod"] == None:
+                    nl.insert(1, '🎞 Enter Code')
+                else:
+                    nl.insert(1, f'🎞 Friend: {bd_user["referal_system"]["friend_cod"]}')
+
+        else:
+
+            if bd_user['language_code'] == 'ru':
+                nl = ['🎲 Сгенерировать код', '🎞 Ввести код', '👥 Меню друзей']
+            else:
+                nl = ['🎲 Generate Code', '🎞 Enter Code', '👥 Friends Menu']
+
+        item1 = types.KeyboardButton(nl[0])
+        item2 = types.KeyboardButton(nl[1])
+        item3 = types.KeyboardButton(nl[2])
+
+        markup.add(item1, item2)
+        markup.add(item3)
 
     elif element == 'actions' and bd_user != None:
         markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
@@ -2154,7 +2195,8 @@ def on_message(message):
 
                                 else:
 
-                                    bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['activ_status'] = 'sleep'
+                                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] = 'sleep'
+                                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_start'] = int(time.time())
                                     users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
 
                                     if bd_user['language_code'] == 'ru':
@@ -2176,21 +2218,32 @@ def on_message(message):
 
                         if dino['activ_status'] == 'sleep' and dino != None:
                             r_n = random.randint(0, 20)
+                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] = 'pass_active'
 
-                            bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['activ_status'] = 'pass_active'
-                            bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['stats']['mood'] -= r_n
+                            if 'sleep_start' in bd_user['dinos'][ bd_user['settings']['dino_id'] ].keys() and int(time.time()) - bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_start'] >= 8 * 3600:
 
-                            if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['stats']['mood'] < 0:
-                                bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['stats']['mood'] = 0
+                                if bd_user['language_code'] == 'ru':
+                                    text = f'🌙 Ваш динозавр пробудился.'
+                                else:
+                                    text = f"🌙 Your dinosaur has awakened."
+
+                                bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+
+                            else:
+
+                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= r_n
+
+                                if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] < 0:
+                                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] = 0
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = f'🌙 Ваш динозавр пробудился. Он сильно не доволен что вы его разбудили!\nДинозавр потерял {r_n}% настроения.'
+                                else:
+                                    text = f"🌙 Your dinosaur has awakened. He is very unhappy that you woke him up!\nDinosaur lost {r_n}% of mood."
+
+                                bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
 
                             users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
-
-                            if bd_user['language_code'] == 'ru':
-                                text = f'🌙 Ваш динозавр пробудился. Он сильно не доволен что вы его разбудили!\nДинозавр потерял {r_n}% настроения.'
-                            else:
-                                text = f"🌙 Your dinosaur has awakened. He is very unhappy that you woke him up!\nDinosaur lost {r_n}% of mood."
-
-                            bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
 
                         else:
                             bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
@@ -2246,28 +2299,28 @@ def on_message(message):
                                 if bd_user['language_code'] == 'ru':
                                     text = f'🦖 | Вы вернули динозавра из путешествия!\nВот что произошло в его путешествии:\n'
 
-                                    if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log'] == []:
+                                    if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_log'] == []:
                                         text += 'Ничего не произошло!'
                                     else:
                                         n = 1
-                                        for el in bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log']:
+                                        for el in bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_log']:
                                             text += f'<b>{n}.</b> {el}\n\n'
                                             n += 1
                                 else:
                                     text = f"🦖 | Turned the dinosaur out of the journey!\nHere's what happened on his journey:\n"
 
-                                    if bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log'] == []:
+                                    if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_log'] == []:
                                         text += 'Nothing happened!'
                                     else:
                                         n = 1
-                                        for el in bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log']:
+                                        for el in bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_log']:
                                             text += f'<b>{n}.</b> {el}\n\n'
                                             n += 1
 
 
-                                bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['activ_status'] = 'pass_active'
-                                del bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_time']
-                                del bd_user['dinos'][ list(bd_user['dinos'].keys())[0] ]['journey_log']
+                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] = 'pass_active'
+                                del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_time']
+                                del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_log']
 
                                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
 
@@ -2748,6 +2801,7 @@ def on_message(message):
 
 
                 if message.text in ['🍕 Прогресс', '🍕 Progress']:
+
                     if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] == 'hunting':
                         number = bd_user['dinos'][ bd_user['settings']['dino_id'] ]['target'][0]
                         tnumber = bd_user['dinos'][ bd_user['settings']['dino_id'] ]['target'][1]
@@ -2759,6 +2813,162 @@ def on_message(message):
                             text = f'🍱 | Current progress: {int( prog )}%\n🎲 | Goal: {tnumber}'
 
                         bot.send_message(message.chat.id, text)
+
+                if message.text in ['🤍 Пригласи друга', '🤍 Invite a friend']:
+
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+                        dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+                        coins = 200
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f"🤍 | Перенаправление в меню реферальной системы!\n\n💜 | При достижению 5-го уровня вашим другом, вы получите 🥚 Необычное/Редкое яйцо динозавра!\n\n❤ | Друг получит бонус в размере: {coins} монет,\n 🍯 Баночка мёда х2, 🧸 Мишка, 🍗 Куриная ножка x2, 🍒 Ягоды x2, 🦪 Мелкая рыба x2, 🍪 Печенье x2"
+
+                        else:
+                            text = f"🤍 | Redirection to the referral system menu!\n\n💜 | When your friend reaches the 5th level, you will receive an Unusual/Rare dinosaur egg!\n\n❤ | Friend will receive a bonus: {coins} coins,\n 🍯 Jar of honey x2, 🧸 Bear, 🍗 Chicken leg x2, 🍒 Berries x2, 🦪 Small fish x2, 🍪 Cookies x2"
+
+                        bot.send_message(message.chat.id, text, reply_markup = markup("referal-system", user))
+
+                if message.text in ['👥 Меню друзей', '👥 Friends Menu']:
+
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+                        dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f"👥 | Перенаправление в меню друзей!"
+
+                        else:
+                            text = f"👥 | Redirecting to the friends menu!"
+
+                        bot.send_message(message.chat.id, text, reply_markup = markup("friends-menu", user))
+
+                if message.text in ['🎲 Сгенерировать код', '🎲 Generate Code']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+                        if 'referal_system' not in bd_user.keys():
+                            rf = referal_system.find_one({"id": 1})
+                            def r_cod():
+                                code_rf = ''
+                                for i in range(6):
+                                    code_rf += str(random.randint(0,9))
+                                return code_rf
+
+                            rf_code = r_cod()
+                            while rf_code in rf['codes']:
+                                rf_code = r_cod()
+
+                            rf['codes'].append(rf_code)
+                            referal_system.update_one( {"id": 1}, {"$set": {'codes': rf['codes'] }} )
+
+                            bd_user['referal_system'] = {'my_cod': rf_code, 'friend_cod': None}
+                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'referal_system': bd_user['referal_system'] }} )
+
+                            if bd_user['language_code'] == 'ru':
+                                text = f"🎲 | Ваш код сгенерирован!\nКод: `{rf_code}`"
+
+                            else:
+                                text = f"🎲 | Your code is generated!\nСode: `{rf_code}`"
+
+                            bot.send_message(message.chat.id, text, parse_mode = 'Markdown', reply_markup = markup("referal-system", user))
+
+                if message.text in ['🎞 Ввести код', '🎞 Enter Code']:
+                    rf = referal_system.find_one({"id": 1})
+
+                    def ret(message, bd_user):
+                        if message.text in rf['codes']:
+                            if str(bd_user['referal_system']['my']) != message.text:
+                                items = ['1', '1', '2', '2', '16', '12', '12', '11', '11', '13', '13']
+                                coins = 200
+                                bd_user['coins'] += coins
+                                for i in items:
+                                    bd_user['inventory'].append(i)
+
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'coins': bd_user['coins'] }} )
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = f"❤🤍💜 | Код друга активирован!\n\n❤ | Спасибо что поддерживаете и помогаете развивать нашего бота, приглашая друзей!\n\n🤍 | По достижению 5-го уровня, ваш друг получит 🥚 Необычное/Редкое яйцо динозавра!\n\n💜 | Вы получаете бонус в размере: {coins} монет, 🍯 Баночка мёда х2, 🧸 Мишка, 🍗 Куриная ножка x2, 🍒 Ягоды x2, 🦪 Мелкая рыба x2, 🍪 Печенье x2"
+
+                                else:
+                                    text = f"❤🤍💜 | The friend's code is activated!\n\n❤ | Thank you for supporting and helping to develop our bot by inviting friends!\n\n🤍 | Upon reaching level 5, your friend will receive an 🥚 Unusual/Rare Dinosaur Egg!\n\n💜 | You get a bonus: {coins} coins, 🍯 Jar of honey x2, 🧸 Bear, 🍗 Chicken leg x2, 🍒 Berries x2, 🦪 Small fish x2, 🍪 Cookies x2"
+
+                            else:
+                                if bd_user['language_code'] == 'ru':
+                                    text = f"❗ | Вы не можете активировать свой код друга!"
+
+                                else:
+                                    text = f"❗ | You can't activate your friend code!"
+                        else:
+                            if bd_user['language_code'] == 'ru':
+                                text = f"❗ | Код не найден!"
+
+                            else:
+                                text = f"❗ | Code not found!"
+
+                        bot.send_message(message.chat.id, text, reply_markup = markup("referal-system", user))
+
+
+
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+                        if 'referal_system' not in bd_user.keys():
+                            rf = referal_system.find_one({"id": 1})
+                            def r_cod():
+                                code_rf = ''
+                                for i in range(6):
+                                    code_rf += str(random.randint(0,9))
+                                return code_rf
+
+                            rf_code = r_cod()
+                            while rf_code in rf['codes']:
+                                rf_code = r_cod()
+
+                            rf['codes'].append(rf_code)
+                            referal_system.update_one( {"id": 1}, {"$set": {'codes': rf['codes'] }} )
+
+                            bd_user['referal_system'] = {'my_cod': rf_code, 'friend_cod': None}
+                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'referal_system': bd_user['referal_system'] }} )
+
+                            if bd_user['language_code'] == 'ru':
+                                text = f"🎲 | Ваш код сгенерирован!\nКод: `{rf_code}`"
+
+                            else:
+                                text = f"🎲 | Your code is generated!\nСode: `{rf_code}`"
+
+                            bot.send_message(message.chat.id, text, parse_mode = 'Markdown', reply_markup = markup("referal-system", user))
+
+                            if bd_user['language_code'] == 'ru':
+                                ans = ['↪ Назад']
+                                text = '👥 | Введите код-приглашение друга > '
+                            else:
+                                ans = ['↪ Back']
+                                text = "👥 | Enter a friend's invitation code >"
+
+                            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                            rmk.add(ans[0])
+
+
+                            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                            bot.register_next_step_handler(msg, ret, bd_user)
+
+                        else:
+
+
+                            if bd_user['language_code'] == 'ru':
+                                ans = ['↪ Назад']
+                                text = '👥 | Введите код-приглашение друга > '
+                            else:
+                                ans = ['↪ Back']
+                                text = "👥 | Enter a friend's invitation code >"
+
+                            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                            rmk.add(ans[0])
+
+
+                            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                            bot.register_next_step_handler(msg, ret, bd_user)
+
 
 
 
@@ -3117,11 +3327,11 @@ def answer(call):
         user = call.from_user
         bd_user = users.find_one({"userid": user.id})
 
-        if bd_user != None and len(bd_user['dinos']) == 0 and functions.notifications_manager(bot, 'dead', bd_user, dino_id = '0', met = 'check') == True and bd_user['notifications']['dead'] == True:
+        if bd_user != None and len(bd_user['dinos']) == 0 and functions.notifications_manager(bot, 'dead', bd_user, dino_id = '1', met = 'check') == True:
             egg_n = str(random.choice(list(json_f['data']['egg'])))
 
             bd_user['dinos'][ functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 30 * 60, 'egg_id': egg_n}
-            bd_user['notifications']['dead'] = False
+            del bd_user['notifications']['1']
             bd_user['coins'] -= int(bd_user['notifications']['ans_dead'])
             del bd_user['notifications']['ans_dead']
 
@@ -3129,6 +3339,8 @@ def answer(call):
             users.update_one( {"userid": user.id}, {"$set": {'notifications': bd_user['notifications']}} )
             users.update_one( {"userid": user.id}, {"$set": {'coins': bd_user['coins']}} )
             users.update_one( {"userid": user.id}, {"$set": {'inventory': [] }} )
+
+            bd_user = users.find_one({"userid": user.id})
 
 
             if bd_user['language_code'] == 'ru':
@@ -3189,7 +3401,7 @@ def answer(call):
 
                         egg_n = str(random.choice(list(json_f['data']['egg'])))
 
-                        bd_user['dinos'][ functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': inc_time, 'egg_id': egg_n}
+                        bd_user['dinos'][ functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': inc_time, 'egg_id': egg_n, 'quality': item['inc_type']}
                         bd_user['inventory'].remove(it_id)
                         users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
                         users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )

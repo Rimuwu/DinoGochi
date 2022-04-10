@@ -178,18 +178,19 @@ class functions:
             return str(max(id_list) + 1)
 
     @staticmethod
-    def random_dino(user, dino_id_remove):
-        r_q = random.randint(1, 10000)
-        if r_q in list(range(1, 5001)):
-            quality = 'com'
-        elif r_q in list(range(5001, 7501)):
-            quality = 'unc'
-        elif r_q in list(range(7501, 9001)):
-            quality = 'rar'
-        elif r_q in list(range(9001, 9801)):
-            quality = 'myt'
-        else:
-            quality = 'leg'
+    def random_dino(user, dino_id_remove, quality = None):
+        if quality == None:
+            r_q = random.randint(1, 10000)
+            if r_q in list(range(1, 5001)):
+                quality = 'com'
+            elif r_q in list(range(5001, 7501)):
+                quality = 'unc'
+            elif r_q in list(range(7501, 9001)):
+                quality = 'rar'
+            elif r_q in list(range(9001, 9801)):
+                quality = 'myt'
+            else:
+                quality = 'leg'
 
         dino_id = None
 
