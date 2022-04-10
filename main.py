@@ -203,7 +203,9 @@ def check(): #проверка каждые 10 секунд
 
                     elif dino['activ_status'] == 'hunting':
 
+                        slv = str(user['lvl'])
                         user = checks.hunting(user, dino_id, dino)
+                        print(user['lvl'], slv)
 
                     elif dino['activ_status'] == 'journey':
 
@@ -288,18 +290,21 @@ def check(): #проверка каждые 10 секунд
                                 functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
 
 
-            users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
-            users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
-            users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
+                users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
 
-            expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
-            if user['lvl'][1] >= expp:
-                user['lvl'][0] += 1
-                user['lvl'][1] = user['lvl'][1] - expp
+                users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
 
-            users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
+                users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
 
-        # print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
+                expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
+                if user['lvl'][1] >= expp:
+                    user['lvl'][0] += 1
+                    user['lvl'][1] = user['lvl'][1] - expp
+
+
+                users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
+
+        print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
         checks_data['main'][0] = int(int(time.time()) - t_st)
         checks_data['main'][1] = int(time.time())
         checks_data['us'] = nn
