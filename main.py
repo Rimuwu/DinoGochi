@@ -153,161 +153,18 @@ def check_notif(): #проверка каждые 5 секунд
         # print(f'Проверка уведомлений - {int(time.time()) - t_st}s {nn}u')
         checks_data['notif'][0] = int(time.time() - t_st)
         checks_data['notif'][1] = int(time.time())
+        checks_data['us'] = nn
 
 thr_notif = threading.Thread(target = check_notif, daemon=True)
 
 def check(): #проверка каждые 10 секунд
+
+    def alpha():
+        checks.main()
+
     while True:
-        nn = 0
+        main = threading.Thread(target = alpha, daemon=True).start()
         time.sleep(10)
-        t_st = int(time.time())
-
-        members = users.find({ })
-        for user in members:
-
-            nn += 1
-            dns_l = list(user['dinos'].keys()).copy()
-
-            for dino_id in dns_l:
-                dino = user['dinos'][dino_id]
-
-                if dino['status'] == 'dino': #дино
-                #stats  - pass_active (ничего) sleep - (сон) journey - (путешествиеф)
-
-                    if dino['activ_status'] != 'sleep':
-                        if random.randint(1, 55) == 1: #eat
-                            user['dinos'][dino_id]['stats']['eat'] -= random.randint(1,2)
-                    else:
-                        if random.randint(1, 80) == 1: #eat
-                            user['dinos'][dino_id]['stats']['eat'] -= random.randint(1,2)
-
-                    if dino['activ_status'] != 'game':
-                        if random.randint(1, 60) == 1: #game
-                            user['dinos'][dino_id]['stats']['game'] -= random.randint(1,2)
-
-                    if dino['activ_status'] != 'sleep':
-                        if random.randint(1, 130) == 1: #unv
-                            user['dinos'][dino_id]['stats']['unv'] -= random.randint(1,2)
-
-                    if dino['activ_status'] == 'pass_active':
-
-                        user = checks.pass_active(user, dino_id, dino)
-
-                    elif dino['activ_status'] == 'sleep':
-
-                        user = checks.sleep(user, dino_id, dino)
-
-                    elif dino['activ_status'] == 'game':
-
-                        user = checks.game(user, dino_id, dino)
-
-                    elif dino['activ_status'] == 'hunting':
-
-                        slv = str(user['lvl'])
-                        user = checks.hunting(user, dino_id, dino)
-                        print(user['lvl'], slv)
-
-                    elif dino['activ_status'] == 'journey':
-
-                        user = checks.journey(user, dino_id, dino, items_f)
-
-                    if user['dinos'][dino_id]['stats']['game'] < 40 and user['dinos'][dino_id]['stats']['game'] > 10:
-                        if dino['stats']['mood'] > 0:
-                            if random.randint(1,30) == 1:
-                                user['dinos'][dino_id]['stats']['mood'] -= random.randint(1,2)
-
-                    if user['dinos'][dino_id]['stats']['game'] < 10:
-                        if dino['stats']['mood'] > 0:
-                            if random.randint(1,15) == 1:
-                                user['dinos'][dino_id]['stats']['mood'] -= 3
-
-                    if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
-                        if random.randint(1,30) == 1:
-                            user['dinos'][dino_id]['stats']['heal'] -= random.randint(1,2)
-
-                    if user['dinos'][dino_id]['stats']['eat'] <= 20:
-                        if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
-                            pass
-                        else:
-                            if random.randint(1,40) == 1:
-                                user['dinos'][dino_id]['stats']['heal'] -= random.randint(0,1)
-
-                    if user['dinos'][dino_id]['stats']['eat'] > 80:
-                        if dino['stats']['mood'] < 100:
-                            if random.randint(1,15) == 1:
-                                user['dinos'][dino_id]['stats']['mood'] += random.randint(1,10)
-
-                    if user['dinos'][dino_id]['stats']['eat'] <= 40 and user['dinos'][dino_id]['stats']['eat'] != 0:
-                        if dino['stats']['mood'] > 0:
-                            if random.randint(1,30) == 1:
-                                user['dinos'][dino_id]['stats']['mood'] -= random.randint(1,2)
-
-                    if user['dinos'][dino_id]['stats']['eat'] > 80 and user['dinos'][dino_id]['stats']['unv'] > 70 and user['dinos'][dino_id]['stats']['mood'] > 50:
-
-                        if random.randint(1,6) == 1:
-                            user['dinos'][dino_id]['stats']['heal'] += random.randint(1,4)
-                            user['dinos'][dino_id]['stats']['eat'] -= random.randint(0,1)
-
-
-                    if user['dinos'][dino_id]['stats']['unv'] > 100:
-                        user['dinos'][dino_id]['stats']['unv'] = 100
-
-                    if user['dinos'][dino_id]['stats']['eat'] > 100:
-                        user['dinos'][dino_id]['stats']['eat'] = 100
-
-                    if user['dinos'][dino_id]['stats']['game'] > 100:
-                        user['dinos'][dino_id]['stats']['game'] = 100
-
-                    if user['dinos'][dino_id]['stats']['heal'] > 100:
-                        user['dinos'][dino_id]['stats']['heal'] = 100
-
-                    if user['dinos'][dino_id]['stats']['mood'] > 100:
-                        user['dinos'][dino_id]['stats']['mood'] = 100
-
-
-                    if dino['stats']['unv'] < 0 or dino['stats']['eat'] < 0 or dino['stats']['game'] < 0 or dino['stats']['mood'] < 0 or dino['stats']['heal'] < 0:
-                        if user['dinos'][dino_id]['stats']['unv'] < 0:
-                            user['dinos'][dino_id]['stats']['unv'] = 0
-
-
-                        if user['dinos'][dino_id]['stats']['eat'] < 0:
-                            user['dinos'][dino_id]['stats']['eat'] = 0
-
-
-                        if user['dinos'][dino_id]['stats']['game'] < 0:
-                            user['dinos'][dino_id]['stats']['game'] = 0
-
-
-                        if user['dinos'][dino_id]['stats']['mood'] < 0:
-                            user['dinos'][dino_id]['stats']['mood'] = 0
-
-
-                        if user['dinos'][dino_id]['stats']['heal'] <= 0:
-                            user['dinos'][dino_id]['stats']['heal'] = 0
-                            del user['dinos'][dino_id]
-
-                            if functions.notifications_manager(bot, "dead", user, dino_id = dino_id, met = 'check') == False:
-                                functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
-
-
-                users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
-
-                users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
-
-                users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
-
-                expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
-                if user['lvl'][1] >= expp:
-                    user['lvl'][0] += 1
-                    user['lvl'][1] = user['lvl'][1] - expp
-
-
-                users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
-
-        print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
-        checks_data['main'][0] = int(int(time.time()) - t_st)
-        checks_data['main'][1] = int(time.time())
-        checks_data['us'] = nn
 
 thr1 = threading.Thread(target = check, daemon=True)
 
