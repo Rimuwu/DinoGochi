@@ -113,7 +113,7 @@ class checks:
                         if random.randint(1, 65) == 1: #unv
                             user['dinos'][dino_id]['stats']['unv'] -= random.randint(0,1)
 
-                        r = random.randint(1, 2)
+                        r = random.randint(1, 15)
                         if r == 1:
 
                             if dino['h_type'] == 'all':
@@ -484,6 +484,6 @@ class checks:
 
             users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
 
-        print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
+        # print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
         # checks_data['main'][0] = int(int(time.time()) - t_st)
         # checks_data['main'][1] = int(time.time())
