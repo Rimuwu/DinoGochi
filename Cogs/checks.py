@@ -10,7 +10,6 @@ import pprint
 
 sys.path.append("..")
 import config
-# from main import checks_data
 
 
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
