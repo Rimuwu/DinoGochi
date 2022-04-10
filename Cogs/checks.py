@@ -7,6 +7,7 @@ import time
 import os
 import sys
 import pprint
+from functions import functions
 
 sys.path.append("..")
 import config
