@@ -289,15 +289,15 @@ def check(): #проверка каждые 10 секунд
 
 
             users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
-        users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
-        users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
+            users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
+            users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
 
-        expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
-        if user['lvl'][1] >= expp:
-            user['lvl'][0] += 1
-            user['lvl'][1] = user['lvl'][1] - expp
+            expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
+            if user['lvl'][1] >= expp:
+                user['lvl'][0] += 1
+                user['lvl'][1] = user['lvl'][1] - expp
 
-        users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
+            users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
 
         # print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
         checks_data['main'][0] = int(int(time.time()) - t_st)
