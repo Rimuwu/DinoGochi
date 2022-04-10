@@ -464,12 +464,8 @@ class checks:
                             user['dinos'][dino_id]['stats']['mood'] = 0
 
 
-                        if user['dinos'][dino_id]['stats']['heal'] <= 0:
+                        if user['dinos'][dino_id]['stats']['heal'] < 0:
                             user['dinos'][dino_id]['stats']['heal'] = 0
-                            del user['dinos'][dino_id]
-
-                            if functions.notifications_manager(bot, "dead", user, dino_id = dino_id, met = 'check') == False:
-                                functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
 
 
             users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
