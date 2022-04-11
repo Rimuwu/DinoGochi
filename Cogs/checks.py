@@ -486,6 +486,9 @@ class checks:
 
             bd_user = users.find_one({"userid": user['userid']})
             if len(user['dinos']) != 0:
+                pprint.pprint(bd_user['dinos'])
+                print('------')
+                pprint.pprint(user['dinos'])
                 users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
 
             if bd_user['coins'] != user['coins']:
