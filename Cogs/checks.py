@@ -485,27 +485,29 @@ class checks:
 
 
             bd_user = users.find_one({"userid": user['userid']})
-            if len(bd_user['dinos']) == len(user['dinos']):
+            if len(bd_user['dinos']) != 0:
                 users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
 
-            users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
+            if bd_user['coins'] != user['coins']:
+                users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
 
-            expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
-            if user['lvl'][0] < 100:
-                if user['lvl'][1] >= expp:
-                    user['lvl'][0] += 1
-                    user['lvl'][1] = user['lvl'][1] - expp
+            if user['lvl'][0] != bd_user['lvl'][0]:
+                expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
+                if user['lvl'][0] < 100:
+                    if user['lvl'][1] >= expp:
+                        user['lvl'][0] += 1
+                        user['lvl'][1] = user['lvl'][1] - expp
 
-                    if user['lvl'][0] == 5:
-                        if 'referal_system' in user.keys():
-                            if 'friend' in user['referal_system'].keys():
-                                egg = random.choice(['20', '22'])
-                                rf_fr = users.find_one({"userid": user['referal_system']['friend']})
-                                rf_fr['inventory'].append(egg)
+                        if user['lvl'][0] == 5:
+                            if 'referal_system' in user.keys():
+                                if 'friend' in user['referal_system'].keys():
+                                    egg = random.choice(['20', '22'])
+                                    rf_fr = users.find_one({"userid": user['referal_system']['friend']})
+                                    rf_fr['inventory'].append(egg)
 
-                                users.update_one( {"userid": rf_fr['userid']}, {"$set": {'inventory': rf_fr['inventory'] }} )
+                                    users.update_one( {"userid": rf_fr['userid']}, {"$set": {'inventory': rf_fr['inventory'] }} )
 
-            users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
+                users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
 
 
         # print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
