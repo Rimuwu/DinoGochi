@@ -486,8 +486,7 @@ class checks:
 
 
             bd_user = users.find_one({"userid": user['userid']})
-            if len(user['dinos']) != 0:
-                users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
+            users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
 
             if bd_user['coins'] != user['coins']:
                 users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
