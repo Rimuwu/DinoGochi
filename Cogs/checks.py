@@ -135,9 +135,10 @@ class checks:
                             i_count = random.randint(1, 2)
                             for i in list(range(i_count)):
                                 user['inventory'].append(str(item))
-                                dino['target'][0] += 1
+                                user['dinos'][dino_id]['target'][0] += 1
 
                             users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
+                            print(user['userid'], dino['target'][0])
 
 
                     elif dino['activ_status'] == 'journey':
