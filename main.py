@@ -18,8 +18,6 @@ sys.path.append("Cogs")
 from functions import functions
 from checks import checks
 
-checks_data = {'memory': [0, time.time()], 'incub': [0, time.time()], 'notif': [0, time.time()], 'main': [0, time.time()], "us": 0}
-
 bot = telebot.TeleBot(config.TOKEN)
 
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
@@ -34,8 +32,8 @@ with open('dino_data.json', encoding='utf-8') as f:
 
 def check_memory():
     while True:
-        checks_data['memory'][0] = int(memory_usage()[0])
-        checks_data['memory'][1] = int(time.time())
+        functions.check_data('memory', 0, int(memory_usage()[0]) )
+        functions.check_data('memory', 1, int(time.time()) )
         time.sleep(10)
 
 thr2 = threading.Thread(target = check_memory, daemon=True)
@@ -70,8 +68,8 @@ def check_incub(): #проверка каждые 5 секунд
                             functions.random_dino(user, dino_id)
                         functions.notifications_manager(bot, "incub", user, dino_id)
 
-        checks_data['incub'][0] = int(time.time() - t_st)
-        checks_data['incub'][1] = int(time.time())
+        functions.check_data('incub', 0, int(time.time() - t_st) )
+        functions.check_data('incub', 1, int(time.time()) )
 
 thr_icub = threading.Thread(target = check_incub, daemon=True)
 
@@ -94,13 +92,13 @@ def check_notif(): #проверка каждые 5 секунд
 
                         if user['dinos'][dino_id]['stats']['unv'] >= 100:
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
-                            functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'check')
+                            functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'send')
 
                     if dino['activ_status'] == 'game':
 
                         if int(dino['game_time']-time.time()) <= 0:
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
-                            functions.notifications_manager(bot, 'game_end', user, None, dino_id, 'check')
+                            functions.notifications_manager(bot, 'game_end', user, None, dino_id, 'send')
 
                             del user['dinos'][ dino_id ]['game_time']
                             del user['dinos'][ dino_id ]['game_%']
@@ -161,19 +159,24 @@ def check_notif(): #проверка каждые 5 секунд
             users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
 
         # print(f'Проверка уведомлений - {int(time.time()) - t_st}s {nn}u')
-        checks_data['notif'][0] = int(time.time() - t_st)
-        checks_data['notif'][1] = int(time.time())
-        checks_data['us'] = nn
+        functions.check_data('notif', 0, int(time.time() - t_st) )
+        functions.check_data('notif', 1, int(time.time()) )
 
 thr_notif = threading.Thread(target = check_notif, daemon=True)
 
 def check(): #проверка каждые 10 секунд
+    global thr_l
 
     def alpha():
+
         checks.main()
 
     while True:
-        main = threading.Thread(target = alpha, daemon=True).start()
+        if int(memory_usage()[0]) < 1500:
+            main = threading.Thread(target = alpha, daemon=True)
+            main.start()
+        else:
+            print(f'Использование памяти: {int(memory_usage()[0])}')
         time.sleep(10)
 
 thr1 = threading.Thread(target = check, daemon=True)
@@ -188,7 +191,7 @@ def markup(element = 1, user = None):
     markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
     bd_user = users.find_one({"userid": userid})
 
-    if bd_user != None and len(bd_user['dinos']) == 0 and functions.notifications_manager(bot, 'dead', bd_user, dino_id = '1', met = 'check') == True:
+    if bd_user != None and len(bd_user['dinos']) == 0:
 
         if bd_user['language_code'] == 'ru':
             nl = "🧩 Проект: Возрождение"
@@ -261,12 +264,10 @@ def markup(element = 1, user = None):
     elif element == "friends-menu" and bd_user != None:
 
         if bd_user['language_code'] == 'ru':
-            #nl = ["➕ Добавить", '📜 Список', '➖ Удалить', '💌 Запросы', '🤍 Пригласи друга', '↪ Назад']
-            nl = ["➕ Добавить", '📜 Список', '➖ Удалить', '💌 Запросы', '↪ Назад']
+            nl = ["➕ Добавить", '📜 Список', '➖ Удалить', '💌 Запросы', '🤍 Пригласи друга', '↪ Назад']
 
         else:
-            #nl = ["➕ Add", '📜 List', '➖ Delete', '💌 Inquiries', '🤍 Invite a friend', '↪ Back']
-            nl = ["➕ Add", '📜 List', '➖ Delete', '💌 Inquiries', '↪ Back']
+            nl = ["➕ Add", '📜 List', '➖ Delete', '💌 Inquiries', '🤍 Invite a friend', '↪ Back']
 
         item1 = types.KeyboardButton(nl[0])
         item2 = types.KeyboardButton(nl[1])
@@ -588,6 +589,7 @@ def member_profile(mem_id, lang):
 @bot.message_handler(commands=['stats'])
 def command(message):
     user = message.from_user
+    checks_data = functions.check_data(m = 'check')
 
     text = 'STATS\n\n'
     text += f"Memory: {checks_data['memory'][0]}mb\nLast {int(time.time() - checks_data['memory'][1])}s\n\n"
@@ -2877,15 +2879,38 @@ def on_message(message):
 
                     def ret(message, bd_user):
                         if message.text in rf['codes']:
-                            if str(bd_user['referal_system']['my']) != message.text:
+                            if str(bd_user['referal_system']['my_cod']) != message.text:
                                 items = ['1', '1', '2', '2', '16', '12', '12', '11', '11', '13', '13']
                                 coins = 200
                                 bd_user['coins'] += coins
                                 for i in items:
                                     bd_user['inventory'].append(i)
 
+                                members = users.find({ })
+                                fr_member = None
+
+                                for i in members:
+                                    if fr_member != None:
+                                        break
+                                    else:
+                                        if i['referal_system']['my_cod'] == message.text:
+                                            fr_member = i
+
+
+                                if fr_member['userid'] not in bd_user['friends']['friends_list']:
+                                    bd_user['friends']['friends_list'].append(i['userid'])
+                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'friends': bd_user['friends'] }} )
+
+                                if bd_user['userid'] not in fr_member['friends']['friends_list']:
+                                    fr_member['friends']['friends_list'].append(bd_user['userid'])
+                                    users.update_one( {"userid": fr_member['userid']}, {"$set": {'friends': fr_member['friends'] }} )
+
+                                bd_user['referal_system']['friend_cod'] = message.text
+                                bd_user['referal_system']['friend'] = fr_member['userid']
+
                                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'coins': bd_user['coins'] }} )
                                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'referal_system': bd_user['referal_system'] }} )
 
                                 if bd_user['language_code'] == 'ru':
                                     text = f"❤🤍💜 | Код друга активирован!\n\n❤ | Спасибо что поддерживаете и помогаете развивать нашего бота, приглашая друзей!\n\n🤍 | По достижению 5-го уровня, ваш друг получит 🥚 Необычное/Редкое яйцо динозавра!\n\n💜 | Вы получаете бонус в размере: {coins} монет, 🍯 Баночка мёда х2, 🧸 Мишка, 🍗 Куриная ножка x2, 🍒 Ягоды x2, 🦪 Мелкая рыба x2, 🍪 Печенье x2"
@@ -2953,21 +2978,29 @@ def on_message(message):
                             bot.register_next_step_handler(msg, ret, bd_user)
 
                         else:
+                            if bd_user['referal_system']['friend_cod'] == None:
+
+                                if bd_user['language_code'] == 'ru':
+                                    ans = ['↪ Назад']
+                                    text = '👥 | Введите код-приглашение друга > '
+                                else:
+                                    ans = ['↪ Back']
+                                    text = "👥 | Enter a friend's invitation code >"
+
+                                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                                rmk.add(ans[0])
 
 
-                            if bd_user['language_code'] == 'ru':
-                                ans = ['↪ Назад']
-                                text = '👥 | Введите код-приглашение друга > '
+                                msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                                bot.register_next_step_handler(msg, ret, bd_user)
+
                             else:
-                                ans = ['↪ Back']
-                                text = "👥 | Enter a friend's invitation code >"
+                                if bd_user['language_code'] == 'ru':
+                                    text = '👥 | Вы уже ввели код друга!'
+                                else:
+                                    text = "👥 | You have already entered a friend's code!"
 
-                            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
-                            rmk.add(ans[0])
-
-
-                            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
-                            bot.register_next_step_handler(msg, ret, bd_user)
+                                msg = bot.send_message(message.chat.id, text)
 
 
 
@@ -3327,13 +3360,18 @@ def answer(call):
         user = call.from_user
         bd_user = users.find_one({"userid": user.id})
 
-        if bd_user != None and len(bd_user['dinos']) == 0 and functions.notifications_manager(bot, 'dead', bd_user, dino_id = '1', met = 'check') == True:
+        if bd_user != None and len(bd_user['dinos']) == 0:
             egg_n = str(random.choice(list(json_f['data']['egg'])))
 
             bd_user['dinos'][ functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 30 * 60, 'egg_id': egg_n}
-            del bd_user['notifications']['1']
             bd_user['coins'] -= int(bd_user['notifications']['ans_dead'])
-            del bd_user['notifications']['ans_dead']
+            try:
+                del bd_user['notifications']['ans_dead']
+                del bd_user['notifications']['1']
+            except:
+                pass
+
+            print(bd_user['dinos'])
 
             users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
             users.update_one( {"userid": user.id}, {"$set": {'notifications': bd_user['notifications']}} )
@@ -3458,5 +3496,6 @@ if bot.get_me().first_name == 'DinoGochi':
     thr_icub.start()
     thr_notif.start()
     thr2.start()
+
 
 bot.infinity_polling()

@@ -107,6 +107,7 @@ class checks:
                                 user['dinos'][dino_id]['stats']['game'] += int(random.randint(2,15) * user['dinos'][dino_id]['game_%'])
 
                     elif dino['activ_status'] == 'hunting':
+                        user = users.find_one({"userid": user['userid']})
 
                         if random.randint(1, 45) == 1:
                             user['lvl'][1] += random.randint(0,20)
@@ -135,6 +136,9 @@ class checks:
                                 user['inventory'].append(str(item))
                                 dino['target'][0] += 1
 
+                            users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
+
+
                     elif dino['activ_status'] == 'journey':
 
                         if random.randint(1, 65) == 1: #unv
@@ -143,7 +147,7 @@ class checks:
                         if random.randint(1, 45) == 1: #unv
                             user['lvl'][1] += random.randint(0,20)
 
-                        r_e_j = random.randint(1,60)
+                        r_e_j = random.randint(1,30)
                         if r_e_j == 1:
                             if random.randint(1,3) != 1:
 
@@ -194,6 +198,7 @@ class checks:
                                         event = f"💭 | Динозавр смог вздремнуть по дороге."
 
                                 elif event == 'random_items':
+                                    user = users.find_one({"userid": user['userid']})
                                     items = ["1", "2", '17', '18', '19', '25', '25']
                                     item = random.choice(items)
                                     if mood_n == True:
@@ -204,6 +209,8 @@ class checks:
                                         else:
                                             event = f"🧸 | Running through the woods, the dinosaur sees something that looks like a chest.\n> Opening it, he finds: {items_f['items'][item]['nameen']}!"
 
+                                        users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
+
                                     if mood_n == False:
 
                                         if user['language_code'] == 'ru':
@@ -212,6 +219,7 @@ class checks:
                                             event = '❌ | A rare event has been canceled due to a bad mood!'
 
                                 elif event == 'random_items_leg':
+                                    user = users.find_one({"userid": user['userid']})
                                     items = ["4", '14', "15", "16"]
                                     item = random.choice(items)
                                     if mood_n == True:
@@ -222,6 +230,8 @@ class checks:
                                         else:
                                             event = f"🧸 | Running through the mountains, the dinosaur sees something similar to a chest.\n> Opening it, he finds: {items_f['items'][item]['nameen']}!"
 
+                                        users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
+
                                     if mood_n == False:
 
                                         if user['language_code'] == 'ru':
@@ -230,6 +240,7 @@ class checks:
                                             event = '❌ | The mystical event has been canceled due to a bad mood!'
 
                                 elif event == 'egg':
+                                    user = users.find_one({"userid": user['userid']})
                                     eggs = ["3", '20', '21', '22', '23', '24']
                                     egg = random.choice(eggs)
                                     if mood_n == True:
@@ -239,6 +250,8 @@ class checks:
                                             event = f"🧸 | Бегая по по пещерам, динозавр видит что-то похожее на сундук.\n>  Открыв его, он находит: {items_f['items'][egg]['nameru']}!"
                                         else:
                                             event = f"🧸 | Running through the caves, the dinosaur sees something similar to a chest.\n> Opening it, he finds: {items_f['items'][egg]['nameen']}!"
+
+                                        users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
 
                                     if mood_n == False:
 
@@ -347,6 +360,7 @@ class checks:
                                         event += texten
 
                                 elif event == 'lose_items':
+                                    user = users.find_one({"userid": user['userid']})
                                     items = user['inventory']
                                     item = random.choice(items)
                                     if mood_n == True:
@@ -356,6 +370,8 @@ class checks:
                                             event = f"❗ | Бегая по лесам, динозавр обронил {items_f['items'][item]['nameru']}\n>  Предмет потерян!"
                                         else:
                                             event = f"❗ | Running through the woods, the dinosaur dropped {items_f['items'][item]['nameen']}\n>  The item is lost!"
+
+                                        users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
 
                                     if mood_n == False:
 
@@ -468,19 +484,31 @@ class checks:
                             user['dinos'][dino_id]['stats']['heal'] = 0
 
 
-            users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
-
-            users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
+            bd_user = users.find_one({"userid": user['userid']})
+            if len(bd_user['dinos']) == len(user['dinos']):
+                users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
 
             users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
 
             expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
-            if user['lvl'][1] >= expp:
-                user['lvl'][0] += 1
-                user['lvl'][1] = user['lvl'][1] - expp
+            if user['lvl'][0] < 100:
+                if user['lvl'][1] >= expp:
+                    user['lvl'][0] += 1
+                    user['lvl'][1] = user['lvl'][1] - expp
+
+                    if user['lvl'][0] == 5:
+                        if 'referal_system' in user.keys():
+                            if 'friend' in user['referal_system'].keys():
+                                egg = random.choice(['20', '22'])
+                                rf_fr = users.find_one({"userid": user['referal_system']['friend']})
+                                rf_fr['inventory'].append(egg)
+
+                                users.update_one( {"userid": rf_fr['userid']}, {"$set": {'inventory': rf_fr['inventory'] }} )
 
             users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
 
+
         # print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
-        # checks_data['main'][0] = int(int(time.time()) - t_st)
-        # checks_data['main'][1] = int(time.time())
+        functions.check_data('main', 0, int(time.time() - t_st) )
+        functions.check_data('main', 1, int(time.time()) )
+        functions.check_data('us', 0, nn )

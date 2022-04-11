@@ -4,6 +4,7 @@ import pymongo
 import sys
 import random
 import json
+import time
 
 sys.path.append("..")
 import config
@@ -17,9 +18,12 @@ with open('items.json', encoding='utf-8') as f:
 with open('dino_data.json', encoding='utf-8') as f:
     json_f = json.load(f)
 
+checks_data = {'memory': [0, time.time()], 'incub': [0, time.time()], 'notif': [0, time.time()], 'main': [0, time.time()], "us": 0}
+
 class functions:
     json_f = json_f
     items_f = items_f
+    checks_data = checks_data
 
     @staticmethod
     def time_end(seconds:int, mini = False):
@@ -467,3 +471,16 @@ class functions:
 
                 else:
                     print(notification, 'notification')
+
+    @staticmethod
+    def check_data(t = None, ind = None, zn = None, m = 'ncheck'):
+        global checks_data
+        #checks_data = {'memory': [0, time.time()], 'incub': [0, time.time()], 'notif': [0, time.time()], 'main': [0, time.time()], "us": 0}
+        if m == 'check':
+            return checks_data
+
+        else:
+            if t != 'us':
+                checks_data[t][ind] = zn
+            else:
+                checks_data[t] = zn
