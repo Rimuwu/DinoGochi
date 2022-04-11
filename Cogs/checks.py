@@ -115,8 +115,9 @@ class checks:
                         if random.randint(1, 65) == 1: #unv
                             user['dinos'][dino_id]['stats']['unv'] -= random.randint(0,1)
 
-                        r = random.randint(1, 15)
+                        r = random.randint(1, 2)
                         if r == 1:
+                            print(user['userid'], dino['target'][0])
 
                             if dino['h_type'] == 'all':
                                 items = [2, 5, 6, 7, 8, 9, 10, 11, 12, 13]
