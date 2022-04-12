@@ -2,7 +2,7 @@
 
  "1": {"nameru": "🍯 Баночка мёда", "nameen": "🍯 Jar of honey", "type": "+heal", "act": 15},
 
- "2": {"nameru": "🍪 Печенье", "nameen": "🍪 Cookies", "type": "+eat", "act": 5, "class": "ALL"},
+ "2": {"nameru": "🍪 Печенье", "nameen": "🍪 Cookies", "type": "+eat", "act": 5, "class": "ALL", "+mood": 10},
 
  "3": {"nameru": "🥚 Загадочное яйцо", "nameen": "🥚 Mysterious egg", "type": "egg", "incub_time": 12, "time_tag": "h", "inc_type": "random"},
 
@@ -35,9 +35,9 @@
 
  "17": {"nameru": "🧪 Лечебная мазь", "nameen": "🧪 Therapeutic ointment", "type": "+heal", "act": 25},
 
- "18": {"nameru": "🍕 Кусочек пиццы", "nameen": "🍕 Slice of pizza", "type": "+eat", "act": 25, "class": "ALL"},
+ "18": {"nameru": "🍕 Кусочек пиццы", "nameen": "🍕 Slice of pizza", "type": "+eat", "act": 25, "class": "ALL", "+mood": 15},
 
- "19": {"nameru": "🥞 Сладкие блинчики", "nameen": "🥞 Sweet pancakes", "type": "+eat", "act": 20, "class": "ALL"},
+ "19": {"nameru": "🥞 Сладкие блинчики", "nameen": "🥞 Sweet pancakes", "type": "+eat", "act": 20, "class": "ALL", "+mood": 20},
 
  "20": {"nameru": "🥚 Необычное яйцо", "nameen": "🥚 Unusual egg", "type": "egg", "incub_time": 24, "time_tag": "h", "inc_type": "unc"},
 
@@ -49,7 +49,13 @@
 
  "24": {"nameru": "🥚 Легендарное яйцо", "nameen": "🥚 Legendary Egg", "type": "egg", "incub_time": 110, "time_tag": "h", "inc_type": "leg"},
 
- "25": {"nameru": "📄 Пустая бумажка", "nameen": "📄 An empty piece of paper", "type": "None"}
+ "25": {"nameru": "📄 Пустая бумажка", "nameen": "📄 An empty piece of paper", "type": "None"},
+
+ "26": {"nameru": "👢 Кожа", "nameen": "👢 Leather", "type": "material"},
+
+ "27": {"nameru": "🥢 Веточки дерева", "nameen": "🥢 Tree branches", "type": "material"},
+
+ "28": {"nameru": "🐡 Рыбья чешуя", "nameen": "🐡 Fish scales", "type": "material"}
 
 }
 }

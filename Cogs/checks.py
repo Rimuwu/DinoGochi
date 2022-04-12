@@ -77,7 +77,7 @@ class checks:
                     elif dino['activ_status'] == 'sleep':
 
                         if user['dinos'][dino_id]['stats']['unv'] < 100:
-                            if random.randint(1,45) == 1:
+                            if random.randint(1,65) == 1:
                                 user['dinos'][dino_id]['stats']['unv'] += random.randint(1,2)
 
                         if user['dinos'][dino_id]['stats']['game'] < 40:
@@ -119,22 +119,23 @@ class checks:
                         if r == 1:
 
                             if dino['h_type'] == 'all':
-                                items = [2, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+                                items = [2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 26, 27, 28]
 
                             if dino['h_type'] == 'collecting':
-                                items = [6, 9, 11]
+                                items = [6, 9, 11, 27]
 
                             if dino['h_type'] == 'hunting':
-                                items = [5, 8, 12]
+                                items = [5, 8, 12, 26]
 
                             if dino['h_type'] == 'fishing':
-                                items = [7, 10, 13]
+                                items = [7, 10, 13, 28]
 
                             item = random.choice(items)
                             i_count = random.randint(1, 2)
                             for i in list(range(i_count)):
                                 user['inventory'].append(str(item))
-                                user['dinos'][dino_id]['target'][0] += 1
+                                if item not in [27, 26, 28]:
+                                    user['dinos'][dino_id]['target'][0] += 1
 
                             users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
 
@@ -199,7 +200,7 @@ class checks:
 
                                 elif event == 'random_items':
                                     user = users.find_one({"userid": user['userid']})
-                                    items = ["1", "2", '17', '18', '19', '25', '25']
+                                    items = ["1", "2", '17', '18', '19', '25', '26', '27', '28']
                                     item = random.choice(items)
                                     if mood_n == True:
                                         user['inventory'].append(item)
@@ -485,28 +486,29 @@ class checks:
 
 
             bd_user = users.find_one({"userid": user['userid']})
-            users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
+            if len(user['dinos']) != 0:
+                users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
 
             if bd_user['coins'] != user['coins']:
                 users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
 
-            if user['lvl'][0] != bd_user['lvl'][0]:
-                expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
-                if user['lvl'][0] < 100:
-                    if user['lvl'][1] >= expp:
-                        user['lvl'][0] += 1
-                        user['lvl'][1] = user['lvl'][1] - expp
 
-                        if user['lvl'][0] == 5:
-                            if 'referal_system' in user.keys():
-                                if 'friend' in user['referal_system'].keys():
-                                    egg = random.choice(['20', '22'])
-                                    rf_fr = users.find_one({"userid": user['referal_system']['friend']})
-                                    rf_fr['inventory'].append(egg)
+            expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
+            if user['lvl'][0] < 100:
+                if user['lvl'][1] >= expp:
+                    user['lvl'][0] += 1
+                    user['lvl'][1] = user['lvl'][1] - expp
 
-                                    users.update_one( {"userid": rf_fr['userid']}, {"$set": {'inventory': rf_fr['inventory'] }} )
+                    if user['lvl'][0] == 5:
+                        if 'referal_system' in user.keys():
+                            if 'friend' in user['referal_system'].keys():
+                                egg = random.choice(['20', '22'])
+                                rf_fr = users.find_one({"userid": user['referal_system']['friend']})
+                                rf_fr['inventory'].append(egg)
 
-                users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
+                                users.update_one( {"userid": rf_fr['userid']}, {"$set": {'inventory': rf_fr['inventory'] }} )
+
+            users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
 
 
         # print(f'Проверка - {int(time.time()) - t_st}s {nn}u')

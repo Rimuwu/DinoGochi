@@ -211,7 +211,7 @@ class functions:
         users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos']}} )
 
     @staticmethod
-    def notifications_manager(bot, notification, user, arg = None, dino_id = '0', met = 'send'):
+    def notifications_manager(bot, notification, user, arg = None, dino_id = '1', met = 'send'):
 
         if met == 'delete':
 
@@ -354,17 +354,35 @@ class functions:
                     if user['language_code'] == 'ru':
                         text = f'💥 | {chat.first_name}, ваш динозаврик.... Умер...'
                         nl = "🧩 Проект: Возрождение"
+                        nl2 = '🎮 Инвентарь'
                     else:
                         text = f'💥 | {chat.first_name}, your dinosaur.... Died...'
                         nl = '🧩 Project: Rebirth'
+                        nl2 = '🎮 Inventory'
 
-                    markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
-                    markup.add(nl)
+                    if functions.inv_egg(user) == False:
+                        markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                        markup.add(nl)
 
-                    try:
-                        bot.send_message(user['userid'], text, reply_markup = markup)
-                    except:
-                        pass
+                        try:
+                            bot.send_message(user['userid'], text, reply_markup = markup)
+                        except:
+                            pass
+
+                    else:
+                        markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                        markup.add(nl2)
+
+                        if user['language_code'] == 'ru':
+                            text += f'\n\nНе стоит печалиться! Загляните в инвентарь, там у вас завалялось ещё одно яйцо!'
+
+                        else:
+                            text += f'\n\nDo not be sad! Take a look at the inventory, there you have another egg lying around!'
+
+                        try:
+                            bot.send_message(user['userid'], text, reply_markup = markup)
+                        except:
+                            pass
 
                 elif notification == "woke_up":
 
@@ -484,3 +502,12 @@ class functions:
                 checks_data[t][ind] = zn
             else:
                 checks_data[t] = zn
+
+    @staticmethod
+    def inv_egg(user):
+
+        for i in user['inventory']:
+            if items_f['items'][i]['type'] == 'egg':
+                return True
+
+        return False

@@ -93,6 +93,10 @@ def check_notif(): #проверка каждые 5 секунд
                         if user['dinos'][dino_id]['stats']['unv'] >= 100:
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
                             functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'send')
+                            try:
+                                del user['dinos'][dino_id]['sleep_start']
+                            except:
+                                pass
 
                     if dino['activ_status'] == 'game':
 
@@ -156,7 +160,10 @@ def check_notif(): #проверка каждые 5 секунд
                         if functions.notifications_manager(bot, "dead", user, dino_id = dino_id, met = 'check') == False:
                             functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
 
-            users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
+                        users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
+
+            if len(user['dinos']) != 0:
+                users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
 
         # print(f'Проверка уведомлений - {int(time.time()) - t_st}s {nn}u')
         functions.check_data('notif', 0, int(time.time() - t_st) )
@@ -191,7 +198,7 @@ def markup(element = 1, user = None):
     markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
     bd_user = users.find_one({"userid": userid})
 
-    if bd_user != None and len(bd_user['dinos']) == 0:
+    if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False:
 
         if bd_user['language_code'] == 'ru':
             nl = "🧩 Проект: Возрождение"
@@ -221,6 +228,7 @@ def markup(element = 1, user = None):
 
             if bd_user['language_code'] == 'ru':
                 nl = ['🦖 Динозавр', '🕹 Действия', '👁‍🗨 Профиль', '🔧 Настройки', '👥 Друзья', '❗ FAQ']
+
             else:
                 nl = ['🦖 Dinosaur', '🕹 Actions', '👁‍🗨 Profile', '🔧 Settings', '👥 Friends', '❗ FAQ']
 
@@ -229,9 +237,14 @@ def markup(element = 1, user = None):
             item3 = types.KeyboardButton(nl[2])
             item4 = types.KeyboardButton(nl[3])
             item5 = types.KeyboardButton(nl[4])
-            item6 = types.KeyboardButton(nl[5])
 
-            markup.add(item1, item2, item3, item4, item5, item6)
+            if 'vis.faq' in bd_user['settings'].keys() and bd_user['settings']['vis.faq'] == False:
+                nl.remove('❗ FAQ')
+                markup.add(item1, item2, item3, item4, item5)
+
+            else:
+                item6 = types.KeyboardButton(nl[5])
+                markup.add(item1, item2, item3, item4, item5, item6)
 
     elif element == 1:
         try:
@@ -248,18 +261,26 @@ def markup(element = 1, user = None):
 
     elif element == "settings" and bd_user != None:
 
+        if 'vis.faq' not in bd_user['settings']:
+            bd_user['settings']['vis.faq'] = True
+
+            users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+
+        markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
+
         if bd_user['language_code'] == 'ru':
-            nl = ['❗ Уведомления', "👅 Язык", '💬 Переименовать', '↪ Назад']
+            nl = ['❗ Уведомления', "👅 Язык", '💬 Переименовать', '⁉ Видимость FAQ', '↪ Назад']
 
         else:
-            nl = ['❗ Notifications', "👅 Language", '💬 Rename', '↪ Back']
+            nl = ['❗ Notifications', "👅 Language", '💬 Rename', '⁉ Visibility FAQ', '↪ Back']
 
         item1 = types.KeyboardButton(nl[0])
         item2 = types.KeyboardButton(nl[1])
         item3 = types.KeyboardButton(nl[2])
         item4 = types.KeyboardButton(nl[3])
+        item5 = types.KeyboardButton(nl[4])
 
-        markup.add(item1, item2, item3, item4)
+        markup.add(item1, item2, item3, item4, item5)
 
     elif element == "friends-menu" and bd_user != None:
 
@@ -596,16 +617,17 @@ def command(message):
     text += f"Incub check: {checks_data['incub'][0]}s\nLast {int(time.time() - checks_data['incub'][1])}s\n\n"
     text += f"Notifications check: {checks_data['notif'][0]}s\nLast {int(time.time() - checks_data['notif'][1])}s\n\n"
     text += f"Main check: {checks_data['main'][0]}s\nLast {int(time.time() - checks_data['main'][1])}s\n\n"
-    text += f"Users: {checks_data['us']}"
+    text += f"Users: {checks_data['us']}\n"
+    text += f'Thr.count: {threading.active_count()}'
     bot.send_message(user.id, text)
 
 @bot.message_handler(commands=['emulate_not'])
 def command(message):
     print('emulate_not')
-    time.sleep(60)
+    # time.sleep(60)
     user = message.from_user
     bd_user = users.find_one({"userid": user.id})
-    functions.notifications_manager(bot, message.text[13:][:-3], bd_user, message.text[-2:], dino_id = '0')
+    functions.notifications_manager(bot, message.text[13:][:-3], bd_user, message.text[-2:], dino_id = '1')
 
 @bot.message_handler(commands=['start', 'main-menu'])
 def on_start(message):
@@ -1194,6 +1216,62 @@ def on_message(message):
                             text = '🔧 The language is set to 🇬🇧 English!'
 
                         bot.send_message(message.chat.id, text, reply_markup = markup("settings", user))
+
+                    msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                    bot.register_next_step_handler(msg, ret, ans, bd_user)
+
+            if message.text in ['⁉ Видимость FAQ', '⁉ Visibility FAQ']:
+                bd_user = users.find_one({"userid": user.id})
+                if bd_user != None:
+
+                    if bd_user['language_code'] == 'ru':
+                        ans = ['✅ Включить', '❌ Выключить', '↪ Назад']
+                        text = '❗ Взаимодействие с настройкой видимости FAQ, выберите видимость >'
+                    else:
+                        ans = ['✅ Enable', '❌ Disable', '↪ Back']
+                        text = '❗ Interaction with the FAQ visibility setting, select visibility >'
+
+                    rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                    rmk.add(ans[0], ans[1])
+                    rmk.add(ans[2])
+
+                    def ret(message, ans, bd_user):
+
+                        if message.text not in ans or message.text == ans[2]:
+                            res = None
+                        else:
+                            res = message.text
+
+                        if res == None:
+                            bot.send_message(message.chat.id, f'❌', reply_markup = markup('settings', user))
+                            return
+
+                        if res in ['✅ Enable', '✅ Включить']:
+
+                            bd_user['settings']['vis.faq'] = True
+                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+
+                            if bd_user['language_code'] == 'ru':
+                                text = '🔧 FAQ был активирован!'
+                            else:
+                                text = '🔧 The FAQ has been activated!'
+
+                            bot.send_message(message.chat.id, text, reply_markup = markup("settings", user))
+
+                        if res in ['❌ Disable', '❌ Выключить']:
+
+                            bd_user['settings']['vis.faq'] = False
+                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+
+                            if bd_user['language_code'] == 'ru':
+                                text = '🔧 FAQ был отключен!'
+                            else:
+                                text = '🔧 The FAQ has been disabled!'
+
+                            bot.send_message(message.chat.id, text, reply_markup = markup("settings", user))
+
+                        else:
+                            return
 
                     msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
                     bot.register_next_step_handler(msg, ret, ans, bd_user)
@@ -1967,6 +2045,7 @@ def on_message(message):
                                     item_id = items_id[ l_ind_sort_it[res] ]
                                     item = items_f['items'][item_id]
                                     type = item['type']
+                                    d_text = ''
 
 
                                     if bd_user['language_code'] == 'ru':
@@ -1979,10 +2058,11 @@ def on_message(message):
                                             d_text = f"*└* Эффективность: {item['act']}"
 
                                         elif item['type'] == 'egg':
+                                            eg_q = item['inc_type']
                                             if item['inc_type'] == 'random': eg_q = 'рандом'
                                             if item['inc_type'] == 'com': eg_q = 'обычная'
                                             if item['inc_type'] == 'unc': eg_q = 'необычная'
-                                            if item['inc_type'] == 'rare': eg_q = 'редкая'
+                                            if item['inc_type'] == 'rar': eg_q = 'редкая'
                                             if item['inc_type'] == 'myt': eg_q = 'мистическая'
                                             if item['inc_type'] == 'leg': eg_q = 'легендарная'
 
@@ -1997,6 +2077,14 @@ def on_message(message):
                                         elif item['type'] == 'None':
                                             type = 'пустышка'
                                             d_text = f"*└* Ничего не делает и не для чего не нужна"
+
+                                        elif item['type'] == 'material':
+                                            type = 'материал'
+                                            d_text = f"*└* Данный предмет нужен для изготовления."
+
+                                        if '+mood' in item.keys():
+                                            d_text += f'\n\n*┌* *🍡 Дополнительные бонусы*\n'
+                                            d_text += f"*└* Повышение настроения: {item['+mood']}%"
 
                                         text =  f"*┌* *🎴 Информация о предмете*\n"
                                         text += f"*├* Название: {item['nameru']}\n"
@@ -2032,6 +2120,14 @@ def on_message(message):
                                         elif item['type'] == 'None':
                                             type = 'dummy'
                                             d_text = f"*└* Does nothing and is not needed for anything"
+
+                                        elif item['type'] == 'material':
+                                            type = 'material'
+                                            d_text = f"*└* This item is needed for manufacturing."
+
+                                        if '+mood' in item.keys():
+                                            d_text += f'\n\n*┌* *🍡 Additional bonuses*\n'
+                                            d_text += f"*└* Mood boost: {item['+mood']}%"
 
                                         text =  f"*┌* *🎴 Subject information*\n"
                                         text += f"*├* Name: {item['nameen']}\n"
@@ -2223,6 +2319,8 @@ def on_message(message):
                             bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] = 'pass_active'
 
                             if 'sleep_start' in bd_user['dinos'][ bd_user['settings']['dino_id'] ].keys() and int(time.time()) - bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_start'] >= 8 * 3600:
+
+                                del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_start']
 
                                 if bd_user['language_code'] == 'ru':
                                     text = f'🌙 Ваш динозавр пробудился.'
@@ -2657,7 +2755,7 @@ def on_message(message):
                                             else:
                                                 eatr = random.randint( 0, int(item['act'] / 2) )
                                                 moodr = random.randint( 1, 10 )
-                                                text = f"🍕 | Динозавру не по вкусу {item['nameru']}, он теряет {eatr}% сытости и {moodr}% настрояния!"
+                                                text = f"🍕 | Динозавру не по вкусу {item['nameru']}, он теряет {eatr}% сытости и {moodr}% настроения!"
 
                                                 bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] -= eatr
                                                 bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= moodr
@@ -2678,6 +2776,9 @@ def on_message(message):
 
                                                 bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] -= eatr
                                                 bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= moodr
+
+                                        if '+mood' in item.keys():
+                                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] += item['+mood']
 
                                         users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
 
@@ -3354,13 +3455,16 @@ def answer(call):
         bd_user['notifications']['ans_dead'] = mn
         users.update_one( {"userid": user.id}, {"$set": {'notifications': bd_user['notifications']}} )
 
-        bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup = markup_inline, parse_mode = 'Markdown')
+        try:
+            bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup = markup_inline, parse_mode = 'Markdown')
+        except:
+            bot.send_message(call.message.chat.id, text, reply_markup = markup_inline, parse_mode = 'Markdown')
 
     if call.data == 'dead_restart':
         user = call.from_user
         bd_user = users.find_one({"userid": user.id})
 
-        if bd_user != None and len(bd_user['dinos']) == 0:
+        if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False:
             egg_n = str(random.choice(list(json_f['data']['egg'])))
 
             bd_user['dinos'][ functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 30 * 60, 'egg_id': egg_n}
@@ -3370,8 +3474,6 @@ def answer(call):
                 del bd_user['notifications']['1']
             except:
                 pass
-
-            print(bd_user['dinos'])
 
             users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
             users.update_one( {"userid": user.id}, {"$set": {'notifications': bd_user['notifications']}} )
@@ -3418,7 +3520,7 @@ def answer(call):
 
             elif item['type'] == 'egg':
 
-                if bd_user['lvl'][0] < 25:
+                if bd_user['lvl'][0] < 25 and len(bd_user['dinos']) != 0:
 
                     if bd_user['language_code'] == 'ru':
                         text = f'🔔 | Вам недоступна данная технология!'
@@ -3426,7 +3528,7 @@ def answer(call):
                         text = f"🔔 | This technology is not available to you!"
 
                 else:
-                    if int(bd_user['lvl'][0] / 25) > len(bd_user['dinos']):
+                    if int(bd_user['lvl'][0] / 25) > len(bd_user['dinos']) or len(bd_user['dinos']) == 0:
 
                         if item['time_tag'] == 'h':
                             inc_time = time.time() + item['incub_time'] * 3600
@@ -3463,6 +3565,13 @@ def answer(call):
                 else:
                     text = f"❗ | This item is not yet available for use!"
 
+
+            if '+mood' in item.keys():
+                dino['stats']['mood'] += item['+mood']
+                bd_user['dinos'][dii] = dino
+                users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
+
+
             bot.send_message(user.id, text, parse_mode = 'Markdown')
 
 
@@ -3474,7 +3583,13 @@ def answer(call):
 
             n_dp, dp_a = functions.dino_pre_answer(bot, call)
             if n_dp == 1:
-                bot.send_message(user.id, f'❌')
+
+                if functions.inv_egg(bd_user) == True and item['type'] == 'egg':
+                    us_item(call, item, {}, bd_user, it_id, 3)
+
+                else:
+                    bot.send_message(user.id, f'❌')
+
 
             if n_dp == 2:
                 dino_dict = [dp_a, list(bd_user['dinos'].keys())[0] ]
