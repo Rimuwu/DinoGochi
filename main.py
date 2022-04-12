@@ -2994,8 +2994,9 @@ def on_message(message):
                                     if fr_member != None:
                                         break
                                     else:
-                                        if i['referal_system']['my_cod'] == message.text:
-                                            fr_member = i
+                                        if 'referal_system' in i.keys():
+                                            if i['referal_system']['my_cod'] == message.text:
+                                                fr_member = i
 
 
                                 if fr_member['userid'] not in bd_user['friends']['friends_list']:
