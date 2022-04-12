@@ -183,7 +183,7 @@ class functions:
 
     @staticmethod
     def random_dino(user, dino_id_remove, quality = None):
-        if quality == None or quality = 'random':
+        if quality == None or quality == 'random':
             r_q = random.randint(1, 10000)
             if r_q in list(range(1, 5001)):
                 quality = 'com'
