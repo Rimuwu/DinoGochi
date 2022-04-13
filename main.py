@@ -157,6 +157,10 @@ def check_notif(): #проверка каждые 5 секунд
                     if user['dinos'][dino_id]['stats']['heal'] <= 0:
                         del user['dinos'][dino_id]
 
+                        if user['lvl'][0] >= 5:
+                            user['inventory'].append("21")
+                            users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
+
                         if functions.notifications_manager(bot, "dead", user, dino_id = dino_id, met = 'check') == False:
                             functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
 
@@ -198,12 +202,22 @@ def markup(element = 1, user = None):
     markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
     bd_user = users.find_one({"userid": userid})
 
-    if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False:
+    if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False and bd_user['lvl'][0] < 5:
 
         if bd_user['language_code'] == 'ru':
             nl = "🧩 Проект: Возрождение"
         else:
             nl = '🧩 Project: Rebirth'
+
+        markup.add(nl)
+        return markup
+
+    if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False and bd_user['lvl'][0] >= 5:
+
+        if bd_user['language_code'] == 'ru':
+            nl = '🎮 Инвентарь'
+        else:
+            nl = '🎮 Инвентарь'
 
         markup.add(nl)
         return markup
@@ -488,17 +502,18 @@ def markup(element = 1, user = None):
     elif element == "profile" and bd_user != None:
 
         if bd_user['language_code'] == 'ru':
-            nl = ['📜 Информация', '🎮 Инвентарь', '🎢 Рейтинг', '↪ Назад']
+            nl = ['📜 Информация', '🎮 Инвентарь', '🎢 Рейтинг', '💍 Аксессуары', '↪ Назад']
 
         else:
-            nl = ['📜 Information', '🎮 Inventory', '🎢 Rating', '↪ Back']
+            nl = ['📜 Information', '🎮 Inventory', '🎢 Rating', '💍 Accessories', '↪ Back']
 
         item1 = types.KeyboardButton(nl[0])
         item2 = types.KeyboardButton(nl[1])
         item3 = types.KeyboardButton(nl[2])
         item4 = types.KeyboardButton(nl[3])
+        item5 = types.KeyboardButton(nl[4])
 
-        markup.add(item1, item2, item3, item4)
+        markup.add(item1, item2, item3, item4, item5)
 
 
     else:
@@ -507,13 +522,15 @@ def markup(element = 1, user = None):
     return markup
 
 def member_profile(mem_id, lang):
-    try:
+    # try:
+    if True:
         user = bot.get_chat(int(mem_id))
         bd_user = users.find_one({"userid": user.id})
         expp = 5 * bd_user['lvl'][0] * bd_user['lvl'][0] + 50 * bd_user['lvl'][0] + 100
         n_d = len(list(bd_user['dinos']))
         t_dinos = ''
         for k in bd_user['dinos']:
+            i = bd_user['dinos'][k]
 
             if list( bd_user['dinos']) [ len(bd_user['dinos']) - 1 ] == k:
                 n = '└'
@@ -521,53 +538,121 @@ def member_profile(mem_id, lang):
             else:
                 n = '├'
 
-            i = bd_user['dinos'][k]
-            stat = i['activ_status']
-            if lang == 'ru':
+            if i['status'] == 'incubation':
 
-                if i['activ_status'] == 'pass_active':
-                    stat = 'ничего не делает'
-                elif i['activ_status'] == 'sleep':
-                    stat = 'спит'
-                elif i['activ_status'] == 'game':
-                    stat = 'играет'
-                elif i['activ_status'] == 'hunting':
-                    stat = 'собирает еду'
-                elif i['activ_status'] == 'journey':
-                    stat = 'путешествует'
+                if lang == 'ru':
 
-                dino = json_f['elements'][str(i['dino_id'])]
-                pre_qual = dino['image'][5:8]
-                qual = ''
-                if pre_qual == 'com':
-                    qual = 'Обычный'
-                if pre_qual == 'unc':
-                    qual = 'Необычный'
-                if pre_qual == 'rar':
-                    qual = 'Редкий'
-                if pre_qual == 'myt':
-                    qual = 'Мистический'
-                if pre_qual == 'leg':
-                    qual = 'Легендарный'
+                    qual = '🎲 Случайное'
+                    if 'quality' in i.keys():
+                        pre_qual = i['quality']
 
-                t_dinos += f"\n   *{n}* {i['name']}\n      *├* Статус: {stat}\n      *└* Редкость: {qual}\n"
+                        if pre_qual == 'com':
+                            qual = '🤍 Обычное'
+                        if pre_qual == 'unc':
+                            qual = '💚 Необычное'
+                        if pre_qual == 'rar':
+                            qual = '💙 Редкое'
+                        if pre_qual == 'myt':
+                            qual = '💜 Мистическое'
+                        if pre_qual == 'leg':
+                            qual = '💛 Легендарное'
 
-            else:
 
-                if i['activ_status'] == 'pass_active':
-                    stat = 'does nothing'
-                elif i['activ_status'] == 'sleep':
-                    stat = 'sleeping'
-                elif i['activ_status'] == 'game':
-                    stat = 'is playing'
-                elif i['activ_status'] == 'hunting':
-                    stat = 'collects food'
-                elif i['activ_status'] == 'journey':
-                    stat = 'travels'
+                    t_dinos += f"\n   *{n}* Статус: яйцо\n      *└* Редкость: {qual}\n"
 
-                t_dinos += f"\n   *{n}* {i['name']}\n      *└* Status: {stat}\n"
+                else:
+
+                    qual = '🎲 Random'
+                    if 'quality' in i.keys():
+                        pre_qual = i['quality']
+
+                        if pre_qual == 'com':
+                            qual = '🤍 Common'
+                        if pre_qual == 'unc':
+                            qual = '💚 Uncommon'
+                        if pre_qual == 'rar':
+                            qual = '💙 Rare'
+                        if pre_qual == 'myt':
+                            qual = '💜 Mystical'
+                        if pre_qual == 'leg':
+                            qual = '💛 Legendary'
+
+
+                    t_dinos += f"\n   *{n}*\n      *├* Status: egg\n      *└* Rare: {qual}\n"
+
+            if i['status'] == 'dino':
+
+                stat = i['activ_status']
+                if lang == 'ru':
+
+                    if i['activ_status'] == 'pass_active':
+                        stat = '🧩 ничего не делает'
+                    elif i['activ_status'] == 'sleep':
+                        stat = '💤 спит'
+                    elif i['activ_status'] == 'game':
+                        stat = '🕹 играет'
+                    elif i['activ_status'] == 'hunting':
+                        stat = '🌿 собирает еду'
+                    elif i['activ_status'] == 'journey':
+                        stat = '🎴 путешествует'
+
+                    dino = json_f['elements'][str(i['dino_id'])]
+                    pre_qual = dino['image'][5:8]
+                    qual = ''
+                    if pre_qual == 'com':
+                        qual = '🤍 Обычный'
+                    if pre_qual == 'unc':
+                        qual = '💚 Необычный'
+                    if pre_qual == 'rar':
+                        qual = '💙 Редкий'
+                    if pre_qual == 'myt':
+                        qual = '💜 Мистический'
+                    if pre_qual == 'leg':
+                        qual = '💛 Легендарный'
+
+                    t_dinos += f"\n   *{n}* {i['name']}\n      *├* Статус: {stat}\n      *└* Редкость: {qual}\n"
+
+                else:
+
+                    if i['activ_status'] == 'pass_active':
+                        stat = '🧩 does nothing'
+                    elif i['activ_status'] == 'sleep':
+                        stat = '💤 sleeping'
+                    elif i['activ_status'] == 'game':
+                        stat = '🕹 is playing'
+                    elif i['activ_status'] == 'hunting':
+                        stat = '🌿 collects food'
+                    elif i['activ_status'] == 'journey':
+                        stat = '🎴 travels'
+
+                    dino = json_f['elements'][str(i['dino_id'])]
+                    pre_qual = dino['image'][5:8]
+                    qual = ''
+                    if pre_qual == 'com':
+                        qual = '🤍 Common'
+                    if pre_qual == 'unc':
+                        qual = '💚 Uncommon'
+                    if pre_qual == 'rar':
+                        qual = '💙 Rare'
+                    if pre_qual == 'myt':
+                        qual = '💜 Mystical'
+                    if pre_qual == 'leg':
+                        qual = '💛 Legendary'
+
+                    t_dinos += f"\n   *{n}* {i['name']}\n      *└* Status: {stat}\n      *└* Rare: {qual}\n"
 
         if lang == 'ru':
+
+            #act_items
+            act_ii = []
+            for itmk in bd_user['activ_items'].keys():
+                itm = bd_user['activ_items'][itmk]
+                if itm == None:
+                    act_ii.append('Нет')
+                else:
+                    item = items_f['items'][itm]['nameru']
+                    act_ii.append(item)
+
             text =  f"*┌* *🎴 Профиль пользователя*\n"
             text += f"*├* Имя: {user.first_name}\n"
             text += f"*└* ID: `{user.id}`\n\n"
@@ -578,14 +663,30 @@ def member_profile(mem_id, lang):
             text += f"*┌* *🦖 Динозавры*\n"
             text += f"*├* Количество: {n_d}\n"
             text += f"*├* Динозавры:\n{t_dinos}"
-            text += f'\n\n'
+            text += f'\n'
             text += f"*┌* *👥 Друзья*\n"
             text += f"*└* Количество: {len(bd_user['friends']['friends_list'])}"
             text += f'\n\n'
             text += f"*┌* *🎈 Инвентарь*\n"
             text += f"*└* Предметов: {len(bd_user['inventory'])}"
+            text += f'\n\n'
+            text += f"*┌* *💍 Аксессуары*\n"
+            text += f"*├* 🌙 Сон: {act_ii[3]}\n"
+            text += f"*├* 🎮 Игра: {act_ii[0]}\n"
+            text += f"*├* 🌿 Сбор пищи: {act_ii[1]}\n"
+            text += f"*└* 🎍 Путешествие: {act_ii[2]}"
 
         else:
+            #act_items
+            act_ii = []
+            for itmk in bd_user['activ_items'].keys():
+                itm = bd_user['activ_items'][itmk]
+                if itm == None:
+                    act_ii.append('None')
+                else:
+                    item = items_f['items'][itm]['nameen']
+                    act_ii.append(item)
+
             text =  f"*┌**🎴 User profile*\n"
             text += f"*├* Name: {user.first_name}\n"
             text += f"*└* ID: `{user.id}`\n\n"
@@ -596,14 +697,20 @@ def member_profile(mem_id, lang):
             text += f"*┌**🦖 Dinosaurs*\n"
             text += f"*├* Number: {n_d}\n"
             text += f"*├* Dinosaurs:\n{t_dinos}"
-            text += f'\n\n'
+            text += f'\n'
             text += f"*┌**👥 Friends*\n"
             text += f"*└* Quantity: {len(bd_user['friends']['friends_list'])}"
             text += f'\n\n'
             text += f"*┌* *🎈 Inventory*\n"
             text += f"*└* Items: {len(bd_user['inventory'])}"
-    except:
-        text = 'KMk456 jr5uhsd7489 lkjs47609485\n               ERRoR'
+            text += f'\n\n'
+            text += f"*┌* *💍 Accessories*\n"
+            text += f"*├* 🌙 Sleep: {act_ii[3]}\n"
+            text += f"*├* 🎮 Game: {act_ii[0]}\n"
+            text += f"*├* 🌿 Collecting food: {act_ii[1]}\n"
+            text += f"*└* 🎍 Journey: {act_ii[2]}"
+    # except:
+    #     text = 'KMk456 jr5uhsd7489 lkjs47609485\n               ERRoR'
 
     return text
 
@@ -730,43 +837,44 @@ def on_message(message):
             if message.text in ["🧩 Проект: Возрождение", '🧩 Project: Rebirth']:
                 bd_user = users.find_one({"userid": user.id})
                 if bd_user != None:
+                    if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False and bd_user['lvl'][0] < 5:
 
-                    if bd_user['language_code'] == 'ru':
-                        text =  f"К вам подходит человек в чёрном одеянии.\n\n"
-                        text += f"Вы видите, что у человека чёрные волосы и какой-то шрам на щеке, но его глаза не видны в тени шляпы.\n\n"
-                        text += f"*Личность:* - Здраствуйте, меня зовут { random.choice( ['мистер', 'доктор'] ) } { random.choice( ['Джеймс', 'Роберт', 'Винсент', 'Альберт'] ) }, а вас...\n\n"
-                        text += f"*Вы:* - ... {user.first_name}, {user.first_name} {user.last_name}, так меня зовут\n\n"
-                        text += f"*Личность:* - Прекрасно {user.first_name}, давно вы в нашем бизнесе? _улыбается_\n\n"
-                        text += f"*Вы:* - ...Что? Бизнес? О чем, вы говорите?!\n\n"
-                        text += f"*Личность:* - Понятно, понятно... Так и запишем. _Записывает что-то в блокнот_\n\n"
-                        text += f"*Вы:* - ...\n\n"
-                        text += f"*Личность:* - Давайте ближе к делу, мы предлагаем вам заключить с нами контракт, мы получаем ваши монеты и ресурсы, вы получаете яйцо с динозавром.\n\n"
-                        text += f"*Вы:* - Яяя, я не знаю...\n\n"
-                        text += f"*Вы:* - \n\n"
-                        text += f"❓ | Выберите вариант ответа"
-                        b1 = ['❓ | Кто вы такой?', '❓ | Это законно?', '❓ | Кто "мы"?', '🧩 | У меня же нет выбора, так?']
-                    else:
-                        text = f"A man in a black robe approaches you.\n\n"
-                        text += f"You can see that the man has black hair and some kind of scar on his cheek, but his eyes are not visible in the shadow of the hat.\n\n"
-                        text += f"*Personality:* - Hello, my name is { random.choice(['mister', 'doctor'] ) } { random.choice( ['James', 'Robert', 'Vincent', 'Albert'] ) }, and you...\n\n"
-                        text += f"*You are:* - ... {user.first_name}, {user.first_name} {user.last_name}, that's my name\n\n"
-                        text += f"*Personality:* - Fine {user.first_name}, how long have you been in our business? _ulybaet_\n\n"
-                        text += f"*You are:* - ...What? Business? What are you talking about?!\n\n"
-                        text += f"*Personality:* - I see, I see... So we'll write it down. _ Writes something in notepad_\n\n"
-                        text += f"*You are:* - ...\n\n"
-                        text += f"*Personality:* - Let's get down to business, we offer you to sign a contract with us, we get your coins and resources, you get an egg with a dinosaur.\n\n"
-                        text += f"*You:* - I know, I don't know...\n\n"
-                        text += f"*You:* - \n\n"
-                        text += f"❓ | Choose the answer option'"
-                        b1 = ['❓ | Who are you?', '❓ | Is it legal?', '❓ | Who are "we"?', "🧩 | I don't have a choice, right?"]
+                        if bd_user['language_code'] == 'ru':
+                            text =  f"К вам подходит человек в чёрном одеянии.\n\n"
+                            text += f"Вы видите, что у человека чёрные волосы и какой-то шрам на щеке, но его глаза не видны в тени шляпы.\n\n"
+                            text += f"*Личность:* - Здраствуйте, меня зовут { random.choice( ['мистер', 'доктор'] ) } { random.choice( ['Джеймс', 'Роберт', 'Винсент', 'Альберт'] ) }, а вас...\n\n"
+                            text += f"*Вы:* - ... {user.first_name}, {user.first_name} {user.last_name}, так меня зовут\n\n"
+                            text += f"*Личность:* - Прекрасно {user.first_name}, давно вы в нашем бизнесе? _улыбается_\n\n"
+                            text += f"*Вы:* - ...Что? Бизнес? О чем, вы говорите?!\n\n"
+                            text += f"*Личность:* - Понятно, понятно... Так и запишем. _Записывает что-то в блокнот_\n\n"
+                            text += f"*Вы:* - ...\n\n"
+                            text += f"*Личность:* - Давайте ближе к делу, мы предлагаем вам заключить с нами контракт, мы получаем ваши монеты и ресурсы, вы получаете яйцо с динозавром.\n\n"
+                            text += f"*Вы:* - Яяя, я не знаю...\n\n"
+                            text += f"*Вы:* - \n\n"
+                            text += f"❓ | Выберите вариант ответа"
+                            b1 = ['❓ | Кто вы такой?', '❓ | Это законно?', '❓ | Кто "мы"?', '🧩 | У меня же нет выбора, так?']
+                        else:
+                            text = f"A man in a black robe approaches you.\n\n"
+                            text += f"You can see that the man has black hair and some kind of scar on his cheek, but his eyes are not visible in the shadow of the hat.\n\n"
+                            text += f"*Personality:* - Hello, my name is { random.choice(['mister', 'doctor'] ) } { random.choice( ['James', 'Robert', 'Vincent', 'Albert'] ) }, and you...\n\n"
+                            text += f"*You are:* - ... {user.first_name}, {user.first_name} {user.last_name}, that's my name\n\n"
+                            text += f"*Personality:* - Fine {user.first_name}, how long have you been in our business? _ulybaet_\n\n"
+                            text += f"*You are:* - ...What? Business? What are you talking about?!\n\n"
+                            text += f"*Personality:* - I see, I see... So we'll write it down. _ Writes something in notepad_\n\n"
+                            text += f"*You are:* - ...\n\n"
+                            text += f"*Personality:* - Let's get down to business, we offer you to sign a contract with us, we get your coins and resources, you get an egg with a dinosaur.\n\n"
+                            text += f"*You:* - I know, I don't know...\n\n"
+                            text += f"*You:* - \n\n"
+                            text += f"❓ | Choose the answer option'"
+                            b1 = ['❓ | Who are you?', '❓ | Is it legal?', '❓ | Who are "we"?', "🧩 | I don't have a choice, right?"]
 
-                    markup_inline = types.InlineKeyboardMarkup()
-                    markup_inline.add( types.InlineKeyboardButton(text= b1[0], callback_data = 'dead_answer1') )
-                    markup_inline.add( types.InlineKeyboardButton(text= b1[1], callback_data = 'dead_answer2') )
-                    markup_inline.add( types.InlineKeyboardButton(text= b1[2], callback_data = 'dead_answer3') )
-                    markup_inline.add( types.InlineKeyboardButton(text= b1[3], callback_data = 'dead_answer4') )
+                        markup_inline = types.InlineKeyboardMarkup()
+                        markup_inline.add( types.InlineKeyboardButton(text= b1[0], callback_data = 'dead_answer1') )
+                        markup_inline.add( types.InlineKeyboardButton(text= b1[1], callback_data = 'dead_answer2') )
+                        markup_inline.add( types.InlineKeyboardButton(text= b1[2], callback_data = 'dead_answer3') )
+                        markup_inline.add( types.InlineKeyboardButton(text= b1[3], callback_data = 'dead_answer4') )
 
-                    bot.reply_to(message, text, reply_markup = markup_inline, parse_mode="Markdown")
+                        bot.reply_to(message, text, reply_markup = markup_inline, parse_mode="Markdown")
 
             if message.text in ['🦖 Динозавр', '🦖 Dinosaur']:
                 bd_user = users.find_one({"userid": user.id})
@@ -1942,6 +2050,8 @@ def on_message(message):
                         items_id[ items_f['items'][str(i)][lg] ] = i
                         items_names.append( items_f['items'][str(i)][lg] )
 
+                    items_names.sort()
+
                     items_sort = []
                     d_it_sort = {}
                     ind_sort_it = {}
@@ -2072,7 +2182,7 @@ def on_message(message):
 
                                         elif item['type'] in ['game_ac', 'unv_ac', 'journey_ac', 'hunt_ac']:
                                             type = 'активный предмет'
-                                            d_text = f"*└* Эффективность: {item['act']}"
+                                            d_text = f"*└* {item['descriptionru']}"
 
                                         elif item['type'] == 'None':
                                             type = 'пустышка'
@@ -2115,7 +2225,7 @@ def on_message(message):
 
                                         elif item['type'] in ['game_ac', 'unv_ac', 'journey_ac', 'hunt_ac']:
                                             type = 'active game item'
-                                            d_text = f"*└* Effectiveness: {item['act']}"
+                                            d_text = f"*└* {item['descriptionen']}"
 
                                         elif item['type'] == 'None':
                                             type = 'dummy'
@@ -2631,6 +2741,9 @@ def on_message(message):
                             items_id[ items_f['items'][str(i)][lg] ] = i
                             items_names.append( items_f['items'][str(i)][lg] )
 
+
+                        items_names.sort()
+
                         items_sort = []
                         d_it_sort = {}
                         ind_sort_it = {}
@@ -2664,18 +2777,6 @@ def on_message(message):
                             l_pages = pages
                             l_page = page
                             l_ind_sort_it = ind_sort_it
-
-                            def ret(message):
-                                global l_pages, l_page, l_ind_sort_it
-                                if message.text in ['↩ Назад', '↩ Back']:
-                                    a.append(None)
-                                    return False
-                                else:
-                                    if message.text in list(l_ind_sort_it.keys()) or message.text in ['◀', '▶']:
-                                        a.append(message.text)
-                                    else:
-                                        a.append(None)
-                                    return False
 
                             rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
                             for i in pages[page-1]:
@@ -3105,6 +3206,253 @@ def on_message(message):
                                 msg = bot.send_message(message.chat.id, text)
 
 
+                if message.text in ['💍 Аксессуары', '💍 Accessories']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+
+                        if bd_user['language_code'] == 'ru':
+                            ans = ['🕹 Игра', '🌙 Сон', '🌿 Сбор пищи', '🏮 Путешествие', '↪ Назад']
+                            text = '🎍 | Выберите какого аспекта должен быть аксесcуар >'
+                        else:
+                            ans = ['🕹 Game', '🌙 Dream', '🌿 Collecting food', '🏮 Journey', '↪ Back']
+                            text = '🎍 | Choose which aspect the accessory should be >'
+
+                        rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                        rmk.add(ans[0], ans[1])
+                        rmk.add(ans[2], ans[3])
+                        rmk.add(ans[4])
+
+                        def ret_zero(message, ans, bd_user):
+
+                            if message.text not in ans or message.text == ans[4]:
+                                res = None
+                            else:
+                                res = message.text
+
+                            if res == None:
+                                bot.send_message(message.chat.id, f'❌', reply_markup = markup('profile', user))
+                                return
+
+                            if message.text in ['🕹 Game', '🕹 Игра']:
+                                ac_type = 'game'
+                            if message.text in ['🌙 Сон', '🌙 Dream']:
+                                ac_type = 'unv'
+                            if message.text in ['🌿 Сбор пищи', '🌿 Collecting food']:
+                                ac_type = 'hunt'
+                            if message.text in ['🏮 Путешествие', '🏮 Journey']:
+                                ac_type = 'journey'
+
+                            if bd_user['language_code'] == 'ru':
+                                text = '🎴 | Выберите предмет из инвентаря, для установки его в активный слот >'
+                            else:
+                                text = '🎴 | Select an item from the inventory to install it in the active slot >'
+
+                            def chunks(lst, n):
+                                for i in range(0, len(lst), n):
+                                    yield lst[i:i + n]
+
+                            nitems = bd_user['inventory']
+
+                            if nitems == []:
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = 'Инвентарь пуст.'
+                                else:
+                                    text = 'Inventory is empty.'
+
+                                bot.send_message(message.chat.id, text, reply_markup = markup('profile', user))
+                                return
+
+                            data_items = items_f['items']
+                            items = []
+                            items_id = {}
+                            page = 1
+                            items_names = []
+
+                            for i in nitems:
+                                if data_items[str(i)]['type'] == f"{ac_type}_ac":
+                                    items.append(i)
+
+
+                            if bd_user['language_code'] == 'ru':
+                                lg = "nameru"
+                            else:
+                                lg = "nameen"
+
+                            for i in items:
+                                items_id[ items_f['items'][str(i)][lg] ] = i
+                                items_names.append( items_f['items'][str(i)][lg] )
+
+                            items_sort = []
+                            d_it_sort = {}
+                            ind_sort_it = {}
+
+                            for i in items_names:
+                                if i in list(d_it_sort.keys()):
+                                    d_it_sort[i] += 1
+                                else:
+                                    d_it_sort[i] = 1
+
+                            for n in list(d_it_sort.keys()):
+                                col = d_it_sort[n]
+                                name = n
+                                items_sort.append(f'{n} x{col}')
+                                ind_sort_it[f'{n} x{col}'] = n
+
+                            pages = list(chunks(list(chunks(items_sort, 2)), 2))
+
+                            if len(pages) == 0:
+                                pages = [ [ ] ]
+
+                            for i in pages:
+                                for ii in i:
+                                    if len(ii) == 1:
+                                        ii.append(' ')
+
+                                if len(i) != 2:
+                                    for iii in range(2 - len(i)):
+                                        i.append([' ', ' '])
+
+                            def work_pr(message, pages, page, items_id, ind_sort_it, lg, ac_type):
+                                global l_pages, l_page, l_ind_sort_it
+                                a = []
+                                l_pages = pages
+                                l_page = page
+                                l_ind_sort_it = ind_sort_it
+
+                                def ret(message):
+                                    global l_pages, l_page, l_ind_sort_it
+                                    if message.text in ['↪ Назад', '↪ Back']:
+                                        a.append(None)
+                                        return False
+                                    else:
+                                        if message.text in list(l_ind_sort_it.keys()) or message.text in ['◀', '▶', '🔻 Снять аксесcуар', '🔻 Remove the accessory']:
+                                            a.append(message.text)
+                                        else:
+                                            a.append(None)
+                                        return False
+
+                                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+                                for i in pages[page-1]:
+                                    rmk.add(i[0], i[1])
+
+                                act_item = []
+                                if bd_user['activ_items'][ac_type] == None:
+                                    act_item = ['нет', 'no']
+                                else:
+                                    act_item = [ items_f['items'][ bd_user['activ_items'][ac_type] ]['nameru'], items_f['items'][ bd_user['activ_items'][ac_type] ]['nameen'] ]
+
+                                if len(pages) > 1:
+                                    if bd_user['language_code'] == 'ru':
+                                        com_buttons = ['◀', '↪ Назад', '▶', '🔻 Снять аксесcуар']
+                                        textt = f'🎴 | Выберите аксессуар >\nАктивный: {act_item[0]}'
+                                    else:
+                                        com_buttons = ['◀', '↪ Back', '▶', '🔻 Remove the accessory']
+                                        textt = f'🎴 | Choose an accessory >\nActive: {act_item[1]}'
+
+                                    rmk.add(com_buttons[3])
+                                    rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
+
+                                else:
+
+                                    if bd_user['language_code'] == 'ru':
+                                        com_buttons = ['↪ Назад', '🔻 Снять аксесcуар']
+                                        textt = f'🎴 | Выберите аксессуар >\nАктивный: {act_item[0]}'
+                                    else:
+                                        textt = f'🎴 | Choose an accessory >\nActive: {act_item[1]}'
+                                        com_buttons = ['↪ Back', '🔻 Remove the accessory']
+
+                                    rmk.add(com_buttons[1])
+                                    rmk.add(com_buttons[0])
+
+                                def ret(message, l_pages, l_page, l_ind_sort_it, bd_user, user, pages, page, items_id, ind_sort_it, lg, ac_type):
+                                    if message.text in ['↩ Назад', '↩ Back']:
+                                        res = None
+
+                                    else:
+                                        if message.text in list(l_ind_sort_it.keys()) or message.text in ['◀', '▶', '🔻 Снять аксесcуар', '🔻 Remove the accessory']:
+                                            res = message.text
+                                        else:
+                                            res = None
+
+
+                                    if res == None:
+                                        if bd_user['language_code'] == 'ru':
+                                            text = "👥 | Возвращение в меню профиля"
+                                        else:
+                                            text = "👥 | Return to the profile menu"
+
+                                        bot.send_message(message.chat.id, text, reply_markup = markup('profile', user))
+                                        return '12'
+
+                                    else:
+                                        if res == '◀':
+                                            if page - 1 == 0:
+                                                page = 1
+                                            else:
+                                                page -= 1
+
+                                            work_pr(message, pages, page, items_id, ind_sort_it, lg, ac_type)
+
+                                        elif res == '▶':
+                                            if page + 1 > len(l_pages):
+                                                page = len(l_pages)
+                                            else:
+                                                page += 1
+
+                                            work_pr(message, pages, page, items_id, ind_sort_it, lg, ac_type)
+
+                                        else:
+
+                                            if res in ['🔻 Снять аксесcуар', '🔻 Remove the accessory']:
+                                                if bd_user['activ_items'][ac_type] != None:
+                                                    item_id = bd_user['activ_items'][ac_type]
+                                                    bd_user['activ_items'][ac_type] = None
+                                                    bd_user['inventory'].append(item_id)
+
+                                                    if bd_user['language_code'] == 'ru':
+                                                        text = "🎴 | Активный предмет снят"
+                                                    else:
+                                                        text = "🎴 | Active item removed"
+
+                                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+                                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'activ_items': bd_user['activ_items'] }} )
+
+                                                else:
+                                                    if bd_user['language_code'] == 'ru':
+                                                        text = "🎴 | В данный момент нет активного предмета!"
+                                                    else:
+                                                        text = "🎴 | There is no active item at the moment!"
+
+                                                bot.send_message(message.chat.id, text, reply_markup = markup('profile', user))
+
+                                            else:
+
+                                                item_id = items_id[ l_ind_sort_it[res] ]
+                                                # item = items_f['items'][item_id]
+
+                                                bd_user['activ_items'][ac_type] = item_id
+
+                                                if bd_user['language_code'] == 'ru':
+                                                    text = "🎴 | Активный предмет установлен!"
+                                                else:
+                                                    text = "🎴 | The active item is installed!"
+
+                                                bd_user['inventory'].remove(item_id)
+                                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+                                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'activ_items': bd_user['activ_items'] }} )
+
+                                                bot.send_message(message.chat.id, text, reply_markup = markup('profile', user))
+
+                                msg = bot.send_message(message.chat.id, textt, reply_markup = rmk)
+                                bot.register_next_step_handler(msg, ret, l_pages, l_page, l_ind_sort_it, bd_user, user, pages, page, items_id, ind_sort_it, lg, ac_type)
+
+                            work_pr(message, pages, page, items_id, ind_sort_it, lg, ac_type)
+
+                        msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                        bot.register_next_step_handler(msg, ret_zero, ans, bd_user)
+
+
 
 
 @bot.callback_query_handler(func = lambda call: True)
@@ -3443,17 +3791,17 @@ def answer(call):
         if bd_user['language_code'] == 'ru':
             text += "\n\n\n"
             text += "     *Контракт*\n"
-            text += f"{user.first_name} отдаёт: весь инвентарь, {mn} монет\n"
+            text += f"{user.first_name} отдаёт: весь инвентарь, {int(mn)} монет\n"
             text += f"{user.first_name} получает: 1х яйцо динозавра"
             markup_inline.add( types.InlineKeyboardButton(text= '✒ Подписать', callback_data = 'dead_restart') )
         else:
             text += "\n\n\n"
             text += "     *Contract*\n"
-            text += f"{user.first_name} gives: all inventory, {mn} coins\n"
+            text += f"{user.first_name} gives: all inventory, {int(mn)} coins\n"
             text += f"{user.first_name} receives: 1x dinosaur egg"
             markup_inline.add( types.InlineKeyboardButton(text= '✒ Sign', callback_data = 'dead_restart') )
 
-        bd_user['notifications']['ans_dead'] = mn
+        bd_user['notifications']['ans_dead'] = int(mn)
         users.update_one( {"userid": user.id}, {"$set": {'notifications': bd_user['notifications']}} )
 
         try:
@@ -3465,7 +3813,7 @@ def answer(call):
         user = call.from_user
         bd_user = users.find_one({"userid": user.id})
 
-        if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False:
+        if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False and bd_user['lvl'][0] < 5:
             egg_n = str(random.choice(list(json_f['data']['egg'])))
 
             bd_user['dinos'][ functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 30 * 60, 'egg_id': egg_n}
