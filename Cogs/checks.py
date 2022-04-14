@@ -213,7 +213,7 @@ class checks:
                                     sh_friends = random.shuffle(user['friends']['friends_list'])
                                     for friend in sh_friends:
                                         if ok != True:
-                                            bd_friend = users.find_one({"userid": user['userid']})
+                                            bd_friend = users.find_one({"userid": friend})
                                             if bd_friend != None:
                                                 try:
                                                     bot_friend = bot.get_chat( bd_friend['userid'] )
