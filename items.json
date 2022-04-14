@@ -49,13 +49,34 @@
 
  "24": {"nameru": "🥚 Легендарное яйцо", "nameen": "🥚 Legendary Egg", "type": "egg", "incub_time": 110, "time_tag": "h", "inc_type": "leg"},
 
- "25": {"nameru": "📄 Пустая бумажка", "nameen": "📄 An empty piece of paper", "type": "None"},
+ "25": {"nameru": "📄 Пустая бумажка", "nameen": "📄 An empty piece of paper", "type": "material"},
 
  "26": {"nameru": "👢 Кожа", "nameen": "👢 Leather", "type": "material"},
 
  "27": {"nameru": "🥢 Веточки дерева", "nameen": "🥢 Tree branches", "type": "material"},
 
- "28": {"nameru": "🐡 Рыбья чешуя", "nameen": "🐡 Fish scales", "type": "material"}
+ "28": {"nameru": "🐡 Рыбий жир", "nameen": "🐡 Fish oil", "type": "material"},
+
+
+ "29": {"nameru": "🧤 Кожаная одежда", "nameen": "🧤 Leather clothing", "type": "journey_ac", "descriptionru": "Отменяет штраф за событие драка.", "descriptionen": "Cancels the penalty for the fight event."},
+
+ "30": {"nameru": "📜 Рецепт #1", "nameen": "📜 Recipe #1", "type": "recipe", "descriptionru": "Рецепт изготовления '🧤 Кожаная одежда' из 5-ти кожи.", "descriptionen": "The recipe for making '🧤 Leather clothing' from 5 leather.", "create": ["29"], "materials": ["26", "26", "26", "26", "26"]},
+
+
+ "31": {"nameru": "🔥 Факел", "nameen": "🔥 Torch", "type": "hunt_ac", "descriptionru": "Во время собирательства, есть шанс найти более изысканные травы.", "descriptionen": "While gathering, there is a chance to find more refined herbs."},
+
+ "32": {"nameru": "📜 Рецепт #2", "nameen": "📜 Recipe #2", "type": "recipe", "descriptionru": "Рецепт изготовления '🔥 Факел' из 4-ёх веточек дерева и 1-ой бумажки.", "descriptionen": "The recipe for making a '🔥 Torch' from 4 tree branches and 1 piece of paper.", "create": ["31"], "materials": ["27", "27", "27", "27", "25"]},
+
+
+ "33": {"nameru": "🍵 Лекарственный напиток", "nameen": "🍵 Medicinal drink", "type": "+heal", "act": 45, "-mood": 10},
+
+ "34": {"nameru": "📜 Рецепт #3", "nameen": "📜 Recipe #3", "type": "recipe", "descriptionru": "Рецепт изготовления '🍵 Лекарственный напиток' из 5-ти рыбьего жира.", "descriptionen": "Recipe for making '🍵 Medicinal drink' from 5 fish oil.", "create": ["33"], "materials": ["28", "28", "28", "28", "28"]},
+
+ "35": {"nameru": "🍀 Изысканные травы", "nameen": "🍀 Exquisite herbs", "type": "+eat", "act": 45, "class": "Herbivore"},
+
+ "36": {"nameru": "🍵 Чай", "nameen": "🍵 Tea", "type": "+unv", "act": 25, "-eat": 30},
+
+ "37": {"nameru": "📜 Рецепт #4", "nameen": "📜 Recipe #4", "type": "recipe", "descriptionru": "Рецепт изготовления '🍵 Чай' из 5-ти изысканных трав.", "descriptionen": "Recipe for making '🍵 Tea' from 5 exquisite herbs.", "create": ["36"], "materials": ["35", "35", "35", "35", "35"]}
 
 }
 }
