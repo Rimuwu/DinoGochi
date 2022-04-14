@@ -210,10 +210,11 @@ class checks:
 
                                 if event == 'friend_meet':
                                     ok = False
-                                    sh_friends = random.shuffle(user['friends']['friends_list'])
+                                    sh_friends = user['friends']['friends_list']
+                                    random.shuffle(sh_friends)
                                     for friend in sh_friends:
                                         if ok != True:
-                                            bd_friend = users.find_one({"userid": friend})
+                                            bd_friend = users.find_one({"userid": int(friend)})
                                             if bd_friend != None:
                                                 try:
                                                     bot_friend = bot.get_chat( bd_friend['userid'] )
