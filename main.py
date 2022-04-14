@@ -747,7 +747,7 @@ def command(message):
 @bot.message_handler(commands=['emulate_not'])
 def command(message):
     print('emulate_not')
-    time.sleep(60)
+    time.sleep(20)
     user = message.from_user
     bd_user = users.find_one({"userid": user.id})
     functions.notifications_manager(bot, message.text[13:][:-3], bd_user, message.text[-2:], dino_id = '1')
