@@ -1854,7 +1854,7 @@ def on_message(message):
                                         else:
                                             page -= 1
 
-                                    if res == '▶':
+                                    elif res == '▶':
                                         if page + 1 > len(friends_chunks):
                                             page = len(friends_chunks)
                                         else:
