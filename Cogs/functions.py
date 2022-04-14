@@ -511,3 +511,20 @@ class functions:
                 return True
 
         return False
+
+    @staticmethod
+    def random_items(com_i:list, unc_i:list, rar_i:list, myt_i:list, leg_i:list):
+
+        r_q = random.randint(1, 100)
+        if r_q in list(range(1, 51)):
+            items = com_i
+        elif r_q in list(range(51, 76)):
+            items = unc_i
+        elif r_q in list(range(76, 91)):
+            items = rar_i
+        elif r_q in list(range(91, 99)):
+            items = myt_i
+        else:
+            items = leg_i
+
+        return random.choice(items)

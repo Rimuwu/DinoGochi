@@ -98,6 +98,17 @@ def check_notif(): #проверка каждые 5 секунд
                             except:
                                 pass
 
+                        if 'sleep_type' in user['dinos'][dino_id].keys() and user['dinos'][dino_id]['sleep_type'] == 'short':
+
+                            if user['dinos'][dino_id]['sleep_time'] - int(time.time()) <= 0:
+
+                                user['dinos'][dino_id]['activ_status'] = 'pass_active'
+                                functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'send')
+
+                                del user['dinos'][dino_id]['sleep_type']
+                                del user['dinos'][dino_id]['sleep_time']
+
+
                     if dino['activ_status'] == 'game':
 
                         if int(dino['game_time']-time.time()) <= 0:
@@ -180,7 +191,7 @@ def check(): #проверка каждые 10 секунд
 
     def alpha():
 
-        checks.main()
+        checks.main(bot)
 
     while True:
         if int(memory_usage()[0]) < 1500:
@@ -728,10 +739,15 @@ def command(message):
     text += f'Thr.count: {threading.active_count()}'
     bot.send_message(user.id, text)
 
+# @bot.message_handler(commands=['rr'])
+# def command(message):
+#     item = functions.random_items([int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 4)], [int(ii) for ii in range(1, 5)], [int(ii) for ii in range(1, 6)], [int(ii) for ii in range(1, 7)])
+#     print(item, ',')
+
 @bot.message_handler(commands=['emulate_not'])
 def command(message):
     print('emulate_not')
-    # time.sleep(60)
+    time.sleep(60)
     user = message.from_user
     bd_user = users.find_one({"userid": user.id})
     functions.notifications_manager(bot, message.text[13:][:-3], bd_user, message.text[-2:], dino_id = '1')
@@ -1012,48 +1028,56 @@ def on_message(message):
                                         st_t = 'сбор пищи 🥞'
 
                                     if bd_dino['stats']['heal'] >= 60:
-                                        h_text = '❤ | Динозавр здоров'
+                                        h_text = '❤ *┌* Динозавр здоров'
                                     elif bd_dino['stats']['heal'] < 60 and bd_dino['stats']['heal'] > 10:
-                                        h_text = '❤ | Динозавр в плохом состоянии'
+                                        h_text = '❤ *┌* Динозавр в плохом состоянии'
                                     elif bd_dino['stats']['heal'] <= 10:
-                                        h_text = '❤ | Динозавр в крайне плохом состоянии!'
+                                        h_text = '❤ *┌* Динозавр в крайне плохом состоянии!'
 
                                     if bd_dino['stats']['eat'] >= 60:
-                                        e_text = '🍕 | Динозавр сыт'
+                                        e_text = '🍕 *├* Динозавр сыт'
                                     elif bd_dino['stats']['eat'] < 60 and bd_dino['stats']['eat'] > 10:
-                                        e_text = '🍕 | Динозавр голоден'
+                                        e_text = '🍕 *├* Динозавр голоден'
                                     elif bd_dino['stats']['eat'] <= 10:
-                                        e_text = '🍕 | Динозавр умирает от голода!'
+                                        e_text = '🍕 *├* Динозавр умирает от голода!'
 
                                     if bd_dino['stats']['game'] >= 60:
-                                        g_text = '🎮 | Динозавр не хочет играть'
+                                        g_text = '🎮 *├* Динозавр не хочет играть'
                                     elif bd_dino['stats']['game'] < 60 and bd_dino['stats']['game'] > 10:
-                                        g_text = '🎮 | Динозавр скучает...'
+                                        g_text = '🎮 *├* Динозавр скучает...'
                                     elif bd_dino['stats']['game'] <= 10:
-                                        g_text = '🎮 | Динозавр умерает от скуки!'
+                                        g_text = '🎮 *├* Динозавр умерает от скуки!'
 
                                     if bd_dino['stats']['mood'] >= 60:
-                                        m_text = '🎈 | Динозавр в хорошем настроении'
+                                        m_text = '🎈 *├* Динозавр в хорошем настроении'
                                     elif bd_dino['stats']['mood'] < 60 and bd_dino['stats']['mood'] > 10:
-                                        m_text = '🎈 | У динозавра нормальное настроение'
+                                        m_text = '🎈 *├* У динозавра нормальное настроение'
                                     elif bd_dino['stats']['mood'] <= 10:
-                                        m_text = '🎈 | Динозавр грустит!'
+                                        m_text = '🎈 *├* Динозавр грустит!'
 
                                     if bd_dino['stats']['unv'] >= 60:
-                                        u_text = '🌙 | Динозавр полон сил'
+                                        u_text = '🌙 *└* Динозавр полон сил'
                                     elif bd_dino['stats']['unv'] < 60 and bd_dino['stats']['unv'] > 10:
-                                        u_text = '🌙 | У динозавра есть силы'
+                                        u_text = '🌙 *└* У динозавра есть силы'
                                     elif bd_dino['stats']['unv'] <= 10:
-                                        u_text = '🌙 | Динозавр устал!'
+                                        u_text = '🌙 *└* Динозавр устал!'
 
 
-                                    text = f'🦖 | Имя: {bd_dino["name"]}\n👁‍🗨 | Статус: {st_t}\n🧿 | Редкость: {qual}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
+                                    text = f'🦖 *┌* Имя: {bd_dino["name"]}\n👁‍🗨 *├* Статус: {st_t}\n🧿 *└* Редкость: {qual}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
 
                                     if bd_dino['activ_status'] == 'journey':
                                         w_t = bd_dino['journey_time'] - time.time()
                                         if w_t < 0:
                                             w_t = 0
-                                        text += f"\n\n🌳 | Путешествие: \n·  Осталось: { functions.time_end(w_t) }"
+                                        text += f"\n\n🌳 *┌* Путешествие: \n·  Осталось: { functions.time_end(w_t) }"
+
+                                    if bd_dino['activ_status'] == 'game':
+                                        if bd_user['activ_items']['game'] == '4':
+                                            w_t = bd_dino['game_time'] - time.time()
+                                            if w_t < 0:
+                                                w_t = 0
+                                            text += f"\n\n🎮 *┌* Игра: \n·  Осталось: { functions.time_end(w_t) }"
+
                                 else:
 
                                     dino = json_f['elements'][str(bd_dino['dino_id'])]
@@ -1082,49 +1106,56 @@ def on_message(message):
                                         st_t = 'collecting food 🥞'
 
                                     if bd_dino['stats']['heal'] >= 60:
-                                        h_text = '❤ | The dinosaur is healthy'
+                                        h_text = '❤ *┌* The dinosaur is healthy'
                                     elif bd_dino['stats']['heal'] < 60 and bd_dino['stats']['heal'] > 10:
-                                        h_text = '❤ | Dinosaur in bad condition'
+                                        h_text = '❤ *┌* Dinosaur in bad condition'
                                     elif bd_dino['stats']['heal'] <= 10:
-                                        h_text = '❤ | The dinosaur is in extremely bad condition!'
+                                        h_text = '❤ *┌* The dinosaur is in extremely bad condition!'
 
                                     if bd_dino['stats']['eat'] >= 60:
-                                        e_text = '🍕 | The dinosaur is full'
+                                        e_text = '🍕 *├* The dinosaur is full'
                                     elif bd_dino['stats']['eat'] < 60 and bd_dino['stats']['eat'] > 10:
-                                        e_text = '🍕 | The dinosaur is hungry'
+                                        e_text = '🍕 *├* The dinosaur is hungry'
                                     elif bd_dino['stats']['eat'] <= 10:
-                                        e_text = '🍕 | The dinosaur is starving!'
+                                        e_text = '🍕 *├* The dinosaur is starving!'
 
                                     if bd_dino['stats']['game'] >= 60:
-                                        g_text = "🎮 | The dinosaur doesn't want to play"
+                                        g_text = "🎮 *├* The dinosaur doesn't want to play"
                                     elif bd_dino['stats']['game'] < 60 and bd_dino['stats']['game'] > 10:
-                                        g_text = '🎮 | The dinosaur is bored...'
+                                        g_text = '🎮 *├* The dinosaur is bored...'
                                     elif bd_dino['stats']['game'] <= 10:
-                                        g_text = '🎮 | The dinosaur is dying of boredom!'
+                                        g_text = '🎮 *├* The dinosaur is dying of boredom!'
 
                                     if bd_dino['stats']['mood'] >= 60:
-                                        m_text = '🎈 | The dinosaur is in a good mood'
+                                        m_text = '🎈 *├* The dinosaur is in a good mood'
                                     elif bd_dino['stats']['mood'] < 60 and bd_dino['stats']['mood'] > 10:
-                                        m_text = '🎈 | The dinosaur has a normal mood'
+                                        m_text = '🎈 *├* The dinosaur has a normal mood'
                                     elif bd_dino['stats']['mood'] <= 10:
-                                        m_text = '🎈 | The dinosaur is sad!'
+                                        m_text = '🎈 *├* The dinosaur is sad!'
 
                                     if bd_dino['stats']['unv'] >= 60:
-                                        u_text = '🌙 | The dinosaur is full of energy'
+                                        u_text = '🌙 *└* The dinosaur is full of energy'
                                     elif bd_dino['stats']['unv'] < 60 and bd_dino['stats']['unv'] > 10:
-                                        u_text = '🌙 | The dinosaur has powers'
+                                        u_text = '🌙 *└* The dinosaur has powers'
                                     elif bd_dino['stats']['unv'] <= 10:
-                                        u_text = '🌙 | The dinosaur is tired!'
+                                        u_text = '🌙 *└* The dinosaur is tired!'
 
-                                    text = f'🦖 | Name: {bd_dino["name"]}\n👁‍🗨 | Status: {st_t}\n🧿 | Rare: {qual}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
+                                    text = f'🦖 *┌* Name: {bd_dino["name"]}\n👁‍🗨 *├* Status: {st_t}\n🧿 *└* Rare: {qual}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
 
                                     if bd_dino['activ_status'] == 'journey':
                                         w_t = bd_dino['journey_time'] - time.time()
                                         if w_t < 0:
                                             w_t = 0
-                                        text += f"\n\n🌳 | Journey: \n·  Left: { functions.time_end(w_t, True) }"
+                                        text += f"\n\n🌳 *┌* Journey: \n·  Left: { functions.time_end(w_t, True) }"
 
-                                bot.send_photo(message.chat.id, profile, text, reply_markup = markup(user = user) )
+                                    if bd_dino['activ_status'] == 'game':
+                                        if bd_user['activ_items']['game'] == '4':
+                                            w_t = bd_dino['game_time'] - time.time()
+                                            if w_t < 0:
+                                                w_t = 0
+                                            text += f"\n\n🎮 *┌* Game: \n·  Left: { functions.time_end(w_t) }"
+
+                                bot.send_photo(message.chat.id, profile, text, reply_markup = markup(user = user), parse_mode = 'Markdown' )
 
                         n_dp, dp_a = functions.dino_pre_answer(bot, message)
                         if n_dp == 1:
@@ -1840,9 +1871,12 @@ def on_message(message):
                                         bd_user['friends']['friends_list'].remove(uid)
                                         users.update_one( {"userid": bd_user['userid']}, {"$set": {'friends': bd_user['friends'] }} )
 
-                                        two_user = users.find_one({"userid": uid})
-                                        two_user['friends']['friends_list'].remove(bd_user['userid'])
-                                        users.update_one( {"userid": two_user['userid']}, {"$set": {'friends': two_user['friends'] }} )
+                                        try:
+                                            two_user = users.find_one({"userid": uid})
+                                            two_user['friends']['friends_list'].remove(bd_user['userid'])
+                                            users.update_one( {"userid": two_user['userid']}, {"$set": {'friends': two_user['friends'] }} )
+                                        except:
+                                            pass
 
                                         if bd_user['friends']['friends_list'] == []:
                                             bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
@@ -1880,12 +1914,12 @@ def on_message(message):
                     mr_l = list(sorted(list(users.find({})), key=lambda x: x['coins'], reverse=True))
                     lv_l = list(sorted(list(users.find({})), key=lambda x: (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], reverse=True))
 
-                    du_mc, du_lv = [{}, {}, {}], [{}, {}, {}]
+                    du_mc, du_lv = [{}, {}, {}, {}, {}], [{}, {}, {}, {}, {}]
 
 
                     i = -1
                     us_i_l = []
-                    while du_mc[0] == {} or du_mc[1] == {} or du_mc[2] == {}:
+                    while du_mc[0] == {} or du_mc[1] == {} or du_mc[2] == {} or du_mc[3] == {} or du_mc[4] == {}:
                         i += 1
                         if i >= len(mr_l):
                             break
@@ -1917,9 +1951,28 @@ def on_message(message):
                             except:
                                 pass
 
+                        if du_mc[3] == {} and mr_l[i]['userid'] not in us_i_l:
+                            try:
+                                m = bot.get_chat(mr_l[i]['userid'])
+                                du_mc[3] = {'ui': mr_l[i]['userid'], 'coins': mr_l[i]['coins'], 'mn': m.first_name}
+
+                                us_i_l.append(mr_l[i]['userid'])
+                            except:
+                                pass
+
+                        if du_mc[4] == {} and mr_l[i]['userid'] not in us_i_l:
+                            try:
+                                m = bot.get_chat(mr_l[i]['userid'])
+                                du_mc[4] = {'ui': mr_l[i]['userid'], 'coins': mr_l[i]['coins'], 'mn': m.first_name}
+
+                                us_i_l.append(mr_l[i]['userid'])
+                            except:
+                                pass
+
+
                     i = -1
                     us_i_m = []
-                    while du_lv[0] == {} or du_lv[1] == {} or du_lv[2] == {}:
+                    while du_lv[0] == {} or du_lv[1] == {} or du_lv[2] == {} or du_lv[3] == {} or du_lv[4] == {}:
                         i += 1
                         if i >= len(lv_l):
                             break
@@ -1954,6 +2007,26 @@ def on_message(message):
                             except:
                                 pass
 
+                        if du_lv[3] == {} and lv_l[i]['userid'] not in us_i_m:
+                            try:
+                                m = bot.get_chat(lv_l[i]['userid'])
+                                x = lv_l[i]
+                                du_lv[3] = {'ui': lv_l[i]['userid'], 'lvl': lv_l[i]['lvl'][0], 'exp': (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], 'mn': m.first_name }
+
+                                us_i_m.append(lv_l[i]['userid'])
+                            except:
+                                pass
+
+                        if du_lv[4] == {} and lv_l[i]['userid'] not in us_i_m:
+                            try:
+                                m = bot.get_chat(lv_l[i]['userid'])
+                                x = lv_l[i]
+                                du_lv[4] = {'ui': lv_l[i]['userid'], 'lvl': lv_l[i]['lvl'][0], 'exp': (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], 'mn': m.first_name }
+
+                                us_i_m.append(lv_l[i]['userid'])
+                            except:
+                                pass
+
                     if bd_user['language_code'] == 'ru':
                         text =  f'*┌* 🎢 Рейтинг по уровню:\n'
                         text += f"*├* Ваше место в рейтинге: #{lv_l.index(bd_user)+1}\n\n"
@@ -1964,7 +2037,7 @@ def on_message(message):
                             if i == {}:
                                 pass
                             else:
-                                if n != 3:
+                                if n != 5:
                                     text += f"*├* #{n} *{i['mn']}*:\n      *└* Ур. {i['lvl']} (Всего опыта {i['exp']})\n"
                                 else:
                                     text += f"*└* #{n} *{i['mn']}*:\n      *└* Ур. {i['lvl']} (Всего опыта {i['exp']})\n"
@@ -1978,7 +2051,7 @@ def on_message(message):
                             if i == {}:
                                 pass
                             else:
-                                if n != 3:
+                                if n != 5:
                                     text += f"*├* #{n} *{i['mn']}*:\n      *└* Монеты {i['coins']}\n"
                                 else:
                                     text += f"*└* #{n} *{i['mn']}*:\n      *└* Монеты {i['coins']}\n"
@@ -1992,7 +2065,7 @@ def on_message(message):
                             if i == {}:
                                 pass
                             else:
-                                if n != 3:
+                                if n != 5:
                                     text += f"*├* #{n} *{i['mn']}*:\n      *└* lvl {i['lvl']} (Total experience {i['exp']})\n"
                                 else:
                                     text += f"*└* #{n} *{i['mn']}*:\n      *└* lvl {i['lvl']} (Total experience {i['exp']})\n"
@@ -2006,7 +2079,7 @@ def on_message(message):
                             if i == {}:
                                 pass
                             else:
-                                if n != 3:
+                                if n != 5:
                                     text += f"*├* #{n} *{i['mn']}*:\n      *└* Coins {i['coins']}\n"
                                 else:
                                     text += f"*└* #{n} *{i['mn']}*:\n      *└* Coins {i['coins']}\n"
@@ -2117,6 +2190,25 @@ def on_message(message):
                             rmk.add(com_buttons)
 
                         def ret(message, l_pages, l_page, l_ind_sort_it, pages, page, items_id, ind_sort_it, bd_user, user):
+
+                            def sort_items_col(nls_i:list, lg):
+                                dct = {}
+                                nl = []
+
+                                for i in nls_i:
+                                    if i not in dct.keys():
+                                        dct[i] = 1
+                                    else:
+                                        dct[i] += 1
+
+                                for i in dct.keys():
+                                    it = dct[i]
+                                    name = items_f['items'][i][f'name{lg}']
+                                    nl.append(f"{name} x{it}")
+
+                                return nl
+
+
                             if message.text in ['↪ Назад', '↪ Back']:
                                 res = None
                             else:
@@ -2167,6 +2259,10 @@ def on_message(message):
                                             type = 'еда'
                                             d_text = f"*└* Эффективность: {item['act']}"
 
+                                        elif item['type'] == '+unv':
+                                            type = 'энергетический напиток'
+                                            d_text = f"*└* Эффективность: {item['act']}"
+
                                         elif item['type'] == 'egg':
                                             eg_q = item['inc_type']
                                             if item['inc_type'] == 'random': eg_q = 'рандом'
@@ -2192,9 +2288,27 @@ def on_message(message):
                                             type = 'материал'
                                             d_text = f"*└* Данный предмет нужен для изготовления."
 
-                                        if '+mood' in item.keys():
+                                        elif item['type'] == 'recipe':
+                                            type = 'рецепт создания'
+                                            d_text = f'*├* Создаёт: {", ".join(sort_items_col( item["create"], "ru" ))}\n'
+                                            d_text += f'*├* Материалы: {", ".join(sort_items_col( item["materials"], "ru" ))}\n'
+                                            d_text +=  f"*└* {item['descriptionru']}"
+
+
+                                        if list(set([ '+mood' ]) & set(item.keys())) != []:
                                             d_text += f'\n\n*┌* *🍡 Дополнительные бонусы*\n'
-                                            d_text += f"*└* Повышение настроения: {item['+mood']}%"
+
+                                            if '+mood' in item.keys():
+                                                d_text += f"*└* Повышение настроения: {item['+mood']}%"
+
+                                        if list(set([ '-mood', "-eat" ]) & set(item.keys())) != []:
+                                            d_text += f'\n\n*┌* *📌 Дополнительные штрафы*\n'
+
+                                            if '-mood' in item.keys():
+                                                d_text += f"*├* Понижение настроения: {item['-mood']}%"
+
+                                            if '-eat' in item.keys():
+                                                d_text += f"*└* Понижение сытости: {item['-eat']}%"
 
                                         text =  f"*┌* *🎴 Информация о предмете*\n"
                                         text += f"*├* Название: {item['nameru']}\n"
@@ -2209,6 +2323,10 @@ def on_message(message):
 
                                         elif item['type'] == '+eat':
                                             type = 'eat'
+                                            d_text = f"*└* Effectiveness: {item['act']}"
+
+                                        elif item['type'] == '+unv':
+                                            type = 'energy drink'
                                             d_text = f"*└* Effectiveness: {item['act']}"
 
                                         elif item['type'] == 'egg':
@@ -2235,9 +2353,26 @@ def on_message(message):
                                             type = 'material'
                                             d_text = f"*└* This item is needed for manufacturing."
 
-                                        if '+mood' in item.keys():
+                                        elif item['type'] == 'recipe':
+                                            type = 'recipe for creation'
+                                            d_text = f'*├* Creates: {", ".join(sort_items_col( item["create"], "ru" ))}\n'
+                                            d_text += f'*├* Materials: {", ".join(sort_items_col( item["materials"], "ru" ))}\n'
+                                            d_text +=  f"*└* {item['descriptionru']}"
+
+                                        if list(set([ '+mood' ]) & set(item.keys())) != []:
                                             d_text += f'\n\n*┌* *🍡 Additional bonuses*\n'
-                                            d_text += f"*└* Mood boost: {item['+mood']}%"
+
+                                            if '+mood' in item.keys():
+                                                d_text += f"*└* Mood boost: {item['+mood']}%"
+
+                                        if list(set([ '-mood', "-eat" ]) & set(item.keys())) != []:
+                                            d_text += f'\n\n*┌* *📌 Additional penalties*\n'
+
+                                            if '-mood' in item.keys():
+                                                d_text += f"*├* Lowering the mood: {item['-mood']}%"
+
+                                            if '-eat' in item.keys():
+                                                d_text += f"*└* Reducing satiety: {item['-eat']}%"
 
                                         text =  f"*┌* *🎴 Subject information*\n"
                                         text += f"*├* Name: {item['nameen']}\n"
@@ -2402,17 +2537,111 @@ def on_message(message):
                                     bot.send_message(message.chat.id, text, reply_markup = markup("actions", user))
 
                                 else:
+                                    def dl_sleep(bd_user, message):
+                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] = 'sleep'
+                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_start'] = int(time.time())
+                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_type'] = 'long'
+                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
 
-                                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] = 'sleep'
-                                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_start'] = int(time.time())
-                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                                        if bd_user['language_code'] == 'ru':
+                                            text = '🌙 Вы уложили динозавра спать!'
+                                        else:
+                                            text = "🌙 You put the dinosaur to sleep!"
 
-                                    if bd_user['language_code'] == 'ru':
-                                        text = '🌙 Вы уложили динозавра спать!'
+                                        bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+
+                                    if bd_user['activ_items']['unv'] != '16':
+                                        dl_sleep(bd_user, message)
+
                                     else:
-                                        text = "🌙 You put the dinosaur to sleep!"
 
-                                    bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+                                        if bd_user['language_code'] == 'ru':
+                                            ans = ['🛌 Длинный сон', '🛌 Короткий сон', '↪ Назад']
+                                            text = '🌙 | Выберите вид сна для динозавра >'
+                                        else:
+                                            ans = ['🛌 Long Sleep', '🛌 Short Sleep', '↪ Back']
+                                            text = '🌙 | Choose the type of sleep for the dinosaur >'
+
+                                        rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                                        rmk.add(ans[0], ans[1])
+                                        rmk.add(ans[2])
+
+                                        def ret(message, ans, bd_user):
+
+                                            if message.text not in ans or message.text == ans[2]:
+                                                res = None
+                                            else:
+                                                res = message.text
+
+                                            if res == None:
+                                                bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
+                                                return
+
+                                            if res in ['🛌 Длинный сон', '🛌 Long Sleep']:
+
+                                                dl_sleep(bd_user, message)
+
+                                            if res in ['🛌 Короткий сон', '🛌 Short Sleep']:
+
+                                                def ret2(message, ans, bd_user):
+
+                                                    if message.text == ans[0]:
+                                                        number = None
+                                                    else:
+
+                                                        try:
+                                                            number = int(message.text)
+                                                        except:
+                                                            number = None
+
+
+                                                    if number == None:
+                                                        bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
+                                                        return
+
+                                                    if number <= 5 or number > 28800:
+
+                                                        if bd_user['language_code'] == 'ru':
+                                                            text = '❌ | Требовалось указать время в минутах больше 5-ти минут и меньше 8-ми часов (28800)!'
+                                                        else:
+                                                            text = '❌ | It was required to specify the time in minutes more than 5 minutes and less than 8 hours (28800)!'
+
+                                                        bot.send_message(message.chat.id, text, reply_markup = markup('actions', user))
+
+                                                    else:
+
+                                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] = 'sleep'
+                                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_time'] = int(time.time()) + number * 60
+                                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_type'] = 'short'
+                                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+
+                                                        if bd_user['language_code'] == 'ru':
+                                                            text = '🌙 Вы уложили динозавра спать!'
+                                                        else:
+                                                            text = "🌙 You put the dinosaur to sleep!"
+
+                                                        bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+
+
+
+                                                if bd_user['language_code'] == 'ru':
+                                                    ans = ['↪ Назад']
+                                                    text = '🌙 | Укажите время быстрого сна (сон идёт в 2 раза быстрее длинного) > '
+                                                else:
+                                                    ans = ['↪ Back']
+                                                    text = '🌙 | Specify the REM sleep time (sleep is 2 times faster than long sleep) >'
+
+                                                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                                                rmk.add(ans[0])
+
+                                                msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                                                bot.register_next_step_handler(msg, ret2, ans, bd_user)
+
+
+                                        msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                                        bot.register_next_step_handler(msg, ret, ans, bd_user)
+
+
 
                         else:
                             bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
@@ -2428,9 +2657,9 @@ def on_message(message):
                             r_n = random.randint(0, 20)
                             bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] = 'pass_active'
 
-                            if 'sleep_start' in bd_user['dinos'][ bd_user['settings']['dino_id'] ].keys() and int(time.time()) - bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_start'] >= 8 * 3600:
+                            if 'sleep_type' in bd_user['dinos'][ bd_user['settings']['dino_id'] ] and bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_type'] == 'short':
 
-                                del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_start']
+                                del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_time']
 
                                 if bd_user['language_code'] == 'ru':
                                     text = f'🌙 Ваш динозавр пробудился.'
@@ -2439,21 +2668,54 @@ def on_message(message):
 
                                 bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
 
-                            else:
+                                try:
+                                    del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_type']
+                                except:
+                                    pass
 
-                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= r_n
+                                try:
+                                    del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_start']
+                                except:
+                                    pass
 
-                                if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] < 0:
-                                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] = 0
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
 
-                                if bd_user['language_code'] == 'ru':
-                                    text = f'🌙 Ваш динозавр пробудился. Он сильно не доволен что вы его разбудили!\nДинозавр потерял {r_n}% настроения.'
+                            elif 'sleep_type' not in bd_user['dinos'][ bd_user['settings']['dino_id'] ] or bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_type'] == 'long':
+
+                                if 'sleep_start' in bd_user['dinos'][ bd_user['settings']['dino_id'] ].keys() and int(time.time()) - bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_start'] >= 8 * 3600:
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = f'🌙 Ваш динозавр пробудился.'
+                                    else:
+                                        text = f"🌙 Your dinosaur has awakened."
+
+                                    bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+
                                 else:
-                                    text = f"🌙 Your dinosaur has awakened. He is very unhappy that you woke him up!\nDinosaur lost {r_n}% of mood."
 
-                                bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+                                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= r_n
 
-                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                                    if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] < 0:
+                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] = 0
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = f'🌙 Ваш динозавр пробудился. Он сильно не доволен что вы его разбудили!\nДинозавр потерял {r_n}% настроения.'
+                                    else:
+                                        text = f"🌙 Your dinosaur has awakened. He is very unhappy that you woke him up!\nDinosaur lost {r_n}% of mood."
+
+                                    bot.send_message(message.chat.id, text , reply_markup = markup('actions', user))
+
+                                try:
+                                    del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_type']
+                                except:
+                                    pass
+
+                                try:
+                                    del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_start']
+                                except:
+                                    pass
+
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
 
                         else:
                             bot.send_message(message.chat.id, f'❌', reply_markup = markup('actions', user))
@@ -2880,6 +3142,9 @@ def on_message(message):
 
                                         if '+mood' in item.keys():
                                             bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] += item['+mood']
+
+                                        if '-mood' in item.keys():
+                                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= item['-mood']
 
                                         users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
 
@@ -3860,12 +4125,61 @@ def answer(call):
                 users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
                 users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
 
+            if item['type'] == '+unv':
+                dino['stats']['unv'] += item['act']
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'⚡ | Вы восстановили {item["act"]}% энергии динозавра!'
+                else:
+                    text = f"⚡ | You have recovered {item['act']}% of the dinosaur's energy!"
+
+                bd_user['dinos'][dii] = dino
+                bd_user['inventory'].remove(it_id)
+                users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
+                users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+            elif item['type'] == 'recipe':
+                ok = True
+
+                for i in item['materials']:
+                    if i in bd_user['inventory']:
+                        bd_user['inventory'].remove(i)
+                    else:
+                        ok = False
+                        break
+
+                if ok == True:
+
+                    if bd_user['language_code'] == 'ru':
+                        text = f'🍡 | Предмет создан!'
+                    else:
+                        text = f"🍡 | The item is created!"
+
+                    for i in item['create']:
+                        bd_user['inventory'].append(i)
+                    users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+                else:
+
+                    if bd_user['language_code'] == 'ru':
+                        text = f'❗ | Материалов недостаточно!'
+                    else:
+                        text = f"❗ | Materials are not enough!"
+
+
             elif item['type'] == '+eat':
 
                 if bd_user['language_code'] == 'ru':
                     text = f'❗ | Перейдите в меню действий и выберите покормить!'
                 else:
                     text = f"❗ | Go to the action menu and select feed!"
+
+            elif item['type'] in ['game_ac', "journey_ac", "hunt_ac", "unv_ac"]:
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'❗ | Перейдите в меню аксессуаров для использования данного предмета!'
+                else:
+                    text = f"❗ | Go to the accessories menu to use this item!"
 
             elif item['type'] == 'egg':
 
@@ -3920,6 +4234,17 @@ def answer(call):
                 bd_user['dinos'][dii] = dino
                 users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
 
+            if '-mood' in item.keys():
+                dino['stats']['mood'] -= item['-mood']
+                bd_user['dinos'][dii] = dino
+                users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
+
+            if '-eat' in item.keys():
+                dino['stats']['eat'] -= item['-eat']
+                bd_user['dinos'][dii] = dino
+                users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
+
+
 
             bot.send_message(user.id, text, parse_mode = 'Markdown')
 
@@ -3960,6 +4285,5 @@ if bot.get_me().first_name == 'DinoGochi':
     thr_icub.start()
     thr_notif.start()
     thr2.start()
-
 
 bot.infinity_polling()

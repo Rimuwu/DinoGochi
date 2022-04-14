@@ -25,7 +25,7 @@ with open('dino_data.json', encoding='utf-8') as f:
 class checks:
 
     @staticmethod
-    def main():
+    def main(bot):
         nn = 0
         t_st = int(time.time())
         members = users.find({ })
@@ -76,16 +76,24 @@ class checks:
 
                     elif dino['activ_status'] == 'sleep':
 
-                        if user['dinos'][dino_id]['stats']['unv'] < 100:
-                            if random.randint(1,65) == 1:
-                                user['dinos'][dino_id]['stats']['unv'] += random.randint(1,2)
+                        if 'sleep_type' not in user['dinos'][dino_id].keys() or user['dinos'][dino_id]['sleep_type'] == 'long':
+
+                            if user['dinos'][dino_id]['stats']['unv'] < 100:
+                                if random.randint(1,80) == 1:
+                                    user['dinos'][dino_id]['stats']['unv'] += random.randint(1,2)
+
+                        else:
+
+                            if user['dinos'][dino_id]['stats']['unv'] < 100:
+                                if random.randint(1,30) == 1:
+                                    user['dinos'][dino_id]['stats']['unv'] += random.randint(1,2)
 
                         if user['dinos'][dino_id]['stats']['game'] < 40:
-                            if random.randint(1,45) == 1:
+                            if random.randint(1,40) == 1:
                                 user['dinos'][dino_id]['stats']['game'] += random.randint(1,2)
 
                         if user['dinos'][dino_id]['stats']['mood'] < 50:
-                            if random.randint(1,45) == 1:
+                            if random.randint(1,40) == 1:
                                 user['dinos'][dino_id]['stats']['mood'] += random.randint(1,2)
 
                         if user['dinos'][dino_id]['stats']['heal'] < 100:
@@ -115,23 +123,52 @@ class checks:
                         if random.randint(1, 65) == 1: #unv
                             user['dinos'][dino_id]['stats']['unv'] -= random.randint(0,1)
 
-                        r = random.randint(1, 15)
+                        if bd_user['activ_items']['hunt'] == '15':
+                            pr_hunt = 15
+                        else:
+                            pr_hunt = 20
+
+                        r = random.randint(1, pr_hunt)
                         if r == 1:
 
+                            if bd_user['activ_items']['hunt'] == '31':
+                                col_l1 = ['27', '11', "35"]
+                                col_l2 = ['6', '11', "35"]
+                                col_l3 = ['6', "35"]
+
+                                all_l1 = ['27', '11', "26", "12", "28", "13", '2', "35"]
+                                all_l2 = ['6', '11', '5', "12", '7', "13", "19", "35"]
+                                all_l3 = ['6', '5', '7', '18', "35"]
+                            else:
+                                col_l1 = ['27', '11']
+                                col_l2 = ['6', '11']
+                                col_l3 = ['6']
+
+                                all_l1 = ['27', '11', "26", "12", "28", "13", '2']
+                                all_l2 = ['6', '11', '5', "12", '7', "13", "19"]
+                                all_l3 = ['6', '5', '7', '18']
+
+
                             if dino['h_type'] == 'all':
-                                items = [2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 26, 27, 28]
+                                item = functions.random_items(['9', '8', "10", '2'], ['27', '9', "26", '8', "28", "10", '2'], all_l1, all_l2, all_l3)
+
+                                # items = [2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 26, 27, 28]
 
                             if dino['h_type'] == 'collecting':
-                                items = [6, 9, 11, 27]
+                                item = functions.random_items(['9'], ['27', '9'], col_l1, col_l2, col_l3)
+                                # items = [6, 9, 11, 27]
 
                             if dino['h_type'] == 'hunting':
-                                items = [5, 8, 12, 26]
+                                item = functions.random_items(['8'], ["26", '8'], ["26", "12"], ['5', "12"], ['5'])
+                                # items = [5, 8, 12, 26]
 
                             if dino['h_type'] == 'fishing':
-                                items = [7, 10, 13, 28]
+                                item = functions.random_items(["10"], ["28", "10"], ["28", "13"], ['7', "13"], ['7'])
+                                # items = [7, 10, 13, 28]
 
-                            item = random.choice(items)
-                            i_count = random.randint(1, 2)
+                            # item = random.choice(items)
+                            # i_count = random.randint(1, 2)
+                            i_count = functions.random_items([int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 4)], [int(ii) for ii in range(1, 5)], [int(ii) for ii in range(1, 6)])
                             for i in list(range(i_count)):
                                 user['inventory'].append(str(item))
                                 if item not in [27, 26, 28]:
@@ -159,17 +196,65 @@ class checks:
 
                                 r_event = random.randint(1, 100)
                                 if r_event in list(range(1,51)): #обычное соб
-                                    events = ['sunny', 'm_coins']
+                                    events = ['sunny', 'm_coins', 'friend_meet']
                                 elif r_event in list(range(51,76)): #необычное соб
-                                    events = ['+eat', 'sleep', 'u_coins']
+                                    events = ['+eat', 'sleep', 'u_coins', 'friend_meet']
                                 elif r_event in list(range(76,91)): #редкое соб
-                                    events = ['random_items', 'b_coins']
+                                    events = ['random_items', 'b_coins', 'friend_meet']
                                 elif r_event in list(range(91,100)): #мистическое соб
                                     events = ['random_items_leg', 'y_coins']
                                 else: #легендарное соб
                                     events = ['egg', 'l_coins']
 
                                 event = random.choice(events)
+
+                                if event == 'friend_meet':
+                                    ok = False
+                                    sh_friends = random.shuffle(user['friends']['friends_list'])
+                                    for friend in sh_friends:
+                                        if ok != True:
+                                            bd_friend = users.find_one({"userid": user['userid']})
+                                            if bd_friend != None:
+                                                try:
+                                                    bot_friend = bot.get_chat( bd_friend['userid'] )
+                                                    for k_dino in bd_friend['dinos'].keys():
+                                                        fr_dino = bd_friend['dinos'][k_dino]
+                                                        if fr_dino['activ_status'] == 'journey':
+                                                            ok = True
+                                                            break
+                                                except:
+                                                    pass
+
+                                    if ok == False:
+
+                                        if user['language_code'] == 'ru':
+                                            event = f'🦕 | Динозавр гулял по знакомым тропинкам, но не увидел знакомых динозавров...'
+                                        else:
+                                            event = f"🦕 | The dinosaur was walking along familiar paths, but did not see familiar dinosaurs..."
+
+                                    else:
+                                        ok = False
+                                        try:
+                                            this_user = bot.get_chat(bd_user['userid'])
+                                            ok = True
+                                        except:
+                                            ok = False
+
+                                        if ok == True:
+                                            mood = random.randint(1, 20)
+                                            user['dinos'][dino_id]['stats']['mood'] += mood
+                                            bd_friend['dinos'][k_dino]['stats']['mood'] += mood
+
+                                            if user['language_code'] == 'ru':
+                                                event = f"🦕 | Гуляя по знакомым тропинкам, динозавр встречает {bd_friend['dinos'][k_dino]['name']} (динозавр игрока {bot_friend.first_name})\n> Динозавры крайне рады друг другу!\n   > Динозавры получают бонус {mood}% к настроению!"
+                                            else:
+                                                event = f"🦕 | Walking along familiar paths, the dinosaur meets {bd_friend['dinos'][k_dino]['name']} (the player's dinosaur {bot_friend.first_name})\n> Dinosaurs are extremely happy with each other!\n > Dinosaurs get a bonus {mood}% to mood!"
+
+                                            if bd_friend['language_code'] == 'ru':
+                                                event = f"🦕 | Гуляя по знакомым тропинкам, динозавр встречает {user['dinos'][dino_id]['name']} (динозавр игрока {this_user.first_name})\n> Динозавры крайне рады друг другу!\n   > Динозавры получают бонус {mood}% к настроению!"
+                                            else:
+                                                event = f"🦕 | Walking along familiar paths, the dinosaur meets {user['dinos'][dino_id]['name']} (the player's dinosaur {this_user.first_name})\n> Dinosaurs are extremely happy with each other!\n > Dinosaurs get a bonus {mood}% to mood!"
+
 
                                 if event == 'sunny':
                                     mood = random.randint(1, 15)
@@ -200,8 +285,9 @@ class checks:
 
                                 elif event == 'random_items':
                                     user = users.find_one({"userid": user['userid']})
-                                    items = ["1", "2", '17', '18', '19', '25', '26', '27', '28']
-                                    item = random.choice(items)
+                                    # items = ["1", "2", '17', '18', '19', '25', '26', '27', '28']
+                                    item = functions.random_items(["1", "2", '25'], ['17', '18', '19'], ['26', '27', '28'], ["30"], ["30"])
+                                    # item = random.choice(items)
                                     if mood_n == True:
                                         user['inventory'].append(item)
 
@@ -221,8 +307,9 @@ class checks:
 
                                 elif event == 'random_items_leg':
                                     user = users.find_one({"userid": user['userid']})
-                                    items = ["4", '14', "15", "16"]
-                                    item = random.choice(items)
+                                    # items = ["4", '14', "15", "16"]
+                                    item = functions.random_items(["4", '14', "15", "16"], ["4", '14', "15", "16"], ["30", "32", '34'], ["37"], ["21"])
+                                    # item = random.choice(items)
                                     if mood_n == True:
                                         user['inventory'].append(item)
 
@@ -242,8 +329,9 @@ class checks:
 
                                 elif event == 'egg':
                                     user = users.find_one({"userid": user['userid']})
-                                    eggs = ["3", '20', '21', '22', '23', '24']
-                                    egg = random.choice(eggs)
+                                    # eggs = ["3", '20', '21', '22', '23', '24']
+                                    egg = functions.random_items(['21', "3"], ['20', "3"], ['22'], ['23', "3"], ['24', "3"])
+                                    # egg = random.choice(eggs)
                                     if mood_n == True:
                                         user['inventory'].append(egg)
 
@@ -311,13 +399,23 @@ class checks:
 
                                 event = random.choice(events)
                                 if event == 'rain':
-                                    mood = random.randint(1, 15)
-                                    user['dinos'][dino_id]['stats']['mood'] -= mood
+                                    if user['activ_items']['journey'] != '14':
 
-                                    if user['language_code'] == 'ru':
-                                        event = f'🌨 | Прошёлся дождь, настроение понижено на {mood}%'
+                                        mood = random.randint(1, 15)
+                                        user['dinos'][dino_id]['stats']['mood'] -= mood
+
+                                        if user['language_code'] == 'ru':
+                                            event = f'🌨 | Прошёлся дождь, настроение понижено на {mood}%'
+                                        else:
+                                            event = f"🌨 | It has rained, the mood is lowered by {mood}%"
+
                                     else:
-                                        event = f"🌨 | It has rained, the mood is lowered by {mood}%"
+
+                                        if user['language_code'] == 'ru':
+                                            event = f'🌨 | Прошёлся дождь, настроение не ухудшено.'
+                                        else:
+                                            event = f"🌨 | It rained, the mood is not worsened."
+
 
                                 elif event == '-eat':
                                     eat = random.randint(1, 10)
@@ -341,10 +439,11 @@ class checks:
 
 
                                 elif event == 'fight':
+
                                     unv = random.randint(1, 10)
                                     user['dinos'][dino_id]['stats']['unv'] -= unv
 
-                                    if random.randint(1,2) == 1:
+                                    if user['activ_items']['journey'] != '29' and random.randint(1,2) == 1:
                                         heal = random.randint(1, 5)
                                         user['dinos'][dino_id]['stats']['heal'] -= heal
                                         textru = f'\nДинозавр не смог избежать ран, он теряет {heal}% здоровья.'
@@ -359,6 +458,7 @@ class checks:
                                     else:
                                         event = f"⚔ | The dinosaur ran into a fight, he loses {unv}% of his strength."
                                         event += texten
+
 
                                 elif event == 'lose_items':
                                     user = users.find_one({"userid": user['userid']})
@@ -487,6 +587,7 @@ class checks:
 
             bd_user = users.find_one({"userid": user['userid']})
             if len(user['dinos']) != 0:
+
                 users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
 
             if bd_user['coins'] != user['coins']:
