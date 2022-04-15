@@ -1868,8 +1868,12 @@ def on_message(message):
                                         else:
                                             text = "👥 | The user has been removed from friends!"
 
-                                        bd_user['friends']['friends_list'].remove(uid)
-                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'friends': bd_user['friends'] }} )
+                                        try:
+                                            bd_user['friends']['friends_list'].remove(uid)
+                                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'friends': bd_user['friends'] }} )
+
+                                        except:
+                                            pass
 
                                         try:
                                             two_user = users.find_one({"userid": uid})
@@ -4285,5 +4289,7 @@ if bot.get_me().first_name == 'DinoGochi':
     thr_icub.start()
     thr_notif.start()
     thr2.start()
+
+thr1.start()
 
 bot.infinity_polling()
