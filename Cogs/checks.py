@@ -198,9 +198,9 @@ class checks:
                                 if r_event in list(range(1,51)): #обычное соб
                                     events = ['sunny', 'm_coins', 'friend_meet']
                                 elif r_event in list(range(51,76)): #необычное соб
-                                    events = ['+eat', 'sleep', 'u_coins', 'friend_meet']
+                                    events = ['+eat', 'sleep', 'u_coins']
                                 elif r_event in list(range(76,91)): #редкое соб
-                                    events = ['random_items', 'b_coins', 'friend_meet']
+                                    events = ['random_items', 'b_coins']
                                 elif r_event in list(range(91,100)): #мистическое соб
                                     events = ['random_items_leg', 'y_coins']
                                 else: #легендарное соб
@@ -209,24 +209,32 @@ class checks:
                                 event = random.choice(events)
 
                                 if event == 'friend_meet':
-                                    ok = False
+                                    fr_d = {}
+
                                     sh_friends = user['friends']['friends_list']
                                     random.shuffle(sh_friends)
                                     for friend in sh_friends:
-                                        if ok != True:
+                                        if fr_d == {}:
                                             bd_friend = users.find_one({"userid": int(friend)})
                                             if bd_friend != None:
+
                                                 try:
                                                     bot_friend = bot.get_chat( bd_friend['userid'] )
+                                                except:
+                                                    bot_friend = None
+
+                                                if bot_friend != None:
                                                     for k_dino in bd_friend['dinos'].keys():
                                                         fr_dino = bd_friend['dinos'][k_dino]
                                                         if fr_dino['activ_status'] == 'journey':
-                                                            ok = True
-                                                            break
-                                                except:
-                                                    pass
+                                                            fr_d['friend_bd'] = bd_friend
+                                                            fr_d['friend_in_bot'] = bot_friend
+                                                            fr_d['dino_id'] = k_dino
 
-                                    if ok == False:
+                                        if fr_d != {}:
+                                            break
+
+                                    if fr_d == {}:
 
                                         if user['language_code'] == 'ru':
                                             event = f'🦕 | Динозавр гулял по знакомым тропинкам, но не увидел знакомых динозавров...'
@@ -234,27 +242,35 @@ class checks:
                                             event = f"🦕 | The dinosaur was walking along familiar paths, but did not see familiar dinosaurs..."
 
                                     else:
-                                        ok = False
                                         try:
-                                            this_user = bot.get_chat(bd_user['userid'])
-                                            ok = True
+                                            this_user = bot.get_chat(user['userid'])
                                         except:
-                                            ok = False
+                                            this_user = None
 
-                                        if ok == True:
+                                        if this_user != None:
                                             mood = random.randint(1, 20)
                                             user['dinos'][dino_id]['stats']['mood'] += mood
-                                            bd_friend['dinos'][k_dino]['stats']['mood'] += mood
+                                            fr_d['friend_bd']['dinos'][ fr_d['dino_id'] ]['stats']['mood'] += mood
 
                                             if user['language_code'] == 'ru':
-                                                event = f"🦕 | Гуляя по знакомым тропинкам, динозавр встречает {bd_friend['dinos'][k_dino]['name']} (динозавр игрока {bot_friend.first_name})\n> Динозавры крайне рады друг другу!\n   > Динозавры получают бонус {mood}% к настроению!"
+                                                event = f"🦕 | Гуляя по знакомым тропинкам, динозавр встречает {fr_d['friend_bd']['dinos'][ fr_d['dino_id'] ]['name']} (динозавр игрока {fr_d['friend_in_bot'].first_name})\n> Динозавры крайне рады друг другу!\n   > Динозавры получают бонус {mood}% к настроению!"
                                             else:
-                                                event = f"🦕 | Walking along familiar paths, the dinosaur meets {bd_friend['dinos'][k_dino]['name']} (the player's dinosaur {bot_friend.first_name})\n> Dinosaurs are extremely happy with each other!\n > Dinosaurs get a bonus {mood}% to mood!"
+                                                event = f"🦕 | Walking along familiar paths, the dinosaur meets {fr_d['friend_bd']['dinos'][ fr_d['dino_id'] ]['name']} (the player's dinosaur {fr_d['friend_in_bot'].first_name})\n> Dinosaurs are extremely happy with each other!\n > Dinosaurs get a bonus {mood}% to mood!"
 
-                                            if bd_friend['language_code'] == 'ru':
-                                                event = f"🦕 | Гуляя по знакомым тропинкам, динозавр встречает {user['dinos'][dino_id]['name']} (динозавр игрока {this_user.first_name})\n> Динозавры крайне рады друг другу!\n   > Динозавры получают бонус {mood}% к настроению!"
+                                            if fr_d['friend_bd']['language_code'] == 'ru':
+                                                fr_event = f"🦕 | Гуляя по знакомым тропинкам, динозавр встречает {user['dinos'][dino_id]['name']} (динозавр игрока {this_user.first_name})\n> Динозавры крайне рады друг другу!\n   > Динозавры получают бонус {mood}% к настроению!"
                                             else:
-                                                event = f"🦕 | Walking along familiar paths, the dinosaur meets {user['dinos'][dino_id]['name']} (the player's dinosaur {this_user.first_name})\n> Dinosaurs are extremely happy with each other!\n > Dinosaurs get a bonus {mood}% to mood!"
+                                                fr_event = f"🦕 | Walking along familiar paths, the dinosaur meets {user['dinos'][dino_id]['name']} (the player's dinosaur {this_user.first_name})\n> Dinosaurs are extremely happy with each other!\n > Dinosaurs get a bonus {mood}% to mood!"
+
+                                            fr_d['friend_bd']['dinos'][ dino_id ]['journey_log'].append(fr_event)
+                                            users.update_one( {"userid": fr_d['friend_bd']['userid']}, {"$set": {'dinos': fr_d['friend_bd']['dinos'] }} )
+
+                                        else:
+
+                                            if user['language_code'] == 'ru':
+                                                event = f'🦕 | Динозавр гулял по знакомым тропинкам, но не увидел знакомых динозавров...'
+                                            else:
+                                                event = f"🦕 | The dinosaur was walking along familiar paths, but did not see familiar dinosaurs..."
 
 
                                 if event == 'sunny':
