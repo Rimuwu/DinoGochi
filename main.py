@@ -1421,22 +1421,31 @@ def on_message(message):
 
                     if bd_user['language_code'] == 'ru':
                         ans = ['↪ Назад']
-                        text = '➡ | Перешлите мне любое сообщение от человека, с которым вы хотите стать друзьями.\nВажно! Ваш друг должен быть зарегистрирован в боте!'
+                        text = '➡ | Перешлите мне любое сообщение от человека (в разделе конфиденциальность > пересылка сообщений - должно быть разрешение), с которым вы хотите стать друзьями или отправте мне его id (можно узнать в своём профиле у бота).\nВажно! Ваш друг должен быть зарегистрирован в боте!'
                     else:
                         ans = ['↪ Back']
-                        text = '➡ | Forward me any message from the person you want to become friends with.\nImportant! Your friend must be registered in the bot!'
+                        text = '➡ | Forward me any message from the person (in the privacy section > message forwarding - there must be permission) with whom you want to become friends or send me his id (you can find out in your bot profile).\nImportant! Your friend must be registered in the bot!'
 
                     rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
                     rmk.add(ans[0])
 
                     def ret(message, ans, bd_user):
                         res = message
-                        print(res)
-                        if res.text == ans[0] or res.forward_from == None:
-                            bot.send_message(message.chat.id, f'❌ user forward not found', reply_markup = markup('friends-menu', user))
+
+                        try:
+                            fr_id = int(res.text)
+                            print(1)
+                        except:
+
+                            if res.text == ans[0] or res.forward_from == None:
+                                bot.send_message(message.chat.id, f'❌ user forward not found', reply_markup = markup('friends-menu', user))
+
+                            else:
+                                fr_id = res.forward_from.id
 
                         else:
-                            two_user = users.find_one({"userid": res.forward_from.id})
+                            two_user = users.find_one({"userid": fr_id})
+
                             if two_user == None:
                                 bot.send_message(message.chat.id, f'❌ user not found in base', reply_markup = markup('friends-menu', user))
 
