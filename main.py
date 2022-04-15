@@ -1432,15 +1432,15 @@ def on_message(message):
                     def ret(message, ans, bd_user):
                         res = message
                         if res.text == ans[0] or res.forward_from == None:
-                            bot.send_message(message.chat.id, f'❌', reply_markup = markup('friends-menu', user))
+                            bot.send_message(message.chat.id, f'❌ user forward not found', reply_markup = markup('friends-menu', user))
 
                         else:
                             two_user = users.find_one({"userid": res.forward_from.id})
                             if two_user == None:
-                                bot.send_message(message.chat.id, f'❌', reply_markup = markup('friends-menu', user))
+                                bot.send_message(message.chat.id, f'❌ user not found in base', reply_markup = markup('friends-menu', user))
 
                             if two_user == bd_user:
-                                bot.send_message(message.chat.id, f'❌', reply_markup = markup('friends-menu', user))
+                                bot.send_message(message.chat.id, f'❌ user == friend', reply_markup = markup('friends-menu', user))
 
                             else:
 
