@@ -1434,7 +1434,6 @@ def on_message(message):
 
                         try:
                             fr_id = int(res.text)
-                            print(1)
                         except:
 
                             if res.text == ans[0] or res.forward_from == None:
