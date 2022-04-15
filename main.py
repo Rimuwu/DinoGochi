@@ -4290,6 +4290,5 @@ if bot.get_me().first_name == 'DinoGochi':
     thr_notif.start()
     thr2.start()
 
-thr1.start()
 
 bot.infinity_polling()
