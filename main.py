@@ -14,8 +14,6 @@ import sys
 from memory_profiler import memory_usage
 import pprint
 
-#1
-
 sys.path.append("Cogs")
 from functions import functions
 from checks import checks

@@ -6,8 +6,6 @@ import random
 import json
 import time
 
-#1
-
 sys.path.append("..")
 import config
 
