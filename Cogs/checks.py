@@ -12,6 +12,7 @@ from functions import functions
 sys.path.append("..")
 import config
 
+#1
 
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
