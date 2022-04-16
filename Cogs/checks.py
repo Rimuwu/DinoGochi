@@ -196,9 +196,9 @@ class checks:
 
                                 r_event = random.randint(1, 100)
                                 if r_event in list(range(1,51)): #обычное соб
-                                    events = ['sunny', 'm_coins', 'friend_meet']
+                                    events = ['sunny', 'm_coins']
                                 elif r_event in list(range(51,76)): #необычное соб
-                                    events = ['+eat', 'sleep', 'u_coins']
+                                    events = ['+eat', 'sleep', 'u_coins', 'friend_meet']
                                 elif r_event in list(range(76,91)): #редкое соб
                                     events = ['random_items', 'b_coins']
                                 elif r_event in list(range(91,100)): #мистическое соб

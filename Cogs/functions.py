@@ -25,6 +25,339 @@ class functions:
     items_f = items_f
     checks_data = checks_data
 
+    def markup(bot, element = 1, user = None):
+        try:
+            user = int(user)
+        except:
+            pass
+
+        if type(user) == int:
+            userid = user
+        else:
+            userid = user.id
+
+        markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
+        bd_user = users.find_one({"userid": userid})
+
+        if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False and bd_user['lvl'][0] < 5:
+
+            if bd_user['language_code'] == 'ru':
+                nl = "🧩 Проект: Возрождение"
+            else:
+                nl = '🧩 Project: Rebirth'
+
+            markup.add(nl)
+            return markup
+
+        if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False and bd_user['lvl'][0] >= 5:
+
+            if bd_user['language_code'] == 'ru':
+                nl = '🎮 Инвентарь'
+            else:
+                nl = '🎮 Inventory'
+
+            markup.add(nl)
+            return markup
+
+        if element == 1 and bd_user != None:
+
+            if len(list(bd_user['dinos'])) == 1 and bd_user['dinos']['1']['status'] == 'incubation':
+
+                if bd_user['language_code'] == 'ru':
+                    nl = ['🦖 Динозавр', '🔧 Настройки', '👥 Друзья', '❗ FAQ']
+                else:
+                    nl = ['🦖 Dinosaur', '🔧 Settings', '👥 Friends', '❗ FAQ']
+
+                item1 = types.KeyboardButton(nl[0])
+                item2 = types.KeyboardButton(nl[1])
+                item3 = types.KeyboardButton(nl[2])
+                item4 = types.KeyboardButton(nl[3])
+
+                markup.add(item1, item2, item3, item4)
+
+            else:
+
+                if bd_user['language_code'] == 'ru':
+                    nl = ['🦖 Динозавр', '🕹 Действия', '👁‍🗨 Профиль', '🔧 Настройки', '👥 Друзья', '❗ FAQ']
+
+                else:
+                    nl = ['🦖 Dinosaur', '🕹 Actions', '👁‍🗨 Profile', '🔧 Settings', '👥 Friends', '❗ FAQ']
+
+                item1 = types.KeyboardButton(nl[0])
+                item2 = types.KeyboardButton(nl[1])
+                item3 = types.KeyboardButton(nl[2])
+                item4 = types.KeyboardButton(nl[3])
+                item5 = types.KeyboardButton(nl[4])
+
+                if 'vis.faq' in bd_user['settings'].keys() and bd_user['settings']['vis.faq'] == False:
+                    nl.remove('❗ FAQ')
+                    markup.add(item1, item2, item3, item4, item5)
+
+                else:
+                    item6 = types.KeyboardButton(nl[5])
+                    markup.add(item1, item2, item3, item4, item5, item6)
+
+        elif element == 1:
+            try:
+                if user.language_code == 'ru':
+                    nl = ['🍡 Начать играть']
+                else:
+                    nl = ['🍡 Start playing']
+            except:
+                nl = ['🍡 Start playing']
+
+            item1 = types.KeyboardButton(nl[0])
+
+            markup.add(item1)
+
+        elif element == "settings" and bd_user != None:
+
+            if 'vis.faq' not in bd_user['settings']:
+                bd_user['settings']['vis.faq'] = True
+
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+
+            markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
+
+            if bd_user['language_code'] == 'ru':
+                nl = ['❗ Уведомления', "👅 Язык", '💬 Переименовать', '⁉ Видимость FAQ', '↪ Назад']
+
+            else:
+                nl = ['❗ Notifications', "👅 Language", '💬 Rename', '⁉ Visibility FAQ', '↪ Back']
+
+            item1 = types.KeyboardButton(nl[0])
+            item2 = types.KeyboardButton(nl[1])
+            item3 = types.KeyboardButton(nl[2])
+            item4 = types.KeyboardButton(nl[3])
+            item5 = types.KeyboardButton(nl[4])
+
+            markup.add(item1, item2, item3, item4, item5)
+
+        elif element == "friends-menu" and bd_user != None:
+
+            if bd_user['language_code'] == 'ru':
+                nl = ["➕ Добавить", '📜 Список', '➖ Удалить', '💌 Запросы', '🤍 Пригласи друга', '↪ Назад']
+
+            else:
+                nl = ["➕ Add", '📜 List', '➖ Delete', '💌 Inquiries', '🤍 Invite a friend', '↪ Back']
+
+            item1 = types.KeyboardButton(nl[0])
+            item2 = types.KeyboardButton(nl[1])
+            item3 = types.KeyboardButton(nl[2])
+            item4 = types.KeyboardButton(nl[3])
+            item5 = types.KeyboardButton(nl[4])
+            item6 = types.KeyboardButton(nl[5])
+
+            markup.add(item1, item2, item3, item4, item5)
+            markup.add(item6)
+
+        elif element == "referal-system" and bd_user != None:
+
+            if 'referal_system' in bd_user.keys():
+
+                if bd_user['language_code'] == 'ru':
+                    nl = [f'🎲 Код: {bd_user["referal_system"]["my_cod"]}', '👥 Меню друзей']
+
+                    if bd_user["referal_system"]["friend_cod"] == None:
+                        nl.insert(1, '🎞 Ввести код')
+                    else:
+                        nl.insert(1, f'🎞 Друг: {bd_user["referal_system"]["friend_cod"]}')
+                else:
+                    nl = [f'🎲 Code: {bd_user["referal_system"]["my_cod"]}', '👥 Friends Menu']
+
+                    if bd_user["referal_system"]["friend_cod"] == None:
+                        nl.insert(1, '🎞 Enter Code')
+                    else:
+                        nl.insert(1, f'🎞 Friend: {bd_user["referal_system"]["friend_cod"]}')
+
+            else:
+
+                if bd_user['language_code'] == 'ru':
+                    nl = ['🎲 Сгенерировать код', '🎞 Ввести код', '👥 Меню друзей']
+                else:
+                    nl = ['🎲 Generate Code', '🎞 Enter Code', '👥 Friends Menu']
+
+            item1 = types.KeyboardButton(nl[0])
+            item2 = types.KeyboardButton(nl[1])
+            item3 = types.KeyboardButton(nl[2])
+
+            markup.add(item1, item2)
+            markup.add(item3)
+
+        elif element == 'actions' and bd_user != None:
+            markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
+
+            if bd_user['language_code'] == 'ru':
+                nl = ['🎮 Развлечения', '🍣 Покормить', '↪ Назад']
+
+                if len(bd_user['dinos']) == 1:
+                    nid_dino = list(bd_user['dinos'].keys())[0]
+                    dino = bd_user['dinos'][ str(nid_dino) ]
+
+                if len(bd_user['dinos']) > 1:
+                    try:
+                        nid_dino = bd_user['settings']['dino_id']
+                        dino = bd_user['dinos'][ str(nid_dino) ]
+                    except:
+                        nid_dino = list(bd_user['dinos'].keys())[0]
+                        bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[0]
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+                        dino = bd_user['dinos'][ str(nid_dino) ]
+
+                if len(bd_user['dinos']) == 0:
+                    return markup
+
+                if dino['activ_status'] == 'journey':
+                    nl.insert(2, '🎑 Вернуть')
+                else:
+                    nl.insert(2, '🎑 Путешествие')
+
+                if dino['activ_status'] == 'sleep':
+                    nl.insert(3, '🌙 Пробудить')
+                else:
+                    nl.insert(3, '🌙 Уложить спать')
+
+                if dino['activ_status'] != 'hunting':
+                    nl.insert(4, '🍕 Сбор пищи')
+
+                else:
+                    nl.insert(4, '🍕 Прогресс')
+
+                if len(bd_user['dinos']) > 1:
+                    item0 = types.KeyboardButton(f'🦖 Динозавр: {nid_dino}')
+                    item1 = types.KeyboardButton(nl[0])
+                    item2 = types.KeyboardButton(nl[1])
+                    item3 = types.KeyboardButton(nl[2])
+                    item4 = types.KeyboardButton(nl[3])
+                    item5 = types.KeyboardButton(nl[4])
+                    item6 = types.KeyboardButton(nl[5])
+
+                    markup.add(item0, item1, item2, item3, item4, item5, item6)
+
+                else:
+
+                    item1 = types.KeyboardButton(nl[0])
+                    item2 = types.KeyboardButton(nl[1])
+                    item3 = types.KeyboardButton(nl[2])
+                    item4 = types.KeyboardButton(nl[3])
+                    item5 = types.KeyboardButton(nl[4])
+                    item6 = types.KeyboardButton(nl[5])
+
+                    markup.add(item1, item2, item3, item4, item5, item6)
+
+            else:
+                nl = ['🎮 Entertainments', '🍣 Feed', '↪ Back']
+
+                if len(bd_user['dinos']) == 1:
+                    nid_dino = list(bd_user['dinos'].keys())[0]
+                    dino = bd_user['dinos'][ str(nid_dino) ]
+
+                if len(bd_user['dinos']) > 1:
+                    if 'dino_id' not in bd_user['settings']:
+                        bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[0]
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+                    try:
+                        nid_dino = bd_user['settings']['dino_id']
+                        dino = bd_user['dinos'][ str(nid_dino) ]
+                    except:
+                        nid_dino = list(bd_user['dinos'].keys())[0]
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+                        dino = bd_user['dinos'][ str(nid_dino) ]
+
+                if len(bd_user['dinos']) == 0:
+                    return markup
+
+                if dino['activ_status'] == 'journey':
+                    nl.insert(2, '🎑 Call')
+                else:
+                    nl.insert(2, '🎑 Journey')
+
+                if dino['activ_status'] == 'sleep':
+                    nl.insert(3, '🌙 Awaken')
+                else:
+                    nl.insert(3, '🌙 Put to bed')
+
+                if dino['activ_status'] != 'hunting':
+                    nl.insert(4, '🍕 Collecting food')
+
+                else:
+                    nl.insert(4, '🍕 Progress')
+
+                if len(bd_user['dinos']) > 1:
+                    item0 = types.KeyboardButton(f'🦖 Dino: {nid_dino}')
+                    item1 = types.KeyboardButton(nl[0])
+                    item2 = types.KeyboardButton(nl[1])
+                    item3 = types.KeyboardButton(nl[2])
+                    item4 = types.KeyboardButton(nl[3])
+                    item5 = types.KeyboardButton(nl[4])
+                    item6 = types.KeyboardButton(nl[5])
+
+                    markup.add(item0, item1, item2, item3, item4, item5, item6)
+
+                else:
+
+                    item1 = types.KeyboardButton(nl[0])
+                    item2 = types.KeyboardButton(nl[1])
+                    item3 = types.KeyboardButton(nl[2])
+                    item4 = types.KeyboardButton(nl[3])
+                    item5 = types.KeyboardButton(nl[4])
+                    item6 = types.KeyboardButton(nl[5])
+
+                    markup.add(item1, item2, item3, item4, item5, item6)
+
+        elif element == 'games' and bd_user != None:
+
+            if bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['activ_status'] == 'game':
+                markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
+
+                if bd_user['language_code'] == 'ru':
+                    nl = ['❌ Остановить игру', '↪ Назад']
+                else:
+                    nl = ['❌ Stop the game', '↪ Back']
+
+                item1 = types.KeyboardButton(nl[0])
+                item2 = types.KeyboardButton(nl[1])
+
+                markup.add(item1, item2)
+
+            else:
+                markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
+
+                if bd_user['language_code'] == 'ru':
+                    nl = ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '↩ Назад']
+                else:
+                    nl = ['🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball', '↩ Back']
+
+                item1 = types.KeyboardButton(nl[0])
+                item2 = types.KeyboardButton(nl[1])
+                item3 = types.KeyboardButton(nl[2])
+                item4 = types.KeyboardButton(nl[3])
+                item5 = types.KeyboardButton(nl[4])
+
+                markup.add(item1, item2, item3, item4, item5)
+
+        elif element == "profile" and bd_user != None:
+
+            if bd_user['language_code'] == 'ru':
+                nl = ['📜 Информация', '🎮 Инвентарь', '🎢 Рейтинг', '💍 Аксессуары', '↪ Назад']
+
+            else:
+                nl = ['📜 Information', '🎮 Inventory', '🎢 Rating', '💍 Accessories', '↪ Back']
+
+            item1 = types.KeyboardButton(nl[0])
+            item2 = types.KeyboardButton(nl[1])
+            item3 = types.KeyboardButton(nl[2])
+            item4 = types.KeyboardButton(nl[3])
+            item5 = types.KeyboardButton(nl[4])
+
+            markup.add(item1, item2, item3, item4, item5)
+
+
+        else:
+            print(f'{element}\n{user}')
+
+        return markup
+
     @staticmethod
     def time_end(seconds:int, mini = False):
 
@@ -528,3 +861,315 @@ class functions:
             items = leg_i
 
         return random.choice(items)
+
+    @staticmethod
+    def sort_items_col(nls_i:list, lg):
+        dct = {}
+        nl = []
+
+        for i in nls_i:
+            if i not in dct.keys():
+                dct[i] = 1
+            else:
+                dct[i] += 1
+
+        for i in dct.keys():
+            it = dct[i]
+            name = items_f['items'][i][f'name{lg}']
+            nl.append(f"{name} x{it}")
+
+        return nl
+
+    @staticmethod
+    def item_info(item_id, lg):
+
+        item = items_f['items'][item_id]
+        type = item['type']
+        d_text = ''
+
+
+        if lg == 'ru':
+            if item['type'] == '+heal':
+                type = '❤ лекарство'
+                d_text = f"*└* Эффективность: {item['act']}"
+
+            elif item['type'] == '+eat':
+                type = '🍔 еда'
+                d_text = f"*└* Эффективность: {item['act']}"
+
+            elif item['type'] == '+unv':
+                type = '☕ энергетический напиток'
+                d_text = f"*└* Эффективность: {item['act']}"
+
+            elif item['type'] == 'egg':
+                eg_q = item['inc_type']
+                if item['inc_type'] == 'random': eg_q = 'рандом'
+                if item['inc_type'] == 'com': eg_q = 'обычная'
+                if item['inc_type'] == 'unc': eg_q = 'необычная'
+                if item['inc_type'] == 'rar': eg_q = 'редкая'
+                if item['inc_type'] == 'myt': eg_q = 'мистическая'
+                if item['inc_type'] == 'leg': eg_q = 'легендарная'
+
+                type = '🥚 яйцо динозавра'
+                d_text = f"*├* Инкубация: {item['incub_time']}{item['time_tag']}\n"
+                d_text += f"*└* Редкость яйца: {eg_q}"
+
+            elif item['type'] in ['game_ac', 'unv_ac', 'journey_ac', 'hunt_ac']:
+                type = '💍 активный предмет'
+                d_text = f"*└* {item['descriptionru']}"
+
+            elif item['type'] == 'None':
+                type = '🕳 пустышка'
+                d_text = f"*└* Ничего не делает и не для чего не нужна"
+
+            elif item['type'] == 'material':
+                type = '🧱 материал'
+                d_text = f"*└* Данный предмет нужен для изготовления."
+
+            elif item['type'] == 'recipe':
+                type = '🧾 рецепт создания'
+                d_text = f'*├* Создаёт: {", ".join(functions.sort_items_col( item["create"], "ru" ))}\n'
+                d_text += f'*├* Материалы: {", ".join(functions.sort_items_col( item["materials"], "ru" ))}\n'
+                d_text +=  f"*└* {item['descriptionru']}"
+
+
+            if list(set([ '+mood' ]) & set(item.keys())) != []:
+                d_text += f'\n\n*┌* *🍡 Дополнительные бонусы*\n'
+
+                if '+mood' in item.keys():
+                    d_text += f"*└* Повышение настроения: {item['+mood']}%"
+
+            if list(set([ '-mood', "-eat" ]) & set(item.keys())) != []:
+                d_text += f'\n\n*┌* *📌 Дополнительные штрафы*\n'
+
+                if '-mood' in item.keys():
+                    d_text += f"*├* Понижение настроения: {item['-mood']}%"
+
+                if '-eat' in item.keys():
+                    d_text += f"*└* Понижение сытости: {item['-eat']}%"
+
+            text =  f"*┌* *🎴 Информация о предмете*\n"
+            text += f"*├* Название: {item['nameru']}\n"
+            text += f"*├* Тип: {type}\n"
+            text += d_text
+            in_text = ['🔮 | Использовать', '🗑 | Выбросить', '🔁 | Передать']
+
+        else:
+            if item['type'] == '+heal':
+                type = '❤ medicine'
+                d_text = f"*└* Effectiveness: {item['act']}"
+
+            elif item['type'] == '+eat':
+                type = '🍔 eat'
+                d_text = f"*└* Effectiveness: {item['act']}"
+
+            elif item['type'] == '+unv':
+                type = '☕ energy drink'
+                d_text = f"*└* Effectiveness: {item['act']}"
+
+            elif item['type'] == 'egg':
+                if item['inc_type'] == 'random': eg_q = 'random'
+                if item['inc_type'] == 'com': eg_q = 'common'
+                if item['inc_type'] == 'unc': eg_q = 'uncommon'
+                if item['inc_type'] == 'rare': eg_q = 'rare'
+                if item['inc_type'] == 'myt': eg_q = 'mystical'
+                if item['inc_type'] == 'leg': eg_q = 'legendary'
+
+                type = '🥚 dinosaur egg'
+                d_text = f"*└* Incubation: {item['incub_time']}{item['time_tag']}\n"
+                d_text += f"*└* The rarity of eggs: {eg_q}"
+
+            elif item['type'] in ['game_ac', 'unv_ac', 'journey_ac', 'hunt_ac']:
+                type = '💍 active game item'
+                d_text = f"*└* {item['descriptionen']}"
+
+            elif item['type'] == 'None':
+                type = '🕳 dummy'
+                d_text = f"*└* Does nothing and is not needed for anything"
+
+            elif item['type'] == 'material':
+                type = '🧱 material'
+                d_text = f"*└* This item is needed for manufacturing."
+
+            elif item['type'] == 'recipe':
+                type = '🧾 recipe for creation'
+                d_text = f'*├* Creates: {", ".join(functions.sort_items_col( item["create"], "ru" ))}\n'
+                d_text += f'*├* Materials: {", ".join(functions.sort_items_col( item["materials"], "ru" ))}\n'
+                d_text +=  f"*└* {item['descriptionru']}"
+
+            if list(set([ '+mood' ]) & set(item.keys())) != []:
+                d_text += f'\n\n*┌* *🍡 Additional bonuses*\n'
+
+                if '+mood' in item.keys():
+                    d_text += f"*└* Mood boost: {item['+mood']}%"
+
+            if list(set([ '-mood', "-eat" ]) & set(item.keys())) != []:
+                d_text += f'\n\n*┌* *📌 Additional penalties*\n'
+
+                if '-mood' in item.keys():
+                    d_text += f"*├* Lowering the mood: {item['-mood']}%"
+
+                if '-eat' in item.keys():
+                    d_text += f"*└* Reducing satiety: {item['-eat']}%"
+
+            text =  f"*┌* *🎴 Subject information*\n"
+            text += f"*├* Name: {item['nameen']}\n"
+            text += f"*├* Type: {type}\n"
+            text += d_text
+            in_text = ['🔮 | Use', '🗑 | Delete', '🔁 | Transfer']
+
+        markup_inline = types.InlineKeyboardMarkup()
+        markup_inline.add( types.InlineKeyboardButton( text = in_text[0], callback_data = f"item_{item_id}"),  types.InlineKeyboardButton( text = in_text[1], callback_data = f"remove_item_{item_id}") )
+        markup_inline.add( types.InlineKeyboardButton( text = in_text[2], callback_data = f"exchange_{item_id}") )
+
+        return text, markup_inline
+
+    @staticmethod
+    def exchange(bot, message, item_id, bd_user):
+
+        def zero(message, item_id, bd_user):
+
+            if message.text in ['Yes, transfer the item', 'Да, передать предмет']:
+                pass
+            else:
+                pass
+
+            def chunks(lst, n):
+                for i in range(0, len(lst), n):
+                    yield lst[i:i + n]
+
+            friends_id = bd_user['friends']['friends_list']
+            page = 1
+
+            friends_name = []
+            friends_id_d = {}
+
+            for i in friends_id:
+                try:
+                    if users.find_one({"userid": int(i)}) != None:
+                        fr_name = bot.get_chat(int(i)).first_name
+                        friends_name.append(fr_name)
+                        friends_id_d[fr_name] = i
+                except:
+                    pass
+
+            friends_chunks = list(chunks(list(chunks(friends_name, 2)), 3))
+
+            def work_pr(message, friends_id, page, friends_chunks, friends_id_d, item_id, mms = None):
+                global pages
+
+                if bd_user['language_code'] == 'ru':
+                    text = "📜 | Обновление..."
+                else:
+                    text = "📜 | Update..."
+
+                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+
+                if friends_chunks == []:
+
+                    if bd_user['language_code'] == 'ru':
+                        text = "👥 | Список пуст!"
+                    else:
+                        text = "👥 | The list is empty!"
+
+                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', bd_user['userid']))
+
+                else:
+
+                    for el in friends_chunks[page-1]:
+                        if len(el) == 2:
+                            rmk.add(el[0], el[1])
+                        else:
+                            rmk.add(el[0], ' ')
+
+                    if 3 - len(friends_chunks[page-1]) != 0:
+                        for i in list(range(3 - len(friends_chunks[page-1]))):
+                            rmk.add(' ', ' ')
+
+                    if len(friends_chunks) > 1:
+                        if bd_user['language_code'] == 'ru':
+                            com_buttons = ['◀', '↪ Назад', '▶']
+                        else:
+                            com_buttons = ['◀', '↪ Back', '▶']
+
+                        rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
+                    else:
+                        if bd_user['language_code'] == 'ru':
+                            com_buttons = '↪ Назад'
+                        else:
+                            com_buttons = '↪ Back'
+
+                        rmk.add(com_buttons)
+
+                    def ret(message, bd_user, page, friends_chunks, friends_id, friends_id_d, item_id):
+                        if message.text in ['↪ Назад', '↪ Back']:
+                            res = None
+                        else:
+                            res = message.text
+
+                        if res == None:
+                            if bd_user['language_code'] == 'ru':
+                                text = "👥 | Возвращение в меню друзей!"
+                            else:
+                                text = "👥 | Return to the friends menu!"
+
+                            bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
+
+                        else:
+                            mms = None
+                            if res == '◀':
+                                if page - 1 == 0:
+                                    page = 1
+                                else:
+                                    page -= 1
+
+                                work_pr(message, friends_id, page, friends_chunks, friends_id_d, item_id, mms = mms)
+
+                            if res == '▶':
+                                if page + 1 > len(friends_chunks):
+                                    page = len(friends_chunks)
+                                else:
+                                    page += 1
+
+                                work_pr(message, friends_id, page, friends_chunks, friends_id_d, item_id, mms = mms)
+
+                            else:
+                                if res in list(friends_id_d.keys()):
+                                    fr_id = friends_id_d[res]
+                                    bd_user = users.find_one({"userid": bd_user['userid']})
+                                    two_user = users.find_one({"userid": fr_id})
+
+                                    if item_id in bd_user['inventory']:
+                                        bd_user['inventory'].remove(item_id)
+                                        two_user['inventory'].append(item_id)
+
+                                        users.update_one( {"userid": two_user['userid']}, {"$set": {'inventory': two_user['inventory'] }} )
+                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = f'🔁 | Предмет был отправлен игроку!'
+                                        else:
+                                            text = f"🔁 | The item has been sent to the player!"
+
+                                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', bd_user['userid']))
+
+                    if mms == None:
+                        msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                    else:
+                        msg = mms
+                    bot.register_next_step_handler(msg, ret, bd_user, page, friends_chunks, friends_id, friends_id_d, item_id)
+
+            work_pr(message, friends_id, page, friends_chunks, friends_id_d, item_id)
+
+        if bd_user['language_code'] == 'ru':
+            com_buttons = ['Да, передать предмет', '↪ Назад']
+            text = '🔁 | Вы уверены что хотите передать предмет другому пользователю?'
+        else:
+            com_buttons = ['Yes, transfer the item', '↪ Back']
+            text = '🔁 | Are you sure you want to transfer the item to another user?'
+
+        rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
+        rmk.add(com_buttons[0], com_buttons[1])
+
+        msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+        bot.register_next_step_handler(msg, zero, item_id, bd_user)
