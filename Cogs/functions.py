@@ -1032,7 +1032,8 @@ class functions:
             if message.text in ['Yes, transfer the item', 'Да, передать предмет']:
                 pass
             else:
-                pass
+                bot.send_message(message.chat.id, '❌', reply_markup = functions.markup(bot, 'profile', bd_user['userid']))
+                return
 
             def chunks(lst, n):
                 for i in range(0, len(lst), n):
