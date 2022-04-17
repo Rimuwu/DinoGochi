@@ -131,7 +131,7 @@ class checks:
                         r = random.randint(1, pr_hunt)
                         if r == 1:
 
-                            if bd_user['activ_items']['hunt'] == '31':
+                            if user['activ_items']['hunt'] == '31':
                                 col_l1 = ['27', '11', "35"]
                                 col_l2 = ['6', '11', "35"]
                                 col_l3 = ['6', "35"]
