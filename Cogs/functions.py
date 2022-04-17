@@ -12,10 +12,10 @@ import config
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
 
-with open('items.json', encoding='utf-8') as f:
+with open('data/items.json', encoding='utf-8') as f:
     items_f = json.load(f)
 
-with open('dino_data.json', encoding='utf-8') as f:
+with open('data/dino_data.json', encoding='utf-8') as f:
     json_f = json.load(f)
 
 checks_data = {'memory': [0, time.time()], 'incub': [0, time.time()], 'notif': [0, time.time()], 'main': [0, time.time()], "us": 0}
@@ -339,18 +339,26 @@ class functions:
         elif element == "profile" and bd_user != None:
 
             if bd_user['language_code'] == 'ru':
-                nl = ['📜 Информация', '🎮 Инвентарь', '🎢 Рейтинг', '💍 Аксессуары', '↪ Назад']
+                nl = ['📜 Информация', '🎮 Инвентарь', '🎢 Рейтинг', '💍 Аксессуары', '🛒 Рынок', '↪ Назад']
 
             else:
-                nl = ['📜 Information', '🎮 Inventory', '🎢 Rating', '💍 Accessories', '↪ Back']
+                nl = ['📜 Information', '🎮 Inventory', '🎢 Rating', '💍 Accessories', '🛒 Market', '↪ Back']
 
-            item1 = types.KeyboardButton(nl[0])
-            item2 = types.KeyboardButton(nl[1])
-            item3 = types.KeyboardButton(nl[2])
-            item4 = types.KeyboardButton(nl[3])
-            item5 = types.KeyboardButton(nl[4])
+            markup.add(nl[0], nl[1])
+            markup.add(nl[2], nl[3], nl[4])
+            markup.add(nl[5])
 
-            markup.add(item1, item2, item3, item4, item5)
+        elif element == "market" and bd_user != None:
+
+            if bd_user['language_code'] == 'ru':
+                nl = ['🛒 Случайные товары', '🔍 Поиск товара', '➕ Добавить товар', '📜 Мои товары', '➖ Удалить товар', '👁‍🗨 Профиль']
+
+            else:
+                nl = ['🛒 Random Products', '🔍 Product Search', '➕ Add Product', '📜 My products', '➖ Delete Product', '👁‍🗨 Profile']
+
+            markup.add(nl[0], nl[1])
+            markup.add(nl[2], nl[3], nl[4])
+            markup.add(nl[5])
 
 
         else:

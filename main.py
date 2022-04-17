@@ -13,6 +13,7 @@ import threading
 import sys
 from memory_profiler import memory_usage
 import pprint
+from fuzzywuzzy import fuzz
 
 sys.path.append("Cogs")
 from functions import functions
@@ -23,11 +24,12 @@ bot = telebot.TeleBot(config.TOKEN)
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
 referal_system = client.bot.referal_system
+market = client.bot.market
 
-with open('items.json', encoding='utf-8') as f:
+with open('data/items.json', encoding='utf-8') as f:
     items_f = json.load(f)
 
-with open('dino_data.json', encoding='utf-8') as f:
+with open('data/dino_data.json', encoding='utf-8') as f:
     json_f = json.load(f)
 
 def check_memory():
@@ -410,11 +412,6 @@ def command(message):
     text += f'Thr.count: {threading.active_count()}'
     bot.send_message(user.id, text)
 
-# @bot.message_handler(commands=['rr'])
-# def command(message):
-#     item = functions.random_items([int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 4)], [int(ii) for ii in range(1, 5)], [int(ii) for ii in range(1, 6)], [int(ii) for ii in range(1, 7)])
-#     print(item, ',')
-
 @bot.message_handler(commands=['emulate_not'])
 def command(message):
     print('emulate_not')
@@ -448,6 +445,10 @@ def on_message(message):
         fg_img_trans = Image.blend(fg_img_trans,fg_img,alpha)
         bg_img.paste(fg_img_trans,box,fg_img_trans)
         return bg_img
+
+    def chunks(lst, n):
+        for i in range(0, len(lst), n):
+            yield lst[i:i + n]
 
 
     if users.find_one({"userid": user.id}) != None:
@@ -1109,7 +1110,6 @@ def on_message(message):
 
                             if res.text == ans[0] or res.forward_from == None:
                                 bot.send_message(message.chat.id, f'❌ user forward not found', reply_markup = functions.markup(bot, 'friends-menu', user))
-                                return
 
                             else:
                                 fr_id = res.forward_from.id
@@ -1119,6 +1119,7 @@ def on_message(message):
 
                         if two_user == None:
                             bot.send_message(message.chat.id, f'❌ user not found in base', reply_markup = functions.markup(bot, 'friends-menu', user))
+                            return
 
                         if two_user == bd_user:
                             bot.send_message(message.chat.id, f'❌ user == friend', reply_markup = functions.markup(bot, 'friends-menu', user))
@@ -3255,8 +3256,760 @@ def on_message(message):
                         msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
                         bot.register_next_step_handler(msg, ret_zero, ans, bd_user)
 
+                if message.text in ['🛒 Рынок', '🛒 Market']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = '🛒 Панель рынка открыта!'
+                        else:
+                            text = '🛒 The market panel is open!'
+
+                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "market", user))
+
+                if message.text in ['➕ Добавить товар', '➕ Add Product']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+
+                        def chunks(lst, n):
+                            for i in range(0, len(lst), n):
+                                yield lst[i:i + n]
+
+                        data_items = items_f['items']
+                        items = bd_user['inventory']
+
+                        if items == []:
+
+                            if bd_user['language_code'] == 'ru':
+                                text = 'Инвентарь пуст.'
+                            else:
+                                text = 'Inventory is empty.'
+
+                            bot.send_message(message.chat.id, text)
+
+                            return
+
+                        items_id = {}
+                        page = 1
+                        items_names = []
+
+                        if bd_user['language_code'] == 'ru':
+                            lg = "nameru"
+                        else:
+                            lg = "nameen"
+
+                        for i in items:
+                            items_id[ items_f['items'][str(i)][lg] ] = i
+                            items_names.append( items_f['items'][str(i)][lg] )
+
+                        items_names.sort()
+
+                        items_sort = []
+                        d_it_sort = {}
+                        ind_sort_it = {}
+
+                        for i in items_names:
+                            if i in list(d_it_sort.keys()):
+                                d_it_sort[i] += 1
+                            else:
+                                d_it_sort[i] = 1
+
+                        for n in list(d_it_sort.keys()):
+                            col = d_it_sort[n]
+                            name = n
+                            items_sort.append(f'{n} x{col}')
+                            ind_sort_it[f'{n} x{col}'] = n
+
+                        pages = list(chunks(list(chunks(items_sort, 2)), 3))
+
+                        for i in pages:
+                            for ii in i:
+                                if len(ii) == 1:
+                                    ii.append(' ')
+
+                            if len(i) != 3:
+                                for iii in range(3 - len(i)):
+                                    i.append([' ', ' '])
+
+                        if bd_user['language_code'] == 'ru':
+                            textt = '➕ | Выберите предмет для добавления на рынок >'
+                        else:
+                            textt = '➕ | Select an item to add to the market >'
+
+                        mms = bot.send_message(message.chat.id, textt)
+
+                        def work_pr(message, pages, page, items_id, ind_sort_it, mms = None):
+                            a = []
+                            l_pages = pages
+                            l_page = page
+                            l_ind_sort_it = ind_sort_it
+
+                            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+                            for i in pages[page-1]:
+                                rmk.add(i[0], i[1])
+
+                            if len(pages) > 1:
+                                if bd_user['language_code'] == 'ru':
+                                    com_buttons = ['◀', '🛒 Рынок', '▶']
+                                    textt = '🎈 | Обновление...'
+                                else:
+                                    com_buttons = ['◀', '🛒 Market', '▶']
+                                    textt = '🎈 | Update...'
+
+                                rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
+
+                            else:
+                                if bd_user['language_code'] == 'ru':
+                                    com_buttons = '🛒 Рынок'
+                                    textt = '🎈 | Обновление...'
+                                else:
+                                    textt = '🎈 | Update...'
+                                    com_buttons = '🛒 Market'
+
+                                rmk.add(com_buttons)
+
+                            def ret(message, l_pages, l_page, l_ind_sort_it, pages, page, items_id, ind_sort_it, bd_user, user):
+
+                                if message.text in ['Yes, transfer the item', 'Да, передать предмет']:
+                                    return
+
+                                elif message.text in ['🛒 Рынок', '🛒 Market']:
+                                    res = None
+
+                                else:
+                                    if message.text in list(l_ind_sort_it.keys()) or message.text in ['◀', '▶']:
+                                        res = message.text
+                                    else:
+                                        res = None
+
+                                if res == None:
+                                    if bd_user['language_code'] == 'ru':
+                                        text = "🛒 | Возвращение в меню рынка!"
+                                    else:
+                                        text = "🛒 | Return to the market menu!"
+
+                                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                    return '12'
+
+                                else:
+                                    if res == '◀':
+                                        if page - 1 == 0:
+                                            page = 1
+                                        else:
+                                            page -= 1
+
+                                        work_pr(message, pages, page, items_id, ind_sort_it)
+
+                                    elif res == '▶':
+                                        if page + 1 > len(l_pages):
+                                            page = len(l_pages)
+                                        else:
+                                            page += 1
+
+                                        work_pr(message, pages, page, items_id, ind_sort_it)
+
+                                    else:
+                                        item_id = items_id[ l_ind_sort_it[res] ]
+
+                                        def sch_items(item_id, bd_user):
+                                            a = 0
+                                            for i in bd_user['inventory']:
+                                                if i == item_id:
+                                                    a += 1
+                                            return a
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = "🛒 | Введите количество товара: "
+                                            ans = ['🛒 Рынок']
+                                        else:
+                                            text = "🛒 | Enter the quantity of the product: "
+                                            ans = ['🛒 Market']
+
+                                        rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
+                                        rmk.add(ans[0])
+
+                                        def ret_number(message, ans, bd_user, item_id):
+                                            number = message.text
+                                            try:
+                                                number = int(number)
+                                                mn = sch_items(item_id, bd_user)
+                                                if number <= 0 or number >= mn + 1:
+                                                    if bd_user['language_code'] == 'ru':
+                                                        text = f'0️⃣1️⃣0️⃣ | Введите число от 1 до {mn}!'
+                                                    else:
+                                                        text = f'0️⃣1️⃣0️⃣ | Enter a number from 1 to {mn}!'
+
+                                                    bot.send_message(message.chat.id, text)
+                                                    number = None
+                                            except:
+                                                number = None
+
+                                            if number == None:
+                                                if bd_user['language_code'] == 'ru':
+                                                    text = "🛒 | Возвращение в меню рынка!"
+                                                else:
+                                                    text = "🛒 | Return to the market menu!"
+
+                                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+
+                                            else:
+
+                                                def max_k(dct):
+                                                    mx_dct = -1
+                                                    for i in dct.keys():
+                                                        if int(i) > mx_dct:
+                                                            mx_dct = int(i)
+                                                    return str(mx_dct+1)
+
+                                                if bd_user['language_code'] == 'ru':
+                                                    text = "🛒 | Введите стоимость предмета х1: "
+                                                else:
+                                                    text = "🛒 | Enter the cost of the item x1: "
+
+                                                def ret_number2(message, ans, bd_user, item_id, col):
+                                                    number = message.text
+                                                    try:
+                                                        number = int(number)
+                                                        if number <= 0 or number >= 1000000 + 1:
+                                                            if bd_user['language_code'] == 'ru':
+                                                                text = f'0️⃣1️⃣0️⃣ | Введите число от 1 до 1000000!'
+                                                            else:
+                                                                text = f'0️⃣1️⃣0️⃣ | Enter a number from 1 to 1000000!'
+
+                                                            bot.send_message(message.chat.id, text)
+                                                            number = None
+                                                    except:
+                                                        number = None
+
+                                                    if number == None:
+                                                        if bd_user['language_code'] == 'ru':
+                                                            text = "🛒 | Возвращение в меню рынка!"
+                                                        else:
+                                                            text = "🛒 | Return to the market menu!"
+
+                                                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+
+                                                    else:
+
+                                                        market_ = market.find_one({"id": 1})
+
+                                                        try:
+                                                            products = market_['products'][str(user.id)]['products']
+                                                        except:
+                                                            market_['products'][str(user.id)] = { 'products': {}, 'dinos': {} }
+                                                            products = market_['products'][str(user.id)]['products']
+
+                                                        market_['products'][str(user.id)]['products'][ max_k(products) ] = { 'item_id': item_id, 'price': number, 'col': [0, col]}
+
+                                                        for i in range(col):
+                                                            bd_user['inventory'].remove(item_id)
+
+                                                        users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
+
+                                                        market.update_one( {"id": 1}, {"$set": {'products': market_['products'] }} )
+
+                                                        if bd_user['language_code'] == 'ru':
+                                                            text = "🛒 | Продукт добавлен на рынок, статус своих продуктов вы можете посмотреть в своих продуктах!"
+                                                        else:
+                                                            text = "🛒 | The product has been added to the market, you can see the status of your products in your products!"
+
+                                                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
 
 
+
+
+                                                msg = bot.send_message(message.chat.id, text)
+                                                bot.register_next_step_handler(msg, ret_number2, ans, bd_user, item_id, number)
+
+                                        msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                                        bot.register_next_step_handler(msg, ret_number, ans, bd_user, item_id)
+
+
+                            if mms == None:
+                                msg = bot.send_message(message.chat.id, textt, reply_markup = rmk)
+                            else:
+                                msg = mms
+
+                            bot.register_next_step_handler(msg, ret, l_pages, l_page, l_ind_sort_it, pages, page, items_id, ind_sort_it, bd_user, user)
+
+                        work_pr(message, pages, page, items_id, ind_sort_it)
+
+                if message.text in ['📜 Мои товары', '📜 My products']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+
+                        def chunks(lst, n):
+                            for i in range(0, len(lst), n):
+                                yield lst[i:i + n]
+
+                        market_ = market.find_one({"id": 1})
+                        if str(user.id) not in market_['products'].keys() or market_['products'][str(user.id)]['products'] == {}:
+
+                            if bd_user['language_code'] == 'ru':
+                                text = "🛒 | У вас нет продаваемых продуктов на рынке!"
+                            else:
+                                text = "🛒 | You don't have any saleable products on the market!"
+
+                            bot.send_message(message.chat.id, text)
+
+                        else:
+
+                            products = []
+                            page = 1
+
+                            for i in market_['products'][str(user.id)]['products'].keys():
+                                product = market_['products'][str(user.id)]['products'][i]
+                                products.append(product)
+
+                            pages = list(chunks(products, 5))
+
+                            if bd_user['language_code'] == 'ru':
+                                text = '🛒 | *Ваши продукты*\n\n'
+                            else:
+                                text = '🛒 | *Your products*\n\n'
+
+                            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+
+                            if len(pages) > 1:
+
+                                if bd_user['language_code'] == 'ru':
+                                    ans = ['◀', '🛒 Рынок', '▶']
+                                else:
+                                    ans = ['◀', '🛒 Market', '▶']
+
+                                rmk.add(ans[0], ans[1], ans[2])
+
+                            else:
+
+                                if bd_user['language_code'] == 'ru':
+                                    ans = ['🛒 Рынок']
+                                else:
+                                    ans = ['🛒 Market']
+
+                                rmk.add(ans[0])
+
+                            def work_pr(page, pages):
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = '🛒 | *Ваши продукты*\n\n'
+                                else:
+                                    text = '🛒 | *Your products*\n\n'
+
+                                w_page = pages[page-1]
+
+                                nn = (page - 1) * 5
+                                for pr in w_page:
+                                    item = items_f['items'][ pr['item_id'] ]
+                                    nn += 1
+
+                                    if int(w_page.index(pr)) == len(w_page) - 1:
+                                        n = '└'
+                                    elif int(w_page.index(pr)) == 0:
+                                        n = '┌'
+                                    else:
+                                        n = '├'
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text += f"*{n}* {nn}# {item['nameru']}\n    *└* Цена за 1х: {pr['price']}\n        *└* Продано: {pr['col'][0]} / {pr['col'][1]}\n\n"
+                                    else:
+                                        text += f"*{n}* {nn}# {item['nameen']}\n    *└* Price pay for 1х: {pr['price']}\n        *└* Sold: {pr['col'][0]} / {pr['col'][1]}\n\n"
+
+                                if bd_user['language_code'] == 'ru':
+                                    text += f'Страница: {page}'
+                                else:
+                                    text += f'Page: {page}'
+
+                                return text
+
+                            msg_g = bot.send_message(message.chat.id, work_pr(page, pages), reply_markup = rmk, parse_mode = 'Markdown')
+
+                            def check_key(message, page, pages, ans):
+
+                                if message.text in ['🛒 Рынок', '🛒 Market'] or message.text not in ans:
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = "🛒 | Возвращение в меню рынка!"
+                                    else:
+                                        text = "🛒 | Return to the market menu!"
+
+                                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                    return
+
+                                if len(pages) > 1 and message.text in ['◀', '▶']:
+                                    if message.text == '◀':
+
+                                        if page - 1 == 0:
+                                            page = 1
+                                        else:
+                                            page -= 1
+
+                                    if message.text == '▶':
+
+                                        if page + 1 > len(pages):
+                                            page = len(pages)
+                                        else:
+                                            page += 1
+
+                                msg = bot.send_message(message.chat.id, work_pr(page, pages), reply_markup = rmk, parse_mode = 'Markdown')
+                                bot.register_next_step_handler(msg, check_key, page, pages, ans)
+
+                            bot.register_next_step_handler(msg_g, check_key, page, pages, ans)
+
+                if message.text in ['➖ Удалить товар', '➖ Delete Product']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+
+                        market_ = market.find_one({"id": 1})
+                        if str(user.id) not in market_['products'].keys() or market_['products'][str(user.id)]['products'] == {}:
+
+                            if bd_user['language_code'] == 'ru':
+                                text = "🛒 | У вас нет продаваемых продуктов на рынке!"
+                            else:
+                                text = "🛒 | You don't have any saleable products on the market!"
+
+                            bot.send_message(message.chat.id, text)
+
+                        else:
+
+                            products = []
+                            page = 1
+
+                            for i in market_['products'][str(user.id)]['products'].keys():
+                                product = market_['products'][str(user.id)]['products'][i]
+                                products.append(product)
+
+                            pages = list(chunks(products, 5))
+
+                            if bd_user['language_code'] == 'ru':
+                                text = '🛒 | *Ваши продукты*\n\n'
+                            else:
+                                text = '🛒 | *Your products*\n\n'
+
+                            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+
+                            lll = []
+                            for i in range(1, len(pages[page-1])+1 ):
+                                lll.append(str(i + 1 * page + (5 * (page-1))-1 * page ))
+
+                            if len(lll) == 1:
+                                rmk.add(lll[0])
+                            if len(lll) == 2:
+                                rmk.add(lll[0], lll[1])
+                            if len(lll) == 3:
+                                rmk.row(lll[0], lll[1], lll[2])
+                            if len(lll) == 4:
+                                rmk.row(lll[0], lll[1], lll[2], lll[3])
+                            if len(lll) == 5:
+                                rmk.row(lll[0], lll[1], lll[2], lll[3], lll[4])
+
+                            if len(pages) > 1:
+
+                                if bd_user['language_code'] == 'ru':
+                                    ans = ['◀', '🛒 Рынок', '▶']
+                                else:
+                                    ans = ['◀', '🛒 Market', '▶']
+
+                                rmk.add(ans[0], ans[1], ans[2])
+
+                            else:
+
+                                if bd_user['language_code'] == 'ru':
+                                    ans = ['🛒 Рынок']
+                                else:
+                                    ans = ['🛒 Market']
+
+                                rmk.add(ans[0])
+
+                            def work_pr(page, pages):
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = '🛒 | *Ваши продукты*\n\n'
+                                else:
+                                    text = '🛒 | *Your products*\n\n'
+
+                                w_page = pages[page-1]
+
+                                nn = (page - 1) * 5
+                                for pr in w_page:
+                                    item = items_f['items'][ pr['item_id'] ]
+                                    nn += 1
+
+                                    if int(w_page.index(pr)) == len(w_page) - 1:
+                                        n = '└'
+                                    elif int(w_page.index(pr)) == 0:
+                                        n = '┌'
+                                    else:
+                                        n = '├'
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text += f"*{n}* {nn}# {item['nameru']}\n    *└* Цена за 1х: {pr['price']}\n        *└* Продано: {pr['col'][0]} / {pr['col'][1]}\n\n"
+                                    else:
+                                        text += f"*{n}* {nn}# {item['nameen']}\n    *└* Price pay for 1х: {pr['price']}\n        *└* Sold: {pr['col'][0]} / {pr['col'][1]}\n\n"
+
+                                if bd_user['language_code'] == 'ru':
+                                    text += f'Страница: {page}'
+                                else:
+                                    text += f'Page: {page}'
+
+                                return text
+
+                            msg_g = bot.send_message(message.chat.id, work_pr(page, pages), reply_markup = rmk, parse_mode = 'Markdown')
+
+                            def check_key(message, page, pages, ans):
+                                number = None
+
+                                if message.text in ['🛒 Рынок', '🛒 Market']:
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = "🛒 | Возвращение в меню рынка!"
+                                    else:
+                                        text = "🛒 | Return to the market menu!"
+
+                                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                    return
+
+                                if message.text not in ans:
+
+                                    try:
+                                        number = int(message.text)
+
+                                    except:
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = "🛒 | Возвращение в меню рынка!"
+                                        else:
+                                            text = "🛒 | Return to the market menu!"
+
+                                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                        return
+
+                                if number == None:
+                                    if len(pages) > 1 and message.text in ['◀', '▶']:
+                                        if message.text == '◀':
+
+                                            if page - 1 == 0:
+                                                page = 1
+                                            else:
+                                                page -= 1
+
+                                        if message.text == '▶':
+
+                                            if page + 1 > len(pages):
+                                                page = len(pages)
+                                            else:
+                                                page += 1
+
+                                    rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+
+                                    lll = []
+                                    for i in range(1, len(pages[page-1])+1 ):
+                                        lll.append(str(i + 1 * page + (5 * (page-1))-1 * page ))
+
+                                    if len(lll) == 1:
+                                        rmk.add(lll[0])
+                                    if len(lll) == 2:
+                                        rmk.add(lll[0], lll[1])
+                                    if len(lll) == 3:
+                                        rmk.row(lll[0], lll[1], lll[2])
+                                    if len(lll) == 4:
+                                        rmk.row(lll[0], lll[1], lll[2], lll[3])
+                                    if len(lll) == 5:
+                                        rmk.row(lll[0], lll[1], lll[2], lll[3], lll[4])
+
+                                    if len(pages) > 1:
+
+                                        if bd_user['language_code'] == 'ru':
+                                            ans = ['◀', '🛒 Рынок', '▶']
+                                        else:
+                                            ans = ['◀', '🛒 Market', '▶']
+
+                                        rmk.add(ans[0], ans[1], ans[2])
+
+                                    else:
+
+                                        if bd_user['language_code'] == 'ru':
+                                            ans = ['🛒 Рынок']
+                                        else:
+                                            ans = ['🛒 Market']
+
+                                        rmk.add(ans[0])
+
+                                    msg = bot.send_message(message.chat.id, work_pr(page, pages), reply_markup = rmk, parse_mode = 'Markdown')
+                                    bot.register_next_step_handler(msg, check_key, page, pages, ans)
+
+                                else:
+
+                                    nn_number = list(market_['products'][str(user.id)]['products'].keys())[number-1]
+
+                                    if nn_number not in market_['products'][str(user.id)]['products'].keys():
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = "🛒 | Объект с данным номером не найден в ваших продуктах!"
+                                        else:
+                                            text = "🛒 | The object with this number is not found in your products!"
+
+                                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+
+                                    else:
+
+                                        prod = market_['products'][str(user.id)]['products'][nn_number]
+                                        print(prod)
+
+                                        for i in range(prod['col'][1] - prod['col'][0]):
+                                            bd_user['inventory'].append(prod['item_id'])
+
+                                        del market_['products'][str(user.id)]['products'][nn_number]
+
+                                        market.update_one( {"id": 1}, {"$set": {'products': market_['products'] }} )
+                                        users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = "🛒 | Продукт удалён!"
+                                        else:
+                                            text = "🛒 | The product has been removed!"
+
+                                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+
+                            bot.register_next_step_handler(msg_g, check_key, page, pages, ans)
+
+                if message.text in [ '🔍 Поиск товара', '🔍 Product Search']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+
+                        market_ = market.find_one({"id": 1})
+
+                        rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+
+                        if bd_user['language_code'] == 'ru':
+                            ans = ['🛒 Рынок']
+                            text = '🔍 | Введите имя предмета который вы ищите...'
+                        else:
+                            ans = ['🛒 Market']
+                            text = '🔍 | Enter the name of the item you are looking for...'
+
+                        rmk.add(ans[0])
+
+                        def name_reg(message):
+                            if message.text in ['🛒 Market', '🛒 Рынок']:
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = "🛒 | Возвращение в меню рынка!"
+                                else:
+                                    text = "🛒 | Return to the market menu!"
+
+                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                return
+
+                            else:
+                                s_i = []
+                                for i in items_f['items']:
+                                    item = items_f['items'][i]
+
+                                    for inn in [ item['nameru'], item['nameen'] ]:
+                                        if fuzz.token_sort_ratio(message.text, inn) > 80 or fuzz.ratio(message.text, inn) > 80 or message.text == inn:
+                                            s_i.append(i)
+
+                                if s_i == []:
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = "🛒 | Предмет с таким именем не найден в базе продаваемых предметов!\nВозвращение в меню рынка!"
+                                    else:
+                                        text = "🛒 | An item with that name was not found in the database of sold items!\nreturn to the market menu!"
+
+                                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                    return
+
+
+                                sear_items = []
+                                for uid in market_['products']:
+                                    if uid != str(bd_user['userid']):
+                                        userser = market_['products'][uid]['products']
+                                        for ki in userser:
+                                            if userser[ki]['item_id'] in s_i:
+                                                sear_items.append( {'user': uid, 'key': ki, 'col': userser[ki]['col'], 'price': userser[ki]['price'], 'item_id': userser[ki]['item_id']} )
+
+                                if sear_items == []:
+                                    if bd_user['language_code'] == 'ru':
+                                        text = "🛒 | Предмет с таким именем не найден в базе продаваемых предметов!\nВозвращение в меню рынка!"
+                                    else:
+                                        text = "🛒 | An item with that name was not found in the database of sold items!\nreturn to the market menu!"
+
+                                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                    return
+
+                                random.shuffle(sear_items)
+                                page = list(chunks(sear_items, 10))[0]
+
+                                text = ''
+                                a = 0
+
+                                markup_inline = types.InlineKeyboardMarkup()
+                                in_l = []
+
+                                if bd_user['language_code'] == 'ru':
+                                    text += f"🔍 | По вашему запросу найдено {len(sear_items)} предметов(а) >\n\n"
+                                    for i in page:
+                                        a += 1
+                                        text += f"*{a}#* {items_f['items'][i['item_id']]['nameru']}\n     *└* Цена за 1х: {i['price']}\n         *└* Количесвто: {i['col'][1] - i['col'][0]}\n\n"
+                                        in_l.append( types.InlineKeyboardButton( text = str(a) + '#', callback_data = f"market_buy_[{i['user']}, {i['key']}]"))
+                                else:
+                                    text += f'🔍 | Your search found {len(search_items)} item(s) >\n\n'
+                                    for i in page:
+                                        a += 1
+                                        text += f"*{a}#* {items_f['items'][i['item_id']]['nameen']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}\n\n"
+                                        in_l.append( types.InlineKeyboardButton( text = str(a) + '#', callback_data = f"market_buy_[{i['user']}, {i['key']}]"))
+
+
+                                if len(in_l) == 1:
+                                    markup_inline.add(in_l[0])
+                                if len(in_l) == 2:
+                                    markup_inline.add(in_l[0], in_l[1])
+                                if len(in_l) == 3:
+                                    markup_inline.add(in_l[0], in_l[1], in_l[2])
+                                if len(in_l) == 4:
+                                    markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3])
+                                if len(in_l) == 5:
+                                    markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                                if len(in_l) == 6:
+                                    markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                                    markup_inline.add(in_l[5])
+                                if len(in_l) == 7:
+                                    markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                                    markup_inline.add(in_l[5], in_l[6])
+                                if len(in_l) == 8:
+                                    markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                                    markup_inline.add(in_l[5], in_l[6], in_l[7])
+                                if len(in_l) == 9:
+                                    markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                                    markup_inline.add(in_l[5], in_l[6], in_l[7], in_l[8])
+                                if len(in_l) == 10:
+                                    markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                                    markup_inline.add(in_l[5], in_l[6], in_l[7], in_l[8], in_l[9])
+
+                                msg = bot.send_message(message.chat.id, text, parse_mode = 'Markdown', reply_markup = markup_inline)
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = "🛒 | Возвращение в меню рынка!"
+                                else:
+                                    text = "🛒 | Return to the market menu!"
+
+                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                return
+
+
+                        msg = bot.send_message(message.chat.id, text, reply_markup = rmk, parse_mode = 'Markdown')
+                        bot.register_next_step_handler(msg, name_reg )
+
+                if message.text in [ '🛒 Случайные товары', '🛒 Random Products']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = "🛒 | Временно отключено.."
+                        else:
+                            text = "🛒 | Temporarily disabled.."
+
+                        bot.send_message(message.chat.id, text)
 
 @bot.callback_query_handler(func = lambda call: True)
 def answer(call):
@@ -3328,7 +4081,7 @@ def answer(call):
             bot.send_photo(message.chat.id, photo, text, reply_markup = markup_inline)
             users.update_one( {"userid": user.id}, {"$set": {'eggs': id_l}} )
 
-    if call.data == 'checking_the_user_in_the_channel':
+    elif call.data == 'checking_the_user_in_the_channel':
         if bot.get_chat_member(-1001673242031, user.id).status != 'left':
 
             if bd_user['language_code'] == 'ru':
@@ -3339,7 +4092,7 @@ def answer(call):
             bot.edit_message_text(text, call.message.chat.id, call.message.message_id, parse_mode = 'Markdown')
 
 
-    if call.data in ['egg_answer_1', 'egg_answer_2', 'egg_answer_3']:
+    elif call.data in ['egg_answer_1', 'egg_answer_2', 'egg_answer_3']:
 
         if 'eggs' in list(bd_user.keys()):
             egg_n = call.data[11:]
@@ -3392,7 +4145,7 @@ def answer(call):
             bot.edit_message_caption(text, call.message.chat.id, call.message.message_id)
             bot.send_message(call.message.chat.id, text2, parse_mode = 'Markdown', reply_markup = functions.markup(bot, 1, user))
 
-    if call.data[:13] in ['90min_journey', '60min_journey', '30min_journey', '10min_journey']:
+    elif call.data[:13] in ['90min_journey', '60min_journey', '30min_journey', '10min_journey']:
 
         bd_user['dinos'][ call.data[14:] ]['activ_status'] = 'journey'
         bd_user['dinos'][ call.data[14:] ]['journey_time'] = time.time() + 60 * int(call.data[:2])
@@ -3410,7 +4163,7 @@ def answer(call):
         bot.edit_message_text(text2, call.message.chat.id, call.message.message_id)
         bot.send_message(call.message.chat.id, text, parse_mode = 'html', reply_markup = functions.markup(bot, "actions", user))
 
-    if call.data[:10] in ['1_con_game', '2_con_game', '3_con_game', '1_sna_game', '2_sna_game', '3_sna_game', '1_pin_game', '2_pin_game', '3_pin_game', '1_bal_game', '2_bal_game', '3_bal_game']:
+    elif call.data[:10] in ['1_con_game', '2_con_game', '3_con_game', '1_sna_game', '2_sna_game', '3_sna_game', '1_pin_game', '2_pin_game', '3_pin_game', '1_bal_game', '2_bal_game', '3_bal_game']:
         user = call.from_user
         bd_user = users.find_one({"userid": user.id})
         n_s = int(call.data[:1])
@@ -3527,7 +4280,7 @@ def answer(call):
         bot.edit_message_text(text2, call.message.chat.id, call.message.message_id)
         bot.send_message(call.message.chat.id, text, parse_mode = 'html', reply_markup = functions.markup(bot, "games", user))
 
-    if call.data in ['dead_answer1', 'dead_answer2', 'dead_answer3', 'dead_answer4']:
+    elif call.data in ['dead_answer1', 'dead_answer2', 'dead_answer3', 'dead_answer4']:
 
         user = call.from_user
         bd_user = users.find_one({"userid": user.id})
@@ -3612,7 +4365,7 @@ def answer(call):
         except:
             bot.send_message(call.message.chat.id, text, reply_markup = markup_inline, parse_mode = 'Markdown')
 
-    if call.data == 'dead_restart':
+    elif call.data == 'dead_restart':
         user = call.from_user
         bd_user = users.find_one({"userid": user.id})
 
@@ -3642,7 +4395,7 @@ def answer(call):
 
             bot.send_message(user.id, text, parse_mode = 'Markdown', reply_markup = functions.markup(bot, 1, user))
 
-    if call.data[:5] == 'item_':
+    elif call.data[:5] == 'item_':
 
         def us_item(message, item, dino_dict, bd_user, it_id, sl):
             if sl == 2:
@@ -3811,7 +4564,7 @@ def answer(call):
                 msg = bot.send_message(user.id, text, reply_markup = rmk)
                 bot.register_next_step_handler(msg, us_item, item, dino_dict, bd_user, it_id, 2)
 
-    if call.data[:12] == 'remove_item_':
+    elif call.data[:12] == 'remove_item_':
 
         bd_user = users.find_one({"userid": user.id})
         it_id = str(call.data[12:])
@@ -3830,7 +4583,7 @@ def answer(call):
 
             bot.send_message(user.id, text, reply_markup = markup_inline)
 
-    if call.data[:7] == 'remove_':
+    elif call.data[:7] == 'remove_':
         bd_user = users.find_one({"userid": user.id})
         it_id = str(call.data[7:])
         if it_id in bd_user['inventory']:
@@ -3845,11 +4598,169 @@ def answer(call):
 
             bot.edit_message_text(text, user.id, call.message.message_id)
 
-    if call.data == "cancel_remove":
+    elif call.data == "cancel_remove":
         bot.delete_message(user.id, call.message.message_id)
 
-    if call.data[:9] == 'exchange_':
+    elif call.data[:9] == 'exchange_':
         functions.exchange(bot, call.message, str(call.data[9:]), bd_user)
+
+    elif call.data[:11] == 'market_buy_':
+        l = eval(call.data[11:])
+        market_ = market.find_one({"id": 1})
+        us_id = l[0]
+        key_i = l[1]
+
+        if str(us_id) in market_['products'].keys():
+            ma_d = market_['products'][str(us_id)]['products']
+
+            if str(key_i) in ma_d.keys():
+                mmd = market_['products'][str(us_id)]['products'][str(key_i)]
+
+                if mmd['price'] <= bd_user['coins']:
+
+                    def reg0(message, mmd, us_id, key_i):
+
+                        def reg(message, mmd, us_id, key_i):
+
+                            try:
+                                number = int(message.text)
+                            except:
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = "🛒 | Возвращение в меню рынка!"
+                                else:
+                                    text = "🛒 | Return to the market menu!"
+
+                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                return
+
+                            if number <= 0 or number > mmd['col'][1] - mmd['col'][0]:
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = "🛒 | На рынке нет такого количества предмета!"
+                                else:
+                                    text = "🛒 | There is no such amount of item on the market!"
+
+                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                return
+
+                            mr_user = users.find_one({"userid": us_id})
+
+                            if mmd['price'] * number > bd_user['coins']:
+                                if bd_user['language_code'] == 'ru':
+                                    text = "🛒 | У вас нет столько монет!"
+                                else:
+                                    text = "🛒 | You don't have that many coins!"
+
+                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                return
+
+                            for i in range(number):
+                                bd_user['inventory'].append(mmd['item_id'])
+                            bd_user['coins'] -= mmd['price'] * number
+
+                            if mr_user != None:
+                                mr_user['coins'] += mmd['price'] * number
+                                users.update_one( {"userid": us_id}, {"$set": {'coins': mr_user['coins'] }} )
+
+                            market_['products'][str(us_id)]['products'][str(key_i)]['col'][0] += number
+
+                            if market_['products'][str(us_id)]['products'][str(key_i)]['col'][0] >= market_['products'][str(us_id)]['products'][str(key_i)]['col'][1]:
+
+                                del market_['products'][str(us_id)]['products'][str(key_i)]
+
+
+                            market.update_one( {"id": 1}, {"$set": {'products': market_['products'] }} )
+                            users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
+                            users.update_one( {"userid": user.id}, {"$set": {'coins': bd_user['coins'] }} )
+
+                            if bd_user['language_code'] == 'ru':
+                                text = "🛒 | Товар был куплен!"
+                            else:
+                                text = "🛒 | The product was purchased!"
+
+                            bot.send_message(call.message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+
+                        if message.text in [f"Yes, purchase {items_f['items'][mmd['item_id']]['nameru']}", f"Да, приобрести {items_f['items'][mmd['item_id']]['nameru']}"]:
+                            pass
+
+                        elif message.text in [ '🛒 Рынок', '🛒 Market' ]:
+
+                            if bd_user['language_code'] == 'ru':
+                                text = "🛒 | Возвращение в меню рынка!"
+                            else:
+                                text = "🛒 | Return to the market menu!"
+
+                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                            return
+
+                        else:
+
+                            if bd_user['language_code'] == 'ru':
+                                text = "🛒 | Возвращение в меню рынка!"
+                            else:
+                                text = "🛒 | Return to the market menu!"
+
+                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                            return
+
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f"🛒 | Укажите сколько вы хотите купить >\nВведите число от {1} до {mmd['col'][1] - mmd['col'][0] }"
+                            ans = ['🛒 Рынок']
+                        else:
+                            text = f"🛒 | Specify how much you want to buy >\enter a number from {1} to {mmd['col'][1] - mmd['col'][0] }"
+                            ans = ['🛒 Market']
+
+                        rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
+                        rmk.add(ans[0])
+
+                        msg = bot.send_message(message.chat.id, text, reply_markup = rmk, parse_mode = 'Markdown')
+                        bot.register_next_step_handler(msg, reg, mmd, us_id, key_i)
+
+                    if bd_user['language_code'] == 'ru':
+                        text = f"🛒 | Вы уверены что вы хотите купить {items_f['items'][mmd['item_id']]['nameru']}?"
+                        ans = [f"Да, приобрести {items_f['items'][mmd['item_id']]['nameru']}", '🛒 Рынок']
+                    else:
+                        text = f"🛒 | Are you sure you want to buy {items_f['items'][mod['item_id']]['nameen']}?"
+                        ans = [f"Yes, purchase {items_f['items'][mmd['item_id']]['nameru']}", '🛒 Market']
+
+                    rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
+                    rmk.add(ans[0], ans[1])
+
+                    msg = bot.send_message(call.message.chat.id, text, reply_markup = rmk, parse_mode = 'Markdown')
+                    bot.register_next_step_handler(msg, reg0, mmd, us_id, key_i)
+
+                else:
+                    if bd_user['language_code'] == 'ru':
+                        text = "🛒 | У вас не хватает монет для покупки!"
+                    else:
+                        text = "🛒 | You don't have enough coins to buy!"
+
+                    bot.send_message(call.message.chat.id, text)
+
+            else:
+                if bd_user['language_code'] == 'ru':
+                    text = "🛒 | Предмет не найден на рынке, возможно он уже был куплен."
+                else:
+                    text = "🛒 | The item was not found on the market, it may have already been purchased."
+
+                bot.send_message(call.message.chat.id, text)
+
+        else:
+            if bd_user['language_code'] == 'ru':
+                text = "🛒 | Предмет не найден на рынке, возможно он уже был куплен."
+            else:
+                text = "🛒 | The item was not found on the market, it may have already been purchased."
+
+            bot.send_message(call.message.chat.id, text)
+
+
+
+
+
+    else:
+        print(call.data, 'call.data')
 
 
 print(f'Бот {bot.get_me().first_name} запущен!')
