@@ -123,7 +123,7 @@ class checks:
                         if random.randint(1, 65) == 1: #unv
                             user['dinos'][dino_id]['stats']['unv'] -= random.randint(0,1)
 
-                        if bd_user['activ_items']['hunt'] == '15':
+                        if user['activ_items']['hunt'] == '15':
                             pr_hunt = 15
                         else:
                             pr_hunt = 20
