@@ -175,6 +175,7 @@ class checks:
                                     user['dinos'][dino_id]['target'][0] += 1
 
                             users.update_one( {"userid": user['userid']}, {"$push": {'inventory': item }} )
+                            users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
 
 
                     elif dino['activ_status'] == 'journey':
@@ -522,7 +523,9 @@ class checks:
                                         else:
                                             event = '🍭 | Negative event canceled due to good mood!'
 
-                                user['dinos'][ dino_id ]['journey_log'].append(event)
+                                bd_user = users.find_one({"userid": user['userid']})
+                                bd_user['dinos'][ dino_id ]['journey_log'].append(event)
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
 
                     if user['dinos'][dino_id]['stats']['game'] < 40 and user['dinos'][dino_id]['stats']['game'] > 10:
                         if dino['stats']['mood'] > 0:
