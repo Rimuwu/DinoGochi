@@ -418,6 +418,7 @@ def on_message(message):
 
                             if res.text == ans[0] or res.forward_from == None:
                                 bot.send_message(message.chat.id, f'❌ user forward not found', reply_markup = functions.markup(bot, 'friends-menu', user))
+                                fr_id = None
 
                             else:
                                 fr_id = res.forward_from.id
