@@ -206,198 +206,6 @@ def check(): #проверка каждые 10 секунд
 
 thr1 = threading.Thread(target = check, daemon=True)
 
-def member_profile(mem_id, lang):
-    # try:
-    if True:
-        user = bot.get_chat(int(mem_id))
-        bd_user = users.find_one({"userid": user.id})
-        expp = 5 * bd_user['lvl'][0] * bd_user['lvl'][0] + 50 * bd_user['lvl'][0] + 100
-        n_d = len(list(bd_user['dinos']))
-        t_dinos = ''
-        for k in bd_user['dinos']:
-            i = bd_user['dinos'][k]
-
-            if list( bd_user['dinos']) [ len(bd_user['dinos']) - 1 ] == k:
-                n = '└'
-
-            else:
-                n = '├'
-
-            if i['status'] == 'incubation':
-
-                if lang == 'ru':
-
-                    qual = '🎲 Случайное'
-                    if 'quality' in i.keys():
-                        pre_qual = i['quality']
-
-                        if pre_qual == 'com':
-                            qual = '🤍 Обычное'
-                        if pre_qual == 'unc':
-                            qual = '💚 Необычное'
-                        if pre_qual == 'rar':
-                            qual = '💙 Редкое'
-                        if pre_qual == 'myt':
-                            qual = '💜 Мистическое'
-                        if pre_qual == 'leg':
-                            qual = '💛 Легендарное'
-
-
-                    t_dinos += f"\n   *{n}* Статус: яйцо\n      *└* Редкость: {qual}\n"
-
-                else:
-
-                    qual = '🎲 Random'
-                    if 'quality' in i.keys():
-                        pre_qual = i['quality']
-
-                        if pre_qual == 'com':
-                            qual = '🤍 Common'
-                        if pre_qual == 'unc':
-                            qual = '💚 Uncommon'
-                        if pre_qual == 'rar':
-                            qual = '💙 Rare'
-                        if pre_qual == 'myt':
-                            qual = '💜 Mystical'
-                        if pre_qual == 'leg':
-                            qual = '💛 Legendary'
-
-
-                    t_dinos += f"\n   *{n}*\n      *├* Status: egg\n      *└* Rare: {qual}\n"
-
-            if i['status'] == 'dino':
-
-                stat = i['activ_status']
-                if lang == 'ru':
-
-                    if i['activ_status'] == 'pass_active':
-                        stat = '🧩 ничего не делает'
-                    elif i['activ_status'] == 'sleep':
-                        stat = '💤 спит'
-                    elif i['activ_status'] == 'game':
-                        stat = '🕹 играет'
-                    elif i['activ_status'] == 'hunting':
-                        stat = '🌿 собирает еду'
-                    elif i['activ_status'] == 'journey':
-                        stat = '🎴 путешествует'
-
-                    dino = json_f['elements'][str(i['dino_id'])]
-                    pre_qual = dino['image'][5:8]
-                    qual = ''
-                    if pre_qual == 'com':
-                        qual = '🤍 Обычный'
-                    if pre_qual == 'unc':
-                        qual = '💚 Необычный'
-                    if pre_qual == 'rar':
-                        qual = '💙 Редкий'
-                    if pre_qual == 'myt':
-                        qual = '💜 Мистический'
-                    if pre_qual == 'leg':
-                        qual = '💛 Легендарный'
-
-                    t_dinos += f"\n   *{n}* {i['name']}\n      *├* Статус: {stat}\n      *└* Редкость: {qual}\n"
-
-                else:
-
-                    if i['activ_status'] == 'pass_active':
-                        stat = '🧩 does nothing'
-                    elif i['activ_status'] == 'sleep':
-                        stat = '💤 sleeping'
-                    elif i['activ_status'] == 'game':
-                        stat = '🕹 is playing'
-                    elif i['activ_status'] == 'hunting':
-                        stat = '🌿 collects food'
-                    elif i['activ_status'] == 'journey':
-                        stat = '🎴 travels'
-
-                    dino = json_f['elements'][str(i['dino_id'])]
-                    pre_qual = dino['image'][5:8]
-                    qual = ''
-                    if pre_qual == 'com':
-                        qual = '🤍 Common'
-                    if pre_qual == 'unc':
-                        qual = '💚 Uncommon'
-                    if pre_qual == 'rar':
-                        qual = '💙 Rare'
-                    if pre_qual == 'myt':
-                        qual = '💜 Mystical'
-                    if pre_qual == 'leg':
-                        qual = '💛 Legendary'
-
-                    t_dinos += f"\n   *{n}* {i['name']}\n      *└* Status: {stat}\n      *└* Rare: {qual}\n"
-
-        if lang == 'ru':
-
-            #act_items
-            act_ii = []
-            for itmk in bd_user['activ_items'].keys():
-                itm = bd_user['activ_items'][itmk]
-                if itm == None:
-                    act_ii.append('Нет')
-                else:
-                    item = items_f['items'][itm]['nameru']
-                    act_ii.append(item)
-
-            text =  f"*┌* *🎴 Профиль пользователя*\n"
-            text += f"*├* Имя: {user.first_name}\n"
-            text += f"*└* ID: `{user.id}`\n\n"
-            text += f"*┌* Уровень: {bd_user['lvl'][0]}\n"
-            text += f"*├* Опыт: {bd_user['lvl'][1]} / {expp}\n"
-            text += f"*└* Монеты: {bd_user['coins']}"
-            text += f'\n\n'
-            text += f"*┌* *🦖 Динозавры*\n"
-            text += f"*├* Количество: {n_d}\n"
-            text += f"*├* Динозавры:\n{t_dinos}"
-            text += f'\n'
-            text += f"*┌* *👥 Друзья*\n"
-            text += f"*└* Количество: {len(bd_user['friends']['friends_list'])}"
-            text += f'\n\n'
-            text += f"*┌* *🎈 Инвентарь*\n"
-            text += f"*└* Предметов: {len(bd_user['inventory'])}"
-            text += f'\n\n'
-            text += f"*┌* *💍 Аксессуары*\n"
-            text += f"*├* 🌙 Сон: {act_ii[3]}\n"
-            text += f"*├* 🎮 Игра: {act_ii[0]}\n"
-            text += f"*├* 🌿 Сбор пищи: {act_ii[1]}\n"
-            text += f"*└* 🎍 Путешествие: {act_ii[2]}"
-
-        else:
-            #act_items
-            act_ii = []
-            for itmk in bd_user['activ_items'].keys():
-                itm = bd_user['activ_items'][itmk]
-                if itm == None:
-                    act_ii.append('None')
-                else:
-                    item = items_f['items'][itm]['nameen']
-                    act_ii.append(item)
-
-            text =  f"*┌**🎴 User profile*\n"
-            text += f"*├* Name: {user.first_name}\n"
-            text += f"*└* ID: `{user.id}`\n\n"
-            text += f"*┌* Level: {bd_user['lvl'][0]}\n"
-            text += f"*├* Experience: {bd_user['lvl'][1]} / {expp}\n"
-            text += f"*└* Coins: {bd_user['coins']}"
-            text += f'\n\n'
-            text += f"*┌**🦖 Dinosaurs*\n"
-            text += f"*├* Number: {n_d}\n"
-            text += f"*├* Dinosaurs:\n{t_dinos}"
-            text += f'\n'
-            text += f"*┌**👥 Friends*\n"
-            text += f"*└* Quantity: {len(bd_user['friends']['friends_list'])}"
-            text += f'\n\n'
-            text += f"*┌* *🎈 Inventory*\n"
-            text += f"*└* Items: {len(bd_user['inventory'])}"
-            text += f'\n\n'
-            text += f"*┌* *💍 Accessories*\n"
-            text += f"*├* 🌙 Sleep: {act_ii[3]}\n"
-            text += f"*├* 🎮 Game: {act_ii[0]}\n"
-            text += f"*├* 🌿 Collecting food: {act_ii[1]}\n"
-            text += f"*└* 🎍 Journey: {act_ii[2]}"
-    # except:
-    #     text = 'KMk456 jr5uhsd7489 lkjs47609485\n               ERRoR'
-
-    return text
 
 @bot.message_handler(commands=['stats'])
 def command(message):
@@ -755,7 +563,7 @@ def on_message(message):
                                     else:
                                         if res in list(friends_id_d.keys()):
                                             fr_id = friends_id_d[res]
-                                            text = member_profile(fr_id, bd_user['language_code'])
+                                            text = functions.member_profile(bot, fr_id, bd_user['language_code'])
 
                                             mms = bot.send_message(message.chat.id, text, parse_mode = 'Markdown')
 
@@ -1426,7 +1234,7 @@ def on_message(message):
             if message.text in ['📜 Информация', '📜 Information']:
                 bd_user = users.find_one({"userid": user.id})
                 if bd_user != None:
-                    text = member_profile(user.id, lang = bd_user['language_code'])
+                    text = functions.member_profile(bot, user.id, lang = bd_user['language_code'])
                     bot.send_message(message.chat.id, text, parse_mode = 'Markdown')
 
 
@@ -1767,6 +1575,8 @@ def on_message(message):
 
                                 item_3 = types.InlineKeyboardButton( text = '90 мин.', callback_data = f"90min_journey_{str(bd_user['settings']['dino_id'])}")
 
+                                item_4 = types.InlineKeyboardButton( text = '120 мин.', callback_data = f"12min_journey_{str(bd_user['settings']['dino_id'])}")
+
                             else:
                                 text = "🌳 How long to send a dinosaur on a journey?"
 
@@ -1778,7 +1588,9 @@ def on_message(message):
 
                                 item_3 = types.InlineKeyboardButton( text = '90 min.', callback_data = f"90min_journey_{str(bd_user['settings']['dino_id'])}")
 
-                            markup_inline.add(item_0, item_1, item_2, item_3)
+                                item_4 = types.InlineKeyboardButton( text = '120 min.', callback_data = f"12min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                            markup_inline.add(item_0, item_1, item_2, item_3, item_4)
 
                             bot.send_message(message.chat.id, text, reply_markup = markup_inline)
 
@@ -3670,10 +3482,15 @@ def answer(call):
             bot.edit_message_caption(text, call.message.chat.id, call.message.message_id)
             bot.send_message(call.message.chat.id, text2, parse_mode = 'Markdown', reply_markup = functions.markup(bot, 1, user))
 
-    elif call.data[:13] in ['90min_journey', '60min_journey', '30min_journey', '10min_journey']:
+    elif call.data[:13] in ['90min_journey', '60min_journey', '30min_journey', '10min_journey', '12min_journey']:
+
+        if call.data[:13] == '12min_journey':
+            jr_time = 120
+        else:
+            jr_time = int(call.data[:2])
 
         bd_user['dinos'][ call.data[14:] ]['activ_status'] = 'journey'
-        bd_user['dinos'][ call.data[14:] ]['journey_time'] = time.time() + 60 * int(call.data[:2])
+        bd_user['dinos'][ call.data[14:] ]['journey_time'] = time.time() + 60 * jr_time
         bd_user['dinos'][ call.data[14:] ]['journey_log'] = []
         users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
 

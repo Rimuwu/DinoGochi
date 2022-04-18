@@ -562,43 +562,44 @@ class checks:
                             dinos_stats['eat'] -= random.randint(0,1)
 
                 bd_user = users.find_one({"userid": user['userid']})
-                if len(bd_user['dinos']) != 0:
-                    if dinos_stats != {'heal': 0, 'eat': 0, 'game': 0, 'mood': 0, 'unv': 0}:
-                        for i in dinos_stats.keys():
-                            if dinos_stats[i] != 0:
-                                bd_user['dinos'][dino_id]['stats'][i] += dinos_stats[i]
+                if bd_user != None:
+                    if len(bd_user['dinos']) != 0:
+                        if dinos_stats != {'heal': 0, 'eat': 0, 'game': 0, 'mood': 0, 'unv': 0}:
+                            for i in dinos_stats.keys():
+                                if dinos_stats[i] != 0:
+                                    bd_user['dinos'][dino_id]['stats'][i] += dinos_stats[i]
 
-                        if user['dinos'][dino_id]['stats']['unv'] > 100:
-                            user['dinos'][dino_id]['stats']['unv'] = 100
+                            if user['dinos'][dino_id]['stats']['unv'] > 100:
+                                user['dinos'][dino_id]['stats']['unv'] = 100
 
-                        if user['dinos'][dino_id]['stats']['eat'] > 100:
-                            user['dinos'][dino_id]['stats']['eat'] = 100
+                            if user['dinos'][dino_id]['stats']['eat'] > 100:
+                                user['dinos'][dino_id]['stats']['eat'] = 100
 
-                        if user['dinos'][dino_id]['stats']['game'] > 100:
-                            user['dinos'][dino_id]['stats']['game'] = 100
+                            if user['dinos'][dino_id]['stats']['game'] > 100:
+                                user['dinos'][dino_id]['stats']['game'] = 100
 
-                        if user['dinos'][dino_id]['stats']['heal'] > 100:
-                            user['dinos'][dino_id]['stats']['heal'] = 100
+                            if user['dinos'][dino_id]['stats']['heal'] > 100:
+                                user['dinos'][dino_id]['stats']['heal'] = 100
 
-                        if user['dinos'][dino_id]['stats']['mood'] > 100:
-                            user['dinos'][dino_id]['stats']['mood'] = 100
+                            if user['dinos'][dino_id]['stats']['mood'] > 100:
+                                user['dinos'][dino_id]['stats']['mood'] = 100
 
-                        if user['dinos'][dino_id]['stats']['unv'] < 0:
-                            user['dinos'][dino_id]['stats']['unv'] = 0
+                            if user['dinos'][dino_id]['stats']['unv'] < 0:
+                                user['dinos'][dino_id]['stats']['unv'] = 0
 
-                        if user['dinos'][dino_id]['stats']['eat'] < 0:
-                            user['dinos'][dino_id]['stats']['eat'] = 0
+                            if user['dinos'][dino_id]['stats']['eat'] < 0:
+                                user['dinos'][dino_id]['stats']['eat'] = 0
 
-                        if user['dinos'][dino_id]['stats']['game'] < 0:
-                            user['dinos'][dino_id]['stats']['game'] = 0
+                            if user['dinos'][dino_id]['stats']['game'] < 0:
+                                user['dinos'][dino_id]['stats']['game'] = 0
 
-                        if user['dinos'][dino_id]['stats']['mood'] < 0:
-                            user['dinos'][dino_id]['stats']['mood'] = 0
+                            if user['dinos'][dino_id]['stats']['mood'] < 0:
+                                user['dinos'][dino_id]['stats']['mood'] = 0
 
-                        if user['dinos'][dino_id]['stats']['heal'] < 0:
-                            user['dinos'][dino_id]['stats']['heal'] = 0
+                            if user['dinos'][dino_id]['stats']['heal'] < 0:
+                                user['dinos'][dino_id]['stats']['heal'] = 0
 
-                        users.update_one( {"userid": user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                            users.update_one( {"userid": user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
 
 
             expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100

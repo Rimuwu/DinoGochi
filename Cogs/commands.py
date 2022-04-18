@@ -402,7 +402,7 @@ class commands:
                     try:
                         p_profile(message, bd_dino, user, bd_user, list(bd_user['dinos'].keys())[0])
                     except:
-                        print('Ошибка в профиле')
+                        print('Ошибка в профиле4')
 
                 if n_dp == 3:
                     rmk = dp_a[0]
@@ -413,7 +413,7 @@ class commands:
                         try:
                             p_profile(message, dino_dict[message.text][0], user, bd_user, dino_dict[message.text][1])
                         except:
-                            print('Ошибка в профиле')
+                            print('Ошибка в профиле3')
 
                     msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
                     bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)
@@ -750,6 +750,8 @@ class commands:
 
                         else:
 
+                            st_t = bd_dino['activ_status']
+
                             dino = json_f['elements'][str(bd_dino['dino_id'])]
                             pre_qual = dino['image'][5:8]
                             qual = ''
@@ -772,7 +774,7 @@ class commands:
                                 st_t = 'playing 🎮'
                             elif bd_dino['activ_status'] == 'journey':
                                 st_t = 'travels 🎴'
-                            elif bd_dino['activ_status'] == 'hunt':
+                            elif bd_dino['activ_status'] == 'hunting':
                                 st_t = 'collecting food 🥞'
 
                             if bd_dino['stats']['heal'] >= 60:
@@ -838,7 +840,7 @@ class commands:
                     try:
                         p_profile(message, bd_dino, user, bd_user, list(bd_user['dinos'].keys())[0])
                     except:
-                        print('Ошибка в профиле')
+                        print('Ошибка в профиле2')
 
                 if n_dp == 3:
                     rmk = dp_a[0]
@@ -849,7 +851,7 @@ class commands:
                         try:
                             p_profile(message, dino_dict[message.text][0], user, bd_user, dino_dict[message.text][1])
                         except:
-                            print('Ошибка в профиле')
+                            print('Ошибка в профиле1')
 
                     msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
                     bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)
