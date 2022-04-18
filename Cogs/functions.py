@@ -5,6 +5,7 @@ import sys
 import random
 import json
 import time
+from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageSequence, ImageFilter
 
 sys.path.append("..")
 import config
@@ -24,6 +25,18 @@ class functions:
     json_f = json_f
     items_f = items_f
     checks_data = checks_data
+
+    @staticmethod
+    def trans_paste(fg_img,bg_img,alpha=10,box=(0,0)):
+        fg_img_trans = Image.new("RGBA",fg_img.size)
+        fg_img_trans = Image.blend(fg_img_trans,fg_img,alpha)
+        bg_img.paste(fg_img_trans,box,fg_img_trans)
+        return bg_img
+
+    @staticmethod
+    def chunks(lst, n):
+        for i in range(0, len(lst), n):
+            yield lst[i:i + n]
 
     def markup(bot, element = 1, user = None):
         try:
@@ -1042,10 +1055,6 @@ class functions:
             else:
                 return
 
-            def chunks(lst, n):
-                for i in range(0, len(lst), n):
-                    yield lst[i:i + n]
-
             friends_id = bd_user['friends']['friends_list']
             page = 1
 
@@ -1061,7 +1070,7 @@ class functions:
                 except:
                     pass
 
-            friends_chunks = list(chunks(list(chunks(friends_name, 2)), 3))
+            friends_chunks = list(functions.chunks(list(functions.chunks(friends_name, 2)), 3))
 
             def work_pr(message, friends_id, page, friends_chunks, friends_id_d, item_id, mms = None):
                 global pages
