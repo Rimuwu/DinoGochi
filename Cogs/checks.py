@@ -110,7 +110,7 @@ class checks:
                             dinos_stats['unv'] -= random.randint(0,2)
 
                         if random.randint(1, 45) == 1: #unv
-                            lvl_[1] += random.randint(0,20)
+                            lvl_ += random.randint(0,20)
 
                         if user['dinos'][dino_id]['stats']['game'] < 100:
                             if random.randint(1,30) == 1:
@@ -120,7 +120,7 @@ class checks:
                         user = users.find_one({"userid": user['userid']})
 
                         if random.randint(1, 45) == 1:
-                            lvl_[1] += random.randint(0,20)
+                            lvl_ += random.randint(0,20)
 
                         if random.randint(1, 65) == 1: #unv
                             dinos_stats['unv'] -= random.randint(0,1)
@@ -168,7 +168,7 @@ class checks:
                                 try:
                                     users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.target': 1 }} )
                                 except:
-                                    users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.target': 1 }} )
+                                    users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.activ_status': 'pass_active' }} )
 
                                 users.update_one( {"userid": user['userid']}, {"$push": {'inventory': item }} )
 
@@ -179,7 +179,7 @@ class checks:
                             dinos_stats['unv'] -= random.randint(0,1)
 
                         if random.randint(1, 45) == 1: #unv
-                            lvl_[1] += random.randint(0,20)
+                            lvl_ += random.randint(0,20)
 
                         r_e_j = random.randint(1,30)
                         if r_e_j == 1:
