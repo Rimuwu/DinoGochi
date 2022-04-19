@@ -19,7 +19,7 @@ with open('data/items.json', encoding='utf-8') as f:
 with open('data/dino_data.json', encoding='utf-8') as f:
     json_f = json.load(f)
 
-checks_data = {'memory': [0, time.time()], 'incub': [0, time.time()], 'notif': [0, time.time()], 'main': [0, time.time()], "us": 0}
+checks_data = {'memory': [0, time.time()], 'incub': [0, time.time(), 0], 'notif': [0, time.time()], 'main': [0, time.time()], 'main_hunt': [0, time.time(), 0], 'main_game': [0, time.time(), 0], 'main_sleep': [0, time.time(), 0], 'main_pass': [0, time.time(), 0], "us": 0}
 
 class functions:
     json_f = json_f
