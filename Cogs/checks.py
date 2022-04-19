@@ -517,7 +517,7 @@ class checks:
                                         else:
                                             event = '🍭 | Negative event canceled due to good mood!'
 
-                            users.update_one( {"userid": bd_user['userid']}, {"$push": {f'dinos.{dino_id}.journey_log': event }} )
+                            users.update_one( {"userid": user['userid']}, {"$push": {f'dinos.{dino_id}.journey_log': event }} )
 
                     if user['dinos'][dino_id]['stats']['game'] < 40 and user['dinos'][dino_id]['stats']['game'] > 10:
                         if dino['stats']['mood'] > 0:
