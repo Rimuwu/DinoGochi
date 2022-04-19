@@ -33,6 +33,7 @@ class checks:
             nn += 1
 
             dns_l = list(user['dinos'].keys()).copy()
+            lvl_ = 0
 
             for dino_id in dns_l:
                 dino = user['dinos'][dino_id]
@@ -109,7 +110,7 @@ class checks:
                             dinos_stats['unv'] -= random.randint(0,2)
 
                         if random.randint(1, 45) == 1: #unv
-                            user['lvl'][1] += random.randint(0,20)
+                            lvl_[1] += random.randint(0,20)
 
                         if user['dinos'][dino_id]['stats']['game'] < 100:
                             if random.randint(1,30) == 1:
@@ -119,7 +120,7 @@ class checks:
                         user = users.find_one({"userid": user['userid']})
 
                         if random.randint(1, 45) == 1:
-                            user['lvl'][1] += random.randint(0,20)
+                            lvl_[1] += random.randint(0,20)
 
                         if random.randint(1, 65) == 1: #unv
                             dinos_stats['unv'] -= random.randint(0,1)
@@ -164,13 +165,12 @@ class checks:
 
                             i_count = functions.random_items([int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 4)], [int(ii) for ii in range(1, 5)], [int(ii) for ii in range(1, 6)])
                             for i in list(range(i_count)):
-                                if item not in [27, 26, 28]:
-                                    try:
-                                        users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.target': 1 }} )
-                                    except:
-                                        users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.target': 1 }} )
+                                try:
+                                    users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.target': 1 }} )
+                                except:
+                                    users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.target': 1 }} )
 
-                            users.update_one( {"userid": user['userid']}, {"$push": {'inventory': item }} )
+                                users.update_one( {"userid": user['userid']}, {"$push": {'inventory': item }} )
 
 
                     elif dino['activ_status'] == 'journey':
@@ -179,7 +179,7 @@ class checks:
                             dinos_stats['unv'] -= random.randint(0,1)
 
                         if random.randint(1, 45) == 1: #unv
-                            user['lvl'][1] += random.randint(0,20)
+                            lvl_[1] += random.randint(0,20)
 
                         r_e_j = random.randint(1,30)
                         if r_e_j == 1:
@@ -563,27 +563,31 @@ class checks:
                                 if dinos_stats[i] != 0 or bd_user['dinos'][dino_id]['stats'][i] > 100 or bd_user['dinos'][dino_id]['stats'][i] < 0:
                                     if dinos_stats[i] + bd_user['dinos'][dino_id]['stats'][i] > 100:
                                         users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.stats.{i}': 100 }} )
+
                                     elif dinos_stats[i] + bd_user['dinos'][dino_id]['stats'][i] < 0:
                                         users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.stats.{i}': 0 }} )
+
                                     else:
                                         users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i] }} )
 
 
-            expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
-            if user['lvl'][0] < 100:
-                if user['lvl'][1] >= expp:
-                    user['lvl'][0] += 1
-                    user['lvl'][1] = user['lvl'][1] - expp
+            if lvl_ != 0:
+                user['lvl'][1] += lvl_
+                expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
+                if user['lvl'][0] < 100:
+                    if user['lvl'][1] >= expp:
+                        user['lvl'][0] += 1
+                        user['lvl'][1] = user['lvl'][1] - expp
 
-                    if user['lvl'][0] == 5:
-                        if 'referal_system' in user.keys():
-                            if 'friend' in user['referal_system'].keys():
-                                egg = random.choice(['20', '22'])
-                                rf_fr = users.find_one({"userid": user['referal_system']['friend']})
+                        if user['lvl'][0] == 5:
+                            if 'referal_system' in user.keys():
+                                if 'friend' in user['referal_system'].keys():
+                                    egg = random.choice(['20', '22'])
+                                    rf_fr = users.find_one({"userid": user['referal_system']['friend']})
 
-                                users.update_one( {"userid": rf_fr['userid']}, {"$push": {'inventory': egg }} )
+                                    users.update_one( {"userid": rf_fr['userid']}, {"$push": {'inventory': egg }} )
 
-            users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
+                users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
 
 
         # print(f'Проверка - {int(time.time()) - t_st}s {nn}u')

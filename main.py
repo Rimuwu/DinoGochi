@@ -232,24 +232,21 @@ def command(message):
 @bot.message_handler(commands=['start', 'main-menu'])
 def on_start(message):
     user = message.from_user
-    if users.find_one({"userid": user.id}) == None:
-        if user.language_code == 'ru':
-            text = f"🎋 | Хей <b>{user.first_name}</b>, рад приветствовать тебя!\n"+ f"<b>•</b> Я маленький игровой бот по типу тамагочи, только с динозаврами!🦖\n\n"+f"<b>🕹 | Что такое тамагочи?</b>\n"+f'<b>•</b> Тамагочи - игра с виртуальным питомцем, которого надо кормить, ухаживать за ним, играть и тд.🥚\n'+f"<b>•</b> Соревнуйтесь в рейтинге и станьте лучшим!\n\n"+f"<b>🎮 | Как начать играть?</b>\n"+f'<b>•</b> Нажмите кномку <b>🍡 Начать играть</b>!\n\n'+f'<b>❤ | Ждём в игре!</b>\n'
-        else:
-            text = f"🎋 | Hey <b>{user.first_name}</b>, I am glad to welcome you!\n" +f"<b>•</b> I'm a small tamagotchi-type game bot, only with dinosaurs!🦖\n\n"+f"<b>🕹 | What is tamagotchi?</b>\n"+ f'<b>•</b> Tamagotchi is a game with a virtual pet that needs to be fed, cared for, played, and so on.🥚\n'+ f"<b>•</b> Compete in the ranking and become the best!\n\n"+ f"<b>🎮 | How to start playing?</b>\n" + f'<b>•</b> Press the button <b>🍡Start playing</b>!\n\n' + f'<b>❤ | Waiting in the game!</b>\n' +f'<b>❗ | In some places, the bot may not be translated!</b>\n'
+    if message.chat.type == 'private':
+        if users.find_one({"userid": user.id}) == None:
+            if user.language_code == 'ru':
+                text = f"🎋 | Хей <b>{user.first_name}</b>, рад приветствовать тебя!\n"+ f"<b>•</b> Я маленький игровой бот по типу тамагочи, только с динозаврами!🦖\n\n"+f"<b>🕹 | Что такое тамагочи?</b>\n"+f'<b>•</b> Тамагочи - игра с виртуальным питомцем, которого надо кормить, ухаживать за ним, играть и тд.🥚\n'+f"<b>•</b> Соревнуйтесь в рейтинге и станьте лучшим!\n\n"+f"<b>🎮 | Как начать играть?</b>\n"+f'<b>•</b> Нажмите кномку <b>🍡 Начать играть</b>!\n\n'+f'<b>❤ | Ждём в игре!</b>\n'
+            else:
+                text = f"🎋 | Hey <b>{user.first_name}</b>, I am glad to welcome you!\n" +f"<b>•</b> I'm a small tamagotchi-type game bot, only with dinosaurs!🦖\n\n"+f"<b>🕹 | What is tamagotchi?</b>\n"+ f'<b>•</b> Tamagotchi is a game with a virtual pet that needs to be fed, cared for, played, and so on.🥚\n'+ f"<b>•</b> Compete in the ranking and become the best!\n\n"+ f"<b>🎮 | How to start playing?</b>\n" + f'<b>•</b> Press the button <b>🍡Start playing</b>!\n\n' + f'<b>❤ | Waiting in the game!</b>\n' +f'<b>❗ | In some places, the bot may not be translated!</b>\n'
 
-        bot.reply_to(message, text, reply_markup = functions.markup(bot, user = user), parse_mode = 'html')
-    else:
-        bot.reply_to(message, '👋', reply_markup = functions.markup(bot, user = user), parse_mode = 'html')
+            bot.reply_to(message, text, reply_markup = functions.markup(bot, user = user), parse_mode = 'html')
+        else:
+            bot.reply_to(message, '👋', reply_markup = functions.markup(bot, user = user), parse_mode = 'html')
 
 
 @bot.message_handler(content_types = ['text'])
 def on_message(message):
     user = message.from_user
-
-    # print(user.first_name, message.text)
-
-
 
     if users.find_one({"userid": user.id}) != None:
         bd_user = users.find_one({"userid": user.id})
@@ -3497,11 +3494,11 @@ def answer(call):
 
         if bd_user['language_code'] == 'ru':
             text = f'🎈 | Если у динозавра хорошее настроение, он может принести обратно какие то вещи.\n\n🧶 | Во время путешествия, могут произойти разные ситуации, от них зависит результат путешествия.'
-            text2 = f'🌳 | Вы отправили динозавра в путешествие на {call.data[:2]} минут.'
+            text2 = f'🌳 | Вы отправили динозавра в путешествие на {jr_time} минут.'
 
         else:
             text = f"🎈 | If the dinosaur is in a good mood, he can bring back some things.\n\n🧶 | During the trip, different situations may occur, the result of the trip depends on them."
-            text2 = f"🌳 | You sent a dinosaur on a journey for {call.data[:2]} minutes."
+            text2 = f"🌳 | You sent a dinosaur on a journey for {jr_time} minutes."
 
         bot.edit_message_text(text2, call.message.chat.id, call.message.message_id)
         bot.send_message(call.message.chat.id, text, parse_mode = 'html', reply_markup = functions.markup(bot, "actions", user))
@@ -4109,6 +4106,5 @@ if bot.get_me().first_name == 'DinoGochi':
     thr_icub.start()
     thr_notif.start()
     thr2.start()
-
 
 bot.infinity_polling()
