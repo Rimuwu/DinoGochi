@@ -4087,7 +4087,7 @@ def answer(call):
 
 
 print(f'Бот {bot.get_me().first_name} запущен!')
-if bot.get_me().first_name != 'DinoGochi':
+if bot.get_me().first_name == 'DinoGochi':
     thr1.start()
     thr_icub.start()
     thr_notif.start()
