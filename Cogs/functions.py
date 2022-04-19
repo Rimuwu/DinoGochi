@@ -1160,7 +1160,7 @@ class functions:
                                         bd_user['inventory'].remove(item_id)
                                         two_user['inventory'].append(item_id)
 
-                                        users.update_one( {"userid": two_user['userid']}, {"$set": {'inventory': two_user['inventory'] }} )
+                                        users.update_one( {"userid": two_user['userid']}, {"$push": {'inventory': item_id }} )
                                         users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
 
                                         if bd_user['language_code'] == 'ru':

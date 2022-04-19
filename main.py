@@ -41,6 +41,9 @@ def check_memory():
 
 thr2 = threading.Thread(target = check_memory, daemon=True)
 
+# def check_dead_users(): #проверка каждые 5 секунд
+#     while True:
+
 def check_incub(): #проверка каждые 5 секунд
     while True:
         nn = 0
@@ -96,10 +99,8 @@ def check_notif(): #проверка каждые 5 секунд
                         if user['dinos'][dino_id]['stats']['unv'] >= 100:
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
                             functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'send')
-                            try:
-                                del user['dinos'][dino_id]['sleep_start']
-                            except:
-                                pass
+                            del user['dinos'][dino_id]['sleep_start']
+
 
                         if 'sleep_type' in user['dinos'][dino_id].keys() and user['dinos'][dino_id]['sleep_type'] == 'short':
 
@@ -112,7 +113,7 @@ def check_notif(): #проверка каждые 5 секунд
                                 del user['dinos'][dino_id]['sleep_time']
 
 
-                    if dino['activ_status'] == 'game':
+                    elif dino['activ_status'] == 'game':
 
                         if int(dino['game_time']-time.time()) <= 0:
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
@@ -121,7 +122,7 @@ def check_notif(): #проверка каждые 5 секунд
                             del user['dinos'][ dino_id ]['game_time']
                             del user['dinos'][ dino_id ]['game_%']
 
-                    if dino['activ_status'] == 'journey':
+                    elif dino['activ_status'] == 'journey':
 
                         if int(dino['journey_time']-time.time()) <= 0:
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
@@ -131,21 +132,14 @@ def check_notif(): #проверка каждые 5 секунд
                             del user['dinos'][ dino_id ]['journey_time']
                             del user['dinos'][ dino_id ]['journey_log']
 
-                    if dino['activ_status'] == 'hunting':
-                        try:
-                            if dino['target'][0] >= dino['target'][1]:
-                                del user['dinos'][ dino_id ]['target']
-                                del user['dinos'][ dino_id ]['h_type']
-                                user['dinos'][dino_id]['activ_status'] = 'pass_active'
-
-                                functions.notifications_manager(bot, "hunting_end", user, dino_id = dino_id)
-                        except:
-
+                    elif dino['activ_status'] == 'hunting':
+                        if dino['target'][0] >= dino['target'][1]:
                             del user['dinos'][ dino_id ]['target']
                             del user['dinos'][ dino_id ]['h_type']
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
 
                             functions.notifications_manager(bot, "hunting_end", user, dino_id = dino_id)
+
 
                     if user['dinos'][dino_id]['stats']['mood'] <= 70:
                         if functions.notifications_manager(bot, "need_mood", user, dino_id = dino_id, met = 'check') == False:
@@ -176,16 +170,14 @@ def check_notif(): #проверка каждые 5 секунд
                         functions.notifications_manager(bot, 'need_unv', user,dino_id = dino_id, met = 'delete')
 
                     if user['dinos'][dino_id]['stats']['heal'] <= 0:
-                        del user['dinos'][dino_id]
 
                         if user['lvl'][0] >= 5:
-                            user['inventory'].append("21")
-                            users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
+                            users.update_one( {"userid": user['userid']}, {"$push": {'inventory': "21" }} )
 
                         if functions.notifications_manager(bot, "dead", user, dino_id = dino_id, met = 'check') == False:
                             functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
 
-                        users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
+                        users.update_one( {"userid": user['userid']}, {"$unset": {f'dinos.{dino_id}': user['dinos'] }} )
 
             if len(user['dinos']) != 0:
                 users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
@@ -3751,29 +3743,25 @@ def answer(call):
                 dino, dii = dino_dict[0], dino_dict[1]
 
             if item['type'] == '+heal':
-                dino['stats']['heal'] += item['act']
 
                 if bd_user['language_code'] == 'ru':
                     text = f'❤ | Вы восстановили {item["act"]}% здоровья динозавра!'
                 else:
                     text = f"❤ | You have restored {item['act']}% of the dinosaur's health!"
 
-                bd_user['dinos'][dii] = dino
                 bd_user['inventory'].remove(it_id)
-                users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
+                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dii}.stats.heal': item['act'] }} )
                 users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
 
             elif item['type'] == '+unv':
-                dino['stats']['unv'] += item['act']
 
                 if bd_user['language_code'] == 'ru':
                     text = f'⚡ | Вы восстановили {item["act"]}% энергии динозавра!'
                 else:
                     text = f"⚡ | You have recovered {item['act']}% of the dinosaur's energy!"
 
-                bd_user['dinos'][dii] = dino
                 bd_user['inventory'].remove(it_id)
-                users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
+                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dii}.stats.unv': item['act'] }} )
                 users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
 
             elif item['type'] == 'recipe':
@@ -3868,19 +3856,13 @@ def answer(call):
 
 
             if '+mood' in item.keys():
-                dino['stats']['mood'] += item['+mood']
-                bd_user['dinos'][dii] = dino
-                users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
+                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dii}.stats.mood': item['+mood'] }} )
 
             if '-mood' in item.keys():
-                dino['stats']['mood'] -= item['-mood']
-                bd_user['dinos'][dii] = dino
-                users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
+                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dii}.stats.mood': item['-mood'] * -1 }} )
 
             if '-eat' in item.keys():
-                dino['stats']['eat'] -= item['-eat']
-                bd_user['dinos'][dii] = dino
-                users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
+                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dii}.stats.eat': item['-eat'] * -1 }} )
 
             bot.send_message(user.id, text, parse_mode = 'Markdown')
 
@@ -4004,22 +3986,19 @@ def answer(call):
 
                             for i in range(number):
                                 bd_user['inventory'].append(mmd['item_id'])
-                            bd_user['coins'] -= mmd['price'] * number
 
                             if mr_user != None:
-                                mr_user['coins'] += mmd['price'] * number
-                                users.update_one( {"userid": us_id}, {"$set": {'coins': mr_user['coins'] }} )
+                                users.update_one( {"userid": us_id}, {"$inc": {'coins': mmd['price'] * number }} )
 
                             market_['products'][str(us_id)]['products'][str(key_i)]['col'][0] += number
 
                             if market_['products'][str(us_id)]['products'][str(key_i)]['col'][0] >= market_['products'][str(us_id)]['products'][str(key_i)]['col'][1]:
-
                                 del market_['products'][str(us_id)]['products'][str(key_i)]
 
 
                             market.update_one( {"id": 1}, {"$set": {'products': market_['products'] }} )
                             users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
-                            users.update_one( {"userid": user.id}, {"$set": {'coins': bd_user['coins'] }} )
+                            users.update_one( {"userid": user.id}, {"$inc": {'coins': (mmd['price'] * number) * -1 }} )
 
                             if bd_user['language_code'] == 'ru':
                                 text = "🛒 | Товар был куплен!"
@@ -4108,11 +4087,10 @@ def answer(call):
 
 
 print(f'Бот {bot.get_me().first_name} запущен!')
-if bot.get_me().first_name == 'DinoGochi':
+if bot.get_me().first_name != 'DinoGochi':
     thr1.start()
     thr_icub.start()
     thr_notif.start()
     thr2.start()
-
 
 bot.infinity_polling()

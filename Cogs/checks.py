@@ -318,9 +318,7 @@ class checks:
 
                                 elif event == 'random_items_leg':
                                     user = users.find_one({"userid": user['userid']})
-                                    # items = ["4", '14', "15", "16"]
                                     item = functions.random_items(["4", '14', "15", "16"], ["4", '14', "15", "16"], ["30", "32", '34', "19"], ["37", "19"], ["21", "37"])
-                                    # item = random.choice(items)
                                     if mood_n == True:
 
                                         if user['language_code'] == 'ru':
@@ -384,8 +382,6 @@ class checks:
                                             event = '❌ | Cобытие отменено из-за плохого настроения!'
                                         else:
                                             event = '❌ | Event has been canceled due to a bad mood!'
-
-                                user['dinos'][ dino_id ]['journey_log'].append(event)
 
                             else:
                                 if dino['stats']['mood'] >= 55:
@@ -588,7 +584,6 @@ class checks:
                                     users.update_one( {"userid": rf_fr['userid']}, {"$push": {'inventory': egg }} )
 
                 users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
-
 
         # print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
         functions.check_data('main', 0, int(time.time() - t_st) )
