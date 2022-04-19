@@ -242,11 +242,13 @@ class checks:
                             i_count = functions.random_items([int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 4)], [int(ii) for ii in range(1, 5)], [int(ii) for ii in range(1, 6)])
                             for i in list(range(i_count)):
                                 try:
-                                    users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.target': 1 }} )
+                                    dino['target'][0] += 1
                                 except:
                                     users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.activ_status': 'pass_active' }} )
 
                                 users.update_one( {"userid": user['userid']}, {"$push": {'inventory': item }} )
+                                
+                            users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.target': dino['target'] }} )
 
                         bd_user = users.find_one({"userid": user['userid']})
                         if bd_user != None:
