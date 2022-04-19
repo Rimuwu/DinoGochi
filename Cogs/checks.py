@@ -153,26 +153,22 @@ class checks:
                             if dino['h_type'] == 'all':
                                 item = functions.random_items(['9', '8', "10", '2'], ['27', '9', "26", '8', "28", "10", '2'], all_l1, all_l2, all_l3)
 
-                                # items = [2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 26, 27, 28]
-
                             if dino['h_type'] == 'collecting':
                                 item = functions.random_items(['9'], ['27', '9'], col_l1, col_l2, col_l3)
-                                # items = [6, 9, 11, 27]
 
                             if dino['h_type'] == 'hunting':
                                 item = functions.random_items(['8'], ["26", '8'], ["26", "12"], ['5', "12"], ['5'])
-                                # items = [5, 8, 12, 26]
 
                             if dino['h_type'] == 'fishing':
                                 item = functions.random_items(["10"], ["28", "10"], ["28", "13"], ['7', "13"], ['7'])
-                                # items = [7, 10, 13, 28]
 
-                            # item = random.choice(items)
-                            # i_count = random.randint(1, 2)
                             i_count = functions.random_items([int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 4)], [int(ii) for ii in range(1, 5)], [int(ii) for ii in range(1, 6)])
                             for i in list(range(i_count)):
                                 if item not in [27, 26, 28]:
-                                    users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.target': 1 }} )
+                                    try:
+                                        users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.target': 1 }} )
+                                    except:
+                                        users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.target': 1 }} )
 
                             users.update_one( {"userid": user['userid']}, {"$push": {'inventory': item }} )
 
