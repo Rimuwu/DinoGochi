@@ -132,8 +132,15 @@ def check_notif(): #проверка каждые 5 секунд
                             del user['dinos'][ dino_id ]['journey_log']
 
                     if dino['activ_status'] == 'hunting':
+                        try:
+                            if dino['target'][0] >= dino['target'][1]:
+                                del user['dinos'][ dino_id ]['target']
+                                del user['dinos'][ dino_id ]['h_type']
+                                user['dinos'][dino_id]['activ_status'] = 'pass_active'
 
-                        if dino['target'][0] >= dino['target'][1]:
+                                functions.notifications_manager(bot, "hunting_end", user, dino_id = dino_id)
+                        except:
+
                             del user['dinos'][ dino_id ]['target']
                             del user['dinos'][ dino_id ]['h_type']
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
@@ -4106,5 +4113,7 @@ if bot.get_me().first_name == 'DinoGochi':
     thr_icub.start()
     thr_notif.start()
     thr2.start()
+
+thr1.start()
 
 bot.infinity_polling()
