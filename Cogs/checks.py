@@ -294,24 +294,6 @@ class checks:
                             if random.randint(1, 130) == 1: #unv
                                 dinos_stats['unv'] -= random.randint(1,2)
 
-                        # if dino['activ_status'] == 'pass_active':
-                        #
-                        #     if user['dinos'][dino_id]['stats']['game'] > 60:
-                        #         if dino['stats']['mood'] < 100:
-                        #             if random.randint(1,15) == 1:
-                        #                 dinos_stats['mood'] += random.randint(1,15)
-                        #
-                        #             if random.randint(1,60) == 1:
-                        #                 user['coins'] += random.randint(0,100)
-                        #
-                        #     if user['dinos'][dino_id]['stats']['mood'] > 80:
-                        #         if random.randint(1,60) == 1:
-                        #             user['coins'] += random.randint(0,100)
-                        #
-                        #     if user['dinos'][dino_id]['stats']['unv'] <= 20 and user['dinos'][dino_id]['stats']['unv'] != 0:
-                        #         if dino['stats']['mood'] > 0:
-                        #             if random.randint(1,30) == 1:
-                        #                 dinos_stats['mood'] -= random.randint(1,2)
 
                         elif dino['activ_status'] == 'journey':
 
@@ -724,7 +706,7 @@ class checks:
 
                     users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
 
-        print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
+        # print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
         functions.check_data('main', 0, int(time.time() - t_st) )
         functions.check_data('main', 1, int(time.time()) )
         functions.check_data('us', 0, nn )
