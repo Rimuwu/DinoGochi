@@ -52,12 +52,12 @@ def check_incub(): #проверка каждые 5 секунд
 
         members = users.find({ })
         for user in members:
-            nn += 1
             dns_l = list(user['dinos'].keys()).copy()
 
             for dino_id in dns_l:
                 dino = user['dinos'][dino_id]
                 if dino['status'] == 'incubation': #инкубация
+                    nn += 1
                     if dino['incubation_time'] - int(time.time()) <= 60*5 and dino['incubation_time'] - int(time.time()) > 0: #уведомление за 5 минут
 
                         if functions.notifications_manager(bot, '5_min_incub', user, None, dino_id, 'check') == False:
@@ -76,6 +76,7 @@ def check_incub(): #проверка каждые 5 секунд
 
         functions.check_data('incub', 0, int(time.time() - t_st) )
         functions.check_data('incub', 1, int(time.time()) )
+        functions.check_data('incub', 2, nn)
 
 thr_icub = threading.Thread(target = check_incub, daemon=True)
 
@@ -192,13 +193,27 @@ def check(): #проверка каждые 10 секунд
     global thr_l
 
     def alpha():
-
         checks.main(bot)
+
+    def beta():
+        checks.main_hunting()
+
+    def beta2():
+        checks.main_game()
+
+    def gamma():
+        checks.main_sleep()
+
+    def gamma2():
+        checks.main_pass()
 
     while True:
         if int(memory_usage()[0]) < 1500:
-            main = threading.Thread(target = alpha, daemon=True)
-            main.start()
+            main = threading.Thread(target = alpha, daemon=True).start()
+            main_hunt = threading.Thread(target = beta, daemon=True).start()
+            main_game = threading.Thread(target = beta2, daemon=True).start()
+            main_sleep = threading.Thread(target = gamma, daemon=True).start()
+            main_pass = threading.Thread(target = gamma2, daemon=True).start()
         else:
             print(f'Использование памяти: {int(memory_usage()[0])}')
         time.sleep(10)
@@ -213,9 +228,13 @@ def command(message):
 
     text = 'STATS\n\n'
     text += f"Memory: {checks_data['memory'][0]}mb\nLast {int(time.time() - checks_data['memory'][1])}s\n\n"
-    text += f"Incub check: {checks_data['incub'][0]}s\nLast {int(time.time() - checks_data['incub'][1])}s\n\n"
+    text += f"Incub check: {checks_data['incub'][0]}s\nLast {int(time.time() - checks_data['incub'][1])}s\nUsers: {checks_data['incub'][2]}\n\n"
     text += f"Notifications check: {checks_data['notif'][0]}s\nLast {int(time.time() - checks_data['notif'][1])}s\n\n"
     text += f"Main check: {checks_data['main'][0]}s\nLast {int(time.time() - checks_data['main'][1])}s\n\n"
+    text += f"Hunt check: {checks_data['main_hunt'][0]}s\nLast {int(time.time() - checks_data['main_hunt'][1])}s\nUsers: {checks_data['main_hunt'][2]}\n\n"
+    text += f"Game check: {checks_data['main_game'][0]}s\nLast {int(time.time() - checks_data['main_game'][1])}s\nUsers: {checks_data['main_game'][2]}\n\n"
+    text += f"Sleep check: {checks_data['main_sleep'][0]}s\nLast {int(time.time() - checks_data['main_sleep'][1])}s\nUsers: {checks_data['main_sleep'][2]}\n\n"
+    text += f"Pass check: {checks_data['main_pass'][0]}s\nLast {int(time.time() - checks_data['main_pass'][1])}s\nUsers: {checks_data['main_pass'][2]}\n\n"
     text += f"Users: {checks_data['us']}\n"
     text += f'Thr.count: {threading.active_count()}'
     bot.send_message(user.id, text)
@@ -4087,7 +4106,7 @@ def answer(call):
 
 
 print(f'Бот {bot.get_me().first_name} запущен!')
-if bot.get_me().first_name == 'DinoGochi':
+if bot.get_me().first_name == 'DinoGochi' or True:
     thr1.start()
     thr_icub.start()
     thr_notif.start()
