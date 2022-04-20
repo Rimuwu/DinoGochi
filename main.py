@@ -100,7 +100,11 @@ def check_notif(): #проверка каждые 5 секунд
                         if user['dinos'][dino_id]['stats']['unv'] >= 100:
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
                             functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'send')
-                            del user['dinos'][dino_id]['sleep_start']
+
+                            try:
+                                del user['dinos'][dino_id]['sleep_start']
+                            except:
+                                pass
 
 
                         if 'sleep_type' in user['dinos'][dino_id].keys() and user['dinos'][dino_id]['sleep_type'] == 'short':
