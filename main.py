@@ -911,8 +911,6 @@ def on_message(message):
 
                     bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "profile", user))
 
-            # nl = ['📜 Информация', '🎮 Инвентарь', '🎢 Рейтинг', '↪ Назад']
-            # nl = ['📜 Information', '🎮 Inventory', '🎢 Rating', '↪ Back']
 
             if message.text in ['🎢 Рейтинг', '🎢 Rating']:
                 if bd_user != None:
@@ -1281,7 +1279,7 @@ def on_message(message):
             bd_user = users.find_one({"userid": user.id})
             tr_c = False
             if bd_user != None and len(list(bd_user['dinos'])) > 0:
-                if len(list(bd_user['dinos'])) > 1:
+                if len(list(bd_user['dinos'])) > 1 or ( len(list(bd_user['dinos'])) == 1 and bd_user['lvl'][0] > 1) :
                     tr_c = True
 
                 else:
@@ -2164,7 +2162,6 @@ def on_message(message):
 
                     bd_user = users.find_one({"userid": user.id})
                     if bd_user != None:
-                        dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
                         coins = 200
 
                         if bd_user['language_code'] == 'ru':
@@ -4130,7 +4127,7 @@ def answer(call):
 
 
 print(f'Бот {bot.get_me().first_name} запущен!')
-if bot.get_me().first_name == 'DinoGochi' or True:
+if bot.get_me().first_name == 'DinoGochi' or False:
     thr1.start()
     thr_icub.start()
     thr_notif.start()
