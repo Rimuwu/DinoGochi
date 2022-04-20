@@ -1037,8 +1037,13 @@ def on_message(message):
                                 pass
 
                     if bd_user['language_code'] == 'ru':
+                        if bd_user in lv_l:
+                            ind = lv_l.index(bd_user)+1
+                        else:
+                            ind = '-'
+
                         text =  f'*┌* 🎢 Рейтинг по уровню:\n'
-                        text += f"*├* Ваше место в рейтинге: #{lv_l.index(bd_user)+1}\n\n"
+                        text += f"*├* Ваше место в рейтинге: #{ind}\n\n"
 
                         n = 0
                         for i in du_lv:
@@ -1051,8 +1056,13 @@ def on_message(message):
                                 else:
                                     text += f"*└* #{n} *{i['mn']}*:\n      *└* Ур. {i['lvl']} (Всего опыта {i['exp']})\n"
 
+                        if bd_user in mr_l:
+                            ind = mr_l.index(bd_user)+1
+                        else:
+                            ind = '-'
+
                         text += f'\n\n*┌* 🎢 Рейтинг по монетам:\n'
-                        text += f"*├* Ваше место в рейтинге: #{mr_l.index(bd_user)+1}\n\n"
+                        text += f"*├* Ваше место в рейтинге: #{ind}\n\n"
 
                         n = 0
                         for i in du_mc:
@@ -1065,8 +1075,13 @@ def on_message(message):
                                 else:
                                     text += f"*└* #{n} *{i['mn']}*:\n      *└* Монеты {i['coins']}\n"
                     else:
+                        if bd_user in lv_l:
+                            ind = lv_l.index(bd_user)+1
+                        else:
+                            ind = '-'
+
                         text =  f'*┌* 🎢 Rating by level:\n'
-                        text += f"*├* Your place in the ranking: #{lv_l.index(bd_user)+1}\n\n"
+                        text += f"*├* Your place in the ranking: #{ind}\n\n"
 
                         n = 0
                         for i in du_lv:
@@ -1079,8 +1094,13 @@ def on_message(message):
                                 else:
                                     text += f"*└* #{n} *{i['mn']}*:\n      *└* lvl {i['lvl']} (Total experience {i['exp']})\n"
 
+                        if bd_user in mr_l:
+                            ind = mr_l.index(bd_user)+1
+                        else:
+                            ind = '-'
+
                         text += f'\n\n*┌* 🎢 Coin Rating:\n'
-                        text += f"*├* Your place in the ranking: #{mr_l.index(bd_user)+1}\n\n"
+                        text += f"*├* Your place in the ranking: #{ind}\n\n"
 
                         n = 0
                         for i in du_mc:

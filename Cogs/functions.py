@@ -74,7 +74,7 @@ class functions:
 
         if element == 1 and bd_user != None:
 
-            if len(list(bd_user['dinos'])) == 1 and bd_user['dinos']['1']['status'] == 'incubation':
+            if len(list(bd_user['dinos'])) == 1 and bd_user['dinos']['1']['status'] == 'incubation' and bd_user['lvl'][0] > 1:
 
                 if bd_user['language_code'] == 'ru':
                     nl = ['🦖 Динозавр', '🔧 Настройки', '👥 Друзья', '❗ FAQ']
