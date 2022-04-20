@@ -200,63 +200,65 @@ class functions:
         elif element == 'actions' and bd_user != None:
             markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
 
-            if bd_user['language_code'] == 'ru':
-                nl = ['🎮 Развлечения', '🍣 Покормить', '↪ Назад']
+            if bd_user['dinos'][ bd_user['setting']['dino_id'] ]['status'] == 'dino':
 
-                if len(bd_user['dinos']) == 1:
-                    nid_dino = list(bd_user['dinos'].keys())[0]
-                    dino = bd_user['dinos'][ str(nid_dino) ]
+                if bd_user['language_code'] == 'ru':
+                    nl = ['🎮 Развлечения', '🍣 Покормить', '↪ Назад']
 
-                if len(bd_user['dinos']) > 1:
-                    try:
-                        nid_dino = bd_user['settings']['dino_id']
-                        dino = bd_user['dinos'][ str(nid_dino) ]
-                    except:
+                    if len(bd_user['dinos']) == 1:
                         nid_dino = list(bd_user['dinos'].keys())[0]
-                        bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[0]
-                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
                         dino = bd_user['dinos'][ str(nid_dino) ]
 
-                if len(bd_user['dinos']) == 0:
-                    return markup
+                    if len(bd_user['dinos']) > 1:
+                        try:
+                            nid_dino = bd_user['settings']['dino_id']
+                            dino = bd_user['dinos'][ str(nid_dino) ]
+                        except:
+                            nid_dino = list(bd_user['dinos'].keys())[0]
+                            bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[0]
+                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+                            dino = bd_user['dinos'][ str(nid_dino) ]
 
-                if dino['activ_status'] == 'journey':
-                    nl.insert(2, '🎑 Вернуть')
-                else:
-                    nl.insert(2, '🎑 Путешествие')
+                    if len(bd_user['dinos']) == 0:
+                        return markup
 
-                if dino['activ_status'] == 'sleep':
-                    nl.insert(3, '🌙 Пробудить')
-                else:
-                    nl.insert(3, '🌙 Уложить спать')
+                    if dino['activ_status'] == 'journey':
+                        nl.insert(2, '🎑 Вернуть')
+                    else:
+                        nl.insert(2, '🎑 Путешествие')
 
-                if dino['activ_status'] != 'hunting':
-                    nl.insert(4, '🍕 Сбор пищи')
+                    if dino['activ_status'] == 'sleep':
+                        nl.insert(3, '🌙 Пробудить')
+                    else:
+                        nl.insert(3, '🌙 Уложить спать')
 
-                else:
-                    nl.insert(4, '🍕 Прогресс')
+                    if dino['activ_status'] != 'hunting':
+                        nl.insert(4, '🍕 Сбор пищи')
 
-                if len(bd_user['dinos']) > 1:
-                    item0 = types.KeyboardButton(f'🦖 Динозавр: {nid_dino}')
-                    item1 = types.KeyboardButton(nl[0])
-                    item2 = types.KeyboardButton(nl[1])
-                    item3 = types.KeyboardButton(nl[2])
-                    item4 = types.KeyboardButton(nl[3])
-                    item5 = types.KeyboardButton(nl[4])
-                    item6 = types.KeyboardButton(nl[5])
+                    else:
+                        nl.insert(4, '🍕 Прогресс')
 
-                    markup.add(item0, item1, item2, item3, item4, item5, item6)
+                    if len(bd_user['dinos']) > 1:
+                        item0 = types.KeyboardButton(f'🦖 Динозавр: {nid_dino}')
+                        item1 = types.KeyboardButton(nl[0])
+                        item2 = types.KeyboardButton(nl[1])
+                        item3 = types.KeyboardButton(nl[2])
+                        item4 = types.KeyboardButton(nl[3])
+                        item5 = types.KeyboardButton(nl[4])
+                        item6 = types.KeyboardButton(nl[5])
 
-                else:
+                        markup.add(item0, item1, item2, item3, item4, item5, item6)
 
-                    item1 = types.KeyboardButton(nl[0])
-                    item2 = types.KeyboardButton(nl[1])
-                    item3 = types.KeyboardButton(nl[2])
-                    item4 = types.KeyboardButton(nl[3])
-                    item5 = types.KeyboardButton(nl[4])
-                    item6 = types.KeyboardButton(nl[5])
+                    else:
 
-                    markup.add(item1, item2, item3, item4, item5, item6)
+                        item1 = types.KeyboardButton(nl[0])
+                        item2 = types.KeyboardButton(nl[1])
+                        item3 = types.KeyboardButton(nl[2])
+                        item4 = types.KeyboardButton(nl[3])
+                        item5 = types.KeyboardButton(nl[4])
+                        item6 = types.KeyboardButton(nl[5])
+
+                        markup.add(item1, item2, item3, item4, item5, item6)
 
             else:
                 nl = ['🎮 Entertainments', '🍣 Feed', '↪ Back']

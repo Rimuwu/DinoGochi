@@ -25,11 +25,11 @@ with open('data/dino_data.json', encoding='utf-8') as f:
 class checks:
 
     @staticmethod
-    def main_pass():
+    def main_pass(members):
 
         nn = 0
         t_st = int(time.time())
-        members = users.find({ })
+        # members = users.find({ })
         for user in members:
 
             dns_l = list(user['dinos'].keys()).copy()
@@ -75,11 +75,11 @@ class checks:
         functions.check_data('main_pass', 2, nn )
 
     @staticmethod
-    def main_sleep():
+    def main_sleep(members):
 
         nn = 0
         t_st = int(time.time())
-        members = users.find({ })
+        # members = users.find({ })
         for user in members:
 
             dns_l = list(user['dinos'].keys()).copy()
@@ -132,11 +132,11 @@ class checks:
         functions.check_data('main_sleep', 2, nn )
 
     @staticmethod
-    def main_game():
+    def main_game(members):
 
         nn = 0
         t_st = int(time.time())
-        members = users.find({ })
+        # members = users.find({ })
         for user in members:
 
             dns_l = list(user['dinos'].keys()).copy()
@@ -175,11 +175,11 @@ class checks:
         functions.check_data('main_game', 2, nn )
 
     @staticmethod
-    def main_hunting():
+    def main_hunting(members):
 
         nn = 0
         t_st = int(time.time())
-        members = users.find({ })
+        # members = users.find({ })
         for user in members:
 
             dns_l = list(user['dinos'].keys()).copy()
@@ -263,10 +263,11 @@ class checks:
         functions.check_data('main_hunt', 2, nn )
 
     @staticmethod
-    def main(bot):
+    def main(bot, members):
+
         nn = 0
         t_st = int(time.time())
-        members = users.find({ })
+        # members = users.find({ })
         for user in members:
             nn += 1
 
@@ -297,7 +298,7 @@ class checks:
                                 dinos_stats['unv'] -= random.randint(1,2)
 
 
-                        elif dino['activ_status'] == 'journey':
+                        if dino['activ_status'] == 'journey':
 
                             if random.randint(1, 65) == 1: #unv
                                 dinos_stats['unv'] -= random.randint(0,1)
@@ -636,7 +637,6 @@ class checks:
                                             else:
                                                 event = '🍭 | Negative event canceled due to good mood!'
 
-                                print(user['userid'], dino_id, event)
                                 users.update_one( {"userid": user['userid']}, {"$push": {f'dinos.{dino_id}.journey_log': event }} )
 
                         if user['dinos'][dino_id]['stats']['game'] < 40 and user['dinos'][dino_id]['stats']['game'] > 10:

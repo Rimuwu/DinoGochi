@@ -196,28 +196,33 @@ thr_notif = threading.Thread(target = check_notif, daemon=True)
 def check(): #проверка каждые 10 секунд
     global thr_l
 
-    def alpha():
-        checks.main(bot)
+    def alpha(bot, members):
+        checks.main(bot, members)
 
-    def beta():
-        checks.main_hunting()
+    def beta(members):
+        checks.main_hunting(members)
 
-    def beta2():
-        checks.main_game()
+    def beta2(members):
+        checks.main_game(members)
 
-    def gamma():
-        checks.main_sleep()
+    def gamma(members):
+        checks.main_sleep(members)
 
-    def gamma2():
-        checks.main_pass()
+    def gamma2(members):
+        checks.main_pass(members)
 
     while True:
         if int(memory_usage()[0]) < 1500:
-            main = threading.Thread(target = alpha, daemon=True).start()
-            main_hunt = threading.Thread(target = beta, daemon=True).start()
-            main_game = threading.Thread(target = beta2, daemon=True).start()
-            main_sleep = threading.Thread(target = gamma, daemon=True).start()
-            main_pass = threading.Thread(target = gamma2, daemon=True).start()
+            non_members = users.find({ })
+            chunks_users = list(functions.chunks( list(non_members), 50 ))
+
+            for members in chunks_users:
+                main = threading.Thread(target = alpha, daemon=True, kwargs = {'bot': bot, 'members': members}).start()
+                main_hunt = threading.Thread(target = beta, daemon=True, kwargs = {'members': members} ).start()
+                main_game = threading.Thread(target = beta2, daemon=True, kwargs = {'members': members} ).start()
+                main_sleep = threading.Thread(target = gamma, daemon=True, kwargs = {'members': members} ).start()
+                main_pass = threading.Thread(target = gamma2, daemon=True, kwargs = {'members': members} ).start()
+
         else:
             print(f'Использование памяти: {int(memory_usage()[0])}')
         time.sleep(10)
@@ -241,6 +246,12 @@ def command(message):
     text += f"Pass check: {checks_data['main_pass'][0]}s\nLast {int(time.time() - checks_data['main_pass'][1])}s\nUsers: {checks_data['main_pass'][2]}\n\n"
     text += f"Users: {checks_data['us']}\n"
     text += f'Thr.count: {threading.active_count()}'
+    bot.send_message(user.id, text)
+
+@bot.message_handler(commands=['iam'])
+def command(message):
+    user = message.from_user
+    text = str(users.find_one({"userid": user.id}))
     bot.send_message(user.id, text)
 
 @bot.message_handler(commands=['emulate_not'])
@@ -4127,7 +4138,7 @@ def answer(call):
 
 
 print(f'Бот {bot.get_me().first_name} запущен!')
-if bot.get_me().first_name == 'DinoGochi' or False:
+if bot.get_me().first_name == 'DinoGochi' or True:
     thr1.start()
     thr_icub.start()
     thr_notif.start()
