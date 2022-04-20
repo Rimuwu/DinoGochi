@@ -690,9 +690,9 @@ class checks:
                                         else:
                                             users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i] }} )
 
-                if lvl_ != 0:
+                expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
+                if lvl_ != 0 or user['lvl'][1] >= expp:
                     user['lvl'][1] += lvl_
-                    expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
                     if user['lvl'][0] < 100:
                         if user['lvl'][1] >= expp:
                             user['lvl'][0] += 1
