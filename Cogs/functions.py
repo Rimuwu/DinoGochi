@@ -200,7 +200,7 @@ class functions:
         elif element == 'actions' and bd_user != None:
             markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
 
-            if bd_user['dinos'][ bd_user['setting']['dino_id'] ]['status'] == 'dino':
+            if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['status'] == 'dino':
 
                 if bd_user['language_code'] == 'ru':
                     nl = ['🎮 Развлечения', '🍣 Покормить', '↪ Назад']
