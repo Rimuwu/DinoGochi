@@ -175,6 +175,7 @@ def check_notif(): #проверка каждые 5 секунд
                         functions.notifications_manager(bot, 'need_unv', user,dino_id = dino_id, met = 'delete')
 
                     if user['dinos'][dino_id]['stats']['heal'] <= 0:
+                        del user['dinos'][dino_id]
 
                         if user['lvl'][0] >= 5:
                             users.update_one( {"userid": user['userid']}, {"$push": {'inventory': "21" }} )
@@ -182,7 +183,7 @@ def check_notif(): #проверка каждые 5 секунд
                         if functions.notifications_manager(bot, "dead", user, dino_id = dino_id, met = 'check') == False:
                             functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
 
-                        users.update_one( {"userid": user['userid']}, {"$unset": {f'dinos.{dino_id}': user['dinos'] }} )
+                        users.update_one( {"userid": user['userid']}, {"$set": {f'dinos': user['dinos'] }} )
 
             if len(user['dinos']) != 0:
                 users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
