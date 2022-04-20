@@ -260,65 +260,65 @@ class functions:
 
                         markup.add(item1, item2, item3, item4, item5, item6)
 
-            else:
-                nl = ['🎮 Entertainments', '🍣 Feed', '↪ Back']
+                else:
+                    nl = ['🎮 Entertainments', '🍣 Feed', '↪ Back']
 
-                if len(bd_user['dinos']) == 1:
-                    nid_dino = list(bd_user['dinos'].keys())[0]
-                    dino = bd_user['dinos'][ str(nid_dino) ]
-
-                if len(bd_user['dinos']) > 1:
-                    if 'dino_id' not in bd_user['settings']:
-                        bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[0]
-                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
-                    try:
-                        nid_dino = bd_user['settings']['dino_id']
-                        dino = bd_user['dinos'][ str(nid_dino) ]
-                    except:
+                    if len(bd_user['dinos']) == 1:
                         nid_dino = list(bd_user['dinos'].keys())[0]
-                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
                         dino = bd_user['dinos'][ str(nid_dino) ]
 
-                if len(bd_user['dinos']) == 0:
-                    return markup
+                    if len(bd_user['dinos']) > 1:
+                        if 'dino_id' not in bd_user['settings']:
+                            bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[0]
+                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+                        try:
+                            nid_dino = bd_user['settings']['dino_id']
+                            dino = bd_user['dinos'][ str(nid_dino) ]
+                        except:
+                            nid_dino = list(bd_user['dinos'].keys())[0]
+                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+                            dino = bd_user['dinos'][ str(nid_dino) ]
 
-                if dino['activ_status'] == 'journey':
-                    nl.insert(2, '🎑 Call')
-                else:
-                    nl.insert(2, '🎑 Journey')
+                    if len(bd_user['dinos']) == 0:
+                        return markup
 
-                if dino['activ_status'] == 'sleep':
-                    nl.insert(3, '🌙 Awaken')
-                else:
-                    nl.insert(3, '🌙 Put to bed')
+                    if dino['activ_status'] == 'journey':
+                        nl.insert(2, '🎑 Call')
+                    else:
+                        nl.insert(2, '🎑 Journey')
 
-                if dino['activ_status'] != 'hunting':
-                    nl.insert(4, '🍕 Collecting food')
+                    if dino['activ_status'] == 'sleep':
+                        nl.insert(3, '🌙 Awaken')
+                    else:
+                        nl.insert(3, '🌙 Put to bed')
 
-                else:
-                    nl.insert(4, '🍕 Progress')
+                    if dino['activ_status'] != 'hunting':
+                        nl.insert(4, '🍕 Collecting food')
 
-                if len(bd_user['dinos']) > 1:
-                    item0 = types.KeyboardButton(f'🦖 Dino: {nid_dino}')
-                    item1 = types.KeyboardButton(nl[0])
-                    item2 = types.KeyboardButton(nl[1])
-                    item3 = types.KeyboardButton(nl[2])
-                    item4 = types.KeyboardButton(nl[3])
-                    item5 = types.KeyboardButton(nl[4])
-                    item6 = types.KeyboardButton(nl[5])
+                    else:
+                        nl.insert(4, '🍕 Progress')
 
-                    markup.add(item0, item1, item2, item3, item4, item5, item6)
+                    if len(bd_user['dinos']) > 1:
+                        item0 = types.KeyboardButton(f'🦖 Dino: {nid_dino}')
+                        item1 = types.KeyboardButton(nl[0])
+                        item2 = types.KeyboardButton(nl[1])
+                        item3 = types.KeyboardButton(nl[2])
+                        item4 = types.KeyboardButton(nl[3])
+                        item5 = types.KeyboardButton(nl[4])
+                        item6 = types.KeyboardButton(nl[5])
 
-                else:
+                        markup.add(item0, item1, item2, item3, item4, item5, item6)
 
-                    item1 = types.KeyboardButton(nl[0])
-                    item2 = types.KeyboardButton(nl[1])
-                    item3 = types.KeyboardButton(nl[2])
-                    item4 = types.KeyboardButton(nl[3])
-                    item5 = types.KeyboardButton(nl[4])
-                    item6 = types.KeyboardButton(nl[5])
+                    else:
 
-                    markup.add(item1, item2, item3, item4, item5, item6)
+                        item1 = types.KeyboardButton(nl[0])
+                        item2 = types.KeyboardButton(nl[1])
+                        item3 = types.KeyboardButton(nl[2])
+                        item4 = types.KeyboardButton(nl[3])
+                        item5 = types.KeyboardButton(nl[4])
+                        item6 = types.KeyboardButton(nl[5])
+
+                        markup.add(item1, item2, item3, item4, item5, item6)
 
         elif element == 'games' and bd_user != None:
 
