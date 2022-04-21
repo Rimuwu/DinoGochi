@@ -19,7 +19,7 @@ with open('data/items.json', encoding='utf-8') as f:
 with open('data/dino_data.json', encoding='utf-8') as f:
     json_f = json.load(f)
 
-checks_data = {'memory': [0, time.time()], 'incub': [0, time.time(), 0], 'notif': [0, time.time()], 'main': [0, time.time()], 'main_hunt': [0, time.time(), 0], 'main_game': [0, time.time(), 0], 'main_sleep': [0, time.time(), 0], 'main_pass': [0, time.time(), 0], "us": 0}
+checks_data = {'memory': [0, time.time()], 'incub': [0, time.time(), 0], 'notif': [[], []], 'main': [[], [], []], 'main_hunt': [ [], [], [] ], 'main_game': [ [], [], [] ], 'main_sleep': [ [], [], [] ], 'main_pass': [ [], [], [] ], 'col': 0}
 
 class functions:
     json_f = json_f
@@ -849,13 +849,22 @@ class functions:
     @staticmethod
     def check_data(t = None, ind = None, zn = None, m = 'ncheck'):
         global checks_data
-        #checks_data = {'memory': [0, time.time()], 'incub': [0, time.time()], 'notif': [0, time.time()], 'main': [0, time.time()], "us": 0}
+        # {'memory': [0, time.time()], 'incub': [0, time.time(), 0], 'notif': [[], [time.time()]], 'main': [[], [time.time()], []], 'main_hunt': [ [], [], [] ], 'main_game': [ [], [], [] ], 'main_sleep': [ [], [], [] ], 'main_pass': [ [], [], [] ], 'col': 0}
+
         if m == 'check':
             return checks_data
 
-        else:
-            if t != 'us':
+        if t not in ['memory', 'incub',  'col_main', 'col_notif', 'col']:
+            if len(checks_data[t][ind]) >= checks_data['col']:
+                checks_data[t][ind] = []
+
+        if m != 'check':
+            if t in ['memory', 'incub']:
                 checks_data[t][ind] = zn
+
+            elif t not in ['col', 'memory']:
+                checks_data[t][ind].append(zn)
+
             else:
                 checks_data[t] = zn
 

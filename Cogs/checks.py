@@ -25,6 +25,120 @@ with open('data/dino_data.json', encoding='utf-8') as f:
 class checks:
 
     @staticmethod
+    def check_notif(bot, members): #проверка каждые 5 секунд
+
+        nn = 0
+        t_st = int(time.time())
+
+        for user in members:
+            nn += 1
+            dns_l = list(user['dinos'].keys()).copy()
+
+            for dino_id in dns_l:
+                dino = user['dinos'][dino_id]
+                if dino['status'] == 'dino': #дино
+
+                    if dino['activ_status'] == 'sleep':
+
+                        if user['dinos'][dino_id]['stats']['unv'] >= 100:
+                            user['dinos'][dino_id]['activ_status'] = 'pass_active'
+                            functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'send')
+
+                            try:
+                                del user['dinos'][dino_id]['sleep_start']
+                            except:
+                                pass
+
+                            users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}': user['dinos'][dino_id] }} )
+
+
+                        if 'sleep_type' in user['dinos'][dino_id].keys() and user['dinos'][dino_id]['sleep_type'] == 'short':
+
+                            if user['dinos'][dino_id]['sleep_time'] - int(time.time()) <= 0:
+
+                                user['dinos'][dino_id]['activ_status'] = 'pass_active'
+                                functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'send')
+
+                                del user['dinos'][dino_id]['sleep_type']
+                                del user['dinos'][dino_id]['sleep_time']
+                                users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}': user['dinos'][dino_id] }} )
+
+
+                    elif dino['activ_status'] == 'game':
+
+                        if int(dino['game_time'] - time.time()) <= 0:
+                            user['dinos'][dino_id]['activ_status'] = 'pass_active'
+                            functions.notifications_manager(bot, 'game_end', user, None, dino_id, 'send')
+
+                            del user['dinos'][ dino_id ]['game_time']
+                            del user['dinos'][ dino_id ]['game_%']
+                            users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}': user['dinos'][dino_id] }} )
+
+                    elif dino['activ_status'] == 'journey':
+
+                        if int(dino['journey_time']-time.time()) <= 0:
+                            user['dinos'][dino_id]['activ_status'] = 'pass_active'
+
+                            functions.notifications_manager(bot, "journey_end", user, user['dinos'][ dino_id ]['journey_log'], dino_id = dino_id)
+
+                            del user['dinos'][ dino_id ]['journey_time']
+                            del user['dinos'][ dino_id ]['journey_log']
+                            users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}': user['dinos'][dino_id] }} )
+
+                    elif dino['activ_status'] == 'hunting':
+                        if dino['target'][0] >= dino['target'][1]:
+                            del user['dinos'][ dino_id ]['target']
+                            del user['dinos'][ dino_id ]['h_type']
+                            user['dinos'][dino_id]['activ_status'] = 'pass_active'
+
+                            functions.notifications_manager(bot, "hunting_end", user, dino_id = dino_id)
+                            users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}': user['dinos'][dino_id] }} )
+
+
+                    if user['dinos'][dino_id]['stats']['mood'] <= 70:
+                        if functions.notifications_manager(bot, "need_mood", user, dino_id = dino_id, met = 'check') == False:
+                            functions.notifications_manager(bot, "need_mood", user, user['dinos'][dino_id]['stats']['mood'], dino_id = dino_id)
+
+                    if user['dinos'][dino_id]['stats']['game'] <= 50:
+                        if functions.notifications_manager(bot, "need_game", user, dino_id = dino_id, met = 'check') == False:
+                            functions.notifications_manager(bot, "need_game", user, user['dinos'][dino_id]['stats']['game'], dino_id = dino_id)
+
+                    if user['dinos'][dino_id]['stats']['eat'] <= 40:
+                        if functions.notifications_manager(bot, "need_eat", user, dino_id = dino_id, met = 'check') == False:
+                            functions.notifications_manager(bot, "need_eat", user, user['dinos'][dino_id]['stats']['eat'], dino_id = dino_id)
+
+                    if user['dinos'][dino_id]['stats']['unv'] <= 30:
+                        if functions.notifications_manager(bot, "need_unv", user, dino_id = dino_id, met = 'check') == False:
+                            functions.notifications_manager(bot, "need_unv", user, user['dinos'][dino_id]['stats']['unv'], dino_id = dino_id)
+
+                    if user['dinos'][dino_id]['stats']['mood'] >= 80:
+                        functions.notifications_manager(bot, 'need_mood', user, dino_id = dino_id, met = 'delete')
+
+                    if user['dinos'][dino_id]['stats']['game'] >= 80:
+                        functions.notifications_manager(bot, 'need_game', user, dino_id = dino_id, met = 'delete')
+
+                    if user['dinos'][dino_id]['stats']['eat'] >= 50:
+                        functions.notifications_manager(bot, 'need_eat', user, dino_id = dino_id, met = 'delete')
+
+                    if user['dinos'][dino_id]['stats']['unv'] >= 40:
+                        functions.notifications_manager(bot, 'need_unv', user, dino_id = dino_id, met = 'delete')
+
+                    if user['dinos'][dino_id]['stats']['heal'] <= 0:
+                        del user['dinos'][dino_id]
+
+                        if user['lvl'][0] >= 5:
+                            users.update_one( {"userid": user['userid']}, {"$push": {'inventory': "21" }} )
+
+                        if functions.notifications_manager(bot, "dead", user, dino_id = dino_id, met = 'check') == False:
+                            functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
+
+                        users.update_one( {"userid": user['userid']}, {"$set": {f'dinos': user['dinos'] }} )
+
+        # print(f'Проверка уведомлений - {int(time.time()) - t_st}s {nn}u')
+        functions.check_data('notif', 0, int(time.time() - t_st) )
+        functions.check_data('notif', 1, int(time.time()) )
+
+    @staticmethod
     def main_pass(members):
 
         nn = 0
@@ -48,14 +162,12 @@ class checks:
                                 if random.randint(1,15) == 1:
                                     dinos_stats['mood'] += random.randint(1,15)
 
-                                if random.randint(1,60) == 1:
-                                    user['coins'] += random.randint(0,20)
-                                    users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
+                                if random.randint(1,10) == 1:
+                                    users.update_one( {"userid": user['userid']}, {"$inc": {'coins': random.randint(0,20) }} )
 
                         if user['dinos'][dino_id]['stats']['mood'] > 80:
                             if random.randint(1,60) == 1:
-                                user['coins'] += random.randint(0,100)
-                                users.update_one( {"userid": user['userid']}, {"$set": {'coins': user['coins'] }} )
+                                users.update_one( {"userid": user['userid']}, {"$inc": {'coins': random.randint(0,20) }} )
 
                         if user['dinos'][dino_id]['stats']['unv'] <= 20 and user['dinos'][dino_id]['stats']['unv'] != 0:
                             if dino['stats']['mood'] > 0:
@@ -241,10 +353,8 @@ class checks:
 
                             i_count = functions.random_items([int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 4)], [int(ii) for ii in range(1, 5)], [int(ii) for ii in range(1, 6)])
                             for i in list(range(i_count)):
-                                try:
-                                    dino['target'][0] += 1
-                                except:
-                                    users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.activ_status': 'pass_active' }} )
+                                dino['target'][0] += 1
+
 
                                 users.update_one( {"userid": user['userid']}, {"$push": {'inventory': item }} )
 
@@ -711,4 +821,4 @@ class checks:
         # print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
         functions.check_data('main', 0, int(time.time() - t_st) )
         functions.check_data('main', 1, int(time.time()) )
-        functions.check_data('us', 0, nn )
+        functions.check_data('main', 2, nn )

@@ -80,137 +80,22 @@ def check_incub(): #проверка каждые 5 секунд
 
 thr_icub = threading.Thread(target = check_incub, daemon=True)
 
-def check_notif(): #проверка каждые 5 секунд
-    while True:
-        nn = 0
-        time.sleep(5)
-        t_st = int(time.time())
-
-        members = users.find({ })
-        for user in members:
-            nn += 1
-            dns_l = list(user['dinos'].keys()).copy()
-
-            for dino_id in dns_l:
-                dino = user['dinos'][dino_id]
-                if dino['status'] == 'dino': #дино
-
-                    if dino['activ_status'] == 'sleep':
-
-                        if user['dinos'][dino_id]['stats']['unv'] >= 100:
-                            user['dinos'][dino_id]['activ_status'] = 'pass_active'
-                            functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'send')
-
-                            try:
-                                del user['dinos'][dino_id]['sleep_start']
-                            except:
-                                pass
-
-
-                        if 'sleep_type' in user['dinos'][dino_id].keys() and user['dinos'][dino_id]['sleep_type'] == 'short':
-
-                            if user['dinos'][dino_id]['sleep_time'] - int(time.time()) <= 0:
-
-                                user['dinos'][dino_id]['activ_status'] = 'pass_active'
-                                functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'send')
-
-                                del user['dinos'][dino_id]['sleep_type']
-                                del user['dinos'][dino_id]['sleep_time']
-
-
-                    elif dino['activ_status'] == 'game':
-
-                        if int(dino['game_time']-time.time()) <= 0:
-                            user['dinos'][dino_id]['activ_status'] = 'pass_active'
-                            functions.notifications_manager(bot, 'game_end', user, None, dino_id, 'send')
-
-                            del user['dinos'][ dino_id ]['game_time']
-                            del user['dinos'][ dino_id ]['game_%']
-
-                    elif dino['activ_status'] == 'journey':
-
-                        if int(dino['journey_time']-time.time()) <= 0:
-                            user['dinos'][dino_id]['activ_status'] = 'pass_active'
-
-                            functions.notifications_manager(bot, "journey_end", user, user['dinos'][ dino_id ]['journey_log'], dino_id = dino_id)
-
-                            del user['dinos'][ dino_id ]['journey_time']
-                            del user['dinos'][ dino_id ]['journey_log']
-
-                    elif dino['activ_status'] == 'hunting':
-                        if dino['target'][0] >= dino['target'][1]:
-                            del user['dinos'][ dino_id ]['target']
-                            del user['dinos'][ dino_id ]['h_type']
-                            user['dinos'][dino_id]['activ_status'] = 'pass_active'
-
-                            functions.notifications_manager(bot, "hunting_end", user, dino_id = dino_id)
-
-
-                    if user['dinos'][dino_id]['stats']['mood'] <= 70:
-                        if functions.notifications_manager(bot, "need_mood", user, dino_id = dino_id, met = 'check') == False:
-                            functions.notifications_manager(bot, "need_mood", user, user['dinos'][dino_id]['stats']['mood'], dino_id = dino_id)
-
-                    if user['dinos'][dino_id]['stats']['game'] <= 50:
-                        if functions.notifications_manager(bot, "need_game", user, dino_id = dino_id, met = 'check') == False:
-                            functions.notifications_manager(bot, "need_game", user, user['dinos'][dino_id]['stats']['game'], dino_id = dino_id)
-
-                    if user['dinos'][dino_id]['stats']['eat'] <= 40:
-                        if functions.notifications_manager(bot, "need_eat", user, dino_id = dino_id, met = 'check') == False:
-                            functions.notifications_manager(bot, "need_eat", user, user['dinos'][dino_id]['stats']['eat'], dino_id = dino_id)
-
-                    if user['dinos'][dino_id]['stats']['unv'] <= 30:
-                        if functions.notifications_manager(bot, "need_unv", user, dino_id = dino_id, met = 'check') == False:
-                            functions.notifications_manager(bot, "need_unv", user, user['dinos'][dino_id]['stats']['unv'], dino_id = dino_id)
-
-                    if user['dinos'][dino_id]['stats']['mood'] >= 80:
-                        functions.notifications_manager(bot, 'need_mood', user, dino_id = dino_id, met = 'delete')
-
-                    if user['dinos'][dino_id]['stats']['game'] >= 80:
-                        functions.notifications_manager(bot, 'need_game', user,dino_id = dino_id, met = 'delete')
-
-                    if user['dinos'][dino_id]['stats']['eat'] >= 50:
-                        functions.notifications_manager(bot, 'need_eat', user,dino_id = dino_id, met = 'delete')
-
-                    if user['dinos'][dino_id]['stats']['unv'] >= 40:
-                        functions.notifications_manager(bot, 'need_unv', user,dino_id = dino_id, met = 'delete')
-
-                    if user['dinos'][dino_id]['stats']['heal'] <= 0:
-                        del user['dinos'][dino_id]
-
-                        if user['lvl'][0] >= 5:
-                            users.update_one( {"userid": user['userid']}, {"$push": {'inventory': "21" }} )
-
-                        if functions.notifications_manager(bot, "dead", user, dino_id = dino_id, met = 'check') == False:
-                            functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
-
-                        users.update_one( {"userid": user['userid']}, {"$set": {f'dinos': user['dinos'] }} )
-
-            if len(user['dinos']) != 0:
-                users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos'] }} )
-
-        # print(f'Проверка уведомлений - {int(time.time()) - t_st}s {nn}u')
-        functions.check_data('notif', 0, int(time.time() - t_st) )
-        functions.check_data('notif', 1, int(time.time()) )
-
-thr_notif = threading.Thread(target = check_notif, daemon=True)
 
 def check(): #проверка каждые 10 секунд
-    global thr_l
 
-    def alpha(bot, members):
-        checks.main(bot, members)
+    def alpha(bot, members): checks.main(bot, members)
 
-    def beta(members):
-        checks.main_hunting(members)
+    def beta(members): checks.main_hunting(members)
 
-    def beta2(members):
-        checks.main_game(members)
+    def beta2(members): checks.main_game(members)
 
-    def gamma(members):
-        checks.main_sleep(members)
+    def gamma(members): checks.main_sleep(members)
 
-    def gamma2(members):
-        checks.main_pass(members)
+    def gamma2(members): checks.main_pass(members)
+
+    non_members = users.find({ })
+    chunks_users = list(functions.chunks( list(non_members), 50 ))
+    functions.check_data('col', None, int(len(chunks_users)) )
 
     while True:
         if int(memory_usage()[0]) < 1500:
@@ -226,9 +111,31 @@ def check(): #проверка каждые 10 секунд
 
         else:
             print(f'Использование памяти: {int(memory_usage()[0])}')
+
         time.sleep(10)
 
 thr1 = threading.Thread(target = check, daemon=True)
+
+def check_notif(): #проверка каждые 5 секунд
+
+    def alpha(bot, members):
+        checks.check_notif(bot, members)
+
+    while True:
+
+        if int(memory_usage()[0]) < 1500:
+            non_members = users.find({ })
+            chunks_users = list(functions.chunks( list(non_members), 50 ))
+
+            for members in chunks_users:
+                main = threading.Thread(target = alpha, daemon=True, kwargs = {'bot': bot, 'members': members}).start()
+
+        else:
+            print(f'Использование памяти: {int(memory_usage()[0])}')
+
+        time.sleep(5)
+
+thr_notif = threading.Thread(target = check_notif, daemon=True)
 
 
 @bot.message_handler(commands=['stats'])
@@ -236,16 +143,27 @@ def command(message):
     user = message.from_user
     checks_data = functions.check_data(m = 'check')
 
+    def ttx(tm, lst):
+        lgs = []
+        for i in lst:
+            lgs.append(f'{int(tm) - i}s')
+        return ', '.join(lgs)
+
+    # f'{int(time.time()) - ii}s, ' for ii in checks_data["memory"][1]
+
     text = 'STATS\n\n'
-    text += f"Memory: {checks_data['memory'][0]}mb\nLast {int(time.time() - checks_data['memory'][1])}s\n\n"
+    text += f"Memory: {checks_data['memory'][0]}mb\nLast {int(time.time() - checks_data['memory'][1]) }s\n\n"
     text += f"Incub check: {checks_data['incub'][0]}s\nLast {int(time.time() - checks_data['incub'][1])}s\nUsers: {checks_data['incub'][2]}\n\n"
-    text += f"Notifications check: {checks_data['notif'][0]}s\nLast {int(time.time() - checks_data['notif'][1])}s\n\n"
-    text += f"Main check: {checks_data['main'][0]}s\nLast {int(time.time() - checks_data['main'][1])}s\n\n"
-    text += f"Hunt check: {checks_data['main_hunt'][0]}s\nLast {int(time.time() - checks_data['main_hunt'][1])}s\nUsers: {checks_data['main_hunt'][2]}\n\n"
-    text += f"Game check: {checks_data['main_game'][0]}s\nLast {int(time.time() - checks_data['main_game'][1])}s\nUsers: {checks_data['main_game'][2]}\n\n"
-    text += f"Sleep check: {checks_data['main_sleep'][0]}s\nLast {int(time.time() - checks_data['main_sleep'][1])}s\nUsers: {checks_data['main_sleep'][2]}\n\n"
-    text += f"Pass check: {checks_data['main_pass'][0]}s\nLast {int(time.time() - checks_data['main_pass'][1])}s\nUsers: {checks_data['main_pass'][2]}\n\n"
-    text += f"Users: {checks_data['us']}\n"
+    text += f"Notifications check: {'s, '.join(str(i) for i in checks_data['notif'][0])}\nLast { ttx(time.time(), checks_data['notif'][1]) }\n\n"
+
+    for cls in ['main', 'main_hunt', 'main_game', 'main_sleep', 'main_pass']:
+        text += f"{cls} check: {'s, '.join(str(i) for i in checks_data[cls][0])}\nLast { ttx(time.time(), checks_data[cls][1]) }\nUsers: {str(checks_data[cls][2])}\n\n"
+
+    # text += f"Main check: {checks_data['main'][0]}s\nLast {int(time.time() - checks_data['main'][1])}s\nUsers: {checks_data['main'][2]}\n\n"
+    # text += f"Hunt check: {checks_data['main_hunt'][0]}s\nLast {int(time.time() - checks_data['main_hunt'][1])}s\nUsers: {checks_data['main_hunt'][2]}\n\n"
+    # text += f"Game check: {checks_data['main_game'][0]}s\nLast {int(time.time() - checks_data['main_game'][1])}s\nUsers: {checks_data['main_game'][2]}\n\n"
+    # text += f"Sleep check: {checks_data['main_sleep'][0]}s\nLast {int(time.time() - checks_data['main_sleep'][1])}s\nUsers: {checks_data['main_sleep'][2]}\n\n"
+    # text += f"Pass check: {checks_data['main_pass'][0]}s\nLast {int(time.time() - checks_data['main_pass'][1])}s\nUsers: {checks_data['main_pass'][2]}\n\n"
     text += f'Thr.count: {threading.active_count()}'
     bot.send_message(user.id, text)
 
@@ -1364,7 +1282,7 @@ def on_message(message):
                                         if res in ['✅ Confirm', '✅ Подтверждаю']:
 
                                             bd_user['dinos'][str(dino_user_id)]['name'] = dino_name
-                                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                                            users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{dino_user_id}': bd_user['dinos'][str(dino_user_id)] }} )
 
                                             bot.send_message(message.chat.id, f'✅', reply_markup = functions.markup(bot, 'settings', user))
 
@@ -1423,10 +1341,11 @@ def on_message(message):
 
                                 else:
                                     def dl_sleep(bd_user, message):
-                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] = 'sleep'
-                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_start'] = int(time.time())
-                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_type'] = 'long'
-                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                                        d_id = bd_user['settings']['dino_id']
+                                        bd_user['dinos'][ d_id ]['activ_status'] = 'sleep'
+                                        bd_user['dinos'][ d_id ]['sleep_start'] = int(time.time())
+                                        bd_user['dinos'][ d_id ]['sleep_type'] = 'long'
+                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{d_id}': bd_user['dinos'][d_id] }} )
 
                                         if bd_user['language_code'] == 'ru':
                                             text = '🌙 Вы уложили динозавра спать!'
@@ -1494,11 +1413,11 @@ def on_message(message):
                                                         bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
 
                                                     else:
-
-                                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] = 'sleep'
-                                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_time'] = int(time.time()) + number * 60
-                                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_type'] = 'short'
-                                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                                                        d_id = bd_user['settings']['dino_id']
+                                                        bd_user['dinos'][ d_id ]['activ_status'] = 'sleep'
+                                                        bd_user['dinos'][ d_id ]['sleep_time'] = int(time.time()) + number * 60
+                                                        bd_user['dinos'][ d_id ]['sleep_type'] = 'short'
+                                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{d_id}': bd_user['dinos'][d_id] }} )
 
                                                         if bd_user['language_code'] == 'ru':
                                                             text = '🌙 Вы уложили динозавра спать!'
@@ -1536,15 +1455,16 @@ def on_message(message):
                 if message.text in ['🌙 Пробудить', '🌙 Awaken']:
                     bd_user = users.find_one({"userid": user.id})
                     if bd_user != None:
-                        dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+                        d_id = str(bd_user['settings']['dino_id'])
+                        dino = bd_user['dinos'][ str(d_id) ]
 
                         if dino['activ_status'] == 'sleep' and dino != None:
                             r_n = random.randint(0, 20)
-                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] = 'pass_active'
+                            bd_user['dinos'][ d_id ]['activ_status'] = 'pass_active'
 
-                            if 'sleep_type' in bd_user['dinos'][ bd_user['settings']['dino_id'] ] and bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_type'] == 'short':
+                            if 'sleep_type' in bd_user['dinos'][ d_id ] and bd_user['dinos'][ d_id ]['sleep_type'] == 'short':
 
-                                del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_time']
+                                del bd_user['dinos'][ d_id ]['sleep_time']
 
                                 if bd_user['language_code'] == 'ru':
                                     text = f'🌙 Ваш динозавр пробудился.'
@@ -1554,20 +1474,20 @@ def on_message(message):
                                 bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
 
                                 try:
-                                    del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_type']
+                                    del bd_user['dinos'][ d_id ]['sleep_type']
                                 except:
                                     pass
 
                                 try:
-                                    del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_start']
+                                    del bd_user['dinos'][ d_id ]['sleep_start']
                                 except:
                                     pass
 
-                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{d_id}': bd_user['dinos'][d_id] }} )
 
-                            elif 'sleep_type' not in bd_user['dinos'][ bd_user['settings']['dino_id'] ] or bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_type'] == 'long':
+                            elif 'sleep_type' not in bd_user['dinos'][ d_id ] or bd_user['dinos'][ d_id ]['sleep_type'] == 'long':
 
-                                if 'sleep_start' in bd_user['dinos'][ bd_user['settings']['dino_id'] ].keys() and int(time.time()) - bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_start'] >= 8 * 3600:
+                                if 'sleep_start' in bd_user['dinos'][ d_id ].keys() and int(time.time()) - bd_user['dinos'][ d_id ]['sleep_start'] >= 8 * 3600:
 
                                     if bd_user['language_code'] == 'ru':
                                         text = f'🌙 Ваш динозавр пробудился.'
@@ -1578,10 +1498,10 @@ def on_message(message):
 
                                 else:
 
-                                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= r_n
+                                    bd_user['dinos'][ d_id ]['stats']['mood'] -= r_n
 
-                                    if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] < 0:
-                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] = 0
+                                    if bd_user['dinos'][ d_id ]['stats']['mood'] < 0:
+                                        bd_user['dinos'][ d_id ]['stats']['mood'] = 0
 
                                     if bd_user['language_code'] == 'ru':
                                         text = f'🌙 Ваш динозавр пробудился. Он сильно не доволен что вы его разбудили!\nДинозавр потерял {r_n}% настроения.'
@@ -1591,16 +1511,16 @@ def on_message(message):
                                     bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
 
                                 try:
-                                    del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_type']
+                                    del bd_user['dinos'][ d_id ]['sleep_type']
                                 except:
                                     pass
 
                                 try:
-                                    del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['sleep_start']
+                                    del bd_user['dinos'][ d_id ]['sleep_start']
                                 except:
                                     pass
 
-                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{d_id}': bd_user['dinos'][d_id] }} )
 
                         else:
                             bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'actions', user))
@@ -1683,7 +1603,7 @@ def on_message(message):
                                 del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_time']
                                 del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_log']
 
-                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {f"dinos.{bd_user['settings']['dino_id']}": bd_user['dinos'][ bd_user['settings']['dino_id'] ] }} )
 
                                 bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user), parse_mode = 'html')
 
