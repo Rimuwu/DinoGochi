@@ -858,9 +858,6 @@ def on_message(message):
             if message.text in ['🎢 Рейтинг', '🎢 Rating']:
                 if bd_user != None:
 
-                    def f_m(x):
-                        return 5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100
-
                     mr_l = functions.rayt_update('check')[0]#list(sorted(list(users.find({})), key=lambda x: x['coins'], reverse=True))
                     lv_l = functions.rayt_update('check')[1]#list(sorted(list(users.find({})), key=lambda x: (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], reverse=True))
 
@@ -919,7 +916,6 @@ def on_message(message):
                             except:
                                 pass
 
-
                     i = -1
                     us_i_m = []
                     while du_lv[0] == {} or du_lv[1] == {} or du_lv[2] == {} or du_lv[3] == {} or du_lv[4] == {}:
@@ -977,9 +973,18 @@ def on_message(message):
                             except:
                                 pass
 
+                    lv_ar_id = []
+                    for i in lv_l:
+                        lv_ar_id.append(i['userid'])
+
+                    mr_ar_id = []
+                    for i in mr_l:
+                        mr_ar_id.append(i['userid'])
+
+
                     if bd_user['language_code'] == 'ru':
-                        if bd_user in lv_l:
-                            ind = lv_l.index(bd_user)+1
+                        if bd_user['userid'] in lv_ar_id:
+                            ind = lv_ar_id.index(bd_user['userid'])+1
                         else:
                             ind = '-'
 
@@ -997,8 +1002,8 @@ def on_message(message):
                                 else:
                                     text += f"*└* #{n} *{i['mn']}*:\n      *└* Ур. {i['lvl']} (Всего опыта {i['exp']})\n"
 
-                        if bd_user in mr_l:
-                            ind = mr_l.index(bd_user)+1
+                        if bd_user['userid'] in mr_ar_id:
+                            ind = mr_ar_id.index(bd_user['userid'])+1
                         else:
                             ind = '-'
 
@@ -1016,8 +1021,8 @@ def on_message(message):
                                 else:
                                     text += f"*└* #{n} *{i['mn']}*:\n      *└* Монеты {i['coins']}\n"
                     else:
-                        if bd_user in lv_l:
-                            ind = lv_l.index(bd_user)+1
+                        if bd_user['userid'] in lv_ar_id:
+                            ind = lv_ar_id.index(bd_user['userid'])+1
                         else:
                             ind = '-'
 
@@ -1035,8 +1040,8 @@ def on_message(message):
                                 else:
                                     text += f"*└* #{n} *{i['mn']}*:\n      *└* lvl {i['lvl']} (Total experience {i['exp']})\n"
 
-                        if bd_user in mr_l:
-                            ind = mr_l.index(bd_user)+1
+                        if bd_user['userid'] in mr_ar_id:
+                            ind = mr_ar_id.index(bd_user['userid'])+1
                         else:
                             ind = '-'
 

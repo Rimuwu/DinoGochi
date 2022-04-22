@@ -26,9 +26,17 @@ class checks:
 
     @staticmethod
     def rayt(users):
+        mr_l, lv_l = [], []
 
-        mr_l = list(sorted(list(users), key=lambda x: x['coins'], reverse=True))
-        lv_l = list(sorted(list(users), key=lambda x: (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], reverse=True))
+        loc_users = list(users).copy()
+        mr_l_r = list(sorted(loc_users, key=lambda x: x['coins'], reverse=True))
+        lv_l_r = list(sorted(loc_users, key=lambda x: (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], reverse=True))
+
+        for i in mr_l_r:
+            mr_l.append( {'userid': i['userid'], 'coins': i['coins']} )
+
+        for i in lv_l_r:
+            lv_l.append( {'userid': i['userid'], 'lvl': i['lvl']} )
 
         functions.rayt_update('save', [mr_l, lv_l])
 
