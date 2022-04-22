@@ -39,7 +39,7 @@ def check_memory():
         functions.check_data('memory', 1, int(time.time()) )
         time.sleep(10)
 
-thr2 = threading.Thread(target = check_memory, daemon=True)
+memory = threading.Thread(target = check_memory, daemon=True)
 
 # def check_dead_users(): #проверка каждые 5 секунд
 #     while True:
@@ -114,7 +114,7 @@ def check(): #проверка каждые 10 секунд
 
         time.sleep(10)
 
-thr1 = threading.Thread(target = check, daemon=True)
+main_checks = threading.Thread(target = check, daemon=True)
 
 def check_notif(): #проверка каждые 5 секунд
 
@@ -137,6 +137,24 @@ def check_notif(): #проверка каждые 5 секунд
 
 thr_notif = threading.Thread(target = check_notif, daemon=True)
 
+def rayt(): #проверка каждые 5 секунд
+
+    def alpha(users):
+        checks.rayt(users)
+
+    while True:
+
+        if int(memory_usage()[0]) < 1500:
+            uss = users.find({ })
+            main = threading.Thread(target = alpha, daemon=True, kwargs = {'users': uss}).start()
+
+        else:
+            print(f'Использование памяти: {int(memory_usage()[0])}')
+
+        time.sleep(600)
+
+rayt_thr = threading.Thread(target = rayt, daemon=True)
+
 
 @bot.message_handler(commands=['stats'])
 def command(message):
@@ -149,7 +167,6 @@ def command(message):
             lgs.append(f'{int(tm) - i}s')
         return ', '.join(lgs)
 
-    # f'{int(time.time()) - ii}s, ' for ii in checks_data["memory"][1]
 
     text = 'STATS\n\n'
     text += f"Memory: {checks_data['memory'][0]}mb\nLast {int(time.time() - checks_data['memory'][1]) }s\n\n"
@@ -159,11 +176,7 @@ def command(message):
     for cls in ['main', 'main_hunt', 'main_game', 'main_sleep', 'main_pass']:
         text += f"{cls} check: {'s, '.join(str(i) for i in checks_data[cls][0])}\nLast { ttx(time.time(), checks_data[cls][1]) }\nUsers: {str(checks_data[cls][2])}\n\n"
 
-    # text += f"Main check: {checks_data['main'][0]}s\nLast {int(time.time() - checks_data['main'][1])}s\nUsers: {checks_data['main'][2]}\n\n"
-    # text += f"Hunt check: {checks_data['main_hunt'][0]}s\nLast {int(time.time() - checks_data['main_hunt'][1])}s\nUsers: {checks_data['main_hunt'][2]}\n\n"
-    # text += f"Game check: {checks_data['main_game'][0]}s\nLast {int(time.time() - checks_data['main_game'][1])}s\nUsers: {checks_data['main_game'][2]}\n\n"
-    # text += f"Sleep check: {checks_data['main_sleep'][0]}s\nLast {int(time.time() - checks_data['main_sleep'][1])}s\nUsers: {checks_data['main_sleep'][2]}\n\n"
-    # text += f"Pass check: {checks_data['main_pass'][0]}s\nLast {int(time.time() - checks_data['main_pass'][1])}s\nUsers: {checks_data['main_pass'][2]}\n\n"
+
     text += f'Thr.count: {threading.active_count()}'
     bot.send_message(user.id, text)
 
@@ -848,8 +861,8 @@ def on_message(message):
                     def f_m(x):
                         return 5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100
 
-                    mr_l = list(sorted(list(users.find({})), key=lambda x: x['coins'], reverse=True))
-                    lv_l = list(sorted(list(users.find({})), key=lambda x: (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], reverse=True))
+                    mr_l = functions.rayt_update('check')[0]#list(sorted(list(users.find({})), key=lambda x: x['coins'], reverse=True))
+                    lv_l = functions.rayt_update('check')[1]#list(sorted(list(users.find({})), key=lambda x: (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], reverse=True))
 
                     du_mc, du_lv = [{}, {}, {}, {}, {}], [{}, {}, {}, {}, {}]
 
@@ -1233,83 +1246,85 @@ def on_message(message):
                     if bd_user != None:
                         n_dp, dp_a = functions.dino_pre_answer(bot, message)
 
-                        def rename(message, bd_user, user, dino_user_id, dino):
-                            if bd_user['language_code'] == 'ru':
-                                text = f"🦖 | Введите новое имя для {dino['name']}\nРазмер: не более 20-ти символов\n>"
-                                ans = ['↪ Назад']
-                            else:
-                                text = f"🦖 | Enter a new name for {dino['name']}\nSize: no more than 20 characters\n>"
-                                ans = ['↪ Back']
+                        if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['status'] == 'dino':
 
-                            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
-                            rmk.add(ans[0])
-
-                            def ret(message, ans, bd_user):
-                                if message.text == ans[0]:
-                                    bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'settings', user))
-                                    return
-
-                                dino_name = message.text
-
-                                if len(dino_name) > 20:
-
-                                    if bd_user['language_code'] == 'ru':
-                                        text = f"🦖 | Новое имя больше 20-ти символов!"
-                                    else:
-                                        text = f"🦖 | The new name is more than 20 characters!"
-
-                                    msg = bot.send_message(message.chat.id, text)
-
+                            def rename(message, bd_user, user, dino_user_id, dino):
+                                if bd_user['language_code'] == 'ru':
+                                    text = f"🦖 | Введите новое имя для {dino['name']}\nРазмер: не более 20-ти символов\n>"
+                                    ans = ['↪ Назад']
                                 else:
-                                    if bd_user['language_code'] == 'ru':
-                                        text = f"🦖 | Переименовать {dino['name']} > {dino_name}?"
-                                        ans2 = ['✅ Подтверждаю', '↪ Назад']
-                                    else:
-                                        text = f"🦖 | Rename {dino['name']} > {dino_name}?"
-                                        ans2 = ['✅ Confirm', '↪ Back']
+                                    text = f"🦖 | Enter a new name for {dino['name']}\nSize: no more than 20 characters\n>"
+                                    ans = ['↪ Back']
 
-                                    rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
-                                    rmk.add(ans2[0])
-                                    rmk.add(ans2[1])
+                                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                                rmk.add(ans[0])
 
-                                    def ret2(message, ans2, bd_user):
-                                        if message.text == ans2[1]:
-                                            bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'settings', user))
-                                            return
+                                def ret(message, ans, bd_user):
+                                    if message.text == ans[0]:
+                                        bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'settings', user))
+                                        return
+
+                                    dino_name = message.text
+
+                                    if len(dino_name) > 20:
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = f"🦖 | Новое имя больше 20-ти символов!"
                                         else:
-                                            res = message.text
+                                            text = f"🦖 | The new name is more than 20 characters!"
 
-                                        if res in ['✅ Confirm', '✅ Подтверждаю']:
+                                        msg = bot.send_message(message.chat.id, text)
 
-                                            bd_user['dinos'][str(dino_user_id)]['name'] = dino_name
-                                            users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{dino_user_id}': bd_user['dinos'][str(dino_user_id)] }} )
+                                    else:
+                                        if bd_user['language_code'] == 'ru':
+                                            text = f"🦖 | Переименовать {dino['name']} > {dino_name}?"
+                                            ans2 = ['✅ Подтверждаю', '↪ Назад']
+                                        else:
+                                            text = f"🦖 | Rename {dino['name']} > {dino_name}?"
+                                            ans2 = ['✅ Confirm', '↪ Back']
 
-                                            bot.send_message(message.chat.id, f'✅', reply_markup = functions.markup(bot, 'settings', user))
+                                        rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                                        rmk.add(ans2[0])
+                                        rmk.add(ans2[1])
 
-                                    msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
-                                    bot.register_next_step_handler(msg, ret2, ans2, bd_user)
+                                        def ret2(message, ans2, bd_user):
+                                            if message.text == ans2[1]:
+                                                bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'settings', user))
+                                                return
+                                            else:
+                                                res = message.text
 
-                            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
-                            bot.register_next_step_handler(msg, ret, ans, bd_user)
+                                            if res in ['✅ Confirm', '✅ Подтверждаю']:
 
-                        if n_dp == 1:
-                            bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'settings', user))
-                            return
+                                                bd_user['dinos'][str(dino_user_id)]['name'] = dino_name
+                                                users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{dino_user_id}': bd_user['dinos'][str(dino_user_id)] }} )
 
-                        if n_dp == 2:
-                            bd_dino = dp_a
-                            rename(message, bd_user, user, list(bd_user['dinos'].keys())[0], dp_a)
+                                                bot.send_message(message.chat.id, f'✅', reply_markup = functions.markup(bot, 'settings', user))
 
-                        if n_dp == 3:
-                            rmk = dp_a[0]
-                            text = dp_a[1]
-                            dino_dict = dp_a[2]
+                                        msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                                        bot.register_next_step_handler(msg, ret2, ans2, bd_user)
 
-                            def ret(message, dino_dict, user, bd_user):
-                                rename(message, bd_user, user, dino_dict[message.text][1], dino_dict[message.text][0])
+                                msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                                bot.register_next_step_handler(msg, ret, ans, bd_user)
 
-                            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
-                            bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)
+                            if n_dp == 1:
+                                bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'settings', user))
+                                return
+
+                            if n_dp == 2:
+                                bd_dino = dp_a
+                                rename(message, bd_user, user, list(bd_user['dinos'].keys())[0], dp_a)
+
+                            if n_dp == 3:
+                                rmk = dp_a[0]
+                                text = dp_a[1]
+                                dino_dict = dp_a[2]
+
+                                def ret(message, dino_dict, user, bd_user):
+                                    rename(message, bd_user, user, dino_dict[message.text][1], dino_dict[message.text][0])
+
+                                msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                                bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)
 
 
                 if message.text in ['🕹 Действия', '🕹 Actions']:
@@ -4060,9 +4075,10 @@ def answer(call):
 
 print(f'Бот {bot.get_me().first_name} запущен!')
 if bot.get_me().first_name == 'DinoGochi' or True:
-    thr1.start()
+    main_checks.start()
     thr_icub.start()
     thr_notif.start()
-    thr2.start()
+    memory.start()
+    rayt_thr.start()
 
 bot.infinity_polling()

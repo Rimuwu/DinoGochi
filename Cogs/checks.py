@@ -25,8 +25,47 @@ with open('data/dino_data.json', encoding='utf-8') as f:
 class checks:
 
     @staticmethod
-    def check_notif(bot, members): #проверка каждые 5 секунд
+    def rayt(users):
 
+        mr_l = list(sorted(list(users), key=lambda x: x['coins'], reverse=True))
+        lv_l = list(sorted(list(users), key=lambda x: (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], reverse=True))
+
+        functions.rayt_update('save', [mr_l, lv_l])
+
+    @staticmethod
+    def check_incub(bot, members): #проверка каждые 5 секунд
+        nn = 0
+        t_st = int(time.time())
+
+        for user in members:
+            dns_l = list(user['dinos'].keys()).copy()
+
+            for dino_id in dns_l:
+                dino = user['dinos'][dino_id]
+                if dino['status'] == 'incubation': #инкубация
+                    nn += 1
+                    if dino['incubation_time'] - int(time.time()) <= 60*5 and dino['incubation_time'] - int(time.time()) > 0: #уведомление за 5 минут
+
+                        if functions.notifications_manager(bot, '5_min_incub', user, None, dino_id, 'check') == False:
+                            functions.notifications_manager(bot, "5_min_incub", user, dino, dino_id)
+
+
+                    elif dino['incubation_time'] - int(time.time()) <= 0:
+
+                        functions.notifications_manager(bot, "5_min_incub", user, dino, dino_id, met = 'delete')
+
+                        if 'quality' in dino.keys():
+                            functions.random_dino(user, dino_id, dino['quality'])
+                        else:
+                            functions.random_dino(user, dino_id)
+                        functions.notifications_manager(bot, "incub", user, dino_id)
+
+        functions.check_data('incub', 0, int(time.time() - t_st) )
+        functions.check_data('incub', 1, int(time.time()) )
+        functions.check_data('incub', 2, nn)
+
+    @staticmethod
+    def check_notif(bot, members): #проверка каждые 5 секунд
         nn = 0
         t_st = int(time.time())
 

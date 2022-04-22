@@ -21,6 +21,8 @@ with open('data/dino_data.json', encoding='utf-8') as f:
 
 checks_data = {'memory': [0, time.time()], 'incub': [0, time.time(), 0], 'notif': [[], []], 'main': [[], [], []], 'main_hunt': [ [], [], [] ], 'main_game': [ [], [], [] ], 'main_sleep': [ [], [], [] ], 'main_pass': [ [], [], [] ], 'col': 0}
 
+reyt_ = [[], []]
+
 class functions:
     json_f = json_f
     items_f = items_f
@@ -1393,3 +1395,13 @@ class functions:
             text = 'KMk456 jr5uhsd7489 lkjs47609485\n               ERRoR'
 
         return text
+
+    @staticmethod
+    def rayt_update(met = "save", lst_save = None):
+        global reyt_
+
+        if met == 'save':
+            reyt_ = lst_save
+
+        if met == 'check':
+            return reyt_
