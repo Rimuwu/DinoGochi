@@ -579,7 +579,7 @@ class checks:
 
                                     elif event == 'random_items':
 
-                                        item = functions.random_items(["1", "2", '25'], ['17', '18', '19'], ['26', '27', '28'], ["30", "32"], ["30", "32"])
+                                        item = functions.random_items(["1", "2", '25'], ['17', '18', '19'], ['26', '27', '28'], ["30", "32", '31'], ["30", "32", '31'])
 
                                         if mood_n == True:
 
@@ -599,7 +599,7 @@ class checks:
 
                                     elif event == 'random_items_leg':
 
-                                        item = functions.random_items(["4", '14', "15", "16"], ["4", '14', "15", "16"], ["30", "32", '34', "19"], ["37", "19"], ["21", "37"])
+                                        item = functions.random_items(["4", '14', "15", "16"], ["4", '14', "15", "16", '31'], ["30", "32", '34', "19", '31'], ["37", "19", '31'], ["21", "37", '31'])
                                         if mood_n == True:
 
                                             if user['language_code'] == 'ru':
