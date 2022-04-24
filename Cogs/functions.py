@@ -812,7 +812,7 @@ class functions:
                 elif notification == "friend_accept":
 
                     if user['language_code'] == 'ru':
-                        text = f'💬 | {chat.first_name}, {arg} приянл запрос в друзья!'
+                        text = f'💬 | {chat.first_name}, {arg} принял запрос в друзья!'
                     else:
                         text = f'💬 | {chat.first_name}, {arg} accepted a friend request!'
 
@@ -1405,3 +1405,28 @@ class functions:
 
         if met == 'check':
             return reyt_
+
+    @staticmethod
+    def add_item_to_user(user:dict, item_id:str, col:int = 1):
+        item = items_f[item_id]
+        d_it = {'item_id': item_id}
+        if 'abilities' in item.keys():
+            for k in item.keys():
+                d_it[k] = item[k]
+
+        for i in range(col):
+            users.update_one( {"userid": user['userid']}, {"$push": {'inventory': d_it }} )
+
+        return True
+
+    @staticmethod
+    def item_authenticity(item:dict):
+        item_data = items_f[item_id]
+        if list(item.keys()) == ['item_id']:
+            return True
+
+        else:
+            if item['abilities'] == item_data['abilities']:
+                return True
+            else:
+                return False

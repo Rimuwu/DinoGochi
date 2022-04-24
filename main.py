@@ -2514,9 +2514,10 @@ def on_message(message):
                                                 bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', user))
 
                                             else:
+                                                if bd_user['activ_items'][ac_type] != None:
+                                                    bd_user['inventory'].append(bd_user['activ_items'][ac_type])
 
                                                 item_id = items_id[ l_ind_sort_it[res] ]
-                                                # item = items_f['items'][item_id]
 
                                                 bd_user['activ_items'][ac_type] = item_id
 
@@ -3801,7 +3802,7 @@ def answer(call):
 
             elif item['type'] == 'egg':
 
-                if bd_user['lvl'][0] < 25 and len(bd_user['dinos']) != 0:
+                if bd_user['lvl'][0] < 20 and len(bd_user['dinos']) != 0:
 
                     if bd_user['language_code'] == 'ru':
                         text = f'🔔 | Вам недоступна данная технология!'
@@ -3809,7 +3810,7 @@ def answer(call):
                         text = f"🔔 | This technology is not available to you!"
 
                 else:
-                    if int(bd_user['lvl'][0] / 25) > len(bd_user['dinos']) or len(bd_user['dinos']) == 0:
+                    if int(bd_user['lvl'][0] / 20) > len(bd_user['dinos']) or len(bd_user['dinos']) == 0:
 
                         if item['time_tag'] == 'h':
                             inc_time = time.time() + item['incub_time'] * 3600
@@ -3834,9 +3835,9 @@ def answer(call):
 
                     else:
                         if bd_user['language_code'] == 'ru':
-                            text = f"🔔 | Вам доступна только {int(bd_user['lvl'][0] / 25)} динозавров!"
+                            text = f"🔔 | Вам доступна только {int(bd_user['lvl'][0] / 20)} динозавров!"
                         else:
-                            text = f"🔔 | Only {int(bd_user['lvl'][0] / 25)} dinosaurs are available to you!"
+                            text = f"🔔 | Only {int(bd_user['lvl'][0] / 20)} dinosaurs are available to you!"
 
 
             else:
