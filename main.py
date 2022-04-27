@@ -203,8 +203,9 @@ def command_n(message):
                     for i in bd_user['activ_items'].keys():
                         dt = bd_user['activ_items'][i]
                         if dt != None:
-                            it = functions.get_dict_item(str(dt))
-                            bd_user['activ_items'][i] = it
+                            if type(dt) != dict:
+                                it = functions.get_dict_item(str(dt))
+                                bd_user['activ_items'][i] = it
 
                     users.update_one( {"userid": bd_user['userid']}, {"$set": {'activ_items': bd_user['activ_items'] }} )
 
