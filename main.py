@@ -186,22 +186,27 @@ def command_n(message):
 
         def work(members, n):
             for bd_user in members:
+                dtn = False
                 nw_inv = []
                 for i in bd_user['inventory']:
+                    if type(i) == dict:
+                        dtn = True
                     nw_inv.append(i)
 
-                users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': [] }} )
+                if dtn == False:
 
-                for i in nw_inv:
-                    functions.add_item_to_user(bd_user, i)
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': [] }} )
 
-                for i in bd_user['activ_items'].keys():
-                    dt = bd_user['activ_items'][i]
-                    if dt != None:
-                        it = functions.get_dict_item(str(dt))
-                        bd_user['activ_items'][i] = it
+                    for i in nw_inv:
+                        functions.add_item_to_user(bd_user, i)
 
-                users.update_one( {"userid": bd_user['userid']}, {"$set": {'activ_items': bd_user['activ_items'] }} )
+                    for i in bd_user['activ_items'].keys():
+                        dt = bd_user['activ_items'][i]
+                        if dt != None:
+                            it = functions.get_dict_item(str(dt))
+                            bd_user['activ_items'][i] = it
+
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'activ_items': bd_user['activ_items'] }} )
 
             print(f'Программа обновления №{n} завершила работу.')
 
@@ -213,12 +218,16 @@ def command_n(message):
             n += 1
             main = threading.Thread(target = work, daemon=True, kwargs = { 'members': members, 'n': n}).start()
 
+@bot.message_handler(commands=['market'])
+def command_n(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
         market_ = market.find_one({"id": 1})
 
         def mr_work(key):
             pr_ll = []
-            for pr_k in market_[key]['products']:
-                pr = market_[key]['products'][pr_k]
+            for pr_k in market_['products'][key]['products']:
+                pr = market_['products'][key]['products'][pr_k]
                 pr_ll.append( {'item': functions.get_dict_item(pr['item_id']), 'price': pr['price'], 'col': pr['col'] } )
 
             if pr_ll != []:
@@ -228,7 +237,6 @@ def command_n(message):
 
         for us_key in market_['products']:
             main = threading.Thread(target = mr_work, daemon=True, kwargs = { 'key': us_key}).start()
-
 
 
 @bot.message_handler(commands=['am'])
