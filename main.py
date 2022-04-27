@@ -190,9 +190,9 @@ def command(message):
 def command(message):
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
-        bd = users.find_one({"userid": user.id})
-
         msg_args = message.text.split()
+        bd = users.find_one({"userid": int(msg_args[3])})
+
         tr = functions.add_item_to_user(bd, msg_args[1], int(msg_args[2]))
         bot.send_message(user.id, str(msg_args))
 
