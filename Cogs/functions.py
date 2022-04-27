@@ -1342,7 +1342,7 @@ class functions:
                     if itm == None:
                         act_ii.append('Нет')
                     else:
-                        item = items_f['items'][itm]['nameru']
+                        item = items_f['items'][itm['item_id']]['nameru']
                         act_ii.append(item)
 
                 text =  f"*┌* *🎴 Профиль пользователя*\n"
@@ -1376,7 +1376,7 @@ class functions:
                     if itm == None:
                         act_ii.append('None')
                     else:
-                        item = items_f['items'][itm]['nameen']
+                        item = items_f['items'][itm['item_id']]['nameen']
                         act_ii.append(item)
 
                 text =  f"*┌**🎴 User profile*\n"
