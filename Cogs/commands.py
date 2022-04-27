@@ -352,7 +352,13 @@ class commands:
                 return profile
 
             if len(bd_user['dinos'].keys()) == 0:
-                pass
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'🥚 | В данный момент у вас нету динозавров, пожалуйста проверьте свой инвентарь. В инвентаре у вас должно быть яйцо, которое вы можете инкубировать!'
+                else:
+                    text = f"🥚 | You don't have any dinosaurs at the moment, please check your inventory. You must have an egg in your inventory that you can incubate!"
+
+                bot.send_message(message.chat.id, text)
 
             elif len(bd_user['dinos'].keys()) > 0:
 

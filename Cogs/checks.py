@@ -174,7 +174,7 @@ class checks:
                         del user['dinos'][dino_id]
 
                         if user['lvl'][0] >= 5:
-                            users.update_one( {"userid": user['userid']}, {"$push": {'inventory': "21" }} )
+                            functions.add_item_to_user(user, '21')
 
                         if functions.notifications_manager(bot, "dead", user, dino_id = dino_id, met = 'check') == False:
                             functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
@@ -310,7 +310,7 @@ class checks:
                         nn += 1
 
                         if random.randint(1, 65) == 1: #unv
-                            dinos_stats['unv'] -= random.randint(0,2)
+                            dinos_stats['unv'] -= random.randint(0,1)
 
                         if random.randint(1, 45) == 1: #unv
 
@@ -402,8 +402,7 @@ class checks:
                             for i in list(range(i_count)):
                                 dino['target'][0] += 1
 
-
-                                users.update_one( {"userid": user['userid']}, {"$push": {'inventory': item }} )
+                                functions.add_item_to_user(user, item)
 
                             users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.target': dino['target'] }} )
 
@@ -588,7 +587,7 @@ class checks:
                                             else:
                                                 event = f"🧸 | Running through the woods, the dinosaur sees something that looks like a chest.\n> Opening it, he finds: {items_f['items'][item]['nameen']}!"
 
-                                            users.update_one( {"userid": user['userid']}, {"$push": {'inventory': item }} )
+                                            functions.add_item_to_user(user, item)
 
                                         if mood_n == False:
 
@@ -607,7 +606,7 @@ class checks:
                                             else:
                                                 event = f"🧸 | Running through the mountains, the dinosaur sees something similar to a chest.\n> Opening it, he finds: {items_f['items'][item]['nameen']}!"
 
-                                            users.update_one( {"userid": user['userid']}, {"$push": {'inventory': item }} )
+                                            functions.add_item_to_user(user, item)
 
                                         if mood_n == False:
 
@@ -628,7 +627,7 @@ class checks:
                                             else:
                                                 event = f"🧸 | Running through the caves, the dinosaur sees something similar to a chest.\n> Opening it, he finds: {items_f['items'][egg]['nameen']}!"
 
-                                            users.update_one( {"userid": user['userid']}, {"$push": {'inventory': egg }} )
+                                            functions.add_item_to_user(user, egg)
 
                                         if mood_n == False:
 
@@ -861,7 +860,7 @@ class checks:
                                         egg = random.choice(['20', '22'])
                                         rf_fr = users.find_one({"userid": user['referal_system']['friend']})
 
-                                        users.update_one( {"userid": rf_fr['userid']}, {"$push": {'inventory': egg }} )
+                                        functions.add_item_to_user(user, egg)
 
                     users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
 

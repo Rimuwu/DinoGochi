@@ -874,7 +874,7 @@ class functions:
     def inv_egg(user):
 
         for i in user['inventory']:
-            if items_f['items'][i]['type'] == 'egg':
+            if items_f['items'][i['item_id']]['type'] == 'egg':
                 return True
 
         return False
@@ -915,8 +915,9 @@ class functions:
         return nl
 
     @staticmethod
-    def item_info(item_id, lg):
+    def item_info(us_item, lg):
 
+        item_id = us_item['item_id']
         item = items_f['items'][item_id]
         type = item['type']
         d_text = ''
@@ -984,6 +985,11 @@ class functions:
 
             text =  f"*┌* *🎴 Информация о предмете*\n"
             text += f"*├* Название: {item['nameru']}\n"
+
+            if 'abilities' in us_item.keys():
+                if 'uses' in us_item['abilities'].keys():
+                    text += f"*├* Использований: {us_item['abilities']['uses']}\n"
+
             text += f"*├* Тип: {type}\n"
             text += d_text
             in_text = ['🔮 | Использовать', '🗑 | Выбросить', '🔁 | Передать']
@@ -1048,20 +1054,25 @@ class functions:
 
             text =  f"*┌* *🎴 Subject information*\n"
             text += f"*├* Name: {item['nameen']}\n"
+
+            if 'abilities' in us_item.keys():
+                if 'uses' in us_item['abilities'].keys():
+                    text += f"*├* Uses: {us_item['abilities']['uses']}\n"
+
             text += f"*├* Type: {type}\n"
             text += d_text
             in_text = ['🔮 | Use', '🗑 | Delete', '🔁 | Transfer']
 
         markup_inline = types.InlineKeyboardMarkup()
-        markup_inline.add( types.InlineKeyboardButton( text = in_text[0], callback_data = f"item_{item_id}"),  types.InlineKeyboardButton( text = in_text[1], callback_data = f"remove_item_{item_id}") )
-        markup_inline.add( types.InlineKeyboardButton( text = in_text[2], callback_data = f"exchange_{item_id}") )
+        markup_inline.add( types.InlineKeyboardButton( text = in_text[0], callback_data = f"item_{functions.qr_item_code(us_item)}"),  types.InlineKeyboardButton( text = in_text[1], callback_data = f"remove_item_{functions.qr_item_code(us_item)}") )
+        markup_inline.add( types.InlineKeyboardButton( text = in_text[2], callback_data = f"exchange_{functions.qr_item_code(us_item)}") )
 
         return text, markup_inline
 
     @staticmethod
-    def exchange(bot, message, item_id, bd_user):
+    def exchange(bot, message, user_item, bd_user):
 
-        def zero(message, item_id, bd_user):
+        def zero(message, user_item, bd_user):
 
             if message.text in ['Yes, transfer the item', 'Да, передать предмет']:
                 pass
@@ -1085,7 +1096,7 @@ class functions:
 
             friends_chunks = list(functions.chunks(list(functions.chunks(friends_name, 2)), 3))
 
-            def work_pr(message, friends_id, page, friends_chunks, friends_id_d, item_id, mms = None):
+            def work_pr(message, friends_id, page, friends_chunks, friends_id_d, user_item, mms = None):
                 global pages
 
                 if bd_user['language_code'] == 'ru':
@@ -1131,7 +1142,7 @@ class functions:
 
                         rmk.add(com_buttons)
 
-                    def ret(message, bd_user, page, friends_chunks, friends_id, friends_id_d, item_id):
+                    def ret(message, bd_user, page, friends_chunks, friends_id, friends_id_d, user_item):
                         if message.text in ['↪ Назад', '↪ Back']:
                             res = None
                         else:
@@ -1143,7 +1154,7 @@ class functions:
                             else:
                                 text = "👥 | Return to the friends menu!"
 
-                            bot.send_message(message.chat.id, text, reply_markup = markup('friends-menu', user))
+                            bot.send_message(message.chat.id, text, reply_markup = functions.markup('friends-menu', user))
 
                         else:
                             mms = None
@@ -1153,7 +1164,7 @@ class functions:
                                 else:
                                     page -= 1
 
-                                work_pr(message, friends_id, page, friends_chunks, friends_id_d, item_id, mms = mms)
+                                work_pr(message, friends_id, page, friends_chunks, friends_id_d, user_item, mms = mms)
 
                             if res == '▶':
                                 if page + 1 > len(friends_chunks):
@@ -1161,7 +1172,7 @@ class functions:
                                 else:
                                     page += 1
 
-                                work_pr(message, friends_id, page, friends_chunks, friends_id_d, item_id, mms = mms)
+                                work_pr(message, friends_id, page, friends_chunks, friends_id_d, user_item, mms = mms)
 
                             else:
                                 if res in list(friends_id_d.keys()):
@@ -1169,27 +1180,26 @@ class functions:
                                     bd_user = users.find_one({"userid": bd_user['userid']})
                                     two_user = users.find_one({"userid": fr_id})
 
-                                    if item_id in bd_user['inventory']:
-                                        bd_user['inventory'].remove(item_id)
-                                        two_user['inventory'].append(item_id)
 
-                                        users.update_one( {"userid": two_user['userid']}, {"$push": {'inventory': item_id }} )
-                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+                                    bd_user['inventory'].remove(user_item)
 
-                                        if bd_user['language_code'] == 'ru':
-                                            text = f'🔁 | Предмет был отправлен игроку!'
-                                        else:
-                                            text = f"🔁 | The item has been sent to the player!"
+                                    users.update_one( {"userid": two_user['userid']}, {"$push": {'inventory': user_item }} )
+                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
 
-                                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', bd_user['userid']))
+                                    if bd_user['language_code'] == 'ru':
+                                        text = f'🔁 | Предмет был отправлен игроку!'
+                                    else:
+                                        text = f"🔁 | The item has been sent to the player!"
+
+                                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', bd_user['userid']))
 
                     if mms == None:
                         msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
                     else:
                         msg = mms
-                    bot.register_next_step_handler(msg, ret, bd_user, page, friends_chunks, friends_id, friends_id_d, item_id)
+                    bot.register_next_step_handler(msg, ret, bd_user, page, friends_chunks, friends_id, friends_id_d, user_item)
 
-            work_pr(message, friends_id, page, friends_chunks, friends_id_d, item_id)
+            work_pr(message, friends_id, page, friends_chunks, friends_id_d, user_item)
 
         if bd_user['language_code'] == 'ru':
             com_buttons = ['Да, передать предмет', '↪ Назад']
@@ -1408,11 +1418,15 @@ class functions:
 
     @staticmethod
     def add_item_to_user(user:dict, item_id:str, col:int = 1):
-        item = items_f[item_id]
+
+        item = items_f['items'][item_id]
         d_it = {'item_id': item_id}
         if 'abilities' in item.keys():
-            for k in item.keys():
-                d_it[k] = item[k]
+            abl = {}
+            for k in item['abilities'].keys():
+                abl[k] = item['abilities'][k]
+
+            d_it['abilities'] = abl
 
         for i in range(col):
             users.update_one( {"userid": user['userid']}, {"$push": {'inventory': d_it }} )
@@ -1420,13 +1434,66 @@ class functions:
         return True
 
     @staticmethod
+    def get_dict_item(item_id:str):
+
+        item = items_f['items'][item_id]
+        d_it = {'item_id': item_id}
+        if 'abilities' in item.keys():
+            abl = {}
+            for k in item['abilities'].keys():
+                abl[k] = item['abilities'][k]
+
+            d_it['abilities'] = abl
+
+        return d_it
+
+    @staticmethod
     def item_authenticity(item:dict):
-        item_data = items_f[item_id]
+        item_data = items_f['items'][item['item_id']]
         if list(item.keys()) == ['item_id']:
             return True
 
         else:
-            if item['abilities'] == item_data['abilities']:
-                return True
-            else:
+            try:
+                if item['abilities'] == item_data['abilities']:
+                    return True
+                else:
+                    return False
+            except:
                 return False
+
+    @staticmethod
+    def qr_item_code(item:dict):
+        text = f"i{item['item_id']}"
+        if 'abilities' in item.keys():
+
+            if 'uses' in item['abilities'].keys():
+                # u - ключ код для des_qr
+                text += f".u{item['abilities']['uses']}"
+
+        return text
+
+    @staticmethod
+    def des_qr(it_qr:str):
+        l_data = {}
+        ind = 0
+        for i in it_qr:
+            if i != '.':
+                if ind in l_data.keys():
+                    l_data[ind] += i
+                else:
+                    l_data[ind] = i
+            else:
+                ind += 1
+
+        ret_data = {}
+
+        for i in l_data.keys():
+            tx = list(l_data[i])
+            if tx[0] == 'u':
+                ret_data['uses'] = int(''.join(l_data[i])[1:])
+
+            if tx[0] == 'i':
+                ret_data['id'] = int(''.join(l_data[i])[1:])
+
+        return ret_data

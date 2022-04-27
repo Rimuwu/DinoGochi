@@ -8,7 +8,6 @@ from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageSequence, ImageFilte
 import io
 from io import BytesIO
 import time
-import os
 import threading
 import sys
 from memory_profiler import memory_usage
@@ -180,19 +179,88 @@ def command(message):
     text += f'Thr.count: {threading.active_count()}'
     bot.send_message(user.id, text)
 
-@bot.message_handler(commands=['iam'])
+@bot.message_handler(commands=['new'])
+def command_n(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+
+        def work(members, n):
+            for bd_user in members:
+                nw_inv = []
+                for i in bd_user['inventory']:
+                    nw_inv.append(i)
+
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': [] }} )
+
+                for i in nw_inv:
+                    functions.add_item_to_user(bd_user, i)
+
+                for i in bd_user['activ_items'].keys():
+                    dt = bd_user['activ_items'][i]
+                    if dt != None:
+                        it = functions.get_dict_item(str(dt))
+                        bd_user['activ_items'][i] = it
+
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {'activ_items': bd_user['activ_items'] }} )
+
+            print(f'Программа обновления №{n} завершила работу.')
+
+        non_members = users.find({ })
+        chunks_users = list(functions.chunks( list(non_members), 10 ))
+
+        n = 0
+        for members in chunks_users:
+            n += 1
+            main = threading.Thread(target = work, daemon=True, kwargs = { 'members': members, 'n': n}).start()
+
+        market_ = market.find_one({"id": 1})
+
+        def mr_work(key):
+            pr_ll = []
+            for pr_k in market_[key]['products']:
+                pr = market_[key]['products'][pr_k]
+                pr_ll.append( {'item': functions.get_dict_item(pr['item_id']), 'price': pr['price'], 'col': pr['col'] } )
+
+            if pr_ll != []:
+                market.update_one( {"id": 1}, {"$set": {f'products.{key}.products': pr_ll }} )
+
+                print(f'Продукты с ключём {key} обновлены')
+
+        for us_key in market_['products']:
+            main = threading.Thread(target = mr_work, daemon=True, kwargs = { 'key': us_key}).start()
+
+
+
+@bot.message_handler(commands=['am'])
 def command(message):
     user = message.from_user
     text = str(users.find_one({"userid": user.id}))
     bot.send_message(user.id, text)
 
-@bot.message_handler(commands=['emulate_not'])
+@bot.message_handler(commands=['add_item'])
 def command(message):
-    print('emulate_not')
-    time.sleep(20)
     user = message.from_user
-    bd_user = users.find_one({"userid": user.id})
-    functions.notifications_manager(bot, message.text[13:][:-3], bd_user, message.text[-2:], dino_id = '1')
+    if user.id in [5279769615, 1191252229]:
+        bd = users.find_one({"userid": user.id})
+
+        msg_args = message.text.split()
+        tr = functions.add_item_to_user(bd, msg_args[1], int(msg_args[2]))
+        bot.send_message(user.id, str(msg_args))
+
+
+# @bot.message_handler(commands=['des_qr'])
+# def command(message):
+#     user = message.from_user
+#     text = functions.des_qr('i23.u12')
+#     bot.send_message(user.id, str(text))
+
+# @bot.message_handler(commands=['emulate_not'])
+# def command(message):
+#     print('emulate_not')
+#     time.sleep(20)
+#     user = message.from_user
+#     bd_user = users.find_one({"userid": user.id})
+#     functions.notifications_manager(bot, message.text[13:][:-3], bd_user, message.text[-2:], dino_id = '1')
 
 @bot.message_handler(commands=['start', 'main-menu'])
 def on_start(message):
@@ -1091,8 +1159,14 @@ def on_message(message):
                         lg = "nameen"
 
                     for i in items:
-                        items_id[ items_f['items'][str(i)][lg] ] = i
-                        items_names.append( items_f['items'][str(i)][lg] )
+                        if functions.item_authenticity(i) == True:
+                            items_id[ items_f['items'][ i['item_id'] ][lg] ] = i
+                            items_names.append( items_f['items'][ i['item_id'] ][lg] )
+
+                        else:
+
+                            items_id[ items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i)})" ] = i
+                            items_names.append( items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i)})" )
 
                     items_names.sort()
 
@@ -1112,12 +1186,11 @@ def on_message(message):
                         items_sort.append(f'{n} x{col}')
                         ind_sort_it[f'{n} x{col}'] = n
 
+                    pages_n = []
+
                     pages = list(functions.chunks(list(functions.chunks(items_sort, 2)), 3))
 
                     for i in pages:
-                        for ii in i:
-                            if len(ii) == 1:
-                                ii.append(' ')
 
                         if len(i) != 3:
                             for iii in range(3 - len(i)):
@@ -1138,7 +1211,10 @@ def on_message(message):
 
                         rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
                         for i in pages[page-1]:
-                            rmk.add(i[0], i[1])
+                            if len(i) == 1:
+                                rmk.add( i[0])
+                            else:
+                                rmk.add( i[0], i[1])
 
                         if len(pages) > 1:
                             if bd_user['language_code'] == 'ru':
@@ -1201,8 +1277,8 @@ def on_message(message):
                                     work_pr(message, pages, page, items_id, ind_sort_it)
 
                                 else:
-                                    item_id = items_id[ l_ind_sort_it[res] ]
-                                    text,  markup_inline = functions.item_info(item_id, bd_user['language_code'])
+                                    item = items_id[ l_ind_sort_it[res] ]
+                                    text,  markup_inline = functions.item_info(item, bd_user['language_code'])
 
                                     mms = bot.send_message(message.chat.id, text, reply_markup = markup_inline, parse_mode = 'Markdown')
                                     work_pr(message, pages, page, items_id, ind_sort_it, mms)
@@ -1423,12 +1499,12 @@ def on_message(message):
                                                         bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'actions', user))
                                                         return
 
-                                                    if number <= 5 or number > 28800:
+                                                    if number <= 5 or number > 480:
 
                                                         if bd_user['language_code'] == 'ru':
-                                                            text = '❌ | Требовалось указать время в минутах больше 5-ти минут и меньше 8-ми часов (28800)!'
+                                                            text = '❌ | Требовалось указать время в минутах больше 5-ти минут и меньше 8-ми часов (480)!'
                                                         else:
-                                                            text = '❌ | It was required to specify the time in minutes more than 5 minutes and less than 8 hours (28800)!'
+                                                            text = '❌ | It was required to specify the time in minutes more than 5 minutes and less than 8 hours (480)!'
 
                                                         bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
 
@@ -1450,10 +1526,10 @@ def on_message(message):
 
                                                 if bd_user['language_code'] == 'ru':
                                                     ans = ['↪ Назад']
-                                                    text = '🌙 | Укажите время быстрого сна (сон идёт в 2 раза быстрее длинного) > '
+                                                    text = '🌙 | Укажите время быстрого сна (сон идёт в 2 раза быстрее длинного) в минутах > '
                                                 else:
                                                     ans = ['↪ Back']
-                                                    text = '🌙 | Specify the REM sleep time (sleep is 2 times faster than long sleep) >'
+                                                    text = '🌙 | Specify the REM sleep time (sleep is 2 times faster than long sleep) in minutes >'
 
                                                 rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
                                                 rmk.add(ans[0])
@@ -1689,10 +1765,10 @@ def on_message(message):
                             markup_inline = types.InlineKeyboardMarkup(row_width=2)
 
                             if bd_user['language_code'] == 'ru':
-                                text = ['25 - 60 мин.', '60 - 90 мин.', '90 - 120 мин.']
+                                text = ['5 - 15 мин.', '15 - 30 мин.', '30 - 60 мин.']
                                 m_text = '🎮 Укажите разрешённое время игры > '
                             else:
-                                text = ['25 - 60 min.', '60 - 90 min.', '90 - 120 min.']
+                                text = ['5 - 15 min.', '15 - 30 min.', '30 - 60 min.']
                                 m_text = '🎮 Specify the allowed game time >'
 
                             if message.text in ['🎮 Консоль', '🎮 Console']:
@@ -1805,7 +1881,7 @@ def on_message(message):
                         items_names = []
 
                         for i in nitems:
-                            if data_items[str(i)]['type'] == "+eat":
+                            if data_items[str(i['item_id'])]['type'] == "+eat":
                                 items.append(i)
 
                         if items == []:
@@ -1825,9 +1901,8 @@ def on_message(message):
                             lg = "nameen"
 
                         for i in items:
-                            items_id[ items_f['items'][str(i)][lg] ] = i
-                            items_names.append( items_f['items'][str(i)][lg] )
-
+                            items_id[ items_f['items'][str(i['item_id'])][lg] ] = i
+                            items_names.append( items_f['items'][str(i['item_id'])][lg] )
 
                         items_names.sort()
 
@@ -1844,6 +1919,7 @@ def on_message(message):
                         for n in list(d_it_sort.keys()):
                             col = d_it_sort[n]
                             name = n
+
                             items_sort.append(f'{n} x{col}')
                             ind_sort_it[f'{n} x{col}'] = n
 
@@ -1926,8 +2002,10 @@ def on_message(message):
                                         work_pr(message, pages, page, items_id, ind_sort_it)
 
                                     else:
-                                        item_id = items_id[ l_ind_sort_it[res] ]
+                                        item_id = items_id[ l_ind_sort_it[res] ]['item_id']
+                                        user_item = items_id[ l_ind_sort_it[res] ]
                                         item = items_f['items'][item_id]
+
                                         bd_dino = bd_user['dinos'][ bd_user['settings']['dino_id'] ]
                                         d_dino = json_f['elements'][ str(bd_dino['dino_id']) ]
 
@@ -1973,10 +2051,17 @@ def on_message(message):
                                         if '-mood' in item.keys():
                                             bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= item['-mood']
 
-                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{bd_user["settings"]["dino_id"]}': bd_user['dinos'][ bd_user['settings']['dino_id'] ] }} )
 
-                                        bd_user['inventory'].remove(item_id)
+
+                                        bd_user['inventory'].remove(user_item)
                                         users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+                                        if 'abilities' in user_item.keys():
+                                            if 'uses' in user_item['abilities'].keys():
+                                                user_item['abilities']['uses'] -= 1
+                                                if user_item['abilities']['uses'] > 0:
+                                                    users.update_one( {"userid": user.id}, {"$push": {f'inventory': user_item }} )
 
                                         bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
 
@@ -2177,7 +2262,7 @@ def on_message(message):
                                 coins = 200
                                 bd_user['coins'] += coins
                                 for i in items:
-                                    bd_user['inventory'].append(i)
+                                    functions.add_item_to_user(bd_user, i)
 
                                 members = users.find({ })
                                 fr_member = None
@@ -2203,7 +2288,7 @@ def on_message(message):
                                 bd_user['referal_system']['friend'] = fr_member['userid']
 
                                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'coins': bd_user['coins'] }} )
-                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+
                                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'referal_system': bd_user['referal_system'] }} )
 
                                 if bd_user['language_code'] == 'ru':
@@ -2357,7 +2442,7 @@ def on_message(message):
                             items_names = []
 
                             for i in nitems:
-                                if data_items[str(i)]['type'] == f"{ac_type}_ac":
+                                if data_items[str(i['item_id'])]['type'] == f"{ac_type}_ac":
                                     items.append(i)
 
 
@@ -2367,8 +2452,8 @@ def on_message(message):
                                 lg = "nameen"
 
                             for i in items:
-                                items_id[ items_f['items'][str(i)][lg] ] = i
-                                items_names.append( items_f['items'][str(i)][lg] )
+                                items_id[ items_f['items'][str(i['item_id'])][lg] ] = i
+                                items_names.append( items_f['items'][str(i['item_id'])][lg] )
 
                             items_sort = []
                             d_it_sort = {}
@@ -2427,7 +2512,7 @@ def on_message(message):
                                 if bd_user['activ_items'][ac_type] == None:
                                     act_item = ['нет', 'no']
                                 else:
-                                    act_item = [ items_f['items'][ bd_user['activ_items'][ac_type] ]['nameru'], items_f['items'][ bd_user['activ_items'][ac_type] ]['nameen'] ]
+                                    act_item = [ items_f['items'][ bd_user['activ_items'][ac_type]['item_id'] ] ['nameru'], items_f['items'][ bd_user['activ_items'][ac_type]['item_id'] ]['nameen'] ]
 
                                 if len(pages) > 1:
                                     if bd_user['language_code'] == 'ru':
@@ -2493,16 +2578,15 @@ def on_message(message):
 
                                             if res in ['🔻 Снять аксесcуар', '🔻 Remove the accessory']:
                                                 if bd_user['activ_items'][ac_type] != None:
-                                                    item_id = bd_user['activ_items'][ac_type]
+                                                    item = bd_user['activ_items'][ac_type]
                                                     bd_user['activ_items'][ac_type] = None
-                                                    bd_user['inventory'].append(item_id)
 
                                                     if bd_user['language_code'] == 'ru':
                                                         text = "🎴 | Активный предмет снят"
                                                     else:
                                                         text = "🎴 | Active item removed"
 
-                                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+                                                    users.update_one( {"userid": bd_user['userid']}, {"$push": {'inventory': item }} )
                                                     users.update_one( {"userid": bd_user['userid']}, {"$set": {'activ_items': bd_user['activ_items'] }} )
 
                                                 else:
@@ -2517,16 +2601,16 @@ def on_message(message):
                                                 if bd_user['activ_items'][ac_type] != None:
                                                     bd_user['inventory'].append(bd_user['activ_items'][ac_type])
 
-                                                item_id = items_id[ l_ind_sort_it[res] ]
+                                                item = items_id[ l_ind_sort_it[res] ]
 
-                                                bd_user['activ_items'][ac_type] = item_id
+                                                bd_user['activ_items'][ac_type] = item
 
                                                 if bd_user['language_code'] == 'ru':
                                                     text = "🎴 | Активный предмет установлен!"
                                                 else:
                                                     text = "🎴 | The active item is installed!"
 
-                                                bd_user['inventory'].remove(item_id)
+                                                bd_user['inventory'].remove(item)
                                                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
                                                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'activ_items': bd_user['activ_items'] }} )
 
@@ -2580,8 +2664,8 @@ def on_message(message):
                             lg = "nameen"
 
                         for i in items:
-                            items_id[ items_f['items'][str(i)][lg] ] = i
-                            items_names.append( items_f['items'][str(i)][lg] )
+                            items_id[ items_f['items'][str(i['item_id'])][lg] ] = i
+                            items_names.append( items_f['items'][str(i['item_id'])][lg] )
 
                         items_names.sort()
 
@@ -2690,12 +2774,12 @@ def on_message(message):
                                         work_pr(message, pages, page, items_id, ind_sort_it)
 
                                     else:
-                                        item_id = items_id[ l_ind_sort_it[res] ]
+                                        item = items_id[ l_ind_sort_it[res] ]
 
-                                        def sch_items(item_id, bd_user):
+                                        def sch_items(item, bd_user):
                                             a = 0
                                             for i in bd_user['inventory']:
-                                                if i == item_id:
+                                                if i == item:
                                                     a += 1
                                             return a
 
@@ -2709,11 +2793,11 @@ def on_message(message):
                                         rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
                                         rmk.add(ans[0])
 
-                                        def ret_number(message, ans, bd_user, item_id):
+                                        def ret_number(message, ans, bd_user, item):
                                             number = message.text
                                             try:
                                                 number = int(number)
-                                                mn = sch_items(item_id, bd_user)
+                                                mn = sch_items(item, bd_user)
                                                 if number <= 0 or number >= mn + 1:
                                                     if bd_user['language_code'] == 'ru':
                                                         text = f'0️⃣1️⃣0️⃣ | Введите число от 1 до {mn}!'
@@ -2747,7 +2831,7 @@ def on_message(message):
                                                 else:
                                                     text = "🛒 | Enter the cost of the item x1: "
 
-                                                def ret_number2(message, ans, bd_user, item_id, col):
+                                                def ret_number2(message, ans, bd_user, item, col):
                                                     number = message.text
                                                     try:
                                                         number = int(number)
@@ -2780,10 +2864,10 @@ def on_message(message):
                                                             market_['products'][str(user.id)] = { 'products': {}, 'dinos': {} }
                                                             products = market_['products'][str(user.id)]['products']
 
-                                                        market_['products'][str(user.id)]['products'][ max_k(products) ] = { 'item_id': item_id, 'price': number, 'col': [0, col]}
+                                                        market_['products'][str(user.id)]['products'][ max_k(products) ] = { 'item': item, 'price': number, 'col': [0, col]}
 
                                                         for i in range(col):
-                                                            bd_user['inventory'].remove(item_id)
+                                                            bd_user['inventory'].remove(item)
 
                                                         users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
 
@@ -2797,13 +2881,11 @@ def on_message(message):
                                                         bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
 
 
-
-
                                                 msg = bot.send_message(message.chat.id, text)
-                                                bot.register_next_step_handler(msg, ret_number2, ans, bd_user, item_id, number)
+                                                bot.register_next_step_handler(msg, ret_number2, ans, bd_user, item, number)
 
                                         msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
-                                        bot.register_next_step_handler(msg, ret_number, ans, bd_user, item_id)
+                                        bot.register_next_step_handler(msg, ret_number, ans, bd_user, item)
 
 
                             if mms == None:
@@ -2876,7 +2958,7 @@ def on_message(message):
 
                                 nn = (page - 1) * 5
                                 for pr in w_page:
-                                    item = items_f['items'][ pr['item_id'] ]
+                                    item = items_f['items'][ pr['item']['item_id'] ]
                                     nn += 1
 
                                     if int(w_page.index(pr)) == len(w_page) - 1:
@@ -2887,9 +2969,24 @@ def on_message(message):
                                         n = '├'
 
                                     if bd_user['language_code'] == 'ru':
-                                        text += f"*{n}* {nn}# {item['nameru']}\n    *└* Цена за 1х: {pr['price']}\n        *└* Продано: {pr['col'][0]} / {pr['col'][1]}\n\n"
+                                        text += f"*{n}* {nn}# {item['nameru']}\n    *└* Цена за 1х: {pr['price']}\n"
+                                        text += f"       *└* Продано: {pr['col'][0]} / {pr['col'][1]}"
+
+                                        if 'abilities' in pr['item'].keys():
+                                            if 'uses' in pr['item']['abilities'].keys():
+                                                text += f"\n           *└* Использований: {pr['item']['abilities']['uses']}"
+
+                                        text += '\n\n'
+
                                     else:
-                                        text += f"*{n}* {nn}# {item['nameen']}\n    *└* Price pay for 1х: {pr['price']}\n        *└* Sold: {pr['col'][0]} / {pr['col'][1]}\n\n"
+                                        text += f"*{n}* {nn}# {item['nameen']}\n    *└* Price pay for 1х: {pr['price']}\n"
+                                        text += f"        *└* Sold: {pr['col'][0]} / {pr['col'][1]}"
+
+                                        if 'abilities' in pr['item'].keys():
+                                            if 'uses' in pr['item']['abilities'].keys():
+                                                text += f"\n           *└* Uses: {pr['item']['abilities']['uses']}"
+
+                                        text += '\n\n'
 
                                 if bd_user['language_code'] == 'ru':
                                     text += f'Страница: {page}'
@@ -3008,7 +3105,7 @@ def on_message(message):
 
                                 nn = (page - 1) * 5
                                 for pr in w_page:
-                                    item = items_f['items'][ pr['item_id'] ]
+                                    item = items_f['items'][ pr['item']['item_id'] ]
                                     nn += 1
 
                                     if int(w_page.index(pr)) == len(w_page) - 1:
@@ -3019,9 +3116,24 @@ def on_message(message):
                                         n = '├'
 
                                     if bd_user['language_code'] == 'ru':
-                                        text += f"*{n}* {nn}# {item['nameru']}\n    *└* Цена за 1х: {pr['price']}\n        *└* Продано: {pr['col'][0]} / {pr['col'][1]}\n\n"
+                                        text += f"*{n}* {nn}# {item['nameru']}\n    *└* Цена за 1х: {pr['price']}\n"
+                                        text += f"       *└* Продано: {pr['col'][0]} / {pr['col'][1]}"
+
+                                        if 'abilities' in pr['item'].keys():
+                                            if 'uses' in pr['item']['abilities'].keys():
+                                                text += f"\n           *└* Использований: {pr['item']['abilities']['uses']}"
+
+                                        text += '\n\n'
+
                                     else:
-                                        text += f"*{n}* {nn}# {item['nameen']}\n    *└* Price pay for 1х: {pr['price']}\n        *└* Sold: {pr['col'][0]} / {pr['col'][1]}\n\n"
+                                        text += f"*{n}* {nn}# {item['nameen']}\n    *└* Price pay for 1х: {pr['price']}\n"
+                                        text += f"        *└* Sold: {pr['col'][0]} / {pr['col'][1]}"
+
+                                        if 'abilities' in pr['item'].keys():
+                                            if 'uses' in pr['item']['abilities'].keys():
+                                                text += f"\n           *└* Uses: {pr['item']['abilities']['uses']}"
+
+                                        text += '\n\n'
 
                                 if bd_user['language_code'] == 'ru':
                                     text += f'Страница: {page}'
@@ -3132,7 +3244,7 @@ def on_message(message):
                                         prod = market_['products'][str(user.id)]['products'][nn_number]
 
                                         for i in range(prod['col'][1] - prod['col'][0]):
-                                            bd_user['inventory'].append(prod['item_id'])
+                                            bd_user['inventory'].append(prod['item'])
 
                                         del market_['products'][str(user.id)]['products'][nn_number]
 
@@ -3201,8 +3313,8 @@ def on_message(message):
                                     if uid != str(bd_user['userid']):
                                         userser = market_['products'][uid]['products']
                                         for ki in userser:
-                                            if userser[ki]['item_id'] in s_i:
-                                                sear_items.append( {'user': uid, 'key': ki, 'col': userser[ki]['col'], 'price': userser[ki]['price'], 'item_id': userser[ki]['item_id']} )
+                                            if userser[ki]['item']['item_id'] in s_i:
+                                                sear_items.append( {'user': uid, 'key': ki, 'col': userser[ki]['col'], 'price': userser[ki]['price'], 'item': userser[ki]['item']} )
 
                                 if sear_items == []:
                                     if bd_user['language_code'] == 'ru':
@@ -3226,13 +3338,25 @@ def on_message(message):
                                     text += f"🔍 | По вашему запросу найдено {len(sear_items)} предметов(а) >\n\n"
                                     for i in page:
                                         a += 1
-                                        text += f"*{a}#* {items_f['items'][i['item_id']]['nameru']}\n     *└* Цена за 1х: {i['price']}\n         *└* Количесвто: {i['col'][1] - i['col'][0]}\n\n"
+                                        text += f"*{a}#* {items_f['items'][i['item']['item_id']]['nameru']}\n     *└* Цена за 1х: {i['price']}\n         *└* Количесвто: {i['col'][1] - i['col'][0]}"
+
+                                        if 'abilities' in i['item'].keys():
+                                            if 'uses' in i['item']['abilities'].keys():
+                                                text += f"\n           *└* Использований: {i['item']['abilities']['uses']}"
+
+                                        text += '\n\n'
                                         in_l.append( types.InlineKeyboardButton( text = str(a) + '#', callback_data = f"market_buy_[{i['user']}, {i['key']}]"))
                                 else:
                                     text += f'🔍 | Your search found {len(search_items)} item(s) >\n\n'
                                     for i in page:
                                         a += 1
-                                        text += f"*{a}#* {items_f['items'][i['item_id']]['nameen']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}\n\n"
+                                        text += f"*{a}#* {items_f['items'][i['item_id']]['nameen']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}"
+
+                                        if 'abilities' in i['item'].keys():
+                                            if 'uses' in i['item']['abilities'].keys():
+                                                text += f"\n           *└* Uses: {i['item']['abilities']['uses']}"
+
+                                        text += '\n\n'
                                         in_l.append( types.InlineKeyboardButton( text = str(a) + '#', callback_data = f"market_buy_[{i['user']}, {i['key']}]"))
 
 
@@ -3307,13 +3431,28 @@ def on_message(message):
                             text += f"🔍 | Случайные предметы с рынка >\n\n"
                             for i in page:
                                 a += 1
-                                text += f"*{a}#* {items_f['items'][i['item_id']]['nameru']}\n     *└* Цена за 1х: {i['price']}\n         *└* Количесвто: {i['col'][1] - i['col'][0]}\n\n"
+                                text += f"*{a}#* {items_f['items'][i['item']['item_id']]['nameru']}\n     *└* Цена за 1х: {i['price']}\n         *└* Количесвто: {i['col'][1] - i['col'][0]}"
+
+                                if 'abilities' in i['item'].keys():
+                                    if 'uses' in i['item']['abilities'].keys():
+                                        text += f"\n           *└* Использований: {i['item']['abilities']['uses']}"
+
+                                text += '\n\n'
+
                                 in_l.append( types.InlineKeyboardButton( text = str(a) + '#', callback_data = f"market_buy_[{i['user']}, {i['key']}]"))
+
                         else:
                             text += f'🔍 | Your search found {len(search_items)} item(s) >\n\n'
                             for i in page:
                                 a += 1
-                                text += f"*{a}#* {items_f['items'][i['item_id']]['nameen']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}\n\n"
+                                text += f"*{a}#* {items_f['items'][i['item_id']]['nameen']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}"
+
+                                if 'abilities' in i['item'].keys():
+                                    if 'uses' in i['item']['abilities'].keys():
+                                        text += f"\n           *└* Uses: {i['item']['abilities']['uses']}"
+
+                                text += '\n\n'
+
                                 in_l.append( types.InlineKeyboardButton( text = str(a) + '#', callback_data = f"market_buy_[{i['user']}, {i['key']}]"))
 
                         if len(in_l) == 1:
@@ -3396,7 +3535,7 @@ def answer(call):
             else:
                 lg = 'en'
 
-            users.insert_one({'userid': user.id, 'last_m': int(time.time()), 'dinos': {}, 'eggs': [], 'notifications': {}, 'settings': {'notifications': True, 'dino_id': '1'}, 'language_code': lg, 'inventory': [], 'coins': 0, 'lvl': [1, 0], 'activ_items': {'game': None, 'hunt': None, 'journey': None, 'unv': None}, 'friends': { 'friends_list': [], 'requests': [] } })
+            users.insert_one({'userid': user.id, 'last_m': int(time.time()), 'dinos': {}, 'eggs': [], 'notifications': {}, 'settings': {'notifications': True, 'dino_id': '1', 'iid': 0}, 'language_code': lg, 'inventory': [], 'coins': 0, 'lvl': [1, 0], 'activ_items': {'game': None, 'hunt': None, 'journey': None, 'unv': None}, 'friends': { 'friends_list': [], 'requests': [] } })
 
             markup_inline = types.InlineKeyboardMarkup()
             item_1 = types.InlineKeyboardButton( text = '🥚 1', callback_data = 'egg_answer_1')
@@ -3501,11 +3640,11 @@ def answer(call):
         n_s = int(call.data[:1])
         dino_id = call.data[11:]
         if n_s == 1:
-            time_m = random.randint(25, 60) * 60
+            time_m = random.randint(5, 15) * 60
         if n_s == 2:
-            time_m = random.randint(60, 90) * 60
+            time_m = random.randint(15, 30) * 60
         if n_s == 3:
-            time_m = random.randint(90, 120) * 60
+            time_m = random.randint(30, 60) * 60
 
         if bd_user['dinos'][dino_id]['activ_status'] != 'pass_active':
             return
@@ -3729,7 +3868,7 @@ def answer(call):
 
     elif call.data[:5] == 'item_':
 
-        def us_item(message, item, dino_dict, bd_user, it_id, sl):
+        def us_item(message, item, dino_dict, bd_user, user_item, list_inv, list_inv_id, sl):
             if sl == 2:
                 dino, dii = dino_dict[message.text][0], dino_dict[message.text][1]
             if sl == 1:
@@ -3742,7 +3881,7 @@ def answer(call):
                 else:
                     text = f"❤ | You have restored {item['act']}% of the dinosaur's health!"
 
-                bd_user['inventory'].remove(it_id)
+                bd_user['inventory'].remove(user_item)
                 users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dii}.stats.heal': item['act'] }} )
                 users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
 
@@ -3753,7 +3892,7 @@ def answer(call):
                 else:
                     text = f"⚡ | You have recovered {item['act']}% of the dinosaur's energy!"
 
-                bd_user['inventory'].remove(it_id)
+                bd_user['inventory'].remove(user_item)
                 users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dii}.stats.unv': item['act'] }} )
                 users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
 
@@ -3761,8 +3900,8 @@ def answer(call):
                 ok = True
 
                 for i in item['materials']:
-                    if i in bd_user['inventory']:
-                        bd_user['inventory'].remove(i)
+                    if i in list_inv_id:
+                        bd_user['inventory'].remove( list_inv[list_inv_id.index(i)] )
                     else:
                         ok = False
                         break
@@ -3775,8 +3914,7 @@ def answer(call):
                         text = f"🍡 | The item is created!"
 
                     for i in item['create']:
-                        bd_user['inventory'].append(i)
-                    users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
+                        functions.add_item_to_user(bd_user, i)
 
                 else:
 
@@ -3824,7 +3962,7 @@ def answer(call):
                         egg_n = str(random.choice(list(json_f['data']['egg'])))
 
                         bd_user['dinos'][ functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': inc_time, 'egg_id': egg_n, 'quality': item['inc_type']}
-                        bd_user['inventory'].remove(it_id)
+                        bd_user['inventory'].remove(user_item)
                         users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
                         users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
 
@@ -3857,74 +3995,227 @@ def answer(call):
             if '-eat' in item.keys():
                 users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dii}.stats.eat': item['-eat'] * -1 }} )
 
+            if 'abilities' in user_item.keys():
+                if 'uses' in item['abilities'].keys():
+
+                    user_item['abilities']['uses'] -= 1
+                    if user_item['abilities']['uses'] > 0:
+                        users.update_one( {"userid": user.id}, {"$push": {f'inventory': user_item }} )
+
             bot.send_message(user.id, text, parse_mode = 'Markdown')
 
         bd_user = users.find_one({"userid": user.id})
-        it_id = str(call.data[5:])
-        if it_id in bd_user['inventory']:
+        data = functions.des_qr(str(call.data[5:]))
+
+        it_id = str(data['id'])
+        list_inv = list(bd_user['inventory'])
+        list_inv_id = []
+        for i in list_inv:
+            list_inv_id.append(i['item_id'])
+
+        if it_id in list_inv_id:
             item = items_f['items'][it_id]
 
-            n_dp, dp_a = functions.dino_pre_answer(bot, call)
-            if n_dp == 1:
+            ok = None
+            if 'abilities' in item.keys():
+                for key_c in data.keys():
+                    for it in list_inv:
+                        if key_c != 'id':
+                            if 'abilities' in it.keys():
+                                if it['abilities'][key_c] == data[key_c] or ( type(data[key_c]) == int and it['abilities'][key_c] <= data[key_c] ):
+                                    ok = it
+                                    break
 
-                if functions.inv_egg(bd_user) == True and item['type'] == 'egg':
-                    us_item(call, item, {}, bd_user, it_id, 3)
+                user_item = ok
 
+            else:
+
+                user_item = list_inv[list_inv_id.index(it_id)]
+                ok = '12'
+
+            if ok == None:
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'❌ | Предмет не найден в инвентаре!'
                 else:
-                    bot.send_message(user.id, f'❌')
+                    text = f"❌ | Item not found in inventory!"
+
+                bot.send_message(user.id, text, parse_mode = 'Markdown')
+
+            if ok != None:
+
+                n_dp, dp_a = functions.dino_pre_answer(bot, call)
+                if n_dp == 1:
+
+                    if functions.inv_egg(bd_user) == True and item['type'] == 'egg':
+                        us_item(call, item, {}, bd_user, user_item, list_inv, list_inv_id, 3)
+
+                    else:
+                        bot.send_message(user.id, f'❌')
 
 
-            if n_dp == 2:
-                dino_dict = [dp_a, list(bd_user['dinos'].keys())[0] ]
-                us_item(call, item, dino_dict, bd_user, it_id, 1)
+                if n_dp == 2:
+                    dino_dict = [dp_a, list(bd_user['dinos'].keys())[0] ]
+                    us_item(call, item, dino_dict, bd_user, user_item, list_inv, list_inv_id, 1)
 
-            if n_dp == 3:
-                rmk = dp_a[0]
-                text = dp_a[1]
-                dino_dict = dp_a[2]
+                if n_dp == 3:
+                    rmk = dp_a[0]
+                    text = dp_a[1]
+                    dino_dict = dp_a[2]
 
-                msg = bot.send_message(user.id, text, reply_markup = rmk)
-                bot.register_next_step_handler(msg, us_item, item, dino_dict, bd_user, it_id, 2)
+                    msg = bot.send_message(user.id, text, reply_markup = rmk)
+                    bot.register_next_step_handler(msg, us_item, item, dino_dict, bd_user, user_item, list_inv, list_inv_id, 2)
 
     elif call.data[:12] == 'remove_item_':
 
         bd_user = users.find_one({"userid": user.id})
-        it_id = str(call.data[12:])
-        if it_id in bd_user['inventory']:
+        data = functions.des_qr(str(call.data[12:]))
+
+        it_id = str(data['id'])
+        list_inv = list(bd_user['inventory'])
+        list_inv_id = []
+        for i in list_inv:
+            list_inv_id.append(i['item_id'])
+
+        if it_id in list_inv_id:
             item = items_f['items'][it_id]
 
-            if bd_user['language_code'] == 'ru':
-                text = '🗑 | Вы уверены что хотите удалить данный предмет?'
-                in_text = ['✔ Удалить', '❌ Отмена']
+            ok = None
+            if 'abilities' in item.keys():
+                for key_c in data.keys():
+                    for it in list_inv:
+                        if key_c != 'id':
+                            if 'abilities' in it.keys():
+                                if it['abilities'][key_c] == data[key_c] or ( type(data[key_c]) == int and it['abilities'][key_c] <= data[key_c] ):
+                                    ok = it
+                                    break
+
+                user_item = ok
+
             else:
-                text = '🗑 | Are you sure you want to delete this item?'
-                in_text = ['✔ Delete', '❌ Cancel']
 
-            markup_inline = types.InlineKeyboardMarkup()
-            markup_inline.add( types.InlineKeyboardButton( text = in_text[0], callback_data = f"remove_{it_id}"),  types.InlineKeyboardButton( text = in_text[1], callback_data = f"cancel_remove") )
+                user_item = list_inv[list_inv_id.index(it_id)]
+                ok = '12'
 
-            bot.send_message(user.id, text, reply_markup = markup_inline)
+            if ok == None:
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'❌ | Предмет не найден в инвентаре!'
+                else:
+                    text = f"❌ | Item not found in inventory!"
+
+                bot.send_message(user.id, text, parse_mode = 'Markdown')
+
+            if ok != None:
+
+                if bd_user['language_code'] == 'ru':
+                    text = '🗑 | Вы уверены что хотите удалить данный предмет?'
+                    in_text = ['✔ Удалить', '❌ Отмена']
+                else:
+                    text = '🗑 | Are you sure you want to delete this item?'
+                    in_text = ['✔ Delete', '❌ Cancel']
+
+                markup_inline = types.InlineKeyboardMarkup()
+                markup_inline.add( types.InlineKeyboardButton( text = in_text[0], callback_data = f"remove_{functions.qr_item_code(user_item)}"),  types.InlineKeyboardButton( text = in_text[1], callback_data = f"cancel_remove") )
+
+                bot.send_message(user.id, text, reply_markup = markup_inline)
 
     elif call.data[:7] == 'remove_':
         bd_user = users.find_one({"userid": user.id})
-        it_id = str(call.data[7:])
-        if it_id in bd_user['inventory']:
+        data = functions.des_qr(str(call.data[7:]))
 
-            bd_user['inventory'].remove(it_id)
-            users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
+        it_id = str(data['id'])
+        list_inv = list(bd_user['inventory'])
+        list_inv_id = []
+        for i in list_inv:
+            list_inv_id.append(i['item_id'])
 
-            if bd_user['language_code'] == 'ru':
-                text = '🗑 | Предмет удалён.'
+        if it_id in list_inv_id:
+            item = items_f['items'][it_id]
+
+            ok = None
+            if 'abilities' in item.keys():
+                for key_c in data.keys():
+                    for it in list_inv:
+                        if key_c != 'id':
+                            if 'abilities' in it.keys():
+                                if it['abilities'][key_c] == data[key_c] or ( type(data[key_c]) == int and it['abilities'][key_c] <= data[key_c] ):
+                                    ok = it
+                                    break
+
+                user_item = ok
+
             else:
-                text = '🗑 | The item has been deleted.'
 
-            bot.edit_message_text(text, user.id, call.message.message_id)
+                user_item = list_inv[list_inv_id.index(it_id)]
+                ok = '12'
+
+            if ok == None:
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'❌ | Предмет не найден в инвентаре!'
+                else:
+                    text = f"❌ | Item not found in inventory!"
+
+                bot.send_message(user.id, text, parse_mode = 'Markdown')
+
+            if ok != None:
+
+                bd_user['inventory'].remove(user_item)
+                users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+                if bd_user['language_code'] == 'ru':
+                    text = '🗑 | Предмет удалён.'
+                else:
+                    text = '🗑 | The item has been deleted.'
+
+                bot.edit_message_text(text, user.id, call.message.message_id)
 
     elif call.data == "cancel_remove":
         bot.delete_message(user.id, call.message.message_id)
 
     elif call.data[:9] == 'exchange_':
-        functions.exchange(bot, call.message, str(call.data[9:]), bd_user)
+        bd_user = users.find_one({"userid": user.id})
+        data = functions.des_qr(str(call.data[7:]))
+
+        it_id = str(data['id'])
+        list_inv = list(bd_user['inventory'])
+        list_inv_id = []
+        for i in list_inv:
+            list_inv_id.append(i['item_id'])
+
+        if it_id in list_inv_id:
+            item = items_f['items'][it_id]
+
+            ok = None
+            if 'abilities' in item.keys():
+                for key_c in data.keys():
+                    for it in list_inv:
+                        if key_c != 'id':
+                            if 'abilities' in it.keys():
+                                if it['abilities'][key_c] == data[key_c] or ( type(data[key_c]) == int and it['abilities'][key_c] <= data[key_c] ):
+                                    ok = it
+                                    break
+
+                user_item = ok
+
+            else:
+
+                user_item = list_inv[list_inv_id.index(it_id)]
+                ok = '12'
+
+            if ok == None:
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'❌ | Предмет не найден в инвентаре!'
+                else:
+                    text = f"❌ | Item not found in inventory!"
+
+                bot.send_message(user.id, text, parse_mode = 'Markdown')
+
+            if ok != None:
+
+                functions.exchange(bot, call.message, user_item, bd_user)
 
     elif call.data[:11] == 'market_buy_':
         l = eval(call.data[11:])
@@ -3978,7 +4269,7 @@ def answer(call):
                                 return
 
                             for i in range(number):
-                                bd_user['inventory'].append(mmd['item_id'])
+                                bd_user['inventory'].append(mmd['item'])
 
                             if mr_user != None:
                                 users.update_one( {"userid": us_id}, {"$inc": {'coins': mmd['price'] * number }} )
@@ -4000,7 +4291,7 @@ def answer(call):
 
                             bot.send_message(call.message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
 
-                        if message.text in [f"Yes, purchase {items_f['items'][mmd['item_id']]['nameru']}", f"Да, приобрести {items_f['items'][mmd['item_id']]['nameru']}"]:
+                        if message.text in [f"Yes, purchase {items_f['items'][mmd['item']['item_id']]['nameru']}", f"Да, приобрести {items_f['items'][mmd['item']['item_id']]['nameru']}"]:
                             pass
 
                         elif message.text in [ '🛒 Рынок', '🛒 Market' ]:
@@ -4039,10 +4330,10 @@ def answer(call):
 
                     if bd_user['language_code'] == 'ru':
                         text = f"🛒 | Вы уверены что вы хотите купить {items_f['items'][mmd['item_id']]['nameru']}?"
-                        ans = [f"Да, приобрести {items_f['items'][mmd['item_id']]['nameru']}", '🛒 Рынок']
+                        ans = [f"Да, приобрести {items_f['items'][mmd['item']['item_id']]['nameru']}", '🛒 Рынок']
                     else:
                         text = f"🛒 | Are you sure you want to buy {items_f['items'][mod['item_id']]['nameen']}?"
-                        ans = [f"Yes, purchase {items_f['items'][mmd['item_id']]['nameru']}", '🛒 Market']
+                        ans = [f"Yes, purchase {items_f['items'][mmd['item']['item_id']]['nameru']}", '🛒 Market']
 
                     rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
                     rmk.add(ans[0], ans[1])
@@ -4080,11 +4371,11 @@ def answer(call):
 
 
 print(f'Бот {bot.get_me().first_name} запущен!')
-if bot.get_me().first_name == 'DinoGochi' or True:
-    main_checks.start()
-    thr_icub.start()
-    thr_notif.start()
-    memory.start()
-    rayt_thr.start()
+# if bot.get_me().first_name == 'DinoGochi' or False:
+#     main_checks.start()
+#     thr_icub.start()
+#     thr_notif.start()
+#     memory.start()
+#     rayt_thr.start()
 
 bot.infinity_polling()
