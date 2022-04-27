@@ -360,7 +360,7 @@ class checks:
                         if random.randint(1, 65) == 1: #unv
                             dinos_stats['unv'] -= random.randint(0,1)
 
-                        if user['activ_items']['hunt'] == '15':
+                        if user['activ_items']['hunt']['item_id'] == '15':
                             pr_hunt = 15
                         else:
                             pr_hunt = 20
@@ -368,7 +368,7 @@ class checks:
                         r = random.randint(1, pr_hunt)
                         if r == 1:
 
-                            if user['activ_items']['hunt'] == '31':
+                            if user['activ_items']['hunt']['item_id'] == '31':
                                 col_l1 = ['27', '11', "35"]
                                 col_l2 = ['6', '11', "35"]
                                 col_l3 = ['6', "35"]
@@ -684,7 +684,7 @@ class checks:
 
                                     event = random.choice(events)
                                     if event == 'rain':
-                                        if user['activ_items']['journey'] != '14':
+                                        if user['activ_items']['journey']['item_id'] != '14':
 
                                             mood = random.randint(1, 15)
                                             user['dinos'][dino_id]['stats']['mood'] -= mood
@@ -728,7 +728,7 @@ class checks:
                                         unv = random.randint(1, 10)
                                         dinos_stats['unv'] -= unv
 
-                                        if user['activ_items']['journey'] != '29' and random.randint(1,2) == 1:
+                                        if user['activ_items']['journey']['item_id'] != '29' and random.randint(1,2) == 1:
                                             heal = random.randint(1, 5)
                                             dinos_stats['heal'] -= heal
                                             textru = f'\nДинозавр не смог избежать ран, он теряет {heal}% здоровья.'

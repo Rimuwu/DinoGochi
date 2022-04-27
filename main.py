@@ -180,6 +180,59 @@ def command(message):
     bot.send_message(user.id, text)
 
 
+@bot.message_handler(commands=['new_y'])
+def command_n(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+
+        def work(members, n):
+            print(f'Программа обновления №{n} начала работу.')
+            for bd_user in members:
+                for i in bd_user['inventory']:
+                    data_item = items_f['items'][i['item_id']]
+                    if 'abilities' in data_item.keys():
+                        if 'abilities' not in i.keys():
+                            bd_user['inventory'].append(functions.get_dict_item(i['item_id']))
+                            bd_user['inventory'].remove(i)
+
+
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+
+            print(f'Программа обновления №{n} завершила работу.')
+
+        non_members = users.find({ })
+        chunks_users = list(functions.chunks( list(non_members), 2 ))
+
+        n = 0
+        for members in chunks_users:
+            n += 1
+            main = threading.Thread(target = work, daemon=True, kwargs = { 'members': members, 'n': n}).start()
+
+# @bot.message_handler(commands=['market_y'])
+# def command_n(message):
+#     user = message.from_user
+#     if user.id in [5279769615, 1191252229]:
+#         market_ = market.find_one({"id": 1})
+#
+#         def mr_work(key):
+#             pr_ll = []
+#             for pr_k in market_['products'][key]['products']:
+#                 pr = market_['products'][key]['products'][pr_k]
+#                 data_item = items_f['items'][pr['item']['item_id']]
+#                 if 'abilities' in data_item.keys():
+#                     if 'abilities' not in pr['item'].keys():
+#             #     pr_ll.append( {'item': functions.get_dict_item(pr['item_id']), 'price': pr['price'], 'col': pr['col'] } )
+#             #
+#             # if pr_ll != []:
+#             #     market.update_one( {"id": 1}, {"$set": {f'products.{key}.products': pr_ll }} )
+#
+#                 print(f'Продукты с ключём {key} обновлены')
+#
+#         for us_key in market_['products']:
+#             main = threading.Thread(target = mr_work, daemon=True, kwargs = { 'key': us_key}).start()
+
+
 @bot.message_handler(commands=['am'])
 def command(message):
     user = message.from_user
@@ -1399,7 +1452,7 @@ def on_message(message):
 
                                         bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
 
-                                    if bd_user['activ_items']['unv'] != '16':
+                                    if bd_user['activ_items']['unv']['item_id'] != '16':
                                         dl_sleep(bd_user, message)
 
                                     else:
