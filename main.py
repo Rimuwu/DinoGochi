@@ -4278,10 +4278,10 @@ def answer(call):
                         bot.register_next_step_handler(msg, reg, mmd, us_id, key_i)
 
                     if bd_user['language_code'] == 'ru':
-                        text = f"🛒 | Вы уверены что вы хотите купить {items_f['items'][mmd['item_id']]['nameru']}?"
+                        text = f"🛒 | Вы уверены что вы хотите купить {items_f['items'][mmd['item']['item_id']]['nameru']}?"
                         ans = [f"Да, приобрести {items_f['items'][mmd['item']['item_id']]['nameru']}", '🛒 Рынок']
                     else:
-                        text = f"🛒 | Are you sure you want to buy {items_f['items'][mod['item_id']]['nameen']}?"
+                        text = f"🛒 | Are you sure you want to buy {items_f['items'][mmd['item']['item_id']]['nameen']}?"
                         ans = [f"Yes, purchase {items_f['items'][mmd['item']['item_id']]['nameru']}", '🛒 Market']
 
                     rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
