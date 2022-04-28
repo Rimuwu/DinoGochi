@@ -182,8 +182,6 @@ rayt_thr = threading.Thread(target = rayt, daemon=True)
 #             n += 1
 #             main = threading.Thread(target = work, daemon=True, kwargs = { 'members': members, 'n': n}).start()
 
-
-
 @bot.message_handler(commands=['stats'])
 def command(message):
     user = message.from_user
@@ -4158,8 +4156,7 @@ def answer(call):
 
     elif call.data[:9] == 'exchange_':
         bd_user = users.find_one({"userid": user.id})
-        data = functions.des_qr(str(call.data[7:]))
-
+        data = functions.des_qr(str(call.data[9:]))
         it_id = str(data['id'])
         list_inv = list(bd_user['inventory'])
         list_inv_id = []

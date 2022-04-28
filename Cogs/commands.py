@@ -455,7 +455,7 @@ class commands:
                                 text += f"\n\n🌳 *┌* Путешествие: \n·  Осталось: { functions.time_end(w_t) }"
 
                             if bd_dino['activ_status'] == 'game':
-                                if bd_user['activ_items']['game']['item_id'] == '4':
+                                if bd_user['activ_items']['game']['item_id'] != None and bd_user['activ_items']['game']['item_id'] == '4':
                                     w_t = bd_dino['game_time'] - time.time()
                                     if w_t < 0:
                                         w_t = 0

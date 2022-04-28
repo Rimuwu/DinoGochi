@@ -1212,7 +1212,7 @@ class functions:
         rmk.add(com_buttons[0], com_buttons[1])
 
         msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
-        bot.register_next_step_handler(msg, zero, item_id, bd_user)
+        bot.register_next_step_handler(msg, zero, user_item, bd_user)
 
     def member_profile(bot, mem_id, lang):
         try:
