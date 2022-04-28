@@ -154,6 +154,35 @@ def rayt(): #проверка каждые 5 секунд
 
 rayt_thr = threading.Thread(target = rayt, daemon=True)
 
+# @bot.message_handler(commands=['nw'])
+# def command_n(message):
+#     user = message.from_user
+#     if user.id in [5279769615, 1191252229]:
+#
+#         def work(members, n):
+#             for bd_user in members:
+#                 nw_inv = bd_user['inventory'].copy()
+#
+#                 for i in bd_user['inventory']:
+#                     if 'abilities' in i.keys():
+#                         dt_it = items_f['items'][i['item_id']]
+#                         if dt_it['abilities'] != i['abilities']:
+#                             nw_inv.remove(i)
+#
+#                 if nw_inv != bd_user['inventory']:
+#                     users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': nw_inv }} )
+#
+#             print(f'Программа обновления №{n} завершила работу.')
+#
+#         non_members = users.find({ })
+#         chunks_users = list(functions.chunks( list(non_members), 10 ))
+#
+#         n = 0
+#         for members in chunks_users:
+#             n += 1
+#             main = threading.Thread(target = work, daemon=True, kwargs = { 'members': members, 'n': n}).start()
+
+
 
 @bot.message_handler(commands=['stats'])
 def command(message):
@@ -3818,6 +3847,7 @@ def answer(call):
     elif call.data[:5] == 'item_':
 
         def us_item(message, item, dino_dict, bd_user, user_item, list_inv, list_inv_id, sl):
+
             if sl == 2:
                 dino, dii = dino_dict[message.text][0], dino_dict[message.text][1]
             if sl == 1:
