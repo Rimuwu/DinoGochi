@@ -154,10 +154,67 @@ def rayt(): #проверка каждые 5 секунд
 
 rayt_thr = threading.Thread(target = rayt, daemon=True)
 
-# @bot.message_handler(commands=['stic'])
-# def command_n(message):
-#     user = message.from_user
-#     bot.create_new_sticker_set(user.id, 'dinogochi test 1', 'dinogochi test 1', '🍕', open('st.png'))
+@bot.message_handler(commands=['stic'])
+def command_n(message):
+    import os
+
+    def work(img_l):
+        print(': Start')
+        for img in img_l:
+
+            #
+            if str(img)[:4] == 'dino':
+                emoji = '🦕'
+            else:
+                emoji = '🥚'
+
+            image = Image.open(img_dir + img).resize((512,512), Image.ANTIALIAS)
+            image.save(f'sticker.png')
+
+            ry = bot.add_sticker_to_set(user_id = user.id, name = f'Stickers_by_{us}', emojis = emoji, png_sticker = open(f'sticker.png', 'rb'))
+
+        print(': Ready')
+
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        us = bot.get_me().username
+        try:
+            ry = bot.create_new_sticker_set(user.id, f'Stickers_by_{us}', f'Dinogochi', '🎈', open('st_av.png', 'rb'))
+            print(ry)
+        except:
+            print('90')
+
+
+        img_dir = 'images/stcis/'
+        t = threading.Thread(target = work, daemon=True, kwargs = {'img_l': os.listdir(img_dir)}).start()
+
+@bot.message_handler(commands=['stic_memes'])
+def command_n(message):
+    import os
+
+    def work(img_l):
+        print(': Start')
+        for img in img_l:
+
+            emoji = '🦕'
+
+            ry = bot.add_sticker_to_set(user_id = user.id, name = f'Memes_by_{us}', emojis = emoji, png_sticker = open(img_dir + str(img), 'rb'))
+
+        print(': Ready')
+
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        us = bot.get_me().username
+        try:
+            ry = bot.create_new_sticker_set(user.id, f'Memes_by_{us}', f'MemesDinogochi', '🎈', open('stmeme_av.png', 'rb'))
+            print(ry)
+        except:
+            print('901')
+
+
+        img_dir = 'images/memes/'
+        t = threading.Thread(target = work, daemon=True, kwargs = {'img_l': os.listdir(img_dir)}).start()
+
 
 # @bot.message_handler(commands=['nw'])
 # def command_n(message):
@@ -2764,8 +2821,14 @@ def on_message(message):
                             lg = "nameen"
 
                         for i in items:
-                            items_id[ items_f['items'][str(i['item_id'])][lg] ] = i
-                            items_names.append( items_f['items'][str(i['item_id'])][lg] )
+                            if functions.item_authenticity(i) == True:
+                                items_id[ items_f['items'][ i['item_id'] ][lg] ] = i
+                                items_names.append( items_f['items'][ i['item_id'] ][lg] )
+
+                            else:
+
+                                items_id[ items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i)})" ] = i
+                                items_names.append( items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i)})" )
 
                         items_names.sort()
 
@@ -2788,9 +2851,6 @@ def on_message(message):
                         pages = list(functions.chunks(list(functions.chunks(items_sort, 2)), 3))
 
                         for i in pages:
-                            for ii in i:
-                                if len(ii) == 1:
-                                    ii.append(' ')
 
                             if len(i) != 3:
                                 for iii in range(3 - len(i)):
