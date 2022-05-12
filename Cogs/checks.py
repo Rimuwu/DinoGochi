@@ -462,7 +462,7 @@ class checks:
                             if random.randint(1, 45) == 1: #unv
                                 lvl_ += random.randint(0,20)
 
-                            r_e_j = random.randint(1,30)
+                            r_e_j = random.randint(1,25)
                             if r_e_j == 1:
                                 if random.randint(1,3) != 1:
 
@@ -503,7 +503,7 @@ class checks:
                                                     if bot_friend != None:
                                                         for k_dino in bd_friend['dinos'].keys():
                                                             fr_dino = bd_friend['dinos'][k_dino]
-                                                            if fr_dino['activ_status'] == 'journey':
+                                                            if 'activ_status' in fr_dino.keys() and fr_dino['activ_status'] == 'journey':
                                                                 fr_d['friend_bd'] = bd_friend
                                                                 fr_d['friend_in_bot'] = bot_friend
                                                                 fr_d['dino_id'] = k_dino
@@ -578,7 +578,7 @@ class checks:
 
                                     elif event == 'random_items':
 
-                                        item = functions.random_items(["1", "2", '25'], ['17', '18', '19'], ['26', '27', '28'], ["30", "32", '31'], ["30", "32", '31'])
+                                        item = functions.random_items(["1", "2", '25'], ['17', '18', '19'], ['26', '27', '28'], ["30", "32", "39", "41", "43"], ["30", "32", "39", "41", "43"])
 
                                         if mood_n == True:
 
@@ -598,7 +598,7 @@ class checks:
 
                                     elif event == 'random_items_leg':
 
-                                        item = functions.random_items(["4", '14', "15", "16"], ["4", '14', "15", "16", '31'], ["30", "32", '34', "19", '31'], ["37", "19", '31'], ["21", "37", '31'])
+                                        item = functions.random_items(["4", '14', "15", "16"], ["4", '14', "15", "16", "39", "41", "43"], ["30", "32", '34', "19", "39", "41"], ["37", "19", "39", "41", "43"], ["21", "37", "39", "41", "43"])
                                         if mood_n == True:
 
                                             if user['language_code'] == 'ru':
@@ -617,9 +617,9 @@ class checks:
 
                                     elif event == 'egg':
 
-                                        # eggs = ["3", '20', '21', '22', '23', '24']
+
                                         egg = functions.random_items(['21', "3"], ['20', "3"], ['22'], ['23', "3"], ['24', "3"])
-                                        # egg = random.choice(eggs)
+
                                         if mood_n == True:
 
                                             if user['language_code'] == 'ru':
@@ -849,7 +849,7 @@ class checks:
                 expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
                 if lvl_ != 0 or user['lvl'][1] >= expp:
                     user['lvl'][1] += lvl_
-                    if user['lvl'][0] < 100:
+                    if user['lvl'][0] < 101:
                         if user['lvl'][1] >= expp:
                             user['lvl'][0] += 1
                             user['lvl'][1] = user['lvl'][1] - expp
@@ -860,7 +860,7 @@ class checks:
                                         egg = random.choice(['20', '22'])
                                         rf_fr = users.find_one({"userid": user['referal_system']['friend']})
 
-                                        functions.add_item_to_user(user, egg)
+                                        functions.add_item_to_user(rf_fr, egg)
 
                     users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
 

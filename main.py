@@ -154,67 +154,6 @@ def rayt(): #проверка каждые 5 секунд
 
 rayt_thr = threading.Thread(target = rayt, daemon=True)
 
-@bot.message_handler(commands=['stic'])
-def command_n(message):
-    import os
-
-    def work(img_l):
-        print(': Start')
-        for img in img_l:
-
-            #
-            if str(img)[:4] == 'dino':
-                emoji = '🦕'
-            else:
-                emoji = '🥚'
-
-            image = Image.open(img_dir + img).resize((512,512), Image.ANTIALIAS)
-            image.save(f'sticker.png')
-
-            ry = bot.add_sticker_to_set(user_id = user.id, name = f'Stickers_by_{us}', emojis = emoji, png_sticker = open(f'sticker.png', 'rb'))
-
-        print(': Ready')
-
-    user = message.from_user
-    if user.id in [5279769615, 1191252229]:
-        us = bot.get_me().username
-        try:
-            ry = bot.create_new_sticker_set(user.id, f'Stickers_by_{us}', f'Dinogochi', '🎈', open('st_av.png', 'rb'))
-            print(ry)
-        except:
-            print('90')
-
-
-        img_dir = 'images/stcis/'
-        t = threading.Thread(target = work, daemon=True, kwargs = {'img_l': os.listdir(img_dir)}).start()
-
-@bot.message_handler(commands=['stic_memes'])
-def command_n(message):
-    import os
-
-    def work(img_l):
-        print(': Start')
-        for img in img_l:
-
-            emoji = '🦕'
-
-            ry = bot.add_sticker_to_set(user_id = user.id, name = f'Memes_by_{us}', emojis = emoji, png_sticker = open(img_dir + str(img), 'rb'))
-
-        print(': Ready')
-
-    user = message.from_user
-    if user.id in [5279769615, 1191252229]:
-        us = bot.get_me().username
-        try:
-            ry = bot.create_new_sticker_set(user.id, f'Memes_by_{us}', f'MemesDinogochi', '🎈', open('stmeme_av.png', 'rb'))
-            print(ry)
-        except:
-            print('901')
-
-
-        img_dir = 'images/memes/'
-        t = threading.Thread(target = work, daemon=True, kwargs = {'img_l': os.listdir(img_dir)}).start()
-
 
 # @bot.message_handler(commands=['nw'])
 # def command_n(message):
@@ -1803,10 +1742,10 @@ def on_message(message):
                             markup_inline = types.InlineKeyboardMarkup(row_width=2)
 
                             if bd_user['language_code'] == 'ru':
-                                text = ['5 - 15 мин.', '15 - 30 мин.', '30 - 60 мин.']
+                                text = ['15 - 30 мин.', '30 - 60 мин.', '60 - 90 мин.']
                                 m_text = '🎮 Укажите разрешённое время игры > '
                             else:
-                                text = ['5 - 15 min.', '15 - 30 min.', '30 - 60 min.']
+                                text = ['15 - 30 min.', '30 - 60 min.', '60 - 90 min.']
                                 m_text = '🎮 Specify the allowed game time >'
 
                             if message.text in ['🎮 Консоль', '🎮 Console']:
@@ -2871,7 +2810,10 @@ def on_message(message):
 
                             rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
                             for i in pages[page-1]:
-                                rmk.add(i[0], i[1])
+                                try:
+                                    rmk.add(i[0], i[1])
+                                except:
+                                    rmk.add(i[0])
 
                             if len(pages) > 1:
                                 if bd_user['language_code'] == 'ru':
@@ -3800,11 +3742,11 @@ def answer(call):
         n_s = int(call.data[:1])
         dino_id = call.data[11:]
         if n_s == 1:
-            time_m = random.randint(5, 15) * 60
-        if n_s == 2:
             time_m = random.randint(15, 30) * 60
-        if n_s == 3:
+        if n_s == 2:
             time_m = random.randint(30, 60) * 60
+        if n_s == 3:
+            time_m = random.randint(60, 90) * 60
 
         if bd_user['dinos'][dino_id]['activ_status'] != 'pass_active':
             return
@@ -4528,13 +4470,20 @@ def answer(call):
 
             bot.send_message(call.message.chat.id, text)
 
+    elif call.data[:9] == 'iteminfo_':
+
+        item = functions.get_dict_item(call.data[9:])
+        text= functions.item_info(item, bd_user['language_code'])
+
+        bot.send_message(call.message.chat.id, text, parse_mode = 'Markdown')
+
 
     else:
         print(call.data, 'call.data')
 
 
 print(f'Бот {bot.get_me().first_name} запущен!')
-if bot.get_me().first_name == 'DinoGochi' or False:
+if bot.get_me().first_name == 'DinoGochi' or True:
     main_checks.start()
     thr_icub.start()
     thr_notif.start()

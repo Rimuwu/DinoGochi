@@ -710,7 +710,7 @@ class functions:
                 elif notification == "dead":
 
                     if user['language_code'] == 'ru':
-                        text = f'💥 | {chat.first_name}, ваш динозаврик.... Умер...'
+                        text = f'💥 | {chat.first_name}, ваш динозаврик.... Умир...'
                         nl = "🧩 Проект: Возрождение"
                         nl2 = '🎮 Инвентарь'
                     else:
@@ -915,13 +915,12 @@ class functions:
         return nl
 
     @staticmethod
-    def item_info(us_item, lg):
+    def item_info(us_item, lg, mark: bool = True):
 
         item_id = us_item['item_id']
         item = items_f['items'][item_id]
         type = item['type']
         d_text = ''
-
 
         if lg == 'ru':
             if item['type'] == '+heal':
@@ -963,9 +962,14 @@ class functions:
 
             elif item['type'] == 'recipe':
                 type = '🧾 рецепт создания'
+
+                if list( set(item["create"]) & set(item["materials"])) != []:
+                    for i in list( set(item["create"]) & set(item["materials"])):
+                        item["create"].remove(i)
+
                 d_text = f'*├* Создаёт: {", ".join(functions.sort_items_col( item["create"], "ru" ))}\n'
-                d_text += f'*├* Материалы: {", ".join(functions.sort_items_col( item["materials"], "ru" ))}\n'
-                d_text +=  f"*└* {item['descriptionru']}"
+                d_text += f'*└* Материалы: {", ".join(functions.sort_items_col( item["materials"], "ru" ))}\n\n'
+                d_text +=  f"{item['descriptionru']}"
 
 
             if list(set([ '+mood' ]) & set(item.keys())) != []:
@@ -992,7 +996,7 @@ class functions:
 
             text += f"*├* Тип: {type}\n"
             text += d_text
-            in_text = ['🔮 | Использовать', '🗑 | Выбросить', '🔁 | Передать']
+            in_text = ['🔮 | Использовать', '🗑 | Выбросить', '🔁 | Передать', '🛠 | Создаваемый предмет']
 
         else:
             if item['type'] == '+heal':
@@ -1033,9 +1037,14 @@ class functions:
 
             elif item['type'] == 'recipe':
                 type = '🧾 recipe for creation'
+
+                if list( set(item["create"]) & set(item["materials"])) != []:
+                    for i in list( set(item["create"]) & set(item["materials"])):
+                        item["create"].remove(i)
+
                 d_text = f'*├* Creates: {", ".join(functions.sort_items_col( item["create"], "ru" ))}\n'
-                d_text += f'*├* Materials: {", ".join(functions.sort_items_col( item["materials"], "ru" ))}\n'
-                d_text +=  f"*└* {item['descriptionru']}"
+                d_text += f'*└* Materials: {", ".join(functions.sort_items_col( item["materials"], "ru" ))}\n\n'
+                d_text +=  f"{item['descriptionru']}"
 
             if list(set([ '+mood' ]) & set(item.keys())) != []:
                 d_text += f'\n\n*┌* *🍡 Additional bonuses*\n'
@@ -1061,13 +1070,21 @@ class functions:
 
             text += f"*├* Type: {type}\n"
             text += d_text
-            in_text = ['🔮 | Use', '🗑 | Delete', '🔁 | Transfer']
+            in_text = ['🔮 | Use', '🗑 | Delete', '🔁 | Transfer', '🛠 | Сreated item']
 
-        markup_inline = types.InlineKeyboardMarkup()
-        markup_inline.add( types.InlineKeyboardButton( text = in_text[0], callback_data = f"item_{functions.qr_item_code(us_item)}"),  types.InlineKeyboardButton( text = in_text[1], callback_data = f"remove_item_{functions.qr_item_code(us_item)}") )
-        markup_inline.add( types.InlineKeyboardButton( text = in_text[2], callback_data = f"exchange_{functions.qr_item_code(us_item)}") )
+        if mark == True:
+            markup_inline = types.InlineKeyboardMarkup()
+            markup_inline.add( types.InlineKeyboardButton( text = in_text[0], callback_data = f"item_{functions.qr_item_code(us_item)}"),  types.InlineKeyboardButton( text = in_text[1], callback_data = f"remove_item_{functions.qr_item_code(us_item)}") )
+            markup_inline.add( types.InlineKeyboardButton( text = in_text[2], callback_data = f"exchange_{functions.qr_item_code(us_item)}") )
 
-        return text, markup_inline
+            if item['type'] == 'recipe':
+                if len(item["create"]) == 1:
+                    markup_inline.add( types.InlineKeyboardButton( text = in_text[3], callback_data = f"iteminfo_{item['create'][0]}") )
+
+            return text, markup_inline
+
+        else:
+            return text
 
     @staticmethod
     def exchange(bot, message, user_item, bd_user):
