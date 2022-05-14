@@ -578,7 +578,7 @@ class checks:
 
                                     elif event == 'random_items':
 
-                                        item = functions.random_items(["1", "2", '25'], ['17', '18', '19'], ['26', '27', '28'], ["30", "32", "39", "41", "43"], ["30", "32", "39", "41", "43"])
+                                        item = functions.random_items(["1", "2", '25'], ['17', '18', '19'], ['26', '27', '28'], ["30", "32"], ["30", "32", "39", "41", "43"])
 
                                         if mood_n == True:
 
@@ -598,7 +598,7 @@ class checks:
 
                                     elif event == 'random_items_leg':
 
-                                        item = functions.random_items(["4", '14', "15", "16"], ["4", '14', "15", "16", "39", "41", "43"], ["30", "32", '34', "19", "39", "41"], ["37", "19", "39", "41", "43"], ["21", "37", "39", "41", "43"])
+                                        item = functions.random_items(["4", '14', "15", "16"], ["4", '14', "15", "16"], ["30", "32", '34', "19", "39", "41"], ["37", "19", "39", "41", "43"], ["21", "37", "39", "41", "43"])
                                         if mood_n == True:
 
                                             if user['language_code'] == 'ru':
@@ -750,14 +750,13 @@ class checks:
                                         items = user['inventory']
                                         item = random.choice(items)
                                         if mood_n == True:
-                                            user['inventory'].remove(item)
 
                                             if user['language_code'] == 'ru':
                                                 event = f"❗ | Бегая по лесам, динозавр обронил {items_f['items'][item]['nameru']}\n>  Предмет потерян!"
                                             else:
                                                 event = f"❗ | Running through the woods, the dinosaur dropped {items_f['items'][item]['nameen']}\n>  The item is lost!"
 
-                                            users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
+                                            users.update_one( {"userid": user['userid']}, {"$pull": {'inventory': item }} )
 
                                         if mood_n == False:
 

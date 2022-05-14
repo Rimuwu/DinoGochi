@@ -183,6 +183,15 @@ rayt_thr = threading.Thread(target = rayt, daemon=True)
 #             n += 1
 #             main = threading.Thread(target = work, daemon=True, kwargs = { 'members': members, 'n': n}).start()
 
+# @bot.message_handler(commands=['test'])
+# def command(message):
+#     user = message.from_user
+#     market_ = market.find_one({"id": 2})
+#     pprint.pprint(dict(market_))
+#     market.update_one({"id": 2}, {'$pull': {"arr": '1'}})
+#     # market.update_one({"id": 2}, {'$set': {"arr.1": '000'}})
+#     print(1)
+
 @bot.message_handler(commands=['stats'])
 def command(message):
     user = message.from_user
@@ -710,7 +719,7 @@ def on_message(message):
 
                                             try:
                                                 bd_user['friends']['requests'].remove(uid)
-                                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'friends': bd_user['friends'] }} )
+                                                users.update_one( {"userid": bd_user['userid']}, {"$pull": {'friends.requests': uid }} )
                                             except:
                                                 pass
 
@@ -863,15 +872,13 @@ def on_message(message):
 
                                         try:
                                             bd_user['friends']['friends_list'].remove(uid)
-                                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'friends': bd_user['friends'] }} )
+                                            users.update_one( {"userid": bd_user['userid']}, {"$pull": {'friends.friends_list': uid }} )
 
                                         except:
                                             pass
 
                                         try:
-                                            two_user = users.find_one({"userid": uid})
-                                            two_user['friends']['friends_list'].remove(bd_user['userid'])
-                                            users.update_one( {"userid": two_user['userid']}, {"$set": {'friends': two_user['friends'] }} )
+                                            users.update_one( {"userid": uid}, {"$pull": {'friends.friends_list': bd_user['userid'] }} )
                                         except:
                                             pass
 
@@ -2144,13 +2151,11 @@ def on_message(message):
                                             if ('abilities' in user_item.keys() and 'uses' not in user_item['abilities'].keys()) or 'abilities' not in user_item.keys():
 
                                                 for i in range(col):
-                                                    bd_user['inventory'].remove(user_item)
 
-                                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+                                                    users.update_one( {"userid": bd_user['userid']}, {"$pull": {'inventory': user_item }} )
 
                                             else:
-                                                bd_user['inventory'].remove(user_item)
-                                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+                                                users.update_one( {"userid": bd_user['userid']}, {"$pull": {'inventory': user_item }} )
 
                                                 user_item['abilities']['uses'] -= 1 * col
                                                 if user_item['abilities']['uses'] > 0:
@@ -2706,8 +2711,8 @@ def on_message(message):
                                                 else:
                                                     text = "🎴 | The active item is installed!"
 
-                                                bd_user['inventory'].remove(item)
-                                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+                                                users.update_one( {"userid": bd_user['userid']}, {"$pull": {'inventory': user_item }} )
+
                                                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'activ_items': bd_user['activ_items'] }} )
 
                                                 bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', user))
@@ -2969,9 +2974,7 @@ def on_message(message):
                                                         market_['products'][str(user.id)]['products'][ max_k(products) ] = { 'item': item, 'price': number, 'col': [0, col]}
 
                                                         for i in range(col):
-                                                            bd_user['inventory'].remove(item)
-
-                                                        users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
+                                                            users.update_one( {"userid": bd_user['userid']}, {"$pull": {'inventory': item }} )
 
                                                         market.update_one( {"id": 1}, {"$set": {'products': market_['products'] }} )
 
@@ -3977,6 +3980,8 @@ def answer(call):
             if sl == 1:
                 dino, dii = dino_dict[0], dino_dict[1]
 
+            use_st = True
+
             if item['type'] == '+heal':
 
                 if bd_user['language_code'] == 'ru':
@@ -3984,9 +3989,8 @@ def answer(call):
                 else:
                     text = f"❤ | You have restored {item['act']}% of the dinosaur's health!"
 
-                bd_user['inventory'].remove(user_item)
+
                 users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dii}.stats.heal': item['act'] }} )
-                users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
 
             elif item['type'] == '+unv':
 
@@ -3995,9 +3999,7 @@ def answer(call):
                 else:
                     text = f"⚡ | You have recovered {item['act']}% of the dinosaur's energy!"
 
-                bd_user['inventory'].remove(user_item)
                 users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dii}.stats.unv': item['act'] }} )
-                users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
 
             elif item['type'] == 'recipe':
                 ok = True
@@ -4012,12 +4014,9 @@ def answer(call):
                 if ok == True:
 
                     if bd_user['language_code'] == 'ru':
-                        text = f'🍡 | Предмет создан!'
+                        text = f'🍡 | Предмет {item["nameru"]} создан!'
                     else:
-                        text = f"🍡 | The item is created!"
-
-                    bd_user['inventory'].remove(user_item)
-                    users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
+                        text = f"🍡 | The item {item['nameen']} is created!"
 
                     for i in item['create']:
                         functions.add_item_to_user(bd_user, i)
@@ -4029,6 +4028,7 @@ def answer(call):
                     else:
                         text = f"❗ | Materials are not enough!"
 
+                    use_st = False
 
             elif item['type'] == '+eat':
 
@@ -4037,12 +4037,16 @@ def answer(call):
                 else:
                     text = f"❗ | Go to the action menu and select feed!"
 
+                use_st = False
+
             elif item['type'] in ['game_ac', "journey_ac", "hunt_ac", "unv_ac"]:
 
                 if bd_user['language_code'] == 'ru':
                     text = f'❗ | Перейдите в меню аксессуаров для использования данного предмета!'
                 else:
                     text = f"❗ | Go to the accessories menu to use this item!"
+
+                use_st = False
 
             elif item['type'] == 'egg':
 
@@ -4052,6 +4056,8 @@ def answer(call):
                         text = f'🔔 | Вам недоступна данная технология!'
                     else:
                         text = f"🔔 | This technology is not available to you!"
+
+                    use_st = False
 
                 else:
                     if int(bd_user['lvl'][0] / 20) > len(bd_user['dinos']) or len(bd_user['dinos']) == 0:
@@ -4068,9 +4074,9 @@ def answer(call):
                         egg_n = str(random.choice(list(json_f['data']['egg'])))
 
                         bd_user['dinos'][ functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': inc_time, 'egg_id': egg_n, 'quality': item['inc_type']}
-                        bd_user['inventory'].remove(user_item)
+
                         users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
-                        users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
+
 
                         if bd_user['language_code'] == 'ru':
                             text = f'🥚 | Яйцо отправлено на инкубацию!'
@@ -4083,6 +4089,7 @@ def answer(call):
                         else:
                             text = f"🔔 | Only {int(bd_user['lvl'][0] / 20)} dinosaurs are available to you!"
 
+                        use_st = False
 
             else:
 
@@ -4090,6 +4097,8 @@ def answer(call):
                     text = f'❗ | Данный предмет пока что недоступен для использования!'
                 else:
                     text = f"❗ | This item is not yet available for use!"
+
+                use_st = False
 
 
             if '+mood' in item.keys():
@@ -4104,9 +4113,19 @@ def answer(call):
             if 'abilities' in user_item.keys():
                 if 'uses' in item['abilities'].keys():
 
-                    user_item['abilities']['uses'] -= 1
-                    if user_item['abilities']['uses'] > 0:
-                        users.update_one( {"userid": user.id}, {"$push": {f'inventory': user_item }} )
+                    if user_item['abilities']['uses'] != -100:
+
+                        user_item['abilities']['uses'] -= 1
+                        if user_item['abilities']['uses'] > 0:
+                            users.update_one( {"userid": user.id}, {"$set": {f'inventory.{list_inv.index(user_item)}.abilities.uses': user_item['abilities']['uses'] }} )
+
+                        else:
+                            users.update_one( {"userid": user.id}, {"$pull": {'inventory': user_item }} )
+
+            else:
+
+                if use_st == True:
+                    users.update_one( {"userid": user.id}, {"$pull": {'inventory': user_item }} )
 
             bot.send_message(user.id, text, parse_mode = 'Markdown')
 
@@ -4126,11 +4145,12 @@ def answer(call):
             if 'abilities' in item.keys():
                 for key_c in data.keys():
                     for it in list_inv:
-                        if key_c != 'id':
-                            if 'abilities' in it.keys():
-                                if it['abilities'][key_c] == data[key_c] or ( type(data[key_c]) == int and it['abilities'][key_c] <= data[key_c] ):
-                                    ok = it
-                                    break
+                        if str(it['item_id']) == str(it_id):
+                            if key_c != 'id':
+                                if 'abilities' in it.keys():
+                                    if it['abilities'][key_c] == data[key_c] or ( type(data[key_c]) == int and it['abilities'][key_c] <= data[key_c] ):
+                                        ok = it
+                                        break
 
                 user_item = ok
 
@@ -4190,11 +4210,12 @@ def answer(call):
             if 'abilities' in item.keys():
                 for key_c in data.keys():
                     for it in list_inv:
-                        if key_c != 'id':
-                            if 'abilities' in it.keys():
-                                if it['abilities'][key_c] == data[key_c] or ( type(data[key_c]) == int and it['abilities'][key_c] <= data[key_c] ):
-                                    ok = it
-                                    break
+                        if str(it['item_id']) == str(it_id):
+                            if key_c != 'id':
+                                if 'abilities' in it.keys():
+                                    if it['abilities'][key_c] == data[key_c] or ( type(data[key_c]) == int and it['abilities'][key_c] <= data[key_c] ):
+                                        ok = it
+                                        break
 
                 user_item = ok
 
@@ -4243,11 +4264,12 @@ def answer(call):
             if 'abilities' in item.keys():
                 for key_c in data.keys():
                     for it in list_inv:
-                        if key_c != 'id':
-                            if 'abilities' in it.keys():
-                                if it['abilities'][key_c] == data[key_c] or ( type(data[key_c]) == int and it['abilities'][key_c] <= data[key_c] ):
-                                    ok = it
-                                    break
+                        if str(it['item_id']) == str(it_id):
+                            if key_c != 'id':
+                                if 'abilities' in it.keys():
+                                    if it['abilities'][key_c] == data[key_c] or ( type(data[key_c]) == int and it['abilities'][key_c] <= data[key_c] ):
+                                        ok = it
+                                        break
 
                 user_item = ok
 
@@ -4267,8 +4289,7 @@ def answer(call):
 
             if ok != None:
 
-                bd_user['inventory'].remove(user_item)
-                users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
+                users.update_one( {"userid": user.id}, {"$pull": {f'inventory': user_item }} )
 
                 if bd_user['language_code'] == 'ru':
                     text = '🗑 | Предмет удалён.'
@@ -4296,11 +4317,12 @@ def answer(call):
             if 'abilities' in item.keys():
                 for key_c in data.keys():
                     for it in list_inv:
-                        if key_c != 'id':
-                            if 'abilities' in it.keys():
-                                if it['abilities'][key_c] == data[key_c] or ( type(data[key_c]) == int and it['abilities'][key_c] <= data[key_c] ):
-                                    ok = it
-                                    break
+                        if str(it['item_id']) == str(it_id):
+                            if key_c != 'id':
+                                if 'abilities' in it.keys():
+                                    if it['abilities'][key_c] == data[key_c] or ( type(data[key_c]) == int and it['abilities'][key_c] <= data[key_c] ):
+                                        ok = it
+                                        break
 
                 user_item = ok
 

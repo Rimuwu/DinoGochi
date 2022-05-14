@@ -82,7 +82,7 @@
 
  "41": {"nameru": "📜 Салат", "nameen": "📜 Salad", "type": "recipe", "descriptionru": "Не надоело ли динозавру питаться одной травой? Может лучше сделаем салат из нескольких трав? Моему динозавру понравился результат!", "descriptionen": "Isn't the dinosaur tired of eating grass alone? Maybe we'd better make a salad of several herbs? My dinosaur liked the result!", "create": ["40"], "materials": ["6", "9", "11"], "abilities": {"uses": 100}},
 
- "42": {"nameru": "🥣 Суп", "nameen": "🥣 Soup", "type": "+eat", "act": 55, "class": "Carnivore"},
+ "42": {"nameru": "🥣 Суп", "nameen": "🥣 Soup", "type": "+eat", "act": 55, "class": "Flying"},
 
  "43": {"nameru": "📜 Суп", "nameen": "📜 Soup", "type": "recipe", "descriptionru": "'Рыба живёт в воде, почему я ем её сухой?' - Так наверно думает каждый динозавр, он просто ещё не пробовал рыбный суп.", "descriptionen": "'A fish lives in water, why do I eat it dry?' - That's probably what every dinosaur thinks, he just hasn't tried fish soup yet.", "create": ["42"], "materials": ["10", "10", "10"], "abilities": {"uses": 100}}
 
