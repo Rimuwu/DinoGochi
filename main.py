@@ -183,14 +183,14 @@ rayt_thr = threading.Thread(target = rayt, daemon=True)
 #             n += 1
 #             main = threading.Thread(target = work, daemon=True, kwargs = { 'members': members, 'n': n}).start()
 
-# @bot.message_handler(commands=['test'])
-# def command(message):
-#     user = message.from_user
-#     market_ = market.find_one({"id": 2})
-#     pprint.pprint(dict(market_))
-#     market.update_one({"id": 2}, {'$pull': {"arr": '1'}})
-#     # market.update_one({"id": 2}, {'$set': {"arr.1": '000'}})
-#     print(1)
+@bot.message_handler(commands=['test'])
+def command(message):
+    user = message.from_user
+    market_ = market.find_one({"id": 2})
+    pprint.pprint(dict(market_))
+    market.update_one({"id": 2}, {'$pop': {"arr": '2'}})
+    # market.update_one({"id": 2}, {'$set': {"arr.1": '000'}})
+    print(1)
 
 @bot.message_handler(commands=['stats'])
 def command(message):
@@ -2151,11 +2151,13 @@ def on_message(message):
                                             if ('abilities' in user_item.keys() and 'uses' not in user_item['abilities'].keys()) or 'abilities' not in user_item.keys():
 
                                                 for i in range(col):
+                                                    bd_user['inventory'].remove(user_item)
 
-                                                    users.update_one( {"userid": bd_user['userid']}, {"$pull": {'inventory': user_item }} )
+                                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
 
                                             else:
-                                                users.update_one( {"userid": bd_user['userid']}, {"$pull": {'inventory': user_item }} )
+                                                bd_user['inventory'].remove(user_item)
+                                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
 
                                                 user_item['abilities']['uses'] -= 1 * col
                                                 if user_item['abilities']['uses'] > 0:
@@ -2711,7 +2713,8 @@ def on_message(message):
                                                 else:
                                                     text = "🎴 | The active item is installed!"
 
-                                                users.update_one( {"userid": bd_user['userid']}, {"$pull": {'inventory': user_item }} )
+                                                bd_user['inventory'].remove(item)
+                                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
 
                                                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'activ_items': bd_user['activ_items'] }} )
 
@@ -2974,7 +2977,9 @@ def on_message(message):
                                                         market_['products'][str(user.id)]['products'][ max_k(products) ] = { 'item': item, 'price': number, 'col': [0, col]}
 
                                                         for i in range(col):
-                                                            users.update_one( {"userid": bd_user['userid']}, {"$pull": {'inventory': item }} )
+                                                            bd_user['inventory'].remove(item)
+
+                                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
 
                                                         market.update_one( {"id": 1}, {"$set": {'products': market_['products'] }} )
 
@@ -4120,12 +4125,14 @@ def answer(call):
                             users.update_one( {"userid": user.id}, {"$set": {f'inventory.{list_inv.index(user_item)}.abilities.uses': user_item['abilities']['uses'] }} )
 
                         else:
-                            users.update_one( {"userid": user.id}, {"$pull": {'inventory': user_item }} )
+                            bd_user['inventory'].remove(user_item)
+                            users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
 
             else:
 
                 if use_st == True:
-                    users.update_one( {"userid": user.id}, {"$pull": {'inventory': user_item }} )
+                    bd_user['inventory'].remove(user_item)
+                    users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
 
             bot.send_message(user.id, text, parse_mode = 'Markdown')
 
@@ -4288,8 +4295,8 @@ def answer(call):
                 bot.send_message(user.id, text, parse_mode = 'Markdown')
 
             if ok != None:
-
-                users.update_one( {"userid": user.id}, {"$pull": {f'inventory': user_item }} )
+                bd_user['inventory'].remove(user_item)
+                users.update_one( {"userid": user.id}, {"$set": {f'inventory': bd_user['inventory'] }} )
 
                 if bd_user['language_code'] == 'ru':
                     text = '🗑 | Предмет удалён.'
