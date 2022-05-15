@@ -756,8 +756,8 @@ class checks:
                                             else:
                                                 event = f"❗ | Running through the woods, the dinosaur dropped {items_f['items'][item]['nameen']}\n>  The item is lost!"
 
-                                            bd_user['inventory'].remove(item)
-                                            users.update_one( {"userid": user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+                                            user['inventory'].remove(item)
+                                            users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
 
                                         if mood_n == False:
 
