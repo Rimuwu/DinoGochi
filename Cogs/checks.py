@@ -50,18 +50,21 @@ class checks:
                         text = f"🦕 | {bot.get_chat( user['userid'] ).first_name}, we miss you 😥, you haven't used the bot for a long time ({functions.time_end( notactivity_time )})!\n\n❤ | Let's play, travel and have fun together! We are looking forward to seeing you!"
 
 
-                    # bot.send_message(user['userid'], text)
+                    bot.send_message(user['userid'], text)
 
-                    # users.update_one( {"userid": user['userid']}, {"$set": {'last_m': int(time.time()) }} )
+                    users.update_one( {"userid": user['userid']}, {"$set": {'last_m': int(time.time()) }} )
+                    user['notification']['dead_user'] = False
+
+                    users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications'] }} )
 
 
                 except Exception as error:
 
                     if str(error) in ['A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: chat not found', "A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot can't initiate conversation with a user"]:
                         # пользователь заблокировал бота, удаляем из базы.
-                        # users.deleteOne({"userid": user['userid']})
+                        users.deleteOne({"userid": user['userid']})
                         act2 += 1
-                        pass
+
 
                     else:
                         print('WARNING in dead check users, 7 days check\n' + str(error))
@@ -69,20 +72,25 @@ class checks:
 
             elif notactivity_time >= 172800 and len(user['dinos']) == 0: #2 дня не активнсоти
 
-                try:
+                if 'dead_user' not in user['notification'].keys() or user['notification']['dead_user'] == False:
 
-                    if user['language_code'] == 'ru':
-                        text = f"🦕 | Хей {bot.get_chat( user['userid'] ).first_name}, мы уже довольно давно с тобой не виделись ({functions.time_end( notactivity_time )})!\n\n🦄 | Пока тебя не было, в боте появилось куча всего интересного и произошло много событий! Мы сного ждём тебя в игре и будем рады твоей активности! ❤"
-                    else:
-                        text = f"🦕 | Hey {bot.get_chat( user['userid'] ).first_name}, we haven't seen you for quite a while ({functions.time_end( notactivity_time, True )})!\n\n🦄 | When you weren't there, a bunch of interesting things appeared in the bot and a lot of events happened! We are waiting for you a lot in the game and we will be glad of your activity! ❤"
+                    try:
 
-                    # bot.send_message(user['userid'], text)
+                        if user['language_code'] == 'ru':
+                            text = f"🦕 | Хей {bot.get_chat( user['userid'] ).first_name}, мы уже довольно давно с тобой не виделись ({functions.time_end( notactivity_time )})!\n\n🦄 | Пока тебя не было, в боте появилось куча всего интересного и произошло много событий! Мы сного ждём тебя в игре и будем рады твоей активности! ❤"
+                        else:
+                            text = f"🦕 | Hey {bot.get_chat( user['userid'] ).first_name}, we haven't seen you for quite a while ({functions.time_end( notactivity_time, True )})!\n\n🦄 | When you weren't there, a bunch of interesting things appeared in the bot and a lot of events happened! We are waiting for you a lot in the game and we will be glad of your activity! ❤"
 
-                except Exception as error:
-                    if str(error) in ['A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: chat not found', "A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot can't initiate conversation with a user"]:
-                        # пользователь заблокировал бота, дадим ему возможность подумать ещё пару дней.
-                        act1 += 1
-                        pass
+                        bot.send_message(user['userid'], text)
+                        user['notification']['dead_user'] = True
+
+                        users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications'] }} )
+
+                    except Exception as error:
+                        if str(error) in ['A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: chat not found', "A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot can't initiate conversation with a user"]:
+                            # пользователь заблокировал бота, дадим ему возможность подумать ещё пару дней.
+                            act1 += 1
+
 
                     else:
                         print('WARNING in dead check users, 2 days check\n' + str(error))
