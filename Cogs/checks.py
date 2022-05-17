@@ -50,7 +50,7 @@ class checks:
                         text = f"🦕 | {bot.get_chat( user['userid'] ).first_name}, we miss you 😥, you haven't used the bot for a long time ({functions.time_end( notactivity_time )})!\n\n❤ | Let's play, travel and have fun together! We are looking forward to seeing you!"
 
 
-                    bot.send_message(user['userid'], text)
+                    # bot.send_message(user['userid'], text)
 
                     # users.update_one( {"userid": user['userid']}, {"$set": {'last_m': int(time.time()) }} )
 
@@ -76,7 +76,7 @@ class checks:
                     else:
                         text = f"🦕 | Hey {bot.get_chat( user['userid'] ).first_name}, we haven't seen you for quite a while ({functions.time_end( notactivity_time, True )})!\n\n🦄 | When you weren't there, a bunch of interesting things appeared in the bot and a lot of events happened! We are waiting for you a lot in the game and we will be glad of your activity! ❤"
 
-                    bot.send_message(user['userid'], text)
+                    # bot.send_message(user['userid'], text)
 
                 except Exception as error:
                     if str(error) in ['A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: chat not found', "A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot can't initiate conversation with a user"]:
