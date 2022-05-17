@@ -116,8 +116,7 @@ def min5_check(): #проверка каждые 5 мин
             threading.Thread(target = alpha, daemon=True, kwargs = {'users': uss}).start()
 
             if bot.get_me().first_name == 'DinoGochi':
-
-                    threading.Thread(target = dead_users, daemon=True, kwargs = {'bot': bot, 'members': uss} ).start()
+                threading.Thread(target = dead_users, daemon=True, kwargs = {'bot': bot, 'members': uss} ).start()
 
         else:
             print(f'Использование памяти: {int(memory_usage()[0])}')
@@ -1679,7 +1678,11 @@ def on_message(message):
 
                                         if col_to_full == 1:
 
-                                            rmk.add(bt_1)
+                                            if bt_3 != None:
+                                                rmk.add(bt_1, bt_3)
+
+                                            else:
+                                                rmk.add(bt_1)
 
                                         elif col_to_full != 1 and col_to_full != 0:
 
@@ -4270,6 +4273,6 @@ print(f'Бот {bot.get_me().first_name} запущен!')
 if bot.get_me().first_name == 'DinoGochi' or True:
     main_checks.start() # активация всех проверок и игрового процесса
     thr_notif.start() # активация уведомлений
-    min5_thr.start() # активация обновление топа
+    min5_thr.start() # пяти-минутный чек
 
 bot.infinity_polling()

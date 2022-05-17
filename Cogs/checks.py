@@ -29,6 +29,7 @@ class checks:
     def check_dead_users(bot, members):
         act1 = 0
         act2 = 0
+        act3 = 0
 
         for user in members:
 
@@ -39,28 +40,28 @@ class checks:
                 user['last_m'] = int(time.time()) - 604800
                 notactivity_time = int(time.time()) - int(user['last_m'])
 
-
             if notactivity_time >= 604800 and len(user['dinos']) == 0: #7 дней не активности
 
                 try:
 
                     if user['language_code'] == 'ru':
-                        text = f"🦕 | {bot.get_chat( user['userid'] ).first_name}, мы скучаем по тебе 😥, ты уже очень данов не пользовался ботом ({functions.time_end( notactivity_time )})!\n\n❤ | Давай сного будем играть, путешествовать и развлекаться вместе! Мы с нетерпением ждём тебя!"
+                        text = f"🦕 | {bot.get_chat( user['userid'] ).first_name}, мы скучаем по тебе 😥, ты уже очень давно не пользовался ботом ({functions.time_end( notactivity_time )})!\n\n❤ | Давай сного будем играть, путешествовать и развлекаться вместе! Мы с нетерпением ждём тебя!"
                     else:
                         text = f"🦕 | {bot.get_chat( user['userid'] ).first_name}, we miss you 😥, you haven't used the bot for a long time ({functions.time_end( notactivity_time )})!\n\n❤ | Let's play, travel and have fun together! We are looking forward to seeing you!"
 
 
                     bot.send_message(user['userid'], text)
+                    act3 += 1
 
                     users.update_one( {"userid": user['userid']}, {"$set": {'last_m': int(time.time()) }} )
-                    user['notification']['dead_user'] = False
+                    user['notifications']['dead_user'] = False
 
                     users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications'] }} )
 
 
                 except Exception as error:
 
-                    if str(error) in ['A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: chat not found', "A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot can't initiate conversation with a user"]:
+                    if str(error) in ['A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user']:
                         # пользователь заблокировал бота, удаляем из базы.
                         users.deleteOne({"userid": user['userid']})
                         act2 += 1
@@ -72,7 +73,7 @@ class checks:
 
             elif notactivity_time >= 172800 and len(user['dinos']) == 0: #2 дня не активнсоти
 
-                if 'dead_user' not in user['notification'].keys() or user['notification']['dead_user'] == False:
+                if 'dead_user' not in user['notifications'].keys() or user['notifications']['dead_user'] == False:
 
                     try:
 
@@ -82,20 +83,21 @@ class checks:
                             text = f"🦕 | Hey {bot.get_chat( user['userid'] ).first_name}, we haven't seen you for quite a while ({functions.time_end( notactivity_time, True )})!\n\n🦄 | When you weren't there, a bunch of interesting things appeared in the bot and a lot of events happened! We are waiting for you a lot in the game and we will be glad of your activity! ❤"
 
                         bot.send_message(user['userid'], text)
-                        user['notification']['dead_user'] = True
+                        act3 += 1
+                        user['notifications']['dead_user'] = True
 
                         users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications'] }} )
 
                     except Exception as error:
-                        if str(error) in ['A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: chat not found', "A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot can't initiate conversation with a user"]:
+                        if str(error) in ['A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user']:
                             # пользователь заблокировал бота, дадим ему возможность подумать ещё пару дней.
                             act1 += 1
 
 
-                    else:
-                        print('WARNING in dead check users, 2 days check\n' + str(error))
+                        else:
+                            print('WARNING in dead check users, 2 days check\n' + str(error))
 
-        print('Предупреждено - нет ответа - ', act1, '\n', 'Удалено - ', act2)
+        print('Предупреждено - нет ответа -', act1, '\n', 'Удалено - ', act2,  '\n', 'Получили ув: ', act3 )
 
 
     @staticmethod
@@ -288,8 +290,7 @@ class checks:
                         if user['lvl'][0] >= 5:
                             functions.add_item_to_user(user, '21')
 
-                        if functions.notifications_manager(bot, "dead", user, dino_id = dino_id, met = 'check') == False:
-                            functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
+                        functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
 
                         users.update_one( {"userid": user['userid']}, {"$set": {f'dinos': user['dinos'] }} )
 
