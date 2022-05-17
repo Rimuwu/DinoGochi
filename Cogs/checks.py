@@ -8,6 +8,7 @@ import os
 import sys
 import pprint
 from functions import functions
+from memory_profiler import memory_usage
 
 sys.path.append("..")
 import config
@@ -23,6 +24,109 @@ with open('data/dino_data.json', encoding='utf-8') as f:
     json_f = json.load(f)
 
 class checks:
+
+    @staticmethod
+    def check_dead_users(bot, members):
+        act1 = 0
+        act2 = 0
+
+        for user in members:
+
+            try:
+                notactivity_time = int(time.time()) - int(user['last_m'])
+            except:
+                users.update_one( {"userid": user['userid']}, {"$set": {'last_m': int(time.time()) - 604800 }} )
+                user['last_m'] = int(time.time()) - 604800
+                notactivity_time = int(time.time()) - int(user['last_m'])
+
+
+            if notactivity_time >= 604800 and len(user['dinos']) == 0: #7 дней не активности
+
+                try:
+
+                    if user['language_code'] == 'ru':
+                        text = f"🦕 | {bot.get_chat( user['userid'] ).first_name}, мы скучаем по тебе 😥, ты уже очень данов не пользовался ботом ({functions.time_end( notactivity_time )})!\n\n❤ | Давай сного будем играть, путешествовать и развлекаться вместе! Мы с нетерпением ждём тебя!"
+                    else:
+                        text = f"🦕 | {bot.get_chat( user['userid'] ).first_name}, we miss you 😥, you haven't used the bot for a long time ({functions.time_end( notactivity_time )})!\n\n❤ | Let's play, travel and have fun together! We are looking forward to seeing you!"
+
+
+                    bot.send_message(user['userid'], text)
+
+                    # users.update_one( {"userid": user['userid']}, {"$set": {'last_m': int(time.time()) }} )
+
+
+                except Exception as error:
+
+                    if str(error) in ['A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: chat not found', "A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot can't initiate conversation with a user"]:
+                        # пользователь заблокировал бота, удаляем из базы.
+                        # users.deleteOne({"userid": user['userid']})
+                        act2 += 1
+                        pass
+
+                    else:
+                        print('WARNING in dead check users, 7 days check\n' + str(error))
+
+
+            elif notactivity_time >= 172800 and len(user['dinos']) == 0: #2 дня не активнсоти
+
+                try:
+
+                    if user['language_code'] == 'ru':
+                        text = f"🦕 | Хей {bot.get_chat( user['userid'] ).first_name}, мы уже довольно давно с тобой не виделись ({functions.time_end( notactivity_time )})!\n\n🦄 | Пока тебя не было, в боте появилось куча всего интересного и произошло много событий! Мы сного ждём тебя в игре и будем рады твоей активности! ❤"
+                    else:
+                        text = f"🦕 | Hey {bot.get_chat( user['userid'] ).first_name}, we haven't seen you for quite a while ({functions.time_end( notactivity_time, True )})!\n\n🦄 | When you weren't there, a bunch of interesting things appeared in the bot and a lot of events happened! We are waiting for you a lot in the game and we will be glad of your activity! ❤"
+
+                    bot.send_message(user['userid'], text)
+
+                except Exception as error:
+                    if str(error) in ['A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: chat not found', "A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot can't initiate conversation with a user"]:
+                        # пользователь заблокировал бота, дадим ему возможность подумать ещё пару дней.
+                        act1 += 1
+                        pass
+
+                    else:
+                        print('WARNING in dead check users, 2 days check\n' + str(error))
+
+        print('Предупреждено - нет ответа - ', act1, '\n', 'Удалено - ', act2)
+
+
+    @staticmethod
+    def check_memory():
+
+        functions.check_data('memory', 0, int(memory_usage()[0]) )
+        functions.check_data('memory', 1, int(time.time()) )
+
+    @staticmethod
+    def check_incub(bot, members): #проверка каждые 5 секунд
+        nn = 0
+        t_st = int(time.time())
+
+        for user in members:
+            dns_l = list(user['dinos'].keys()).copy()
+
+            for dino_id in dns_l:
+                dino = user['dinos'][dino_id]
+                if dino['status'] == 'incubation': #инкубация
+                    nn += 1
+                    if dino['incubation_time'] - int(time.time()) <= 60*5 and dino['incubation_time'] - int(time.time()) > 0: #уведомление за 5 минут
+
+                        if functions.notifications_manager(bot, '5_min_incub', user, None, dino_id, 'check') == False:
+                            functions.notifications_manager(bot, "5_min_incub", user, dino, dino_id)
+
+
+                    elif dino['incubation_time'] - int(time.time()) <= 0:
+
+                        functions.notifications_manager(bot, "5_min_incub", user, dino, dino_id, met = 'delete')
+
+                        if 'quality' in dino.keys():
+                            functions.random_dino(user, dino_id, dino['quality'])
+                        else:
+                            functions.random_dino(user, dino_id)
+                        functions.notifications_manager(bot, "incub", user, dino_id)
+
+        functions.check_data('incub', 0, int(time.time() - t_st) )
+        functions.check_data('incub', 1, int(time.time()) )
+        functions.check_data('incub', 2, nn)
 
     @staticmethod
     def rayt(users):
@@ -702,7 +806,7 @@ class checks:
                                                 event = f"🌨 | It rained, the mood is not worsened."
 
 
-                                    elif event == '-eat':
+                                    if event == '-eat':
                                         eat = random.randint(1, 10)
                                         heal = random.randint(1, 3)
                                         dinos_stats['eat'] -= eat
@@ -713,7 +817,7 @@ class checks:
                                         else:
                                             event = f"🍤 | The dinosaur found something delicious and ate it, the food was spoiled. Dinosaur loses {eat}% of food and {heal}% health."
 
-                                    elif event == 'toxic_rain':
+                                    if event == 'toxic_rain':
                                         heal = random.randint(1, 5)
                                         dinos_stats['heal'] -= heal
 
@@ -723,7 +827,7 @@ class checks:
                                             event = f"⛈ | The dinosaur got caught in the toxic rain!"
 
 
-                                    elif event == 'fight':
+                                    if event == 'fight':
 
                                         unv = random.randint(1, 10)
                                         dinos_stats['unv'] -= unv
@@ -745,7 +849,7 @@ class checks:
                                             event += texten
 
 
-                                    elif event == 'lose_items':
+                                    if event == 'lose_items':
                                         user = users.find_one({"userid": user['userid']})
                                         items = user['inventory']
                                         item = random.choice(items)
@@ -766,7 +870,7 @@ class checks:
                                             else:
                                                 event = '🍭 | Negative event canceled due to good mood!'
 
-                                    elif event[2:] == 'coins':
+                                    if event[2:] == 'coins':
 
                                         if mood_n == True:
                                             if event[:1] == 'm':
