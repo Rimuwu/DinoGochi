@@ -115,7 +115,7 @@ def min5_check(): #проверка каждые 5 мин
             uss = users.find({ })
             threading.Thread(target = alpha, daemon=True, kwargs = {'users': uss}).start()
 
-            if bot.get_me().first_name != 'DinoGochi':
+            if bot.get_me().first_name == 'DinoGochi':
 
                     threading.Thread(target = dead_users, daemon=True, kwargs = {'bot': bot, 'members': uss} ).start()
 
