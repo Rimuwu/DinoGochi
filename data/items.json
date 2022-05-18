@@ -86,7 +86,11 @@
 
  "43": {"nameru": "📜 Суп", "nameen": "📜 Soup", "type": "recipe", "descriptionru": "'Рыба живёт в воде, почему я ем её сухой?' - Так наверно думает каждый динозавр, он просто ещё не пробовал рыбный суп.", "descriptionen": "'A fish lives in water, why do I eat it dry?' - That's probably what every dinosaur thinks, he just hasn't tried fish soup yet.", "create": ["42"], "materials": ["10", "10", "10"], "abilities": {"uses": 100}},
 
- "44": {"nameru": "🧩 Настольные игры", "nameen": "🧩 Board games", "type": "game_ac", "descriptionru": "Добавляет 4 настольные игры для динозавра!", "descriptionen": "Adds 4 board games for dinosaur!"}
+ "44": {"nameru": "🧩 Настольные игры", "nameen": "🧩 Board games", "type": "game_ac", "descriptionru": "Добавляет 4 настольные игры для динозавра!", "descriptionen": "Adds 4 board games for dinosaur!"},
+
+ "45": {"nameru": "👜 Походный мешочек", "nameen": "👜 Travel bag", "type": "journey_ac", "descriptionru": "Увеличивает шанс событий в путешествии.", "descriptionen": "Increases the chance of travel events."},
+
+ "46": {"nameru": "📜 Походный мешочек", "nameen": "📜 Travel bag", "type": "recipe", "descriptionru": "Во время путешествия динозавру требуется место для хранения всех найденных вещей, тут нам поможет походный мешочек!", "descriptionen": "During the journey, the dinosaur needs a place to store all the things found, a hiking bag will help us here!", "create": ["45"], "materials": ["26", "26", "26", "27", "27"], "abilities": {"uses": 2}}
 
 }
 }

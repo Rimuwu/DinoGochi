@@ -35,7 +35,7 @@ with open('data/dino_data.json', encoding='utf-8') as f:
 
 def check(): #проверка каждые 10 секунд
 
-    def alpha(bot, members): checks.main(bot, members)
+    def alpha(members): checks.main(members)
 
     def beta(members): checks.main_hunting(members)
 
@@ -44,6 +44,8 @@ def check(): #проверка каждые 10 секунд
     def gamma(members): checks.main_sleep(members)
 
     def gamma2(members): checks.main_pass(members)
+
+    def delta(bot, members): checks.main_journey(bot, members)
 
     def memory(): checks.check_memory()
 
@@ -64,11 +66,12 @@ def check(): #проверка каждые 10 секунд
 
             for members in chunks_users:
 
-                threading.Thread(target = alpha, daemon=True, kwargs = {'bot': bot, 'members': members}).start()
-                threading.Thread(target = beta, daemon=True, kwargs = {'members': members} ).start()
-                threading.Thread(target = beta2, daemon=True, kwargs = {'members': members} ).start()
-                threading.Thread(target = gamma, daemon=True, kwargs = {'members': members} ).start()
+                threading.Thread(target = alpha,  daemon=True, kwargs = {'members': members}).start()
+                threading.Thread(target = beta,   daemon=True, kwargs = {'members': members} ).start()
+                threading.Thread(target = beta2,  daemon=True, kwargs = {'members': members} ).start()
+                threading.Thread(target = gamma,  daemon=True, kwargs = {'members': members} ).start()
                 threading.Thread(target = gamma2, daemon=True, kwargs = {'members': members} ).start()
+                threading.Thread(target = delta,  daemon=True, kwargs = {'bot': bot, 'members': members}).start()
 
             threading.Thread(target = memory, daemon=True ).start()
 
