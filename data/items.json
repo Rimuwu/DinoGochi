@@ -84,7 +84,9 @@
 
  "42": {"nameru": "🥣 Суп", "nameen": "🥣 Soup", "type": "+eat", "act": 55, "class": "Flying"},
 
- "43": {"nameru": "📜 Суп", "nameen": "📜 Soup", "type": "recipe", "descriptionru": "'Рыба живёт в воде, почему я ем её сухой?' - Так наверно думает каждый динозавр, он просто ещё не пробовал рыбный суп.", "descriptionen": "'A fish lives in water, why do I eat it dry?' - That's probably what every dinosaur thinks, he just hasn't tried fish soup yet.", "create": ["42"], "materials": ["10", "10", "10"], "abilities": {"uses": 100}}
+ "43": {"nameru": "📜 Суп", "nameen": "📜 Soup", "type": "recipe", "descriptionru": "'Рыба живёт в воде, почему я ем её сухой?' - Так наверно думает каждый динозавр, он просто ещё не пробовал рыбный суп.", "descriptionen": "'A fish lives in water, why do I eat it dry?' - That's probably what every dinosaur thinks, he just hasn't tried fish soup yet.", "create": ["42"], "materials": ["10", "10", "10"], "abilities": {"uses": 100}},
+
+ "44": {"nameru": "🧩 Настольные игры", "nameen": "🧩 Board games", "type": "game_ac", "descriptionru": "Добавляет 4 настольные игры для динозавра!", "descriptionen": "Adds 4 board games for dinosaur!"}
 
 }
 }

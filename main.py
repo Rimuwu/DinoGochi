@@ -103,7 +103,7 @@ def check_notif(): #проверка каждые 5 секунд
 
 thr_notif = threading.Thread(target = check_notif, daemon=True)
 
-def min5_check(): #проверка каждые 5 мин
+def min10_check(): #проверка каждые 10 мин
 
     def alpha(users): checks.rayt(users)
 
@@ -122,7 +122,7 @@ def min5_check(): #проверка каждые 5 мин
 
         time.sleep(600)
 
-min5_thr = threading.Thread(target = min5_check, daemon=True)
+min10_thr = threading.Thread(target = min10_check, daemon=True)
 
 
 # @bot.message_handler(commands=['nw'])
@@ -1390,7 +1390,7 @@ def on_message(message):
 
                         bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'games', user))
 
-                if message.text in ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball']:
+                if message.text in ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball', '🧩 Пазлы', '♟ Шахматы', '🧱 Дженга', '🎲 D&D', '🧩 Puzzles', '♟ Chess', '🧱 Jenga']:
                     bd_user = users.find_one({"userid": user.id})
                     if bd_user != None:
                         dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
@@ -1413,6 +1413,21 @@ def on_message(message):
                                 g = 'pin'
                             elif message.text in ['🏐 Мяч', '🏐 Ball']:
                                 g = 'bal'
+
+                            else:
+                                if bd_user['activ_items']['game'] != None and bd_user['activ_items']['game']['item_id'] == '44':
+
+                                    if message.text in ['🧩 Пазлы', '🧩 Puzzles']:
+                                        g = 'puz'
+                                    elif message.text in ['♟ Шахматы', '♟ Chess']:
+                                        g = 'che'
+                                    elif message.text in ['🧱 Jenga', '🧱 Дженга']:
+                                        g = 'jen'
+                                    elif message.text in ['🎲 D&D']:
+                                        g = 'ddd'
+
+                                else:
+                                    return
 
                             item_1 = types.InlineKeyboardButton( text = text[0], callback_data = f"1_{g}_game_{str(bd_user['settings']['dino_id'])}")
                             item_2 = types.InlineKeyboardButton( text = text[1], callback_data = f"2_{g}_game_{str(bd_user['settings']['dino_id'])}")
@@ -3409,11 +3424,11 @@ def answer(call):
         bot.edit_message_text(text2, call.message.chat.id, call.message.message_id)
         bot.send_message(call.message.chat.id, text, parse_mode = 'html', reply_markup = functions.markup(bot, "actions", user))
 
-    elif call.data[:10] in ['1_con_game', '2_con_game', '3_con_game', '1_sna_game', '2_sna_game', '3_sna_game', '1_pin_game', '2_pin_game', '3_pin_game', '1_bal_game', '2_bal_game', '3_bal_game']:
+    elif call.data[:10] in ['1_con_game', '2_con_game', '3_con_game', '1_sna_game', '2_sna_game', '3_sna_game', '1_pin_game', '2_pin_game', '3_pin_game', '1_bal_game', '2_bal_game', '3_bal_game', '1_puz_game', '2_puz_game', '3_puz_game', '1_che_game', '2_che_game', '3_che_game', '1_jen_game', '2_jen_game', '3_jen_game', '1_ddd_game', '2_ddd_game', '3_ddd_game']:
         user = call.from_user
         bd_user = users.find_one({"userid": user.id})
         n_s = int(call.data[:1])
-        dino_id = call.data[11:]
+        dino_id = str(bd_user['settings']['dino_id'])
         if n_s == 1:
             time_m = random.randint(15, 30) * 60
         if n_s == 2:
@@ -3441,6 +3456,22 @@ def answer(call):
         elif game == 'bal':
             game = 'ball'
             e_text = [ [ ['Динозавру надоело играть в мяч...'], ['The dinosaur is tired of playing ball...'] ], [ ['Динозавру немного надоело играть в мяч...'], ['The dinosaur got a little tired of playing ball...'] ], [ ['Динозавр довольно играет в мяч!'], ['The dinosaur is pretty playing ball!'] ] ]
+
+        elif game == 'puz':
+            game = 'puzzles'
+            e_text = [ [ ['Динозавру надоело играть в пазлы...'], ['The dinosaur is tired of playing puzzles...'] ], [ ['Динозавру немного надоело играть в пазлы...'], ['The dinosaur got a little tired of playing puzzles...'] ], [ ['Динозавр довольно играет в пазлы!'], ['The dinosaur is pretty playing puzzles!'] ] ]
+
+        elif game == 'che':
+            game = 'сhess'
+            e_text = [ [ ['Динозавру надоело играть в шахматы...'], ['The dinosaur is tired of playing chess...'] ], [ ['Динозавру немного надоело играть в шахматы...'], ['The dinosaur got a little tired of playing chess...'] ], [ ['Динозавр довольно играет в шахматы!'], ['Dinosaur is playing chess pretty!'] ] ]
+
+        elif game == 'jen':
+            game = 'jenga'
+            e_text = [ [ ['Динозавру надоело играть в дженгу...'], ['The dinosaur is tired of playing jenga...'] ], [ ['Динозавру немного надоело играть в дженгу...'], ['The dinosaur got a little tired of playing jenga...'] ], [ ['Динозавр довольно играет в дженгу!'], ['Dinosaur is playing jenga pretty!'] ] ]
+
+        elif game == 'ddd':
+            game = 'jenga'
+            e_text = [ [ ['Динозавру надоело играть в D&D...'], ['The dinosaur is tired of playing D&D...'] ], [ ['Динозавру немного надоело играть в D&D...'], ['The dinosaur got a little tired of playing D&D...'] ], [ ['Динозавр довольно играет в D&D!'], ['Dinosaur is playing D&D pretty!'] ] ]
 
         bd_user['dinos'][ dino_id ]['activ_status'] = 'game'
         if 'games' not in list(bd_user['dinos'][ dino_id ].keys()):
@@ -3730,7 +3761,7 @@ def answer(call):
                     use_st = False
 
                 else:
-                    if int(bd_user['lvl'][0] / 20) > len(bd_user['dinos']) or len(bd_user['dinos']) == 0:
+                    if int(bd_user['lvl'][0] / 20 + 1) > len(bd_user['dinos']) or len(bd_user['dinos']) == 0:
 
                         if item['time_tag'] == 'h':
                             inc_time = time.time() + item['incub_time'] * 3600
@@ -4272,6 +4303,6 @@ print(f'Бот {bot.get_me().first_name} запущен!')
 if bot.get_me().first_name == 'DinoGochi' or True:
     main_checks.start() # активация всех проверок и игрового процесса
     thr_notif.start() # активация уведомлений
-    min5_thr.start() # пяти-минутный чек
+    min10_thr.start() # пяти-минутный чек
 
 bot.infinity_polling()

@@ -396,17 +396,24 @@ class functions:
                 markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
 
                 if bd_user['language_code'] == 'ru':
-                    nl = ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '↩ Назад']
+                    nl = ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч']
+
+                    if bd_user['activ_items']['game'] != None and bd_user['activ_items']['game']['item_id'] == '44':
+                        for x in ['🧩 Пазлы', '♟ Шахматы', '🧱 Дженга', '🎲 D&D']:
+                            nl.append(x)
+
+                    nl.append('↩ Назад')
+
                 else:
-                    nl = ['🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball', '↩ Back']
+                    nl = ['🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball']
 
-                item1 = types.KeyboardButton(nl[0])
-                item2 = types.KeyboardButton(nl[1])
-                item3 = types.KeyboardButton(nl[2])
-                item4 = types.KeyboardButton(nl[3])
-                item5 = types.KeyboardButton(nl[4])
+                    if bd_user['activ_items']['game'] != None and bd_user['activ_items']['game']['item_id'] == '44':
+                        for x in ['🧩 Puzzles', '♟ Chess', '🧱 Jenga', '🎲 D&D']:
+                            nl.append(x)
 
-                markup.add(item1, item2, item3, item4, item5)
+                    nl.append('↩ Back')
+
+                markup.add(* [x for x in nl] )
 
         elif element == "profile" and bd_user != None:
 

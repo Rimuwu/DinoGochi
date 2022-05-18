@@ -452,7 +452,7 @@ class checks:
                         r = random.randint(1, pr_hunt)
                         if r == 1:
 
-                            if  user['activ_items']['hunt'] != None and user['activ_items']['hunt']['item_id'] == '31':
+                            if user['activ_items']['hunt'] != None and user['activ_items']['hunt']['item_id'] == '31':
                                 col_l1 = ['27', '11', "35"]
                                 col_l2 = ['6', '11', "35"]
                                 col_l3 = ['6', "35"]
@@ -662,7 +662,7 @@ class checks:
 
                                     elif event == 'random_items':
 
-                                        item = functions.random_items(["1", "2", '25'], ['17', '18', '19'], ['26', '27', '28'], ["30", "32"], ["30", "32", "39", "41", "43"])
+                                        item = functions.random_items(["1", "2", '25'], ['17', '18', '19'], ['26', '27', '28'], ["30", "32", '44'], ["30", "32", "39", "41", "43", '44'])
 
                                         if mood_n == True:
 
@@ -682,7 +682,7 @@ class checks:
 
                                     elif event == 'random_items_leg':
 
-                                        item = functions.random_items(["4", '14', "15", "16"], ["4", '14', "15", "16"], ["30", "32", '34', "19", "39", "41"], ["37", "19", "39", "41", "43"], ["21", "37", "39", "41", "43"])
+                                        item = functions.random_items(["4", '14', "15", "16"], ["4", '14', "15", "16"], ["30", "32", '34', "19", "39", "41", '44'], ["37", "19", "39", "41", "43", '44'], ["21", "37", "39", "41", "43", '44'])
                                         if mood_n == True:
 
                                             if user['language_code'] == 'ru':
