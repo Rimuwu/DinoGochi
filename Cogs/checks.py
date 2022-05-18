@@ -520,6 +520,7 @@ class checks:
                 if dino['status'] == 'dino': #дино
 
                     if dino['activ_status'] == 'journey':
+                        nn += 1
 
                         if random.randint(1, 65) == 1: #unv
                             dinos_stats['unv'] -= random.randint(0,1)
@@ -528,9 +529,9 @@ class checks:
                             lvl_ += random.randint(0,20)
 
                         if user['activ_items']['journey'] != None and user['activ_items']['journey']['item_id'] == '45':
-                            tick = [1, 18]
-                        else:
                             tick = [1, 25]
+                        else:
+                            tick = [1, 30]
 
                         r_e_j = random.randint(tick[0], tick[1])
                         if r_e_j == 1:
