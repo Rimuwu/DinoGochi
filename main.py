@@ -83,7 +83,7 @@ def check_notif(): #проверка каждые 5 секунд
 
     def alpha(bot, members): checks.check_notif(bot, members)
 
-    def beta(bot, members): checks.check_incub(bot, members)
+    def beta(bot): checks.check_incub(bot)
 
     while True:
 
@@ -94,7 +94,7 @@ def check_notif(): #проверка каждые 5 секунд
             for members in chunks_users:
                 threading.Thread(target = alpha, daemon=True, kwargs = {'bot': bot, 'members': members}).start()
 
-            threading.Thread(target = beta, daemon=True, kwargs = {'bot': bot, 'members': non_members}).start()
+            threading.Thread(target = beta, daemon=True, kwargs = {'bot': bot}).start()
 
         else:
             print(f'Использование памяти: {int(memory_usage()[0])}')
@@ -107,7 +107,7 @@ def min5_check(): #проверка каждые 5 мин
 
     def alpha(users): checks.rayt(users)
 
-    def dead_users(bot, members): checks.check_dead_users(bot, members)
+    def dead_users(bot): checks.check_dead_users(bot)
 
     while True:
 
@@ -115,8 +115,7 @@ def min5_check(): #проверка каждые 5 мин
             uss = users.find({ })
             threading.Thread(target = alpha, daemon=True, kwargs = {'users': uss}).start()
 
-            if bot.get_me().first_name == 'DinoGochi':
-                threading.Thread(target = dead_users, daemon=True, kwargs = {'bot': bot, 'members': uss} ).start()
+            threading.Thread(target = dead_users, daemon=True, kwargs = {'bot': bot} ).start()
 
         else:
             print(f'Использование памяти: {int(memory_usage()[0])}')
@@ -3466,7 +3465,7 @@ def answer(call):
         if len(games) == 2:
 
             if games[0] == games[1]:
-                bd_user['dinos'][ dino_id ]['game_%'] = 0.5
+                bd_user['dinos'][ dino_id ]['game_%'] = 0.9
                 if bd_user['language_code'] == 'ru':
                     text2 = f"🎮 | {e_text[0][0][0]}, он получает штраф {bd_user['dinos'][ dino_id ]['game_%']}% в получении удовольствия от игры!"
 
@@ -3485,7 +3484,7 @@ def answer(call):
 
         if len(games) == 3:
 
-            if games[0] == games[1] and games[1] == games[2]:
+            if games[2] == games[0] and games[2] == games[1]:
                 bd_user['dinos'][ dino_id ]['game_%'] = 0.5
 
                 if bd_user['language_code'] == 'ru':
@@ -3494,7 +3493,7 @@ def answer(call):
                 else:
                     text2 = f"🎮 | {e_text[0][1][0]}, he gets a {bd_user['dinos'][ dino_id ]['game_%']}% penalty in enjoying the game!"
 
-            if games[0] == games[1] and games[1] != games[2] or games[0] == games[2] and games[0] != games[1] or games[0] != games[1] and games[1] == games[2]:
+            if ( games[2] == games[0] and games[2] != games[1] ) or ( games[2] != games[0] and games[2] == games[1] ):
                 bd_user['dinos'][ dino_id ]['game_%'] = 0.9
 
                 if bd_user['language_code'] == 'ru':
@@ -3503,7 +3502,7 @@ def answer(call):
                 else:
                     text2 = f"🎮 | {e_text[1][1][0]}, he gets a {bd_user['dinos'][ dino_id ]['game_%']}% penalty in enjoying the game!"
 
-            if games[0] != games[1] and games[1] != games[2] and games[0] != games[2]:
+            if games[2] != games[0] and games[2] != games[1]:
                 bd_user['dinos'][ dino_id ]['game_%'] = 1
 
                 if bd_user['language_code'] == 'ru':

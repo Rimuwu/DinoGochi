@@ -26,10 +26,11 @@ with open('data/dino_data.json', encoding='utf-8') as f:
 class checks:
 
     @staticmethod
-    def check_dead_users(bot, members):
+    def check_dead_users(bot):
         act1 = 0
         act2 = 0
         act3 = 0
+        members = users.find({ 'dinos': {'$eq': {} } })
 
         for user in members:
 
@@ -61,9 +62,9 @@ class checks:
 
                 except Exception as error:
 
-                    if str(error) in ['A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user']:
+                    if str(error) in ['A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user', 'A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: user is deactivated']:
                         # пользователь заблокировал бота, удаляем из базы.
-                        users.deleteOne({"userid": user['userid']})
+                        users.delete_one({"userid": user['userid']})
                         act2 += 1
 
 
@@ -97,7 +98,7 @@ class checks:
                         else:
                             print('WARNING in dead check users, 2 days check\n' + str(error))
 
-        print('Предупреждено - нет ответа -', act1, '\n', 'Удалено - ', act2,  '\n', 'Получили ув: ', act3 )
+        #print('Предупреждено - нет ответа -', act1, '\n', 'Удалено - ', act2,  '\n', 'Получили ув: ', act3 )
 
 
     @staticmethod
@@ -107,9 +108,10 @@ class checks:
         functions.check_data('memory', 1, int(time.time()) )
 
     @staticmethod
-    def check_incub(bot, members): #проверка каждые 5 секунд
+    def check_incub(bot): #проверка каждые 5 секунд
         nn = 0
         t_st = int(time.time())
+        members = users.find({ 'dinos': {'$ne': {} } })
 
         for user in members:
             dns_l = list(user['dinos'].keys()).copy()
@@ -139,10 +141,10 @@ class checks:
         functions.check_data('incub', 2, nn)
 
     @staticmethod
-    def rayt(users):
+    def rayt(members):
         mr_l, lv_l = [], []
 
-        loc_users = list(users).copy()
+        loc_users = list(members).copy()
         mr_l_r = list(sorted(loc_users, key=lambda x: x['coins'], reverse=True))
         lv_l_r = list(sorted(loc_users, key=lambda x: (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], reverse=True))
 
@@ -154,37 +156,6 @@ class checks:
 
         functions.rayt_update('save', [mr_l, lv_l])
 
-    @staticmethod
-    def check_incub(bot, members): #проверка каждые 5 секунд
-        nn = 0
-        t_st = int(time.time())
-
-        for user in members:
-            dns_l = list(user['dinos'].keys()).copy()
-
-            for dino_id in dns_l:
-                dino = user['dinos'][dino_id]
-                if dino['status'] == 'incubation': #инкубация
-                    nn += 1
-                    if dino['incubation_time'] - int(time.time()) <= 60*5 and dino['incubation_time'] - int(time.time()) > 0: #уведомление за 5 минут
-
-                        if functions.notifications_manager(bot, '5_min_incub', user, None, dino_id, 'check') == False:
-                            functions.notifications_manager(bot, "5_min_incub", user, dino, dino_id)
-
-
-                    elif dino['incubation_time'] - int(time.time()) <= 0:
-
-                        functions.notifications_manager(bot, "5_min_incub", user, dino, dino_id, met = 'delete')
-
-                        if 'quality' in dino.keys():
-                            functions.random_dino(user, dino_id, dino['quality'])
-                        else:
-                            functions.random_dino(user, dino_id)
-                        functions.notifications_manager(bot, "incub", user, dino_id)
-
-        functions.check_data('incub', 0, int(time.time() - t_st) )
-        functions.check_data('incub', 1, int(time.time()) )
-        functions.check_data('incub', 2, nn)
 
     @staticmethod
     def check_notif(bot, members): #проверка каждые 5 секунд
