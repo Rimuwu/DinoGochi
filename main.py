@@ -924,8 +924,6 @@ def on_message(message):
 
                     bot.send_message(message.chat.id, text, parse_mode = "Markdown")
 
-
-
             if message.text in ['🎮 Инвентарь', '🎮 Inventory']:
 
                 functions.user_inventory(bot, user, message)
@@ -936,11 +934,53 @@ def on_message(message):
                     text = functions.member_profile(bot, user.id, lang = bd_user['language_code'])
                     bot.send_message(message.chat.id, text, parse_mode = 'Markdown')
 
+            if message.text in ['🕹 Действия', '🕹 Actions']:
+                bd_user = users.find_one({"userid": user.id})
+                if bd_user != None:
+
+                    if bd_user['language_code'] == 'ru':
+                        text = '🕹 Панель действий открыта!'
+                    else:
+                        text = '🕹 The action panel is open!'
+
+                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "actions", user))
+
+            if message.text[:11] in ['🦖 Динозавр:'] or message.text[:7] in [ '🦖 Dino:']:
+                bd_user = users.find_one({"userid": user.id})
+                if bd_user != None:
+                    if bd_user['language_code'] == 'ru':
+                        did = int(message.text[12:])
+                    else:
+                        did = int(message.text[8:])
+
+                    if did == int(bd_user['settings']['dino_id']):
+                        ll = list(bd_user['dinos'].keys())
+                        ind = list(bd_user['dinos'].keys()).index(str(did))
+
+                        if ind + 1 == len(ll):
+                            bd_user['settings']['dino_id'] = ll[0]
+                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+                        else:
+                            bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[int(ll[did-1])]
+                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+
+                        if bd_user['language_code'] == 'ru':
+                            if bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['status'] == 'incubation':
+                                text = f"Вы выбрали динозавра 🥚"
+                            else:
+                                text = f"Вы выбрали динозавра {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
+                        else:
+                            if bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['status'] == 'incubation':
+                                text = f"You have chosen 🥚"
+                            else:
+                                text = f"You have chosen a dinosaur {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
+
+                        bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
 
             bd_user = users.find_one({"userid": user.id})
             tr_c = False
             if bd_user != None and len(list(bd_user['dinos'])) > 0:
-                if len(list(bd_user['dinos'])) > 1 or ( len(list(bd_user['dinos'])) == 1 and bd_user['lvl'][0] > 1) :
+                if ( len(list(bd_user['dinos'])) == 1 and bd_user['lvl'][0] > 1) :
                     tr_c = True
 
                 else:
@@ -1043,18 +1083,6 @@ def on_message(message):
 
                                 msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
                                 bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)
-
-
-                if message.text in ['🕹 Действия', '🕹 Actions']:
-                    bd_user = users.find_one({"userid": user.id})
-                    if bd_user != None:
-
-                        if bd_user['language_code'] == 'ru':
-                            text = '🕹 Панель действий открыта!'
-                        else:
-                            text = '🕹 The action panel is open!'
-
-                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "actions", user))
 
                 if message.text in ['🌙 Уложить спать', '🌙 Put to bed']:
                     bd_user = users.find_one({"userid": user.id})
@@ -1351,34 +1379,6 @@ def on_message(message):
                         else:
                             bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'actions', user))
                             return
-
-
-                if message.text[:11] in ['🦖 Динозавр:'] or message.text[:7] in [ '🦖 Dino:']:
-                    bd_user = users.find_one({"userid": user.id})
-                    if bd_user != None:
-                        if bd_user['language_code'] == 'ru':
-                            did = int(message.text[12:])
-                        else:
-                            did = int(message.text[8:])
-
-                        if did == int(bd_user['settings']['dino_id']):
-                            ll = list(bd_user['dinos'].keys())
-                            ind = list(bd_user['dinos'].keys()).index(str(did))
-
-                            if ind + 1 == len(ll):
-                                bd_user['settings']['dino_id'] = ll[0]
-                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
-                            else:
-                                bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[int(ll[did-1])]
-                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
-
-                            if bd_user['language_code'] == 'ru':
-                                text = f"Вы выбрали динозавра {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
-                            else:
-                                text = f"You have chosen a dinosaur {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
-
-                            bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
-
 
                 if message.text in ['🎮 Развлечения', '🎮 Entertainments']:
                     bd_user = users.find_one({"userid": user.id})

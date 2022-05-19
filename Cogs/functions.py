@@ -257,6 +257,25 @@ class functions:
         elif element == 'actions' and bd_user != None:
             markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
 
+            if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['status'] == 'incubation':
+                ll = []
+
+                if bd_user['language_code'] == 'ru':
+                    nl = '🥚 Яйцо инкубируется'
+                    nll = '↪ Назад'
+                else:
+                    nl = '🥚 The egg is incubated'
+                    nll = '↪ Back'
+
+                if len(bd_user['dinos']) > 1:
+                    nid_dino = bd_user['settings']['dino_id']
+                    ll.append(f'🦖 Динозавр: {nid_dino}')
+
+                ll.append(nl)
+                ll.append(nll)
+
+                markup.add(* [ x for x in ll ])
+
             if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['status'] == 'dino':
 
                 if bd_user['language_code'] == 'ru':
@@ -307,15 +326,7 @@ class functions:
                         markup.add(item0, item1, item2, item3, item4, item5, item6)
 
                     else:
-
-                        item1 = types.KeyboardButton(nl[0])
-                        item2 = types.KeyboardButton(nl[1])
-                        item3 = types.KeyboardButton(nl[2])
-                        item4 = types.KeyboardButton(nl[3])
-                        item5 = types.KeyboardButton(nl[4])
-                        item6 = types.KeyboardButton(nl[5])
-
-                        markup.add(item1, item2, item3, item4, item5, item6)
+                        markup.add(* [ x for x in nl ])
 
                 else:
                     nl = ['🎮 Entertainments', '🍣 Feed', '↪ Back']

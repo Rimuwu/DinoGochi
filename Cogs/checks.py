@@ -261,6 +261,10 @@ class checks:
                         if user['lvl'][0] >= 5:
                             functions.add_item_to_user(user, '21')
 
+                        if len(user['dinos']) > 0:
+                            user['settings']['dino_id'] = list(user['dinos'].keys())[0]
+                            users.update_one( {"userid": user['userid']}, {"$set": {'settings': user['settings'] }} )
+
                         functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
 
                         users.update_one( {"userid": user['userid']}, {"$set": {f'dinos': user['dinos'] }} )
