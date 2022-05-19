@@ -3681,6 +3681,14 @@ def answer(call):
 
             if sl == 2:
                 dino, dii = dino_dict[message.text][0], dino_dict[message.text][1]
+
+                if bd_user['language_code'] == 'ru':
+                    text = "👥 | Возвращение в меню профиля"
+                else:
+                    text = "👥 | Return to the profile menu"
+
+                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', user))
+
             if sl == 1:
                 dino, dii = dino_dict[0], dino_dict[1]
 
@@ -3816,16 +3824,17 @@ def answer(call):
 
             if 'abilities' in user_item.keys():
                 if 'uses' in item['abilities'].keys():
+                    if use_st == True:
 
-                    if user_item['abilities']['uses'] != -100:
+                        if user_item['abilities']['uses'] != -100:
 
-                        user_item['abilities']['uses'] -= 1
-                        if user_item['abilities']['uses'] > 0:
-                            users.update_one( {"userid": user.id}, {"$set": {f'inventory.{list_inv.index(user_item)}.abilities.uses': user_item['abilities']['uses'] }} )
+                            user_item['abilities']['uses'] -= 1
+                            if user_item['abilities']['uses'] > 0:
+                                users.update_one( {"userid": user.id}, {"$set": {f'inventory.{list_inv.index(user_item)}.abilities.uses': user_item['abilities']['uses'] }} )
 
-                        else:
-                            bd_user['inventory'].remove(user_item)
-                            users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
+                            else:
+                                bd_user['inventory'].remove(user_item)
+                                users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
 
             else:
 
@@ -3897,6 +3906,7 @@ def answer(call):
 
                     msg = bot.send_message(user.id, text, reply_markup = rmk)
                     bot.register_next_step_handler(msg, us_item, item, dino_dict, bd_user, user_item, list_inv, list_inv_id, 2)
+
 
     elif call.data[:12] == 'remove_item_':
 

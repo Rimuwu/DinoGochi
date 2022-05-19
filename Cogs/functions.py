@@ -576,8 +576,12 @@ class functions:
 
         else:
             for dii in bd_user['dinos']:
-                rmk.add( f"{dii}# {bd_user['dinos'][dii]['name']}" )
-                id_dino[f"{dii}# {bd_user['dinos'][dii]['name']}"] = [bd_user['dinos'][dii], dii]
+                if bd_user['dinos'][dii]['status'] == 'incubation':
+                    rmk.add( f"{dii}# 🥚" )
+                    id_dino[f"{dii}# 🥚"] = [bd_user['dinos'][dii], dii]
+                else:
+                    rmk.add( f"{dii}# {bd_user['dinos'][dii]['name']}" )
+                    id_dino[f"{dii}# {bd_user['dinos'][dii]['name']}"] = [bd_user['dinos'][dii], dii]
 
             if bd_user['language_code'] == 'ru':
                 rmk.add('↪ Назад')
@@ -1777,10 +1781,15 @@ class functions:
 
                 def ret(message, l_pages, l_page, l_ind_sort_it, pages, page, items_id, ind_sort_it, bd_user, user):
 
+                    if len(bd_user['dinos']) >= 2:
+                        sl, ll = functions.dino_pre_answer(bot, message)
+                        if message.text in list(ll[2].keys()):
+                            return
+
                     if message.text in ['Yes, transfer the item', 'Да, передать предмет']:
                         return
 
-                    elif message.text in ['↪ Назад', '↪ Back']:
+                    if message.text in ['↪ Назад', '↪ Back']:
                         res = None
 
                     else:
