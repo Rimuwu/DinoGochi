@@ -448,7 +448,7 @@ class checks:
                         if random.randint(1, 65) == 1: #unv
                             dinos_stats['unv'] -= random.randint(0,1)
 
-                        if user['activ_items']['hunt'] != None and user['activ_items']['hunt']['item_id'] == '15':
+                        if functions.acc_check(user, '15', dino_id, True):
                             pr_hunt = 15
                         else:
                             pr_hunt = 20
@@ -456,7 +456,7 @@ class checks:
                         r = random.randint(1, pr_hunt)
                         if r == 1:
 
-                            if user['activ_items']['hunt'] != None and user['activ_items']['hunt']['item_id'] == '31':
+                            if functions.acc_check(user, '31', dino_id, True):
                                 col_l1 = ['27', '11', "35"]
                                 col_l2 = ['6', '11', "35"]
                                 col_l3 = ['6', "35"]
@@ -532,7 +532,7 @@ class checks:
                         if random.randint(1, 45) == 1: #unv
                             lvl_ += random.randint(0,20)
 
-                        if user['activ_items']['journey'] != None and user['activ_items']['journey']['item_id'] == '45':
+                        if functions.acc_check(user, '45', dino_id, True):
                             tick = [1, 25]
                         else:
                             tick = [1, 30]
@@ -614,7 +614,7 @@ class checks:
                                             else:
                                                 fr_event = f"🦕 | Walking along familiar paths, the dinosaur meets {user['dinos'][dino_id]['name']} (the player's dinosaur {this_user.first_name})\n> Dinosaurs are extremely happy with each other!\n > Dinosaurs get a bonus {mood}% to mood!"
 
-                                            users.update_one( {"userid": fr_d['friend_bd']['userid']}, {"$push": {f'dinos.{dino_id}.journey_log': fr_event }} )
+                                            users.update_one( {"userid": fr_d['friend_bd']['userid']}, {"$push": {f'dinos.{fr_d["dino_id"]}.journey_log': fr_event }} )
 
                                         else:
 
@@ -759,7 +759,7 @@ class checks:
 
                                 event = random.choice(events)
                                 if event == 'rain':
-                                    if user['activ_items']['journey'] != None and user['activ_items']['journey']['item_id'] != '14':
+                                    if functions.acc_check(user, '14', dino_id, True) == False:
 
                                         mood = random.randint(1, 15)
                                         dinos_stats['mood'] -= mood
@@ -802,7 +802,7 @@ class checks:
                                     unv = random.randint(1, 10)
                                     dinos_stats['unv'] -= unv
 
-                                    if (user['activ_items']['journey'] != None and user['activ_items']['journey']['item_id'] != '29') and random.randint(1,2) == 1:
+                                    if functions.acc_check(user, '29', dino_id, True) == False and random.randint(1,2) == 1:
                                         heal = random.randint(1, 5)
                                         dinos_stats['heal'] -= heal
                                         textru = f'\nДинозавр не смог избежать ран, он теряет {heal}% здоровья.'

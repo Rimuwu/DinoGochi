@@ -6,7 +6,7 @@
 
  "3": {"nameru": "🥚 Загадочное яйцо", "nameen": "🥚 Mysterious egg", "type": "egg", "incub_time": 12, "time_tag": "h", "inc_type": "random"},
 
- "4": {"nameru": "⏲ Таймер", "nameen": "⏲ Timer", "type": "game_ac", "descriptionru": "Даёт возможность узнать сколько времени продлится игра.", "descriptionen": "Gives you the opportunity to find out how long the game will last."},
+ "4": {"nameru": "⏲ Таймер", "nameen": "⏲ Timer", "type": "game_ac", "descriptionru": "Даёт возможность узнать сколько времени продлится игра.", "descriptionen": "Gives you the opportunity to find out how long the game will last.", "abilities": {"endurance": 100}},
 
  "5": {"nameru": "🍖 Мясо кабана", "nameen": "🍖 Wild boar meat", "type": "+eat", "act": 25, "class": "Carnivore"},
 
@@ -26,11 +26,11 @@
 
  "13": {"nameru": "🦪 Мелкая рыба", "nameen": "🦪 Small fish", "type": "+eat", "act": 20, "class": "Flying"},
 
- "14": {"nameru": "🧥 Плащ", "nameen": "🧥 Raincoat", "type": "journey_ac", "descriptionru": "Отменяет штраф за событие Дождь.", "descriptionen": "Cancels the penalty for the Rain event."},
+ "14": {"nameru": "🧥 Плащ", "nameen": "🧥 Raincoat", "type": "journey_ac", "descriptionru": "Отменяет штраф за событие Дождь.", "descriptionen": "Cancels the penalty for the Rain event.", "abilities": {"endurance": 100}},
 
- "15": {"nameru": "🛠 Инструменты", "nameen": "🛠 Tools", "type": "hunt_ac", "descriptionru": "Ускоряют сбор пищи.", "descriptionen": "Accelerate the collection of food.", "act": 10},
+ "15": {"nameru": "🛠 Инструменты", "nameen": "🛠 Tools", "type": "hunt_ac", "descriptionru": "Ускоряют сбор пищи.", "descriptionen": "Accelerate the collection of food.", "act": 10, "abilities": {"endurance": 100}},
 
- "16": {"nameru": "🧸 Мишка", "nameen": "🧸 Bear", "type": "unv_ac", "descriptionru": "Добавляет режимы сна.", "descriptionen": "Adds sleep modes."},
+ "16": {"nameru": "🧸 Мишка", "nameen": "🧸 Bear", "type": "unv_ac", "descriptionru": "Добавляет режимы сна.", "descriptionen": "Adds sleep modes.", "abilities": {"endurance": 100}},
 
  "17": {"nameru": "🧪 Лечебная мазь", "nameen": "🧪 Therapeutic ointment", "type": "+heal", "act": 25},
 
@@ -56,11 +56,11 @@
 
  "28": {"nameru": "🐡 Рыбий жир", "nameen": "🐡 Fish oil", "type": "material"},
 
- "29": {"nameru": "🧤 Кожаная одежда", "nameen": "🧤 Leather clothing", "type": "journey_ac", "descriptionru": "Отменяет штраф за событие драка.", "descriptionen": "Cancels the penalty for the fight event."},
+ "29": {"nameru": "🧤 Кожаная одежда", "nameen": "🧤 Leather clothing", "type": "journey_ac", "descriptionru": "Отменяет штраф за событие драка.", "descriptionen": "Cancels the penalty for the fight event.", "abilities": {"endurance": 100}},
 
  "30": {"nameru": "📜 Кожаная одежда", "nameen": "📜 Leather clothing", "type": "recipe", "descriptionru": "Рецепт изготовления '🧤 Кожаная одежда' из 5-ти кожи.", "descriptionen": "The recipe for making '🧤 Leather clothing' from 5 leather.", "create": ["29"], "materials": ["26", "26", "26", "26", "26"], "abilities": {"uses": 3} },
 
- "31": {"nameru": "🔥 Факел", "nameen": "🔥 Torch", "type": "hunt_ac", "descriptionru": "Во время собирательства, есть шанс найти более изысканные травы.", "descriptionen": "While gathering, there is a chance to find more refined herbs."},
+ "31": {"nameru": "🔥 Факел", "nameen": "🔥 Torch", "type": "hunt_ac", "descriptionru": "Во время собирательства, есть шанс найти более изысканные травы.", "descriptionen": "While gathering, there is a chance to find more refined herbs.", "abilities": {"endurance": 100}},
 
  "32": {"nameru": "📜 Рецепт факела", "nameen": "📜 Torch Recipe", "type": "recipe", "descriptionru": "Рецепт изготовления '🔥 Факел' из 4-ёх веточек дерева и 1-ой бумажки.", "descriptionen": "The recipe for making a '🔥 Torch' from 4 tree branches and 1 piece of paper.", "create": ["31"], "materials": ["27", "27", "27", "27", "25"], "abilities": {"uses": 1}},
 
@@ -86,9 +86,9 @@
 
  "43": {"nameru": "📜 Суп", "nameen": "📜 Soup", "type": "recipe", "descriptionru": "'Рыба живёт в воде, почему я ем её сухой?' - Так наверно думает каждый динозавр, он просто ещё не пробовал рыбный суп.", "descriptionen": "'A fish lives in water, why do I eat it dry?' - That's probably what every dinosaur thinks, he just hasn't tried fish soup yet.", "create": ["42"], "materials": ["10", "10", "10"], "abilities": {"uses": 100}},
 
- "44": {"nameru": "🧩 Настольные игры", "nameen": "🧩 Board games", "type": "game_ac", "descriptionru": "Добавляет 4 настольные игры для динозавра!", "descriptionen": "Adds 4 board games for dinosaur!"},
+ "44": {"nameru": "🧩 Настольные игры", "nameen": "🧩 Board games", "type": "game_ac", "descriptionru": "Добавляет 4 настольные игры для динозавра!", "descriptionen": "Adds 4 board games for dinosaur!", "abilities": {"endurance": 100}},
 
- "45": {"nameru": "👜 Походный мешочек", "nameen": "👜 Travel bag", "type": "journey_ac", "descriptionru": "Увеличивает шанс событий в путешествии.", "descriptionen": "Increases the chance of travel events."},
+ "45": {"nameru": "👜 Походный мешочек", "nameen": "👜 Travel bag", "type": "journey_ac", "descriptionru": "Увеличивает шанс событий в путешествии.", "descriptionen": "Increases the chance of travel events.", "abilities": {"endurance": 100}},
 
  "46": {"nameru": "📜 Походный мешочек", "nameen": "📜 Travel bag", "type": "recipe", "descriptionru": "Во время путешествия динозавру требуется место для хранения всех найденных вещей, тут нам поможет походный мешочек!", "descriptionen": "During the journey, the dinosaur needs a place to store all the things found, a hiking bag will help us here!", "create": ["45"], "materials": ["26", "26", "26", "27", "27"], "abilities": {"uses": 2}}
 
