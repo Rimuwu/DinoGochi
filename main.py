@@ -199,43 +199,64 @@ def command(message):
         tr = functions.add_item_to_user(bd, msg_args[1], int(msg_args[2]))
         bot.send_message(user.id, str(msg_args))
 
-@bot.message_handler(commands=['acc'])
+# @bot.message_handler(commands=['acc'])
+# def command(message):
+#     user = message.from_user
+#     if user.id in [5279769615, 1191252229]:
+#         uss = users.find({  })
+#
+#         for user in uss:
+#
+#             if 'game' in user['activ_items'].keys():
+#
+#                 for i in user['activ_items']:
+#
+#                     ac = user['activ_items'][i]
+#                     if ac != None:
+#                         ac["abilities"] = {"endurance": 100}
+#
+#
+#                 user['activ_items'] = { '1': user['activ_items']}
+#
+#                 users.update_one( {"userid": user['userid']}, {"$set": {'activ_items': user['activ_items'] }} )
+#
+#             a = 0
+#             for item in user['inventory'].copy():
+#
+#                 data_item = items_f['items'][ item['item_id'] ]
+#
+#                 if data_item['type'] in ["game_ac", "journey_ac", "hunt_ac", "unv_ac"]:
+#                     a+=1
+#                     item['abilities'] =  {"endurance": 100}
+#
+#             if a > 0:
+#                 users.update_one( {"userid": user['userid']}, {"$set": {f'inventory': user['inventory'] }} )
+#
+#             print(user['userid'], ' - ready')
+#
+#         print('all')
+
+
+@bot.message_handler(commands=['acc2'])
 def command(message):
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
-        uss = users.find({  })
+        market_ = market.find_one({"id": 1})
 
-        for user in uss:
+        for r in market_['products']:
+            userr = market_['products'][r]
 
-            if 'game' in user['activ_items'].keys():
-
-                for i in user['activ_items']:
-
-                    ac = user['activ_items'][i]
-                    if ac != None:
-                        ac["abilities"] = {"endurance": 100}
-
-
-                user['activ_items'] = { '1': user['activ_items']}
-
-                users.update_one( {"userid": user['userid']}, {"$set": {'activ_items': user['activ_items'] }} )
-
-            a = 0
-            for item in user['inventory'].copy():
+            for ite in userr['products']:
+                item = userr['products'][ite]['item']
 
                 data_item = items_f['items'][ item['item_id'] ]
 
                 if data_item['type'] in ["game_ac", "journey_ac", "hunt_ac", "unv_ac"]:
-                    a+=1
-                    item['abilities'] =  {"endurance": 100}
 
-            if a > 0:
-                users.update_one( {"userid": user['userid']}, {"$set": {f'inventory': user['inventory'] }} )
+                    market.update_one( {"id": 1}, {"$set": {f'products.{r}.products.{ite}.item.abilities': {"endurance": 100} }} )
 
-            print(user['userid'], ' - ready')
 
-        print('all')
-
+        print(';')
 
 
 
@@ -1162,7 +1183,7 @@ def on_message(message):
 
                                         bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
 
-                                    if functions.acc_check(bd_user, '16', d_id, True):
+                                    if functions.acc_check(bd_user, '16', bd_user['settings']['dino_id'], True) == False:
                                         dl_sleep(bd_user, message)
 
                                     else:
@@ -2585,6 +2606,9 @@ def on_message(message):
                                             if 'uses' in pr['item']['abilities'].keys():
                                                 text += f"\n           *└* Использований: {pr['item']['abilities']['uses']}"
 
+                                            if 'endurance' in pr['item']['abilities'].keys():
+                                                text += f"\n           *└* Прочность: {pr['item']['abilities']['endurance']}"
+
                                         text += '\n\n'
 
                                     else:
@@ -2594,6 +2618,9 @@ def on_message(message):
                                         if 'abilities' in pr['item'].keys():
                                             if 'uses' in pr['item']['abilities'].keys():
                                                 text += f"\n           *└* Uses: {pr['item']['abilities']['uses']}"
+
+                                            if 'endurance' in pr['item']['abilities'].keys():
+                                                text += f"\n           *└* Endurance: {pr['item']['abilities']['endurance']}"
 
                                         text += '\n\n'
 
@@ -3046,6 +3073,9 @@ def on_message(message):
                                     if 'uses' in i['item']['abilities'].keys():
                                         text += f"\n           *└* Использований: {i['item']['abilities']['uses']}"
 
+                                    if 'endurance' in i['item']['abilities'].keys():
+                                        text += f"\n           *└* Прочность: {i['item']['abilities']['endurance']}"
+
                                 text += '\n\n'
 
                                 in_l.append( types.InlineKeyboardButton( text = str(a) + '#', callback_data = f"market_buy_[{i['user']}, {i['key']}]"))
@@ -3059,6 +3089,9 @@ def on_message(message):
                                 if 'abilities' in i['item'].keys():
                                     if 'uses' in i['item']['abilities'].keys():
                                         text += f"\n           *└* Uses: {i['item']['abilities']['uses']}"
+
+                                    if 'endurance' in i['item']['abilities'].keys():
+                                        text += f"\n           *└* Endurance: {i['item']['abilities']['endurance']}"
 
                                 text += '\n\n'
 
