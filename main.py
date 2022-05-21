@@ -3568,7 +3568,7 @@ def answer(call):
                         ok = False
                         break
 
-                if ok == True and False:
+                if ok == True:
 
                     if bd_user['language_code'] == 'ru':
                         text = f'🍡 | Предмет {item["nameru"]} создан!'
