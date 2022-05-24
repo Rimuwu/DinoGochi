@@ -26,6 +26,7 @@ checks_data = {'memory': [0, time.time()], 'incub': [0, time.time(), 0], 'notif'
 reyt_ = [[], []]
 
 class functions:
+
     json_f = json_f
     items_f = items_f
     checks_data = checks_data
@@ -86,6 +87,18 @@ class functions:
                 types.InlineKeyboardButton( text = f'👥 | {inp_text[1]}', callback_data = f"requests")
                 )
 
+        elif element == 'send_request' and bd_user != None: #markup_inline
+
+            if bd_user['language_code'] == 'ru':
+                markup_inline.add(
+                types.InlineKeyboardButton( text = f'✔ | {inp_text[0]}', callback_data = f"send_request")
+                )
+
+            else:
+                markup_inline.add(
+                types.InlineKeyboardButton( text = f'✔ | {inp_text[1]}', callback_data = f"send_request")
+                )
+
         else:
             print(f'{element}\n{user.first_name}')
 
@@ -130,6 +143,8 @@ class functions:
 
             markup.add(nl)
             return markup
+
+        users.update_one( {"userid": userid}, {"$set": {f'settings.last_markup': element }} )
 
         if element == 1 and bd_user != None:
 
@@ -418,7 +433,7 @@ class functions:
                 if bd_user['language_code'] == 'ru':
                     nl = ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч']
 
-                    if functions.acc_check(bd_user, '44', str(bd_user['settings']['dino_id'])):
+                    if functions.acc_check(bot, bd_user, '44', str(bd_user['settings']['dino_id'])):
                         for x in ['🧩 Пазлы', '♟ Шахматы', '🧱 Дженга', '🎲 D&D']:
                             nl.append(x)
 
@@ -427,7 +442,7 @@ class functions:
                 else:
                     nl = ['🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball']
 
-                    if functions.acc_check(bd_user, '44', str(bd_user['settings']['dino_id'])):
+                    if functions.acc_check(bot, bd_user, '44', str(bd_user['settings']['dino_id'])):
                         for x in ['🧩 Puzzles', '♟ Chess', '🧱 Jenga', '🎲 D&D']:
                             nl.append(x)
 
@@ -577,7 +592,7 @@ class functions:
 
 
     @staticmethod
-    def dino_pre_answer(bot, message):
+    def dino_pre_answer(bot, message, type:str = 'all'):
         id_dino = {}
 
         user = message.from_user
@@ -597,8 +612,9 @@ class functions:
         else:
             for dii in bd_user['dinos']:
                 if bd_user['dinos'][dii]['status'] == 'incubation':
-                    rmk.add( f"{dii}# 🥚" )
-                    id_dino[f"{dii}# 🥚"] = [bd_user['dinos'][dii], dii]
+                    if type == 'all':
+                        rmk.add( f"{dii}# 🥚" )
+                        id_dino[f"{dii}# 🥚"] = [bd_user['dinos'][dii], dii]
                 else:
                     rmk.add( f"{dii}# {bd_user['dinos'][dii]['name']}" )
                     id_dino[f"{dii}# {bd_user['dinos'][dii]['name']}"] = [bd_user['dinos'][dii], dii]
@@ -721,7 +737,10 @@ class functions:
                 except:
                     return False
 
-                dinoname = user['dinos'][ dino_id ]['name']
+                try:
+                    dinoname = user['dinos'][ dino_id ]['name']
+                except:
+                    dinoname = 'none'
 
                 if notification == "5_min_incub":
 
@@ -798,11 +817,11 @@ class functions:
                 elif notification == "dead":
 
                     if user['language_code'] == 'ru':
-                        text = f'💥 | {chat.first_name}, ваш динозаврик {dinoname}.... Умир...'
+                        text = f'💥 | {chat.first_name}, ваш динозаврик.... Умир...'
                         nl = "🧩 Проект: Возрождение"
                         nl2 = '🎮 Инвентарь'
                     else:
-                        text = f'💥 | {chat.first_name}, your dinosaur {dinoname}.... Died...'
+                        text = f'💥 | {chat.first_name}, your dinosaur.... Died...'
                         nl = '🧩 Project: Rebirth'
                         nl2 = '🎮 Inventory'
 
@@ -861,22 +880,22 @@ class functions:
 
                         text = f'🦖 | {dinoname} вернулся из путешествия!\nВот что произошло в его путешествии:\n\n'
 
-                        if user['dinos'][ str( user['settings']['dino_id'] ) ]['journey_log'] == []:
+                        if user['dinos'][ dino_id ]['journey_log'] == []:
                             text += 'Ничего не произошло!'
                         else:
                             n = 1
-                            for el in user['dinos'][ str( user['settings']['dino_id'] ) ]['journey_log']:
+                            for el in user['dinos'][ dino_id ]['journey_log']:
                                 text += f'<b>{n}.</b> {el}\n\n'
                                 n += 1
                     else:
 
                         text = f"🦖 | Your dinosaur has returned from a journey!\nHere's what happened on his journey:\n\n"
 
-                        if user['dinos'][ str( user['settings']['dino_id'] ) ]['journey_log'] == []:
+                        if user['dinos'][ dino_id ]['journey_log'] == []:
                             text += 'Nothing happened!'
                         else:
                             n = 1
-                            for el in user['dinos'][ str( user['settings']['dino_id'] ) ]['journey_log']:
+                            for el in user['dinos'][ dino_id ]['journey_log']:
                                 text += f'<b>{n}.</b> {el}\n\n'
                                 n += 1
 
@@ -1563,7 +1582,10 @@ class functions:
                             act_ii[d_id].append('-')
                         else:
                             item = items_f['items'][str(itm['item_id'])]['nameru']
-                            act_ii[d_id].append(item)
+                            if 'abilities' in itm.keys() and 'endurance' in itm['abilities'].keys():
+                                act_ii[d_id].append(f"{item} ({itm['abilities']['endurance']})")
+                            else:
+                                act_ii[d_id].append(f'{item}')
 
                 text =  f"*┌* *🎴 Профиль пользователя*\n"
                 text += f"*├* Имя: {user.first_name}\n"
@@ -2189,7 +2211,8 @@ class functions:
                 work_pr(message, id_friends)
 
     @staticmethod
-    def acc_check(user, item_id:str, dino_id, endurance = False):
+    def acc_check(bot, user, item_id:str, dino_id, endurance = False):
+
         data_item = items_f['items'][item_id]
         acc_type = data_item['type'][:-3]
 
@@ -2220,3 +2243,12 @@ class functions:
 
             else:
                 return False
+
+    @staticmethod
+    def last_markup(bd_user, alternative = 1):
+
+        if 'last_markup' not in bd_user['settings'].keys():
+            return alternative
+
+        else:
+            return bd_user['settings']['last_markup']

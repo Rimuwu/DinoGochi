@@ -455,7 +455,7 @@ class commands:
                                 text += f"\n\n🌳 *┌* Путешествие: \n·  Осталось: { functions.time_end(w_t) }"
 
                             if bd_dino['activ_status'] == 'game':
-                                if functions.acc_check(bd_user, '4', dino_user_id):
+                                if functions.acc_check(bot, bd_user, '4', dino_user_id):
                                     w_t = bd_dino['game_time'] - time.time()
                                     if w_t < 0:
                                         w_t = 0
@@ -534,7 +534,7 @@ class commands:
                                 text += f"\n\n🌳 *┌* Journey: \n·  Left: { functions.time_end(w_t, True) }"
 
                             if bd_dino['activ_status'] == 'game':
-                                if functions.acc_check(bd_user, '4', dino_user_id):
+                                if functions.acc_check(bot, bd_user, '4', dino_user_id):
                                     w_t = bd_dino['game_time'] - time.time()
                                     if w_t < 0:
                                         w_t = 0
