@@ -6,6 +6,8 @@ import random
 import json
 import time
 from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageSequence, ImageFilter
+import io
+from io import BytesIO
 
 sys.path.append("..")
 import config
@@ -44,7 +46,7 @@ class functions:
             yield lst[i:i + n]
 
     @staticmethod
-    def inline_markup(bot, element = None, user = None, inp_text:list = [None, None]):
+    def inline_markup(bot, element = None, user = None, inp_text:list = [None, None], arg = None):
 
         try:  #ошибка связанная с Int64 при попытке поставить обычную проверку
             user = int(user)
@@ -97,6 +99,18 @@ class functions:
             else:
                 markup_inline.add(
                 types.InlineKeyboardButton( text = f'✔ | {inp_text[1]}', callback_data = f"send_request")
+                )
+
+        elif element == 'open_dino_profile' and bd_user != None: #markup_inline
+
+            if bd_user['language_code'] == 'ru':
+                markup_inline.add(
+                types.InlineKeyboardButton( text = f'🦕 | {inp_text[0]}', callback_data = f"open_dino_profile_{arg}")
+                )
+
+            else:
+                markup_inline.add(
+                types.InlineKeyboardButton( text = f'🦕 | {inp_text[1]}', callback_data = f"open_dino_profile_{arg}")
                 )
 
         else:
@@ -762,7 +776,7 @@ class functions:
                         text = f'🦖 | {chat.first_name}, the dinosaur has hatched! 🎉'
 
                     try:
-                        bot.send_message(user['userid'], text)
+                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id) )
                     except:
                         pass
 
@@ -774,7 +788,7 @@ class functions:
                         text = f'🍕 | {chat.first_name}, {dinoname} wants to eat, his need for food has dropped to {arg}%!'
 
                     try:
-                        bot.send_message(user['userid'], text)
+                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
                     except:
                         pass
 
@@ -786,7 +800,7 @@ class functions:
                         text = f'🎮 | {chat.first_name}, {dinoname} wants to play, his need for the game has dropped to {arg}%!'
 
                     try:
-                        bot.send_message(user['userid'], text)
+                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
                     except:
                         pass
 
@@ -798,7 +812,7 @@ class functions:
                         text = f'🦖 | {chat.first_name}, {dinoname} is in a bad mood, his mood has sunk to {arg}%!'
 
                     try:
-                        bot.send_message(user['userid'], text)
+                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
                     except:
                         pass
 
@@ -810,7 +824,7 @@ class functions:
                         text = f'🌙 | {chat.first_name}, {dinoname} wants to sleep, his sleep characteristic dropped to {arg}%!'
 
                     try:
-                        bot.send_message(user['userid'], text)
+                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
                     except:
                         pass
 
@@ -857,8 +871,9 @@ class functions:
                         text = f'🌙 | {chat.first_name}, {dinoname} is awake and full of energy!'
 
                     try:
-                        bot.send_message(user['userid'], text)
-                    except:
+                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
+                    except Exception as error:
+                        print('woke_up ', error)
                         pass
 
                 elif notification == "game_end":
@@ -869,7 +884,7 @@ class functions:
                         text = f'🎮 | {chat.first_name}, {dinoname} has stopped playing!'
 
                     try:
-                        bot.send_message(user['userid'], text)
+                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
                     except:
                         pass
 
@@ -900,9 +915,13 @@ class functions:
                                 n += 1
 
                     try:
-                        bot.send_message(user['userid'], text, parse_mode = 'html')
-                    except:
-                        pass
+                        bot.send_message(user['userid'], text, parse_mode = 'html', reply_markup = functions.inline_markup(bot, 'inventory', chat.id, ['Открыть инвентарь', 'Open inventory']) )
+                    except Exception as error:
+                        print('journey_end ', error)
+                        try:
+                            bot.send_message(user['userid'], text, parse_mode = 'html' )
+                        except:
+                            pass
 
                 elif notification == "friend_request":
 
@@ -948,7 +967,7 @@ class functions:
                         text = f'🍕 | {chat.first_name}, {dinoname} is back from collecting food!'
 
                     try:
-                        bot.send_message(user['userid'], text)
+                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, 'inventory', chat.id, ['Открыть инвентарь', 'Open inventory']) )
                     except:
                         pass
 
@@ -960,6 +979,18 @@ class functions:
                         text = f'🛠 | {chat.first_name}, ваш аксессуар {item_d["nameru"]} сломался!'
                     else:
                         text = f'🛠 | {chat.first_name}, your accessory {item_d["nameen"]} broke!'
+
+                    try:
+                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, 'inventory', chat.id, ['Открыть инвентарь', 'Open inventory']) )
+                    except:
+                        pass
+
+                elif notification == "lvl_up":
+
+                    if user['language_code'] == 'ru':
+                        text = f'🎉 | {chat.first_name}, ваш уровень повышен! ({arg})'
+                    else:
+                        text = f'🎉 | {chat.first_name}, your level has been raised! ({arg})'
 
                     try:
                         bot.send_message(user['userid'], text)
@@ -1219,9 +1250,8 @@ class functions:
 
         def zero(message, user_item, bd_user):
 
-            if message.text in ['Yes, transfer the item', 'Да, передать предмет']:
-                pass
-            else:
+            if message.text not in ['Yes, transfer the item', 'Да, передать предмет']:
+                bot.send_message(message.chat.id, '❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
                 return
 
             friends_id = bd_user['friends']['friends_list']
@@ -1468,6 +1498,8 @@ class functions:
                     n = '├'
 
                 if i['status'] == 'incubation':
+                    t_incub = i['incubation_time'] - time.time()
+                    time_end = functions.time_end(t_incub, True)
 
                     if lang == 'ru':
 
@@ -1486,8 +1518,7 @@ class functions:
                             if pre_qual == 'leg':
                                 qual = '💛 Легендарное'
 
-
-                        t_dinos += f"\n   *{n}* Статус: яйцо\n      *└* Редкость: {qual}\n"
+                        t_dinos += f"\n   *{n}* Статус: яйцо\n      *├* Редкость: {qual}\n      *└* Осталось: {time_end}\n"
 
                     else:
 
@@ -1507,7 +1538,7 @@ class functions:
                                 qual = '💛 Legendary'
 
 
-                        t_dinos += f"\n   *{n}*\n      *├* Status: egg\n      *└* Rare: {qual}\n"
+                        t_dinos += f"\n   *{n}*\n      *├* Status: egg\n      *├* Rare: {qual}\n      *└* Left: {time_end}\n"
 
                 if i['status'] == 'dino':
 
@@ -1663,7 +1694,7 @@ class functions:
                     text += f"*└* 🎍 Journey: {act_ii[i][2]}"
 
         except Exception as error:
-             text = f'ERROR: {error}'
+             text = f'ERROR Profile: {error}'
 
         return text
 
@@ -2252,3 +2283,312 @@ class functions:
 
         else:
             return bd_user['settings']['last_markup']
+
+    @staticmethod
+    def p_profile(bot, message, bd_dino, user, bd_user, dino_user_id):
+
+        def egg_profile(bd_user, user, bd_dino):
+            egg_id = bd_dino['egg_id']
+
+            if bd_user['language_code'] == 'ru':
+                lang = bd_user['language_code']
+            else:
+                lang = 'en'
+
+            if 'quality' in bd_dino.keys():
+                quality = bd_dino['quality']
+            else:
+                quality = 'random'
+
+            if quality == 'random':
+                if lang == 'ru':
+                    dino_quality = ['Редкость:', 'Случайный']
+                else:
+                    dino_quality = ['Quality:', 'Random']
+                fill = (207, 70, 204)
+
+            if quality == 'com':
+                if lang == 'ru':
+                    dino_quality = ['Редкость:', 'Обычный']
+                else:
+                    dino_quality = ['Quality:', 'Common']
+                fill = (108, 139, 150)
+
+            if quality == 'unc':
+                if lang == 'ru':
+                    dino_quality = ['Редкость:', 'Необычный']
+                else:
+                    dino_quality = ['Quality:', 'Uncommon']
+                fill = (68, 235, 90)
+
+            if quality == 'rar':
+                if lang == 'ru':
+                    dino_quality = ['Редкость:', 'Редкий']
+                else:
+                    dino_quality = ['Quality:', 'Rare']
+                fill = (68, 143, 235)
+
+            if quality == 'myt':
+                if lang == 'ru':
+                    dino_quality = ['Редкость:', 'Мистическое']
+                else:
+                    dino_quality = ['Quality:', 'Mystical']
+                fill = (230, 103, 175)
+
+            if quality == 'leg':
+                if lang == 'ru':
+                    dino_quality = ['Редкость:', 'Легендарное']
+                else:
+                    dino_quality = ['Quality:', 'Legendary']
+                fill = (235, 168, 68)
+
+
+            t_incub = bd_dino['incubation_time'] - time.time()
+            if t_incub < 0:
+                t_incub = 0
+
+            time_end = functions.time_end(t_incub, True)
+            if len(time_end) >= 18:
+                time_end = time_end[:-6]
+
+            bg_p = Image.open(f"images/remain/egg_profile_{lang}.png")
+            egg = Image.open("images/" + str(json_f['elements'][egg_id]['image']))
+            egg = egg.resize((290, 290), Image.ANTIALIAS)
+
+            img = functions.trans_paste(egg, bg_p, 1.0, (-50, 40))
+
+            idraw = ImageDraw.Draw(img)
+            line1 = ImageFont.truetype("fonts/Comic Sans MS.ttf", size = 35)
+
+            idraw.text((430, 220), time_end, font = line1, stroke_width = 1)
+            idraw.text((210, 270), dino_quality[0], font = line1)
+            idraw.text((385, 270), dino_quality[1], font = line1, fill = fill)
+
+            img.save('profile.png')
+            profile = open(f"profile.png", 'rb')
+
+            return profile, time_end
+
+        def dino_profile(bd_user, user, dino_user_id):
+
+            dino_id = str(bd_user['dinos'][ dino_user_id ]['dino_id'])
+
+            if bd_user['language_code'] == 'ru':
+                lang = bd_user['language_code']
+            else:
+                lang = 'en'
+
+            dino = json_f['elements'][dino_id]
+            if 'class' in list(dino.keys()):
+                bg_p = Image.open(f"images/remain/{dino['class']}_icon.png")
+            else:
+                bg_p = Image.open(f"images/remain/None_icon.png")
+
+            class_ = dino['image'][5:8]
+
+            panel_i = Image.open(f"images/remain/{class_}_profile_{lang}.png")
+
+            img = functions.trans_paste(panel_i, bg_p, 1.0)
+
+            dino_image = Image.open("images/"+str(json_f['elements'][dino_id]['image']))
+
+            sz = 412
+            dino_image = dino_image.resize((sz, sz), Image.ANTIALIAS)
+
+            xy = -80
+            x2 = 80
+            img = functions.trans_paste(dino_image, img, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
+
+
+            idraw = ImageDraw.Draw(img)
+            line1 = ImageFont.truetype("fonts/Comic Sans MS.ttf", size = 35)
+
+            idraw.text((530, 110), str(bd_user['dinos'][dino_user_id]['stats']['heal']), font = line1)
+            idraw.text((530, 190), str(bd_user['dinos'][dino_user_id]['stats']['eat']), font = line1)
+
+            idraw.text((750, 110), str(bd_user['dinos'][dino_user_id]['stats']['game']), font = line1)
+            idraw.text((750, 190), str(bd_user['dinos'][dino_user_id]['stats']['mood']), font = line1)
+            idraw.text((750, 270), str(bd_user['dinos'][dino_user_id]['stats']['unv']), font = line1)
+
+            img.save('profile.png')
+            profile = open(f"profile.png", 'rb')
+
+            return profile
+
+        if bd_dino['status'] == 'incubation':
+
+            profile, time_end  = egg_profile(bd_user, user, bd_dino)
+            if bd_user['language_code'] == 'ru':
+                text = f'🥚 | Яйцо инкубируется, осталось: {time_end}'
+            else:
+                text = f'🥚 | The egg is incubated, left: {time_end}'
+
+            bot.send_photo(message.chat.id, profile, text, reply_markup = functions.markup(bot, user = user))
+
+        if bd_dino['status'] == 'dino':
+
+            for i in bd_user['dinos'].keys():
+                if bd_user['dinos'][i] == bd_dino:
+                    dino_user_id = i
+
+            profile = dino_profile(bd_user, user, dino_user_id = dino_user_id )
+
+            if bd_user['language_code'] == 'ru':
+                st_t = bd_dino['activ_status']
+
+                dino = json_f['elements'][str(bd_dino['dino_id'])]
+                pre_qual = dino['image'][5:8]
+                qual = ''
+                if pre_qual == 'com':
+                    qual = 'Обычный'
+                if pre_qual == 'unc':
+                    qual = 'Необычный'
+                if pre_qual == 'rar':
+                    qual = 'Редкий'
+                if pre_qual == 'myt':
+                    qual = 'Мистический'
+                if pre_qual == 'leg':
+                    qual = 'Легендарный'
+
+                if bd_dino['activ_status'] == 'pass_active':
+                    st_t = 'ничего не делает 💭'
+                elif bd_dino['activ_status'] == 'sleep':
+                    st_t = 'спит 🌙'
+                elif bd_dino['activ_status'] == 'game':
+                    st_t = 'играет 🎮'
+                elif bd_dino['activ_status'] == 'journey':
+                    st_t = 'путешествует 🎴'
+                elif bd_dino['activ_status'] in ['hunt', 'hunting']:
+                    st_t = 'сбор пищи 🥞'
+
+                if bd_dino['stats']['heal'] >= 60:
+                    h_text = '❤ *┌* Динозавр здоров'
+                elif bd_dino['stats']['heal'] < 60 and bd_dino['stats']['heal'] > 10:
+                    h_text = '❤ *┌* Динозавр в плохом состоянии'
+                elif bd_dino['stats']['heal'] <= 10:
+                    h_text = '❤ *┌* Динозавр в крайне плохом состоянии!'
+
+                if bd_dino['stats']['eat'] >= 60:
+                    e_text = '🍕 *├* Динозавр сыт'
+                elif bd_dino['stats']['eat'] < 60 and bd_dino['stats']['eat'] > 10:
+                    e_text = '🍕 *├* Динозавр голоден'
+                elif bd_dino['stats']['eat'] <= 10:
+                    e_text = '🍕 *├* Динозавр умирает от голода!'
+
+                if bd_dino['stats']['game'] >= 60:
+                    g_text = '🎮 *├* Динозавр не хочет играть'
+                elif bd_dino['stats']['game'] < 60 and bd_dino['stats']['game'] > 10:
+                    g_text = '🎮 *├* Динозавр скучает...'
+                elif bd_dino['stats']['game'] <= 10:
+                    g_text = '🎮 *├* Динозавр умирает от скуки!'
+
+                if bd_dino['stats']['mood'] >= 60:
+                    m_text = '🎈 *├* Динозавр в хорошем настроении'
+                elif bd_dino['stats']['mood'] < 60 and bd_dino['stats']['mood'] > 10:
+                    m_text = '🎈 *├* У динозавра нормальное настроение'
+                elif bd_dino['stats']['mood'] <= 10:
+                    m_text = '🎈 *├* Динозавр грустит!'
+
+                if bd_dino['stats']['unv'] >= 60:
+                    u_text = '🌙 *└* Динозавр полон сил'
+                elif bd_dino['stats']['unv'] < 60 and bd_dino['stats']['unv'] > 10:
+                    u_text = '🌙 *└* У динозавра есть силы'
+                elif bd_dino['stats']['unv'] <= 10:
+                    u_text = '🌙 *└* Динозавр устал!'
+
+
+                text = f'🦖 *┌* Имя: {bd_dino["name"]}\n👁‍🗨 *├* Статус: {st_t}\n🧿 *└* Редкость: {qual}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
+
+                if bd_dino['activ_status'] == 'journey':
+                    w_t = bd_dino['journey_time'] - time.time()
+                    if w_t < 0:
+                        w_t = 0
+                    text += f"\n\n🌳 *┌* Путешествие: \n·  Осталось: { functions.time_end(w_t) }"
+
+                if bd_dino['activ_status'] == 'game':
+                    if functions.acc_check(bot, bd_user, '4', dino_user_id):
+                        w_t = bd_dino['game_time'] - time.time()
+                        if w_t < 0:
+                            w_t = 0
+                        text += f"\n\n🎮 *┌* Игра: \n·  Осталось: { functions.time_end(w_t) }"
+
+            else:
+
+                st_t = bd_dino['activ_status']
+
+                dino = json_f['elements'][str(bd_dino['dino_id'])]
+                pre_qual = dino['image'][5:8]
+                qual = ''
+                if pre_qual == 'com':
+                    qual = 'Сommon'
+                if pre_qual == 'unc':
+                    qual = 'Unusual'
+                if pre_qual == 'rar':
+                    qual = 'Rare'
+                if pre_qual == 'myt':
+                    qual = 'Mystical'
+                if pre_qual == 'leg':
+                    qual = 'Legendary'
+
+                if bd_dino['activ_status'] == 'pass_active':
+                    st_t = 'does nothing 💭'
+                elif bd_dino['activ_status'] == 'sleep':
+                    st_t = 'sleeping 🌙'
+                elif bd_dino['activ_status'] == 'game':
+                    st_t = 'playing 🎮'
+                elif bd_dino['activ_status'] == 'journey':
+                    st_t = 'travels 🎴'
+                elif bd_dino['activ_status'] == 'hunting':
+                    st_t = 'collecting food 🥞'
+
+                if bd_dino['stats']['heal'] >= 60:
+                    h_text = '❤ *┌* The dinosaur is healthy'
+                elif bd_dino['stats']['heal'] < 60 and bd_dino['stats']['heal'] > 10:
+                    h_text = '❤ *┌* Dinosaur in bad condition'
+                elif bd_dino['stats']['heal'] <= 10:
+                    h_text = '❤ *┌* The dinosaur is in extremely bad condition!'
+
+                if bd_dino['stats']['eat'] >= 60:
+                    e_text = '🍕 *├* The dinosaur is full'
+                elif bd_dino['stats']['eat'] < 60 and bd_dino['stats']['eat'] > 10:
+                    e_text = '🍕 *├* The dinosaur is hungry'
+                elif bd_dino['stats']['eat'] <= 10:
+                    e_text = '🍕 *├* The dinosaur is starving!'
+
+                if bd_dino['stats']['game'] >= 60:
+                    g_text = "🎮 *├* The dinosaur doesn't want to play"
+                elif bd_dino['stats']['game'] < 60 and bd_dino['stats']['game'] > 10:
+                    g_text = '🎮 *├* The dinosaur is bored...'
+                elif bd_dino['stats']['game'] <= 10:
+                    g_text = '🎮 *├* The dinosaur is dying of boredom!'
+
+                if bd_dino['stats']['mood'] >= 60:
+                    m_text = '🎈 *├* The dinosaur is in a good mood'
+                elif bd_dino['stats']['mood'] < 60 and bd_dino['stats']['mood'] > 10:
+                    m_text = '🎈 *├* The dinosaur has a normal mood'
+                elif bd_dino['stats']['mood'] <= 10:
+                    m_text = '🎈 *├* The dinosaur is sad!'
+
+                if bd_dino['stats']['unv'] >= 60:
+                    u_text = '🌙 *└* The dinosaur is full of energy'
+                elif bd_dino['stats']['unv'] < 60 and bd_dino['stats']['unv'] > 10:
+                    u_text = '🌙 *└* The dinosaur has powers'
+                elif bd_dino['stats']['unv'] <= 10:
+                    u_text = '🌙 *└* The dinosaur is tired!'
+
+                text = f'🦖 *┌* Name: {bd_dino["name"]}\n👁‍🗨 *├* Status: {st_t}\n🧿 *└* Rare: {qual}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
+
+                if bd_dino['activ_status'] == 'journey':
+                    w_t = bd_dino['journey_time'] - time.time()
+                    if w_t < 0:
+                        w_t = 0
+                    text += f"\n\n🌳 *┌* Journey: \n·  Left: { functions.time_end(w_t, True) }"
+
+                if bd_dino['activ_status'] == 'game':
+                    if functions.acc_check(bot, bd_user, '4', dino_user_id):
+                        w_t = bd_dino['game_time'] - time.time()
+                        if w_t < 0:
+                            w_t = 0
+                        text += f"\n\n🎮 *┌* Game: \n·  Left: { functions.time_end(w_t) }"
+
+            bot.send_photo(message.chat.id, profile, text, reply_markup = functions.markup(bot, user = user), parse_mode = 'Markdown' )
