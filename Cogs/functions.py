@@ -2271,9 +2271,10 @@ class functions:
                             users.update_one( {"userid": user["userid"] }, {"$set": {'activ_items': user['activ_items'] }} )
 
                 return True
-
             else:
                 return False
+        else:
+            return False
 
     @staticmethod
     def last_markup(bd_user, alternative = 1):
@@ -2506,11 +2507,29 @@ class functions:
                     text += f"\n\n🌳 *┌* Путешествие: \n·  Осталось: { functions.time_end(w_t) }"
 
                 if bd_dino['activ_status'] == 'game':
-                    if functions.acc_check(bot, bd_user, '4', dino_user_id):
+                    if functions.acc_check(bot, bd_user, '4', dino_user_id, True):
                         w_t = bd_dino['game_time'] - time.time()
                         if w_t < 0:
                             w_t = 0
                         text += f"\n\n🎮 *┌* Игра: \n·  Осталось: { functions.time_end(w_t) }"
+
+                d_id = dino_user_id
+                act_ii = []
+                for itmk in bd_user['activ_items'][d_id].keys():
+                    itm = bd_user['activ_items'][d_id][itmk]
+                    if itm == None:
+                        act_ii.append('-')
+                    else:
+                        item = items_f['items'][str(itm['item_id'])]['nameru']
+                        if 'abilities' in itm.keys() and 'endurance' in itm['abilities'].keys():
+                            act_ii.append(f"{item} ({itm['abilities']['endurance']})")
+                        else:
+                            act_ii.append(f'{item}')
+
+                text += f"\n\n🌙 *┌* Сон: {act_ii[3]}\n"
+                text += f"🎮 *├* Игра: {act_ii[0]}\n"
+                text += f"🌿 *├* Сбор пищи: {act_ii[1]}\n"
+                text += f"🎍 *└* Путешествие: {act_ii[2]}\n"
 
             else:
 
@@ -2585,7 +2604,7 @@ class functions:
                     text += f"\n\n🌳 *┌* Journey: \n·  Left: { functions.time_end(w_t, True) }"
 
                 if bd_dino['activ_status'] == 'game':
-                    if functions.acc_check(bot, bd_user, '4', dino_user_id):
+                    if functions.acc_check(bot, bd_user, '4', dino_user_id, True):
                         w_t = bd_dino['game_time'] - time.time()
                         if w_t < 0:
                             w_t = 0

@@ -1264,8 +1264,14 @@ def on_message(message):
 
 
                         else:
-                            bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'actions', user))
-                            return
+
+                            if bd_user['language_code'] == 'ru':
+                                text = f"❗ | Ваш динозавр уже чем то занят, проверьте профиль!"
+
+                            else:
+                                text = f"❗ | Your dinosaur is already busy with something, check the profile!"
+
+                            bot.send_message(message.chat.id, text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', message.chat.id, ['Открыть профиль', 'Open a profile'], str(bd_user['settings']['dino_id']) ))
 
 
                 if message.text in ['🌙 Пробудить', '🌙 Awaken']:
@@ -1381,8 +1387,14 @@ def on_message(message):
                             bot.send_message(message.chat.id, text, reply_markup = markup_inline)
 
                         else:
-                            bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'actions', user))
-                            return
+
+                            if bd_user['language_code'] == 'ru':
+                                text = f"❗ | Ваш динозавр уже чем то занят, проверьте профиль!"
+
+                            else:
+                                text = f"❗ | Your dinosaur is already busy with something, check the profile!"
+
+                            bot.send_message(message.chat.id, text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', message.chat.id, ['Открыть профиль', 'Open a profile'], str(bd_user['settings']['dino_id']) ))
 
 
                 if message.text in ['🎑 Вернуть', '🎑 Call']:
@@ -1440,13 +1452,26 @@ def on_message(message):
                     if bd_user != None:
                         dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
 
-                        if bd_user['language_code'] == 'ru':
-                            text = f"🎮 | Перенаправление в меню развлечений!"
+                        if dino['activ_status'] == 'pass_active':
+
+                            if bd_user['language_code'] == 'ru':
+                                text = f"🎮 | Перенаправление в меню развлечений!"
+
+                            else:
+                                text = f"🎮 | Redirecting to the entertainment menu!"
+
+                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'games', user))
 
                         else:
-                            text = f"🎮 | Redirecting to the entertainment menu!"
 
-                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'games', user))
+                            if bd_user['language_code'] == 'ru':
+                                text = f"❗ | Ваш динозавр уже чем то занят, проверьте профиль!"
+
+                            else:
+                                text = f"❗ | Your dinosaur is already busy with something, check the profile!"
+
+                            bot.send_message(message.chat.id, text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', message.chat.id, ['Открыть профиль', 'Open a profile'], str(bd_user['settings']['dino_id']) ))
+
 
                 if message.text in ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball', '🧩 Пазлы', '♟ Шахматы', '🧱 Дженга', '🎲 D&D', '🧩 Puzzles', '♟ Chess', '🧱 Jenga']:
                     bd_user = users.find_one({"userid": user.id})
@@ -2020,6 +2045,16 @@ def on_message(message):
 
                         msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
                         bot.register_next_step_handler(msg, ret, bbt, bd_user)
+
+                    else:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f"❗ | Ваш динозавр уже чем то занят, проверьте профиль!"
+
+                        else:
+                            text = f"❗ | Your dinosaur is already busy with something, check the profile!"
+
+                        bot.send_message(message.chat.id, text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', message.chat.id, ['Открыть профиль', 'Open a profile'], str(bd_user['settings']['dino_id']) ))
 
 
                 if message.text in ['🍕 Прогресс', '🍕 Progress']:
@@ -3856,12 +3891,14 @@ def answer(call):
 
                     for _ in range(col):
                         for i in data_item['materials']:
-                            fr_user['inventory'].remove( fr_user['inventory'][list_inv_id.index(i)] )
+                            if i not in data_item['created']:
+                                fr_user['inventory'].remove( fr_user['inventory'][list_inv_id.index(i)] )
 
                     res = users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
 
                     for i in data_item['create']:
-                        ok = functions.add_item_to_user(bd_user, i, col)
+                        if i not in data_item['materials']:
+                            ok = functions.add_item_to_user(bd_user, i, col)
 
 
             bot.send_message(user.id, text, parse_mode = 'Markdown', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
