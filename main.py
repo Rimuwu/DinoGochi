@@ -3891,7 +3891,7 @@ def answer(call):
 
                     for _ in range(col):
                         for i in data_item['materials']:
-                            if i not in data_item['created']:
+                            if i not in data_item['create']:
                                 fr_user['inventory'].remove( fr_user['inventory'][list_inv_id.index(i)] )
 
                     res = users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
