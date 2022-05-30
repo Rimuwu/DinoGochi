@@ -3606,12 +3606,12 @@ def answer(call):
                 elif data_item['type'] == 'egg':
                     use_item()
 
-            if check_n == 2:
+            elif check_n == 2:
 
                 if data_item['type'] == '+heal':
                     ans_col()
 
-                elif data_item['type'] == '+unv':
+                if data_item['type'] == '+unv':
                     ans_col()
 
                 elif data_item['type'] == 'recipe':
@@ -3623,7 +3623,7 @@ def answer(call):
                 elif data_item['type'] in ['game_ac', "journey_ac", "hunt_ac", "unv_ac"]:
                     use_item()
 
-            if check_n == 3:
+            elif check_n == 3:
 
                 if data_item['type'] == '+heal':
                     use_item()
@@ -3658,6 +3658,8 @@ def answer(call):
 
             if n_dp == 2: # 1 дино
                 dino_dict = [dp_a, list(bd_user['dinos'].keys())[0] ]
+                dino_id = list(bd_user['dinos'].keys())[0]
+                n_c_f(), re_item()
 
             if n_dp == 3: # 2 и более
                 rmk = dp_a[0]
@@ -3886,7 +3888,6 @@ def answer(call):
                                 users.update_one( {"userid": user.id}, {"$set": {f'inventory.{fr_user["inventory"].index(user_item)}.abilities.uses': user_item['abilities']['uses'] - col}} )
 
                             else:
-                                print('0845')
                                 fr_user['inventory'].remove(user_item)
                                 users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
 
@@ -3944,7 +3945,6 @@ def answer(call):
                 return
 
             else:
-
                 n_c_f(), re_item()
 
         def ans_col():
