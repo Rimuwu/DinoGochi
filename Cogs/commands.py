@@ -293,6 +293,13 @@ class commands:
         bd_user = users.find_one({"userid": user.id})
         if bd_user != None:
 
+            if len(bd_user['dinos']) > 1:
+                for i in bd_user['dinos'].keys():
+                    if i not in bd_user['activ_items'].keys():
+
+                        users.update_one( {"userid": bd_user["userid"] }, {"$set": {f'activ_items.{i}': {'game': None, 'hunt': None, 'journey': None, 'unv': None} }} )
+                        bd_user = users.find_one({"userid": user.id})
+
             if len(bd_user['dinos'].keys()) == 0:
 
                 if bd_user['language_code'] == 'ru':
@@ -324,10 +331,10 @@ class commands:
 
                     def ret(message, dino_dict, user, bd_user):
                         if message.text in dino_dict.keys():
-                            try:
-                                functions.p_profile(bot, message, dino_dict[message.text][0], user, bd_user, dino_dict[message.text][1])
-                            except Exception as error:
-                                print('Ошибка в профиле1\n', error)
+                            # try:
+                            functions.p_profile(bot, message, dino_dict[message.text][0], user, bd_user, dino_dict[message.text][1])
+                            # except Exception as error:
+                            #     print('Ошибка в профиле1\n', error)
 
                         else:
                             bot.send_message(message.chat.id, '❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user), bd_user ))
