@@ -2259,7 +2259,7 @@ def on_message(message):
 
 
                 if message.text in ['💍 Аксессуары', '💍 Accessories']:
-                    bd_user = users.find_one({"userid": user.id})
+                    bd_user = users.find_one({"useriid": user.id})
                     if bd_user != None:
 
                         if len(bd_user['dinos']) > 1:
@@ -3678,7 +3678,7 @@ def answer(call):
             if data_item['type'] == '+heal':
 
                 if bd_user['language_code'] == 'ru':
-                    text = f'❤ | Вы восстановили {item["act"] * col}% здоровья динозавра!'
+                    text = f'❤ | Вы восстановили {data_item["act"] * col}% здоровья динозавра!'
                 else:
                     text = f"❤ | You have restored {data_item['act'] * col}% of the dinosaur's health!"
 
