@@ -3669,6 +3669,7 @@ def answer(call):
 
         def use_item():
             global col, dino_id
+            fr_user = users.find_one({"userid": user.id})
 
             use_st = True
 
@@ -3692,7 +3693,6 @@ def answer(call):
 
             elif data_item['type'] == 'recipe':
                 ok = True
-                fr_user = users.find_one({"userid": user.id})
 
                 for _ in range(col):
                     for i in data_item['materials']:
@@ -3712,6 +3712,21 @@ def answer(call):
                         text = f'🍡 | Предмет {data_item["nameru"]} x{col} создан!'
                     else:
                         text = f"🍡 | The item {data_item['nameen']} x{col} is created!"
+
+                    fr_user = users.find_one({"userid": user.id})
+
+                    for _ in range(col):
+                        for i in data_item['materials']:
+                            if i not in data_item['create']:
+                                lst_ind = list_inv_id.index(i)
+
+                                fr_user['inventory'].remove( fr_user['inventory'][lst_ind] )
+
+                    res = users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
+
+                    for i in data_item['create']:
+                        if i not in data_item['materials']:
+                            ok = functions.add_item_to_user(fr_user, i, col)
 
                 else:
 
@@ -3865,40 +3880,26 @@ def answer(call):
 
                         if user_item['abilities']['uses'] != -100:
 
-                            user_item['abilities']['uses'] -= col
-                            if user_item['abilities']['uses'] > 0:
-                                users.update_one( {"userid": user.id}, {"$set": {f'inventory.{list_inv.index(user_item)}.abilities.uses': user_item['abilities']['uses'] }} )
+                            s_col = user_item['abilities']['uses'] - col
+
+                            if s_col > 0:
+                                users.update_one( {"userid": user.id}, {"$set": {f'inventory.{fr_user["inventory"].index(user_item)}.abilities.uses': user_item['abilities']['uses'] - col}} )
 
                             else:
-                                bd_user['inventory'].remove(user_item)
-                                users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
+                                print('0845')
+                                fr_user['inventory'].remove(user_item)
+                                users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
 
             else:
 
                 if use_st == True:
                     try:
                         for _ in range(col):
-                            bd_user['inventory'].remove(user_item)
+                            fr_user['inventory'].remove(user_item)
                     except:
-                        bd_user['inventory'].remove(user_item)
+                        fr_user['inventory'].remove(user_item)
 
-                    users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
-
-            if use_st == True:
-
-                if data_item['type'] == 'recipe':
-                    fr_user = users.find_one({"userid": user.id})
-
-                    for _ in range(col):
-                        for i in data_item['materials']:
-                            if i not in data_item['create']:
-                                fr_user['inventory'].remove( fr_user['inventory'][list_inv_id.index(i)] )
-
-                    res = users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
-
-                    for i in data_item['create']:
-                        if i not in data_item['materials']:
-                            ok = functions.add_item_to_user(bd_user, i, col)
+                    users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
 
 
             bot.send_message(user.id, text, parse_mode = 'Markdown', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
@@ -4435,8 +4436,6 @@ def answer(call):
             if str(key_i) in ma_d.keys():
                 mmd = market_['products'][str(us_id)]['products'][str(key_i)]
 
-                print(mmd)
-
             else:
                 if bd_user['language_code'] == 'ru':
                     text = "🛒 | Предмет не найден на рынке, возможно он уже был куплен."
@@ -4499,7 +4498,7 @@ def answer(call):
 
 
 print(f'Бот {bot.get_me().first_name} запущен!')
-if bot.get_me().first_name == 'DinoGochi' or True:
+if bot.get_me().first_name == 'DinoGochi' or False:
     main_checks.start() # активация всех проверок и игрового процесса
     thr_notif.start() # активация уведомлений
     min10_thr.start() # пяти-минутный чек
