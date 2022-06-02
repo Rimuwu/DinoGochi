@@ -90,7 +90,7 @@ class checks:
                         users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications'] }} )
 
                     except Exception as error:
-                        if str(error) in ['A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user']:
+                        if str(error) in ['A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user', 'A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: user is deactivated']:
                             # пользователь заблокировал бота, дадим ему возможность подумать ещё пару дней.
                             act1 += 1
 
@@ -765,7 +765,7 @@ class checks:
                                 elif r_event in list(range(91,100)): #мистическое соб
                                     events = ['toxic_rain', 'y_coins']
                                 else: #легендарное соб
-                                    events = ['lose_item', 'l_coins']
+                                    events = ['lose_items', 'l_coins']
 
 
                                 event = random.choice(events)

@@ -2259,7 +2259,7 @@ def on_message(message):
 
 
                 if message.text in ['💍 Аксессуары', '💍 Accessories']:
-                    bd_user = users.find_one({"useriid": user.id})
+                    bd_user = users.find_one({"userid": user.id})
                     if bd_user != None:
 
                         if len(bd_user['dinos']) > 1:
@@ -2547,7 +2547,6 @@ def on_message(message):
                             def ret(message, dino_dict, user, bd_user):
 
                                 try:
-
                                     acss(message, dino_dict[message.text][1], user, bd_user)
                                 except:
                                     bot.send_message(message.chat.id, '❓', reply_markup = functions.markup(bot, "profile", user))
