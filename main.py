@@ -1263,15 +1263,15 @@ def on_message(message):
 
 
 
-                        else:
-
-                            if bd_user['language_code'] == 'ru':
-                                text = f"❗ | Ваш динозавр уже чем то занят, проверьте профиль!"
-
                             else:
-                                text = f"❗ | Your dinosaur is already busy with something, check the profile!"
 
-                            bot.send_message(message.chat.id, text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', message.chat.id, ['Открыть профиль', 'Open a profile'], str(bd_user['settings']['dino_id']) ))
+                                if bd_user['language_code'] == 'ru':
+                                    text = f"❗ | Ваш динозавр уже чем то занят, проверьте профиль!"
+
+                                else:
+                                    text = f"❗ | Your dinosaur is already busy with something, check the profile!"
+
+                                bot.send_message(message.chat.id, text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', message.chat.id, ['Открыть профиль', 'Open a profile'], str(bd_user['settings']['dino_id']) ))
 
 
                 if message.text in ['🌙 Пробудить', '🌙 Awaken']:
