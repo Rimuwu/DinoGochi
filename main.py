@@ -194,6 +194,15 @@ def command(message):
         text = f'{bd_user["dinos"][i]}\n\n'
     bot.send_message(user.id, text)
 
+@bot.message_handler(commands=['delete_dinos_check_acc'])
+def command(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        bd_user = users.find_one({"userid": user.id})
+        users.update_one( {"userid": user.id}, {"$set": {f'dinos': {} }} )
+        print("all")
+
+
 @bot.message_handler(commands=['add_item'])
 def command(message):
     user = message.from_user
@@ -3875,6 +3884,8 @@ def answer(call):
             if '-eat' in data_item.keys():
                 users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.eat': (data_item['-eat'] * -1) * col }} )
 
+            fr_user = users.find_one({"userid": user.id})
+
             if 'abilities' in user_item.keys():
                 if 'uses' in user_item['abilities'].keys():
                     if use_st == True:
@@ -3897,7 +3908,11 @@ def answer(call):
                         for _ in range(col):
                             fr_user['inventory'].remove(user_item)
                     except:
-                        fr_user['inventory'].remove(user_item)
+                        try:
+                            fr_user['inventory'].remove(user_item)
+                        except Exception as error:
+                            print(error, ' error - use item')
+                            pass
 
                     users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
 
