@@ -702,30 +702,30 @@ class checks:
                                             this_user = None
 
                                         if this_user != None:
-                                            game = random.randint(1, 20)
-                                            dinos_stats['game'] += game
-                                            fr_d['friend_bd']['dinos'][ fr_d['dino_id'] ]['stats']['game'] += game
+                                            game_p = random.randint(1, 20)
+                                            dinos_stats['game'] += game_p
+                                            fr_d['friend_bd']['dinos'][ fr_d['dino_id'] ]['stats']['game'] += game_p
 
                                             if user['language_code'] == 'ru':
                                                 game = random.choice([ 'нарды', "шашки", "карты", "мяч", "футбол", "лото", "d&d", "воздушного змея" ])
 
-                                                event = f"🎮 🦕 | Динозавр забрёл на игровую площадку, на ней оказался {fr_d['friend_bd']['dinos'][ fr_d['dino_id'] ]['name']} (динозавр игрока {fr_d['friend_in_bot'].first_name})\n> Динозавры решили сыграть в {game}!\n   > Динозавры получают бонус {game}% к игре!"
+                                                event = f"🎮 🦕 | Динозавр забрёл на игровую площадку, на ней оказался {fr_d['friend_bd']['dinos'][ fr_d['dino_id'] ]['name']} (динозавр игрока {fr_d['friend_in_bot'].first_name})\n> Динозавры решили сыграть в {game}!\n  > Динозавры получают бонус {game_p}% к игре!"
 
                                             else:
 
                                                 game = random.choice([ 'backgammon', "checkers", "cards", "ball", "football", "lotto", "d&d", "kite" ])
 
-                                                event = f"🦕 | The dinosaur wandered into the playground, found himself on it {fr_d['friend_bd']['dinos'][ fr_d['dino_id'] ]['name']} (the player's dinosaur {fr_d['friend_in_bot'].first_name})\n> Dinosaurs decided to play in {game}!\n > Dinosaurs get a bonus {game}% to the game!"
+                                                event = f"🦕 | The dinosaur wandered into the playground, found himself on it {fr_d['friend_bd']['dinos'][ fr_d['dino_id'] ]['name']} (the player's dinosaur {fr_d['friend_in_bot'].first_name})\n> Dinosaurs decided to play in {game}!\n  > Dinosaurs get a bonus {game_p}% to the game!"
 
                                             if fr_d['friend_bd']['language_code'] == 'ru':
                                                 game = random.choice([ 'нарды', "шашки", "карты", "мяч", "футбол", "лото", "d&d", "воздушного змея" ])
 
-                                                fr_event = f"🎮 🦕 | Динозавр забрёл на игровую площадку, на ней оказался {user['dinos'][dino_id]['name']} (динозавр игрока {this_user.first_name})\n> Динозавры решили сыграть в {game}!\n   > Динозавры получают бонус {game}% к игре!"
+                                                fr_event = f"🎮 🦕 | Динозавр забрёл на игровую площадку, на ней оказался {user['dinos'][dino_id]['name']} (динозавр игрока {this_user.first_name})\n> Динозавры решили сыграть в {game}!\n  > Динозавры получают бонус {game_p}% к игре!"
 
                                             else:
                                                 game = random.choice([ 'backgammon', "checkers", "cards", "ball", "football", "lotto", "d&d", "kite" ])
 
-                                                fr_event = f"🦕 | The dinosaur wandered into the playground, found himself on it {user['dinos'][dino_id]['name']} (the player's dinosaur {this_user.first_name})\n> Dinosaurs decided to play in {game}!\n > Dinosaurs get a bonus {game}% to the game!"
+                                                fr_event = f"🦕 | The dinosaur wandered into the playground, found himself on it {user['dinos'][dino_id]['name']} (the player's dinosaur {this_user.first_name})\n> Dinosaurs decided to play in {game}!\n  > Dinosaurs get a bonus {game_p}% to the game!"
 
                                             users.update_one( {"userid": fr_d['friend_bd']['userid']}, {"$push": {f'dinos.{fr_d["dino_id"]}.journey_log': fr_event }} )
 
