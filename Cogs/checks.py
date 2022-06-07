@@ -520,13 +520,7 @@ class checks:
 
         nn = 0
         t_st = int(time.time())
-        # members = users.find({ })
         for user in members:
-
-            if user['userid'] not in [5279769615, 1191252229]:
-                break
-
-            print(user['userid'], 'journey')
 
             dns_l = list(user['dinos'].keys()).copy()
             lvl_ = 0
@@ -551,11 +545,9 @@ class checks:
                         else:
                             tick = [1, 30]
 
-                        #r_e_j = random.randint(tick[0], tick[1])
-                        r_e_j = 1
+                        r_e_j = random.randint(tick[0], tick[1])
                         if r_e_j == 1:
-                            #rr = random.randint(1,3)
-                            rr = 2
+                            rr = random.randint(1,3)
                             if rr != 1:
 
                                 nd = random.randint(40, 75)
@@ -566,21 +558,19 @@ class checks:
                                 else:
                                     mood_n = False
 
-                                # r_event = random.randint(1, 100)
-                                # if r_event in list(range(1,51)): #обычное соб
-                                #     events = ['sunny', 'm_coins', 'breeze']
-                                # elif r_event in list(range(51,76)): #необычное соб
-                                #     events = ['+eat', 'sleep', 'u_coins', 'friend_meet', 'deadlock', 'friend_game']
-                                # elif r_event in list(range(76,91)): #редкое соб
-                                #     events = ['random_items', 'b_coins', 'deadlock']
-                                # elif r_event in list(range(91,100)): #мистическое соб
-                                #     events = ['random_items_leg', 'y_coins']
-                                # else: #легендарное соб
-                                #     events = ['egg', 'l_coins']
-                                #
-                                # event = random.choice(events)
-                                event = 'friend_game'
-                                print(event)
+                                r_event = random.randint(1, 100)
+                                if r_event in list(range(1,51)): #обычное соб
+                                    events = ['sunny', 'm_coins', 'breeze']
+                                elif r_event in list(range(51,76)): #необычное соб
+                                    events = ['+eat', 'sleep', 'u_coins', 'friend_meet', 'deadlock', 'friend_game']
+                                elif r_event in list(range(76,91)): #редкое соб
+                                    events = ['random_items', 'b_coins', 'deadlock']
+                                elif r_event in list(range(91,100)): #мистическое соб
+                                    events = ['random_items_leg', 'y_coins']
+                                else: #легендарное соб
+                                    events = ['egg', 'l_coins']
+
+                                event = random.choice(events)
 
                                 if event == 'deadlock':
 
