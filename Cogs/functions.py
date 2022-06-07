@@ -891,37 +891,7 @@ class functions:
 
                 elif notification == "journey_end":
 
-                    if user['language_code'] == 'ru':
-
-                        text = f'🦖 | {dinoname} вернулся из путешествия!\nВот что произошло в его путешествии:\n\n'
-
-                        if user['dinos'][ dino_id ]['journey_log'] == []:
-                            text += 'Ничего не произошло!'
-                        else:
-                            n = 1
-                            for el in user['dinos'][ dino_id ]['journey_log']:
-                                text += f'<b>{n}.</b> {el}\n\n'
-                                n += 1
-                    else:
-
-                        text = f"🦖 | Your dinosaur has returned from a journey!\nHere's what happened on his journey:\n\n"
-
-                        if user['dinos'][ dino_id ]['journey_log'] == []:
-                            text += 'Nothing happened!'
-                        else:
-                            n = 1
-                            for el in user['dinos'][ dino_id ]['journey_log']:
-                                text += f'<b>{n}.</b> {el}\n\n'
-                                n += 1
-
-                    try:
-                        bot.send_message(user['userid'], text, parse_mode = 'html', reply_markup = functions.inline_markup(bot, 'inventory', chat.id, ['Открыть инвентарь', 'Open inventory']) )
-                    except Exception as error:
-                        print('journey_end ', error)
-                        try:
-                            bot.send_message(user['userid'], text, parse_mode = 'html' )
-                        except:
-                            pass
+                    functions.journey_end_log(bot, user['userid'], dino_id)
 
                 elif notification == "friend_request":
 
@@ -2611,3 +2581,30 @@ class functions:
                         text += f"\n\n🎮 *┌* Game: \n·  Left: { functions.time_end(w_t) }"
 
             bot.send_photo(message.chat.id, profile, text, reply_markup = functions.markup(bot, user = user), parse_mode = 'Markdown' )
+
+    @staticmethod
+    def journey_end_log(bot, user_id, dino_id):
+        bd_user = users.find_one({"userid": user_id })
+
+        text = f'🦖 | {bd_user["dinos"][ dino_id ]["name"]} вернулся из путешествия!\nВот что произошло в его путешествии:\n\n'
+
+        if bd_user['dinos'][ dino_id ]['journey_log'] == []:
+            text += 'Ничего не произошло!'
+            bot.send_message(user_id, text, parse_mode = 'Markdown')
+
+        else:
+            messages = []
+
+            n = 1
+            for el in bd_user['dinos'][ dino_id ]['journey_log']:
+                if len(text) >= 3700:
+                    messages.append(text)
+                    text = ''
+
+                text += f'*{n}.* {el}\n\n'
+                n += 1
+
+            messages.append(text)
+
+            for m in messages:
+                bot.send_message(user_id, m, parse_mode = 'Markdown')

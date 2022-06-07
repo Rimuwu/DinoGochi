@@ -66,11 +66,11 @@ def check(): #проверка каждые 10 секунд
 
             for members in chunks_users:
 
-                threading.Thread(target = alpha,  daemon=True, kwargs = {'bot': bot, 'members': members}).start()
-                threading.Thread(target = beta,   daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
-                threading.Thread(target = beta2,  daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
-                threading.Thread(target = gamma,  daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
-                threading.Thread(target = gamma2, daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
+                # threading.Thread(target = alpha,  daemon=True, kwargs = {'bot': bot, 'members': members}).start()
+                # threading.Thread(target = beta,   daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
+                # threading.Thread(target = beta2,  daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
+                # threading.Thread(target = gamma,  daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
+                # threading.Thread(target = gamma2, daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
                 threading.Thread(target = delta,  daemon=True, kwargs = {'bot': bot, 'members': members}).start()
 
             threading.Thread(target = memory, daemon=True ).start()
@@ -212,6 +212,24 @@ def command(message):
 
         tr = functions.add_item_to_user(bd, msg_args[1], int(msg_args[2]))
         bot.send_message(user.id, str(msg_args))
+
+@bot.message_handler(commands=['events'])
+def command(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        bd_user = users.find_one({"userid": user.id})
+
+        functions.journey_end_log(bot, user.id, bd_user['settings']['dino_id'])
+
+@bot.message_handler(commands=['events_clear'])
+def command(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        bd_user = users.find_one({"userid": user.id})
+
+        users.update_one( {"userid": user.id}, {"$set": {f"dinos.{bd_user['settings']['dino_id']}.journey_log": [] }} )
+
+        print(';;; all')
 
 @bot.message_handler(commands=['dns'])
 def command(message):
@@ -1414,35 +1432,13 @@ def on_message(message):
                         if dino['activ_status'] == 'journey' and dino != None:
                             if random.randint(1,2) == 1:
 
-                                if bd_user['language_code'] == 'ru':
-                                    text = f'🦖 | Вы вернули динозавра из путешествия!\nВот что произошло в его путешествии:\n'
-
-                                    if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_log'] == []:
-                                        text += 'Ничего не произошло!'
-                                    else:
-                                        n = 1
-                                        for el in bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_log']:
-                                            text += f'<b>{n}.</b> {el}\n\n'
-                                            n += 1
-                                else:
-                                    text = f"🦖 | Turned the dinosaur out of the journey!\nHere's what happened on his journey:\n"
-
-                                    if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_log'] == []:
-                                        text += 'Nothing happened!'
-                                    else:
-                                        n = 1
-                                        for el in bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_log']:
-                                            text += f'<b>{n}.</b> {el}\n\n'
-                                            n += 1
-
+                                functions.journey_end_log(bot, bd_user['userid'], bd_user['settings']['dino_id'])
 
                                 bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] = 'pass_active'
                                 del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_time']
                                 del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_log']
 
                                 users.update_one( {"userid": bd_user['userid']}, {"$set": {f"dinos.{bd_user['settings']['dino_id']}": bd_user['dinos'][ bd_user['settings']['dino_id'] ] }} )
-
-                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user), parse_mode = 'html')
 
 
                             else:
@@ -4512,9 +4508,9 @@ def answer(call):
 
 
 print(f'Бот {bot.get_me().first_name} запущен!')
-if bot.get_me().first_name == 'DinoGochi' or False:
+if bot.get_me().first_name == 'DinoGochi' or True:
     main_checks.start() # активация всех проверок и игрового процесса
-    thr_notif.start() # активация уведомлений
-    min10_thr.start() # пяти-минутный чек
+    # thr_notif.start() # активация уведомлений
+    # min10_thr.start() # пяти-минутный чек
 
 bot.infinity_polling()

@@ -295,17 +295,17 @@ class checks:
                     if dino['activ_status'] == 'pass_active':
                         nn += 1
 
-                        if user['dinos'][dino_id]['stats']['game'] > 60:
+                        if user['dinos'][dino_id]['stats']['game'] >= 90:
                             if dino['stats']['mood'] < 100:
                                 if random.randint(1,15) == 1:
                                     dinos_stats['mood'] += random.randint(1,15)
 
-                                if random.randint(1,10) == 1:
+                                if random.randint(1,60) == 1:
                                     users.update_one( {"userid": user['userid']}, {"$inc": {'coins': random.randint(0,20) }} )
 
-                        if user['dinos'][dino_id]['stats']['mood'] > 80:
+                        if user['dinos'][dino_id]['stats']['mood'] >= 80:
                             if random.randint(1,60) == 1:
-                                users.update_one( {"userid": user['userid']}, {"$inc": {'coins': random.randint(0,20) }} )
+                                users.update_one( {"userid": user['userid']}, {"$inc": {'coins': random.randint(0,10) }} )
 
                         if user['dinos'][dino_id]['stats']['unv'] <= 20 and user['dinos'][dino_id]['stats']['unv'] != 0:
                             if dino['stats']['mood'] > 0:
@@ -523,6 +523,11 @@ class checks:
         # members = users.find({ })
         for user in members:
 
+            if user['userid'] not in [5279769615, 1191252229]:
+                break
+
+            print(user['userid'], 'journey')
+
             dns_l = list(user['dinos'].keys()).copy()
             lvl_ = 0
 
@@ -535,10 +540,10 @@ class checks:
                     if dino['activ_status'] == 'journey':
                         nn += 1
 
-                        if random.randint(1, 65) == 1: #unv
-                            dinos_stats['unv'] -= random.randint(0,1)
+                        if random.randint(1, 80) == 1: #unv
+                            dinos_stats['unv'] -= random.randint(1,2)
 
-                        if random.randint(1, 45) == 1: #unv
+                        if random.randint(1, 45) == 1:
                             lvl_ += random.randint(0,20)
 
                         if functions.acc_check(bot, user, '45', dino_id, False):
@@ -546,30 +551,200 @@ class checks:
                         else:
                             tick = [1, 30]
 
-                        r_e_j = random.randint(tick[0], tick[1])
+                        #r_e_j = random.randint(tick[0], tick[1])
+                        r_e_j = 1
                         if r_e_j == 1:
-                            if random.randint(1,3) != 1:
+                            #rr = random.randint(1,3)
+                            rr = 2
+                            if rr != 1:
 
-                                if dino['stats']['mood'] >= 55:
+                                nd = random.randint(40, 75)
+                                if dino['stats']['mood'] >= nd:
                                     mood_n = True
-
                                     functions.acc_check(bot, user, '45', dino_id, True) #снимает прочность у мешочка
+
                                 else:
                                     mood_n = False
 
-                                r_event = random.randint(1, 100)
-                                if r_event in list(range(1,51)): #обычное соб
-                                    events = ['sunny', 'm_coins']
-                                elif r_event in list(range(51,76)): #необычное соб
-                                    events = ['+eat', 'sleep', 'u_coins', 'friend_meet']
-                                elif r_event in list(range(76,91)): #редкое соб
-                                    events = ['random_items', 'b_coins']
-                                elif r_event in list(range(91,100)): #мистическое соб
-                                    events = ['random_items_leg', 'y_coins']
-                                else: #легендарное соб
-                                    events = ['egg', 'l_coins']
+                                # r_event = random.randint(1, 100)
+                                # if r_event in list(range(1,51)): #обычное соб
+                                #     events = ['sunny', 'm_coins', 'breeze']
+                                # elif r_event in list(range(51,76)): #необычное соб
+                                #     events = ['+eat', 'sleep', 'u_coins', 'friend_meet', 'deadlock', 'friend_game']
+                                # elif r_event in list(range(76,91)): #редкое соб
+                                #     events = ['random_items', 'b_coins', 'deadlock']
+                                # elif r_event in list(range(91,100)): #мистическое соб
+                                #     events = ['random_items_leg', 'y_coins']
+                                # else: #легендарное соб
+                                #     events = ['egg', 'l_coins']
+                                #
+                                # event = random.choice(events)
+                                event = 'friend_game'
+                                print(event)
 
-                                event = random.choice(events)
+                                if event == 'deadlock':
+
+                                    tp = random.randint(1, 10)
+                                    if tp > 1:
+
+                                        if user['language_code'] == 'ru':
+                                            event = f'💢 | Динозавр забрёл в тупик, он развернулся и пошёл обратно...'
+                                        else:
+                                            event = f"💢 | The dinosaur wandered into a dead end, he turned around and went back..."
+
+                                    else:
+
+                                        if user['language_code'] == 'ru':
+                                            names = ['Федя', 'Вова', 'Алёша', 'Тима', 'Сеня', 'Макс', 'Вера', 'Аня', 'Юля', 'Гоша', 'Мария', 'Марьяна', 'Олег', 'Оля', 'Маша', 'Петя', 'Слава', 'Вадим', 'Йося']
+
+                                            locations = ['Тихий лес', "Забытый дом", "Дорога мёртвых", "Лес забытых", "Пещеры славы", "Магический лес", 'Город воспоминаний', "Торговый путь", "Торговый городок", "Дорога великих", 'Дорога пропавших' ]
+                                        else:
+                                            names = ['Fedya', 'Vova', 'Alyosha', 'Tima', 'Senya', 'Max', 'Vera', 'Anya', 'Julia', 'Gosha', 'Maria', 'Mariana', 'Oleg', 'Olya', 'Masha', 'Petya', 'Slava', 'Vadim', 'Yosya']
+
+                                            locations = ['Silent Forest', 'Forgotten House', 'Road of the Dead', 'Forest of the Forgotten', 'Caves of Glory', 'Magic Forest', 'City of Memories', 'Trade Route', 'Trading Town', 'Road of the Great', 'Road of the Lost']
+
+                                        fr_d = {}
+                                        sh_friends = user['friends']['friends_list']
+                                        for friend in sh_friends:
+                                            if fr_d == {}:
+                                                bd_friend = users.find_one({"userid": int(friend)})
+                                                if bd_friend != None:
+                                                    if len(bd_friend['dinos']) > 0:
+                                                        for d in bd_friend['dinos']:
+                                                            dd = bd_friend['dinos'][d]
+                                                            if dd['status'] == 'dino':
+                                                                names.append(dd['name'])
+
+                                        sf_name = random.choice(names)
+
+                                        if user['language_code'] == 'ru':
+                                            event = f'❓ | Динозавр забрёл в тупик, вдруг он видит проходящего мимо динозавра..\n'
+                                        else:
+                                            event = f"The dinosaur wandered into a dead end, he turned around and went in the opposite direction...\n"
+
+                                        if user['language_code'] == 'ru':
+                                            event += f'>  {sf_name}: Хей, я вижу ты забрёл в тупик... Я могу показать тебе 2 пути, только выбери куда ты хочешь пойти...\n'
+                                        else:
+                                            event += f">  {sf_name}: Hey, I see you've wandered into a dead end... I can show you 2 ways, just choose where you want to go...\n"
+
+                                        loc1 = random.choice(locations)
+                                        loc2 = random.choice(locations)
+                                        vr = random.randint(1,2)
+
+                                        while loc1 == loc2:
+                                            loc2 = random.choice(locations)
+
+                                        if vr == 1:
+                                            event += f'>  ✅ {loc1} ❌ {loc2}\n'
+                                            loc = loc1
+                                        else:
+                                            event += f'>  ❌ {loc1} ✅ {loc2}\n'
+                                            loc = loc2
+
+                                        if loc in ['Тихий лес', "Забытый дом", "Лес забытых", "Пещеры славы", "Магический лес", 'Город воспоминаний', "Торговый городок", 'Silent Forest', 'Forgotten House', 'Forest of the Forgotten', 'Caves of Glory', 'Magic Forest', 'City of Memories', 'Trading Town']:
+                                            eve_l = ['sunny', 'breeze', '+eat', 'sleep', 'friend_meet', 'random_items', 'random_items_leg']
+                                            eve = random.choice(eve_l)
+
+                                            if user['language_code'] == 'ru':
+                                                event += f'>  Динозавр выбрал путь ведущий в {loc}, и вот что случилось когда он туда пришёл >'
+                                            else:
+                                                event += f">  The dinosaur chose the path leading to {loc}, and that's what happened when he got there >"
+
+                                        elif loc in ["Торговый путь", "Trade way"]:
+                                            eve_l = ['b_coins', 'y_coins', 'random_items', 'l_coins', 'friend_meet', '+eat', 'sunny', 'breeze']
+                                            eve = random.choice(eve_l)
+                                            if user['language_code'] == 'ru':
+                                                event += f'>  Динозавр выбрал {loc}, и вот что случилось пока он по нему шёл >'
+                                            else:
+                                                event += f">  The dinosaur chose {loc}, and that's what happened while he was walking on it >"
+
+                                        else:
+                                            eve_l = ['sunny', 'breeze', '+eat', 'sleep', 'friend_meet']
+                                            eve = random.choice(eve_l)
+
+                                            if user['language_code'] == 'ru':
+                                                event += f'>  Динозавр выбрал {loc}, и вот что случилось пока он по нему шёл >'
+                                            else:
+                                                event += f">  The dinosaur chose {loc}, and that's what happened while he was walking on it >"
+
+
+                                        users.update_one( {"userid": user['userid']}, {"$push": {f'dinos.{dino_id}.journey_log': event }} )
+                                        event = eve
+
+                                if event == 'friend_game':
+                                    fr_d = {}
+
+                                    sh_friends = user['friends']['friends_list']
+                                    random.shuffle(sh_friends)
+                                    for friend in sh_friends:
+
+                                        if fr_d == {}:
+                                            bd_friend = users.find_one({"userid": int(friend)})
+                                            if bd_friend != None:
+
+                                                try:
+                                                    bot_friend = bot.get_chat( bd_friend['userid'] )
+                                                except:
+                                                    bot_friend = None
+
+                                                if bot_friend != None:
+                                                    for k_dino in bd_friend['dinos'].keys():
+                                                        fr_dino = bd_friend['dinos'][k_dino]
+                                                        if 'activ_status' in fr_dino.keys() and fr_dino['activ_status'] == 'journey':
+                                                            fr_d['friend_bd'] = bd_friend
+                                                            fr_d['friend_in_bot'] = bot_friend
+                                                            fr_d['dino_id'] = k_dino
+
+                                        if fr_d != {}:
+                                            break
+
+                                    if fr_d == {}:
+
+                                        if user['language_code'] == 'ru':
+                                            event = f'🎮 🦕 | Динозавр забрёл на игровую площадку, но она оказалась пуста...'
+                                        else:
+                                            event = f"🎮 🦕 | The dinosaur wandered into the playground, but it turned out to be empty..."
+
+                                    else:
+                                        try:
+                                            this_user = bot.get_chat(user['userid'])
+                                        except:
+                                            this_user = None
+
+                                        if this_user != None:
+                                            game = random.randint(1, 20)
+                                            dinos_stats['game'] += game
+                                            fr_d['friend_bd']['dinos'][ fr_d['dino_id'] ]['stats']['game'] += game
+
+                                            if user['language_code'] == 'ru':
+                                                game = random.choice([ 'нарды', "шашки", "карты", "мяч", "футбол", "лото", "d&d", "воздушного змея" ])
+
+                                                event = f"🎮 🦕 | Динозавр забрёл на игровую площадку, на ней оказался {fr_d['friend_bd']['dinos'][ fr_d['dino_id'] ]['name']} (динозавр игрока {fr_d['friend_in_bot'].first_name})\n> Динозавры решили сыграть в {game}!\n   > Динозавры получают бонус {game}% к игре!"
+
+                                            else:
+
+                                                game = random.choice([ 'backgammon', "checkers", "cards", "ball", "football", "lotto", "d&d", "kite" ])
+
+                                                event = f"🦕 | The dinosaur wandered into the playground, found himself on it {fr_d['friend_bd']['dinos'][ fr_d['dino_id'] ]['name']} (the player's dinosaur {fr_d['friend_in_bot'].first_name})\n> Dinosaurs decided to play in {game}!\n > Dinosaurs get a bonus {game}% to the game!"
+
+                                            if fr_d['friend_bd']['language_code'] == 'ru':
+                                                game = random.choice([ 'нарды', "шашки", "карты", "мяч", "футбол", "лото", "d&d", "воздушного змея" ])
+
+                                                fr_event = f"🎮 🦕 | Динозавр забрёл на игровую площадку, на ней оказался {user['dinos'][dino_id]['name']} (динозавр игрока {this_user.first_name})\n> Динозавры решили сыграть в {game}!\n   > Динозавры получают бонус {game}% к игре!"
+
+                                            else:
+                                                game = random.choice([ 'backgammon', "checkers", "cards", "ball", "football", "lotto", "d&d", "kite" ])
+
+                                                fr_event = f"🦕 | The dinosaur wandered into the playground, found himself on it {user['dinos'][dino_id]['name']} (the player's dinosaur {this_user.first_name})\n> Dinosaurs decided to play in {game}!\n > Dinosaurs get a bonus {game}% to the game!"
+
+                                            users.update_one( {"userid": fr_d['friend_bd']['userid']}, {"$push": {f'dinos.{fr_d["dino_id"]}.journey_log': fr_event }} )
+
+                                        else:
+
+                                            if user['language_code'] == 'ru':
+                                                event = f'🎮 🦕 | Динозавр забрёл на игровую площадку, но она оказалась пуста...'
+                                            else:
+                                                event = f"🎮 🦕 | The dinosaur wandered into the playground, but it turned out to be empty..."
 
                                 if event == 'friend_meet':
                                     fr_d = {}
@@ -643,6 +818,15 @@ class checks:
                                         event = f'☀ | Солнечно, настроение динозавра повысилось на {mood}%'
                                     else:
                                         event = f"☀ | Sunny, the dinosaur's mood has increased by {mood}%"
+
+                                if event == 'breeze':
+                                    mood = random.randint(1, 15)
+                                    dinos_stats['mood'] += mood
+
+                                    if user['language_code'] == 'ru':
+                                        event = f'🍃 | Подул приятный ветерок, настроение динозавра повышено на {mood}%'
+                                    else:
+                                        event = f"🍃 | A pleasant breeze has blown, the dinosaur's mood has been raised by {mood}%"
 
                                 elif event == '+eat':
                                     eat = random.randint(1, 10)
@@ -750,14 +934,15 @@ class checks:
                                             event = '❌ | Event has been canceled due to a bad mood!'
 
                             else:
-                                if dino['stats']['mood'] >= 55:
+                                nd = random.randint(40, 75)
+                                if dino['stats']['mood'] >= nd:
                                     mood_n = False
                                 else:
                                     mood_n = True
 
                                 r_event = random.randint(1, 100)
                                 if r_event in list(range(1,51)): #обычное соб
-                                    events = ['rain', 'm_coins']
+                                    events = ['rain', 'm_coins', 'snow', 'hot_weather']
                                 elif r_event in list(range(51,76)): #необычное соб
                                     events = ['fight', '-eat', 'u_coins']
                                 elif r_event in list(range(76,91)): #редкое соб
@@ -787,6 +972,26 @@ class checks:
                                         else:
                                             event = f"🌨 | It rained, the mood is not worsened."
 
+                                if event == 'hot_weather':
+
+                                    mood = random.randint(1, 15)
+                                    temp = random.randint(39, 60)
+                                    dinos_stats['mood'] -= mood
+
+                                    if user['language_code'] == 'ru':
+                                        event = f'☀ | Температура поднялась до {temp} ℃, динозавру жарко, его настроение понижено на {mood}%'
+                                    else:
+                                        event = f"☀ | The temperature has risen to {temp} ℃, the dinosaur is hot, his mood is lowered by {mood}%"
+
+                                if event == 'snow':
+
+                                    mood = random.randint(1, 15)
+                                    dinos_stats['mood'] -= mood
+
+                                    if user['language_code'] == 'ru':
+                                        event = f'❄ | Вдруг начал идти снег! Динозавр замёрз, его настроение понижено на {mood}%'
+                                    else:
+                                        event = f"❄ | Suddenly it started snowing! The dinosaur is frozen, his mood is lowered by {mood}%"
 
                                 if event == '-eat':
                                     eat = random.randint(1, 10)
