@@ -66,11 +66,11 @@ def check(): #проверка каждые 10 секунд
 
             for members in chunks_users:
 
-                # threading.Thread(target = alpha,  daemon=True, kwargs = {'bot': bot, 'members': members}).start()
-                # threading.Thread(target = beta,   daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
-                # threading.Thread(target = beta2,  daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
-                # threading.Thread(target = gamma,  daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
-                # threading.Thread(target = gamma2, daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
+                threading.Thread(target = alpha,  daemon=True, kwargs = {'bot': bot, 'members': members}).start()
+                threading.Thread(target = beta,   daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
+                threading.Thread(target = beta2,  daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
+                threading.Thread(target = gamma,  daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
+                threading.Thread(target = gamma2, daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
                 threading.Thread(target = delta,  daemon=True, kwargs = {'bot': bot, 'members': members}).start()
 
             threading.Thread(target = memory, daemon=True ).start()
@@ -4510,7 +4510,7 @@ def answer(call):
 print(f'Бот {bot.get_me().first_name} запущен!')
 if bot.get_me().first_name == 'DinoGochi' or True:
     main_checks.start() # активация всех проверок и игрового процесса
-    # thr_notif.start() # активация уведомлений
-    # min10_thr.start() # пяти-минутный чек
+    thr_notif.start() # активация уведомлений
+    min10_thr.start() # пяти-минутный чек
 
 bot.infinity_polling()
