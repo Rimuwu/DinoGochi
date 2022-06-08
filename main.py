@@ -320,7 +320,6 @@ def on_start(message):
 
 @bot.message_handler(content_types = ['text'])
 def on_message(message):
-    print('start')
     user = message.from_user
     bd_user = users.find_one({"userid": user.id})
     st_time = int(time.time())
@@ -330,8 +329,6 @@ def on_message(message):
         users.update_one( {"userid": bd_user['userid']}, {"$set": {'last_m': int(time.time()) }} )
 
     if message.chat.type == 'private':
-
-        print(int(time.time()) - st_time, '089455')
 
         r = bot.get_chat_member(-1001673242031, user.id)
         if bd_user != None and r.status == 'left':
@@ -1836,7 +1833,7 @@ def on_message(message):
                                                         bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
                                                         return
 
-                                            if 'abilities' not in user_item.keys() and 'uses' not in user_item['abilities'].keys():
+                                            if 'abilities' not in user_item.keys() or 'uses' not in user_item['abilities'].keys():
 
                                                 if col > mx_col:
 
