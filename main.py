@@ -118,7 +118,7 @@ def min10_check(): #проверка каждые 10 мин
             uss = users.find({ })
             threading.Thread(target = alpha, daemon=True, kwargs = {'users': uss}).start()
 
-            if bot.get_me().first_name != 'DinoGochi':
+            if bot.get_me().first_name == 'DinoGochi':
                 threading.Thread(target = dead_users, daemon=True, kwargs = {'bot': bot} ).start()
 
         else:
@@ -4511,9 +4511,9 @@ def answer(call):
 
 print(f'Бот {bot.get_me().first_name} запущен!')
 if bot.get_me().first_name == 'DinoGochi' or True:
-    # main_checks.start() # активация всех проверок и игрового процесса
-    # thr_notif.start() # активация уведомлений
-    # min10_thr.start() # пяти-минутный чек
+    main_checks.start() # активация всех проверок и игрового процесса
+    thr_notif.start() # активация уведомлений
+    min10_thr.start() # пяти-минутный чек
     pass
 
 bot.infinity_polling()
