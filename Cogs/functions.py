@@ -158,8 +158,6 @@ class functions:
             markup.add(nl)
             return markup
 
-        users.update_one( {"userid": userid}, {"$set": {f'settings.last_markup': element }} )
-
         if element == 1 and bd_user != None:
 
             if len(list(bd_user['dinos'])) == 1 and bd_user['dinos']['1']['status'] == 'incubation' and bd_user['lvl'][0] < 2:
@@ -492,6 +490,7 @@ class functions:
         else:
             print(f'{element}\n{user.first_name}')
 
+        users.update_one( {"userid": userid}, {"$set": {f'settings.last_markup': element }} )
         return markup
 
     @staticmethod

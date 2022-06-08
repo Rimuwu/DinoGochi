@@ -70,6 +70,7 @@ class checks:
 
                     else:
                         print('WARNING in dead check users, 7 days check\n' + str(error))
+                        print(user['userid'])
 
 
             elif notactivity_time >= 172800 and len(user['dinos']) == 0: #2 дня не активнсоти
@@ -97,6 +98,7 @@ class checks:
 
                         else:
                             print('WARNING in dead check users, 2 days check\n' + str(error))
+                            print(user['userid'])
 
         #print('Предупреждено - нет ответа -', act1, '\n', 'Удалено - ', act2,  '\n', 'Получили ув: ', act3 )
 

@@ -118,7 +118,7 @@ def min10_check(): #проверка каждые 10 мин
             uss = users.find({ })
             threading.Thread(target = alpha, daemon=True, kwargs = {'users': uss}).start()
 
-            if bot.get_me().first_name == 'DinoGochi':
+            if bot.get_me().first_name != 'DinoGochi':
                 threading.Thread(target = dead_users, daemon=True, kwargs = {'bot': bot} ).start()
 
         else:
@@ -320,19 +320,21 @@ def on_start(message):
 
 @bot.message_handler(content_types = ['text'])
 def on_message(message):
+    print('start')
     user = message.from_user
+    bd_user = users.find_one({"userid": user.id})
+    st_time = int(time.time())
 
-    if users.find_one({"userid": user.id}) != None:
-        bd_user = users.find_one({"userid": user.id})
-
+    if bd_user != None:
         # последняя активность
         users.update_one( {"userid": bd_user['userid']}, {"$set": {'last_m': int(time.time()) }} )
 
     if message.chat.type == 'private':
 
-        if users.find_one({"userid": user.id}) != None and bot.get_chat_member(-1001673242031, user.id).status == 'left':
-            bd_user = users.find_one({"userid": user.id})
-            r = bot.get_chat_member(-1001673242031, user.id)
+        print(int(time.time()) - st_time, '089455')
+
+        r = bot.get_chat_member(-1001673242031, user.id)
+        if bd_user != None and r.status == 'left':
 
             if bd_user['language_code'] == 'ru':
                 text = f'📜 | Уважаемый пользователь!\n\n*•* Для получения новостей и важных уведомлений по поводу бота, мы просим вас подписаться на телеграм канал бота!\n\n🔴 | Нажмите на кнопку *"Подписаться"* для перехода в канал, а после на кнопку *"Проверить"*, для продолжения работы!'
@@ -349,33 +351,23 @@ def on_message(message):
 
             bot.reply_to(message, text, reply_markup = markup_inline, parse_mode="Markdown")
 
-
         else:
 
             if message.text in ['🍡 Начать играть', '🍡 Start playing']:
 
-                commands.start_game(bot, message, user)
+                commands.start_game(bot, message, user, bd_user)
 
             if message.text in ["🧩 Проект: Возрождение", '🧩 Project: Rebirth']:
 
-                commands.project_reb(bot, message, user)
+                commands.project_reb(bot, message, user, bd_user)
 
             if message.text in ['🦖 Динозавр', '🦖 Dinosaur']:
 
                 commands.dino_prof(bot, message, user)
 
             if message.text in ['🔧 Настройки', '🔧 Settings']:
-                bd_user = users.find_one({"userid": user.id})
 
-                if bd_user != None:
-
-                    if bd_user['language_code'] == 'ru':
-                        text = '🔧 Меню настроек активировано'
-                    else:
-                        text = '🔧 The settings menu is activated'
-
-
-                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'settings', user))
+                commands.open_settings(bot, message, user, bd_user)
 
             if message.text in ['↪ Назад', '↪ Back']:
                 bd_user = users.find_one({"userid": user.id})
@@ -401,7 +393,7 @@ def on_message(message):
 
             if message.text in ['❗ FAQ']:
 
-                commands.faq(bot, message, user)
+                commands.faq(bot, message, user, bd_user)
 
             if message.text in ['❗ Notifications', '❗ Уведомления']:
 
@@ -409,7 +401,7 @@ def on_message(message):
 
             if message.text in ["👅 Язык", "👅 Language"]:
 
-                commands.lang_set(bot, message, user)
+                commands.lang_set(bot, message, user, bd_user)
 
             if message.text in ['⁉ Видимость FAQ', '⁉ Visibility FAQ']:
                 bd_user = users.find_one({"userid": user.id})
@@ -799,7 +791,6 @@ def on_message(message):
 
                     bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "profile", user))
 
-
             if message.text in ['🎢 Рейтинг', '🎢 Rating']:
                 if bd_user != None:
 
@@ -1059,7 +1050,6 @@ def on_message(message):
 
                         bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
 
-            bd_user = users.find_one({"userid": user.id})
             tr_c = False
             if bd_user != None and len(list(bd_user['dinos'])) > 0:
                 if ( len(list(bd_user['dinos'])) == 1 and bd_user['lvl'][0] > 1) :
@@ -1638,8 +1628,14 @@ def on_message(message):
                             lg = "nameen"
 
                         for i in items:
-                            items_id[ items_f['items'][str(i['item_id'])][lg] ] = i
-                            items_names.append( items_f['items'][str(i['item_id'])][lg] )
+                            if functions.item_authenticity(i) == True:
+                                items_id[ items_f['items'][ i['item_id'] ][lg] ] = i
+                                items_names.append( items_f['items'][ i['item_id'] ][lg] )
+
+                            else:
+
+                                items_id[ items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i)})" ] = i
+                                items_names.append( items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i)})" )
 
                         items_names.sort()
 
@@ -1838,19 +1834,20 @@ def on_message(message):
                                                             text = f"This item cannot be used so many times!"
 
                                                         bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
-
                                                         return
 
-                                            if col > mx_col:
+                                            if 'abilities' not in user_item.keys() and 'uses' not in user_item['abilities'].keys():
 
-                                                if bd_user['language_code'] == 'ru':
-                                                    text = f"У вас нет столько предметов в инвентаре!"
-                                                else:
-                                                    text = f"You don't have that many items in your inventory!"
+                                                if col > mx_col:
 
-                                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+                                                    if bd_user['language_code'] == 'ru':
+                                                        text = f"У вас нет столько предметов в инвентаре!"
+                                                    else:
+                                                        text = f"You don't have that many items in your inventory!"
 
-                                                return
+                                                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+
+                                                    return
 
 
                                             if bd_user['language_code'] == 'ru':
@@ -1916,20 +1913,26 @@ def on_message(message):
 
                                             users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{bd_user["settings"]["dino_id"]}': bd_user['dinos'][ bd_user['settings']['dino_id'] ] }} )
 
-                                            if ('abilities' in user_item.keys() and 'uses' not in user_item['abilities'].keys()) or 'abilities' not in user_item.keys():
+                                            if 'abilities' in user_item.keys():
+                                                if 'uses' in user_item['abilities'].keys():
+
+                                                    if user_item['abilities']['uses'] != -100:
+
+                                                        s_col = user_item['abilities']['uses'] - col
+
+                                                        if s_col > 0:
+                                                            users.update_one( {"userid": user.id}, {"$set": {f'inventory.{bd_user["inventory"].index(user_item)}.abilities.uses': user_item['abilities']['uses'] - col}} )
+
+                                                        else:
+                                                            bd_user['inventory'].remove(user_item)
+                                                            users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+                                            else:
 
                                                 for i in range(col):
                                                     bd_user['inventory'].remove(user_item)
 
                                                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
-
-                                            else:
-                                                bd_user['inventory'].remove(user_item)
-                                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
-
-                                                user_item['abilities']['uses'] -= 1 * col
-                                                if user_item['abilities']['uses'] > 0:
-                                                    users.update_one( {"userid": user.id}, {"$push": {f'inventory': user_item }} )
 
                                             bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
 
@@ -3084,6 +3087,8 @@ def on_message(message):
                         bot.register_next_step_handler(msg, name_reg )
 
                 if message.text in [ '🛒 Случайные товары', '🛒 Random Products']:
+                    print(int(time.time()) - st_time)
+
                     bd_user = users.find_one({"userid": user.id})
                     if bd_user != None:
 
@@ -4509,8 +4514,9 @@ def answer(call):
 
 print(f'Бот {bot.get_me().first_name} запущен!')
 if bot.get_me().first_name == 'DinoGochi' or True:
-    main_checks.start() # активация всех проверок и игрового процесса
-    thr_notif.start() # активация уведомлений
-    min10_thr.start() # пяти-минутный чек
+    # main_checks.start() # активация всех проверок и игрового процесса
+    # thr_notif.start() # активация уведомлений
+    # min10_thr.start() # пяти-минутный чек
+    pass
 
 bot.infinity_polling()

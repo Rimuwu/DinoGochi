@@ -39,11 +39,10 @@ class commands:
     json_f = json_f
 
     @staticmethod
-    def start_game(bot, message, user):
+    def start_game(bot, message, user, bd_user):
 
-        if users.find_one({"userid": user.id}) == None:
+        if bd_user == None:
 
-            bd_user = users.find_one({"userid": user.id})
             try:
                 r = bot.get_chat_member(-1001673242031, user.id)
             except:
@@ -82,9 +81,8 @@ class commands:
                 bot.reply_to(message, text, reply_markup = markup_inline, parse_mode="Markdown")
 
     @staticmethod
-    def project_reb(bot, message, user):
+    def project_reb(bot, message, user, bd_user):
 
-        bd_user = users.find_one({"userid": user.id})
         if bd_user != None:
             if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False and bd_user['lvl'][0] < 5:
 
@@ -126,8 +124,8 @@ class commands:
                 bot.reply_to(message, text, reply_markup = markup_inline, parse_mode="Markdown")
 
     @staticmethod
-    def faq(bot, message, user):
-        bd_user = users.find_one({"userid": user.id})
+    def faq(bot, message, user, bd_user):
+
         if bd_user != None:
 
             if bd_user['language_code'] == 'ru':
@@ -186,9 +184,8 @@ class commands:
             bot.send_message(message.chat.id, text2, parse_mode = 'Markdown')
 
     @staticmethod
-    def not_set(bot, message, user):
+    def not_set(bot, message, user, bd_user):
 
-        bd_user = users.find_one({"userid": user.id})
         if bd_user != None:
 
             if bd_user['language_code'] == 'ru':
@@ -244,7 +241,7 @@ class commands:
             bot.register_next_step_handler(msg, ret, ans, bd_user)
 
     @staticmethod
-    def lang_set(bot, message, user):
+    def lang_set(bot, message, user, bd_user):
 
         bd_user = users.find_one({"userid": user.id})
         if bd_user != None:
@@ -341,3 +338,15 @@ class commands:
 
                     msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
                     bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)
+
+    @staticmethod
+    def open_settings(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            if bd_user['language_code'] == 'ru':
+                text = '🔧 Меню настроек активировано'
+            else:
+                text = '🔧 The settings menu is activated'
+
+            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'settings', user))
