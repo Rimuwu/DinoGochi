@@ -568,9 +568,9 @@ class checks:
                                 if r_event in list(range(1,51)): #обычное соб
                                     events = ['sunny', 'm_coins', 'breeze']
                                 elif r_event in list(range(51,76)): #необычное соб
-                                    events = ['+eat', 'sleep', 'u_coins', 'friend_meet', 'deadlock', 'friend_game']
+                                    events = ['+eat', 'sleep', 'u_coins', 'friend_meet', 'deadlock']
                                 elif r_event in list(range(76,91)): #редкое соб
-                                    events = ['random_items', 'b_coins', 'deadlock']
+                                    events = ['random_items', 'b_coins', 'deadlock', 'friend_game']
                                 elif r_event in list(range(91,100)): #мистическое соб
                                     events = ['random_items_leg', 'y_coins']
                                 else: #легендарное соб
@@ -708,7 +708,7 @@ class checks:
                                             this_user = None
 
                                         if this_user != None:
-                                            game_p = random.randint(1, 20)
+                                            game_p = random.randint(1, 10)
                                             dinos_stats['game'] += game_p
                                             fr_d['friend_bd']['dinos'][ fr_d['dino_id'] ]['stats']['game'] += game_p
 

@@ -286,6 +286,9 @@ class functions:
         elif element == 'actions' and bd_user != None:
             markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
 
+            if len(bd_user['dinos']) == 0:
+                return markup
+
             try:
                 dino = bd_user['dinos'][ bd_user['settings']['dino_id'] ]
             except:
@@ -1023,6 +1026,7 @@ class functions:
         dct = {}
         nl = []
 
+
         for i in nls_i:
             if i not in dct.keys():
                 dct[i] = 1
@@ -1038,6 +1042,30 @@ class functions:
 
     @staticmethod
     def item_info(us_item, lg, mark: bool = True):
+
+        def sort_materials(nls_i:list, lg):
+            dct = {}
+            nl = []
+
+            for i in nls_i:
+                if i['item'] not in dct.keys():
+                    dct[i['item']] = 1
+                else:
+                    dct[i['item']] += 1
+
+            itts = []
+            for i in nls_i:
+                if i not in itts:
+                    name = items_f['items'][i['item']][f'name{lg}']
+                    if i['type'] == 'endurance':
+                        nl.append(f"{name} (⬇ -{i['act']}) x{dct[i['item']]}")
+                    else:
+                        nl.append(f"{name} x{dct[i['item']]}")
+
+                    itts.append(i)
+
+
+            return nl
 
         item_id = us_item['item_id']
         item = items_f['items'][item_id]
@@ -1060,11 +1088,11 @@ class functions:
             elif item['type'] == 'egg':
                 eg_q = item['inc_type']
                 if item['inc_type'] == 'random': eg_q = 'рандом'
-                if item['inc_type'] == 'com': eg_q = 'обычная'
-                if item['inc_type'] == 'unc': eg_q = 'необычная'
-                if item['inc_type'] == 'rar': eg_q = 'редкая'
-                if item['inc_type'] == 'myt': eg_q = 'мистическая'
-                if item['inc_type'] == 'leg': eg_q = 'легендарная'
+                if item['inc_type'] == 'com': eg_q = 'обычное'
+                if item['inc_type'] == 'unc': eg_q = 'необычное'
+                if item['inc_type'] == 'rar': eg_q = 'редкое'
+                if item['inc_type'] == 'myt': eg_q = 'мистическое'
+                if item['inc_type'] == 'leg': eg_q = 'легендарное'
 
                 type = '🥚 яйцо динозавра'
                 d_text = f"*├* Инкубация: {item['incub_time']}{item['time_tag']}\n"
@@ -1085,14 +1113,9 @@ class functions:
             elif item['type'] == 'recipe':
                 type = '🧾 рецепт создания'
 
-                if list( set(item["create"]) & set(item["materials"])) != []:
-                    for i in list( set(item["create"]) & set(item["materials"])):
-                        item["create"].remove(i)
-
                 d_text = f'*├* Создаёт: {", ".join(functions.sort_items_col( item["create"], "ru" ))}\n'
-                d_text += f'*└* Материалы: {", ".join(functions.sort_items_col( item["materials"], "ru" ))}\n\n'
+                d_text += f'*└* Материалы: {", ".join(sort_materials( item["materials"], "ru"))}\n\n'
                 d_text +=  f"{item['descriptionru']}"
-
 
             if list(set([ '+mood' ]) & set(item.keys())) != []:
                 d_text += f'\n\n*┌* *🍡 Дополнительные бонусы*\n'
@@ -1163,12 +1186,8 @@ class functions:
             elif item['type'] == 'recipe':
                 type = '🧾 recipe for creation'
 
-                if list( set(item["create"]) & set(item["materials"])) != []:
-                    for i in list( set(item["create"]) & set(item["materials"])):
-                        item["create"].remove(i)
-
-                d_text = f'*├* Creates: {", ".join(functions.sort_items_col( item["create"], "ru" ))}\n'
-                d_text += f'*└* Materials: {", ".join(functions.sort_items_col( item["materials"], "ru" ))}\n\n'
+                d_text = f'*├* Creates: {", ".join(functions.sort_items_col( item["create"], "en" ))}\n'
+                d_text += f'*└* Materials: {", ".join(sort_materials( item["materials"], "en"))}\n\n'
                 d_text +=  f"{item['descriptionru']}"
 
             if list(set([ '+mood' ]) & set(item.keys())) != []:
@@ -1678,7 +1697,7 @@ class functions:
             return reyt_
 
     @staticmethod
-    def add_item_to_user(user:dict, item_id:str, col:int = 1):
+    def add_item_to_user(user:dict, item_id:str, col:int = 1, type:str = 'add'):
 
         item = items_f['items'][item_id]
         d_it = {'item_id': item_id}
@@ -1689,10 +1708,18 @@ class functions:
 
             d_it['abilities'] = abl
 
-        for i in range(col):
-            users.update_one( {"userid": user['userid']}, {"$push": {'inventory': d_it }} )
+        if type == 'add':
+            for i in range(col):
+                users.update_one( {"userid": user['userid']}, {"$push": {'inventory': d_it }} )
 
-        return True
+            return True
+
+        if type == 'data':
+            ret_d = []
+            for i in range(col):
+                ret_d.append(d_it)
+
+            return ret_d
 
     @staticmethod
     def get_dict_item(item_id:str):

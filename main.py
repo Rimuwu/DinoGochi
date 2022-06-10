@@ -394,7 +394,7 @@ def on_message(message):
 
             if message.text in ['❗ Notifications', '❗ Уведомления']:
 
-                commands.not_set(bot, message, user)
+                commands.not_set(bot, message, user, bd_user)
 
             if message.text in ["👅 Язык", "👅 Language"]:
 
@@ -4514,6 +4514,5 @@ if bot.get_me().first_name == 'DinoGochi' or True:
     main_checks.start() # активация всех проверок и игрового процесса
     thr_notif.start() # активация уведомлений
     min10_thr.start() # пяти-минутный чек
-    pass
 
 bot.infinity_polling()
