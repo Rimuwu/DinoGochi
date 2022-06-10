@@ -194,6 +194,12 @@ def command(message):
         text = f'{bd_user["dinos"][i]}\n\n'
     bot.send_message(user.id, text)
 
+@bot.message_handler(commands=['iam'])
+def command(message):
+    user = message.from_user
+    bd_user = users.find_one({"userid": user.id})
+    pprint.pprint(bd_user)
+
 @bot.message_handler(commands=['delete_dinos_check_acc'])
 def command(message):
     user = message.from_user
@@ -3084,7 +3090,6 @@ def on_message(message):
                         bot.register_next_step_handler(msg, name_reg )
 
                 if message.text in [ '🛒 Случайные товары', '🛒 Random Products']:
-                    print(int(time.time()) - st_time)
 
                     bd_user = users.find_one({"userid": user.id})
                     if bd_user != None:
@@ -3242,9 +3247,9 @@ def answer(call):
         if bot.get_chat_member(-1001673242031, user.id).status != 'left':
 
             if bd_user['language_code'] == 'ru':
-                text = f'📜 | Уважаемый пользователь!\n\n*•* Для получения новостей и важных уведомлений по поводу бота, мы просим вас подписаться на телеграм канал бота!\n\n🟢 | Спасибо за понимание, приятного использования бота!'
+                text = f'📜 | Уважаемый пользователь!\n\n*•* Для получения новостей и важных уведомлений по поводу бота, мы просим вас подписаться на телеграм канал бота!\n\n🟢 | Спасибо за понимание, приятного использования бота!\n\n🍕 | Обсудить или спросить что-то, вы всегда можете в нашей оф. группе > https://t.me/+pq9_21HXXYY4ZGQy'
             else:
-                text = f"📜 | Dear user!\n\n*•* To receive news and important notifications about the bot, we ask you to subscribe to the bot's telegram channel!\n\n🟢 | Thank you for understanding, enjoy using the bot!"
+                text = f"📜 | Dear user!\n\n*•* To receive news and important notifications about the bot, we ask you to subscribe to the bot's telegram channel!\n\n🟢 | Thank you for understanding, enjoy using the bot!🍕 | To discuss or ask something, you can always in our of. group > https://t.me/+pq9_21HXXYY4ZGQy"
 
             bot.edit_message_text(text, call.message.chat.id, call.message.message_id, parse_mode = 'Markdown')
 
@@ -3701,20 +3706,41 @@ def answer(call):
 
             elif data_item['type'] == 'recipe':
                 ok = True
+                end_ok = True
+                list_inv_id.clear()
+                for i in fr_user['inventory']: list_inv_id.append(i['item_id'])
+                search_items = {}
 
                 for _ in range(col):
                     for i in data_item['materials']:
-                        if i in list_inv_id:
-                            try:
-                                fr_user['inventory'].remove( fr_user['inventory'][list_inv_id.index(i)] )
-                            except:
-                                ok = False
-                                break
+                        if i['item'] in list_inv_id:
+
+                            if i['type'] == 'delete':
+                                list_inv_id.remove(i['item'])
+
+                            if i['type'] == 'endurance':
+
+                                itms_ind = []
+                                sr_lst_id = list_inv_id.copy()
+
+                                for itm in sr_lst_id:
+                                    if itm == i['item']:
+                                        itms_ind.append( sr_lst_id.index(itm) )
+                                        sr_lst_id[ sr_lst_id.index(itm) ] = None
+
+                                end_ok = False
+                                for end_i in itms_ind:
+                                    ittm = fr_user['inventory'][end_i]
+                                    if ittm['abilities']['endurance'] >= i['act'] * col:
+                                        end_ok = True
+                                        search_items[ str(list_inv_id[end_i]) ] = end_i
+                                        break
+
                         else:
                             ok = False
                             break
 
-                if ok == True:
+                if ok == True and end_ok == True:
 
                     if bd_user['language_code'] == 'ru':
                         text = f'🍡 | Предмет {data_item["nameru"]} x{col} создан!'
@@ -3722,26 +3748,45 @@ def answer(call):
                         text = f"🍡 | The item {data_item['nameen']} x{col} is created!"
 
                     fr_user = users.find_one({"userid": user.id})
+                    list_inv_id.clear()
+                    for i in fr_user['inventory']: list_inv_id.append(i['item_id'])
 
                     for _ in range(col):
-                        for i in data_item['materials']:
-                            if i not in data_item['create']:
-                                lst_ind = list_inv_id.index(i)
+                        for it_m in data_item['materials']:
+                            if it_m['type'] == 'delete':
 
+                                lst_ind = list_inv_id.index(it_m['item'])
                                 fr_user['inventory'].remove( fr_user['inventory'][lst_ind] )
 
-                    res = users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
+                            if it_m['type'] == 'endurance':
+                                lst_ind = int(search_items[ it_m['item'] ])
+                                fr_user['inventory'][lst_ind]['abilities']['endurance'] -= it_m['act']
 
-                    for i in data_item['create']:
-                        if i not in data_item['materials']:
-                            ok = functions.add_item_to_user(fr_user, i, col)
+                                if fr_user['inventory'][lst_ind]['abilities']['endurance'] == 0:
+                                    fr_user['inventory'].remove(fr_user['inventory'][lst_ind])
+
+
+                    for it_c in data_item['create']:
+                        dt = functions.add_item_to_user(fr_user, it_c, col, 'data')
+
+                        for i in dt:
+                            fr_user['inventory'].append(i)
 
                 else:
 
-                    if bd_user['language_code'] == 'ru':
-                        text = f'❗ | Материалов недостаточно!'
-                    else:
-                        text = f"❗ | Materials are not enough!"
+                    if ok == False:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f'❗ | Материалов недостаточно!'
+                        else:
+                            text = f"❗ | Materials are not enough!"
+
+                    if end_ok == False:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f'❗ | Нет ни одного предмета с требуемой прочностью!'
+                        else:
+                            text = f"❗ | There is not a single object with the required strength!"
 
                     use_st = False
 
@@ -3882,8 +3927,6 @@ def answer(call):
             if '-eat' in data_item.keys():
                 users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.eat': (data_item['-eat'] * -1) * col }} )
 
-            fr_user = users.find_one({"userid": user.id})
-
             if 'abilities' in user_item.keys():
                 if 'uses' in user_item['abilities'].keys():
                     if use_st == True:
@@ -3893,11 +3936,10 @@ def answer(call):
                             s_col = user_item['abilities']['uses'] - col
 
                             if s_col > 0:
-                                users.update_one( {"userid": user.id}, {"$set": {f'inventory.{fr_user["inventory"].index(user_item)}.abilities.uses': user_item['abilities']['uses'] - col}} )
+                                fr_user['inventory'][ fr_user['inventory'].index(user_item) ]['abilities']['uses'] = user_item['abilities']['uses'] - col
 
                             else:
                                 fr_user['inventory'].remove(user_item)
-                                users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
 
             else:
 
@@ -3912,8 +3954,7 @@ def answer(call):
                             print(error, ' error - use item')
                             pass
 
-                    users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
-
+            users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
 
             bot.send_message(user.id, text, parse_mode = 'Markdown', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
 
@@ -4509,10 +4550,11 @@ def answer(call):
         print(call.data, 'call.data')
 
 
-print(f'Бот {bot.get_me().first_name} запущен!')
-if bot.get_me().first_name == 'DinoGochi' or True:
+
+if bot.get_me().first_name == 'DinoGochi' or False:
     main_checks.start() # активация всех проверок и игрового процесса
     thr_notif.start() # активация уведомлений
     min10_thr.start() # пяти-минутный чек
 
+print(f'Бот {bot.get_me().first_name} запущен!')
 bot.infinity_polling()
