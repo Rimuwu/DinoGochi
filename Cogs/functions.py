@@ -1026,7 +1026,6 @@ class functions:
         dct = {}
         nl = []
 
-
         for i in nls_i:
             if i not in dct.keys():
                 dct[i] = 1
@@ -1072,20 +1071,32 @@ class functions:
         type = item['type']
         d_text = ''
 
-        if lg == 'ru':
-            if item['type'] == '+heal':
+        if item['type'] == '+heal':
+            if lg == 'ru':
                 type = '❤ лекарство'
                 d_text = f"*└* Эффективность: {item['act']}"
+            else:
+                type = '❤ medicine'
+                d_text = f"*└* Effectiveness: {item['act']}"
 
-            elif item['type'] == '+eat':
+        elif item['type'] == '+eat':
+            if lg == 'ru':
                 type = '🍔 еда'
                 d_text = f"*└* Эффективность: {item['act']}"
+            else:
+                type = '🍔 eat'
+                d_text = f"*└* Effectiveness: {item['act']}"
 
-            elif item['type'] == '+unv':
+        elif item['type'] == '+unv':
+            if lg == 'ru':
                 type = '☕ энергетический напиток'
                 d_text = f"*└* Эффективность: {item['act']}"
+            else:
+                type = '☕ energy drink'
+                d_text = f"*└* Effectiveness: {item['act']}"
 
-            elif item['type'] == 'egg':
+        elif item['type'] == 'egg':
+            if lg == 'ru':
                 eg_q = item['inc_type']
                 if item['inc_type'] == 'random': eg_q = 'рандом'
                 if item['inc_type'] == 'com': eg_q = 'обычное'
@@ -1098,68 +1109,7 @@ class functions:
                 d_text = f"*├* Инкубация: {item['incub_time']}{item['time_tag']}\n"
                 d_text += f"*└* Редкость яйца: {eg_q}"
 
-            elif item['type'] in ['game_ac', 'unv_ac', 'journey_ac', 'hunt_ac']:
-                type = '💍 активный предмет'
-                d_text = f"*└* {item['descriptionru']}"
-
-            elif item['type'] == 'None':
-                type = '🕳 пустышка'
-                d_text = f"*└* Ничего не делает и не для чего не нужна"
-
-            elif item['type'] == 'material':
-                type = '🧱 материал'
-                d_text = f"*└* Данный предмет нужен для изготовления."
-
-            elif item['type'] == 'recipe':
-                type = '🧾 рецепт создания'
-
-                d_text = f'*├* Создаёт: {", ".join(functions.sort_items_col( item["create"], "ru" ))}\n'
-                d_text += f'*└* Материалы: {", ".join(sort_materials( item["materials"], "ru"))}\n\n'
-                d_text +=  f"{item['descriptionru']}"
-
-            if list(set([ '+mood' ]) & set(item.keys())) != []:
-                d_text += f'\n\n*┌* *🍡 Дополнительные бонусы*\n'
-
-                if '+mood' in item.keys():
-                    d_text += f"*└* Повышение настроения: {item['+mood']}%"
-
-            if list(set([ '-mood', "-eat" ]) & set(item.keys())) != []:
-                d_text += f'\n\n*┌* *📌 Дополнительные штрафы*\n'
-
-                if '-mood' in item.keys():
-                    d_text += f"*├* Понижение настроения: {item['-mood']}%"
-
-                if '-eat' in item.keys():
-                    d_text += f"*└* Понижение сытости: {item['-eat']}%"
-
-            text =  f"*┌* *🎴 Информация о предмете*\n"
-            text += f"*├* Название: {item['nameru']}\n"
-
-            if 'abilities' in us_item.keys():
-                if 'uses' in us_item['abilities'].keys():
-                    text += f"*├* Использований: {us_item['abilities']['uses']}\n"
-
-                if 'endurance' in us_item['abilities'].keys():
-                    text += f"*├* Прочность: {us_item['abilities']['endurance']}\n"
-
-            text += f"*├* Тип: {type}\n"
-            text += d_text
-            in_text = ['🔮 | Использовать', '🗑 | Выбросить', '🔁 | Передать', '🛠 | Создаваемый предмет']
-
-        else:
-            if item['type'] == '+heal':
-                type = '❤ medicine'
-                d_text = f"*└* Effectiveness: {item['act']}"
-
-            elif item['type'] == '+eat':
-                type = '🍔 eat'
-                d_text = f"*└* Effectiveness: {item['act']}"
-
-            elif item['type'] == '+unv':
-                type = '☕ energy drink'
-                d_text = f"*└* Effectiveness: {item['act']}"
-
-            elif item['type'] == 'egg':
+            else:
                 if item['inc_type'] == 'random': eg_q = 'random'
                 if item['inc_type'] == 'com': eg_q = 'common'
                 if item['inc_type'] == 'unc': eg_q = 'uncommon'
@@ -1171,50 +1121,107 @@ class functions:
                 d_text = f"*└* Incubation: {item['incub_time']}{item['time_tag']}\n"
                 d_text += f"*└* The rarity of eggs: {eg_q}"
 
-            elif item['type'] in ['game_ac', 'unv_ac', 'journey_ac', 'hunt_ac']:
+        elif item['type'] in ['game_ac', 'unv_ac', 'journey_ac', 'hunt_ac']:
+            if lg == 'ru':
+                type = '💍 активный предмет'
+                d_text = f"*└* {item['descriptionru']}"
+            else:
                 type = '💍 active game item'
                 d_text = f"*└* {item['descriptionen']}"
 
-            elif item['type'] == 'None':
+        elif item['type'] in ['None', 'none']:
+            if lg == 'ru':
+                type = '🕳 пустышка'
+                d_text = f"*└* Ничего не делает и не для чего не нужна"
+            else:
                 type = '🕳 dummy'
                 d_text = f"*└* Does nothing and is not needed for anything"
 
-            elif item['type'] == 'material':
+        elif item['type'] == 'material':
+            if lg == 'ru':
+                type = '🧱 материал'
+                d_text = f"*└* Данный предмет нужен для изготовления."
+            else:
                 type = '🧱 material'
                 d_text = f"*└* This item is needed for manufacturing."
 
-            elif item['type'] == 'recipe':
+        elif item['type'] == 'recipe':
+            if lg == 'ru':
+                type = '🧾 рецепт создания'
+
+                d_text = f'*├* Создаёт: {", ".join(functions.sort_items_col( item["create"], "ru" ))}\n'
+                d_text += f'*└* Материалы: {", ".join(sort_materials( item["materials"], "ru"))}\n\n'
+                d_text +=  f"{item['descriptionru']}"
+            else:
                 type = '🧾 recipe for creation'
 
                 d_text = f'*├* Creates: {", ".join(functions.sort_items_col( item["create"], "en" ))}\n'
                 d_text += f'*└* Materials: {", ".join(sort_materials( item["materials"], "en"))}\n\n'
-                d_text +=  f"{item['descriptionru']}"
+                d_text +=  f"{item['descriptionen']}"
 
-            if list(set([ '+mood' ]) & set(item.keys())) != []:
+        if list(set([ '+mood' ]) & set(item.keys())) != []:
+            if lg == 'ru':
+                d_text += f'\n\n*┌* *🍡 Дополнительные бонусы*\n'
+            else:
                 d_text += f'\n\n*┌* *🍡 Additional bonuses*\n'
 
-                if '+mood' in item.keys():
+            if '+mood' in item.keys():
+                if lg == 'ru':
+                    d_text += f"*└* Повышение настроения: {item['+mood']}%"
+                else:
                     d_text += f"*└* Mood boost: {item['+mood']}%"
 
-            if list(set([ '-mood', "-eat" ]) & set(item.keys())) != []:
+        if list(set([ '-mood', "-eat" ]) & set(item.keys())) != []:
+            if lg == 'ru':
+                d_text += f'\n\n*┌* *📌 Дополнительные штрафы*\n'
+            else:
                 d_text += f'\n\n*┌* *📌 Additional penalties*\n'
 
-                if '-mood' in item.keys():
+            if '-mood' in item.keys():
+                if lg == 'ru':
+                    d_text += f"*├* Понижение настроения: {item['-mood']}%"
+                else:
                     d_text += f"*├* Lowering the mood: {item['-mood']}%"
 
-                if '-eat' in item.keys():
+            if '-eat' in item.keys():
+                if lg == 'ru':
+                    d_text += f"*└* Понижение сытости: {item['-eat']}%"
+                else:
                     d_text += f"*└* Reducing satiety: {item['-eat']}%"
 
+        if lg == 'ru':
+            text =  f"*┌* *🎴 Информация о предмете*\n"
+            text += f"*├* Название: {item['nameru']}\n"
+        else:
             text =  f"*┌* *🎴 Subject information*\n"
             text += f"*├* Name: {item['nameen']}\n"
 
-            if 'abilities' in us_item.keys():
-                if 'uses' in us_item['abilities'].keys():
+        if 'abilities' in us_item.keys():
+            if 'uses' in us_item['abilities'].keys():
+
+                if lg == 'ru':
+                    text += f"*├* Использований: {us_item['abilities']['uses']}\n"
+                else:
                     text += f"*├* Uses: {us_item['abilities']['uses']}\n"
 
-                if 'endurance' in us_item['abilities'].keys():
+            if 'endurance' in us_item['abilities'].keys():
+                if lg == 'ru':
+                    text += f"*├* Прочность: {us_item['abilities']['endurance']}\n"
+                else:
                     text += f"*├* Endurance: {us_item['abilities']['endurance']}\n"
 
+            if 'mana' in us_item['abilities'].keys():
+                if lg == 'ru':
+                    text += f"*├* Мана: {us_item['abilities']['mana']}\n"
+                else:
+                    text += f"*├* Mana: {us_item['abilities']['mana']}\n"
+
+        if lg == 'ru':
+            text += f"*├* Тип: {type}\n"
+            text += d_text
+            in_text = ['🔮 | Использовать', '🗑 | Выбросить', '🔁 | Передать', '🛠 | Создаваемый предмет']
+
+        else:
             text += f"*├* Type: {type}\n"
             text += d_text
             in_text = ['🔮 | Use', '🗑 | Delete', '🔁 | Transfer', '🛠 | Сreated item']
@@ -1227,6 +1234,27 @@ class functions:
             if item['type'] == 'recipe':
                 if len(item["create"]) == 1:
                     markup_inline.add( types.InlineKeyboardButton( text = in_text[3], callback_data = f"iteminfo_{item['create'][0]}") )
+
+            if "ns_craft" in item.keys():
+                for cr_dct_id in item["ns_craft"].keys():
+                    cr_dct = item["ns_craft"][cr_dct_id]
+                    bt_text = f''
+
+                    if lg == 'ru':
+                        bt_text += ", ".join(functions.sort_items_col( item["ns_craft"][cr_dct_id]["materials"], "ru"))
+
+                    else:
+                        bt_text += ", ".join(functions.sort_items_col( item["ns_craft"][cr_dct_id]["materials"], "en"))
+
+                    bt_text += ' = '
+
+                    if lg == 'ru':
+                        bt_text += ", ".join(functions.sort_items_col( item["ns_craft"][cr_dct_id]["create"], "ru" ))
+
+                    else:
+                        bt_text += ", ".join(functions.sort_items_col( item["ns_craft"][cr_dct_id]["create"], "en" ))
+
+                markup_inline.add( types.InlineKeyboardButton( text = bt_text, callback_data = f"ns_craft {functions.qr_item_code(us_item)} {cr_dct_id}") )
 
             return text, markup_inline
 
@@ -1751,17 +1779,37 @@ class functions:
                 return False
 
     @staticmethod
-    def qr_item_code(item:dict):
-        text = f"i{item['item_id']}"
+    def qr_item_code(item:dict, v_id:bool = True):
+        if v_id == True:
+            text = f"i{item['item_id']}."
+        else:
+            text = ''
+
         if 'abilities' in item.keys():
 
             if 'uses' in item['abilities'].keys():
                 # u - ключ код для des_qr
-                text += f".u{item['abilities']['uses']}"
+
+                if v_id == True:
+                    text += f".u{item['abilities']['uses']}"
+                else:
+                    text += f"{item['abilities']['uses']}"
 
             if 'endurance' in item['abilities'].keys():
                 # e - ключ код для des_qr
-                text += f".e{item['abilities']['endurance']}"
+
+                if v_id == True:
+                    text += f".e{item['abilities']['endurance']}"
+                else:
+                    text += f"{item['abilities']['endurance']}"
+
+            if 'mana' in item['abilities'].keys():
+                # m - ключ код для des_qr
+
+                if v_id == True:
+                    text += f".m{item['abilities']['mana']}"
+                else:
+                    text += f"{item['abilities']['mana']}"
 
         return text
 
@@ -1829,8 +1877,8 @@ class functions:
 
                 else:
 
-                    items_id[ items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i)})" ] = i
-                    items_names.append( items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i)})" )
+                    items_id[ items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i, False)})" ] = i
+                    items_names.append( items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i, False)})" )
 
             items_names.sort()
 
@@ -1907,7 +1955,7 @@ class functions:
                         if message.text in list(ll[2].keys()):
                             return
 
-                    if message.text in ['Yes, transfer the item', 'Да, передать предмет']:
+                    if message.text in ['Yes, transfer the item', 'Да, передать предмет', 'Да, я хочу это сделать', 'Yes, I want to do it']:
                         return
 
                     if message.text in ['↪ Назад', '↪ Back']:

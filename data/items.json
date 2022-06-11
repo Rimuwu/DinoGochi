@@ -2,7 +2,7 @@
 
  "1": {"nameru": "🍯 Баночка мёда", "nameen": "🍯 Jar of honey", "type": "+heal", "act": 15},
 
- "2": {"nameru": "🍪 Печенье", "nameen": "🍪 Cookies", "type": "+eat", "act": 5, "class": "ALL", "+mood": 10},
+ "2": {"nameru": "🍪 Печенье", "nameen": "🍪 Cookies", "type": "+eat", "act": 5, "class": "ALL", "+mood": 10, "ns_craft": { "1": { "materials": ["2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2"], "create": ["47"] }} },
 
  "3": {"nameru": "🥚 Загадочное яйцо", "nameen": "🥚 Mysterious egg", "type": "egg", "incub_time": 12, "time_tag": "h", "inc_type": "random"},
 
@@ -38,13 +38,13 @@
 
  "19": {"nameru": "🥞 Сладкие блинчики", "nameen": "🥞 Sweet pancakes", "type": "+eat", "act": 20, "class": "ALL", "+mood": 20},
 
- "20": {"nameru": "🥚 Необычное яйцо", "nameen": "🥚 Unusual egg", "type": "egg", "incub_time": 24, "time_tag": "h", "inc_type": "unc", "ns_craft": { "1": { "materials": ["20", "20", "20", "20", "20", "20", "20", "20", "20", "20"], "create": "22" } } },
+ "20": {"nameru": "🥚 Необычное яйцо", "nameen": "🥚 Unusual egg", "type": "egg", "incub_time": 24, "time_tag": "h", "inc_type": "unc", "ns_craft": { "1": { "materials": ["20", "20", "20", "20", "20", "20", "20", "20", "20", "20"], "create": ["22"] } } },
 
- "21": {"nameru": "🥚 Обычное яйцо", "nameen": "🥚 Ordinary egg", "type": "egg", "incub_time": 30, "time_tag": "m", "inc_type": "com", "ns_craft": { "1": { "materials": ["21", "21", "21", "21", "21", "21", "21", "21", "21", "21"], "create": "20" } } },
+ "21": {"nameru": "🥚 Обычное яйцо", "nameen": "🥚 Ordinary egg", "type": "egg", "incub_time": 30, "time_tag": "m", "inc_type": "com", "ns_craft": { "1": { "materials": ["21", "21", "21", "21", "21", "21", "21", "21", "21", "21"], "create": ["20"] } } },
 
- "22": {"nameru": "🥚 Редкое яйцо", "nameen": "🥚 Rare egg", "type": "egg", "incub_time": 48, "time_tag": "h", "inc_type": "rar", "ns_craft": { "1": { "materials": ["22", "22", "22", "22", "22", "22", "22", "22", "22", "22"], "create": "23" } } },
+ "22": {"nameru": "🥚 Редкое яйцо", "nameen": "🥚 Rare egg", "type": "egg", "incub_time": 48, "time_tag": "h", "inc_type": "rar", "ns_craft": { "1": { "materials": ["22", "22", "22", "22", "22", "22", "22", "22", "22", "22"], "create": ["23"] } } },
 
- "23": {"nameru": "🥚 Мистическое яйцо", "nameen": "🥚 Rare egg", "type": "egg", "incub_time": 72, "time_tag": "h", "inc_type": "myt", "ns_craft": { "1": { "materials": ["23", "23", "23", "23", "23", "23", "23", "23", "23", "23"], "create": "24" } }},
+ "23": {"nameru": "🥚 Мистическое яйцо", "nameen": "🥚 Rare egg", "type": "egg", "incub_time": 72, "time_tag": "h", "inc_type": "myt", "ns_craft": { "1": { "materials": ["23", "23", "23", "23", "23", "23", "23", "23", "23", "23"], "create": ["24"] } }},
 
  "24": {"nameru": "🥚 Легендарное яйцо", "nameen": "🥚 Legendary Egg", "type": "egg", "incub_time": 110, "time_tag": "h", "inc_type": "leg"},
 
@@ -92,11 +92,13 @@
 
  "46": {"nameru": "📜 Походный мешочек", "nameen": "📜 Travel bag", "type": "recipe", "descriptionru": "Во время путешествия динозавру требуется место для хранения всех найденных вещей, тут нам поможет походный мешочек!", "descriptionen": "During the journey, the dinosaur needs a place to store all the things found, a hiking bag will help us here!", "create": ["45"], "materials": [ {"item": "26", "type": "delete"},  {"item": "26", "type": "delete"},  {"item": "26", "type": "delete"},  {"item": "27", "type": "delete"},  {"item": "27", "type": "delete"}, {"item": "15", "type": "endurance", "act": 30}], "abilities": {"uses": 2}},
 
- "47": {"nameru": "🍪 Набор печенек", "nameen": "🍪 A set of cookies", "type": "+eat", "act": 5, "class": "ALL", "+mood": 10, "abilities": {"uses": 3}},
+ "47": {"nameru": "🍪 Набор печенек", "nameen": "🍪 A set of cookies", "type": "+eat", "act": 6, "class": "ALL", "+mood": 10, "abilities": {"uses": 15}},
 
  "48": {"nameru": "🍕 Пицца", "nameen": "🍕 Pizza", "type": "+eat", "act": 25, "class": "ALL", "+mood": 15, "abilities": {"uses": 9}},
 
- "49": {"nameru": "🔮 Магический камень", "nameen": "🔮 Magic Stone", "type": "material", "abilities": {"mana": 120}}
+ "49": {"nameru": "🔮 Магический камень", "nameen": "🔮 Magic Stone", "type": "material", "abilities": {"mana": 0}},
+
+ "50": {"nameru": "🌮 Тако", "nameen": "🌮 Tacos", "type": "+eat", "act": 40, "class": "ALL", "+mood": 20}
 
 }
 }

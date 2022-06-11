@@ -1637,8 +1637,8 @@ def on_message(message):
 
                             else:
 
-                                items_id[ items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i)})" ] = i
-                                items_names.append( items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i)})" )
+                                items_id[ items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i, False)})" ] = i
+                                items_names.append( items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i, False)})" )
 
                         items_names.sort()
 
@@ -4085,7 +4085,27 @@ def answer(call):
                 bot.send_message(user.id, text, parse_mode = 'Markdown')
 
             if user_item != None:
-                n_c_f(), re_item()
+
+                def wrk_p(message):
+
+                    if message.text in ['Да, я хочу это сделать', 'Yes, I want to do it']:
+                        n_c_f(), re_item()
+
+                    else:
+                        bot.send_message(user.id, f'❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
+
+                markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
+
+                if bd_user['language_code'] == 'ru':
+                    markup.add( *[i for i in ['Да, я хочу это сделать', '❌ Отмена'] ] )
+                    msg = bot.send_message(user.id, f'Вы уверены что хотите использовать {data_item["nameru"]} ?', reply_markup = markup)
+
+                else:
+                    markup.add( *[i for i in ['Yes, I want to do it', '❌ Cancel'] ] )
+                    msg = bot.send_message(user.id, f'Are you sure you want to use {data_item["nameen"]} ?', reply_markup = markup)
+
+                bot.register_next_step_handler(msg, wrk_p)
+
 
 
 
@@ -4545,6 +4565,114 @@ def answer(call):
         did = call.data[18:]
         bd_dino = bd_user['dinos'][did]
         functions.p_profile(bot, call.message, bd_dino, user, bd_user, did)
+
+    elif call.data[:8] == 'ns_craft':
+        did = call.data.split()
+        data = functions.des_qr(did[1])
+        cr_n = did[2]
+
+        it_id = str(data['id'])
+        list_inv = list(bd_user['inventory'])
+        list_inv_id = []
+        for i in list_inv: list_inv_id.append(i['item_id'])
+
+        if it_id in list_inv_id:
+            data_item = items_f['items'][it_id]
+
+            user_item = None
+            if list(set(['abilities']) & set(list(data_item.keys()))) != []:
+
+                abl_it = {}
+                for i in data.keys(): abl_it[i] = data[i]
+                del abl_it['id']
+
+                for it in list_inv:
+                    if user_item == None:
+                        if str(it['item_id']) == str(it_id):
+                            if 'abilities' in it.keys():
+                                for key_c in data.keys():
+                                    if key_c != 'id':
+                                        if it['abilities'] == abl_it:
+                                            user_item = it
+                                            break
+
+            else:
+                user_item = list_inv[list_inv_id.index(it_id)]
+
+            if user_item == None:
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'❌ | Предмет не найден в инвентаре!'
+                else:
+                    text = f"❌ | Item not found in inventory!"
+
+                bot.send_message(user.id, text, parse_mode = 'Markdown')
+
+            if user_item != None:
+
+                def wrk_p(message):
+
+                    if message.text in ['Да, я хочу это сделать', 'Yes, I want to do it']:
+
+                        fr_user = users.find_one({"userid": user.id })
+                        ok = True
+                        list_inv_id.clear()
+                        for i in fr_user['inventory']: list_inv_id.append(i['item_id'])
+
+                        for i in data_item["ns_craft"][cr_n]['materials']:
+
+                            if i in list_inv_id:
+                                list_inv_id.remove(i)
+
+                            else:
+                                ok = False
+                                break
+
+                        if ok == True:
+
+                            if bd_user['language_code'] == 'ru':
+                                text = f'🍡 | Предмет {", ".join(functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "ru" ))} создан!'
+                            else:
+                                text = f'🍡 | The item {", ".join(functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "en" ))} is created!'
+
+                            list_inv_id.clear()
+                            for i in fr_user['inventory']: list_inv_id.append(i['item_id'])
+
+                            for it_m in data_item["ns_craft"][cr_n]['materials']:
+
+                                lst_ind = list_inv_id.index(it_m)
+                                fr_user['inventory'].remove( fr_user['inventory'][lst_ind] )
+
+                            for it_c in data_item["ns_craft"][cr_n]['create']:
+                                dt = functions.add_item_to_user(fr_user, it_c, 1, 'data')
+                                for i in dt:
+                                    fr_user['inventory'].append(i)
+
+                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': fr_user['inventory'] }} )
+
+                        else:
+
+                            if bd_user['language_code'] == 'ru':
+                                text = f'❗ | Материалов недостаточно!'
+                            else:
+                                text = f"❗ | Materials are not enough!"
+
+                        bot.send_message(user.id, text, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ) )
+
+                    else:
+                        bot.send_message(user.id, f'❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
+
+                markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
+
+                if bd_user['language_code'] == 'ru':
+                    markup.add( *[i for i in ['Да, я хочу это сделать', '❌ Отмена'] ] )
+                    msg = bot.send_message(user.id, f'Вы уверены что хотите создать {", ".join(functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "ru" ))}?', reply_markup = markup)
+
+                else:
+                    markup.add( *[i for i in ['Yes, I want to do it', '❌ Cancel'] ] )
+                    msg = bot.send_message(user.id, f'Are you sure you want to create {", ".join(functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "en" ))}?', reply_markup = markup)
+
+                bot.register_next_step_handler(msg, wrk_p)
 
     else:
         print(call.data, 'call.data')

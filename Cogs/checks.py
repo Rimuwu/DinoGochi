@@ -566,17 +566,23 @@ class checks:
 
                                 r_event = random.randint(1, 100)
                                 if r_event in list(range(1,51)): #обычное соб
-                                    events = ['sunny', 'm_coins', 'breeze']
+                                    events = ['sunny', 'm_coins', 'breeze'] #, 'trade'
                                 elif r_event in list(range(51,76)): #необычное соб
                                     events = ['+eat', 'sleep', 'u_coins', 'friend_meet', 'deadlock']
                                 elif r_event in list(range(76,91)): #редкое соб
                                     events = ['random_items', 'b_coins', 'deadlock', 'friend_game']
                                 elif r_event in list(range(91,100)): #мистическое соб
-                                    events = ['random_items_leg', 'y_coins']
+                                    events = ['random_items_leg', 'y_coins'] #, 'magic_stone'
                                 else: #легендарное соб
                                     events = ['egg', 'l_coins']
 
                                 event = random.choice(events)
+
+                                if event == 'magic_stone':
+                                    pass
+
+                                if event == 'trade':
+                                    pass
 
                                 if event == 'deadlock':
 
@@ -844,7 +850,7 @@ class checks:
 
                                 elif event == 'random_items':
 
-                                    item = functions.random_items(["1", "2", '25'], ['17', '18', '19'], ['26', '27', '28'], ["30", "32", '44'], ["30", "32", "39", "41", "43", '44', "46"])
+                                    item = functions.random_items(["1", "2", '25'], ['17', '18', '19', "1", "2", '25'], ['26', '27', '28', '17', '18', '19', "1", "2", '25'], ['26', '27', '28', '17', '18', '19', '44', "1", "2", '25', '30'], ["30", "39", "41", "43", '44', "46", "32"])
 
                                     if mood_n == True:
 
@@ -864,7 +870,7 @@ class checks:
 
                                 elif event == 'random_items_leg':
 
-                                    item = functions.random_items(["4", '14', "15", "16"], ["4", '14', "15", "16"], ["30", "32", '34', "19", "39", "41", '44'], ["37", "19", "39", "41", "43", '44', "46"], ["21", "37", "39", "41", "43", '44', "46"])
+                                    item = functions.random_items(['1', '2', '17', '18', '19', '25', "4", '14', "15", "16"], ['1', '2', '17', '18', '19', "4", '14', "15", "16"], ['1', '2', '17', '18', '19', "30", "32", '34', "19", "39", "41", '44'], ["37", "19", "39", "41", "43", '44', "46"], ["21", "37", "39", "41", "43", '44', "46"])
                                     if mood_n == True:
 
                                         if user['language_code'] == 'ru':
@@ -882,7 +888,6 @@ class checks:
                                             event = '❌ | The mystical event has been canceled due to a bad mood!'
 
                                 elif event == 'egg':
-
 
                                     egg = functions.random_items(['21', "3"], ['20', "3"], ['22'], ['23', "3"], ['24', "3"])
 
