@@ -3710,6 +3710,7 @@ def answer(call):
                 list_inv_id.clear()
                 for i in fr_user['inventory']: list_inv_id.append(i['item_id'])
                 search_items = {}
+                list_inv = fr_user['inventory'].copy()
 
                 for _ in range(col):
                     for i in data_item['materials']:
@@ -3756,14 +3757,14 @@ def answer(call):
                             if it_m['type'] == 'delete':
 
                                 lst_ind = list_inv_id.index(it_m['item'])
-                                fr_user['inventory'].remove( fr_user['inventory'][lst_ind] )
+                                fr_user['inventory'].remove( list_inv[lst_ind] )
 
                             if it_m['type'] == 'endurance':
                                 lst_ind = int(search_items[ it_m['item'] ])
                                 fr_user['inventory'][lst_ind]['abilities']['endurance'] -= it_m['act']
 
                                 if fr_user['inventory'][lst_ind]['abilities']['endurance'] == 0:
-                                    fr_user['inventory'].remove(fr_user['inventory'][lst_ind])
+                                    fr_user['inventory'].remove(list_inv[lst_ind])
 
 
                     for it_c in data_item['create']:
@@ -4618,6 +4619,7 @@ def answer(call):
                         ok = True
                         list_inv_id.clear()
                         for i in fr_user['inventory']: list_inv_id.append(i['item_id'])
+                        list_inv = fr_user['inventory'].copy()
 
                         for i in data_item["ns_craft"][cr_n]['materials']:
 
@@ -4639,9 +4641,9 @@ def answer(call):
                             for i in fr_user['inventory']: list_inv_id.append(i['item_id'])
 
                             for it_m in data_item["ns_craft"][cr_n]['materials']:
-
                                 lst_ind = list_inv_id.index(it_m)
-                                fr_user['inventory'].remove( fr_user['inventory'][lst_ind] )
+                                list_inv_id[lst_ind] = None
+                                fr_user['inventory'].remove( list_inv[lst_ind] )
 
                             for it_c in data_item["ns_craft"][cr_n]['create']:
                                 dt = functions.add_item_to_user(fr_user, it_c, 1, 'data')
