@@ -1254,7 +1254,7 @@ class functions:
                     else:
                         bt_text += ", ".join(functions.sort_items_col( item["ns_craft"][cr_dct_id]["create"], "en" ))
 
-                markup_inline.add( types.InlineKeyboardButton( text = bt_text, callback_data = f"ns_craft {functions.qr_item_code(us_item)} {cr_dct_id}") )
+                # markup_inline.add( types.InlineKeyboardButton( text = bt_text, callback_data = f"ns_craft {functions.qr_item_code(us_item)} {cr_dct_id}") )
 
             return text, markup_inline
 
