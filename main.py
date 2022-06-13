@@ -200,6 +200,32 @@ def command(message):
     bd_user = users.find_one({"userid": user.id})
     pprint.pprint(bd_user)
 
+@bot.message_handler(commands=['check_inv'])
+def command(message):
+    user = message.from_user
+    msg_args = message.text.split()
+    bd_user = users.find_one({"userid": int(msg_args[1])})
+    print('id', msg_args[2], type(msg_args[2]))
+    for i in bd_user['inventory']:
+
+        if i['item_id'] == msg_args[2]:
+            print(' #                 ============================================= #')
+            print(i)
+            print(bd_user['inventory'].index(i))
+
+    print('all')
+
+@bot.message_handler(commands=['test_edit'])
+def command(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+
+        markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
+        markup.add(* [x for x in ['кнопка1', 'кнопка2']] )
+
+        msg = bot.send_message(message.chat.id, 'текст1', reply_markup = markup)
+        bot.edit_message_text(text = 'text2', chat_id = msg.chat.id, message_id = msg.message_id)
+
 @bot.message_handler(commands=['delete_dinos_check_acc'])
 def command(message):
     user = message.from_user
@@ -208,6 +234,21 @@ def command(message):
         users.update_one( {"userid": user.id}, {"$set": {f'dinos': {} }} )
         print("all")
 
+@bot.message_handler(commands=['quality_d'])
+def command(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        bd_user = users.find_one({"userid": user.id})
+        for i in bd_user['dinos'].keys():
+            dino = bd_user['dinos'][i]
+
+            if dino['status'] == 'dino':
+                dino_data = json_f['elements'][str(dino['dino_id'])]
+                dino['quality'] = dino_data['image'][5:8]
+
+                users.update_one( {"userid": user.id}, {"$set": {f'dinos.{i}': dino }} )
+
+        print("all")
 
 @bot.message_handler(commands=['add_item'])
 def command(message):
@@ -237,27 +278,16 @@ def command(message):
 
         print(';;; all')
 
-@bot.message_handler(commands=['dns'])
+@bot.message_handler(commands=['reply_id'])
 def command(message):
     user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        msg = message.reply_to_message
+        if msg != None:
+            bot.reply_to(message, msg.message_id)
+            print(msg.message_id)
 
-    for i in users.find({}):
-
-        for ii in i['activ_items'].keys():
-            d = i['activ_items'][ii].keys()
-            if '1' in d:
-                print(i['userid'], 'l-34')
-            if '2' in d:
-                print(i['userid'], 'l-3934')
-
-    print('all')
-
-
-# @bot.message_handler(commands=['des_qr'])
-# def command(message):
-#     user = message.from_user
-#     text = functions.des_qr('i23.u12')
-#     bot.send_message(user.id, str(text))
+# =========================================
 
 @bot.message_handler(commands=['emulate_not'])
 def command(message):
@@ -1010,59 +1040,112 @@ def on_message(message):
                     text = functions.member_profile(bot, user.id, lang = bd_user['language_code'])
                     bot.send_message(message.chat.id, text, parse_mode = 'Markdown')
 
-            if message.text in ['🕹 Действия', '🕹 Actions']:
-                bd_user = users.find_one({"userid": user.id})
-                if bd_user != None:
-
-                    if bd_user['language_code'] == 'ru':
-                        text = '🕹 Панель действий открыта!'
-                    else:
-                        text = '🕹 The action panel is open!'
-
-                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "actions", user))
-
-            if message.text[:11] in ['🦖 Динозавр:'] or message.text[:7] in [ '🦖 Dino:']:
-                bd_user = users.find_one({"userid": user.id})
-                if bd_user != None:
-                    if bd_user['language_code'] == 'ru':
-                        did = int(message.text[12:])
-                    else:
-                        did = int(message.text[8:])
-
-                    if did == int(bd_user['settings']['dino_id']):
-                        ll = list(bd_user['dinos'].keys())
-                        ind = list(bd_user['dinos'].keys()).index(str(did))
-
-                        if ind + 1 == len(ll):
-                            bd_user['settings']['dino_id'] = ll[0]
-                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
-                        else:
-                            bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[int(ll[did-1])]
-                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
-
-                        if bd_user['language_code'] == 'ru':
-                            if bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['status'] == 'incubation':
-                                text = f"Вы выбрали динозавра 🥚"
-                            else:
-                                text = f"Вы выбрали динозавра {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
-                        else:
-                            if bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['status'] == 'incubation':
-                                text = f"You have chosen 🥚"
-                            else:
-                                text = f"You have chosen a dinosaur {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
-
-                        bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
-
             tr_c = False
+            stats_list = []
             if bd_user != None and len(list(bd_user['dinos'])) > 0:
-                if ( len(list(bd_user['dinos'])) == 1 and bd_user['lvl'][0] > 1) :
+                for i in bd_user['dinos'].keys():
+                    dd = bd_user['dinos'][i]
+                    stats_list.append(dd['status'])
+
+                if 'dino' in stats_list:
                     tr_c = True
 
-                else:
-                    if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['status'] == 'dino':
-                        tr_c = True
-
             if tr_c == True:
+
+                if message.text in ['🕹 Действия', '🕹 Actions']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = '🕹 Панель действий открыта!'
+                        else:
+                            text = '🕹 The action panel is open!'
+
+                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "actions", user))
+
+                if message.text in ['🍺 Дино-таверна', '🍺 Dino-tavern']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = '🍺 Вы вошли в дино-таверну!'
+                            text2 = '🍺 Друзья в таверне: Поиск среди толпы...'
+                        else:
+                            text = '🍺 You have entered the dino-tavern!'
+                            text2 = '🍺 Friends in the tavern: Search among the crowd...'
+
+                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "dino-tavern", user))
+                        msg = bot.send_message(message.chat.id, text2)
+
+                        if bd_user['language_code'] == 'ru':
+                            text = '🍺 Друзья в таверне: '
+                        else:
+                            text = '🍺 Friends in the tavern: '
+
+                        fr_in_tav = []
+
+                        for fr_id in bd_user['friends']['friends_list']:
+                            fr_user = users.find_one({"userid": fr_id})
+
+                            if 'last_markup' in fr_user['settings'].keys() and fr_user['settings']['last_markup'] == 'dino-tavern':
+
+                                fr_in_tav.append(fr_user)
+
+                        if fr_in_tav == []:
+
+                            text += '❌'
+
+                        else:
+                            text += '\n'
+                            for fr_user in fr_in_tav:
+                                fr_tel = bot.get_chat(fr_user['userid'])
+                                text += f' ● {fr_tel.first_name}\n'
+
+                        bot.edit_message_text(text = text, chat_id = msg.chat.id, message_id = msg.message_id)
+
+                        for fr_user in fr_in_tav:
+
+                            if fr_user['language_code'] == 'ru':
+                                text = f'🍺 {user.first_name} зашёл в таверну...'
+                            else:
+                                text = f'🍺 {user.first_name} went into the tavern...'
+
+                            time.sleep(0.5)
+                            bot.send_message(fr_user['userid'], text)
+
+
+
+                if message.text[:11] in ['🦖 Динозавр:'] or message.text[:7] in [ '🦖 Dino:']:
+                    bd_user = users.find_one({"userid": user.id})
+                    if bd_user != None:
+                        if bd_user['language_code'] == 'ru':
+                            did = int(message.text[12:])
+                        else:
+                            did = int(message.text[8:])
+
+                        if did == int(bd_user['settings']['dino_id']):
+                            ll = list(bd_user['dinos'].keys())
+                            ind = list(bd_user['dinos'].keys()).index(str(did))
+
+                            if ind + 1 == len(ll):
+                                bd_user['settings']['dino_id'] = ll[0]
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+                            else:
+                                bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[int(ll[did-1])]
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+
+                            if bd_user['language_code'] == 'ru':
+                                if bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['status'] == 'incubation':
+                                    text = f"Вы выбрали динозавра 🥚"
+                                else:
+                                    text = f"Вы выбрали динозавра {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
+                            else:
+                                if bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['status'] == 'incubation':
+                                    text = f"You have chosen 🥚"
+                                else:
+                                    text = f"You have chosen a dinosaur {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
+
+                            bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
 
                 if message.text in ['↩ Назад', '↩ Back']:
                     bd_user = users.find_one({"userid": user.id})
@@ -3309,6 +3392,52 @@ def answer(call):
 
     elif call.data[:13] in ['90min_journey', '60min_journey', '30min_journey', '10min_journey', '12min_journey']:
 
+        def dino_profile(bd_user, user, dino_user_id):
+
+            dino_id = str(bd_user['dinos'][ dino_user_id ]['dino_id'])
+
+            if bd_user['language_code'] == 'ru':
+                lang = bd_user['language_code']
+            else:
+                lang = 'en'
+
+            dino = json_f['elements'][dino_id]
+            if 'class' in list(dino.keys()):
+                bg_p = Image.open(f"images/remain/{dino['class']}_icon.png")
+            else:
+                bg_p = Image.open(f"images/remain/None_icon.png")
+
+            class_ = bd_user['dinos'][ dino_user_id ]['quality']
+
+            panel_i = Image.open(f"images/remain/{class_}_profile_{lang}.png")
+
+            img = functions.trans_paste(panel_i, bg_p, 1.0)
+
+            dino_image = Image.open("images/"+str(json_f['elements'][dino_id]['image']))
+
+            sz = 412
+            dino_image = dino_image.resize((sz, sz), Image.ANTIALIAS)
+
+            xy = -80
+            x2 = 80
+            img = functions.trans_paste(dino_image, img, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
+
+
+            idraw = ImageDraw.Draw(img)
+            line1 = ImageFont.truetype("fonts/Comic Sans MS.ttf", size = 35)
+
+            idraw.text((530, 110), str(bd_user['dinos'][dino_user_id]['stats']['heal']), font = line1)
+            idraw.text((530, 190), str(bd_user['dinos'][dino_user_id]['stats']['eat']), font = line1)
+
+            idraw.text((750, 110), str(bd_user['dinos'][dino_user_id]['stats']['game']), font = line1)
+            idraw.text((750, 190), str(bd_user['dinos'][dino_user_id]['stats']['mood']), font = line1)
+            idraw.text((750, 270), str(bd_user['dinos'][dino_user_id]['stats']['unv']), font = line1)
+
+            img.save('profile.png')
+            profile = open(f"profile.png", 'rb')
+
+            return profile
+
         if call.data[:13] == '12min_journey':
             jr_time = 120
         else:
@@ -3707,8 +3836,9 @@ def answer(call):
             elif data_item['type'] == 'recipe':
                 ok = True
                 end_ok = True
-                list_inv_id.clear()
-                for i in fr_user['inventory']: list_inv_id.append(i['item_id'])
+                list_inv_id = []
+                list_inv_id_copy = []
+                for i in fr_user['inventory']: list_inv_id.append(i['item_id']), list_inv_id_copy.append(i['item_id'])
                 search_items = {}
                 list_inv = fr_user['inventory'].copy()
 
@@ -3722,7 +3852,7 @@ def answer(call):
                             if i['type'] == 'endurance':
 
                                 itms_ind = []
-                                sr_lst_id = list_inv_id.copy()
+                                sr_lst_id = list_inv_id_copy.copy()
 
                                 for itm in sr_lst_id:
                                     if itm == i['item']:
@@ -3732,9 +3862,10 @@ def answer(call):
                                 end_ok = False
                                 for end_i in itms_ind:
                                     ittm = fr_user['inventory'][end_i]
+
                                     if ittm['abilities']['endurance'] >= i['act'] * col:
                                         end_ok = True
-                                        search_items[ str(list_inv_id[end_i]) ] = end_i
+                                        search_items[ str(list_inv_id_copy[end_i]) ] = fr_user['inventory'][end_i]
                                         break
 
                         else:
@@ -3749,22 +3880,23 @@ def answer(call):
                         text = f"🍡 | The item {data_item['nameen']} x{col} is created!"
 
                     fr_user = users.find_one({"userid": user.id})
-                    list_inv_id.clear()
-                    for i in fr_user['inventory']: list_inv_id.append(i['item_id'])
 
                     for _ in range(col):
                         for it_m in data_item['materials']:
                             if it_m['type'] == 'delete':
 
-                                lst_ind = list_inv_id.index(it_m['item'])
+                                lst_ind = list_inv_id_copy.index(it_m['item'])
                                 fr_user['inventory'].remove( list_inv[lst_ind] )
 
                             if it_m['type'] == 'endurance':
-                                lst_ind = int(search_items[ it_m['item'] ])
-                                fr_user['inventory'][lst_ind]['abilities']['endurance'] -= it_m['act']
+                                lst_i = search_items[ it_m['item'] ]
 
-                                if fr_user['inventory'][lst_ind]['abilities']['endurance'] == 0:
+                                llst_i = fr_user['inventory'].index(lst_i)
+                                fr_user['inventory'][ llst_i ]['abilities']['endurance'] -= it_m['act']
+
+                                if fr_user['inventory'][ llst_i ]['abilities']['endurance'] == 0:
                                     fr_user['inventory'].remove(list_inv[lst_ind])
+                                    print(list_inv[lst_ind])
 
 
                     for it_c in data_item['create']:
@@ -4564,8 +4696,9 @@ def answer(call):
 
     elif call.data[:18] == 'open_dino_profile_':
         did = call.data[18:]
-        bd_dino = bd_user['dinos'][did]
-        functions.p_profile(bot, call.message, bd_dino, user, bd_user, did)
+        if did in bd_user['dinos'].keys():
+            bd_dino = bd_user['dinos'][did]
+            functions.p_profile(bot, call.message, bd_dino, user, bd_user, did)
 
     elif call.data[:8] == 'ns_craft':
         did = call.data.split()
@@ -4687,4 +4820,4 @@ if bot.get_me().first_name == 'DinoGochi' or False:
     min10_thr.start() # пяти-минутный чек
 
 print(f'Бот {bot.get_me().first_name} запущен!')
-bot.infinity_polling()
+bot.infinity_polling(timeout = 60)
