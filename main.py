@@ -305,7 +305,11 @@ def command(message):
 
         text = functions.member_profile(bot, user.id, bd_user['language_code'])
 
-        bot.reply_to(message, text, parse_mode = 'Markdown')
+        try:
+            bot.reply_to(message, text, parse_mode = 'Markdown')
+        except Exception as error:
+            print(message.chat.id, 'ERROR Профиль', '\n', error)
+            bot.reply_to(message, text)
 
     else:
 
@@ -315,7 +319,7 @@ def command(message):
             text = 'You do not have a registered account in the bot, please go to the bot and register to get access to this command.'
 
         bot.reply_to(message, text, parse_mode = 'Markdown')
-
+        
 @bot.message_handler(commands=['add_me', 'добавь_меня'])
 def command(message):
     user = message.from_user
