@@ -319,7 +319,7 @@ def command(message):
             text = 'You do not have a registered account in the bot, please go to the bot and register to get access to this command.'
 
         bot.reply_to(message, text, parse_mode = 'Markdown')
-        
+
 @bot.message_handler(commands=['add_me', 'добавь_меня'])
 def command(message):
     user = message.from_user
@@ -4821,7 +4821,7 @@ def answer(call):
 if bot.get_me().first_name == 'DinoGochi' or False:
     main_checks.start() # активация всех проверок и игрового процесса
     thr_notif.start() # активация уведомлений
-    min10_thr.start() # пяти-минутный чек
+    min10_thr.start() # десяти-минутный чек
 
 print(f'Бот {bot.get_me().first_name} запущен!')
 bot.infinity_polling(timeout = 60)
