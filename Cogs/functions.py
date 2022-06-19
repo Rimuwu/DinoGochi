@@ -893,11 +893,11 @@ class functions:
 
                 elif notification == "journey_end":
 
-                    bd_user['dinos'][ dino_id ]['activ_status'] = 'pass_active'
-                    del bd_user['dinos'][ dino_id ]['journey_time']
-                    del bd_user['dinos'][ dino_id ]['journey_log']
+                    user['dinos'][ dino_id ]['activ_status'] = 'pass_active'
+                    del user['dinos'][ dino_id ]['journey_time']
+                    del user['dinos'][ dino_id ]['journey_log']
 
-                    users.update_one( {"userid": bd_user['userid']}, {"$set": {f"dinos.{dino_id}": bd_user['dinos'][ dino_id ] }} )
+                    users.update_one( {"userid": user['userid']}, {"$set": {f"dinos.{dino_id}": user['dinos'][ dino_id ] }} )
 
                     try:
                         functions.journey_end_log(bot, user['userid'], dino_id)
