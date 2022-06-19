@@ -894,8 +894,11 @@ class functions:
                 elif notification == "journey_end":
 
                     user['dinos'][ dino_id ]['activ_status'] = 'pass_active'
-                    del user['dinos'][ dino_id ]['journey_time']
-                    del user['dinos'][ dino_id ]['journey_log']
+                    try:
+                        del user['dinos'][ dino_id ]['journey_time']
+                        del user['dinos'][ dino_id ]['journey_log']
+                    except:
+                        pass
 
                     users.update_one( {"userid": user['userid']}, {"$set": {f"dinos.{dino_id}": user['dinos'][ dino_id ] }} )
 
