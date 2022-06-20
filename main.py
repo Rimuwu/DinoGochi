@@ -1928,8 +1928,6 @@ def answer(call):
         us_id = m_call[0][11:]
         key_i = m_call[1]
 
-        print(us_id)
-
         if str(us_id) in market_['products'].keys():
             ma_d = market_['products'][str(us_id)]['products']
 
@@ -1978,8 +1976,7 @@ def answer(call):
                                 bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
                                 return
 
-                            mr_user = users.find_one({"userid": us_id})
-                            print(mr_user == None)
+                            mr_user = users.find_one({"userid": int(us_id)})
 
                             if mmd['price'] * number > bd_user['coins']:
                                 if bd_user['language_code'] == 'ru':
