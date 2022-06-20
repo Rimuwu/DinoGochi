@@ -3240,6 +3240,7 @@ class commands:
     def rarity_change(bot, message, user, bd_user):
 
         data_items = items_f['items']
+        bd_user = functions.dino_q(bd_user)
 
         def inf_message(dino_id):
 
