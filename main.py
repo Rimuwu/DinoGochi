@@ -1992,7 +1992,7 @@ def answer(call):
 
                             if mr_user != None:
                                 print('выплата')
-                                users.update_one( {"userid": us_id}, {"$inc": {'coins': mmd['price'] * number }} )
+                                users.update_one( {"userid": int(us_id)}, {"$inc": {'coins': mmd['price'] * number }} )
 
                             market_['products'][str(us_id)]['products'][str(key_i)]['col'][0] += number
 
