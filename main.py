@@ -2302,8 +2302,7 @@ def answer(call):
 
                             qul = quality
                             if quality == 'ran':
-                                while qul == 'ran' or quality == bd_user['dinos'][dino_id]['quality']:
-                                    qul = functions.random_items(['com'], ['unc'], ['rar'], ['myt'], ['leg'])
+                                qul = functions.random_items(['com'], ['unc'], ['rar'], ['myt'], ['leg'])
 
                             bd_user['coins'] -= data_q_r[quality]['money']
                             bd_user['dinos'][dino_id]['quality'] = qul
