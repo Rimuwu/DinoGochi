@@ -234,33 +234,6 @@ def command(message):
         users.update_one( {"userid": user.id}, {"$set": {f'dinos': {} }} )
         print("all")
 
-@bot.message_handler(commands=['quality_d'])
-def command(message):
-
-    user = message.from_user
-    if user.id in [5279769615, 1191252229]:
-        mem = users.find({ })
-        print(len(list(mem)))
-        n = 0
-
-        for bd_user in mem:
-
-            n += 1
-            print(n)
-
-            for i in bd_user['dinos'].keys():
-                dino = bd_user['dinos'][i]
-
-                if 'quality' not in bd_user['dinos'][i].keys():
-
-                    if dino['status'] == 'dino':
-                        dino_data = json_f['elements'][str(dino['dino_id'])]
-                        dino['quality'] = dino_data['image'][5:8]
-
-                        users.update_one( {"userid": user.id}, {"$set": {f'dinos.{i}': dino }} )
-
-        print("all")
-
 @bot.message_handler(commands=['add_item'])
 def command(message):
     user = message.from_user
