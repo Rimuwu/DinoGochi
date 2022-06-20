@@ -1394,7 +1394,7 @@ class functions:
                                     data_item = data_items[ user_item['item_id'] ]
                                     if data_item['type'] == '+eat':
                                         eat_c = functions.items_counting(two_user, '+eat')
-                                        if eat_c >= 10:
+                                        if eat_c >= 300:
 
                                             if bd_user['language_code'] == 'ru':
                                                 text = f'🌴 | У данного пользователя очень много еды, в данный момент вы не можете отправить ему {data_item["nameru"]}!'
