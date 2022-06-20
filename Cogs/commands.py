@@ -19,7 +19,6 @@ from functions import functions
 sys.path.append("..")
 import config
 
-
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
 referal_system = client.bot.referal_system
@@ -328,10 +327,10 @@ class commands:
 
                     def ret(message, dino_dict, user, bd_user):
                         if message.text in dino_dict.keys():
-                            # try:
-                            functions.p_profile(bot, message, dino_dict[message.text][0], user, bd_user, dino_dict[message.text][1])
-                            # except Exception as error:
-                            #     print('Ошибка в профиле1\n', error)
+                            try:
+                                functions.p_profile(bot, message, dino_dict[message.text][0], user, bd_user, dino_dict[message.text][1])
+                            except Exception as error:
+                                print('Ошибка в профиле1\n', error)
 
                         else:
                             bot.send_message(message.chat.id, '❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user), bd_user ))
@@ -343,10 +342,2993 @@ class commands:
     def open_settings(bot, message, user, bd_user):
 
         if bd_user != None:
+            settings = bd_user['settings']
+
+            if 'vis.faq' not in settings.keys():
+                settings['vis.faq'] = True
 
             if bd_user['language_code'] == 'ru':
-                text = '🔧 Меню настроек активировано'
+                text = f'🔧 Меню настроек активировано\n\nУведомления: {settings["notifications"]}\nВидимость справочника: {settings["vis.faq"]}'.replace("True", '✔').replace("False", '❌')
+
             else:
-                text = '🔧 The settings menu is activated'
+                text = f'🔧 The settings menu is activated\n\nNotifications: {settings["notifications"]}\nFAQ: {settings["vis.faq"]}'.replace("True", '✔').replace("False", '❌')
 
             bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'settings', user))
+
+    @staticmethod
+    def back_open(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            if bd_user['language_code'] == 'ru':
+                text = '↪ Возврат в главное меню'
+            else:
+                text = '↪ Return to the main menu'
+
+            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 1, user))
+
+    @staticmethod
+    def friends_open(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            if bd_user['language_code'] == 'ru':
+                text = '👥 | Перенаправление в меню друзей!'
+            else:
+                text = '👥 | Redirecting to the friends menu!'
+
+            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "friends-menu", user))
+
+    @staticmethod
+    def settings_faq(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            if bd_user['language_code'] == 'ru':
+                ans = ['✅ Включить', '❌ Выключить', '↪ Назад']
+                text = '❗ Взаимодействие с настройкой видимости FAQ, выберите видимость >'
+            else:
+                ans = ['✅ Enable', '❌ Disable', '↪ Back']
+                text = '❗ Interaction with the FAQ visibility setting, select visibility >'
+
+            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+            rmk.add(ans[0], ans[1])
+            rmk.add(ans[2])
+
+            def ret(message, ans, bd_user):
+
+                if message.text not in ans or message.text == ans[2]:
+                    res = None
+                else:
+                    res = message.text
+
+                if res == None:
+                    bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'settings', user))
+                    return
+
+                if res in ['✅ Enable', '✅ Включить']:
+
+                    bd_user['settings']['vis.faq'] = True
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+
+                    if bd_user['language_code'] == 'ru':
+                        text = '🔧 FAQ был активирован!'
+                    else:
+                        text = '🔧 The FAQ has been activated!'
+
+                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "settings", user))
+
+                if res in ['❌ Disable', '❌ Выключить']:
+
+                    bd_user['settings']['vis.faq'] = False
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+
+                    if bd_user['language_code'] == 'ru':
+                        text = '🔧 FAQ был отключен!'
+                    else:
+                        text = '🔧 The FAQ has been disabled!'
+
+                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "settings", user))
+
+                else:
+                    return
+
+            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+            bot.register_next_step_handler(msg, ret, ans, bd_user)
+
+    @staticmethod
+    def add_friend(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            if bd_user['language_code'] == 'ru':
+                ans = ['↪ Назад']
+                text = '➡ | Перешлите мне любое сообщение от человека (в разделе конфиденциальность > пересылка сообщений - должно быть разрешение), с которым вы хотите стать друзьями или отправте мне его id (можно узнать в своём профиле у бота).\nВажно! Ваш друг должен быть зарегистрирован в боте!'
+            else:
+                ans = ['↪ Back']
+                text = '➡ | Forward me any message from the person (in the privacy section > message forwarding - there must be permission) with whom you want to become friends or send me his id (you can find out in your bot profile).\nImportant! Your friend must be registered in the bot!'
+
+            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+            rmk.add(ans[0])
+
+            def ret(message, ans, bd_user):
+                res = message
+
+                if message.text in ans:
+                    bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'friends-menu', user))
+                    return
+
+                try:
+                    fr_id = int(res.text)
+                except:
+
+                    if res.text == ans[0] or res.forward_from == None:
+                        bot.send_message(message.chat.id, f'❌ user forward not found', reply_markup = functions.markup(bot, 'friends-menu', user))
+                        fr_id = None
+
+                    else:
+                        fr_id = res.forward_from.id
+
+
+                two_user = users.find_one({"userid": fr_id})
+
+                if two_user == None:
+                    bot.send_message(message.chat.id, f'❌ user not found in base', reply_markup = functions.markup(bot, 'friends-menu', user))
+                    return
+
+                if two_user == bd_user:
+                    bot.send_message(message.chat.id, f'❌ user == friend', reply_markup = functions.markup(bot, 'friends-menu', user))
+
+                else:
+
+                    if 'friends_list' not in bd_user['friends']:
+                        bd_user['friends']['friends_list'] = []
+                        bd_user['friends']['requests'] = []
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'friends': bd_user['friends'] }} )
+
+                    if 'friends_list' not in two_user['friends']:
+                        two_user['friends']['friends_list'] = []
+                        two_user['friends']['requests'] = []
+                        users.update_one( {"userid": two_user['userid']}, {"$set": {'friends': two_user['friends'] }} )
+
+                    if bd_user['userid'] not in two_user['friends']['requests'] and bd_user['userid'] not in two_user['friends']['friends_list'] and two_user['userid'] not in bd_user['friends']['requests']:
+
+                        two_user['friends']['requests'].append(bd_user['userid'])
+                        users.update_one( {"userid": two_user['userid']}, {"$set": {'friends': two_user['friends'] }} )
+
+                        bot.send_message(message.chat.id, f'✔', reply_markup = functions.markup(bot, 'friends-menu', user))
+                        functions.notifications_manager(bot, 'friend_request', two_user)
+
+                    else:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f"📜 | Данный пользователь уже в друзьях / получил запрос от вас!"
+
+                        else:
+                            text = f"📜 | This user is already a friend / has received a request from you!"
+
+                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'friends-menu', user))
+
+            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+            bot.register_next_step_handler(msg, ret, ans, bd_user)
+
+    @staticmethod
+    def friends_list(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            friends_id = bd_user['friends']['friends_list']
+            page = 1
+
+            friends_name = []
+            friends_id_d = {}
+
+            for i in friends_id:
+                try:
+                    if users.find_one({"userid": int(i)}) != None:
+                        fr_name = bot.get_chat(int(i)).first_name
+                        friends_name.append(fr_name)
+                        friends_id_d[fr_name] = i
+                except:
+                    pass
+
+            friends_chunks = list(functions.chunks(list(functions.chunks(friends_name, 2)), 3))
+
+            def work_pr(message, friends_id, page, friends_chunks, friends_id_d, mms = None):
+                global pages
+
+                if bd_user['language_code'] == 'ru':
+                    text = "📜 | Обновление..."
+                else:
+                    text = "📜 | Update..."
+
+                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+
+                if friends_chunks == []:
+
+                    if bd_user['language_code'] == 'ru':
+                        text = "👥 | Список пуст!"
+                    else:
+                        text = "👥 | The list is empty!"
+
+                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'friends-menu', user))
+
+                else:
+
+                    for el in friends_chunks[page-1]:
+                        if len(el) == 2:
+                            rmk.add(el[0], el[1])
+                        else:
+                            rmk.add(el[0], ' ')
+
+                    if 3 - len(friends_chunks[page-1]) != 0:
+                        for i in list(range(3 - len(friends_chunks[page-1]))):
+                            rmk.add(' ', ' ')
+
+                    if len(friends_chunks) > 1:
+                        if bd_user['language_code'] == 'ru':
+                            com_buttons = ['◀', '↪ Назад', '▶']
+                        else:
+                            com_buttons = ['◀', '↪ Back', '▶']
+
+                        rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
+                    else:
+                        if bd_user['language_code'] == 'ru':
+                            com_buttons = '↪ Назад'
+                        else:
+                            com_buttons = '↪ Back'
+
+                        rmk.add(com_buttons)
+
+                    def ret(message, bd_user, page, friends_chunks, friends_id, friends_id_d):
+                        if message.text in ['↪ Назад', '↪ Back']:
+                            res = None
+                        else:
+                            res = message.text
+
+                        if res == None:
+                            if bd_user['language_code'] == 'ru':
+                                text = "👥 | Возвращение в меню друзей!"
+                            else:
+                                text = "👥 | Return to the friends menu!"
+
+                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'friends-menu', user))
+
+                        else:
+                            mms = None
+                            if res == '◀':
+                                if page - 1 == 0:
+                                    page = 1
+                                else:
+                                    page -= 1
+
+                            if res == '▶':
+                                if page + 1 > len(friends_chunks):
+                                    page = len(friends_chunks)
+                                else:
+                                    page += 1
+
+                            else:
+                                if res in list(friends_id_d.keys()):
+                                    fr_id = friends_id_d[res]
+
+
+                                    text = functions.member_profile(bot, fr_id, bd_user['language_code'])
+
+                                    try:
+                                        mms = bot.send_message(message.chat.id, text, parse_mode = 'Markdown')
+                                    except Exception as error:
+                                        print(message.chat.id, 'ERROR Профиль', '\n', error)
+                                        mms = bot.send_message(message.chat.id, text)
+
+                            work_pr(message, friends_id, page, friends_chunks, friends_id_d, mms = mms)
+
+                    if mms == None:
+                        msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                    else:
+                        msg = mms
+                    bot.register_next_step_handler(msg, ret, bd_user, page, friends_chunks, friends_id, friends_id_d)
+
+            work_pr(message, friends_id, page, friends_chunks, friends_id_d)
+
+    @staticmethod
+    def delete_friend(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            friends_id = bd_user['friends']['friends_list']
+            page = 1
+            friends_name = []
+            id_names = {}
+
+            for i in friends_id:
+                try:
+                    fr_name = bot.get_chat(int(i)).first_name
+                    friends_name.append(fr_name)
+                    id_names[bot.get_chat(int(i)).first_name] = i
+                except:
+                    pass
+
+            friends_chunks = list(functions.chunks(list(functions.chunks(friends_name, 2)), 3))
+
+            if friends_chunks == []:
+
+                if bd_user['language_code'] == 'ru':
+                    text = "👥 | Список пуст!"
+                else:
+                    text = "👥 | The list is empty!"
+
+                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'friends-menu', user))
+                return
+
+            else:
+                if bd_user['language_code'] == 'ru':
+                    text = "➖ | Выберите пользователя для удаления из друзей > "
+                else:
+                    text = "➖ | Select the user to remove from friends >"
+                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'friends-menu', user))
+
+            def work_pr(message, friends_id, page):
+
+                if bd_user['language_code'] == 'ru':
+                    text = "💌 | Обновление..."
+                else:
+                    text = "💌 | Update..."
+
+                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+
+                for el in friends_chunks[page-1]:
+                    if len(el) == 2:
+                        rmk.add(el[0], el[1])
+                    else:
+                        rmk.add(el[0], ' ')
+
+                if 3 - len(friends_chunks[page-1]) != 0:
+                    for i in list(range(3 - len(friends_chunks[page-1]))):
+                        rmk.add(' ', ' ')
+
+                if len(friends_chunks) > 1:
+                    if bd_user['language_code'] == 'ru':
+                        com_buttons = ['◀', '↪ Назад', '▶']
+                    else:
+                        com_buttons = ['◀', '↪ Back', '▶']
+
+                    rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
+                else:
+                    if bd_user['language_code'] == 'ru':
+                        com_buttons = '↪ Назад'
+                    else:
+                        com_buttons = '↪ Back'
+
+                    rmk.add(com_buttons)
+
+                def ret(message, friends_id, page, bd_user):
+                    if message.text in ['↪ Назад', '↪ Back']:
+                        res = None
+                    else:
+                        res = message.text
+
+                    if res == None:
+                        if bd_user['language_code'] == 'ru':
+                            text = "👥 | Возвращение в меню друзей!"
+                        else:
+                            text = "👥 | Return to the friends menu!"
+
+                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'friends-menu', user))
+                        return None
+                    else:
+                        if res == '◀':
+                            if page - 1 == 0:
+                                page = 1
+                            else:
+                                page -= 1
+
+                        elif res == '▶':
+                            if page + 1 > len(friends_chunks):
+                                page = len(friends_chunks)
+                            else:
+                                page += 1
+
+                        else:
+                            uid = id_names[res]
+
+                            if bd_user['language_code'] == 'ru':
+                                text = "👥 | Пользователь удалён из друзей!"
+                            else:
+                                text = "👥 | The user has been removed from friends!"
+
+                            try:
+                                bd_user['friends']['friends_list'].remove(uid)
+                                users.update_one( {"userid": bd_user['userid']}, {"$pull": {'friends.friends_list': uid }} )
+
+                            except:
+                                pass
+
+                            try:
+                                users.update_one( {"userid": uid}, {"$pull": {'friends.friends_list': bd_user['userid'] }} )
+                            except:
+                                pass
+
+                            if bd_user['friends']['friends_list'] == []:
+                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'friends-menu', user))
+                                return
+                            else:
+                                bot.send_message(message.chat.id, text)
+
+                    work_pr(message, friends_id, page)
+
+                msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                bot.register_next_step_handler(msg, ret, friends_id, page, bd_user)
+
+            work_pr(message, friends_id, page)
+
+    @staticmethod
+    def open_profile_menu(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            if bd_user['language_code'] == 'ru':
+                text = '👁‍🗨 | Панель профиля открыта!'
+            else:
+                text = '👁‍🗨 | The profile panel is open!'
+
+            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "profile", user))
+
+    @staticmethod
+    def rayting(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            mr_l = functions.rayt_update('check')[0]
+            lv_l = functions.rayt_update('check')[1]
+
+            du_mc, du_lv = [{}, {}, {}, {}, {}], [{}, {}, {}, {}, {}]
+
+
+            i = -1
+            us_i_l = []
+            while du_mc[0] == {} or du_mc[1] == {} or du_mc[2] == {} or du_mc[3] == {} or du_mc[4] == {}:
+                i += 1
+                if i >= len(mr_l):
+                    break
+
+                if du_mc[0] == {} and mr_l[i]['userid'] not in us_i_l:
+                    try:
+                        m = bot.get_chat(mr_l[i]['userid'])
+                        du_mc[0] = {'ui': mr_l[i]['userid'], 'coins': mr_l[i]['coins'], 'mn': m.first_name}
+
+                        us_i_l.append(mr_l[i]['userid'])
+                    except:
+                        pass
+
+                if du_mc[1] == {} and mr_l[i]['userid'] not in us_i_l:
+                    try:
+                        m = bot.get_chat(mr_l[i]['userid'])
+                        du_mc[1] = {'ui': mr_l[i]['userid'], 'coins': mr_l[i]['coins'], 'mn': m.first_name}
+
+                        us_i_l.append(mr_l[i]['userid'])
+                    except:
+                        pass
+
+                if du_mc[2] == {} and mr_l[i]['userid'] not in us_i_l:
+                    try:
+                        m = bot.get_chat(mr_l[i]['userid'])
+                        du_mc[2] = {'ui': mr_l[i]['userid'], 'coins': mr_l[i]['coins'], 'mn': m.first_name}
+
+                        us_i_l.append(mr_l[i]['userid'])
+                    except:
+                        pass
+
+                if du_mc[3] == {} and mr_l[i]['userid'] not in us_i_l:
+                    try:
+                        m = bot.get_chat(mr_l[i]['userid'])
+                        du_mc[3] = {'ui': mr_l[i]['userid'], 'coins': mr_l[i]['coins'], 'mn': m.first_name}
+
+                        us_i_l.append(mr_l[i]['userid'])
+                    except:
+                        pass
+
+                if du_mc[4] == {} and mr_l[i]['userid'] not in us_i_l:
+                    try:
+                        m = bot.get_chat(mr_l[i]['userid'])
+                        du_mc[4] = {'ui': mr_l[i]['userid'], 'coins': mr_l[i]['coins'], 'mn': m.first_name}
+
+                        us_i_l.append(mr_l[i]['userid'])
+                    except:
+                        pass
+
+            i = -1
+            us_i_m = []
+            while du_lv[0] == {} or du_lv[1] == {} or du_lv[2] == {} or du_lv[3] == {} or du_lv[4] == {}:
+                i += 1
+                if i >= len(lv_l):
+                    break
+
+                if du_lv[0] == {} and lv_l[i]['userid'] not in us_i_m:
+                    try:
+                        m = bot.get_chat(lv_l[i]['userid'])
+                        x = lv_l[i]
+                        du_lv[0] = {'ui': lv_l[i]['userid'], 'lvl': lv_l[i]['lvl'][0], 'exp': (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], 'mn': m.first_name }
+
+                        us_i_m.append(lv_l[i]['userid'])
+                    except:
+                        pass
+
+                if du_lv[1] == {} and lv_l[i]['userid'] not in us_i_m:
+                    try:
+                        m = bot.get_chat(lv_l[i]['userid'])
+                        x = lv_l[i]
+                        du_lv[1] = {'ui': lv_l[i]['userid'], 'lvl': lv_l[i]['lvl'][0], 'exp': (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], 'mn': m.first_name }
+
+                        us_i_m.append(lv_l[i]['userid'])
+                    except:
+                        pass
+
+                if du_lv[2] == {} and lv_l[i]['userid'] not in us_i_m:
+                    try:
+                        m = bot.get_chat(lv_l[i]['userid'])
+                        x = lv_l[i]
+                        du_lv[2] = {'ui': lv_l[i]['userid'], 'lvl': lv_l[i]['lvl'][0], 'exp': (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], 'mn': m.first_name }
+
+                        us_i_m.append(lv_l[i]['userid'])
+                    except:
+                        pass
+
+                if du_lv[3] == {} and lv_l[i]['userid'] not in us_i_m:
+                    try:
+                        m = bot.get_chat(lv_l[i]['userid'])
+                        x = lv_l[i]
+                        du_lv[3] = {'ui': lv_l[i]['userid'], 'lvl': lv_l[i]['lvl'][0], 'exp': (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], 'mn': m.first_name }
+
+                        us_i_m.append(lv_l[i]['userid'])
+                    except:
+                        pass
+
+                if du_lv[4] == {} and lv_l[i]['userid'] not in us_i_m:
+                    try:
+                        m = bot.get_chat(lv_l[i]['userid'])
+                        x = lv_l[i]
+                        du_lv[4] = {'ui': lv_l[i]['userid'], 'lvl': lv_l[i]['lvl'][0], 'exp': (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], 'mn': m.first_name }
+
+                        us_i_m.append(lv_l[i]['userid'])
+                    except:
+                        pass
+
+            lv_ar_id = []
+            for i in lv_l:
+                lv_ar_id.append(i['userid'])
+
+            mr_ar_id = []
+            for i in mr_l:
+                mr_ar_id.append(i['userid'])
+
+
+            if bd_user['language_code'] == 'ru':
+                if bd_user['userid'] in lv_ar_id:
+                    ind = lv_ar_id.index(bd_user['userid'])+1
+                else:
+                    ind = '-'
+
+                text =  f'*┌* 🎢 Рейтинг по уровню:\n'
+                text += f"*├* Ваше место в рейтинге: #{ind}\n\n"
+
+                n = 0
+                for i in du_lv:
+                    n += 1
+                    if i == {}:
+                        pass
+                    else:
+                        if n != 5:
+                            text += f"*├* #{n} *{i['mn']}*:\n      *└* Ур. {i['lvl']} (Всего опыта {i['exp']})\n"
+                        else:
+                            text += f"*└* #{n} *{i['mn']}*:\n      *└* Ур. {i['lvl']} (Всего опыта {i['exp']})\n"
+
+                if bd_user['userid'] in mr_ar_id:
+                    ind = mr_ar_id.index(bd_user['userid'])+1
+                else:
+                    ind = '-'
+
+                text += f'\n\n*┌* 🎢 Рейтинг по монетам:\n'
+                text += f"*├* Ваше место в рейтинге: #{ind}\n\n"
+
+                n = 0
+                for i in du_mc:
+                    n += 1
+                    if i == {}:
+                        pass
+                    else:
+                        if n != 5:
+                            text += f"*├* #{n} *{i['mn']}*:\n      *└* Монеты {i['coins']}\n"
+                        else:
+                            text += f"*└* #{n} *{i['mn']}*:\n      *└* Монеты {i['coins']}\n"
+            else:
+                if bd_user['userid'] in lv_ar_id:
+                    ind = lv_ar_id.index(bd_user['userid'])+1
+                else:
+                    ind = '-'
+
+                text =  f'*┌* 🎢 Rating by level:\n'
+                text += f"*├* Your place in the ranking: #{ind}\n\n"
+
+                n = 0
+                for i in du_lv:
+                    n += 1
+                    if i == {}:
+                        pass
+                    else:
+                        if n != 5:
+                            text += f"*├* #{n} *{i['mn']}*:\n      *└* lvl {i['lvl']} (Total experience {i['exp']})\n"
+                        else:
+                            text += f"*└* #{n} *{i['mn']}*:\n      *└* lvl {i['lvl']} (Total experience {i['exp']})\n"
+
+                if bd_user['userid'] in mr_ar_id:
+                    ind = mr_ar_id.index(bd_user['userid'])+1
+                else:
+                    ind = '-'
+
+                text += f'\n\n*┌* 🎢 Coin Rating:\n'
+                text += f"*├* Your place in the ranking: #{ind}\n\n"
+
+                n = 0
+                for i in du_mc:
+                    n += 1
+                    if i == {}:
+                        pass
+                    else:
+                        if n != 5:
+                            text += f"*├* #{n} *{i['mn']}*:\n      *└* Coins {i['coins']}\n"
+                        else:
+                            text += f"*└* #{n} *{i['mn']}*:\n      *└* Coins {i['coins']}\n"
+
+            bot.send_message(message.chat.id, text, parse_mode = "Markdown")
+
+    @staticmethod
+    def open_information(bot, message, user, bd_user):
+
+        if bd_user != None:
+            text = functions.member_profile(bot, user.id, lang = bd_user['language_code'])
+
+            try:
+                bot.send_message(message.chat.id, text, parse_mode = 'Markdown')
+            except Exception as error:
+                print(message.chat.id, 'ERROR Профиль', '\n', error)
+                bot.send_message(message.chat.id, text)
+
+    @staticmethod
+    def open_action_menu(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            if bd_user['language_code'] == 'ru':
+                text = '🕹 Панель действий открыта!'
+            else:
+                text = '🕹 The action panel is open!'
+
+            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "actions", user))
+
+    @staticmethod
+    def open_dino_tavern(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            if bd_user['language_code'] == 'ru':
+                text = '🍺 Вы вошли в дино-таверну!'
+                text2 = '🍺 Друзья в таверне: Поиск среди толпы...'
+            else:
+                text = '🍺 You have entered the dino-tavern!'
+                text2 = '🍺 Friends in the tavern: Search among the crowd...'
+
+            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "dino-tavern", user))
+            msg = bot.send_message(message.chat.id, text2)
+
+            if bd_user['language_code'] == 'ru':
+                text = '🍺 Друзья в таверне: '
+            else:
+                text = '🍺 Friends in the tavern: '
+
+            fr_in_tav = []
+
+            for fr_id in bd_user['friends']['friends_list']:
+                fr_user = users.find_one({"userid": fr_id})
+
+                if 'last_markup' in fr_user['settings'].keys() and fr_user['settings']['last_markup'] == 'dino-tavern':
+
+                    fr_in_tav.append(fr_user)
+
+            if fr_in_tav == []:
+
+                text += '❌'
+
+            else:
+                text += '\n'
+                for fr_user in fr_in_tav:
+                    fr_tel = bot.get_chat(fr_user['userid'])
+                    text += f' ● {fr_tel.first_name}\n'
+
+            bot.edit_message_text(text = text, chat_id = msg.chat.id, message_id = msg.message_id)
+
+            for fr_user in fr_in_tav:
+
+                if fr_user['language_code'] == 'ru':
+                    text = f'🍺 {user.first_name} зашёл в таверну...'
+                else:
+                    text = f'🍺 {user.first_name} went into the tavern...'
+
+                time.sleep(0.5)
+                bot.send_message(fr_user['userid'], text)
+
+    @staticmethod
+    def dino_action_ans(bot, message, user, bd_user):
+
+        if bd_user != None:
+            if bd_user['language_code'] == 'ru':
+                did = int(message.text[12:])
+            else:
+                did = int(message.text[8:])
+
+            if did == int(bd_user['settings']['dino_id']):
+                ll = list(bd_user['dinos'].keys())
+                ind = list(bd_user['dinos'].keys()).index(str(did))
+
+                if ind + 1 == len(ll):
+                    bd_user['settings']['dino_id'] = ll[0]
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+                else:
+                    bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[int(ll[did-1])]
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+
+                if bd_user['language_code'] == 'ru':
+                    if bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['status'] == 'incubation':
+                        text = f"Вы выбрали динозавра 🥚"
+                    else:
+                        text = f"Вы выбрали динозавра {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
+                else:
+                    if bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['status'] == 'incubation':
+                        text = f"You have chosen 🥚"
+                    else:
+                        text = f"You have chosen a dinosaur {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
+
+                bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
+
+    @staticmethod
+    def action_back(bot, message, user, bd_user):
+
+        if bd_user['language_code'] == 'ru':
+            text = '↩ Возврат в меню активностей'
+        else:
+            text = '↩ Return to the activity menu'
+
+        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+
+    @staticmethod
+    def rename_dino(bot, message, user, bd_user):
+
+        if bd_user != None:
+            n_dp, dp_a = functions.dino_pre_answer(bot, message)
+
+            if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['status'] == 'dino':
+
+                def rename(message, bd_user, user, dino_user_id, dino):
+                    if bd_user['language_code'] == 'ru':
+                        text = f"🦖 | Введите новое имя для {dino['name']}\nРазмер: не более 20-ти символов\n>"
+                        ans = ['↪ Назад']
+                    else:
+                        text = f"🦖 | Enter a new name for {dino['name']}\nSize: no more than 20 characters\n>"
+                        ans = ['↪ Back']
+
+                    rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                    rmk.add(ans[0])
+
+                    def ret(message, ans, bd_user):
+                        if message.text == ans[0]:
+                            bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'settings', user))
+                            return
+
+                        dino_name = message.text.replace('*', '').replace('`', '')
+
+                        if len(dino_name) > 20:
+
+                            if bd_user['language_code'] == 'ru':
+                                text = f"🦖 | Новое имя больше 20-ти символов!"
+                            else:
+                                text = f"🦖 | The new name is more than 20 characters!"
+
+                            msg = bot.send_message(message.chat.id, text)
+
+                        else:
+                            if bd_user['language_code'] == 'ru':
+                                text = f"🦖 | Переименовать {dino['name']} > {dino_name}?"
+                                ans2 = ['✅ Подтверждаю', '↪ Назад']
+                            else:
+                                text = f"🦖 | Rename {dino['name']} > {dino_name}?"
+                                ans2 = ['✅ Confirm', '↪ Back']
+
+                            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                            rmk.add(ans2[0])
+                            rmk.add(ans2[1])
+
+                            def ret2(message, ans2, bd_user):
+                                if message.text == ans2[1]:
+                                    bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'settings', user))
+                                    return
+                                else:
+                                    res = message.text
+
+                                if res in ['✅ Confirm', '✅ Подтверждаю']:
+
+                                    bd_user['dinos'][str(dino_user_id)]['name'] = dino_name
+                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{dino_user_id}': bd_user['dinos'][str(dino_user_id)] }} )
+
+                                    bot.send_message(message.chat.id, f'✅', reply_markup = functions.markup(bot, 'settings', user))
+
+                            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                            bot.register_next_step_handler(msg, ret2, ans2, bd_user)
+
+                    msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                    bot.register_next_step_handler(msg, ret, ans, bd_user)
+
+                if n_dp == 1:
+                    bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'settings', user))
+                    return
+
+                if n_dp == 2:
+                    bd_dino = dp_a
+                    rename(message, bd_user, user, list(bd_user['dinos'].keys())[0], dp_a)
+
+                if n_dp == 3:
+                    rmk = dp_a[0]
+                    text = dp_a[1]
+                    dino_dict = dp_a[2]
+
+                    def ret(message, dino_dict, user, bd_user):
+                        rename(message, bd_user, user, dino_dict[message.text][1], dino_dict[message.text][0])
+
+                    msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                    bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)
+
+    @staticmethod
+    def dino_sleep_ac(bot, message, user, bd_user):
+
+        if bd_user != None:
+            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+
+            if dino != None:
+                if dino['activ_status'] == 'pass_active':
+                    if dino['stats']['unv'] >= 90:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = '🌙 Динозавр не хочет спать!'
+                        else:
+                            text = "🌙 The dinosaur doesn't want to sleep!"
+
+                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "actions", user))
+
+                    else:
+                        def dl_sleep(bd_user, message):
+                            d_id = bd_user['settings']['dino_id']
+                            bd_user['dinos'][ d_id ]['activ_status'] = 'sleep'
+                            bd_user['dinos'][ d_id ]['sleep_start'] = int(time.time())
+                            bd_user['dinos'][ d_id ]['sleep_type'] = 'long'
+                            users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{d_id}': bd_user['dinos'][d_id] }} )
+
+                            if bd_user['language_code'] == 'ru':
+                                text = '🌙 Вы уложили динозавра спать!'
+                            else:
+                                text = "🌙 You put the dinosaur to sleep!"
+
+                            bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
+
+                        if functions.acc_check(bot, bd_user, '16', bd_user['settings']['dino_id'], True) == False:
+                            dl_sleep(bd_user, message)
+
+                        else:
+
+                            if bd_user['language_code'] == 'ru':
+                                ans = ['🛌 Длинный сон', '🛌 Короткий сон', '↪ Назад']
+                                text = '🌙 | Выберите вид сна для динозавра >'
+                            else:
+                                ans = ['🛌 Long Sleep', '🛌 Short Sleep', '↪ Back']
+                                text = '🌙 | Choose the type of sleep for the dinosaur >'
+
+                            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                            rmk.add(ans[0], ans[1])
+                            rmk.add(ans[2])
+
+                            def ret(message, ans, bd_user):
+
+                                if message.text not in ans or message.text == ans[2]:
+                                    res = None
+                                else:
+                                    res = message.text
+
+                                if res == None:
+                                    bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'actions', user))
+                                    return
+
+                                if res in ['🛌 Длинный сон', '🛌 Long Sleep']:
+
+                                    dl_sleep(bd_user, message)
+
+                                if res in ['🛌 Короткий сон', '🛌 Short Sleep']:
+
+                                    def ret2(message, ans, bd_user):
+
+                                        if message.text == ans[0]:
+                                            number = None
+                                        else:
+
+                                            try:
+                                                number = int(message.text)
+                                            except:
+                                                number = None
+
+
+                                        if number == None:
+                                            bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'actions', user))
+                                            return
+
+                                        if number <= 5 or number > 480:
+
+                                            if bd_user['language_code'] == 'ru':
+                                                text = '❌ | Требовалось указать время в минутах больше 5-ти минут и меньше 8-ми часов (480)!'
+                                            else:
+                                                text = '❌ | It was required to specify the time in minutes more than 5 minutes and less than 8 hours (480)!'
+
+                                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+
+                                        else:
+                                            d_id = bd_user['settings']['dino_id']
+                                            bd_user['dinos'][ d_id ]['activ_status'] = 'sleep'
+                                            bd_user['dinos'][ d_id ]['sleep_time'] = int(time.time()) + number * 60
+                                            bd_user['dinos'][ d_id ]['sleep_type'] = 'short'
+                                            users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{d_id}': bd_user['dinos'][d_id] }} )
+
+                                            if bd_user['language_code'] == 'ru':
+                                                text = '🌙 Вы уложили динозавра спать!'
+                                            else:
+                                                text = "🌙 You put the dinosaur to sleep!"
+
+                                            bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
+
+
+
+                                    if bd_user['language_code'] == 'ru':
+                                        ans = ['↪ Назад']
+                                        text = '🌙 | Укажите время быстрого сна (сон идёт в 2 раза быстрее длинного) в минутах > '
+                                    else:
+                                        ans = ['↪ Back']
+                                        text = '🌙 | Specify the REM sleep time (sleep is 2 times faster than long sleep) in minutes >'
+
+                                    rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                                    rmk.add(ans[0])
+
+                                    msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                                    bot.register_next_step_handler(msg, ret2, ans, bd_user)
+
+
+                            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                            bot.register_next_step_handler(msg, ret, ans, bd_user)
+
+
+
+                else:
+
+                    if bd_user['language_code'] == 'ru':
+                        text = f"❗ | Ваш динозавр уже чем то занят, проверьте профиль!"
+
+                    else:
+                        text = f"❗ | Your dinosaur is already busy with something, check the profile!"
+
+                    bot.send_message(message.chat.id, text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', message.chat.id, ['Открыть профиль', 'Open a profile'], str(bd_user['settings']['dino_id']) ))
+
+    @staticmethod
+    def dino_unsleep_ac(bot, message, user, bd_user):
+
+        if bd_user != None:
+            d_id = str(bd_user['settings']['dino_id'])
+            dino = bd_user['dinos'][ str(d_id) ]
+
+            if dino['activ_status'] == 'sleep' and dino != None:
+                r_n = random.randint(0, 20)
+                bd_user['dinos'][ d_id ]['activ_status'] = 'pass_active'
+
+                if 'sleep_type' in bd_user['dinos'][ d_id ] and bd_user['dinos'][ d_id ]['sleep_type'] == 'short':
+
+                    del bd_user['dinos'][ d_id ]['sleep_time']
+
+                    if bd_user['language_code'] == 'ru':
+                        text = f'🌙 Ваш динозавр пробудился.'
+                    else:
+                        text = f"🌙 Your dinosaur has awakened."
+
+                    bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
+
+                    try:
+                        del bd_user['dinos'][ d_id ]['sleep_type']
+                    except:
+                        pass
+
+                    try:
+                        del bd_user['dinos'][ d_id ]['sleep_start']
+                    except:
+                        pass
+
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{d_id}': bd_user['dinos'][d_id] }} )
+
+                elif 'sleep_type' not in bd_user['dinos'][ d_id ] or bd_user['dinos'][ d_id ]['sleep_type'] == 'long':
+
+                    if 'sleep_start' in bd_user['dinos'][ d_id ].keys() and int(time.time()) - bd_user['dinos'][ d_id ]['sleep_start'] >= 8 * 3600:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f'🌙 Ваш динозавр пробудился.'
+                        else:
+                            text = f"🌙 Your dinosaur has awakened."
+
+                        bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
+
+                    else:
+
+                        bd_user['dinos'][ d_id ]['stats']['mood'] -= r_n
+
+                        if bd_user['dinos'][ d_id ]['stats']['mood'] < 0:
+                            bd_user['dinos'][ d_id ]['stats']['mood'] = 0
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f'🌙 Ваш динозавр пробудился. Он сильно не доволен что вы его разбудили!\nДинозавр потерял {r_n}% настроения.'
+                        else:
+                            text = f"🌙 Your dinosaur has awakened. He is very unhappy that you woke him up!\nDinosaur lost {r_n}% of mood."
+
+                        bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
+
+                    try:
+                        del bd_user['dinos'][ d_id ]['sleep_type']
+                    except:
+                        pass
+
+                    try:
+                        del bd_user['dinos'][ d_id ]['sleep_start']
+                    except:
+                        pass
+
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{d_id}': bd_user['dinos'][d_id] }} )
+
+            else:
+                bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'actions', user))
+
+    @staticmethod
+    def dino_journey(bot, message, user, bd_user):
+
+        if bd_user != None:
+            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+
+            if dino['activ_status'] == 'pass_active' and dino != None:
+                markup_inline = types.InlineKeyboardMarkup()
+
+                if bd_user['language_code'] == 'ru':
+                    text = '🌳 На какое время отправить динозавра в путешествие?'
+
+                    item_0 = types.InlineKeyboardButton( text = '10 мин.', callback_data = f"10min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                    item_1 = types.InlineKeyboardButton( text = '30 мин.', callback_data = f"30min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                    item_2 = types.InlineKeyboardButton( text = '60 мин.', callback_data = f"60min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                    item_3 = types.InlineKeyboardButton( text = '90 мин.', callback_data = f"90min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                    item_4 = types.InlineKeyboardButton( text = '120 мин.', callback_data = f"12min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                else:
+                    text = "🌳 How long to send a dinosaur on a journey?"
+
+                    item_0 = types.InlineKeyboardButton( text = '10 min.', callback_data = f"10min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                    item_1 = types.InlineKeyboardButton( text = '30 min.', callback_data = f"30min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                    item_2 = types.InlineKeyboardButton( text = '60 min.', callback_data = f"60min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                    item_3 = types.InlineKeyboardButton( text = '90 min.', callback_data = f"90min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                    item_4 = types.InlineKeyboardButton( text = '120 min.', callback_data = f"12min_journey_{str(bd_user['settings']['dino_id'])}")
+
+                markup_inline.add(item_0, item_1, item_2, item_3, item_4)
+
+                bot.send_message(message.chat.id, text, reply_markup = markup_inline)
+
+            else:
+
+                if bd_user['language_code'] == 'ru':
+                    text = f"❗ | Ваш динозавр уже чем то занят, проверьте профиль!"
+
+                else:
+                    text = f"❗ | Your dinosaur is already busy with something, check the profile!"
+
+                bot.send_message(message.chat.id, text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', message.chat.id, ['Открыть профиль', 'Open a profile'], str(bd_user['settings']['dino_id']) ))
+
+    @staticmethod
+    def dino_unjourney(bot, message, user, bd_user):
+
+        if bd_user != None:
+            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+
+            if dino['activ_status'] == 'journey' and dino != None:
+                if random.randint(1,2) == 1:
+
+                    functions.journey_end_log(bot, bd_user['userid'], bd_user['settings']['dino_id'])
+
+                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] = 'pass_active'
+                    del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_time']
+                    del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_log']
+
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {f"dinos.{bd_user['settings']['dino_id']}": bd_user['dinos'][ bd_user['settings']['dino_id'] ] }} )
+
+
+                else:
+                    if bd_user['language_code'] == 'ru':
+                        text = f'🔇 | Вы попробовали вернуть динозавра, но что-то пошло не так...'
+                    else:
+                        text = f"🔇 | You tried to bring the dinosaur back, but something went wrong..."
+
+                    bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
+            else:
+                bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'actions', user))
+
+    @staticmethod
+    def dino_entert(bot, message, user, bd_user):
+
+        if bd_user != None:
+            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+
+            if dino['activ_status'] in ['pass_active', 'game']:
+
+                if bd_user['language_code'] == 'ru':
+                    text = f"🎮 | Перенаправление в меню развлечений!"
+
+                else:
+                    text = f"🎮 | Redirecting to the entertainment menu!"
+
+                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'games', user))
+
+            else:
+
+                if bd_user['language_code'] == 'ru':
+                    text = f"❗ | Ваш динозавр уже чем то занят, проверьте профиль!"
+
+                else:
+                    text = f"❗ | Your dinosaur is already busy with something, check the profile!"
+
+                bot.send_message(message.chat.id, text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', message.chat.id, ['Открыть профиль', 'Open a profile'], str(bd_user['settings']['dino_id']) ))
+
+    @staticmethod
+    def dino_entert_games(bot, message, user, bd_user):
+
+        if bd_user != None:
+            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+            if dino['activ_status'] == 'pass_active':
+
+                markup_inline = types.InlineKeyboardMarkup(row_width=2)
+
+                if bd_user['language_code'] == 'ru':
+                    text = ['15 - 30 мин.', '30 - 60 мин.', '60 - 90 мин.']
+                    m_text = '🎮 Укажите разрешённое время игры > '
+                else:
+                    text = ['15 - 30 min.', '30 - 60 min.', '60 - 90 min.']
+                    m_text = '🎮 Specify the allowed game time >'
+
+                if message.text in ['🎮 Консоль', '🎮 Console']:
+                    g = 'con'
+                elif message.text in ['🪁 Змей', '🪁 Snake']:
+                    g = 'sna'
+                elif message.text in ['🏓 Пинг-понг', '🏓 Ping Pong']:
+                    g = 'pin'
+                elif message.text in ['🏐 Мяч', '🏐 Ball']:
+                    g = 'bal'
+
+                else:
+                    if functions.acc_check(bot, bd_user, '44', str(bd_user['settings']['dino_id']), True):
+
+                        if message.text in ['🧩 Пазлы', '🧩 Puzzles']:
+                            g = 'puz'
+                        elif message.text in ['♟ Шахматы', '♟ Chess']:
+                            g = 'che'
+                        elif message.text in ['🧱 Jenga', '🧱 Дженга']:
+                            g = 'jen'
+                        elif message.text in ['🎲 D&D']:
+                            g = 'ddd'
+
+                    else:
+                        return
+
+                item_1 = types.InlineKeyboardButton( text = text[0], callback_data = f"1_{g}_game_{str(bd_user['settings']['dino_id'])}")
+                item_2 = types.InlineKeyboardButton( text = text[1], callback_data = f"2_{g}_game_{str(bd_user['settings']['dino_id'])}")
+                item_3 = types.InlineKeyboardButton( text = text[2], callback_data = f"3_{g}_game_{str(bd_user['settings']['dino_id'])}")
+                markup_inline.add(item_1, item_2, item_3)
+
+                bot.send_message(message.chat.id, m_text, reply_markup = markup_inline)
+
+    @staticmethod
+    def dino_stop_games(bot, message, user, bd_user):
+
+        if bd_user != None:
+            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+            if dino['activ_status'] == 'game':
+
+                if dino['game_%'] == 1:
+                    rt = random.randint(1,3)
+
+                if dino['game_%'] == 0.5:
+                    rt = 1
+
+                if dino['game_%'] == 0.9:
+                    rt = random.randint(1,2)
+
+                if rt == 1:
+
+                    if dino['game_%'] == 1:
+                        bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['stats']['mood'] -= 20
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f"🎮 | Динозавру нравилось играть, но вы его остановили, его настроение снижено на 20%!"
+
+                        else:
+                            text = f"🎮 | The dinosaur liked to play, but you stopped him, his mood is reduced by 20%!"
+
+                    if dino['game_%'] == 0.5:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f"🎮 | Динозавру не особо нравилось играть, он не теряет настроение..."
+
+                        else:
+                            text = f"🎮 | The dinosaur didn't really like playing, he doesn't lose his mood..."
+
+                    if dino['game_%'] == 0.9:
+                        bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['stats']['mood'] -= 5
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f"🎮 | Динозавр немного расстроен что вы его отвлекли, он теряет 5% настроения..."
+
+                        else:
+                            text = f"🎮 | The dinosaur is a little upset that you distracted him, he loses 5% of his mood..."
+
+                    bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['activ_status'] = 'pass_active'
+                    del bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['game_time']
+                    del bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['game_%']
+
+
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'games', user))
+
+                else:
+
+                    if bd_user['language_code'] == 'ru':
+                        text = f"🎮 | Динозавра невозможно оторвать от игры, попробуйте ещё раз. Имейте ввиду, динозавр будет расстроен."
+
+                    else:
+                        text = f"🎮 | It is impossible to tear the dinosaur away from the game, try again. Keep in mind, the dinosaur will be upset."
+
+                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'games', user))
+
+    @staticmethod
+    def dino_feed(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] == 'sleep':
+
+                if bd_user['language_code'] == 'ru':
+                    text = 'Во время сна нельзя кормить динозавра.'
+                else:
+                    text = 'During sleep, you can not feed the dinosaur.'
+
+                bot.send_message(message.chat.id, text)
+                return
+
+            nitems = bd_user['inventory']
+
+            if nitems == []:
+
+                if bd_user['language_code'] == 'ru':
+                    text = 'Инвентарь пуст.'
+                else:
+                    text = 'Inventory is empty.'
+
+                bot.send_message(message.chat.id, text)
+                return
+
+            data_items = items_f['items']
+            items = []
+            items_id = {}
+            page = 1
+            items_names = []
+
+            for i in nitems:
+                if data_items[str(i['item_id'])]['type'] == "+eat":
+                    items.append(i)
+
+            if items == []:
+
+                if bd_user['language_code'] == 'ru':
+                    text = '🥞 | В инвентаре нет продуктов питания.'
+                else:
+                    text = '🥞 | There are no food items in the inventory.'
+
+                bot.send_message(message.chat.id, text)
+                return
+
+
+            if bd_user['language_code'] == 'ru':
+                lg = "nameru"
+            else:
+                lg = "nameen"
+
+            for i in items:
+                if functions.item_authenticity(i) == True:
+                    items_id[ items_f['items'][ i['item_id'] ][lg] ] = i
+                    items_names.append( items_f['items'][ i['item_id'] ][lg] )
+
+                else:
+
+                    items_id[ items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i, False)})" ] = i
+                    items_names.append( items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i, False)})" )
+
+            items_names.sort()
+
+            items_sort = []
+            d_it_sort = {}
+            ind_sort_it = {}
+
+            for i in items_names:
+                if i in list(d_it_sort.keys()):
+                    d_it_sort[i] += 1
+                else:
+                    d_it_sort[i] = 1
+
+            for n in list(d_it_sort.keys()):
+                col = d_it_sort[n]
+                name = n
+
+                items_sort.append(f'{n} x{col}')
+                ind_sort_it[f'{n} x{col}'] = n
+
+            pages = list(functions.chunks(list(functions.chunks(items_sort, 2)), 3))
+
+            for i in pages:
+                for ii in i:
+                    if len(ii) == 1:
+                        ii.append(' ')
+
+                if len(i) != 3:
+                    for iii in range(3 - len(i)):
+                        i.append([' ', ' '])
+
+            def work_pr(message, pages, page, items_id, ind_sort_it):
+                global l_pages, l_page, l_ind_sort_it
+                a = []
+                l_pages = pages
+                l_page = page
+                l_ind_sort_it = ind_sort_it
+
+                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+                for i in pages[page-1]:
+                    rmk.add(i[0], i[1])
+
+                if len(pages) > 1:
+                    if bd_user['language_code'] == 'ru':
+                        com_buttons = ['◀', '↩ Назад', '▶']
+                        textt = '🍕 | Выберите чем вы хотите покормить динозавра > '
+                    else:
+                        com_buttons = ['◀', '↩ Back', '▶']
+                        textt = '🍕 | Choose what you want to feed the dinosaur >'
+
+                    rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
+
+                else:
+                    if bd_user['language_code'] == 'ru':
+                        com_buttons = '↩ Назад'
+                        textt = '🍕 | Выберите чем вы хотите покормить динозавра > '
+                    else:
+                        textt = '🍕 | Choose what you want to feed the dinosaur >'
+                        com_buttons = '↩ Back'
+
+                    rmk.add(com_buttons)
+
+                def ret(message, l_pages, l_page, l_ind_sort_it, bd_user, user, pages, page, items_id, ind_sort_it):
+                    if message.text in ['↩ Назад', '↩ Back']:
+                        res = None
+
+                    else:
+                        if message.text in list(l_ind_sort_it.keys()) or message.text in ['◀', '▶']:
+                            res = message.text
+                        else:
+                            res = None
+
+
+                    if res == None:
+                        if bd_user['language_code'] == 'ru':
+                            text = "👥 | Возвращение в меню активностей!"
+                        else:
+                            text = "👥 | Return to the friends menu!"
+
+                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+                        return '12'
+                    else:
+                        if res == '◀':
+                            if page - 1 == 0:
+                                page = 1
+                            else:
+                                page -= 1
+
+                            work_pr(message, pages, page, items_id, ind_sort_it)
+
+                        elif res == '▶':
+                            if page + 1 > len(l_pages):
+                                page = len(l_pages)
+                            else:
+                                page += 1
+
+                            work_pr(message, pages, page, items_id, ind_sort_it)
+
+                        else:
+                            item_id = items_id[ l_ind_sort_it[res] ]['item_id']
+                            user_item = items_id[ l_ind_sort_it[res] ]
+                            item = items_f['items'][item_id]
+
+                            bd_dino = bd_user['dinos'][ bd_user['settings']['dino_id'] ]
+                            d_dino = json_f['elements'][ str(bd_dino['dino_id']) ]
+                            col = 1
+                            mx_col = 0
+                            for item_c in bd_user['inventory']:
+                                if item_c == user_item:
+                                    mx_col += 1
+
+                            if bd_user['language_code'] == 'ru':
+                                text_col = f"🧀 | Введите число использований или выберите его из списка >"
+                            else:
+                                text_col = f"🧀 | Enter the number of uses or select it from the list >"
+
+                            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+
+                            col_to_full = int( (100 - bd_dino['stats']['eat']) / item['act'])
+                            bt_3 = None
+
+                            if col_to_full > mx_col:
+                                col_to_full = mx_col
+
+                            bt_1 = f"{bd_dino['stats']['eat'] + item['act']}% = {item['nameru'][:1]} x1"
+                            bt_2 = f"{bd_dino['stats']['eat'] + item['act'] * col_to_full}% = {item['nameru'][:1]} x{col_to_full}"
+
+                            col_l = [[], [1, col_to_full]]
+
+                            col_l[0].append(bt_1), col_l[0].append(bt_2)
+
+                            if bd_dino['stats']['eat'] + item['act'] * col_to_full < 100:
+
+                                bt_3 = f"{100}% = {item['nameru'][:1]} x{col_to_full+1}"
+
+                                col_l[0].append(bt_3)
+                                col_l[1].append(col_to_full+1)
+
+                            if col_to_full == 1:
+
+                                if bt_3 != None:
+                                    rmk.add(bt_1, bt_3)
+
+                                else:
+                                    rmk.add(bt_1)
+
+                            elif col_to_full != 1 and col_to_full != 0:
+
+                                if bt_3 != None:
+                                    rmk.add(bt_1, bt_2, bt_3)
+
+                                else:
+                                    rmk.add(bt_1, bt_2)
+
+                            if bd_user['language_code'] == 'ru':
+                                rmk.add('↩ Назад')
+                            else:
+                                rmk.add('↩ Back')
+
+
+                            def corm(message, bd_user, user_item, item, d_dino, mx_col, col_l):
+
+                                if message.text in ['↩ Back', '↩ Назад']:
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = "👥 | Возвращение в меню активностей!"
+                                    else:
+                                        text = "👥 | Return to the friends menu!"
+
+                                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+                                    return '12'
+
+                                try:
+                                    col = int(message.text)
+                                except:
+                                    if message.text in col_l[0]:
+                                        col = col_l[1][ col_l[0].index(message.text) ]
+
+                                    else:
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = f"Введите корректное число!"
+                                        else:
+                                            text = f"Enter the correct number!"
+
+                                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+                                        return
+
+                                if 'abilities' in user_item.keys():
+                                    if 'uses' in user_item['abilities'].keys():
+                                        if col > user_item['abilities']['uses']:
+
+                                            if bd_user['language_code'] == 'ru':
+                                                text = f"Данный предмет нельзя использовать столько раз!"
+                                            else:
+                                                text = f"This item cannot be used so many times!"
+
+                                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+                                            return
+
+                                if 'abilities' not in user_item.keys() or 'uses' not in user_item['abilities'].keys():
+
+                                    if col > mx_col:
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = f"У вас нет столько предметов в инвентаре!"
+                                        else:
+                                            text = f"You don't have that many items in your inventory!"
+
+                                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+
+                                        return
+
+
+                                if bd_user['language_code'] == 'ru':
+                                    if item['class'] == 'ALL':
+
+                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] += item['act'] * col
+
+                                        if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] > 100:
+                                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] = 100
+
+                                        text = f"🍕 | Динозавр с удовольствием съел {item['nameru']}!\nДинозавр сыт на {bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat']}%"
+
+
+                                    elif item['class'] == d_dino['class']:
+                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] += item['act'] * col
+
+                                        if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] > 100:
+                                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] = 100
+
+                                        text = f"🍕 | Динозавр с удовольствием съел {item['nameru']}!\nДинозавр сыт на {bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat']}%"
+
+
+                                    else:
+                                        eatr = random.randint( 0, int(item['act'] / 2) )
+                                        moodr = random.randint( 1, 10 )
+                                        text = f"🍕 | Динозавру не по вкусу {item['nameru']}, он теряет {eatr}% сытости и {moodr}% настроения!"
+
+                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] -= eatr
+                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= moodr
+
+                                else:
+                                    if item['class'] == 'ALL':
+
+                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] += item['act'] * col
+
+                                        if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] > 100:
+                                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] = 100
+
+                                        text = f"🍕 | The dinosaur ate it with pleasure {item['nameen']}!\nThe dinosaur is fed up on {bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat']}%"
+
+                                    elif item['class'] == d_dino['class']:
+
+                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] += item['act'] * col
+
+                                        if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] > 100:
+                                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] = 100
+
+                                        text = f"🍕 | The dinosaur ate it with pleasure {item['nameen']}!\nThe dinosaur is fed up on {bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat']}%"
+
+                                    else:
+                                        eatr = random.randint( 0, int(item['act'] / 2) )
+                                        moodr = random.randint( 1, 10 )
+                                        text = f"🍕 | The dinosaur doesn't like {item['nameen']}, it loses {eatr}% satiety and {mood}% mood!"
+
+                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] -= eatr
+                                        bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= moodr
+
+                                if '+mood' in item.keys():
+                                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] += item['+mood'] * col
+
+                                if '-mood' in item.keys():
+                                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= item['-mood'] * col
+
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{bd_user["settings"]["dino_id"]}': bd_user['dinos'][ bd_user['settings']['dino_id'] ] }} )
+
+                                if 'abilities' in user_item.keys():
+                                    if 'uses' in user_item['abilities'].keys():
+
+                                        if user_item['abilities']['uses'] != -100:
+
+                                            s_col = user_item['abilities']['uses'] - col
+
+                                            if s_col > 0:
+                                                users.update_one( {"userid": user.id}, {"$set": {f'inventory.{bd_user["inventory"].index(user_item)}.abilities.uses': user_item['abilities']['uses'] - col}} )
+
+                                            else:
+                                                bd_user['inventory'].remove(user_item)
+                                                users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+                                else:
+
+                                    for i in range(col):
+                                        bd_user['inventory'].remove(user_item)
+
+                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+
+                            msg = bot.send_message(message.chat.id, text_col, reply_markup = rmk)
+                            bot.register_next_step_handler(msg, corm, bd_user, user_item, item, d_dino, mx_col, col_l)
+
+                msg = bot.send_message(message.chat.id, textt, reply_markup = rmk)
+                bot.register_next_step_handler(msg, ret, l_pages, l_page, l_ind_sort_it, bd_user, user, pages, page, items_id, ind_sort_it)
+
+            work_pr(message, pages, page, items_id, ind_sort_it)
+
+    @staticmethod
+    def collecting_food(bot, message, user, bd_user):
+
+        eat_c = functions.items_counting(bd_user, '+eat')
+        if eat_c >= 300:
+
+            if bd_user['language_code'] == 'ru':
+                text = f'🌴 | Ваш инвентарь ломится от количества еды! В данный момент у вас {eat_c} предметов которые можно съесть!'
+            else:
+                text = f'🌴 | Your inventory is bursting with the amount of food! At the moment you have {eat_c} items that can be eaten!'
+
+            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+            return
+
+        if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] == 'pass_active':
+
+            if bd_user['language_code'] == 'ru':
+                bbt = ['🌿 | Собирательство', '🍖 | Охота', '🍤 | Рыбалка', '🥗 | Все вместе', '↩ Назад']
+                text = '🌴 | Выберите способ добычи продовольствия >'
+            else:
+                bbt = ['🌿 | Collecting', '🍖 | Hunting', '🍤 | Fishing', '🥗 | All together', '↩ Back']
+                text = '🌴 | Choose a way to get food >'
+
+            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+            rmk.add(bbt[0], bbt[1])
+            rmk.add(bbt[2], bbt[3])
+            rmk.add(bbt[4])
+
+            def ret(message, ans, bd_user):
+
+                if message.text not in ans or message.text == ans[4]:
+                    res = None
+                else:
+                    res = message.text
+
+                if res == None:
+                    if bd_user['language_code'] == 'ru':
+                        text = '↩ Возврат в меню активностей'
+                    else:
+                        text = '↩ Return to the activity menu'
+
+                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+
+                else:
+
+                    if bd_user['language_code'] == 'ru':
+                        ans = ['↩ Назад']
+                        text = '🍽 | Введите число продуктов, которое должен собрать динозавр >'
+                    else:
+                        ans = ['↩ Back']
+                        text = '🍽 | Enter the number of products that the dinosaur must collect >'
+
+                    rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                    rmk.add(ans[0])
+
+                    def ret2(message, ans, bd_user):
+                        number = message.text
+                        try:
+                            number = int(number)
+                            if number <= 0 or number >= 101:
+                                if bd_user['language_code'] == 'ru':
+                                    text = '0️⃣1️⃣0️⃣ | Введите число от 1 до 100!'
+                                else:
+                                    text = '0️⃣1️⃣0️⃣ | Enter a number from 1 to 100!'
+
+                                bot.send_message(message.chat.id, text)
+                                number = None
+                        except:
+                            number = None
+
+                        if number == None:
+                            if bd_user['language_code'] == 'ru':
+                                text = '↩ Возврат в меню активностей'
+                            else:
+                                text = '↩ Return to the activity menu'
+
+                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+
+                        else:
+                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] = 'hunting'
+                            bd_user['dinos'][ bd_user['settings']['dino_id'] ]['target'] = [0, number]
+
+                            if res == bbt[0]:
+                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['h_type'] = 'collecting'
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = f'🌿 | Сбор ягод и трав начат!\n♻ | Текущий прогресс: 0%\n🎲 | Цель: {number}'
+                                else:
+                                    text = f'🌿 | The gathering of berries and herbs has begun!\n♻ | Current progress: 0%\n🎲 | Goal: {number}'
+
+                            if res == bbt[1]:
+                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['h_type'] = 'hunting'
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = f'🍖 | Охота началась!\n♻ | Текущий прогресс: 0%\n🎲 | Цель: {number}'
+                                else:
+                                    text = f'🍖 | The hunt has begun!\n♻ | Current progress: 0%\n🎲 | Goal: {number}'
+
+                            if res == bbt[2]:
+                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['h_type'] = 'fishing'
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = f'🍣 | Рыбалка началась!\n♻ | Текущий прогресс: 0%\n🎲 | Цель: {number}'
+                                else:
+                                    text = f'🍣 | Fishing has begun!\n♻ | Current progress: 0%\n🎲 | Goal: {number}'
+
+                            if res == bbt[3]:
+                                bd_user['dinos'][ bd_user['settings']['dino_id'] ]['h_type'] = 'all'
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = f'🍱 | Общий сбор пищи начат!\n♻ | Текущий прогресс: 0%\n🎲 | Цель: {number}'
+                                else:
+                                    text = f'🍱 | The general food collection has begun!\n♻ | Current progress: 0%\n🎲 | Goal: {number}'
+
+                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+
+                    msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                    bot.register_next_step_handler(msg, ret2, ans, bd_user)
+
+            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+            bot.register_next_step_handler(msg, ret, bbt, bd_user)
+
+        else:
+
+            if bd_user['language_code'] == 'ru':
+                text = f"❗ | Ваш динозавр уже чем то занят, проверьте профиль!"
+
+            else:
+                text = f"❗ | Your dinosaur is already busy with something, check the profile!"
+
+            bot.send_message(message.chat.id, text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', message.chat.id, ['Открыть профиль', 'Open a profile'], str(bd_user['settings']['dino_id']) ))
+
+    @staticmethod
+    def coll_progress(bot, message, user, bd_user):
+
+        if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] == 'hunting':
+            number = bd_user['dinos'][ bd_user['settings']['dino_id'] ]['target'][0]
+            tnumber = bd_user['dinos'][ bd_user['settings']['dino_id'] ]['target'][1]
+            prog = number / (tnumber / 100)
+
+            if bd_user['language_code'] == 'ru':
+                text = f'🍱 | Текущий прогресс: {int( prog )}%\n🎲 | Цель: {tnumber}'
+            else:
+                text = f'🍱 | Current progress: {int( prog )}%\n🎲 | Goal: {tnumber}'
+
+            bot.send_message(message.chat.id, text)
+
+    @staticmethod
+    def invite_friend(bot, message, user, bd_user):
+
+        if bd_user != None:
+            coins = 200
+
+            if bd_user['language_code'] == 'ru':
+                text = f"🤍 | Перенаправление в меню реферальной системы!\n\n💜 | При достижению 5-го уровня вашим другом, вы получите 🥚 Необычное/Редкое яйцо динозавра!\n\n❤ | Друг получит бонус в размере: {coins} монет, 🍯 Баночка мёда х2, 🧸 Мишка, 🍗 Куриная ножка x2, 🍒 Ягоды x2, 🦪 Мелкая рыба x2, 🍪 Печенье x2"
+
+            else:
+                text = f"🤍 | Redirection to the referral system menu!\n\n💜 | When your friend reaches the 5th level, you will receive an Unusual/Rare dinosaur egg!\n\n❤ | Friend will receive a bonus: {coins} coins, 🍯 Jar of honey x2, 🧸 Bear, 🍗 Chicken leg x2, 🍒 Berries x2, 🦪 Small fish x2, 🍪 Cookies x2"
+
+            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "referal-system", user))
+
+    @staticmethod
+    def friends_menu(bot, message, user, bd_user):
+
+        if bd_user != None:
+            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+
+            if bd_user['language_code'] == 'ru':
+                text = f"👥 | Перенаправление в меню друзей!"
+
+            else:
+                text = f"👥 | Redirecting to the friends menu!"
+
+            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "friends-menu", user))
+
+    @staticmethod
+    def generate_fr_code(bot, message, user, bd_user):
+
+        if bd_user != None:
+            if 'referal_system' not in bd_user.keys():
+                rf = referal_system.find_one({"id": 1})
+                def r_cod():
+                    code_rf = ''
+                    for i in range(6):
+                        code_rf += str(random.randint(0,9))
+                    return code_rf
+
+                rf_code = r_cod()
+                while rf_code in rf['codes']:
+                    rf_code = r_cod()
+
+                rf['codes'].append(rf_code)
+                referal_system.update_one( {"id": 1}, {"$set": {'codes': rf['codes'] }} )
+
+                bd_user['referal_system'] = {'my_cod': rf_code, 'friend_cod': None}
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {'referal_system': bd_user['referal_system'] }} )
+
+                if bd_user['language_code'] == 'ru':
+                    text = f"🎲 | Ваш код сгенерирован!\nКод: `{rf_code}`"
+
+                else:
+                    text = f"🎲 | Your code is generated!\nСode: `{rf_code}`"
+
+                bot.send_message(message.chat.id, text, parse_mode = 'Markdown', reply_markup = functions.markup(bot, "referal-system", user))
+
+    @staticmethod
+    def enter_fr_code(bot, message, user, bd_user):
+
+        rf = referal_system.find_one({"id": 1})
+
+        def ret(message, bd_user):
+            if message.text in rf['codes']:
+                if str(bd_user['referal_system']['my_cod']) != message.text:
+                    items = ['1', '1', '2', '2', '16', '12', '12', '11', '11', '13', '13']
+                    coins = 200
+                    bd_user['coins'] += coins
+                    for i in items:
+                        functions.add_item_to_user(bd_user, i)
+
+                    members = users.find({ })
+                    fr_member = None
+
+                    for i in members:
+                        if fr_member != None:
+                            break
+                        else:
+                            if 'referal_system' in i.keys():
+                                if i['referal_system']['my_cod'] == message.text:
+                                    fr_member = i
+
+
+                    if fr_member['userid'] not in bd_user['friends']['friends_list']:
+                        bd_user['friends']['friends_list'].append(i['userid'])
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'friends': bd_user['friends'] }} )
+
+                    if bd_user['userid'] not in fr_member['friends']['friends_list']:
+                        fr_member['friends']['friends_list'].append(bd_user['userid'])
+                        users.update_one( {"userid": fr_member['userid']}, {"$set": {'friends': fr_member['friends'] }} )
+
+                    bd_user['referal_system']['friend_cod'] = message.text
+                    bd_user['referal_system']['friend'] = fr_member['userid']
+
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'coins': bd_user['coins'] }} )
+
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'referal_system': bd_user['referal_system'] }} )
+
+                    if bd_user['language_code'] == 'ru':
+                        text = f"❤🤍💜 | Код друга активирован!\n\n❤ | Спасибо что поддерживаете и помогаете развивать нашего бота, приглашая друзей!\n\n🤍 | По достижению 5-го уровня, ваш друг получит 🥚 Необычное/Редкое яйцо динозавра!\n\n💜 | Вы получаете бонус в размере: {coins} монет, 🍯 Баночка мёда х2, 🧸 Мишка, 🍗 Куриная ножка x2, 🍒 Ягоды x2, 🦪 Мелкая рыба x2, 🍪 Печенье x2"
+
+                    else:
+                        text = f"❤🤍💜 | The friend's code is activated!\n\n❤ | Thank you for supporting and helping to develop our bot by inviting friends!\n\n🤍 | Upon reaching level 5, your friend will receive an 🥚 Unusual/Rare Dinosaur Egg!\n\n💜 | You get a bonus: {coins} coins, 🍯 Jar of honey x2, 🧸 Bear, 🍗 Chicken leg x2, 🍒 Berries x2, 🦪 Small fish x2, 🍪 Cookies x2"
+
+                else:
+                    if bd_user['language_code'] == 'ru':
+                        text = f"❗ | Вы не можете активировать свой код друга!"
+
+                    else:
+                        text = f"❗ | You can't activate your friend code!"
+            else:
+                if bd_user['language_code'] == 'ru':
+                    text = f"❗ | Код не найден!"
+
+                else:
+                    text = f"❗ | Code not found!"
+
+            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "referal-system", user))
+
+
+        if bd_user != None:
+            if 'referal_system' not in bd_user.keys():
+                rf = referal_system.find_one({"id": 1})
+                def r_cod():
+                    code_rf = ''
+                    for i in range(6):
+                        code_rf += str(random.randint(0,9))
+                    return code_rf
+
+                rf_code = r_cod()
+                while rf_code in rf['codes']:
+                    rf_code = r_cod()
+
+                rf['codes'].append(rf_code)
+                referal_system.update_one( {"id": 1}, {"$set": {'codes': rf['codes'] }} )
+
+                bd_user['referal_system'] = {'my_cod': rf_code, 'friend_cod': None}
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {'referal_system': bd_user['referal_system'] }} )
+
+                if bd_user['language_code'] == 'ru':
+                    text = f"🎲 | Ваш код сгенерирован!\nКод: `{rf_code}`"
+
+                else:
+                    text = f"🎲 | Your code is generated!\nСode: `{rf_code}`"
+
+                bot.send_message(message.chat.id, text, parse_mode = 'Markdown', reply_markup = functions.markup(bot, "referal-system", user))
+
+                if bd_user['language_code'] == 'ru':
+                    ans = ['↪ Назад']
+                    text = '👥 | Введите код-приглашение друга > '
+                else:
+                    ans = ['↪ Back']
+                    text = "👥 | Enter a friend's invitation code >"
+
+                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                rmk.add(ans[0])
+
+
+                msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                bot.register_next_step_handler(msg, ret, bd_user)
+
+            else:
+                if bd_user['referal_system']['friend_cod'] == None:
+
+                    if bd_user['language_code'] == 'ru':
+                        ans = ['↪ Назад']
+                        text = '👥 | Введите код-приглашение друга > '
+                    else:
+                        ans = ['↪ Back']
+                        text = "👥 | Enter a friend's invitation code >"
+
+                    rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                    rmk.add(ans[0])
+
+
+                    msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                    bot.register_next_step_handler(msg, ret, bd_user)
+
+                else:
+                    if bd_user['language_code'] == 'ru':
+                        text = '👥 | Вы уже ввели код друга!'
+                    else:
+                        text = "👥 | You have already entered a friend's code!"
+
+                    msg = bot.send_message(message.chat.id, text)
+
+    @staticmethod
+    def acss(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            if len(bd_user['dinos']) > 1:
+                for i in bd_user['dinos'].keys():
+                    if i not in bd_user['activ_items'].keys():
+
+                        users.update_one( {"userid": bd_user["userid"] }, {"$set": {f'activ_items.{i}': {'game': None, 'hunt': None, 'journey': None, 'unv': None} }} )
+
+            def acss(message, dino_id, user, bd_user):
+
+                if bd_user['dinos'][dino_id]['status'] != 'dino':
+
+                    if bd_user['language_code'] == 'ru':
+                        text = '🎍 | Динозавр должен быть инкубирован!'
+                    else:
+                        text = '🎍 | The dinosaur must be incubated!'
+
+                    bot.send_message(message.chat.id, text)
+                    return
+
+                if bd_user['dinos'][dino_id]['activ_status'] != 'pass_active':
+
+                    if bd_user['language_code'] == 'ru':
+                        text = '🎍 | Во время игры / сна / путешествия и тд. - нельзя менять аксесcуар!'
+                    else:
+                        text = '🎍 | While playing / sleeping / traveling, etc. - you can not change the accessory!'
+
+                    bot.send_message(message.chat.id, text)
+                    return
+
+
+                if bd_user['language_code'] == 'ru':
+                    ans = ['🕹 Игра', '🌙 Сон', '🌿 Сбор пищи', '🏮 Путешествие', '↪ Назад']
+                    text = '🎍 | Выберите какого аспекта должен быть аксесcуар >'
+                else:
+                    ans = ['🕹 Game', '🌙 Dream', '🌿 Collecting food', '🏮 Journey', '↪ Back']
+                    text = '🎍 | Choose which aspect the accessory should be >'
+
+                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
+                rmk.add(ans[0], ans[1])
+                rmk.add(ans[2], ans[3])
+                rmk.add(ans[4])
+
+                def ret_zero(message, ans, bd_user):
+
+                    if message.text not in ans or message.text == ans[4]:
+                        res = None
+                    else:
+                        res = message.text
+
+                    if res == None:
+                        bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 'profile', user))
+                        return
+
+                    if message.text in ['🕹 Game', '🕹 Игра']:
+                        ac_type = 'game'
+                    if message.text in ['🌙 Сон', '🌙 Dream']:
+                        ac_type = 'unv'
+                    if message.text in ['🌿 Сбор пищи', '🌿 Collecting food']:
+                        ac_type = 'hunt'
+                    if message.text in ['🏮 Путешествие', '🏮 Journey']:
+                        ac_type = 'journey'
+
+                    if bd_user['language_code'] == 'ru':
+                        text = '🎴 | Выберите предмет из инвентаря, для установки его в активный слот >'
+                    else:
+                        text = '🎴 | Select an item from the inventory to install it in the active slot >'
+
+                    nitems = bd_user['inventory']
+
+                    if nitems == []:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = 'Инвентарь пуст.'
+                        else:
+                            text = 'Inventory is empty.'
+
+                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', user))
+                        return
+
+                    data_items = items_f['items']
+                    items = []
+                    items_id = {}
+                    page = 1
+                    items_names = []
+
+                    for i in nitems:
+                        if data_items[str(i['item_id'])]['type'] == f"{ac_type}_ac":
+                            items.append(i)
+
+                    if bd_user['language_code'] == 'ru':
+                        lg = "nameru"
+                    else:
+                        lg = "nameen"
+
+                    for i in items:
+                        items_id[ items_f['items'][str(i['item_id'])][lg] ] = i
+                        items_names.append( items_f['items'][str(i['item_id'])][lg] )
+
+                    items_sort = []
+                    d_it_sort = {}
+                    ind_sort_it = {}
+
+                    for i in items_names:
+                        if i in list(d_it_sort.keys()):
+                            d_it_sort[i] += 1
+                        else:
+                            d_it_sort[i] = 1
+
+                    for n in list(d_it_sort.keys()):
+                        col = d_it_sort[n]
+                        name = n
+                        items_sort.append(f'{n} x{col}')
+                        ind_sort_it[f'{n} x{col}'] = n
+
+                    pages = list(functions.chunks(list(functions.chunks(items_sort, 2)), 2))
+
+                    if len(pages) == 0:
+                        pages = [ [ ] ]
+
+                    for i in pages:
+                        for ii in i:
+                            if len(ii) == 1:
+                                ii.append(' ')
+
+                        if len(i) != 2:
+                            for iii in range(2 - len(i)):
+                                i.append([' ', ' '])
+
+                    def work_pr(message, pages, page, items_id, ind_sort_it, lg, ac_type):
+                        global l_pages, l_page, l_ind_sort_it
+                        a = []
+                        l_pages = pages
+                        l_page = page
+                        l_ind_sort_it = ind_sort_it
+
+                        def ret(message):
+                            global l_pages, l_page, l_ind_sort_it
+                            if message.text in ['↪ Назад', '↪ Back']:
+                                a.append(None)
+                                return False
+                            else:
+                                if message.text in list(l_ind_sort_it.keys()) or message.text in ['◀', '▶', '🔻 Снять аксесcуар', '🔻 Remove the accessory']:
+                                    a.append(message.text)
+                                else:
+                                    a.append(None)
+                                return False
+
+                        rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+                        for i in pages[page-1]:
+                            rmk.add(i[0], i[1])
+
+                        act_item = []
+                        if bd_user['activ_items'][ dino_id ][ac_type] == None:
+                            act_item = ['нет', 'no']
+                        else:
+                            act_item = [ items_f['items'][ bd_user['activ_items'][ dino_id ][ac_type]['item_id'] ] ['nameru'], items_f['items'][ bd_user['activ_items'][ dino_id ][ac_type]['item_id'] ]['nameen'] ]
+
+                        if len(pages) > 1:
+                            if bd_user['language_code'] == 'ru':
+                                com_buttons = ['◀', '↪ Назад', '▶', '🔻 Снять аксесcуар']
+                                textt = f'🎴 | Выберите аксессуар >\nАктивный: {act_item[0]}'
+                            else:
+                                com_buttons = ['◀', '↪ Back', '▶', '🔻 Remove the accessory']
+                                textt = f'🎴 | Choose an accessory >\nActive: {act_item[1]}'
+
+                            rmk.add(com_buttons[3])
+                            rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
+
+                        else:
+
+                            if bd_user['language_code'] == 'ru':
+                                com_buttons = ['↪ Назад', '🔻 Снять аксесcуар']
+                                textt = f'🎴 | Выберите аксессуар >\nАктивный: {act_item[0]}'
+                            else:
+                                textt = f'🎴 | Choose an accessory >\nActive: {act_item[1]}'
+                                com_buttons = ['↪ Back', '🔻 Remove the accessory']
+
+                            rmk.add(com_buttons[1])
+                            rmk.add(com_buttons[0])
+
+                        def ret(message, l_pages, l_page, l_ind_sort_it, bd_user, user, pages, page, items_id, ind_sort_it, lg, ac_type):
+                            if message.text in ['↩ Назад', '↩ Back']:
+                                res = None
+
+                            else:
+                                if message.text in list(l_ind_sort_it.keys()) or message.text in ['◀', '▶', '🔻 Снять аксесcуар', '🔻 Remove the accessory']:
+                                    res = message.text
+                                else:
+                                    res = None
+
+
+                            if res == None:
+                                if bd_user['language_code'] == 'ru':
+                                    text = "👥 | Возвращение в меню профиля"
+                                else:
+                                    text = "👥 | Return to the profile menu"
+
+                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', user))
+                                return '12'
+
+                            else:
+                                if res == '◀':
+                                    if page - 1 == 0:
+                                        page = 1
+                                    else:
+                                        page -= 1
+
+                                    work_pr(message, pages, page, items_id, ind_sort_it, lg, ac_type)
+
+                                elif res == '▶':
+                                    if page + 1 > len(l_pages):
+                                        page = len(l_pages)
+                                    else:
+                                        page += 1
+
+                                    work_pr(message, pages, page, items_id, ind_sort_it, lg, ac_type)
+
+                                else:
+
+                                    if res in ['🔻 Снять аксесcуар', '🔻 Remove the accessory']:
+                                        if bd_user['activ_items'][ dino_id ][ac_type] != None:
+                                            item = bd_user['activ_items'][ dino_id ][ac_type]
+                                            bd_user['activ_items'][ dino_id ][ac_type] = None
+
+                                            if bd_user['language_code'] == 'ru':
+                                                text = "🎴 | Активный предмет снят"
+                                            else:
+                                                text = "🎴 | Active item removed"
+
+                                            users.update_one( {"userid": bd_user['userid']}, {"$push": {'inventory': item }} )
+                                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'activ_items': bd_user['activ_items'] }} )
+
+                                        else:
+                                            if bd_user['language_code'] == 'ru':
+                                                text = "🎴 | В данный момент нет активного предмета!"
+                                            else:
+                                                text = "🎴 | There is no active item at the moment!"
+
+                                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', user))
+
+                                    else:
+                                        if bd_user['activ_items'][ dino_id ][ac_type] != None:
+                                            bd_user['inventory'].append(bd_user['activ_items'][ dino_id ][ac_type])
+
+                                        item = items_id[ l_ind_sort_it[res] ]
+
+                                        bd_user['activ_items'][ dino_id ][ac_type] = item
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = "🎴 | Активный предмет установлен!"
+                                        else:
+                                            text = "🎴 | The active item is installed!"
+
+                                        bd_user['inventory'].remove(item)
+                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'activ_items': bd_user['activ_items'] }} )
+
+                                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', user))
+
+                        msg = bot.send_message(message.chat.id, textt, reply_markup = rmk)
+                        bot.register_next_step_handler(msg, ret, l_pages, l_page, l_ind_sort_it, bd_user, user, pages, page, items_id, ind_sort_it, lg, ac_type)
+
+                    work_pr(message, pages, page, items_id, ind_sort_it, lg, ac_type)
+
+                msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                bot.register_next_step_handler(msg, ret_zero, ans, bd_user)
+
+            n_dp, dp_a = functions.dino_pre_answer(bot, message)
+            if n_dp == 1:
+
+                bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, 1, user))
+                return
+
+            if n_dp == 2:
+
+                acss(message, list(bd_user['dinos'].keys())[0], user, bd_user)
+
+            if n_dp == 3:
+                rmk = dp_a[0]
+                text = dp_a[1]
+                dino_dict = dp_a[2]
+
+                def ret(message, dino_dict, user, bd_user):
+
+                    try:
+                        acss(message, dino_dict[message.text][1], user, bd_user)
+                    except:
+                        bot.send_message(message.chat.id, '❓', reply_markup = functions.markup(bot, "profile", user))
+
+                msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+                bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)
+
+    @staticmethod
+    def open_market_menu(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            if bd_user['language_code'] == 'ru':
+                text = '🛒 Панель рынка открыта!'
+            else:
+                text = '🛒 The market panel is open!'
+
+            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "market", user))
+
+    @staticmethod
+    def my_products(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            market_ = market.find_one({"id": 1})
+            if str(user.id) not in market_['products'].keys() or market_['products'][str(user.id)]['products'] == {}:
+
+                if bd_user['language_code'] == 'ru':
+                    text = "🛒 | У вас нет продаваемых продуктов на рынке!"
+                else:
+                    text = "🛒 | You don't have any saleable products on the market!"
+
+                bot.send_message(message.chat.id, text)
+
+            else:
+
+                products = []
+                page = 1
+
+                for i in market_['products'][str(user.id)]['products'].keys():
+                    product = market_['products'][str(user.id)]['products'][i]
+                    products.append(product)
+
+                pages = list(functions.chunks(products, 5))
+
+                if bd_user['language_code'] == 'ru':
+                    text = '🛒 | *Ваши продукты*\n\n'
+                else:
+                    text = '🛒 | *Your products*\n\n'
+
+                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+
+                if len(pages) > 1:
+
+                    if bd_user['language_code'] == 'ru':
+                        ans = ['◀', '🛒 Рынок', '▶']
+                    else:
+                        ans = ['◀', '🛒 Market', '▶']
+
+                    rmk.add(ans[0], ans[1], ans[2])
+
+                else:
+
+                    if bd_user['language_code'] == 'ru':
+                        ans = ['🛒 Рынок']
+                    else:
+                        ans = ['🛒 Market']
+
+                    rmk.add(ans[0])
+
+                def work_pr(page, pages):
+
+                    if bd_user['language_code'] == 'ru':
+                        text = '🛒 | *Ваши продукты*\n\n'
+                    else:
+                        text = '🛒 | *Your products*\n\n'
+
+                    w_page = pages[page-1]
+
+                    nn = (page - 1) * 5
+                    for pr in w_page:
+                        item = items_f['items'][ pr['item']['item_id'] ]
+                        nn += 1
+
+                        if int(w_page.index(pr)) == len(w_page) - 1:
+                            n = '└'
+                        elif int(w_page.index(pr)) == 0:
+                            n = '┌'
+                        else:
+                            n = '├'
+
+                        if bd_user['language_code'] == 'ru':
+                            text += f"*{n}* {nn}# {item['nameru']}\n    *└* Цена за 1х: {pr['price']}\n"
+                            text += f"       *└* Продано: {pr['col'][0]} / {pr['col'][1]}"
+
+                            if 'abilities' in pr['item'].keys():
+                                if 'uses' in pr['item']['abilities'].keys():
+                                    text += f"\n           *└* Использований: {pr['item']['abilities']['uses']}"
+
+                                if 'endurance' in pr['item']['abilities'].keys():
+                                    text += f"\n           *└* Прочность: {pr['item']['abilities']['endurance']}"
+
+                            text += '\n\n'
+
+                        else:
+                            text += f"*{n}* {nn}# {item['nameen']}\n    *└* Price pay for 1х: {pr['price']}\n"
+                            text += f"        *└* Sold: {pr['col'][0]} / {pr['col'][1]}"
+
+                            if 'abilities' in pr['item'].keys():
+                                if 'uses' in pr['item']['abilities'].keys():
+                                    text += f"\n           *└* Uses: {pr['item']['abilities']['uses']}"
+
+                                if 'endurance' in pr['item']['abilities'].keys():
+                                    text += f"\n           *└* Endurance: {pr['item']['abilities']['endurance']}"
+
+                            text += '\n\n'
+
+                    if bd_user['language_code'] == 'ru':
+                        text += f'Страница: {page}'
+                    else:
+                        text += f'Page: {page}'
+
+                    return text
+
+                msg_g = bot.send_message(message.chat.id, work_pr(page, pages), reply_markup = rmk, parse_mode = 'Markdown')
+
+                def check_key(message, page, pages, ans):
+
+                    if message.text in ['🛒 Рынок', '🛒 Market'] or message.text not in ans:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = "🛒 | Возвращение в меню рынка!"
+                        else:
+                            text = "🛒 | Return to the market menu!"
+
+                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                        return
+
+                    if len(pages) > 1 and message.text in ['◀', '▶']:
+                        if message.text == '◀':
+
+                            if page - 1 == 0:
+                                page = 1
+                            else:
+                                page -= 1
+
+                        if message.text == '▶':
+
+                            if page + 1 > len(pages):
+                                page = len(pages)
+                            else:
+                                page += 1
+
+                    msg = bot.send_message(message.chat.id, work_pr(page, pages), reply_markup = rmk, parse_mode = 'Markdown')
+                    bot.register_next_step_handler(msg, check_key, page, pages, ans)
+
+                bot.register_next_step_handler(msg_g, check_key, page, pages, ans)
+
+    @staticmethod
+    def delete_product(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            market_ = market.find_one({"id": 1})
+            if str(user.id) not in market_['products'].keys() or market_['products'][str(user.id)]['products'] == {}:
+
+                if bd_user['language_code'] == 'ru':
+                    text = "🛒 | У вас нет продаваемых продуктов на рынке!"
+                else:
+                    text = "🛒 | You don't have any saleable products on the market!"
+
+                bot.send_message(message.chat.id, text)
+
+            else:
+
+                products = []
+                page = 1
+
+                for i in market_['products'][str(user.id)]['products'].keys():
+                    product = market_['products'][str(user.id)]['products'][i]
+                    products.append(product)
+
+                pages = list(functions.chunks(products, 5))
+
+                if bd_user['language_code'] == 'ru':
+                    text = '🛒 | *Ваши продукты*\n\n'
+                else:
+                    text = '🛒 | *Your products*\n\n'
+
+                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+
+                lll = []
+                for i in range(1, len(pages[page-1])+1 ):
+                    lll.append(str(i + 1 * page + (5 * (page-1))-1 * page ))
+
+                if len(lll) == 1:
+                    rmk.add(lll[0])
+                if len(lll) == 2:
+                    rmk.add(lll[0], lll[1])
+                if len(lll) == 3:
+                    rmk.row(lll[0], lll[1], lll[2])
+                if len(lll) == 4:
+                    rmk.row(lll[0], lll[1], lll[2], lll[3])
+                if len(lll) == 5:
+                    rmk.row(lll[0], lll[1], lll[2], lll[3], lll[4])
+
+                if len(pages) > 1:
+
+                    if bd_user['language_code'] == 'ru':
+                        ans = ['◀', '🛒 Рынок', '▶']
+                    else:
+                        ans = ['◀', '🛒 Market', '▶']
+
+                    rmk.add(ans[0], ans[1], ans[2])
+
+                else:
+
+                    if bd_user['language_code'] == 'ru':
+                        ans = ['🛒 Рынок']
+                    else:
+                        ans = ['🛒 Market']
+
+                    rmk.add(ans[0])
+
+                def work_pr(page, pages):
+
+                    if bd_user['language_code'] == 'ru':
+                        text = '🛒 | *Ваши продукты*\n\n'
+                    else:
+                        text = '🛒 | *Your products*\n\n'
+
+                    w_page = pages[page-1]
+
+                    nn = (page - 1) * 5
+                    for pr in w_page:
+                        item = items_f['items'][ pr['item']['item_id'] ]
+                        nn += 1
+
+                        if int(w_page.index(pr)) == len(w_page) - 1:
+                            n = '└'
+                        elif int(w_page.index(pr)) == 0:
+                            n = '┌'
+                        else:
+                            n = '├'
+
+                        if bd_user['language_code'] == 'ru':
+                            text += f"*{n}* {nn}# {item['nameru']}\n    *└* Цена за 1х: {pr['price']}\n"
+                            text += f"       *└* Продано: {pr['col'][0]} / {pr['col'][1]}"
+
+                            if 'abilities' in pr['item'].keys():
+                                if 'uses' in pr['item']['abilities'].keys():
+                                    text += f"\n           *└* Использований: {pr['item']['abilities']['uses']}"
+
+                            text += '\n\n'
+
+                        else:
+                            text += f"*{n}* {nn}# {item['nameen']}\n    *└* Price pay for 1х: {pr['price']}\n"
+                            text += f"        *└* Sold: {pr['col'][0]} / {pr['col'][1]}"
+
+                            if 'abilities' in pr['item'].keys():
+                                if 'uses' in pr['item']['abilities'].keys():
+                                    text += f"\n           *└* Uses: {pr['item']['abilities']['uses']}"
+
+                            text += '\n\n'
+
+                    if bd_user['language_code'] == 'ru':
+                        text += f'Страница: {page}'
+                    else:
+                        text += f'Page: {page}'
+
+                    return text
+
+                msg_g = bot.send_message(message.chat.id, work_pr(page, pages), reply_markup = rmk, parse_mode = 'Markdown')
+
+                def check_key(message, page, pages, ans):
+                    number = None
+
+                    if message.text in ['🛒 Рынок', '🛒 Market']:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = "🛒 | Возвращение в меню рынка!"
+                        else:
+                            text = "🛒 | Return to the market menu!"
+
+                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                        return
+
+                    if message.text not in ans:
+
+                        try:
+                            number = int(message.text)
+
+                        except:
+
+                            if bd_user['language_code'] == 'ru':
+                                text = "🛒 | Возвращение в меню рынка!"
+                            else:
+                                text = "🛒 | Return to the market menu!"
+
+                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                            return
+
+                    if number == None:
+                        if len(pages) > 1 and message.text in ['◀', '▶']:
+                            if message.text == '◀':
+
+                                if page - 1 == 0:
+                                    page = 1
+                                else:
+                                    page -= 1
+
+                            if message.text == '▶':
+
+                                if page + 1 > len(pages):
+                                    page = len(pages)
+                                else:
+                                    page += 1
+
+                        rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+
+                        lll = []
+                        for i in range(1, len(pages[page-1])+1 ):
+                            lll.append(str(i + 1 * page + (5 * (page-1))-1 * page ))
+
+                        if len(lll) == 1:
+                            rmk.add(lll[0])
+                        if len(lll) == 2:
+                            rmk.add(lll[0], lll[1])
+                        if len(lll) == 3:
+                            rmk.row(lll[0], lll[1], lll[2])
+                        if len(lll) == 4:
+                            rmk.row(lll[0], lll[1], lll[2], lll[3])
+                        if len(lll) == 5:
+                            rmk.row(lll[0], lll[1], lll[2], lll[3], lll[4])
+
+                        if len(pages) > 1:
+
+                            if bd_user['language_code'] == 'ru':
+                                ans = ['◀', '🛒 Рынок', '▶']
+                            else:
+                                ans = ['◀', '🛒 Market', '▶']
+
+                            rmk.add(ans[0], ans[1], ans[2])
+
+                        else:
+
+                            if bd_user['language_code'] == 'ru':
+                                ans = ['🛒 Рынок']
+                            else:
+                                ans = ['🛒 Market']
+
+                            rmk.add(ans[0])
+
+                        msg = bot.send_message(message.chat.id, work_pr(page, pages), reply_markup = rmk, parse_mode = 'Markdown')
+                        bot.register_next_step_handler(msg, check_key, page, pages, ans)
+
+                    else:
+
+                        nn_number = list(market_['products'][str(user.id)]['products'].keys())[number-1]
+
+                        if nn_number not in market_['products'][str(user.id)]['products'].keys():
+
+                            if bd_user['language_code'] == 'ru':
+                                text = "🛒 | Объект с данным номером не найден в ваших продуктах!"
+                            else:
+                                text = "🛒 | The object with this number is not found in your products!"
+
+                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+
+                        else:
+                            data_items = items_f['items']
+                            prod = market_['products'][str(user.id)]['products'][nn_number]
+
+                            if data_items[ prod['item']['item_id'] ]['type'] == '+eat':
+
+                                eat_c = functions.items_counting(bd_user, '+eat')
+                                if eat_c >= 300:
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = f'🌴 | Ваш инвентарь ломится от количества еды! В данный момент у вас {eat_c} предметов которые можно съесть!'
+                                    else:
+                                        text = f'🌴 | Your inventory is bursting with the amount of food! At the moment you have {eat_c} items that can be eaten!'
+
+                                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                    return
+
+                            for i in range(prod['col'][1] - prod['col'][0]):
+                                bd_user['inventory'].append(prod['item'])
+
+                            del market_['products'][str(user.id)]['products'][nn_number]
+
+                            market.update_one( {"id": 1}, {"$set": {'products': market_['products'] }} )
+                            users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
+
+                            if bd_user['language_code'] == 'ru':
+                                text = "🛒 | Продукт удалён!"
+                            else:
+                                text = "🛒 | The product has been removed!"
+
+                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+
+                bot.register_next_step_handler(msg_g, check_key, page, pages, ans)
+
+    @staticmethod
+    def search_pr(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            market_ = market.find_one({"id": 1})
+
+            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+
+            if bd_user['language_code'] == 'ru':
+                ans = ['🛒 Рынок']
+                text = '🔍 | Введите имя предмета который вы ищите...'
+            else:
+                ans = ['🛒 Market']
+                text = '🔍 | Enter the name of the item you are looking for...'
+
+            rmk.add(ans[0])
+
+            def name_reg(message):
+                if message.text in ['🛒 Market', '🛒 Рынок']:
+
+                    if bd_user['language_code'] == 'ru':
+                        text = "🛒 | Возвращение в меню рынка!"
+                    else:
+                        text = "🛒 | Return to the market menu!"
+
+                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                    return
+
+                else:
+                    s_i = []
+                    for i in items_f['items']:
+                        item = items_f['items'][i]
+
+                        for inn in [ item['nameru'], item['nameen'] ]:
+                            if fuzz.token_sort_ratio(message.text, inn) > 80 or fuzz.ratio(message.text, inn) > 80 or message.text == inn:
+                                s_i.append(i)
+
+                    if s_i == []:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = "🛒 | Предмет с таким именем не найден в базе продаваемых предметов!\nВозвращение в меню рынка!"
+                        else:
+                            text = "🛒 | An item with that name was not found in the database of sold items!\nreturn to the market menu!"
+
+                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                        return
+
+
+                    sear_items = []
+                    for uid in market_['products']:
+                        if uid != str(bd_user['userid']):
+                            userser = market_['products'][uid]['products']
+                            for ki in userser:
+                                if userser[ki]['item']['item_id'] in s_i:
+                                    sear_items.append( {'user': uid, 'key': ki, 'col': userser[ki]['col'], 'price': userser[ki]['price'], 'item': userser[ki]['item']} )
+
+                    if sear_items == []:
+                        if bd_user['language_code'] == 'ru':
+                            text = "🛒 | Предмет с таким именем не найден в базе продаваемых предметов!\nВозвращение в меню рынка!"
+                        else:
+                            text = "🛒 | An item with that name was not found in the database of sold items!\nreturn to the market menu!"
+
+                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                        return
+
+                    random.shuffle(sear_items)
+                    page = list(functions.chunks(sear_items, 10))[0]
+
+                    text = ''
+                    a = 0
+
+                    markup_inline = types.InlineKeyboardMarkup()
+                    in_l = []
+
+                    if bd_user['language_code'] == 'ru':
+                        text += f"🔍 | По вашему запросу найдено {len(sear_items)} предметов(а) >\n\n"
+                        for i in page:
+                            a += 1
+                            text += f"*{a}#* {items_f['items'][i['item']['item_id']]['nameru']}\n     *└* Цена за 1х: {i['price']}\n         *└* Количество: {i['col'][1] - i['col'][0]}"
+
+                            if 'abilities' in i['item'].keys():
+                                if 'uses' in i['item']['abilities'].keys():
+                                    text += f"\n           *└* Использований: {i['item']['abilities']['uses']}"
+
+                            text += '\n\n'
+                            in_l.append( types.InlineKeyboardButton( text = str(a) + '#', callback_data = f"market_buy_{i['user']} {i['key']}"))
+                    else:
+                        text += f'🔍 | Your search found {len(search_items)} item(s) >\n\n'
+                        for i in page:
+                            a += 1
+                            text += f"*{a}#* {items_f['items'][i['item_id']]['nameen']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}"
+
+                            if 'abilities' in i['item'].keys():
+                                if 'uses' in i['item']['abilities'].keys():
+                                    text += f"\n           *└* Uses: {i['item']['abilities']['uses']}"
+
+                            text += '\n\n'
+                            in_l.append( types.InlineKeyboardButton( text = str(a) + '#', callback_data = f"market_buy_{i['user']} {i['key']}"))
+
+
+                    if len(in_l) == 1:
+                        markup_inline.add(in_l[0])
+                    if len(in_l) == 2:
+                        markup_inline.add(in_l[0], in_l[1])
+                    if len(in_l) == 3:
+                        markup_inline.add(in_l[0], in_l[1], in_l[2])
+                    if len(in_l) == 4:
+                        markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3])
+                    if len(in_l) == 5:
+                        markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                    if len(in_l) == 6:
+                        markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                        markup_inline.add(in_l[5])
+                    if len(in_l) == 7:
+                        markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                        markup_inline.add(in_l[5], in_l[6])
+                    if len(in_l) == 8:
+                        markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                        markup_inline.add(in_l[5], in_l[6], in_l[7])
+                    if len(in_l) == 9:
+                        markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                        markup_inline.add(in_l[5], in_l[6], in_l[7], in_l[8])
+                    if len(in_l) == 10:
+                        markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                        markup_inline.add(in_l[5], in_l[6], in_l[7], in_l[8], in_l[9])
+
+                    msg = bot.send_message(message.chat.id, text, parse_mode = 'Markdown', reply_markup = markup_inline)
+
+                    if bd_user['language_code'] == 'ru':
+                        text = "🛒 | Возвращение в меню рынка!"
+                    else:
+                        text = "🛒 | Return to the market menu!"
+
+                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                    return
+
+
+            msg = bot.send_message(message.chat.id, text, reply_markup = rmk, parse_mode = 'Markdown')
+            bot.register_next_step_handler(msg, name_reg )
+
+    @staticmethod
+    def random_search(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            market_ = market.find_one({"id": 1})
+
+            items = []
+
+            for usk in market_['products']:
+                if usk != str(user.id):
+                    for prd in market_['products'][usk]['products']:
+                        market_['products'][usk]['products'][prd]['user'] = usk
+                        market_['products'][usk]['products'][prd]['key'] = prd
+                        items.append(market_['products'][usk]['products'][prd])
+
+            random.shuffle(items)
+
+            page = []
+            for i in items:
+                if len(page) != 10:
+                    page.append(i)
+
+            text = ''
+            a = 0
+            markup_inline = types.InlineKeyboardMarkup()
+            in_l = []
+
+            if bd_user['language_code'] == 'ru':
+                text += f"🔍 | Случайные предметы с рынка >\n\n"
+                for i in page:
+                    a += 1
+                    text += f"*{a}#* {items_f['items'][i['item']['item_id']]['nameru']}\n     *└* Цена за 1х: {i['price']}\n         *└* Количесвто: {i['col'][1] - i['col'][0]}"
+
+                    if 'abilities' in i['item'].keys():
+                        if 'uses' in i['item']['abilities'].keys():
+                            text += f"\n           *└* Использований: {i['item']['abilities']['uses']}"
+
+                        if 'endurance' in i['item']['abilities'].keys():
+                            text += f"\n           *└* Прочность: {i['item']['abilities']['endurance']}"
+
+                    text += '\n\n'
+
+                    in_l.append( types.InlineKeyboardButton( text = str(a) + '#', callback_data = f"market_buy_{i['user']} {i['key']}"))
+
+            else:
+                text += f'🔍 | Your search found {len(search_items)} item(s) >\n\n'
+                for i in page:
+                    a += 1
+                    text += f"*{a}#* {items_f['items'][i['item_id']]['nameen']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}"
+
+                    if 'abilities' in i['item'].keys():
+                        if 'uses' in i['item']['abilities'].keys():
+                            text += f"\n           *└* Uses: {i['item']['abilities']['uses']}"
+
+                        if 'endurance' in i['item']['abilities'].keys():
+                            text += f"\n           *└* Endurance: {i['item']['abilities']['endurance']}"
+
+                    text += '\n\n'
+
+                    in_l.append( types.InlineKeyboardButton( text = str(a) + '#', callback_data = f"market_buy_{i['user']} {i['key']}"))
+
+            if len(in_l) == 1:
+                markup_inline.add(in_l[0])
+            if len(in_l) == 2:
+                markup_inline.add(in_l[0], in_l[1])
+            if len(in_l) == 3:
+                markup_inline.add(in_l[0], in_l[1], in_l[2])
+            if len(in_l) == 4:
+                markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3])
+            if len(in_l) == 5:
+                markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+            if len(in_l) == 6:
+                markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                markup_inline.add(in_l[5])
+            if len(in_l) == 7:
+                markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                markup_inline.add(in_l[5], in_l[6])
+            if len(in_l) == 8:
+                markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                markup_inline.add(in_l[5], in_l[6], in_l[7])
+            if len(in_l) == 9:
+                markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                markup_inline.add(in_l[5], in_l[6], in_l[7], in_l[8])
+            if len(in_l) == 10:
+                markup_inline.add(in_l[0], in_l[1], in_l[2], in_l[3], in_l[4])
+                markup_inline.add(in_l[5], in_l[6], in_l[7], in_l[8], in_l[9])
+
+            msg = bot.send_message(message.chat.id, text, parse_mode = 'Markdown', reply_markup = markup_inline)
+
+    @staticmethod
+    def rarity_change(bot, message, user, bd_user):
+
+        data_items = items_f['items']
+
+        def inf_message(dino_id):
+
+            data_q_r = { 'com': {'money': 4000,  'materials': ['21']  } ,
+                         'unc': {'money': 10000, 'materials': ['20'] } ,
+                         'rar': {'money': 20000, 'materials': ['22'] } ,
+                         'myt': {'money': 40000, 'materials': ['23'] } ,
+                         'leg': {'money': 75000, 'materials': ['24'] } ,
+                         'ran': {'money': 15000, 'materials': ['3']  } ,
+                       }
+
+            r_text = { 'com': ['Обычный', 'Common'] ,
+                       'unc': ['Необычный', 'Unusual'] ,
+                       'rar': ['Редкий', 'Rare'] ,
+                       'myt': ['Мистический', 'Mystical'] ,
+                       'leg': ['Легендарный', 'Legendary'] ,
+                       'ran': ['Случайный', 'Random'] ,
+                       }
+
+            if bd_user['dinos'][dino_id]['quality'] == 'com':
+                ql = ['unc', 'rar', 'myt', 'leg', 'ran']
+            if bd_user['dinos'][dino_id]['quality'] == 'unc':
+                ql = ['com', 'rar', 'myt', 'leg', 'ran']
+            if bd_user['dinos'][dino_id]['quality'] == 'rar':
+                ql = ['com', 'unc', 'myt', 'leg', 'ran']
+            if bd_user['dinos'][dino_id]['quality'] == 'myt':
+                ql = ['com', 'unc', 'rar', 'leg', 'ran']
+            if bd_user['dinos'][dino_id]['quality'] == 'leg':
+                ql = ['com', 'unc', 'rar', 'myt', 'ran']
+
+            if bd_user['language_code'] == 'ru':
+                text_m = f" *┌* ♻ Возможная смена редкости для {bd_user['dinos'][dino_id]['name']}\n\n"
+                lcode = 'ru'
+                text_p2 = '✨ | Выберите в какую редкость вы хотите преобразовать динозавра, нажмите на кнопку и произойдёт магия!'
+            else:
+                text_m = f" *┌* ♻ Possible change of rarity for {bd_user['dinos'][dino_id]['name']}\n\n"
+                lcode = 'en'
+                text_p2 = '✨ | Choose which rarity you want to transform the dinosaur into, click on the button and magic will happen!'
+
+            markup_inline = types.InlineKeyboardMarkup()
+            cmm = []
+
+            nn = 0
+            for i in ql:
+                nn += 1
+
+                if bd_user['language_code'] == 'ru':
+                    dino_q = r_text[i][0]
+                else:
+                    dino_q = r_text[i][1]
+
+                if i == 'ran':
+                    spl = '└'
+                else:
+                    spl = '├'
+
+                text_m += f" *{spl}* *{nn}*. {', '.join(functions.sort_items_col(data_q_r[i]['materials'], lcode))} + {data_q_r[i]['money']}💰 > {dino_q}🦕\n\n"
+
+                cmm.append(types.InlineKeyboardButton( text = f'♻ {nn}', callback_data = f"change_rarity {dino_id} {i}"))
+
+            markup_inline.add( *cmm )
+
+            bot.send_message(message.chat.id, text_m, reply_markup = markup_inline, parse_mode = 'Markdown')
+            bot.send_message(message.chat.id, text_p2, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ), parse_mode = 'Markdown')
+
+        n_dp, dp_a = functions.dino_pre_answer(bot, message)
+        if n_dp == 1:
+
+            bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
+            return
+
+        if n_dp == 2:
+            bd_dino = dp_a
+
+            inf_message(  list(bd_user['dinos'].keys())[0]  )
+
+        if n_dp == 3:
+            rmk = dp_a[0]
+            text = dp_a[1]
+            dino_dict = dp_a[2]
+
+            def ret(message, dino_dict, user, bd_user):
+
+                if message.text in dino_dict.keys():
+
+                    inf_message( dino_dict[message.text][1] )
+
+                else:
+                    bot.send_message(message.chat.id, '❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user), bd_user ))
+
+            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+            bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)

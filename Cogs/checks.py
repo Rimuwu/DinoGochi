@@ -277,6 +277,7 @@ class checks:
                             functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
 
                         users.update_one( {"userid": user['userid']}, {"$set": {f'dinos': user['dinos'] }} )
+                        users.update_one( {"userid": user['userid']}, {"$inc": {'dead_dinos': 1 }} )
 
         # print(f'Проверка уведомлений - {int(time.time()) - t_st}s {nn}u')
         functions.check_data('notif', 0, int(time.time() - t_st) )
@@ -287,7 +288,6 @@ class checks:
 
         nn = 0
         t_st = int(time.time())
-        # members = users.find({ })
         for user in members:
 
             dns_l = list(user['dinos'].keys()).copy()
@@ -335,7 +335,6 @@ class checks:
 
         nn = 0
         t_st = int(time.time())
-        # members = users.find({ })
         for user in members:
 
             dns_l = list(user['dinos'].keys()).copy()
@@ -392,7 +391,6 @@ class checks:
 
         nn = 0
         t_st = int(time.time())
-        # members = users.find({ })
         for user in members:
 
             dns_l = list(user['dinos'].keys()).copy()
@@ -435,7 +433,6 @@ class checks:
 
         nn = 0
         t_st = int(time.time())
-        # members = users.find({ })
         for user in members:
 
             dns_l = list(user['dinos'].keys()).copy()
@@ -547,7 +544,7 @@ class checks:
                             lvl_ += random.randint(0,20)
 
                         if functions.acc_check(bot, user, '45', dino_id, False):
-                            tick = [1, 25]
+                            tick = [1, 20]
                         else:
                             tick = [1, 30]
 
@@ -1110,7 +1107,6 @@ class checks:
 
         nn = 0
         t_st = int(time.time())
-        # members = users.find({ })
         for user in members:
             nn += 1
 
