@@ -735,7 +735,7 @@ def answer(call):
             else:
                 lg = 'en'
 
-            users.insert_one({'userid': user.id, 'last_m': int(time.time()), 'dead_dinos': 0, 'dinos': {}, 'eggs': [], 'notifications': {}, 'settings': {'notifications': True, 'dino_id': '1', 'vis.faq': True, 'last_markup': 1}, 'language_code': lg, 'inventory': [], 'coins': 0, 'lvl': [1, 0], 'activ_items': { '1': {'game': None, 'hunt': None, 'journey': None, 'unv': None} }, 'friends': { 'friends_list': [], 'requests': [] } })
+            users.insert_one({'userid': user.id, 'last_m': int(time.time()), 'dead_dinos': 0, 'dinos': {}, 'eggs': [], 'notifications': {}, 'settings': {'notifications': True, 'dino_id': '1', 'last_markup': 1}, 'language_code': lg, 'inventory': [], 'coins': 0, 'lvl': [1, 0], 'activ_items': { '1': {'game': None, 'hunt': None, 'journey': None, 'unv': None} }, 'friends': { 'friends_list': [], 'requests': [] } })
 
             markup_inline = types.InlineKeyboardMarkup()
             item_1 = types.InlineKeyboardButton( text = '🥚 1', callback_data = 'egg_answer_1')
