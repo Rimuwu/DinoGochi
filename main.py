@@ -455,6 +455,10 @@ def on_message(message):
 
                 commands.open_profile_menu(bot, message, user, bd_user)
 
+            elif message.text in ['🎮 Инвентарь', '🎮 Inventory']:
+
+                functions.user_inventory(bot, user, message)
+
             elif last_mrk == 1:
 
                 if message.text in ['🦖 Динозавр', '🦖 Dinosaur']:
@@ -611,10 +615,6 @@ def on_message(message):
                 if message.text in ['🎢 Рейтинг', '🎢 Rating']:
 
                     commands.rayting(bot, message, user, bd_user)
-
-                elif message.text in ['🎮 Инвентарь', '🎮 Inventory']:
-
-                    functions.user_inventory(bot, user, message)
 
                 elif message.text in ['📜 Информация', '📜 Information']:
 
