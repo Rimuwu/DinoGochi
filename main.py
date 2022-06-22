@@ -433,6 +433,8 @@ def on_message(message):
 
             if bd_user != None:
                 last_mrk = functions.last_markup(bd_user, alternative = 1)
+            else:
+                last_mrk = None
 
             if bot.get_me().first_name != 'DinoGochi':
                 print(last_mrk, 'last_mrk')
@@ -2117,9 +2119,13 @@ def answer(call):
     elif call.data[:9] == 'iteminfo_':
 
         item = functions.get_dict_item(call.data[9:])
-        text= functions.item_info(item, bd_user['language_code'])
+        text, image  = functions.item_info(item, bd_user['language_code'], mark = False)
 
-        bot.send_message(call.message.chat.id, text, parse_mode = 'Markdown')
+        if image == None:
+            bot.send_message(call.message.chat.id, text, parse_mode = 'Markdown')
+        else:
+            bot.send_photo(call.message.chat.id, image, text, parse_mode = 'Markdown')
+
 
     elif call.data == 'inventory':
 

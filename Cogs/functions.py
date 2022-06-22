@@ -1245,6 +1245,12 @@ class functions:
             text += d_text
             in_text = ['🔮 | Use', '🗑 | Delete', '🔁 | Transfer', '🛠 | Сreated item']
 
+        if 'image' in item.keys():
+            image = open(f"images/items/{item['image']}.png", 'rb')
+
+        else:
+            image = None
+
         if mark == True:
             markup_inline = types.InlineKeyboardMarkup()
             markup_inline.add( types.InlineKeyboardButton( text = in_text[0], callback_data = f"item_{functions.qr_item_code(us_item)}"),  types.InlineKeyboardButton( text = in_text[1], callback_data = f"remove_item_{functions.qr_item_code(us_item)}") )
@@ -1275,10 +1281,10 @@ class functions:
 
                 markup_inline.add( types.InlineKeyboardButton( text = bt_text, callback_data = f"ns_craft {functions.qr_item_code(us_item)} {cr_dct_id}") )
 
-            return text, markup_inline
+            return text, markup_inline, image
 
         else:
-            return text
+            return text, image
 
     @staticmethod
     def exchange(bot, message, user_item, bd_user):
@@ -2033,9 +2039,14 @@ class functions:
 
                             if inv_t == 'info':
 
-                                text,  markup_inline = functions.item_info(item, bd_user['language_code'])
+                                text,  markup_inline, image = functions.item_info(item, bd_user['language_code'])
 
-                                mms = bot.send_message(message.chat.id, text, reply_markup = markup_inline, parse_mode = 'Markdown')
+                                if image == None:
+                                    mms = bot.send_message(message.chat.id, text, reply_markup = markup_inline, parse_mode = 'Markdown')
+
+                                else:
+                                    mms = bot.send_photo(message.chat.id, image, text, reply_markup = markup_inline, parse_mode = 'Markdown')
+
                                 work_pr(message, pages, page, items_id, ind_sort_it, mms)
 
                             if inv_t == 'add_product':
@@ -2765,7 +2776,7 @@ class functions:
         global users_timeout
 
         if str(user_id) in users_timeout.keys():
-            if users_timeout[str(user_id)] + 2 < int(time.time()):
+            if users_timeout[str(user_id)] + 1.5 < time.time():
                 del users_timeout[str(user_id)]
                 return True
 

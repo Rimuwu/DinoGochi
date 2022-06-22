@@ -1,104 +1,104 @@
 {"items": {
 
- "1": {"nameru": "🍯 Баночка мёда", "nameen": "🍯 Jar of honey", "type": "+heal", "act": 15},
+ "1": {"nameru": "🍯 Баночка мёда", "nameen": "🍯 Jar of honey", "type": "+heal", "act": 15, "image": "item1" },
 
- "2": {"nameru": "🍪 Печенье", "nameen": "🍪 Cookies", "type": "+eat", "act": 5, "class": "ALL", "+mood": 10, "ns_craft": { "1": { "materials": ["2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2"], "create": ["47"] }} },
+ "2": {"nameru": "🍪 Печенье", "nameen": "🍪 Cookies", "type": "+eat", "act": 5, "class": "ALL", "+mood": 10, "ns_craft": { "1": { "materials": ["2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2"], "create": ["47"] }}, "image": "item2" },
 
- "3": {"nameru": "🥚 Загадочное яйцо", "nameen": "🥚 Mysterious egg", "type": "egg", "incub_time": 12, "time_tag": "h", "inc_type": "random"},
+ "3": {"nameru": "🥚 Загадочное яйцо", "nameen": "🥚 Mysterious egg", "type": "egg", "incub_time": 12, "time_tag": "h", "inc_type": "random", "image": "item3"},
 
- "4": {"nameru": "⏲ Таймер", "nameen": "⏲ Timer", "type": "game_ac", "descriptionru": "Даёт возможность узнать сколько времени продлится игра.", "descriptionen": "Gives you the opportunity to find out how long the game will last.", "abilities": {"endurance": 100}},
+ "4": {"nameru": "⏲ Таймер", "nameen": "⏲ Timer", "type": "game_ac", "descriptionru": "Даёт возможность узнать сколько времени продлится игра.", "descriptionen": "Gives you the opportunity to find out how long the game will last.", "abilities": {"endurance": 100}, "image": "item4"},
 
- "5": {"nameru": "🍖 Мясо кабана", "nameen": "🍖 Wild boar meat", "type": "+eat", "act": 25, "class": "Carnivore"},
+ "5": {"nameru": "🍖 Мясо кабана", "nameen": "🍖 Wild boar meat", "type": "+eat", "act": 25, "class": "Carnivore", "image": "item5"},
 
- "6": {"nameru": "🌿 Связка трав", "nameen": "🌿 A bunch of herbs", "type": "+eat", "act": 25, "class": "Herbivore"},
+ "6": {"nameru": "🌿 Связка трав", "nameen": "🌿 A bunch of herbs", "type": "+eat", "act": 25, "class": "Herbivore", "image": "item6"},
 
- "7": {"nameru": "🍤 Рыба", "nameen": "🍤 Fish", "type": "+eat", "act": 25, "class": "Flying"},
+ "7": {"nameru": "🍤 Рыба", "nameen": "🍤 Fish", "type": "+eat", "act": 25, "class": "Flying", "image": "item7"},
 
- "8": {"nameru": "🥩 Мясо волка", "nameen": "🥩 Wolf Meat", "type": "+eat", "act": 15, "class": "Carnivore"},
+ "8": {"nameru": "🥩 Мясо волка", "nameen": "🥩 Wolf Meat", "type": "+eat", "act": 15, "class": "Carnivore", "image": "item8"},
 
- "9": {"nameru": "🌾 Травы с полей", "nameen": "🌾 A bunch of herbs", "type": "+eat", "act": 15, "class": "Herbivore"},
+ "9": {"nameru": "🌾 Травы с полей", "nameen": "🌾 A bunch of herbs", "type": "+eat", "act": 15, "class": "Herbivore", "image": "item9"},
 
- "10": {"nameru": "🍣 Морепродукты", "nameen": "🍣 Seafood", "type": "+eat", "act": 15, "class": "Flying"},
+ "10": {"nameru": "🍣 Морепродукты", "nameen": "🍣 Seafood", "type": "+eat", "act": 15, "class": "Flying", "image": "item10"},
 
- "11": {"nameru": "🍒 Ягоды", "nameen": "🍒 Berries", "type": "+eat", "act": 20, "class": "Herbivore"},
+ "11": {"nameru": "🍒 Ягоды", "nameen": "🍒 Berries", "type": "+eat", "act": 20, "class": "Herbivore", "image": "item11"},
 
- "12": {"nameru": "🍗 Куриная ножка", "nameen": "🍗 Chicken leg", "type": "+eat", "act": 20, "class": "Carnivore"},
+ "12": {"nameru": "🍗 Куриная ножка", "nameen": "🍗 Chicken leg", "type": "+eat", "act": 20, "class": "Carnivore", "image": "item12"},
 
- "13": {"nameru": "🦪 Мелкая рыба", "nameen": "🦪 Small fish", "type": "+eat", "act": 20, "class": "Flying"},
+ "13": {"nameru": "🦪 Мелкая рыба", "nameen": "🦪 Small fish", "type": "+eat", "act": 20, "class": "Flying", "image": "item13"},
 
- "14": {"nameru": "🧥 Плащ", "nameen": "🧥 Raincoat", "type": "journey_ac", "descriptionru": "Отменяет штраф за событие Дождь.", "descriptionen": "Cancels the penalty for the Rain event.", "abilities": {"endurance": 100}},
+ "14": {"nameru": "🧥 Плащ", "nameen": "🧥 Raincoat", "type": "journey_ac", "descriptionru": "Отменяет штраф за событие Дождь.", "descriptionen": "Cancels the penalty for the Rain event.", "abilities": {"endurance": 100}, "image": "item14"},
 
- "15": {"nameru": "🛠 Инструменты", "nameen": "🛠 Tools", "type": "hunt_ac", "descriptionru": "Ускоряют сбор пищи.", "descriptionen": "Accelerate the collection of food.", "act": 10, "abilities": {"endurance": 100}},
+ "15": {"nameru": "🛠 Инструменты", "nameen": "🛠 Tools", "type": "hunt_ac", "descriptionru": "Ускоряют сбор пищи.", "descriptionen": "Accelerate the collection of food.", "act": 10, "abilities": {"endurance": 100}, "image": "item15"},
 
- "16": {"nameru": "🧸 Мишка", "nameen": "🧸 Bear", "type": "unv_ac", "descriptionru": "Добавляет режимы сна.", "descriptionen": "Adds sleep modes.", "abilities": {"endurance": 100}},
+ "16": {"nameru": "🧸 Мишка", "nameen": "🧸 Bear", "type": "unv_ac", "descriptionru": "Добавляет режимы сна.", "descriptionen": "Adds sleep modes.", "abilities": {"endurance": 100}, "image": "item16"},
 
- "17": {"nameru": "🧪 Лечебная мазь", "nameen": "🧪 Therapeutic ointment", "type": "+heal", "act": 25},
+ "17": {"nameru": "🧪 Лечебная мазь", "nameen": "🧪 Therapeutic ointment", "type": "+heal", "act": 25, "image": "item17"},
 
- "18": {"nameru": "🍕 Кусочек пиццы", "nameen": "🍕 Slice of pizza", "type": "+eat", "act": 25, "class": "ALL", "+mood": 15},
+ "18": {"nameru": "🍕 Кусочек пиццы", "nameen": "🍕 Slice of pizza", "type": "+eat", "act": 25, "class": "ALL", "+mood": 15, "ns_craft": { "1": { "materials": ["18", "18", "18", "18", "18", "18", "18", "18", "18"], "create": ["48"] }}, "image": "item18"},
 
- "19": {"nameru": "🥞 Сладкие блинчики", "nameen": "🥞 Sweet pancakes", "type": "+eat", "act": 20, "class": "ALL", "+mood": 20},
+ "19": {"nameru": "🥞 Сладкие блинчики", "nameen": "🥞 Sweet pancakes", "type": "+eat", "act": 20, "class": "ALL", "+mood": 20, "image": "item19"},
 
- "20": {"nameru": "🥚 Необычное яйцо", "nameen": "🥚 Unusual egg", "type": "egg", "incub_time": 24, "time_tag": "h", "inc_type": "unc", "ns_craft": { "1": { "materials": ["20", "20", "20", "20", "20", "20", "20", "20", "20", "20"], "create": ["22"] } } },
+ "20": {"nameru": "🥚 Необычное яйцо", "nameen": "🥚 Unusual egg", "type": "egg", "incub_time": 24, "time_tag": "h", "inc_type": "unc", "ns_craft": { "1": { "materials": ["20", "20", "20", "20", "20", "20", "20", "20", "20", "20"], "create": ["22"] } }, "image": "item20" },
 
- "21": {"nameru": "🥚 Обычное яйцо", "nameen": "🥚 Ordinary egg", "type": "egg", "incub_time": 30, "time_tag": "m", "inc_type": "com", "ns_craft": { "1": { "materials": ["21", "21", "21", "21", "21", "21", "21", "21", "21", "21"], "create": ["20"] } } },
+ "21": {"nameru": "🥚 Обычное яйцо", "nameen": "🥚 Ordinary egg", "type": "egg", "incub_time": 30, "time_tag": "m", "inc_type": "com", "ns_craft": { "1": { "materials": ["21", "21", "21", "21", "21", "21", "21", "21", "21", "21"], "create": ["20"] } }, "image": "item21" },
 
- "22": {"nameru": "🥚 Редкое яйцо", "nameen": "🥚 Rare egg", "type": "egg", "incub_time": 48, "time_tag": "h", "inc_type": "rar", "ns_craft": { "1": { "materials": ["22", "22", "22", "22", "22", "22", "22", "22", "22", "22"], "create": ["23"] } } },
+ "22": {"nameru": "🥚 Редкое яйцо", "nameen": "🥚 Rare egg", "type": "egg", "incub_time": 48, "time_tag": "h", "inc_type": "rar", "ns_craft": { "1": { "materials": ["22", "22", "22", "22", "22", "22", "22", "22", "22", "22"], "create": ["23"] } }, "image": "item22" },
 
- "23": {"nameru": "🥚 Мистическое яйцо", "nameen": "🥚 Rare egg", "type": "egg", "incub_time": 72, "time_tag": "h", "inc_type": "myt", "ns_craft": { "1": { "materials": ["23", "23", "23", "23", "23", "23", "23", "23", "23", "23"], "create": ["24"] } }},
+ "23": {"nameru": "🥚 Мистическое яйцо", "nameen": "🥚 Rare egg", "type": "egg", "incub_time": 72, "time_tag": "h", "inc_type": "myt", "ns_craft": { "1": { "materials": ["23", "23", "23", "23", "23", "23", "23", "23", "23", "23"], "create": ["24"] } }, "image": "item23"},
 
- "24": {"nameru": "🥚 Легендарное яйцо", "nameen": "🥚 Legendary Egg", "type": "egg", "incub_time": 110, "time_tag": "h", "inc_type": "leg"},
+ "24": {"nameru": "🥚 Легендарное яйцо", "nameen": "🥚 Legendary Egg", "type": "egg", "incub_time": 110, "time_tag": "h", "inc_type": "leg", "image": "item24"},
 
- "25": {"nameru": "📄 Пустая бумажка", "nameen": "📄 An empty piece of paper", "type": "material"},
+ "25": {"nameru": "📄 Пустая бумажка", "nameen": "📄 An empty piece of paper", "type": "material", "image": "item25"},
 
- "26": {"nameru": "👢 Кожа", "nameen": "👢 Leather", "type": "material"},
+ "26": {"nameru": "👢 Кожа", "nameen": "👢 Leather", "type": "material", "image": "item26"},
 
- "27": {"nameru": "🥢 Веточки дерева", "nameen": "🥢 Tree branches", "type": "material"},
+ "27": {"nameru": "🥢 Веточки дерева", "nameen": "🥢 Tree branches", "type": "material", "image": "item27"},
 
- "28": {"nameru": "🐡 Рыбий жир", "nameen": "🐡 Fish oil", "type": "material"},
+ "28": {"nameru": "🐡 Рыбий жир", "nameen": "🐡 Fish oil", "type": "material", "image": "item28"},
 
- "29": {"nameru": "🧤 Кожаная одежда", "nameen": "🧤 Leather clothing", "type": "journey_ac", "descriptionru": "Отменяет штраф за событие драка.", "descriptionen": "Cancels the penalty for the fight event.", "abilities": {"endurance": 100}},
+ "29": {"nameru": "🧤 Кожаная одежда", "nameen": "🧤 Leather clothing", "type": "journey_ac", "descriptionru": "Отменяет штраф за событие драка.", "descriptionen": "Cancels the penalty for the fight event.", "abilities": {"endurance": 100}, "image": "item29"},
 
- "30": {"nameru": "📜 Кожаная одежда", "nameen": "📜 Leather clothing", "type": "recipe", "descriptionru": "Рецепт изготовления '🧤 Кожаная одежда' из 5-ти кожи.", "descriptionen": "The recipe for making '🧤 Leather clothing' from 5 leather.", "create": ["29"], "materials": [ {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"} ], "abilities": {"uses": 3} },
+ "30": {"nameru": "📜 Кожаная одежда", "nameen": "📜 Leather clothing", "type": "recipe", "descriptionru": "Рецепт изготовления '🧤 Кожаная одежда' из 5-ти кожи.", "descriptionen": "The recipe for making '🧤 Leather clothing' from 5 leather.", "create": ["29"], "materials": [ {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"} ], "abilities": {"uses": 3}, "image": "recipe" },
 
- "31": {"nameru": "🔥 Факел", "nameen": "🔥 Torch", "type": "hunt_ac", "descriptionru": "Во время собирательства, есть шанс найти более изысканные травы.", "descriptionen": "While gathering, there is a chance to find more refined herbs.", "abilities": {"endurance": 100}},
+ "31": {"nameru": "🔥 Факел", "nameen": "🔥 Torch", "type": "hunt_ac", "descriptionru": "Во время собирательства, есть шанс найти более изысканные травы.", "descriptionen": "While gathering, there is a chance to find more refined herbs.", "abilities": {"endurance": 100}, "image": "item31"},
 
- "32": {"nameru": "📜 Рецепт факела", "nameen": "📜 Torch Recipe", "type": "recipe", "descriptionru": "Рецепт изготовления '🔥 Факел' из 4-ёх веточек дерева и 1-ой бумажки.", "descriptionen": "The recipe for making a '🔥 Torch' from 4 tree branches and 1 piece of paper.", "create": ["31"], "materials": [ {"item": "27", "type": "delete"}, {"item": "27", "type": "delete"}, {"item": "27", "type": "delete"}, {"item": "27", "type": "delete"}, {"item": "25", "type": "delete"}, {"item": "25", "type": "delete"}, {"item": "25", "type": "delete"} ], "abilities": {"uses": 1}},
+ "32": {"nameru": "📜 Рецепт факела", "nameen": "📜 Torch Recipe", "type": "recipe", "descriptionru": "Рецепт изготовления '🔥 Факел' из 4-ёх веточек дерева и 1-ой бумажки.", "descriptionen": "The recipe for making a '🔥 Torch' from 4 tree branches and 1 piece of paper.", "create": ["31"], "materials": [ {"item": "27", "type": "delete"}, {"item": "27", "type": "delete"}, {"item": "27", "type": "delete"}, {"item": "27", "type": "delete"}, {"item": "25", "type": "delete"}, {"item": "25", "type": "delete"}, {"item": "25", "type": "delete"} ], "abilities": {"uses": 1}, "image": "recipe"},
 
- "33": {"nameru": "🍵 Лекарственный напиток", "nameen": "🍵 Medicinal drink", "type": "+heal", "act": 45, "-mood": 10},
+ "33": {"nameru": "🍵 Лекарственный напиток", "nameen": "🍵 Medicinal drink", "type": "+heal", "act": 45, "-mood": 10, "image": "item33"},
 
- "34": {"nameru": "📜 Лекарственный напиток", "nameen": "📜 Medicinal drink", "type": "recipe", "descriptionru": "Рецепт изготовления '🍵 Лекарственный напиток' из 5-ти рыбьего жира.", "descriptionen": "Recipe for making '🍵 Medicinal drink' from 5 fish oil.", "create": ["33"], "materials": [ {"item": "28", "type": "delete"}, {"item": "28", "type": "delete"}, {"item": "28", "type": "delete"}, {"item": "28", "type": "delete"}, {"item": "28", "type": "delete"} ], "abilities": {"uses": 10}},
+ "34": {"nameru": "📜 Лекарственный напиток", "nameen": "📜 Medicinal drink", "type": "recipe", "descriptionru": "Рецепт изготовления '🍵 Лекарственный напиток' из 5-ти рыбьего жира.", "descriptionen": "Recipe for making '🍵 Medicinal drink' from 5 fish oil.", "create": ["33"], "materials": [ {"item": "28", "type": "delete"}, {"item": "28", "type": "delete"}, {"item": "28", "type": "delete"}, {"item": "28", "type": "delete"}, {"item": "28", "type": "delete"} ], "abilities": {"uses": 10}, "image": "recipe"},
 
- "35": {"nameru": "🍀 Изысканные травы", "nameen": "🍀 Exquisite herbs", "type": "+eat", "act": 45, "class": "Herbivore"},
+ "35": {"nameru": "🍀 Изысканные травы", "nameen": "🍀 Exquisite herbs", "type": "+eat", "act": 45, "class": "Herbivore", "image": "item35"},
 
- "36": {"nameru": "🍵 Чай", "nameen": "🍵 Tea", "type": "+unv", "act": 25, "-eat": 30},
+ "36": {"nameru": "🍵 Чай", "nameen": "🍵 Tea", "type": "+unv", "act": 25, "-eat": 30, "image": "item36"},
 
- "37": {"nameru": "📜 Рецепт чая", "nameen": "📜 Tea recipe", "type": "recipe", "descriptionru": "Рецепт изготовления '🍵 Чай' из 5-ти изысканных трав.", "descriptionen": "Recipe for making '🍵 Tea' from 5 exquisite herbs.", "create": ["36"], "materials": [ {"item": "35", "type": "delete"}, {"item": "35", "type": "delete"}, {"item": "35", "type": "delete"}, {"item": "35", "type": "delete"}, {"item": "35", "type": "delete"} ], "abilities": {"uses": 10}},
+ "37": {"nameru": "📜 Рецепт чая", "nameen": "📜 Tea recipe", "type": "recipe", "descriptionru": "Рецепт изготовления '🍵 Чай' из 5-ти изысканных трав.", "descriptionen": "Recipe for making '🍵 Tea' from 5 exquisite herbs.", "create": ["36"], "materials": [ {"item": "35", "type": "delete"}, {"item": "35", "type": "delete"}, {"item": "35", "type": "delete"}, {"item": "35", "type": "delete"}, {"item": "35", "type": "delete"} ], "abilities": {"uses": 10}, "image": "recipe"},
 
- "38": {"nameru": "🥩 Жареное мясо", "nameen": "🥩 Fried meat", "type": "+eat", "act": 40, "class": "Carnivore"},
+ "38": {"nameru": "🥩 Жареное мясо", "nameen": "🥩 Fried meat", "type": "+eat", "act": 40, "class": "Carnivore", "image": "item38"},
 
- "39": {"nameru": "📜 Жареное мясо", "nameen": "📜 Fried meat", "type": "recipe", "descriptionru": "Кто не любит съесть кусочек хорошо приготовленного мяса? Динозавр тоже не откажется. Чтобы приготовить данный деликатес, понадобится открытый огонь, тут нам поможет 🔥 Факел! Но после использования мы не будем его выкидывать, а просто положим обратно.", "descriptionen": "Who doesn't like to eat a piece of well-cooked meat? The dinosaur won't refuse either. To cook this delicacy, you will need an open fire, a 🔥 torch will help us here! But after using it, we will not throw it away, but just put it back.", "create": ["38"], "materials": [ {"item": "31", "type": "endurance", "act": 10}, {"item": "8", "type": "delete"}, {"item": "8", "type": "delete"} ], "abilities": {"uses": 100}},
+ "39": {"nameru": "📜 Жареное мясо", "nameen": "📜 Fried meat", "type": "recipe", "descriptionru": "Кто не любит съесть кусочек хорошо приготовленного мяса? Динозавр тоже не откажется. Чтобы приготовить данный деликатес, понадобится открытый огонь, тут нам поможет 🔥 Факел! Но после использования мы не будем его выкидывать, а просто положим обратно.", "descriptionen": "Who doesn't like to eat a piece of well-cooked meat? The dinosaur won't refuse either. To cook this delicacy, you will need an open fire, a 🔥 torch will help us here! But after using it, we will not throw it away, but just put it back.", "create": ["38"], "materials": [ {"item": "31", "type": "endurance", "act": 10}, {"item": "8", "type": "delete"}, {"item": "8", "type": "delete"} ], "abilities": {"uses": 100}, "image": "recipe"},
 
- "40": {"nameru": "🥗 Салат", "nameen": "🥗 Salad", "type": "+eat", "act": 70, "class": "Herbivore"},
+ "40": {"nameru": "🥗 Салат", "nameen": "🥗 Salad", "type": "+eat", "act": 70, "class": "Herbivore", "image": "item40"},
 
- "41": {"nameru": "📜 Салат", "nameen": "📜 Salad", "type": "recipe", "descriptionru": "Не надоело ли динозавру питаться одной травой? Может лучше сделаем салат из нескольких трав? Моему динозавру понравился результат!", "descriptionen": "Isn't the dinosaur tired of eating grass alone? Maybe we'd better make a salad of several herbs? My dinosaur liked the result!", "create": ["40"], "materials": [ {"item": "6", "type": "delete"},  {"item": "9", "type": "delete"},  {"item": "11", "type": "delete"}, {"item": "27", "type": "delete"}, {"item": "27", "type": "delete"} ], "abilities": {"uses": 40}},
+ "41": {"nameru": "📜 Салат", "nameen": "📜 Salad", "type": "recipe", "descriptionru": "Не надоело ли динозавру питаться одной травой? Может лучше сделаем салат из нескольких трав? Моему динозавру понравился результат!", "descriptionen": "Isn't the dinosaur tired of eating grass alone? Maybe we'd better make a salad of several herbs? My dinosaur liked the result!", "create": ["40"], "materials": [ {"item": "6", "type": "delete"},  {"item": "9", "type": "delete"},  {"item": "11", "type": "delete"}, {"item": "27", "type": "delete"}, {"item": "27", "type": "delete"} ], "abilities": {"uses": 40}, "image": "recipe"},
 
- "42": {"nameru": "🥣 Суп", "nameen": "🥣 Soup", "type": "+eat", "act": 55, "class": "Flying"},
+ "42": {"nameru": "🥣 Суп", "nameen": "🥣 Soup", "type": "+eat", "act": 55, "class": "Flying", "image": "item42"},
 
- "43": {"nameru": "📜 Суп", "nameen": "📜 Soup", "type": "recipe", "descriptionru": "'Рыба живёт в воде, почему я ем её сухой?' - Так наверно думает каждый динозавр, он просто ещё не пробовал рыбный суп.", "descriptionen": "'A fish lives in water, why do I eat it dry?' - That's probably what every dinosaur thinks, he just hasn't tried fish soup yet.", "create": ["42"], "materials": [ {"item": "10", "type": "delete"}, {"item": "10", "type": "delete"}, {"item": "10", "type": "delete"}, {"item": "4", "type": "endurance", "act": 10} ], "abilities": {"uses": 40}},
+ "43": {"nameru": "📜 Суп", "nameen": "📜 Soup", "type": "recipe", "descriptionru": "'Рыба живёт в воде, почему я ем её сухой?' - Так наверно думает каждый динозавр, он просто ещё не пробовал рыбный суп.", "descriptionen": "'A fish lives in water, why do I eat it dry?' - That's probably what every dinosaur thinks, he just hasn't tried fish soup yet.", "create": ["42"], "materials": [ {"item": "10", "type": "delete"}, {"item": "10", "type": "delete"}, {"item": "10", "type": "delete"}, {"item": "4", "type": "endurance", "act": 10} ], "abilities": {"uses": 40}, "image": "recipe"},
 
- "44": {"nameru": "🧩 Настольные игры", "nameen": "🧩 Board games", "type": "game_ac", "descriptionru": "Добавляет 4 настольные игры для динозавра!", "descriptionen": "Adds 4 board games for dinosaur!", "abilities": {"endurance": 100}},
+ "44": {"nameru": "🧩 Настольные игры", "nameen": "🧩 Board games", "type": "game_ac", "descriptionru": "Добавляет 4 настольные игры для динозавра!", "descriptionen": "Adds 4 board games for dinosaur!", "abilities": {"endurance": 100}, "image": "item44"},
 
- "45": {"nameru": "👜 Походный мешочек", "nameen": "👜 Travel bag", "type": "journey_ac", "descriptionru": "Увеличивает шанс событий в путешествии.", "descriptionen": "Increases the chance of travel events.", "abilities": {"endurance": 100}},
+ "45": {"nameru": "👜 Походный мешочек", "nameen": "👜 Travel bag", "type": "journey_ac", "descriptionru": "Увеличивает шанс событий в путешествии.", "descriptionen": "Increases the chance of travel events.", "abilities": {"endurance": 100}, "image": "item45"},
 
- "46": {"nameru": "📜 Походный мешочек", "nameen": "📜 Travel bag", "type": "recipe", "descriptionru": "Во время путешествия динозавру требуется место для хранения всех найденных вещей, тут нам поможет походный мешочек!", "descriptionen": "During the journey, the dinosaur needs a place to store all the things found, a hiking bag will help us here!", "create": ["45"], "materials": [ {"item": "26", "type": "delete"},  {"item": "26", "type": "delete"},  {"item": "26", "type": "delete"},  {"item": "27", "type": "delete"},  {"item": "27", "type": "delete"}, {"item": "15", "type": "endurance", "act": 30}], "abilities": {"uses": 2}},
+ "46": {"nameru": "📜 Походный мешочек", "nameen": "📜 Travel bag", "type": "recipe", "descriptionru": "Во время путешествия динозавру требуется место для хранения всех найденных вещей, тут нам поможет походный мешочек!", "descriptionen": "During the journey, the dinosaur needs a place to store all the things found, a hiking bag will help us here!", "create": ["45"], "materials": [ {"item": "26", "type": "delete"},  {"item": "26", "type": "delete"},  {"item": "26", "type": "delete"},  {"item": "27", "type": "delete"},  {"item": "27", "type": "delete"}, {"item": "15", "type": "endurance", "act": 30}], "abilities": {"uses": 2}, "image": "recipe"},
 
- "47": {"nameru": "🍪 Набор печенек", "nameen": "🍪 A set of cookies", "type": "+eat", "act": 6, "class": "ALL", "+mood": 10, "abilities": {"uses": 15}},
+ "47": {"nameru": "🍪 Набор печенек", "nameen": "🍪 A set of cookies", "type": "+eat", "act": 6, "class": "ALL", "+mood": 10, "abilities": {"uses": 15}, "image": "item47"},
 
- "48": {"nameru": "🍕 Пицца", "nameen": "🍕 Pizza", "type": "+eat", "act": 25, "class": "ALL", "+mood": 15, "abilities": {"uses": 9}},
+ "48": {"nameru": "🍕 Пицца", "nameen": "🍕 Pizza", "type": "+eat", "act": 25, "class": "ALL", "+mood": 15, "abilities": {"uses": 9}, "image": "item50"},
 
- "49": {"nameru": "🔮 Магический камень", "nameen": "🔮 Magic Stone", "type": "material", "abilities": {"mana": 0}},
+ "49": {"nameru": "🔮 Магический камень", "nameen": "🔮 Magic Stone", "type": "material", "abilities": {"mana": 0}, "image": "item49"},
 
- "50": {"nameru": "🌮 Тако", "nameen": "🌮 Tacos", "type": "+eat", "act": 40, "class": "ALL", "+mood": 20}
+ "50": {"nameru": "🌮 Тако", "nameen": "🌮 Tacos", "type": "+eat", "act": 40, "class": "ALL", "+mood": 20, "image": "item50"}
 
 }
 }

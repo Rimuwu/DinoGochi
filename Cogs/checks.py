@@ -455,9 +455,9 @@ class checks:
                             dinos_stats['unv'] -= random.randint(0,1)
 
                         if functions.acc_check(bot, user, '15', dino_id, False):
-                            pr_hunt = 15
+                            pr_hunt = 25
                         else:
-                            pr_hunt = 20
+                            pr_hunt = 30
 
                         r = random.randint(1, pr_hunt)
                         if r == 1:
@@ -564,11 +564,11 @@ class checks:
                                 r_event = random.randint(1, 100)
                                 if r_event in list(range(1,51)): #обычное соб
                                     events = ['sunny', 'm_coins', 'breeze'] #, 'trade'
-                                elif r_event in list(range(51,76)): #необычное соб
+                                elif r_event in list(range(51,81)): #необычное соб
                                     events = ['+eat', 'sleep', 'u_coins', 'friend_meet', 'deadlock']
-                                elif r_event in list(range(76,91)): #редкое соб
+                                elif r_event in list(range(81,98)): #редкое соб
                                     events = ['random_items', 'b_coins', 'deadlock', 'friend_game']
-                                elif r_event in list(range(91,100)): #мистическое соб
+                                elif r_event in list(range(98,100)): #мистическое соб
                                     events = ['random_items_leg', 'y_coins'] #, 'magic_stone'
                                 else: #легендарное соб
                                     events = ['egg', 'l_coins']
@@ -847,7 +847,7 @@ class checks:
 
                                 elif event == 'random_items':
 
-                                    item = functions.random_items(["1", "2", '25'], ['17', '18', '19', "1", "2", '25'], ['26', '27', '28', '17', '18', '19', "1", "2", '25'], ['26', '27', '28', '17', '18', '19', '44', "1", "2", '25', '30'], ["30", "39", "41", "43", '44', "46", "32"])
+                                    item = functions.random_items(["1", "2", '25'], ['17', '18', '19', "1", "2", '25'], ['26', '27', '28', '17', '18', '19', "1", "2", '25'], ['26', '27', '28', '17', '18', '19', "1", "2", '25'], ['26', '27', '28', '17', '18', '19', "1", "2", '25'], ['26', '27', '28', "1", "2", "30", "39", "41", "43", '44', "46", "32"])
 
                                     if mood_n == True:
 
