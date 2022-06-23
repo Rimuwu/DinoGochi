@@ -83,7 +83,7 @@ class commands:
     def project_reb(bot, message, user, bd_user):
 
         if bd_user != None:
-            if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False and bd_user['lvl'][0] < 5:
+            if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False and bd_user['lvl'][0] <= 5:
 
                 if bd_user['language_code'] == 'ru':
                     text =  f"К вам подходит человек в чёрном одеянии.\n\n"

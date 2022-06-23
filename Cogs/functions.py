@@ -857,7 +857,7 @@ class functions:
                         nl = '🧩 Project: Rebirth'
                         nl2 = '🎮 Inventory'
 
-                    if functions.inv_egg(user) == False:
+                    if functions.inv_egg(user) == False and user['lvl'][0] <= 5:
                         markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
                         markup.add(nl)
 
@@ -982,6 +982,28 @@ class functions:
                         text = f'🎉 | {chat.first_name}, ваш уровень повышен! ({arg})'
                     else:
                         text = f'🎉 | {chat.first_name}, your level has been raised! ({arg})'
+
+                    if int(arg) in [20, 40, 60, 80, 100]:
+
+                        if user['language_code'] == 'ru':
+                            text = f'\n\n✨ | Теперь у вас появился +1 слот для динозавров!'
+                        else:
+                            text = f'\n\n✨ | Now you have +1 dinosaur slot!'
+
+                    if int(arg) == 50:
+
+                        if user['language_code'] == 'ru':
+                            text = f'\n\n🎴 | Вы на полпути к максимальному уровню, так держать!'
+                        else:
+                            text = f'\n\n🎴 | You are halfway to the maximum level, keep it up!'
+
+                    if int(arg) == 100:
+
+                        if user['language_code'] == 'ru':
+                            text = f'\n\n🎴 | Вы достигли максимального уровня!'
+                        else:
+                            text = f'\n\n🎴 | You have reached the maximum level!'
+
 
                     try:
                         bot.send_message(user['userid'], text)
