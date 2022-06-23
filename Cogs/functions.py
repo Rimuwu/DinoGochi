@@ -2803,6 +2803,7 @@ class functions:
                 return True
 
             else:
+                users_timeout[str(user_id)] = time.time()
                 return False
 
         else:
