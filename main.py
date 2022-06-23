@@ -394,6 +394,28 @@ def on_message(message):
     user = message.from_user
     bd_user = users.find_one({"userid": user.id})
 
+    def tr_c_f():
+        tr_c = False
+        stats_list = []
+        if bd_user != None and len(list(bd_user['dinos'])) > 0:
+            for i in bd_user['dinos'].keys():
+                dd = bd_user['dinos'][i]
+                stats_list.append(dd['status'])
+
+            if 'dino' in stats_list:
+                tr_c = True
+
+        return tr_c
+
+    def lst_m_f():
+
+        if bd_user != None:
+            last_mrk = functions.last_markup(bd_user, alternative = 1)
+        else:
+            last_mrk = None
+
+        return last_mrk
+
     if bot.get_me().first_name != 'DinoGochi':
         print("Поймал", message.text, 'от ', user.first_name)
 
@@ -421,29 +443,12 @@ def on_message(message):
             bot.reply_to(message, text, reply_markup = markup_inline, parse_mode="Markdown")
 
         else:
-            tr_c = False
-            stats_list = []
-            if bd_user != None and len(list(bd_user['dinos'])) > 0:
-                for i in bd_user['dinos'].keys():
-                    dd = bd_user['dinos'][i]
-                    stats_list.append(dd['status'])
-
-                if 'dino' in stats_list:
-                    tr_c = True
-
-            if bd_user != None:
-                last_mrk = functions.last_markup(bd_user, alternative = 1)
-            else:
-                last_mrk = None
-
-            if bot.get_me().first_name != 'DinoGochi':
-                print(last_mrk, 'last_mrk')
 
             if message.text in ['🍡 Начать играть', '🍡 Start playing']:
 
                 commands.start_game(bot, message, user, bd_user)
 
-            if message.text in ["🧩 Проект: Возрождение", '🧩 Project: Rebirth']:
+            elif message.text in ["🧩 Проект: Возрождение", '🧩 Project: Rebirth']:
 
                 commands.project_reb(bot, message, user, bd_user)
 
@@ -459,226 +464,189 @@ def on_message(message):
 
                 functions.user_inventory(bot, user, message)
 
-            elif last_mrk == 1:
+            elif message.text in ['🦖 Динозавр', '🦖 Dinosaur']:
 
-                if message.text in ['🦖 Динозавр', '🦖 Dinosaur']:
+                commands.dino_prof(bot, message, user)
 
-                    commands.dino_prof(bot, message, user)
+            elif message.text in ['🔧 Настройки', '🔧 Settings']:
 
-                elif message.text in ['🔧 Настройки', '🔧 Settings']:
+                commands.open_settings(bot, message, user, bd_user)
 
-                    commands.open_settings(bot, message, user, bd_user)
+            elif message.text in ['👥 Друзья', '👥 Friends']:
 
-                elif message.text in ['👥 Друзья', '👥 Friends']:
+                commands.friends_open(bot, message, user, bd_user)
 
-                    commands.friends_open(bot, message, user, bd_user)
+            elif message.text in ['❗ FAQ']:
 
-                elif message.text in ['❗ FAQ']:
+                commands.faq(bot, message, user, bd_user)
 
-                    commands.faq(bot, message, user, bd_user)
+            elif message.text in ['🍺 Дино-таверна', '🍺 Dino-tavern'] and lst_m_f() != 'dino-tavern':
 
-                elif message.text in ['🍺 Дино-таверна', '🍺 Dino-tavern']:
+                commands.open_dino_tavern(bot, message, user, bd_user)
 
-                    commands.open_dino_tavern(bot, message, user, bd_user)
+            elif tr_c_f() and message.text in ['🕹 Действия', '🕹 Actions']:
 
-                elif tr_c == True and message.text in ['🕹 Действия', '🕹 Actions']:
+                commands.open_action_menu(bot, message, user, bd_user)
 
-                    commands.open_action_menu(bot, message, user, bd_user)
+            elif message.text in ['❗ Notifications', '❗ Уведомления']:
 
-                elif tr_c == False and message.text in ['🕹 Действия', '🕹 Actions']:
+                commands.not_set(bot, message, user, bd_user)
 
-                    pass
+            elif message.text in ["👅 Язык", "👅 Language"]:
 
-                else:
+                commands.lang_set(bot, message, user, bd_user)
 
-                    if bd_user != None:
+            elif message.text in ['⁉ Видимость FAQ', '⁉ Visibility FAQ']:
 
-                        if bd_user['language_code'] == 'ru':
-                            text = '❓ Последнее действие не найдено, вы были перенаправлены в главное меню!'
-                        else:
-                            text = '❓ The last action was not found, you were redirected to the main menu!'
+                commands.settings_faq(bot, message, user, bd_user)
 
-                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, user = user))
+            elif tr_c_f() and message.text in ['💬 Переименовать', '💬 Rename']:
 
-            elif last_mrk == 'settings':
+                commands.rename_dino(bot, message, user, bd_user)
 
-                if message.text in ['❗ Notifications', '❗ Уведомления']:
+            elif message.text in ["➕ Добавить", "➕ Add"]:
 
-                    commands.not_set(bot, message, user, bd_user)
+                commands.add_friend(bot, message, user, bd_user)
 
-                elif message.text in ["👅 Язык", "👅 Language"]:
+            elif message.text in ["📜 Список", "📜 List"]:
 
-                    commands.lang_set(bot, message, user, bd_user)
+                commands.friends_list(bot, message, user, bd_user)
 
-                elif message.text in ['⁉ Видимость FAQ', '⁉ Visibility FAQ']:
+            elif message.text in ["💌 Запросы", "💌 Inquiries"]:
 
-                    commands.settings_faq(bot, message, user, bd_user)
+                functions.user_requests(bot, user, message)
 
-                elif tr_c == True:
+            elif message.text in ['➖ Удалить', '➖ Delete']:
 
-                    if message.text in ['💬 Переименовать', '💬 Rename']:
+                commands.delete_friend(bot, message, user, bd_user)
 
-                        commands.rename_dino(bot, message, user, bd_user)
+            elif message.text in ['🤍 Пригласи друга', '🤍 Invite a friend']:
 
-            elif last_mrk == "friends-menu":
+                commands.invite_friend(bot, message, user, bd_user)
 
-                if message.text in ["➕ Добавить", "➕ Add"]:
+            elif message.text in ['🎲 Сгенерировать код', '🎲 Generate Code']:
 
-                    commands.add_friend(bot, message, user, bd_user)
+                commands.generate_fr_code(bot, message, user, bd_user)
 
-                elif message.text in ["📜 Список", "📜 List"]:
+            elif message.text in ['🎞 Ввести код', '🎞 Enter Code']:
 
-                    commands.friends_list(bot, message, user, bd_user)
+                commands.enter_fr_code(bot, message, user, bd_user)
 
-                elif message.text in ["💌 Запросы", "💌 Inquiries"]:
+            elif message.text in ['👥 Меню друзей', '👥 Friends Menu']:
 
-                    functions.user_requests(bot, user, message)
+                commands.friends_menu(bot, message, user, bd_user)
 
-                elif message.text in ['➖ Удалить', '➖ Delete']:
+            elif tr_c_f() and message.text in ['🌙 Уложить спать', '🌙 Put to bed']:
 
-                    commands.delete_friend(bot, message, user, bd_user)
+                commands.dino_sleep_ac(bot, message, user, bd_user)
 
-                elif message.text in ['🤍 Пригласи друга', '🤍 Invite a friend']:
+            elif tr_c_f() and message.text in ['🌙 Пробудить', '🌙 Awaken']:
 
-                    commands.invite_friend(bot, message, user, bd_user)
+                commands.dino_unsleep_ac(bot, message, user, bd_user)
 
-            elif last_mrk == "referal-system":
+            elif tr_c_f() and message.text in ['🎑 Путешествие', '🎑 Journey']:
 
-                if message.text in ['🎲 Сгенерировать код', '🎲 Generate Code']:
+                commands.dino_journey(bot, message, user, bd_user)
 
-                    commands.generate_fr_code(bot, message, user, bd_user)
+            elif tr_c_f() and message.text in ['🎑 Вернуть', '🎑 Call']:
 
-                elif message.text in ['🎞 Ввести код', '🎞 Enter Code']:
+                commands.dino_unjourney(bot, message, user, bd_user)
 
-                    commands.enter_fr_code(bot, message, user, bd_user)
+            elif tr_c_f() and message.text in ['🎮 Развлечения', '🎮 Entertainments']:
 
-                elif message.text in ['👥 Меню друзей', '👥 Friends Menu']:
+                commands.dino_entert(bot, message, user, bd_user)
 
-                    commands.friends_menu(bot, message, user, bd_user)
+            elif tr_c_f() and message.text in ['🍣 Покормить', '🍣 Feed']:
 
-            elif last_mrk == 'actions':
+                commands.dino_feed(bot, message, user, bd_user)
 
-                if tr_c == True:
+            elif tr_c_f() and message.text in ['🍕 Сбор пищи', '🍕 Collecting food']:
 
-                    if message.text in ['🌙 Уложить спать', '🌙 Put to bed']:
+                commands.collecting_food(bot, message, user, bd_user)
 
-                        commands.dino_sleep_ac(bot, message, user, bd_user)
+            elif tr_c_f() and message.text in ['🍕 Прогресс', '🍕 Progress']:
 
-                    elif message.text in ['🌙 Пробудить', '🌙 Awaken']:
+                commands.coll_progress(bot, message, user, bd_user)
 
-                        commands.dino_unsleep_ac(bot, message, user, bd_user)
+            elif tr_c_f() and (message.text[:11] in ['🦖 Динозавр:'] or message.text[:7] in [ '🦖 Dino:']):
 
-                    elif message.text in ['🎑 Путешествие', '🎑 Journey']:
+                commands.dino_action_ans(bot, message, user, bd_user)
 
-                        commands.dino_journey(bot, message, user, bd_user)
+            elif tr_c_f() and message.text in ['↩ Назад', '↩ Back']:
 
-                    elif message.text in ['🎑 Вернуть', '🎑 Call']:
+                commands.action_back(bot, message, user, bd_user)
 
-                        commands.dino_unjourney(bot, message, user, bd_user)
+            elif tr_c_f() and message.text in ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball', '🧩 Пазлы', '♟ Шахматы', '🧱 Дженга', '🎲 D&D', '🧩 Puzzles', '♟ Chess', '🧱 Jenga']:
 
-                    elif message.text in ['🎮 Развлечения', '🎮 Entertainments']:
+                commands.dino_entert_games(bot, message, user, bd_user)
 
-                        commands.dino_entert(bot, message, user, bd_user)
+            elif tr_c_f() and message.text in ['❌ Остановить игру', '❌ Stop the game']:
 
-                    elif message.text in ['🍣 Покормить', '🍣 Feed']:
+                commands.dino_stop_games(bot, message, user, bd_user)
 
-                        commands.dino_feed(bot, message, user, bd_user)
+            elif message.text in ['🎢 Рейтинг', '🎢 Rating']:
 
-                    elif message.text in ['🍕 Сбор пищи', '🍕 Collecting food']:
+                commands.rayting(bot, message, user, bd_user)
 
-                        commands.collecting_food(bot, message, user, bd_user)
+            elif message.text in ['📜 Информация', '📜 Information']:
 
-                    elif message.text in ['🍕 Прогресс', '🍕 Progress']:
+                commands.open_information(bot, message, user, bd_user)
 
-                        commands.coll_progress(bot, message, user, bd_user)
+            elif message.text in ['🛒 Рынок', '🛒 Market']:
 
-                    elif message.text[:11] in ['🦖 Динозавр:'] or message.text[:7] in [ '🦖 Dino:']:
+                commands.open_market_menu(bot, message, user, bd_user)
 
-                        commands.dino_action_ans(bot, message, user, bd_user)
+            elif message.text in ['💍 Аксессуары', '💍 Accessories']:
 
-            elif last_mrk == 'games':
+                commands.acss(bot, message, user, bd_user)
 
-                if message.text in ['↩ Назад', '↩ Back']:
+            elif message.text in ['➕ Добавить товар', '➕ Add Product']:
 
-                    commands.action_back(bot, message, user, bd_user)
+                functions.user_inventory(bot, user, message, 'add_product')
 
-                elif message.text in ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball', '🧩 Пазлы', '♟ Шахматы', '🧱 Дженга', '🎲 D&D', '🧩 Puzzles', '♟ Chess', '🧱 Jenga']:
+            elif message.text in ['📜 Мои товары', '📜 My products']:
 
-                    commands.dino_entert_games(bot, message, user, bd_user)
+                commands.my_products(bot, message, user, bd_user)
 
-                elif message.text in ['❌ Остановить игру', '❌ Stop the game']:
+            elif message.text in ['➖ Удалить товар', '➖ Delete Product']:
 
-                    commands.dino_stop_games(bot, message, user, bd_user)
+                commands.delete_product(bot, message, user, bd_user)
 
-            elif last_mrk == "profile":
+            elif message.text in [ '🔍 Поиск товара', '🔍 Product Search']:
 
-                if message.text in ['🎢 Рейтинг', '🎢 Rating']:
+                commands.search_pr(bot, message, user, bd_user)
 
-                    commands.rayting(bot, message, user, bd_user)
+            elif message.text in [ '🛒 Случайные товары', '🛒 Random Products']:
 
-                elif message.text in ['📜 Информация', '📜 Information']:
+                commands.random_search(bot, message, user, bd_user)
 
-                    commands.open_information(bot, message, user, bd_user)
+            elif message.text in ['⛓ Квесты', '⛓ Quests']:
 
-                elif message.text in ['🛒 Рынок', '🛒 Market']:
+                bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-                    commands.open_market_menu(bot, message, user, bd_user)
+            elif message.text in ['🎭 Навыки', '🎭 Skills']:
 
-                elif message.text in ['💍 Аксессуары', '💍 Accessories']:
+                bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-                    commands.acss(bot, message, user, bd_user)
+            elif message.text in ['🦖 БИО', '🦖 BIO']:
 
-            elif last_mrk == "market":
+                bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-                if message.text in ['➕ Добавить товар', '➕ Add Product']:
+            elif message.text in [ '👁‍🗨 Динозавры в таверне', '👁‍🗨 Dinosaurs in the Tavern']:
 
-                    functions.user_inventory(bot, user, message, 'add_product')
+                bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-                elif message.text in ['📜 Мои товары', '📜 My products']:
+            elif message.text in [ '♻ Rarity Change', '♻ Изменение редкости']:
 
-                    commands.my_products(bot, message, user, bd_user)
+                commands.rarity_change(bot, message, user, bd_user)
 
-                elif message.text in ['➖ Удалить товар', '➖ Delete Product']:
+            elif message.text in [ '🥏 Дрессировка', '🥏 Training']:
 
-                    commands.delete_product(bot, message, user, bd_user)
+                bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-                elif message.text in [ '🔍 Поиск товара', '🔍 Product Search']:
+            elif message.text in [ "💡 Исследования", "💡 Research"]:
 
-                    commands.search_pr(bot, message, user, bd_user)
-
-                elif message.text in [ '🛒 Случайные товары', '🛒 Random Products']:
-
-                    commands.random_search(bot, message, user, bd_user)
-
-            elif last_mrk == "dino-tavern":
-
-                if message.text in ['⛓ Квесты', '⛓ Quests']:
-
-                    bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
-
-                elif message.text in ['🎭 Навыки', '🎭 Skills']:
-
-                    bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
-
-                elif message.text in ['🦖 БИО', '🦖 BIO']:
-
-                    bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
-
-                elif message.text in [ '👁‍🗨 Динозавры в таверне', '👁‍🗨 Dinosaurs in the Tavern']:
-
-                    bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
-
-                elif message.text in [ '♻ Rarity Change', '♻ Изменение редкости']:
-
-                    commands.rarity_change(bot, message, user, bd_user)
-
-                elif message.text in [ '🥏 Дрессировка', '🥏 Training']:
-
-                    bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
-
-                elif message.text in [ "💡 Исследования", "💡 Research"]:
-
-                    bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
+                bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
     if bd_user != None:
         # последняя активность
