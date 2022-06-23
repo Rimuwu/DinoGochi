@@ -24,12 +24,12 @@
 - В коллекцие market создайте документ
 > market:
 > - id: 1
-> - codes: Array
+> - products: Object
 
 - В коллекцие referal_system создайте документ
 > referal_system:
 > - id: 1
-> - products: Object
+> - codes: Array
 
 - В файле config.py введите токены от кластера и бота
 - Запустите файл main.py
