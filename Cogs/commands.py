@@ -317,8 +317,11 @@ class commands:
                     bd_dino = dp_a
                     try:
                         functions.p_profile(bot, message, bd_dino, user, bd_user, list(bd_user['dinos'].keys())[0])
+
                     except Exception as error:
                         print('Ошибка в профиле2\n', error)
+
+                        functions.p_profile(bot, message, bd_dino, user, bd_user, list(bd_user['dinos'].keys())[0])
 
                 if n_dp == 3:
                     rmk = dp_a[0]
@@ -329,8 +332,11 @@ class commands:
                         if message.text in dino_dict.keys():
                             try:
                                 functions.p_profile(bot, message, dino_dict[message.text][0], user, bd_user, dino_dict[message.text][1])
+
                             except Exception as error:
                                 print('Ошибка в профиле1\n', error)
+
+                                functions.p_profile(bot, message, dino_dict[message.text][0], user, bd_user, dino_dict[message.text][1])
 
                         else:
                             bot.send_message(message.chat.id, '❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user), bd_user ))
@@ -3306,7 +3312,7 @@ class commands:
             bot.send_message(message.chat.id, text_m, reply_markup = markup_inline, parse_mode = 'Markdown')
             bot.send_message(message.chat.id, text_p2, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ), parse_mode = 'Markdown')
 
-        n_dp, dp_a = functions.dino_pre_answer(bot, message)
+        n_dp, dp_a = functions.dino_pre_answer(bot, message, type = 'noall')
         if n_dp == 1:
 
             bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))

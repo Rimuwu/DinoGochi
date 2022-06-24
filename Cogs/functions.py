@@ -2798,7 +2798,7 @@ class functions:
         global users_timeout
 
         if str(user_id) in users_timeout.keys():
-            if users_timeout[str(user_id)] + 1.5 < time.time():
+            if users_timeout[str(user_id)] + 1 < time.time():
                 del users_timeout[str(user_id)]
                 return True
 
