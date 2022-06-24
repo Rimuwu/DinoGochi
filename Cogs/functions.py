@@ -144,7 +144,7 @@ class functions:
         if bd_user == None:
             bd_user = users.find_one({"userid": userid})
 
-        if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False and bd_user['lvl'][0] < 5:
+        if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False and bd_user['lvl'][0] <= 5:
 
             if bd_user['language_code'] == 'ru':
                 nl = "🧩 Проект: Возрождение"
@@ -154,7 +154,7 @@ class functions:
             markup.add(nl)
             return markup
 
-        elif bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False and bd_user['lvl'][0] >= 5:
+        elif bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False and bd_user['lvl'][0] > 5:
 
             if bd_user['language_code'] == 'ru':
                 nl = '🎮 Инвентарь'
@@ -2822,3 +2822,39 @@ class functions:
                 users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{i}.quality': dino_data['image'][5:8] }} )
 
         return bd_user
+
+    @staticmethod
+    def dungeon_base_upd(userid, messageid, dinosid, dungeonid = None, type = 'add_users'):
+
+        if dungeonid == None:
+            dung = dungeons.find_one({"dungeonid": userid})
+            if dung == None:
+                dungeons.insert_one({
+                    'dungeonid': userid,
+                    'users': { str(userid): {'messageid': messageid, 'dinosid': dinosid } },
+                    'floor': 1,
+                    'room': 1,
+                    'dungeon_stage': 'preparation'
+                                   })
+
+                dung = dungeons.find_one({"dungeonid": userid})
+                return dung, 'create_dungeon'
+
+            else:
+                return 'error_find_dungeon'
+
+        if dungeonid != None:
+            if type == 'add_users':
+                dung = dungeons.find_one({"dungeonid": userid})
+                dung['users'][str(userid)] = {'messageid': messageid, 'dinosid': dinosid }
+                dungeons.update_one( {"dungeonid": userid}, {"$set": {'users': dung['users'] }} )
+
+                return dung, 'add_user'
+
+    # @staticmethod
+    # def dungeon_message_upd(useriddungeonid = None, upd_type = 'one'):
+    #     dung = dungeons.find_one({"dungeonid": userid})
+    #
+    #     if dung != None:
+    #
+    #     else:
