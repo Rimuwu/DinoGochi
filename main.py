@@ -2372,6 +2372,22 @@ def answer(call):
         inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, image_update = True)
         print(inf)
 
+    elif call.data.split()[0] == 'dungeon.settings_lang':
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        if dung != None:
+            if dung['settings']['lang'] == 'ru':
+                lang = 'en'
+            else:
+                lang = 'ru'
+
+            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'settings.lang': lang }} )
+
+            inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
+            inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
+            print(inf)
+
 
     else:
         print(call.data, 'call.data')

@@ -1564,7 +1564,7 @@ class functions:
 
             user = bot.get_chat(int(mem_id))
             bd_user = users.find_one({"userid": user.id})
-            expp = 5 * bd_user['lvl'][0] * bd_user['lvl'][0] + 50 * bd_user['lvl'][0] + 100
+            expp = (5 * bd_user['lvl'][0] * bd_user['lvl'][0] + 50 * bd_user['lvl'][0] + 100) * len(bd_user['dinos'])
             n_d = len(list(bd_user['dinos']))
             t_dinos = ''
             for k in bd_user['dinos']:
@@ -2933,13 +2933,15 @@ class functions:
             if type == 'settings':
 
                 if dung['settings']['lang'] == 'ru':
-                    inl_l = {'Язык: 🇷🇺': 'dungeon.settings_lang'
+                    inl_l = {'Язык: 🇷🇺': 'dungeon.settings_lang',
+                             '🗑 Удалить': 'dungeon.remove'
                             }
 
                     inl_l2 = {'🕹 Назад': 'dungeon.to_lobby'}
 
                 else:
-                    inl_l = {'Language: 🇬🇧': 'dungeon.settings_lang'
+                    inl_l = {'Language: 🇬🇧': 'dungeon.settings_lang',
+                             '🗑 Delete': 'dungeon.remove'
                             }
 
                     inl_l2 = {'🕹 Back': 'dungeon.to_lobby'}
@@ -2960,7 +2962,7 @@ class functions:
 
 
     @staticmethod
-    def dungeon_message_upd(bot, userid = None, dungeonid = None, upd_type = 'one', type = None, image_update = False):
+    def dungeon_message_upd(bot, userid = None, dungeonid = None, upd_type = 'one', type = None, image_update = False, ignore_list = []):
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
         if dung != None:
@@ -2971,7 +2973,7 @@ class functions:
                         text = '*🗻 | Информация*\nВы стоите перед входом в подземелье. Кого-то трясёт от страха, а кто-то жаждет приключений. Что вы найдёте в подземелье, известно только богу удачи, соберите команду и покорите бесконечное подземелье!\n\n*🦕 | Динозавры*'
 
                     else:
-                        text = '*🗻 | Information*\You are standing in front of the entrance to the dungeon. Someone is shaking with fear, and someone is eager for adventure. What you will find in the dungeon is known only to the god of luck, gather a team and conquer the endless dungeon!\n\n*🦕 | Динозавры*'
+                        text = '*🗻 | Information*\You are standing in front of the entrance to the dungeon. Someone is shaking with fear, and someone is eager for adventure. What you will find in the dungeon is known only to the god of luck, gather a team and conquer the endless dungeon!\n\n*🦕 | Dinosaurs*'
 
                     d_n = 0
                     users_text = ''
@@ -3048,40 +3050,42 @@ class functions:
                         for u_k in dung['users']:
                             us = dung['users'][u_k]
 
-                            if us['messageid'] != None:
+                            if int(u_k) not in ignore_list:
 
-                                if image_update == False:
+                                if us['messageid'] != None:
 
-                                    try:
-                                        bot.edit_message_caption(text, int(u_k), us['messageid'], parse_mode = 'Markdown', reply_markup = functions.dungeon_inline(bot, int(u_k), dungeonid = dungeonid, type = 'preparation'))
-                                        dl += 1
-                                    except Exception as e:
-                                        print(e)
-                                        undl += 1
+                                    if image_update == False:
+
+                                        try:
+                                            bot.edit_message_caption(text, int(u_k), us['messageid'], parse_mode = 'Markdown', reply_markup = functions.dungeon_inline(bot, int(u_k), dungeonid = dungeonid, type = 'preparation'))
+                                            dl += 1
+                                        except Exception as e:
+                                            print(e)
+                                            undl += 1
+
+                                    else:
+
+                                        try:
+
+                                            bot.edit_message_media(
+                                                chat_id = int(u_k),
+                                                message_id =  int(dung['users'][str(u_k)]['messageid']),
+                                                reply_markup = functions.dungeon_inline(bot, int(u_k), dungeonid = dungeonid, type = 'preparation'),
+                                                media = telebot.types.InputMedia(type='photo', media = image, caption = text, parse_mode = 'Markdown')
+                                            )
+                                        except Exception as e:
+                                            return f'2error_(message_and_image_no_update)? {e} ?'
 
                                 else:
 
                                     try:
+                                        msg = bot.send_photo(int(u_k), image, text, parse_mode = 'Markdown', reply_markup = functions.dungeon_inline(bot, int(u_k), dungeonid = dungeonid, type = 'preparation'))
 
-                                        bot.edit_message_media(
-                                            chat_id = int(u_k),
-                                            message_id =  int(dung['users'][str(u_k)]['messageid']),
-                                            reply_markup = functions.dungeon_inline(bot, int(u_k), dungeonid = dungeonid, type = 'preparation'),
-                                            media = telebot.types.InputMedia(type='photo', media = image, caption = text, parse_mode = 'Markdown')
-                                        )
+                                        functions.dungeon_base_upd(userid = int(u_k), messageid = msg.id, dungeonid = dung['dungeonid'], type = 'edit_message')
+
+                                        dl += 1
                                     except Exception as e:
-                                        return f'2error_(message_and_image_no_update)? {e} ?'
-
-                            else:
-
-                                try:
-                                    msg = bot.send_photo(int(u_k), image, text, parse_mode = 'Markdown', reply_markup = functions.dungeon_inline(bot, int(u_k), dungeonid = dungeonid, type = 'preparation'))
-
-                                    functions.dungeon_base_upd(userid = int(u_k), messageid = msg.id, dungeonid = dung['dungeonid'], type = 'edit_message')
-
-                                    dl += 1
-                                except Exception as e:
-                                    return f'5error_(message_no_update)? {e} ?'
+                                        return f'5error_(message_no_update)? {e} ?'
 
                         return f'message_update < upd {dl} - unupd {undl} >'
 
