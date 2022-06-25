@@ -23,6 +23,7 @@ client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
 referal_system = client.bot.referal_system
 market = client.bot.market
+dungeons = client.bot.dungeons
 
 with open('data/items.json', encoding='utf-8') as f:
     items_f = json.load(f)
@@ -36,6 +37,7 @@ class commands:
     market = market
     items_f = items_f
     json_f = json_f
+    dungeons = dungeons
 
     @staticmethod
     def start_game(bot, message, user, bd_user):
@@ -528,6 +530,13 @@ class commands:
 
             friends_name = []
             friends_id_d = {}
+
+            if bd_user['language_code'] == 'ru':
+                text = "👥 | Ожидайте..."
+            else:
+                text = "👥 | Wait..."
+
+            bot.send_message(message.chat.id, text)
 
             for i in friends_id:
                 try:
@@ -3339,3 +3348,12 @@ class commands:
 
             msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
             bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)
+
+    @staticmethod
+    def game_dungeon(bot, message, user, bd_user):
+
+        if bd_user['language_code'] == 'ru':
+            text_m = f" тестовое сообщение с информацией"
+
+        else:
+            text_m = f" test"

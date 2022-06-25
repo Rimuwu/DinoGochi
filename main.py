@@ -25,6 +25,7 @@ client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
 referal_system = client.bot.referal_system
 market = client.bot.market
+dungeons = client.bot.dungeons
 
 with open('data/items.json', encoding='utf-8') as f:
     items_f = json.load(f)
@@ -317,6 +318,42 @@ def command(message):
             bot.reply_to(message, msg.message_id)
             print(msg.message_id)
 
+@bot.message_handler(commands=['dungeon'])
+def command(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        dng, inf = functions.dungeon_base_upd(userid = user.id, dinosid = ['1', '2'])
+        pprint.pprint(dng)
+        print(inf)
+
+        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = user.id)
+        print(inf)
+
+@bot.message_handler(commands=['dungeon_add'])
+def command(message):
+    user = message.from_user
+    msg_args = message.text.split()
+    if user.id in [5279769615, 1191252229]:
+
+        dng, inf = functions.dungeon_base_upd(userid = user.id, dinosid = ['1'], dungeonid = int(msg_args[1]))
+        pprint.pprint(dng)
+        print(inf)
+
+        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dng['dungeonid'], upd_type = 'all')
+        print(inf)
+
+@bot.message_handler(commands=['dungeon_delete'])
+def command(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        inf = functions.dungeon_message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
+        print(inf)
+
+        dng, inf = functions.dungeon_base_upd(dungeonid = user.id, type = 'delete_dungeon')
+        pprint.pprint(dng)
+        print(inf)
+
+
 # =========================================
 
 @bot.message_handler(commands=['emulate_not'])
@@ -418,6 +455,8 @@ def on_message(message):
 
     if bot.get_me().first_name != 'DinoGochi':
         print("Поймал", message.text, 'от ', user.first_name)
+        if user.id not in [5279769615, 1191252229]:
+            return print('Отмена команды')
 
     if message.chat.type == 'private':
         if functions.spam_stop(user.id) == False:
@@ -2320,6 +2359,18 @@ def answer(call):
             msg = bot.send_message(user.id, f'Are you sure you want to change the rarity of your dinosaur?', reply_markup = markup)
 
         bot.register_next_step_handler(msg, change_rarity)
+
+    elif call.data.split()[0] == 'dungeon.settings':
+        dungeonid = int(call.data.split()[1])
+
+        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
+        print(inf)
+
+    elif call.data.split()[0] == 'dungeon.to_lobby':
+        dungeonid = int(call.data.split()[1])
+
+        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, image_update = True)
+        print(inf)
 
 
     else:
