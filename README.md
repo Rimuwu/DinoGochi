@@ -20,6 +20,7 @@
  > - users
  > - market
  > - referal_system
+ > - dungeons
 
 - В коллекцие market создайте документ
 > market:
