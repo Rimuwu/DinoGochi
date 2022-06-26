@@ -2826,7 +2826,7 @@ class functions:
         return bd_user
 
     @staticmethod
-    def dungeon_base_upd(userid = None, messageid = None, dinosid = None, dungeonid = None, type = 'add_users'):
+    def dungeon_base_upd(userid = None, messageid = None, dinosid = None, dungeonid = None, type = None):
 
         if dungeonid == None:
             dung = dungeons.find_one({"dungeonid": userid})
@@ -2860,7 +2860,7 @@ class functions:
 
             if dung != None:
 
-                if type == 'add_users':
+                if type == 'add_user':
 
                     if str(userid) not in dung['users'].keys():
                         dinos = {}
@@ -2875,6 +2875,19 @@ class functions:
                     else:
                         return dung, 'error_user_in_dungeon'
 
+                if type == 'remove_user':
+
+                    if str(userid) in dung['users'].keys():
+                        dinos = {}
+
+                        del dung['users'][str(userid)]
+                        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
+
+                        return dung, 'remove_user'
+
+                    else:
+                        return dung, 'error_user_not_in_dungeon'
+
                 if type == 'delete_dungeon':
 
                     dungeons.delete_one({"dungeonid": dungeonid})
@@ -2886,6 +2899,9 @@ class functions:
                     dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
 
                     return dung, 'edit_message'
+
+                else:
+                    return dung, 'error_type_dont_find'
 
             else:
                 return None, 'error_no_dungeon'
@@ -2910,7 +2926,7 @@ class functions:
                         inl_l2 = {'✅ Начать': 'dungeon.start', '👥 Пригласить': 'dungeon.invite'}
 
                     else:
-                        inl_l2 = {'✅ Готовность': 'dungeon.ready'}
+                        inl_l2 = {'✅ Готовность': 'dungeon.ready', '🚪 Выйти': 'dungeon.leave'}
 
                 else:
                     inl_l = {'🦕 Add': 'dungeon.add_dino',
@@ -2922,7 +2938,7 @@ class functions:
                         inl_l['🛠 Settings'] = 'dungeon.settings'
                         inl_l2 = {'✅ Start': 'dungeon.start', '👥 Invite': 'dungeon.invite'}
                     else:
-                        inl_l2 = {'✅ Ready': 'dungeon.ready'}
+                        inl_l2 = {'✅ Ready': 'dungeon.ready', '🚪 Go out': 'dungeon.leave'}
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
 
