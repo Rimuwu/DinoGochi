@@ -1817,3 +1817,48 @@ class call_data:
 
         inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
         print(inf)
+
+    def dungeon_add_dino_menu(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'add_dino')
+        print(inf)
+
+    def dungeon_remove_dino_menu(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'remove_dino')
+        print(inf)
+
+    def dungeon_add_dino(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dinoid = call.data.split()[2]
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        dng, inf = functions.dungeon_base_upd(userid = user.id, dungeonid = dungeonid, type = 'add_dino', dinosid = [dinoid])
+        pprint.pprint(dng)
+        print(inf)
+
+        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'add_dino')
+        print(inf)
+
+        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
+
+    def dungeon_remove_dino(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dinoid = call.data.split()[2]
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        dng, inf = functions.dungeon_base_upd(userid = user.id, dungeonid = dungeonid, type = 'remove_dino', dinosid = [dinoid])
+        pprint.pprint(dng)
+        print(inf)
+
+        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'remove_dino')
+        print(inf)
+        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])

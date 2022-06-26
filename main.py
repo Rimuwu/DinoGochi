@@ -323,7 +323,7 @@ def command(message):
 def command(message):
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
-        dng, inf = functions.dungeon_base_upd(userid = user.id, dinosid = ['1', '2'])
+        dng, inf = functions.dungeon_base_upd(userid = user.id, dinosid = ['1'])
         pprint.pprint(dng)
         print(inf)
 
@@ -820,6 +820,22 @@ def answer(call):
     elif call.data.split()[0] == 'dungeon.remove_False':
 
         call_data.dungeon_remove_False(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.menu.add_dino':
+
+        call_data.dungeon_add_dino_menu(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.menu.remove_dino':
+
+        call_data.dungeon_remove_dino_menu(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.action.add_dino':
+
+        call_data.dungeon_add_dino(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.action.remove_dino':
+
+        call_data.dungeon_remove_dino(bot, bd_user, call, user)
 
     else:
         print(call.data, 'call.data')
