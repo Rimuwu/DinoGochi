@@ -17,6 +17,7 @@ client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
 market = client.bot.market
 referal_system = client.bot.referal_system
+dungeons = client.bot.dungeons
 
 with open('data/items.json', encoding='utf-8') as f:
     items_f = json.load(f)
@@ -36,6 +37,7 @@ class functions:
     items_f = items_f
     checks_data = checks_data
     users_timeout = users_timeout
+    dungeons = dungeons
 
     @staticmethod
     def trans_paste(fg_img,bg_img,alpha=10,box=(0,0)):
@@ -1562,7 +1564,7 @@ class functions:
 
             user = bot.get_chat(int(mem_id))
             bd_user = users.find_one({"userid": user.id})
-            expp = 5 * bd_user['lvl'][0] * bd_user['lvl'][0] + 50 * bd_user['lvl'][0] + 100
+            expp = (5 * bd_user['lvl'][0] * bd_user['lvl'][0] + 50 * bd_user['lvl'][0] + 100) * len(bd_user['dinos'])
             n_d = len(list(bd_user['dinos']))
             t_dinos = ''
             for k in bd_user['dinos']:
@@ -2824,37 +2826,581 @@ class functions:
         return bd_user
 
     @staticmethod
-    def dungeon_base_upd(userid, messageid, dinosid, dungeonid = None, type = 'add_users'):
+    def dungeon_base_upd(userid = None, messageid = None, dinosid = [], dungeonid = None, type = None):
+
+        def dino_data(dinosid):
+            dinos = {}
+            for i in dinosid:
+                dinos[i] = {'status': 'live'}
+
+            return dinos
+
+        def user_data(messageid, dinos):
+            return {'messageid': messageid, 'dinos': dinos, 'coins': 200, 'inventory': []}
 
         if dungeonid == None:
-            dung = dungeons.find_one({"dungeonid": userid})
+            dung = dungeons.find_one({"dungeonid": int(userid)})
+            bd_user = users.find_one({"userid": int(userid) })
+
             if dung == None:
-                dungeons.insert_one({
+                dinos = dino_data(dinosid)
+
+                dungeons.insert_one(
+                {
                     'dungeonid': userid,
-                    'users': { str(userid): {'messageid': messageid, 'dinosid': dinosid } },
-                    'floor': 1,
-                    'room': 1,
-                    'dungeon_stage': 'preparation'
-                                   })
+                    'users': { str(userid): user_data(messageid, dinos) },
+                    'floor': {}, 'room': {},
+                    'dungeon_stage': 'preparation',
+                    'stage_data':  { 'preparation': {'image': random.randint(1,6), 'ready': [] }
+                                   },
+                    'settings': { 'lang': bd_user['language_code'], 'max_dinos': 10 }
+                } )
 
                 dung = dungeons.find_one({"dungeonid": userid})
                 return dung, 'create_dungeon'
 
             else:
-                return 'error_find_dungeon'
+                return dung, 'error_(find_dungeon)'
 
         if dungeonid != None:
-            if type == 'add_users':
-                dung = dungeons.find_one({"dungeonid": userid})
-                dung['users'][str(userid)] = {'messageid': messageid, 'dinosid': dinosid }
-                dungeons.update_one( {"dungeonid": userid}, {"$set": {'users': dung['users'] }} )
+            dung = dungeons.find_one({"dungeonid": dungeonid})
 
-                return dung, 'add_user'
+            if dung != None:
 
-    # @staticmethod
-    # def dungeon_message_upd(useriddungeonid = None, upd_type = 'one'):
-    #     dung = dungeons.find_one({"dungeonid": userid})
-    #
-    #     if dung != None:
-    #
-    #     else:
+                if type == 'add_user':
+
+                    if str(userid) not in dung['users'].keys():
+                        dinos = dino_data(dinosid)
+
+                        dung['users'][str(userid)] = user_data(messageid, dinos)
+                        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
+
+                        return dung, 'add_user'
+
+                    else:
+                        return dung, 'error_user_in_dungeon'
+
+                if type == 'remove_user':
+
+                    if str(userid) in dung['users'].keys():
+
+                        if dung['users'][str(userid)]['inventory'] != []:
+                            bd_user = users.find_one({"userid": int(userid) })
+
+                            for item in dung['users'][str(userid)]['inventory']:
+                                bd_user['inventory'].append(item)
+
+                            users.update_one( {"userid": int(userid)}, {"$set": {f'inventory': bd_user['inventory']}} )
+
+
+                        del dung['users'][str(userid)]
+                        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
+
+                        return dung, 'remove_user'
+
+                    else:
+                        return dung, 'error_user_not_in_dungeon'
+
+                if type == 'delete_dungeon':
+
+                    for user_id in dung['users']:
+
+                        if dung['users'][str(user_id)]['inventory'] != []:
+                            bd_user = users.find_one({"userid": int(user_id) })
+
+                            for item in dung['users'][str(user_id)]['inventory']:
+                                bd_user['inventory'].append(item)
+
+                            users.update_one( {"userid": int(user_id)}, {"$set": {f'inventory': bd_user['inventory']}} )
+
+                    dungeons.delete_one({"dungeonid": dungeonid})
+                    return None, 'delete_dungeon'
+
+                if type == 'edit_message':
+
+                    dung['users'][str(userid)]['messageid'] = messageid
+                    dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
+
+                    return dung, 'edit_message_data'
+
+                if type == 'remove_dino':
+
+                    for d_k in dinosid:
+                        if str(d_k) in dung['users'][str(userid)]['dinos'].keys():
+                            del dung['users'][str(userid)]['dinos'][str(d_k)]
+
+                        else:
+                            print('dinoid - ', d_k, 'not in keys')
+
+                    dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
+
+                    return dung, 'remove_dino'
+
+                if type == 'add_dino':
+                    ddnl = []
+                    bd_user = users.find_one({"userid": int(userid) })
+
+                    d_n = 0
+                    for u in dung['users']:
+                        d_n += len(dung['users'][u]['dinos'])
+
+                    if d_n < dung['settings']['max_dinos']:
+
+                        for d_k in dinosid:
+                            if str(d_k) not in dung['users'][str(userid)]['dinos'].keys():
+                                if bd_user['dinos'][str(d_k)]['status'] != 'incubation':
+                                    if bd_user['dinos'][str(d_k)]['activ_status'] == 'pass_active':
+                                        ddnl.append(d_k)
+
+                                    else:
+                                        return dung, 'action_dino_is_not_pass'
+
+                                else:
+                                    return dung, 'dino_incubation'
+
+                            else:
+                                print('dinoid - ', d_k, 'not in keys')
+
+                        dinos = dino_data(ddnl)
+
+                        for i in dinos:
+                            d_data = dinos[str(i)]
+
+                            dung['users'][str(userid)]['dinos'][i] = d_data
+
+                        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
+
+                        return dung, 'add_dino'
+
+                    else:
+
+                        return dung, 'limit_(add_dino)'
+
+                else:
+                    return dung, f'error_type_dont_find - {type}'
+
+            else:
+                return None, 'error_no_dungeon'
+
+    @staticmethod
+    def dungeon_inline(bot, userid = None, dungeonid = None, type = None):
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+        markup_inline = types.InlineKeyboardMarkup(row_width = 3)
+
+        if dung != None:
+
+            if type == 'preparation':
+
+                if dung['settings']['lang'] == 'ru':
+                    inl_l = {'🦕 Добавить': 'dungeon.menu.add_dino',
+                             '💼 Припасы':  'dungeon.supplies',
+                             '🦕 Удалить':  'dungeon.menu.remove_dino'
+                            }
+
+                    if userid == dungeonid:
+                        inl_l['🛠 Настройки'] = 'dungeon.settings'
+                        inl_l['👥 Пригласить'] = 'dungeon.invite'
+                        inl_l2 = {'✅ Начать': 'dungeon.start'}
+
+                    else:
+                        inl_l2 = {'✅ Готовность': 'dungeon.ready', '🚪 Выйти': 'dungeon.leave'}
+
+                else:
+                    inl_l = {'🦕 Add': 'dungeon.menu.add_dino',
+                             '💼 Supplies': 'dungeon.supplies',
+                             '🦕 Remove':  'dungeon.menu.remove_dino'
+                            }
+
+                    if userid == dungeonid:
+                        inl_l['🛠 Settings'] = 'dungeon.settings'
+                        inl_l['👥 Invite'] = 'dungeon.invite'
+                        inl_l2 = {'✅ Start': 'dungeon.start'}
+                    else:
+                        inl_l2 = {'✅ Ready': 'dungeon.ready', '🚪 Go out': 'dungeon.leave'}
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
+
+                return markup_inline
+
+            if type == 'settings':
+
+                if dung['settings']['lang'] == 'ru':
+                    inl_l = {'Язык: 🇷🇺': 'dungeon.settings_lang',
+                             '🗑 Удалить': 'dungeon.remove'
+                            }
+
+                    inl_l2 = {'🕹 Назад': 'dungeon.to_lobby'}
+
+                else:
+                    inl_l = {'Language: 🇬🇧': 'dungeon.settings_lang',
+                             '🗑 Delete': 'dungeon.remove'
+                            }
+
+                    inl_l2 = {'🕹 Back': 'dungeon.to_lobby'}
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
+
+                return markup_inline
+
+            if type == 'invite_room':
+
+                if dung['settings']['lang'] == 'ru':
+                    inl_l = {'🕹 Назад': 'dungeon.to_lobby'}
+
+                else:
+                    inl_l = {'🕹 Back': 'dungeon.to_lobby'}
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
+
+                return markup_inline
+
+            if type == 'add_dino':
+
+                if dung['settings']['lang'] == 'ru':
+                    inl_l = {'⚙ Действие: Добавить': 'dungeon.menu.remove_dino'
+                            }
+
+                    inl_l2 = {'🕹 Назад': 'dungeon.to_lobby'
+                            }
+
+                else:
+                    inl_l = {'⚙ Action: Add': 'dungeon.menu.remove_dino'
+                            }
+                    inl_l2 = {'🕹 Back': 'dungeon.to_lobby'
+                            }
+
+                d_inl = {}
+
+                bd_user = users.find_one({"userid": int(userid) })
+                for d_k in bd_user['dinos'].keys():
+                    if d_k not in dung['users'][str(userid)]['dinos'].keys():
+                        din_name = bd_user['dinos'][str(d_k)]['name']
+                        d_inl[f'#{d_k} {din_name}'] = f'dungeon.action.add_dino {dungeonid} {d_k}'
+
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{d_inl[inl]}") for inl in d_inl.keys() ])
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
+
+                return markup_inline
+
+            if type == 'remove_dino':
+
+                if dung['settings']['lang'] == 'ru':
+                    inl_l = {'⚙ Действие: Удалить': 'dungeon.menu.add_dino'
+                            }
+
+                    inl_l2 = {'🕹 Назад': 'dungeon.to_lobby'
+                            }
+
+                else:
+                    inl_l = {'⚙ Action: Delete': 'dungeon.menu.add_dino'
+                            }
+                    inl_l2 = {'🕹 Back': 'dungeon.to_lobby'
+                            }
+
+                d_inl = {}
+
+                bd_user = users.find_one({"userid": int(userid) })
+                for d_k in dung['users'][str(userid)]['dinos'].keys():
+                    din_name = bd_user['dinos'][str(d_k)]['name']
+                    d_inl[f'#{d_k} {din_name}'] = f'dungeon.action.remove_dino {dungeonid} {d_k}'
+
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{d_inl[inl]}") for inl in d_inl.keys() ])
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
+
+                return markup_inline
+
+            else:
+                print('error_type_dont_find')
+                return markup_inline
+
+        else:
+            print('error_no_dungeon')
+            return markup_inline
+
+
+    @staticmethod
+    def dungeon_message_upd(bot, userid = None, dungeonid = None, upd_type = 'one', type = None, image_update = False, ignore_list = []):
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        if dung != None:
+            if type == None:
+                if dung['dungeon_stage'] == 'preparation':
+
+                    if dung['settings']['lang'] == 'ru':
+                        text = '*🎴 Лобби*\n\n   *🗻 | Информация*\nВы стоите перед входом в подземелье. Кого-то трясёт от страха, а кто-то жаждет приключений. Что вы найдёте в подземелье, известно только богу удачи, соберите команду и покорите бесконечное подземелье!\n\n   *💼 | Припасы*\nВо время путешествия в подземелье может случится что-то неожиданное. Лучше быть готовым ко всему.\n\n   *☎ | Правила*\nВсе вещи и монеты взятые в подземелье, могут быть потерены, в случае "небезопасного выхода". Безопасно выйти можно каждые 5 этажей. Динозавры автоматически покидают подземелье в случае, когда здоровье опустилось до 10-ти.\n\n   *🦕 | Динозавры*'
+
+                    else:
+                        text = "*🎴 Lobby*\n\n   *🗻 | Information*\nYou are standing in front of the entrance to the dungeon. Someone is shaking with fear, and someone is eager for adventure. What you will find in the dungeon is known only to the god of luck, gather a team and conquer the endless dungeon!\n\n   *💼 | Supplies*\nDuring the journey to the dungeon, something unexpected may happen. It's better to be prepared for everything.\n\n   *🦕 | Dinosaurs*"
+
+                    d_n = 0
+                    dinos_text = ''
+                    users_text = ''
+                    u_n = 0
+                    for k in dung['users'].keys():
+                        us = dung['users'][k]
+                        bd_us = users.find_one({"userid": int(k)})
+
+                        if int(k) in dung['stage_data']['preparation']['ready']:
+                            r_e = '✅'
+
+                        else:
+                            r_e = '❌'
+
+                        u_n += 1
+                        username = bot.get_chat(int(k)).first_name
+                        users_text += f'{u_n}. {username} (🦕 {len(us["dinos"])})  ({r_e})\n'
+
+                        for din in us['dinos'].keys():
+                            d_n += 1
+
+                            if d_n % 2 == 0:
+                                dinos_text += '   |   '
+                            else:
+                                if d_n != 0:
+                                    dinos_text += '\n    '
+
+                            dinos_text += f'{bd_us["dinos"][din]["name"]}'
+
+
+                    text += f" {d_n} / {dung['settings']['max_dinos']}"
+                    text += dinos_text
+
+                    if dung['settings']['lang'] == 'ru':
+                        text += '\n\n   *👥 | Игроки*\n'
+
+                    else:
+                        text += '\n\n   *👥 | Players*\n'
+
+                    text += users_text
+
+                    if upd_type == 'one':
+
+                        if dung['users'][str(userid)]['messageid'] != None:
+
+                            if image_update == False:
+                                try:
+                                    bot.edit_message_caption(text, int(userid), int(dung['users'][str(userid)]['messageid']), parse_mode = 'Markdown', reply_markup = functions.dungeon_inline(bot, int(userid), dungeonid = dungeonid, type = 'preparation'))
+                                except Exception as e:
+                                    return f'1error_(message_no_update)? {e} ?'
+
+                            else:
+                                try:
+                                    image = open(f"images/dungeon/preparation/{dung['stage_data']['preparation']['image']}.png", 'rb')
+
+                                    bot.edit_message_media(
+                                        chat_id = int(userid),
+                                        message_id =  int(dung['users'][str(userid)]['messageid']),
+                                        reply_markup = functions.dungeon_inline(bot, int(userid), dungeonid = dungeonid, type = 'preparation'),
+                                        media = telebot.types.InputMedia(type='photo', media = image, caption = text, parse_mode = 'Markdown')
+                                    )
+                                except Exception as e:
+                                    return f'1error_(message_and_image_no_update)? {e} ?'
+
+                            return f'message_update'
+
+                        else:
+
+                            image = open(f"images/dungeon/preparation/{dung['stage_data']['preparation']['image']}.png", 'rb')
+
+                            try:
+                                msg = bot.send_photo(int(userid), image, text, parse_mode = 'Markdown', reply_markup = functions.dungeon_inline(bot, int(userid), dungeonid = dungeonid, type = 'preparation'))
+
+                                functions.dungeon_base_upd(userid = userid, messageid = msg.id, dungeonid = dung['dungeonid'], type = 'edit_message')
+                            except Exception as e:
+                                return f'3error_(message_no_update)? {e} ?'
+
+                            return f'message_update (send)'
+
+
+                    if upd_type == 'all':
+                        dl = 0
+                        undl = 0
+
+                        image = open(f"images/dungeon/preparation/{dung['stage_data']['preparation']['image']}.png", 'rb')
+
+                        for u_k in dung['users']:
+                            us = dung['users'][u_k]
+
+                            if int(u_k) not in ignore_list:
+
+                                if us['messageid'] != None:
+
+                                    if image_update == False:
+
+                                        try:
+                                            bot.edit_message_caption(text, int(u_k), us['messageid'], parse_mode = 'Markdown', reply_markup = functions.dungeon_inline(bot, int(u_k), dungeonid = dungeonid, type = 'preparation'))
+                                            dl += 1
+                                        except Exception as e:
+                                            print(e)
+                                            undl += 1
+
+                                    else:
+
+                                        try:
+
+                                            bot.edit_message_media(
+                                                chat_id = int(u_k),
+                                                message_id =  int(dung['users'][str(u_k)]['messageid']),
+                                                reply_markup = functions.dungeon_inline(bot, int(u_k), dungeonid = dungeonid, type = 'preparation'),
+                                                media = telebot.types.InputMedia(type='photo', media = image, caption = text, parse_mode = 'Markdown')
+                                            )
+                                        except Exception as e:
+                                            return f'2error_(message_and_image_no_update)? {e} ?'
+
+                                else:
+
+                                    try:
+                                        msg = bot.send_photo(int(u_k), image, text, parse_mode = 'Markdown', reply_markup = functions.dungeon_inline(bot, int(u_k), dungeonid = dungeonid, type = 'preparation'))
+
+                                        functions.dungeon_base_upd(userid = int(u_k), messageid = msg.id, dungeonid = dung['dungeonid'], type = 'edit_message')
+
+                                        dl += 1
+                                    except Exception as e:
+                                        return f'5error_(message_no_update)? {e} ?'
+
+                        return f'message_update < upd {dl} - unupd {undl} >'
+
+                    return 'message_update'
+
+            if type == 'delete_dungeon':
+                dl = 0
+                undl = 0
+
+                if dung['settings']['lang'] == 'ru':
+                    text = '🗻 | Подземелье удалено'
+
+                else:
+                    text = '🗻 | Dungeon removed'
+
+                for u_k in dung['users']:
+                    us = dung['users'][u_k]
+
+                    try:
+                        bot.delete_message(int(u_k), us['messageid'])
+                        bot.send_message(int(u_k), text)
+                        dl += 1
+                    except Exception as e:
+                        undl += 1
+                        print(e)
+
+                return f'message_update < delete {dl} - undelete {undl} >'
+
+            if type == 'settings':
+
+                if dung['settings']['lang'] == 'ru':
+                    text = '⚙ | Настройте ваше подземелье для комфортной игры!'
+
+                else:
+                    text = '⚙ | Customize your dungeon for a comfortable game!'
+
+                try:
+
+                    image = open('images/dungeon/settings/1.png','rb')
+                    bot.edit_message_media(
+                        chat_id = int(userid),
+                        message_id =  int(dung['users'][str(userid)]['messageid']),
+                        reply_markup = functions.dungeon_inline(bot, int(userid), dungeonid = dungeonid, type = 'settings'),
+                        media = telebot.types.InputMedia(type='photo', media = image, caption = text)
+                    )
+
+                except Exception as e:
+                    return f'message_dont_update - settings ~{e}~'
+
+                return 'message_update - settings'
+
+            if type == 'invite_room':
+
+                if dung['settings']['lang'] == 'ru':
+                    text = f'🎲 | Код приглашения: `{dungeonid}` (можно кликнуть)\n\n📢 | Отправте друзьям код приглашения, чтобы они могли присоединиться к вам!'
+
+                else:
+                    text = f'🎲 | Invitation code: `{dungeonid}` (you can click)\n\n📢 | Send your friends an invitation code so they can join you!'
+
+                try:
+
+                    image = open('images/dungeon/invite_room/1.png','rb')
+                    bot.edit_message_media(
+                        chat_id = int(userid),
+                        message_id =  int(dung['users'][str(userid)]['messageid']),
+                        reply_markup = functions.dungeon_inline(bot, int(userid), dungeonid = dungeonid, type = 'invite_room'),
+                        media = telebot.types.InputMedia(type='photo', media = image, parse_mode = 'Markdown', caption = text)
+                    )
+
+                except Exception as e:
+                    return f'message_dont_update - settings ~{e}~'
+
+                return 'message_update - settings'
+
+            if type in ['add_dino', 'limit_(add_dino)', 'action_dino_is_not_pass']:
+
+                if dung['settings']['lang'] == 'ru':
+                    text = '🦕 | Выберите динозавров из списка ниже, чтобы он принял участие в подземелье. Динозавры могут принять участие, только если ничем не заняты в данный момент!\n\n🍔 | Вы можете изменить действие на Добавить / Удалить.'
+                    text_limit = '\n\n💢 | В лобби уже максимальное количество динозавров!'
+                    text_inp = '\n\n💢 | Динозавр уже  чем-то занят!'
+
+                else:
+                    text = '🦕 | Select the dinosaurs from the list below to take part in the dungeon. Dinosaurs can take part only if they are not busy at the moment!\n\n🍔 | You can also change the action to Add / Remove.'
+                    text_limit = '\n\n💢 | There is already a maximum number of dinosaurs in the lobby!'
+                    text_inp = '💢 | The dinosaur is already busy with something!'
+
+                if type == 'limit_(add_dino)':
+                    text += text_limit
+
+                if type == 'action_dino_is_not_pass':
+                    text += text_inp
+
+                try:
+
+                    image = open('images/dungeon/add_remove_dino/1.png','rb')
+                    bot.edit_message_media(
+                        chat_id = int(userid),
+                        message_id =  int(dung['users'][str(userid)]['messageid']),
+                        reply_markup = functions.dungeon_inline(bot, int(userid), dungeonid = dungeonid, type = 'add_dino'),
+                        media = telebot.types.InputMedia(type='photo', media = image, caption = text)
+                    )
+
+                except Exception as e:
+                    return f'message_dont_update - settings ~{e}~'
+
+                return 'message_update - add_dino'
+
+            if type == 'remove_dino':
+
+                if dung['settings']['lang'] == 'ru':
+                    text = '🦕 | Выберите динозавра, который не будет принимать участие.\n\n🍔 | Вы можете изменить действие на Добавить / Удалить.'
+
+                else:
+                    text = '🦕 | Choose a dinosaur that will not take part.\n\n🍔 | You can also change the action to Add / Remove.'
+
+                try:
+
+                    image = open('images/dungeon/add_remove_dino/1.png','rb')
+                    bot.edit_message_media(
+                        chat_id = int(userid),
+                        message_id =  int(dung['users'][str(userid)]['messageid']),
+                        reply_markup = functions.dungeon_inline(bot, int(userid), dungeonid = dungeonid, type = 'remove_dino'),
+                        media = telebot.types.InputMedia(type='photo', media = image, caption = text)
+                    )
+
+                except Exception as e:
+                    return f'message_dont_update - settings ~{e}~'
+
+                return 'message_update - remove_dino'
+
+            else:
+                return 'error_type_no_ind'
+
+        else:
+            return 'error_no_dungeon'

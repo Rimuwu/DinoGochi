@@ -23,6 +23,7 @@ client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
 referal_system = client.bot.referal_system
 market = client.bot.market
+dungeons = client.bot.dungeons
 
 with open('data/items.json', encoding='utf-8') as f:
     items_f = json.load(f)
@@ -36,6 +37,7 @@ class commands:
     market = market
     items_f = items_f
     json_f = json_f
+    dungeons = dungeons
 
     @staticmethod
     def start_game(bot, message, user, bd_user):
@@ -528,6 +530,13 @@ class commands:
 
             friends_name = []
             friends_id_d = {}
+
+            if bd_user['language_code'] == 'ru':
+                text = "👥 | Ожидайте..."
+            else:
+                text = "👥 | Wait..."
+
+            bot.send_message(message.chat.id, text)
 
             for i in friends_id:
                 try:
@@ -2118,6 +2127,7 @@ class commands:
 
     @staticmethod
     def coll_progress(bot, message, user, bd_user):
+        markup_inline = types.InlineKeyboardMarkup()
 
         if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] == 'hunting':
             number = bd_user['dinos'][ bd_user['settings']['dino_id'] ]['target'][0]
@@ -2126,10 +2136,14 @@ class commands:
 
             if bd_user['language_code'] == 'ru':
                 text = f'🍱 | Текущий прогресс: {int( prog )}%\n🎲 | Цель: {tnumber}'
+                inl_l = {'❌ Отменить': f"cancel_progress {bd_user['settings']['dino_id']}" }
+
             else:
                 text = f'🍱 | Current progress: {int( prog )}%\n🎲 | Goal: {tnumber}'
+                inl_l = {'❌ Cancel': f"cancel_progress {bd_user['settings']['dino_id']}" }
 
-            bot.send_message(message.chat.id, text)
+            markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]}") for inl in inl_l.keys() ])
+            bot.send_message(message.chat.id, text, reply_markup = markup_inline)
 
     @staticmethod
     def invite_friend(bot, message, user, bd_user):
@@ -3339,3 +3353,12 @@ class commands:
 
             msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
             bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)
+
+    @staticmethod
+    def game_dungeon(bot, message, user, bd_user):
+
+        if bd_user['language_code'] == 'ru':
+            text_m = f" тестовое сообщение с информацией"
+
+        else:
+            text_m = f" test"
