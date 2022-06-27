@@ -2127,6 +2127,7 @@ class commands:
 
     @staticmethod
     def coll_progress(bot, message, user, bd_user):
+        markup_inline = types.InlineKeyboardMarkup()
 
         if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] == 'hunting':
             number = bd_user['dinos'][ bd_user['settings']['dino_id'] ]['target'][0]
@@ -2135,10 +2136,14 @@ class commands:
 
             if bd_user['language_code'] == 'ru':
                 text = f'🍱 | Текущий прогресс: {int( prog )}%\n🎲 | Цель: {tnumber}'
+                inl_l = {'❌ Отменить': f"cancel_progress {bd_user['settings']['dino_id']}" }
+
             else:
                 text = f'🍱 | Current progress: {int( prog )}%\n🎲 | Goal: {tnumber}'
+                inl_l = {'❌ Cancel': f"cancel_progress {bd_user['settings']['dino_id']}" }
 
-            bot.send_message(message.chat.id, text)
+            markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]}") for inl in inl_l.keys() ])
+            bot.send_message(message.chat.id, text, reply_markup = markup_inline)
 
     @staticmethod
     def invite_friend(bot, message, user, bd_user):

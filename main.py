@@ -323,7 +323,7 @@ def command(message):
 def command(message):
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
-        dng, inf = functions.dungeon_base_upd(userid = user.id, dinosid = ['1'])
+        dng, inf = functions.dungeon_base_upd(userid = user.id)
         pprint.pprint(dng)
         print(inf)
 
@@ -336,7 +336,7 @@ def command(message):
     msg_args = message.text.split()
     if user.id in [5279769615, 1191252229]:
 
-        dng, inf = functions.dungeon_base_upd(userid = user.id, dinosid = ['1'], dungeonid = int(msg_args[1]), type = 'add_user')
+        dng, inf = functions.dungeon_base_upd(userid = user.id, dungeonid = int(msg_args[1]), type = 'add_user')
         pprint.pprint(dng)
         print(inf)
 
@@ -785,6 +785,10 @@ def answer(call):
 
         call_data.change_rarity_call_data(bot, bd_user, call, user)
 
+    elif call.data.split()[0] == 'cancel_progress':
+
+        call_data.cancel_progress(bot, bd_user, call, user)
+
     elif call.data.split()[0] == 'dungeon.settings':
 
         call_data.dungeon_settings(bot, bd_user, call, user)
@@ -836,6 +840,14 @@ def answer(call):
     elif call.data.split()[0] == 'dungeon.action.remove_dino':
 
         call_data.dungeon_remove_dino(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.ready':
+
+        call_data.dungeon_ready(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.invite':
+
+        call_data.dungeon_invite(bot, bd_user, call, user)
 
     else:
         print(call.data, 'call.data')

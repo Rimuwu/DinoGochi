@@ -1598,6 +1598,21 @@ class call_data:
 
                 bot.register_next_step_handler(msg, wrk_p)
 
+    def cancel_progress(bot, bd_user, call, user):
+
+        did = call.data.split()
+        dino_id = did[1]
+
+        if bd_user['dinos'][dino_id]['activ_status'] == 'hunting':
+
+            del bd_user['dinos'][ dino_id ]['target']
+            del bd_user['dinos'][ dino_id ]['h_type']
+            bd_user['dinos'][dino_id]['activ_status'] = 'pass_active'
+
+            functions.notifications_manager(bot, "hunting_end", bd_user, dino_id = dino_id)
+            users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{dino_id}': bd_user['dinos'][dino_id] }} )
+
+
     def change_rarity_call_data(bot, bd_user, call, user):
 
         did = call.data.split()
@@ -1844,10 +1859,12 @@ class call_data:
         pprint.pprint(dng)
         print(inf)
 
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'add_dino')
-        print(inf)
+        inf2 = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = inf)
+        print(inf2)
 
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
+        if inf == 'add_dino':
+            inf3 = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
+            print(inf3)
 
     def dungeon_remove_dino(bot, bd_user, call, user):
 
@@ -1862,3 +1879,32 @@ class call_data:
         inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'remove_dino')
         print(inf)
         inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
+        print(inf)
+
+    def dungeon_ready(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        if dung != None:
+
+            pprint.pprint(dung)
+
+            if user.id not in dung['stage_data']['preparation']['ready']:
+
+                if dung['users'][str(user.id)]['dinos'] != {}:
+                    dung['stage_data']['preparation']['ready'].append(user.id)
+
+            else:
+                dung['stage_data']['preparation']['ready'].remove(user.id)
+
+            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
+            inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
+            print(inf)
+
+    def dungeon_invite(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+
+        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'invite_room')
+        print(inf)
