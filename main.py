@@ -52,14 +52,14 @@ def check(): #проверка каждые 10 секунд
     def memory(): checks.check_memory()
 
     non_members = users.find({ })
-    chunks_users = list(functions.chunks( list(non_members), 50 ))
+    chunks_users = list(functions.chunks( list(non_members), 25 ))
     functions.check_data('col', None, int(len(chunks_users)) )
 
     while True:
         if int(memory_usage()[0]) < 1500:
             st_r_time = int(time.time())
             non_members = users.find({ })
-            chunks_users = list(functions.chunks( list(non_members), 50 ))
+            chunks_users = list(functions.chunks( list(non_members), 25 ))
             sl_time = 10 - ( int(time.time()) - st_r_time )
 
             if sl_time <= 0:

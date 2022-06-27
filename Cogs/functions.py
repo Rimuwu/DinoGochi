@@ -1565,11 +1565,7 @@ class functions:
             user = bot.get_chat(int(mem_id))
             bd_user = users.find_one({"userid": user.id})
 
-            unpd = int(len(bd_user['dinos']))
-            if unpd == 0:
-                unpd = 1
-
-            expp = (5 * bd_user['lvl'][0] * bd_user['lvl'][0] + 50 * bd_user['lvl'][0] + 100) * unpd
+            expp = 5 * bd_user['lvl'][0] * bd_user['lvl'][0] + 50 * bd_user['lvl'][0] + 100
             n_d = len(list(bd_user['dinos']))
             t_dinos = ''
             for k in bd_user['dinos']:
