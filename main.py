@@ -52,14 +52,14 @@ def check(): #проверка каждые 10 секунд
     def memory(): checks.check_memory()
 
     non_members = users.find({ })
-    chunks_users = list(functions.chunks( list(non_members), 50 ))
+    chunks_users = list(functions.chunks( list(non_members), 25 ))
     functions.check_data('col', None, int(len(chunks_users)) )
 
     while True:
         if int(memory_usage()[0]) < 1500:
             st_r_time = int(time.time())
             non_members = users.find({ })
-            chunks_users = list(functions.chunks( list(non_members), 50 ))
+            chunks_users = list(functions.chunks( list(non_members), 25 ))
             sl_time = 10 - ( int(time.time()) - st_r_time )
 
             if sl_time <= 0:
@@ -256,31 +256,30 @@ def command(message):
 
         print("all")
 
-# @bot.message_handler(commands=['add_quality_to_all'])
+# @bot.message_handler(commands=['sbros_lvl'])
 # def command_n(message):
 #     user = message.from_user
 #     if user.id in [5279769615, 1191252229]:
 #
 #         def work(members, n):
 #             for bd_user in members:
-#                 print(bd_user['userid'])
-#                 for i in bd_user['dinos']:
-#                     dino = {}
-#                     dino = bd_user['dinos'][i]
-#                     dino_data = json_f['elements'][str(dino['dino_id'])]
 #
-#                     users.update_one( {"userid": user.id}, {"$set": {f'dinos.{i}.quality': dino_data['image'][5:8] }} )
+#                 if bd_user['lvl'][0] > 10 and len(bd_user['dinos']) == 0:
+#                     bd_user['lvl'][0] = 2
+#
+#                     users.update_one( {"userid": bd_user['userid']}, {"$set": {f'lvl': bd_user['lvl'] }} )
 #
 #             print(f'Программа обновления №{n} завершила работу.')
 #
-#         non_members = [users.find_one({"userid": 1191252229}), users.find_one({"userid": 5279769615})] #users.find({ })
-#         chunks_users = list(functions.chunks( list(non_members), 1 ))
+#         non_members = users.find({ })
+#         chunks_users = list(functions.chunks( list(non_members), 10 ))
 #
 #         n = 0
 #         for members in chunks_users:
 #             n += 1
 #             main = threading.Thread(target = work, daemon=True, kwargs = { 'members': members, 'n': n}).start()
 #             print(f'Программа обновления №{n} начала работу.')
+
 
 @bot.message_handler(commands=['add_item'])
 def command(message):
@@ -688,6 +687,26 @@ def on_message(message):
 
                 bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
+            elif message.text in [ "🗻 Подземелья", "🗻 Dungeons"]:
+
+                commands.dungeon_menu(bot, message, user, bd_user)
+
+            elif message.text in [ "🗻 Создать", "🗻 Create"]:
+
+                commands.dungeon_create(bot, message, user, bd_user)
+
+            elif message.text in [ '🚪 Присоединиться', '🚪 Join']:
+
+                commands.dungeon_menu(bot, message, user, bd_user)
+
+            elif message.text in [ '⚔ Экипировка', '⚔ Equip']:
+
+                commands.dungeon_menu(bot, message, user, bd_user)
+
+            elif message.text in [ '📕 Правила подземелья', '📕 Dungeon Rules']:
+
+                commands.dungeon_rules(bot, message, user, bd_user)
+
     if bd_user != None:
         # последняя активность
         users.update_one( {"userid": bd_user['userid']}, {"$set": {'last_m': int(time.time()) }} )
@@ -848,6 +867,22 @@ def answer(call):
     elif call.data.split()[0] == 'dungeon.invite':
 
         call_data.dungeon_invite(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.supplies':
+
+        call_data.dungeon_supplies(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.action.set_coins':
+
+        call_data.dungeon_set_coins(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.action.add_item':
+
+        call_data.dungeon_add_item_action(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon_add_item':
+
+        call_data.dungeon_add_item(bot, bd_user, call, user)
 
     else:
         print(call.data, 'call.data')

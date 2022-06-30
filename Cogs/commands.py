@@ -3355,10 +3355,99 @@ class commands:
             bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)
 
     @staticmethod
-    def game_dungeon(bot, message, user, bd_user):
+    def dungeon_menu(bot, message, user, bd_user):
 
-        if bd_user['language_code'] == 'ru':
-            text_m = f" тестовое сообщение с информацией"
+        if bd_user != None:
 
-        else:
-            text_m = f" test"
+            for din in bd_user['dinos']:
+
+                if 'dungeon' not in bd_user['dinos'][din].keys():
+                    bd_user['dinos'][din]['dungeon'] = {"equipment": {'armor': None, 'weapon': None}}
+
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{din}': bd_user['dinos'][din] }} )
+
+            if 'user_dungeon' not in bd_user.keys():
+                bd_user['user_dungeon'] = { "equipment": {'backpack': None}, 'statistics': [] }
+
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {f'user_dungeon': bd_user['user_dungeon'] }} )
+
+
+            if bd_user['language_code'] == 'ru':
+                text = f"🗻 | Вы перешли в меню подготовки к подземелью!"
+
+            else:
+                text = f"🗻 | You have moved to the dungeon preparation menu!"
+
+            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "dungeon_menu", user))
+
+    @staticmethod
+    def dungeon_rules(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            if bd_user['language_code'] == 'ru':
+                text = (f'*📕 | Правила подземелья*\n\n'
+                       f'1. *Предметы:*\n Все вещи и монеты взятые в подземелье, могут быть потерены, в случае "небезопасного выхода".\n\n'
+                       f'2. *Безопасный выход:*\n Безопасно выйти можно каждые 5 этажей. При этом сохраняются все вещи и монеты.\n\n'
+                       f'3. *НЕбезопасный выход:*\n Динозавры автоматически покидают подземелье в случае, когда здоровье опустилось до 10-ти. При этом теряются все вещи и монеты. Динозавр остаётся жив.\n\n'
+                       f'4. *Боссы:*\n Каждые 10 этажей, расположен босс, его требуется победить для перехода на следующий этаж.\n\n'
+                       f'5. *Конец подземелья:*\n Как говорят ранкеры: "У подземелья нет конца", оно спускается на многие киллометры вниз, кто знает, что вас там ожидает.\n\n'
+                       f'6. *Награда:*\n Чем ниже вы спускаетесь, тем ценнее награда, и ресурсы которые можно добыть.\n\n'
+                       f'7. *Рейтинг:*\n Ваш результат будет записан в таблицу рейтинга. Рейтинг сбрасывается 1 раз в 2-а месяца. А победители, получают награду.')
+
+            else:
+                text = (f'*📕 | Dungeon Rules*\n\n'
+                       f'1. *Items:*\n All items and coins taken in the dungeon can be lost in case of an "unsafe exit".\n\n'
+                       f'2. *Safe exit:*\n It is safe to exit every 5 floors. At the same time, all items and coins are saved.\n\n'
+                       f'3. *Unsafe exit:*\n Dinosaurs automatically leave the dungeon when their health drops to 10. At the same time, all things and coins are lost. The dinosaur remains alive.\n\n'
+                       f'4. *Bosses:*\n Every 10 floors, there is a boss, it needs to be defeated to move to the next floor.\n\n'
+                       f'5. * The end of the dungeon:*\n As the rankers say: "The dungeon has no end," it descends many kilometers down, who knows what awaits you there.\n\n'
+                       f'6. *Reward:*\n The lower you go, the more valuable the reward and the resources that can be obtained.\n\n'
+                       f'7. *Rating:*\n Your result will be recorded in the rating table. The rating is reset 1 time in 2 months. And the winners get a reward.')
+
+            bot.send_message(message.chat.id, text, parse_mode = 'Markdown')
+
+    @staticmethod
+    def dungeon_create(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            dung = dungeons.find_one({"dungeonid": user.id})
+
+            if dung == None:
+
+                dungs = dungeons.find({ })
+
+                for dng in dungs:
+                    if str(user.id) in dng['users'].keys():
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f'❗ | Вы уже участвуете в подземелье!'
+
+                        else:
+                            text = f'❗ | You are already participating in the dungeon!'
+
+                        bot.send_message(message.chat.id, text)
+                        return
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'⚙ | Генерация...'
+
+                else:
+                    text = f'⚙ | Generation...'
+
+                mg = bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "dungeon", user))
+
+                dng, inf = functions.dungeon_base_upd(userid = user.id)
+                inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = user.id)
+
+                bot.delete_message(user.id, mg.message_id)
+
+            else:
+                if bd_user['language_code'] == 'ru':
+                    text = f'❗ | У вас уже создано подземелье!'
+
+                else:
+                    text = f'❗ | You have already created a dungeon!'
+
+                bot.send_message(message.chat.id, text)

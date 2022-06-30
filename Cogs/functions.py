@@ -186,10 +186,10 @@ class functions:
 
                 if bd_user['language_code'] == 'ru':
                     nl = ['🦖 Динозавр', '🕹 Действия', '👁‍🗨 Профиль', '🔧 Настройки', '👥 Друзья', '❗ FAQ']
-                    tv = ['🍺 Дино-таверна']
+                    tv = ['🍺 Дино-таверна',  "🗻 Подземелья"]
                 else:
                     nl = ['🦖 Dinosaur', '🕹 Actions', '👁‍🗨 Profile', '🔧 Settings', '👥 Friends', '❗ FAQ']
-                    tv = ['🍺 Dino-tavern']
+                    tv = ['🍺 Dino-tavern', "🗻 Dungeons"]
 
                 if 'vis.faq' in bd_user['settings'].keys() and bd_user['settings']['vis.faq'] == False:
                     nl.remove('❗ FAQ')
@@ -320,7 +320,8 @@ class functions:
             if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['status'] == 'dino':
 
                 if bd_user['language_code'] == 'ru':
-                    nl = ['🎮 Развлечения', '🍣 Покормить', '↪ Назад']
+                    nl = ['🎮 Развлечения', '🍣 Покормить']
+                    nl2 = ['↪ Назад']
 
                     if len(bd_user['dinos']) == 1:
                         nid_dino = list(bd_user['dinos'].keys())[0]
@@ -362,12 +363,14 @@ class functions:
                         item3 = types.KeyboardButton(nl[2])
                         item4 = types.KeyboardButton(nl[3])
                         item5 = types.KeyboardButton(nl[4])
-                        item6 = types.KeyboardButton(nl[5])
+                        item6 = types.KeyboardButton(nl2[0])
 
-                        markup.add(item0, item1, item2, item3, item4, item5, item6)
+                        markup.add(item0, item1, item2, item3, item4, item5)
+                        markup.add(item6)
 
                     else:
                         markup.add(* [ x for x in nl ])
+                        markup.add(* [ x for x in nl2 ])
 
                 else:
                     nl = ['🎮 Entertainments', '🍣 Feed', '↪ Back']
@@ -414,20 +417,15 @@ class functions:
                         item3 = types.KeyboardButton(nl[2])
                         item4 = types.KeyboardButton(nl[3])
                         item5 = types.KeyboardButton(nl[4])
-                        item6 = types.KeyboardButton(nl[5])
+                        item6 = types.KeyboardButton(nl2[0])
 
-                        markup.add(item0, item1, item2, item3, item4, item5, item6)
+                        markup.add(item0, item1, item2, item3, item4, item5)
+                        markup.add(item6)
 
                     else:
 
-                        item1 = types.KeyboardButton(nl[0])
-                        item2 = types.KeyboardButton(nl[1])
-                        item3 = types.KeyboardButton(nl[2])
-                        item4 = types.KeyboardButton(nl[3])
-                        item5 = types.KeyboardButton(nl[4])
-                        item6 = types.KeyboardButton(nl[5])
-
-                        markup.add(item1, item2, item3, item4, item5, item6)
+                        markup.add(* [ x for x in nl ])
+                        markup.add(* [ x for x in nl2 ])
 
         elif element == 'games' and bd_user != None:
 
@@ -470,14 +468,14 @@ class functions:
         elif element == "profile" and bd_user != None:
 
             if bd_user['language_code'] == 'ru':
-                nl = ['📜 Информация', '🎮 Инвентарь', '🎢 Рейтинг', '💍 Аксессуары', '🛒 Рынок', '↪ Назад']
+                nl = ['📜 Информация', '🎮 Инвентарь', '🎢 Рейтинг', '💍 Аксессуары', '🛒 Рынок', "💡 Исследования", '↪ Назад']
 
             else:
-                nl = ['📜 Information', '🎮 Inventory', '🎢 Rating', '💍 Accessories', '🛒 Market', '↪ Back']
+                nl = ['📜 Information', '🎮 Inventory', '🎢 Rating', '💍 Accessories', '🛒 Market', "💡 Research", '↪ Back']
 
             markup.add(nl[0], nl[1])
             markup.add(nl[2], nl[3], nl[4])
-            markup.add(nl[5])
+            markup.add(nl[5], nl[6])
 
         elif element == "market" and bd_user != None:
 
@@ -496,17 +494,41 @@ class functions:
 
             if bd_user['language_code'] == 'ru':
                 nl = ['⛓ Квесты', '🎭 Навыки', '🦖 БИО', '👁‍🗨 Динозавры в таверне', '♻ Изменение редкости']
-                nl2 = ['🥏 Дрессировка', "💡 Исследования"]
+                nl2 = ['🥏 Дрессировка']
                 nl3 = ['↪ Назад']
 
             else:
                 nl = ['⛓ Quests', '🎭 Skills', '🦖 BIO', '👁‍🗨 Dinosaurs in the Tavern', '♻ Rarity Change']
-                nl2 = ['🥏 Training', "💡 Research"]
+                nl2 = ['🥏 Training']
                 nl3 = ['↪ Back']
 
             markup.add(* [x for x in nl] )
             markup.add(* [x for x in nl2] )
             markup.add(* [x for x in nl3] )
+
+        elif element == "dungeon_menu" and bd_user != None:
+            markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+
+            if bd_user['language_code'] == 'ru':
+                nl = ['🗻 Создать', '🚪 Присоединиться', '⚔ Экипировка', '📕 Правила подземелья', '🎮 Статистика']
+                nl3 = ['↪ Назад']
+
+            else:
+                nl = ['🗻 Create', '🚪 Join', '⚔ Equip', '📕 Dungeon Rules', '🎮 Statistics']
+                nl3 = ['↪ Back']
+
+            markup.add(* [x for x in nl] )
+            markup.add(* [x for x in nl3] )
+
+        elif element == "dungeon" and bd_user != None:
+
+            if bd_user['language_code'] == 'ru':
+                nl = ['Ничего не делает']
+
+            else:
+                nl = ['Does nothing']
+
+            markup.add(* [x for x in nl] )
 
         else:
             print(f'{element}\n{user.first_name}')
@@ -1498,7 +1520,7 @@ class functions:
                                                 else:
                                                     text = f"Enter the correct number!"
 
-                                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+                                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', bd_user))
                                                 return
 
                                         if col > mx_col:
@@ -1565,11 +1587,7 @@ class functions:
             user = bot.get_chat(int(mem_id))
             bd_user = users.find_one({"userid": user.id})
 
-            unpd = int(len(bd_user['dinos']))
-            if unpd == 0:
-                unpd = 1
-
-            expp = (5 * bd_user['lvl'][0] * bd_user['lvl'][0] + 50 * bd_user['lvl'][0] + 100) * unpd
+            expp = 5 * bd_user['lvl'][0] * bd_user['lvl'][0] + 50 * bd_user['lvl'][0] + 100
             n_d = len(list(bd_user['dinos']))
             t_dinos = ''
             for k in bd_user['dinos']:
@@ -1835,7 +1853,7 @@ class functions:
 
     @staticmethod
     def item_authenticity(item:dict):
-        item_data = items_f['items'][item['item_id']]
+        item_data = items_f['items'][ item['item_id'] ]
         if list(item.keys()) == ['item_id']:
             return True
 
@@ -1923,12 +1941,11 @@ class functions:
             if items == []:
 
                 if bd_user['language_code'] == 'ru':
-                    text = 'Инвентарь пуст.'
+                    text = '💥 | Инвентарь пуст.'
                 else:
-                    text = 'Inventory is empty.'
+                    text = '💥 | Inventory is empty.'
 
                 bot.send_message(message.chat.id, text)
-
                 return
 
             items_id = {}
@@ -2484,8 +2501,8 @@ class functions:
             idraw.text((210, 270), dino_quality[0], font = line1)
             idraw.text((385, 270), dino_quality[1], font = line1, fill = fill)
 
-            img.save('profile.png')
-            profile = open(f"profile.png", 'rb')
+            img.save(f'profile {user.id}.png')
+            profile = open(f'profile {user.id}.png', 'rb')
 
             return profile, time_end
 
@@ -2530,8 +2547,8 @@ class functions:
             idraw.text((750, 190), str(bd_user['dinos'][dino_user_id]['stats']['mood']), font = line1)
             idraw.text((750, 270), str(bd_user['dinos'][dino_user_id]['stats']['unv']), font = line1)
 
-            img.save('profile.png')
-            profile = open(f"profile.png", 'rb')
+            img.save(f'profile {user.id}.png')
+            profile = open(f'profile {user.id}.png', 'rb')
 
             return profile
 
@@ -2801,11 +2818,11 @@ class functions:
         return count
 
     @staticmethod
-    def spam_stop(user_id):
+    def spam_stop(user_id, sec = 1):
         global users_timeout
 
         if str(user_id) in users_timeout.keys():
-            if users_timeout[str(user_id)] + 1 < time.time():
+            if users_timeout[str(user_id)] + sec < time.time():
                 del users_timeout[str(user_id)]
                 return True
 
@@ -2858,7 +2875,7 @@ class functions:
                     'dungeon_stage': 'preparation',
                     'stage_data':  { 'preparation': {'image': random.randint(1,6), 'ready': [] }
                                    },
-                    'settings': { 'lang': bd_user['language_code'], 'max_dinos': 10 }
+                    'settings': { 'lang': bd_user['language_code'], 'max_dinos': 10}
                 } )
 
                 dung = dungeons.find_one({"dungeonid": userid})
@@ -3126,6 +3143,34 @@ class functions:
 
                 return markup_inline
 
+            if type == 'supplies':
+                markup_inline = types.InlineKeyboardMarkup(row_width = 2)
+
+                if dung['settings']['lang'] == 'ru':
+                    inl_l = {'⚙ Добавить': 'dungeon.action.add_item',
+                             '💸 Монеты': 'dungeon.action.set_coins',
+                             '⚙ Удалить': 'dungeon.action.remove_item'
+                            }
+
+                    inl_l2 = {'🕹 Назад': 'dungeon.to_lobby'
+                            }
+
+                else:
+                    inl_l = {'⚙ Add': 'dungeon.action.add_item',
+                             '💸 Coins': 'dungeon.action.set_coins',
+                             '⚙ Remove': 'dungeon.action.remove_item'
+                            }
+                    inl_l2 = {'🕹 Back': 'dungeon.to_lobby'
+                            }
+
+                bd_user = users.find_one({"userid": int(userid) })
+
+                markup_inline.row( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
+
+                return markup_inline
+
             else:
                 print('error_type_dont_find')
                 return markup_inline
@@ -3144,10 +3189,11 @@ class functions:
                 if dung['dungeon_stage'] == 'preparation':
 
                     if dung['settings']['lang'] == 'ru':
-                        text = '*🎴 Лобби*\n\n   *🗻 | Информация*\nВы стоите перед входом в подземелье. Кого-то трясёт от страха, а кто-то жаждет приключений. Что вы найдёте в подземелье, известно только богу удачи, соберите команду и покорите бесконечное подземелье!\n\n   *💼 | Припасы*\nВо время путешествия в подземелье может случится что-то неожиданное. Лучше быть готовым ко всему.\n\n   *☎ | Правила*\nВсе вещи и монеты взятые в подземелье, могут быть потерены, в случае "небезопасного выхода". Безопасно выйти можно каждые 5 этажей. Динозавры автоматически покидают подземелье в случае, когда здоровье опустилось до 10-ти.\n\n   *🦕 | Динозавры*'
+                        text = '*🎴 Лобби*\n\n   *🗻 | Информация*\nВы стоите перед входом в подземелье. Кого-то трясёт от страха, а кто-то жаждет приключений. Что вы найдёте в подземелье, известно только богу удачи, соберите команду и покорите бесконечное подземелье!\n\n   *🦕 | Динозавры*'
 
                     else:
-                        text = "*🎴 Lobby*\n\n   *🗻 | Information*\nYou are standing in front of the entrance to the dungeon. Someone is shaking with fear, and someone is eager for adventure. What you will find in the dungeon is known only to the god of luck, gather a team and conquer the endless dungeon!\n\n   *💼 | Supplies*\nDuring the journey to the dungeon, something unexpected may happen. It's better to be prepared for everything.\n\n   *🦕 | Dinosaurs*"
+                        text = "*🎴 Lobby*\n\n   *🗻 | Information*\nYou are standing in front of the entrance to the dungeon. Someone is shaking with fear, and someone is eager for adventure. What you will find in the dungeon is known only to the god of luck, gather a team and conquer the endless dungeon!\n\n   *🦕 | Dinosaurs*"
+
 
                     d_n = 0
                     dinos_text = ''
@@ -3174,7 +3220,7 @@ class functions:
                                 dinos_text += '   |   '
                             else:
                                 if d_n != 0:
-                                    dinos_text += '\n    '
+                                    dinos_text += '\n'
 
                             dinos_text += f'{bd_us["dinos"][din]["name"]}'
 
@@ -3294,7 +3340,7 @@ class functions:
 
                     try:
                         bot.delete_message(int(u_k), us['messageid'])
-                        bot.send_message(int(u_k), text)
+                        bot.send_message(int(u_k), text, reply_markup = functions.markup(bot, "dungeon_menu", int(u_k) ))
                         dl += 1
                     except Exception as e:
                         undl += 1
@@ -3344,9 +3390,35 @@ class functions:
                     )
 
                 except Exception as e:
-                    return f'message_dont_update - settings ~{e}~'
+                    return f'message_dont_update - invite_room ~{e}~'
 
-                return 'message_update - settings'
+                return 'message_update - invite_room'
+
+            if type == 'supplies':
+
+                bd_user = users.find_one({"userid": userid})
+                items_id = [ i['item_id'] for i in dung['users'][str(userid)]['inventory']]
+
+                if dung['settings']['lang'] == 'ru':
+                    text = f'💼 | Во время путешествия в подземелье может случится что-то неожиданное. Лучше быть готовым ко всему. Учтите, для входа в подземелье требуется минимум 200 монет!\n\n💸 | Монеты: { dung["users"][str(userid)]["coins"] }\n👜 | Вместимость рюкзака: {len(dung["users"][str(userid)]["inventory"])} / {functions.d_backpack(bd_user)}\n🧵 | Предметы: {", ".join(functions.sort_items_col( items_id, "ru" ))}'
+
+                else:
+                    text = f"💼 | During the journey to the dungeon, something unexpected may happen. It's better to be prepared for everything.Please note that a minimum of 200 coins is required to enter the dungeon!\n\n💸 | Coins: {dung['users'][str(userid)]['coins']}\n👜 | Backpack capacity: {len(dung["users"][str(userid)]["inventory"])} / {functions.d_backpack(bd_user)}\n🧵 | Items: {", ".join(functions.sort_items_col( items_id, "en" ))}"
+
+                try:
+
+                    image = open('images/dungeon/supplies/1.png','rb')
+                    bot.edit_message_media(
+                        chat_id = int(userid),
+                        message_id =  int(dung['users'][str(userid)]['messageid']),
+                        reply_markup = functions.dungeon_inline(bot, int(userid), dungeonid = dungeonid, type = 'supplies'),
+                        media = telebot.types.InputMedia(type='photo', media = image, parse_mode = 'Markdown', caption = text)
+                    )
+
+                except Exception as e:
+                    return f'message_dont_update - supplies ~{e}~'
+
+                return 'message_update - supplies'
 
             if type in ['add_dino', 'limit_(add_dino)', 'action_dino_is_not_pass']:
 
@@ -3409,3 +3481,19 @@ class functions:
 
         else:
             return 'error_no_dungeon'
+
+    @staticmethod
+    def d_backpack(bd_user):
+
+        if 'user_dungeon' in bd_user.keys():
+
+            item = bd_user['user_dungeon']["equipment"]['backpack']
+
+            if item == None:
+                return 5
+
+            else:
+                return item['act']
+
+        else:
+            return 5
