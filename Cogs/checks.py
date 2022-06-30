@@ -568,7 +568,7 @@ class checks:
                                     events = ['+eat', 'sleep', 'u_coins', 'friend_meet', 'deadlock']
                                 elif r_event in list(range(81,98)): #редкое соб
                                     events = ['random_items', 'b_coins', 'deadlock', 'friend_game']
-                                elif r_event in list(range(98,100)): #мистическое соб
+                                elif r_event in list(range(99,100)): #мистическое соб
                                     events = ['random_items_leg', 'y_coins'] #, 'magic_stone'
                                 else: #легендарное соб
                                     events = ['egg', 'l_coins']

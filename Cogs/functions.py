@@ -1498,7 +1498,7 @@ class functions:
                                                 else:
                                                     text = f"Enter the correct number!"
 
-                                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+                                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', bd_user))
                                                 return
 
                                         if col > mx_col:
