@@ -14,7 +14,7 @@
     pip install requirements.txt
 
 - Далее зайдите на https://account.mongodb.com/account/login
-- Зарегестрируйте аккаунт и получите бесплатный кластер m1
+- Зарегестрируйте аккаунт и получите бесплатный кластер m0
 - В кластере создайте базу с названием bot и коллекциями в ней
  > bot:
  > - users
@@ -34,3 +34,5 @@
 
 - В файле config.py введите токены от кластера и бота
 - Запустите файл main.py
+> - CLUSTER_TOKEN = "mongodb+srv://bot:CLUSTER_TOKEN.CLUSTER_NAME.mongodb.net/<dbname>?retryWrites=true&w=majority" #Замените CLUSTER_TOKEN и CLUSTER_NAME
+> - TOKEN = "Токен бота из BotFather"
