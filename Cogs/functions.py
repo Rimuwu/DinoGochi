@@ -1869,7 +1869,7 @@ class functions:
     @staticmethod
     def qr_item_code(item:dict, v_id:bool = True):
         if v_id == True:
-            text = f"i{item['item_id']}."
+            text = f"i{item['item_id']}"
         else:
             text = ''
 
@@ -3403,7 +3403,7 @@ class functions:
                     text = f'💼 | Во время путешествия в подземелье может случится что-то неожиданное. Лучше быть готовым ко всему. Учтите, для входа в подземелье требуется минимум 200 монет!\n\n💸 | Монеты: { dung["users"][str(userid)]["coins"] }\n👜 | Вместимость рюкзака: {len(dung["users"][str(userid)]["inventory"])} / {functions.d_backpack(bd_user)}\n🧵 | Предметы: {", ".join(functions.sort_items_col( items_id, "ru" ))}'
 
                 else:
-                    text = f"💼 | During the journey to the dungeon, something unexpected may happen. It's better to be prepared for everything.Please note that a minimum of 200 coins is required to enter the dungeon!\n\n💸 | Coins: {dung['users'][str(userid)]['coins']}\n👜 | Backpack capacity: {len(dung["users"][str(userid)]["inventory"])} / {functions.d_backpack(bd_user)}\n🧵 | Items: {", ".join(functions.sort_items_col( items_id, "en" ))}"
+                    text = f"💼 | During the journey to the dungeon, something unexpected may happen. It's better to be prepared for everything.Please note that a minimum of 200 coins is required to enter the dungeon!\n\n💸 | Coins: {dung['users'][str(userid)]['coins']}\n👜 | Backpack capacity: {len(dung['users'][str(userid)]['inventory'])} / {functions.d_backpack(bd_user)}\n🧵 | Items: {', '.join(functions.sort_items_col( items_id, 'en' ))}"
 
                 try:
 

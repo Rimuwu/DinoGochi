@@ -1983,6 +1983,7 @@ class call_data:
 
         def set_coins(message, old_m):
             bot.delete_message(user.id, old_m.message_id)
+            bot.delete_message(user.id, message.message_id)
 
             try:
                 coins = int(message.text)
@@ -2017,7 +2018,6 @@ class call_data:
                         show_text = "✔ | Coins are installed!"
 
                     bot.answer_callback_query(call.id, show_text)
-                    bot.delete_message(user.id, message.message_id)
                     dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}.coins': coins }} )
                     inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
@@ -2039,13 +2039,8 @@ class call_data:
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        items_id = {}
-        for item in items:
-
-            if item['item_id'] in items_id:
-                items_id[ item['item_id'] ]['col'] += 1
-            else:
-                items_id[ item['item_id'] ] = {'item': item, 'col': 1 }
+        list_items_id = []
+        for i in items: list_items_id.append( i['item_id'] )
 
         if bd_user['language_code'] == 'ru':
             show_text = '🎴 | Ващ инвентарь пуст!'
@@ -2097,8 +2092,7 @@ class call_data:
                         bot.answer_callback_query(call.id, show_text2, show_alert = True)
 
                     else:
-
-                        pr_l_s = list(set(items_id.keys()) & set(s_i) )
+                        pr_l_s = list(set(list_items_id) | set(s_i) )
 
                         if pr_l_s == []:
 
@@ -2112,19 +2106,26 @@ class call_data:
 
                         else:
                             inl_d = {}
+                            for i in items:
 
-                            for itm in pr_l_s:
-                                if functions.item_authenticity(items_id[itm]['item']) == True:
-                                    inl_d[ f'{data_items[itm][lg_name]}' ] = items_id[itm]['item']
-                                else:
-                                    inl_d[ f'{data_items[itm][lg_name]} ({functions.qr_item_code(items_id[itm]["item"], False)})' ] = items_id[itm]['item']
+                                if i['item_id'] in pr_l_s:
+
+                                    if functions.item_authenticity(i) == True:
+
+                                        if data_items[i['item_id']][lg_name] not in inl_d.keys():
+                                            inl_d[ data_items[i['item_id']][lg_name] ] = f"dungeon_add_item {dungeonid} {functions.qr_item_code(i)}"
+
+                                    else:
+                                        if f"{data_items[i['item_id']][lg_name]} ({functions.qr_item_code(i, False)})" not in inl_d.keys():
+
+                                            inl_d[ f"{data_items[i['item_id']][lg_name]} ({functions.qr_item_code(i, False)})" ] = f"dungeon_add_item {dungeonid} {functions.qr_item_code(i)}"
 
                             markup_inline = types.InlineKeyboardMarkup(row_width = 3)
 
                             markup_inline.add( *[
                             types.InlineKeyboardButton(
                                 text = inl,
-                                callback_data = f'dungeon_add_item {dungeonid} {functions.qr_item_code(inl_d[inl])}' ) for inl in inl_d.keys()
+                                callback_data = inl_d[inl] ) for inl in inl_d.keys()
                                                 ])
 
                             if bd_user['language_code'] == 'ru':
@@ -2272,3 +2273,98 @@ class call_data:
                         dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}': dung['users'][str(user.id)] }} )
 
                         inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+
+    def dungeon_remove_item_action(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+        data_items = items_f['items']
+        user_items = dung['users'][str(user.id)]['inventory']
+        markup_inline = types.InlineKeyboardMarkup()
+        mrk_d = {}
+
+        if bd_user['language_code'] == 'ru':
+            lg_name = 'nameru'
+        else:
+            lg_name = 'nameen'
+
+        for i in user_items:
+            if functions.item_authenticity(i) == True:
+                ke = f"{data_items[ i['item_id'] ][lg_name]}  x{user_items.count(i)}"
+
+                mrk_d[ ke ] = f'dungeon_remove_item {dungeonid} {functions.qr_item_code(i)}'
+            else:
+                ke = f"{data_items[ i['item_id'] ][lg_name]}  x{user_items.count(i)} ({functions.qr_item_code(i, False)})"
+
+                mrk_d[ ke ] = f'dungeon_remove_item {dungeonid} {functions.qr_item_code(i)}'
+
+        markup_inline = types.InlineKeyboardMarkup(row_width = 1)
+
+        markup_inline.add( *[
+        types.InlineKeyboardButton( text = inl,
+        callback_data = mrk_d[inl] ) for inl in mrk_d.keys()
+                            ])
+
+        if bd_user['language_code'] == 'ru':
+            inl = ['❌ Отмена', f'dungeon.supplies {dungeonid}']
+            text = '🧵 | Выберите предмет для удаления из инвентаря >'
+        else:
+            inl = ['❌ Cancel', f'dungeon.supplies {dungeonid}']
+            text = '🧵 | Select an item to remove from inventory >'
+
+        markup_inline.add( types.InlineKeyboardButton(text = inl[0], callback_data = inl[1] ) )
+
+        bot.edit_message_caption(text, call.message.chat.id, call.message.message_id, reply_markup = markup_inline)
+
+    def dungeon_remove_item(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+        data = functions.des_qr(call.data.split()[2])
+        list_inv_id = []
+        list_inv = dung['users'][str(user.id)]['inventory'].copy()
+        it_id = str(data['id'])
+
+        for i in list_inv: list_inv_id.append(i['item_id'])
+
+        if it_id in list_inv_id:
+            data_item = items_f['items'][it_id]
+
+            user_item = None
+            if list(set(['abilities']) & set(list(data_item.keys()))) != []:
+
+                abl_it = {}
+                for i in data.keys(): abl_it[i] = data[i]
+                del abl_it['id']
+
+                for it in list_inv:
+                    if user_item == None:
+                        if str(it['item_id']) == str(it_id):
+                            if 'abilities' in it.keys():
+                                for key_c in data.keys():
+                                    if key_c != 'id':
+                                        if it['abilities'] == abl_it:
+                                            user_item = it
+                                            break
+
+            else:
+                user_item = list_inv[list_inv_id.index(it_id)]
+
+            if user_item == None:
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'❌ | Предмет не найден в инвентаре!'
+                else:
+                    text = f"❌ | Enter the correct number!"
+
+                bot.answer_callback_query(call.id, text, show_alert = True)
+                inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+
+            if user_item != None:
+
+                for i in list_inv:
+                    if i == user_item:
+                        dung['users'][str(user.id)]['inventory'].remove(i)
+
+                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}.inventory': dung['users'][str(user.id)]['inventory'] }} )
+                inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')

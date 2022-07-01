@@ -3451,3 +3451,86 @@ class commands:
                     text = f'❗ | You have already created a dungeon!'
 
                 bot.send_message(message.chat.id, text)
+
+    @staticmethod
+    def dungeon_join(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            dung = dungeons.find_one({"dungeonid": user.id})
+
+            if dung == None:
+
+                dungs = dungeons.find({ })
+
+                for dng in dungs:
+                    if str(user.id) in dng['users'].keys():
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f'❗ | Вы уже участвуете в подземелье!'
+
+                        else:
+                            text = f'❗ | You are already participating in the dungeon!'
+
+                        bot.send_message(message.chat.id, text)
+                        return
+
+
+                def join_dungeon(message, old_m):
+
+                    try:
+                        code = int(message.text)
+                    except:
+                        if bd_user['language_code'] == 'ru':
+                            text = f'❗  | Введите корректный код!'
+
+                        else:
+                            text = f'❗  | Enter the correct code!'
+
+                        msg = bot.send_message(message.chat.id, text)
+
+                    else:
+                        dung = dungeons.find_one({"dungeonid": code})
+
+                        if dung == None:
+
+                            if bd_user['language_code'] == 'ru':
+                                text = f'❗  | Введите корректный код!'
+
+                            else:
+                                text = f'❗  | Enter the correct code!'
+
+                            msg = bot.send_message(message.chat.id, text)
+
+                        else:
+
+                            if bd_user['language_code'] == 'ru':
+                                text = f'⚙ | Генерация...'
+
+                            else:
+                                text = f'⚙ | Generation...'
+
+                            mg = bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "dungeon", user))
+
+                            dng, inf = functions.dungeon_base_upd(userid = user.id, dungeonid = code, type = 'add_user')
+
+                            inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dng['dungeonid'], upd_type = 'all')
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'🎟 | Введите код подключения > '
+
+                else:
+                    text = f'🎟 | Enter the connection code >'
+
+                msg = bot.send_message(message.chat.id, text)
+                bot.register_next_step_handler(msg, join_dungeon, msg)
+
+
+            else:
+                if bd_user['language_code'] == 'ru':
+                    text = f'❗ | У вас уже создано подземелье!'
+
+                else:
+                    text = f'❗ | You have already created a dungeon!'
+
+                bot.send_message(message.chat.id, text)
