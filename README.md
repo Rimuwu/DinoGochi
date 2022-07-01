@@ -34,5 +34,5 @@
 
 - В файле config.py введите токены от кластера и бота
 - Запустите файл main.py
-> - CLUSTER_TOKEN = "mongodb+srv://bot:CLUSTER_TOKEN.CLUSTER_NAME.mongodb.net/<dbname>?retryWrites=true&w=majority" #Замените CLUSTER_TOKEN и CLUSTER_NAME
+> - CLUSTER_TOKEN = "mongodb+srv://bot:CLUSTER_TOKEN.CLUSTER_NAME.mongodb.net/<dbname>?retryWrites=true&w=majority"
 > - TOKEN = "Токен бота из BotFather"
