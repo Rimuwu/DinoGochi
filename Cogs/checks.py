@@ -561,17 +561,17 @@ class checks:
                                 else:
                                     mood_n = False
 
-                                r_event = random.randint(1, 100)
-                                if r_event in list(range(1,51)): #обычное соб
+                                r_event = random.randint(1, 1000)
+                                if r_event >= 1 and r_event <= 500: #обычное соб
                                     events = ['sunny', 'm_coins', 'breeze'] #, 'trade'
-                                elif r_event in list(range(51,81)): #необычное соб
+                                elif r_event > 500 and r_event <= 800: #необычное соб
                                     events = ['+eat', 'sleep', 'u_coins', 'friend_meet', 'deadlock']
-                                elif r_event in list(range(81,98)): #редкое соб
+                                elif r_event > 800 and r_event <= 950: #редкое соб
                                     events = ['random_items', 'b_coins', 'deadlock', 'friend_game']
-                                elif r_event in list(range(99,100)): #мистическое соб
-                                    events = ['random_items_leg', 'y_coins'] #, 'magic_stone'
-                                else: #легендарное соб
-                                    events = ['egg', 'l_coins']
+                                elif r_event > 950 and r_event <= 995: #мистическое соб
+                                    events = ['random_items_leg', 'y_coins']
+                                elif r_event > 995 and r_event <= 1000: #легендарное соб
+                                    events = ['egg', 'l_coins'] #, 'magic_stone'
 
                                 event = random.choice(events)
 
@@ -848,10 +848,10 @@ class checks:
                                 elif event == 'random_items':
 
                                     items_dd = { "com": ["1", "2", '25'],
-                                                 'unc': ["1", "2", '17', '18', '19', '25'],
-                                                 'rar': ["1", "2", '17', '18', '19', '25', '26', '27', '28'],
-                                                 'myt': ["1", "2", '17', '18', '19', '25', '26', '27', '28', '41'],
-                                                 'leg': ["1", "2", '17', '18', '19', '25', '26', '27', '28', '43']
+                                                 'unc': ["1", "2", '17', '18', '19', '34'],
+                                                 'rar': ['17', '18', '19', '26', '27', '28'],
+                                                 'myt': ['26', '27', '28', '41'],
+                                                 'leg': ['43', '41', '35', '34']
                                                }
 
                                     item = functions.random_items(items_dd['com'], items_dd['unc'], items_dd['rar'], items_dd['myt'], items_dd['leg'])
@@ -875,15 +875,15 @@ class checks:
                                 elif event == 'random_items_leg':
 
                                     items_dd = {
-                                            "com": ['14', "15", "16", '17', '18', '19', '25',  '30', '32'],
+                                            "com": ['14', "15", "16", '17', '18', '19', '30', '32'],
 
-                                            'unc': ['14', "15", "16", '17', '18', '19', '25',  '34', '39'],
+                                            'unc': ['14', "15", "16", '17', '18', '19',  '34', '39'],
 
-                                            'rar': ['14', "15", "16", '17', '18', '19', '25',  '41','42','43'],
+                                            'rar': ['14', "15", "16", '17', '18', '19', '41', '42', '43'],
 
-                                            'myt': ['14', "15", "16", '17', '18', '19', '25',  '37', '46'],
+                                            'myt': ['14', "15", "16", '17', '18', '19', '25', '37', '46'],
 
-                                            'leg': ['30', '32', '34', '37', '39', '41','42','43', '46' ]
+                                            'leg': ['30', '32', '34', '37', '39', '41','42','43', '46']
                                                }
 
                                     item = functions.random_items(items_dd['com'], items_dd['unc'], items_dd['rar'], items_dd['myt'], items_dd['leg'])
