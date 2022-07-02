@@ -1070,7 +1070,7 @@ class functions:
         return False
 
     @staticmethod
-    def random_items(com_i:list, unc_i:list, rar_i:list, myt_i:list, leg_i:list):
+    def random_items(com_i:list, unc_i:list, rar_i:list, myt_i:list, leg_i:list): # 5 аргументов
 
         r_q = random.randint(1, 100)
         if r_q in list(range(1, 51)):
@@ -1582,7 +1582,8 @@ class functions:
         bot.register_next_step_handler(msg, zero, user_item, bd_user)
 
     def member_profile(bot, mem_id, lang):
-        try:
+        # try:
+        if True:
 
             user = bot.get_chat(int(mem_id))
             bd_user = users.find_one({"userid": user.id})
@@ -1797,8 +1798,8 @@ class functions:
                     text += f"*├* 🌿 Collecting food: {act_ii[i][1]}\n"
                     text += f"*└* 🎍 Journey: {act_ii[i][2]}"
 
-        except Exception as error:
-             text = f'ERROR Profile: {error}'
+        # except Exception as error:
+        #      text = f'ERROR Profile: {error}'
 
         return text
 
@@ -2840,10 +2841,12 @@ class functions:
         for i in bd_user['dinos']:
             if 'quality' not in bd_user['dinos'][i].keys():
                 dino = bd_user['dinos'][i]
-                dino_data = json_f['elements'][str(dino['dino_id'])]
-                bd_user['dinos'][i]['quality'] = dino_data['image'][5:8]
 
-                users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{i}.quality': dino_data['image'][5:8] }} )
+                if dino['status'] == 'dino':
+                    dino_data = json_f['elements'][str(dino['dino_id'])]
+                    bd_user['dinos'][i]['quality'] = dino_data['image'][5:8]
+
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{i}.quality': dino_data['image'][5:8] }} )
 
         return bd_user
 
@@ -2871,7 +2874,7 @@ class functions:
                 {
                     'dungeonid': userid,
                     'users': { str(userid): user_data(messageid, dinos) },
-                    'floor': {}, 'room': {},
+                    'floor': {},
                     'dungeon_stage': 'preparation',
                     'stage_data':  { 'preparation': {'image': random.randint(1,6), 'ready': [] }
                                    },
@@ -2888,6 +2891,51 @@ class functions:
             dung = dungeons.find_one({"dungeonid": dungeonid})
 
             if dung != None:
+
+                if type == 'create_floor':
+
+                    if 'game' not in dung['stage_data'].keys():
+                        dung['stage_data']['game'] = { 'floor_n': 1, 'room_n': 0, 'player_move': 0 }
+                        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
+
+                    floor = { '0': { 'room_type': 'start_room', 'image': random.randint(1, 2) }, '1': {},
+                              '2': {}, '3': {}, '4': {}, '5': {},
+                              '6': {}, '7': {}, '8': {}, '9': {}, '10': {}, 'floor_data': {}
+                            }
+
+                    rooms = { 'com': ['battle', 'empty_room'],
+                              'unc': ['fork_2', 'fork_3'],
+                              'rar': ['forest'],
+                              'myt': ['town', 'mine'],
+                              'leg': ['chest', 'mimic']
+                            }
+
+                    for room_n in list(range(1, 10)):
+
+                        room_type = functions.random_items( rooms['com'], rooms['unc'], rooms['rar'], rooms['myt'], rooms['leg'] )
+
+                        if room_type == 'battle':
+                            floor[str(room_n)] = { 'type': room_type, 'mobs': [], 'image': f'images/dungeon/simple_rooms/{random.randint(1,2)}.png', 'next_lvl': False }
+
+                        elif room_type in ['fork_2', 'fork_3']:
+
+                            if room_type == 'fork_2':
+                                poll_rooms = [ functions.random_items( rooms['com'], rooms['unc'], rooms['rar'], rooms['myt'], rooms['leg'] ) for i in range(2) ]
+                                results = [0, 0]
+
+                            if room_type == 'fork_3':
+                                poll_rooms = [ functions.random_items( rooms['com'], rooms['unc'], rooms['rar'], rooms['myt'], rooms['leg'] ) for i in range(3) ]
+                                results = [0, 0, 0]
+
+                            floor[str(room_n)] = { 'type': room_type, 'poll_rooms': poll_rooms, 'image': f'images/dungeon/{room_type}/1.png', 'results': results, 'next_lvl': False }
+
+                        else:
+                            floor[str(room_n)] = { 'type': room_type, 'image': f'images/dungeon/simple_rooms/{random.randint(1,2)}.png', 'next_lvl': False }
+
+                    dung['floor'] = floor
+                    dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor': floor }} )
+
+                    return dung, 'create_floor'
 
                 if type == 'add_user':
 
@@ -3186,6 +3234,11 @@ class functions:
 
         if dung != None:
             if type == None:
+
+                if dung['dungeon_stage'] == 'game':
+
+                    text = 'text'
+
                 if dung['dungeon_stage'] == 'preparation':
 
                     if dung['settings']['lang'] == 'ru':
@@ -3193,7 +3246,6 @@ class functions:
 
                     else:
                         text = "*🎴 Lobby*\n\n   *🗻 | Information*\nYou are standing in front of the entrance to the dungeon. Someone is shaking with fear, and someone is eager for adventure. What you will find in the dungeon is known only to the god of luck, gather a team and conquer the endless dungeon!\n\n   *🦕 | Dinosaurs*"
-
 
                     d_n = 0
                     dinos_text = ''
@@ -3273,7 +3325,6 @@ class functions:
                                 return f'3error_(message_no_update)? {e} ?'
 
                             return f'message_update (send)'
-
 
                     if upd_type == 'all':
                         dl = 0

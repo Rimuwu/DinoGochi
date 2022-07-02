@@ -101,8 +101,8 @@ class call_data:
                               'user_dungeon': { "equipment": {
                                                 'backpack': None}, 'statistics': []
                                               },
-                              'activ_items': { '1': {'game': None,
-                                                     'hunt': None, 'journey': None, 'unv': None}
+                              'activ_items': { '1': { 'game': None, 'hunt': None,
+                                                     'journey': None, 'unv': None }
                                              },
                               'friends': { 'friends_list': [],
                                            'requests': []
@@ -2399,9 +2399,27 @@ class call_data:
 
                         if len(dung['stage_data']['preparation']['ready']) == len(dung['users']) - 1:
 
-                            if len(dung['users']) - 1 != 0:
+                            if True:#len(dung['users']) - 1 != 0:
 
-                                print('ok')
+                                for userid in dung['users'].keys():
+                                    userd = dung['users'][userid]
+                                    dg_user = users.find_one({"userid": user.id})
+
+                                    for dk in userd['dinos'].keys():
+                                        dg_user['dinos'][dk]['activ_status'] = 'dungeon'
+
+                                    users.update_one( {"userid": int(userid) }, {"$inc": {f'coins': userd['coins'] * -1 }} )
+                                    users.update_one( {"userid": int(userid) }, {"$set": {f'dinos': dg_user['dinos'] }} )
+
+                                    userd['coins'] -= 200
+
+                                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
+                                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'dungeon_stage': 'game' }} )
+
+                                dng, inf = functions.dungeon_base_upd(dungeonid = dungeonid, type = 'create_floor')
+                                pprint.pprint(dng)
+                                print(inf)
+
 
                             else:
 
