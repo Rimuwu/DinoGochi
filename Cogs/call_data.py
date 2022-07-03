@@ -4,17 +4,12 @@ import random
 import json
 import pymongo
 from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageSequence, ImageFilter
-import io
-from io import BytesIO
 import time
-import os
-import threading
 import sys
-from memory_profiler import memory_usage
 import pprint
 from fuzzywuzzy import fuzz
 
-from functions import functions
+from functions import functions, dungeon
 
 sys.path.append("..")
 import config
@@ -32,12 +27,6 @@ with open('data/dino_data.json', encoding='utf-8') as f:
     json_f = json.load(f)
 
 class call_data:
-    users = users
-    referal_system = referal_system
-    market = market
-    items_f = items_f
-    json_f = json_f
-    dungeons = dungeons
 
     def start(bot, bd_user, call, user):
 
@@ -1723,15 +1712,15 @@ class call_data:
 
         dungeonid = int(call.data.split()[1])
 
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
-        print(inf)
+        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
+        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'settings', dungeonid = dungeonid, type = 'edit_last_page')
 
     def dungeon_to_lobby(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
 
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, image_update = True)
-        print(inf)
+        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, image_update = True)
+        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'main', dungeonid = dungeonid, type = 'edit_last_page')
 
     def dungeon_settings_lang(bot, bd_user, call, user):
 
@@ -1746,9 +1735,8 @@ class call_data:
 
             dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'settings.lang': lang }} )
 
-            inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
-            inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
-            print(inf)
+            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
+            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
 
     def dungeon_leave(bot, bd_user, call, user):
 
@@ -1787,14 +1775,11 @@ class call_data:
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        dng, inf = functions.dungeon_base_upd(userid = user.id, dungeonid = dungeonid, type = 'remove_user')
-        pprint.pprint(dng)
-        print(inf)
+        dng, inf = dungeon.base_upd(userid = user.id, dungeonid = dungeonid, type = 'remove_user')
 
         bot.delete_message(user.id, dung['users'][str(user.id)]['messageid'])
 
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
-        print(inf)
+        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
 
         bot.send_message(user.id, "✅", reply_markup = functions.markup(bot, "dungeon_menu", user.id ))
 
@@ -1803,8 +1788,7 @@ class call_data:
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid)
-        print(inf)
+        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid)
 
     def dungeon_remove(bot, bd_user, call, user):
 
@@ -1842,36 +1826,36 @@ class call_data:
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        inf = functions.dungeon_message_upd(bot, dungeonid = dungeonid, type = 'delete_dungeon')
-        print(inf)
+        inf = dungeon.message_upd(bot, dungeonid = dungeonid, type = 'delete_dungeon')
 
-        dng, inf = functions.dungeon_base_upd(dungeonid = dungeonid, type = 'delete_dungeon')
-        pprint.pprint(dng)
-        print(inf)
+        dng, inf = dungeon.base_upd(dungeonid = dungeonid, type = 'delete_dungeon')
+
 
     def dungeon_remove_False(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
-        print(inf)
+        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
+
 
     def dungeon_add_dino_menu(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'add_dino')
-        print(inf)
+        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'add_dino')
+
+        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'dino_control', dungeonid = dungeonid, type = 'edit_last_page')
 
     def dungeon_remove_dino_menu(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'remove_dino')
-        print(inf)
+        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'remove_dino')
+
+        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'dino_control', dungeonid = dungeonid, type = 'edit_last_page')
 
     def dungeon_add_dino(bot, bd_user, call, user):
 
@@ -1879,16 +1863,12 @@ class call_data:
         dinoid = call.data.split()[2]
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        dng, inf = functions.dungeon_base_upd(userid = user.id, dungeonid = dungeonid, type = 'add_dino', dinosid = [dinoid])
-        pprint.pprint(dng)
-        print(inf)
+        dng, inf = dungeon.base_upd(userid = user.id, dungeonid = dungeonid, type = 'add_dino', dinosid = [dinoid])
 
-        inf2 = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = inf)
-        print(inf2)
+        inf2 = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = inf)
 
         if inf == 'add_dino':
-            inf3 = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
-            print(inf3)
+            inf3 = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
 
     def dungeon_remove_dino(bot, bd_user, call, user):
 
@@ -1896,28 +1876,26 @@ class call_data:
         dinoid = call.data.split()[2]
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        dng, inf = functions.dungeon_base_upd(userid = user.id, dungeonid = dungeonid, type = 'remove_dino', dinosid = [dinoid])
-        pprint.pprint(dng)
-        print(inf)
+        dng, inf = dungeon.base_upd(userid = user.id, dungeonid = dungeonid, type = 'remove_dino', dinosid = [dinoid])
 
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'remove_dino')
-        print(inf)
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
-        print(inf)
+        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'remove_dino')
+
+        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
 
     def dungeon_invite(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
 
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'invite_room')
-        print(inf)
+        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'invite_room')
+        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'invite', dungeonid = dungeonid, type = 'edit_last_page')
 
     def dungeon_supplies(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
 
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
         print(inf)
+        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'supplies', dungeonid = dungeonid, type = 'edit_last_page')
 
     def dungeon_set_coins(bot, bd_user, call, user):
 
@@ -1972,7 +1950,7 @@ class call_data:
 
                     bot.answer_callback_query(call.id, show_text)
                     dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}.coins': coins }} )
-                    inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
 
         if bd_user['language_code'] == 'ru':
@@ -2020,7 +1998,7 @@ class call_data:
 
                 if message.text in ['Отмена', 'Cancel']:
                     bot.delete_message(user.id, message.message_id)
-                    inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
                 else:
 
@@ -2041,7 +2019,7 @@ class call_data:
                         else:
                             show_text2 = "🔎 | The item is not found, try to enter a more correct name!"
 
-                        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
                         bot.answer_callback_query(call.id, show_text2, show_alert = True)
 
                     else:
@@ -2054,7 +2032,7 @@ class call_data:
                             else:
                                 show_text3 = "🔎 | The item is not found in your inventory!"
 
-                            inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
                             bot.answer_callback_query(call.id, show_text3, show_alert = True)
 
                         else:
@@ -2138,7 +2116,7 @@ class call_data:
                     text = f"❌ | Enter the correct number!"
 
                 bot.answer_callback_query(call.id, text, show_alert = True)
-                inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
             if user_item != None:
 
@@ -2159,7 +2137,7 @@ class call_data:
                             text = f"❌ | Item not found in inventory!"
 
                         bot.answer_callback_query(call.id, text, show_alert = True)
-                        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
                     else:
 
@@ -2171,7 +2149,7 @@ class call_data:
                                 text = f"❌ | Your backpack can't hold so many items!"
 
                             bot.answer_callback_query(call.id, text, show_alert = True)
-                            inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
                         else:
 
@@ -2182,7 +2160,7 @@ class call_data:
                             users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
                             dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}': dung['users'][str(user.id)] }} )
 
-                        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
                 max_count = list_inv.count(user_item)
 
@@ -2213,7 +2191,7 @@ class call_data:
                             text = f"❌ | Your backpack can't hold so many items!"
 
                         bot.answer_callback_query(call.id, text, show_alert = True)
-                        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
 
                     else:
@@ -2225,7 +2203,7 @@ class call_data:
                         users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
                         dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}': dung['users'][str(user.id)] }} )
 
-                        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
     def dungeon_remove_item_action(bot, bd_user, call, user):
 
@@ -2313,7 +2291,7 @@ class call_data:
                         text = f"❌ | Enter the correct number!"
 
                     bot.answer_callback_query(call.id, text, show_alert = True)
-                    inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
                 if user_item != None:
 
@@ -2322,7 +2300,7 @@ class call_data:
                             dung['users'][str(user.id)]['inventory'].remove(i)
 
                     dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}.inventory': dung['users'][str(user.id)]['inventory'] }} )
-                    inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
     def dungeon_ready(bot, bd_user, call, user):
 
@@ -2378,7 +2356,7 @@ class call_data:
             if ok == True:
 
                 dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
-                inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
+                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
                 print(inf)
 
             else:
@@ -2391,24 +2369,25 @@ class call_data:
 
         if dung != None:
 
-            if dung['users'][str(user.id)]['dinos'] != {}:
+            if True:#dung['users'][str(user.id)]['dinos'] != {}:
 
                 if dung['users'][str(user.id)]['coins'] <= bd_user['coins']:
 
                     if dung['users'][str(user.id)]['coins'] >= 200:
 
-                        if len(dung['stage_data']['preparation']['ready']) == len(dung['users']) - 1:
+                        if True: #len(dung['stage_data']['preparation']['ready']) == len(dung['users']) - 1:
 
                             if True:#len(dung['users']) - 1 != 0:
 
                                 for userid in dung['users'].keys():
                                     userd = dung['users'][userid]
                                     dg_user = users.find_one({"userid": user.id})
+                                    dung['users'][userid]['last_page'] = 'main'
 
                                     for dk in userd['dinos'].keys():
                                         dg_user['dinos'][dk]['activ_status'] = 'dungeon'
 
-                                    users.update_one( {"userid": int(userid) }, {"$inc": {f'coins': userd['coins'] * -1 }} )
+                                    #users.update_one( {"userid": int(userid) }, {"$inc": {f'coins': userd['coins'] * -1 }} )
                                     users.update_one( {"userid": int(userid) }, {"$set": {f'dinos': dg_user['dinos'] }} )
 
                                     userd['coins'] -= 200
@@ -2416,9 +2395,11 @@ class call_data:
                                 dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
                                 dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'dungeon_stage': 'game' }} )
 
-                                dng, inf = functions.dungeon_base_upd(dungeonid = dungeonid, type = 'create_floor')
+                                dng, inf = dungeon.base_upd(dungeonid = dungeonid, type = 'create_floor')
                                 pprint.pprint(dng)
-                                print(inf)
+
+                                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
+
 
 
                             else:

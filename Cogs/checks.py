@@ -26,9 +26,8 @@ class checks:
 
     @staticmethod
     def check_dead_users(bot):
-        act1 = 0
-        act2 = 0
-        act3 = 0
+        act1, act2, act3 = 0, 0, 0
+
         members = users.find({ 'dinos': {'$eq': {} } })
 
         for user in members:

@@ -4,17 +4,12 @@ import random
 import json
 import pymongo
 from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageSequence, ImageFilter
-import io
-from io import BytesIO
 import time
-import os
-import threading
 import sys
-from memory_profiler import memory_usage
 import pprint
 from fuzzywuzzy import fuzz
 
-from functions import functions
+from functions import functions, dungeon
 
 sys.path.append("..")
 import config
@@ -32,12 +27,6 @@ with open('data/dino_data.json', encoding='utf-8') as f:
     json_f = json.load(f)
 
 class commands:
-    users = users
-    referal_system = referal_system
-    market = market
-    items_f = items_f
-    json_f = json_f
-    dungeons = dungeons
 
     @staticmethod
     def start_game(bot, message, user, bd_user):
@@ -3438,8 +3427,8 @@ class commands:
 
                 mg = bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "dungeon", user))
 
-                dng, inf = functions.dungeon_base_upd(userid = user.id)
-                inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = user.id)
+                dng, inf = dungeon.base_upd(userid = user.id)
+                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = user.id)
 
                 bot.delete_message(user.id, mg.message_id)
 
@@ -3512,9 +3501,11 @@ class commands:
 
                             mg = bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "dungeon", user))
 
-                            dng, inf = functions.dungeon_base_upd(userid = user.id, dungeonid = code, type = 'add_user')
+                            dng, inf = dungeon.base_upd(userid = user.id, dungeonid = code, type = 'add_user')
 
-                            inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dng['dungeonid'], upd_type = 'all')
+                            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dng['dungeonid'], upd_type = 'all')
+
+                            bot.delete_message(user.id, mg.message_id)
 
                 if bd_user['language_code'] == 'ru':
                     text = f'🎟 | Введите код подключения > '

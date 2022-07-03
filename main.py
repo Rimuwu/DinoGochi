@@ -4,8 +4,6 @@ import random
 import json
 import pymongo
 from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageSequence, ImageFilter
-import io
-from io import BytesIO
 import time
 import threading
 import sys
@@ -17,7 +15,7 @@ import config
 
 sys.path.append("Cogs")
 from commands import commands
-from functions import functions
+from functions import functions, dungeon
 from checks import checks
 from call_data import call_data
 
@@ -379,11 +377,11 @@ def command(message):
 def command(message):
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
-        dng, inf = functions.dungeon_base_upd(userid = user.id)
+        dng, inf = dungeon.base_upd(userid = user.id)
         pprint.pprint(dng)
         print(inf)
 
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = user.id)
+        inf =  dungeon.message_upd(bot, userid = user.id, dungeonid = user.id)
         print(inf)
 
 @bot.message_handler(commands=['dungeon_add'])
@@ -392,21 +390,21 @@ def command(message):
     msg_args = message.text.split()
     if user.id in [5279769615, 1191252229]:
 
-        dng, inf = functions.dungeon_base_upd(userid = user.id, dungeonid = int(msg_args[1]), type = 'add_user')
+        dng, inf =  dungeon.base_upd(userid = user.id, dungeonid = int(msg_args[1]), type = 'add_user')
         pprint.pprint(dng)
         print(inf)
 
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dng['dungeonid'], upd_type = 'all')
+        inf =  dungeon.message_upd(bot, userid = user.id, dungeonid = dng['dungeonid'], upd_type = 'all')
         print(inf)
 
 @bot.message_handler(commands=['dungeon_delete'])
 def command(message):
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
-        inf = functions.dungeon_message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
+        inf =  dungeon.message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
         print(inf)
 
-        dng, inf = functions.dungeon_base_upd(dungeonid = user.id, type = 'delete_dungeon')
+        dng, inf =  dungeon.base_upd(dungeonid = user.id, type = 'delete_dungeon')
         pprint.pprint(dng)
         print(inf)
 
