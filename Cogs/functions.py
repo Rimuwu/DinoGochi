@@ -2869,7 +2869,7 @@ class dungeon:
                     'users': { str(userid): user_data(messageid, dinos) },
                     'floor': {},
                     'dungeon_stage': 'preparation',
-                    'stage_data':  { 'preparation': {'image': random.randint(1,6), 'ready': [] }
+                    'stage_data':  { 'preparation': {'image': random.randint(1,5), 'ready': [] }
                                    },
                     'settings': { 'lang': bd_user['language_code'], 'max_dinos': 10}
                 } )
@@ -2891,14 +2891,20 @@ class dungeon:
                         dung['stage_data']['game'] = { 'floor_n': 1, 'room_n': 0, 'player_move': 0, 'start_time': int(time.time()) }
                         dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
 
-                    floor = { '0': { 'room_type': 'start_room', 'image': f'images/dungeon/start_room/{random.randint(1,2)}.png', 'next_room': True }, '1': {},
+                    else:
+                        dung['stage_data']['game']['floor_n'] += 1
+                        dung['stage_data']['game']['room_n'] = 0
+                        dung['stage_data']['game']['player_move'] = 0
+                        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
+
+                    floor = { '0': { 'room_type': 'start_room', 'image': f'images/dungeon/start_room/{random.randint(1,2)}.png', 'next_room': True, 'ready': [] }, '1': {},
                               '2': {}, '3': {}, '4': {}, '5': {},
                               '6': {}, '7': {}, '8': {}, '9': {}, '10': {}, 'floor_data': {}
                             }
 
                     rooms = { 'com': ['battle', 'empty_room'],
-                              'unc': ['fork_2', 'fork_3'],
-                              'rar': ['forest'],
+                              'unc': ['forest'],
+                              'rar': ['fork_2', 'fork_3', 'quest'],
                               'myt': ['town', 'mine'],
                               'leg': ['chest', 'mimic']
                             }
@@ -2908,7 +2914,21 @@ class dungeon:
                         room_type = functions.random_items( rooms['com'], rooms['unc'], rooms['rar'], rooms['myt'], rooms['leg'] )
 
                         if room_type == 'battle':
-                            floor[str(room_n)] = { 'type': room_type, 'mobs': [], 'image': f'images/dungeon/simple_rooms/{random.randint(1,2)}.png', 'next_room': False }
+                            floor[str(room_n)] = { 'room_type': room_type, 'mobs': [], 'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png', 'next_room': False }
+
+                        if room_type == 'empty_room':
+                            secrets = []
+
+                            if random.randint(1, 100) > 90:
+                                secrets_n = ['item', 'way', 'battle']
+                                secrets.append( random.choice(secrets_n) )
+
+                            floor[str(room_n)] = { 'room_type': room_type, 'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png', 'next_room': True, 'secrets': secrets }
+
+                        if room_type == 'mine':
+                            resources = {}
+
+                            floor[str(room_n)] = { 'room_type': room_type, 'image': f'images/dungeon/mine/{1}.png', 'next_room': True, 'resources': resources }
 
                         elif room_type in ['fork_2', 'fork_3']:
 
@@ -2920,10 +2940,12 @@ class dungeon:
                                 poll_rooms = [ functions.random_items( rooms['com'], rooms['unc'], rooms['rar'], rooms['myt'], rooms['leg'] ) for i in range(3) ]
                                 results = [0, 0, 0]
 
-                            floor[str(room_n)] = { 'type': room_type, 'poll_rooms': poll_rooms, 'image': f'images/dungeon/{room_type}/1.png', 'results': results, 'next_room': False }
+                            floor[str(room_n)] = { 'room_type': room_type, 'poll_rooms': poll_rooms, 'image': f'images/dungeon/{room_type}/1.png', 'results': results, 'next_room': False }
 
                         else:
-                            floor[str(room_n)] = { 'type': room_type, 'image': f'images/dungeon/simple_rooms/{random.randint(1,2)}.png', 'next_room': False }
+                            floor[str(room_n)] = { 'room_type': room_type, 'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png', 'next_room': False }
+
+                        floor[str(room_n)]['ready'] = []
 
                     dung['floor'] = floor
                     dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor': floor }} )
@@ -3057,6 +3079,34 @@ class dungeon:
         markup_inline = types.InlineKeyboardMarkup(row_width = 3)
 
         if dung != None:
+
+            if type == 'game':
+
+                if dung['settings']['lang'] == 'ru':
+                    inl_l = { '📜 Инвентарь': 'dungeon.inventory'
+                            }
+
+                    if userid == dungeonid:
+                        inl_l2 = {'⏩ След. комната': 'dungeon.next_room'}
+
+                    else:
+                        inl_l2 = {'✅ Готовность': 'dungeon.ready', '🚪 Выйти': 'dungeon.leave_in_game'}
+
+                else:
+                    inl_l = { '📜 Inventory': 'dungeon.inventory'
+                            }
+
+                    if userid == dungeonid:
+                        inl_l2 = {'⏩ Next room': 'dungeon.next_room'}
+
+                    else:
+                        inl_l2 = {'✅ Ready': 'dungeon.ready', '🚪 Go out': 'dungeon.leave_in_game'}
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
+
+                return markup_inline
 
             if type == 'preparation':
 
@@ -3300,7 +3350,43 @@ class dungeon:
 
                     text = 'text'
                     room_n = dung['stage_data']['game']['room_n']
+                    floor_n = dung['stage_data']['game']['floor_n']
                     image = dung['floor'][str(room_n)]['image']
+                    room_type = dung['floor'][str(room_n)]['room_type']
+
+                    if dung['settings']['lang'] == 'ru':
+                        text = f"🕹 | Комната: #{room_n} | Время: {functions.time_end(int( time.time()) - dung['stage_data']['game']['start_time']) }"
+
+                    else:
+                        text = f'🕹 | Room: #{room_n} | Time: {functions.time_end(int( time.time()) - dung["stage_data"]["game"]["start_time"], True) }'
+
+                    if room_type == 'start_room':
+
+                        if dung['settings']['lang'] == 'ru':
+                            text += f"\n\nВы спустились на этаж #{floor_n}, подготовьтесь к испытаниям и продолжайте ваш путь!"
+                            text += '\n\n   *👥 | Игроки*\n'
+
+                        else:
+                            text += f'\n\n You have descended to the floor #{floor_n}, prepare for the tests and continue your journey!'
+                            text += '\n\n   *👥 | Players*\n'
+
+                        u_n = 0
+                        users_text = ''
+                        for k in dung['users'].keys():
+                            us = dung['users'][k]
+                            bd_us = users.find_one({"userid": int(k)})
+
+                            if int(k) in dung['floor'][str(room_n)]['ready']:
+                                r_e = '✅'
+
+                            else:
+                                r_e = '❌'
+
+                            u_n += 1
+                            username = bot.get_chat(int(k)).first_name
+                            users_text += f'{u_n}. {username} (🦕 {len(us["dinos"])}) ({r_e})\n'
+
+                        text += users_text
 
                     return update(dung, text, 'game', image)
 

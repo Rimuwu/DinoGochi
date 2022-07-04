@@ -922,6 +922,10 @@ def answer(call):
 
         call_data.dungeon_start_game(bot, bd_user, call, user)
 
+    elif call.data.split()[0] == 'dungeon.next_room':
+
+        call_data.dungeon_next_room(bot, bd_user, call, user)
+
     else:
         print(call.data, 'call.data')
 

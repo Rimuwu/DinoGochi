@@ -2381,14 +2381,14 @@ class call_data:
 
                                 for userid in dung['users'].keys():
                                     userd = dung['users'][userid]
-                                    dg_user = users.find_one({"userid": user.id})
+                                    dg_user = users.find_one({"userid": int(userid)})
                                     dung['users'][userid]['last_page'] = 'main'
 
                                     for dk in userd['dinos'].keys():
                                         dg_user['dinos'][dk]['activ_status'] = 'dungeon'
 
                                     #users.update_one( {"userid": int(userid) }, {"$inc": {f'coins': userd['coins'] * -1 }} )
-                                    users.update_one( {"userid": int(userid) }, {"$set": {f'dinos': dg_user['dinos'] }} )
+                                    #users.update_one( {"userid": int(userid) }, {"$set": {f'dinos': dg_user['dinos'] }} )
 
                                     userd['coins'] -= 200
 
@@ -2399,8 +2399,6 @@ class call_data:
                                 pprint.pprint(dng)
 
                                 inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
-
-
 
                             else:
 
@@ -2449,5 +2447,41 @@ class call_data:
 
                 else:
                     show_text = "❗ | You didn't choose the participating dinosaurs!"
+
+                bot.answer_callback_query(call.id, show_text, show_alert = True)
+
+    def dungeon_next_room(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        if dung != None:
+
+            room_n = str(dung['stage_data']['game']['room_n'])
+            if True: #dung['floor'][room_n]['next_room'] == True:
+
+                if len(dung['floor'][room_n]['ready']) == len(dung['users']) - 1:
+
+                    dung['stage_data']['game']['room_n'] += 1
+                    dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
+
+                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
+
+                else:
+                    if bd_user['language_code'] == 'ru':
+                        show_text = '❗ | Не все пользователи подтвердили готовность перейти в следующую комнату!'
+
+                    else:
+                        show_text = "❗ | Not all users have confirmed their readiness to move to the next room!"
+
+                    bot.answer_callback_query(call.id, show_text, show_alert = True)
+
+
+            else:
+                if bd_user['language_code'] == 'ru':
+                    show_text = '❗ | Не выполнены все условия для перехода в следующую комнату!'
+
+                else:
+                    show_text = "❗ | All the conditions for moving to the next room are not met!"
 
                 bot.answer_callback_query(call.id, show_text, show_alert = True)
