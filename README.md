@@ -12,10 +12,10 @@
 >
     # Windows
     pip install requirements.txt
-    
+
 >
     # Linux
-    pip install requirements.txt
+    pip install -r requirements.txt
 
 - Далее зайдите на https://account.mongodb.com/account/login
 - Зарегестрируйте аккаунт и получите бесплатный кластер m0
