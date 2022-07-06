@@ -1540,7 +1540,7 @@ class functions:
                                         user = bot.get_chat( bd_user['userid'] )
 
                                         if two_user['language_code'] == 'ru':
-                                            text = f"🦄 | Единорог-круьер доставил вам предмет(ы) от {user.first_name}, загляните в инвентарь!\n\n📜 Доставлено:\n{items_f['items'][str(user_item['item_id'])]['nameru']} x{col}"
+                                            text = f"🦄 | Единорог-курьер доставил вам предмет(ы) от {user.first_name}, загляните в инвентарь!\n\n📜 Доставлено:\n{items_f['items'][str(user_item['item_id'])]['nameru']} x{col}"
                                         else:
                                             text = f"🦄 | The Unicorn-courier delivered you an item(s) from {user.first_name}, take a look at the inventory!\n\n📜 Delivered:\n{items_f['items'][str(user_item['item_id'])]['nameen']} x{col}"
 
