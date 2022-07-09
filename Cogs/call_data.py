@@ -662,9 +662,10 @@ class call_data:
 
                                 llst_i = fr_user['inventory'].index(lst_i)
                                 fr_user['inventory'][ llst_i ]['abilities']['endurance'] -= it_m['act']
+                                search_items[ it_m['item'] ]['abilities']['endurance']  -= it_m['act']
 
                                 if fr_user['inventory'][ llst_i ]['abilities']['endurance'] == 0:
-                                    fr_user['inventory'].remove(list_inv[lst_ind])
+                                    fr_user['inventory'].remove( search_items[ it_m['item'] ] )
 
 
                     for it_c in data_item['create']:
