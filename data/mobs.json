@@ -1,12 +1,57 @@
 {
 
  "mobs": {
-            "slime": { "hp": { "min": 2, "max": 10, "type": "random" },
+            "goblin": {
+                       "name": { "ru": "Гоблин", "en": "Goblin" },
+                       "hp": { "min": 2, "max": 10, "type": "random" },
+
+                       "damage-type": "near",
+                       "endurance": { "min": 80, "max": 100, "type": "random" },
+
                        "damage": { "min": 1, "max": 3, "type": "random" },
                        "intelligence": { "act": 1, "type": "static" },
-                       "image": "images/dungeon/mobs/"
-                     }
-         } ,
+                       "image": "images/dungeon/mobs/goblin.png",
+                       "lvls": {"min": 1, "max": 10},
+                       "actions": { "attacks": [],
+                                    "healing": [],
+                                    "other": []
+                                  }
+                      },
+
+            "skeleton_magician": {
+                       "name": { "ru": "Маг-скелет", "en": "Skeleton Magician" },
+                       "hp": { "min": 2, "max": 10, "type": "random" },
+
+                       "damage-type": "magic",
+                       "mana": { "min": 80, "max": 100, "type": "random" },
+
+                       "damage": { "min": 1, "max": 5, "type": "random" },
+                       "intelligence": { "act": 10, "type": "static" },
+                       "image": "images/dungeon/mobs/skeleton_magician.png",
+                       "lvls": {"min": 1, "max": 10},
+                       "actions": { "attacks": [],
+                                    "healing": [],
+                                    "other": []
+                                  }
+                      },
+
+            "piglin-archer": {
+                       "name": { "ru": "Лучник пиглин", "en": "Piglin-archer" },
+                       "hp": { "min": 1, "max": 5, "type": "random" },
+
+                       "damage-type": "far",
+                       "ammunition": { "min": 20, "max": 40, "type": "random" },
+
+                       "damage": { "min": 2, "max": 6, "type": "random" },
+                       "intelligence": { "min": 0, "max": 2, "type": "random" },
+                       "image": "images/dungeon/mobs/piglin-archer.png",
+                       "lvls": {"min": 1, "max": 10},
+                       "actions": { "attacks": [],
+                                    "healing": [],
+                                    "other": []
+                                  }
+                      }
+         },
 
  "boss": { }
 

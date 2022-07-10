@@ -5,6 +5,7 @@ import sys
 import random
 import json
 import time
+from pprint import pprint
 from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageSequence, ImageFilter
 
 sys.path.append("..")
@@ -21,6 +22,9 @@ with open('data/items.json', encoding='utf-8') as f:
 
 with open('data/dino_data.json', encoding='utf-8') as f:
     json_f = json.load(f)
+
+with open('data/mobs.json', encoding='utf-8') as f:
+    mobs_f = json.load(f)
 
 checks_data = {'memory': [0, time.time()], 'incub': [0, time.time(), 0], 'notif': [[], []], 'main': [[], [], []], 'main_hunt': [ [], [], [] ], 'main_game': [ [], [], [] ], 'main_sleep': [ [], [], [] ], 'main_pass': [ [], [], [] ], 'main_journey': [ [], [], [] ], 'col': 0}
 
@@ -2844,6 +2848,55 @@ class functions:
 
 class dungeon:
 
+    def random_mobs(mobs_type:str, floor_lvl:int, count:int):
+        ret_list = []
+
+        if mobs_type == 'mobs':
+            mobs_data = mobs_f['mobs']
+
+            mobs_keys = list(mobs_data.keys())
+            random.shuffle(mobs_keys)
+
+            for n in range(count):
+                for mob_key in mobs_keys:
+                    mob = mobs_data[mob_key]
+
+                    if mob['lvls']['min'] >= floor_lvl <= mob['lvls']['max']:
+
+                        mob_data = {'mob_key': mob_key}
+
+                        l_k = ['hp', 'damage', 'intelligence']
+
+                        if mob['damage-type'] == 'magic':
+                            l_k.append('mana')
+                        elif mob['damage-type'] == 'near':
+                            l_k.append('endurance')
+                        elif mob['damage-type'] == 'far':
+                            l_k.append('ammunition')
+
+                        for i in l_k:
+                            if mob[i]['type'] == 'random':
+                                mob_data[i] = random.randint(mob[i]['min'], mob[i]['max'])
+
+                            if mob[i]['type'] == 'static':
+                                mob_data[i] = mob[i]['act']
+
+                            if i in ['hp', 'mana']:
+                                mob_data[f"max{i}"] = mob_data[i]
+
+                        ret_list.append(mob_data)
+                        break
+
+            return ret_list
+
+        elif mobs_type == 'boss':
+            boss_data = json_f['boss']
+            pass
+
+        else:
+            print('random_mobs - mobs_type error')
+            return []
+
     def base_upd(userid = None, messageid = None, dinosid = [], dungeonid = None, type = None):
 
         def dino_data(dinosid):
@@ -2902,8 +2955,8 @@ class dungeon:
                               '6': {}, '7': {}, '8': {}, '9': {}, '10': {}, 'floor_data': {}
                             }
 
-                    rooms = { 'com': ['battle', 'empty_room'],
-                              'unc': ['forest'],
+                    rooms = { 'com': ['battle'],
+                              'unc': ['battle', 'forest', 'empty_room'],
                               'rar': ['fork_2', 'fork_3', 'quest'],
                               'myt': ['town', 'mine'],
                               'leg': ['chest', 'mimic']
@@ -2914,9 +2967,11 @@ class dungeon:
                         room_type = functions.random_items( rooms['com'], rooms['unc'], rooms['rar'], rooms['myt'], rooms['leg'] )
 
                         if room_type == 'battle':
-                            floor[str(room_n)] = { 'room_type': room_type, 'mobs': [], 'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png', 'next_room': False }
+                            mobs = dungeon.random_mobs(mobs_type = 'mobs', floor_lvl = dung['stage_data']['game']['floor_n'], count = random.randint(1, 3))
 
-                        if room_type == 'empty_room':
+                            floor[str(room_n)] = { 'room_type': room_type, 'mobs': mobs, 'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png', 'next_room': False }
+
+                        elif room_type == 'empty_room':
                             secrets = []
 
                             if random.randint(1, 100) > 90:
@@ -2925,7 +2980,7 @@ class dungeon:
 
                             floor[str(room_n)] = { 'room_type': room_type, 'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png', 'next_room': True, 'secrets': secrets }
 
-                        if room_type == 'mine':
+                        elif room_type == 'mine':
                             resources = {}
 
                             floor[str(room_n)] = { 'room_type': room_type, 'image': f'images/dungeon/mine/{1}.png', 'next_room': True, 'resources': resources }
@@ -3080,6 +3135,9 @@ class dungeon:
 
         if dung != None:
 
+            if type == 'battle':
+                pass
+
             if type == 'game':
 
                 if dung['settings']['lang'] == 'ru':
@@ -3090,7 +3148,7 @@ class dungeon:
                         inl_l2 = {'⏩ След. комната': 'dungeon.next_room'}
 
                     else:
-                        inl_l2 = {'✅ Готовность': 'dungeon.ready', '🚪 Выйти': 'dungeon.leave_in_game'}
+                        inl_l2 = {'✅ Готовность': 'dungeon.next_room_ready', '🚪 Выйти': 'dungeon.leave_in_game'}
 
                 else:
                     inl_l = { '📜 Inventory': 'dungeon.inventory'
@@ -3100,7 +3158,7 @@ class dungeon:
                         inl_l2 = {'⏩ Next room': 'dungeon.next_room'}
 
                     else:
-                        inl_l2 = {'✅ Ready': 'dungeon.ready', '🚪 Go out': 'dungeon.leave_in_game'}
+                        inl_l2 = {'✅ Ready': 'dungeon.next_room_ready', '🚪 Go out': 'dungeon.leave_in_game'}
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
 
@@ -3348,7 +3406,6 @@ class dungeon:
 
                 if dung['dungeon_stage'] == 'game':
 
-                    text = 'text'
                     room_n = dung['stage_data']['game']['room_n']
                     floor_n = dung['stage_data']['game']['floor_n']
                     image = dung['floor'][str(room_n)]['image']
@@ -3359,6 +3416,30 @@ class dungeon:
 
                     else:
                         text = f'🕹 | Room: #{room_n} | Time: {functions.time_end(int( time.time()) - dung["stage_data"]["game"]["start_time"], True) }'
+
+                    if room_type == 'battle':
+                        mob = dung['floor'][str(room_n)]['mobs'][0]
+                        data_mob = mobs_f['mobs'][ mob['mob_key'] ]
+
+                        if dung['settings']['lang'] == 'ru':
+                            text += (f"\n\n⚔ | Схватка: "
+                                    f"Врагов: {len(dung['floor'][str(room_n)]['mobs'])}"
+                                    f"\n\n😈 | Текущий враг: {data_mob['name'][dung['settings']['lang']]}"
+                                    f"\n❤ | Здоровье: {mob['hp']} / {mob['maxhp']} ({ (mob['hp'] / mob['maxhp']) * 100}%)")
+
+                        else:
+                            text = f'🕹 | '
+
+                        ok = dungeon.generate_battle_image(image, mob)
+                        image = 'battle.png'
+
+                    if room_type == 'empty_room':
+
+                        if dung['settings']['lang'] == 'ru':
+                            text += f"\n\nПохоже это просто пустая комната. Тут немного темно, но ничего интересного вы не видите."
+
+                        else:
+                            text += f"\n\nIt looks like it's just an empty room. It's a little dark here, but you don't see anything interesting."
 
                     if room_type == 'start_room':
 
@@ -3612,3 +3693,75 @@ class dungeon:
 
         else:
             return 5
+
+    def generate_battle_image(image_way, mob):
+
+        def generate_bar(act, maxact, tp):
+
+            if tp == 'heal':
+                colorbg = '#860c1d'
+                color = '#ff0000'
+                mask_way = 'images/dungeon/remain/bar_mask_heal.png'
+
+            if tp == 'mana':
+                colorbg = '#0e3895'
+                color = '#009cff'
+                mask_way = 'images/dungeon/remain/bar_mask_mana.png'
+
+            bar = Image.new('RGB', (153, 33),  color = colorbg)
+            mask = Image.open(mask_way).convert('L').resize((153, 33), Image.ANTIALIAS)
+
+            x = (act / maxact) * 100
+            x = int(x * 1.5) + 5
+
+            ImageDraw.Draw(bar).polygon(xy=[(3, 3),(x, 3),(x,30),(3,30)], fill = color)
+            bar = bar.filter(ImageFilter.GaussianBlur(0.6))
+            bar.putalpha(mask)
+
+            return bar
+
+        data_mob = mobs_f['mobs'][ mob['mob_key'] ]
+
+        alpha_img = Image.open('images/dungeon/remain/alpha.png')
+
+        bg_p = Image.open(image_way)
+        img = Image.open(mobs_f['mobs'][ mob['mob_key']]['image'] )
+        sz = 350
+        img = img.resize((sz, sz), Image.ANTIALIAS)
+
+        xy = -10
+        x2 = 100
+        alpha_img = functions.trans_paste(img, alpha_img, 0.95, (xy + x2, xy, sz + xy + x2, sz + xy ))
+
+        # здоровье
+        img = Image.open( 'images/dungeon/remain/mob_heal.png' )
+        sz1, sz2 = img.size
+        sz1, sz2 = int(sz1 / 1.5), int(sz2 / 1.5)
+
+        img = img.resize((sz1, sz2), Image.ANTIALIAS)
+
+        y, x = 50, 390
+        alpha_img = functions.trans_paste(img, alpha_img, 1, (y + x, y, sz1 + y + x, sz2 + y ))
+
+        bar = generate_bar(mob['hp'], mob['maxhp'], 'heal')
+        alpha_img = functions.trans_paste(bar, alpha_img, 1.0, (510, 68) )
+
+        #мана
+        if data_mob['damage-type'] == 'magic':
+
+            img = Image.open( 'images/dungeon/remain/mob_mana.png' )
+            sz1, sz2 = img.size
+            sz1, sz2 = int(sz1 / 1.5), int(sz2 / 1.5)
+
+            img = img.resize((sz1, sz2), Image.ANTIALIAS)
+
+            y, x = 120, 320
+            alpha_img = functions.trans_paste(img, alpha_img, 1, (y + x, y, sz1 + y + x, sz2 + y ))
+
+            bar = generate_bar(mob['mana'], mob['maxmana'], 'mana')
+            alpha_img = functions.trans_paste(bar, alpha_img, 1.0, (510, 140) )
+
+
+        image = alpha_img = functions.trans_paste(alpha_img, bg_p, 1.0 )
+        image.save('battle.png')
+        return 'generation - ok'
