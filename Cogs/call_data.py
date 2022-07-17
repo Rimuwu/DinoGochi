@@ -820,9 +820,14 @@ class call_data:
                         if data_item['time_tag'] == 's':
                             inc_time = time.time() + data_item['incub_time']
 
+                        if 'dead_dinos' not in bd_user.keys():
+                            tim_m = 1
+                        else:
+                            tim_m = bd_user['dead_dinos']
+
                         egg_n = str(random.choice(list(json_f['data']['egg'])))
 
-                        bd_user['dinos'][ functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': inc_time, 'egg_id': egg_n, 'quality': data_item['inc_type']}
+                        bd_user['dinos'][ functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': inc_time * tim_m, 'egg_id': egg_n, 'quality': data_item['inc_type']}
 
                         users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
 
@@ -1630,12 +1635,12 @@ class call_data:
         dino_id = did[1]
         quality = did[2]
 
-        data_q_r = { 'com': {'money': 4000,  'materials': ['21']  } ,
-                     'unc': {'money': 10000, 'materials': ['20'] } ,
-                     'rar': {'money': 20000, 'materials': ['22'] } ,
-                     'myt': {'money': 40000, 'materials': ['23'] } ,
-                     'leg': {'money': 75000, 'materials': ['24'] } ,
-                     'ran': {'money': 15000, 'materials': ['3']  } ,
+        data_q_r = { 'com': {'money': 2000,  'materials': ['21']  } ,
+                     'unc': {'money': 5000, 'materials': ['20'] } ,
+                     'rar': {'money': 10000, 'materials': ['22'] } ,
+                     'myt': {'money': 20000, 'materials': ['23'] } ,
+                     'leg': {'money': 40000, 'materials': ['24'] } ,
+                     'ran': {'money': 5000, 'materials': ['3']  } ,
                    }
 
         def change_rarity(message):
@@ -2378,13 +2383,16 @@ class call_data:
                         if True: #len(dung['stage_data']['preparation']['ready']) == len(dung['users']) - 1:
 
                             if True:#len(dung['users']) - 1 != 0:
+                                complexity = [0, 0] #игроков и динозавров изначально
 
                                 for userid in dung['users'].keys():
+                                    complexity[0] += 1
                                     userd = dung['users'][userid]
                                     dg_user = users.find_one({"userid": int(userid)})
                                     dung['users'][userid]['last_page'] = 'main'
 
                                     for dk in userd['dinos'].keys():
+                                        complexity[1] += 1
                                         dg_user['dinos'][dk]['activ_status'] = 'dungeon'
 
                                     #users.update_one( {"userid": int(userid) }, {"$inc": {f'coins': userd['coins'] * -1 }} )
@@ -2392,6 +2400,16 @@ class call_data:
 
                                     userd['coins'] -= 200
 
+
+                                dung['stage_data']['game'] = {
+                                        'floor_n': 0,
+                                        'room_n': 0,
+                                        'player_move': [ list( dung['users'].keys() )[0], list( dung['users'].keys() ) ],
+                                        'start_time': int(time.time()),
+                                        'complexity': { 'users': complexity[0], 'dinos': complexity[1] }
+                                                             }
+
+                                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
                                 dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
                                 dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'dungeon_stage': 'game' }} )
 
@@ -2476,7 +2494,6 @@ class call_data:
 
                     bot.answer_callback_query(call.id, show_text, show_alert = True)
 
-
             else:
                 if bd_user['language_code'] == 'ru':
                     show_text = '❗ | Не выполнены все условия для перехода в следующую комнату!'
@@ -2485,3 +2502,68 @@ class call_data:
                     show_text = "❗ | All the conditions for moving to the next room are not met!"
 
                 bot.answer_callback_query(call.id, show_text, show_alert = True)
+
+    def dungeon_battle_action(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dinoid = int(call.data.split()[2])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+        din_name = bd_user['dinos'][str(dinoid)]['name']
+
+        if bd_user['language_code'] == 'ru':
+            text = f'⚔🛡 | Выберите действие для {din_name} >'
+        else:
+            text = f"⚔🛡 | Select an action for {din_name} >"
+
+        msg = bot.send_message(call.message.chat.id, text, reply_markup = dungeon.inline(bot, user.id, dungeonid, 'battle_action', {'dinoid': dinoid}) )
+
+    def dungeon_battle_attack(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dinoid = int(call.data.split()[2])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        dung['users'][str(user.id)]['dinos'][str(dinoid)]['action'] = 'attack'
+        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
+        bot.delete_message(user.id, call.message.message_id)
+
+        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = False)
+
+    def dungeon_battle_defend(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dinoid = int(call.data.split()[2])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        dung['users'][str(user.id)]['dinos'][str(dinoid)]['action'] = 'defend'
+        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
+        bot.delete_message(user.id, call.message.message_id)
+
+        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = False)
+
+    def dungeon_next_room_ready(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+        room_n = str(dung['stage_data']['game']['room_n'])
+
+        if dung['floor'][room_n]['next_room'] == True:
+            if user.id not in dung['floor'][room_n]['ready']:
+                dung['floor'][room_n]['ready'].append(user.id)
+                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor': dung['floor'] }} )
+
+        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = False)
+
+    def dungeon_end_move(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        if int(dung['stage_data']['game']['player_move'][0]) == user.id:
+
+            dungeon.battle_user_move(bot, dungeonid, user.id, bd_user, call)
+            dungeon.battle_mob_move(bot, dungeonid, user.id, bd_user, call)
+            dng, inf = dungeon.base_upd(dungeonid = dungeonid, type = 'next_move')
+            print(inf)
+
+            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = False)
