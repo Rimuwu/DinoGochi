@@ -373,6 +373,13 @@ def command(message):
             bot.reply_to(message, msg.message_id)
             print(msg.message_id)
 
+@bot.message_handler(commands=['d_upd'])
+def command(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        inf =  dungeon.message_upd(bot, userid = user.id, dungeonid = user.id, upd_type = 'all')
+        print(inf)
+
 @bot.message_handler(commands=['dungeon'])
 def command(message):
     user = message.from_user
@@ -408,6 +415,20 @@ def command(message):
         pprint.pprint(dng)
         print(inf)
 
+@bot.message_handler(commands=['stats_100'])
+def command(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        bd_user = users.find_one({"userid": user.id})
+
+        for dk in bd_user['dinos'].keys():
+            dino = bd_user['dinos'][dk]
+            ds = dino['stats'].copy()
+            for st in ds:
+                dino['stats'][st] = 100
+
+        users.update_one( {"userid": user.id}, {"$set": {f"dinos": bd_user['dinos'] }} )
+        print('ok')
 
 # =========================================
 
@@ -925,6 +946,26 @@ def answer(call):
     elif call.data.split()[0] == 'dungeon.next_room':
 
         call_data.dungeon_next_room(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.action.battle_action':
+
+        call_data.dungeon_battle_action(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.battle_action_attack':
+
+        call_data.dungeon_battle_attack(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.battle_action_defend':
+
+        call_data.dungeon_battle_defend(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.next_room_ready':
+
+        call_data.dungeon_next_room_ready(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.end_move':
+
+        call_data.dungeon_end_move(bot, bd_user, call, user)
 
     else:
         print(call.data, 'call.data')
