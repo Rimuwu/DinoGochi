@@ -247,6 +247,13 @@ class checks:
                             if functions.notifications_manager(bot, "need_unv", user, dino_id = dino_id, met = 'check') == False:
                                 functions.notifications_manager(bot, "need_unv", user, user['dinos'][dino_id]['stats']['unv'], dino_id = dino_id)
 
+                    if user['dinos'][dino_id]['stats']['heal'] <= 30:
+                        if functions.notifications_manager(bot, "need_heal", user, dino_id = dino_id, met = 'check') == False:
+                            functions.notifications_manager(bot, "need_heal", user, user['dinos'][dino_id]['stats']['heal'], dino_id = dino_id)
+
+                    if user['dinos'][dino_id]['stats']['heal'] >= 60:
+                        functions.notifications_manager(bot, 'need_heal', user, dino_id = dino_id, met = 'delete')
+
                     if user['dinos'][dino_id]['stats']['mood'] >= 60:
                         functions.notifications_manager(bot, 'need_mood', user, dino_id = dino_id, met = 'delete')
 
@@ -485,13 +492,13 @@ class checks:
                                 item = functions.random_items(['9', '8', "10", '2'], ['27', '9', "26", '8', "28", "10", '2'], all_l1, all_l2, all_l3)
 
                             if dino['h_type'] == 'collecting':
-                                item = functions.random_items(['9'], ['27', '9'], col_l1, col_l2, col_l3)
+                                item = functions.random_items(['9'], ['9'], col_l1, col_l2, col_l3)
 
                             if dino['h_type'] == 'hunting':
-                                item = functions.random_items(['8'], ["26", '8'], ["26", "12"], ['5', "12"], ['5'])
+                                item = functions.random_items(['8'], ['8'], ["26", "12"], ['5', "12"], ['5'])
 
                             if dino['h_type'] == 'fishing':
-                                item = functions.random_items(["10"], ["28", "10"], ["28", "13"], ['7', "13"], ['7'])
+                                item = functions.random_items(["10"], ["10"], ["28", "13"], ['7', "13"], ['7'])
 
                             if item == '35':
                                 functions.acc_check(bot, user, '31', dino_id, True)
@@ -542,9 +549,9 @@ class checks:
                             lvl_ += random.randint(0,20)
 
                         if functions.acc_check(bot, user, '45', dino_id, False):
-                            tick = [1, 20]
-                        else:
                             tick = [1, 30]
+                        else:
+                            tick = [1, 40]
 
                         r_e_j = random.randint(tick[0], tick[1])
                         if r_e_j == 1:
@@ -1164,14 +1171,14 @@ class checks:
                                     dinos_stats['mood'] -= 3
 
                         if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
-                            if random.randint(1,30) == 1:
+                            if random.randint(1,40) == 1:
                                 dinos_stats['heal'] -= random.randint(1,2)
 
                         if user['dinos'][dino_id]['stats']['eat'] <= 20:
                             if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
                                 pass
                             else:
-                                if random.randint(1,40) == 1:
+                                if random.randint(1,60) == 1:
                                     dinos_stats['heal'] -= random.randint(0,1)
 
                         if user['dinos'][dino_id]['stats']['eat'] > 80:
