@@ -3253,12 +3253,12 @@ class commands:
 
         def inf_message(dino_id):
 
-            data_q_r = { 'com': {'money': 4000,  'materials': ['21']  } ,
-                         'unc': {'money': 10000, 'materials': ['20'] } ,
-                         'rar': {'money': 20000, 'materials': ['22'] } ,
-                         'myt': {'money': 40000, 'materials': ['23'] } ,
-                         'leg': {'money': 75000, 'materials': ['24'] } ,
-                         'ran': {'money': 15000, 'materials': ['3']  } ,
+            data_q_r = { 'com': {'money': 2000,  'materials': ['21']  } ,
+                         'unc': {'money': 5000, 'materials': ['20'] } ,
+                         'rar': {'money': 10000, 'materials': ['22'] } ,
+                         'myt': {'money': 20000, 'materials': ['23'] } ,
+                         'leg': {'money': 40000, 'materials': ['24'] } ,
+                         'ran': {'money': 5000, 'materials': ['3']  } ,
                        }
 
             r_text = { 'com': ['Обычный', 'Common'] ,
@@ -3484,28 +3484,41 @@ class commands:
                         if dung == None:
 
                             if bd_user['language_code'] == 'ru':
-                                text = f'❗  | Введите корректный код!'
+                                text = f'❗ | Введите корректный код!'
 
                             else:
-                                text = f'❗  | Enter the correct code!'
+                                text = f'❗ | Enter the correct code!'
 
                             msg = bot.send_message(message.chat.id, text)
 
                         else:
 
-                            if bd_user['language_code'] == 'ru':
-                                text = f'⚙ | Генерация...'
+                            if dung['dungeon_stage'] == 'preparation':
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = f'⚙ | Генерация...'
+
+                                else:
+                                    text = f'⚙ | Generation...'
+
+                                mg = bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "dungeon", user))
+
+                                dng, inf = dungeon.base_upd(userid = user.id, dungeonid = code, type = 'add_user')
+
+                                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dng['dungeonid'], upd_type = 'all')
+
+                                bot.delete_message(user.id, mg.message_id)
 
                             else:
-                                text = f'⚙ | Generation...'
 
-                            mg = bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, "dungeon", user))
+                                if bd_user['language_code'] == 'ru':
+                                    text = f'❗ | На этой стадии нельзя присоединится к подземелью!'
 
-                            dng, inf = dungeon.base_upd(userid = user.id, dungeonid = code, type = 'add_user')
+                                else:
+                                    text = f"❗ | You can't join the dungeon at this stage!"
 
-                            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dng['dungeonid'], upd_type = 'all')
+                                msg = bot.send_message(message.chat.id, text)
 
-                            bot.delete_message(user.id, mg.message_id)
 
                 if bd_user['language_code'] == 'ru':
                     text = f'🎟 | Введите код подключения > '
