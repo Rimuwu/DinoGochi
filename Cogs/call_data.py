@@ -909,6 +909,13 @@ class call_data:
                     bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
                     return
 
+            if col < 1:
+
+                text = f"0 % 0 % 0 % 0 % 0 % 0 % 0 % 0 % 0 % 0 % 0 % 0 :)"
+
+                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
+                return
+
             if col > mx_col:
 
                 if bd_user['language_code'] == 'ru':

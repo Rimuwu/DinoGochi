@@ -1872,6 +1872,16 @@ class commands:
                                         bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
                                         return
 
+                                if col < 1:
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text = f"Введите корректное число!"
+                                    else:
+                                        text = f"Enter the correct number!"
+
+                                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+                                    return
+
                                 if 'abilities' in user_item.keys():
                                     if 'uses' in user_item['abilities'].keys():
                                         if col > user_item['abilities']['uses']:
