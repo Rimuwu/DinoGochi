@@ -58,3 +58,8 @@
 > - TOKEN = "Токен бота из BotFather"
 
 - Запустите файл main.py
+
+### 📜 | Последнее
+
+Время потраченое с начала разработки 1.0.2 > <a href="https://wakatime.com/badge/github/Rimuwu/DinoGochi"><img src="https://wakatime.com/badge/github/Rimuwu/DinoGochi.svg" alt="wakatime"></a>
+- 1.0.2v - 🗻 | Обновление подземелий.
