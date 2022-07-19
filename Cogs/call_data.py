@@ -924,6 +924,13 @@ class call_data:
                     bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
                     return
 
+            if col < 1:
+
+                text = f"0 % 0 % 0 % 0 % 0 % 0 % 0 % 0 % 0 % 0 % 0 % 0 :)"
+
+                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
+                return
+
             if col > mx_col:
 
                 if bd_user['language_code'] == 'ru':
@@ -2561,9 +2568,20 @@ class call_data:
 
         if int(dung['stage_data']['game']['player_move'][0]) == user.id:
 
-            dungeon.battle_user_move(bot, dungeonid, user.id, bd_user, call)
-            dungeon.battle_mob_move(bot, dungeonid, user.id, bd_user, call)
+            sht, iff = dungeon.battle_user_move(bot, dungeonid, user.id, bd_user, call)
+            print(iff)
+
+            log, iff2 = dungeon.battle_mob_move(bot, dungeonid, user.id, bd_user, call)
+            print(iff2)
+
             dng, inf = dungeon.base_upd(dungeonid = dungeonid, type = 'next_move')
             print(inf)
 
-            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = False)
+            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
+            print(inf)
+
+            sw_text = sht + '\n\n'
+            for i in log: sw_text += i + '\n'
+
+            print(sw_text)
+            bot.answer_callback_query(call.id, sw_text, show_alert = True)
