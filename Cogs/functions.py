@@ -717,7 +717,7 @@ class functions:
 
         dino = json_f['elements'][str(dino_id)]
         del user['dinos'][str(dino_id_remove)]
-        user['dinos'][functions.user_dino_pn(user)] = {'dino_id': dino_id, "status": 'dino', 'activ_status': 'pass_active', 'name': dino['name'], 'stats':  {"heal": 100, "eat": random.randint(70, 100), 'game': random.randint(50, 100), 'mood': random.randint(7, 100), "unv": 100}, 'games': [], 'quality': quality}
+        user['dinos'][functions.user_dino_pn(user)] = {'dino_id': dino_id, "status": 'dino', 'activ_status': 'pass_active', 'name': dino['name'], 'stats':  {"heal": 100, "eat": random.randint(70, 100), 'game': random.randint(50, 100), 'mood': random.randint(7, 100), "unv": 100}, 'games': [], 'quality': quality, 'dungeon': {"equipment": {'armor': None, 'weapon': None}} }
 
         users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos']}} )
 
@@ -1501,7 +1501,6 @@ class functions:
                                     else:
                                         rmk.add('↩ Back')
 
-
                                     def tr_complete(message, bd_user, user_item, mx_col, col_l, two_user):
 
                                         if message.text in ['↩ Back', '↩ Назад']:
@@ -1529,6 +1528,16 @@ class functions:
 
                                                 bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', bd_user))
                                                 return
+
+                                        if col < 1:
+
+                                            if bd_user['language_code'] == 'ru':
+                                                text = f"Введите корректное число!"
+                                            else:
+                                                text = f"Enter the correct number!"
+
+                                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+                                            return
 
                                         if col > mx_col:
 
@@ -2898,6 +2907,7 @@ class dungeon:
                         if i in ['hp', 'mana']:
                             mob_data[f"max{i}"] = mob_data[i]
 
+                    mob_data[f"activ_effects"] = []
                     ret_list.append(mob_data)
 
             return ret_list
@@ -2915,7 +2925,7 @@ class dungeon:
         def dino_data(dinosid):
             dinos = {}
             for i in dinosid:
-                dinos[i] = {'status': 'live'}
+                dinos[i] = {'status': 'live', 'activ_effects': []}
 
             return dinos
 
@@ -3518,6 +3528,15 @@ class dungeon:
                             else:
                                 text = f'🕹 | '
 
+                            if data_mob['damage-type'] == 'magic':
+
+                                if dung['settings']['lang'] == 'ru':
+                                    text +=  f"\n🌌 | Мана: {mob['mana']} / {mob['maxmana']} ({ round( (mob['mana'] / mob['maxmana']) * 100, 2)}%)"
+
+                                else:
+                                    text +=  f"\n🌌 | Mana: {mob['mana']} / {mob['maxmana']} ({ round( (mob['mana'] / mob['maxmana']) * 100, 2)}%)"
+
+
                             u_n = 0
                             users_text = '\n\n'
                             for k in dung['users'].keys():
@@ -3931,6 +3950,8 @@ class dungeon:
         mob = dung['floor'][room_n]['mobs'][0]
         userdata = dung['users'][str(userid)]
         damage = 0
+        damage_permission = True
+
         for i in userdata['dinos'].keys():
             dino_data = userdata['dinos'][i]
 
@@ -3943,16 +3964,21 @@ class dungeon:
                     else:
                         pass #доделать в соответствии с оружием
 
-                del dung['users'][str(userid)]['dinos'][i]['action']
+        if dung['users'][str(userid)]['dinos'][i]['activ_effects'] != []:
+            print('user have effect')
 
-        mob['hp'] -= damage
+
+        if damage_permission == True:
+            mob['hp'] -= damage
+
         dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor':  dung['floor'] }} )
         dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users':  dung['users'] }} )
 
-        if mob['hp'] > 0:
-            inf = dungeon.message_upd(bot, userid = userid, dungeonid = dungeonid, upd_type = 'all', image_update = True)
-            print(inf)
+        # if mob['hp'] > 0:
+        #     inf = dungeon.message_upd(bot, userid = userid, dungeonid = dungeonid, upd_type = 'all', image_update = True)
+        #     print(inf)
 
+        show_text = ''
         if call != None:
 
             if bd_user['language_code'] == 'ru':
@@ -3961,18 +3987,128 @@ class dungeon:
             else:
                 show_text = f"🦕 Your dinosaurs inflicted: {damage} 💥"
 
-            bot.answer_callback_query(call.id, show_text)
-
-        print(damage)
-        print('user_move')
+        return show_text, 'user_move'
 
     def battle_mob_move(bot, dungeonid, userid, bd_user, call = None):
 
         dung = dungeons.find_one({"dungeonid": dungeonid})
         room_n = str(dung['stage_data']['game']['room_n'])
         mob = dung['floor'][room_n]['mobs'][0]
+        data_mob = mobs_f['mobs'][ mob['mob_key'] ]
+        log = []
         pprint(mob)
-        damage = 0
+
+        def mob_heal(standart = True, heal_dict = None): #могут использовать только маги
+            successful = True
+
+            if standart == True or heal_dict['type'] == 'standart':
+
+                heal_col = random.randint(0, 3)
+                mana_use = 15
+                rg_type = 'simple_regeneration'
+
+            else:
+                if heal_dict['heal']['type'] == 'random':
+                    heal_col = random.randint(heal_dict['heal']['min'], heal_dict['heal']['max'])
+                else:
+                    heal_col = heal_dict['heal']['act']
+
+                if heal_dict['mana']['type'] == 'random':
+                    mana_use = random.randint(heal_dict['mana']['min'], heal_dict['mana']['max'])
+                else:
+                    mana_use = heal_dict['mana']['act']
+
+                rg_type = heal_dict['name']
+
+            if rg_type == 'simple_regeneration':
+
+                if mob['mana'] >= mana_use:
+                    if mob['hp'] < mob['maxhp']:
+
+                        mob['hp'] += heal_col
+                        mob['mana'] -= mana_use
+
+                else:
+                    successful = False
+
+            if mob['hp'] > mob['maxhp']:
+                mob['hp'] = mob['maxhp']
+
+            return heal_col, successful
+
+        def mob_damage(standart = True, attack_dict = None):
+            damage = 0
+            successful = True
+
+            if standart == True or attack_dict['type'] == 'standart':
+                damag_d = random.randint( mob['damage'] // 2, mob['damage'] )
+                mind = mob['damage'] // 2
+
+                endur = random.randint(0,2)
+                ammun = 1
+                mana = random.randint(0,10)
+                at_type = 'simple_attack'
+
+            else:
+
+                if attack_dict['damage']['type'] == 'random':
+                    damag_d = random.randint( attack_dict['damage']['min'], attack_dict['damage']['max'] )
+                    mind = attack_dict['damage']['max'] // 2
+                else:
+                    damag_d = attack_dict['damage']['act']
+                    mind  = attack_dict['damage']['act'] // 2
+
+                if "endurance" in attack_dict.keys():
+                    if attack_dict["endurance"]['type'] == 'random':
+                        endur = random.randint( attack_dict['endurance']['min'], attack_dict['endurance']['max'] )
+                    else:
+                        endur = attack_dict['endurance']['act']
+
+                if "ammunition" in attack_dict.keys():
+                    if attack_dict["ammunition"]['type'] == 'random':
+                        ammun = random.randint( attack_dict['ammunition']['min'], attack_dict['ammunition']['max'] )
+                    else:
+                        ammun = attack_dict['ammunition']['act']
+
+                if "mana" in attack_dict.keys():
+                    if attack_dict["mana"]['type'] == 'random':
+                        mana = random.randint( attack_dict['mana']['min'], attack_dict['mana']['max'] )
+                    else:
+                        mana = attack_dict['mana']['act']
+
+                at_type = attack_dict['name']
+
+            if at_type == 'simple_attack':
+
+                if data_mob["damage-type"] == "near":
+                    if mob['endurance'] > 0:
+                        mob['endurance'] -= endur
+                        damage = damag_d
+
+                    else:
+                        damage = random.randint(0, mind )
+                        successful = False
+
+                elif data_mob["damage-type"] == "far":
+                    if mob['ammunition'] > 0:
+                        mob['ammunition'] -= ammun
+                        damage = damag_d
+
+                    else:
+                        damage = random.randint(0, mind )
+                        successful = False
+
+                elif data_mob["damage-type"] == "magic":
+                    if mob['mana'] > 0:
+                        mob['mana'] -= mana
+                        damage = damag_d
+
+                    else:
+                        damage = random.randint(0, mind )
+                        successful = False
+
+            return damage, successful
+
 
         if mob['hp'] <= 0:
             dung['floor'][room_n]['mobs'].pop(0)
@@ -3982,9 +4118,154 @@ class dungeon:
 
             dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor':  dung['floor'] }} )
 
+            if dung['settings']['lang'] == 'ru':
+                log.append( f"💥 {data_mob['name'][dung['settings']['lang']]} умер." )
+            else:
+                log.append( f"💥 {data_mob['name'][dung['settings']['lang']]} dead." )
+
             inf = dungeon.message_upd(bot, userid = userid, dungeonid = dungeonid, upd_type = 'all', image_update = True)
 
         else:
-            damage = random.randint(mob['damage'] // 2, mob['damage'])
+            dinos_keys_pr = list(dung['users'][str(userid)]['dinos'].keys())
+            act_log = []
+            damage_count = 1
 
-        print(damage)
+            if len(dinos_keys_pr) != 1:
+                damage_count = random.randint(int(len(dinos_keys) / 2), len(dinos_keys))
+
+            if mob['intelligence'] < 10:
+
+                for i in range(damage_count):
+                    random.shuffle(dinos_keys_pr)
+                    damage, successful = mob_damage()
+
+                    act_log.append( {'type': 'damage_dino', 'dino_key': dinos_keys_pr[0], 'damage': damage, 'successful': successful} )
+
+            if mob['intelligence'] >= 10 and mob['intelligence'] < 20:
+
+                if data_mob["damage-type"] == "magic":
+                    act_l = ["attacks", "healing"] #, "other"] доделать еффекты
+                else:
+                    act_l = ["attacks"] #, "other"] доделать еффекты
+
+                a = 0
+                for i in range(damage_count):
+                    random.shuffle(dinos_keys_pr)
+                    mob_action = random.choice(act_l)
+
+                    if mob_action == "attacks":
+                        damage, successful = mob_damage( False, random.choice(data_mob['actions'][mob_action]) )
+
+                        act_log.append( {'type': 'damage_dino', 'dino_key': dinos_keys_pr[0], 'damage': damage, 'successful': successful} )
+
+                    elif mob_action == "healing":
+                        hp, successful = mob_heal( False, random.choice(data_mob['actions'][mob_action]) )
+
+                        act_log.append( {'type': 'mob_heal', 'heal': hp, 'successful': successful} )
+
+            if mob['intelligence'] >= 20 and mob['intelligence'] < 30:
+
+                pass
+                # моб выбирает что ему сделать из действий, но само действие рандомное (actions - выбирает, random( mob[actions][?] ) )
+
+            if mob['intelligence'] >= 30 and mob['intelligence'] < 40:
+
+                pass
+                # моб выбирает что ему сделать, как и при 30-ти + выбирает цель на основе косвенных данных (у кого меньше хп и тд)
+
+            if mob['intelligence'] >= 40 and mob['intelligence'] < 50:
+
+                pass
+                # моб выбирает что ему сделать, как и при 40-ти + выбирает цель на основе всех данных
+
+            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor.{room_n}.mobs':  dung['floor'][room_n]['mobs'] }} )
+
+            for log_d in act_log:
+                print(log_d)
+
+
+                if log_d['type'] == 'mob_heal':
+
+                    if log_d['successful'] == True:
+
+                        if dung['settings']['lang'] == 'ru':
+                            log.append( f"⬆ {data_mob['name'][ dung['settings']['lang'] ]} восстанавливает себе {log_d['heal']} ❤" )
+                        else:
+                            log.append( f"⬆ {data_mob['name'][ dung['settings']['lang'] ]} restores itself {log_d['heal']} ❤" )
+
+                    else:
+
+                        if dung['settings']['lang'] == 'ru':
+                            log.append( f"❌ У {data_mob['name'][ dung['settings']['lang'] ]} не хватает маны на восстановление здоровья..." )
+                        else:
+                            log.append( f"❌{data_mob['name'][dung['settings']['lang']]} doesn't have enough mana to restore health..." )
+
+                elif log_d['type'] == 'damage_dino':
+
+                    if bd_user['dinos'][ log_d['dino_key'] ]['dungeon']['equipment']['armor'] == None:
+                        reflection = [1, 10] # 1 / 10 урона будет отражена
+
+                    else:
+                        pass # доделать, когда появятся предметы защиты
+
+                    print(dung['users'][str(userid)]['dinos'][ log_d['dino_key'] ], 'ktut')
+
+                    if 'action' in dung['users'][str(userid)]['dinos'][ log_d['dino_key'] ].keys() and dung['users'][str(userid)]['dinos'][ log_d['dino_key'] ]['action'] == 'defend':
+                        use_armor = True
+
+                    else:
+                        use_armor = False
+
+                    print(use_armor)
+
+                    if dung['settings']['lang'] == 'ru':
+                        if log_d['successful'] == True:
+
+                            log.append(f"💢 {data_mob['name'][dung['settings']['lang']]} наносит {bd_user['dinos'][ log_d['dino_key'] ]['name']} {damage} урон(а).")
+
+                        else:
+
+                            if data_mob["damage-type"] == "magic":
+
+                                log.append(f"💢 У {data_mob['name'][dung['settings']['lang']]} не хватает маны, атаки ослабли, {bd_user['dinos'][ log_d['dino_key'] ]['name']} получает {damage} урон(а).")
+
+                            elif data_mob["damage-type"] == "near":
+
+                                log.append(f"💢 У {data_mob['name'][dung['settings']['lang']]} сломалось оружие, атаки ослабли, {bd_user['dinos'][ log_d['dino_key'] ]['name']} получает {damage} урон(а).")
+
+                            elif data_mob["damage-type"] == "far":
+
+                                log.append(f"💢 У {data_mob['name'][dung['settings']['lang']]} не хватает боеприпасов, атаки ослабли, {bd_user['dinos'][ log_d['dino_key'] ]['name']} получает {damage} урона.")
+
+
+                    else:
+                        if log_d['successful'] == True:
+
+                            log.append(f"💢 {data_mob['name'][dung['settings']['lang']]} causes {bd_user['dinos'][ log_d['dino_key'] ]['name']} {damage} damage.")
+
+                        else:
+
+                            if data_mob["damage-type"] == "magic":
+
+                                log.append(f"💢 At {data_mob['name'][dung['settings']['lang']]} not enough mana, attacks weakened, {bd_user['dinos'][ log_d['dino_key'] ]['name']} receives {damage} damage.")
+
+                            elif data_mob["damage-type"] == "near":
+
+                                log.append(f"💢 At {data_mob['name'][dung['settings']['lang']]} the weapon broke, attacks weakened, {bd_user['dinos'][ log_d['dino_key'] ]['name']} receives {damage} damage.")
+
+                            elif data_mob["damage-type"] == "far":
+
+                                log.append(f"💢 At {data_mob['name'][dung['settings']['lang']]} not enough ammunition, attacks weakened, {bd_user['dinos'][ log_d['dino_key'] ]['name']} receives {damage} damage.")
+
+                    if use_armor == True:
+
+                        if dung['settings']['lang'] == 'ru':
+
+                            log.append( f"🛡 {bd_user['dinos'][ log_d['dino_key'] ]['name']} отражает {reflection[0]} / {reflection[1]} урона. ({ int(round(damage - (damage / reflection[1]) * reflection[0]))})" )
+
+                        else:
+
+                            log.append( f"🛡 {bd_user['dinos'][ log_d['dino_key'] ]['name']} reflects {reflection[0]} / {reflection[1]} damage." )
+
+            pprint(log)
+            return log, 'mob_move'
