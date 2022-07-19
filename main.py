@@ -377,7 +377,7 @@ def command(message):
 def command(message):
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
-        inf =  dungeon.message_upd(bot, userid = user.id, dungeonid = user.id, upd_type = 'all')
+        inf =  dungeon.message_upd(bot, userid = user.id, dungeonid = user.id, upd_type = 'all', image_update = True)
         print(inf)
 
 @bot.message_handler(commands=['dungeon'])
