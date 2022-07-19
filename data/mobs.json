@@ -12,6 +12,7 @@
                        "intelligence": { "act": 1, "type": "static" },
                        "image": "images/dungeon/mobs/goblin.png",
                        "lvls": {"min": 1, "max": 10},
+                       "experience": { "min": 2, "max": 20, "type": "random" },
                        "actions": { "attacks": [],
                                     "healing": [],
                                     "other": []
@@ -23,15 +24,30 @@
                        "hp": { "min": 2, "max": 10, "type": "random" },
 
                        "damage-type": "magic",
-                       "mana": { "min": 80, "max": 100, "type": "random" },
+                       "mana": { "min": 20, "max": 50, "type": "random" },
 
                        "damage": { "min": 1, "max": 5, "type": "random" },
                        "intelligence": { "act": 10, "type": "static" },
                        "image": "images/dungeon/mobs/skeleton_magician.png",
                        "lvls": {"min": 1, "max": 10},
-                       "actions": { "attacks": [],
-                                    "healing": [],
-                                    "other": []
+                       "experience": { "min": 2, "max": 20, "type": "random" },
+                       "actions": {
+                                   "attacks": [
+
+                                { "name": "simple_attack", "type": "standart" },
+                                { "name": "simple_attack", "damage": {"min": 1, "max": 2, "type": "random"}, "mana": { "min": 1, "max": 10, "type": "random" }, "type": "unique" }
+
+                                              ],
+
+                                    "healing": [
+
+                                { "name": "simple_regeneration", "type": "standart" },
+                                { "name": "simple_regeneration", "heal": { "act": 9, "type": "static" }, "mana": { "act": 20, "type": "static" }, "type": "unique" }
+
+                                               ],
+
+                                    "other"  : [ { "name": "simple_evasion", "type": "standart" }
+                                               ]
                                   }
                       },
 
@@ -46,6 +62,7 @@
                        "intelligence": { "min": 0, "max": 2, "type": "random" },
                        "image": "images/dungeon/mobs/piglin-archer.png",
                        "lvls": {"min": 1, "max": 10},
+                       "experience": { "min": 2, "max": 20, "type": "random" },
                        "actions": { "attacks": [],
                                     "healing": [],
                                     "other": []
