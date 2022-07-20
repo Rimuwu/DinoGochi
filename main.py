@@ -855,6 +855,12 @@ def answer(call):
 
         call_data.cancel_progress(bot, bd_user, call, user)
 
+    elif call.data.split()[0] == 'message_delete':
+
+        show_text = "✉ > 🗑"
+        bot.answer_callback_query(call.id, show_text)
+        bot.delete_message(user.id, call.message.message_id)
+
     elif call.data.split()[0] == 'dungeon.settings':
 
         call_data.dungeon_settings(bot, bd_user, call, user)
@@ -959,6 +965,10 @@ def answer(call):
 
         call_data.dungeon_battle_defend(bot, bd_user, call, user)
 
+    elif call.data.split()[0] == 'dungeon.battle_action_idle':
+
+        call_data.dungeon_battle_idle(bot, bd_user, call, user)
+
     elif call.data.split()[0] == 'dungeon.next_room_ready':
 
         call_data.dungeon_next_room_ready(bot, bd_user, call, user)
@@ -966,6 +976,10 @@ def answer(call):
     elif call.data.split()[0] == 'dungeon.end_move':
 
         call_data.dungeon_end_move(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.dinos_stats':
+
+        call_data.dungeon_dinos_stats(bot, bd_user, call, user)
 
     else:
         print(call.data, 'call.data')

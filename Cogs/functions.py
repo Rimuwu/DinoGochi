@@ -78,6 +78,15 @@ class functions:
                 types.InlineKeyboardButton( text = f'🍭 | {inp_text[1]}', callback_data = f"inventory")
                 )
 
+        if element == 'delete_message': #markup_inline
+
+            if bd_user['language_code'] == 'ru':
+                inl_l = {"⚙ Удалить сообщение": 'message_delete', }
+            else:
+                inl_l = {"⚙ Delete a message": 'message_delete'}
+
+            markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]}") for inl in inl_l.keys() ])
+
         elif element == 'requests' and bd_user != None: #markup_inline
 
             if bd_user['language_code'] == 'ru':
@@ -2866,6 +2875,19 @@ class functions:
 
         return bd_user
 
+    @staticmethod
+    def message_from_delete(bot, userid, text):
+        markup_inline = types.InlineKeyboardMarkup()
+
+        if dung['settings']['lang'] == 'ru':
+            inl_l = {"⚙ Удалить сообщение": 'message_delete', }
+        else:
+            inl_l = {"⚙ Delete a message": 'message_delete'}
+
+        markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]}") for inl in inl_l.keys() ])
+
+        bot.send_message(userid, text, reply_markup = functions.markup(bot, "dungeon_menu", int(u_k) ))
+
 
 class dungeon:
 
@@ -2966,17 +2988,30 @@ class dungeon:
                     dung['stage_data']['game']['floor_n'] += 1
                     dung['stage_data']['game']['room_n'] = 0
                     dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
+                    floor_n = dung['stage_data']['game']['floor_n']
 
                     floor = { '0': { 'room_type': 'start_room', 'image': f'images/dungeon/start_room/{random.randint(1,2)}.png', 'next_room': True, 'ready': [] }, '1': {},
                               '2': {}, '3': {}, '4': {}, '5': {},
                               '6': {}, '7': {}, '8': {}, '9': {}, '10': {}, 'floor_data': {}
                             }
 
+                    if floor_n % 5 == 0 and floor_n % 10 != 0:
+                        #выход каждые 5 этажей, не считая босса
+                        floor['10'] = { 'room_type': 'safe_exit', 'image': f'images/dungeon/start_room/1.png', 'next_room': True }
+
+                    elif floor_n % 5 == 0 and floor_n % 10 == 0:
+                        # босс каждые 10 этажей
+                        floor['10'] = { 'room_type': 'boss', 'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png', 'next_room': True }
+
+                    else:
+                        #остальное
+                        floor['10'] = { 'room_type': 'ladder_down', 'image': f'images/dungeon/start_room/1.png', 'next_room': True }
+
                     rooms = { 'com': ['battle'],
                               'unc': ['battle', 'forest', 'empty_room'],
-                              'rar': ['fork_2', 'fork_3', 'quest'],
-                              'myt': ['town', 'mine'],
-                              'leg': ['chest', 'mimic']
+                              'rar': ['fork_2', 'fork_3'],  #, 'quest'],
+                              'myt': ['mine'],#, 'town'],
+                              'leg': ['mine'] #['chest', 'mimic']
                             }
 
                     for room_n in list(range(1, 10)):
@@ -2986,7 +3021,10 @@ class dungeon:
                         if room_type == 'battle':
                             mobs = dungeon.random_mobs(mobs_type = 'mobs', floor_lvl = dung['stage_data']['game']['floor_n'], count = random.randint(1, 3))
 
-                            floor[str(room_n)] = { 'room_type': room_type, 'mobs': mobs, 'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png', 'next_room': False }
+                            floor[str(room_n)] = { 'room_type': room_type, 'reward': { 'experience': 0, 'items': [], 'collected': {} },'mobs': mobs, 'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png', 'next_room': False }
+
+                            # collected - items : True, exp: True
+                            # при нажатии выдавать опыт, и давать выбрать предметы
 
                         elif room_type == 'empty_room':
                             secrets = []
@@ -3175,11 +3213,12 @@ class dungeon:
         if dung != None:
 
             if type == 'battle_action':
+                markup_inline = types.InlineKeyboardMarkup(row_width = 2)
 
                 if dung['settings']['lang'] == 'ru':
-                    inl_l = {"⚔ Атаковать": 'dungeon.battle_action_attack', '🛡 Защищаться': 'dungeon.battle_action_defend'}
+                    inl_l = {"⚔ Атаковать": 'dungeon.battle_action_attack', '🛡 Защищаться': 'dungeon.battle_action_defend', '❌ Бездействовать': 'dungeon.battle_action_idle'}
                 else:
-                    inl_l = {"⚔ Attack": 'dungeon.battle_action_attack', '🛡 Defend yourself': 'dungeon.battle_action_defend'}
+                    inl_l = {"⚔ Attack": 'dungeon.battle_action_attack', '🛡 Defend yourself': 'dungeon.battle_action_defend', '❌ Idle': 'dungeon.battle_action_idle'}
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid} {kwargs['dinoid']}") for inl in inl_l.keys() ])
                 return markup_inline
@@ -3228,13 +3267,38 @@ class dungeon:
                     return markup_inline
 
                 if room['next_room'] == True:
-                    type = 'game'
+
+                    if dung['settings']['lang'] == 'ru':
+                        inl_l = { '📜 Инвентарь': 'dungeon.inventory', '🦕 Состояние': 'dungeon.dinos_stats', '👑 Награда': 'dungeon.collect_reward'
+                                }
+
+                        if userid == dungeonid:
+                            inl_l2 = {'⏩ След. комната': 'dungeon.next_room', '❌ Исключить': 'dungeon.kick_member'}
+
+                        else:
+                            inl_l2 = {'✅ Готовность': 'dungeon.next_room_ready', '🚪 Выйти': 'dungeon.leave_in_game'}
+
+                    else:
+                        inl_l = { '📜 Inventory': 'dungeon.inventory', '🦕 Condition': 'dungeon.dinos_stats', '👑 Reward': 'dungeon.collect_reward'
+                                }
+
+                        if userid == dungeonid:
+                            inl_l2 = {'⏩ Next room': 'dungeon.next_room', '❌ Exclude': 'dungeon.kick_member'}
+
+                        else:
+                            inl_l2 = {'✅ Ready': 'dungeon.next_room_ready', '🚪 Go out': 'dungeon.leave_in_game'}
+
+                    markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
+
+                    markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
+
+                    return markup_inline
 
 
             if type == 'game':
 
                 if dung['settings']['lang'] == 'ru':
-                    inl_l = { '📜 Инвентарь': 'dungeon.inventory'
+                    inl_l = { '📜 Инвентарь': 'dungeon.inventory', '🦕 Состояние': 'dungeon.dinos_stats'
                             }
 
                     if userid == dungeonid:
@@ -3244,7 +3308,7 @@ class dungeon:
                         inl_l2 = {'✅ Готовность': 'dungeon.next_room_ready', '🚪 Выйти': 'dungeon.leave_in_game'}
 
                 else:
-                    inl_l = { '📜 Inventory': 'dungeon.inventory'
+                    inl_l = { '📜 Inventory': 'dungeon.inventory', '🦕 Condition': 'dungeon.dinos_stats'
                             }
 
                     if userid == dungeonid:
@@ -3591,6 +3655,13 @@ class dungeon:
                             image = f'battle {dungeonid}.png'
 
                         if dung['floor'][str(room_n)]['next_room'] == True:
+                            inline_type = 'battle'
+
+                            if dung['settings']['lang'] == 'ru':
+                                text += f'\n\n🏆 Вы одолели всех монстров в этой локации, забери свою награду и продвигайтесь дальше!'
+
+                            else:
+                                text += f'\n\n🏆 You have defeated all the monsters in this location, take your reward and move on!'
 
                             text += '\n\n'
                             u_n = 0
@@ -3618,6 +3689,27 @@ class dungeon:
 
                         else:
                             text += f"\n\nIt looks like it's just an empty room. It's a little dark here, but you don't see anything interesting."
+
+                        if dung['floor'][str(room_n)]['next_room'] == True:
+
+                            text += '\n\n'
+                            u_n = 0
+                            users_text = ''
+                            for k in dung['users'].keys():
+                                us = dung['users'][k]
+                                bd_us = users.find_one({"userid": int(k)})
+
+                                if int(k) in dung['floor'][str(room_n)]['ready']:
+                                    r_e = '✅'
+
+                                else:
+                                    r_e = '❌'
+
+                                u_n += 1
+                                username = bot.get_chat(int(k)).first_name
+                                users_text += f'{u_n}. {username} (🦕 {len(us["dinos"])}) ({r_e})\n'
+
+                            text += users_text
 
                     if room_type == 'start_room':
 
@@ -3964,8 +4056,8 @@ class dungeon:
                     else:
                         pass #доделать в соответствии с оружием
 
-        if dung['users'][str(userid)]['dinos'][i]['activ_effects'] != []:
-            print('user have effect')
+            if dung['users'][str(userid)]['dinos'][i]['activ_effects'] != []:
+                print('dino have effect')
 
 
         if damage_permission == True:
@@ -3973,10 +4065,6 @@ class dungeon:
 
         dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor':  dung['floor'] }} )
         dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users':  dung['users'] }} )
-
-        # if mob['hp'] > 0:
-        #     inf = dungeon.message_upd(bot, userid = userid, dungeonid = dungeonid, upd_type = 'all', image_update = True)
-        #     print(inf)
 
         show_text = ''
         if call != None:
@@ -4125,13 +4213,18 @@ class dungeon:
 
             inf = dungeon.message_upd(bot, userid = userid, dungeonid = dungeonid, upd_type = 'all', image_update = True)
 
+            return log, 'mob_move'
+
         else:
             dinos_keys_pr = list(dung['users'][str(userid)]['dinos'].keys())
             act_log = []
             damage_count = 1
 
-            if len(dinos_keys_pr) != 1:
-                damage_count = random.randint(int(len(dinos_keys) / 2), len(dinos_keys))
+            if len(dinos_keys_pr) == 0:
+                damage_count = 0
+
+            if len(dinos_keys_pr) > 1:
+                damage_count = random.randint(int(len(dinos_keys_pr) / 2), len(dinos_keys_pr))
 
             if mob['intelligence'] < 10:
 
@@ -4181,8 +4274,6 @@ class dungeon:
             dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor.{room_n}.mobs':  dung['floor'][room_n]['mobs'] }} )
 
             for log_d in act_log:
-                print(log_d)
-
 
                 if log_d['type'] == 'mob_heal':
 
@@ -4203,20 +4294,16 @@ class dungeon:
                 elif log_d['type'] == 'damage_dino':
 
                     if bd_user['dinos'][ log_d['dino_key'] ]['dungeon']['equipment']['armor'] == None:
-                        reflection = [1, 10] # 1 / 10 урона будет отражена
+                        reflection = 1 # 1 урон будет отражена
 
                     else:
                         pass # доделать, когда появятся предметы защиты
-
-                    print(dung['users'][str(userid)]['dinos'][ log_d['dino_key'] ], 'ktut')
 
                     if 'action' in dung['users'][str(userid)]['dinos'][ log_d['dino_key'] ].keys() and dung['users'][str(userid)]['dinos'][ log_d['dino_key'] ]['action'] == 'defend':
                         use_armor = True
 
                     else:
                         use_armor = False
-
-                    print(use_armor)
 
                     if dung['settings']['lang'] == 'ru':
                         if log_d['successful'] == True:
@@ -4261,11 +4348,44 @@ class dungeon:
 
                         if dung['settings']['lang'] == 'ru':
 
-                            log.append( f"🛡 {bd_user['dinos'][ log_d['dino_key'] ]['name']} отражает {reflection[0]} / {reflection[1]} урона. ({ int(round(damage - (damage / reflection[1]) * reflection[0]))})" )
+                            log.append( f"🛡 {bd_user['dinos'][ log_d['dino_key'] ]['name']} отражает {reflection} урон(а)." )
 
                         else:
 
-                            log.append( f"🛡 {bd_user['dinos'][ log_d['dino_key'] ]['name']} reflects {reflection[0]} / {reflection[1]} damage." )
+                            log.append( f"🛡 {bd_user['dinos'][ log_d['dino_key'] ]['name']} reflects {reflection} damage." )
 
-            pprint(log)
+                    dmg = damage
+                    if use_armor == True:
+                        dmg -= reflection
+
+                    if dmg < 1:
+                        dmg = 0
+
+                    if bd_user['dinos'][ log_d['dino_key'] ]['stats']['heal'] - dmg <= 10:
+                        bd_user['dinos'][ log_d['dino_key'] ]['stats']['heal'] = 10
+                        del dung['users'][ str(userid) ]['dinos'][ log_d['dino_key'] ]
+
+                        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
+
+                        if dung['settings']['lang'] == 'ru':
+
+                            log.append( f"🦕 У {bd_user['dinos'][ log_d['dino_key'] ]['name']} остаётся 10 ❤, он покидает подземелье в целях безопасности." )
+
+                        else:
+
+                            log.append( f"🦕 At {bd_user['dinos'][ log_d['dino_key'] ]['name']} remains 10 ❤, he leaves the dungeon for safety reasons." )
+
+                    else:
+                        bd_user['dinos'][ log_d['dino_key'] ]['stats']['heal'] -= dmg
+
+                        if dung['settings']['lang'] == 'ru':
+
+                            log.append( f"🦕 У {bd_user['dinos'][ log_d['dino_key'] ]['name']} остаётся {bd_user['dinos'][ log_d['dino_key'] ]['stats']['heal']} ❤" )
+
+                        else:
+
+                            log.append( f"🦕 At {bd_user['dinos'][ log_d['dino_key'] ]['name']} remains {bd_user['dinos'][ log_d['dino_key'] ]['stats']['heal']} ❤" )
+
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+
             return log, 'mob_move'

@@ -2548,6 +2548,20 @@ class call_data:
 
         inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = False)
 
+    def dungeon_battle_idle(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dinoid = int(call.data.split()[2])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        if 'action' in dung['users'][str(user.id)]['dinos'][str(dinoid)].keys():
+            del dung['users'][str(user.id)]['dinos'][str(dinoid)]['action']
+            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
+            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = False)
+
+        bot.delete_message(user.id, call.message.message_id)
+
+
     def dungeon_next_room_ready(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
@@ -2580,8 +2594,34 @@ class call_data:
             inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
             print(inf)
 
-            sw_text = sht + '\n\n'
+            sw_text = sht + '\n'
             for i in log: sw_text += i + '\n'
 
-            print(sw_text)
-            bot.answer_callback_query(call.id, sw_text, show_alert = True)
+            bot.send_message(user.id, sw_text, reply_markup = functions.inline_markup(bot, f'delete_message', user.id) )
+
+    def dungeon_dinos_stats(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        dinos_k = dung['users'][str(user.id)]['dinos'].keys()
+        sw_text = ''
+
+        if len(dinos_k) == 0:
+
+            if bd_user['language_code'] == 'ru':
+                sw_text = 'В подземелье нет ни одного вашего динозавра.'
+            else:
+                sw_text = "There aren't any of your dinosaurs in the dungeon."
+
+        else:
+
+            for dkey in dinos_k:
+                dino = bd_user['dinos'][dkey]
+                dino_stats = dino['stats']
+
+                sw_text += f"🦕 {dino['name']}\n❤ {dino_stats['heal']}%\n🍕 {dino_stats['eat']}%"
+                sw_text += '\n\n'
+
+
+        bot.send_message(user.id, sw_text, reply_markup = functions.inline_markup(bot, f'delete_message', user.id) )
