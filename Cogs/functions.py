@@ -1839,7 +1839,7 @@ class functions:
             return reyt_
 
     @staticmethod
-    def add_item_to_user(user:dict, item_id:str, col:int = 1, type:str = 'add'):
+    def get_dict_item(item_id:str):
 
         item = items_f['items'][item_id]
         d_it = {'item_id': item_id}
@@ -1849,6 +1849,13 @@ class functions:
                 abl[k] = item['abilities'][k]
 
             d_it['abilities'] = abl
+
+        return d_it
+
+    @staticmethod
+    def add_item_to_user(user:dict, item_id:str, col:int = 1, type:str = 'add'):
+
+        d_it = functions.get_dict_item(item_id)
 
         if type == 'add':
             for i in range(col):
@@ -1862,20 +1869,6 @@ class functions:
                 ret_d.append(d_it)
 
             return ret_d
-
-    @staticmethod
-    def get_dict_item(item_id:str):
-
-        item = items_f['items'][item_id]
-        d_it = {'item_id': item_id}
-        if 'abilities' in item.keys():
-            abl = {}
-            for k in item['abilities'].keys():
-                abl[k] = item['abilities'][k]
-
-            d_it['abilities'] = abl
-
-        return d_it
 
     @staticmethod
     def item_authenticity(item:dict):
@@ -3223,7 +3216,7 @@ class dungeon:
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid} {kwargs['dinoid']}") for inl in inl_l.keys() ])
                 return markup_inline
 
-            if type == 'battle':
+            elif type == 'battle':
                 room_n = dung['stage_data']['game']['room_n']
                 room = dung['floor'][str(room_n)]
 
@@ -3295,7 +3288,7 @@ class dungeon:
                     return markup_inline
 
 
-            if type == 'game':
+            elif type == 'game':
 
                 if dung['settings']['lang'] == 'ru':
                     inl_l = { '📜 Инвентарь': 'dungeon.inventory', '🦕 Состояние': 'dungeon.dinos_stats'
@@ -3323,7 +3316,7 @@ class dungeon:
 
                 return markup_inline
 
-            if type == 'preparation':
+            elif type == 'preparation':
 
                 if dung['settings']['lang'] == 'ru':
                     inl_l = {'🦕 Добавить': 'dungeon.menu.add_dino',
@@ -3358,7 +3351,7 @@ class dungeon:
 
                 return markup_inline
 
-            if type == 'settings':
+            elif type == 'settings':
 
                 if dung['settings']['lang'] == 'ru':
                     inl_l = {'Язык: 🇷🇺': 'dungeon.settings_lang',
@@ -3380,7 +3373,7 @@ class dungeon:
 
                 return markup_inline
 
-            if type == 'invite_room':
+            elif type == 'invite_room':
 
                 if dung['settings']['lang'] == 'ru':
                     inl_l = {'🕹 Назад': 'dungeon.to_lobby'}
@@ -3392,7 +3385,7 @@ class dungeon:
 
                 return markup_inline
 
-            if type == 'add_dino':
+            elif type == 'add_dino':
 
                 if dung['settings']['lang'] == 'ru':
                     inl_l = {'⚙ Действие: Добавить': 'dungeon.menu.remove_dino'
@@ -3424,7 +3417,7 @@ class dungeon:
 
                 return markup_inline
 
-            if type == 'remove_dino':
+            elif type == 'remove_dino':
 
                 if dung['settings']['lang'] == 'ru':
                     inl_l = {'⚙ Действие: Удалить': 'dungeon.menu.add_dino'
@@ -3455,7 +3448,7 @@ class dungeon:
 
                 return markup_inline
 
-            if type == 'supplies':
+            elif type == 'supplies':
                 markup_inline = types.InlineKeyboardMarkup(row_width = 2)
 
                 if dung['settings']['lang'] == 'ru':
@@ -3478,6 +3471,45 @@ class dungeon:
                 bd_user = users.find_one({"userid": int(userid) })
 
                 markup_inline.row( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
+
+                return markup_inline
+
+            elif type == 'collect_reward':
+
+                room_n = str(dung['stage_data']['game']['room_n'])
+                room_rew = dung['floor'][room_n]['reward']
+
+                inv = room_rew['collected'][ str(userid) ]['items']
+                r_inv = room_rew['items']
+                d_items = []
+
+                for itm in inv:
+
+                    if itm in r_inv:
+                        r_inv.remove(itm)
+
+                d_items = r_inv
+                inl_l = {}
+
+                if dung['settings']['lang'] == 'ru':
+                    inl_l2 = {'🕹 Назад': 'dungeon.to_lobby'}
+
+                else:
+                    inl_l2 = {'🕹 Back': 'dungeon.to_lobby'}
+
+                for itm in d_items:
+                    item_data = items_f['items'][ itm['item_id'] ]
+                    iname = item_data[ f"name{dung['settings']['lang']}" ]
+
+                    if iname not in inl_l.keys():
+                        inl_l[ iname ] = {'item_id': itm['item_id'], 'col': 1}
+
+                    else:
+                        inl_l[ iname ]['col'] += 1
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = f"{inl} x{inl_l[inl]['col']}", callback_data = f"dungeon.item_from_reward {dungeonid} {inl_l[inl]['item_id']}") for inl in inl_l.keys() ])
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
 
@@ -3814,6 +3846,40 @@ class dungeon:
                         print(e)
 
                 return f'message_update < delete {dl} - undelete {undl} >'
+
+            elif type == 'collect_reward':
+
+                if dung['settings']['lang'] == 'ru':
+                    text = '🏆 | Вы достойно сражались, заполните свой рюкзак материалами и выдвигайтесь дальше!'
+                else:
+                    text = '🏆 | You fought with dignity, fill your backpack with materials and move on!'
+
+                room_n = str(dung['stage_data']['game']['room_n'])
+                room_rew = dung['floor'][room_n]['reward']
+
+                if str(userid) not in room_rew['collected'].keys():
+                    room_rew['collected'][str(userid)] = {'experience': True, 'items': []}
+
+                    bd_user = users.find_one({"userid": int(userid) })
+                    bd_user['lvl'][1] += room_rew['experience']
+
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'lvl': bd_user['lvl'] }} )
+
+                    dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor':  dung['floor'] }} )
+
+                try:
+
+                    bot.edit_message_caption(
+                        chat_id = int(userid),
+                        message_id =  int(dung['users'][str(userid)]['messageid']),
+                        caption = text,
+                        reply_markup = dungeon.inline(bot, int(userid), dungeonid = dungeonid, type = 'collect_reward'),
+                    )
+
+                except Exception as e:
+                    return f'message_dont_update - collect_reward ~{e}~'
+
+                return 'message_update - collect_reward'
 
             elif type == 'settings':
 
@@ -4204,7 +4270,18 @@ class dungeon:
             if len(dung['floor'][room_n]['mobs']) == 0:
                 dung['floor'][room_n]['next_room'] = True
 
-            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor':  dung['floor'] }} )
+            loot = dung['floor'][room_n]['reward']['items']
+            exp = dung['floor'][room_n]['reward']['experience']
+
+            if data_mob["experience"]['type'] == 'random':
+                exp += random.randint( data_mob["experience"]['min'], data_mob["experience"]['max'] )
+            else:
+                exp += data_mob["experience"]['act']
+
+            n_l = dungeon.loot_generator( mob['mob_key'] )
+            for i in n_l: loot.append(i)
+
+            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor': dung['floor'] }} )
 
             if dung['settings']['lang'] == 'ru':
                 log.append( f"💥 {data_mob['name'][dung['settings']['lang']]} умер." )
@@ -4389,3 +4466,18 @@ class dungeon:
                     users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
 
             return log, 'mob_move'
+
+    def loot_generator(mob_key):
+        """ Доки функции
+
+        Шанс берётся из моба, рандомится от 1-го до 1к, и проверяется число из лута, если x (item['chance']) >= ra.int - значит выпал"""
+        loot = []
+
+        data_mob = mobs_f['mobs'][ mob_key ]
+
+        for i_d in data_mob['loot']:
+            for _ in range(i_d['col']):
+                if random.randint(1, 1000) <= i_d['chance']:
+                    loot.append( functions.get_dict_item( i_d['item'] ) )
+
+        return loot

@@ -430,6 +430,24 @@ def command(message):
         users.update_one( {"userid": user.id}, {"$set": {f"dinos": bd_user['dinos'] }} )
         print('ok')
 
+@bot.message_handler(commands=['loot'])
+def command(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        loot = []
+        ky = ["piglin-archer", "goblin", "skeleton_magician"]
+
+        for _ in range(1):
+            random.shuffle(ky)
+
+            mk = ky[0]
+            print(mk)
+
+            n_l = dungeon.loot_generator(mk)
+            for i in n_l: loot.append(i)
+
+        print(loot)
+
 # =========================================
 
 @bot.message_handler(commands=['emulate_not'])
@@ -980,6 +998,14 @@ def answer(call):
     elif call.data.split()[0] == 'dungeon.dinos_stats':
 
         call_data.dungeon_dinos_stats(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.collect_reward':
+
+        call_data.dungeon_collect_reward(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.item_from_reward':
+
+        call_data.item_from_reward(bot, bd_user, call, user)
 
     else:
         print(call.data, 'call.data')

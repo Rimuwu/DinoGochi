@@ -2522,7 +2522,7 @@ class call_data:
         else:
             text = f"⚔🛡 | Select an action for {din_name} >"
 
-        msg = bot.send_message(call.message.chat.id, text, reply_markup = dungeon.inline(bot, user.id, dungeonid, 'battle_action', {'dinoid': dinoid}) )
+        bot.send_message(call.message.chat.id, text, reply_markup = dungeon.inline(bot, user.id, dungeonid, 'battle_action', {'dinoid': dinoid}) )
 
     def dungeon_battle_attack(bot, bd_user, call, user):
 
@@ -2560,7 +2560,6 @@ class call_data:
             inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = False)
 
         bot.delete_message(user.id, call.message.message_id)
-
 
     def dungeon_next_room_ready(bot, bd_user, call, user):
 
@@ -2625,3 +2624,49 @@ class call_data:
 
 
         bot.send_message(user.id, sw_text, reply_markup = functions.inline_markup(bot, f'delete_message', user.id) )
+
+    def dungeon_collect_reward(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'collect_reward')
+        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'collect_reward', dungeonid = dungeonid, type = 'edit_last_page')
+
+    def item_from_reward(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        item_id = call.data.split()[2]
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+        user_dt = dung['users'][str(user.id)]
+
+        room_n = str(dung['stage_data']['game']['room_n'])
+        loot = dung['floor'][room_n]['reward']['items']
+
+        item_dt = functions.get_dict_item( item_id )
+
+        if item_dt in loot:
+
+            if len(user_dt['inventory']) >= dungeon.d_backpack(bd_user):
+
+
+                if bd_user['language_code'] == 'ru':
+                    show_text = '❗ | В вашем рюкзаке больше нет места! Освободите место, а после заберите награду.'
+
+                else:
+                    show_text = "❗ | There is no more space in your backpack! Make room, and then collect the reward."
+
+                bot.answer_callback_query(call.id, show_text, show_alert = True)
+
+            else:
+                user_dt['inventory'].append(item_dt)
+                dung['floor'][room_n]['reward']['collected'][str(user.id)]['items'].append(item_dt)
+
+                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor':  dung['floor'] }} )
+                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users':  dung['users'] }} )
+
+                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'collect_reward')
+
+
+        else:
+            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'collect_reward')
