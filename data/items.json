@@ -98,7 +98,7 @@
 
  "49": {"nameru": "🔮 Магический камень", "nameen": "🔮 Magic Stone", "type": "material", "abilities": {"mana": 0}, "image": "item49"},
 
- "50": {"nameru": "🌮 Тако", "nameen": "🌮 Tacos", "type": "+eat", "act": 40, "class": "ALL", "+mood": 20, "image": "item50"},
+ "50": {"nameru": "🌮 Тако", "nameen": "🌮 Tacos", "type": "+eat", "act": 75, "class": "ALL", "+mood": 40, "image": "item50"},
 
  "51": {"nameru": "🦴 Кость", "nameen": "🦴 Bone", "type": "material", "image": "item51"},
 
@@ -108,7 +108,23 @@
 
  "54": {"nameru": "💘 Костяная стрела", "nameen": "💘 Bone Arrow", "type": "ammunition", "abilities": {"stack": 1}, "image": "item54"},
 
- "55": {"nameru": "🏹 Костяной лук", "nameen": "🏹 Bone Bow", "type": "weapon", "class": "far", "damage": {"min": 0, "max": 5}, "ammunition": ["54"], "abilities": {"endurance": 150}, "image": "item55"}
+ "55": {"nameru": "🏹 Костяной лук", "nameen": "🏹 Bone Bow", "type": "weapon", "class": "far", "damage": {"min": 0, "max": 5}, "ammunition": ["54"], "abilities": {"endurance": 150}, "image": "item55"},
+
+ "56": {"nameru": "📜 Рецепт тако", "nameen": "📜 Taco Recipe", "type": "recipe", "descriptionru": "Тако, превосходная еда, которую обожают все динозавры любых видов!", "descriptionen": "Tacos, excellent food that all dinosaurs of all kinds adore!", "create": ["50"], "materials": [ {"item": "9", "type": "delete"}, {"item": "9", "type": "delete"}, {"item": "9", "type": "delete"}, {"item": "8", "type": "delete"}, {"item": "8", "type": "delete"} ], "abilities": {"uses": 5}, "image": "recipe"},
+
+ "57": {"nameru": "📜 Костяной меч", "nameen": "📜 Bone Sword", "type": "recipe", "descriptionru": "Остро заточенный меч из костей нежити.", "descriptionen": "A sharpened sword made of undead bones.", "create": ["53"], "materials": [ {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"}, {"item": "15", "type": "endurance", "act": 30} ], "abilities": {"uses": 2}, "image": "recipe"},
+
+ "58": {"nameru": "📜 Костяной лук", "nameen": "📜 Bone Bow", "type": "recipe", "descriptionru": "Лук из пару костей, стреляет исправно.", "descriptionen": "A bow made of a couple of bones, shoots properly.", "create": ["55"], "materials": [ {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"}, {"item": "15", "type": "endurance", "act": 30} ], "abilities": {"uses": 2}, "image": "recipe"},
+
+ "59": {"nameru": "📜 Костяная стрела", "nameen": "📜 Bone Arrow", "type": "recipe", "descriptionru": "Кость, ломающая кости.", "descriptionen": "Bone breaking bones.", "create": ["54", "54", "54"], "materials": [ {"item": "51", "type": "delete"}, {"item": "15", "type": "endurance", "act": 10} ], "abilities": {"uses": 50}, "image": "recipe"},
+
+ "60": {"nameru": "🎒 Обычный рюкзак", "nameen": "🎒 Ordinary backpack", "type": "backpack", "capacity": 10, "image": "item45"},
+
+ "61": {"nameru": "📜 Обычный рюкзак", "nameen": "📜 Ordinary backpack", "type": "recipe", "descriptionru": "Школьный рюкзак, оборудованный для подземелья.", "descriptionen": "A school backpack equipped for dungeons.", "create": ["60"], "materials": [ {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"}, {"item": "26", "type": "delete"} ], "abilities": {"uses": 2}, "image": "recipe"},
+
+ "62": {"nameru": "🛡 Костяной щит", "nameen": "🛡 Bone Shield", "type": "armor", "reflection": 2, "abilities": {"endurance": 120}, "image": "item50"},
+
+ "63": {"nameru": "📜 Костяной щит", "nameen": "📜 Bone Shield", "type": "recipe", "descriptionru": "", "descriptionen": "", "create": ["62"], "materials": [ {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"} ], "abilities": {"uses": 2}, "image": "recipe"}
 
 }
 }
