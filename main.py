@@ -766,7 +766,7 @@ def on_message(message):
 
         elif message.text in [ '⚔ Экипировка', '⚔ Equip']:
 
-            commands.dungeon_menu(bot, message, user, bd_user)
+            commands.dungeon_equipment(bot, message, user, bd_user)
 
         elif message.text in [ '📕 Правила подземелья', '📕 Dungeon Rules']:
 
