@@ -4017,6 +4017,8 @@ class dungeon:
 
     def d_backpack(bd_user):
 
+        data_items = items_f['items']
+
         if 'user_dungeon' in bd_user.keys():
 
             item = bd_user['user_dungeon']["equipment"]['backpack']
@@ -4025,7 +4027,7 @@ class dungeon:
                 return 5
 
             else:
-                return item['act']
+                return data_items[ item['item_id'] ]['capacity']
 
         else:
             return 5
@@ -4120,7 +4122,8 @@ class dungeon:
                         damage += random.randint(0, 2) #стандартный урон без оружия
 
                     else:
-                        pass #доделать в соответствии с оружием
+                        dmg, br = dungeon.dino_attack(bd_user, i)
+                        damage += dmg
 
             if dung['users'][str(userid)]['dinos'][i]['activ_effects'] != []:
                 print('dino have effect')
@@ -4481,3 +4484,28 @@ class dungeon:
                     loot.append( functions.get_dict_item( i_d['item'] ) )
 
         return loot
+
+    def dino_attack(bd_user, dino_id):
+
+        data_items = items_f['items']
+        item = bd_user['dinos'][dino_id]['dungeon']['equipment']['weapon']
+        data_item = data_items[ item['item_id'] ]
+        broken = False
+
+        damage = random.randint( data_item['damage']['min'], data_item['damage']['max'] )
+
+        if data_item['class'] == 'near':
+            item['abilities']['endurance'] -= random.randint(0,2)
+
+        if data_item['class'] == 'far':
+            item['abilities']['endurance'] -= random.randint(0,2)
+
+            #сделать уменьшение стрел и если нет, то убрать урон, так же вместо broken, сделать сообщение с тем, что произошло
+
+        if item['abilities']['endurance'] <= 0:
+            bd_user['dinos'][dino_id]['dungeon']['equipment']['weapon'] = None
+            broken = True
+
+            users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{dino_id}': bd_user['dinos'][dino_id] }} )
+
+        return damage, broken

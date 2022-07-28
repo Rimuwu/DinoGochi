@@ -6,7 +6,7 @@ import pymongo
 from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageSequence, ImageFilter
 import time
 import sys
-import pprint
+from pprint import pprint
 from fuzzywuzzy import fuzz
 
 from functions import functions, dungeon
@@ -1706,7 +1706,7 @@ class commands:
 
             def work_pr(message, pages, page, items_id, ind_sort_it):
                 global l_pages, l_page, l_ind_sort_it
-                a = []
+
                 l_pages = pages
                 l_page = page
                 l_ind_sort_it = ind_sort_it
@@ -2464,23 +2464,10 @@ class commands:
                                 i.append([' ', ' '])
 
                     def work_pr(message, pages, page, items_id, ind_sort_it, lg, ac_type):
-                        global l_pages, l_page, l_ind_sort_it
-                        a = []
+
                         l_pages = pages
                         l_page = page
                         l_ind_sort_it = ind_sort_it
-
-                        def ret(message):
-                            global l_pages, l_page, l_ind_sort_it
-                            if message.text in ['↪ Назад', '↪ Back']:
-                                a.append(None)
-                                return False
-                            else:
-                                if message.text in list(l_ind_sort_it.keys()) or message.text in ['◀', '▶', '🔻 Снять аксесcуар', '🔻 Remove the accessory']:
-                                    a.append(message.text)
-                                else:
-                                    a.append(None)
-                                return False
 
                         rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
                         for i in pages[page-1]:
@@ -3548,3 +3535,321 @@ class commands:
                     text = f'❗ | You have already created a dungeon!'
 
                 bot.send_message(message.chat.id, text)
+
+    @staticmethod
+    def dungeon_equipment(bot, message, user, bd_user):
+
+        def work_pr_zero(message, dino_id):
+            data_items = items_f['items']
+
+            type_eq = None
+
+            if message.text in ['🗡 Оружие', '🛡 Броня', '🎒 Рюкзак', '🗡 Weapon', '🛡 Armor', '🎒 Backpack']:
+
+                if message.text in ['🗡 Оружие', '🗡 Weapon']:
+                    type_eq = 'weapon'
+
+                elif message.text in ['🛡 Броня', '🛡 Armor']:
+                    type_eq = 'armor'
+
+                else:
+                    type_eq = 'backpack'
+
+            else:
+
+                bot.send_message(message.chat.id, '❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user), bd_user ))
+                return
+
+            items = []
+
+            for i in bd_user['inventory']:
+                itm = data_items[ i['item_id'] ]
+
+                if itm['type'] == type_eq:
+                    items.append(i)
+
+            if bd_user['language_code'] == 'ru':
+                text = '🎴 | Выберите предмет из инвентаря, для установки его в активный слот >'
+            else:
+                text = '🎴 | Select an item from the inventory to install it in the active slot >'
+
+            nitems = bd_user['inventory']
+
+            if nitems == []:
+
+                if bd_user['language_code'] == 'ru':
+                    text = 'Инвентарь пуст.'
+                else:
+                    text = 'Inventory is empty.'
+
+                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'dungeon_menu', user))
+                return
+
+            data_items = items_f['items']
+            items_id = {}
+            page = 1
+            items_names = []
+
+            if bd_user['language_code'] == 'ru':
+                lg = "nameru"
+            else:
+                lg = "nameen"
+
+            for i in items:
+                items_id[ items_f['items'][str(i['item_id'])][lg] ] = i
+                items_names.append( items_f['items'][str(i['item_id'])][lg] )
+
+            items_sort = []
+            d_it_sort = {}
+            ind_sort_it = {}
+
+            for i in items_names:
+                if i in list(d_it_sort.keys()):
+                    d_it_sort[i] += 1
+                else:
+                    d_it_sort[i] = 1
+
+            for n in list(d_it_sort.keys()):
+                col = d_it_sort[n]
+                name = n
+                items_sort.append(f'{n} x{col}')
+                ind_sort_it[f'{n} x{col}'] = n
+
+            pages = list(functions.chunks(list(functions.chunks(items_sort, 2)), 2))
+
+            if len(pages) == 0:
+                pages = [ [ ] ]
+
+            for i in pages:
+                for ii in i:
+                    if len(ii) == 1:
+                        ii.append(' ')
+
+                if len(i) != 2:
+                    for iii in range(2 - len(i)):
+                        i.append([' ', ' '])
+
+            def work_pr(message, pages, page, items_id, ind_sort_it, lg, type_eq, dino_id):
+
+                l_pages = pages
+                l_page = page
+                l_ind_sort_it = ind_sort_it
+
+                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+                for i in pages[page-1]:
+                    rmk.add(i[0], i[1])
+
+                if len(pages) > 1:
+                    if bd_user['language_code'] == 'ru':
+                        com_buttons = ['◀', '↪ Назад', '▶', '🔻 Снять']
+                        textt = f'🎴 | Выберите предмет >'
+                    else:
+                        com_buttons = ['◀', '↪ Back', '▶', '🔻 Remove']
+                        textt = f'🎴 | Choose a subject >'
+
+                    rmk.add(com_buttons[3])
+                    rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
+
+                else:
+
+                    if bd_user['language_code'] == 'ru':
+                        com_buttons = ['↪ Назад', '🔻 Снять']
+                        textt = f'🎴 | Выберите предмет >'
+                    else:
+                        textt = f'🎴 | Choose a subject >'
+                        com_buttons = ['↪ Back', '🔻 Remove']
+
+                    rmk.add(com_buttons[1])
+                    rmk.add(com_buttons[0])
+
+                def ret(message, l_pages, l_page, l_ind_sort_it, bd_user, user, pages, page, items_id, ind_sort_it, lg, type_eq, dino_id):
+                    if message.text in ['↩ Назад', '↩ Back']:
+                        res = None
+
+                    else:
+                        if message.text in list(l_ind_sort_it.keys()) or message.text in ['◀', '▶', '🔻 Снять', '🔻 Remove']:
+                            res = message.text
+                        else:
+                            res = None
+
+                    if res == None:
+                        if bd_user['language_code'] == 'ru':
+                            text = "⚙ | Возвращение"
+                        else:
+                            text = "⚙ | Return"
+
+                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'dungeon_menu', user))
+                        return '12'
+
+                    else:
+                        if res == '◀':
+                            if page - 1 == 0:
+                                page = 1
+                            else:
+                                page -= 1
+
+                            work_pr(message, pages, page, items_id, ind_sort_it, lg, type_eq, dino_id)
+
+                        elif res == '▶':
+                            if page + 1 > len(l_pages):
+                                page = len(l_pages)
+                            else:
+                                page += 1
+
+                            work_pr(message, pages, page, items_id, ind_sort_it, lg, type_eq, dino_id)
+
+                        else:
+
+                            if res in ['🔻 Снять', '🔻 Remove']:
+
+                                if type_eq in ['weapon', 'armor']:
+                                    item = bd_user['dinos'][dino_id]['dungeon']['equipment'][type_eq]
+
+                                    if item != None:
+
+                                        users.update_one( {"userid": bd_user['userid']}, {"$push": {'inventory': item }} )
+
+                                        bd_user['dinos'][dino_id]['dungeon']['equipment'][type_eq] = None
+
+                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = "🎴 | Активный предмет снят"
+                                        else:
+                                            text = "🎴 | Active item removed"
+
+                                    else:
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = "🎴 | В данный момент нет активного предмета!"
+                                        else:
+                                            text = "🎴 | There is no active item at the moment!"
+
+
+                                if type_eq in ['backpack']:
+                                    item = bd_user['user_dungeon']['equipment'][type_eq]
+
+                                    if item != None:
+                                        users.update_one( {"userid": bd_user['userid']}, {"$push": {'inventory': item }} )
+
+                                        bd_user['user_dungeon']['equipment'][type_eq] = None
+
+                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = "🎴 | Активный предмет снят"
+                                        else:
+                                            text = "🎴 | Active item removed"
+
+                                    else:
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = "🎴 | В данный момент нет активного предмета!"
+                                        else:
+                                            text = "🎴 | There is no active item at the moment!"
+
+                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'dungeon_menu', user))
+
+                            else:
+                                if type_eq in ['weapon', 'armor']:
+                                    item = bd_user['dinos'][dino_id]['dungeon']['equipment'][type_eq]
+
+                                    if item != None:
+
+                                        users.update_one( {"userid": bd_user['userid']}, {"$push": {'inventory': item }} )
+
+                                        bd_user['dinos'][dino_id]['dungeon']['equipment'][type_eq] = None
+
+
+                                    itemm = items_id[ l_ind_sort_it[res] ]
+                                    bd_user['dinos'][dino_id]['dungeon']['equipment'][type_eq] = itemm
+
+                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+
+                                if type_eq in ['backpack']:
+                                    item = bd_user['user_dungeon']['equipment'][type_eq]
+
+                                    if item != None:
+                                        users.update_one( {"userid": bd_user['userid']}, {"$push": {'inventory': item }} )
+
+                                        bd_user['user_dungeon']['equipment'][type_eq] = None
+
+                                    itemm = items_id[ l_ind_sort_it[res] ]
+                                    bd_user['user_dungeon']['equipment'][type_eq] = itemm
+
+                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+                                if bd_user['language_code'] == 'ru':
+                                    text = "🎴 | Активный предмет установлен!"
+                                else:
+                                    text = "🎴 | The active item is installed!"
+
+                                bd_user['inventory'].remove(itemm)
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'dungeon_menu', user))
+
+                msg = bot.send_message(message.chat.id, textt, reply_markup = rmk)
+                bot.register_next_step_handler(msg, ret, l_pages, l_page, l_ind_sort_it, bd_user, user, pages, page, items_id, ind_sort_it, lg, type_eq, dino_id)
+
+            work_pr(message, pages, page, items_id, ind_sort_it, lg, type_eq, dino_id)
+
+        data_items = items_f['items']
+
+        def type_answer(message, dino_id):
+            dino = bd_user['dinos'][dino_id]
+
+            if bd_user['language_code'] == 'ru':
+                ans = [ '🗡 Оружие', '🛡 Броня', '🎒 Рюкзак', '↪ Назад' ]
+            else:
+                ans = [ '🗡 Weapon', '🛡 Armor', '🎒 Backpack', '↪ Back' ]
+
+            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
+            rmk.add(ans[0], ans[1], ans[2])
+            rmk.add(ans[3])
+
+            if dino['dungeon']['equipment']['weapon'] != None: w_n = data_items[ dino['dungeon']['equipment']['weapon']['item_id'] ][ f'name{ bd_user["language_code"] }' ]
+            else: w_n = '-'
+
+            if dino['dungeon']['equipment']['armor'] != None: a_n = data_items[ dino['dungeon']['equipment']['armor']['item_id'] ][ f'name{ bd_user["language_code"] }' ]
+            else: a_n = '-'
+
+            if bd_user['user_dungeon']['equipment']['backpack'] != None: b_n = data_items[ bd_user['user_dungeon']['equipment']['backpack']['item_id'] ][ f'name{ bd_user["language_code"] }' ]
+            else: b_n = '-'
+
+            if bd_user['language_code'] == 'ru':
+                text = f'Экипированно:\n🗡: {w_n}\n🛡: {a_n}\n🎒: {b_n}\n\n⚙ | Выберите что вы хотите экипировать >'
+
+            else:
+                text = f'Equipped:\n🗡: {w_n}\n🛡: {a_n}\n🎒: {b_n}\n\n⚙ | Choose what you want to equip >'
+
+            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+            bot.register_next_step_handler(msg, work_pr_zero, dino_id)
+
+        n_dp, dp_a = functions.dino_pre_answer(bot, message, type = 'noall')
+        if n_dp == 1:
+
+            bot.send_message(message.chat.id, f'❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'dungeon_menu'), bd_user ))
+            return
+
+        if n_dp == 2:
+            bd_dino = dp_a
+
+            type_answer( message, list(bd_user['dinos'].keys())[0]  )
+
+        if n_dp == 3:
+            rmk = dp_a[0]
+            text = dp_a[1]
+            dino_dict = dp_a[2]
+
+            def ret(message, dino_dict, user, bd_user):
+
+                if message.text in dino_dict.keys():
+
+                    type_answer( message, dino_dict[message.text][1] )
+
+                else:
+                    bot.send_message(message.chat.id, '❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user), bd_user ))
+
+            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+            bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)
