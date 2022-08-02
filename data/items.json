@@ -106,7 +106,7 @@
 
  "53": {"nameru": "🗡 Костяной меч", "nameen": "🗡 Bone Sword", "type": "weapon", "class": "near", "damage": {"min": 1, "max": 3}, "abilities": {"endurance": 50}, "image": "item53"},
 
- "54": {"nameru": "💘 Костяная стрела", "nameen": "💘 Bone Arrow", "type": "ammunition", "abilities": {"stack": 1}, "add_damage": 0, "add_effects": [], "image": "item54"},
+ "54": {"nameru": "💘 Костяная стрела", "nameen": "💘 Bone Arrow", "type": "ammunition", "abilities": {"stack": 1}, "add_damage": 0, "add_effects": [], "max_stack": 66, "image": "item54"},
 
  "55": {"nameru": "🏹 Костяной лук", "nameen": "🏹 Bone Bow", "type": "weapon", "class": "far", "damage": {"min": 0, "max": 5}, "ammunition": ["54"], "abilities": {"endurance": 150}, "image": "item55"},
 
