@@ -78,7 +78,7 @@ class functions:
                 types.InlineKeyboardButton( text = f'🍭 | {inp_text[1]}', callback_data = f"inventory")
                 )
 
-        if element == 'delete_message': #markup_inline
+        elif element == 'delete_message': #markup_inline
 
             if bd_user['language_code'] == 'ru':
                 inl_l = {"⚙ Удалить сообщение": 'message_delete', }
@@ -124,7 +124,7 @@ class functions:
                 )
 
         else:
-            print(f'{element}\n{user.first_name}')
+            print(f'{element}\n{user}')
 
         return markup_inline
 
@@ -1102,7 +1102,7 @@ class functions:
         return random.choice(items)
 
     @staticmethod
-    def sort_items_col(nls_i:list, lg):
+    def sort_items_col(nls_i:list, lg, col_display = True):
         dct = {}
         nl = []
 
@@ -1115,7 +1115,11 @@ class functions:
         for i in dct.keys():
             it = dct[i]
             name = items_f['items'][i][f'name{lg}']
-            nl.append(f"{name} x{it}")
+
+            if col_display == True:
+                nl.append(f"{name} x{it}")
+            else:
+                nl.append(f"{name}")
 
         return nl
 
@@ -1142,7 +1146,6 @@ class functions:
                         nl.append(f"{name} x{dct[i['item']]}")
 
                     itts.append(i)
-
 
             return nl
 
@@ -1199,7 +1202,7 @@ class functions:
                 elif item['inc_type'] == 'leg': eg_q = 'legendary'
 
                 type = '🥚 dinosaur egg'
-                d_text = f"*└* Incubation: {item['incub_time']}{item['time_tag']}* (killed dinosaurs)\\n"
+                d_text = f"*└* Incubation: {item['incub_time']}{item['time_tag']} * (killed dinosaurs)\\n"
                 d_text += f"*└* The rarity of eggs: {eg_q}"
 
         elif item['type'] in ['game_ac', 'unv_ac', 'journey_ac', 'hunt_ac']:
@@ -1230,15 +1233,65 @@ class functions:
             if lg == 'ru':
                 type = '🧾 рецепт создания'
 
-                d_text = f'*├* Создаёт: {", ".join(functions.sort_items_col( item["create"], "ru" ))}\n'
+                d_text = f'*├* Создаёт: {", ".join(sort_materials( item["create"], "ru" ))}\n'
                 d_text += f'*└* Материалы: {", ".join(sort_materials( item["materials"], "ru"))}\n\n'
                 d_text +=  f"{item['descriptionru']}"
             else:
                 type = '🧾 recipe for creation'
 
-                d_text = f'*├* Creates: {", ".join(functions.sort_items_col( item["create"], "en" ))}\n'
+                d_text = f'*├* Creates: {", ".join(sort_materials( item["create"], "en" ))}\n'
                 d_text += f'*└* Materials: {", ".join(sort_materials( item["materials"], "en"))}\n\n'
                 d_text +=  f"{item['descriptionen']}"
+
+        elif item['type'] == 'weapon':
+            if lg == 'ru':
+                if item['class'] == 'far':
+                    type = '🔫 Оружие'
+                    d_text += f'*├* Боеприпасы: {", ".join(functions.sort_items_col( item["ammunition"], "ru", False ))}\n'
+
+                if item['class'] == 'near':
+                    type = '🗡 Оружие'
+
+                d_text += f"*└* Урон: {item['damage']['min']} - {item['damage']['max']}"
+
+
+            else:
+                if item['class'] == 'far':
+                    type = '🔫 Weapon'
+                    d_text += f'*├* Ammunition: {", ".join(functions.sort_items_col( item["ammunition"], "en", False ))}\n'
+
+                if item['class'] == 'near':
+                    type = '🗡 Weapon'
+
+                d_text = f"*└* Damage: {item['damage']['min']} - {item['damage']['max']}"
+
+        elif item['type'] == 'ammunition':
+            if lg == 'ru':
+                type = '🌠 Боеприпас'
+                d_text += f'*└* Доп. урон: {item["add_damage"]}\n'
+
+            else:
+                type = '🌠 Ammunition'
+                d_text += f'*└* Add. damage: {item["add_damage"]}\n'
+
+        elif item['type'] == 'armor':
+            if lg == 'ru':
+                type = '🛡 Броня'
+                d_text += f'*└* Отражение: {item["reflection"]}\n'
+
+            else:
+                type = '🛡 Armor'
+                d_text += f'*└* Reflection: {item["reflection"]}\n'
+
+        elif item['type'] == 'backpack':
+            if lg == 'ru':
+                type = '🎒 Хранилище'
+                d_text += f'*└* Вместимость: {item["capacity"]}\n'
+
+            else:
+                type = '🎒 Storage'
+                d_text += f'*└* Capacity: {item["capacity"]}\n'
+
 
         if list(set([ '+mood' ]) & set(item.keys())) != []:
             if lg == 'ru':
@@ -1297,6 +1350,12 @@ class functions:
                 else:
                     text += f"*├* Mana: {us_item['abilities']['mana']}\n"
 
+            if 'stack' in us_item['abilities'].keys():
+                if lg == 'ru':
+                    text += f"*├* В наборе: {us_item['abilities']['stack']}\n"
+                else:
+                    text += f"*├* In the set: {us_item['abilities']['stack']}\n"
+
         if lg == 'ru':
             text += f"*├* Тип: {type}\n"
             text += d_text
@@ -1308,7 +1367,11 @@ class functions:
             in_text = ['🔮 | Use', '🗑 | Delete', '🔁 | Transfer', '🛠 | Сreated item']
 
         if 'image' in item.keys():
-            image = open(f"images/items/{item['image']}.png", 'rb')
+            try:
+                image = open(f"images/items/{item['image']}.png", 'rb')
+            except Exception as e:
+                image = None
+                print('item image incorrect')
 
         else:
             image = None
@@ -1320,7 +1383,7 @@ class functions:
 
             if item['type'] == 'recipe':
                 if len(item["create"]) == 1:
-                    markup_inline.add( types.InlineKeyboardButton( text = in_text[3], callback_data = f"iteminfo_{item['create'][0]}") )
+                    markup_inline.add( types.InlineKeyboardButton( text = in_text[3], callback_data = f"iteminfo_{item['create'][0]['item']}") )
 
             if "ns_craft" in item.keys():
                 for cr_dct_id in item["ns_craft"].keys():
@@ -1578,7 +1641,7 @@ class functions:
                                         else:
                                             text = f"🦄 | The Unicorn-courier delivered you an item(s) from {user.first_name}, take a look at the inventory!\n\n📜 Delivered:\n{items_f['items'][str(user_item['item_id'])]['nameen']} x{col}"
 
-                                        bot.send_message(two_user['userid'], text, reply_markup = functions.inline_markup(bot, 'inventory', int(two_user['userid']), ['Проверить инвентарь', 'Check inventory']))
+                                        bot.send_message(two_user['userid'], text, reply_markup = functions.inline_markup(bot, 'inventory', two_user['userid'], ['Проверить инвентарь', 'Check inventory']))
 
                                         functions.user_inventory(bot, user, message)
 
@@ -1839,7 +1902,7 @@ class functions:
             return reyt_
 
     @staticmethod
-    def get_dict_item(item_id:str):
+    def get_dict_item(item_id:str, preabil:dict = None):
 
         item = items_f['items'][item_id]
         d_it = {'item_id': item_id}
@@ -1850,12 +1913,18 @@ class functions:
 
             d_it['abilities'] = abl
 
+        if preabil != None:
+
+            for ak in d_it['abilities'].keys():
+                if ak in preabil.keys():
+                    d_it['abilities'][ak] = preabil[ak]
+
         return d_it
 
     @staticmethod
-    def add_item_to_user(user:dict, item_id:str, col:int = 1, type:str = 'add'):
+    def add_item_to_user(user:dict, item_id:str, col:int = 1, type:str = 'add', preabil:dict = None):
 
-        d_it = functions.get_dict_item(item_id)
+        d_it = functions.get_dict_item(item_id, preabil)
 
         if type == 'add':
             for i in range(col):
@@ -1918,12 +1987,21 @@ class functions:
                 else:
                     text += f"{item['abilities']['mana']}"
 
+            if 'stack' in item['abilities'].keys():
+                # s - ключ код для des_qr
+
+                if v_id == True:
+                    text += f".s{item['abilities']['stack']}"
+                else:
+                    text += f"{item['abilities']['stack']}"
+
         return text
 
     @staticmethod
-    def des_qr(it_qr:str):
+    def des_qr(it_qr:str, i_type:bool = False):
         l_data = {}
         ind = 0
+
         for i in it_qr:
             if i != '.':
                 if ind in l_data.keys():
@@ -1934,17 +2012,38 @@ class functions:
                 ind += 1
 
         ret_data = {}
-
         for i in l_data.keys():
+
             tx = list(l_data[i])
-            if tx[0] == 'u':
-                ret_data['uses'] = int(''.join(l_data[i])[1:])
+            if tx[0] in ['u', 'e', 's']:
+
+                if i_type == True:
+                    if 'abilities' not in ret_data.keys():
+                        ret_data['abilities'] = {}
 
             if tx[0] == 'i':
-                ret_data['id'] = int(''.join(l_data[i])[1:])
+                if i_type == False:
+                    ret_data['id'] = int(''.join(l_data[i])[1:])
+                else:
+                    ret_data['item_id'] = str(''.join(l_data[i])[1:])
 
-            if tx[0] == 'e':
-                ret_data['endurance'] = int(''.join(l_data[i])[1:])
+            elif tx[0] == 'u':
+                if i_type == False:
+                    ret_data['uses'] = int(''.join(l_data[i])[1:])
+                else:
+                    ret_data['abilities']['uses'] = int(''.join(l_data[i])[1:])
+
+            elif tx[0] == 'e':
+                if i_type == False:
+                    ret_data['endurance'] = int(''.join(l_data[i])[1:])
+                else:
+                    ret_data['abilities']['endurance'] = int(''.join(l_data[i])[1:])
+
+            elif tx[0] == 's':
+                if i_type == False:
+                    ret_data['stack'] = int(''.join(l_data[i])[1:])
+                else:
+                    ret_data['abilities']['stack'] = int(''.join(l_data[i])[1:])
 
         return ret_data
 
@@ -3618,11 +3717,16 @@ class dungeon:
                                 f"\n\n⚔ | Схватка: "
                                 f"Врагов: {len(dung['floor'][str(room_n)]['mobs'])}"
                                 f"\n\n😈 | Текущий враг: {data_mob['name'][dung['settings']['lang']]}"
-                                f"\n❤ | Здоровье: {mob['hp']} / {mob['maxhp']} ({ round( (mob['hp'] / mob['maxhp']) * 100, 2)}%)"
+                                f"\n❤ | Health: {mob['hp']} / {mob['maxhp']} ({ round( (mob['hp'] / mob['maxhp']) * 100, 2)}%)"
                                 )
 
                             else:
-                                text = f'🕹 | '
+                                text += (
+                                f"\n\n⚔ | The fight: "
+                                f"Enemies: {len(dung['floor'][str(room_n)]['mobs'])}"
+                                f"\n\n😈 | Current enemy: {data_mob['name'][dung['settings']['lang']]}"
+                                f"\n❤ | Здоровье: {mob['hp']} / {mob['maxhp']} ({ round( (mob['hp'] / mob['maxhp']) * 100, 2)}%)"
+                                )
 
                             if data_mob['damage-type'] == 'magic':
 
@@ -4111,6 +4215,7 @@ class dungeon:
         userdata = dung['users'][str(userid)]
         damage = 0
         damage_permission = True
+        show_text = ''
 
         for i in userdata['dinos'].keys():
             dino_data = userdata['dinos'][i]
@@ -4122,8 +4227,9 @@ class dungeon:
                         damage += random.randint(0, 2) #стандартный урон без оружия
 
                     else:
-                        dmg, br = dungeon.dino_attack(bd_user, i)
+                        dmg, at_log = dungeon.dino_attack(bd_user, i, dungeonid)
                         damage += dmg
+                        show_text += at_log
 
             if dung['users'][str(userid)]['dinos'][i]['activ_effects'] != []:
                 print('dino have effect')
@@ -4133,16 +4239,14 @@ class dungeon:
             mob['hp'] -= damage
 
         dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor':  dung['floor'] }} )
-        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users':  dung['users'] }} )
 
-        show_text = ''
         if call != None:
 
             if bd_user['language_code'] == 'ru':
-                show_text = f"🦕 Ваши динозавры нанесли: {damage} 💥"
+                show_text += f"🦕 Ваши динозавры нанесли: {damage} 💥"
 
             else:
-                show_text = f"🦕 Your dinosaurs inflicted: {damage} 💥"
+                show_text += f"🦕 Your dinosaurs inflicted: {damage} 💥"
 
         return show_text, 'user_move'
 
@@ -4374,10 +4478,12 @@ class dungeon:
                 elif log_d['type'] == 'damage_dino':
 
                     if bd_user['dinos'][ log_d['dino_key'] ]['dungeon']['equipment']['armor'] == None:
-                        reflection = 1 # 1 урон будет отражена
+                        reflection = 1 # 1 урон будет отражен
 
                     else:
-                        pass # доделать, когда появятся предметы защиты
+                        arm_id = bd_user['dinos'][ log_d['dino_key'] ]['dungeon']['equipment']['armor']['item_id']
+
+                        reflection = items_f['items'][arm_id]['reflection']
 
                     if 'action' in dung['users'][str(userid)]['dinos'][ log_d['dino_key'] ].keys() and dung['users'][str(userid)]['dinos'][ log_d['dino_key'] ]['action'] == 'defend':
                         use_armor = True
@@ -4485,27 +4591,72 @@ class dungeon:
 
         return loot
 
-    def dino_attack(bd_user, dino_id):
+    def dino_attack(bd_user, dino_id, dungeonid):
+
+        dung = dungeons.find_one({"dungeonid": dungeonid})
 
         data_items = items_f['items']
         item = bd_user['dinos'][dino_id]['dungeon']['equipment']['weapon']
         data_item = data_items[ item['item_id'] ]
-        broken = False
+        log = ''
+        user_inv_dg = dung['users'][ str(bd_user['userid']) ]['inventory'].copy()
+        upd_items = False
+        upd_inv = False
 
         damage = random.randint( data_item['damage']['min'], data_item['damage']['max'] )
 
         if data_item['class'] == 'near':
+
             item['abilities']['endurance'] -= random.randint(0,2)
+            upd_items = True
 
         if data_item['class'] == 'far':
-            item['abilities']['endurance'] -= random.randint(0,2)
 
-            #сделать уменьшение стрел и если нет, то убрать урон, так же вместо broken, сделать сообщение с тем, что произошло
+            user_inv_id = []
+            for i in user_inv_dg: user_inv_id.append( i['item_id'] )
+            am_itemid_list = data_item['ammunition']
+            sv_lst = list(set(am_itemid_list) & set(user_inv_id))
+
+            if sv_lst != []:
+
+                amm_id_item = sv_lst[0]
+                itm_ind = am_itemid_list.index(amm_id_item)
+                itm = user_inv_dg[ itm_ind ]
+                itm['abilities']['stack'] -= 1
+                upd_inv = True
+
+                damage += data_items[ str(amm_id_item) ]['add_damage']
+
+                if itm['abilities']['stack'] <= 0:
+                    user_inv_dg.pop(itm_ind)
+                else:
+                    user_inv_dg[ itm_ind ] = itm
+
+                if random.randint(1, 100) > 60:
+
+                    item['abilities']['endurance'] -= random.randint(1,2)
+                    upd_items = True
+            else:
+                damage = 0
+
+                if dung['settings']['lang'] == 'ru':
+                    log += '💢 В инвентаре нет боеприпасов для этого оружия!\n'
+                else:
+                    log += '💢 There is no ammunition for this weapon in the inventory!\n'
 
         if item['abilities']['endurance'] <= 0:
             bd_user['dinos'][dino_id]['dungeon']['equipment']['weapon'] = None
-            broken = True
+            upd_items = True
 
+            if dung['settings']['lang'] == 'ru':
+                log += '💢 Ваше оружие сломалось!\n'
+            else:
+                log += '💢 Your weapon is broken!\n'
+
+        if upd_items == True:
             users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{dino_id}': bd_user['dinos'][dino_id] }} )
 
-        return damage, broken
+        if upd_inv == True:
+            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{bd_user["userid"]}.inventory': user_inv_dg }} )
+
+        return damage, log
