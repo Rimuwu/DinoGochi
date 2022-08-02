@@ -1352,9 +1352,9 @@ class functions:
 
             if 'stack' in us_item['abilities'].keys():
                 if lg == 'ru':
-                    text += f"*├* В наборе: {us_item['abilities']['stack']}\n"
+                    text += f"*├* В наборе: {us_item['abilities']['stack']} / {item['max_stack']}\n"
                 else:
-                    text += f"*├* In the set: {us_item['abilities']['stack']}\n"
+                    text += f"*├* In the set: {us_item['abilities']['stack']} / {item['max_stack']}\n"
 
         if lg == 'ru':
             text += f"*├* Тип: {type}\n"
@@ -3361,7 +3361,7 @@ class dungeon:
                 if room['next_room'] == True:
 
                     if dung['settings']['lang'] == 'ru':
-                        inl_l = { '📜 Инвентарь': 'dungeon.inventory', '🦕 Состояние': 'dungeon.dinos_stats', '👑 Награда': 'dungeon.collect_reward'
+                        inl_l = { '📜 Инвентарь': 'dungeon.inventory 1', '🦕 Состояние': 'dungeon.dinos_stats', '👑 Награда': 'dungeon.collect_reward'
                                 }
 
                         if userid == dungeonid:
@@ -3371,7 +3371,7 @@ class dungeon:
                             inl_l2 = {'✅ Готовность': 'dungeon.next_room_ready', '🚪 Выйти': 'dungeon.leave_in_game'}
 
                     else:
-                        inl_l = { '📜 Inventory': 'dungeon.inventory', '🦕 Condition': 'dungeon.dinos_stats', '👑 Reward': 'dungeon.collect_reward'
+                        inl_l = { '📜 Inventory': 'dungeon.inventory 1', '🦕 Condition': 'dungeon.dinos_stats', '👑 Reward': 'dungeon.collect_reward'
                                 }
 
                         if userid == dungeonid:
@@ -3390,7 +3390,7 @@ class dungeon:
             elif type == 'game':
 
                 if dung['settings']['lang'] == 'ru':
-                    inl_l = { '📜 Инвентарь': 'dungeon.inventory', '🦕 Состояние': 'dungeon.dinos_stats'
+                    inl_l = { '📜 Инвентарь': 'dungeon.inventory 1', '🦕 Состояние': 'dungeon.dinos_stats'
                             }
 
                     if userid == dungeonid:
@@ -3400,7 +3400,7 @@ class dungeon:
                         inl_l2 = {'✅ Готовность': 'dungeon.next_room_ready', '🚪 Выйти': 'dungeon.leave_in_game'}
 
                 else:
-                    inl_l = { '📜 Inventory': 'dungeon.inventory', '🦕 Condition': 'dungeon.dinos_stats'
+                    inl_l = { '📜 Inventory': 'dungeon.inventory 1', '🦕 Condition': 'dungeon.dinos_stats'
                             }
 
                     if userid == dungeonid:
