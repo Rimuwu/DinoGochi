@@ -849,19 +849,18 @@ class call_data:
             if '-eat' in data_item.keys():
                 users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.eat': (data_item['-eat'] * -1) * col }} )
 
-            if 'abilities' in user_item.keys():
-                if 'uses' in user_item['abilities'].keys():
-                    if use_st == True:
+            if 'abilities' in user_item.keys() and 'uses' in user_item['abilities'].keys():
+                if use_st == True:
 
-                        if user_item['abilities']['uses'] != -100:
+                    if user_item['abilities']['uses'] != -100:
 
-                            s_col = user_item['abilities']['uses'] - col
+                        s_col = user_item['abilities']['uses'] - col
 
-                            if s_col > 0:
-                                fr_user['inventory'][ fr_user['inventory'].index(user_item) ]['abilities']['uses'] = user_item['abilities']['uses'] - col
+                        if s_col > 0:
+                            fr_user['inventory'][ fr_user['inventory'].index(user_item) ]['abilities']['uses'] = user_item['abilities']['uses'] - col
 
-                            else:
-                                fr_user['inventory'].remove(user_item)
+                        else:
+                            fr_user['inventory'].remove(user_item)
 
             else:
 
