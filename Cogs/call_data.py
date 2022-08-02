@@ -488,15 +488,20 @@ class call_data:
 
     def item_use(bot, bd_user, call, user):
 
-        data = functions.des_qr(str(call.data[5:]))
-        it_id = str(data['id'])
-        list_inv = list(bd_user['inventory'])
-        list_inv_id = []
+        data = functions.des_qr(str(call.data[5:]), True )
+        it_id = str(data['item_id'])
         check_n = 0
         dino_id = 1
         col = 1
 
-        for i in list_inv: list_inv_id.append(i['item_id'])
+        def cannot_use():
+
+            if bd_user['language_code'] == 'ru':
+                text = f'❌ | Этот предмет не может быть использован самостоятельно!'
+            else:
+                text = f"❌ | This item cannot be used on its own!"
+
+            bot.send_message(user.id, text, parse_mode = 'Markdown', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
 
         def n_c_f():
             nonlocal check_n
@@ -524,6 +529,9 @@ class call_data:
 
                 elif data_item['type'] == 'egg':
                     use_item()
+
+                elif data_item['type'] in ['material', 'none']:
+                    cannot_use()
 
             elif check_n == 2:
 
@@ -679,10 +687,22 @@ class call_data:
 
 
                     for it_c in data_item['create']:
-                        dt = functions.add_item_to_user(fr_user, it_c, col, 'data')
+                        dp_col = 1
 
-                        for i in dt:
-                            fr_user['inventory'].append(i)
+                        if it_c['type'] == 'create':
+
+                            if 'col' in it_c.keys():
+                                dp_col = it_c['col']
+
+                            if 'abilities' in it_c.keys():
+                                preabil = it_c['abilities']
+                            else:
+                                preabil = None
+
+                            dt = functions.add_item_to_user(fr_user, it_c['item'], col * dp_col, 'data', preabil)
+
+                            for i in dt:
+                                fr_user['inventory'].append(i)
 
                 else:
 
@@ -926,7 +946,7 @@ class call_data:
 
             if col < 1:
 
-                text = f"0 % 0 % 0 % 0 % 0 % 0 % 0 % 0 % 0 % 0 % 0 % 0 :)"
+                text = f"0 % 0 % 0 % 0 % 0 % 0 :)"
 
                 bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
                 return
@@ -996,295 +1016,215 @@ class call_data:
                 msg = bot.send_message(user.id, text_col, reply_markup = rmk)
                 bot.register_next_step_handler(msg, ent_col, col_l, mx_col)
 
-        if it_id in list_inv_id:
-            data_item = items_f['items'][it_id]
+        data_item = items_f['items'][it_id]
+        user_item = None
 
-            user_item = None
-            if list(set(['abilities']) & set(list(data_item.keys()))) != []:
+        if data in bd_user['inventory']:
+            user_item = data
 
-                abl_it = {}
-                for i in data.keys(): abl_it[i] = data[i]
-                del abl_it['id']
+        if user_item == None:
 
-                for it in list_inv:
-                    if user_item == None:
-                        if str(it['item_id']) == str(it_id):
-                            if 'abilities' in it.keys():
-                                for key_c in data.keys():
-                                    if key_c != 'id':
-                                        if it['abilities'] == abl_it:
-                                            user_item = it
-                                            break
+            if bd_user['language_code'] == 'ru':
+                text = f'❌ | Предмет не найден в инвентаре!'
+            else:
+                text = f"❌ | Item not found in inventory!"
+
+            bot.send_message(user.id, text, parse_mode = 'Markdown')
+
+        if user_item != None:
+
+            def wrk_p(message):
+
+                if message.text in ['Да, я хочу это сделать', 'Yes, I want to do it']:
+                    n_c_f(), re_item()
+
+                else:
+                    bot.send_message(user.id, f'❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
+
+            markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
+
+            if bd_user['language_code'] == 'ru':
+                markup.add( *[i for i in ['Да, я хочу это сделать', '❌ Отмена'] ] )
+                msg = bot.send_message(user.id, f'Вы уверены что хотите использовать {data_item["nameru"]} ?', reply_markup = markup)
 
             else:
-                user_item = list_inv[list_inv_id.index(it_id)]
+                markup.add( *[i for i in ['Yes, I want to do it', '❌ Cancel'] ] )
+                msg = bot.send_message(user.id, f'Are you sure you want to use {data_item["nameen"]} ?', reply_markup = markup)
 
-            if user_item == None:
-
-                if bd_user['language_code'] == 'ru':
-                    text = f'❌ | Предмет не найден в инвентаре!'
-                else:
-                    text = f"❌ | Item not found in inventory!"
-
-                bot.send_message(user.id, text, parse_mode = 'Markdown')
-
-            if user_item != None:
-
-                def wrk_p(message):
-
-                    if message.text in ['Да, я хочу это сделать', 'Yes, I want to do it']:
-                        n_c_f(), re_item()
-
-                    else:
-                        bot.send_message(user.id, f'❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
-
-                markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
-
-                if bd_user['language_code'] == 'ru':
-                    markup.add( *[i for i in ['Да, я хочу это сделать', '❌ Отмена'] ] )
-                    msg = bot.send_message(user.id, f'Вы уверены что хотите использовать {data_item["nameru"]} ?', reply_markup = markup)
-
-                else:
-                    markup.add( *[i for i in ['Yes, I want to do it', '❌ Cancel'] ] )
-                    msg = bot.send_message(user.id, f'Are you sure you want to use {data_item["nameen"]} ?', reply_markup = markup)
-
-                bot.register_next_step_handler(msg, wrk_p)
+            bot.register_next_step_handler(msg, wrk_p)
 
     def remove_item(bot, bd_user, call, user):
 
-        data = functions.des_qr(str(call.data[12:]))
+        data = functions.des_qr(str(call.data[12:]), True)
+        it_id = str(data['item_id'])
 
-        it_id = str(data['id'])
-        list_inv = list(bd_user['inventory'])
-        list_inv_id = []
-        for i in list_inv: list_inv_id.append(i['item_id'])
+        data_item = items_f['items'][it_id]
+        user_item = None
 
-        if it_id in list_inv_id:
-            data_item = items_f['items'][it_id]
+        if data in bd_user['inventory']:
+            user_item = data
 
-            user_item = None
-            if list(set(['abilities']) & set(list(data_item.keys()))) != []:
+        if user_item == None:
 
-                abl_it = {}
-                for i in data.keys(): abl_it[i] = data[i]
-                del abl_it['id']
-
-                for it in list_inv:
-                    if user_item == None:
-                        if str(it['item_id']) == str(it_id):
-                            if 'abilities' in it.keys():
-                                for key_c in data.keys():
-                                    if key_c != 'id':
-                                        if it['abilities'] == abl_it:
-                                            user_item = it
-                                            break
-
+            if bd_user['language_code'] == 'ru':
+                text = f'❌ | Предмет не найден в инвентаре!'
             else:
-                user_item = list_inv[list_inv_id.index(it_id)]
+                text = f"❌ | Item not found in inventory!"
 
-            if user_item == None:
+            bot.send_message(user.id, text, parse_mode = 'Markdown')
 
-                if bd_user['language_code'] == 'ru':
-                    text = f'❌ | Предмет не найден в инвентаре!'
-                else:
-                    text = f"❌ | Item not found in inventory!"
+        if user_item != None:
 
-                bot.send_message(user.id, text, parse_mode = 'Markdown')
+            if bd_user['language_code'] == 'ru':
+                text = '🗑 | Вы уверены что хотите удалить данный предмет?'
+                in_text = ['✔ Удалить', '❌ Отмена']
+            else:
+                text = '🗑 | Are you sure you want to delete this item?'
+                in_text = ['✔ Delete', '❌ Cancel']
 
-            if user_item != None:
+            markup_inline = types.InlineKeyboardMarkup()
+            markup_inline.add( types.InlineKeyboardButton( text = in_text[0], callback_data = f"remove_{functions.qr_item_code(user_item)}"),  types.InlineKeyboardButton( text = in_text[1], callback_data = f"cancel_remove") )
 
-                if bd_user['language_code'] == 'ru':
-                    text = '🗑 | Вы уверены что хотите удалить данный предмет?'
-                    in_text = ['✔ Удалить', '❌ Отмена']
-                else:
-                    text = '🗑 | Are you sure you want to delete this item?'
-                    in_text = ['✔ Delete', '❌ Cancel']
-
-                markup_inline = types.InlineKeyboardMarkup()
-                markup_inline.add( types.InlineKeyboardButton( text = in_text[0], callback_data = f"remove_{functions.qr_item_code(user_item)}"),  types.InlineKeyboardButton( text = in_text[1], callback_data = f"cancel_remove") )
-
-                bot.send_message(user.id, text, reply_markup = markup_inline)
+            bot.send_message(user.id, text, reply_markup = markup_inline)
 
     def remove(bot, bd_user, call, user):
 
-        data = functions.des_qr(str(call.data[7:]))
+        data = functions.des_qr(str(call.data[7:]), True)
+        it_id = str(data['item_id'])
 
-        it_id = str(data['id'])
-        list_inv = list(bd_user['inventory'])
-        list_inv_id = []
-        for i in list_inv: list_inv_id.append(i['item_id'])
+        data_item = items_f['items'][it_id]
+        user_item = None
 
-        if it_id in list_inv_id:
-            data_item = items_f['items'][it_id]
+        if data in bd_user['inventory']:
+            user_item = data
 
-            user_item = None
-            if list(set(['abilities']) & set(list(data_item.keys()))) != []:
+        if user_item == None:
 
-                abl_it = {}
-                for i in data.keys(): abl_it[i] = data[i]
-                del abl_it['id']
-
-                for it in list_inv:
-                    if user_item == None:
-                        if str(it['item_id']) == str(it_id):
-                            if 'abilities' in it.keys():
-                                for key_c in data.keys():
-                                    if key_c != 'id':
-                                        if it['abilities'] == abl_it:
-                                            user_item = it
-                                            break
-
+            if bd_user['language_code'] == 'ru':
+                text = f'❌ | Предмет не найден в инвентаре!'
             else:
-                user_item = list_inv[list_inv_id.index(it_id)]
+                text = f"❌ | Item not found in inventory!"
 
-            if user_item == None:
+            bot.send_message(user.id, text, parse_mode = 'Markdown')
 
-                if bd_user['language_code'] == 'ru':
-                    text = f'❌ | Предмет не найден в инвентаре!'
-                else:
-                    text = f"❌ | Item not found in inventory!"
+        if user_item != None:
+            col = 1
+            mx_col = 0
+            for item_c in bd_user['inventory']:
+                if item_c == user_item:
+                    mx_col += 1
 
-                bot.send_message(user.id, text, parse_mode = 'Markdown')
+            bot.delete_message(user.id, call.message.message_id)
 
-            if user_item != None:
-                col = 1
-                mx_col = 0
-                for item_c in bd_user['inventory']:
-                    if item_c == user_item:
-                        mx_col += 1
+            if bd_user['language_code'] == 'ru':
+                text_col = f"🗑 | Введите какое количество предметов вы хотите удалить или выберите из списка >"
+            else:
+                text_col = f"🗑 | Enter how many items you want to remove or select from the list >"
 
-                bot.delete_message(user.id, call.message.message_id)
+            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
 
-                if bd_user['language_code'] == 'ru':
-                    text_col = f"🗑 | Введите какое количество предметов вы хотите удалить или выберите из списка >"
-                else:
-                    text_col = f"🗑 | Enter how many items you want to remove or select from the list >"
+            bt_1 = f"x1"
+            bt_2 = f"x{int(mx_col / 2)}"
+            bt_3 = f"x{mx_col}"
 
-                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+            col_l = [[], [1, int(mx_col / 2), mx_col]]
 
-                bt_1 = f"x1"
-                bt_2 = f"x{int(mx_col / 2)}"
-                bt_3 = f"x{mx_col}"
+            col_l[0].append(bt_1), col_l[0].append(bt_2), col_l[0].append(bt_3)
 
-                col_l = [[], [1, int(mx_col / 2), mx_col]]
+            if mx_col == 1:
 
-                col_l[0].append(bt_1), col_l[0].append(bt_2), col_l[0].append(bt_3)
+                rmk.add(bt_1)
 
-                if mx_col == 1:
+            elif mx_col >= 4:
 
-                    rmk.add(bt_1)
+                rmk.add(bt_1, bt_2, bt_3)
 
-                elif mx_col >= 4:
+            elif mx_col > 1:
 
-                    rmk.add(bt_1, bt_2, bt_3)
+                rmk.add(bt_1, bt_3)
 
-                elif mx_col > 1:
-
-                    rmk.add(bt_1, bt_3)
-
-                if bd_user['language_code'] == 'ru':
-                    rmk.add('↩ Назад')
-                else:
-                    rmk.add('↩ Back')
+            if bd_user['language_code'] == 'ru':
+                rmk.add('↩ Назад')
+            else:
+                rmk.add('↩ Back')
 
 
-                def tr_complete(message, bd_user, user_item, mx_col, col_l):
+            def tr_complete(message, bd_user, user_item, mx_col, col_l):
 
-                    if message.text in ['↩ Back', '↩ Назад']:
+                if message.text in ['↩ Back', '↩ Назад']:
 
-                        if bd_user['language_code'] == 'ru':
-                            text = "👥 | Возвращение в меню активностей!"
-                        else:
-                            text = "👥 | Return to the friends menu!"
+                    if bd_user['language_code'] == 'ru':
+                        text = "👥 | Возвращение в меню активностей!"
+                    else:
+                        text = "👥 | Return to the friends menu!"
 
-                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
-                        return '12'
+                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+                    return '12'
 
-                    try:
-                        col = int(message.text)
-                    except:
-                        if message.text in col_l[0]:
-                            col = col_l[1][ col_l[0].index(message.text) ]
+                try:
+                    col = int(message.text)
+                except:
+                    if message.text in col_l[0]:
+                        col = col_l[1][ col_l[0].index(message.text) ]
 
-                        else:
-
-                            if bd_user['language_code'] == 'ru':
-                                text = f"Введите корректное число!"
-                            else:
-                                text = f"Enter the correct number!"
-
-                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
-                            return
-
-                    if col > mx_col:
+                    else:
 
                         if bd_user['language_code'] == 'ru':
-                            text = f"У вас нет столько предметов в инвентаре!"
+                            text = f"Введите корректное число!"
                         else:
-                            text = f"You don't have that many items in your inventory!"
+                            text = f"Enter the correct number!"
 
                         bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
                         return
 
-                    for i in range(col):
-                        bd_user['inventory'].remove(user_item)
-
-                    users.update_one( {"userid": user.id}, {"$set": {f'inventory': bd_user['inventory'] }} )
+                if col > mx_col:
 
                     if bd_user['language_code'] == 'ru':
-                        text = '🗑 | Предмет удалён.'
+                        text = f"У вас нет столько предметов в инвентаре!"
                     else:
-                        text = '🗑 | The item has been deleted.'
+                        text = f"You don't have that many items in your inventory!"
 
-                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', user))
+                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+                    return
 
-                msg = bot.send_message(user.id, text_col, reply_markup = rmk)
-                bot.register_next_step_handler(msg, tr_complete, bd_user, user_item, mx_col, col_l)
+                for i in range(col):
+                    bd_user['inventory'].remove(user_item)
+
+                users.update_one( {"userid": user.id}, {"$set": {f'inventory': bd_user['inventory'] }} )
+
+                if bd_user['language_code'] == 'ru':
+                    text = '🗑 | Предмет удалён.'
+                else:
+                    text = '🗑 | The item has been deleted.'
+
+                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', user))
+
+            msg = bot.send_message(user.id, text_col, reply_markup = rmk)
+            bot.register_next_step_handler(msg, tr_complete, bd_user, user_item, mx_col, col_l)
 
     def exchange(bot, bd_user, call, user):
 
-        data = functions.des_qr(str(call.data[9:]))
+        data = functions.des_qr(str(call.data[9:]), True)
+        it_id = str(data['item_id'])
 
-        it_id = str(data['id'])
-        list_inv = list(bd_user['inventory'])
-        list_inv_id = []
-        for i in list_inv: list_inv_id.append(i['item_id'])
+        data_item = items_f['items'][it_id]
+        user_item = None
 
-        if it_id in list_inv_id:
-            data_item = items_f['items'][it_id]
+        if data in bd_user['inventory']:
+            user_item = data
 
-            user_item = None
-            if list(set(['abilities']) & set(list(data_item.keys()))) != []:
+        if user_item == None:
 
-                abl_it = {}
-                for i in data.keys(): abl_it[i] = data[i]
-                del abl_it['id']
-
-                for it in list_inv:
-                    if user_item == None:
-                        if str(it['item_id']) == str(it_id):
-                            if 'abilities' in it.keys():
-                                for key_c in data.keys():
-                                    if key_c != 'id':
-                                        if it['abilities'] == abl_it:
-                                            user_item = it
-                                            break
-
+            if bd_user['language_code'] == 'ru':
+                text = f'❌ | Предмет не найден в инвентаре!'
             else:
-                user_item = list_inv[list_inv_id.index(it_id)]
+                text = f"❌ | Item not found in inventory!"
 
-            if user_item == None:
+            bot.send_message(user.id, text, parse_mode = 'Markdown')
 
-                if bd_user['language_code'] == 'ru':
-                    text = f'❌ | Предмет не найден в инвентаре!'
-                else:
-                    text = f"❌ | Item not found in inventory!"
+        if user_item != None:
 
-                bot.send_message(user.id, text, parse_mode = 'Markdown')
-
-            if user_item != None:
-
-                functions.exchange(bot, call.message, user_item, bd_user)
+            functions.exchange(bot, call.message, user_item, bd_user)
 
     def market_buy(bot, bd_user, call, user):
 
@@ -1514,112 +1454,91 @@ class call_data:
     def ns_craft(bot, bd_user, call, user):
 
         did = call.data.split()
-        data = functions.des_qr(did[1])
+        data = functions.des_qr(did[1], True)
+        it_id = str(data['item_id'])
         cr_n = did[2]
 
-        it_id = str(data['id'])
-        list_inv = list(bd_user['inventory'])
-        list_inv_id = []
-        for i in list_inv: list_inv_id.append(i['item_id'])
+        data_item = items_f['items'][it_id]
+        user_item = None
 
-        if it_id in list_inv_id:
-            data_item = items_f['items'][it_id]
+        if data in bd_user['inventory']:
+            user_item = data
 
-            user_item = None
-            if list(set(['abilities']) & set(list(data_item.keys()))) != []:
+        if user_item == None:
 
-                abl_it = {}
-                for i in data.keys(): abl_it[i] = data[i]
-                del abl_it['id']
-
-                for it in list_inv:
-                    if user_item == None:
-                        if str(it['item_id']) == str(it_id):
-                            if 'abilities' in it.keys():
-                                for key_c in data.keys():
-                                    if key_c != 'id':
-                                        if it['abilities'] == abl_it:
-                                            user_item = it
-                                            break
-
+            if bd_user['language_code'] == 'ru':
+                text = f'❌ | Предмет не найден в инвентаре!'
             else:
-                user_item = list_inv[list_inv_id.index(it_id)]
+                text = f"❌ | Item not found in inventory!"
 
-            if user_item == None:
+            bot.send_message(user.id, text, parse_mode = 'Markdown')
 
-                if bd_user['language_code'] == 'ru':
-                    text = f'❌ | Предмет не найден в инвентаре!'
-                else:
-                    text = f"❌ | Item not found in inventory!"
+        if user_item != None:
 
-                bot.send_message(user.id, text, parse_mode = 'Markdown')
+            def wrk_p(message):
 
-            if user_item != None:
+                if message.text in ['Да, я хочу это сделать', 'Yes, I want to do it']:
 
-                def wrk_p(message):
+                    fr_user = users.find_one({"userid": user.id })
+                    ok = True
+                    list_inv_id = []
+                    for i in fr_user['inventory']: list_inv_id.append(i['item_id'])
+                    list_inv = fr_user['inventory'].copy()
 
-                    if message.text in ['Да, я хочу это сделать', 'Yes, I want to do it']:
+                    for i in data_item["ns_craft"][cr_n]['materials']:
 
-                        fr_user = users.find_one({"userid": user.id })
-                        ok = True
-                        list_inv_id.clear()
-                        for i in fr_user['inventory']: list_inv_id.append(i['item_id'])
-                        list_inv = fr_user['inventory'].copy()
-
-                        for i in data_item["ns_craft"][cr_n]['materials']:
-
-                            if i in list_inv_id:
-                                list_inv_id.remove(i)
-
-                            else:
-                                ok = False
-                                break
-
-                        if ok == True:
-
-                            if bd_user['language_code'] == 'ru':
-                                text = f'🍡 | Предмет {", ".join(functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "ru" ))} создан!'
-                            else:
-                                text = f'🍡 | The item {", ".join(functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "en" ))} is created!'
-
-                            list_inv_id.clear()
-                            for i in fr_user['inventory']: list_inv_id.append(i['item_id'])
-
-                            for it_m in data_item["ns_craft"][cr_n]['materials']:
-                                lst_ind = list_inv_id.index(it_m)
-                                list_inv_id[lst_ind] = None
-                                fr_user['inventory'].remove( list_inv[lst_ind] )
-
-                            for it_c in data_item["ns_craft"][cr_n]['create']:
-                                dt = functions.add_item_to_user(fr_user, it_c, 1, 'data')
-                                for i in dt:
-                                    fr_user['inventory'].append(i)
-
-                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': fr_user['inventory'] }} )
+                        if i in list_inv_id:
+                            list_inv_id.remove(i)
 
                         else:
+                            ok = False
+                            break
 
-                            if bd_user['language_code'] == 'ru':
-                                text = f'❗ | Материалов недостаточно!'
-                            else:
-                                text = f"❗ | Materials are not enough!"
+                    if ok == True:
 
-                        bot.send_message(user.id, text, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ) )
+                        if bd_user['language_code'] == 'ru':
+                            text = f'🍡 | Предмет {", ".join(functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "ru" ))} создан!'
+                        else:
+                            text = f'🍡 | The item {", ".join(functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "en" ))} is created!'
+
+                        list_inv_id.clear()
+                        for i in fr_user['inventory']: list_inv_id.append(i['item_id'])
+
+                        for it_m in data_item["ns_craft"][cr_n]['materials']:
+                            lst_ind = list_inv_id.index(it_m)
+                            list_inv_id[lst_ind] = None
+                            fr_user['inventory'].remove( list_inv[lst_ind] )
+
+                        for it_c in data_item["ns_craft"][cr_n]['create']:
+                            dt = functions.add_item_to_user(fr_user, it_c, 1, 'data')
+                            for i in dt:
+                                fr_user['inventory'].append(i)
+
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': fr_user['inventory'] }} )
 
                     else:
-                        bot.send_message(user.id, f'❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
 
-                markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
+                        if bd_user['language_code'] == 'ru':
+                            text = f'❗ | Материалов недостаточно!'
+                        else:
+                            text = f"❗ | Materials are not enough!"
 
-                if bd_user['language_code'] == 'ru':
-                    markup.add( *[i for i in ['Да, я хочу это сделать', '❌ Отмена'] ] )
-                    msg = bot.send_message(user.id, f'Вы уверены что хотите создать {", ".join(functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "ru" ))}?', reply_markup = markup)
+                    bot.send_message(user.id, text, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ) )
 
                 else:
-                    markup.add( *[i for i in ['Yes, I want to do it', '❌ Cancel'] ] )
-                    msg = bot.send_message(user.id, f'Are you sure you want to create {", ".join(functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "en" ))}?', reply_markup = markup)
+                    bot.send_message(user.id, f'❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
 
-                bot.register_next_step_handler(msg, wrk_p)
+            markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
+
+            if bd_user['language_code'] == 'ru':
+                markup.add( *[i for i in ['Да, я хочу это сделать', '❌ Отмена'] ] )
+                msg = bot.send_message(user.id, f'Вы уверены что хотите создать {", ".join(functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "ru" ))}?', reply_markup = markup)
+
+            else:
+                markup.add( *[i for i in ['Yes, I want to do it', '❌ Cancel'] ] )
+                msg = bot.send_message(user.id, f'Are you sure you want to create {", ".join(functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "en" ))}?', reply_markup = markup)
+
+            bot.register_next_step_handler(msg, wrk_p)
 
     def cancel_progress(bot, bd_user, call, user):
 
@@ -1986,7 +1905,7 @@ class call_data:
         for i in items: list_items_id.append( i['item_id'] )
 
         if bd_user['language_code'] == 'ru':
-            show_text = '🎴 | Ващ инвентарь пуст!'
+            show_text = '🎴 | Ваш инвентарь пуст!'
             lg_name = "nameru"
             text = '🍨 | Введите название предмета, который вы хотите взять с собой >'
             text2 = '🔎 | Ожидание ввода...\n❌ | Введите "Отмена" для отмены поиска.'
@@ -2035,7 +1954,7 @@ class call_data:
                         bot.answer_callback_query(call.id, show_text2, show_alert = True)
 
                     else:
-                        pr_l_s = list(set(list_items_id) | set(s_i) )
+                        pr_l_s = list(set(list_items_id) & set(s_i) )
 
                         if pr_l_s == []:
 
@@ -2088,114 +2007,50 @@ class call_data:
     def dungeon_add_item(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
-        data = functions.des_qr(call.data.split()[2])
+        data = functions.des_qr(call.data.split()[2], True)
         dung = dungeons.find_one({"dungeonid": dungeonid})
-        list_inv = bd_user['inventory'].copy()
+        it_id = str(data['item_id'])
 
-        list_inv_id = []
-        it_id = str(data['id'])
+        data_item = items_f['items'][it_id]
+        user_item = None
 
-        for i in list_inv: list_inv_id.append(i['item_id'])
+        if data in bd_user['inventory']:
+            user_item = data
 
-        if it_id in list_inv_id:
-            data_item = items_f['items'][it_id]
+        if user_item == None:
 
-            user_item = None
-            if list(set(['abilities']) & set(list(data_item.keys()))) != []:
-
-                abl_it = {}
-                for i in data.keys(): abl_it[i] = data[i]
-                del abl_it['id']
-
-                for it in list_inv:
-                    if user_item == None:
-                        if str(it['item_id']) == str(it_id):
-                            if 'abilities' in it.keys():
-                                for key_c in data.keys():
-                                    if key_c != 'id':
-                                        if it['abilities'] == abl_it:
-                                            user_item = it
-                                            break
-
+            if bd_user['language_code'] == 'ru':
+                text = f'❌ | Предмет не найден в инвентаре!'
             else:
-                user_item = list_inv[list_inv_id.index(it_id)]
+                text = f"❌ | Enter the correct number!"
 
-            if user_item == None:
+            bot.answer_callback_query(call.id, text, show_alert = True)
+            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
-                if bd_user['language_code'] == 'ru':
-                    text = f'❌ | Предмет не найден в инвентаре!'
-                else:
-                    text = f"❌ | Enter the correct number!"
+        if user_item != None:
 
-                bot.answer_callback_query(call.id, text, show_alert = True)
-                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+            def item_count(message, old_m, max_count):
+                bot.delete_message(user.id, old_m.message_id)
+                bot.delete_message(user.id, message.message_id)
 
-            if user_item != None:
+                try:
+                    count = int(message.text)
+                except:
+                    count = None
 
-                def item_count(message, old_m, max_count):
-                    bot.delete_message(user.id, old_m.message_id)
-                    bot.delete_message(user.id, message.message_id)
-
-                    try:
-                        count = int(message.text)
-                    except:
-                        count = None
-
-                    if count == None or count <= 0 or count > max_count:
-
-                        if bd_user['language_code'] == 'ru':
-                            text = f'❌ | Введите корректное число!'
-                        else:
-                            text = f"❌ | Item not found in inventory!"
-
-                        bot.answer_callback_query(call.id, text, show_alert = True)
-                        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
-
-                    else:
-
-                        if len(dung['users'][str(user.id)]['inventory']) + count > functions.d_backpack(bd_user):
-
-                            if bd_user['language_code'] == 'ru':
-                                text = f'❌ | Ваш рюкзак не может вместить в себя столько предметов!'
-                            else:
-                                text = f"❌ | Your backpack can't hold so many items!"
-
-                            bot.answer_callback_query(call.id, text, show_alert = True)
-                            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
-
-                        else:
-
-                            for _ in range(count):
-                                bd_user['inventory'].remove(user_item)
-                                dung['users'][str(user.id)]['inventory'].append(user_item)
-
-                            users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
-                            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}': dung['users'][str(user.id)] }} )
-
-                        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
-
-                max_count = list_inv.count(user_item)
-
-                if max_count != 1:
+                if count == None or count <= 0 or count > max_count:
 
                     if bd_user['language_code'] == 'ru':
-                        text = f'🎈 | Ожидание...'
+                        text = f'❌ | Введите корректное число!'
                     else:
-                        text = f"🎈 | Wait..."
+                        text = f"❌ | Item not found in inventory!"
 
-                    bot.edit_message_caption(text, call.message.chat.id, call.message.message_id)
-
-                    if bd_user['language_code'] == 'ru':
-                        text2 = f'🧶 | Введите количество предмета от 1 до {max_count} >'
-                    else:
-                        text2 = f"🧶 | Enter the number of items from 1 to {max_count} >"
-
-                    msg = bot.send_message(call.message.chat.id, text2)
-                    bot.register_next_step_handler(msg, item_count, msg, max_count)
+                    bot.answer_callback_query(call.id, text, show_alert = True)
+                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
                 else:
 
-                    if len(dung['users'][str(user.id)]['inventory']) + max_count > functions.d_backpack(bd_user):
+                    if len(dung['users'][str(user.id)]['inventory']) + count > dungeon.d_backpack(bd_user):
 
                         if bd_user['language_code'] == 'ru':
                             text = f'❌ | Ваш рюкзак не может вместить в себя столько предметов!'
@@ -2205,17 +2060,59 @@ class call_data:
                         bot.answer_callback_query(call.id, text, show_alert = True)
                         inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
-
                     else:
 
-                        for _ in range(max_count):
+                        for _ in range(count):
                             bd_user['inventory'].remove(user_item)
                             dung['users'][str(user.id)]['inventory'].append(user_item)
 
                         users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
                         dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}': dung['users'][str(user.id)] }} )
 
-                        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+
+            max_count = bd_user['inventory'].count(user_item)
+
+            if max_count != 1:
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'🎈 | Ожидание...'
+                else:
+                    text = f"🎈 | Wait..."
+
+                bot.edit_message_caption(text, call.message.chat.id, call.message.message_id)
+
+                if bd_user['language_code'] == 'ru':
+                    text2 = f'🧶 | Введите количество предмета от 1 до {max_count} >'
+                else:
+                    text2 = f"🧶 | Enter the number of items from 1 to {max_count} >"
+
+                msg = bot.send_message(call.message.chat.id, text2)
+                bot.register_next_step_handler(msg, item_count, msg, max_count)
+
+            else:
+
+                if len(dung['users'][str(user.id)]['inventory']) + max_count > functions.d_backpack(bd_user):
+
+                    if bd_user['language_code'] == 'ru':
+                        text = f'❌ | Ваш рюкзак не может вместить в себя столько предметов!'
+                    else:
+                        text = f"❌ | Your backpack can't hold so many items!"
+
+                    bot.answer_callback_query(call.id, text, show_alert = True)
+                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+
+
+                else:
+
+                    for _ in range(max_count):
+                        bd_user['inventory'].remove(user_item)
+                        dung['users'][str(user.id)]['inventory'].append(user_item)
+
+                    users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
+                    dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}': dung['users'][str(user.id)] }} )
+
+                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
     def dungeon_remove_item_action(bot, bd_user, call, user):
 
@@ -2265,54 +2162,33 @@ class call_data:
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
         if dung != None:
-            data = functions.des_qr(call.data.split()[2])
-            list_inv_id = []
-            list_inv = dung['users'][str(user.id)]['inventory'].copy()
-            it_id = str(data['id'])
+            data = functions.des_qr(call.data.split()[2], True)
+            it_id = str(data['item_id'])
 
-            for i in list_inv: list_inv_id.append(i['item_id'])
+            data_item = items_f['items'][it_id]
+            user_item = None
 
-            if it_id in list_inv_id:
-                data_item = items_f['items'][it_id]
+            if data in bd_user['inventory']:
+                user_item = data
 
-                user_item = None
-                if list(set(['abilities']) & set(list(data_item.keys()))) != []:
+            if user_item == None:
 
-                    abl_it = {}
-                    for i in data.keys(): abl_it[i] = data[i]
-                    del abl_it['id']
-
-                    for it in list_inv:
-                        if user_item == None:
-                            if str(it['item_id']) == str(it_id):
-                                if 'abilities' in it.keys():
-                                    for key_c in data.keys():
-                                        if key_c != 'id':
-                                            if it['abilities'] == abl_it:
-                                                user_item = it
-                                                break
-
+                if bd_user['language_code'] == 'ru':
+                    text = f'❌ | Предмет не найден в инвентаре!'
                 else:
-                    user_item = list_inv[list_inv_id.index(it_id)]
+                    text = f"❌ | Enter the correct number!"
 
-                if user_item == None:
+                bot.answer_callback_query(call.id, text, show_alert = True)
+                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
-                    if bd_user['language_code'] == 'ru':
-                        text = f'❌ | Предмет не найден в инвентаре!'
-                    else:
-                        text = f"❌ | Enter the correct number!"
+            if user_item != None:
 
-                    bot.answer_callback_query(call.id, text, show_alert = True)
-                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                for i in bd_user['inventory']:
+                    if i == user_item:
+                        dung['users'][str(user.id)]['inventory'].remove(i)
 
-                if user_item != None:
-
-                    for i in list_inv:
-                        if i == user_item:
-                            dung['users'][str(user.id)]['inventory'].remove(i)
-
-                    dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}.inventory': dung['users'][str(user.id)]['inventory'] }} )
-                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}.inventory': dung['users'][str(user.id)]['inventory'] }} )
+                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
     def dungeon_ready(bot, bd_user, call, user):
 
