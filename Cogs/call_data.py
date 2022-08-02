@@ -530,8 +530,20 @@ class call_data:
                 elif data_item['type'] == 'egg':
                     use_item()
 
+                elif data_item['type'] in ['weapon', "armor"]:
+                    ans_dino()
+
+                elif data_item['type'] == "backpack":
+                    use_item()
+
                 elif data_item['type'] in ['material', 'none']:
                     cannot_use()
+
+                elif data_item['type'] == "ammunition":
+                    use_item()
+
+                else:
+                    print('Первый этап не найден')
 
             elif check_n == 2:
 
@@ -550,6 +562,12 @@ class call_data:
                 elif data_item['type'] in ['game_ac', "journey_ac", "hunt_ac", "unv_ac"]:
                     use_item()
 
+                elif data_item['type'] in ['weapon', "armor"]:
+                    use_item()
+
+                else:
+                    print('Втрой этап не найден')
+
             elif check_n == 3:
 
                 if data_item['type'] == '+heal':
@@ -560,6 +578,9 @@ class call_data:
 
                 elif data_item['type'] == '+eat':
                     use_item()
+
+                else:
+                    print('Третий этап не найден')
 
         def ans_dino():
             global dino_id
@@ -599,7 +620,6 @@ class call_data:
         def use_item():
             global col, dino_id
             fr_user = users.find_one({"userid": user.id})
-
             use_st = True
 
             if data_item['type'] == '+heal':
@@ -791,6 +811,38 @@ class call_data:
 
                     users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{dino_id}': bd_user['dinos'][ dino_id ] }} )
 
+            elif data_item['type'] in ['weapon', 'armor', 'backpack']:
+                type_eq = data_item['type']
+                item = None
+
+                if type_eq in ['weapon', 'armor']:
+                    item = bd_user['dinos'][dino_id]['dungeon']['equipment'][type_eq]
+
+                    if item != None:
+
+                        users.update_one( {"userid": bd_user['userid']}, {"$push": {'inventory': item }} )
+                        bd_user['dinos'][dino_id]['dungeon']['equipment'][type_eq] = None
+
+                    bd_user['dinos'][dino_id]['dungeon']['equipment'][type_eq] = user_item
+
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+
+                if type_eq in ['backpack']:
+                    item = bd_user['user_dungeon']['equipment'][type_eq]
+
+                    if item != None:
+                        users.update_one( {"userid": bd_user['userid']}, {"$push": {'inventory': item }} )
+                        bd_user['user_dungeon']['equipment'][type_eq] = None
+
+                    bd_user['user_dungeon']['equipment'][type_eq] = user_item
+
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+                if bd_user['language_code'] == 'ru':
+                    text = "🎴 | Активный предмет установлен!"
+                else:
+                    text = "🎴 | The active item is installed!"
+
             elif data_item['type'] in ['game_ac', "journey_ac", "hunt_ac", "unv_ac"]:
                 ac_type = data_item['type'][:-3]
 
@@ -865,6 +917,52 @@ class call_data:
 
                         use_st = False
 
+            elif data_item['type'] == "ammunition":
+
+                list_inv_id = []
+                for i in fr_user['inventory']: list_inv_id.append(i['item_id'])
+                standart_i_id = user_item['item_id']
+                standart_index = fr_user['inventory'].index(user_item)
+                csh = list_inv_id.count(standart_i_id)
+                list_inv_id[standart_index] = 0
+                use_st = 'update_only'
+
+                if csh > 0:
+
+                    two_item_ind = list_inv_id.index(standart_i_id)
+                    two_item = fr_user['inventory'][two_item_ind]
+
+                    if user_item['abilities']['stack'] + two_item['abilities']['stack'] > data_item["max_stack"]:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f'❗ | Этот набор не может быть соединён ни с одним предметом в инвентаре!'
+                        else:
+                            text = f"❗ | This set cannot be connected to any item in the inventory!"
+
+                        use_st = False
+
+                    else:
+
+                        preabil = {'stack': user_item['abilities']['stack'] + two_item['abilities']['stack'] }
+                        fr_user['inventory'].append( functions.get_dict_item(standart_i_id, preabil) )
+
+                        fr_user['inventory'].remove(two_item)
+                        fr_user['inventory'].remove(user_item)
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f'🏹 | Предметы были соединены!'
+                        else:
+                            text = f"🏹 | The items were connected!"
+
+                else:
+
+                    if bd_user['language_code'] == 'ru':
+                        text = f'❗ | В инвентаре нет предметов для соединения!'
+                    else:
+                        text = f"❗ | There are no items in the inventory to connect!"
+
+                    use_st = False
+
             else:
 
                 if bd_user['language_code'] == 'ru':
@@ -873,7 +971,6 @@ class call_data:
                     text = f"❗ | This item is not yet available for use!"
 
                 use_st = False
-
 
             if '+mood' in data_item.keys():
                 users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.mood': data_item['+mood'] * col }} )
@@ -884,19 +981,18 @@ class call_data:
             if '-eat' in data_item.keys():
                 users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.eat': (data_item['-eat'] * -1) * col }} )
 
-            if 'abilities' in user_item.keys():
-                if 'uses' in user_item['abilities'].keys():
-                    if use_st == True:
+            if 'abilities' in user_item.keys() and 'uses' in user_item['abilities'].keys():
+                if use_st == True:
 
-                        if user_item['abilities']['uses'] != -100:
+                    if user_item['abilities']['uses'] != -100:
 
-                            s_col = user_item['abilities']['uses'] - col
+                        s_col = user_item['abilities']['uses'] - col
 
-                            if s_col > 0:
-                                fr_user['inventory'][ fr_user['inventory'].index(user_item) ]['abilities']['uses'] = user_item['abilities']['uses'] - col
+                        if s_col > 0:
+                            fr_user['inventory'][ fr_user['inventory'].index(user_item) ]['abilities']['uses'] = user_item['abilities']['uses'] - col
 
-                            else:
-                                fr_user['inventory'].remove(user_item)
+                        else:
+                            fr_user['inventory'].remove(user_item)
 
             else:
 
@@ -911,7 +1007,8 @@ class call_data:
                             print(error, ' error - use item')
                             pass
 
-            users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
+            if use_st == True or use_st == 'update_only':
+                users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
 
             bot.send_message(user.id, text, parse_mode = 'Markdown', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
 
@@ -2092,7 +2189,7 @@ class call_data:
 
             else:
 
-                if len(dung['users'][str(user.id)]['inventory']) + max_count > functions.d_backpack(bd_user):
+                if len(dung['users'][str(user.id)]['inventory']) + max_count > dungeon.d_backpack(bd_user):
 
                     if bd_user['language_code'] == 'ru':
                         text = f'❌ | Ваш рюкзак не может вместить в себя столько предметов!'
@@ -2546,3 +2643,110 @@ class call_data:
 
         else:
             inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'collect_reward')
+
+    def dungeon_inventory(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[2])
+        page = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+        data_items = items_f['items']
+
+        if bd_user['language_code'] == 'ru':
+            lg_name = "nameru"
+        else:
+            lg_name = "nameen"
+
+        items = dung['users'][str(user.id)]['inventory']
+        pages_inv = list( functions.chunks(items, 6) )
+        inl_d = {}
+
+        if pages_inv != []:
+            sl_n = 0
+
+            for i in pages_inv[page-1]:
+                sl_n += 1
+
+                if functions.item_authenticity(i) == True:
+
+                    if data_items[i['item_id']][lg_name] not in inl_d.keys():
+                        inl_d[ data_items[i['item_id']][lg_name] ] = f"dungeon_use_item {dungeonid} {functions.qr_item_code(i)}"
+
+                else:
+                    if f"{data_items[i['item_id']][lg_name]} ({functions.qr_item_code(i, False)})" not in inl_d.keys():
+
+                        inl_d[ f"{data_items[i['item_id']][lg_name]} ({functions.qr_item_code(i, False)})" ] = f"dungeon_use_item {dungeonid} {functions.qr_item_code(i)}"
+
+            if sl_n != 6:
+                for _ in range(6 - sl_n):
+                    sl_n += 1
+                    inl_d[ ' ' * (6 - sl_n) ] = '-'
+
+            markup_inline = types.InlineKeyboardMarkup(row_width = 2)
+            markup_inline.add( *[
+                                types.InlineKeyboardButton(
+                                    text = inl,
+                                    callback_data = inl_d[inl] ) for inl in inl_d.keys()
+                             ])
+
+        if len(pages_inv) > 1:
+
+            inl_serv = { }
+
+            if page - 1 < 1:
+                m_page = 1
+
+            else:
+                m_page = page - 1
+                inl_serv['◀'] = f'dungeon.inventory {m_page} {dungeonid}'
+
+            inl_serv['❌'] = f'dungeon.to_lobby {dungeonid}'
+
+            if page + 1 > len(pages_inv):
+                p_page = len(pages_inv)
+
+            else:
+                p_page = page + 1
+                inl_serv['▶'] = f'dungeon.inventory {p_page} {dungeonid}'
+
+        else:
+            inl_serv = { '❌': f'dungeon.to_lobby {dungeonid}'}
+
+        markup_inline.row( *[ types.InlineKeyboardButton(
+                              text = inl,
+                              callback_data = inl_serv[inl] ) for inl in inl_serv.keys()
+                         ])
+
+        if bd_user['language_code'] == 'ru':
+            text = "🔎 | Выберите предмет для использования > "
+        else:
+            text = "🔎 | Select an item to use > "
+
+        bot.edit_message_caption(text, call.message.chat.id, call.message.message_id, parse_mode = 'Markdown', reply_markup = markup_inline)
+        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'inventory', dungeonid = dungeonid, type = 'edit_last_page')
+
+    def dungeon_use_item(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        data = functions.des_qr(call.data.split()[2], True)
+        it_id = str(data['item_id'])
+
+        data_item = items_f['items'][it_id]
+        user_item = None
+
+        if data in dung['users'][str(user.id)]['inventory']:
+            user_item = data
+
+        if user_item == None:
+
+            if bd_user['language_code'] == 'ru':
+                text = f'❌ | Предмет не найден в инвентаре!'
+            else:
+                text = f"❌ | Item not found in inventory!"
+
+            bot.send_message(user.id, text, parse_mode = 'Markdown')
+
+        if user_item != None:
+
+            print(user_item)
