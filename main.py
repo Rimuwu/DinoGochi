@@ -1007,6 +1007,17 @@ def answer(call):
 
         call_data.item_from_reward(bot, bd_user, call, user)
 
+    elif call.data.split()[0] == 'dungeon.inventory':
+
+        call_data.dungeon_inventory(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == '-':
+        pass
+
+    elif call.data.split()[0] == 'dungeon_use_item':
+
+        call_data.dungeon_use_item(bot, bd_user, call, user)
+
     else:
         print(call.data, 'call.data')
 
