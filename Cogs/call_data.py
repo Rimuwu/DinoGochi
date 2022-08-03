@@ -6,7 +6,7 @@ import pymongo
 from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageSequence, ImageFilter
 import time
 import sys
-import pprint
+from pprint import pprint
 from fuzzywuzzy import fuzz
 
 from functions import functions, dungeon
@@ -2394,7 +2394,7 @@ class call_data:
                                 dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'dungeon_stage': 'game' }} )
 
                                 dng, inf = dungeon.base_upd(dungeonid = dungeonid, type = 'create_floor')
-                                pprint.pprint(dng)
+                                pprint(dng)
 
                                 inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
 
@@ -2461,7 +2461,14 @@ class call_data:
                 if len(dung['floor'][room_n]['ready']) == len(dung['users']) - 1:
 
                     dung['stage_data']['game']['room_n'] += 1
-                    dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
+
+                    if dung['stage_data']['game']['room_n'] >= 11:
+
+                        dng, inf = dungeon.base_upd(dungeonid = dungeonid, type = 'create_floor')
+
+                    else:
+
+                        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
 
                     inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
 
@@ -2603,6 +2610,22 @@ class call_data:
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
+        room_n = str(dung['stage_data']['game']['room_n'])
+        reward = dung['floor'][room_n]['reward']
+
+        if str(user.id) not in reward['collected'].keys() or reward['collected'][str(user.id)] == {}:
+            reward['collected'][str(user.id)] = {}
+
+            reward['collected'][str(user.id)]['coins'] = True
+            reward['collected'][str(user.id)]['experience'] = True
+            reward['collected'][str(user.id)]['items'] = []
+
+            dung['users'][str(user.id)]['coins'] += reward['coins']
+            users.update_one( {"userid": user.id}, {"$inc": {'lvl.1': reward['experience'] }} )
+
+            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor.{room_n}.reward': reward }} )
+            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}': dung['users'][str(user.id)] }} )
+
         inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'collect_reward')
         dng, inf = dungeon.base_upd(userid = user.id, messageid = 'collect_reward', dungeonid = dungeonid, type = 'edit_last_page')
 
@@ -2657,31 +2680,53 @@ class call_data:
             lg_name = "nameen"
 
         items = dung['users'][str(user.id)]['inventory']
-        pages_inv = list( functions.chunks(items, 6) )
+        sort_items = {}
+
+        for i in items:
+            print(i)
+
+            if functions.item_authenticity(i) == True:
+
+                if data_items[ str(i['item_id']) ][lg_name] not in sort_items.keys():
+                    sort_items[ data_items[ str(i['item_id']) ][lg_name] ] = { 'col': 1, 'callback_data': f"dungeon_use_item {dungeonid} {functions.qr_item_code(i)}" }
+
+                else:
+                    sort_items[ data_items[ str(i['item_id']) ][lg_name] ]['col'] += 1
+
+            else:
+                if f"{data_items[ str(i['item_id']) ][lg_name]} ({functions.qr_item_code(i, False)})" not in sort_items.keys():
+
+                    inl_d[ f"{data_items[ str(i['item_id']) ][lg_name]} ({functions.qr_item_code(i, False)})" ] = { 'col': 1, 'callback_data': f"dungeon_use_item {dungeonid} {functions.qr_item_code(i)}" }
+
+                else:
+                    sort_items[ f"{data_items[ str(i['item_id']) ][lg_name]} ({functions.qr_item_code(i, False)})" ]['col'] += 1
+
+        sort_items_keys = {}
+        sort_list = []
+
+        for i in sort_items.keys():
+            i_n = f'{i} x{sort_items[i]["col"]}'
+
+            if i_n not in sort_list:
+                sort_list.append( i_n )
+                sort_items_keys[ i_n ] = sort_items[i]['callback_data']
+
+        pages_inv = list( functions.chunks(sort_list, 6) )
         inl_d = {}
+        markup_inline = types.InlineKeyboardMarkup(row_width = 2)
 
         if pages_inv != []:
             sl_n = 0
 
             for i in pages_inv[page-1]:
                 sl_n += 1
-
-                if functions.item_authenticity(i) == True:
-
-                    if data_items[i['item_id']][lg_name] not in inl_d.keys():
-                        inl_d[ data_items[i['item_id']][lg_name] ] = f"dungeon_use_item {dungeonid} {functions.qr_item_code(i)}"
-
-                else:
-                    if f"{data_items[i['item_id']][lg_name]} ({functions.qr_item_code(i, False)})" not in inl_d.keys():
-
-                        inl_d[ f"{data_items[i['item_id']][lg_name]} ({functions.qr_item_code(i, False)})" ] = f"dungeon_use_item {dungeonid} {functions.qr_item_code(i)}"
+                inl_d[i] = sort_items_keys[i]
 
             if sl_n != 6:
                 for _ in range(6 - sl_n):
                     sl_n += 1
                     inl_d[ ' ' * (6 - sl_n) ] = '-'
 
-            markup_inline = types.InlineKeyboardMarkup(row_width = 2)
             markup_inline.add( *[
                                 types.InlineKeyboardButton(
                                     text = inl,
@@ -2750,3 +2795,126 @@ class call_data:
         if user_item != None:
 
             print(user_item)
+
+    def dungeon_kick_member(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+        us_dct = {}
+
+        for m_key in dung['users'].keys():
+            if int(m_key) != user.id:
+
+                m_chat = bot.get_chat(int(m_key))
+                us_dct[ m_chat.first_name ] = f'dungeon_kick {dungeonid} {m_key}'
+
+        markup_inline = types.InlineKeyboardMarkup(row_width = 2)
+        markup_inline.add( *[ types.InlineKeyboardButton(
+                              text = inl,
+                              callback_data = us_dct[inl] ) for inl in us_dct.keys()
+                         ])
+
+        markup_inline.add( types.InlineKeyboardButton( text = '❌', callback_data = f'dungeon.to_lobby {dungeonid}' ) )
+
+        if bd_user['language_code'] == 'ru':
+            text = "❌ | Исключение пользователей > "
+        else:
+            text = "❌ | Exclusion of users > "
+
+        bot.edit_message_caption(text, call.message.chat.id, call.message.message_id, parse_mode = 'Markdown', reply_markup = markup_inline)
+        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'kick_room', dungeonid = dungeonid, type = 'edit_last_page')
+
+    def dungeon_kick(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        k_user_id = str(call.data.split()[2])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        if k_user_id in dung['users'].keys():
+            user_message = dung['users'][k_user_id]['messageid']
+            dng, inf = dungeon.base_upd(userid = int(k_user_id), dungeonid = dungeonid, type = 'leave_user')
+            print(inf), pprint(dng)
+
+            if inf == 'leave_user':
+
+                if bd_user['language_code'] == 'ru':
+                    text = "❌ | Вы были исключены из подземелья."
+                else:
+                    text = "❌ | You have been excluded from the dungeon."
+
+                bot.delete_message(int(k_user_id), user_message)
+                bot.send_message(int(k_user_id), text, reply_markup = functions.markup(bot, 'dungeon_menu', user))
+
+                call_data.dungeon_kick_member(bot, bd_user, call, user)
+                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
+
+    def dungeon_leave_in_game(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        k_user_id = str(user.id)
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        if k_user_id in dung['users'].keys():
+            user_message = dung['users'][k_user_id]['messageid']
+            dng, inf = dungeon.base_upd(userid = int(k_user_id), dungeonid = dungeonid, type = 'leave_user')
+
+            if inf == 'leave_user':
+
+                if bd_user['language_code'] == 'ru':
+                    text = "🗻 | Вы вышли из подземелья!"
+                else:
+                    text = "🗻 | You are out of the dungeon!"
+
+                bot.delete_message(int(k_user_id), user_message)
+                bot.send_message(int(k_user_id), text, reply_markup = functions.markup(bot, 'dungeon_menu', user))
+
+                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
+
+    def dungeon_fork_answer(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        res_n = int(call.data.split()[2]) - 1
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+        room_n = str(dung['stage_data']['game']['room_n'])
+        room = dung['floor'][room_n]
+
+        for r_l in room['results']:
+            if user.id in r_l:
+                r_l.remove(user.id)
+
+        room['results'][res_n].append(user.id)
+
+        rs_all = 0
+        for l in room['results']: rs_all += len(l)
+
+        if rs_all >= len( dung['users'].keys() ):
+
+            if len(room['results']) == 2:
+
+                if len(room['results'][0]) > len(room['results'][1]):
+                    new_room_type = room['poll_rooms'][0]
+
+                elif len(room['results'][0]) == len(room['results'][1]):
+                    new_room_type = room['poll_rooms'][ random.randint(0,1) ]
+
+                else:
+                    new_room_type = room['poll_rooms'][1]
+
+            if len(room['results']) == 3:
+
+                mx_n = max( len(room['results'][0]), len(room['results'][1]), len(room['results'][2]) )
+
+                for i in range(0, 3):
+                    if len(room['results'][i]) == mx_n:
+                        new_room_type = room['poll_rooms'][i]
+
+            dng, inf = dungeon.base_upd(dungeonid = dungeonid, type = 'create_room', kwargs = { 'rooms_list': [room_n], 'rooms': { f'{room_n}': new_room_type } } )
+
+            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
+
+        else:
+
+            dung['floor'][room_n]['results'] = room['results']
+            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor': dung['floor'] }} )
+
+            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
