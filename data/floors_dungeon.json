@@ -1,0 +1,21 @@
+{ "floors": { "1":
+              { "rooms_type": { "com": ["battle"],
+                                "unc": ["battle", "empty_room"],
+                                "rar": ["fork_2"],
+                                "myt": ["fork_3"],
+                                "leg": ["mine"]
+                              },
+                "mobs_count": { "act": 1, "type": "static" }
+              },
+
+              "3":
+              { "rooms_type": { "com": ["battle"],
+                                "unc": ["battle", "empty_room"],
+                                "rar": ["fork_2"],
+                                "myt": ["fork_3"],
+                                "leg": ["mine"]
+                              },
+                "mobs_count": { "min": 1, "max": 2, "type": "random" }
+              }
+    }
+}

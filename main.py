@@ -228,40 +228,6 @@ def command(message):
     bd_user = users.find_one({"userid": user.id})
     pprint.pprint(bd_user)
 
-@bot.message_handler(commands=['d_journey'])
-def command(message):
-    user = message.from_user
-    bd_user = users.find_one({"userid": user.id})
-
-    if user.id in [5279769615, 1191252229]:
-
-        def dino_journey(bd_user, user, dino_user_id):
-
-            dino_id = str(bd_user['dinos'][ dino_user_id ]['dino_id'])
-            dino = json_f['elements'][dino_id]
-            n_img = random.randint(1,5)
-            bg_p = Image.open(f"images/journey/{n_img}.png")
-
-            dino_image = Image.open("images/"+str(json_f['elements'][dino_id]['image']))
-            sz = 412
-            dino_image = dino_image.resize((sz, sz), Image.ANTIALIAS)
-            dino_image = dino_image.transpose(Image.FLIP_LEFT_RIGHT)
-
-            xy = -35
-            x2 = random.randint(80,120)
-            img = functions.trans_paste(dino_image, bg_p, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
-
-            img.save('profile.png')
-            profile = open(f"profile.png", 'rb')
-
-            return profile
-
-        profile_i = dino_journey(bd_user, user, '1')
-
-        text = f'🎈 | Если у динозавра хорошее настроение, он может принести обратно какие то вещи.\n\n🧶 | Во время путешествия, могут произойти разные ситуации, от них зависит результат путешествия.'
-
-        bot.send_photo(message.chat.id, profile_i, text )
-
 @bot.message_handler(commands=['check_inv'])
 def command(message):
     user = message.from_user
@@ -277,18 +243,7 @@ def command(message):
 
     print('all')
 
-@bot.message_handler(commands=['test_edit'])
-def command(message):
-    user = message.from_user
-    if user.id in [5279769615, 1191252229]:
-
-        markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
-        markup.add(* [x for x in ['кнопка1', 'кнопка2']] )
-
-        msg = bot.send_message(message.chat.id, 'текст1', reply_markup = markup)
-        bot.edit_message_text(text = 'text2', chat_id = msg.chat.id, message_id = msg.message_id)
-
-@bot.message_handler(commands=['delete_dinos_check_acc'])
+@bot.message_handler(commands=['delete_dinos'])
 def command(message):
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
@@ -296,20 +251,13 @@ def command(message):
         users.update_one( {"userid": user.id}, {"$set": {f'dinos': {} }} )
         print("all")
 
-@bot.message_handler(commands=['quality_edit'])
+@bot.message_handler(commands=['test_data'])
 def command(message):
-
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
-        bd_user = users.find_one({"userid": user.id})
-        for i in bd_user['dinos']:
-            dino = bd_user['dinos'][i]
-            dino_data = json_f['elements'][str(dino['dino_id'])]
 
-            print(dino_data)
-            users.update_one( {"userid": user.id}, {"$set": {f'dinos.{i}.quality': dino_data['image'][5:8] }} )
-
-        print("all")
+        for i in range(1, 10):
+            print(i, dungeon.floor_data(i) )
 
 # @bot.message_handler(commands=['sbros_lvl'])
 # def command_n(message):
@@ -319,8 +267,9 @@ def command(message):
 #         def work(members, n):
 #             for bd_user in members:
 #
-#                 if bd_user['lvl'][0] > 10 and len(bd_user['dinos']) == 0:
+#                 if bd_user['lvl'][0] == 10 and bd_user['lvl'][1] == 0 and len(bd_user['dinos']) == 0:
 #                     bd_user['lvl'][0] = 2
+#                     print(bd_user['lvl'][0], bd_user['lvl'][1])
 #
 #                     users.update_one( {"userid": bd_user['userid']}, {"$set": {f'lvl': bd_user['lvl'] }} )
 #
@@ -332,8 +281,8 @@ def command(message):
 #         n = 0
 #         for members in chunks_users:
 #             n += 1
-#             main = threading.Thread(target = work, daemon=True, kwargs = { 'members': members, 'n': n}).start()
 #             print(f'Программа обновления №{n} начала работу.')
+#             main = threading.Thread(target = work, daemon=True, kwargs = { 'members': members, 'n': n}).start()
 
 
 @bot.message_handler(commands=['add_item'])
@@ -353,16 +302,6 @@ def command(message):
         bd_user = users.find_one({"userid": user.id})
 
         functions.journey_end_log(bot, user.id, bd_user['settings']['dino_id'])
-
-@bot.message_handler(commands=['events_clear'])
-def command(message):
-    user = message.from_user
-    if user.id in [5279769615, 1191252229]:
-        bd_user = users.find_one({"userid": user.id})
-
-        users.update_one( {"userid": user.id}, {"$set": {f"dinos.{bd_user['settings']['dino_id']}.journey_log": [] }} )
-
-        print(';;; all')
 
 @bot.message_handler(commands=['reply_id'])
 def command(message):
@@ -430,26 +369,6 @@ def command(message):
         users.update_one( {"userid": user.id}, {"$set": {f"dinos": bd_user['dinos'] }} )
         print('ok')
 
-@bot.message_handler(commands=['loot'])
-def command(message):
-    user = message.from_user
-    if user.id in [5279769615, 1191252229]:
-        loot = []
-        ky = ["piglin-archer", "goblin", "skeleton_magician"]
-
-        for _ in range(1):
-            random.shuffle(ky)
-
-            mk = ky[0]
-            print(mk)
-
-            n_l = dungeon.loot_generator(mk)
-            for i in n_l: loot.append(i)
-
-        print(loot)
-
-# =========================================
-
 @bot.message_handler(commands=['emulate_not'])
 def command(message):
     print('emulate_not')
@@ -457,6 +376,8 @@ def command(message):
     user = message.from_user
     bd_user = users.find_one({"userid": user.id})
     functions.notifications_manager(bot, msg_args[1], bd_user, msg_args[2], dino_id = '1')
+
+# =========================================
 
 @bot.message_handler(test_bot = True, in_channel = True, spam_check = True, commands=['profile', 'профиль'])
 def command(message):
@@ -1033,6 +954,10 @@ def answer(call):
     elif call.data.split()[0] == 'dungeon.fork_answer':
 
         call_data.dungeon_fork_answer(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.safe_exit':
+
+        call_data.dungeon_safe_exit(bot, bd_user, call, user)
 
     else:
         print(call.data, 'call.data')

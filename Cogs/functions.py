@@ -17,14 +17,13 @@ market = client.bot.market
 referal_system = client.bot.referal_system
 dungeons = client.bot.dungeons
 
-with open('data/items.json', encoding='utf-8') as f:
-    items_f = json.load(f)
+with open('data/items.json', encoding='utf-8') as f: items_f = json.load(f)
 
-with open('data/dino_data.json', encoding='utf-8') as f:
-    json_f = json.load(f)
+with open('data/dino_data.json', encoding='utf-8') as f: json_f = json.load(f)
 
-with open('data/mobs.json', encoding='utf-8') as f:
-    mobs_f = json.load(f)
+with open('data/mobs.json', encoding='utf-8') as f: mobs_f = json.load(f)
+
+with open('data/floors_dungeon.json', encoding='utf-8') as f: floors_f = json.load(f)
 
 checks_data = {'memory': [0, time.time()], 'incub': [0, time.time(), 0], 'notif': [[], []], 'main': [[], [], []], 'main_hunt': [ [], [], [] ], 'main_game': [ [], [], [] ], 'main_sleep': [ [], [], [] ], 'main_pass': [ [], [], [] ], 'main_journey': [ [], [], [] ], 'col': 0}
 
@@ -3061,7 +3060,7 @@ class dungeon:
                     'dungeon_stage': 'preparation',
                     'stage_data':  { 'preparation': {'image': random.randint(1,5), 'ready': [] }
                                    },
-                    'settings': { 'lang': bd_user['language_code'], 'max_dinos': 10}
+                    'settings': { 'lang': bd_user['language_code'], 'max_dinos': 10, 'max_rooms': 10}
                 } )
 
                 dung = dungeons.find_one({"dungeonid": userid})
@@ -3076,21 +3075,29 @@ class dungeon:
             if dung != None:
 
                 if type in ['create_floor', 'create_room']:
-                    floor_n = dung['stage_data']['game']['floor_n']
 
                     if type == 'create_floor':
+
                         dung['stage_data']['game']['floor_n'] += 1
                         dung['stage_data']['game']['room_n'] = 0
+
+                        dung['stage_data']['game']['floors_stat'][ str( dung['stage_data']['game']['floor_n'] ) ] = {
+                            'start_time': int(time.time()),
+                            'mobs_killing': 0,
+                            'end_time': int(time.time())
+                        }
+
                         dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
 
-                        floor = { '0': { 'room_type': 'start_room', 'image': f'images/dungeon/start_room/{random.randint(1,2)}.png', 'next_room': True, 'ready': [] }, '1': {},
-                                  '2': {}, '3': {}, '4': {}, '5': {},
-                                  '6': {}, '7': {}, '8': {}, '9': {}, '10': {}, 'floor_data': {}
-                                }
-                        rooms_list = list(range(1, 10))
-                        room_type_cr = "random"
+                        floor = { '0': { 'room_type': 'start_room', 'image': f'images/dungeon/start_room/{random.randint(1,2)}.png', 'next_room': True, 'ready': [] }, 'floor_data': {}}
 
-                        print(floor_n)
+                        for rmn in range(1, dung['settings']['max_rooms'] + 1):
+                            floor[ str(rmn) ] = {}
+
+                        rooms_list = list(range(1, dung['settings']['max_rooms'] ))
+                        room_type_cr = "random"
+                        floor_n = dung['stage_data']['game']['floor_n']
+                        floor_data = dungeon.floor_data(floor_n)
 
                         if floor_n % 5 == 0 and floor_n % 10 != 0:
                             #выход каждые 5 этажей, не считая босса
@@ -3102,7 +3109,7 @@ class dungeon:
 
                         else:
                             #остальное
-                            floor['10'] = { 'room_type': 'ladder_down', 'image': f'images/dungeon/start_room/1.png', 'next_room': True, 'ready': [] }
+                            rooms_list = list(range(1, dung['settings']['max_rooms'] + 1 ))
 
                     else:
 
@@ -3110,12 +3117,14 @@ class dungeon:
                         rooms_list = kwargs['rooms_list']
                         room_type_cr = "static"
 
-                    rooms = { 'com': ['battle'],
-                              'unc': ['battle', 'empty_room'], # 'forest'
-                              'rar': ['fork_2', 'fork_3'],  #, 'quest'],
-                              'myt': ['mine'],#, 'town'],
-                              'leg': ['mine'] #['chest', 'mimic']
-                            }
+                    # rooms = { 'com': ['battle'],
+                    #           'unc': ['battle', 'empty_room'], # 'forest'
+                    #           'rar': ['fork_2', 'fork_3'],  #, 'quest'],
+                    #           'myt': ['mine'],#, 'town'],
+                    #           'leg': ['mine'] #['chest', 'mimic']
+                    #         }
+
+                    rooms = floor_data["rooms_type"]
 
                     for room_n in rooms_list:
 
@@ -3126,7 +3135,13 @@ class dungeon:
                             room_type = kwargs['rooms'][ str(room_n) ]
 
                         if room_type == 'battle':
-                            mobs = dungeon.random_mobs(mobs_type = 'mobs', floor_lvl = dung['stage_data']['game']['floor_n'], count = random.randint(1, 3))
+
+                            if floor_data['mobs_count']['type'] == 'random':
+                                m_count = random.randint(floor_data['mobs_count']['min'], floor_data['mobs_count']['max'])
+                            else:
+                                m_count = floor_data['mobs_count']['act']
+
+                            mobs = dungeon.random_mobs(mobs_type = 'mobs', floor_lvl = dung['stage_data']['game']['floor_n'], count = m_count)
 
                             floor[str(room_n)] = { 'room_type': room_type, 'reward': { 'experience': 0, 'items': [], 'collected': {}, 'coins': 0 },'mobs': mobs, 'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png', 'next_room': False }
 
@@ -3248,9 +3263,10 @@ class dungeon:
 
                 if type == 'leave_user':
                     floor_n = dung['stage_data']['game']['floor_n']
+                    room_n = dung['stage_data']['game']['room_n']
                     bd_user = users.find_one({"userid": int(userid) })
 
-                    if floor_n % 5 == 0:
+                    if floor_n % 5 == 0 and room_n == 10:
 
                         if dung['users'][str(userid)]['inventory'] != []:
 
@@ -3354,6 +3370,29 @@ class dungeon:
         inl_l2 = {}
 
         if dung != None:
+
+            if type == 'safe_exit':
+                markup_inline = types.InlineKeyboardMarkup(row_width = 3)
+
+                if dung['settings']['lang'] == 'ru':
+
+                    if userid == dungeonid:
+                        inl_l = {'⏩ След. комната': f'dungeon.next_room {dungeonid}', '🚪 Выйти': f'dungeon.safe_exit {dungeonid}'}
+
+                    else:
+                        inl_l = {'✅ Готовность': f'dungeon.next_room_ready {dungeonid}', '🚪 Выйти': f'dungeon.safe_exit {dungeonid}'}
+
+                else:
+
+                    if userid == dungeonid:
+                        inl_l = {'⏩ Next room': f'dungeon.next_room {dungeonid}', '🚪 Exit': f'dungeon.safe_exit {dungeonid}'}
+
+                    else:
+                        inl_l = {'✅ Ready': f'dungeon.next_room_ready {dungeonid}', '🚪 Exit': f'dungeon.safe_exit {dungeonid}'}
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = inl_l[inl] ) for inl in inl_l.keys() ])
+
+                return markup_inline
 
             if type in ['fork_2', 'fork_3']:
                 markup_inline = types.InlineKeyboardMarkup(row_width = 3)
@@ -3928,13 +3967,14 @@ class dungeon:
 
                             text += users_text
 
-                    if room_type == 'ladder_down':
+                    if room_type == 'safe_exit':
+                        inline_type = 'safe_exit'
 
                         if dung['settings']['lang'] == 'ru':
-                            text += f"\n\n✨ | Поздравляем, вы прошли этаж #{floor_n}! Подготовьтесь и спускайтесь ниже!"
+                            text += f"\n\n✨ | Поздравляем, вы прошли достаточно тяжёлый путь, перед вами стоит выбор, выйти из подземелья или продолжить путь..."
 
                         else:
-                            text += f"\n\n✨ | Congratulations, you have passed the floor #{floor_n}! Get ready and go down below!"
+                            text += f"\n\n✨ | Congratulations, you have passed a rather difficult path, you have a choice before you, to leave the dungeon or continue on your way..."
 
                         if dung['floor'][str(room_n)]['next_room'] == True:
 
@@ -4079,19 +4119,45 @@ class dungeon:
             elif type == 'delete_dungeon':
                 dl = 0
                 undl = 0
+                text = ' '
 
-                if dung['settings']['lang'] == 'ru':
-                    text = '🗻 | Подземелье удалено'
+                if dung['dungeon_stage'] == 'game':
+                    floor_n = dung['stage_data']['game']['floor_n']
+                    floors_st = dung['stage_data']['game']['floors_stat']
+                    flr_text = ''
+                    mobs_count = 0
 
-                else:
-                    text = '🗻 | Dungeon removed'
+                    for flr_k in floors_st:
+                        floor_st = floors_st[flr_k]
+                        mobs_count += floor_st['mobs_killing']
+
+
+                        if dung['settings']['lang'] == 'ru':
+                            flr_time = functions.time_end(floor_st['end_time'] - floor_st['start_time'])
+                            flr_text += f'{flr_k}# Время: {flr_time}\n   *└* Убито: {floor_st["mobs_killing"]}\n\n'
+
+                        else:
+                            flr_time = functions.time_end(floor_st['end_time'] - floor_st['start_time'], True)
+                            flr_text += f'{flr_k}# Time: {flr_time}\n   *└ *Killed: {floor_st["mobs_killing"]}\n\n'
+
+                    if dung['settings']['lang'] == 'ru':
+                        text = f'*🗻 | Подземелье завершено!*\n\n*🗝 | Статистика*\n\n🏆 Пройдено этажей: {floor_n}\n👿 Убито боссов: {floor_n // 10}\n😈 Убито мобов: {mobs_count}\n\n*🖼 | Статистика по этажам*\n\n{flr_text}'
+                    else:
+                        text = f'*🗻 | Dungeon conspiracy!*\n\n*🗝 | Statistics*\n\nFloors passed: {floor_n} 🏆\nBosses killed: {floor_n // 10}\nMobs killed:: {mobs_count}\n\n*🖼 | Floor statistics*\n\n{flr_text}'
+
+                if dung['dungeon_stage'] == 'preparation':
+
+                    if dung['settings']['lang'] == 'ru':
+                        text = '🗻 | Подземелье удалено'
+                    else:
+                        text = '🗻 | Dungeon removed'
 
                 for u_k in dung['users']:
                     us = dung['users'][u_k]
 
                     try:
                         bot.delete_message(int(u_k), us['messageid'])
-                        bot.send_message(int(u_k), text, reply_markup = functions.markup(bot, "dungeon_menu", int(u_k) ))
+                        bot.send_message(int(u_k), text, parse_mode = 'Markdown', reply_markup = functions.markup(bot, "dungeon_menu", int(u_k) ))
                         dl += 1
                     except Exception as e:
                         undl += 1
@@ -4402,6 +4468,7 @@ class dungeon:
 
         dung = dungeons.find_one({"dungeonid": dungeonid})
         room_n = str(dung['stage_data']['game']['room_n'])
+        floor_n = dung['stage_data']['game']['floor_n']
         mob = dung['floor'][room_n]['mobs'][0]
         data_mob = mobs_f['mobs'][ mob['mob_key'] ]
         log = []
@@ -4547,6 +4614,7 @@ class dungeon:
             dung['floor'][room_n]['reward']['coins'] = coins
 
             dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor': dung['floor'] }} )
+            dungeons.update_one( {"dungeonid": dungeonid}, {"$inc": {f'stage_data.game.floors_stat.{floor_n}.mobs_killing': 1 }} )
 
             if dung['settings']['lang'] == 'ru':
                 log.append( f"💥 {data_mob['name'][dung['settings']['lang']]} умер." )
@@ -4818,3 +4886,33 @@ class dungeon:
             dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{bd_user["userid"]}.inventory': user_inv_dg }} )
 
         return damage, log
+
+    def user_dungeon_stat(user_id:int, dungeonid):
+
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+        user_stat = {
+                'time': int(time.time()) - int(dung['stage_data']['game']['start_time']),
+                'floor': dung['stage_data']['game']['floor_n'],
+                    }
+
+        users.update_one( {"userid": user_id }, {"$push": {'user_dungeon.statistics': user_stat }} )
+
+        return True
+
+    def floor_data(floor_n):
+        floors_data = floors_f["floors"]
+
+        if str(floor_n) not in floors_data.keys():
+
+            while floor_n != 1:
+
+                if str(floor_n) not in floors_data.keys():
+                    floor_n -= 1
+                else:
+                    return floors_data[str(floor_n)]
+
+            else:
+                return floors_data['1']
+
+        else:
+            return floors_data[str(floor_n)]

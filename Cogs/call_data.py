@@ -1922,7 +1922,6 @@ class call_data:
         dungeonid = int(call.data.split()[1])
 
         inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
-        print(inf)
         dng, inf = dungeon.base_upd(userid = user.id, messageid = 'supplies', dungeonid = dungeonid, type = 'edit_last_page')
 
     def dungeon_set_coins(bot, bd_user, call, user):
@@ -2342,7 +2341,6 @@ class call_data:
 
                 dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
                 inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
-                print(inf)
 
             else:
                 print('-0-')
@@ -2386,7 +2384,8 @@ class call_data:
                                         'room_n': 0,
                                         'player_move': [ list( dung['users'].keys() )[0], list( dung['users'].keys() ) ],
                                         'start_time': int(time.time()),
-                                        'complexity': { 'users': complexity[0], 'dinos': complexity[1] }
+                                        'complexity': { 'users': complexity[0], 'dinos': complexity[1] },
+                                        'floors_stat': {}
                                                              }
 
                                 dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
@@ -2456,15 +2455,18 @@ class call_data:
         if dung != None:
 
             room_n = str(dung['stage_data']['game']['room_n'])
+            floor_n = str(dung['stage_data']['game']['floor_n'])
             if True: #dung['floor'][room_n]['next_room'] == True:
 
                 if len(dung['floor'][room_n]['ready']) == len(dung['users']) - 1:
 
                     dung['stage_data']['game']['room_n'] += 1
 
-                    if dung['stage_data']['game']['room_n'] >= 11:
+                    if dung['stage_data']['game']['room_n'] >= dung['settings']['max_rooms'] + 1:
 
                         dng, inf = dungeon.base_upd(dungeonid = dungeonid, type = 'create_floor')
+
+                        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data.game.floors_stat.{floor_n}.end_time': int(time.time()) }} )
 
                     else:
 
@@ -2613,21 +2615,23 @@ class call_data:
         room_n = str(dung['stage_data']['game']['room_n'])
         reward = dung['floor'][room_n]['reward']
 
-        if str(user.id) not in reward['collected'].keys() or reward['collected'][str(user.id)] == {}:
-            reward['collected'][str(user.id)] = {}
+        if dung['users'][str(user.id)]['dinos'] != {}:
 
-            reward['collected'][str(user.id)]['coins'] = True
-            reward['collected'][str(user.id)]['experience'] = True
-            reward['collected'][str(user.id)]['items'] = []
+            if str(user.id) not in reward['collected'].keys() or reward['collected'][str(user.id)] == {}:
+                reward['collected'][str(user.id)] = {}
 
-            dung['users'][str(user.id)]['coins'] += reward['coins']
-            users.update_one( {"userid": user.id}, {"$inc": {'lvl.1': reward['experience'] }} )
+                reward['collected'][str(user.id)]['coins'] = True
+                reward['collected'][str(user.id)]['experience'] = True
+                reward['collected'][str(user.id)]['items'] = []
 
-            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor.{room_n}.reward': reward }} )
-            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}': dung['users'][str(user.id)] }} )
+                dung['users'][str(user.id)]['coins'] += reward['coins']
+                users.update_one( {"userid": user.id}, {"$inc": {'lvl.1': reward['experience'] }} )
 
-        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'collect_reward')
-        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'collect_reward', dungeonid = dungeonid, type = 'edit_last_page')
+                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor.{room_n}.reward': reward }} )
+                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}': dung['users'][str(user.id)] }} )
+
+            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'collect_reward')
+            dng, inf = dungeon.base_upd(userid = user.id, messageid = 'collect_reward', dungeonid = dungeonid, type = 'edit_last_page')
 
     def item_from_reward(bot, bd_user, call, user):
 
@@ -2683,7 +2687,6 @@ class call_data:
         sort_items = {}
 
         for i in items:
-            print(i)
 
             if functions.item_authenticity(i) == True:
 
@@ -2918,3 +2921,35 @@ class call_data:
             dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor': dung['floor'] }} )
 
             inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
+
+    def dungeon_safe_exit(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        if user.id == dungeonid:
+
+            for k_user_id in dung['users'].keys():
+                dungeon.user_dungeon_stat(int(k_user_id), dungeonid)
+
+            inf = dungeon.message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
+            dng, inf = dungeon.base_upd(dungeonid = user.id, type = 'delete_dungeon')
+
+        else:
+
+            if k_user_id in dung['users'].keys():
+                user_message = dung['users'][k_user_id]['messageid']
+                dng, inf = dungeon.base_upd(userid = int(k_user_id), dungeonid = dungeonid, type = 'leave_user')
+
+                if inf == 'leave_user':
+                    dungeons.user_dungeon_stat(user.id, dungeonid)
+
+                    if bd_user['language_code'] == 'ru':
+                        text = "🗻 | Вы вышли из подземелья!"
+                    else:
+                        text = "🗻 | You are out of the dungeon!"
+
+                    bot.delete_message(int(k_user_id), user_message)
+                    bot.send_message(int(k_user_id), text, reply_markup = functions.markup(bot, 'dungeon_menu', user))
+
+                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
