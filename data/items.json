@@ -98,7 +98,11 @@
 
  "49": {"nameru": "🔮 Магический камень", "nameen": "🔮 Magic Stone", "type": "material", "abilities": {"mana": 0}, "image": "item49"},
 
- "50": {"nameru": "🌮 Тако", "nameen": "🌮 Tacos", "type": "+eat", "act": 40, "class": "ALL", "+mood": 20, "image": "item50"}
+ "50": {"nameru": "🌮 Тако", "nameen": "🌮 Tacos", "type": "+eat", "act": 40, "class": "ALL", "+mood": 20, "image": "item50"},
+
+ "51": {"nameru": "🦴 Кость", "nameen": "🦴 Bone", "type": "material", "image": "item51"},
+
+ "52": {"nameru": "🧱 Железо", "nameen": "🧱 Iron", "type": "material", "image": "item52"}
 
 }
 }
