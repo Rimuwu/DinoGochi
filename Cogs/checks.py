@@ -7,8 +7,9 @@ import time
 import os
 import sys
 import pprint
-from functions import functions
 from memory_profiler import memory_usage
+
+from classes import Functions
 
 sys.path.append("..")
 import config
@@ -44,9 +45,9 @@ class checks:
                 try:
 
                     if user['language_code'] == 'ru':
-                        text = f"🦕 | {bot.get_chat( user['userid'] ).first_name}, мы скучаем по тебе 😥, ты уже очень давно не пользовался ботом ({functions.time_end( notactivity_time )})!\n\n❤ | Давай сного будем играть, путешествовать и развлекаться вместе! Мы с нетерпением ждём тебя!"
+                        text = f"🦕 | {bot.get_chat( user['userid'] ).first_name}, мы скучаем по тебе 😥, ты уже очень давно не пользовался ботом ({Functions.time_end( notactivity_time )})!\n\n❤ | Давай сного будем играть, путешествовать и развлекаться вместе! Мы с нетерпением ждём тебя!"
                     else:
-                        text = f"🦕 | {bot.get_chat( user['userid'] ).first_name}, we miss you 😥, you haven't used the bot for a long time ({functions.time_end( notactivity_time )})!\n\n❤ | Let's play, travel and have fun together! We are looking forward to seeing you!"
+                        text = f"🦕 | {bot.get_chat( user['userid'] ).first_name}, we miss you 😥, you haven't used the bot for a long time ({Functions.time_end( notactivity_time )})!\n\n❤ | Let's play, travel and have fun together! We are looking forward to seeing you!"
 
 
                     bot.send_message(user['userid'], text)
@@ -78,9 +79,9 @@ class checks:
                     try:
 
                         if user['language_code'] == 'ru':
-                            text = f"🦕 | Хей {bot.get_chat( user['userid'] ).first_name}, мы уже довольно давно с тобой не виделись ({functions.time_end( notactivity_time )})!\n\n🦄 | Пока тебя не было, в боте появилось куча всего интересного и произошло много событий! Мы сного ждём тебя в игре и будем рады твоей активности! ❤"
+                            text = f"🦕 | Хей {bot.get_chat( user['userid'] ).first_name}, мы уже довольно давно с тобой не виделись ({Functions.time_end( notactivity_time )})!\n\n🦄 | Пока тебя не было, в боте появилось куча всего интересного и произошло много событий! Мы сного ждём тебя в игре и будем рады твоей активности! ❤"
                         else:
-                            text = f"🦕 | Hey {bot.get_chat( user['userid'] ).first_name}, we haven't seen you for quite a while ({functions.time_end( notactivity_time, True )})!\n\n🦄 | When you weren't there, a bunch of interesting things appeared in the bot and a lot of events happened! We are waiting for you a lot in the game and we will be glad of your activity! ❤"
+                            text = f"🦕 | Hey {bot.get_chat( user['userid'] ).first_name}, we haven't seen you for quite a while ({Functions.time_end( notactivity_time, True )})!\n\n🦄 | When you weren't there, a bunch of interesting things appeared in the bot and a lot of events happened! We are waiting for you a lot in the game and we will be glad of your activity! ❤"
 
                         bot.send_message(user['userid'], text)
                         act3 += 1
@@ -104,8 +105,8 @@ class checks:
     @staticmethod
     def check_memory():
 
-        functions.check_data('memory', 0, int(memory_usage()[0]) )
-        functions.check_data('memory', 1, int(time.time()) )
+        Functions.check_data('memory', 0, int(memory_usage()[0]) )
+        Functions.check_data('memory', 1, int(time.time()) )
 
     @staticmethod
     def check_incub(bot): #проверка каждые 5 секунд
@@ -122,23 +123,23 @@ class checks:
                     nn += 1
                     if dino['incubation_time'] - int(time.time()) <= 60*5 and dino['incubation_time'] - int(time.time()) > 0: #уведомление за 5 минут
 
-                        if functions.notifications_manager(bot, '5_min_incub', user, None, dino_id, 'check') == False:
-                            functions.notifications_manager(bot, "5_min_incub", user, dino, dino_id)
+                        if Functions.notifications_manager(bot, '5_min_incub', user, None, dino_id, 'check') == False:
+                            Functions.notifications_manager(bot, "5_min_incub", user, dino, dino_id)
 
 
                     elif dino['incubation_time'] - int(time.time()) <= 0:
 
-                        functions.notifications_manager(bot, "5_min_incub", user, dino, dino_id, met = 'delete')
+                        Functions.notifications_manager(bot, "5_min_incub", user, dino, dino_id, met = 'delete')
 
                         if 'quality' in dino.keys():
-                            functions.random_dino(user, dino_id, dino['quality'])
+                            Functions.random_dino(user, dino_id, dino['quality'])
                         else:
-                            functions.random_dino(user, dino_id)
-                        functions.notifications_manager(bot, "incub", user, dino_id)
+                            Functions.random_dino(user, dino_id)
+                        Functions.notifications_manager(bot, "incub", user, dino_id)
 
-        functions.check_data('incub', 0, int(time.time() - t_st) )
-        functions.check_data('incub', 1, int(time.time()) )
-        functions.check_data('incub', 2, nn)
+        Functions.check_data('incub', 0, int(time.time() - t_st) )
+        Functions.check_data('incub', 1, int(time.time()) )
+        Functions.check_data('incub', 2, nn)
 
     @staticmethod
     def rayt(members):
@@ -154,7 +155,7 @@ class checks:
         for i in lv_l_r:
             lv_l.append( {'userid': i['userid'], 'lvl': i['lvl']} )
 
-        functions.rayt_update('save', [mr_l, lv_l])
+        Functions.rayt_update('save', [mr_l, lv_l])
 
 
     @staticmethod
@@ -174,7 +175,7 @@ class checks:
 
                         if user['dinos'][dino_id]['stats']['unv'] >= 100:
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
-                            functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'send')
+                            Functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'send')
 
                             try:
                                 del user['dinos'][dino_id]['sleep_start']
@@ -189,7 +190,7 @@ class checks:
                             if user['dinos'][dino_id]['sleep_time'] - int(time.time()) <= 0:
 
                                 user['dinos'][dino_id]['activ_status'] = 'pass_active'
-                                functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'send')
+                                Functions.notifications_manager(bot, 'woke_up', user, None, dino_id, 'send')
 
                                 del user['dinos'][dino_id]['sleep_type']
                                 del user['dinos'][dino_id]['sleep_time']
@@ -200,7 +201,7 @@ class checks:
 
                         if int(dino['game_time'] - time.time()) <= 0:
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
-                            functions.notifications_manager(bot, 'game_end', user, None, dino_id, 'send')
+                            Functions.notifications_manager(bot, 'game_end', user, None, dino_id, 'send')
 
                             del user['dinos'][ dino_id ]['game_time']
                             del user['dinos'][ dino_id ]['game_%']
@@ -211,7 +212,7 @@ class checks:
                         if int(dino['journey_time']-time.time()) <= 0:
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
 
-                            functions.notifications_manager(bot, "journey_end", user, user['dinos'][ dino_id ]['journey_log'], dino_id = dino_id)
+                            Functions.notifications_manager(bot, "journey_end", user, user['dinos'][ dino_id ]['journey_log'], dino_id = dino_id)
 
                             del user['dinos'][ dino_id ]['journey_time']
                             del user['dinos'][ dino_id ]['journey_log']
@@ -223,70 +224,70 @@ class checks:
                             del user['dinos'][ dino_id ]['h_type']
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
 
-                            functions.notifications_manager(bot, "hunting_end", user, dino_id = dino_id)
+                            Functions.notifications_manager(bot, "hunting_end", user, dino_id = dino_id)
                             users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}': user['dinos'][dino_id] }} )
 
 
                     if user['dinos'][dino_id]['stats']['mood'] <= 50:
                         if user['dinos'][dino_id]['activ_status'] != 'sleep':
-                            if functions.notifications_manager(bot, "need_mood", user, dino_id = dino_id, met = 'check') == False:
-                                functions.notifications_manager(bot, "need_mood", user, user['dinos'][dino_id]['stats']['mood'], dino_id = dino_id)
+                            if Functions.notifications_manager(bot, "need_mood", user, dino_id = dino_id, met = 'check') == False:
+                                Functions.notifications_manager(bot, "need_mood", user, user['dinos'][dino_id]['stats']['mood'], dino_id = dino_id)
 
                     if user['dinos'][dino_id]['stats']['game'] <= 50:
                         if user['dinos'][dino_id]['activ_status'] != 'sleep':
-                            if functions.notifications_manager(bot, "need_game", user, dino_id = dino_id, met = 'check') == False:
-                                functions.notifications_manager(bot, "need_game", user, user['dinos'][dino_id]['stats']['game'], dino_id = dino_id)
+                            if Functions.notifications_manager(bot, "need_game", user, dino_id = dino_id, met = 'check') == False:
+                                Functions.notifications_manager(bot, "need_game", user, user['dinos'][dino_id]['stats']['game'], dino_id = dino_id)
 
                     if user['dinos'][dino_id]['stats']['eat'] <= 40:
                         if user['dinos'][dino_id]['activ_status'] != 'sleep':
-                            if functions.notifications_manager(bot, "need_eat", user, dino_id = dino_id, met = 'check') == False:
-                                functions.notifications_manager(bot, "need_eat", user, user['dinos'][dino_id]['stats']['eat'], dino_id = dino_id)
+                            if Functions.notifications_manager(bot, "need_eat", user, dino_id = dino_id, met = 'check') == False:
+                                Functions.notifications_manager(bot, "need_eat", user, user['dinos'][dino_id]['stats']['eat'], dino_id = dino_id)
 
                     if user['dinos'][dino_id]['stats']['unv'] <= 30:
                         if user['dinos'][dino_id]['activ_status'] != 'sleep':
-                            if functions.notifications_manager(bot, "need_unv", user, dino_id = dino_id, met = 'check') == False:
-                                functions.notifications_manager(bot, "need_unv", user, user['dinos'][dino_id]['stats']['unv'], dino_id = dino_id)
+                            if Functions.notifications_manager(bot, "need_unv", user, dino_id = dino_id, met = 'check') == False:
+                                Functions.notifications_manager(bot, "need_unv", user, user['dinos'][dino_id]['stats']['unv'], dino_id = dino_id)
 
                     if user['dinos'][dino_id]['stats']['heal'] <= 30:
-                        if functions.notifications_manager(bot, "need_heal", user, dino_id = dino_id, met = 'check') == False:
-                            functions.notifications_manager(bot, "need_heal", user, user['dinos'][dino_id]['stats']['heal'], dino_id = dino_id)
+                        if Functions.notifications_manager(bot, "need_heal", user, dino_id = dino_id, met = 'check') == False:
+                            Functions.notifications_manager(bot, "need_heal", user, user['dinos'][dino_id]['stats']['heal'], dino_id = dino_id)
 
                     if user['dinos'][dino_id]['stats']['heal'] >= 60:
-                        functions.notifications_manager(bot, 'need_heal', user, dino_id = dino_id, met = 'delete')
+                        Functions.notifications_manager(bot, 'need_heal', user, dino_id = dino_id, met = 'delete')
 
                     if user['dinos'][dino_id]['stats']['mood'] >= 60:
-                        functions.notifications_manager(bot, 'need_mood', user, dino_id = dino_id, met = 'delete')
+                        Functions.notifications_manager(bot, 'need_mood', user, dino_id = dino_id, met = 'delete')
 
                     if user['dinos'][dino_id]['stats']['game'] >= 60:
-                        functions.notifications_manager(bot, 'need_game', user, dino_id = dino_id, met = 'delete')
+                        Functions.notifications_manager(bot, 'need_game', user, dino_id = dino_id, met = 'delete')
 
                     if user['dinos'][dino_id]['stats']['eat'] >= 50:
-                        functions.notifications_manager(bot, 'need_eat', user, dino_id = dino_id, met = 'delete')
+                        Functions.notifications_manager(bot, 'need_eat', user, dino_id = dino_id, met = 'delete')
 
                     if user['dinos'][dino_id]['stats']['unv'] >= 40:
-                        functions.notifications_manager(bot, 'need_unv', user, dino_id = dino_id, met = 'delete')
+                        Functions.notifications_manager(bot, 'need_unv', user, dino_id = dino_id, met = 'delete')
 
                     if user['dinos'][dino_id]['stats']['heal'] <= 0:
                         del user['dinos'][dino_id]
-                        functions.notifications_manager(bot, 'dead', user, dino_id = dino_id, met = 'delete')
+                        Functions.notifications_manager(bot, 'dead', user, dino_id = dino_id, met = 'delete')
 
-                        if functions.notifications_manager(bot, "dead", user, dino_id = dino_id, met = 'check') == False:
+                        if Functions.notifications_manager(bot, "dead", user, dino_id = dino_id, met = 'check') == False:
 
                             if user['lvl'][0] >= 5:
-                                functions.add_item_to_user(user, '21')
+                                Functions.add_item_to_user(user, '21')
 
                             if len(user['dinos']) > 0:
                                 user['settings']['dino_id'] = list(user['dinos'].keys())[0]
                                 users.update_one( {"userid": user['userid']}, {"$set": {'settings': user['settings'] }} )
 
-                            functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
+                            Functions.notifications_manager(bot, "dead", user, dino_id = dino_id)
 
                         users.update_one( {"userid": user['userid']}, {"$set": {f'dinos': user['dinos'] }} )
                         users.update_one( {"userid": user['userid']}, {"$inc": {'dead_dinos': 1 }} )
 
         # print(f'Проверка уведомлений - {int(time.time()) - t_st}s {nn}u')
-        functions.check_data('notif', 0, int(time.time() - t_st) )
-        functions.check_data('notif', 1, int(time.time()) )
+        Functions.check_data('notif', 0, int(time.time() - t_st) )
+        Functions.check_data('notif', 1, int(time.time()) )
 
     @staticmethod
     def main_pass(bot, members):
@@ -331,9 +332,9 @@ class checks:
                                         users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i] }} )
 
         # print(f'Проверка пассивность - {int(time.time() - t_st)}s {nn}u')
-        functions.check_data('main_pass', 0, int(time.time() - t_st) )
-        functions.check_data('main_pass', 1, int(time.time()))
-        functions.check_data('main_pass', 2, nn )
+        Functions.check_data('main_pass', 0, int(time.time() - t_st) )
+        Functions.check_data('main_pass', 1, int(time.time()))
+        Functions.check_data('main_pass', 2, nn )
 
     @staticmethod
     def main_sleep(bot, members):
@@ -387,9 +388,9 @@ class checks:
                                         users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i] }} )
 
         # print(f'Проверка сон - {int(time.time() - t_st)}s {nn}u')
-        functions.check_data('main_sleep', 0, int(time.time() - t_st) )
-        functions.check_data('main_sleep', 1, int(time.time()))
-        functions.check_data('main_sleep', 2, nn )
+        Functions.check_data('main_sleep', 0, int(time.time() - t_st) )
+        Functions.check_data('main_sleep', 1, int(time.time()))
+        Functions.check_data('main_sleep', 2, nn )
 
     @staticmethod
     def main_game(bot, members):
@@ -429,9 +430,9 @@ class checks:
                                         users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i] }} )
 
         # print(f'Проверка игра - {int(time.time() - t_st)}s {nn}u')
-        functions.check_data('main_game', 0, int(time.time() - t_st) )
-        functions.check_data('main_game', 1, int(time.time()))
-        functions.check_data('main_game', 2, nn )
+        Functions.check_data('main_game', 0, int(time.time() - t_st) )
+        Functions.check_data('main_game', 1, int(time.time()))
+        Functions.check_data('main_game', 2, nn )
 
     @staticmethod
     def main_hunting(bot, members):
@@ -459,7 +460,7 @@ class checks:
                         if random.randint(1, 65) == 1: #unv
                             dinos_stats['unv'] -= random.randint(0,1)
 
-                        if functions.acc_check(bot, user, '15', dino_id, False):
+                        if Functions.acc_check(bot, user, '15', dino_id, False):
                             pr_hunt = 25
                         else:
                             pr_hunt = 30
@@ -467,9 +468,9 @@ class checks:
                         r = random.randint(1, pr_hunt)
                         if r == 1:
 
-                            functions.acc_check(bot, user, '15', dino_id, True) #понижение прочности для инструментов
+                            Functions.acc_check(bot, user, '15', dino_id, True) #понижение прочности для инструментов
 
-                            if functions.acc_check(bot, user, '31', dino_id, False):
+                            if Functions.acc_check(bot, user, '31', dino_id, False):
                                 col_l1 = ['27', '11', "35"]
                                 col_l2 = ['6', '11', "35"]
                                 col_l3 = ['6', "35"]
@@ -489,25 +490,25 @@ class checks:
 
 
                             if dino['h_type'] == 'all':
-                                item = functions.random_items(['9', '8', "10", '2'], ['27', '9', "26", '8', "28", "10", '2'], all_l1, all_l2, all_l3)
+                                item = Functions.random_items(['9', '8', "10", '2'], ['27', '9', "26", '8', "28", "10", '2'], all_l1, all_l2, all_l3)
 
                             if dino['h_type'] == 'collecting':
-                                item = functions.random_items(['9'], ['9'], col_l1, col_l2, col_l3)
+                                item = Functions.random_items(['9'], ['9'], col_l1, col_l2, col_l3)
 
                             if dino['h_type'] == 'hunting':
-                                item = functions.random_items(['8'], ['8'], ["26", "12"], ['5', "12"], ['5'])
+                                item = Functions.random_items(['8'], ['8'], ["26", "12"], ['5', "12"], ['5'])
 
                             if dino['h_type'] == 'fishing':
-                                item = functions.random_items(["10"], ["10"], ["28", "13"], ['7', "13"], ['7'])
+                                item = Functions.random_items(["10"], ["10"], ["28", "13"], ['7', "13"], ['7'])
 
                             if item == '35':
-                                functions.acc_check(bot, user, '31', dino_id, True)
+                                Functions.acc_check(bot, user, '31', dino_id, True)
 
-                            i_count = functions.random_items([int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 4)], [int(ii) for ii in range(1, 5)], [int(ii) for ii in range(1, 6)])
+                            i_count = Functions.random_items([int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 4)], [int(ii) for ii in range(1, 5)], [int(ii) for ii in range(1, 6)])
                             for i in list(range(i_count)):
                                 dino['target'][0] += 1
 
-                                functions.add_item_to_user(user, item)
+                                Functions.add_item_to_user(user, item)
 
                             users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.target': dino['target'] }} )
 
@@ -519,9 +520,9 @@ class checks:
                                         users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i] }} )
 
         # print(f'Проверка охота - {int(time.time()) - t_st}s {nn}u')
-        functions.check_data('main_hunt', 0, int(time.time() - t_st) )
-        functions.check_data('main_hunt', 1, int(time.time()))
-        functions.check_data('main_hunt', 2, nn )
+        Functions.check_data('main_hunt', 0, int(time.time() - t_st) )
+        Functions.check_data('main_hunt', 1, int(time.time()))
+        Functions.check_data('main_hunt', 2, nn )
 
     @staticmethod
     def main_journey(bot, members):
@@ -548,7 +549,7 @@ class checks:
                         if random.randint(1, 45) == 1:
                             lvl_ += random.randint(0,20)
 
-                        if functions.acc_check(bot, user, '45', dino_id, False):
+                        if Functions.acc_check(bot, user, '45', dino_id, False):
                             tick = [1, 30]
                         else:
                             tick = [1, 40]
@@ -561,7 +562,7 @@ class checks:
                                 nd = random.randint(40, 75)
                                 if dino['stats']['mood'] >= nd:
                                     mood_n = True
-                                    functions.acc_check(bot, user, '45', dino_id, True) #снимает прочность у мешочка
+                                    Functions.acc_check(bot, user, '45', dino_id, True) #снимает прочность у мешочка
 
                                 else:
                                     mood_n = False
@@ -859,7 +860,7 @@ class checks:
                                                  'leg': ['43', '41', '35', '34', '56']
                                                }
 
-                                    item = functions.random_items(items_dd['com'], items_dd['unc'], items_dd['rar'], items_dd['myt'], items_dd['leg'])
+                                    item = Functions.random_items(items_dd['com'], items_dd['unc'], items_dd['rar'], items_dd['myt'], items_dd['leg'])
 
                                     if mood_n == True:
 
@@ -868,7 +869,7 @@ class checks:
                                         else:
                                             event = f"🧸 | Running through the woods, the dinosaur sees something that looks like a chest.\n> Opening it, he finds: {items_f['items'][item]['nameen']}!"
 
-                                        functions.add_item_to_user(user, item)
+                                        Functions.add_item_to_user(user, item)
 
                                     if mood_n == False:
 
@@ -891,7 +892,7 @@ class checks:
                                             'leg': ['30', '32', '34', '37', '39', '41', '42', '43', '46', "50", '56']
                                                }
 
-                                    item = functions.random_items(items_dd['com'], items_dd['unc'], items_dd['rar'], items_dd['myt'], items_dd['leg'])
+                                    item = Functions.random_items(items_dd['com'], items_dd['unc'], items_dd['rar'], items_dd['myt'], items_dd['leg'])
 
                                     if mood_n == True:
 
@@ -900,7 +901,7 @@ class checks:
                                         else:
                                             event = f"🧸 | Running through the mountains, the dinosaur sees something similar to a chest.\n> Opening it, he finds: {items_f['items'][item]['nameen']}!"
 
-                                        functions.add_item_to_user(user, item)
+                                        Functions.add_item_to_user(user, item)
 
                                     if mood_n == False:
 
@@ -911,7 +912,7 @@ class checks:
 
                                 elif event == 'egg':
 
-                                    egg = functions.random_items(['21', "3"], ['20', "3"], ['22'], ['23', "3"], ['24', "3"])
+                                    egg = Functions.random_items(['21', "3"], ['20', "3"], ['22'], ['23', "3"], ['24', "3"])
 
                                     if mood_n == True:
 
@@ -920,7 +921,7 @@ class checks:
                                         else:
                                             event = f"🧸 | Running through the caves, the dinosaur sees something similar to a chest.\n> Opening it, he finds: {items_f['items'][egg]['nameen']}!"
 
-                                        functions.add_item_to_user(user, egg)
+                                        Functions.add_item_to_user(user, egg)
 
                                     if mood_n == False:
 
@@ -978,7 +979,7 @@ class checks:
 
                                 event = random.choice(events)
                                 if event == 'rain':
-                                    if functions.acc_check(bot, user, '14', dino_id, True) == False:
+                                    if Functions.acc_check(bot, user, '14', dino_id, True) == False:
 
                                         mood = random.randint(1, 15)
                                         dinos_stats['mood'] -= mood
@@ -1041,7 +1042,7 @@ class checks:
                                     unv = random.randint(1, 10)
                                     dinos_stats['unv'] -= unv
 
-                                    if functions.acc_check(bot, user, '29', dino_id, True) == False and random.randint(1,2) == 1:
+                                    if Functions.acc_check(bot, user, '29', dino_id, True) == False and random.randint(1,2) == 1:
                                         heal = random.randint(1, 5)
                                         dinos_stats['heal'] -= heal
                                         textru = f'\nДинозавр не смог избежать ран, он теряет {heal}% здоровья.'
@@ -1123,9 +1124,9 @@ class checks:
                                             users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i] }} )
 
         # print(f'Проверка охота - {int(time.time()) - t_st}s {nn}u')
-        functions.check_data('main_journey', 0, int(time.time() - t_st) )
-        functions.check_data('main_journey', 1, int(time.time()))
-        functions.check_data('main_journey', 2, nn )
+        Functions.check_data('main_journey', 0, int(time.time() - t_st) )
+        Functions.check_data('main_journey', 1, int(time.time()))
+        Functions.check_data('main_journey', 2, nn )
 
     @staticmethod
     def main(bot, members):
@@ -1224,12 +1225,12 @@ class checks:
                                     egg = random.choice(['20', '22'])
                                     rf_fr = users.find_one({"userid": user['referal_system']['friend']})
 
-                                    functions.add_item_to_user(rf_fr, egg)
+                                    Functions.add_item_to_user(rf_fr, egg)
 
-                functions.notifications_manager(bot, 'lvl_up', user, arg = user['lvl'][0])
+                Functions.notifications_manager(bot, 'lvl_up', user, arg = user['lvl'][0])
                 users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
 
         # print(f'Проверка - {int(time.time()) - t_st}s {nn}u')
-        functions.check_data('main', 0, int(time.time() - t_st) )
-        functions.check_data('main', 1, int(time.time()) )
-        functions.check_data('main', 2, nn )
+        Functions.check_data('main', 0, int(time.time() - t_st) )
+        Functions.check_data('main', 1, int(time.time()) )
+        Functions.check_data('main', 2, nn )
