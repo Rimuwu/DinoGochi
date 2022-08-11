@@ -9,7 +9,7 @@ import sys
 from pprint import pprint
 from fuzzywuzzy import fuzz
 
-from functions import functions, dungeon
+from classes import Functions, Dungeon
 
 sys.path.append("..")
 import config
@@ -59,7 +59,7 @@ class call_data:
                 for i in range(3):
                     bg_img = bg_p
                     fg_img = eg_l[i]
-                    img = functions.trans_paste(fg_img, bg_img, 1.0, (i*512,0))
+                    img = Functions.trans_paste(fg_img, bg_img, 1.0, (i*512,0))
 
                 img.save('eggs.png')
                 photo = open(f"eggs.png", 'rb')
@@ -125,7 +125,7 @@ class call_data:
         if 'eggs' in list(bd_user.keys()):
             egg_n = call.data[11:]
 
-            bd_user['dinos'][ functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 10 * 60, 'egg_id': bd_user['eggs'][int(egg_n)-1]}
+            bd_user['dinos'][ Functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 10 * 60, 'egg_id': bd_user['eggs'][int(egg_n)-1]}
 
             users.update_one( {"userid": user.id}, {"$unset": {'eggs': None}} )
             users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
@@ -171,7 +171,7 @@ class call_data:
                 text2 += "*└*  In the settings, you can rename the dinosaur, disable notifications, or switch the language.\n\n"
 
             bot.edit_message_caption(text, call.message.chat.id, call.message.message_id)
-            bot.send_message(call.message.chat.id, text2, parse_mode = 'Markdown', reply_markup = functions.markup(bot, 1, user))
+            bot.send_message(call.message.chat.id, text2, parse_mode = 'Markdown', reply_markup = Functions.markup(bot, 1, user))
 
     def journey(bot, bd_user, call, user):
 
@@ -189,7 +189,7 @@ class call_data:
 
             xy = -35
             x2 = random.randint(80,120)
-            img = functions.trans_paste(dino_image, bg_p, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
+            img = Functions.trans_paste(dino_image, bg_p, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
 
             img.save('journey.png')
             profile = open(f"journey.png", 'rb')
@@ -202,6 +202,8 @@ class call_data:
 
             if call.data[:13] == '12min_journey':
                 jr_time = 120
+            if call.data[:13] == '24min_journey':
+                jr_time = 240
             else:
                 jr_time = int(call.data[:2])
 
@@ -219,7 +221,7 @@ class call_data:
                 text2 = f"🌳 | You sent a dinosaur on a journey for {jr_time} minutes."
 
             bot.edit_message_text(text2, call.message.chat.id, call.message.message_id)
-            bot.send_photo(call.message.chat.id, profile_i, text, reply_markup = functions.markup(bot, "actions", user) )
+            bot.send_photo(call.message.chat.id, profile_i, text, reply_markup = Functions.markup(bot, "actions", user) )
 
     def game(bot, bd_user, call, user):
 
@@ -249,7 +251,7 @@ class call_data:
 
             xy = random.randint(-65, -35)
             x2 = random.randint(20,340)
-            img = functions.trans_paste(dino_image, bg_p, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
+            img = Functions.trans_paste(dino_image, bg_p, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
 
             img.save('game.png')
             profile = open(f"game.png", 'rb')
@@ -374,7 +376,7 @@ class call_data:
             text = f"🎮 | Alternate games to avoid a penalty!"
 
         bot.edit_message_text(text2, call.message.chat.id, call.message.message_id)
-        bot.send_photo(call.message.chat.id, profile_i, text, reply_markup = functions.markup(bot, "games", user), parse_mode = 'html' )
+        bot.send_photo(call.message.chat.id, profile_i, text, reply_markup = Functions.markup(bot, "games", user), parse_mode = 'html' )
 
     def dead_answer(bot, bd_user, call, user):
 
@@ -460,10 +462,10 @@ class call_data:
 
     def dead_restart(bot, bd_user, call, user):
 
-        if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False and bd_user['lvl'][0] <= 5:
+        if bd_user != None and len(bd_user['dinos']) == 0 and Functions.inv_egg(bd_user) == False and bd_user['lvl'][0] <= 5:
             egg_n = str(random.choice(list(json_f['data']['egg'])))
 
-            bd_user['dinos'][ functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 30 * 60, 'egg_id': egg_n}
+            bd_user['dinos'][ Functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 30 * 60, 'egg_id': egg_n}
             bd_user['coins'] -= int(bd_user['notifications']['ans_dead'])
             try:
                 del bd_user['notifications']['ans_dead']
@@ -484,11 +486,11 @@ class call_data:
             else:
                 text = '✒ | The contract is signed, the dinosaur is incubating.'
 
-            bot.send_message(user.id, text, parse_mode = 'Markdown', reply_markup = functions.markup(bot, 1, user))
+            bot.send_message(user.id, text, parse_mode = 'Markdown', reply_markup = Functions.markup(bot, 1, user))
 
     def item_use(bot, bd_user, call, user):
 
-        data = functions.des_qr(str(call.data[5:]), True )
+        data = Functions.des_qr(str(call.data[5:]), True )
         it_id = str(data['item_id'])
         check_n = 0
         dino_id = 1
@@ -501,7 +503,7 @@ class call_data:
             else:
                 text = f"❌ | This item cannot be used on its own!"
 
-            bot.send_message(user.id, text, parse_mode = 'Markdown', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
+            bot.send_message(user.id, text, parse_mode = 'Markdown', reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
 
         def n_c_f():
             nonlocal check_n
@@ -592,17 +594,17 @@ class call_data:
                     n_c_f(), re_item()
 
                 else:
-                    bot.send_message(user.id, f'❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
+                    bot.send_message(user.id, f'❌', reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
 
-            n_dp, dp_a = functions.dino_pre_answer(bot, call, 'noall')
+            n_dp, dp_a = Functions.dino_pre_answer(bot, call, 'noall')
 
             if n_dp == 1: #нет дино
 
-                if functions.inv_egg(bd_user) == True and data_item['type'] == 'egg':
+                if Functions.inv_egg(bd_user) == True and data_item['type'] == 'egg':
                     n_c_f(), re_item()
 
                 else:
-                    bot.send_message(user.id, f'❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 1), bd_user ))
+                    bot.send_message(user.id, f'❌', reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 1), bd_user ))
 
             if n_dp == 2: # 1 дино
                 dino_dict = [dp_a, list(bd_user['dinos'].keys())[0] ]
@@ -719,7 +721,7 @@ class call_data:
                             else:
                                 preabil = None
 
-                            dt = functions.add_item_to_user(fr_user, it_c['item'], col * dp_col, 'data', preabil)
+                            dt = Functions.add_item_to_user(fr_user, it_c['item'], col * dp_col, 'data', preabil)
 
                             for i in dt:
                                 fr_user['inventory'].append(i)
@@ -751,6 +753,7 @@ class call_data:
                         text = 'Во время сна нельзя кормить динозавра.'
                     else:
                         text = 'During sleep, you can not feed the dinosaur.'
+                        use_st = False
 
                 else:
 
@@ -899,7 +902,7 @@ class call_data:
 
                         egg_n = str(random.choice(list(json_f['data']['egg'])))
 
-                        bd_user['dinos'][ functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': inc_time * tim_m, 'egg_id': egg_n, 'quality': data_item['inc_type']}
+                        bd_user['dinos'][ Functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': inc_time * tim_m, 'egg_id': egg_n, 'quality': data_item['inc_type']}
 
                         users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
 
@@ -944,7 +947,7 @@ class call_data:
                     else:
 
                         preabil = {'stack': user_item['abilities']['stack'] + two_item['abilities']['stack'] }
-                        fr_user['inventory'].append( functions.get_dict_item(standart_i_id, preabil) )
+                        fr_user['inventory'].append( Functions.get_dict_item(standart_i_id, preabil) )
 
                         fr_user['inventory'].remove(two_item)
                         fr_user['inventory'].remove(user_item)
@@ -1010,7 +1013,7 @@ class call_data:
             if use_st == True or use_st == 'update_only':
                 users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
 
-            bot.send_message(user.id, text, parse_mode = 'Markdown', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
+            bot.send_message(user.id, text, parse_mode = 'Markdown', reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
 
         def ent_col(message, col_l, mx_col):
             global col
@@ -1022,7 +1025,7 @@ class call_data:
                 else:
                     text = f"🎈 | Cancellation of use!"
 
-                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
+                bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
                 return
 
             try:
@@ -1038,14 +1041,14 @@ class call_data:
                     else:
                         text = f"Enter the correct number!"
 
-                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
+                    bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
                     return
 
             if col < 1:
 
                 text = f"0 % 0 % 0 % 0 % 0 % 0 :)"
 
-                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
+                bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
                 return
 
             if col > mx_col:
@@ -1055,7 +1058,7 @@ class call_data:
                 else:
                     text = f"You don't have that many items in your inventory!"
 
-                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
+                bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
                 return
 
             else:
@@ -1136,7 +1139,7 @@ class call_data:
                     n_c_f(), re_item()
 
                 else:
-                    bot.send_message(user.id, f'❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
+                    bot.send_message(user.id, f'❌', reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
 
             markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
 
@@ -1152,7 +1155,7 @@ class call_data:
 
     def remove_item(bot, bd_user, call, user):
 
-        data = functions.des_qr(str(call.data[12:]), True)
+        data = Functions.des_qr(str(call.data[12:]), True)
         it_id = str(data['item_id'])
 
         data_item = items_f['items'][it_id]
@@ -1180,13 +1183,13 @@ class call_data:
                 in_text = ['✔ Delete', '❌ Cancel']
 
             markup_inline = types.InlineKeyboardMarkup()
-            markup_inline.add( types.InlineKeyboardButton( text = in_text[0], callback_data = f"remove_{functions.qr_item_code(user_item)}"),  types.InlineKeyboardButton( text = in_text[1], callback_data = f"cancel_remove") )
+            markup_inline.add( types.InlineKeyboardButton( text = in_text[0], callback_data = f"remove_{Functions.qr_item_code(user_item)}"),  types.InlineKeyboardButton( text = in_text[1], callback_data = f"cancel_remove") )
 
             bot.send_message(user.id, text, reply_markup = markup_inline)
 
     def remove(bot, bd_user, call, user):
 
-        data = functions.des_qr(str(call.data[7:]), True)
+        data = Functions.des_qr(str(call.data[7:]), True)
         it_id = str(data['item_id'])
 
         data_item = items_f['items'][it_id]
@@ -1255,7 +1258,7 @@ class call_data:
                     else:
                         text = "👥 | Return to the friends menu!"
 
-                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+                    bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'actions', user))
                     return '12'
 
                 try:
@@ -1271,7 +1274,7 @@ class call_data:
                         else:
                             text = f"Enter the correct number!"
 
-                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+                        bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'actions', user))
                         return
 
                 if col > mx_col:
@@ -1281,7 +1284,7 @@ class call_data:
                     else:
                         text = f"You don't have that many items in your inventory!"
 
-                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+                    bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'actions', user))
                     return
 
                 for i in range(col):
@@ -1294,14 +1297,14 @@ class call_data:
                 else:
                     text = '🗑 | The item has been deleted.'
 
-                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', user))
+                bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'profile', user))
 
             msg = bot.send_message(user.id, text_col, reply_markup = rmk)
             bot.register_next_step_handler(msg, tr_complete, bd_user, user_item, mx_col, col_l)
 
     def exchange(bot, bd_user, call, user):
 
-        data = functions.des_qr(str(call.data[9:]), True)
+        data = Functions.des_qr(str(call.data[9:]), True)
         it_id = str(data['item_id'])
 
         data_item = items_f['items'][it_id]
@@ -1321,7 +1324,7 @@ class call_data:
 
         if user_item != None:
 
-            functions.exchange(bot, call.message, user_item, bd_user)
+            Functions.exchange(bot, call.message, user_item, bd_user)
 
     def market_buy(bot, bd_user, call, user):
 
@@ -1340,7 +1343,7 @@ class call_data:
 
                 if data_items[ mmd['item']['item_id'] ]['type'] == '+eat':
 
-                    eat_c = functions.items_counting(bd_user, '+eat')
+                    eat_c = Functions.items_counting(bd_user, '+eat')
                     if eat_c >= 300:
 
                         if bd_user['language_code'] == 'ru':
@@ -1348,7 +1351,7 @@ class call_data:
                         else:
                             text = f'🌴 | Your inventory is bursting with the amount of food! At the moment you have {eat_c} items that can be eaten!'
 
-                        bot.send_message(call.message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                        bot.send_message(call.message.chat.id, text, reply_markup = Functions.markup(bot, 'market', user))
                         return
 
                 if mmd['price'] <= bd_user['coins']:
@@ -1366,7 +1369,7 @@ class call_data:
                                 else:
                                     text = "🛒 | Return to the market menu!"
 
-                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'market', user))
                                 return
 
                             if number <= 0 or number > mmd['col'][1] - mmd['col'][0]:
@@ -1376,7 +1379,7 @@ class call_data:
                                 else:
                                     text = "🛒 | There is no such amount of item on the market!"
 
-                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'market', user))
                                 return
 
                             mr_user = users.find_one({"userid": int(us_id)})
@@ -1387,7 +1390,7 @@ class call_data:
                                 else:
                                     text = "🛒 | You don't have that many coins!"
 
-                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'market', user))
                                 return
 
                             for i in range(number):
@@ -1411,7 +1414,7 @@ class call_data:
                             else:
                                 text = "🛒 | The product was purchased!"
 
-                            bot.send_message(call.message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                            bot.send_message(call.message.chat.id, text, reply_markup = Functions.markup(bot, 'market', user))
 
                         if message.text in [f"Yes, purchase {items_f['items'][mmd['item']['item_id']]['nameru']}", f"Да, приобрести {items_f['items'][mmd['item']['item_id']]['nameru']}"]:
                             pass
@@ -1423,7 +1426,7 @@ class call_data:
                             else:
                                 text = "🛒 | Return to the market menu!"
 
-                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                            bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'market', user))
                             return
 
                         else:
@@ -1433,7 +1436,7 @@ class call_data:
                             else:
                                 text = "🛒 | Return to the market menu!"
 
-                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                            bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'market', user))
                             return
 
 
@@ -1519,8 +1522,8 @@ class call_data:
 
     def iteminfo(bot, bd_user, call, user):
 
-        item = functions.get_dict_item(call.data[9:])
-        text, image  = functions.item_info(item, bd_user['language_code'], mark = False)
+        item = Functions.get_dict_item(call.data[9:])
+        text, image  = Functions.item_info(item, bd_user['language_code'], mark = False)
 
         if image == None:
             bot.send_message(call.message.chat.id, text, parse_mode = 'Markdown')
@@ -1551,7 +1554,7 @@ class call_data:
     def ns_craft(bot, bd_user, call, user):
 
         did = call.data.split()
-        data = functions.des_qr(did[1], True)
+        data = Functions.des_qr(did[1], True)
         it_id = str(data['item_id'])
         cr_n = did[2]
 
@@ -1594,9 +1597,9 @@ class call_data:
                     if ok == True:
 
                         if bd_user['language_code'] == 'ru':
-                            text = f'🍡 | Предмет {", ".join(functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "ru" ))} создан!'
+                            text = f'🍡 | Предмет {", ".join(Functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "ru" ))} создан!'
                         else:
-                            text = f'🍡 | The item {", ".join(functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "en" ))} is created!'
+                            text = f'🍡 | The item {", ".join(Functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "en" ))} is created!'
 
                         list_inv_id.clear()
                         for i in fr_user['inventory']: list_inv_id.append(i['item_id'])
@@ -1607,7 +1610,7 @@ class call_data:
                             fr_user['inventory'].remove( list_inv[lst_ind] )
 
                         for it_c in data_item["ns_craft"][cr_n]['create']:
-                            dt = functions.add_item_to_user(fr_user, it_c, 1, 'data')
+                            dt = Functions.add_item_to_user(fr_user, it_c, 1, 'data')
                             for i in dt:
                                 fr_user['inventory'].append(i)
 
@@ -1620,20 +1623,20 @@ class call_data:
                         else:
                             text = f"❗ | Materials are not enough!"
 
-                    bot.send_message(user.id, text, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ) )
+                    bot.send_message(user.id, text, reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'profile'), bd_user ) )
 
                 else:
-                    bot.send_message(user.id, f'❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
+                    bot.send_message(user.id, f'❌', reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
 
             markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
 
             if bd_user['language_code'] == 'ru':
                 markup.add( *[i for i in ['Да, я хочу это сделать', '❌ Отмена'] ] )
-                msg = bot.send_message(user.id, f'Вы уверены что хотите создать {", ".join(functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "ru" ))}?', reply_markup = markup)
+                msg = bot.send_message(user.id, f'Вы уверены что хотите создать {", ".join(Functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "ru" ))}?', reply_markup = markup)
 
             else:
                 markup.add( *[i for i in ['Yes, I want to do it', '❌ Cancel'] ] )
-                msg = bot.send_message(user.id, f'Are you sure you want to create {", ".join(functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "en" ))}?', reply_markup = markup)
+                msg = bot.send_message(user.id, f'Are you sure you want to create {", ".join(Functions.sort_items_col( data_item["ns_craft"][cr_n]["create"], "en" ))}?', reply_markup = markup)
 
             bot.register_next_step_handler(msg, wrk_p)
 
@@ -1648,7 +1651,7 @@ class call_data:
             del bd_user['dinos'][ dino_id ]['h_type']
             bd_user['dinos'][dino_id]['activ_status'] = 'pass_active'
 
-            functions.notifications_manager(bot, "hunting_end", bd_user, dino_id = dino_id)
+            Functions.notifications_manager(bot, "hunting_end", bd_user, dino_id = dino_id)
             users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{dino_id}': bd_user['dinos'][dino_id] }} )
 
 
@@ -1670,7 +1673,7 @@ class call_data:
 
             if message.text in ['Да, я хочу это сделать', 'Yes, I want to do it']:
                 bd_user = users.find_one({"userid": user.id })
-                bd_user = functions.dino_q(bd_user)
+                bd_user = Functions.dino_q(bd_user)
 
                 if dino_id in bd_user['dinos'].keys():
                     if quality != bd_user['dinos'][dino_id]['quality']:
@@ -1686,17 +1689,17 @@ class call_data:
                                     else:
                                         text = f"❗ | Materials are not enough!"
 
-                                    bot.send_message(user.id, text, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
+                                    bot.send_message(user.id, text, reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
                                     return
 
                             qul = quality
                             if quality == 'ran':
-                                qul = functions.random_items(['com'], ['unc'], ['rar'], ['myt'], ['leg'])
+                                qul = Functions.random_items(['com'], ['unc'], ['rar'], ['myt'], ['leg'])
 
                             bd_user['coins'] -= data_q_r[quality]['money']
                             bd_user['dinos'][dino_id]['quality'] = qul
                             for i in data_q_r[quality]['materials']:
-                                ittm = functions.get_dict_item(i)
+                                ittm = Functions.get_dict_item(i)
                                 bd_user['inventory'].remove(ittm)
 
                             users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
@@ -1710,8 +1713,8 @@ class call_data:
                                 text = f"🔮 Magic happens!\n\nYour dinosaur has changed the rarity, rather take a look at the profile!"
                                 text2 = '🎗 | You have been returned to the last menu!'
 
-                            bot.send_message(user.id, text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', user.id, ['Открыть профиль', 'Open a profile'], dino_id))
-                            bot.send_message(user.id, text2, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
+                            bot.send_message(user.id, text, reply_markup = Functions.inline_markup(bot, f'open_dino_profile', user.id, ['Открыть профиль', 'Open a profile'], dino_id))
+                            bot.send_message(user.id, text2, reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
 
                         else:
                             if bd_user['language_code'] == 'ru':
@@ -1719,10 +1722,10 @@ class call_data:
                             else:
                                 text = f"❗ | Coins are not enough!"
 
-                            bot.send_message(user.id, text, reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
+                            bot.send_message(user.id, text, reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
 
             else:
-                bot.send_message(user.id, f'❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
+                bot.send_message(user.id, f'❌', reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
 
 
         markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
@@ -1740,15 +1743,15 @@ class call_data:
 
         dungeonid = int(call.data.split()[1])
 
-        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
-        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'settings', dungeonid = dungeonid, type = 'edit_last_page')
+        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
+        dng, inf = Dungeon.base_upd(userid = user.id, messageid = 'settings', dungeonid = dungeonid, type = 'edit_last_page')
 
     def dungeon_to_lobby(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
 
-        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, image_update = True)
-        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'main', dungeonid = dungeonid, type = 'edit_last_page')
+        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, image_update = True)
+        dng, inf = Dungeon.base_upd(userid = user.id, messageid = 'main', dungeonid = dungeonid, type = 'edit_last_page')
 
     def dungeon_settings_lang(bot, bd_user, call, user):
 
@@ -1763,8 +1766,8 @@ class call_data:
 
             dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'settings.lang': lang }} )
 
-            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
-            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
+            inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
+            inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
 
     def dungeon_leave(bot, bd_user, call, user):
 
@@ -1803,20 +1806,20 @@ class call_data:
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        dng, inf = dungeon.base_upd(userid = user.id, dungeonid = dungeonid, type = 'remove_user')
+        dng, inf = Dungeon.base_upd(userid = user.id, dungeonid = dungeonid, type = 'remove_user')
 
         bot.delete_message(user.id, dung['users'][str(user.id)]['messageid'])
 
-        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
+        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
 
-        bot.send_message(user.id, "✅", reply_markup = functions.markup(bot, "dungeon_menu", user.id ))
+        bot.send_message(user.id, "✅", reply_markup = Functions.markup(bot, "dungeon_menu", user.id ))
 
     def dungeon_leave_False(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid)
+        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid)
 
     def dungeon_remove(bot, bd_user, call, user):
 
@@ -1854,9 +1857,9 @@ class call_data:
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        inf = dungeon.message_upd(bot, dungeonid = dungeonid, type = 'delete_dungeon')
+        inf = Dungeon.message_upd(bot, dungeonid = dungeonid, type = 'delete_dungeon')
 
-        dng, inf = dungeon.base_upd(dungeonid = dungeonid, type = 'delete_dungeon')
+        dng, inf = Dungeon.base_upd(dungeonid = dungeonid, type = 'delete_dungeon')
 
 
     def dungeon_remove_False(bot, bd_user, call, user):
@@ -1864,7 +1867,7 @@ class call_data:
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
+        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
 
 
     def dungeon_add_dino_menu(bot, bd_user, call, user):
@@ -1872,18 +1875,18 @@ class call_data:
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'add_dino')
+        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'add_dino')
 
-        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'dino_control', dungeonid = dungeonid, type = 'edit_last_page')
+        dng, inf = Dungeon.base_upd(userid = user.id, messageid = 'dino_control', dungeonid = dungeonid, type = 'edit_last_page')
 
     def dungeon_remove_dino_menu(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'remove_dino')
+        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'remove_dino')
 
-        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'dino_control', dungeonid = dungeonid, type = 'edit_last_page')
+        dng, inf = Dungeon.base_upd(userid = user.id, messageid = 'dino_control', dungeonid = dungeonid, type = 'edit_last_page')
 
     def dungeon_add_dino(bot, bd_user, call, user):
 
@@ -1891,12 +1894,12 @@ class call_data:
         dinoid = call.data.split()[2]
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        dng, inf = dungeon.base_upd(userid = user.id, dungeonid = dungeonid, type = 'add_dino', dinosid = [dinoid])
+        dng, inf = Dungeon.base_upd(userid = user.id, dungeonid = dungeonid, type = 'add_dino', dinosid = [dinoid])
 
-        inf2 = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = inf)
+        inf2 = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = inf)
 
         if inf == 'add_dino':
-            inf3 = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
+            inf3 = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
 
     def dungeon_remove_dino(bot, bd_user, call, user):
 
@@ -1904,25 +1907,25 @@ class call_data:
         dinoid = call.data.split()[2]
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        dng, inf = dungeon.base_upd(userid = user.id, dungeonid = dungeonid, type = 'remove_dino', dinosid = [dinoid])
+        dng, inf = Dungeon.base_upd(userid = user.id, dungeonid = dungeonid, type = 'remove_dino', dinosid = [dinoid])
 
-        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'remove_dino')
+        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'remove_dino')
 
-        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
+        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
 
     def dungeon_invite(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
 
-        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'invite_room')
-        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'invite', dungeonid = dungeonid, type = 'edit_last_page')
+        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'invite_room')
+        dng, inf = Dungeon.base_upd(userid = user.id, messageid = 'invite', dungeonid = dungeonid, type = 'edit_last_page')
 
     def dungeon_supplies(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
 
-        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
-        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'supplies', dungeonid = dungeonid, type = 'edit_last_page')
+        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+        dng, inf = Dungeon.base_upd(userid = user.id, messageid = 'supplies', dungeonid = dungeonid, type = 'edit_last_page')
 
     def dungeon_set_coins(bot, bd_user, call, user):
 
@@ -1977,7 +1980,7 @@ class call_data:
 
                     bot.answer_callback_query(call.id, show_text)
                     dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}.coins': coins }} )
-                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                    inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
 
         if bd_user['language_code'] == 'ru':
@@ -2025,7 +2028,7 @@ class call_data:
 
                 if message.text in ['Отмена', 'Cancel']:
                     bot.delete_message(user.id, message.message_id)
-                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                    inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
                 else:
 
@@ -2046,7 +2049,7 @@ class call_data:
                         else:
                             show_text2 = "🔎 | The item is not found, try to enter a more correct name!"
 
-                        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
                         bot.answer_callback_query(call.id, show_text2, show_alert = True)
 
                     else:
@@ -2059,7 +2062,7 @@ class call_data:
                             else:
                                 show_text3 = "🔎 | The item is not found in your inventory!"
 
-                            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                            inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
                             bot.answer_callback_query(call.id, show_text3, show_alert = True)
 
                         else:
@@ -2068,15 +2071,15 @@ class call_data:
 
                                 if i['item_id'] in pr_l_s:
 
-                                    if functions.item_authenticity(i) == True:
+                                    if Functions.item_authenticity(i) == True:
 
                                         if data_items[i['item_id']][lg_name] not in inl_d.keys():
-                                            inl_d[ data_items[i['item_id']][lg_name] ] = f"dungeon_add_item {dungeonid} {functions.qr_item_code(i)}"
+                                            inl_d[ data_items[i['item_id']][lg_name] ] = f"dungeon_add_item {dungeonid} {Functions.qr_item_code(i)}"
 
                                     else:
-                                        if f"{data_items[i['item_id']][lg_name]} ({functions.qr_item_code(i, False)})" not in inl_d.keys():
+                                        if f"{data_items[i['item_id']][lg_name]} ({Functions.qr_item_code(i, False)})" not in inl_d.keys():
 
-                                            inl_d[ f"{data_items[i['item_id']][lg_name]} ({functions.qr_item_code(i, False)})" ] = f"dungeon_add_item {dungeonid} {functions.qr_item_code(i)}"
+                                            inl_d[ f"{data_items[i['item_id']][lg_name]} ({Functions.qr_item_code(i, False)})" ] = f"dungeon_add_item {dungeonid} {Functions.qr_item_code(i)}"
 
                             markup_inline = types.InlineKeyboardMarkup(row_width = 3)
 
@@ -2103,7 +2106,7 @@ class call_data:
     def dungeon_add_item(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
-        data = functions.des_qr(call.data.split()[2], True)
+        data = Functions.des_qr(call.data.split()[2], True)
         dung = dungeons.find_one({"dungeonid": dungeonid})
         it_id = str(data['item_id'])
 
@@ -2121,7 +2124,7 @@ class call_data:
                 text = f"❌ | Enter the correct number!"
 
             bot.answer_callback_query(call.id, text, show_alert = True)
-            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+            inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
         if user_item != None:
 
@@ -2142,11 +2145,11 @@ class call_data:
                         text = f"❌ | Item not found in inventory!"
 
                     bot.answer_callback_query(call.id, text, show_alert = True)
-                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                    inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
                 else:
 
-                    if len(dung['users'][str(user.id)]['inventory']) + count > dungeon.d_backpack(bd_user):
+                    if len(dung['users'][str(user.id)]['inventory']) + count > Dungeon.d_backpack(bd_user):
 
                         if bd_user['language_code'] == 'ru':
                             text = f'❌ | Ваш рюкзак не может вместить в себя столько предметов!'
@@ -2154,7 +2157,7 @@ class call_data:
                             text = f"❌ | Your backpack can't hold so many items!"
 
                         bot.answer_callback_query(call.id, text, show_alert = True)
-                        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
                     else:
 
@@ -2165,7 +2168,7 @@ class call_data:
                         users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
                         dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}': dung['users'][str(user.id)] }} )
 
-                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                    inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
             max_count = bd_user['inventory'].count(user_item)
 
@@ -2188,7 +2191,7 @@ class call_data:
 
             else:
 
-                if len(dung['users'][str(user.id)]['inventory']) + max_count > dungeon.d_backpack(bd_user):
+                if len(dung['users'][str(user.id)]['inventory']) + max_count > Dungeon.d_backpack(bd_user):
 
                     if bd_user['language_code'] == 'ru':
                         text = f'❌ | Ваш рюкзак не может вместить в себя столько предметов!'
@@ -2196,7 +2199,7 @@ class call_data:
                         text = f"❌ | Your backpack can't hold so many items!"
 
                     bot.answer_callback_query(call.id, text, show_alert = True)
-                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                    inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
 
                 else:
@@ -2208,7 +2211,7 @@ class call_data:
                     users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
                     dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}': dung['users'][str(user.id)] }} )
 
-                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                    inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
     def dungeon_remove_item_action(bot, bd_user, call, user):
 
@@ -2225,14 +2228,14 @@ class call_data:
             lg_name = 'nameen'
 
         for i in user_items:
-            if functions.item_authenticity(i) == True:
+            if Functions.item_authenticity(i) == True:
                 ke = f"{data_items[ i['item_id'] ][lg_name]}  x{user_items.count(i)}"
 
-                mrk_d[ ke ] = f'dungeon_remove_item {dungeonid} {functions.qr_item_code(i)}'
+                mrk_d[ ke ] = f'dungeon_remove_item {dungeonid} {Functions.qr_item_code(i)}'
             else:
-                ke = f"{data_items[ i['item_id'] ][lg_name]}  x{user_items.count(i)} ({functions.qr_item_code(i, False)})"
+                ke = f"{data_items[ i['item_id'] ][lg_name]}  x{user_items.count(i)} ({Functions.qr_item_code(i, False)})"
 
-                mrk_d[ ke ] = f'dungeon_remove_item {dungeonid} {functions.qr_item_code(i)}'
+                mrk_d[ ke ] = f'dungeon_remove_item {dungeonid} {Functions.qr_item_code(i)}'
 
         markup_inline = types.InlineKeyboardMarkup(row_width = 1)
 
@@ -2258,7 +2261,7 @@ class call_data:
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
         if dung != None:
-            data = functions.des_qr(call.data.split()[2], True)
+            data = Functions.des_qr(call.data.split()[2], True)
             it_id = str(data['item_id'])
 
             data_item = items_f['items'][it_id]
@@ -2275,7 +2278,7 @@ class call_data:
                     text = f"❌ | Enter the correct number!"
 
                 bot.answer_callback_query(call.id, text, show_alert = True)
-                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
             if user_item != None:
 
@@ -2284,7 +2287,7 @@ class call_data:
                         dung['users'][str(user.id)]['inventory'].remove(i)
 
                 dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}.inventory': dung['users'][str(user.id)]['inventory'] }} )
-                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
 
     def dungeon_ready(bot, bd_user, call, user):
 
@@ -2298,7 +2301,7 @@ class call_data:
 
                 if dung['users'][str(user.id)]['dinos'] != {}:
 
-                    if dung['users'][str(user.id)]['coins'] > bd_user['coins']:
+                    if False:#dung['users'][str(user.id)]['coins'] > bd_user['coins']:
 
                         if bd_user['language_code'] == 'ru':
                             show_text = '❗ | Вы указали недопустимое количество монет!'
@@ -2336,14 +2339,15 @@ class call_data:
 
             else:
                 dung['stage_data']['preparation']['ready'].remove(user.id)
+                ok = True
 
             if ok == True:
 
                 dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
-                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
+                inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
 
             else:
-                print('-0-')
+                print('-0-095')
 
     def dungeon_start_game(bot, bd_user, call, user):
 
@@ -2352,60 +2356,50 @@ class call_data:
 
         if dung != None:
 
-            if True:#dung['users'][str(user.id)]['dinos'] != {}:
+            if dung['users'][str(user.id)]['dinos'] != {}:
 
-                if True:# dung['users'][str(user.id)]['coins'] <= bd_user['coins']:
+                if True: #dung['users'][str(user.id)]['coins'] <= bd_user['coins']:
 
-                    if True:# dung['users'][str(user.id)]['coins'] >= 200:
+                    if dung['users'][str(user.id)]['coins'] >= 200:
 
-                        if True: #len(dung['stage_data']['preparation']['ready']) == len(dung['users']) - 1:
+                        if len(dung['stage_data']['preparation']['ready']) == len(dung['users']) - 1:
 
-                            if True:#len(dung['users']) - 1 != 0:
-                                complexity = [0, 0] #игроков и динозавров изначально
+                            complexity = [0, 0] #игроков и динозавров изначально
 
-                                for userid in dung['users'].keys():
-                                    complexity[0] += 1
-                                    userd = dung['users'][userid]
-                                    dg_user = users.find_one({"userid": int(userid)})
-                                    dung['users'][userid]['last_page'] = 'main'
+                            for userid in dung['users'].keys():
+                                complexity[0] += 1
+                                userd = dung['users'][userid]
+                                dg_user = users.find_one({"userid": int(userid)})
+                                dung['users'][userid]['last_page'] = 'main'
 
-                                    for dk in userd['dinos'].keys():
-                                        complexity[1] += 1
-                                        dg_user['dinos'][dk]['activ_status'] = 'dungeon'
+                                for dk in userd['dinos'].keys():
+                                    complexity[1] += 1
+                                    dg_user['dinos'][dk]['activ_status'] = 'dungeon'
 
-                                    #users.update_one( {"userid": int(userid) }, {"$inc": {f'coins': userd['coins'] * -1 }} )
-                                    #users.update_one( {"userid": int(userid) }, {"$set": {f'dinos': dg_user['dinos'] }} )
+                                #users.update_one( {"userid": int(userid) }, {"$inc": {f'coins': userd['coins'] * -1 }} )
+                                #users.update_one( {"userid": int(userid) }, {"$set": {f'dinos': dg_user['dinos'] }} )
 
-                                    userd['coins'] -= 200
+                                userd['coins'] -= 200
 
 
-                                dung['stage_data']['game'] = {
-                                        'floor_n': 0,
-                                        'room_n': 0,
-                                        'player_move': [ list( dung['users'].keys() )[0], list( dung['users'].keys() ) ],
-                                        'start_time': int(time.time()),
-                                        'complexity': { 'users': complexity[0], 'dinos': complexity[1] },
-                                        'floors_stat': {}
-                                                             }
+                            dung['stage_data']['game'] = {
+                                    'floor_n': 0,
+                                    'room_n': 0,
+                                    'player_move': [ list( dung['users'].keys() )[0], list( dung['users'].keys() ) ],
+                                    'start_time': int(time.time()),
+                                    'complexity': { 'users': complexity[0], 'dinos': complexity[1] },
+                                    'floors_stat': {}
+                                                         }
 
-                                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
-                                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
-                                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'dungeon_stage': 'game' }} )
+                            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
+                            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
+                            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'dungeon_stage': 'game' }} )
 
-                                dng, inf = dungeon.base_upd(dungeonid = dungeonid, type = 'create_floor')
-                                pprint(dng)
+                            dng, inf = Dungeon.base_upd(dungeonid = dungeonid, type = 'create_floor')
+                            pprint(dng)
 
-                                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
+                            inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
 
-                            else:
-
-                                if bd_user['language_code'] == 'ru':
-                                    show_text = '❗ | В игре должно участвовать минимум 2 человека!'
-
-                                else:
-                                    show_text = "❗ | At least 2 people must participate in the game!"
-
-                                bot.answer_callback_query(call.id, show_text, show_alert = True)
 
                         else:
 
@@ -2462,9 +2456,14 @@ class call_data:
 
                     dung['stage_data']['game']['room_n'] += 1
 
-                    if dung['stage_data']['game']['room_n'] >= dung['settings']['max_rooms'] + 1:
+                    for userid in dung['users'].keys():
+                        dung['users'][userid]['last_page'] = 'main'
 
-                        dng, inf = dungeon.base_upd(dungeonid = dungeonid, type = 'create_floor')
+                    dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
+
+                    if dung['stage_data']['game']['room_n'] > dung['settings']['max_rooms'] + 1:
+
+                        dng, inf = Dungeon.base_upd(dungeonid = dungeonid, type = 'create_floor')
 
                         dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data.game.floors_stat.{floor_n}.end_time': int(time.time()) }} )
 
@@ -2472,7 +2471,7 @@ class call_data:
 
                         dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
 
-                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
+                    inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
 
                 else:
                     if bd_user['language_code'] == 'ru':
@@ -2504,7 +2503,7 @@ class call_data:
         else:
             text = f"⚔🛡 | Select an action for {din_name} >"
 
-        bot.send_message(call.message.chat.id, text, reply_markup = dungeon.inline(bot, user.id, dungeonid, 'battle_action', {'dinoid': dinoid}) )
+        bot.send_message(call.message.chat.id, text, reply_markup = Dungeon.inline(bot, user.id, dungeonid, 'battle_action', {'dinoid': dinoid}) )
 
     def dungeon_battle_attack(bot, bd_user, call, user):
 
@@ -2516,7 +2515,7 @@ class call_data:
         dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
         bot.delete_message(user.id, call.message.message_id)
 
-        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = False)
+        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = False)
 
     def dungeon_battle_defend(bot, bd_user, call, user):
 
@@ -2528,7 +2527,7 @@ class call_data:
         dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
         bot.delete_message(user.id, call.message.message_id)
 
-        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = False)
+        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = False)
 
     def dungeon_battle_idle(bot, bd_user, call, user):
 
@@ -2539,7 +2538,7 @@ class call_data:
         if 'action' in dung['users'][str(user.id)]['dinos'][str(dinoid)].keys():
             del dung['users'][str(user.id)]['dinos'][str(dinoid)]['action']
             dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
-            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = False)
+            inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = False)
 
         bot.delete_message(user.id, call.message.message_id)
 
@@ -2552,9 +2551,13 @@ class call_data:
         if dung['floor'][room_n]['next_room'] == True:
             if user.id not in dung['floor'][room_n]['ready']:
                 dung['floor'][room_n]['ready'].append(user.id)
-                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor': dung['floor'] }} )
 
-        inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = False)
+            else:
+                dung['floor'][room_n]['ready'].remove(user.id)
+
+            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor': dung['floor'] }} )
+
+        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = False)
 
     def dungeon_end_move(bot, bd_user, call, user):
 
@@ -2563,22 +2566,22 @@ class call_data:
 
         if int(dung['stage_data']['game']['player_move'][0]) == user.id:
 
-            sht, iff = dungeon.battle_user_move(bot, dungeonid, user.id, bd_user, call)
+            sht, iff = Dungeon.battle_user_move(bot, dungeonid, user.id, bd_user, call)
             print(iff)
 
-            log, iff2 = dungeon.battle_mob_move(bot, dungeonid, user.id, bd_user, call)
+            log, iff2 = Dungeon.battle_mob_move(bot, dungeonid, user.id, bd_user, call)
             print(iff2)
 
-            dng, inf = dungeon.base_upd(dungeonid = dungeonid, type = 'next_move')
+            dng, inf = Dungeon.base_upd(dungeonid = dungeonid, type = 'next_move')
             print(inf)
 
-            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
-            print(inf)
+            # inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
+            # print(inf)
 
             sw_text = sht + '\n'
             for i in log: sw_text += i + '\n'
 
-            bot.send_message(user.id, sw_text, reply_markup = functions.inline_markup(bot, f'delete_message', user.id) )
+            bot.send_message(user.id, sw_text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
 
     def dungeon_dinos_stats(bot, bd_user, call, user):
 
@@ -2605,7 +2608,7 @@ class call_data:
                 sw_text += '\n\n'
 
 
-        bot.send_message(user.id, sw_text, reply_markup = functions.inline_markup(bot, f'delete_message', user.id) )
+        bot.send_message(user.id, sw_text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
 
     def dungeon_collect_reward(bot, bd_user, call, user):
 
@@ -2617,21 +2620,33 @@ class call_data:
 
         if dung['users'][str(user.id)]['dinos'] != {}:
 
-            if str(user.id) not in reward['collected'].keys() or reward['collected'][str(user.id)] == {}:
-                reward['collected'][str(user.id)] = {}
+            if user.id not in dung['floor'][room_n]['ready']:
 
-                reward['collected'][str(user.id)]['coins'] = True
-                reward['collected'][str(user.id)]['experience'] = True
-                reward['collected'][str(user.id)]['items'] = []
+                if str(user.id) not in reward['collected'].keys() or reward['collected'][str(user.id)] == {}:
+                    reward['collected'][str(user.id)] = {}
 
-                dung['users'][str(user.id)]['coins'] += reward['coins']
-                users.update_one( {"userid": user.id}, {"$inc": {'lvl.1': reward['experience'] }} )
+                    reward['collected'][str(user.id)]['coins'] = True
+                    reward['collected'][str(user.id)]['experience'] = True
+                    reward['collected'][str(user.id)]['items'] = []
 
-                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor.{room_n}.reward': reward }} )
-                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}': dung['users'][str(user.id)] }} )
+                    dung['users'][str(user.id)]['coins'] += reward['coins']
+                    users.update_one( {"userid": user.id}, {"$inc": {'lvl.1': reward['experience'] }} )
 
-            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'collect_reward')
-            dng, inf = dungeon.base_upd(userid = user.id, messageid = 'collect_reward', dungeonid = dungeonid, type = 'edit_last_page')
+                    dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor.{room_n}.reward': reward }} )
+                    dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}': dung['users'][str(user.id)] }} )
+
+                inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'collect_reward')
+                dng, inf = Dungeon.base_upd(userid = user.id, messageid = 'collect_reward', dungeonid = dungeonid, type = 'edit_last_page')
+
+            else:
+                if bd_user['language_code'] == 'ru':
+                    show_text = '❗ | Для взаимодействия, отмените готовность!'
+
+                else:
+                    show_text = "❗ | For interaction, cancel readiness!"
+
+                bot.answer_callback_query(call.id, show_text, show_alert = True)
+
 
     def item_from_reward(bot, bd_user, call, user):
 
@@ -2643,12 +2658,19 @@ class call_data:
         room_n = str(dung['stage_data']['game']['room_n'])
         loot = dung['floor'][room_n]['reward']['items']
 
-        item_dt = functions.get_dict_item( item_id )
+        inv = room_rew['collected'][ str(user.id) ]['items']
+        d_items = []
+
+        for itm in inv:
+
+            if itm in loot:
+                loot.remove(itm)
+
+        item_dt = Functions.get_dict_item( item_id )
 
         if item_dt in loot:
 
-            if len(user_dt['inventory']) >= dungeon.d_backpack(bd_user):
-
+            if len(user_dt['inventory']) >= Dungeon.d_backpack(bd_user):
 
                 if bd_user['language_code'] == 'ru':
                     show_text = '❗ | В вашем рюкзаке больше нет места! Освободите место, а после заберите награду.'
@@ -2665,11 +2687,11 @@ class call_data:
                 dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor':  dung['floor'] }} )
                 dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users':  dung['users'] }} )
 
-                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'collect_reward')
+                inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'collect_reward')
 
 
         else:
-            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'collect_reward')
+            inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'collect_reward')
 
     def dungeon_inventory(bot, bd_user, call, user):
 
@@ -2677,6 +2699,7 @@ class call_data:
         page = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
         data_items = items_f['items']
+        room_n = str(dung['stage_data']['game']['room_n'])
 
         if bd_user['language_code'] == 'ru':
             lg_name = "nameru"
@@ -2686,98 +2709,116 @@ class call_data:
         items = dung['users'][str(user.id)]['inventory']
         sort_items = {}
 
-        for i in items:
+        if user.id not in dung['floor'][room_n]['ready']:
 
-            if functions.item_authenticity(i) == True:
+            for i in items:
 
-                if data_items[ str(i['item_id']) ][lg_name] not in sort_items.keys():
-                    sort_items[ data_items[ str(i['item_id']) ][lg_name] ] = { 'col': 1, 'callback_data': f"dungeon_use_item {dungeonid} {functions.qr_item_code(i)}" }
+                if Functions.item_authenticity(i) == True:
+
+                    if data_items[ str(i['item_id']) ][lg_name] not in sort_items.keys():
+                        sort_items[ data_items[ str(i['item_id']) ][lg_name] ] = { 'col': 1, 'callback_data': f"dungeon_use_item {dungeonid} {Functions.qr_item_code(i)}" }
+
+                    else:
+                        sort_items[ data_items[ str(i['item_id']) ][lg_name] ]['col'] += 1
 
                 else:
-                    sort_items[ data_items[ str(i['item_id']) ][lg_name] ]['col'] += 1
+                    if f"{data_items[ str(i['item_id']) ][lg_name]} ({Functions.qr_item_code(i, False)})" not in sort_items.keys():
+
+                        inl_d[ f"{data_items[ str(i['item_id']) ][lg_name]} ({Functions.qr_item_code(i, False)})" ] = { 'col': 1, 'callback_data': f"dungeon_use_item {dungeonid} {Functions.qr_item_code(i)}" }
+
+                    else:
+                        sort_items[ f"{data_items[ str(i['item_id']) ][lg_name]} ({Functions.qr_item_code(i, False)})" ]['col'] += 1
+
+            sort_items_keys = {}
+            sort_list = []
+
+            for i in sort_items.keys():
+                i_n = f'{i} x{sort_items[i]["col"]}'
+
+                if i_n not in sort_list:
+                    sort_list.append( i_n )
+                    sort_items_keys[ i_n ] = sort_items[i]['callback_data']
+
+            pages_inv = list( Functions.chunks(sort_list, 6) )
+            inl_d = {}
+            markup_inline = types.InlineKeyboardMarkup(row_width = 2)
+
+            if pages_inv != []:
+                sl_n = 0
+
+                for i in pages_inv[page-1]:
+                    sl_n += 1
+                    inl_d[i] = sort_items_keys[i]
+
+                if sl_n != 6:
+                    for _ in range(6 - sl_n):
+                        sl_n += 1
+                        inl_d[ ' ' * (6 - sl_n) ] = '-'
+
+                markup_inline.add( *[
+                                    types.InlineKeyboardButton(
+                                        text = inl,
+                                        callback_data = inl_d[inl] ) for inl in inl_d.keys()
+                                 ])
+
+            if len(pages_inv) > 1:
+
+                inl_serv = { }
+
+                if page - 1 < 1:
+                    m_page = 1
+
+                else:
+                    m_page = page - 1
+                    inl_serv['◀'] = f'dungeon.inventory {m_page} {dungeonid}'
+
+                inl_serv['❌'] = f'dungeon.to_lobby {dungeonid}'
+
+                if page + 1 > len(pages_inv):
+                    p_page = len(pages_inv)
+
+                else:
+                    p_page = page + 1
+                    inl_serv['▶'] = f'dungeon.inventory {p_page} {dungeonid}'
 
             else:
-                if f"{data_items[ str(i['item_id']) ][lg_name]} ({functions.qr_item_code(i, False)})" not in sort_items.keys():
+                inl_serv = { '❌': f'dungeon.to_lobby {dungeonid}'}
 
-                    inl_d[ f"{data_items[ str(i['item_id']) ][lg_name]} ({functions.qr_item_code(i, False)})" ] = { 'col': 1, 'callback_data': f"dungeon_use_item {dungeonid} {functions.qr_item_code(i)}" }
-
-                else:
-                    sort_items[ f"{data_items[ str(i['item_id']) ][lg_name]} ({functions.qr_item_code(i, False)})" ]['col'] += 1
-
-        sort_items_keys = {}
-        sort_list = []
-
-        for i in sort_items.keys():
-            i_n = f'{i} x{sort_items[i]["col"]}'
-
-            if i_n not in sort_list:
-                sort_list.append( i_n )
-                sort_items_keys[ i_n ] = sort_items[i]['callback_data']
-
-        pages_inv = list( functions.chunks(sort_list, 6) )
-        inl_d = {}
-        markup_inline = types.InlineKeyboardMarkup(row_width = 2)
-
-        if pages_inv != []:
-            sl_n = 0
-
-            for i in pages_inv[page-1]:
-                sl_n += 1
-                inl_d[i] = sort_items_keys[i]
-
-            if sl_n != 6:
-                for _ in range(6 - sl_n):
-                    sl_n += 1
-                    inl_d[ ' ' * (6 - sl_n) ] = '-'
-
-            markup_inline.add( *[
-                                types.InlineKeyboardButton(
-                                    text = inl,
-                                    callback_data = inl_d[inl] ) for inl in inl_d.keys()
+            markup_inline.row( *[ types.InlineKeyboardButton(
+                                  text = inl,
+                                  callback_data = inl_serv[inl] ) for inl in inl_serv.keys()
                              ])
 
-        if len(pages_inv) > 1:
-
-            inl_serv = { }
-
-            if page - 1 < 1:
-                m_page = 1
-
-            else:
-                m_page = page - 1
-                inl_serv['◀'] = f'dungeon.inventory {m_page} {dungeonid}'
-
-            inl_serv['❌'] = f'dungeon.to_lobby {dungeonid}'
-
-            if page + 1 > len(pages_inv):
-                p_page = len(pages_inv)
+            if bd_user['language_code'] == 'ru':
+                text = ( f"🎒 | Инвентарь\n\n"
+                         f"👑 | Монет: {dung['users'][ str(user.id) ]['coins']}\n"
+                         f"🎈 | Предметов: {len(dung['users'][ str(user.id) ]['inventory'])} / {Dungeon.d_backpack(bd_user)}"
+                       )
 
             else:
-                p_page = page + 1
-                inl_serv['▶'] = f'dungeon.inventory {p_page} {dungeonid}'
+                text = ( f"🎒 | Inventory\n\n"
+                         f"👑 | Coins: {dung['users'][ str(user.id) ]['coins']}\n"
+                         f"🎈 | Items: {len(dung['users'][ str(user.id) ]['inventory'])} / {Dungeon.d_backpack(bd_user)}"
+                       )
+
+            bot.edit_message_caption(text, call.message.chat.id, call.message.message_id, parse_mode = 'Markdown', reply_markup = markup_inline)
+            dng, inf = Dungeon.base_upd(userid = user.id, messageid = 'inventory', dungeonid = dungeonid, type = 'edit_last_page')
 
         else:
-            inl_serv = { '❌': f'dungeon.to_lobby {dungeonid}'}
+            if bd_user['language_code'] == 'ru':
+                show_text = '❗ | Для взаимодействия, отмените готовность!'
 
-        markup_inline.row( *[ types.InlineKeyboardButton(
-                              text = inl,
-                              callback_data = inl_serv[inl] ) for inl in inl_serv.keys()
-                         ])
+            else:
+                show_text = "❗ | For interaction, cancel readiness!"
 
-        if bd_user['language_code'] == 'ru':
-            text = "🔎 | Выберите предмет для использования > "
-        else:
-            text = "🔎 | Select an item to use > "
-
-        bot.edit_message_caption(text, call.message.chat.id, call.message.message_id, parse_mode = 'Markdown', reply_markup = markup_inline)
-        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'inventory', dungeonid = dungeonid, type = 'edit_last_page')
+            bot.answer_callback_query(call.id, show_text, show_alert = True)
 
     def dungeon_use_item(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
-        data = functions.des_qr(call.data.split()[2], True)
+        data = Functions.des_qr(call.data.split()[2], True)
         it_id = str(data['item_id'])
 
         data_item = items_f['items'][it_id]
@@ -2825,7 +2866,7 @@ class call_data:
             text = "❌ | Exclusion of users > "
 
         bot.edit_message_caption(text, call.message.chat.id, call.message.message_id, parse_mode = 'Markdown', reply_markup = markup_inline)
-        dng, inf = dungeon.base_upd(userid = user.id, messageid = 'kick_room', dungeonid = dungeonid, type = 'edit_last_page')
+        dng, inf = Dungeon.base_upd(userid = user.id, messageid = 'kick_room', dungeonid = dungeonid, type = 'edit_last_page')
 
     def dungeon_kick(bot, bd_user, call, user):
 
@@ -2835,7 +2876,7 @@ class call_data:
 
         if k_user_id in dung['users'].keys():
             user_message = dung['users'][k_user_id]['messageid']
-            dng, inf = dungeon.base_upd(userid = int(k_user_id), dungeonid = dungeonid, type = 'leave_user')
+            dng, inf = Dungeon.base_upd(userid = int(k_user_id), dungeonid = dungeonid, type = 'leave_user')
             print(inf), pprint(dng)
 
             if inf == 'leave_user':
@@ -2846,10 +2887,10 @@ class call_data:
                     text = "❌ | You have been excluded from the dungeon."
 
                 bot.delete_message(int(k_user_id), user_message)
-                bot.send_message(int(k_user_id), text, reply_markup = functions.markup(bot, 'dungeon_menu', user))
+                bot.send_message(int(k_user_id), text, reply_markup = Functions.markup(bot, 'dungeon_menu', user))
 
                 call_data.dungeon_kick_member(bot, bd_user, call, user)
-                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
+                inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
 
     def dungeon_leave_in_game(bot, bd_user, call, user):
 
@@ -2859,7 +2900,7 @@ class call_data:
 
         if k_user_id in dung['users'].keys():
             user_message = dung['users'][k_user_id]['messageid']
-            dng, inf = dungeon.base_upd(userid = int(k_user_id), dungeonid = dungeonid, type = 'leave_user')
+            dng, inf = Dungeon.base_upd(userid = int(k_user_id), dungeonid = dungeonid, type = 'leave_user')
 
             if inf == 'leave_user':
 
@@ -2869,9 +2910,9 @@ class call_data:
                     text = "🗻 | You are out of the dungeon!"
 
                 bot.delete_message(int(k_user_id), user_message)
-                bot.send_message(int(k_user_id), text, reply_markup = functions.markup(bot, 'dungeon_menu', user))
+                bot.send_message(int(k_user_id), text, reply_markup = Functions.markup(bot, 'dungeon_menu', user))
 
-                inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
+                inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
 
     def dungeon_fork_answer(bot, bd_user, call, user):
 
@@ -2911,16 +2952,16 @@ class call_data:
                     if len(room['results'][i]) == mx_n:
                         new_room_type = room['poll_rooms'][i]
 
-            dng, inf = dungeon.base_upd(dungeonid = dungeonid, type = 'create_room', kwargs = { 'rooms_list': [room_n], 'rooms': { f'{room_n}': new_room_type } } )
+            dng, inf = Dungeon.base_upd(dungeonid = dungeonid, type = 'create_room', kwargs = { 'rooms_list': [room_n], 'rooms': { f'{room_n}': new_room_type } } )
 
-            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
+            inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
 
         else:
 
             dung['floor'][room_n]['results'] = room['results']
             dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor': dung['floor'] }} )
 
-            inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
+            inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
 
     def dungeon_safe_exit(bot, bd_user, call, user):
 
@@ -2930,16 +2971,16 @@ class call_data:
         if user.id == dungeonid:
 
             for k_user_id in dung['users'].keys():
-                dungeon.user_dungeon_stat(int(k_user_id), dungeonid)
+                Dungeon.user_dungeon_stat(int(k_user_id), dungeonid)
 
-            inf = dungeon.message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
-            dng, inf = dungeon.base_upd(dungeonid = user.id, type = 'delete_dungeon')
+            inf = Dungeon.message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
+            dng, inf = Dungeon.base_upd(dungeonid = user.id, type = 'delete_dungeon')
 
         else:
 
             if k_user_id in dung['users'].keys():
                 user_message = dung['users'][k_user_id]['messageid']
-                dng, inf = dungeon.base_upd(userid = int(k_user_id), dungeonid = dungeonid, type = 'leave_user')
+                dng, inf = Dungeon.base_upd(userid = int(k_user_id), dungeonid = dungeonid, type = 'leave_user')
 
                 if inf == 'leave_user':
                     dungeons.user_dungeon_stat(user.id, dungeonid)
@@ -2950,6 +2991,83 @@ class call_data:
                         text = "🗻 | You are out of the dungeon!"
 
                     bot.delete_message(int(k_user_id), user_message)
-                    bot.send_message(int(k_user_id), text, reply_markup = functions.markup(bot, 'dungeon_menu', user))
+                    bot.send_message(int(k_user_id), text, reply_markup = Functions.markup(bot, 'dungeon_menu', user))
 
-                    inf = dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
+                    inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
+
+    def dungeon_mine(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+        room_n = str(dung['stage_data']['game']['room_n'])
+
+        data_items = items_f['items']
+        ob_ef = 0
+
+        for dkey in dung['users'][str(user.id)]['dinos'].keys():
+            eq_tool = bd_user['dinos'][dkey]['dungeon']['equipment']['weapon']
+
+            if eq_tool == None:
+                pass
+
+            else:
+                data_item = data_items[ str(eq_tool['item_id']) ]
+                if "effectiv" in data_item.keys():
+                    ob_ef += data_item["effectiv"]
+                else:
+                    ob_ef += 1
+
+        if str(user.id) not in dung['floor'][room_n]['users_res'].keys():
+            dung['floor'][room_n]['users_res'][str(user.id)] = []
+
+        users_res = dung['floor'][room_n]['users_res'][str(user.id)]
+        mine_res = dung['floor'][room_n]['resources']
+        user_dt = dung['users'][str(user.id)]
+        dp_rm_res = []
+
+        for dt_i in mine_res:
+
+            if dt_i['min_efect'] <= ob_ef:
+                dp_rm_res.append( dt_i['item'] )
+
+        for itm in users_res:
+
+            if itm in dp_rm_res:
+                dp_rm_res.remove(itm)
+
+        if dp_rm_res != []:
+
+            if len(user_dt['inventory']) >= Dungeon.d_backpack(bd_user):
+
+                if bd_user['language_code'] == 'ru':
+                    show_text = '❗ | В вашем рюкзаке больше нет места! Освободите место, а после заберите награду.'
+
+                else:
+                    show_text = "❗ | There is no more space in your backpack! Make room, and then collect the reward."
+
+            else:
+
+                dung['floor'][room_n]['users_res'][str(user.id)].append( dp_rm_res[0] )
+                dung['users'][str(user.id)]['inventory'].append( dp_rm_res[0] )
+
+                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor.{room_n}.users_res.{user.id}': dung['floor'][room_n]['users_res'][str(user.id)] }} )
+
+                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}': dung['users'][str(user.id)] }} )
+
+                data_item = data_items[ dp_rm_res[0]['item_id'] ]
+
+                if bd_user['language_code'] == 'ru':
+                    sw_text = f'⛏ | Ваши динозавры выкопали {data_item["nameru"]}!'
+
+                else:
+                    sw_text = f"⛏ | Your dinosaurs dug up {data_item['nameen']}!"
+
+        else:
+
+            if bd_user['language_code'] == 'ru':
+                sw_text = 'В данный момент нет материалов которые ваши динозавры способны выкопать!'
+
+            else:
+                sw_text = "At the moment there are no materials that your dinosaurs are able to dig up!"
+
+        bot.send_message(user.id, sw_text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
