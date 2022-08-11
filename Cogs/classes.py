@@ -31,7 +31,7 @@ reyt_ = [[], []]
 
 users_timeout = {}
 
-class functions:
+class Functions:
 
     @staticmethod
     def trans_paste(fg_img,bg_img,alpha=10,box=(0,0)):
@@ -149,7 +149,7 @@ class functions:
         if bd_user == None:
             bd_user = users.find_one({"userid": userid})
 
-        if bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False and bd_user['lvl'][0] <= 5:
+        if bd_user != None and len(bd_user['dinos']) == 0 and Functions.inv_egg(bd_user) == False and bd_user['lvl'][0] <= 5:
 
             if bd_user['language_code'] == 'ru':
                 nl = "🧩 Проект: Возрождение"
@@ -159,7 +159,7 @@ class functions:
             markup.add(nl)
             return markup
 
-        elif bd_user != None and len(bd_user['dinos']) == 0 and functions.inv_egg(bd_user) == False and bd_user['lvl'][0] > 5:
+        elif bd_user != None and len(bd_user['dinos']) == 0 and Functions.inv_egg(bd_user) == False and bd_user['lvl'][0] > 5:
 
             if bd_user['language_code'] == 'ru':
                 nl = '🎮 Инвентарь'
@@ -451,7 +451,7 @@ class functions:
                 if bd_user['language_code'] == 'ru':
                     nl = ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч']
 
-                    if functions.acc_check(bot, bd_user, '44', str(bd_user['settings']['dino_id'])):
+                    if Functions.acc_check(bot, bd_user, '44', str(bd_user['settings']['dino_id'])):
                         for x in ['🧩 Пазлы', '♟ Шахматы', '🧱 Дженга', '🎲 D&D']:
                             nl.append(x)
 
@@ -460,7 +460,7 @@ class functions:
                 else:
                     nl = ['🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball']
 
-                    if functions.acc_check(bot, bd_user, '44', str(bd_user['settings']['dino_id'])):
+                    if Functions.acc_check(bot, bd_user, '44', str(bd_user['settings']['dino_id'])):
                         for x in ['🧩 Puzzles', '♟ Chess', '🧱 Jenga', '🎲 D&D']:
                             nl.append(x)
 
@@ -725,7 +725,7 @@ class functions:
 
         dino = json_f['elements'][str(dino_id)]
         del user['dinos'][str(dino_id_remove)]
-        user['dinos'][functions.user_dino_pn(user)] = {'dino_id': dino_id, "status": 'dino', 'activ_status': 'pass_active', 'name': dino['name'], 'stats':  {"heal": 100, "eat": random.randint(70, 100), 'game': random.randint(50, 100), 'mood': random.randint(7, 100), "unv": 100}, 'games': [], 'quality': quality, 'dungeon': {"equipment": {'armor': None, 'weapon': None}} }
+        user['dinos'][Functions.user_dino_pn(user)] = {'dino_id': dino_id, "status": 'dino', 'activ_status': 'pass_active', 'name': dino['name'], 'stats':  {"heal": 100, "eat": random.randint(70, 100), 'game': random.randint(50, 100), 'mood': random.randint(7, 100), "unv": 100}, 'games': [], 'quality': quality, 'dungeon': {"equipment": {'armor': None, 'weapon': None}} }
 
         users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos']}} )
 
@@ -821,7 +821,7 @@ class functions:
                         text = f'🦖 | {chat.first_name}, the dinosaur has hatched! 🎉'
 
                     try:
-                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id) )
+                        bot.send_message(user['userid'], text, reply_markup = Functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id) )
                     except:
                         pass
 
@@ -833,7 +833,7 @@ class functions:
                         text = f'🍕 | {chat.first_name}, {dinoname} wants to eat, his need for food has dropped to {arg}%!'
 
                     try:
-                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
+                        bot.send_message(user['userid'], text, reply_markup = Functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
                     except:
                         pass
 
@@ -845,7 +845,7 @@ class functions:
                         text = f'🎮 | {chat.first_name}, {dinoname} wants to play, his need for the game has dropped to {arg}%!'
 
                     try:
-                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
+                        bot.send_message(user['userid'], text, reply_markup = Functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
                     except:
                         pass
 
@@ -857,7 +857,7 @@ class functions:
                         text = f'🦖 | {chat.first_name}, {dinoname} is in a bad mood, his mood has sunk to {arg}%!'
 
                     try:
-                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
+                        bot.send_message(user['userid'], text, reply_markup = Functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
                     except:
                         pass
 
@@ -869,7 +869,7 @@ class functions:
                         text = f'❤ | {chat.first_name}, {dinoname} is feeling unwell, his health has dropped to {arg}%!'
 
                     try:
-                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, 'inventory', chat.id, ['Открыть инвентарь', 'Open inventory']) )
+                        bot.send_message(user['userid'], text, reply_markup = Functions.inline_markup(bot, 'inventory', chat.id, ['Открыть инвентарь', 'Open inventory']) )
                     except:
                         pass
 
@@ -881,7 +881,7 @@ class functions:
                         text = f'🌙 | {chat.first_name}, {dinoname} wants to sleep, his sleep characteristic dropped to {arg}%!'
 
                     try:
-                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
+                        bot.send_message(user['userid'], text, reply_markup = Functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
                     except:
                         pass
 
@@ -896,7 +896,7 @@ class functions:
                         nl = '🧩 Project: Rebirth'
                         nl2 = '🎮 Inventory'
 
-                    if functions.inv_egg(user) == False and user['lvl'][0] <= 5:
+                    if Functions.inv_egg(user) == False and user['lvl'][0] <= 5:
                         markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
                         markup.add(nl)
 
@@ -928,7 +928,7 @@ class functions:
                         text = f'🌙 | {chat.first_name}, {dinoname} is awake and full of energy!'
 
                     try:
-                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
+                        bot.send_message(user['userid'], text, reply_markup = Functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
                     except Exception as error:
                         print('woke_up ', error)
                         pass
@@ -941,7 +941,7 @@ class functions:
                         text = f'🎮 | {chat.first_name}, {dinoname} has stopped playing!'
 
                     try:
-                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
+                        bot.send_message(user['userid'], text, reply_markup = Functions.inline_markup(bot, f'open_dino_profile', chat.id, ['Открыть профиль', 'Open a profile'], dino_id))
                     except:
                         pass
 
@@ -949,7 +949,7 @@ class functions:
                 elif notification == "journey_end":
 
                     try:
-                        functions.journey_end_log(bot, user['userid'], dino_id)
+                        Functions.journey_end_log(bot, user['userid'], dino_id)
                     except:
                         pass
 
@@ -961,7 +961,7 @@ class functions:
                         text = f'💬 | {chat.first_name}, you have received a friend request!'
 
                     try:
-                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, 'requests', chat.id, ['Проверить запросы', 'Check requests']))
+                        bot.send_message(user['userid'], text, reply_markup = Functions.inline_markup(bot, 'requests', chat.id, ['Проверить запросы', 'Check requests']))
                     except:
                         pass
 
@@ -997,7 +997,7 @@ class functions:
                         text = f'🍕 | {chat.first_name}, {dinoname} is back from collecting food!'
 
                     try:
-                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, 'inventory', chat.id, ['Открыть инвентарь', 'Open inventory']) )
+                        bot.send_message(user['userid'], text, reply_markup = Functions.inline_markup(bot, 'inventory', chat.id, ['Открыть инвентарь', 'Open inventory']) )
                     except:
                         pass
 
@@ -1011,7 +1011,7 @@ class functions:
                         text = f'🛠 | {chat.first_name}, your accessory {item_d["nameen"]} broke!'
 
                     try:
-                        bot.send_message(user['userid'], text, reply_markup = functions.inline_markup(bot, 'inventory', chat.id, ['Открыть инвентарь', 'Open inventory']) )
+                        bot.send_message(user['userid'], text, reply_markup = Functions.inline_markup(bot, 'inventory', chat.id, ['Открыть инвентарь', 'Open inventory']) )
                     except:
                         pass
 
@@ -1246,7 +1246,7 @@ class functions:
             if lg == 'ru':
                 if item['class'] == 'far':
                     type = '🔫 Оружие'
-                    d_text += f'*├* Боеприпасы: {", ".join(functions.sort_items_col( item["ammunition"], "ru", False ))}\n'
+                    d_text += f'*├* Боеприпасы: {", ".join(Functions.sort_items_col( item["ammunition"], "ru", False ))}\n'
 
                 if item['class'] == 'near':
                     type = '🗡 Оружие'
@@ -1257,7 +1257,7 @@ class functions:
             else:
                 if item['class'] == 'far':
                     type = '🔫 Weapon'
-                    d_text += f'*├* Ammunition: {", ".join(functions.sort_items_col( item["ammunition"], "en", False ))}\n'
+                    d_text += f'*├* Ammunition: {", ".join(Functions.sort_items_col( item["ammunition"], "en", False ))}\n'
 
                 if item['class'] == 'near':
                     type = '🗡 Weapon'
@@ -1377,8 +1377,8 @@ class functions:
 
         if mark == True:
             markup_inline = types.InlineKeyboardMarkup()
-            markup_inline.add( types.InlineKeyboardButton( text = in_text[0], callback_data = f"item_{functions.qr_item_code(us_item)}"),  types.InlineKeyboardButton( text = in_text[1], callback_data = f"remove_item_{functions.qr_item_code(us_item)}") )
-            markup_inline.add( types.InlineKeyboardButton( text = in_text[2], callback_data = f"exchange_{functions.qr_item_code(us_item)}") )
+            markup_inline.add( types.InlineKeyboardButton( text = in_text[0], callback_data = f"item_{Functions.qr_item_code(us_item)}"),  types.InlineKeyboardButton( text = in_text[1], callback_data = f"remove_item_{Functions.qr_item_code(us_item)}") )
+            markup_inline.add( types.InlineKeyboardButton( text = in_text[2], callback_data = f"exchange_{Functions.qr_item_code(us_item)}") )
 
             if item['type'] == 'recipe':
                 if len(item["create"]) == 1:
@@ -1390,20 +1390,20 @@ class functions:
                     bt_text = f''
 
                     if lg == 'ru':
-                        bt_text += ", ".join(functions.sort_items_col( item["ns_craft"][cr_dct_id]["materials"], "ru"))
+                        bt_text += ", ".join(Functions.sort_items_col( item["ns_craft"][cr_dct_id]["materials"], "ru"))
 
                     else:
-                        bt_text += ", ".join(functions.sort_items_col( item["ns_craft"][cr_dct_id]["materials"], "en"))
+                        bt_text += ", ".join(Functions.sort_items_col( item["ns_craft"][cr_dct_id]["materials"], "en"))
 
                     bt_text += ' = '
 
                     if lg == 'ru':
-                        bt_text += ", ".join(functions.sort_items_col( item["ns_craft"][cr_dct_id]["create"], "ru" ))
+                        bt_text += ", ".join(Functions.sort_items_col( item["ns_craft"][cr_dct_id]["create"], "ru" ))
 
                     else:
-                        bt_text += ", ".join(functions.sort_items_col( item["ns_craft"][cr_dct_id]["create"], "en" ))
+                        bt_text += ", ".join(Functions.sort_items_col( item["ns_craft"][cr_dct_id]["create"], "en" ))
 
-                markup_inline.add( types.InlineKeyboardButton( text = bt_text, callback_data = f"ns_craft {functions.qr_item_code(us_item)} {cr_dct_id}") )
+                markup_inline.add( types.InlineKeyboardButton( text = bt_text, callback_data = f"ns_craft {Functions.qr_item_code(us_item)} {cr_dct_id}") )
 
             return text, markup_inline, image
 
@@ -1416,7 +1416,7 @@ class functions:
         def zero(message, user_item, bd_user):
 
             if message.text not in ['Yes, transfer the item', 'Да, передать предмет']:
-                bot.send_message(message.chat.id, '❌', reply_markup = functions.markup(bot, functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
+                bot.send_message(message.chat.id, '❌', reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
                 return
 
             friends_id = bd_user['friends']['friends_list']
@@ -1434,7 +1434,7 @@ class functions:
                 except:
                     pass
 
-            friends_chunks = list(functions.chunks(list(functions.chunks(friends_name, 2)), 3))
+            friends_chunks = list(Functions.chunks(list(Functions.chunks(friends_name, 2)), 3))
 
             def work_pr(message, friends_id, page, friends_chunks, friends_id_d, user_item, mms = None):
                 global pages
@@ -1453,7 +1453,7 @@ class functions:
                     else:
                         text = "👥 | The list is empty!"
 
-                    bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', bd_user['userid']))
+                    bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'profile', bd_user['userid']))
 
                 else:
 
@@ -1494,7 +1494,7 @@ class functions:
                             else:
                                 text = "👥 | Return to the friends menu!"
 
-                            bot.send_message(message.chat.id, text, reply_markup = functions.markup('friends-menu', bd_user['userid']))
+                            bot.send_message(message.chat.id, text, reply_markup = Functions.markup('friends-menu', bd_user['userid']))
 
                         else:
                             mms = None
@@ -1523,7 +1523,7 @@ class functions:
                                     data_items = items_f['items']
                                     data_item = data_items[ user_item['item_id'] ]
                                     if data_item['type'] == '+eat':
-                                        eat_c = functions.items_counting(two_user, '+eat')
+                                        eat_c = Functions.items_counting(two_user, '+eat')
                                         if eat_c >= 300:
 
                                             if bd_user['language_code'] == 'ru':
@@ -1531,7 +1531,7 @@ class functions:
                                             else:
                                                 text = f"🌴 | This user has a lot of food, at the moment you can't send him {data_item['nameen']}!"
 
-                                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, functions.last_markup(bd_user, 'profile') , bd_user))
+                                            bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, 'profile') , bd_user))
                                             return
 
                                     col = 1
@@ -1581,7 +1581,7 @@ class functions:
                                             else:
                                                 text = "👥 | Cancel!"
 
-                                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', bd_user['userid']))
+                                            bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'profile', bd_user['userid']))
                                             return '12'
 
                                         try:
@@ -1597,7 +1597,7 @@ class functions:
                                                 else:
                                                     text = f"Enter the correct number!"
 
-                                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', bd_user))
+                                                bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'actions', bd_user))
                                                 return
 
                                         if col < 1:
@@ -1607,7 +1607,7 @@ class functions:
                                             else:
                                                 text = f"Enter the correct number!"
 
-                                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+                                            bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'actions', user))
                                             return
 
                                         if col > mx_col:
@@ -1617,7 +1617,7 @@ class functions:
                                             else:
                                                 text = f"You don't have that many items in your inventory!"
 
-                                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'actions', user))
+                                            bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'actions', user))
                                             return
 
                                         for i in range(col):
@@ -1640,9 +1640,9 @@ class functions:
                                         else:
                                             text = f"🦄 | The Unicorn-courier delivered you an item(s) from {user.first_name}, take a look at the inventory!\n\n📜 Delivered:\n{items_f['items'][str(user_item['item_id'])]['nameen']} x{col}"
 
-                                        bot.send_message(two_user['userid'], text, reply_markup = functions.inline_markup(bot, 'inventory', two_user['userid'], ['Проверить инвентарь', 'Check inventory']))
+                                        bot.send_message(two_user['userid'], text, reply_markup = Functions.inline_markup(bot, 'inventory', two_user['userid'], ['Проверить инвентарь', 'Check inventory']))
 
-                                        functions.user_inventory(bot, user, message)
+                                        Functions.user_inventory(bot, user, message)
 
                                     msg = bot.send_message(message.chat.id, text_col, reply_markup = rmk)
                                     bot.register_next_step_handler(msg, tr_complete, bd_user, user_item, mx_col, col_l, two_user)
@@ -1679,7 +1679,7 @@ class functions:
             n_d = len(list(bd_user['dinos']))
             t_dinos = ''
             for k in bd_user['dinos']:
-                bd_user = functions.dino_q(bd_user)
+                bd_user = Functions.dino_q(bd_user)
                 i = bd_user['dinos'][k]
 
 
@@ -1691,7 +1691,7 @@ class functions:
 
                 if i['status'] == 'incubation':
                     t_incub = i['incubation_time'] - time.time()
-                    time_end = functions.time_end(t_incub, True)
+                    time_end = Functions.time_end(t_incub, True)
 
                     if lang == 'ru':
 
@@ -1923,7 +1923,7 @@ class functions:
     @staticmethod
     def add_item_to_user(user:dict, item_id:str, col:int = 1, type:str = 'add', preabil:dict = None):
 
-        d_it = functions.get_dict_item(item_id, preabil)
+        d_it = Functions.get_dict_item(item_id, preabil)
 
         if type == 'add':
             for i in range(col):
@@ -2075,14 +2075,14 @@ class functions:
                 lg = "nameen"
 
             for i in items:
-                if functions.item_authenticity(i) == True:
+                if Functions.item_authenticity(i) == True:
                     items_id[ items_f['items'][ i['item_id'] ][lg] ] = i
                     items_names.append( items_f['items'][ i['item_id'] ][lg] )
 
                 else:
 
-                    items_id[ items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i, False)})" ] = i
-                    items_names.append( items_f['items'][ i['item_id'] ][lg] + f" ({functions.qr_item_code(i, False)})" )
+                    items_id[ items_f['items'][ i['item_id'] ][lg] + f" ({Functions.qr_item_code(i, False)})" ] = i
+                    items_names.append( items_f['items'][ i['item_id'] ][lg] + f" ({Functions.qr_item_code(i, False)})" )
 
             items_names.sort()
 
@@ -2104,7 +2104,7 @@ class functions:
 
             pages_n = []
 
-            pages = list(functions.chunks(list(functions.chunks(items_sort, 2)), 3))
+            pages = list(Functions.chunks(list(Functions.chunks(items_sort, 2)), 3))
 
             for i in pages:
 
@@ -2155,7 +2155,7 @@ class functions:
                 def ret(message, l_pages, l_page, l_ind_sort_it, pages, page, items_id, ind_sort_it, bd_user, user):
 
                     if len(bd_user['dinos']) >= 2:
-                        sl, ll = functions.dino_pre_answer(bot, message)
+                        sl, ll = Functions.dino_pre_answer(bot, message)
                         if message.text in list(ll[2].keys()):
                             return
 
@@ -2177,7 +2177,7 @@ class functions:
                         else:
                             text = "👥 | Return to the profile menu!"
 
-                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'profile', user))
+                        bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'profile', user))
                         return '12'
 
                     else:
@@ -2202,7 +2202,7 @@ class functions:
 
                             if inv_t == 'info':
 
-                                text,  markup_inline, image = functions.item_info(item, bd_user['language_code'])
+                                text,  markup_inline, image = Functions.item_info(item, bd_user['language_code'])
 
                                 if image == None:
                                     mms = bot.send_message(message.chat.id, text, reply_markup = markup_inline, parse_mode = 'Markdown')
@@ -2253,7 +2253,7 @@ class functions:
                                         else:
                                             text = "🛒 | Return to the market menu!"
 
-                                        bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                        bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'market', user))
 
                                     else:
 
@@ -2290,7 +2290,7 @@ class functions:
                                                 else:
                                                     text = "🛒 | Return to the market menu!"
 
-                                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                                bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'market', user))
 
                                             else:
 
@@ -2316,7 +2316,7 @@ class functions:
                                                 else:
                                                     text = "🛒 | The product has been added to the market, you can see the status of your products in your products!"
 
-                                                bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'market', user))
+                                                bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'market', user))
 
 
                                         msg = bot.send_message(message.chat.id, text)
@@ -2363,7 +2363,7 @@ class functions:
                         except:
                             pass
 
-                    fr_pages = list(functions.chunks(friends, 3))
+                    fr_pages = list(Functions.chunks(friends, 3))
                     page = 1
 
                     pages_buttons = []
@@ -2431,7 +2431,7 @@ class functions:
                             else:
                                 text = "👥 | Return to the friends menu!"
 
-                            bot.send_message(message.chat.id, text, reply_markup = functions.markup(bot, 'friends-menu', user))
+                            bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'friends-menu', user))
                             return None
                         else:
                             if res == '◀':
@@ -2450,7 +2450,7 @@ class functions:
                                 uid = id_names[res[2:]]
 
                                 if list(res)[0] == '❌':
-                                    functions.notifications_manager(bot, "friend_rejection", users.find_one({"userid": int(uid) }), user.first_name)
+                                    Functions.notifications_manager(bot, "friend_rejection", users.find_one({"userid": int(uid) }), user.first_name)
 
                                     if bd_user['language_code'] == 'ru':
                                         text = "👥 | Запрос в друзья отклонён!"
@@ -2467,7 +2467,7 @@ class functions:
 
 
                                 if list(res)[0] == '✅':
-                                    functions.notifications_manager(bot, "friend_accept", users.find_one({"userid": int(uid) }), user.first_name)
+                                    Functions.notifications_manager(bot, "friend_accept", users.find_one({"userid": int(uid) }), user.first_name)
 
                                     if bd_user['language_code'] == 'ru':
                                         text = "👥 | Запрос в друзья одобрен!"
@@ -2519,7 +2519,7 @@ class functions:
 
                             if acc_item['abilities']['endurance'] <= 0:
                                 user['activ_items'][ dino_id ][acc_type] = None
-                                functions.notifications_manager(bot, "acc_broke", user, arg = item_id)
+                                Functions.notifications_manager(bot, "acc_broke", user, arg = item_id)
 
                             users.update_one( {"userid": user["userid"] }, {"$set": {'activ_items': user['activ_items'] }} )
 
@@ -2601,7 +2601,7 @@ class functions:
             if t_incub < 0:
                 t_incub = 0
 
-            time_end = functions.time_end(t_incub, True)
+            time_end = Functions.time_end(t_incub, True)
             if len(time_end) >= 18:
                 time_end = time_end[:-6]
 
@@ -2609,7 +2609,7 @@ class functions:
             egg = Image.open("images/" + str(json_f['elements'][egg_id]['image']))
             egg = egg.resize((290, 290), Image.ANTIALIAS)
 
-            img = functions.trans_paste(egg, bg_p, 1.0, (-50, 40))
+            img = Functions.trans_paste(egg, bg_p, 1.0, (-50, 40))
 
             idraw = ImageDraw.Draw(img)
             line1 = ImageFont.truetype("fonts/Comic Sans MS.ttf", size = 35)
@@ -2638,12 +2638,12 @@ class functions:
             else:
                 bg_p = Image.open(f"images/remain/None_icon.png")
 
-            bd_user = functions.dino_q(bd_user)
+            bd_user = Functions.dino_q(bd_user)
             class_ = bd_user['dinos'][ dino_user_id ]['quality']
 
             panel_i = Image.open(f"images/remain/{class_}_profile_{lang}.png")
 
-            img = functions.trans_paste(panel_i, bg_p, 1.0)
+            img = Functions.trans_paste(panel_i, bg_p, 1.0)
 
             dino_image = Image.open("images/"+str(json_f['elements'][dino_id]['image']))
 
@@ -2652,7 +2652,7 @@ class functions:
 
             xy = -80
             x2 = 80
-            img = functions.trans_paste(dino_image, img, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
+            img = Functions.trans_paste(dino_image, img, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
 
             idraw = ImageDraw.Draw(img)
             line1 = ImageFont.truetype("fonts/Comic Sans MS.ttf", size = 35)
@@ -2677,7 +2677,7 @@ class functions:
             else:
                 text = f'🥚 | The egg is incubated, left: {time_end}'
 
-            bot.send_photo(message.chat.id, profile, text, reply_markup = functions.markup(bot, user = user))
+            bot.send_photo(message.chat.id, profile, text, reply_markup = Functions.markup(bot, user = user))
 
         if bd_dino['status'] == 'dino':
 
@@ -2851,19 +2851,19 @@ class functions:
                 if w_t < 0:
                     w_t = 0
                 if bd_user['language_code'] == 'ru':
-                    text += f"\n\n🌳 *┌* Путешествие: \n·  Осталось: { functions.time_end(w_t) }"
+                    text += f"\n\n🌳 *┌* Путешествие: \n·  Осталось: { Functions.time_end(w_t) }"
                 else:
-                    text += f"\n\n🌳 *┌* Journey: \n·  Left: { functions.time_end(w_t, True) }"
+                    text += f"\n\n🌳 *┌* Journey: \n·  Left: { Functions.time_end(w_t, True) }"
 
             if bd_dino['activ_status'] == 'game':
-                if functions.acc_check(bot, bd_user, '4', dino_user_id, True):
+                if Functions.acc_check(bot, bd_user, '4', dino_user_id, True):
                     w_t = bd_dino['game_time'] - time.time()
                     if w_t < 0:
                         w_t = 0
                     if bd_user['language_code'] == 'ru':
-                        text += f"\n\n🎮 *┌* Игра: \n·  Осталось: { functions.time_end(w_t) }"
+                        text += f"\n\n🎮 *┌* Игра: \n·  Осталось: { Functions.time_end(w_t) }"
                     else:
-                        text += f"\n\n🎮 *┌* Game: \n·  Left: { functions.time_end(w_t, True) }"
+                        text += f"\n\n🎮 *┌* Game: \n·  Left: { Functions.time_end(w_t, True) }"
 
             d_id = dino_user_id
             act_ii = []
@@ -2894,7 +2894,7 @@ class functions:
                 text += f"🌿 *├* Collecting food: {act_ii[1]}\n"
                 text += f"🎍 *└* Journey: {act_ii[2]}\n"
 
-            bot.send_photo(message.chat.id, profile, text, reply_markup = functions.markup(bot, user = user), parse_mode = 'Markdown' )
+            bot.send_photo(message.chat.id, profile, text, reply_markup = Functions.markup(bot, user = user), parse_mode = 'Markdown' )
 
     @staticmethod
     def journey_end_log(bot, user_id, dino_id):
@@ -2977,10 +2977,34 @@ class functions:
 
         markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]}") for inl in inl_l.keys() ])
 
-        bot.send_message(userid, text, reply_markup = functions.markup(bot, "dungeon_menu", int(u_k) ))
+        bot.send_message(userid, text, reply_markup = Functions.markup(bot, "dungeon_menu", int(u_k) ))
+
+    @staticmethod
+    def rand_d(rd:dict):
+
+        """
+        Тип словаря:
+        { "min": 1, "max": 2, "type": "random" }
+                       /
+        { "act": 1, "type": "static" }
+        """
+
+        number = 0
+        if rd["type"] == "static":
+            number = rd['act']
+
+        elif rd["type"] == "random":
+
+            if rd['min'] >= rd['max']:
+                pass
+
+            else:
+                number = random.randint( rd['min'], rd['max'] )
+
+        return number
 
 
-class dungeon:
+class Dungeon:
 
     def random_mobs(mobs_type:str, floor_lvl:int, count:int):
         ret_list = []
@@ -3011,11 +3035,14 @@ class dungeon:
                         l_k.append('ammunition')
 
                     for i in l_k:
-                        if mob[i]['type'] == 'random':
-                            mob_data[i] = random.randint(mob[i]['min'], mob[i]['max'])
 
-                        if mob[i]['type'] == 'static':
-                            mob_data[i] = mob[i]['act']
+                        # if mob[i]['type'] == 'random':
+                        #     mob_data[i] = random.randint(mob[i]['min'], mob[i]['max'])
+                        #
+                        # if mob[i]['type'] == 'static':
+                        #     mob_data[i] = mob[i]['act']
+
+                        mob_data[i] = Functions.rand_d( mob[i] )
 
                         if i in ['hp', 'mana']:
                             mob_data[f"max{i}"] = mob_data[i]
@@ -3038,7 +3065,7 @@ class dungeon:
         def dino_data(dinosid):
             dinos = {}
             for i in dinosid:
-                dinos[i] = {'status': 'live', 'activ_effects': []}
+                dinos[i] = {'activ_effects': []}
 
             return dinos
 
@@ -3076,6 +3103,9 @@ class dungeon:
 
                 if type in ['create_floor', 'create_room']:
 
+                    floor_n = dung['stage_data']['game']['floor_n'] + 1
+                    floor_data = Dungeon.floor_data(floor_n)
+
                     if type == 'create_floor':
 
                         dung['stage_data']['game']['floor_n'] += 1
@@ -3096,20 +3126,16 @@ class dungeon:
 
                         rooms_list = list(range(1, dung['settings']['max_rooms'] ))
                         room_type_cr = "random"
-                        floor_n = dung['stage_data']['game']['floor_n']
-                        floor_data = dungeon.floor_data(floor_n)
 
-                        if floor_n % 5 == 0 and floor_n % 10 != 0:
-                            #выход каждые 5 этажей, не считая босса
-                            floor['10'] = { 'room_type': 'safe_exit', 'image': f'images/dungeon/start_room/1.png', 'next_room': True, 'ready': [] }
-
-                        elif floor_n % 5 == 0 and floor_n % 10 == 0:
+                        if floor_n % 5 == 0 and floor_n % 10 == 0:
                             # босс каждые 10 этажей
                             floor['10'] = { 'room_type': 'boss', 'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png', 'next_room': True }
 
                         else:
                             #остальное
                             rooms_list = list(range(1, dung['settings']['max_rooms'] + 1 ))
+
+                        floor['11'] = { 'room_type': 'safe_exit', 'image': f'images/dungeon/start_room/1.png', 'next_room': True, 'ready': [] }
 
                     else:
 
@@ -3129,7 +3155,7 @@ class dungeon:
                     for room_n in rooms_list:
 
                         if room_type_cr == "random":
-                            room_type = functions.random_items( rooms['com'], rooms['unc'], rooms['rar'], rooms['myt'], rooms['leg'] )
+                            room_type = Functions.random_items( rooms['com'], rooms['unc'], rooms['rar'], rooms['myt'], rooms['leg'] )
 
                         else:
                             room_type = kwargs['rooms'][ str(room_n) ]
@@ -3141,7 +3167,7 @@ class dungeon:
                             else:
                                 m_count = floor_data['mobs_count']['act']
 
-                            mobs = dungeon.random_mobs(mobs_type = 'mobs', floor_lvl = dung['stage_data']['game']['floor_n'], count = m_count)
+                            mobs = Dungeon.random_mobs(mobs_type = 'mobs', floor_lvl = dung['stage_data']['game']['floor_n'], count = m_count)
 
                             floor[str(room_n)] = { 'room_type': room_type, 'reward': { 'experience': 0, 'items': [], 'collected': {}, 'coins': 0 },'mobs': mobs, 'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png', 'next_room': False }
 
@@ -3158,18 +3184,48 @@ class dungeon:
                             floor[str(room_n)] = { 'room_type': room_type, 'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png', 'next_room': True, 'secrets': secrets }
 
                         elif room_type == 'mine':
-                            resources = {}
+                            resources = []
 
-                            floor[str(room_n)] = { 'room_type': room_type, 'image': f'images/dungeon/mine/{1}.png', 'next_room': True, 'resources': resources }
+                            res_count = Functions.rand_d( floor_data["resources"]["items_col"] )
+
+                            for _ in range(res_count):
+                                for item_d in floor_data["resources"]['items']:
+                                    if random.randint(1, 1000) <= item_d['chance']:
+                                        resources.append( { 'item': Functions.get_dict_item( item_d['item'] ), 'min_efect': item_d['min_efect'] } )
+
+                            floor[str(room_n)] = { 'room_type': room_type, 'image': f'images/dungeon/mine/{1}.png', 'next_room': True, 'resources': resources, 'users_res': {} }
+
+                        elif room_type == 'town':
+                            products = []
+                            col = Functions.rand_d( floor_data["products_settings"]['col'] )
+
+                            while len(products) < col:
+                                for pr_k in floor_data['products'].keys():
+                                    if len(products) < col:
+
+                                        pr = floor_data['products'][pr_k]
+                                        ccol = Functions.rand_d( pr['col'] )
+
+                                        for _ in range( ccol ):
+                                            if random.randint(1, 1000) <= pr['chance']:
+
+                                                p_data = {}
+                                                p_data['price'] =  Functions.rand_d( pr['price'] )
+                                                p_data['item'] = { 'item_id': pr['item'], "preabil": pr["preabil"] }
+
+                                                products.append(p_data)
+
+
+                            floor[str(room_n)] = { 'room_type': room_type, 'image': f'images/dungeon/town/{ random.randint(1,3) }.png', 'next_room': True, 'products': products }
 
                         elif room_type in ['fork_2', 'fork_3']:
 
                             if room_type == 'fork_2':
-                                poll_rooms = [ functions.random_items( rooms['com'], rooms['unc'], rooms['rar'], rooms['myt'], rooms['leg'] ) for i in range(2) ]
+                                poll_rooms = [ Functions.random_items( rooms['com'], rooms['unc'], rooms['rar'], rooms['myt'], rooms['leg'] ) for i in range(2) ]
                                 results = [[], []]
 
                             if room_type == 'fork_3':
-                                poll_rooms = [ functions.random_items( rooms['com'], rooms['unc'], rooms['rar'], rooms['myt'], rooms['leg'] ) for i in range(3) ]
+                                poll_rooms = [ Functions.random_items( rooms['com'], rooms['unc'], rooms['rar'], rooms['myt'], rooms['leg'] ) for i in range(3) ]
                                 results = [ [], [], [] ]
 
                             floor[str(room_n)] = { 'room_type': room_type, 'poll_rooms': poll_rooms, 'image': f'images/dungeon/{room_type}/1.png', 'results': results, 'next_room': False }
@@ -3287,7 +3343,7 @@ class dungeon:
                     dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
 
                     if str(userid) == dung['stage_data']['game']['player_move'][0]:
-                        dng, inf = dungeon.base_upd(dungeonid = dungeonid, type = 'next_move')
+                        dng, inf = Dungeon.base_upd(dungeonid = dungeonid, type = 'next_move')
 
                     return dung, 'leave_user'
 
@@ -3370,6 +3426,62 @@ class dungeon:
         inl_l2 = {}
 
         if dung != None:
+
+            if type == 'mine':
+
+                if dung['settings']['lang'] == 'ru':
+                    inl_l = { '📜 Инвентарь': 'dungeon.inventory 1', '⛏ Копать': 'dungeon.mine', '🦕 Состояние': 'dungeon.dinos_stats'
+                            }
+
+                    if userid == dungeonid:
+                        inl_l2 = {'⏩ След. комната': 'dungeon.next_room', '❌ Исключить': 'dungeon.kick_member'}
+
+                    else:
+                        inl_l2 = {'✅ Готовность': 'dungeon.next_room_ready', '🚪 Выйти': 'dungeon.leave_in_game'}
+
+                else:
+                    inl_l = { '📜 Inventory': 'dungeon.inventory 1', '⛏ Dig': 'dungeon.mine', '🦕 Condition': 'dungeon.dinos_stats'
+                            }
+
+                    if userid == dungeonid:
+                        inl_l2 = {'⏩ Next room': 'dungeon.next_room', '❌ Exclude': 'dungeon.kick_member'}
+
+                    else:
+                        inl_l2 = {'✅ Ready': 'dungeon.next_room_ready', '🚪 Go out': 'dungeon.leave_in_game'}
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
+
+                return markup_inline
+
+            if type == 'town':
+
+                if dung['settings']['lang'] == 'ru':
+                    inl_l = { '📜 Инвентарь': 'dungeon.inventory 1', '🧭 Лавка': 'dungeon.shop_menu', '🦕 Состояние': 'dungeon.dinos_stats'
+                            }
+
+                    if userid == dungeonid:
+                        inl_l2 = {'⏩ След. комната': 'dungeon.next_room', '❌ Исключить': 'dungeon.kick_member'}
+
+                    else:
+                        inl_l2 = {'✅ Готовность': 'dungeon.next_room_ready', '🚪 Выйти': 'dungeon.leave_in_game'}
+
+                else:
+                    inl_l = { '📜 Inventory': 'dungeon.inventory 1', '🧭 Shop': 'dungeon.shop_menu', '🦕 Condition': 'dungeon.dinos_stats'
+                            }
+
+                    if userid == dungeonid:
+                        inl_l2 = {'⏩ Next room': 'dungeon.next_room', '❌ Exclude': 'dungeon.kick_member'}
+
+                    else:
+                        inl_l2 = {'✅ Ready': 'dungeon.next_room_ready', '🚪 Go out': 'dungeon.leave_in_game'}
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
+
+                return markup_inline
 
             if type == 'safe_exit':
                 markup_inline = types.InlineKeyboardMarkup(row_width = 3)
@@ -3742,11 +3854,11 @@ class dungeon:
             print('error_no_dungeon')
             return markup_inline
 
-    def message_upd(bot, userid = None, dungeonid = None, upd_type = 'one', type = None, image_update = False, ignore_list = []):
+    def message_upd(bot, userid = None, dungeonid = None, upd_type = 'one', type = None, image_update = False, ignore_list = [], main_page = False):
 
-        def update(dung, text, stage_type, image_way = None):
+        def update(dung, text, stage_type, image_way = None, main_page = False):
 
-            def message_updt(users_ids):
+            def message_updt(users_ids, main_page = False):
                 undl = 0
                 dl = 0
 
@@ -3755,14 +3867,14 @@ class dungeon:
 
                     if int(u_k) not in ignore_list:
 
-                        if upd_type == 'one' or us['last_page'] == 'main':
+                        if upd_type == 'one' or us['last_page'] == 'main' or main_page:
 
                             if us['messageid'] != None:
 
                                 if image_update == False:
 
                                     try:
-                                        bot.edit_message_caption(text, int(u_k), us['messageid'], parse_mode = 'Markdown', reply_markup = dungeon.inline(bot, int(u_k), dungeonid = dungeonid, type = stage_type))
+                                        bot.edit_message_caption(text, int(u_k), us['messageid'], parse_mode = 'Markdown', reply_markup = Dungeon.inline(bot, int(u_k), dungeonid = dungeonid, type = stage_type))
                                         dl += 1
                                     except Exception as e:
                                         print(e)
@@ -3776,7 +3888,7 @@ class dungeon:
                                         bot.edit_message_media(
                                             chat_id = int(u_k),
                                             message_id =  int(dung['users'][str(u_k)]['messageid']),
-                                            reply_markup = dungeon.inline(bot, int(u_k), dungeonid = dungeonid, type = stage_type),
+                                            reply_markup = Dungeon.inline(bot, int(u_k), dungeonid = dungeonid, type = stage_type),
                                             media = telebot.types.InputMedia(type='photo', media = image, caption = text, parse_mode = 'Markdown')
                                         )
                                     except Exception as e:
@@ -3786,9 +3898,9 @@ class dungeon:
                                 image = open(image_way, 'rb')
 
                                 try:
-                                    msg = bot.send_photo(int(u_k), image, text, parse_mode = 'Markdown', reply_markup = dungeon.inline(bot, int(u_k), dungeonid = dungeonid, type = stage_type))
+                                    msg = bot.send_photo(int(u_k), image, text, parse_mode = 'Markdown', reply_markup = Dungeon.inline(bot, int(u_k), dungeonid = dungeonid, type = stage_type))
 
-                                    dungeon.base_upd(userid = int(u_k), messageid = msg.id, dungeonid = dung['dungeonid'], type = 'edit_message')
+                                    Dungeon.base_upd(userid = int(u_k), messageid = msg.id, dungeonid = dung['dungeonid'], type = 'edit_message')
 
                                     dl += 1
                                 except Exception as e:
@@ -3802,7 +3914,7 @@ class dungeon:
 
             if upd_type == 'all':
 
-                return message_updt( list( dung['users'].keys() ) )
+                return message_updt( list( dung['users'].keys() ), main_page )
 
             else:
                 return 'upd_type_dont_find'
@@ -3814,256 +3926,9 @@ class dungeon:
 
                 if dung['dungeon_stage'] == 'game':
 
-                    room_n = dung['stage_data']['game']['room_n']
-                    floor_n = dung['stage_data']['game']['floor_n']
-                    image = dung['floor'][str(room_n)]['image']
-                    room_type = dung['floor'][str(room_n)]['room_type']
-                    inline_type = 'game'
+                    text, inline_type, image, main_page = Dungeon.panel_message(bot, dung, type, main_page)
 
-                    if dung['settings']['lang'] == 'ru':
-                        text = f"🕹 | Комната: #{room_n} | Время: {functions.time_end(int( time.time()) - dung['stage_data']['game']['start_time']) }"
-
-                    else:
-                        text = f'🕹 | Room: #{room_n} | Time: {functions.time_end(int( time.time()) - dung["stage_data"]["game"]["start_time"], True) }'
-
-                    if room_type == 'battle':
-                        if dung['floor'][str(room_n)]['next_room'] == False:
-                            mob = dung['floor'][str(room_n)]['mobs'][0]
-                            data_mob = mobs_f['mobs'][ mob['mob_key'] ]
-                            inline_type = 'battle'
-
-                            if dung['settings']['lang'] == 'ru':
-                                text += (
-                                f"\n\n⚔ | Схватка: \n"
-                                f"        └ Врагов: {len(dung['floor'][str(room_n)]['mobs'])}"
-                                f"\n\n😈 | Текущий враг: {data_mob['name'][dung['settings']['lang']]}"
-                                f"\n❤ | Здоровье: {mob['hp']} / {mob['maxhp']} ({ round( (mob['hp'] / mob['maxhp']) * 100, 2)}%)"
-                                )
-
-                            else:
-                                text += (
-                                f"\n\n⚔ | The fight: \n"
-                                f"        └ Enemies: {len(dung['floor'][str(room_n)]['mobs'])}"
-                                f"\n\n😈 | Current enemy: {data_mob['name'][dung['settings']['lang']]}"
-                                f"\n❤ | Health: {mob['hp']} / {mob['maxhp']} ({ round( (mob['hp'] / mob['maxhp']) * 100, 2)}%)"
-                                )
-
-                            if data_mob['damage-type'] == 'magic':
-
-                                if dung['settings']['lang'] == 'ru':
-                                    text +=  f"\n🌌 | Мана: {mob['mana']} / {mob['maxmana']} ({ round( (mob['mana'] / mob['maxmana']) * 100, 2)}%)"
-
-                                else:
-                                    text +=  f"\n🌌 | Mana: {mob['mana']} / {mob['maxmana']} ({ round( (mob['mana'] / mob['maxmana']) * 100, 2)}%)"
-
-
-                            u_n = 0
-                            users_text = '\n\n'
-                            for k in dung['users'].keys():
-
-                                if k == dung['stage_data']['game']['player_move'][0]:
-                                    r_e = ' ⬅'
-
-                                else:
-                                    r_e = ' ⛔'
-
-                                u_n += 1
-                                username = bot.get_chat(int(k)).first_name
-                                users_text += f'{u_n}. {username} {r_e}\n'
-
-                            if dung['settings']['lang'] == 'ru':
-                                move_text = f'\n🛡⚔ | {bot.get_chat(int(k)).first_name}, выберите действие для динозавров, а после завершите ход! Если вы хотите пропустить ход, просто не выбирайте действия.'
-                            else:
-                                move_text = f"\n🛡⚔ | {bot.get_chat(int(k)).first_name} choose an action for the dinosaurs, and then complete the move! If you want to skip a move, just don't choose actions."
-
-                            dino_text = '\n\n'
-
-                            at_action = 0
-                            df_action = 0
-                            nn_action = 0
-
-                            mus = dung['stage_data']['game']['player_move'][0]
-                            for dn_id in dung['users'][ mus ]['dinos'].keys():
-                                dn = dung['users'][ mus ]['dinos'][dn_id]
-
-                                if 'action' not in dn.keys():
-                                    nn_action += 1
-
-                                else:
-                                    if dn['action'] == 'attack':
-                                        at_action += 1
-
-                                    if dn['action'] == 'defend':
-                                        df_action += 1
-
-                            if dung['settings']['lang'] == 'ru':
-                                dino_text += f'🦕 | Дейсвтия: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
-                            else:
-                                dino_text += f'🦕 | Actions: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
-
-                            text += users_text
-                            text += move_text
-                            text += dino_text
-
-                            if image_update == True:
-                                ok = dungeon.generate_battle_image(image, mob, dungeonid)
-
-                            image = f'battle {dungeonid}.png'
-
-                        if dung['floor'][str(room_n)]['next_room'] == True:
-                            inline_type = 'battle'
-
-                            if dung['settings']['lang'] == 'ru':
-                                text += f'\n\n🏆 Вы одолели всех монстров в этой локации, забери свою награду и продвигайтесь дальше!'
-
-                            else:
-                                text += f'\n\n🏆 You have defeated all the monsters in this location, take your reward and move on!'
-
-                            text += '\n\n'
-                            u_n = 0
-                            users_text = ''
-                            for k in dung['users'].keys():
-                                us = dung['users'][k]
-                                bd_us = users.find_one({"userid": int(k)})
-
-                                if int(k) in dung['floor'][str(room_n)]['ready']:
-                                    r_e = '✅'
-
-                                else:
-                                    r_e = '❌'
-
-                                u_n += 1
-                                username = bot.get_chat(int(k)).first_name
-                                users_text += f'{u_n}. {username} (🦕 {len(us["dinos"])}) ({r_e})\n'
-
-                            text += users_text
-
-                    if room_type == 'empty_room':
-
-                        if dung['settings']['lang'] == 'ru':
-                            text += f"\n\nПохоже это просто пустая комната. Тут немного темно, но ничего интересного вы не видите."
-
-                        else:
-                            text += f"\n\nIt looks like it's just an empty room. It's a little dark here, but you don't see anything interesting."
-
-                        if dung['floor'][str(room_n)]['next_room'] == True:
-
-                            text += '\n\n'
-                            u_n = 0
-                            users_text = ''
-                            for k in dung['users'].keys():
-                                us = dung['users'][k]
-                                bd_us = users.find_one({"userid": int(k)})
-
-                                if int(k) in dung['floor'][str(room_n)]['ready']:
-                                    r_e = '✅'
-
-                                else:
-                                    r_e = '❌'
-
-                                u_n += 1
-                                username = bot.get_chat(int(k)).first_name
-                                users_text += f'{u_n}. {username} (🦕 {len(us["dinos"])}) ({r_e})\n'
-
-                            text += users_text
-
-                    if room_type == 'safe_exit':
-                        inline_type = 'safe_exit'
-
-                        if dung['settings']['lang'] == 'ru':
-                            text += f"\n\n✨ | Поздравляем, вы прошли достаточно тяжёлый путь, перед вами стоит выбор, выйти из подземелья или продолжить путь..."
-
-                        else:
-                            text += f"\n\n✨ | Congratulations, you have passed a rather difficult path, you have a choice before you, to leave the dungeon or continue on your way..."
-
-                        if dung['floor'][str(room_n)]['next_room'] == True:
-
-                            text += '\n\n'
-                            u_n = 0
-                            users_text = ''
-                            for k in dung['users'].keys():
-                                us = dung['users'][k]
-                                bd_us = users.find_one({"userid": int(k)})
-
-                                if int(k) in dung['floor'][str(room_n)]['ready']:
-                                    r_e = '✅'
-
-                                else:
-                                    r_e = '❌'
-
-                                u_n += 1
-                                username = bot.get_chat(int(k)).first_name
-                                users_text += f'{u_n}. {username} (🦕 {len(us["dinos"])}) ({r_e})\n'
-
-                            text += users_text
-
-                    if room_type in ['fork_2', 'fork_3']:
-
-                        if dung['settings']['lang'] == 'ru':
-                            text += f"\n\n🧩 | Перед вами находится несколько проходов, выберите общим голосованием куда вы направитесь!\n\n*🎏 | Выберите*\n"
-
-                        else:
-                            text += f'\n\n🧩 | There are several passageways in front of you, choose by general vote where you will go!\n\n*🎏 | Select*\n'
-
-                        results = dung['floor'][str(room_n)]['results']
-                        inline_type = room_type
-
-                        rs_all = 0
-                        for l in results: rs_all += len(l)
-
-                        if rs_all == 0:
-                            rs_all = 1
-
-                        rs_n = 0
-                        for rs in results:
-                            rs_n += 1
-
-                            pr = int(round( (len(rs) / rs_all * 100), 0))
-
-                            if pr <= 10: bar = '▫'
-
-                            if pr > 10 and pr <= 25:  bar = '▫◽'
-
-                            if pr > 25 and pr <= 50:  bar = '▫◽⬜'
-
-                            if pr > 50 and pr <= 75: bar = '▫◽⬜⬛'
-
-                            if pr > 75 and pr < 100: bar = '▫◽⬜⬛⬜'
-
-                            if pr >= 100: bar = '▫◽⬜⬛⬜⬛'
-
-                            text += f'{rs_n}# {bar} ({ pr }%)\n'
-
-
-                    if room_type == 'start_room':
-
-                        if dung['settings']['lang'] == 'ru':
-                            text += f"\n\nВы спустились на этаж #{floor_n}, подготовьтесь к испытаниям и продолжайте ваш путь!"
-                            text += '\n\n   *👥 | Игроки*\n'
-
-                        else:
-                            text += f'\n\n You have descended to the floor #{floor_n}, prepare for the tests and continue your journey!'
-                            text += '\n\n   *👥 | Players*\n'
-
-                        u_n = 0
-                        users_text = ''
-                        for k in dung['users'].keys():
-                            us = dung['users'][k]
-                            bd_us = users.find_one({"userid": int(k)})
-
-                            if int(k) in dung['floor'][str(room_n)]['ready']:
-                                r_e = '✅'
-
-                            else:
-                                r_e = '❌'
-
-                            u_n += 1
-                            username = bot.get_chat(int(k)).first_name
-                            users_text += f'{u_n}. {username} (🦕 {len(us["dinos"])}) ({r_e})\n'
-
-                        text += users_text
-
-                    return update(dung, text, inline_type, image)
+                    return update(dung, text, inline_type, image, main_page)
 
                 if dung['dungeon_stage'] == 'preparation':
 
@@ -4133,11 +3998,11 @@ class dungeon:
 
 
                         if dung['settings']['lang'] == 'ru':
-                            flr_time = functions.time_end(floor_st['end_time'] - floor_st['start_time'])
+                            flr_time = Functions.time_end(floor_st['end_time'] - floor_st['start_time'])
                             flr_text += f'{flr_k}# Время: {flr_time}\n   *└* Убито: {floor_st["mobs_killing"]}\n\n'
 
                         else:
-                            flr_time = functions.time_end(floor_st['end_time'] - floor_st['start_time'], True)
+                            flr_time = Functions.time_end(floor_st['end_time'] - floor_st['start_time'], True)
                             flr_text += f'{flr_k}# Time: {flr_time}\n   *└ *Killed: {floor_st["mobs_killing"]}\n\n'
 
                     if dung['settings']['lang'] == 'ru':
@@ -4157,7 +4022,7 @@ class dungeon:
 
                     try:
                         bot.delete_message(int(u_k), us['messageid'])
-                        bot.send_message(int(u_k), text, parse_mode = 'Markdown', reply_markup = functions.markup(bot, "dungeon_menu", int(u_k) ))
+                        bot.send_message(int(u_k), text, parse_mode = 'Markdown', reply_markup = Functions.markup(bot, "dungeon_menu", int(u_k) ))
                         dl += 1
                     except Exception as e:
                         undl += 1
@@ -4191,7 +4056,7 @@ class dungeon:
                         chat_id = int(userid),
                         message_id =  int(dung['users'][str(userid)]['messageid']),
                         caption = text,
-                        reply_markup = dungeon.inline(bot, int(userid), dungeonid = dungeonid, type = 'collect_reward'),
+                        reply_markup = Dungeon.inline(bot, int(userid), dungeonid = dungeonid, type = 'collect_reward'),
                     )
 
                 except Exception as e:
@@ -4213,7 +4078,7 @@ class dungeon:
                     bot.edit_message_media(
                         chat_id = int(userid),
                         message_id =  int(dung['users'][str(userid)]['messageid']),
-                        reply_markup = dungeon.inline(bot, int(userid), dungeonid = dungeonid, type = 'settings'),
+                        reply_markup = Dungeon.inline(bot, int(userid), dungeonid = dungeonid, type = 'settings'),
                         media = telebot.types.InputMedia(type='photo', media = image, caption = text)
                     )
 
@@ -4236,7 +4101,7 @@ class dungeon:
                     bot.edit_message_media(
                         chat_id = int(userid),
                         message_id =  int(dung['users'][str(userid)]['messageid']),
-                        reply_markup = dungeon.inline(bot, int(userid), dungeonid = dungeonid, type = 'invite_room'),
+                        reply_markup = Dungeon.inline(bot, int(userid), dungeonid = dungeonid, type = 'invite_room'),
                         media = telebot.types.InputMedia(type='photo', media = image, parse_mode = 'Markdown', caption = text)
                     )
 
@@ -4251,10 +4116,10 @@ class dungeon:
                 items_id = [ i['item_id'] for i in dung['users'][str(userid)]['inventory']]
 
                 if dung['settings']['lang'] == 'ru':
-                    text = f'💼 | Во время путешествия в подземелье может случится что-то неожиданное. Лучше быть готовым ко всему. Учтите, для входа в подземелье требуется минимум 200 монет!\n\n💸 | Монеты: { dung["users"][str(userid)]["coins"] }\n👜 | Вместимость рюкзака: {len(dung["users"][str(userid)]["inventory"])} / {dungeon.d_backpack(bd_user)}\n🧵 | Предметы: {", ".join(functions.sort_items_col( items_id, "ru" ))}'
+                    text = f'💼 | Во время путешествия в подземелье может случится что-то неожиданное. Лучше быть готовым ко всему. Учтите, для входа в подземелье требуется минимум 200 монет!\n\n💸 | Монеты: { dung["users"][str(userid)]["coins"] }\n👜 | Вместимость рюкзака: {len(dung["users"][str(userid)]["inventory"])} / {Dungeon.d_backpack(bd_user)}\n🧵 | Предметы: {", ".join(Functions.sort_items_col( items_id, "ru" ))}'
 
                 else:
-                    text = f"💼 | During the journey to the dungeon, something unexpected may happen. It's better to be prepared for everything.Please note that a minimum of 200 coins is required to enter the dungeon!\n\n💸 | Coins: {dung['users'][str(userid)]['coins']}\n👜 | Backpack capacity: {len(dung['users'][str(userid)]['inventory'])} / {dungeon.d_backpack(bd_user)}\n🧵 | Items: {', '.join(functions.sort_items_col( items_id, 'en' ))}"
+                    text = f"💼 | During the journey to the dungeon, something unexpected may happen. It's better to be prepared for everything.Please note that a minimum of 200 coins is required to enter the dungeon!\n\n💸 | Coins: {dung['users'][str(userid)]['coins']}\n👜 | Backpack capacity: {len(dung['users'][str(userid)]['inventory'])} / {Dungeon.d_backpack(bd_user)}\n🧵 | Items: {', '.join(Functions.sort_items_col( items_id, 'en' ))}"
 
                 try:
 
@@ -4262,7 +4127,7 @@ class dungeon:
                     bot.edit_message_media(
                         chat_id = int(userid),
                         message_id =  int(dung['users'][str(userid)]['messageid']),
-                        reply_markup = dungeon.inline(bot, int(userid), dungeonid = dungeonid, type = 'supplies'),
+                        reply_markup = Dungeon.inline(bot, int(userid), dungeonid = dungeonid, type = 'supplies'),
                         media = telebot.types.InputMedia(type='photo', media = image, parse_mode = 'Markdown', caption = text)
                     )
 
@@ -4276,7 +4141,7 @@ class dungeon:
                 if dung['settings']['lang'] == 'ru':
                     text = '🦕 | Выберите динозавров из списка ниже, чтобы он принял участие в подземелье. Динозавры могут принять участие, только если ничем не заняты в данный момент!\n\n🍔 | Вы можете изменить действие на Добавить / Удалить.'
                     text_limit = '\n\n💢 | В лобби уже максимальное количество динозавров!'
-                    text_inp = '\n\n💢 | Динозавр уже  чем-то занят!'
+                    text_inp = '\n\n💢 | Динозавр уже чем-то занят!'
 
                 else:
                     text = '🦕 | Select the dinosaurs from the list below to take part in the dungeon. Dinosaurs can take part only if they are not busy at the moment!\n\n🍔 | You can also change the action to Add / Remove.'
@@ -4295,7 +4160,7 @@ class dungeon:
                     bot.edit_message_media(
                         chat_id = int(userid),
                         message_id =  int(dung['users'][str(userid)]['messageid']),
-                        reply_markup = dungeon.inline(bot, int(userid), dungeonid = dungeonid, type = 'add_dino'),
+                        reply_markup = Dungeon.inline(bot, int(userid), dungeonid = dungeonid, type = 'add_dino'),
                         media = telebot.types.InputMedia(type='photo', media = image, caption = text)
                     )
 
@@ -4318,7 +4183,7 @@ class dungeon:
                     bot.edit_message_media(
                         chat_id = int(userid),
                         message_id =  int(dung['users'][str(userid)]['messageid']),
-                        reply_markup = dungeon.inline(bot, int(userid), dungeonid = dungeonid, type = 'remove_dino'),
+                        reply_markup = Dungeon.inline(bot, int(userid), dungeonid = dungeonid, type = 'remove_dino'),
                         media = telebot.types.InputMedia(type='photo', media = image, caption = text)
                     )
 
@@ -4387,7 +4252,7 @@ class dungeon:
 
         xy = -10
         x2 = 100
-        alpha_img = functions.trans_paste(img, alpha_img, 0.95, (xy + x2, xy, sz + xy + x2, sz + xy ))
+        alpha_img = Functions.trans_paste(img, alpha_img, 0.95, (xy + x2, xy, sz + xy + x2, sz + xy ))
 
         # здоровье
         img = Image.open( 'images/dungeon/remain/mob_heal.png' )
@@ -4397,10 +4262,10 @@ class dungeon:
         img = img.resize((sz1, sz2), Image.ANTIALIAS)
 
         y, x = 50, 390
-        alpha_img = functions.trans_paste(img, alpha_img, 1, (y + x, y, sz1 + y + x, sz2 + y ))
+        alpha_img = Functions.trans_paste(img, alpha_img, 1, (y + x, y, sz1 + y + x, sz2 + y ))
 
         bar = generate_bar(mob['hp'], mob['maxhp'], 'heal')
-        alpha_img = functions.trans_paste(bar, alpha_img, 1.0, (510, 68) )
+        alpha_img = Functions.trans_paste(bar, alpha_img, 1.0, (510, 68) )
 
         #мана
         if data_mob['damage-type'] == 'magic':
@@ -4412,12 +4277,12 @@ class dungeon:
             img = img.resize((sz1, sz2), Image.ANTIALIAS)
 
             y, x = 120, 320
-            alpha_img = functions.trans_paste(img, alpha_img, 1, (y + x, y, sz1 + y + x, sz2 + y ))
+            alpha_img = Functions.trans_paste(img, alpha_img, 1, (y + x, y, sz1 + y + x, sz2 + y ))
 
             bar = generate_bar(mob['mana'], mob['maxmana'], 'mana')
-            alpha_img = functions.trans_paste(bar, alpha_img, 1.0, (510, 140) )
+            alpha_img = Functions.trans_paste(bar, alpha_img, 1.0, (510, 140) )
 
-        image = alpha_img = functions.trans_paste(alpha_img, bg_p, 1.0 )
+        image = alpha_img = Functions.trans_paste(alpha_img, bg_p, 1.0 )
         image.save(f'battle {dungeonid}.png')
         return 'generation - ok'
 
@@ -4441,7 +4306,7 @@ class dungeon:
                         damage += random.randint(0, 2) #стандартный урон без оружия
 
                     else:
-                        dmg, at_log = dungeon.dino_attack(bd_user, i, dungeonid)
+                        dmg, at_log = Dungeon.dino_attack(bd_user, i, dungeonid)
                         damage += dmg
                         show_text += at_log
 
@@ -4606,7 +4471,7 @@ class dungeon:
             else:
                 coins += data_mob["coins"]['act']
 
-            n_l = dungeon.loot_generator( mob['mob_key'] )
+            n_l = Dungeon.loot_generator( mob['mob_key'] )
             for i in n_l: loot.append(i)
 
             dung['floor'][room_n]['reward']['items'] = loot
@@ -4621,7 +4486,7 @@ class dungeon:
             else:
                 log.append( f"💥 {data_mob['name'][dung['settings']['lang']]} dead." )
 
-            inf = dungeon.message_upd(bot, userid = userid, dungeonid = dungeonid, upd_type = 'all', image_update = True)
+            inf = Dungeon.message_upd(bot, userid = userid, dungeonid = dungeonid, upd_type = 'all', image_update = True)
 
             return log, 'mob_move'
 
@@ -4770,6 +4635,9 @@ class dungeon:
                     if use_armor == True:
                         dmg -= reflection
 
+                        # item = bd_user['dinos'][dino_id]['dungeon']['equipment']['weapon']
+                        # item['abilities']['endurance'] -= random.randint(0,2)
+
                     if dmg < 1:
                         dmg = 0
 
@@ -4813,7 +4681,13 @@ class dungeon:
         for i_d in data_mob['loot']:
             for _ in range(i_d['col']):
                 if random.randint(1, 1000) <= i_d['chance']:
-                    loot.append( functions.get_dict_item( i_d['item'] ) )
+
+                    if 'preabil' not in i_d.keys():
+                        preabil = None
+                    else:
+                        preabil = i_d['preabil']
+
+                    loot.append( Functions.get_dict_item( i_d['item'], preabil ) )
 
         return loot
 
@@ -4901,6 +4775,7 @@ class dungeon:
 
     def floor_data(floor_n):
         floors_data = floors_f["floors"]
+        print(floor_n)
 
         if str(floor_n) not in floors_data.keys():
 
@@ -4908,6 +4783,7 @@ class dungeon:
 
                 if str(floor_n) not in floors_data.keys():
                     floor_n -= 1
+
                 else:
                     return floors_data[str(floor_n)]
 
@@ -4916,3 +4792,282 @@ class dungeon:
 
         else:
             return floors_data[str(floor_n)]
+
+    def panel_message(bot, dung, type, main_page):
+
+        room_n = dung['stage_data']['game']['room_n']
+        floor_n = dung['stage_data']['game']['floor_n']
+        image = dung['floor'][str(room_n)]['image']
+        room_type = dung['floor'][str(room_n)]['room_type']
+        inline_type = 'game'
+
+        if dung['settings']['lang'] == 'ru':
+            text = f"🕹 | Комната: #{room_n} | Время: {Functions.time_end(int( time.time()) - dung['stage_data']['game']['start_time']) }"
+
+        else:
+            text = f'🕹 | Room: #{room_n} | Time: {Functions.time_end(int( time.time()) - dung["stage_data"]["game"]["start_time"], True) }'
+
+        if room_type == 'battle':
+            if dung['floor'][str(room_n)]['next_room'] == False:
+                mob = dung['floor'][str(room_n)]['mobs'][0]
+                data_mob = mobs_f['mobs'][ mob['mob_key'] ]
+                inline_type = 'battle'
+
+                if dung['settings']['lang'] == 'ru':
+                    text += (
+                    f"\n\n⚔ | Схватка: \n"
+                    f"        └ Врагов: {len(dung['floor'][str(room_n)]['mobs'])}"
+                    f"\n\n😈 | Текущий враг: {data_mob['name'][dung['settings']['lang']]}"
+                    f"\n❤ | Здоровье: {mob['hp']} / {mob['maxhp']} ({ round( (mob['hp'] / mob['maxhp']) * 100, 2)}%)"
+                    )
+
+                else:
+                    text += (
+                    f"\n\n⚔ | The fight: \n"
+                    f"        └ Enemies: {len(dung['floor'][str(room_n)]['mobs'])}"
+                    f"\n\n😈 | Current enemy: {data_mob['name'][dung['settings']['lang']]}"
+                    f"\n❤ | Health: {mob['hp']} / {mob['maxhp']} ({ round( (mob['hp'] / mob['maxhp']) * 100, 2)}%)"
+                    )
+
+                if data_mob['damage-type'] == 'magic':
+
+                    if dung['settings']['lang'] == 'ru':
+                        text +=  f"\n🌌 | Мана: {mob['mana']} / {mob['maxmana']} ({ round( (mob['mana'] / mob['maxmana']) * 100, 2)}%)"
+
+                    else:
+                        text +=  f"\n🌌 | Mana: {mob['mana']} / {mob['maxmana']} ({ round( (mob['mana'] / mob['maxmana']) * 100, 2)}%)"
+
+
+                u_n = 0
+                users_text = '\n\n'
+                pl_move = dung['stage_data']['game']['player_move'][0]
+                for k in dung['users'].keys():
+
+                    if k == pl_move:
+                        r_e = ' ⬅'
+
+                    else:
+                        r_e = ' ⛔'
+
+                    u_n += 1
+                    username = bot.get_chat(int(k)).first_name
+                    users_text += f'{u_n}. {username} {r_e}\n'
+
+                if dung['settings']['lang'] == 'ru':
+                    move_text = f'\n🛡⚔ | {bot.get_chat(int( pl_move )).first_name}, выберите действие для динозавров, а после завершите ход! Если вы хотите пропустить ход, просто не выбирайте действия.'
+                else:
+                    move_text = f"\n🛡⚔ | {bot.get_chat(int( pl_move )).first_name} choose an action for the dinosaurs, and then complete the move! If you want to skip a move, just don't choose actions."
+
+                dino_text = '\n\n'
+
+                at_action = 0
+                df_action = 0
+                nn_action = 0
+
+                for dn_id in dung['users'][ pl_move ]['dinos'].keys():
+                    dn = dung['users'][ pl_move ]['dinos'][dn_id]
+
+                    if 'action' not in dn.keys():
+                        nn_action += 1
+
+                    else:
+                        if dn['action'] == 'attack':
+                            at_action += 1
+
+                        if dn['action'] == 'defend':
+                            df_action += 1
+
+                if dung['settings']['lang'] == 'ru':
+                    dino_text += f'🦕 | Дейсвтия: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
+                else:
+                    dino_text += f'🦕 | Actions: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
+
+                text += users_text
+                text += move_text
+                text += dino_text
+
+                if image_update == True:
+                    ok = Dungeon.generate_battle_image(image, mob, dungeonid)
+
+                image = f'battle {dungeonid}.png'
+
+            if dung['floor'][str(room_n)]['next_room'] == True:
+                inline_type = 'battle'
+
+                if dung['settings']['lang'] == 'ru':
+                    text += f'\n\n🏆 Вы одолели всех монстров в этой локации, забери свою награду и продвигайтесь дальше!'
+
+                else:
+                    text += f'\n\n🏆 You have defeated all the monsters in this location, take your reward and move on!'
+
+                text += '\n\n'
+                u_n = 0
+                users_text = ''
+                for k in dung['users'].keys():
+                    us = dung['users'][k]
+                    bd_us = users.find_one({"userid": int(k)})
+
+                    if int(k) in dung['floor'][str(room_n)]['ready']:
+                        r_e = '✅'
+
+                    else:
+                        r_e = '❌'
+
+                    u_n += 1
+                    username = bot.get_chat(int(k)).first_name
+                    users_text += f'{u_n}. {username} (🦕 {len(us["dinos"])}) ({r_e})\n'
+
+                text += users_text
+
+        elif room_type == 'empty_room':
+
+            if dung['settings']['lang'] == 'ru':
+                text += f"\n\nПохоже это просто пустая комната. Тут немного темно, но ничего интересного вы не видите."
+
+            else:
+                text += f"\n\nIt looks like it's just an empty room. It's a little dark here, but you don't see anything interesting."
+
+            if dung['floor'][str(room_n)]['next_room'] == True:
+
+                text += '\n\n'
+                u_n = 0
+                users_text = ''
+                for k in dung['users'].keys():
+                    us = dung['users'][k]
+                    bd_us = users.find_one({"userid": int(k)})
+
+                    if int(k) in dung['floor'][str(room_n)]['ready']:
+                        r_e = '✅'
+
+                    else:
+                        r_e = '❌'
+
+                    u_n += 1
+                    username = bot.get_chat(int(k)).first_name
+                    users_text += f'{u_n}. {username} (🦕 {len(us["dinos"])}) ({r_e})\n'
+
+                text += users_text
+
+        elif room_type == 'safe_exit':
+            inline_type = 'safe_exit'
+
+            if dung['settings']['lang'] == 'ru':
+                text += f"\n\n✨ | Поздравляем, вы прошли достаточно тяжёлый путь, перед вами стоит выбор, выйти из подземелья или продолжить путь..."
+
+            else:
+                text += f"\n\n✨ | Congratulations, you have passed a rather difficult path, you have a choice before you, to leave the dungeon or continue on your way..."
+
+            if dung['floor'][str(room_n)]['next_room'] == True:
+
+                text += '\n\n'
+                u_n = 0
+                users_text = ''
+                for k in dung['users'].keys():
+                    us = dung['users'][k]
+                    bd_us = users.find_one({"userid": int(k)})
+
+                    if int(k) in dung['floor'][str(room_n)]['ready']:
+                        r_e = '✅'
+
+                    else:
+                        r_e = '❌'
+
+                    u_n += 1
+                    username = bot.get_chat(int(k)).first_name
+                    users_text += f'{u_n}. {username} (🦕 {len(us["dinos"])}) ({r_e})\n'
+
+                text += users_text
+
+        elif room_type in ['fork_2', 'fork_3']:
+
+            if dung['settings']['lang'] == 'ru':
+                text += f"\n\n🧩 | Перед вами находится несколько проходов, выберите общим голосованием куда вы направитесь!\n\n*🎏 | Выберите*\n"
+
+            else:
+                text += f'\n\n🧩 | There are several passageways in front of you, choose by general vote where you will go!\n\n*🎏 | Select*\n'
+
+            results = dung['floor'][str(room_n)]['results']
+            inline_type = room_type
+
+            rs_all = 0
+            for l in results: rs_all += len(l)
+
+            if rs_all == 0:
+                rs_all = 1
+
+            rs_n = 0
+            for rs in results:
+                rs_n += 1
+
+                pr = int(round( (len(rs) / rs_all * 100), 0))
+
+                if pr <= 10: bar = '▫'
+
+                if pr > 10 and pr <= 25:  bar = '▫◽'
+
+                if pr > 25 and pr <= 50:  bar = '▫◽⬜'
+
+                if pr > 50 and pr <= 75: bar = '▫◽⬜⬛'
+
+                if pr > 75 and pr < 100: bar = '▫◽⬜⬛⬜'
+
+                if pr >= 100: bar = '▫◽⬜⬛⬜⬛'
+
+                text += f'{rs_n}# {bar} ({ pr }%)\n'
+
+        elif room_type == 'mine':
+            inline_type = 'mine'
+
+            if dung['settings']['lang'] == 'ru':
+                text += f"\n\n💎 | В этой комнате всё так блестит и светится!\nСоберите все эти блестяшки!\n\n"
+
+            else:
+                text += f'\n\n💎 | Everything in this room is so shiny and glowing!\nCollect all these sparkles!\n\n'
+
+            u_n = 0
+            users_text = ''
+            for k in dung['users'].keys():
+                us = dung['users'][k]
+                bd_us = users.find_one({"userid": int(k)})
+
+                if int(k) in dung['floor'][str(room_n)]['ready']:
+                    r_e = '✅'
+
+                else:
+                    r_e = '❌'
+
+                u_n += 1
+                username = bot.get_chat(int(k)).first_name
+                users_text += f'{u_n}. {username} (🦕 {len(us["dinos"])}) ({r_e})\n'
+
+            text += users_text
+
+        elif room_type == 'start_room':
+
+            if dung['settings']['lang'] == 'ru':
+                text += f"\n\nВы спустились на этаж #{floor_n}, подготовьтесь к испытаниям и продолжайте ваш путь!"
+                text += '\n\n   *👥 | Игроки*\n'
+
+            else:
+                text += f'\n\n You have descended to the floor #{floor_n}, prepare for the tests and continue your journey!'
+                text += '\n\n   *👥 | Players*\n'
+
+            u_n = 0
+            users_text = ''
+            for k in dung['users'].keys():
+                us = dung['users'][k]
+                bd_us = users.find_one({"userid": int(k)})
+
+                if int(k) in dung['floor'][str(room_n)]['ready']:
+                    r_e = '✅'
+
+                else:
+                    r_e = '❌'
+
+                u_n += 1
+                username = bot.get_chat(int(k)).first_name
+                users_text += f'{u_n}. {username} (🦕 {len(us["dinos"])}) ({r_e})\n'
+
+            text += users_text
+
+        return text, inline_type, image, main_page
