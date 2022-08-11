@@ -3,7 +3,6 @@ from telebot import types
 import random
 import json
 import pymongo
-from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageSequence, ImageFilter
 import time
 import threading
 import sys
@@ -15,7 +14,7 @@ import config
 
 sys.path.append("Cogs")
 from commands import commands
-from functions import functions, dungeon
+from classes import Functions, Dungeon
 from checks import checks
 from call_data import call_data
 
@@ -38,7 +37,7 @@ class SpamStop(telebot.custom_filters.AdvancedCustomFilter):
     def check(message, text):
         user = message.from_user
 
-        if functions.spam_stop(user.id) == False:
+        if Functions.spam_stop(user.id) == False:
             bot.delete_message(user.id, message.message_id)
             return False
 
@@ -108,14 +107,14 @@ def check(): #проверка каждые 10 секунд
     def memory(): checks.check_memory()
 
     non_members = users.find({ })
-    chunks_users = list(functions.chunks( list(non_members), 25 ))
-    functions.check_data('col', None, int(len(chunks_users)) )
+    chunks_users = list(Functions.chunks( list(non_members), 25 ))
+    Functions.check_data('col', None, int(len(chunks_users)) )
 
     while True:
         if int(memory_usage()[0]) < 1500:
             st_r_time = int(time.time())
             non_members = users.find({ })
-            chunks_users = list(functions.chunks( list(non_members), 25 ))
+            chunks_users = list(Functions.chunks( list(non_members), 25 ))
             sl_time = 10 - ( int(time.time()) - st_r_time )
 
             if sl_time <= 0:
@@ -150,7 +149,7 @@ def check_notif(): #проверка каждые 5 секунд
 
         if int(memory_usage()[0]) < 1500:
             non_members = users.find({ })
-            chunks_users = list(functions.chunks( list(non_members), 50 ))
+            chunks_users = list(Functions.chunks( list(non_members), 50 ))
 
             for members in chunks_users:
                 threading.Thread(target = alpha, daemon=True, kwargs = {'bot': bot, 'members': members}).start()
@@ -189,7 +188,7 @@ min10_thr = threading.Thread(target = min10_check, daemon=True)
 @bot.message_handler(commands=['stats'])
 def command(message):
     user = message.from_user
-    checks_data = functions.check_data(m = 'check')
+    checks_data = Functions.check_data(m = 'check')
 
     def ttx(tm, lst):
         lgs = []
@@ -257,7 +256,7 @@ def command(message):
     if user.id in [5279769615, 1191252229]:
 
         for i in range(1, 10):
-            print(i, dungeon.floor_data(i) )
+            print(i, Dungeon.floor_data(i) )
 
 # @bot.message_handler(commands=['sbros_lvl'])
 # def command_n(message):
@@ -276,7 +275,7 @@ def command(message):
 #             print(f'Программа обновления №{n} завершила работу.')
 #
 #         non_members = users.find({ })
-#         chunks_users = list(functions.chunks( list(non_members), 10 ))
+#         chunks_users = list(Functions.chunks( list(non_members), 10 ))
 #
 #         n = 0
 #         for members in chunks_users:
@@ -292,7 +291,7 @@ def command(message):
         msg_args = message.text.split()
         bd = users.find_one({"userid": int(msg_args[3])})
 
-        tr = functions.add_item_to_user(bd, msg_args[1], int(msg_args[2]))
+        tr = Functions.add_item_to_user(bd, msg_args[1], int(msg_args[2]))
         bot.send_message(user.id, str(msg_args))
 
 @bot.message_handler(commands=['events'])
@@ -301,7 +300,7 @@ def command(message):
     if user.id in [5279769615, 1191252229]:
         bd_user = users.find_one({"userid": user.id})
 
-        functions.journey_end_log(bot, user.id, bd_user['settings']['dino_id'])
+        Functions.journey_end_log(bot, user.id, bd_user['settings']['dino_id'])
 
 @bot.message_handler(commands=['reply_id'])
 def command(message):
@@ -316,18 +315,18 @@ def command(message):
 def command(message):
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
-        inf =  dungeon.message_upd(bot, userid = user.id, dungeonid = user.id, upd_type = 'all', image_update = True)
+        inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = user.id, upd_type = 'all', image_update = True)
         print(inf)
 
 @bot.message_handler(commands=['dungeon'])
 def command(message):
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
-        dng, inf = dungeon.base_upd(userid = user.id)
+        dng, inf = Dungeon.base_upd(userid = user.id)
         pprint.pprint(dng)
         print(inf)
 
-        inf =  dungeon.message_upd(bot, userid = user.id, dungeonid = user.id)
+        inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = user.id)
         print(inf)
 
 @bot.message_handler(commands=['dungeon_add'])
@@ -336,21 +335,21 @@ def command(message):
     msg_args = message.text.split()
     if user.id in [5279769615, 1191252229]:
 
-        dng, inf =  dungeon.base_upd(userid = user.id, dungeonid = int(msg_args[1]), type = 'add_user')
+        dng, inf =  Dungeon.base_upd(userid = user.id, dungeonid = int(msg_args[1]), type = 'add_user')
         pprint.pprint(dng)
         print(inf)
 
-        inf =  dungeon.message_upd(bot, userid = user.id, dungeonid = dng['dungeonid'], upd_type = 'all')
+        inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = dng['dungeonid'], upd_type = 'all')
         print(inf)
 
 @bot.message_handler(commands=['dungeon_delete'])
 def command(message):
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
-        inf =  dungeon.message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
+        inf =  Dungeon.message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
         print(inf)
 
-        dng, inf =  dungeon.base_upd(dungeonid = user.id, type = 'delete_dungeon')
+        dng, inf =  Dungeon.base_upd(dungeonid = user.id, type = 'delete_dungeon')
         pprint.pprint(dng)
         print(inf)
 
@@ -375,7 +374,7 @@ def command(message):
     msg_args = message.text.split()
     user = message.from_user
     bd_user = users.find_one({"userid": user.id})
-    functions.notifications_manager(bot, msg_args[1], bd_user, msg_args[2], dino_id = '1')
+    Functions.notifications_manager(bot, msg_args[1], bd_user, msg_args[2], dino_id = '1')
 
 # =========================================
 
@@ -385,7 +384,7 @@ def command(message):
     bd_user = users.find_one({"userid": user.id})
     if bd_user != None:
 
-        text = functions.member_profile(bot, user.id, bd_user['language_code'])
+        text = Functions.member_profile(bot, user.id, bd_user['language_code'])
 
         try:
             bot.reply_to(message, text, parse_mode = 'Markdown')
@@ -414,7 +413,7 @@ def command(message):
             else:
                 text = f"❤ | Everyone can send a request to friends <a href='tg://user?id={user.id}'>🌀{user.first_name}</a> by clicking on the button below!"
 
-            bot.reply_to(message, text, parse_mode = 'HTML', reply_markup = functions.inline_markup(bot, 'send_request', user.id, ['Отправить запрос', 'Send a request']) )
+            bot.reply_to(message, text, parse_mode = 'HTML', reply_markup = Functions.inline_markup(bot, 'send_request', user.id, ['Отправить запрос', 'Send a request']) )
 
         else:
 
@@ -435,11 +434,11 @@ def on_start(message):
             else:
                 text = f"🎋 | Hey <b>{user.first_name}</b>, I am glad to welcome you!\n" +f"<b>•</b> I'm a small tamagotchi-type game bot, only with dinosaurs!🦖\n\n"+f"<b>🕹 | What is tamagotchi?</b>\n"+ f'<b>•</b> Tamagotchi is a game with a virtual pet that needs to be fed, cared for, played, and so on.🥚\n'+ f"<b>•</b> Compete in the ranking and become the best!\n\n"+ f"<b>🎮 | How to start playing?</b>\n" + f'<b>•</b> Press the button <b>🍡Start playing</b>!\n\n' + f'<b>❤ | Waiting in the game!</b>\n' +f'<b>❗ | In some places, the bot may not be translated!</b>\n'
 
-            bot.reply_to(message, text, reply_markup = functions.markup(bot, user = user), parse_mode = 'html')
+            bot.reply_to(message, text, reply_markup = Functions.markup(bot, user = user), parse_mode = 'html')
         else:
-            bot.reply_to(message, '👋', reply_markup = functions.markup(bot, user = user), parse_mode = 'html')
+            bot.reply_to(message, '👋', reply_markup = Functions.markup(bot, user = user), parse_mode = 'html')
 
-@bot.message_handler(test_bot = True, in_channel = True, spam_check = True, content_types = ['text'])
+@bot.message_handler(in_channel = True, spam_check = True, content_types = ['text']) #test_bot = True,
 def on_message(message):
 
     user = message.from_user
@@ -461,7 +460,7 @@ def on_message(message):
     def lst_m_f():
 
         if bd_user != None:
-            last_mrk = functions.last_markup(bd_user, alternative = 1)
+            last_mrk = Functions.last_markup(bd_user, alternative = 1)
         else:
             last_mrk = None
 
@@ -487,7 +486,7 @@ def on_message(message):
 
         elif message.text in ['🎮 Инвентарь', '🎮 Inventory']:
 
-            functions.user_inventory(bot, user, message)
+            Functions.user_inventory(bot, user, message)
 
         elif message.text in ['🦖 Динозавр', '🦖 Dinosaur']:
 
@@ -539,7 +538,7 @@ def on_message(message):
 
         elif message.text in ["💌 Запросы", "💌 Inquiries"]:
 
-            functions.user_requests(bot, user, message)
+            Functions.user_requests(bot, user, message)
 
         elif message.text in ['➖ Удалить', '➖ Delete']:
 
@@ -627,7 +626,7 @@ def on_message(message):
 
         elif message.text in ['➕ Добавить товар', '➕ Add Product']:
 
-            functions.user_inventory(bot, user, message, 'add_product')
+            Functions.user_inventory(bot, user, message, 'add_product')
 
         elif message.text in ['📜 Мои товары', '📜 My products']:
 
@@ -715,7 +714,7 @@ def answer(call):
 
         call_data.egg_answer(bot, bd_user, call, user)
 
-    elif call.data[:13] in ['90min_journey', '60min_journey', '30min_journey', '10min_journey', '12min_journey']:
+    elif call.data[:13] in ['90min_journey', '60min_journey', '30min_journey', '10min_journey', '12min_journey', '24min_journey']:
 
         call_data.journey(bot, bd_user, call, user)
 
@@ -765,11 +764,11 @@ def answer(call):
 
     elif call.data == 'inventory':
 
-        functions.user_inventory(bot, user, call.message)
+        Functions.user_inventory(bot, user, call.message)
 
     elif call.data == 'requests':
 
-        functions.user_requests(bot, user, call.message)
+        Functions.user_requests(bot, user, call.message)
 
     elif call.data == 'send_request':
 
@@ -780,7 +779,7 @@ def answer(call):
         did = call.data[18:]
         if did in bd_user['dinos'].keys():
             bd_dino = bd_user['dinos'][did]
-            functions.p_profile(bot, call.message, bd_dino, user, bd_user, did)
+            Functions.p_profile(bot, call.message, bd_dino, user, bd_user, did)
 
     elif call.data[:8] == 'ns_craft':
 
@@ -959,8 +958,13 @@ def answer(call):
 
         call_data.dungeon_safe_exit(bot, bd_user, call, user)
 
+    elif call.data.split()[0] == 'dungeon.mine':
+
+        call_data.dungeon_mine(bot, bd_user, call, user)
+
     else:
         print(call.data, 'call.data')
+
 
 if bot.get_me().first_name == 'DinoGochi' or False:
     main_checks.start() # активация всех проверок и игрового процесса
