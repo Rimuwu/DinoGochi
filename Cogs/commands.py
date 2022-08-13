@@ -1104,7 +1104,7 @@ class commands:
                     else:
                         text = f"You have chosen a dinosaur {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
 
-                bot.send_message(message.chat.id, text , reply_markup = Functions.markup(bot, 'actions', user))
+                bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
 
     @staticmethod
     def action_back(bot, message, user, bd_user):
