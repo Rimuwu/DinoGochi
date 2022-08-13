@@ -1085,12 +1085,13 @@ class commands:
                 ll = list(bd_user['dinos'].keys())
                 ind = list(bd_user['dinos'].keys()).index(str(did))
 
-                if ind + 1 == len(ll):
-                    bd_user['settings']['dino_id'] = ll[0]
-                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+                if ind + 1 != len(ll):
+                    bd_user['settings']['dino_id'] = ll[ind + 1]
+
                 else:
-                    bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[int(ll[did-1])]
-                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+                    bd_user['settings']['dino_id'] = ll[0]
+
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
 
                 if bd_user['language_code'] == 'ru':
                     if bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['status'] == 'incubation':
@@ -1103,7 +1104,7 @@ class commands:
                     else:
                         text = f"You have chosen a dinosaur {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
 
-                bot.send_message(message.chat.id, text , reply_markup = functions.markup(bot, 'actions', user))
+                bot.send_message(message.chat.id, text , reply_markup = Functions.markup(bot, 'actions', user))
 
     @staticmethod
     def action_back(bot, message, user, bd_user):
