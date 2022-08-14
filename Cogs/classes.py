@@ -1739,14 +1739,21 @@ class Functions:
 
                         if i['activ_status'] == 'pass_active':
                             stat = '🧩 ничего не делает'
+
                         elif i['activ_status'] == 'sleep':
                             stat = '💤 спит'
+
                         elif i['activ_status'] == 'game':
                             stat = '🕹 играет'
+
                         elif i['activ_status'] == 'hunting':
                             stat = '🌿 собирает еду'
+
                         elif i['activ_status'] == 'journey':
                             stat = '🎴 путешествует'
+
+                        elif i['activ_status'] == 'dungeon':
+                            stat = '🗻 в подземелье'
 
                         dino = json_f['elements'][str(i['dino_id'])]
                         pre_qual = i['quality']
@@ -1768,14 +1775,21 @@ class Functions:
 
                         if i['activ_status'] == 'pass_active':
                             stat = '🧩 does nothing'
+
                         elif i['activ_status'] == 'sleep':
                             stat = '💤 sleeping'
+
                         elif i['activ_status'] == 'game':
                             stat = '🕹 is playing'
+
                         elif i['activ_status'] == 'hunting':
                             stat = '🌿 collects food'
+
                         elif i['activ_status'] == 'journey':
                             stat = '🎴 travels'
+
+                        elif i['activ_status'] == 'dungeon':
+                            stat = '🗻 in dungeon'
 
                         dino = json_f['elements'][str(i['dino_id'])]
                         pre_qual = i['quality']
@@ -2746,6 +2760,12 @@ class Functions:
                 else:
                     st_t = 'collecting food 🥞'
 
+            elif bd_dino['activ_status'] == 'dungeon':
+                if bd_user['language_code'] == 'ru':
+                    st_t = 'в подземелье 🗻'
+                else:
+                    st_t = 'in dungeon 🗻'
+
             if bd_dino['stats']['heal'] >= 60:
                 if bd_user['language_code'] == 'ru':
                     h_text = '❤ *┌* Динозавр здоров'
@@ -3006,7 +3026,7 @@ class Functions:
 
 class Dungeon:
 
-    def random_mobs(mobs_type:str, floor_lvl:int, count:int):
+    def random_mobs(mobs_type:str, floor_lvl:int, count:int = 1):
         ret_list = []
 
         if mobs_type == 'mobs':
@@ -3029,18 +3049,14 @@ class Dungeon:
 
                     if mob['damage-type'] == 'magic':
                         l_k.append('mana')
+
                     elif mob['damage-type'] == 'near':
                         l_k.append('endurance')
+
                     elif mob['damage-type'] == 'far':
                         l_k.append('ammunition')
 
                     for i in l_k:
-
-                        # if mob[i]['type'] == 'random':
-                        #     mob_data[i] = random.randint(mob[i]['min'], mob[i]['max'])
-                        #
-                        # if mob[i]['type'] == 'static':
-                        #     mob_data[i] = mob[i]['act']
 
                         mob_data[i] = Functions.rand_d( mob[i] )
 
@@ -3053,8 +3069,39 @@ class Dungeon:
             return ret_list
 
         elif mobs_type == 'boss':
-            boss_data = json_f['boss']
-            pass
+            boss_data = mobs_f['boss']
+
+            boss_keys = list(boss_data.keys())
+            random.shuffle(boss_keys)
+
+            boss_key = boss_keys[ 0 ]
+            boss = boss_data[boss_key]
+
+            if boss['lvls']['min'] >= floor_lvl or floor_lvl <= boss['lvls']['max']:
+
+                boss_data = {'mob_key': boss_key}
+
+                l_k = ['hp', 'damage', 'intelligence']
+
+                if boss['damage-type'] == 'magic':
+                    l_k.append('mana')
+
+                elif boss['damage-type'] == 'near':
+                    l_k.append('endurance')
+
+                elif boss['damage-type'] == 'far':
+                    l_k.append('ammunition')
+
+                for i in l_k:
+
+                    boss_data[i] = Functions.rand_d( boss[i] )
+
+                    if i in ['hp', 'mana']:
+                        boss_data[f"max{i}"] = boss_data[i]
+
+                boss_data[f"activ_effects"] = []
+
+            return boss_data
 
         else:
             print('random_mobs - mobs_type error')
@@ -3087,7 +3134,7 @@ class Dungeon:
                     'dungeon_stage': 'preparation',
                     'stage_data':  { 'preparation': {'image': random.randint(1,5), 'ready': [] }
                                    },
-                    'settings': { 'lang': bd_user['language_code'], 'max_dinos': 10, 'max_rooms': 10}
+                    'settings': { 'lang': bd_user['language_code'], 'max_dinos': 10, 'max_rooms': 10, 'start_floor': 0} # начальный -1
                 } )
 
                 dung = dungeons.find_one({"dungeonid": userid})
@@ -3129,7 +3176,16 @@ class Dungeon:
 
                         if floor_n % 5 == 0 and floor_n % 10 == 0:
                             # босс каждые 10 этажей
-                            floor['10'] = { 'room_type': 'boss', 'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png', 'next_room': True }
+
+                            boss = Dungeon.random_mobs(mobs_type = 'boss', floor_lvl = dung['stage_data']['game']['floor_n'])
+
+                            floor['10'] = {
+                                'room_type': 'battle', 'battle_type': 'boss',
+                                'reward': { 'experience': 0, 'items': [], 'collected': {}, 'coins': 0 },
+                                'mobs': boss,
+                                'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png',
+                                'next_room': False
+                                          }
 
                         else:
                             #остальное
@@ -3161,15 +3217,18 @@ class Dungeon:
                             room_type = kwargs['rooms'][ str(room_n) ]
 
                         if room_type == 'battle':
-
-                            if floor_data['mobs_count']['type'] == 'random':
-                                m_count = random.randint(floor_data['mobs_count']['min'], floor_data['mobs_count']['max'])
-                            else:
-                                m_count = floor_data['mobs_count']['act']
+                            m_count = Functions.rand_d( floor_data['mobs_count'] )
 
                             mobs = Dungeon.random_mobs(mobs_type = 'mobs', floor_lvl = dung['stage_data']['game']['floor_n'], count = m_count)
 
-                            floor[str(room_n)] = { 'room_type': room_type, 'reward': { 'experience': 0, 'items': [], 'collected': {}, 'coins': 0 },'mobs': mobs, 'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png', 'next_room': False }
+                            floor[str(room_n)] = {
+                                'room_type': room_type, 'battle_type': 'mobs',
+                                'reward': { 'experience': 0, 'items': [], 'collected': {}, 'coins': 0 },
+                                'mobs': mobs,
+                                'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png',
+                                'next_room': False,
+                                'ready': []
+                                                 }
 
                             # collected - items : True, exp: True, coins: True
                             # при нажатии выдавать опыт, и давать выбрать предметы
@@ -3197,6 +3256,7 @@ class Dungeon:
 
                         elif room_type == 'town':
                             products = []
+                            pprint(floor_data)
                             col = Functions.rand_d( floor_data["products_settings"]['col'] )
 
                             while len(products) < col:
@@ -3211,7 +3271,7 @@ class Dungeon:
 
                                                 p_data = {}
                                                 p_data['price'] =  Functions.rand_d( pr['price'] )
-                                                p_data['item'] = { 'item_id': pr['item'], "preabil": pr["preabil"] }
+                                                p_data['item'] = { 'item_id': pr['item'] }
 
                                                 products.append(p_data)
 
@@ -3298,16 +3358,25 @@ class Dungeon:
 
                 if type == 'delete_dungeon':
 
+                    if kwargs == {}:
+                        save_inv = True
+                    else:
+                        save_inv = kwargs['save_inv']
+
                     for user_id in dung['users']:
 
                         bd_user = users.find_one({"userid": int(user_id) })
 
-                        if dung['users'][str(user_id)]['inventory'] != []:
+                        if save_inv == True:
+                            if dung['users'][str(user_id)]['inventory'] != []:
 
-                            for item in dung['users'][str(user_id)]['inventory']:
-                                bd_user['inventory'].append(item)
+                                for item in dung['users'][str(user_id)]['inventory']:
+                                    bd_user['inventory'].append(item)
 
-                            users.update_one( {"userid": int(user_id)}, {"$set": {f'inventory': bd_user['inventory']}} )
+                                users.update_one( {"userid": int(user_id)}, {"$set": {f'inventory': bd_user['inventory']}} )
+
+                            if dung['users'][str(user_id)]['coins'] != 0:
+                                users.update_one( {"userid": int(user_id)}, {"$inc": {f'coins': dung['users'][str(user_id)]['coins'] }} )
 
                         for d_k in dung['users'][ str(user_id) ]['dinos'].keys():
 
@@ -3322,7 +3391,7 @@ class Dungeon:
                     room_n = dung['stage_data']['game']['room_n']
                     bd_user = users.find_one({"userid": int(userid) })
 
-                    if floor_n % 5 == 0 and room_n == 10:
+                    if room_n == 11:
 
                         if dung['users'][str(userid)]['inventory'] != []:
 
@@ -3337,6 +3406,8 @@ class Dungeon:
 
                     for d_k in dung['users'][ str(userid) ]['dinos'].keys():
                         bd_user['dinos'][d_k]['activ_status'] = 'pass_active'
+                        del bd_user['dinos'][d_k]['dungeon_id']
+
                         users.update_one( {"userid": int(userid)}, {"$set": {f'dinos.{d_k}': bd_user['dinos'][d_k] }} )
 
                     del dung['users'][str(userid)]
@@ -3453,9 +3524,7 @@ class Dungeon:
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
 
-                return markup_inline
-
-            if type == 'town':
+            elif type == 'town':
 
                 if dung['settings']['lang'] == 'ru':
                     inl_l = { '📜 Инвентарь': 'dungeon.inventory 1', '🧭 Лавка': 'dungeon.shop_menu', '🦕 Состояние': 'dungeon.dinos_stats'
@@ -3481,9 +3550,8 @@ class Dungeon:
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
 
-                return markup_inline
 
-            if type == 'safe_exit':
+            elif type == 'safe_exit':
                 markup_inline = types.InlineKeyboardMarkup(row_width = 3)
 
                 if dung['settings']['lang'] == 'ru':
@@ -3504,9 +3572,8 @@ class Dungeon:
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = inl_l[inl] ) for inl in inl_l.keys() ])
 
-                return markup_inline
 
-            if type in ['fork_2', 'fork_3']:
+            elif type in ['fork_2', 'fork_3']:
                 markup_inline = types.InlineKeyboardMarkup(row_width = 3)
 
                 inl_l = {"1️⃣": f'dungeon.fork_answer {dungeonid} 1', '2️⃣': f'dungeon.fork_answer {dungeonid} 2'}
@@ -3534,9 +3601,7 @@ class Dungeon:
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = inl_l2[inl] ) for inl in inl_l2.keys() ])
 
-                return markup_inline
-
-            if type == 'battle_action':
+            elif type == 'battle_action':
                 markup_inline = types.InlineKeyboardMarkup(row_width = 2)
 
                 if dung['settings']['lang'] == 'ru':
@@ -3545,7 +3610,6 @@ class Dungeon:
                     inl_l = {"⚔ Attack": 'dungeon.battle_action_attack', '🛡 Defend yourself': 'dungeon.battle_action_defend', '❌ Idle': 'dungeon.battle_action_idle'}
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid} {kwargs['dinoid']}") for inl in inl_l.keys() ])
-                return markup_inline
 
             elif type == 'battle':
                 room_n = dung['stage_data']['game']['room_n']
@@ -3588,8 +3652,6 @@ class Dungeon:
 
                     markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
 
-                    return markup_inline
-
                 if room['next_room'] == True:
 
                     if dung['settings']['lang'] == 'ru':
@@ -3616,9 +3678,6 @@ class Dungeon:
 
                     markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
 
-                    return markup_inline
-
-
             elif type == 'game':
 
                 if dung['settings']['lang'] == 'ru':
@@ -3644,8 +3703,6 @@ class Dungeon:
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
-
-                return markup_inline
 
             elif type == 'preparation':
 
@@ -3680,8 +3737,6 @@ class Dungeon:
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
 
-                return markup_inline
-
             elif type == 'settings':
 
                 if dung['settings']['lang'] == 'ru':
@@ -3702,8 +3757,6 @@ class Dungeon:
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
 
-                return markup_inline
-
             elif type == 'invite_room':
 
                 if dung['settings']['lang'] == 'ru':
@@ -3713,8 +3766,6 @@ class Dungeon:
                     inl_l = {'🕹 Back': 'dungeon.to_lobby'}
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
-
-                return markup_inline
 
             elif type == 'add_dino':
 
@@ -3746,8 +3797,6 @@ class Dungeon:
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
 
-                return markup_inline
-
             elif type == 'remove_dino':
 
                 if dung['settings']['lang'] == 'ru':
@@ -3777,8 +3826,6 @@ class Dungeon:
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
 
-                return markup_inline
-
             elif type == 'supplies':
                 markup_inline = types.InlineKeyboardMarkup(row_width = 2)
 
@@ -3804,8 +3851,6 @@ class Dungeon:
                 markup_inline.row( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
-
-                return markup_inline
 
             elif type == 'collect_reward':
 
@@ -3844,21 +3889,20 @@ class Dungeon:
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
 
-                return markup_inline
-
             else:
                 print('error_type_dont_find')
-                return markup_inline
+
+            return markup_inline
 
         else:
             print('error_no_dungeon')
             return markup_inline
 
-    def message_upd(bot, userid = None, dungeonid = None, upd_type = 'one', type = None, image_update = False, ignore_list = [], main_page = False):
+    def message_upd(bot, userid = None, dungeonid = None, upd_type = 'one', type = None, image_update = False, ignore_list = []):
 
-        def update(dung, text, stage_type, image_way = None, main_page = False):
+        def update(dung, text, stage_type, image_way = None):
 
-            def message_updt(users_ids, main_page = False):
+            def message_updt(users_ids):
                 undl = 0
                 dl = 0
 
@@ -3867,7 +3911,7 @@ class Dungeon:
 
                     if int(u_k) not in ignore_list:
 
-                        if upd_type == 'one' or us['last_page'] == 'main' or main_page:
+                        if upd_type == 'one' or us['last_page'] == 'main':
 
                             if us['messageid'] != None:
 
@@ -3914,7 +3958,7 @@ class Dungeon:
 
             if upd_type == 'all':
 
-                return message_updt( list( dung['users'].keys() ), main_page )
+                return message_updt( list( dung['users'].keys() ) )
 
             else:
                 return 'upd_type_dont_find'
@@ -3926,9 +3970,9 @@ class Dungeon:
 
                 if dung['dungeon_stage'] == 'game':
 
-                    text, inline_type, image, main_page = Dungeon.panel_message(bot, dung, type, main_page)
+                    text, inline_type, image = Dungeon.panel_message(bot, dung, type, image_update)
 
-                    return update(dung, text, inline_type, image, main_page)
+                    return update(dung, text, inline_type, image)
 
                 if dung['dungeon_stage'] == 'preparation':
 
@@ -4215,6 +4259,50 @@ class Dungeon:
         else:
             return 5
 
+    def generate_boss_image(image_way, boss, dungeonid):
+
+        def generate_bar(act, maxact):
+
+            colorbg = '#9a1752'
+            color = '#ff0000'
+            mask_way = 'images/dungeon/remain/bar_mask_heal_boss.png'
+
+            sz_osn = [900, 70]
+            szz = [ sz_osn[1] / 100 * 90, sz_osn[1] / 100 * 10 ]
+
+            bar = Image.new('RGB', (sz_osn[0], sz_osn[1]),  color = colorbg)
+            mask = Image.open(mask_way).convert('L').resize((sz_osn[0], sz_osn[1]), Image.ANTIALIAS)
+
+            x = (act / maxact) * 100
+            x = int(x * 8.7) + 16
+
+            ImageDraw.Draw(bar).polygon(xy=[(szz[1], szz[1]),(x, szz[1]),(x,szz[0]),(szz[1],szz[0])], fill = color)
+            bar = bar.filter(ImageFilter.GaussianBlur(0.6))
+            bar.putalpha(mask)
+
+            return bar
+
+        data_mob = mobs_f['boss'][ boss['mob_key'] ]
+
+        alpha_img = Image.open('images/dungeon/remain/alpha.png')
+
+        bar = generate_bar(boss['hp'], boss['maxhp'])
+        alpha_img = Functions.trans_paste(bar, alpha_img, 1.0, (0, -5) )
+
+        bg_p = Image.open(image_way)
+        img = Image.open(mobs_f['boss'][ boss['mob_key']]['image'] )
+        sz = 325
+        img = img.resize((sz, sz), Image.ANTIALIAS)
+
+        xy = 20
+        x2 = 287
+        alpha_img = Functions.trans_paste(img, alpha_img, 1, (xy + x2, xy, sz + xy + x2, sz + xy ))
+
+        image = Functions.trans_paste(alpha_img, bg_p, 1.0 )
+        image.save(f'boss {dungeonid}.png')
+
+        return 'generation - ok'
+
     def generate_battle_image(image_way, mob, dungeonid):
 
         def generate_bar(act, maxact, tp):
@@ -4290,54 +4378,70 @@ class Dungeon:
 
         dung = dungeons.find_one({"dungeonid": dungeonid})
         room_n = str(dung['stage_data']['game']['room_n'])
-        mob = dung['floor'][room_n]['mobs'][0]
-        userdata = dung['users'][str(userid)]
-        damage = 0
-        damage_permission = True
-        show_text = ''
+        room = dung['floor'][room_n]
 
-        for i in userdata['dinos'].keys():
-            dino_data = userdata['dinos'][i]
+        if len(dung['floor'][room_n]['mobs']) != 0:
 
-            if 'action' in dino_data.keys():
-                if dino_data['action'] == 'attack':
-
-                    if bd_user['dinos'][i]['dungeon']['equipment']['weapon'] == None:
-                        damage += random.randint(0, 2) #стандартный урон без оружия
-
-                    else:
-                        dmg, at_log = Dungeon.dino_attack(bd_user, i, dungeonid)
-                        damage += dmg
-                        show_text += at_log
-
-            if dung['users'][str(userid)]['dinos'][i]['activ_effects'] != []:
-                print('dino have effect')
-
-
-        if damage_permission == True:
-            mob['hp'] -= damage
-
-        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor':  dung['floor'] }} )
-
-        if call != None:
-
-            if bd_user['language_code'] == 'ru':
-                show_text += f"🦕 Ваши динозавры нанесли: {damage} 💥"
-
+            if room['battle_type'] == 'mobs':
+                mob = dung['floor'][room_n]['mobs'][0]
             else:
-                show_text += f"🦕 Your dinosaurs inflicted: {damage} 💥"
+                mob = dung['floor'][room_n]['mobs']
 
-        return show_text, 'user_move'
+            userdata = dung['users'][str(userid)]
+            damage = 0
+            damage_permission = True
+            show_text = ''
+
+            for i in userdata['dinos'].keys():
+                dino_data = userdata['dinos'][i]
+
+                if 'action' in dino_data.keys():
+                    if dino_data['action'] == 'attack':
+
+                        if bd_user['dinos'][i]['dungeon']['equipment']['weapon'] == None:
+                            damage += random.randint(0, 2) #стандартный урон без оружия
+
+                        else:
+                            dmg, at_log = Dungeon.dino_attack(bd_user, i, dungeonid)
+                            damage += dmg
+                            show_text += at_log
+
+                if dung['users'][str(userid)]['dinos'][i]['activ_effects'] != []:
+                    print('dino have effect')
+
+
+            if damage_permission == True:
+                mob['hp'] -= damage
+
+            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor': dung['floor'] }} )
+
+            if call != None:
+
+                if bd_user['language_code'] == 'ru':
+                    show_text += f"🦕 Ваши динозавры нанесли: {damage} 💥"
+
+                else:
+                    show_text += f"🦕 Your dinosaurs inflicted: {damage} 💥"
+
+            return show_text, 'user_move'
+
+        return '', 'no_mobs'
 
     def battle_mob_move(bot, dungeonid, userid, bd_user, call = None):
 
         dung = dungeons.find_one({"dungeonid": dungeonid})
         room_n = str(dung['stage_data']['game']['room_n'])
         floor_n = dung['stage_data']['game']['floor_n']
-        mob = dung['floor'][room_n]['mobs'][0]
-        data_mob = mobs_f['mobs'][ mob['mob_key'] ]
+        room = dung['floor'][room_n]
+
+        if room['battle_type'] == 'mobs':
+            mob = dung['floor'][room_n]['mobs'][0]
+            data_mob = mobs_f['mobs'][ mob['mob_key'] ]
+        else:
+            mob = dung['floor'][room_n]['mobs']
+            data_mob = mobs_f['boss'][ mob['mob_key'] ]
+
         log = []
-        pprint(mob)
 
         def mob_heal(standart = True, heal_dict = None): #могут использовать только маги
             successful = True
@@ -4452,7 +4556,12 @@ class Dungeon:
 
 
         if mob['hp'] <= 0:
-            dung['floor'][room_n]['mobs'].pop(0)
+
+            if room['battle_type'] == 'mobs':
+                dung['floor'][room_n]['mobs'].pop(0)
+
+            else:
+                dung['floor'][room_n]['mobs'] = []
 
             if len(dung['floor'][room_n]['mobs']) == 0:
                 dung['floor'][room_n]['next_room'] = True
@@ -4471,7 +4580,11 @@ class Dungeon:
             else:
                 coins += data_mob["coins"]['act']
 
-            n_l = Dungeon.loot_generator( mob['mob_key'] )
+            if room['battle_type'] == 'mobs':
+                n_l = Dungeon.loot_generator( mob['mob_key'], 'mobs' )
+            else:
+                n_l = Dungeon.loot_generator( mob['mob_key'], 'boss' )
+
             for i in n_l: loot.append(i)
 
             dung['floor'][room_n]['reward']['items'] = loot
@@ -4635,8 +4748,8 @@ class Dungeon:
                     if use_armor == True:
                         dmg -= reflection
 
-                        # item = bd_user['dinos'][dino_id]['dungeon']['equipment']['weapon']
-                        # item['abilities']['endurance'] -= random.randint(0,2)
+                        item = bd_user['dinos'][dino_id]['dungeon']['equipment']['weapon']
+                        item['abilities']['endurance'] -= random.randint(0,2)
 
                     if dmg < 1:
                         dmg = 0
@@ -4655,6 +4768,16 @@ class Dungeon:
 
                             log.append( f"🦕 At {bd_user['dinos'][ log_d['dino_key'] ]['name']} remains 10 ❤, he leaves the dungeon for safety reasons." )
 
+                        if userid == dung['dungeonid'] and len(dung['users'][ str(userid) ]['dinos']) == 0:
+
+                            for uk in dung['users'].keys():
+                                Dungeon.user_dungeon_stat(int(uk), dungeonid)
+
+                                inf = Dungeon.message_upd(bot, dungeonid = int(uk ), type = 'delete_dungeon')
+
+                            kwargs = { 'save_inv': False }
+                            dng, inf = Dungeon.base_upd(dungeonid = userid, type = 'delete_dungeon', kwargs = kwargs)
+
                     else:
                         bd_user['dinos'][ log_d['dino_key'] ]['stats']['heal'] -= dmg
 
@@ -4670,13 +4793,13 @@ class Dungeon:
 
             return log, 'mob_move'
 
-    def loot_generator(mob_key):
+    def loot_generator(mob_key, mt):
         """ Доки функции
 
         Шанс берётся из моба, рандомится от 1-го до 1к, и проверяется число из лута, если x (item['chance']) >= ra.int - значит выпал"""
         loot = []
 
-        data_mob = mobs_f['mobs'][ mob_key ]
+        data_mob = mobs_f[mt][ mob_key ]
 
         for i_d in data_mob['loot']:
             for _ in range(i_d['col']):
@@ -4766,7 +4889,8 @@ class Dungeon:
         dung = dungeons.find_one({"dungeonid": dungeonid})
         user_stat = {
                 'time': int(time.time()) - int(dung['stage_data']['game']['start_time']),
-                'floor': dung['stage_data']['game']['floor_n'],
+                'end_floor': dung['stage_data']['game']['floor_n'],
+                'start_floor': dung['settings']['start_floor'],
                     }
 
         users.update_one( {"userid": user_id }, {"$push": {'user_dungeon.statistics': user_stat }} )
@@ -4793,11 +4917,13 @@ class Dungeon:
         else:
             return floors_data[str(floor_n)]
 
-    def panel_message(bot, dung, type, main_page):
+    def panel_message(bot, dung, type, image_update):
 
+        dungeonid = dung['dungeonid']
         room_n = dung['stage_data']['game']['room_n']
         floor_n = dung['stage_data']['game']['floor_n']
         image = dung['floor'][str(room_n)]['image']
+        room = dung['floor'][str(room_n)]
         room_type = dung['floor'][str(room_n)]['room_type']
         inline_type = 'game'
 
@@ -4808,116 +4934,230 @@ class Dungeon:
             text = f'🕹 | Room: #{room_n} | Time: {Functions.time_end(int( time.time()) - dung["stage_data"]["game"]["start_time"], True) }'
 
         if room_type == 'battle':
-            if dung['floor'][str(room_n)]['next_room'] == False:
-                mob = dung['floor'][str(room_n)]['mobs'][0]
-                data_mob = mobs_f['mobs'][ mob['mob_key'] ]
-                inline_type = 'battle'
+            if room['battle_type'] == 'boss':
+                if dung['floor'][str(room_n)]['next_room'] == False:
 
-                if dung['settings']['lang'] == 'ru':
-                    text += (
-                    f"\n\n⚔ | Схватка: \n"
-                    f"        └ Врагов: {len(dung['floor'][str(room_n)]['mobs'])}"
-                    f"\n\n😈 | Текущий враг: {data_mob['name'][dung['settings']['lang']]}"
-                    f"\n❤ | Здоровье: {mob['hp']} / {mob['maxhp']} ({ round( (mob['hp'] / mob['maxhp']) * 100, 2)}%)"
-                    )
+                    inline_type = 'battle'
+                    boss = dung['floor'][str(room_n)]['mobs']
 
-                else:
-                    text += (
-                    f"\n\n⚔ | The fight: \n"
-                    f"        └ Enemies: {len(dung['floor'][str(room_n)]['mobs'])}"
-                    f"\n\n😈 | Current enemy: {data_mob['name'][dung['settings']['lang']]}"
-                    f"\n❤ | Health: {mob['hp']} / {mob['maxhp']} ({ round( (mob['hp'] / mob['maxhp']) * 100, 2)}%)"
-                    )
-
-                if data_mob['damage-type'] == 'magic':
+                    data_mob = mobs_f['boss'][ boss['mob_key'] ]
+                    inline_type = 'battle'
 
                     if dung['settings']['lang'] == 'ru':
-                        text +=  f"\n🌌 | Мана: {mob['mana']} / {mob['maxmana']} ({ round( (mob['mana'] / mob['maxmana']) * 100, 2)}%)"
+                        text += (
+                        f"\n\n⚔ | Сражение с боссом"
+                        f"\n\n😈 | {data_mob['name'][dung['settings']['lang']]}"
+                        f"\n❤ | Здоровье: {boss['hp']} / {boss['maxhp']} ({ round( (boss['hp'] / boss['maxhp']) * 100, 2)}%)"
+                        )
 
                     else:
-                        text +=  f"\n🌌 | Mana: {mob['mana']} / {mob['maxmana']} ({ round( (mob['mana'] / mob['maxmana']) * 100, 2)}%)"
+                        text += (
+                        f"\n\n⚔ | Boss battle: \n"
+                        f"\n\n😈 | {data_mob['name'][dung['settings']['lang']]}"
+                        f"\n❤ | Health: {boss['hp']} / {boss['maxhp']} ({ round( (boss['hp'] / boss['maxhp']) * 100, 2)}%)"
+                        )
+
+                    if data_mob['damage-type'] == 'magic':
+
+                        if dung['settings']['lang'] == 'ru':
+                            text +=  f"\n🌌 | Мана: {boss['mana']} / {boss['maxmana']} ({ round( (boss['mana'] / boss['maxmana']) * 100, 2)}%)"
+
+                        else:
+                            text +=  f"\n🌌 | Mana: {boss['mana']} / {boss['maxmana']} ({ round( (boss['mana'] / boss['maxmana']) * 100, 2)}%)"
 
 
-                u_n = 0
-                users_text = '\n\n'
-                pl_move = dung['stage_data']['game']['player_move'][0]
-                for k in dung['users'].keys():
+                    u_n = 0
+                    users_text = '\n\n'
+                    pl_move = dung['stage_data']['game']['player_move'][0]
+                    for k in dung['users'].keys():
 
-                    if k == pl_move:
-                        r_e = ' ⬅'
+                        if k == pl_move:
+                            r_e = ' ⬅'
+
+                        else:
+                            r_e = ' ⛔'
+
+                        u_n += 1
+                        username = bot.get_chat(int(k)).first_name
+                        users_text += f'{u_n}. {username} {r_e}\n'
+
+                    if dung['settings']['lang'] == 'ru':
+                        move_text = f'\n🛡⚔ | {bot.get_chat(int( pl_move )).first_name}, выберите действие для динозавров, а после завершите ход! Если вы хотите пропустить ход, просто не выбирайте действия.'
+                    else:
+                        move_text = f"\n🛡⚔ | {bot.get_chat(int( pl_move )).first_name} choose an action for the dinosaurs, and then complete the move! If you want to skip a move, just don't choose actions."
+
+                    dino_text = '\n\n'
+
+                    at_action = 0
+                    df_action = 0
+                    nn_action = 0
+
+                    for dn_id in dung['users'][ pl_move ]['dinos'].keys():
+                        dn = dung['users'][ pl_move ]['dinos'][dn_id]
+
+                        if 'action' not in dn.keys():
+                            nn_action += 1
+
+                        else:
+                            if dn['action'] == 'attack':
+                                at_action += 1
+
+                            if dn['action'] == 'defend':
+                                df_action += 1
+
+                    if dung['settings']['lang'] == 'ru':
+                        dino_text += f'🦕 | Дейсвтия: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
+                    else:
+                        dino_text += f'🦕 | Actions: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
+
+                    text += users_text
+                    text += move_text
+                    text += dino_text
+
+                    if image_update == True:
+                        ok = Dungeon.generate_boss_image(image, boss, dungeonid)
+
+                        image = f'boss {dungeonid}.png'
+
+                if dung['floor'][str(room_n)]['next_room'] == True:
+                    inline_type = 'battle'
+
+                    if dung['settings']['lang'] == 'ru':
+                        text += f'\n\n🏆 Вы победили босса этажа #{floor_n}! Подземелье трепещет от ваших достижений, заберите награду и продолжайте покорение!'
 
                     else:
-                        r_e = ' ⛔'
+                        text += f'\n\n🏆 You have defeated the floor boss #{floor_n}! The dungeon is trembling with your achievements, collect the reward and continue the conquest!'
 
-                    u_n += 1
-                    username = bot.get_chat(int(k)).first_name
-                    users_text += f'{u_n}. {username} {r_e}\n'
+                    text += '\n\n'
+                    u_n = 0
+                    users_text = ''
+                    for k in dung['users'].keys():
+                        us = dung['users'][k]
+                        bd_us = users.find_one({"userid": int(k)})
 
-                if dung['settings']['lang'] == 'ru':
-                    move_text = f'\n🛡⚔ | {bot.get_chat(int( pl_move )).first_name}, выберите действие для динозавров, а после завершите ход! Если вы хотите пропустить ход, просто не выбирайте действия.'
-                else:
-                    move_text = f"\n🛡⚔ | {bot.get_chat(int( pl_move )).first_name} choose an action for the dinosaurs, and then complete the move! If you want to skip a move, just don't choose actions."
+                        if int(k) in dung['floor'][str(room_n)]['ready']:
+                            r_e = '✅'
 
-                dino_text = '\n\n'
+                        else:
+                            r_e = '❌'
 
-                at_action = 0
-                df_action = 0
-                nn_action = 0
+                        u_n += 1
+                        username = bot.get_chat(int(k)).first_name
+                        users_text += f'{u_n}. {username} (🦕 {len(us["dinos"])}) ({r_e})\n'
 
-                for dn_id in dung['users'][ pl_move ]['dinos'].keys():
-                    dn = dung['users'][ pl_move ]['dinos'][dn_id]
+                    text += users_text
 
-                    if 'action' not in dn.keys():
-                        nn_action += 1
+            if room['battle_type'] == 'mobs':
+                if dung['floor'][str(room_n)]['next_room'] == False:
+                    mob = dung['floor'][str(room_n)]['mobs'][0]
+                    data_mob = mobs_f['mobs'][ mob['mob_key'] ]
+                    inline_type = 'battle'
 
-                    else:
-                        if dn['action'] == 'attack':
-                            at_action += 1
-
-                        if dn['action'] == 'defend':
-                            df_action += 1
-
-                if dung['settings']['lang'] == 'ru':
-                    dino_text += f'🦕 | Дейсвтия: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
-                else:
-                    dino_text += f'🦕 | Actions: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
-
-                text += users_text
-                text += move_text
-                text += dino_text
-
-                if image_update == True:
-                    ok = Dungeon.generate_battle_image(image, mob, dungeonid)
-
-                image = f'battle {dungeonid}.png'
-
-            if dung['floor'][str(room_n)]['next_room'] == True:
-                inline_type = 'battle'
-
-                if dung['settings']['lang'] == 'ru':
-                    text += f'\n\n🏆 Вы одолели всех монстров в этой локации, забери свою награду и продвигайтесь дальше!'
-
-                else:
-                    text += f'\n\n🏆 You have defeated all the monsters in this location, take your reward and move on!'
-
-                text += '\n\n'
-                u_n = 0
-                users_text = ''
-                for k in dung['users'].keys():
-                    us = dung['users'][k]
-                    bd_us = users.find_one({"userid": int(k)})
-
-                    if int(k) in dung['floor'][str(room_n)]['ready']:
-                        r_e = '✅'
+                    if dung['settings']['lang'] == 'ru':
+                        text += (
+                        f"\n\n⚔ | Схватка: \n"
+                        f"        └ Врагов: {len(dung['floor'][str(room_n)]['mobs'])}"
+                        f"\n\n😈 | Текущий враг: {data_mob['name'][dung['settings']['lang']]}"
+                        f"\n❤ | Здоровье: {mob['hp']} / {mob['maxhp']} ({ round( (mob['hp'] / mob['maxhp']) * 100, 2)}%)"
+                        )
 
                     else:
-                        r_e = '❌'
+                        text += (
+                        f"\n\n⚔ | The fight: \n"
+                        f"        └ Enemies: {len(dung['floor'][str(room_n)]['mobs'])}"
+                        f"\n\n😈 | Current enemy: {data_mob['name'][dung['settings']['lang']]}"
+                        f"\n❤ | Health: {mob['hp']} / {mob['maxhp']} ({ round( (mob['hp'] / mob['maxhp']) * 100, 2)}%)"
+                        )
 
-                    u_n += 1
-                    username = bot.get_chat(int(k)).first_name
-                    users_text += f'{u_n}. {username} (🦕 {len(us["dinos"])}) ({r_e})\n'
+                    if data_mob['damage-type'] == 'magic':
 
-                text += users_text
+                        if dung['settings']['lang'] == 'ru':
+                            text +=  f"\n🌌 | Мана: {mob['mana']} / {mob['maxmana']} ({ round( (mob['mana'] / mob['maxmana']) * 100, 2)}%)"
+
+                        else:
+                            text +=  f"\n🌌 | Mana: {mob['mana']} / {mob['maxmana']} ({ round( (mob['mana'] / mob['maxmana']) * 100, 2)}%)"
+
+
+                    u_n = 0
+                    users_text = '\n\n'
+                    pl_move = dung['stage_data']['game']['player_move'][0]
+                    for k in dung['users'].keys():
+
+                        if k == pl_move:
+                            r_e = ' ⬅'
+
+                        else:
+                            r_e = ' ⛔'
+
+                        u_n += 1
+                        username = bot.get_chat(int(k)).first_name
+                        users_text += f'{u_n}. {username} {r_e}\n'
+
+                    if dung['settings']['lang'] == 'ru':
+                        move_text = f'\n🛡⚔ | {bot.get_chat(int( pl_move )).first_name}, выберите действие для динозавров, а после завершите ход! Если вы хотите пропустить ход, просто не выбирайте действия.'
+                    else:
+                        move_text = f"\n🛡⚔ | {bot.get_chat(int( pl_move )).first_name} choose an action for the dinosaurs, and then complete the move! If you want to skip a move, just don't choose actions."
+
+                    dino_text = '\n\n'
+
+                    at_action = 0
+                    df_action = 0
+                    nn_action = 0
+
+                    for dn_id in dung['users'][ pl_move ]['dinos'].keys():
+                        dn = dung['users'][ pl_move ]['dinos'][dn_id]
+
+                        if 'action' not in dn.keys():
+                            nn_action += 1
+
+                        else:
+                            if dn['action'] == 'attack':
+                                at_action += 1
+
+                            if dn['action'] == 'defend':
+                                df_action += 1
+
+                    if dung['settings']['lang'] == 'ru':
+                        dino_text += f'🦕 | Дейсвтия: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
+                    else:
+                        dino_text += f'🦕 | Actions: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
+
+                    text += users_text
+                    text += move_text
+                    text += dino_text
+
+                    if image_update == True:
+                        ok = Dungeon.generate_battle_image(image, mob, dungeonid)
+
+                        image = f'battle {dungeonid}.png'
+
+                if dung['floor'][str(room_n)]['next_room'] == True:
+                    inline_type = 'battle'
+
+                    if dung['settings']['lang'] == 'ru':
+                        text += f'\n\n🏆 Вы одолели всех монстров в этой локации, забери свою награду и продвигайтесь дальше!'
+
+                    else:
+                        text += f'\n\n🏆 You have defeated all the monsters in this location, take your reward and move on!'
+
+                    text += '\n\n'
+                    u_n = 0
+                    users_text = ''
+                    for k in dung['users'].keys():
+                        us = dung['users'][k]
+                        bd_us = users.find_one({"userid": int(k)})
+
+                        if int(k) in dung['floor'][str(room_n)]['ready']:
+                            r_e = '✅'
+
+                        else:
+                            r_e = '❌'
+
+                        u_n += 1
+                        username = bot.get_chat(int(k)).first_name
+                        users_text += f'{u_n}. {username} (🦕 {len(us["dinos"])}) ({r_e})\n'
+
+                    text += users_text
 
         elif room_type == 'empty_room':
 
@@ -5042,6 +5282,33 @@ class Dungeon:
 
             text += users_text
 
+        elif room_type == 'town':
+            inline_type = 'town'
+
+            if dung['settings']['lang'] == 'ru':
+                text += f"\n\n🗼 | Вы вошли в подземный город! Пройдитесь по городу и приготовьтесь к дальнейшим путешествиям!\n\n"
+
+            else:
+                text += f'\n\n🗼 | You have entered the underground city! Take a walk around the city and get ready for further travels!\n\n'
+
+            u_n = 0
+            users_text = ''
+            for k in dung['users'].keys():
+                us = dung['users'][k]
+                bd_us = users.find_one({"userid": int(k)})
+
+                if int(k) in dung['floor'][str(room_n)]['ready']:
+                    r_e = '✅'
+
+                else:
+                    r_e = '❌'
+
+                u_n += 1
+                username = bot.get_chat(int(k)).first_name
+                users_text += f'{u_n}. {username} (🦕 {len(us["dinos"])}) ({r_e})\n'
+
+            text += users_text
+
         elif room_type == 'start_room':
 
             if dung['settings']['lang'] == 'ru':
@@ -5070,4 +5337,4 @@ class Dungeon:
 
             text += users_text
 
-        return text, inline_type, image, main_page
+        return text, inline_type, image

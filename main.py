@@ -438,7 +438,7 @@ def on_start(message):
         else:
             bot.reply_to(message, '👋', reply_markup = Functions.markup(bot, user = user), parse_mode = 'html')
 
-@bot.message_handler(in_channel = True, spam_check = True, content_types = ['text']) #test_bot = True,
+@bot.message_handler(test_bot = True, in_channel = True, spam_check = True, content_types = ['text'])
 def on_message(message):
 
     user = message.from_user
@@ -961,6 +961,14 @@ def answer(call):
     elif call.data.split()[0] == 'dungeon.mine':
 
         call_data.dungeon_mine(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.shop_menu':
+
+        call_data.dungeon_shop_menu(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.shop_buy':
+
+        call_data.dungeon_shop_buy(bot, bd_user, call, user)
 
     else:
         print(call.data, 'call.data')

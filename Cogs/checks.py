@@ -9,7 +9,7 @@ import sys
 import pprint
 from memory_profiler import memory_usage
 
-from classes import Functions
+from classes import Functions, Dungeon
 
 sys.path.append("..")
 import config
@@ -17,11 +17,9 @@ import config
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
 
-with open('data/items.json', encoding='utf-8') as f:
-    items_f = json.load(f)
+with open('data/items.json', encoding='utf-8') as f: items_f = json.load(f)
 
-with open('data/dino_data.json', encoding='utf-8') as f:
-    json_f = json.load(f)
+with open('data/dino_data.json', encoding='utf-8') as f: json_f = json.load(f)
 
 class checks:
 
@@ -268,6 +266,17 @@ class checks:
                         Functions.notifications_manager(bot, 'need_unv', user, dino_id = dino_id, met = 'delete')
 
                     if user['dinos'][dino_id]['stats']['heal'] <= 0:
+
+                        if user['dinos'][dino_id]['activ_status'] == 'dungeon':
+                            dungeonid =  user['dinos'][dino_id]['dungeon_id']
+                            dung = dungeons.find_one({"dungeonid": dungeonid})
+
+                            del dung['users'][ user['userid'] ]['dinos'][ dino_id ]
+
+                            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
+
+                            inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = user.id)
+
                         del user['dinos'][dino_id]
                         Functions.notifications_manager(bot, 'dead', user, dino_id = dino_id, met = 'delete')
 

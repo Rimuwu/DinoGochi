@@ -126,9 +126,13 @@
 
  "63": {"nameru": "📜 Костяной щит", "nameen": "📜 Bone Shield", "type": "recipe", "descriptionru": "Щит из костей, просто щит.", "descriptionen": "A shield of bones, just a shield.", "create": [{"item": "62", "type": "create"}], "materials": [ {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"} ], "abilities": {"uses": 2}, "image": "recipe"},
 
- "64": {"nameru": "⛏ Костяная кирка", "nameen": "⛏ Bone Pickaxe", "type": "weapon", "class": "near", "damage": {"min": 0, "max": 1}, "effectiv": 2, "abilities": {"endurance": 50}, "image": "item53"},
+ "64": {"nameru": "⛏ Костяная кирка", "nameen": "⛏ Bone Pickaxe", "type": "weapon", "class": "near", "damage": {"min": 0, "max": 1}, "effectiv": 2, "abilities": {"endurance": 50}, "image": "item64"},
 
- "65": {"nameru": "📜 Костяная кирка", "nameen": "📜 Bone Pickaxe", "type": "recipe", "descriptionru": "Костяная кирка, не эффективна в бою, ведь все знают, что топор более грозное оружие. Зато эффективная в добыче ресурсов.", "descriptionen": "A bone pickaxe is not effective in combat, because everyone knows that an axe is a more formidable weapon. But effective in resource extraction.", "create": [{"item": "64", "type": "create"}], "materials": [ {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"} ], "abilities": {"uses": 2}, "image": "recipe"}
+ "65": {"nameru": "📜 Костяная кирка", "nameen": "📜 Bone Pickaxe", "type": "recipe", "descriptionru": "Костяная кирка, не эффективна в бою, ведь все знают, что топор более грозное оружие. Зато эффективная в добыче ресурсов.", "descriptionen": "A bone pickaxe is not effective in combat, because everyone knows that an axe is a more formidable weapon. But effective in resource extraction.", "create": [{"item": "64", "type": "create"}], "materials": [ {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"} ], "abilities": {"uses": 2}, "image": "recipe"},
+
+ "66": {"nameru": "❄ Заморозка", "nameen": "❄ Freezing", "type": "freezing", "time": "forever", "image": "item66"},
+
+ "67": {"nameru": "🔥 Разморозка", "nameen": "🔥 Defrosting", "type": "defrosting", "image": "item67"}
 
 }
 }

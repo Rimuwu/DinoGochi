@@ -17,7 +17,7 @@
                                  {"item": "57", "col": 1, "chance": 10},
                                  {"item": "53", "col": 1, "chance": 100, "preabil": {"endurance": 11} }
                                ],
-                       "coins": { "min": 0, "max": 10, "type": "random" },
+                       "coins": { "min": 1, "max": 10, "type": "random" },
                        "actions": { "attacks": [],
                                     "healing": [],
                                     "other": []
@@ -26,18 +26,18 @@
 
             "skeleton_magician": {
                        "name": { "ru": "Маг-скелет", "en": "Skeleton Magician" },
-                       "hp": { "min": 2, "max": 10, "type": "random" },
+                       "hp": { "min": 2, "max": 7, "type": "random" },
 
                        "damage-type": "magic",
                        "mana": { "min": 20, "max": 50, "type": "random" },
 
-                       "damage": { "min": 1, "max": 5, "type": "random" },
+                       "damage": { "min": 0, "max": 2, "type": "random" },
                        "intelligence": { "act": 10, "type": "static" },
                        "image": "images/dungeon/mobs/skeleton_magician.png",
                        "lvls": {"min": 1, "max": 10},
                        "experience": { "min": 2, "max": 20, "type": "random" },
                        "loot": [ {"item": "51", "col": 3, "chance": 200} ],
-                       "coins": { "min": 0, "max": 10, "type": "random" },
+                       "coins": { "min": 1, "max": 10, "type": "random" },
                        "actions": {
                                    "attacks": [
 
@@ -75,7 +75,7 @@
                                  {"item": "58", "col": 1, "chance": 10},
                                  {"item": "55", "col": 1, "chance": 100, "preabil": {"endurance": 21}}
                                ],
-                       "coins": { "min": 0, "max": 10, "type": "random" },
+                       "coins": { "min": 1, "max": 10, "type": "random" },
                        "actions": { "attacks": [],
                                     "healing": [],
                                     "other": []
@@ -83,6 +83,31 @@
                       }
          },
 
- "boss": { }
+ "boss": {
+
+       "mega_goblin": {
+                  "name": { "ru": "Мега гоблин", "en": "Mega goblin" },
+                  "hp": { "min": 40, "max": 55, "type": "random" },
+
+                  "damage-type": "near",
+                  "endurance": { "act": 1000, "type": "static" },
+
+                  "damage": { "min": 1, "max": 5, "type": "random" },
+                  "intelligence": { "act": 3, "type": "static" },
+                  "image": "images/dungeon/bosss/mega-goblin.png",
+                  "lvls": {"min": 10, "max": 200},
+                  "experience": { "min": 2, "max": 20, "type": "random" },
+                  "loot": [ {"item": "20", "col": 1, "chance": 250},
+                            {"item": "46", "col": 1, "chance": 300},
+                            {"item": "51", "col": 10, "chance": 400 }
+                          ],
+                  "coins": { "min": 50, "max": 500, "type": "random" },
+                  "actions": { "attacks": [],
+                               "healing": [],
+                               "other": []
+                             }
+                 }
+
+ }
 
 }

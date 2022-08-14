@@ -1076,12 +1076,13 @@ class commands:
                 ll = list(bd_user['dinos'].keys())
                 ind = list(bd_user['dinos'].keys()).index(str(did))
 
-                if ind + 1 == len(ll):
-                    bd_user['settings']['dino_id'] = ll[0]
-                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+                if ind + 1 != len(ll):
+                    bd_user['settings']['dino_id'] = ll[ind + 1]
+
                 else:
-                    bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[int(ll[did-1])]
-                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+                    bd_user['settings']['dino_id'] = ll[0]
+
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
 
                 if bd_user['language_code'] == 'ru':
                     if bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['status'] == 'incubation':
@@ -3381,7 +3382,7 @@ class commands:
             if bd_user['language_code'] == 'ru':
                 text = (f'*📕 | Правила подземелья*\n\n'
                        f'1. *Предметы:*\n Все вещи и монеты взятые в подземелье, могут быть потерены, в случае "небезопасного выхода".\n\n'
-                       f'2. *Безопасный выход:*\n Безопасно выйти можно каждые 5 этажей. При этом сохраняются все вещи и монеты.\n\n'
+                       f'2. *Безопасный выход:*\n Безопасно выйти по окончанию каждого этажа. При этом сохраняются все вещи и монеты.\n\n'
                        f'3. *НЕбезопасный выход:*\n Динозавры автоматически покидают подземелье в случае, когда здоровье опустилось до 10-ти. При этом теряются все вещи и монеты. Динозавр остаётся жив.\n\n'
                        f'4. *Боссы:*\n Каждые 10 этажей, расположен босс, его требуется победить для перехода на следующий этаж.\n\n'
                        f'5. *Конец подземелья:*\n Как говорят ранкеры: "У подземелья нет конца", оно спускается на многие киллометры вниз, кто знает, что вас там ожидает.\n\n'
@@ -3391,7 +3392,7 @@ class commands:
             else:
                 text = (f'*📕 | Dungeon Rules*\n\n'
                        f'1. *Items:*\n All items and coins taken in the dungeon can be lost in case of an "unsafe exit".\n\n'
-                       f'2. *Safe exit:*\n It is safe to exit every 5 floors. At the same time, all items and coins are saved.\n\n'
+                       f'2. *Safe exit:*\n It is safe to exit at the end of each floor. At the same time, all items and coins are saved.\n\n'
                        f'3. *Unsafe exit:*\n Dinosaurs automatically leave the dungeon when their health drops to 10. At the same time, all things and coins are lost. The dinosaur remains alive.\n\n'
                        f'4. *Bosses:*\n Every 10 floors, there is a boss, it needs to be defeated to move to the next floor.\n\n'
                        f'5. * The end of the dungeon:*\n As the rankers say: "The dungeon has no end," it descends many kilometers down, who knows what awaits you there.\n\n'

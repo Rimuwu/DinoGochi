@@ -2375,15 +2375,16 @@ class call_data:
                                 for dk in userd['dinos'].keys():
                                     complexity[1] += 1
                                     dg_user['dinos'][dk]['activ_status'] = 'dungeon'
+                                    dg_user['dinos'][dk]['dungeon_id'] = dungeonid
 
                                 #users.update_one( {"userid": int(userid) }, {"$inc": {f'coins': userd['coins'] * -1 }} )
-                                #users.update_one( {"userid": int(userid) }, {"$set": {f'dinos': dg_user['dinos'] }} )
+                                users.update_one( {"userid": int(userid) }, {"$set": {f'dinos': dg_user['dinos'] }} )
 
                                 userd['coins'] -= 200
 
 
                             dung['stage_data']['game'] = {
-                                    'floor_n': 0,
+                                    'floor_n': dung['settings']['start_floor'],
                                     'room_n': 0,
                                     'player_move': [ list( dung['users'].keys() )[0], list( dung['users'].keys() ) ],
                                     'start_time': int(time.time()),
@@ -2575,8 +2576,8 @@ class call_data:
             dng, inf = Dungeon.base_upd(dungeonid = dungeonid, type = 'next_move')
             print(inf)
 
-            # inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
-            # print(inf)
+            inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
+            print(inf)
 
             sw_text = sht + '\n'
             for i in log: sw_text += i + '\n'
@@ -2657,6 +2658,7 @@ class call_data:
 
         room_n = str(dung['stage_data']['game']['room_n'])
         loot = dung['floor'][room_n]['reward']['items']
+        room_rew = dung['floor'][room_n]['reward']
 
         inv = room_rew['collected'][ str(user.id) ]['items']
         d_items = []
@@ -3071,3 +3073,100 @@ class call_data:
                 sw_text = "At the moment there are no materials that your dinosaurs are able to dig up!"
 
         bot.send_message(user.id, sw_text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
+
+    def dungeon_shop_menu(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+        room_n = str(dung['stage_data']['game']['room_n'])
+
+        room = dung['floor'][room_n]
+        products = room['products']
+        data_items = items_f['items']
+        inl_l = {}
+        markup_inline = types.InlineKeyboardMarkup(row_width = 1)
+
+        if dung['settings']['lang'] == 'ru':
+            text = f'🛒 | Хозяин лавки приветствует тебя путник! Выбирай товар по отличной цене!\n\n💰 | Монеты: {dung["users"][str(user.id)]["coins"]}'
+        else:
+            text = f'🛒 | The shopkeeper greets you traveler! Choose a product at a great price!\n\n💰 | Coins: {dung["users"][str(user.id)]["coins"]}'
+
+        for pr in products:
+
+            data_item = data_items[ pr['item']['item_id'] ]
+            if dung['settings']['lang'] == 'ru':
+                inl_l[ f"{data_item['nameru']} — Цена: {pr['price']}" ] = f'dungeon.shop_buy {dungeonid} {Functions.qr_item_code(pr["item"])}'
+
+            else:
+
+                inl_l[ f"{data_item['nameen']} — Price: {pr['price']}" ] = f'dungeon.shop_buy {dungeonid} {Functions.qr_item_code(pr["item"])}'
+
+        inl_l['❌'] = f'dungeon.to_lobby {dungeonid}'
+
+        markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = inl_l[inl]) for inl in inl_l.keys() ] )
+
+        bot.edit_message_caption(text, call.message.chat.id, call.message.message_id, parse_mode = 'Markdown', reply_markup = markup_inline)
+        dng, inf = Dungeon.base_upd(userid = user.id, messageid = 'shop', dungeonid = dungeonid, type = 'edit_last_page')
+
+    def dungeon_shop_buy(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+        item_qr = call.data.split()[2]
+        data = Functions.des_qr(item_qr, True )
+        room_n = str(dung['stage_data']['game']['room_n'])
+        user_data = dung['users'][str(user.id)]
+        data_items = items_f['items']
+
+        room = dung['floor'][room_n]
+        products = room['products']
+        n_pr = None
+
+        for pr in products:
+
+            if pr['item'] == data:
+                n_pr = pr
+                break
+
+        if n_pr == None:
+
+            if bd_user['language_code'] == 'ru':
+                sw_text = 'Товар не найден, возможно его уже купил другой игрок.'
+
+            else:
+                sw_text = "The product has not been found, perhaps another player has already bought it."
+
+            bot.send_message(user.id, sw_text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
+
+            call_data.dungeon_shop_menu(bot, bd_user, call, user)
+
+        else:
+
+            if n_pr['price'] > user_data['coins']:
+
+                if bd_user['language_code'] == 'ru':
+                    sw_text = 'У вас не хватает монет для покупки!'
+
+                else:
+                    sw_text = "You don't have enough coins to buy!"
+
+                bot.send_message(user.id, sw_text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
+
+            else:
+
+                user_data['coins'] -= n_pr['price']
+                user_data['inventory'].append(n_pr['item'])
+                products.remove(n_pr)
+
+                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}': dung['users'][str(user.id)] }} )
+                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor.{room_n}': dung['floor'][room_n] }} )
+
+                if bd_user['language_code'] == 'ru':
+                    sw_text = f"🎇 | Предмет {data_items[n_pr['item']['item_id']]['nameru']} был приобретён!"
+
+                else:
+                    sw_text = f"🎇 | The item {data_items[n_pr['item']['item_id']]['nameen']} has been purchased!"
+
+                bot.send_message(user.id, sw_text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
+
+                call_data.dungeon_shop_menu(bot, bd_user, call, user)
