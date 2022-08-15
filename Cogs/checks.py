@@ -141,7 +141,7 @@ class checks:
 
     @staticmethod
     def rayt(members):
-        mr_l, lv_l = [], []
+        mr_l, lv_l, dng_fl = [], [], {}
 
         loc_users = list(members).copy()
         mr_l_r = list(sorted(loc_users, key=lambda x: x['coins'], reverse=True))
@@ -153,7 +153,33 @@ class checks:
         for i in lv_l_r:
             lv_l.append( {'userid': i['userid'], 'lvl': i['lvl']} )
 
-        Functions.rayt_update('save', [mr_l, lv_l])
+        for us in loc_users:
+
+            if 'user_dungeon' in us.keys():
+                ns_res = None
+                st = us['user_dungeon']['statistics']
+
+                for i in st:
+
+                    if ns_res == None:
+                        ns_res = i
+
+                    else:
+                        if i['end_floor'] >= ns_res['end_floor']:
+                            ns_res = i
+
+                if ns_res != None:
+
+                    if str(ns_res['end_floor']) not in dng_fl.keys():
+                        dng_fl[str(ns_res['end_floor'])] = [us['userid']]
+
+                    else:
+                        dng_fl[str(ns_res['end_floor'])].append(us['userid'])
+
+
+
+        Functions.rayt_update('save', [mr_l, lv_l, dng_fl])
+        print('rayt_update')
 
 
     @staticmethod
