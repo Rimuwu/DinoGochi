@@ -780,211 +780,23 @@ class commands:
 
     @staticmethod
     def rayting(bot, message, user, bd_user):
+        markup_inline = types.InlineKeyboardMarkup(row_width = 3)
 
-        if bd_user != None:
+        if bd_user['language_code'] == 'ru':
+            text = '👁‍🗨 | Какой рейтинг вас интересует?'
 
-            mr_l = Functions.rayt_update('check')[0]
-            lv_l = Functions.rayt_update('check')[1]
+            inl_l = { '🎢 Уровень': 'rayt_lvl', '🗝 Монеты': 'rayt_money', '🗻 Подземелье': 'rayt_dungeon'
+                    }
 
-            du_mc, du_lv = [{}, {}, {}, {}, {}], [{}, {}, {}, {}, {}]
+        else:
+            text = '👁‍🗨 | What rating are you interested in?'
 
+            inl_l = { '🎢 Level': 'rayt_lvl', '🗝 Coins': 'rayt_money', '🗻 Dungeon': 'rayt_dungeon'
+                    }
 
-            i = -1
-            us_i_l = []
-            while du_mc[0] == {} or du_mc[1] == {} or du_mc[2] == {} or du_mc[3] == {} or du_mc[4] == {}:
-                i += 1
-                if i >= len(mr_l):
-                    break
+        markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = inl_l[inl]) for inl in inl_l.keys() ])
 
-                if du_mc[0] == {} and mr_l[i]['userid'] not in us_i_l:
-                    try:
-                        m = bot.get_chat(mr_l[i]['userid'])
-                        du_mc[0] = {'ui': mr_l[i]['userid'], 'coins': mr_l[i]['coins'], 'mn': m.first_name}
-
-                        us_i_l.append(mr_l[i]['userid'])
-                    except:
-                        pass
-
-                if du_mc[1] == {} and mr_l[i]['userid'] not in us_i_l:
-                    try:
-                        m = bot.get_chat(mr_l[i]['userid'])
-                        du_mc[1] = {'ui': mr_l[i]['userid'], 'coins': mr_l[i]['coins'], 'mn': m.first_name}
-
-                        us_i_l.append(mr_l[i]['userid'])
-                    except:
-                        pass
-
-                if du_mc[2] == {} and mr_l[i]['userid'] not in us_i_l:
-                    try:
-                        m = bot.get_chat(mr_l[i]['userid'])
-                        du_mc[2] = {'ui': mr_l[i]['userid'], 'coins': mr_l[i]['coins'], 'mn': m.first_name}
-
-                        us_i_l.append(mr_l[i]['userid'])
-                    except:
-                        pass
-
-                if du_mc[3] == {} and mr_l[i]['userid'] not in us_i_l:
-                    try:
-                        m = bot.get_chat(mr_l[i]['userid'])
-                        du_mc[3] = {'ui': mr_l[i]['userid'], 'coins': mr_l[i]['coins'], 'mn': m.first_name}
-
-                        us_i_l.append(mr_l[i]['userid'])
-                    except:
-                        pass
-
-                if du_mc[4] == {} and mr_l[i]['userid'] not in us_i_l:
-                    try:
-                        m = bot.get_chat(mr_l[i]['userid'])
-                        du_mc[4] = {'ui': mr_l[i]['userid'], 'coins': mr_l[i]['coins'], 'mn': m.first_name}
-
-                        us_i_l.append(mr_l[i]['userid'])
-                    except:
-                        pass
-
-            i = -1
-            us_i_m = []
-            while du_lv[0] == {} or du_lv[1] == {} or du_lv[2] == {} or du_lv[3] == {} or du_lv[4] == {}:
-                i += 1
-                if i >= len(lv_l):
-                    break
-
-                if du_lv[0] == {} and lv_l[i]['userid'] not in us_i_m:
-                    try:
-                        m = bot.get_chat(lv_l[i]['userid'])
-                        x = lv_l[i]
-                        du_lv[0] = {'ui': lv_l[i]['userid'], 'lvl': lv_l[i]['lvl'][0], 'exp': (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], 'mn': m.first_name }
-
-                        us_i_m.append(lv_l[i]['userid'])
-                    except:
-                        pass
-
-                if du_lv[1] == {} and lv_l[i]['userid'] not in us_i_m:
-                    try:
-                        m = bot.get_chat(lv_l[i]['userid'])
-                        x = lv_l[i]
-                        du_lv[1] = {'ui': lv_l[i]['userid'], 'lvl': lv_l[i]['lvl'][0], 'exp': (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], 'mn': m.first_name }
-
-                        us_i_m.append(lv_l[i]['userid'])
-                    except:
-                        pass
-
-                if du_lv[2] == {} and lv_l[i]['userid'] not in us_i_m:
-                    try:
-                        m = bot.get_chat(lv_l[i]['userid'])
-                        x = lv_l[i]
-                        du_lv[2] = {'ui': lv_l[i]['userid'], 'lvl': lv_l[i]['lvl'][0], 'exp': (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], 'mn': m.first_name }
-
-                        us_i_m.append(lv_l[i]['userid'])
-                    except:
-                        pass
-
-                if du_lv[3] == {} and lv_l[i]['userid'] not in us_i_m:
-                    try:
-                        m = bot.get_chat(lv_l[i]['userid'])
-                        x = lv_l[i]
-                        du_lv[3] = {'ui': lv_l[i]['userid'], 'lvl': lv_l[i]['lvl'][0], 'exp': (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], 'mn': m.first_name }
-
-                        us_i_m.append(lv_l[i]['userid'])
-                    except:
-                        pass
-
-                if du_lv[4] == {} and lv_l[i]['userid'] not in us_i_m:
-                    try:
-                        m = bot.get_chat(lv_l[i]['userid'])
-                        x = lv_l[i]
-                        du_lv[4] = {'ui': lv_l[i]['userid'], 'lvl': lv_l[i]['lvl'][0], 'exp': (x['lvl'][0] - 1) * (5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) +  x['lvl'][1], 'mn': m.first_name }
-
-                        us_i_m.append(lv_l[i]['userid'])
-                    except:
-                        pass
-
-            lv_ar_id = []
-            for i in lv_l:
-                lv_ar_id.append(i['userid'])
-
-            mr_ar_id = []
-            for i in mr_l:
-                mr_ar_id.append(i['userid'])
-
-
-            if bd_user['language_code'] == 'ru':
-                if bd_user['userid'] in lv_ar_id:
-                    ind = lv_ar_id.index(bd_user['userid'])+1
-                else:
-                    ind = '-'
-
-                text =  f'*┌* 🎢 Рейтинг по уровню:\n'
-                text += f"*├* Ваше место в рейтинге: #{ind}\n\n"
-
-                n = 0
-                for i in du_lv:
-                    n += 1
-                    if i == {}:
-                        pass
-                    else:
-                        if n != 5:
-                            text += f"*├* #{n} *{i['mn']}*:\n      *└* Ур. {i['lvl']} (Всего опыта {i['exp']})\n"
-                        else:
-                            text += f"*└* #{n} *{i['mn']}*:\n      *└* Ур. {i['lvl']} (Всего опыта {i['exp']})\n"
-
-                if bd_user['userid'] in mr_ar_id:
-                    ind = mr_ar_id.index(bd_user['userid'])+1
-                else:
-                    ind = '-'
-
-                text += f'\n\n*┌* 🎢 Рейтинг по монетам:\n'
-                text += f"*├* Ваше место в рейтинге: #{ind}\n\n"
-
-                n = 0
-                for i in du_mc:
-                    n += 1
-                    if i == {}:
-                        pass
-                    else:
-                        if n != 5:
-                            text += f"*├* #{n} *{i['mn']}*:\n      *└* Монеты {i['coins']}\n"
-                        else:
-                            text += f"*└* #{n} *{i['mn']}*:\n      *└* Монеты {i['coins']}\n"
-            else:
-                if bd_user['userid'] in lv_ar_id:
-                    ind = lv_ar_id.index(bd_user['userid'])+1
-                else:
-                    ind = '-'
-
-                text =  f'*┌* 🎢 Rating by level:\n'
-                text += f"*├* Your place in the ranking: #{ind}\n\n"
-
-                n = 0
-                for i in du_lv:
-                    n += 1
-                    if i == {}:
-                        pass
-                    else:
-                        if n != 5:
-                            text += f"*├* #{n} *{i['mn']}*:\n      *└* lvl {i['lvl']} (Total experience {i['exp']})\n"
-                        else:
-                            text += f"*└* #{n} *{i['mn']}*:\n      *└* lvl {i['lvl']} (Total experience {i['exp']})\n"
-
-                if bd_user['userid'] in mr_ar_id:
-                    ind = mr_ar_id.index(bd_user['userid'])+1
-                else:
-                    ind = '-'
-
-                text += f'\n\n*┌* 🎢 Coin Rating:\n'
-                text += f"*├* Your place in the ranking: #{ind}\n\n"
-
-                n = 0
-                for i in du_mc:
-                    n += 1
-                    if i == {}:
-                        pass
-                    else:
-                        if n != 5:
-                            text += f"*├* #{n} *{i['mn']}*:\n      *└* Coins {i['coins']}\n"
-                        else:
-                            text += f"*└* #{n} *{i['mn']}*:\n      *└* Coins {i['coins']}\n"
-
-            bot.send_message(message.chat.id, text, parse_mode = "Markdown")
+        bot.send_message(message.chat.id, text, reply_markup = markup_inline)
 
     @staticmethod
     def open_information(bot, message, user, bd_user):
@@ -1188,7 +1000,11 @@ class commands:
                     dino_dict = dp_a[2]
 
                     def ret(message, dino_dict, user, bd_user):
-                        rename(message, bd_user, user, dino_dict[message.text][1], dino_dict[message.text][0])
+                        if message.text not in dino_dict.keys():
+                            bot.send_message(message.chat.id, f'❌', reply_markup = Functions.markup(bot, 'settings', user))
+
+                        else:
+                            rename(message, bd_user, user, dino_dict[message.text][1], dino_dict[message.text][0])
 
                     msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
                     bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)
@@ -3861,3 +3677,52 @@ class commands:
 
             msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
             bot.register_next_step_handler(msg, ret, dino_dict, user, bd_user)
+
+    @staticmethod
+    def dungeon_statist(bot, message, user, bd_user):
+
+        if 'user_dungeon' in bd_user.keys():
+            ns_res = None
+            st = bd_user['user_dungeon']['statistics']
+
+            for i in st:
+
+                if ns_res == None:
+                    ns_res = i
+
+                else:
+                    if i['end_floor'] >= ns_res['end_floor']:
+                        ns_res = i
+
+
+            if ns_res != None:
+
+                if bd_user['language_code'] == 'ru':
+                    text = (f'*🗻 | Статистика в подземелье*\n'
+                            f'🔥 Всего игр: {len(st)}\n\n'
+                            f'*👑 | Лучшая игра*\n'
+                            f'🧩 Начальный этаж: {ns_res["start_floor"]}\n'
+                            f'🗝 Последний этаж: {ns_res["end_floor"]}\n'
+                            f'🕰 Время: { Functions.time_end(ns_res["time"]) }\n')
+
+                else:
+                    text = (f'*🗻 | Statistics in the dungeon*\n'
+                            f'🔥 Total games: { len(st) }\n\n'
+                            f'*👑 | Best game*\n'
+                            f'🧩 Initial floor: { ns_res["start_floor"] }\n'
+                            f'🗝 Last floor: { ns_res["end_floor"] }\n'
+                            f'🕰 Time: { Functions.time_end(ns_res["time"], True) }\n')
+
+            else:
+
+                if bd_user['language_code'] == 'ru':
+                    text = 'Статистика не собрана.'
+                else:
+                    text = 'Statistics are not collected.'
+
+            msg = bot.send_message(message.chat.id, text, parse_mode = 'Markdown')
+
+    @staticmethod
+    def rayt_dungeon(bot, message, user, bd_user):
+
+        pass

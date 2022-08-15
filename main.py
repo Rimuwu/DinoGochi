@@ -227,6 +227,12 @@ def command(message):
     bd_user = users.find_one({"userid": user.id})
     pprint.pprint(bd_user)
 
+@bot.message_handler(commands=['st_0'])
+def command(message):
+    uss = users.find({ })
+
+    checks.rayt(uss)
+
 @bot.message_handler(commands=['check_inv'])
 def command(message):
     user = message.from_user
@@ -688,9 +694,13 @@ def on_message(message):
 
             commands.dungeon_equipment(bot, message, user, bd_user)
 
-        elif message.text in [ '📕 Правила подземелья', '📕 Dungeon Rules']:
+        elif message.text in [ '📕 Правила подземелья', '📕 Dungeon Rules' ]:
 
             commands.dungeon_rules(bot, message, user, bd_user)
+
+        elif message.text in [ '🎮 Статистика', '🎮 Statistics' ]:
+
+            commands.dungeon_statist(bot, message, user, bd_user)
 
     if bd_user != None:
         # последняя активность
@@ -797,7 +807,11 @@ def answer(call):
 
         show_text = "✉ > 🗑"
         bot.answer_callback_query(call.id, show_text)
-        bot.delete_message(user.id, call.message.message_id)
+
+        try:
+            bot.delete_message(user.id, call.message.message_id)
+        except:
+            pass
 
     elif call.data.split()[0] == 'dungeon.settings':
 
@@ -969,6 +983,18 @@ def answer(call):
     elif call.data.split()[0] == 'dungeon.shop_buy':
 
         call_data.dungeon_shop_buy(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'rayt_lvl':
+
+        call_data.rayt_lvl(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'rayt_money':
+
+        call_data.rayt_money(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'rayt_dungeon':
+
+        call_data.rayt_dungeon(bot, bd_user, call, user)
 
     else:
         print(call.data, 'call.data')
