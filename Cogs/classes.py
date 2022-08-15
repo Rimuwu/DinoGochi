@@ -1411,7 +1411,7 @@ class Functions:
             return text, image
 
     @staticmethod
-    def exchange(bot, message, user_item, bd_user):
+    def exchange(bot, message, user_item, bd_user, user):
 
         def zero(message, user_item, bd_user):
 
