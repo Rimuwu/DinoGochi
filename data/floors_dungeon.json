@@ -9,11 +9,11 @@
                 "mobs_count": { "act": 1, "type": "static" },
 
                 "resources": { "items": [
-                                { "item": "52", "chance": 700, "min_efect": 2 },
-                                { "item": "51", "chance": 100, "min_efect": 0 }
+                                { "item": "51", "chance": 500, "min_efect": 0 },
+                                { "item": "52", "chance": 1000, "min_efect": 2 }
                                         ],
 
-                               "items_col": { "min": 0, "max": 1, "type": "random" }
+                               "items_col": { "min": 1, "max": 2, "type": "random" }
                              },
 
                 "products": {
@@ -57,11 +57,11 @@
                               },
                 "mobs_count": { "min": 1, "max": 2, "type": "random" },
 
-                "resources": { "items": [ { "item": "52", "chance": 700, "min_efect": 2 },
-                                          { "item": "51", "chance": 100, "min_efect": 0 }
+                "resources": { "items": [ { "item": "51", "chance": 500, "min_efect": 0 },
+                                          { "item": "52", "chance": 1000, "min_efect": 2 }
                                         ],
 
-                               "items_col": { "min": 1, "max": 2, "type": "random" }
+                               "items_col": { "min": 1, "max": 3, "type": "random" }
                              },
 
                 "products": {

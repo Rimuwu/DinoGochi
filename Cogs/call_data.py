@@ -546,7 +546,7 @@ class call_data:
                     use_item()
 
                 else:
-                    print('Первый этап не найден')
+                    print(f'Первый этап не найден {data_item["type"]}')
 
             elif check_n == 2:
 
@@ -569,7 +569,7 @@ class call_data:
                     use_item()
 
                 else:
-                    print('Второй этап не найден')
+                    print(f'Второй этап не найден {data_item["type"]}')
 
             elif check_n == 3:
 
@@ -583,7 +583,7 @@ class call_data:
                     use_item()
 
                 else:
-                    print('Третий этап не найден')
+                    print(f'Третий этап не найден {data_item["type"]}')
 
         def ans_dino():
             global dino_id

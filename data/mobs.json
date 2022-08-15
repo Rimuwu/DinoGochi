@@ -65,7 +65,7 @@
                        "damage-type": "far",
                        "ammunition": { "min": 20, "max": 40, "type": "random" },
 
-                       "damage": { "min": 2, "max": 6, "type": "random" },
+                       "damage": { "min": 2, "max": 4, "type": "random" },
                        "intelligence": { "min": 0, "max": 2, "type": "random" },
                        "image": "images/dungeon/mobs/piglin-archer.png",
                        "lvls": {"min": 1, "max": 100},
