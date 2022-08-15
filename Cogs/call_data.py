@@ -897,13 +897,13 @@ class call_data:
                             inc_time = time.time() + data_item['incub_time']
 
                         if 'dead_dinos' not in bd_user.keys():
-                            tim_m = 1
+                            tim_m = 0
                         else:
                             tim_m = bd_user['dead_dinos']
 
                         egg_n = str(random.choice(list(json_f['data']['egg'])))
 
-                        bd_user['dinos'][ Functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': inc_time * tim_m, 'egg_id': egg_n, 'quality': data_item['inc_type']}
+                        bd_user['dinos'][ Functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': inc_time + ( ( (inc_time / 100) * 5) * tim_m), 'egg_id': egg_n, 'quality': data_item['inc_type']}
 
                         users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
 
@@ -3166,3 +3166,107 @@ class call_data:
                 bot.send_message(user.id, sw_text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
 
                 call_data.dungeon_shop_menu(bot, bd_user, call, user)
+
+    def rayt_lvl(bot, bd_user, call, user):
+
+        if bd_user['language_code'] == 'ru':
+            text =  f'*┌* 🎢 Рейтинг по уровню:\n'
+        else:
+            text =  f'*┌* 🎢 Rating by level:\n'
+
+        rayt_list = Functions.rayt_update('check')[1]
+        max_rayt_users = 10
+        total = 0
+        uses_list = []
+
+        for ud in rayt_list: uses_list.append( ud['userid'] )
+
+        if bd_user['userid'] in uses_list:
+            ind = uses_list.index(bd_user['userid'])+1
+        else:
+            ind = '-'
+
+        if bd_user['language_code'] == 'ru':
+            text += f"*├* Ваше место в рейтинге: #{ind}\n\n"
+        else:
+            text += f"*├* Your place in the ranking: #{ind}\n\n"
+
+        for ud in rayt_list:
+
+            if total < max_rayt_users:
+
+                try:
+                    member = bot.get_chat(ud['userid'])
+                    name = member.first_name
+                except:
+                    name = ud['userid']
+
+                if total < max_rayt_users - 1:
+                    el = '├'
+
+                elif total == max_rayt_users - 1:
+                    el = '└'
+
+                if bd_user['language_code'] == 'ru':
+                    text += f"*{el}* #{total+1} *{name}*:\n      *└* Ур. {ud['lvl'][0]} Опыт {ud['lvl'][1]}\n"
+                else:
+                    text += f"*{el}* #{total+1} *{name}*:\n      *└* Lvl {ud['lvl'][0]} Exp {ud['lvl'][1]}\n"
+
+            else:
+                break
+
+            total += 1
+
+        bot.send_message(call.message.chat.id, text, parse_mode = "Markdown")
+
+    def rayt_money(bot, bd_user, call, user):
+
+        if bd_user['language_code'] == 'ru':
+            text = f'*┌* 🎢 Рейтинг по монетам:\n'
+        else:
+            text = f'*┌* 🎢 Coin Rating:\n'
+
+        rayt_list = Functions.rayt_update('check')[0]
+        max_rayt_users = 10
+        total = 0
+        uses_list = []
+
+        for ud in rayt_list: uses_list.append( ud['userid'] )
+
+        if bd_user['userid'] in uses_list:
+            ind = uses_list.index(bd_user['userid'])+1
+        else:
+            ind = '-'
+
+        if bd_user['language_code'] == 'ru':
+            text += f"*├* Ваше место в рейтинге: #{ind}\n\n"
+        else:
+            text += f"*├* Your place in the ranking: #{ind}\n\n"
+
+        for ud in rayt_list:
+
+            if total < max_rayt_users:
+
+                try:
+                    member = bot.get_chat(ud['userid'])
+                    name = member.first_name
+                except:
+                    name = ud['userid']
+
+                if total < max_rayt_users - 1:
+                    el = '├'
+
+                elif total == max_rayt_users - 1:
+                    el = '└'
+
+                if bd_user['language_code'] == 'ru':
+                    text += f"*{el}* #{total+1} *{name}*:\n      *└* Монеты {ud['coins']}\n"
+                else:
+                    text += f"*{el}* #{total+1} *{name}*:\n      *└* Coins {ud['coins']}\n"
+
+            else:
+                break
+
+            total += 1
+
+        bot.send_message(call.message.chat.id, text, parse_mode = "Markdown")
