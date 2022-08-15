@@ -27,7 +27,7 @@ with open('data/floors_dungeon.json', encoding='utf-8') as f: floors_f = json.lo
 
 checks_data = {'memory': [0, time.time()], 'incub': [0, time.time(), 0], 'notif': [[], []], 'main': [[], [], []], 'main_hunt': [ [], [], [] ], 'main_game': [ [], [], [] ], 'main_sleep': [ [], [], [] ], 'main_pass': [ [], [], [] ], 'main_journey': [ [], [], [] ], 'col': 0}
 
-reyt_ = [[], []]
+reyt_ = [[], [], []]
 
 users_timeout = {}
 
