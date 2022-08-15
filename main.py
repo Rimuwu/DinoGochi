@@ -438,7 +438,7 @@ def on_start(message):
         else:
             bot.reply_to(message, '👋', reply_markup = Functions.markup(bot, user = user), parse_mode = 'html')
 
-@bot.message_handler(test_bot = True, in_channel = True, spam_check = True, content_types = ['text'])
+@bot.message_handler(in_channel = True, spam_check = True, content_types = ['text']) #test_bot = True
 def on_message(message):
 
     user = message.from_user

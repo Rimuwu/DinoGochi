@@ -3256,7 +3256,6 @@ class Dungeon:
 
                         elif room_type == 'town':
                             products = []
-                            pprint(floor_data)
                             col = Functions.rand_d( floor_data["products_settings"]['col'] )
 
                             while len(products) < col:
@@ -3439,7 +3438,8 @@ class Dungeon:
                             del dung['users'][str(userid)]['dinos'][str(d_k)]
 
                         else:
-                            print('dinoid - ', d_k, 'not in keys')
+                            pass
+                            # print('dinoid - ', d_k, 'not in keys')
 
                     dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
 
@@ -3468,7 +3468,8 @@ class Dungeon:
                                     return dung, 'dino_incubation'
 
                             else:
-                                print('dinoid - ', d_k, 'not in keys')
+                                pass
+                                #print('dinoid - ', d_k, 'not in keys')
 
                         dinos = dino_data(ddnl)
 
@@ -3921,7 +3922,7 @@ class Dungeon:
                                         bot.edit_message_caption(text, int(u_k), us['messageid'], parse_mode = 'Markdown', reply_markup = Dungeon.inline(bot, int(u_k), dungeonid = dungeonid, type = stage_type))
                                         dl += 1
                                     except Exception as e:
-                                        print(e)
+                                        #print(e)
                                         undl += 1
 
                                 if image_update == True:
@@ -4070,7 +4071,7 @@ class Dungeon:
                         dl += 1
                     except Exception as e:
                         undl += 1
-                        print(e)
+                        #print(e)
 
                 return f'message_update < delete {dl} - undelete {undl} >'
 
@@ -4407,7 +4408,8 @@ class Dungeon:
                             show_text += at_log
 
                 if dung['users'][str(userid)]['dinos'][i]['activ_effects'] != []:
-                    print('dino have effect')
+                    pass
+                    #print('dino have effect')
 
 
             if damage_permission == True:
@@ -4748,8 +4750,8 @@ class Dungeon:
                     if use_armor == True:
                         dmg -= reflection
 
-                        item = bd_user['dinos'][dino_id]['dungeon']['equipment']['weapon']
-                        item['abilities']['endurance'] -= random.randint(0,2)
+                        # item = bd_user['dinos'][ log_d['dino_key'] ]['dungeon']['equipment']['weapon']
+                        # item['abilities']['endurance'] -= random.randint(0,2)
 
                     if dmg < 1:
                         dmg = 0
@@ -4899,7 +4901,6 @@ class Dungeon:
 
     def floor_data(floor_n):
         floors_data = floors_f["floors"]
-        print(floor_n)
 
         if str(floor_n) not in floors_data.keys():
 

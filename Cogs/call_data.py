@@ -2347,7 +2347,8 @@ class call_data:
                 inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
 
             else:
-                print('-0-095')
+                # print('-0-095')
+                pass
 
     def dungeon_start_game(bot, bd_user, call, user):
 
@@ -2358,7 +2359,7 @@ class call_data:
 
             if dung['users'][str(user.id)]['dinos'] != {}:
 
-                if True: #dung['users'][str(user.id)]['coins'] <= bd_user['coins']:
+                if dung['users'][str(user.id)]['coins'] <= bd_user['coins']:
 
                     if dung['users'][str(user.id)]['coins'] >= 200:
 
@@ -2377,7 +2378,7 @@ class call_data:
                                     dg_user['dinos'][dk]['activ_status'] = 'dungeon'
                                     dg_user['dinos'][dk]['dungeon_id'] = dungeonid
 
-                                #users.update_one( {"userid": int(userid) }, {"$inc": {f'coins': userd['coins'] * -1 }} )
+                                users.update_one( {"userid": int(userid) }, {"$inc": {f'coins': userd['coins'] * -1 }} )
                                 users.update_one( {"userid": int(userid) }, {"$set": {f'dinos': dg_user['dinos'] }} )
 
                                 userd['coins'] -= 200
@@ -2397,7 +2398,6 @@ class call_data:
                             dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'dungeon_stage': 'game' }} )
 
                             dng, inf = Dungeon.base_upd(dungeonid = dungeonid, type = 'create_floor')
-                            pprint(dng)
 
                             inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
 
@@ -2568,16 +2568,12 @@ class call_data:
         if int(dung['stage_data']['game']['player_move'][0]) == user.id:
 
             sht, iff = Dungeon.battle_user_move(bot, dungeonid, user.id, bd_user, call)
-            print(iff)
 
             log, iff2 = Dungeon.battle_mob_move(bot, dungeonid, user.id, bd_user, call)
-            print(iff2)
 
             dng, inf = Dungeon.base_upd(dungeonid = dungeonid, type = 'next_move')
-            print(inf)
 
             inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
-            print(inf)
 
             sw_text = sht + '\n'
             for i in log: sw_text += i + '\n'
@@ -2839,8 +2835,8 @@ class call_data:
             bot.send_message(user.id, text, parse_mode = 'Markdown')
 
         if user_item != None:
-
-            print(user_item)
+            pass
+            # print(user_item)
 
     def dungeon_kick_member(bot, bd_user, call, user):
 
@@ -2879,7 +2875,6 @@ class call_data:
         if k_user_id in dung['users'].keys():
             user_message = dung['users'][k_user_id]['messageid']
             dng, inf = Dungeon.base_upd(userid = int(k_user_id), dungeonid = dungeonid, type = 'leave_user')
-            print(inf), pprint(dng)
 
             if inf == 'leave_user':
 
