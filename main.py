@@ -1,12 +1,8 @@
 import telebot
 from telebot import types
-import config
 import random
 import json
 import pymongo
-from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageSequence, ImageFilter
-import io
-from io import BytesIO
 import time
 import threading
 import sys
@@ -14,18 +10,18 @@ from memory_profiler import memory_usage
 import pprint
 from fuzzywuzzy import fuzz
 
+import config
+
 sys.path.append("Cogs")
 from commands import commands
-from functions import functions
+from classes import Functions, Dungeon
 from checks import checks
 from call_data import call_data
 
 bot = telebot.TeleBot(config.TOKEN)
 
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
-users = client.bot.users
-referal_system = client.bot.referal_system
-market = client.bot.market
+users, referal_system, market = client.bot.users, client.bot.referal_system, client.bot.market
 dungeons = client.bot.dungeons
 
 with open('data/items.json', encoding='utf-8') as f:
@@ -34,6 +30,65 @@ with open('data/items.json', encoding='utf-8') as f:
 with open('data/dino_data.json', encoding='utf-8') as f:
     json_f = json.load(f)
 
+class SpamStop(telebot.custom_filters.AdvancedCustomFilter):
+    key = 'spam_check'
+
+    @staticmethod
+    def check(message, text):
+        user = message.from_user
+
+        if Functions.spam_stop(user.id) == False:
+            bot.delete_message(user.id, message.message_id)
+            return False
+
+        else:
+            return True
+
+class Test_bot(telebot.custom_filters.AdvancedCustomFilter):
+    key = 'test_bot'
+
+    @staticmethod
+    def check(message, text):
+        user = message.from_user
+
+        if bot.get_me().first_name != 'DinoGochi':
+            print("Поймал", message.text, 'от ', user.first_name)
+            if user.id in [5279769615, 1191252229]:
+                return True
+
+            else:
+                print('Отмена команды')
+                return False
+
+class In_channel(telebot.custom_filters.AdvancedCustomFilter):
+    key = 'in_channel'
+
+    @staticmethod
+    def check(message, text):
+        user = message.from_user
+        bd_user = users.find_one({"userid": user.id})
+
+        r = bot.get_chat_member(-1001673242031, user.id)
+        if bd_user != None and r.status == 'left':
+
+            if bd_user['language_code'] == 'ru':
+                text = f'📜 | Уважаемый пользователь!\n\n*•* Для получения новостей и важных уведомлений по поводу бота, мы просим вас подписаться на телеграм канал бота!\n\n🔴 | Нажмите на кнопку *"Подписаться"* для перехода в канал, а после на кнопку *"Проверить"*, для продолжения работы!'
+                b1 = "🦖 | Подписаться"
+                b2 = "🔄 | Проверить"
+            else:
+                text = f"📜 | Dear user!\n\n*•* To receive news and important notifications about the bot, we ask you to subscribe to the bot's telegram channel!\n\n🔴 | Click on the *'Subscribe'* button to go to the channel, and then on the *'Check'*, to continue working!"
+                b1 = "🦖 | Subscribe"
+                b2 = "🔄 | Check"
+
+            markup_inline = types.InlineKeyboardMarkup()
+            markup_inline.add( types.InlineKeyboardButton(text= b1, url="https://t.me/DinoGochi"))
+            markup_inline.add( types.InlineKeyboardButton(text= b2, callback_data = 'checking_the_user_in_the_channel') )
+
+            bot.reply_to(message, text, reply_markup = markup_inline, parse_mode="Markdown")
+            return False
+
+        else:
+            return True
 
 def check(): #проверка каждые 10 секунд
 
@@ -52,14 +107,14 @@ def check(): #проверка каждые 10 секунд
     def memory(): checks.check_memory()
 
     non_members = users.find({ })
-    chunks_users = list(functions.chunks( list(non_members), 25 ))
-    functions.check_data('col', None, int(len(chunks_users)) )
+    chunks_users = list(Functions.chunks( list(non_members), 25 ))
+    Functions.check_data('col', None, int(len(chunks_users)) )
 
     while True:
         if int(memory_usage()[0]) < 1500:
             st_r_time = int(time.time())
             non_members = users.find({ })
-            chunks_users = list(functions.chunks( list(non_members), 25 ))
+            chunks_users = list(Functions.chunks( list(non_members), 25 ))
             sl_time = 10 - ( int(time.time()) - st_r_time )
 
             if sl_time <= 0:
@@ -94,7 +149,7 @@ def check_notif(): #проверка каждые 5 секунд
 
         if int(memory_usage()[0]) < 1500:
             non_members = users.find({ })
-            chunks_users = list(functions.chunks( list(non_members), 50 ))
+            chunks_users = list(Functions.chunks( list(non_members), 50 ))
 
             for members in chunks_users:
                 threading.Thread(target = alpha, daemon=True, kwargs = {'bot': bot, 'members': members}).start()
@@ -133,7 +188,7 @@ min10_thr = threading.Thread(target = min10_check, daemon=True)
 @bot.message_handler(commands=['stats'])
 def command(message):
     user = message.from_user
-    checks_data = functions.check_data(m = 'check')
+    checks_data = Functions.check_data(m = 'check')
 
     def ttx(tm, lst):
         lgs = []
@@ -154,7 +209,6 @@ def command(message):
     text += f'Thr.count: {threading.active_count()}'
     bot.send_message(user.id, text)
 
-
 @bot.message_handler(commands=['dinos'])
 def command(message):
     user = message.from_user
@@ -173,40 +227,6 @@ def command(message):
     bd_user = users.find_one({"userid": user.id})
     pprint.pprint(bd_user)
 
-@bot.message_handler(commands=['d_journey'])
-def command(message):
-    user = message.from_user
-    bd_user = users.find_one({"userid": user.id})
-
-    if user.id in [5279769615, 1191252229]:
-
-        def dino_journey(bd_user, user, dino_user_id):
-
-            dino_id = str(bd_user['dinos'][ dino_user_id ]['dino_id'])
-            dino = json_f['elements'][dino_id]
-            n_img = random.randint(1,5)
-            bg_p = Image.open(f"images/journey/{n_img}.png")
-
-            dino_image = Image.open("images/"+str(json_f['elements'][dino_id]['image']))
-            sz = 412
-            dino_image = dino_image.resize((sz, sz), Image.ANTIALIAS)
-            dino_image = dino_image.transpose(Image.FLIP_LEFT_RIGHT)
-
-            xy = -35
-            x2 = random.randint(80,120)
-            img = functions.trans_paste(dino_image, bg_p, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
-
-            img.save('profile.png')
-            profile = open(f"profile.png", 'rb')
-
-            return profile
-
-        profile_i = dino_journey(bd_user, user, '1')
-
-        text = f'🎈 | Если у динозавра хорошее настроение, он может принести обратно какие то вещи.\n\n🧶 | Во время путешествия, могут произойти разные ситуации, от них зависит результат путешествия.'
-
-        bot.send_photo(message.chat.id, profile_i, text )
-
 @bot.message_handler(commands=['check_inv'])
 def command(message):
     user = message.from_user
@@ -222,18 +242,7 @@ def command(message):
 
     print('all')
 
-@bot.message_handler(commands=['test_edit'])
-def command(message):
-    user = message.from_user
-    if user.id in [5279769615, 1191252229]:
-
-        markup = types.ReplyKeyboardMarkup(resize_keyboard = True)
-        markup.add(* [x for x in ['кнопка1', 'кнопка2']] )
-
-        msg = bot.send_message(message.chat.id, 'текст1', reply_markup = markup)
-        bot.edit_message_text(text = 'text2', chat_id = msg.chat.id, message_id = msg.message_id)
-
-@bot.message_handler(commands=['delete_dinos_check_acc'])
+@bot.message_handler(commands=['delete_dinos'])
 def command(message):
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
@@ -241,46 +250,39 @@ def command(message):
         users.update_one( {"userid": user.id}, {"$set": {f'dinos': {} }} )
         print("all")
 
-@bot.message_handler(commands=['quality_edit'])
+@bot.message_handler(commands=['test_data'])
 def command(message):
-
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
-        bd_user = users.find_one({"userid": user.id})
-        for i in bd_user['dinos']:
-            dino = bd_user['dinos'][i]
-            dino_data = json_f['elements'][str(dino['dino_id'])]
 
-            print(dino_data)
-            users.update_one( {"userid": user.id}, {"$set": {f'dinos.{i}.quality': dino_data['image'][5:8] }} )
+        for i in range(1, 10):
+            print(i, Dungeon.floor_data(i) )
 
-        print("all")
-
-# @bot.message_handler(commands=['add_quality_to_all'])
+# @bot.message_handler(commands=['sbros_lvl'])
 # def command_n(message):
 #     user = message.from_user
 #     if user.id in [5279769615, 1191252229]:
 #
 #         def work(members, n):
 #             for bd_user in members:
-#                 print(bd_user['userid'])
-#                 for i in bd_user['dinos']:
-#                     dino = {}
-#                     dino = bd_user['dinos'][i]
-#                     dino_data = json_f['elements'][str(dino['dino_id'])]
 #
-#                     users.update_one( {"userid": user.id}, {"$set": {f'dinos.{i}.quality': dino_data['image'][5:8] }} )
+#                 if bd_user['lvl'][0] == 10 and bd_user['lvl'][1] == 0 and len(bd_user['dinos']) == 0:
+#                     bd_user['lvl'][0] = 2
+#                     print(bd_user['lvl'][0], bd_user['lvl'][1])
+#
+#                     users.update_one( {"userid": bd_user['userid']}, {"$set": {f'lvl': bd_user['lvl'] }} )
 #
 #             print(f'Программа обновления №{n} завершила работу.')
 #
-#         non_members = [users.find_one({"userid": 1191252229}), users.find_one({"userid": 5279769615})] #users.find({ })
-#         chunks_users = list(functions.chunks( list(non_members), 1 ))
+#         non_members = users.find({ })
+#         chunks_users = list(Functions.chunks( list(non_members), 10 ))
 #
 #         n = 0
 #         for members in chunks_users:
 #             n += 1
-#             main = threading.Thread(target = work, daemon=True, kwargs = { 'members': members, 'n': n}).start()
 #             print(f'Программа обновления №{n} начала работу.')
+#             main = threading.Thread(target = work, daemon=True, kwargs = { 'members': members, 'n': n}).start()
+
 
 @bot.message_handler(commands=['add_item'])
 def command(message):
@@ -289,7 +291,7 @@ def command(message):
         msg_args = message.text.split()
         bd = users.find_one({"userid": int(msg_args[3])})
 
-        tr = functions.add_item_to_user(bd, msg_args[1], int(msg_args[2]))
+        tr = Functions.add_item_to_user(bd, msg_args[1], int(msg_args[2]))
         bot.send_message(user.id, str(msg_args))
 
 @bot.message_handler(commands=['events'])
@@ -298,17 +300,7 @@ def command(message):
     if user.id in [5279769615, 1191252229]:
         bd_user = users.find_one({"userid": user.id})
 
-        functions.journey_end_log(bot, user.id, bd_user['settings']['dino_id'])
-
-@bot.message_handler(commands=['events_clear'])
-def command(message):
-    user = message.from_user
-    if user.id in [5279769615, 1191252229]:
-        bd_user = users.find_one({"userid": user.id})
-
-        users.update_one( {"userid": user.id}, {"$set": {f"dinos.{bd_user['settings']['dino_id']}.journey_log": [] }} )
-
-        print(';;; all')
+        Functions.journey_end_log(bot, user.id, bd_user['settings']['dino_id'])
 
 @bot.message_handler(commands=['reply_id'])
 def command(message):
@@ -319,15 +311,22 @@ def command(message):
             bot.reply_to(message, msg.message_id)
             print(msg.message_id)
 
+@bot.message_handler(commands=['d_upd'])
+def command(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = user.id, upd_type = 'all', image_update = True)
+        print(inf)
+
 @bot.message_handler(commands=['dungeon'])
 def command(message):
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
-        dng, inf = functions.dungeon_base_upd(userid = user.id)
+        dng, inf = Dungeon.base_upd(userid = user.id)
         pprint.pprint(dng)
         print(inf)
 
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = user.id)
+        inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = user.id)
         print(inf)
 
 @bot.message_handler(commands=['dungeon_add'])
@@ -336,26 +335,38 @@ def command(message):
     msg_args = message.text.split()
     if user.id in [5279769615, 1191252229]:
 
-        dng, inf = functions.dungeon_base_upd(userid = user.id, dungeonid = int(msg_args[1]), type = 'add_user')
+        dng, inf =  Dungeon.base_upd(userid = user.id, dungeonid = int(msg_args[1]), type = 'add_user')
         pprint.pprint(dng)
         print(inf)
 
-        inf = functions.dungeon_message_upd(bot, userid = user.id, dungeonid = dng['dungeonid'], upd_type = 'all')
+        inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = dng['dungeonid'], upd_type = 'all')
         print(inf)
 
 @bot.message_handler(commands=['dungeon_delete'])
 def command(message):
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
-        inf = functions.dungeon_message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
+        inf =  Dungeon.message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
         print(inf)
 
-        dng, inf = functions.dungeon_base_upd(dungeonid = user.id, type = 'delete_dungeon')
+        dng, inf =  Dungeon.base_upd(dungeonid = user.id, type = 'delete_dungeon')
         pprint.pprint(dng)
         print(inf)
 
+@bot.message_handler(commands=['stats_100'])
+def command(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        bd_user = users.find_one({"userid": user.id})
 
-# =========================================
+        for dk in bd_user['dinos'].keys():
+            dino = bd_user['dinos'][dk]
+            ds = dino['stats'].copy()
+            for st in ds:
+                dino['stats'][st] = 100
+
+        users.update_one( {"userid": user.id}, {"$set": {f"dinos": bd_user['dinos'] }} )
+        print('ok')
 
 @bot.message_handler(commands=['emulate_not'])
 def command(message):
@@ -363,15 +374,17 @@ def command(message):
     msg_args = message.text.split()
     user = message.from_user
     bd_user = users.find_one({"userid": user.id})
-    functions.notifications_manager(bot, msg_args[1], bd_user, msg_args[2], dino_id = '1')
+    Functions.notifications_manager(bot, msg_args[1], bd_user, msg_args[2], dino_id = '1')
 
-@bot.message_handler(commands=['profile', 'профиль'])
+# =========================================
+
+@bot.message_handler(test_bot = True, in_channel = True, spam_check = True, commands=['profile', 'профиль'])
 def command(message):
     user = message.from_user
     bd_user = users.find_one({"userid": user.id})
     if bd_user != None:
 
-        text = functions.member_profile(bot, user.id, bd_user['language_code'])
+        text = Functions.member_profile(bot, user.id, bd_user['language_code'])
 
         try:
             bot.reply_to(message, text, parse_mode = 'Markdown')
@@ -388,7 +401,7 @@ def command(message):
 
         bot.reply_to(message, text, parse_mode = 'Markdown')
 
-@bot.message_handler(commands=['add_me', 'добавь_меня'])
+@bot.message_handler(test_bot = True, in_channel = True, spam_check = True, commands=['add_me', 'добавь_меня'])
 def command(message):
     user = message.from_user
     bd_user = users.find_one({"userid": user.id})
@@ -400,7 +413,7 @@ def command(message):
             else:
                 text = f"❤ | Everyone can send a request to friends <a href='tg://user?id={user.id}'>🌀{user.first_name}</a> by clicking on the button below!"
 
-            bot.reply_to(message, text, parse_mode = 'HTML', reply_markup = functions.inline_markup(bot, 'send_request', user.id, ['Отправить запрос', 'Send a request']) )
+            bot.reply_to(message, text, parse_mode = 'HTML', reply_markup = Functions.inline_markup(bot, 'send_request', user.id, ['Отправить запрос', 'Send a request']) )
 
         else:
 
@@ -421,12 +434,11 @@ def on_start(message):
             else:
                 text = f"🎋 | Hey <b>{user.first_name}</b>, I am glad to welcome you!\n" +f"<b>•</b> I'm a small tamagotchi-type game bot, only with dinosaurs!🦖\n\n"+f"<b>🕹 | What is tamagotchi?</b>\n"+ f'<b>•</b> Tamagotchi is a game with a virtual pet that needs to be fed, cared for, played, and so on.🥚\n'+ f"<b>•</b> Compete in the ranking and become the best!\n\n"+ f"<b>🎮 | How to start playing?</b>\n" + f'<b>•</b> Press the button <b>🍡Start playing</b>!\n\n' + f'<b>❤ | Waiting in the game!</b>\n' +f'<b>❗ | In some places, the bot may not be translated!</b>\n'
 
-            bot.reply_to(message, text, reply_markup = functions.markup(bot, user = user), parse_mode = 'html')
+            bot.reply_to(message, text, reply_markup = Functions.markup(bot, user = user), parse_mode = 'html')
         else:
-            bot.reply_to(message, '👋', reply_markup = functions.markup(bot, user = user), parse_mode = 'html')
+            bot.reply_to(message, '👋', reply_markup = Functions.markup(bot, user = user), parse_mode = 'html')
 
-
-@bot.message_handler(content_types = ['text'])
+@bot.message_handler(in_channel = True, spam_check = True, content_types = ['text']) #test_bot = True
 def on_message(message):
 
     user = message.from_user
@@ -448,245 +460,237 @@ def on_message(message):
     def lst_m_f():
 
         if bd_user != None:
-            last_mrk = functions.last_markup(bd_user, alternative = 1)
+            last_mrk = Functions.last_markup(bd_user, alternative = 1)
         else:
             last_mrk = None
 
         return last_mrk
 
-    if bot.get_me().first_name != 'DinoGochi':
-        print("Поймал", message.text, 'от ', user.first_name)
-        if user.id not in [5279769615, 1191252229]:
-            return print('Отмена команды')
-
     if message.chat.type == 'private':
-        if functions.spam_stop(user.id) == False:
-            bot.delete_message(user.id, message.message_id)
-            return
 
-        r = bot.get_chat_member(-1001673242031, user.id)
-        if bd_user != None and r.status == 'left':
+        if message.text in ['🍡 Начать играть', '🍡 Start playing']:
 
-            if bd_user['language_code'] == 'ru':
-                text = f'📜 | Уважаемый пользователь!\n\n*•* Для получения новостей и важных уведомлений по поводу бота, мы просим вас подписаться на телеграм канал бота!\n\n🔴 | Нажмите на кнопку *"Подписаться"* для перехода в канал, а после на кнопку *"Проверить"*, для продолжения работы!'
-                b1 = "🦖 | Подписаться"
-                b2 = "🔄 | Проверить"
-            else:
-                text = f"📜 | Dear user!\n\n*•* To receive news and important notifications about the bot, we ask you to subscribe to the bot's telegram channel!\n\n🔴 | Click on the *'Subscribe'* button to go to the channel, and then on the *'Check'*, to continue working!"
-                b1 = "🦖 | Subscribe"
-                b2 = "🔄 | Check"
+            commands.start_game(bot, message, user, bd_user)
 
-            markup_inline = types.InlineKeyboardMarkup()
-            markup_inline.add( types.InlineKeyboardButton(text= b1, url="https://t.me/DinoGochi"))
-            markup_inline.add( types.InlineKeyboardButton(text= b2, callback_data = 'checking_the_user_in_the_channel') )
+        elif message.text in ["🧩 Проект: Возрождение", '🧩 Project: Rebirth']:
 
-            bot.reply_to(message, text, reply_markup = markup_inline, parse_mode="Markdown")
+            commands.project_reb(bot, message, user, bd_user)
 
-        else:
+        elif message.text in ['↪ Назад', '↪ Back', '❌ Cancel', '❌ Отмена']:
 
-            if message.text in ['🍡 Начать играть', '🍡 Start playing']:
+            commands.back_open(bot, message, user, bd_user)
 
-                commands.start_game(bot, message, user, bd_user)
+        elif message.text in ['👁‍🗨 Профиль', '👁‍🗨 Profile']:
 
-            elif message.text in ["🧩 Проект: Возрождение", '🧩 Project: Rebirth']:
+            commands.open_profile_menu(bot, message, user, bd_user)
 
-                commands.project_reb(bot, message, user, bd_user)
+        elif message.text in ['🎮 Инвентарь', '🎮 Inventory']:
 
-            elif message.text in ['↪ Назад', '↪ Back', '❌ Cancel', '❌ Отмена']:
+            Functions.user_inventory(bot, user, message)
 
-                commands.back_open(bot, message, user, bd_user)
+        elif message.text in ['🦖 Динозавр', '🦖 Dinosaur']:
 
-            elif message.text in ['👁‍🗨 Профиль', '👁‍🗨 Profile']:
+            commands.dino_prof(bot, message, user)
 
-                commands.open_profile_menu(bot, message, user, bd_user)
+        elif message.text in ['🔧 Настройки', '🔧 Settings']:
 
-            elif message.text in ['🎮 Инвентарь', '🎮 Inventory']:
+            commands.open_settings(bot, message, user, bd_user)
 
-                functions.user_inventory(bot, user, message)
+        elif message.text in ['👥 Друзья', '👥 Friends']:
 
-            elif message.text in ['🦖 Динозавр', '🦖 Dinosaur']:
+            commands.friends_open(bot, message, user, bd_user)
 
-                commands.dino_prof(bot, message, user)
+        elif message.text in ['❗ FAQ']:
 
-            elif message.text in ['🔧 Настройки', '🔧 Settings']:
+            commands.faq(bot, message, user, bd_user)
 
-                commands.open_settings(bot, message, user, bd_user)
+        elif message.text in ['🍺 Дино-таверна', '🍺 Dino-tavern'] and lst_m_f() != 'dino-tavern':
 
-            elif message.text in ['👥 Друзья', '👥 Friends']:
+            commands.open_dino_tavern(bot, message, user, bd_user)
 
-                commands.friends_open(bot, message, user, bd_user)
+        elif tr_c_f() and message.text in ['🕹 Действия', '🕹 Actions']:
 
-            elif message.text in ['❗ FAQ']:
+            commands.open_action_menu(bot, message, user, bd_user)
 
-                commands.faq(bot, message, user, bd_user)
+        elif message.text in ['❗ Notifications', '❗ Уведомления']:
 
-            elif message.text in ['🍺 Дино-таверна', '🍺 Dino-tavern'] and lst_m_f() != 'dino-tavern':
+            commands.not_set(bot, message, user, bd_user)
 
-                commands.open_dino_tavern(bot, message, user, bd_user)
+        elif message.text in ["👅 Язык", "👅 Language"]:
 
-            elif tr_c_f() and message.text in ['🕹 Действия', '🕹 Actions']:
+            commands.lang_set(bot, message, user, bd_user)
 
-                commands.open_action_menu(bot, message, user, bd_user)
+        elif message.text in ['⁉ Видимость FAQ', '⁉ Visibility FAQ']:
 
-            elif message.text in ['❗ Notifications', '❗ Уведомления']:
+            commands.settings_faq(bot, message, user, bd_user)
 
-                commands.not_set(bot, message, user, bd_user)
+        elif tr_c_f() and message.text in ['💬 Переименовать', '💬 Rename']:
 
-            elif message.text in ["👅 Язык", "👅 Language"]:
+            commands.rename_dino(bot, message, user, bd_user)
 
-                commands.lang_set(bot, message, user, bd_user)
+        elif message.text in ["➕ Добавить", "➕ Add"]:
 
-            elif message.text in ['⁉ Видимость FAQ', '⁉ Visibility FAQ']:
+            commands.add_friend(bot, message, user, bd_user)
 
-                commands.settings_faq(bot, message, user, bd_user)
+        elif message.text in ["📜 Список", "📜 List"]:
 
-            elif tr_c_f() and message.text in ['💬 Переименовать', '💬 Rename']:
+            commands.friends_list(bot, message, user, bd_user)
 
-                commands.rename_dino(bot, message, user, bd_user)
+        elif message.text in ["💌 Запросы", "💌 Inquiries"]:
 
-            elif message.text in ["➕ Добавить", "➕ Add"]:
+            Functions.user_requests(bot, user, message)
 
-                commands.add_friend(bot, message, user, bd_user)
+        elif message.text in ['➖ Удалить', '➖ Delete']:
 
-            elif message.text in ["📜 Список", "📜 List"]:
+            commands.delete_friend(bot, message, user, bd_user)
 
-                commands.friends_list(bot, message, user, bd_user)
+        elif message.text in ['🤍 Пригласи друга', '🤍 Invite a friend']:
 
-            elif message.text in ["💌 Запросы", "💌 Inquiries"]:
+            commands.invite_friend(bot, message, user, bd_user)
 
-                functions.user_requests(bot, user, message)
+        elif message.text in ['🎲 Сгенерировать код', '🎲 Generate Code']:
 
-            elif message.text in ['➖ Удалить', '➖ Delete']:
+            commands.generate_fr_code(bot, message, user, bd_user)
 
-                commands.delete_friend(bot, message, user, bd_user)
+        elif message.text in ['🎞 Ввести код', '🎞 Enter Code']:
 
-            elif message.text in ['🤍 Пригласи друга', '🤍 Invite a friend']:
+            commands.enter_fr_code(bot, message, user, bd_user)
 
-                commands.invite_friend(bot, message, user, bd_user)
+        elif message.text in ['👥 Меню друзей', '👥 Friends Menu']:
 
-            elif message.text in ['🎲 Сгенерировать код', '🎲 Generate Code']:
+            commands.friends_menu(bot, message, user, bd_user)
 
-                commands.generate_fr_code(bot, message, user, bd_user)
+        elif tr_c_f() and message.text in ['🌙 Уложить спать', '🌙 Put to bed']:
 
-            elif message.text in ['🎞 Ввести код', '🎞 Enter Code']:
+            commands.dino_sleep_ac(bot, message, user, bd_user)
 
-                commands.enter_fr_code(bot, message, user, bd_user)
+        elif tr_c_f() and message.text in ['🌙 Пробудить', '🌙 Awaken']:
 
-            elif message.text in ['👥 Меню друзей', '👥 Friends Menu']:
+            commands.dino_unsleep_ac(bot, message, user, bd_user)
 
-                commands.friends_menu(bot, message, user, bd_user)
+        elif tr_c_f() and message.text in ['🎑 Путешествие', '🎑 Journey']:
 
-            elif tr_c_f() and message.text in ['🌙 Уложить спать', '🌙 Put to bed']:
+            commands.dino_journey(bot, message, user, bd_user)
 
-                commands.dino_sleep_ac(bot, message, user, bd_user)
+        elif tr_c_f() and message.text in ['🎑 Вернуть', '🎑 Call']:
 
-            elif tr_c_f() and message.text in ['🌙 Пробудить', '🌙 Awaken']:
+            commands.dino_unjourney(bot, message, user, bd_user)
 
-                commands.dino_unsleep_ac(bot, message, user, bd_user)
+        elif tr_c_f() and message.text in ['🎮 Развлечения', '🎮 Entertainments']:
 
-            elif tr_c_f() and message.text in ['🎑 Путешествие', '🎑 Journey']:
+            commands.dino_entert(bot, message, user, bd_user)
 
-                commands.dino_journey(bot, message, user, bd_user)
+        elif tr_c_f() and message.text in ['🍣 Покормить', '🍣 Feed']:
 
-            elif tr_c_f() and message.text in ['🎑 Вернуть', '🎑 Call']:
+            commands.dino_feed(bot, message, user, bd_user)
 
-                commands.dino_unjourney(bot, message, user, bd_user)
+        elif tr_c_f() and message.text in ['🍕 Сбор пищи', '🍕 Collecting food']:
 
-            elif tr_c_f() and message.text in ['🎮 Развлечения', '🎮 Entertainments']:
+            commands.collecting_food(bot, message, user, bd_user)
 
-                commands.dino_entert(bot, message, user, bd_user)
+        elif tr_c_f() and message.text in ['🍕 Прогресс', '🍕 Progress']:
 
-            elif tr_c_f() and message.text in ['🍣 Покормить', '🍣 Feed']:
+            commands.coll_progress(bot, message, user, bd_user)
 
-                commands.dino_feed(bot, message, user, bd_user)
+        elif tr_c_f() and (message.text[:11] in ['🦖 Динозавр:'] or message.text[:7] in [ '🦖 Dino:']):
 
-            elif tr_c_f() and message.text in ['🍕 Сбор пищи', '🍕 Collecting food']:
+            commands.dino_action_ans(bot, message, user, bd_user)
 
-                commands.collecting_food(bot, message, user, bd_user)
+        elif tr_c_f() and message.text in ['↩ Назад', '↩ Back']:
 
-            elif tr_c_f() and message.text in ['🍕 Прогресс', '🍕 Progress']:
+            commands.action_back(bot, message, user, bd_user)
 
-                commands.coll_progress(bot, message, user, bd_user)
+        elif tr_c_f() and message.text in ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball', '🧩 Пазлы', '♟ Шахматы', '🧱 Дженга', '🎲 D&D', '🧩 Puzzles', '♟ Chess', '🧱 Jenga']:
 
-            elif tr_c_f() and (message.text[:11] in ['🦖 Динозавр:'] or message.text[:7] in [ '🦖 Dino:']):
+            commands.dino_entert_games(bot, message, user, bd_user)
 
-                commands.dino_action_ans(bot, message, user, bd_user)
+        elif tr_c_f() and message.text in ['❌ Остановить игру', '❌ Stop the game']:
 
-            elif tr_c_f() and message.text in ['↩ Назад', '↩ Back']:
+            commands.dino_stop_games(bot, message, user, bd_user)
 
-                commands.action_back(bot, message, user, bd_user)
+        elif message.text in ['🎢 Рейтинг', '🎢 Rating']:
 
-            elif tr_c_f() and message.text in ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball', '🧩 Пазлы', '♟ Шахматы', '🧱 Дженга', '🎲 D&D', '🧩 Puzzles', '♟ Chess', '🧱 Jenga']:
+            commands.rayting(bot, message, user, bd_user)
 
-                commands.dino_entert_games(bot, message, user, bd_user)
+        elif message.text in ['📜 Информация', '📜 Information']:
 
-            elif tr_c_f() and message.text in ['❌ Остановить игру', '❌ Stop the game']:
+            commands.open_information(bot, message, user, bd_user)
 
-                commands.dino_stop_games(bot, message, user, bd_user)
+        elif message.text in ['🛒 Рынок', '🛒 Market']:
 
-            elif message.text in ['🎢 Рейтинг', '🎢 Rating']:
+            commands.open_market_menu(bot, message, user, bd_user)
 
-                commands.rayting(bot, message, user, bd_user)
+        elif message.text in ['💍 Аксессуары', '💍 Accessories']:
 
-            elif message.text in ['📜 Информация', '📜 Information']:
+            commands.acss(bot, message, user, bd_user)
 
-                commands.open_information(bot, message, user, bd_user)
+        elif message.text in ['➕ Добавить товар', '➕ Add Product']:
 
-            elif message.text in ['🛒 Рынок', '🛒 Market']:
+            Functions.user_inventory(bot, user, message, 'add_product')
 
-                commands.open_market_menu(bot, message, user, bd_user)
+        elif message.text in ['📜 Мои товары', '📜 My products']:
 
-            elif message.text in ['💍 Аксессуары', '💍 Accessories']:
+            commands.my_products(bot, message, user, bd_user)
 
-                commands.acss(bot, message, user, bd_user)
+        elif message.text in ['➖ Удалить товар', '➖ Delete Product']:
 
-            elif message.text in ['➕ Добавить товар', '➕ Add Product']:
+            commands.delete_product(bot, message, user, bd_user)
 
-                functions.user_inventory(bot, user, message, 'add_product')
+        elif message.text in [ '🔍 Поиск товара', '🔍 Product Search']:
 
-            elif message.text in ['📜 Мои товары', '📜 My products']:
+            commands.search_pr(bot, message, user, bd_user)
 
-                commands.my_products(bot, message, user, bd_user)
+        elif message.text in [ '🛒 Случайные товары', '🛒 Random Products']:
 
-            elif message.text in ['➖ Удалить товар', '➖ Delete Product']:
+            commands.random_search(bot, message, user, bd_user)
 
-                commands.delete_product(bot, message, user, bd_user)
+        elif message.text in ['⛓ Квесты', '⛓ Quests']:
 
-            elif message.text in [ '🔍 Поиск товара', '🔍 Product Search']:
+            bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-                commands.search_pr(bot, message, user, bd_user)
+        elif message.text in ['🎭 Навыки', '🎭 Skills']:
 
-            elif message.text in [ '🛒 Случайные товары', '🛒 Random Products']:
+            bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-                commands.random_search(bot, message, user, bd_user)
+        elif message.text in ['🦖 БИО', '🦖 BIO']:
 
-            elif message.text in ['⛓ Квесты', '⛓ Quests']:
+            bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-                bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
+        elif message.text in [ '👁‍🗨 Динозавры в таверне', '👁‍🗨 Dinosaurs in the Tavern']:
 
-            elif message.text in ['🎭 Навыки', '🎭 Skills']:
+            bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-                bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
+        elif message.text in [ '♻ Rarity Change', '♻ Изменение редкости']:
 
-            elif message.text in ['🦖 БИО', '🦖 BIO']:
+            commands.rarity_change(bot, message, user, bd_user)
 
-                bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
+        elif message.text in [ '🥏 Дрессировка', '🥏 Training']:
 
-            elif message.text in [ '👁‍🗨 Динозавры в таверне', '👁‍🗨 Dinosaurs in the Tavern']:
+            bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-                bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
+        elif message.text in [ "💡 Исследования", "💡 Research"]:
 
-            elif message.text in [ '♻ Rarity Change', '♻ Изменение редкости']:
+            bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-                commands.rarity_change(bot, message, user, bd_user)
+        elif message.text in [ "🗻 Подземелья", "🗻 Dungeons"]:
 
-            elif message.text in [ '🥏 Дрессировка', '🥏 Training']:
+            commands.dungeon_menu(bot, message, user, bd_user)
 
-                bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
+        elif message.text in [ "🗻 Создать", "🗻 Create"]:
 
-            elif message.text in [ "💡 Исследования", "💡 Research"]:
+            commands.dungeon_create(bot, message, user, bd_user)
 
-                bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
+        elif message.text in [ '🚪 Присоединиться', '🚪 Join']:
+
+            commands.dungeon_join(bot, message, user, bd_user)
+
+        elif message.text in [ '⚔ Экипировка', '⚔ Equip']:
+
+            commands.dungeon_equipment(bot, message, user, bd_user)
+
+        elif message.text in [ '📕 Правила подземелья', '📕 Dungeon Rules']:
+
+            commands.dungeon_rules(bot, message, user, bd_user)
 
     if bd_user != None:
         # последняя активность
@@ -710,7 +714,7 @@ def answer(call):
 
         call_data.egg_answer(bot, bd_user, call, user)
 
-    elif call.data[:13] in ['90min_journey', '60min_journey', '30min_journey', '10min_journey', '12min_journey']:
+    elif call.data[:13] in ['90min_journey', '60min_journey', '30min_journey', '10min_journey', '12min_journey', '24min_journey']:
 
         call_data.journey(bot, bd_user, call, user)
 
@@ -760,11 +764,11 @@ def answer(call):
 
     elif call.data == 'inventory':
 
-        functions.user_inventory(bot, user, call.message)
+        Functions.user_inventory(bot, user, call.message)
 
     elif call.data == 'requests':
 
-        functions.user_requests(bot, user, call.message)
+        Functions.user_requests(bot, user, call.message)
 
     elif call.data == 'send_request':
 
@@ -775,7 +779,7 @@ def answer(call):
         did = call.data[18:]
         if did in bd_user['dinos'].keys():
             bd_dino = bd_user['dinos'][did]
-            functions.p_profile(bot, call.message, bd_dino, user, bd_user, did)
+            Functions.p_profile(bot, call.message, bd_dino, user, bd_user, did)
 
     elif call.data[:8] == 'ns_craft':
 
@@ -788,6 +792,12 @@ def answer(call):
     elif call.data.split()[0] == 'cancel_progress':
 
         call_data.cancel_progress(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'message_delete':
+
+        show_text = "✉ > 🗑"
+        bot.answer_callback_query(call.id, show_text)
+        bot.delete_message(user.id, call.message.message_id)
 
     elif call.data.split()[0] == 'dungeon.settings':
 
@@ -849,8 +859,120 @@ def answer(call):
 
         call_data.dungeon_invite(bot, bd_user, call, user)
 
+    elif call.data.split()[0] == 'dungeon.supplies':
+
+        call_data.dungeon_supplies(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.action.set_coins':
+
+        call_data.dungeon_set_coins(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.action.add_item':
+
+        call_data.dungeon_add_item_action(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.action.remove_item':
+
+        call_data.dungeon_remove_item_action(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon_add_item':
+
+        call_data.dungeon_add_item(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon_remove_item':
+
+        call_data.dungeon_remove_item(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.start':
+
+        call_data.dungeon_start_game(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.next_room':
+
+        call_data.dungeon_next_room(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.action.battle_action':
+
+        call_data.dungeon_battle_action(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.battle_action_attack':
+
+        call_data.dungeon_battle_attack(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.battle_action_defend':
+
+        call_data.dungeon_battle_defend(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.battle_action_idle':
+
+        call_data.dungeon_battle_idle(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.next_room_ready':
+
+        call_data.dungeon_next_room_ready(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.end_move':
+
+        call_data.dungeon_end_move(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.dinos_stats':
+
+        call_data.dungeon_dinos_stats(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.collect_reward':
+
+        call_data.dungeon_collect_reward(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.item_from_reward':
+
+        call_data.item_from_reward(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.inventory':
+
+        call_data.dungeon_inventory(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == '-':
+        pass
+
+    elif call.data.split()[0] == 'dungeon_use_item':
+
+        call_data.dungeon_use_item(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.kick_member':
+
+        call_data.dungeon_kick_member(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon_kick':
+
+        call_data.dungeon_kick(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.leave_in_game':
+
+        call_data.dungeon_leave_in_game(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.fork_answer':
+
+        call_data.dungeon_fork_answer(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.safe_exit':
+
+        call_data.dungeon_safe_exit(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.mine':
+
+        call_data.dungeon_mine(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.shop_menu':
+
+        call_data.dungeon_shop_menu(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon.shop_buy':
+
+        call_data.dungeon_shop_buy(bot, bd_user, call, user)
+
     else:
         print(call.data, 'call.data')
+
 
 if bot.get_me().first_name == 'DinoGochi' or False:
     main_checks.start() # активация всех проверок и игрового процесса
@@ -858,4 +980,8 @@ if bot.get_me().first_name == 'DinoGochi' or False:
     min10_thr.start() # десяти-минутный чек
 
 print(f'Бот {bot.get_me().first_name} запущен!')
+
+bot.add_custom_filter(SpamStop())
+bot.add_custom_filter(Test_bot())
+bot.add_custom_filter(In_channel())
 bot.infinity_polling()
