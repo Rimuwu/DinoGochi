@@ -179,7 +179,7 @@ class checks:
 
 
         Functions.rayt_update('save', [mr_l, lv_l, dng_fl])
-        print('rayt_update')
+        # print('rayt_update')
 
 
     @staticmethod

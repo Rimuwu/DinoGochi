@@ -3721,8 +3721,3 @@ class commands:
                     text = 'Statistics are not collected.'
 
             msg = bot.send_message(message.chat.id, text, parse_mode = 'Markdown')
-
-    @staticmethod
-    def rayt_dungeon(bot, message, user, bd_user):
-
-        pass

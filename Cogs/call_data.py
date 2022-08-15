@@ -3270,3 +3270,8 @@ class call_data:
             total += 1
 
         bot.send_message(call.message.chat.id, text, parse_mode = "Markdown")
+
+    @staticmethod
+    def rayt_dungeon(bot, message, user, bd_user):
+
+        pass
