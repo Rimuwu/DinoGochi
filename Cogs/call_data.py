@@ -568,7 +568,7 @@ class call_data:
                     use_item()
 
                 else:
-                    print('Втрой этап не найден')
+                    print('Второй этап не найден')
 
             elif check_n == 3:
 
@@ -1324,7 +1324,7 @@ class call_data:
 
         if user_item != None:
 
-            Functions.exchange(bot, call.message, user_item, bd_user)
+            Functions.exchange(bot, call.message, user_item, bd_user, user)
 
     def market_buy(bot, bd_user, call, user):
 
