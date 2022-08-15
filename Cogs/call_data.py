@@ -202,7 +202,8 @@ class call_data:
 
             if call.data[:13] == '12min_journey':
                 jr_time = 120
-            if call.data[:13] == '24min_journey':
+
+            elif call.data[:13] == '24min_journey':
                 jr_time = 240
             else:
                 jr_time = int(call.data[:2])
