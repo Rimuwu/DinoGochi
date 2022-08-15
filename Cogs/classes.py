@@ -1189,7 +1189,7 @@ class Functions:
                 elif item['inc_type'] == 'leg': eg_q = 'легендарное'
 
                 type = '🥚 яйцо динозавра'
-                d_text = f"*├* Инкубация: {item['incub_time']}{item['time_tag']} * (убитых динозавров)\n"
+                d_text = f"*├* Инкубация: {item['incub_time']}{item['time_tag']}\n"
                 d_text += f"*└* Редкость яйца: {eg_q}"
 
             else:
@@ -1201,7 +1201,7 @@ class Functions:
                 elif item['inc_type'] == 'leg': eg_q = 'legendary'
 
                 type = '🥚 dinosaur egg'
-                d_text = f"*└* Incubation: {item['incub_time']}{item['time_tag']} * (killed dinosaurs)\\n"
+                d_text = f"*└* Incubation: {item['incub_time']}{item['time_tag']}\\n"
                 d_text += f"*└* The rarity of eggs: {eg_q}"
 
         elif item['type'] in ['game_ac', 'unv_ac', 'journey_ac', 'hunt_ac']:
