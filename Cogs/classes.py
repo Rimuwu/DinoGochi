@@ -3374,7 +3374,7 @@ class Dungeon:
 
                                 users.update_one( {"userid": int(user_id)}, {"$set": {f'inventory': bd_user['inventory']}} )
 
-                            if dung['users'][str(user_id)]['coins'] != 0:
+                            if dung['users'][str(user_id)]['coins'] != 0 and dung['dungeon_stage'] == 'game':
                                 users.update_one( {"userid": int(user_id)}, {"$inc": {f'coins': dung['users'][str(user_id)]['coins'] }} )
 
                         for d_k in dung['users'][ str(user_id) ]['dinos'].keys():
