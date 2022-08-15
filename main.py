@@ -384,7 +384,7 @@ def command(message):
 
 # =========================================
 
-@bot.message_handler(test_bot = True, in_channel = True, spam_check = True, commands=['profile', 'профиль'])
+@bot.message_handler(commands=['profile', 'профиль'])
 def command(message):
     user = message.from_user
     bd_user = users.find_one({"userid": user.id})
@@ -407,7 +407,7 @@ def command(message):
 
         bot.reply_to(message, text, parse_mode = 'Markdown')
 
-@bot.message_handler(test_bot = True, in_channel = True, spam_check = True, commands=['add_me', 'добавь_меня'])
+@bot.message_handler(commands=['add_me', 'добавь_меня'])
 def command(message):
     user = message.from_user
     bd_user = users.find_one({"userid": user.id})
