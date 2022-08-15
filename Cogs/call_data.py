@@ -1073,7 +1073,7 @@ class call_data:
                 mx_col = user_item['abilities']['uses']
 
             else:
-                mx_col = list_inv.count(user_item)
+                mx_col = bd_user['inventory'].count(user_item)
 
             if mx_col == 1:
                 call.message.text = '1'
