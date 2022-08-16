@@ -712,295 +712,294 @@ def answer(call):
     user = call.from_user
     bd_user = users.find_one({"userid": user.id})
 
-    if Functions.callback_spam_stop(user.id) == False:
-        return
+    if Functions.callback_spam_stop(user.id) == True:
 
-    if call.data == 'start':
+        if call.data == 'start':
 
-        call_data.start(bot, bd_user, call, user)
+            call_data.start(bot, bd_user, call, user)
 
-    elif call.data == 'checking_the_user_in_the_channel':
+        elif call.data == 'checking_the_user_in_the_channel':
 
-        call_data.checking_the_user_in_the_channel(bot, bd_user, call, user)
+            call_data.checking_the_user_in_the_channel(bot, bd_user, call, user)
 
-    elif call.data in ['egg_answer_1', 'egg_answer_2', 'egg_answer_3']:
+        elif call.data in ['egg_answer_1', 'egg_answer_2', 'egg_answer_3']:
 
-        call_data.egg_answer(bot, bd_user, call, user)
+            call_data.egg_answer(bot, bd_user, call, user)
 
-    elif call.data[:13] in ['90min_journey', '60min_journey', '30min_journey', '10min_journey', '12min_journey', '24min_journey']:
+        elif call.data[:13] in ['90min_journey', '60min_journey', '30min_journey', '10min_journey', '12min_journey', '24min_journey']:
 
-        call_data.journey(bot, bd_user, call, user)
+            call_data.journey(bot, bd_user, call, user)
 
-    elif call.data[:10] in ['1_con_game', '2_con_game', '3_con_game', '1_sna_game', '2_sna_game', '3_sna_game', '1_pin_game', '2_pin_game', '3_pin_game', '1_bal_game', '2_bal_game', '3_bal_game', '1_puz_game', '2_puz_game', '3_puz_game', '1_che_game', '2_che_game', '3_che_game', '1_jen_game', '2_jen_game', '3_jen_game', '1_ddd_game', '2_ddd_game', '3_ddd_game']:
+        elif call.data[:10] in ['1_con_game', '2_con_game', '3_con_game', '1_sna_game', '2_sna_game', '3_sna_game', '1_pin_game', '2_pin_game', '3_pin_game', '1_bal_game', '2_bal_game', '3_bal_game', '1_puz_game', '2_puz_game', '3_puz_game', '1_che_game', '2_che_game', '3_che_game', '1_jen_game', '2_jen_game', '3_jen_game', '1_ddd_game', '2_ddd_game', '3_ddd_game']:
 
-        call_data.game(bot, bd_user, call, user)
+            call_data.game(bot, bd_user, call, user)
 
-    elif call.data in ['dead_answer1', 'dead_answer2', 'dead_answer3', 'dead_answer4']:
+        elif call.data in ['dead_answer1', 'dead_answer2', 'dead_answer3', 'dead_answer4']:
 
-        call_data.dead_answer(bot, bd_user, call, user)
+            call_data.dead_answer(bot, bd_user, call, user)
 
-    elif call.data == 'dead_restart':
+        elif call.data == 'dead_restart':
 
-        call_data.dead_restart(bot, bd_user, call, user)
+            call_data.dead_restart(bot, bd_user, call, user)
 
-    elif call.data[:5] == 'item_':
+        elif call.data[:5] == 'item_':
 
-        call_data.item_use(bot, bd_user, call, user)
+            call_data.item_use(bot, bd_user, call, user)
 
-    elif call.data[:12] == 'remove_item_':
+        elif call.data[:12] == 'remove_item_':
 
-        call_data.remove_item(bot, bd_user, call, user)
+            call_data.remove_item(bot, bd_user, call, user)
 
-    elif call.data[:7] == 'remove_':
+        elif call.data[:7] == 'remove_':
 
-        call_data.remove(bot, bd_user, call, user)
+            call_data.remove(bot, bd_user, call, user)
 
-    elif call.data == "cancel_remove":
+        elif call.data == "cancel_remove":
 
-        bot.delete_message(user.id, call.message.message_id)
-
-    elif call.data[:9] == 'exchange_':
-
-        call_data.exchange(bot, bd_user, call, user)
-
-    elif call.data[:11] == 'market_buy_':
-
-        call_data.market_buy(bot, bd_user, call, user)
-
-    elif call.data[:7] == 'market_':
-
-        call_data.market_inf(bot, bd_user, call, user)
-
-    elif call.data[:9] == 'iteminfo_':
-
-        call_data.iteminfo(bot, bd_user, call, user)
-
-    elif call.data == 'inventory':
-
-        Functions.user_inventory(bot, user, call.message)
-
-    elif call.data == 'requests':
-
-        Functions.user_requests(bot, user, call.message)
-
-    elif call.data == 'send_request':
-
-        call_data.send_request(bot, bd_user, call, user)
-
-    elif call.data[:18] == 'open_dino_profile_':
-
-        did = call.data[18:]
-        if did in bd_user['dinos'].keys():
-            bd_dino = bd_user['dinos'][did]
-            Functions.p_profile(bot, call.message, bd_dino, user, bd_user, did)
-
-    elif call.data[:8] == 'ns_craft':
-
-        call_data.ns_craft(bot, bd_user, call, user)
-
-    elif call.data[:13] == 'change_rarity':
-
-        call_data.change_rarity_call_data(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'cancel_progress':
-
-        call_data.cancel_progress(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'message_delete':
-
-        show_text = "✉ > 🗑"
-        bot.answer_callback_query(call.id, show_text)
-
-        try:
             bot.delete_message(user.id, call.message.message_id)
-        except:
+
+        elif call.data[:9] == 'exchange_':
+
+            call_data.exchange(bot, bd_user, call, user)
+
+        elif call.data[:11] == 'market_buy_':
+
+            call_data.market_buy(bot, bd_user, call, user)
+
+        elif call.data[:7] == 'market_':
+
+            call_data.market_inf(bot, bd_user, call, user)
+
+        elif call.data[:9] == 'iteminfo_':
+
+            call_data.iteminfo(bot, bd_user, call, user)
+
+        elif call.data == 'inventory':
+
+            Functions.user_inventory(bot, user, call.message)
+
+        elif call.data == 'requests':
+
+            Functions.user_requests(bot, user, call.message)
+
+        elif call.data == 'send_request':
+
+            call_data.send_request(bot, bd_user, call, user)
+
+        elif call.data[:18] == 'open_dino_profile_':
+
+            did = call.data[18:]
+            if did in bd_user['dinos'].keys():
+                bd_dino = bd_user['dinos'][did]
+                Functions.p_profile(bot, call.message, bd_dino, user, bd_user, did)
+
+        elif call.data[:8] == 'ns_craft':
+
+            call_data.ns_craft(bot, bd_user, call, user)
+
+        elif call.data[:13] == 'change_rarity':
+
+            call_data.change_rarity_call_data(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'cancel_progress':
+
+            call_data.cancel_progress(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'message_delete':
+
+            show_text = "✉ > 🗑"
+            bot.answer_callback_query(call.id, show_text)
+
+            try:
+                bot.delete_message(user.id, call.message.message_id)
+            except:
+                pass
+
+        elif call.data.split()[0] == 'dungeon.settings':
+
+            call_data.dungeon_settings(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.to_lobby':
+
+            call_data.dungeon_to_lobby(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.settings_lang':
+
+            call_data.dungeon_settings_lang(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.leave':
+
+            call_data.dungeon_leave(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.leave_True':
+
+            call_data.dungeon_leave_True(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.leave_False':
+
+            call_data.dungeon_leave_False(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.remove':
+
+            call_data.dungeon_remove(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.remove_True':
+
+            call_data.dungeon_remove_True(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.remove_False':
+
+            call_data.dungeon_remove_False(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.menu.add_dino':
+
+            call_data.dungeon_add_dino_menu(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.menu.remove_dino':
+
+            call_data.dungeon_remove_dino_menu(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.action.add_dino':
+
+            call_data.dungeon_add_dino(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.action.remove_dino':
+
+            call_data.dungeon_remove_dino(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.ready':
+
+            call_data.dungeon_ready(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.invite':
+
+            call_data.dungeon_invite(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.supplies':
+
+            call_data.dungeon_supplies(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.action.set_coins':
+
+            call_data.dungeon_set_coins(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.action.add_item':
+
+            call_data.dungeon_add_item_action(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.action.remove_item':
+
+            call_data.dungeon_remove_item_action(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon_add_item':
+
+            call_data.dungeon_add_item(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon_remove_item':
+
+            call_data.dungeon_remove_item(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.start':
+
+            call_data.dungeon_start_game(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.next_room':
+
+            call_data.dungeon_next_room(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.action.battle_action':
+
+            call_data.dungeon_battle_action(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.battle_action_attack':
+
+            call_data.dungeon_battle_attack(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.battle_action_defend':
+
+            call_data.dungeon_battle_defend(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.battle_action_idle':
+
+            call_data.dungeon_battle_idle(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.next_room_ready':
+
+            call_data.dungeon_next_room_ready(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.end_move':
+
+            call_data.dungeon_end_move(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.dinos_stats':
+
+            call_data.dungeon_dinos_stats(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.collect_reward':
+
+            call_data.dungeon_collect_reward(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.item_from_reward':
+
+            call_data.item_from_reward(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == 'dungeon.inventory':
+
+            call_data.dungeon_inventory(bot, bd_user, call, user)
+
+        elif call.data.split()[0] == '-':
             pass
 
-    elif call.data.split()[0] == 'dungeon.settings':
+        elif call.data.split()[0] == 'dungeon_use_item':
 
-        call_data.dungeon_settings(bot, bd_user, call, user)
+            call_data.dungeon_use_item(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.to_lobby':
+        elif call.data.split()[0] == 'dungeon.kick_member':
 
-        call_data.dungeon_to_lobby(bot, bd_user, call, user)
+            call_data.dungeon_kick_member(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.settings_lang':
+        elif call.data.split()[0] == 'dungeon_kick':
 
-        call_data.dungeon_settings_lang(bot, bd_user, call, user)
+            call_data.dungeon_kick(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.leave':
+        elif call.data.split()[0] == 'dungeon.leave_in_game':
 
-        call_data.dungeon_leave(bot, bd_user, call, user)
+            call_data.dungeon_leave_in_game(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.leave_True':
+        elif call.data.split()[0] == 'dungeon.fork_answer':
 
-        call_data.dungeon_leave_True(bot, bd_user, call, user)
+            call_data.dungeon_fork_answer(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.leave_False':
+        elif call.data.split()[0] == 'dungeon.safe_exit':
 
-        call_data.dungeon_leave_False(bot, bd_user, call, user)
+            call_data.dungeon_safe_exit(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.remove':
+        elif call.data.split()[0] == 'dungeon.mine':
 
-        call_data.dungeon_remove(bot, bd_user, call, user)
+            call_data.dungeon_mine(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.remove_True':
+        elif call.data.split()[0] == 'dungeon.shop_menu':
 
-        call_data.dungeon_remove_True(bot, bd_user, call, user)
+            call_data.dungeon_shop_menu(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.remove_False':
+        elif call.data.split()[0] == 'dungeon.shop_buy':
 
-        call_data.dungeon_remove_False(bot, bd_user, call, user)
+            call_data.dungeon_shop_buy(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.menu.add_dino':
+        elif call.data.split()[0] == 'rayt_lvl':
 
-        call_data.dungeon_add_dino_menu(bot, bd_user, call, user)
+            call_data.rayt_lvl(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.menu.remove_dino':
+        elif call.data.split()[0] == 'rayt_money':
 
-        call_data.dungeon_remove_dino_menu(bot, bd_user, call, user)
+            call_data.rayt_money(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.action.add_dino':
+        elif call.data.split()[0] == 'rayt_dungeon':
 
-        call_data.dungeon_add_dino(bot, bd_user, call, user)
+            call_data.rayt_dungeon(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.action.remove_dino':
-
-        call_data.dungeon_remove_dino(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.ready':
-
-        call_data.dungeon_ready(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.invite':
-
-        call_data.dungeon_invite(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.supplies':
-
-        call_data.dungeon_supplies(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.action.set_coins':
-
-        call_data.dungeon_set_coins(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.action.add_item':
-
-        call_data.dungeon_add_item_action(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.action.remove_item':
-
-        call_data.dungeon_remove_item_action(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon_add_item':
-
-        call_data.dungeon_add_item(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon_remove_item':
-
-        call_data.dungeon_remove_item(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.start':
-
-        call_data.dungeon_start_game(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.next_room':
-
-        call_data.dungeon_next_room(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.action.battle_action':
-
-        call_data.dungeon_battle_action(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.battle_action_attack':
-
-        call_data.dungeon_battle_attack(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.battle_action_defend':
-
-        call_data.dungeon_battle_defend(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.battle_action_idle':
-
-        call_data.dungeon_battle_idle(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.next_room_ready':
-
-        call_data.dungeon_next_room_ready(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.end_move':
-
-        call_data.dungeon_end_move(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.dinos_stats':
-
-        call_data.dungeon_dinos_stats(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.collect_reward':
-
-        call_data.dungeon_collect_reward(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.item_from_reward':
-
-        call_data.item_from_reward(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.inventory':
-
-        call_data.dungeon_inventory(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == '-':
-        pass
-
-    elif call.data.split()[0] == 'dungeon_use_item':
-
-        call_data.dungeon_use_item(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.kick_member':
-
-        call_data.dungeon_kick_member(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon_kick':
-
-        call_data.dungeon_kick(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.leave_in_game':
-
-        call_data.dungeon_leave_in_game(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.fork_answer':
-
-        call_data.dungeon_fork_answer(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.safe_exit':
-
-        call_data.dungeon_safe_exit(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.mine':
-
-        call_data.dungeon_mine(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.shop_menu':
-
-        call_data.dungeon_shop_menu(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'dungeon.shop_buy':
-
-        call_data.dungeon_shop_buy(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'rayt_lvl':
-
-        call_data.rayt_lvl(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'rayt_money':
-
-        call_data.rayt_money(bot, bd_user, call, user)
-
-    elif call.data.split()[0] == 'rayt_dungeon':
-
-        call_data.rayt_dungeon(bot, bd_user, call, user)
-
-    else:
-        print(call.data, 'call.data')
+        else:
+            print(call.data, 'call.data')
 
 
 if bot.get_me().first_name == 'DinoGochi' or False:
