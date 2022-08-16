@@ -30,6 +30,7 @@ checks_data = {'memory': [0, time.time()], 'incub': [0, time.time(), 0], 'notif'
 reyt_ = [[], [], []]
 
 users_timeout = {}
+callback_timeout = {}
 
 class Functions:
 
@@ -2969,6 +2970,23 @@ class Functions:
 
         else:
             users_timeout[str(user_id)] = time.time()
+            return True
+
+    @staticmethod
+    def callback_spam_stop(user_id, sec = 3):
+        global callback_timeout
+
+        if str(user_id) in callback_timeout.keys():
+            if callback_timeout[str(user_id)] + sec < time.time():
+                del callback_timeout[str(user_id)]
+                return True
+
+            else:
+                callback_timeout[str(user_id)] = time.time()
+                return False
+
+        else:
+            callback_timeout[str(user_id)] = time.time()
             return True
 
     @staticmethod

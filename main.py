@@ -712,6 +712,9 @@ def answer(call):
     user = call.from_user
     bd_user = users.find_one({"userid": user.id})
 
+    if Functions.callback_spam_stop(user.id) == False:
+        return
+
     if call.data == 'start':
 
         call_data.start(bot, bd_user, call, user)
