@@ -2978,7 +2978,7 @@ class Functions:
 
         if str(user_id) in callback_timeout.keys():
             if callback_timeout[str(user_id)] + sec < time.time():
-                del callback_timeout[str(user_id)]
+                callback_timeout[str(user_id)] = time.time()
                 return True
 
             else:
