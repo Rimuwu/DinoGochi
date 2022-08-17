@@ -1,19 +1,39 @@
 { "floors": {
             "1":
-              { "rooms_type": { "com": ["battle"],
+              { "rooms_type": { "com": ["battle", "empty_room"],
                                 "unc": ["empty_room"],
-                                "rar": ["fork_2", "fork_3"],
-                                "myt": ["mine"],
-                                "leg": ["town"]
+                                "rar": ["battle", "fork_2"],
+                                "myt": ["battle", "mine", "fork_3"],
+                                "leg": ["battle", "mine"]
                               },
                 "mobs_count": { "act": 1, "type": "static" },
 
                 "resources": { "items": [
-                                { "item": "51", "chance": 500, "min_efect": 0 },
-                                { "item": "52", "chance": 500, "min_efect": 2 }
+                                { "item": "51", "chance": 600, "min_efect": 0 }
                                         ],
 
                                "items_col": { "min": 1, "max": 2, "type": "random" }
+                             },
+
+                "products": { },
+                "products_settings": { }
+
+              },
+
+              "3":
+              { "rooms_type": { "com": ["battle"],
+                                "unc": ["empty_room"],
+                                "rar": ["battle", "fork_2"],
+                                "myt": ["fork_3", "mine"],
+                                "leg": ["mine", "town"]
+                              },
+                "mobs_count": { "min": 1, "max": 2, "type": "random" },
+
+                "resources": { "items": [ { "item": "51", "chance": 500, "min_efect": 0 },
+                                          { "item": "52", "chance": 1000, "min_efect": 2 }
+                                        ],
+
+                               "items_col": { "min": 1, "max": 3, "type": "random" }
                              },
 
                 "products": {
@@ -44,18 +64,18 @@
 
                             },
 
-                "products_settings": { "col": { "min": 1, "max": 2, "type": "random" } }
+                "products_settings": { "col": { "min": 1, "max": 5, "type": "random" } }
 
               },
 
-              "3":
+              "5":
               { "rooms_type": { "com": ["battle"],
-                                "unc": ["empty_room"],
-                                "rar": ["fork_2", "fork_3"],
-                                "myt": ["mine"],
-                                "leg": ["town"]
+                                "unc": ["battle", "empty_room"],
+                                "rar": ["battle", "fork_2", "fork_3"],
+                                "myt": ["battle", "mine"],
+                                "leg": ["town", "mine"]
                               },
-                "mobs_count": { "min": 1, "max": 2, "type": "random" },
+                "mobs_count": { "min": 1, "max": 4, "type": "random" },
 
                 "resources": { "items": [ { "item": "51", "chance": 500, "min_efect": 0 },
                                           { "item": "52", "chance": 1000, "min_efect": 2 }
@@ -104,7 +124,7 @@
 
                             },
 
-                "products_settings": { "col": { "min": 1, "max": 5, "type": "random" } }
+                "products_settings": { "col": { "min": 2, "max": 5, "type": "random" } }
 
               }
       }
