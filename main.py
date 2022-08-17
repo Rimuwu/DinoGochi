@@ -72,23 +72,26 @@ class In_Dungeon(telebot.custom_filters.AdvancedCustomFilter):
 
     @staticmethod
     def check(message, text):
-        user = message.from_user
-        bd_user = users.find_one({"userid": user.id})
 
-        for dino_id in bd_user['dinos'].keys():
-            dino_st = bd_user['dinos'][str(dino_id)]['activ_status']
+        if message.chat.type == 'private':
 
-            if dino_st == 'dungeon':
+            user = message.from_user
+            bd_user = users.find_one({"userid": user.id})
 
-                if bd_user['language_code'] == 'ru':
-                    text = '❌ Во время нахождения в подземелье, используйте интерфейс подземелья!'
-                else:
-                    text = '❌ While in the dungeon, use the dungeon interface!'
-                bot.reply_to(message, text)
+            for dino_id in bd_user['dinos'].keys():
+                dino_st = bd_user['dinos'][str(dino_id)]['activ_status']
 
-                return False
+                if dino_st == 'dungeon':
 
-        return True
+                    if bd_user['language_code'] == 'ru':
+                        text = '❌ Во время нахождения в подземелье, используйте интерфейс подземелья!'
+                    else:
+                        text = '❌ While in the dungeon, use the dungeon interface!'
+                    bot.reply_to(message, text)
+
+                    return False
+
+            return True
 
 class In_channel(telebot.custom_filters.AdvancedCustomFilter):
     key = 'in_channel'
