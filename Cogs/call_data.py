@@ -2472,6 +2472,10 @@ class call_data:
 
                     dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
 
+                    if dung['stage_data']['game']['room_n'] == dung['settings']['max_rooms'] + 1:
+
+                        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data.game.floors_stat.{floor_n}.end_time': int(time.time()) }} )
+
                     if dung['stage_data']['game']['room_n'] > dung['settings']['max_rooms'] + 1:
 
                         dng, inf = Dungeon.base_upd(dungeonid = dungeonid, type = 'create_floor')
@@ -2870,6 +2874,13 @@ class call_data:
         markup_inline.add( types.InlineKeyboardButton( text = '❌', callback_data = f'dungeon.to_lobby {dungeonid}' ) )
 
         if bd_user['language_code'] == 'ru':
+            markup_inline.add( types.InlineKeyboardButton( text = '➖ Выйти', callback_data = f'dungeon.leave_in_game_answer {dungeonid}' ) )
+
+        else:
+            markup_inline.add( types.InlineKeyboardButton( text = '➖ Leave', callback_data = f'dungeon.leave_in_game_answer {dungeonid}' ) )
+
+
+        if bd_user['language_code'] == 'ru':
             text = "❌ | Исключение пользователей > "
         else:
             text = "❌ | Exclusion of users > "
@@ -2941,20 +2952,27 @@ class call_data:
             pass
 
         if k_user_id in dung['users'].keys():
-            user_message = dung['users'][k_user_id]['messageid']
-            dng, inf = Dungeon.base_upd(userid = int(k_user_id), dungeonid = dungeonid, type = 'leave_user')
+            if user.id == dungeonid:
 
-            if inf == 'leave_user':
+                inf = Dungeon.message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
+                kwargs = { 'save_inv': False }
+                dng, inf = Dungeon.base_upd(dungeonid = user.id, type = 'delete_dungeon', kwargs = kwargs)
 
-                if bd_user['language_code'] == 'ru':
-                    text = "🗻 | Вы вышли из подземелья!"
-                else:
-                    text = "🗻 | You are out of the dungeon!"
+            else:
+                dng, inf = Dungeon.base_upd(userid = int(k_user_id), dungeonid = dungeonid, type = 'leave_user')
+                user_message = dung['users'][k_user_id]['messageid']
 
-                bot.delete_message(int(k_user_id), user_message)
-                bot.send_message(int(k_user_id), text, reply_markup = Functions.markup(bot, 'dungeon_menu', user))
+                if inf == 'leave_user':
 
-                inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
+                    if bd_user['language_code'] == 'ru':
+                        text = "🗻 | Вы вышли из подземелья!"
+                    else:
+                        text = "🗻 | You are out of the dungeon!"
+
+                    bot.delete_message(int(k_user_id), user_message)
+                    bot.send_message(int(k_user_id), text, reply_markup = Functions.markup(bot, 'dungeon_menu', user))
+
+                    inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all')
 
     def dungeon_fork_answer(bot, bd_user, call, user):
 
