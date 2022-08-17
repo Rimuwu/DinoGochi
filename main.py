@@ -443,13 +443,32 @@ def command(message):
 
         bot.reply_to(message, text, parse_mode = 'Markdown')
 
-# @bot.message_handler(commands=['profile', 'профиль'])
-# def command(message):
-#     user = message.from_user
-#     bd_user = users.find_one({"userid": user.id})
-#     if bd_user != None:
-#
-#         if message.chat.type == 'private':
+@bot.message_handler(commands=['message_update'])
+def command(message):
+    user = message.from_user
+    bd_user = users.find_one({"userid": user.id})
+    if bd_user != None:
+
+        if message.chat.type == 'private':
+
+            dungs = dungeons.find({ })
+            dungeonid = None
+
+            for dng in dungs:
+                if str(user.id) in dng['users'].keys():
+                    dungeonid = dng['dungeonid']
+                    break
+
+            if dungeonid != None:
+                image_way = 'images/dungeon/preparation/1.png'
+                image = open(image_way, 'rb')
+                text = '-'
+
+                msg = bot.send_photo(int(user.id), image, text, parse_mode = 'Markdown')
+
+                Dungeon.base_upd(userid = int(user.id), messageid = msg.id, dungeonid = dungeonid, type = 'edit_message')
+
+                inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'one', image_update = True)
 
 
 @bot.message_handler(commands=['add_me', 'добавь_меня'])
