@@ -79,17 +79,18 @@ class In_Dungeon(telebot.custom_filters.AdvancedCustomFilter):
             bd_user = users.find_one({"userid": user.id})
 
             for dino_id in bd_user['dinos'].keys():
-                dino_st = bd_user['dinos'][str(dino_id)]['activ_status']
+                if bd_user['dinos'][str(dino_id)]['status'] == 'dino':
+                    dino_st = bd_user['dinos'][str(dino_id)]['activ_status']
 
-                if dino_st == 'dungeon':
+                    if dino_st == 'dungeon':
 
-                    if bd_user['language_code'] == 'ru':
-                        text = '❌ Во время нахождения в подземелье, используйте интерфейс подземелья!'
-                    else:
-                        text = '❌ While in the dungeon, use the dungeon interface!'
-                    bot.reply_to(message, text)
+                        if bd_user['language_code'] == 'ru':
+                            text = '❌ Во время нахождения в подземелье, используйте интерфейс подземелья!'
+                        else:
+                            text = '❌ While in the dungeon, use the dungeon interface!'
+                        bot.reply_to(message, text)
 
-                    return False
+                        return False
 
         return True
 
@@ -1058,4 +1059,5 @@ bot.add_custom_filter(Test_bot())
 bot.add_custom_filter(In_channel())
 bot.add_custom_filter(WC())
 bot.add_custom_filter(In_Dungeon())
+
 bot.infinity_polling()
