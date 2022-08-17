@@ -2461,7 +2461,7 @@ class call_data:
 
             room_n = str(dung['stage_data']['game']['room_n'])
             floor_n = str(dung['stage_data']['game']['floor_n'])
-            if True: #dung['floor'][room_n]['next_room'] == True:
+            if dung['floor'][room_n]['next_room'] == True:
 
                 if len(dung['floor'][room_n]['ready']) >= len(dung['users']) - 1:
 
