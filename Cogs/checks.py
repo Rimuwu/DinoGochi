@@ -15,7 +15,7 @@ sys.path.append("..")
 import config
 
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
-users = client.bot.users
+users, dungeons = client.bot.users, client.bot.dungeons
 
 with open('data/items.json', encoding='utf-8') as f: items_f = json.load(f)
 
@@ -1279,3 +1279,23 @@ class checks:
         Functions.check_data('main', 0, int(time.time() - t_st) )
         Functions.check_data('main', 1, int(time.time()) )
         Functions.check_data('main', 2, nn )
+
+    @staticmethod
+    def dungeons_check(bot):
+        dngs = list( dungeons.find({ }) ).copy()
+
+        for dng in dngs:
+            dungeonid = dng['dungeonid']
+
+            if 'create_time' in dng.keys():
+                crt = dng['create_time']
+
+                if dng['dungeon_stage'] == 'preparation':
+
+                    if int(time.time()) - crt >= 1800:
+
+                        Dungeon.message_upd(bot, dungeonid = dungeonid, type = 'delete_dungeon')
+                        Dungeon.base_upd(dungeonid = dungeonid, type = 'delete_dungeon')
+
+            else:
+                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'create_time': int(time.time()) }} )

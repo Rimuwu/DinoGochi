@@ -3150,10 +3150,10 @@ class Dungeon:
                     'dungeonid': userid,
                     'users': { str(userid): user_data(messageid, dinos) },
                     'floor': {},
-                    'dungeon_stage': 'preparation',
+                    'dungeon_stage': 'preparation', "create_time": int( time.time() ),
                     'stage_data':  { 'preparation': {'image': random.randint(1,5), 'ready': [] }
                                    },
-                    'settings': { 'lang': bd_user['language_code'], 'max_dinos': 10, 'max_rooms': 10, 'start_floor': 0} # начальный -1
+                    'settings': { 'lang': bd_user['language_code'], 'max_dinos': 10, 'max_rooms': 10, 'start_floor': 0} # начальный уровень -1;
                 } )
 
                 dung = dungeons.find_one({"dungeonid": userid})

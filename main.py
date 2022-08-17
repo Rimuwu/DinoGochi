@@ -21,8 +21,7 @@ from call_data import call_data
 bot = telebot.TeleBot(config.TOKEN)
 
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
-users, referal_system, market = client.bot.users, client.bot.referal_system, client.bot.market
-dungeons = client.bot.dungeons
+users, referal_system, market, dungeons = client.bot.users, client.bot.referal_system, client.bot.market, client.bot.dungeons
 
 with open('data/items.json', encoding='utf-8') as f:
     items_f = json.load(f)
@@ -203,6 +202,8 @@ def min10_check(): #проверка каждые 10 мин
 
     def dead_users(bot): checks.check_dead_users(bot)
 
+    def dng_check(bot): checks.dungeons_check(bot)
+
     while True:
 
         if int(memory_usage()[0]) < 1500:
@@ -211,6 +212,7 @@ def min10_check(): #проверка каждые 10 мин
 
             if bot.get_me().first_name == 'DinoGochi':
                 threading.Thread(target = dead_users, daemon=True, kwargs = {'bot': bot} ).start()
+                threading.Thread(target = dng_check, daemon=True, kwargs = {'bot': bot}).start()
 
         else:
             print(f'Использование памяти: {int(memory_usage()[0])}')
