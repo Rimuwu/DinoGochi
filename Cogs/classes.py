@@ -4094,14 +4094,13 @@ class Dungeon:
                 return f'message_update < delete {dl} - undelete {undl} >'
 
             elif type == 'collect_reward':
+                room_n = str(dung['stage_data']['game']['room_n'])
                 room_rew = dung['floor'][room_n]['reward']
 
                 if dung['settings']['lang'] == 'ru':
                     text = f"🏆 | Вы достойно сражались, заполните свой рюкзак материалами и выдвигайтесь дальше!\n🎇 Опыт: {room_rew['experience']}\n👑 Монеты: {room_rew['coins']}"
                 else:
                     text = f"🏆 | You fought with dignity, fill your backpack with materials and move on!\n🎇 Experience: {room_rew['experience']}\n👑 Coins: {room_rew['coins']}"
-
-                room_n = str(dung['stage_data']['game']['room_n'])
 
                 if str(userid) not in room_rew['collected'].keys():
                     room_rew['collected'][str(userid)] = {'experience': True, 'items': []}
