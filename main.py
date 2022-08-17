@@ -91,7 +91,7 @@ class In_Dungeon(telebot.custom_filters.AdvancedCustomFilter):
 
                     return False
 
-            return True
+        return True
 
 class In_channel(telebot.custom_filters.AdvancedCustomFilter):
     key = 'in_channel'
