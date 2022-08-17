@@ -3580,8 +3580,7 @@ class commands:
 
                                     if item != None:
 
-                                        users.update_one( {"userid": bd_user['userid']}, {"$push": {'inventory': item }} )
-
+                                        bd_user['inventory'].append(item)
                                         bd_user['dinos'][dino_id]['dungeon']['equipment'][type_eq] = None
 
 
@@ -3594,8 +3593,8 @@ class commands:
                                     item = bd_user['user_dungeon']['equipment'][type_eq]
 
                                     if item != None:
-                                        users.update_one( {"userid": bd_user['userid']}, {"$push": {'inventory': item }} )
 
+                                        bd_user['inventory'].append(item)
                                         bd_user['user_dungeon']['equipment'][type_eq] = None
 
                                     itemm = items_id[ l_ind_sort_it[res] ]

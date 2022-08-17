@@ -1960,13 +1960,14 @@ class Functions:
             return True
 
         else:
-            try:
+            if 'abilities' in item.keys():
                 if item['abilities'] == item_data['abilities']:
                     return True
                 else:
                     return False
-            except:
-                return False
+            else:
+                return True
+
 
     @staticmethod
     def qr_item_code(item:dict, v_id:bool = True):
@@ -2961,7 +2962,7 @@ class Functions:
 
         if str(user_id) in users_timeout.keys():
             if users_timeout[str(user_id)] + sec < time.time():
-                del users_timeout[str(user_id)]
+                users_timeout[str(user_id)] = time.time()
                 return True
 
             else:
@@ -2973,7 +2974,7 @@ class Functions:
             return True
 
     @staticmethod
-    def callback_spam_stop(user_id, sec = 1.5):
+    def callback_spam_stop(user_id, sec = 1):
         global callback_timeout
 
         if str(user_id) in callback_timeout.keys():
@@ -3896,15 +3897,24 @@ class Dungeon:
 
                 for itm in d_items:
                     item_data = items_f['items'][ itm['item_id'] ]
-                    iname = item_data[ f"name{dung['settings']['lang']}" ]
+
+                    if Functions.item_authenticity(itm) == False:
+                        nlg = f"name{dung['settings']['lang']}"
+                        iname = f'{item_data[ nlg ]} ({Functions.qr_item_code(itm, False)})'
+                    else:
+                        iname = item_data[ f"name{dung['settings']['lang']}" ]
 
                     if iname not in inl_l.keys():
-                        inl_l[ iname ] = {'item_id': itm['item_id'], 'col': 1}
+                        if 'abilities' in itm.keys():
+                            inl_l[ iname ] = {'item_id': itm['item_id'], 'col': 1, 'abilities': itm['abilities']}
+
+                        else:
+                            inl_l[ iname ] = {'item_id': itm['item_id'], 'col': 1}
 
                     else:
                         inl_l[ iname ]['col'] += 1
 
-                markup_inline.add( *[ types.InlineKeyboardButton( text = f"{inl} x{inl_l[inl]['col']}", callback_data = f"dungeon.item_from_reward {dungeonid} {inl_l[inl]['item_id']}") for inl in inl_l.keys() ])
+                markup_inline.add( *[ types.InlineKeyboardButton( text = f"{inl} x{inl_l[inl]['col']}", callback_data = f"dungeon.item_from_reward {dungeonid} {Functions.qr_item_code(inl_l[inl]) }") for inl in inl_l.keys() ])
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
 
@@ -4098,9 +4108,9 @@ class Dungeon:
                 room_rew = dung['floor'][room_n]['reward']
 
                 if dung['settings']['lang'] == 'ru':
-                    text = f"🏆 | Вы достойно сражались, заполните свой рюкзак материалами и выдвигайтесь дальше!\n🎇 Опыт: {room_rew['experience']}\n👑 Монеты: {room_rew['coins']}"
+                    text = f"🏆 | Вы достойно сражались, заполните свой рюкзак материалами и выдвигайтесь дальше!\n\n🎇 Опыт: {room_rew['experience']}\n👑 Монеты: {room_rew['coins']}"
                 else:
-                    text = f"🏆 | You fought with dignity, fill your backpack with materials and move on!\n🎇 Experience: {room_rew['experience']}\n👑 Coins: {room_rew['coins']}"
+                    text = f"🏆 | You fought with dignity, fill your backpack with materials and move on!\n\n🎇 Experience: {room_rew['experience']}\n👑 Coins: {room_rew['coins']}"
 
                 if str(userid) not in room_rew['collected'].keys():
                     room_rew['collected'][str(userid)] = {'experience': True, 'items': []}

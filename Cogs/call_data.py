@@ -832,7 +832,7 @@ class call_data:
 
                     if item != None:
 
-                        users.update_one( {"userid": bd_user['userid']}, {"$push": {'inventory': item }} )
+                        fr_user['inventory'].append(item)
                         bd_user['dinos'][dino_id]['dungeon']['equipment'][type_eq] = None
 
                     bd_user['dinos'][dino_id]['dungeon']['equipment'][type_eq] = user_item
@@ -843,7 +843,8 @@ class call_data:
                     item = bd_user['user_dungeon']['equipment'][type_eq]
 
                     if item != None:
-                        users.update_one( {"userid": bd_user['userid']}, {"$push": {'inventory': item }} )
+
+                        fr_user['inventory'].append(item)
                         bd_user['user_dungeon']['equipment'][type_eq] = None
 
                     bd_user['user_dungeon']['equipment'][type_eq] = user_item
@@ -870,7 +871,7 @@ class call_data:
                 else:
 
                     if bd_user['activ_items'][ dino_id ][ac_type] != None:
-                        bd_user['inventory'].append(bd_user['activ_items'][ dino_id ][ac_type])
+                        fr_user['inventory'].append(bd_user['activ_items'][ dino_id ][ac_type])
 
                     bd_user['activ_items'][ dino_id ][ac_type] = user_item
 
@@ -2462,7 +2463,7 @@ class call_data:
             floor_n = str(dung['stage_data']['game']['floor_n'])
             if True: #dung['floor'][room_n]['next_room'] == True:
 
-                if len(dung['floor'][room_n]['ready']) == len(dung['users']) - 1:
+                if len(dung['floor'][room_n]['ready']) >= len(dung['users']) - 1:
 
                     dung['stage_data']['game']['room_n'] += 1
 
@@ -2657,7 +2658,6 @@ class call_data:
     def item_from_reward(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
-        item_id = call.data.split()[2]
         dung = dungeons.find_one({"dungeonid": dungeonid})
         user_dt = dung['users'][str(user.id)]
 
@@ -2673,7 +2673,9 @@ class call_data:
             if itm in loot:
                 loot.remove(itm)
 
-        item_dt = Functions.get_dict_item( item_id )
+        item_dt = Functions.des_qr(call.data.split()[2], True)
+        print(item_dt)
+        print(loot)
 
         if item_dt in loot:
 
@@ -2731,7 +2733,7 @@ class call_data:
                 else:
                     if f"{data_items[ str(i['item_id']) ][lg_name]} ({Functions.qr_item_code(i, False)})" not in sort_items.keys():
 
-                        inl_d[ f"{data_items[ str(i['item_id']) ][lg_name]} ({Functions.qr_item_code(i, False)})" ] = { 'col': 1, 'callback_data': f"dungeon_use_item {dungeonid} {Functions.qr_item_code(i)}" }
+                        sort_items[ f"{data_items[ str(i['item_id']) ][lg_name]} ({Functions.qr_item_code(i, False)})" ] = { 'col': 1, 'callback_data': f"dungeon_use_item {dungeonid} {Functions.qr_item_code(i)}" }
 
                     else:
                         sort_items[ f"{data_items[ str(i['item_id']) ][lg_name]} ({Functions.qr_item_code(i, False)})" ]['col'] += 1
@@ -3014,14 +3016,17 @@ class call_data:
             eq_tool = bd_user['dinos'][dkey]['dungeon']['equipment']['weapon']
 
             if eq_tool == None:
-                pass
+                end_up = 0 #не убирать прочность
 
             else:
                 data_item = data_items[ str(eq_tool['item_id']) ]
                 if "effectiv" in data_item.keys():
                     ob_ef += data_item["effectiv"]
+                    end_up = 1 #убирать чуть прочности
+
                 else:
                     ob_ef += 1
+                    end_up = 2 #убирать много прочности
 
         if str(user.id) not in dung['floor'][room_n]['users_res'].keys():
             dung['floor'][room_n]['users_res'][str(user.id)] = []
@@ -3067,6 +3072,28 @@ class call_data:
 
                 else:
                     sw_text = f"⛏ | Your dinosaurs dug up {data_item['nameen']}!"
+
+                if end_up == 1:
+
+                    eq_tool['abilities']['endurance'] -= random.randint(1,2)
+                    upd_items = True
+
+                if end_up == 1:
+
+                    eq_tool['abilities']['endurance'] -= random.randint(5,15)
+                    upd_items = True
+
+                if eq_tool['abilities']['endurance'] <= 0:
+                    bd_user['dinos'][dino_id]['dungeon']['equipment']['weapon'] = None
+                    upd_items = True
+
+                    if dung['settings']['lang'] == 'ru':
+                        sw_text += '💢 Ваше оружие сломалось!\n'
+                    else:
+                        sw_text += '💢 Your weapon is broken!\n'
+
+                if upd_items == True:
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{dino_id}': bd_user['dinos'][dino_id] }} )
 
         else:
 
