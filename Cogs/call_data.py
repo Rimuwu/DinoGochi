@@ -553,7 +553,7 @@ class call_data:
                 if data_item['type'] == '+heal':
                     ans_col()
 
-                if data_item['type'] == '+unv':
+                elif data_item['type'] == '+unv':
                     ans_col()
 
                 elif data_item['type'] == 'recipe':
