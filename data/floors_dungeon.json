@@ -10,7 +10,7 @@
 
                 "resources": { "items": [
                                 { "item": "51", "chance": 500, "min_efect": 0 },
-                                { "item": "52", "chance": 500, "min_efect": 1 }
+                                { "item": "52", "chance": 500, "min_efect": 2 }
                                         ],
 
                                "items_col": { "min": 1, "max": 2, "type": "random" }

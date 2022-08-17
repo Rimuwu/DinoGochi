@@ -414,6 +414,15 @@ def command(message):
 
         bot.reply_to(message, text, parse_mode = 'Markdown')
 
+# @bot.message_handler(commands=['profile', 'профиль'])
+# def command(message):
+#     user = message.from_user
+#     bd_user = users.find_one({"userid": user.id})
+#     if bd_user != None:
+#
+#         if message.chat.type == 'private':
+
+
 @bot.message_handler(commands=['add_me', 'добавь_меня'])
 def command(message):
     user = message.from_user
