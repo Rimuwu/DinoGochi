@@ -308,8 +308,8 @@ class checks:
                                 for uk in dung['users'].keys():
                                     Dungeon.user_dungeon_stat(int(uk), dungeonid)
 
-                                    inf = Dungeon.message_upd(bot, dungeonid = int(uk ), type = 'delete_dungeon')
 
+                                inf = Dungeon.message_upd(bot, dungeonid = int(uk ), type = 'delete_dungeon')
                                 kwargs = { 'save_inv': False }
                                 dng, inf = Dungeon.base_upd(dungeonid = userid, type = 'delete_dungeon', kwargs = kwargs)
 
