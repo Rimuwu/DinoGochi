@@ -67,6 +67,29 @@ class Test_bot(telebot.custom_filters.AdvancedCustomFilter):
                 print('Отмена команды')
                 return False
 
+class In_Dungeon(telebot.custom_filters.AdvancedCustomFilter):
+    key = 'in_dungeon'
+
+    @staticmethod
+    def check(message, text):
+        user = message.from_user
+        bd_user = users.find_one({"userid": user.id})
+
+        for dino_id in bd_user['dinos'].keys():
+            dino_st = bd_user['dinos'][str(dino_id)]['activ_status']
+
+            if dino_st == 'dungeon':
+
+                if bd_user['language_code'] == 'ru':
+                    text = '❌ Во время нахождения в подземелье, используйте интерфейс подземелья!'
+                else:
+                    text = '❌ While in the dungeon, use the dungeon interface!'
+                bot.reply_to(message, text)
+
+                return False
+
+        return True
+
 class In_channel(telebot.custom_filters.AdvancedCustomFilter):
     key = 'in_channel'
 
@@ -460,7 +483,7 @@ def on_start(message):
         else:
             bot.reply_to(message, '👋', reply_markup = Functions.markup(bot, user = user), parse_mode = 'html')
 
-@bot.message_handler(in_channel = True, spam_check = True, content_types = ['text']) #test_bot = True
+@bot.message_handler(content_types = ['text'], spam_check = True, in_channel = True, in_dungeon = True) #test_bot = True
 def on_message(message):
 
     user = message.from_user
@@ -1031,4 +1054,5 @@ bot.add_custom_filter(SpamStop())
 bot.add_custom_filter(Test_bot())
 bot.add_custom_filter(In_channel())
 bot.add_custom_filter(WC())
+bot.add_custom_filter(In_Dungeon())
 bot.infinity_polling()
