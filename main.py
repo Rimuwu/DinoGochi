@@ -470,6 +470,12 @@ def command(message):
 
                 inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'one', image_update = True)
 
+                try:
+                    bot.delete_message(user.id, dng['users'][str(user.id)]['messageid'])
+                except:
+                    pass
+
+
 
 @bot.message_handler(commands=['add_me', 'добавь_меня'])
 def command(message):

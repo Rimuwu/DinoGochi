@@ -2472,19 +2472,15 @@ class call_data:
 
                     dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
 
-                    if dung['stage_data']['game']['room_n'] == dung['settings']['max_rooms'] + 1:
-
-                        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data.game.floors_stat.{floor_n}.end_time': int(time.time()) }} )
-
                     if dung['stage_data']['game']['room_n'] > dung['settings']['max_rooms'] + 1:
 
                         dng, inf = Dungeon.base_upd(dungeonid = dungeonid, type = 'create_floor')
 
-                        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data.game.floors_stat.{floor_n}.end_time': int(time.time()) }} )
-
                     else:
 
                         dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data': dung['stage_data'] }} )
+
+                    dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'stage_data.game.floors_stat.{floor_n}.end_time': int(time.time()) }} )
 
                     inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
 
@@ -2678,8 +2674,6 @@ class call_data:
                 loot.remove(itm)
 
         item_dt = Functions.des_qr(call.data.split()[2], True)
-        print(item_dt)
-        print(loot)
 
         if item_dt in loot:
 
