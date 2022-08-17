@@ -2900,11 +2900,45 @@ class call_data:
                 call_data.dungeon_kick_member(bot, bd_user, call, user)
                 inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
 
+    def dungeon_leave_in_game_answer(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        k_user_id = str(user.id)
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+        markup_inline = types.InlineKeyboardMarkup(row_width = 2)
+
+        if bd_user['language_code'] == 'ru':
+
+            inl_l = {'✅ Да': 'dungeon.leave_in_game',
+                     '❌ Нет':  'message_delete',
+                    }
+
+            text = "🗻 | Вы уверены что хотите выйти из подземелья?"
+
+            markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
+
+        else:
+
+            inl_l = {'✅ Yes': 'dungeon.leave_in_game',
+                     '❌ No':  'message_delete',
+                    }
+
+            text = "🗻 | Are you sure you want to get out of the dungeon?"
+
+            markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
+
+        bot.send_message(user.id, text = text, parse_mode = 'Markdown', reply_markup = markup_inline)
+
     def dungeon_leave_in_game(bot, bd_user, call, user):
 
         dungeonid = int(call.data.split()[1])
         k_user_id = str(user.id)
         dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        try:
+            bot.delete_message(user.id, call.message.message_id)
+        except:
+            pass
 
         if k_user_id in dung['users'].keys():
             user_message = dung['users'][k_user_id]['messageid']

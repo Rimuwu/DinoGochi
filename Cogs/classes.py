@@ -3528,7 +3528,7 @@ class Dungeon:
                         inl_l2 = {'⏩ След. комната': 'dungeon.next_room', '❌ Исключить': 'dungeon.kick_member'}
 
                     else:
-                        inl_l2 = {'✅ Готовность': 'dungeon.next_room_ready', '🚪 Выйти': 'dungeon.leave_in_game'}
+                        inl_l2 = {'✅ Готовность': 'dungeon.next_room_ready', '🚪 Выйти': 'dungeon.leave_in_game_answer'}
 
                 else:
                     inl_l = { '📜 Inventory': 'dungeon.inventory 1', '⛏ Dig': 'dungeon.mine', '🦕 Condition': 'dungeon.dinos_stats'
@@ -3538,7 +3538,7 @@ class Dungeon:
                         inl_l2 = {'⏩ Next room': 'dungeon.next_room', '❌ Exclude': 'dungeon.kick_member'}
 
                     else:
-                        inl_l2 = {'✅ Ready': 'dungeon.next_room_ready', '🚪 Go out': 'dungeon.leave_in_game'}
+                        inl_l2 = {'✅ Ready': 'dungeon.next_room_ready', '🚪 Go out': 'dungeon.leave_in_game_answer'}
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
 
@@ -3554,7 +3554,7 @@ class Dungeon:
                         inl_l2 = {'⏩ След. комната': 'dungeon.next_room', '❌ Исключить': 'dungeon.kick_member'}
 
                     else:
-                        inl_l2 = {'✅ Готовность': 'dungeon.next_room_ready', '🚪 Выйти': 'dungeon.leave_in_game'}
+                        inl_l2 = {'✅ Готовность': 'dungeon.next_room_ready', '🚪 Выйти': 'dungeon.leave_in_game_answer'}
 
                 else:
                     inl_l = { '📜 Inventory': 'dungeon.inventory 1', '🧭 Shop': 'dungeon.shop_menu', '🦕 Condition': 'dungeon.dinos_stats'
@@ -3564,7 +3564,7 @@ class Dungeon:
                         inl_l2 = {'⏩ Next room': 'dungeon.next_room', '❌ Exclude': 'dungeon.kick_member'}
 
                     else:
-                        inl_l2 = {'✅ Ready': 'dungeon.next_room_ready', '🚪 Go out': 'dungeon.leave_in_game'}
+                        inl_l2 = {'✅ Ready': 'dungeon.next_room_ready', '🚪 Go out': 'dungeon.leave_in_game_answer'}
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
 
@@ -3608,14 +3608,14 @@ class Dungeon:
                         inl_l2['❌ Исключить'] = f'dungeon.kick_member {dungeonid}'
 
                     else:
-                        inl_l2['🚪 Выйти'] = f'dungeon.leave_in_game {dungeonid}'
+                        inl_l2['🚪 Выйти'] = f'dungeon.leave_in_game_answer {dungeonid}'
 
                 else:
                     if userid == dungeonid:
                         inl_l2['❌ Exclude'] = f'dungeon.kick_member {dungeonid}'
 
                     else:
-                        inl_l2['🚪 Go out'] = f'dungeon.leave_in_game {dungeonid}'
+                        inl_l2['🚪 Go out'] = f'dungeon.leave_in_game_answer {dungeonid}'
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = inl_l[inl] ) for inl in inl_l.keys() ])
 
@@ -3660,7 +3660,7 @@ class Dungeon:
                             inl_l['❌ Исключить'] = 'dungeon.kick_member'
 
                         else:
-                            inl_l['🚪 Выйти'] = 'dungeon.leave_in_game'
+                            inl_l['🚪 Выйти'] = 'dungeon.leave_in_game_answer'
 
                     else:
 
@@ -3668,7 +3668,7 @@ class Dungeon:
                             inl_l['❌ Exclude'] = 'dungeon.kick_member'
 
                         else:
-                            inl_l['🚪 Go out'] = 'dungeon.leave_in_game'
+                            inl_l['🚪 Go out'] = 'dungeon.leave_in_game_answer'
 
                     markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
 
@@ -3682,7 +3682,7 @@ class Dungeon:
                             inl_l2 = {'⏩ След. комната': 'dungeon.next_room', '❌ Исключить': 'dungeon.kick_member'}
 
                         else:
-                            inl_l2 = {'✅ Готовность': 'dungeon.next_room_ready', '🚪 Выйти': 'dungeon.leave_in_game'}
+                            inl_l2 = {'✅ Готовность': 'dungeon.next_room_ready', '🚪 Выйти': 'dungeon.leave_in_game_answer'}
 
                     else:
                         inl_l = { '📜 Inventory': 'dungeon.inventory 1', '🦕 Condition': 'dungeon.dinos_stats', '👑 Reward': 'dungeon.collect_reward'
@@ -3692,7 +3692,7 @@ class Dungeon:
                             inl_l2 = {'⏩ Next room': 'dungeon.next_room', '❌ Exclude': 'dungeon.kick_member'}
 
                         else:
-                            inl_l2 = {'✅ Ready': 'dungeon.next_room_ready', '🚪 Go out': 'dungeon.leave_in_game'}
+                            inl_l2 = {'✅ Ready': 'dungeon.next_room_ready', '🚪 Go out': 'dungeon.leave_in_game_answer'}
 
                     markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
 
@@ -3708,7 +3708,7 @@ class Dungeon:
                         inl_l2 = {'⏩ След. комната': 'dungeon.next_room', '❌ Исключить': 'dungeon.kick_member'}
 
                     else:
-                        inl_l2 = {'✅ Готовность': 'dungeon.next_room_ready', '🚪 Выйти': 'dungeon.leave_in_game'}
+                        inl_l2 = {'✅ Готовность': 'dungeon.next_room_ready', '🚪 Выйти': 'dungeon.leave_in_game_answer'}
 
                 else:
                     inl_l = { '📜 Inventory': 'dungeon.inventory 1', '🦕 Condition': 'dungeon.dinos_stats'
@@ -3718,7 +3718,7 @@ class Dungeon:
                         inl_l2 = {'⏩ Next room': 'dungeon.next_room', '❌ Exclude': 'dungeon.kick_member'}
 
                     else:
-                        inl_l2 = {'✅ Ready': 'dungeon.next_room_ready', '🚪 Go out': 'dungeon.leave_in_game'}
+                        inl_l2 = {'✅ Ready': 'dungeon.next_room_ready', '🚪 Go out': 'dungeon.leave_in_game_answer'}
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
 

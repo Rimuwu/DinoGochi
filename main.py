@@ -980,6 +980,10 @@ def answer(call):
 
         call_data.dungeon_leave_in_game(bot, bd_user, call, user)
 
+    elif call.data.split()[0] == 'dungeon.leave_in_game_answer':
+
+        call_data.dungeon_leave_in_game_answer(bot, bd_user, call, user)
+
     elif call.data.split()[0] == 'dungeon.fork_answer':
 
         call_data.dungeon_fork_answer(bot, bd_user, call, user)
