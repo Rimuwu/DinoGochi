@@ -32,7 +32,7 @@
 
  "16": {"nameru": "🧸 Мишка", "nameen": "🧸 Bear", "type": "unv_ac", "descriptionru": "Добавляет режимы сна.", "descriptionen": "Adds sleep modes.", "abilities": {"endurance": 100}, "image": "item16"},
 
- "17": {"nameru": "🧪 Лечебная мазь", "nameen": "🧪 Therapeutic ointment", "type": "+heal", "act": 25, "image": "item17"},
+ "17": {"nameru": "🧪 Лечебная мазь", "nameen": "🧪 Therapeutic ointment", "type": "+heal", "act": 15, "image": "item17"},
 
  "18": {"nameru": "🍕 Кусочек пиццы", "nameen": "🍕 Slice of pizza", "type": "+eat", "act": 25, "class": "ALL", "+mood": 15, "ns_craft": { "1": { "materials": ["18", "18", "18", "18", "18", "18", "18", "18", "18"], "create": ["48"] }}, "image": "item18"},
 
@@ -64,7 +64,7 @@
 
  "32": {"nameru": "📜 Рецепт факела", "nameen": "📜 Torch Recipe", "type": "recipe", "descriptionru": "Рецепт создания факела, который осветит ваш путь.", "descriptionen": "A recipe for creating a torch that will light your way.", "create": [{"item": "31", "type": "create"}], "materials": [ {"item": "27", "type": "delete"}, {"item": "27", "type": "delete"}, {"item": "27", "type": "delete"}, {"item": "27", "type": "delete"}, {"item": "25", "type": "delete"}, {"item": "25", "type": "delete"}, {"item": "25", "type": "delete"} ], "abilities": {"uses": 1}, "image": "recipe"},
 
- "33": {"nameru": "🍵 Лекарственный напиток", "nameen": "🍵 Medicinal drink", "type": "+heal", "act": 45, "-mood": 10, "image": "item33"},
+ "33": {"nameru": "🍵 Лекарственный напиток", "nameen": "🍵 Medicinal drink", "type": "+heal", "act": 25, "-mood": 10, "image": "item33"},
 
  "34": {"nameru": "📜 Лекарственный напиток", "nameen": "📜 Medicinal drink", "type": "recipe", "descriptionru": "Рецепт изготовления отвратительного на вкус, но лечебного напитка.", "descriptionen": "Рецепт изготовления отвратительного на вкус, но лечебного напитка.", "create": [{"item": "33", "type": "create"}], "materials": [ {"item": "28", "type": "delete"}, {"item": "28", "type": "delete"}, {"item": "28", "type": "delete"}, {"item": "28", "type": "delete"}, {"item": "28", "type": "delete"} ], "abilities": {"uses": 10}, "image": "recipe"},
 
@@ -108,7 +108,7 @@
 
  "54": {"nameru": "💘 Костяная стрела", "nameen": "💘 Bone Arrow", "type": "ammunition", "abilities": {"stack": 1}, "add_damage": 0, "add_effects": [], "max_stack": 66, "image": "item54"},
 
- "55": {"nameru": "🏹 Костяной лук", "nameen": "🏹 Bone Bow", "type": "weapon", "class": "far", "damage": {"min": 0, "max": 5}, "ammunition": ["54"], "abilities": {"endurance": 150}, "image": "item55"},
+ "55": {"nameru": "🏹 Костяной лук", "nameen": "🏹 Bone Bow", "type": "weapon", "class": "far", "damage": {"min": 0, "max": 5}, "ammunition": ["54"], "abilities": {"endurance": 70}, "image": "item55"},
 
  "56": {"nameru": "📜 Рецепт тако", "nameen": "📜 Taco Recipe", "type": "recipe", "descriptionru": "Тако, превосходная еда, которую обожают все динозавры любых видов!", "descriptionen": "Tacos, excellent food that all dinosaurs of all kinds adore!", "create": [{"item": "50", "type": "create"}], "materials": [ {"item": "9", "type": "delete"}, {"item": "9", "type": "delete"}, {"item": "9", "type": "delete"}, {"item": "8", "type": "delete"}, {"item": "8", "type": "delete"} ], "abilities": {"uses": 5}, "image": "recipe"},
 
@@ -116,7 +116,7 @@
 
  "58": {"nameru": "📜 Костяной лук", "nameen": "📜 Bone Bow", "type": "recipe", "descriptionru": "Лук из пару костей, стреляет исправно.", "descriptionen": "A bow made of a couple of bones, shoots properly.", "create": [{"item": "55", "type": "create"}], "materials": [ {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"}, {"item": "15", "type": "endurance", "act": 30}, {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"}, {"item": "51", "type": "delete"} ], "abilities": {"uses": 2}, "image": "recipe"},
 
- "59": {"nameru": "📜 Костяная стрела", "nameen": "📜 Bone Arrow", "type": "recipe", "descriptionru": "Кость, ломающая кости.", "descriptionen": "Bone breaking bones.", "create": [{"item": "54", "type": "create", "abilities": {"stack": 3} }], "materials": [ {"item": "51", "type": "delete"}, {"item": "15", "type": "endurance", "act": 10} ], "abilities": {"uses": 50}, "image": "recipe"},
+ "59": {"nameru": "📜 Костяная стрела", "nameen": "📜 Bone Arrow", "type": "recipe", "descriptionru": "Кость, ломающая кости.", "descriptionen": "Bone breaking bones.", "create": [{"item": "54", "type": "create", "abilities": {"stack": 3} }], "materials": [ {"item": "51", "type": "delete"}, {"item": "15", "type": "endurance", "act": 10} ], "abilities": {"uses": 11}, "image": "recipe"},
 
  "60": {"nameru": "🎒 Обычный рюкзак", "nameen": "🎒 Ordinary backpack", "type": "backpack", "capacity": 10, "image": "item45"},
 

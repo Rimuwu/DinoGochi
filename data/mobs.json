@@ -15,7 +15,8 @@
                        "experience": { "min": 2, "max": 20, "type": "random" },
                        "loot": [ {"item": "51", "col": 2, "chance": 200},
                                  {"item": "57", "col": 1, "chance": 10},
-                                 {"item": "53", "col": 1, "chance": 100, "preabil": {"endurance": 11} }
+                                 {"item": "53", "col": 1, "chance": 100,
+                                        "preabil": {"endurance": {"min": 2, "max": 15, "type": "random"} } }
                                ],
                        "coins": { "min": 1, "max": 10, "type": "random" },
                        "actions": { "attacks": [],
@@ -31,11 +32,11 @@
                        "damage-type": "magic",
                        "mana": { "min": 20, "max": 50, "type": "random" },
 
-                       "damage": { "min": 0, "max": 2, "type": "random" },
+                       "damage": { "min": 1, "max": 2, "type": "random" },
                        "intelligence": { "act": 10, "type": "static" },
                        "image": "images/dungeon/mobs/skeleton_magician.png",
                        "lvls": {"min": 1, "max": 100},
-                       "experience": { "min": 2, "max": 20, "type": "random" },
+                       "experience": { "min": 0, "max": 10, "type": "random" },
                        "loot": [ {"item": "51", "col": 3, "chance": 300} ],
                        "coins": { "min": 1, "max": 10, "type": "random" },
                        "actions": {
@@ -63,17 +64,18 @@
                        "hp": { "min": 1, "max": 5, "type": "random" },
 
                        "damage-type": "far",
-                       "ammunition": { "min": 20, "max": 40, "type": "random" },
+                       "ammunition": { "min": 5, "max": 10, "type": "random" },
 
                        "damage": { "min": 2, "max": 4, "type": "random" },
                        "intelligence": { "min": 0, "max": 2, "type": "random" },
                        "image": "images/dungeon/mobs/piglin-archer.png",
                        "lvls": {"min": 1, "max": 100},
-                       "experience": { "min": 2, "max": 20, "type": "random" },
+                       "experience": { "min": 2, "max": 10, "type": "random" },
                        "loot": [ {"item": "51", "col": 1, "chance": 200},
                                  {"item": "26", "col": 1, "chance": 400},
                                  {"item": "58", "col": 1, "chance": 10},
-                                 {"item": "55", "col": 1, "chance": 100, "preabil": {"endurance": 21}}
+                                 {"item": "55", "col": 1, "chance": 100,
+                                        "preabil": {"endurance": {"min": 2, "max": 30, "type": "random"} } }
                                ],
                        "coins": { "min": 1, "max": 10, "type": "random" },
                        "actions": { "attacks": [],
@@ -92,10 +94,10 @@
                   "damage-type": "near",
                   "endurance": { "act": 1000, "type": "static" },
 
-                  "damage": { "min": 1, "max": 5, "type": "random" },
+                  "damage": { "min": 1, "max": 10, "type": "random" },
                   "intelligence": { "act": 3, "type": "static" },
                   "image": "images/dungeon/bosss/mega-goblin.png",
-                  "lvls": {"min": 10, "max": 200},
+                  "lvls": {"min": 10, "max": 100},
                   "experience": { "min": 20, "max": 100, "type": "random" },
                   "loot": [ {"item": "20", "col": 1, "chance": 250},
                             {"item": "46", "col": 1, "chance": 300},

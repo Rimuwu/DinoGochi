@@ -1923,7 +1923,12 @@ class Functions:
         if 'abilities' in item.keys():
             abl = {}
             for k in item['abilities'].keys():
-                abl[k] = item['abilities'][k]
+
+                if type(item['abilities'][k]) == int:
+                    abl[k] = item['abilities'][k]
+
+                elif type(item['abilities'][k]) == dict:
+                    abl[k] = Functions.rand_d( item['abilities'][k] )
 
             d_it['abilities'] = abl
 
@@ -1931,7 +1936,12 @@ class Functions:
 
             for ak in d_it['abilities'].keys():
                 if ak in preabil.keys():
-                    d_it['abilities'][ak] = preabil[ak]
+
+                    if type(preabil[ak]) == int:
+                        d_it['abilities'][ak] = preabil[ak]
+
+                    elif type(preabil[ak]) == dict:
+                        d_it['abilities'][ak] = Functions.rand_d(preabil[ak])
 
         return d_it
 
@@ -3028,19 +3038,29 @@ class Functions:
         { "act": 1, "type": "static" }
         """
 
-        number = 0
-        if rd["type"] == "static":
-            number = rd['act']
+        if 'type' in rd.keys():
 
-        elif rd["type"] == "random":
+            if rd["type"] in ["static", "random"]:
 
-            if rd['min'] >= rd['max']:
-                pass
+                number = 0
+                if rd["type"] == "static":
+                    number = rd['act']
+
+                elif rd["type"] == "random":
+
+                    if rd['min'] >= rd['max']:
+                        pass
+
+                    else:
+                        number = random.randint( rd['min'], rd['max'] )
+
+                return number
 
             else:
-                number = random.randint( rd['min'], rd['max'] )
+                return rd
 
-        return number
+        else:
+            return rd
 
 
 class Dungeon:
@@ -5034,7 +5054,7 @@ class Dungeon:
                                 df_action += 1
 
                     if dung['settings']['lang'] == 'ru':
-                        dino_text += f'🦕 | Дейсвтия: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
+                        dino_text += f'🦕 | Действия: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
                     else:
                         dino_text += f'🦕 | Actions: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
 
@@ -5146,7 +5166,7 @@ class Dungeon:
                                 df_action += 1
 
                     if dung['settings']['lang'] == 'ru':
-                        dino_text += f'🦕 | Дейсвтия: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
+                        dino_text += f'🦕 | Действия: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
                     else:
                         dino_text += f'🦕 | Actions: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
 
