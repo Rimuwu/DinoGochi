@@ -6,7 +6,7 @@
                        "hp": { "min": 2, "max": 10, "type": "random" },
 
                        "damage-type": "near",
-                       "endurance": { "min": 20, "max": 50, "type": "random" },
+                       "endurance": { "min": 5, "max": 15, "type": "random" },
 
                        "damage": { "min": 1, "max": 3, "type": "random" },
                        "intelligence": { "act": 1, "type": "static" },
@@ -95,7 +95,7 @@
                   "endurance": { "act": 1000, "type": "static" },
 
                   "damage": { "min": 1, "max": 10, "type": "random" },
-                  "intelligence": { "act": 3, "type": "static" },
+                  "intelligence": { "act": 10, "type": "static" },
                   "image": "images/dungeon/bosss/mega-goblin.png",
                   "lvls": {"min": 10, "max": 100},
                   "experience": { "min": 20, "max": 100, "type": "random" },
@@ -104,7 +104,13 @@
                             {"item": "51", "col": 10, "chance": 400 }
                           ],
                   "coins": { "min": 50, "max": 500, "type": "random" },
-                  "actions": { "attacks": [],
+                  "actions": { "attacks": [
+
+                            { "name": "simple_attack", "damage": {"min": 1, "max": 5, "type": "random"}, "endurance": { "act": 0, "type": "static" }, "type": "unique" },
+
+                            { "name": "simple_attack", "damage": {"min": 1, "max": 10, "type": "random"}, "endurance": { "act": 0, "type": "static" }, "type": "unique" }
+
+                                          ],
                                "healing": [],
                                "other": []
                              }
