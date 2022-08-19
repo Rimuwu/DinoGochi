@@ -3488,10 +3488,19 @@ class call_data:
                 elif total == max_rayt_users - 1:
                     el = '└'
 
-                if bd_user['language_code'] == 'ru':
-                    text += f"*{el}* #{total+1} *{name}*:\n      *└* Ур. {ud['lvl'][0]} Опыт {ud['lvl'][1]}\n"
+                if total == 0:
+                    mm = '🥇'
+                elif total == 1:
+                    mm = '🥈'
+                elif total == 2:
+                    mm = '🥉'
                 else:
-                    text += f"*{el}* #{total+1} *{name}*:\n      *└* Lvl {ud['lvl'][0]} Exp {ud['lvl'][1]}\n"
+                    mm = total+1
+
+                if bd_user['language_code'] == 'ru':
+                    text += f"*{el}* #{mm} *{name}*:\n      *└* Ур. {ud['lvl'][0]} Опыт {ud['lvl'][1]}\n"
+                else:
+                    text += f"*{el}* #{mm} *{name}*:\n      *└* Lvl {ud['lvl'][0]} Exp {ud['lvl'][1]}\n"
 
             else:
                 break
@@ -3540,10 +3549,19 @@ class call_data:
                 elif total == max_rayt_users - 1:
                     el = '└'
 
-                if bd_user['language_code'] == 'ru':
-                    text += f"*{el}* #{total+1} *{name}*:\n      *└* Монеты {ud['coins']}\n"
+                if total == 0:
+                    mm = '🥇'
+                elif total == 1:
+                    mm = '🥈'
+                elif total == 2:
+                    mm = '🥉'
                 else:
-                    text += f"*{el}* #{total+1} *{name}*:\n      *└* Coins {ud['coins']}\n"
+                    mm = total+1
+
+                if bd_user['language_code'] == 'ru':
+                    text += f"*{el}* #{mm} *{name}*:\n      *└* Монеты {ud['coins']}\n"
+                else:
+                    text += f"*{el}* #{mm} *{name}*:\n      *└* Coins {ud['coins']}\n"
 
             else:
                 break
@@ -3553,6 +3571,59 @@ class call_data:
         bot.send_message(call.message.chat.id, text, parse_mode = "Markdown")
 
     @staticmethod
-    def rayt_dungeon(bot, message, user, bd_user):
+    def rayt_dungeon(bot, bd_user, call, user):
 
-        pass
+        rayt_list = Functions.rayt_update('check')[2]
+
+        if bd_user['language_code'] == 'ru':
+            text = f'*┌* 🗻 Рейтинг по подземельям:\n'
+        else:
+            text = f'*┌* 🗻 Dungeon Rating:\n'
+
+        max_rayt_users = 10
+        total = 0
+
+        sort_l_keys = sorted([ int(i) for i in rayt_list.keys() ], reverse = True)
+
+        for floorn in sort_l_keys:
+
+            if total < max_rayt_users:
+                lm = []
+
+                for ud in rayt_list[str(floorn)]:
+
+                    try:
+                        member = bot.get_chat(ud)
+                        name = member.first_name
+                    except:
+                        name = str(ud)
+
+                    lm.append(name)
+
+                if total < max_rayt_users - 1:
+                    el = '├'
+
+                elif total == max_rayt_users - 1:
+                    el = '└'
+
+                if total == 0:
+                    mm = '🥇'
+                elif total == 1:
+                    mm = '🥈'
+                elif total == 2:
+                    mm = '🥉'
+                else:
+                    mm = ''
+
+                if bd_user['language_code'] == 'ru':
+                    text += f'*{el}* Этаж #{floorn}\n    *└* {mm} {", ".join(lm) }\n\n'
+                else:
+                    text += f'*{el}* Floor #{floorn}\n    *└* {mm} {", ".join(lm) }\n\n'
+
+
+            else:
+                break
+
+            total += 1
+
+        bot.send_message(call.message.chat.id, text, parse_mode = "Markdown")
