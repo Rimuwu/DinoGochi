@@ -3324,12 +3324,12 @@ class call_data:
                     eq_tool['abilities']['endurance'] -= random.randint(1,2)
                     upd_items = True
 
-                if end_up == 1:
+                elif end_up == 2:
 
                     eq_tool['abilities']['endurance'] -= random.randint(5,15)
                     upd_items = True
 
-                if eq_tool['abilities']['endurance'] <= 0:
+                if eq_tool != None and eq_tool['abilities']['endurance'] <= 0:
                     bd_user['dinos'][dino_id]['dungeon']['equipment']['weapon'] = None
                     upd_items = True
 
