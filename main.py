@@ -77,19 +77,21 @@ class In_Dungeon(telebot.custom_filters.AdvancedCustomFilter):
             user = message.from_user
             bd_user = users.find_one({"userid": user.id})
 
-            for dino_id in bd_user['dinos'].keys():
-                if bd_user['dinos'][str(dino_id)]['status'] == 'dino':
-                    dino_st = bd_user['dinos'][str(dino_id)]['activ_status']
+            if bd_user != None:
 
-                    if dino_st == 'dungeon':
+                for dino_id in bd_user['dinos'].keys():
+                    if bd_user['dinos'][str(dino_id)]['status'] == 'dino':
+                        dino_st = bd_user['dinos'][str(dino_id)]['activ_status']
 
-                        if bd_user['language_code'] == 'ru':
-                            text = '❌ Во время нахождения в подземелье, используйте интерфейс подземелья!'
-                        else:
-                            text = '❌ While in the dungeon, use the dungeon interface!'
-                        bot.reply_to(message, text)
+                        if dino_st == 'dungeon':
 
-                        return False
+                            if bd_user['language_code'] == 'ru':
+                                text = '❌ Во время нахождения в подземелье, используйте интерфейс подземелья!'
+                            else:
+                                text = '❌ While in the dungeon, use the dungeon interface!'
+                            bot.reply_to(message, text)
+
+                            return False
 
         return True
 
