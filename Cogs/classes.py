@@ -81,7 +81,7 @@ class Functions:
         elif element == 'delete_message': #markup_inline
 
             if bd_user['language_code'] == 'ru':
-                inl_l = {"⚙ Удалить сообщение": 'message_delete', }
+                inl_l = {"⚙ Удалить сообщение": 'message_delete'}
             else:
                 inl_l = {"⚙ Delete a message": 'message_delete'}
 
@@ -3947,7 +3947,7 @@ class Dungeon:
             print('error_no_dungeon')
             return markup_inline
 
-    def message_upd(bot, userid = None, dungeonid = None, upd_type = 'one', type = None, image_update = False, ignore_list = []):
+    def message_upd(bot, userid = None, dungeonid = None, upd_type = 'one', type = None, image_update = False, ignore_list = [], kwargs = {}):
 
         def update(dung, text, stage_type, image_way = None):
 
@@ -4283,6 +4283,112 @@ class Dungeon:
                     return f'message_dont_update - settings ~{e}~'
 
                 return 'message_update - remove_dino'
+
+            elif type == 'user_inventory':
+
+                page = kwargs['page']
+                bd_user = kwargs['bd_user']
+                items = dung['users'][str(userid)]['inventory']
+                data_items = items_f['items']
+                sort_items = {}
+
+                if dung['settings']['lang'] == 'ru':
+                    lg_name = "nameru"
+                else:
+                    lg_name = "nameen"
+
+                for i in items:
+
+                    if Functions.item_authenticity(i) == True:
+
+                        if data_items[ str(i['item_id']) ][lg_name] not in sort_items.keys():
+                            sort_items[ data_items[ str(i['item_id']) ][lg_name] ] = { 'col': 1, 'callback_data': f"dungeon_use_item_info {dungeonid} {Functions.qr_item_code(i)}" }
+
+                        else:
+                            sort_items[ data_items[ str(i['item_id']) ][lg_name] ]['col'] += 1
+
+                    else:
+                        if f"{data_items[ str(i['item_id']) ][lg_name]} ({Functions.qr_item_code(i, False)})" not in sort_items.keys():
+
+                            sort_items[ f"{data_items[ str(i['item_id']) ][lg_name]} ({Functions.qr_item_code(i, False)})" ] = { 'col': 1, 'callback_data': f"dungeon_use_item_info {dungeonid} {Functions.qr_item_code(i)}" }
+
+                        else:
+                            sort_items[ f"{data_items[ str(i['item_id']) ][lg_name]} ({Functions.qr_item_code(i, False)})" ]['col'] += 1
+
+                sort_items_keys = {}
+                sort_list = []
+
+                for i in sort_items.keys():
+                    i_n = f'{i} x{sort_items[i]["col"]}'
+
+                    if i_n not in sort_list:
+                        sort_list.append( i_n )
+                        sort_items_keys[ i_n ] = sort_items[i]['callback_data']
+
+                pages_inv = list( Functions.chunks(sort_list, 6) )
+                inl_d = {}
+                markup_inline = types.InlineKeyboardMarkup(row_width = 2)
+
+                if pages_inv != []:
+                    sl_n = 0
+
+                    for i in pages_inv[page-1]:
+                        sl_n += 1
+                        inl_d[i] = sort_items_keys[i]
+
+                    if sl_n != 6:
+                        for _ in range(6 - sl_n):
+                            sl_n += 1
+                            inl_d[ ' ' * (6 - sl_n) ] = '-'
+
+                    markup_inline.add( *[
+                                        types.InlineKeyboardButton(
+                                            text = inl,
+                                            callback_data = inl_d[inl] ) for inl in inl_d.keys()
+                                     ])
+
+                if len(pages_inv) > 1:
+
+                    inl_serv = { }
+
+                    if page - 1 < 1:
+                        m_page = 1
+
+                    else:
+                        m_page = page - 1
+                        inl_serv['◀'] = f'dungeon.inventory {m_page} {dungeonid}'
+
+                    inl_serv['❌'] = f'dungeon.to_lobby {dungeonid}'
+
+                    if page + 1 > len(pages_inv):
+                        p_page = len(pages_inv)
+
+                    else:
+                        p_page = page + 1
+                        inl_serv['▶'] = f'dungeon.inventory {p_page} {dungeonid}'
+
+                else:
+                    inl_serv = { '❌': f'dungeon.to_lobby {dungeonid}'}
+
+                markup_inline.row( *[ types.InlineKeyboardButton(
+                                      text = inl,
+                                      callback_data = inl_serv[inl] ) for inl in inl_serv.keys()
+                                 ])
+
+                if dung['settings']['lang'] == 'ru':
+                    text = ( f"🎒 | Инвентарь\n\n"
+                             f"👑 | Монет: {dung['users'][ str(userid) ]['coins']}\n"
+                             f"🎈 | Предметов: {len(dung['users'][ str(userid) ]['inventory'])} / {Dungeon.d_backpack(bd_user)}"
+                           )
+
+                else:
+                    text = ( f"🎒 | Inventory\n\n"
+                             f"👑 | Coins: {dung['users'][ str(userid) ]['coins']}\n"
+                             f"🎈 | Items: {len(dung['users'][ str(userid) ]['inventory'])} / {Dungeon.d_backpack(bd_user)}"
+                           )
+
+                bot.edit_message_caption(text, int(userid), dung['users'][ str(userid) ]['messageid'], parse_mode = 'Markdown', reply_markup = markup_inline)
+
 
             else:
                 return 'error_type_no_ind'
