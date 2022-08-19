@@ -1,6 +1,6 @@
 { "floors": {
             "1":
-              { "rooms_type": { "com": ["fork_2"],
+              { "rooms_type": { "com": ["battle"],
                                 "unc": ["empty_room"],
                                 "rar": ["battle", "fork_2"],
                                 "myt": ["battle", "mine", "fork_3"],
