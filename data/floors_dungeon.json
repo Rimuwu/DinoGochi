@@ -1,6 +1,6 @@
 { "floors": {
             "1":
-              { "rooms_type": { "com": ["battle"],
+              { "rooms_type": { "com": ["fork_2"],
                                 "unc": ["empty_room"],
                                 "rar": ["battle", "fork_2"],
                                 "myt": ["battle", "mine", "fork_3"],
@@ -20,7 +20,7 @@
 
               },
 
-              "3":
+            "3":
               { "rooms_type": { "com": ["battle"],
                                 "unc": ["battle", "empty_room"],
                                 "rar": ["battle", "fork_2"],
@@ -87,7 +87,7 @@
 
               },
 
-              "5":
+            "5":
               { "rooms_type": { "com": ["battle"],
                                 "unc": ["battle", "empty_room"],
                                 "rar": ["battle", "fork_2"],
@@ -154,74 +154,7 @@
 
               },
 
-              "3":
-              { "rooms_type": { "com": ["battle"],
-                                "unc": ["battle", "empty_room"],
-                                "rar": ["battle", "fork_2"],
-                                "myt": ["fork_3", "mine"],
-                                "leg": ["mine", "town"]
-                              },
-                "mobs_count": { "min": 1, "max": 2, "type": "random" },
-
-                "resources": { "items": [ { "item": "51", "chance": 500, "min_efect": 0 },
-                                          { "item": "52", "chance": 1000, "min_efect": 2 }
-                                        ],
-
-                               "items_col": { "min": 2, "max": 2, "type": "random" }
-                             },
-
-                "products": {
-
-                          "1": { "price": { "min": 170, "max": 370, "type": "random" } ,
-                                 "item": "33",
-                                 "col": { "act": 2, "type": "static" },
-                                 "chance": 1000
-                               },
-
-
-                          "2": { "price": { "min": 150, "max": 300, "type": "random" } ,
-                                 "item": "65",
-                                 "col": { "act": 1, "type": "static" },
-                                 "chance": 300
-                               },
-
-                          "3": { "price": { "min": 150, "max": 300, "type": "random" } ,
-                                 "item": "63",
-                                 "col": { "act": 1, "type": "static" },
-                                 "chance": 300
-                               },
-
-                          "4": { "price": { "min": 150, "max": 300, "type": "random" } ,
-                                 "item": "61",
-                                 "col": { "act": 1, "type": "static" },
-                                 "chance": 300
-                               },
-
-                          "5": { "price": { "min": 100, "max": 200, "type": "random" } ,
-                                 "item": "59",
-                                 "col": { "act": 1, "type": "static" },
-                                 "chance": 300
-                               },
-
-                          "6": { "price": { "min": 150, "max": 300, "type": "random" } ,
-                                "item": "58",
-                                "col": { "act": 1, "type": "static" },
-                                "chance": 300
-                              },
-
-                          "7": { "price": { "min": 150, "max": 300, "type": "random" } ,
-                                "item": "57",
-                                "col": { "act": 1, "type": "static" },
-                                "chance": 300
-                              }
-
-                            },
-
-                "products_settings": { "col": { "min": 3, "max": 5, "type": "random" } }
-
-              },
-
-              "7":
+            "7":
               { "rooms_type": { "com": ["battle"],
                                 "unc": ["battle", "empty_room"],
                                 "rar": ["battle", "fork_2"],
@@ -288,74 +221,7 @@
 
               },
 
-              "3":
-              { "rooms_type": { "com": ["battle"],
-                                "unc": ["battle", "empty_room"],
-                                "rar": ["battle", "fork_2"],
-                                "myt": ["fork_3", "mine"],
-                                "leg": ["mine", "town"]
-                              },
-                "mobs_count": { "min": 1, "max": 2, "type": "random" },
-
-                "resources": { "items": [ { "item": "51", "chance": 500, "min_efect": 0 },
-                                          { "item": "52", "chance": 1000, "min_efect": 2 }
-                                        ],
-
-                               "items_col": { "min": 2, "max": 2, "type": "random" }
-                             },
-
-                "products": {
-
-                          "1": { "price": { "min": 170, "max": 370, "type": "random" } ,
-                                 "item": "33",
-                                 "col": { "act": 2, "type": "static" },
-                                 "chance": 1000
-                               },
-
-
-                          "2": { "price": { "min": 150, "max": 300, "type": "random" } ,
-                                 "item": "65",
-                                 "col": { "act": 1, "type": "static" },
-                                 "chance": 300
-                               },
-
-                          "3": { "price": { "min": 150, "max": 300, "type": "random" } ,
-                                 "item": "63",
-                                 "col": { "act": 1, "type": "static" },
-                                 "chance": 300
-                               },
-
-                          "4": { "price": { "min": 150, "max": 300, "type": "random" } ,
-                                 "item": "61",
-                                 "col": { "act": 1, "type": "static" },
-                                 "chance": 300
-                               },
-
-                          "5": { "price": { "min": 100, "max": 200, "type": "random" } ,
-                                 "item": "59",
-                                 "col": { "act": 1, "type": "static" },
-                                 "chance": 300
-                               },
-
-                          "6": { "price": { "min": 150, "max": 300, "type": "random" } ,
-                                "item": "58",
-                                "col": { "act": 1, "type": "static" },
-                                "chance": 300
-                              },
-
-                          "7": { "price": { "min": 150, "max": 300, "type": "random" } ,
-                                "item": "57",
-                                "col": { "act": 1, "type": "static" },
-                                "chance": 300
-                              }
-
-                            },
-
-                "products_settings": { "col": { "min": 3, "max": 5, "type": "random" } }
-
-              },
-
-              "10":
+            "10":
               { "rooms_type": { "com": ["battle"],
                                 "unc": ["battle", "empty_room"],
                                 "rar": ["battle", "fork_2"],

@@ -99,7 +99,7 @@
                   "image": "images/dungeon/bosss/mega-goblin.png",
                   "lvls": {"min": 10, "max": 100},
                   "experience": { "min": 20, "max": 100, "type": "random" },
-                  "loot": [ {"item": "20", "col": 1, "chance": 250},
+                  "loot": [ {"item": "20", "col": 1, "chance": 750},
                             {"item": "46", "col": 1, "chance": 300},
                             {"item": "51", "col": 10, "chance": 400 }
                           ],
