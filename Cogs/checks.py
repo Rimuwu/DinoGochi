@@ -177,9 +177,7 @@ class checks:
                         dng_fl[str(ns_res['end_floor'])].append(us['userid'])
 
 
-
         Functions.rayt_update('save', [mr_l, lv_l, dng_fl])
-        # print('rayt_update')
 
 
     @staticmethod
