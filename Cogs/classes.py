@@ -3082,7 +3082,7 @@ class Dungeon:
 
                 if mob['lvls']['min'] >= floor_lvl or floor_lvl <= mob['lvls']['max']:
 
-                    mob_data = {'mob_key': mob_key}
+                    mob_data = {'mob_key': mob_key, 'effects': []}
 
                     l_k = ['hp', 'damage', 'intelligence']
 
@@ -5374,11 +5374,43 @@ class Dungeon:
 
         elif room_type in ['fork_2', 'fork_3']:
 
+            poll_rooms = dung['floor'][str(room_n)]['poll_rooms']
+            olr = {}
+            t_l = []
+
+            for r in poll_rooms:
+                if r in olr.keys():
+                    olr[r] += 1
+                else:
+                    olr[r] = 1
+
+            r_n = { 'battle': [ 'Бой', 'Battle' ],
+                    "empty_room": [ 'Пустая комната', 'Empty room' ],
+                    "fork_2": [ 'Развилка', 'Fork' ],
+                    "fork_3": [ 'Развилка', 'Fork' ],
+                    "mine": [ 'Комната с ресурсами', 'Room with resources' ],
+                    "town": [ 'Город', 'Town' ]
+            }
+
+            for i in olr.keys():
+
+                if dung['settings']['lang'] == 'ru':
+                    t_l.append( f'{ r_n[ i ][0] } x{olr[i]}' )
+                else:
+                    t_l.append( f'{ r_n[ i ][1] } x{olr[i]}' )
+
+            random.shuffle(t_l)
+
+
             if dung['settings']['lang'] == 'ru':
-                text += f"\n\n🧩 | Перед вами находится несколько проходов, выберите общим голосованием куда вы направитесь!\n\n*🎏 | Выберите*\n"
+                text += f"\n\n🧩 | Перед вами находится несколько проходов, выберите общим голосованием куда вы направитесь!\n"
+                text += f'🧭 | Возможные комнаты: {", ".join(t_l)}'
+                text += "\n\n*🎏 | Выберите*\n"
 
             else:
-                text += f'\n\n🧩 | There are several passageways in front of you, choose by general vote where you will go!\n\n*🎏 | Select*\n'
+                text += f'\n\n🧩 | There are several passageways in front of you, choose by general vote where you will go!\n'
+                text += f'🧭 | Possible rooms: {", ".join(t_l)}'
+                text += '\n\n*🎏 | Select*\n'
 
             results = dung['floor'][str(room_n)]['results']
             inline_type = room_type
