@@ -544,6 +544,8 @@ def on_message(message):
 
     if message.chat.type == 'private':
 
+        bot.send_chat_action(user.id, 'typing')
+
         if message.text in ['🍡 Начать играть', '🍡 Start playing']:
 
             commands.start_game(bot, message, user, bd_user)
@@ -1018,9 +1020,21 @@ def answer(call):
     elif call.data.split()[0] == '-':
         pass
 
+    elif call.data.split()[0] == 'dungeon_use_item_info':
+
+        call_data.dungeon_use_item_info(bot, bd_user, call, user)
+
     elif call.data.split()[0] == 'dungeon_use_item':
 
         call_data.dungeon_use_item(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon_use_item':
+
+        call_data.dungeon_use_item(bot, bd_user, call, user)
+
+    elif call.data.split()[0] == 'dungeon_delete_item':
+
+        call_data.dungeon_delete_item(bot, bd_user, call, user)
 
     elif call.data.split()[0] == 'dungeon.kick_member':
 
