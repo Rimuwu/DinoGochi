@@ -1,9 +1,9 @@
 { "floors": {
             "1":
               { "rooms_type": { "com": ["battle"],
-                                "unc": ["empty_room"],
-                                "rar": ["battle", "fork_2"],
-                                "myt": ["battle", "mine", "fork_3"],
+                                "unc": ["battle", "empty_room"],
+                                "rar": ["fork_2", "fork_3"],
+                                "myt": ["mine", "fork_3"],
                                 "leg": ["mine"]
                               },
                 "mobs_count": { "act": 1, "type": "static" },
@@ -23,7 +23,7 @@
             "3":
               { "rooms_type": { "com": ["battle"],
                                 "unc": ["battle", "empty_room"],
-                                "rar": ["battle", "fork_2"],
+                                "rar": ["fork_2", "fork_3"],
                                 "myt": ["fork_3", "mine"],
                                 "leg": ["mine", "town"]
                               },
@@ -90,7 +90,7 @@
             "5":
               { "rooms_type": { "com": ["battle"],
                                 "unc": ["battle", "empty_room"],
-                                "rar": ["battle", "fork_2"],
+                                "rar": ["fork_2", "fork_3"],
                                 "myt": ["mine", "fork_3"],
                                 "leg": ["town"]
                               },
@@ -157,7 +157,7 @@
             "7":
               { "rooms_type": { "com": ["battle"],
                                 "unc": ["battle", "empty_room"],
-                                "rar": ["battle", "fork_2"],
+                                "rar": ["fork_2", "fork_3"],
                                 "myt": ["mine", "fork_3"],
                                 "leg": ["town"]
                               },
@@ -224,7 +224,7 @@
             "10":
               { "rooms_type": { "com": ["battle"],
                                 "unc": ["battle", "empty_room"],
-                                "rar": ["battle", "fork_2"],
+                                "rar": ["fork_2", "fork_3"],
                                 "myt": ["mine", "fork_3"],
                                 "leg": ["town"]
                               },
