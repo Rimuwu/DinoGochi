@@ -497,14 +497,16 @@ class Functions:
             markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
 
             if bd_user['language_code'] == 'ru':
-                nl = ['⛓ Квесты', '🎭 Навыки', '🦖 БИО', '👁‍🗨 Динозавры в таверне', '♻ Изменение редкости']
+                nl = ['⛓ Квесты', '🎭 Навыки', '🦖 БИО', '👁‍🗨 Динозавры в таверне', '♻ Изменение Динозавра']
                 nl2 = ['🥏 Дрессировка']
                 nl3 = ['↪ Назад']
 
             else:
-                nl = ['⛓ Quests', '🎭 Skills', '🦖 BIO', '👁‍🗨 Dinosaurs in the Tavern', '♻ Rarity Change']
+                nl = ['⛓ Quests', '🎭 Skills', '🦖 BIO', '👁‍🗨 Dinosaurs in the Tavern', '♻ Change Dinosaur']
                 nl2 = ['🥏 Training']
                 nl3 = ['↪ Back']
+
+                [ '♻ Change Dinosaur', '♻ Изменение Динозавра']
 
             markup.add(* [x for x in nl] )
             markup.add(* [x for x in nl2] )
@@ -726,7 +728,13 @@ class Functions:
 
         dino = json_f['elements'][str(dino_id)]
         del user['dinos'][str(dino_id_remove)]
-        user['dinos'][Functions.user_dino_pn(user)] = {'dino_id': dino_id, "status": 'dino', 'activ_status': 'pass_active', 'name': dino['name'], 'stats':  {"heal": 100, "eat": random.randint(70, 100), 'game': random.randint(50, 100), 'mood': random.randint(7, 100), "unv": 100}, 'games': [], 'quality': quality, 'dungeon': {"equipment": {'armor': None, 'weapon': None}} }
+        user['dinos'][Functions.user_dino_pn(user)] = {
+                'dino_id': dino_id, "status": 'dino',
+                'activ_status': 'pass_active', 'name': dino['name'],
+                'stats': {"heal": 100, "eat": random.randint(70, 100), 'game': random.randint(50, 100), 'mood': random.randint(7, 100), "unv": 100},
+                'games': [],
+                'quality': quality, 'dungeon': {"equipment": {'armor': None, 'weapon': None}}
+                                                      }
 
         users.update_one( {"userid": user['userid']}, {"$set": {'dinos': user['dinos']}} )
 
