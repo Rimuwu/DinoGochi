@@ -37,7 +37,10 @@
                        "image": "images/dungeon/mobs/skeleton_magician.png",
                        "lvls": {"min": 1, "max": 100},
                        "experience": { "min": 0, "max": 10, "type": "random" },
-                       "loot": [ {"item": "51", "col": 3, "chance": 300} ],
+                       "loot": [ {"item": "51", "col": 3, "chance": 300},
+                                 {"item": "49", "col": 1, "chance": 50,
+                                        "preabil": {"mana": {"min": 1, "max": 12, "type": "random"} } }
+                               ],
                        "coins": { "min": 1, "max": 10, "type": "random" },
                        "actions": {
                                    "attacks": [
