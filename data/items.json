@@ -96,7 +96,7 @@
 
  "48": {"nameru": "🍕 Пицца", "nameen": "🍕 Pizza", "type": "+eat", "act": 25, "class": "ALL", "+mood": 15, "abilities": {"uses": 9}, "image": "item48"},
 
- "49": {"nameru": "🔮 Магический камень", "nameen": "🔮 Magic Stone", "type": "material", "abilities": {"mana": 0}, "image": "item49"},
+ "49": {"nameru": "🔮 Магический камень", "nameen": "🔮 Magic Stone", "type": "material", "abilities": {"mana": 0 }, "image": "item49"},
 
  "50": {"nameru": "🌮 Тако", "nameen": "🌮 Tacos", "type": "+eat", "act": 75, "class": "ALL", "+mood": 40, "image": "item50"},
 
