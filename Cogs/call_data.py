@@ -1667,82 +1667,118 @@ class call_data:
         quality = did[2]
 
         data_q_r = { 'com': {'money': 2000,  'materials': ['21']  } ,
-                     'unc': {'money': 5000, 'materials': ['20'] } ,
-                     'rar': {'money': 10000, 'materials': ['22'] } ,
-                     'myt': {'money': 20000, 'materials': ['23'] } ,
-                     'leg': {'money': 40000, 'materials': ['24'] } ,
+                     'unc': {'money': 4000, 'materials': ['20'] } ,
+                     'rar': {'money': 8000, 'materials': ['22'] } ,
+                     'myt': {'money': 16000, 'materials': ['23'] } ,
+                     'leg': {'money': 32000, 'materials': ['24'] } ,
                      'ran': {'money': 5000, 'materials': ['3']  } ,
                    }
 
-        def change_rarity(message):
+        def change_rarity(message, chang_type):
 
             if message.text in ['Да, я хочу это сделать', 'Yes, I want to do it']:
                 bd_user = users.find_one({"userid": user.id })
                 bd_user = Functions.dino_q(bd_user)
 
                 if dino_id in bd_user['dinos'].keys():
-                    if quality != bd_user['dinos'][dino_id]['quality']:
-                        if bd_user['coins'] >= data_q_r[quality]['money']:
-                            list_inv_id = []
-                            for i in bd_user['inventory']: list_inv_id.append(i['item_id'])
+                    if bd_user['coins'] >= data_q_r[quality]['money']:
+                        list_inv_id = []
+                        for i in bd_user['inventory']: list_inv_id.append(i['item_id'])
 
-                            for i in data_q_r[quality]['materials']:
-                                if i not in list_inv_id:
+                        for i in data_q_r[quality]['materials']:
+                            if i not in list_inv_id:
 
-                                    if bd_user['language_code'] == 'ru':
-                                        text = f'❗ | Материалов недостаточно!'
-                                    else:
-                                        text = f"❗ | Materials are not enough!"
+                                if bd_user['language_code'] == 'ru':
+                                    text = f'❗ | Материалов недостаточно!'
+                                else:
+                                    text = f"❗ | Materials are not enough!"
 
-                                    bot.send_message(user.id, text, reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
-                                    return
+                                bot.send_message(user.id, text, reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
+                                return
 
-                            qul = quality
-                            if quality == 'ran':
-                                qul = Functions.random_items(['com'], ['unc'], ['rar'], ['myt'], ['leg'])
+                        qul = quality
+                        if quality == 'ran':
+                            qul = Functions.random_items(['com'], ['unc'], ['rar'], ['myt'], ['leg'])
 
-                            bd_user['coins'] -= data_q_r[quality]['money']
-                            bd_user['dinos'][dino_id]['quality'] = qul
-                            for i in data_q_r[quality]['materials']:
-                                ittm = Functions.get_dict_item(i)
-                                bd_user['inventory'].remove(ittm)
+                        bd_user['coins'] -= data_q_r[quality]['money']
+                        bd_user['dinos'][dino_id]['quality'] = qul
 
-                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
-                            users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{dino_id}': bd_user['dinos'][dino_id] }} )
-                            users.update_one( {"userid": bd_user['userid']}, {"$inc": {'coins': data_q_r[quality]['money'] * -1 }} )
+                        for i in data_q_r[quality]['materials']:
+                            ittm = Functions.get_dict_item(i)
+                            bd_user['inventory'].remove(ittm)
 
-                            if bd_user['language_code'] == 'ru':
-                                text = f'🔮 Происходит магия!\n\nВаш динозавр поменял редкость, скорее загляните в профиль!'
-                                text2 = '🎗 | Вы были возвращены в прошлое меню!'
-                            else:
-                                text = f"🔮 Magic happens!\n\nYour dinosaur has changed the rarity, rather take a look at the profile!"
-                                text2 = '🎗 | You have been returned to the last menu!'
+                        if chang_type == 'change_dino':
 
-                            bot.send_message(user.id, text, reply_markup = Functions.inline_markup(bot, f'open_dino_profile', user.id, ['Открыть профиль', 'Open a profile'], dino_id))
-                            bot.send_message(user.id, text2, reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
+                            ndino_id = None
+                            while ndino_id == None:
+                                p_var = random.choice(json_f['data']['dino'])
+                                dino = json_f['elements'][str(p_var)]
+                                if dino['image'][5:8] == qul:
+                                    if dino_id != p_var:
+                                        ndino_id = p_var
 
+                            bd_user['dinos'][dino_id]['dino_id'] = ndino_id
+
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{dino_id}': bd_user['dinos'][dino_id] }} )
+                        users.update_one( {"userid": bd_user['userid']}, {"$inc": {'coins': data_q_r[quality]['money'] * -1 }} )
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f'🔮 Происходит магия!\n\nВаш динозавр поменял редкость, скорее загляните в профиль!'
+                            text2 = '🎗 | Вы были возвращены в прошлое меню!'
                         else:
-                            if bd_user['language_code'] == 'ru':
-                                text = f'❗ | Монет недостаточно!'
-                            else:
-                                text = f"❗ | Coins are not enough!"
+                            text = f"🔮 Magic happens!\n\nYour dinosaur has changed the rarity, rather take a look at the profile!"
+                            text2 = '🎗 | You have been returned to the last menu!'
 
-                            bot.send_message(user.id, text, reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
+                        bot.send_message(user.id, text, reply_markup = Functions.inline_markup(bot, f'open_dino_profile', user.id, ['Открыть профиль', 'Open a profile'], dino_id))
+                        bot.send_message(user.id, text2, reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
+
+                    else:
+                        if bd_user['language_code'] == 'ru':
+                            text = f'❗ | Монет недостаточно!'
+                        else:
+                            text = f"❗ | Coins are not enough!"
+
+                        bot.send_message(user.id, text, reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
 
             else:
                 bot.send_message(user.id, f'❌', reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
 
+        def pre_change(message):
 
-        markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
+            if message.text in ['1️⃣', '2️⃣']:
+
+                if message.text == '1️⃣':
+                    chang_type = 'change_rarity'
+
+                else:
+                    chang_type = 'change_dino'
+
+                markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
+                if bd_user['language_code'] == 'ru':
+                    markup.add( *[i for i in ['Да, я хочу это сделать', '❌ Отмена'] ] )
+                    msg = bot.send_message(user.id, f'Вы уверены что хотите изменить редкость своего динозавра?', reply_markup = markup)
+
+                else:
+                    markup.add( *[i for i in ['Yes, I want to do it', '❌ Cancel'] ] )
+                    msg = bot.send_message(user.id, f'Are you sure you want to change the rarity of your dinosaur?', reply_markup = markup)
+
+                bot.register_next_step_handler(msg, change_rarity, chang_type)
+
+            else:
+                bot.send_message(user.id, f'❌', reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'dino-tavern'), bd_user ))
+
+        markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
+        markup.add( *[i for i in ['1️⃣', '2️⃣', '❌'] ] )
+
         if bd_user['language_code'] == 'ru':
-            markup.add( *[i for i in ['Да, я хочу это сделать', '❌ Отмена'] ] )
-            msg = bot.send_message(user.id, f'Вы уверены что хотите изменить редкость своего динозавра?', reply_markup = markup)
+            text = f'❓ | Хотите ли вы поменять динозавра или улучшить его редкость?\n\n1️⃣ — Изменение редкости\n2️⃣ —  Измена редкости и динозавра'
 
         else:
-            markup.add( *[i for i in ['Yes, I want to do it', '❌ Cancel'] ] )
-            msg = bot.send_message(user.id, f'Are you sure you want to change the rarity of your dinosaur?', reply_markup = markup)
+            text = f'❓ | Do you want to change the dinosaur or improve its rarity?\n\n1️⃣ - Change of rarity\n2️⃣ — Change of rarity and dinosaur'
 
-        bot.register_next_step_handler(msg, change_rarity)
+        msg = bot.send_message(user.id, text, reply_markup = markup)
+        bot.register_next_step_handler(msg, pre_change)
 
     def dungeon_settings(bot, bd_user, call, user):
 
@@ -2614,9 +2650,9 @@ class call_data:
                 if d_eq['weapon'] == None:
                     weap = ''
                 else:
-                    weap = data_items[ d_eq['weapon']['item_id'] ][lgn]
+                    weap = f"\n{ data_items[ d_eq['weapon']['item_id'] ][lgn] } "
 
-                sw_text += f"🦕 {dino['name']}\n❤ {dino_stats['heal']}%\n🍕 {dino_stats['eat']}%\n{weap}"
+                sw_text += f"🦕 {dino['name']}\n❤ {dino_stats['heal']}%\n🍕 {dino_stats['eat']}%{weap}"
                 sw_text += '\n\n'
 
 
