@@ -3075,10 +3075,10 @@ class commands:
         def inf_message(dino_id):
 
             data_q_r = { 'com': {'money': 2000,  'materials': ['21']  } ,
-                         'unc': {'money': 5000, 'materials': ['20'] } ,
-                         'rar': {'money': 10000, 'materials': ['22'] } ,
-                         'myt': {'money': 20000, 'materials': ['23'] } ,
-                         'leg': {'money': 40000, 'materials': ['24'] } ,
+                         'unc': {'money': 4000, 'materials': ['20'] } ,
+                         'rar': {'money': 8000, 'materials': ['22'] } ,
+                         'myt': {'money': 16000, 'materials': ['23'] } ,
+                         'leg': {'money': 32000, 'materials': ['24'] } ,
                          'ran': {'money': 5000, 'materials': ['3']  } ,
                        }
 
@@ -3090,25 +3090,16 @@ class commands:
                        'ran': ['Случайный', 'Random'] ,
                        }
 
-            if bd_user['dinos'][dino_id]['quality'] == 'com':
-                ql = ['unc', 'rar', 'myt', 'leg', 'ran']
-            if bd_user['dinos'][dino_id]['quality'] == 'unc':
-                ql = ['com', 'rar', 'myt', 'leg', 'ran']
-            if bd_user['dinos'][dino_id]['quality'] == 'rar':
-                ql = ['com', 'unc', 'myt', 'leg', 'ran']
-            if bd_user['dinos'][dino_id]['quality'] == 'myt':
-                ql = ['com', 'unc', 'rar', 'leg', 'ran']
-            if bd_user['dinos'][dino_id]['quality'] == 'leg':
-                ql = ['com', 'unc', 'rar', 'myt', 'ran']
+            ql = list( data_q_r.keys() )
 
             if bd_user['language_code'] == 'ru':
                 text_m = f" *┌* ♻ Возможная смена редкости для {bd_user['dinos'][dino_id]['name']}\n\n"
                 lcode = 'ru'
-                text_p2 = '✨ | Выберите в какую редкость вы хотите преобразовать динозавра, нажмите на кнопку и произойдёт магия!'
+                text_p2 = '✨ | Выберите в какую редкость вы хотите преобразовать динозавра, нажмите на кнопку и произойдёт магия! Также вы можете заменить динозавра на другого случайного!'
             else:
                 text_m = f" *┌* ♻ Possible change of rarity for {bd_user['dinos'][dino_id]['name']}\n\n"
                 lcode = 'en'
-                text_p2 = '✨ | Choose which rarity you want to transform the dinosaur into, click on the button and magic will happen!'
+                text_p2 = '✨ | Choose which rarity you want to transform the dinosaur into, click on the button and magic will happen! You can also replace the dinosaur with another random one!'
 
             markup_inline = types.InlineKeyboardMarkup()
             cmm = []
@@ -3127,7 +3118,12 @@ class commands:
                 else:
                     spl = '├'
 
-                text_m += f" *{spl}* *{nn}*. {', '.join(Functions.sort_items_col(data_q_r[i]['materials'], lcode))} + {data_q_r[i]['money']}💰 > {dino_q}🦕\n\n"
+                text_m += f" *{spl}* *{nn}*. {', '.join(Functions.sort_items_col(data_q_r[i]['materials'], lcode))} + {data_q_r[i]['money']}💰 > {dino_q}🦕"
+
+                if bd_user['dinos'][dino_id]['quality'] == i:
+                    text_m += ' (✅)'
+
+                text_m += '\n\n'
 
                 cmm.append(types.InlineKeyboardButton( text = f'♻ {nn}', callback_data = f"change_rarity {dino_id} {i}"))
 
