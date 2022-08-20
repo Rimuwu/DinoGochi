@@ -740,7 +740,7 @@ def on_message(message):
 
             bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-        elif message.text in [ '♻ Rarity Change', '♻ Изменение редкости']:
+        elif message.text in [ '♻ Change Dinosaur', '♻ Изменение Динозавра']:
 
             commands.rarity_change(bot, message, user, bd_user)
 
