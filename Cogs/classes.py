@@ -2046,13 +2046,7 @@ class Functions:
 
         ret_data = {}
         for i in l_data.keys():
-
             tx = list(l_data[i])
-            if tx[0] in ['u', 'e', 's']:
-
-                if i_type == True:
-                    if 'abilities' not in ret_data.keys():
-                        ret_data['abilities'] = {}
 
             if tx[0] == 'i':
                 if i_type == False:
@@ -2060,23 +2054,35 @@ class Functions:
                 else:
                     ret_data['item_id'] = str(''.join(l_data[i])[1:])
 
-            elif tx[0] == 'u':
-                if i_type == False:
-                    ret_data['uses'] = int(''.join(l_data[i])[1:])
-                else:
-                    ret_data['abilities']['uses'] = int(''.join(l_data[i])[1:])
+            if tx[0] in ['u', 'e', 's', 'm']:
 
-            elif tx[0] == 'e':
-                if i_type == False:
-                    ret_data['endurance'] = int(''.join(l_data[i])[1:])
-                else:
-                    ret_data['abilities']['endurance'] = int(''.join(l_data[i])[1:])
+                if i_type == True:
+                    if 'abilities' not in ret_data.keys():
+                        ret_data['abilities'] = {}
 
-            elif tx[0] == 's':
-                if i_type == False:
-                    ret_data['stack'] = int(''.join(l_data[i])[1:])
-                else:
-                    ret_data['abilities']['stack'] = int(''.join(l_data[i])[1:])
+                if tx[0] == 'u':
+                    if i_type == False:
+                        ret_data['uses'] = int(''.join(l_data[i])[1:])
+                    else:
+                        ret_data['abilities']['uses'] = int(''.join(l_data[i])[1:])
+
+                elif tx[0] == 'e':
+                    if i_type == False:
+                        ret_data['endurance'] = int(''.join(l_data[i])[1:])
+                    else:
+                        ret_data['abilities']['endurance'] = int(''.join(l_data[i])[1:])
+
+                elif tx[0] == 's':
+                    if i_type == False:
+                        ret_data['stack'] = int(''.join(l_data[i])[1:])
+                    else:
+                        ret_data['abilities']['stack'] = int(''.join(l_data[i])[1:])
+
+                elif tx[0] == 'm':
+                    if i_type == False:
+                        ret_data['mana'] = int(''.join(l_data[i])[1:])
+                    else:
+                        ret_data['abilities']['mana'] = int(''.join(l_data[i])[1:])
 
         return ret_data
 
