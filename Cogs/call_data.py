@@ -586,17 +586,16 @@ class call_data:
                     print(f'Третий этап не найден {data_item["type"]}')
 
         def ans_dino():
-            global dino_id
 
             def dino_reg(message, dino_dict):
-                global dino_id
+
                 if message.text in dino_dict.keys():
+                    dino_id = dino_dict[message.text][1]
 
                     dino_st = bd_user['dinos'][str(dino_id)]['activ_status']
 
                     if dino_st != 'dungeon':
 
-                        dino_id = dino_dict[message.text][1]
                         n_c_f(), re_item()
 
                     else:
