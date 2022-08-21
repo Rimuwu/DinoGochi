@@ -38,7 +38,7 @@
                        "lvls": {"min": 1, "max": 100},
                        "experience": { "min": 0, "max": 10, "type": "random" },
                        "loot": [ {"item": "51", "col": 3, "chance": 300},
-                                 {"item": "49", "col": 1, "chance": 50,
+                                 {"item": "49", "col": 1, "chance": 10,
                                         "preabil": {"mana": {"min": 1, "max": 12, "type": "random"} } }
                                ],
                        "coins": { "min": 1, "max": 10, "type": "random" },
@@ -75,10 +75,11 @@
                        "lvls": {"min": 1, "max": 100},
                        "experience": { "min": 2, "max": 10, "type": "random" },
                        "loot": [ {"item": "51", "col": 1, "chance": 200},
-                                 {"item": "26", "col": 1, "chance": 400},
                                  {"item": "58", "col": 1, "chance": 10},
-                                 {"item": "55", "col": 1, "chance": 100,
-                                        "preabil": {"endurance": {"min": 2, "max": 30, "type": "random"} } }
+                                 {"item": "55", "col": 1, "chance": 90,
+                                        "preabil": {"endurance": {"min": 2, "max": 30, "type": "random"} } },
+                                 {"item": "54", "col": 1, "chance": 150,
+                                        "preabil": {"stack": {"min": 1, "max": 3, "type": "random"} } }
                                ],
                        "coins": { "min": 1, "max": 10, "type": "random" },
                        "actions": { "attacks": [],
