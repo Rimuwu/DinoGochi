@@ -2885,6 +2885,62 @@ class call_data:
 
                 users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.heal': data_item['act'] }} )
 
+            elif data_item['type'] == "ammunition":
+
+                list_inv_id = []
+                for i in dung_user['inventory']: list_inv_id.append(i['item_id'])
+                standart_i_id = user_item['item_id']
+                standart_index = dung_user['inventory'].index(user_item)
+                csh = list_inv_id.count(standart_i_id)
+                list_inv_id[standart_index] = 0
+
+                rem_item = False
+
+                if csh > 0:
+
+                    two_item_ind = list_inv_id.index(standart_i_id)
+                    two_item = dung_user['inventory'][two_item_ind]
+
+                    if user_item['abilities']['stack'] + two_item['abilities']['stack'] > data_item["max_stack"]:
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f'❗ | Этот набор не может быть соединён ни с одним предметом в инвентаре!'
+                        else:
+                            text = f"❗ | This set cannot be connected to any item in the inventory!"
+
+                        rem_item = False
+
+                    else:
+
+                        preabil = {'stack': user_item['abilities']['stack'] + two_item['abilities']['stack'] }
+                        dung_user['inventory'].append( Functions.get_dict_item(standart_i_id, preabil) )
+
+                        dung_user['inventory'].remove(two_item)
+                        dung_user['inventory'].remove(user_item)
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f'🏹 | Предметы были соединены!'
+                        else:
+                            text = f"🏹 | The items were connected!"
+
+                        dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users.{user.id}.inventory': dung_user['inventory'] }} )
+
+                        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'user_inventory', kwargs = {'page': 1, 'bd_user': bd_user} )
+
+                        try:
+                            bot.delete_message(user.id, call.message.message_id)
+                        except:
+                            pass
+
+                else:
+
+                    if bd_user['language_code'] == 'ru':
+                        text = f'❗ | В инвентаре нет предметов для соединения!'
+                    else:
+                        text = f"❗ | There are no items in the inventory to connect!"
+
+                    rem_item = False
+
             elif data_item['type'] == "+eat":
                 d_dino = json_f['elements'][ str(bd_user['dinos'][dino_id]['dino_id']) ]
 
@@ -2981,6 +3037,21 @@ class call_data:
             else:
                 rem_item = False
 
+                if bd_user['language_code'] == 'ru':
+                    text = "❌"
+                else:
+                    text = "❌"
+
+            if '+mood' in data_item.keys():
+                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.mood': data_item['+mood'] }} )
+
+            if '-mood' in data_item.keys():
+                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.mood': data_item['-mood'] * -1 }} )
+
+            if '-eat' in data_item.keys():
+                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.eat': data_item['-eat'] * -1 }} )
+
+
             bot.send_message(user.id, text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
 
             if rem_item == True:
@@ -3008,9 +3079,6 @@ class call_data:
             bot.send_message(user.id, text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
 
         if user_item != None:
-
-            print(user_item)
-            print(data_item)
 
             if data_item['type'] in ["+heal", "+eat", "weapon", "armor"]:
 
@@ -3069,9 +3137,9 @@ class call_data:
 
                     bot.send_message(user.id, text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
 
-            elif data_item['type'] in ["backpack"]:
+            elif data_item['type'] in ["backpack", "ammunition"]:
 
-                item_use_dungeon(dino_id)
+                item_use_dungeon()
 
             else:
 
