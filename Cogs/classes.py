@@ -3187,7 +3187,7 @@ class Dungeon:
                     'dungeon_stage': 'preparation', "create_time": int( time.time() ),
                     'stage_data':  { 'preparation': {'image': random.randint(1,5), 'ready': [] }
                                    },
-                    'settings': { 'lang': bd_user['language_code'], 'max_dinos': 10, 'max_rooms': 10, 'start_floor': 0} # начальный уровень -1;
+                    'settings': { 'lang': bd_user['language_code'], 'max_dinos': 10, 'max_rooms': 10, 'start_floor': 0, 'battle_notifications': True} # начальный уровень -1;
                 } )
 
                 dung = dungeons.find_one({"dungeonid": userid})
@@ -3669,6 +3669,8 @@ class Dungeon:
                 room_n = dung['stage_data']['game']['room_n']
                 room = dung['floor'][str(room_n)]
 
+                markup_inline = types.InlineKeyboardMarkup(row_width = 2)
+
                 if room['next_room'] == False:
                     inl_l = {}
 
@@ -3696,6 +3698,10 @@ class Dungeon:
                         else:
                             inl_l['🚪 Выйти'] = 'dungeon.leave_in_game_answer'
 
+                        if dung['settings']['battle_notifications'] == False:
+
+                            inl_l['🦕 Состояние'] = 'dungeon.dinos_stats'
+
                     else:
 
                         if userid == dungeonid:
@@ -3703,6 +3709,10 @@ class Dungeon:
 
                         else:
                             inl_l['🚪 Go out'] = 'dungeon.leave_in_game_answer'
+
+                        if dung['settings']['battle_notifications'] == False:
+
+                            inl_l['🦕 Condition'] = 'dungeon.dinos_stats'
 
                     markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
 
@@ -3792,11 +3802,18 @@ class Dungeon:
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l2[inl]} {dungeonid}") for inl in inl_l2.keys() ])
 
             elif type == 'settings':
+                markup_inline = types.InlineKeyboardMarkup(row_width = 2)
 
                 if dung['settings']['lang'] == 'ru':
                     inl_l = {'Язык: 🇷🇺': 'dungeon.settings_lang',
                              '🗑 Удалить': 'dungeon.remove'
                             }
+
+                    if dung['settings']['battle_notifications'] == True:
+                        inl_l['👁‍🗨 Уведомления в бою: Вкл'] = 'dungeon.settings_batnotf'
+
+                    else:
+                        inl_l['👁‍🗨 Уведомления в бою: Откл'] = 'dungeon.settings_batnotf'
 
                     inl_l2 = {'🕹 Назад': 'dungeon.to_lobby'}
 
@@ -3805,6 +3822,13 @@ class Dungeon:
                              '🗑 Delete': 'dungeon.remove'
                             }
 
+                    if dung['settings']['battle_notifications'] == True:
+                        inl_l['👁‍🗨 Notifications in Battle: On'] = 'dungeon.settings_batnotf'
+
+                    else:
+                        inl_l['👁‍🗨 Notifications in Battle: Off'] = 'dungeon.settings_batnotf'
+
+                    inl_l['🗑 Delete'] = 'dungeon.remove'
                     inl_l2 = {'🕹 Back': 'dungeon.to_lobby'}
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])

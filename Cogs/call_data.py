@@ -1801,15 +1801,27 @@ class call_data:
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
         if dung != None:
-            if dung['settings']['lang'] == 'ru':
-                lang = 'en'
-            else:
-                lang = 'ru'
+
+            if dung['settings']['lang'] == 'ru': lang = 'en'
+            else: lang = 'ru'
 
             dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'settings.lang': lang }} )
 
             inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
             inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
+
+    def dungeon_settings_batnotf(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        if dung != None:
+            if dung['settings']['battle_notifications'] == True: ntf = False
+            else: ntf = True
+
+            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'settings.battle_notifications': ntf }} )
+
+            inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
 
     def dungeon_leave(bot, bd_user, call, user):
 
@@ -2617,10 +2629,13 @@ class call_data:
 
             inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', image_update = True)
 
-            sw_text = sht + '\n'
-            for i in log: sw_text += i + '\n'
 
-            bot.send_message(user.id, sw_text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
+            if dung['settings']['battle_notifications'] == True:
+
+                sw_text = sht + '\n'
+                for i in log: sw_text += i + '\n'
+
+                bot.send_message(user.id, sw_text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
 
     def dungeon_dinos_stats(bot, bd_user, call, user):
 

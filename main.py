@@ -899,6 +899,10 @@ def answer(call):
 
         call_data.dungeon_settings_lang(bot, bd_user, call, user)
 
+    elif call.data.split()[0] == 'dungeon.settings_batnotf':
+
+        call_data.dungeon_settings_batnotf(bot, bd_user, call, user)
+
     elif call.data.split()[0] == 'dungeon.leave':
 
         call_data.dungeon_leave(bot, bd_user, call, user)
