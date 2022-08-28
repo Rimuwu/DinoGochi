@@ -27,7 +27,7 @@ with open('data/floors_dungeon.json', encoding='utf-8') as f: floors_f = json.lo
 
 checks_data = {'memory': [0, time.time()], 'incub': [0, time.time(), 0], 'notif': [[], []], 'main': [[], [], []], 'main_hunt': [ [], [], [] ], 'main_game': [ [], [], [] ], 'main_sleep': [ [], [], [] ], 'main_pass': [ [], [], [] ], 'main_journey': [ [], [], [] ], 'col': 0}
 
-reyt_ = [[], [], []]
+reyt_ = [[], [], {}]
 
 users_timeout = {}
 callback_timeout = {}
@@ -190,10 +190,10 @@ class Functions:
 
                 if bd_user['language_code'] == 'ru':
                     nl = ['🦖 Динозавр', '🕹 Действия', '👁‍🗨 Профиль', '🔧 Настройки', '👥 Друзья', '❗ FAQ']
-                    tv = ['🍺 Дино-таверна',  "🗻 Подземелья"]
+                    tv = ['🍺 Дино-таверна']
                 else:
                     nl = ['🦖 Dinosaur', '🕹 Actions', '👁‍🗨 Profile', '🔧 Settings', '👥 Friends', '❗ FAQ']
-                    tv = ['🍺 Dino-tavern', "🗻 Dungeons"]
+                    tv = ['🍺 Dino-tavern']
 
                 if 'vis.faq' in bd_user['settings'].keys() and bd_user['settings']['vis.faq'] == False:
                     nl.remove('❗ FAQ')
@@ -472,14 +472,14 @@ class Functions:
         elif element == "profile" and bd_user != None:
 
             if bd_user['language_code'] == 'ru':
-                nl = ['📜 Информация', '🎮 Инвентарь', '🎢 Рейтинг', '💍 Аксессуары', '🛒 Рынок', "💡 Исследования", '↪ Назад']
+                nl = ['📜 Информация', '🎮 Инвентарь', '🎢 Рейтинг', '💍 Аксессуары', '🛒 Рынок', '↪ Назад']
 
             else:
-                nl = ['📜 Information', '🎮 Inventory', '🎢 Rating', '💍 Accessories', '🛒 Market', "💡 Research", '↪ Back']
+                nl = ['📜 Information', '🎮 Inventory', '🎢 Rating', '💍 Accessories', '🛒 Market', '↪ Back']
 
             markup.add(nl[0], nl[1])
             markup.add(nl[2], nl[3], nl[4])
-            markup.add(nl[5], nl[6])
+            markup.add(nl[5])
 
         elif element == "market" and bd_user != None:
 
@@ -497,16 +497,14 @@ class Functions:
             markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
 
             if bd_user['language_code'] == 'ru':
-                nl = ['⛓ Квесты', '🎭 Навыки', '🦖 БИО', '👁‍🗨 Динозавры в таверне', '♻ Изменение Динозавра']
-                nl2 = ['🥏 Дрессировка']
+                nl = ['⛓ Квесты', '♻ Изменение Динозавра']
+                nl2 = ["🗻 Подземелья"]
                 nl3 = ['↪ Назад']
 
             else:
-                nl = ['⛓ Quests', '🎭 Skills', '🦖 BIO', '👁‍🗨 Dinosaurs in the Tavern', '♻ Change Dinosaur']
-                nl2 = ['🥏 Training']
+                nl = ['⛓ Quests', '♻ Change Dinosaur']
+                nl2 = ["🗻 Dungeons"]
                 nl3 = ['↪ Back']
-
-                [ '♻ Change Dinosaur', '♻ Изменение Динозавра']
 
             markup.add(* [x for x in nl] )
             markup.add(* [x for x in nl2] )
@@ -2092,10 +2090,7 @@ class Functions:
         bd_user = users.find_one({"userid": user.id})
         if bd_user != None:
 
-            data_items = items_f['items']
-            items = bd_user['inventory']
-
-            if items == []:
+            if bd_user['inventory'] == []:
 
                 if bd_user['language_code'] == 'ru':
                     text = '💥 | Инвентарь пуст.'
@@ -2105,52 +2100,7 @@ class Functions:
                 bot.send_message(message.chat.id, text)
                 return
 
-            items_id = {}
-            page = 1
-            items_names = []
-
-            if bd_user['language_code'] == 'ru':
-                lg = "nameru"
-            else:
-                lg = "nameen"
-
-            for i in items:
-                if Functions.item_authenticity(i) == True:
-                    items_id[ items_f['items'][ i['item_id'] ][lg] ] = i
-                    items_names.append( items_f['items'][ i['item_id'] ][lg] )
-
-                else:
-
-                    items_id[ items_f['items'][ i['item_id'] ][lg] + f" ({Functions.qr_item_code(i, False)})" ] = i
-                    items_names.append( items_f['items'][ i['item_id'] ][lg] + f" ({Functions.qr_item_code(i, False)})" )
-
-            items_names.sort()
-
-            items_sort = []
-            d_it_sort = {}
-            ind_sort_it = {}
-
-            for i in items_names:
-                if i in list(d_it_sort.keys()):
-                    d_it_sort[i] += 1
-                else:
-                    d_it_sort[i] = 1
-
-            for n in list(d_it_sort.keys()):
-                col = d_it_sort[n]
-                name = n
-                items_sort.append(f'{n} x{col}')
-                ind_sort_it[f'{n} x{col}'] = n
-
-            pages_n = []
-
-            pages = list(Functions.chunks(list(Functions.chunks(items_sort, 2)), 3))
-
-            for i in pages:
-
-                if len(i) != 3:
-                    for iii in range(3 - len(i)):
-                        i.append([' ', ' '])
+            pages, page, items_data, items_names, row_width = Functions.inventory_pages(bd_user)
 
             if bd_user['language_code'] == 'ru':
                 textt = '🎈 | Инвентарь открыт'
@@ -2159,45 +2109,35 @@ class Functions:
 
             bot.send_message(message.chat.id, textt)
 
-            def work_pr(message, pages, page, items_id, ind_sort_it, mms = None):
-                a = []
-                l_pages = pages
-                l_page = page
-                l_ind_sort_it = ind_sort_it
+            def work_pr(message, mms = None, page = None):
 
-                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+                rmk = types.ReplyKeyboardMarkup(resize_keyboard = False, row_width = row_width)
                 for i in pages[page-1]:
-                    if len(i) == 1:
-                        rmk.add( i[0])
-                    else:
-                        rmk.add( i[0], i[1])
+                    rmk.add( *[ it for it in i ] )
 
-                if len(pages) > 1:
-                    if bd_user['language_code'] == 'ru':
+                if bd_user['language_code'] == 'ru':
+
+                    textt = f'🎈 | Страница: {page} | {len(pages)}\n🎟 | Обновление...'
+
+                    if len(pages) > 1:
                         com_buttons = ['◀', '↪ Назад', '▶']
-                        textt = '🎈 | Обновление...'
-                    else:
-                        com_buttons = ['◀', '↪ Back', '▶']
-                        textt = '🎈 | Update...'
 
-                    rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
+                    else:
+                        com_buttons = ['◀', '↪ Назад', '▶']
 
                 else:
-                    if bd_user['language_code'] == 'ru':
-                        com_buttons = '↪ Назад'
-                        textt = '🎈 | Обновление...'
+
+                    textt = f'🎈 | Page: {page} | {len(pages)}\n🎟 | Update...'
+
+                    if len(pages) > 1:
+                        com_buttons = ['↪ Back']
+
                     else:
-                        textt = '🎈 | Update...'
-                        com_buttons = '↪ Back'
+                        com_buttons = ['↪ Back']
 
-                    rmk.add(com_buttons)
+                rmk.row(* [cm for cm in com_buttons] )
 
-                def ret(message, l_pages, l_page, l_ind_sort_it, pages, page, items_id, ind_sort_it, bd_user, user):
-
-                    if len(bd_user['dinos']) >= 2:
-                        sl, ll = Functions.dino_pre_answer(bot, message)
-                        if message.text in list(ll[2].keys()):
-                            return
+                def ret(message, page):
 
                     if message.text in ['Yes, transfer the item', 'Да, передать предмет', 'Да, я хочу это сделать', 'Yes, I want to do it']:
                         return
@@ -2206,7 +2146,7 @@ class Functions:
                         res = None
 
                     else:
-                        if message.text in list(l_ind_sort_it.keys()) or message.text in ['◀', '▶']:
+                        if message.text in items_names or message.text in ['◀', '▶']:
                             res = message.text
                         else:
                             res = None
@@ -2227,18 +2167,18 @@ class Functions:
                             else:
                                 page -= 1
 
-                            work_pr(message, pages, page, items_id, ind_sort_it)
+                            work_pr(message, page = page)
 
                         elif res == '▶':
-                            if page + 1 > len(l_pages):
-                                page = len(l_pages)
+                            if page + 1 > len(pages):
+                                page = len(pages)
                             else:
                                 page += 1
 
-                            work_pr(message, pages, page, items_id, ind_sort_it)
+                            work_pr(message, page = page)
 
                         else:
-                            item = items_id[ l_ind_sort_it[res] ]
+                            item = items_data[ res ]
 
                             if inv_t == 'info':
 
@@ -2250,16 +2190,12 @@ class Functions:
                                 else:
                                     mms = bot.send_photo(message.chat.id, image, text, reply_markup = markup_inline, parse_mode = 'Markdown')
 
-                                work_pr(message, pages, page, items_id, ind_sort_it, mms)
+                                work_pr(message, mms, page = page)
 
                             if inv_t == 'add_product':
 
                                 def sch_items(item, bd_user):
-                                    a = 0
-                                    for i in bd_user['inventory']:
-                                        if i == item:
-                                            a += 1
-                                    return a
+                                    return bd_user['inventory'].count(item)
 
                                 if bd_user['language_code'] == 'ru':
                                     text = "🛒 | Введите количество товара: "
@@ -2271,7 +2207,7 @@ class Functions:
                                 rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
                                 rmk.add(ans[0])
 
-                                def ret_number(message, ans, bd_user, item):
+                                def ret_number(message):
                                     number = message.text
                                     try:
                                         number = int(number)
@@ -2309,11 +2245,11 @@ class Functions:
                                         else:
                                             text = "🛒 | Enter the cost of the item x1: "
 
-                                        def ret_number2(message, ans, bd_user, item, col):
+                                        def ret_number2(message):
                                             number = message.text
                                             try:
                                                 number = int(number)
-                                                if number <= 0 or number >= 1000000 + 1:
+                                                if number <= 0 or number >= 100000 + 1:
                                                     if bd_user['language_code'] == 'ru':
                                                         text = f'0️⃣1️⃣0️⃣ | Введите число от 1 до 1000000!'
                                                     else:
@@ -2360,19 +2296,19 @@ class Functions:
 
 
                                         msg = bot.send_message(message.chat.id, text)
-                                        bot.register_next_step_handler(msg, ret_number2, ans, bd_user, item, number)
+                                        bot.register_next_step_handler(msg, ret_number2)
 
                                 msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
-                                bot.register_next_step_handler(msg, ret_number, ans, bd_user, item)
+                                bot.register_next_step_handler(msg, ret_number)
 
                 if mms == None:
                     msg = bot.send_message(message.chat.id, textt, reply_markup = rmk)
                 else:
                     msg = mms
-                bot.register_next_step_handler(msg, ret, l_pages, l_page, l_ind_sort_it, pages, page, items_id, ind_sort_it, bd_user, user)
 
+                bot.register_next_step_handler(msg, ret, page)
 
-            work_pr(message, pages, page, items_id, ind_sort_it)
+            work_pr(message, page = page)
 
     @staticmethod
     def user_requests(bot, user, message):
@@ -3075,6 +3011,104 @@ class Functions:
 
         else:
             return rd
+
+    @staticmethod
+    def inventory_pages(bd_user, i_filter_type = 'all', i_filter = None):
+
+        data_items = items_f['items']
+        items = bd_user['inventory']
+
+        page = 1
+        add_item = False
+        items_data = {}
+        items_names = []
+
+        if 'inv_view' in bd_user['settings'].keys():
+            pages_v = bd_user['settings']['inv_view']
+        else:
+            pages_v = [2, 3]
+
+        if bd_user['language_code'] == 'ru':
+            lg = "nameru"
+        else:
+            lg = "nameen"
+
+        for i in items:
+            ic = items.count(i)
+
+            if ic == 1:
+                i_col = ''
+            else:
+                i_col = f' x{ic}'
+
+            if i_filter_type == 'all':
+                add_item = True
+
+            elif i_filter_type == 'itemid':
+
+                if int(i['item_id']) == int(i_filter):
+                    add_item = True
+
+                else:
+                    add_item = False
+
+            if i_filter_type == 'itemtype':
+
+                if data_items[str(i['item_id'])] == i_filter:
+                    add_item = True
+
+                else:
+                    add_item = False
+
+            if add_item == True:
+
+                if Functions.item_authenticity(i) == True:
+                    i_name = f"{items_f['items'][ i['item_id'] ][lg]}{i_col}"
+
+                else:
+                    i_name = f"{items_f['items'][ i['item_id'] ][lg]}{i_col} ({Functions.qr_item_code(i, False)})"
+
+                items_data[ i_name] = i
+
+
+        items_names = list(items_data.keys())
+        items_names.sort()
+
+        pages = list(Functions.chunks(list(Functions.chunks( items_names, pages_v[0] )), pages_v[1] ))
+
+        for i in pages:
+
+            if len(i) != pages_v[1]:
+                for _ in range(pages_v[1] - len(i)):
+                    i.append( [ ' ' for _ in range(pages_v[0]) ])
+
+        row_width = pages_v[0]
+        return pages, page, items_data, items_names, row_width
+
+    @staticmethod
+    def tr_c_f(bd_user):
+
+        tr_c = False
+        stats_list = []
+        if bd_user != None and len(list(bd_user['dinos'])) > 0:
+            for i in bd_user['dinos'].keys():
+                dd = bd_user['dinos'][i]
+                stats_list.append(dd['status'])
+
+            if 'dino' in stats_list:
+                tr_c = True
+
+        return tr_c
+
+    @staticmethod
+    def lst_m_f(bd_user):
+
+        if bd_user != None:
+            last_mrk = Functions.last_markup(bd_user, alternative = 1)
+        else:
+            last_mrk = None
+
+        return last_mrk
 
 
 class Dungeon:

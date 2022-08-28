@@ -246,61 +246,49 @@ def command(message):
 
     text += f'Thr.count: {threading.active_count()}'
     bot.send_message(user.id, text)
-
-@bot.message_handler(commands=['dinos'])
-def command(message):
-    user = message.from_user
-    bd_user = users.find_one({"userid": user.id})
-    text = ''
-    for i in bd_user['dinos']:
-        if 'journey_log' in bd_user["dinos"][i].keys():
-            bd_user["dinos"][i]['journey_log'] = f"{len(bd_user['dinos'][i]['journey_log'])} - событий"
-
-        text = f'{bd_user["dinos"][i]}\n\n'
-    bot.send_message(user.id, text)
-
-@bot.message_handler(commands=['iam'])
-def command(message):
-    user = message.from_user
-    bd_user = users.find_one({"userid": user.id})
-    pprint.pprint(bd_user)
-
-@bot.message_handler(commands=['st_0'])
-def command(message):
-    uss = users.find({ })
-
-    checks.rayt(uss)
-
-@bot.message_handler(commands=['check_inv'])
-def command(message):
-    user = message.from_user
-    msg_args = message.text.split()
-    bd_user = users.find_one({"userid": int(msg_args[1])})
-    print('id', msg_args[2], type(msg_args[2]))
-    for i in bd_user['inventory']:
-
-        if i['item_id'] == msg_args[2]:
-            print(' #                 ============================================= #')
-            print(i)
-            print(bd_user['inventory'].index(i))
-
-    print('all')
-
-@bot.message_handler(commands=['delete_dinos'])
-def command(message):
-    user = message.from_user
-    if user.id in [5279769615, 1191252229]:
-        bd_user = users.find_one({"userid": user.id})
-        users.update_one( {"userid": user.id}, {"$set": {f'dinos': {} }} )
-        print("all")
-
-@bot.message_handler(commands=['test_data'])
-def command(message):
-    user = message.from_user
-    if user.id in [5279769615, 1191252229]:
-
-        for i in range(1, 10):
-            print(i, Dungeon.floor_data(i) )
+#
+# @bot.message_handler(commands=['dinos'])
+# def command(message):
+#     user = message.from_user
+#     bd_user = users.find_one({"userid": user.id})
+#     text = ''
+#     for i in bd_user['dinos']:
+#         if 'journey_log' in bd_user["dinos"][i].keys():
+#             bd_user["dinos"][i]['journey_log'] = f"{len(bd_user['dinos'][i]['journey_log'])} - событий"
+#
+#         text = f'{bd_user["dinos"][i]}\n\n'
+#     bot.send_message(user.id, text)
+#
+# @bot.message_handler(commands=['iam'])
+# def command(message):
+#     user = message.from_user
+#     bd_user = users.find_one({"userid": user.id})
+#     pprint.pprint(bd_user)
+#
+#
+# @bot.message_handler(commands=['check_inv'])
+# def command(message):
+#     user = message.from_user
+#     msg_args = message.text.split()
+#     bd_user = users.find_one({"userid": int(msg_args[1])})
+#     print('id', msg_args[2], type(msg_args[2]))
+#     for i in bd_user['inventory']:
+#
+#         if i['item_id'] == msg_args[2]:
+#             print(' #                 ============================================= #')
+#             print(i)
+#             print(bd_user['inventory'].index(i))
+#
+#     print('all')
+#
+# @bot.message_handler(commands=['delete_dinos'])
+# def command(message):
+#     user = message.from_user
+#     if user.id in [5279769615, 1191252229]:
+#         bd_user = users.find_one({"userid": user.id})
+#         users.update_one( {"userid": user.id}, {"$set": {f'dinos': {} }} )
+#         print("all")
+#
 
 # @bot.message_handler(commands=['sbros_lvl'])
 # def command_n(message):
@@ -337,66 +325,27 @@ def command(message):
 
         tr = Functions.add_item_to_user(bd, msg_args[1], int(msg_args[2]))
         bot.send_message(user.id, str(msg_args))
+#
+#
+# @bot.message_handler(commands=['d_upd'])
+# def command(message):
+#     user = message.from_user
+#     if user.id in [5279769615, 1191252229]:
+#         inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = user.id, upd_type = 'all', image_update = True)
+#         print(inf)
+#
 
-@bot.message_handler(commands=['events'])
-def command(message):
-    user = message.from_user
-    if user.id in [5279769615, 1191252229]:
-        bd_user = users.find_one({"userid": user.id})
-
-        Functions.journey_end_log(bot, user.id, bd_user['settings']['dino_id'])
-
-@bot.message_handler(commands=['reply_id'])
-def command(message):
-    user = message.from_user
-    if user.id in [5279769615, 1191252229]:
-        msg = message.reply_to_message
-        if msg != None:
-            bot.reply_to(message, msg.message_id)
-            print(msg.message_id)
-
-@bot.message_handler(commands=['d_upd'])
-def command(message):
-    user = message.from_user
-    if user.id in [5279769615, 1191252229]:
-        inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = user.id, upd_type = 'all', image_update = True)
-        print(inf)
-
-@bot.message_handler(commands=['dungeon'])
-def command(message):
-    user = message.from_user
-    if user.id in [5279769615, 1191252229]:
-        dng, inf = Dungeon.base_upd(userid = user.id)
-        pprint.pprint(dng)
-        print(inf)
-
-        inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = user.id)
-        print(inf)
-
-@bot.message_handler(commands=['dungeon_add'])
-def command(message):
-    user = message.from_user
-    msg_args = message.text.split()
-    if user.id in [5279769615, 1191252229]:
-
-        dng, inf =  Dungeon.base_upd(userid = user.id, dungeonid = int(msg_args[1]), type = 'add_user')
-        pprint.pprint(dng)
-        print(inf)
-
-        inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = dng['dungeonid'], upd_type = 'all')
-        print(inf)
-
-@bot.message_handler(commands=['dungeon_delete'])
-def command(message):
-    user = message.from_user
-    if user.id in [5279769615, 1191252229]:
-        inf =  Dungeon.message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
-        print(inf)
-
-        dng, inf =  Dungeon.base_upd(dungeonid = user.id, type = 'delete_dungeon')
-        pprint.pprint(dng)
-        print(inf)
-
+# @bot.message_handler(commands=['dungeon_delete'])
+# def command(message):
+#     user = message.from_user
+#     if user.id in [5279769615, 1191252229]:
+#         inf =  Dungeon.message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
+#         print(inf)
+#
+#         dng, inf =  Dungeon.base_upd(dungeonid = user.id, type = 'delete_dungeon')
+#         pprint.pprint(dng)
+#         print(inf)
+#
 @bot.message_handler(commands=['stats_100'])
 def command(message):
     user = message.from_user
@@ -411,14 +360,6 @@ def command(message):
 
         users.update_one( {"userid": user.id}, {"$set": {f"dinos": bd_user['dinos'] }} )
         print('ok')
-
-@bot.message_handler(commands=['emulate_not'])
-def command(message):
-    print('emulate_not')
-    msg_args = message.text.split()
-    user = message.from_user
-    bd_user = users.find_one({"userid": user.id})
-    Functions.notifications_manager(bot, msg_args[1], bd_user, msg_args[2], dino_id = '1')
 
 # =========================================
 
@@ -477,8 +418,6 @@ def command(message):
                 except:
                     pass
 
-
-
 @bot.message_handler(commands=['add_me', 'добавь_меня'])
 def command(message):
     user = message.from_user
@@ -516,37 +455,14 @@ def on_start(message):
         else:
             bot.reply_to(message, '👋', reply_markup = Functions.markup(bot, user = user), parse_mode = 'html')
 
-@bot.message_handler(content_types = ['text'], spam_check = True, in_channel = True, in_dungeon = True) #test_bot = True
+@bot.message_handler( content_types = ['text'], spam_check = True, in_channel = True, in_dungeon = True)
 def on_message(message):
 
     user = message.from_user
-    bd_user = users.find_one({"userid": user.id})
-
-    def tr_c_f():
-        tr_c = False
-        stats_list = []
-        if bd_user != None and len(list(bd_user['dinos'])) > 0:
-            for i in bd_user['dinos'].keys():
-                dd = bd_user['dinos'][i]
-                stats_list.append(dd['status'])
-
-            if 'dino' in stats_list:
-                tr_c = True
-
-        return tr_c
-
-    def lst_m_f():
-
-        if bd_user != None:
-            last_mrk = Functions.last_markup(bd_user, alternative = 1)
-        else:
-            last_mrk = None
-
-        return last_mrk
 
     if message.chat.type == 'private':
 
-        bot.send_chat_action(user.id, 'typing')
+        bd_user = users.find_one({"userid": user.id})
 
         if message.text in ['🍡 Начать играть', '🍡 Start playing']:
 
@@ -584,11 +500,11 @@ def on_message(message):
 
             commands.faq(bot, message, user, bd_user)
 
-        elif message.text in ['🍺 Дино-таверна', '🍺 Dino-tavern'] and lst_m_f() != 'dino-tavern':
+        elif message.text in ['🍺 Дино-таверна', '🍺 Dino-tavern'] and Functions.lst_m_f(bd_user) != 'dino-tavern':
 
             commands.open_dino_tavern(bot, message, user, bd_user)
 
-        elif tr_c_f() and message.text in ['🕹 Действия', '🕹 Actions']:
+        elif Functions.tr_c_f(bd_user) and message.text in ['🕹 Действия', '🕹 Actions']:
 
             commands.open_action_menu(bot, message, user, bd_user)
 
@@ -604,7 +520,7 @@ def on_message(message):
 
             commands.settings_faq(bot, message, user, bd_user)
 
-        elif tr_c_f() and message.text in ['💬 Переименовать', '💬 Rename']:
+        elif Functions.tr_c_f(bd_user) and message.text in ['💬 Переименовать', '💬 Rename']:
 
             commands.rename_dino(bot, message, user, bd_user)
 
@@ -640,51 +556,51 @@ def on_message(message):
 
             commands.friends_menu(bot, message, user, bd_user)
 
-        elif tr_c_f() and message.text in ['🌙 Уложить спать', '🌙 Put to bed']:
+        elif Functions.tr_c_f(bd_user) and message.text in ['🌙 Уложить спать', '🌙 Put to bed']:
 
             commands.dino_sleep_ac(bot, message, user, bd_user)
 
-        elif tr_c_f() and message.text in ['🌙 Пробудить', '🌙 Awaken']:
+        elif Functions.tr_c_f(bd_user) and message.text in ['🌙 Пробудить', '🌙 Awaken']:
 
             commands.dino_unsleep_ac(bot, message, user, bd_user)
 
-        elif tr_c_f() and message.text in ['🎑 Путешествие', '🎑 Journey']:
+        elif Functions.tr_c_f(bd_user) and message.text in ['🎑 Путешествие', '🎑 Journey']:
 
             commands.dino_journey(bot, message, user, bd_user)
 
-        elif tr_c_f() and message.text in ['🎑 Вернуть', '🎑 Call']:
+        elif Functions.tr_c_f(bd_user) and message.text in ['🎑 Вернуть', '🎑 Call']:
 
             commands.dino_unjourney(bot, message, user, bd_user)
 
-        elif tr_c_f() and message.text in ['🎮 Развлечения', '🎮 Entertainments']:
+        elif Functions.tr_c_f(bd_user) and message.text in ['🎮 Развлечения', '🎮 Entertainments']:
 
             commands.dino_entert(bot, message, user, bd_user)
 
-        elif tr_c_f() and message.text in ['🍣 Покормить', '🍣 Feed']:
+        elif Functions.tr_c_f(bd_user) and message.text in ['🍣 Покормить', '🍣 Feed']:
 
             commands.dino_feed(bot, message, user, bd_user)
 
-        elif tr_c_f() and message.text in ['🍕 Сбор пищи', '🍕 Collecting food']:
+        elif Functions.tr_c_f(bd_user) and message.text in ['🍕 Сбор пищи', '🍕 Collecting food']:
 
             commands.collecting_food(bot, message, user, bd_user)
 
-        elif tr_c_f() and message.text in ['🍕 Прогресс', '🍕 Progress']:
+        elif Functions.tr_c_f(bd_user) and message.text in ['🍕 Прогресс', '🍕 Progress']:
 
             commands.coll_progress(bot, message, user, bd_user)
 
-        elif tr_c_f() and (message.text[:11] in ['🦖 Динозавр:'] or message.text[:7] in [ '🦖 Dino:']):
+        elif Functions.tr_c_f(bd_user) and (message.text[:11] in ['🦖 Динозавр:'] or message.text[:7] in [ '🦖 Dino:']):
 
             commands.dino_action_ans(bot, message, user, bd_user)
 
-        elif tr_c_f() and message.text in ['↩ Назад', '↩ Back']:
+        elif Functions.tr_c_f(bd_user) and message.text in ['↩ Назад', '↩ Back']:
 
             commands.action_back(bot, message, user, bd_user)
 
-        elif tr_c_f() and message.text in ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball', '🧩 Пазлы', '♟ Шахматы', '🧱 Дженга', '🎲 D&D', '🧩 Puzzles', '♟ Chess', '🧱 Jenga']:
+        elif Functions.tr_c_f(bd_user) and message.text in ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball', '🧩 Пазлы', '♟ Шахматы', '🧱 Дженга', '🎲 D&D', '🧩 Puzzles', '♟ Chess', '🧱 Jenga']:
 
             commands.dino_entert_games(bot, message, user, bd_user)
 
-        elif tr_c_f() and message.text in ['❌ Остановить игру', '❌ Stop the game']:
+        elif Functions.tr_c_f(bd_user) and message.text in ['❌ Остановить игру', '❌ Stop the game']:
 
             commands.dino_stop_games(bot, message, user, bd_user)
 
@@ -1107,4 +1023,4 @@ bot.add_custom_filter(In_channel())
 bot.add_custom_filter(WC())
 bot.add_custom_filter(In_Dungeon())
 
-bot.infinity_polling()
+bot.infinity_polling(skip_pending = False)
