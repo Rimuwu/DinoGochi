@@ -222,6 +222,11 @@ class Functions:
 
                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
 
+            if 'inv_view' not in bd_user['settings']:
+                bd_user['settings']['inv_view'] = [2, 3]
+
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+
             markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
 
             if bd_user['language_code'] == 'ru':
@@ -2111,7 +2116,7 @@ class Functions:
 
             def work_pr(message, mms = None, page = None):
 
-                rmk = types.ReplyKeyboardMarkup(resize_keyboard = False, row_width = row_width)
+                rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = row_width)
                 for i in pages[page-1]:
                     rmk.add( *[ it for it in i ] )
 
