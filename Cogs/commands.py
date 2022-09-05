@@ -344,6 +344,9 @@ class commands:
             if 'vis.faq' not in settings.keys():
                 settings['vis.faq'] = True
 
+            if 'inv_view' not in settings.keys():
+                settings['inv_view'] = [2, 3]
+
             if bd_user['language_code'] == 'ru':
                 text = f'🔧 Меню настроек активировано\n\nУведомления: {settings["notifications"]}\nВидимость справочника: {settings["vis.faq"]}'.replace("True", '✔').replace("False", '❌')
 
@@ -429,6 +432,80 @@ class commands:
 
                 else:
                     return
+
+            msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
+            bot.register_next_step_handler(msg, ret, ans, bd_user)
+
+    @staticmethod
+    def inv_set_pages(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            gr, vr = bd_user['settings']['inv_view']
+
+            if bd_user['language_code'] == 'ru':
+                ans = ['2 | 3', '3 | 3', '2 | 2', '2 | 4', '↪ Назад']
+                text = f'🎞 Режим в данный момент:\n♠ По горизонтали: {gr}\n♣ По вертикали: {vr}\n\nВыберите режим отображения инвентаря (Стандарт 2 | 3)'
+            else:
+                ans = ['2 | 3', '3 | 3', '2 | 2', '2 | 4', '↪ Back']
+                text = f'🎞 Current mode:\n♠ Horizontally: {gr}\n♣ Vertically: {vr}\n\n Select the inventory display mode (Standard 2 | 3)'
+
+            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
+            rmk.add( *[ i for i in ans] )
+
+            def ret(message, ans, bd_user):
+
+                if message.text not in ans or message.text in ['↪ Назад', '↪ Back']:
+                    res = None
+                else:
+                    res = message.text
+
+                if res == None:
+                    bot.send_message(message.chat.id, f'❌', reply_markup = Functions.markup(bot, 'settings', user))
+                    return
+
+                vviw = res.split(' | ')
+                v_list = []
+                for i in vviw:
+                    v_list.append(int(i))
+
+                gr, vr = v_list
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'♠ По горизонтали: {gr}\n♣ По вертикали: {vr}'
+                else:
+                    text = f'♠ Horizontally: {gr}\n♣ Vertically: {vr}'
+
+                bd_user['settings']['inv_view'] = v_list
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+
+                bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "settings", user))
+
+                #
+                #     bd_user['settings']['vis.faq'] = True
+                #     users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+                #
+                #     if bd_user['language_code'] == 'ru':
+                #         text = '🔧 FAQ был активирован!'
+                #     else:
+                #         text = '🔧 The FAQ has been activated!'
+                #
+                #     bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "settings", user))
+                #
+                # if res in ['❌ Disable', '❌ Выключить']:
+                #
+                #     bd_user['settings']['vis.faq'] = False
+                #     users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+                #
+                #     if bd_user['language_code'] == 'ru':
+                #         text = '🔧 FAQ был отключен!'
+                #     else:
+                #         text = '🔧 The FAQ has been disabled!'
+                #
+                #     bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "settings", user))
+                #
+                # else:
+                #     return
 
             msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
             bot.register_next_step_handler(msg, ret, ans, bd_user)
