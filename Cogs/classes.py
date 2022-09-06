@@ -2215,22 +2215,22 @@ class Functions:
                                 rmk.add(ans[0])
 
                                 def ret_number(message):
-                                    number = message.text
+                                    col = message.text
                                     try:
-                                        number = int(number)
+                                        col = int(col)
                                         mn = sch_items(item, bd_user)
-                                        if number <= 0 or number >= mn + 1:
+                                        if col <= 0 or col >= mn + 1:
                                             if bd_user['language_code'] == 'ru':
                                                 text = f'0️⃣1️⃣0️⃣ | Введите число от 1 до {mn}!'
                                             else:
                                                 text = f'0️⃣1️⃣0️⃣ | Enter a number from 1 to {mn}!'
 
                                             bot.send_message(message.chat.id, text)
-                                            number = None
+                                            col = None
                                     except:
-                                        number = None
+                                        col = None
 
-                                    if number == None:
+                                    if col == None:
                                         if bd_user['language_code'] == 'ru':
                                             text = "🛒 | Возвращение в меню рынка!"
                                         else:
@@ -2285,9 +2285,9 @@ class Functions:
                                                     market_['products'][str(user.id)] = { 'products': {}, 'dinos': {} }
                                                     products = market_['products'][str(user.id)]['products']
 
-                                                market_['products'][str(user.id)]['products'][ max_k(products) ] = { 'item': item, 'price': number, 'col': [0, number]}
+                                                market_['products'][str(user.id)]['products'][ max_k(products) ] = { 'item': item, 'price': col, 'col': [0, col]}
 
-                                                for i in range(number):
+                                                for i in range(col):
                                                     bd_user['inventory'].remove(item)
 
                                                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )

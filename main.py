@@ -696,9 +696,9 @@ def on_message(message):
 
             commands.dungeon_statist(bot, message, user, bd_user)
 
-    if bd_user != None:
-        # последняя активность
-        users.update_one( {"userid": bd_user['userid']}, {"$set": {'last_m': int(time.time()) }} )
+        if bd_user != None:
+            # последняя активность
+            users.update_one( {"userid": bd_user['userid']}, {"$set": {'last_m': int(time.time()) }} )
 
 
 @bot.callback_query_handler(wait_callback = True, func = lambda call: True)
@@ -1020,7 +1020,6 @@ if bot.get_me().first_name == 'DinoGochi' or False:
     min10_thr.start() # десяти-минутный чек
 
 print(f'Бот {bot.get_me().first_name} запущен!')
-print('Проверка пройдена')
 
 bot.add_custom_filter(SpamStop())
 bot.add_custom_filter(Test_bot())
