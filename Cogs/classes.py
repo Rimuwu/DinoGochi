@@ -230,18 +230,20 @@ class Functions:
             markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
 
             if bd_user['language_code'] == 'ru':
-                nl = ['❗ Уведомления', "👅 Язык", '💬 Переименовать', '⁉ Видимость FAQ', '↪ Назад']
+                nl = ['❗ Уведомления', "👅 Язык", '💬 Переименовать', '⁉ Видимость FAQ', '🎞 Инвентарь', '↪ Назад']
 
             else:
-                nl = ['❗ Notifications', "👅 Language", '💬 Rename', '⁉ Visibility FAQ', '↪ Back']
+                nl = ['❗ Notifications', "👅 Language", '💬 Rename', '⁉ Visibility FAQ', '🎞 Inventory', '↪ Back']
 
             item1 = types.KeyboardButton(nl[0])
             item2 = types.KeyboardButton(nl[1])
             item3 = types.KeyboardButton(nl[2])
             item4 = types.KeyboardButton(nl[3])
             item5 = types.KeyboardButton(nl[4])
+            item6 = types.KeyboardButton(nl[5])
 
             markup.add(item1, item2, item3, item4, item5)
+            markup.add(item6)
 
         elif element == "friends-menu" and bd_user != None:
 
@@ -888,7 +890,7 @@ class Functions:
                 elif notification == "need_unv":
 
                     if user['language_code'] == 'ru':
-                        text = f'🌙 | {chat.first_name}, {dinoname} хочет спать, его харрактеристика сна опустилось до {arg}%!'
+                        text = f'🌙 | {chat.first_name}, {dinoname} хочет спать, его характеристика сна опустилось до {arg}%!'
                     else:
                         text = f'🌙 | {chat.first_name}, {dinoname} wants to sleep, his sleep characteristic dropped to {arg}%!'
 
@@ -2283,9 +2285,9 @@ class Functions:
                                                     market_['products'][str(user.id)] = { 'products': {}, 'dinos': {} }
                                                     products = market_['products'][str(user.id)]['products']
 
-                                                market_['products'][str(user.id)]['products'][ max_k(products) ] = { 'item': item, 'price': number, 'col': [0, col]}
+                                                market_['products'][str(user.id)]['products'][ max_k(products) ] = { 'item': item, 'price': number, 'col': [0, number]}
 
-                                                for i in range(col):
+                                                for i in range(number):
                                                     bd_user['inventory'].remove(item)
 
                                                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )

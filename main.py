@@ -516,6 +516,10 @@ def on_message(message):
 
             commands.lang_set(bot, message, user, bd_user)
 
+        elif message.text in ['🎞 Инвентарь', '🎞 Inventory']:
+
+            commands.inv_set_pages(bot, message, user, bd_user)
+
         elif message.text in ['⁉ Видимость FAQ', '⁉ Visibility FAQ']:
 
             commands.settings_faq(bot, message, user, bd_user)
@@ -1016,6 +1020,7 @@ if bot.get_me().first_name == 'DinoGochi' or False:
     min10_thr.start() # десяти-минутный чек
 
 print(f'Бот {bot.get_me().first_name} запущен!')
+print('Проверка пройдена')
 
 bot.add_custom_filter(SpamStop())
 bot.add_custom_filter(Test_bot())
