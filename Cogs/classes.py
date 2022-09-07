@@ -7,15 +7,18 @@ import json
 import time
 from pprint import pprint
 from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageSequence, ImageFilter
+import os, glob
 
 sys.path.append("..")
 import config
+
 
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users = client.bot.users
 market = client.bot.market
 referal_system = client.bot.referal_system
 dungeons = client.bot.dungeons
+
 
 with open('data/items.json', encoding='utf-8') as f: items_f = json.load(f)
 
@@ -2601,8 +2604,8 @@ class Functions:
             idraw.text((210, 270), dino_quality[0], font = line1)
             idraw.text((385, 270), dino_quality[1], font = line1, fill = fill)
 
-            img.save(f'profile {user.id}.png')
-            profile = open(f'profile {user.id}.png', 'rb')
+            img.save(f'tmp_images/profile {user.id}.png')
+            profile = open(f'tmp_images/profile {user.id}.png', 'rb')
 
             return profile, time_end
 
@@ -2647,8 +2650,8 @@ class Functions:
             idraw.text((750, 190), str(bd_user['dinos'][dino_user_id]['stats']['mood']), font = line1)
             idraw.text((750, 270), str(bd_user['dinos'][dino_user_id]['stats']['unv']), font = line1)
 
-            img.save(f'profile {user.id}.png')
-            profile = open(f'profile {user.id}.png', 'rb')
+            img.save(f'tmp_images/profile {user.id}.png')
+            profile = open(f'tmp_images/profile {user.id}.png', 'rb')
 
             return profile
 
@@ -3116,6 +3119,13 @@ class Functions:
             last_mrk = None
 
         return last_mrk
+
+    @staticmethod
+    def clean_tmp():
+
+        for file in glob.glob("tmp_images/*"):
+            os.remove(file)
+            print("Deleted " + str(file))
 
 
 class Dungeon:
@@ -4604,7 +4614,7 @@ class Dungeon:
             alpha_img = Functions.trans_paste(bar, alpha_img, 1.0, (510, 140) )
 
         image = alpha_img = Functions.trans_paste(alpha_img, bg_p, 1.0 )
-        image.save(f'battle {dungeonid}.png')
+        image.save(f'tmp_images/battle {dungeonid}.png')
         return 'generation - ok'
 
     def battle_user_move(bot, dungeonid, userid, bd_user, call = None):
@@ -5362,7 +5372,7 @@ class Dungeon:
                     if image_update == True:
                         ok = Dungeon.generate_battle_image(image, mob, dungeonid)
 
-                        image = f'battle {dungeonid}.png'
+                        image = f'tmp_images/battle {dungeonid}.png'
 
                 if dung['floor'][str(room_n)]['next_room'] == True:
                     inline_type = 'battle'

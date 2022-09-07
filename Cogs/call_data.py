@@ -61,8 +61,8 @@ class call_data:
                     fg_img = eg_l[i]
                     img = Functions.trans_paste(fg_img, bg_img, 1.0, (i*512,0))
 
-                img.save('eggs.png')
-                photo = open(f"eggs.png", 'rb')
+                img.save('tmp_images/eggs.png')
+                photo = open(f"tmp_images/eggs.png", 'rb')
 
                 return photo, id_l
 
@@ -191,8 +191,8 @@ class call_data:
             x2 = random.randint(80,120)
             img = Functions.trans_paste(dino_image, bg_p, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
 
-            img.save('journey.png')
-            profile = open(f"journey.png", 'rb')
+            img.save('tmp_images/journey.png')
+            profile = open(f"tmp_images/journey.png", 'rb')
 
             return profile
 
@@ -254,8 +254,8 @@ class call_data:
             x2 = random.randint(20,340)
             img = Functions.trans_paste(dino_image, bg_p, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
 
-            img.save('game.png')
-            profile = open(f"game.png", 'rb')
+            img.save('tmp_images/game.png')
+            profile = open(f"tmp_images/game.png", 'rb')
 
             return profile
 

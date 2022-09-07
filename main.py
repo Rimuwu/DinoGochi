@@ -457,7 +457,6 @@ def on_start(message):
 
 @bot.message_handler( content_types = ['text'], spam_check = True, in_channel = True, in_dungeon = True)
 def on_message(message):
-
     user = message.from_user
 
     if message.chat.type == 'private':
@@ -1014,17 +1013,25 @@ def answer(call):
         print(call.data, 'call.data')
 
 
-if bot.get_me().first_name == 'DinoGochi' or False:
-    main_checks.start() # активация всех проверок и игрового процесса
-    thr_notif.start() # активация уведомлений
-    min10_thr.start() # десяти-минутный чек
+def start_all(bot):
 
-print(f'Бот {bot.get_me().first_name} запущен!')
+    if bot.get_me().first_name == 'DinoGochi' or False:
+        main_checks.start() # активация всех проверок и игрового процесса
+        thr_notif.start() # активация уведомлений
+        min10_thr.start() # десяти-минутный чек
 
-bot.add_custom_filter(SpamStop())
-bot.add_custom_filter(Test_bot())
-bot.add_custom_filter(In_channel())
-bot.add_custom_filter(WC())
-bot.add_custom_filter(In_Dungeon())
+    bot.add_custom_filter(SpamStop())
+    bot.add_custom_filter(Test_bot())
+    bot.add_custom_filter(In_channel())
+    bot.add_custom_filter(WC())
+    bot.add_custom_filter(In_Dungeon())
 
-bot.infinity_polling(skip_pending = False)
+    try:
+        Functions.clean_tmp()
+    except:
+        print('Временные изображения не были очищены.')
+
+    print(f'Бот {bot.get_me().first_name} запущен!')
+    bot.infinity_polling(skip_pending = False)
+
+start_all(bot)
