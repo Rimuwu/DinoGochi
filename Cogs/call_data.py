@@ -664,7 +664,7 @@ class call_data:
                     use_st = False
                     text = f'❌'
 
-            if data_item['type'] == 'defrosting':
+            elif data_item['type'] == 'defrosting':
 
                 dino = fr_user['dinos'][dino_id]
 
