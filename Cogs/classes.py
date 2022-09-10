@@ -1194,6 +1194,22 @@ class Functions:
                 type = '☕ energy drink'
                 d_text = f"*└* Effectiveness: {item['act']}"
 
+        elif item['type'] == 'freezing':
+            if lg == 'ru':
+                type = '❄ Заморозка'
+                d_text = f"*└* Данный предмет останавливает метаболизм у динозавра, тем самым он замораживается."
+            else:
+                type = '❄ Freezing'
+                d_text = f"*└* This item stops the metabolism of the dinosaur, thereby it freezes."
+
+        elif item['type'] == 'defrosting':
+            if lg == 'ru':
+                type = '🔥 Разморозка'
+                d_text = f"*└* Предмет восстанавливает метаболизм у динозавра."
+            else:
+                type = '🔥 defrosting'
+                d_text = f"*└* The item restores the metabolism of the dinosaur."
+
         elif item['type'] == 'egg':
 
             if lg == 'ru':
@@ -1772,6 +1788,9 @@ class Functions:
                         elif i['activ_status'] == 'dungeon':
                             stat = '🗻 в подземелье'
 
+                        elif i['activ_status'] == 'freezing':
+                            stat = '❄ заморожен'
+
                         dino = json_f['elements'][str(i['dino_id'])]
                         pre_qual = i['quality']
                         qual = ''
@@ -1807,6 +1826,9 @@ class Functions:
 
                         elif i['activ_status'] == 'dungeon':
                             stat = '🗻 in dungeon'
+
+                        elif i['activ_status'] == 'freezing':
+                            stat = '❄ freezing'
 
                         dino = json_f['elements'][str(i['dino_id'])]
                         pre_qual = i['quality']
@@ -2737,6 +2759,12 @@ class Functions:
                     st_t = 'в подземелье 🗻'
                 else:
                     st_t = 'in dungeon 🗻'
+
+            elif bd_dino['activ_status'] == 'freezing':
+                if bd_user['language_code'] == 'ru':
+                    st_t = 'заморожен ❄'
+                else:
+                    st_t = 'freezing ❄'
 
             if bd_dino['stats']['heal'] >= 60:
                 if bd_user['language_code'] == 'ru':

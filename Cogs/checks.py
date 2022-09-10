@@ -1189,71 +1189,73 @@ class checks:
                     if dino['status'] == 'dino': #дино
                     #stats  - pass_active (ничего) sleep - (сон) journey - (путешествиеф)
 
-                        if dino['activ_status'] != 'sleep':
-                            if random.randint(1, 65) == 1: #eat
-                                dinos_stats['eat'] -= random.randint(1,2)
-                        else:
-                            if random.randint(1, 90) == 1: #eat
-                                dinos_stats['eat'] -= random.randint(1,2)
+                        if dino['activ_status'] != 'freezing':
 
-                        if dino['activ_status'] != 'game':
-                            if random.randint(1, 60) == 1: #game
-                                dinos_stats['game'] -= random.randint(1,2)
-
-                        if dino['activ_status'] != 'sleep':
-                            if random.randint(1, 130) == 1: #unv
-                                dinos_stats['unv'] -= random.randint(1,2)
-
-                        if user['dinos'][dino_id]['stats']['game'] < 40 and user['dinos'][dino_id]['stats']['game'] > 10:
-                            if dino['stats']['mood'] > 0:
-                                if random.randint(1,30) == 1:
-                                    dinos_stats['mood'] -= random.randint(1,2)
-
-                        if user['dinos'][dino_id]['stats']['game'] < 10:
-                            if dino['stats']['mood'] > 0:
-                                if random.randint(1,15) == 1:
-                                    dinos_stats['mood'] -= 3
-
-                        if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
-                            if random.randint(1,40) == 1:
-                                dinos_stats['heal'] -= random.randint(1,2)
-
-                        if user['dinos'][dino_id]['stats']['eat'] <= 20:
-                            if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
-                                pass
+                            if dino['activ_status'] != 'sleep':
+                                if random.randint(1, 65) == 1: #eat
+                                    dinos_stats['eat'] -= random.randint(1,2)
                             else:
-                                if random.randint(1,60) == 1:
-                                    dinos_stats['heal'] -= random.randint(0,1)
+                                if random.randint(1, 90) == 1: #eat
+                                    dinos_stats['eat'] -= random.randint(1,2)
 
-                        if user['dinos'][dino_id]['stats']['eat'] > 80:
-                            if dino['stats']['mood'] < 100:
-                                if random.randint(1,15) == 1:
-                                    dinos_stats['mood'] += random.randint(1,10)
+                            if dino['activ_status'] != 'game':
+                                if random.randint(1, 60) == 1: #game
+                                    dinos_stats['game'] -= random.randint(1,2)
 
-                        if user['dinos'][dino_id]['stats']['eat'] <= 40 and user['dinos'][dino_id]['stats']['eat'] != 0:
-                            if dino['stats']['mood'] > 0:
-                                if random.randint(1,30) == 1:
-                                    dinos_stats['mood'] -= random.randint(1,2)
+                            if dino['activ_status'] != 'sleep':
+                                if random.randint(1, 130) == 1: #unv
+                                    dinos_stats['unv'] -= random.randint(1,2)
 
-                        if user['dinos'][dino_id]['stats']['eat'] > 80 and user['dinos'][dino_id]['stats']['unv'] > 70 and user['dinos'][dino_id]['stats']['mood'] > 50:
+                            if user['dinos'][dino_id]['stats']['game'] < 40 and user['dinos'][dino_id]['stats']['game'] > 10:
+                                if dino['stats']['mood'] > 0:
+                                    if random.randint(1,30) == 1:
+                                        dinos_stats['mood'] -= random.randint(1,2)
 
-                            if random.randint(1,6) == 1:
-                                dinos_stats['heal'] += random.randint(1,4)
-                                dinos_stats['eat'] -= random.randint(0,1)
+                            if user['dinos'][dino_id]['stats']['game'] < 10:
+                                if dino['stats']['mood'] > 0:
+                                    if random.randint(1,15) == 1:
+                                        dinos_stats['mood'] -= 3
 
-                        bd_user = users.find_one({"userid": user['userid']})
-                        if bd_user != None:
-                            if len(bd_user['dinos']) != 0:
-                                for i in dinos_stats.keys():
-                                    if dinos_stats[i] != 0 or bd_user['dinos'][dino_id]['stats'][i] > 100 or bd_user['dinos'][dino_id]['stats'][i] < 0:
-                                        if dinos_stats[i] + bd_user['dinos'][dino_id]['stats'][i] > 100:
-                                            users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.stats.{i}': 100 }} )
+                            if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
+                                if random.randint(1,40) == 1:
+                                    dinos_stats['heal'] -= random.randint(1,2)
 
-                                        elif dinos_stats[i] + bd_user['dinos'][dino_id]['stats'][i] < 0:
-                                            users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.stats.{i}': 0 }} )
+                            if user['dinos'][dino_id]['stats']['eat'] <= 20:
+                                if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
+                                    pass
+                                else:
+                                    if random.randint(1,60) == 1:
+                                        dinos_stats['heal'] -= random.randint(0,1)
 
-                                        else:
-                                            users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i] }} )
+                            if user['dinos'][dino_id]['stats']['eat'] > 80:
+                                if dino['stats']['mood'] < 100:
+                                    if random.randint(1,15) == 1:
+                                        dinos_stats['mood'] += random.randint(1,10)
+
+                            if user['dinos'][dino_id]['stats']['eat'] <= 40 and user['dinos'][dino_id]['stats']['eat'] != 0:
+                                if dino['stats']['mood'] > 0:
+                                    if random.randint(1,30) == 1:
+                                        dinos_stats['mood'] -= random.randint(1,2)
+
+                            if user['dinos'][dino_id]['stats']['eat'] > 80 and user['dinos'][dino_id]['stats']['unv'] > 70 and user['dinos'][dino_id]['stats']['mood'] > 50:
+
+                                if random.randint(1,6) == 1:
+                                    dinos_stats['heal'] += random.randint(1,4)
+                                    dinos_stats['eat'] -= random.randint(0,1)
+
+                            bd_user = users.find_one({"userid": user['userid']})
+                            if bd_user != None:
+                                if len(bd_user['dinos']) != 0:
+                                    for i in dinos_stats.keys():
+                                        if dinos_stats[i] != 0 or bd_user['dinos'][dino_id]['stats'][i] > 100 or bd_user['dinos'][dino_id]['stats'][i] < 0:
+                                            if dinos_stats[i] + bd_user['dinos'][dino_id]['stats'][i] > 100:
+                                                users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.stats.{i}': 100 }} )
+
+                                            elif dinos_stats[i] + bd_user['dinos'][dino_id]['stats'][i] < 0:
+                                                users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.stats.{i}': 0 }} )
+
+                                            else:
+                                                users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i] }} )
 
             expp = 5 * user['lvl'][0] * user['lvl'][0] + 50 * user['lvl'][0] + 100
             if user['lvl'][1] >= expp:

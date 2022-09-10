@@ -545,6 +545,9 @@ class call_data:
                 elif data_item['type'] == "ammunition":
                     use_item()
 
+                elif data_item['type'] in ['freezing', 'defrosting']:
+                    ans_dino()
+
                 else:
                     print(f'Первый этап не найден {data_item["type"]}')
 
@@ -566,6 +569,9 @@ class call_data:
                     use_item()
 
                 elif data_item['type'] in ['weapon', "armor"]:
+                    use_item()
+
+                elif data_item['type'] in ['freezing', 'defrosting']:
                     use_item()
 
                 else:
@@ -634,7 +640,56 @@ class call_data:
             fr_user = users.find_one({"userid": user.id})
             use_st = True
 
-            if data_item['type'] == '+heal':
+            if data_item['type'] == 'freezing':
+
+                dino = fr_user['dinos'][dino_id]
+
+                if dino['status'] == 'dino':
+                    if dino['activ_status'] != 'freezing':
+
+                        dino['activ_status'] = 'freezing'
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f'❄ | Метаболизм динозавра был остановлен!'
+                        else:
+                            text = f"❄ | The dinosaur's metabolism has been stopped!"
+
+                        users.update_one( {"userid": user.id}, {"$set": {f'dinos.{dino_id}': dino }} )
+
+                    else:
+                        use_st = False
+                        text = f'❌'
+
+                else:
+                    use_st = False
+                    text = f'❌'
+
+            if data_item['type'] == 'defrosting':
+
+                dino = fr_user['dinos'][dino_id]
+
+                if dino['status'] == 'dino':
+                    if dino['activ_status'] == 'freezing':
+
+                        dino['activ_status'] = 'pass_active'
+
+                        if bd_user['language_code'] == 'ru':
+                            text = f'🔥 | Метаболизм динозавра был восстановлен!'
+                        else:
+                            text = f"🔥 | The dinosaur's metabolism has been restored!"
+
+                        users.update_one( {"userid": user.id}, {"$set": {f'dinos.{dino_id}': dino }} )
+
+                    else:
+                        use_st = False
+                        text = f'❌'
+
+                else:
+                    use_st = False
+                    text = f'❌'
+
+
+            elif data_item['type'] == '+heal':
 
                 if bd_user['language_code'] == 'ru':
                     text = f'❤ | Вы восстановили {data_item["act"] * col}% здоровья динозавра!'
