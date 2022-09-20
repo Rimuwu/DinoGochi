@@ -153,12 +153,13 @@ class Functions:
         if bd_user == None:
             bd_user = users.find_one({"userid": userid})
 
-        try:
-            dino = bd_user['dinos'][ bd_user['settings']['dino_id'] ]
-        except:
-            if len(bd_user['dinos']) > 0:
-                bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[0]
-                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+        if bd_user != None:
+            try:
+                dino = bd_user['dinos'][ bd_user['settings']['dino_id'] ]
+            except:
+                if len(bd_user['dinos']) > 0:
+                    bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[0]
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
 
         if bd_user != None and len(bd_user['dinos']) == 0 and Functions.inv_egg(bd_user) == False and bd_user['lvl'][0] <= 5:
 
