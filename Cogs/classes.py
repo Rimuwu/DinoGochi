@@ -2311,7 +2311,7 @@ class Functions:
                                                     market_['products'][str(user.id)] = { 'products': {}, 'dinos': {} }
                                                     products = market_['products'][str(user.id)]['products']
 
-                                                market_['products'][str(user.id)]['products'][ max_k(products) ] = { 'item': item, 'price': col, 'col': [0, col]}
+                                                market_['products'][str(user.id)]['products'][ max_k(products) ] = { 'item': item, 'price': number, 'col': [0, col]}
 
                                                 for i in range(col):
                                                     bd_user['inventory'].remove(item)
