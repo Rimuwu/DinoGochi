@@ -1308,26 +1308,7 @@ class checks:
 
             if int(time.time()) - user['last_m'] <= 5400:
 
-                if random.randint(1, 25) == 10:
-
-                    if 'user_dungeon' in user.keys():
-                        if 'quests' in user['user_dungeon'].keys():
-                            if len(user['user_dungeon']['quests']['activ_quests']) < user['user_dungeon']['quests']['max_quests']:
-
-                                q = Dungeon.create_quest(user)
-                                users.update_one( {"userid": user['userid']}, {"$push": {'user_dungeon.quests.activ_quests': q }} )
-
-                                if user['language_code'] == 'ru':
-                                    text = f"📜 | Вам был выдан квест {q['name']}!"
-                                else:
-                                    text = f"📜 | You have been given a quest {q['name']}!"
-
-                                try:
-                                    bot.send_message(user['userid'], text)
-                                except:
-                                    pass
-
-                elif random.randint(1, 15) == 5:
+                if random.randint(1, 15) == 5:
                     us_m = uss.copy()
 
                     us_m.remove(user)
@@ -1381,3 +1362,22 @@ class checks:
                                 bot.send_message(user['userid'], text, parse_mode = 'HTML')
                             except:
                                 pass
+
+                elif random.randint(1, 25) == 10:
+
+                    if 'user_dungeon' in user.keys():
+                        if 'quests' in user['user_dungeon'].keys():
+                            if len(user['user_dungeon']['quests']['activ_quests']) < user['user_dungeon']['quests']['max_quests']:
+
+                                q = Dungeon.create_quest(user)
+                                users.update_one( {"userid": user['userid']}, {"$push": {'user_dungeon.quests.activ_quests': q }} )
+
+                                if user['language_code'] == 'ru':
+                                    text = f"📜 | Вам был выдан квест {q['name']}!"
+                                else:
+                                    text = f"📜 | You have been given a quest {q['name']}!"
+
+                                try:
+                                    bot.send_message(user['userid'], text)
+                                except:
+                                    pass

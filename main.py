@@ -228,6 +228,7 @@ def min1_check(): #проверка каждую минуту
     def alpha(bot): checks.quests(bot)
 
     while True:
+        time.sleep(60)
 
         if int(memory_usage()[0]) < 1500:
 
@@ -236,8 +237,6 @@ def min1_check(): #проверка каждую минуту
 
         else:
             print(f'Использование памяти: {int(memory_usage()[0])}')
-
-        time.sleep(60)
 
 min1_thr = threading.Thread(target = min1_check, daemon=True)
 
