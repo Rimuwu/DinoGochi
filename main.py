@@ -1066,8 +1066,6 @@ def start_all(bot):
         min10_thr.start() # десяти-минутный чек
         min1_thr.start() # 1-мин чек
 
-    min1_thr.start()
-
     bot.add_custom_filter(SpamStop())
     bot.add_custom_filter(Test_bot())
     bot.add_custom_filter(In_channel())
