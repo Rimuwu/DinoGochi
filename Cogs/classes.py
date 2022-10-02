@@ -1420,6 +1420,61 @@ class Functions:
             text =  f"*┌* *🎴 Subject information*\n"
             text += f"*├* Name: {item['nameen']}\n"
 
+        if 'rank' in item.keys():
+
+            if lg == 'ru':
+                text +=  f"*├* Ранг: "
+            else:
+                text +=  f"*├* Rank: "
+
+            if item['rank'] == 'common':
+
+                if lg == 'ru':
+                    text += '🤍 Обычный\n'
+                else:
+                    text += '🤍 Сommon\n'
+
+            if item['rank'] == 'uncommon':
+
+                if lg == 'ru':
+                    text += '💚 Необычный\n'
+                else:
+                    text += '💚 Uncommon\n'
+
+            if item['rank'] == 'rare':
+
+                if lg == 'ru':
+                    text += '💙 Редкий\n'
+                else:
+                    text += '💙 Rare\n'
+
+            if item['rank'] == 'mystical': #мистическое
+
+                if lg == 'ru':
+                    text += '💜 Мистический\n'
+                else:
+                    text += '💜 Mystical\n'
+
+            if item['rank'] == 'legendary':
+
+                if lg == 'ru':
+                    text += '💛 Легендарный\n'
+                else:
+                    text += '💛 Legendary\n'
+
+            if item['rank'] == 'mythical': #мифическое
+
+                if lg == 'ru':
+                    text += '❤ Мифический (За гранью)\n'
+                else:
+                    text += '❤ Mythical\n'
+
+        else:
+            if lg == 'ru':
+                text +=  f"*├* Ранг: Отсутствует\n"
+            else:
+                text +=  f"*├* Rank: None\n"
+
         if 'abilities' in us_item.keys():
             if 'uses' in us_item['abilities'].keys():
 
@@ -2330,20 +2385,39 @@ class Functions:
                                                     mx_dct = int(i)
                                             return str(mx_dct+1)
 
-                                        if bd_user['language_code'] == 'ru':
-                                            text = "🛒 | Введите стоимость предмета х1: "
+                                        data_item = items_f['items'][item['item_id']]
+
+                                        if 'rank' in data_item.keys():
+
+                                            if data_item['rank'] == 'common': max_price = 2000
+
+                                            if data_item['rank'] == 'uncommon': max_price = 4000
+
+                                            if data_item['rank'] == 'rare': max_price = 8000
+
+                                            if data_item['rank'] == 'mystical': max_price = 15000
+
+                                            if data_item['rank'] == 'legendary': max_price = 50000
+
+                                            if data_item['rank'] == 'mythical': max_price = 1000000
+
                                         else:
-                                            text = "🛒 | Enter the cost of the item x1: "
+                                            max_price = 2000
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = f"🛒 | Введите стоимость предмета х1: (макс {max_price})"
+                                        else:
+                                            text = f"🛒 | Enter the cost of the item x1: (max {max_price})"
 
                                         def ret_number2(message):
                                             number = message.text
                                             try:
                                                 number = int(number)
-                                                if number <= 0 or number >= 100000 + 1:
+                                                if number <= 0 or number >= max_price + 1:
                                                     if bd_user['language_code'] == 'ru':
-                                                        text = f'0️⃣1️⃣0️⃣ | Введите число от 1 до 1000000!'
+                                                        text = f'0️⃣1️⃣0️⃣ | Введите число от 1 до {max_price}!'
                                                     else:
-                                                        text = f'0️⃣1️⃣0️⃣ | Enter a number from 1 to 1000000!'
+                                                        text = f'0️⃣1️⃣0️⃣ | Enter a number from 1 to {max_price}!'
 
                                                     bot.send_message(message.chat.id, text)
                                                     number = None
