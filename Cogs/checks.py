@@ -1363,7 +1363,7 @@ class checks:
                             except:
                                 pass
 
-                elif random.randint(1, 20) == 10:
+                if random.randint(1, 15) == 5:
 
                     if 'user_dungeon' in user.keys():
                         if 'quests' in user['user_dungeon'].keys():
