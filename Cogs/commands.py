@@ -3893,14 +3893,22 @@ class commands:
                             }
 
                     if quest['type'] == 'come':
+                        markup_inline = types.InlineKeyboardMarkup(row_width = 1)
+
                         if bd_user['language_code'] == 'ru':
                             text += f'Дойдите до этажа #{quest["lvl"]}'
 
-                            inl_l = {'Завершается автоматически': '-'}
+                            inl_l = {
+                            'Завершается автоматически': '-',
+                            '🔗 | Удалить': f"delete_quest {quest['id']}"
+                            }
                         else:
                             text += f'Get to the floor #{quest["lvl"]}'
 
-                            inl_l = {'Completed automatically': '-'}
+                            inl_l = {
+                            'Completed automatically': '-',
+                            '🔗 | Delete': f"delete_quest {quest['id']}"
+                            }
 
                     markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]}") for inl in inl_l.keys() ])
 
