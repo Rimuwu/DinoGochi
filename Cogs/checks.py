@@ -1308,7 +1308,7 @@ class checks:
 
             if int(time.time()) - user['last_m'] <= 5400:
 
-                if random.randint(1, 15) == 5:
+                if random.randint(1, 25) == 10:
 
                     if 'user_dungeon' in user.keys():
                         if 'quests' in user['user_dungeon'].keys():
@@ -1327,7 +1327,7 @@ class checks:
                                 except:
                                     pass
 
-                elif random.randint(1, 15) == 2:
+                elif random.randint(1, 15) == 5:
                     us_m = uss.copy()
 
                     us_m.remove(user)
