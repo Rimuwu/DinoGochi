@@ -3813,8 +3813,9 @@ class call_data:
         q_id = int(call.data.split()[1])
 
         quest = None
-        for quest in bd_user['user_dungeon']['quests']['activ_quests']:
-            if quest['id'] == q_id:
+        for qu in bd_user['user_dungeon']['quests']['activ_quests']:
+            if qu['id'] == q_id:
+                quest = qu
                 break
 
         if quest == None:
@@ -3867,8 +3868,9 @@ class call_data:
         q_id = int(call.data.split()[1])
 
         quest = None
-        for quest in bd_user['user_dungeon']['quests']['activ_quests']:
-            if quest['id'] == q_id:
+        for qu in bd_user['user_dungeon']['quests']['activ_quests']:
+            if qu['id'] == q_id:
+                quest = qu
                 break
 
         if quest == None:
