@@ -139,22 +139,20 @@ def check(): #проверка каждые 10 секунд
 
     def delta(bot, members): checks.main_journey(bot, members)
 
-    def memory(): checks.check_memory()
-
     non_members = users.find({ })
-    chunks_users = list(Functions.chunks( list(non_members), 25 ))
+    chunks_users = list(Functions.chunks( list(non_members), 20 ))
     Functions.check_data('col', None, int(len(chunks_users)) )
 
     while True:
         if int(memory_usage()[0]) < 1500:
             st_r_time = int(time.time())
             non_members = users.find({ })
-            chunks_users = list(Functions.chunks( list(non_members), 25 ))
+            chunks_users = list(Functions.chunks( list(non_members), 20 ))
             sl_time = 10 - ( int(time.time()) - st_r_time )
 
-            if sl_time <= 0:
-                print(f'WARNING: sleep time: {sl_time}, time sleep skip to 10')
-                sl_time = 10
+            if sl_time < 0:
+                sl_time = 0
+                print(f'WARNING: sleep time: {sl_time}, time sleep skip to {sl_time}')
 
             for members in chunks_users:
 
@@ -164,8 +162,6 @@ def check(): #проверка каждые 10 секунд
                 threading.Thread(target = gamma,  daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
                 threading.Thread(target = gamma2, daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
                 threading.Thread(target = delta,  daemon=True, kwargs = {'bot': bot, 'members': members}).start()
-
-            threading.Thread(target = memory, daemon=True ).start()
 
         else:
             print(f'Использование памяти: {int(memory_usage()[0])}')
@@ -180,16 +176,20 @@ def check_notif(): #проверка каждые 5 секунд
 
     def beta(bot): checks.check_incub(bot)
 
+    def memory(): checks.check_memory()
+
     while True:
 
         if int(memory_usage()[0]) < 1500:
             non_members = users.find({ })
-            chunks_users = list(Functions.chunks( list(non_members), 50 ))
+            chunks_users = list(Functions.chunks( list(non_members), 25 ))
 
             for members in chunks_users:
                 threading.Thread(target = alpha, daemon=True, kwargs = {'bot': bot, 'members': members}).start()
 
             threading.Thread(target = beta, daemon=True, kwargs = {'bot': bot}).start()
+
+            threading.Thread(target = memory, daemon=True ).start()
 
         else:
             print(f'Использование памяти: {int(memory_usage()[0])}')
@@ -222,6 +222,24 @@ def min10_check(): #проверка каждые 10 мин
         time.sleep(600)
 
 min10_thr = threading.Thread(target = min10_check, daemon=True)
+
+def min1_check(): #проверка каждую минуту
+
+    def alpha(bot): checks.quests(bot)
+
+    while True:
+
+        if int(memory_usage()[0]) < 1500:
+
+            if bot.get_me().first_name == 'DinoGochi':
+                threading.Thread(target = alpha, daemon = True, kwargs = {'bot': bot}).start()
+
+        else:
+            print(f'Использование памяти: {int(memory_usage()[0])}')
+
+        time.sleep(60)
+
+min1_thr = threading.Thread(target = min1_check, daemon=True)
 
 @bot.message_handler(commands=['stats'])
 def command(message):
@@ -325,8 +343,27 @@ def command(message):
 
         tr = Functions.add_item_to_user(bd, msg_args[1], int(msg_args[2]))
         bot.send_message(user.id, str(msg_args))
-#
-#
+
+@bot.message_handler(commands=['compete_quest'])
+def command(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+
+        bd_user = users.find_one({"userid": user.id})
+        Dungeon.check_quest(bot, bd_user, met = 'check', quests_type = 'kill', kwargs = {'mob': 'goblin'} )
+
+@bot.message_handler(commands=['quest'])
+def command(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        bd_user = users.find_one({"userid": user.id})
+
+        q = Dungeon.create_quest(bd_user)
+        print(q)
+
+        users.update_one( {"userid": user.id}, {"$push": {'user_dungeon.quests.activ_quests': q }} )
+
+
 # @bot.message_handler(commands=['d_upd'])
 # def command(message):
 #     user = message.from_user
@@ -335,16 +372,16 @@ def command(message):
 #         print(inf)
 #
 
-# @bot.message_handler(commands=['dungeon_delete'])
-# def command(message):
-#     user = message.from_user
-#     if user.id in [5279769615, 1191252229]:
-#         inf =  Dungeon.message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
-#         print(inf)
-#
-#         dng, inf =  Dungeon.base_upd(dungeonid = user.id, type = 'delete_dungeon')
-#         pprint.pprint(dng)
-#         print(inf)
+@bot.message_handler(commands=['dungeon_delete'])
+def command(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        inf =  Dungeon.message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
+        print(inf)
+
+        dng, inf =  Dungeon.base_upd(dungeonid = user.id, type = 'delete_dungeon')
+        pprint.pprint(dng)
+        print(inf)
 #
 @bot.message_handler(commands=['stats_100'])
 def command(message):
@@ -467,27 +504,27 @@ def on_message(message):
 
             commands.start_game(bot, message, user, bd_user)
 
-        elif message.text in ["🧩 Проект: Возрождение", '🧩 Project: Rebirth']:
+        if message.text in ["🧩 Проект: Возрождение", '🧩 Project: Rebirth']:
 
             commands.project_reb(bot, message, user, bd_user)
 
-        elif message.text in ['↪ Назад', '↪ Back', '❌ Cancel', '❌ Отмена']:
+        if message.text in ['↪ Назад', '↪ Back', '❌ Cancel', '❌ Отмена']:
 
             commands.back_open(bot, message, user, bd_user)
 
-        elif message.text in ['👁‍🗨 Профиль', '👁‍🗨 Profile']:
+        if message.text in ['👁‍🗨 Профиль', '👁‍🗨 Profile']:
 
             commands.open_profile_menu(bot, message, user, bd_user)
 
-        elif message.text in ['🎮 Инвентарь', '🎮 Inventory']:
+        if message.text in ['🎮 Инвентарь', '🎮 Inventory']:
 
             Functions.user_inventory(bot, user, message)
 
-        elif message.text in ['🦖 Динозавр', '🦖 Dinosaur']:
+        if message.text in ['🦖 Динозавр', '🦖 Dinosaur']:
 
             commands.dino_prof(bot, message, user)
 
-        elif message.text in ['🔧 Настройки', '🔧 Settings']:
+        if message.text in ['🔧 Настройки', '🔧 Settings']:
 
             commands.open_settings(bot, message, user, bd_user)
 
@@ -495,203 +532,203 @@ def on_message(message):
 
             commands.friends_open(bot, message, user, bd_user)
 
-        elif message.text in ['❗ FAQ']:
+        if message.text in ['❗ FAQ']:
 
             commands.faq(bot, message, user, bd_user)
 
-        elif message.text in ['🍺 Дино-таверна', '🍺 Dino-tavern'] and Functions.lst_m_f(bd_user) != 'dino-tavern':
+        if message.text in ['🍺 Дино-таверна', '🍺 Dino-tavern'] and Functions.lst_m_f(bd_user) != 'dino-tavern':
 
             commands.open_dino_tavern(bot, message, user, bd_user)
 
-        elif Functions.tr_c_f(bd_user) and message.text in ['🕹 Действия', '🕹 Actions']:
+        if Functions.tr_c_f(bd_user) and message.text in ['🕹 Действия', '🕹 Actions']:
 
             commands.open_action_menu(bot, message, user, bd_user)
 
-        elif message.text in ['❗ Notifications', '❗ Уведомления']:
+        if message.text in ['❗ Notifications', '❗ Уведомления']:
 
             commands.not_set(bot, message, user, bd_user)
 
-        elif message.text in ["👅 Язык", "👅 Language"]:
+        if message.text in ["👅 Язык", "👅 Language"]:
 
             commands.lang_set(bot, message, user, bd_user)
 
-        elif message.text in ['🎞 Инвентарь', '🎞 Inventory']:
+        if message.text in ['🎞 Инвентарь', '🎞 Inventory']:
 
             commands.inv_set_pages(bot, message, user, bd_user)
 
-        elif message.text in ['⁉ Видимость FAQ', '⁉ Visibility FAQ']:
+        if message.text in ['⁉ Видимость FAQ', '⁉ Visibility FAQ']:
 
             commands.settings_faq(bot, message, user, bd_user)
 
-        elif Functions.tr_c_f(bd_user) and message.text in ['💬 Переименовать', '💬 Rename']:
+        if Functions.tr_c_f(bd_user) and message.text in ['💬 Переименовать', '💬 Rename']:
 
             commands.rename_dino(bot, message, user, bd_user)
 
-        elif message.text in ["➕ Добавить", "➕ Add"]:
+        if message.text in ["➕ Добавить", "➕ Add"]:
 
             commands.add_friend(bot, message, user, bd_user)
 
-        elif message.text in ["📜 Список", "📜 List"]:
+        if message.text in ["📜 Список", "📜 List"]:
 
             commands.friends_list(bot, message, user, bd_user)
 
-        elif message.text in ["💌 Запросы", "💌 Inquiries"]:
+        if message.text in ["💌 Запросы", "💌 Inquiries"]:
 
             Functions.user_requests(bot, user, message)
 
-        elif message.text in ['➖ Удалить', '➖ Delete']:
+        if message.text in ['➖ Удалить', '➖ Delete']:
 
             commands.delete_friend(bot, message, user, bd_user)
 
-        elif message.text in ['🤍 Пригласи друга', '🤍 Invite a friend']:
+        if message.text in ['🤍 Пригласи друга', '🤍 Invite a friend']:
 
             commands.invite_friend(bot, message, user, bd_user)
 
-        elif message.text in ['🎲 Сгенерировать код', '🎲 Generate Code']:
+        if message.text in ['🎲 Сгенерировать код', '🎲 Generate Code']:
 
             commands.generate_fr_code(bot, message, user, bd_user)
 
-        elif message.text in ['🎞 Ввести код', '🎞 Enter Code']:
+        if message.text in ['🎞 Ввести код', '🎞 Enter Code']:
 
             commands.enter_fr_code(bot, message, user, bd_user)
 
-        elif message.text in ['👥 Меню друзей', '👥 Friends Menu']:
+        if message.text in ['👥 Меню друзей', '👥 Friends Menu']:
 
             commands.friends_menu(bot, message, user, bd_user)
 
-        elif Functions.tr_c_f(bd_user) and message.text in ['🌙 Уложить спать', '🌙 Put to bed']:
+        if Functions.tr_c_f(bd_user) and message.text in ['🌙 Уложить спать', '🌙 Put to bed']:
 
             commands.dino_sleep_ac(bot, message, user, bd_user)
 
-        elif Functions.tr_c_f(bd_user) and message.text in ['🌙 Пробудить', '🌙 Awaken']:
+        if Functions.tr_c_f(bd_user) and message.text in ['🌙 Пробудить', '🌙 Awaken']:
 
             commands.dino_unsleep_ac(bot, message, user, bd_user)
 
-        elif Functions.tr_c_f(bd_user) and message.text in ['🎑 Путешествие', '🎑 Journey']:
+        if Functions.tr_c_f(bd_user) and message.text in ['🎑 Путешествие', '🎑 Journey']:
 
             commands.dino_journey(bot, message, user, bd_user)
 
-        elif Functions.tr_c_f(bd_user) and message.text in ['🎑 Вернуть', '🎑 Call']:
+        if Functions.tr_c_f(bd_user) and message.text in ['🎑 Вернуть', '🎑 Call']:
 
             commands.dino_unjourney(bot, message, user, bd_user)
 
-        elif Functions.tr_c_f(bd_user) and message.text in ['🎮 Развлечения', '🎮 Entertainments']:
+        if Functions.tr_c_f(bd_user) and message.text in ['🎮 Развлечения', '🎮 Entertainments']:
 
             commands.dino_entert(bot, message, user, bd_user)
 
-        elif Functions.tr_c_f(bd_user) and message.text in ['🍣 Покормить', '🍣 Feed']:
+        if Functions.tr_c_f(bd_user) and message.text in ['🍣 Покормить', '🍣 Feed']:
 
             commands.dino_feed(bot, message, user, bd_user)
 
-        elif Functions.tr_c_f(bd_user) and message.text in ['🍕 Сбор пищи', '🍕 Collecting food']:
+        if Functions.tr_c_f(bd_user) and message.text in ['🍕 Сбор пищи', '🍕 Collecting food']:
 
             commands.collecting_food(bot, message, user, bd_user)
 
-        elif Functions.tr_c_f(bd_user) and message.text in ['🍕 Прогресс', '🍕 Progress']:
+        if Functions.tr_c_f(bd_user) and message.text in ['🍕 Прогресс', '🍕 Progress']:
 
             commands.coll_progress(bot, message, user, bd_user)
 
-        elif Functions.tr_c_f(bd_user) and (message.text[:11] in ['🦖 Динозавр:'] or message.text[:7] in [ '🦖 Dino:']):
+        if Functions.tr_c_f(bd_user) and (message.text[:11] in ['🦖 Динозавр:'] or message.text[:7] in [ '🦖 Dino:']):
 
             commands.dino_action_ans(bot, message, user, bd_user)
 
-        elif Functions.tr_c_f(bd_user) and message.text in ['↩ Назад', '↩ Back']:
+        if Functions.tr_c_f(bd_user) and message.text in ['↩ Назад', '↩ Back']:
 
             commands.action_back(bot, message, user, bd_user)
 
-        elif Functions.tr_c_f(bd_user) and message.text in ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball', '🧩 Пазлы', '♟ Шахматы', '🧱 Дженга', '🎲 D&D', '🧩 Puzzles', '♟ Chess', '🧱 Jenga']:
+        if Functions.tr_c_f(bd_user) and message.text in ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball', '🧩 Пазлы', '♟ Шахматы', '🧱 Дженга', '🎲 D&D', '🧩 Puzzles', '♟ Chess', '🧱 Jenga']:
 
             commands.dino_entert_games(bot, message, user, bd_user)
 
-        elif Functions.tr_c_f(bd_user) and message.text in ['❌ Остановить игру', '❌ Stop the game']:
+        if Functions.tr_c_f(bd_user) and message.text in ['❌ Остановить игру', '❌ Stop the game']:
 
             commands.dino_stop_games(bot, message, user, bd_user)
 
-        elif message.text in ['🎢 Рейтинг', '🎢 Rating']:
+        if message.text in ['🎢 Рейтинг', '🎢 Rating']:
 
             commands.rayting(bot, message, user, bd_user)
 
-        elif message.text in ['📜 Информация', '📜 Information']:
+        if message.text in ['📜 Информация', '📜 Information']:
 
             commands.open_information(bot, message, user, bd_user)
 
-        elif message.text in ['🛒 Рынок', '🛒 Market']:
+        if message.text in ['🛒 Рынок', '🛒 Market']:
 
             commands.open_market_menu(bot, message, user, bd_user)
 
-        elif message.text in ['💍 Аксессуары', '💍 Accessories']:
+        if message.text in ['💍 Аксессуары', '💍 Accessories']:
 
             commands.acss(bot, message, user, bd_user)
 
-        elif message.text in ['➕ Добавить товар', '➕ Add Product']:
+        if message.text in ['➕ Добавить товар', '➕ Add Product']:
 
             Functions.user_inventory(bot, user, message, 'add_product')
 
-        elif message.text in ['📜 Мои товары', '📜 My products']:
+        if message.text in ['📜 Мои товары', '📜 My products']:
 
             commands.my_products(bot, message, user, bd_user)
 
-        elif message.text in ['➖ Удалить товар', '➖ Delete Product']:
+        if message.text in ['➖ Удалить товар', '➖ Delete Product']:
 
             commands.delete_product(bot, message, user, bd_user)
 
-        elif message.text in [ '🔍 Поиск товара', '🔍 Product Search']:
+        if message.text in [ '🔍 Поиск товара', '🔍 Product Search']:
 
             commands.search_pr(bot, message, user, bd_user)
 
-        elif message.text in [ '🛒 Случайные товары', '🛒 Random Products']:
+        if message.text in [ '🛒 Случайные товары', '🛒 Random Products']:
 
             commands.random_search(bot, message, user, bd_user)
 
-        elif message.text in ['⛓ Квесты', '⛓ Quests']:
+        if message.text in ['⛓ Квесты', '⛓ Quests']:
+
+            commands.quests(bot, message, user, bd_user)
+
+        if message.text in ['🎭 Навыки', '🎭 Skills']:
 
             bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-        elif message.text in ['🎭 Навыки', '🎭 Skills']:
+        if message.text in ['🦖 БИО', '🦖 BIO']:
 
             bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-        elif message.text in ['🦖 БИО', '🦖 BIO']:
+        if message.text in [ '👁‍🗨 Динозавры в таверне', '👁‍🗨 Dinosaurs in the Tavern']:
 
             bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-        elif message.text in [ '👁‍🗨 Динозавры в таверне', '👁‍🗨 Dinosaurs in the Tavern']:
-
-            bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
-
-        elif message.text in [ '♻ Change Dinosaur', '♻ Изменение Динозавра']:
+        if message.text in [ '♻ Change Dinosaur', '♻ Изменение Динозавра']:
 
             commands.rarity_change(bot, message, user, bd_user)
 
-        elif message.text in [ '🥏 Дрессировка', '🥏 Training']:
+        if message.text in [ '🥏 Дрессировка', '🥏 Training']:
 
             bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-        elif message.text in [ "💡 Исследования", "💡 Research"]:
+        if message.text in [ "💡 Исследования", "💡 Research"]:
 
             bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
 
-        elif message.text in [ "🗻 Подземелья", "🗻 Dungeons"]:
+        if message.text in [ "🗻 Подземелья", "🗻 Dungeons"]:
 
             commands.dungeon_menu(bot, message, user, bd_user)
 
-        elif message.text in [ "🗻 Создать", "🗻 Create"]:
+        if message.text in [ "🗻 Создать", "🗻 Create"]:
 
             commands.dungeon_create(bot, message, user, bd_user)
 
-        elif message.text in [ '🚪 Присоединиться', '🚪 Join']:
+        if message.text in [ '🚪 Присоединиться', '🚪 Join']:
 
             commands.dungeon_join(bot, message, user, bd_user)
 
-        elif message.text in [ '⚔ Экипировка', '⚔ Equip']:
+        if message.text in [ '⚔ Экипировка', '⚔ Equip']:
 
             commands.dungeon_equipment(bot, message, user, bd_user)
 
-        elif message.text in [ '📕 Правила подземелья', '📕 Dungeon Rules' ]:
+        if message.text in [ '📕 Правила подземелья', '📕 Dungeon Rules' ]:
 
             commands.dungeon_rules(bot, message, user, bd_user)
 
-        elif message.text in [ '🎮 Статистика', '🎮 Statistics' ]:
+        if message.text in [ '🎮 Статистика', '🎮 Statistics' ]:
 
             commands.dungeon_statist(bot, message, user, bd_user)
 
@@ -709,94 +746,94 @@ def answer(call):
 
         call_data.start(bot, bd_user, call, user)
 
-    elif call.data == 'checking_the_user_in_the_channel':
+    if call.data == 'checking_the_user_in_the_channel':
 
         call_data.checking_the_user_in_the_channel(bot, bd_user, call, user)
 
-    elif call.data in ['egg_answer_1', 'egg_answer_2', 'egg_answer_3']:
+    if call.data in ['egg_answer_1', 'egg_answer_2', 'egg_answer_3']:
 
         call_data.egg_answer(bot, bd_user, call, user)
 
-    elif call.data[:13] in ['90min_journey', '60min_journey', '30min_journey', '10min_journey', '12min_journey', '24min_journey']:
+    if call.data[:13] in ['90min_journey', '60min_journey', '30min_journey', '10min_journey', '12min_journey', '24min_journey']:
 
         call_data.journey(bot, bd_user, call, user)
 
-    elif call.data[:10] in ['1_con_game', '2_con_game', '3_con_game', '1_sna_game', '2_sna_game', '3_sna_game', '1_pin_game', '2_pin_game', '3_pin_game', '1_bal_game', '2_bal_game', '3_bal_game', '1_puz_game', '2_puz_game', '3_puz_game', '1_che_game', '2_che_game', '3_che_game', '1_jen_game', '2_jen_game', '3_jen_game', '1_ddd_game', '2_ddd_game', '3_ddd_game']:
+    if call.data[:10] in ['1_con_game', '2_con_game', '3_con_game', '1_sna_game', '2_sna_game', '3_sna_game', '1_pin_game', '2_pin_game', '3_pin_game', '1_bal_game', '2_bal_game', '3_bal_game', '1_puz_game', '2_puz_game', '3_puz_game', '1_che_game', '2_che_game', '3_che_game', '1_jen_game', '2_jen_game', '3_jen_game', '1_ddd_game', '2_ddd_game', '3_ddd_game']:
 
         call_data.game(bot, bd_user, call, user)
 
-    elif call.data in ['dead_answer1', 'dead_answer2', 'dead_answer3', 'dead_answer4']:
+    if call.data in ['dead_answer1', 'dead_answer2', 'dead_answer3', 'dead_answer4']:
 
         call_data.dead_answer(bot, bd_user, call, user)
 
-    elif call.data == 'dead_restart':
+    if call.data == 'dead_restart':
 
         call_data.dead_restart(bot, bd_user, call, user)
 
-    elif call.data[:5] == 'item_':
+    if call.data[:5] == 'item_':
 
         call_data.item_use(bot, bd_user, call, user)
 
-    elif call.data[:12] == 'remove_item_':
+    if call.data[:12] == 'remove_item_':
 
         call_data.remove_item(bot, bd_user, call, user)
 
-    elif call.data[:7] == 'remove_':
+    if call.data[:7] == 'remove_':
 
         call_data.remove(bot, bd_user, call, user)
 
-    elif call.data == "cancel_remove":
+    if call.data == "cancel_remove":
 
         bot.delete_message(user.id, call.message.message_id)
 
-    elif call.data[:9] == 'exchange_':
+    if call.data[:9] == 'exchange_':
 
         call_data.exchange(bot, bd_user, call, user)
 
-    elif call.data[:11] == 'market_buy_':
+    if call.data[:11] == 'market_buy_':
 
         call_data.market_buy(bot, bd_user, call, user)
 
-    elif call.data[:7] == 'market_':
+    if call.data[:7] == 'market_':
 
         call_data.market_inf(bot, bd_user, call, user)
 
-    elif call.data[:9] == 'iteminfo_':
+    if call.data[:9] == 'iteminfo_':
 
         call_data.iteminfo(bot, bd_user, call, user)
 
-    elif call.data == 'inventory':
+    if call.data == 'inventory':
 
         Functions.user_inventory(bot, user, call.message)
 
-    elif call.data == 'requests':
+    if call.data == 'requests':
 
         Functions.user_requests(bot, user, call.message)
 
-    elif call.data == 'send_request':
+    if call.data == 'send_request':
 
         call_data.send_request(bot, bd_user, call, user)
 
-    elif call.data[:18] == 'open_dino_profile_':
+    if call.data[:18] == 'open_dino_profile_':
 
         did = call.data[18:]
         if did in bd_user['dinos'].keys():
             bd_dino = bd_user['dinos'][did]
             Functions.p_profile(bot, call.message, bd_dino, user, bd_user, did)
 
-    elif call.data[:8] == 'ns_craft':
+    if call.data[:8] == 'ns_craft':
 
         call_data.ns_craft(bot, bd_user, call, user)
 
-    elif call.data[:13] == 'change_rarity':
+    if call.data[:13] == 'change_rarity':
 
         call_data.change_rarity_call_data(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'cancel_progress':
+    if call.data.split()[0] == 'cancel_progress':
 
         call_data.cancel_progress(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'message_delete':
+    if call.data.split()[0] == 'message_delete':
 
         show_text = "✉ > 🗑"
         bot.answer_callback_query(call.id, show_text)
@@ -806,211 +843,219 @@ def answer(call):
         except:
             pass
 
-    elif call.data.split()[0] == 'dungeon.settings':
+    if call.data.split()[0] == 'dungeon.settings':
 
         call_data.dungeon_settings(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.to_lobby':
+    if call.data.split()[0] == 'dungeon.to_lobby':
 
         call_data.dungeon_to_lobby(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.settings_lang':
+    if call.data.split()[0] == 'dungeon.settings_lang':
 
         call_data.dungeon_settings_lang(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.settings_batnotf':
+    if call.data.split()[0] == 'dungeon.settings_batnotf':
 
         call_data.dungeon_settings_batnotf(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.leave':
+    if call.data.split()[0] == 'dungeon.leave':
 
         call_data.dungeon_leave(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.leave_True':
+    if call.data.split()[0] == 'dungeon.leave_True':
 
         call_data.dungeon_leave_True(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.leave_False':
+    if call.data.split()[0] == 'dungeon.leave_False':
 
         call_data.dungeon_leave_False(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.remove':
+    if call.data.split()[0] == 'dungeon.remove':
 
         call_data.dungeon_remove(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.remove_True':
+    if call.data.split()[0] == 'dungeon.remove_True':
 
         call_data.dungeon_remove_True(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.remove_False':
+    if call.data.split()[0] == 'dungeon.remove_False':
 
         call_data.dungeon_remove_False(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.menu.add_dino':
+    if call.data.split()[0] == 'dungeon.menu.add_dino':
 
         call_data.dungeon_add_dino_menu(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.menu.remove_dino':
+    if call.data.split()[0] == 'dungeon.menu.remove_dino':
 
         call_data.dungeon_remove_dino_menu(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.action.add_dino':
+    if call.data.split()[0] == 'dungeon.action.add_dino':
 
         call_data.dungeon_add_dino(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.action.remove_dino':
+    if call.data.split()[0] == 'dungeon.action.remove_dino':
 
         call_data.dungeon_remove_dino(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.ready':
+    if call.data.split()[0] == 'dungeon.ready':
 
         call_data.dungeon_ready(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.invite':
+    if call.data.split()[0] == 'dungeon.invite':
 
         call_data.dungeon_invite(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.supplies':
+    if call.data.split()[0] == 'dungeon.supplies':
 
         call_data.dungeon_supplies(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.action.set_coins':
+    if call.data.split()[0] == 'dungeon.action.set_coins':
 
         call_data.dungeon_set_coins(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.action.add_item':
+    if call.data.split()[0] == 'dungeon.action.add_item':
 
         call_data.dungeon_add_item_action(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.action.remove_item':
+    if call.data.split()[0] == 'dungeon.action.remove_item':
 
         call_data.dungeon_remove_item_action(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon_add_item':
+    if call.data.split()[0] == 'dungeon_add_item':
 
         call_data.dungeon_add_item(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon_remove_item':
+    if call.data.split()[0] == 'dungeon_remove_item':
 
         call_data.dungeon_remove_item(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.start':
+    if call.data.split()[0] == 'dungeon.start':
 
         call_data.dungeon_start_game(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.next_room':
+    if call.data.split()[0] == 'dungeon.next_room':
 
         call_data.dungeon_next_room(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.action.battle_action':
+    if call.data.split()[0] == 'dungeon.action.battle_action':
 
         call_data.dungeon_battle_action(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.battle_action_attack':
+    if call.data.split()[0] == 'dungeon.battle_action_attack':
 
         call_data.dungeon_battle_attack(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.battle_action_defend':
+    if call.data.split()[0] == 'dungeon.battle_action_defend':
 
         call_data.dungeon_battle_defend(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.battle_action_idle':
+    if call.data.split()[0] == 'dungeon.battle_action_idle':
 
         call_data.dungeon_battle_idle(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.next_room_ready':
+    if call.data.split()[0] == 'dungeon.next_room_ready':
 
         call_data.dungeon_next_room_ready(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.end_move':
+    if call.data.split()[0] == 'dungeon.end_move':
 
         call_data.dungeon_end_move(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.dinos_stats':
+    if call.data.split()[0] == 'dungeon.dinos_stats':
 
         call_data.dungeon_dinos_stats(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.collect_reward':
+    if call.data.split()[0] == 'dungeon.collect_reward':
 
         call_data.dungeon_collect_reward(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.item_from_reward':
+    if call.data.split()[0] == 'dungeon.item_from_reward':
 
         call_data.item_from_reward(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.inventory':
+    if call.data.split()[0] == 'dungeon.inventory':
 
         call_data.dungeon_inventory(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == '-':
+    if call.data.split()[0] == '-' or call.data.split()[0] == ' ':
         pass
 
-    elif call.data.split()[0] == 'dungeon_use_item_info':
+    if call.data.split()[0] == 'dungeon_use_item_info':
 
         call_data.dungeon_use_item_info(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon_use_item':
+    if call.data.split()[0] == 'dungeon_use_item':
 
         call_data.dungeon_use_item(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon_use_item':
+    if call.data.split()[0] == 'dungeon_use_item':
 
         call_data.dungeon_use_item(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon_delete_item':
+    if call.data.split()[0] == 'dungeon_delete_item':
 
         call_data.dungeon_delete_item(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.kick_member':
+    if call.data.split()[0] == 'dungeon.kick_member':
 
         call_data.dungeon_kick_member(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon_kick':
+    if call.data.split()[0] == 'dungeon_kick':
 
         call_data.dungeon_kick(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.leave_in_game':
+    if call.data.split()[0] == 'dungeon.leave_in_game':
 
         call_data.dungeon_leave_in_game(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.leave_in_game_answer':
+    if call.data.split()[0] == 'dungeon.leave_in_game_answer':
 
         call_data.dungeon_leave_in_game_answer(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.fork_answer':
+    if call.data.split()[0] == 'dungeon.fork_answer':
 
         call_data.dungeon_fork_answer(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.safe_exit':
+    if call.data.split()[0] == 'dungeon.safe_exit':
 
         call_data.dungeon_safe_exit(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.mine':
+    if call.data.split()[0] == 'dungeon.mine':
 
         call_data.dungeon_mine(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.shop_menu':
+    if call.data.split()[0] == 'dungeon.shop_menu':
 
         call_data.dungeon_shop_menu(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'dungeon.shop_buy':
+    if call.data.split()[0] == 'dungeon.shop_buy':
 
         call_data.dungeon_shop_buy(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'rayt_lvl':
+    if call.data.split()[0] == 'rayt_lvl':
 
         call_data.rayt_lvl(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'rayt_money':
+    if call.data.split()[0] == 'rayt_money':
 
         call_data.rayt_money(bot, bd_user, call, user)
 
-    elif call.data.split()[0] == 'rayt_dungeon':
+    if call.data.split()[0] == 'rayt_dungeon':
 
         call_data.rayt_dungeon(bot, bd_user, call, user)
 
-    else:
-        print(call.data, 'call.data')
+    if call.data.split()[0] == 'complete_quest':
+
+        call_data.complete_quest(bot, bd_user, call, user)
+
+    if call.data.split()[0] == 'delete_quest':
+
+        call_data.delete_quest(bot, bd_user, call, user)
+
+    # else:
+    #     print(call.data, 'call.data')
 
 
 def start_all(bot):
@@ -1019,6 +1064,9 @@ def start_all(bot):
         main_checks.start() # активация всех проверок и игрового процесса
         thr_notif.start() # активация уведомлений
         min10_thr.start() # десяти-минутный чек
+        min1_thr.start() # 1-мин чек
+
+    min1_thr.start()
 
     bot.add_custom_filter(SpamStop())
     bot.add_custom_filter(Test_bot())

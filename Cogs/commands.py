@@ -20,11 +20,11 @@ referal_system = client.bot.referal_system
 market = client.bot.market
 dungeons = client.bot.dungeons
 
-with open('data/items.json', encoding='utf-8') as f:
-    items_f = json.load(f)
+with open('data/items.json', encoding='utf-8') as f: items_f = json.load(f)
 
-with open('data/dino_data.json', encoding='utf-8') as f:
-    json_f = json.load(f)
+with open('data/dino_data.json', encoding='utf-8') as f: json_f = json.load(f)
+
+with open('data/mobs.json', encoding='utf-8') as f: mobs_f = json.load(f)
 
 class commands:
 
@@ -905,10 +905,10 @@ class commands:
         if bd_user != None:
 
             if bd_user['language_code'] == 'ru':
-                text = '🍺 Вы вошли в дино-таверну!'
+                text = '🍺 Вы вошли в дино-таверну!\n\n📜 Во время нахождения в таверне вы можете получить квест или услышать полезную информацию!'
                 text2 = '🍺 Друзья в таверне: Поиск среди толпы...'
             else:
-                text = '🍺 You have entered the dino-tavern!'
+                text = '🍺 You have entered the dino-tavern!\n\n📜 While staying in the tavern, you can get a quest or hear useful information!'
                 text2 = '🍺 Friends in the tavern: Search among the crowd...'
 
             bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "dino-tavern", user))
@@ -3793,3 +3793,136 @@ class commands:
                     text = 'Statistics are not collected.'
 
             msg = bot.send_message(message.chat.id, text, parse_mode = 'Markdown')
+
+    @staticmethod
+    def quests(bot, message, user, bd_user):
+
+        if 'user_dungeon' not in bd_user.keys():
+
+            if bd_user['language_code'] == 'ru':
+                text = 'Вы не авторизованы в системе подземелий!'
+            else:
+                text = 'You are not logged into the dungeon system!'
+
+            bot.send_message(message.chat.id, text)
+
+        else:
+
+            if 'quests' not in bd_user['user_dungeon'].keys():
+
+                bd_user['user_dungeon']['quests'] = {
+                    'activ_quests': [],
+                    'max_quests': 5,
+                    'ended': 0,
+                }
+
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon.quests': bd_user['user_dungeon']['quests'] }} )
+
+            if bd_user['language_code'] == 'ru':
+                text = f"🎪 | Меню квестов\nЗавершено: {bd_user['user_dungeon']['quests']['ended']}\nКоличество активных квестов: {len(bd_user['user_dungeon']['quests']['activ_quests'])}"
+            else:
+                text = f"🎪 | Quest menu\nCompleted: {bd_user['user_dungeon']['quests']['ended']}\nNumber of active quests: {len(bd_user['user_dungeon']['quests']['activ_quests'])}"
+
+            msg = bot.send_message(message.chat.id, text)
+
+            if bd_user['user_dungeon']['quests']['activ_quests'] != []:
+
+                for quest in bd_user['user_dungeon']['quests']['activ_quests']:
+                    text = f"🎪 | {quest['name']}\n"
+                    markup_inline = types.InlineKeyboardMarkup()
+
+                    if bd_user['language_code'] == 'ru':
+                        text += f"Тип: "
+
+                        if quest['type'] == 'get':
+                            text += '🔎 Поиск\n'
+
+                        if quest['type'] == 'kill':
+                            text += '☠ Убийство\n'
+
+                        if quest['type'] == 'come':
+                            text += '🗻 Покорение\n'
+
+                    else:
+                        text += f"Type: "
+
+                        if quest['type'] == 'get':
+                            text += '🔎 Search\n'
+
+                        if quest['type'] == 'kill':
+                            text += '☠ Murder\n'
+
+                        if quest['type'] == 'come':
+                            text += '🗻 Conquest\n'
+
+
+                    if quest['type'] == 'get':
+
+                        if bd_user['language_code'] == 'ru':
+                            text += f'Достаньте: {", ".join(Functions.sort_items_col(quest["get_items"], "ru") )}'
+
+                            inl_l = {
+                            '📌 | Завершить': f"complete_quest {quest['id']}",
+                            '🔗 | Удалить': f"delete_quest {quest['id']}"
+                            }
+
+
+                        else:
+                            text += f'Достаньте: {", ".join(Functions.sort_items_col(quest["get_items"], "en") )}'
+
+                            inl_l = {
+                            '📌 | Finish': f"complete_quest {quest['id']}",
+                            '🔗 | Delete': f"delete_quest {quest['id']}"
+                            }
+
+                    if quest['type'] == 'kill':
+
+                        if bd_user['language_code'] == 'ru':
+                            text += f"Убейте: { mobs_f['mobs'][ quest['mob'] ]['name'][bd_user['language_code']]} {quest['col'][1]} / {quest['col'][0]}"
+
+                            inl_l = {
+                            '📌 | Завершить': f"complete_quest {quest['id']}",
+                            '🔗 | Удалить': f"delete_quest {quest['id']}"
+                            }
+                        else:
+                            text += f"Kill: { mobs_f['mobs'][ quest['mob'] ]['name'][bd_user['language_code']]} {quest['col'][1]} / {quest['col'][0]}"
+
+                            inl_l = {
+                            '📌 | Finish': f"complete_quest {quest['id']}",
+                            '🔗 | Delete': f"delete_quest {quest['id']}"
+                            }
+
+                    if quest['type'] == 'come':
+                        if bd_user['language_code'] == 'ru':
+                            text += f'Дойдите до этажа #{quest["lvl"]}'
+
+                            inl_l = {'Завершается автоматически': '-'}
+                        else:
+                            text += f'Get to the floor #{quest["lvl"]}'
+
+                            inl_l = {'Completed automatically': '-'}
+
+                    markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]}") for inl in inl_l.keys() ])
+
+                    if bd_user['language_code'] == 'ru':
+                        text += f'\n\n👑 | Награда\nМонеты: '
+                    else:
+                        text += f'\n\n👑 | Reward\nМонеты: '
+
+                    text += f"{quest['reward']['money']}💰"
+
+                    if quest['reward']['items'] != []:
+
+                        if bd_user['language_code'] == 'ru':
+                            text += f"\nПредметы: {', '.join(Functions.sort_items_col(quest['reward']['items'], 'ru') )}"
+                        else:
+                            text += f"\nItems: {', '.join(Functions.sort_items_col(quest['reward']['items'], 'en') )}"
+
+                    if bd_user['language_code'] == 'ru':
+                        text += f"\n\n⏳ Осталось: {Functions.time_end(quest['time'] - int(time.time()), mini = False)}"
+
+                    else:
+                        text += f"\n\n⏳ Time left: {Functions.time_end(quest['time']  - int(time.time()), mini = True)}"
+
+                    bot.send_message(message.chat.id, text, reply_markup = markup_inline)
+                    time.sleep(0.5)

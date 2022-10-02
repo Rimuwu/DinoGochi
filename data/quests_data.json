@@ -1,0 +1,112 @@
+{
+  "complexity": {
+
+    "1": {
+          "money": { "min": 5, "max": 15, "type": "random" },
+          "item_chance": 0,
+          "time": 86400,
+          "items": []
+         },
+
+    "3": {
+          "money": { "min": 25, "max": 55, "type": "random" },
+          "item_chance": 400,
+          "time": 129600,
+          "items": [
+                   {"item": "1",
+                    "col": { "min": 1, "max": 2, "type": "random"},
+                    "chance": 400
+                   },
+                   {"item": "17",
+                    "col": { "min": 1, "max": 3, "type": "random"},
+                    "chance": 300
+                   },
+                   {"item": "33",
+                    "col": { "act": 1, "type": "static" },
+                    "chance": 300
+                   }
+                   ]
+         },
+
+    "5": {
+          "money": { "min": 60, "max": 100, "type": "random" },
+          "item_chance": 400,
+          "time": 172800,
+          "items": [
+                   {"item": "1",
+                    "col": { "min": 1, "max": 2, "type": "random"},
+                    "chance": 400
+                   },
+                   {"item": "17",
+                    "col": { "min": 1, "max": 2, "type": "random"},
+                    "chance": 400
+                   },
+                   {"item": "33",
+                    "col": { "act": 1, "type": "static" },
+                    "chance": 200
+                   },
+                   {"item": "37",
+                    "col": { "act": 1, "type": "static" },
+                    "chance": 200
+                   },
+                   {"item": "41",
+                    "col": { "act": 1, "type": "static" },
+                    "chance": 100
+                   },
+                   {"item": "46",
+                    "col": { "act": 1, "type": "static" },
+                    "chance": 50
+                   }
+                   ]
+          },
+
+    "10": {
+          "money": { "min": 100, "max": 300, "type": "random" },
+          "item_chance": 800,
+          "time": 259200,
+          "items": [
+                   {"item": "17",
+                    "col": { "min": 1, "max": 3, "type": "random"},
+                    "chance": 600
+                   },
+                   {"item": "33",
+                    "col": { "act": 1, "type": "static" },
+                    "chance": 300
+                   },
+                   {"item": "61",
+                    "col": { "act": 1, "type": "static" },
+                    "chance": 300
+                   },
+                   {"item": "59",
+                    "col": { "act": 1, "type": "static" },
+                    "chance": 300
+                   }
+                   ]
+          }
+
+  },
+
+  "quests": {
+
+        "get": {
+
+            "items": [
+              {"item": "51",
+               "complexity": 1,
+               "col": { "min": 1, "max": 2, "type": "random"}
+              },
+              {"item": "52",
+               "complexity": 2,
+               "col": { "min": 1, "max": 2, "type": "random"}
+              },
+              {"item": "51",
+               "complexity": 1,
+               "col": { "min": 1, "max": 2, "type": "random"}
+              }
+            ]
+        }
+
+  }
+
+
+}

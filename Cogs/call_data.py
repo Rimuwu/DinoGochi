@@ -1477,6 +1477,8 @@ class call_data:
 
                             bot.send_message(call.message.chat.id, text, reply_markup = Functions.markup(bot, 'market', user))
 
+                            Functions.notifications_manager(bot, "product_bought", mr_user, mmd['price'] * number )
+
                         if message.text in [f"Yes, purchase {items_f['items'][mmd['item']['item_id']]['nameru']}", f"Да, приобрести {items_f['items'][mmd['item']['item_id']]['nameru']}"]:
                             pass
 
@@ -2574,6 +2576,11 @@ class call_data:
                     if dung['stage_data']['game']['room_n'] > dung['settings']['max_rooms'] + 1:
 
                         dng, inf = Dungeon.base_upd(dungeonid = dungeonid, type = 'create_floor')
+
+                        for uk in dung['users'].keys():
+                            uk = users.find_one({"userid": int(uk) })
+
+                            Dungeon.check_quest(bot, uk, met = 'check', quests_type = 'come', kwargs = {'lvl': int(floor_n) + 1} )
 
                     else:
 
@@ -3745,7 +3752,6 @@ class call_data:
 
         bot.send_message(call.message.chat.id, text, parse_mode = "Markdown")
 
-    @staticmethod
     def rayt_dungeon(bot, bd_user, call, user):
 
         rayt_list = Functions.rayt_update('check')[2]
@@ -3802,3 +3808,86 @@ class call_data:
             total += 1
 
         bot.send_message(call.message.chat.id, text, parse_mode = "Markdown")
+
+    def complete_quest(bot, bd_user, call, user):
+        q_id = int(call.data.split()[1])
+
+        quest = None
+        for quest in bd_user['user_dungeon']['quests']['activ_quests']:
+            if quest['id'] == q_id:
+                break
+
+        if quest == None:
+
+            if bd_user['language_code'] == 'ru':
+                text = '🎭 | Квест не найден!'
+            else:
+                text = '🎭 | The quest was not found!'
+
+            bot.send_message(call.message.chat.id, text)
+
+        else:
+
+            if quest['time'] - time.time() > 0:
+
+                ans, f_ans = Dungeon.check_quest(bot, bd_user, met = 'user_active', quests_type = None, kwargs = {'quest': quest} )
+
+                if not ans:
+
+                    if f_ans == 'n_cmp':
+
+                        if bd_user['language_code'] == 'ru':
+                            text = '🎭 | Требования квеста не были выполнены!'
+                        else:
+                            text = '🎭 | The quest requirements were not met!'
+
+                    if f_ans == 'n_quests':
+
+                        if bd_user['language_code'] == 'ru':
+                            text = '🎭 | Квест не найден!'
+                        else:
+                            text = '🎭 | The quest was not found!'
+
+                    bot.send_message(call.message.chat.id, text)
+
+
+            else:
+
+                if bd_user['language_code'] == 'ru':
+                    text = '🎭 | Время для выполнения квеста закончилось, квест был передан другому пользователю!'
+                else:
+                    text = '🎭 | The time for completing the quest is over, the quest has been transferred to another user!'
+
+                bot.send_message(call.message.chat.id, text)
+
+                bd_user['user_dungeon']['quests']['activ_quests'].remove(quest)
+                users.update_one( {"userid": call.message.chat.id}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+    def delete_quest(bot, bd_user, call, user):
+        q_id = int(call.data.split()[1])
+
+        quest = None
+        for quest in bd_user['user_dungeon']['quests']['activ_quests']:
+            if quest['id'] == q_id:
+                break
+
+        if quest == None:
+
+            if bd_user['language_code'] == 'ru':
+                text = '🎭 | Квест не найден!'
+            else:
+                text = '🎭 | The quest was not found!'
+
+            bot.send_message(call.message.chat.id, text)
+
+        else:
+
+            if bd_user['language_code'] == 'ru':
+                text = '🎭 | Квест удалён!'
+            else:
+                text = '🎭 | The quest has been deleted!'
+
+            bot.send_message(call.message.chat.id, text)
+
+            bd_user['user_dungeon']['quests']['activ_quests'].remove(quest)
+            users.update_one( {"userid": call.message.chat.id}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )

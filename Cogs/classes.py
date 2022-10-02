@@ -28,6 +28,8 @@ with open('data/mobs.json', encoding='utf-8') as f: mobs_f = json.load(f)
 
 with open('data/floors_dungeon.json', encoding='utf-8') as f: floors_f = json.load(f)
 
+with open('data/quests_data.json', encoding='utf-8') as f: quests_f = json.load(f)
+
 checks_data = {'memory': [0, time.time()], 'incub': [0, time.time(), 0], 'notif': [[], []], 'main': [[], [], []], 'main_hunt': [ [], [], [] ], 'main_game': [ [], [], [] ], 'main_sleep': [ [], [], [] ], 'main_pass': [ [], [], [] ], 'main_journey': [ [], [], [] ], 'col': 0}
 
 reyt_ = [[], [], {}]
@@ -554,6 +556,8 @@ class Functions:
     @staticmethod
     def time_end(seconds:int, mini = False):
 
+        if seconds < 0: seconds = 0
+
         def ending_w(word, number:str, mini):
             if int(number) not in [11,12,13,14,15]:
                 ord = int(str(number)[int(len(str(number))) - 1:])
@@ -831,7 +835,7 @@ class Functions:
                     except:
                         pass
 
-                elif notification == "incub":
+                if notification == "incub":
 
                     if user['language_code'] == 'ru':
                         text = f'🦖 | {chat.first_name}, динозавр вылупился! 🎉'
@@ -843,7 +847,7 @@ class Functions:
                     except:
                         pass
 
-                elif notification == "need_eat":
+                if notification == "need_eat":
 
                     if user['language_code'] == 'ru':
                         text = f'🍕 | {chat.first_name}, {dinoname} хочет кушать, его потребность в еде опустилась до {arg}%!'
@@ -855,7 +859,7 @@ class Functions:
                     except:
                         pass
 
-                elif notification == "need_game":
+                if notification == "need_game":
 
                     if user['language_code'] == 'ru':
                         text = f'🎮 | {chat.first_name}, {dinoname} хочет играть, его потребность в игре опустилось до {arg}%!'
@@ -867,7 +871,7 @@ class Functions:
                     except:
                         pass
 
-                elif notification == "need_mood":
+                if notification == "need_mood":
 
                     if user['language_code'] == 'ru':
                         text = f'🦖 | {chat.first_name}, у {dinoname} плохое настроение, его настроение опустилось до {arg}%!'
@@ -879,7 +883,7 @@ class Functions:
                     except:
                         pass
 
-                elif notification == "need_heal":
+                if notification == "need_heal":
 
                     if user['language_code'] == 'ru':
                         text = f'❤ | {chat.first_name}, у {dinoname} плохое самочувствие, его здоровье опустилось до {arg}%!'
@@ -891,7 +895,7 @@ class Functions:
                     except:
                         pass
 
-                elif notification == "need_unv":
+                if notification == "need_unv":
 
                     if user['language_code'] == 'ru':
                         text = f'🌙 | {chat.first_name}, {dinoname} хочет спать, его характеристика сна опустилось до {arg}%!'
@@ -903,7 +907,7 @@ class Functions:
                     except:
                         pass
 
-                elif notification == "dead":
+                if notification == "dead":
 
                     if user['language_code'] == 'ru':
                         text = f'💥 | {chat.first_name}, ваш динозаврик.... Умер...'
@@ -938,7 +942,7 @@ class Functions:
                         except:
                             pass
 
-                elif notification == "woke_up":
+                if notification == "woke_up":
 
                     if user['language_code'] == 'ru':
                         text = f'🌙 | {chat.first_name}, {dinoname} проснулся и полон сил!'
@@ -951,7 +955,7 @@ class Functions:
                         print('woke_up ', error)
                         pass
 
-                elif notification == "game_end":
+                if notification == "game_end":
 
                     if user['language_code'] == 'ru':
                         text = f'🎮 | {chat.first_name}, {dinoname} прекратил играть!'
@@ -964,14 +968,14 @@ class Functions:
                         pass
 
 
-                elif notification == "journey_end":
+                if notification == "journey_end":
 
                     try:
                         Functions.journey_end_log(bot, user['userid'], dino_id)
                     except:
                         pass
 
-                elif notification == "friend_request":
+                if notification == "friend_request":
 
                     if user['language_code'] == 'ru':
                         text = f'💬 | {chat.first_name}, вам поступил запрос в друзья!'
@@ -983,7 +987,7 @@ class Functions:
                     except:
                         pass
 
-                elif notification == "friend_accept":
+                if notification == "friend_accept":
 
                     if user['language_code'] == 'ru':
                         text = f'💬 | {chat.first_name}, {arg} принял запрос в друзья!'
@@ -995,7 +999,7 @@ class Functions:
                     except:
                         pass
 
-                elif notification == "friend_rejection":
+                if notification == "friend_rejection":
 
                     if user['language_code'] == 'ru':
                         text = f'💬 | {chat.first_name}, ваш запрос в друзья {arg}, был отклонён...'
@@ -1007,7 +1011,7 @@ class Functions:
                     except:
                         pass
 
-                elif notification == "hunting_end":
+                if notification == "hunting_end":
 
                     if user['language_code'] == 'ru':
                         text = f'🍕 | {chat.first_name}, {dinoname} вернулся со сбора пищи!'
@@ -1019,7 +1023,7 @@ class Functions:
                     except:
                         pass
 
-                elif notification == "acc_broke":
+                if notification == "acc_broke":
 
                     item_d = items_f['items'][arg]
 
@@ -1033,7 +1037,36 @@ class Functions:
                     except:
                         pass
 
-                elif notification == "lvl_up":
+                if notification == "quest_completed":
+
+                    quest = arg['quest']
+
+                    if user['language_code'] == 'ru':
+                        text = f'🎉 | {chat.first_name}, квест {arg["name"]} выполнен!'
+                    else:
+                        text = f'🎉 | {chat.first_name}, quest {arg["name"]} completed!'
+
+                    if user['language_code'] == 'ru':
+                        text += f'\n\n👑 | Награда\nМонеты: '
+                    else:
+                        text += f'\n\n👑 | Reward\nМонеты: '
+
+                    text += f"{quest['reward']['money']}💰\n"
+
+                    if quest['reward']['items'] != []:
+
+                        if user['language_code'] == 'ru':
+                            text += f"Предметы: {', '.join(Functions.sort_items_col(quest['reward']['items'], 'ru') )}"
+                        else:
+                            text += f"Items: {', '.join(Functions.sort_items_col(quest['reward']['items'], 'en') )}"
+
+                    try:
+                        bot.send_message(user['userid'], text, reply_markup = Functions.inline_markup(bot, f'delete_message', user['userid']) )
+                    except:
+                        pass
+
+
+                if notification == "lvl_up":
 
                     if user['language_code'] == 'ru':
                         text = f'🎉 | {chat.first_name}, ваш уровень повышен! ({arg})'
@@ -1067,9 +1100,33 @@ class Functions:
                     except:
                         pass
 
+                if notification == "quest":
 
-                else:
-                    print(notification, 'notification')
+                    if user['language_code'] == 'ru':
+                        text = f'🎴 | Вы получили новый квест!'
+                    else:
+                        text = f'🎴 | You have received a new quest!'
+
+                    try:
+                        bot.send_message(user['userid'], text)
+                    except:
+                        pass
+
+                if notification == "product_bought":
+
+                    if user['language_code'] == 'ru':
+                        text = f'💡 | Ваш продукт на рынке был куплен!\nВам начислено {arg} монет!'
+                    else:
+                        text = f'💡 | Your product has been purchased on the market!\nYou have been awarded {arg} coins!'
+
+                    try:
+                        bot.send_message(user['userid'], text)
+                    except:
+                        pass
+
+
+                # else:
+                #     print(notification, 'notification')
 
     @staticmethod
     def check_data(t = None, ind = None, zn = None, m = 'ncheck'):
@@ -4207,14 +4264,16 @@ class Dungeon:
                         floor_st = floors_st[flr_k]
                         mobs_count += floor_st['mobs_killing']
 
+                        try:
+                            if dung['settings']['lang'] == 'ru':
+                                flr_time = Functions.time_end(floor_st['end_time'] - floor_st['start_time'])
+                                flr_text += f'{flr_k}# Время: {flr_time}\n   *└* Убито: {floor_st["mobs_killing"]}\n\n'
 
-                        if dung['settings']['lang'] == 'ru':
-                            flr_time = Functions.time_end(floor_st['end_time'] - floor_st['start_time'])
-                            flr_text += f'{flr_k}# Время: {flr_time}\n   *└* Убито: {floor_st["mobs_killing"]}\n\n'
-
-                        else:
-                            flr_time = Functions.time_end(floor_st['end_time'] - floor_st['start_time'], True)
-                            flr_text += f'{flr_k}# Time: {flr_time}\n   *└ *Killed: {floor_st["mobs_killing"]}\n\n'
+                            else:
+                                flr_time = Functions.time_end(floor_st['end_time'] - floor_st['start_time'], True)
+                                flr_text += f'{flr_k}# Time: {flr_time}\n   *└ *Killed: {floor_st["mobs_killing"]}\n\n'
+                        except:
+                            pass
 
                     if dung['settings']['lang'] == 'ru':
                         text = f'*🗻 | Подземелье завершено!*\n\n*🗝 | Статистика*\n\n🏆 Пройдено этажей: {floor_n}\n👿 Убито боссов: {floor_n // 10}\n😈 Убито мобов: {mobs_count}\n\n*🖼 | Статистика по этажам*\n\n{flr_text}'
@@ -4258,7 +4317,7 @@ class Dungeon:
 
                     users.update_one( {"userid": bd_user['userid']}, {"$set": {'lvl': bd_user['lvl'] }} )
 
-                    dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor':  dung['floor'] }} )
+                    dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor': dung['floor'] }} )
 
                 try:
 
@@ -4873,6 +4932,9 @@ class Dungeon:
                 log.append( f"💥 {data_mob['name'][dung['settings']['lang']]} dead." )
 
             inf = Dungeon.message_upd(bot, userid = userid, dungeonid = dungeonid, upd_type = 'all', image_update = True)
+
+            bd_user = users.find_one({"userid": int(userid)})
+            Dungeon.check_quest(bot, bd_user, met = 'check', quests_type = 'kill', kwargs = {'mob': mob['mob_key']} )
 
             return log, 'mob_move'
 
@@ -5642,3 +5704,246 @@ class Dungeon:
             text += users_text
 
         return text, inline_type, image
+
+    def create_quest(bd_user):
+
+        def comp_r(complex):
+            if str(complex) not in quests_f['complexity'].keys():
+
+                while complex > 1:
+
+                    if str(complex) not in quests_f['complexity'].keys():
+
+                        if complex <= 0:
+                            return quests_f['complexity']['1']
+
+                        else:
+                            complex -= 1
+
+                    else:
+                        return quests_f['complexity'][str(complex)]
+
+                else:
+                    return quests_f['complexity']['1']
+
+            else:
+                return quests_f['complexity'][str(complex)]
+
+        types = ['get', 'kill', 'come']
+        quest_type = random.choice(types)
+
+        quest = {
+        'reward': {'money': 0, 'items': []},
+        'complexity': 0,
+        'type': quest_type,
+        'time': 0,
+        'name': None
+        }
+
+        if quest_type == 'get':
+
+            if bd_user['language_code'] == 'ru':
+                names = ['Доставка припасов', 'Поиски припасов']
+
+            else:
+                names = ['Delivery of supplies', 'Search for supplies']
+
+            quest['get_items'] = []
+            qq = list(quests_f['quests']['get']['items'])
+            random.shuffle(qq)
+
+            col, n = random.randint(1, 3), 0
+            t = time.time()
+
+            while n != col:
+                for i in qq:
+
+                    if random.randint(1, 100) <= 50:
+                        if n < col:
+                            for _ in range(Functions.rand_d( i["col"] )):
+                                if random.randint(1, 100) <= 50:
+                                    if n < col:
+                                        quest['get_items'].append(i['item'])
+                                        quest['complexity'] += i["complexity"]
+                                        n += 1
+
+        if quest_type == 'kill':
+
+            if bd_user['language_code'] == 'ru':
+                names = ['Живым или мёртвым', 'Мертвецы не рассказывают сказки', 'Покорай монстров!']
+
+            else:
+                names = ['Alive or dead', "Dead men don't tell fairy tales", 'Conquer monsters!']
+
+            col, n = random.randint(1, 3), 0
+
+            mbs = list(mobs_f['mobs'].keys())
+            random.shuffle(mbs)
+
+            quest['mob'] = mbs[0]
+            quest['col'] = [random.randint(1, 3), 0]
+
+            quest['complexity'] += col * random.randint(1, 2)
+
+        if quest_type == 'come':
+
+            if bd_user['language_code'] == 'ru':
+                names = ['Покоряй рекорды!', 'Покорение горизонта!', 'Там чудо ждёт тебя..']
+
+            else:
+                names = ['Conquer records!', 'Conquering the horizon!', "There's a miracle waiting for you.."]
+
+            ns_res = None
+            st = bd_user['user_dungeon']['statistics']
+
+            for i in st:
+
+                if ns_res == None:
+                    ns_res = i
+
+                else:
+                    if i['end_floor'] >= ns_res['end_floor']:
+                        ns_res = i
+
+            if ns_res == None:
+                quest['lvl'] = random.randint(1, 3)
+
+            else:
+                quest['lvl'] = ns_res["end_floor"] + random.randint(1, 3)
+
+            quest['complexity'] += random.randint(2, 5)
+
+            quest['reward']['money'] += quest['lvl'] * random.randint(20, 80)
+
+
+        quest['name'] = random.choice(names)
+
+        complex = quest['complexity']
+        cmp_data = comp_r(complex)
+
+        quest['reward']['money'] += Functions.rand_d(cmp_data['money'])
+        quest['time'] = int(time.time()) + cmp_data['time']
+
+        if random.randint(1, 1000) <= cmp_data["item_chance"]:
+
+            for i in cmp_data['items']:
+
+                for _ in range( Functions.rand_d(i['col']) ):
+                    if random.randint(1, 1000) <= i['chance']:
+                        quest['reward']['items'].append(i['item'])
+
+        ncor = True
+        while ncor:
+            quest['id'] = random.randint(0, 1000)
+            ncor = False
+
+            for i in bd_user['user_dungeon']['quests']['activ_quests']:
+
+                if i['id'] == quest['id']:
+                    ncor = True
+                    break
+
+        return quest
+
+    def quest_reward(bd_user, quest):
+
+        reward = quest['reward']
+
+        if 'money' in reward.keys():
+            bd_user['coins'] += reward['money']
+
+        if 'items' in reward.keys() and reward['items'] != []:
+            for i in reward['items']:
+                bd_user['inventory'].append( Functions.get_dict_item(i) )
+
+        users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+        users.update_one( {"userid": bd_user['userid']}, {"$set": {'coins': bd_user['coins'] }} )
+
+
+    def check_quest(bot, bd_user, met:str = 'check', quests_type:str = None, kwargs:dict = None):
+
+        quests = bd_user['user_dungeon']['quests']['activ_quests']
+
+        if met == 'user_active':
+            quest = kwargs['quest']
+
+            if quest in quests:
+                bd_user['user_dungeon']['quests']['activ_quests'].remove(quest)
+                q_completed = False
+
+                if quest['type'] == 'get':
+
+                    all_ok = True
+
+                    for i in quest['get_items']:
+                        item = Functions.get_dict_item(i)
+
+                        if item in bd_user['inventory']:
+                            bd_user['inventory'].remove(item)
+
+                        else:
+                            all_ok = False
+                            break
+
+                    if all_ok:
+
+                        qdata = { 'name': quest['name'], 'quest': quest }
+                        Functions.notifications_manager(bot, 'quest_completed', bd_user, arg = qdata)
+
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+                        bd_user['user_dungeon']['quests']['ended'] += 1
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+                        Dungeon.quest_reward(bd_user, quest)
+
+                        q_completed = True
+
+
+                if quest['type'] == 'kill':
+
+                    if quest['col'][1] >= quest['col'][0]:
+
+                        qdata = { 'name': quest['name'], 'quest': quest }
+                        Functions.notifications_manager(bot, 'quest_completed', bd_user, arg = qdata)
+
+                        bd_user['user_dungeon']['quests']['ended'] += 1
+                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+                        Dungeon.quest_reward(bd_user, quest)
+
+                        q_completed = True
+
+                return q_completed, 'n_cmp'
+
+            else:
+                return False, 'n_quests'
+
+
+        if met == 'check':
+            for quest in quests:
+                if quest['type'] == quests_type:
+
+                    if quest['type'] == 'come': # может быть вызван тоько системой
+
+                        if quest['lvl'] >= kwargs['lvl']:
+
+                            bd_user['user_dungeon']['quests']['activ_quests'].remove(quest)
+
+                            qdata = { 'name': quest['name'], 'quest': quest }
+                            Functions.notifications_manager(bot, 'quest_completed', bd_user, arg = qdata)
+
+                            bd_user['user_dungeon']['quests']['ended'] += 1
+                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+                            Dungeon.quest_reward(bd_user, quest)
+
+
+                    if quest['type'] == 'kill':
+
+                        if quest['mob'] == kwargs['mob']:
+
+                            if quest['col'][1] != quest['col'][0]:
+                                quest['col'][1] += 1
+
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )

@@ -2,7 +2,7 @@
 
  "mobs": {
             "goblin": {
-                       "name": { "ru": "Гоблин", "en": "Goblin" },
+                       "name": { "ru": "🐸 Гоблин", "en": "🐸 Goblin" },
                        "hp": { "min": 2, "max": 10, "type": "random" },
 
                        "damage-type": "near",
@@ -26,7 +26,7 @@
                       },
 
             "skeleton_magician": {
-                       "name": { "ru": "Маг-скелет", "en": "Skeleton Magician" },
+                       "name": { "ru": "🧙‍♂️ Маг-скелет", "en": "🧙‍♂️ Skeleton Magician" },
                        "hp": { "min": 2, "max": 7, "type": "random" },
 
                        "damage-type": "magic",
@@ -63,7 +63,7 @@
                       },
 
             "piglin-archer": {
-                       "name": { "ru": "Лучник пиглин", "en": "Piglin-archer" },
+                       "name": { "ru": "🏹 Лучник пиглин", "en": "🏹 Piglin-archer" },
                        "hp": { "min": 1, "max": 5, "type": "random" },
 
                        "damage-type": "far",
@@ -92,7 +92,7 @@
  "boss": {
 
        "mega_goblin": {
-                  "name": { "ru": "Мега гоблин", "en": "Mega goblin" },
+                  "name": { "ru": "😈 Мега гоблин", "en": "😈 Mega goblin" },
                   "hp": { "min": 40, "max": 55, "type": "random" },
 
                   "damage-type": "near",
