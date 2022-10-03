@@ -447,7 +447,7 @@ def command(message):
 
                 Dungeon.base_upd(userid = int(user.id), messageid = msg.id, dungeonid = dungeonid, type = 'edit_message')
 
-                inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'one', image_update = True)
+                inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'one', image_update = True)
 
                 try:
                     bot.delete_message(user.id, dng['users'][str(user.id)]['messageid'])
@@ -1032,6 +1032,14 @@ def answer(call):
     if call.data.split()[0] == 'dungeon.shop_buy':
 
         call_data.dungeon_shop_buy(bot, bd_user, call, user)
+
+    if call.data.split()[0] == 'dungeon.settings_start_floor':
+
+        call_data.dungeon_settings_start_floor(bot, bd_user, call, user)
+
+    if call.data.split()[0] == 'dungeon.start_floor':
+
+        call_data.dungeon_start_floor(bot, bd_user, call, user)
 
     if call.data.split()[0] == 'rayt_lvl':
 

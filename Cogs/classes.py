@@ -4015,6 +4015,8 @@ class Dungeon:
             elif type == 'settings':
                 markup_inline = types.InlineKeyboardMarkup(row_width = 2)
 
+                start_floor = dung['settings']['start_floor'] + 1
+
                 if dung['settings']['lang'] == 'ru':
                     inl_l = {'Язык: 🇷🇺': 'dungeon.settings_lang',
                              '🗑 Удалить': 'dungeon.remove'
@@ -4026,7 +4028,10 @@ class Dungeon:
                     else:
                         inl_l['👁‍🗨 Уведомления в бою: Откл'] = 'dungeon.settings_batnotf'
 
-                    inl_l2 = {'🕹 Назад': 'dungeon.to_lobby'}
+                    inl_l2 = {
+                    f'🏷 Начальный этаж: {start_floor}': 'dungeon.settings_start_floor',
+                    '🕹 Назад': 'dungeon.to_lobby'
+                    }
 
                 else:
                     inl_l = {'Language: 🇬🇧': 'dungeon.settings_lang',
@@ -4039,8 +4044,9 @@ class Dungeon:
                     else:
                         inl_l['👁‍🗨 Notifications in Battle: Off'] = 'dungeon.settings_batnotf'
 
-                    inl_l['🗑 Delete'] = 'dungeon.remove'
-                    inl_l2 = {'🕹 Back': 'dungeon.to_lobby'}
+                    inl_l2 = {f'🏷 Начальный этаж: {start_floor}': 'dungeon.settings_start_floor',
+                    '🕹 Back': 'dungeon.to_lobby'
+                    }
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
 
@@ -4275,10 +4281,14 @@ class Dungeon:
                 if dung['dungeon_stage'] == 'preparation':
 
                     if dung['settings']['lang'] == 'ru':
-                        text = '*🎴 Лобби*\n\n   *🗻 | Информация*\nВы стоите перед входом в подземелье. Кого-то трясёт от страха, а кто-то жаждет приключений. Что вы найдёте в подземелье, известно только богу удачи, соберите команду и покорите бесконечное подземелье!\n\n   *🦕 | Динозавры*'
+                        inf_m = '`/message_update` - если сообщение не обновляется\n'
+
+                        text = f'*🎴 Лобби*\n\n   *🗻 | Информация*\nВы стоите перед входом в подземелье. Кого-то трясёт от страха, а кто-то жаждет приключений. Что вы найдёте в подземелье, известно только богу удачи, соберите команду и покорите бесконечное подземелье!\n{inf_m}\n   *🦕 | Динозавры*'
 
                     else:
-                        text = "*🎴 Lobby*\n\n   *🗻 | Information*\nYou are standing in front of the entrance to the dungeon. Someone is shaking with fear, and someone is eager for adventure. What you will find in the dungeon is known only to the god of luck, gather a team and conquer the endless dungeon!\n\n   *🦕 | Dinosaurs*"
+                        inf_m = '`/message_update` - if the message is not updated\n'
+
+                        text = f"*🎴 Lobby*\n\n   *🗻 | Information*\nYou are standing in front of the entrance to the dungeon. Someone is shaking with fear, and someone is eager for adventure. What you will find in the dungeon is known only to the god of luck, gather a team and conquer the endless dungeon!\n{inf_m}\n   *🦕 | Dinosaurs*"
 
                     d_n = 0
                     dinos_text = ''
@@ -4334,6 +4344,8 @@ class Dungeon:
                     flr_text = ''
                     mobs_count = 0
 
+                    start_floor = dung['settings']['start_floor']
+
                     for flr_k in floors_st:
                         floor_st = floors_st[flr_k]
                         mobs_count += floor_st['mobs_killing']
@@ -4350,9 +4362,9 @@ class Dungeon:
                             pass
 
                     if dung['settings']['lang'] == 'ru':
-                        text = f'*🗻 | Подземелье завершено!*\n\n*🗝 | Статистика*\n\n🏆 Пройдено этажей: {floor_n}\n👿 Убито боссов: {floor_n // 10}\n😈 Убито мобов: {mobs_count}\n\n*🖼 | Статистика по этажам*\n\n{flr_text}'
+                        text = f'*🗻 | Подземелье завершено!*\n\n*🗝 | Статистика*\n\n🏆 Пройдено этажей: {floor_n - start_floor}\n👿 Убито боссов: {(floor_n - start_floor) // 10}\n😈 Убито мобов: {mobs_count}\n\n*🖼 | Статистика по этажам*\n\n{flr_text}'
                     else:
-                        text = f'*🗻 | Dungeon conspiracy!*\n\n*🗝 | Statistics*\n\nFloors passed: {floor_n} 🏆\nBosses killed: {floor_n // 10}\nMobs killed:: {mobs_count}\n\n*🖼 | Floor statistics*\n\n{flr_text}'
+                        text = f'*🗻 | Dungeon conspiracy!*\n\n*🗝 | Statistics*\n\nFloors passed: {floor_n - start_floor} 🏆\nBosses killed: {(floor_n - start_floor) // 10}\nMobs killed:: {mobs_count}\n\n*🖼 | Floor statistics*\n\n{flr_text}'
 
                 if dung['dungeon_stage'] == 'preparation':
 
@@ -4458,11 +4470,14 @@ class Dungeon:
                 bd_user = users.find_one({"userid": userid})
                 items_id = [ i['item_id'] for i in dung['users'][str(userid)]['inventory']]
 
+                floor = dung['settings']['start_floor'] + 1
+                min_money = 150 + floor * 50
+
                 if dung['settings']['lang'] == 'ru':
-                    text = f'💼 | Во время путешествия в подземелье может случится что-то неожиданное. Лучше быть готовым ко всему. Учтите, для входа в подземелье требуется минимум 200 монет!\n\n💸 | Монеты: { dung["users"][str(userid)]["coins"] }\n👜 | Вместимость рюкзака: {len(dung["users"][str(userid)]["inventory"])} / {Dungeon.d_backpack(bd_user)}\n🧵 | Предметы: {", ".join(Functions.sort_items_col( items_id, "ru" ))}'
+                    text = f'💼 | Во время путешествия в подземелье может случится что-то неожиданное. Лучше быть готовым ко всему. Учтите, для входа в подземелье требуется минимум {min_money} монет!\n\n💸 | Монеты: { dung["users"][str(userid)]["coins"] }\n👜 | Вместимость рюкзака: {len(dung["users"][str(userid)]["inventory"])} / {Dungeon.d_backpack(bd_user)}\n🧵 | Предметы: {", ".join(Functions.sort_items_col( items_id, "ru" ))}'
 
                 else:
-                    text = f"💼 | During the journey to the dungeon, something unexpected may happen. It's better to be prepared for everything.Please note that a minimum of 200 coins is required to enter the dungeon!\n\n💸 | Coins: {dung['users'][str(userid)]['coins']}\n👜 | Backpack capacity: {len(dung['users'][str(userid)]['inventory'])} / {Dungeon.d_backpack(bd_user)}\n🧵 | Items: {', '.join(Functions.sort_items_col( items_id, 'en' ))}"
+                    text = f"💼 | During the journey to the dungeon, something unexpected may happen. It's better to be prepared for everything.Please note that a minimum of {min_money} coins is required to enter the dungeon!\n\n💸 | Coins: {dung['users'][str(userid)]['coins']}\n👜 | Backpack capacity: {len(dung['users'][str(userid)]['inventory'])} / {Dungeon.d_backpack(bd_user)}\n🧵 | Items: {', '.join(Functions.sort_items_col( items_id, 'en' ))}"
 
                 try:
 
@@ -5803,7 +5818,9 @@ class Dungeon:
             else:
                 return quests_f['complexity'][str(complex)]
 
-        types = ['get', 'kill', 'come']
+        types = ['get', 'kill', 'come', 'get', 'kill']
+        random.shuffle(types)
+
         quest_type = random.choice(types)
 
         quest = {

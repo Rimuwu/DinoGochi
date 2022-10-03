@@ -2043,6 +2043,8 @@ class call_data:
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
 
+        min_coins = 150 + 50 * dung['settings']['start_floor']
+
         def set_coins(message, old_m):
             bot.delete_message(user.id, old_m.message_id)
             bot.delete_message(user.id, message.message_id)
@@ -2071,13 +2073,13 @@ class call_data:
 
                     bot.answer_callback_query(call.id, show_text, show_alert = True)
 
-                elif coins < 200:
+                elif coins < min_coins:
 
                     if bd_user['language_code'] == 'ru':
-                        show_text = '❗ | Требовалось указать число больше или равное 200!'
+                        show_text = f'❗ | Требовалось указать число больше или равное {min_coins}!'
 
                     else:
-                        show_text = "❗ | It was required to specify a number greater than or equal to 200!"
+                        show_text = f"❗ | It was required to specify a number greater than or equal to {min_coins}!"
 
                     bot.answer_callback_query(call.id, show_text, show_alert = True)
 
@@ -2406,13 +2408,15 @@ class call_data:
         dung = dungeons.find_one({"dungeonid": dungeonid})
         ok = False
 
+        min_coins = 150 + 50 * dung['settings']['start_floor']
+
         if dung != None:
 
             if user.id not in dung['stage_data']['preparation']['ready']:
 
                 if dung['users'][str(user.id)]['dinos'] != {}:
 
-                    if False:#dung['users'][str(user.id)]['coins'] > bd_user['coins']:
+                    if dung['users'][str(user.id)]['coins'] > bd_user['coins']:
 
                         if bd_user['language_code'] == 'ru':
                             show_text = '❗ | Вы указали недопустимое количество монет!'
@@ -2423,13 +2427,13 @@ class call_data:
                         bot.answer_callback_query(call.id, show_text, show_alert = True)
 
                     else:
-                        if dung['users'][str(user.id)]['coins'] < 200:
+                        if dung['users'][str(user.id)]['coins'] < min_coins:
 
                             if bd_user['language_code'] == 'ru':
-                                show_text = '❗ | Вам необходимо взять как минимум 200 монет для входа в подземелье! (они будут списаны)'
+                                show_text = f'❗ | Вам необходимо взять как минимум {min_coins} монет для входа в подземелье! (они будут списаны)'
 
                             else:
-                                show_text = '❗ | You need to take at least 200 coins to enter the dungeon! (they will be debited)'
+                                show_text = f'❗ | You need to take at least {min_coins} coins to enter the dungeon! (they will be debited)'
 
                             bot.answer_callback_query(call.id, show_text, show_alert = True)
 
@@ -2465,6 +2469,7 @@ class call_data:
 
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
+        min_coins = 150 + 50 * dung['settings']['start_floor']
 
         if dung != None:
 
@@ -2472,7 +2477,7 @@ class call_data:
 
                 if dung['users'][str(user.id)]['coins'] <= bd_user['coins']:
 
-                    if dung['users'][str(user.id)]['coins'] >= 200:
+                    if dung['users'][str(user.id)]['coins'] >= min_coins:
 
                         if len(dung['stage_data']['preparation']['ready']) == len(dung['users']) - 1:
 
@@ -2492,7 +2497,7 @@ class call_data:
                                 users.update_one( {"userid": int(userid) }, {"$inc": {f'coins': userd['coins'] * -1 }} )
                                 users.update_one( {"userid": int(userid) }, {"$set": {f'dinos': dg_user['dinos'] }} )
 
-                                userd['coins'] -= 200
+                                userd['coins'] -= min_coins
 
 
                             dung['stage_data']['game'] = {
@@ -2526,10 +2531,10 @@ class call_data:
                     else:
 
                         if bd_user['language_code'] == 'ru':
-                            show_text = '❗ | Вам необходимо взять как минимум 200 монет для входа в подземелье! (они будут списаны)'
+                            show_text = f'❗ | Вам необходимо взять как минимум {min_coins} монет для входа в подземелье! (они будут списаны)'
 
                         else:
-                            show_text = '❗ | You need to take at least 200 coins to enter the dungeon! (they will be debited)'
+                            show_text = f'❗ | You need to take at least {min_coins} coins to enter the dungeon! (they will be debited)'
 
                         bot.answer_callback_query(call.id, show_text, show_alert = True)
 
@@ -3893,3 +3898,85 @@ class call_data:
 
             bd_user['user_dungeon']['quests']['activ_quests'].remove(quest)
             users.update_one( {"userid": call.message.chat.id}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+    def dungeon_settings_start_floor(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        if dung != None:
+
+
+            ns_res = None
+            st = bd_user['user_dungeon']['statistics']
+
+            for i in st:
+
+                if ns_res == None:
+                    ns_res = i
+
+                else:
+                    if i['end_floor'] >= ns_res['end_floor']:
+                        ns_res = i
+
+            if ns_res == None:
+
+                if bd_user['language_code'] == 'ru':
+                    show_text = '🏷 | Вы пока что не можете установить другой начальный этаж!'
+
+                else:
+                    show_text = "🏷 | You can't install another primary floor yet!"
+
+                bot.answer_callback_query(call.id, show_text, show_alert = True)
+
+            else:
+                markup_inline = types.InlineKeyboardMarkup(row_width = 5)
+                max_floor = ns_res['end_floor'] // 2 * 2
+                inl_l = {}
+
+                for i in range(1, max_floor + 1):
+
+                    if i % 2 == 0 or i == 1:
+                        inl_l[str(i)] = f'dungeon.start_floor {dungeonid} {i}'
+
+                markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'🏷 | Укажите начальный этаж:'
+                    markup_inline.add( types.InlineKeyboardButton( text = '❌ Отмена', callback_data = f'dungeon.settings {dungeonid}') )
+
+                else:
+                    text = "🏷 | Specify the initial floor:"
+                    markup_inline.add( types.InlineKeyboardButton( text = '❌ Cancel', callback_data = f'dungeon.settings {dungeonid}') )
+
+                bot.edit_message_caption(text, call.message.chat.id, call.message.message_id, parse_mode = 'Markdown', reply_markup = markup_inline)
+
+            # dng, inf = Dungeon.base_upd(userid = user.id, messageid = 'shop', dungeonid = dungeonid, type = 'edit_last_page')
+
+    def dungeon_start_floor(bot, bd_user, call, user):
+
+        dungeonid = int(call.data.split()[1])
+        floor = int(call.data.split()[2])
+        dung = dungeons.find_one({"dungeonid": dungeonid})
+
+        if dung != None:
+            min_money = 150 + floor * 50
+
+            for uk in dung['users']:
+                us = dung['users'][uk]
+
+                if us['coins'] < min_money:
+                    us['coins'] = min_money
+
+                    if dung['settings']['lang'] == 'ru':
+                        text = f'📌 | Настройки комнаты изменены, ваш баланс монет был изменён на {min_money}'
+
+                    else:
+                        text = f'📌 | Room settings have been changed, your coin balance has been changed to {min_money}'
+
+                    bot.send_message(int(uk), text, reply_markup = Functions.inline_markup(bot, f'delete_message', int(uk) ))
+
+            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
+
+            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'settings.start_floor': floor - 1 }} )
+            inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
