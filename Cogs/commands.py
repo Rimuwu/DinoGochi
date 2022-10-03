@@ -1358,13 +1358,16 @@ class commands:
             if dino['activ_status'] == 'journey' and dino != None:
                 if random.randint(1,2) == 1:
 
-                    Functions.journey_end_log(bot, bd_user['userid'], bd_user['settings']['dino_id'])
+                    dino_id = bd_user['settings']['dino_id']
 
-                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['activ_status'] = 'pass_active'
-                    del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_time']
-                    del bd_user['dinos'][ bd_user['settings']['dino_id'] ]['journey_log']
+                    Functions.journey_end_log(bot, bd_user['userid'], dino_id)
 
-                    users.update_one( {"userid": bd_user['userid']}, {"$set": {f"dinos.{bd_user['settings']['dino_id']}": bd_user['dinos'][ bd_user['settings']['dino_id'] ] }} )
+                    bd_user['dinos'][ dino_id ]['activ_status'] = 'pass_active'
+
+                    del bd_user['dinos'][ dino_id ]['journey_time']
+                    del bd_user['dinos'][ dino_id ]['journey_log']
+
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {f"dinos.{dino_id}": bd_user['dinos'][dino_id] }} )
 
 
                 else:
@@ -1494,12 +1497,23 @@ class commands:
                         else:
                             text = f"🎮 | The dinosaur is a little upset that you distracted him, he loses 5% of his mood..."
 
-                    bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['activ_status'] = 'pass_active'
-                    del bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['game_time']
-                    del bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['game_%']
+                    dino_id = str(bd_user['settings']['dino_id'])
 
+                    game_time = (int(time.time()) - bd_user['dinos'][ dino_id ]['game_start']) // 60
 
-                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'dinos': bd_user['dinos'] }} )
+                    Dungeon.check_quest(bot, bd_user, met = 'check', quests_type = 'do', kwargs = {'dp_type': 'game', 'act': game_time } )
+
+                    bd_user['dinos'][ dino_id ]['activ_status'] = 'pass_active'
+
+                    try:
+                        del bd_user['dinos'][ dino_id ]['game_time']
+                        del bd_user['dinos'][ dino_id ]['game_%']
+                        del bd_user['dinos'][ dino_id ]['game_start']
+                    except:
+                        pass
+
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{dino_id}': bd_user['dinos'][dino_id] }} )
+
                     bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'games', user))
 
                 else:
@@ -1883,6 +1897,8 @@ class commands:
                                     users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
 
                                 bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'actions', user))
+
+                                Dungeon.check_quest(bot, bd_user, met = 'check', quests_type = 'do', kwargs = {'dp_type': 'feed', 'act': col, 'item': str(item_id) } )
 
                             msg = bot.send_message(message.chat.id, text_col, reply_markup = rmk)
                             bot.register_next_step_handler(msg, corm, bd_user, user_item, item, d_dino, mx_col, col_l)
@@ -3843,6 +3859,9 @@ class commands:
                         if quest['type'] == 'come':
                             text += '🗻 Покорение\n'
 
+                        if quest['type'] == 'do':
+                            text += '🕰 Задание\n'
+
                     else:
                         text += f"Type: "
 
@@ -3854,6 +3873,9 @@ class commands:
 
                         if quest['type'] == 'come':
                             text += '🗻 Conquest\n'
+
+                        if quest['type'] == 'do':
+                            text += '🕰 Task\n'
 
 
                     if quest['type'] == 'get':
@@ -3909,6 +3931,73 @@ class commands:
                             'Completed automatically': '-',
                             '🔗 | Delete': f"delete_quest {quest['id']}"
                             }
+
+                    if quest['type'] == 'do':
+                        target = quest['target']
+                        dp_type = quest['dp_type']
+
+                        if dp_type == 'game':
+
+                            if bd_user['language_code'] == 'ru':
+                                text += f'Поиграйте с динозавром: {target[1]} / {target[0]} мин.'
+                            else:
+                                text += f'Play with a dinosaur: {target[1]} / {target[0]} min.'
+
+                        if dp_type == 'journey':
+
+                            if bd_user['language_code'] == 'ru':
+                                text += f'Отправьте динозавра в путешествие: {target[1]} / {target[0]} раз.'
+                            else:
+                                text += f'Send the dinosaur on a journey: {target[1]} / {target[0]} times.'
+
+                        if dp_type == 'hunting':
+
+                            if bd_user['language_code'] == 'ru':
+                                text += f'Найдите предметов на охоте: {target[1]} / {target[0]}'
+                            else:
+                                text += f'Find items on the hunt: {target[1]} / {target[0]}'
+
+                        if dp_type == 'fishing':
+
+                            if bd_user['language_code'] == 'ru':
+                                text += f'Выловите предметов: {target[1]} / {target[0]}'
+                            else:
+                                text += f'Catch items: {target[1]} / {target[0]}'
+
+                        if dp_type == 'collecting':
+
+                            if bd_user['language_code'] == 'ru':
+                                text += f'Соберите предметов: {target[1]} / {target[0]}'
+                            else:
+                                text += f'Collect items: {target[1]} / {target[0]}'
+
+                        if dp_type == 'feed':
+
+                            lang = bd_user['language_code']
+
+                            if bd_user['language_code'] == 'ru':
+                                text += f'Накормите динозавра: \n\n'
+                            else:
+                                text += f'Feed the dinosaur: \n\n'
+
+                            for i in target.keys():
+                                item = items_f['items'][i]
+                                target_item = target[i]
+
+                                text += f'{item[f"name{lang}"]}: {target_item[1]} / {target_item[0]}\n'
+
+                        if bd_user['language_code'] == 'ru':
+                            inl_l = {
+                            '📌 | Завершить': f"complete_quest {quest['id']}",
+                            '🔗 | Удалить': f"delete_quest {quest['id']}"
+                            }
+
+                        else:
+                            inl_l = {
+                            '📌 | Finish': f"complete_quest {quest['id']}",
+                            '🔗 | Delete': f"delete_quest {quest['id']}"
+                            }
+
 
                     markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]}") for inl in inl_l.keys() ])
 
