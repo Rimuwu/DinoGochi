@@ -343,14 +343,6 @@ def command(message):
         tr = Functions.add_item_to_user(bd, msg_args[1], int(msg_args[2]))
         bot.send_message(user.id, str(msg_args))
 
-@bot.message_handler(commands=['compete_quest'])
-def command(message):
-    user = message.from_user
-    if user.id in [5279769615, 1191252229]:
-
-        bd_user = users.find_one({"userid": user.id})
-        Dungeon.check_quest(bot, bd_user, met = 'check', quests_type = 'kill', kwargs = {'mob': 'goblin'} )
-
 @bot.message_handler(commands=['quest'])
 def command(message):
     user = message.from_user
