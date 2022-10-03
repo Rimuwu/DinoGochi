@@ -6141,148 +6141,150 @@ class Dungeon:
 
     def check_quest(bot, bd_user, met:str = 'check', quests_type:str = None, kwargs:dict = None):
 
-        quests = bd_user['user_dungeon']['quests']['activ_quests']
+        if 'user_dungeon' in bd_user['user_dungeon'].keys():
+            if 'quests' in bd_user['user_dungeon'].keys():
+                quests = bd_user['user_dungeon']['quests']['activ_quests']
 
-        if met == 'user_active':
-            quest = kwargs['quest']
+                if met == 'user_active':
+                    quest = kwargs['quest']
 
-            if quest in quests:
-                bd_user['user_dungeon']['quests']['activ_quests'].remove(quest)
-                q_completed = False
+                    if quest in quests:
+                        bd_user['user_dungeon']['quests']['activ_quests'].remove(quest)
+                        q_completed = False
 
-                if quest['type'] == 'get':
+                        if quest['type'] == 'get':
 
-                    all_ok = True
+                            all_ok = True
 
-                    for i in quest['get_items']:
-                        item = Functions.get_dict_item(i)
+                            for i in quest['get_items']:
+                                item = Functions.get_dict_item(i)
 
-                        if item in bd_user['inventory']:
-                            bd_user['inventory'].remove(item)
-
-                        else:
-                            all_ok = False
-                            break
-
-                    if all_ok:
-
-                        qdata = { 'name': quest['name'], 'quest': quest }
-                        Functions.notifications_manager(bot, 'quest_completed', bd_user, arg = qdata)
-
-                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
-
-                        bd_user['user_dungeon']['quests']['ended'] += 1
-                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
-
-                        Dungeon.quest_reward(bd_user, quest)
-
-                        q_completed = True
-
-
-                if quest['type'] == 'kill':
-
-                    if quest['col'][1] >= quest['col'][0]:
-
-                        qdata = { 'name': quest['name'], 'quest': quest }
-                        Functions.notifications_manager(bot, 'quest_completed', bd_user, arg = qdata)
-
-                        bd_user['user_dungeon']['quests']['ended'] += 1
-                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
-
-                        Dungeon.quest_reward(bd_user, quest)
-
-                        q_completed = True
-
-                if quest['type'] == 'do':
-                    if quest['dp_type'] == 'feed':
-                        glob_targ = [len(list(quest['target'].keys())), 0]
-
-                        for i in quest['target'].keys():
-                            tg = quest['target'][i]
-
-                            if tg[0] == tg[1]:
-                                glob_targ += 1
-
-                        if glob_targ[0] == glob_targ[1]:
-
-                            qdata = { 'name': quest['name'], 'quest': quest }
-                            Functions.notifications_manager(bot, 'quest_completed', bd_user, arg = qdata)
-
-                            bd_user['user_dungeon']['quests']['ended'] += 1
-                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
-
-                            Dungeon.quest_reward(bd_user, quest)
-                            q_completed = True
-
-
-                    else:
-
-                        if quest['target'][1] >= quest['target'][0]:
-
-                            qdata = { 'name': quest['name'], 'quest': quest }
-                            Functions.notifications_manager(bot, 'quest_completed', bd_user, arg = qdata)
-
-                            bd_user['user_dungeon']['quests']['ended'] += 1
-                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
-
-                            Dungeon.quest_reward(bd_user, quest)
-                            q_completed = True
-
-                return q_completed, 'n_cmp'
-
-            else:
-                return False, 'n_quests'
-
-
-        if met == 'check':
-            for quest in quests:
-                if quest['type'] == quests_type:
-
-                    if quest['type'] == 'come': # может быть вызван тоько системой
-
-                        if quest['lvl'] >= kwargs['lvl']:
-
-                            bd_user['user_dungeon']['quests']['activ_quests'].remove(quest)
-
-                            qdata = { 'name': quest['name'], 'quest': quest }
-                            Functions.notifications_manager(bot, 'quest_completed', bd_user, arg = qdata)
-
-                            bd_user['user_dungeon']['quests']['ended'] += 1
-                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
-
-                            Dungeon.quest_reward(bd_user, quest)
-
-
-                    if quest['type'] == 'kill':
-
-                        if quest['mob'] == kwargs['mob']:
-
-                            if quest['col'][1] != quest['col'][0]:
-                                quest['col'][1] += 1
-
-                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
-
-                    if quest['type'] == 'do':
-                        ok = True
-
-                        if quest['dp_type'] == kwargs['dp_type']:
-
-                            if quest['dp_type'] == 'feed':
-
-                                if kwargs['item'] in quest['target'].keys():
-                                    quest['target'][kwargs['item']][1] += kwargs['act']
-
-                                    if quest['target'][kwargs['item']][1] > quest['target'][kwargs['item']][0]:
-                                        quest['target'][kwargs['item']][1] = quest['target'][kwargs['item']][0]
+                                if item in bd_user['inventory']:
+                                    bd_user['inventory'].remove(item)
 
                                 else:
-                                    ok = False
+                                    all_ok = False
+                                    break
+
+                            if all_ok:
+
+                                qdata = { 'name': quest['name'], 'quest': quest }
+                                Functions.notifications_manager(bot, 'quest_completed', bd_user, arg = qdata)
+
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
+
+                                bd_user['user_dungeon']['quests']['ended'] += 1
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+                                Dungeon.quest_reward(bd_user, quest)
+
+                                q_completed = True
+
+
+                        if quest['type'] == 'kill':
+
+                            if quest['col'][1] >= quest['col'][0]:
+
+                                qdata = { 'name': quest['name'], 'quest': quest }
+                                Functions.notifications_manager(bot, 'quest_completed', bd_user, arg = qdata)
+
+                                bd_user['user_dungeon']['quests']['ended'] += 1
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+                                Dungeon.quest_reward(bd_user, quest)
+
+                                q_completed = True
+
+                        if quest['type'] == 'do':
+                            if quest['dp_type'] == 'feed':
+                                glob_targ = [len(list(quest['target'].keys())), 0]
+
+                                for i in quest['target'].keys():
+                                    tg = quest['target'][i]
+
+                                    if tg[0] == tg[1]:
+                                        glob_targ += 1
+
+                                if glob_targ[0] == glob_targ[1]:
+
+                                    qdata = { 'name': quest['name'], 'quest': quest }
+                                    Functions.notifications_manager(bot, 'quest_completed', bd_user, arg = qdata)
+
+                                    bd_user['user_dungeon']['quests']['ended'] += 1
+                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+                                    Dungeon.quest_reward(bd_user, quest)
+                                    q_completed = True
+
 
                             else:
-                                quest['target'][1] += kwargs['act']
 
-                                if quest['target'][1] > quest['target'][0]:
-                                    quest['target'][1] = quest['target'][0]
+                                if quest['target'][1] >= quest['target'][0]:
 
-                            if ok:
-                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+                                    qdata = { 'name': quest['name'], 'quest': quest }
+                                    Functions.notifications_manager(bot, 'quest_completed', bd_user, arg = qdata)
+
+                                    bd_user['user_dungeon']['quests']['ended'] += 1
+                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+                                    Dungeon.quest_reward(bd_user, quest)
+                                    q_completed = True
+
+                        return q_completed, 'n_cmp'
+
+                    else:
+                        return False, 'n_quests'
+
+
+                if met == 'check':
+                    for quest in quests:
+                        if quest['type'] == quests_type:
+
+                            if quest['type'] == 'come': # может быть вызван тоько системой
+
+                                if quest['lvl'] >= kwargs['lvl']:
+
+                                    bd_user['user_dungeon']['quests']['activ_quests'].remove(quest)
+
+                                    qdata = { 'name': quest['name'], 'quest': quest }
+                                    Functions.notifications_manager(bot, 'quest_completed', bd_user, arg = qdata)
+
+                                    bd_user['user_dungeon']['quests']['ended'] += 1
+                                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+                                    Dungeon.quest_reward(bd_user, quest)
+
+
+                            if quest['type'] == 'kill':
+
+                                if quest['mob'] == kwargs['mob']:
+
+                                    if quest['col'][1] != quest['col'][0]:
+                                        quest['col'][1] += 1
+
+                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+                            if quest['type'] == 'do':
+                                ok = True
+
+                                if quest['dp_type'] == kwargs['dp_type']:
+
+                                    if quest['dp_type'] == 'feed':
+
+                                        if kwargs['item'] in quest['target'].keys():
+                                            quest['target'][kwargs['item']][1] += kwargs['act']
+
+                                            if quest['target'][kwargs['item']][1] > quest['target'][kwargs['item']][0]:
+                                                quest['target'][kwargs['item']][1] = quest['target'][kwargs['item']][0]
+
+                                        else:
+                                            ok = False
+
+                                    else:
+                                        quest['target'][1] += kwargs['act']
+
+                                        if quest['target'][1] > quest['target'][0]:
+                                            quest['target'][1] = quest['target'][0]
+
+                                    if ok:
+                                        users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )

@@ -224,8 +224,6 @@ class checks:
                         if int(dino['game_time'] - time.time()) <= 0:
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
 
-                            game_time = (int(time.time()) - user['dinos'][ dino_id ]['game_start']) // 60
-
                             Functions.notifications_manager(bot, 'game_end', user, None, dino_id, 'send')
 
                             try:
@@ -237,7 +235,11 @@ class checks:
 
                             users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}': user['dinos'][dino_id] }} )
 
-                            Dungeon.check_quest(bot, user, met = 'check', quests_type = 'do', kwargs = {'dp_type': 'game', 'act': game_time } )
+                            try:
+                                game_time = (int(time.time()) - user['dinos'][ dino_id ]['game_start']) // 60
+                                Dungeon.check_quest(bot, user, met = 'check', quests_type = 'do', kwargs = {'dp_type': 'game', 'act': game_time } )
+                            except:
+                                pass
 
                     elif dino['activ_status'] == 'journey':
 
