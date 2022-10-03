@@ -144,6 +144,12 @@ class commands:
                 text2 += "*└*  В меню друзей вы можете управлять своими друзьями и реферальной системой. Чем больше друзей, тем болше возможностей получить какие то бонусы. Так же пригласив друга через реферальную систему, вы и ваш друг получат приятные бонусы.\n\n"
                 text2 += "*┌* *Количество динозавров 🦕*\n\n"
                 text2 += "*├*  Каждый 20-ый уровень количество динозавров увеличивается на 1.\n*├*  20ый уровень - 2 динозавра.\n*└*  40ой уровень - 3 динозавра...\n\n"
+                text2 += "*┌* *Дино-таверна ‍🍺*\n\n"
+                text2 += "*└* Загляните в `‍🍺 Дино-таверна`, там вы сможете узнать информацию от посетителей, найти других игроков. А также получить квесты!\n\n"
+                text2 += "*┌* *Квесты 📜*\n\n"
+                text2 += "*└* В таверне вы можете получить квест (просто ожидайте в ней), квесты дают интересные бонусы за самые обычные действия!\n\n"
+                text2 += "*┌* *Подземелья 🗻*\n\n"
+                text2 += "*└* Отправляйтесь в захватывающее приключение вместе со своими друзьями! Приключения, боссы, уникальные предметы!\n\n"
             else:
                 text2  = '*❗ FAQ*\n\n'
                 text2 += "*┌* *Rarities 🎈*\n\n"
@@ -170,6 +176,12 @@ class commands:
                 text2+= "*└* In the friends menu, you can manage your friends and referral system. The more friends there are, the more opportunities there are to get some bonuses. Also, by inviting a friend through the referral system, you and your friend will receive pleasant bonuses.\n\n"
                 text2 += "*┌* *Number of dinosaurs 🦕*\n\n"
                 text2 += "*├* Every 20th level the number of dinosaurs increases by 1.\n*├* 20th level - 2 dinosaurs.\n*└* 40th level - 3 dinosaurs...\n\n"
+                text2 += "*┌* *Dino-tavern ‍🍺*\n\n"
+                text2 += "*└*Take a look at the `Dino-tavern`, there you can find out information from visitors, find other players. And also get quests!\n\n"
+                text2 += "*┌* *Quests 📜*\n\n"
+                text2 += "*└* In the tavern you can get a quest (just wait in it), quests give interesting bonuses for the most ordinary actions!\n\n"
+                text2 += "*┌* *Dungeons 🗻*\n\n"
+                text2 += "*└* Embark on an exciting adventure with your friends! Adventures, bosses, unique items!\n\n"
 
             bot.send_message(message.chat.id, text2, parse_mode = 'Markdown')
 
