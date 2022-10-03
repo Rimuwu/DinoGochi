@@ -6141,7 +6141,7 @@ class Dungeon:
 
     def check_quest(bot, bd_user, met:str = 'check', quests_type:str = None, kwargs:dict = None):
 
-        if 'user_dungeon' in bd_user['user_dungeon'].keys():
+        if 'user_dungeon' in bd_user.keys():
             if 'quests' in bd_user['user_dungeon'].keys():
                 quests = bd_user['user_dungeon']['quests']['activ_quests']
 
