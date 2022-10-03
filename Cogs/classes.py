@@ -5818,7 +5818,7 @@ class Dungeon:
             else:
                 return quests_f['complexity'][str(complex)]
 
-        types = ['get', 'kill', 'come', 'get', 'kill']
+        types = ['get', 'do', 'kill', 'do', 'come', 'get', 'kill', 'do']
         random.shuffle(types)
 
         quest_type = random.choice(types)
@@ -5903,9 +5903,194 @@ class Dungeon:
                 quest['lvl'] = ns_res["end_floor"] + random.randint(1, 3)
 
             quest['complexity'] += random.randint(2, 5)
-
             quest['reward']['money'] += quest['lvl'] * random.randint(20, 80)
 
+
+        if quest_type == 'do':
+
+            q_case = [ 'game', 'journey', 'hunting', 'fishing', 'collecting', 'feed' ]
+            random.shuffle(q_case)
+
+            dp_type = random.choice(q_case)
+            quest['dp_type'] = dp_type
+
+            if dp_type == 'game':
+                # поиграть определённое время
+
+                tl = [ [100, 1], [150, 1], [240, 1], [360, 3], [480, 5], [540, 10] ]
+                game_time = random.choice(tl)
+
+                quest['target'] = [game_time[0], 0]
+                quest['complexity'] = game_time[1]
+
+                if bd_user['language_code'] == 'ru':
+                    names = ['Время игр!', "Пора пройти ту самую игру!", "Играть, играть, играть!"]
+
+                else:
+                    names = ['Game time!', "It's time to pass that very game!", "Play, play, play!"]
+
+            if dp_type == 'journey':
+                #сходить в путешествие несколько раз
+
+                j_col = random.randint(3, 20)
+                quest['target'] = [j_col, 0]
+
+                if j_col < 5:
+                    quest['complexity'] = 1
+
+                elif j_col < 10:
+                    quest['complexity'] = 2
+
+                elif j_col < 15:
+                    quest['complexity'] = 5
+
+                elif j_col <= 20:
+                    quest['complexity'] = 10
+
+                if bd_user['language_code'] == 'ru':
+                    names = ['Путешествия зовут...', "Долгая прогулка...", 'Там путешествия ждут нас...']
+
+                else:
+                    names = ['Travel is called...', 'A long walk...', 'There are journeys waiting for us...']
+
+            if dp_type == 'hunting':
+                #добыть в охоте Х предметов
+
+                h_col = random.randint(10, 50)
+                quest['target'] = [h_col, 0]
+
+                if h_col < 5:
+                    quest['complexity'] = 1
+
+                elif h_col < 15:
+                    quest['complexity'] = 2
+
+                elif h_col < 25:
+                    quest['complexity'] = 5
+
+                elif h_col <= 50:
+                    quest['complexity'] = 10
+
+                if bd_user['language_code'] == 'ru':
+                    names = ['Пора поохотится...', "Там есть тот, кого я съем!", "Мясоооо!"]
+
+                else:
+                    names = ["It's time to hunt...", "There's someone I'm going to eat!", "Meat!"]
+
+            if dp_type == 'fishing':
+                #наловить Х предметов
+
+                f_col = random.randint(10, 50)
+                quest['target'] = [f_col, 0]
+
+                if f_col < 5:
+                    quest['complexity'] = 1
+
+                elif f_col < 15:
+                    quest['complexity'] = 2
+
+                elif f_col < 25:
+                    quest['complexity'] = 5
+
+                elif f_col <= 50:
+                    quest['complexity'] = 10
+
+                if bd_user['language_code'] == 'ru':
+                    names = ['Ловись рыбка большая и маленькая...', "Рыбаааааааа!", "Карасики..."]
+
+                else:
+                    names = ['Catch a fish big and small...', "Fishaaaaaaaa!", "Crucians ..."]
+
+            if dp_type == 'collecting':
+                #собрать Х предметов
+
+                c_col = random.randint(10, 50)
+                quest['target'] = [c_col, 0]
+
+                if c_col < 5:
+                    quest['complexity'] = 1
+
+                elif c_col < 15:
+                    quest['complexity'] = 2
+
+                elif c_col < 25:
+                    quest['complexity'] = 5
+
+                elif c_col <= 50:
+                    quest['complexity'] = 10
+
+                if bd_user['language_code'] == 'ru':
+                    names = ["Бананааааа!", "Пора собрать ягодки...", "Ягодки, кустики - вкусненько"]
+
+                else:
+                    names = ["Bananaaaaaa!", "It's time to pick berries...", "Berries, bushes - delicious"]
+
+            if dp_type == 'feed':
+                #покормить определённой едой
+
+                eat_col = random.randint(3, 15)
+
+                if eat_col < 5:
+                    quest['complexity'] = 2
+
+                elif eat_col < 10:
+                    quest['complexity'] = 5
+
+                elif eat_col <= 15:
+                    quest['complexity'] = 10
+
+                eat_items = []
+                quest['target'] = {}
+
+                for i in items_f['items'].keys():
+
+                    if items_f['items'][i]["type"] == '+eat' and items_f['items'][i]["class"] == 'ALL':
+                        eat_items.append(i)
+
+                        if 'rank' in items_f['items'][i].keys():
+
+                            if items_f['items'][i]['rank'] == 'common':
+                                quest['reward']['money'] += 10
+
+                            if items_f['items'][i]['rank'] == 'uncommon':
+                                quest['reward']['money'] += 20
+
+                            if items_f['items'][i]['rank'] == 'rare':
+                                quest['reward']['money'] += 80
+
+                            if items_f['items'][i]['rank'] == 'mystical':
+                                quest['reward']['money'] += 100
+
+                            if items_f['items'][i]['rank'] == 'legendary':
+                                quest['reward']['money'] += 200
+
+                            if items_f['items'][i]['rank'] == 'mythical':
+                                quest['reward']['money'] += 500
+
+                        else:
+                            quest['reward']['money'] += 10
+
+                random.shuffle(eat_items)
+
+                cl = 0
+                while cl < eat_col:
+
+                    random.shuffle(eat_items)
+                    item = random.choice(eat_items)
+
+                    if item not in quest['target'].keys():
+                        quest['target'][item] = [1, 0]
+
+                    else:
+                        quest['target'][item][0] += 1
+
+                    cl += 1
+
+                if bd_user['language_code'] == 'ru':
+                    names = ["Пора устроить динозавру вкусный ужин!", "Динозавр давно вкусно не ел...", "Хочется чего-то вкусненького..."]
+
+                else:
+                    names = ["It's time to arrange a delicious dinner for the dinosaur!", "The dinosaur has not eaten delicious for a long time...", "I want something delicious ..."]
 
         quest['name'] = random.choice(names)
 
@@ -5915,9 +6100,12 @@ class Dungeon:
         quest['reward']['money'] += Functions.rand_d(cmp_data['money'])
         quest['time'] = int(time.time()) + cmp_data['time']
 
+        rew_items = cmp_data['items']
+        random.shuffle(rew_items)
+
         if random.randint(1, 1000) <= cmp_data["item_chance"]:
 
-            for i in cmp_data['items']:
+            for i in rew_items:
 
                 for _ in range( Functions.rand_d(i['col']) ):
                     if random.randint(1, 1000) <= i['chance']:
@@ -6005,6 +6193,41 @@ class Dungeon:
 
                         q_completed = True
 
+                if quest['type'] == 'do':
+                    if quest['dp_type'] == 'feed':
+                        glob_targ = [len(list(quest['target'].keys())), 0]
+
+                        for i in quest['target'].keys():
+                            tg = quest['target'][i]
+
+                            if tg[0] == tg[1]:
+                                glob_targ += 1
+
+                        if glob_targ[0] == glob_targ[1]:
+
+                            qdata = { 'name': quest['name'], 'quest': quest }
+                            Functions.notifications_manager(bot, 'quest_completed', bd_user, arg = qdata)
+
+                            bd_user['user_dungeon']['quests']['ended'] += 1
+                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+                            Dungeon.quest_reward(bd_user, quest)
+                            q_completed = True
+
+
+                    else:
+
+                        if quest['target'][1] >= quest['target'][0]:
+
+                            qdata = { 'name': quest['name'], 'quest': quest }
+                            Functions.notifications_manager(bot, 'quest_completed', bd_user, arg = qdata)
+
+                            bd_user['user_dungeon']['quests']['ended'] += 1
+                            users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+                            Dungeon.quest_reward(bd_user, quest)
+                            q_completed = True
+
                 return q_completed, 'n_cmp'
 
             else:
@@ -6037,4 +6260,29 @@ class Dungeon:
                             if quest['col'][1] != quest['col'][0]:
                                 quest['col'][1] += 1
 
+                                users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
+
+                    if quest['type'] == 'do':
+                        ok = True
+
+                        if quest['dp_type'] == kwargs['dp_type']:
+
+                            if quest['dp_type'] == 'feed':
+
+                                if kwargs['item'] in quest['target'].keys():
+                                    quest['target'][kwargs['item']][1] += kwargs['act']
+
+                                    if quest['target'][kwargs['item']][1] > quest['target'][kwargs['item']][0]:
+                                        quest['target'][kwargs['item']][1] = quest['target'][kwargs['item']][0]
+
+                                else:
+                                    ok = False
+
+                            else:
+                                quest['target'][1] += kwargs['act']
+
+                                if quest['target'][1] > quest['target'][0]:
+                                    quest['target'][1] = quest['target'][0]
+
+                            if ok:
                                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
