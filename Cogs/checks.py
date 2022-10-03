@@ -224,7 +224,7 @@ class checks:
                         if int(dino['game_time'] - time.time()) <= 0:
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
 
-                            game_time = (int(time.time()) - bd_user['dinos'][ dino_id ]['game_start']) // 60
+                            game_time = (int(time.time()) - user['dinos'][ dino_id ]['game_start']) // 60
 
                             Functions.notifications_manager(bot, 'game_end', user, None, dino_id, 'send')
 
