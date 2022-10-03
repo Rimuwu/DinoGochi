@@ -223,11 +223,21 @@ class checks:
 
                         if int(dino['game_time'] - time.time()) <= 0:
                             user['dinos'][dino_id]['activ_status'] = 'pass_active'
+
+                            game_time = (int(time.time()) - bd_user['dinos'][ dino_id ]['game_start']) // 60
+
                             Functions.notifications_manager(bot, 'game_end', user, None, dino_id, 'send')
 
-                            del user['dinos'][ dino_id ]['game_time']
-                            del user['dinos'][ dino_id ]['game_%']
+                            try:
+                                del user['dinos'][ dino_id ]['game_time']
+                                del user['dinos'][ dino_id ]['game_%']
+                                del user['dinos'][ dino_id ]['game_start']
+                            except:
+                                pass
+
                             users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}': user['dinos'][dino_id] }} )
+
+                            Dungeon.check_quest(bot, user, met = 'check', quests_type = 'do', kwargs = {'dp_type': 'game', 'act': game_time } )
 
                     elif dino['activ_status'] == 'journey':
 
@@ -238,7 +248,10 @@ class checks:
 
                             del user['dinos'][ dino_id ]['journey_time']
                             del user['dinos'][ dino_id ]['journey_log']
+
                             users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}': user['dinos'][dino_id] }} )
+
+                            Dungeon.check_quest(bot, user, met = 'check', quests_type = 'do', kwargs = {'dp_type': 'journey', 'act': 1 } )
 
                     elif dino['activ_status'] == 'hunting':
                         if dino['target'][0] >= dino['target'][1]:
@@ -547,13 +560,22 @@ class checks:
                             if item == '35':
                                 Functions.acc_check(bot, user, '31', dino_id, True)
 
+                            tg = 0
+
                             i_count = Functions.random_items([int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 3)], [int(ii) for ii in range(1, 4)], [int(ii) for ii in range(1, 5)], [int(ii) for ii in range(1, 6)])
+
                             for i in list(range(i_count)):
                                 dino['target'][0] += 1
+                                tg += 1
 
                                 Functions.add_item_to_user(user, item)
 
                             users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}.target': dino['target'] }} )
+
+                            #квесты
+                            if dino['h_type'] != 'all':
+
+                                Dungeon.check_quest(bot, user, met = 'check', quests_type = 'do', kwargs = {'dp_type': dino['h_type'], 'act': tg } )
 
                         bd_user = users.find_one({"userid": user['userid']})
                         if bd_user != None:
