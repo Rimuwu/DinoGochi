@@ -365,7 +365,8 @@ class call_data:
                     text2 = f"🎮 | {e_text[2][1][0]}"
 
 
-        bd_user['dinos'][ dino_id ]['game_time'] = time.time() + time_m
+        bd_user['dinos'][ dino_id ]['game_time'] = int(time.time()) + time_m
+        bd_user['dinos'][ dino_id ]['game_start'] = int(time.time())
         users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
 
         if bd_user['language_code'] == 'ru':
@@ -3950,8 +3951,6 @@ class call_data:
                     markup_inline.add( types.InlineKeyboardButton( text = '❌ Cancel', callback_data = f'dungeon.settings {dungeonid}') )
 
                 bot.edit_message_caption(text, call.message.chat.id, call.message.message_id, parse_mode = 'Markdown', reply_markup = markup_inline)
-
-            # dng, inf = Dungeon.base_upd(userid = user.id, messageid = 'shop', dungeonid = dungeonid, type = 'edit_last_page')
 
     def dungeon_start_floor(bot, bd_user, call, user):
 
