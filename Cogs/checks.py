@@ -226,6 +226,8 @@ class checks:
 
                             Functions.notifications_manager(bot, 'game_end', user, None, dino_id, 'send')
 
+                            gm = user['dinos'][ dino_id ]['game_start']
+
                             try:
                                 del user['dinos'][ dino_id ]['game_time']
                                 del user['dinos'][ dino_id ]['game_%']
@@ -236,7 +238,7 @@ class checks:
                             users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}': user['dinos'][dino_id] }} )
 
                             try:
-                                game_time = (int(time.time()) - user['dinos'][ dino_id ]['game_start']) // 60
+                                game_time = (int(time.time()) - gm) // 60
 
                                 Dungeon.check_quest(bot, user, met = 'check', quests_type = 'do', kwargs = {'dp_type': 'game', 'act': game_time } )
                             except Exception as e:
