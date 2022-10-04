@@ -3448,7 +3448,8 @@ class Dungeon:
                                 'reward': { 'experience': 0, 'items': [], 'collected': {}, 'coins': 0 },
                                 'mobs': boss,
                                 'image': f'images/dungeon/simple_rooms/{random.randint(1,5)}.png',
-                                'next_room': False
+                                'next_room': False,
+                                'ready': []
                                           }
 
                         else:
@@ -6203,7 +6204,7 @@ class Dungeon:
                                     tg = quest['target'][i]
 
                                     if tg[0] == tg[1]:
-                                        glob_targ += 1
+                                        glob_targ[1] += 1
 
                                 if glob_targ[0] == glob_targ[1]:
 

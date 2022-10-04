@@ -74,7 +74,7 @@
 
  "37": {"nameru": "📜 Рецепт чая", "nameen": "📜 Tea recipe", "type": "recipe", "descriptionru": "Рецепт изготовления ароматного чая.", "descriptionen": "The recipe for making fragrant tea.", "create": [{"item": "36", "type": "create"}], "materials": [ {"item": "35", "type": "delete"}, {"item": "35", "type": "delete"}, {"item": "35", "type": "delete"}, {"item": "35", "type": "delete"}, {"item": "35", "type": "delete"} ], "abilities": {"uses": 10}, "image": "recipe", "rank": "rare"},
 
- "38": {"nameru": "🥩 Жареное мясо", "nameen": "🥩 Fried meat", "type": "+eat", "act": 40, "class": "Carnivore", "image": "item38", "rank": "uncommon"},
+ "38": {"nameru": "🥩 Жареное мясо", "nameen": "🥩 Fried meat", "type": "+eat", "act": 40, "class": "Carnivore", "image": "item38", "rank": "rare"},
 
  "39": {"nameru": "📜 Жареное мясо", "nameen": "📜 Fried meat", "type": "recipe", "descriptionru": "Кто не любит съесть кусочек хорошо приготовленного мяса? Динозавр тоже не откажется. ", "descriptionen": "Who doesn't like to eat a piece of well-cooked meat? The dinosaur won't refuse either.", "create": [{"item": "38", "type": "create"}], "materials": [ {"item": "31", "type": "endurance", "act": 10}, {"item": "8", "type": "delete"}, {"item": "8", "type": "delete"} ], "abilities": {"uses": 100}, "image": "recipe", "rank": "rare"},
 
@@ -92,13 +92,13 @@
 
  "46": {"nameru": "📜 Походный мешочек", "nameen": "📜 Travel bag", "type": "recipe", "descriptionru": "Во время путешествия динозавру требуется место для хранения всех найденных вещей, тут нам поможет походный мешочек!", "descriptionen": "During the journey, the dinosaur needs a place to store all the things found, a hiking bag will help us here!", "create": [{"item": "45", "type": "create"}], "materials": [ {"item": "26", "type": "delete"},  {"item": "26", "type": "delete"},  {"item": "26", "type": "delete"},  {"item": "27", "type": "delete"},  {"item": "27", "type": "delete"}, {"item": "15", "type": "endurance", "act": 30}], "abilities": {"uses": 2}, "image": "recipe", "rank": "rare"},
 
- "47": {"nameru": "🍪 Набор печенек", "nameen": "🍪 A set of cookies", "type": "+eat", "act": 6, "class": "ALL", "+mood": 10, "abilities": {"uses": 15}, "image": "item47", "rank": "common"},
+ "47": {"nameru": "🍪 Набор печенек", "nameen": "🍪 A set of cookies", "type": "+eat", "act": 6, "class": "ALL", "+mood": 10, "abilities": {"uses": 15}, "image": "item47", "rank": "uncommon"},
 
- "48": {"nameru": "🍕 Пицца", "nameen": "🍕 Pizza", "type": "+eat", "act": 25, "class": "ALL", "+mood": 15, "abilities": {"uses": 9}, "image": "item48", "rank": "common"},
+ "48": {"nameru": "🍕 Пицца", "nameen": "🍕 Pizza", "type": "+eat", "act": 25, "class": "ALL", "+mood": 15, "abilities": {"uses": 9}, "image": "item48", "rank": "uncommon"},
 
  "49": {"nameru": "🔮 Магический камень", "nameen": "🔮 Magic Stone", "type": "material", "abilities": {"mana": 0 }, "image": "item49", "rank": "rare"},
 
- "50": {"nameru": "🌮 Тако", "nameen": "🌮 Tacos", "type": "+eat", "act": 75, "class": "ALL", "+mood": 40, "image": "item50", "rank": "uncommon"},
+ "50": {"nameru": "🌮 Тако", "nameen": "🌮 Tacos", "type": "+eat", "act": 75, "class": "ALL", "+mood": 40, "image": "item50", "rank": "rare"},
 
  "51": {"nameru": "🦴 Кость", "nameen": "🦴 Bone", "type": "material", "image": "item51", "rank": "common"},
 

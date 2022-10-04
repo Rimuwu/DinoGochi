@@ -41,7 +41,7 @@
                           "1": { "price": { "min": 170, "max": 370, "type": "random" } ,
                                  "item": "33",
                                  "col": { "act": 2, "type": "static" },
-                                 "chance": 1000
+                                 "chance": 900
                                },
 
 
@@ -108,7 +108,7 @@
                           "1": { "price": { "min": 170, "max": 370, "type": "random" } ,
                                  "item": "33",
                                  "col": { "act": 2, "type": "static" },
-                                 "chance": 1000
+                                 "chance": 900
                                },
 
 
@@ -175,7 +175,7 @@
                           "1": { "price": { "min": 170, "max": 370, "type": "random" } ,
                                  "item": "33",
                                  "col": { "act": 2, "type": "static" },
-                                 "chance": 1000
+                                 "chance": 900
                                },
 
 
@@ -242,7 +242,7 @@
                           "1": { "price": { "min": 170, "max": 370, "type": "random" } ,
                                  "item": "33",
                                  "col": { "act": 2, "type": "static" },
-                                 "chance": 1000
+                                 "chance": 900
                                },
 
 

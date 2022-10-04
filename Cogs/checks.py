@@ -237,9 +237,10 @@ class checks:
 
                             try:
                                 game_time = (int(time.time()) - user['dinos'][ dino_id ]['game_start']) // 60
+
                                 Dungeon.check_quest(bot, user, met = 'check', quests_type = 'do', kwargs = {'dp_type': 'game', 'act': game_time } )
-                            except:
-                                pass
+                            except Exception as e:
+                                print(f"Check quest error: {e}")
 
                     elif dino['activ_status'] == 'journey':
 
