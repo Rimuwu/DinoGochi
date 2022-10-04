@@ -3988,5 +3988,5 @@ class call_data:
 
             dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
 
-            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'settings.start_floor': floor - 1 }} )
+            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'settings.start_floor': floor }} )
             inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
