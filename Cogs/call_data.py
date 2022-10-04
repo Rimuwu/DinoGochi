@@ -3857,6 +3857,13 @@ class call_data:
 
                     bot.send_message(call.message.chat.id, text)
 
+                else:
+
+                    try:
+                        bot.delete_message(user.id, call.message.id)
+                    except Exception as e:
+                        print(f"delete message-quest: {e}")
+
             else:
 
                 if bd_user['language_code'] == 'ru':
@@ -3865,11 +3872,6 @@ class call_data:
                     text = '🎭 | The time for completing the quest is over, the quest has been transferred to another user!'
 
                 bot.send_message(call.message.chat.id, text)
-
-                try:
-                    bot.delete_message(user.id, call.message.id)
-                except:
-                    pass
 
                 bd_user['user_dungeon']['quests']['activ_quests'].remove(quest)
                 users.update_one( {"userid": call.message.chat.id}, {"$set": {'user_dungeon': bd_user['user_dungeon'] }} )
