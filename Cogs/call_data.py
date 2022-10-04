@@ -3943,12 +3943,12 @@ class call_data:
 
             else:
                 markup_inline = types.InlineKeyboardMarkup(row_width = 5)
-                max_floor = ns_res['end_floor'] // 2 * 2
+                max_floor = ns_res['end_floor']
                 inl_l = {}
 
                 for i in range(1, max_floor + 1):
 
-                    if i % 2 == 0 or i == 1:
+                    if i % 5 == 0 or i == 1:
                         inl_l[str(i)] = f'dungeon.start_floor {dungeonid} {i}'
 
                 markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]} {dungeonid}") for inl in inl_l.keys() ])
