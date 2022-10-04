@@ -3534,8 +3534,8 @@ class Dungeon:
                                             if random.randint(1, 1000) <= pr['chance']:
 
                                                 p_data = {}
-                                                p_data['price'] =  Functions.rand_d( pr['price'] )
-                                                p_data['item'] = { 'item_id': pr['item'] }
+                                                p_data['price'] = Functions.rand_d( pr['price'] )
+                                                p_data['item'] = Functions.get_dict_item(pr['item'])
 
                                                 products.append(p_data)
 

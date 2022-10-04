@@ -1053,9 +1053,6 @@ def answer(call):
 
         call_data.delete_quest(bot, bd_user, call, user)
 
-    # else:
-    #     print(call.data, 'call.data')
-
 
 def start_all(bot):
 
