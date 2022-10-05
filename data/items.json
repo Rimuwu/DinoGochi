@@ -132,7 +132,91 @@
 
  "66": {"nameru": "❄ Заморозка", "nameen": "❄ Freezing", "type": "freezing", "time": "forever", "image": "item66", "rank": "mythical"},
 
- "67": {"nameru": "🔥 Разморозка", "nameen": "🔥 Defrosting", "type": "defrosting", "image": "item67", "rank": "mythical"}
+ "67": {"nameru": "🔥 Разморозка", "nameen": "🔥 Defrosting", "type": "defrosting", "image": "item67", "rank": "mythical"},
+
+ "68": {"nameru": "🍫 Шоколад", "nameen": "🍫 Chocolate", "type": "+eat", "act": 10, "class": "ALL", "+energy": 5, "image": "recipe", "rank": "common"},
+ 
+ "69": {"nameru": "🍬 Конфеты", "nameen": "🍬 Candy", "type": "+eat", "act": 3, "class": "ALL", "+mood": 5, "+energy": 2, "abilities": {"uses": 10}, "image": "recipe", "rank": "uncommon"},
+
+ "70": {"nameru": "📜 Рецепт конфет", "nameen": "📜 Candy recipe", "type": "recipe", "descriptionru": "Рецепт создания целой кучи шоколадных конфет", "descriptionen": "Recipe for making a whole bunch of chocolates", "image": "recipe", "create": [{"item": "69", "type": "create"}], "materials": [ {"item": "68", "type": "delete"}, {"item": "68", "type": "delete"}, {"item": "68", "type": "delete"} ], "abilities": {"uses": 5}, "rank": "uncommon"},
+
+ "71": {"nameru": "🌽 Кукуруза", "nameen": "🌽 Corn", "type": "+eat", "act": 10, "class": "Herbivore", "image": "recipe", "rank": "common"},
+
+ "72": {"nameru": "🍿 Попкорн", "nameen": "🍿 Popcorn", "type": "+eat", "act": 20, "class": "ALL", "+mood": 25, "image": "recipe", "rank": "uncommon"},
+
+ "73": {"nameru": "📜 Рецепт попкорна", "nameen": "📜 Popcorn recipe", "type": "recipe", "descriptionru": "Рецепт создания попкорна. Время посмотреть фильм!", "descriptionen": "Popcorn recipe. Time to watch a movie!", "image": "recipe", "create": [{"item": "72", "type": "create"}], "materials": [ {"item": "31", "type": "endurance", "act": 5}, {"item": "71", "type": "delete"}, {"item": "71", "type": "delete"} ], "abilities": {"uses": 5}, "rank": "uncommon"},
+
+ "74": {"nameru": "🧃 Сок", "nameen": "🧃 Juice", "type": "+eat", "act": 20, "class": "ALL", "+mood": 20, "image": "recipe", "rank": "uncommon"},
+
+ "75": {"nameru": "📜 Рецепт сока", "nameen": "📜 Juice recipe", "type": "recipe", "descriptionru": "Рецепт создания свежевыжатого сока", "descriptionen": "Fresh juice recipe", "image": "recipe", "create": [{"item": "74", "type": "create"}], "materials": [ {"item": "11", "type": "delete"} ], "abilities": {"uses": 10}, "rank": "uncommon"},
+
+ "76": {"nameru": "🌶️ Специи", "nameen": "🌶️ Spicy", "type": "+eat", "act": -10, "class": "Herbivore", "image": "recipe", "rank": "common"},
+
+ "77": {"nameru": "🥩 Острый стейк", "nameen": "🥩 Spicy steak", "type": "+eat", "act": 50, "class": "Carnivore", "image": "recipe", "rank": "rare"},
+
+ "78": {"nameru": "📜 Рецепт острого стейка", "nameen": "📜 Spicy steak recipe", "type": "recipe", "descriptionru": "Рецепт создания острого, но вкусного стейка", "descriptionen": "The recipe for a spicy but tasty steak", "image": "recipe", "create": [{"item": "77", "type": "create"}], "materials": [ {"item": "31", "type": "endurance", "act": 10}, {"item": "8", "type": "delete"}, {"item": "9", "type": "delete"}, {"item": "76", "type": "delete"} ], "abilities": {"uses": 5}, "rank": "rare"},
+
+ "79": {"nameru": "🍌 Банан", "nameen": "🍌 Banana", "type": "+eat", "act": 15, "class": "Herbivore", "image": "recipe", "rank": "common"},
+
+ "80": {"nameru": "🦀 Краб", "nameen": "🦀 Crab", "type": "+eat", "act": 30, "class": "Flying", "image": "recipe", "rank": "uncommon"},
+
+ "81": {"nameru": "☕️ Кофе", "nameen": "☕️ Coffee", "type": "+eat", "act": 5, "+energy": 30, "class": "ALL", "image": "recipe", "rank": "uncommon"},
+
+ "82": {"nameru": "🍄 Гриб", "nameen": "🍄 Mushroom", "type": "+eat", "act": 15, "+mood": 10, "+hp": -5, "class": "Herbivore", "image": "recipe", "rank": "uncommon"},
+
+ "83": {"nameru": "🍲 Бульон", "nameen": "🍲 Broth", "type": "+eat", "act": 50, "+hp": 10, "class": "ALL", "image": "recipe", "rank": "rare"},
+
+ "84": {"nameru": "📜 Рецепт бульона", "nameen": "📜 Broth recipe", "type": "recipe", "descriptionru": "Рецепт создания наваристого мясного бульона", "descriptionen": "Recipe for a rich meat broth", "image": "recipe", "create": [{"item": "83", "type": "create"}], "materials": [ {"item": "31", "type": "endurance", "act": 10}, {"item": "5", "type": "delete"}, {"item": "5", "type": "delete"} ], "abilities": {"uses": 5}, "rank": "rare"},
+
+ "85": {"nameru": "🍚 Рис", "nameen": "🍚 Rice", "type": "+eat", "act": 10, "class": "Herbivore", "image": "recipe", "rank": "common"},
+
+ "86": {"nameru": "🍣 Суши", "nameen": "🍣 Sushi", "type": "+eat", "act": 30, "class": "ALL", "image": "recipe", "rank": "common"},
+
+ "87": {"nameru": "📜 Рецепт суши", "nameen": "📜 Sushi recipe", "type": "recipe", "descriptionru": "Рецепт создания суши. Говорят, это идеально сбалансированная еда", "descriptionen": "Recipe for making sushi. They say it's a perfectly balanced meal.", "image": "recipe", "create": [{"item": "86", "type": "create"}], "materials": [ {"item": "85", "type": "delete"}, {"item": "7", "type": "delete"} ], "abilities": {"uses": 5}, "rank": "rare"},
+
+ "88": {"nameru": "☕️ Горячий шоколад", "nameen": "☕️ Hot chocolate", "type": "+eat", "act": 10, "+energy": 30, "class": "ALL", "image": "recipe", "rank": "uncommon"},
+
+ "89": {"nameru": "📜 Рецепт горячего шоколада", "nameen": "📜 Hot chocolate recipe", "type": "recipe", "descriptionru": "Рецепт создания горячего шоколада. Идеально подходит чтобы согреться зимой", "descriptionen": "Hot chocolate recipe. Ideal for keeping warm in winter", "image": "recipe", "create": [{"item": "88", "type": "create"}], "materials": [ {"item": "68", "type": "delete"}, {"item": "68", "type": "delete"} ], "abilities": {"uses": 5}, "rank": "uncommon"},
+
+ "90": {"nameru": "🎂 Торт", "nameen": "🎂 Cake", "type": "+eat", "act": 50, "class": "ALL", "+mood": 50, "abilities": {"uses": 8}, "image": "recipe", "rank": "mystical"},
+
+ "91": {"nameru": "📜 Рецепт торта", "nameen": "📜 Cake recipe", "type": "recipe", "descriptionru": "Рецепт создания большого торта. Торт это ложь", "descriptionen": "Recipe for a large cake. Cake is a lie", "image": "recipe", "create": [{"item": "90", "type": "create"}], "materials": [ {"item": "68", "type": "delete"}, {"item": "68", "type": "delete"}, {"item": "68", "type": "delete"}, {"item": "68", "type": "delete"}, {"item": "11", "type": "delete"}, {"item": "11", "type": "delete"}, {"item": "11", "type": "delete"}, {"item": "11", "type": "delete"}, {"item": "11", "type": "delete"}, {"item": "1", "type": "delete"}, {"item": "2", "type": "delete"}, {"item": "2", "type": "delete"} ], "abilities": {"uses": 2}, "rank": "mystical"},
+
+ "92": {"nameru": "🍛 Карри", "nameen": "🍛 Curry", "type": "+eat", "act": 50, "class": "ALL", "image": "recipe", "rank": "rare"},
+
+ "93": {"nameru": "📜 Рецепт карри", "nameen": "📜 Curry recipe", "type": "recipe", "descriptionru": "Рецепт создания карри. Это такое осторое блюдо с рисом", "descriptionen": "Curry recipe. It's such a spicy rice dish", "image": "recipe", "create": [{"item": "92", "type": "create"}], "materials": [ {"item": "85", "type": "delete"}, {"item": "85", "type": "delete"}, {"item": "76", "type": "delete"}, {"item": "76", "type": "delete"} ], "abilities": {"uses": 5}, "rank": "rare"},
+
+ "94": {"nameru": "🍡 Данго", "nameen": "🍡 Dango", "type": "+eat", "act": 20, "+mood": 10, "class": "ALL", "image": "recipe", "rank": "rare"},
+
+ "95": {"nameru": "🥜 Зерна", "nameen": "🥜 Grains", "type": "+eat", "act": 10, "class": "Herbivore", "image": "recipe", "rank": "common"},
+
+ "96": {"nameru": "🍞 Хлеб", "nameen": "🍞 Bread", "type": "+eat", "act": 30, "class": "ALL", "image": "recipe", "rank": "uncommon"},
+
+ "97": {"nameru": "📜 Рецепт хлеба", "nameen": "📜 Bread recipe", "type": "recipe", "descriptionru": "Рецепт создания хлеба", "descriptionen": "Recipe for making bread", "image": "recipe", "create": [{"item": "96", "type": "create"}], "materials": [ {"item": "95", "type": "delete"}, {"item": "95", "type": "delete"} ], "abilities": {"uses": 10}, "rank": "uncommon"},
+
+ "98": {"nameru": "🥧 Ягодный пирог", "nameen": "🥧 Berry pie", "type": "+eat", "act": 70, "+mood": 20, "class": "ALL", "image": "recipe", "rank": "uncommon"},
+
+ "99": {"nameru": "🥘 Рыбный пирог", "nameen": "🥘 Fish pie", "type": "+eat", "act": 80, "+energy": 10, "class": "ALL", "image": "recipe", "rank": "uncommon"},
+
+ "100": {"nameru": "🍲 Мясной пирог", "nameen": "🍲 Meat pie", "type": "+eat", "act": 90, "+hp": 10, "class": "ALL", "image": "recipe", "rank": "uncommon"},
+
+ "101": {"nameru": "📜 Рецепт ягодного пирога", "nameen": "📜 Berry pie recipe", "type": "recipe", "descriptionru": "Рецепт создания самого сладкого пирога", "descriptionen": "The recipe for the sweetest pie", "image": "recipe", "create": [{"item": "98", "type": "create"}], "materials": [ {"item": "95", "type": "delete"}, {"item": "95", "type": "delete"}, {"item": "11", "type": "delete"}, {"item": "11", "type": "delete"} ], "abilities": {"uses": 5}, "rank": "uncommon"},
+ 
+ "102": {"nameru": "📜 Рецепт рыбного пирога", "nameen": "📜 Fish pie recipe", "type": "recipe", "descriptionru": "Рецепт создания самого полезного пирога", "descriptionen": "Recipe for making the healthiest pie", "image": "recipe", "create": [{"item": "99", "type": "create"}], "materials": [ {"item": "95", "type": "delete"}, {"item": "95", "type": "delete"}, {"item": "7", "type": "delete"}, {"item": "7", "type": "delete"} ], "abilities": {"uses": 5}, "rank": "uncommon"},
+ 
+ "103": {"nameru": "📜 Рецепт мясного пирога", "nameen": "📜 Meat pie recipe", "type": "recipe", "descriptionru": "Рецепт создания самого сытного пирога", "descriptionen": "The recipe for the most satisfying pie", "image": "recipe", "create": [{"item": "100", "type": "create"}], "materials": [ {"item": "95", "type": "delete"}, {"item": "95", "type": "delete"}, {"item": "8", "type": "delete"}, {"item": "8", "type": "delete"} ], "abilities": {"uses": 5}, "rank": "uncommon"},
+
+ "104": {"nameru": "🥓 Бекон", "nameen": "🥓 Bacon", "type": "+eat", "act": 30, "class": "Carnivore", "image": "recipe", "rank": "uncommon"},
+
+ "105": {"nameru": "📜 Рецепт бекона", "nameen": "📜 Bacon recipe", "type": "recipe", "descriptionru": "Рецепт создания бекона", "descriptionen": "Recipe for making bacon", "image": "recipe", "create": [{"item": "104", "type": "create"}], "materials": [ {"item": "31", "type": "endurance", "act": 10}, {"item": "5", "type": "delete"} ], "abilities": {"uses": 10}, "rank": "uncommon"},
+
+ "106": {"nameru": "🍱 Бенто", "nameen": "🍱 Bento", "type": "+eat", "act": 100, "+mood": 20, "+hp": 20, "class": "Carnivore", "abilities": {"uses": 2}, "image": "recipe", "rank": "mystical"},
+
+ "107": {"nameru": "📜 Рецепт бенто", "nameen": "📜 Bento recipe", "type": "recipe", "descriptionru": "Рецепт создания бенто. Здесь собрано все для полноценного перекуса.", "descriptionen": "The recipe for a bento. Everything you need for a complete meal is here.", "image": "recipe", "create": [{"item": "106", "type": "create"}], "materials": [ {"item": "38", "type": "delete"}, {"item": "86", "type": "delete"}, {"item": "40", "type": "delete"} ], "abilities": {"uses": 2}, "rank": "mystical"},
+ 
+ "108": {"nameru": "🥪 Бутерброд", "nameen": "🥪 Sandwich", "type": "+eat", "act": 50, "class": "ALL", "image": "recipe", "rank": "rare"},
+
+ "109": {"nameru": "📜 Рецепт бутерброда", "nameen": "📜 Sandwich recipe", "type": "recipe", "descriptionru": "Рецепт создания бутерброда. Удобно для быстрого перекуса", "descriptionen": "Recipe for a sandwich. Good for a quick snack", "image": "recipe", "create": [{"item": "108", "type": "create"}], "materials": [ {"item": "96", "type": "delete"}, {"item": "8", "type": "delete"}, {"item": "9", "type": "delete"} ], "abilities": {"uses": 5}, "rank": "rare"}
 
 }
 }
