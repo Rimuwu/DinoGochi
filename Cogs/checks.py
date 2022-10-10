@@ -313,7 +313,8 @@ class checks:
                             dungeonid =  user['dinos'][dino_id]['dungeon_id']
                             dung = dungeons.find_one({"dungeonid": dungeonid})
 
-                            del dung['users'][ user['userid'] ]['dinos'][ dino_id ]
+                            if dung != None:
+                                del dung['users'][ user['userid'] ]['dinos'][ dino_id ]
 
                             dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
 
