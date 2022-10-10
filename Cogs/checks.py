@@ -316,7 +316,7 @@ class checks:
                             if dung != None:
                                 del dung['users'][ user['userid'] ]['dinos'][ dino_id ]
 
-                            dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
+                                dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
 
                             inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = user.id)
 
