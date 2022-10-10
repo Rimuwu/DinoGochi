@@ -318,7 +318,7 @@ class checks:
 
                                 dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
 
-                            inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = user.id)
+                                inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = user.id)
 
                             if user['userid'] == dung['dungeonid'] and len(dung['users'][ str(user['userid']) ]['dinos']) == 0:
 
