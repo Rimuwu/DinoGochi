@@ -320,15 +320,15 @@ class checks:
 
                                 inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = user.id)
 
-                            if user['userid'] == dung['dungeonid'] and len(dung['users'][ str(user['userid']) ]['dinos']) == 0:
+                                if user['userid'] == dung['dungeonid'] and len(dung['users'][ str(user['userid']) ]['dinos']) == 0:
 
-                                for uk in dung['users'].keys():
-                                    Dungeon.user_dungeon_stat(int(uk), dungeonid)
+                                    for uk in dung['users'].keys():
+                                        Dungeon.user_dungeon_stat(int(uk), dungeonid)
 
 
-                                inf = Dungeon.message_upd(bot, dungeonid = int(uk ), type = 'delete_dungeon')
-                                kwargs = { 'save_inv': False }
-                                dng, inf = Dungeon.base_upd(dungeonid = userid, type = 'delete_dungeon', kwargs = kwargs)
+                                    inf = Dungeon.message_upd(bot, dungeonid = int(uk ), type = 'delete_dungeon')
+                                    kwargs = { 'save_inv': False }
+                                    dng, inf = Dungeon.base_upd(dungeonid = userid, type = 'delete_dungeon', kwargs = kwargs)
 
                         del user['dinos'][dino_id]
                         Functions.notifications_manager(bot, 'dead', user, dino_id = dino_id, met = 'delete')
