@@ -1159,20 +1159,31 @@ class Functions:
         return False
 
     @staticmethod
-    def random_items(com_i:list, unc_i:list, rar_i:list, myt_i:list, leg_i:list): # 5 аргументов
+    def random_items(rand_d:dict):
 
-        r_q = random.randint(1, 100)
-        if r_q in list(range(1, 51)):
-            items = com_i
-        elif r_q in list(range(51, 76)):
-            items = unc_i
-        elif r_q in list(range(76, 91)):
-            items = rar_i
-        elif r_q in list(range(91, 99)):
-            items = myt_i
-        else:
-            items = leg_i
+        '''
+            example = {
+            'com': [], 'unc': [], 'rar': [], 'myt': [], 'leg': []
+            }
+        '''
 
+        r_event = random.randint(1, 100)
+        if r_event >= 1 and r_event <= 50: #50%
+            items = rand_d['com']
+
+        elif r_event > 50 and r_event <= 75: #25%
+            items = rand_d['unc']
+
+        elif r_event > 75 and r_event <= 90: #15%
+            items = rand_d['rar']
+
+        elif r_event > 90 and r_event <= 99: #9%
+            items = rand_d['myt']
+
+        elif r_event > 99 and r_event <= 100: #1%
+            items = rand_d['leg']
+
+        random.shuffle(items)
         return random.choice(items)
 
     @staticmethod
@@ -1228,15 +1239,7 @@ class Functions:
         type = item['type']
         d_text = ''
 
-        if item['type'] == '+heal':
-            if lg == 'ru':
-                type = '❤ лекарство'
-                d_text = f"*└* Эффективность: {item['act']}"
-            else:
-                type = '❤ medicine'
-                d_text = f"*└* Effectiveness: {item['act']}"
-
-        elif item['type'] == '+eat':
+        if item['type'] == '+eat':
             if lg == 'ru':
                 type = '🍔 еда'
                 d_text = f"*└* Эффективность: {item['act']}"
@@ -1383,7 +1386,7 @@ class Functions:
                 d_text += f'*└* Capacity: {item["capacity"]}\n'
 
 
-        if list(set([ '+mood' ]) & set(item.keys())) != []:
+        if list(set([ '+mood', '+energy', '+eat', '+hp' ]) & set(item.keys())) != []:
             if lg == 'ru':
                 d_text += f'\n\n*┌* *🍡 Дополнительные бонусы*\n'
             else:
@@ -1391,11 +1394,29 @@ class Functions:
 
             if '+mood' in item.keys():
                 if lg == 'ru':
-                    d_text += f"*└* Повышение настроения: {item['+mood']}%"
+                    d_text += f"*└* Повышение настроения: {item['+mood']}%\n"
                 else:
-                    d_text += f"*└* Mood boost: {item['+mood']}%"
+                    d_text += f"*└* Mood boost: {item['+mood']}%\n"
 
-        if list(set([ '-mood', "-eat" ]) & set(item.keys())) != []:
+            if '+eat' in item.keys():
+                if lg == 'ru':
+                    d_text += f"*└* Повышение сытости: {item['+eat']}%\n"
+                else:
+                    d_text += f"*└* Increased satiety: {item['+eat']}%\n"
+
+            if '+energy' in item.keys():
+                if lg == 'ru':
+                    d_text += f"*└* Повышение энергии: {item['+energy']}%\n"
+                else:
+                    d_text += f"*└* Energy Boost: {item['+energy']}%\n"
+
+            if '+hp' in item.keys():
+                if lg == 'ru':
+                    d_text += f"*└* Повышение здоровья: {item['+hp']}%\n"
+                else:
+                    d_text += f"*└* Improving health: {item['+hp']}%\n"
+
+        if list(set([ '-mood', "-eat", '-energy', '-hp' ]) & set(item.keys())) != []:
             if lg == 'ru':
                 d_text += f'\n\n*┌* *📌 Дополнительные штрафы*\n'
             else:
@@ -1403,15 +1424,27 @@ class Functions:
 
             if '-mood' in item.keys():
                 if lg == 'ru':
-                    d_text += f"*├* Понижение настроения: {item['-mood']}%"
+                    d_text += f"*└* Понижение настроения: {item['-mood']}%\n"
                 else:
-                    d_text += f"*├* Lowering the mood: {item['-mood']}%"
+                    d_text += f"*└* Lowering the mood: {item['-mood']}%\n"
 
             if '-eat' in item.keys():
                 if lg == 'ru':
-                    d_text += f"*└* Понижение сытости: {item['-eat']}%"
+                    d_text += f"*└* Понижение сытости: {item['-eat']}%\n"
                 else:
-                    d_text += f"*└* Reducing satiety: {item['-eat']}%"
+                    d_text += f"*└* Reducing satiety: {item['-eat']}%\n"
+
+            if '-energy' in item.keys():
+                if lg == 'ru':
+                    d_text += f"*└* Понижение энергии: {item['-energy']}%\n"
+                else:
+                    d_text += f"*└* Energy reduction: {item['-energy']}%\n"
+
+            if '-hp' in item.keys():
+                if lg == 'ru':
+                    d_text += f"*└* Понижение здоровья: {item['-hp']}%\n"
+                else:
+                    d_text += f"*└* Lower health: {item['-hp']}%\n"
 
         if lg == 'ru':
             text =  f"*┌* *🎴 Информация о предмете*\n"
@@ -1516,7 +1549,7 @@ class Functions:
                 image = open(f"images/items/{item['image']}.png", 'rb')
             except Exception as e:
                 image = None
-                print('item image incorrect')
+                print(f'item {item_id} image incorrect')
 
         else:
             image = None
@@ -3476,7 +3509,7 @@ class Dungeon:
                     for room_n in rooms_list:
 
                         if room_type_cr == "random":
-                            room_type = Functions.random_items( rooms['com'], rooms['unc'], rooms['rar'], rooms['myt'], rooms['leg'] )
+                            room_type = Functions.random_items(rooms)
 
                         else:
                             room_type = kwargs['rooms'][ str(room_n) ]
@@ -3545,11 +3578,11 @@ class Dungeon:
                         elif room_type in ['fork_2', 'fork_3']:
 
                             if room_type == 'fork_2':
-                                poll_rooms = [ Functions.random_items( rooms['com'], rooms['unc'], rooms['rar'], rooms['myt'], rooms['leg'] ) for i in range(2) ]
+                                poll_rooms = [ Functions.random_items(rooms) for i in range(2) ]
                                 results = [[], []]
 
                             if room_type == 'fork_3':
-                                poll_rooms = [ Functions.random_items( rooms['com'], rooms['unc'], rooms['rar'], rooms['myt'], rooms['leg'] ) for i in range(3) ]
+                                poll_rooms = [ Functions.random_items(rooms) for i in range(3) ]
                                 results = [ [], [], [] ]
 
                             floor[str(room_n)] = { 'room_type': room_type, 'poll_rooms': poll_rooms, 'image': f'images/dungeon/{room_type}/1.png', 'results': results, 'next_room': False }
@@ -5314,7 +5347,7 @@ class Dungeon:
         dung = dungeons.find_one({"dungeonid": dungeonid})
         user_stat = {
                 'time': int(time.time()) - int(dung['stage_data']['game']['start_time']),
-                'end_floor': dung['stage_data']['game']['floor_n'],
+                'end_floor': dung['stage_data']['game']['floor_n'] + 1,
                 'start_floor': dung['settings']['start_floor'],
                     }
 
