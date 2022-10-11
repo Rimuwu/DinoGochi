@@ -1879,11 +1879,31 @@ class commands:
                                         bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] -= eatr
                                         bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= moodr
 
+                                din_id = bd_user['settings']['dino_id']
+
                                 if '+mood' in item.keys():
-                                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] += item['+mood'] * col
+                                    bd_user['dinos'][ din_id ]['stats']['mood'] += item['+mood'] * col
 
                                 if '-mood' in item.keys():
-                                    bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= item['-mood'] * col
+                                    bd_user['dinos'][ din_id ]['stats']['mood'] -= item['-mood'] * col
+
+                                if '+eat' in item.keys():
+                                    bd_user['dinos'][ din_id ]['stats']['eat'] += item['+eat'] * col
+
+                                if '-eat' in item.keys():
+                                    bd_user['dinos'][ din_id ]['stats']['eat'] -= item['-eat'] * col
+
+                                if '+energy' in item.keys():
+                                    bd_user['dinos'][ din_id ]['stats']['unv'] += item['+energy'] * col
+
+                                if '-energy' in item.keys():
+                                    bd_user['dinos'][ din_id ]['stats']['unv'] -= item['-energy'] * col
+
+                                if '+hp' in item.keys():
+                                    bd_user['dinos'][ din_id ]['stats']['heal'] += item['+hp'] * col
+
+                                if '-hp' in item.keys():
+                                    bd_user['dinos'][ din_id ]['stats']['heal'] -= item['-hp'] * col
 
                                 users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{bd_user["settings"]["dino_id"]}': bd_user['dinos'][ bd_user['settings']['dino_id'] ] }} )
 

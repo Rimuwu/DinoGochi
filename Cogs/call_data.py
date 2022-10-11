@@ -516,10 +516,7 @@ class call_data:
 
             if check_n == 1:
 
-                if data_item['type'] == '+heal':
-                    ans_dino()
-
-                elif data_item['type'] == '+unv':
+                if data_item['type'] == '+unv':
                     ans_dino()
 
                 elif data_item['type'] == 'recipe':
@@ -551,13 +548,11 @@ class call_data:
 
                 else:
                     print(f'Первый этап не найден {data_item["type"]}')
+                    cannot_use()
 
             elif check_n == 2:
 
-                if data_item['type'] == '+heal':
-                    ans_col()
-
-                elif data_item['type'] == '+unv':
+                if data_item['type'] == '+unv':
                     ans_col()
 
                 elif data_item['type'] == 'recipe':
@@ -580,10 +575,7 @@ class call_data:
 
             elif check_n == 3:
 
-                if data_item['type'] == '+heal':
-                    use_item()
-
-                elif data_item['type'] == '+unv':
+                if data_item['type'] == '+unv':
                     use_item()
 
                 elif data_item['type'] == '+eat':
@@ -640,6 +632,7 @@ class call_data:
             global col, dino_id
             fr_user = users.find_one({"userid": user.id})
             use_st = True
+            text = ''
 
             if data_item['type'] == 'freezing':
 
@@ -688,25 +681,6 @@ class call_data:
                 else:
                     use_st = False
                     text = f'❌'
-
-
-            elif data_item['type'] == '+heal':
-
-                if bd_user['language_code'] == 'ru':
-                    text = f'❤ | Вы восстановили {data_item["act"] * col}% здоровья динозавра!'
-                else:
-                    text = f"❤ | You have restored {data_item['act'] * col}% of the dinosaur's health!"
-
-                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.heal': data_item['act'] * col }} )
-
-            elif data_item['type'] == '+unv':
-
-                if bd_user['language_code'] == 'ru':
-                    text = f'⚡ | Вы восстановили {data_item["act"] * col}% энергии динозавра!'
-                else:
-                    text = f"⚡ | You have recovered {data_item['act'] * col}% of the dinosaur's energy!"
-
-                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.unv': data_item['act'] * col }} )
 
             elif data_item['type'] == 'recipe':
                 ok = True
@@ -1037,14 +1011,73 @@ class call_data:
 
                 use_st = False
 
-            if '+mood' in data_item.keys():
-                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.mood': data_item['+mood'] * col }} )
+            if list(set([ '+mood', '-mood', '-eat', '+eat', '+energy', '-energy', '+hp', '-hp']) & set(data_item.keys())) != [] and use_st == True:
 
-            if '-mood' in data_item.keys():
-                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.mood': (data_item['-mood'] * -1) * col }} )
+                text += '\n\n'
 
-            if '-eat' in data_item.keys():
-                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.eat': (data_item['-eat'] * -1) * col }} )
+                if '+mood' in data_item.keys():
+                    users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.mood': data_item['+mood'] * col }} )
+
+                    if bd_user['language_code'] == 'ru':
+                        text += f'😀 | Динозавр получил +{data_item["+mood"] * col}% к настроению!\n'
+                    else:
+                        text += f'😀 | Dinosaur got +{data_item["+mood"] * col}% to mood!\n'
+
+                if '-mood' in data_item.keys():
+                    users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.mood': (data_item['-mood'] * -1) * col }} )
+
+                    if bd_user['language_code'] == 'ru':
+                        text += f'😥 | Динозавр получил -{data_item["-mood"] * col}% к настроению!\n'
+                    else:
+                        text += f'😥 | Dinosaur got -{data_item["-mood"] * col}% to mood!\n'
+
+                if '+eat' in data_item.keys():
+                    users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.eat': (data_item['+eat']) * col }} )
+
+                    if bd_user['language_code'] == 'ru':
+                        text += f'🥪 | Динозавр восстановил {data_item["+eat"] * col}% сытости!\n'
+                    else:
+                        text += f'🥪 | The dinosaur has restored {data_item["+eat"] * col}% satiety!\n'
+
+                if '-eat' in data_item.keys():
+                    users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.eat': (data_item['-eat'] * -1) * col }} )
+
+                    if bd_user['language_code'] == 'ru':
+                        text += f'🥪 | Динозавр потерял {data_item["-eat"] * col}% сытости!\n'
+                    else:
+                        text += f'🥪 | Dinosaur lost {data_item["-eat"] * col}% satiety!\n'
+
+                if '+energy' in data_item.keys():
+                    users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.unv': (data_item['+energy']) * col }} )
+
+                    if bd_user['language_code'] == 'ru':
+                        text += f'⚡ | Вы восстановили {data_item["+energy"] * col}% энергии динозавра!\n'
+                    else:
+                        text += f"⚡ | You have recovered {data_item['+energy'] * col}% of the dinosaur's energy!\n"
+
+                if '-energy' in data_item.keys():
+                    users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.unv': (data_item['-energy'] * -1) * col }} )
+
+                    if bd_user['language_code'] == 'ru':
+                        text += f'⚡ | Динозавр потерял {data_item["-energy"] * col}% энергии!\n'
+                    else:
+                        text += f'⚡ | Dinosaur lost {data_item["-energy"] * col}% energy!\n'
+
+                if '+hp' in data_item.keys():
+                    users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.heal': (data_item['+hp']) * col }} )
+
+                    if bd_user['language_code'] == 'ru':
+                        text += f'❤ | Вы восстановили {data_item["+hp"] * col}% здоровья динозавра!'
+                    else:
+                        text += f"❤ | You have restored {data_item['+hp'] * col}% of the dinosaur's health!"
+
+                if '-hp' in data_item.keys():
+                    users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.heal': (data_item['-hp']) * col }} )
+
+                    if bd_user['language_code'] == 'ru':
+                        text += f'❤ | Ваш динозавр потерял {data_item["-hp"] * col}% здоровья!\n'
+                    else:
+                        text += f'❤ | Your dinosaur lost {data_item["-hp"] * col}% health!\n'
 
             if 'abilities' in user_item.keys() and 'uses' in user_item['abilities'].keys():
                 if use_st == True:
@@ -1070,7 +1103,6 @@ class call_data:
                             fr_user['inventory'].remove(user_item)
                         except Exception as error:
                             print(error, ' error - use item')
-                            pass
 
             if use_st == True or use_st == 'update_only':
                 users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
@@ -1757,7 +1789,15 @@ class call_data:
 
                         qul = quality
                         if quality == 'ran':
-                            qul = Functions.random_items(['com'], ['unc'], ['rar'], ['myt'], ['leg'])
+                            rd = {
+                            'com': ['com'],
+                            'unc': ['unc'],
+                            'rar': ['rar'],
+                            'myt': ['myt'],
+                            'leg': ['leg']
+                            }
+
+                            qul = Functions.random_items(rd)
 
                         bd_user['coins'] -= data_q_r[quality]['money']
                         bd_user['dinos'][dino_id]['quality'] = qul
@@ -2960,16 +3000,7 @@ class call_data:
             text = '-'
             rem_item = True
 
-            if data_item['type'] == "+heal":
-
-                if bd_user['language_code'] == 'ru':
-                    text = f'❤ | Вы восстановили {data_item["act"]}% здоровья динозавра!'
-                else:
-                    text = f"❤ | You have restored {data_item['act']}% of the dinosaur's health!"
-
-                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.heal': data_item['act'] }} )
-
-            elif data_item['type'] == "ammunition":
+            if data_item['type'] == "ammunition":
 
                 list_inv_id = []
                 for i in dung_user['inventory']: list_inv_id.append(i['item_id'])
@@ -3127,13 +3158,28 @@ class call_data:
                     text = "❌"
 
             if '+mood' in data_item.keys():
-                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.mood': data_item['+mood'] }} )
+                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.mood': data_item['+mood'] * col }} )
 
             if '-mood' in data_item.keys():
-                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.mood': data_item['-mood'] * -1 }} )
+                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.mood': (data_item['-mood'] * -1) * col }} )
+
+            if '+eat' in data_item.keys():
+                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.eat': (data_item['+eat']) * col }} )
 
             if '-eat' in data_item.keys():
-                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.eat': data_item['-eat'] * -1 }} )
+                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.eat': (data_item['-eat'] * -1) * col }} )
+
+            if '+energy' in data_item.keys():
+                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.unv': (data_item['+energy']) * col }} )
+
+            if '-energy' in data_item.keys():
+                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.unv': (data_item['-energy'] * -1) * col }} )
+
+            if '+hp' in data_item.keys():
+                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.heal': (data_item['+hp']) * col }} )
+
+            if '-hp' in data_item.keys():
+                users.update_one( {"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.heal': (data_item['-hp']) * col }} )
 
 
             bot.send_message(user.id, text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
@@ -3164,7 +3210,7 @@ class call_data:
 
         if user_item != None:
 
-            if data_item['type'] in ["+heal", "+eat", "weapon", "armor"]:
+            if data_item['type'] in ["+eat", "weapon", "armor"]:
 
                 dins_k = dung_user['dinos'].keys()
 
