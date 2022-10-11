@@ -15,8 +15,9 @@ import config
 sys.path.append("Cogs")
 from commands import commands
 from classes import Functions, Dungeon
-from checks import checks
+from checks import Checks
 from call_data import call_data
+
 
 bot = telebot.TeleBot(config.TOKEN)
 
@@ -127,17 +128,17 @@ class In_channel(telebot.custom_filters.AdvancedCustomFilter):
 
 def check(): #проверка каждые 10 секунд
 
-    def alpha(bot, members): checks.main(bot, members)
+    def alpha(bot, members): Checks.main(bot, members)
 
-    def beta(bot, members): checks.main_hunting(bot, members)
+    def beta(bot, members): Checks.main_hunting(bot, members)
 
-    def beta2(bot, members): checks.main_game(bot, members)
+    def beta2(bot, members): Checks.main_game(bot, members)
 
-    def gamma(bot, members): checks.main_sleep(bot, members)
+    def gamma(bot, members): Checks.main_sleep(bot, members)
 
-    def gamma2(bot, members): checks.main_pass(bot, members)
+    def gamma2(bot, members): Checks.main_pass(bot, members)
 
-    def delta(bot, members): checks.main_journey(bot, members)
+    def delta(bot, members): Checks.main_journey(bot, members)
 
     non_members = users.find({ })
     chunks_users = list(Functions.chunks( list(non_members), 20 ))
@@ -172,11 +173,11 @@ main_checks = threading.Thread(target = check, daemon=True)
 
 def check_notif(): #проверка каждые 5 секунд
 
-    def alpha(bot, members): checks.check_notif(bot, members)
+    def alpha(bot, members): Checks.check_notif(bot, members)
 
-    def beta(bot): checks.check_incub(bot)
+    def beta(bot): Checks.check_incub(bot)
 
-    def memory(): checks.check_memory()
+    def memory(): Checks.check_memory()
 
     while True:
 
@@ -200,11 +201,11 @@ thr_notif = threading.Thread(target = check_notif, daemon=True)
 
 def min10_check(): #проверка каждые 10 мин
 
-    def alpha(users): checks.rayt(users)
+    def alpha(users): Checks.rayt(users)
 
-    def dead_users(bot): checks.check_dead_users(bot)
+    def dead_users(bot): Checks.check_dead_users(bot)
 
-    def dng_check(bot): checks.dungeons_check(bot)
+    def dng_check(bot): Checks.dungeons_check(bot)
 
     while True:
 
@@ -225,7 +226,7 @@ min10_thr = threading.Thread(target = min10_check, daemon=True)
 
 def min1_check(): #проверка каждую минуту
 
-    def alpha(bot): checks.quests(bot)
+    def alpha(bot): Checks.quests(bot)
 
     while True:
         time.sleep(60)
@@ -253,7 +254,7 @@ def command(message):
 
 
     text = 'STATS\n\n'
-    text += f"Memory: {checks_data['memory'][0]}mb\nLast {int(time.time() - checks_data['memory'][1]) }s\n\n"
+    text += f"Memory: {checks_data['memory'][0]}mb\nLast {int(time.time() - checks_data['memory'][1])}s\n\n"
     text += f"Incub check: {checks_data['incub'][0]}s\nLast {int(time.time() - checks_data['incub'][1])}s\nUsers: {checks_data['incub'][2]}\n\n"
     text += f"Notifications check: {'s, '.join(str(i) for i in checks_data['notif'][0])}\nLast { ttx(time.time(), checks_data['notif'][1]) }\n\n"
 
@@ -343,16 +344,56 @@ def command(message):
         tr = Functions.add_item_to_user(bd, msg_args[1], int(msg_args[2]))
         bot.send_message(user.id, str(msg_args))
 
-@bot.message_handler(commands=['quest'])
+@bot.message_handler(commands=['test_ad'])
 def command(message):
     user = message.from_user
     if user.id in [5279769615, 1191252229]:
-        bd_user = users.find_one({"userid": user.id})
+        msg_args = message.text.split()
+        bd = users.find_one({"userid": user.id})
 
-        q = Dungeon.create_quest(bd_user)
-        print(q)
+        for it_id in range(68, 110):
+            tr = Functions.add_item_to_user(bd, str(it_id), 10, type = 'data')
 
-        users.update_one( {"userid": user.id}, {"$push": {'user_dungeon.quests.activ_quests': q }} )
+            for i in tr:
+                bd['inventory'].append(i)
+
+        users.update_one( {"userid": bd['userid']}, {"$set": {f'inventory': bd['inventory'] }} )
+        bot.send_message(user.id, '+')
+
+@bot.message_handler(commands=['test_d'])
+def command(message):
+    user = message.from_user
+    if user.id in [5279769615, 1191252229]:
+        msg_args = message.text.split()
+        bd = users.find_one({"userid": user.id})
+
+        lt = list(range(68, 110))
+        n = len(bd['inventory'])
+        print('len', n)
+
+        inv = bd['inventory'].copy()
+
+        for item in inv:
+
+            if int(item['item_id']) in lt:
+                bd['inventory'].remove(item)
+
+        print('len', len(bd['inventory']), 'l', n - len(bd['inventory']))
+        print(len(lt) * 10)
+
+        users.update_one( {"userid": bd['userid']}, {"$set": {f'inventory': bd['inventory'] }} )
+
+
+# @bot.message_handler(commands=['quest'])
+# def command(message):
+#     user = message.from_user
+#     if user.id in [5279769615, 1191252229]:
+#         bd_user = users.find_one({"userid": user.id})
+#
+#         q = Dungeon.create_quest(bd_user)
+#         print(q)
+#
+#         users.update_one( {"userid": user.id}, {"$push": {'user_dungeon.quests.activ_quests': q }} )
 
 
 # @bot.message_handler(commands=['d_upd'])
