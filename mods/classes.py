@@ -14,7 +14,7 @@ sys.path.append("..")
 import config
 
 
-client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
+client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users, market, referal_system, dungeons = client.bot.users, client.bot.market, client.bot.referal_system, client.bot.dungeons
 
 
