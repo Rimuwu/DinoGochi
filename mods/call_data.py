@@ -1,24 +1,22 @@
-import telebot
-from telebot import types
-import random
 import json
-import pymongo
-from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageSequence, ImageFilter
-import time
+import random
 import sys
-from pprint import pprint
-from fuzzywuzzy import fuzz
+import time
 
-from classes import Functions, Dungeon
+import pymongo
+import telebot
+from fuzzywuzzy import fuzz
+from PIL import Image
+from telebot import types
+
+from mods.classes import Dungeon, Functions
 
 sys.path.append("..")
 import config
 
-client = pymongo.MongoClient(config.CLUSTER_TOKEN)
-users = client.bot.users
-referal_system = client.bot.referal_system
-market = client.bot.market
-dungeons = client.bot.dungeons
+
+client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
+users, market, dungeons = client.bot.users, client.bot.market, client.bot.dungeons
 
 with open('data/items.json', encoding='utf-8') as f:
     items_f = json.load(f)
@@ -26,7 +24,7 @@ with open('data/items.json', encoding='utf-8') as f:
 with open('data/dino_data.json', encoding='utf-8') as f:
     json_f = json.load(f)
 
-class call_data:
+class CallData:
 
     def start(bot, bd_user, call, user):
 
@@ -847,7 +845,7 @@ class call_data:
                         else:
                             eatr = random.randint( 0, int(data_item['act'] / 2) )
                             moodr = random.randint( 1, 10 )
-                            text = f"🍕 | The dinosaur doesn't like {data_item['nameen']}, it loses {eatr * col}% satiety and {mood * col}% mood!"
+                            text = f"🍕 | The dinosaur doesn't like {data_item['nameen']}, it loses {eatr * col}% satiety and {moodr * col}% mood!"
 
                             bd_user['dinos'][ dino_id ]['stats']['eat'] -= eatr * col
                             bd_user['dinos'][ dino_id ]['stats']['mood'] -= moodr * col
@@ -3109,7 +3107,7 @@ class call_data:
                     else:
                         eatr = random.randint( 0, int(data_item['act'] / 2) )
                         moodr = random.randint( 1, 10 )
-                        text = f"🍕 | The dinosaur doesn't like {data_item['nameen']}, it loses {eatr}% satiety and {mood}% mood!"
+                        text = f"🍕 | The dinosaur doesn't like {data_item['nameen']}, it loses {eatr}% satiety and {moodr}% mood!"
 
                         bd_user['dinos'][ dino_id ]['stats']['eat'] -= eatr
                         bd_user['dinos'][ dino_id ]['stats']['mood'] -= moodr
@@ -3336,7 +3334,7 @@ class call_data:
                 bot.delete_message(int(k_user_id), user_message)
                 bot.send_message(int(k_user_id), text, reply_markup = Functions.markup(bot, 'dungeon_menu', user))
 
-                call_data.dungeon_kick_member(bot, bd_user, call, user)
+                CallData.dungeon_kick_member(bot, bd_user, call, user)
                 inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'all', ignore_list = [user.id])
 
     def dungeon_leave_in_game_answer(bot, bd_user, call, user):
@@ -3455,6 +3453,7 @@ class call_data:
 
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
+        k_user_id = str(user.id)
 
         if user.id == dungeonid:
 
@@ -3462,7 +3461,7 @@ class call_data:
                 Dungeon.user_dungeon_stat(int(k_user_id), dungeonid)
 
             inf = Dungeon.message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
-            dng, inf = Dungeon.base_upd(dungeonid = user.id, type = 'delete_dungeon')
+            ngd, inf = Dungeon.base_upd(dungeonid = user.id, type = 'delete_dungeon')
 
         else:
 
@@ -3649,7 +3648,7 @@ class call_data:
 
             bot.send_message(user.id, sw_text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
 
-            call_data.dungeon_shop_menu(bot, bd_user, call, user)
+            CallData.dungeon_shop_menu(bot, bd_user, call, user)
 
         else:
 
@@ -3680,7 +3679,7 @@ class call_data:
 
                 bot.send_message(user.id, sw_text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
 
-                call_data.dungeon_shop_menu(bot, bd_user, call, user)
+                CallData.dungeon_shop_menu(bot, bd_user, call, user)
 
     def rayt_lvl(bot, bd_user, call, user):
 

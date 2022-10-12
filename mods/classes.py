@@ -1,23 +1,21 @@
-import telebot
-from telebot import types
-import pymongo
-import sys
-import random
+import glob
 import json
+import os
+import random
+import sys
 import time
-from pprint import pprint
-from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageSequence, ImageFilter
-import os, glob
+
+import pymongo
+import telebot
+from PIL import (Image, ImageDraw, ImageFilter, ImageFont)
+from telebot import types
 
 sys.path.append("..")
 import config
 
 
-client = pymongo.MongoClient(config.CLUSTER_TOKEN)
-users = client.bot.users
-market = client.bot.market
-referal_system = client.bot.referal_system
-dungeons = client.bot.dungeons
+client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
+users, market, referal_system, dungeons = client.bot.users, client.bot.market, client.bot.referal_system, client.bot.dungeons
 
 
 with open('data/items.json', encoding='utf-8') as f: items_f = json.load(f)
@@ -29,6 +27,7 @@ with open('data/mobs.json', encoding='utf-8') as f: mobs_f = json.load(f)
 with open('data/floors_dungeon.json', encoding='utf-8') as f: floors_f = json.load(f)
 
 with open('data/quests_data.json', encoding='utf-8') as f: quests_f = json.load(f)
+
 
 checks_data = {'memory': [0, time.time()], 'incub': [0, time.time(), 0], 'notif': [[], []], 'main': [[], [], []], 'main_hunt': [ [], [], [] ], 'main_game': [ [], [], [] ], 'main_sleep': [ [], [], [] ], 'main_pass': [ [], [], [] ], 'main_journey': [ [], [], [] ], 'col': 0}
 
@@ -3120,7 +3119,7 @@ class Functions:
         return count
 
     @staticmethod
-    def spam_stop(user_id, sec = 1):
+    def spam_stop(user_id, sec = 0.5):
         global users_timeout
 
         if str(user_id) in users_timeout.keys():
@@ -3137,7 +3136,7 @@ class Functions:
             return True
 
     @staticmethod
-    def callback_spam_stop(user_id, sec = 1):
+    def callback_spam_stop(user_id, sec = 0.5):
         global callback_timeout
 
         if str(user_id) in callback_timeout.keys():
@@ -3168,18 +3167,18 @@ class Functions:
 
         return bd_user
 
-    @staticmethod
-    def message_from_delete(bot, userid, text):
-        markup_inline = types.InlineKeyboardMarkup()
+    # @staticmethod
+    # def message_from_delete(bot, userid, text):
+    #     markup_inline = types.InlineKeyboardMarkup()
 
-        if dung['settings']['lang'] == 'ru':
-            inl_l = {"⚙ Удалить сообщение": 'message_delete', }
-        else:
-            inl_l = {"⚙ Delete a message": 'message_delete'}
+    #     if dung['settings']['lang'] == 'ru':
+    #         inl_l = {"⚙ Удалить сообщение": 'message_delete', }
+    #     else:
+    #         inl_l = {"⚙ Delete a message": 'message_delete'}
 
-        markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]}") for inl in inl_l.keys() ])
+    #     markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = f"{inl_l[inl]}") for inl in inl_l.keys() ])
 
-        bot.send_message(userid, text, reply_markup = Functions.markup(bot, "dungeon_menu", int(u_k) ))
+    #     bot.send_message(userid, text, reply_markup = Functions.markup(bot, "dungeon_menu", int(u_k) ))
 
     @staticmethod
     def rand_d(rd:dict):

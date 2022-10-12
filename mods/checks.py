@@ -1,20 +1,20 @@
-import telebot
-from telebot import types
-import random
 import json
-import pymongo
-import time
-import os
+import random
 import sys
-import pprint
-from memory_profiler import memory_usage
+import time
 
-from classes import Functions, Dungeon
+import pymongo
+import telebot
+from memory_profiler import memory_usage
+from telebot import types
+
+from mods.classes import Dungeon, Functions
 
 sys.path.append("..")
 import config
 
-client = pymongo.MongoClient(config.CLUSTER_TOKEN)
+
+client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
 users, dungeons = client.bot.users, client.bot.dungeons
 
 with open('data/items.json', encoding='utf-8') as f: items_f = json.load(f)
@@ -1114,7 +1114,7 @@ class CheckFunction:
 
                                 inf = Dungeon.message_upd(bot, dungeonid = int(uk ), type = 'delete_dungeon')
                                 kwargs = { 'save_inv': False }
-                                dng, inf = Dungeon.base_upd(dungeonid = userid, type = 'delete_dungeon', kwargs = kwargs)
+                                dng, inf = Dungeon.base_upd(dungeonid = user['userid'], type = 'delete_dungeon', kwargs = kwargs)
 
                     del user['dinos'][dino_id]
                     Functions.notifications_manager(bot, 'dead', user, dino_id = dino_id, met = 'delete')

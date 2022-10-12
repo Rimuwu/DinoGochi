@@ -1,24 +1,21 @@
-import telebot
-from telebot import types
-import random
 import json
-import pymongo
-from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageSequence, ImageFilter
-import time
+import random
 import sys
-from pprint import pprint
-from fuzzywuzzy import fuzz
+import time
 
-from classes import Functions, Dungeon
+import pymongo
+import telebot
+from fuzzywuzzy import fuzz
+from telebot import types
+
+from mods.classes import Dungeon, Functions
 
 sys.path.append("..")
 import config
 
-client = pymongo.MongoClient(config.CLUSTER_TOKEN)
-users = client.bot.users
-referal_system = client.bot.referal_system
-market = client.bot.market
-dungeons = client.bot.dungeons
+
+client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
+users, referal_system, market, dungeons = client.bot.users, client.bot.referal_system, client.bot.market, client.bot.dungeons
 
 with open('data/items.json', encoding='utf-8') as f: items_f = json.load(f)
 
@@ -26,7 +23,7 @@ with open('data/dino_data.json', encoding='utf-8') as f: json_f = json.load(f)
 
 with open('data/mobs.json', encoding='utf-8') as f: mobs_f = json.load(f)
 
-class commands:
+class Commands:
 
     @staticmethod
     def start_game(bot, message, user, bd_user):
@@ -1874,7 +1871,7 @@ class commands:
                                     else:
                                         eatr = random.randint( 0, int(item['act'] / 2) )
                                         moodr = random.randint( 1, 10 )
-                                        text = f"🍕 | The dinosaur doesn't like {item['nameen']}, it loses {eatr}% satiety and {mood}% mood!"
+                                        text = f"🍕 | The dinosaur doesn't like {item['nameen']}, it loses {eatr}% satiety and {moodr}% mood!"
 
                                         bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] -= eatr
                                         bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= moodr
@@ -3048,7 +3045,7 @@ class commands:
                             text += '\n\n'
                             in_l.append( types.InlineKeyboardButton( text = str(a) + '#', callback_data = f"market_buy_{i['user']} {i['key']}"))
                     else:
-                        text += f'🔍 | Your search found {len(search_items)} item(s) >\n\n'
+                        text += f'🔍 | Your search found {len(sear_items)} item(s) >\n\n'
                         for i in page:
                             a += 1
                             text += f"*{a}#* {items_f['items'][i['item_id']]['nameen']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}"
@@ -3147,7 +3144,7 @@ class commands:
                     in_l.append( types.InlineKeyboardButton( text = str(a) + '#', callback_data = f"market_buy_{i['user']} {i['key']}"))
 
             else:
-                text += f'🔍 | Your search found {len(search_items)} item(s) >\n\n'
+                text += f'🔍 | Random items from the market >\n\n'
                 for i in page:
                     a += 1
                     text += f"*{a}#* {items_f['items'][i['item_id']]['nameen']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}"
