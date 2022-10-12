@@ -15,7 +15,11 @@ from mods.commands import Commands
 
 
 bot = telebot.TeleBot(config.TOKEN)
+<<<<<<< HEAD
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
+=======
+client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
+>>>>>>> 5c3d212e87bf6c631921a73c131c47c7cc24a97c
 users, dungeons = client.bot.users, client.bot.dungeons
 
 class SpamStop(telebot.custom_filters.AdvancedCustomFilter):
