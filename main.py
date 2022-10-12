@@ -13,7 +13,6 @@ from mods.checks import Checks
 from mods.classes import Dungeon, Functions
 from mods.commands import Commands
 
-
 bot = telebot.TeleBot(config.TOKEN)
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users, dungeons = client.bot.users, client.bot.dungeons
