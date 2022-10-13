@@ -13,13 +13,12 @@ from mods.classes import Dungeon, Functions
 sys.path.append("..")
 import config
 
-
 client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users, dungeons = client.bot.users, client.bot.dungeons
 
-with open('data/items.json', encoding='utf-8') as f: items_f = json.load(f)
+with open('json/items.json', encoding='utf-8') as f: items_f = json.load(f)
 
-with open('data/dino_data.json', encoding='utf-8') as f: json_f = json.load(f)
+with open('json/dino_data.json', encoding='utf-8') as f: json_f = json.load(f)
 
 class CheckFunction:
 
