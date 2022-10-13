@@ -14,109 +14,16 @@ from mods.classes import Dungeon, Functions
 sys.path.append("..")
 import config
 
-
-client = pymongo.MongoClient(config.CLUSTER_TOKEN)
+client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
 users, market, dungeons = client.bot.users, client.bot.market, client.bot.dungeons
 
-with open('data/items.json', encoding='utf-8') as f:
+with open('json/items.json', encoding='utf-8') as f:
     items_f = json.load(f)
 
-with open('data/dino_data.json', encoding='utf-8') as f:
+with open('json/dino_data.json', encoding='utf-8') as f:
     json_f = json.load(f)
 
 class CallData:
-
-    def start(bot, bd_user, call, user):
-
-        if bot.get_chat_member(-1001673242031, user.id).status != 'left' and bd_user == None:
-            message = call
-            try:
-                message.chat = bot.get_chat(user.id)
-            except:
-                return
-
-            if user.language_code == 'ru':
-                text = f'📜 | Приятной игры!'
-            else:
-                text = f"📜 | Have a nice game!"
-
-            bot.edit_message_text(text, call.message.chat.id, call.message.message_id, parse_mode = 'Markdown')
-
-            def photo():
-                global json_f
-                bg_p = Image.open(f"images/remain/{random.choice(['back', 'back2'])}.png")
-                eg_l = []
-                id_l = []
-
-                for i in range(3):
-                    rid = str(random.choice(list(json_f['data']['egg'])))
-                    image = Image.open('images/'+str(json_f['elements'][rid]['image']))
-                    eg_l.append(image)
-                    id_l.append(rid)
-
-                for i in range(3):
-                    bg_img = bg_p
-                    fg_img = eg_l[i]
-                    img = Functions.trans_paste(fg_img, bg_img, 1.0, (i*512,0))
-
-                img.save('tmp_images/eggs.png')
-                photo = open(f"tmp_images/eggs.png", 'rb')
-
-                return photo, id_l
-
-            if user.language_code == 'ru':
-                text = '🥚 | Выберите яйцо с динозавром!'
-            else:
-                text = '🥚 | Choose a dinosaur egg!'
-
-            if user.language_code == 'ru':
-                lg = "ru"
-            else:
-                lg = 'en'
-
-            users.insert_one({'userid': user.id,
-                              'last_m': int(time.time()),
-                              'dead_dinos': 0,
-                              'dinos': {}, 'eggs': [],
-                              'notifications': {},
-                              'settings': {'notifications': True,
-                                           'dino_id': '1',
-                                           'last_markup': 1},
-                              'language_code': lg,
-                              'inventory': [],
-                              'coins': 0, 'lvl': [1, 0],
-                              'user_dungeon': { "equipment": {
-                                                'backpack': None}, 'statistics': []
-                                              },
-                              'activ_items': { '1': { 'game': None, 'hunt': None,
-                                                     'journey': None, 'unv': None }
-                                             },
-                              'friends': { 'friends_list': [],
-                                           'requests': []
-                                         }
-                            })
-
-            markup_inline = types.InlineKeyboardMarkup()
-            item_1 = types.InlineKeyboardButton( text = '🥚 1', callback_data = 'egg_answer_1')
-            item_2 = types.InlineKeyboardButton( text = '🥚 2', callback_data = 'egg_answer_2')
-            item_3 = types.InlineKeyboardButton( text = '🥚 3', callback_data = 'egg_answer_3')
-            markup_inline.add(item_1, item_2, item_3)
-
-            photo, id_l = photo()
-            bot.send_photo(message.chat.id, photo, text, reply_markup = markup_inline)
-            users.update_one( {"userid": user.id}, {"$set": {'eggs': id_l}} )
-
-    def checking_the_user_in_the_channel(bot, bd_user, call, user):
-
-        if bot.get_chat_member(-1001673242031, user.id).status != 'left':
-
-            if bd_user['language_code'] == 'ru':
-                text = f'📜 | Уважаемый пользователь!\n\n• Для получения новостей и важных уведомлений по поводу бота, мы просим вас подписаться на телеграм канал бота!\n\n🟢 | Спасибо за понимание, приятного использования бота!\n\n🍕 | Обсудить или спросить что-то, вы всегда можете в нашей оф. группе > https://t.me/+pq9_21HXXYY4ZGQy'
-            else:
-                text = f"📜 | Dear user!\n\n• To receive news and important notifications about the bot, we ask you to subscribe to the bot's telegram channel!\n\n🟢 | Thank you for understanding, enjoy using the bot!\n\n🍕 | To discuss or ask something, you can always in our of. group > https://t.me/+pq9_21HXXYY4ZGQy"
-
-
-            bot.edit_message_text(text, call.message.chat.id, call.message.message_id)
 
     def egg_answer(bot, bd_user, call, user):
 
@@ -130,43 +37,12 @@ class CallData:
 
             if bd_user['language_code'] == 'ru':
                 text = f'🥚 | Выберите яйцо с динозавром!\n🦖 | Вы выбрали яйцо 🥚{egg_n}!'
-                text2 = f'Поздравляем, у вас появился свой первый динозавр!\nВ данный момент яйцо инкубируется, а через 10 минут из него вылупится динозаврик!\nЧтобы посмотреть актуальную информацию о яйце, нажмите кнопку *🦖 Динозавр*!'
-                text2 += "\n\n*Новичок!*\n\nДавай немного расскажу тебе об этом мире и как устроен бот!\n"
+
+                text2 = f'🧸 | Поздравляем, у вас появился свой первый динозавр!\n\n🎇 | В данный момент яйцо инкубируется, а через 10 минут из него вылупится динозаврик!\n\n🎮 | Чтобы посмотреть актуальную информацию о яйце, нажмите кнопку `🦖 Динозавр`!\n\n🧨 | Пока ждёте, изучите интерфейс, прочитайте FAQ, настройте бота под себя!'
             else:
                 text = f'🥚 | Choose a dinosaur egg!\n🦖 | You have chosen an egg 🥚{egg_n}!'
-                text2 = f'Congratulations, you have your first dinosaur!\n At the moment the egg is incubating, and in 10 minutes a dinosaur will hatch out of it!To view up-to-date information about the egg, click *🦖 Dinosaur*!'
-                text2 += '\n\n**Newbie!*\n\nlet me tell you a little about this world and how the bot works!\n'
 
-            if bd_user['language_code'] == 'ru':
-                text2 += "*┌* *Редкости 🎈*\n\n"
-                text2 += "*├* События и динозавры делятся на редкости.\nЧем больше редкость, тем слаще награда.\n\n"
-                text2 += "*├*  1. Обычная - 50%\n*├*  2. Необычная - 25%\n*├*  3. Редкая - 15%\n*├*  4. Мистическая - 9%\n*└*  5. Легендарная - 1%\n\n"
-                text2 += "*┌* *Взаимодейтвия 🕹*\n\n"
-                text2 += "*├* Для взаимодействия с динозарвом передите в `🕹 Действия`.\n\n"
-                text2 += "*├*  1. Для того что бы покормить динозавра, вам требуется добыть пищу, нажмите на `🕹 Действия` > `🍕 Сбор пищи` и следуйте инструкциям.\n\n"
-                text2 += "*├*  2. Для того чтобы покормить динозавра нажмите на `🕹 Действия` > `🍣 Покормить` и выберите подходящую пищу.\n\n"
-                text2 += "*├*  3. Для повышения настроения динозавра треубется времени от времени развлекать динозавра. Перейдите `🕹 Действия` > `🎮 Развлечения` и следуйте указаниям.\n\n"
-                text2 += "*├*  4. Чтобы возобновить силы динозавра, отправляйте его спать, `🕹 Действия` > `🌙 Уложить спать`\n\n"
-                text2 += "*└*  5. Для повышения настроения, требуется держать потребность в еде, игры, сна в норме.\n\n"
-                text2 += "*┌* *Профиль 🎮*\n"
-                text2 += "*└*  Чтобы посмотреть инвентарь или узнать свою статистику, перейдите в `👁‍🗨 Профиль`\n\n"
-                text2 += "*┌* *Настройки 🔧*\n\n"
-                text2 += "*└*  В настройках вы можете переименовать динозавра, отключить уведомления или переключить язык.\n\n"
-            else:
-                text2 += "*┌* *Rarities 🎈*\n\n"
-                text2 += "*├* Events and dinosaurs are divided into rarities.The greater the rarity, the sweeter the reward.\n\n"
-                text2 += "*├* 1. Normal - 50%\n*├* 2. Unusual - 25%\n*├* 3. Rare - 15%\n*├* 4. Mystical - 9%\n*└* 5. Legendary - 1%\n\n"
-                text2 += "*┌* *Interaction 🕹*\n\n"
-                text2 += "*├* To interact with dinozarv, pass in `🕹 Actions`.\n\n"
-                text2 += "*├* 1. In order to feed the dinosaur, you need to get food, click on `🕹 Actions` > `🍕 Food Collection` and follow the instructions.\n\n"
-                text2 += "*├*  2. To feed the dinosaur, click on `🕹 Actions` > `🍣 Feed` and choose the appropriate food.\n\n"
-                text2 += "*├* 3. To improve the mood of the dinosaur, it is necessary to entertain the dinosaur from time to time. Go to `🕹 Actions` > `🎮 Entertainment` and follow the instructions.\n\n"
-                text2 += "*├* 4. To renew the dinosaur's powers, send it to sleep, `🕹 Action` > `🌙 Put to bed`\n\n"
-                text2 += "*└* 5. To improve mood, it is required to keep the need for iodine, games, sleep normal.\n\n"
-                text2 += "*┌* *Profile 🎮*\n"
-                text2 += "*└* To view inventory or find out your statistics, go to `👁 Profile`\n\n"
-                text2 += "*┌* *Settings 🔧*\n\n"
-                text2 += "*└*  In the settings, you can rename the dinosaur, disable notifications, or switch the language.\n\n"
+                text2 = f'🧸 | Congratulations, you have your first dinosaur!\n\n🎇 | At the moment, the egg is incubating, and in 10 minutes a dinosaur will hatch out of it!\n\n🎮 | To view up-to-date information about the egg, click the `🦖 Dinosaur` button!\n\n🧨 | While you are waiting, study the interface, read the FAQ, configure the bot for yourself!'
 
             bot.edit_message_caption(text, call.message.chat.id, call.message.message_id)
             bot.send_message(call.message.chat.id, text2, parse_mode = 'Markdown', reply_markup = Functions.markup(bot, 1, user))
@@ -189,8 +65,8 @@ class CallData:
             x2 = random.randint(80,120)
             img = Functions.trans_paste(dino_image, bg_p, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
 
-            img.save('tmp_images/journey.png')
-            profile = open(f"tmp_images/journey.png", 'rb')
+            img.save(f'{config.TEMP_DIRECTION}/journey.png')
+            profile = open(f"{config.TEMP_DIRECTION}/journey.png", 'rb')
 
             return profile
 
@@ -252,8 +128,8 @@ class CallData:
             x2 = random.randint(20,340)
             img = Functions.trans_paste(dino_image, bg_p, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy ))
 
-            img.save('tmp_images/game.png')
-            profile = open(f"tmp_images/game.png", 'rb')
+            img.save(f'{config.TEMP_DIRECTION}/game.png')
+            profile = open(f"{config.TEMP_DIRECTION}/game.png", 'rb')
 
             return profile
 
