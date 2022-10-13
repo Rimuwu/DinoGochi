@@ -4,39 +4,76 @@ import os
 import random
 import sys
 import time
+import logging
 
 import pymongo
 import telebot
-from PIL import (Image, ImageDraw, ImageFilter, ImageFont)
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from telebot import types
 
 sys.path.append("..")
 import config
 
-
-client = pymongo.MongoClient(config.CLUSTER_TOKEN)
+client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
 users, market, referal_system, dungeons = client.bot.users, client.bot.market, client.bot.referal_system, client.bot.dungeons
 
 
-with open('data/items.json', encoding='utf-8') as f: items_f = json.load(f)
+with open('json/items.json', encoding='utf-8') as f: 
+    items_f = json.load(f)
 
-with open('data/dino_data.json', encoding='utf-8') as f: json_f = json.load(f)
+with open('json/dino_data.json', encoding='utf-8') as f: 
+    json_f = json.load(f)
 
-with open('data/mobs.json', encoding='utf-8') as f: mobs_f = json.load(f)
+with open('json/mobs.json', encoding='utf-8') as f: 
+    mobs_f = json.load(f)
 
-with open('data/floors_dungeon.json', encoding='utf-8') as f: floors_f = json.load(f)
+with open('json/floors_dungeon.json', encoding='utf-8') as f: 
+    floors_f = json.load(f)
 
-with open('data/quests_data.json', encoding='utf-8') as f: quests_f = json.load(f)
-
+with open('json/quests_data.json', encoding='utf-8') as f: 
+    quests_f = json.load(f)
 
 checks_data = {'memory': [0, time.time()], 'incub': [0, time.time(), 0], 'notif': [[], []], 'main': [[], [], []], 'main_hunt': [ [], [], [] ], 'main_game': [ [], [], [] ], 'main_sleep': [ [], [], [] ], 'main_pass': [ [], [], [] ], 'main_journey': [ [], [], [] ], 'col': 0}
-
 reyt_ = [[], [], {}]
-
 users_timeout = {}
 callback_timeout = {}
 
+languages = {}
+
 class Functions:
+
+    def insert_user(user):
+        global languages
+
+        if user.language_code in languages.keys():
+            lg = user.language_code
+        else:
+            lg = 'en'
+
+        users.insert_one({
+
+            'userid': user.id,
+            'last_m': int(time.time()),
+            'create_acc': int(time.time()),
+            'dead_dinos': 0,
+            'dinos': {}, 'eggs': [],
+            'notifications': {},
+            'settings': {'notifications': True,
+                         'dino_id': '1',
+                         'last_markup': 1},
+            'language_code': lg,
+            'inventory': [],
+            'coins': 0, 'lvl': [1, 0],
+            'user_dungeon': { "equipment": { 'backpack': None}, 
+                              'statistics': []
+                            },
+            'activ_items': { '1': { 'game': None, 'hunt': None,
+                                    'journey': None, 'unv': None }
+                            },
+            'friends': { 'friends_list': [],
+                        'requests': []
+                        }
+                            })
 
     @staticmethod
     def trans_paste(fg_img,bg_img,alpha=10,box=(0,0)):
@@ -2790,8 +2827,8 @@ class Functions:
             idraw.text((210, 270), dino_quality[0], font = line1)
             idraw.text((385, 270), dino_quality[1], font = line1, fill = fill)
 
-            img.save(f'tmp_images/profile {user.id}.png')
-            profile = open(f'tmp_images/profile {user.id}.png', 'rb')
+            img.save(f'{config.TEMP_DIRECTION}/profile {user.id}.png')
+            profile = open(f'{config.TEMP_DIRECTION}/profile {user.id}.png', 'rb')
 
             return profile, time_end
 
@@ -2836,8 +2873,8 @@ class Functions:
             idraw.text((750, 190), str(bd_user['dinos'][dino_user_id]['stats']['mood']), font = line1)
             idraw.text((750, 270), str(bd_user['dinos'][dino_user_id]['stats']['unv']), font = line1)
 
-            img.save(f'tmp_images/profile {user.id}.png')
-            profile = open(f'tmp_images/profile {user.id}.png', 'rb')
+            img.save(f'{config.TEMP_DIRECTION}/profile {user.id}.png')
+            profile = open(f'{config.TEMP_DIRECTION}/profile {user.id}.png', 'rb')
 
             return profile
 
@@ -3312,13 +3349,58 @@ class Functions:
 
         return last_mrk
 
-    @staticmethod
     def clean_tmp():
 
-        for file in glob.glob("tmp_images/*"):
+        for file in glob.glob(f"{config.TEMP_DIRECTION}/*"):
             os.remove(file)
-            print("Deleted " + str(file))
+            print(f"Система: {str(file)} удалён.")
 
+    def load_languages():
+        global languages
+
+        for filename in os.listdir("localization"):
+            with open(f'localization/{filename}', encoding='utf-8') as f: 
+                languages_f = json.load(f)
+
+            for l_key in languages_f.keys():
+                languages[l_key] = languages_f[l_key]
+        
+        print(f"Система: Загружено {len(languages.keys())} файла(ов) локализации.")
+        logging.info(f"Загружено {len(languages.keys())} файла(ов) локализации.")
+    
+    def create_logfile():
+
+        logging.basicConfig(
+            level = logging.INFO, 
+            filename = f"{config.LOGS_DERECTION}/{time.strftime('%Y %m-%d %H.%M.%S')}.log",
+            filemode = "w", encoding='utf-8',
+            format = "%(asctime)s %(levelname)s %(message)s" 
+            )
+    
+    def get_text(l_key:str, text_key:str, dp_text_key:str = None):
+        global languages
+
+        if l_key not in languages.keys():
+            l_key = 'en'
+        
+        if text_key not in languages[ l_key ].keys():
+            text_key = "no_text_key"
+        
+        if dp_text_key == None:
+            return  languages[ l_key ][ text_key ]
+        
+        else:
+
+            if type(languages[ l_key ][ text_key ]) == dict:
+
+                if dp_text_key not in languages[ l_key ][ text_key ].keys():
+                    return  languages[ l_key ][ "no_dp_text_key" ]
+                
+                else:
+                    return  languages[ l_key ][ text_key ][ dp_text_key ]
+
+            else:
+                return  languages[ l_key ][ text_key ]
 
 class Dungeon:
 
@@ -4824,7 +4906,7 @@ class Dungeon:
             alpha_img = Functions.trans_paste(bar, alpha_img, 1.0, (510, 140) )
 
         image = alpha_img = Functions.trans_paste(alpha_img, bg_p, 1.0 )
-        image.save(f'tmp_images/battle {dungeonid}.png')
+        image.save(f'{config.TEMP_DIRECTION}/battle {dungeonid}.png')
         return 'generation - ok'
 
     def battle_user_move(bot, dungeonid, userid, bd_user, call = None):
@@ -5585,7 +5667,7 @@ class Dungeon:
                     if image_update == True:
                         ok = Dungeon.generate_battle_image(image, mob, dungeonid)
 
-                        image = f'tmp_images/battle {dungeonid}.png'
+                        image = f'{config.TEMP_DIRECTION}/battle {dungeonid}.png'
 
                 if dung['floor'][str(room_n)]['next_room'] == True:
                     inline_type = 'battle'
