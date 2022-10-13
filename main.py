@@ -1,3 +1,4 @@
+import logging
 import pprint
 import threading
 import time
@@ -73,45 +74,11 @@ class In_Dungeon(telebot.custom_filters.AdvancedCustomFilter):
 
                         if dino_st == 'dungeon':
 
-                            if bd_user['language_code'] == 'ru':
-                                text = '❌ Во время нахождения в подземелье, используйте интерфейс подземелья!'
-                            else:
-                                text = '❌ While in the dungeon, use the dungeon interface!'
+                            text = Functions.get_text(user.language_code, "no_use_interface")
                             bot.reply_to(message, text)
-
                             return False
 
         return True
-
-class In_channel(telebot.custom_filters.AdvancedCustomFilter):
-    key = 'in_channel'
-
-    @staticmethod
-    def check(message, text):
-        user = message.from_user
-        bd_user = users.find_one({"userid": user.id})
-
-        r = bot.get_chat_member(-1001673242031, user.id)
-        if bd_user != None and r.status == 'left':
-
-            if bd_user['language_code'] == 'ru':
-                text = f'📜 | Уважаемый пользователь!\n\n*•* Для получения новостей и важных уведомлений по поводу бота, мы просим вас подписаться на телеграм канал бота!\n\n🔴 | Нажмите на кнопку *"Подписаться"* для перехода в канал, а после на кнопку *"Проверить"*, для продолжения работы!'
-                b1 = "🦖 | Подписаться"
-                b2 = "🔄 | Проверить"
-            else:
-                text = f"📜 | Dear user!\n\n*•* To receive news and important notifications about the bot, we ask you to subscribe to the bot's telegram channel!\n\n🔴 | Click on the *'Subscribe'* button to go to the channel, and then on the *'Check'*, to continue working!"
-                b1 = "🦖 | Subscribe"
-                b2 = "🔄 | Check"
-
-            markup_inline = types.InlineKeyboardMarkup()
-            markup_inline.add( types.InlineKeyboardButton(text= b1, url="https://t.me/DinoGochi"))
-            markup_inline.add( types.InlineKeyboardButton(text= b2, callback_data = 'checking_the_user_in_the_channel') )
-
-            bot.reply_to(message, text, reply_markup = markup_inline, parse_mode="Markdown")
-            return False
-
-        else:
-            return True
 
 def check(): #проверка каждые 10 секунд
 
@@ -141,6 +108,7 @@ def check(): #проверка каждые 10 секунд
             if sl_time < 0:
                 sl_time = 0
                 print(f'WARNING: sleep time: {sl_time}, time sleep skip to {sl_time}')
+                logging.warning(f'sleep time: {sl_time}, time sleep skip to {sl_time}')
 
             for members in chunks_users:
 
@@ -153,6 +121,7 @@ def check(): #проверка каждые 10 секунд
 
         else:
             print(f'Использование памяти: {int(memory_usage()[0])}')
+            logging.warning(f'Использование памяти: {int(memory_usage()[0])}')
 
         time.sleep(sl_time)
 
@@ -181,6 +150,7 @@ def check_notif(): #проверка каждые 5 секунд
 
         else:
             print(f'Использование памяти: {int(memory_usage()[0])}')
+            logging.warning(f'Использование памяти: {int(memory_usage()[0])}')
 
         time.sleep(5)
 
@@ -206,6 +176,7 @@ def min10_check(): #проверка каждые 10 мин
 
         else:
             print(f'Использование памяти: {int(memory_usage()[0])}')
+            logging.warning(f'Использование памяти: {int(memory_usage()[0])}')
 
         time.sleep(600)
 
@@ -225,6 +196,7 @@ def min1_check(): #проверка каждую минуту
 
         else:
             print(f'Использование памяти: {int(memory_usage()[0])}')
+            logging.warning(f'Использование памяти: {int(memory_usage()[0])}')
 
 min1_thr = threading.Thread(target = min1_check, daemon=True)
 
@@ -306,10 +278,7 @@ def command(message):
 
     else:
 
-        if user.language_code == 'ru':
-            text = 'У вас нет зарегистрированного аккаунта в боте, пожалуйста перейдите в бота и зарегистрируйтесь для получения доступа к данной команде.'
-        else:
-            text = 'You do not have a registered account in the bot, please go to the bot and register to get access to this command.'
+        text = Functions.get_text(l_key = user.language_code, text_key = "no_account")
 
         bot.reply_to(message, text, parse_mode = 'Markdown')
 
@@ -349,22 +318,16 @@ def command(message):
 def command(message):
     user = message.from_user
     bd_user = users.find_one({"userid": user.id})
-    if message.chat.type != 'private':
+    if message.chat.type == 'private':
         if bd_user != None:
 
-            if bd_user['language_code'] == 'ru':
-                text = f"❤ | Все желающие могут отправить запрос в друзья <a href='tg://user?id={user.id}'>🌀 {user.first_name}</a>, нажав на кнопку ниже!"
-            else:
-                text = f"❤ | Everyone can send a request to friends <a href='tg://user?id={user.id}'>🌀{user.first_name}</a> by clicking on the button below!"
+            text = Functions.get_text(l_key = user.language_code, text_key = "add_me").format(userid = user.id, username = user.first_name)
 
             bot.reply_to(message, text, parse_mode = 'HTML', reply_markup = Functions.inline_markup(bot, 'send_request', user.id, ['Отправить запрос', 'Send a request']) )
 
         else:
 
-            if user.language_code == 'ru':
-                text = 'У вас нет зарегистрированного аккаунта в боте, пожалуйста перейдите в бота и зарегистрируйтесь для получения доступа к данной команде.'
-            else:
-                text = 'You do not have a registered account in the bot, please go to the bot and register to get access to this command.'
+            text = Functions.get_text(l_key = user.language_code, text_key = "no_account")
 
             bot.reply_to(message, text, parse_mode = 'Markdown')
 
@@ -373,16 +336,15 @@ def on_start(message):
     user = message.from_user
     if message.chat.type == 'private':
         if users.find_one({"userid": user.id}) == None:
-            if user.language_code == 'ru':
-                text = f"🎋 | Хей <b>{user.first_name}</b>, рад приветствовать тебя!\n"+ f"<b>•</b> Я маленький игровой бот по типу тамагочи, только с динозаврами!🦖\n\n"+f"<b>🕹 | Что такое тамагочи?</b>\n"+f'<b>•</b> Тамагочи - игра с виртуальным питомцем, которого надо кормить, ухаживать за ним, играть и тд.🥚\n'+f"<b>•</b> Соревнуйтесь в рейтинге и станьте лучшим!\n\n"+f"<b>🎮 | Как начать играть?</b>\n"+f'<b>•</b> Нажмите кномку <b>🍡 Начать играть</b>!\n\n'+f'<b>❤ | Ждём в игре!</b>\n'
-            else:
-                text = f"🎋 | Hey <b>{user.first_name}</b>, I am glad to welcome you!\n" +f"<b>•</b> I'm a small tamagotchi-type game bot, only with dinosaurs!🦖\n\n"+f"<b>🕹 | What is tamagotchi?</b>\n"+ f'<b>•</b> Tamagotchi is a game with a virtual pet that needs to be fed, cared for, played, and so on.🥚\n'+ f"<b>•</b> Compete in the ranking and become the best!\n\n"+ f"<b>🎮 | How to start playing?</b>\n" + f'<b>•</b> Press the button <b>🍡Start playing</b>!\n\n' + f'<b>❤ | Waiting in the game!</b>\n' +f'<b>❗ | In some places, the bot may not be translated!</b>\n'
+
+            text = Functions.get_text(l_key = user.language_code, text_key = "start_menu").format(username = user.first_name)
 
             bot.reply_to(message, text, reply_markup = Functions.markup(bot, user = user), parse_mode = 'html')
+
         else:
             bot.reply_to(message, '👋', reply_markup = Functions.markup(bot, user = user), parse_mode = 'html')
 
-@bot.message_handler( content_types = ['text'], spam_check = True, in_channel = True, in_dungeon = True)
+@bot.message_handler( content_types = ['text'], spam_check = True, in_dungeon = True)
 def on_message(message):
     user = message.from_user
 
@@ -576,15 +538,18 @@ def on_message(message):
 
         if message.text in ['🎭 Навыки', '🎭 Skills']:
 
-            bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
+            text = Functions.get_text(user.language_code, "in_development")
+            bot.send_message(user.id, text)
 
         if message.text in ['🦖 БИО', '🦖 BIO']:
 
-            bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
+            text = Functions.get_text(user.language_code, "in_development")
+            bot.send_message(user.id, text)
 
         if message.text in [ '👁‍🗨 Динозавры в таверне', '👁‍🗨 Dinosaurs in the Tavern']:
 
-            bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
+            text = Functions.get_text(user.language_code, "in_development")
+            bot.send_message(user.id, text)
 
         if message.text in [ '♻ Change Dinosaur', '♻ Изменение Динозавра']:
 
@@ -592,11 +557,13 @@ def on_message(message):
 
         if message.text in [ '🥏 Дрессировка', '🥏 Training']:
 
-            bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
+            text = Functions.get_text(user.language_code, "in_development")
+            bot.send_message(user.id, text)
 
         if message.text in [ "💡 Исследования", "💡 Research"]:
 
-            bot.send_message(user.id, 'Данная функция находится в разработке, следите за новостями, дабы узнать когда команда заработает!\n\nThis feature is under development, follow the news in order to find out when the team will work!')
+            text = Functions.get_text(user.language_code, "in_development")
+            bot.send_message(user.id, text)
 
         if message.text in [ "🗻 Подземелья", "🗻 Dungeons"]:
 
@@ -631,14 +598,6 @@ def on_message(message):
 def answer(call):
     user = call.from_user
     bd_user = users.find_one({"userid": user.id})
-
-    if call.data == 'start':
-
-        CallData.start(bot, bd_user, call, user)
-
-    if call.data == 'checking_the_user_in_the_channel':
-
-        CallData.checking_the_user_in_the_channel(bot, bd_user, call, user)
 
     if call.data in ['egg_answer_1', 'egg_answer_2', 'egg_answer_3']:
 
@@ -955,24 +914,50 @@ def answer(call):
 
 def start_all(bot):
 
-    if bot.get_me().first_name == config.BOT_NAME or False:
+    try:
+        Functions.create_logfile()
+    except Exception as e:
+        print('Система: Файл логирования не был создан >', e)
+        logging.critical(f'Файл логирования не был создан > {e}')
+
+    if bot.get_me().first_name == config.BOT_NAME or True:
         main_checks.start() # активация всех проверок и игрового процесса
         thr_notif.start() # активация уведомлений
         min10_thr.start() # десяти-минутный чек
         min1_thr.start() # 1-мин чек
 
-    bot.add_custom_filter(SpamStop())
-    bot.add_custom_filter(Test_bot())
-    bot.add_custom_filter(In_channel())
-    bot.add_custom_filter(WC())
-    bot.add_custom_filter(In_Dungeon())
+        print('Система: Жизненный процессы запущены')
+        logging.info('Жизненный процессы запущены')
+
+    else:
+        print('Система: Жизненные процессы не запущены')
+        logging.warning('Жизненные процессы не запущены')
+
+    try:
+        bot.add_custom_filter(SpamStop())
+        bot.add_custom_filter(Test_bot())
+        bot.add_custom_filter(WC())
+        bot.add_custom_filter(In_Dungeon())
+    except Exception as e:
+        print('Система: Фильтры не были определены >', e)
+        logging.error(f'Фильтры не были определены > {e}')
 
     try:
         Functions.clean_tmp()
-    except:
-        print('Временные изображения не были очищены.')
+    except Exception as e:
+        print('Система: Временные изображения не были очищены >', e)
+        logging.warning(f'Временные изображения не были очищены > {e}')
 
-    print(f'Бот {bot.get_me().first_name} запущен!')
+    try:
+        Functions.load_languages()
+    except Exception as e:
+        print('Система: Локализация не была загружена >', e)
+        logging.warning(f'Локализация не была загружена > {e}')
+
+    print(f'Система: Бот {bot.get_me().first_name} запущен!')
+    logging.info(f'Бот {bot.get_me().first_name} запущен!')
+
     bot.infinity_polling(skip_pending = False)
 
-start_all(bot)
+if __name__ == '__main__':
+    start_all(bot)
