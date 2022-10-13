@@ -86,7 +86,50 @@
                                     "healing": [],
                                     "other": []
                                   }
+                      },
+
+            "masked_archer": {
+                       "name": { "ru": "🏹 Лучник в маске", "en": "🏹 Masked Archer" },
+                       "hp": { "min": 10, "max": 25, "type": "random" },
+
+                       "damage-type": "far",
+                       "ammunition": { "min": 10, "max": 20, "type": "random" },
+
+                       "damage": { "min": 3, "max": 7, "type": "random" },
+                       "intelligence": { "min": 0, "max": 2, "type": "random" },
+                       "image": "images/dungeon/mobs/masked_archer.png",
+                       "lvls": {"min": 11, "max": 100},
+                       "experience": { "min": 20, "max": 50, "type": "random" },
+                       "loot": [
+                               ],
+                       "coins": { "min": 10, "max": 30, "type": "random" },
+                       "actions": { "attacks": [],
+                                    "healing": [],
+                                    "other": []
+                                  }
+                      },
+
+            "rat": {
+                       "name": { "ru": "🐀 Крыса", "en": "🐀 Крыса" },
+                       "hp": { "min": 2, "max": 10, "type": "random" },
+
+                       "damage-type": "near",
+                       "endurance": { "min": 15, "max": 25, "type": "random" },
+
+                       "damage": { "min": 1, "max": 3, "type": "random" },
+                       "intelligence": { "act": 1, "type": "static" },
+                       "image": "images/dungeon/mobs/rat.png",
+                       "lvls": {"min": 11, "max": 100},
+                       "experience": { "min": 20, "max": 50, "type": "random" },
+                       "loot": [
+                               ],
+                       "coins": { "min": 10, "max": 40, "type": "random" },
+                       "actions": { "attacks": [],
+                                    "healing": [],
+                                    "other": []
+                                  }
                       }
+
          },
 
  "boss": {
