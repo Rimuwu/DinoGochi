@@ -14,7 +14,7 @@ from mods.classes import Dungeon, Functions
 sys.path.append("..")
 import config
 
-client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
+client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users, referal_system, market, dungeons = client.bot.users, client.bot.referal_system, client.bot.market, client.bot.dungeons
 
 with open('json/items.json', encoding='utf-8') as f: items_f = json.load(f)
@@ -34,7 +34,7 @@ class Commands:
             b1, b2 = Functions.get_text(user.language_code, "request_subscribe", "button")
 
             markup_inline = types.InlineKeyboardMarkup()
-            
+
             markup_inline.add( types.InlineKeyboardButton(text = b1, url = "https://t.me/DinoGochi"))
             markup_inline.add( types.InlineKeyboardButton(text = b2, url = "https://t.me/+pq9_21HXXYY4ZGQy"))
 

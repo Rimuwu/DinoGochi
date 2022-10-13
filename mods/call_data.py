@@ -14,7 +14,7 @@ from mods.classes import Dungeon, Functions
 sys.path.append("..")
 import config
 
-client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
+client = pymongo.MongoClient(config.CLUSTER_TOKEN)
 users, market, dungeons = client.bot.users, client.bot.market, client.bot.dungeons
 
 with open('json/items.json', encoding='utf-8') as f:
