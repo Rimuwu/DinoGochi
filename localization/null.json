@@ -1,0 +1,26 @@
+{
+    "null": {
+
+        "no_text_key": "",
+
+        "no_dp_text_key": "",
+
+        "no_use_interface": "",
+
+        "request_subscribe": {
+
+            "text": "",
+
+            "buttons": ["", ""]
+        },
+
+        "no_account": "",
+
+        "add_me": "",
+
+        "start_menu": "",
+
+        "in_development": ""
+
+    }
+}

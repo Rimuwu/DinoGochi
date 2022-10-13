@@ -1,0 +1,27 @@
+{
+    "en": {
+
+        "no_text_key": "❌ The text corresponding to this key is not found, contact the developer!",
+
+        "no_dp_text_key": "❌ There is no additional key!",
+
+        "no_use_interface": "❌ While in the dungeon, use the dungeon interface!",
+
+        "request_subscribe": {
+
+            "text": "📜 | Dear user!\n\n🎭 | The bot has an official telegram channel and a group, go to the group to find a topic for conversation or ask questions, as well as subscribe to the channel to receive interesting bonuses and news!\n\n❤ | This is not necessary, but we will be very grateful to you!",
+
+            "button": ["🦖 | Subscribe", "🔮 | Enter"]
+        },
+
+        "no_account": "You do not have a registered account in the bot, please go to the bot and register to get access to this command.",
+
+        "add_me": "❤ | Everyone can send a request to friends <a href='tg://user?id={userid}'>🌀{username}</a> by clicking on the button below!",
+
+        "start_menu": "🎋 | Hey <b>{username}</b>, glad to welcome you!A small tamagotchi-type game bot, only with dinosaurs!🦖\n\n<b>🥚 | What is a tamagotchi?</b>\nPtamagochi is a game with a virtual pet that needs to be fed, cared for, played, and so on.\n\n<b>🗻 | What kind of bot?</b>\nIn this bot you have to take care of your pet, travel, conquer the dungeon and completely immerse yourself in this RPG world!\n\n<b>🎮 | How to start playing?</b>\nPress the button <b>🍡 Start playing</b>!\n\n<b>❤ | Waiting in the game!</b>",
+
+        "in_development": "This feature is under development, follow the news in order to find out when the team will work!"
+
+    }
+
+}
