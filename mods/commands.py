@@ -6,6 +6,7 @@ import time
 import pymongo
 import telebot
 from fuzzywuzzy import fuzz
+from PIL import Image
 from telebot import types
 
 from mods.classes import Dungeon, Functions
@@ -13,15 +14,14 @@ from mods.classes import Dungeon, Functions
 sys.path.append("..")
 import config
 
-
-client = pymongo.MongoClient(config.CLUSTER_TOKEN)
+client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
 users, referal_system, market, dungeons = client.bot.users, client.bot.referal_system, client.bot.market, client.bot.dungeons
 
-with open('data/items.json', encoding='utf-8') as f: items_f = json.load(f)
+with open('json/items.json', encoding='utf-8') as f: items_f = json.load(f)
 
-with open('data/dino_data.json', encoding='utf-8') as f: json_f = json.load(f)
+with open('json/dino_data.json', encoding='utf-8') as f: json_f = json.load(f)
 
-with open('data/mobs.json', encoding='utf-8') as f: mobs_f = json.load(f)
+with open('json/mobs.json', encoding='utf-8') as f: mobs_f = json.load(f)
 
 class Commands:
 
@@ -30,42 +30,55 @@ class Commands:
 
         if bd_user == None:
 
-            try:
-                r = bot.get_chat_member(-1001673242031, user.id)
-            except:
-                return
+            text = Functions.get_text(l_key = user.language_code, text_key = "request_subscribe", dp_text_key = "text")
+            b1, b2 = Functions.get_text(user.language_code, "request_subscribe", "button")
 
-            if r.status == 'left':
+            markup_inline = types.InlineKeyboardMarkup()
+            
+            markup_inline.add( types.InlineKeyboardButton(text = b1, url = "https://t.me/DinoGochi"))
+            markup_inline.add( types.InlineKeyboardButton(text = b2, url = "https://t.me/+pq9_21HXXYY4ZGQy"))
 
-                if user.language_code == 'ru':
-                    text = f'📜 | Уважаемый пользователь!\n\n*•* Для получения новостей и важных уведомлений по поводу бота, мы просим вас подписаться на телеграм канал бота!\n\n🔴 | Нажмите на кнопку *"Подписаться"* для перехода в канал, а после на кнопку *"Проверить"*, для продолжения работы!'
-                    b1 = "🦖 | Подписаться"
-                    b2 = "🔄 | Проверить"
-                else:
-                    text = f"📜 | Dear user!\n\n*•* To receive news and important notifications about the bot, we ask you to subscribe to the bot's telegram channel!\n\n🔴 | Click on the *'Subscribe'* button to go to the channel, and then on the *'Check'*, to continue working!"
-                    b1 = "🦖 | Subscribe"
-                    b2 = "🔄 | Check"
+            bot.send_message(message.chat.id, text, parse_mode = 'html', reply_markup = markup_inline)
 
-                markup_inline = types.InlineKeyboardMarkup()
-                markup_inline.add( types.InlineKeyboardButton(text= b1, url="https://t.me/DinoGochi"))
-                markup_inline.add( types.InlineKeyboardButton(text= b2, callback_data = 'start') )
+            def photo():
+                global json_f
+                bg_p = Image.open(f"images/remain/{random.choice(['back', 'back2'])}.png")
+                eg_l = []
+                id_l = []
 
-                bot.reply_to(message, text, reply_markup = markup_inline, parse_mode="Markdown")
+                for i in range(3):
+                    rid = str(random.choice(list(json_f['data']['egg'])))
+                    image = Image.open('images/'+str(json_f['elements'][rid]['image']))
+                    eg_l.append(image)
+                    id_l.append(rid)
 
+                for i in range(3):
+                    bg_img = bg_p
+                    fg_img = eg_l[i]
+                    img = Functions.trans_paste(fg_img, bg_img, 1.0, (i*512,0))
+
+                img.save(f'{config.TEMP_DIRECTION}/eggs.png')
+                photo = open(f"{config.TEMP_DIRECTION}/eggs.png", 'rb')
+
+                return photo, id_l
+
+            if user.language_code == 'ru':
+                text = '🥚 | Выберите яйцо с динозавром!'
             else:
+                text = '🥚 | Choose a dinosaur egg!'
 
-                if user.language_code == 'ru':
-                    text = f'🎍 | Захватывающий мир приключений ждёт, ты готов стать владельцем динозавра и сразиться в рейтинге с другими пользователями?!\n\nЕсли да, то скорее нажимай на кнопку снизу!'
-                    b1 = "🎋 | Начать!"
-                else:
-                    text = f"🎍 | An exciting world of adventures awaits, are you ready to become the owner of a dinosaur and compete in the ranking with other users?!\n\nIf yes, then rather press the button from below!"
-                    b1 = "🎋 | Start!"
+            markup_inline = types.InlineKeyboardMarkup()
+            item_1 = types.InlineKeyboardButton( text = '🥚 1', callback_data = 'egg_answer_1')
+            item_2 = types.InlineKeyboardButton( text = '🥚 2', callback_data = 'egg_answer_2')
+            item_3 = types.InlineKeyboardButton( text = '🥚 3', callback_data = 'egg_answer_3')
+            markup_inline.add(item_1, item_2, item_3)
 
+            photo, id_l = photo()
+            bot.send_photo(message.chat.id, photo, text, reply_markup = markup_inline)
 
-                markup_inline = types.InlineKeyboardMarkup()
-                markup_inline.add( types.InlineKeyboardButton(text= b1, callback_data = 'start') )
+            Functions.insert_user(user)
+            users.update_one( {"userid": user.id}, {"$set": {'eggs': id_l}} )
 
-                bot.reply_to(message, text, reply_markup = markup_inline, parse_mode="Markdown")
 
     @staticmethod
     def project_reb(bot, message, user, bd_user):
