@@ -1,4 +1,3 @@
 __pycache__
-profile.png
-eggs.png
-images\profile.png
+temp/*.png
+logs/*.log
