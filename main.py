@@ -318,11 +318,11 @@ def command(message):
 def command(message):
     user = message.from_user
     bd_user = users.find_one({"userid": user.id})
-    if message.chat.type == 'private':
+    if message.chat.type != 'private':
         if bd_user != None:
 
             text = Functions.get_text(l_key = user.language_code, text_key = "add_me").format(userid = user.id, username = user.first_name)
-
+            
             bot.reply_to(message, text, parse_mode = 'HTML', reply_markup = Functions.inline_markup(bot, 'send_request', user.id, ['Отправить запрос', 'Send a request']) )
 
         else:
@@ -928,7 +928,7 @@ def start_all(bot):
 
         print('Система: Жизненный процессы запущены')
         logging.info('Жизненный процессы запущены')
-
+    
     else:
         print('Система: Жизненные процессы не запущены')
         logging.warning('Жизненные процессы не запущены')
@@ -947,7 +947,7 @@ def start_all(bot):
     except Exception as e:
         print('Система: Временные изображения не были очищены >', e)
         logging.warning(f'Временные изображения не были очищены > {e}')
-
+    
     try:
         Functions.load_languages()
     except Exception as e:
