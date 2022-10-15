@@ -2,9 +2,9 @@ CLUSTER_TOKEN = ('localhost', 27017)
 
 TOKEN = ''
 
-BOT_NAME = 'DinoGochi'
+BOT_NAME = ''
 
-DEVS = [5279769615, 1191252229]
+DEVS = []
 
 TEMP_DIRECTION = 'temp'
 
