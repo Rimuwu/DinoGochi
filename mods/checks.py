@@ -3,16 +3,14 @@ import random
 import sys
 import time
 
-import pymongo
 from memory_profiler import memory_usage
-from telebot import types
 
 from mods.classes import Dungeon, Functions
 
 sys.path.append("..")
 import config
 
-client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
+client = config.CLUSTER_CLIENT
 users, dungeons = client.bot.users, client.bot.dungeons
 
 with open('json/items.json', encoding='utf-8') as f: items_f = json.load(f)
