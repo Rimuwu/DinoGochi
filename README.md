@@ -33,33 +33,40 @@
     # Linux
     pip install -r requirements.txt
 
+Если вы используете **онлайн базу**, то следуйте этим 4-ём пунктам:
+
 - Далее зайдите на https://account.mongodb.com/account/login
-- Зарегестрируйте аккаунт и получите бесплатный кластер m0
-- В кластере создайте базу с названием bot и коллекциями в ней
+- Зарегестрируйте аккаунт и получите бесплатный кластер m0 / m1
+- В файле config.py замените CLUSTER_CLIENT на >
+
+  > CLUSTER_CLIENT = pymongo.MongoClient("mongodb+srv://bot:PASSWORD@cluster0.CLUSTER_TOKEN.mongodb.net/<dbname>?retryWrites=true&w=majority")
+
+- Далее создайте базу с именем **bot** и коллекциями в ней:
+
  > bot:
  > - users
- > - market
- > - referal_system
  > - dungeons
+ > - management
 
-- В коллекцие market создайте документ
-> market:
-> - id: 1
-> - products: Object
+- В коллекцие **management** создайте документ:
 
-- В коллекцие referal_system создайте документ
-> referal_system:
-> - id: 1
-> - codes: Array
+ > - _id: "market"
+ > - products: Object
 
-- В файле config.py введите токены от кластера и бота
+ > - _id: "referal_system"
+ > - codes: Array
 
-> - CLUSTER_TOKEN = "mongodb+srv://bot:PASSWORD@cluster0.CLUSTER_TOKEN.mongodb.net/<dbname>?retryWrites=true&w=majority"
-> - TOKEN = "Токен бота из BotFather"
+- В файле **config.py** добавьте токен и имя бота
+
+> - BOT_TOKEN = "Токен бота из BotFather"
+> - BOT_NAME = 'Имя бота' #Да это важно!
 
 - Запустите файл main.py
 
 ### 📜 | Последнее
 
 Время потраченое с начала разработки 1.0.2 > <a href="https://wakatime.com/badge/github/Rimuwu/DinoGochi"><img src="https://wakatime.com/badge/github/Rimuwu/DinoGochi.svg" alt="wakatime"></a>
+
+- 1.0.4v - 🌭 | Новая еда и различные улучшения.
+- 1.0.3v - 📜 | Квесты.
 - 1.0.2v - 🗻 | Обновление подземелий.
