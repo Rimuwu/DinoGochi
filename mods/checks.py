@@ -4,7 +4,6 @@ import sys
 import time
 
 import pymongo
-import telebot
 from memory_profiler import memory_usage
 from telebot import types
 
@@ -13,7 +12,7 @@ from mods.classes import Dungeon, Functions
 sys.path.append("..")
 import config
 
-client = pymongo.MongoClient(config.CLUSTER_TOKEN)
+client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
 users, dungeons = client.bot.users, client.bot.dungeons
 
 with open('json/items.json', encoding='utf-8') as f: items_f = json.load(f)
@@ -35,11 +34,11 @@ class CheckFunction:
 
                     if dino['activ_status'] != 'freezing':
 
-                        if dino['activ_status'] != 'sleep':
-                            if random.randint(1, 65) == 1: #eat
+                        if dino['activ_status'] == 'sleep':
+                            if random.randint(1, 120) == 10: #eat
                                 dinos_stats['eat'] -= random.randint(1,2)
                         else:
-                            if random.randint(1, 90) == 1: #eat
+                            if random.randint(1, 100) == 10: #eat
                                 dinos_stats['eat'] -= random.randint(1,2)
 
                         if dino['activ_status'] != 'game':
@@ -47,7 +46,7 @@ class CheckFunction:
                                 dinos_stats['game'] -= random.randint(1,2)
 
                         if dino['activ_status'] != 'sleep':
-                            if random.randint(1, 130) == 1: #unv
+                            if random.randint(1, 150) == 1: #unv
                                 dinos_stats['unv'] -= random.randint(1,2)
 
                         if user['dinos'][dino_id]['stats']['game'] < 40 and user['dinos'][dino_id]['stats']['game'] > 10:
@@ -61,15 +60,8 @@ class CheckFunction:
                                     dinos_stats['mood'] -= 3
 
                         if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
-                            if random.randint(1,40) == 1:
-                                dinos_stats['heal'] -= random.randint(1,2)
-
-                        if user['dinos'][dino_id]['stats']['eat'] <= 20:
-                            if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats']['eat'] <= 20:
-                                pass
-                            else:
-                                if random.randint(1,60) == 1:
-                                    dinos_stats['heal'] -= random.randint(0,1)
+                            if random.randint(1,100) == 1:
+                                dinos_stats['heal'] -= random.randint(0,1)
 
                         if user['dinos'][dino_id]['stats']['eat'] > 80:
                             if dino['stats']['mood'] < 100:
@@ -122,6 +114,7 @@ class CheckFunction:
     def user_journey(bot, user):
         dns_l = list(user['dinos'].keys()).copy()
         lvl_ = 0
+        nn = 0
 
         for dino_id in dns_l:
             dino = user['dinos'][dino_id]
@@ -130,9 +123,10 @@ class CheckFunction:
             if dino['status'] == 'dino': #дино
 
                 if dino['activ_status'] == 'journey':
+                    nn = 1
 
                     if random.randint(1, 80) == 1: #unv
-                        dinos_stats['unv'] -= random.randint(1,2)
+                        dinos_stats['unv'] -= random.randint(0,1)
 
                     if random.randint(1, 45) == 1:
                         lvl_ += random.randint(0,20)
@@ -716,9 +710,12 @@ class CheckFunction:
 
                                     else:
                                         users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i] }} )
+        
+        return nn
 
     def user_hunt(bot, user):
         dns_l = list(user['dinos'].keys()).copy()
+        nn = 0
 
         for dino_id in dns_l:
             dino = user['dinos'][dino_id]
@@ -727,13 +724,14 @@ class CheckFunction:
             if dino['status'] == 'dino': #дино
 
                 if dino['activ_status'] == 'hunting':
+                    nn = 1
 
                     if random.randint(1, 45) == 1:
 
                         user['lvl'][1] += random.randint(0,20)
                         users.update_one( {"userid": user['userid']}, {"$set": {'lvl': user['lvl'] }} )
 
-                    if random.randint(1, 65) == 1: #unv
+                    if random.randint(1, 80) == 1: #unv
                         dinos_stats['unv'] -= random.randint(0,1)
 
                     if Functions.acc_check(bot, user, '15', dino_id, False):
@@ -839,9 +837,12 @@ class CheckFunction:
                             for i in dinos_stats.keys():
                                 if dinos_stats[i] != 0:
                                     users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i] }} )
+        
+        return nn
 
     def user_game(bot, user):
         dns_l = list(user['dinos'].keys()).copy()
+        nn = 0
 
         for dino_id in dns_l:
             dino = user['dinos'][dino_id]
@@ -850,8 +851,9 @@ class CheckFunction:
             if dino['status'] == 'dino': #дино
 
                 if dino['activ_status'] == 'game':
+                    nn = 1
 
-                    if random.randint(1, 65) == 1: #unv
+                    if random.randint(1, 80) == 1: #unv
                         dinos_stats['unv'] -= random.randint(0,1)
 
                     if random.randint(1, 45) == 1: #unv
@@ -869,9 +871,12 @@ class CheckFunction:
                             for i in dinos_stats.keys():
                                 if dinos_stats[i] != 0:
                                     users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i] }} )
+        
+        return nn
 
     def user_sleep(bot, user):
         dns_l = list(user['dinos'].keys()).copy()
+        nn = 0
 
         for dino_id in dns_l:
             dino = user['dinos'][dino_id]
@@ -880,6 +885,7 @@ class CheckFunction:
             if dino['status'] == 'dino': #дино
 
                 if dino['activ_status'] == 'sleep':
+                    nn = 1
 
                     if 'sleep_type' not in user['dinos'][dino_id].keys() or user['dinos'][dino_id]['sleep_type'] == 'long':
 
@@ -903,7 +909,7 @@ class CheckFunction:
                     if user['dinos'][dino_id]['stats']['heal'] < 100:
                         if user['dinos'][dino_id]['stats']['eat'] > 50:
                             if random.randint(1,45) == 1:
-                                dinos_stats['heal'] += random.randint(1,2)
+                                dinos_stats['heal'] += random.randint(1,5)
                                 dinos_stats['eat'] -= random.randint(0,1)
 
                     bd_user = users.find_one({"userid": user['userid']})
@@ -912,9 +918,12 @@ class CheckFunction:
                             for i in dinos_stats.keys():
                                 if dinos_stats[i] != 0:
                                     users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i] }} )
+        
+        return nn
 
     def user_pass(user):
         dns_l = list(user['dinos'].keys()).copy()
+        nn = 0
 
         for dino_id in dns_l:
             dino = user['dinos'][dino_id]
@@ -923,6 +932,7 @@ class CheckFunction:
             if dino['status'] == 'dino': #дино
 
                 if dino['activ_status'] == 'pass_active':
+                    nn = 1
 
                     if user['dinos'][dino_id]['stats']['game'] >= 90:
                         if dino['stats']['mood'] < 100:
@@ -947,13 +957,17 @@ class CheckFunction:
                             for i in dinos_stats.keys():
                                 if dinos_stats[i] != 0:
                                     users.update_one( {"userid": user['userid']}, {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i] }} )
+        
+        return nn
 
     def user_incub(bot, user):
         dns_l = list(user['dinos'].keys()).copy()
+        nn = 0
 
         for dino_id in dns_l:
             dino = user['dinos'][dino_id]
             if dino['status'] == 'incubation': #инкубация
+                nn = 1
 
                 if dino['incubation_time'] - int(time.time()) <= 60*5 and dino['incubation_time'] - int(time.time()) > 0: #уведомление за 5 минут
 
@@ -970,6 +984,8 @@ class CheckFunction:
                     else:
                         Functions.random_dino(user, dino_id)
                     Functions.notifications_manager(bot, "incub", user, dino_id)
+        
+        return nn
 
     def user_notif(bot, user):
         dns_l = list(user['dinos'].keys()).copy()
@@ -1076,9 +1092,16 @@ class CheckFunction:
                 if user['dinos'][dino_id]['stats']['heal'] <= 30:
                     if Functions.notifications_manager(bot, "need_heal", user, dino_id = dino_id, met = 'check') == False:
                         Functions.notifications_manager(bot, "need_heal", user, user['dinos'][dino_id]['stats']['heal'], dino_id = dino_id)
+                
+                if user['dinos'][dino_id]['stats']['heal'] <= 10:
+                    if Functions.notifications_manager(bot, "need_heal!", user, dino_id = dino_id, met = 'check') == False:
+                        Functions.notifications_manager(bot, "need_heal!", user, user['dinos'][dino_id]['stats']['heal'], dino_id = dino_id)
 
-                if user['dinos'][dino_id]['stats']['heal'] >= 60:
+                if user['dinos'][dino_id]['stats']['heal'] >= 50:
                     Functions.notifications_manager(bot, 'need_heal', user, dino_id = dino_id, met = 'delete')
+
+                if user['dinos'][dino_id]['stats']['heal'] >= 30:
+                    Functions.notifications_manager(bot, 'need_heal!', user, dino_id = dino_id, met = 'delete')
 
                 if user['dinos'][dino_id]['stats']['mood'] >= 60:
                     Functions.notifications_manager(bot, 'need_mood', user, dino_id = dino_id, met = 'delete')
@@ -1223,10 +1246,9 @@ class Checks:
         members = users.find({ 'dinos': {'$ne': {} } })
 
         for user in members:
-            nn += 1
 
             try:
-                CheckFunction.user_incub(bot, user)
+                nn += CheckFunction.user_incub(bot, user)
             except Exception as err:
                 print(f'Error in user_incub\nError: {err}\nUser id: {user["userid"]}')
 
@@ -1281,10 +1303,10 @@ class Checks:
         t_st = int(time.time())
 
         for user in members:
-            nn += 1
 
             try:
                 CheckFunction.user_notif(bot, user)
+                nn += 1
             except Exception as err:
                 print(f'Error in user_notif\nError: {err}\nUser id: {user["userid"]}')
 
@@ -1293,14 +1315,13 @@ class Checks:
 
     @staticmethod
     def main_pass(bot, members):
-
         nn = 0
         t_st = int(time.time())
+
         for user in members:
-            nn += 1
 
             try:
-                CheckFunction.user_pass(user)
+                nn += CheckFunction.user_pass(user)
             except Exception as err:
                 print(f'Error in user_pass\nError: {err}\nUser id: {user["userid"]}')
 
@@ -1310,14 +1331,13 @@ class Checks:
 
     @staticmethod
     def main_sleep(bot, members):
-
         nn = 0
         t_st = int(time.time())
+
         for user in members:
-            nn += 1
 
             try:
-                CheckFunction.user_sleep(bot, user)
+                nn += CheckFunction.user_sleep(bot, user)
             except Exception as err:
                 print(f'Error in user_sleep\nError: {err}\nUser id: {user["userid"]}')
 
@@ -1327,14 +1347,13 @@ class Checks:
 
     @staticmethod
     def main_game(bot, members):
-
         nn = 0
         t_st = int(time.time())
+
         for user in members:
-            nn += 1
 
             try:
-                CheckFunction.user_game(bot, user)
+                nn += CheckFunction.user_game(bot, user)
             except Exception as err:
                 print(f'Error in user_game\nError: {err}\nUser id: {user["userid"]}')
 
@@ -1344,14 +1363,13 @@ class Checks:
 
     @staticmethod
     def main_hunting(bot, members):
-
         nn = 0
         t_st = int(time.time())
+
         for user in members:
-            nn += 1
 
             try:
-                CheckFunction.user_hunt(bot, user)
+                nn += CheckFunction.user_hunt(bot, user)
             except Exception as err:
                 print(f'Error in user_hunt\nError: {err}\nUser id: {user["userid"]}')
 
@@ -1361,14 +1379,13 @@ class Checks:
 
     @staticmethod
     def main_journey(bot, members):
-
         nn = 0
         t_st = int(time.time())
+
         for user in members:
-            nn += 1
 
             try:
-                CheckFunction.user_journey(bot, user)
+                nn += CheckFunction.user_journey(bot, user)
             except Exception as err:
                 print(f'Error in user_journey\nError: {err}\nUser id: {user["userid"]}')
 
@@ -1378,14 +1395,14 @@ class Checks:
 
     @staticmethod
     def main(bot, members):
-
         nn = 0
         t_st = int(time.time())
+
         for user in members:
-            nn += 1
 
             try:
                 CheckFunction.main(bot, user)
+                nn += 1
             except Exception as err:
                 print(f'Error in main\nError: {err}\nUser id: {user["userid"]}')
 

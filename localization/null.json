@@ -1,6 +1,8 @@
 {
     "null": {
 
+        "language_name": "",
+
         "no_text_key": "",
 
         "no_dp_text_key": "",
@@ -11,7 +13,7 @@
 
             "text": "",
 
-            "buttons": ["", ""]
+            "button": ["", ""]
         },
 
         "no_account": "",
@@ -20,7 +22,18 @@
 
         "start_menu": "",
 
-        "in_development": ""
+        "in_development": "",
+
+        "help_command": "",
+
+        "additem_command": {
+            "user": "",
+            "dev": ""
+        },
+
+        "commands_name": {
+
+        }
 
     }
 }

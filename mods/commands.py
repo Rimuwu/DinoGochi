@@ -14,8 +14,8 @@ from mods.classes import Dungeon, Functions
 sys.path.append("..")
 import config
 
-client = pymongo.MongoClient(config.CLUSTER_TOKEN)
-users, referal_system, market, dungeons = client.bot.users, client.bot.referal_system, client.bot.market, client.bot.dungeons
+client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
+users, management, dungeons = client.bot.users, client.bot.management, client.bot.dungeons
 
 with open('json/items.json', encoding='utf-8') as f: items_f = json.load(f)
 
@@ -34,7 +34,7 @@ class Commands:
             b1, b2 = Functions.get_text(user.language_code, "request_subscribe", "button")
 
             markup_inline = types.InlineKeyboardMarkup()
-
+            
             markup_inline.add( types.InlineKeyboardButton(text = b1, url = "https://t.me/DinoGochi"))
             markup_inline.add( types.InlineKeyboardButton(text = b2, url = "https://t.me/+pq9_21HXXYY4ZGQy"))
 
@@ -125,75 +125,32 @@ class Commands:
 
     @staticmethod
     def faq(bot, message, user, bd_user):
+        markup_inline = types.InlineKeyboardMarkup(row_width = 2)
 
         if bd_user != None:
 
             if bd_user['language_code'] == 'ru':
-                text2  = '*❗ FAQ*\n\n'
-                text2 += "*┌* *Редкости 🎈*\n\n"
-                text2 += "*├* События и динозавры делятся на редкости.\nЧем больше редкость, тем слаще награда.\n\n"
-                text2 += "*├*  1. Обычная - 50%\n*├*  2. Необычная - 25%\n*├*  3. Редкая - 15%\n*├*  4. Мистическая - 9%\n*└*  5. Легендарная - 1%\n\n"
-                text2 += "*┌* *Взаимодейтвия 🕹*\n\n"
-                text2 += "*├* Для взаимодействия с динозарвом передите в `🕹 Действия`.\n\n"
-                text2 += "*├*  1. Для того что бы покормить динозавра, вам требуется добыть пищу, нажмите на `🕹 Действия` > `🍕 Сбор пищи` и следуйте инструкциям.\n\n"
-                text2 += "*├*  2. Для того чтобы покормить динозавра нажмите на `🕹 Действия` > `🍣 Покормить` и выберите подходящую пищу.\n\n"
-                text2 += "*├*  3. Для повышения настроения динозавра требуется времени от времени развлекать динозавра. Перейдите `🕹 Действия` > `🎮 Развлечения` и следуйте указаниям.\n\n"
-                text2 += "*├*  4. Чтобы возобновить силы динозавра, отправляйте его спать, `🕹 Действия` > `🌙 Уложить спать`\n\n"
-                text2 += "*└*  5. Для повышения настроения, требуется держать потребность в еде, игры, сна в норме.\n\n"
-                text2 += "*┌* *Профиль 🎮*\n\n"
-                text2 += "*└*  Чтобы посмотреть инвентарь или узнать свою статистику, перейдите в `👁‍🗨 Профиль`\n\n"
-                text2 += "*┌* *Настройки 🔧*\n\n"
-                text2 += "*└*  В настройках вы можете переименовать динозавра, отключить уведомления или переключить язык.\n\n"
-                text2 += "*┌* *Еда 🍕*\n\n"
-                text2 += "*└*  Какой вид пищи подойдёт вашему динозавру, можно узнать по заднему фону профиля.\n\n"
-                text2 += "*┌* *Рынок 🛒*\n\n"
-                text2 += "*└*  На рынке можно продать или приобрести нужные вам вещи.\n\n"
-                text2 += "*┌* *Аксессуары 🏓*\n\n"
-                text2 += "*└*  Аксессуары открывают дополнительные возможности или ускоряют вид деятельности. Аксессуары можно установить пока динозавр ничего не делает в меню `👁‍🗨 Профиль`\n\n"
-                text2 += "*┌* *Друзья 👥*\n\n"
-                text2 += "*└*  В меню друзей вы можете управлять своими друзьями и реферальной системой. Чем больше друзей, тем болше возможностей получить какие то бонусы. Так же пригласив друга через реферальную систему, вы и ваш друг получат приятные бонусы.\n\n"
-                text2 += "*┌* *Количество динозавров 🦕*\n\n"
-                text2 += "*├*  Каждый 20-ый уровень количество динозавров увеличивается на 1.\n*├*  20ый уровень - 2 динозавра.\n*└*  40ой уровень - 3 динозавра...\n\n"
-                text2 += "*┌* *Дино-таверна ‍🍺*\n\n"
-                text2 += "*└* Загляните в `‍🍺 Дино-таверна`, там вы сможете узнать информацию от посетителей, найти других игроков. А также получить квесты!\n\n"
-                text2 += "*┌* *Квесты 📜*\n\n"
-                text2 += "*└* В таверне вы можете получить квест (просто ожидайте в ней), квесты дают интересные бонусы за самые обычные действия!\n\n"
-                text2 += "*┌* *Подземелья 🗻*\n\n"
-                text2 += "*└* Отправляйтесь в захватывающее приключение вместе со своими друзьями! Приключения, боссы, уникальные предметы!\n\n"
-            else:
-                text2  = '*❗ FAQ*\n\n'
-                text2 += "*┌* *Rarities 🎈*\n\n"
-                text2 += "*├* Events and dinosaurs are divided into rarities.The greater the rarity, the sweeter the reward.\n\n"
-                text2 += "*├* 1. Normal - 50%\n*├* 2. Unusual - 25%\n*├* 3. Rare - 15%\n*├* 4. Mystical - 9%\n*└* 5. Legendary - 1%\n\n"
-                text2 += "*┌* *Interaction 🕹*\n\n"
-                text2 += "*├* To interact with dinozarv, pass in `🕹 Actions`.\n\n"
-                text2 += "*├* 1. In order to feed the dinosaur, you need to get food, click on `🕹 Actions` > `🍕 Food Collection` and follow the instructions.\n\n"
-                text2 += "*├*  2. To feed the dinosaur, click on `🕹 Actions` > `🍣 Feed` and choose the appropriate food.\n\n"
-                text2 += "*├* 3. To improve the mood of the dinosaur, it is necessary to entertain the dinosaur from time to time. Go to `🕹 Actions` > `🎮 Entertainment` and follow the instructions.\n\n"
-                text2 += "*├* 4. To renew the dinosaur's powers, send it to sleep, `🕹 Action` > `🌙 Put to bed`\n\n"
-                text2 += "*└* 5. To improve mood, it is required to keep the need for iodine, games, sleep normal.\n\n"
-                text2 += "*┌* *Profile 🎮*\n\n"
-                text2+= "*└* To view inventory or find out your stats, go to `👁🗨 Profile`\n\n"
-                text2 += "*┌**Settings 🔧*\n\n"
-                text2 += "*└*  In the settings, you can rename the dinosaur, disable notifications, or switch the language.\n\n"
-                text2 += "*┌* *Food 🍕*\n\n"
-                text2 += "*└* What kind of food will suit your dinosaur, you can find out by the background of the profile.\n\n"
-                text2 += "*┌* *Market 🛒*\n\n"
-                text2 += "*└* You can sell or buy the things you need on the market.\n\n"
-                text2 += "*┌* *Accessories 🏓*\n\n"
-                text2 += "*└* Accessories open up additional opportunities or accelerate the type of activity. Accessories can be installed while the dinosaur does nothing in the menu `👁‍ Profile'`\n\n"
-                text2 += "*┌**Friends 👥*\n\n"
-                text2+= "*└* In the friends menu, you can manage your friends and referral system. The more friends there are, the more opportunities there are to get some bonuses. Also, by inviting a friend through the referral system, you and your friend will receive pleasant bonuses.\n\n"
-                text2 += "*┌* *Number of dinosaurs 🦕*\n\n"
-                text2 += "*├* Every 20th level the number of dinosaurs increases by 1.\n*├* 20th level - 2 dinosaurs.\n*└* 40th level - 3 dinosaurs...\n\n"
-                text2 += "*┌* *Dino-tavern ‍🍺*\n\n"
-                text2 += "*└*Take a look at the `Dino-tavern`, there you can find out information from visitors, find other players. And also get quests!\n\n"
-                text2 += "*┌* *Quests 📜*\n\n"
-                text2 += "*└* In the tavern you can get a quest (just wait in it), quests give interesting bonuses for the most ordinary actions!\n\n"
-                text2 += "*┌* *Dungeons 🗻*\n\n"
-                text2 += "*└* Embark on an exciting adventure with your friends! Adventures, bosses, unique items!\n\n"
+                text = '🍿 | Хей, наш бот довольно большой, и информации куча. Вот тебе пару категорий, выбери какую информацию хочешь получить >'
 
-            bot.send_message(message.chat.id, text2, parse_mode = 'Markdown')
+                inl_l = {
+                    '🎈 Общая': 'faq general',
+                    '🥙 Еда': 'faq eat',
+                    '🧵 Аксессуары': 'faq accessories',
+                    '🗻 Подземелье': 'faq dungeon',
+                }
+
+            else:
+                text = '🍿 | Hey, our bot is quite big, and there is a lot of information. Here are a couple of categories for you, choose what information you want to get >'
+
+                inl_l = {
+                    '🎈 General': 'faq general',
+                    '🥙 Food': 'faq eat',
+                    '🧵 Accessories': 'faq accessories',
+                    '🗻 Dungeon': 'faq dungeon',
+                }
+
+            markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = inl_l[inl]) for inl in inl_l.keys() ])
+            bot.send_message(message.chat.id, text, parse_mode = 'Markdown', reply_markup =  markup_inline)
 
     @staticmethod
     def not_set(bot, message, user, bd_user):
@@ -502,32 +459,6 @@ class Commands:
                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
 
                 bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "settings", user))
-
-                #
-                #     bd_user['settings']['vis.faq'] = True
-                #     users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
-                #
-                #     if bd_user['language_code'] == 'ru':
-                #         text = '🔧 FAQ был активирован!'
-                #     else:
-                #         text = '🔧 The FAQ has been activated!'
-                #
-                #     bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "settings", user))
-                #
-                # if res in ['❌ Disable', '❌ Выключить']:
-                #
-                #     bd_user['settings']['vis.faq'] = False
-                #     users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
-                #
-                #     if bd_user['language_code'] == 'ru':
-                #         text = '🔧 FAQ был отключен!'
-                #     else:
-                #         text = '🔧 The FAQ has been disabled!'
-                #
-                #     bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "settings", user))
-                #
-                # else:
-                #     return
 
             msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
             bot.register_next_step_handler(msg, ret, ans, bd_user)
@@ -1954,7 +1885,7 @@ class Commands:
     def collecting_food(bot, message, user, bd_user):
 
         eat_c = Functions.items_counting(bd_user, '+eat')
-        if eat_c >= 300:
+        if eat_c >= 800:
 
             if bd_user['language_code'] == 'ru':
                 text = f'🌴 | Ваш инвентарь ломится от количества еды! В данный момент у вас {eat_c} предметов которые можно съесть!'
@@ -2136,7 +2067,7 @@ class Commands:
 
         if bd_user != None:
             if 'referal_system' not in bd_user.keys():
-                rf = referal_system.find_one({"id": 1})
+                rf = management.find_one({"_id": 'referal_system'})
                 def r_cod():
                     code_rf = ''
                     for i in range(6):
@@ -2148,7 +2079,7 @@ class Commands:
                     rf_code = r_cod()
 
                 rf['codes'].append(rf_code)
-                referal_system.update_one( {"id": 1}, {"$set": {'codes': rf['codes'] }} )
+                management.update_one( {"_id": 'referal_system'}, {"$set": {'codes': rf['codes'] }} )
 
                 bd_user['referal_system'] = {'my_cod': rf_code, 'friend_cod': None}
                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'referal_system': bd_user['referal_system'] }} )
@@ -2164,7 +2095,7 @@ class Commands:
     @staticmethod
     def enter_fr_code(bot, message, user, bd_user):
 
-        rf = referal_system.find_one({"id": 1})
+        rf = management.find_one({"_id": 'referal_system'})
 
         def ret(message, bd_user):
             if message.text in rf['codes']:
@@ -2226,7 +2157,7 @@ class Commands:
 
         if bd_user != None:
             if 'referal_system' not in bd_user.keys():
-                rf = referal_system.find_one({"id": 1})
+                rf = management.find_one({"_id": 'referal_system'})
                 def r_cod():
                     code_rf = ''
                     for i in range(6):
@@ -2238,7 +2169,7 @@ class Commands:
                     rf_code = r_cod()
 
                 rf['codes'].append(rf_code)
-                referal_system.update_one( {"id": 1}, {"$set": {'codes': rf['codes'] }} )
+                management.update_one( {"_id": 'referal_system'}, {"$set": {'codes': rf['codes'] }} )
 
                 bd_user['referal_system'] = {'my_cod': rf_code, 'friend_cod': None}
                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'referal_system': bd_user['referal_system'] }} )
@@ -2591,7 +2522,7 @@ class Commands:
 
         if bd_user != None:
 
-            market_ = market.find_one({"id": 1})
+            market_ = management.find_one({"_id": 'products'})
             if str(user.id) not in market_['products'].keys() or market_['products'][str(user.id)]['products'] == {}:
 
                 if bd_user['language_code'] == 'ru':
@@ -2730,7 +2661,7 @@ class Commands:
 
         if bd_user != None:
 
-            market_ = market.find_one({"id": 1})
+            market_ = management.find_one({"_id": 'products'})
             if str(user.id) not in market_['products'].keys() or market_['products'][str(user.id)]['products'] == {}:
 
                 if bd_user['language_code'] == 'ru':
@@ -2943,7 +2874,7 @@ class Commands:
                             if data_items[ prod['item']['item_id'] ]['type'] == '+eat':
 
                                 eat_c = Functions.items_counting(bd_user, '+eat')
-                                if eat_c >= 300:
+                                if eat_c >= 800:
 
                                     if bd_user['language_code'] == 'ru':
                                         text = f'🌴 | Ваш инвентарь ломится от количества еды! В данный момент у вас {eat_c} предметов которые можно съесть!'
@@ -2958,7 +2889,7 @@ class Commands:
 
                             del market_['products'][str(user.id)]['products'][nn_number]
 
-                            market.update_one( {"id": 1}, {"$set": {'products': market_['products'] }} )
+                            management.update_one( {"_id": 'products'}, {"$set": {'products': market_['products'] }} )
                             users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
 
                             if bd_user['language_code'] == 'ru':
@@ -2975,7 +2906,7 @@ class Commands:
 
         if bd_user != None:
 
-            market_ = market.find_one({"id": 1})
+            market_ = management.find_one({"_id": 'products'})
 
             rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
 
@@ -3116,7 +3047,7 @@ class Commands:
 
         if bd_user != None:
 
-            market_ = market.find_one({"id": 1})
+            market_ = management.find_one({"_id": 'products'})
 
             items = []
 

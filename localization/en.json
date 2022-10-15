@@ -1,6 +1,8 @@
 {
     "en": {
 
+        "language_name": "🇬🇧 English",
+
         "no_text_key": "❌ The text corresponding to this key is not found, contact the developer!",
 
         "no_dp_text_key": "❌ There is no additional key!",
@@ -20,7 +22,18 @@
 
         "start_menu": "🎋 | Hey <b>{username}</b>, glad to welcome you!A small tamagotchi-type game bot, only with dinosaurs!🦖\n\n<b>🥚 | What is a tamagotchi?</b>\nPtamagochi is a game with a virtual pet that needs to be fed, cared for, played, and so on.\n\n<b>🗻 | What kind of bot?</b>\nIn this bot you have to take care of your pet, travel, conquer the dungeon and completely immerse yourself in this RPG world!\n\n<b>🎮 | How to start playing?</b>\nPress the button <b>🍡 Start playing</b>!\n\n<b>❤ | Waiting in the game!</b>",
 
-        "in_development": "This feature is under development, follow the news in order to find out when the team will work!"
+        "in_development": "This feature is under development, follow the news in order to find out when the team will work!",
+
+        "help_command": "<b>🎨 | Help</b>\n<i>Are you so pathetic that you're asking me for help?)\nPfff... Well okay.</i>\n\n/help - A plea for help from a higher mind.\n\n/start - Start the bot / main menu\n\n/profile - Open the user profile.\n\n/add_me - Send a message with an active add to friends button. (group only)",
+
+        "additem_command": {
+            "user": "💎 | Yo, the system was generous and gave you {item}",
+            "dev": "💚 | The command is executed\n🧨 | Subject {item}\n🎭 | User {username}\n🌐 | Status messages {message_status}"
+        },
+
+        "commands_name": {
+
+        }
 
     }
 

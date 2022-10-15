@@ -4,7 +4,6 @@ import sys
 import time
 
 import pymongo
-import telebot
 from fuzzywuzzy import fuzz
 from PIL import Image
 from telebot import types
@@ -14,8 +13,8 @@ from mods.classes import Dungeon, Functions
 sys.path.append("..")
 import config
 
-client = pymongo.MongoClient(config.CLUSTER_TOKEN)
-users, market, dungeons = client.bot.users, client.bot.market, client.bot.dungeons
+client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
+users, management, dungeons = client.bot.users, client.bot.management, client.bot.dungeons
 
 with open('json/items.json', encoding='utf-8') as f:
     items_f = json.load(f)
@@ -1298,7 +1297,7 @@ class CallData:
 
         m_call = call.data.split()
 
-        market_ = market.find_one({"id": 1})
+        market_ = management.find_one({"_id": 'products'})
         us_id = m_call[0][11:]
         key_i = m_call[1]
 
@@ -1312,7 +1311,7 @@ class CallData:
                 if data_items[ mmd['item']['item_id'] ]['type'] == '+eat':
 
                     eat_c = Functions.items_counting(bd_user, '+eat')
-                    if eat_c >= 300:
+                    if eat_c >= 800:
 
                         if bd_user['language_code'] == 'ru':
                             text = f'🌴 | Ваш инвентарь ломится от количества еды! В данный момент у вас {eat_c} предметов которые можно съесть!'
@@ -1373,7 +1372,7 @@ class CallData:
                                 del market_['products'][str(us_id)]['products'][str(key_i)]
 
 
-                            market.update_one( {"id": 1}, {"$set": {'products': market_['products'] }} )
+                            management.update_one( {"_id": 'products'}, {"$set": {'products': market_['products'] }} )
                             users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
                             users.update_one( {"userid": user.id}, {"$inc": {'coins': (mmd['price'] * number) * -1 }} )
 
@@ -1460,35 +1459,35 @@ class CallData:
 
             bot.send_message(call.message.chat.id, text)
 
-    def market_inf(bot, bd_user, call, user):
+    # def market_inf(bot, bd_user, call, user):
 
-        m_call = call.data.split()
+    #     m_call = call.data.split()
 
-        market_ = market.find_one({"id": 1})
-        us_id = m_call[0][7:]
-        key_i = m_call[1]
+    #     market_ = management.find_one({"_id": 'products'})
+    #     us_id = m_call[0][7:]
+    #     key_i = m_call[1]
 
-        if str(us_id) in market_['products'].keys():
-            ma_d = market_['products'][str(us_id)]['products']
+    #     if str(us_id) in market_['products'].keys():
+    #         ma_d = market_['products'][str(us_id)]['products']
 
-            if str(key_i) in ma_d.keys():
-                mmd = market_['products'][str(us_id)]['products'][str(key_i)]
+    #         if str(key_i) in ma_d.keys():
+    #             mmd = market_['products'][str(us_id)]['products'][str(key_i)]
 
-            else:
-                if bd_user['language_code'] == 'ru':
-                    text = "🛒 | Предмет не найден на рынке, возможно он уже был куплен."
-                else:
-                    text = "🛒 | The item was not found on the market, it may have already been purchased."
+    #         else:
+    #             if bd_user['language_code'] == 'ru':
+    #                 text = "🛒 | Предмет не найден на рынке, возможно он уже был куплен."
+    #             else:
+    #                 text = "🛒 | The item was not found on the market, it may have already been purchased."
 
-                bot.send_message(call.message.chat.id, text)
+    #             bot.send_message(call.message.chat.id, text)
 
-        else:
-            if bd_user['language_code'] == 'ru':
-                text = "🛒 | Предмет не найден на рынке, возможно он уже был куплен."
-            else:
-                text = "🛒 | The item was not found on the market, it may have already been purchased."
+    #     else:
+    #         if bd_user['language_code'] == 'ru':
+    #             text = "🛒 | Предмет не найден на рынке, возможно он уже был куплен."
+    #         else:
+    #             text = "🛒 | The item was not found on the market, it may have already been purchased."
 
-            bot.send_message(call.message.chat.id, text)
+    #         bot.send_message(call.message.chat.id, text)
 
     def iteminfo(bot, bd_user, call, user):
 
@@ -3911,3 +3910,147 @@ class CallData:
 
             dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'settings.start_floor': floor }} )
             inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'settings')
+    
+    def faq(bot, bd_user, call, user):
+
+        f_type = call.data.split()[1]
+
+        if f_type == 'general':
+
+            if bd_user['language_code'] == 'ru':
+
+                text =  "*┌* 🎈 *Редкости*\n\n"
+                text += "*├* События и динозавры делятся на редкости.\nЧем больше редкость, тем слаще награда.\n\n"
+                text += "*┌*  1. Обычная - 50%\n*├*  2. Необычная - 25%\n*├*  3. Редкая - 15%\n*├*  4. Мистическая - 9%\n*└*  5. Легендарная - 1%\n\n"
+
+                text += "*┌* 🕹 *Взаимодейтвия*\n\n"
+                text += "*├* Для взаимодействия с динозарвом передите в `🕹 Действия`.\n\n"
+                text += "*├*  1. Для того что бы покормить динозавра, вам требуется добыть пищу, нажмите на `🕹 Действия` > `🍕 Сбор пищи` и следуйте инструкциям.\n\n"
+                text += "*├*  2. Для того чтобы покормить динозавра нажмите на `🕹 Действия` > `🍣 Покормить` и выберите подходящую пищу.\n\n"
+                text += "*├*  3. В `🎮 Развлечения` можно выбрать игру и развлечь динозавра, чтобы поднять его настроение.\n\n"
+                text += "*├*  4. В `🎑 Путешествие` можно найти разные предметы, встретить друзей и увидеть много интересного!\n\n"
+                text += "*└*  5. `🌙 Уложить спать` динозавру ежедневно требуется сон, не забывайте укладывать его спать!\n\n"
+
+                text += "*┌* 🎮 *Профиль*\n\n"
+                text += "*└*  Чтобы посмотреть инвентарь или узнать свою статистику, перейдите в `👁‍🗨 Профиль`\n\n"
+
+                text += "*┌* 🔧 *Настройки*\n\n"
+                text += "*└*  В настройках вы можете переименовать динозавра, отключить уведомления или переключить язык.\n\n"
+
+                text += "*┌* 🛒 *Рынок*\n\n"
+                text += "*└*  На рынке можно продать или приобрести нужные вам вещи.\n\n"
+
+                text += "*┌* 👥 *Друзья*\n\n"
+                text += "*└*  В меню друзей вы можете управлять своими друзьями и реферальной системой. Чем больше друзей, тем болше возможностей получить какие то бонусы. Так же пригласив друга через реферальную систему, вы и ваш друг получат приятные бонусы.\n\n"
+
+                text += "*┌* 🦕 *Количество динозавров*\n\n"
+                text += "*├*  Каждый 20-ый уровень количество динозавров увеличивается на 1.\n*├*  20ый уровень - 2 динозавра.\n*└*  40ой уровень - 3 динозавра...\n\n"
+            
+            else:
+
+                text =  "*┌* *Rarities*\n\n"
+                text +="*├* Events and dinosaurs are divided into rarities.The greater the rarity, the sweeter the reward.\n\n"
+                text+= "*┌* 1. Normal - 50%\n*├* 2. Unusual - 25%\n*├* 3. Rare - 15%\n*├* 4. Mystical - 9%\n*└* 5. Legendary - 1%\n\n"
+
+                text += "*┌* 🕹 *Interaction*\n\n"
+                text += "*├* To interact with the dinozarv, pass in `🕹 Actions`.\n\n"
+                text += "*├* 1. In order to feed the dinosaur, you need to get food, click on `🕹 Actions` > `🍕 Food Collection` and follow the instructions.\n\n"
+                text += "*├* 2. To feed the dinosaur, click on `🕹 Actions` > `🍣 Feed` and choose the appropriate food.\n\n"
+                text += "*├* 3. In `🎮 Entertainment`, you can choose a game and entertain the dinosaur to cheer him up.\n\n"
+                text += "*├* 4. In the `🎑 Journey` you can find different items, meet friends and see a lot of interesting things!\n\n"
+                text += "*└* 5. `🌙 Put to bed` The dinosaur needs sleep every day, don't forget to put him to bed!\n\n"
+
+                text += "*┌* 🎮 *Profile*\n\n"
+                text+= "*└* To view inventory or find out your statistics, go to `👁🗨 Profile`\n\n"
+
+                text += "*┌* 🔧*Settings*\n\n"
+                text += "*└*  In the settings, you can rename the dinosaur, disable notifications, or switch the language.\n\n"
+
+                text += "*┌* 🛒 *Market*\n\n"
+                text += "*└* You can sell or buy the things you need on the market.\n\n"
+
+                text += "*┌* 👥 *Friends*\n\n"
+                text += "*└* In the friends menu, you can manage your friends and referral system. The more friends there are, the more opportunities there are to get some bonuses. Also, by inviting a friend through the referral system, you and your friend will receive pleasant bonuses.\n\n"
+
+                text += "*┌* 🦕 *Number of dinosaurs*\n\n"
+                text+= "*├* Every 20th level the number of dinosaurs increases by 1.\n*├* 20th level - 2 dinosaurs.\n*└* 40th level - 3 dinosaurs...\n\n"
+
+        
+        if f_type == 'eat':
+
+            if bd_user['language_code'] == 'ru':
+
+                text =  "*┌* 🥙 *Что кушает мой динозавр?*\n\n"
+                text += "*├* Посмотрите на профиль своего динозавра, динозавры живут в своей родной среде.\n\n"
+                text += "*└* Травоядные там где много трав, хищники в лесах / джунглях, а те кто любят рыбку - летают в облаках.\n\n"
+
+                text += "*┌* 🍕 *Вкусняшки*\n\n"
+                text += "*├* 🍯 Баночка мёда, 🥞 Сладкие блинчики - динозавры любят вкусняшки и независимо от их вида, они с радостью съедят их!\n\n"
+                text += "*├* Так же эта еда даёт бонусы к настроению / здоровью и тд.\n\n"
+                text += "*└* Всю информацию о предмете вы можете узнать в инвентаре!\n\n"
+            
+            else:
+
+                text =  "*┌* 🥙 *What does my dinosaur eat?*\n\n"
+                text += "*├* Look at the profile of your dinosaur, dinosaurs live in their native environment.\n\n"
+                text += "*└* Herbivores where there are a lot of herbs, predators in forests / jungles, and those who love fish - fly in the clouds.\n\n"
+
+                text += "*┌* 🍕 *Yummy*\n\n"
+                text += "*├* 🍯 Jar of honey, 🥞 Sweet pancakes - dinosaurs love sweets and regardless of their kind, they will gladly eat them!\n\n"
+                text += "*├* Also, this food gives bonuses to mood / health and so on.\n\n"
+                text += "*└* You can find out all the information about the item in the inventory!\n\n"
+
+
+        if f_type == 'accessories':
+
+            if bd_user['language_code'] == 'ru':
+        
+                text =  "*┌* 🏓 *Аксессуары*\n\n"
+                text += "*├*  Аксессуары открывают дополнительные возможности или ускоряют вид деятельности. \n\n"
+                text += "*├*  Аксессуары можно установить пока динозавр ничего не делает в меню `👁‍🗨 Профиль`.\n\n"
+                text += "*└*  Аксессуары можно найти в путешествиях или подземелье.\n\n"
+
+                text =  "*┌* 🎲 *Вот некоторые из них...*\n\n"
+                text += "*├* 🧸 Мишка - позволяет выбрать режим сна.\n\n"
+                text += "*└* 🛠 Инструменты - ускоряют сбор пищи.\n\n"
+            
+            else:
+                text =  "*┌* 🏓 *Accessories*\n\n"
+                text += "*├* Accessories open up additional opportunities or accelerate the type of activity. \n\n"
+                text += "*├* Accessories can be installed while the dinosaur does nothing in the menu `👁‍🗨 Profile`.\n\n"
+                text += "*└* Accessories can be found in travel or dungeon.\n\n"
+
+                text +=  "*┌* 🎲 *Here are some of them...*\n\n"
+                text += "*├* 🧸 Bear - allows you to select the sleep mode.\n\n"
+                text += "*└* 🛠 Tools - speed up food collection.\n\n"
+        
+        if f_type == 'dungeon':
+
+            if bd_user['language_code'] == 'ru':
+
+                text =  "*┌* 📜 *Квесты*\n\n"
+                text += "*└* В таверне вы можете получить квест (просто ожидайте в ней), квесты дают интересные бонусы за самые обычные действия!\n\n"
+
+                text += "*┌* 🗻 *Подземелья*\n\n"
+                text += "*├* Отправляйтесь в захватывающее приключение вместе со своими друзьями! Приключения, боссы, уникальные предметы!\n\n"
+                text += "*├* Чтобы попасть в подземелье вам нужно всего 200 монет!\n\n"
+                text += "*└* Никакого начального снаряжения не нужно, а ваши динозавры в нём не могут умереть.\n\n"
+
+                text += "*┌* 🍺 *Дино-таверна*\n\n"
+                text += "*└* Загляните в `‍🍺 Дино-таверна`, там вы сможете узнать информацию от посетителей, найти других игроков. А также получить квесты!\n\n"
+            
+            else:
+
+                text =  "*┌* 📜 *Quests*\n\n"
+                text += "*└* In the tavern you can get a quest (just wait in it), quests give interesting bonuses for the most common actions!\n\n"
+
+                text += "*┌* 🗻 *Dungeons*\n\n"
+                text += "*├* Embark on an exciting adventure with your friends! Adventures, bosses, unique items!\n\n"
+                text += "*├* To get into the dungeon you only need 200 coins!\n\n"
+                text += "*└* No initial equipment is needed, and your dinosaurs can't die in it.\n\n"
+
+                text += "*┌* 🍺 *Dino-tavern*\n\n"
+                text += "*└* Take a look at the `🍺 Dino-tavern`, there you can find out information from visitors, find other players. And also get quests!\n\n"
+
+
+        bot.send_message(call.message.chat.id, text, parse_mode = 'Markdown')

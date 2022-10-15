@@ -14,8 +14,8 @@ from telebot import types
 sys.path.append("..")
 import config
 
-client = pymongo.MongoClient(config.CLUSTER_TOKEN)
-users, market, referal_system, dungeons = client.bot.users, client.bot.market, client.bot.referal_system, client.bot.dungeons
+client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
+users, management, dungeons = client.bot.users, client.bot.management, client.bot.dungeons
 
 
 with open('json/items.json', encoding='utf-8') as f: 
@@ -919,7 +919,7 @@ class Functions:
                     except:
                         pass
 
-                if notification == "need_heal":
+                if notification in ["need_heal", "need_heal!"]:
 
                     if user['language_code'] == 'ru':
                         text = f'❤ | {chat.first_name}, у {dinoname} плохое самочувствие, его здоровье опустилось до {arg}%!'
@@ -1739,7 +1739,7 @@ class Functions:
                                     data_item = data_items[ user_item['item_id'] ]
                                     if data_item['type'] == '+eat':
                                         eat_c = Functions.items_counting(two_user, '+eat')
-                                        if eat_c >= 300:
+                                        if eat_c >= 800:
 
                                             if bd_user['language_code'] == 'ru':
                                                 text = f'🌴 | У данного пользователя очень много еды, в данный момент вы не можете отправить ему {data_item["nameru"]}!'
@@ -1884,137 +1884,53 @@ class Functions:
         bot.register_next_step_handler(msg, zero, user_item, bd_user)
 
     def member_profile(bot, mem_id, lang):
-        # try:
-        if True:
 
-            user = bot.get_chat(int(mem_id))
-            bd_user = users.find_one({"userid": user.id})
+        user = bot.get_chat(int(mem_id))
+        bd_user = users.find_one({"userid": user.id})
 
-            expp = 5 * bd_user['lvl'][0] * bd_user['lvl'][0] + 50 * bd_user['lvl'][0] + 100
-            n_d = len(list(bd_user['dinos']))
-            t_dinos = ''
-            for k in bd_user['dinos']:
-                bd_user = Functions.dino_q(bd_user)
-                i = bd_user['dinos'][k]
+        expp = 5 * bd_user['lvl'][0] * bd_user['lvl'][0] + 50 * bd_user['lvl'][0] + 100
+        n_d = len(list(bd_user['dinos']))
+        t_dinos = ''
+        for k in bd_user['dinos']:
+            bd_user = Functions.dino_q(bd_user)
+            i = bd_user['dinos'][k]
 
 
-                if list( bd_user['dinos']) [ len(bd_user['dinos']) - 1 ] == k:
-                    n = '└'
+            if list( bd_user['dinos']) [ len(bd_user['dinos']) - 1 ] == k:
+                n = '└'
+
+            else:
+                n = '├'
+
+            if i['status'] == 'incubation':
+                t_incub = i['incubation_time'] - time.time()
+                time_end = Functions.time_end(t_incub, True)
+
+                if lang == 'ru':
+
+                    qual = '🎲 Случайное'
+                    if 'quality' in i.keys():
+                        pre_qual = i['quality']
+
+                        if pre_qual == 'com':
+                            qual = '🤍 Обычное'
+                        if pre_qual == 'unc':
+                            qual = '💚 Необычное'
+                        if pre_qual == 'rar':
+                            qual = '💙 Редкое'
+                        if pre_qual == 'myt':
+                            qual = '💜 Мистическое'
+                        if pre_qual == 'leg':
+                            qual = '💛 Легендарное'
+
+                    t_dinos += f"\n   *{n}* Статус: яйцо\n      *├* Редкость: {qual}\n      *└* Осталось: {time_end}\n"
 
                 else:
-                    n = '├'
 
-                if i['status'] == 'incubation':
-                    t_incub = i['incubation_time'] - time.time()
-                    time_end = Functions.time_end(t_incub, True)
-
-                    if lang == 'ru':
-
-                        qual = '🎲 Случайное'
-                        if 'quality' in i.keys():
-                            pre_qual = i['quality']
-
-                            if pre_qual == 'com':
-                                qual = '🤍 Обычное'
-                            if pre_qual == 'unc':
-                                qual = '💚 Необычное'
-                            if pre_qual == 'rar':
-                                qual = '💙 Редкое'
-                            if pre_qual == 'myt':
-                                qual = '💜 Мистическое'
-                            if pre_qual == 'leg':
-                                qual = '💛 Легендарное'
-
-                        t_dinos += f"\n   *{n}* Статус: яйцо\n      *├* Редкость: {qual}\n      *└* Осталось: {time_end}\n"
-
-                    else:
-
-                        qual = '🎲 Random'
-                        if 'quality' in i.keys():
-                            pre_qual = i['quality']
-
-                            if pre_qual == 'com':
-                                qual = '🤍 Common'
-                            if pre_qual == 'unc':
-                                qual = '💚 Uncommon'
-                            if pre_qual == 'rar':
-                                qual = '💙 Rare'
-                            if pre_qual == 'myt':
-                                qual = '💜 Mystical'
-                            if pre_qual == 'leg':
-                                qual = '💛 Legendary'
-
-
-                        t_dinos += f"\n   *{n}*\n      *├* Status: egg\n      *├* Rare: {qual}\n      *└* Left: {time_end}\n"
-
-                if i['status'] == 'dino':
-
-                    stat = i['activ_status']
-                    if lang == 'ru':
-
-                        if i['activ_status'] == 'pass_active':
-                            stat = '🧩 ничего не делает'
-
-                        elif i['activ_status'] == 'sleep':
-                            stat = '💤 спит'
-
-                        elif i['activ_status'] == 'game':
-                            stat = '🕹 играет'
-
-                        elif i['activ_status'] == 'hunting':
-                            stat = '🌿 собирает еду'
-
-                        elif i['activ_status'] == 'journey':
-                            stat = '🎴 путешествует'
-
-                        elif i['activ_status'] == 'dungeon':
-                            stat = '🗻 в подземелье'
-
-                        elif i['activ_status'] == 'freezing':
-                            stat = '❄ заморожен'
-
-                        dino = json_f['elements'][str(i['dino_id'])]
+                    qual = '🎲 Random'
+                    if 'quality' in i.keys():
                         pre_qual = i['quality']
-                        qual = ''
-                        if pre_qual == 'com':
-                            qual = '🤍 Обычный'
-                        if pre_qual == 'unc':
-                            qual = '💚 Необычный'
-                        if pre_qual == 'rar':
-                            qual = '💙 Редкий'
-                        if pre_qual == 'myt':
-                            qual = '💜 Мистический'
-                        if pre_qual == 'leg':
-                            qual = '💛 Легендарный'
 
-                        t_dinos += f"\n   *{n}* {i['name'].replace('*', '')}\n      *├* Статус: {stat}\n      *└* Редкость: {qual}\n"
-
-                    else:
-
-                        if i['activ_status'] == 'pass_active':
-                            stat = '🧩 does nothing'
-
-                        elif i['activ_status'] == 'sleep':
-                            stat = '💤 sleeping'
-
-                        elif i['activ_status'] == 'game':
-                            stat = '🕹 is playing'
-
-                        elif i['activ_status'] == 'hunting':
-                            stat = '🌿 collects food'
-
-                        elif i['activ_status'] == 'journey':
-                            stat = '🎴 travels'
-
-                        elif i['activ_status'] == 'dungeon':
-                            stat = '🗻 in dungeon'
-
-                        elif i['activ_status'] == 'freezing':
-                            stat = '❄ freezing'
-
-                        dino = json_f['elements'][str(i['dino_id'])]
-                        pre_qual = i['quality']
-                        qual = ''
                         if pre_qual == 'com':
                             qual = '🤍 Common'
                         if pre_qual == 'unc':
@@ -2026,102 +1942,181 @@ class Functions:
                         if pre_qual == 'leg':
                             qual = '💛 Legendary'
 
-                        t_dinos += f"\n   *{n}* {i['name'].replace('*', '')}\n      *└* Status: {stat}\n      *└* Rare: {qual}\n"
 
-            if lang == 'ru':
+                    t_dinos += f"\n   *{n}*\n      *├* Status: egg\n      *├* Rare: {qual}\n      *└* Left: {time_end}\n"
 
-                #act_items
-                act_ii = {}
-                for d_id in bd_user['activ_items'].keys():
-                    act_ii[d_id] = []
-                    for itmk in bd_user['activ_items'][d_id].keys():
-                        itm = bd_user['activ_items'][d_id][itmk]
-                        if itm == None:
-                            act_ii[d_id].append('-')
+            if i['status'] == 'dino':
+
+                stat = i['activ_status']
+                if lang == 'ru':
+
+                    if i['activ_status'] == 'pass_active':
+                        stat = '🧩 ничего не делает'
+
+                    elif i['activ_status'] == 'sleep':
+                        stat = '💤 спит'
+
+                    elif i['activ_status'] == 'game':
+                        stat = '🕹 играет'
+
+                    elif i['activ_status'] == 'hunting':
+                        stat = '🌿 собирает еду'
+
+                    elif i['activ_status'] == 'journey':
+                        stat = '🎴 путешествует'
+
+                    elif i['activ_status'] == 'dungeon':
+                        stat = '🗻 в подземелье'
+
+                    elif i['activ_status'] == 'freezing':
+                        stat = '❄ заморожен'
+
+                    dino = json_f['elements'][str(i['dino_id'])]
+                    pre_qual = i['quality']
+                    qual = ''
+                    if pre_qual == 'com':
+                        qual = '🤍 Обычный'
+                    if pre_qual == 'unc':
+                        qual = '💚 Необычный'
+                    if pre_qual == 'rar':
+                        qual = '💙 Редкий'
+                    if pre_qual == 'myt':
+                        qual = '💜 Мистический'
+                    if pre_qual == 'leg':
+                        qual = '💛 Легендарный'
+
+                    t_dinos += f"\n   *{n}* {i['name'].replace('*', '')}\n      *├* Статус: {stat}\n      *└* Редкость: {qual}\n"
+
+                else:
+
+                    if i['activ_status'] == 'pass_active':
+                        stat = '🧩 does nothing'
+
+                    elif i['activ_status'] == 'sleep':
+                        stat = '💤 sleeping'
+
+                    elif i['activ_status'] == 'game':
+                        stat = '🕹 is playing'
+
+                    elif i['activ_status'] == 'hunting':
+                        stat = '🌿 collects food'
+
+                    elif i['activ_status'] == 'journey':
+                        stat = '🎴 travels'
+
+                    elif i['activ_status'] == 'dungeon':
+                        stat = '🗻 in dungeon'
+
+                    elif i['activ_status'] == 'freezing':
+                        stat = '❄ freezing'
+
+                    dino = json_f['elements'][str(i['dino_id'])]
+                    pre_qual = i['quality']
+                    qual = ''
+                    if pre_qual == 'com':
+                        qual = '🤍 Common'
+                    if pre_qual == 'unc':
+                        qual = '💚 Uncommon'
+                    if pre_qual == 'rar':
+                        qual = '💙 Rare'
+                    if pre_qual == 'myt':
+                        qual = '💜 Mystical'
+                    if pre_qual == 'leg':
+                        qual = '💛 Legendary'
+
+                    t_dinos += f"\n   *{n}* {i['name'].replace('*', '')}\n      *└* Status: {stat}\n      *└* Rare: {qual}\n"
+
+        if lang == 'ru':
+
+            #act_items
+            act_ii = {}
+            for d_id in bd_user['activ_items'].keys():
+                act_ii[d_id] = []
+                for itmk in bd_user['activ_items'][d_id].keys():
+                    itm = bd_user['activ_items'][d_id][itmk]
+                    if itm == None:
+                        act_ii[d_id].append('-')
+                    else:
+                        item = items_f['items'][str(itm['item_id'])]['nameru']
+                        if 'abilities' in itm.keys() and 'endurance' in itm['abilities'].keys():
+                            act_ii[d_id].append(f"{item} ({itm['abilities']['endurance']})")
                         else:
-                            item = items_f['items'][str(itm['item_id'])]['nameru']
-                            if 'abilities' in itm.keys() and 'endurance' in itm['abilities'].keys():
-                                act_ii[d_id].append(f"{item} ({itm['abilities']['endurance']})")
-                            else:
-                                act_ii[d_id].append(f'{item}')
+                            act_ii[d_id].append(f'{item}')
 
-                text =  f"*┌* *🎴 Профиль пользователя*\n"
-                text += f"*├* Имя: {user.first_name}\n"
-                text += f"*└* ID: `{user.id}`\n\n"
-                text += f"*┌* Уровень: {bd_user['lvl'][0]}\n"
-                text += f"*├* Опыт: {bd_user['lvl'][1]} / {expp}\n"
-                text += f"*└* Монеты: {bd_user['coins']}"
-                text += f'\n\n'
-                text += f"*┌* *🦖 Динозавры*\n"
-                text += f"*├* Количество: {n_d}\n"
-                text += f"*├* Динозавры:\n{t_dinos}"
-                text += f'\n'
-                text += f"*┌* *👥 Друзья*\n"
-                text += f"*└* Количество: {len(bd_user['friends']['friends_list'])}"
-                text += f'\n\n'
-                text += f"*┌* *🎈 Инвентарь*\n"
-                text += f"*└* Предметов: {len(bd_user['inventory'])}"
-                text += f'\n\n'
-                text += f"*┌* *💍 Аксессуары*\n"
+            text =  f"*┌* *🎴 Профиль пользователя*\n"
+            text += f"*├* Имя: {user.first_name}\n"
+            text += f"*└* ID: `{user.id}`\n\n"
+            text += f"*┌* Уровень: {bd_user['lvl'][0]}\n"
+            text += f"*├* Опыт: {bd_user['lvl'][1]} / {expp}\n"
+            text += f"*└* Монеты: {bd_user['coins']}"
+            text += f'\n\n'
+            text += f"*┌* *🦖 Динозавры*\n"
+            text += f"*├* Количество: {n_d}\n"
+            text += f"*├* Динозавры:\n{t_dinos}"
+            text += f'\n'
+            text += f"*┌* *👥 Друзья*\n"
+            text += f"*└* Количество: {len(bd_user['friends']['friends_list'])}"
+            text += f'\n\n'
+            text += f"*┌* *🎈 Инвентарь*\n"
+            text += f"*└* Предметов: {len(bd_user['inventory'])}"
+            text += f'\n\n'
+            text += f"*┌* *💍 Аксессуары*\n"
 
-                for i in act_ii.keys():
-                    try:
-                        d_n = bd_user['dinos'][i]['name']
-                    except:
-                        break
+            for i in act_ii.keys():
+                try:
+                    d_n = bd_user['dinos'][i]['name']
+                except:
+                    break
 
-                    text += f"\n*┌* 🦖 > {d_n.replace('*', '')}\n"
-                    text += f"*├* 🌙 Сон: {act_ii[i][3]}\n"
-                    text += f"*├* 🎮 Игра: {act_ii[i][0]}\n"
-                    text += f"*├* 🌿 Сбор пищи: {act_ii[i][1]}\n"
-                    text += f"*└* 🎍 Путешествие: {act_ii[i][2]}\n"
+                text += f"\n*┌* 🦖 > {d_n.replace('*', '')}\n"
+                text += f"*├* 🌙 Сон: {act_ii[i][3]}\n"
+                text += f"*├* 🎮 Игра: {act_ii[i][0]}\n"
+                text += f"*├* 🌿 Сбор пищи: {act_ii[i][1]}\n"
+                text += f"*└* 🎍 Путешествие: {act_ii[i][2]}\n"
 
-            else:
-                #act_items
-                act_ii = {}
-                for d_id in bd_user['activ_items'].keys():
-                    act_ii[d_id] = []
-                    for itmk in bd_user['activ_items'][d_id].keys():
-                        itm = bd_user['activ_items'][d_id][itmk]
-                        if itm == None:
-                            act_ii[d_id].append('-')
-                        else:
-                            item = items_f['items'][str(itm['item_id'])]['nameen']
-                            act_ii[d_id].append(item)
+        else:
+            #act_items
+            act_ii = {}
+            for d_id in bd_user['activ_items'].keys():
+                act_ii[d_id] = []
+                for itmk in bd_user['activ_items'][d_id].keys():
+                    itm = bd_user['activ_items'][d_id][itmk]
+                    if itm == None:
+                        act_ii[d_id].append('-')
+                    else:
+                        item = items_f['items'][str(itm['item_id'])]['nameen']
+                        act_ii[d_id].append(item)
 
-                text =  f"*┌**🎴 User profile*\n"
-                text += f"*├* Name: {user.first_name}\n"
-                text += f"*└* ID: `{user.id}`\n\n"
-                text += f"*┌* Level: {bd_user['lvl'][0]}\n"
-                text += f"*├* Experience: {bd_user['lvl'][1]} / {expp}\n"
-                text += f"*└* Coins: {bd_user['coins']}"
-                text += f'\n\n'
-                text += f"*┌**🦖 Dinosaurs*\n"
-                text += f"*├* Number: {n_d}\n"
-                text += f"*├* Dinosaurs:\n{t_dinos}"
-                text += f'\n'
-                text += f"*┌**👥 Friends*\n"
-                text += f"*└* Quantity: {len(bd_user['friends']['friends_list'])}"
-                text += f'\n\n'
-                text += f"*┌* *🎈 Inventory*\n"
-                text += f"*└* Items: {len(bd_user['inventory'])}"
-                text += f'\n\n'
-                text += f"*┌* *💍 Accessories*\n"
+            text =  f"*┌**🎴 User profile*\n"
+            text += f"*├* Name: {user.first_name}\n"
+            text += f"*└* ID: `{user.id}`\n\n"
+            text += f"*┌* Level: {bd_user['lvl'][0]}\n"
+            text += f"*├* Experience: {bd_user['lvl'][1]} / {expp}\n"
+            text += f"*└* Coins: {bd_user['coins']}"
+            text += f'\n\n'
+            text += f"*┌**🦖 Dinosaurs*\n"
+            text += f"*├* Number: {n_d}\n"
+            text += f"*├* Dinosaurs:\n{t_dinos}"
+            text += f'\n'
+            text += f"*┌**👥 Friends*\n"
+            text += f"*└* Quantity: {len(bd_user['friends']['friends_list'])}"
+            text += f'\n\n'
+            text += f"*┌* *🎈 Inventory*\n"
+            text += f"*└* Items: {len(bd_user['inventory'])}"
+            text += f'\n\n'
+            text += f"*┌* *💍 Accessories*\n"
 
-                for i in act_ii.keys():
-                    try:
-                        d_n = bd_user['dinos'][i]['name']
-                    except:
-                        break
+            for i in act_ii.keys():
+                try:
+                    d_n = bd_user['dinos'][i]['name']
+                except:
+                    break
 
-                    text += f"\n*┌* 🦖 > {d_n.replace('*', '')}\n"
-                    text += f"*├* 🌙 Sleep: {act_ii[i][3]}\n"
-                    text += f"*├* 🎮 Game: {act_ii[i][0]}\n"
-                    text += f"*├* 🌿 Collecting food: {act_ii[i][1]}\n"
-                    text += f"*└* 🎍 Journey: {act_ii[i][2]}"
-
-        # except Exception as error:
-        #      text = f'ERROR Profile: {error}'
+                text += f"\n*┌* 🦖 > {d_n.replace('*', '')}\n"
+                text += f"*├* 🌙 Sleep: {act_ii[i][3]}\n"
+                text += f"*├* 🎮 Game: {act_ii[i][0]}\n"
+                text += f"*├* 🌿 Collecting food: {act_ii[i][1]}\n"
+                text += f"*└* 🎍 Journey: {act_ii[i][2]}"
 
         return text
 
@@ -2503,7 +2498,7 @@ class Functions:
 
                                             else:
 
-                                                market_ = market.find_one({"id": 1})
+                                                market_ = management.find_one({"_id": 'products'})
 
                                                 try:
                                                     products = market_['products'][str(user.id)]['products']
@@ -2513,12 +2508,12 @@ class Functions:
 
                                                 market_['products'][str(user.id)]['products'][ max_k(products) ] = { 'item': item, 'price': number, 'col': [0, col]}
 
-                                                for i in range(col):
+                                                for _ in range(col):
                                                     bd_user['inventory'].remove(item)
 
                                                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory'] }} )
 
-                                                market.update_one( {"id": 1}, {"$set": {'products': market_['products'] }} )
+                                                management.update_one( {"_id": 'products'}, {"$set": {'products': market_['products'] }} )
 
                                                 if bd_user['language_code'] == 'ru':
                                                     text = "🛒 | Продукт добавлен на рынок, статус своих продуктов вы можете посмотреть в своих продуктах!"

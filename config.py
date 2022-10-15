@@ -1,8 +1,6 @@
-import os
+CLUSTER_TOKEN = ('localhost', 27017)
 
-CLUSTER_TOKEN = os.environ.get('CLUSTER_TOKEN')
-
-TOKEN = os.environ.get('TOKEN')
+TOKEN = ''
 
 BOT_NAME = 'DinoGochi'
 

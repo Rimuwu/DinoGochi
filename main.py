@@ -1,3 +1,4 @@
+import json
 import logging
 import pprint
 import threading
@@ -15,8 +16,10 @@ from mods.classes import Dungeon, Functions
 from mods.commands import Commands
 
 bot = telebot.TeleBot(config.TOKEN)
-client = pymongo.MongoClient(config.CLUSTER_TOKEN)
+client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
 users, dungeons = client.bot.users, client.bot.dungeons
+
+with open('json/items.json', encoding='utf-8') as f: items_f = json.load(f)
 
 class SpamStop(telebot.custom_filters.AdvancedCustomFilter):
     key = 'spam_check'
@@ -38,22 +41,6 @@ class WC(telebot.custom_filters.AdvancedCustomFilter):
     @staticmethod
     def check(call, trt):
         return Functions.callback_spam_stop(call.from_user.id)
-
-class Test_bot(telebot.custom_filters.AdvancedCustomFilter):
-    key = 'test_bot'
-
-    @staticmethod
-    def check(message, text):
-        user = message.from_user
-
-        if bot.get_me().first_name != config.BOT_NAME:
-            print("Поймал", message.text, 'от ', user.first_name)
-            if user.id in config.DEVS:
-                return True
-
-            else:
-                print('Отмена команды')
-                return False
 
 class In_Dungeon(telebot.custom_filters.AdvancedCustomFilter):
     key = 'in_dungeon'
@@ -95,14 +82,14 @@ def check(): #проверка каждые 10 секунд
     def delta(bot, members): Checks.main_journey(bot, members)
 
     non_members = users.find({ })
-    chunks_users = list(Functions.chunks( list(non_members), 20 ))
+    chunks_users = list(Functions.chunks( list(non_members), 50 ))
     Functions.check_data('col', None, int(len(chunks_users)) )
 
     while True:
         if int(memory_usage()[0]) < 1500:
             st_r_time = int(time.time())
             non_members = users.find({ })
-            chunks_users = list(Functions.chunks( list(non_members), 20 ))
+            chunks_users = list(Functions.chunks( list(non_members), 50 ))
             sl_time = 10 - ( int(time.time()) - st_r_time )
 
             if sl_time < 0:
@@ -113,10 +100,10 @@ def check(): #проверка каждые 10 секунд
             for members in chunks_users:
 
                 threading.Thread(target = alpha,  daemon=True, kwargs = {'bot': bot, 'members': members}).start()
-                threading.Thread(target = beta,   daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
-                threading.Thread(target = beta2,  daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
-                threading.Thread(target = gamma,  daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
-                threading.Thread(target = gamma2, daemon=True, kwargs = {'bot': bot, 'members': members} ).start()
+                threading.Thread(target = beta,   daemon=True, kwargs = {'bot': bot, 'members': members}).start()
+                threading.Thread(target = beta2,  daemon=True, kwargs = {'bot': bot, 'members': members}).start()
+                threading.Thread(target = gamma,  daemon=True, kwargs = {'bot': bot, 'members': members}).start()
+                threading.Thread(target = gamma2, daemon=True, kwargs = {'bot': bot, 'members': members}).start()
                 threading.Thread(target = delta,  daemon=True, kwargs = {'bot': bot, 'members': members}).start()
 
         else:
@@ -139,7 +126,7 @@ def check_notif(): #проверка каждые 5 секунд
 
         if int(memory_usage()[0]) < 1500:
             non_members = users.find({ })
-            chunks_users = list(Functions.chunks( list(non_members), 25 ))
+            chunks_users = list(Functions.chunks( list(non_members), 50 ))
 
             for members in chunks_users:
                 threading.Thread(target = alpha, daemon=True, kwargs = {'bot': bot, 'members': members}).start()
@@ -229,10 +216,28 @@ def command(message):
     user = message.from_user
     if user.id in config.DEVS:
         msg_args = message.text.split()
-        bd = users.find_one({"userid": int(msg_args[3])})
+        items = items_f['items']
 
-        tr = Functions.add_item_to_user(bd, msg_args[1], int(msg_args[2]))
-        bot.send_message(user.id, str(msg_args))
+        ad_user = int(msg_args[3])
+        item_id = msg_args[1]
+        col = int(msg_args[2])
+        bd = users.find_one({"userid": ad_user})
+
+        item_name = items[item_id][ bd['naguage_code'] ]
+        chat = bot.get_chat(ad_user)
+
+        Functions.add_item_to_user(bd, item_id, col)
+        text_user = Functions.get_text(user.language_code,"additem_command", 'user').format(item = f'{item_name} x{col}')
+        
+
+        try:
+            bot.send_message(chat.id, text_user)
+            ms_status = True
+        except:
+            ms_status = False
+
+        text_dev = Functions.get_text(user.language_code,"additem_command", 'dev').format(item = f'{item_name} x{col}', username = chat.first_name, message_status = ms_status)
+        bot.send_message(user.id, text_dev)
 
 @bot.message_handler(commands=['dungeon_delete'])
 def command(message):
@@ -244,7 +249,7 @@ def command(message):
         dng, inf =  Dungeon.base_upd(dungeonid = user.id, type = 'delete_dungeon')
         pprint.pprint(dng)
         print(inf)
-#
+
 @bot.message_handler(commands=['stats_100'])
 def command(message):
     user = message.from_user
@@ -261,6 +266,14 @@ def command(message):
         print('ok')
 
 # =========================================
+
+@bot.message_handler(commands=['help'])
+def command(message):
+    user = message.from_user
+
+    text = Functions.get_text(l_key = user.language_code, text_key = "help_command")
+    bot.reply_to(message, text, parse_mode = 'html')
+
 
 @bot.message_handler(commands=['profile', 'профиль'])
 def command(message):
@@ -643,9 +656,9 @@ def answer(call):
 
         CallData.market_buy(bot, bd_user, call, user)
 
-    if call.data[:7] == 'market_':
+    # if call.data[:7] == 'market_':
 
-        CallData.market_inf(bot, bd_user, call, user)
+    #     CallData.market_inf(bot, bd_user, call, user)
 
     if call.data[:9] == 'iteminfo_':
 
@@ -677,6 +690,10 @@ def answer(call):
     if call.data[:13] == 'change_rarity':
 
         CallData.change_rarity_call_data(bot, bd_user, call, user)
+    
+    if call.data.split()[0] == 'faq':
+
+        CallData.faq(bot, bd_user, call, user)
 
     if call.data.split()[0] == 'cancel_progress':
 
@@ -920,7 +937,7 @@ def start_all(bot):
         print('Система: Файл логирования не был создан >', e)
         logging.critical(f'Файл логирования не был создан > {e}')
 
-    if bot.get_me().first_name == config.BOT_NAME or True:
+    if bot.get_me().first_name == config.BOT_NAME or False:
         main_checks.start() # активация всех проверок и игрового процесса
         thr_notif.start() # активация уведомлений
         min10_thr.start() # десяти-минутный чек
@@ -935,7 +952,6 @@ def start_all(bot):
 
     try:
         bot.add_custom_filter(SpamStop())
-        bot.add_custom_filter(Test_bot())
         bot.add_custom_filter(WC())
         bot.add_custom_filter(In_Dungeon())
     except Exception as e:
