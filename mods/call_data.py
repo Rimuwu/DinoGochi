@@ -3,7 +3,6 @@ import random
 import sys
 import time
 
-import pymongo
 from fuzzywuzzy import fuzz
 from PIL import Image
 from telebot import types
@@ -13,7 +12,7 @@ from mods.classes import Dungeon, Functions
 sys.path.append("..")
 import config
 
-client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
+client = config.CLUSTER_CLIENT
 users, management, dungeons = client.bot.users, client.bot.management, client.bot.dungeons
 
 with open('json/items.json', encoding='utf-8') as f:
