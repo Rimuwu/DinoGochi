@@ -1,12 +1,12 @@
 import pymongo
 
-CLUSTER_TOKEN = pymongo.MongoClient('localhost', 27017) 
+CLUSTER_CLIENT = pymongo.MongoClient('localhost', 27017) 
 
-TOKEN = ''
+BOT_TOKEN = ''
 
 BOT_NAME = ''
 
-DEVS = []
+BOT_DEVS = []
 
 TEMP_DIRECTION = 'temp'
 
