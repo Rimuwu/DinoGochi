@@ -1,12 +1,11 @@
 import glob
 import json
+import logging
 import os
 import random
 import sys
 import time
-import logging
 
-import pymongo
 import telebot
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from telebot import types
@@ -14,7 +13,7 @@ from telebot import types
 sys.path.append("..")
 import config
 
-client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
+client = config.CLUSTER_CLIENT
 users, management, dungeons = client.bot.users, client.bot.management, client.bot.dungeons
 
 
