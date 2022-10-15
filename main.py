@@ -4,10 +4,8 @@ import pprint
 import threading
 import time
 
-import pymongo
 import telebot
 from memory_profiler import memory_usage
-from telebot import types
 
 import config
 from mods.call_data import CallData
@@ -15,8 +13,8 @@ from mods.checks import Checks
 from mods.classes import Dungeon, Functions
 from mods.commands import Commands
 
-bot = telebot.TeleBot(config.TOKEN)
-client = pymongo.MongoClient(config.CLUSTER_TOKEN[0], config.CLUSTER_TOKEN[1])
+bot = telebot.TeleBot(config.BOT_TOKEN)
+client = config.CLUSTER_CLIENT
 users, dungeons = client.bot.users, client.bot.dungeons
 
 with open('json/items.json', encoding='utf-8') as f: items_f = json.load(f)
@@ -214,7 +212,7 @@ def command(message):
 @bot.message_handler(commands=['add_item'])
 def command(message):
     user = message.from_user
-    if user.id in config.DEVS:
+    if user.id in config.BOT_DEVS :
         msg_args = message.text.split()
         items = items_f['items']
 
@@ -228,7 +226,7 @@ def command(message):
 
         Functions.add_item_to_user(bd, item_id, col)
         text_user = Functions.get_text(user.language_code,"additem_command", 'user').format(item = f'{item_name} x{col}')
-        
+
 
         try:
             bot.send_message(chat.id, text_user)
@@ -242,7 +240,7 @@ def command(message):
 @bot.message_handler(commands=['dungeon_delete'])
 def command(message):
     user = message.from_user
-    if user.id in config.DEVS:
+    if user.id in config.BOT_DEVS :
         inf =  Dungeon.message_upd(bot, dungeonid = user.id, type = 'delete_dungeon')
         print(inf)
 
@@ -253,7 +251,7 @@ def command(message):
 @bot.message_handler(commands=['stats_100'])
 def command(message):
     user = message.from_user
-    if user.id in config.DEVS:
+    if user.id in config.BOT_DEVS :
         bd_user = users.find_one({"userid": user.id})
 
         for dk in bd_user['dinos'].keys():
@@ -335,7 +333,7 @@ def command(message):
         if bd_user != None:
 
             text = Functions.get_text(l_key = user.language_code, text_key = "add_me").format(userid = user.id, username = user.first_name)
-            
+
             bot.reply_to(message, text, parse_mode = 'HTML', reply_markup = Functions.inline_markup(bot, 'send_request', user.id, ['Отправить запрос', 'Send a request']) )
 
         else:
@@ -690,7 +688,7 @@ def answer(call):
     if call.data[:13] == 'change_rarity':
 
         CallData.change_rarity_call_data(bot, bd_user, call, user)
-    
+
     if call.data.split()[0] == 'faq':
 
         CallData.faq(bot, bd_user, call, user)
@@ -937,7 +935,7 @@ def start_all(bot):
         print('Система: Файл логирования не был создан >', e)
         logging.critical(f'Файл логирования не был создан > {e}')
 
-    if bot.get_me().first_name == config.BOT_NAME or False:
+    if bot.get_me().first_name == config.BOT_NAME:
         main_checks.start() # активация всех проверок и игрового процесса
         thr_notif.start() # активация уведомлений
         min10_thr.start() # десяти-минутный чек
@@ -945,7 +943,7 @@ def start_all(bot):
 
         print('Система: Жизненный процессы запущены')
         logging.info('Жизненный процессы запущены')
-    
+
     else:
         print('Система: Жизненные процессы не запущены')
         logging.warning('Жизненные процессы не запущены')
@@ -963,7 +961,7 @@ def start_all(bot):
     except Exception as e:
         print('Система: Временные изображения не были очищены >', e)
         logging.warning(f'Временные изображения не были очищены > {e}')
-    
+
     try:
         Functions.load_languages()
     except Exception as e:
