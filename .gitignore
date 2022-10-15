@@ -1,3 +1,3 @@
 __pycache__
-temp/*.png
-logs/*.log
+temp/*
+logs/*
