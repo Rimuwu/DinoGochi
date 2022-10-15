@@ -1,4 +1,6 @@
-CLUSTER_TOKEN = ('localhost', 27017)
+import pymongo
+
+CLUSTER_TOKEN = pymongo.MongoClient('localhost', 27017) 
 
 TOKEN = ''
 
