@@ -24,14 +24,52 @@
 
         "in_development": "This feature is under development, follow the news in order to find out when the team will work!",
 
-        "help_command": "<b>🎨 | Help</b>\n<i>Are you so pathetic that you're asking me for help?)\nPfff... Well okay.</i>\n\n/help - A plea for help from a higher mind.\n\n/start - Start the bot / main menu\n\n/profile - Open the user profile.\n\n/add_me - Send a message with an active add to friends button. (group only)",
+        "help_command": {
+
+            "all": "<b>🎨 | Help</b>\n<i>Are you so pathetic that you're asking me for help?)\nPfff... Well okay.</i>\n\n/help - A plea for help from a higher mind.\n\n/start - Start the bot / main menu\n\n/profile - Open the user profile.\n\n/add_me - Send a message with an active add to friends button. (group only)\n\n/promo (code) - Enter a promo code.\n\n",
+
+            "dev": "/stats - statistics for the bot.\n\n/add_item item_id col user_id - add an item to the user.\n\n/dungeon_delete - delete your dungeon.\n\n/stats_100 - set charracteristics to all your dinosaurs by 100.\n\n/link_promo (code) - link a button with a promo code to a message from the channel. (a response to the message is required)\n\n/unlink_promo - remove the button (a response to the message is required)\n\n/create_promo col | inf time | inf money - create a promo code."
+        },
 
         "additem_command": {
+
+            "err": "Input format:\nid of the item\nnumber\nid of the user",
+
             "user": "💎 | Yo, the system was generous and gave you {item}",
+
             "dev": "💚 | The command is executed\n🧨 | Subject {item}\n🎭 | User {username}\n🌐 | Status messages {message_status}"
         },
 
         "commands_name": {
+
+        },
+
+        "promo_commands": {
+
+            "create_promo": {
+                "format": "Input format:\nNumber of uses: number / inf\nTime: 1m / 2h / 3d / inf\nCoins: Number",
+
+                "not_item": "Item {i} not found, cancel.",
+
+                "create": "🔮 Promo code created!\n\nPromo code: `{pr_code}`\nActivity: ❌\nUses: {col_use}\nEnding after: {txt_time}\nCoins: {money}\n\nItems: {i_names}",
+
+                "buttons": [
+                    "✅ Activate", "🗑 Delete", "🎋 Use"
+                ],
+
+                "enter_items": "Enter items separated by a space or \"-\""
+            },
+
+            "link": {
+                "button_name": "🥙 Activate the promo code!",
+                "create": "The button has been created!",
+                "not_found": "Promo code not found!"
+            },
+
+            "unlink": {
+                "delete": "The button is removed!",
+                "not_found": "The message was not found!"
+            }
 
         }
 

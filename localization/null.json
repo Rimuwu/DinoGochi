@@ -24,16 +24,55 @@
 
         "in_development": "",
 
-        "help_command": "",
+        "help_command": {
+
+            "all": "",
+
+            "dev": ""
+        },
 
         "additem_command": {
+
+            "err": "",
+
             "user": "",
+
             "dev": ""
         },
 
         "commands_name": {
 
+        },
+
+        "promo_commands": {
+
+            "create_promo": {
+                "format": "",
+
+                "not_item": "",
+
+                "create": "",
+
+                "buttons": [
+                    "", "", ""
+                ],
+
+                "enter_items": ""
+            },
+
+            "link": {
+                "button_name": "",
+                "create": "",
+                "not_found": ""
+            },
+
+            "unlink": {
+                "delete": "",
+                "not_found": ""
+            }
+
         }
 
     }
+
 }
