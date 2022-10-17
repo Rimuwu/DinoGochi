@@ -441,11 +441,12 @@ class CheckFunction:
                                 item = Functions.random_items(items_dd)
 
                                 if mood_n == True:
+                                    iname = Functions.item_name(str(item), user['language_code'])
 
                                     if user['language_code'] == 'ru':
-                                        event = f"🧸 | Бегая по лесам, динозавр видит что-то похожее на сундук.\n>  Открыв его, он находит: {items_f['items'][item]['nameru']}!"
+                                        event = f"🧸 | Бегая по лесам, динозавр видит что-то похожее на сундук.\n>  Открыв его, он находит: {iname}!"
                                     else:
-                                        event = f"🧸 | Running through the woods, the dinosaur sees something that looks like a chest.\n> Opening it, he finds: {items_f['items'][item]['nameen']}!"
+                                        event = f"🧸 | Running through the woods, the dinosaur sees something that looks like a chest.\n> Opening it, he finds: {iname}!"
 
                                     Functions.add_item_to_user(user, item)
 
@@ -474,11 +475,12 @@ class CheckFunction:
                                 item = Functions.random_items(items_dd)
 
                                 if mood_n == True:
+                                    iname = Functions.item_name(item, user['language_code'])
 
                                     if user['language_code'] == 'ru':
-                                        event = f"🧸 | Бегая по горам, динозавр видит что-то похожее на сундук.\n>  Открыв его, он находит: {items_f['items'][item]['nameru']}!"
+                                        event = f"🧸 | Бегая по горам, динозавр видит что-то похожее на сундук.\n>  Открыв его, он находит: {iname}!"
                                     else:
-                                        event = f"🧸 | Running through the mountains, the dinosaur sees something similar to a chest.\n> Opening it, he finds: {items_f['items'][item]['nameen']}!"
+                                        event = f"🧸 | Running through the mountains, the dinosaur sees something similar to a chest.\n> Opening it, he finds: {iname}!"
 
                                     Functions.add_item_to_user(user, item)
 
@@ -501,11 +503,12 @@ class CheckFunction:
                                 egg = Functions.random_items(egg_d)
 
                                 if mood_n == True:
+                                    iname = Functions.item_name(egg, user['language_code'])
 
                                     if user['language_code'] == 'ru':
-                                        event = f"🧸 | Бегая по по пещерам, динозавр видит что-то похожее на сундук.\n>  Открыв его, он находит: {items_f['items'][egg]['nameru']}!"
+                                        event = f"🧸 | Бегая по по пещерам, динозавр видит что-то похожее на сундук.\n>  Открыв его, он находит: {iname}!"
                                     else:
-                                        event = f"🧸 | Running through the caves, the dinosaur sees something similar to a chest.\n> Opening it, he finds: {items_f['items'][egg]['nameen']}!"
+                                        event = f"🧸 | Running through the caves, the dinosaur sees something similar to a chest.\n> Opening it, he finds: {iname}!"
 
                                     Functions.add_item_to_user(user, egg)
 
@@ -649,12 +652,14 @@ class CheckFunction:
                                 user = users.find_one({"userid": user['userid']})
                                 items = user['inventory']
                                 item = random.choice(items)
+
                                 if mood_n == True:
+                                    iname = Functions.item_name(item, user['language_code'])
 
                                     if user['language_code'] == 'ru':
-                                        event = f"❗ | Бегая по лесам, динозавр обронил {items_f['items'][item]['nameru']}\n>  Предмет потерян!"
+                                        event = f"❗ | Бегая по лесам, динозавр обронил {iname}\n>  Предмет потерян!"
                                     else:
-                                        event = f"❗ | Running through the woods, the dinosaur dropped {items_f['items'][item]['nameen']}\n>  The item is lost!"
+                                        event = f"❗ | Running through the woods, the dinosaur dropped {iname}\n>  The item is lost!"
 
                                     user['inventory'].remove(item)
                                     users.update_one( {"userid": user['userid']}, {"$set": {'inventory': user['inventory'] }} )
