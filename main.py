@@ -277,13 +277,6 @@ def command(message):
         users.update_one( {"userid": user.id}, {"$set": {f"dinos": bd_user['dinos'] }} )
         print('ok')
 
-
-@bot.message_handler(commands=['egg_image'])
-def command(message):
-
-    photo, markup_inline, id_l = Functions.create_egg_image()
-    bot.send_photo(message.chat.id, photo, '-', reply_markup = markup_inline)
-
 # =========================================
 
 @bot.message_handler(commands=['link_promo'])
