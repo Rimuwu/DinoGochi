@@ -17,20 +17,17 @@ client = config.CLUSTER_CLIENT
 users, management, dungeons = client.bot.users, client.bot.management, client.bot.dungeons
 
 
-with open('json/items.json', encoding='utf-8') as f: 
-    items_f = json.load(f)
+with open('json/items.json', encoding='utf-8') as f: items_f = json.load(f)
 
-with open('json/dino_data.json', encoding='utf-8') as f: 
-    json_f = json.load(f)
+with open('json/dino_data.json', encoding='utf-8') as f: json_f = json.load(f)
 
-with open('json/mobs.json', encoding='utf-8') as f: 
-    mobs_f = json.load(f)
+with open('json/mobs.json', encoding='utf-8') as f: mobs_f = json.load(f)
 
-with open('json/floors_dungeon.json', encoding='utf-8') as f: 
-    floors_f = json.load(f)
+with open('json/floors_dungeon.json', encoding='utf-8') as f: floors_f = json.load(f)
 
-with open('json/quests_data.json', encoding='utf-8') as f: 
-    quests_f = json.load(f)
+with open('json/quests_data.json', encoding='utf-8') as f: quests_f = json.load(f)
+
+with open('json/settings.json', encoding='utf-8') as f: settings_f = json.load(f)
 
 checks_data = {'memory': [0, time.time()], 'incub': [0, time.time(), 0], 'notif': [[], []], 'main': [[], [], []], 'main_hunt': [ [], [], [] ], 'main_game': [ [], [], [] ], 'main_sleep': [ [], [], [] ], 'main_pass': [ [], [], [] ], 'main_journey': [ [], [], [] ], 'col': 0}
 reyt_ = [[], [], {}]
@@ -835,7 +832,7 @@ class Functions:
 
         if met == 'send':
 
-            if notification not in ['friend_request', "friend_rejection", "friend_accept"]:
+            if notification not in ['friend_request', "friend_rejection", "friend_accept", "product_bought", "quest", "lvl_up", "quest_completed"]:
                 if dino_id in user['notifications'].keys():
                     user['notifications'][dino_id][notification] = True
                 else:
@@ -1063,9 +1060,9 @@ class Functions:
                     item_d = items_f['items'][arg]
 
                     if user['language_code'] == 'ru':
-                        text = f'🛠 | {chat.first_name}, ваш аксессуар {item_d["nameru"]} сломался!'
+                        text = f'🛠 | {chat.first_name}, ваш аксессуар {item_d["name"]["ru"]} сломался!'
                     else:
-                        text = f'🛠 | {chat.first_name}, your accessory {item_d["nameen"]} broke!'
+                        text = f'🛠 | {chat.first_name}, your accessory {item_d["name"]["en"]} broke!'
 
                     try:
                         bot.send_message(user['userid'], text, reply_markup = Functions.inline_markup(bot, 'inventory', chat.id, ['Открыть инвентарь', 'Open inventory']) )
@@ -1159,10 +1156,6 @@ class Functions:
                     except:
                         pass
 
-
-                # else:
-                #     print(notification, 'notification')
-
     @staticmethod
     def check_data(t = None, ind = None, zn = None, m = 'ncheck'):
         global checks_data
@@ -1234,7 +1227,7 @@ class Functions:
 
         for i in dct.keys():
             it = dct[i]
-            name = items_f['items'][i][f'name{lg}']
+            name = items_f['items'][i][f'name'][lg]
 
             if col_display == True:
                 nl.append(f"{name} x{it}")
@@ -1259,7 +1252,7 @@ class Functions:
             itts = []
             for i in nls_i:
                 if i not in itts:
-                    name = items_f['items'][i['item']][f'name{lg}']
+                    name = items_f['items'][i['item']][f'name'][lg]
                     if i['type'] == 'endurance':
                         nl.append(f"{name} (⬇ -{i['act']}) x{dct[i['item']]}")
                     else:
@@ -1483,10 +1476,10 @@ class Functions:
 
         if lg == 'ru':
             text =  f"*┌* *🎴 Информация о предмете*\n"
-            text += f"*├* Название: {item['nameru']}\n"
+            text += f"*├* Название: {item['name']['ru']}\n"
         else:
             text =  f"*┌* *🎴 Subject information*\n"
-            text += f"*├* Name: {item['nameen']}\n"
+            text += f"*├* Name: {item['name']['en']}\n"
 
         if 'rank' in item.keys():
 
@@ -1591,7 +1584,10 @@ class Functions:
 
         if mark == True:
             markup_inline = types.InlineKeyboardMarkup()
-            markup_inline.add( types.InlineKeyboardButton( text = in_text[0], callback_data = f"item_{Functions.qr_item_code(us_item)}"),  types.InlineKeyboardButton( text = in_text[1], callback_data = f"remove_item_{Functions.qr_item_code(us_item)}") )
+            markup_inline.add( 
+                types.InlineKeyboardButton( text = in_text[0], callback_data = f"item_{Functions.qr_item_code(us_item)}"),  
+                types.InlineKeyboardButton( text = in_text[1], callback_data = f"remove_item_{Functions.qr_item_code(us_item)}") 
+            )
             markup_inline.add( types.InlineKeyboardButton( text = in_text[2], callback_data = f"exchange_{Functions.qr_item_code(us_item)}") )
 
             if item['type'] == 'recipe':
@@ -1738,17 +1734,16 @@ class Functions:
                                     data_item = data_items[ user_item['item_id'] ]
                                     if data_item['type'] == '+eat':
                                         eat_c = Functions.items_counting(two_user, '+eat')
-                                        if eat_c >= 800:
+                                        if eat_c >= settings_f['max_eat_items']:
 
                                             if bd_user['language_code'] == 'ru':
-                                                text = f'🌴 | У данного пользователя очень много еды, в данный момент вы не можете отправить ему {data_item["nameru"]}!'
+                                                text = f'🌴 | У данного пользователя очень много еды, в данный момент вы не можете отправить ему {data_item["name"]["ru"]}!'
                                             else:
-                                                text = f"🌴 | This user has a lot of food, at the moment you can't send him {data_item['nameen']}!"
+                                                text = f"🌴 | This user has a lot of food, at the moment you can't send him {data_item['name']['en']}!"
 
                                             bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, 'profile') , bd_user))
                                             return
 
-                                    col = 1
                                     mx_col = 0
                                     for item_c in bd_user['inventory']:
                                         if item_c == user_item:
@@ -1850,9 +1845,9 @@ class Functions:
                                         user = bot.get_chat( bd_user['userid'] )
 
                                         if two_user['language_code'] == 'ru':
-                                            text = f"🦄 | Единорог-курьер доставил вам предмет(ы) от {user.first_name}, загляните в инвентарь!\n\n📜 Доставлено:\n{items_f['items'][str(user_item['item_id'])]['nameru']} x{col}"
+                                            text = f"🦄 | Единорог-курьер доставил вам предмет(ы) от {user.first_name}, загляните в инвентарь!\n\n📜 Доставлено:\n{items_f['items'][str(user_item['item_id'])]['name']['ru']} x{col}"
                                         else:
-                                            text = f"🦄 | The Unicorn-courier delivered you an item(s) from {user.first_name}, take a look at the inventory!\n\n📜 Delivered:\n{items_f['items'][str(user_item['item_id'])]['nameen']} x{col}"
+                                            text = f"🦄 | The Unicorn-courier delivered you an item(s) from {user.first_name}, take a look at the inventory!\n\n📜 Delivered:\n{items_f['items'][str(user_item['item_id'])]['name']['en']} x{col}"
 
                                         bot.send_message(two_user['userid'], text, reply_markup = Functions.inline_markup(bot, 'inventory', two_user['userid'], ['Проверить инвентарь', 'Check inventory']))
 
@@ -2036,7 +2031,7 @@ class Functions:
                     if itm == None:
                         act_ii[d_id].append('-')
                     else:
-                        item = items_f['items'][str(itm['item_id'])]['nameru']
+                        item = items_f['items'][str(itm['item_id'])]['name']['ru']
                         if 'abilities' in itm.keys() and 'endurance' in itm['abilities'].keys():
                             act_ii[d_id].append(f"{item} ({itm['abilities']['endurance']})")
                         else:
@@ -2083,7 +2078,7 @@ class Functions:
                     if itm == None:
                         act_ii[d_id].append('-')
                     else:
-                        item = items_f['items'][str(itm['item_id'])]['nameen']
+                        item = items_f['items'][str(itm['item_id'])]['name']['en']
                         act_ii[d_id].append(item)
 
             text =  f"*┌**🎴 User profile*\n"
@@ -2451,21 +2446,10 @@ class Functions:
                                         data_item = items_f['items'][item['item_id']]
 
                                         if 'rank' in data_item.keys():
-
-                                            if data_item['rank'] == 'common': max_price = 2000
-
-                                            if data_item['rank'] == 'uncommon': max_price = 4000
-
-                                            if data_item['rank'] == 'rare': max_price = 8000
-
-                                            if data_item['rank'] == 'mystical': max_price = 15000
-
-                                            if data_item['rank'] == 'legendary': max_price = 50000
-
-                                            if data_item['rank'] == 'mythical': max_price = 1000000
+                                            max_price = settings_f['max_eat_price'][ data_item['rank'] ]
 
                                         else:
-                                            max_price = 2000
+                                            max_price = 200
 
                                         if bd_user['language_code'] == 'ru':
                                             text = f"🛒 | Введите стоимость предмета х1: (макс {max_price})"
@@ -3088,9 +3072,9 @@ class Functions:
                     act_ii.append('-')
                 else:
                     if bd_user['language_code'] == 'ru':
-                        item = items_f['items'][str(itm['item_id'])]['nameru']
+                        item = items_f['items'][str(itm['item_id'])]['name']['ru']
                     else:
-                        item = items_f['items'][str(itm['item_id'])]['nameen']
+                        item = items_f['items'][str(itm['item_id'])]['name']['en']
 
                     if 'abilities' in itm.keys() and 'endurance' in itm['abilities'].keys():
                         act_ii.append(f"{item} ({itm['abilities']['endurance']})")
@@ -3261,13 +3245,9 @@ class Functions:
         else:
             pages_v = [2, 3]
 
-        if bd_user['language_code'] == 'ru':
-            lg = "nameru"
-        else:
-            lg = "nameen"
-
         for i in items:
             ic = items.count(i)
+            iname = Functions.item_name(str(i['item_id']), bd_user['language_code'])
 
             if ic == 1:
                 i_col = ''
@@ -3296,10 +3276,10 @@ class Functions:
             if add_item == True:
 
                 if Functions.item_authenticity(i) == True:
-                    i_name = f"{items_f['items'][ i['item_id'] ][lg]}{i_col}"
+                    i_name = f"{iname}{i_col}"
 
                 else:
-                    i_name = f"{items_f['items'][ i['item_id'] ][lg]}{i_col} ({Functions.qr_item_code(i, False)})"
+                    i_name = f"{iname}{i_col} ({Functions.qr_item_code(i, False)})"
 
                 items_data[ i_name] = i
 
@@ -3395,6 +3375,156 @@ class Functions:
 
             else:
                 return  languages[ l_key ][ text_key ]
+    
+    def create_egg_image(id_l = None, calb = "egg_answer"):
+        bg_p = Image.open(f"images/remain/{random.choice( settings_f['egg_ask_backs'] )}.png")
+        eg_l = []
+
+        if id_l == None:
+            id_l = []
+
+            for i in range(3):
+                rid = str(random.choice(list(json_f['data']['egg'])))
+                image = Image.open('images/'+str(json_f['elements'][rid]['image']))
+                eg_l.append(image)
+                id_l.append(rid)
+        
+        else:
+            for i in id_l:
+                rid = str(i)
+                image = Image.open('images/'+ str(json_f['elements'][rid]['image']))
+                eg_l.append(image)
+                
+
+        for i in range(3):
+            bg_img = bg_p
+            fg_img = eg_l[i]
+            img = Functions.trans_paste(fg_img, bg_img, 1.0, (i*512,0))
+
+        img.save(f'{config.TEMP_DIRECTION}/eggs.png')
+        photo = open(f"{config.TEMP_DIRECTION}/eggs.png", 'rb')
+
+        markup_inline = types.InlineKeyboardMarkup()
+        markup_inline.add(
+            *[ types.InlineKeyboardButton( text = f'🥚 {id_l.index(i) + 1}', callback_data = f'{calb} {i}') for i in id_l]
+        )
+
+        return photo, markup_inline, id_l
+    
+    def item_name(item_id, lg):
+        data_items = items_f['items']
+        item = data_items[ item_id ]
+
+        if lg in item['name'].keys():
+            return item['name'][lg]
+        
+        else:
+            return item['name']['en']
+    
+    def promo_use(promo_code:str, user:int):
+        promo_data = management.find_one({"_id": 'promo_codes'})['codes']
+        bd_user = users.find_one({"userid": user.id})
+
+        if bd_user != None:
+
+            if promo_code in promo_data.keys():
+                promo = promo_data[promo_code]
+
+                col = promo['col']
+                if col == 'inf': col = 1
+
+                time_end = promo['time_end']
+                if time_end == 'inf': time_end = int(time.time()) + 100
+
+                if promo['active']:
+
+                    if col > 0:
+                        
+                        if time_end - int(time.time()) > 0:
+
+                            if user.id not in promo['users']:
+
+                                management.update_one( {"_id": 'promo_codes'}, {"$push": {f'codes.{promo_code}.users': user.id }} )
+
+                                if promo['col'] != 'inf':
+                                    management.update_one( {"_id": 'promo_codes'}, {"$inc": {f'codes.{promo_code}.col': -1 }} )
+
+                                text = ''
+                                if bd_user['language_code'] == 'ru':
+                                    text = f'🎁 | Промокод активирован!\n\n'
+                                else:
+                                    text = f'🎁 | Promo code activated!\n\n'
+
+                                if promo['money'] != 0:
+
+                                    if bd_user['language_code'] == 'ru':
+                                        text += f'🎟 | Монеты: {promo["money"]}\n\n'
+                                    else:
+                                        text += f'🎟 | Монеты: {promo["money"]}\n\n'
+
+                                    users.update_one( {"userid": user.id}, {"$inc": {'coins': promo['money'] }} )
+
+                                if promo['items'] != []:
+
+                                    items = ', '.join(Functions.sort_items_col(promo['items'], user.language_code) )
+                                    if bd_user['language_code'] == 'ru':
+                                        text += f'📦 | Предметы: {items}'
+                                    else:
+                                        text += f'📦 | Items: {items}'
+                                    
+                                    for i in promo['items']:
+                                        Functions.add_item_to_user(bd_user, i)
+                                
+                                return 'promo_activ', text
+
+                            else:
+                                if bd_user['language_code'] == 'ru':
+                                    text = f'🧸 | Вы уже использовали этот промокод!'
+                                else:
+                                    text = f'🧸 | You have already used this promo code!'
+                            
+                                return 'alredy_use', text
+
+                        else:
+                            if bd_user['language_code'] == 'ru':
+                                text = f'🎨 | Время для данного промокода вышло...'
+                            else:
+                                text = f'🎨 | The time for this promo code is over...'
+                            
+                            return 'time_end', text
+
+                    else:
+                        if bd_user['language_code'] == 'ru':
+                            text = f'🧨 | Промокод уже использовали максимальное количество раз!'
+                        else:
+                            text = f'🧨 | The promo code has already been used the maximum number of times!'
+
+                        return 'max_col_use', text
+                
+                else:
+                    if bd_user['language_code'] == 'ru':
+                        text = f'✨ | Этот промокод в данный момент деактивирован!'
+                    else:
+                        text = f'✨ | This promo code is currently deactivated!'
+
+                    return 'deactivated', text
+
+            else:     
+                if bd_user['language_code'] == 'ru':
+                    text = f'🎍 | Промокод не найден, попробуйте ввести его заново!'
+                else:
+                    text = f'🎍 | Promo code not found, try to enter it again!'
+                
+                return 'not_found', text
+        
+        else:     
+            if bd_user['language_code'] == 'ru':
+                text = f'🦕 | Вы не авторизированы в боте!'
+            else:
+                text = f'🦕 | You are not logged in to the bot!'
+            
+            return 'no_user', text
+
 
 class Dungeon:
 
@@ -4664,31 +4794,26 @@ class Dungeon:
                 page = kwargs['page']
                 bd_user = kwargs['bd_user']
                 items = dung['users'][str(userid)]['inventory']
-                data_items = items_f['items']
                 sort_items = {}
 
-                if dung['settings']['lang'] == 'ru':
-                    lg_name = "nameru"
-                else:
-                    lg_name = "nameen"
-
                 for i in items:
+                    iname = Functions.item_name(str(i['item_id']), dung['settings']['lang'])
 
                     if Functions.item_authenticity(i) == True:
 
-                        if data_items[ str(i['item_id']) ][lg_name] not in sort_items.keys():
-                            sort_items[ data_items[ str(i['item_id']) ][lg_name] ] = { 'col': 1, 'callback_data': f"dungeon_use_item_info {dungeonid} {Functions.qr_item_code(i)}" }
+                        if iname not in sort_items.keys():
+                            sort_items[ iname ] = { 'col': 1, 'callback_data': f"dungeon_use_item_info {dungeonid} {Functions.qr_item_code(i)}" }
 
                         else:
-                            sort_items[ data_items[ str(i['item_id']) ][lg_name] ]['col'] += 1
+                            sort_items[ iname ]['col'] += 1
 
                     else:
-                        if f"{data_items[ str(i['item_id']) ][lg_name]} ({Functions.qr_item_code(i, False)})" not in sort_items.keys():
+                        if f"{iname} ({Functions.qr_item_code(i, False)})" not in sort_items.keys():
 
-                            sort_items[ f"{data_items[ str(i['item_id']) ][lg_name]} ({Functions.qr_item_code(i, False)})" ] = { 'col': 1, 'callback_data': f"dungeon_use_item_info {dungeonid} {Functions.qr_item_code(i)}" }
+                            sort_items[ f"{iname} ({Functions.qr_item_code(i, False)})" ] = { 'col': 1, 'callback_data': f"dungeon_use_item_info {dungeonid} {Functions.qr_item_code(i)}" }
 
                         else:
-                            sort_items[ f"{data_items[ str(i['item_id']) ][lg_name]} ({Functions.qr_item_code(i, False)})" ]['col'] += 1
+                            sort_items[ f"{iname} ({Functions.qr_item_code(i, False)})" ]['col'] += 1
 
                 sort_items_keys = {}
                 sort_list = []
