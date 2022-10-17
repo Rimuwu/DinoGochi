@@ -15,20 +15,20 @@ import config
 client = config.CLUSTER_CLIENT
 users, management, dungeons = client.bot.users, client.bot.management, client.bot.dungeons
 
-with open('json/items.json', encoding='utf-8') as f:
-    items_f = json.load(f)
+with open('json/items.json', encoding='utf-8') as f: items_f = json.load(f)
 
-with open('json/dino_data.json', encoding='utf-8') as f:
-    json_f = json.load(f)
+with open('json/dino_data.json', encoding='utf-8') as f: json_f = json.load(f)
+
+with open('json/settings.json', encoding='utf-8') as f: settings_f = json.load(f)
 
 class CallData:
 
     def egg_answer(bot, bd_user, call, user):
 
         if 'eggs' in list(bd_user.keys()):
-            egg_n = call.data[11:]
+            egg_n = call.data.split()[1]
 
-            bd_user['dinos'][ Functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 10 * 60, 'egg_id': bd_user['eggs'][int(egg_n)-1]}
+            bd_user['dinos'][ Functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': time.time() + 10 * 60, 'egg_id': egg_n}
 
             users.update_one( {"userid": user.id}, {"$unset": {'eggs': None}} )
             users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
@@ -50,7 +50,6 @@ class CallData:
         def dino_journey(bd_user, user, dino_user_id):
 
             dino_id = str(bd_user['dinos'][ dino_user_id ]['dino_id'])
-            dino = json_f['elements'][dino_id]
             n_img = random.randint(1,5)
             bg_p = Image.open(f"images/journey/{n_img}.png")
 
@@ -504,6 +503,7 @@ class CallData:
             global col, dino_id
             fr_user = users.find_one({"userid": user.id})
             use_st = True
+            send_status = True
             text = ''
 
             if data_item['type'] == 'freezing':
@@ -559,8 +559,9 @@ class CallData:
                 end_ok = True
                 list_inv_id = []
                 list_inv_id_copy = []
-                for i in fr_user['inventory']: list_inv_id.append(i['item_id']), list_inv_id_copy.append(i['item_id'])
                 search_items = {}
+
+                for i in fr_user['inventory']: list_inv_id.append(i['item_id']), list_inv_id_copy.append(i['item_id'])
                 list_inv = fr_user['inventory'].copy()
 
                 for _ in range(col):
@@ -595,10 +596,12 @@ class CallData:
 
                 if ok == True and end_ok == True:
 
+                    iname = Functions.item_name(user_item['item_id'], fr_user['language_code'])
+
                     if bd_user['language_code'] == 'ru':
-                        text = f'🍡 | Предмет {data_item["nameru"]} x{col} создан!'
+                        text = f'🍡 | Предмет {iname} x{col} создан!'
                     else:
-                        text = f"🍡 | The item {data_item['nameen']} x{col} is created!"
+                        text = f"🍡 | The item {iname} x{col} is created!"
 
                     fr_user = users.find_one({"userid": user.id})
 
@@ -658,6 +661,7 @@ class CallData:
 
             elif data_item['type'] == '+eat':
                 d_dino = json_f['elements'][ str(bd_user['dinos'][dino_id]['dino_id']) ]
+                iname = Functions.item_name(user_item['item_id'], bd_user['language_code'])
 
                 if bd_user['dinos'][ dino_id ]['activ_status'] == 'sleep':
 
@@ -677,7 +681,7 @@ class CallData:
                             if bd_user['dinos'][ dino_id ]['stats']['eat'] > 100:
                                 bd_user['dinos'][ dino_id ]['stats']['eat'] = 100
 
-                            text = f"🍕 | Динозавр с удовольствием съел {data_item['nameru']}!\nДинозавр сыт на {bd_user['dinos'][ dino_id ]['stats']['eat']}%"
+                            text = f"🍕 | Динозавр с удовольствием съел {iname}!\nДинозавр сыт на {bd_user['dinos'][ dino_id ]['stats']['eat']}%"
 
 
                         elif data_item['class'] == d_dino['class']:
@@ -686,13 +690,13 @@ class CallData:
                             if bd_user['dinos'][ dino_id ]['stats']['eat'] > 100:
                                 bd_user['dinos'][ dino_id ]['stats']['eat'] = 100
 
-                            text = f"🍕 | Динозавр с удовольствием съел {data_item['nameru']}!\nДинозавр сыт на {bd_user['dinos'][ dino_id ]['stats']['eat']}%"
+                            text = f"🍕 | Динозавр с удовольствием съел {iname}!\nДинозавр сыт на {bd_user['dinos'][ dino_id ]['stats']['eat']}%"
 
 
                         else:
                             eatr = random.randint( 0, int(data_item['act'] / 2) )
                             moodr = random.randint( 1, 10 )
-                            text = f"🍕 | Динозавру не по вкусу {data_item['nameru']}, он теряет {eatr}% сытости и {moodr}% настроения!"
+                            text = f"🍕 | Динозавру не по вкусу {iname}, он теряет {eatr}% сытости и {moodr}% настроения!"
 
                             bd_user['dinos'][ dino_id ]['stats']['eat'] -= eatr
                             bd_user['dinos'][ dino_id ]['stats']['mood'] -= moodr
@@ -705,7 +709,7 @@ class CallData:
                             if bd_user['dinos'][ dino_id ]['stats']['eat'] > 100:
                                 bd_user['dinos'][ dino_id ]['stats']['eat'] = 100
 
-                            text = f"🍕 | The dinosaur ate it with pleasure {data_item['nameen']}!\nThe dinosaur is fed up on {bd_user['dinos'][ dino_id ]['stats']['eat']}%"
+                            text = f"🍕 | The dinosaur ate it with pleasure {iname}!\nThe dinosaur is fed up on {bd_user['dinos'][ dino_id ]['stats']['eat']}%"
 
                         elif data_item['class'] == d_dino['class']:
 
@@ -714,12 +718,12 @@ class CallData:
                             if bd_user['dinos'][ dino_id ]['stats']['eat'] > 100:
                                 bd_user['dinos'][ dino_id ]['stats']['eat'] = 100
 
-                            text = f"🍕 | The dinosaur ate it with pleasure {data_item['nameen']}!\nThe dinosaur is fed up on {bd_user['dinos'][ dino_id ]['stats']['eat']}%"
+                            text = f"🍕 | The dinosaur ate it with pleasure {iname}!\nThe dinosaur is fed up on {bd_user['dinos'][ dino_id ]['stats']['eat']}%"
 
                         else:
                             eatr = random.randint( 0, int(data_item['act'] / 2) )
                             moodr = random.randint( 1, 10 )
-                            text = f"🍕 | The dinosaur doesn't like {data_item['nameen']}, it loses {eatr * col}% satiety and {moodr * col}% mood!"
+                            text = f"🍕 | The dinosaur doesn't like {iname}, it loses {eatr * col}% satiety and {moodr * col}% mood!"
 
                             bd_user['dinos'][ dino_id ]['stats']['eat'] -= eatr * col
                             bd_user['dinos'][ dino_id ]['stats']['mood'] -= moodr * col
@@ -798,27 +802,25 @@ class CallData:
 
                 else:
                     if int(bd_user['lvl'][0] / 20 + 1) > len(bd_user['dinos']):
+                        use_st = False
 
-                        if data_item['time_tag'] == 'h':
-                            inc_time = time.time() + data_item['incub_time'] * 3600
-
-                        if data_item['time_tag'] == 'm':
-                            inc_time = time.time() + data_item['incub_time'] * 60
-
-                        if data_item['time_tag'] == 's':
-                            inc_time = time.time() + data_item['incub_time']
-
-                        egg_n = str(random.choice(list(json_f['data']['egg'])))
-
-                        bd_user['dinos'][ Functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': inc_time , 'egg_id': egg_n, 'quality': data_item['inc_type']}
-
-                        users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
-
-
-                        if bd_user['language_code'] == 'ru':
-                            text = f'🥚 | Яйцо отправлено на инкубацию!'
+                        if user.language_code == 'ru':
+                            text2 = '🥚 | Выберите яйцо с динозавром!'
+                            text = '🎨 | Профиль открыт!'
                         else:
-                            text = f"🥚 | The egg has been sent for incubation!"
+                            text2 = '🥚 | Choose a dinosaur egg!'
+                            text = '🎨 | Profile is open!'
+
+                        if 'eggs' in bd_user.keys():
+                            id_l = bd_user['eggs']
+                        else:
+                            id_l = None
+
+                        photo, markup_inline, id_l = Functions.create_egg_image(id_l, 'egg_use')
+                        bot.send_photo(call.message.chat.id, photo, text2, reply_markup = markup_inline)
+
+                        users.update_one( {"userid": user.id}, {"$set": {'eggs': id_l}} )
+                        users.update_one( {"userid": user.id}, {"$set": {'egg_item': user_item }} )
 
                     else:
                         if bd_user['language_code'] == 'ru':
@@ -978,8 +980,9 @@ class CallData:
 
             if use_st == True or use_st == 'update_only':
                 users.update_one( {"userid": user.id}, {"$set": {'inventory': fr_user['inventory'] }} )
-
-            bot.send_message(user.id, text, parse_mode = 'Markdown', reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
+            
+            if send_status == True:
+                bot.send_message(user.id, text, parse_mode = 'Markdown', reply_markup = Functions.markup(bot, Functions.last_markup(bd_user, alternative = 'profile'), bd_user ))
 
         def ent_col(message, col_l, mx_col):
             global col
@@ -1084,6 +1087,7 @@ class CallData:
 
         data_item = items_f['items'][it_id]
         user_item = None
+        iname = Functions.item_name(str(it_id), bd_user['language_code'])
 
         if data in bd_user['inventory']:
             user_item = data
@@ -1111,11 +1115,11 @@ class CallData:
 
             if bd_user['language_code'] == 'ru':
                 markup.add( *[i for i in ['Да, я хочу это сделать', '❌ Отмена'] ] )
-                msg = bot.send_message(user.id, f'Вы уверены что хотите использовать {data_item["nameru"]} ?', reply_markup = markup)
+                msg = bot.send_message(user.id, f'Вы уверены что хотите использовать {iname} ?', reply_markup = markup)
 
             else:
                 markup.add( *[i for i in ['Yes, I want to do it', '❌ Cancel'] ] )
-                msg = bot.send_message(user.id, f'Are you sure you want to use {data_item["nameen"]} ?', reply_markup = markup)
+                msg = bot.send_message(user.id, f'Are you sure you want to use {iname} ?', reply_markup = markup)
 
             bot.register_next_step_handler(msg, wrk_p)
 
@@ -1123,8 +1127,6 @@ class CallData:
 
         data = Functions.des_qr(str(call.data[12:]), True)
         it_id = str(data['item_id'])
-
-        data_item = items_f['items'][it_id]
         user_item = None
 
         if data in bd_user['inventory']:
@@ -1156,9 +1158,6 @@ class CallData:
     def remove(bot, bd_user, call, user):
 
         data = Functions.des_qr(str(call.data[7:]), True)
-        it_id = str(data['item_id'])
-
-        data_item = items_f['items'][it_id]
         user_item = None
 
         if data in bd_user['inventory']:
@@ -1174,7 +1173,6 @@ class CallData:
             bot.send_message(user.id, text, parse_mode = 'Markdown')
 
         if user_item != None:
-            col = 1
             mx_col = 0
             for item_c in bd_user['inventory']:
                 if item_c == user_item:
@@ -1253,7 +1251,7 @@ class CallData:
                     bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'actions', user))
                     return
 
-                for i in range(col):
+                for _ in range(col):
                     bd_user['inventory'].remove(user_item)
 
                 users.update_one( {"userid": user.id}, {"$set": {f'inventory': bd_user['inventory'] }} )
@@ -1272,8 +1270,6 @@ class CallData:
 
         data = Functions.des_qr(str(call.data[9:]), True)
         it_id = str(data['item_id'])
-
-        data_item = items_f['items'][it_id]
         user_item = None
 
         if data in bd_user['inventory']:
@@ -1310,7 +1306,7 @@ class CallData:
                 if data_items[ mmd['item']['item_id'] ]['type'] == '+eat':
 
                     eat_c = Functions.items_counting(bd_user, '+eat')
-                    if eat_c >= 800:
+                    if eat_c >= settings_f['max_eat_items']:
 
                         if bd_user['language_code'] == 'ru':
                             text = f'🌴 | Ваш инвентарь ломится от количества еды! В данный момент у вас {eat_c} предметов которые можно съесть!'
@@ -1321,6 +1317,7 @@ class CallData:
                         return
 
                 if mmd['price'] <= bd_user['coins']:
+                    iname = Functions.item_name(str(mmd['item']['item_id']), bd_user['language_code'])
 
                     def reg0(message, mmd, us_id, key_i):
 
@@ -1359,7 +1356,7 @@ class CallData:
                                 bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'market', user))
                                 return
 
-                            for i in range(number):
+                            for _ in range(number):
                                 bd_user['inventory'].append(mmd['item'])
 
                             if mr_user != None:
@@ -1384,7 +1381,7 @@ class CallData:
 
                             Functions.notifications_manager(bot, "product_bought", mr_user, mmd['price'] * number )
 
-                        if message.text in [f"Yes, purchase {items_f['items'][mmd['item']['item_id']]['nameru']}", f"Да, приобрести {items_f['items'][mmd['item']['item_id']]['nameru']}"]:
+                        if message.text in [f"Yes, purchase {iname}", f"Да, приобрести {iname}"]:
                             pass
 
                         elif message.text in [ '🛒 Рынок', '🛒 Market' ]:
@@ -1421,12 +1418,13 @@ class CallData:
                         msg = bot.send_message(message.chat.id, text, reply_markup = rmk, parse_mode = 'Markdown')
                         bot.register_next_step_handler(msg, reg, mmd, us_id, key_i)
 
+
                     if bd_user['language_code'] == 'ru':
-                        text = f"🛒 | Вы уверены что вы хотите купить {items_f['items'][mmd['item']['item_id']]['nameru']}?"
-                        ans = [f"Да, приобрести {items_f['items'][mmd['item']['item_id']]['nameru']}", '🛒 Рынок']
+                        text = f"🛒 | Вы уверены что вы хотите купить {iname}?"
+                        ans = [f"Да, приобрести {iname}", '🛒 Рынок']
                     else:
-                        text = f"🛒 | Are you sure you want to buy {items_f['items'][mmd['item']['item_id']]['nameen']}?"
-                        ans = [f"Yes, purchase {items_f['items'][mmd['item']['item_id']]['nameru']}", '🛒 Market']
+                        text = f"🛒 | Are you sure you want to buy {iname}?"
+                        ans = [f"Yes, purchase {iname}", '🛒 Market']
 
                     rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 1)
                     rmk.add(ans[0], ans[1])
@@ -1629,13 +1627,7 @@ class CallData:
         dino_id = did[1]
         quality = did[2]
 
-        data_q_r = { 'com': {'money': 2000,  'materials': ['21']  } ,
-                     'unc': {'money': 4000, 'materials': ['20'] } ,
-                     'rar': {'money': 8000, 'materials': ['22'] } ,
-                     'myt': {'money': 16000, 'materials': ['23'] } ,
-                     'leg': {'money': 32000, 'materials': ['24'] } ,
-                     'ran': {'money': 5000, 'materials': ['3']  } ,
-                   }
+        data_q_r = settings_f['change_rarity']
 
         def change_rarity(message, chang_type):
 
@@ -2029,15 +2021,14 @@ class CallData:
         list_items_id = []
         for i in items: list_items_id.append( i['item_id'] )
 
+        lg_name = bd_user['language_code']
         if bd_user['language_code'] == 'ru':
             show_text = '🎴 | Ваш инвентарь пуст!'
-            lg_name = "nameru"
             text = '🍨 | Введите название предмета, который вы хотите взять с собой >'
             text2 = '🔎 | Ожидание ввода...\n❌ | Введите "Отмена" для отмены поиска.'
 
         else:
             show_text = "🎴 | Your inventory is empty!"
-            lg_name = "nameen"
             text = '🍨 | Enter the name of the item you want to take with you >'
             text2 = '🔎 | Waiting for input...\n❌ | Enter "Cancel" to cancel the search.'
 
@@ -2062,7 +2053,7 @@ class CallData:
                     for i in items_f['items']:
                         item = items_f['items'][i]
 
-                        for inn in [ item['nameru'], item['nameen'] ]:
+                        for inn in [ item['name']['ru'], item['name']['en'] ]:
                             if fuzz.token_sort_ratio(message.text, inn) > 70 or fuzz.ratio(message.text, inn) > 70 or message.text == inn:
                                 s_i.append(i)
 
@@ -2075,7 +2066,7 @@ class CallData:
                         else:
                             show_text2 = "🔎 | The item is not found, try to enter a more correct name!"
 
-                        inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                        Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
                         bot.answer_callback_query(call.id, show_text2, show_alert = True)
 
                     else:
@@ -2088,7 +2079,7 @@ class CallData:
                             else:
                                 show_text3 = "🔎 | The item is not found in your inventory!"
 
-                            inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
+                            Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'supplies')
                             bot.answer_callback_query(call.id, show_text3, show_alert = True)
 
                         else:
@@ -2099,13 +2090,13 @@ class CallData:
 
                                     if Functions.item_authenticity(i) == True:
 
-                                        if data_items[i['item_id']][lg_name] not in inl_d.keys():
+                                        if data_items[i['item_id']]['name'][lg_name] not in inl_d.keys():
                                             inl_d[ data_items[i['item_id']][lg_name] ] = f"dungeon_add_item {dungeonid} {Functions.qr_item_code(i)}"
 
                                     else:
-                                        if f"{data_items[i['item_id']][lg_name]} ({Functions.qr_item_code(i, False)})" not in inl_d.keys():
+                                        if f"{data_items[i['item_id']]['name'][lg_name]} ({Functions.qr_item_code(i, False)})" not in inl_d.keys():
 
-                                            inl_d[ f"{data_items[i['item_id']][lg_name]} ({Functions.qr_item_code(i, False)})" ] = f"dungeon_add_item {dungeonid} {Functions.qr_item_code(i)}"
+                                            inl_d[ f"{data_items[i['item_id']]['name'][lg_name]} ({Functions.qr_item_code(i, False)})" ] = f"dungeon_add_item {dungeonid} {Functions.qr_item_code(i)}"
 
                             markup_inline = types.InlineKeyboardMarkup(row_width = 3)
 
@@ -2248,18 +2239,15 @@ class CallData:
         markup_inline = types.InlineKeyboardMarkup()
         mrk_d = {}
 
-        if bd_user['language_code'] == 'ru':
-            lg_name = 'nameru'
-        else:
-            lg_name = 'nameen'
+        lg_name = bd_user['language_code']
 
         for i in user_items:
             if Functions.item_authenticity(i) == True:
-                ke = f"{data_items[ i['item_id'] ][lg_name]}  x{user_items.count(i)}"
+                ke = f"{data_items[ i['item_id'] ]['name'][lg_name]}  x{user_items.count(i)}"
 
                 mrk_d[ ke ] = f'dungeon_remove_item {dungeonid} {Functions.qr_item_code(i)}'
             else:
-                ke = f"{data_items[ i['item_id'] ][lg_name]}  x{user_items.count(i)} ({Functions.qr_item_code(i, False)})"
+                ke = f"{data_items[ i['item_id'] ]['name'][lg_name]}  x{user_items.count(i)} ({Functions.qr_item_code(i, False)})"
 
                 mrk_d[ ke ] = f'dungeon_remove_item {dungeonid} {Functions.qr_item_code(i)}'
 
@@ -2634,10 +2622,7 @@ class CallData:
                 sw_text = "There aren't any of your dinosaurs in the dungeon."
 
         else:
-            if bd_user['language_code'] == 'ru':
-                lgn = 'nameru'
-            else:
-                lgn = 'nameen'
+            lgn = bd_user['language_code']
 
             for dkey in dinos_k:
                 dino = bd_user['dinos'][dkey]
@@ -2646,7 +2631,7 @@ class CallData:
                 if d_eq['weapon'] == None:
                     weap = ''
                 else:
-                    weap = f"\n{ data_items[ d_eq['weapon']['item_id'] ][lgn] } "
+                    weap = f"\n{ data_items[ d_eq['weapon']['item_id'] ]['name'][lgn] } "
 
                 sw_text += f"🦕 {dino['name']}\n❤ {dino_stats['heal']}%\n🍕 {dino_stats['eat']}%{weap}"
                 sw_text += '\n\n'
@@ -2744,15 +2729,9 @@ class CallData:
         dung = dungeons.find_one({"dungeonid": dungeonid})
         room_n = str(dung['stage_data']['game']['room_n'])
 
-        if bd_user['language_code'] == 'ru':
-            lg_name = "nameru"
-        else:
-            lg_name = "nameen"
-
-
         if user.id not in dung['floor'][room_n]['ready']:
 
-            inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'user_inventory', kwargs = {'page': page, 'bd_user': bd_user} )
+            Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, type = 'user_inventory', kwargs = {'page': page, 'bd_user': bd_user} )
 
         else:
             if bd_user['language_code'] == 'ru':
@@ -2939,7 +2918,7 @@ class CallData:
                         if bd_user['dinos'][ dino_id ]['stats']['eat'] > 100:
                             bd_user['dinos'][ dino_id ]['stats']['eat'] = 100
 
-                        text = f"🍕 | Динозавр с удовольствием съел {data_item['nameru']}!\nДинозавр сыт на {bd_user['dinos'][ dino_id ]['stats']['eat']}%"
+                        text = f"🍕 | Динозавр с удовольствием съел {data_item['name']['ru']}!\nДинозавр сыт на {bd_user['dinos'][ dino_id ]['stats']['eat']}%"
 
 
                     elif data_item['class'] == d_dino['class']:
@@ -2948,13 +2927,13 @@ class CallData:
                         if bd_user['dinos'][ dino_id ]['stats']['eat'] > 100:
                             bd_user['dinos'][ dino_id ]['stats']['eat'] = 100
 
-                        text = f"🍕 | Динозавр с удовольствием съел {data_item['nameru']}!\nДинозавр сыт на {bd_user['dinos'][ dino_id ]['stats']['eat']}%"
+                        text = f"🍕 | Динозавр с удовольствием съел {data_item['name']['ru']}!\nДинозавр сыт на {bd_user['dinos'][ dino_id ]['stats']['eat']}%"
 
 
                     else:
                         eatr = random.randint( 0, int(data_item['act'] / 2) )
                         moodr = random.randint( 1, 10 )
-                        text = f"🍕 | Динозавру не по вкусу {data_item['nameru']}, он теряет {eatr}% сытости и {moodr}% настроения!"
+                        text = f"🍕 | Динозавру не по вкусу {data_item['name']['ru']}, он теряет {eatr}% сытости и {moodr}% настроения!"
 
                         bd_user['dinos'][ dino_id ]['stats']['eat'] -= eatr
                         bd_user['dinos'][ dino_id ]['stats']['mood'] -= moodr
@@ -2967,7 +2946,7 @@ class CallData:
                         if bd_user['dinos'][ dino_id ]['stats']['eat'] > 100:
                             bd_user['dinos'][ dino_id ]['stats']['eat'] = 100
 
-                        text = f"🍕 | The dinosaur ate it with pleasure {data_item['nameen']}!\nThe dinosaur is fed up on {bd_user['dinos'][ dino_id ]['stats']['eat']}%"
+                        text = f"🍕 | The dinosaur ate it with pleasure {data_item['name']['en']}!\nThe dinosaur is fed up on {bd_user['dinos'][ dino_id ]['stats']['eat']}%"
 
                     elif data_item['class'] == d_dino['class']:
 
@@ -2976,12 +2955,12 @@ class CallData:
                         if bd_user['dinos'][ dino_id ]['stats']['eat'] > 100:
                             bd_user['dinos'][ dino_id ]['stats']['eat'] = 100
 
-                        text = f"🍕 | The dinosaur ate it with pleasure {data_item['nameen']}!\nThe dinosaur is fed up on {bd_user['dinos'][ dino_id ]['stats']['eat']}%"
+                        text = f"🍕 | The dinosaur ate it with pleasure {data_item['name']['en']}!\nThe dinosaur is fed up on {bd_user['dinos'][ dino_id ]['stats']['eat']}%"
 
                     else:
                         eatr = random.randint( 0, int(data_item['act'] / 2) )
                         moodr = random.randint( 1, 10 )
-                        text = f"🍕 | The dinosaur doesn't like {data_item['nameen']}, it loses {eatr}% satiety and {moodr}% mood!"
+                        text = f"🍕 | The dinosaur doesn't like {data_item['name']['en']}, it loses {eatr}% satiety and {moodr}% mood!"
 
                         bd_user['dinos'][ dino_id ]['stats']['eat'] -= eatr
                         bd_user['dinos'][ dino_id ]['stats']['mood'] -= moodr
@@ -3364,6 +3343,7 @@ class CallData:
 
         data_items = items_f['items']
         ob_ef = 0
+        upd_items = False
 
         for dkey in dung['users'][str(user.id)]['dinos'].keys():
             eq_tool = bd_user['dinos'][dkey]['dungeon']['equipment']['weapon']
@@ -3421,10 +3401,10 @@ class CallData:
                 data_item = data_items[ dp_rm_res[0]['item_id'] ]
 
                 if bd_user['language_code'] == 'ru':
-                    sw_text = f'⛏ | Ваши динозавры выкопали {data_item["nameru"]}!'
+                    sw_text = f'⛏ | Ваши динозавры выкопали {data_item["name"]["ru"]}!'
 
                 else:
-                    sw_text = f"⛏ | Your dinosaurs dug up {data_item['nameen']}!"
+                    sw_text = f"⛏ | Your dinosaurs dug up {data_item['name']['en']}!"
 
                 if end_up == 1:
 
@@ -3479,11 +3459,11 @@ class CallData:
 
             data_item = data_items[ pr['item']['item_id'] ]
             if dung['settings']['lang'] == 'ru':
-                inl_l[ f"{data_item['nameru']} — Цена: {pr['price']}" ] = f'dungeon.shop_buy {dungeonid} {Functions.qr_item_code(pr["item"])}'
+                inl_l[ f"{data_item['name']['ru']} — Цена: {pr['price']}" ] = f'dungeon.shop_buy {dungeonid} {Functions.qr_item_code(pr["item"])}'
 
             else:
 
-                inl_l[ f"{data_item['nameen']} — Price: {pr['price']}" ] = f'dungeon.shop_buy {dungeonid} {Functions.qr_item_code(pr["item"])}'
+                inl_l[ f"{data_item['name']['en']} — Price: {pr['price']}" ] = f'dungeon.shop_buy {dungeonid} {Functions.qr_item_code(pr["item"])}'
 
         inl_l['❌'] = f'dungeon.to_lobby {dungeonid}'
 
@@ -3546,10 +3526,10 @@ class CallData:
                 dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'floor.{room_n}': dung['floor'][room_n] }} )
 
                 if bd_user['language_code'] == 'ru':
-                    sw_text = f"🎇 | Предмет {data_items[n_pr['item']['item_id']]['nameru']} был приобретён!"
+                    sw_text = f"🎇 | Предмет {data_items[n_pr['item']['item_id']]['name']['ru']} был приобретён!"
 
                 else:
-                    sw_text = f"🎇 | The item {data_items[n_pr['item']['item_id']]['nameen']} has been purchased!"
+                    sw_text = f"🎇 | The item {data_items[n_pr['item']['item_id']]['name']['en']} has been purchased!"
 
                 bot.send_message(user.id, sw_text, reply_markup = Functions.inline_markup(bot, f'delete_message', user.id) )
 
@@ -4053,3 +4033,134 @@ class CallData:
 
 
         bot.send_message(call.message.chat.id, text, parse_mode = 'Markdown')
+
+    def egg_use(bot, bd_user, call, user):
+
+        if 'eggs' in bd_user.keys():
+
+            if bd_user['egg_item'] in bd_user['inventory']:
+                egg_n = bd_user['eggs'].index( call.data.split()[1] ) + 1
+                data_items = items_f['items']
+                data_item = data_items[ bd_user['egg_item']['item_id'] ]
+
+                if data_item['time_tag'] == 'h':
+                    inc_time = time.time() + data_item['incub_time'] * 3600
+
+                if data_item['time_tag'] == 'm':
+                    inc_time = time.time() + data_item['incub_time'] * 60
+
+                if data_item['time_tag'] == 's':
+                    inc_time = time.time() + data_item['incub_time']
+
+                bd_user['dinos'][ Functions.user_dino_pn(bd_user) ] = {'status': 'incubation', 'incubation_time': inc_time , 'egg_id': call.data.split()[1], 'quality': data_item['inc_type']}
+
+                bd_user['inventory'].remove( bd_user['egg_item'] )
+
+                users.update_one( {"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}} )
+                users.update_one( {"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}} )
+                users.update_one( {"userid": user.id}, {"$unset": {'eggs': None}} )
+                users.update_one( {"userid": user.id}, {"$unset": {'egg_item': None}} )
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'🥚 | Выберите яйцо с динозавром!\n🦖 | Вы выбрали яйцо 🥚{egg_n}!'
+                    text2 = f'🥚 | Яйцо отправлено на инкубацию!'
+
+                else:
+                    text = f'🥚 | Choose a dinosaur egg!\n🦖 | You have chosen an egg 🥚{egg_n}!'
+                    text2 = f"🥚 | The egg has been sent for incubation!"
+
+                bot.edit_message_caption(text, call.message.chat.id, call.message.message_id)
+                bot.send_message(call.message.chat.id, text2, parse_mode = 'Markdown', reply_markup = Functions.markup(bot, 'profile', user))
+            
+            else:
+
+                if bd_user['language_code'] == 'ru':
+                    text = f'💥 | Предмет не найден в инвентаре!'
+
+                else:
+                    text = f'💥 | The item was not found in the inventory!'
+
+                bot.send_message(call.message.chat.id, text, parse_mode = 'Markdown')
+    
+    def promo_activ(bot, bd_user, call, user):
+
+        data = call.data.split()
+        promo_code = data[1]
+        activ = data[2]
+        promo_data = management.find_one({"_id": 'promo_codes'})['codes']
+
+        def message_promo_upd(promo, promo_code):
+            inl_l = {}
+
+            if promo['active']:
+                inl_l['❌ Деактивировать'] = f'promo_activ {promo_code} activ'
+                status = '✅'
+            else:
+                inl_l['✅ Активировать'] = f'promo_activ {promo_code} activ'
+                status = '❌'
+
+            inl_l['🗑 Удалить'] = f'promo_activ {promo_code} delete'
+            inl_l['🎋 Использовать'] = f'promo_activ {promo_code} use'
+
+            if promo['time_d'] != 'inf':
+                if promo['time_end'] == 0:
+                    txt_time = Functions.time_end( promo['time_d'], True)
+                else:
+                    txt_time = Functions.time_end( promo['time_end'] - int(time.time()), True)
+            else:
+                txt_time = promo['time_d']
+            
+            text = f"🔮 Промокод создан!\n\nПромокод: `{promo_code}`\nАктивность: {status}\nИспользований: {promo['col']}\nОкончание через: { txt_time }\nМонеты: {promo['money']}\n\nПредметы: {', '.join(Functions.sort_items_col(promo['items'], user.language_code) )}"
+
+            markup_inline = types.InlineKeyboardMarkup(row_width=2)
+
+            markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = inl_l[inl]) for inl in inl_l] )
+
+            return text, markup_inline
+
+        if promo_code in promo_data.keys():
+            promo = promo_data[promo_code]
+
+            if activ == 'activ':
+
+                if not promo['active']:
+                    promo['active'] = True
+
+                    if promo['time_d'] != 'inf':
+                        promo['time_end'] = int(time.time()) + promo['time_d']
+                 
+                else:
+                    promo['active'] = False
+                    if promo['time_d'] != 'inf':
+                        promo['time_d'] = promo['time_end'] - int(time.time())
+                        promo['time_end'] = 0
+                
+                management.update_one( {"_id": 'promo_codes'}, {"$set": {f'codes.{promo_code}': promo }} )
+
+                text, markup_inline = message_promo_upd(promo, promo_code)
+                bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup = markup_inline, parse_mode = 'markdown')
+            
+            if activ == 'delete':
+
+                text = f'{promo_code} - удалено!'
+                
+                management.update_one( {"_id": 'promo_codes'}, {"$unset": {f'codes.{promo_code}': None}} )
+                bot.edit_message_text(text, call.message.chat.id, call.message.message_id, parse_mode = 'markdown')
+            
+            if activ == 'use':
+                
+                ret_code, text = Functions.promo_use(promo_code, user)
+
+                if ret_code in ['deactivated', 'max_col_use', 'time_end', 'alredy_use', 'no_user']:
+                    bot.answer_callback_query(call.id, text, show_alert = True)
+                
+                else:
+                    bot.send_message(user.id, text)
+        
+        else:
+            if bd_user['language_code'] == 'ru':
+                text = f'🎍 | Промокод не найден, возможно он уже удалён...'
+            else:
+                text = f'🎍 | The promo code was not found, it may have already been deleted...'
+
+            bot.answer_callback_query(call.id, text, show_alert = True)
