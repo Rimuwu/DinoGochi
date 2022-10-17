@@ -21,6 +21,8 @@ with open('json/dino_data.json', encoding='utf-8') as f: json_f = json.load(f)
 
 with open('json/mobs.json', encoding='utf-8') as f: mobs_f = json.load(f)
 
+with open('json/settings.json', encoding='utf-8') as f: settings_f = json.load(f)
+
 class Commands:
 
     @staticmethod
@@ -38,40 +40,12 @@ class Commands:
 
             bot.send_message(message.chat.id, text, parse_mode = 'html', reply_markup = markup_inline)
 
-            def photo():
-                global json_f
-                bg_p = Image.open(f"images/remain/{random.choice(['back', 'back2'])}.png")
-                eg_l = []
-                id_l = []
-
-                for i in range(3):
-                    rid = str(random.choice(list(json_f['data']['egg'])))
-                    image = Image.open('images/'+str(json_f['elements'][rid]['image']))
-                    eg_l.append(image)
-                    id_l.append(rid)
-
-                for i in range(3):
-                    bg_img = bg_p
-                    fg_img = eg_l[i]
-                    img = Functions.trans_paste(fg_img, bg_img, 1.0, (i*512,0))
-
-                img.save(f'{config.TEMP_DIRECTION}/eggs.png')
-                photo = open(f"{config.TEMP_DIRECTION}/eggs.png", 'rb')
-
-                return photo, id_l
-
             if user.language_code == 'ru':
                 text = '🥚 | Выберите яйцо с динозавром!'
             else:
                 text = '🥚 | Choose a dinosaur egg!'
 
-            markup_inline = types.InlineKeyboardMarkup()
-            item_1 = types.InlineKeyboardButton( text = '🥚 1', callback_data = 'egg_answer_1')
-            item_2 = types.InlineKeyboardButton( text = '🥚 2', callback_data = 'egg_answer_2')
-            item_3 = types.InlineKeyboardButton( text = '🥚 3', callback_data = 'egg_answer_3')
-            markup_inline.add(item_1, item_2, item_3)
-
-            photo, id_l = photo()
+            photo, markup_inline, id_l = Functions.create_egg_image()
             bot.send_photo(message.chat.id, photo, text, reply_markup = markup_inline)
 
             Functions.insert_user(user)
@@ -1525,20 +1499,17 @@ class Commands:
                 return
 
 
-            if bd_user['language_code'] == 'ru':
-                lg = "nameru"
-            else:
-                lg = "nameen"
+            lg = bd_user['language_code']
 
             for i in items:
                 if Functions.item_authenticity(i) == True:
-                    items_id[ items_f['items'][ i['item_id'] ][lg] ] = i
-                    items_names.append( items_f['items'][ i['item_id'] ][lg] )
+                    items_id[ items_f['items'][ i['item_id'] ]['name'][lg] ] = i
+                    items_names.append( items_f['items'][ i['item_id'] ]['name'][lg] )
 
                 else:
 
-                    items_id[ items_f['items'][ i['item_id'] ][lg] + f" ({Functions.qr_item_code(i, False)})" ] = i
-                    items_names.append( items_f['items'][ i['item_id'] ][lg] + f" ({Functions.qr_item_code(i, False)})" )
+                    items_id[ items_f['items'][ i['item_id'] ]['name'][lg] + f" ({Functions.qr_item_code(i, False)})" ] = i
+                    items_names.append( items_f['items'][ i['item_id'] ]['name'][lg] + f" ({Functions.qr_item_code(i, False)})" )
 
             items_names.sort()
 
@@ -1663,8 +1634,8 @@ class Commands:
                             if col_to_full > mx_col:
                                 col_to_full = mx_col
 
-                            bt_1 = f"{bd_dino['stats']['eat'] + item['act']}% = {item['nameru'][:1]} x1"
-                            bt_2 = f"{bd_dino['stats']['eat'] + item['act'] * col_to_full}% = {item['nameru'][:1]} x{col_to_full}"
+                            bt_1 = f"{bd_dino['stats']['eat'] + item['act']}% = {item['name']['ru'][:1]} x1"
+                            bt_2 = f"{bd_dino['stats']['eat'] + item['act'] * col_to_full}% = {item['name']['ru'][:1]} x{col_to_full}"
 
                             col_l = [[], [1, col_to_full]]
 
@@ -1672,7 +1643,7 @@ class Commands:
 
                             if bd_dino['stats']['eat'] + item['act'] * col_to_full < 100:
 
-                                bt_3 = f"{100}% = {item['nameru'][:1]} x{col_to_full+1}"
+                                bt_3 = f"{100}% = {item['name']['ru'][:1]} x{col_to_full+1}"
 
                                 col_l[0].append(bt_3)
                                 col_l[1].append(col_to_full+1)
@@ -1771,7 +1742,7 @@ class Commands:
                                         if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] > 100:
                                             bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] = 100
 
-                                        text = f"🍕 | Динозавр с удовольствием съел {item['nameru']}!\nДинозавр сыт на {bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat']}%"
+                                        text = f"🍕 | Динозавр с удовольствием съел {item['name']['ru']}!\nДинозавр сыт на {bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat']}%"
 
 
                                     elif item['class'] == d_dino['class']:
@@ -1780,13 +1751,13 @@ class Commands:
                                         if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] > 100:
                                             bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] = 100
 
-                                        text = f"🍕 | Динозавр с удовольствием съел {item['nameru']}!\nДинозавр сыт на {bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat']}%"
+                                        text = f"🍕 | Динозавр с удовольствием съел {item['name']['ru']}!\nДинозавр сыт на {bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat']}%"
 
 
                                     else:
                                         eatr = random.randint( 0, int(item['act'] / 2) )
                                         moodr = random.randint( 1, 10 )
-                                        text = f"🍕 | Динозавру не по вкусу {item['nameru']}, он теряет {eatr}% сытости и {moodr}% настроения!"
+                                        text = f"🍕 | Динозавру не по вкусу {item['name']['ru']}, он теряет {eatr}% сытости и {moodr}% настроения!"
 
                                         bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] -= eatr
                                         bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= moodr
@@ -1799,7 +1770,7 @@ class Commands:
                                         if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] > 100:
                                             bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] = 100
 
-                                        text = f"🍕 | The dinosaur ate it with pleasure {item['nameen']}!\nThe dinosaur is fed up on {bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat']}%"
+                                        text = f"🍕 | The dinosaur ate it with pleasure {item['name']['en']}!\nThe dinosaur is fed up on {bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat']}%"
 
                                     elif item['class'] == d_dino['class']:
 
@@ -1808,12 +1779,12 @@ class Commands:
                                         if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] > 100:
                                             bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] = 100
 
-                                        text = f"🍕 | The dinosaur ate it with pleasure {item['nameen']}!\nThe dinosaur is fed up on {bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat']}%"
+                                        text = f"🍕 | The dinosaur ate it with pleasure {item['name']['en']}!\nThe dinosaur is fed up on {bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat']}%"
 
                                     else:
                                         eatr = random.randint( 0, int(item['act'] / 2) )
                                         moodr = random.randint( 1, 10 )
-                                        text = f"🍕 | The dinosaur doesn't like {item['nameen']}, it loses {eatr}% satiety and {moodr}% mood!"
+                                        text = f"🍕 | The dinosaur doesn't like {item['name']['en']}, it loses {eatr}% satiety and {moodr}% mood!"
 
                                         bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['eat'] -= eatr
                                         bd_user['dinos'][ bd_user['settings']['dino_id'] ]['stats']['mood'] -= moodr
@@ -1883,7 +1854,7 @@ class Commands:
     def collecting_food(bot, message, user, bd_user):
 
         eat_c = Functions.items_counting(bd_user, '+eat')
-        if eat_c >= 800:
+        if eat_c >= settings_f['max_eat_items']:
 
             if bd_user['language_code'] == 'ru':
                 text = f'🌴 | Ваш инвентарь ломится от количества еды! В данный момент у вас {eat_c} предметов которые можно съесть!'
@@ -2050,11 +2021,9 @@ class Commands:
     def friends_menu(bot, message, user, bd_user):
 
         if bd_user != None:
-            dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
 
             if bd_user['language_code'] == 'ru':
                 text = f"👥 | Перенаправление в меню друзей!"
-
             else:
                 text = f"👥 | Redirecting to the friends menu!"
 
@@ -2312,14 +2281,11 @@ class Commands:
                         if data_items[str(i['item_id'])]['type'] == f"{ac_type}_ac":
                             items.append(i)
 
-                    if bd_user['language_code'] == 'ru':
-                        lg = "nameru"
-                    else:
-                        lg = "nameen"
+                    lg = bd_user['language_code']
 
                     for i in items:
-                        items_id[ items_f['items'][str(i['item_id'])][lg] ] = i
-                        items_names.append( items_f['items'][str(i['item_id'])][lg] )
+                        items_id[ items_f['items'][str(i['item_id'])]['name'][lg] ] = i
+                        items_names.append( items_f['items'][str(i['item_id'])]['name'][lg] )
 
                     items_sort = []
                     d_it_sort = {}
@@ -2365,7 +2331,7 @@ class Commands:
                         if bd_user['activ_items'][ dino_id ][ac_type] == None:
                             act_item = ['нет', 'no']
                         else:
-                            act_item = [ items_f['items'][ bd_user['activ_items'][ dino_id ][ac_type]['item_id'] ] ['nameru'], items_f['items'][ bd_user['activ_items'][ dino_id ][ac_type]['item_id'] ]['nameen'] ]
+                            act_item = [ items_f['items'][ bd_user['activ_items'][ dino_id ][ac_type]['item_id'] ] ['name']['ru'], items_f['items'][ bd_user['activ_items'][ dino_id ][ac_type]['item_id'] ]['name']['en'] ]
 
                         if len(pages) > 1:
                             if bd_user['language_code'] == 'ru':
@@ -2588,7 +2554,7 @@ class Commands:
                             n = '├'
 
                         if bd_user['language_code'] == 'ru':
-                            text += f"*{n}* {nn}# {item['nameru']}\n    *└* Цена за 1х: {pr['price']}\n"
+                            text += f"*{n}* {nn}# {item['name']['ru']}\n    *└* Цена за 1х: {pr['price']}\n"
                             text += f"       *└* Продано: {pr['col'][0]} / {pr['col'][1]}"
 
                             if 'abilities' in pr['item'].keys():
@@ -2601,7 +2567,7 @@ class Commands:
                             text += '\n\n'
 
                         else:
-                            text += f"*{n}* {nn}# {item['nameen']}\n    *└* Price pay for 1х: {pr['price']}\n"
+                            text += f"*{n}* {nn}# {item['name']['en']}\n    *└* Price pay for 1х: {pr['price']}\n"
                             text += f"        *└* Sold: {pr['col'][0]} / {pr['col'][1]}"
 
                             if 'abilities' in pr['item'].keys():
@@ -2742,7 +2708,7 @@ class Commands:
                             n = '├'
 
                         if bd_user['language_code'] == 'ru':
-                            text += f"*{n}* {nn}# {item['nameru']}\n    *└* Цена за 1х: {pr['price']}\n"
+                            text += f"*{n}* {nn}# {item['name']['ru']}\n    *└* Цена за 1х: {pr['price']}\n"
                             text += f"       *└* Продано: {pr['col'][0]} / {pr['col'][1]}"
 
                             if 'abilities' in pr['item'].keys():
@@ -2752,7 +2718,7 @@ class Commands:
                             text += '\n\n'
 
                         else:
-                            text += f"*{n}* {nn}# {item['nameen']}\n    *└* Price pay for 1х: {pr['price']}\n"
+                            text += f"*{n}* {nn}# {item['name']['en']}\n    *└* Price pay for 1х: {pr['price']}\n"
                             text += f"        *└* Sold: {pr['col'][0]} / {pr['col'][1]}"
 
                             if 'abilities' in pr['item'].keys():
@@ -2872,7 +2838,7 @@ class Commands:
                             if data_items[ prod['item']['item_id'] ]['type'] == '+eat':
 
                                 eat_c = Functions.items_counting(bd_user, '+eat')
-                                if eat_c >= 800:
+                                if eat_c >= settings_f['max_eat_items']:
 
                                     if bd_user['language_code'] == 'ru':
                                         text = f'🌴 | Ваш инвентарь ломится от количества еды! В данный момент у вас {eat_c} предметов которые можно съесть!'
@@ -2933,7 +2899,7 @@ class Commands:
                     for i in items_f['items']:
                         item = items_f['items'][i]
 
-                        for inn in [ item['nameru'], item['nameen'] ]:
+                        for inn in [ item['name']['ru'], item['name']['en'] ]:
                             if fuzz.token_sort_ratio(message.text, inn) > 80 or fuzz.ratio(message.text, inn) > 80 or message.text == inn:
                                 s_i.append(i)
 
@@ -2978,7 +2944,7 @@ class Commands:
                         text += f"🔍 | По вашему запросу найдено {len(sear_items)} предметов(а) >\n\n"
                         for i in page:
                             a += 1
-                            text += f"*{a}#* {items_f['items'][i['item']['item_id']]['nameru']}\n     *└* Цена за 1х: {i['price']}\n         *└* Количество: {i['col'][1] - i['col'][0]}"
+                            text += f"*{a}#* {items_f['items'][i['item']['item_id']]['name']['ru']}\n     *└* Цена за 1х: {i['price']}\n         *└* Количество: {i['col'][1] - i['col'][0]}"
 
                             if 'abilities' in i['item'].keys():
                                 if 'uses' in i['item']['abilities'].keys():
@@ -2990,7 +2956,7 @@ class Commands:
                         text += f'🔍 | Your search found {len(sear_items)} item(s) >\n\n'
                         for i in page:
                             a += 1
-                            text += f"*{a}#* {items_f['items'][i['item_id']]['nameen']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}"
+                            text += f"*{a}#* {items_f['items'][i['item_id']]['name']['en']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}"
 
                             if 'abilities' in i['item'].keys():
                                 if 'uses' in i['item']['abilities'].keys():
@@ -3072,7 +3038,7 @@ class Commands:
                 text += f"🔍 | Случайные предметы с рынка >\n\n"
                 for i in page:
                     a += 1
-                    text += f"*{a}#* {items_f['items'][i['item']['item_id']]['nameru']}\n     *└* Цена за 1х: {i['price']}\n         *└* Количество: {i['col'][1] - i['col'][0]}"
+                    text += f"*{a}#* {items_f['items'][i['item']['item_id']]['name']['ru']}\n     *└* Цена за 1х: {i['price']}\n         *└* Количество: {i['col'][1] - i['col'][0]}"
 
                     if 'abilities' in i['item'].keys():
                         if 'uses' in i['item']['abilities'].keys():
@@ -3133,18 +3099,11 @@ class Commands:
     @staticmethod
     def rarity_change(bot, message, user, bd_user):
 
-        data_items = items_f['items']
         bd_user = Functions.dino_q(bd_user)
 
         def inf_message(dino_id):
 
-            data_q_r = { 'com': {'money': 2000,  'materials': ['21']  } ,
-                         'unc': {'money': 4000, 'materials': ['20'] } ,
-                         'rar': {'money': 8000, 'materials': ['22'] } ,
-                         'myt': {'money': 16000, 'materials': ['23'] } ,
-                         'leg': {'money': 32000, 'materials': ['24'] } ,
-                         'ran': {'money': 5000, 'materials': ['3']  } ,
-                       }
+            data_q_r = settings_f['change_rarity']
 
             r_text = { 'com': ['Обычный', 'Common'] ,
                        'unc': ['Необычный', 'Unusual'] ,
@@ -3474,14 +3433,11 @@ class Commands:
             page = 1
             items_names = []
 
-            if bd_user['language_code'] == 'ru':
-                lg = "nameru"
-            else:
-                lg = "nameen"
-
             for i in items:
-                items_id[ items_f['items'][str(i['item_id'])][lg] ] = i
-                items_names.append( items_f['items'][str(i['item_id'])][lg] )
+                iname = Functions.item_name(str(i['item_id']), bd_user['language_code'])
+
+                items_id[ iname ] = i
+                items_names.append( iname )
 
             items_sort = []
             d_it_sort = {}
@@ -3495,7 +3451,6 @@ class Commands:
 
             for n in list(d_it_sort.keys()):
                 col = d_it_sort[n]
-                name = n
                 items_sort.append(f'{n} x{col}')
                 ind_sort_it[f'{n} x{col}'] = n
 
@@ -3510,10 +3465,10 @@ class Commands:
                         ii.append(' ')
 
                 if len(i) != 2:
-                    for iii in range(2 - len(i)):
+                    for _ in range(2 - len(i)):
                         i.append([' ', ' '])
 
-            def work_pr(message, pages, page, items_id, ind_sort_it, lg, type_eq, dino_id):
+            def work_pr(message, pages, page, items_id, ind_sort_it, type_eq, dino_id):
 
                 l_pages = pages
                 l_page = page
@@ -3546,7 +3501,7 @@ class Commands:
                     rmk.add(com_buttons[1])
                     rmk.add(com_buttons[0])
 
-                def ret(message, l_pages, l_page, l_ind_sort_it, bd_user, user, pages, page, items_id, ind_sort_it, lg, type_eq, dino_id):
+                def ret(message, l_pages, l_page, l_ind_sort_it, bd_user, user, pages, page, items_id, ind_sort_it, type_eq, dino_id):
                     if message.text in ['↩ Назад', '↩ Back']:
                         res = None
 
@@ -3572,7 +3527,7 @@ class Commands:
                             else:
                                 page -= 1
 
-                            work_pr(message, pages, page, items_id, ind_sort_it, lg, type_eq, dino_id)
+                            work_pr(message, pages, page, items_id, ind_sort_it, type_eq, dino_id)
 
                         elif res == '▶':
                             if page + 1 > len(l_pages):
@@ -3580,7 +3535,7 @@ class Commands:
                             else:
                                 page += 1
 
-                            work_pr(message, pages, page, items_id, ind_sort_it, lg, type_eq, dino_id)
+                            work_pr(message, pages, page, items_id, ind_sort_it, type_eq, dino_id)
 
                         else:
 
@@ -3673,9 +3628,9 @@ class Commands:
                                 bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'dungeon_menu', user))
 
                 msg = bot.send_message(message.chat.id, textt, reply_markup = rmk)
-                bot.register_next_step_handler(msg, ret, l_pages, l_page, l_ind_sort_it, bd_user, user, pages, page, items_id, ind_sort_it, lg, type_eq, dino_id)
+                bot.register_next_step_handler(msg, ret, l_pages, l_page, l_ind_sort_it, bd_user, user, pages, page, items_id, ind_sort_it, type_eq, dino_id)
 
-            work_pr(message, pages, page, items_id, ind_sort_it, lg, type_eq, dino_id)
+            work_pr(message, pages, page, items_id, ind_sort_it, type_eq, dino_id)
 
         data_items = items_f['items']
 
