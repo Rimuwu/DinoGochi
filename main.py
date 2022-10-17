@@ -1,11 +1,13 @@
 import json
 import logging
 import pprint
+import random
 import threading
 import time
 
 import telebot
 from memory_profiler import memory_usage
+from telebot import types
 
 import config
 from mods.call_data import CallData
@@ -15,7 +17,7 @@ from mods.commands import Commands
 
 bot = telebot.TeleBot(config.BOT_TOKEN)
 client = config.CLUSTER_CLIENT
-users, dungeons = client.bot.users, client.bot.dungeons
+users, management, dungeons = client.bot.users, client.bot.management, client.bot.dungeons
 
 with open('json/items.json', encoding='utf-8') as f: items_f = json.load(f)
 
@@ -27,7 +29,11 @@ class SpamStop(telebot.custom_filters.AdvancedCustomFilter):
         user = message.from_user
 
         if Functions.spam_stop(user.id) == False:
-            bot.delete_message(user.id, message.message_id)
+            try:
+                bot.delete_message(user.id, message.message_id)
+            except:
+                pass
+            
             return False
 
         else:
@@ -214,28 +220,36 @@ def command(message):
     user = message.from_user
     if user.id in config.BOT_DEVS :
         msg_args = message.text.split()
-        items = items_f['items']
 
-        ad_user = int(msg_args[3])
-        item_id = msg_args[1]
-        col = int(msg_args[2])
-        bd = users.find_one({"userid": ad_user})
+        if len(msg_args) < 4:
 
-        item_name = items[item_id][ bd['naguage_code'] ]
-        chat = bot.get_chat(ad_user)
+            text = Functions.get_text(user.language_code, "additem_command", 'err')
+            bot.send_message(user.id, text)
 
-        Functions.add_item_to_user(bd, item_id, col)
-        text_user = Functions.get_text(user.language_code,"additem_command", 'user').format(item = f'{item_name} x{col}')
+        else:
+
+            items = items_f['items']
+
+            ad_user = int(msg_args[3])
+            item_id = msg_args[1]
+            col = int(msg_args[2])
+            bd = users.find_one({"userid": ad_user})
+
+            item_name = items[item_id]['name'][ bd['language_code'] ] 
+            chat = bot.get_chat(ad_user)
+
+            Functions.add_item_to_user(bd, item_id, col)
+            text_user = Functions.get_text(user.language_code,"additem_command", 'user').format(item = f'{item_name} x{col}')
 
 
-        try:
-            bot.send_message(chat.id, text_user)
-            ms_status = True
-        except:
-            ms_status = False
+            try:
+                bot.send_message(chat.id, text_user)
+                ms_status = True
+            except:
+                ms_status = False
 
-        text_dev = Functions.get_text(user.language_code,"additem_command", 'dev').format(item = f'{item_name} x{col}', username = chat.first_name, message_status = ms_status)
-        bot.send_message(user.id, text_dev)
+            text_dev = Functions.get_text(user.language_code,"additem_command", 'dev').format(item = f'{item_name} x{col}', username = chat.first_name, message_status = ms_status)
+            bot.send_message(user.id, text_dev)
 
 @bot.message_handler(commands=['dungeon_delete'])
 def command(message):
@@ -263,13 +277,216 @@ def command(message):
         users.update_one( {"userid": user.id}, {"$set": {f"dinos": bd_user['dinos'] }} )
         print('ok')
 
+
+@bot.message_handler(commands=['egg_image'])
+def command(message):
+
+    photo, markup_inline, id_l = Functions.create_egg_image()
+    bot.send_photo(message.chat.id, photo, '-', reply_markup = markup_inline)
+
 # =========================================
+
+@bot.message_handler(commands=['link_promo'])
+def command(message):
+    user = message.from_user
+    msg_args = message.text.split()
+
+    if user.id in config.BOT_DEVS:
+        text_dict = Functions.get_text(user.language_code,"promo_commands", 'link')
+
+        if len(msg_args) > 1:
+
+            promo_code = msg_args[1]
+            promo_data = management.find_one({"_id": 'promo_codes'})['codes']
+
+            if promo_code in promo_data.keys():
+
+                fw = message.reply_to_message
+
+                if fw != None:
+                    fw_ms_id = fw.forward_from_message_id
+                    fw_chat_id = fw.forward_from_chat.id
+                    fw_chat_text = fw.text
+
+                    markup_inline = types.InlineKeyboardMarkup()
+
+                    markup_inline.add( types.InlineKeyboardButton( text = text_dict['button_name'], callback_data = f'promo_activ {promo_code} use') )
+
+                    bot.edit_message_text(fw_chat_text, fw_chat_id, fw_ms_id, reply_markup = markup_inline, parse_mode = 'markdown')
+
+                    bot.send_message(user.id, text_dict['create'])
+            
+            else:
+                bot.send_message(user.id, text_dict['not_found'])
+
+@bot.message_handler(commands=['unlink_promo'])
+def command(message):
+    user = message.from_user
+
+    if user.id in config.BOT_DEVS:
+        text_dict = Functions.get_text(user.language_code,"promo_commands", 'unlink')
+
+        fw = message.reply_to_message
+        if fw != None:
+            fw_ms_id = fw.forward_from_message_id
+            fw_chat_id = fw.forward_from_chat.id
+            fw_chat_text = fw.text
+
+            markup_inline = types.InlineKeyboardMarkup()
+
+            bot.edit_message_text(fw_chat_text, fw_chat_id, fw_ms_id, reply_markup = markup_inline, parse_mode = 'markdown')
+
+            bot.send_message(user.id, text_dict['delete'])
+
+        else:
+            bot.send_message(user.id, text_dict['not_found'])
+
+
+@bot.message_handler(commands=['promo'])
+def command(message):
+    user = message.from_user
+    msg_args = message.text.split()
+    if len(msg_args) > 1:
+        promo_code = msg_args[1]
+
+        ret_code, text = Functions.promo_use(promo_code, user)
+        bot.send_message(user.id, text)
+
+@bot.message_handler(commands=['create_promo'])
+def command(message):
+    user = message.from_user
+    if user.id in config.BOT_DEVS:
+        msg_args = message.text.split()
+        text_dict = Functions.get_text(user.language_code,"promo_commands", 'create_promo')
+
+        if len(msg_args) < 4:
+
+            text = text_dict['format']
+            bot.send_message(user.id, text)
+        
+        else:
+
+            col_use = msg_args[1]
+            nt_time = msg_args[2]
+            money = int(msg_args[3])
+
+            if col_use != 'inf':
+                col_use = int(col_use)
+
+            if nt_time != 'inf':
+                time_t = int(nt_time[:-1])
+                nt_time = list(nt_time)
+
+                if nt_time[-1] == 'm':
+                    time_t = time_t * 60
+
+                if nt_time[-1] == 'h':
+                    time_t = time_t * 3600
+
+                if nt_time[-1] == 'd':
+                    time_t = time_t * 86400
+            
+            else:
+                time_t = 'inf'
+
+            col = random.randint(5, 10)
+            promo_data = management.find_one({"_id": 'promo_codes'})
+            codes = list(promo_data['codes'].keys())
+
+            letters = [
+                'a', 'b', 'c', 'd', 'e', 'f', 'g', 
+                'h', 'i', 'j', 'k', 'l', 'm', 'n', 
+                'o', 'p', 'q', 'r', 's', 't', 'u', 
+                'v', 'w', 'x', 'y', 'z', '!', '$', 
+                '%', '.', '<', ">", ';']
+            random.shuffle(letters)
+
+            def create_code():
+                pr_code = ''
+                while len(pr_code) < col:
+
+                    if random.randint(0, 1):
+                        random.shuffle(letters)
+                        pr_code += random.choice(letters)
+                    
+                    else:
+                        pr_code += str( random.randint(0, 9) )
+                    
+                return pr_code
+
+            pr_code = create_code()
+            if pr_code in codes:
+                while pr_code in codes:
+                    pr_code = create_code()
+
+            def reg_items(msg):
+                ok = True
+                iims = []
+                content = ''
+
+                if msg.text != '-':
+
+                    items = items_f['items'].keys()
+                    content = msg.text.split()
+
+                    for i in content:
+
+                        if i not in items:
+                            msg = bot.send_message(user.id, text_dict['not_item'].format(i = i) )
+                            ok = False
+                            break
+                            
+                        else:
+                            iims.append( i )
+                
+                if ok:
+    
+                    data = {
+                        'users': [], 
+                        'col': col_use,
+                        'time_end': time_t,
+                        'time_d': time_t,
+                        'money': money,
+                        'items': iims,
+                        'active': False
+                    }
+
+                    if time_t != 'inf':
+                        txt_time = Functions.time_end( data['time_end'], True)
+                    else:
+                        txt_time = time_t
+
+                    i_names = ', '.join(Functions.sort_items_col(iims, user.language_code) )
+
+                    text = text_dict['create'].format(pr_code = pr_code, col_use = col_use, txt_time = txt_time, money = money, i_names = i_names)
+                    
+                    markup_inline = types.InlineKeyboardMarkup(row_width=2)
+                    bs = text_dict['buttons']
+
+                    inl_l = {
+                        bs[0]: f'promo_activ {pr_code} activ',
+                        bs[1]: f'promo_activ {pr_code} delete',
+                        bs[2]: f'promo_activ {pr_code} use'
+                    }
+
+                    markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = inl_l[inl]) for inl in inl_l] )
+
+                    management.update_one( {"_id": 'promo_codes'}, {"$set": {f'codes.{pr_code}': data }} )
+                    bot.send_message(user.id, text, parse_mode = 'markdown', reply_markup = markup_inline)
+
+
+            msg = bot.send_message(user.id, text_dict['enter_items'])
+            bot.register_next_step_handler(msg, reg_items)
 
 @bot.message_handler(commands=['help'])
 def command(message):
     user = message.from_user
 
-    text = Functions.get_text(l_key = user.language_code, text_key = "help_command")
+    text = Functions.get_text(user.language_code, "help_command", "all")
+
+    if user.id in config.BOT_DEVS:
+        text += Functions.get_text(user.language_code, "help_command", "dev")
+
     bot.reply_to(message, text, parse_mode = 'html')
 
 
@@ -290,7 +507,6 @@ def command(message):
     else:
 
         text = Functions.get_text(l_key = user.language_code, text_key = "no_account")
-
         bot.reply_to(message, text, parse_mode = 'Markdown')
 
 @bot.message_handler(commands=['message_update'])
@@ -318,7 +534,7 @@ def command(message):
 
                 Dungeon.base_upd(userid = int(user.id), messageid = msg.id, dungeonid = dungeonid, type = 'edit_message')
 
-                inf = Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'one', image_update = True)
+                Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'one', image_update = True)
 
                 try:
                     bot.delete_message(user.id, dng['users'][str(user.id)]['messageid'])
@@ -339,7 +555,6 @@ def command(message):
         else:
 
             text = Functions.get_text(l_key = user.language_code, text_key = "no_account")
-
             bot.reply_to(message, text, parse_mode = 'Markdown')
 
 @bot.message_handler(commands=['start', 'main-menu'])
@@ -610,7 +825,7 @@ def answer(call):
     user = call.from_user
     bd_user = users.find_one({"userid": user.id})
 
-    if call.data in ['egg_answer_1', 'egg_answer_2', 'egg_answer_3']:
+    if call.data.split()[0] == 'egg_answer':
 
         CallData.egg_answer(bot, bd_user, call, user)
 
@@ -638,7 +853,7 @@ def answer(call):
 
         CallData.remove_item(bot, bd_user, call, user)
 
-    if call.data[:7] == 'remove_':
+    elif call.data[:7] == 'remove_':
 
         CallData.remove(bot, bd_user, call, user)
 
@@ -925,6 +1140,14 @@ def answer(call):
     if call.data.split()[0] == 'delete_quest':
 
         CallData.delete_quest(bot, bd_user, call, user)
+    
+    if call.data.split()[0] == 'egg_use':
+
+        CallData.egg_use(bot, bd_user, call, user)
+    
+    if call.data.split()[0] == 'promo_activ':
+
+        CallData.promo_activ(bot, bd_user, call, user)
 
 
 def start_all(bot):
@@ -935,7 +1158,7 @@ def start_all(bot):
         print('Система: Файл логирования не был создан >', e)
         logging.critical(f'Файл логирования не был создан > {e}')
 
-    if bot.get_me().first_name == config.BOT_NAME:
+    if bot.get_me().first_name == config.BOT_NAME or True:
         main_checks.start() # активация всех проверок и игрового процесса
         thr_notif.start() # активация уведомлений
         min10_thr.start() # десяти-минутный чек
