@@ -56,6 +56,9 @@
  > - _id: "referal_system"
  > - codes: Array
 
+ > - _id: "promo_codes"
+ > - codes: Object
+
 - В файле **config.py** добавьте токен и имя бота
 
 > - BOT_TOKEN = "Токен бота из BotFather"
