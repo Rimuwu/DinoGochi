@@ -1,0 +1,24 @@
+{
+    "max_eat_items": 800,
+
+    "max_eat_price": {
+        "common": 200,
+        "uncommon": 500,
+        "rare": 3000,
+        "mystical": 8000,
+        "legendary": 20000,
+        "mythical": 1000000
+    },
+
+    "change_rarity": { 
+        "com": {"money": 2000,  "materials": ["21"] },
+        "unc": {"money": 4000,  "materials": ["20"] },
+        "rar": {"money": 8000,  "materials": ["22"] },
+        "myt": {"money": 16000, "materials": ["23"] },
+        "leg": {"money": 32000, "materials": ["24"] },
+        "ran": {"money": 5000,  "materials": ["3" ] } 
+    },
+
+    "egg_ask_backs": ["back", "back2", "back3", "back4", "back5"]
+
+} 
