@@ -2091,7 +2091,7 @@ class CallData:
                                     if Functions.item_authenticity(i) == True:
 
                                         if data_items[i['item_id']]['name'][lg_name] not in inl_d.keys():
-                                            inl_d[ data_items[i['item_id']][lg_name] ] = f"dungeon_add_item {dungeonid} {Functions.qr_item_code(i)}"
+                                            inl_d[ data_items[i['item_id']]['name'][lg_name] ] = f"dungeon_add_item {dungeonid} {Functions.qr_item_code(i)}"
 
                                     else:
                                         if f"{data_items[i['item_id']]['name'][lg_name]} ({Functions.qr_item_code(i, False)})" not in inl_d.keys():
@@ -4155,7 +4155,10 @@ class CallData:
                     bot.answer_callback_query(call.id, text, show_alert = True)
                 
                 else:
-                    bot.send_message(user.id, text)
+                    try:
+                        bot.send_message(user.id, text)
+                    except:
+                        pass
         
         else:
             if bd_user['language_code'] == 'ru':
