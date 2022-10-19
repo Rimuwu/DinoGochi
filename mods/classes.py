@@ -422,7 +422,8 @@ class Functions:
                         markup.add(* [ x for x in nl2 ])
 
                 else:
-                    nl = ['🎮 Entertainments', '🍣 Feed', '↪ Back']
+                    nl = ['🎮 Entertainments', '🍣 Feed']
+                    nl2 = ['↪ Back']
 
                     if len(bd_user['dinos']) == 1:
                         nid_dino = list(bd_user['dinos'].keys())[0]

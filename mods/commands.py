@@ -3055,7 +3055,7 @@ class Commands:
                 text += f'🔍 | Random items from the market >\n\n'
                 for i in page:
                     a += 1
-                    text += f"*{a}#* {items_f['items'][i['item_id']]['nameen']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}"
+                    text += f"*{a}#* {items_f['items'][i['item_id']]['name']['en']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}"
 
                     if 'abilities' in i['item'].keys():
                         if 'uses' in i['item']['abilities'].keys():
