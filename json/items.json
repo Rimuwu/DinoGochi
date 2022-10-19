@@ -1840,7 +1840,7 @@
           "class": "ALL",
           "+mood": 100,
           "abilities": {
-              "uses": 5
+              "uses": 6
           },
           "image": "item90",
           "rank": "mystical"
