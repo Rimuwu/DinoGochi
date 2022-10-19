@@ -299,14 +299,11 @@ def command(message):
                 if fw != None:
                     fw_ms_id = fw.forward_from_message_id
                     fw_chat_id = fw.forward_from_chat.id
-                    fw_chat_text = fw.text
 
                     markup_inline = types.InlineKeyboardMarkup()
-
                     markup_inline.add( types.InlineKeyboardButton( text = text_dict['button_name'], callback_data = f'promo_activ {promo_code} use') )
 
-                    bot.edit_message_text(fw_chat_text, fw_chat_id, fw_ms_id, reply_markup = markup_inline, parse_mode = 'markdown')
-
+                    bot.edit_message_reply_markup(fw_chat_id, fw_ms_id, reply_markup = markup_inline)
                     bot.send_message(user.id, text_dict['create'])
             
             else:
@@ -323,12 +320,8 @@ def command(message):
         if fw != None:
             fw_ms_id = fw.forward_from_message_id
             fw_chat_id = fw.forward_from_chat.id
-            fw_chat_text = fw.text
 
-            markup_inline = types.InlineKeyboardMarkup()
-
-            bot.edit_message_text(fw_chat_text, fw_chat_id, fw_ms_id, reply_markup = markup_inline, parse_mode = 'markdown')
-
+            bot.edit_message_reply_markup(fw_chat_id, fw_ms_id, reply_markup = None)
             bot.send_message(user.id, text_dict['delete'])
 
         else:
@@ -523,9 +516,9 @@ def command(message):
                 image = open(image_way, 'rb')
                 text = '-'
 
-                msg = bot.send_photo(int(user.id), image, text, parse_mode = 'Markdown')
+                msg = bot.send_photo(user.id, image, text, parse_mode = 'Markdown')
 
-                Dungeon.base_upd(userid = int(user.id), messageid = msg.id, dungeonid = dungeonid, type = 'edit_message')
+                Dungeon.base_upd(userid = user.id, messageid = msg.id, dungeonid = dungeonid, type = 'edit_message')
 
                 Dungeon.message_upd(bot, userid = user.id, dungeonid = dungeonid, upd_type = 'one', image_update = True)
 
