@@ -3646,13 +3646,13 @@ class Commands:
             rmk.add(ans[0], ans[1], ans[2])
             rmk.add(ans[3])
 
-            if dino['dungeon']['equipment']['weapon'] != None: w_n = data_items[ dino['dungeon']['equipment']['weapon']['item_id'] ][ f'name{ bd_user["language_code"] }' ]
+            if dino['dungeon']['equipment']['weapon'] != None: w_n = data_items[ dino['dungeon']['equipment']['weapon']['item_id'] ][ 'name' ][bd_user["language_code"]]
             else: w_n = '-'
 
-            if dino['dungeon']['equipment']['armor'] != None: a_n = data_items[ dino['dungeon']['equipment']['armor']['item_id'] ][ f'name{ bd_user["language_code"] }' ]
+            if dino['dungeon']['equipment']['armor'] != None: a_n = data_items[ dino['dungeon']['equipment']['armor']['item_id'] ][ 'name' ][bd_user["language_code"]]
             else: a_n = '-'
 
-            if bd_user['user_dungeon']['equipment']['backpack'] != None: b_n = data_items[ bd_user['user_dungeon']['equipment']['backpack']['item_id'] ][ f'name{ bd_user["language_code"] }' ]
+            if bd_user['user_dungeon']['equipment']['backpack'] != None: b_n = data_items[ bd_user['user_dungeon']['equipment']['backpack']['item_id'] ][ 'name' ][bd_user["language_code"]]
             else: b_n = '-'
 
             if bd_user['language_code'] == 'ru':
@@ -3910,7 +3910,7 @@ class Commands:
                                 item = items_f['items'][i]
                                 target_item = target[i]
 
-                                text += f'{item[f"name{lang}"]}: {target_item[1]} / {target_item[0]}\n'
+                                text += f'{item[f"name"][lang]}: {target_item[1]} / {target_item[0]}\n'
 
                         if bd_user['language_code'] == 'ru':
                             inl_l = {

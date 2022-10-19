@@ -1227,7 +1227,7 @@ class Functions:
 
         for i in dct.keys():
             it = dct[i]
-            name = items_f['items'][i][f'name'][lg]
+            name = Functions.item_name(i, lg)
 
             if col_display == True:
                 nl.append(f"{name} x{it}")
@@ -4413,10 +4413,9 @@ class Dungeon:
                     item_data = items_f['items'][ itm['item_id'] ]
 
                     if Functions.item_authenticity(itm) == False:
-                        nlg = f"name{dung['settings']['lang']}"
-                        iname = f'{item_data[ nlg ]} ({Functions.qr_item_code(itm, False)})'
+                        iname = f'{item_data["name"][dung["settings"]["lang"]]} ({Functions.qr_item_code(itm, False)})'
                     else:
-                        iname = item_data[ f"name{dung['settings']['lang']}" ]
+                        iname = item_data[ "name" ][dung['settings']['lang']]
 
                     if iname not in inl_l.keys():
                         if 'abilities' in itm.keys():
