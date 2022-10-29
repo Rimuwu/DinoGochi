@@ -1212,7 +1212,7 @@ class Functions:
         elif r_event > 99 and r_event <= 100: #1%
             items = rand_d['leg']
 
-        random.shuffle(items)
+        # random.shuffle(items)
         return random.choice(items)
 
     @staticmethod
