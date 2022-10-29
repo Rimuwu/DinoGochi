@@ -71,7 +71,9 @@
                 "not_found": ""
             }
 
-        }
+        },
+
+        "dungeon_err": ""
 
     }
 

@@ -71,7 +71,9 @@
                 "not_found": "The message was not found!"
             }
 
-        }
+        },
+
+        "dungeon_err": "Cleaning is done."
 
     }
 

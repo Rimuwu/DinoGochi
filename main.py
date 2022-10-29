@@ -527,6 +527,35 @@ def command(message):
                 except:
                     pass
 
+@bot.message_handler(commands=['check_dinos'])
+def command(message):
+    user = message.from_user
+    bd_user = users.find_one({"userid": user.id})
+    if message.chat.type == 'private':
+        if bd_user != None:
+            bd_user = users.find_one({"userid": user.id})
+
+            for dk in bd_user['dinos'].keys():
+                dino = bd_user['dinos'][dk]
+
+                if dino['activ_status'] == 'dungeon':
+
+                    if 'dungeon_id' not in dino.keys():
+                        dino['activ_status'] = 'pass_activ'
+                        del dino["dungeon_id"]
+                    
+                    elif 'dungeon_id' in dino.keys():
+                        dng = dungeons.find_one({"dungeonid": dino['dungeon_id']})
+
+                        if dng == None:
+                            dino['activ_status'] = 'pass_activ'
+                            del dino["dungeon_id"]
+            
+            users.update_one( {"userid": user.id}, {"$set": {f"dinos": bd_user['dinos'] }} )
+
+            text = Functions.get_text(l_key = user.language_code, text_key = "dungeon_err")
+            bot.reply_to(message, text)
+
 @bot.message_handler(commands=['add_me', 'добавь_меня'])
 def command(message):
     user = message.from_user
