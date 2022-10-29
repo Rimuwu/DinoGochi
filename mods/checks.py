@@ -1121,12 +1121,14 @@ class CheckFunction:
                 if user['dinos'][dino_id]['stats']['heal'] <= 0:
 
                     if user['dinos'][dino_id]['activ_status'] == 'dungeon':
-                        dungeonid =  user['dinos'][dino_id]['dungeon_id']
+                        dungeonid = user['dinos'][dino_id]['dungeon_id']
                         dung = dungeons.find_one({"dungeonid": dungeonid})
 
                         if dung != None:
-                            del dung['users'][ user['userid'] ]['dinos'][ dino_id ]
+                            user['dinos'][dino_id]['activ_status'] = 'pass_active'
+                            users.update_one( {"userid": user['userid']}, {"$set": {f'dinos.{dino_id}': user['dinos'][dino_id] }} )
 
+                            del dung['users'][ user['userid'] ]['dinos'][ dino_id ]
                             dungeons.update_one( {"dungeonid": dungeonid}, {"$set": {f'users': dung['users'] }} )
 
                             inf =  Dungeon.message_upd(bot, userid = user.id, dungeonid = user.id)
