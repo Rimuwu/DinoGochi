@@ -59,6 +59,12 @@
  > - _id: "promo_codes"
  > - codes: Object
 
+ > - _id: "events"
+ > - activ: Array
+ > - planned: Array
+ > - settings: Object
+ > - log_events: Array
+
 - В файле **config.py** добавьте токен и имя бота
 
 > - BOT_TOKEN = "Токен бота из BotFather"
