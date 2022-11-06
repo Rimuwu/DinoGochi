@@ -4089,6 +4089,9 @@ class CallData:
         activ = data[2]
         promo_data = management.find_one({"_id": 'promo_codes'})['codes']
 
+        if bd_user == None:
+            bd_user = { 'language_code': user.language_code }
+
         def message_promo_upd(promo, promo_code):
             inl_l = {}
 
