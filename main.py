@@ -1173,7 +1173,7 @@ def start_all(bot):
         print('Система: Файл логирования не был создан >', e)
         logging.critical(f'Файл логирования не был создан > {e}')
 
-    if bot.get_me().first_name == config.BOT_NAME or True:
+    if bot.get_me().first_name == config.BOT_NAME or False:
         main_checks.start() # активация всех проверок и игрового процесса
         thr_notif.start() # активация уведомлений
         min10_thr.start() # десяти-минутный чек
@@ -1209,7 +1209,7 @@ def start_all(bot):
     print(f'Система: Бот {bot.get_me().first_name} запущен!')
     logging.info(f'Бот {bot.get_me().first_name} запущен!')
 
-    bot.infinity_polling(skip_pending = False)
+    bot.infinity_polling(skip_pending = False, timeout = 600)
 
 if __name__ == '__main__':
     start_all(bot)
