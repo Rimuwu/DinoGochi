@@ -40,10 +40,7 @@ class Commands:
 
             bot.send_message(message.chat.id, text, parse_mode = 'html', reply_markup = markup_inline)
 
-            if user.language_code == 'ru':
-                text = '🥚 | Выберите яйцо с динозавром!'
-            else:
-                text = '🥚 | Choose a dinosaur egg!'
+            text = Functions.get_text(l_key=bd_user['language_code'], text_key="start_game")
 
             photo, markup_inline, id_l = Functions.create_egg_image()
             bot.send_photo(message.chat.id, photo, text, reply_markup = markup_inline)
@@ -57,41 +54,21 @@ class Commands:
 
         if bd_user != None:
             if bd_user != None and len(bd_user['dinos']) == 0 and Functions.inv_egg(bd_user) == False and bd_user['lvl'][0] <= 5:
+                text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="project_reb")
 
-                if bd_user['language_code'] == 'ru':
-                    text =  f"К вам подходит человек в чёрном одеянии.\n\n"
-                    text += f"Вы видите, что у человека чёрные волосы и какой-то шрам на щеке, но его глаза не видны в тени шляпы.\n\n"
-                    text += f"*Личность:* - Здраствуйте, меня зовут { random.choice( ['мистер', 'доктор'] ) } { random.choice( ['Джеймс', 'Роберт', 'Винсент', 'Альберт'] ) }, а вас...\n\n"
-                    text += f"*Вы:* - ... {user.first_name}, {user.first_name} {user.last_name}, так меня зовут\n\n"
-                    text += f"*Личность:* - Прекрасно {user.first_name}, давно вы в нашем бизнесе? _улыбается_\n\n"
-                    text += f"*Вы:* - ...Что? Бизнес? О чем, вы говорите?!\n\n"
-                    text += f"*Личность:* - Понятно, понятно... Так и запишем. _Записывает что-то в блокнот_\n\n"
-                    text += f"*Вы:* - ...\n\n"
-                    text += f"*Личность:* - Давайте ближе к делу, мы предлагаем вам заключить с нами контракт, мы получаем ваши монеты и ресурсы, вы получаете яйцо с динозавром.\n\n"
-                    text += f"*Вы:* - Яяя, я не знаю...\n\n"
-                    text += f"*Вы:* - \n\n"
-                    text += f"❓ | Выберите вариант ответа"
-                    b1 = ['❓ | Кто вы такой?', '❓ | Это законно?', '❓ | Кто "мы"?', '🧩 | У меня же нет выбора, так?']
-                else:
-                    text = f"A man in a black robe approaches you.\n\n"
-                    text += f"You can see that the man has black hair and some kind of scar on his cheek, but his eyes are not visible in the shadow of the hat.\n\n"
-                    text += f"*Personality:* - Hello, my name is { random.choice(['mister', 'doctor'] ) } { random.choice( ['James', 'Robert', 'Vincent', 'Albert'] ) }, and you...\n\n"
-                    text += f"*You are:* - ... {user.first_name}, {user.first_name} {user.last_name}, that's my name\n\n"
-                    text += f"*Personality:* - Fine {user.first_name}, how long have you been in our business? _ulybaet_\n\n"
-                    text += f"*You are:* - ...What? Business? What are you talking about?!\n\n"
-                    text += f"*Personality:* - I see, I see... So we'll write it down. _ Writes something in notepad_\n\n"
-                    text += f"*You are:* - ...\n\n"
-                    text += f"*Personality:* - Let's get down to business, we offer you to sign a contract with us, we get your coins and resources, you get an egg with a dinosaur.\n\n"
-                    text += f"*You:* - I know, I don't know...\n\n"
-                    text += f"*You:* - \n\n"
-                    text += f"❓ | Choose the answer option'"
-                    b1 = ['❓ | Who are you?', '❓ | Is it legal?', '❓ | Who are "we"?', "🧩 | I don't have a choice, right?"]
+                random1 = text_dict['random1']
+                random2 = text_dict['random2']
+                first_name = user.first_name
+                last_name = user.last_name
+                buttons = buttons
+
+                text = text_dict['text'].replace(random1=random1, random2=random2, first_name=first_name, last_name=last_name)
 
                 markup_inline = types.InlineKeyboardMarkup()
-                markup_inline.add( types.InlineKeyboardButton(text= b1[0], callback_data = 'dead_answer1') )
-                markup_inline.add( types.InlineKeyboardButton(text= b1[1], callback_data = 'dead_answer2') )
-                markup_inline.add( types.InlineKeyboardButton(text= b1[2], callback_data = 'dead_answer3') )
-                markup_inline.add( types.InlineKeyboardButton(text= b1[3], callback_data = 'dead_answer4') )
+                markup_inline.add( types.InlineKeyboardButton(text=buttons[0], callback_data = 'dead_answer1') )
+                markup_inline.add( types.InlineKeyboardButton(text=buttons[1], callback_data = 'dead_answer2') )
+                markup_inline.add( types.InlineKeyboardButton(text=buttons[2], callback_data = 'dead_answer3') )
+                markup_inline.add( types.InlineKeyboardButton(text=buttons[3], callback_data = 'dead_answer4') )
 
                 bot.reply_to(message, text, reply_markup = markup_inline, parse_mode="Markdown")
 
@@ -101,25 +78,9 @@ class Commands:
 
         if bd_user != None:
 
-            if bd_user['language_code'] == 'ru':
-                text = '🍿 | Хей, наш бот довольно большой, и информации куча. Вот тебе пару категорий, выбери какую информацию хочешь получить >'
-
-                inl_l = {
-                    '🎈 Общая': 'faq general',
-                    '🥙 Еда': 'faq eat',
-                    '🧵 Аксессуары': 'faq accessories',
-                    '🗻 Подземелье': 'faq dungeon',
-                }
-
-            else:
-                text = '🍿 | Hey, our bot is quite big, and there is a lot of information. Here are a couple of categories for you, choose what information you want to get >'
-
-                inl_l = {
-                    '🎈 General': 'faq general',
-                    '🥙 Food': 'faq eat',
-                    '🧵 Accessories': 'faq accessories',
-                    '🗻 Dungeon': 'faq dungeon',
-                }
+            text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="faq")
+            text = text_dict['text']
+            inl_l = text_dict['inl_l']
 
             markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = inl_l[inl]) for inl in inl_l.keys() ])
             bot.send_message(message.chat.id, text, parse_mode = 'Markdown', reply_markup =  markup_inline)
@@ -128,13 +89,10 @@ class Commands:
     def not_set(bot, message, user, bd_user):
 
         if bd_user != None:
-
-            if bd_user['language_code'] == 'ru':
-                ans = ['✅ Включить', '❌ Выключить', '↪ Назад']
-                text = '❗ Взаимодействие с настройкой уведомлений, выберите активность уведомлений >'
-            else:
-                ans = ['✅ Enable', '❌ Disable', '↪ Back']
-                text = '❗ Interaction with notification settings, select notification activity >'
+            text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="not_set")
+            buttons = Functions.get_text(l_key=bd_user['language_code'], text_key="buttons_name")
+            ans = [buttons['enable'], buttons['disable'], buttons['back']]
+            text = text_dict['info']
 
             rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
             rmk.add(ans[0], ans[1])
@@ -151,7 +109,7 @@ class Commands:
                     bot.send_message(message.chat.id, f'❌', reply_markup = Functions.markup(bot, 'settings', user))
                     return
 
-                if res in ['✅ Enable', '✅ Включить']:
+                if res == buttons['enable']:
 
                     bd_user['settings']['notifications'] = True
                     users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
@@ -163,7 +121,7 @@ class Commands:
 
                     bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "settings", user))
 
-                if res in ['❌ Disable', '❌ Выключить']:
+                if res == buttons['disable']:
 
                     bd_user['settings']['notifications'] = False
                     users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
@@ -176,7 +134,7 @@ class Commands:
                     bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "settings", user))
 
                 else:
-                    return
+                    bot.send_message(message.chat.id, '❌', reply_markup = Functions.markup(bot, "settings", user))
 
             msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
             bot.register_next_step_handler(msg, ret, ans, bd_user)
@@ -186,21 +144,23 @@ class Commands:
 
         bd_user = users.find_one({"userid": user.id})
         if bd_user != None:
+            ans = []
+            text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="lang_set")
+            lg_dict = Functions.get_all_text_from_lkey('language_name')
+            buttons_name = Functions.get_text(l_key=bd_user['language_code'], text_key="buttons_name")
 
-            if bd_user['language_code'] == 'ru':
-                ans = ['🇬🇧 English', '🇷🇺 Русский', '↪ Назад']
-                text = '❗ Взаимодействие с настройкой языка, выберите язык >'
-            else:
-                ans = ['🇬🇧 English', '🇷🇺 Русский', '↪ Back']
-                text = '❗ Interaction with the language setting, select the language >'
+            text = text_dict['interaction']
 
-            rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
-            rmk.add(ans[0], ans[1])
-            rmk.add(ans[2])
+            for lkey in lg_dict:
+                ans.append(lg_dict[lkey])
+
+            rmk = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
+            rmk.add(*ans)
+            rmk.add(buttons_name['back'])
 
             def ret(message, ans, bd_user):
 
-                if message.text not in ans or message.text == ans[2]:
+                if message.text not in ans or message.text == buttons_name['back']:
                     res = None
                 else:
                     res = message.text
@@ -208,17 +168,16 @@ class Commands:
                 if res == None:
                     bot.send_message(message.chat.id, f'❌', reply_markup = Functions.markup(bot, 'settings', user))
                     return
+                
+                code = 'en'
+                for i in lg_dict.keys():
+                    if lg_dict[i] == res:
+                        code = i
+                
+                users.update_one( {"userid": bd_user['userid']}, {"$set": {'language_code': code }} )
 
-                if res == ans[0]:
-                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'language_code': 'en' }} )
-                if res == ans[1]:
-                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'language_code': 'ru' }} )
-                bd_user = users.find_one({"userid": user.id})
-
-                if bd_user['language_code'] == 'ru':
-                    text = '🔧 Язык установлен на 🇷🇺 Русский!'
-                else:
-                    text = '🔧 The language is set to 🇬🇧 English!'
+                text_dict = Functions.get_text(l_key=code, text_key="lang_set")
+                text = text_dict['accept'] + res
 
                 bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "settings", user))
 
@@ -240,10 +199,7 @@ class Commands:
 
             if len(bd_user['dinos'].keys()) == 0:
 
-                if bd_user['language_code'] == 'ru':
-                    text = f'🥚 | В данный момент у вас нету динозавров, пожалуйста проверьте свой инвентарь. В инвентаре у вас должно быть яйцо, которое вы можете инкубировать!'
-                else:
-                    text = f"🥚 | You don't have any dinosaurs at the moment, please check your inventory. You must have an egg in your inventory that you can incubate!"
+                text = Functions.get_text(l_key=bd_user['language_code'], text_key="command_dino_prof")
 
                 bot.send_message(message.chat.id, text)
 
@@ -291,18 +247,13 @@ class Commands:
 
         if bd_user != None:
             settings = bd_user['settings']
-
+            text = Functions.get_text(l_key=bd_user['language_code'], text_key="open_settings")
+            
             if 'vis.faq' not in settings.keys():
                 settings['vis.faq'] = True
 
-            if 'inv_view' not in settings.keys():
-                settings['inv_view'] = [2, 3]
-
-            if bd_user['language_code'] == 'ru':
-                text = f'🔧 Меню настроек активировано\n\nУведомления: {settings["notifications"]}\nВидимость справочника: {settings["vis.faq"]}'.replace("True", '✔').replace("False", '❌')
-
-            else:
-                text = f'🔧 The settings menu is activated\n\nNotifications: {settings["notifications"]}\nFAQ: {settings["vis.faq"]}'.replace("True", '✔').replace("False", '❌')
+            text = text.format(notif=str(settings["notifications"]), vis_faq=str(settings["vis.faq"]))
+            text = text.replace("True", '✔').replace("False", '❌')
 
             bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'settings', user))
 
@@ -2208,7 +2159,7 @@ class Commands:
                     else:
                         text = '🎍 | The dinosaur must be incubated!'
 
-                    bot.send_message(message.chat.id, text)
+                    bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'profile', user))
                     return
 
                 if bd_user['dinos'][dino_id]['activ_status'] != 'pass_active':
@@ -2218,7 +2169,7 @@ class Commands:
                     else:
                         text = '🎍 | While playing / sleeping / traveling, etc. - you can not change the accessory!'
 
-                    bot.send_message(message.chat.id, text)
+                    bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'profile', user))
                     return
 
 
@@ -2956,7 +2907,7 @@ class Commands:
                         text += f'🔍 | Your search found {len(sear_items)} item(s) >\n\n'
                         for i in page:
                             a += 1
-                            text += f"*{a}#* {items_f['items'][i['item_id']]['name']['en']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}"
+                            text += f"*{a}#* {items_f['items'][i['item']['item_id']]['name']['en']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}"
 
                             if 'abilities' in i['item'].keys():
                                 if 'uses' in i['item']['abilities'].keys():
@@ -3055,7 +3006,7 @@ class Commands:
                 text += f'🔍 | Random items from the market >\n\n'
                 for i in page:
                     a += 1
-                    text += f"*{a}#* {items_f['items'][i['item_id']]['name']['en']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}"
+                    text += f"*{a}#* {items_f['items'][i['item']['item_id']]['name']['en']}\n     *└* Price per 1x: {i['price']}\n         *└* Quantity: {i['col'][1] - i['col'][0]}"
 
                     if 'abilities' in i['item'].keys():
                         if 'uses' in i['item']['abilities'].keys():
