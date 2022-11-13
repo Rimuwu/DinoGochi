@@ -40,7 +40,7 @@ class Commands:
 
             bot.send_message(message.chat.id, text, parse_mode = 'html', reply_markup = markup_inline)
 
-            text = Functions.get_text(l_key=bd_user['language_code'], text_key="start_game")
+            text = Functions.get_text(l_key=user.language_code, text_key="start_game")
 
             photo, markup_inline, id_l = Functions.create_egg_image()
             bot.send_photo(message.chat.id, photo, text, reply_markup = markup_inline)

@@ -833,7 +833,7 @@ class Functions:
 
         if met == 'send':
 
-            if Functions.check_in_dungeon(bot, user): return 
+            if Functions.check_in_dungeon(bot, user['userid']): return 
 
             if notification not in ['friend_request', "friend_rejection", "friend_accept", "product_bought", "quest", "lvl_up", "quest_completed"]:
                 if dino_id in user['notifications'].keys():
@@ -3620,8 +3620,8 @@ class Functions:
             else:
                 event['season'] =  'autumn'
             
-    def check_in_dungeon(bot, user):
-        bd_user = users.find_one({"userid": user.id})
+    def check_in_dungeon(bot, userid):
+        bd_user = users.find_one({"userid": userid})
 
         if bd_user != None:
 

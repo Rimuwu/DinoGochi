@@ -55,7 +55,7 @@ class In_Dungeon(telebot.custom_filters.AdvancedCustomFilter):
         if message.chat.type == 'private':
 
             user = message.from_user
-            otv = Functions.check_in_dungeon(bot, user)
+            otv = Functions.check_in_dungeon(bot, user.id)
 
             if otv:
                 text = Functions.get_text(user.language_code, "no_use_interface")
