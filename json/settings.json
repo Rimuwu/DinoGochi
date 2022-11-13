@@ -19,6 +19,58 @@
         "ran": {"money": 5000,  "materials": ["3" ] } 
     },
 
-    "egg_ask_backs": ["back", "back2", "back3", "back4", "back5"]
+    "egg_ask_backs": ["back", "back2", "back3", "back4", "back5"],
+
+    "events": {
+
+        "time_year": {
+            "standart": {
+                "name": "🦖", "status": "👁‍🗨", "rare": "🧿",
+
+                "heal": "❤️", "eat": "🍕", "game": "🎮",
+                "mood": "🎈", "sleep": "🌙",
+
+                "ac_sleep": "🌙", "ac_game": "🎮",
+                "ac_collecting": "🌿", "ac_journey": "🎍"
+            },
+            "winter":  {
+                "name": "⛄️", "status": "🧊", "rare": "❄️",
+
+                "heal": "☃️", "eat": "☕️", "game": "🌲",
+                "mood": "❄️", "sleep": "⭐️",
+
+                "ac_sleep": "🕯", "ac_game": "🎄",
+                "ac_collecting": "🌿",  "ac_journey": "🏔"
+            },
+            "spring":  {
+                "name": "🌸", "status": "💮", "rare": "🌿",
+
+                "heal": "🏵", "eat": "🥞", "game": "💐",
+                "mood": "🍯", "sleep": "✨",
+
+                "ac_sleep": "🌙", "ac_game": "🌾",
+                "ac_collecting": "🌻", "ac_journey": "🏔"
+            },
+            "summer":  {
+                "name": "🍹", "status": "💐", "rare": "🥀",
+
+                "heal": "🌴", "eat": "🥜", "game": "🍨",
+                "mood": "⛺️", "sleep": "🍯",
+
+                "ac_sleep": "🎗", "ac_game": "🌾",
+                "ac_collecting": "🫐",  "ac_journey": "🏔"
+            },
+            "autumn":  {
+                "name": "🏮", "status": "🍁", "rare": "🥧",
+
+                "heal": "🍂", "eat": "🍷", "game": "🍁",
+                "mood": "🍃", "sleep": "🥀",
+
+                "ac_sleep": "🍂", "ac_game": "🍁",
+                "ac_collecting": "🍊", "ac_journey": "🏔"
+            }
+        }
+
+    }
 
 } 
