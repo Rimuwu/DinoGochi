@@ -3,11 +3,13 @@
 
         "language_name": "🇬🇧 English",
 
+        "language_code": "en",
+
         "no_text_key": "❌ The text corresponding to this key is not found, contact the developer!",
 
         "no_dp_text_key": "❌ There is no additional key!",
 
-        "no_use_interface": "❌ While in the dungeon, use the dungeon interface!",
+        "no_use_interface": "❌ While in the dungeon, use the dungeon interface!\n\nIf an error has occurred and you have exited the dungeon, write /check_dinos",
 
         "request_subscribe": {
 
@@ -73,7 +75,47 @@
 
         },
 
-        "dungeon_err": "Cleaning is done."
+        "dungeon_err": "Cleaning is done.",
+
+        "buttons_name": {
+            "back": "↪ Back",
+            "enable": "✅ Enable",
+            "disable": "❌ Disable"
+        },
+
+        "lang_set": {
+            "interaction": "❗ Interaction with the language setting, select the language >",
+            "accept": "🔧 The language is set to "
+        },
+
+        "start_game": "🥚 | Choose a dinosaur egg!",
+
+        "project_reb": {
+            "text": "A man in a black robe approaches you.\n\nYou can see that the man has black hair and some kind of scar on his cheek, but his eyes are not visible in the shadow of the hat.\n\n*Personality:* - Hello, my name is { random1 } { random2 }, and you...\n\n*You are:* - ... {first_name}, {user.first_name} {last_name}, that's my name\n\n*Personality:* - Fine {first_name}, how long have you been in our business? _smiling_\n\n*You are:* - ...What? Business? What are you talking about?!\n\n*Personality:* - I see, I see... So we'll write it down. _ Writes something in notepad_\n\n*You are:* - ...\n\n*Personality:* - Let's get down to business, we offer you to sign a contract with us, we get your coins and resources, you get an egg with a dinosaur.\n\n*You:* - I know, I don't know...\n\n*You:* - \n\n❓ | Choose the answer option",
+            "buttons": ["❓ | Who are you?", "❓ | Is it legal?", "❓ | Who are \"we\"?", "🧩 | I don't have a choice, right?"],
+            "random1": ["mister", "doctor"],
+            "random2": ["James", "Robert", "Vincent", "Albert"]
+        },
+
+        "faq": {
+            "text": "🍿 | Hey, our bot is quite big, and there is a lot of information. Here are a couple of categories for you, choose what information you want to get >",
+            "inl_l": {
+                "🎈 General": "faq general",
+                "🥙 Food": "faq eat",
+                "🧵 Accessories": "faq accessories",
+                "🗻 Dungeon": "faq dungeon"
+            }
+        },
+
+        "not_set": {
+            "info": "❗ Interaction with notification settings, select notification activity >",
+            "on": "🔧 Notifications have been activated!",
+            "off": "🔧 Notifications have been disabled!"
+        },
+
+        "command_dino_prof": "🥚 | You don't have any dinosaurs at the moment, please check your inventory. You must have an egg in your inventory that you can incubate!",
+
+        "open_settings": "🔧 The settings menu is activated\n\nNotifications: {notif}\nFAQ: {vis_faq}"
 
     }
 
