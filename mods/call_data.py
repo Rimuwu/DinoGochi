@@ -1965,6 +1965,7 @@ class CallData:
                     show_text = "❗ | It was required to specify a number!"
 
                 bot.answer_callback_query(call.id, show_text, show_alert = True)
+                return
 
             else:
 
