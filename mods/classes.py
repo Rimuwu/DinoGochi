@@ -833,6 +833,8 @@ class Functions:
 
         if met == 'send':
 
+            if Functions.check_in_dungeon(bot, user): return 
+
             if notification not in ['friend_request', "friend_rejection", "friend_accept", "product_bought", "quest", "lvl_up", "quest_completed"]:
                 if dino_id in user['notifications'].keys():
                     user['notifications'][dino_id][notification] = True
@@ -3340,8 +3342,21 @@ class Functions:
             for l_key in languages_f.keys():
                 languages[l_key] = languages_f[l_key]
         
+        
+        
         print(f"Система: Загружено {len(languages.keys())} файла(ов) локализации.")
         logging.info(f"Загружено {len(languages.keys())} файла(ов) локализации.")
+
+    def get_all_text_from_lkey(lkey:str):
+        global languages
+        all_text_from_lkey = {}
+
+        for lang_key in languages.keys():
+            if lang_key != 'null':
+                all_text_from_lkey[lang_key] = languages[lang_key][lkey]
+
+        return all_text_from_lkey
+
     
     def create_logfile():
 
@@ -3568,28 +3583,57 @@ class Functions:
                 add_items_to_leg_items
                 Добавить предмет к событию (легендарное выпадение)
         
-        Вход:
+        Ввод:
             events
-                [ { "type": ..., *args } ]
+                [ *{ "type":str, "time_start":int, "time_end":int, "condition_performance":dict / None, *args } ]
+        
+        Другое:
+            condition_performance - условие окончания, оставлено для дальнейшего усложнения, пока что указывать None
 
         """
+        id_list = [] #Список с id всех событий для получения максимального и выдачи новым событиям id, если пустой то 0 
 
-        # event_data = { "types": [], 'data': {} }
-        # for event in events:
-        #     event_data['types'].append(event['type'])
-        #     del event['type']
 
-        #     event_data['data'][event['type']] = event
 
     
-    def get_event():
+    def get_event(etype:str):
         ...
     
-    def delete_event():
+    def delete_event(eid:int):
         ...
 
-    def auto_event():
-        ...
+    def auto_event(etype:str = 'random'):
+
+        if etype == 'time_year':
+            month_n = int(time.strftime("%m"))
+            event = { 'type': etype }
+
+            if month_n < 3 or month_n > 11:
+                event['season'] =  'winter'
+
+            elif 6 > month_n > 2:
+                event['season'] =  'spring'
+
+            elif 9 > month_n > 5:
+                event['season'] =  'summer'
+
+            else:
+                event['season'] =  'autumn'
+            
+    def check_in_dungeon(bot, user):
+        bd_user = users.find_one({"userid": user.id})
+
+        if bd_user != None:
+
+            for dino_id in bd_user['dinos'].keys():
+                if bd_user['dinos'][str(dino_id)]['status'] == 'dino':
+                    dino_st = bd_user['dinos'][str(dino_id)]['activ_status']
+
+                    if dino_st == 'dungeon':
+                        return True
+        
+        return False
+
 
 
 class Dungeon:
