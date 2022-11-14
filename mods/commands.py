@@ -60,7 +60,7 @@ class Commands:
                 random2 = text_dict['random2']
                 first_name = user.first_name
                 last_name = user.last_name
-                buttons = buttons
+                buttons = Functions.get_text(l_key=bd_user['language_code'], text_key="buttons_name")
 
                 text = text_dict['text'].replace(random1=random1, random2=random2, first_name=first_name, last_name=last_name)
 
@@ -261,11 +261,7 @@ class Commands:
     def back_open(bot, message, user, bd_user):
 
         if bd_user != None:
-
-            if bd_user['language_code'] == 'ru':
-                text = '↪ Возврат в главное меню'
-            else:
-                text = '↪ Return to the main menu'
+            text = Functions.get_text(l_key=bd_user['language_code'], text_key="back_open")
 
             bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 1, user))
 
@@ -273,11 +269,7 @@ class Commands:
     def friends_open(bot, message, user, bd_user):
 
         if bd_user != None:
-
-            if bd_user['language_code'] == 'ru':
-                text = '👥 | Перенаправление в меню друзей!'
-            else:
-                text = '👥 | Redirecting to the friends menu!'
+            text = Functions.get_text(l_key=bd_user['language_code'], text_key="friends_open")
 
             bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "friends-menu", user))
 
@@ -285,13 +277,9 @@ class Commands:
     def settings_faq(bot, message, user, bd_user):
 
         if bd_user != None:
-
-            if bd_user['language_code'] == 'ru':
-                ans = ['✅ Включить', '❌ Выключить', '↪ Назад']
-                text = '❗ Взаимодействие с настройкой видимости FAQ, выберите видимость >'
-            else:
-                ans = ['✅ Enable', '❌ Disable', '↪ Back']
-                text = '❗ Interaction with the FAQ visibility setting, select visibility >'
+            buttons_name = Functions.get_text(l_key=bd_user['language_code'], text_key="buttons_name")
+            ans = [buttons_name['enable'], buttons_name['disable'], buttons_name["back"]]
+            text = Functions.get_text(l_key=bd_user['language_code'], text_key="settings_faq")
 
             rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
             rmk.add(ans[0], ans[1])
@@ -308,7 +296,7 @@ class Commands:
                     bot.send_message(message.chat.id, f'❌', reply_markup = Functions.markup(bot, 'settings', user))
                     return
 
-                if res in ['✅ Enable', '✅ Включить']:
+                if res == buttons_name['enable']:
 
                     bd_user['settings']['vis.faq'] = True
                     users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
@@ -320,7 +308,7 @@ class Commands:
 
                     bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "settings", user))
 
-                if res in ['❌ Disable', '❌ Выключить']:
+                if res == buttons_name['disable']:
 
                     bd_user['settings']['vis.faq'] = False
                     users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
@@ -333,7 +321,7 @@ class Commands:
                     bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "settings", user))
 
                 else:
-                    return
+                    bot.send_message(message.chat.id, f'❌', reply_markup = Functions.markup(bot, 'settings', user))
 
             msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
             bot.register_next_step_handler(msg, ret, ans, bd_user)
@@ -344,13 +332,11 @@ class Commands:
         if bd_user != None:
 
             gr, vr = bd_user['settings']['inv_view']
+            buttons_name = Functions.get_text(l_key=bd_user['language_code'], text_key="buttons_name")
+            text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="inv_set_pages")
 
-            if bd_user['language_code'] == 'ru':
-                ans = ['2 | 3', '3 | 3', '2 | 2', '2 | 4', '↪ Назад']
-                text = f'🎞 Режим в данный момент:\n♠ По горизонтали: {gr}\n♣ По вертикали: {vr}\n\nВыберите режим отображения инвентаря (Стандарт 2 | 3)'
-            else:
-                ans = ['2 | 3', '3 | 3', '2 | 2', '2 | 4', '↪ Back']
-                text = f'🎞 Current mode:\n♠ Horizontally: {gr}\n♣ Vertically: {vr}\n\n Select the inventory display mode (Standard 2 | 3)'
+            ans = ['2 | 3', '3 | 3', '2 | 2', '2 | 4', buttons_name["back"]]
+            text = text_dict['info'].format(gr=gr, vr=vr)
 
             rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
             rmk.add( *[ i for i in ans] )
@@ -372,11 +358,7 @@ class Commands:
                     v_list.append(int(i))
 
                 gr, vr = v_list
-
-                if bd_user['language_code'] == 'ru':
-                    text = f'♠ По горизонтали: {gr}\n♣ По вертикали: {vr}'
-                else:
-                    text = f'♠ Horizontally: {gr}\n♣ Vertically: {vr}'
+                text = text_dict['accept'].format(gr=gr, vr=vr)
 
                 bd_user['settings']['inv_view'] = v_list
                 users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
@@ -390,21 +372,18 @@ class Commands:
     def add_friend(bot, message, user, bd_user):
 
         if bd_user != None:
+            buttons_name = Functions.get_text(l_key=bd_user['language_code'], text_key="buttons_name")
+            text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="add_friend")
 
-            if bd_user['language_code'] == 'ru':
-                ans = ['↪ Назад']
-                text = '➡ | Перешлите мне любое сообщение от человека (в разделе конфиденциальность > пересылка сообщений - должно быть разрешение), с которым вы хотите стать друзьями или отправте мне его id (можно узнать в своём профиле у бота).\nВажно! Ваш друг должен быть зарегистрирован в боте!'
-            else:
-                ans = ['↪ Back']
-                text = '➡ | Forward me any message from the person (in the privacy section > message forwarding - there must be permission) with whom you want to become friends or send me his id (you can find out in your bot profile).\nImportant! Your friend must be registered in the bot!'
+            text = text_dict['info']
 
             rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
-            rmk.add(ans[0])
+            rmk.add(buttons_name['back'])
 
-            def ret(message, ans, bd_user):
+            def ret(message, bd_user):
                 res = message
 
-                if message.text in ans:
+                if message.text in buttons_name['back']:
                     bot.send_message(message.chat.id, f'❌', reply_markup = Functions.markup(bot, 'friends-menu', user))
                     return
 
@@ -412,8 +391,8 @@ class Commands:
                     fr_id = int(res.text)
                 except:
 
-                    if res.text == ans[0] or res.forward_from == None:
-                        bot.send_message(message.chat.id, f'❌ user forward not found', reply_markup = Functions.markup(bot, 'friends-menu', user))
+                    if res.text == buttons_name['back'] or res.forward_from == None:
+                        bot.send_message(message.chat.id, text_dict['not_f'], reply_markup = Functions.markup(bot, 'friends-menu', user))
                         fr_id = None
 
                     else:
@@ -423,11 +402,11 @@ class Commands:
                 two_user = users.find_one({"userid": fr_id})
 
                 if two_user == None:
-                    bot.send_message(message.chat.id, f'❌ user not found in base', reply_markup = Functions.markup(bot, 'friends-menu', user))
+                    bot.send_message(message.chat.id, text_dict['not_b'], reply_markup = Functions.markup(bot, 'friends-menu', user))
                     return
 
                 if two_user == bd_user:
-                    bot.send_message(message.chat.id, f'❌ user == friend', reply_markup = Functions.markup(bot, 'friends-menu', user))
+                    bot.send_message(message.chat.id, text_dict['me'], reply_markup = Functions.markup(bot, 'friends-menu', user))
 
                 else:
 
@@ -450,17 +429,12 @@ class Commands:
                         Functions.notifications_manager(bot, 'friend_request', two_user)
 
                     else:
-
-                        if bd_user['language_code'] == 'ru':
-                            text = f"📜 | Данный пользователь уже в друзьях / получил запрос от вас!"
-
-                        else:
-                            text = f"📜 | This user is already a friend / has received a request from you!"
+                        text = text_dict['already']
 
                         bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'friends-menu', user))
 
             msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
-            bot.register_next_step_handler(msg, ret, ans, bd_user)
+            bot.register_next_step_handler(msg, ret, bd_user)
 
     @staticmethod
     def friends_list(bot, message, user, bd_user):
@@ -469,14 +443,13 @@ class Commands:
 
             friends_id = bd_user['friends']['friends_list']
             page = 1
+            text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="friends")
+            buttons_name = Functions.get_text(l_key=bd_user['language_code'], text_key="buttons_name")
 
             friends_name = []
             friends_id_d = {}
 
-            if bd_user['language_code'] == 'ru':
-                text = "👥 | Ожидайте..."
-            else:
-                text = "👥 | Wait..."
+            text = text_dict['wait']
 
             bot.send_message(message.chat.id, text)
 
@@ -494,19 +467,13 @@ class Commands:
             def work_pr(message, friends_id, page, friends_chunks, friends_id_d, mms = None):
                 global pages
 
-                if bd_user['language_code'] == 'ru':
-                    text = "📜 | Обновление..."
-                else:
-                    text = "📜 | Update..."
+                text = text_dict['update']
 
                 rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
 
                 if friends_chunks == []:
 
-                    if bd_user['language_code'] == 'ru':
-                        text = "👥 | Список пуст!"
-                    else:
-                        text = "👥 | The list is empty!"
+                    text = text_dict['null']
 
                     bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'friends-menu', user))
 
@@ -523,31 +490,19 @@ class Commands:
                             rmk.add(' ', ' ')
 
                     if len(friends_chunks) > 1:
-                        if bd_user['language_code'] == 'ru':
-                            com_buttons = ['◀', '↪ Назад', '▶']
-                        else:
-                            com_buttons = ['◀', '↪ Back', '▶']
+                        rmk.add('◀', buttons_name['back'], '▶')
 
-                        rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
                     else:
-                        if bd_user['language_code'] == 'ru':
-                            com_buttons = '↪ Назад'
-                        else:
-                            com_buttons = '↪ Back'
-
-                        rmk.add(com_buttons)
+                        rmk.add(buttons_name['back'])
 
                     def ret(message, bd_user, page, friends_chunks, friends_id, friends_id_d):
-                        if message.text in ['↪ Назад', '↪ Back']:
+                        if message.text == buttons_name['back']:
                             res = None
                         else:
                             res = message.text
 
                         if res == None:
-                            if bd_user['language_code'] == 'ru':
-                                text = "👥 | Возвращение в меню друзей!"
-                            else:
-                                text = "👥 | Return to the friends menu!"
+                            text = text_dict['return']
 
                             bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'friends-menu', user))
 
@@ -597,6 +552,8 @@ class Commands:
             page = 1
             friends_name = []
             id_names = {}
+            text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="friends_list")
+            buttons_name = Functions.get_text(l_key=bd_user['language_code'], text_key="buttons_name")
 
             for i in friends_id:
                 try:
@@ -610,27 +567,16 @@ class Commands:
 
             if friends_chunks == []:
 
-                if bd_user['language_code'] == 'ru':
-                    text = "👥 | Список пуст!"
-                else:
-                    text = "👥 | The list is empty!"
-
+                text = text_dict['null']
                 bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'friends-menu', user))
                 return
 
             else:
-                if bd_user['language_code'] == 'ru':
-                    text = "➖ | Выберите пользователя для удаления из друзей > "
-                else:
-                    text = "➖ | Select the user to remove from friends >"
+                text = text_dict['delete_info']
                 bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'friends-menu', user))
 
             def work_pr(message, friends_id, page):
-
-                if bd_user['language_code'] == 'ru':
-                    text = "💌 | Обновление..."
-                else:
-                    text = "💌 | Update..."
+                text = text_dict['update']
 
                 rmk = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
 
@@ -645,31 +591,18 @@ class Commands:
                         rmk.add(' ', ' ')
 
                 if len(friends_chunks) > 1:
-                    if bd_user['language_code'] == 'ru':
-                        com_buttons = ['◀', '↪ Назад', '▶']
-                    else:
-                        com_buttons = ['◀', '↪ Back', '▶']
-
-                    rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
+                    rmk.add('◀', buttons_name['back'], '▶')
                 else:
-                    if bd_user['language_code'] == 'ru':
-                        com_buttons = '↪ Назад'
-                    else:
-                        com_buttons = '↪ Back'
-
-                    rmk.add(com_buttons)
+                    rmk.add(buttons_name['back'])
 
                 def ret(message, friends_id, page, bd_user):
-                    if message.text in ['↪ Назад', '↪ Back']:
+                    if message.text == buttons_name['back']:
                         res = None
                     else:
                         res = message.text
 
                     if res == None:
-                        if bd_user['language_code'] == 'ru':
-                            text = "👥 | Возвращение в меню друзей!"
-                        else:
-                            text = "👥 | Return to the friends menu!"
+                        text = text_dict['return']
 
                         bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'friends-menu', user))
                         return None
@@ -688,11 +621,7 @@ class Commands:
 
                         else:
                             uid = id_names[res]
-
-                            if bd_user['language_code'] == 'ru':
-                                text = "👥 | Пользователь удалён из друзей!"
-                            else:
-                                text = "👥 | The user has been removed from friends!"
+                            text = text_dict['delete']
 
                             try:
                                 bd_user['friends']['friends_list'].remove(uid)
@@ -723,28 +652,16 @@ class Commands:
     def open_profile_menu(bot, message, user, bd_user):
 
         if bd_user != None:
-
-            if bd_user['language_code'] == 'ru':
-                text = '👁‍🗨 | Панель профиля открыта!'
-            else:
-                text = '👁‍🗨 | The profile panel is open!'
-
+            text = Functions.get_text(l_key=bd_user['language_code'], text_key="open_profile_menu")
             bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "profile", user))
 
     @staticmethod
     def rayting(bot, message, user, bd_user):
         markup_inline = types.InlineKeyboardMarkup(row_width = 3)
+        text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="rayting")
 
-        if bd_user['language_code'] == 'ru':
-            text = '👁‍🗨 | Какой рейтинг вас интересует?'
-
-            inl_l = { '🎢 Уровень': 'rayt_lvl', '🗝 Монеты': 'rayt_money', '🗻 Подземелье': 'rayt_dungeon'
-                    }
-
-        else:
-            text = '👁‍🗨 | What rating are you interested in?'
-
-            inl_l = { '🎢 Level': 'rayt_lvl', '🗝 Coins': 'rayt_money', '🗻 Dungeon': 'rayt_dungeon'
+        text = text_dict['info']
+        inl_l = { text_dict['lvl']: 'rayt_lvl', text_dict['money']: 'rayt_money', text_dict['dungeon']: 'rayt_dungeon'
                     }
 
         markup_inline.add( *[ types.InlineKeyboardButton( text = inl, callback_data = inl_l[inl]) for inl in inl_l.keys() ])
@@ -760,18 +677,14 @@ class Commands:
             try:
                 bot.send_message(message.chat.id, text, parse_mode = 'Markdown')
             except Exception as error:
-                print(message.chat.id, 'ERROR Профиль', '\n', error)
+                print(message.chat.id, 'ERROR Profile', '\n', error)
                 bot.send_message(message.chat.id, text)
 
     @staticmethod
     def open_action_menu(bot, message, user, bd_user):
 
         if bd_user != None:
-
-            if bd_user['language_code'] == 'ru':
-                text = '🕹 Панель действий открыта!'
-            else:
-                text = '🕹 The action panel is open!'
+            text = Functions.get_text(l_key=bd_user['language_code'], text_key="open_action_menu")
 
             bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "actions", user))
 
@@ -779,21 +692,14 @@ class Commands:
     def open_dino_tavern(bot, message, user, bd_user):
 
         if bd_user != None:
-
-            if bd_user['language_code'] == 'ru':
-                text = '🍺 Вы вошли в дино-таверну!\n\n📜 Во время нахождения в таверне вы можете получить квест или услышать полезную информацию!'
-                text2 = '🍺 Друзья в таверне: Поиск среди толпы...'
-            else:
-                text = '🍺 You have entered the dino-tavern!\n\n📜 While staying in the tavern, you can get a quest or hear useful information!'
-                text2 = '🍺 Friends in the tavern: Search among the crowd...'
+            text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="open_dino_tavern")
+            text = text_dict['info']
+            text2 = text_dict['friends']
 
             bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "dino-tavern", user))
             msg = bot.send_message(message.chat.id, text2)
 
-            if bd_user['language_code'] == 'ru':
-                text = '🍺 Друзья в таверне: '
-            else:
-                text = '🍺 Friends in the tavern: '
+            text = text_dict['friends2']
 
             fr_in_tav = []
 
@@ -820,10 +726,7 @@ class Commands:
 
             for fr_user in fr_in_tav:
 
-                if fr_user['language_code'] == 'ru':
-                    text = f'🍺 {user.first_name} зашёл в таверну...'
-                else:
-                    text = f'🍺 {user.first_name} went into the tavern...'
+                text = text_dict['went'].format(first_name = user.first_name)
 
                 time.sleep(0.5)
                 bot.send_message(fr_user['userid'], text)
@@ -832,61 +735,56 @@ class Commands:
     def dino_action_ans(bot, message, user, bd_user):
 
         if bd_user != None:
-            if bd_user['language_code'] == 'ru':
-                did = int(message.text[12:])
+            try:
+                did = int(message.text.split()[2])
+
+            except:
+                pass
+
             else:
-                did = int(message.text[8:])
+                text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="dino_action_ans")
 
-            if did == int(bd_user['settings']['dino_id']):
-                ll = list(bd_user['dinos'].keys())
-                ind = list(bd_user['dinos'].keys()).index(str(did))
+                if did == int(bd_user['settings']['dino_id']):
+                    ll = list(bd_user['dinos'].keys())
+                    ind = list(bd_user['dinos'].keys()).index(str(did))
 
-                if ind + 1 != len(ll):
-                    bd_user['settings']['dino_id'] = ll[ind + 1]
+                    if ind + 1 != len(ll):
+                        bd_user['settings']['dino_id'] = ll[ind + 1]
 
-                else:
-                    bd_user['settings']['dino_id'] = ll[0]
-
-                users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
-
-                if bd_user['language_code'] == 'ru':
-                    if bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['status'] == 'incubation':
-                        text = f"Вы выбрали динозавра 🥚"
                     else:
-                        text = f"Вы выбрали динозавра {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
-                else:
-                    if bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['status'] == 'incubation':
-                        text = f"You have chosen 🥚"
-                    else:
-                        text = f"You have chosen a dinosaur {bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']}"
+                        bd_user['settings']['dino_id'] = ll[0]
 
-                bot.send_message(message.chat.id, text , reply_markup = Functions.markup(bot, 'actions', user))
+                    users.update_one( {"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings'] }} )
+
+                    dino_name = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['name']
+
+                    if bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]['status'] == 'incubation':
+                        text = text_dict['egg']
+                    else:
+                        text = text_dict['dino'].format(dino_name=dino_name)
+
+                    bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, 'actions', user))
 
     @staticmethod
     def action_back(bot, message, user, bd_user):
 
-        if bd_user['language_code'] == 'ru':
-            text = '↩ Возврат в меню активностей'
-        else:
-            text = '↩ Return to the activity menu'
-
-        bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'actions', user))
+        text = Functions.get_text(l_key=bd_user['language_code'], text_key="action_back")
+        bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, 'actions', user))
 
     @staticmethod
     def rename_dino(bot, message, user, bd_user):
 
         if bd_user != None:
             n_dp, dp_a = Functions.dino_pre_answer(bot, message)
+            text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="rename_dino")
+            buttons_name = Functions.get_text(l_key=bd_user['language_code'], text_key="buttons_name")
 
             if bd_user['dinos'][ bd_user['settings']['dino_id'] ]['status'] == 'dino':
 
                 def rename(message, bd_user, user, dino_user_id, dino):
-                    if bd_user['language_code'] == 'ru':
-                        text = f"🦖 | Введите новое имя для {dino['name']}\nРазмер: не более 20-ти символов\n>"
-                        ans = ['↪ Назад']
-                    else:
-                        text = f"🦖 | Enter a new name for {dino['name']}\nSize: no more than 20 characters\n>"
-                        ans = ['↪ Back']
+                    last_name = dino['name']
+                    text = text_dict['info'].format(last_name=last_name)
+                    ans = [buttons_name['back']]
 
                     rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
                     rmk.add(ans[0])
@@ -896,24 +794,16 @@ class Commands:
                             bot.send_message(message.chat.id, f'❌', reply_markup = Functions.markup(bot, 'settings', user))
                             return
 
-                        dino_name = message.text.replace('*', '').replace('`', '')
+                        dino_name = message.text.replace('*', '').replace('`', '').replace('_', '').replace('\\', '').replace('~', '')
 
                         if len(dino_name) > 20:
-
-                            if bd_user['language_code'] == 'ru':
-                                text = f"🦖 | Новое имя больше 20-ти символов!"
-                            else:
-                                text = f"🦖 | The new name is more than 20 characters!"
-
+                            text = text_dict['err_more']
                             msg = bot.send_message(message.chat.id, text)
 
                         else:
-                            if bd_user['language_code'] == 'ru':
-                                text = f"🦖 | Переименовать {dino['name']} > {dino_name}?"
-                                ans2 = ['✅ Подтверждаю', '↪ Назад']
-                            else:
-                                text = f"🦖 | Rename {dino['name']} > {dino_name}?"
-                                ans2 = ['✅ Confirm', '↪ Back']
+
+                            text = text_dict['rename']
+                            ans2 = [buttons_name['confirm'], buttons_name['back']]
 
                             rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
                             rmk.add(ans2[0])
@@ -926,7 +816,7 @@ class Commands:
                                 else:
                                     res = message.text
 
-                                if res in ['✅ Confirm', '✅ Подтверждаю']:
+                                if res == buttons_name['confirm']:
 
                                     bd_user['dinos'][str(dino_user_id)]['name'] = dino_name
                                     users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{dino_user_id}': bd_user['dinos'][str(dino_user_id)] }} )
@@ -945,7 +835,7 @@ class Commands:
 
                 if n_dp == 2:
                     bd_dino = dp_a
-                    rename(message, bd_user, user, list(bd_user['dinos'].keys())[0], dp_a)
+                    rename(message, bd_user, user, list(bd_user['dinos'].keys())[0], bd_dino)
 
                 if n_dp == 3:
                     rmk = dp_a[0]
@@ -967,15 +857,13 @@ class Commands:
 
         if bd_user != None:
             dino = bd_user['dinos'][ str(bd_user['settings']['dino_id']) ]
+            text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="dino_sleep_ac")
+            buttons_name = Functions.get_text(l_key=bd_user['language_code'], text_key="buttons_name")
 
             if dino != None:
                 if dino['activ_status'] == 'pass_active':
                     if dino['stats']['unv'] >= 90:
-
-                        if bd_user['language_code'] == 'ru':
-                            text = '🌙 Динозавр не хочет спать!'
-                        else:
-                            text = "🌙 The dinosaur doesn't want to sleep!"
+                        text = text_dict['d_want']
 
                         bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, "actions", user))
 
@@ -987,24 +875,16 @@ class Commands:
                             bd_user['dinos'][ d_id ]['sleep_type'] = 'long'
                             users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{d_id}': bd_user['dinos'][d_id] }} )
 
-                            if bd_user['language_code'] == 'ru':
-                                text = '🌙 Вы уложили динозавра спать!'
-                            else:
-                                text = "🌙 You put the dinosaur to sleep!"
-
+                            text = text_dict['sleep']
                             bot.send_message(message.chat.id, text , reply_markup = Functions.markup(bot, 'actions', user))
 
                         if Functions.acc_check(bot, bd_user, '16', bd_user['settings']['dino_id'], True) == False:
                             dl_sleep(bd_user, message)
 
                         else:
-
-                            if bd_user['language_code'] == 'ru':
-                                ans = ['🛌 Длинный сон', '🛌 Короткий сон', '↪ Назад']
-                                text = '🌙 | Выберите вид сна для динозавра >'
-                            else:
-                                ans = ['🛌 Long Sleep', '🛌 Short Sleep', '↪ Back']
-                                text = '🌙 | Choose the type of sleep for the dinosaur >'
+                            text = text_dict['sleep']
+                            ans = text_dict['buttons']
+                            ans.append(buttons_name['back'])
 
                             rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
                             rmk.add(ans[0], ans[1])
@@ -1021,11 +901,11 @@ class Commands:
                                     bot.send_message(message.chat.id, f'❌', reply_markup = Functions.markup(bot, 'actions', user))
                                     return
 
-                                if res in ['🛌 Длинный сон', '🛌 Long Sleep']:
+                                if res == text_dict['buttons'][0]:
 
                                     dl_sleep(bd_user, message)
 
-                                if res in ['🛌 Короткий сон', '🛌 Short Sleep']:
+                                if res == text_dict['buttons'][1]:
 
                                     def ret2(message, ans, bd_user):
 
@@ -1038,17 +918,12 @@ class Commands:
                                             except:
                                                 number = None
 
-
                                         if number == None:
                                             bot.send_message(message.chat.id, f'❌', reply_markup = Functions.markup(bot, 'actions', user))
                                             return
 
                                         if number <= 5 or number > 480:
-
-                                            if bd_user['language_code'] == 'ru':
-                                                text = '❌ | Требовалось указать время в минутах больше 5-ти минут и меньше 8-ми часов (480)!'
-                                            else:
-                                                text = '❌ | It was required to specify the time in minutes more than 5 minutes and less than 8 hours (480)!'
+                                            text = text_dict['err_time']
 
                                             bot.send_message(message.chat.id, text, reply_markup = Functions.markup(bot, 'actions', user))
 
@@ -1059,21 +934,11 @@ class Commands:
                                             bd_user['dinos'][ d_id ]['sleep_type'] = 'short'
                                             users.update_one( {"userid": bd_user['userid']}, {"$set": {f'dinos.{d_id}': bd_user['dinos'][d_id] }} )
 
-                                            if bd_user['language_code'] == 'ru':
-                                                text = '🌙 Вы уложили динозавра спать!'
-                                            else:
-                                                text = "🌙 You put the dinosaur to sleep!"
-
+                                            text = text_dict['sleep']
                                             bot.send_message(message.chat.id, text , reply_markup = Functions.markup(bot, 'actions', user))
 
-
-
-                                    if bd_user['language_code'] == 'ru':
-                                        ans = ['↪ Назад']
-                                        text = '🌙 | Укажите время быстрого сна (сон идёт в 2 раза быстрее длинного) в минутах > '
-                                    else:
-                                        ans = ['↪ Back']
-                                        text = '🌙 | Specify the REM sleep time (sleep is 2 times faster than long sleep) in minutes >'
+                                    ans = [buttons_name['back']]
+                                    text = text_dict['choice_time']
 
                                     rmk = types.ReplyKeyboardMarkup(resize_keyboard = True)
                                     rmk.add(ans[0])
@@ -1081,19 +946,11 @@ class Commands:
                                     msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
                                     bot.register_next_step_handler(msg, ret2, ans, bd_user)
 
-
                             msg = bot.send_message(message.chat.id, text, reply_markup = rmk)
                             bot.register_next_step_handler(msg, ret, ans, bd_user)
 
-
-
                 else:
-
-                    if bd_user['language_code'] == 'ru':
-                        text = f"❗ | Ваш динозавр уже чем то занят, проверьте профиль!"
-
-                    else:
-                        text = f"❗ | Your dinosaur is already busy with something, check the profile!"
+                    text = text_dict['alredy_busy']
 
                     bot.send_message(message.chat.id, text, reply_markup = Functions.inline_markup(bot, f'open_dino_profile', message.chat.id, ['Открыть профиль', 'Open a profile'], str(bd_user['settings']['dino_id']) ))
 
@@ -1102,7 +959,9 @@ class Commands:
 
         if bd_user != None:
             d_id = str(bd_user['settings']['dino_id'])
-            dino = bd_user['dinos'][ str(d_id) ]
+            dino = bd_user['dinos'][str(d_id)]
+
+            text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="dino_unsleep_ac")
 
             if dino['activ_status'] == 'sleep' and dino != None:
                 r_n = random.randint(0, 20)
@@ -1111,11 +970,7 @@ class Commands:
                 if 'sleep_type' in bd_user['dinos'][ d_id ] and bd_user['dinos'][ d_id ]['sleep_type'] == 'short':
 
                     del bd_user['dinos'][ d_id ]['sleep_time']
-
-                    if bd_user['language_code'] == 'ru':
-                        text = f'🌙 Ваш динозавр пробудился.'
-                    else:
-                        text = f"🌙 Your dinosaur has awakened."
+                    text = text_dict['awaked']
 
                     bot.send_message(message.chat.id, text , reply_markup = Functions.markup(bot, 'actions', user))
 
@@ -1134,11 +989,7 @@ class Commands:
                 elif 'sleep_type' not in bd_user['dinos'][ d_id ] or bd_user['dinos'][ d_id ]['sleep_type'] == 'long':
 
                     if 'sleep_start' in bd_user['dinos'][ d_id ].keys() and int(time.time()) - bd_user['dinos'][ d_id ]['sleep_start'] >= 8 * 3600:
-
-                        if bd_user['language_code'] == 'ru':
-                            text = f'🌙 Ваш динозавр пробудился.'
-                        else:
-                            text = f"🌙 Your dinosaur has awakened."
+                        text = text_dict['awaked']
 
                         bot.send_message(message.chat.id, text , reply_markup = Functions.markup(bot, 'actions', user))
 
@@ -1148,11 +999,8 @@ class Commands:
 
                         if bd_user['dinos'][ d_id ]['stats']['mood'] < 0:
                             bd_user['dinos'][ d_id ]['stats']['mood'] = 0
-
-                        if bd_user['language_code'] == 'ru':
-                            text = f'🌙 Ваш динозавр пробудился. Он сильно не доволен что вы его разбудили!\nДинозавр потерял {r_n}% настроения.'
-                        else:
-                            text = f"🌙 Your dinosaur has awakened. He is very unhappy that you woke him up!\nDinosaur lost {r_n}% of mood."
+                        
+                        text = text_dict['awaked_mood'].format(r_n=r_n)
 
                         bot.send_message(message.chat.id, text , reply_markup = Functions.markup(bot, 'actions', user))
 
