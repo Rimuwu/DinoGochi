@@ -5,7 +5,7 @@
 
         "language_code": "en",
 
-        "no_text_key": "❌ The text corresponding to this key is not found, contact the developer!",
+        "no_text_key": "❌ The text corresponding to key {key} is not found, contact the developer!",
 
         "no_dp_text_key": "❌ There is no additional key!",
 
@@ -80,7 +80,8 @@
         "buttons_name": {
             "back": "↪ Back",
             "enable": "✅ Enable",
-            "disable": "❌ Disable"
+            "disable": "❌ Disable",
+            "confirm": "✅ Confirm"
         },
 
         "lang_set": {
@@ -115,7 +116,80 @@
 
         "command_dino_prof": "🥚 | You don't have any dinosaurs at the moment, please check your inventory. You must have an egg in your inventory that you can incubate!",
 
-        "open_settings": "🔧 The settings menu is activated\n\nNotifications: {notif}\nFAQ: {vis_faq}"
+        "open_settings": "🔧 The settings menu is activated\n\nNotifications: {notif}\nFAQ: {vis_faq}",
+
+        "back_open": "↪ Return to the main menu",
+
+        "friends_open": "👥 | Redirecting to the friends menu!",
+
+        "settings_faq": "❗ Interaction with the FAQ visibility setting, select visibility >",
+
+        "inv_set_pages": {
+            "info": "🎞 Current mode:\n♠ Horizontally: {gr}\n♣ Vertically: {vr}\n\n Select the inventory display mode (Standard 2 | 3)",
+            "accept": "♠ Horizontally: {gr}\n♣ Vertically: {vr}"
+        },
+
+        "add_friend": {
+            "info": "➡ | Forward me any message from the person (in the privacy section > message forwarding - there must be permission) with whom you want to become friends or send me his id (you can find out in your bot profile).\nImportant! Your friend must be registered in the bot!",
+            "not_f": "❌ User forward not found!",
+            "not_b": "❌ User not found in base!",
+            "me": "❌ I think you don't have too few friends to try to make friends with yourself.",
+            "already": "📜 | This user is already a friend / has received a request from you!"
+        },
+
+        "friends": {
+            "wait": "👥 | Wait...",
+            "update": "📜 | Update...",
+            "null": "👥 | The list is empty!",
+            "return": "👥 | Return to the friends menu!",
+            "delete_info": "➖ | Select the user to remove from friends >",
+            "delete": "👥 | The user has been removed from friends!"
+        },
+
+        "open_profile_menu": "👁‍🗨 | The profile panel is open!",
+
+        "rayting": {
+            "info": "👁‍🗨 | What rating are you interested in?",
+            "lvl": "🎢 Level", "money": "🗝 Coins", "dungeon": "🗻 Dungeon"
+        },
+
+        "open_action_menu": "🕹 The action panel is open!",
+
+        "open_dino_tavern": {
+            "info": "🍺 You have entered the dino-tavern!\n\n📜 While staying in the tavern, you can get a quest or hear useful information!",
+            "friends": "🍺 Friends in the tavern: Search among the crowd...",
+            "friends2": "🍺 Friends in the tavern: ",
+            "went": "🍺 {first_name} went into the tavern..."
+        },
+
+        "dino_action_ans": {
+            "dino": "🦕 | You have chosen a dinosaur {dino_name}",
+            "egg": "🥚 | You have chosen egg"
+        },
+
+        "action_back": "↩ Return to the activity menu",
+
+        "rename_dino": {
+            "info": "🦖 | Enter a new name for {dino_name}\nSize: no more than 20 characters\n>",
+            "err_more": "🦖 | The new name is more than 20 characters!",
+            "rename": "🦖 | Rename {last_name} > {dino_name}?"
+        },
+
+        "dino_sleep_ac": {
+            "d_want": "🌙 The dinosaur doesn't want to sleep!",
+            "sleep": "🌙 You put the dinosaur to sleep!",
+            "buttons": ["🛌 Long Sleep", "🛌 Short Sleep"],
+            "choice": "🌙 | Choose the type of sleep for the dinosaur >",
+            "err_time": "❌ | It was required to specify the time in minutes more than 5 minutes and less than 8 hours (480)!",
+            "choice_time": "🌙 | Specify the REM sleep time (sleep is 2 times faster than long sleep) in minutes >",
+            "alredy_busy": "❗ | Ваш динозавр уже чем то занят, проверьте профиль!"
+        },
+
+        "dino_unsleep_ac": {
+            "awaked": "🌙 Ваш динозавр пробудился.",
+            "awaked_mood": "🌙 Your dinosaur has awakened. He is very unhappy that you woke him up!\nDinosaur lost {r_n}% of mood."
+        }
+
 
     }
 
