@@ -79,16 +79,13 @@ def check(): #проверка каждые 10 секунд
 
     def delta(bot, members): Checks.main_journey(bot, members)
 
-    non_members = users.find({ })
-    chunks_users = list(Functions.chunks( list(non_members), 50 ))
-    Functions.check_data('col', None, int(len(chunks_users)) )
-
     while True:
         if int(memory_usage()[0]) < 1500:
             st_r_time = int(time.time())
             non_members = users.find({ })
             chunks_users = list(Functions.chunks( list(non_members), 50 ))
             sl_time = 10 - ( int(time.time()) - st_r_time )
+            Functions.check_data('col', None, int(len(chunks_users)) )
 
             if sl_time < 0:
                 sl_time = 0
