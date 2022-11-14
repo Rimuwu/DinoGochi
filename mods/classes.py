@@ -830,7 +830,6 @@ class Functions:
                         users.update_one( {"userid": user['userid']}, {"$set": {'notifications': user['notifications'] }} )
                         return False
 
-
         if met == 'send':
 
             if Functions.check_in_dungeon(bot, user['userid']): return 
@@ -3374,10 +3373,10 @@ class Functions:
             l_key = 'en'
         
         if text_key not in languages[ l_key ].keys():
-            text_key = "no_text_key"
+            return languages[ l_key ][ "no_text_key" ].format(key=text_key)
         
         if dp_text_key == None:
-            return  languages[ l_key ][ text_key ]
+            return languages[ l_key ][ text_key ]
         
         else:
 
