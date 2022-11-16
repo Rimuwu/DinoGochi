@@ -23,6 +23,38 @@
 
     "events": {
 
+        "data_set": {
+            "col": { "min": 1, "max": 2, "type": "random" },
+            "events": ["add_hunting", "add_fishing", "add_collecting", "add_extraction"],
+
+            "time": [7200, 14400, 21600, 43200, 86400, 129600]
+        },
+
+        "random_data": {
+            "random_col": { "min": 1, "max": 2, "type": "random" },
+
+            "add_hunting": {
+                "104": [50, 100],
+                "77": [20, 100]
+            },
+
+            "add_fishing": {
+                "92": [50, 100],
+                "99": [20, 100]
+            },
+
+            "add_collecting": {
+                "86": [50, 100],
+                "98": [20, 100]
+            },
+
+            "add_extraction": {
+                "72": [50, 100],
+                "90": [20, 100]
+            }
+
+        },
+
         "time_year": {
             "standart": {
                 "name": "🦖", "status": "👁‍🗨", "rare": "🧿",
