@@ -140,7 +140,7 @@
         "friends": {
             "wait": "👥 | Wait...",
             "update": "📜 | Update...",
-            "null": "👥 | The list is empty!",
+            "null_list": "👥 | The list is empty!",
             "return": "👥 | Return to the friends menu!",
             "delete_info": "➖ | Select the user to remove from friends >",
             "delete": "👥 | The user has been removed from friends!"
@@ -170,7 +170,7 @@
         "action_back": "↩ Return to the activity menu",
 
         "rename_dino": {
-            "info": "🦖 | Enter a new name for {dino_name}\nSize: no more than 20 characters\n>",
+            "info": "🦖 | Enter a new name for {last_name}\nSize: no more than 20 characters\n>",
             "err_more": "🦖 | The new name is more than 20 characters!",
             "rename": "🦖 | Rename {last_name} > {dino_name}?"
         },
