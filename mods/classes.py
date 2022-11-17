@@ -1327,7 +1327,7 @@ class Functions:
                 d_text = f"*└* The item restores the metabolism of the dinosaur."
 
         elif item['type'] == 'egg':
-
+            eg_q = item['inc_type']
             if lg == 'ru':
                 eg_q = item['inc_type']
                 if item['inc_type'] == 'random':
@@ -2790,60 +2790,55 @@ class Functions:
     @staticmethod
     def p_profile(bot, message, bd_dino, user, bd_user, dino_user_id):
 
-        def egg_profile(bd_user, user, bd_dino):
-            egg_id = bd_dino['egg_id']
+        text_dict = Functions.get_text(
+            l_key=bd_user['language_code'], 
+            text_key="p_profile")
 
-            if bd_user['language_code'] == 'ru':
-                lang = bd_user['language_code']
-            else:
-                lang = 'en'
+        text_rare = Functions.get_text  (
+            l_key=bd_user['language_code'], 
+            text_key="rare")
+
+        events = Functions.get_event("time_year")
+        if events == []:
+            season = "standart"
+        else:
+            season = events[0]['data']['season']
+
+        tem = settings_f['events']['time_year'][season]
+
+        def egg_profile(user, bd_dino):
+            egg_id = bd_dino['egg_id']
 
             if 'quality' in bd_dino.keys():
                 quality = bd_dino['quality']
             else:
                 quality = 'random'
+            
+            dino_quality = [text_dict['rare_name']]
 
             if quality == 'random':
-                if lang == 'ru':
-                    dino_quality = ['Редкость:', 'Случайный']
-                else:
-                    dino_quality = ['Quality:', 'Random']
+                dino_quality.append(text_rare['ran'][1])
                 fill = (207, 70, 204)
 
             if quality == 'com':
-                if lang == 'ru':
-                    dino_quality = ['Редкость:', 'Обычный']
-                else:
-                    dino_quality = ['Quality:', 'Common']
+                dino_quality.append(text_rare['com'][1])
                 fill = (108, 139, 150)
 
             if quality == 'unc':
-                if lang == 'ru':
-                    dino_quality = ['Редкость:', 'Необычный']
-                else:
-                    dino_quality = ['Quality:', 'Uncommon']
+                dino_quality.append(text_rare['unc'][1])
                 fill = (68, 235, 90)
 
             if quality == 'rar':
-                if lang == 'ru':
-                    dino_quality = ['Редкость:', 'Редкий']
-                else:
-                    dino_quality = ['Quality:', 'Rare']
+                dino_quality.append(text_rare['rar'][1])
                 fill = (68, 143, 235)
 
             if quality == 'myt':
-                if lang == 'ru':
-                    dino_quality = ['Редкость:', 'Мистическое']
-                else:
-                    dino_quality = ['Quality:', 'Mystical']
+                dino_quality.append(text_rare['mys'][1])
                 fill = (230, 103, 175)
 
             if quality == 'leg':
-                if lang == 'ru':
-                    dino_quality = ['Редкость:', 'Легендарное']
-                else:
-                    dino_quality = ['Quality:', 'Legendary']
-                fill = (235, 168, 68)
+                dino_quality.append(text_rare['leg'][1])
+                fill = (255, 212, 59)
 
             t_incub = bd_dino['incubation_time'] - time.time()
             if t_incub < 0:
@@ -2853,18 +2848,34 @@ class Functions:
             if len(time_end) >= 18:
                 time_end = time_end[:-6]
 
-            bg_p = Image.open(f"images/remain/egg_profile_{lang}.png")
-            egg = Image.open("images/" + str(json_f['elements'][egg_id]['image']))
-            egg = egg.resize((290, 290), Image.ANTIALIAS)
+            bg_p = Image.open(f"images/remain/egg_profile.png")
+            egg = Image.open(f"images/{json_f['elements'][egg_id]['image']}")
+            egg = egg.resize((290, 290), Image.Resampling.LANCZOS)
 
             img = Functions.trans_paste(egg, bg_p, 1.0, (-50, 40))
 
             idraw = ImageDraw.Draw(img)
             line1 = ImageFont.truetype("fonts/Comic Sans MS.ttf", size=35)
+            line2 = ImageFont.truetype("fonts/Comic Sans MS.ttf", size=45)
+            line3 = ImageFont.truetype("fonts/Comic Sans MS.ttf", size=55)
 
-            idraw.text((430, 220), time_end, font=line1, stroke_width=1)
-            idraw.text((210, 270), dino_quality[0], font=line1)
-            idraw.text((385, 270), dino_quality[1], font=line1, fill=fill)
+            idraw.text((310, 110), text_dict['text_info'], 
+                    font=line3,
+                    stroke_width=1
+            )
+            idraw.text((210, 210), text_dict['text_ost'], 
+                    font=line2
+            )
+            idraw.text(text_dict['time_position'], time_end, 
+                    font=line1, 
+            )
+            idraw.text((210, 270), dino_quality[0],
+                    font=line2
+            )
+            idraw.text(text_dict['rare_position'], dino_quality[1], 
+                    font=line1, 
+                    fill=fill
+            )
 
             img.save(f'{config.TEMP_DIRECTION}/profile {user.id}.png')
             profile = open(f'{config.TEMP_DIRECTION}/profile {user.id}.png', 'rb')
@@ -2896,7 +2907,7 @@ class Functions:
             dino_image = Image.open("images/" + str(json_f['elements'][dino_id]['image']))
 
             sz = 412
-            dino_image = dino_image.resize((sz, sz), Image.ANTIALIAS)
+            dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
 
             xy = -80
             x2 = 80
@@ -2919,11 +2930,8 @@ class Functions:
 
         if bd_dino['status'] == 'incubation':
 
-            profile, time_end = egg_profile(bd_user, user, bd_dino)
-            if bd_user['language_code'] == 'ru':
-                text = f'🥚 | Яйцо инкубируется, осталось: {time_end}'
-            else:
-                text = f'🥚 | The egg is incubated, left: {time_end}'
+            profile, time_end = egg_profile(user, bd_dino)
+            text = text_dict['incubation_text'].format(time_end=time_end)
 
             bot.send_photo(message.chat.id, profile, text, reply_markup=Functions.markup(bot, user=user))
 
@@ -2935,222 +2943,128 @@ class Functions:
 
             profile = dino_profile(bd_user, user, dino_user_id=dino_user_id)
 
-            st_t = bd_dino['activ_status']
+            qual = text_rare[bd_user['dinos'][dino_user_id]['quality']][0]
+            st_t = text_dict['stats'][bd_dino['activ_status']]
 
-            dino = json_f['elements'][str(bd_dino['dino_id'])]
-            pre_qual = bd_user['dinos'][dino_user_id]['quality']
-            qual = ''
-
-            if bd_user['language_code'] == 'ru':
-                if pre_qual == 'com':
-                    qual = 'Обычный'
-                if pre_qual == 'unc':
-                    qual = 'Необычный'
-                if pre_qual == 'rar':
-                    qual = 'Редкий'
-                if pre_qual == 'myt':
-                    qual = 'Мистический'
-                if pre_qual == 'leg':
-                    qual = 'Легендарный'
-            else:
-                if pre_qual == 'com':
-                    qual = 'Сommon'
-                if pre_qual == 'unc':
-                    qual = 'Unusual'
-                if pre_qual == 'rar':
-                    qual = 'Rare'
-                if pre_qual == 'myt':
-                    qual = 'Mystical'
-                if pre_qual == 'leg':
-                    qual = 'Legendary'
-
-            if bd_dino['activ_status'] == 'pass_active':
-                if bd_user['language_code'] == 'ru':
-                    st_t = 'ничего не делает 💭'
-                else:
-                    st_t = 'does nothing 💭'
-
-            elif bd_dino['activ_status'] == 'sleep':
-                if bd_user['language_code'] == 'ru':
-                    st_t = 'спит 🌙'
-                else:
-                    st_t = 'sleeping 🌙'
-
-            elif bd_dino['activ_status'] == 'game':
-                if bd_user['language_code'] == 'ru':
-                    st_t = 'играет 🎮'
-                else:
-                    st_t = 'playing 🎮'
-
-            elif bd_dino['activ_status'] == 'journey':
-                if bd_user['language_code'] == 'ru':
-                    st_t = 'путешествует 🎴'
-                else:
-                    st_t = 'travels 🎴'
-
-            elif bd_dino['activ_status'] in ['hunt', 'hunting']:
-                if bd_user['language_code'] == 'ru':
-                    st_t = 'сбор пищи 🥞'
-                else:
-                    st_t = 'collecting food 🥞'
-
-            elif bd_dino['activ_status'] == 'dungeon':
-                if bd_user['language_code'] == 'ru':
-                    st_t = 'в подземелье 🗻'
-                else:
-                    st_t = 'in dungeon 🗻'
-
-            elif bd_dino['activ_status'] == 'freezing':
-                if bd_user['language_code'] == 'ru':
-                    st_t = 'заморожен ❄'
-                else:
-                    st_t = 'freezing ❄'
+            h_text = tem['heal']
+            e_text = tem['eat']
+            g_text = tem['game']
+            m_text = tem['mood']
+            u_text = tem['sleep']
 
             if bd_dino['stats']['heal'] >= 60:
-                if bd_user['language_code'] == 'ru':
-                    h_text = '❤ *┌* Динозавр здоров'
-                else:
-                    h_text = '❤ *┌* The dinosaur is healthy'
+                h_text += text_dict['heal']['0']
 
             elif bd_dino['stats']['heal'] < 60 and bd_dino['stats']['heal'] > 10:
-                if bd_user['language_code'] == 'ru':
-                    h_text = '❤ *┌* Динозавр в плохом состоянии'
-                else:
-                    h_text = '❤ *┌* Dinosaur in bad condition'
+                h_text += text_dict['heal']['1']
 
             elif bd_dino['stats']['heal'] <= 10:
-                if bd_user['language_code'] == 'ru':
-                    h_text = '❤ *┌* Динозавр в крайне плохом состоянии!'
-                else:
-                    h_text = '❤ *┌* The dinosaur is in extremely bad condition!'
+                h_text += text_dict['heal']['2']
+            
+            h_text += f" \[ *{bd_dino['stats']['heal']}* ]"
 
             if bd_dino['stats']['eat'] >= 60:
-                if bd_user['language_code'] == 'ru':
-                    e_text = '🍕 *├* Динозавр сыт'
-                else:
-                    e_text = '🍕 *├* The dinosaur is full'
+                e_text += text_dict['eat']['0']
 
             elif bd_dino['stats']['eat'] < 60 and bd_dino['stats']['eat'] > 10:
-                if bd_user['language_code'] == 'ru':
-                    e_text = '🍕 *├* Динозавр голоден'
-                else:
-                    e_text = '🍕 *├* The dinosaur is hungry'
+                e_text += text_dict['eat']['1']
 
             elif bd_dino['stats']['eat'] <= 10:
-                if bd_user['language_code'] == 'ru':
-                    e_text = '🍕 *├* Динозавр умирает от голода!'
-                else:
-                    e_text = '🍕 *├* The dinosaur is starving!'
+                e_text += text_dict['eat']['2']
+            
+            e_text += f" \[ *{bd_dino['stats']['eat']}* ]"
 
             if bd_dino['stats']['game'] >= 60:
-                if bd_user['language_code'] == 'ru':
-                    g_text = '🎮 *├* Динозавр не хочет играть'
-                else:
-                    g_text = "🎮 *├* The dinosaur doesn't want to play"
+                g_text += text_dict['game']['0']
 
             elif bd_dino['stats']['game'] < 60 and bd_dino['stats']['game'] > 10:
-                if bd_user['language_code'] == 'ru':
-                    g_text = '🎮 *├* Динозавр скучает...'
-                else:
-                    g_text = '🎮 *├* The dinosaur is bored...'
+                g_text += text_dict['game']['1']
 
             elif bd_dino['stats']['game'] <= 10:
-                if bd_user['language_code'] == 'ru':
-                    g_text = '🎮 *├* Динозавр умирает от скуки!'
-                else:
-                    g_text = '🎮 *├* The dinosaur is dying of boredom!'
+                g_text += text_dict['game']['2']
+            
+            g_text += f" \[ *{bd_dino['stats']['game']}* ]"
 
             if bd_dino['stats']['mood'] >= 60:
-                if bd_user['language_code'] == 'ru':
-                    m_text = '🎈 *├* Динозавр в хорошем настроении'
-                else:
-                    m_text = '🎈 *├* The dinosaur is in a good mood'
+                m_text += text_dict['mood']['0']
 
             elif bd_dino['stats']['mood'] < 60 and bd_dino['stats']['mood'] > 10:
-                if bd_user['language_code'] == 'ru':
-                    m_text = '🎈 *├* У динозавра нормальное настроение'
-                else:
-                    m_text = '🎈 *├* The dinosaur has a normal mood'
+                m_text += text_dict['mood']['1']
 
             elif bd_dino['stats']['mood'] <= 10:
-                if bd_user['language_code'] == 'ru':
-                    m_text = '🎈 *├* Динозавр грустит!'
-                else:
-                    m_text = '🎈 *├* The dinosaur is sad!'
+                m_text += text_dict['mood']['2']
+            
+            m_text += f" \[ *{bd_dino['stats']['mood']}* ]"
 
             if bd_dino['stats']['unv'] >= 60:
-                if bd_user['language_code'] == 'ru':
-                    u_text = '🌙 *└* Динозавр полон сил'
-                else:
-                    u_text = '🌙 *└* The dinosaur is full of energy'
+                u_text += text_dict['unv']['0']
 
             elif bd_dino['stats']['unv'] < 60 and bd_dino['stats']['unv'] > 10:
-                if bd_user['language_code'] == 'ru':
-                    u_text = '🌙 *└* У динозавра есть силы'
-                else:
-                    u_text = '🌙 *└* The dinosaur has powers'
+                u_text += text_dict['unv']['1']
 
             elif bd_dino['stats']['unv'] <= 10:
-                if bd_user['language_code'] == 'ru':
-                    u_text = '🌙 *└* Динозавр устал!'
-                else:
-                    u_text = '🌙 *└* The dinosaur is tired!'
+                u_text += text_dict['unv']['2']
+            
+            u_text += f" \[ *{bd_dino['stats']['unv']}* ]"
 
-            if bd_user['language_code'] == 'ru':
-                text = f'🦖 *┌* Имя: {bd_dino["name"].replace("*", "")}\n👁‍🗨 *├* Статус: {st_t}\n🧿 *└* Редкость: {qual}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
-            else:
-                text = f'🦖 *┌* Name: {bd_dino["name"].replace("*", "")}\n👁‍🗨 *├* Status: {st_t}\n🧿 *└* Rare: {qual}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}'
+            text = text_dict['profile_text'].format(
+                    dino_name=bd_dino["name"],
+                    st_t=st_t, qual=qual, h_text=h_text,
+                    e_text=e_text, g_text=g_text,
+                    m_text=m_text, u_text=u_text,
+                    em_name=tem['name'], em_status=tem['status'],
+                    em_rare=tem['status']
+            )
 
             if bd_dino['activ_status'] == 'journey':
                 w_t = bd_dino['journey_time'] - time.time()
-                if w_t < 0:
-                    w_t = 0
-                if bd_user['language_code'] == 'ru':
-                    text += f"\n\n🌳 *┌* Путешествие: \n·  Осталось: {Functions.time_end(w_t)}"
-                else:
-                    text += f"\n\n🌳 *┌* Journey: \n·  Left: {Functions.time_end(w_t, True)}"
+                jtime = Functions.time_end(w_t, text_dict['journey_time']['set'])
+
+                text += "\n\n" + tem['activ_journey']
+                text += text_dict['journey_time']['text'].format(jtime=jtime)
 
             if bd_dino['activ_status'] == 'game':
                 if Functions.acc_check(bot, bd_user, '4', dino_user_id, True):
                     w_t = bd_dino['game_time'] - time.time()
-                    if w_t < 0:
-                        w_t = 0
-                    if bd_user['language_code'] == 'ru':
-                        text += f"\n\n🎮 *┌* Игра: \n·  Осталось: {Functions.time_end(w_t)}"
-                    else:
-                        text += f"\n\n🎮 *┌* Game: \n·  Left: {Functions.time_end(w_t, True)}"
+                    gtime = Functions.time_end(w_t, text_dict['game_time']['set'])
+
+                    text += "\n\n" + tem['activ_game']
+                    text += text_dict['game_time']['text'].format(gtime=gtime)
+            
+            if bd_dino['activ_status'] == 'hunting':
+                targ = bd_dino['target']
+                number, tnumber = targ[0], targ[1]
+                prog = int(number / (tnumber / 100))
+
+                text += "\n\n" + tem['activ_hunting']
+                text += text_dict['collecting_progress'].format(progress=prog)
 
             d_id = dino_user_id
             act_ii = []
             for itmk in bd_user['activ_items'][d_id].keys():
                 itm = bd_user['activ_items'][d_id][itmk]
+
                 if itm == None:
-                    act_ii.append('-')
+                    act_ii.append(text_dict['no_item'])
+
                 else:
-                    if bd_user['language_code'] == 'ru':
-                        item = items_f['items'][str(itm['item_id'])]['name']['ru']
-                    else:
-                        item = items_f['items'][str(itm['item_id'])]['name']['en']
+                    item = Functions.item_name(str(itm['item_id']), bd_user['language_code'])
 
                     if 'abilities' in itm.keys() and 'endurance' in itm['abilities'].keys():
-                        act_ii.append(f"{item} ({itm['abilities']['endurance']})")
+                        act_ii.append(f"{item} \[ *{itm['abilities']['endurance']}* ]")
                     else:
                         act_ii.append(f'{item}')
 
-            if bd_user['language_code'] == 'ru':
-                text += f"\n\n🌙 *┌* Сон: {act_ii[3]}\n"
-                text += f"🎮 *├* Игра: {act_ii[0]}\n"
-                text += f"🌿 *├* Сбор пищи: {act_ii[1]}\n"
-                text += f"🎍 *└* Путешествие: {act_ii[2]}\n"
+            game, coll, jour, sleep = act_ii
+            text += "\n\n" + text_dict['accs'].format(
+                    game=game, coll=coll, jour=jour, sleep=sleep,
+                    em_game=tem['ac_game'], em_coll=tem['ac_collecting'], em_jour=tem['ac_journey'], 
+                    em_sleep=tem['ac_sleep']
+            )
 
-            else:
-                text += f"\n\n🌙 *┌* Sleep: {act_ii[3]}\n"
-                text += f"🎮 *├* Game: {act_ii[0]}\n"
-                text += f"🌿 *├* Collecting food: {act_ii[1]}\n"
-                text += f"🎍 *└* Journey: {act_ii[2]}\n"
-
-            bot.send_photo(message.chat.id, profile, text, reply_markup=Functions.markup(bot, user=user),
-                           parse_mode='Markdown')
+            bot.send_photo(message.chat.id, profile, text,      
+                reply_markup=Functions.markup(bot, user=user),
+                parse_mode='Markdown')
 
     @staticmethod
     def journey_end_log(bot, user_id, dino_id):
@@ -3594,7 +3508,7 @@ class Functions:
 
             return 'no_user', text
 
-    def create_event(events: list = [], random_data: bool = True):
+    def create_event(events:list=[], random_data:bool=True):
 
         """
         Типы:
@@ -3639,7 +3553,7 @@ class Functions:
         Ввод:
             events
                 random_data == False
-                    [ *{ "type":str, "time_start":int, "time_end":int, "condition_performance":dict / None, *args } ]
+                    [ *{ "type":str, event_time:int, "condition_performance":dict / None, *args } ]
                 random_data == True
                     [ *types:str]
         
@@ -3696,21 +3610,45 @@ class Functions:
         else:
             max_id = 0
 
-        if random_data:
 
+        if random_data:
             for etype in events:
                 max_id += 1
-                e_data = {"id": max_id, "type": etype, "condition_performance": None, "data": {}}
-                event_time = random.choice(ev_set['data_set']['time'])
+                e_data = {"id": max_id, "type": etype, 
+                          "condition_performance": None, "data": {}
+                         }
 
+                event_time = random.choice(ev_set['data_set']['time'])
                 e_data['time_start'] = int(time.time())
                 e_data['time_end'] = int(time.time()) + event_time
-
+                
                 ready_events.append(event_data_create(e_data))
+        
+        else:
+            for event in events:
+                max_id += 1
+                e_data = {"id": max_id, "type": event['type'], 
+                          "condition_performance": event['condition_performance'], 
+                          "data": event['data']
+                         }
+                
+                if 'event_time' in event.keys():
+                    event_time = event['event_time']
+                else:
+                    event_time = random.choice(ev_set['data_set']['time'])
 
-        print(ready_events)
+                if event_time != None:
+                    e_data['time_start'] = int(time.time())
+                    e_data['time_end'] = int(time.time()) + event_time
+                else:
+                    e_data['time_start'] = None
+                    e_data['time_end'] = None
+                    
+                ready_events.append(e_data)
 
-    def get_event(etype: str = None, eid: int = None, section: str = 'activ'):
+        return ready_events
+
+    def get_event(etype:str=None, eid:int=None, section:str ='activ'):
         events = []
         events_data = management.find_one({"_id": 'events'})
 
@@ -3724,11 +3662,26 @@ class Functions:
 
         return events
 
-    def delete_event(eid: int, section: str = "activ"):
+    def add_events(events:list, section:str='activ'):
+
+        for event in events:
+            management.update_one({"_id": "events"}, {"$push": {f'{section}': event}})
+
+            n_event = {'id': event['id'], 'type': event['type'], 'time_end': event['time_end']}
+            management.update_one({"_id": "events"}, {"$push": {f'log_events': n_event}})
+
+    def delete_event(eid:int, section:str="activ"):
         events_data = management.find_one({"_id": 'events'})
         event = Functions.get_event(eid=eid)
+        
+        events_data[section].remove(event)
+        management.update_one({"_id": "events"}, {"$set": {f'{section}': events_data[section]}})
+    
+    def evet_notification(eid:int, section:str="activ"):
+        events_data = management.find_one({"_id": 'events'})
+        ...
 
-    def auto_event(etype: str = 'random'):
+    def auto_event(etype:str='random', section:str="activ"):
         events_data = management.find_one({"_id": 'events'})
         id_list, max_id = [], 0
 
@@ -3740,7 +3693,7 @@ class Functions:
 
         if etype == 'time_year':
             month_n = int(time.strftime("%m"))
-            event = {'type': etype, "data": {}}
+            event = {'type': etype, "condition_performance": None, "event_time": None, "data": {}}
 
             if month_n < 3 or month_n > 11:
                 event['data']['season'] = 'winter'
@@ -3753,6 +3706,27 @@ class Functions:
 
             else:
                 event['data']['season'] = 'autumn'
+            
+            events = Functions.get_event(etype='time_year')
+            if len(events) > 1:
+                for i in events:
+                    eid = i['eid']
+                    Functions.delete_event(eid=events[0]['id'])
+                
+                events = []
+            
+            if len(events) == 1:
+                
+                if events[0]['data']['season'] != event['data']['season']:
+                    Functions.delete_event(eid=eid)
+
+                    cr_events = Functions.create_event([event], False)
+                    Functions.add_events(cr_events)
+            
+            if len(events) == 0:
+                
+                cr_events = Functions.create_event([event], False)
+                Functions.add_events(cr_events)
 
     def check_in_dungeon(bot, userid):
         bd_user = users.find_one({"userid": userid})
@@ -5252,7 +5226,7 @@ class Dungeon:
             szz = [sz_osn[1] / 100 * 90, sz_osn[1] / 100 * 10]
 
             bar = Image.new('RGB', (sz_osn[0], sz_osn[1]), color=colorbg)
-            mask = Image.open(mask_way).convert('L').resize((sz_osn[0], sz_osn[1]), Image.ANTIALIAS)
+            mask = Image.open(mask_way).convert('L').resize((sz_osn[0], sz_osn[1]), Image.Resampling.LANCZOS)
 
             x = (act / maxact) * 100
             x = int(x * 8.7) + 16
@@ -5273,7 +5247,7 @@ class Dungeon:
         bg_p = Image.open(image_way)
         img = Image.open(mobs_f['boss'][boss['mob_key']]['image'])
         sz = 325
-        img = img.resize((sz, sz), Image.ANTIALIAS)
+        img = img.resize((sz, sz), Image.Resampling.LANCZOS)
 
         xy = 20
         x2 = 287
@@ -5299,7 +5273,7 @@ class Dungeon:
                 mask_way = 'images/dungeon/remain/bar_mask_mana.png'
 
             bar = Image.new('RGB', (153, 33), color=colorbg)
-            mask = Image.open(mask_way).convert('L').resize((153, 33), Image.ANTIALIAS)
+            mask = Image.open(mask_way).convert('L').resize((153, 33), Image.Resampling.LANCZOS)
 
             x = (act / maxact) * 100
             x = int(x * 1.5) + 5
@@ -5317,7 +5291,7 @@ class Dungeon:
         bg_p = Image.open(image_way)
         img = Image.open(mobs_f['mobs'][mob['mob_key']]['image'])
         sz = 350
-        img = img.resize((sz, sz), Image.ANTIALIAS)
+        img = img.resize((sz, sz), Image.Resampling.LANCZOS)
 
         xy = -10
         x2 = 100
@@ -5328,7 +5302,7 @@ class Dungeon:
         sz1, sz2 = img.size
         sz1, sz2 = int(sz1 / 1.5), int(sz2 / 1.5)
 
-        img = img.resize((sz1, sz2), Image.ANTIALIAS)
+        img = img.resize((sz1, sz2), Image.Resampling.LANCZOS)
 
         y, x = 50, 390
         alpha_img = Functions.trans_paste(img, alpha_img, 1, (y + x, y, sz1 + y + x, sz2 + y))
@@ -5342,7 +5316,7 @@ class Dungeon:
             sz1, sz2 = img.size
             sz1, sz2 = int(sz1 / 1.5), int(sz2 / 1.5)
 
-            img = img.resize((sz1, sz2), Image.ANTIALIAS)
+            img = img.resize((sz1, sz2), Image.Resampling.LANCZOS)
 
             y, x = 120, 320
             alpha_img = Functions.trans_paste(img, alpha_img, 1, (y + x, y, sz1 + y + x, sz2 + y))
