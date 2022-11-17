@@ -5,9 +5,32 @@
 
         "language_code": "en",
 
+        "buttons_name": {
+            "back": "↪ Back",
+            "enable": "✅ Enable",
+            "disable": "❌ Disable",
+            "confirm": "✅ Confirm"
+        },
+
+        "commands_name": {},
+
+        "items_name": {},
+
+        "rare": {
+            "com": ["Normal", "Normal"],
+            "unc": ["Unusual", "Unusual"],
+            "rar": ["Rare", "Rare"],
+            "mys": ["Mystical", "Mystical"],
+            "leg": ["Legendary", "Legendary"],
+            "myt": ["Mythical", "Mythical"],
+            "ran": ["Random", "Random"]
+        },
+
+
         "no_text_key": "❌ The text corresponding to key {key} is not found, contact the developer!",
 
         "no_dp_text_key": "❌ There is no additional key!",
+
 
         "no_use_interface": "❌ While in the dungeon, use the dungeon interface!\n\nIf an error has occurred and you have exited the dungeon, write /check_dinos",
 
@@ -42,10 +65,6 @@
             "dev": "💚 | The command is executed\n🧨 | Subject {item}\n🎭 | User {username}\n🌐 | Status messages {message_status}"
         },
 
-        "commands_name": {
-
-        },
-
         "promo_commands": {
 
             "create_promo": {
@@ -77,13 +96,6 @@
 
         "dungeon_err": "Cleaning is done.",
 
-        "buttons_name": {
-            "back": "↪ Back",
-            "enable": "✅ Enable",
-            "disable": "❌ Disable",
-            "confirm": "✅ Confirm"
-        },
-
         "lang_set": {
             "interaction": "❗ Interaction with the language setting, select the language >",
             "accept": "🔧 The language is set to "
@@ -92,7 +104,7 @@
         "start_game": "🥚 | Choose a dinosaur egg!",
 
         "project_reb": {
-            "text": "A man in a black robe approaches you.\n\nYou can see that the man has black hair and some kind of scar on his cheek, but his eyes are not visible in the shadow of the hat.\n\n*Personality:* - Hello, my name is { random1 } { random2 }, and you...\n\n*You are:* - ... {first_name}, {user.first_name} {last_name}, that's my name\n\n*Personality:* - Fine {first_name}, how long have you been in our business? _smiling_\n\n*You are:* - ...What? Business? What are you talking about?!\n\n*Personality:* - I see, I see... So we'll write it down. _ Writes something in notepad_\n\n*You are:* - ...\n\n*Personality:* - Let's get down to business, we offer you to sign a contract with us, we get your coins and resources, you get an egg with a dinosaur.\n\n*You:* - I know, I don't know...\n\n*You:* - \n\n❓ | Choose the answer option",
+            "text": "A man in a black robe approaches you.\n\nYou can see that the man has black hair and some kind of scar on his cheek, but his eyes are not visible in the shadow of the hat.\n\n*Personality:* - Hello, my name is {random1} {random2}, and you...\n\n*You are:* - ... {first_name}, {user.first_name} {last_name}, that's my name\n\n*Personality:* - Fine {first_name}, how long have you been in our business? _smiling_\n\n*You are:* - ...What? Business? What are you talking about?!\n\n*Personality:* - I see, I see... So we'll write it down. _ Writes something in notepad_\n\n*You are:* - ...\n\n*Personality:* - Let's get down to business, we offer you to sign a contract with us, we get your coins and resources, you get an egg with a dinosaur.\n\n*You:* - I know, I don't know...\n\n*You:* - \n\n❓ | Choose the answer option",
             "buttons": ["❓ | Who are you?", "❓ | Is it legal?", "❓ | Who are \"we\"?", "🧩 | I don't have a choice, right?"],
             "random1": ["mister", "doctor"],
             "random2": ["James", "Robert", "Vincent", "Albert"]
@@ -186,8 +198,76 @@
         },
 
         "dino_unsleep_ac": {
-            "awaked": "🌙 Ваш динозавр пробудился.",
+            "awaked": "🌙 Your dinosaur has awakened.",
             "awaked_mood": "🌙 Your dinosaur has awakened. He is very unhappy that you woke him up!\nDinosaur lost {r_n}% of mood."
+        },
+
+        "p_profile": {
+            "text_info": "information",
+            "text_ost": "Left:",
+            "rare_name": "Quality:",
+            "time_position": [335, 220],
+            "rare_position": [405, 280],
+
+            "incubation_text": "🥚 | The egg is incubated, left: {time_end}",
+
+            "stats": {
+                "pass_active": "I'm not doing anything 💭",
+                "sleep": "Sleeping 🌙",
+                "game": "Playing 🎮",
+                "journey": "Travels 🎴",
+                "hunting": "Collecting food 🥞",
+                "dungeon": "Conquering the dungeon 🗻",
+                "freezing": "I'm frozen ❄"
+            },
+
+            "heal": {
+                "0": "*┌* Healthy",
+                "1": "*┌* Cough, cough, I don't feel well...",
+                "2": "*┌* I'm dying..."
+            },
+
+            "eat": {
+                "0": "*├* Full",
+                "1": "*├* Hungry",
+                "2": "*├* I'm starving!"
+            },
+
+            "game": {
+                "0": "*├* I don't want to play",
+                "1": "*├* I miss you...",
+                "2": "*├* I'm dying of boredom!"
+            },
+
+            "mood": {
+                "0": "*├* In a great mood",
+                "1": "*├* Everything is fine",
+                "2": "*├* I'm sad..."
+            },
+
+            "unv": {
+                "0": "*└* Full of energy!",
+                "1": "*└* I have the strength",
+                "2": "*└* I am insanely tired :("
+            },
+
+            "profile_text": "🦖 *┌* Name: {dino_name}\n👁‍🗨 *├* Status: {st_t}\n🧿 *└* Rare: {qual}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}",
+
+            "journey_time": {
+                "text": "\n\n🌳 *┌* Journey: \n·  Left: {jtime}",
+                "set": true
+            },
+
+            "game_time": {
+                "text": "\n\n🎮 *┌* Game: \n·  Left: {gtime}",
+                "set": true
+            },
+
+            "collecting_progress": "\n\n🥙 *┌* Collecting food: \n·  > {progress} / 100%",
+
+            "no_item": "Nothing",
+
+            "accs": "*┌* Game: {game}\n*├* Collecting food: {coll}\n*├* Journey: {jour}\n*└* Sleep: {sleep}\n"
         }
 
 
