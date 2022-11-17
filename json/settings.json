@@ -63,7 +63,10 @@
                 "mood": "🎈", "sleep": "🌙",
 
                 "ac_sleep": "🌙", "ac_game": "🎮",
-                "ac_collecting": "🌿", "ac_journey": "🎍"
+                "ac_collecting": "🌿", "ac_journey": "🎍",
+
+                "activ_journey": "📙", "activ_game": "🏀",
+                "activ_hunting": "🎯"
             },
             "winter":  {
                 "name": "⛄️", "status": "🧊", "rare": "❄️",
@@ -72,7 +75,10 @@
                 "mood": "❄️", "sleep": "⭐️",
 
                 "ac_sleep": "🕯", "ac_game": "🎄",
-                "ac_collecting": "🌿",  "ac_journey": "🏔"
+                "ac_collecting": "🌿",  "ac_journey": "🏔",
+
+                "activ_journey": "📙", "activ_game": "🏀",
+                "activ_hunting": "🎯"
             },
             "spring":  {
                 "name": "🌸", "status": "💮", "rare": "🌿",
@@ -81,7 +87,10 @@
                 "mood": "🍯", "sleep": "✨",
 
                 "ac_sleep": "🌙", "ac_game": "🌾",
-                "ac_collecting": "🌻", "ac_journey": "🏔"
+                "ac_collecting": "🌻", "ac_journey": "🏔",
+
+                "activ_journey": "📙", "activ_game": "🏀",
+                "activ_hunting": "🎯"
             },
             "summer":  {
                 "name": "🍹", "status": "💐", "rare": "🥀",
@@ -90,7 +99,10 @@
                 "mood": "⛺️", "sleep": "🍯",
 
                 "ac_sleep": "🎗", "ac_game": "🌾",
-                "ac_collecting": "🫐",  "ac_journey": "🏔"
+                "ac_collecting": "🫐",  "ac_journey": "🏔",
+
+                "activ_journey": "📙", "activ_game": "🏀",
+                "activ_hunting": "🎯"
             },
             "autumn":  {
                 "name": "🏮", "status": "🍁", "rare": "🥧",
@@ -99,7 +111,10 @@
                 "mood": "🍃", "sleep": "🥀",
 
                 "ac_sleep": "🍂", "ac_game": "🍁",
-                "ac_collecting": "🍊", "ac_journey": "🏔"
+                "ac_collecting": "🍊", "ac_journey": "🏔",
+
+                "activ_journey": "📙", "activ_game": "🏀",
+                "activ_hunting": "🎯"
             }
         }
 
