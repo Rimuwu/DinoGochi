@@ -11,7 +11,7 @@ sys.path.append("..")
 import config
 
 client = config.CLUSTER_CLIENT
-users, dungeons = client.bot.users, client.bot.dungeons
+users, dungeons, management = client.bot.users, client.bot.dungeons, client.bot.management
 
 with open('json/items.json', encoding='utf-8') as f: items_f = json.load(f)
 
@@ -1221,6 +1221,10 @@ class CheckFunction:
 
                     users.update_one({"userid": user['userid']}, {"$set": {f'dinos': user['dinos']}})
                     users.update_one({"userid": user['userid']}, {"$inc": {'dead_dinos': 1}})
+    
+    def events(bot):
+        # events_data = management.find_one({"_id": 'events'})
+        Functions.auto_event("time_year")
 
 
 class Checks:
@@ -1477,6 +1481,14 @@ class Checks:
         Functions.check_data('main', 0, int(time.time() - t_st))
         Functions.check_data('main', 1, int(time.time()))
         Functions.check_data('main', 2, nn)
+    
+    @staticmethod
+    def events(bot):
+
+        try:
+            CheckFunction.events(bot)
+        except Exception as err:
+            print(f'Error in events\nError: {err}')
 
     @staticmethod
     def dungeons_check(bot):
