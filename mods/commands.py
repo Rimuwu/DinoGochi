@@ -558,7 +558,7 @@ class Commands:
             page = 1
             friends_name = []
             id_names = {}
-            text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="friends_list")
+            text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="friends")
             buttons_name = Functions.get_text(l_key=bd_user['language_code'], text_key="buttons_name")
 
             for i in friends_id:
@@ -764,11 +764,10 @@ class Commands:
 
                     users.update_one({"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings']}})
 
-                    dino_name = bd_user['dinos'][str(bd_user['settings']['dino_id'])]['name']
-
                     if bd_user['dinos'][str(bd_user['settings']['dino_id'])]['status'] == 'incubation':
                         text = text_dict['egg']
                     else:
+                        dino_name = bd_user['dinos'][str(bd_user['settings']['dino_id'])]['name']
                         text = text_dict['dino'].format(dino_name=dino_name)
 
                     bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, 'actions', user))
