@@ -165,15 +165,18 @@ def min10_check():  # проверка каждые 10 мин
     def dng_check(bot):
         Checks.dungeons_check(bot)
 
+    def events_check(bot):
+        Checks.events(bot)
+
     while True:
 
         if int(memory_usage()[0]) < 1500:
             uss = users.find({})
             threading.Thread(target=alpha, daemon=True, kwargs={'users': uss}).start()
 
-            if bot.get_me().first_name == config.BOT_NAME:
-                threading.Thread(target=dead_users, daemon=True, kwargs={'bot': bot}).start()
-                threading.Thread(target=dng_check, daemon=True, kwargs={'bot': bot}).start()
+            threading.Thread(target=dead_users, daemon=True, kwargs={'bot': bot}).start()
+            threading.Thread(target=dng_check, daemon=True, kwargs={'bot': bot}).start()
+            threading.Thread(target=events_check, daemon=True, kwargs={'bot': bot}).start()
 
         else:
             print(f'Использование памяти: {int(memory_usage()[0])}')
@@ -329,7 +332,9 @@ def command(message):
 def command(message):
     user = message.from_user
 
-    Functions.create_event()
+    Functions.auto_event('time_year')
+
+    print(Functions.get_event("time_year"))
 
 
 # =========================================
@@ -808,9 +813,7 @@ def on_message(message):
 
             Commands.action_back(bot, message, user, bd_user)
 
-        elif Functions.tr_c_f(bd_user) and message.text in ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '🎮 Console',
-                                                            '🪁 Snake', '🏓 Ping Pong', '🏐 Ball', '🧩 Пазлы', '♟ Шахматы',
-                                                            '🧱 Дженга', '🎲 D&D', '🧩 Puzzles', '♟ Chess', '🧱 Jenga']:
+        elif Functions.tr_c_f(bd_user) and message.text in ['🎮 Консоль', '🪁 Змей', '🏓 Пинг-понг', '🏐 Мяч', '🎮 Console', '🪁 Snake', '🏓 Ping Pong', '🏐 Ball', '🧩 Пазлы', '♟ Шахматы', '🧱 Дженга', '🎲 D&D', '🧩 Puzzles', '♟ Chess', '🧱 Jenga']:
 
             Commands.dino_entert_games(bot, message, user, bd_user)
 
