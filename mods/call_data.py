@@ -56,15 +56,17 @@ class CallData:
 
             dino_image = Image.open("images/" + str(json_f['elements'][dino_id]['image']))
             sz = 412
-            dino_image = dino_image.resize((sz, sz), Image.ANTIALIAS)
+            dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
             dino_image = dino_image.transpose(Image.FLIP_LEFT_RIGHT)
 
             xy = -35
             x2 = random.randint(80, 120)
             img = Functions.trans_paste(dino_image, bg_p, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy))
 
-            img.save(f'{config.TEMP_DIRECTION}/journey.png')
-            profile = open(f"{config.TEMP_DIRECTION}/journey.png", 'rb')
+            n_rand = random.randint(1,3) #Создано чтобы не смешивались фотки
+
+            img.save(f'{config.TEMP_DIRECTION}/journey_{n_rand}.png')
+            profile = open(f"{config.TEMP_DIRECTION}/journey_{n_rand}.png", 'rb')
 
             return profile
 
@@ -113,21 +115,22 @@ class CallData:
         def dino_game(bd_user, user, dino_user_id):
 
             dino_id = str(bd_user['dinos'][dino_user_id]['dino_id'])
-            dino = json_f['elements'][dino_id]
             n_img = random.randint(1, 2)
             bg_p = Image.open(f"images/game/{n_img}.png")
 
             dino_image = Image.open("images/" + str(json_f['elements'][dino_id]['image']))
             sz = 412
-            dino_image = dino_image.resize((sz, sz), Image.ANTIALIAS)
+            dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
             dino_image = dino_image.transpose(Image.FLIP_LEFT_RIGHT)
 
             xy = random.randint(-65, -35)
             x2 = random.randint(20, 340)
             img = Functions.trans_paste(dino_image, bg_p, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy))
 
-            img.save(f'{config.TEMP_DIRECTION}/game.png')
-            profile = open(f"{config.TEMP_DIRECTION}/game.png", 'rb')
+            n_rand = random.randint(1,3) #Создано чтобы не смешивались фотки
+
+            img.save(f'{config.TEMP_DIRECTION}/game_{n_rand}.png')
+            profile = open(f"{config.TEMP_DIRECTION}/game_{n_rand}.png", 'rb')
 
             return profile
 
