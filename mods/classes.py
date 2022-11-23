@@ -1348,6 +1348,7 @@ class Functions:
                 d_text += f"*└* Редкость яйца: {eg_q}"
 
             else:
+                eg_q = item['inc_type']
                 if item['inc_type'] == 'random':
                     eg_q = 'random'
                 elif item['inc_type'] == 'com':
@@ -2885,24 +2886,15 @@ class Functions:
         def dino_profile(bd_user, user, dino_user_id):
 
             dino_id = str(bd_user['dinos'][dino_user_id]['dino_id'])
-
-            if bd_user['language_code'] == 'ru':
-                lang = bd_user['language_code']
-            else:
-                lang = 'en'
-
             dino = json_f['elements'][dino_id]
-            if 'class' in list(dino.keys()):
-                bg_p = Image.open(f"images/remain/{dino['class']}_icon.png")
-            else:
-                bg_p = Image.open(f"images/remain/None_icon.png")
+            bg_p = Image.open(f"images/remain/{dino['class']}_icon.png")
 
             bd_user = Functions.dino_q(bd_user)
             class_ = bd_user['dinos'][dino_user_id]['quality']
-
-            panel_i = Image.open(f"images/remain/{class_}_profile_{lang}.png")
-
+            panel_i = Image.open(f"images/remain/{class_}_profile.png")
             img = Functions.trans_paste(panel_i, bg_p, 1.0)
+
+            pr = "%"
 
             dino_image = Image.open("images/" + str(json_f['elements'][dino_id]['image']))
 
@@ -2915,16 +2907,35 @@ class Functions:
 
             idraw = ImageDraw.Draw(img)
             line1 = ImageFont.truetype("fonts/Comic Sans MS.ttf", size=35)
+            line2 = ImageFont.truetype("fonts/Comic Sans MS.ttf", size=50)
 
-            idraw.text((530, 110), str(bd_user['dinos'][dino_user_id]['stats']['heal']), font=line1)
-            idraw.text((530, 190), str(bd_user['dinos'][dino_user_id]['stats']['eat']), font=line1)
+            idraw.text((560, 20), text_dict['text_info'], 
+                    font=line2,
+            )
 
-            idraw.text((750, 110), str(bd_user['dinos'][dino_user_id]['stats']['game']), font=line1)
-            idraw.text((750, 190), str(bd_user['dinos'][dino_user_id]['stats']['mood']), font=line1)
-            idraw.text((750, 270), str(bd_user['dinos'][dino_user_id]['stats']['unv']), font=line1)
+            idraw.text((530, 110), 
+                str(bd_user['dinos'][dino_user_id]['stats']['heal']) + pr,   font=line1
+            )
+            idraw.text((530, 190), 
+                str(bd_user['dinos'][dino_user_id]['stats']['eat']) + pr, 
+                font=line1
+            )
 
-            img.save(f'{config.TEMP_DIRECTION}/profile {user.id}.png')
-            profile = open(f'{config.TEMP_DIRECTION}/profile {user.id}.png', 'rb')
+            idraw.text((750, 110), 
+                str(bd_user['dinos'][dino_user_id]['stats']['game']) + pr, 
+                font=line1
+            )
+            idraw.text((750, 190), 
+                str(bd_user['dinos'][dino_user_id]['stats']['mood']) + pr, 
+                font=line1
+            )
+            idraw.text((750, 270), 
+                str(bd_user['dinos'][dino_user_id]['stats']['unv']) + pr, 
+                font=line1
+            )
+
+            img.save(f'{config.TEMP_DIRECTION}/profile_{user.id}.png')
+            profile = open(f'{config.TEMP_DIRECTION}/profile_{user.id}.png', 'rb')
 
             return profile
 
@@ -2961,7 +2972,7 @@ class Functions:
             elif bd_dino['stats']['heal'] <= 10:
                 h_text += text_dict['heal']['2']
             
-            h_text += f" \[ *{bd_dino['stats']['heal']}* ]"
+            h_text += f" \[ *{bd_dino['stats']['heal']}%* ]"
 
             if bd_dino['stats']['eat'] >= 60:
                 e_text += text_dict['eat']['0']
@@ -2972,7 +2983,7 @@ class Functions:
             elif bd_dino['stats']['eat'] <= 10:
                 e_text += text_dict['eat']['2']
             
-            e_text += f" \[ *{bd_dino['stats']['eat']}* ]"
+            e_text += f" \[ *{bd_dino['stats']['eat']}%* ]"
 
             if bd_dino['stats']['game'] >= 60:
                 g_text += text_dict['game']['0']
@@ -2983,7 +2994,7 @@ class Functions:
             elif bd_dino['stats']['game'] <= 10:
                 g_text += text_dict['game']['2']
             
-            g_text += f" \[ *{bd_dino['stats']['game']}* ]"
+            g_text += f" \[ *{bd_dino['stats']['game']}%* ]"
 
             if bd_dino['stats']['mood'] >= 60:
                 m_text += text_dict['mood']['0']
@@ -2994,7 +3005,7 @@ class Functions:
             elif bd_dino['stats']['mood'] <= 10:
                 m_text += text_dict['mood']['2']
             
-            m_text += f" \[ *{bd_dino['stats']['mood']}* ]"
+            m_text += f" \[ *{bd_dino['stats']['mood']}%* ]"
 
             if bd_dino['stats']['unv'] >= 60:
                 u_text += text_dict['unv']['0']
@@ -3005,7 +3016,7 @@ class Functions:
             elif bd_dino['stats']['unv'] <= 10:
                 u_text += text_dict['unv']['2']
             
-            u_text += f" \[ *{bd_dino['stats']['unv']}* ]"
+            u_text += f" \[ *{bd_dino['stats']['unv']}%* ]"
 
             text = text_dict['profile_text'].format(
                     dino_name=bd_dino["name"],
@@ -3013,7 +3024,7 @@ class Functions:
                     e_text=e_text, g_text=g_text,
                     m_text=m_text, u_text=u_text,
                     em_name=tem['name'], em_status=tem['status'],
-                    em_rare=tem['status']
+                    em_rare=tem['rare']
             )
 
             if bd_dino['activ_status'] == 'journey':
@@ -6337,7 +6348,7 @@ class Dungeon:
 
         return text, inline_type, image
 
-    def create_quest(bd_user):
+    def create_quest(bd_user, quest_type:str = None):
 
         def comp_r(complex):
             if str(complex) not in quests_f['complexity'].keys():
@@ -6361,10 +6372,10 @@ class Dungeon:
             else:
                 return quests_f['complexity'][str(complex)]
 
-        types = ['get', 'do', 'kill', 'do', 'come', 'get', 'kill', 'do']
-        random.shuffle(types)
-
-        quest_type = random.choice(types)
+        if quest_type == None:
+            types = ['get', 'do', 'kill', 'do', 'come', 'get', 'kill', 'do']
+            random.shuffle(types)
+            quest_type = random.choice(types)
 
         quest = {
             'reward': {'money': 0, 'items': []},
@@ -6411,7 +6422,13 @@ class Dungeon:
 
             col, n = random.randint(1, 3), 0
 
-            mbs = list(mobs_f['mobs'].keys())
+            max_user_dung_lvl = Dungeon.get_statics(bd_user, "max")["end_floor"]
+
+            mbs_n_sort = list(mobs_f['mobs'].keys())
+            mbs = []
+            for i in mbs_n_sort:
+                if max_user_dung_lvl >= mobs_f['mobs'][i]['lvls']['min']:
+                    mbs.append(i)
             random.shuffle(mbs)
 
             quest['mob'] = mbs[0]
@@ -6832,3 +6849,29 @@ class Dungeon:
                                     if ok:
                                         users.update_one({"userid": bd_user['userid']},
                                                          {"$set": {'user_dungeon': bd_user['user_dungeon']}})
+    
+    def get_statics(bd_user, met:str='max'):
+        
+        ''' Выдаёт статисику по прохождениям
+
+            met = min / max
+        '''
+
+        ns_res = None
+        st = bd_user['user_dungeon']['statistics']
+
+        for i in st:
+
+            if ns_res == None:
+                ns_res = i
+
+            else:
+                if met == 'max':
+                    if i['end_floor'] >= ns_res['end_floor']:
+                        ns_res = i
+                    
+                else:
+                    if i['end_floor'] <= ns_res['end_floor']:
+                        ns_res = i
+        
+        return ns_res
