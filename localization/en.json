@@ -104,7 +104,7 @@
         "start_game": "🥚 | Choose a dinosaur egg!",
 
         "project_reb": {
-            "text": "A man in a black robe approaches you.\n\nYou can see that the man has black hair and some kind of scar on his cheek, but his eyes are not visible in the shadow of the hat.\n\n*Personality:* - Hello, my name is {random1} {random2}, and you...\n\n*You are:* - ... {first_name}, {user.first_name} {last_name}, that's my name\n\n*Personality:* - Fine {first_name}, how long have you been in our business? _smiling_\n\n*You are:* - ...What? Business? What are you talking about?!\n\n*Personality:* - I see, I see... So we'll write it down. _ Writes something in notepad_\n\n*You are:* - ...\n\n*Personality:* - Let's get down to business, we offer you to sign a contract with us, we get your coins and resources, you get an egg with a dinosaur.\n\n*You:* - I know, I don't know...\n\n*You:* - \n\n❓ | Choose the answer option",
+            "text": "A man in a black robe approaches you.\n\nYou can see that the man has black hair and some kind of scar on his cheek, but his eyes are not visible in the shadow of the hat.\n\n*Personality:* - Hello, my name is {random1} {random2}, and you...\n\n*You are:* - ... {first_name}, {first_name} {last_name}, that's my name\n\n*Personality:* - Fine {first_name}, how long have you been in our business? _smiling_\n\n*You are:* - ...What? Business? What are you talking about?!\n\n*Personality:* - I see, I see... So we'll write it down. _ Writes something in notepad_\n\n*You are:* - ...\n\n*Personality:* - Let's get down to business, we offer you to sign a contract with us, we get your coins and resources, you get an egg with a dinosaur.\n\n*You:* - I know, I don't know...\n\n*You:* - \n\n❓ | Choose the answer option",
             "buttons": ["❓ | Who are you?", "❓ | Is it legal?", "❓ | Who are \"we\"?", "🧩 | I don't have a choice, right?"],
             "random1": ["mister", "doctor"],
             "random2": ["James", "Robert", "Vincent", "Albert"]
@@ -203,7 +203,7 @@
         },
 
         "p_profile": {
-            "text_info": "information",
+            "text_info": "Information",
             "text_ost": "Left:",
             "rare_name": "Quality:",
             "time_position": [335, 220],
