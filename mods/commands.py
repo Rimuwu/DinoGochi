@@ -59,7 +59,7 @@ class Commands:
                 random2 = random.choice(text_dict['random2'])
                 first_name = user.first_name
                 last_name = user.last_name
-                buttons = Functions.get_text(l_key=bd_user['language_code'], text_key="buttons_name")
+                buttons = text_dict['buttons']
 
                 text = text_dict['text'].format(random1=random1, random2=random2, first_name=first_name, last_name=last_name)
 
@@ -734,7 +734,8 @@ class Commands:
             bot.edit_message_text(text=text, chat_id=msg.chat.id, message_id=msg.message_id)
 
             for fr_user in fr_in_tav:
-                text = text_dict['went'].format(first_name=user.first_name)
+                text = Functions.get_text(l_key=fr_user['language_code'], text_key="open_dino_tavern", dp_text_key='went').format(first_name=user.first_name)
+                
 
                 time.sleep(0.5)
                 bot.send_message(fr_user['userid'], text)
@@ -3568,17 +3569,8 @@ class Commands:
     def dungeon_statist(bot, message, user, bd_user):
 
         if 'user_dungeon' in bd_user.keys():
-            ns_res = None
+            ns_res =Dungeon.get_statics(bd_user, "max")
             st = bd_user['user_dungeon']['statistics']
-
-            for i in st:
-
-                if ns_res == None:
-                    ns_res = i
-
-                else:
-                    if i['end_floor'] >= ns_res['end_floor']:
-                        ns_res = i
 
             if ns_res != None:
 
@@ -3800,7 +3792,7 @@ class Commands:
                     if bd_user['language_code'] == 'ru':
                         text += f'\n\n👑 | Награда\nМонеты: '
                     else:
-                        text += f'\n\n👑 | Reward\nМонеты: '
+                        text += f'\n\n👑 | Reward\Сoins: '
 
                     text += f"{quest['reward']['money']}💰"
 
