@@ -330,12 +330,10 @@ def command(message):
 
 @bot.message_handler(commands=['events'])
 def command(message):
-    user = message.from_user
 
     Functions.auto_event('time_year')
 
     print(Functions.get_event("time_year"))
-
 
 # =========================================
 
@@ -361,8 +359,7 @@ def command(message):
                     fw_chat_id = fw.forward_from_chat.id
 
                     markup_inline = types.InlineKeyboardMarkup()
-                    markup_inline.add(types.InlineKeyboardButton(text=text_dict['button_name'],
-                                                                 callback_data=f'promo_activ {promo_code} use'))
+                    markup_inline.add(types.InlineKeyboardButton(text=text_dict['button_name'], callback_data=f'promo_activ {promo_code} use'))
 
                     bot.edit_message_reply_markup(fw_chat_id, fw_ms_id, reply_markup=markup_inline)
                     bot.send_message(user.id, text_dict['create'])
@@ -643,12 +640,10 @@ def command(message):
     if message.chat.type != 'private':
         if bd_user != None:
 
-            text = Functions.get_text(l_key=user.language_code, text_key="add_me").format(userid=user.id,
-                                                                                          username=user.first_name)
+            text = Functions.get_text(l_key=user.language_code, text_key="add_me").format(userid=user.id, username=user.first_name)
 
             bot.reply_to(message, text, parse_mode='HTML',
-                         reply_markup=Functions.inline_markup(bot, 'send_request', user.id,
-                                                              ['Отправить запрос', 'Send a request']))
+                         reply_markup=Functions.inline_markup(bot, 'send_request', user.id, ['Отправить запрос', 'Send a request']))
 
         else:
 
