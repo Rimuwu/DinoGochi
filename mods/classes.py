@@ -3287,6 +3287,9 @@ class Functions:
                     i.append([' ' for _ in range(pages_v[0])])
 
         row_width = pages_v[0]
+        if row_width < 3:
+            row_width = 3
+
         return pages, page, items_data, items_names, row_width
 
     @staticmethod
@@ -3903,6 +3906,8 @@ class Functions:
                     settings_f['xp_craft'][data_item['rank']]
                 else:
                     data_user['lvl'][1] += settings_f['xp_craft']['common']
+
+                users.update_one({"userid": user.id}, {"$set": {'lvl': data_user['lvl']}})
 
             else:
                 if ok == False:
