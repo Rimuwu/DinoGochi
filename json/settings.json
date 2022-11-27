@@ -10,6 +10,15 @@
         "mythical": 1000000
     },
 
+    "xp_craft": {
+        "common": 2,
+        "uncommon": 5,
+        "rare": 10,
+        "mystical": 20,
+        "legendary": 50,
+        "mythical": 100
+    },
+
     "change_rarity": { 
         "com": {"money": 2000,  "materials": ["21"] },
         "unc": {"money": 4000,  "materials": ["20"] },
