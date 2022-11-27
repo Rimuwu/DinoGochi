@@ -287,7 +287,9 @@
                 "weapon": "🗻 For the dungeon", 
                 "armor": "🗻 For the dungeon", 
                 "ammunition": "🗻 For the dungeon", 
-                "backpack": "🗻  For the dungeon"
+                "backpack": "🗻  For the dungeon",
+                "freezing": "🔮 Other",
+                "defrosting": "🔮 Other"
             },
 
             "open": "🎈 | Inventory is open",
