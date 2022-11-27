@@ -311,7 +311,8 @@
                 "💍 Аксессуары": ["game_ac", "journey_ac", "hunt_ac", "unv_ac"],
                 "👢 Материалы": ["material"],
                 "📜 Рецепты": ["recipe"],
-                "🗻 Для подземелья": ["weapon", "armor", "ammunition", "backpack"]
+                "🗻 Для подземелья": ["weapon", "armor", "ammunition", "backpack"],
+                "🔮 Другое": ["freezing", "defrosting"]
             },
 
             "s_bt": "📚 Без фильтра"
