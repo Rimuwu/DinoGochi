@@ -2466,12 +2466,12 @@ class Functions:
 
         if bd_user != None:
 
-            if bd_user['inventory'] == []:
+            pages, page, items_data, items_names, row_width = Functions.inventory_pages(bd_user, filter_type, i_filter)
+
+            if items_names == []:
                 text = text_dict['null']
                 bot.send_message(message.chat.id, text)
                 return
-
-            pages, page, items_data, items_names, row_width = Functions.inventory_pages(bd_user, filter_type, i_filter)
 
             if filter_type == 'all':
                 filter_type = text_dict['no_filter']
