@@ -690,7 +690,7 @@ def on_message(message):
 
         elif message.text in ['🎮 Инвентарь', '🎮 Inventory']:
 
-            Functions.user_inventory(bot, user, message)
+            Commands.opne_inventory(bot, message, user, bd_user)
 
         elif message.text in ['🦖 Динозавр', '🦖 Dinosaur']:
 
@@ -790,7 +790,7 @@ def on_message(message):
 
         elif Functions.tr_c_f(bd_user) and message.text in ['🍣 Покормить', '🍣 Feed']:
 
-            Commands.dino_feed(bot, message, user, bd_user)
+            Functions.user_inventory(bot, user, message, 'use_item', 'itemtype', ["+eat"])
 
         elif Functions.tr_c_f(bd_user) and message.text in ['🍕 Сбор пищи', '🍕 Collecting food']:
 
