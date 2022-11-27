@@ -7,6 +7,7 @@ import sys
 import time
 
 import telebot
+from fuzzywuzzy import fuzz
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from telebot import types
 
@@ -712,10 +713,8 @@ class Functions:
             return f"{mm} {ending_w('месяц', mm, mini)}, {w} {ending_w('неделя', w, mini)}, {d} {ending_w('день', d, mini)}, {h} {ending_w('час', h, mini)}, {m} {ending_w('минута', m, mini)}, {s} {ending_w('секунда', s, mini)}"
 
     @staticmethod
-    def dino_pre_answer(bot, message, type: str = 'all'):
+    def dino_pre_answer(user, type:str='all'):
         id_dino = {}
-
-        user = message.from_user
         bd_user = users.find_one({"userid": user.id})
 
         if bd_user == None:
@@ -2335,31 +2334,154 @@ class Functions:
                         ret_data['abilities']['mana'] = int(''.join(l_data[i])[1:])
 
         return ret_data
+    
+    def add_product_activ(bot, user, message, bd_user, item):
 
-    @staticmethod
-    def user_inventory(bot, user, message, inv_t='info'):
+        def sch_items(item, bd_user):
+            return bd_user['inventory'].count(item)
+
+        if bd_user['language_code'] == 'ru':
+            text = "🛒 | Введите количество товара: "
+            ans = ['🛒 Рынок']
+        else:
+            text = "🛒 | Enter the quantity of the product: "
+            ans = ['🛒 Market']
+
+        rmk = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+        rmk.add(ans[0])
+
+        def ret_number(message):
+            col = message.text
+            try:
+                col = int(col)
+                mn = sch_items(item, bd_user)
+                if col <= 0 or col >= mn + 1:
+                    if bd_user['language_code'] == 'ru':
+                        text = f'0️⃣1️⃣0️⃣ | Введите число от 1 до {mn}!'
+                    else:
+                        text = f'0️⃣1️⃣0️⃣ | Enter a number from 1 to {mn}!'
+
+                    bot.send_message(message.chat.id, text)
+                    col = None
+            except:
+                col = None
+
+            if col == None:
+                if bd_user['language_code'] == 'ru':
+                    text = "🛒 | Возвращение в меню рынка!"
+                else:
+                    text = "🛒 | Return to the market menu!"
+
+                bot.send_message(message.chat.id, text,
+                                reply_markup=Functions.markup(bot, 'market', user))
+
+            else:
+
+                def max_k(dct):
+                    mx_dct = -1
+                    for i in dct.keys():
+                        if int(i) > mx_dct:
+                            mx_dct = int(i)
+                    return str(mx_dct + 1)
+
+                data_item = items_f['items'][item['item_id']]
+
+                if 'rank' in data_item.keys():
+                    max_price = settings_f['max_eat_price'][data_item['rank']]
+
+                else:
+                    max_price = 200
+
+                if bd_user['language_code'] == 'ru':
+                    text = f"🛒 | Введите стоимость предмета х1: (макс {max_price})"
+                else:
+                    text = f"🛒 | Enter the cost of the item x1: (max {max_price})"
+
+                def ret_number2(message):
+                    number = message.text
+                    try:
+                        number = int(number)
+                        if number <= 0 or number >= max_price + 1:
+                            if bd_user['language_code'] == 'ru':
+                                text = f'0️⃣1️⃣0️⃣ | Введите число от 1 до {max_price}!'
+                            else:
+                                text = f'0️⃣1️⃣0️⃣ | Enter a number from 1 to {max_price}!'
+
+                            bot.send_message(message.chat.id, text)
+                            number = None
+                    except:
+                        number = None
+
+                    if number == None:
+                        if bd_user['language_code'] == 'ru':
+                            text = "🛒 | Возвращение в меню рынка!"
+                        else:
+                            text = "🛒 | Return to the market menu!"
+
+                        bot.send_message(message.chat.id, text,
+                                            reply_markup=Functions.markup(bot, 'market', user))
+
+                    else:
+
+                        market_ = management.find_one({"_id": 'products'})
+
+                        try:
+                            products = market_['products'][str(user.id)]['products']
+                        except:
+                            market_['products'][str(user.id)] = {'products': {}, 'dinos': {}}
+                            products = market_['products'][str(user.id)]['products']
+
+                        market_['products'][str(user.id)]['products'][max_k(products)] = {
+                            'item': item, 'price': number, 'col': [0, col]}
+
+                        for _ in range(col):
+                            bd_user['inventory'].remove(item)
+
+                        users.update_one({"userid": bd_user['userid']},
+                                            {"$set": {'inventory': bd_user['inventory']}})
+
+                        management.update_one({"_id": 'products'},
+                                                {"$set": {'products': market_['products']}})
+
+                        if bd_user['language_code'] == 'ru':
+                            text = "🛒 | Продукт добавлен на рынок, статус своих продуктов вы можете посмотреть в мои товары!"
+                        else:
+                            text = "🛒 | The product has been added to the market, you can see the status of your products in your products!"
+
+                        bot.send_message(message.chat.id, text,
+                                            reply_markup=Functions.markup(bot, 'market', user))
+
+                msg = bot.send_message(message.chat.id, text)
+                bot.register_next_step_handler(msg, ret_number2)
+
+        msg = bot.send_message(message.chat.id, text, reply_markup=rmk)
+        bot.register_next_step_handler(msg, ret_number)
+
+
+    def user_inventory(bot, user, message, inv_t='info', filter_type:str='all', i_filter:list=[]):
 
         bd_user = users.find_one({"userid": user.id})
+        text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="user_inventory")
+        buttons = Functions.get_text(l_key=bd_user['language_code'], text_key="buttons_name")
+
         if bd_user != None:
 
             if bd_user['inventory'] == []:
-
-                if bd_user['language_code'] == 'ru':
-                    text = '💥 | Инвентарь пуст.'
-                else:
-                    text = '💥 | Inventory is empty.'
-
+                text = text_dict['null']
                 bot.send_message(message.chat.id, text)
                 return
 
-            pages, page, items_data, items_names, row_width = Functions.inventory_pages(bd_user)
+            pages, page, items_data, items_names, row_width = Functions.inventory_pages(bd_user, filter_type, i_filter)
 
-            if bd_user['language_code'] == 'ru':
-                textt = '🎈 | Инвентарь открыт'
+            if filter_type == 'all':
+                filter_type = text_dict['no_filter']
+                
             else:
-                textt = '🎈 | Inventory is open'
+                dct = text_dict['filters']
+                filter_type = dct[i_filter[0]]
 
-            bot.send_message(message.chat.id, textt)
+            text = text_dict['open']
+            bot.send_message(message.chat.id, text)
 
             def work_pr(message, mms=None, page=None):
 
@@ -2367,55 +2489,57 @@ class Functions:
                 for i in pages[page - 1]:
                     rmk.add(*[it for it in i])
 
-                if bd_user['language_code'] == 'ru':
+                l_pages = len(pages)
+                text = text_dict['page'].format(page=page, l_pages=l_pages, filter_type=filter_type)
 
-                    textt = f'🎈 | Страница: {page} | {len(pages)}\n🎟 | Обновление...'
-
-                    if len(pages) > 1:
-                        com_buttons = ['◀', '↪ Назад', '▶']
-
-                    else:
-                        com_buttons = ['↪ Назад']
-
+                if len(pages) > 1:
+                    com_buttons = ['◀', buttons['back'], '▶']
                 else:
-
-                    textt = f'🎈 | Page: {page} | {len(pages)}\n🎟 | Update...'
-
-                    if len(pages) > 1:
-                        com_buttons = ['◀', '↪ Back', '▶']
-
-                    else:
-                        com_buttons = ['↪ Back']
-
-                rmk.row(*[cm for cm in com_buttons])
+                    com_buttons = [buttons['back']]
+                
+                rmk.add(*[bt for bt in com_buttons])
 
                 def ret(message, page):
 
-                    if message.text in ['Yes, transfer the item', 'Да, передать предмет', 'Да, я хочу это сделать', 'Yes, I want to do it']:
+                    if message.text in text_dict['ret_words']:
                         return
 
-                    if message.text in ['↪ Назад', '↪ Back']:
+                    if message.text == buttons['back']:
                         res = None
 
                     else:
                         if message.text in items_names or message.text in ['◀', '▶']:
                             res = message.text
                         else:
-                            res = None
+                            dct_items = {}
+                            
+                            for i in items_data:
+                                tok_s = fuzz.token_sort_ratio(message.text, i)
+                                ratio = fuzz.ratio(message.text, i)
+
+                                if tok_s > 30 or ratio > 30:
+                                    sr_z = (tok_s + ratio) // 2
+                                    dct_items[sr_z] = i
+                                
+                                elif message.text == i:
+                                    dct_items[100] = i
+                            
+                            if len(dct_items.keys()) == 0:
+                                res = None
+                            
+                            else:
+                                res = dct_items[max(dct_items.keys())]
 
                     if res == None:
-                        if bd_user['language_code'] == 'ru':
-                            text = "👥 | Возвращение в меню профиля!"
-                        else:
-                            text = "👥 | Return to the profile menu!"
+                        text = text_dict['return']
 
-                        bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, 'profile', user))
+                        bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, Functions.last_markup( bd_user, alternative='profile'), bd_user))
                         return '12'
 
                     else:
                         if res == '◀':
                             if page - 1 == 0:
-                                page = 1
+                                page = len(pages)
                             else:
                                 page -= 1
 
@@ -2423,7 +2547,7 @@ class Functions:
 
                         elif res == '▶':
                             if page + 1 > len(pages):
-                                page = len(pages)
+                                page = 1
                             else:
                                 page += 1
 
@@ -2438,138 +2562,24 @@ class Functions:
 
                                 if image == None:
                                     mms = bot.send_message(message.chat.id, text, reply_markup=markup_inline,
-                                                           parse_mode='Markdown')
+                                            parse_mode='Markdown')
 
                                 else:
                                     mms = bot.send_photo(message.chat.id, image, text, reply_markup=markup_inline,
-                                                         parse_mode='Markdown')
+                                            parse_mode='Markdown')
 
                                 work_pr(message, mms, page=page)
 
                             if inv_t == 'add_product':
 
-                                def sch_items(item, bd_user):
-                                    return bd_user['inventory'].count(item)
-
-                                if bd_user['language_code'] == 'ru':
-                                    text = "🛒 | Введите количество товара: "
-                                    ans = ['🛒 Рынок']
-                                else:
-                                    text = "🛒 | Enter the quantity of the product: "
-                                    ans = ['🛒 Market']
-
-                                rmk = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
-                                rmk.add(ans[0])
-
-                                def ret_number(message):
-                                    col = message.text
-                                    try:
-                                        col = int(col)
-                                        mn = sch_items(item, bd_user)
-                                        if col <= 0 or col >= mn + 1:
-                                            if bd_user['language_code'] == 'ru':
-                                                text = f'0️⃣1️⃣0️⃣ | Введите число от 1 до {mn}!'
-                                            else:
-                                                text = f'0️⃣1️⃣0️⃣ | Enter a number from 1 to {mn}!'
-
-                                            bot.send_message(message.chat.id, text)
-                                            col = None
-                                    except:
-                                        col = None
-
-                                    if col == None:
-                                        if bd_user['language_code'] == 'ru':
-                                            text = "🛒 | Возвращение в меню рынка!"
-                                        else:
-                                            text = "🛒 | Return to the market menu!"
-
-                                        bot.send_message(message.chat.id, text,
-                                                         reply_markup=Functions.markup(bot, 'market', user))
-
-                                    else:
-
-                                        def max_k(dct):
-                                            mx_dct = -1
-                                            for i in dct.keys():
-                                                if int(i) > mx_dct:
-                                                    mx_dct = int(i)
-                                            return str(mx_dct + 1)
-
-                                        data_item = items_f['items'][item['item_id']]
-
-                                        if 'rank' in data_item.keys():
-                                            max_price = settings_f['max_eat_price'][data_item['rank']]
-
-                                        else:
-                                            max_price = 200
-
-                                        if bd_user['language_code'] == 'ru':
-                                            text = f"🛒 | Введите стоимость предмета х1: (макс {max_price})"
-                                        else:
-                                            text = f"🛒 | Enter the cost of the item x1: (max {max_price})"
-
-                                        def ret_number2(message):
-                                            number = message.text
-                                            try:
-                                                number = int(number)
-                                                if number <= 0 or number >= max_price + 1:
-                                                    if bd_user['language_code'] == 'ru':
-                                                        text = f'0️⃣1️⃣0️⃣ | Введите число от 1 до {max_price}!'
-                                                    else:
-                                                        text = f'0️⃣1️⃣0️⃣ | Enter a number from 1 to {max_price}!'
-
-                                                    bot.send_message(message.chat.id, text)
-                                                    number = None
-                                            except:
-                                                number = None
-
-                                            if number == None:
-                                                if bd_user['language_code'] == 'ru':
-                                                    text = "🛒 | Возвращение в меню рынка!"
-                                                else:
-                                                    text = "🛒 | Return to the market menu!"
-
-                                                bot.send_message(message.chat.id, text,
-                                                                 reply_markup=Functions.markup(bot, 'market', user))
-
-                                            else:
-
-                                                market_ = management.find_one({"_id": 'products'})
-
-                                                try:
-                                                    products = market_['products'][str(user.id)]['products']
-                                                except:
-                                                    market_['products'][str(user.id)] = {'products': {}, 'dinos': {}}
-                                                    products = market_['products'][str(user.id)]['products']
-
-                                                market_['products'][str(user.id)]['products'][max_k(products)] = {
-                                                    'item': item, 'price': number, 'col': [0, col]}
-
-                                                for _ in range(col):
-                                                    bd_user['inventory'].remove(item)
-
-                                                users.update_one({"userid": bd_user['userid']},
-                                                                 {"$set": {'inventory': bd_user['inventory']}})
-
-                                                management.update_one({"_id": 'products'},
-                                                                      {"$set": {'products': market_['products']}})
-
-                                                if bd_user['language_code'] == 'ru':
-                                                    text = "🛒 | Продукт добавлен на рынок, статус своих продуктов вы можете посмотреть в своих продуктах!"
-                                                else:
-                                                    text = "🛒 | The product has been added to the market, you can see the status of your products in your products!"
-
-                                                bot.send_message(message.chat.id, text,
-                                                                 reply_markup=Functions.markup(bot, 'market', user))
-
-                                        msg = bot.send_message(message.chat.id, text)
-                                        bot.register_next_step_handler(msg, ret_number2)
-
-                                msg = bot.send_message(message.chat.id, text, reply_markup=rmk)
-                                bot.register_next_step_handler(msg, ret_number)
+                                Functions.add_product_activ(bot, user, message, bd_user, item)
+                            
+                            if inv_t == 'use_item':
+                                
+                                Functions.use_answers(bot, user, bd_user, item['item_id'], message, item, False, bd_user['settings']['dino_id'])
 
                 if mms == None:
-                    msg = bot.send_message(message.chat.id, textt, reply_markup=rmk)
+                    msg = bot.send_message(message.chat.id, text, reply_markup=rmk)
                 else:
                     msg = mms
 
@@ -3214,15 +3224,13 @@ class Functions:
             return rd
 
     @staticmethod
-    def inventory_pages(bd_user, i_filter_type='all', i_filter=None):
+    def inventory_pages(bd_user:dict, i_filter_type:str='all', i_filter:list=None):
 
         data_items = items_f['items']
         items = bd_user['inventory']
 
-        page = 1
-        add_item = False
-        items_data = {}
-        items_names = []
+        page, add_item = 1, False
+        items_data, items_names = {}, []
 
         if 'inv_view' in bd_user['settings'].keys():
             pages_v = bd_user['settings']['inv_view']
@@ -3243,15 +3251,15 @@ class Functions:
 
             elif i_filter_type == 'itemid':
 
-                if int(i['item_id']) == int(i_filter):
+                if int(i['item_id']) in i_filter or str(i['item_id']) in i_filter:
                     add_item = True
 
                 else:
                     add_item = False
 
-            if i_filter_type == 'itemtype':
+            elif i_filter_type == 'itemtype':
 
-                if data_items[str(i['item_id'])] == i_filter:
+                if data_items[str(i['item_id'])]['type'] in i_filter:
                     add_item = True
 
                 else:
@@ -3752,6 +3760,826 @@ class Functions:
                         return True
 
         return False
+    
+    def use_item(bot, user, item_id:int, user_item:dict, col:int=1, dino_id:str=None):
+
+        data_user = users.find_one({"userid": user.id})
+        data_item = items_f['items'][item_id]
+        use_st, send_status = True, True
+        text = ''
+
+        if data_item['type'] == 'freezing':
+
+            dino = data_user['dinos'][dino_id]
+
+            if dino['status'] == 'dino':
+                if dino['activ_status'] != 'freezing':
+
+                    dino['activ_status'] = 'freezing'
+
+                    if data_user['language_code'] == 'ru':
+                        text = f'❄ | Метаболизм динозавра был остановлен!'
+                    else:
+                        text = f"❄ | The dinosaur's metabolism has been stopped!"
+
+                    users.update_one({"userid": user.id}, {"$set": {f'dinos.{dino_id}': dino}})
+
+                else:
+                    use_st = False
+                    text = f'❌'
+
+            else:
+                use_st = False
+                text = f'❌'
+
+        elif data_item['type'] == 'defrosting':
+
+            dino = data_user['dinos'][dino_id]
+
+            if dino['status'] == 'dino':
+                if dino['activ_status'] == 'freezing':
+
+                    dino['activ_status'] = 'pass_active'
+
+                    if data_user['language_code'] == 'ru':
+                        text = f'🔥 | Метаболизм динозавра был восстановлен!'
+                    else:
+                        text = f"🔥 | The dinosaur's metabolism has been restored!"
+
+                    users.update_one({"userid": user.id}, {"$set": {f'dinos.{dino_id}': dino}})
+
+                else:
+                    use_st = False
+                    text = f'❌'
+
+            else:
+                use_st = False
+                text = f'❌'
+
+        elif data_item['type'] == 'recipe':
+            ok, end_ok = True, True
+            list_inv_id, list_inv_id_copy, n_mat = [], [], []
+            search_items = {}
+
+            for i in data_user['inventory']: list_inv_id.append(i['item_id']), list_inv_id_copy.append(i['item_id'])
+            list_inv = data_user['inventory'].copy()
+
+            for _ in range(col):
+                for i in data_item['materials']:
+                    if i['item'] in list_inv_id:
+
+                        if i['type'] == 'delete':
+                            list_inv_id.remove(i['item'])
+
+                        if i['type'] == 'endurance':
+
+                            itms_ind = []
+                            sr_lst_id = list_inv_id_copy.copy()
+
+                            for itm in sr_lst_id:
+                                if itm == i['item']:
+                                    itms_ind.append(sr_lst_id.index(itm))
+                                    sr_lst_id[sr_lst_id.index(itm)] = None
+
+                            end_ok = False
+                            for end_i in itms_ind:
+                                ittm = data_user['inventory'][end_i]
+
+                                if 'abilities' in ittm.keys():
+                                    if ittm['abilities']['endurance'] >= i['act'] * col:
+                                        end_ok = True
+                                        search_items[str(list_inv_id_copy[end_i])] = data_user['inventory'][end_i]
+                                        break
+
+                    else:
+                        ok = False
+                        n_mat.append(i['item'])
+
+            if ok == True and end_ok == True:
+
+                iname = Functions.item_name(user_item['item_id'], data_user['language_code'])
+
+                if data_user['language_code'] == 'ru':
+                    text = f'🍡 | Предмет {iname} x{col} создан!'
+                else:
+                    text = f"🍡 | The item {iname} x{col} is created!"
+
+                for _ in range(col):
+                    for it_m in data_item['materials']:
+                        if it_m['type'] == 'delete':
+                            lst_ind = list_inv_id_copy.index(it_m['item'])
+                            data_user['inventory'].remove(list_inv[lst_ind])
+
+                        if it_m['type'] == 'endurance':
+                            lst_i = search_items[it_m['item']]
+
+                            llst_i = data_user['inventory'].index(lst_i)
+                            data_user['inventory'][llst_i]['abilities']['endurance'] -= it_m['act']
+                            search_items[it_m['item']]['abilities']['endurance'] -= it_m['act']
+
+                            if data_user['inventory'][llst_i]['abilities']['endurance'] == 0:
+                                data_user['inventory'].remove(search_items[it_m['item']])
+
+                for it_c in data_item['create']:
+                    dp_col = 1
+
+                    if it_c['type'] == 'create':
+
+                        if 'col' in it_c.keys():
+                            dp_col = it_c['col']
+
+                        if 'abilities' in it_c.keys():
+                            preabil = it_c['abilities']
+                        else:
+                            preabil = None
+
+                        dt = Functions.add_item_to_user(data_user, it_c['item'], col * dp_col, 'data', preabil)
+
+                        for i in dt:
+                            data_user['inventory'].append(i)
+
+                if 'rank' in data_item.keys():
+                    data_user['lvl'][1] += \
+                    settings_f['xp_craft'][data_item['rank']]
+                else:
+                    data_user['lvl'][1] += settings_f['xp_craft']['common']
+
+            else:
+                if ok == False:
+                    materials = Functions.sort_items_col(n_mat, data_user['language_code'], True)
+
+                    if data_user['language_code'] == 'ru':
+                        text = f"❗ | Материалов недостаточно: {' '.join(materials)}"
+                    else:
+                        text = f"❗ | Materials are not enough: {' '.join(materials)}"
+
+                if end_ok == False:
+
+                    if data_user['language_code'] == 'ru':
+                        text = f'❗ | Нет ни одного предмета с требуемой прочностью!'
+                    else:
+                        text = f"❗ | There is not a single object with the required strength!"
+
+                use_st = False
+
+        elif data_item['type'] == '+eat':
+            d_dino = json_f['elements'][str(data_user['dinos'][dino_id]['dino_id'])]
+            iname = Functions.item_name(user_item['item_id'], data_user['language_code'])
+
+            if data_user['dinos'][dino_id]['activ_status'] == 'sleep':
+
+                if data_user['language_code'] == 'ru':
+                    text = 'Во время сна нельзя кормить динозавра.'
+                else:
+                    text = 'During sleep, you can not feed the dinosaur.'
+
+                use_st = False
+
+            else:
+
+                if data_user['language_code'] == 'ru':
+                    if data_item['class'] == 'ALL':
+
+                        data_user['dinos'][dino_id]['stats']['eat'] += data_item['act'] * col
+
+                        if data_user['dinos'][dino_id]['stats']['eat'] > 100:
+                            data_user['dinos'][dino_id]['stats']['eat'] = 100
+
+                        text = f"🍕 | Динозавр с удовольствием съел {iname}!\nДинозавр сыт на {data_user['dinos'][dino_id]['stats']['eat']}%"
+
+
+                    elif data_item['class'] == d_dino['class']:
+                        data_user['dinos'][dino_id]['stats']['eat'] += data_item['act'] * col
+
+                        if data_user['dinos'][dino_id]['stats']['eat'] > 100:
+                            data_user['dinos'][dino_id]['stats']['eat'] = 100
+
+                        text = f"🍕 | Динозавр с удовольствием съел {iname}!\nДинозавр сыт на {data_user['dinos'][dino_id]['stats']['eat']}%"
+
+
+                    else:
+                        eatr = random.randint(0, int(data_item['act'] / 2))
+                        moodr = random.randint(1, 10)
+                        text = f"🍕 | Динозавру не по вкусу {iname}, он теряет {eatr}% сытости и {moodr}% настроения!"
+
+                        data_user['dinos'][dino_id]['stats']['eat'] -= eatr
+                        data_user['dinos'][dino_id]['stats']['mood'] -= moodr
+
+                else:
+                    if data_item['class'] == 'ALL':
+
+                        data_user['dinos'][dino_id]['stats']['eat'] += data_item['act'] * col
+
+                        if data_user['dinos'][dino_id]['stats']['eat'] > 100:
+                            data_user['dinos'][dino_id]['stats']['eat'] = 100
+
+                        text = f"🍕 | The dinosaur ate it with pleasure {iname}!\nThe dinosaur is fed up on {data_user['dinos'][dino_id]['stats']['eat']}%"
+
+                    elif data_item['class'] == d_dino['class']:
+
+                        data_user['dinos'][dino_id]['stats']['eat'] += data_item['act'] * col
+
+                        if data_user['dinos'][dino_id]['stats']['eat'] > 100:
+                            data_user['dinos'][dino_id]['stats']['eat'] = 100
+
+                        text = f"🍕 | The dinosaur ate it with pleasure {iname}!\nThe dinosaur is fed up on {data_user['dinos'][dino_id]['stats']['eat']}%"
+
+                    else:
+                        eatr = random.randint(0, int(data_item['act'] / 2))
+                        moodr = random.randint(1, 10)
+                        text = f"🍕 | The dinosaur doesn't like {iname}, it loses {eatr * col}% satiety and {moodr * col}% mood!"
+
+                        data_user['dinos'][dino_id]['stats']['eat'] -= eatr * col
+                        data_user['dinos'][dino_id]['stats']['mood'] -= moodr * col
+
+                users.update_one({"userid": data_user['userid']}, {"$set": {f'dinos.{dino_id}': data_user['dinos'][dino_id]}})
+
+        elif data_item['type'] in ['weapon', 'armor', 'backpack']:
+            type_eq = data_item['type']
+            item = None
+
+            if type_eq in ['weapon', 'armor']:
+                item = data_user['dinos'][dino_id]['dungeon']['equipment'][type_eq]
+
+                if item != None:
+                    data_user['inventory'].append(item)
+                    data_user['dinos'][dino_id]['dungeon']['equipment'][type_eq] = None
+
+                data_user['dinos'][dino_id]['dungeon']['equipment'][type_eq] = user_item
+
+                users.update_one({"userid": data_user['userid']}, {"$set": {'dinos': data_user['dinos']}})
+
+            if type_eq in ['backpack']:
+                item = data_user['user_dungeon']['equipment'][type_eq]
+
+                if item != None:
+                    data_user['inventory'].append(item)
+                    data_user['user_dungeon']['equipment'][type_eq] = None
+
+                data_user['user_dungeon']['equipment'][type_eq] = user_item
+
+                users.update_one({"userid": data_user['userid']}, {"$set": {'user_dungeon': data_user['user_dungeon']}})
+
+            if data_user['language_code'] == 'ru':
+                text = "🎴 | Активный предмет установлен!"
+            else:
+                text = "🎴 | The active item is installed!"
+
+        elif data_item['type'] in ['game_ac', "journey_ac", "hunt_ac", "unv_ac"]:
+            ac_type = data_item['type'][:-3]
+
+            if data_user['dinos'][dino_id]['activ_status'] != 'pass_active':
+
+                if data_user['language_code'] == 'ru':
+                    text = '🎍 | Во время игры / сна / путешествия и тд. - нельзя менять аксесcуар!'
+                else:
+                    text = '🎍 | While playing / sleeping / traveling, etc. - you can not change the accessory!'
+
+                use_st = False
+
+            else:
+
+                if data_user['activ_items'][dino_id][ac_type] != None:
+                    data_user['inventory'].append(data_user['activ_items'][dino_id][ac_type])
+
+                data_user['activ_items'][dino_id][ac_type] = user_item
+
+                if data_user['language_code'] == 'ru':
+                    text = "🎴 | Активный предмет установлен!"
+                else:
+                    text = "🎴 | The active item is installed!"
+
+                users.update_one({"userid": data_user['userid']}, {"$set": {'activ_items': data_user['activ_items']}})
+
+        elif data_item['type'] == 'egg':
+
+            if data_user['lvl'][0] < 20 and len(data_user['dinos']) != 0:
+
+                if data_user['language_code'] == 'ru':
+                    text = f'🔔 | Вам недоступна данная технология!'
+                else:
+                    text = f"🔔 | This technology is not available to you!"
+
+                use_st = False
+
+            else:
+                if int(data_user['lvl'][0] / 20 + 1) > len(data_user['dinos']):
+                    use_st = False
+
+                    if user.language_code == 'ru':
+                        text2 = '🥚 | Выберите яйцо с динозавром!'
+                        text = '🎨 | Профиль открыт!'
+                    else:
+                        text2 = '🥚 | Choose a dinosaur egg!'
+                        text = '🎨 | Profile is open!'
+
+                    if 'eggs' in data_user.keys():
+                        id_l = data_user['eggs']
+                    else:
+                        id_l = None
+
+                    photo, markup_inline, id_l = Functions.create_egg_image(id_l, 'egg_use')
+                    bot.send_photo(user.id, photo, text2, reply_markup=markup_inline)
+
+                    users.update_one({"userid": user.id}, {"$set": {'eggs': id_l}})
+                    users.update_one({"userid": user.id}, {"$set": {'egg_item': user_item}})
+
+                else:
+                    if data_user['language_code'] == 'ru':
+                        text = f"🔔 | Вам доступна только {int(data_user['lvl'][0] / 20)} динозавров!"
+                    else:
+                        text = f"🔔 | Only {int(data_user['lvl'][0] / 20)} dinosaurs are available to you!"
+
+                    use_st = False
+
+        elif data_item['type'] == "ammunition":
+
+            list_inv_id = []
+            for i in data_user['inventory']: list_inv_id.append(i['item_id'])
+            standart_i_id = user_item['item_id']
+            standart_index = data_user['inventory'].index(user_item)
+            csh = list_inv_id.count(standart_i_id)
+            list_inv_id[standart_index] = 0
+            use_st = 'update_only'
+
+            if csh > 0:
+
+                two_item_ind = list_inv_id.index(standart_i_id)
+                two_item = data_user['inventory'][two_item_ind]
+
+                if user_item['abilities']['stack'] + two_item['abilities']['stack'] > data_item["max_stack"]:
+
+                    if data_user['language_code'] == 'ru':
+                        text = f'❗ | Этот набор не может быть соединён ни с одним предметом в инвентаре!'
+                    else:
+                        text = f"❗ | This set cannot be connected to any item in the inventory!"
+
+                    use_st = False
+
+                else:
+
+                    preabil = {'stack': user_item['abilities']['stack'] + two_item['abilities']['stack']}
+                    data_user['inventory'].append(Functions.get_dict_item(standart_i_id, preabil))
+
+                    data_user['inventory'].remove(two_item)
+                    data_user['inventory'].remove(user_item)
+
+                    if data_user['language_code'] == 'ru':
+                        text = f'🏹 | Предметы были соединены!'
+                    else:
+                        text = f"🏹 | The items were connected!"
+
+            else:
+
+                if data_user['language_code'] == 'ru':
+                    text = f'❗ | В инвентаре нет предметов для соединения!'
+                else:
+                    text = f"❗ | There are no items in the inventory to connect!"
+
+                use_st = False
+
+        else:
+
+            if data_user['language_code'] == 'ru':
+                text = f'❗ | Данный предмет пока что недоступен для использования!'
+            else:
+                text = f"❗ | This item is not yet available for use!"
+
+            use_st = False
+
+        if list(set(['+mood', '-mood', '-eat', '+eat', '+energy', '-energy', '+hp', '-hp']) & set(
+                data_item.keys())) != [] and use_st == True:
+
+            text += '\n\n'
+
+            if '+mood' in data_item.keys():
+                users.update_one({"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.mood': data_item['+mood'] * col}})
+
+                if data_user['language_code'] == 'ru':
+                    text += f'😀 | Динозавр получил +{data_item["+mood"] * col}% к настроению!\n'
+                else:
+                    text += f'😀 | Dinosaur got +{data_item["+mood"] * col}% to mood!\n'
+
+            if '-mood' in data_item.keys():
+                users.update_one({"userid": user.id}, {"$inc": {f'dinos.{dino_id}.stats.mood': (data_item['-mood'] * -1) * col}})
+
+                if data_user['language_code'] == 'ru':
+                    text += f'😥 | Динозавр получил -{data_item["-mood"] * col}% к настроению!\n'
+                else:
+                    text += f'😥 | Dinosaur got -{data_item["-mood"] * col}% to mood!\n'
+
+            if '+eat' in data_item.keys():
+                users.update_one({"userid": user.id},
+                                    {"$inc": {f'dinos.{dino_id}.stats.eat': (data_item['+eat']) * col}})
+
+                if data_user['language_code'] == 'ru':
+                    text += f'🥪 | Динозавр восстановил {data_item["+eat"] * col}% сытости!\n'
+                else:
+                    text += f'🥪 | The dinosaur has restored {data_item["+eat"] * col}% satiety!\n'
+
+            if '-eat' in data_item.keys():
+                users.update_one({"userid": user.id},
+                                    {"$inc": {f'dinos.{dino_id}.stats.eat': (data_item['-eat'] * -1) * col}})
+
+                if data_user['language_code'] == 'ru':
+                    text += f'🥪 | Динозавр потерял {data_item["-eat"] * col}% сытости!\n'
+                else:
+                    text += f'🥪 | Dinosaur lost {data_item["-eat"] * col}% satiety!\n'
+
+            if '+energy' in data_item.keys():
+                users.update_one({"userid": user.id},
+                                    {"$inc": {f'dinos.{dino_id}.stats.unv': (data_item['+energy']) * col}})
+
+                if data_user['language_code'] == 'ru':
+                    text += f'⚡ | Вы восстановили {data_item["+energy"] * col}% энергии динозавра!\n'
+                else:
+                    text += f"⚡ | You have recovered {data_item['+energy'] * col}% of the dinosaur's energy!\n"
+
+            if '-energy' in data_item.keys():
+                users.update_one({"userid": user.id},
+                                    {"$inc": {f'dinos.{dino_id}.stats.unv': (data_item['-energy'] * -1) * col}})
+
+                if data_user['language_code'] == 'ru':
+                    text += f'⚡ | Динозавр потерял {data_item["-energy"] * col}% энергии!\n'
+                else:
+                    text += f'⚡ | Dinosaur lost {data_item["-energy"] * col}% energy!\n'
+
+            if '+hp' in data_item.keys():
+                users.update_one({"userid": user.id},
+                                    {"$inc": {f'dinos.{dino_id}.stats.heal': (data_item['+hp']) * col}})
+
+                if data_user['language_code'] == 'ru':
+                    text += f'❤ | Вы восстановили {data_item["+hp"] * col}% здоровья динозавра!'
+                else:
+                    text += f"❤ | You have restored {data_item['+hp'] * col}% of the dinosaur's health!"
+
+            if '-hp' in data_item.keys():
+                users.update_one({"userid": user.id},
+                                    {"$inc": {f'dinos.{dino_id}.stats.heal': (data_item['-hp']) * col}})
+
+                if data_user['language_code'] == 'ru':
+                    text += f'❤ | Ваш динозавр потерял {data_item["-hp"] * col}% здоровья!\n'
+                else:
+                    text += f'❤ | Your dinosaur lost {data_item["-hp"] * col}% health!\n'
+
+        if 'abilities' in user_item.keys() and 'uses' in user_item['abilities'].keys():
+            if use_st == True:
+
+                if user_item['abilities']['uses'] != -100:
+
+                    s_col = user_item['abilities']['uses'] - col
+
+                    if s_col > 0:
+                        data_user['inventory'][data_user['inventory'].index(user_item)]['abilities']['uses'] = \
+                        user_item['abilities']['uses'] - col
+
+                    else:
+                        data_user['inventory'].remove(user_item)
+
+        else:
+
+            if use_st == True:
+                try:
+                    for _ in range(col):
+                        data_user['inventory'].remove(user_item)
+                except:
+                    try:
+                        data_user['inventory'].remove(user_item)
+                    except Exception as error:
+                        print(error, ' error - use item')
+
+        if use_st == True or use_st == 'update_only':
+            users.update_one({"userid": user.id}, {"$set": {'inventory': data_user['inventory']}})
+        
+        return send_status, text
+    
+    def use_answers(bot, user, bd_user, it_id, message, data, dp_check:bool=True, dino_id=None):
+        check_n, col = 0, 1
+
+        data_item = items_f['items'][it_id]
+        iname = Functions.item_name(str(it_id), bd_user['language_code'])
+        user_item = None
+
+        def cannot_use():
+
+            if bd_user['language_code'] == 'ru':
+                text = f'❌ | Этот предмет не может быть использован самостоятельно!'
+            else:
+                text = f"❌ | This item cannot be used on its own!"
+
+            bot.send_message(user.id, text, parse_mode='Markdown', reply_markup=Functions.markup(bot, Functions.last_markup(bd_user, alternative='profile'), bd_user))
+
+        def n_c_f():
+            nonlocal check_n
+            check_n += 1
+
+        def re_item():
+            nonlocal check_n, data_item
+
+            if check_n == 1:
+
+                if data_item['type'] == '+unv':
+                    ans_dino()
+
+                elif data_item['type'] == 'recipe':
+                    ans_col()
+
+                elif data_item['type'] == '+eat':
+                    ans_dino()
+
+                elif data_item['type'] in ['game_ac', "journey_ac", "hunt_ac", "unv_ac"]:
+                    ans_dino()
+
+                elif data_item['type'] == 'egg':
+                    use_item()
+
+                elif data_item['type'] in ['weapon', "armor"]:
+                    ans_dino()
+
+                elif data_item['type'] == "backpack":
+                    use_item()
+
+                elif data_item['type'] in ['material', 'none']:
+                    cannot_use()
+
+                elif data_item['type'] == "ammunition":
+                    use_item()
+
+                elif data_item['type'] in ['freezing', 'defrosting']:
+                    ans_dino()
+
+                else:
+                    print(f'Первый этап не найден {data_item["type"]}')
+                    cannot_use()
+
+            elif check_n == 2:
+
+                if data_item['type'] == '+unv':
+                    ans_col()
+
+                elif data_item['type'] == 'recipe':
+                    use_item()
+
+                elif data_item['type'] == '+eat':
+                    ans_col()
+
+                elif data_item['type'] in ['game_ac', "journey_ac", "hunt_ac", "unv_ac"]:
+                    use_item()
+
+                elif data_item['type'] in ['weapon', "armor"]:
+                    use_item()
+
+                elif data_item['type'] in ['freezing', 'defrosting']:
+                    use_item()
+
+                else:
+                    print(f'Второй этап не найден {data_item["type"]}')
+
+            elif check_n == 3:
+
+                if data_item['type'] == '+unv':
+                    use_item()
+
+                elif data_item['type'] == '+eat':
+                    use_item()
+
+                else:
+                    print(f'Третий этап не найден {data_item["type"]}')
+        
+        def use_item():
+            
+            send_status, text = Functions.use_item(bot, user, it_id, user_item, col, dino_id)
+
+            if send_status == True:
+                bot.send_message(user.id, text, parse_mode='Markdown', reply_markup=Functions.markup(bot, Functions.last_markup( bd_user, alternative='profile'), bd_user))
+        
+        def dino_reg(message, dino_dict):
+            nonlocal dino_id
+
+            if message.text in dino_dict.keys():
+                dino_id = dino_dict[message.text][1]
+
+                dino_st = bd_user['dinos'][str(dino_id)]['activ_status']
+
+                if dino_st != 'dungeon':
+
+                    n_c_f(), re_item()
+
+                else:
+                    bot.send_message(user.id, f'❌', reply_markup=Functions.markup(bot, Functions.last_markup(bd_user, alternative='profile'), bd_user))
+
+            else:
+                bot.send_message(user.id, f'❌', reply_markup=Functions.markup(bot, Functions.last_markup(bd_user, alternative='profile'), bd_user))
+
+        def ans_dino():
+            nonlocal dino_id
+
+            if dino_id == None:
+
+                n_dp, dp_a = Functions.dino_pre_answer(user, 'noall')
+
+                if n_dp == 1:  # нет дино
+
+                    if Functions.inv_egg(bd_user) == True and data_item['type'] == 'egg':
+                        n_c_f(), re_item()
+
+                    else:
+                        bot.send_message(user.id, f'❌',
+                            reply_markup=Functions.markup(bot, Functions.last_markup(bd_user, alternative=1),
+                            bd_user))
+
+                if n_dp == 2:  # 1 дино
+                    dino_dict = [dp_a, list(bd_user['dinos'].keys())[0]]
+                    dino_id = list(bd_user['dinos'].keys())[0]
+                    n_c_f(), re_item()
+
+                if n_dp == 3:  # 2 и более
+                    rmk = dp_a[0]
+                    text = dp_a[1]
+                    dino_dict = dp_a[2]
+
+                    msg = bot.send_message(user.id, text, reply_markup=rmk)
+                    bot.register_next_step_handler(msg, dino_reg, dino_dict)
+            
+            else:
+                n_c_f(), re_item()
+
+
+        def ent_col(message, col_l, mx_col):
+            nonlocal col
+
+            if message.text in ['↩️ Назад', '↩️ Back']:
+
+                if bd_user['language_code'] == 'ru':
+                    text = f"🎈 | Отмена использования!"
+                else:
+                    text = f"🎈 | Cancellation of use!"
+
+                bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, Functions.last_markup(bd_user, alternative='profile'), bd_user))
+                return
+
+            if message.text.isdigit():
+                col = int(message.text)
+            else:
+                if message.text in col_l[0]:
+                    col = col_l[1][col_l[0].index(message.text)]
+
+                else:
+                    if bd_user['language_code'] == 'ru':
+                        text = f"Введите корректное число!"
+                    else:
+                        text = f"Enter the correct number!"
+
+                    bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, Functions.last_markup(bd_user, alternative='profile'), bd_user))
+                    return
+
+            if col < 1:
+                text = f"0 % 0 % 0 % 0 % 0 % 0 :)"
+
+                bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, Functions.last_markup(bd_user, alternative='profile'), bd_user))
+                return
+
+            if col > mx_col:
+
+                if bd_user['language_code'] == 'ru':
+                    text = f"У вас нет столько предметов в инвентаре!"
+                else:
+                    text = f"You don't have that many items in your inventory!"
+
+                bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, Functions.last_markup(bd_user, alternative='profile'), bd_user))
+                return
+
+            else:
+                n_c_f(), re_item()
+
+        def ans_col():
+            mx_col = 0
+
+            if 'abilities' in user_item.keys() and 'uses' in user_item['abilities'].keys():
+                mx_col = user_item['abilities']['uses']
+
+            else:
+                mx_col = bd_user['inventory'].count(user_item)
+
+            if mx_col == 1:
+                message.text = '1'
+                ent_col(message, [[], []], mx_col)
+
+            else:
+
+                if bd_user['language_code'] == 'ru':
+                    text_col = f"🕹 | Введите сколько вы хотите использовать или выберите из списка >"
+                else:
+                    text_col = f"🕹 | Enter how much you want to use or select from the list >"
+
+                rmk = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
+            
+                if data_item['type'] == '+eat':
+                    bd_dino = bd_user['dinos'][dino_id]
+                    eat = bd_dino['stats']['eat']
+                    act = data_item['act']
+
+                    col_to_full = int((100 - eat) / act)
+                    bt_3 = None
+
+                    if col_to_full > mx_col:
+                        col_to_full = mx_col
+
+                    bt_1 = f"{eat + act}% = {iname[:1]} x1"
+                    bt_2 = f"{eat + act * col_to_full}% = {iname[:1]} x{col_to_full}"
+
+                    col_l = [[], [1, col_to_full]]
+
+                    col_l[0].append(bt_1), col_l[0].append(bt_2)
+
+                    if eat + act * col_to_full < 100:
+                        bt_3 = f"{100}% = {iname[:1]} x{col_to_full + 1}"
+
+                        col_l[0].append(bt_3)
+                        col_l[1].append(col_to_full + 1)
+
+                    if col_to_full == 1:
+
+                        if bt_3 != None:
+                            rmk.add(bt_1, bt_3)
+
+                        else:
+                            rmk.add(bt_1)
+
+                    elif col_to_full != 1 and col_to_full != 0:
+
+                        if bt_3 != None:
+                            rmk.add(bt_1, bt_2, bt_3)
+
+                        else:
+                            rmk.add(bt_1, bt_2)
+                
+                else:
+                    bt_1 = f"x1"
+                    bt_2 = f"x{int(mx_col / 2)}"
+                    bt_3 = f"x{mx_col}"
+
+                    col_l = [[], [1, int(mx_col / 2), mx_col]]
+
+                    col_l[0].append(bt_1), col_l[0].append(bt_2), col_l[0].append(bt_3)
+
+                    if mx_col == 1:
+
+                        rmk.add(bt_1)
+
+                    elif mx_col >= 4:
+
+                        rmk.add(bt_1, bt_2, bt_3)
+
+                    elif mx_col > 1:
+
+                        rmk.add(bt_1, bt_3)
+
+                if bd_user['language_code'] == 'ru':
+                    rmk.add('↩ Назад')
+                else:
+                    rmk.add('↩ Back')
+
+                msg = bot.send_message(user.id, text_col, reply_markup=rmk)
+                bot.register_next_step_handler(msg, ent_col, col_l, mx_col)
+
+        if data in bd_user['inventory']:
+            user_item = data
+
+        if user_item == None:
+
+            if bd_user['language_code'] == 'ru':
+                text = f'❌ | Предмет не найден в инвентаре!'
+            else:
+                text = f"❌ | Item not found in inventory!"
+
+            bot.send_message(user.id, text, parse_mode='Markdown')
+
+        if user_item != None:
+
+            def wrk_p(message):
+
+                if message.text in ['Да, я хочу это сделать', 'Yes, I want to do it']:
+                    n_c_f(), re_item()
+
+                else:
+                    bot.send_message(user.id, f'❌', reply_markup=Functions.markup(bot, Functions.last_markup(bd_user, alternative='profile'), bd_user))
+
+            if dp_check:
+                markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+
+                if bd_user['language_code'] == 'ru':
+                    markup.add(*[i for i in ['Да, я хочу это сделать', '❌ Отмена']])
+                    msg = bot.send_message(user.id, f'Вы уверены что хотите использовать {iname} ?', reply_markup=markup)
+
+                else:
+                    markup.add(*[i for i in ['Yes, I want to do it', '❌ Cancel']])
+                    msg = bot.send_message(user.id, f'Are you sure you want to use {iname} ?', reply_markup=markup)
+
+                bot.register_next_step_handler(msg, wrk_p)
+            
+            else:
+                n_c_f(), re_item()
 
 
 class Dungeon:
