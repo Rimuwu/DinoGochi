@@ -268,6 +268,52 @@
             "no_item": "Nothing",
 
             "accs": "*┌* Game: {game}\n*├* Collecting food: {coll}\n*├* Journey: {jour}\n*└* Sleep: {sleep}\n"
+        },
+
+        "user_inventory": {
+            "null": "💥 | Inventory is empty.",
+
+            "no_filter": "None",
+
+            "filters": {
+                "+eat": "🍕 Food", 
+                "egg": "🥚 Eggs", 
+                "game_ac": "💍 Accessories", 
+                "journey_ac": "💍 Accessories", 
+                "hunt_ac": "💍 Accessories", 
+                "unv_ac": "💍 Accessories", 
+                "material": "👢 Materials", 
+                "recipe": "📜 Recipes", 
+                "weapon": "🗻 For the dungeon", 
+                "armor": "🗻 For the dungeon", 
+                "ammunition": "🗻 For the dungeon", 
+                "backpack": "🗻  For the dungeon"
+            },
+
+            "open": "🎈 | Inventory is open",
+            
+            "page": "🎈 | Page: {page} | {l_pages}\n🧩 | Filter: {filter_type}\n\n🎮 | Use the arrows (◀ ▶) to search.\n🔎 | Write a name for a quick search.",
+
+            "ret_words": ["Yes, transfer the item", "Yes, I want to do it"],
+
+            "return": "👥 | Return to the profile menu!"
+        },
+
+        "opne_inventory": {
+
+            "info": "🔎 | Select an inventory filter: " ,
+
+            "dct_filters": {
+                "📚 No filter": [],
+                "🍕 Food": ["+eat"],
+                "🥚 Eggs": ["egg"],
+                "💍 Accessories": ["game_ac", "journey_ac", "hunt_ac", "unv_ac"],
+                "👢 Materials": ["material"],
+                "📜 Recipes": ["recipe"],
+                "🗻 For the dungeon": ["weapon", "armor", "ammunition", "backpack"]
+            },
+
+            "s_bt": "📚 No filter"
         }
 
 
