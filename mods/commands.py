@@ -203,7 +203,7 @@ class Commands:
 
             elif len(bd_user['dinos'].keys()) > 0:
 
-                n_dp, dp_a = Functions.dino_pre_answer(bot, message)
+                n_dp, dp_a = Functions.dino_pre_answer(user)
                 if n_dp == 1:
                     bot.send_message(message.chat.id, f'❌', reply_markup=Functions.markup(bot, 1, user))
                     return
@@ -783,7 +783,7 @@ class Commands:
     def rename_dino(bot, message, user, bd_user):
 
         if bd_user != None:
-            n_dp, dp_a = Functions.dino_pre_answer(bot, message)
+            n_dp, dp_a = Functions.dino_pre_answer(user)
             text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="rename_dino")
             buttons_name = Functions.get_text(l_key=bd_user['language_code'], text_key="buttons_name")
 
@@ -1283,417 +1283,6 @@ class Commands:
                         text = f"🎮 | It is impossible to tear the dinosaur away from the game, try again. Keep in mind, the dinosaur will be upset."
 
                     bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, 'games', user))
-
-    @staticmethod
-    def dino_feed(bot, message, user, bd_user):
-
-        if bd_user != None:
-
-            if bd_user['dinos'][bd_user['settings']['dino_id']]['activ_status'] == 'sleep':
-
-                if bd_user['language_code'] == 'ru':
-                    text = 'Во время сна нельзя кормить динозавра.'
-                else:
-                    text = 'During sleep, you can not feed the dinosaur.'
-
-                bot.send_message(message.chat.id, text)
-                return
-
-            nitems = bd_user['inventory']
-
-            if nitems == []:
-
-                if bd_user['language_code'] == 'ru':
-                    text = 'Инвентарь пуст.'
-                else:
-                    text = 'Inventory is empty.'
-
-                bot.send_message(message.chat.id, text)
-                return
-
-            data_items = items_f['items']
-            items = []
-            items_id = {}
-            page = 1
-            items_names = []
-
-            for i in nitems:
-                if data_items[str(i['item_id'])]['type'] == "+eat":
-                    items.append(i)
-
-            if items == []:
-
-                if bd_user['language_code'] == 'ru':
-                    text = '🥞 | В инвентаре нет продуктов питания.'
-                else:
-                    text = '🥞 | There are no food items in the inventory.'
-
-                bot.send_message(message.chat.id, text)
-                return
-
-            lg = bd_user['language_code']
-
-            for i in items:
-                if Functions.item_authenticity(i) == True:
-                    items_id[items_f['items'][i['item_id']]['name'][lg]] = i
-                    items_names.append(items_f['items'][i['item_id']]['name'][lg])
-
-                else:
-
-                    items_id[items_f['items'][i['item_id']]['name'][lg] + f" ({Functions.qr_item_code(i, False)})"] = i
-                    items_names.append(
-                        items_f['items'][i['item_id']]['name'][lg] + f" ({Functions.qr_item_code(i, False)})")
-
-            items_names.sort()
-
-            items_sort = []
-            d_it_sort = {}
-            ind_sort_it = {}
-
-            for i in items_names:
-                if i in list(d_it_sort.keys()):
-                    d_it_sort[i] += 1
-                else:
-                    d_it_sort[i] = 1
-
-            for n in list(d_it_sort.keys()):
-                col = d_it_sort[n]
-                name = n
-
-                items_sort.append(f'{n} x{col}')
-                ind_sort_it[f'{n} x{col}'] = n
-
-            pages = list(Functions.chunks(list(Functions.chunks(items_sort, 2)), 3))
-
-            for i in pages:
-                for ii in i:
-                    if len(ii) == 1:
-                        ii.append(' ')
-
-                if len(i) != 3:
-                    for iii in range(3 - len(i)):
-                        i.append([' ', ' '])
-
-            def work_pr(message, pages, page, items_id, ind_sort_it):
-                global l_pages, l_page, l_ind_sort_it
-
-                l_pages = pages
-                l_page = page
-                l_ind_sort_it = ind_sort_it
-
-                rmk = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
-                for i in pages[page - 1]:
-                    rmk.add(i[0], i[1])
-
-                if len(pages) > 1:
-                    if bd_user['language_code'] == 'ru':
-                        com_buttons = ['◀', '↩ Назад', '▶']
-                        textt = '🍕 | Выберите чем вы хотите покормить динозавра > '
-                    else:
-                        com_buttons = ['◀', '↩ Back', '▶']
-                        textt = '🍕 | Choose what you want to feed the dinosaur >'
-
-                    rmk.add(com_buttons[0], com_buttons[1], com_buttons[2])
-
-                else:
-                    if bd_user['language_code'] == 'ru':
-                        com_buttons = '↩ Назад'
-                        textt = '🍕 | Выберите чем вы хотите покормить динозавра > '
-                    else:
-                        textt = '🍕 | Choose what you want to feed the dinosaur >'
-                        com_buttons = '↩ Back'
-
-                    rmk.add(com_buttons)
-
-                def ret(message, l_pages, l_page, l_ind_sort_it, bd_user, user, pages, page, items_id, ind_sort_it):
-                    if message.text in ['↩ Назад', '↩ Back']:
-                        res = None
-
-                    else:
-                        if message.text in list(l_ind_sort_it.keys()) or message.text in ['◀', '▶']:
-                            res = message.text
-                        else:
-                            res = None
-
-                    if res == None:
-                        if bd_user['language_code'] == 'ru':
-                            text = "👥 | Возвращение в меню активностей!"
-                        else:
-                            text = "👥 | Return to the friends menu!"
-
-                        bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, 'actions', user))
-                        return '12'
-                    else:
-                        if res == '◀':
-                            if page - 1 == 0:
-                                page = 1
-                            else:
-                                page -= 1
-
-                            work_pr(message, pages, page, items_id, ind_sort_it)
-
-                        elif res == '▶':
-                            if page + 1 > len(l_pages):
-                                page = len(l_pages)
-                            else:
-                                page += 1
-
-                            work_pr(message, pages, page, items_id, ind_sort_it)
-
-                        else:
-                            item_id = items_id[l_ind_sort_it[res]]['item_id']
-                            user_item = items_id[l_ind_sort_it[res]]
-                            item = items_f['items'][item_id]
-
-                            bd_dino = bd_user['dinos'][bd_user['settings']['dino_id']]
-                            d_dino = json_f['elements'][str(bd_dino['dino_id'])]
-                            col = 1
-                            mx_col = 0
-                            for item_c in bd_user['inventory']:
-                                if item_c == user_item:
-                                    mx_col += 1
-
-                            if bd_user['language_code'] == 'ru':
-                                text_col = f"🧀 | Введите число использований или выберите его из списка >"
-                            else:
-                                text_col = f"🧀 | Enter the number of uses or select it from the list >"
-
-                            rmk = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
-
-                            col_to_full = int((100 - bd_dino['stats']['eat']) / item['act'])
-                            bt_3 = None
-
-                            if col_to_full > mx_col:
-                                col_to_full = mx_col
-
-                            bt_1 = f"{bd_dino['stats']['eat'] + item['act']}% = {item['name']['ru'][:1]} x1"
-                            bt_2 = f"{bd_dino['stats']['eat'] + item['act'] * col_to_full}% = {item['name']['ru'][:1]} x{col_to_full}"
-
-                            col_l = [[], [1, col_to_full]]
-
-                            col_l[0].append(bt_1), col_l[0].append(bt_2)
-
-                            if bd_dino['stats']['eat'] + item['act'] * col_to_full < 100:
-                                bt_3 = f"{100}% = {item['name']['ru'][:1]} x{col_to_full + 1}"
-
-                                col_l[0].append(bt_3)
-                                col_l[1].append(col_to_full + 1)
-
-                            if col_to_full == 1:
-
-                                if bt_3 != None:
-                                    rmk.add(bt_1, bt_3)
-
-                                else:
-                                    rmk.add(bt_1)
-
-                            elif col_to_full != 1 and col_to_full != 0:
-
-                                if bt_3 != None:
-                                    rmk.add(bt_1, bt_2, bt_3)
-
-                                else:
-                                    rmk.add(bt_1, bt_2)
-
-                            if bd_user['language_code'] == 'ru':
-                                rmk.add('↩ Назад')
-                            else:
-                                rmk.add('↩ Back')
-
-                            def corm(message, bd_user, user_item, item, d_dino, mx_col, col_l):
-
-                                if message.text in ['↩ Back', '↩ Назад']:
-
-                                    if bd_user['language_code'] == 'ru':
-                                        text = "👥 | Возвращение в меню активностей!"
-                                    else:
-                                        text = "👥 | Return to the friends menu!"
-
-                                    bot.send_message(message.chat.id, text,
-                                                     reply_markup=Functions.markup(bot, 'actions', user))
-                                    return '12'
-
-                                try:
-                                    col = int(message.text)
-                                except:
-                                    if message.text in col_l[0]:
-                                        col = col_l[1][col_l[0].index(message.text)]
-
-                                    else:
-
-                                        if bd_user['language_code'] == 'ru':
-                                            text = f"Введите корректное число!"
-                                        else:
-                                            text = f"Enter the correct number!"
-
-                                        bot.send_message(message.chat.id, text,
-                                                         reply_markup=Functions.markup(bot, 'actions', user))
-                                        return
-
-                                if col < 1:
-
-                                    if bd_user['language_code'] == 'ru':
-                                        text = f"Введите корректное число!"
-                                    else:
-                                        text = f"Enter the correct number!"
-
-                                    bot.send_message(message.chat.id, text,
-                                                reply_markup=Functions.markup(bot, 'actions', user))
-                                    return
-
-                                if 'abilities' in user_item.keys():
-                                    if 'uses' in user_item['abilities'].keys():
-                                        if col > user_item['abilities']['uses']:
-
-                                            if bd_user['language_code'] == 'ru':
-                                                text = f"Данный предмет нельзя использовать столько раз!"
-                                            else:
-                                                text = f"This item cannot be used so many times!"
-
-                                            bot.send_message(message.chat.id, text,
-                                                reply_markup=Functions.markup(bot, 'actions', user))
-                                            return
-
-                                if 'abilities' not in user_item.keys() or 'uses' not in user_item['abilities'].keys():
-
-                                    if col > mx_col:
-
-                                        if bd_user['language_code'] == 'ru':
-                                            text = f"У вас нет столько предметов в инвентаре!"
-                                        else:
-                                            text = f"You don't have that many items in your inventory!"
-
-                                        bot.send_message(message.chat.id, text,
-                                                         reply_markup=Functions.markup(bot, 'actions', user))
-
-                                        return
-
-                                if bd_user['language_code'] == 'ru':
-                                    if item['class'] == 'ALL':
-
-                                        bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat'] += item[
-                                                                                                                'act'] * col
-
-                                        if bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat'] > 100:
-                                            bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat'] = 100
-
-                                        text = f"🍕 | Динозавр с удовольствием съел {item['name']['ru']}!\nДинозавр сыт на {bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat']}%"
-
-
-                                    elif item['class'] == d_dino['class']:
-                                        bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat'] += item[
-                                                                                                                'act'] * col
-
-                                        if bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat'] > 100:
-                                            bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat'] = 100
-
-                                        text = f"🍕 | Динозавр с удовольствием съел {item['name']['ru']}!\nДинозавр сыт на {bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat']}%"
-
-
-                                    else:
-                                        eatr = random.randint(0, int(item['act'] / 2))
-                                        moodr = random.randint(1, 10)
-                                        text = f"🍕 | Динозавру не по вкусу {item['name']['ru']}, он теряет {eatr}% сытости и {moodr}% настроения!"
-
-                                        bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat'] -= eatr
-                                        bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['mood'] -= moodr
-
-                                else:
-                                    if item['class'] == 'ALL':
-
-                                        bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat'] += item[
-                                                                                                                'act'] * col
-
-                                        if bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat'] > 100:
-                                            bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat'] = 100
-
-                                        text = f"🍕 | The dinosaur ate it with pleasure {item['name']['en']}!\nThe dinosaur is fed up on {bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat']}%"
-
-                                    elif item['class'] == d_dino['class']:
-
-                                        bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat'] += item[
-                                                                                                                'act'] * col
-
-                                        if bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat'] > 100:
-                                            bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat'] = 100
-
-                                        text = f"🍕 | The dinosaur ate it with pleasure {item['name']['en']}!\nThe dinosaur is fed up on {bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat']}%"
-
-                                    else:
-                                        eatr = random.randint(0, int(item['act'] / 2))
-                                        moodr = random.randint(1, 10)
-                                        text = f"🍕 | The dinosaur doesn't like {item['name']['en']}, it loses {eatr}% satiety and {moodr}% mood!"
-
-                                        bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['eat'] -= eatr
-                                        bd_user['dinos'][bd_user['settings']['dino_id']]['stats']['mood'] -= moodr
-
-                                din_id = bd_user['settings']['dino_id']
-
-                                if '+mood' in item.keys():
-                                    bd_user['dinos'][din_id]['stats']['mood'] += item['+mood'] * col
-
-                                if '-mood' in item.keys():
-                                    bd_user['dinos'][din_id]['stats']['mood'] -= item['-mood'] * col
-
-                                if '+eat' in item.keys():
-                                    bd_user['dinos'][din_id]['stats']['eat'] += item['+eat'] * col
-
-                                if '-eat' in item.keys():
-                                    bd_user['dinos'][din_id]['stats']['eat'] -= item['-eat'] * col
-
-                                if '+energy' in item.keys():
-                                    bd_user['dinos'][din_id]['stats']['unv'] += item['+energy'] * col
-
-                                if '-energy' in item.keys():
-                                    bd_user['dinos'][din_id]['stats']['unv'] -= item['-energy'] * col
-
-                                if '+hp' in item.keys():
-                                    bd_user['dinos'][din_id]['stats']['heal'] += item['+hp'] * col
-
-                                if '-hp' in item.keys():
-                                    bd_user['dinos'][din_id]['stats']['heal'] -= item['-hp'] * col
-
-                                users.update_one({"userid": bd_user['userid']}, {"$set": {
-                                    f'dinos.{bd_user["settings"]["dino_id"]}': bd_user['dinos'][
-                                        bd_user['settings']['dino_id']]}})
-
-                                if 'abilities' in user_item.keys():
-                                    if 'uses' in user_item['abilities'].keys():
-
-                                        if user_item['abilities']['uses'] != -100:
-
-                                            s_col = user_item['abilities']['uses'] - col
-
-                                            if s_col > 0:
-                                                users.update_one({"userid": user.id}, {"$set": {
-                                                    f'inventory.{bd_user["inventory"].index(user_item)}.abilities.uses':
-                                                        user_item['abilities']['uses'] - col}})
-
-                                            else:
-                                                bd_user['inventory'].remove(user_item)
-                                                users.update_one({"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}})
-
-                                else:
-
-                                    for i in range(col):
-                                        bd_user['inventory'].remove(user_item)
-
-                                    users.update_one({"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory']}})
-
-                                bot.send_message(message.chat.id, text,
-                                                 reply_markup=Functions.markup(bot, 'actions', user))
-
-                                Dungeon.check_quest(bot, bd_user, met='check', quests_type='do',
-                                                kwargs={'dp_type': 'feed', 'act': col, 'item': str(item_id)})
-
-                            msg = bot.send_message(message.chat.id, text_col, reply_markup=rmk)
-                            bot.register_next_step_handler(msg, corm, bd_user, user_item, item, d_dino, mx_col, col_l)
-
-                msg = bot.send_message(message.chat.id, textt, reply_markup=rmk)
-                bot.register_next_step_handler(msg, ret, l_pages, l_page, l_ind_sort_it, bd_user, user, pages, page,
-                                               items_id, ind_sort_it)
-
-            work_pr(message, pages, page, items_id, ind_sort_it)
 
     @staticmethod
     def collecting_food(bot, message, user, bd_user):
@@ -2301,7 +1890,7 @@ class Commands:
                 msg = bot.send_message(message.chat.id, text, reply_markup=rmk)
                 bot.register_next_step_handler(msg, ret_zero, ans, bd_user)
 
-            n_dp, dp_a = Functions.dino_pre_answer(bot, message)
+            n_dp, dp_a = Functions.dino_pre_answer(user)
             if n_dp == 1:
                 bot.send_message(message.chat.id, f'❌', reply_markup=Functions.markup(bot, 1, user))
                 return
@@ -2753,16 +2342,24 @@ class Commands:
                     return
 
                 else:
-                    s_i = []
+
+                    dct_items = {}
+                    
                     for i in items_f['items']:
                         item = items_f['items'][i]
 
                         for inn in [item['name']['ru'], item['name']['en']]:
-                            if fuzz.token_sort_ratio(message.text, inn) > 80 or fuzz.ratio(message.text,
-                                                                                           inn) > 80 or message.text == inn:
-                                s_i.append(i)
+                            tok_s = fuzz.token_sort_ratio(message.text, inn)
+                            ratio = fuzz.ratio(message.text, inn)
+                            
+                            if tok_s > 30 or ratio > 30:
+                                sr_z = (tok_s + ratio) // 2
+                                dct_items[sr_z] = i
+                        
+                            elif message.text == i:
+                                dct_items[100] = i
 
-                    if s_i == []:
+                    if dct_items == {}:
 
                         if bd_user['language_code'] == 'ru':
                             text = "🛒 | Предмет с таким именем не найден в базе продаваемых предметов!\nВозвращение в меню рынка!"
@@ -2771,6 +2368,13 @@ class Commands:
 
                         bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, 'market', user))
                         return
+                    
+                    else:
+                        s_i = []
+                        for _ in range(2):
+                            if dct_items != {}:
+                                s_i.append(dct_items[max(dct_items.keys())])
+                                del dct_items[max(dct_items.keys())]
 
                     sear_items = []
                     for uid in market_['products']:
@@ -2778,8 +2382,12 @@ class Commands:
                             userser = market_['products'][uid]['products']
                             for ki in userser:
                                 if userser[ki]['item']['item_id'] in s_i:
-                                    sear_items.append({'user': uid, 'key': ki, 'col': userser[ki]['col'],
-                                                       'price': userser[ki]['price'], 'item': userser[ki]['item']})
+                                    sear_items.append({
+                                        'user': uid, 'key': ki, 
+                                        'col': userser[ki]['col'],
+                                        'price': userser[ki]['price'], 
+                                        'item': userser[ki]['item']
+                                    })
 
                     if sear_items == []:
                         if bd_user['language_code'] == 'ru':
@@ -3016,7 +2624,7 @@ class Commands:
             bot.send_message(message.chat.id, text_m, reply_markup=markup_inline, parse_mode='Markdown')
             bot.send_message(message.chat.id, text_p2, reply_markup=Functions.markup(bot, Functions.last_markup(bd_user, alternative='dino-tavern'), bd_user), parse_mode='Markdown')
 
-        n_dp, dp_a = Functions.dino_pre_answer(bot, message, type='noall')
+        n_dp, dp_a = Functions.dino_pre_answer(user, type='noall')
         if n_dp == 1:
             bot.send_message(message.chat.id, f'❌', reply_markup=Functions.markup(bot, Functions.last_markup(bd_user, alternative='dino-tavern'), bd_user))
             return
@@ -3537,7 +3145,7 @@ class Commands:
             msg = bot.send_message(message.chat.id, text, reply_markup=rmk)
             bot.register_next_step_handler(msg, work_pr_zero, dino_id)
 
-        n_dp, dp_a = Functions.dino_pre_answer(bot, message, type='noall')
+        n_dp, dp_a = Functions.dino_pre_answer(user, type='noall')
         if n_dp == 1:
             bot.send_message(message.chat.id, f'❌', reply_markup=Functions.markup(bot, Functions.last_markup(bd_user, alternative='dungeon_menu'), bd_user))
             return
@@ -3811,3 +3419,54 @@ class Commands:
 
                     bot.send_message(message.chat.id, text, reply_markup=markup_inline)
                     time.sleep(0.5)
+    
+    def opne_inventory(bot, message, user, bd_user):
+
+        rmk = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
+        data_items = items_f['items']
+        text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="opne_inventory")
+        buttons = Functions.get_text(l_key=bd_user['language_code'], text_key="buttons_name")
+
+        text = text_dict['info']
+        dct_filters = text_dict['dct_filters']
+        bt_0, bt_last = text_dict['s_bt'], buttons['back']
+        ans = []
+
+        n_dct = {}
+        for i in dct_filters.keys():
+            dct = dct_filters[i]
+
+            for kl in dct:
+                n_dct[kl] = i
+        
+        for i in bd_user['inventory']:
+            if len(ans) == len(dct_filters.keys()):
+                break
+            
+            else:
+                i_tp = data_items[i['item_id']]['type']
+                type_word = n_dct[i_tp]
+
+                if type_word not in ans:
+                    ans.append(type_word)
+        
+        ans.sort()
+        ans.insert(len(ans), bt_last)
+        ans.insert(-1, bt_0)
+        rmk.add(*[bt for bt in ans])
+
+        def ret(message):
+            if message.text in dct_filters.keys():
+                
+                inv_type = dct_filters[message.text]
+                if inv_type == []:
+                    Functions.user_inventory(bot, user, message, filter_type='all')
+                else:
+                    Functions.user_inventory(bot, user, message, filter_type='itemtype', i_filter=inv_type)
+
+            else:
+                bot.send_message(message.chat.id, '❌', reply_markup=Functions.markup(bot, 'profile', user))
+
+        msg = bot.send_message(user.id, text, reply_markup=rmk)
+        bot.register_next_step_handler(msg, ret)
+
