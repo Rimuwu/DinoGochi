@@ -3903,9 +3903,9 @@ class Functions:
 
                 if 'rank' in data_item.keys():
                     data_user['lvl'][1] += \
-                    settings_f['xp_craft'][data_item['rank']]
+                    settings_f['xp_craft'][data_item['rank']] * col
                 else:
-                    data_user['lvl'][1] += settings_f['xp_craft']['common']
+                    data_user['lvl'][1] += settings_f['xp_craft']['common'] * col
 
                 users.update_one({"userid": user.id}, {"$set": {'lvl': data_user['lvl']}})
 
@@ -3998,6 +3998,8 @@ class Functions:
                         data_user['dinos'][dino_id]['stats']['mood'] -= moodr * col
 
                 users.update_one({"userid": data_user['userid']}, {"$set": {f'dinos.{dino_id}': data_user['dinos'][dino_id]}})
+
+                Dungeon.check_quest(bot, data_user, met='check', quests_type='do', kwargs={'dp_type': 'feed', 'act': col, 'item': str(item_id)})
 
         elif data_item['type'] in ['weapon', 'armor', 'backpack']:
             type_eq = data_item['type']
@@ -7590,6 +7592,8 @@ class Dungeon:
                                 q_completed = True
 
                         if quest['type'] == 'do':
+                            #{'dp_type': 'feed', 'act': col, 'item': item_id}
+
                             if quest['dp_type'] == 'feed':
                                 glob_targ = [len(list(quest['target'].keys())), 0]
 
@@ -7604,8 +7608,7 @@ class Dungeon:
                                     Functions.notifications_manager(bot, 'quest_completed', bd_user, arg=qdata)
 
                                     bd_user['user_dungeon']['quests']['ended'] += 1
-                                    users.update_one({"userid": bd_user['userid']},
-                                                     {"$set": {'user_dungeon': bd_user['user_dungeon']}})
+                                    users.update_one({"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon']}})
 
                                     Dungeon.quest_reward(bd_user, quest)
                                     q_completed = True
@@ -7618,8 +7621,7 @@ class Dungeon:
                                     Functions.notifications_manager(bot, 'quest_completed', bd_user, arg=qdata)
 
                                     bd_user['user_dungeon']['quests']['ended'] += 1
-                                    users.update_one({"userid": bd_user['userid']},
-                                                     {"$set": {'user_dungeon': bd_user['user_dungeon']}})
+                                    users.update_one({"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon']}})
 
                                     Dungeon.quest_reward(bd_user, quest)
                                     q_completed = True
@@ -7642,8 +7644,7 @@ class Dungeon:
                                     Functions.notifications_manager(bot, 'quest_completed', bd_user, arg=qdata)
 
                                     bd_user['user_dungeon']['quests']['ended'] += 1
-                                    users.update_one({"userid": bd_user['userid']},
-                                                     {"$set": {'user_dungeon': bd_user['user_dungeon']}})
+                                    users.update_one({"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon']}})
 
                                     Dungeon.quest_reward(bd_user, quest)
 
@@ -7654,8 +7655,7 @@ class Dungeon:
                                     if quest['col'][1] != quest['col'][0]:
                                         quest['col'][1] += 1
 
-                                        users.update_one({"userid": bd_user['userid']},
-                                                         {"$set": {'user_dungeon': bd_user['user_dungeon']}})
+                                        users.update_one({"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon']}})
 
                             if quest['type'] == 'do':
                                 ok = True
@@ -7680,8 +7680,7 @@ class Dungeon:
                                             quest['target'][1] = quest['target'][0]
 
                                     if ok:
-                                        users.update_one({"userid": bd_user['userid']},
-                                                         {"$set": {'user_dungeon': bd_user['user_dungeon']}})
+                                        users.update_one({"userid": bd_user['userid']}, {"$set": {'user_dungeon': bd_user['user_dungeon']}})
     
     def get_statics(bd_user, met:str='max'):
         

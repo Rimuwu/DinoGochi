@@ -1251,7 +1251,7 @@ class Checks:
                     if user['language_code'] == 'ru':
                         text = f"🦕 | {bot.get_chat(user['userid']).first_name}, мы скучаем по тебе 😥, ты уже очень давно не пользовался ботом ({Functions.time_end(notactivity_time)})!\n\n❤ | Давай сного будем играть, путешествовать и развлекаться вместе! Мы с нетерпением ждём тебя!"
                     else:
-                        text = f"🦕 | {bot.get_chat(user['userid']).first_name}, we miss you 😥, you haven't used the bot for a long time ({Functions.time_end(notactivity_time)})!\n\n❤ | Let's play, travel and have fun together! We are looking forward to seeing you!"
+                        text = f"🦕 | {bot.get_chat(user['userid']).first_name}, we miss you 😥, you haven't used the bot for a long time ({Functions.time_end(notactivity_time, True)})!\n\n❤ | Let's play, travel and have fun together! We are looking forward to seeing you!"
 
                     bot.send_message(user['userid'], text)
                     act3 += 1
