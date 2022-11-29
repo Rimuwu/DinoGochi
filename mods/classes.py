@@ -2517,7 +2517,7 @@ class Functions:
                                 tok_s = fuzz.token_sort_ratio(message.text, i)
                                 ratio = fuzz.ratio(message.text, i)
 
-                                if tok_s > 30 or ratio > 30:
+                                if tok_s > 50 or ratio > 50:
                                     sr_z = (tok_s + ratio) // 2
                                     dct_items[sr_z] = i
                                 
@@ -2600,11 +2600,10 @@ class Functions:
                 else:
                     text = "💌 | The query menu is open!"
 
-                msg = bot.send_message(message.chat.id, text)
+                bot.send_message(message.chat.id, text)
 
                 def work_pr(message, id_friends):
                     global pages, pagen
-                    a = []
 
                     id_names = {}
                     friends = []
@@ -2687,6 +2686,7 @@ class Functions:
                             bot.send_message(message.chat.id, text,
                                              reply_markup=Functions.markup(bot, 'friends-menu', user))
                             return None
+
                         else:
                             if res == '◀':
                                 if page - 1 == 0:
@@ -2701,51 +2701,57 @@ class Functions:
                                     page += 1
 
                             else:
-                                uid = id_names[res[2:]]
+                                uid = id_names.get(res[2:], None)
 
-                                if list(res)[0] == '❌':
-                                    Functions.notifications_manager(bot, "friend_rejection",
-                                                                    users.find_one({"userid": int(uid)}),
-                                                                    user.first_name)
+                                if uid != None:
 
+                                    if list(res)[0] == '❌':
+                                        Functions.notifications_manager(bot, "friend_rejection", users.find_one({"userid": int(uid)}), user.first_name)
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = "👥 | Запрос в друзья отклонён!"
+                                        else:
+                                            text = "👥 | Friend request rejected!"
+
+                                        bot.send_message(message.chat.id, text)
+
+                                        try:
+                                            bd_user['friends']['requests'].remove(uid)
+                                            users.update_one({"userid": bd_user['userid']}, {"$pull": {'friends.requests': uid}})
+                                        except:
+                                            pass
+
+                                    if list(res)[0] == '✅':
+                                        Functions.notifications_manager(bot, "friend_accept", users.find_one({"userid": int(uid)}), user.first_name)
+
+                                        if bd_user['language_code'] == 'ru':
+                                            text = "👥 | Запрос в друзья одобрен!"
+                                        else:
+                                            text = "👥 | The friend request is approved!"
+
+                                        bot.send_message(message.chat.id, text)
+
+                                        try:
+                                            bd_user['friends']['requests'].remove(uid)
+                                            bd_user['friends']['friends_list'].append(uid)
+                                            users.update_one({"userid": bd_user['userid']},
+                                                            {"$set": {'friends': bd_user['friends']}})
+
+                                            two_user = users.find_one({"userid": int(uid)})
+                                            two_user['friends']['friends_list'].append(bd_user['userid'])
+                                            users.update_one({"userid": int(uid)},
+                                                            {"$set": {'friends': two_user['friends']}})
+                                        except:
+                                            pass
+                                
+                                else:
                                     if bd_user['language_code'] == 'ru':
-                                        text = "👥 | Запрос в друзья отклонён!"
+                                        text = "👥 | Возвращение в меню друзей!"
                                     else:
-                                        text = "👥 | Friend request rejected!"
+                                        text = "👥 | Return to the friends menu!"
 
-                                    bot.send_message(message.chat.id, text)
-
-                                    try:
-                                        bd_user['friends']['requests'].remove(uid)
-                                        users.update_one({"userid": bd_user['userid']},
-                                                         {"$pull": {'friends.requests': uid}})
-                                    except:
-                                        pass
-
-                                if list(res)[0] == '✅':
-                                    Functions.notifications_manager(bot, "friend_accept",
-                                                                    users.find_one({"userid": int(uid)}),
-                                                                    user.first_name)
-
-                                    if bd_user['language_code'] == 'ru':
-                                        text = "👥 | Запрос в друзья одобрен!"
-                                    else:
-                                        text = "👥 | The friend request is approved!"
-
-                                    bot.send_message(message.chat.id, text)
-
-                                    try:
-                                        bd_user['friends']['requests'].remove(uid)
-                                        bd_user['friends']['friends_list'].append(uid)
-                                        users.update_one({"userid": bd_user['userid']},
-                                                         {"$set": {'friends': bd_user['friends']}})
-
-                                        two_user = users.find_one({"userid": int(uid)})
-                                        two_user['friends']['friends_list'].append(bd_user['userid'])
-                                        users.update_one({"userid": int(uid)},
-                                                         {"$set": {'friends': two_user['friends']}})
-                                    except:
-                                        pass
+                                    bot.send_message(message.chat.id, text,
+                                        reply_markup=Functions.markup(bot, 'friends-menu', user))
 
                             work_pr(message, id_friends)
 
@@ -6572,6 +6578,8 @@ class Dungeon:
 
                     if bd_user['dinos'][log_d['dino_key']]['stats']['heal'] - dmg <= 10:
                         bd_user['dinos'][log_d['dino_key']]['stats']['heal'] = 10
+                        bd_user['dinos'][log_d['dino_key']]['active_status'] = 'pass_active'
+
                         del dung['users'][str(userid)]['dinos'][log_d['dino_key']]
 
                         dungeons.update_one({"dungeonid": dungeonid}, {"$set": {f'users': dung['users']}})
@@ -6591,10 +6599,10 @@ class Dungeon:
                             for uk in dung['users'].keys():
                                 Dungeon.user_dungeon_stat(int(uk), dungeonid)
 
-                                inf = Dungeon.message_upd(bot, dungeonid=int(uk), type='delete_dungeon')
+                                Dungeon.message_upd(bot, dungeonid=int(uk), type='delete_dungeon')
 
                             kwargs = {'save_inv': False}
-                            dng, inf = Dungeon.base_upd(dungeonid=userid, type='delete_dungeon', kwargs=kwargs)
+                            Dungeon.base_upd(dungeonid=userid, type='delete_dungeon', kwargs=kwargs)
 
                     else:
                         bd_user['dinos'][log_d['dino_key']]['stats']['heal'] -= dmg

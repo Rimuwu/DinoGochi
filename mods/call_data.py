@@ -1254,7 +1254,7 @@ class CallData:
             bot.delete_message(user.id, old_m.message_id)
             bot.delete_message(user.id, message.message_id)
 
-            if not coins.isdigit():
+            if not message.text.isdigit():
                 if bd_user['language_code'] == 'ru':
                     show_text = '❗ | Требовалось указать число!'
 
