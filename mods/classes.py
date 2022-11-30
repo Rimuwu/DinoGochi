@@ -2964,8 +2964,6 @@ class Functions:
                 if bd_user['dinos'][i] == bd_dino:
                     dino_user_id = i
 
-            profile = dino_profile(bd_user, user, dino_user_id=dino_user_id)
-
             qual = text_rare[bd_user['dinos'][dino_user_id]['quality']][0]
             st_t = text_dict['stats'][bd_dino['activ_status']]
 
@@ -3085,9 +3083,22 @@ class Functions:
                     em_sleep=tem['ac_sleep']
             )
 
-            bot.send_photo(message.chat.id, profile, text,      
-                reply_markup=Functions.markup(bot, user=user),
-                parse_mode='Markdown')
+            generate_image = open(f'images/remain/no_generate.png', 'rb')
+
+            msg = bot.send_photo(message.chat.id, generate_image, text,
+                        parse_mode='Markdown')
+
+            bot.send_message(message.chat.id, text_dict['return'], 
+                            reply_markup=Functions.markup(bot, user=user))
+            
+            profile = dino_profile(bd_user, user, dino_user_id=dino_user_id)
+
+            bot.edit_message_media(
+                chat_id=message.chat.id,
+                message_id=msg.id,
+                media=telebot.types.InputMedia(
+                    type='photo', media=profile, parse_mode='Markdown', caption=text)
+                )
 
     @staticmethod
     def journey_end_log(bot, user_id, dino_id):
