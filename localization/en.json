@@ -267,7 +267,9 @@
 
             "no_item": "Nothing",
 
-            "accs": "*┌* Game: {game}\n*├* Collecting food: {coll}\n*├* Journey: {jour}\n*└* Sleep: {sleep}\n"
+            "accs": "*┌* Game: {game}\n*├* Collecting food: {coll}\n*├* Journey: {jour}\n*└* Sleep: {sleep}\n",
+
+            "return": "🔮 Return to the main menu!"
         },
 
         "user_inventory": {
