@@ -1862,8 +1862,7 @@ class Functions:
                                             else:
                                                 text = f"Enter the correct number!"
 
-                                            bot.send_message(message.chat.id, text,
-                                                             reply_markup=Functions.markup(bot, 'actions', user))
+                                            bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, 'actions', user))
                                             return
 
                                         if col > mx_col:
@@ -1873,17 +1872,14 @@ class Functions:
                                             else:
                                                 text = f"You don't have that many items in your inventory!"
 
-                                            bot.send_message(message.chat.id, text,
-                                                             reply_markup=Functions.markup(bot, 'actions', user))
+                                            bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, 'actions', user))
                                             return
 
                                         for i in range(col):
                                             bd_user['inventory'].remove(user_item)
-                                            users.update_one({"userid": two_user['userid']},
-                                                             {"$push": {'inventory': user_item}})
+                                            users.update_one({"userid": two_user['userid']}, {"$push": {'inventory': user_item}})
 
-                                        users.update_one({"userid": bd_user['userid']},
-                                                         {"$set": {'inventory': bd_user['inventory']}})
+                                        users.update_one({"userid": bd_user['userid']}, {"$set": {'inventory': bd_user['inventory']}})
 
                                         if bd_user['language_code'] == 'ru':
                                             text = f'🔁 | Предмет(ы) был отправлен игроку!'

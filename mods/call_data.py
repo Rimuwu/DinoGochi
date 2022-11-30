@@ -95,7 +95,11 @@ class CallData:
                 text = f"🎈 | If the dinosaur is in a good mood, he can bring back some things.\n\n🧶 | During the journey, different stories can happen, the result depends on them."
                 text2 = f"🌳 | You sent a dinosaur on a journey for {jr_time} minutes."
 
-            bot.edit_message_text(text2, call.message.chat.id, call.message.message_id)
+            try:
+                bot.edit_message_text(text2, call.message.chat.id, call.message.message_id)
+            except:
+                pass
+
             bot.send_photo(call.message.chat.id, profile_i, text, reply_markup=Functions.markup(bot, "actions", user))
 
     def game(bot, bd_user, call, user):
@@ -1557,7 +1561,7 @@ class CallData:
 
         markup_inline.add(*[
             types.InlineKeyboardButton(text=inl,
-                                       callback_data=mrk_d[inl]) for inl in mrk_d.keys()
+                callback_data=mrk_d[inl]) for inl in mrk_d.keys()
         ])
 
         if bd_user['language_code'] == 'ru':
@@ -1569,7 +1573,10 @@ class CallData:
 
         markup_inline.add(types.InlineKeyboardButton(text=inl[0], callback_data=inl[1]))
 
-        bot.edit_message_caption(text, call.message.chat.id, call.message.message_id, reply_markup=markup_inline)
+        try:
+            bot.edit_message_caption(text, call.message.chat.id, call.message.message_id, reply_markup=markup_inline)
+        except:
+            pass
 
     def dungeon_remove_item(bot, bd_user, call, user):
 
@@ -3048,7 +3055,10 @@ class CallData:
 
             total += 1
 
-        bot.send_message(call.message.chat.id, text, parse_mode="Markdown")
+        try:
+            bot.send_message(call.message.chat.id, text, parse_mode="Markdown")
+        except:
+            bot.send_message(call.message.chat.id, text)
 
     def complete_quest(bot, bd_user, call, user):
         q_id = int(call.data.split()[1])

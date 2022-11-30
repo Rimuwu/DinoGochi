@@ -383,7 +383,7 @@ class Commands:
             def ret(message, bd_user):
                 res = message
 
-                if message.text in buttons_name['back']:
+                if message.text == buttons_name['back']:
                     bot.send_message(message.chat.id, f'❌', reply_markup=Functions.markup(bot, 'friends-menu', user))
                     return
 
