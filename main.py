@@ -662,7 +662,10 @@ def on_start(message):
             bot.reply_to(message, text, reply_markup=Functions.markup(bot, user=user), parse_mode='html')
 
         else:
-            bot.reply_to(message, '👋', reply_markup=Functions.markup(bot, user=user), parse_mode='html')
+
+            stickers = list(bot.get_sticker_set('Stickers_by_DinoGochi_bot').stickers)
+            sticker = random.choice(stickers).file_id
+            bot.send_sticker(message.chat.id, sticker, reply_markup=Functions.markup(bot, user=user))
 
 
 @bot.message_handler(content_types=['text'], spam_check=True, in_dungeon=True)
