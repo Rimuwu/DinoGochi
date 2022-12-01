@@ -4627,7 +4627,7 @@ class Dungeon:
             mobs_keys = list(mobs_data.keys())
             random.shuffle(mobs_keys)
 
-            for n in range(count):
+            while len(ret_list) != count:
                 random.shuffle(mobs_keys)
 
                 mob_key = mobs_keys[0]
