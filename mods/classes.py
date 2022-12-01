@@ -3103,11 +3103,19 @@ class Functions:
     @staticmethod
     def journey_end_log(bot, user_id, dino_id):
         bd_user = users.find_one({"userid": user_id})
+        dino_name = bd_user["dinos"][dino_id]["name"]
 
-        text = f'🦖 | {bd_user["dinos"][dino_id]["name"]} вернулся из путешествия!\nВот что произошло в его путешествии:\n\n'
+        if bd_user['language_code'] == 'ru':
+            text = f'🦖 | {dino_name} вернулся из путешествия!\nВот что произошло в его путешествии:\n\n'
+        else:
+            text = f"🦖 | {dino_name} back from a trip!\nHere's what happened on his journey:\n\n"
 
         if bd_user['dinos'][dino_id]['journey_log'] == []:
-            text += 'Ничего не произошло!'
+            if bd_user['language_code'] == 'ru':
+                text += 'Ничего не произошло!'
+            else:
+                text += 'Nothing happened!'
+                
             bot.send_message(user_id, text, parse_mode='Markdown')
 
         else:
