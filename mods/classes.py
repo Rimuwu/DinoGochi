@@ -3695,6 +3695,13 @@ class Functions:
                     if event['id'] == eid:
                         events.append(event)
 
+            elif etype == None and eid != None:
+                if event['id'] == eid:
+                        events.append(event)
+
+            else:
+                events.append(event)
+
         return events
 
     def add_events(events:list, section:str='activ'):
@@ -3707,10 +3714,17 @@ class Functions:
 
     def delete_event(eid:int, section:str="activ"):
         events_data = management.find_one({"_id": 'events'})
-        event = Functions.get_event(eid=eid)
+        events = Functions.get_event(eid=eid)
+
+        if len(events) > 0:
+
+            events_data[section].remove(events[0])
+            management.update_one({"_id": "events"}, {"$set": {f'{section}': events_data[section]}})
+
+            return True
         
-        events_data[section].remove(event)
-        management.update_one({"_id": "events"}, {"$set": {f'{section}': events_data[section]}})
+        else:
+            return False
     
     def evet_notification(eid:int, section:str="activ"):
         events_data = management.find_one({"_id": 'events'})
@@ -3718,13 +3732,10 @@ class Functions:
 
     def auto_event(etype:str='random', section:str="activ"):
         events_data = management.find_one({"_id": 'events'})
-        id_list, max_id = [], 0
+        id_list = []
 
         for i in events_data['log_events']:
             id_list.append(i['id'])
-
-        if id_list != []:
-            max_id = max(id_list)
 
         if etype == 'time_year':
             month_n = int(time.strftime("%m"))
@@ -3746,14 +3757,14 @@ class Functions:
             if len(events) > 1:
                 for i in events:
                     eid = i['eid']
-                    Functions.delete_event(eid=events[0]['id'])
+                    Functions.delete_event(eid=eid)
                 
                 events = []
             
             if len(events) == 1:
                 
                 if events[0]['data']['season'] != event['data']['season']:
-                    Functions.delete_event(eid=eid)
+                    Functions.delete_event(eid=events[0]['id'])
 
                     cr_events = Functions.create_event([event], False)
                     Functions.add_events(cr_events)
