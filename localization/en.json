@@ -251,23 +251,23 @@
                 "2": "*└* I am insanely tired :("
             },
 
-            "profile_text": "🦖 *┌* Name: {dino_name}\n👁‍🗨 *├* Status: {st_t}\n🧿 *└* Rare: {qual}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}",
+            "profile_text": "{em_name}*┌* Name: {dino_name}\n{em_status}*├* Status: {st_t}\n{em_rare}*└* Rare: {qual}\n\n{h_text}\n{e_text}\n{g_text}\n{m_text}\n{u_text}",
 
             "journey_time": {
-                "text": "\n\n🌳 *┌* Journey: \n·  Left: {jtime}",
+                "text": "\n\n*┌* Journey: \n·  Left: {jtime}",
                 "set": true
             },
 
             "game_time": {
-                "text": "\n\n🎮 *┌* Game: \n·  Left: {gtime}",
+                "text": "\n\n*┌* Game: \n·  Left: {gtime}",
                 "set": true
             },
 
-            "collecting_progress": "\n\n🥙 *┌* Collecting food: \n·  > {progress} / 100%",
+            "collecting_progress": "\n\n*┌* Collecting food: \n·  > {progress} / 100%",
 
             "no_item": "Nothing",
 
-            "accs": "*┌* Game: {game}\n*├* Collecting food: {coll}\n*├* Journey: {jour}\n*└* Sleep: {sleep}\n",
+            "accs": "{em_game}*┌* Game: {game}\n{em_coll}*├* Collecting food: {coll}\n{em_jour}*├* Journey: {jour}\n{em_sleep}*└* Sleep: {sleep}\n",
 
             "return": "🔮 Return to the main menu!"
         },
