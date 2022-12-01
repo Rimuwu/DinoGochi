@@ -319,8 +319,12 @@
             },
 
             "s_bt": "📚 No filter"
-        }
+        },
 
+        "journey_end_log": {
+            "nothing": "Nothing happened!",
+            "top_message": "🦖 | {dino_name} back from a trip!\nHere's what happened on his journey:\n\n"
+        }
 
     }
 
