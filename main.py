@@ -331,7 +331,7 @@ def command(message):
 @bot.message_handler(commands=['events'])
 def command(message):
 
-    Functions.auto_event('time_year')
+    Functions.auto_event("time_year")
 
     print(Functions.get_event("time_year"))
 
@@ -1257,6 +1257,18 @@ def start_all(bot):
     except Exception as e:
         print('Система: Файл логирования не был создан >', e)
         logging.critical(f'Файл логирования не был создан > {e}')
+    
+    try:
+        Functions.clean_tmp()
+    except Exception as e:
+        print('Система: Временные изображения не были очищены >', e)
+        logging.warning(f'Временные изображения не были очищены > {e}')
+    
+    try:
+        Functions.load_languages()
+    except Exception as e:
+        print('Система: Локализация не была загружена >', e)
+        logging.warning(f'Локализация не была загружена > {e}')
 
     if bot.get_me().first_name == config.BOT_NAME or False:
         main_checks.start()  # активация всех проверок и игрового процесса
@@ -1278,18 +1290,6 @@ def start_all(bot):
     except Exception as e:
         print('Система: Фильтры не были определены >', e)
         logging.error(f'Фильтры не были определены > {e}')
-
-    try:
-        Functions.clean_tmp()
-    except Exception as e:
-        print('Система: Временные изображения не были очищены >', e)
-        logging.warning(f'Временные изображения не были очищены > {e}')
-
-    try:
-        Functions.load_languages()
-    except Exception as e:
-        print('Система: Локализация не была загружена >', e)
-        logging.warning(f'Локализация не была загружена > {e}')
 
     print(f'Система: Бот {bot.get_me().first_name} запущен!')
     logging.info(f'Бот {bot.get_me().first_name} запущен!')
