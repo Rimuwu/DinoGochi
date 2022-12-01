@@ -3104,17 +3104,12 @@ class Functions:
     def journey_end_log(bot, user_id, dino_id):
         bd_user = users.find_one({"userid": user_id})
         dino_name = bd_user["dinos"][dino_id]["name"]
+        text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="journey_end_log")
 
-        if bd_user['language_code'] == 'ru':
-            text = f'🦖 | {dino_name} вернулся из путешествия!\nВот что произошло в его путешествии:\n\n'
-        else:
-            text = f"🦖 | {dino_name} back from a trip!\nHere's what happened on his journey:\n\n"
+        text = text_dict['top_message'].format(dino_name=dino_name)
 
         if bd_user['dinos'][dino_id]['journey_log'] == []:
-            if bd_user['language_code'] == 'ru':
-                text += 'Ничего не произошло!'
-            else:
-                text += 'Nothing happened!'
+            text = text_dict['top_message']['nothing']
                 
             bot.send_message(user_id, text, parse_mode='Markdown')
 
@@ -4638,7 +4633,7 @@ class Dungeon:
                 mob_key = mobs_keys[0]
                 mob = mobs_data[mob_key]
 
-                if mob['lvls']['min'] >= floor_lvl or floor_lvl <= mob['lvls']['max']:
+                if mob['lvls']['min'] <= floor_lvl and floor_lvl <= mob['lvls']['max']:
 
                     mob_data = {'mob_key': mob_key, 'effects': []}
 
