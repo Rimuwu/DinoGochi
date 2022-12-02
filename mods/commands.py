@@ -890,7 +890,7 @@ class Commands:
                             dl_sleep(bd_user, message)
 
                         else:
-                            text = text_dict['sleep']
+                            text = text_dict['choice']
                             ans = text_dict['buttons']
                             ans.append(buttons_name['back'])
 
