@@ -777,7 +777,7 @@ class CallData:
 
         user_2 = call.message.reply_to_message
         if user_2.from_user != None:
-            fr_user = user_2.from_user.from_user
+            fr_user = user_2.from_user
 
             if bd_user != None:
                 two_user = users.find_one({"userid": fr_user.id})
