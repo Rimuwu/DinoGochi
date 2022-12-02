@@ -3109,7 +3109,7 @@ class Functions:
         text = text_dict['top_message'].format(dino_name=dino_name)
 
         if bd_user['dinos'][dino_id]['journey_log'] == []:
-            text = text_dict['top_message']['nothing']
+            text = text_dict['nothing']
                 
             bot.send_message(user_id, text, parse_mode='Markdown')
 
