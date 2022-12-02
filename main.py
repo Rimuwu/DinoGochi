@@ -122,6 +122,8 @@ main_checks = threading.Thread(target=check, daemon=True)
 
 def check_notif():  # проверка каждые 5 секунд
 
+    time.sleep(1) # запуск спустя 2 секунды, для разбиения нагрузки
+
     def alpha(bot, members):
         Checks.check_notif(bot, members)
 
@@ -174,7 +176,9 @@ def min10_check():  # проверка каждые 10 мин
             uss = users.find({})
             threading.Thread(target=alpha, daemon=True, kwargs={'users': uss}).start()
 
-            threading.Thread(target=dead_users, daemon=True, kwargs={'bot': bot}).start()
+            if bot.get_me().first_name == config.BOT_NAME:
+                threading.Thread(target=dead_users, daemon=True, kwargs={'bot': bot}).start()
+
             threading.Thread(target=dng_check, daemon=True, kwargs={'bot': bot}).start()
             threading.Thread(target=events_check, daemon=True, kwargs={'bot': bot}).start()
 
@@ -189,6 +193,8 @@ min10_thr = threading.Thread(target=min10_check, daemon=True)
 
 
 def min1_check():  # проверка каждую минуту
+
+    time.sleep(3) # запуск спустя 2 секунды, для разбиения нагрузки
 
     def alpha(bot):
         Checks.quests(bot)
@@ -215,18 +221,29 @@ def command(message):
     checks_data = Functions.check_data(m='check')
 
     def ttx(tm, lst):
-        lgs = []
+        if lst != []:
+            lgs = [str(sum(lst) // len(lst)), "Warning: "]
+        else:
+            lgs = ['0', "Warning: "]
+
         for i in lst:
-            lgs.append(f'{int(tm) - i}s')
-        return ', '.join(lgs)
+            if int(tm) - i >= 60:
+                lgs.append(f'{int(tm) - i}s')
+
+        return str(lgs)
 
     text = 'STATS\n\n'
     text += f"Memory: {checks_data['memory'][0]}mb\nLast {int(time.time() - checks_data['memory'][1])}s\n\n"
+
     text += f"Incub check: {checks_data['incub'][0]}s\nLast {int(time.time() - checks_data['incub'][1])}s\nUsers: {checks_data['incub'][2]}\n\n"
-    text += f"Notifications check: {'s, '.join(str(i) for i in checks_data['notif'][0])}\nLast {ttx(time.time(), checks_data['notif'][1])}\n\n"
+
+    not_col = str(sum(checks_data['notif'][0]) // len(checks_data['notif'][0]))
+    text += f"Notifications check: {not_col}\nLast {ttx(time.time(), checks_data['notif'][1])}\n\n"
 
     for cls in ['main', 'main_hunt', 'main_game', 'main_sleep', 'main_pass', 'main_journey']:
-        text += f"{cls} check: {'s, '.join(str(i) for i in checks_data[cls][0])}\nLast {ttx(time.time(), checks_data[cls][1])}\nUsers: {str(checks_data[cls][2])}\n\n"
+        time_t = str(sum(checks_data[cls][0]) // len(checks_data['notif'][0]))
+
+        text += f"{cls} check: {time_t}\nLast {ttx(time.time(), checks_data[cls][1])}\nUsers: {len(checks_data[cls][2])}\n\n"
 
     text += f'Thr.count: {threading.active_count()}'
     bot.send_message(user.id, text)
@@ -328,12 +345,10 @@ def command(message):
         print(text)
 
 
-@bot.message_handler(commands=['events'])
+@bot.message_handler(commands=['mobs'])
 def command(message):
 
-    Functions.auto_event("time_year")
-
-    print(Functions.get_event("time_year"))
+    print(Dungeon.random_mobs('mobs', 5, 10))
 
 # =========================================
 
@@ -1255,8 +1270,8 @@ def start_all(bot):
     try:
         Functions.create_logfile()
     except Exception as e:
-        print('Система: Файл логирования не был создан >', e)
-        logging.critical(f'Файл логирования не был создан > {e}')
+        print('Система: При создании файла логгирования произошла ошибка >', e)
+        logging.warning(f'При создании файла логгирования произошла ошибка > {e}')
     
     try:
         Functions.clean_tmp()
