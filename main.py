@@ -222,15 +222,15 @@ def command(message):
 
     def ttx(tm, lst):
         if lst != []:
-            lgs = [str(sum(lst) // len(lst)), "Warning: "]
+            lgs = [str(int(tm) - sum(lst) // len(lst)), "Warning: "]
         else:
             lgs = ['0', "Warning: "]
 
         for i in lst:
-            if int(tm) - i >= 60:
+            if int(tm) - i >= 10:
                 lgs.append(f'{int(tm) - i}s')
 
-        return str(lgs)
+        return ' '.join(lgs)
 
     text = 'STATS\n\n'
     text += f"Memory: {checks_data['memory'][0]}mb\nLast {int(time.time() - checks_data['memory'][1])}s\n\n"
@@ -243,7 +243,7 @@ def command(message):
     for cls in ['main', 'main_hunt', 'main_game', 'main_sleep', 'main_pass', 'main_journey']:
         time_t = str(sum(checks_data[cls][0]) // len(checks_data['notif'][0]))
 
-        text += f"{cls} check: {time_t}\nLast {ttx(time.time(), checks_data[cls][1])}\nUsers: {len(checks_data[cls][2])}\n\n"
+        text += f"{cls} check: {time_t}\nLast {ttx(time.time(), checks_data[cls][1])}\nUsers: {sum(checks_data[cls][2])}\n\n"
 
     text += f'Thr.count: {threading.active_count()}'
     bot.send_message(user.id, text)
@@ -1285,7 +1285,7 @@ def start_all(bot):
         print('Система: Локализация не была загружена >', e)
         logging.warning(f'Локализация не была загружена > {e}')
 
-    if bot.get_me().first_name == config.BOT_NAME or False:
+    if bot.get_me().first_name == config.BOT_NAME or True:
         main_checks.start()  # активация всех проверок и игрового процесса
         thr_notif.start()  # активация уведомлений
         min10_thr.start()  # десяти-минутный чек
