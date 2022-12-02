@@ -4,7 +4,7 @@ import sys
 import time
 
 from fuzzywuzzy import fuzz
-from telebot import types
+from telebot import types, util 
 
 from mods.classes import Dungeon, Functions
 
