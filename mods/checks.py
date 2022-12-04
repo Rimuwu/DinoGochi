@@ -3,8 +3,6 @@ import random
 import sys
 import time
 
-from memory_profiler import memory_usage
-
 from mods.classes import Dungeon, Functions
 
 sys.path.append("..")
@@ -17,11 +15,9 @@ with open('json/items.json', encoding='utf-8') as f: items_f = json.load(f)
 
 with open('json/dino_data.json', encoding='utf-8') as f: json_f = json.load(f)
 
-
 class CheckFunction:
 
     def main(bot, user):
-
         dns_l = list(user['dinos'].keys()).copy()
 
         if len(dns_l) != 0:
@@ -87,6 +83,7 @@ class CheckFunction:
                                 for i in dinos_stats.keys():
                                     if dinos_stats[i] != 0 or bd_user['dinos'][dino_id]['stats'][i] > 100 or \
                                             bd_user['dinos'][dino_id]['stats'][i] < 0:
+
                                         if dinos_stats[i] + bd_user['dinos'][dino_id]['stats'][i] > 100:
                                             users.update_one({"userid": user['userid']},
                                                 {"$set": {f'dinos.{dino_id}.stats.{i}': 100}})
@@ -120,7 +117,6 @@ class CheckFunction:
     def user_journey(bot, user):
         dns_l = list(user['dinos'].keys()).copy()
         lvl_ = 0
-        nn = 0
 
         for dino_id in dns_l:
             dino = user['dinos'][dino_id]
@@ -129,7 +125,6 @@ class CheckFunction:
             if dino['status'] == 'dino':  # дино
 
                 if dino['activ_status'] == 'journey':
-                    nn = 1
 
                     if random.randint(1, 80) == 1:  # unv
                         dinos_stats['unv'] -= random.randint(0, 1)
@@ -663,8 +658,7 @@ class CheckFunction:
                                 unv = random.randint(1, 10)
                                 dinos_stats['unv'] -= unv
 
-                                if Functions.acc_check(bot, user, '29', dino_id, True) == False and random.randint(1,
-                                                                                                                   2) == 1:
+                                if Functions.acc_check(bot, user, '29', dino_id, True) == False and random.randint(1, 2) == 1:
                                     heal = random.randint(1, 5)
                                     dinos_stats['heal'] -= heal
                                     textru = f'\nДинозавр не смог избежать ран, он теряет {heal}% здоровья.'
@@ -751,11 +745,8 @@ class CheckFunction:
                                         users.update_one({"userid": user['userid']},
                                             {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i]}})
 
-        return nn
-
     def user_hunt(bot, user):
         dns_l = list(user['dinos'].keys()).copy()
-        nn = 0
 
         for dino_id in dns_l:
             dino = user['dinos'][dino_id]
@@ -764,7 +755,6 @@ class CheckFunction:
             if dino['status'] == 'dino':  # дино
 
                 if dino['activ_status'] == 'hunting':
-                    nn = 1
 
                     if random.randint(1, 45) == 1:
                         user['lvl'][1] += random.randint(0, 20)
@@ -880,11 +870,8 @@ class CheckFunction:
                                     users.update_one({"userid": user['userid']},
                                         {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i]}})
 
-        return nn
-
     def user_game(bot, user):
         dns_l = list(user['dinos'].keys()).copy()
-        nn = 0
 
         for dino_id in dns_l:
             dino = user['dinos'][dino_id]
@@ -893,7 +880,7 @@ class CheckFunction:
             if dino['status'] == 'dino':  # дино
 
                 if dino['activ_status'] == 'game':
-                    nn = 1
+
 
                     if random.randint(1, 80) == 1:  # unv
                         dinos_stats['unv'] -= random.randint(0, 1)
@@ -915,11 +902,9 @@ class CheckFunction:
                                     users.update_one({"userid": user['userid']},
                                         {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i]}})
 
-        return nn
 
     def user_sleep(bot, user):
         dns_l = list(user['dinos'].keys()).copy()
-        nn = 0
 
         for dino_id in dns_l:
             dino = user['dinos'][dino_id]
@@ -928,7 +913,6 @@ class CheckFunction:
             if dino['status'] == 'dino':  # дино
 
                 if dino['activ_status'] == 'sleep':
-                    nn = 1
 
                     if 'sleep_type' not in user['dinos'][dino_id].keys() or user['dinos'][dino_id][
                         'sleep_type'] == 'long':
@@ -964,11 +948,8 @@ class CheckFunction:
                                     users.update_one({"userid": user['userid']},
                                         {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i]}})
 
-        return nn
-
     def user_pass(user):
         dns_l = list(user['dinos'].keys()).copy()
-        nn = 0
 
         for dino_id in dns_l:
             dino = user['dinos'][dino_id]
@@ -977,7 +958,6 @@ class CheckFunction:
             if dino['status'] == 'dino':  # дино
 
                 if dino['activ_status'] == 'pass_active':
-                    nn = 1
 
                     if user['dinos'][dino_id]['stats']['game'] >= 90:
                         if dino['stats']['mood'] < 100:
@@ -1004,16 +984,13 @@ class CheckFunction:
                                     users.update_one({"userid": user['userid']},
                                         {"$inc": {f'dinos.{dino_id}.stats.{i}': dinos_stats[i]}})
 
-        return nn
 
     def user_incub(bot, user):
         dns_l = list(user['dinos'].keys()).copy()
-        nn = 0
 
         for dino_id in dns_l:
             dino = user['dinos'][dino_id]
             if dino['status'] == 'incubation':  # инкубация
-                nn = 1
 
                 if dino['incubation_time'] - int(time.time()) <= 60 * 5 and dino['incubation_time'] - int(
                         time.time()) > 0:  # уведомление за 5 минут
@@ -1031,8 +1008,6 @@ class CheckFunction:
                     else:
                         Functions.random_dino(user, dino_id)
                     Functions.notifications_manager(bot, "incub", user, dino_id)
-
-        return nn
 
     def user_notif(bot, user):
         dns_l = list(user['dinos'].keys()).copy()
@@ -1273,8 +1248,7 @@ class Checks:
 
 
                     else:
-                        print('WARNING in dead check users, 7 days check\n' + str(error))
-                        print(user['userid'])
+                        Functions.console_message(f"WARNING in dead check users, 7 days check\n{error}\n{user['userid']}", 2)
 
 
             elif notactivity_time >= 172800 and len(user['dinos']) == 0:  # 2 дня не активнсоти
@@ -1303,31 +1277,21 @@ class Checks:
 
 
                         else:
-                            print('WARNING in dead check users, 2 days check\n' + str(error))
-                            print(user['userid'])
 
-    @staticmethod
-    def check_memory():
-
-        Functions.check_data('memory', 0, int(memory_usage()[0]))
-        Functions.check_data('memory', 1, int(time.time()))
+                            Functions.console_message(f"WARNING in dead check users, 2 days check\n{error}\n{user['userid']}", 2)
 
     @staticmethod
     def check_incub(bot):  # проверка каждые 5 секунд
-        nn = 0
+
         t_st = int(time.time())
         members = users.find({'dinos': {'$ne': {}}})
 
         for user in members:
 
             try:
-                nn += CheckFunction.user_incub(bot, user)
+                CheckFunction.user_incub(bot, user)
             except Exception as err:
-                print(f'Error in user_incub\nError: {err}\nUser id: {user["userid"]}')
-
-        Functions.check_data('incub', 0, int(time.time() - t_st))
-        Functions.check_data('incub', 1, int(time.time()))
-        Functions.check_data('incub', 2, nn)
+                Functions.console_message(f'Error in user_incub\nError: {err}\nUser id: {user["userid"]}', 2)
 
     @staticmethod
     def rayt(members):
@@ -1371,116 +1335,73 @@ class Checks:
 
     @staticmethod
     def check_notif(bot, members):
-        nn = 0
-        t_st = int(time.time())
 
         for user in members:
 
             try:
                 CheckFunction.user_notif(bot, user)
-                nn += 1
             except Exception as err:
-                print(f'Error in user_notif\nError: {err}\nUser id: {user["userid"]}')
-
-        Functions.check_data('notif', 0, int(time.time() - t_st))
-        Functions.check_data('notif', 1, int(time.time()))
+                Functions.console_message(f'Error in user_notif\nError: {err}\nUser id: {user["userid"]}', 3)
 
     @staticmethod
     def main_pass(bot, members):
-        nn = 0
-        t_st = int(time.time())
 
         for user in members:
 
             try:
-                nn += CheckFunction.user_pass(user)
+                CheckFunction.user_pass(user)
             except Exception as err:
-                print(f'Error in user_pass\nError: {err}\nUser id: {user["userid"]}')
-
-        Functions.check_data('main_pass', 0, int(time.time() - t_st))
-        Functions.check_data('main_pass', 1, int(time.time()))
-        Functions.check_data('main_pass', 2, nn)
+                Functions.console_message(f'Error in user_pass\nError: {err}\nUser id: {user["userid"]}', 3)
 
     @staticmethod
     def main_sleep(bot, members):
-        nn = 0
-        t_st = int(time.time())
 
         for user in members:
 
             try:
-                nn += CheckFunction.user_sleep(bot, user)
+                CheckFunction.user_sleep(bot, user)
             except Exception as err:
-                print(f'Error in user_sleep\nError: {err}\nUser id: {user["userid"]}')
-
-        Functions.check_data('main_sleep', 0, int(time.time() - t_st))
-        Functions.check_data('main_sleep', 1, int(time.time()))
-        Functions.check_data('main_sleep', 2, nn)
+                Functions.console_message(f'Error in user_sleep\nError: {err}\nUser id: {user["userid"]}', 3)
 
     @staticmethod
     def main_game(bot, members):
-        nn = 0
-        t_st = int(time.time())
 
         for user in members:
 
             try:
-                nn += CheckFunction.user_game(bot, user)
+                CheckFunction.user_game(bot, user)
             except Exception as err:
-                print(f'Error in user_game\nError: {err}\nUser id: {user["userid"]}')
-
-        Functions.check_data('main_game', 0, int(time.time() - t_st))
-        Functions.check_data('main_game', 1, int(time.time()))
-        Functions.check_data('main_game', 2, nn)
+                Functions.console_message(f'Error in user_game\nError: {err}\nUser id: {user["userid"]}', 3)
 
     @staticmethod
     def main_hunting(bot, members):
-        nn = 0
-        t_st = int(time.time())
 
         for user in members:
 
             try:
-                nn += CheckFunction.user_hunt(bot, user)
+                CheckFunction.user_hunt(bot, user)
             except Exception as err:
-                print(f'Error in user_hunt\nError: {err}\nUser id: {user["userid"]}')
-
-        Functions.check_data('main_hunt', 0, int(time.time() - t_st))
-        Functions.check_data('main_hunt', 1, int(time.time()))
-        Functions.check_data('main_hunt', 2, nn)
+                Functions.console_message(f'Error in user_hunt\nError: {err}\nUser id: {user["userid"]}', 3)
 
     @staticmethod
     def main_journey(bot, members):
-        nn = 0
-        t_st = int(time.time())
 
         for user in members:
 
             try:
-                nn += CheckFunction.user_journey(bot, user)
+                CheckFunction.user_journey(bot, user)
             except Exception as err:
-                print(f'Error in user_journey\nError: {err}\nUser id: {user["userid"]}')
-
-        Functions.check_data('main_journey', 0, int(time.time() - t_st))
-        Functions.check_data('main_journey', 1, int(time.time()))
-        Functions.check_data('main_journey', 2, nn)
+                Functions.console_message(f'Error in user_journey\nError: {err}\nUser id: {user["userid"]}', 3)
 
     @staticmethod
     def main(bot, members):
-        nn = 0
-        t_st = int(time.time())
 
         for user in members:
 
             try:
                 CheckFunction.main(bot, user)
-                nn += 1
             except Exception as err:
-                print(f'Error in main\nError: {err}\nUser id: {user["userid"]}')
-
-        Functions.check_data('main', 0, int(time.time() - t_st))
-        Functions.check_data('main', 1, int(time.time()))
-        Functions.check_data('main', 2, nn)
+                Functions.console_message(f'Error in MAIN\nError: {err}\nUser id: {user["userid"]}', 3)
     
     @staticmethod
     def events(bot):
@@ -1488,7 +1409,7 @@ class Checks:
         try:
             CheckFunction.events(bot)
         except Exception as err:
-            print(f'Error in events\nError: {err}')
+            Functions.console_message(f'Error in events\nError: {err}', 3)
 
     @staticmethod
     def dungeons_check(bot):
