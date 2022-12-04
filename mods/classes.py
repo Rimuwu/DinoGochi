@@ -5,6 +5,7 @@ import os
 import random
 import sys
 import time
+import psutil
 
 import telebot
 from fuzzywuzzy import fuzz
@@ -29,19 +30,40 @@ with open('json/quests_data.json', encoding='utf-8') as f: quests_f = json.load(
 
 with open('json/settings.json', encoding='utf-8') as f: settings_f = json.load(f)
 
-checks_data = {'memory': [0, time.time()],
-               'incub': [0, time.time(), 0],
-               'notif': [[], []],  'main': [[], [], []],
-               'main_hunt': [[], [], []], 'main_game': [[], [], []], 'main_sleep': [[], [], []],
-               'main_pass': [[], [], []], 'main_journey': [[], [], []], 
-               'col': 0}
 reyt_ = [[], [], {}]
 users_timeout = {}
 callback_timeout = {}
 languages = {}
 
-
 class Functions:
+
+    def cpu():
+        pid = psutil.Process()
+        cpu_count = psutil.cpu_count(logical=True) // 1.5
+
+        for i in range(0, 10):
+            print(pid.cpu_percent(interval=1.0) // cpu_count)
+
+    def console_message(message, lvl=1):
+        """
+        LVL: \n
+        1 - info\n
+        2 - warning\n
+        3 - error\n
+        4 - critical
+        """
+
+        print(f"{time.strftime('%Y %m-%d %H.%M.%S')} Бот: {message}")
+
+        if lvl == 1:
+            logging.info(message)
+        elif lvl == 2:
+            logging.warning(message)
+        elif lvl == 3:
+            logging.error(message)
+        else:
+            logging.critical(message)
+
 
     def insert_user(user):
         global languages
@@ -55,7 +77,6 @@ class Functions:
 
             'userid': user.id,
             'last_m': int(time.time()),
-            'create_acc': int(time.time()),
             'dead_dinos': 0,
             'dinos': {}, 'eggs': [],
             'notifications': {},
@@ -76,19 +97,16 @@ class Functions:
                         }
         })
 
-    @staticmethod
     def trans_paste(fg_img, bg_img, alpha=10, box=(0, 0)):
         fg_img_trans = Image.new("RGBA", fg_img.size)
         fg_img_trans = Image.blend(fg_img_trans, fg_img, alpha)
         bg_img.paste(fg_img_trans, box, fg_img_trans)
         return bg_img
 
-    @staticmethod
     def chunks(lst, n):
         for i in range(0, len(lst), n):
             yield lst[i:i + n]
 
-    @staticmethod
     def inline_markup(bot, element=None, user=None, inp_text: list = [None, None], arg=None):
 
         markup_inline = types.InlineKeyboardMarkup()
@@ -175,7 +193,6 @@ class Functions:
 
         return markup_inline
 
-    @staticmethod
     def markup(bot, element=1, user=None, inp_text: list = [None, None], bd_user=None):
 
         try:  # ошибка связанная с Int64 при попытке поставить обычную проверку
@@ -601,7 +618,6 @@ class Functions:
         users.update_one({"userid": userid}, {"$set": {f'settings.last_markup': element}})
         return markup
 
-    @staticmethod
     def time_end(seconds: int, mini=False):
 
         if seconds < 0: seconds = 0
@@ -712,7 +728,6 @@ class Functions:
         else:
             return f"{mm} {ending_w('месяц', mm, mini)}, {w} {ending_w('неделя', w, mini)}, {d} {ending_w('день', d, mini)}, {h} {ending_w('час', h, mini)}, {m} {ending_w('минута', m, mini)}, {s} {ending_w('секунда', s, mini)}"
 
-    @staticmethod
     def dino_pre_answer(user, type:str='all'):
         id_dino = {}
         bd_user = users.find_one({"userid": user.id})
@@ -747,7 +762,6 @@ class Functions:
 
             return 3, [rmk, text, id_dino]
 
-    @staticmethod
     def user_dino_pn(user):
         if len(user['dinos'].keys()) == 0:
             return '1'
@@ -760,7 +774,6 @@ class Functions:
                     pass
             return str(max(id_list) + 1)
 
-    @staticmethod
     def random_dino(user, dino_id_remove, quality=None):
         if quality == None or quality == 'random':
             r_q = random.randint(1, 10000)
@@ -798,7 +811,6 @@ class Functions:
 
         users.update_one({"userid": user['userid']}, {"$set": {'dinos': user['dinos']}})
 
-    @staticmethod
     def notifications_manager(bot, notification, user, arg=None, dino_id='1', met='send'):
 
         if met == 'delete':
@@ -1182,28 +1194,6 @@ class Functions:
                     except:
                         pass
 
-    @staticmethod
-    def check_data(t=None, ind=None, zn=None, m='ncheck'):
-        global checks_data
-
-        if m == 'check':
-            return checks_data
-
-        if t not in ['memory', 'incub', 'col_main', 'col_notif', 'col']:
-            if len(checks_data[t][ind]) >= checks_data['col']:
-                checks_data[t][ind] = []
-
-        if m != 'check':
-            if t in ['memory', 'incub']:
-                checks_data[t][ind] = zn
-
-            elif t not in ['col', 'memory']:
-                checks_data[t][ind].append(zn)
-
-            else:
-                checks_data[t] = zn
-
-    @staticmethod
     def inv_egg(user):
 
         for i in user['inventory']:
@@ -1212,7 +1202,6 @@ class Functions:
 
         return False
 
-    @staticmethod
     def random_items(rand_d: dict):
 
         '''
@@ -1240,7 +1229,6 @@ class Functions:
         # random.shuffle(items)
         return random.choice(items)
 
-    @staticmethod
     def sort_items_col(nls_i: list, lg, col_display=True):
         dct = {}
         nl = []
@@ -1262,7 +1250,6 @@ class Functions:
 
         return nl
 
-    @staticmethod
     def item_info(us_item, lg, mark: bool = True):
 
         def sort_materials(nls_i: list, lg):
@@ -1662,7 +1649,6 @@ class Functions:
         else:
             return text, image
 
-    @staticmethod
     def exchange(bot, message, user_item, bd_user, user):
 
         def zero(message, user_item, bd_user):
@@ -2159,7 +2145,6 @@ class Functions:
 
         return text
 
-    @staticmethod
     def rayt_update(met="save", lst_save=None):
         global reyt_
 
@@ -2169,7 +2154,6 @@ class Functions:
         if met == 'check':
             return reyt_
 
-    @staticmethod
     def get_dict_item(item_id: str, preabil: dict = None):
 
         item = items_f['items'][item_id]
@@ -2199,7 +2183,7 @@ class Functions:
 
         return d_it
 
-    @staticmethod
+
     def add_item_to_user(user: dict, item_id: str, col: int = 1, type: str = 'add', preabil: dict = None):
 
         d_it = Functions.get_dict_item(item_id, preabil)
@@ -2217,7 +2201,6 @@ class Functions:
 
             return ret_d
 
-    @staticmethod
     def item_authenticity(item: dict):
         item_data = items_f['items'][item['item_id']]
         if list(item.keys()) == ['item_id']:
@@ -2232,7 +2215,6 @@ class Functions:
             else:
                 return True
 
-    @staticmethod
     def qr_item_code(item: dict, v_id: bool = True):
         if v_id == True:
             text = f"i{item['item_id']}"
@@ -2275,7 +2257,6 @@ class Functions:
 
         return text
 
-    @staticmethod
     def des_qr(it_qr: str, i_type: bool = False):
         l_data = {}
         ind = 0
@@ -2583,7 +2564,6 @@ class Functions:
 
             work_pr(message, page=page)
 
-    @staticmethod
     def user_requests(bot, user, message):
 
         bd_user = users.find_one({"userid": user.id})
@@ -2756,7 +2736,6 @@ class Functions:
 
                 work_pr(message, id_friends)
 
-    @staticmethod
     def acc_check(bot, user, item_id: str, dino_id, endurance=False):
 
         data_item = items_f['items'][item_id]
@@ -2791,7 +2770,6 @@ class Functions:
         else:
             return False
 
-    @staticmethod
     def last_markup(bd_user, alternative=1):
 
         if 'last_markup' not in bd_user['settings'].keys():
@@ -2800,7 +2778,6 @@ class Functions:
         else:
             return bd_user['settings']['last_markup']
 
-    @staticmethod
     def p_profile(bot, message, bd_dino, user, bd_user, dino_user_id):
 
         text_dict = Functions.get_text(
@@ -3100,7 +3077,6 @@ class Functions:
                     type='photo', media=profile, parse_mode='Markdown', caption=text)
                 )
 
-    @staticmethod
     def journey_end_log(bot, user_id, dino_id):
         bd_user = users.find_one({"userid": user_id})
         dino_name = bd_user["dinos"][dino_id]["name"]
@@ -3130,7 +3106,6 @@ class Functions:
             for m in messages:
                 bot.send_message(user_id, m, parse_mode='Markdown')
 
-    @staticmethod
     def items_counting(user, item_type):
         data_items = items_f['items']
         count = 0
@@ -3141,7 +3116,6 @@ class Functions:
 
         return count
 
-    @staticmethod
     def spam_stop(user_id, sec=0.5):
         global users_timeout
 
@@ -3158,7 +3132,6 @@ class Functions:
             users_timeout[str(user_id)] = time.time()
             return True
 
-    @staticmethod
     def callback_spam_stop(user_id, sec=0.5):
         global callback_timeout
 
@@ -3175,7 +3148,6 @@ class Functions:
             callback_timeout[str(user_id)] = time.time()
             return True
 
-    @staticmethod
     def dino_q(bd_user):
 
         for i in bd_user['dinos']:
@@ -3204,7 +3176,6 @@ class Functions:
 
     #     bot.send_message(userid, text, reply_markup = Functions.markup(bot, "dungeon_menu", int(u_k) ))
 
-    @staticmethod
     def rand_d(rd: dict):
         # random_dict dict_random random_dict_items
 
@@ -3239,7 +3210,6 @@ class Functions:
         else:
             return rd
 
-    @staticmethod
     def inventory_pages(bd_user:dict, i_filter_type:str='all', i_filter:list=None):
 
         data_items = items_f['items']
@@ -3308,7 +3278,6 @@ class Functions:
 
         return pages, page, items_data, items_names, row_width
 
-    @staticmethod
     def tr_c_f(bd_user):
 
         tr_c = False
@@ -3323,7 +3292,6 @@ class Functions:
 
         return tr_c
 
-    @staticmethod
     def lst_m_f(bd_user):
 
         if bd_user != None:
@@ -3349,8 +3317,7 @@ class Functions:
             for l_key in languages_f.keys():
                 languages[l_key] = languages_f[l_key]
 
-        print(f"Система: Загружено {len(languages.keys())} файла(ов) локализации.")
-        logging.info(f"Загружено {len(languages.keys())} файла(ов) локализации.")
+        Functions.console_message(f"Загружено {len(languages.keys())} файла(ов) локализации.", 1)
 
     def get_all_text_from_lkey(lkey: str):
         global languages
@@ -6895,86 +6862,91 @@ class Dungeon:
 
             if room['battle_type'] == 'mobs':
                 if dung['floor'][str(room_n)]['next_room'] == False:
-                    mob = dung['floor'][str(room_n)]['mobs'][0]
-                    data_mob = mobs_f['mobs'][mob['mob_key']]
-                    inline_type = 'battle'
 
-                    if dung['settings']['lang'] == 'ru':
-                        text += (
-                            f"\n\n⚔ | Схватка: \n"
-                            f"        └ Врагов: {len(dung['floor'][str(room_n)]['mobs'])}"
-                            f"\n\n😈 | Текущий враг: {data_mob['name'][dung['settings']['lang']]}"
-                            f"\n❤ | Здоровье: {mob['hp']} / {mob['maxhp']} ({round((mob['hp'] / mob['maxhp']) * 100, 2)}%)"
-                        )
-
-                    else:
-                        text += (
-                            f"\n\n⚔ | The fight: \n"
-                            f"        └ Enemies: {len(dung['floor'][str(room_n)]['mobs'])}"
-                            f"\n\n😈 | Current enemy: {data_mob['name'][dung['settings']['lang']]}"
-                            f"\n❤ | Health: {mob['hp']} / {mob['maxhp']} ({round((mob['hp'] / mob['maxhp']) * 100, 2)}%)"
-                        )
-
-                    if data_mob['damage-type'] == 'magic':
+                    if len(dung['floor'][str(room_n)]['mobs']) > 1:
+                        mob = dung['floor'][str(room_n)]['mobs'][0]
+                        data_mob = mobs_f['mobs'][mob['mob_key']]
+                        inline_type = 'battle'
 
                         if dung['settings']['lang'] == 'ru':
-                            text += f"\n🌌 | Мана: {mob['mana']} / {mob['maxmana']} ({round((mob['mana'] / mob['maxmana']) * 100, 2)}%)"
+                            text += (
+                                f"\n\n⚔ | Схватка: \n"
+                                f"        └ Врагов: {len(dung['floor'][str(room_n)]['mobs'])}"
+                                f"\n\n😈 | Текущий враг: {data_mob['name'][dung['settings']['lang']]}"
+                                f"\n❤ | Здоровье: {mob['hp']} / {mob['maxhp']} ({round((mob['hp'] / mob['maxhp']) * 100, 2)}%)"
+                            )
 
                         else:
-                            text += f"\n🌌 | Mana: {mob['mana']} / {mob['maxmana']} ({round((mob['mana'] / mob['maxmana']) * 100, 2)}%)"
+                            text += (
+                                f"\n\n⚔ | The fight: \n"
+                                f"        └ Enemies: {len(dung['floor'][str(room_n)]['mobs'])}"
+                                f"\n\n😈 | Current enemy: {data_mob['name'][dung['settings']['lang']]}"
+                                f"\n❤ | Health: {mob['hp']} / {mob['maxhp']} ({round((mob['hp'] / mob['maxhp']) * 100, 2)}%)"
+                            )
 
-                    u_n = 0
-                    users_text = '\n\n'
-                    pl_move = dung['stage_data']['game']['player_move'][0]
-                    for k in dung['users'].keys():
+                        if data_mob['damage-type'] == 'magic':
 
-                        if k == pl_move:
-                            r_e = ' ⬅'
+                            if dung['settings']['lang'] == 'ru':
+                                text += f"\n🌌 | Мана: {mob['mana']} / {mob['maxmana']} ({round((mob['mana'] / mob['maxmana']) * 100, 2)}%)"
 
+                            else:
+                                text += f"\n🌌 | Mana: {mob['mana']} / {mob['maxmana']} ({round((mob['mana'] / mob['maxmana']) * 100, 2)}%)"
+
+                        u_n = 0
+                        users_text = '\n\n'
+                        pl_move = dung['stage_data']['game']['player_move'][0]
+                        for k in dung['users'].keys():
+
+                            if k == pl_move:
+                                r_e = ' ⬅'
+
+                            else:
+                                r_e = ' ⛔'
+
+                            u_n += 1
+                            username = bot.get_chat(int(k)).first_name
+                            users_text += f'{u_n}. {username} {r_e}\n'
+
+                        if dung['settings']['lang'] == 'ru':
+                            move_text = f'\n🛡⚔ | {bot.get_chat(int(pl_move)).first_name}, выберите действие для динозавров, а после завершите ход! Если вы хотите пропустить ход, просто не выбирайте действия.'
                         else:
-                            r_e = ' ⛔'
+                            move_text = f"\n🛡⚔ | {bot.get_chat(int(pl_move)).first_name} choose an action for the dinosaurs, and then complete the move! If you want to skip a move, just don't choose actions."
 
-                        u_n += 1
-                        username = bot.get_chat(int(k)).first_name
-                        users_text += f'{u_n}. {username} {r_e}\n'
+                        dino_text = '\n\n'
 
-                    if dung['settings']['lang'] == 'ru':
-                        move_text = f'\n🛡⚔ | {bot.get_chat(int(pl_move)).first_name}, выберите действие для динозавров, а после завершите ход! Если вы хотите пропустить ход, просто не выбирайте действия.'
+                        at_action = 0
+                        df_action = 0
+                        nn_action = 0
+
+                        for dn_id in dung['users'][pl_move]['dinos'].keys():
+                            dn = dung['users'][pl_move]['dinos'][dn_id]
+
+                            if 'action' not in dn.keys():
+                                nn_action += 1
+
+                            else:
+                                if dn['action'] == 'attack':
+                                    at_action += 1
+
+                                if dn['action'] == 'defend':
+                                    df_action += 1
+
+                        if dung['settings']['lang'] == 'ru':
+                            dino_text += f'🦕 | Действия: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
+                        else:
+                            dino_text += f'🦕 | Actions: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
+
+                        text += users_text
+                        text += move_text
+                        text += dino_text
+
+                        if image_update == True:
+                            Dungeon.generate_battle_image(image, mob, dungeonid)
+
+                            image = f'{config.TEMP_DIRECTION}/battle {dungeonid}.png'
+                    
                     else:
-                        move_text = f"\n🛡⚔ | {bot.get_chat(int(pl_move)).first_name} choose an action for the dinosaurs, and then complete the move! If you want to skip a move, just don't choose actions."
-
-                    dino_text = '\n\n'
-
-                    at_action = 0
-                    df_action = 0
-                    nn_action = 0
-
-                    for dn_id in dung['users'][pl_move]['dinos'].keys():
-                        dn = dung['users'][pl_move]['dinos'][dn_id]
-
-                        if 'action' not in dn.keys():
-                            nn_action += 1
-
-                        else:
-                            if dn['action'] == 'attack':
-                                at_action += 1
-
-                            if dn['action'] == 'defend':
-                                df_action += 1
-
-                    if dung['settings']['lang'] == 'ru':
-                        dino_text += f'🦕 | Действия: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
-                    else:
-                        dino_text += f'🦕 | Actions: ⚔{at_action} 🛡{df_action} ❌{nn_action}'
-
-                    text += users_text
-                    text += move_text
-                    text += dino_text
-
-                    if image_update == True:
-                        ok = Dungeon.generate_battle_image(image, mob, dungeonid)
-
-                        image = f'{config.TEMP_DIRECTION}/battle {dungeonid}.png'
+                        dung['floor'][str(room_n)]['next_room'] = True
 
                 if dung['floor'][str(room_n)]['next_room'] == True:
                     inline_type = 'battle'
