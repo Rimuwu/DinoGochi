@@ -6,6 +6,7 @@ import time
 
 import telebot
 from memory_profiler import memory_usage
+import psutil
 from telebot import types
 
 import config
@@ -92,15 +93,15 @@ def check():  # проверка каждые 10 секунд
     while True:
         if int(memory_usage()[0]) < 1500:
             st_r_time = int(time.time())
-            non_members = users.find({})
-            chunks_users = list(Functions.chunks(list(non_members), 50))
+
+            uss = users.find({ "dinos": {'$ne': {}} }) #получает юзеров у которых есть динозавры 
+            chunks_users = list(Functions.chunks(list(non_members), 100)) #делит в списки по 100 человек
+
             sl_time = 10 - (int(time.time()) - st_r_time)
-            Functions.check_data('col', None, int(len(chunks_users)))
 
             if sl_time < 0:
                 sl_time = 0
-                print(f'WARNING: sleep time: {sl_time}, time sleep skip to {sl_time}')
-                logging.warning(f'sleep time: {sl_time}, time sleep skip to {sl_time}')
+                Functions.console_message(f"sleep time: {sl_time}, time sleep skip to {sl_time}", 2)
 
             for members in chunks_users:
                 threading.Thread(target=alpha, daemon=True, kwargs={'bot': bot, 'members': members}).start()
@@ -111,8 +112,7 @@ def check():  # проверка каждые 10 секунд
                 threading.Thread(target=delta, daemon=True, kwargs={'bot': bot, 'members': members}).start()
 
         else:
-            print(f'Использование памяти: {int(memory_usage()[0])}')
-            logging.warning(f'Использование памяти: {int(memory_usage()[0])}')
+            Functions.console_message(f"Использование памяти: {int(memory_usage()[0])}", 2)
 
         time.sleep(sl_time)
 
@@ -122,33 +122,25 @@ main_checks = threading.Thread(target=check, daemon=True)
 
 def check_notif():  # проверка каждые 5 секунд
 
-    time.sleep(1) # запуск спустя 2 секунды, для разбиения нагрузки
-
     def alpha(bot, members):
         Checks.check_notif(bot, members)
 
     def beta(bot):
         Checks.check_incub(bot)
 
-    def memory():
-        Checks.check_memory()
-
     while True:
 
-        if int(memory_usage()[0]) < 1500:
+        if int(memory_usage()[0]) < 7500:
             non_members = users.find({})
-            chunks_users = list(Functions.chunks(list(non_members), 50))
+            chunks_users = list(Functions.chunks(list(non_members), 100))
 
             for members in chunks_users:
                 threading.Thread(target=alpha, daemon=True, kwargs={'bot': bot, 'members': members}).start()
 
             threading.Thread(target=beta, daemon=True, kwargs={'bot': bot}).start()
 
-            threading.Thread(target=memory, daemon=True).start()
-
         else:
-            print(f'Использование памяти: {int(memory_usage()[0])}')
-            logging.warning(f'Использование памяти: {int(memory_usage()[0])}')
+            Functions.console_message(f"Использование памяти: {int(memory_usage()[0])}", 2)
 
         time.sleep(5)
 
@@ -172,7 +164,7 @@ def min10_check():  # проверка каждые 10 мин
 
     while True:
 
-        if int(memory_usage()[0]) < 1500:
+        if int(memory_usage()[0]) < 7500:
             uss = users.find({})
             threading.Thread(target=alpha, daemon=True, kwargs={'users': uss}).start()
 
@@ -183,8 +175,7 @@ def min10_check():  # проверка каждые 10 мин
             threading.Thread(target=events_check, daemon=True, kwargs={'bot': bot}).start()
 
         else:
-            print(f'Использование памяти: {int(memory_usage()[0])}')
-            logging.warning(f'Использование памяти: {int(memory_usage()[0])}')
+            Functions.console_message(f"Использование памяти: {int(memory_usage()[0])}", 2)
 
         time.sleep(600)
 
@@ -194,58 +185,31 @@ min10_thr = threading.Thread(target=min10_check, daemon=True)
 
 def min1_check():  # проверка каждую минуту
 
-    time.sleep(3) # запуск спустя 2 секунды, для разбиения нагрузки
-
     def alpha(bot):
         Checks.quests(bot)
 
     while True:
         time.sleep(60)
 
-        if int(memory_usage()[0]) < 1500:
+        if int(memory_usage()[0]) < 7500:
 
             if bot.get_me().first_name == config.BOT_NAME:
                 threading.Thread(target=alpha, daemon=True, kwargs={'bot': bot}).start()
 
         else:
-            print(f'Использование памяти: {int(memory_usage()[0])}')
-            logging.warning(f'Использование памяти: {int(memory_usage()[0])}')
+            Functions.console_message(f"Использование памяти: {int(memory_usage()[0])}", 2)
 
 
 min1_thr = threading.Thread(target=min1_check, daemon=True)
 
-
 @bot.message_handler(commands=['stats'])
 def command(message):
     user = message.from_user
-    checks_data = Functions.check_data(m='check')
 
-    def ttx(tm, lst):
-        if lst != []:
-            lgs = [str(int(tm) - sum(lst) // len(lst)), "Warning: "]
-        else:
-            lgs = ['0', "Warning: "]
+    pid = psutil.Process()
+    cpu_count = psutil.cpu_count(logical=True)
 
-        for i in lst:
-            if int(tm) - i >= 10:
-                lgs.append(f'{int(tm) - i}s')
-
-        return ' '.join(lgs)
-
-    text = 'STATS\n\n'
-    text += f"Memory: {checks_data['memory'][0]}mb\nLast {int(time.time() - checks_data['memory'][1])}s\n\n"
-
-    text += f"Incub check: {checks_data['incub'][0]}s\nLast {int(time.time() - checks_data['incub'][1])}s\nUsers: {checks_data['incub'][2]}\n\n"
-
-    not_col = str(sum(checks_data['notif'][0]) // len(checks_data['notif'][0]))
-    text += f"Notifications check: {not_col}\nLast {ttx(time.time(), checks_data['notif'][1])}\n\n"
-
-    for cls in ['main', 'main_hunt', 'main_game', 'main_sleep', 'main_pass', 'main_journey']:
-        time_t = str(sum(checks_data[cls][0]) // len(checks_data['notif'][0]))
-
-        text += f"{cls} check: {time_t}\nLast {ttx(time.time(), checks_data[cls][1])}\nUsers: {sum(checks_data[cls][2])}\n\n"
-
-    text += f'Thr.count: {threading.active_count()}'
+    text = f"Memory {int(memory_usage()[0])}, CPU: {pid.cpu_percent(interval=1.0) // cpu_count}"
     bot.send_message(user.id, text)
 
 
@@ -1270,20 +1234,17 @@ def start_all(bot):
     try:
         Functions.create_logfile()
     except Exception as e:
-        print('Система: При создании файла логгирования произошла ошибка >', e)
-        logging.warning(f'При создании файла логгирования произошла ошибка > {e}')
+        Functions.console_message(f"При создании файла логгирования произошла ошибка > {e}", 3)
     
     try:
         Functions.clean_tmp()
     except Exception as e:
-        print('Система: Временные изображения не были очищены >', e)
-        logging.warning(f'Временные изображения не были очищены > {e}')
+        Functions.console_message(f"Система: Временные изображения не были очищены > {e}", 2)
     
     try:
         Functions.load_languages()
     except Exception as e:
-        print('Система: Локализация не была загружена >', e)
-        logging.warning(f'Локализация не была загружена > {e}')
+        Functions.console_message(f"Локализация не была загружена > {e}", 2)
 
     if bot.get_me().first_name == config.BOT_NAME or True:
         main_checks.start()  # активация всех проверок и игрового процесса
@@ -1291,23 +1252,19 @@ def start_all(bot):
         min10_thr.start()  # десяти-минутный чек
         min1_thr.start()  # 1-мин чек
 
-        print('Система: Жизненный процессы запущены')
-        logging.info('Жизненный процессы запущены')
+        Functions.console_message(f"Жизненный процессы запущены", 1)
 
     else:
-        print('Система: Жизненные процессы не запущены')
-        logging.warning('Жизненные процессы не запущены')
+        Functions.console_message(f"Жизненный процессы не запущены", 2)
 
     try:
         bot.add_custom_filter(SpamStop())
         bot.add_custom_filter(WC())
         bot.add_custom_filter(In_Dungeon())
     except Exception as e:
-        print('Система: Фильтры не были определены >', e)
-        logging.error(f'Фильтры не были определены > {e}')
+        Functions.console_message(f"Фильтры не были определены > {e}", 4)
 
-    print(f'Система: Бот {bot.get_me().first_name} запущен!')
-    logging.info(f'Бот {bot.get_me().first_name} запущен!')
+    Functions.console_message(f"Бот {bot.get_me().first_name} запущен!", 1)
 
     bot.infinity_polling(skip_pending=False, timeout=600)
 
