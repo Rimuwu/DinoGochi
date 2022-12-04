@@ -91,28 +91,27 @@ def check():  # проверка каждые 10 секунд
         Checks.main_journey(bot, members)
 
     while True:
-        if int(memory_usage()[0]) < 1500:
-            st_r_time = int(time.time())
+        st_r_time = int(time.time())
 
-            uss = users.find({ "dinos": {'$ne': {}} }) #получает юзеров у которых есть динозавры 
-            chunks_users = list(Functions.chunks(list(non_members), 100)) #делит в списки по 100 человек
+        non_members = users.find({ "dinos": {'$ne': {}} }) #получает юзеров у которых есть динозавры 
+        ll = len(list(non_members))
 
-            sl_time = 10 - (int(time.time()) - st_r_time)
+        chunks_users = list(Functions.chunks(list(non_members), ll // 10)) #делит в списки по 100 человек
 
-            if sl_time < 0:
-                sl_time = 0
-                Functions.console_message(f"sleep time: {sl_time}, time sleep skip to {sl_time}", 2)
+        for members in chunks_users:
+            threading.Thread(target=alpha, daemon=True, kwargs={'bot': bot, 'members': members}).start()
+            threading.Thread(target=beta, daemon=True, kwargs={'bot': bot, 'members': members}).start()
+            threading.Thread(target=beta2, daemon=True, kwargs={'bot': bot, 'members': members}).start()
+            threading.Thread(target=gamma, daemon=True, kwargs={'bot': bot, 'members': members}).start()
+            threading.Thread(target=gamma2, daemon=True, kwargs={'bot': bot, 'members': members}).start()
+            threading.Thread(target=delta, daemon=True, kwargs={'bot': bot, 'members': members}).start()
 
-            for members in chunks_users:
-                threading.Thread(target=alpha, daemon=True, kwargs={'bot': bot, 'members': members}).start()
-                threading.Thread(target=beta, daemon=True, kwargs={'bot': bot, 'members': members}).start()
-                threading.Thread(target=beta2, daemon=True, kwargs={'bot': bot, 'members': members}).start()
-                threading.Thread(target=gamma, daemon=True, kwargs={'bot': bot, 'members': members}).start()
-                threading.Thread(target=gamma2, daemon=True, kwargs={'bot': bot, 'members': members}).start()
-                threading.Thread(target=delta, daemon=True, kwargs={'bot': bot, 'members': members}).start()
-
-        else:
-            Functions.console_message(f"Использование памяти: {int(memory_usage()[0])}", 2)
+            time.sleep(0.1)
+        
+        sl_time = 10 - (int(time.time()) - st_r_time)
+        if sl_time < 0:
+            sl_time = 0
+            Functions.console_message(f"sleep time: {sl_time}, time sleep skip to {sl_time}", 2)
 
         time.sleep(sl_time)
 
@@ -207,7 +206,7 @@ def command(message):
     user = message.from_user
 
     pid = psutil.Process()
-    cpu_count = psutil.cpu_count(logical=True)
+    cpu_count = psutil.cpu_count(logical=True) // 1.5
 
     text = f"Memory {int(memory_usage()[0])}, CPU: {pid.cpu_percent(interval=1.0) // cpu_count}"
     bot.send_message(user.id, text)
@@ -1246,7 +1245,7 @@ def start_all(bot):
     except Exception as e:
         Functions.console_message(f"Локализация не была загружена > {e}", 2)
 
-    if bot.get_me().first_name == config.BOT_NAME or True:
+    if bot.get_me().first_name == config.BOT_NAME or False:
         main_checks.start()  # активация всех проверок и игрового процесса
         thr_notif.start()  # активация уведомлений
         min10_thr.start()  # десяти-минутный чек
