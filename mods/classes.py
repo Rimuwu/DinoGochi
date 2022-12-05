@@ -11,6 +11,7 @@ import telebot
 from fuzzywuzzy import fuzz
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from telebot import types
+from colorama import Fore, Back, Style
 
 sys.path.append("..")
 import config
@@ -37,13 +38,6 @@ languages = {}
 
 class Functions:
 
-    def cpu():
-        pid = psutil.Process()
-        cpu_count = psutil.cpu_count(logical=True) // 1.5
-
-        for i in range(0, 10):
-            print(pid.cpu_percent(interval=1.0) // cpu_count)
-
     def console_message(message, lvl=1):
         """
         LVL: \n
@@ -53,17 +47,18 @@ class Functions:
         4 - critical
         """
 
-        print(f"{time.strftime('%Y %m-%d %H.%M.%S')} Бот: {message}")
-
         if lvl == 1:
             logging.info(message)
+            print(Fore.GREEN + f"{time.strftime('%Y %m-%d %H.%M.%S')} Бот: {message}" + Style.RESET_ALL)
         elif lvl == 2:
             logging.warning(message)
+            print(Fore.BLUE + f"{time.strftime('%Y %m-%d %H.%M.%S')} Бот: {message}" + Style.RESET_ALL)
         elif lvl == 3:
             logging.error(message)
+            print(Fore.YELLOW + f"{time.strftime('%Y %m-%d %H.%M.%S')} Бот: {message}" + Style.RESET_ALL)
         else:
             logging.critical(message)
-
+            print(Fore.RED + f"{time.strftime('%Y %m-%d %H.%M.%S')} Бот: {message}" + Style.RESET_ALL)
 
     def insert_user(user):
         global languages
@@ -3852,6 +3847,9 @@ class Functions:
                         ok = False
                         n_mat.append(i['item'])
 
+                        if len(n_mat) >= 50:
+                            break
+
             if ok == True and end_ok == True:
 
                 iname = Functions.item_name(user_item['item_id'], data_user['language_code'])
@@ -4587,20 +4585,28 @@ class Dungeon:
 
     def random_mobs(mobs_type: str, floor_lvl: int, count: int = 1):
         ret_list = []
+        if count <= 0: count = 1
 
-        if mobs_type == 'mobs':
-            mobs_data = mobs_f['mobs']
+        mobs_data = mobs_f[mobs_type]
+        mobs_keys = []
 
-            mobs_keys = list(mobs_data.keys())
-            random.shuffle(mobs_keys)
+        for m_key in mobs_data:
+            mob = mobs_data[m_key]
 
+            if mob['lvls']['min'] <= floor_lvl <= mob['lvls']['max']:
+                mobs_keys.append(m_key)
+
+        if len(mobs_keys) == 0:
+            return ret_list
+
+        else:
             while len(ret_list) != count:
                 random.shuffle(mobs_keys)
 
                 mob_key = mobs_keys[0]
                 mob = mobs_data[mob_key]
 
-                if mob['lvls']['min'] <= floor_lvl and floor_lvl <= mob['lvls']['max']:
+                if mob['lvls']['min'] <= floor_lvl <= mob['lvls']['max']:
 
                     mob_data = {'mob_key': mob_key, 'effects': []}
 
@@ -4626,45 +4632,6 @@ class Dungeon:
                     ret_list.append(mob_data)
 
             return ret_list
-
-        elif mobs_type == 'boss':
-            boss_data = mobs_f['boss']
-
-            boss_keys = list(boss_data.keys())
-            random.shuffle(boss_keys)
-
-            boss_key = boss_keys[0]
-            boss = boss_data[boss_key]
-
-            if boss['lvls']['min'] >= floor_lvl or floor_lvl <= boss['lvls']['max']:
-
-                boss_data = {'mob_key': boss_key}
-
-                l_k = ['hp', 'damage', 'intelligence']
-
-                if boss['damage-type'] == 'magic':
-                    l_k.append('mana')
-
-                elif boss['damage-type'] == 'near':
-                    l_k.append('endurance')
-
-                elif boss['damage-type'] == 'far':
-                    l_k.append('ammunition')
-
-                for i in l_k:
-
-                    boss_data[i] = Functions.rand_d(boss[i])
-
-                    if i in ['hp', 'mana']:
-                        boss_data[f"max{i}"] = boss_data[i]
-
-                boss_data[f"activ_effects"] = []
-
-            return boss_data
-
-        else:
-            print('random_mobs - mobs_type error')
-            return []
 
     def base_upd(userid=None, messageid=None, dinosid=[], dungeonid=None, type=None, kwargs={}):
 
@@ -7691,21 +7658,17 @@ class Dungeon:
             met = min / max
         '''
 
-        ns_res = None
+        ns_res = {'end_floor': 1}
         st = bd_user['user_dungeon']['statistics']
 
         for i in st:
 
-            if ns_res == None:
-                ns_res = i
-
+            if met == 'max':
+                if i['end_floor'] >= ns_res['end_floor']:
+                    ns_res = i
+                
             else:
-                if met == 'max':
-                    if i['end_floor'] >= ns_res['end_floor']:
-                        ns_res = i
-                    
-                else:
-                    if i['end_floor'] <= ns_res['end_floor']:
-                        ns_res = i
-        
+                if i['end_floor'] <= ns_res['end_floor']:
+                    ns_res = i
+    
         return ns_res
