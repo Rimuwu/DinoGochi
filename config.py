@@ -1,5 +1,6 @@
 import pymongo
 
+
 CLUSTER_CLIENT = pymongo.MongoClient('localhost', 27017) 
 
 BOT_TOKEN = ''
