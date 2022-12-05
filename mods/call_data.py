@@ -25,26 +25,27 @@ with open('json/settings.json', encoding='utf-8') as f: settings_f = json.load(f
 class CallData:
 
     def egg_answer(bot, bd_user, call, user):
+        
+        if bd_user != None:
+            if 'eggs' in list(bd_user.keys()):
+                egg_n = call.data.split()[1]
 
-        if 'eggs' in list(bd_user.keys()):
-            egg_n = call.data.split()[1]
+                bd_user['dinos'][Functions.user_dino_pn(bd_user)] = {'status': 'incubation', 'incubation_time': time.time() + 10 * 60, 'egg_id': egg_n}
 
-            bd_user['dinos'][Functions.user_dino_pn(bd_user)] = {'status': 'incubation', 'incubation_time': time.time() + 10 * 60, 'egg_id': egg_n}
+                users.update_one({"userid": user.id}, {"$unset": {'eggs': None}})
+                users.update_one({"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}})
 
-            users.update_one({"userid": user.id}, {"$unset": {'eggs': None}})
-            users.update_one({"userid": user.id}, {"$set": {'dinos': bd_user['dinos']}})
+                if bd_user['language_code'] == 'ru':
+                    text = f'🥚 | Выберите яйцо с динозавром!\n🦖 | Вы выбрали яйцо 🥚{egg_n}!'
 
-            if bd_user['language_code'] == 'ru':
-                text = f'🥚 | Выберите яйцо с динозавром!\n🦖 | Вы выбрали яйцо 🥚{egg_n}!'
+                    text2 = f'🧸 | Поздравляем, у вас появился свой первый динозавр!\n\n🎇 | В данный момент яйцо инкубируется, а через 10 минут из него вылупится динозаврик!\n\n🎮 | Чтобы посмотреть актуальную информацию о яйце, нажмите кнопку `🦖 Динозавр`!\n\n🧨 | Пока ждёте, изучите интерфейс, прочитайте FAQ, настройте бота под себя!'
+                else:
+                    text = f'🥚 | Choose a dinosaur egg!\n🦖 | You have chosen an egg 🥚{egg_n}!'
 
-                text2 = f'🧸 | Поздравляем, у вас появился свой первый динозавр!\n\n🎇 | В данный момент яйцо инкубируется, а через 10 минут из него вылупится динозаврик!\n\n🎮 | Чтобы посмотреть актуальную информацию о яйце, нажмите кнопку `🦖 Динозавр`!\n\n🧨 | Пока ждёте, изучите интерфейс, прочитайте FAQ, настройте бота под себя!'
-            else:
-                text = f'🥚 | Choose a dinosaur egg!\n🦖 | You have chosen an egg 🥚{egg_n}!'
+                    text2 = f'🧸 | Congratulations, you have your first dinosaur!\n\n🎇 | At the moment, the egg is incubating, and in 10 minutes a dinosaur will hatch out of it!\n\n🎮 | To view up-to-date information about the egg, click the `🦖 Dinosaur` button!\n\n🧨 | While you are waiting, study the interface, read the FAQ, configure the bot for yourself!'
 
-                text2 = f'🧸 | Congratulations, you have your first dinosaur!\n\n🎇 | At the moment, the egg is incubating, and in 10 minutes a dinosaur will hatch out of it!\n\n🎮 | To view up-to-date information about the egg, click the `🦖 Dinosaur` button!\n\n🧨 | While you are waiting, study the interface, read the FAQ, configure the bot for yourself!'
-
-            bot.edit_message_caption(text, call.message.chat.id, call.message.message_id)
-            bot.send_message(call.message.chat.id, text2, parse_mode='Markdown', reply_markup=Functions.markup(bot, 1, user))
+                bot.edit_message_caption(text, call.message.chat.id, call.message.message_id)
+                bot.send_message(call.message.chat.id, text2, parse_mode='Markdown', reply_markup=Functions.markup(bot, 1, user))
 
     def journey(bot, bd_user, call, user):
 
@@ -388,7 +389,9 @@ class CallData:
             else:
                 text = '✒ | The contract is signed, the dinosaur is incubating.'
 
-            bot.send_message(user.id, text, parse_mode='Markdown', reply_markup=Functions.markup(bot, 1, user))
+            try:
+                bot.send_message(user.id, text, parse_mode='Markdown', reply_markup=Functions.markup(bot, 1, user))
+            except: pass
 
     def item_use(bot, bd_user, call, user):
 
@@ -3009,7 +3012,7 @@ class CallData:
         else:
             text = f'*┌* 🗻 Dungeon Rating:\n'
 
-        max_rayt_users = 10
+        max_rayt_users = 5
         total = 0
 
         sort_l_keys = sorted([int(i) for i in rayt_list.keys()], reverse=True)
@@ -3020,6 +3023,10 @@ class CallData:
                 lm = []
 
                 for ud in rayt_list[str(floorn)]:
+
+                    if len(lm) >= 5:
+                        lm.append('...')
+                        break
 
                     try:
                         member = bot.get_chat(ud)
