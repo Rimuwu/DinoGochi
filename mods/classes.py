@@ -3305,7 +3305,7 @@ class Functions:
 
         for file in glob.glob(f"{config.TEMP_DIRECTION}/*"):
             os.remove(file)
-            print(f"Система: {str(file)} удалён.")
+            Functions.console_message(f"{str(file)} удалён.", 1)
 
     def load_languages():
         global languages
@@ -6947,6 +6947,7 @@ class Dungeon:
                     
                     else:
                         dung['floor'][str(room_n)]['next_room'] = True
+                        dungeons.update_one({"dungeonid": dungeonid}, {"$set": {f'floor': dung['floor']}})
 
                 if dung['floor'][str(room_n)]['next_room'] == True:
                     inline_type = 'battle'
