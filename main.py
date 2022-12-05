@@ -93,10 +93,10 @@ def check():  # проверка каждые 10 секунд
     while True:
         st_r_time = int(time.time())
 
-        non_members = users.find({ "dinos": {'$ne': {}} }) #получает юзеров у которых есть динозавры 
-        ll = len(list(non_members))
+        non_members = list(users.find({ "dinos": {"$ne": {}} })) #получает всех юзеров
+        ll = len(non_members) // 10
 
-        chunks_users = list(Functions.chunks(list(non_members), ll // 10)) #делит в списки по 100 человек
+        chunks_users = list(Functions.chunks(non_members, ll)) #Делит людей на 10 списков
 
         for members in chunks_users:
             threading.Thread(target=alpha, daemon=True, kwargs={'bot': bot, 'members': members}).start()
@@ -106,12 +106,12 @@ def check():  # проверка каждые 10 секунд
             threading.Thread(target=gamma2, daemon=True, kwargs={'bot': bot, 'members': members}).start()
             threading.Thread(target=delta, daemon=True, kwargs={'bot': bot, 'members': members}).start()
 
-            time.sleep(0.1)
+            time.sleep(1)
         
-        sl_time = 10 - (int(time.time()) - st_r_time)
+        sl_time = 60 - (int(time.time()) - st_r_time)
         if sl_time < 0:
-            sl_time = 0
-            Functions.console_message(f"sleep time: {sl_time}, time sleep skip to {sl_time}", 2)
+            Functions.console_message(f"sleep time: {sl_time}, time sleep skip to 60", 2)
+            sl_time = 60
 
         time.sleep(sl_time)
 
@@ -208,7 +208,7 @@ def command(message):
     pid = psutil.Process()
     cpu_count = psutil.cpu_count(logical=True) // 1.5
 
-    text = f"Memory {int(memory_usage()[0])}, CPU: {pid.cpu_percent(interval=1.0) // cpu_count}"
+    text = f"Memory {int(memory_usage()[0])}, CPU: {pid.cpu_percent() // cpu_count} Users: {len(list(users.find({})))}"
     bot.send_message(user.id, text)
 
 

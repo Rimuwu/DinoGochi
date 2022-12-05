@@ -30,50 +30,50 @@ class CheckFunction:
                     if dino['activ_status'] != 'freezing':
 
                         if dino['activ_status'] == 'sleep':
-                            if random.randint(1, 120) == 10:  # eat
+                            if random.randint(1, 20) == 10:  # eat
                                 dinos_stats['eat'] -= random.randint(1, 2)
                         else:
-                            if random.randint(1, 100) == 10:  # eat
+                            if random.randint(1, 17) == 8:  # eat
                                 dinos_stats['eat'] -= random.randint(1, 2)
 
                         if dino['activ_status'] != 'game':
-                            if random.randint(1, 60) == 1:  # game
+                            if random.randint(1, 10) == 5:  # game
                                 dinos_stats['game'] -= random.randint(1, 2)
 
                         if dino['activ_status'] != 'sleep':
-                            if random.randint(1, 150) == 1:  # unv
+                            if random.randint(1, 25) == 12:  # unv
                                 dinos_stats['unv'] -= random.randint(1, 2)
 
                         if user['dinos'][dino_id]['stats']['game'] < 40 and user['dinos'][dino_id]['stats'][
                             'game'] > 10:
                             if dino['stats']['mood'] > 0:
-                                if random.randint(1, 30) == 1:
+                                if random.randint(1, 5) == 3:
                                     dinos_stats['mood'] -= random.randint(1, 2)
 
                         if user['dinos'][dino_id]['stats']['game'] < 10:
                             if dino['stats']['mood'] > 0:
-                                if random.randint(1, 15) == 1:
+                                if random.randint(1, 3) == 2:
                                     dinos_stats['mood'] -= 3
 
                         if user['dinos'][dino_id]['stats']['unv'] <= 10 and user['dinos'][dino_id]['stats'][
                             'eat'] <= 20:
-                            if random.randint(1, 100) == 1:
+                            if random.randint(1, 17) == 10:
                                 dinos_stats['heal'] -= random.randint(0, 1)
 
                         if user['dinos'][dino_id]['stats']['eat'] > 80:
                             if dino['stats']['mood'] < 100:
-                                if random.randint(1, 15) == 1:
+                                if random.randint(1, 3) == 2:
                                     dinos_stats['mood'] += random.randint(1, 10)
 
                         if user['dinos'][dino_id]['stats']['eat'] <= 40 and user['dinos'][dino_id]['stats']['eat'] != 0:
                             if dino['stats']['mood'] > 0:
-                                if random.randint(1, 30) == 1:
+                                if random.randint(1, 5) == 2:
                                     dinos_stats['mood'] -= random.randint(1, 2)
 
                         if user['dinos'][dino_id]['stats']['eat'] > 80 and user['dinos'][dino_id]['stats'][
                             'unv'] > 70 and user['dinos'][dino_id]['stats']['mood'] > 50:
 
-                            if random.randint(1, 6) == 1:
+                            if random.randint(1, 2) == 1:
                                 dinos_stats['heal'] += random.randint(1, 4)
                                 dinos_stats['eat'] -= random.randint(0, 1)
 
@@ -81,14 +81,15 @@ class CheckFunction:
                         if bd_user != None:
                             if len(bd_user['dinos']) != 0:
                                 for i in dinos_stats.keys():
-                                    if dinos_stats[i] != 0 or bd_user['dinos'][dino_id]['stats'][i] > 100 or \
-                                            bd_user['dinos'][dino_id]['stats'][i] < 0:
+                                    stats = bd_user['dinos'][dino_id]['stats']
 
-                                        if dinos_stats[i] + bd_user['dinos'][dino_id]['stats'][i] > 100:
+                                    if dinos_stats[i] != 0 or stats[i] > 100 or  stats[i] < 0:
+
+                                        if dinos_stats[i] + stats[i] > 100:
                                             users.update_one({"userid": user['userid']},
                                                 {"$set": {f'dinos.{dino_id}.stats.{i}': 100}})
 
-                                        elif dinos_stats[i] + bd_user['dinos'][dino_id]['stats'][i] < 0:
+                                        elif dinos_stats[i] + stats[i] < 0:
                                             users.update_one({"userid": user['userid']},
                                                 {"$set": {f'dinos.{dino_id}.stats.{i}': 0}})
 
@@ -126,16 +127,16 @@ class CheckFunction:
 
                 if dino['activ_status'] == 'journey':
 
-                    if random.randint(1, 80) == 1:  # unv
+                    if random.randint(1, 13) == 7:  # unv
                         dinos_stats['unv'] -= random.randint(0, 1)
 
-                    if random.randint(1, 45) == 1:
+                    if random.randint(1, 8) == 4:
                         lvl_ += random.randint(0, 20)
 
                     if Functions.acc_check(bot, user, '45', dino_id, False):
-                        tick = [1, 30]
+                        tick = [1, 5]
                     else:
-                        tick = [1, 40]
+                        tick = [1, 7]
 
                     r_e_j = random.randint(tick[0], tick[1])
                     if r_e_j == 1:
@@ -756,17 +757,17 @@ class CheckFunction:
 
                 if dino['activ_status'] == 'hunting':
 
-                    if random.randint(1, 45) == 1:
+                    if random.randint(1, 8) == 4:
                         user['lvl'][1] += random.randint(0, 20)
                         users.update_one({"userid": user['userid']}, {"$set": {'lvl': user['lvl']}})
 
-                    if random.randint(1, 80) == 1:  # unv
+                    if random.randint(1, 13) == 7:  # unv
                         dinos_stats['unv'] -= random.randint(0, 1)
 
                     if Functions.acc_check(bot, user, '15', dino_id, False):
-                        pr_hunt = 25
+                        pr_hunt = 4
                     else:
-                        pr_hunt = 30
+                        pr_hunt = 5
 
                     r = random.randint(1, pr_hunt)
                     if r == 1:
@@ -882,16 +883,16 @@ class CheckFunction:
                 if dino['activ_status'] == 'game':
 
 
-                    if random.randint(1, 80) == 1:  # unv
+                    if random.randint(1, 13) == 7:  # unv
                         dinos_stats['unv'] -= random.randint(0, 1)
 
-                    if random.randint(1, 45) == 1:  # unv
+                    if random.randint(1, 8) == 4:  # unv
 
                         user['lvl'][1] += random.randint(0, 20)
                         users.update_one({"userid": user['userid']}, {"$set": {'lvl': user['lvl']}})
 
                     if user['dinos'][dino_id]['stats']['game'] < 100:
-                        if random.randint(1, 30) == 1:
+                        if random.randint(1, 5) == 1:
                             dinos_stats['game'] += int(random.randint(2, 15) * user['dinos'][dino_id]['game_%'])
 
                     bd_user = users.find_one({"userid": user['userid']})
@@ -918,25 +919,25 @@ class CheckFunction:
                         'sleep_type'] == 'long':
 
                         if user['dinos'][dino_id]['stats']['unv'] < 100:
-                            if random.randint(1, 80) == 1:
+                            if random.randint(1, 13) == 7:
                                 dinos_stats['unv'] += random.randint(1, 2)
 
                     else:
                         if user['dinos'][dino_id]['stats']['unv'] < 100:
-                            if random.randint(1, 30) == 1:
+                            if random.randint(1, 5) == 2:
                                 dinos_stats['unv'] += random.randint(1, 2)
 
                     if user['dinos'][dino_id]['stats']['game'] < 40:
-                        if random.randint(1, 40) == 1:
+                        if random.randint(1, 7) == 3:
                             dinos_stats['game'] += random.randint(1, 2)
 
                     if user['dinos'][dino_id]['stats']['mood'] < 50:
-                        if random.randint(1, 40) == 1:
+                        if random.randint(1, 7) == 3:
                             dinos_stats['mood'] += random.randint(1, 2)
 
                     if user['dinos'][dino_id]['stats']['heal'] < 100:
                         if user['dinos'][dino_id]['stats']['eat'] > 50:
-                            if random.randint(1, 45) == 1:
+                            if random.randint(1, 8) == 1:
                                 dinos_stats['heal'] += random.randint(1, 5)
                                 dinos_stats['eat'] -= random.randint(0, 1)
 
@@ -961,19 +962,19 @@ class CheckFunction:
 
                     if user['dinos'][dino_id]['stats']['game'] >= 90:
                         if dino['stats']['mood'] < 100:
-                            if random.randint(1, 15) == 1:
+                            if random.randint(1, 3) == 2:
                                 dinos_stats['mood'] += random.randint(1, 15)
 
-                            if random.randint(1, 60) == 1:
+                            if random.randint(1, 10) == 5:
                                 users.update_one({"userid": user['userid']}, {"$inc": {'coins': random.randint(0, 20)}})
 
                     if user['dinos'][dino_id]['stats']['mood'] >= 80:
-                        if random.randint(1, 60) == 1:
+                        if random.randint(1, 10) == 5:
                             users.update_one({"userid": user['userid']}, {"$inc": {'coins': random.randint(0, 10)}})
 
                     if user['dinos'][dino_id]['stats']['unv'] <= 20 and user['dinos'][dino_id]['stats']['unv'] != 0:
                         if dino['stats']['mood'] > 0:
-                            if random.randint(1, 30) == 1:
+                            if random.randint(1, 5) == 2:
                                 dinos_stats['mood'] -= random.randint(1, 2)
 
                     bd_user = users.find_one({"userid": user['userid']})
