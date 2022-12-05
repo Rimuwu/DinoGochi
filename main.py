@@ -89,6 +89,8 @@ def check():  # проверка каждые 10 секунд
 
     def delta(bot, members):
         Checks.main_journey(bot, members)
+    
+    time_sleep = 5
 
     while True:
         st_r_time = int(time.time())
@@ -106,12 +108,15 @@ def check():  # проверка каждые 10 секунд
             threading.Thread(target=gamma2, daemon=True, kwargs={'bot': bot, 'members': members}).start()
             threading.Thread(target=delta, daemon=True, kwargs={'bot': bot, 'members': members}).start()
 
-            time.sleep(1)
+            time.sleep(time_sleep)
         
         sl_time = 60 - (int(time.time()) - st_r_time)
         if sl_time < 0:
             Functions.console_message(f"sleep time: {sl_time}, time sleep skip to 60", 2)
             sl_time = 60
+
+            if time_sleep >= 2:
+                time_sleep -= 1
 
         time.sleep(sl_time)
 
@@ -206,11 +211,10 @@ def command(message):
     user = message.from_user
 
     pid = psutil.Process()
-    cpu_count = psutil.cpu_count(logical=True) // 1.5
+    cpu_count = psutil.cpu_count(logical=True)
 
-    text = f"Memory {int(memory_usage()[0])}, CPU: {pid.cpu_percent() // cpu_count} Users: {len(list(users.find({})))}"
+    text = f"Memory {int(memory_usage()[0])}, CPU: {pid.cpu_percent(interval=5.0) // cpu_count}, Users: {len(list(users.find({})))}\nThr.counts: {threading.active_count()}"
     bot.send_message(user.id, text)
-
 
 @bot.message_handler(commands=['add_item'])
 def command(message):
@@ -1243,18 +1247,18 @@ def start_all(bot):
     try:
         Functions.load_languages()
     except Exception as e:
-        Functions.console_message(f"Локализация не была загружена > {e}", 2)
+        Functions.console_message(f"Локализация не была загружена > {e}", 4)
 
-    if bot.get_me().first_name == config.BOT_NAME or False:
+    if bot.get_me().first_name == config.BOT_NAME or True:
         main_checks.start()  # активация всех проверок и игрового процесса
         thr_notif.start()  # активация уведомлений
         min10_thr.start()  # десяти-минутный чек
         min1_thr.start()  # 1-мин чек
 
-        Functions.console_message(f"Жизненный процессы запущены", 1)
+        Functions.console_message(f"Жизненный процессы запущены.", 1)
 
     else:
-        Functions.console_message(f"Жизненный процессы не запущены", 2)
+        Functions.console_message(f"Жизненный процессы не запущены.", 2)
 
     try:
         bot.add_custom_filter(SpamStop())
@@ -1264,7 +1268,6 @@ def start_all(bot):
         Functions.console_message(f"Фильтры не были определены > {e}", 4)
 
     Functions.console_message(f"Бот {bot.get_me().first_name} запущен!", 1)
-
     bot.infinity_polling(skip_pending=False, timeout=600)
 
 
