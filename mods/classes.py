@@ -6627,15 +6627,20 @@ class Dungeon:
                 amm_id_item = sv_lst[0]
                 itm_ind = am_itemid_list.index(amm_id_item)
                 itm = user_inv_dg[itm_ind]
-                itm['abilities']['stack'] -= 1
-                upd_inv = True
+                if 'abilities' in itm.keys():
+                    itm['abilities']['stack'] -= 1
+                    upd_inv = True
+
+                    if itm['abilities']['stack'] <= 0:
+                        user_inv_dg.pop(itm_ind)
+                    else:
+                        user_inv_dg[itm_ind] = itm
+
+                else:
+                    user_inv_dg.pop(itm_ind)
+                    upd_inv = True
 
                 damage += data_items[str(amm_id_item)]['add_damage']
-
-                if itm['abilities']['stack'] <= 0:
-                    user_inv_dg.pop(itm_ind)
-                else:
-                    user_inv_dg[itm_ind] = itm
 
                 if random.randint(1, 100) > 60:
                     item['abilities']['endurance'] -= random.randint(1, 2)
@@ -6813,7 +6818,6 @@ class Dungeon:
                     users_text = ''
                     for k in dung['users'].keys():
                         us = dung['users'][k]
-                        bd_us = users.find_one({"userid": int(k)})
 
                         if int(k) in dung['floor'][str(room_n)]['ready']:
                             r_e = '✅'
@@ -6830,7 +6834,7 @@ class Dungeon:
             if room['battle_type'] == 'mobs':
                 if dung['floor'][str(room_n)]['next_room'] == False:
 
-                    if len(dung['floor'][str(room_n)]['mobs']) > 1:
+                    if len(dung['floor'][str(room_n)]['mobs']) > 0:
                         mob = dung['floor'][str(room_n)]['mobs'][0]
                         data_mob = mobs_f['mobs'][mob['mob_key']]
                         inline_type = 'battle'
