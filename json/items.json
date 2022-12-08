@@ -729,7 +729,7 @@
               }
           ],
           "abilities": {
-              "uses": 100
+              "uses": 30
           },
           "image": "recipe",
           "rank": "rare"
@@ -1017,7 +1017,7 @@
           "type": "weapon",
           "class": "far",
           "damage": {
-              "min": 0,
+              "min": 1,
               "max": 5
           },
           "ammunition": ["54"],
@@ -1046,15 +1046,13 @@
               }, {
                   "item": "9",
                   "type": "delete"
-              },
-              {
+              }, {
                   "item": "9",
                   "type": "delete"
               }, {
                   "item": "8",
                   "type": "delete"
-              },
-              {
+              }, {
                   "item": "8",
                   "type": "delete"
               }
@@ -1084,16 +1082,14 @@
               }, {
                   "item": "51",
                   "type": "delete"
-              },
-              {
+              }, {
                   "item": "15",
                   "type": "endurance",
                   "act": 30
               }, {
                   "item": "51",
                   "type": "delete"
-              },
-              {
+              }, {
                   "item": "51",
                   "type": "delete"
               }, {
