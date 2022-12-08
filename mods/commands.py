@@ -3185,17 +3185,21 @@ class Commands:
                 if bd_user['language_code'] == 'ru':
                     text = (f'*🗻 | Статистика в подземелье*\n'
                             f'🔥 Всего игр: {len(st)}\n\n'
-                            f'*👑 | Лучшая игра*\n'
-                            f'🧩 Начальный этаж: {ns_res["start_floor"]}\n'
-                            f'🗝 Последний этаж: {ns_res["end_floor"]}\n'
+                            f'*👑 | Лучшая игра*\n')
+                    if 'start_floor' in ns_res.keys():
+                        text += f'🧩 Начальный этаж: {ns_res["start_floor"]}\n'
+                    
+                    text += (f'🗝 Последний этаж: {ns_res["end_floor"]}\n'
                             f'🕰 Время: {Functions.time_end(ns_res["time"])}\n')
 
                 else:
                     text = (f'*🗻 | Statistics in the dungeon*\n'
                             f'🔥 Total games: {len(st)}\n\n'
-                            f'*👑 | Best game*\n'
-                            f'🧩 Initial floor: {ns_res["start_floor"]}\n'
-                            f'🗝 Last floor: {ns_res["end_floor"]}\n'
+                            f'*👑 | Best game*\n')
+                    if 'start_floor' in ns_res.keys():
+                        text += f'🧩 Initial floor: {ns_res["start_floor"]}\n'
+                    
+                    text += (f'🗝 Last floor: {ns_res["end_floor"]}\n'
                             f'🕰 Time: {Functions.time_end(ns_res["time"], True)}\n')
 
             else:
