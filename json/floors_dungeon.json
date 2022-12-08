@@ -287,5 +287,9 @@
                 "products_settings": { "col": { "min": 3, "max": 5, "type": "random" } }
 
               }
-      }
+      },
+
+  "settings": {
+    "last_floor": 10
+  }
 }
