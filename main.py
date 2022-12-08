@@ -89,13 +89,13 @@ def check():  # проверка каждые 10 секунд
     def delta(bot, members):
         Checks.main_journey(bot, members)
     
-    time_sleep = 5
+    time_sleep = 2
 
     while True:
         st_r_time = int(time.time())
 
         non_members = list(users.find({ "dinos": {"$ne": {}} })) #получает всех юзеров
-        ll = len(non_members) // 10
+        ll = len(non_members) // 20
 
         chunks_users = list(Functions.chunks(non_members, ll)) #Делит людей на 10 списков
 
@@ -114,7 +114,7 @@ def check():  # проверка каждые 10 секунд
             Functions.console_message(f"sleep time: {sl_time}, time sleep skip to 60", 2)
             sl_time = 60
 
-            if time_sleep >= 2:
+            if time_sleep >= 1:
                 time_sleep -= 1
 
         time.sleep(sl_time)
