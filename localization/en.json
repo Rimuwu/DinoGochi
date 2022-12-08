@@ -26,6 +26,12 @@
             "ran": ["Random", "Random"]
         },
 
+        "items_names": {
+
+            "110": "📦 Сase"
+
+        },
+
 
         "no_text_key": "❌ The text corresponding to key {key} is not found, contact the developer!",
 
