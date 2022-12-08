@@ -189,6 +189,7 @@ class Functions:
         return markup_inline
 
     def markup(bot, element=1, user=None, inp_text: list = [None, None], bd_user=None):
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
         try:  # ошибка связанная с Int64 при попытке поставить обычную проверку
             user = int(user)
@@ -203,9 +204,11 @@ class Functions:
             bd_user = user
 
         else:
-            userid = user.id
+            try:
+                userid = user.id
+            except:
+                return markup
 
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         if bd_user == None:
             bd_user = users.find_one({"userid": userid})
 
@@ -2151,6 +2154,11 @@ class Functions:
 
     def get_dict_item(item_id: str, preabil: dict = None):
 
+        '''
+            Example 
+              preabil - {'uses': int}
+        '''
+
         item = items_f['items'][item_id]
         d_it = {'item_id': item_id}
         if 'abilities' in item.keys():
@@ -3093,13 +3101,13 @@ class Functions:
                     messages.append(text)
                     text = ''
 
-                text += f'*{n}.* {el}\n\n'
+                text += f'<b>{n}.</b> {el}\n\n'
                 n += 1
 
             messages.append(text)
 
             for m in messages:
-                bot.send_message(user_id, m, parse_mode='Markdown')
+                bot.send_message(user_id, m, parse_mode='HTML')
 
     def items_counting(user, item_type):
         data_items = items_f['items']
@@ -3810,45 +3818,56 @@ class Functions:
 
         elif data_item['type'] == 'recipe':
             ok, end_ok = True, True
-            list_inv_id, list_inv_id_copy, n_mat = [], [], []
-            search_items = {}
+            n_mat = []
 
-            for i in data_user['inventory']: list_inv_id.append(i['item_id']), list_inv_id_copy.append(i['item_id'])
-            list_inv = data_user['inventory'].copy()
+            # Создаём копию инвентаря для безопасной работы над ним
+            inv_copy = data_user['inventory'].copy() 
+            materials = {'delete': [], 'endurance': []}
 
             for _ in range(col):
-                for i in data_item['materials']:
-                    if i['item'] in list_inv_id:
+                for item in data_item['materials']:
 
-                        if i['type'] == 'delete':
-                            list_inv_id.remove(i['item'])
+                    if item['type'] == 'delete': # если предмет надо удалить
+                        # получаем стандартный словарь предмета
+                        del_item = Functions.get_dict_item(item['item'])
 
-                        if i['type'] == 'endurance':
+                        if del_item in inv_copy: #проверяем есть ли он в инвентаре
+                            # Всё нормально, удаляем его из копии инвентаря 
+                            inv_copy.remove(del_item)
+                            # Добавляем в удаляемые предметы
+                            materials['delete'].append(del_item)
+                        
+                        else:
+                            # Не хватает материалов
+                            ok = False
+                            n_mat.append(item['item'])
+            
+            for item in data_item['materials']:
 
-                            itms_ind = []
-                            sr_lst_id = list_inv_id_copy.copy()
+                if item['type'] == 'endurance': # Если надо понизить прочность
+                    nd_act = item['act'] * col # Всего прочности с учётом кол.
 
-                            for itm in sr_lst_id:
-                                if itm == i['item']:
-                                    itms_ind.append(sr_lst_id.index(itm))
-                                    sr_lst_id[sr_lst_id.index(itm)] = None
-
-                            end_ok = False
-                            for end_i in itms_ind:
-                                ittm = data_user['inventory'][end_i]
-
-                                if 'abilities' in ittm.keys():
-                                    if ittm['abilities']['endurance'] >= i['act'] * col:
-                                        end_ok = True
-                                        search_items[str(list_inv_id_copy[end_i])] = data_user['inventory'][end_i]
-                                        break
-
-                    else:
-                        ok = False
-                        n_mat.append(i['item'])
-
-                        if len(n_mat) >= 50:
+                    for item_end in inv_copy:
+                        if nd_act <= 0:
                             break
+
+                        if item_end['item_id'] == item['item']:
+                            if 'abilities' in item_end.keys():
+                                end = item_end['abilities']['endurance']
+
+                                if nd_act >= end:
+                                    materials['delete'].append(item_end)
+                                    nd_act -= end
+
+                                elif nd_act < end:
+                                    materials['endurance'].append({'item': item_end, 'act': nd_act})
+                                    nd_act = 0
+                    
+                    if nd_act > 0:
+                        # Не достаточно расходоюмых предметов
+                        end_ok = False
+            
+            del inv_copy # Удаляем чтобы не мешался
 
             if ok == True and end_ok == True:
 
@@ -3859,21 +3878,16 @@ class Functions:
                 else:
                     text = f"🍡 | The item {iname} x{col} is created!"
 
-                for _ in range(col):
-                    for it_m in data_item['materials']:
-                        if it_m['type'] == 'delete':
-                            lst_ind = list_inv_id_copy.index(it_m['item'])
-                            data_user['inventory'].remove(list_inv[lst_ind])
+                for item in materials['delete']:
+                    data_user['inventory'].remove(item)
+                
+                for item in materials['endurance']:
+                    data_user['inventory'].remove(item['item'], )
+                    
+                    preabil = {'endurance': item['item']['abilities']['endurance'] - item['act']}
+                    new_i = Functions.get_dict_item(item['item']['item_id'], preabil)
+                    data_user['inventory'].append(new_i)
 
-                        if it_m['type'] == 'endurance':
-                            lst_i = search_items[it_m['item']]
-
-                            llst_i = data_user['inventory'].index(lst_i)
-                            data_user['inventory'][llst_i]['abilities']['endurance'] -= it_m['act']
-                            search_items[it_m['item']]['abilities']['endurance'] -= it_m['act']
-
-                            if data_user['inventory'][llst_i]['abilities']['endurance'] == 0:
-                                data_user['inventory'].remove(search_items[it_m['item']])
 
                 for it_c in data_item['create']:
                     dp_col = 1
@@ -5708,7 +5722,7 @@ class Dungeon:
                     if dung['settings']['lang'] == 'ru':
                         text = f'*🗻 | Подземелье завершено!*\n\n*🗝 | Статистика*\n\n🏆 Пройдено этажей: {floor_n - start_floor}\n👿 Убито боссов: {(floor_n - start_floor) // 10}\n😈 Убито мобов: {mobs_count}\n\n*🖼 | Статистика по этажам*\n\n{flr_text}'
                     else:
-                        text = f'*🗻 | Dungeon conspiracy!*\n\n*🗝 | Statistics*\n\nFloors passed: {floor_n - start_floor} 🏆\nBosses killed: {(floor_n - start_floor) // 10}\nMobs killed:: {mobs_count}\n\n*🖼 | Floor statistics*\n\n{flr_text}'
+                        text = f'*🗻 | Dungeon conspiracy!*\n\n*🗝 | Statistics*\n\n🏆 Floors passed: {floor_n - start_floor}\n👿 Bosses killed: {(floor_n - start_floor) // 10}\n😈 Mobs killed:: {mobs_count}\n\n*🖼 | Floor statistics*\n\n{flr_text}'
 
                 if dung['dungeon_stage'] == 'preparation':
 
@@ -7676,3 +7690,9 @@ class Dungeon:
                     ns_res = i
     
         return ns_res
+
+    def last_floor(floor:int):
+        if floors_f['settings']['last_floor'] <= int(floor):
+            return True
+        else:
+            return False
