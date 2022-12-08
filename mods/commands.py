@@ -3177,7 +3177,7 @@ class Commands:
     def dungeon_statist(bot, message, user, bd_user):
 
         if 'user_dungeon' in bd_user.keys():
-            ns_res =Dungeon.get_statics(bd_user, "max")
+            ns_res = Dungeon.get_statics(bd_user, "max")
             st = bd_user['user_dungeon']['statistics']
 
             if ns_res != None:
@@ -3189,8 +3189,10 @@ class Commands:
                     if 'start_floor' in ns_res.keys():
                         text += f'🧩 Начальный этаж: {ns_res["start_floor"]}\n'
                     
-                    text += (f'🗝 Последний этаж: {ns_res["end_floor"]}\n'
-                            f'🕰 Время: {Functions.time_end(ns_res["time"])}\n')
+                    text += f'🗝 Последний этаж: {ns_res["end_floor"]}\n'
+
+                    if 'time' in ns_res.keys():
+                        text += f'🕰 Время: {Functions.time_end(ns_res["time"])}\n'
 
                 else:
                     text = (f'*🗻 | Statistics in the dungeon*\n'
@@ -3199,8 +3201,10 @@ class Commands:
                     if 'start_floor' in ns_res.keys():
                         text += f'🧩 Initial floor: {ns_res["start_floor"]}\n'
                     
-                    text += (f'🗝 Last floor: {ns_res["end_floor"]}\n'
-                            f'🕰 Time: {Functions.time_end(ns_res["time"], True)}\n')
+                    text += f'🗝 Last floor: {ns_res["end_floor"]}\n'
+
+                    if 'time' in ns_res.keys():
+                        text += f'🕰 Time: {Functions.time_end(ns_res["time"], True)}\n'
 
             else:
 
