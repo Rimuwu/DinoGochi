@@ -1794,12 +1794,18 @@ class CallData:
 
                     if dung['stage_data']['game']['room_n'] > dung['settings']['max_rooms'] + 1:
 
-                        dng, inf = Dungeon.base_upd(dungeonid=dungeonid, type='create_floor')
+                        if Dungeon.last_floor(floor_n):
+                            inf = Dungeon.message_upd(bot, dungeonid=user.id, type='delete_dungeon')
+                            kwargs = {'save_inv': True}
+                            dng, inf = Dungeon.base_upd(dungeonid=user.id, type='delete_dungeon', kwargs=kwargs)
 
-                        for uk in dung['users'].keys():
-                            uk = users.find_one({"userid": int(uk)})
+                        else:
+                            dng, inf = Dungeon.base_upd(dungeonid=dungeonid, type='create_floor')
 
-                            Dungeon.check_quest(bot, uk, met='check', quests_type='come', kwargs={'lvl': floor_n})
+                            for uk in dung['users'].keys():
+                                uk = users.find_one({"userid": int(uk)})
+
+                                Dungeon.check_quest(bot, uk, met='check', quests_type='come', kwargs={'lvl': floor_n})
 
                     else:
 
