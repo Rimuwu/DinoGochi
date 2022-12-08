@@ -1,4 +1,3 @@
-import logging
 import pprint
 import random
 import threading
