@@ -3014,9 +3014,9 @@ class CallData:
         rayt_list = Functions.rayt_update('check')[2]
 
         if bd_user['language_code'] == 'ru':
-            text = f'*┌* 🗻 Рейтинг по подземельям:\n'
+            text = f'<b>┌</b> 🗻 Рейтинг по подземельям:\n'
         else:
-            text = f'*┌* 🗻 Dungeon Rating:\n'
+            text = f'<b>┌</b> 🗻 Dungeon Rating:\n'
 
         max_rayt_users = 5
         total = 0
@@ -3058,10 +3058,9 @@ class CallData:
                     mm = ''
 
                 if bd_user['language_code'] == 'ru':
-                    text += f'*{el}* Этаж #{floorn}\n    *└* {mm} {", ".join(lm)}\n\n'
+                    text += f'<b>{el}</b> Этаж #{floorn}\n    <b>└</b> {mm} {", ".join(lm)}\n\n'
                 else:
-                    text += f'*{el}* Floor #{floorn}\n    *└* {mm} {", ".join(lm)}\n\n'
-
+                    text += f'<b>{el}</b> Floor #{floorn}\n    <b>└</b> {mm} {", ".join(lm)}\n\n'
 
             else:
                 break
@@ -3069,7 +3068,7 @@ class CallData:
             total += 1
 
         try:
-            bot.send_message(call.message.chat.id, text, parse_mode="Markdown")
+            bot.send_message(call.message.chat.id, text, parse_mode="HTML")
         except:
             bot.send_message(call.message.chat.id, text)
 
