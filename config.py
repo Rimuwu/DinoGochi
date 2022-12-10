@@ -12,3 +12,5 @@ BOT_DEVS = []
 TEMP_DIRECTION = 'temp'
 
 LOGS_DERECTION = 'logs'
+
+IGNORE_NAME = False
