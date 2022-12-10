@@ -1427,6 +1427,10 @@ class Checks:
                     if int(time.time()) - crt >= 1800:
                         Dungeon.message_upd(bot, dungeonid=dungeonid, type='delete_dungeon')
                         Dungeon.base_upd(dungeonid=dungeonid, type='delete_dungeon')
+                
+                if int(time.time()) - crt >= 86400:
+                    Dungeon.message_upd(bot, dungeonid=dungeonid, type='delete_dungeon')
+                    Dungeon.base_upd(dungeonid=dungeonid, type='delete_dungeon')
 
             else:
                 dungeons.update_one({"dungeonid": dungeonid}, {"$set": {f'create_time': int(time.time())}})
@@ -1465,7 +1469,7 @@ class Checks:
                                 "Мой друг Бари зашёл туда 21 год назад, я всё ещё жду...",
                                 "Я вчера видел как Герой выходил из подземелья с золотым мечём!",
                                 "Не рассказывай сказки, нету там никого страшного!",
-                                "Расскажи как ты потеря свой глаз в этом подземелье...",
+                                "Расскажи как ты потерял свой глаз в этом подземелье...",
                                 "Да не боюсь я! Просто монет на вход нет...",
                                 "Какой это будет раз, 21-ый? И много ты оттуда вынес уже?", "Да э...", "Да нееет...",
                                 "Шутишь?", "АХА ХА ХА!", "Хо хо хо...", "Нарываешься?!", "Выпьем?!",
