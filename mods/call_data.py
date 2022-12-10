@@ -2806,12 +2806,12 @@ class CallData:
             data_item = data_items[pr['item']['item_id']]
             if dung['settings']['lang'] == 'ru':
                 inl_l[
-                    f"{data_item['name']['ru']} — Цена: {pr['price']}"] = f'dungeon.shop_buy {dungeonid} {Functions.qr_item_code(pr["item"])}'
+                    f"{data_item['name']['ru']} — Цена: {pr['price']}"] = f'dungeon.shop_buy {dungeonid} {Functions.qr_item_code(pr["item"])} {pr["price"]}'
 
             else:
 
                 inl_l[
-                    f"{data_item['name']['en']} — Price: {pr['price']}"] = f'dungeon.shop_buy {dungeonid} {Functions.qr_item_code(pr["item"])}'
+                    f"{data_item['name']['en']} — Price: {pr['price']}"] = f'dungeon.shop_buy {dungeonid} {Functions.qr_item_code(pr["item"])} {pr["price"]}'
 
         inl_l['❌'] = f'dungeon.to_lobby {dungeonid}'
 
@@ -2825,8 +2825,11 @@ class CallData:
 
         dungeonid = int(call.data.split()[1])
         dung = dungeons.find_one({"dungeonid": dungeonid})
+
         item_qr = call.data.split()[2]
+        price = int(call.data.split()[3])
         data = Functions.des_qr(item_qr, True)
+
         room_n = str(dung['stage_data']['game']['room_n'])
         user_data = dung['users'][str(user.id)]
         data_items = items_f['items']
@@ -2837,7 +2840,7 @@ class CallData:
 
         for pr in products:
 
-            if pr['item'] == data:
+            if pr['item'] == data and pr['price'] == price:
                 n_pr = pr
                 break
 
@@ -2851,7 +2854,10 @@ class CallData:
 
             bot.send_message(user.id, sw_text, reply_markup=Functions.inline_markup(bot, f'delete_message', user.id))
 
-            CallData.dungeon_shop_menu(bot, bd_user, call, user)
+            try:
+                CallData.dungeon_shop_menu(bot, bd_user, call, user)
+            except:
+                pass
 
         else:
 
@@ -2868,24 +2874,37 @@ class CallData:
 
             else:
 
-                user_data['coins'] -= n_pr['price']
-                user_data['inventory'].append(n_pr['item'])
-                products.remove(n_pr)
+                if len(dung['users'][str(user.id)]['inventory']) + 1 > Dungeon.d_backpack(bd_user):
 
-                dungeons.update_one({"dungeonid": dungeonid},
-                                    {"$set": {f'users.{user.id}': dung['users'][str(user.id)]}})
-                dungeons.update_one({"dungeonid": dungeonid}, {"$set": {f'floor.{room_n}': dung['floor'][room_n]}})
+                    if bd_user['language_code'] == 'ru':
+                        sw_text = f"❌ | Ваш инвентарь пепреполнен!"
 
-                if bd_user['language_code'] == 'ru':
-                    sw_text = f"🎇 | Предмет {data_items[n_pr['item']['item_id']]['name']['ru']} был приобретён!"
+                    else:
+                        sw_text = f"❌ |Your inventory is full!"
 
+                    bot.send_message(user.id, sw_text,
+                                     reply_markup=Functions.inline_markup(bot, f'delete_message', user.id))
+                
                 else:
-                    sw_text = f"🎇 | The item {data_items[n_pr['item']['item_id']]['name']['en']} has been purchased!"
 
-                bot.send_message(user.id, sw_text,
-                                 reply_markup=Functions.inline_markup(bot, f'delete_message', user.id))
+                    user_data['coins'] -= n_pr['price']
+                    user_data['inventory'].append(n_pr['item'])
+                    products.remove(n_pr)
 
-                CallData.dungeon_shop_menu(bot, bd_user, call, user)
+                    dungeons.update_one({"dungeonid": dungeonid},
+                                        {"$set": {f'users.{user.id}': dung['users'][str(user.id)]}})
+                    dungeons.update_one({"dungeonid": dungeonid}, {"$set": {f'floor.{room_n}': dung['floor'][room_n]}})
+
+                    if bd_user['language_code'] == 'ru':
+                        sw_text = f"🎇 | Предмет {data_items[n_pr['item']['item_id']]['name']['ru']} был приобретён!"
+
+                    else:
+                        sw_text = f"🎇 | The item {data_items[n_pr['item']['item_id']]['name']['en']} has been purchased!"
+
+                    bot.send_message(user.id, sw_text,
+                                    reply_markup=Functions.inline_markup(bot, f'delete_message', user.id))
+
+                    CallData.dungeon_shop_menu(bot, bd_user, call, user)
 
     def rayt_lvl(bot, bd_user, call, user):
 
