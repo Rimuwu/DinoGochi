@@ -343,7 +343,7 @@ class Commands:
 
             def ret(message, ans, bd_user):
 
-                if message.text not in ans or message.text in ['↪ Назад', '↪ Back']:
+                if message.text not in ans or message.text == buttons_name["back"]:
                     res = None
                 else:
                     res = message.text
@@ -364,6 +364,50 @@ class Commands:
                 users.update_one({"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings']}})
 
                 bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, "settings", user))
+
+            msg = bot.send_message(message.chat.id, text, reply_markup=rmk)
+            bot.register_next_step_handler(msg, ret, ans, bd_user)
+    
+    @staticmethod
+    def profile_view_set(bot, message, user, bd_user):
+
+        if bd_user != None:
+
+            if 'profile_view' in bd_user['settings'].keys():
+                view_now = bd_user['settings']['profile_view']
+            else:
+                view_now = 1
+                
+            buttons_name = Functions.get_text(l_key=bd_user['language_code'], text_key="buttons_name")
+            text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="profile_view")
+
+            now = text_dict['now']
+            ans = text_dict['ans']
+
+            answers = dict(zip(now.values(), now.keys()))
+
+            now = now[str(view_now)]
+            ans.append(buttons_name["back"])
+            text = text_dict['info'].format(now=now)
+
+            rmk = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+            rmk.add(*[i for i in ans])
+
+            def ret(message, ans, bd_user):
+
+                if message.text not in ans or message.text == buttons_name["back"]:
+                    res = None
+                else:
+                    res = message.text
+
+                if res == None:
+                    bot.send_message(message.chat.id, f'❌', reply_markup=Functions.markup(bot, 'settings', user))
+                    return
+
+                bd_user['settings']['profile_view'] = int(answers[res])
+                users.update_one({"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings']}})
+
+                bot.send_message(message.chat.id, "✅", reply_markup=Functions.markup(bot, "settings", user))
 
             msg = bot.send_message(message.chat.id, text, reply_markup=rmk)
             bot.register_next_step_handler(msg, ret, ans, bd_user)
