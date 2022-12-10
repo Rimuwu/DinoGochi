@@ -57,9 +57,9 @@
 
         "help_command": {
 
-            "all": "<b>🎨 | Help</b>\n<i>Are you so pathetic that you're asking me for help?)\nPfff... Well okay.</i>\n\n/help - A plea for help from a higher mind.\n\n/start - Start the bot / main menu\n\n/profile - Open the user profile.\n\n/add_me - Send a message with an active add to friends button. (group only)\n\n/promo (code) - Enter a promo code.\n\n",
+            "all": "<b>🎨 | Help</b>\n<i>Are you so pathetic that you're asking me for help?)\nPfff... Well okay.</i>\n\n/help - A plea for help from a higher mind.\n\n/start - Start the bot / main menu\n\n/profile - Open the user profile.\n\n/add_me - Send a message with an active add to friends button. (group only)\n\n/promo (code) - Enter a promo code.\n\n/message_update - Update the dungeon message.",
 
-            "dev": "/stats - statistics for the bot.\n\n/add_item item_id col user_id - add an item to the user.\n\n/dungeon_delete - delete your dungeon.\n\n/stats_100 - set charracteristics to all your dinosaurs by 100.\n\n/link_promo (code) - link a button with a promo code to a message from the channel. (a response to the message is required)\n\n/unlink_promo - remove the button (a response to the message is required)\n\n/create_promo col | inf time | inf money - create a promo code."
+            "dev": "/stats - statistics for the bot.\n\n/add_item item_id col user_id - add an item to the user.\n\n/dungeon_delete - delete your dungeon.\n\n/stats_100 - set charracteristics to all your dinosaurs by 100.\n\n/link_promo (code) - link a button with a promo code to a message from the channel. (a response to the message is required)\n\n/unlink_promo - remove the button (a response to the message is required)\n\n/create_promo col | inf time | inf money - create a promo code./copy_m - Send the message to all the users of the bot."
         },
 
         "additem_command": {
@@ -147,6 +147,17 @@
             "accept": "♠ Horizontally: {gr}\n♣ Vertically: {vr}"
         },
 
+        "profile_view": {
+            "info": "🦕 Выберите типо отображения панели в профиле динозавра:\nВ данный момент: {now}",
+            "ans": ["▶ Сбоку", "🔽 Свнизу", "🔼 Сверху", "❌ Без панели"],
+            "now": {
+                "1": "▶ Сбоку",
+                "2": "🔽 Свнизу",
+                "3": "🔼 Сверху",
+                "4": "❌ Без панели"
+            }
+        },
+
         "add_friend": {
             "info": "➡ | Forward me any message from the person (in the privacy section > message forwarding - there must be permission) with whom you want to become friends or send me his id (you can find out in your bot profile).\nImportant! Your friend must be registered in the bot!",
             "not_f": "❌ User forward not found!",
@@ -209,7 +220,6 @@
         },
 
         "p_profile": {
-            "text_info": "Information",
             "text_ost": "Left:",
             "rare_name": "Quality:",
             "time_position": [335, 220],
@@ -330,6 +340,11 @@
         "journey_end_log": {
             "nothing": "Nothing happened!",
             "top_message": "🦖 | {dino_name} back from a trip!\nHere's what happened on his journey:\n\n"
+        },
+
+        "copy_m": {
+            "info": "Обязателен ответ на сообщение с текстом для рассылкт",
+            "no_message": "Должен быть ответ на сообщение!"
         }
 
     }
