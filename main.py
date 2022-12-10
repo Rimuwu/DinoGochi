@@ -7,6 +7,7 @@ import telebot
 from memory_profiler import memory_usage
 import psutil
 from telebot import types
+from telebot import util
 
 import config
 import json
@@ -311,10 +312,39 @@ def command(message):
         print(text)
 
 
-@bot.message_handler(commands=['mobs'])
+@bot.message_handler(commands=['copy_m'])
 def command(message):
 
-    print(Dungeon.random_mobs('mobs', 5, 10))
+    user = message.from_user
+    if user.id in config.BOT_DEVS:
+        text_dict = Functions.get_text(user.language_code, "add_button_command")
+
+        if message.reply_to_message == None:
+            text = text_dict['no_message']
+            bot.send_message(user.id, text)
+
+        else:
+            reply_message = message.reply_to_message
+            send = 0
+            start_time = time.time()
+
+            uss = list(users.find({}))
+            ll = len(uss)
+
+            for suser in uss:
+                try:
+                    msg = bot.copy_message(suser['userid'], reply_message.chat.id, reply_message.message_id)
+
+                    try:
+                        bot.pin_chat_message(chat_id = reply_message.chat.id, message_id = msg.message_id)
+                    except: pass
+
+                    send += 1
+                    time.sleep(0.1)
+                except Exception as e: pass
+
+            end_time = round(time.time() - start_time, 2)
+            bot.send_message(user.id, f'send: {send} / {ll}, time: {end_time}s')
 
 # =========================================
 
@@ -711,6 +741,10 @@ def on_message(message):
         elif message.text in ['🎞 Инвентарь', '🎞 Inventory']:
 
             Commands.inv_set_pages(bot, message, user, bd_user)
+        
+        elif message.text in ['🦕 Профиль', '🦕 Profile']:
+
+            Commands.profile_view_set(bot, message, user, bd_user)
 
         elif message.text in ['⁉ Видимость FAQ', '⁉ Visibility FAQ']:
 
@@ -1248,7 +1282,7 @@ def start_all(bot):
     except Exception as e:
         Functions.console_message(f"Локализация не была загружена > {e}", 4)
 
-    if bot.get_me().first_name == config.BOT_NAME or True:
+    if bot.get_me().first_name == config.BOT_NAME or config.IGNORE_NAME:
         main_checks.start()  # активация всех проверок и игрового процесса
         thr_notif.start()  # активация уведомлений
         min10_thr.start()  # десяти-минутный чек
