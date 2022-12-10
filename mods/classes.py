@@ -5,7 +5,7 @@ import os
 import random
 import sys
 import time
-import psutil
+
 
 import telebot
 from fuzzywuzzy import fuzz
@@ -77,7 +77,8 @@ class Functions:
             'notifications': {},
             'settings': {'notifications': True,
                          'dino_id': '1',
-                         'last_markup': 1},
+                         'last_markup': 1, 'profile_view': 1
+                        },
             'language_code': lg,
             'inventory': [],
             'coins': 0, 'lvl': [1, 0],
@@ -285,7 +286,6 @@ class Functions:
                 nl = ['🍡 Start playing']
 
             item1 = types.KeyboardButton(nl[0])
-
             markup.add(item1)
 
         elif element == "settings" and bd_user != None:
@@ -303,20 +303,12 @@ class Functions:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
             if bd_user['language_code'] == 'ru':
-                nl = ['❗ Уведомления', "👅 Язык", '💬 Переименовать', '⁉ Видимость FAQ', '🎞 Инвентарь', '↪ Назад']
+                nl = ['❗ Уведомления', "👅 Язык", '💬 Переименовать', '⁉ Видимость FAQ', '🎞 Инвентарь', '🦕 Профиль', '↪ Назад']
 
             else:
-                nl = ['❗ Notifications', "👅 Language", '💬 Rename', '⁉ Visibility FAQ', '🎞 Inventory', '↪ Back']
+                nl = ['❗ Notifications', "👅 Language", '💬 Rename', '⁉ Visibility FAQ', '🎞 Inventory', '🦕 Profile', '↪ Back']
 
-            item1 = types.KeyboardButton(nl[0])
-            item2 = types.KeyboardButton(nl[1])
-            item3 = types.KeyboardButton(nl[2])
-            item4 = types.KeyboardButton(nl[3])
-            item5 = types.KeyboardButton(nl[4])
-            item6 = types.KeyboardButton(nl[5])
-
-            markup.add(item1, item2, item3, item4, item5)
-            markup.add(item6)
+            markup.add(*[i for i in nl])
 
         elif element == "friends-menu" and bd_user != None:
 
@@ -2450,7 +2442,7 @@ class Functions:
 
             if items_names == []:
                 text = text_dict['null']
-                bot.send_message(message.chat.id, text)
+                bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, Functions.last_markup( bd_user, alternative='profile'), bd_user))
                 return
 
             if filter_type == 'all':
@@ -2879,52 +2871,78 @@ class Functions:
 
             dino_id = str(bd_user['dinos'][dino_user_id]['dino_id'])
             dino = json_f['elements'][dino_id]
-            bg_p = Image.open(f"images/remain/{dino['class']}_icon.png")
+            st = bd_user['dinos'][dino_user_id]['stats']
 
-            bd_user = Functions.dino_q(bd_user)
-            class_ = bd_user['dinos'][dino_user_id]['quality']
-            panel_i = Image.open(f"images/remain/{class_}_profile.png")
-            img = Functions.trans_paste(panel_i, bg_p, 1.0)
+            if 'profile_view' in bd_user['settings']:
+                profile_view = bd_user['settings']['profile_view']
+            else:
+                profile_view = 1
 
-            pr = "%"
+            bg_p = Image.open(f"images/remain/backgrounds/{dino['class'].lower()}.png")
+            class_ = dino['image'][5:8]
 
-            dino_image = Image.open("images/" + str(json_f['elements'][dino_id]['image']))
+            if profile_view != 4:
+                panel_i = Image.open(f"images/remain/panels/v{profile_view}_{class_}.png")
+                img = Functions.trans_paste(panel_i, bg_p, 1.0)
+            
+            else:
+                img = bg_p
 
-            sz = 412
+            dino_image = Image.open('images/' + str(json_f['elements'][dino_id]['image']))
+
+            heal, eat, sleep = st['heal'], st['eat'], st['unv']
+            game, mood = st['game'], st['mood']
+
+            if profile_view == 1:
+                idraw = ImageDraw.Draw(img)
+                line1 = ImageFont.truetype("fonts/Aqum.otf", size=30)
+                sz = 400
+                x, y = 90, -80
+
+                idraw.text((518, 93), f'{heal}%', font = line1)
+                idraw.text((518, 170), f'{eat}%', font = line1)
+
+                idraw.text((718, 93), f'{game}%', font = line1)
+                idraw.text((718, 170), f'{mood}%', font = line1)
+                idraw.text((718, 247), f'{sleep}%', font = line1)
+
+            if profile_view == 2:
+                idraw = ImageDraw.Draw(img)
+                line1 = ImageFont.truetype("fonts/Aqum.otf", size=25)
+                sz = 450
+                x, y = 385, -180
+                text_y = 280
+
+                idraw.text((157, text_y), f'{heal}%', font = line1)
+                idraw.text((298, text_y), f'{eat}%', font = line1)
+                idraw.text((440, text_y), f'{sleep}%', font = line1)
+
+                idraw.text((585, text_y), f'{game}%', font = line1)
+                idraw.text((730, text_y), f'{mood}%', font = line1)
+
+            if profile_view == 3:
+                idraw = ImageDraw.Draw(img)
+                line1 = ImageFont.truetype("fonts/Aqum.otf", size=25)
+                sz = 450
+                x, y = 275, -80
+                text_y = 50
+
+                idraw.text((157, text_y), f'{heal}%', font = line1)
+                idraw.text((298, text_y), f'{eat}%', font = line1)
+                idraw.text((440, text_y), f'{sleep}%', font = line1)
+
+                idraw.text((585, text_y), f'{game}%', font = line1)
+                idraw.text((730, text_y), f'{mood}%', font = line1)
+            
+            if profile_view == 4:
+                sz = 450
+                if random.randint(0, 1):
+                    dino_image = dino_image.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+                
+                x, y = random.randint(200, 550), random.randint(-180, -100)
+
             dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
-
-            xy = -80
-            x2 = 80
-            img = Functions.trans_paste(dino_image, img, 1.0, (xy + x2, xy, sz + xy + x2, sz + xy))
-
-            idraw = ImageDraw.Draw(img)
-            line1 = ImageFont.truetype("fonts/Comic Sans MS.ttf", size=35)
-            line2 = ImageFont.truetype("fonts/Comic Sans MS.ttf", size=50)
-
-            idraw.text((560, 20), text_dict['text_info'], 
-                    font=line2,
-            )
-
-            idraw.text((530, 110), 
-                str(bd_user['dinos'][dino_user_id]['stats']['heal']) + pr,   font=line1
-            )
-            idraw.text((530, 190), 
-                str(bd_user['dinos'][dino_user_id]['stats']['eat']) + pr, 
-                font=line1
-            )
-
-            idraw.text((750, 110), 
-                str(bd_user['dinos'][dino_user_id]['stats']['game']) + pr, 
-                font=line1
-            )
-            idraw.text((750, 190), 
-                str(bd_user['dinos'][dino_user_id]['stats']['mood']) + pr, 
-                font=line1
-            )
-            idraw.text((750, 270), 
-                str(bd_user['dinos'][dino_user_id]['stats']['unv']) + pr, 
-                font=line1
-            )
+            img = Functions.trans_paste(dino_image, img, 1.0, (y + x, y, sz + y + x, sz + y ))
 
             img.save(f'{config.TEMP_DIRECTION}/profile_{user.id}.png')
             profile = open(f'{config.TEMP_DIRECTION}/profile_{user.id}.png', 'rb')
@@ -3367,7 +3385,7 @@ class Functions:
                 return languages[l_key][text_key]
 
     def create_egg_image(id_l=None, calb="egg_answer"):
-        bg_p = Image.open(f"images/remain/{random.choice(settings_f['egg_ask_backs'])}.png")
+        bg_p = Image.open(f"images/remain/backs/{random.choice(settings_f['egg_ask_backs'])}.png")
         eg_l = []
 
         if id_l == None:
@@ -4934,9 +4952,12 @@ class Dungeon:
                                                  {"$inc": {f'coins': dung['users'][str(user_id)]['coins']}})
 
                         for d_k in dung['users'][str(user_id)]['dinos'].keys():
-                            bd_user['dinos'][d_k]['activ_status'] = 'pass_active'
-                            users.update_one({"userid": int(user_id)},
-                                             {"$set": {f'dinos.{d_k}': bd_user['dinos'][d_k]}})
+                            try:
+                                bd_user['dinos'][d_k]['activ_status'] = 'pass_active'
+                                users.update_one({"userid": int(user_id)},
+                                                 {"$set": {f'dinos.{d_k}': bd_user['dinos'][d_k]}})
+                            except:
+                                pass
 
                     dungeons.delete_one({"dungeonid": dungeonid})
                     return None, 'delete_dungeon'
@@ -5124,12 +5145,10 @@ class Dungeon:
                 if dung['settings']['lang'] == 'ru':
 
                     if userid == dungeonid:
-                        inl_l = {'⏩ След. комната': f'dungeon.next_room {dungeonid}',
-                                 '🚪 Выйти': f'dungeon.safe_exit {dungeonid}'}
+                        inl_l = {'🚪 Выйти': f'dungeon.safe_exit {dungeonid}'}
 
                     else:
-                        inl_l = {'✅ Готовность': f'dungeon.next_room_ready {dungeonid}',
-                                 '🚪 Выйти': f'dungeon.safe_exit {dungeonid}'}
+                        inl_l = {'🚪 Выйти': f'dungeon.safe_exit {dungeonid}'}
 
                 else:
 
@@ -5140,6 +5159,25 @@ class Dungeon:
                     else:
                         inl_l = {'✅ Ready': f'dungeon.next_room_ready {dungeonid}',
                                  '🚪 Exit': f'dungeon.safe_exit {dungeonid}'}
+                
+                floor_n = dung['stage_data']['game']['floor_n']
+                if not Dungeon.last_floor(floor_n):
+
+                    if dung['settings']['lang'] == 'ru':
+                        
+                        if userid == dungeonid:
+                            inl_l['⏩ След. комната'] = f'dungeon.next_room {dungeonid}'
+
+                        else:
+                            inl_l['✅ Готовность'] = f'dungeon.next_room_ready {dungeonid}'
+
+                    else:
+
+                        if userid == dungeonid:
+                            inl_l['⏩ Next room'] = f'dungeon.next_room {dungeonid}'
+
+                        else:
+                            inl_l['✅ Ready'] = f'dungeon.next_room_ready {dungeonid}'
 
                 markup_inline.add(
                     *[types.InlineKeyboardButton(text=inl, callback_data=inl_l[inl]) for inl in inl_l.keys()])
@@ -5720,9 +5758,9 @@ class Dungeon:
                             pass
 
                     if dung['settings']['lang'] == 'ru':
-                        text = f'*🗻 | Подземелье завершено!*\n\n*🗝 | Статистика*\n\n🏆 Пройдено этажей: {floor_n - start_floor}\n👿 Убито боссов: {(floor_n - start_floor) // 10}\n😈 Убито мобов: {mobs_count}\n\n*🖼 | Статистика по этажам*\n\n{flr_text}'
+                        text = f'*🗻 | Подземелье завершено!*\n\n*🗝 | Статистика*\n\n🏆 Пройдено этажей: {floor_n - start_floor}\n👿 Убито боссов: {floor_n // 10}\n😈 Убито мобов: {mobs_count}\n\n*🖼 | Статистика по этажам*\n\n{flr_text}'
                     else:
-                        text = f'*🗻 | Dungeon conspiracy!*\n\n*🗝 | Statistics*\n\n🏆 Floors passed: {floor_n - start_floor}\n👿 Bosses killed: {(floor_n - start_floor) // 10}\n😈 Mobs killed:: {mobs_count}\n\n*🖼 | Floor statistics*\n\n{flr_text}'
+                        text = f'*🗻 | Dungeon conspiracy!*\n\n*🗝 | Statistics*\n\n🏆 Floors passed: {floor_n - start_floor}\n👿 Bosses killed: {floor_n // 10}\n😈 Mobs killed:: {mobs_count}\n\n*🖼 | Floor statistics*\n\n{flr_text}'
 
                 if dung['dungeon_stage'] == 'preparation':
 
@@ -6058,8 +6096,6 @@ class Dungeon:
 
             return bar
 
-        data_mob = mobs_f['boss'][boss['mob_key']]
-
         alpha_img = Image.open('images/dungeon/remain/alpha.png')
 
         bar = generate_bar(boss['hp'], boss['maxhp'])
@@ -6075,7 +6111,7 @@ class Dungeon:
         alpha_img = Functions.trans_paste(img, alpha_img, 1, (xy + x2, xy, sz + xy + x2, sz + xy))
 
         image = Functions.trans_paste(alpha_img, bg_p, 1.0)
-        image.save(f'boss {dungeonid}.png')
+        image.save(f'{config.TEMP_DIRECTION}/boss {dungeonid}.png')
 
         return 'generation - ok'
 
@@ -6157,10 +6193,7 @@ class Dungeon:
 
         if len(dung['floor'][room_n]['mobs']) != 0:
 
-            if room['battle_type'] == 'mobs':
-                mob = dung['floor'][room_n]['mobs'][0]
-            else:
-                mob = dung['floor'][room_n]['mobs']
+            mob = dung['floor'][room_n]['mobs'][0]
 
             userdata = dung['users'][str(userid)]
             damage = 0
@@ -6213,7 +6246,7 @@ class Dungeon:
             mob = dung['floor'][room_n]['mobs'][0]
             data_mob = mobs_f['mobs'][mob['mob_key']]
         else:
-            mob = dung['floor'][room_n]['mobs']
+            mob = dung['floor'][room_n]['mobs'][0]
             data_mob = mobs_f['boss'][mob['mob_key']]
 
         log = []
@@ -6738,7 +6771,7 @@ class Dungeon:
                 if dung['floor'][str(room_n)]['next_room'] == False:
 
                     inline_type = 'battle'
-                    boss = dung['floor'][str(room_n)]['mobs']
+                    boss = dung['floor'][str(room_n)]['mobs'][0]
 
                     data_mob = mobs_f['boss'][boss['mob_key']]
                     inline_type = 'battle'
@@ -6816,7 +6849,7 @@ class Dungeon:
                     if image_update == True:
                         ok = Dungeon.generate_boss_image(image, boss, dungeonid)
 
-                        image = f'boss {dungeonid}.png'
+                        image = f'{config.TEMP_DIRECTION}/boss {dungeonid}.png'
 
                 if dung['floor'][str(room_n)]['next_room'] == True:
                     inline_type = 'battle'
@@ -6993,11 +7026,21 @@ class Dungeon:
         elif room_type == 'safe_exit':
             inline_type = 'safe_exit'
 
-            if dung['settings']['lang'] == 'ru':
-                text += f"\n\n✨ | Поздравляем, вы прошли достаточно тяжёлый путь, перед вами стоит выбор, выйти из подземелья или продолжить путь..."
+            if not Dungeon.last_floor(floor_n):
 
+                if dung['settings']['lang'] == 'ru':
+                    text += f"\n\n✨ | Поздравляем, вы прошли достаточно тяжёлый путь, перед вами стоит выбор, выйти из подземелья или продолжить путь..."
+
+                else:
+                    text += f"\n\n✨ | Congratulations, you have passed a rather difficult path, you have a choice before you, to leave the dungeon or continue on your way..."
+            
             else:
-                text += f"\n\n✨ | Congratulations, you have passed a rather difficult path, you have a choice before you, to leave the dungeon or continue on your way..."
+
+                if dung['settings']['lang'] == 'ru':
+                    text += f"\n\n✨ | Подзравляем, вы преодолели долгий путь и дошли до обрыва... Возмозможно там может что то и быть, но вы не решаетесь рисковать..."
+
+                else:
+                    text += f"\n\n✨ | We call, you overcame a long way and reached a cliff ... It may be possible there, but you do not dare to take risks ..."
 
             if dung['floor'][str(room_n)]['next_room'] == True:
 
