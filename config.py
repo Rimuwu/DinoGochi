@@ -14,3 +14,5 @@ TEMP_DIRECTION = 'temp'
 LOGS_DERECTION = 'logs'
 
 IGNORE_NAME = False
+
+BOT_GROUP_ID = None
