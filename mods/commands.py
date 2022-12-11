@@ -383,15 +383,15 @@ class Commands:
 
             now = text_dict['now']
             ans = text_dict['ans']
-
+            
             answers = dict(zip(now.values(), now.keys()))
 
             now = now[str(view_now)]
-            ans.append(buttons_name["back"])
             text = text_dict['info'].format(now=now)
 
             rmk = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
             rmk.add(*[i for i in ans])
+            rmk.add(buttons_name["back"])
 
             def ret(message, ans, bd_user):
 
@@ -1551,6 +1551,7 @@ class Commands:
                 if str(bd_user['referal_system']['my_cod']) != message.text:
                     items = ['1', '1', '2', '2', '16', '12', '12', '11', '11', '13', '13']
                     coins = 200
+
                     bd_user['coins'] += coins
                     for i in items:
                         Functions.add_item_to_user(bd_user, i)
@@ -1559,12 +1560,11 @@ class Commands:
                     fr_member = None
 
                     for i in members:
-                        if fr_member != None:
-                            break
-                        else:
-                            if 'referal_system' in i.keys():
-                                if i['referal_system']['my_cod'] == message.text:
-                                    fr_member = i
+
+                        if 'referal_system' in i.keys():
+                            if i['referal_system']['my_cod'] == message.text:
+                                fr_member = i
+                                break
 
                     if fr_member['userid'] not in bd_user['friends']['friends_list']:
                         bd_user['friends']['friends_list'].append(i['userid'])
