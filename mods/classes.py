@@ -2879,12 +2879,14 @@ class Functions:
                 profile_view = 1
 
             bg_p = Image.open(f"images/remain/backgrounds/{dino['class'].lower()}.png")
-            class_ = dino['image'][5:8]
+            if 'quality' in bd_user['dinos'][dino_user_id].keys():
+                class_ = bd_user['dinos'][dino_user_id]['quality']
+            else:
+                class_ = dino['image'][5:8]
 
             if profile_view != 4:
                 panel_i = Image.open(f"images/remain/panels/v{profile_view}_{class_}.png")
                 img = Functions.trans_paste(panel_i, bg_p, 1.0)
-            
             else:
                 img = bg_p
 
@@ -3717,9 +3719,19 @@ class Functions:
         else:
             return False
     
-    def evet_notification(eid:int, section:str="activ"):
+    def evet_notification(bot, eid:int, section:str="activ"):
         events_data = management.find_one({"_id": 'events'})
-        ...
+        if type(config.BOT_GROUP_ID) == int:
+            try:
+                chat = bot.get_chat(config.BOT_GROUP_ID)
+            except:
+                chat = None
+            
+            if chat != None:
+                bot.send_message(chat.id, 'Тестовое сообщение', parse_mode='Markdown')
+        
+        else:
+            Functions.console_message("For the bot, a group of sending messages is not specified.", 2)
 
     def auto_event(etype:str='random', section:str="activ"):
         events_data = management.find_one({"_id": 'events'})
@@ -3727,6 +3739,10 @@ class Functions:
 
         for i in events_data['log_events']:
             id_list.append(i['id'])
+        
+        if etype == 'new_year':
+            month_n = int(time.strftime("%m"))
+            event = {'type': etype, "condition_performance": None, "event_time": None, "data": {}}
 
         if etype == 'time_year':
             month_n = int(time.strftime("%m"))
@@ -3758,12 +3774,12 @@ class Functions:
                     Functions.delete_event(eid=events[0]['id'])
 
                     cr_events = Functions.create_event([event], False)
-                    Functions.add_events(cr_events)
+                    Functions.add_events(cr_events, section)
             
             if len(events) == 0:
                 
                 cr_events = Functions.create_event([event], False)
-                Functions.add_events(cr_events)
+                Functions.add_events(cr_events, section)
 
     def check_in_dungeon(bot, userid):
         bd_user = users.find_one({"userid": userid})
