@@ -220,6 +220,7 @@
         },
 
         "p_profile": {
+            "text_info": "Информация",
             "text_ost": "Осталось:",
             "rare_name": "Редкость:",
             "time_position": [445, 220],

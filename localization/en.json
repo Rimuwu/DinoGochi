@@ -148,13 +148,13 @@
         },
 
         "profile_view": {
-            "info": "🦕 Выберите типо отображения панели в профиле динозавра:\nВ данный момент: {now}",
-            "ans": ["▶ Сбоку", "🔽 Свнизу", "🔼 Сверху", "❌ Без панели"],
+            "info": "🦕 Select the type of display of the panel in the profile of a dinosaur:\nAt the moment: {now}",
+            "ans": ["▶ From the side", "🔽 From below", "🔼 Above", "❌ No panel"],
             "now": {
-                "1": "▶ Сбоку",
-                "2": "🔽 Свнизу",
-                "3": "🔼 Сверху",
-                "4": "❌ Без панели"
+                "1": "▶ From the side",
+                "2": "🔽 From below",
+                "3": "🔼 Above",
+                "4": "❌ No panel"
             }
         },
 
@@ -220,6 +220,7 @@
         },
 
         "p_profile": {
+            "text_info": "Information",
             "text_ost": "Left:",
             "rare_name": "Quality:",
             "time_position": [335, 220],
