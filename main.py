@@ -96,7 +96,7 @@ def check():  # проверка каждые 10 секунд
         st_r_time = int(time.time())
 
         non_members = list(users.find({ "dinos": {"$ne": {}} })) #получает всех юзеров
-        ll = len(non_members) // 20
+        ll = len(non_members) // 10
 
         chunks_users = list(Functions.chunks(non_members, ll)) #Делит людей на 10 списков
 
@@ -114,9 +114,6 @@ def check():  # проверка каждые 10 секунд
         if sl_time < 0:
             Functions.console_message(f"sleep time: {sl_time}, time sleep skip to 60", 2)
             sl_time = 60
-
-            if time_sleep >= 1:
-                time_sleep -= 1
 
         time.sleep(sl_time)
 
@@ -310,6 +307,11 @@ def command(message):
 
         bot.send_message(user.id, text, parse_mode="MarkdownV2")
         print(text)
+
+@bot.message_handler(commands=['event_m'])
+def command(message):
+
+    Functions.evet_notification(bot, 1)
 
 
 @bot.message_handler(commands=['copy_m'])
