@@ -456,7 +456,7 @@ class CheckFunction:
                                 if user['language_code'] == 'ru':
                                     event = f'💭 | Динозавр смог вздремнуть по дороге.'
                                 else:
-                                    event = f"💭 | Динозавр смог вздремнуть по дороге."
+                                    event = f"💭 | The dinosaur was able to take a nap along the road."
 
                             elif event == 'random_items':
 

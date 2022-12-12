@@ -211,7 +211,7 @@
             "choice": "🌙 | Choose the type of sleep for the dinosaur >",
             "err_time": "❌ | It was required to specify the time in minutes more than 5 minutes and less than 8 hours (480)!",
             "choice_time": "🌙 | Specify the REM sleep time (sleep is 2 times faster than long sleep) in minutes >",
-            "alredy_busy": "❗ | Ваш динозавр уже чем то занят, проверьте профиль!"
+            "alredy_busy": "❗ |Your dinosaur is already busy with something, check the profile!"
         },
 
         "dino_unsleep_ac": {
@@ -344,8 +344,8 @@
         },
 
         "copy_m": {
-            "info": "Обязателен ответ на сообщение с текстом для рассылкт",
-            "no_message": "Должен быть ответ на сообщение!"
+            "info": "The response to the message for the newsletter is required",
+            "no_message": "There must be an answer to the message!"
         }
 
     }
