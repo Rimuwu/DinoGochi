@@ -98,7 +98,10 @@ def check():  # проверка каждые 10 секунд
         non_members = list(users.find({ "dinos": {"$ne": {}} })) #получает всех юзеров
         ll = len(non_members) // 10
 
-        chunks_users = list(Functions.chunks(non_members, ll)) #Делит людей на 10 списков
+        if ll > 0:
+            chunks_users = list(Functions.chunks(non_members, ll)) #Делит людей на 10 списков
+        else:
+            chunks_users = [non_members]
 
         for members in chunks_users:
             threading.Thread(target=alpha, daemon=True, kwargs={'bot': bot, 'members': members}).start()
