@@ -1428,6 +1428,15 @@ class Functions:
             else:
                 type = '🎒 Storage'
                 d_text += f'*└* Capacity: {item["capacity"]}\n'
+        
+        elif item['type'] == 'case':
+            if lg == 'ru':
+                type = '📦 Коробка удачи'
+                d_text += f'*└* Содержимое: ???\n'
+
+            else:
+                type = '📦 Box of good luck'
+                d_text += f'*└* Content: ???\n'
 
         if list(set(['+mood', '+energy', '+eat', '+hp']) & set(item.keys())) != []:
             if lg == 'ru':
@@ -2166,15 +2175,16 @@ class Functions:
             d_it['abilities'] = abl
 
         if preabil != None:
+            
+            if 'abilities' in d_it.keys():
+                for ak in d_it['abilities'].keys():
+                    if ak in preabil.keys():
 
-            for ak in d_it['abilities'].keys():
-                if ak in preabil.keys():
+                        if type(preabil[ak]) == int:
+                            d_it['abilities'][ak] = preabil[ak]
 
-                    if type(preabil[ak]) == int:
-                        d_it['abilities'][ak] = preabil[ak]
-
-                    elif type(preabil[ak]) == dict:
-                        d_it['abilities'][ak] = Functions.rand_d(preabil[ak])
+                        elif type(preabil[ak]) == dict:
+                            d_it['abilities'][ak] = Functions.rand_d(preabil[ak])
 
         return d_it
 
@@ -3638,7 +3648,6 @@ class Functions:
         else:
             max_id = 0
 
-
         if random_data:
             for etype in events:
                 max_id += 1
@@ -3690,10 +3699,7 @@ class Functions:
 
             elif etype == None and eid != None:
                 if event['id'] == eid:
-                        events.append(event)
-
-            else:
-                events.append(event)
+                    events.append(event)
 
         return events
 
@@ -3713,7 +3719,6 @@ class Functions:
 
             events_data[section].remove(events[0])
             management.update_one({"_id": "events"}, {"$set": {f'{section}': events_data[section]}})
-
             return True
         
         else:
@@ -3741,8 +3746,23 @@ class Functions:
             id_list.append(i['id'])
         
         if etype == 'new_year':
-            month_n = int(time.strftime("%m"))
-            event = {'type': etype, "condition_performance": None, "event_time": None, "data": {}}
+            day_n = int(time.strftime("%j"))
+            events = Functions.get_event(etype='new_year')
+
+            if day_n >= 358:
+                event = {'type': etype, "condition_performance": None, "data": { 'send': [] }}
+                event['event_time'] = 86400 * (366 - day_n) + 5
+
+                if len(events) > 1:
+                    for i in events:
+                        eid = i['eid']
+                        Functions.delete_event(eid=eid)
+                    
+                    events = []
+
+                if len(events) == 0:
+                    cr_events = Functions.create_event([event], False)
+                    Functions.add_events(cr_events, section)
 
         if etype == 'time_year':
             month_n = int(time.strftime("%m"))
@@ -3800,6 +3820,7 @@ class Functions:
         data_user = users.find_one({"userid": user.id})
         data_item = items_f['items'][item_id]
         use_st, send_status = True, True
+        lg = data_user['language_code']
         text = ''
 
         if data_item['type'] == 'freezing':
@@ -3849,6 +3870,38 @@ class Functions:
             else:
                 use_st = False
                 text = f'❌'
+        
+        elif data_item['type'] == 'case':
+
+            drop = data_item['drop_items']
+            send_status = 'photo'
+            random.shuffle(drop)
+            send_status = False
+            col_repit = Functions.rand_d(data_item['col_repit'])
+            
+            for i in range(col_repit):
+                drop_item = None
+                while drop_item == None:
+
+                    for i in drop:
+                        if random.randint(1, i['chance'][1]) <= i['chance'][0]:
+                            drop_item = i
+                
+                dr_col = Functions.rand_d(drop_item['col'])
+                items = Functions.add_item_to_user({}, drop_item['id'], dr_col, 'data', drop_item['abilities'])
+
+                for i in items:
+                    data_user['inventory'].append(i)
+
+                drop_item_data = items_f['items'][drop_item['id']]
+                image = open(f"images/items/{drop_item_data['image']}.png", 'rb')
+
+                if data_user['language_code'] == 'ru':
+                    text = f"📦 | Из волшебной коробки вам выпал {drop_item_data['name'][lg]} x{dr_col}!"
+                else:
+                    text = f"📦 | From the magic box you fell out {drop_item_data['name'][lg]} x{dr_col}!"
+
+                bot.send_photo(user.id, image, text, parse_mode='Markdown', reply_markup=Functions.markup(bot, Functions.last_markup( data_user, alternative='profile'), data_user))
 
         elif data_item['type'] == 'recipe':
             ok, end_ok = True, True
@@ -4354,6 +4407,9 @@ class Functions:
 
                 elif data_item['type'] in ['freezing', 'defrosting']:
                     ans_dino()
+                
+                elif data_item['type'] == 'case':
+                    use_item()
 
                 else:
                     print(f'Первый этап не найден {data_item["type"]}')
@@ -4399,6 +4455,10 @@ class Functions:
 
             if send_status == True:
                 bot.send_message(user.id, text, parse_mode='Markdown', reply_markup=Functions.markup(bot, Functions.last_markup( bd_user, alternative='profile'), bd_user))
+            
+            elif send_status == 'photo':
+                text, image = text
+                bot.send_photo(user.id, image, text, parse_mode='Markdown', reply_markup=Functions.markup(bot, Functions.last_markup( bd_user, alternative='profile'), bd_user))
         
         def dino_reg(message, dino_dict):
             nonlocal dino_id
