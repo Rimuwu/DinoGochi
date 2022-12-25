@@ -172,7 +172,13 @@
             "null_list": "👥 | The list is empty!",
             "return": "👥 | Return to the friends menu!",
             "delete_info": "➖ | Select the user to remove from friends >",
-            "delete": "👥 | The user has been removed from friends!"
+            "delete": "👥 | The user has been removed from friends!",
+
+            "new_year": {
+                "button": "🎁 Send a gift",
+                "send": "🎁 | Hey {name}, your friend {friend} sent you a gift!",
+                "no_send": "🎁 | This user has already received a preliminary gift!"
+            }
         },
 
         "open_profile_menu": "👁‍🗨 | The profile panel is open!",
@@ -308,7 +314,8 @@
                 "ammunition": "🗻 For the dungeon", 
                 "backpack": "🗻  For the dungeon",
                 "freezing": "🔮 Other",
-                "defrosting": "🔮 Other"
+                "defrosting": "🔮 Other",
+                "case": "🔮 Other"
             },
 
             "open": "🎈 | Inventory is open",
@@ -332,7 +339,7 @@
                 "👢 Materials": ["material"],
                 "📜 Recipes": ["recipe"],
                 "🗻 For the dungeon": ["weapon", "armor", "ammunition", "backpack"],
-                "🔮 Other": ["freezing", "defrosting"]
+                "🔮 Other": ["freezing", "defrosting", "case"]
             },
 
             "s_bt": "📚 No filter"
