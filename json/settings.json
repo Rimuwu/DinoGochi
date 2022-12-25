@@ -1,6 +1,8 @@
 {
     "max_eat_items": 800,
 
+    "new_year_item": "112",
+
     "max_eat_price": {
         "common": 200,
         "uncommon": 500,
@@ -78,13 +80,13 @@
                 "activ_hunting": "🎯"
             },
             "winter":  {
-                "name": "⛄️", "status": "🧊", "rare": "❄️",
+                "name": "🧊", "status": "❄️", "rare": "☃️",
 
-                "heal": "☃️", "eat": "☕️", "game": "🌲",
-                "mood": "❄️", "sleep": "⭐️",
+                "heal": "☁️", "eat": "🥂", "game": "🎄",
+                "mood": "❄️", "sleep": "🕯",
 
-                "ac_sleep": "🕯", "ac_game": "🎄",
-                "ac_collecting": "🌿",  "ac_journey": "🏔",
+                "ac_sleep": "🕯", "ac_game": "✨",
+                "ac_collecting": "🌿",  "ac_journey": "🌨",
 
                 "activ_journey": "📙", "activ_game": "🏀",
                 "activ_hunting": "🎯"
