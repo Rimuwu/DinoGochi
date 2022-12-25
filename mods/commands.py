@@ -431,10 +431,10 @@ class Commands:
                     bot.send_message(message.chat.id, f'❌', reply_markup=Functions.markup(bot, 'friends-menu', user))
                     return
 
-                try:
+                if res.text.isdigit():
                     fr_id = int(res.text)
-                except:
 
+                else:
                     if res.text == buttons_name['back'] or res.forward_from == None:
                         bot.send_message(message.chat.id, text_dict['not_f'],
                                          reply_markup=Functions.markup(bot, 'friends-menu', user))
@@ -501,6 +501,12 @@ class Commands:
 
             text = text_dict['wait']
 
+            events = Functions.get_event("new_year")
+            if events == []:
+                new_year = False
+            else:
+                new_year = True
+
             bot.send_message(message.chat.id, text)
 
             for i in friends_id:
@@ -524,7 +530,6 @@ class Commands:
                 if friends_chunks == []:
 
                     text = text_dict['null_list']
-
                     bot.send_message(message.chat.id, text, reply_markup=Functions.markup(bot, 'friends-menu', user))
 
                 else:
@@ -577,11 +582,23 @@ class Commands:
 
                                     text = Functions.member_profile(bot, fr_id, bd_user['language_code'])
 
-                                    try:
-                                        mms = bot.send_message(message.chat.id, text, parse_mode='Markdown')
-                                    except Exception as error:
-                                        print(message.chat.id, 'ERROR Профиль', '\n', error)
-                                        mms = bot.send_message(message.chat.id, text)
+                                    if new_year:
+                                        markup_inline = types.InlineKeyboardMarkup()
+                                        markup_inline.add( 
+                                            types.InlineKeyboardButton( text = text_dict['new_year']['button'], callback_data = f"new_year {fr_id}")
+                                            )
+
+                                        try:
+                                            mms = bot.send_message(message.chat.id, text, parse_mode='Markdown', reply_markup = markup_inline)
+                                        except Exception as error:
+                                            mms = bot.send_message(message.chat.id, text, reply_markup = markup_inline)
+                                    
+                                    else:
+                                        try:
+                                            mms = bot.send_message(message.chat.id, text, parse_mode='Markdown')
+                                        except Exception as error:
+                                            mms = bot.send_message(message.chat.id, text + '\n\n' + error)
+
 
                             work_pr(message, friends_id, page, friends_chunks, friends_id_d, mms=mms)
 
