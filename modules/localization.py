@@ -6,10 +6,13 @@ class Localization:
 
     def __init__(self) -> None:
         self.languages = self.load_languages()
+
+    def __str__(self) -> str:
+        return f"Object localization(s) {', '.join(self.languages.keys())}"
     
     def load_languages(self):
         ''' Загрузка фалов локализации
-            Загружает все словари с локализацией в один словарь
+            Загружает все словари c локализацией в один словарь.
         '''
         languages = {}
 
@@ -42,6 +45,7 @@ class Localization:
             >>> func("language_name")
             >>> {'ru': 'Русский', 'en': 'English'}
         '''
+
         all_text_from_lkey = {}
 
         for lang_key in self.languages.keys():
