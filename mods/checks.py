@@ -1199,8 +1199,16 @@ class CheckFunction:
                     users.update_one({"userid": user['userid']}, {"$inc": {'dead_dinos': 1}})
     
     def events(bot):
-        # events_data = management.find_one({"_id": 'events'})
+        events_data = management.find_one({"_id": 'events'})
+
         Functions.auto_event("time_year")
+        Functions.auto_event("new_year")
+        events = events_data['activ']
+
+        for event in events:
+            if event['time_end'] != None:
+                if event['time_end'] - int(time.time()) <= 0:
+                    Functions.delete_event(eid=event['id'])
 
 
 class Checks:
@@ -1406,11 +1414,11 @@ class Checks:
     
     @staticmethod
     def events(bot):
-
-        try:
-            CheckFunction.events(bot)
-        except Exception as err:
-            Functions.console_message(f'Error in events\nError: {err}', 3)
+        CheckFunction.events(bot)
+        # try:
+        #     CheckFunction.events(bot)
+        # except Exception as err:
+        #     Functions.console_message(f'Error in events\nError: {err}', 3)
 
     @staticmethod
     def dungeons_check(bot):
