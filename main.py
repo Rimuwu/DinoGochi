@@ -213,7 +213,7 @@ def command(message):
     pid = psutil.Process()
     cpu_count = psutil.cpu_count(logical=True)
 
-    text = f"Memory {int(memory_usage()[0])}, CPU: {pid.cpu_percent(interval=5.0) // cpu_count}, Users: {len(list(users.find({})))}\nThr.counts: {threading.active_count()}"
+    text = f"Memory {int(memory_usage()[0])}, CPU: {pid.cpu_percent() // cpu_count}, Users: {len(list(users.find({})))}\nThr.counts: {threading.active_count()}"
     bot.send_message(user.id, text)
 
 @bot.message_handler(commands=['add_item'])
@@ -1269,6 +1269,10 @@ def answer(call):
     elif call.data.split()[0] == 'promo_activ':
 
         CallData.promo_activ(bot, bd_user, call, user)
+    
+    elif call.data.split()[0] == 'new_year':
+
+         CallData.send_gift(bot, bd_user, call, user)
 
 
 def start_all(bot):
