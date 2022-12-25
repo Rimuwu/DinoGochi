@@ -3497,7 +3497,6 @@ class CallData:
             text = f"🔮 Промокод создан!\n\nПромокод: `{promo_code}`\nАктивность: {status}\nИспользований: {promo['col']}\nОкончание через: {txt_time}\nМонеты: {promo['money']}\n\nПредметы: {', '.join(Functions.sort_items_col(promo['items'], user.language_code))}"
 
             markup_inline = types.InlineKeyboardMarkup(row_width=2)
-
             markup_inline.add(*[types.InlineKeyboardButton(text=inl, callback_data=inl_l[inl]) for inl in inl_l])
 
             return text, markup_inline
@@ -3551,3 +3550,34 @@ class CallData:
                 text = f'🎍 | The promo code was not found, it may have already been deleted...'
 
             bot.answer_callback_query(call.id, text, show_alert=True)
+    
+    def send_gift(bot, bd_user, call, user):
+
+        data = call.data.split()
+        friend_id = int(data[1])
+        events_data = management.find_one({"_id": 'events'})
+        text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="friends")
+        gift_item = settings_f['new_year_item']
+
+        friend = bot.get_chat(friend_id)
+        friend_name = friend.first_name
+
+        events = Functions.get_event("new_year")
+        if events != []:
+            event = events[0]
+            comp_users = event['data']['send']
+
+            if friend_id not in comp_users:
+                item = Functions.get_dict_item(gift_item)
+                users.update_one({"userid": friend_id}, {"$push": {'inventory': item}})
+
+                ev_idex = events_data['activ'].index(event)
+                management.update_one({"_id": 'events'}, {"$push": {f'activ.{ev_idex}.data.send': friend_id}})
+
+                bot.answer_callback_query(call.id, f'🎁 -> {friend_name}', show_alert=True)
+
+                text = text_dict['new_year']['send'].format(name=friend_name, friend=user.first_name)
+                bot.send_message(friend_id, text, reply_markup=Functions.inline_markup(bot, 'inventory', friend, ['🎁', '🎁']))
+            
+            else:
+                bot.answer_callback_query(call.id, text_dict['new_year']['no_send'], show_alert=True)
