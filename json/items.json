@@ -2286,14 +2286,98 @@
 
       "110": {
           "name": {
-              "en": "",
-              "ru": ""
+              "en": "📦 A chest with food",
+              "ru": "📦 Сундук с едой"
           },
           "type": "case",
-          "descriptionru": "-",
-          "descriptionen": "-",
-          "image": "recipe",
-          "rank": "mystical"
+          "drop_items": [
+            {"id": "38", "chance": [2, 10], "col": {"min": 1, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "40", "chance": [2, 10], "col": {"min": 1, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "42", "chance": [2, 10], "col": {"min": 1, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "48", "chance": [2, 10], "col": {"min": 1, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "50", "chance": [2, 10], "col": {"min": 1, "max": 2, "type": "random"}, "abilities": {}},
+            {"id": "68", "chance": [2, 10], "col": {"min": 1, "max": 10, "type": "random"}, "abilities": {}},
+            {"id": "69", "chance": [2, 10], "col": {"min": 1, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "72", "chance": [2, 10], "col": {"min": 1, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "74", "chance": [2, 10], "col": {"min": 1, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "77", "chance": [2, 10], "col": {"min": 1, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "79", "chance": [2, 10], "col": {"min": 5, "max": 20, "type": "random"}, "abilities": {}},
+            {"id": "80", "chance": [2, 10], "col": {"min": 2, "max": 10, "type": "random"}, "abilities": {}},
+            {"id": "81", "chance": [2, 10], "col": {"min": 1, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "83", "chance": [2, 10], "col": {"min": 1, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "85", "chance": [2, 10], "col": {"min": 5, "max": 10, "type": "random"}, "abilities": {}},
+            {"id": "86", "chance": [4, 10], "col": {"min": 2, "max": 5, "type": "random"}, "abilities": {}},
+            {"id": "88", "chance": [2, 10], "col": {"min": 1, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "90", "chance": [1, 10], "col": {"act": 1, "type": "static"}, "abilities": {}},
+            {"id": "92", "chance": [2, 10], "col": {"min": 1, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "94", "chance": [2, 10], "col": {"min": 2, "max": 5, "type": "random"}, "abilities": {}},
+            {"id": "95", "chance": [5, 100], "col": {"min": 10, "max": 30, "type": "random"}, "abilities": {}},
+            {"id": "96", "chance": [1, 10], "col": {"min": 2, "max": 6, "type": "random"}, "abilities": {}},
+            {"id": "98", "chance": [2, 10], "col": {"min": 1, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "99", "chance": [2, 10], "col": {"min": 1, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "100", "chance": [2, 10], "col": {"min": 1, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "104", "chance": [2, 10], "col": {"min": 4, "max": 10, "type": "random"}, "abilities": {}},
+            {"id": "106", "chance": [3, 10], "col": {"min": 1, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "108", "chance": [4, 10], "col": {"min": 2, "max": 10, "type": "random"}, "abilities": {}}
+          ],
+          "col_repit": {"act": 4, "type": "static" },
+          "image": "case",
+          "rank": "mythical"
+      },
+
+      "111": {
+        "name": {
+            "en": "📦 Recipes chest",
+            "ru": "📦 Сундук рецептов"
+        },
+        "type": "case",
+        "drop_items": [
+            {"id": "30", "chance": [2, 10], "col": {"act": 1, "type": "static"}, "abilities": {}},
+            {"id": "32", "chance": [2, 10], "col": {"act": 1, "type": "static"}, "abilities": {}},
+            {"id": "34", "chance": [3, 10], "col": {"act": 1, "type": "static"}, "abilities": {}},
+            {"id": "37", "chance": [3, 10], "col": {"act": 1, "type": "static"}, "abilities": {}},
+            {"id": "39", "chance": [2, 10], "col": {"act": 1, "type": "static"}, "abilities": {}},
+            {"id": "40", "chance": [2, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "43", "chance": [2, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "46", "chance": [4, 10], "col": {"act": 1, "type": "static"}, "abilities": {}},
+            {"id": "56", "chance": [4, 10], "col": {"act": 1, "type": "static"}, "abilities": {}},
+            {"id": "70", "chance": [4, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "73", "chance": [4, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "75", "chance": [4, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "78", "chance": [4, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "84", "chance": [4, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "87", "chance": [4, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "89", "chance": [4, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "91", "chance": [4, 10], "col": {"min": 1, "max": 3, "type": "random"}, "abilities": {}},
+            {"id": "93", "chance": [4, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "97", "chance": [3, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "101", "chance": [4, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "102", "chance": [4, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "103", "chance": [4, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "105", "chance": [4, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "107", "chance": [4, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}},
+            {"id": "109", "chance": [4, 10], "col": {"min": 2, "max": 4, "type": "random"}, "abilities": {}}
+        ],
+        "col_repit": {"act": 4, "type": "static" },
+        "image": "case",
+        "rank": "mythical"
+      },
+
+      "112": {
+        "name": {
+            "en": "🎁 Gift 2023",
+            "ru": "🎁 Подарок 2023"
+        },
+        "type": "case",
+        "drop_items": [
+            {"id": "23", "chance": [1, 100], "col": {"act": 1, "type": "static" }, "abilities": {}},
+            {"id": "24", "chance": [1, 1000], "col": {"act": 1, "type": "static" }, "abilities": {}},
+            {"id": "110", "chance": [2, 10], "col": {"act": 1, "type": "static" }, "abilities": {}},
+            {"id": "111", "chance": [2, 10], "col": {"act": 1, "type": "static" }, "abilities": {}}
+        ],
+        "col_repit": {"act": 1, "type": "static" },
+        "image": "case",
+        "rank": "mythical"
       }
 
   }
