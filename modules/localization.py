@@ -70,15 +70,12 @@ class Localization:
             return self.languages[language][text_key]
 
         else:
-
             if type(self.languages[language][text_key]) == dict:
-
+                
                 if dp_text_key not in self.languages[language][text_key].keys():
                     return self.languages[language]["no_dp_text_key"]
-
                 else:
                     return self.languages[language][text_key][dp_text_key]
-
             else:
                 return self.languages[language][text_key]
     
