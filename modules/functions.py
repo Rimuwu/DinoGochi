@@ -5,6 +5,9 @@ import time
 
 from colorama import Fore, Style
 
+# from modules.localization import Localization
+# localization = Localization()
+
 with open('json/items.json', encoding='utf-8') as f: items_data = json.load(f)['items']
 
 class LogFuncs:
@@ -65,6 +68,33 @@ class DataFormat:
                 return data
         else:
             return data
+    
+    # def sort_materials(nls_i: list, lg: str) -> list:
+    #     """ Сортирует материалы, для вывода их в формате "материалы рецепта".
+    #     """
+    #     dct, nl = {}, []
+
+    #     for i in nls_i:
+    #         if i['item'] not in dct.keys():
+    #             dct[i['item']] = 1
+    #         else:
+    #             dct[i['item']] += 1
+
+    #     itts = []
+    #     for i in nls_i:
+    #         if i not in itts:
+    #             item = Item(i['item'])
+    #             name = item.name[lg]
+
+    #             if i['type'] == 'endurance':
+    #                 nl.append(f"{name} (⬇ -{i['act']}) x{dct[i['item']]}")
+    #             else:
+    #                 nl.append(f"{name} x{dct[i['item']]}")
+
+    #             itts.append(i)
+
+    #     return nl
+    
 
 if __name__ == '__main__':
     raise Exception("This file cannot be launched on its own!")
