@@ -1,11 +1,16 @@
+import json
 import logging
-from colorama import Fore, Style
+import random
 import time
+
+from colorama import Fore, Style
+
+with open('json/items.json', encoding='utf-8') as f: items_data = json.load(f)['items']
 
 class LogFuncs:
 
     def __init__(self) -> None:
-        ...
+        '''Функции логирования'''
 
     def console_message(message, lvl=1) -> None:
         """
@@ -28,6 +33,38 @@ class LogFuncs:
         else:
             logging.critical(message)
             print(Fore.RED + f"{time.strftime('%Y %m-%d %H.%M.%S')} Бот: {message}" + Style.RESET_ALL)
+
+class DataFormat:
+
+    def __init__(self) -> None:
+        '''Функции форматизации данных'''
+    
+    def random_dict(data: dict) -> dict:
+        """ Предоставляет общий формат данных, подерживающий 
+            случайные и статичные числа.
+        
+        Примеры словаря:
+          >>> {"min": 1, "max": 2, "type": "random"}
+          >>> {"act": 1, "type": "static"}
+        """
+
+        if 'type' in data.keys():
+            if data["type"] in ["static", "random"]:
+
+                if data["type"] == "static":
+                    return data['act']
+
+                elif data["type"] == "random":
+                    if data['min'] >= data['max']:
+                        return 0
+                    else:
+                        return random.randint(data['min'], data['max'])
+                else:
+                    return 0
+            else:
+                return data
+        else:
+            return data
 
 if __name__ == '__main__':
     raise Exception("This file cannot be launched on its own!")
