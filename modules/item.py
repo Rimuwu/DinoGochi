@@ -14,8 +14,7 @@ def get_data(itemid:str) -> dict:
     # Проверяем еть ли предмет с таким ключём в items.json
     if itemid in items_data.keys():
         return items_data[itemid]
-
-    else: # Иначе вызываем ошибку 
+    else:
         raise Exception(f"The subject with ID {itemid} does not exist.")
 
 class ItemBase:
@@ -23,7 +22,7 @@ class ItemBase:
     def __init__(self, item_id:str | int = None, item_data:dict = None, preabil:dict = None) -> None:
         ''' Создание объекта Item
 
-            Получаем в класс либо id предмета либо формата {"item_id": string, "abilities": dict}
+            Получаем в класс либо id предмета либо формата {"item_id": string, "abilities": dict}\n
             abilities - не обязателен.
 
             Пояснение:
@@ -33,10 +32,10 @@ class ItemBase:
 
         '''
 
-        if item_id: # Получаем стандартный предмет, если есть только id
+        if item_id is not None: # Получаем стандартный предмет, если есть только id
             self.id = str(item_id)
 
-        elif item_data: # Предмет от пользователя, есть id и возможно abilities
+        elif item_data is not None: # Предмет от пользователя, есть id и возможно abilities
             self.id = str(item_data['item_id'])
             if 'abilities' in item_data.keys():
                 preabil = item_data['abilities']
@@ -45,8 +44,9 @@ class ItemBase:
             raise Exception(f"An empty object cannot be created.")
 
         self.data = get_data(self.id)
-        self.name = self.get_names()
+        self.names = self.get_names()
         self.user_data = self.get_item_dict(preabil=preabil)
+        self.is_standart = self.is_standart()
     
     def __str__(self) -> str:
         return f"Item{self.data['type'].capitalize()}Object {self.name}"
@@ -76,7 +76,7 @@ class ItemBase:
         return name
     
     def get_item_dict(self, preabil: dict = None) -> dict:
-        ''' Создание словаря, хранящийся в инвентаре пользователя.
+        ''' Создание словаря, хранящийся в инвентаре пользователя.\n
 
             Примеры: 
                 Просто предмет
@@ -115,7 +115,26 @@ class ItemBase:
 
         return d_it
     
+    def is_standart(self) -> bool:
+        """Определяем ли стандартный ли предмет*.
+
+        Для этого проверяем есть ли у него свои харрактеристик.\n
+        Если их нет - значит он точно стандартный.\n
+        Если они есть и не изменены - стандартный.
+        """
+
+        if list(self.user_data.keys()) == ['item_id']:
+            return True
+        else:
+            if 'abilities' in self.user_data.keys():
+                if self.user_data['abilities'] == self.data['abilities']:
+                    return True
+                else:
+                    return False
+            else:
+                return True
     
+
     """ Используемые функции """
 
     def view(self) -> None:
@@ -194,51 +213,36 @@ class CaseItem(ItemBase):
 class CreateItem:
 
     def __init__(self, item_id:str | int = None, item_data:dict = None, preabil:dict = {}):
-        self.item_id = item_id
+        self.id = item_id
         self.item_data = item_data
         self.preabil = preabil
 
-        self.data = get_data(str(item_id))
+        if item_id is not None:
+            self.data = get_data(str(self.id))
+        else:
+            self.data = get_data(item_data['item_id'])
 
     def new(self):
-        data = (self.item_id, self.item_data, self.preabil)
+        data = (self.id, self.item_data, self.preabil)
+        item_type = self.data['type']
+        class_dict = {
+            '+eat': EatItem, 'egg': EggItem,
 
-        if self.data['type'] == '+eat':
-            return EatItem(*data)
-        
-        if self.data['type'] == 'egg':
-            return EggItem(*data)
-        
-        if self.data['type'] in ['game_ac', 'journey_ac', 'unv_ac', 'hunt_ac']:
-            return AccessoryItem(*data)
-        
-        if self.data['type'] == 'material':
-            return MaterialItem(*data)
-        
-        if self.data['type'] == 'recipe':
-            return RecipeItem(*data)
-        
-        if self.data['type'] == 'weapon':
-            return WeaponItem(*data)
-        
-        if self.data['type'] == 'ammunition':
-            return AmmunitionItem(*data)
-        
-        if self.data['type'] == 'backpack':
-            return BackpackItem(*data)
-        
-        if self.data['type'] == 'armor':
-            return ArmorItem(*data)
-        
-        if self.data['type'] == 'freezing':
-            return FreezingItem(*data)
-        
-        if self.data['type'] == 'defrosting':
-            return DefrostingItem(*data)
-        
-        if self.data['type'] == 'case':
-            return CaseItem(*data)
-        
+            'game_ac': AccessoryItem, 'journey_ac': AccessoryItem,
+            'unv_ac': AccessoryItem,  'hunt_ac': AccessoryItem,
+
+            'material': MaterialItem, 'recipe': RecipeItem,
+
+            'weapon': WeaponItem,  'ammunition': AmmunitionItem,
+            'backpack': BackpackItem, 'armor': ArmorItem,
+
+            'freezing': FreezingItem, 'defrosting': DefrostingItem,
+
+            'case': CaseItem
+        }
+
+        if item_type in class_dict.keys():
+            return class_dict[item_type](*data)
         else:
             return ItemBase(*data)
 
