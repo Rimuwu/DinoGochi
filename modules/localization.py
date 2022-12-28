@@ -78,7 +78,7 @@ class Localization:
                     return self.languages[language][text_key][dp_text_key]
             else:
                 return self.languages[language][text_key]
-    
+
 
 if __name__ == '__main__':
     raise Exception("This file cannot be launched on its own!")
