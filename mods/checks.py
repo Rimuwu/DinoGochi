@@ -17,6 +17,115 @@ with open('json/dino_data.json', encoding='utf-8') as f: json_f = json.load(f)
 
 class CheckFunction:
 
+    def pre_quest(bot, user, uss):
+        if int(time.time()) - user['last_m'] <= 5400:
+
+            if random.randint(1, 10) == 5:
+                us_m = uss.copy()
+
+                us_m.remove(user)
+                m_bd_user = random.choice(us_m)
+
+                try:
+                    m_user = bot.get_chat(m_bd_user['userid'])
+                except:
+                    m_user = None
+
+                if m_user != None:
+
+                    if user['language_code'] == 'ru':
+                        messages = [
+                            "Говорят в подземельях бродят страшные монстры...",
+                            "Мой динозавр может завалить 20 таких!", "Да не разсказывай, ха ха ха!",
+                            "Говорят предметы в подземелье высокого класса...",
+                            "Я вчера ходил, мне выпал какой то светящийся камень...",
+                            "А вы видели какая у этого гоблина страшная рожа?!", "Да я таких на завтрак ем!",
+                            "Как они бьются с этими тупыми мечами?", "Я не вернусь туда!",
+                            "Ты что, боишься спустится в подземелье?!",
+                            "Мой друг Бари зашёл туда 21 год назад, я всё ещё жду...",
+                            "Я вчера видел как Герой выходил из подземелья с золотым мечём!",
+                            "Не рассказывай сказки, нету там никого страшного!",
+                            "Расскажи как ты потерял свой глаз в этом подземелье...",
+                            "Да не боюсь я! Просто монет на вход нет...",
+                            "Какой это будет раз, 21-ый? И много ты оттуда вынес уже?", "Да э...", "Да нееет...",
+                            "Шутишь?", "АХА ХА ХА!", "Хо хо хо...", "Нарываешься?!", "Выпьем?!",
+                            "Хорошая новость, наливай!", "Хрю хрю", "Демон...."
+                        ]
+
+                        messages_special = [
+                            'Налил бы кто выпить...', "Сухо на душе и во рту...",
+                            "Не осталось добрых людей в этом городе..."
+                        ]
+
+
+                    else:
+                        messages = [
+                            "They say there are scary monsters roaming in the dungeons...",
+                            "My dinosaur can knock down 20 of them!", "Don't tell me, ha ha ha!",
+                            "They say objects in a high-class dungeon...",
+                            "I went yesterday, I got some kind of glowing stone...",
+                            "Did you see what a scary face this goblin has?!", "Yes, I eat these for breakfast!",
+                            "How do they fight with these blunt swords?", "I'm not going back there!",
+                            "Are you afraid to go down to the dungeon?!",
+                            "My friend Bari went there 21 years ago, I'm still waiting...",
+                            "I saw the Hero coming out of the dungeon with a golden sword yesterday!",
+                            "Don't tell fairy tales, there is no one scary there!",
+                            "Tell me how you lost your eye in this dungeon...",
+                            "Yes, I'm not afraid! There are just no coins to enter...",
+                            "What time will it be, the 21st? And how much have you taken out of there already?",
+                            "Yes uh...", "Yes nooo...", "Are you kidding?", "AHA HA HA!", "Ho ho ho...",
+                            "Are you running into it?!", "Drink?!", "Good news, pour!", "Oink oink", "Demon...."
+                        ]
+
+                        messages_special = [
+                            'Someone would pour a drink...', 'Dry in the soul and in the mouth...',
+                            'There are no good people left in this city...'
+                        ]
+
+                    random.shuffle(messages)
+                    random.shuffle(messages_special)
+
+                    if random.randint(1, 5) == 2:
+
+                        message = random.choice(messages_special)
+                        text = f"<a href='tg://user?id={m_user.id}'>{m_user.first_name}</a>: {message}"
+
+                        try:
+                            bot.send_message(user['userid'], text, parse_mode='HTML')
+                        except:
+                            pass
+
+                    else:
+
+                        message = random.choice(messages)
+                        text = f"<a href='tg://user?id={m_user.id}'>{m_user.first_name}</a>: {message}"
+
+                        try:
+                            bot.send_message(user['userid'], text, parse_mode='HTML')
+                        except:
+                            pass
+
+            if random.randint(1, 15) == 5:
+
+                if 'user_dungeon' in user.keys():
+                    if 'quests' in user['user_dungeon'].keys():
+                        if len(user['user_dungeon']['quests']['activ_quests']) < user['user_dungeon']['quests'][
+                            'max_quests']:
+
+                            q = Dungeon.create_quest(user)
+                            users.update_one({"userid": user['userid']},
+                                                {"$push": {'user_dungeon.quests.activ_quests': q}})
+
+                            if user['language_code'] == 'ru':
+                                text = f"📜 | Вам был выдан квест {q['name']}!"
+                            else:
+                                text = f"📜 | You have been given a quest {q['name']}!"
+
+                            try:
+                                bot.send_message(user['userid'], text)
+                            except:
+                                pass
+
     def main(bot, user):
         dns_l = list(user['dinos'].keys()).copy()
 
@@ -1449,111 +1558,7 @@ class Checks:
         uss = list(users.find({'settings.last_markup': 'dino-tavern'}))
 
         for user in uss:
-
-            if int(time.time()) - user['last_m'] <= 5400:
-
-                if random.randint(1, 10) == 5:
-                    us_m = uss.copy()
-
-                    us_m.remove(user)
-                    m_bd_user = random.choice(us_m)
-
-                    try:
-                        m_user = bot.get_chat(m_bd_user['userid'])
-                    except:
-                        m_user = None
-
-                    if m_user != None:
-
-                        if user['language_code'] == 'ru':
-                            messages = [
-                                "Говорят в подземельях бродят страшные монстры...",
-                                "Мой динозавр может завалить 20 таких!", "Да не разсказывай, ха ха ха!",
-                                "Говорят предметы в подземелье высокого класса...",
-                                "Я вчера ходил, мне выпал какой то светящийся камень...",
-                                "А вы видели какая у этого гоблина страшная рожа?!", "Да я таких на завтрак ем!",
-                                "Как они бьются с этими тупыми мечами?", "Я не вернусь туда!",
-                                "Ты что, боишься спустится в подземелье?!",
-                                "Мой друг Бари зашёл туда 21 год назад, я всё ещё жду...",
-                                "Я вчера видел как Герой выходил из подземелья с золотым мечём!",
-                                "Не рассказывай сказки, нету там никого страшного!",
-                                "Расскажи как ты потерял свой глаз в этом подземелье...",
-                                "Да не боюсь я! Просто монет на вход нет...",
-                                "Какой это будет раз, 21-ый? И много ты оттуда вынес уже?", "Да э...", "Да нееет...",
-                                "Шутишь?", "АХА ХА ХА!", "Хо хо хо...", "Нарываешься?!", "Выпьем?!",
-                                "Хорошая новость, наливай!", "Хрю хрю", "Демон...."
-                            ]
-
-                            messages_special = [
-                                'Налил бы кто выпить...', "Сухо на душе и во рту...",
-                                "Не осталось добрых людей в этом городе..."
-                            ]
-
-
-                        else:
-                            messages = [
-                                "They say there are scary monsters roaming in the dungeons...",
-                                "My dinosaur can knock down 20 of them!", "Don't tell me, ha ha ha!",
-                                "They say objects in a high-class dungeon...",
-                                "I went yesterday, I got some kind of glowing stone...",
-                                "Did you see what a scary face this goblin has?!", "Yes, I eat these for breakfast!",
-                                "How do they fight with these blunt swords?", "I'm not going back there!",
-                                "Are you afraid to go down to the dungeon?!",
-                                "My friend Bari went there 21 years ago, I'm still waiting...",
-                                "I saw the Hero coming out of the dungeon with a golden sword yesterday!",
-                                "Don't tell fairy tales, there is no one scary there!",
-                                "Tell me how you lost your eye in this dungeon...",
-                                "Yes, I'm not afraid! There are just no coins to enter...",
-                                "What time will it be, the 21st? And how much have you taken out of there already?",
-                                "Yes uh...", "Yes nooo...", "Are you kidding?", "AHA HA HA!", "Ho ho ho...",
-                                "Are you running into it?!", "Drink?!", "Good news, pour!", "Oink oink", "Demon...."
-                            ]
-
-                            messages_special = [
-                                'Someone would pour a drink...', 'Dry in the soul and in the mouth...',
-                                'There are no good people left in this city...'
-                            ]
-
-                        random.shuffle(messages)
-                        random.shuffle(messages_special)
-
-                        if random.randint(1, 5) == 2:
-
-                            message = random.choice(messages_special)
-                            text = f"<a href='tg://user?id={m_user.id}'>{m_user.first_name}</a>: {message}"
-
-                            try:
-                                bot.send_message(user['userid'], text, parse_mode='HTML')
-                            except:
-                                pass
-
-                        else:
-
-                            message = random.choice(messages)
-                            text = f"<a href='tg://user?id={m_user.id}'>{m_user.first_name}</a>: {message}"
-
-                            try:
-                                bot.send_message(user['userid'], text, parse_mode='HTML')
-                            except:
-                                pass
-
-                if random.randint(1, 15) == 5:
-
-                    if 'user_dungeon' in user.keys():
-                        if 'quests' in user['user_dungeon'].keys():
-                            if len(user['user_dungeon']['quests']['activ_quests']) < user['user_dungeon']['quests'][
-                                'max_quests']:
-
-                                q = Dungeon.create_quest(user)
-                                users.update_one({"userid": user['userid']},
-                                                 {"$push": {'user_dungeon.quests.activ_quests': q}})
-
-                                if user['language_code'] == 'ru':
-                                    text = f"📜 | Вам был выдан квест {q['name']}!"
-                                else:
-                                    text = f"📜 | You have been given a quest {q['name']}!"
-
-                                try:
-                                    bot.send_message(user['userid'], text)
-                                except:
-                                    pass
+            try:
+                CheckFunction.pre_quest(bot, user, uss)
+            except Exception as e:
+                print('QUESTS err ', e)
