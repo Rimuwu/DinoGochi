@@ -89,8 +89,8 @@ def check():  # проверка каждые 10 секунд
     def delta(bot, members):
         Checks.main_journey(bot, members)
     
-    time_sleep = 2
-    dl_us = 10
+    time_sleep = 3
+    dl_us = 15
 
     while True:
         st_r_time = int(time.time())
@@ -141,7 +141,7 @@ def check_notif():  # проверка каждые 5 секунд
     while True:
 
         if int(memory_usage()[0]) < 7500:
-            n_rayt = users.find({}, {'userid': 1, 'notifications': 1, 'dinos': 1, 'settings': 1, 'language_code': 1})
+            n_rayt = users.find({}, {'userid': 1, 'notifications': 1, 'dinos': 1, 'settings': 1, 'language_code': 1, 'lvl': 1})
 
             c_users = list(Functions.chunks(list(n_rayt), 100))
 

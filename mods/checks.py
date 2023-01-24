@@ -1402,7 +1402,7 @@ class Checks:
     @staticmethod
     def check_incub(bot):  # проверка каждые 5 секунд
 
-        members = users.find(filter={'dinos': {'$ne': {}}}, projection={'dinos': 1, 'notifications': 1, 'userid': 1, 'settings': 1})
+        members = users.find(filter={'dinos': {'$ne': {}}}, projection={'dinos': 1, 'notifications': 1, 'userid': 1, 'settings': 1, 'language_code': 1})
 
         for user in members:
             try:
