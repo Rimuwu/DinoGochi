@@ -364,7 +364,7 @@ class CallData:
 
     def dead_restart(bot, bd_user, call, user):
 
-        if bd_user != None and len(bd_user['dinos']) == 0 and Functions.inv_egg(bd_user) == False and bd_user['lvl'][
+        if bd_user != None and len(bd_user['dinos']) == 0 and Functions.inv_egg(bd_user['userid']) == False and bd_user['lvl'][
             0] <= 5:
             egg_n = str(random.choice(list(json_f['data']['egg'])))
 

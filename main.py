@@ -7,7 +7,6 @@ import telebot
 from memory_profiler import memory_usage
 import psutil
 from telebot import types
-from telebot import util
 
 import config
 import json
@@ -91,12 +90,13 @@ def check():  # проверка каждые 10 секунд
         Checks.main_journey(bot, members)
     
     time_sleep = 2
+    dl_us = 10
 
     while True:
         st_r_time = int(time.time())
 
-        non_members = list(users.find({ "dinos": {"$ne": {}} })) #получает всех юзеров
-        ll = len(non_members) // 10
+        non_members = list(users.find({ "dinos": {"$ne": {}} }, {'inventory': 0})) #получает всех юзеров
+        ll = len(non_members) // dl_us
 
         if ll > 0:
             chunks_users = list(Functions.chunks(non_members, ll)) #Делит людей на 10 списков
@@ -113,10 +113,16 @@ def check():  # проверка каждые 10 секунд
 
             time.sleep(time_sleep)
         
+        
         sl_time = 60 - (int(time.time()) - st_r_time)
-        if sl_time < 0:
-            Functions.console_message(f"sleep time: {sl_time}, time sleep skip to 60", 2)
-            sl_time = 60
+        if sl_time <= 0:
+            Functions.console_message(f"sleep time: {sl_time}, time sleep skip to 0", 2)
+
+            if time_sleep > 1:
+                time_sleep -= 1
+            else:
+                if dl_us > 5:
+                    dl_us -= 1
 
         time.sleep(sl_time)
 
@@ -135,10 +141,11 @@ def check_notif():  # проверка каждые 5 секунд
     while True:
 
         if int(memory_usage()[0]) < 7500:
-            non_members = users.find({})
-            chunks_users = list(Functions.chunks(list(non_members), 100))
+            n_rayt = users.find({}, {'userid': 1, 'notifications': 1, 'dinos': 1, 'settings': 1, 'language_code': 1})
 
-            for members in chunks_users:
+            c_users = list(Functions.chunks(list(n_rayt), 100))
+
+            for members in c_users:
                 threading.Thread(target=alpha, daemon=True, kwargs={'bot': bot, 'members': members}).start()
 
             threading.Thread(target=beta, daemon=True, kwargs={'bot': bot}).start()
@@ -169,7 +176,7 @@ def min10_check():  # проверка каждые 10 мин
     while True:
 
         if int(memory_usage()[0]) < 7500:
-            uss = users.find({})
+            uss = users.find({}, {'userid': 1, 'coins': 1, 'lvl': 1})
             threading.Thread(target=alpha, daemon=True, kwargs={'users': uss}).start()
 
             if bot.get_me().first_name == config.BOT_NAME:

@@ -189,7 +189,7 @@ class Functions:
 
         return markup_inline
 
-    def markup(bot, element=1, user=None, inp_text: list = [None, None], bd_user=None):
+    def markup(bot, element=1, user=None, bd_user=None):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
         try:  # ошибка связанная с Int64 при попытке поставить обычную проверку
@@ -221,7 +221,7 @@ class Functions:
                     bd_user['settings']['dino_id'] = list(bd_user['dinos'].keys())[0]
                     users.update_one({"userid": bd_user['userid']}, {"$set": {'settings': bd_user['settings']}})
 
-        if bd_user != None and len(bd_user['dinos']) == 0 and Functions.inv_egg(bd_user) == False and bd_user['lvl'][
+        if bd_user != None and len(bd_user['dinos']) == 0 and Functions.inv_egg(bd_user['userid']) == False and bd_user['lvl'][
             0] <= 5:
 
             if bd_user['language_code'] == 'ru':
@@ -232,7 +232,7 @@ class Functions:
             markup.add(nl)
             return markup
 
-        elif bd_user != None and len(bd_user['dinos']) == 0 and Functions.inv_egg(bd_user) == False and bd_user['lvl'][
+        elif bd_user != None and len(bd_user['dinos']) == 0 and Functions.inv_egg(bd_user['userid']) == False and bd_user['lvl'][
             0] > 5:
 
             if bd_user['language_code'] == 'ru':
@@ -975,7 +975,7 @@ class Functions:
                         nl = '🧩 Project: Rebirth'
                         nl2 = '🎮 Inventory'
 
-                    if Functions.inv_egg(user) == False and user['lvl'][0] <= 5:
+                    if Functions.inv_egg(user['userid']) == False and user['lvl'][0] <= 5:
                         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
                         markup.add(nl)
 
@@ -1184,7 +1184,9 @@ class Functions:
                     except:
                         pass
 
-    def inv_egg(user):
+    def inv_egg(userid):
+
+        user = users.find_one({'userid': userid}, {'inventory': 1})
 
         for i in user['inventory']:
             if items_f['items'][i['item_id']]['type'] == 'egg':
@@ -4487,7 +4489,7 @@ class Functions:
 
                 if n_dp == 1:  # нет дино
 
-                    if Functions.inv_egg(bd_user) == True and data_item['type'] == 'egg':
+                    if Functions.inv_egg(bd_user['userid']) == True and data_item['type'] == 'egg':
                         n_c_f(), re_item()
 
                     else:

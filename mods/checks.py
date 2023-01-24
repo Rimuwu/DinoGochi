@@ -219,7 +219,8 @@ class CheckFunction:
                                 egg = random.choice(['20', '22'])
                                 rf_fr = users.find_one({"userid": user['referal_system']['friend']})
 
-                                Functions.add_item_to_user(rf_fr, egg)
+                                if rf_fr != None:
+                                    Functions.add_item_to_user(rf_fr, egg)
 
             Functions.notifications_manager(bot, 'lvl_up', user, arg=user['lvl'][0])
             users.update_one({"userid": user['userid']}, {"$set": {'lvl': user['lvl']}})
@@ -701,7 +702,7 @@ class CheckFunction:
                             elif r_event in list(range(91, 100)):  # мистическое соб
                                 events = ['toxic_rain', 'y_coins']
                             else:  # легендарное соб
-                                events = ['lose_items', 'l_coins']
+                                events = ['l_coins'] #'lose_items'
 
                             event = random.choice(events)
                             if event == 'rain':
@@ -784,29 +785,29 @@ class CheckFunction:
                                     event = f"⚔ | The dinosaur ran into a fight, he loses {unv}% of his strength."
                                     event += texten
 
-                            if event == 'lose_items':
-                                user = users.find_one({"userid": user['userid']})
-                                items = user['inventory']
-                                item = random.choice(items)
+                            # if event == 'lose_items':
+                            #     user = users.find_one({"userid": user['userid']})
+                            #     items = user['inventory']
+                            #     item = random.choice(items)
 
-                                if mood_n == True:
-                                    iname = Functions.item_name(item, user['language_code'])
+                            #     if mood_n == True:
+                            #         iname = Functions.item_name(item, user['language_code'])
 
-                                    if user['language_code'] == 'ru':
-                                        event = f"❗ | Бегая по лесам, динозавр обронил {iname}\n>  Предмет потерян!"
-                                    else:
-                                        event = f"❗ | Running through the woods, the dinosaur dropped {iname}\n>  The item is lost!"
+                            #         if user['language_code'] == 'ru':
+                            #             event = f"❗ | Бегая по лесам, динозавр обронил {iname}\n>  Предмет потерян!"
+                            #         else:
+                            #             event = f"❗ | Running through the woods, the dinosaur dropped {iname}\n>  The item is lost!"
 
-                                    user['inventory'].remove(item)
-                                    users.update_one({"userid": user['userid']},
-                                        {"$set": {'inventory': user['inventory']}})
+                            #         user['inventory'].remove(item)
+                            #         users.update_one({"userid": user['userid']},
+                            #             {"$set": {'inventory': user['inventory']}})
 
-                                if mood_n == False:
+                            #     if mood_n == False:
 
-                                    if user['language_code'] == 'ru':
-                                        event = '🍭 | Отрицательное событие отменено из-за хорошего настроения!'
-                                    else:
-                                        event = '🍭 | Negative event canceled due to good mood!'
+                            #         if user['language_code'] == 'ru':
+                            #             event = '🍭 | Отрицательное событие отменено из-за хорошего настроения!'
+                            #         else:
+                            #             event = '🍭 | Negative event canceled due to good mood!'
 
                             if event[2:] == 'coins':
 
@@ -1277,7 +1278,7 @@ class CheckFunction:
                             del dung['users'][user['userid']]['dinos'][dino_id]
                             dungeons.update_one({"dungeonid": dungeonid}, {"$set": {f'users': dung['users']}})
 
-                            inf = Dungeon.message_upd(bot, userid=user.id, dungeonid=user.id)
+                            inf = Dungeon.message_upd(bot, userid=user['userid'], dungeonid=user['userid'])
 
                             if user['userid'] == dung['dungeonid'] and len(
                                     dung['users'][str(user['userid'])]['dinos']) == 0:
@@ -1401,11 +1402,9 @@ class Checks:
     @staticmethod
     def check_incub(bot):  # проверка каждые 5 секунд
 
-        t_st = int(time.time())
-        members = users.find({'dinos': {'$ne': {}}})
+        members = users.find(filter={'dinos': {'$ne': {}}}, projection={'dinos': 1, 'notifications': 1, 'userid': 1, 'settings': 1})
 
         for user in members:
-
             try:
                 CheckFunction.user_incub(bot, user)
             except Exception as err:
@@ -1414,8 +1413,8 @@ class Checks:
     @staticmethod
     def rayt(members):
         mr_l, lv_l, dng_fl = [], [], {}
-
         loc_users = list(members).copy()
+
         mr_l_r = list(sorted(loc_users, key=lambda x: x['coins'], reverse=True))
         lv_l_r = list(sorted(loc_users, key=lambda x: (x['lvl'][0] - 1) * (
                     5 * x['lvl'][0] * x['lvl'][0] + 50 * x['lvl'][0] + 100) + x['lvl'][1], reverse=True))
@@ -1455,7 +1454,6 @@ class Checks:
     def check_notif(bot, members):
 
         for user in members:
-
             try:
                 CheckFunction.user_notif(bot, user)
             except Exception as err:
@@ -1515,7 +1513,6 @@ class Checks:
     def main(bot, members):
 
         for user in members:
-
             try:
                 CheckFunction.main(bot, user)
             except Exception as err:
@@ -1523,11 +1520,10 @@ class Checks:
     
     @staticmethod
     def events(bot):
-        CheckFunction.events(bot)
-        # try:
-        #     CheckFunction.events(bot)
-        # except Exception as err:
-        #     Functions.console_message(f'Error in events\nError: {err}', 3)
+        try:
+            CheckFunction.events(bot)
+        except Exception as err:
+            Functions.console_message(f'Error in events\nError: {err}', 3)
 
     @staticmethod
     def dungeons_check(bot):

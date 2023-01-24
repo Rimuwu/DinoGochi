@@ -4,7 +4,7 @@ import sys
 import time
 
 from fuzzywuzzy import fuzz
-from telebot import types, util 
+from telebot import types
 
 from mods.classes import Dungeon, Functions
 
@@ -51,7 +51,7 @@ class Commands:
     def project_reb(bot, message, user, bd_user):
 
         if bd_user != None:
-            if bd_user != None and len(bd_user['dinos']) == 0 and Functions.inv_egg(bd_user) == False and \
+            if bd_user != None and len(bd_user['dinos']) == 0 and Functions.inv_egg(bd_user['userid']) == False and \
                     bd_user['lvl'][0] <= 5:
                 text_dict = Functions.get_text(l_key=bd_user['language_code'], text_key="project_reb")
 
