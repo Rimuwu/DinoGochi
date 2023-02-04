@@ -601,6 +601,9 @@ class CallData:
 
                         def reg(message, mmd, us_id, key_i):
 
+                            bd_user = users.find_one({"userid": user.id})
+                            market_ = management.find_one({"_id": 'products'})
+
                             try:
                                 number = int(message.text)
                             except:
@@ -650,8 +653,11 @@ class CallData:
                                 del market_['products'][str(us_id)]['products'][str(key_i)]
 
                             management.update_one({"_id": 'products'}, {"$set": {'products': market_['products']}})
-                            users.update_one({"userid": user.id}, {"$set": {'inventory': bd_user['inventory']}})
-                            users.update_one({"userid": user.id}, {"$inc": {'coins': (mmd['price'] * number) * -1}})
+                            users.update_one({"userid": user.id}, 
+                            {
+                                "$set": {'inventory': bd_user['inventory']}, 
+                                "$inc": {'coins': (mmd['price'] * number) * -1}
+                                })
 
                             if bd_user['language_code'] == 'ru':
                                 text = "🛒 | Товар был куплен!"
