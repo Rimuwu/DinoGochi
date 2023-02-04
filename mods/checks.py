@@ -134,7 +134,7 @@ class CheckFunction:
                 dino = user['dinos'][dino_id]
                 dinos_stats = {'heal': 0, 'eat': 0, 'game': 0, 'mood': 0, 'unv': 0}
 
-                if dino['status'] == 'dino':
+                if dino.get('status', 0) == 'dino':
 
                     if dino['activ_status'] != 'freezing':
 
@@ -233,7 +233,7 @@ class CheckFunction:
             dino = user['dinos'][dino_id]
             dinos_stats = {'heal': 0, 'eat': 0, 'game': 0, 'mood': 0, 'unv': 0}
 
-            if dino['status'] == 'dino':  # дино
+            if dino.get('status', 0) == 'dino':  # дино
 
                 if dino['activ_status'] == 'journey':
 
@@ -863,7 +863,7 @@ class CheckFunction:
             dino = user['dinos'][dino_id]
             dinos_stats = {'unv': 0}
 
-            if dino['status'] == 'dino':  # дино
+            if dino.get('status', 0) == 'dino':  # дино
 
                 if dino['activ_status'] == 'hunting':
 
@@ -988,7 +988,7 @@ class CheckFunction:
             dino = user['dinos'][dino_id]
             dinos_stats = {'game': 0, 'unv': 0}
 
-            if dino['status'] == 'dino':  # дино
+            if dino.get('status', 0) == 'dino':  # дино
 
                 if dino['activ_status'] == 'game':
 
@@ -1021,7 +1021,7 @@ class CheckFunction:
             dino = user['dinos'][dino_id]
             dinos_stats = {'game': 0, 'unv': 0, 'mood': 0, 'heal': 0, 'eat': 0}
 
-            if dino['status'] == 'dino':  # дино
+            if dino.get('status', 0) == 'dino':  # дино
 
                 if dino['activ_status'] == 'sleep':
 
@@ -1066,7 +1066,7 @@ class CheckFunction:
             dino = user['dinos'][dino_id]
             dinos_stats = {'mood': 0}
 
-            if dino['status'] == 'dino':  # дино
+            if dino.get('status', 0) == 'dino':  # дино
 
                 if dino['activ_status'] == 'pass_active':
 
@@ -1101,7 +1101,7 @@ class CheckFunction:
 
         for dino_id in dns_l:
             dino = user['dinos'][dino_id]
-            if dino['status'] == 'incubation':  # инкубация
+            if dino.get('status', 0) == 'incubation':  # инкубация
 
                 if dino['incubation_time'] - int(time.time()) <= 60 * 5 and dino['incubation_time'] - int(
                         time.time()) > 0:  # уведомление за 5 минут
@@ -1125,7 +1125,7 @@ class CheckFunction:
 
         for dino_id in dns_l:
             dino = user['dinos'][dino_id]
-            if dino['status'] == 'dino':  # дино
+            if dino.get('status', 0) == 'dino':  # дино
 
                 if dino['activ_status'] == 'sleep':
 
