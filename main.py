@@ -69,7 +69,7 @@ class In_Dungeon(telebot.custom_filters.AdvancedCustomFilter):
                 return True
 
 
-def check():  # проверка каждые 10 секунд
+def check():  # проверка каждую минуту
 
     def alpha(bot, members):
         Checks.main(bot, members)
@@ -89,42 +89,43 @@ def check():  # проверка каждые 10 секунд
     def delta(bot, members):
         Checks.main_journey(bot, members)
     
-    time_sleep = 3
-    dl_us = 15
+    time_sleep = 5
+    dl_us = 10
 
-    while True:
-        st_r_time = int(time.time())
+    try:
+        while True:
+            st_r_time = int(time.time())
 
-        non_members = list(users.find({ "dinos": {"$ne": {}} }, {'inventory': 0})) #получает всех юзеров
-        ll = len(non_members) // dl_us
+            non_members = list(users.find({ "dinos": {"$ne": {}} })) #получает всех юзеров {'inventory': 0}
+            ll = len(non_members) // dl_us
 
-        if ll > 0:
-            chunks_users = list(Functions.chunks(non_members, ll)) #Делит людей на 10 списков
-        else:
-            chunks_users = [non_members]
-
-        for members in chunks_users:
-            threading.Thread(target=alpha, daemon=True, kwargs={'bot': bot, 'members': members}).start()
-            threading.Thread(target=beta, daemon=True, kwargs={'bot': bot, 'members': members}).start()
-            threading.Thread(target=beta2, daemon=True, kwargs={'bot': bot, 'members': members}).start()
-            threading.Thread(target=gamma, daemon=True, kwargs={'bot': bot, 'members': members}).start()
-            threading.Thread(target=gamma2, daemon=True, kwargs={'bot': bot, 'members': members}).start()
-            threading.Thread(target=delta, daemon=True, kwargs={'bot': bot, 'members': members}).start()
-
-            time.sleep(time_sleep)
-        
-        
-        sl_time = 60 - (int(time.time()) - st_r_time)
-        if sl_time <= 0:
-            Functions.console_message(f"sleep time: {sl_time}, time sleep skip to 0", 2)
-
-            if time_sleep > 1:
-                time_sleep -= 1
+            if ll < 0:
+                chunks_users = list(Functions.chunks(non_members, ll)) #Делит людей на 10 списков
             else:
-                if dl_us > 5:
-                    dl_us -= 1
+                chunks_users = [non_members]
 
-        time.sleep(sl_time)
+            daemon = True
+            for members in chunks_users:
+                threading.Thread(target=alpha, daemon=daemon, kwargs={'bot': bot, 'members': members}).start()
+                threading.Thread(target=beta, daemon=daemon, kwargs={'bot': bot, 'members': members}).start()
+                threading.Thread(target=beta2, daemon=daemon, kwargs={'bot': bot, 'members': members}).start()
+                threading.Thread(target=gamma, daemon=daemon, kwargs={'bot': bot, 'members': members}).start()
+                threading.Thread(target=gamma2, daemon=daemon, kwargs={'bot': bot, 'members': members}).start()
+                threading.Thread(target=delta, daemon=daemon, kwargs={'bot': bot, 'members': members}).start()
+
+                time.sleep(time_sleep)
+            
+            
+            sl_time = 60 - (int(time.time()) - st_r_time)
+            if sl_time <= 0:
+                Functions.console_message(f"sleep time: {sl_time}, time sleep skip to {30 + abs(sl_time) }", 2)
+                sl_time = 30 + abs(sl_time)
+
+            time.sleep(sl_time)
+    
+    except Exception as e:
+        Functions.console_message(f"ERRRRRRRRRRRRRRRORR {e}", 4)
+        check()
 
 
 main_checks = threading.Thread(target=check, daemon=True)
@@ -141,7 +142,7 @@ def check_notif():  # проверка каждые 5 секунд
     while True:
 
         if int(memory_usage()[0]) < 7500:
-            n_rayt = users.find({}, {'userid': 1, 'notifications': 1, 'dinos': 1, 'settings': 1, 'language_code': 1, 'lvl': 1})
+            n_rayt = users.find({})
 
             c_users = list(Functions.chunks(list(n_rayt), 100))
 
@@ -176,7 +177,7 @@ def min10_check():  # проверка каждые 10 мин
     while True:
 
         if int(memory_usage()[0]) < 7500:
-            uss = users.find({}, {'userid': 1, 'coins': 1, 'lvl': 1})
+            uss = users.find({}, {'userid': 1, 'coins': 1, 'lvl': 1, 'user_dungeon': 1})
             threading.Thread(target=alpha, daemon=True, kwargs={'users': uss}).start()
 
             if bot.get_me().first_name == config.BOT_NAME:
