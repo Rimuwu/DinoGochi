@@ -1,168 +1,169 @@
 {
 
- "mobs": {
-            "goblin": {
-                       "name": { "ru": "🐸 Гоблин", "en": "🐸 Goblin" },
-                       "hp": { "min": 2, "max": 10, "type": "random" },
-
-                       "damage-type": "near",
-                       "endurance": { "min": 5, "max": 15, "type": "random" },
-
-                       "damage": { "min": 1, "max": 3, "type": "random" },
-                       "intelligence": { "act": 1, "type": "static" },
-                       "image": "images/dungeon/mobs/goblin.png",
-                       "lvls": {"min": 1, "max": 100},
-                       "experience": { "min": 2, "max": 20, "type": "random" },
-                       "loot": [ {"item": "51", "col": 2, "chance": 200},
-                                 {"item": "57", "col": 1, "chance": 10},
-                                 {"item": "53", "col": 1, "chance": 100,
-                                        "preabil": {"endurance": {"min": 2, "max": 15, "type": "random"} } }
-                               ],
-                       "coins": { "min": 1, "max": 10, "type": "random" },
-                       "actions": { "attacks": [],
-                                    "healing": [],
-                                    "other": []
-                                  }
-                      },
-
-            "skeleton_magician": {
-                       "name": { "ru": "🧙‍♂️ Маг-скелет", "en": "🧙‍♂️ Skeleton Magician" },
-                       "hp": { "min": 2, "max": 7, "type": "random" },
-
-                       "damage-type": "magic",
-                       "mana": { "min": 20, "max": 50, "type": "random" },
-
-                       "damage": { "min": 1, "max": 2, "type": "random" },
-                       "intelligence": { "act": 10, "type": "static" },
-                       "image": "images/dungeon/mobs/skeleton_magician.png",
-                       "lvls": {"min": 1, "max": 100},
-                       "experience": { "min": 0, "max": 10, "type": "random" },
-                       "loot": [ {"item": "51", "col": 3, "chance": 300},
-                                 {"item": "49", "col": 1, "chance": 10,
-                                        "preabil": {"mana": {"min": 1, "max": 12, "type": "random"} } }
-                               ],
-                       "coins": { "min": 1, "max": 10, "type": "random" },
-                       "actions": {
-                                   "attacks": [
-
-                                { "name": "simple_attack", "type": "standart" },
-                                { "name": "simple_attack", "damage": {"min": 1, "max": 2, "type": "random"}, "mana": { "min": 1, "max": 10, "type": "random" }, "type": "unique" }
-
-                                              ],
-
-                                    "healing": [
-
-                                { "name": "simple_regeneration", "type": "standart" },
-                                { "name": "simple_regeneration", "heal": { "act": 1, "type": "static" }, "mana": { "act": 2, "type": "static" }, "type": "unique" }
-
-                                               ],
-
-                                    "other"  : [ { "name": "simple_evasion", "type": "standart" }
-                                               ]
-                                  }
-                      },
-
-            "piglin-archer": {
-                       "name": { "ru": "🏹 Лучник пиглин", "en": "🏹 Piglin-archer" },
-                       "hp": { "min": 1, "max": 5, "type": "random" },
-
-                       "damage-type": "far",
-                       "ammunition": { "min": 5, "max": 10, "type": "random" },
-
-                       "damage": { "min": 2, "max": 4, "type": "random" },
-                       "intelligence": { "min": 0, "max": 2, "type": "random" },
-                       "image": "images/dungeon/mobs/piglin-archer.png",
-                       "lvls": {"min": 1, "max": 100},
-                       "experience": { "min": 2, "max": 10, "type": "random" },
-                       "loot": [ {"item": "51", "col": 1, "chance": 200},
-                                 {"item": "58", "col": 1, "chance": 10},
-                                 {"item": "55", "col": 1, "chance": 90,
-                                        "preabil": {"endurance": {"min": 2, "max": 30, "type": "random"} } },
-                                 {"item": "54", "col": 1, "chance": 150,
-                                        "preabil": {"stack": {"min": 1, "max": 3, "type": "random"} } }
-                               ],
-                       "coins": { "min": 1, "max": 10, "type": "random" },
-                       "actions": { "attacks": [],
-                                    "healing": [],
-                                    "other": []
-                                  }
-                      },
-
-            "masked_archer": {
-                       "name": { "ru": "🏹 Лучник в маске", "en": "🏹 Masked Archer" },
-                       "hp": { "min": 10, "max": 25, "type": "random" },
-
-                       "damage-type": "far",
-                       "ammunition": { "min": 10, "max": 20, "type": "random" },
-
-                       "damage": { "min": 3, "max": 7, "type": "random" },
-                       "intelligence": { "min": 0, "max": 2, "type": "random" },
-                       "image": "images/dungeon/mobs/masked_archer.png",
-                       "lvls": {"min": 11, "max": 100},
-                       "experience": { "min": 20, "max": 50, "type": "random" },
-                       "loot": [
-                               ],
-                       "coins": { "min": 10, "max": 30, "type": "random" },
-                       "actions": { "attacks": [],
-                                    "healing": [],
-                                    "other": []
-                                  }
-                      },
-
-            "rat": {
-                       "name": { "ru": "🐀 Крыса", "en": "🐀 Крыса" },
-                       "hp": { "min": 2, "max": 10, "type": "random" },
-
-                       "damage-type": "near",
-                       "endurance": { "min": 15, "max": 25, "type": "random" },
-
-                       "damage": { "min": 1, "max": 3, "type": "random" },
-                       "intelligence": { "act": 1, "type": "static" },
-                       "image": "images/dungeon/mobs/rat.png",
-                       "lvls": {"min": 11, "max": 100},
-                       "experience": { "min": 20, "max": 50, "type": "random" },
-                       "loot": [
-                               ],
-                       "coins": { "min": 10, "max": 40, "type": "random" },
-                       "actions": { "attacks": [],
-                                    "healing": [],
-                                    "other": []
-                                  }
-                      }
-
-         },
-
- "boss": {
-
-       "mega_goblin": {
-                  "name": { "ru": "😈 Мега гоблин", "en": "😈 Mega goblin" },
-                  "hp": { "min": 40, "max": 55, "type": "random" },
-
-                  "damage-type": "near",
-                  "endurance": { "act": 1000, "type": "static" },
-
-                  "damage": { "min": 1, "max": 10, "type": "random" },
-                  "intelligence": { "act": 10, "type": "static" },
-                  "image": "images/dungeon/bosss/mega-goblin.png",
-                  "lvls": {"min": 10, "max": 100},
-                  "experience": { "min": 20, "max": 100, "type": "random" },
-                  "loot": [ {"item": "20", "col": 1, "chance": 750},
-                            {"item": "46", "col": 1, "chance": 300},
-                            {"item": "51", "col": 10, "chance": 400 }
-                          ],
-                  "coins": { "min": 50, "max": 500, "type": "random" },
-                  "actions": { "attacks": [
-
-                            { "name": "simple_attack", "damage": {"min": 1, "max": 5, "type": "random"}, "endurance": { "act": 0, "type": "static" }, "type": "unique" },
-
-                            { "name": "simple_attack", "damage": {"min": 1, "max": 10, "type": "random"}, "endurance": { "act": 0, "type": "static" }, "type": "unique" }
-
-                                          ],
-                               "healing": [],
-                               "other": []
+        "mobs": {
+                   "goblin": {
+                              "name": { "ru": "🐸 Гоблин", "en": "🐸 Goblin" },
+                              "hp": { "min": 2, "max": 10, "type": "random" },
+       
+                              "damage-type": "near",
+                              "endurance": { "min": 5, "max": 15, "type": "random" },
+       
+                              "damage": { "min": 1, "max": 3, "type": "random" },
+                              "intelligence": { "act": 1, "type": "static" },
+                              "image": "images/dungeon/mobs/goblin.png",
+                              "lvls": {"min": 1, "max": 100},
+                              "experience": { "min": 2, "max": 20, "type": "random" },
+                              "loot": [ {"item": "51", "col": 2, "chance": 200},
+                                        {"item": "57", "col": 1, "chance": 10},
+                                        {"item": "53", "col": 1, "chance": 100,
+                                               "preabil": {"endurance": {"min": 2, "max": 15, "type": "random"} } }
+                                      ],
+                              "coins": { "min": 1, "max": 10, "type": "random" },
+                              "actions": { "attacks": [],
+                                           "healing": [],
+                                           "other": []
+                                         }
+                             },
+       
+                   "skeleton_magician": {
+                              "name": { "ru": "🧙‍♂️ Маг-скелет", "en": "🧙‍♂️ Skeleton Magician" },
+                              "hp": { "min": 2, "max": 7, "type": "random" },
+       
+                              "damage-type": "magic",
+                              "mana": { "min": 20, "max": 50, "type": "random" },
+       
+                              "damage": { "min": 1, "max": 2, "type": "random" },
+                              "intelligence": { "act": 10, "type": "static" },
+                              "image": "images/dungeon/mobs/skeleton_magician.png",
+                              "lvls": {"min": 1, "max": 100},
+                              "experience": { "min": 0, "max": 10, "type": "random" },
+                              "loot": [ {"item": "51", "col": 3, "chance": 300},
+                                        {"item": "49", "col": 1, "chance": 10,
+                                               "preabil": {"mana": {"min": 1, "max": 12, "type": "random"} } }
+                                      ],
+                              "coins": { "min": 1, "max": 10, "type": "random" },
+                              "actions": {
+                                          "attacks": [
+       
+                                       { "name": "simple_attack", "type": "standart" },
+                                       { "name": "simple_attack", "damage": {"min": 1, "max": 2, "type": "random"}, "mana": { "min": 1, "max": 10, "type": "random" }, "type": "unique" }
+       
+                                                     ],
+       
+                                           "healing": [
+       
+                                       { "name": "simple_regeneration", "type": "standart" },
+                                       { "name": "simple_regeneration", "heal": { "act": 1, "type": "static" }, "mana": { "act": 2, "type": "static" }, "type": "unique" }
+       
+                                                      ],
+       
+                                           "other"  : [ { "name": "simple_evasion", "type": "standart" }
+                                                      ]
+                                         }
+                             },
+       
+                   "piglin-archer": {
+                              "name": { "ru": "🏹 Лучник пиглин", "en": "🏹 Piglin-archer" },
+                              "hp": { "min": 1, "max": 5, "type": "random" },
+       
+                              "damage-type": "far",
+                              "ammunition": { "min": 5, "max": 10, "type": "random" },
+       
+                              "damage": { "min": 2, "max": 4, "type": "random" },
+                              "intelligence": { "min": 0, "max": 2, "type": "random" },
+                              "image": "images/dungeon/mobs/piglin-archer.png",
+                              "lvls": {"min": 1, "max": 100},
+                              "experience": { "min": 2, "max": 10, "type": "random" },
+                              "loot": [ {"item": "51", "col": 1, "chance": 200},
+                                        {"item": "58", "col": 1, "chance": 10},
+                                        {"item": "55", "col": 1, "chance": 90,
+                                               "preabil": {"endurance": {"min": 2, "max": 30, "type": "random"} } },
+                                        {"item": "54", "col": 1, "chance": 150,
+                                               "preabil": {"stack": {"min": 1, "max": 3, "type": "random"} } }
+                                      ],
+                              "coins": { "min": 1, "max": 10, "type": "random" },
+                              "actions": { "attacks": [],
+                                           "healing": [],
+                                           "other": []
+                                         }
+                             },
+       
+                   "masked_archer": {
+                              "name": { "ru": "🏹 Лучник в маске", "en": "🏹 Masked Archer" },
+                              "hp": { "min": 5, "max": 20, "type": "random" },
+       
+                              "damage-type": "far",
+                              "ammunition": { "min": 10, "max": 20, "type": "random" },
+       
+                              "damage": { "min": 3, "max": 7, "type": "random" },
+                              "intelligence": { "min": 0, "max": 2, "type": "random" },
+                              "image": "images/dungeon/mobs/masked_archer.png",
+                              "lvls": {"min": 11, "max": 100},
+                              "experience": { "min": 20, "max": 50, "type": "random" },
+                              "loot": [
+                                      ],
+                              "coins": { "min": 10, "max": 30, "type": "random" },
+                              "actions": { "attacks": [],
+                                           "healing": [],
+                                           "other": []
+                                         }
+                             },
+       
+                   "rat": {
+                              "name": { "ru": "🐀 Крыса", "en": "🐀 Крыса" },
+                              "hp": { "min": 2, "max": 10, "type": "random" },
+       
+                              "damage-type": "near",
+                              "endurance": { "min": 5, "max": 20, "type": "random" },
+       
+                              "damage": { "min": 1, "max": 3, "type": "random" },
+                              "intelligence": { "act": 1, "type": "static" },
+                              "image": "images/dungeon/mobs/rat.png",
+                              "lvls": {"min": 11, "max": 100},
+                              "experience": { "min": 20, "max": 50, "type": "random" },
+                              "loot": [
+                                      ],
+                              "coins": { "min": 10, "max": 40, "type": "random" },
+                              "actions": { "attacks": [],
+                                           "healing": [],
+                                           "other": []
+                                         }
                              }
-                 }
-
- }
-
-}
+       
+                },
+       
+        "boss": {
+       
+              "mega_goblin": {
+                         "name": { "ru": "😈 Мега гоблин", "en": "😈 Mega goblin" },
+                         "hp": { "min": 20, "max": 55, "type": "random" },
+       
+                         "damage-type": "near",
+                         "endurance": { "act": 1000, "type": "static" },
+       
+                         "damage": { "min": 1, "max": 10, "type": "random" },
+                         "intelligence": { "act": 10, "type": "static" },
+                         "image": "images/dungeon/bosss/mega-goblin.png",
+                         "lvls": {"min": 10, "max": 100},
+                         "experience": { "min": 20, "max": 100, "type": "random" },
+                         "loot": [ {"item": "20", "col": 1, "chance": 750},
+                                   {"item": "46", "col": 1, "chance": 300},
+                                   {"item": "51", "col": 10, "chance": 400 }
+                                 ],
+                         "coins": { "min": 50, "max": 500, "type": "random" },
+                         "actions": { "attacks": [
+       
+                                   { "name": "simple_attack", "damage": {"min": 1, "max": 5, "type": "random"}, "endurance": { "act": 0, "type": "static" }, "type": "unique" },
+       
+                                   { "name": "simple_attack", "damage": {"min": 1, "max": 10, "type": "random"}, "endurance": { "act": 0, "type": "static" }, "type": "unique" }
+       
+                                                 ],
+                                      "healing": [],
+                                      "other": []
+                                    }
+                        }
+       
+        }
+       
+       }
+       
