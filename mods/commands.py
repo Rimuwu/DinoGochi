@@ -35,7 +35,7 @@ class Commands:
             markup_inline = types.InlineKeyboardMarkup()
 
             markup_inline.add(types.InlineKeyboardButton(text=b1, url="https://t.me/DinoGochi"))
-            markup_inline.add(types.InlineKeyboardButton(text=b2, url="https://t.me/+pq9_21HXXYY4ZGQy"))
+            markup_inline.add(types.InlineKeyboardButton(text=b2, url="https://t.me/dinoforum"))
 
             bot.send_message(message.chat.id, text, parse_mode='html', reply_markup=markup_inline)
 
