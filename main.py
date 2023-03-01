@@ -89,7 +89,7 @@ def check():  # проверка каждую минуту
     def delta(bot, members):
         Checks.main_journey(bot, members)
     
-    time_sleep = 5
+    time_sleep = 8
     dl_us = 10
 
     try:
@@ -116,7 +116,7 @@ def check():  # проверка каждую минуту
                 time.sleep(time_sleep)
             
             
-            sl_time = 60 - (int(time.time()) - st_r_time)
+            sl_time = 90 - (int(time.time()) - st_r_time)
             if sl_time <= 0:
                 Functions.console_message(f"sleep time: {sl_time}, time sleep skip to {30 + abs(sl_time) }", 2)
                 sl_time = 30 + abs(sl_time)
@@ -697,6 +697,7 @@ def on_message(message):
     user = message.from_user
 
     if message.chat.type == 'private':
+
         bd_user = users.find_one({"userid": user.id})
 
         if message.text in ['🍡 Начать играть', '🍡 Start playing']:
