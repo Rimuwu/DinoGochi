@@ -608,7 +608,7 @@ class Functions:
         users.update_one({"userid": userid}, {"$set": {f'settings.last_markup': element}})
         return markup
 
-    def time_end(seconds: int, mini=False):
+    def time_end(seconds: int, mini: bool=False):
 
         if seconds < 0: seconds = 0
 
@@ -6658,7 +6658,7 @@ class Dungeon:
 
                     if bd_user['dinos'][log_d['dino_key']]['stats']['heal'] - dmg <= 10:
                         bd_user['dinos'][log_d['dino_key']]['stats']['heal'] = 10
-                        bd_user['dinos'][log_d['dino_key']]['active_status'] = 'pass_active'
+                        bd_user['dinos'][log_d['dino_key']]['activ_status'] = 'pass_active'
 
                         del dung['users'][str(userid)]['dinos'][log_d['dino_key']]
 
