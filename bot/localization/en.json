@@ -3484,7 +3484,7 @@
         "promo": {
             "coins": "🍡 Enter the number of coins or 0",
             "count": "☄ Enter the number of uses, 0 is infinite",
-            "time_end": "🎠 Enter the end time, 0 is infinite. `/seconds_to_str` - Do not forget about the memo.",
+            "time_end": "🎠 Enter the end time, 0 is infinite. `/string_to_sec` - Do not forget about the memo.",
             "code": "🎃 Enter the tracking code.",
             "chose_item": "🧮 Choose an item to add"
         }
