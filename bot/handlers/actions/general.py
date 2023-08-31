@@ -33,14 +33,14 @@ async def edit_dino_buttom(message: Message):
 
     for element in dinos:
         txt = f'🦕 {element.name}'
-        data_names[txt] = f'edit_dino {element.alt_id}'
+        data_names[txt] = f'activ_dino {element.alt_id}'
     
     inline = list_to_inline([data_names], 2)
     await bot.send_message(user_id, 
                            t('edit_dino_button.edit', lang), 
                            reply_markup=inline)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('edit_dino'))
+@bot.callback_query_handler(func=lambda call: call.data.startswith('activ_dino'))
 async def answer_edit(callback: CallbackQuery):
     """ Изменение последнего динозавра (кнопка)
     """

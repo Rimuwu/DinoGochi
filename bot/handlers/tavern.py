@@ -258,8 +258,8 @@ async def dino_now(return_data, transmitted_data):
     await ChooseInlineState(end_edit, userid, chatid, lang, str(code), {'dino': dino, 'type': o_type})
     await bot.send_message(chatid,  t('edit_dino.new_rare', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('edit_dino') , is_authorized=True)
-async def edit_dino(callback: CallbackQuery):
+@bot.callback_query_handler(func=lambda call: call.data.startswith('transformation') , is_authorized=True)
+async def transformation(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
     lang = get_lang(callback.from_user.id)

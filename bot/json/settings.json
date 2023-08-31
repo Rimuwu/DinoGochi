@@ -62,7 +62,7 @@
         }
     },
 
-    "first_dino_time_incub": 1, 
+    "first_dino_time_incub": 600, 
     "first_egg_rarity": "random",
 
     "max_eat_items": 333,

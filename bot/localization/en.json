@@ -838,7 +838,7 @@
         },
         "no_text_key": "❌ The text corresponding to the key {key} was not found, contact the developer @AS1AW!",
         "edit_dino_button": {
-            "edit": "🦕 | Select an active dinosaur -&gt;",
+            "edit": "🦕 | Select an active dinosaur ->",
             "notfouned": "❌ | Dinosaur not found",
             "susseful": "🦕 | Active dinosaur changed to {name}"
         },
@@ -3441,9 +3441,9 @@
         "edit_dino": {
             "info": "🧬 | *Dinosaur change* \n _A dinosaur can be transformed into another. With the help of the latest technology, it is possible to change the appearance and genes of a dinosaur!_\n \n 🎍 | There are 3 ways to transform:\n \n *🎭 Rarity* - Only the rarity of the dinosaur will change. \n \n *🎠 Appearance* - Change the appearance. The rarity will remain the same, but the appearance will change in accordance with the rarity of the dinosaur. \n \n *🎑 Full* - Change and appearance and rarity of the dinosaur. \n \n _As a result of mutations, your dinosaur's tastes may change._",
             "buttons": {
-                "edit_dino rare": "🎭 Rarity",
-                "edit_dino appearance": "🎠 Appearance",
-                "edit_dino all": "🎑 Full"
+                "transformation rare": "🎭 Rarity",
+                "transformation appearance": "🎠 Appearance",
+                "transformation all": "🎑 Full"
             },
             "dino": "🍡 | Choose a dinosaur to transform",
             "new_rare": "🍡 | Click the button to select a new rarity",
