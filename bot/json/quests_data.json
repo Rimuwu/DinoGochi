@@ -1,0 +1,170 @@
+[
+  {
+    "type": "get", "complexity": 1, 
+    "reward": {
+      "coins": {"min": 50, "max": 120, "type": "random"}, 
+      "max_items": 0
+    },
+    "data": {
+      "count": {"min": 1, "max": 3, "type": "random"},
+      "items": ["soup", "salad", "taco", "popcorn", "broth", "sushi", "hot_chocolate", "cake", "curry"]
+    }
+  },
+  {
+    "type": "get", "complexity": 2, 
+    "reward": {
+      "coins": {"min": 80, "max": 200, "type": "random"}, 
+      "max_items": 0
+    },
+    "data": {
+      "count": {"act": 1, "type": "static"},
+      "items": ["cloak", "tooling", "rod", "net", "basket", "board_games"]
+    }
+  },
+
+
+  {
+    "type": "kill", "complexity": 1,
+    "reward": {
+      "coins": 0, 
+      "max_items": 0
+    },
+    "data": {
+      "mobs": []
+    }
+  },
+
+
+  {
+    "type": "feed", "complexity": 1,
+    "reward": {
+      "coins": {"min": 1, "max": 30, "type": "random"}, 
+      "max_items": 0
+    },
+    "data": {
+      "count": {"min": 1, "max": 8, "type": "random"},
+      "eat_rare": {"act": ["common", "uncommon"], "type": "choice"}
+    }
+  },
+  {
+    "type": "feed", "complexity": 2,
+    "reward": {
+      "coins": {"min": 1, "max": 30, "type": "random"}, 
+      "max_items": 0
+    },
+    "data": {
+      "count": {"min": 1, "max": 5, "type": "random"},
+      "eat_rare": {"act": ["common"], "type": "choice"}
+    }
+  },
+
+
+  {
+    "type": "game", "complexity": 1,
+    "reward": {
+      "coins": {"min": 20, "max": 118, "type": "random"}, 
+      "max_items": 0
+    },
+    "data": {
+      "minutes": {"min": 100, "max": 270, "type": "random"}
+    }
+  },
+  {
+    "type": "game", "complexity": 2,
+    "reward": {
+      "coins": {"min": 60, "max": 300, "type": "random"}, 
+      "max_items": 0
+    },
+    "data": {
+      "minutes": {"min": 200, "max": 400, "type": "random"}
+    }
+  },
+
+
+  {
+    "type": "journey", "complexity": 1,
+    "reward": {
+      "coins": {"min": 20, "max": 100, "type": "random"}, 
+      "max_items": 0
+    },
+    "data": {
+      "minutes": {"min": 100, "max": 270, "type": "random"}
+    }
+  },
+  {
+    "type": "journey", "complexity": 2,
+    "reward": {
+      "coins": {"min": 20, "max": 300, "type": "random"}, 
+      "max_items": 0
+    },
+    "data": {
+      "minutes": {"min": 300, "max": 500, "type": "random"}
+    }
+  },
+
+
+  {
+    "type": "fishing", "complexity": 1,
+    "reward": {
+      "coins": {"min": 1, "max": 2, "type": "random"}, 
+      "max_items": 0
+    },
+    "data": {
+      "count": {"min": 30, "max": 100, "type": "random"}
+    }
+  },
+  {
+    "type": "fishing", "complexity": 2,
+    "reward": {
+      "coins": {"min": 1, "max": 2, "type": "random"}, 
+      "max_items": 0
+    },
+    "data": {
+      "count": {"min": 140, "max": 240, "type": "random"}
+    }
+  },
+
+
+  {
+    "type": "collecting", "complexity": 1,
+    "reward": {
+      "coins": {"min": 2, "max": 5, "type": "random"}, 
+      "max_items": 0
+    },
+    "data": {
+      "count": {"min": 10, "max": 50, "type": "random"}
+    }
+  },
+  {
+    "type": "collecting", "complexity": 2,
+    "reward": {
+      "coins": {"min": 2, "max": 3, "type": "random"}, 
+      "max_items": 0
+    },
+    "data": {
+      "count": {"min": 80, "max": 160, "type": "random"}
+    }
+  },
+
+
+  {
+    "type": "hunt", "complexity": 1,
+    "reward": {
+      "coins": {"min": 2, "max": 5, "type": "random"}, 
+      "max_items": 0
+    },
+    "data": {
+      "count": {"min": 10, "max": 50, "type": "random"}
+    }
+  },
+  {
+    "type": "hunt", "complexity": 2,
+    "reward": {
+      "coins": {"min": 3, "max": 4, "type": "random"}, 
+      "max_items": 0
+    },
+    "data": {
+      "count": {"min": 30, "max": 100, "type": "random"}
+    }
+  }
+]

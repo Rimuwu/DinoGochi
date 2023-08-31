@@ -1,0 +1,434 @@
+{
+  "mobs": {
+      "crocodile": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "lion": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "tiger": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "bear": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "wolf": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "shark": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "snake": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "rhino": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "elephant": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "gorilla": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "spider": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "scorpion": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "camel": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "puma": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "fox": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "hyena": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "hippo": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "otter": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "panther": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "raccoon": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "deer": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "bear_cub": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "bat": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "coyote": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "cougar": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "dolphin": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "dragon": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "eagle": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "falcon": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "fennec_fox": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "giraffe": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "goat": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "grizzly": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "hamster": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "hedgehog": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "horse": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "jackal": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "jaguar": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "kangaroo": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "komodo_dragon": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "lemur": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "leopard": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "lobster": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "lynx": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "meerkat": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "mole": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "monkey": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "moose": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "narwhal": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "octopus": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "opossum": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "orca": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "ostrich": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "otter_pup": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "owl": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "panda": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "parrot": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "peacock": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "pelican": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "penguin": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "pig": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "pigeon": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "polar_bear": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "porcupine": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "rabbit": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "rattlesnake": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "red_panda": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "reindeer": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "rooster": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "seagull": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "seahorse": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "seal": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "sheep": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "skunk": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "sloth": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "snail": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "snow_leopard": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "squid": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "swan": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "toucan": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "turtle": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "walrus": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "weasel": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "whale": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "wombat": {
+        "loot": [
+          "skin"
+        ]
+      },
+      "zebra": {
+        "loot": [
+          "skin"
+        ]
+      }
+    }
+}

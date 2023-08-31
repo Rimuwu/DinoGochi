@@ -1,0 +1,344 @@
+{
+    "collections": {
+        "user": ["users", "lang", "referrals", "friends", "subscriptions"],
+        "dinosaur": ["dinosaurs", "dead_dinos", "incubation", "dino_owners", "dino_mood"],
+        "dino_activity": ["game", "journey", "sleep", "collecting", "kindergarten"],
+        "market": ["products", "sellers", "preferential", "puhs"],
+        "items": ["items"],
+        "tavern": ["quests", "tavern", "daily_award"],
+        "dungeon": ["lobby", "dungeon_statistic"],
+        "other": ["management", "statistic", "events", "promo"]
+    },
+
+    "please_create_this": {
+        "other": {
+            "management": [
+                {
+                    "_id": "tracking_links",
+                    "links": {}
+                },
+                {
+                    "_id": "rayting_coins",
+                    "data": [],
+                    "ids": []
+                },
+                {
+                    "_id": "rayting_lvl",
+                    "data": [],
+                    "ids": []
+                },
+                {
+                    "_id": "rayt_update",
+                    "time": 0
+                }
+            ]
+        }
+    },
+
+    "dino_rarity": {
+        "com": 50,
+        "unc": 25,
+        "rar": 15,
+        "mys": 9,
+        "leg": 1
+    },
+
+    "penalties": {
+
+        "games": {
+            "0": 1.0,
+            "1": 0.8,
+            "2": 0.7,
+            "3": 0.6
+        },
+
+        "eat": {
+            "0": 1.2,
+            "1": 1.0,
+            "2": 0.9,
+            "3": 0.8,
+            "4": 0.7,
+            "5": 0.6
+        }
+    },
+
+    "first_dino_time_incub": 1, 
+    "first_egg_rarity": "leg",
+
+    "max_eat_items": 333,
+    "premium_max_eat_items": 555,
+
+    "max_collecting": 100,
+    "premium_max_collecting": 200,
+
+    "new_year_item": "gift_2023",
+
+    "max_eat_price": {
+        "common": 200,
+        "uncommon": 500,
+        "rare": 3000,
+        "mystical": 8000,
+        "legendary": 20000,
+        "mythical": 1000000
+    },
+
+    "xp_craft": {
+        "common": 2,
+        "uncommon": 5,
+        "rare": 10,
+        "mystical": 20,
+        "legendary": 50,
+        "mythical": 100
+    },
+
+    "change_rarity": { 
+        "com": {"coins": 2000,  "materials": ["regular_egg"] },
+        "unc": {"coins": 4000,  "materials": ["unusual_egg"] },
+        "rar": {"coins": 8000,  "materials": ["rare_egg"] },
+        "mys": {"coins": 16000, "materials": ["mystic_egg"] },
+        "leg": {"coins": 32000, "materials": ["legendary_egg"] },
+        "random": {"coins": 5000,  "materials": ["mysterious_egg" ] }
+    },
+
+    "change_appearance": {
+        "coins": 1000, "items": ["mysterious_egg"]
+    },
+
+    "egg_ask_backs": ["back", "back2", "back3", "back4", "back5"],
+
+    "events": {
+
+        "random_data": {
+            "random_col": { "min": 1, "max": 2, "type": "random" },
+            "random_time": [7200, 14400, 21600, 43200, 86400, 129600],
+
+            "add_hunting": {
+                "bacon": [5, 10],
+                "spicy_steak": [2, 10]
+            },
+
+            "add_fishing": {
+                "curry": [5, 10],
+                "fish_cake": [2, 10]
+            },
+
+            "add_collecting": {
+                "sushi": [5, 10],
+                "berry_pie": [2, 10]
+            },
+
+            "add_all": {
+                "popcorn": [5, 10],
+                "cake": [2, 10]
+            }
+        },
+
+        "time_year": {
+            "standart": {
+                "name": "🦖", "status": "👁‍🗨", "rare": "🧿",
+                "age": "🎂", 
+
+                "em_coll_act": "🏹", "em_game_act": "🧩",
+                "em_journey_act": "🎑",
+
+                "heal": "❤️", "eat": "🍕", "game": "🎮",
+                "mood": "🎈", "energy": "🌙",
+
+                "ac_sleep": "🌙", "ac_game": "🎮",
+                "ac_collecting": "🌿", "ac_journey": "🎍",
+                "ac_weapon": "⚔", "ac_armor": "🛡", 
+                "ac_backpack": "🎒",
+
+                "activ_journey": "📙", "activ_game": "🏀",
+                "activ_hunting": "🎯"
+            },
+            "winter":  {
+                "name": "🧊", "status": "❄️", "rare": "☃️",
+                "age": "🧵",
+
+                "em_coll_act": "🏹", "em_game_act": "🧩",
+                "em_journey_act": "🎑",
+
+                "heal": "☁️", "eat": "🥂", "game": "🎄",
+                "mood": "❄️", "energy": "🕯",
+
+                "ac_sleep": "🕯", "ac_game": "✨",
+                "ac_collecting": "🌿",  "ac_journey": "🌨",
+                "ac_weapon": "⚔", "ac_armor": "🛡", 
+                "ac_backpack": "🎒",
+
+                "activ_journey": "📙", "activ_game": "🏀",
+                "activ_hunting": "🎯"
+            },
+            "spring":  {
+                "name": "🌸", "status": "💮", "rare": "🌿",
+                "age": "🥭",
+
+                "em_coll_act": "🏹", "em_game_act": "🧩",
+                "em_journey_act": "🎑",
+
+                "heal": "🏵", "eat": "🥞", "game": "💐",
+                "mood": "🍯", "energy": "✨",
+
+                "ac_sleep": "🌙", "ac_game": "🌾",
+                "ac_collecting": "🌻", "ac_journey": "🏔",
+                "ac_weapon": "⚔", "ac_armor": "🛡", 
+                "ac_backpack": "🎒",
+
+                "activ_journey": "📙", "activ_game": "🏀",
+                "activ_hunting": "🎯"
+            },
+            "summer":  {
+                "name": "🍹", "status": "💐", "rare": "🥀",
+                "age": "🥕",
+
+                "em_coll_act": "🏹", "em_game_act": "🧩",
+                "em_journey_act": "🎑",
+
+                "heal": "🌴", "eat": "🥜", "game": "🍨",
+                "mood": "⛺️", "energy": "🍯",
+
+                "ac_sleep": "🎗", "ac_game": "🌾",
+                "ac_collecting": "🫐",  "ac_journey": "🏔",
+                "ac_weapon": "⚔", "ac_armor": "🛡", 
+                "ac_backpack": "🎒",
+
+                "activ_journey": "📙", "activ_game": "🏀",
+                "activ_hunting": "🎯"
+            },
+            "autumn":  {
+                "name": "🏮", "status": "🍁", "rare": "🥧",
+                "age": "🍒",
+
+                "em_coll_act": "🏹", "em_game_act": "🧩",
+                "em_journey_act": "🎑",
+
+                "heal": "🍂", "eat": "🍷", "game": "🍁",
+                "mood": "🍃", "energy": "🥀",
+
+                "ac_sleep": "🍂", "ac_game": "🍁",
+                "ac_collecting": "🍊", "ac_journey": "🏔",
+                "ac_weapon": "⚔", "ac_armor": "🛡", 
+                "ac_backpack": "🎒",
+
+                "activ_journey": "📙", "activ_game": "🏀",
+                "activ_hunting": "🎯"
+            }
+        }
+    },
+
+    "products": {
+        "dino_ultima": {
+            "type": "subscription",
+            "cost": {
+                "1": {
+                    "USD": 1,
+                    "RUB": 80
+                },
+                "2": {
+                    "USD": 2,
+                    "RUB": 160
+                },
+                "3": {
+                    "USD": 2.5,
+                    "RUB": 200
+                }
+            }, 
+            "time": 2592000,
+            "items": []
+        },
+        "rescue_kit": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "USD": 0.5,
+                    "RUB": 40
+                }
+            },
+            "items": ["jar_honey", "jar_honey", "jar_honey", "jar_honey", "therapeutic_mixture", "therapeutic_mixture", "therapeutic_mixture", "medicinal_drink", "medicinal_drink", "meat_pie", "fish_cake", "berry_pie", "mushroom"]
+        },
+        "reborn": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "USD": 0.6,
+                    "RUB": 50
+                }
+            },
+            "items": ["stone_resurrection"]
+        }
+    },
+    
+
+    "collecting_items": {
+
+        "collecting": {
+            "com": ["grasses_from_fields", "maize", "carrot"],
+            "unc": ["grasses_from_fields", "banana", "grain"],
+            "rar": ["twigs_tree", "berries", "tomato", "potato"], 
+            "mys": ["bunch_herbs", "berries", "rice"],
+            "leg": ["bunch_herbs", "spices", "mushroom"]
+        },
+
+        "hunt": {
+            "com": ["wolf_meat"],
+            "unc": ["wolf_meat"],
+            "rar": ["skin", "chicken_leg"],
+            "mys": ["wild_boar_meat", "chicken_leg"],
+            "leg": ["wild_boar_meat"]
+        },
+
+        "fishing": {
+            "com": ["seafood"],
+            "unc": ["seafood"],
+            "rar": ["fish_oil", "small_fish"],
+            "mys": ["small_fish", "fish", "small_fish"],
+            "leg": ["fish", "crab"]
+        },
+
+        "all": {
+            "com": ["cookie", "chocolate", "grasses_from_fields", "maize", "wolf_meat", "seafood", "carrot"],
+            "unc": ["cookie", "chocolate", "grasses_from_fields", "banana", "grain", "wolf_meat", "seafood"],
+            "rar": ["cookie", "dango", "twigs_tree", "berries", "skin", "chicken_leg", "fish_oil", "small_fish", "potato", "tomato"],
+            "mys": ["sweet_pancakes", "slice_pizza", "bunch_herbs", "berries", "rice", "wild_boar_meat", "chicken_leg", "small_fish", "fish", "small_fish"],
+            "leg": ["slice_pizza", "coffee", "bunch_herbs", "spices", "mushroom", "wild_boar_meat", "fish", "crab"]
+        }
+
+    },
+
+    "back_button": "◀",
+    "forward_button": "▶",
+
+    "referal": {
+        "coins": 255,
+        "items": ["jar_honey", "jar_honey", "cookie", "cookie", "bear", "chicken_leg", "chicken_leg", "berries", "berries", "small_fish", "small_fish", "cake"],
+
+        "custom_price": 50,
+
+        "award_lvl": 5,
+        "award_items": ["rare_egg", "unusual_egg"]
+    },
+
+    "dead_dino_item": "regular_egg",
+
+    "dead_dialog_max_lvl": 10,
+    "dead_dialog_item": "mysterious_egg",
+
+    "inspiration_bonus": 2,
+    "event_points": 25,
+
+    "daily_award": {
+        "lvl1": {
+            "items": ["medicinal_drink", "ale"],
+            "coins": 122
+        },
+        "lvl2": {
+            "items": ["medicinal_drink", "ale", "sandwich", "pizza"],
+            "coins": 222
+        },
+        "bonus": {
+            "items": ["taco", "broth", "hot_chocolate"],
+            "coins": 178
+        }
+    }
+} 
