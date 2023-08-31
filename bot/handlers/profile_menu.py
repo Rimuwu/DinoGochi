@@ -107,7 +107,7 @@ async def rayting_call(callback: CallbackQuery):
             elif n == 3: n = '🥉'
 
             if premium(user['userid']):
-                add_text += t(f"rayting.premium", lang)
+                add_text += t(f"rayting.premium", lang) + '\n     '
 
             add_text += t(f"rayting.{data[1]}_text", lang, **user)
             text += f'{sign} #{n} *{name}*\n     {add_text}\n'
