@@ -6,7 +6,7 @@ from bot.exec import bot
 from bot.config import mongo_client
 from time import time as time_now
 
-DEFAULT_RATE_LIMIT = 0.5
+DEFAULT_RATE_LIMIT = 0.2
 users = mongo_client.user.users
 
 class AntifloodMiddleware(BaseMiddleware):
