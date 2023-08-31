@@ -63,7 +63,7 @@
     },
 
     "first_dino_time_incub": 1, 
-    "first_egg_rarity": "leg",
+    "first_egg_rarity": "random",
 
     "max_eat_items": 333,
     "premium_max_eat_items": 555,
