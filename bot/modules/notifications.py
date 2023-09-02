@@ -4,7 +4,7 @@ from time import time
 from bson.objectid import ObjectId
 from telebot.types import InlineKeyboardMarkup
 
-from bot.config import mongo_client
+from bot.config import mongo_client, conf
 from bot.exec import bot
 from bot.modules.data_format import seconds_to_str
 from bot.modules.inline import inline_menu
@@ -34,7 +34,7 @@ critical_line = {
     'heal': 30, 'eat': 40, 
     'game': 50, 'mood': 50,
     'energy': 30
- }
+}
 
 def save_notification(dino_id: ObjectId, not_type: str):
     """ Сохраняет уведомление и его время отправки
@@ -137,12 +137,13 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
                 try:
                     try:
                         await bot.send_message(owner['owner_id'], text, reply_markup=markup_inline, parse_mode='Markdown')
-                    except Exception: 
+                    except Exception:
                         await bot.send_message(owner['owner_id'], text, reply_markup=markup_inline)
-                except Exception as error: 
-                    log(prefix='DinoNotification Error', 
-                        message=f'User: {owner["owner_id"]} DinoId: {dino_id}, Data: {not_type} Error: {error}', 
-                        lvl=3)
+                except Exception as error:
+                    if conf.debug:
+                        log(prefix='DinoNotification Error', 
+                            message=f'User: {owner["owner_id"]} DinoId: {dino_id}, Data: {not_type} Error: {error}', 
+                            lvl=3)
     if dino: # type: dict
         kwargs['dino_name'] = dino['name']
         kwargs['dino_alt_id_markup'] = dino['alt_id']
@@ -153,8 +154,8 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
             if not_type in tracked_notifications:
 
                 if check_dino_notification(dino_id, not_type):
-                    await send_not(text, markup_inline)
                     save_notification(dino_id, not_type)
+                    await send_not(text, markup_inline)
                 else:
                     log(prefix='Notification Repeat', 
                         message=f'DinoId: {dino_id}, Data: {not_type} Kwargs: {kwargs}', lvl=0)
@@ -221,7 +222,7 @@ async def notification_manager(dino_id: ObjectId, stat: str, unit: int):
         if check_dino_notification(dino_id, notif, False):
             # Отправка уведомления
             await dino_notification(dino_id, notif, unit=unit)
-        
+
     elif unit >= critical_line[stat] + 20:
         # Удаляем уведомление 
         dino_notification_delete(dino_id, notif)
