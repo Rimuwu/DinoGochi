@@ -830,7 +830,7 @@
                 "went": "🍺 {name} I went to the tavern ...",
                 "button": "🍻 Buy ale for 50 🪙"
             },
-            "about": "🤖 | Hello! I'm @{bot_name}, and here's some information about me! \n \n 🗝️ | Statistics: 👥 &lt;code&gt;{col_u}&lt;/code&gt; 🦕 &lt;code&gt;{col_d}&lt;/code&gt; 🔮 &lt;code&gt;{col_i}&lt;/code&gt;\n &lt;i&gt;{update_time} ago.&lt;/i&gt;",
+            "about": "🤖 | Hello! I'm @{bot_name}, and here's some information about me! \n \n 🗝️ | Statistics: 👥 <code>{col_u}</code> 🦕 <code>{col_d}</code> 🔮 <code>{col_i}</code>\n <i>{update_time} ago.</i>",
             "referal": "🤍 | Redirection to the referral system menu! \n \n 💜 | *Upon reaching the level {lvl}* your friend, you will get {award_text}! \n \n ❤️ | A friend will receive a bonus in the amount of: {coins} coins, {items}",
             "referal_separator": "or",
             "settings2": "🔧 | Settings menu (Page 2)\n \n 🦕 Handling: {my_name}",
@@ -1177,23 +1177,23 @@
             "return": "🔮 Return to the main menu!",
             "inline_menu": {
                 "reset_activ_item": {
-                    "text": "💍 Снять предмет",
+                    "text": "💍 Remove the item",
                     "data": "dino_menu reset_activ_item {dino}"
                 },
                 "mood_log": {
-                    "text": "📜 О настроении",
+                    "text": "📜 About the mood",
                     "data": "dino_menu mood_log {dino}"
                 },
                 "joint_dino": {
-                    "text": "❌ Отказаться",
+                    "text": "❌ Refuse",
                     "data": "dino_menu joint_cancel {dino}"
                 },
                 "my_joint": {
-                    "text": "❌ Общий доступ",
+                    "text": "❌ Shared access",
                     "data": "dino_menu my_joint_cancel {dino}"
                 },
                 "kindergarten": {
-                    "text": "🏡 Детский сад (⭐)",
+                    "text": "🏡 Kindergarten (⭐)",
                     "data": "dino_menu kindergarten {dino}"
                 }
             },
