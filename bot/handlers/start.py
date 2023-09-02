@@ -38,7 +38,7 @@ async def start_command_auth(message: types.Message):
                           'chatid': message.chat.id,
                           'lang': get_lang(message.from_user.id)})
 
-@bot.message_handler(pass_bot=True, text='commands_name.start_game', is_authorized=False)
+@bot.message_handler(text='commands_name.start_game', is_authorized=False)
 async def start_game(message: types.Message, code: str = '', code_type: str = ''):
 
     #Сообщение-реклама
