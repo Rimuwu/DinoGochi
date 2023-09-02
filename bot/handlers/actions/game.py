@@ -171,7 +171,7 @@ async def game_start(return_data: dict,
         ])
         await bot.send_message(chatid, text, reply_markup=markup)
 
-@bot.message_handler(text='commands_name.actions.entertainments', dino_pass=True, nothing_state=True)
+@bot.message_handler(pass_bot=True, text='commands_name.actions.entertainments', dino_pass=True, nothing_state=True)
 async def entertainments(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
@@ -181,7 +181,7 @@ async def entertainments(message: Message):
     dino = user.get_last_dino()
     if dino: await start_game_ent(userid, chatid, lang, dino)
 
-@bot.message_handler(text='commands_name.actions.stop_game')
+@bot.message_handler(pass_bot=True, text='commands_name.actions.stop_game')
 async def stop_game(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)

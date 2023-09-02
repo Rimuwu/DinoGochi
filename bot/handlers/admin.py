@@ -28,14 +28,14 @@ friends = mongo_client.user.friends
 dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = mongo_client.dinosaur.dino_owners
 
-@bot.message_handler(commands=['send_message'], is_admin=True)
+@bot.message_handler(pass_bot=True, commands=['send_message'], is_admin=True)
 async def send_message(message: Message):
     chatid = message.chat.id
     lang = get_lang(message.from_user.id)
     
     # Рассылка
 
-@bot.message_handler(commands=['create_tracking'], is_admin=True)
+@bot.message_handler(pass_bot=True, commands=['create_tracking'], is_admin=True)
 async def create_tracking(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -62,7 +62,7 @@ async def create_track(name, transmitted_data: dict):
 
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.message_handler(commands=['tracking'], is_admin=True)
+@bot.message_handler(pass_bot=True, commands=['tracking'], is_admin=True)
 async def tracking(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -79,7 +79,7 @@ async def track_info_adp(data, transmitted_data: dict):
     text, markup = await track_info(data, lang)
     await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('track'), private=True)
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('track'), private=True)
 async def track(call: CallbackQuery):
     split_d = call.data.split()
     action = split_d[1]
@@ -103,7 +103,7 @@ async def track(call: CallbackQuery):
 
         await bot.send_message(chatid, text)
 
-@bot.message_handler(commands=['create_promo'], is_admin=True)
+@bot.message_handler(pass_bot=True, commands=['create_promo'], is_admin=True)
 async def create_promo(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -111,7 +111,7 @@ async def create_promo(message: Message):
 
     await create_promo_start(userid, chatid, lang)
 
-@bot.message_handler(commands=['promos'], is_admin=True)
+@bot.message_handler(pass_bot=True, commands=['promos'], is_admin=True)
 async def promos(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -128,7 +128,7 @@ async def promo_info_adp(code, transmitted_data: dict):
     text, markup = promo_ui(code, lang)
     await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('promo'))
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('promo'))
 async def promo_call(call: CallbackQuery):
     split_d = call.data.split()
     action = split_d[2]
@@ -185,7 +185,7 @@ async def promo_call(call: CallbackQuery):
     else:
         await bot.send_message(userid, t('promo_commands.not_found', lang), parse_mode='Markdown')
 
-@bot.message_handler(commands=['link_promo'])
+@bot.message_handler(pass_bot=True, commands=['link_promo'])
 async def link_promo(message):
     user = message.from_user
     msg_args = message.text.split()

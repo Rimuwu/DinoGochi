@@ -19,7 +19,7 @@ from bot.modules.promo import use_promo
 stickers = bot.get_sticker_set('Stickers_by_DinoGochi_bot')
 referals = mongo_client.user.referrals
 
-@bot.message_handler(commands=['start'], is_authorized=True, private=True)
+@bot.message_handler(pass_bot=True, commands=['start'], is_authorized=True, private=True)
 async def start_command_auth(message: types.Message):
     stickers = await bot.get_sticker_set('Stickers_by_DinoGochi_bot')
     sticker = choice(list(stickers.stickers)).file_id
@@ -38,7 +38,7 @@ async def start_command_auth(message: types.Message):
                           'chatid': message.chat.id,
                           'lang': get_lang(message.from_user.id)})
 
-@bot.message_handler(text='commands_name.start_game', is_authorized=False)
+@bot.message_handler(pass_bot=True, text='commands_name.start_game', is_authorized=False)
 async def start_game(message: types.Message, code: str = '', code_type: str = ''):
 
     #Сообщение-реклама
@@ -63,7 +63,7 @@ async def start_game(message: types.Message, code: str = '', code_type: str = ''
     start_game = t('start_command.start_game', message.from_user.language_code)
     await bot.send_photo(message.chat.id, img, start_game, reply_markup=markup_inline)
 
-@bot.message_handler(commands=['start'], is_authorized=False)
+@bot.message_handler(pass_bot=True, commands=['start'], is_authorized=False)
 async def start_game_message(message: types.Message):
     langue_code = message.from_user.language_code
     username = user_name(message.from_user)
@@ -92,7 +92,7 @@ async def start_game_message(message: types.Message):
         await start_game(message, referal=referal) # type: ignore
 
 
-@bot.callback_query_handler(is_authorized=False, 
+@bot.callback_query_handler(pass_bot=True, is_authorized=False, 
                             func=lambda call: call.data.startswith('start_egg'), private=True)
 async def egg_answer_callback(callback: types.CallbackQuery):
     egg_id = int(callback.data.split()[1])

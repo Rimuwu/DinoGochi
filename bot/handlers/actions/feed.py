@@ -66,7 +66,7 @@ async def inventory_adapter(item, transmitted_data):
                                   lang, steps, 
                               transmitted_data=transmitted_data)
 
-@bot.message_handler(text='commands_name.actions.feed')
+@bot.message_handler(pass_bot=True, text='commands_name.actions.feed')
 async def feed(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)

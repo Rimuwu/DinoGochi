@@ -15,7 +15,7 @@ from bot.modules.user import take_coins
 users = mongo_client.user.users
 referals = mongo_client.user.referrals
 
-@bot.message_handler(text='commands_name.referal.code', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.referal.code', is_authorized=True)
 async def code(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
@@ -77,7 +77,7 @@ async def custom_handler(message: Message, transmitted_data: dict):
         await bot.send_message(chatid, text, parse_mode='Markdown')
     return status, code
 
-@bot.callback_query_handler(func=lambda call: 
+@bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('generate_referal'), private=True)
 async def generate_code(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -105,7 +105,7 @@ async def generate_code(call: CallbackQuery):
         await bot.send_message(chatid, t('referals.have_code', lang))
 
 
-@bot.message_handler(textstart='commands_name.referal.my_code')
+@bot.message_handler(pass_bot=True, textstart='commands_name.referal.my_code')
 async def my_code(message: Message):
     """ Кнопка - мой код ...
     """
@@ -142,7 +142,7 @@ async def check_code(code: str, transmitted_data: dict):
     await bot.send_message(chatid, text, parse_mode='Markdown', 
                         reply_markup=m(userid, 'last_menu', lang, True))
 
-@bot.message_handler(text='commands_name.referal.enter_code', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.referal.enter_code', is_authorized=True)
 async def enter_code(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)

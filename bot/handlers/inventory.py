@@ -30,7 +30,7 @@ async def cancel(message):
     await bot.delete_state(message.from_user.id, message.chat.id)
     await bot.reset_data(message.from_user.id,  message.chat.id)
 
-@bot.message_handler(text='commands_name.profile.inventory', is_authorized=True, state=None)
+@bot.message_handler(pass_bot=True, text='commands_name.profile.inventory', is_authorized=True, state=None)
 async def open_inventory(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
@@ -38,7 +38,7 @@ async def open_inventory(message: Message):
 
     await start_inv(None, userid, chatid, lang)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('inventory_start'), private=True)
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('inventory_start'), private=True)
 async def start_callback(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id
@@ -80,7 +80,7 @@ async def inventory(message: Message):
         await function(items_data[content], transmitted_data)
     else: await cancel(message)
 
-@bot.callback_query_handler(state=InventoryStates.Inventory, func=lambda call: call.data.startswith('inventory_menu'), private=True)
+@bot.callback_query_handler(pass_bot=True, state=InventoryStates.Inventory, func=lambda call: call.data.startswith('inventory_menu'), private=True)
 async def inv_callback(call: CallbackQuery):
     call_data = call.data.split()[1]
     chatid = call.message.chat.id
@@ -133,7 +133,7 @@ async def inv_callback(call: CallbackQuery):
             data['filters'] = []
         await swipe_page(userid, chatid)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('item'), private=True)
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('item'), private=True)
 async def item_callback(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -180,7 +180,7 @@ async def item_callback(call: CallbackQuery):
         else: print('item_callback', call_data[1])
 
 # Поиск внутри инвентаря
-@bot.callback_query_handler(state=InventoryStates.InventorySearch, 
+@bot.callback_query_handler(pass_bot=True, state=InventoryStates.InventorySearch, 
                             func=lambda call: call.data.startswith('inventory_search'), private=True)
 async def search_callback(call: CallbackQuery):
     call_data = call.data.split()[1]
@@ -192,7 +192,7 @@ async def search_callback(call: CallbackQuery):
         await bot.set_state(userid, InventoryStates.Inventory, chatid)
         await swipe_page(userid, chatid)
 
-@bot.message_handler(state=InventoryStates.InventorySearch, is_authorized=True)
+@bot.message_handler(pass_bot=True, state=InventoryStates.InventorySearch, is_authorized=True)
 async def search_message(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
@@ -228,7 +228,7 @@ async def search_message(message: Message):
         await bot.send_message(chatid, t('inventory.search_null', lang))
 
 #Фильтры
-@bot.callback_query_handler(state=InventoryStates.InventorySetFilters, func=lambda call: call.data.startswith('inventory_filter'), private=True)
+@bot.callback_query_handler(pass_bot=True, state=InventoryStates.InventorySetFilters, func=lambda call: call.data.startswith('inventory_filter'), private=True)
 async def filter_callback(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -279,7 +279,7 @@ async def filter_callback(call: CallbackQuery):
 
             await filter_menu(userid, chatid)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('book'), private=True)
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('book'), private=True)
 async def book(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -292,7 +292,7 @@ async def book(call: CallbackQuery):
         await bot.edit_message_text(text, chatid, call.message.id, reply_markup=markup, parse_mode='Markdown')
     except: pass
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('ns_craft'), private=True)
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('ns_craft'), private=True)
 async def ns_craft(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id

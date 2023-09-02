@@ -11,7 +11,7 @@ from time import time
 users = mongo_client.user.users
 management = mongo_client.other.management
 
-@bot.message_handler(text='commands_name.profile.information', 
+@bot.message_handler(pass_bot=True, text='commands_name.profile.information', 
                      is_authorized=True)
 async def infouser(message: Message):
     userid = message.from_user.id
@@ -26,7 +26,7 @@ async def infouser(message: Message):
     else:
         await bot.send_message(message.chat.id, text, parse_mode='Markdown')
 
-@bot.message_handler(commands=['profile'], is_authorized=True)
+@bot.message_handler(pass_bot=True, commands=['profile'], is_authorized=True)
 async def infouser_com(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
@@ -40,7 +40,7 @@ async def infouser_com(message: Message):
     else:
         await bot.send_message(message.chat.id, text, parse_mode='Markdown')
 
-@bot.message_handler(text='commands_name.profile.rayting', 
+@bot.message_handler(pass_bot=True, text='commands_name.profile.rayting', 
                      is_authorized=True)
 async def rayting(message: Message):
     chatid = message.chat.id
@@ -65,7 +65,7 @@ async def rayting(message: Message):
             markup = list_to_inline([buttons])
             await bot.send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('rayting'))
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('rayting'))
 async def rayting_call(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id

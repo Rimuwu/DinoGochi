@@ -173,7 +173,7 @@ async def transition(element, transmitted_data: dict):
     elif type(element) == Egg:
         await egg_profile(chatid, element, lang)
 
-@bot.message_handler(text='commands_name.dino_profile', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.dino_profile', is_authorized=True)
 async def dino_handler(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
@@ -186,7 +186,7 @@ async def dino_handler(message: Message):
         else:
             await bot.send_message(userid, t(f'p_profile.no_dino_no_egg', lang))
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('dino_profile'))
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('dino_profile'))
 async def answer_edit(call: types.CallbackQuery):
     dino_data = call.data.split()[1]
     await bot.delete_state(call.from_user.id, call.message.chat.id)
@@ -203,7 +203,7 @@ async def answer_edit(call: types.CallbackQuery):
     dino = Dino(dino_data) #type: ignore
     await transition(dino, trans_data)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('dino_menu'), private=True)
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('dino_menu'), private=True)
 async def dino_menu(call: types.CallbackQuery):
     split_d = call.data.split()
     action = split_d[1]
@@ -348,7 +348,7 @@ async def remove_accessory(option: list, transmitted_data:dict):
     await bot.send_message(userid, t("remove_accessory.remove", lang), 
                            reply_markup=m(userid, 'last_menu', lang))
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('kindergarten'), private=True)
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('kindergarten'), private=True)
 async def kindergarten(call: types.CallbackQuery):
     split_d = call.data.split()
     action = split_d[1]

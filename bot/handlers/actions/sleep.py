@@ -89,7 +89,7 @@ async def end_choice(option: str, transmitted_data: dict):
             reply_markup=inline_menu('dino_profile', lang, 
             dino_alt_id_markup=last_dino.alt_id))
 
-@bot.message_handler(text='commands_name.actions.put_to_bed', dino_pass=True)
+@bot.message_handler(pass_bot=True, text='commands_name.actions.put_to_bed', dino_pass=True)
 async def put_to_bed(message: Message):
     """Уложить спать динозавра
     """
@@ -132,7 +132,7 @@ async def put_to_bed(message: Message):
         await bot.send_message(userid, t('edit_dino_button.notfouned', lang),
                 reply_markup=m(userid, 'last_menu', lang))
 
-@bot.message_handler(text='commands_name.actions.awaken')
+@bot.message_handler(pass_bot=True, text='commands_name.actions.awaken')
 async def awaken(message: Message):
     """Пробуждение динозавра
     """

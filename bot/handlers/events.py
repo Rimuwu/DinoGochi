@@ -12,7 +12,7 @@ from bot.modules.user import user_in_chat
 users = mongo_client.user.users
 puhs = mongo_client.market.puhs
 
-@bot.my_chat_member_handler()
+@bot.my_chat_member_handler(pass_bot=True)
 async def my_update(data: ChatMemberUpdated):
     lang = get_lang(data.from_user.id)
     userid = data.from_user.id

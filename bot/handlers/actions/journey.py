@@ -101,7 +101,7 @@ async def start_journey(userid: int, chatid: int, lang: str,
     await bot.send_message(chatid, t('journey_start.cancel_text', lang), 
                            reply_markup=cancel_markup(lang))
 
-@bot.message_handler(text='commands_name.actions.journey', 
+@bot.message_handler(pass_bot=True, text='commands_name.actions.journey', 
                      nothing_state=True)
 async def journey_com(message: Message):
     userid = message.from_user.id
@@ -110,7 +110,7 @@ async def journey_com(message: Message):
 
     await start_journey(userid, chatid, lang)
 
-@bot.callback_query_handler(func=
+@bot.callback_query_handler(pass_bot=True, func=
                             lambda call: call.data.startswith('journey_complexity'), private=True)
 async def journey_complexity(callback: CallbackQuery):
     lang = get_lang(callback.from_user.id)
@@ -119,7 +119,7 @@ async def journey_complexity(callback: CallbackQuery):
     text = t('journey_complexity', lang)
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.message_handler(text='commands_name.actions.events')
+@bot.message_handler(pass_bot=True, text='commands_name.actions.events')
 async def events(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
@@ -151,7 +151,7 @@ async def events(message: Message):
         else:
             await bot.send_message(chatid, '❌', reply_markup=m(userid, 'last_menu', lang))
 
-@bot.callback_query_handler(func=
+@bot.callback_query_handler(pass_bot=True, func=
                             lambda call: call.data.startswith('journey_stop'))
 async def journey_stop(callback: CallbackQuery):
     lang = get_lang(callback.from_user.id)

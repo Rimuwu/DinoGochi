@@ -10,7 +10,7 @@ from bot.modules.data_format import seconds_to_str
 
 users = mongo_client.user.users
 
-@bot.message_handler(text='commands_name.about.team', 
+@bot.message_handler(pass_bot=True, text='commands_name.about.team', 
                      is_authorized=True)
 async def team(message: Message):
     lang = get_lang(message.from_user.id)
@@ -24,7 +24,7 @@ async def team(message: Message):
                                      author=author_loc
                                     ), parse_mode='html')
 
-@bot.message_handler(text='commands_name.about.links', 
+@bot.message_handler(pass_bot=True, text='commands_name.about.links', 
                      is_authorized=True)
 async def links(message: Message):
     lang = get_lang(message.from_user.id)
@@ -54,7 +54,7 @@ def main_support_menu(lang: str):
 
     return image, text, markup_inline
 
-@bot.message_handler(text='commands_name.about.support', 
+@bot.message_handler(pass_bot=True, text='commands_name.about.support', 
                      is_authorized=True)
 async def support(message: Message):
     lang = get_lang(message.from_user.id)
@@ -64,7 +64,7 @@ async def support(message: Message):
     
     await bot.send_photo(chatid, image, text, reply_markup=markup_inline, parse_mode='Markdown')
 
-@bot.message_handler(commands=['premium'], 
+@bot.message_handler(pass_bot=True, commands=['premium'], 
                      is_authorized=True)
 async def support_com(message: Message):
     lang = get_lang(message.from_user.id)
@@ -74,7 +74,7 @@ async def support_com(message: Message):
     
     await bot.send_photo(chatid, image, text, reply_markup=markup_inline, parse_mode='Markdown')
 
-@bot.message_handler(text='commands_name.about.faq', 
+@bot.message_handler(pass_bot=True, text='commands_name.about.faq', 
                      is_authorized=True)
 async def faq(message: Message):
     lang = get_lang(message.from_user.id)
@@ -92,7 +92,7 @@ async def faq(message: Message):
 
     await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline)
 
-@bot.callback_query_handler(func=lambda call: 
+@bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('faq'))
 async def faq_buttons(call: CallbackQuery):
     data = call.data.split()[1]
@@ -102,7 +102,7 @@ async def faq_buttons(call: CallbackQuery):
     text = t(f'faq.{data}', lang)
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.callback_query_handler(func=lambda call: 
+@bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('support'))
 async def support_buttons(call: CallbackQuery):
     action = call.data.split()[1]

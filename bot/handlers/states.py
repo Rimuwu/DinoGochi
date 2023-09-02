@@ -18,20 +18,20 @@ async def cancel(message, text:str = "❌"):
     await bot.delete_state(message.from_user.id, message.chat.id)
     await bot.reset_data(message.from_user.id,  message.chat.id)
 
-@bot.message_handler(text='buttons_name.cancel', state='*')
+@bot.message_handler(pass_bot=True, text='buttons_name.cancel', state='*')
 async def cancel_m(message: Message):
     """Состояние отмены
     """
     await cancel(message)
 
-@bot.message_handler(commands=['cancel'], state='*')
+@bot.message_handler(pass_bot=True, commands=['cancel'], state='*')
 async def cancel_c(message: Message):
     """Команда отмены
     """
     await cancel(message)
 
 
-@bot.message_handler(commands=['state'])
+@bot.message_handler(pass_bot=True, commands=['state'])
 async def get_state(message: Message):
     """Состояние
     """
@@ -42,7 +42,7 @@ async def get_state(message: Message):
                                  message.chat.id) as data: log(data)
     except: pass
 
-@bot.message_handler(state=GeneralStates.ChooseDino, is_authorized=True)
+@bot.message_handler(pass_bot=True, state=GeneralStates.ChooseDino, is_authorized=True)
 async def ChoseDino(message: Message):
     """Общая функция для выбора динозавра
     """
@@ -65,7 +65,7 @@ async def ChoseDino(message: Message):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseDino.error_not_dino', lang))
 
-@bot.message_handler(state=GeneralStates.ChooseInt, is_authorized=True)
+@bot.message_handler(pass_bot=True, state=GeneralStates.ChooseInt, is_authorized=True)
 async def ChooseInt(message: Message):
     """Общая функция для ввода числа
     """
@@ -106,7 +106,7 @@ async def ChooseInt(message: Message):
 
         await func(number, transmitted_data=transmitted_data)
 
-@bot.message_handler(state=GeneralStates.ChooseString, is_authorized=True)
+@bot.message_handler(pass_bot=True, state=GeneralStates.ChooseString, is_authorized=True)
 async def ChooseString(message: Message):
     """Общая функция для ввода сообщения
     """
@@ -138,7 +138,7 @@ async def ChooseString(message: Message):
 
         await func(content, transmitted_data=transmitted_data)
 
-@bot.message_handler(state=GeneralStates.ChooseConfirm, is_authorized=True)
+@bot.message_handler(pass_bot=True, state=GeneralStates.ChooseConfirm, is_authorized=True)
 async def ChooseConfirm(message: Message):
     """Общая функция для подтверждения
     """
@@ -175,7 +175,7 @@ async def ChooseConfirm(message: Message):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseConfirm.error_not_confirm', lang))
 
-@bot.message_handler(state=GeneralStates.ChooseOption, is_authorized=True)
+@bot.message_handler(pass_bot=True, state=GeneralStates.ChooseOption, is_authorized=True)
 async def ChooseOption(message: Message):
     """Общая функция для выбора из предложенных вариантов
     """
@@ -198,7 +198,7 @@ async def ChooseOption(message: Message):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseOption.error_not_option', lang))
 
-@bot.message_handler(state=GeneralStates.ChooseCustom, is_authorized=True)
+@bot.message_handler(pass_bot=True, state=GeneralStates.ChooseCustom, is_authorized=True)
 async def ChooseCustom(message: Message):
     """Кастомный обработчик, принимает данные и отправляет в обработчик
     """
@@ -219,7 +219,7 @@ async def ChooseCustom(message: Message):
         await bot.reset_data(message.from_user.id,  message.chat.id)
         await func(answer, transmitted_data=transmitted_data)
     
-@bot.message_handler(state=GeneralStates.ChoosePagesState, is_authorized=True)
+@bot.message_handler(pass_bot=True, state=GeneralStates.ChoosePagesState, is_authorized=True)
 async def ChooseOptionPages(message: Message):
     """Кастомный обработчик, принимает данные и отправляет в обработчик
     """
@@ -311,7 +311,7 @@ async def ChooseOptionPages(message: Message):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseOption.error_not_option', lang))
 
-@bot.callback_query_handler(state=GeneralStates.ChooseInline, is_authorized=True, 
+@bot.callback_query_handler(pass_bot=True, state=GeneralStates.ChooseInline, is_authorized=True, 
                             func=lambda call: call.data.startswith('chooseinline'))
 async def ChooseInline(callback: CallbackQuery):
     code = callback.data.split()
@@ -338,7 +338,7 @@ async def ChooseInline(callback: CallbackQuery):
 
         await func(code, transmitted_data=transmitted_data)
 
-@bot.message_handler(state=GeneralStates.ChooseTime, is_authorized=True)
+@bot.message_handler(pass_bot=True, state=GeneralStates.ChooseTime, is_authorized=True)
 async def ChooseTime(message: Message):
     """Общая функция для ввода времени
     """

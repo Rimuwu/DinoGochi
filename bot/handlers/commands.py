@@ -10,7 +10,7 @@ from bot.handlers.start import start_game
 
 users = mongo_client.user.users
 
-@bot.message_handler(commands=['timer'])
+@bot.message_handler(pass_bot=True, commands=['timer'])
 async def timer(message: Message):
     chatid = message.chat.id
     lang = get_lang(message.from_user.id)
@@ -27,7 +27,7 @@ async def timer(message: Message):
         except: text = 'error'
         await bot.send_message(chatid, text)
 
-@bot.message_handler(commands=['string_to_sec'], private=True)
+@bot.message_handler(pass_bot=True, commands=['string_to_sec'], private=True)
 async def string_time(message):
     txt = message.text.replace('/string_to_sec', '')
     chatid = message.chat.id
@@ -40,7 +40,7 @@ async def string_time(message):
         sec = str_to_seconds(txt)
         await bot.send_message(chatid, str(sec))
 
-@bot.message_handler(commands=['push_info'])
+@bot.message_handler(pass_bot=True, commands=['push_info'])
 async def push_info(message: Message):
     chatid = message.chat.id
     lang = get_lang(message.from_user.id)
@@ -48,7 +48,7 @@ async def push_info(message: Message):
     text = t('push.push_info', lang)
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.message_handler(commands=['add_me'], private=False)
+@bot.message_handler(pass_bot=True, commands=['add_me'], private=False)
 async def profile(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
@@ -59,7 +59,7 @@ async def profile(message: Message):
                     reply_markup=inline_menu('send_request', lang, userid=userid)
                     )
 
-@bot.message_handler(commands=['promo'])
+@bot.message_handler(pass_bot=True, commands=['promo'])
 async def promo(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
@@ -75,7 +75,7 @@ async def promo(message: Message):
         else:
             await start_game(message, code, 'promo')
 
-@bot.message_handler(commands=['help'])
+@bot.message_handler(pass_bot=True, commands=['help'])
 async def help(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)

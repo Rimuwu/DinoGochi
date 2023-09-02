@@ -72,7 +72,7 @@ async def custom_name(message: Message, transmitted_data):
         return True, name
     return False, None
 
-@bot.message_handler(text='commands_name.seller_profile.create_market', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.seller_profile.create_market', is_authorized=True)
 async def create_market(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
@@ -110,7 +110,7 @@ async def create_market(message: Message):
                               lang, steps, 
                               transmitted_data=transmitted_data)
 
-@bot.message_handler(text='commands_name.seller_profile.my_market', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.seller_profile.my_market', is_authorized=True)
 async def my_market(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
@@ -121,7 +121,7 @@ async def my_market(message: Message):
         text, markup, image = seller_ui(userid, lang, True)
         await bot.send_photo(chatid, image, text, parse_mode='Markdown', reply_markup=markup)
 
-@bot.message_handler(text='commands_name.seller_profile.add_product', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.seller_profile.add_product', is_authorized=True)
 async def add_product_com(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
@@ -142,7 +142,7 @@ async def add_product_com(message: Message):
     await bot.send_message(chatid, t('add_product.options_info', lang), reply_markup=markup)
     await ChooseOptionState(prepare_data_option, userid, chatid, lang, options)
 
-@bot.message_handler(text='commands_name.seller_profile.my_products', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.seller_profile.my_products', is_authorized=True)
 async def my_products(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
@@ -165,7 +165,7 @@ async def my_products(message: Message):
         text = t('no_products', lang)
         await bot.send_message(chatid, text,  parse_mode='Markdown')
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('product_info'))
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('product_info'))
 async def product_info(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -218,7 +218,7 @@ async def product_info(call: CallbackQuery):
                 await promotion_prepare(userid, chatid, lang, product['_id'], 
                                         call.message.id)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('seller'), private=True)
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('seller'), private=True)
 async def seller(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -273,7 +273,7 @@ async def seller(call: CallbackQuery):
     elif call_type == 'сomplain':
         ...
 
-@bot.message_handler(text='commands_name.market.random', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.market.random', is_authorized=True)
 async def random_products(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
@@ -302,7 +302,7 @@ async def random_products(message: Message):
     else:
         await bot.send_message(chatid, t('products.null', lang))
 
-@bot.message_handler(text='commands_name.market.find', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.market.find', is_authorized=True)
 async def find_products(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
@@ -310,7 +310,7 @@ async def find_products(message: Message):
 
     await find_prepare(userid, chatid, lang)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('create_push'), private=True)
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('create_push'), private=True)
 async def push(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id

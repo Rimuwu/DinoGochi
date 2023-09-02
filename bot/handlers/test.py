@@ -38,7 +38,7 @@ sellers = mongo_client.market.sellers
 puhs = mongo_client.market.puhs
 items = mongo_client.items.items
 
-@bot.message_handler(commands=['add_item', 'item_add'], is_admin=True)
+@bot.message_handler(pass_bot=True, commands=['add_item', 'item_add'], is_admin=True)
 async def command(message):
     user = message.from_user
     if user.id in conf.bot_devs:

@@ -15,7 +15,7 @@ from bot.modules.user import take_coins
 quests_data = mongo_client.tavern.quests
 users = mongo_client.user.users
 
-@bot.message_handler(text='commands_name.dino_tavern.quests', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.quests', is_authorized=True)
 async def check_quests(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
@@ -35,7 +35,7 @@ async def check_quests(message: Message):
                             chatid, text, reply_markup=mark, parse_mode='Markdown')
             await sleep(0.3)
 
-@bot.callback_query_handler(func=lambda call: 
+@bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('quest'), private=True)
 async def quest(call: CallbackQuery):
     chatid = call.message.chat.id

@@ -7,7 +7,8 @@ from bot.modules.dialogs import dialogs
 from bot.modules.localization import get_lang
 
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('dialog'),   
+@bot.callback_query_handler(pass_bot=True, 
+                            func=lambda call: call.data.startswith('dialog'),   
                             is_authorized=True)
 async def rename_button(callback: CallbackQuery):
     dialog_key = callback.data.split()[1]

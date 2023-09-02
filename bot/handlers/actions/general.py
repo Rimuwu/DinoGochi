@@ -21,7 +21,7 @@ game_task = mongo_client.dino_activity.game
 collecting_task = mongo_client.dino_activity.collecting
 
 
-@bot.message_handler(textstart='commands_name.actions.dino_button')
+@bot.message_handler(pass_bot=True, textstart='commands_name.actions.dino_button')
 async def edit_dino_buttom(message: Message):
     """ Изменение последнего динозавра (команда)
     """
@@ -40,7 +40,7 @@ async def edit_dino_buttom(message: Message):
                            t('edit_dino_button.edit', lang), 
                            reply_markup=inline)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('activ_dino'))
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('activ_dino'))
 async def answer_edit(callback: CallbackQuery):
     """ Изменение последнего динозавра (кнопка)
     """
@@ -70,7 +70,7 @@ async def invite_adp(friend, transmitted_data: dict):
     # Возврат в меню
     await bot.send_message(chatid, t('back_text.actions_menu', lang), reply_markup=m(userid, 'last_menu', lang))
 
-@bot.callback_query_handler(func=
+@bot.callback_query_handler(pass_bot=True, func=
                             lambda call: call.data.startswith('invite_to_action'), private=True)
 async def invite_to_action(callback: CallbackQuery):
     lang = get_lang(callback.from_user.id)
@@ -115,7 +115,7 @@ async def join_adp(dino: Dino, transmitted_data):
             await start_game_ent(userid, chatid, lang, 
                                  dino, friend, True, friend_dino)
 
-@bot.callback_query_handler(func=
+@bot.callback_query_handler(pass_bot=True, func=
                             lambda call: call.data.startswith('join_to_action'))
 async def join(callback: CallbackQuery):
     lang = get_lang(callback.from_user.id)
