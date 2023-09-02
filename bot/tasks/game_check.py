@@ -13,7 +13,7 @@ game_task = mongo_client.dino_activity.game
 dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = mongo_client.dinosaur.dino_owners
 
-REPEAT_MINUTS = 2
+REPEAT_MINUTS = 1
 ENERGY_DOWN = 0.03 * REPEAT_MINUTS
 ENERGY_DOWN2 = 0.5 * REPEAT_MINUTS
 LVL_CHANCE = 0.125 * REPEAT_MINUTS
@@ -59,5 +59,5 @@ async def game_process():
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(game_end, REPEAT_MINUTS * 60.0, 1.0)
-        add_task(game_process, REPEAT_MINUTS * 60.0, 1.0)
+        add_task(game_end, 15, 3.0)
+        add_task(game_process, REPEAT_MINUTS * 60.0, 3.0)

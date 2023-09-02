@@ -43,6 +43,6 @@ async def subscription_check():
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(subscription_notification, 3600.0, 1.0)
+        add_task(subscription_notification, 1800.0, 1.0)
         add_task(subscription_check, 300.0, 1.0)
         add_task(check_donations, 120.0, 1.0)

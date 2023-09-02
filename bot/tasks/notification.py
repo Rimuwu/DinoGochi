@@ -4,14 +4,13 @@ from bot.taskmanager import add_task
 from bot.modules.dinosaur import Dino
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
-REPEAT_MINUTS = 1
 
 async def dino_notifications():
     dinos = dinosaurs.find({})
     for dino in dinos:
         dino_id = dino['_id']
         for stat in dino['stats']:
-            
+
             if dino['stats']['heal'] <= 0:
                 Dino(dino['_id']).dead()
                 continue
@@ -21,4 +20,4 @@ async def dino_notifications():
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(dino_notifications, REPEAT_MINUTS * 60.0, 15.0)
+        add_task(dino_notifications, 10, 10.0)

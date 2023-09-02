@@ -42,5 +42,5 @@ async def events():
 
 if __name__ != '__main__':
     if conf.active_tasks: 
-        add_task(end_journey_time, 60.0, 5.0)
+        add_task(end_journey_time, 30.0, 5.0)
         add_task(events, REPEAT_MINUTS * 60.0, 20.0)

@@ -37,4 +37,4 @@ async def incubation():
     
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(incubation, 5.0, 1.0)
+        add_task(incubation, 2.0, 1.0)
