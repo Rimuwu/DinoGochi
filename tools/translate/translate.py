@@ -70,15 +70,19 @@ def dict_string(s, s_key):
 
         if s_key not in ['data', 'callback', 'inline_menu']:
             repl_words = {
-                '(1!)': {'text': '\n', 'translate': False},
-                '(2!)': {'text': '\n\n', 'translate': False},
-                '(3!)': {'text': '\n\n\n', 'translate': False},
-                '(4!)': {'text': '\n\n\n\n', 'translate': False},
+                '(111!)': {'text': '\n', 'translate': False},
+                '(222!)': {'text': '\n\n', 'translate': False},
+                '(333!)': {'text': '\n\n\n', 'translate': False},
+                '(444!)': {'text': '\n\n\n\n', 'translate': False},
                 '(100!)': {'text': 'ᴜsᴇʀ ᴘʀᴏғɪʟᴇ', 'translate': False},
                 '(200!)': {'text': 'ʟᴇᴠᴇʟ', 'translate': False},
                 '(300!)': {'text': 'ᴅɪɴᴏsᴀᴜʀs', 'translate': False},
                 '(400!)': {'text': 'ɪɴᴠᴇɴᴛᴏʀʏ', 'translate': False},
                 '(500!)': {'text': '->', 'translate': False},
+                '(600!)': {'text': '</code>', 'translate': False},
+                '(700!)': {'text': '<code>', 'translate': False},
+                '(800!)': {'text': '<i>', 'translate': False},
+                '(900!)': {'text': '</i>', 'translate': False},
             }
             for key, item in repl_words.items(): s = s.replace(item['text'], key)
 
