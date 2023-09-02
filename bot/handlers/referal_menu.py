@@ -13,7 +13,7 @@ from bot.modules.states_tools import ChooseCustomState, ChooseStringState
 from bot.modules.user import take_coins
 
 users = mongo_client.user.users
-referals = mongo_client.user.referrals
+referals = mongo_client.user.referals
 
 @bot.message_handler(pass_bot=True, text='commands_name.referal.code', is_authorized=True)
 async def code(message: Message):
