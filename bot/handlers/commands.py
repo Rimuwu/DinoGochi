@@ -77,7 +77,6 @@ async def promo(message: Message):
 
 @bot.message_handler(pass_bot=True, commands=['help'])
 async def help(message: Message):
-    userid = message.from_user.id
     lang = get_lang(message.from_user.id)
     chatid = message.chat.id
     
