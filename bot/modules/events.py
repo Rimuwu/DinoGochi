@@ -68,7 +68,7 @@ async def auto_event():
     ty_event = create_event('time_year')
     if time_year:
         if time_year['data']['season'] != ty_event['data']['season']:
-            events.update_one({'type': 'time_year'}, {'data': ty_event['data']})
+            events.update_one({'type': 'time_year'}, {"$set": {'data': ty_event['data']}})
     else: add_event(ty_event)
     
     # Проверка на новогоднее событие
