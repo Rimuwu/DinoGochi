@@ -46,7 +46,7 @@ async def events_c(message: Message):
     await bot.send_message(chatid, text)
 
 async def bonus_message(user, message, lang):
-    userid = message.from_user.id
+    userid = user.id
 
     add_text = ''
     award_data = GS['daily_award']
