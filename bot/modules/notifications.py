@@ -1,5 +1,6 @@
 from random import choice
 from time import time
+from asyncio import sleep
 
 from bson.objectid import ObjectId
 from telebot.types import InlineKeyboardMarkup
@@ -136,6 +137,7 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
                     message=f'User: {owner["owner_id"]} DinoId: {dino_id}, Data: {not_type} Kwargs: {kwargs}', lvl=0)
                 try:
                     try:
+                        await sleep(0.05)
                         await bot.send_message(owner['owner_id'], text, reply_markup=markup_inline, parse_mode='Markdown')
                     except Exception:
                         await bot.send_message(owner['owner_id'], text, reply_markup=markup_inline)
@@ -205,6 +207,7 @@ async def user_notification(user_id: int, not_type: str,
         message=f'User: {user_id}, Data: {not_type} Kwargs: {kwargs}', lvl=0)
     try:
         try:
+            await sleep(0.05)
             await bot.send_message(user_id, text, reply_markup=markup_inline, parse_mode='Markdown')
         except Exception:
             await bot.send_message(user_id, text, reply_markup=markup_inline)
