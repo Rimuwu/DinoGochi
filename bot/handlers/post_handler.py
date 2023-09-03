@@ -20,7 +20,7 @@ async def not_found(call: types.CallbackQuery):
     userid = call.from_user.id
     log(f'Ключ {call.data} не был обработан! Пользователь: {userid}', 0, "CallbackQuery")
 
-@bot.message_handler(is_authorized=False)
+@bot.message_handler(is_authorized=False, priveate=True)
 async def not_authorized(message: types.Message):
     lang = get_lang(message.from_user.id)
     chatid = message.chat.id
