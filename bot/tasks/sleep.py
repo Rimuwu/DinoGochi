@@ -9,7 +9,7 @@ from bot.modules.mood import add_mood, check_inspiration
 sleepers = mongo_client.dino_activity.sleep
 dinosaurs = mongo_client.dinosaur.dinosaurs
 
-LONG_SLEEP_COLDOWN_MIN = 12
+LONG_SLEEP_COLDOWN_MIN = 6
 LONG_SLEEP_TIME_MIN = 600
 LONG_MAX_UNIT_AFTER = LONG_SLEEP_TIME_MIN // LONG_SLEEP_COLDOWN_MIN
 LONG_ONE_TIME = LONG_MAX_UNIT_AFTER // 100
@@ -73,14 +73,14 @@ async def check_notification():
 
 async def short_check():
     data = list(sleepers.find({'sleep_type': 'short'})).copy()
-    if data: await one_time(data, LONG_ONE_TIME)
+    await one_time(data, 1)
 
 async def long_check():
     data = list(sleepers.find({'sleep_type': 'long'})).copy()
-    if data: await one_time(data, SHORT_ONE_TIME)
+    await one_time(data, 1)
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(long_check, LONG_SLEEP_COLDOWN_MIN * 60.0, 1.0)
-        add_task(short_check, SHORT_SLEEP_COLDOWN_MIN * 60.0, 1.0)
+        add_task(long_check, 12 * 60.0, 1.0)
+        add_task(short_check, 6 * 60.0, 1.0)
         add_task(check_notification, 30.0, 1.0)
