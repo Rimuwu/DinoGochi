@@ -65,8 +65,8 @@
     "first_dino_time_incub": 600, 
     "first_egg_rarity": "random",
 
-    "max_eat_items": 333,
-    "premium_max_eat_items": 555,
+    "max_eat_items": 800,
+    "premium_max_eat_items": 1200,
 
     "max_collecting": 100,
     "premium_max_collecting": 200,
