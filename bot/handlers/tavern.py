@@ -59,7 +59,7 @@ async def bonus_message(user, message, lang):
         + f', ' + str(award_data['lvl2']['coins'])
 
     res = await user_in_chat(userid, -1001673242031)
-    res2 = check_name(message.from_user)
+    res2 = check_name(user)
 
     if res: add_text += t('daily_award.2', lang)
     else: add_text += t('daily_award.1', lang)
