@@ -382,7 +382,7 @@ async def kindergarten(call: types.CallbackQuery):
                     await ChooseOptionState(start_kind, userid, chatid, lang, options,
                                             transmitted_data={'dino': dino['_id']}
                                             )
-                    await bot.send_message(userid, t('kindergarten.no_hours', lang),
+                    await bot.send_message(userid, t('kindergarten.choose_house', lang),
                                            reply_markup=bb)
                 else:
                     await bot.send_message(userid, t('kindergarten.no_hours', lang))
