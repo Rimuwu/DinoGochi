@@ -315,18 +315,19 @@ def start_game(dino_baseid: ObjectId, duration: int=1800,
     """Запуск активности "игра". 
        + Изменение статуса динозавра 
     """
-
-    game = {
-        'dino_id': dino_baseid,
-        'game_start': int(time()),
-        'game_end': int(time()) + duration,
-        'game_percent': percent
-    }
-    result = game_task.insert_one(game)
     
-    dino = dinosaurs.find_one({'_id': dino_baseid})
-    if dino: set_status(dino_baseid, 'game', dino['status'])
-
+    result = False
+    if not game_task.find_one({'dino_id': dino_baseid}):
+        game = {
+            'dino_id': dino_baseid,
+            'game_start': int(time()),
+            'game_end': int(time()) + duration,
+            'game_percent': percent
+        }
+        result = game_task.insert_one(game)
+        
+        dino = dinosaurs.find_one({'_id': dino_baseid})
+        if dino: set_status(dino_baseid, 'game', dino['status'])
     return result
 
 async def end_game(dino_id: ObjectId, send_notif: bool=True):
@@ -335,7 +336,7 @@ async def end_game(dino_id: ObjectId, send_notif: bool=True):
     dinosaurs.update_one({'_id': dino_id}, 
                             {'$set': {'status': 'pass'}})
     game_task.delete_one({'dino_id': dino_id}) 
-    
+
     if send_notif: await dino_notification(dino_id, 'game_end')
 
 
@@ -347,17 +348,19 @@ def start_sleep(dino_baseid: ObjectId, s_type: str='long',
 
     assert s_type in ['long', 'short'], f'Неподходящий аргумент {s_type}'
 
-    sleep = {
-        'dino_id': dino_baseid,
-        'sleep_start': int(time()),
-        'sleep_type': s_type
-    }
-    if s_type == 'short':
-        sleep['sleep_end'] = int(time()) + duration
+    result = False
+    if not sleep_task.find_one({'dino_id': dino_baseid}):
+        sleep = {
+            'dino_id': dino_baseid,
+            'sleep_start': int(time()),
+            'sleep_type': s_type
+        }
+        if s_type == 'short':
+            sleep['sleep_end'] = int(time()) + duration
 
-    result = sleep_task.insert_one(sleep)
-    dinosaurs.update_one({"_id": dino_baseid}, 
-                         {'$set': {'status': 'sleep'}})
+        result = sleep_task.insert_one(sleep)
+        dinosaurs.update_one({"_id": dino_baseid}, 
+                            {'$set': {'status': 'sleep'}})
     return result
 
 async def end_sleep(dino_id: ObjectId,
@@ -380,20 +383,21 @@ def start_journey(dino_baseid: ObjectId, owner_id: int,
     """Запуск активности "путешествие". 
        + Изменение статуса динозавра 
     """
+    result = False
+    if not journey_task.find_one({'dino_id': dino_baseid}):
+        game = {
+            'sended': owner_id, # Так как у нас может быть несколько владельцев
+            'dino_id': dino_baseid,
+            'journey_start': int(time()),
+            'journey_end': int(time()) + duration,
 
-    game = {
-        'sended': owner_id, # Так как у нас может быть несколько владельцев
-        'dino_id': dino_baseid,
-        'journey_start': int(time()),
-        'journey_end': int(time()) + duration,
-
-        'location': location,
-        'journey_log': [], 'items': [],
-        'coins': 0
-    }
-    result = journey_task.insert_one(game)
-    dinosaurs.update_one({"_id": dino_baseid}, 
-                         {'$set': {'status': 'journey'}})
+            'location': location,
+            'journey_log': [], 'items': [],
+            'coins': 0
+        }
+        result = journey_task.insert_one(game)
+        dinosaurs.update_one({"_id": dino_baseid}, 
+                            {'$set': {'status': 'journey'}})
     return result
 
 def end_journey(dino_id: ObjectId):
@@ -410,20 +414,22 @@ def start_collecting(dino_baseid: ObjectId, owner_id: int, coll_type: str, max_c
     """Запуск активности "сбор пищи". 
        + Изменение статуса динозавра 
     """
-
+    
     assert coll_type in ['collecting', 'hunt', 'fishing', 'all'], f'Неподходящий аргумент {coll_type}'
-
-    game = {
-        'sended': owner_id, # Так как у нас может быть несколько владельцев
-        'dino_id': dino_baseid,
-        'collecting_type': coll_type,
-        'max_count': max_count,
-        'now_count': 0,
-        'items': {}
-    }
-    result = collecting_task.insert_one(game)
-    dinosaurs.update_one({"_id": dino_baseid}, 
-                         {'$set': {'status': 'collecting'}})
+    
+    result = False
+    if not collecting_task.find_one({'dino_id': dino_baseid}):
+        game = {
+            'sended': owner_id, # Так как у нас может быть несколько владельцев
+            'dino_id': dino_baseid,
+            'collecting_type': coll_type,
+            'max_count': max_count,
+            'now_count': 0,
+            'items': {}
+        }
+        result = collecting_task.insert_one(game)
+        dinosaurs.update_one({"_id": dino_baseid}, 
+                            {'$set': {'status': 'collecting'}})
     return result
 
 async def end_collecting(dino_id: ObjectId, items: dict, recipient: int,
