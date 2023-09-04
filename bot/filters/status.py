@@ -6,6 +6,7 @@ from bot.exec import bot
 from bot.modules.inline import inline_menu
 from bot.modules.localization import t
 from bot.modules.user import User
+from bot.modules.over_functions import send_message
 
 users = mongo_client.user.users
 
