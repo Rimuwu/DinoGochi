@@ -311,6 +311,8 @@ def update_col(transmitted_data):
     if items_res:
         max_count = 0
         for i in items_res: max_count += i['count']
+        
+        if max_count > 100: max_count = 100
 
         # Добавление данных для выбора количества
         transmitted_data['steps'][step+1]['data']['max_int'] = max_count
