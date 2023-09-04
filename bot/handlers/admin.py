@@ -2,7 +2,7 @@ from telebot.types import CallbackQuery, Message
 
 from bot.config import mongo_client, conf
 from bot.exec import bot
-from bot.modules.data_format import list_to_inline
+from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.states_tools import start_friend_menu
 from bot.modules.friends import get_frineds, insert_friend_connect
 from bot.modules.localization import get_data, t, get_lang
@@ -19,7 +19,7 @@ from bot.modules.tracking import creat_track, get_track_pages, track_info
 from bot.modules.promo import create_promo_start, get_promo_pages, promo_ui, use_promo
 from time import time
 from bot.modules.user import User, max_dino_col, award_premium
-from bot.modules.over_functions import send_message
+from bot.modules.over_functions import send_message, get_last_messages
 
 
 management = mongo_client.other.management
@@ -235,3 +235,42 @@ async def give_me_premium(message):
 
     award_premium(userid, 'inf')
     await send_message(message.from_user.id, 'ok')
+
+@bot.message_handler(commands=['last_messages'], is_admin=True)
+async def last_messages(message):
+    
+    messages_ls, tt = get_last_messages()
+
+    messages, n_message = [''], 0
+    for key, value in messages_ls.items():
+        text = f'`{key}`: {value}\n'
+
+        if len(messages[n_message]) >= 1700:
+                messages.append('')
+                n_message += 1
+        messages[n_message] += text
+
+    messages[-1] += f'\n{seconds_to_str(int(time()) - tt)}'
+
+    for text in messages:
+        await send_message(message.from_user.id, text, parse_mode='Markdown')
+
+@bot.message_handler(commands=['last_messages1'], is_admin=True)
+async def last_messages1(message):
+    
+    messages_ls, tt = get_last_messages()
+
+    messages, n_message = [''], 0
+    for key, value in messages_ls.items():
+        if value > 1:
+            text = f'`{key}`: {value}\n'
+
+            if len(messages[n_message]) >= 1700:
+                    messages.append('')
+                    n_message += 1
+            messages[n_message] += text
+
+    messages[-1] += f'\n{seconds_to_str(int(time()) - tt)}'
+
+    for text in messages:
+        await send_message(message.from_user.id, text, parse_mode='Markdown')
