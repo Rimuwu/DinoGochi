@@ -9,15 +9,7 @@ from bot.modules.mood import add_mood, check_inspiration
 sleepers = mongo_client.dino_activity.sleep
 dinosaurs = mongo_client.dinosaur.dinosaurs
 
-LONG_SLEEP_COLDOWN_MIN = 6
-LONG_SLEEP_TIME_MIN = 600
-LONG_MAX_UNIT_AFTER = LONG_SLEEP_TIME_MIN // LONG_SLEEP_COLDOWN_MIN
-LONG_ONE_TIME = LONG_MAX_UNIT_AFTER // 100
-
-SHORT_SLEEP_COLDOWN_MIN = LONG_SLEEP_COLDOWN_MIN // 2
-SHORT_SLEEP_TIME_MIN = LONG_SLEEP_TIME_MIN // 2
-SHORT_MAX_UNIT_AFTER = SHORT_SLEEP_TIME_MIN // SHORT_SLEEP_COLDOWN_MIN
-SHORT_ONE_TIME = SHORT_MAX_UNIT_AFTER // 100
+LONG_SLEEP_COLDOWN_MIN = 30
 
 DREAM_CHANCE = 0.01
 
@@ -43,7 +35,7 @@ async def one_time(data, one_time_unit):
                     add_energy = 100 - energy
                     await end_sleep(sleeper['dino_id'], sec_time)
                 else: add_energy = one_time_unit
-                    
+
                 if uniform(0, 1) <= DREAM_CHANCE:
                     if randint(1, 3) == 2:
                         add_mood(dino['_id'], 'bad_dream', -1, 2700, True)
@@ -81,6 +73,6 @@ async def long_check():
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(long_check, 12 * 60.0, 1.0)
-        add_task(short_check, 6 * 60.0, 1.0)
+        add_task(long_check, LONG_SLEEP_COLDOWN_MIN * 60.0, 1.0)
+        add_task(short_check, (LONG_SLEEP_COLDOWN_MIN // 2) * 60.0, 1.0)
         add_task(check_notification, 30.0, 1.0)
