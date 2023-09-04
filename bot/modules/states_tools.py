@@ -587,8 +587,9 @@ async def next_step(answer, transmitted_data: dict, start: bool=False):
 
                         bmessage = await bot.send_photo(chatid, photo=photo, parse_mode='Markdown', **ret_data['message'])
                     else:
-                        bmessage = await send_message(chatid, parse_mode='Markdown', **ret_data['message'])
-                    ret_data['bmessageid'] = bmessage.id
+                        if 'text' in ret_data['message']:
+                            bmessage = await send_message(chatid, parse_mode='Markdown', **ret_data['message'])
+                            ret_data['bmessageid'] = bmessage.id
 
         # Обновление данных состояния
         if not start and func_answer:
