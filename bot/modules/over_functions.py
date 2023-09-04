@@ -61,6 +61,8 @@ async def send_message(chat_id: int, text: str,
         :rtype: :class:`telebot.types.Message`
         """
 
+    if 'caption' in kwargs: kwargs['text'] = kwargs['caption']
+
     if last_message == int(time()):
         if col_now < 30:
             col_now += 1
