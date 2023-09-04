@@ -238,32 +238,16 @@ async def give_me_premium(message):
 
 @bot.message_handler(commands=['last_messages'], is_admin=True)
 async def last_messages(message):
-    
+    msg_args = message.text.split()
     messages_ls, tt = get_last_messages()
+    min_n = 0
+    
+    if len(msg_args) > 1: min_n = int(msg_args[1])
 
     messages, n_message = [''], 0
     for key, value in messages_ls.items():
-        text = f'`{key}`: {value}\n'
-
-        if len(messages[n_message]) >= 1700:
-                messages.append('')
-                n_message += 1
-        messages[n_message] += text
-
-    messages[-1] += f'\n{seconds_to_str(int(time()) - tt)}'
-
-    for text in messages:
-        await send_message(message.from_user.id, text, parse_mode='Markdown')
-
-@bot.message_handler(commands=['last_messages1'], is_admin=True)
-async def last_messages1(message):
-    
-    messages_ls, tt = get_last_messages()
-
-    messages, n_message = [''], 0
-    for key, value in messages_ls.items():
-        if value > 1:
-            text = f'`{key}`: {value}\n'
+        if value > min_n:
+            text = f'" {key} ": {value}\n'
 
             if len(messages[n_message]) >= 1700:
                     messages.append('')
@@ -273,4 +257,4 @@ async def last_messages1(message):
     messages[-1] += f'\n{seconds_to_str(int(time()) - tt)}'
 
     for text in messages:
-        await send_message(message.from_user.id, text, parse_mode='Markdown')
+        await send_message(message.from_user.id, text)
