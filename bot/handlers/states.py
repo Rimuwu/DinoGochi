@@ -8,12 +8,12 @@ from bot.modules.localization import get_data, t, get_lang
 from bot.modules.logs import log
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import GeneralStates
-
+from bot.modules.over_functions import send_message
 
 async def cancel(message, text:str = "❌"):
     lang = get_lang(message.from_user.id)
     if text:
-        await bot.send_message(message.chat.id, text, 
+        await send_message(message.chat.id, text, 
             reply_markup=m(message.from_user.id, 'last_menu', lang))
     await bot.delete_state(message.from_user.id, message.chat.id)
     await bot.reset_data(message.from_user.id,  message.chat.id)
@@ -36,7 +36,7 @@ async def get_state(message: Message):
     """Состояние
     """
     state = await bot.get_state(message.from_user.id, message.chat.id)
-    await bot.send_message(message.chat.id, f'{state}')
+    await send_message(message.chat.id, f'{state}')
     try:
         async with bot.retrieve_data(message.from_user.id, 
                                  message.chat.id) as data: log(data)
@@ -62,7 +62,7 @@ async def ChoseDino(message: Message):
 
         await func(ret_data[message.text], transmitted_data=transmitted_data)
     else:
-        await bot.send_message(message.chat.id, 
+        await send_message(message.chat.id, 
                 t('states.ChooseDino.error_not_dino', lang))
 
 @bot.message_handler(pass_bot=True, state=GeneralStates.ChooseInt, is_authorized=True)
@@ -88,14 +88,14 @@ async def ChooseInt(message: Message):
             number = int(iter_word[1:])
 
     if not number and number != 0:
-        await bot.send_message(message.chat.id, 
+        await send_message(message.chat.id, 
                 t('states.ChooseInt.error_not_int', lang))
     elif max_int != 0 and number > max_int:
-        await bot.send_message(message.chat.id, 
+        await send_message(message.chat.id, 
                 t('states.ChooseInt.error_max_int', lang,
                 number = number, max = max_int))
     elif number < min_int:
-        await bot.send_message(message.chat.id, 
+        await send_message(message.chat.id, 
                 t('states.ChooseInt.error_min_int', lang,
                 number = number, min = min_int))
     else:
@@ -123,11 +123,11 @@ async def ChooseString(message: Message):
     content_len = len(content)
 
     if content_len > max_len and max_len != 0:
-        await bot.send_message(message.chat.id, 
+        await send_message(message.chat.id, 
                 t('states.ChooseString.error_max_len', lang,
                 number = content_len, max = max_len))
     elif content_len < min_len:
-        await bot.send_message(message.chat.id, 
+        await send_message(message.chat.id, 
                 t('states.ChooseString.error_min_len', lang,
                 number = content_len, min = min_len))
     else:
@@ -172,7 +172,7 @@ async def ChooseConfirm(message: Message):
             await func(buttons_data[content], transmitted_data=transmitted_data)
 
     else:
-        await bot.send_message(message.chat.id, 
+        await send_message(message.chat.id, 
                 t('states.ChooseConfirm.error_not_confirm', lang))
 
 @bot.message_handler(pass_bot=True, state=GeneralStates.ChooseOption, is_authorized=True)
@@ -195,7 +195,7 @@ async def ChooseOption(message: Message):
         await bot.reset_data(message.from_user.id,  message.chat.id)
         await func(options[message.text], transmitted_data=transmitted_data)
     else:
-        await bot.send_message(message.chat.id, 
+        await send_message(message.chat.id, 
                 t('states.ChooseOption.error_not_option', lang))
 
 @bot.message_handler(pass_bot=True, state=GeneralStates.ChooseCustom, is_authorized=True)
@@ -308,7 +308,7 @@ async def ChooseOptionPages(message: Message):
         async with bot.retrieve_data(userid, chatid) as data: data['page'] = page
         await update_page(pages, page, chatid, lang)
     else:
-        await bot.send_message(message.chat.id, 
+        await send_message(message.chat.id, 
                 t('states.ChooseOption.error_not_option', lang))
 
 @bot.callback_query_handler(pass_bot=True, state=GeneralStates.ChooseInline, is_authorized=True, 
@@ -355,15 +355,15 @@ async def ChooseTime(message: Message):
     number = str_to_seconds(str(message.text))
 
     if not number and min_int != 0:
-        await bot.send_message(message.chat.id, 
+        await send_message(message.chat.id, 
                 t('states.ChooseTime.zero_seconds', lang))
     elif max_int != 0 and number > max_int:
-        await bot.send_message(message.chat.id, 
+        await send_message(message.chat.id, 
                 t('states.ChooseTime.error_max_int', lang,
                 number = seconds_to_str(number, lang), 
                 max = seconds_to_str(max_int, lang)))
     elif number < min_int:
-        await bot.send_message(message.chat.id, 
+        await send_message(message.chat.id, 
                 t('states.ChooseTime.error_min_int', lang,
                 number = seconds_to_str(number, lang), 
                 min = seconds_to_str(min_int, lang)))

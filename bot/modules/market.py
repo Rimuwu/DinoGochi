@@ -13,6 +13,7 @@ from bot.modules.user import get_inventory, take_coins, premium
 from bot.const import ITEMS
 from bot.modules.localization import t
 from bot.modules.notifications import user_notification
+from bot.modules.over_functions import send_message
 
 products = mongo_client.market.products
 sellers = mongo_client.market.sellers
@@ -289,7 +290,7 @@ async def send_view_product(product_id: ObjectId, owner_id: int):
         ]
 
         markup = list_to_inline(buttons)
-        await bot.send_message(channel, text, reply_markup=markup, parse_mode='Markdown')
+        await send_message(channel, text, reply_markup=markup, parse_mode='Markdown')
 
 def create_push(owner_id: int, channel_id: int, lang: str):
 
@@ -355,7 +356,7 @@ async def delete_product(baseid = None, alt_id = None):
                     text = t('auction.delete_auction', user['lang'], items=c_items)
 
                 try:
-                    await bot.send_message(user['userid'], text)
+                    await send_message(user['userid'], text)
                 except: pass
 
         # Уведомление о удаление товара

@@ -4,6 +4,7 @@ from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, user_name
 from bot.modules.localization import t, get_lang
+from bot.modules.over_functions import send_message
 
 friends = mongo_client.user.friends
 game_task = mongo_client.dino_activity.game
@@ -84,13 +85,13 @@ async def send_action_invite(userid: int, friendid: int, action: str, dino_alt: 
     button = t(f'send_action.{action}.send_button', friend_lang)
     markup = list_to_inline([{button: f'join_to_action {action} {dino_alt} {userid}'}])
     try:
-        await bot.send_message(friendid, send_text, reply_markup=markup)
+        await send_message(friendid, send_text, reply_markup=markup)
         ok = True
     except: ok = False
 
     if chat2_user and ok:
         for_me = t(f'send_action.{action}.for_me', lang, 
                    friendname=user_name(chat2_user.user))
-        await bot.send_message(userid, for_me)
+        await send_message(userid, for_me)
     else:
-        await bot.send_message(userid, t('send_action.error', lang))
+        await send_message(userid, t('send_action.error', lang))

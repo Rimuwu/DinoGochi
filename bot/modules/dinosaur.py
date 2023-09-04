@@ -474,8 +474,6 @@ def get_age(dinoid: ObjectId):
     return delta
 
 async def mutate_dino_stat(dino: dict, key: str, value: int):
-    print(dino, key, value)
-    
     st = dino['stats'][key]
     now = st + value
     if now > 100: value = 100 - st

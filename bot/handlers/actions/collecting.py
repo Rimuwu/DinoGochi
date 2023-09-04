@@ -15,6 +15,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User, count_inventory_items, premium
 from bot.modules.quests import quest_process
+from bot.modules.over_functions import send_message
 
 users = mongo_client.user.users
 dinosaurs = mongo_client.dinosaur.dinosaurs
@@ -37,13 +38,13 @@ async def collecting_adapter(return_data, transmitted_data):
 
         text = t(f'collecting.max_count', lang,
                 eat_count=eat_count)
-        await bot.send_message(chatid, text, reply_markup=m(
+        await send_message(chatid, text, reply_markup=m(
             userid, 'last_menu', lang))
     else:
         res_dino_status = dinosaurs.find_one({"_id": dino._id}, {'status': 1})
         if res_dino_status:
             if res_dino_status['status'] != 'pass':
-                await bot.send_message(chatid, t('alredy_busy', lang), reply_markup=m(userid, 'last_menu', lang))
+                await send_message(chatid, t('alredy_busy', lang), reply_markup=m(userid, 'last_menu', lang))
                 return
 
             dino.collecting(userid, option, count)
@@ -56,7 +57,7 @@ async def collecting_adapter(return_data, transmitted_data):
                 {stop_button: f'collecting stop {dino.alt_id}'}])
 
             await bot.send_photo(chatid, image, text, reply_markup=markup)
-            await bot.send_message(chatid, t('back_text.actions_menu', lang),
+            await send_message(chatid, t('back_text.actions_menu', lang),
                                         reply_markup=m(userid, 'last_menu', lang)
                                         )
 
@@ -124,7 +125,7 @@ async def collecting_progress(message: Message):
                                   [{stop_button: f'collecting stop {last_dino.alt_id}'}]
                                      ))
         else:
-            await bot.send_message(chatid, '❌',
+            await send_message(chatid, '❌',
                                     reply_markup=m(userid, 'last_menu', lang)
                                     )
     

@@ -11,6 +11,7 @@ from bot.modules.item import AddItemToUser
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.quests import quest_resampling, quest_ui, check_quest
 from bot.modules.user import take_coins
+from bot.modules.over_functions import send_message
 
 quests_data = mongo_client.tavern.quests
 users = mongo_client.user.users
@@ -27,11 +28,11 @@ async def check_quests(message: Message):
 
         text = t('quest.quest_menu', lang, 
                 end=user['dungeon']['quest_ended'], act=len(quests))
-        await bot.send_message(chatid, text)
+        await send_message(chatid, text)
 
         for quest in quests:
             text, mark = quest_ui(quest, lang, quest['alt_id'])
-            await bot.send_message(
+            await send_message(
                             chatid, text, reply_markup=mark, parse_mode='Markdown')
             await sleep(0.3)
 
@@ -52,7 +53,7 @@ async def quest(call: CallbackQuery):
             quest_resampling(quest['_id'])
 
             text = t('quest.time_end_h', lang)
-            await bot.send_message(chatid, text)
+            await send_message(chatid, text)
             await bot.edit_message_reply_markup(chatid, message.id, 
                                    reply_markup=InlineKeyboardMarkup())
         else:
@@ -83,9 +84,9 @@ async def quest(call: CallbackQuery):
 
                 else: text = t('quest.conditions', lang)
 
-                await bot.send_message(chatid, text, parse_mode='Markdown')
+                await send_message(chatid, text, parse_mode='Markdown')
     else:
         text = t('quest.not_found', lang)
-        await bot.send_message(chatid, text)
+        await send_message(chatid, text)
         await bot.edit_message_reply_markup(chatid, message.id, 
                                    reply_markup=InlineKeyboardMarkup())

@@ -8,6 +8,8 @@ from bot.modules.user import user_info, premium
 from bot.modules.data_format import list_to_inline, seconds_to_str, user_name, escape_markdown
 from time import time
 
+from bot.modules.over_functions import send_message
+
 users = mongo_client.user.users
 management = mongo_client.other.management
 
@@ -24,7 +26,7 @@ async def infouser(message: Message):
         photo_id = photos.photos[0][0].file_id #type: ignore
         await bot.send_photo(chatid, photo_id, text, parse_mode='Markdown')
     else:
-        await bot.send_message(message.chat.id, text, parse_mode='Markdown')
+        await send_message(message.chat.id, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, commands=['profile'], is_authorized=True)
 async def infouser_com(message: Message):
@@ -38,7 +40,7 @@ async def infouser_com(message: Message):
         photo_id = photos.photos[0][0].file_id #type: ignore
         await bot.send_photo(chatid, photo_id, text, parse_mode='Markdown')
     else:
-        await bot.send_message(message.chat.id, text, parse_mode='Markdown')
+        await send_message(message.chat.id, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, text='commands_name.profile.rayting', 
                      is_authorized=True)
@@ -53,7 +55,7 @@ async def rayting(message: Message):
         if t_upd['time'] == 0:
 
             text = t("rayting.no_rayting", lang)
-            await bot.send_message(chatid, text)
+            await send_message(chatid, text)
         else:
             text = f'{t("rayting.info", lang)}\n_{time_update_rayt}_'
             text_data = get_data('rayting', lang)
@@ -63,7 +65,7 @@ async def rayting(message: Message):
                 buttons[text_data[i]] = f'rayting {i}'
 
             markup = list_to_inline([buttons])
-            await bot.send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
+            await send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('rayting'))
 async def rayting_call(callback: CallbackQuery):

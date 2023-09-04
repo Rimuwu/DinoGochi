@@ -17,6 +17,7 @@ from bot.modules.states_tools import (ChooseIntState, ChooseStringState,
 from bot.modules.markup import markups_menu as m
 from bot.modules.user import take_coins
 from random import choice
+from bot.modules.over_functions import send_message
 
 MAX_PRICE = 10_000_000
 
@@ -94,13 +95,13 @@ async def end(return_data, transmitted_data):
         m_text, markup = product_ui(lang, pr_id, True)
 
         try:
-            await bot.send_message(chatid, m_text, reply_markup=markup,
+            await send_message(chatid, m_text, reply_markup=markup,
                                    parse_mode='Markdown')
         except Exception as e:
             print(e)
-            await bot.send_message(chatid, m_text, reply_markup=markup)
+            await send_message(chatid, m_text, reply_markup=markup)
 
-    await bot.send_message(chatid, text, reply_markup=m(userid, 'last_menu', lang), parse_mode='Markdown')
+    await send_message(chatid, text, reply_markup=m(userid, 'last_menu', lang), parse_mode='Markdown')
 
 """ Функция для получения цены и запаса для типов coins_items / items_coins
 """
@@ -214,7 +215,7 @@ async def stock(return_data, transmitted_data):
     for key, item in return_data.items(): transmitted_data[key] = item
 
     await ChooseIntState(stock_adapter, userid, chatid, lang, 1, 20, transmitted_data=transmitted_data)
-    await bot.send_message(chatid, t(f'add_product.stock.{option}', lang), reply_markup=cancel_markup(lang), parse_mode='Markdown')
+    await send_message(chatid, t(f'add_product.stock.{option}', lang), reply_markup=cancel_markup(lang), parse_mode='Markdown')
 
 """ Функция для получения предметов на обмен (items_items)
 """
@@ -526,14 +527,14 @@ async def edit_price(new_price: int, transmitted_data: dict):
     else:
         text = t('product_info.error', lang)
 
-    await bot.send_message(chatid, text, reply_markup=m(userid, 'last_menu', lang), parse_mode='Markdown')
+    await send_message(chatid, text, reply_markup=m(userid, 'last_menu', lang), parse_mode='Markdown')
 
 async def prepare_edit_price(userid: int, chatid: int, lang: str, productid: str):
     transmitted_data = {
         'productid': productid,
     }
 
-    await bot.send_message(chatid, t('product_info.new_price', lang), 
+    await send_message(chatid, t('product_info.new_price', lang), 
                            reply_markup=cancel_markup(lang))
     await ChooseIntState(edit_price, userid, chatid, lang, 1, MAX_PRICE, transmitted_data=transmitted_data)
 
@@ -588,7 +589,7 @@ async def add_stock(in_stock: int, transmitted_data: dict):
     else:
         text = t('product_info.error', lang)
 
-    await bot.send_message(chatid, text, reply_markup=m(userid, 'last_menu', lang), parse_mode='Markdown')
+    await send_message(chatid, text, reply_markup=m(userid, 'last_menu', lang), parse_mode='Markdown')
 
 async def prepare_add(userid: int, chatid: int, lang: str, productid: str):
 
@@ -596,7 +597,7 @@ async def prepare_add(userid: int, chatid: int, lang: str, productid: str):
         'productid': productid,
     }
     
-    await bot.send_message(chatid, t('product_info.add_stock', lang), 
+    await send_message(chatid, t('product_info.add_stock', lang), 
                            reply_markup=cancel_markup(lang))
     await ChooseIntState(add_stock, userid, chatid, lang, 1, MAX_PRICE, transmitted_data=transmitted_data)
 
@@ -611,7 +612,7 @@ async def delete_all(_: bool, transmitted_data: dict):
         for i in products_del:
             await delete_product(i['_id'])
 
-    await bot.send_message(chatid, t('seller.delete_all', lang), 
+    await send_message(chatid, t('seller.delete_all', lang), 
                            reply_markup=m(userid, 'last_menu', lang))
 
     text, markup, image = seller_ui(userid, lang, True)
@@ -622,7 +623,7 @@ async def prepare_delete_all(userid: int, chatid: int, lang: str, message_id: in
         'message_id': message_id,
     }
 
-    await bot.send_message(chatid, t('seller.confirm_delete_all', lang), 
+    await send_message(chatid, t('seller.confirm_delete_all', lang), 
                            reply_markup=confirm_markup(lang))
     await ChooseConfirmState(delete_all, userid, chatid, lang, True, transmitted_data=transmitted_data)
 
@@ -636,7 +637,7 @@ async def edit_name(name: str, transmitted_data: dict):
     if not sellers.find_one({'name': name}):
         sellers.update_one({'owner_id': userid}, 
                             {'$set': {'name': name}})
-        await bot.send_message(chatid, t('seller.new_name', lang), 
+        await send_message(chatid, t('seller.new_name', lang), 
                             reply_markup=m(userid, 'last_menu', lang))
 
         text, markup, image = seller_ui(userid, lang, True)
@@ -645,7 +646,7 @@ async def edit_name(name: str, transmitted_data: dict):
         except: pass
     else:
         text =  t('market_create.name_error', lang)
-        await bot.send_message(chatid, t('seller.confirm_delete_all', lang), 
+        await send_message(chatid, t('seller.confirm_delete_all', lang), 
                                reply_markup=m(userid, 'last_menu', lang))
 
 async def pr_edit_name(userid: int, chatid: int, lang: str, message_id: int):
@@ -653,7 +654,7 @@ async def pr_edit_name(userid: int, chatid: int, lang: str, message_id: int):
         'message_id': message_id
     }
 
-    await bot.send_message(chatid, t('seller.edit_name', lang), 
+    await send_message(chatid, t('seller.edit_name', lang), 
                            reply_markup=cancel_markup(lang))
     await ChooseStringState(edit_name, userid, chatid, lang, min_len=3, max_len=50, transmitted_data=transmitted_data)
 
@@ -666,7 +667,7 @@ async def edit_description(description: str, transmitted_data: dict):
     description = escape_markdown(description)
     sellers.update_one({'owner_id': userid}, 
                         {'$set': {'description': description}})
-    await bot.send_message(chatid, t('seller.new_description', lang), 
+    await send_message(chatid, t('seller.new_description', lang), 
                            reply_markup=m(userid, 'last_menu', lang))
 
     text, markup, image = seller_ui(userid, lang, True)
@@ -679,7 +680,7 @@ async def pr_edit_description(userid: int, chatid: int, lang: str, message_id: i
         'message_id': message_id
     }
 
-    await bot.send_message(chatid, t('seller.edit_description', lang), 
+    await send_message(chatid, t('seller.edit_description', lang), 
                            reply_markup=cancel_markup(lang))
     await ChooseStringState(edit_description, userid, chatid, lang, max_len=500, transmitted_data=transmitted_data)
 
@@ -696,7 +697,7 @@ async def edit_image(new_image: str, transmitted_data: dict):
     if new_image: text = t('seller.new_image', lang)
     else: text = t('seller.delete_image', lang)
 
-    await bot.send_message(chatid, text, 
+    await send_message(chatid, text, 
                            reply_markup=m(userid, 'last_menu', lang))
 
     text, markup, image = seller_ui(userid, lang, True)
@@ -712,7 +713,7 @@ async def pr_edit_image(userid: int, chatid: int, lang: str, message_id: int):
         'message_id': message_id
     }
 
-    await bot.send_message(chatid, t('seller.edit_image', lang), 
+    await send_message(chatid, t('seller.edit_image', lang), 
                            reply_markup=cancel_markup(lang))
     await ChooseStringState(edit_image, userid, chatid, lang, max_len=200, transmitted_data=transmitted_data)
 
@@ -726,7 +727,7 @@ async def end_buy(unit: int, transmitted_data: dict):
     messageid = transmitted_data['messageid']
 
     status, code = await buy_product(pid, unit, userid, name, lang)
-    await bot.send_message(chatid, t(f'buy.{code}', lang), 
+    await send_message(chatid, t(f'buy.{code}', lang), 
                            reply_markup=m(userid, 'last_menu', lang))
 
     if status:
@@ -761,13 +762,13 @@ async def buy_item(userid: int, chatid: int, lang: str, product: dict, name: str
             status, _ = await ChooseIntState(end_buy, userid, chatid, lang, min_int=min_int, max_int=max_int, transmitted_data=transmitted_data, autoanswer=False)
             if status:
                 if product['type'] != 'auction':
-                    await bot.send_message(chatid, text, 
+                    await send_message(chatid, text, 
                                     reply_markup=count_markup(max_int, lang))
                 else:
-                    await bot.send_message(chatid, text, 
+                    await send_message(chatid, text, 
                                     reply_markup=cancel_markup(lang))
         else:
-            await bot.send_message(chatid, t('buy.max_min', lang), 
+            await send_message(chatid, t('buy.max_min', lang), 
                                 reply_markup=cancel_markup(lang))
 
 async def promotion(_: bool, transmitted_data: dict):
@@ -789,7 +790,7 @@ async def promotion(_: bool, transmitted_data: dict):
         text = t('promotion.ok', lang)
         create_preferential(pid, 43_200, userid)
 
-    await bot.send_message(chatid, text, 
+    await send_message(chatid, text, 
                     reply_markup=m(userid, 'last_menu', lang))
     if stat:
         m_text, markup = product_ui(lang, pid, True)
@@ -806,7 +807,7 @@ async def promotion_prepare(userid: int, chatid: int, lang: str, product_id, mes
             'message_id': message_id
         }
 
-        await bot.send_message(chatid, t('promotion.buy', lang), 
+        await send_message(chatid, t('promotion.buy', lang), 
                                 reply_markup=confirm_markup(lang))
         await ChooseConfirmState(promotion, userid, chatid, lang, True, transmitted_data)
 
@@ -819,9 +820,9 @@ async def send_info_pr(option, transmitted_data: dict):
     if product:
         my = product['owner_id'] == userid
         m_text, markup = product_ui(lang, option, my)
-        await bot.send_message(chatid, m_text, reply_markup=markup, parse_mode='Markdown')
+        await send_message(chatid, m_text, reply_markup=markup, parse_mode='Markdown')
     else:
-        await bot.send_message(chatid,  t('product_info.error', lang))
+        await send_message(chatid,  t('product_info.error', lang))
 
 async def find_prepare(userid: int, chatid: int, lang: str):
 
@@ -884,11 +885,11 @@ async def find_end(return_data, transmitted_data):
                     ] = product['_id']
             else: break
 
-        await bot.send_message(chatid, t('products.search', lang))
+        await send_message(chatid, t('products.search', lang))
         await ChoosePagesState(send_info_pr, userid, chatid, lang, prd, 1, 3, 
                                None, False, False)
     else:
-        await bot.send_message(chatid, t('find_product.not_found', lang), 
+        await send_message(chatid, t('find_product.not_found', lang), 
                                reply_markup=m(userid, 'last_menu', lang))
 
 async def complain_market(userid: int, chatid: int, lang: str):

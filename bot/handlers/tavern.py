@@ -22,6 +22,7 @@ from bot.modules.states_tools import (ChooseConfirmState, ChooseCustomState,
                                       ChoosePagesState, ChooseStepState)
 from bot.modules.user import (AddItemToUser, check_name, daily_award_con,
                               take_coins, user_in_chat, user_name)
+from bot.modules.over_functions import send_message
 
 events = mongo_client.other.events
 
@@ -43,7 +44,7 @@ async def events_c(message: Message):
         else: event_text = t(f"events.{event['type']}", lang)
         text += f'{a}. {event_text}\n\n'
 
-    await bot.send_message(chatid, text)
+    await send_message(chatid, text)
 
 async def bonus_message(user, message, lang):
     userid = user.id
@@ -131,13 +132,13 @@ async def daily_award(callback: CallbackQuery):
 
         text = t('daily_award.use', lang, time=strtime, 
                  items=str_items, coins=coins)
-        await bot.send_message(chatid, text, parse_mode='Markdown')
+        await send_message(chatid, text, parse_mode='Markdown')
 
         for i in items: AddItemToUser(userid, i)
         take_coins(userid, coins, True)
     else:
         text = t('daily_award.in_base', lang)
-        await bot.send_message(chatid, text, parse_mode='Markdown')
+        await send_message(chatid, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.edit', is_authorized=True)
 async def edit(message: Message):
@@ -174,16 +175,16 @@ async def edit_appearance(return_data, transmitted_data):
             dino.update({'$set': {'data_id': n_id}})
 
             text = t('edit_dino.new', lang)
-            await bot.send_message(chatid, text, parse_mode='Markdown', 
+            await send_message(chatid, text, parse_mode='Markdown', 
                                    reply_markup=inline_menu('dino_profile', lang, dino_alt_id_markup=dino.alt_id))
-            await bot.send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
+            await send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
                                    reply_markup=m(userid, 'last_menu', lang))
             return
 
         else: text = t('edit_dino.no_items', lang)
     else: text = t('edit_dino.no_coins', lang)
 
-    await bot.send_message(chatid, text, parse_mode='Markdown', 
+    await send_message(chatid, text, parse_mode='Markdown', 
                            reply_markup=m(userid, 'last_menu', lang))
 
 async def end_edit(code, transmitted_data):
@@ -222,17 +223,17 @@ async def end_edit(code, transmitted_data):
                 dino.update({'$set': {'quality': quality}})
 
             text = t('edit_dino.new', lang)
-            await bot.send_message(chatid, text, parse_mode='Markdown', 
+            await send_message(chatid, text, parse_mode='Markdown', 
                                    reply_markup=inline_menu('dino_profile', lang, dino_alt_id_markup=dino.alt_id))
 
-            await bot.send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
+            await send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
                                    reply_markup=m(userid, 'last_menu', lang))
             return
 
         else: text = t('edit_dino.no_items', lang)
     else: text = t('edit_dino.no_coins', lang)
 
-    await bot.send_message(chatid, text, parse_mode='Markdown', 
+    await send_message(chatid, text, parse_mode='Markdown', 
                            reply_markup=m(userid, 'last_menu', lang))
 
 
@@ -253,10 +254,10 @@ async def dino_now(return_data, transmitted_data):
             buttons[f'{t("rare."+key+".2", lang)} {t("rare."+key+".1", lang)}'] = f'chooseinline {code} {key}'
     
     mark = list_to_inline([buttons], 2)
-    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=mark)
+    await send_message(chatid, text, parse_mode='Markdown', reply_markup=mark)
 
     await ChooseInlineState(end_edit, userid, chatid, lang, str(code), {'dino': dino, 'type': o_type})
-    await bot.send_message(chatid,  t('edit_dino.new_rare', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
+    await send_message(chatid,  t('edit_dino.new_rare', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('transformation') , is_authorized=True)
 async def transformation(callback: CallbackQuery):

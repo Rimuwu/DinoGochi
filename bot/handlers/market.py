@@ -24,6 +24,8 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import (ChooseOptionState, ChoosePagesState,
                                       ChooseStepState, prepare_steps)
 from bot.modules.user import premium
+from bot.modules.over_functions import send_message
+
 
 users = mongo_client.user.users
 management = mongo_client.other.management
@@ -43,7 +45,7 @@ async def create_adapter(return_data, transmitted_data):
     description = escape_markdown(description)
     create_seller(userid, name, description)
 
-    await bot.send_message(chatid, t('market_create.create', lang), 
+    await send_message(chatid, t('market_create.create', lang), 
                            reply_markup=m(userid, 'seller_menu', lang), parse_mode='Markdown')
 
 async def custom_name(message: Message, transmitted_data):
@@ -58,15 +60,15 @@ async def custom_name(message: Message, transmitted_data):
     name = escape_markdown(content)
 
     if content_len > max_len:
-        await bot.send_message(message.chat.id, 
+        await send_message(message.chat.id, 
                 t('states.ChooseString.error_max_len', lang,
                 number = content_len, max = max_len))
     elif content_len < min_len:
-        await bot.send_message(message.chat.id, 
+        await send_message(message.chat.id, 
                 t('states.ChooseString.error_min_len', lang,
                 number = content_len, min = min_len))
     elif sellers.find_one({'name': name}):
-        await bot.send_message(message.chat.id, 
+        await send_message(message.chat.id, 
                 t('market_create.name_error', lang))
     else: 
         return True, name
@@ -82,10 +84,10 @@ async def create_market(message: Message):
     user = users.find_one({'userid': userid})
 
     if res or not user:
-        await bot.send_message(message.chat.id, t('menu_text.seller', lang), 
+        await send_message(message.chat.id, t('menu_text.seller', lang), 
                            reply_markup=m(userid, 'market_menu', lang))
     elif user['lvl'] < 2:
-        await bot.send_message(message.chat.id, t('market_create.lvl', lang))
+        await send_message(message.chat.id, t('market_create.lvl', lang))
     else:
         transmitted_data = {}
         steps = [
@@ -139,7 +141,7 @@ async def add_product_com(message: Message):
         [b_list, t('buttons_name.cancel', lang)], 2
     )
 
-    await bot.send_message(chatid, t('add_product.options_info', lang), reply_markup=markup)
+    await send_message(chatid, t('add_product.options_info', lang), reply_markup=markup)
     await ChooseOptionState(prepare_data_option, userid, chatid, lang, options)
 
 @bot.message_handler(pass_bot=True, text='commands_name.seller_profile.my_products', is_authorized=True)
@@ -158,12 +160,12 @@ async def my_products(message: Message):
                                 product['type'], lang)
             ] = product['_id']
 
-        await bot.send_message(chatid, t('products.search', lang))
+        await send_message(chatid, t('products.search', lang))
         await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
     else:
         text = t('no_products', lang)
-        await bot.send_message(chatid, text,  parse_mode='Markdown')
+        await send_message(chatid, text,  parse_mode='Markdown')
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('product_info'))
 async def product_info(call: CallbackQuery):
@@ -202,7 +204,7 @@ async def product_info(call: CallbackQuery):
                         try:
                             await bot.send_photo(chatid, image, text, 'Markdown')
                         except:
-                            await bot.send_message(chatid, text, parse_mode='Markdown')
+                            await send_message(chatid, text, parse_mode='Markdown')
 
             elif call_type == 'buy' and product['owner_id'] != userid:
                 if product['owner_id'] != userid:
@@ -212,7 +214,7 @@ async def product_info(call: CallbackQuery):
             elif call_type == 'info':
                 text, markup = product_ui(lang, product['_id'], 
                                           product['owner_id'] == userid)
-                await bot.send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
+                await send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
 
             elif call_type == 'promotion' and product['owner_id'] == userid:
                 await promotion_prepare(userid, chatid, lang, product['_id'], 
@@ -239,7 +241,7 @@ async def seller(call: CallbackQuery):
         if premium(userid):
             await pr_edit_image(userid, chatid, lang, call.message.id)
         else:
-            await bot.send_message(chatid, t('no_premium', lang))
+            await send_message(chatid, t('no_premium', lang))
 
     # Кнопки вызываемые не владельцем
     elif call_type == 'info':
@@ -266,7 +268,7 @@ async def seller(call: CallbackQuery):
                                 product['type'], lang)
             ] = product['_id']
 
-        await bot.send_message(chatid, t('products.search', lang))
+        await send_message(chatid, t('products.search', lang))
         await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
     
@@ -296,11 +298,11 @@ async def random_products(message: Message):
                     ] = product['_id']
             else: break
 
-        await bot.send_message(chatid, t('products.search', lang))
+        await send_message(chatid, t('products.search', lang))
         await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
     else:
-        await bot.send_message(chatid, t('products.null', lang))
+        await send_message(chatid, t('products.null', lang))
 
 @bot.message_handler(pass_bot=True, text='commands_name.market.find', is_authorized=True)
 async def find_products(message: Message):
@@ -328,7 +330,7 @@ async def push(call: CallbackQuery):
         create_push(userid, channel_id, lang)
         text = t('push.new', lang)
 
-    await bot.send_message(userid, text)
+    await send_message(userid, text)
     await bot.edit_message_reply_markup(chatid, call.message.id, 
                                         reply_markup=InlineKeyboardMarkup())
     

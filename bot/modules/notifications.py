@@ -12,6 +12,7 @@ from bot.modules.inline import inline_menu
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.logs import log
 from bot.modules.item import get_name
+from bot.modules.over_functions import send_message
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = mongo_client.dinosaur.dino_owners
@@ -138,9 +139,9 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
                 try:
                     try:
                         await sleep(0.05)
-                        await bot.send_message(owner['owner_id'], text, reply_markup=markup_inline, parse_mode='Markdown')
+                        await send_message(owner['owner_id'], text, reply_markup=markup_inline, parse_mode='Markdown')
                     except Exception:
-                        await bot.send_message(owner['owner_id'], text, reply_markup=markup_inline)
+                        await send_message(owner['owner_id'], text, reply_markup=markup_inline)
                 except Exception as error:
                     if conf.debug:
                         log(prefix='DinoNotification Error', 
@@ -208,9 +209,9 @@ async def user_notification(user_id: int, not_type: str,
     try:
         try:
             await sleep(0.05)
-            await bot.send_message(user_id, text, reply_markup=markup_inline, parse_mode='Markdown')
+            await send_message(user_id, text, reply_markup=markup_inline, parse_mode='Markdown')
         except Exception:
-            await bot.send_message(user_id, text, reply_markup=markup_inline)
+            await send_message(user_id, text, reply_markup=markup_inline)
     except Exception as error: 
         log(prefix='Notification Error', 
             message=f'User: {user_id}, Data: {not_type} Error: {error}', 

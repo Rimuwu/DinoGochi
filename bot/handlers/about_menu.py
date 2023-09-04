@@ -7,6 +7,8 @@ from bot.modules.localization import get_data, t, get_lang
 from bot.modules.currency import get_all_currency, get_products
 from bot.modules.item import counts_items
 from bot.modules.data_format import seconds_to_str
+from bot.modules.over_functions import send_message
+
 
 users = mongo_client.user.users
 
@@ -19,7 +21,7 @@ async def team(message: Message):
     lang_text = t('language_name', lang)
     author_loc = t('localization_author', lang)
     
-    await bot.send_message(chatid, t('about_menu.team', lang, 
+    await send_message(chatid, t('about_menu.team', lang, 
                                      lang_name=lang_text,
                                      author=author_loc
                                     ), parse_mode='html')
@@ -30,7 +32,7 @@ async def links(message: Message):
     lang = get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await bot.send_message(chatid, t('about_menu.links', lang), parse_mode='Markdown')
+    await send_message(chatid, t('about_menu.links', lang), parse_mode='Markdown')
     
 def main_support_menu(lang: str):
     image = open('images/remain/support/placeholder.png', 'rb')
@@ -90,7 +92,7 @@ async def faq(message: Message):
             callback_data=key
         ) for key, name in buttons.items()])
 
-    await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline)
+    await send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('faq'))
@@ -100,7 +102,7 @@ async def faq_buttons(call: CallbackQuery):
     lang = get_lang(call.from_user.id)
 
     text = t(f'faq.{data}', lang)
-    await bot.send_message(chatid, text, parse_mode='Markdown')
+    await send_message(chatid, text, parse_mode='Markdown')
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('support'))

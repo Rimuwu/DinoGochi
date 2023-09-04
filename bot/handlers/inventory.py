@@ -20,12 +20,13 @@ from bot.modules.item_tools import (AddItemToUser, CheckItemFromUser,
                                     delete_item_action, exchange_item)
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import markups_menu as m
+from bot.modules.over_functions import send_message
 
 users = mongo_client.user.users
 
 async def cancel(message):
     lang = get_lang(message.from_user.id)
-    await bot.send_message(message.chat.id, "❌", 
+    await send_message(message.chat.id, "❌", 
           reply_markup=m(message.from_user.id, 'last_menu', lang))
     await bot.delete_state(message.from_user.id, message.chat.id)
     await bot.reset_data(message.from_user.id,  message.chat.id)
@@ -164,7 +165,7 @@ async def item_callback(call: CallbackQuery):
                 i_name = get_name(item['item_id'], lang)
 
                 if RemoveItemFromUser(userid, item['item_id'], 1, preabil):
-                    await bot.send_message(chatid, 
+                    await send_message(chatid, 
                         t('item_use.egg.incubation', lang, 
                           item_name = i_name, end_time=end_time),  
                           reply_markup=m(userid, 'last_menu', lang))
@@ -174,7 +175,7 @@ async def item_callback(call: CallbackQuery):
                     new_text = t('item_use.egg.edit_content', lang)
                     await bot.edit_message_caption(new_text, chatid, call.message.id, reply_markup=None)
             else:
-                await bot.send_message(chatid, 
+                await send_message(chatid, 
                         t('item_use.cannot_be_used', lang),  
                           reply_markup=m(userid, 'last_menu', lang))
         else: print('item_callback', call_data[1])
@@ -225,7 +226,7 @@ async def search_message(message: Message):
             data['items'] = searched
         await swipe_page(userid, chatid)
     else:
-        await bot.send_message(chatid, t('inventory.search_null', lang))
+        await send_message(chatid, t('inventory.search_null', lang))
 
 #Фильтры
 @bot.callback_query_handler(pass_bot=True, state=InventoryStates.InventorySetFilters, func=lambda call: call.data.startswith('inventory_filter'), private=True)
@@ -322,6 +323,6 @@ async def ns_craft(call: CallbackQuery):
 
         text =  t('ns_craft.create', lang, 
                   items = counts_items(item['ns_craft'][ns_id]['create'], lang))
-        await bot.send_message(chatid, text)
+        await send_message(chatid, text)
     else:
-        await bot.send_message(chatid, t('ns_craft.not_materials', lang))
+        await send_message(chatid, t('ns_craft.not_materials', lang))

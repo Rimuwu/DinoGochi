@@ -18,6 +18,8 @@ from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User
 from random import randint
+from bot.modules.over_functions import send_message
+
 
 users = mongo_client.user.users
 dinosaurs = mongo_client.dinosaur.dinosaurs
@@ -48,7 +50,7 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
         InputMedia(
             type='photo', media=image, caption=text),
         chatid, last_mess_id)
-    await bot.send_message(chatid, t('journey_start.start_2', lang), reply_markup=m(userid, 'last_menu', lang))
+    await send_message(chatid, t('journey_start.start_2', lang), reply_markup=m(userid, 'last_menu', lang))
 
 async def start_journey(userid: int, chatid: int, lang: str, 
                         friend: int = 0):
@@ -75,7 +77,7 @@ async def start_journey(userid: int, chatid: int, lang: str,
     m1_reply = list_to_inline(buttons_complexity)
     m2_reply = list_to_inline([buttons], 2)
 
-    await bot.send_message(chatid, text_complexity, 
+    await send_message(chatid, text_complexity, 
                            reply_markup=m1_reply)
 
     buttons_time = [{}, {}, {}]
@@ -98,7 +100,7 @@ async def start_journey(userid: int, chatid: int, lang: str,
 
     await ChooseStepState(journey_start_adp, userid, chatid, lang, steps, 
                           {'last_dino': last_dino, "edit_message": True, 'friend': friend, 'delete_steps': True})
-    await bot.send_message(chatid, t('journey_start.cancel_text', lang), 
+    await send_message(chatid, t('journey_start.cancel_text', lang), 
                            reply_markup=cancel_markup(lang))
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions.journey', 
@@ -117,7 +119,7 @@ async def journey_complexity(callback: CallbackQuery):
     chatid = callback.message.chat.id
 
     text = t('journey_complexity', lang)
-    await bot.send_message(chatid, text, parse_mode='Markdown')
+    await send_message(chatid, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions.events')
 async def events(message: Message):
@@ -146,10 +148,10 @@ async def events(message: Message):
             if last_event:
                 text += '\n\n' + t('journey_last_event.last_event', lang, last_event=last_event)
 
-            await bot.send_message(chatid, text, parse_mode='html', reply_markup=list_to_inline(
+            await send_message(chatid, text, parse_mode='html', reply_markup=list_to_inline(
                 [{button_name: f'journey_stop {last_dino.alt_id}'}]))
         else:
-            await bot.send_message(chatid, '❌', reply_markup=m(userid, 'last_menu', lang))
+            await send_message(chatid, '❌', reply_markup=m(userid, 'last_menu', lang))
 
 @bot.callback_query_handler(pass_bot=True, func=
                             lambda call: call.data.startswith('journey_stop'))
@@ -172,7 +174,7 @@ async def send_logs(chatid: int, lang: str, data: dict, dino_name: str):
     logs = data['journey_log']
     if logs:
         for i in all_log(logs, lang, data['_id']):
-            await bot.send_message(chatid, i, parse_mode='html')
+            await send_message(chatid, i, parse_mode='html')
 
     items_text = '-'
     coins = data['coins']
@@ -182,4 +184,4 @@ async def send_logs(chatid: int, lang: str, data: dict, dino_name: str):
     if items: items_text = counts_items(items, lang)
     text = t('journey_log', lang, coins=coins, 
              items=items_text, time=j_time, col=len(logs), name=dino_name)
-    await bot.send_message(chatid, text, reply_markup=m(chatid, 'actions_menu', lang, True))
+    await send_message(chatid, text, reply_markup=m(chatid, 'actions_menu', lang, True))

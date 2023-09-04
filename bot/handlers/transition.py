@@ -16,6 +16,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.statistic import get_now_statistic
 from bot.modules.user import User, take_coins, user_name
 from bot.modules.market import preview_product
+from bot.modules.over_functions import send_message
 
 users = mongo_client.user.users
 management = mongo_client.other.management
@@ -31,7 +32,7 @@ async def back_buttom(message: Message):
     # Переделать таверну полностью
 
     text = t(f'back_text.{back_m}', lang)
-    await bot.send_message(message.chat.id, text, 
+    await send_message(message.chat.id, text, 
                            reply_markup=m(userid, back_m, lang))
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings_menu', is_authorized=True)
@@ -50,7 +51,7 @@ async def settings_menu(message: Message):
                 )
         text = text.replace('True', '✅').replace('False', '❌')
 
-        await bot.send_message(message.chat.id, text, 
+        await send_message(message.chat.id, text, 
                                reply_markup=m(userid, 'settings_menu', lang))
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings.settings_page_2', is_authorized=True)
@@ -68,7 +69,7 @@ async def settings2_menu(message: Message):
         
         text = t('menu_text.settings2', lang, my_name=my_name)
 
-        await bot.send_message(message.chat.id, text, 
+        await send_message(message.chat.id, text, 
                                reply_markup=m(userid, 'settings2_menu', lang))
 
 @bot.message_handler(pass_bot=True, text='commands_name.profile_menu', is_authorized=True)
@@ -76,7 +77,7 @@ async def profile_menu(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
 
-    await bot.send_message(message.chat.id, t('menu_text.profile', lang), 
+    await send_message(message.chat.id, t('menu_text.profile', lang), 
                            reply_markup=m(userid, 'profile_menu', lang))
     
 @bot.message_handler(pass_bot=True, text='commands_name.friends_menu', is_authorized=True)
@@ -84,7 +85,7 @@ async def friends_menu(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
 
-    await bot.send_message(message.chat.id, t('menu_text.friends', lang), 
+    await send_message(message.chat.id, t('menu_text.friends', lang), 
                            reply_markup=m(userid, 'friends_menu', lang))
 
 @bot.message_handler(pass_bot=True, text='commands_name.profile.market', is_authorized=True)
@@ -92,7 +93,7 @@ async def market_menu(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
 
-    await bot.send_message(message.chat.id, t('menu_text.market.info', lang), 
+    await send_message(message.chat.id, t('menu_text.market.info', lang), 
                            reply_markup=m(userid, 'market_menu', lang), parse_mode='Markdown')
 
     products_pref = list(preferential.find({"owner_id": {"$ne": userid}})).copy()
@@ -113,7 +114,7 @@ async def market_menu(message: Message):
 
         if rand_p:
             markup = list_to_inline([rand_p], 1)
-            await bot.send_message(message.chat.id, t('menu_text.market.products', lang), 
+            await send_message(message.chat.id, t('menu_text.market.products', lang), 
                                 reply_markup=markup, parse_mode='Markdown')
 
 
@@ -122,7 +123,7 @@ async def actions_menu(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
 
-    await bot.send_message(message.chat.id, t('menu_text.actions', lang), 
+    await send_message(message.chat.id, t('menu_text.actions', lang), 
                            reply_markup=m(userid, 'actions_menu', lang))
     
 @bot.message_handler(pass_bot=True, text='commands_name.dino-tavern_menu', is_authorized=True)
@@ -140,7 +141,7 @@ async def tavern_menu(message: Message):
 
     data_enter = get_data('tavern_enter', lang)
     text = f'🍻 {choice(data_enter)}'
-    await bot.send_message(message.chat.id, text, reply_markup=m(userid, 'dino_tavern_menu', lang))
+    await send_message(message.chat.id, text, reply_markup=m(userid, 'dino_tavern_menu', lang))
     
     if not tavern.find_one({'userid': userid}):
         tavern.insert_one({
@@ -153,7 +154,7 @@ async def tavern_menu(message: Message):
         for i in friends:
             if tavern.find_one({"userid": i}): friends_in_tavern.append(i)
 
-        msg = await bot.send_message(message.chat.id, 
+        msg = await send_message(message.chat.id, 
                 t('menu_text.dino_tavern.friends', lang))
 
         text = t('menu_text.dino_tavern.friends2', lang)
@@ -171,12 +172,12 @@ async def tavern_menu(message: Message):
                                     get_lang(friend.id), 
                                     name=user_name(message.from_user))
                     try:
-                        await bot.send_message(
+                        await send_message(
                             friendid, text_to_friend, reply_markup=buttons)
                     except:
                         await sleep(0.3)
                         try: 
-                            await bot.send_message(
+                            await send_message(
                                 friendid, text_to_friend, reply_markup=buttons)
                         except: pass
         else: text += '❌'
@@ -207,7 +208,7 @@ async def about_menu(message: Message):
         
         update_time = seconds_to_str(delta.seconds, lang, True)
     
-    await bot.send_message(message.chat.id, t(
+    await send_message(message.chat.id, t(
         'menu_text.about', lang, bot_name=bot_name,
         col_u=col_u, col_d=col_d, col_i=col_i, update_time=update_time
         ), 
@@ -228,7 +229,7 @@ async def referal_menu(message: Message):
     award_text = counts_items(award_items, lang, t('menu_text.referal_separator', lang))
     names = counts_items(items, lang)
 
-    await bot.send_message(message.chat.id, t(
+    await send_message(message.chat.id, t(
                 'menu_text.referal', lang, 
                 coins=coins, items=names, 
                 award_text=award_text, lvl=lvl), 
@@ -251,15 +252,15 @@ async def buy_ale(callback: CallbackQuery):
         await bot.answer_callback_query(callback.id, text, True)
 
         text = t('buy_ale.friend', lang, username=user_name(callback.from_user))
-        await bot.send_message(friend, text)
+        await send_message(friend, text)
     else:
         text = t('buy_ale.no_coins', lang)
-        await bot.send_message(friend, text)
+        await send_message(friend, text)
 
 @bot.message_handler(pass_bot=True, text='commands_name.market.seller_profile', is_authorized=True)
 async def seller_profile(message: Message):
     userid = message.from_user.id
     lang = get_lang(message.from_user.id)
 
-    await bot.send_message(message.chat.id, t('menu_text.seller', lang), 
+    await send_message(message.chat.id, t('menu_text.seller', lang), 
                            reply_markup=m(userid, 'seller_menu', lang))

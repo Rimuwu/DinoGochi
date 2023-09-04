@@ -13,6 +13,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User
 from bot.modules.localization import get_lang
+from bot.modules.over_functions import send_message
 
 items = mongo_client.items.items
 
@@ -27,7 +28,7 @@ async def adapter_function(return_dict, transmitted_data):
     send_status, return_text = await use_item(userid, chatid, lang, item, count, dino)
     
     if send_status:
-        await bot.send_message(chatid, return_text, parse_mode='Markdown', reply_markup=m(userid, 'last_menu', lang))
+        await send_message(chatid, return_text, parse_mode='Markdown', reply_markup=m(userid, 'last_menu', lang))
 
 async def inventory_adapter(item, transmitted_data):
     userid = transmitted_data['userid']
@@ -63,7 +64,7 @@ async def inventory_adapter(item, transmitted_data):
                                 dino.stats['eat'], int(item_data['act'] * percent), max_count, item_name, lang)}}
                 ]
         await ChooseStepState(adapter_function, userid, chatid, 
-                                  lang, steps, 
+                              lang, steps, 
                               transmitted_data=transmitted_data)
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions.feed')

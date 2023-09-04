@@ -7,6 +7,8 @@ from bot.modules.inline import inline_menu
 from bot.modules.localization import get_lang, t
 from bot.modules.promo import use_promo
 from bot.handlers.start import start_game
+from bot.modules.over_functions import send_message
+
 
 users = mongo_client.user.users
 
@@ -25,7 +27,7 @@ async def timer(message: Message):
         try:
             text = seconds_to_str(int(num), lang, mini, max_lvl)
         except: text = 'error'
-        await bot.send_message(chatid, text)
+        await send_message(chatid, text)
 
 @bot.message_handler(pass_bot=True, commands=['string_to_sec'], private=True)
 async def string_time(message):
@@ -35,10 +37,10 @@ async def string_time(message):
 
     if txt == '':
         text = t('string_to_str.info', lang)
-        await bot.send_message(chatid, text, parse_mode='Markdown')
+        await send_message(chatid, text, parse_mode='Markdown')
     else:
         sec = str_to_seconds(txt)
-        await bot.send_message(chatid, str(sec))
+        await send_message(chatid, str(sec))
 
 @bot.message_handler(pass_bot=True, commands=['push_info'])
 async def push_info(message: Message):
@@ -46,7 +48,7 @@ async def push_info(message: Message):
     lang = get_lang(message.from_user.id)
 
     text = t('push.push_info', lang)
-    await bot.send_message(chatid, text, parse_mode='Markdown')
+    await send_message(chatid, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, commands=['add_me'], private=False)
 async def profile(message: Message):
@@ -71,7 +73,7 @@ async def promo(message: Message):
         user = users.find_one({'userid': userid})
         if user:
             status, text = use_promo(code, userid, lang)
-            await bot.send_message(chatid, text, parse_mode='Markdown')
+            await send_message(chatid, text, parse_mode='Markdown')
         else:
             await start_game(message, code, 'promo')
 
@@ -80,4 +82,4 @@ async def help(message: Message):
     lang = get_lang(message.from_user.id)
     chatid = message.chat.id
     
-    await bot.send_message(chatid, t('help_command.all', lang), parse_mode='html')
+    await send_message(chatid, t('help_command.all', lang), parse_mode='html')

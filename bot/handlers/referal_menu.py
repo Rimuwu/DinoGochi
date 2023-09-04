@@ -11,6 +11,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.referals import connect_referal, create_referal
 from bot.modules.states_tools import ChooseCustomState, ChooseStringState
 from bot.modules.user import take_coins
+from bot.modules.over_functions import send_message
 
 users = mongo_client.user.users
 referals = mongo_client.user.referals
@@ -30,9 +31,9 @@ async def code(message: Message):
         inl_buttons = dict(zip(buttons.values(), buttons.keys()))
         markup = list_to_inline([inl_buttons])
         
-        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+        await send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
     else:
-        await bot.send_message(message.chat.id, t('referals.have_code', lang))
+        await send_message(message.chat.id, t('referals.have_code', lang))
 
 
 async def create_custom_code(code: str, transmitted_data: dict):
@@ -51,7 +52,7 @@ async def create_custom_code(code: str, transmitted_data: dict):
     else:
         text = t('referals.custom_code.no_coins', lang)
 
-    await bot.send_message(chatid, text, parse_mode='Markdown', 
+    await send_message(chatid, text, parse_mode='Markdown', 
                         reply_markup=m(userid, 'last_menu', lang, True))
 
 async def custom_handler(message: Message, transmitted_data: dict):
@@ -74,7 +75,7 @@ async def custom_handler(message: Message, transmitted_data: dict):
         else: status = True
 
     if not status:
-        await bot.send_message(chatid, text, parse_mode='Markdown')
+        await send_message(chatid, text, parse_mode='Markdown')
     return status, code
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
@@ -93,16 +94,16 @@ async def generate_code(call: CallbackQuery):
             bot_name = iambot.username
 
             url = f'https://t.me/{bot_name}/?start={code}'
-            await bot.send_message(chatid, t('referals.code', lang, 
+            await send_message(chatid, t('referals.code', lang, 
                                     code=code, url=url), parse_mode='Markdown', reply_markup=m(userid, 'last_menu', lang, True))
             
         elif action == 'custom':
-            await bot.send_message(chatid, 
+            await send_message(chatid, 
                                    t('referals.custom_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
             await ChooseCustomState(create_custom_code, custom_handler, 
                                     userid, chatid, lang)
     else:
-        await bot.send_message(chatid, t('referals.have_code', lang))
+        await send_message(chatid, t('referals.have_code', lang))
 
 
 @bot.message_handler(pass_bot=True, textstart='commands_name.referal.my_code')
@@ -125,7 +126,7 @@ async def my_code(message: Message):
         bot_name = iambot.username
         url = f'https://t.me/{bot_name}/?start={code}'
         
-        await bot.send_message(chatid, t('referals.my_code', lang, 
+        await send_message(chatid, t('referals.my_code', lang, 
                                 code=code, url=url, uses=uses), parse_mode='Markdown')
 
 async def check_code(code: str, transmitted_data: dict):
@@ -139,7 +140,7 @@ async def check_code(code: str, transmitted_data: dict):
     
     result = connect_referal(code, userid)
     text = t(f'referals.enter_code.{result}', lang, coins=coins, items=names)
-    await bot.send_message(chatid, text, parse_mode='Markdown', 
+    await send_message(chatid, text, parse_mode='Markdown', 
                         reply_markup=m(userid, 'last_menu', lang, True))
 
 @bot.message_handler(pass_bot=True, text='commands_name.referal.enter_code', is_authorized=True)
@@ -150,7 +151,7 @@ async def enter_code(message: Message):
 
     ref = referals.find_one({'userid': userid, 'type': 'sub'})
     if not ref:
-        await bot.send_message(chatid, t('referals.enter_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
+        await send_message(chatid, t('referals.enter_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
         await ChooseStringState(check_code, userid, chatid, lang)
     else:
-        await bot.send_message(chatid, t('referals.enter_code.have_code', lang), parse_mode='Markdown')
+        await send_message(chatid, t('referals.enter_code.have_code', lang), parse_mode='Markdown')

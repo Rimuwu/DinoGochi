@@ -1,24 +1,16 @@
-from telebot.types import Message, InputMedia
 
 from bot.config import mongo_client
-from bot.exec import bot
-from bot.modules.data_format import (list_to_inline, list_to_keyboard,
-                                     seconds_to_str, user_name, escape_markdown)
-from bot.modules.item import (AddItemToUser, CheckCountItemFromUser,
-                              RemoveItemFromUser, counts_items, get_name, items)
-from bot.modules.localization import get_data, get_lang, t
-from bot.modules.market import (add_product, preview_product,
-                                generate_items_pages, generate_sell_pages,
-                                product_ui, seller_ui, delete_product, buy_product, create_preferential, check_preferential)
-from bot.modules.markup import answer_markup, cancel_markup, count_markup, confirm_markup
+from bot.modules.data_format import list_to_inline, seconds_to_str
+from bot.modules.item import counts_items
+from bot.modules.localization import get_data, t
+from bot.modules.market import generate_items_pages
+from bot.modules.markup import answer_markup, cancel_markup, count_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.states_tools import (ChooseIntState, ChooseStringState,
-                                      ChooseStepState, prepare_steps, ChooseConfirmState, ChoosePagesState)
+from bot.modules.states_tools import ChooseStepState, prepare_steps
 from bot.modules.markup import markups_menu as m
-from bot.modules.user import take_coins
-from random import choice
 from bot.modules.market import generate_items_pages
 from time import time
+from bot.modules.over_functions import send_message
 
 promo = mongo_client.other.promo
 users = mongo_client.user.users
@@ -194,10 +186,10 @@ async def end(return_data, transmitted_data):
 
     text, markup = promo_ui(code, lang)
     try:
-        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+        await send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
     except:
-        await bot.send_message(chatid, text, reply_markup=markup)
-    await bot.send_message(chatid, '✅', reply_markup=m(userid, 'last_menu', lang))
+        await send_message(chatid, text, reply_markup=markup)
+    await send_message(chatid, '✅', reply_markup=m(userid, 'last_menu', lang))
 
 def create_promo(code: str, col, seconds, coins: int, items: list):
     data = {

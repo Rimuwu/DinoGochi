@@ -9,6 +9,7 @@ from bot.modules.localization import get_data, t
 from bot.modules.notifications import user_notification
 from bot.modules.quests import create_quest, quest_resampling, save_quest
 from bot.taskmanager import add_task
+from bot.modules.over_functions import send_message
 
 users = mongo_client.user.users
 tavern = mongo_client.tavern.tavern
@@ -40,7 +41,7 @@ async def tavern_quest(user):
             save_quest(quest, user['userid'])
             text = t('quest.new', lang)
 
-        try: await bot.send_message(user['userid'], text)
+        try: await send_message(user['userid'], text)
         except: pass
 
 async def tavern_replic(in_tavern, user):
@@ -58,7 +59,7 @@ async def tavern_replic(in_tavern, user):
 
         text = f'👤 {random_name}: {random_replic}'
         try:
-            await bot.send_message(user['userid'], text)
+            await send_message(user['userid'], text)
         except Exception: pass
 
 async def tavern_life():
@@ -68,7 +69,7 @@ async def tavern_life():
         if user['time_in'] + 3600 <= int(time()):
             tavern.delete_one({'_id': user['_id']})
             try:
-                await bot.send_message(user['userid'], 
+                await send_message(user['userid'], 
                         t('tavern_sleep', user['lang']))
             except: pass
 

@@ -5,6 +5,8 @@ from bot.exec import bot
 from bot.modules.data_format import user_name
 from bot.modules.dialogs import dialogs
 from bot.modules.localization import get_lang
+from bot.modules.over_functions import send_message
+
 
 
 @bot.callback_query_handler(pass_bot=True, 
@@ -24,7 +26,7 @@ async def rename_button(callback: CallbackQuery):
     if status:
 
         if dialog_action == 'start':
-            await bot.send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
+            await send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
             await bot.edit_message_reply_markup(chatid, message.id, 
                                    reply_markup=InlineKeyboardMarkup())
         else:

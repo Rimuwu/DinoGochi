@@ -13,6 +13,7 @@ from bot.modules.localization import t
 from bot.modules.logs import log
 from bot.modules.markup import list_to_keyboard, down_menu
 from bot.modules.user import get_inventory
+from bot.modules.over_functions import send_message
 
 users = mongo_client.user.users
 back_button, forward_button = gs['back_button'], gs['forward_button']
@@ -135,14 +136,14 @@ async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
     else: markup = None
 
     if not image:
-        await bot.send_message(chatid, text, 'Markdown',
+        await send_message(chatid, text, 'Markdown',
                             reply_markup=markup)
     else:
         try:
             await bot.send_photo(chatid, image, text, 'Markdown', 
                             reply_markup=markup)
         except: 
-             await bot.send_message(chatid, text,
+             await send_message(chatid, text,
                             reply_markup=markup)
 
 async def swipe_page(userid: int, chatid: int):
@@ -186,8 +187,8 @@ async def swipe_page(userid: int, chatid: int):
         buttons['❌🔎'] = 'inventory_menu clear_search'
 
     inl_menu = list_to_inline([buttons], 4)
-    await bot.send_message(chatid, text, reply_markup=keyboard)
-    await bot.send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
+    await send_message(chatid, text, reply_markup=keyboard)
+    await send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
 
 async def search_menu(userid: int, chatid: int):
     """ Панель-сообщение поиска
@@ -202,8 +203,8 @@ async def search_menu(userid: int, chatid: int):
     text = t('inventory.update_search', settings['lang'])
     keyboard = list_to_keyboard([ t('buttons_name.cancel', settings['lang']) ])
 
-    await bot.send_message(chatid, text, reply_markup=keyboard)
-    await bot.send_message(chatid, menu_text, 
+    await send_message(chatid, text, reply_markup=keyboard)
+    await send_message(chatid, menu_text, 
                            parse_mode='Markdown', reply_markup=inl_menu)
     
 async def filter_menu(userid: int, chatid: int):
@@ -234,8 +235,8 @@ async def filter_menu(userid: int, chatid: int):
             await bot.edit_message_text(menu_text, chatid, settings['edited_message'], reply_markup=inl_menu, parse_mode='Markdown')
         except: pass
     else:
-        await bot.send_message(chatid, text, reply_markup=keyboard)
-        msg = await bot.send_message(chatid, menu_text, 
+        await send_message(chatid, text, reply_markup=keyboard)
+        msg = await send_message(chatid, menu_text, 
                             parse_mode='Markdown', reply_markup=inl_menu)
         
         async with bot.retrieve_data(
@@ -272,7 +273,7 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
     pages, row, items_data = inventory_pages(inventory, lang, inv_view, type_filter, item_filter)
 
     if not pages:
-        await bot.send_message(chatid, t('inventory.null', lang))
+        await send_message(chatid, t('inventory.null', lang))
         return False, 'cancel'
     else:
         try:

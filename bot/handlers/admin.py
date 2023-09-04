@@ -19,6 +19,8 @@ from bot.modules.tracking import creat_track, get_track_pages, track_info
 from bot.modules.promo import create_promo_start, get_promo_pages, promo_ui, use_promo
 from time import time
 from bot.modules.user import User, max_dino_col, award_premium
+from bot.modules.over_functions import send_message
+
 
 management = mongo_client.other.management
 promo = mongo_client.other.promo
@@ -28,8 +30,8 @@ friends = mongo_client.user.friends
 dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = mongo_client.dinosaur.dino_owners
 
-@bot.message_handler(pass_bot=True, commands=['send_message'], is_admin=True)
-async def send_message(message: Message):
+@bot.message_handler(pass_bot=True, commands=['s_message'], is_admin=True)
+async def s_message(message: Message):
     chatid = message.chat.id
     lang = get_lang(message.from_user.id)
     
@@ -42,7 +44,7 @@ async def create_tracking(message: Message):
     lang = get_lang(message.from_user.id)
 
     await ChooseStringState(create_track, userid, chatid, lang, 1, 0)
-    await bot.send_message(chatid, t("create_tracking.name", lang), parse_mode='Markdown')
+    await send_message(chatid, t("create_tracking.name", lang), parse_mode='Markdown')
 
 async def create_track(name, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -60,7 +62,7 @@ async def create_track(name, transmitted_data: dict):
     elif res == -1: text = 'error name no find'
     elif res == -2: text = t("create_tracking.already", lang)
 
-    await bot.send_message(chatid, text, parse_mode='Markdown')
+    await send_message(chatid, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, commands=['tracking'], is_admin=True)
 async def tracking(message: Message):
@@ -70,14 +72,14 @@ async def tracking(message: Message):
 
     options = get_track_pages()
     res = await ChoosePagesState(track_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False)
-    await bot.send_message(chatid, t("track_open", lang), parse_mode='Markdown')
+    await send_message(chatid, t("track_open", lang), parse_mode='Markdown')
 
 async def track_info_adp(data, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
     text, markup = await track_info(data, lang)
-    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+    await send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('track'), private=True)
 async def track(call: CallbackQuery):
@@ -101,7 +103,7 @@ async def track(call: CallbackQuery):
             management.update_one({'_id': 'tracking_links'}, 
                                 {'$set': {f'links.{code}.col': 0}})
 
-        await bot.send_message(chatid, text)
+        await send_message(chatid, text)
 
 @bot.message_handler(pass_bot=True, commands=['create_promo'], is_admin=True)
 async def create_promo(message: Message):
@@ -119,14 +121,14 @@ async def promos(message: Message):
 
     options = get_promo_pages()
     res = await ChoosePagesState(promo_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False)
-    await bot.send_message(chatid, t("promo_commands.promo_open", lang), parse_mode='Markdown')
+    await send_message(chatid, t("promo_commands.promo_open", lang), parse_mode='Markdown')
 
 async def promo_info_adp(code, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
     text, markup = promo_ui(code, lang)
-    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+    await send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('promo'))
 async def promo_call(call: CallbackQuery):
@@ -181,9 +183,9 @@ async def promo_call(call: CallbackQuery):
 
         elif action == 'use':
             status, text = use_promo(code, userid, lang)
-            await bot.send_message(userid, text, parse_mode='Markdown')
+            await send_message(userid, text, parse_mode='Markdown')
     else:
-        await bot.send_message(userid, t('promo_commands.not_found', lang), parse_mode='Markdown')
+        await send_message(userid, t('promo_commands.not_found', lang), parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, commands=['link_promo'])
 async def link_promo(message):
@@ -217,10 +219,10 @@ async def link_promo(message):
 
                     markup_inline = list_to_inline([but])
                     await bot.edit_message_reply_markup(fw_chat_id, fw_ms_id, reply_markup=markup_inline)
-                    await bot.send_message(user.id, text_dict['create'])
+                    await send_message(user.id, text_dict['create'])
 
             else:
-                await bot.send_message(user.id, text_dict['not_found'])
+                await send_message(user.id, text_dict['not_found'])
 
 @bot.message_handler(commands=['inf_premium'], is_admin=True)
 async def give_me_premium(message):
@@ -232,4 +234,4 @@ async def give_me_premium(message):
         userid = message.from_user.id
 
     award_premium(userid, 'inf')
-    await bot.send_message(message.from_user.id, 'ok')
+    await send_message(message.from_user.id, 'ok')

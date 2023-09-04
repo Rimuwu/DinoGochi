@@ -20,6 +20,8 @@ from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
                                       ChooseOptionState)
 from bot.modules.user import User, premium
 from bot.modules.kindergarten import check_hours, m_hours, hours_now, minus_hours, dino_kind
+from bot.modules.over_functions import send_message
+
 
 users = mongo_client.user.users
 collecting_task = mongo_client.dino_activity.collecting
@@ -135,7 +137,7 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
     msg = await bot.send_photo(chatid, generate_image, text,
                 parse_mode='Markdown', reply_markup=menu)
 
-    await bot.send_message(chatid, t('p_profile.return', lang), 
+    await send_message(chatid, t('p_profile.return', lang), 
                 reply_markup=m(userid, 'last_menu', lang))
     
     # изменение сообщения с уже нужным изображением
@@ -182,9 +184,9 @@ async def dino_handler(message: Message):
 
     if not bstatus and status == 'cancel':
         if dead_check(userid):
-            await bot.send_message(userid, t(f'p_profile.dialog', lang), reply_markup=inline_menu('dead_dialog', lang))
+            await send_message(userid, t(f'p_profile.dialog', lang), reply_markup=inline_menu('dead_dialog', lang))
         else:
-            await bot.send_message(userid, t(f'p_profile.no_dino_no_egg', lang))
+            await send_message(userid, t(f'p_profile.no_dino_no_egg', lang))
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('dino_profile'))
 async def answer_edit(call: types.CallbackQuery):
@@ -231,7 +233,7 @@ async def dino_menu(call: types.CallbackQuery):
 
                     reply = list_to_keyboard(reply_buttons, 2)
                     text = t('remove_accessory.choose_item', lang)
-                    await bot.send_message(userid, text, reply_markup=reply)
+                    await send_message(userid, text, reply_markup=reply)
 
             elif action == 'mood_log':
                 mood_list = list(dino_mood.find({'dino_id': dino['_id']}))
@@ -271,24 +273,24 @@ async def dino_menu(call: types.CallbackQuery):
                     if data_m['col'] > 1: text += f'x{data_m["col"]}'
                     text += '\n'
 
-                await bot.send_message(userid, text, parse_mode='Markdown')
+                await send_message(userid, text, parse_mode='Markdown')
 
             elif action == 'joint_cancel':
                 # Октазать от совместного динозавра
                 text = t('cancle_joint.confirm', lang)
-                await bot.send_message(userid, text, parse_mode='Markdown', reply_markup=confirm_markup(lang))
+                await send_message(userid, text, parse_mode='Markdown', reply_markup=confirm_markup(lang))
                 await ChooseConfirmState(cnacel_joint, userid, chatid, lang, transmitted_data={'dinoid': dino['_id']})
 
             elif action == 'my_joint_cancel':
                 # Октазать от совместного динозавра
                 text = t('my_joint.confirm', lang)
-                await bot.send_message(userid, text, parse_mode='Markdown', reply_markup=confirm_markup(lang))
+                await send_message(userid, text, parse_mode='Markdown', reply_markup=confirm_markup(lang))
                 await ChooseConfirmState(cnacel_myjoint, userid, chatid, lang, transmitted_data={'dinoid': dino['_id'], 'user': call.from_user})
 
             elif action == 'kindergarten':
                 if not premium(userid): 
                     text = t('no_premium', lang)
-                    await bot.send_message(userid, text)
+                    await send_message(userid, text)
                 else:
                     total, end = check_hours(userid)
                     hours = hours_now(userid)
@@ -309,7 +311,7 @@ async def dino_menu(call: types.CallbackQuery):
                             {
                                 t('kindergarten.button_name', lang): f'kindergarten start {alt_key}'
                             }])
-                    await bot.send_message(userid, text, parse_mode='Markdown', 
+                    await send_message(userid, text, parse_mode='Markdown', 
                                            reply_markup=reply_buttons)
 
 
@@ -319,7 +321,7 @@ async def cnacel_joint(_:bool, transmitted_data:dict):
     dinoid = transmitted_data['dinoid']
 
     dino_owners.delete_one({'dino_id': dinoid, 'owner_id': userid})
-    await bot.send_message(userid, '✅', reply_markup=m(userid, 'last_menu', lang))
+    await send_message(userid, '✅', reply_markup=m(userid, 'last_menu', lang))
 
 async def cnacel_myjoint(_:bool, transmitted_data:dict):
     user = transmitted_data['user']
@@ -331,9 +333,9 @@ async def cnacel_myjoint(_:bool, transmitted_data:dict):
     if res: 
         dino_owners.delete_one({'_id': res['_id']})
         text = t("my_joint.m_for_add_owner", lang, username=user_name(user))
-        await bot.send_message(res['owner_id'], text, reply_markup=m(userid, 'last_menu', lang))
+        await send_message(res['owner_id'], text, reply_markup=m(userid, 'last_menu', lang))
     
-    await bot.send_message(userid, '✅', reply_markup=m(userid, 'last_menu', lang))
+    await send_message(userid, '✅', reply_markup=m(userid, 'last_menu', lang))
 
 async def remove_accessory(option: list, transmitted_data:dict):
     userid = transmitted_data['userid']
@@ -345,7 +347,7 @@ async def remove_accessory(option: list, transmitted_data:dict):
                          {'$set': {f'activ_items.{key}': None}})
     AddItemToUser(userid, item['item_id'], 1, item['abilities'])
 
-    await bot.send_message(userid, t("remove_accessory.remove", lang), 
+    await send_message(userid, t("remove_accessory.remove", lang), 
                            reply_markup=m(userid, 'last_menu', lang))
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('kindergarten'), private=True)
@@ -382,16 +384,16 @@ async def kindergarten(call: types.CallbackQuery):
                     await ChooseOptionState(start_kind, userid, chatid, lang, options,
                                             transmitted_data={'dino': dino['_id']}
                                             )
-                    await bot.send_message(userid, t('kindergarten.choose_house', lang),
+                    await send_message(userid, t('kindergarten.choose_house', lang),
                                            reply_markup=bb)
                 else:
-                    await bot.send_message(userid, t('kindergarten.no_hours', lang))
+                    await send_message(userid, t('kindergarten.no_hours', lang))
 
         elif action == 'stop':
             if dino['status'] == 'kindergarten':
                 dinosaurs.update_one({'_id': dino}, 
                          {'$set': {'status': 'pass'}})
-                await bot.send_message(userid, t('kindergarten.stop', lang))
+                await send_message(userid, t('kindergarten.stop', lang))
 
 async def start_kind(col, transmitted_data):
     chatid = transmitted_data['chatid']
@@ -403,5 +405,5 @@ async def start_kind(col, transmitted_data):
     dinosaurs.update_one({'_id': dino}, 
                          {'$set': {'status': 'kindergarten'}})
     dino_kind(dino, col)
-    await bot.send_message(chatid, t('kindergarten.ok', lang), 
+    await send_message(chatid, t('kindergarten.ok', lang), 
                            reply_markup=m(userid, 'last_menu', lang))

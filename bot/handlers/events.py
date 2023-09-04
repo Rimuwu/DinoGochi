@@ -8,6 +8,7 @@ from bot.modules.currency import get_all_currency, get_products
 from bot.modules.item import counts_items
 from bot.modules.data_format import seconds_to_str, list_to_inline
 from bot.modules.user import user_in_chat
+from bot.modules.over_functions import send_message
 
 users = mongo_client.user.users
 puhs = mongo_client.market.puhs
@@ -24,12 +25,12 @@ async def my_update(data: ChatMemberUpdated):
         if not res:
             if status not in ['creator', 'administrator']:
                 text = t('push.not_admin', lang)
-                await bot.send_message(userid, text)
+                await send_message(userid, text)
                 return
 
             elif not can_manage_chat:
                 text = t('push.not_management', lang)
-                await bot.send_message(userid, text)
+                await send_message(userid, text)
                 return
 
             else:
@@ -37,7 +38,7 @@ async def my_update(data: ChatMemberUpdated):
                 buttons = [{t('buttons_name.confirm', lang): f'create_push {data.chat.id}'}]
                 markup = list_to_inline(buttons)
 
-                await bot.send_message(userid, text, reply_markup=markup)
+                await send_message(userid, text, reply_markup=markup)
 
     elif data.new_chat_member.status == 'left':
         res = puhs.find_one({'owner_id': userid})

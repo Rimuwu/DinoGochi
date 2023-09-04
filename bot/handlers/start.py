@@ -15,6 +15,7 @@ from bot.modules.user import insert_user
 from bot.modules.referals import connect_referal
 from bot.handlers.referal_menu import check_code
 from bot.modules.promo import use_promo
+from bot.modules.over_functions import send_message
 
 stickers = bot.get_sticker_set('Stickers_by_DinoGochi_bot')
 referals = mongo_client.user.referrals
@@ -49,7 +50,7 @@ async def start_game(message: types.Message, code: str = '', code_type: str = ''
     markup_inline.add(types.InlineKeyboardButton(text=b1, url='https://t.me/DinoGochi'))
     markup_inline.add(types.InlineKeyboardButton(text=b2, url='https://t.me/+pq9_21HXXYY4ZGQy'))
 
-    await bot.send_message(message.chat.id, text, parse_mode='html', reply_markup=markup_inline)
+    await send_message(message.chat.id, text, parse_mode='html', reply_markup=markup_inline)
 
     #Создание изображения
     img, id_l = create_eggs_image()
@@ -87,7 +88,7 @@ async def start_game_message(message: types.Message):
 
     if add_referal:
         text = t('start_command.referal', langue_code, username=username)
-        await bot.send_message(message.chat.id, text)
+        await send_message(message.chat.id, text)
 
         await start_game(message, referal=referal) # type: ignore
 
@@ -105,7 +106,7 @@ async def egg_answer_callback(callback: types.CallbackQuery):
                   seconds_to_str(GAME_SETTINGS['first_dino_time_incub'], lang))
 
     await bot.edit_message_caption(edited_text, callback.message.chat.id, callback.message.message_id)
-    await bot.send_message(callback.message.chat.id, send_text, parse_mode='Markdown', 
+    await send_message(callback.message.chat.id, send_text, parse_mode='Markdown', 
                            reply_markup=m(callback.from_user.id, language_code=lang))
 
     # Создание юзера и добавляем динозавра в инкубацию

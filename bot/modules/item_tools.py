@@ -20,6 +20,7 @@ from bot.modules.mood import add_mood
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User, experience_enhancement, get_dead_dinos
+from bot.modules.over_functions import send_message
 
 users = mongo_client.user.users
 dinosaurs = mongo_client.dinosaur.dinosaurs
@@ -43,10 +44,10 @@ async def exchange(return_data: dict, transmitted_data: dict):
     if status:
         AddItemToUser(friend.id, item['item_id'], count, preabil)
 
-        await bot.send_message(friend.id, t('exchange', lang, 
+        await send_message(friend.id, t('exchange', lang, 
                             items=counts_items([item['item_id']]*count, lang),username=username))
 
-        await bot.send_message(chatid, t('exchange_me', lang),
+        await send_message(chatid, t('exchange_me', lang),
                                reply_markup=markups_menu(userid, 'last_menu', lang))
 
 
@@ -118,7 +119,7 @@ async def end_craft(transmitted_data: dict):
     for i in data_item['create']:
         created_items.append(i['item'])
 
-    await bot.send_message(chatid, t('item_use.recipe.create', lang, 
+    await send_message(chatid, t('item_use.recipe.create', lang, 
                                      items=counts_items(created_items*count, lang)), 
                            parse_mode='Markdown', reply_markup=markups_menu(userid, 'last_menu', lang))
 
@@ -303,7 +304,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             await bot.send_photo(userid, image, 
                                  t('item_use.egg.egg_answer', lang), 
                                  parse_mode='Markdown', reply_markup=buttons)
-            await bot.send_message(userid, 
+            await send_message(userid, 
                                    t('item_use.egg.plug', lang),     
                                    reply_markup=markups_menu(userid, 'last_menu', lang))
         else:
@@ -382,7 +383,7 @@ async def edit_craft(return_data: dict, transmitted_data: dict):
             ok = False
             item_name = get_name(iterable_data['old_item']['item_id'], lang)
 
-            await bot.send_message(chatid, 
+            await send_message(chatid, 
                 t('item_use.recipe.enough_characteristics', lang, item_name=item_name), 
                 parse_mode='Markdown', 
                 reply_markup=markups_menu(userid, 'last_menu', lang))
@@ -408,7 +409,7 @@ async def adapter(return_data: dict, transmitted_data: dict):
     send_status, return_text = await use_item(userid, chatid, lang, transmitted_data['items_data'], **return_data)
 
     if send_status:
-        await bot.send_message(chatid, return_text, parse_mode='Markdown', reply_markup=markups_menu(userid, 'last_menu', lang))
+        await send_message(chatid, return_text, parse_mode='Markdown', reply_markup=markups_menu(userid, 'last_menu', lang))
 
 async def pre_adapter(return_data: dict, transmitted_data: dict):
     return_data['dino'] = transmitted_data['dino']
@@ -470,7 +471,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
     ok = True
 
     if type(base_item) is None:
-        await bot.send_message(chatid, t('item_use.no_item', lang))
+        await send_message(chatid, t('item_use.no_item', lang))
     elif type(base_item) is dict:
 
         if 'abilities' in item.keys() and 'uses' in item['abilities']:
@@ -540,18 +541,18 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                     ]
 
                 else:
-                    await bot.send_message(chatid, 
+                    await send_message(chatid, 
                                            t('item_use.special.reborn.no_dinos', lang))
                     return
 
         elif type_item == 'book':
             text, markup = book_page(item_id, 0, lang)
 
-            await bot.send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
+            await send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
             return
         else:
             ok = False
-            await bot.send_message(chatid, t('item_use.cannot_be_used', lang))
+            await send_message(chatid, t('item_use.cannot_be_used', lang))
 
         if ok:
             if confirm:
@@ -579,12 +580,12 @@ async def delete_action(return_data: dict, transmitted_data: dict):
     res = RemoveItemFromUser(userid, item['item_id'], count, preabil)
     
     if res:
-        await bot.send_message(chatid, t('delete_action.delete', lang,  
+        await send_message(chatid, t('delete_action.delete', lang,  
                                          name=item_name, count=count), 
                                reply_markup=
                                markups_menu(userid, 'last_menu', lang))
     else:
-        await bot.send_message(chatid, t('delete_action.error', lang), 
+        await send_message(chatid, t('delete_action.error', lang), 
                                reply_markup=
                                markups_menu(userid, 'last_menu', lang))
         
@@ -617,6 +618,6 @@ async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
         await ChooseStepState(delete_action, userid, chatid, lang, steps, 
                             transmitted_data=transmitted_data)
     else:
-        await bot.send_message(chatid, t('delete_action.error', lang), 
+        await send_message(chatid, t('delete_action.error', lang), 
                                reply_markup=
                                markups_menu(userid, 'last_menu', lang))
