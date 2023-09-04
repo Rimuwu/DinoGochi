@@ -3,14 +3,19 @@ from typing import Optional
 from time import time
 from asyncio import sleep
 from bot.modules.logs import log
+from bot.modules.data_format import seconds_to_str
 
 last_message = 0
 col_now = 0
 
+last_messages = {}
+last_time_start = 0
+upd_time = 600
+
 async def send_message(chat_id: int, text: str, 
                        parse_mode: Optional[str]=None, 
                        **kwargs):
-    global col_now, last_message
+    global col_now, last_message, last_messages, last_time_start
     """
         Use this method to send text messages.
 
@@ -63,6 +68,14 @@ async def send_message(chat_id: int, text: str,
 
     if 'caption' in kwargs: kwargs['text'] = kwargs['caption']
 
+    if int(time()) > last_time_start + upd_time:
+        last_messages = {}
+        last_time_start = int(time())
+
+    if text in last_messages:
+        last_messages[text] += 1
+    else: last_messages[text] = 1
+
     if last_message == int(time()):
         if col_now < 30:
             col_now += 1
@@ -76,3 +89,5 @@ async def send_message(chat_id: int, text: str,
         last_message = int(time())
         col_now = 0
         return await bot.send_message(chat_id, text, parse_mode, **kwargs)
+
+def get_last_messages(): return last_messages, last_time_start
