@@ -500,7 +500,10 @@ def count_inventory_items(userid: int, find_type: list):
     for item in items.find({'owner_id': userid}, 
                                 {'_id': 0, 'owner_id': 0}):
         item_data = get_item_data(item['items_data']['item_id'])
-        item_type = item_data['type']
+        try:
+            item_type = item_data['type']
+        except Exception as E:
+            item_type = None
 
         if item_type in find_type or not find_type: result += 1
     return result

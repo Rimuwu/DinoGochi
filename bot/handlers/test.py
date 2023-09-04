@@ -4,6 +4,7 @@ import statistics
 from asyncio import sleep
 from pprint import pprint
 from time import time
+import json
 from random import choice
 
 from telebot.types import (InlineKeyboardButton, InlineKeyboardMarkup,
@@ -24,19 +25,24 @@ from bot.modules.localization import get_data, t
 from bot.modules.markup import count_markup, down_menu, list_to_keyboard, confirm_markup
 from bot.modules.notifications import user_notification, notification_manager
 from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
-from bot.modules.user import User, max_dino_col, award_premium
+from bot.modules.user import User, max_dino_col, award_premium, count_inventory_items
 from bot.modules.statistic import get_now_statistic
 from bot.modules.quests import create_quest, quest_ui, save_quest
 from bot.modules.journey import create_event, random_event, activate_event
 
 from bot.modules.market import (add_product, create_seller,
                                 generate_sell_pages, product_ui, seller_ui)
+from bson.objectid import ObjectId
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
 products = mongo_client.market.products
 sellers = mongo_client.market.sellers
 puhs = mongo_client.market.puhs
 items = mongo_client.items.items
+
+
+with open('bot/json/old_ids.json', encoding='utf-8') as f: 
+    ids = json.load(f)
 
 @bot.message_handler(pass_bot=True, commands=['add_item', 'item_add'], is_admin=True)
 async def command(message):
@@ -57,3 +63,18 @@ async def command(message):
             print(res)
     else:
         print(user.id, 'not in devs')
+
+
+@bot.message_handler(pass_bot=True, commands=['test'], is_admin=True)
+async def command1(message):
+    user = message.from_user
+    
+    for i in ids.keys():
+        new_id = ids[i]
+        res = items.update_many({'items_data.item_id': i}, 
+                          {'$set': {'items_data.item_id': new_id}})
+        print(i, res.modified_count)
+    
+    print('end')
+    
+
