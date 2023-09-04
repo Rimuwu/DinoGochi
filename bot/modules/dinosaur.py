@@ -9,7 +9,6 @@ from bson.objectid import ObjectId
 from bot.config import mongo_client
 from bot.const import DINOS
 from bot.const import GAME_SETTINGS as GS
-from bot.exec import bot
 from bot.modules.data_format import random_code, random_quality
 from bot.modules.images import create_dino_image, create_egg_image
 from bot.modules.item import AddItemToUser
@@ -475,6 +474,8 @@ def get_age(dinoid: ObjectId):
     return delta
 
 async def mutate_dino_stat(dino: dict, key: str, value: int):
+    print(dino, key, value)
+    
     st = dino['stats'][key]
     now = st + value
     if now > 100: value = 100 - st
@@ -511,7 +512,7 @@ def set_status(dino_id: ObjectId, new_status: str, now_status: str = ''):
 
         sleeper = sleep_task.find_one({'dino_id': dino_id})
         if sleeper:
-            sleep_time = sleeper['sleep_end'] - sleeper['sleep_start']
+            sleep_time = int(time()) - sleeper['sleep_start']
             asyncio.run_coroutine_threadsafe(
                 end_sleep(dino_id, sleeper['_id'], sleep_time), asyncio.get_event_loop())
 

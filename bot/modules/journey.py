@@ -339,10 +339,10 @@ locations = {
             'com': ['influences_mood', 'without_influence', 
                   'influences_eat', 'influences_game'],
             'unc': ['influences_health', 'influences_energy',
-                   'joint_activity', 'battle'],
+                   'joint_activity', 'battle', 'item'],
             'rar': ['coins', 'joint_event', 'meeting_friend', 'battle', 'item'],
             'mys': ['trade_item', 'item'],
-            'leg': ['quest', 'coins']
+            'leg': ['quest', 'coins', 'item']
         },
         "negative": {
             'com': ['influences_mood', 'influences_eat'],
@@ -374,10 +374,10 @@ locations = {
             'com': ['influences_mood', 'without_influence', 
                   'influences_eat', 'influences_game'],
             'unc': ['influences_health', 'influences_energy',
-                   'joint_activity', 'battle'],
+                   'joint_activity', 'battle', 'item'],
             'rar': ['coins', 'joint_event', 'meeting_friend', 'battle', 'item'],
             'mys': ['trade_item', 'item', 'quest'],
-            'leg': ['quest', 'coins']
+            'leg': ['quest', 'coins', 'item']
         },
         "negative": {
             'com': ['influences_mood', 'influences_eat'],

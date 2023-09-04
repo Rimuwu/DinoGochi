@@ -66,13 +66,9 @@ async def short_check():
     data = list(sleepers.find({'sleep_type': 'short'})).copy()
     for sleeper in data: await one_time(sleeper, 1)
 
-    print(time(), 'start short_check')
-
 async def long_check():
     data = list(sleepers.find({'sleep_type': 'long'})).copy()
     for sleeper in data: await one_time(sleeper, 1)
-
-    print(time(), 'start long_check')
 
 if __name__ != '__main__':
     if conf.active_tasks:

@@ -6,11 +6,11 @@ from bot.config import mongo_client
 
 events = mongo_client.other.events
 
-def get_event(event_type: str='', alternative: str='standart'):
+def get_event(event_type: str=''):
     res = events.find_one({'type': event_type})
     if res: return res
     return {}
-    
+
 def create_event(event_type: str = ''):
 
     if not event_type:

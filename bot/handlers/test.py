@@ -64,17 +64,3 @@ async def command(message):
     else:
         print(user.id, 'not in devs')
 
-
-@bot.message_handler(pass_bot=True, commands=['test'], is_admin=True)
-async def command1(message):
-    user = message.from_user
-    
-    for i in ids.keys():
-        new_id = ids[i]
-        res = items.update_many({'items_data.item_id': i}, 
-                          {'$set': {'items_data.item_id': new_id}})
-        print(i, res.modified_count)
-    
-    print('end')
-    
-
