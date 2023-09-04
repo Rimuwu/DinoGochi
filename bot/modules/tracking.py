@@ -71,3 +71,12 @@ async def track_info(code: str, lang: str):
             )
 
     return text, markup
+
+def add_track(name:str):
+    res = management.find_one({'_id': 'tracking_links'})
+    if res:
+        if name in res['links'].keys():
+            management.update_one({'_id': 'tracking_links'}, 
+                                {'$inc': {f'links.{name}.col': 1}})
+            return True
+    return False

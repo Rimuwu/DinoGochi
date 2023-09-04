@@ -16,6 +16,7 @@ from bot.modules.referals import connect_referal
 from bot.handlers.referal_menu import check_code
 from bot.modules.promo import use_promo
 from bot.modules.over_functions import send_message
+from bot.modules.tracking import add_track
 
 stickers = bot.get_sticker_set('Stickers_by_DinoGochi_bot')
 referals = mongo_client.user.referrals
@@ -91,6 +92,8 @@ async def start_game_message(message: types.Message):
         await send_message(message.chat.id, text)
 
         await start_game(message, referal=referal) # type: ignore
+
+    add_track(content[1])
 
 
 @bot.callback_query_handler(pass_bot=True, is_authorized=False, 
