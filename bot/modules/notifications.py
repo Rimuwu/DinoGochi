@@ -64,7 +64,7 @@ def check_dino_notification(dino_id: ObjectId, not_type: str, save: bool = True)
     else:
         if not_type not in tracked_notifications: return True
         elif not_type in dino['notifications'].keys():
-            if dino['notifications'][not_type] + 14400 <= int(time()):
+            if not dino['notifications'][not_type]:
                 if save: save_notification(dino_id, not_type)
                 return True
             else: return False
