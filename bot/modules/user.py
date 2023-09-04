@@ -79,7 +79,7 @@ class User:
         col = col_dinos(self.userid)
         self.col_dinos = col
         return col
-    
+
     @property
     def get_eggs(self) -> list:
         """Возвращает список с объектами динозавров."""
@@ -105,7 +105,7 @@ class User:
 
     @property
     def premium(self) -> bool: return premium(self.userid)
-    
+
     @property
     def lang(self) -> str: return get_lang(self.userid)
 
@@ -263,7 +263,7 @@ def last_dino(user: User):
             return last_dino(user)
     else:
         dino_lst = user.get_dinos()
-        if len(dino_lst):
+        if dino_lst:
             dino = dino_lst[0]
             user.update({'$set': {'settings.last_dino': dino._id}})
             return dino
