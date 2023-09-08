@@ -83,6 +83,17 @@ async def mood_check():
                         dino_mood.delete_one({'_id': event_data['_id']})
         else: dino_mood.delete_many({'dino_id': dino_id})
 
+async def break_down():
+    res = list(dinosaurs.find({'status': 'hysteria'}))
+    
+    for i in res:
+        dino_id = i['_id']
+        res_s = dino_mood.find_one({'dino_id': dino_id, 'action': 'hysteria'})
+
+        if not res_s:
+            dinosaurs.update_one({'_id': dino_id}, {'$set': {'status': 'pass'}})
+
 if __name__ != '__main__':
     if conf.active_tasks:
         add_task(mood_check, REPEAT_MINUTES * 60.0, 5.0)
+        add_task(break_down, REPEAT_MINUTES * 60.0, 5.0)
