@@ -17,7 +17,7 @@ async def one_time(sleeper, one_time_unit):
     add_energy, sec_time = 0, 0
     dino = await dinosaurs.find_one({'_id': sleeper['dino_id']})
 
-    if check_inspiration(sleeper['dino_id'], 'sleep'): 
+    if await check_inspiration(sleeper['dino_id'], 'sleep'): 
         one_time_unit *= 2
 
     if sleeper['sleep_type'] == 'long':

@@ -16,6 +16,7 @@ from bot.modules.user import User
 from bot.modules.over_functions import send_message
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
+sleep_task = mongo_client.dino_activity.sleep
 
 async def short_sleep(number: int, transmitted_data: dict):
     """ Отправляем в которкий сон

@@ -68,7 +68,7 @@ async def collecting_button(message: Message):
 
     user = await User().create(userid)
     lang = await user.lang
-    last_dino = user.get_last_dino()
+    last_dino = await user.get_last_dino()
 
     if last_dino:
             if await user.premium:

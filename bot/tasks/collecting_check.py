@@ -56,7 +56,7 @@ async def collecting_process():
             if await check_accessory(dino, 'tooling'): chance = 0.25
             else: chance = 0.2
 
-            res = check_inspiration(coll_data['dino_id'], 'collecting')
+            res = await check_inspiration(coll_data['dino_id'], 'collecting')
             if res: chance *= 2
 
             if random.uniform(0, 1) <= chance: 

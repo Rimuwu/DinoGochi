@@ -53,7 +53,7 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
 async def start_journey(userid: int, chatid: int, lang: str, 
                         friend: int = 0):
     user = await User().create(userid)
-    last_dino = user.get_last_dino()
+    last_dino = await user.get_last_dino()
     content_data = get_data('journey_start', lang)
 
     text, a = content_data['ask_loc'], 1

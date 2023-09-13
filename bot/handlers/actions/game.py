@@ -148,7 +148,7 @@ async def game_start(return_data: dict,
     r_t = get_data('entertainments', lang)['time'][code]['data']
     game_time = randint(*r_t) * 60
 
-    res = check_inspiration(dino._id, 'game')
+    res = await check_inspiration(dino._id, 'game')
     if res: percent += 1.0
 
     dino.game(game_time, percent)
@@ -233,7 +233,7 @@ async def stop_game(message: Message):
 
             else:
                 if last_dino.status == 'game':
-                    last_dino.update({'$set': {'status': 'pass'}})
+                    await last_dino.update({'$set': {'status': 'pass'}})
                 await send_message(chatid, '❌', reply_markup= await m(userid, 'last_menu', lang, True))
         else:
             await send_message(chatid, t('stop_game.unrestrained_play', lang))

@@ -78,7 +78,7 @@ async def feed(message: Message):
     transmitted_data = {
         'chatid': chatid,
         'lang': lang,
-        'dino': user.get_last_dino()
+        'dino': await user.get_last_dino()
     }
     
     await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
