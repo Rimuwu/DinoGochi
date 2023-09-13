@@ -162,7 +162,7 @@ async def item_callback(call: CallbackQuery):
                 end_time = seconds_to_str(item_data['incub_time'], lang)
                 i_name = get_name(item['item_id'], lang)
 
-                if RemoveItemFromUser(userid, item['item_id'], 1, preabil):
+                if await RemoveItemFromUser(userid, item['item_id'], 1, preabil):
                     await send_message(chatid, 
                         t('item_use.egg.incubation', lang, 
                           item_name = i_name, end_time=end_time),  

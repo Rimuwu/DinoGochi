@@ -39,7 +39,7 @@ async def exchange(return_data: dict, transmitted_data: dict):
     preabil = {}
     if 'abilities' in item: preabil = item['abilities']
 
-    status = RemoveItemFromUser(userid, item['item_id'], count, preabil)
+    status = await RemoveItemFromUser(userid, item['item_id'], count, preabil)
     if status:
         await AddItemToUser(friend.id, item['item_id'], count, preabil)
 
@@ -580,8 +580,8 @@ async def delete_action(return_data: dict, transmitted_data: dict):
     preabil = {}
     
     if 'abilities' in item: preabil = item['abilities']
-    res = RemoveItemFromUser(userid, item['item_id'], count, preabil)
-    
+    res = await RemoveItemFromUser(userid, item['item_id'], count, preabil)
+
     if res:
         await send_message(chatid, t('delete_action.delete', lang,  
                                          name=item_name, count=count), 

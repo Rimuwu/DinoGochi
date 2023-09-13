@@ -69,13 +69,11 @@ class Dino:
         }
 
     async def create(self, baseid: ObjectId | str = ''):
-        print('create1')
         find_result = await dinosaurs.find_one({"_id": baseid})
         if not find_result:
             find_result = await dinosaurs.find_one({"alt_id": baseid})
         if find_result:
             self.UpdateData(find_result)
-        print('create2')
         return self
 
     def UpdateData(self, data):
