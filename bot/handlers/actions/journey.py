@@ -139,7 +139,7 @@ async def events(message: Message):
             col = len(journey_data['journey_log'])
 
             if journey_data['journey_log']:
-                last_event = generate_event_message(journey_data['journey_log'][-1], lang, journey_data['_id'], True)
+                last_event = await generate_event_message(journey_data['journey_log'][-1], lang, journey_data['_id'], True)
 
             text = t('journey_last_event.info', lang, journey_time=journey_time, location=loc_name, col=col, last_event=last_event)
             button_name = t('journey_last_event.button', lang)
@@ -171,7 +171,7 @@ async def journey_stop(callback: CallbackQuery):
 async def send_logs(chatid: int, lang: str, data: dict, dino_name: str):
     logs = data['journey_log']
     if logs:
-        for i in all_log(logs, lang, data['_id']):
+        for i in await all_log(logs, lang, data['_id']):
             await send_message(chatid, i, parse_mode='html')
 
     items_text = '-'

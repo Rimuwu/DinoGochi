@@ -801,7 +801,7 @@ async def generate_event_message(event: dict, lang: str, journey_id: ObjectId, e
         text += f'\n<code>{add_text}</code>'
     return text
 
-def all_log(logs: list, lang: str, journey_id: ObjectId):
+async def all_log(logs: list, lang: str, journey_id: ObjectId):
     """ Генерирует весь лог событий, возвращает список с сообщениям макс ~1700 символов
     """
     text, n, n_message = '', 0, 0
@@ -810,7 +810,8 @@ def all_log(logs: list, lang: str, journey_id: ObjectId):
     for event in logs:
         n += 1
         try:
-            text = f'{n}. {generate_event_message(event, lang, journey_id)}\n\n'
+            m = await generate_event_message(event, lang, journey_id)
+            text = f'{n}. {m}\n\n'
         except Exception as E:
             text = f'error generation - {event}\n{E}'
             log(text, 2, 'log generation')
