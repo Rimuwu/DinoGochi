@@ -408,7 +408,8 @@ async def start_journey(dino_baseid: ObjectId, owner_id: int,
 async def end_journey(dino_id: ObjectId):
     data = await journey_task.find_one({'dino_id': dino_id})
     if data:
-        for i in data['items']: AddItemToUser(data['sended'], i) #type: ignore
+        for i in data['items']: 
+            await AddItemToUser(data['sended'], i)
         await users.update_one({'userid': data['sended']}, {'$inc': {'coins': data['coins']}})
 
         await journey_task.delete_one({'dino_id': dino_id})

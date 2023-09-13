@@ -62,6 +62,7 @@ class User:
         }
 
     async def create(self, userid: int):
+        self.userid = userid
         data = await users.find_one({"userid": userid})
         self.UpdateData(data) #Обновление данных
         return self

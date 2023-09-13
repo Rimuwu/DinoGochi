@@ -121,5 +121,5 @@ async def egg_answer_callback(callback: types.CallbackQuery):
             await connect_referal(referal, callback.from_user.id)
 
         if callback.data.split()[2] == 'promo':
-            code  = callback.data.split()[3]
+            code = callback.data.split()[3]
             await use_promo(code, userid, lang)

@@ -62,7 +62,7 @@ async def command(message):
             col = int(msg_args[3])
             
             print('user', ad_user, 'id:', item_id, 'col:', col)
-            res = AddItemToUser(ad_user, item_id, col)
+            res = await AddItemToUser(ad_user, item_id, col)
             print(res)
     else:
         print(user.id, 'not in devs')
