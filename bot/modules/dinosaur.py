@@ -33,7 +33,7 @@ class Dino:
 
     def __init__(self):
         """Создание объекта динозавра."""
-        self._id = ObjectId
+        self._id: ObjectId = ObjectId()
 
         self.data_id = 0
         self.alt_id = 'alt_id' #альтернативный id 
@@ -68,12 +68,14 @@ class Dino:
             'eat': []
         }
 
-    async def create(self, baseid: ObjectId | str):
+    async def create(self, baseid: ObjectId | str = ''):
+        print('create1')
         find_result = await dinosaurs.find_one({"_id": baseid})
         if not find_result:
             find_result = await dinosaurs.find_one({"alt_id": baseid})
         if find_result:
             self.UpdateData(find_result)
+        print('create2')
         return self
 
     def UpdateData(self, data):
@@ -291,10 +293,11 @@ async def insert_dino(owner_id: int=0, dino_id: int=0, quality: str='random'):
     if not dino_id: dino_id = random_dino(quality)
 
     dino_data = get_dino_data(dino_id)
-    dino = await Dino().create(ObjectId())
+    dino = await Dino().create()
 
     dino.data_id = dino_id
     dino.alt_id = await generation_code(owner_id)
+
     dino.name = dino_data['name']
     dino.quality = quality or dino_data['quality']
     dino.stats = {
@@ -302,11 +305,10 @@ async def insert_dino(owner_id: int=0, dino_id: int=0, quality: str='random'):
         'game': randint(30, 90), 'mood': randint(30, 100),
         'energy': randint(80, 100)
         }
-    
+
     log(prefix='InsertDino', 
         message=f'owner_id: {owner_id} dino_id: {dino_id} name: {dino.name} quality: {dino.quality}', 
         lvl=0)
-
     result = await dinosaurs.insert_one(dino.__dict__)
     if owner_id != 0:
         # Создание связи, если передан id владельца

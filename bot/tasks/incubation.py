@@ -19,31 +19,24 @@ async def incubation():
         {'incubation_time': {'$lte': int(time())}}).to_list(None)).copy() #$lte - incubation_time <= time()
 
     for egg in data:
+        #создаём динозавра
+        res, alt_id = await insert_dino(egg['owner_id'], egg['dino_id'], egg['quality']) 
+
+        #удаляем динозавра из инкубаций
+        await incubations.delete_one({'_id': egg['_id']}) 
+
+        #отправляем уведомление
         try:
-            print('1')
-            #создаём динозавра
-            res, alt_id = await insert_dino(egg['owner_id'], egg['dino_id'], egg['quality']) 
+            chat_user = await bot.get_chat_member(egg['owner_id'], egg['owner_id'])
+            user = chat_user.user
+        except: user = None
 
-            print('2')
-            #удаляем динозавра из инкубаций
-            await incubations.delete_one({'_id': egg['_id']}) 
-
-            print('3')
-            #отправляем уведомление
-            try:
-                chat_user = await bot.get_chat_member(egg['owner_id'], egg['owner_id'])
-                user = chat_user.user
-            except: user = None
-
-            print('4')
-            if user:
-                name = user_name(user)
-                lang = await get_lang(user.id)
-                await user_notification(egg['owner_id'], 
-                            'incubation_ready', lang, 
-                            user_name=name, dino_alt_id_markup=alt_id)
-        except Exception as e:
-            log(f'incub error {e}')
+        if user:
+            name = user_name(user)
+            lang = await get_lang(user.id)
+            await user_notification(egg['owner_id'], 
+                        'incubation_ready', lang, 
+                        user_name=name, dino_alt_id_markup=alt_id)
     
 if __name__ != '__main__':
     if conf.active_tasks:

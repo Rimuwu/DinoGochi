@@ -20,12 +20,12 @@ async def market_delete():
 
 async def auction_end():
     # Завершение аукциона
-    data = products.find({'end': {'$lte': int(time())}}
+    data = await products.find({'end': {'$lte': int(time())}}
                               ).to_list(None) # type: ignore
 
     for i in data:
         for user in i['users']:
-            status = users.find_one({'user_id': user['userid']})
+            status = await users.find_one({'user_id': user['userid']})
             if status:
                 await products.update_one({'_id': i['_id']}, {'$set': {
                     f'users.{i["users"].index(user)}.status': 'win'
