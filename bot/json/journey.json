@@ -2,432 +2,518 @@
   "mobs": {
       "crocodile": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "lion": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "tiger": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "bear": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "wolf": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "shark": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "snake": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "rhino": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "elephant": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "gorilla": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "spider": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "scorpion": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "camel": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "puma": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "fox": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "hyena": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "hippo": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "otter": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "panther": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "raccoon": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "deer": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "bear_cub": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "bat": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "coyote": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "cougar": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "dolphin": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "dragon": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "eagle": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "falcon": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "fennec_fox": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "giraffe": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "goat": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "grizzly": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "hamster": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "hedgehog": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "horse": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "jackal": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "jaguar": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "kangaroo": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "komodo_dragon": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "lemur": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "leopard": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "lobster": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "lynx": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "meerkat": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "mole": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "monkey": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "moose": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "narwhal": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "octopus": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "opossum": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "orca": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "ostrich": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "otter_pup": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "owl": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "panda": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "parrot": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "peacock": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "pelican": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "penguin": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "pig": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "pigeon": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "polar_bear": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "porcupine": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "rabbit": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "rattlesnake": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "red_panda": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "reindeer": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "rooster": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "seagull": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "seahorse": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "seal": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "sheep": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "skunk": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "sloth": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "snail": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "snow_leopard": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "squid": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "swan": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "toucan": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "turtle": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "walrus": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "weasel": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "whale": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "wombat": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       },
       "zebra": {
         "loot": [
-          "skin"
+          "skin",
+          "bone"
         ]
       }
     }
