@@ -143,7 +143,7 @@ class Dino:
         return await start_collecting(self._id, owner_id, coll_type, max_count)
 
     async def game(self, duration: int=1800, percent: int=1):
-        return start_game(self._id, duration, percent)
+        return await start_game(self._id, duration, percent)
 
     async def journey(self, owner_id: int, duration: int=1800):
         return await start_journey(self._id, owner_id, duration)

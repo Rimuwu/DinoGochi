@@ -222,7 +222,7 @@ async def calculation_points(dino: dict, point_type: str):
                 if point_type == 'breakdown':
                     action = await dino_breakdown(dino['_id'])
                 else:
-                    action = dino_inspiration(dino['_id'])
+                    action = await dino_inspiration(dino['_id'])
 
                 await dinosaurs.update_one({'_id': dino['_id']}, 
                                     {'$set': {f'mood.{point_type}': 0}})
