@@ -72,7 +72,7 @@ async def auto_event():
     else: await add_event(ty_event)
     
     # Проверка на новогоднее событие
-    new_year = get_event('time_year')
+    new_year = await get_event('time_year')
     if not new_year:
         day_n = int(time.strftime("%j"))
         if day_n >= 358:

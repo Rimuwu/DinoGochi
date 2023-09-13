@@ -181,7 +181,7 @@ async def dino_handler(message: Message):
     bstatus, status = await ChooseDinoState(transition, userid, message.chat.id, lang, send_error=False) 
 
     if not bstatus and status == 'cancel':
-        if dead_check(userid):
+        if await dead_check(userid):
             await send_message(userid, t(f'p_profile.dialog', lang), reply_markup=inline_menu('dead_dialog', lang))
         else:
             await send_message(userid, t(f'p_profile.no_dino_no_egg', lang))

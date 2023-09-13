@@ -68,7 +68,7 @@ async def dead_last_dino(userid: int, name: str, lang: str,
     user = await users.find_one({'userid': userid})
     if user:
 
-        if dead_check(userid):
+        if await dead_check(userid):
             status = True
 
             end_status, text, markup, end_key = dialog_system(

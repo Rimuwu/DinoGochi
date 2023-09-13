@@ -45,7 +45,7 @@ async def collecting_adapter(return_data, transmitted_data):
                 await send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
                 return
 
-            dino.collecting(userid, option, count)
+            await dino.collecting(userid, option, count)
 
             image = dino_collecting(dino.data_id, option)
             text = t(f'collecting.result.{option}', lang,

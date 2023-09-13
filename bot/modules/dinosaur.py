@@ -121,7 +121,7 @@ class Dino:
                 if item: await AddItemToUser(owner['owner_id'], item['item_id'], 1)
 
             if user:
-                if dead_check(owner['owner_id']):
+                if await dead_check(owner['owner_id']):
                     way = 'not_independent_dead'
                 else: 
                     way = 'independent_dead'
@@ -139,18 +139,18 @@ class Dino:
         age = await self.age
         return create_dino_image(self.data_id, self.stats, self.quality, profile_view, age.days, custom_url)
 
-    def collecting(self, owner_id: int, coll_type: str, max_count: int):
-        return start_collecting(self._id, owner_id, coll_type, max_count)
-    
-    def game(self, duration: int=1800, percent: int=1):
+    async def collecting(self, owner_id: int, coll_type: str, max_count: int):
+        return await start_collecting(self._id, owner_id, coll_type, max_count)
+
+    async def game(self, duration: int=1800, percent: int=1):
         return start_game(self._id, duration, percent)
-    
-    def journey(self, owner_id: int, duration: int=1800):
-        return start_journey(self._id, owner_id, duration)
-    
-    def sleep(self, s_type: str='long', duration: int=1):
-        return start_sleep(self._id, s_type, duration)
-    
+
+    async def journey(self, owner_id: int, duration: int=1800):
+        return await start_journey(self._id, owner_id, duration)
+
+    async def sleep(self, s_type: str='long', duration: int=1):
+        return await start_sleep(self._id, s_type, duration)
+
     async def memory_percent(self, memory_type: str, obj: str, update: bool = True):
         """memory_type - games / eat
         

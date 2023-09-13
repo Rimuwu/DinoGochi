@@ -151,7 +151,7 @@ async def game_start(return_data: dict,
     res = await check_inspiration(dino._id, 'game')
     if res: percent += 1.0
 
-    dino.game(game_time, percent)
+    await dino.game(game_time, percent)
     image = dino_game(dino.data_id, friend_dino_id)
 
     text = t(f'entertainments.game_text.m{str(repeat)}', lang, 
