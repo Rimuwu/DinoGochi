@@ -27,7 +27,7 @@ async def collecting_adapter(return_data, transmitted_data):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
 
-    eat_count = count_inventory_items(userid, ['eat'])
+    eat_count = await count_inventory_items(userid, ['eat'])
     st_premium = await premium(userid)
 
     if st_premium and eat_count + count > GAME_SETTINGS['premium_max_eat_items'] \
