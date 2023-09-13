@@ -7,7 +7,6 @@ from bot.exec import bot
 from bot.modules.data_format import list_to_inline, list_to_keyboard
 from bot.modules.dinosaur import Dino, end_collecting
 from bot.modules.images import dino_collecting
-from bot.modules.inline import inline_menu
 from bot.modules.item import counts_items
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import count_markup
@@ -17,7 +16,6 @@ from bot.modules.user import User, count_inventory_items, premium
 from bot.modules.quests import quest_process
 from bot.modules.over_functions import send_message
 
-users = mongo_client.user.users
 dinosaurs = mongo_client.dinosaur.dinosaurs
 collecting_task = mongo_client.dino_activity.collecting
 
@@ -28,23 +26,23 @@ async def collecting_adapter(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
-    
+
     eat_count = count_inventory_items(userid, ['eat'])
-    st_premium = premium(userid)
-    
+    st_premium = await premium(userid)
+
     if st_premium and eat_count + count > GAME_SETTINGS['premium_max_eat_items'] \
         or not st_premium and \
         eat_count + count > GAME_SETTINGS['max_eat_items']:
 
         text = t(f'collecting.max_count', lang,
                 eat_count=eat_count)
-        await send_message(chatid, text, reply_markup=m(
+        await send_message(chatid, text, reply_markup= await m(
             userid, 'last_menu', lang))
     else:
-        res_dino_status = dinosaurs.find_one({"_id": dino._id}, {'status': 1})
+        res_dino_status = await dinosaurs.find_one({"_id": dino._id}, {'status': 1})
         if res_dino_status:
             if res_dino_status['status'] != 'pass':
-                await send_message(chatid, t('alredy_busy', lang), reply_markup=m(userid, 'last_menu', lang))
+                await send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
                 return
 
             dino.collecting(userid, option, count)
@@ -58,7 +56,7 @@ async def collecting_adapter(return_data, transmitted_data):
 
             await bot.send_photo(chatid, image, text, reply_markup=markup)
             await send_message(chatid, t('back_text.actions_menu', lang),
-                                        reply_markup=m(userid, 'last_menu', lang)
+                                        reply_markup= await m(userid, 'last_menu', lang)
                                         )
 
 
@@ -68,12 +66,12 @@ async def collecting_button(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
 
-    user = User(userid)
-    lang = user.lang
+    user = await User().create(userid)
+    lang = await user.lang
     last_dino = user.get_last_dino()
 
     if last_dino:
-            if user.premium:
+            if await user.premium:
                 max_count = GAME_SETTINGS['premium_max_collecting']
             else: max_count = GAME_SETTINGS['max_collecting']
 
@@ -105,12 +103,12 @@ async def collecting_progress(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
 
-    user = User(userid)
-    lang = user.lang
-    last_dino = user.get_last_dino()
+    user = await User().create(userid)
+    lang = await user.lang
+    last_dino = await user.get_last_dino()
     if last_dino:
         
-        data = collecting_task.find_one({'dino_id': last_dino._id})
+        data = await collecting_task.find_one({'dino_id': last_dino._id})
         if data:
             stop_button = t(
                 f'collecting.stop_button.{data["collecting_type"]}', lang)
@@ -126,7 +124,7 @@ async def collecting_progress(message: Message):
                                      ))
         else:
             await send_message(chatid, '❌',
-                                    reply_markup=m(userid, 'last_menu', lang)
+                                    reply_markup= await m(userid, 'last_menu', lang)
                                     )
     
 
@@ -136,11 +134,11 @@ async def collecting_callback(callback: CallbackQuery):
     dino_data = callback.data.split()[2]
     action = callback.data.split()[1]
 
-    lang = get_lang(callback.from_user.id)
+    lang = await get_lang(callback.from_user.id)
 
-    dino = Dino(dino_data) #type: ignore
-    data = collecting_task.find_one({'dino_id': dino._id})
-    if data and dino:
+    dino = await Dino().create(dino_data)
+    data = await collecting_task.find_one({'dino_id': dino._id})
+    if data and dino and data:
         items_list = []
         for key, count in data['items'].items():
             items_list += [key] * count
@@ -151,5 +149,5 @@ async def collecting_callback(callback: CallbackQuery):
             await end_collecting(dino._id, 
                                  data['items'], data['sended'], 
                                  items_names)
-            quest_process(data['sended'], data['collecting_type'], 
+            await quest_process(data['sended'], data['collecting_type'], 
                           data['now_count'])

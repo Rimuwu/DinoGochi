@@ -11,10 +11,10 @@ from bot.modules.states_tools import GeneralStates
 from bot.modules.over_functions import send_message
 
 async def cancel(message, text:str = "❌"):
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     if text:
         await send_message(message.chat.id, text, 
-            reply_markup=m(message.from_user.id, 'last_menu', lang))
+            reply_markup= await m(message.from_user.id, 'last_menu', lang))
     await bot.delete_state(message.from_user.id, message.chat.id)
     await bot.reset_data(message.from_user.id,  message.chat.id)
 
@@ -47,7 +47,7 @@ async def ChoseDino(message: Message):
     """Общая функция для выбора динозавра
     """
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
 
     async with bot.retrieve_data(userid, message.chat.id) as data:
         ret_data = data['dino_names']
@@ -71,7 +71,7 @@ async def ChooseInt(message: Message):
     """Общая функция для ввода числа
     """
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     number = 0
 
     async with bot.retrieve_data(userid, message.chat.id) as data:
@@ -113,7 +113,7 @@ async def ChooseString(message: Message):
     """Общая функция для ввода сообщения
     """
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
 
     async with bot.retrieve_data(userid, message.chat.id) as data:
         max_len: int = data['max_len']
@@ -146,7 +146,7 @@ async def ChooseConfirm(message: Message):
     """Общая функция для подтверждения
     """
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     content = str(message.text)
 
     async with bot.retrieve_data(userid, message.chat.id) as data:
@@ -184,7 +184,7 @@ async def ChooseOption(message: Message):
     """Общая функция для выбора из предложенных вариантов
     """
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
 
     async with bot.retrieve_data(userid, message.chat.id) as data:
         options: dict = data['options']
@@ -231,7 +231,7 @@ async def ChooseOptionPages(message: Message):
     """
     userid = message.from_user.id
     chatid = message.chat.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
 
     async with bot.retrieve_data(userid, message.chat.id) as data:
         func = data['function']
@@ -350,7 +350,7 @@ async def ChooseTime(message: Message):
     """Общая функция для ввода времени
     """
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     number = 0
 
     async with bot.retrieve_data(userid, message.chat.id) as data:

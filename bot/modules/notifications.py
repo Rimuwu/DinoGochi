@@ -38,35 +38,35 @@ critical_line = {
     'energy': 30
 }
 
-def save_notification(dino_id: ObjectId, not_type: str):
+async def save_notification(dino_id: ObjectId, not_type: str):
     """ Сохраняет уведомление и его время отправки
     """
-    dinosaurs.update_one({'_id': dino_id}, {'$set': 
+    await dinosaurs.update_one({'_id': dino_id}, {'$set': 
                             {f'notifications.{not_type}': int(time())}})
 
-def dino_notification_delete(dino_id: ObjectId, not_type: str):
+async def dino_notification_delete(dino_id: ObjectId, not_type: str):
     """ Обнуляет уведомление
     """
-    dino = dinosaurs.find_one({"_id": dino_id})
+    dino = await dinosaurs.find_one({"_id": dino_id})
     if dino:
         if not_type in dino['notifications']:
-            dinosaurs.update_one({'_id': dino_id}, {'$unset': 
+            await dinosaurs.update_one({'_id': dino_id}, {'$unset': 
                                     {f'notifications.{not_type}': 1}})
 
-def check_dino_notification(dino_id: ObjectId, not_type: str, save: bool = True):
+async def check_dino_notification(dino_id: ObjectId, not_type: str, save: bool = True):
     """ Проверяет отслеживаемые уведомления, а так же удаляет его если 
         
         Return
         True - уведомления нет или не отслеживается или время ожидания истекло
         False - уведомление уже отослано или динозавр не найден
     """
-    dino = dinosaurs.find_one({"_id": dino_id})
+    dino = await dinosaurs.find_one({"_id": dino_id})
     if not dino: return False
     else:
         if not_type not in tracked_notifications: return True
         elif not_type in dino['notifications'].keys():
             if not dino['notifications'][not_type]:
-                if save: save_notification(dino_id, not_type)
+                if save: await save_notification(dino_id, not_type)
                 return True
             else: return False
         return True
@@ -80,17 +80,18 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
         
         Если мы хотим добавить какое то сообщение в тексте, но мы не хотим запрашивать владельца и получать его язык, мы можем добавить ключ add_message c путём к тексту.
     """
-    dino = dinosaurs.find_one({"_id": dino_id})
-    owners = list(dino_owners.find({'dino_id': dino_id}))
+    dino = await dinosaurs.find_one({"_id": dino_id})
+    owners = list(await dino_owners.find(
+        {'dino_id': dino_id}).to_list(None))#type: ignore
     text, markup_inline = not_type, InlineKeyboardMarkup()
 
     if 'unit' in kwargs and kwargs['unit'] < 0: kwargs['unit'] = 0
 
     async def send_not(text, markup_inline):
         for owner in owners:
-            lang = get_lang(owner["owner_id"])
+            lang = await get_lang(owner["owner_id"])
 
-            user = users.find_one({'userid': owner['owner_id']})
+            user = await users.find_one({'userid': owner['owner_id']})
             if user:
 
                 # Добавление переменных в данные
@@ -150,14 +151,14 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
     if dino: # type: dict
         kwargs['dino_name'] = dino['name']
         kwargs['dino_alt_id_markup'] = dino['alt_id']
-        res = dino_mood.find_one({'dino_id': dino_id, 
+        res = await dino_mood.find_one({'dino_id': dino_id, 
                             'type': 'breakdown', 'action': 'seclusion'})
         # Отменя уведолмения если динозавр спит или у него нервный срыв
         if dino['status'] != 'sleep' and not res:
             if not_type in tracked_notifications:
 
                 if check_dino_notification(dino_id, not_type):
-                    save_notification(dino_id, not_type)
+                    await save_notification(dino_id, not_type)
                     await send_not(text, markup_inline)
                 else:
                     log(prefix='Notification Repeat', 
@@ -188,7 +189,7 @@ async def user_notification(user_id: int, not_type: str,
     if not lang:
         try:
             chat_user = await bot.get_chat_member(user_id, user_id)
-            lang = get_lang(chat_user.user.id)
+            lang = await get_lang(chat_user.user.id)
         except: lang = 'en'
 
     if not_type in standart_notification:
@@ -229,4 +230,4 @@ async def notification_manager(dino_id: ObjectId, stat: str, unit: int):
 
     elif unit >= critical_line[stat] + 20:
         # Удаляем уведомление 
-        dino_notification_delete(dino_id, notif)
+        await dino_notification_delete(dino_id, notif)

@@ -7,7 +7,7 @@ from bot.exec import bot
 from bot.modules.accessory import check_accessory
 from bot.modules.dinosaur import Dino, end_collecting, mutate_dino_stat
 from bot.modules.item import counts_items
-from bot.modules.localization import get_lang
+from bot.modules.localization import  get_lang
 from bot.modules.mood import check_inspiration
 from bot.modules.quests import quest_process
 from bot.modules.user import experience_enhancement
@@ -26,7 +26,7 @@ COLLECTING_CHANCE = 0.2 * REPEAT_MINUTS
 async def stop_collect(coll_data):
     try:
         chat_user = await bot.get_chat_member(coll_data['sended'], coll_data['sended'])
-        lang = get_lang(chat_user.user.id)
+        lang = await get_lang(chat_user.user.id)
     except: lang = 'en'
     
     items_list = []
@@ -38,10 +38,10 @@ async def stop_collect(coll_data):
                                  coll_data['items'], coll_data['sended'], 
                                  items_names)
 
-    quest_process(coll_data['sended'], coll_data['collecting_type'], coll_data['now_count'])
+    await quest_process(coll_data['sended'], coll_data['collecting_type'], coll_data['now_count'])
 
 async def collecting_process():
-    data = list(collecting_task.find({})).copy()
+    data = list(await collecting_task.find({}).to_list(None)).copy()
 
     for coll_data in data:
         if coll_data['now_count'] >= coll_data['max_count']:
@@ -49,10 +49,10 @@ async def collecting_process():
         else:
             if random.uniform(0, 1) <= ENERGY_DOWN:
                 if random.uniform(0, 1) <= ENERGY_DOWN2: 
-                    dino = dinosaurs.find_one({'_id': coll_data['dino_id']})
+                    dino = await dinosaurs.find_one({'_id': coll_data['dino_id']})
                     if dino: await mutate_dino_stat(dino, 'energy', -1)
 
-            dino = Dino(coll_data['dino_id'])
+            dino = await Dino().create(coll_data['dino_id'])
             if await check_accessory(dino, 'tooling'): chance = 0.25
             else: chance = 0.2
 
@@ -80,7 +80,7 @@ async def collecting_process():
                         coll_data['items'][item] += 1
                     else: coll_data['items'][item] = 1
 
-                collecting_task.update_one({'_id': coll_data['_id']}, {'$set': {'items': coll_data['items'] },'$inc': {'now_count': count}})
+                await collecting_task.update_one({'_id': coll_data['_id']}, {'$set': {'items': coll_data['items'] },'$inc': {'now_count': count}})
 
                 if coll_data['now_count'] + count == coll_data['max_count']:
                     await stop_collect(coll_data)

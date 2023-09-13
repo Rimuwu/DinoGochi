@@ -4,10 +4,13 @@
 
 # Как модуль предоставляет лишь чтение настроек и доступ к ним
 
-import pymongo
 import json
 import os
 import sys
+import motor.motor_asyncio
+from motor.core import AgnosticClient 
+
+import asyncio
 
 CONFIG_PATH = 'config.json'
 
@@ -51,7 +54,7 @@ class Config:
         return json.dumps(self, default=lambda o: o.__dict__,
             sort_keys=True, indent=4)
  
-def check_base(client: pymongo.MongoClient):
+async def check_base(client: AgnosticClient):
     from bot.const import GAME_SETTINGS
     if client.server_info(): print(f"{client.address}, mongo connected")
 
@@ -60,8 +63,8 @@ def check_base(client: pymongo.MongoClient):
     for base in collections.keys():
         database = client[base]
         for col in collections[base]:
-            if col not in database.list_collection_names():
-                database.create_collection(col)
+            if col not in await database.list_collection_names():
+                await database.create_collection(col)
 
     #Создаёт документы, необходимые для работы бота
     necessary_create = GAME_SETTINGS['please_create_this']
@@ -72,7 +75,7 @@ def check_base(client: pymongo.MongoClient):
             for doc in necessary_create[base][col]:
                 fnd_doc = collection.find_one({"_id": doc['_id']}, {'_id': 1})
                 if not fnd_doc:
-                    collection.insert_one(doc)
+                    await collection.insert_one(doc)
     
     print('The databases are checked and prepared for use.')
 
@@ -96,17 +99,20 @@ if __name__ == '__main__':
         sys.exit(f"{CONFIG_PATH} created! Please don't forget to set it up!")
 else:
     load()
-    if conf.ssh:
-        from ssh_pymongo import MongoSession
+    # if conf.ssh:
+    #     from ssh_pymongo import MongoSession
 
-        session = MongoSession(
-            host=conf.ssh_host,
-            port=conf.ssh_port,
-            user=conf.ssh_user,
-            password=conf.ssh_password,
-        )
-        mongo_client = session.connection
-    else:
-        mongo_client = pymongo.MongoClient(conf.mongo_url)
-
-    check_base(mongo_client) # Проверка базы данных на наличие коллекций
+    #     session = MongoSession(
+    #         host=conf.ssh_host,
+    #         port=conf.ssh_port,
+    #         user=conf.ssh_user,
+    #         password=conf.ssh_password,
+    #     )
+    #     mongo_client = session.connection
+    # else:
+    mongo_client = motor.motor_asyncio.AsyncIOMotorClient(conf.mongo_url)
+    # asyncio.run(check_base(mongo_client)) # Проверка базы данных на наличие коллекций
+    
+    ioloop = asyncio.get_event_loop()
+    ioloop.run_until_complete(check_base(mongo_client)) # Проверка базы данных на наличие коллекций
+    # ioloop.close()

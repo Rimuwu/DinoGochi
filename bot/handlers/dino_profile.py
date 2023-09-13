@@ -22,14 +22,11 @@ from bot.modules.user import User, premium
 from bot.modules.kindergarten import check_hours, m_hours, hours_now, minus_hours, dino_kind
 from bot.modules.over_functions import send_message
 
-
-users = mongo_client.user.users
 collecting_task = mongo_client.dino_activity.collecting
 game_task = mongo_client.dino_activity.game
 dino_mood = mongo_client.dinosaur.dino_mood
 dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = mongo_client.dinosaur.dino_owners
-incubations = mongo_client.dinosaur.incubation
 journey_task = mongo_client.dino_activity.journey
 
 async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_url: str):
@@ -40,15 +37,15 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
     status_rep = t(f'p_profile.stats.{dino.status}', lang)
     joint_dino, my_joint = False, False
 
-    user = User(userid)
-    owners = list(dino_owners.find({'dino_id': dino._id}))
+    user = await User().create(userid)
+    owners = list(await dino_owners.find({'dino_id': dino._id}).to_list(None))
 
     for owner in owners:
         if owner['owner_id'] == userid and owner['type'] == 'add_owner':
             joint_dino = True
         if owner['owner_id'] == userid and owner['type'] == 'owner' and len(owners) >= 2: my_joint = True
 
-    season = get_event('time_year')
+    season = await get_event('time_year')
     if 'data' in season:
         season = season['data']['season']
     else: season = 'standart'
@@ -60,9 +57,10 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
         repl = near_key_number(dino.stats[i], replics[i])
         stats_text += f'{tem[i]} {repl} \[ *{dino.stats[i]}%* ]\n'
 
-    if dino.age.days == 0:
-        age = seconds_to_str(dino.age.seconds, lang)
-    else: age = seconds_to_str(dino.age.days * 86400, lang)
+    age = await dino.age
+    if age.days == 0:
+        age = seconds_to_str(age.seconds, lang)
+    else: age = seconds_to_str(age.days * 86400, lang)
 
     dino_name = dino.name
     if joint_dino: dino_name += t('p_profile.joint', lang)
@@ -77,7 +75,7 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
 
     if dino.status == 'journey':
         text += '\n\n'
-        journey_data = journey_task.find_one({'dino_id': dino._id})
+        journey_data = await journey_task.find_one({'dino_id': dino._id})
 
         if journey_data:
             st = journey_data['journey_start']
@@ -91,7 +89,7 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
             text += t('p_profile.journey.info', lang, journey_time=journey_time, location=loc_name, col=col)
 
     if dino.status == 'game':
-        data = game_task.find_one({'dino_id': dino._id})
+        data = await game_task.find_one({'dino_id': dino._id})
         text += t(
                 f'p_profile.game.text', lang, em_game_act=tem['em_game_act'])
         if data:
@@ -104,7 +102,7 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
                 f'p_profile.game.game_duration', lang, duration=duration)
     
     if dino.status == 'collecting':
-        data = collecting_task.find_one({'dino_id': dino._id})
+        data = await collecting_task.find_one({'dino_id': dino._id})
         if data:
             text += t(
                 f'p_profile.collecting.text', lang, em_coll_act=tem['em_coll_act'])
@@ -138,10 +136,10 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
                 parse_mode='Markdown', reply_markup=menu)
 
     await send_message(chatid, t('p_profile.return', lang), 
-                reply_markup=m(userid, 'last_menu', lang))
+                reply_markup= await m(userid, 'last_menu', lang))
     
     # изменение сообщения с уже нужным изображением
-    image = dino.image(user.settings['profile_view'], custom_url)
+    image = await dino.image(user.settings['profile_view'], custom_url)
     await bot.edit_message_media(
         chat_id=chatid,
         message_id=msg.id,
@@ -158,16 +156,16 @@ async def egg_profile(chatid: int, egg: Egg, lang: str):
         )
     img = egg.image(lang)
     await bot.send_photo(chatid, img, text, 
-                         reply_markup=m(chatid, 'last_menu', language_code=lang))
+                         reply_markup=await m(chatid, 'last_menu', language_code=lang))
 
 async def transition(element, transmitted_data: dict):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
-    user = User(userid)
+    user = await User().create(userid)
     custom_url = ''
 
-    if user and user.premium and 'custom_url' in user.settings:
+    if user and await user.premium and 'custom_url' in user.settings:
         custom_url = user.settings['custom_url']
 
     if type(element) == Dino:
@@ -178,7 +176,7 @@ async def transition(element, transmitted_data: dict):
 @bot.message_handler(pass_bot=True, text='commands_name.dino_profile', is_authorized=True)
 async def dino_handler(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
 
     bstatus, status = await ChooseDinoState(transition, userid, message.chat.id, lang, send_error=False) 
 
@@ -195,14 +193,14 @@ async def answer_edit(call: types.CallbackQuery):
 
     userid = call.from_user.id
     chatid = call.message.chat.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
 
     trans_data = {
         'userid': userid,
         'chatid': chatid,
         'lang': lang
     }
-    dino = Dino(dino_data) #type: ignore
+    dino = await Dino().create(dino_data)
     await transition(dino, trans_data)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('dino_menu'), private=True)
@@ -213,11 +211,11 @@ async def dino_menu(call: types.CallbackQuery):
 
     userid = call.from_user.id
     chatid = call.message.chat.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
 
-    dino = dinosaurs.find_one({'alt_id': alt_key})
+    dino = await dinosaurs.find_one({'alt_id': alt_key})
     if dino:
-        res = dino_owners.find_one({'dino_id': dino['_id'], 
+        res = await dino_owners.find_one({'dino_id': dino['_id'], 
                                     'owner_id': userid})
 
         if res:
@@ -236,7 +234,8 @@ async def dino_menu(call: types.CallbackQuery):
                     await send_message(userid, text, reply_markup=reply)
 
             elif action == 'mood_log':
-                mood_list = list(dino_mood.find({'dino_id': dino['_id']}))
+                mood_list = list(await dino_mood.find(
+                    {'dino_id': dino['_id']}).to_list(None))
                 mood_dict, text, event_text = {}, '', ''
                 res, event_end = 0, 0
 
@@ -288,12 +287,12 @@ async def dino_menu(call: types.CallbackQuery):
                 await ChooseConfirmState(cnacel_myjoint, userid, chatid, lang, transmitted_data={'dinoid': dino['_id'], 'user': call.from_user})
 
             elif action == 'kindergarten':
-                if not premium(userid): 
+                if not await premium(userid): 
                     text = t('no_premium', lang)
                     await send_message(userid, text)
                 else:
-                    total, end = check_hours(userid)
-                    hours = hours_now(userid)
+                    total, end = await check_hours(userid)
+                    hours = await hours_now(userid)
                     text = t('kindergarten.info', lang,
                              hours_now=m_hours - total,
                              remained=total,
@@ -320,8 +319,8 @@ async def cnacel_joint(_:bool, transmitted_data:dict):
     lang = transmitted_data['lang']
     dinoid = transmitted_data['dinoid']
 
-    dino_owners.delete_one({'dino_id': dinoid, 'owner_id': userid})
-    await send_message(userid, '✅', reply_markup=m(userid, 'last_menu', lang))
+    await dino_owners.delete_one({'dino_id': dinoid, 'owner_id': userid})
+    await send_message(userid, '✅', reply_markup= await m(userid, 'last_menu', lang))
 
 async def cnacel_myjoint(_:bool, transmitted_data:dict):
     user = transmitted_data['user']
@@ -329,13 +328,13 @@ async def cnacel_myjoint(_:bool, transmitted_data:dict):
     lang = transmitted_data['lang']
     dinoid = transmitted_data['dinoid']
 
-    res = dino_owners.find_one({'dino_id': dinoid, 'type': 'add_owner'})
+    res = await dino_owners.find_one({'dino_id': dinoid, 'type': 'add_owner'})
     if res: 
-        dino_owners.delete_one({'_id': res['_id']})
+        await dino_owners.delete_one({'_id': res['_id']})
         text = t("my_joint.m_for_add_owner", lang, username=user_name(user))
-        await send_message(res['owner_id'], text, reply_markup=m(userid, 'last_menu', lang))
-    
-    await send_message(userid, '✅', reply_markup=m(userid, 'last_menu', lang))
+        await send_message(res['owner_id'], text, reply_markup= await m(userid, 'last_menu', lang))
+
+    await send_message(userid, '✅', reply_markup= await m(userid, 'last_menu', lang))
 
 async def remove_accessory(option: list, transmitted_data:dict):
     userid = transmitted_data['userid']
@@ -343,12 +342,12 @@ async def remove_accessory(option: list, transmitted_data:dict):
     dino_id = transmitted_data['dino_id']
     key, item = option
     
-    dinosaurs.update_one({'_id': dino_id}, 
+    await dinosaurs.update_one({'_id': dino_id}, 
                          {'$set': {f'activ_items.{key}': None}})
-    AddItemToUser(userid, item['item_id'], 1, item['abilities'])
+    await AddItemToUser(userid, item['item_id'], 1, item['abilities'])
 
     await send_message(userid, t("remove_accessory.remove", lang), 
-                           reply_markup=m(userid, 'last_menu', lang))
+                           reply_markup= await m(userid, 'last_menu', lang))
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('kindergarten'), private=True)
 async def kindergarten(call: types.CallbackQuery):
@@ -358,14 +357,14 @@ async def kindergarten(call: types.CallbackQuery):
 
     userid = call.from_user.id
     chatid = call.message.chat.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
 
-    dino = dinosaurs.find_one({'alt_id': alt_key})
+    dino = await dinosaurs.find_one({'alt_id': alt_key})
     if dino:
         if action == 'start':
-            if dino['status'] != 'kindergarten':
-                all_h, end = check_hours(userid)
-                h = hours_now(userid)
+            if dino['status'] == 'pass':
+                all_h, end = await check_hours(userid)
+                h = await hours_now(userid)
 
                 if h != 6 and all_h:
                     options = {}
@@ -388,10 +387,12 @@ async def kindergarten(call: types.CallbackQuery):
                                            reply_markup=bb)
                 else:
                     await send_message(userid, t('kindergarten.no_hours', lang))
+            else:
+                await send_message(userid, t('alredy_busy', lang))
 
         elif action == 'stop':
             if dino['status'] == 'kindergarten':
-                dinosaurs.update_one({'_id': dino}, 
+                await dinosaurs.update_one({'_id': dino}, 
                          {'$set': {'status': 'pass'}})
                 await send_message(userid, t('kindergarten.stop', lang))
 
@@ -401,9 +402,9 @@ async def start_kind(col, transmitted_data):
     lang = transmitted_data['lang']
     dino = transmitted_data['dino']
 
-    minus_hours(userid, col)
-    dinosaurs.update_one({'_id': dino}, 
+    await minus_hours(userid, col)
+    await dinosaurs.update_one({'_id': dino}, 
                          {'$set': {'status': 'kindergarten'}})
-    dino_kind(dino, col)
+    await dino_kind(dino, col)
     await send_message(chatid, t('kindergarten.ok', lang), 
-                           reply_markup=m(userid, 'last_menu', lang))
+                           reply_markup= await m(userid, 'last_menu', lang))

@@ -496,7 +496,8 @@ async def random_event(dinoid, location: str, ignored_events: list=[], friend_di
                 res = await activate_event(dinoid, event, friend_dino)
                 if res: 
                     if event['type'] == 'exit': 
-                        journey.update_one({'dino_id': dinoid}, {'journey_end': int(time())})
+                        await journey.update_one({'dino_id': dinoid}, 
+                                                 {'journey_end': int(time())})
                     return True
         else: break
 
@@ -506,8 +507,8 @@ async def random_event(dinoid, location: str, ignored_events: list=[], friend_di
 async def activate_event(dinoid, event: dict, friend_dino = None):
     """ При соответствии условий, создаёт событие
     """
-    journey_base = journey.find_one({'dino_id': dinoid})
-    dino = Dino(dinoid)
+    journey_base = await journey.find_one({'dino_id': dinoid})
+    dino = await Dino().create(dinoid)
     active_consequences = True
     event_data = events[event['type']]
 
@@ -544,10 +545,14 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
                         friend_dino = journey_base['friend']
 
             if 'location_friend' in actions:
-                friends = get_frineds(journey_base['sended'])['friends']
+                res = await get_frineds(journey_base['sended'])
+                friends = res['friends']
                 in_loc = []
                 for friend_id in friends:
-                    res = journey.find({'sended': friend_id, 'location': journey_base['location']})
+                    res = await journey.find({
+                        'sended': friend_id, 
+                        'location': journey_base['location']}
+                                       ).to_list(None) #type: ignore
                     for i in list(res): in_loc.append(i['dino_id'])
 
                 if not in_loc: return True
@@ -579,7 +584,7 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
                 ran_locs.remove(data['location'])
 
                 new_loc = choice(ran_locs)
-                journey.update_one({'_id': journey_base['_id']}, 
+                await journey.update_one({'_id': journey_base['_id']}, 
                                    {'$set': {'location': new_loc}})
                 data['old_location'] = new_loc
 
@@ -651,7 +656,7 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
                 data['coins'] = event['coins']
                 if journey_base['coins'] < 0: journey_base['coins'] = 0
 
-                journey.update_one({'_id': journey_base['_id']}, 
+                await journey.update_one({'_id': journey_base['_id']}, 
                                     {'$set': {'coins': journey_base['coins']}})
 
             if 'dino_edit' in event:
@@ -669,7 +674,8 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
             if 'items' in event:
                 data['items'] = event['items'] 
                 for i in data['items']:
-                    journey.update_one({'_id': journey_base['_id']}, {'$push': {'items': i}})
+                    await journey.update_one(
+                        {'_id': journey_base['_id']}, {'$push': {'items': i}})
 
             if 'mood_keys' in event:
                 if data['worldview'] == 'positive':
@@ -683,7 +689,7 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
                                                 unit, end_time)
                 else:
                     for i in event['mood_keys']: 
-                        add_mood(dinoid, i, unit, end_time)
+                        await add_mood(dinoid, i, unit, end_time)
 
             if 'remove_item' in event:
                 col = event['remove_item']
@@ -697,12 +703,12 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
                         data['remove_items'].append(it)
                     else: break
 
-                journey.update_one({'_id': journey_base['_id']}, 
+                await journey.update_one({'_id': journey_base['_id']}, 
                                     {'$set': {'items': items}})
 
         else: data['cancel'] = True
 
-        journey.update_one({'_id': journey_base['_id']}, 
+        await journey.update_one({'_id': journey_base['_id']}, 
                            {'$push': {'journey_log': data}})
         if friend_dino:
             event['friend'] = dinoid
@@ -710,7 +716,7 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
         return True
     return False
 
-def generate_event_message(event: dict, lang: str, journey_id: ObjectId, encode: bool = False):
+async def generate_event_message(event: dict, lang: str, journey_id: ObjectId, encode: bool = False):
     """ Генерирует сообщение события в путешествие
     """
     location = event['location']
@@ -719,7 +725,7 @@ def generate_event_message(event: dict, lang: str, journey_id: ObjectId, encode:
 
     signs = get_data('journey.signs', lang)
 
-    journey_text =  get_data(f'journey', lang)
+    journey_text = get_data(f'journey', lang)
     if location in journey_text:
         if worldview in journey_text[location]:
             if event_type in journey_text[location][worldview]:
@@ -735,10 +741,10 @@ def generate_event_message(event: dict, lang: str, journey_id: ObjectId, encode:
         # Сохраняем id репликии
         text = choice(text_list)
         repl_id = text_list.index(text)
-        journey_data = journey.find_one({'_id': journey_id})
+        journey_data = await journey.find_one({'_id': journey_id})
         if journey_data and journey_data['journey_log']:
             log_index = journey_data['journey_log'].index(event)
-            journey.update_one({'_id': journey_id}, 
+            await journey.update_one({'_id': journey_id}, 
                         {'$set': {f'journey_log.{log_index}.replic': repl_id}})
     else: text = text_list[event['replic']]
 
@@ -776,7 +782,7 @@ def generate_event_message(event: dict, lang: str, journey_id: ObjectId, encode:
         add_list.append(f'{old_loc} -> {loc_now}')
 
     if 'friend' in event:
-        friend_dino = dinosaurs.find_one({'_id': event['friend']})
+        friend_dino = await dinosaurs.find_one({'_id': event['friend']})
         if friend_dino: 
             add_list.append(f'🦕 {friend_dino["name"]}')
             text = text.replace("{friend}", friend_dino["name"])

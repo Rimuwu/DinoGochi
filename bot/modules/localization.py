@@ -23,7 +23,6 @@ def load() -> None:
 
     log(f"Загружено {len(languages.keys())} файла(ов) локализации.", 1)
 
-
 def alternative_language(lang: str):
     languages = {
         'ua': 'ru'
@@ -153,11 +152,11 @@ def get_all_locales(key: str, **kwargs) -> dict:
 
     return locales_dict
 
-def get_lang(userid: int, alternative: str = 'en') -> str:
+async def get_lang(userid: int, alternative: str = 'en') -> str:
     """ Получает язык пользователя
     """
     lang = alternative
-    data = langs.find_one({'userid': userid})
+    data = await langs.find_one({'userid': userid})
 
     if data: lang = data['lang']
     return lang

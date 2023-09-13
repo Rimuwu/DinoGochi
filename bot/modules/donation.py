@@ -11,7 +11,7 @@ from bot.modules.logs import log
 from bot.modules.notifications import user_notification
 from bot.modules.item import AddItemToUser
 from bot.modules.user import award_premium
-from bot.modules.localization import get_lang
+from bot.modules.localization import  get_lang
 
 users = mongo_client.user.users
 
@@ -79,7 +79,7 @@ async def send_donat_notification(userid:int, message_key:str, **kwargs):
     try:
         chat_user = await bot.get_chat_member(userid, userid)
         user = chat_user.user
-        lang = get_lang(user.id)
+        lang = await get_lang(user.id)
     except Exception as e:
         log(prefix='send_donat_notification', message=f'Error {e}', lvl=3)
         lang = 'en'
@@ -91,10 +91,10 @@ async def give_reward(userid:int, product_key:str, col:int):
     product = products[product_key]
 
     if product['type'] == 'subscription':
-        award_premium(userid, product['time'] * col)
+        await award_premium(userid, product['time'] * col)
 
     for item_id in product['items']:
-        AddItemToUser(userid, item_id)
+        await AddItemToUser(userid, item_id)
 
     await send_donat_notification(userid, 'reward')
 

@@ -8,26 +8,26 @@ from bot.modules.item import AddItemToUser
 referals = mongo_client.user.referals
 users = mongo_client.user.users
 
-def get_referal_award(userid: int):
+async def get_referal_award(userid: int):
     """ Выдаёт награду за переход по рефералу
     """
     coins = gs['referal']['coins']
     items = gs['referal']['items']
 
-    users.update_one({'userid': userid}, 
+    await users.update_one({'userid': userid}, 
                         {'$inc': {'coins': coins}})
-    for item in items: AddItemToUser(userid, item)
+    for item in items: await AddItemToUser(userid, item)
     
-def create_referal(userid: int, code: str = ''):
+async def create_referal(userid: int, code: str = ''):
     """ Создаёт связь между кодом и владельцем, 
         если не указан код, генерирует его
     """
 
-    if not referals.find_one({'userid': userid}):
+    if not await referals.find_one({'userid': userid}):
         if not code: 
             while not code:
                 c = random_code(10)
-                if not referals.find_one({'code': code}): code = c
+                if not await referals.find_one({'code': code}): code = c
 
         data = {
             'code': code,
@@ -35,30 +35,30 @@ def create_referal(userid: int, code: str = ''):
             'type': 'general'
         }
 
-        referals.insert_one(data)
+        await referals.insert_one(data)
         return True, code
     return False, ''
 
-def get_code_owner(code: str):
+async def get_code_owner(code: str):
     """ Получает создателя реферального кода
     """
-    return referals.find_one({'code': code, 'type': 'general'})
+    return await referals.find_one({'code': code, 'type': 'general'})
 
-def get_user_code(userid: int):
+async def get_user_code(userid: int):
     """ Получить код созданный пользователем
     """
-    return referals.find_one({'userid': userid, 'type': 'general'})
+    return await referals.find_one({'userid': userid, 'type': 'general'})
 
-def get_user_sub(userid: int):
+async def get_user_sub(userid: int):
     """ Получить активированный пользователем код
     """
-    return referals.find_one({'userid': userid, 'type': 'sub'})
+    return await referals.find_one({'userid': userid, 'type': 'sub'})
 
-def connect_referal(code: str, userid: int):
+async def connect_referal(code: str, userid: int):
     """ Создаёт связь между пользователем и активированным кодом 
     """
-    if not referals.find_one({'userid': userid, 'type': 'sub'}):
-        code_creator = get_code_owner(code)
+    if not await referals.find_one({'userid': userid, 'type': 'sub'}):
+        code_creator = await get_code_owner(code)
         if code_creator:
             if code_creator['userid'] != userid:
                 data = {
@@ -66,9 +66,9 @@ def connect_referal(code: str, userid: int):
                     'userid': userid,
                     'type': 'sub'
                 }
-                referals.insert_one(data)
+                await referals.insert_one(data)
 
-                insert_friend_connect(userid, code_creator['userid'], 'friends')
-                get_referal_award(userid)
+                await insert_friend_connect(userid, code_creator['userid'], 'friends')
+                await get_referal_award(userid)
                 return True
     return False

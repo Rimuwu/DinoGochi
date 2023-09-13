@@ -20,8 +20,6 @@ from bot.modules.user import User
 from random import randint
 from bot.modules.over_functions import send_message
 
-
-users = mongo_client.user.users
 dinosaurs = mongo_client.dinosaur.dinosaurs
 journey_task = mongo_client.dino_activity.journey
 
@@ -39,7 +37,7 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
     
     data_time = get_data(f'journey_start.time_text.{time_key}', lang)
     image = dino_journey(dino.data_id, location, friend)
-    action_journey(dino._id, userid, data_time['time'], location)
+    await action_journey(dino._id, userid, data_time['time'], location)
 
     loc_name = get_data(f'journey_start.locations.{location}', lang)['name']
     time_text = data_time['text']
@@ -50,11 +48,11 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
         InputMedia(
             type='photo', media=image, caption=text),
         chatid, last_mess_id)
-    await send_message(chatid, t('journey_start.start_2', lang), reply_markup=m(userid, 'last_menu', lang))
+    await send_message(chatid, t('journey_start.start_2', lang), reply_markup= await m(userid, 'last_menu', lang))
 
 async def start_journey(userid: int, chatid: int, lang: str, 
                         friend: int = 0):
-    user = User(userid)
+    user = await User().create(userid)
     last_dino = user.get_last_dino()
     content_data = get_data('journey_start', lang)
 
@@ -65,7 +63,7 @@ async def start_journey(userid: int, chatid: int, lang: str,
 
     for key, dct in content_data['locations'].items():
         text += f"*{a}*. {dct['text']}\n\n"
-        if user.premium or key not in premium_loc:
+        if await user.premium or key not in premium_loc:
             buttons[dct['name']] = f'chooseinline {cc} {key}'
         a += 1
 
@@ -107,7 +105,7 @@ async def start_journey(userid: int, chatid: int, lang: str,
                      nothing_state=True)
 async def journey_com(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     await start_journey(userid, chatid, lang)
@@ -115,7 +113,7 @@ async def journey_com(message: Message):
 @bot.callback_query_handler(pass_bot=True, func=
                             lambda call: call.data.startswith('journey_complexity'), private=True)
 async def journey_complexity(callback: CallbackQuery):
-    lang = get_lang(callback.from_user.id)
+    lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id
 
     text = t('journey_complexity', lang)
@@ -124,13 +122,13 @@ async def journey_complexity(callback: CallbackQuery):
 @bot.message_handler(pass_bot=True, text='commands_name.actions.events')
 async def events(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    user = User(userid)
-    last_dino = user.get_last_dino()
+    user = await User().create(userid)
+    last_dino = await user.get_last_dino()
     if last_dino:
-        journey_data = journey_task.find_one({'dino_id': last_dino._id})
+        journey_data = await journey_task.find_one({'dino_id': last_dino._id})
         last_event = None
 
         if journey_data:
@@ -151,23 +149,23 @@ async def events(message: Message):
             await send_message(chatid, text, parse_mode='html', reply_markup=list_to_inline(
                 [{button_name: f'journey_stop {last_dino.alt_id}'}]))
         else:
-            await send_message(chatid, '❌', reply_markup=m(userid, 'last_menu', lang))
+            await send_message(chatid, '❌', reply_markup= await m(userid, 'last_menu', lang))
 
 @bot.callback_query_handler(pass_bot=True, func=
                             lambda call: call.data.startswith('journey_stop'))
 async def journey_stop(callback: CallbackQuery):
-    lang = get_lang(callback.from_user.id)
+    lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id
     code = callback.data.split()[1]
 
-    dino = dinosaurs.find_one({'alt_id': code})
+    dino = await dinosaurs.find_one({'alt_id': code})
     if dino and dino['status'] == 'journey':
         await bot.edit_message_reply_markup(chatid, callback.message.id, 
                                    reply_markup=InlineKeyboardMarkup())
-        data = journey_task.find_one({'dino_id': dino['_id']})
-        end_journey(dino['_id'])
+        data = await journey_task.find_one({'dino_id': dino['_id']})
+        await end_journey(dino['_id'])
         if data:
-            quest_process(data['sended'], 'journey', (int(time()) - data['journey_start']) // 60)
+            await quest_process(data['sended'], 'journey', (int(time()) - data['journey_start']) // 60)
             await send_logs(data['sended'], lang, data, dino['name'])
 
 async def send_logs(chatid: int, lang: str, data: dict, dino_name: str):
@@ -184,4 +182,4 @@ async def send_logs(chatid: int, lang: str, data: dict, dino_name: str):
     if items: items_text = counts_items(items, lang)
     text = t('journey_log', lang, coins=coins, 
              items=items_text, time=j_time, col=len(logs), name=dino_name)
-    await send_message(chatid, text, reply_markup=m(chatid, 'actions_menu', lang, True))
+    await send_message(chatid, text, reply_markup= await m(chatid, 'actions_menu', lang, True))

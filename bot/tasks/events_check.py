@@ -10,22 +10,22 @@ events = mongo_client.other.events
 async def old_events():
     """ Удаляет истёкшие события
     """
-    events_data = list(events.find({}, {'type': 1, 'time_end': 1})).copy()
+    events_data = list(await events.find({}, {'type': 1, 'time_end': 1}).to_list(None)).copy()
 
     for i in events_data:
         if i['time_end'] != 0 and int(time()) >= i['time_end']:
-            events.delete_one({'type': i['type']})
+            await events.delete_one({'type': i['type']})
 
 async def random_event():
-    events_data = list(events.find({}, {'type'})).copy()
+    events_data = list(await events.find({}, {'type'}).to_list(None)).copy()
     not_system = []
     
     for i in events_data:
         if i['type'] not in ['new_year', 'time_year']: not_system.append(i['type'])
 
     if (True or randint(1, 18) == 18) and len(not_system) == 0:
-        event = create_event()
-        add_event(event)
+        event = await create_event()
+        await add_event(event)
         log(f'Создано событие - {event}')
 
 if __name__ != '__main__':

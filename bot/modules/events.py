@@ -6,12 +6,12 @@ from bot.config import mongo_client
 
 events = mongo_client.other.events
 
-def get_event(event_type: str=''):
-    res = events.find_one({'type': event_type})
+async def get_event(event_type: str=''):
+    res = await events.find_one({'type': event_type})
     if res: return res
     return {}
 
-def create_event(event_type: str = ''):
+async def create_event(event_type: str = ''):
 
     if not event_type:
         event_type = choice(['add_hunting', 'add_fishing', 'add_collecting', 'add_all'])
@@ -22,7 +22,7 @@ def create_event(event_type: str = ''):
         'time_start': int(time.time()),
         'time_end': 0
     }
-    
+
     if event_type == 'time_year':
         month_n = int(time.strftime("%m"))
         
@@ -33,13 +33,13 @@ def create_event(event_type: str = ''):
         elif 9 > month_n > 5:
             event['data']['season'] = 'summer'
         else: event['data']['season'] = 'autumn'
-    
+
     elif event_type == 'new_year':
         day_n = int(time.strftime("%j"))
 
         event['data']['send'] = []
         event['time_end'] = (86400 * (366 - day_n) + 5) + int(time.time())
-    
+
     elif event_type in ['add_hunting', 'add_fishing', 'add_collecting', 'add_all']:
         max_col = random_dict(GS['events']['random_data']['random_col'])
         items = []
@@ -53,10 +53,10 @@ def create_event(event_type: str = ''):
         event['time_end'] = int(time.time()) + choice(GS['events']['random_data']['random_time'])
     return event
 
-def add_event(event: dict):
-    res = events.find_one({'type': event['type']})
+async def add_event(event: dict):
+    res = await events.find_one({'type': event['type']})
     if not res:
-        events.insert_one(event)
+        await events.insert_one(event)
         return True
     else: return False
 
@@ -64,17 +64,17 @@ async def auto_event():
     """ Проверка системных событий
     """
     # Проверка на время года
-    time_year = get_event('time_year')
-    ty_event = create_event('time_year')
+    time_year = await get_event('time_year')
+    ty_event = await create_event('time_year')
     if time_year:
         if time_year['data']['season'] != ty_event['data']['season']:
-            events.update_one({'type': 'time_year'}, {"$set": {'data': ty_event['data']}})
-    else: add_event(ty_event)
+            await events.update_one({'type': 'time_year'}, {"$set": {'data': ty_event['data']}})
+    else: await add_event(ty_event)
     
     # Проверка на новогоднее событие
     new_year = get_event('time_year')
     if not new_year:
         day_n = int(time.strftime("%j"))
         if day_n >= 358:
-            new_year_event = create_event('new_year')
-            add_event(new_year_event)
+            new_year_event = await create_event('new_year')
+            await add_event(new_year_event)

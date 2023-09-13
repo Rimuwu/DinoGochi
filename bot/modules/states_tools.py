@@ -12,8 +12,6 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.user import User, get_frineds, user_info, user_name
 from bot.modules.over_functions import send_message
 
-items = mongo_client.items.items
-
 class GeneralStates(StatesGroup):
     ChooseDino = State() # Состояние для выбора динозавра
     ChooseInt = State() # Состояние для ввода числа
@@ -45,9 +43,9 @@ async def ChooseDinoState(function, userid: int, chatid: int,
        Return:
         Возвращает 2 если был создано состояние, 1 если завершилось автоматически (1 вариант выбора), 0 - невозможно завершить
     """
-    user = User(userid)
-    elements = user.get_dinos(all_dinos)
-    if add_egg: elements += user.get_eggs
+    user = await User().create(userid)
+    elements = await user.get_dinos(all_dinos)
+    if add_egg: elements += await user.get_eggs
     if not transmitted_data: transmitted_data = {}
     
     transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
@@ -57,7 +55,7 @@ async def ChooseDinoState(function, userid: int, chatid: int,
         if send_error:
             await send_message(chatid, 
                 t('css.no_dino', lang),
-                reply_markup=m(userid, 'last_menu', lang))
+                reply_markup= await m(userid, 'last_menu', lang))
         return False, 'cancel'
 
     elif ret_data['case'] == 1: #1 динозавр / яйцо, передаём инфу в функцию
@@ -330,9 +328,9 @@ async def friend_handler(friend, transmitted_data: dict):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
 
-    text = user_info(friend, lang)
+    text = await user_info(friend, lang)
     buttons = {}
-    
+
     for key, text_b in get_data('friend_list.buttons', lang).items():
         buttons[text_b] = f'{key} {friend.id}'
     markup = list_to_inline([buttons], 2)
@@ -348,7 +346,8 @@ async def start_friend_menu(function,
                 userid: int, chatid: int, lang: str, 
                 one_element: bool=False,
                 transmitted_data = None):
-    friends = get_frineds(userid)['friends']
+    res = await get_frineds(userid)
+    friends = res['friends']
     options = {}
 
     if function == None: function = friend_handler

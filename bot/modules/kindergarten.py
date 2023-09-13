@@ -2,10 +2,9 @@ from bot.config import mongo_client
 from time import time, strftime
 
 kindergarten = mongo_client.dino_activity.kindergarten
-dinosaurs = mongo_client.dinosaur.dinosaurs
 m_hours = 120
 
-def add_moth_data(userid: int):
+async def add_moth_data(userid: int):
     data = {
         "userid": userid,
         "total": m_hours,
@@ -17,9 +16,9 @@ def add_moth_data(userid: int):
             "hours": 0
         }
     }
-    kindergarten.insert_one(data)
+    await kindergarten.insert_one(data)
 
-def dino_kind(dinoid, hours: int = 1):
+async def dino_kind(dinoid, hours: int = 1):
     data = {
         "dinoid": dinoid,
         "type": "dino",
@@ -27,22 +26,22 @@ def dino_kind(dinoid, hours: int = 1):
         "end": int(time()) + hours * 3600
     }
 
-    kindergarten.insert_one(data)
+    await kindergarten.insert_one(data)
 
-def check_hours(userid: int):
-    st = kindergarten.find_one({'userid': userid})
+async def check_hours(userid: int):
+    st = await kindergarten.find_one({'userid': userid})
 
     if st: return st['total'], st['end']
     else:
-        add_moth_data(userid)
+        await add_moth_data(userid)
         return m_hours, int(time()) + 2_592_000
 
-def minus_hours(userid: int, hours: int = 1):
-    st = kindergarten.find_one({'userid': userid})
+async def minus_hours(userid: int, hours: int = 1):
+    st = await kindergarten.find_one({'userid': userid})
     if st:
         if (st['total'] - hours) < 0: return False
         else:
-            kindergarten.update_one(
+            await kindergarten.update_one(
                 {'userid': userid}, 
                 {'$inc': {'total': -hours, 'now.hours': hours},
                  '$set': {'now.data': strftime('%j')}
@@ -51,13 +50,13 @@ def minus_hours(userid: int, hours: int = 1):
             return True
     else: return False
 
-def hours_now(userid: int):
-    st = kindergarten.find_one({'userid': userid})
+async def hours_now(userid: int):
+    st = await kindergarten.find_one({'userid': userid})
     if st:
         if st['now']['data'] == strftime('%j'):
             return st['now']['hours']
         else:
-            kindergarten.update_one({'userid': userid}, 
+            await kindergarten.update_one({'userid': userid}, 
                                     {'$set': {'now.data': strftime('%j'), 
                                              'now.hours': 0}}
                                     )

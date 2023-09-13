@@ -46,7 +46,7 @@ async def start_game_ent(userid: int, chatid: int,
     if await check_accessory(dino, 'board_games'):
         need += ["puzzles", "chess", "jenga", "dnd"]
 
-    if premium(userid):
+    if await premium(userid):
         need += ["monopolia", "bowling", "darts", "golf"]
 
     for key, value in game_data['game'].items():
@@ -112,19 +112,19 @@ async def game_start(return_data: dict,
     game = return_data['game']
     code = return_data['time']
     
-    res_dino_status = dinosaurs.find_one({"_id": dino._id}, {'status': 1})
+    res_dino_status = await dinosaurs.find_one({"_id": dino._id}, {'status': 1})
     if res_dino_status:
         if res_dino_status['status'] != 'pass':
-            await send_message(chatid, t('alredy_busy', lang), reply_markup=m(userid, 'last_menu', lang))
+            await send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
             return
 
-    percent, repeat = dino.memory_percent('games', game)
+    percent, repeat = await dino.memory_percent('games', game)
 
     if friend and join_status and join_dino:
-        dino_f = dinosaurs.find_one({'alt_id': join_dino})
+        dino_f = await dinosaurs.find_one({'alt_id': join_dino})
         if dino_f:
             friend_dino_id = dino_f['data_id']
-            res = game_task.find_one({'dino_id': dino_f['_id']})
+            res = await game_task.find_one({'dino_id': dino_f['_id']})
             if not res: 
                 join_dino = 0
                 text_m = t('entertainments.join_end', lang)
@@ -132,13 +132,13 @@ async def game_start(return_data: dict,
             else: 
                 percent += 0.5
 
-                res = game_task.find_one({'dino_id': dino_f['data_id']})
+                res = await game_task.find_one({'dino_id': dino_f['data_id']})
                 if res and res['game_percent'] < 2.0:
-                    game_task.update_one({'dino_id': dino_f['data_id']}, 
+                    await game_task.update_one({'dino_id': dino_f['data_id']}, 
                                         {'$inc': {'game_percent': 0.5}})
 
-                add_mood(dino._id, 'playing_together', 1, 1800)
-                add_mood(dino_f['data_id'], 'playing_together', 1, 1800)
+                await add_mood(dino._id, 'playing_together', 1, 1800)
+                await add_mood(dino_f['data_id'], 'playing_together', 1, 1800)
 
                 text_m = t('entertainments.dino_join', lang, 
                             dinoname=dino.name)
@@ -159,7 +159,8 @@ async def game_start(return_data: dict,
     if percent < 1.0:
         text += t(f'entertainments.game_text.penalty', lang, percent=int(percent*100))
 
-    await bot.send_photo(chatid, image, text, reply_markup=m(userid, 'last_menu', lang, True))
+    await bot.send_photo(chatid, image, text, 
+                         reply_markup=await m(userid, 'last_menu', lang, True))
 
     # Пригласить друга
     if friend and not join_status:
@@ -175,24 +176,24 @@ async def game_start(return_data: dict,
 @bot.message_handler(pass_bot=True, text='commands_name.actions.entertainments', dino_pass=True, nothing_state=True)
 async def entertainments(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    user = User(userid)
-    dino = user.get_last_dino()
+    user = await User().create(userid)
+    dino = await user.get_last_dino()
     if dino: await start_game_ent(userid, chatid, lang, dino)
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions.stop_game')
 async def stop_game(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    user = User(userid)
-    last_dino = user.get_last_dino()
+    user = await User().create(userid)
+    last_dino = await user.get_last_dino()
     if last_dino:
         penalties = GAME_SETTINGS['penalties']["games"]
-        game_data = game_task.find_one({'dino_id': last_dino._id})
+        game_data = await game_task.find_one({'dino_id': last_dino._id})
         random_tear, text = 1, ''
 
         res = check_breakdown(last_dino._id, 'unrestrained_play')
@@ -214,7 +215,7 @@ async def stop_game(message: Message):
                     if random_tear == 1:
                         # Дебафф к настроению
                         text = t('stop_game.like', lang)
-                        add_mood(last_dino._id, 'stop_game', randint(-2, -1), 3600)
+                        await add_mood(last_dino._id, 'stop_game', randint(-2, -1), 3600)
                     elif random_tear == 0:
                         # Не нравится динозавру играть, без дебаффа
                         text = t('stop_game.dislike', lang)
@@ -224,15 +225,15 @@ async def stop_game(message: Message):
 
                     await end_game(last_dino._id, False)
                     game_time = (int(time()) - game_data['game_start']) // 60
-                    quest_process(userid, 'game', game_time)
+                    await quest_process(userid, 'game', game_time)
                 else:
                     # Невозможно оторвать от игры
                     text = t('stop_game.dont_tear', lang)
-                await send_message(chatid, text, reply_markup=m(userid, 'last_menu', lang, True))
+                await send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang, True))
 
             else:
                 if last_dino.status == 'game':
                     last_dino.update({'$set': {'status': 'pass'}})
-                await send_message(chatid, '❌', reply_markup=m(userid, 'last_menu', lang, True))
+                await send_message(chatid, '❌', reply_markup= await m(userid, 'last_menu', lang, True))
         else:
             await send_message(chatid, t('stop_game.unrestrained_play', lang))

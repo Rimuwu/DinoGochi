@@ -37,7 +37,7 @@ def load_items_names() -> dict:
     """
     items_names = {}
     loc_items_names = get_all_locales('items_names')
-    
+
     for item_key in ITEMS:
         if item_key not in items_names:
             items_names[item_key] = {}
@@ -135,27 +135,25 @@ def is_standart(item: dict) -> bool:
             if item['abilities']:
                 if item.get('abilities', {}) == data.get('abilities', {}):
                     return True
-                else:
-                    return False
-            else:
-                return True
-        else:
-            return True
+                else: return False
+            else: return True
+        else: return True
 
-def AddItemToUser(userid: int, itemid: str, count: int = 1, preabil: dict = {}):
+async def AddItemToUser(userid: int, itemid: str, count: int = 1, preabil: dict = {}):
     """Добавление стандартного предмета в инвентарь
     """
     assert count >= 0, f'AddItemToUser, count == {count}'
 
     item = get_item_dict(itemid, preabil)
-    find_res = items.find_one({'owner_id': userid, 'items_data': item}, {'_id': 1})
+    find_res = await items.find_one({'owner_id': userid, 
+                                     'items_data': item}, {'_id': 1})
 
     if find_res: action = 'plus_count'
     elif 'abilities' in item or preabil: action = 'new_edited_item'
     else: action = 'new_item'
 
     if action == 'plus_count' and find_res:
-        items.update_one({'_id': find_res['_id']}, {'$inc': {'count': count}})
+        await items.update_one({'_id': find_res['_id']}, {'$inc': {'count': count}})
     elif action == 'new_edited_item':
         for _ in range(count):
             item_dict = {
@@ -163,18 +161,17 @@ def AddItemToUser(userid: int, itemid: str, count: int = 1, preabil: dict = {}):
                 'items_data': item,
                 'count': 1
             }
-            items.insert_one(item_dict, True)
+            await items.insert_one(item_dict, True)
     else:
         item_dict = {
             'owner_id': userid,
             'items_data': item,
             'count': count
         }
-        items.insert_one(item_dict)
-
+        await items.insert_one(item_dict)
     return action
 
-def RemoveItemFromUser(userid: int, itemid: str, 
+async def RemoveItemFromUser(userid: int, itemid: str, 
             count: int = 1, preabil: dict = {}):
     """Удаление предмета из инвентаря
        return
@@ -186,8 +183,8 @@ def RemoveItemFromUser(userid: int, itemid: str,
 
     item = get_item_dict(itemid, preabil)
     max_count = 0
-    find_items = items.find({'owner_id': userid, 'items_data': item}, 
-                            {'_id': 1, 'count': 1})
+    find_items = await items.find({'owner_id': userid, 'items_data': item}, 
+                            {'_id': 1, 'count': 1}).to_list(None) #type: ignore
     find_list = list(find_items)
     
     for iterable_item in find_list: max_count += iterable_item['count']
@@ -196,10 +193,10 @@ def RemoveItemFromUser(userid: int, itemid: str,
         for iterable_item in find_list:
             if count > 0:
                 if count >= iterable_item['count']:
-                    items.delete_one({'_id': iterable_item['_id']})
+                    await items.delete_one({'_id': iterable_item['_id']})
                     
                 elif count < iterable_item['count']:
-                    items.update_one({'_id': iterable_item['_id']}, 
+                    await items.update_one({'_id': iterable_item['_id']}, 
                                 {'$inc': 
                                     {'count': count * -1}})
                 
@@ -250,14 +247,15 @@ def CalculateDowngradeitem(item: dict, characteristic: str, unit: int):
                 'difference': unit - item['abilities'][characteristic]}
 
 
-def DowngradeItem(userid: int, item: dict, characteristic: str, unit: int):
+async def DowngradeItem(userid: int, item: dict, characteristic: str, unit: int):
     """
         Понижает харрактеристику для предметов с одинаковыми данными из базы
         unit - число понижения харрактеристики для всех предметов
     """
 
     max_count, max_char = 0, 0
-    find_items = items.find({'owner_id': userid, 'items_data': item})
+    find_items = await items.find({'owner_id': userid, 
+                                   'items_data': item}).to_list(None) #type: ignore
     find_list = list(find_items)
     
     for iterable_item in find_list:
@@ -271,10 +269,10 @@ def DowngradeItem(userid: int, item: dict, characteristic: str, unit: int):
         item_char = iterable_item['items_data']['abilities'][characteristic]
         if unit > 0:
             if unit >= item_char:
-                items.delete_one({'_id': iterable_item['_id']})
-                
+                await items.delete_one({'_id': iterable_item['_id']})
+
             elif unit < item_char:
-                items.update_one({'_id': iterable_item['_id']}, 
+                await items.update_one({'_id': iterable_item['_id']}, 
                             {'$inc': 
                                 {f'items_data.abilities.{characteristic}': 
                                     unit * -1}
@@ -284,18 +282,18 @@ def DowngradeItem(userid: int, item: dict, characteristic: str, unit: int):
         
     return {'status': True, 'action': 'deleted_edited'}
 
-def CheckItemFromUser(userid: int, item_data: dict, count: int = 1) -> dict:
+async def CheckItemFromUser(userid: int, item_data: dict, count: int = 1) -> dict:
     """Проверяет есть ли count предметов у человека
     """
     
-    find_res = items.find_one({'owner_id': userid, 
+    find_res = await items.find_one({'owner_id': userid, 
                                'items_data': item_data,
                                'count': {'$gte': count}
                                })
     if find_res: 
         return {"status": True, 'item': find_res}
     else:
-        find_res = items.find_one({'owner_id': userid, 
+        find_res = await items.find_one({'owner_id': userid, 
                                'items_data': item_data,
                                'count': {'$gt': 1}
                                })
@@ -303,21 +301,21 @@ def CheckItemFromUser(userid: int, item_data: dict, count: int = 1) -> dict:
         else: difference = count
         return {"status": False, "item": find_res, 'difference': difference}
 
-def CheckCountItemFromUser(userid: int, count: int, itemid: str, 
+async def CheckCountItemFromUser(userid: int, count: int, itemid: str, 
                            preabil: dict = {}):
     """ Проверяет не конкретный документ на count а всю базу, возвращая ответ на вопрос - Есть ли у человек count предметов
     """
     item = get_item_dict(itemid, preabil)
     max_count = 0
-    find_items = items.find({'owner_id': userid, 'items_data': item}, 
-                            {'_id': 1, 'count': 1})
+    find_items = await items.find({'owner_id': userid, 'items_data': item}, 
+                            {'_id': 1, 'count': 1}).to_list(None) #type: ignore
     find_list = list(find_items)
     
     for iterable_item in find_list: max_count += iterable_item['count']
     if count > max_count: return False
     return True
 
-def EditItemFromUser(userid: int, now_item: dict, new_data: dict):
+async def EditItemFromUser(userid: int, now_item: dict, new_data: dict):
     """Функция ищет предмет по now_item и в случае успеха изменяет его данные на new_data.
     
         now_item - 
@@ -333,17 +331,17 @@ def EditItemFromUser(userid: int, now_item: dict, new_data: dict):
         }
     }
     """
-    find_res = items.find_one({'owner_id': userid, 
+    find_res = await items.find_one({'owner_id': userid, 
                                'items_data': now_item,
                                }, {'_id': 1})
     if find_res:
-        items.update_one({'_id': find_res['_id']}, 
+        await items.update_one({'_id': find_res['_id']}, 
                          {'$set': {'items_data': new_data}})
         return True
     else:
         return False
 
-def UseAutoRemove(userid: int, item: dict, count: int):
+async def UseAutoRemove(userid: int, item: dict, count: int):
     """Автомаатически определяет что делать с предметом, 
        удалить или понизить количество использований
     """
@@ -351,7 +349,7 @@ def UseAutoRemove(userid: int, item: dict, count: int):
     if 'abilities' in item and 'uses' in item['abilities']:
         # Если предмет имеет свои харрактеристики, а в частности количество использований, то снимаем их, при том мы знаем что предмета в инвентаре и так count
         if item['abilities']['uses'] != -666: # Бесконечный предмет
-            res = DowngradeItem(userid, item, 'uses', count)
+            res = await DowngradeItem(userid, item, 'uses', count)
             if not res['status']: 
                 log(f'Item downgrade error - {res} {userid} {item}', 0)
                 return False

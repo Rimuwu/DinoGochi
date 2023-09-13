@@ -22,19 +22,17 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import markups_menu as m
 from bot.modules.over_functions import send_message
 
-users = mongo_client.user.users
-
 async def cancel(message):
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     await send_message(message.chat.id, "❌", 
-          reply_markup=m(message.from_user.id, 'last_menu', lang))
+          reply_markup= await m(message.from_user.id, 'last_menu', lang))
     await bot.delete_state(message.from_user.id, message.chat.id)
     await bot.reset_data(message.from_user.id,  message.chat.id)
 
 @bot.message_handler(pass_bot=True, text='commands_name.profile.inventory', is_authorized=True, state=None)
 async def open_inventory(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     await start_inv(None, userid, chatid, lang)
@@ -43,7 +41,7 @@ async def open_inventory(message: Message):
 async def start_callback(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
 
     await start_inv(None, userid, chatid, lang)
 
@@ -86,7 +84,7 @@ async def inv_callback(call: CallbackQuery):
     call_data = call.data.split()[1]
     chatid = call.message.chat.id
     userid = call.from_user.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
 
     async with bot.retrieve_data(userid, chatid) as data:
         changing_filter = data['settings']['changing_filters']
@@ -139,7 +137,7 @@ async def item_callback(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
     userid = call.from_user.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
     item = decode_item(call_data[2])
     preabil = {}
 
@@ -154,7 +152,7 @@ async def item_callback(call: CallbackQuery):
             await exchange_item(userid, chatid, item, lang, 
                                 user_name(call.from_user))
         elif call_data[1] == 'egg':
-            ret_data = CheckItemFromUser(userid, item)
+            ret_data = await CheckItemFromUser(userid, item)
             if 'abilities' in item:
                 preabil = item['abilities']
 
@@ -168,16 +166,16 @@ async def item_callback(call: CallbackQuery):
                     await send_message(chatid, 
                         t('item_use.egg.incubation', lang, 
                           item_name = i_name, end_time=end_time),  
-                          reply_markup=m(userid, 'last_menu', lang))
+                          reply_markup= await m(userid, 'last_menu', lang))
                     
-                    incubation_egg(int(egg_id), userid, item_data['incub_time'], item_data['inc_type'])
+                    await incubation_egg(int(egg_id), userid, item_data['incub_time'], item_data['inc_type'])
                 
                     new_text = t('item_use.egg.edit_content', lang)
                     await bot.edit_message_caption(new_text, chatid, call.message.id, reply_markup=None)
             else:
                 await send_message(chatid, 
                         t('item_use.cannot_be_used', lang),  
-                          reply_markup=m(userid, 'last_menu', lang))
+                          reply_markup= await m(userid, 'last_menu', lang))
         else: print('item_callback', call_data[1])
 
 # Поиск внутри инвентаря
@@ -196,7 +194,7 @@ async def search_callback(call: CallbackQuery):
 @bot.message_handler(pass_bot=True, state=InventoryStates.InventorySearch, is_authorized=True)
 async def search_message(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
     content = message.text
     searched = []
@@ -234,7 +232,7 @@ async def filter_callback(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
     userid = call.from_user.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
 
     if call_data[1] == 'close':
         # Данная функция не открывает новый инвентарь, а возвращает к меню
@@ -284,7 +282,7 @@ async def filter_callback(call: CallbackQuery):
 async def book(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
 
     book_id = call_data[1]
     page = int(call_data[2])
@@ -298,7 +296,7 @@ async def ns_craft(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
     userid = call.from_user.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
 
     item_ns = decode_item(call_data[1])
     item = get_item_data(item_ns['item_id'])
@@ -311,15 +309,15 @@ async def ns_craft(call: CallbackQuery):
     check_lst = []
     for key, value in materials.items():
         item_data = get_item_dict(key)
-        res = CheckItemFromUser(userid, item_data, value)
+        res = await CheckItemFromUser(userid, item_data, value)
         check_lst.append(res['status'])
 
     if all(check_lst):
         for iid in item['ns_craft'][ns_id]['create']:
-            AddItemToUser(userid, iid)
+            await AddItemToUser(userid, iid)
 
         for iid in item['ns_craft'][ns_id]['materials']:
-            RemoveItemFromUser(userid, iid)
+            await RemoveItemFromUser(userid, iid)
 
         text =  t('ns_craft.create', lang, 
                   items = counts_items(item['ns_craft'][ns_id]['create'], lang))

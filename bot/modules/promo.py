@@ -182,16 +182,16 @@ async def end(return_data, transmitted_data):
     if time_end == 0: time_end = 'inf'
     if count == 0: count = 'inf'
 
-    create_promo(code, count, time_end, coins, add_items)
+    await create_promo(code, count, time_end, coins, add_items)
 
-    text, markup = promo_ui(code, lang)
+    text, markup = await promo_ui(code, lang)
     try:
         await send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
     except:
         await send_message(chatid, text, reply_markup=markup)
-    await send_message(chatid, '✅', reply_markup=m(userid, 'last_menu', lang))
+    await send_message(chatid, '✅', reply_markup= await m(userid, 'last_menu', lang))
 
-def create_promo(code: str, col, seconds, coins: int, items: list):
+async def create_promo(code: str, col, seconds, coins: int, items: list):
     data = {
         "code": code,
         "users": [],
@@ -203,10 +203,10 @@ def create_promo(code: str, col, seconds, coins: int, items: list):
         "active": False
     }
 
-    promo.insert_one(data)
+    await promo.insert_one(data)
 
-def promo_ui(code: str, lang: str):
-    data = promo.find_one({"code": code})
+async def promo_ui(code: str, lang: str):
+    data = await promo.find_one({"code": code})
     text, markup = '', None
 
     if data:
@@ -215,7 +215,7 @@ def promo_ui(code: str, lang: str):
         else: status = '❌'
 
         id_list = []
-        for i in data['items']: id_list.append(i['item_id'])
+        for i in list(data['items']): id_list.append(i['item_id'])
 
         if data['time_end'] == 'inf':
             txt_time = '♾'
@@ -237,16 +237,16 @@ def promo_ui(code: str, lang: str):
         markup = list_to_inline([inl_l], 2)
     return text, markup
 
-def get_promo_pages() -> dict:
-    res = list(promo.find({}))
+async def get_promo_pages() -> dict:
+    res = list(await promo.find({}).to_list(None)) #type: ignore
     data = {}
     if res: 
         for i in res: data[i['code']] = i['code']
     return data
 
-def use_promo(code: str, userid: int, lang: str):
-    data = promo.find_one({"code": code})
-    user = users.find_one({'userid': userid}, {'userid': 1})
+async def use_promo(code: str, userid: int, lang: str):
+    data = await promo.find_one({"code": code})
+    user = await users.find_one({'userid': userid}, {'userid': 1})
     text = ''
 
     if user:
@@ -262,12 +262,12 @@ def use_promo(code: str, userid: int, lang: str):
                     if seconds - int(time()) > 0:
                         if userid not in data['users']:
 
-                            promo.update_one({'_id': data['_id']},
+                            await promo.update_one({'_id': data['_id']},
                                              {"$push": {f'users': userid}
                                               })
 
                             if data['col'] != 'inf':
-                                promo.update_one({'_id': data['_id']},
+                                await promo.update_one({'_id': data['_id']},
                                                  {"$inc": {f'col': -1}})
 
                             text = t('promo_commands.activate', lang)
@@ -277,7 +277,7 @@ def use_promo(code: str, userid: int, lang: str):
                                           )
                             if data['items']:
                                 id_list = []
-                                for i in data['items']: id_list.append(i['item_id'])
+                                for i in list(data['items']): id_list.append(i['item_id'])
                                 text += t('promo_commands.items', lang,
                                           items=counts_items(id_list, lang)
                                           )

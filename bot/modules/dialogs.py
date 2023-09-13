@@ -65,7 +65,7 @@ async def dead_last_dino(userid: int, name: str, lang: str,
     status = False
     text = ''
     
-    user = users.find_one({'userid': userid})
+    user = await users.find_one({'userid': userid})
     if user:
 
         if dead_check(userid):
@@ -80,11 +80,11 @@ async def dead_last_dino(userid: int, name: str, lang: str,
                 else:
                     coins = (user['coins'] // 100) * 70
 
-                users.update_one({'userid': userid}, {'$inc': 
+                await users.update_one({'userid': userid}, {'$inc': 
                     {'coins': -coins}})
-                items.delete_many({'owner_id': userid})
+                await items.delete_many({'owner_id': userid})
 
-                AddItemToUser(userid, GS['dead_dialog_item'], 1, 
+                await AddItemToUser(userid, GS['dead_dialog_item'], 1, 
                               {'interact': False})
                 itm_data = get_item_dict(GS['dead_dialog_item'], 
                                          {'interact': False})

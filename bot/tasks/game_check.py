@@ -20,25 +20,26 @@ LVL_CHANCE = 0.125 * REPEAT_MINUTS
 GAME_CHANCE = 0.17 * REPEAT_MINUTS
 
 async def game_end():
-    data = list(game_task.find({'game_end': 
-        {'$lte': int(time())}})).copy()
+    data = list(await game_task.find({'game_end': 
+        {'$lte': int(time())}}).to_list(None)).copy()
 
     for i in data:
         await end_game(i['dino_id'])
         game_time = i['game_end'] - i['game_start']
-        owner = get_owner(i['dino_id'])
+        owner = await get_owner(i['dino_id'])
         if owner:
-            quest_process(owner['owner_id'], 'game', (game_time) // 60)
+            await quest_process(owner['owner_id'], 'game', (game_time) // 60)
 
-        add_mood(i['dino_id'], 'end_game', 1, 
+        await add_mood(i['dino_id'], 'end_game', 1, 
                  int((game_time // 2) * i['game_percent']))
 
 async def game_process():
-    data = list(game_task.find({'game_end': {'$gte': int(time())}})).copy()
+    data = list(await game_task.find(
+        {'game_end': {'$gte': int(time())}}).to_list(None)).copy()
 
     for game_data in data:
         percent = game_data['game_percent']
-        dino = dinosaurs.find_one({'_id': game_data['dino_id']})
+        dino = await dinosaurs.find_one({'_id': game_data['dino_id']})
 
         if dino:
             if random.uniform(0, 1) <= ENERGY_DOWN:
@@ -48,7 +49,7 @@ async def game_process():
             if dino['stats']['game'] < 100:
                 if random.uniform(0, 1) <= LVL_CHANCE: 
                     if not check_breakdown(dino['_id'], 'unrestrained_play'):
-                        dino_con = dino_owners.find_one({'dino_id': dino['_id']})
+                        dino_con = await dino_owners.find_one({'dino_id': dino['_id']})
                         if dino_con:
                             userid = dino_con['owner_id']
                             await experience_enhancement(userid, randint(1, 19))

@@ -14,32 +14,33 @@ preferential = mongo_client.market.preferential
 
 async def market_delete():
     # Удаляет старые продукты
-    data = list(products.find({'add_time': {'$lte': int(time()) - 86_400 * 31}})
-                ).copy()
+    data = await products.find({'add_time': {'$lte': int(time()) - 86_400 * 31}}
+                                    ).to_list(None)  # type: ignore
     for i in data: await delete_product(i['_id'])
 
 async def auction_end():
     # Завершение аукциона
-    data = list(products.find({'end': {'$lte': int(time())}})
-                ).copy()
+    data = products.find({'end': {'$lte': int(time())}}
+                              ).to_list(None) # type: ignore
 
     for i in data:
         for user in i['users']:
             status = users.find_one({'user_id': user['userid']})
             if status:
-                products.update_one({'_id': i['_id']}, {'$set': {
+                await products.update_one({'_id': i['_id']}, {'$set': {
                     f'users.{i["users"].index(user)}.status': 'win'
                 }})
-                take_coins(i['owner_id'], i['coins'], True)
+                await take_coins(i['owner_id'], i['coins'], True)
                 break
 
         await delete_product(i['_id'])
 
 async def preferential_delete():
     # Удаляет продвижение
-    data = list(products.find({'end': {'$lte': int(time())}})
+    data = list(await products.find({'end': {'$lte': int(time())}}
+                                    ).to_list(None) # type: ignore
                 ).copy()
-    for i in data: preferential.delete_one({'_id': i['_id']})
+    for i in data: await preferential.delete_one({'_id': i['_id']})
 
 if __name__ != '__main__':
     if conf.active_tasks:

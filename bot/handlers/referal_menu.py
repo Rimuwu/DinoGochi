@@ -13,18 +13,17 @@ from bot.modules.states_tools import ChooseCustomState, ChooseStringState
 from bot.modules.user import take_coins
 from bot.modules.over_functions import send_message
 
-users = mongo_client.user.users
 referals = mongo_client.user.referals
 
 @bot.message_handler(pass_bot=True, text='commands_name.referal.code', is_authorized=True)
 async def code(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    if not referals.find_one({'ownerid': userid}):
+    if not await referals.find_one({'ownerid': userid}):
         price = GS['referal']['custom_price']
-        
+
         text = t('referals.generate', lang, price=price)
         buttons = get_data('referals.var_buttons', lang)
     
@@ -42,7 +41,7 @@ async def create_custom_code(code: str, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     
     if take_coins(userid, GS['referal']['custom_price'], True):
-        create_referal(userid, code)
+        await create_referal(userid, code)
 
         iambot = await bot.get_me()
         bot_name = iambot.username
@@ -53,7 +52,7 @@ async def create_custom_code(code: str, transmitted_data: dict):
         text = t('referals.custom_code.no_coins', lang)
 
     await send_message(chatid, text, parse_mode='Markdown', 
-                        reply_markup=m(userid, 'last_menu', lang, True))
+                        reply_markup= await m(userid, 'last_menu', lang, True))
 
 async def custom_handler(message: Message, transmitted_data: dict):
     lang = transmitted_data['lang']
@@ -83,19 +82,20 @@ async def custom_handler(message: Message, transmitted_data: dict):
 async def generate_code(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
     action = call.data.split()[1]
-    
-    if not referals.find_one({'ownerid': userid}):
+
+    if not await referals.find_one({'ownerid': userid}):
         if action == 'random':
-            code = create_referal(userid)[1]
-            
+            ref = await create_referal(userid)
+            code = ref[1]
+
             iambot = await bot.get_me()
             bot_name = iambot.username
 
             url = f'https://t.me/{bot_name}/?start={code}'
             await send_message(chatid, t('referals.code', lang, 
-                                    code=code, url=url), parse_mode='Markdown', reply_markup=m(userid, 'last_menu', lang, True))
+                                    code=code, url=url), parse_mode='Markdown', reply_markup= await m(userid, 'last_menu', lang, True))
             
         elif action == 'custom':
             await send_message(chatid, 
@@ -111,21 +111,21 @@ async def my_code(message: Message):
     """ Кнопка - мой код ...
     """
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
-    
-    referal = referals.find_one({'userid': userid})
+
+    referal = await referals.find_one({'userid': userid})
     if referal:
         code = referal['code']
-        referal_find = referals.find(
-            {'code': code, 'type': 'sub'})
+        referal_find = await referals.find(
+            {'code': code, 'type': 'sub'}).to_list(None)
 
         uses = len(list(referal_find))
 
         iambot = await bot.get_me()
         bot_name = iambot.username
         url = f'https://t.me/{bot_name}/?start={code}'
-        
+
         await send_message(chatid, t('referals.my_code', lang, 
                                 code=code, url=url, uses=uses), parse_mode='Markdown')
 
@@ -138,18 +138,18 @@ async def check_code(code: str, transmitted_data: dict):
     items = GS['referal']['items']
     names = counts_items(items, lang)
     
-    result = connect_referal(code, userid)
+    result = await connect_referal(code, userid)
     text = t(f'referals.enter_code.{result}', lang, coins=coins, items=names)
     await send_message(chatid, text, parse_mode='Markdown', 
-                        reply_markup=m(userid, 'last_menu', lang, True))
+                        reply_markup= await m(userid, 'last_menu', lang, True))
 
 @bot.message_handler(pass_bot=True, text='commands_name.referal.enter_code', is_authorized=True)
 async def enter_code(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    ref = referals.find_one({'userid': userid, 'type': 'sub'})
+    ref = await referals.find_one({'userid': userid, 'type': 'sub'})
     if not ref:
         await send_message(chatid, t('referals.enter_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
         await ChooseStringState(check_code, userid, chatid, lang)

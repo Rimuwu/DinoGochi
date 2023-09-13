@@ -172,30 +172,31 @@ def quest_ui(quest: dict, lang: str, quest_id: str=''):
     markup = list_to_inline([buttons], 2)
     return text, markup
 
-def save_quest(quest: dict, owner_id: int): 
+async def save_quest(quest: dict, owner_id: int): 
     """ Сохраняет квест в базе
     """
-    def generation_code():
+    async def generation_code():
         code = random_code(10)
-        if quests_data.find_one({'alt_id': code}):
+        if await quests_data.find_one({'alt_id': code}):
             code = generation_code()
         return code
 
-    quest['alt_id'] = generation_code()
+    quest['alt_id'] = await generation_code()
     quest['owner_id'] = owner_id
 
-    quests_data.insert_one(quest)
+    await quests_data.insert_one(quest)
     return quest['alt_id']
 
-def quest_resampling(questid: ObjectId):
+async def quest_resampling(questid: ObjectId):
     """ Убирает владельца квеста, тем самым предоставляя квест для распределния на новых участников
     """
-    quests_data.update_one({'_id': questid}, {'$set': {'owner_id': 0}})
+    await quests_data.update_one({'_id': questid}, {'$set': {'owner_id': 0}})
 
-def quest_process(userid: int, quest_type: str, unit: int = 0, items: list = []):
+async def quest_process(userid: int, quest_type: str, unit: int = 0, items: list = []):
     """ Заносит данные в квест
     """
-    quests = quests_data.find({"owner_id": userid, 'type': quest_type})
+    quests = await quests_data.find({"owner_id": userid, 
+                                     'type': quest_type}).to_list(None) #type: ignore
 
     for quest in quests:
         if quest_type in ['journey', 'game']:
@@ -205,7 +206,7 @@ def quest_process(userid: int, quest_type: str, unit: int = 0, items: list = [])
             else: plus = unit
 
             if plus:
-                quests_data.update_one({'_id': quest['_id']}, {"$inc": {'data.minutes.1': plus}})
+                await quests_data.update_one({'_id': quest['_id']}, {"$inc": {'data.minutes.1': plus}})
 
         elif quest_type in ['fishing', 'collecting', 'hunt']:
             count = quest['data']['count']
@@ -213,17 +214,17 @@ def quest_process(userid: int, quest_type: str, unit: int = 0, items: list = [])
                 plus = count[0] - count[1]
             else: plus = unit
             if plus:
-                quests_data.update_one({'_id': quest['_id']}, 
+                await quests_data.update_one({'_id': quest['_id']}, 
                                        {"$inc": {'data.count.1': plus+1}})
 
         elif quest_type == 'feed':
             for i in items:
                 if i in quest['data']['items']:
                     if quest['data']['items'][i][1] < quest['data']['items'][i][0]:
-                        quests_data.update_one({'_id': quest['_id']}, 
+                        await quests_data.update_one({'_id': quest['_id']}, 
                                                {"$inc": {f'data.items.{i}.1': 1}})
 
-def check_quest(quest: dict):
+async def check_quest(quest: dict):
     """ Проверяет квест на выполнение, если тип квеста "get" то в случае выполнения удалит предметы
     """
     if quest['type'] == 'get': 
@@ -237,7 +238,7 @@ def check_quest(quest: dict):
 
         # Проверяем на наличие
         for key, value in count_items.items():
-            result = items.find({"items_data.item_id": key, "owner_id": quest['owner_id']})
+            result = await items.find({"items_data.item_id": key, "owner_id": quest['owner_id']}).to_list(None) #type: ignore
 
             if not result: return False
             else:
@@ -247,7 +248,7 @@ def check_quest(quest: dict):
 
         # Удаляем предметы
         for key, value in count_items.items():
-            RemoveItemFromUser(quest['owner_id'], key, value)
+            await RemoveItemFromUser(quest['owner_id'], key, value)
         return True
     
     elif quest['type'] in ['journey', 'game']:

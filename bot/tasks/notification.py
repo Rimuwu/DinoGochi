@@ -6,13 +6,14 @@ from bot.modules.dinosaur import Dino
 dinosaurs = mongo_client.dinosaur.dinosaurs
 
 async def dino_notifications():
-    dinos = dinosaurs.find({})
+    dinos = await dinosaurs.find({}).to_list(None) # type: ignore
     for dino in dinos:
         dino_id = dino['_id']
         for stat in dino['stats']:
 
             if dino['stats']['heal'] <= 0:
-                Dino(dino['_id']).dead()
+                dino_cl = await Dino().create(dino['_id'])
+                await dino_cl.dead()
                 continue
 
             unit = dino['stats'][stat]

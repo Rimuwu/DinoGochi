@@ -19,16 +19,16 @@ from bot.modules.over_functions import send_message
 from bot.modules.tracking import add_track
 
 stickers = bot.get_sticker_set('Stickers_by_DinoGochi_bot')
-referals = mongo_client.user.referrals
+referals = mongo_client.user.referals
 
 @bot.message_handler(pass_bot=True, commands=['start'], is_authorized=True, private=True)
 async def start_command_auth(message: types.Message):
     stickers = await bot.get_sticker_set('Stickers_by_DinoGochi_bot')
     sticker = choice(list(stickers.stickers)).file_id
 
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     await bot.send_sticker(message.chat.id, sticker, 
-                           reply_markup=m(message.from_user.id, language_code=lang))
+                           reply_markup=await m(message.from_user.id, language_code=lang))
 
     await cancel(message, '')
 
@@ -38,7 +38,7 @@ async def start_command_auth(message: types.Message):
         await check_code(referal, 
                          {'userid': message.from_user.id,
                           'chatid': message.chat.id,
-                          'lang': get_lang(message.from_user.id)})
+                          'lang': await get_lang(message.from_user.id)})
 
 @bot.message_handler(text='commands_name.start_game', is_authorized=False)
 async def start_game(message: types.Message, code: str = '', code_type: str = ''):
@@ -76,7 +76,7 @@ async def start_game_message(message: types.Message):
 
     if len(content) > 1: 
         referal = str(content[1])
-        if referals.find_one({'code': referal}): add_referal = True
+        if await referals.find_one({'code': referal}): add_referal = True
 
     if not add_referal:
         buttons_list = [get_data('commands_name.start_game', locale=langue_code)]
@@ -93,7 +93,7 @@ async def start_game_message(message: types.Message):
 
         await start_game(message, referal=referal) # type: ignore
 
-    add_track(content[1])
+    await add_track(content[1])
 
 
 @bot.callback_query_handler(pass_bot=True, is_authorized=False, 
@@ -110,17 +110,17 @@ async def egg_answer_callback(callback: types.CallbackQuery):
 
     await bot.edit_message_caption(edited_text, callback.message.chat.id, callback.message.message_id)
     await send_message(callback.message.chat.id, send_text, parse_mode='Markdown', 
-                           reply_markup=m(callback.from_user.id, language_code=lang))
+                           reply_markup= await m(callback.from_user.id, language_code=lang))
 
     # Создание юзера и добавляем динозавра в инкубацию
-    insert_user(callback.from_user.id, lang)
-    incubation_egg(egg_id, callback.from_user.id, quality=GAME_SETTINGS['first_egg_rarity'])
+    await insert_user(callback.from_user.id, lang)
+    await incubation_egg(egg_id, callback.from_user.id, quality=GAME_SETTINGS['first_egg_rarity'])
 
     if len(callback.data.split()) > 2:
         if callback.data.split()[2] == 'referal':
             referal = callback.data.split()[3]
-            connect_referal(referal, callback.from_user.id)
+            await connect_referal(referal, callback.from_user.id)
 
         if callback.data.split()[2] == 'promo':
             code  = callback.data.split()[3]
-            use_promo(code, userid, lang)
+            await use_promo(code, userid, lang)

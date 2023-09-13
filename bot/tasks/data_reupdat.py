@@ -21,7 +21,7 @@ async def statistic_check():
     users_len = users.count_documents({})
     dinosaurs_len = dinosaurs.count_documents({})
 
-    dinosaurs.count_documents({})
+    await dinosaurs.count_documents({})
 
     data = {
         'date': str(datetime.now().date()),
@@ -29,14 +29,14 @@ async def statistic_check():
         'users': users_len,
         'items': items_len
     }
-    if res := statistic.find_one({'date': data['date']}):
-        statistic.delete_one({'_id': res['_id']})
+    if res := await statistic.find_one({'date': data['date']}):
+        await statistic.delete_one({'_id': res['_id']})
 
-    statistic.insert_one(data)
+    await statistic.insert_one(data)
 
 async def rayting_check():
-    loc_users = list(users.find({}, 
-                        {'userid': 1, 'lvl': 1, 'xp': 1, 'coins': 1}))
+    loc_users = list(await users.find({}, 
+                        {'userid': 1, 'lvl': 1, 'xp': 1, 'coins': 1}).to_list(None))
 
     coins_list = list(sorted(loc_users, key=lambda x: x['coins'], reverse=True))
     lvl_list = list(sorted(loc_users, key=lambda x: (x['lvl'] - 1) * max_lvl_xp(x['lvl']) + x['xp'], reverse=True))
@@ -46,34 +46,34 @@ async def rayting_check():
     for i in coins_list: coins_ids.append(i['userid'])
     for i in lvl_list: lvl_ids.append(i['userid'])
 
-    management.update_one({'_id': 'rayting_coins'}, 
+    await management.update_one({'_id': 'rayting_coins'}, 
                           {'$set': {'data': coins_list, 'ids': coins_ids}})
-    management.update_one({'_id': 'rayting_lvl'}, 
+    await management.update_one({'_id': 'rayting_lvl'}, 
                           {'$set': {'data': lvl_list, 'ids': lvl_ids}})
-    management.update_one({'_id': 'rayt_update'}, 
+    await management.update_one({'_id': 'rayt_update'}, 
                           {'$set': {'time': int(time())}})
 
 async def kindergarten_update():
-    data = list(kindergarten.find({'type': 'save',
-                                   'end': {'$lte': int(time())}})
+    data = list(await kindergarten.find({'type': 'save',
+                                   'end': {'$lte': int(time())}}).to_list(None)
                 ).copy()
 
-    for i in data: kindergarten.delete_one({'_id': i['_id']})
+    for i in data: await kindergarten.delete_one({'_id': i['_id']})
 
 async def dino_kindergarten():
-    data = list(kindergarten.find({'type': 'dino',
-                                   'end': {'$lte': int(time())}})
+    data = list(await kindergarten.find({'type': 'dino',
+                                   'end': {'$lte': int(time())}}).to_list(None)
                 ).copy()
 
     for i in data: 
-        dinosaurs.update_one({'_id': i['dinoid']}, {'$set': {'status': 'pass'}})
-        kindergarten.delete_one({'_id': i['_id']})
+        await dinosaurs.update_one({'_id': i['dinoid']}, {'$set': {'status': 'pass'}})
+        await kindergarten.delete_one({'_id': i['_id']})
 
-        dino = dinosaurs.find_one({'_id': i['dinoid']})
+        dino = await dinosaurs.find_one({'_id': i['dinoid']})
         if dino:
-            owner = get_owner(i['dinoid'])
+            owner = await get_owner(i['dinoid'])
             if owner:
-                lang = get_dino_language(i['dinoid'])
+                lang = await get_dino_language(i['dinoid'])
                 await user_notification(owner['owner_id'], 'kindergarten', lang, 
                                 dino_name=dino['name'], 
                                 dino_alt_id_markup=dino['alt_id'])

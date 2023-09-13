@@ -264,12 +264,12 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
     if 'chatid' not in transmitted_data: transmitted_data['chatid'] = chatid
     if 'lang' not in transmitted_data: transmitted_data['lang'] = lang
 
-    user_settings = users.find_one({'userid': userid}, {'settings': 1})
+    user_settings = await users.find_one({'userid': userid}, {'settings': 1})
     if user_settings: inv_view = user_settings['settings']['inv_view']
     else: inv_view = [2, 3]
 
     if not inventory:
-        inventory, count = get_inventory(userid, exclude_ids)
+        inventory, count = await get_inventory(userid, exclude_ids)
     pages, row, items_data = inventory_pages(inventory, lang, inv_view, type_filter, item_filter)
 
     if not pages:

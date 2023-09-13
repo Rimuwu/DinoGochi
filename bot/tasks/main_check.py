@@ -39,15 +39,16 @@ async def main_checks():
     """Главная проверка динозавров
     """
 
-    dinos = dinosaurs.find({})
+    dinos = await dinosaurs.find({}).to_list(None) # type: ignore
     for dino in dinos:
         if dino['status'] == 'inactive': continue
         is_sleeping = dino['status'] == 'sleep'
 
         if dino['stats']['heal'] <= 0:
-            Dino(dino['_id']).dead()
+            dino = await Dino().create(dino['_id'])
+            await dino.dead()
             continue
-        
+
         if dino['status'] == 'kindergarten':
             if random.uniform(0, 1) <= P_EAT_SLEEP:
                 await mutate_dino_stat(dino, 'eat', randint(*EAT_CHANGE))
@@ -93,52 +94,52 @@ async def main_checks():
         # На настроение будет наложен эффект -1 пока настроение не поднимется до 35
         if dino['stats']['game'] <= 15:
             if random.uniform(0, 1) <= P_MOOD:
-                mood_while_if(dino['_id'], 'little_game', 'game', -1, 35, -1)
-        
+                await mood_while_if(dino['_id'], 'little_game', 'game', -1, 35, -1)
+
         # Если игры больше 84, то накладывается положительный эффект +1
         # Действует пока настроение не упадёт до 45
         elif dino['stats']['game'] >= 85:
             if random.uniform(0, 1) <= P_MOOD:
-                mood_while_if(dino['_id'], 'multi_games', 'game', 45, 101, 1)
+                await mood_while_if(dino['_id'], 'multi_games', 'game', 45, 101, 1)
 
 
         # Если еды меньше чем LOW_EAT, то накладывает эффект -1 к настроению
         if dino['stats']['eat'] <= LOW_EAT and dino['stats']['eat'] >= 5:
             if random.uniform(0, 1) <= P_MOOD:
-                mood_while_if(dino['_id'], 'little_eat', 'eat', 5, 50, -1)
+                await mood_while_if(dino['_id'], 'little_eat', 'eat', 5, 50, -1)
 
         # Если еды меньше чем 5, то накладывает эффект -2 к настроению
         elif dino['stats']['eat'] < 5:
             if random.uniform(0, 1) <= P_MOOD:
-                mood_while_if(dino['_id'], 'little_eat', 'eat', -1, 20, -2)
+                await mood_while_if(dino['_id'], 'little_eat', 'eat', -1, 20, -2)
 
         # Если еды у динозавра больше 84 то получает бонус к настроению +1 пока настроение не будет меньше 60-ти
         elif dino['stats']['eat'] >= 85:
             if random.uniform(0, 1) <= P_MOOD:
-                mood_while_if(dino['_id'], 'multi_eat', 'eat', 60, 101, 1)
+                await mood_while_if(dino['_id'], 'multi_eat', 'eat', 60, 101, 1)
 
 
         # Если энергии меньше 21-ти, понижает настроение на -1
         if dino['stats']['energy'] <= 20:
             if random.uniform(0, 1) <= P_MOOD:
-                mood_while_if(dino['_id'], 'little_energy', 
+                await mood_while_if(dino['_id'], 'little_energy', 
                               'energy', -1, 40, -1)
 
         # Если у динозавра много энергии то настроение +1
         elif dino['stats']['energy'] >= 85:
             if random.uniform(0, 1) <= P_MOOD:
-                mood_while_if(dino['_id'], 'multi_energy', 
+                await mood_while_if(dino['_id'], 'multi_energy', 
                               'energy', 60, 101, 1)
 
 
         # Если здоровье меньше 21 то настроение -1
         if dino['stats']['heal'] <= 20:
             if random.uniform(0, 1) <= P_MOOD:
-                mood_while_if(dino['_id'], 'little_heal', 'heal', -1, 40, -1)
+                await mood_while_if(dino['_id'], 'little_heal', 'heal', -1, 40, -1)
 
         elif dino['stats']['heal'] >= 85:
             if random.uniform(0, 1) <= P_MOOD:
-                mood_while_if(dino['_id'], 'multi_heal', 'heal', 60, 101, 1)
+                await mood_while_if(dino['_id'], 'multi_heal', 'heal', 60, 101, 1)
 
         if dino['status'] != 'kindergarten':
             if dino['stats']['mood'] >= 95:

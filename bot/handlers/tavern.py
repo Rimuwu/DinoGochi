@@ -28,12 +28,12 @@ events = mongo_client.other.events
 
 @bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.events', is_authorized=True)
 async def events_c(message: Message):
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     text = t('events.info', lang)
 
-    res = list(events.find({}))
+    res = list(await events.find({}).to_list(None))
     a = 0
     for event in res:
         a += 1
@@ -95,7 +95,7 @@ async def bonus_message(user, message, lang):
 
 @bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.daily_award', is_authorized=True)
 async def bonus(message: Message):
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     user = message.from_user
     await bonus_message(user, message, lang)
 
@@ -103,7 +103,7 @@ async def bonus(message: Message):
     call.data == 'daily_message', is_authorized=True)
 async def daily_message(callback: CallbackQuery):
     user = callback.from_user
-    lang = get_lang(callback.from_user.id)
+    lang = await get_lang(callback.from_user.id)
     message = callback.message
     await bonus_message(user, message, lang)
 
@@ -111,9 +111,9 @@ async def daily_message(callback: CallbackQuery):
 async def daily_award(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
-    lang = get_lang(callback.from_user.id)
+    lang = await get_lang(callback.from_user.id)
 
-    if sec := daily_award_con(userid):
+    if sec := await daily_award_con(userid):
         award_data = GS['daily_award']
         res = await user_in_chat(userid, -1001673242031)
 
@@ -134,15 +134,15 @@ async def daily_award(callback: CallbackQuery):
                  items=str_items, coins=coins)
         await send_message(chatid, text, parse_mode='Markdown')
 
-        for i in items: AddItemToUser(userid, i)
-        take_coins(userid, coins, True)
+        for i in items: await AddItemToUser(userid, i)
+        await take_coins(userid, coins, True)
     else:
         text = t('daily_award.in_base', lang)
         await send_message(chatid, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.edit', is_authorized=True)
 async def edit(message: Message):
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     text = t('edit_dino.info', lang)
@@ -167,8 +167,8 @@ async def edit_appearance(return_data, transmitted_data):
             status.append(st)
 
         if all(status):
-            take_coins(userid, -GS['change_appearance']['coins'], True)
-            for i in GS['change_appearance']['items']: RemoveItemFromUser(userid, i)
+            await take_coins(userid, -GS['change_appearance']['coins'], True)
+            for i in GS['change_appearance']['items']: await RemoveItemFromUser(userid, i)
 
             n_id = dino.data_id
             while n_id == dino.data_id: n_id = random_dino(dino.quality)
@@ -178,14 +178,14 @@ async def edit_appearance(return_data, transmitted_data):
             await send_message(chatid, text, parse_mode='Markdown', 
                                    reply_markup=inline_menu('dino_profile', lang, dino_alt_id_markup=dino.alt_id))
             await send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
-                                   reply_markup=m(userid, 'last_menu', lang))
+                                   reply_markup= await m(userid, 'last_menu', lang))
             return
 
         else: text = t('edit_dino.no_items', lang)
     else: text = t('edit_dino.no_coins', lang)
 
     await send_message(chatid, text, parse_mode='Markdown', 
-                           reply_markup=m(userid, 'last_menu', lang))
+                           reply_markup= await m(userid, 'last_menu', lang))
 
 async def end_edit(code, transmitted_data):
     chatid = transmitted_data['chatid']
@@ -208,8 +208,8 @@ async def end_edit(code, transmitted_data):
             status.append(st)
 
         if all(status):
-            take_coins(userid, -coins, True)
-            for i in items: RemoveItemFromUser(userid, i)
+            await take_coins(userid, -coins, True)
+            for i in items: await RemoveItemFromUser(userid, i)
 
             if code == 'random': quality = random_quality()
             else: quality = code
@@ -227,14 +227,14 @@ async def end_edit(code, transmitted_data):
                                    reply_markup=inline_menu('dino_profile', lang, dino_alt_id_markup=dino.alt_id))
 
             await send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
-                                   reply_markup=m(userid, 'last_menu', lang))
+                                   reply_markup= await m(userid, 'last_menu', lang))
             return
 
         else: text = t('edit_dino.no_items', lang)
     else: text = t('edit_dino.no_coins', lang)
 
     await send_message(chatid, text, parse_mode='Markdown', 
-                           reply_markup=m(userid, 'last_menu', lang))
+                           reply_markup= await m(userid, 'last_menu', lang))
 
 
 async def dino_now(return_data, transmitted_data):
@@ -263,7 +263,7 @@ async def dino_now(return_data, transmitted_data):
 async def transformation(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
-    lang = get_lang(callback.from_user.id)
+    lang = await get_lang(callback.from_user.id)
     data = callback.data.split()
 
     steps = [

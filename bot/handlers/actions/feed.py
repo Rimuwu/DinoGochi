@@ -12,7 +12,7 @@ from bot.modules.markup import feed_count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User
-from bot.modules.localization import get_lang
+from bot.modules.localization import  get_lang
 from bot.modules.over_functions import send_message
 
 items = mongo_client.items.items
@@ -28,7 +28,7 @@ async def adapter_function(return_dict, transmitted_data):
     send_status, return_text = await use_item(userid, chatid, lang, item, count, dino)
     
     if send_status:
-        await send_message(chatid, return_text, parse_mode='Markdown', reply_markup=m(userid, 'last_menu', lang))
+        await send_message(chatid, return_text, parse_mode='Markdown', reply_markup= await m(userid, 'last_menu', lang))
 
 async def inventory_adapter(item, transmitted_data):
     userid = transmitted_data['userid']
@@ -42,7 +42,7 @@ async def inventory_adapter(item, transmitted_data):
     item_data = get_item_data(item['item_id'])
     item_name = get_name(item['item_id'], lang)
 
-    base_item = items.find_one({'owner_id': userid, 'items_data': item})
+    base_item = await items.find_one({'owner_id': userid, 'items_data': item})
 
     if base_item:
         if 'abilities' in item.keys() and 'uses' in item['abilities']:
@@ -52,8 +52,9 @@ async def inventory_adapter(item, transmitted_data):
         if max_count > limiter: max_count = limiter
 
         percent = 1
-        if dino.age.days >= 10:
-            percent, repeat = dino.memory_percent('games', item['item_id'], False)
+        age = await dino.age
+        if age.days >= 10:
+            percent, repeat = await dino.memory_percent('games', item['item_id'], False)
 
         steps = [
             {"type": 'int', "name": 'count', "data": {
@@ -70,9 +71,9 @@ async def inventory_adapter(item, transmitted_data):
 @bot.message_handler(pass_bot=True, text='commands_name.actions.feed')
 async def feed(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
-    user = User(userid)
+    user = await User().create(userid)
     
     transmitted_data = {
         'chatid': chatid,

@@ -24,14 +24,14 @@ async def notification(result: bool, transmitted_data: dict):
 
     text = t(f'not_set.{result}', lang)
     await send_message(chatid, text, 
-                    reply_markup=m(userid, 'last_menu', lang))
-    users.update_one({'userid': userid}, {"$set": {'settings.notifications': result}})
+                    reply_markup= await m(userid, 'last_menu', lang))
+    await users.update_one({'userid': userid}, {"$set": {'settings.notifications': result}})
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings.notification', 
                      is_authorized=True)
 async def notification_set(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     prefix = 'buttons_name.'
@@ -54,15 +54,15 @@ async def dino_profile(result: bool, transmitted_data: dict):
     data = get_data('profile_view.ans', lang)
     text = t(f'profile_view.result', lang, res = data[result-1])
     await send_message(chatid, text, 
-                    reply_markup=m(userid, 
+                    reply_markup= await m(userid, 
                     'last_menu', lang))
-    users.update_one({'userid': userid}, {"$set": {'settings.profile_view': result}})
+    await users.update_one({'userid': userid}, {"$set": {'settings.profile_view': result}})
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings.dino_profile', 
                      is_authorized=True)
 async def dino_profile_set(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     settings_data, time_list = {}, []
@@ -90,14 +90,14 @@ async def inventory(result: list, transmitted_data: dict):
              gr = result[0], vr = result[1]
             )
     await send_message(chatid, text, 
-                    reply_markup=m(userid, 'last_menu', lang))
-    users.update_one({'userid': userid}, {"$set": {'settings.inv_view': result}})
+                    reply_markup= await m(userid, 'last_menu', lang))
+    await users.update_one({'userid': userid}, {"$set": {'settings.inv_view': result}})
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings.inventory', 
                      is_authorized=True)
 async def inventory_set(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     settings_data, time_list = {}, []
@@ -113,7 +113,6 @@ async def inventory_set(message: Message):
     await ChooseOptionState(inventory, userid, chatid, lang, settings_data)
     await send_message(userid, t('inv_set_pages.info', lang), 
                            reply_markup=keyboard)
-    
 
 async def rename_dino_post_state(content: str, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -127,7 +126,7 @@ async def rename_dino_post_state(content: str, transmitted_data: dict):
     text = t('rename_dino.rename', lang, 
              last_name=last_name, dino_name=content)
     await send_message(chatid, text, 
-                    reply_markup=m(userid, 'last_menu', lang))
+                    reply_markup= await m(userid, 'last_menu', lang))
 
 
 async def transition(dino: Dino, transmitted_data: dict):
@@ -151,7 +150,7 @@ async def transition(dino: Dino, transmitted_data: dict):
                      is_authorized=True)
 async def rename_dino(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
 
     await ChooseDinoState(transition, userid, message.chat.id, lang, False)
 
@@ -163,19 +162,19 @@ async def custom_profile_adapter(content: str, transmitted_data: dict):
 
     text = t('custom_profile.ok', lang)
     await send_message(chatid, text, 
-                           reply_markup=m(userid, 'last_menu', lang))
+                           reply_markup= await m(userid, 'last_menu', lang))
 
-    users.update_one({'userid': userid}, 
+    await users.update_one({'userid': userid}, 
                      {'$set': {'settings.custom_url': content}})
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings2.custom_profile', 
                      is_authorized=True)
 async def custom_profile(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    if premium:
+    if await premium(userid):
         markup = list_to_keyboard([t('buttons_name.cancel', lang)])
         text = t('custom_profile.manual', lang)
         await send_message(userid, text, reply_markup=markup)
@@ -187,7 +186,7 @@ async def custom_profile(message: Message):
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('rename_dino'), is_authorized=True, private=True)
 async def rename_button(callback: CallbackQuery):
     dino_data = callback.data.split()[1]
-    lang = get_lang(callback.from_user.id)
+    lang = await get_lang(callback.from_user.id)
     userid = callback.from_user.id
     chatid = callback.message.chat.id
 
@@ -196,7 +195,7 @@ async def rename_button(callback: CallbackQuery):
         'chatid': chatid,
         'lang': lang
     }
-    dino = Dino(dino_data) #type: ignore
+    dino = await Dino().create(dino_data)
     await transition(dino, trans_data)
 
 async def adapter_delete(return_data, transmitted_data):
@@ -207,11 +206,11 @@ async def adapter_delete(return_data, transmitted_data):
     if return_data['code'] != transmitted_data['code']:
         await send_message(chatid, t('delete_me.incorrect_code', lang),     
                                parse_mode='Markdown', 
-                               reply_markup=m(userid, 'last_menu', lang))
+                               reply_markup= await m(userid, 'last_menu', lang))
 
     else:
-        user = User(userid)
-        user.full_delete()
+        user = await User().create(userid)
+        await user.full_delete()
         r = list_to_keyboard([t('commands_name.start_game', lang)])
 
         await send_message(chatid, t('delete_me.delete', lang),     
@@ -223,7 +222,7 @@ async def adapter_delete(return_data, transmitted_data):
                      is_authorized=True)
 async def delete_me(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
     
     code = str(randint(100, 1000))
@@ -280,14 +279,14 @@ async def my_name_end(content: str, transmitted_data: dict):
     await send_message(chatid, t('my_name.end', lang,
                                      owner_name=name),
                                parse_mode='Markdown', 
-                               reply_markup=m(userid, 'last_menu', lang))
-    
-    users.update_one({'userid': userid}, {'$set': {'settings.my_name': name}})
-    
+                               reply_markup= await m(userid, 'last_menu', lang))
+
+    await users.update_one({'userid': userid}, {'$set': {'settings.my_name': name}})
+
 @bot.message_handler(pass_bot=True, text='commands_name.settings2.my_name', is_authorized=True)
 async def my_name(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
     
     await send_message(chatid, t('my_name.info', lang),
@@ -300,15 +299,15 @@ async def lang_set(new_lang: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
 
-    langs.update_one({'userid': userid}, {'$set': {'lang': new_lang}})
+    await langs.update_one({'userid': userid}, {'$set': {'lang': new_lang}})
 
     await send_message(chatid, t('new_lang', new_lang),
-                               reply_markup=m(userid, 'last_menu', new_lang))
+                               reply_markup= await m(userid, 'last_menu', new_lang))
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings2.lang', is_authorized=True)
 async def lang(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     lang_data = get_all_locales('language_name')

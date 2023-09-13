@@ -28,10 +28,7 @@ from bot.modules.over_functions import send_message
 
 
 users = mongo_client.user.users
-management = mongo_client.other.management
-tavern = mongo_client.tavern.tavern
 sellers = mongo_client.market.sellers
-items = mongo_client.items.items
 products = mongo_client.market.products
 puhs = mongo_client.market.puhs
 
@@ -43,14 +40,14 @@ async def create_adapter(return_data, transmitted_data):
     name = return_data['name']
     description = return_data['description']
     description = escape_markdown(description)
-    create_seller(userid, name, description)
+    await create_seller(userid, name, description)
 
     await send_message(chatid, t('market_create.create', lang), 
-                           reply_markup=m(userid, 'seller_menu', lang), parse_mode='Markdown')
+                           reply_markup= await m(userid, 'seller_menu', lang), parse_mode='Markdown')
 
 async def custom_name(message: Message, transmitted_data):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
 
     max_len = 50
     min_len = 3
@@ -67,7 +64,7 @@ async def custom_name(message: Message, transmitted_data):
         await send_message(message.chat.id, 
                 t('states.ChooseString.error_min_len', lang,
                 number = content_len, min = min_len))
-    elif sellers.find_one({'name': name}):
+    elif await sellers.find_one({'name': name}):
         await send_message(message.chat.id, 
                 t('market_create.name_error', lang))
     else: 
@@ -77,15 +74,15 @@ async def custom_name(message: Message, transmitted_data):
 @bot.message_handler(pass_bot=True, text='commands_name.seller_profile.create_market', is_authorized=True)
 async def create_market(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    res = sellers.find_one({'owner_id': userid})
-    user = users.find_one({'userid': userid})
+    res = await sellers.find_one({'owner_id': userid})
+    user = await users.find_one({'userid': userid})
 
     if res or not user:
         await send_message(message.chat.id, t('menu_text.seller', lang), 
-                           reply_markup=m(userid, 'market_menu', lang))
+                           reply_markup= await m(userid, 'market_menu', lang))
     elif user['lvl'] < 2:
         await send_message(message.chat.id, t('market_create.lvl', lang))
     else:
@@ -115,18 +112,18 @@ async def create_market(message: Message):
 @bot.message_handler(pass_bot=True, text='commands_name.seller_profile.my_market', is_authorized=True)
 async def my_market(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    res = sellers.find_one({'owner_id': userid})
+    res = await sellers.find_one({'owner_id': userid})
     if res:
-        text, markup, image = seller_ui(userid, lang, True)
+        text, markup, image = await seller_ui(userid, lang, True)
         await bot.send_photo(chatid, image, text, parse_mode='Markdown', reply_markup=markup)
 
 @bot.message_handler(pass_bot=True, text='commands_name.seller_profile.add_product', is_authorized=True)
 async def add_product_com(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     options = {
@@ -147,10 +144,10 @@ async def add_product_com(message: Message):
 @bot.message_handler(pass_bot=True, text='commands_name.seller_profile.my_products', is_authorized=True)
 async def my_products(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    user_prd = list(products.find({'owner_id': userid}))
+    user_prd = list(await products.find({'owner_id': userid}).to_list(None))
     rand_p = {}
 
     if user_prd:
@@ -172,11 +169,11 @@ async def product_info(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
     userid = call.from_user.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
 
     call_type = call_data[1]
     alt_id = call_data[2]
-    product = products.find_one({'alt_id': alt_id})
+    product = await products.find_one({'alt_id': alt_id})
     if product:
         if call_type == 'delete':
             if product['owner_id'] == userid:
@@ -212,7 +209,7 @@ async def product_info(call: CallbackQuery):
                                    user_name(call.from_user), call.message.id)
 
             elif call_type == 'info':
-                text, markup = product_ui(lang, product['_id'], 
+                text, markup = await product_ui(lang, product['_id'], 
                                           product['owner_id'] == userid)
                 await send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
 
@@ -225,7 +222,7 @@ async def seller(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
     userid = call.from_user.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
 
     call_type = call_data[1]
     owner_id = int(call_data[2])
@@ -238,7 +235,7 @@ async def seller(call: CallbackQuery):
     elif call_type == 'edit_name':
         await pr_edit_name(userid, chatid, lang, call.message.id)
     elif call_type == 'edit_image':
-        if premium(userid):
+        if await premium(userid):
             await pr_edit_image(userid, chatid, lang, call.message.id)
         else:
             await send_message(chatid, t('no_premium', lang))
@@ -247,7 +244,7 @@ async def seller(call: CallbackQuery):
     elif call_type == 'info':
         my_status = owner_id == userid
 
-        seller = sellers.find_one({'owner_id': owner_id})
+        seller = await sellers.find_one({'owner_id': owner_id})
         if seller:
             try:
                 chat_user = await bot.get_chat_member(seller['owner_id'], 
@@ -255,11 +252,11 @@ async def seller(call: CallbackQuery):
                 name = user_name(chat_user.user)
             except: name = '-'
 
-            text, markup, image = seller_ui(owner_id, lang, my_status, name)
+            text, markup, image = await seller_ui(owner_id, lang, my_status, name)
             await bot.send_photo(chatid, image, text, parse_mode='Markdown', reply_markup=markup)
 
     elif call_type == 'all':
-        user_prd = list(products.find({'owner_id': owner_id}))
+        user_prd = list(await products.find({'owner_id': owner_id}).to_list(None))
 
         rand_p = {}
         for product in user_prd:
@@ -278,10 +275,10 @@ async def seller(call: CallbackQuery):
 @bot.message_handler(pass_bot=True, text='commands_name.market.random', is_authorized=True)
 async def random_products(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    products_all = list(products.find({"owner_id": {"$ne": userid}})).copy()
+    products_all = list(await products.find({"owner_id": {"$ne": userid}}).to_list(None)).copy()
     rand_p = {}
 
     if products_all:
@@ -290,7 +287,7 @@ async def random_products(message: Message):
                 prd = choice(products_all)
                 products_all.remove(prd)
 
-                product = products.find_one({'_id': prd['_id']})
+                product = await products.find_one({'_id': prd['_id']})
                 if product:
                     rand_p[
                         preview_product(product['items'], product['price'], 
@@ -307,7 +304,7 @@ async def random_products(message: Message):
 @bot.message_handler(pass_bot=True, text='commands_name.market.find', is_authorized=True)
 async def find_products(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     await find_prepare(userid, chatid, lang)
@@ -317,17 +314,17 @@ async def push(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
     userid = call.from_user.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
 
     channel_id = int(call_data[1])
 
-    res = puhs.find_one({'owner_id': userid})
+    res = await puhs.find_one({'owner_id': userid})
     if res:
-        puhs.update_one({'owner_id': userid}, 
+        await puhs.update_one({'owner_id': userid}, 
                         {'channel_id': channel_id, 'lang': lang})
         text = t('push.update', lang)
     else: 
-        create_push(userid, channel_id, lang)
+        await create_push(userid, channel_id, lang)
         text = t('push.new', lang)
 
     await send_message(userid, text)

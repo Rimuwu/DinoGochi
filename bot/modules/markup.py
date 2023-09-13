@@ -10,13 +10,10 @@ from bot.modules.referals import get_user_code, get_user_sub
 from bot.modules.user import User, last_dino, premium
 
 users = mongo_client.user.users
-dinosaurs = mongo_client.dinosaur.dinosaurs
-management = mongo_client.other.management
-referals = mongo_client.user.referals
 tavern = mongo_client.tavern.tavern
 sellers = mongo_client.market.sellers
 
-def back_menu(userid) -> str:
+async def back_menu(userid) -> str:
     """Возвращает предыдущее меню
     """
     markup_key = 'main_menu'
@@ -27,7 +24,7 @@ def back_menu(userid) -> str:
                   'main_menu', 'friends_menu', 'referal_menu',
                   'main_menu', 'dino_tavern_menu', 'dungeon_menu'
                  ] # схема всех путей меню клавиатур
-    user_dict = users.find_one(
+    user_dict = await users.find_one(
         {'userid': userid}, {'last_markup': 1}
     )
     if user_dict:
@@ -47,7 +44,7 @@ def get_buttons(dino: Dino) -> list:
     elif dino.status == 'game': data[3] = 'stop_game'
     return data
 
-def markups_menu(userid: int, markup_key: str = 'main_menu', 
+async def markups_menu(userid: int, markup_key: str = 'main_menu', 
                  language_code: str = 'en', last_markup: bool = False):
     """Главная функция создания меню для клавиатур
        >>> menus:
@@ -67,14 +64,14 @@ def markups_menu(userid: int, markup_key: str = 'main_menu',
     kwargs = {}
     old_last_menu = None
     
-    user_dict = users.find_one(
+    user_dict = await users.find_one(
            {'userid': userid}, {'last_markup': 1}
         )
 
     if markup_key == 'last_menu':
        """Возращает к последнему меню
        """
-       user_dict = users.find_one(
+       user_dict = await users.find_one(
            {'userid': userid}, {'last_markup': 1}
         )
        if user_dict:
@@ -82,16 +79,16 @@ def markups_menu(userid: int, markup_key: str = 'main_menu',
 
     else: #Сохранение последнего markup
         if last_markup:
-            user_dict = users.find_one(
+            user_dict = await users.find_one(
                 {'userid': userid}, {'last_markup': 1}
                 )
             if user_dict:
                 old_last_menu = user_dict.get('last_markup')
 
-        users.update_one({"userid": userid}, {'$set': {'last_markup': markup_key}})
+        await users.update_one({"userid": userid}, {'$set': {'last_markup': markup_key}})
 
     if user_dict and user_dict['last_markup'] == "dino_tavern_menu":
-        tavern.delete_one({'userid': userid})
+        await tavern.delete_one({'userid': userid})
 
     if markup_key == 'main_menu':
         # Главное меню
@@ -118,7 +115,7 @@ def markups_menu(userid: int, markup_key: str = 'main_menu',
             ['my_name', 'lang'],
         ]
         
-        if premium(userid): buttons[0].append('custom_profile')
+        if await premium(userid): buttons[0].append('custom_profile')
 
     elif markup_key == 'profile_menu':
         # Меню профиля
@@ -161,7 +158,7 @@ def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.seller_profile.'
         add_back_button = True
         
-        if sellers.find_one({'owner_id': userid}):
+        if await sellers.find_one({'owner_id': userid}):
             buttons = [
                 ['add_product', 'my_products'],
                 ['my_market'],
@@ -185,8 +182,8 @@ def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.referal.'
         add_back_button = True
 
-        referal = get_user_code(userid)
-        friend_code = get_user_sub(userid)
+        referal = await get_user_code(userid)
+        friend_code = await get_user_sub(userid)
         buttons = [
                 ['code', 'enter_code'],
             ]
@@ -201,15 +198,16 @@ def markups_menu(userid: int, markup_key: str = 'main_menu',
         # Меню действий
         prefix = 'commands_name.actions.'
         add_back_button = True
-        user = User(userid)
-        col_dinos = user.get_col_dinos #Сохраняем кол. динозавров
+        user = await User().create(userid)
+        col_dinos = await user.get_col_dinos #Сохраняем кол. динозавров
 
         if col_dinos == 0:
             buttons = [
                 ['no_dino', 'noprefix.buttons_name.back']
             ]
         if col_dinos == 1:
-            dino = user.get_dinos()[0]
+            dinos = await user.get_dinos()
+            dino = dinos[0]
             dp_buttons = get_buttons(dino)
 
             buttons = [
@@ -220,7 +218,7 @@ def markups_menu(userid: int, markup_key: str = 'main_menu',
 
         else:
             add_back_button = False
-            dino = last_dino(user)
+            dino = await last_dino(user)
             if dino:
                 dino_button = f'notranslate.{t("commands_name.actions.dino_button", language_code)} {crop_text(dino.name, 6)}'
 
@@ -246,10 +244,10 @@ def markups_menu(userid: int, markup_key: str = 'main_menu',
 
     if add_back_button:
         buttons.append([t('buttons_name.back', language_code)])
-    
+
     result = list_to_keyboard(buttons)
     if last_markup:
-        user_dict = users.find_one(
+        user_dict = await users.find_one(
            {'userid': userid}, {'last_markup': 1}
         )
         if user_dict:

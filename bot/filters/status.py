@@ -14,11 +14,11 @@ class DinoPassStatus(AdvancedCustomFilter):
     key = 'dino_pass'
 
     async def check(self, message: Message, status: bool):
-        user = User(message.from_user.id)
-        last_dino = user.get_last_dino()
+        user = await User().create(message.from_user.id)
+        last_dino = await user.get_last_dino()
 
         chatid = message.chat.id
-        lang = user.lang
+        lang = await user.lang
 
         if last_dino:
             if last_dino.status == 'pass': return True

@@ -19,21 +19,16 @@ from bot.modules.tracking import creat_track, get_track_pages, track_info
 from bot.modules.promo import create_promo_start, get_promo_pages, promo_ui, use_promo
 from time import time
 from bot.modules.user import User, max_dino_col, award_premium
-from bot.modules.over_functions import send_message, get_last_messages
+from bot.modules.over_functions import send_message
 
 
 management = mongo_client.other.management
 promo = mongo_client.other.promo
 
-users = mongo_client.user.users
-friends = mongo_client.user.friends
-dinosaurs = mongo_client.dinosaur.dinosaurs
-dino_owners = mongo_client.dinosaur.dino_owners
-
 @bot.message_handler(pass_bot=True, commands=['s_message'], is_admin=True)
 async def s_message(message: Message):
     chatid = message.chat.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     
     # Рассылка
 
@@ -41,7 +36,7 @@ async def s_message(message: Message):
 async def create_tracking(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
 
     await ChooseStringState(create_track, userid, chatid, lang, 1, 0)
     await send_message(chatid, t("create_tracking.name", lang), parse_mode='Markdown')
@@ -68,9 +63,9 @@ async def create_track(name, transmitted_data: dict):
 async def tracking(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
 
-    options = get_track_pages()
+    options = await get_track_pages()
     res = await ChoosePagesState(track_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False)
     await send_message(chatid, t("track_open", lang), parse_mode='Markdown')
 
@@ -88,19 +83,19 @@ async def track(call: CallbackQuery):
     code = split_d[2]
 
     chatid = call.message.chat.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
 
-    res = management.find_one({'_id': 'tracking_links'})
+    res = await management.find_one({'_id': 'tracking_links'})
     if res:
         text = '-'
         if action == 'delete':
             text = t("track_delete", lang)
-            management.update_one({'_id': 'tracking_links'}, 
+            await management.update_one({'_id': 'tracking_links'}, 
                                 {'$unset': {f'links.{code}': 0}})
 
         elif action == 'clear':
             text = t("track_clear", lang)
-            management.update_one({'_id': 'tracking_links'}, 
+            await management.update_one({'_id': 'tracking_links'}, 
                                 {'$set': {f'links.{code}.col': 0}})
 
         await send_message(chatid, text)
@@ -109,7 +104,7 @@ async def track(call: CallbackQuery):
 async def create_promo(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
 
     await create_promo_start(userid, chatid, lang)
 
@@ -117,9 +112,9 @@ async def create_promo(message: Message):
 async def promos(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
 
-    options = get_promo_pages()
+    options = await get_promo_pages()
     res = await ChoosePagesState(promo_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False)
     await send_message(chatid, t("promo_commands.promo_open", lang), parse_mode='Markdown')
 
@@ -127,7 +122,7 @@ async def promo_info_adp(code, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
-    text, markup = promo_ui(code, lang)
+    text, markup = await promo_ui(code, lang)
     await send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('promo'))
@@ -138,14 +133,14 @@ async def promo_call(call: CallbackQuery):
 
     userid = call.from_user.id
     chatid = call.message.chat.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
 
-    res = promo.find_one({"code": code})
+    res = await promo.find_one({"code": code})
     if res:
         if action in ['activ', 'delete'] and userid in conf.bot_devs:
 
             if action == 'delete': 
-                promo.delete_one({'_id': res['_id']})
+                await promo.delete_one({'_id': res['_id']})
                 await bot.delete_message(userid, call.message.id)
 
             elif action == 'activ':
@@ -155,12 +150,12 @@ async def promo_call(call: CallbackQuery):
                     if res['time'] != 'inf':
                         res['time_end'] = int(time()) + res['time']
                         
-                        promo.update_one({'_id': res['_id']}, {"$set": {
+                        await promo.update_one({'_id': res['_id']}, {"$set": {
                             "time_end": res['time_end'],
                             'active': True
                         }})
                     else:
-                        promo.update_one({'_id': res['_id']}, {"$set": {
+                        await promo.update_one({'_id': res['_id']}, {"$set": {
                             'active': True
                         }})
 
@@ -169,20 +164,20 @@ async def promo_call(call: CallbackQuery):
                     if res['time'] != 'inf':
                         res['time'] = res['time_end'] - int(time())
 
-                        promo.update_one({'_id': res['_id']}, {"$set": {
+                        await promo.update_one({'_id': res['_id']}, {"$set": {
                             "time": res['time'],
                             'active': False
                         }})
                     else:
-                        promo.update_one({'_id': res['_id']}, {"$set": {
+                        await promo.update_one({'_id': res['_id']}, {"$set": {
                             'active': False
                         }})
 
-                text, markup = promo_ui(code, lang)
+                text, markup = await promo_ui(code, lang)
                 await bot.edit_message_text(text, userid, call.message.message_id, reply_markup=markup, parse_mode='markdown')
 
         elif action == 'use':
-            status, text = use_promo(code, userid, lang)
+            status, text = await use_promo(code, userid, lang)
             await send_message(userid, text, parse_mode='Markdown')
     else:
         await send_message(userid, t('promo_commands.not_found', lang), parse_mode='Markdown')
@@ -191,7 +186,7 @@ async def promo_call(call: CallbackQuery):
 async def link_promo(message):
     user = message.from_user
     msg_args = message.text.split()
-    lang = get_lang(user.id)
+    lang = await get_lang(user.id)
 
     if user.id in conf.bot_devs:
         text_dict = get_data('promo_commands.link', lang)
@@ -203,7 +198,7 @@ async def link_promo(message):
                 but_name = msg_args[2]
             else: but_name = '🎁'
 
-            res = promo.find_one({"code": promo_code})
+            res = await promo.find_one({"code": promo_code})
 
             if res:
 
@@ -233,28 +228,5 @@ async def give_me_premium(message):
     else:
         userid = message.from_user.id
 
-    award_premium(userid, 'inf')
+    await award_premium(userid, 'inf')
     await send_message(message.from_user.id, 'ok')
-
-@bot.message_handler(commands=['last_messages'], is_admin=True)
-async def last_messages(message):
-    msg_args = message.text.split()
-    messages_ls, tt = get_last_messages()
-    min_n = 0
-    
-    if len(msg_args) > 1: min_n = int(msg_args[1])
-
-    messages, n_message = [''], 0
-    for key, value in messages_ls.items():
-        if value > min_n:
-            text = f'" {key} ": {value}\n'
-
-            if len(messages[n_message]) >= 1700:
-                    messages.append('')
-                    n_message += 1
-            messages[n_message] += text
-
-    messages[-1] += f'\n{seconds_to_str(int(time()) - tt)}'
-
-    for text in messages:
-        await send_message(message.from_user.id, text)

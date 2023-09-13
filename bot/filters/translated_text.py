@@ -9,7 +9,7 @@ class IsEqual(AdvancedCustomFilter):
     key = 'text'
 
     async def check(self, message: Message, key: str):
-        lang = get_lang(message.from_user.id, message.from_user.language_code)
+        lang = await get_lang(message.from_user.id, message.from_user.language_code)
         text = t(key, lang)
         return text == message.text
 
@@ -17,7 +17,7 @@ class StartWith(AdvancedCustomFilter):
     key = 'textstart'
 
     async def check(self, message: Message, key: str):
-        lang = get_lang(message.from_user.id, message.from_user.language_code)
+        lang = await get_lang(message.from_user.id, message.from_user.language_code)
         text = t(key, lang, False)
         return message.text.startswith(text) #type: ignore
 

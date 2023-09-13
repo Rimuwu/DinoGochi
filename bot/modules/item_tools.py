@@ -22,7 +22,6 @@ from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User, experience_enhancement, get_dead_dinos
 from bot.modules.over_functions import send_message
 
-users = mongo_client.user.users
 dinosaurs = mongo_client.dinosaur.dinosaurs
 items = mongo_client.items.items
 dead_dinos = mongo_client.dinosaur.dead_dinos
@@ -42,7 +41,7 @@ async def exchange(return_data: dict, transmitted_data: dict):
 
     status = RemoveItemFromUser(userid, item['item_id'], count, preabil)
     if status:
-        AddItemToUser(friend.id, item['item_id'], count, preabil)
+        await AddItemToUser(friend.id, item['item_id'], count, preabil)
 
         await send_message(friend.id, t('exchange', lang, 
                             items=counts_items([item['item_id']]*count, lang),username=username))
@@ -53,7 +52,8 @@ async def exchange(return_data: dict, transmitted_data: dict):
 
 async def exchange_item(userid: int, chatid: int, item: dict,
                         lang: str, username: str):
-    items_data = items.find({'items_data': item, "owner_id": userid})
+    items_data = await items.find({'items_data': item, 
+                                   "owner_id": userid}).to_list(None) #type: ignore
     max_count = 0
 
     for i in items_data: max_count += i['count']
@@ -92,18 +92,18 @@ async def end_craft(transmitted_data: dict):
     lang = transmitted_data['lang']
 
     # Удаление рецепта
-    UseAutoRemove(userid, delete_item, count)
+    await UseAutoRemove(userid, delete_item, count)
 
     # Удаление материалов
     for iteriable_item in materials['delete']:
         item_id = iteriable_item['item_id']
-        RemoveItemFromUser(userid, item_id)
+        await RemoveItemFromUser(userid, item_id)
 
     # Добавление предметов
     for create_data in data_item['create']:
         if create_data['type'] == 'create':
             preabil = create_data.get('abilities', {}) # Берёт характеристики если они есть
-            AddItemToUser(userid, create_data['item'], 1, preabil)
+            await AddItemToUser(userid, create_data['item'], 1, preabil)
 
     # Вычисление опыта за крафт
     if 'rank' in data_item.keys():
@@ -146,18 +146,19 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                 data_item['class'] == dino.data['class']):
                 # Получаем конечную характеристику
                 percent = 1
-                if dino.age.days >= 10:
+                age = await dino.age
+                if age.days >= 10:
                     percent, repeat = dino.memory_percent('eat', item_id)
                     return_text = t(f'item_use.eat.repeat.m{repeat}', lang, percent=int(percent*100)) + '\n'
 
                     if repeat >= 3:
-                        add_mood(dino._id, 'repeat_eat', -1, 900)
+                        await add_mood(dino._id, 'repeat_eat', -1, 900)
 
                 dino.stats['eat'] = edited_stats(dino.stats['eat'], 
                                     int((data_item['act'] * count)*percent))
                 return_text += t('item_use.eat.great', lang, 
                          item_name=item_name, eat_stat=dino.stats['eat'])
-                add_mood(dino._id, 'good_eat', 1, 900)
+                await add_mood(dino._id, 'good_eat', 1, 900)
 
             else:
                 # Если еда не соответствует классу, то убираем дполнительные бафы.
@@ -170,8 +171,8 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                 return_text = t('item_use.eat.bad', lang, item_name=item_name,
                          loses_eat=loses_eat)
 
-                add_mood(dino._id, 'bad_eat', -1, 1200)
-            quest_process(userid, 'feed', items=[item_id] * count)
+                await add_mood(dino._id, 'bad_eat', -1, 1200)
+            await quest_process(userid, 'feed', items=[item_id] * count)
 
     elif type_item in ['game', "journey", "collecting", "sleep", 'weapon', 'armor', 'backpack'] and dino:
 
@@ -181,7 +182,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             use_status = False
         else:
             if dino.activ_items[type_item]:
-                AddItemToUser(userid, 
+                await AddItemToUser(userid, 
                               dino.activ_items[type_item]['item_id'], 1, 
                               dino.activ_items[type_item]['abilities'])
             if is_standart(item):
@@ -217,7 +218,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
         for iterable_item in materials['delete']:
             iter_id = iterable_item['item_id']
             if iter_id not in deleted_items and iter_id not in not_enough_items:
-                ret_data_f = CheckItemFromUser(userid, iterable_item, 
+                ret_data_f = await CheckItemFromUser(userid, iterable_item, 
                                     materials['delete'].count(iterable_item))
                 if ret_data_f['status']:
                     deleted_items[iter_id] = materials['delete'].count(iterable_item)
@@ -285,11 +286,12 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
             await bot.send_photo(userid, image, 
                                  t('item_use.case.drop_item', lang), 
-                                 parse_mode='Markdown', reply_markup=markups_menu(userid, 'last_menu', lang))
+                                 parse_mode='Markdown', reply_markup=
+                                 await markups_menu(userid, 'last_menu', lang))
     
     elif data_item['type'] == 'egg':
-        user = User(userid)
-        dino_limit = user.max_dino_col()['standart']
+        user = await User().create(userid)
+        dino_limit = await user.max_dino_col()['standart']  # type: ignore
         use_status = False
 
         if dino_limit['now'] < dino_limit['limit']:
@@ -312,17 +314,17 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                             limit=dino_limit['limit'])
     
     elif data_item['type'] == 'special':
-        user = User(userid)
+        user = await User().create(userid)
 
         if data_item['class'] == 'reborn':
-            dino_limit = user.max_dino_col()['standart']
+            dino_limit = await user.max_dino_col()['standart'] # type: ignore
 
             if dino_limit['now'] < dino_limit['limit']:
                 res, alt_id = insert_dino(userid, dino['data_id'], # type: ignore
                                           dino['quality']) # type: ignore
                 if res:
-                    dinosaurs.update_one({'_id': res.inserted_id}, {'$set': {'name': dino['name']}}) # type: ignore
-                    dead_dinos.delete_one({'_id': dino['_id']}) # type: ignore
+                    await dinosaurs.update_one({'_id': res.inserted_id}, {'$set': {'name': dino['name']}}) # type: ignore
+                    await dead_dinos.delete_one({'_id': dino['_id']}) # type: ignore
                     return_text = t('item_use.special.reborn.ok', lang, 
                             limit=dino_limit['limit'])
                 else: use_status = False
@@ -353,15 +355,15 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     if dino and type(dino) == Dino:
         # Обновляем данные харрактеристик
         upd_values = {}
-        dino_now: Dino = Dino(dino._id)
+        dino_now: Dino = await Dino().create(dino._id)
         if dino_now.stats != dino.stats:
             for i in dino_now.stats:
                 if dino_now.stats[i] != dino.stats[i]:
                     upd_values['stats.'+i] = dino.stats[i] - dino_now.stats[i]
 
-        if upd_values: dino_now.update({'$inc': upd_values})
+        if upd_values: await dino_now.update({'$inc': upd_values})
 
-    if use_status: UseAutoRemove(userid, item, count)
+    if use_status: await UseAutoRemove(userid, item, count)
     return send_status, return_text
 
 async def edit_craft(return_data: dict, transmitted_data: dict):
@@ -393,10 +395,10 @@ async def edit_craft(return_data: dict, transmitted_data: dict):
             iterable_item = iterable_data['old_item']
 
             if iterable_data['data']['status'] == 'remove':
-                RemoveItemFromUser(userid, iterable_item['item_id'], 1,
+                await RemoveItemFromUser(userid, iterable_item['item_id'], 1,
                                    iterable_item['abilities'])
             elif iterable_data['data']['status'] == 'edit':
-                EditItemFromUser(userid, iterable_item, iterable_data['data']['item'])
+                await EditItemFromUser(userid, iterable_item, iterable_data['data']['item'])
 
         await end_craft(transmitted_data)
 
@@ -429,8 +431,9 @@ async def eat_adapter(return_data: dict, transmitted_data: dict):
     item_name = get_name(item['item_id'], lang)
 
     percent = 1
-    if dino.age.days >= 10:
-        percent, repeat = dino.memory_percent('games', item['item_id'], False)
+    age = await dino.age
+    if age.days >= 10:
+        percent, repeat = await dino.memory_percent('games', item['item_id'], False)
 
     steps = [
         {"type": 'int', "name": 'count', "data": {"max_int": max_count}, 
@@ -464,7 +467,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
     limiter = 100 # Ограничение по количеству использований за раз
     adapter_function = adapter
 
-    base_item = items.find_one({'owner_id': userid, 'items_data': item})
+    base_item = await items.find_one({'owner_id': userid, 'items_data': item})
     transmitted_data = {'items_data': item}
     item_name = get_name(item_id, lang)
     steps = []
@@ -520,7 +523,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
             if data_item['class'] in ['freezing', 'defrosting']:
                 ...
             elif data_item['class'] in ['reborn']:
-                dead = get_dead_dinos(userid)
+                dead = await get_dead_dinos(userid)
                 options, markup = {}, []
 
                 if dead:
@@ -592,7 +595,8 @@ async def delete_action(return_data: dict, transmitted_data: dict):
 
 async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
     steps = []
-    find_items = items.find({'owner_id': userid, 'items_data': item})
+    find_items = await items.find({'owner_id': userid, 
+                             'items_data': item}).to_list(None) #type: ignore
     transmitted_data = {'items_data': item, 'item_name': ''}
     max_count = 0
     item_id = item['item_id']

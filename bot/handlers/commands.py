@@ -4,7 +4,7 @@ from bot.exec import bot
 from bot.config import mongo_client
 from bot.modules.data_format import seconds_to_str, user_name, str_to_seconds
 from bot.modules.inline import inline_menu
-from bot.modules.localization import get_lang, t
+from bot.modules.localization import  get_lang, t
 from bot.modules.promo import use_promo
 from bot.handlers.start import start_game
 from bot.modules.over_functions import send_message
@@ -15,7 +15,7 @@ users = mongo_client.user.users
 @bot.message_handler(pass_bot=True, commands=['timer'])
 async def timer(message: Message):
     chatid = message.chat.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
 
     num, mini, max_lvl = '1', False, 'seconds'
     msg_args = message.text.split() # type: ignore
@@ -33,7 +33,7 @@ async def timer(message: Message):
 async def string_time(message):
     txt = message.text.replace('/string_to_sec', '')
     chatid = message.chat.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
 
     if txt == '':
         text = t('string_to_str.info', lang)
@@ -45,7 +45,7 @@ async def string_time(message):
 @bot.message_handler(pass_bot=True, commands=['push_info'])
 async def push_info(message: Message):
     chatid = message.chat.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
 
     text = t('push.push_info', lang)
     await send_message(chatid, text, parse_mode='Markdown')
@@ -53,7 +53,7 @@ async def push_info(message: Message):
 @bot.message_handler(pass_bot=True, commands=['add_me'], private=False)
 async def profile(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
 
     name = user_name(message.from_user, False)
     text = t("add_me", lang, userid=userid, username=name)
@@ -64,22 +64,22 @@ async def profile(message: Message):
 @bot.message_handler(pass_bot=True, commands=['promo'])
 async def promo(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
-    msg_args = message.text.split()
-    
+    msg_args = str(message.text).split()
+
     if len(msg_args) > 1:
         code = msg_args[1]
-        user = users.find_one({'userid': userid})
+        user = await users.find_one({'userid': userid})
         if user:
-            status, text = use_promo(code, userid, lang)
+            status, text = await use_promo(code, userid, lang)
             await send_message(chatid, text, parse_mode='Markdown')
         else:
             await start_game(message, code, 'promo')
 
 @bot.message_handler(pass_bot=True, commands=['help'])
 async def help(message: Message):
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
     
     await send_message(chatid, t('help_command.all', lang), parse_mode='html')

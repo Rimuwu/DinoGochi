@@ -12,40 +12,42 @@ from time import time
 
 management = mongo_client.other.management
 
-def creat_track(name: str):
+async def creat_track(name: str):
     """Создаёт ссылку отслеживания 
         0 - не найден документ
         -1 - не получается повторно получить имя
         -2 - уже отслеживается
         1 - всё супер!
     """
-    res = management.find_one({'_id': 'tracking_links'})
+    res = await management.find_one({'_id': 'tracking_links'})
     if res:
+        links = res['links']
         if name not in res['links'].keys():
             data = {
                 'col': 0,
                 'start': int(time())
             }
-            management.update_one({'_id': 'tracking_links'}, 
+            await management.update_one({'_id': 'tracking_links'}, 
                                 {'$set': {f'links.{name}': data}})
 
-            res = management.find_one({'_id': 'tracking_links'})
+            res = await management.find_one({'_id': 'tracking_links'})
             if res:
-                if name in res['links'].keys(): return 1
+                if name in links.keys(): return 1
                 else: return -1
         else: return -2
     return 0
 
-def get_track_pages() -> dict:
-    res = management.find_one({'_id': 'tracking_links'})
+async def get_track_pages() -> dict:
+    res = await management.find_one({'_id': 'tracking_links'})
     data = {}
-    if res: 
-        for i in res['links']: data[i] = i
+    if res:
+        links = list(res['links'])
+        for i in links: data[i] = i
 
     return data
 
 async def track_info(code: str, lang: str):
-    res = management.find_one({'_id': 'tracking_links'})
+    res = await management.find_one({'_id': 'tracking_links'})
     text, markup = 'not found', None
 
     if res:
@@ -72,11 +74,11 @@ async def track_info(code: str, lang: str):
 
     return text, markup
 
-def add_track(name:str):
-    res = management.find_one({'_id': 'tracking_links'})
+async def add_track(name:str):
+    res = await management.find_one({'_id': 'tracking_links'})
     if res:
         if name in res['links'].keys():
-            management.update_one({'_id': 'tracking_links'}, 
+            await management.update_one({'_id': 'tracking_links'}, 
                                 {'$inc': {f'links.{name}.col': 1}})
             return True
     return False

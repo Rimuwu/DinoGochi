@@ -17,10 +17,11 @@ quests_data = mongo_client.tavern.quests
 daily_data = mongo_client.tavern.daily_award
 
 async def tavern_quest(user):
-    free_quests = list(quests_data.find({'owner_id': 0}, {'_id': 1}))
+    free_quests = list(await quests_data.find(
+        {'owner_id': 0}, {'_id': 1}).to_list(None))  # type: ignore
     lang = user['lang']
 
-    if quests_data.count_documents({'owner_id': user['userid']}) < 5:
+    if await quests_data.count_documents({'owner_id': user['userid']}) < 5:
         if free_quests and not randint(0, 3):
             ran_quest = choice(free_quests)
             free_quests.remove(ran_quest)
@@ -28,7 +29,7 @@ async def tavern_quest(user):
             quest_id = ran_quest['_id']
 
             new_time = ran_quest['time_end'] - ran_quest['time_start']
-            quests_data.update_one({'_id': quest_id}, {"$set": {
+            await quests_data.update_one({'_id': quest_id}, {"$set": {
                 'owner_id': user['userid'], 
                 'time_start': int(time()), 
                 'end_time': int(time()) + new_time}})
@@ -38,7 +39,7 @@ async def tavern_quest(user):
             compl = choices([2, 1], [0.25, 0.5])[0]
 
             quest = create_quest(compl, lang=lang)
-            save_quest(quest, user['userid'])
+            await save_quest(quest, user['userid'])
             text = t('quest.new', lang)
 
         try: await send_message(user['userid'], text)
@@ -63,11 +64,11 @@ async def tavern_replic(in_tavern, user):
         except Exception: pass
 
 async def tavern_life():
-    in_tavern = list(tavern.find({}))
+    in_tavern = list(await tavern.find({}).to_list(None)) # type: ignore
 
     for user in in_tavern:
         if user['time_in'] + 3600 <= int(time()):
-            tavern.delete_one({'_id': user['_id']})
+            await tavern.delete_one({'_id': user['_id']})
             try:
                 await send_message(user['userid'], 
                         t('tavern_sleep', user['lang']))
@@ -77,7 +78,7 @@ async def tavern_life():
         elif randint(1, 10) == 5: await tavern_quest(user)
 
 async def quest_managment():
-    quests = quests_data.find({})
+    quests = await quests_data.find({}).to_list(None)  # type: ignore
     now = datetime.now(timezone.utc)
 
     for quest in quests:
@@ -85,17 +86,19 @@ async def quest_managment():
         delta = now - create
 
         if delta.seconds >= 2592000:
-            quests_data.delete_one({'_id': quest['_id']})
+            await quests_data.delete_one({'_id': quest['_id']})
 
         elif int(time()) >= quest['time_end']:
-            quest_resampling(quest['_id'])
+            await quest_resampling(quest['_id'])
 
 async def daily_award_old():
-    data = daily_data.find({'time_end': {'$lte': int(time())}})
-    for i in list(data): daily_data.delete_one({'_id': i['_id']})
+    data = await daily_data.find(
+        {'time_end': {'$lte': int(time())}}).to_list(None)  # type: ignore
+    for i in list(data): await daily_data.delete_one({'_id': i['_id']})
 
 async def daily_award_notif():
-    users_ids = users.find({}, {'userid': 1, 'settings': 1})
+    users_ids = await users.find({}, 
+                        {'userid': 1, 'settings': 1}).to_list(None) # type: ignore
 
     for uid in users_ids:
         if not daily_data.find_one({'owner_id': uid['userid']}):

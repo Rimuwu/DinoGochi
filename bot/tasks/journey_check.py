@@ -23,18 +23,20 @@ REPEAT_MINUTS = 3
 EVENT_CHANCE = 0.17 * REPEAT_MINUTS
 
 async def end_journey_time():
-    data = list(journey.find({'journey_end': {'$lte': int(time())}})).copy()
+    data = list(await journey.find(
+        {'journey_end': {'$lte': int(time())}}).to_list(None)).copy()
     for i in data:
-        dino = dinosaurs.find_one({'_id': i['dino_id']})
+        dino = await dinosaurs.find_one({'_id': i['dino_id']})
         if dino:
-            end_journey(i['dino_id'])
-            quest_process(i['sended'], 'journey', (int(time()) - i['journey_start']) // 60)
+            await end_journey(i['dino_id'])
+            await quest_process(i['sended'], 'journey', (int(time()) - i['journey_start']) // 60)
 
-            lang = get_dino_language(i['dino_id'])
+            lang = await get_dino_language(i['dino_id'])
             await send_logs(i['sended'], lang, i, dino['name'])
 
 async def events():
-    data = list(journey.find({'journey_end': {'$gte': int(time())}})).copy()
+    data = list(await journey.find(
+        {'journey_end': {'$gte': int(time())}}).to_list(None)).copy()
 
     for i in data:
         if random.uniform(0, 1) <= EVENT_CHANCE:

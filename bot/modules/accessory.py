@@ -18,10 +18,10 @@ async def downgrade_accessory(dino: Dino, acc_type: str, max_unit: int = 2):
             num = randint(0, max_unit)
 
             if item['abilities']['endurance'] <= 0:
-                dino.update({"$set": {f'activ_items.{acc_type}': None}})
+                await dino.update({"$set": {f'activ_items.{acc_type}': None}})
                 await dino_notification(dino._id, 'broke_accessory', item_id=item['item_id'])
             else:
-                dino.update({"$inc": {f'activ_items.{acc_type}.abilities.endurance': -num}})
+                await dino.update({"$inc": {f'activ_items.{acc_type}.abilities.endurance': -num}})
             return True
         else: return False
     return False

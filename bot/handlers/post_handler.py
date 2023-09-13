@@ -22,7 +22,7 @@ async def not_found(call: types.CallbackQuery):
 
 @bot.message_handler(is_authorized=False, priveate=True)
 async def not_authorized(message: types.Message):
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     text = t('not_authorized', lang)
@@ -30,7 +30,7 @@ async def not_authorized(message: types.Message):
 
 # @bot.message_handler()
 # async def not_found_text(message: types.Message):
-#     lang = get_lang(message.from_user.id)
+#     lang = await get_lang(message.from_user.id)
 #     chatid = message.chat.id
 
 #     text = t('not_found_key', lang)

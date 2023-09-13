@@ -19,12 +19,12 @@ users = mongo_client.user.users
 @bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.quests', is_authorized=True)
 async def check_quests(message: Message):
     userid = message.from_user.id
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    user = users.find_one({'userid': userid})
+    user = await users.find_one({'userid': userid})
     if user:
-        quests = list(quests_data.find({'owner_id': userid}))
+        quests = list(await quests_data.find({'owner_id': userid}).to_list(None))
 
         text = t('quest.quest_menu', lang, 
                 end=user['dungeon']['quest_ended'], act=len(quests))
@@ -41,16 +41,16 @@ async def check_quests(message: Message):
 async def quest(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
     message = call.message
 
     data = call.data.split()
     alt_id = data[2]
 
-    quest = quests_data.find_one({'alt_id': alt_id, 'owner_id': userid})
+    quest = await quests_data.find_one({'alt_id': alt_id, 'owner_id': userid})
     if quest:
         if int(time()) > quest['time_end']:
-            quest_resampling(quest['_id'])
+            await quest_resampling(quest['_id'])
 
             text = t('quest.time_end_h', lang)
             await send_message(chatid, text)
@@ -58,7 +58,7 @@ async def quest(call: CallbackQuery):
                                    reply_markup=InlineKeyboardMarkup())
         else:
             if data[1] == 'delete':
-                quest_resampling(quest['_id'])
+                await quest_resampling(quest['_id'])
 
                 text = t('quest.delete_button', lang)
                 mark = list_to_inline([{text: ' '}])
@@ -75,12 +75,12 @@ async def quest(call: CallbackQuery):
 
                     await bot.edit_message_reply_markup(chatid, message.id, reply_markup=mark)
 
-                    take_coins(userid, quest['reward']['coins'], True)
+                    await take_coins(userid, quest['reward']['coins'], True)
                     for i in quest['reward']['items']: 
-                        AddItemToUser(userid, i)
+                        await AddItemToUser(userid, i)
 
-                    quests_data.delete_one({'_id': quest['_id']})
-                    users.update_one({'userid': userid}, {'$inc': {'dungeon.quest_ended': 1}})
+                    await quests_data.delete_one({'_id': quest['_id']})
+                    await users.update_one({'userid': userid}, {'$inc': {'dungeon.quest_ended': 1}})
 
                 else: text = t('quest.conditions', lang)
 

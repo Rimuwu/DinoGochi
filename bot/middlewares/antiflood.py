@@ -26,6 +26,6 @@ class AntifloodMiddleware(BaseMiddleware):
         self.last_time[message.from_user.id] = time_now()
 
     async def post_process(self, message, data, exception):
-        users.update_one({'userid': message.from_user.id}, {'$set': {'last_message_time': message.date}})
+        await users.update_one({'userid': message.from_user.id}, {'$set': {'last_message_time': message.date}})
 
 bot.setup_middleware(AntifloodMiddleware())

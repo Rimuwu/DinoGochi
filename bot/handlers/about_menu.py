@@ -9,18 +9,15 @@ from bot.modules.item import counts_items
 from bot.modules.data_format import seconds_to_str
 from bot.modules.over_functions import send_message
 
-
-users = mongo_client.user.users
-
 @bot.message_handler(pass_bot=True, text='commands_name.about.team', 
                      is_authorized=True)
 async def team(message: Message):
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     lang_text = t('language_name', lang)
     author_loc = t('localization_author', lang)
-    
+
     await send_message(chatid, t('about_menu.team', lang, 
                                      lang_name=lang_text,
                                      author=author_loc
@@ -29,7 +26,7 @@ async def team(message: Message):
 @bot.message_handler(pass_bot=True, text='commands_name.about.links', 
                      is_authorized=True)
 async def links(message: Message):
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     await send_message(chatid, t('about_menu.links', lang), parse_mode='Markdown')
@@ -59,7 +56,7 @@ def main_support_menu(lang: str):
 @bot.message_handler(pass_bot=True, text='commands_name.about.support', 
                      is_authorized=True)
 async def support(message: Message):
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     image, text, markup_inline = main_support_menu(lang)
@@ -69,7 +66,7 @@ async def support(message: Message):
 @bot.message_handler(pass_bot=True, commands=['premium'], 
                      is_authorized=True)
 async def support_com(message: Message):
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     image, text, markup_inline = main_support_menu(lang)
@@ -79,7 +76,7 @@ async def support_com(message: Message):
 @bot.message_handler(pass_bot=True, text='commands_name.about.faq', 
                      is_authorized=True)
 async def faq(message: Message):
-    lang = get_lang(message.from_user.id)
+    lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     faq_data = get_data('faq', lang)
@@ -99,7 +96,7 @@ async def faq(message: Message):
 async def faq_buttons(call: CallbackQuery):
     data = call.data.split()[1]
     chatid = call.message.chat.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
 
     text = t(f'faq.{data}', lang)
     await send_message(chatid, text, parse_mode='Markdown')
@@ -114,7 +111,7 @@ async def support_buttons(call: CallbackQuery):
 
     chatid = call.message.chat.id
     user_id = call.from_user.id
-    lang = get_lang(call.from_user.id)
+    lang = await get_lang(call.from_user.id)
     messageid = call.message.id
 
     if action == "main":

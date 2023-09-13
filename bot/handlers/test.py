@@ -34,12 +34,15 @@ from bot.modules.market import (add_product, create_seller,
                                 generate_sell_pages, product_ui, seller_ui)
 from bson.objectid import ObjectId
 
+from typing import Optional
+
 dinosaurs = mongo_client.dinosaur.dinosaurs
 products = mongo_client.market.products
 sellers = mongo_client.market.sellers
 puhs = mongo_client.market.puhs
 items = mongo_client.items.items
-
+users = mongo_client.user.users
+friends = mongo_client.user.friends
 
 with open('bot/json/old_ids.json', encoding='utf-8') as f: 
     ids = json.load(f)
@@ -63,4 +66,3 @@ async def command(message):
             print(res)
     else:
         print(user.id, 'not in devs')
-
