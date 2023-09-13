@@ -165,7 +165,7 @@ async def awaken(message: Message):
                     sleep_time = sleeper['sleep_end'] - sleeper['sleep_start']
                     await end_sleep(last_dino._id, sleeper['_id'], sleep_time)
             else:
-                last_dino.update({'$set': {'status': 'pass'}})
+                await last_dino.update({'$set': {'status': 'pass'}})
                 await send_message(chatid, t('awaken.not_sleep', lang),
                 reply_markup= await m(userid, 'last_menu', lang))
         else:

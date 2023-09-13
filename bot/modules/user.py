@@ -180,10 +180,10 @@ class User:
         """
         await users.delete_one({'userid': self.userid})
 
-    def get_last_dino(self):
+    async def get_last_dino(self):
         """Возвращает последнего динозавра или None
         """
-        return last_dino(self)
+        return await last_dino(self)
 
     async def max_dino_col(self):
         """Возвращает доступное количесвто динозавров, беря во внимание уровень и статус,
@@ -273,7 +273,7 @@ async def last_dino(user: User):
             return await Dino().create(dino['_id'])
         else:
             await user.update({'$set': {'settings.last_dino': None}})
-            return last_dino(user)
+            return await last_dino(user)
     else:
         dino_lst = await user.get_dinos()
         if dino_lst:
