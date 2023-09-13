@@ -179,6 +179,7 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False):
     text, coins_text, data_buttons = '', '', []
 
     product = await products.find_one({'_id': product_id})
+    print(product)
     if product:
         seller = await sellers.find_one({'owner_id': product['owner_id']})
         if seller:

@@ -12,6 +12,8 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.user import User, get_frineds, user_info, user_name
 from bot.modules.over_functions import send_message
 
+import inspect
+
 class GeneralStates(StatesGroup):
     ChooseDino = State() # Состояние для выбора динозавра
     ChooseInt = State() # Состояние для ввода числа
@@ -516,7 +518,8 @@ async def next_step(answer, transmitted_data: dict, start: bool=False):
         if ret_data['type'] == 'update_data':
             # Обработчик данных между запросами
             # Теперь может быть последним!
-            if 'async' in ret_data and ret_data['async']:
+            
+            if inspect.iscoroutinefunction(ret_data['function']):
                 transmitted_data, answer = await ret_data['function'](transmitted_data, **add_data)
             else:
                 transmitted_data, answer = ret_data['function'](transmitted_data, **add_data)

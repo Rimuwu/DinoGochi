@@ -247,8 +247,9 @@ async def get_eggs(userid: int) -> list:
 
 async def get_inventory(userid: int, exclude_ids: list = []):
     inv, count = [], 0
-    for item_dict in await items.find({'owner_id': userid}, 
-                                {'_id': 0, 'owner_id': 0}).to_list(None): # type: ignore
+    data_inv = await items.find({'owner_id': userid}, 
+                                {'_id': 0, 'owner_id': 0}).to_list(None)
+    for item_dict in data_inv:
         if item_dict['items_data']['item_id'] not in exclude_ids:
             item = {
                 'item': item_dict['items_data'], 
@@ -256,7 +257,6 @@ async def get_inventory(userid: int, exclude_ids: list = []):
                 }
             inv.append(item)
             count += item_dict['count']
-
     return inv, count
 
 async def items_count(userid: int):

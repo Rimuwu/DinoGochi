@@ -143,6 +143,8 @@ async def AddItemToUser(userid: int, itemid: str, count: int = 1, preabil: dict 
     """Добавление стандартного предмета в инвентарь
     """
     assert count >= 0, f'AddItemToUser, count == {count}'
+    
+    print(122)
 
     item = get_item_dict(itemid, preabil)
     find_res = await items.find_one({'owner_id': userid, 

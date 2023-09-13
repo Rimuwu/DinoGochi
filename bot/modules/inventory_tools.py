@@ -76,7 +76,7 @@ def inventory_pages(items: list, lang: str = 'en',
         count: int
     }
     """
-    items_data, items_names = {}, []
+    items_data = {}
     horizontal, vertical = view
 
     code_items = {}
