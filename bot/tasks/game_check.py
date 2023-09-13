@@ -48,7 +48,7 @@ async def game_process():
 
             if dino['stats']['game'] < 100:
                 if random.uniform(0, 1) <= LVL_CHANCE: 
-                    if not check_breakdown(dino['_id'], 'unrestrained_play'):
+                    if not await check_breakdown(dino['_id'], 'unrestrained_play'):
                         dino_con = await dino_owners.find_one({'dino_id': dino['_id']})
                         if dino_con:
                             userid = dino_con['owner_id']

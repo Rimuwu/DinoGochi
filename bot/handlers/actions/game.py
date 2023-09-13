@@ -196,7 +196,7 @@ async def stop_game(message: Message):
         game_data = await game_task.find_one({'dino_id': last_dino._id})
         random_tear, text = 1, ''
 
-        res = check_breakdown(last_dino._id, 'unrestrained_play')
+        res = await check_breakdown(last_dino._id, 'unrestrained_play')
 
         if not res:
             if game_data:

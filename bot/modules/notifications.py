@@ -157,7 +157,7 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
         if dino['status'] != 'sleep' and not res:
             if not_type in tracked_notifications:
 
-                if check_dino_notification(dino_id, not_type):
+                if await check_dino_notification(dino_id, not_type):
                     await save_notification(dino_id, not_type)
                     await send_not(text, markup_inline)
                 else:
@@ -224,7 +224,7 @@ async def notification_manager(dino_id: ObjectId, stat: str, unit: int):
     notif = f'need_{stat}'
 
     if critical_line[stat] >= unit:
-        if check_dino_notification(dino_id, notif, False):
+        if await check_dino_notification(dino_id, notif, False):
             # Отправка уведомления
             await dino_notification(dino_id, notif, unit=unit)
 
