@@ -17,11 +17,9 @@ kindergarten = mongo_client.dino_activity.kindergarten
 
 # Чек статистики, запускать раз в час
 async def statistic_check():
-    items_len = items.count_documents({})
-    users_len = users.count_documents({})
-    dinosaurs_len = dinosaurs.count_documents({})
-
-    await dinosaurs.count_documents({})
+    items_len = await items.count_documents({})
+    users_len = await users.count_documents({})
+    dinosaurs_len = await dinosaurs.count_documents({})
 
     data = {
         'date': str(datetime.now().date()),
