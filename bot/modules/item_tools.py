@@ -148,7 +148,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                 percent = 1
                 age = await dino.age
                 if age.days >= 10:
-                    percent, repeat = dino.memory_percent('eat', item_id)
+                    percent, repeat = await dino.memory_percent('eat', item_id)
                     return_text = t(f'item_use.eat.repeat.m{repeat}', lang, percent=int(percent*100)) + '\n'
 
                     if repeat >= 3:

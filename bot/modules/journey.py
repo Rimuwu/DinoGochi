@@ -683,9 +683,9 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
                 else: unit = -1
                 if 'location_events' in event:
                     for i in event['location_events']:
-                        mood_res = add_mood(dinoid, i, unit, end_time)
+                        mood_res = await add_mood(dinoid, i, unit, end_time)
                         if not mood_res:
-                            mood_res = add_mood(dinoid, 'journey_event', 
+                            mood_res = await add_mood(dinoid, 'journey_event', 
                                                 unit, end_time)
                 else:
                     for i in event['mood_keys']: 
