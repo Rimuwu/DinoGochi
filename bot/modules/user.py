@@ -200,12 +200,12 @@ async def insert_user(userid: int, lang: str):
     """Создание пользователя"""
     log(prefix='InsertUser', message=f'User: {userid}', lvl=0)
 
-    if not users.find_one({'userid': userid}):
+    if not await users.find_one({'userid': userid}):
         if lang not in available_locales: lang = 'en'
         await langs.insert_one({'userid': userid, 'lang': lang})
 
         user = await User().create(userid)
-        return users.insert_one(user.__dict__)
+        return await users.insert_one(user.__dict__)
 
 async def get_dinos(userid: int, all_dinos: bool = True) -> list:
     """Возвращает список с объектами динозавров."""

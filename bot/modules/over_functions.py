@@ -11,7 +11,7 @@ col_now = 0
 async def send_message(chat_id: int, text: str, 
                        parse_mode: Optional[str]=None, 
                        **kwargs):
-    global col_now, last_message, last_messages, last_time_start
+    global col_now, last_message
     """
         Use this method to send text messages.
 
