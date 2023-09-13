@@ -5,7 +5,6 @@ from bot.modules.item import counts_items
 from bot.modules.localization import get_data, t
 from bot.modules.market import generate_items_pages
 from bot.modules.markup import answer_markup, cancel_markup, count_markup
-from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseStepState, prepare_steps
 from bot.modules.markup import markups_menu as m
 from bot.modules.market import generate_items_pages

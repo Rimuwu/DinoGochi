@@ -47,7 +47,7 @@ async def exchange(return_data: dict, transmitted_data: dict):
                             items=counts_items([item['item_id']]*count, lang),username=username))
 
         await send_message(chatid, t('exchange_me', lang),
-                               reply_markup=markups_menu(userid, 'last_menu', lang))
+                               reply_markup=await markups_menu(userid, 'last_menu', lang))
 
 
 async def exchange_item(userid: int, chatid: int, item: dict,
@@ -121,7 +121,7 @@ async def end_craft(transmitted_data: dict):
 
     await send_message(chatid, t('item_use.recipe.create', lang, 
                                      items=counts_items(created_items*count, lang)), 
-                           parse_mode='Markdown', reply_markup=markups_menu(userid, 'last_menu', lang))
+                           parse_mode='Markdown', reply_markup=await markups_menu(userid, 'last_menu', lang))
 
 async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1, dino=None, combine_item: dict = {}):
     return_text = ''
@@ -308,7 +308,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                                  parse_mode='Markdown', reply_markup=buttons)
             await send_message(userid, 
                                    t('item_use.egg.plug', lang),     
-                                   reply_markup=markups_menu(userid, 'last_menu', lang))
+                                   reply_markup=await markups_menu(userid, 'last_menu', lang))
         else:
             return_text = t('item_use.egg.egg_limit', lang, 
                             limit=dino_limit['limit'])
@@ -388,7 +388,7 @@ async def edit_craft(return_data: dict, transmitted_data: dict):
             await send_message(chatid, 
                 t('item_use.recipe.enough_characteristics', lang, item_name=item_name), 
                 parse_mode='Markdown', 
-                reply_markup=markups_menu(userid, 'last_menu', lang))
+                reply_markup=await markups_menu(userid, 'last_menu', lang))
 
     if ok:
         for iterable_data in items_data.copy(): 
@@ -411,7 +411,7 @@ async def adapter(return_data: dict, transmitted_data: dict):
     send_status, return_text = await use_item(userid, chatid, lang, transmitted_data['items_data'], **return_data)
 
     if send_status:
-        await send_message(chatid, return_text, parse_mode='Markdown', reply_markup=markups_menu(userid, 'last_menu', lang))
+        await send_message(chatid, return_text, parse_mode='Markdown', reply_markup=await markups_menu(userid, 'last_menu', lang))
 
 async def pre_adapter(return_data: dict, transmitted_data: dict):
     return_data['dino'] = transmitted_data['dino']
@@ -586,11 +586,11 @@ async def delete_action(return_data: dict, transmitted_data: dict):
         await send_message(chatid, t('delete_action.delete', lang,  
                                          name=item_name, count=count), 
                                reply_markup=
-                               markups_menu(userid, 'last_menu', lang))
+                               await markups_menu(userid, 'last_menu', lang))
     else:
         await send_message(chatid, t('delete_action.error', lang), 
                                reply_markup=
-                               markups_menu(userid, 'last_menu', lang))
+                               await markups_menu(userid, 'last_menu', lang))
         
 
 async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
@@ -624,4 +624,4 @@ async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
     else:
         await send_message(chatid, t('delete_action.error', lang), 
                                reply_markup=
-                               markups_menu(userid, 'last_menu', lang))
+                               await markups_menu(userid, 'last_menu', lang))

@@ -11,7 +11,6 @@ from bot.modules.market import (add_product, preview_product,
                                 generate_items_pages, generate_sell_pages,
                                 product_ui, seller_ui, delete_product, buy_product, create_preferential, check_preferential)
 from bot.modules.markup import answer_markup, cancel_markup, count_markup, confirm_markup
-from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import (ChooseIntState, ChooseStringState,
                                       ChooseStepState, prepare_steps, ChooseConfirmState, ChoosePagesState)
 from bot.modules.markup import markups_menu as m
