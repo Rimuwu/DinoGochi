@@ -77,6 +77,7 @@ async def start_game_message(message: types.Message):
     if len(content) > 1: 
         referal = str(content[1])
         if await referals.find_one({'code': referal}): add_referal = True
+        await add_track(content[1])
 
     if not add_referal:
         buttons_list = [get_data('commands_name.start_game', locale=langue_code)]
@@ -92,8 +93,6 @@ async def start_game_message(message: types.Message):
         await send_message(message.chat.id, text)
 
         await start_game(message, referal=referal) # type: ignore
-
-    await add_track(content[1])
 
 
 @bot.callback_query_handler(pass_bot=True, is_authorized=False, 
