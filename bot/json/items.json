@@ -3100,6 +3100,7 @@
         "type": "eat"
     },
     "meow_book": {
+        "cant_sell": true,
         "image": "book",
         "rank": "legendary",
         "type": "book"
