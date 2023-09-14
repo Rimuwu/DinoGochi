@@ -13,7 +13,7 @@ REPEAT_MINUTES = 5
 async def mood_check():
     """ Проверяет и выдаёт настроение
     """
-    res = list(await dino_mood.find({}).to_list(None)) # type: ignore
+    res = list(await dino_mood.find({}).to_list(None)) 
     upd_data = {}
 
     for mood_data in res:
@@ -95,7 +95,7 @@ async def break_down():
 
     for i in res:
         dino_id = i['_id']
-        res_s = dino_mood.find_one({'dino_id': dino_id, 'action': 'hysteria'})
+        res_s = await dino_mood.find_one({'dino_id': dino_id, 'action': 'hysteria'})
 
         if not res_s:
             await dinosaurs.update_one({'_id': dino_id}, {'$set': {'status': 'pass'}})

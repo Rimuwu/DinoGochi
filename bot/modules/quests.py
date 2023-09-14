@@ -196,7 +196,7 @@ async def quest_process(userid: int, quest_type: str, unit: int = 0, items: list
     """ Заносит данные в квест
     """
     quests = await quests_data.find({"owner_id": userid, 
-                                     'type': quest_type}).to_list(None) #type: ignore
+                                     'type': quest_type}).to_list(None) 
 
     for quest in quests:
         if quest_type in ['journey', 'game']:
@@ -238,7 +238,7 @@ async def check_quest(quest: dict):
 
         # Проверяем на наличие
         for key, value in count_items.items():
-            result = await items.find({"items_data.item_id": key, "owner_id": quest['owner_id']}).to_list(None) #type: ignore
+            result = await items.find({"items_data.item_id": key, "owner_id": quest['owner_id']}).to_list(None) 
 
             if not result: return False
             else:

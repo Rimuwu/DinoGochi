@@ -52,7 +52,7 @@ async def inventory_adapter(item, transmitted_data):
         if max_count > limiter: max_count = limiter
 
         percent = 1
-        age = await dino.age
+        age = await dino.age()
         if age.days >= 10:
             percent, repeat = await dino.memory_percent('games', item['item_id'], False)
 

@@ -81,7 +81,7 @@ def get_item_dict(itemid: str, preabil: dict = {}) -> dict:
             elif type(data['abilities'][k]) == dict:
                 abl[k] = random_dict(data['abilities'][k])
 
-        d_it['abilities'] = abl #type: ignore
+        d_it['abilities'] = abl 
 
     if preabil != {}:
         if 'abilities' in d_it.keys():
@@ -89,11 +89,11 @@ def get_item_dict(itemid: str, preabil: dict = {}) -> dict:
                 if ak in preabil.keys():
 
                     if type(preabil[ak]) == int:
-                        if preabil[ak] <= d_it['abilities'][ak]: #type: ignore
-                            d_it['abilities'][ak] = preabil[ak] #type: ignore
+                        if preabil[ak] <= d_it['abilities'][ak]: 
+                            d_it['abilities'][ak] = preabil[ak] 
 
                     elif type(preabil[ak]) == dict:
-                        d_it['abilities'][ak] = random_dict(preabil[ak]) #type: ignore
+                        d_it['abilities'][ak] = random_dict(preabil[ak]) 
 
     return d_it
 
@@ -403,7 +403,7 @@ print('enddddddddddddddddddddddddddddddddddddddddddd')
 # print('products')
 
 # pr = management.find_one({'_id': 'products'})
-# pr_dict = pr['products'] #type: ignore
+# pr_dict = pr['products'] 
 
 # trg = len(pr_dict)
 # a = 0
@@ -420,4 +420,4 @@ print('enddddddddddddddddddddddddddddddddddddddddddd')
 # print('wendfg end')
 
 # ref = management.find_one({'_id': 'referal_system'})
-# print(len(ref['codes'])) #type: ignore
+# print(len(ref['codes'])) 

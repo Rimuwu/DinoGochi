@@ -18,7 +18,7 @@ async def timer(message: Message):
     lang = await get_lang(message.from_user.id)
 
     num, mini, max_lvl = '1', False, 'seconds'
-    msg_args = message.text.split() # type: ignore
+    msg_args = message.text.split() 
     if len(msg_args) > 1: num: str = msg_args[1]
     if len(msg_args) > 2: max_lvl: str = msg_args[2]
     if len(msg_args) > 3: mini: bool = bool(msg_args[3])

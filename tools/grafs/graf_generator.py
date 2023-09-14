@@ -84,7 +84,7 @@ def create_graf(holst, point, point_cords: list, data: list, zero_x: int = 123, 
             point2_cords_panel = (cord_x + add_crd, cord_y - add_crd)
             point1_cords_panel = (minus_x + add_crd, minus_y - add_crd)
 
-            holst = create(holst, point1_cords_panel, point2_cords_panel, 449, polyg_color) # type: ignore
+            holst = create(holst, point1_cords_panel, point2_cords_panel, 449, polyg_color) 
         ind += 1
 
     # Точки

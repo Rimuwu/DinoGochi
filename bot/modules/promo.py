@@ -237,7 +237,7 @@ async def promo_ui(code: str, lang: str):
     return text, markup
 
 async def get_promo_pages() -> dict:
-    res = list(await promo.find({}).to_list(None)) #type: ignore
+    res = list(await promo.find({}).to_list(None)) 
     data = {}
     if res: 
         for i in res: data[i['code']] = i['code']

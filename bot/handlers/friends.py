@@ -78,7 +78,7 @@ async def add_friend_end(friendid: int, transmitted_data: dict):
             await send_message(chatid, text)
             return
     else:
-        res = insert_friend_connect(userid, friendid, 'request')
+        res = await insert_friend_connect(userid, friendid, 'request')
         if res:
             text = t('add_friend.correct', lang)
             await send_message(chatid, text, 
@@ -376,9 +376,9 @@ async def transfer_coins(col: int, transmitted_data: dict):
     userid = transmitted_data['userid']
     friendid = transmitted_data['friendid']
     username = transmitted_data['username']
-    
-    status = take_coins(userid, col*-1, True)
-    
+
+    status = await take_coins(userid, col*-1, True)
+
     if status:
         text = t('take_money.send', lang)
         await send_message(chatid, text, 
@@ -410,7 +410,7 @@ async def send_request(call: CallbackQuery):
                 await bot.answer_callback_query(call.id, text)
                 return
         else:
-            res = insert_friend_connect(userid, friendid, 'request')
+            res = await insert_friend_connect(userid, friendid, 'request')
             if res:
                 text = t('add_friend.correct', lang)
                 await bot.answer_callback_query(call.id, text)

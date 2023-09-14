@@ -158,7 +158,7 @@ def dict_string(s, s_key):
                     if 'sml' in data:
                         txt = data['sml'] + txt + data['sml']
 
-                    new_text = new_text.replace(key, txt) #type: ignore
+                    new_text = new_text.replace(key, txt) 
 
             return new_text
 

@@ -33,7 +33,7 @@ async def stop_collect(coll_data):
     for key, count in coll_data['items'].items():
         items_list += [key] * count
     items_names = counts_items(items_list, lang)
-    
+
     await end_collecting(coll_data['dino_id'], 
                                  coll_data['items'], coll_data['sended'], 
                                  items_names)

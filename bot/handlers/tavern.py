@@ -159,11 +159,11 @@ async def edit_appearance(return_data, transmitted_data):
     userid = transmitted_data['userid']
     dino: Dino = return_data['dino']
 
-    coins_st = take_coins(userid, -GS['change_appearance']['coins'])
+    coins_st = await take_coins(userid, -GS['change_appearance']['coins'])
     if coins_st:
         status = []
         for i in GS['change_appearance']['items']:
-            st = CheckCountItemFromUser(userid, 1, i)
+            st = await CheckCountItemFromUser(userid, 1, i)
             status.append(st)
 
         if all(status):
@@ -172,7 +172,7 @@ async def edit_appearance(return_data, transmitted_data):
 
             n_id = dino.data_id
             while n_id == dino.data_id: n_id = random_dino(dino.quality)
-            dino.update({'$set': {'data_id': n_id}})
+            await dino.update({'$set': {'data_id': n_id}})
 
             text = t('edit_dino.new', lang)
             await send_message(chatid, text, parse_mode='Markdown', 
@@ -200,11 +200,11 @@ async def end_edit(code, transmitted_data):
     coins = GS['change_rarity'][code]['coins']
     items = GS['change_rarity'][code]['materials']
 
-    coins_st = take_coins(userid, -coins)
+    coins_st = await take_coins(userid, -coins)
     if coins_st:
         status = []
         for i in items:
-            st = CheckCountItemFromUser(userid, 1, i)
+            st = await CheckCountItemFromUser(userid, 1, i)
             status.append(st)
 
         if all(status):
@@ -217,10 +217,10 @@ async def end_edit(code, transmitted_data):
             if o_type == 'all':
                 n_id = dino.data_id
                 while n_id == dino.data_id: n_id = random_dino(quality)
-                dino.update({'$set': {'data_id': n_id, 'quality': quality}})
+                await dino.update({'$set': {'data_id': n_id, 'quality': quality}})
 
             elif o_type == 'rare': 
-                dino.update({'$set': {'quality': quality}})
+                await dino.update({'$set': {'quality': quality}})
 
             text = t('edit_dino.new', lang)
             await send_message(chatid, text, parse_mode='Markdown', 

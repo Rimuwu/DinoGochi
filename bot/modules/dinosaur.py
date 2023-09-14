@@ -104,7 +104,7 @@ class Dino:
         """ Это очень грустно, но необходимо...
             Удаляем объект динозавра, отсылает уведомление и сохраняет динозавра в мёртвых
         """
-        owner = await self.get_owner
+        owner = await self.get_owner()
 
         if owner:
             user = await users.find_one({"userid": owner['owner_id']})
@@ -136,7 +136,7 @@ class Dino:
     async def image(self, profile_view: int=1, custom_url: str=''):
         """Сгенерировать изображение объекта
         """
-        age = await self.age
+        age = await self.age()
         return create_dino_image(self.data_id, self.stats, self.quality, profile_view, age.days, custom_url)
 
     async def collecting(self, owner_id: int, coll_type: str, max_count: int):
@@ -176,11 +176,9 @@ class Dino:
     @property
     def data(self): return get_dino_data(self.data_id)
 
-    @property
-    def age(self): return get_age(self._id)
-    
-    @property
-    def get_owner(self): return get_owner(self._id)
+    async def age(self): return await get_age(self._id)
+
+    async def get_owner(self): return await get_owner(self._id)
 
 
 class Egg:
@@ -200,8 +198,7 @@ class Egg:
         return self
 
     def UpdateData(self, data):
-        if data:
-            self.__dict__ = data
+        if data: self.__dict__ = data
 
     def __str__(self) -> str:
         return f'{self._id} {self.quality}'
@@ -216,7 +213,6 @@ class Egg:
     
     async def delete(self):
         await incubations.delete_one({'_id': self._id})
-
 
     def image(self, lang: str='en'):
         """Сгенерировать изображение объекта.
@@ -493,7 +489,7 @@ async def mutate_dino_stat(dino: dict, key: str, value: int):
         await notification_manager(dino['_id'], key, now)
         await dinosaurs.update_one({'_id': dino['_id']}, 
                             {'$inc': {f'stats.{key}': value}})
-        
+
 async def get_owner(dino_id: ObjectId):
     return await dino_owners.find_one({'dino_id': dino_id, 'type': 'owner'})
 
@@ -529,12 +525,12 @@ async def set_status(dino_id: ObjectId, new_status: str, now_status: str = ''):
         data = await collecting_task.find_one({'dino_id': dino_id})
         if data:
             items_list = []
-            for key, count in data['items'].items(): #type: ignore
+            for key, count in data['items'].items(): 
                 items_list += [key] * count
 
             asyncio.run_coroutine_threadsafe(end_collecting(dino_id, data['items'], 
                                         data['sended'], '', False), asyncio.get_event_loop())
-    
+
     elif now_status == 'kindergarten':
         data = await kindergarten.find_one({'dinoid': dino_id})
         if data: await kindergarten.delete_one({'_id': data['_id']})

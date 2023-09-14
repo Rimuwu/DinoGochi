@@ -65,7 +65,7 @@ async def quest(call: CallbackQuery):
                 await bot.edit_message_reply_markup(chatid, message.id, 
                                     reply_markup=mark)
             elif data[1] == 'end':
-                result = check_quest(quest)
+                result = await check_quest(quest)
 
                 if result:
                     text = t('quest.end_quest', lang, author_name=quest['author'], name=quest['name'])

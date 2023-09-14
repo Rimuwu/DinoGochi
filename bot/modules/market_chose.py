@@ -51,7 +51,7 @@ async def end(return_data, transmitted_data):
 
     if option == 'coins_items':  
         # Проверить количество монет 
-        res = take_coins(userid, -price*in_stock, True)
+        res = await take_coins(userid, -price*in_stock, True)
         if not res:
             product_status = False
             text = t('add_product.few_coins', lang, coins=price*in_stock)
@@ -64,7 +64,7 @@ async def end(return_data, transmitted_data):
             if 'abillities' in item: abil = item['abillities']
             else: abil = {}
 
-            status = CheckCountItemFromUser(userid, col[n] * in_stock, item_id, abil)
+            status = await CheckCountItemFromUser(userid, col[n] * in_stock, item_id, abil)
 
             items_status.append(status)
             n += 1
@@ -305,7 +305,7 @@ async def update_col(transmitted_data):
         item_data = transmitted_data['return_data']['items']
 
     items_res = await items.find({'items_data': item_data, 
-                            "owner_id": userid}).to_list(None) # type: ignore
+                            "owner_id": userid}).to_list(None) 
     if items_res:
         max_count = 0
         for i in items_res: max_count += i['count']
@@ -335,7 +335,7 @@ async def order_update_col(transmitted_data):
     else:
         item_data = transmitted_data['return_data']['items']
 
-    items_res = await items.find({'items_data': item_data, "owner_id": userid}).to_list(None)  # type: ignore
+    items_res = await items.find({'items_data': item_data, "owner_id": userid}).to_list(None)  
     if items_res:
         max_count = 20
 
@@ -363,7 +363,7 @@ async def trade_update_col(transmitted_data):
     else:
         item_data = transmitted_data['return_data']['trade_items']
 
-    items_res = await items.find({'items_data': item_data, "owner_id": userid}).to_list(None)  # type: ignore
+    items_res = await items.find({'items_data': item_data, "owner_id": userid}).to_list(None)  
     if items_res:
         max_count = 20
 
@@ -515,7 +515,7 @@ async def edit_price(new_price: int, transmitted_data: dict):
         if product['type'] == 'coins_items':
             stock = product['in_stock']
             price = (product['price'] * stock) - (new_price * stock)
-            res = take_coins(userid, price, True)
+            res = await take_coins(userid, price, True)
 
         if res:
             await products.update_one({'alt_id': productid}, 
@@ -555,7 +555,7 @@ async def add_stock(in_stock: int, transmitted_data: dict):
                 if 'abillities' in item: abil = item['abillities']
                 else: abil = {}
 
-                status = CheckCountItemFromUser(userid, in_stock, item_id, abil)
+                status = await CheckCountItemFromUser(userid, in_stock, item_id, abil)
                 items_status.append(status)
                 n += 1
 
@@ -576,7 +576,7 @@ async def add_stock(in_stock: int, transmitted_data: dict):
                                     {'$inc': {'in_stock': in_stock}})
 
         elif product['type'] == 'coins_items':
-            res = take_coins(userid, product['price'] * in_stock, True)
+            res = await take_coins(userid, product['price'] * in_stock, True)
             if res:
                 await products.update_one({'alt_id': productid}, 
                                     {'$inc': {'in_stock': in_stock}})
@@ -605,7 +605,7 @@ async def delete_all(_: bool, transmitted_data: dict):
     message_id = transmitted_data['message_id']
 
     products_del = await products.find(
-        {'owner_id': userid}).to_list(None) #type: ignore
+        {'owner_id': userid}).to_list(None) 
     if products_del:
         for i in products_del:
             await delete_product(i['_id'])
@@ -781,7 +781,7 @@ async def promotion(_: bool, transmitted_data: dict):
 
     if cd == 1: text = t('promotion.max', lang)
     elif cd == 2: text = t('promotion.already', lang)
-    elif not take_coins(userid, -1_890, True):
+    elif not await take_coins(userid, -1_890, True):
         text = t('promotion.no_coins', lang)
         stat = False
     else: 
@@ -862,11 +862,11 @@ async def find_end(return_data, transmitted_data):
     if filt:
         products_all = list(await products.find(
             {"type": filt, "items_id": {'$in': [item['item_id']]}
-                        }).to_list(None)).copy() #type: ignore
+                        }).to_list(None)).copy() 
     else:
         products_all = list(await products.find(
             {"items_id": {'$in': [item['item_id']]}
-                        }).to_list(None)).copy() #type: ignore
+                        }).to_list(None)).copy() 
 
     if products_all:
         prd = {}

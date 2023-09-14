@@ -15,13 +15,13 @@ preferential = mongo_client.market.preferential
 async def market_delete():
     # Удаляет старые продукты
     data = await products.find({'add_time': {'$lte': int(time()) - 86_400 * 31}}
-                                    ).to_list(None)  # type: ignore
+                                    ).to_list(None)  
     for i in data: await delete_product(i['_id'])
 
 async def auction_end():
     # Завершение аукциона
     data = await products.find({'end': {'$lte': int(time())}}
-                              ).to_list(None) # type: ignore
+                              ).to_list(None) 
 
     for i in data:
         for user in i['users']:
@@ -38,7 +38,7 @@ async def auction_end():
 async def preferential_delete():
     # Удаляет продвижение
     data = list(await products.find({'end': {'$lte': int(time())}}
-                                    ).to_list(None) # type: ignore
+                                    ).to_list(None) 
                 ).copy()
     for i in data: await preferential.delete_one({'_id': i['_id']})
 

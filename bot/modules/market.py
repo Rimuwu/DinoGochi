@@ -23,7 +23,7 @@ preferential = mongo_client.market.preferential
 async def generation_code(owner_id):
     code = f'{owner_id}_{random_code(8)}'
     if await products.find_one({'alt_id': code}):
-        code = generation_code(owner_id)
+        code = await generation_code(owner_id)
     return code
 
 async def add_product(owner_id: int, product_type: str, items, price, in_stock: int = 1,
@@ -55,7 +55,7 @@ async def add_product(owner_id: int, product_type: str, items, price, in_stock: 
         'add_time': int(time()),
         'type': product_type,
         'owner_id': owner_id,
-        'alt_id': generation_code(owner_id),
+        'alt_id': await generation_code(owner_id),
         'items': items,
         'price': price,
         'in_stock': in_stock, # В запасе, сколько раз можно купить товар
@@ -179,13 +179,12 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False):
     text, coins_text, data_buttons = '', '', []
 
     product = await products.find_one({'_id': product_id})
-    print(product)
     if product:
         seller = await sellers.find_one({'owner_id': product['owner_id']})
         if seller:
             product_type = product['type']
             items = list(product['items'])
-            price = list(product['price'])
+            price = product['price']
 
             items_id = []
             for i in items: items_id.append(i['item_id'])
@@ -246,7 +245,7 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False):
                         b_data['delete']: f'product_info delete {alt_id}'
                     }
                 ]
-                if not is_promotion(product['_id']):
+                if not await is_promotion(product['_id']):
                     data_buttons[1][b_data['promotion']] = f'product_info promotion {alt_id}'
                 else:
                     data_buttons[1][b_data['alredy_promotion']] = f' '
@@ -446,7 +445,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                 col_price = col * product['price']
                 two_percent = (col_price // 100) * 2
 
-                status = take_coins(userid, -col_price, True)
+                status = await take_coins(userid, -col_price, True)
 
                 if status:
                     for item in list(product['items']):
@@ -469,7 +468,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                     if 'abillities' in item: abil = item['abillities']
                     else: abil = {}
 
-                    status = CheckCountItemFromUser(userid, col, item_id, abil)
+                    status = await CheckCountItemFromUser(userid, col, item_id, abil)
                     items_status.append(status)
                     n += 1
 
@@ -493,7 +492,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                     if 'abillities' in item: abil = item['abillities']
                     else: abil = {}
 
-                    status = CheckCountItemFromUser(userid, col, item_id, abil)
+                    status = await CheckCountItemFromUser(userid, col, item_id, abil)
                     items_status.append(status)
                     n += 1
 
@@ -515,7 +514,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
             elif p_tp == 'auction':
                 # col - ставка пользователя
 
-                status = take_coins(userid, -col, True)
+                status = await take_coins(userid, -col, True)
                 if status:
                     await new_participant(pro_id, userid, col, name, lang)
                 else: return False, 'error_no_coins'

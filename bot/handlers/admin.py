@@ -46,7 +46,7 @@ async def create_track(name, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
-    res, text = creat_track(name.lower()), '-'
+    res, text = await creat_track(name.lower()), '-'
     if res == 1:
         iambot = await bot.get_me()
         bot_name = iambot.username

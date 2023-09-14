@@ -213,7 +213,7 @@ def get_item_dict(itemid: str, preabil: dict = {}) -> dict:
             elif type(data['abilities'][k]) == dict:
                 abl[k] = random_dict(data['abilities'][k])
 
-        d_it['abilities'] = abl #type: ignore
+        d_it['abilities'] = abl 
 
     if preabil != {}:
         if 'abilities' in d_it.keys():
@@ -221,12 +221,12 @@ def get_item_dict(itemid: str, preabil: dict = {}) -> dict:
                 if ak in preabil.keys():
 
                     if type(preabil[ak]) == int:
-                        d_it['abilities'][ak] = preabil[ak] #type: ignore
+                        d_it['abilities'][ak] = preabil[ak] 
 
                     elif type(preabil[ak]) == dict:
-                        d_it['abilities'][ak] = random_dict(preabil[ak]) #type: ignore
+                        d_it['abilities'][ak] = random_dict(preabil[ak]) 
         else: 
-            d_it['abilities'] = preabil #type: ignore
+            d_it['abilities'] = preabil 
 
     return d_it
 

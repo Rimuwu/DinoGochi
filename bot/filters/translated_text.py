@@ -19,7 +19,7 @@ class StartWith(AdvancedCustomFilter):
     async def check(self, message: Message, key: str):
         lang = await get_lang(message.from_user.id, message.from_user.language_code)
         text = t(key, lang, False)
-        return message.text.startswith(text) #type: ignore
+        return message.text.startswith(text) 
 
 bot.add_custom_filter(IsEqual())
 bot.add_custom_filter(StartWith())

@@ -414,10 +414,11 @@ def create_event(location: str, worldview: str = '', rarity: int = 0, event: str
     if not rarity:
         rarity_chr = choices(list(chance.keys()), list(chance.values()))[0]
         rarity = rarity_lvl.index(rarity_chr)
+    else: rarity_chr: str = rarity_lvl[rarity]
 
     # Случайное событие
     loc_data = locations[location]
-    if not event: event = choice(loc_data[worldview][rarity_chr]) # type: ignore
+    if not event: event = choice(loc_data[worldview][rarity_chr]) 
 
     # формирование данны квеста для дальнейшей обработки
     event_data = events[event]
@@ -552,7 +553,7 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
                     res = await journey.find({
                         'sended': friend_id, 
                         'location': journey_base['location']}
-                                       ).to_list(None) #type: ignore
+                                       ).to_list(None) 
                     for i in list(res): in_loc.append(i['dino_id'])
 
                 if not in_loc: return True

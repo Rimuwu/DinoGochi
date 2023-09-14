@@ -39,7 +39,7 @@ async def main_checks():
     """Главная проверка динозавров
     """
 
-    dinos = await dinosaurs.find({}).to_list(None) # type: ignore
+    dinos = await dinosaurs.find({}).to_list(None) 
     for dino in dinos:
         if dino['status'] == 'inactive': continue
         is_sleeping = dino['status'] == 'sleep'

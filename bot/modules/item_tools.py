@@ -53,7 +53,7 @@ async def exchange(return_data: dict, transmitted_data: dict):
 async def exchange_item(userid: int, chatid: int, item: dict,
                         lang: str, username: str):
     items_data = await items.find({'items_data': item, 
-                                   "owner_id": userid}).to_list(None) #type: ignore
+                                   "owner_id": userid}).to_list(None) 
     max_count = 0
 
     for i in items_data: max_count += i['count']
@@ -123,7 +123,8 @@ async def end_craft(transmitted_data: dict):
                                      items=counts_items(created_items*count, lang)), 
                            parse_mode='Markdown', reply_markup=await markups_menu(userid, 'last_menu', lang))
 
-async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1, dino=None, combine_item: dict = {}):
+async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1, 
+                   dino: Dino | None=None, combine_item: dict = {}):
     return_text = ''
     dino_update_list = []
     use_status, send_status, use_baff_status = True, True, True
@@ -146,7 +147,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                 data_item['class'] == dino.data['class']):
                 # Получаем конечную характеристику
                 percent = 1
-                age = await dino.age
+                age = await dino.age()
                 if age.days >= 10:
                     percent, repeat = await dino.memory_percent('eat', item_id)
                     return_text = t(f'item_use.eat.repeat.m{repeat}', lang, percent=int(percent*100)) + '\n'
@@ -291,7 +292,8 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     
     elif data_item['type'] == 'egg':
         user = await User().create(userid)
-        dino_limit = await user.max_dino_col()['standart']  # type: ignore
+        dino_limit_col = await user.max_dino_col()
+        dino_limit = dino_limit_col['standart']  
         use_status = False
 
         if dino_limit['now'] < dino_limit['limit']:
@@ -313,18 +315,19 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             return_text = t('item_use.egg.egg_limit', lang, 
                             limit=dino_limit['limit'])
     
-    elif data_item['type'] == 'special':
+    elif data_item['type'] == 'special' and dino:
         user = await User().create(userid)
 
         if data_item['class'] == 'reborn':
-            dino_limit = await user.max_dino_col()['standart'] # type: ignore
+            dino_limit_col = await user.max_dino_col()
+            dino_limit = dino_limit_col['standart']  
 
             if dino_limit['now'] < dino_limit['limit']:
-                res, alt_id = insert_dino(userid, dino['data_id'], # type: ignore
-                                          dino['quality']) # type: ignore
+                res, alt_id = await insert_dino(userid, dino.data_id, 
+                                          dino.quality)
                 if res:
-                    await dinosaurs.update_one({'_id': res.inserted_id}, {'$set': {'name': dino['name']}}) # type: ignore
-                    await dead_dinos.delete_one({'_id': dino['_id']}) # type: ignore
+                    await dinosaurs.update_one({'_id': res.inserted_id}, {'$set': {'name': dino.name}}) 
+                    await dead_dinos.delete_one({'_id': dino._id}) 
                     return_text = t('item_use.special.reborn.ok', lang, 
                             limit=dino_limit['limit'])
                 else: use_status = False
@@ -350,7 +353,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
     if dino_update_list and dino:
         # Обновляем данные, не связанные с харрактеристиками, например активные предметы
-        for i in dino_update_list: dino.update(i)
+        for i in dino_update_list: await dino.update(i)
 
     if dino and type(dino) == Dino:
         # Обновляем данные харрактеристик
@@ -431,7 +434,7 @@ async def eat_adapter(return_data: dict, transmitted_data: dict):
     item_name = get_name(item['item_id'], lang)
 
     percent = 1
-    age = await dino.age
+    age = await dino.age()
     if age.days >= 10:
         percent, repeat = await dino.memory_percent('games', item['item_id'], False)
 
@@ -485,7 +488,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
 
         if type_item == 'eat':
             adapter_function = eat_adapter
-            transmitted_data['max_count'] = max_count # type: ignore
+            transmitted_data['max_count'] = max_count
 
             steps = [
                 {"type": 'dino', "name": 'dino', "data": {"add_egg": False}, 
@@ -596,7 +599,7 @@ async def delete_action(return_data: dict, transmitted_data: dict):
 async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
     steps = []
     find_items = await items.find({'owner_id': userid, 
-                             'items_data': item}).to_list(None) #type: ignore
+                             'items_data': item}).to_list(None) 
     transmitted_data = {'items_data': item, 'item_name': ''}
     max_count = 0
     item_id = item['item_id']

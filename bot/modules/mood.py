@@ -80,7 +80,7 @@ async def add_mood(dino: ObjectId, key: str, unit: int, duration: int,
         await dino_mood.find({'dino_id': dino, 
                               'action': key, 
                               'type': 'mood_edit'}
-                             ).to_list(None)) #type: ignore
+                             ).to_list(None)) 
 
     if not stacked and res: 
         await dino_mood.update_one({'_id': res[0]['_id']}, 

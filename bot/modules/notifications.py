@@ -82,7 +82,7 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
     """
     dino = await dinosaurs.find_one({"_id": dino_id})
     owners = list(await dino_owners.find(
-        {'dino_id': dino_id}).to_list(None))#type: ignore
+        {'dino_id': dino_id}).to_list(None))
     text, markup_inline = not_type, InlineKeyboardMarkup()
 
     if 'unit' in kwargs and kwargs['unit'] < 0: kwargs['unit'] = 0

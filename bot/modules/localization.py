@@ -53,7 +53,7 @@ def get_data(key: str, locale: str) -> Any:
         if way_key in localed_data or type(way_key) == int:
             if way_key or way_key == 0:
                 try:
-                    localed_data = localed_data[way_key] # type: ignore
+                    localed_data = localed_data[way_key] 
                 except Exception as e:
                     log(f'localiztion.get_data {e}\nway_key - {way_key} locale - {locale} key - {key}', 4)
         else:

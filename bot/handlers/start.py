@@ -73,6 +73,7 @@ async def start_game_message(message: types.Message):
     content = str(message.text).split()
     add_referal = False
     markup = None
+    referal = ''
 
     if len(content) > 1: 
         referal = str(content[1])
@@ -92,7 +93,7 @@ async def start_game_message(message: types.Message):
         text = t('start_command.referal', langue_code, username=username)
         await send_message(message.chat.id, text)
 
-        await start_game(message, referal=referal) # type: ignore
+        await start_game(message, referal, 'referal') 
 
 
 @bot.callback_query_handler(pass_bot=True, is_authorized=False, 

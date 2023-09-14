@@ -49,7 +49,7 @@ async def check_notification():
     """Уведомления и окончание сна
     """
     data = list(await sleepers.find(
-                    {'sleep_end': {'$lte': int(time())}}).to_list(None)  # type: ignore
+                    {'sleep_end': {'$lte': int(time())}}).to_list(None)  
                 ).copy() 
 
     for sleeper in data:
@@ -64,11 +64,11 @@ async def check_notification():
             await add_mood(dino['_id'], 'good_sleep', 1, mood_time)
 
 async def short_check():
-    data = list(await sleepers.find({'sleep_type': 'short'}).to_list(None)).copy() # type: ignore
+    data = list(await sleepers.find({'sleep_type': 'short'}).to_list(None)).copy() 
     for sleeper in data: await one_time(sleeper, 1)
 
 async def long_check():
-    data = list(await sleepers.find({'sleep_type': 'long'}).to_list(None)).copy() # type: ignore
+    data = list(await sleepers.find({'sleep_type': 'long'}).to_list(None)).copy() 
     for sleeper in data: await one_time(sleeper, 1)
 
 if __name__ != '__main__':

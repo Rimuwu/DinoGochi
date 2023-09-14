@@ -57,7 +57,7 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
         repl = near_key_number(dino.stats[i], replics[i])
         stats_text += f'{tem[i]} {repl} \[ *{dino.stats[i]}%* ]\n'
 
-    age = await dino.age
+    age = await dino.age()
     if age.days == 0:
         age = seconds_to_str(age.seconds, lang)
     else: age = seconds_to_str(age.days * 86400, lang)

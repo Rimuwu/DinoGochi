@@ -13,7 +13,7 @@ users = mongo_client.bot.users
 
 async def subscription_notification():
     data = list(await subscriptions.find({'sub_end': {'$lte': int(time()) - 86400}, 
-                    'end_notif': False}).to_list(None)).copy()  # type: ignore
+                    'end_notif': False}).to_list(None)).copy()  
 
     for sub in data:
         try:
@@ -29,7 +29,7 @@ async def subscription_notification():
 
 async def subscription_check():
     data = list(await subscriptions.find(
-        {'sub_end': {'$lte': int(time())}}).to_list(None)).copy()  # type: ignore
+        {'sub_end': {'$lte': int(time())}}).to_list(None)).copy()  
 
     for sub in data:
         await subscriptions.delete_one({'_id': sub['_id']})

@@ -233,7 +233,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
     else:
         log(prefix='Markup', 
             message=f'not_found_key User: {userid}, Data: {markup_key}', lvl=2)
-        return markups_menu(userid, 'main_menu', language_code)
+        return await markups_menu(userid, 'main_menu', language_code)
 
     buttons = tranlate_data(
         data=buttons, 

@@ -18,7 +18,7 @@ daily_data = mongo_client.tavern.daily_award
 
 async def tavern_quest(user):
     free_quests = list(await quests_data.find(
-        {'owner_id': 0}, {'_id': 1}).to_list(None))  # type: ignore
+        {'owner_id': 0}, {'_id': 1}).to_list(None))  
     lang = user['lang']
 
     if await quests_data.count_documents({'owner_id': user['userid']}) < 5:
@@ -64,7 +64,7 @@ async def tavern_replic(in_tavern, user):
         except Exception: pass
 
 async def tavern_life():
-    in_tavern = list(await tavern.find({}).to_list(None)) # type: ignore
+    in_tavern = list(await tavern.find({}).to_list(None)) 
 
     for user in in_tavern:
         if user['time_in'] + 3600 <= int(time()):
@@ -78,7 +78,7 @@ async def tavern_life():
         elif randint(1, 10) == 5: await tavern_quest(user)
 
 async def quest_managment():
-    quests = await quests_data.find({}).to_list(None)  # type: ignore
+    quests = await quests_data.find({}).to_list(None)  
     now = datetime.now(timezone.utc)
 
     for quest in quests:
@@ -93,12 +93,12 @@ async def quest_managment():
 
 async def daily_award_old():
     data = await daily_data.find(
-        {'time_end': {'$lte': int(time())}}).to_list(None)  # type: ignore
+        {'time_end': {'$lte': int(time())}}).to_list(None)  
     for i in list(data): await daily_data.delete_one({'_id': i['_id']})
 
 async def daily_award_notif():
     users_ids = await users.find({}, 
-                        {'userid': 1, 'settings': 1}).to_list(None) # type: ignore
+                        {'userid': 1, 'settings': 1}).to_list(None) 
 
     for uid in users_ids:
         if not daily_data.find_one({'owner_id': uid['userid']}):

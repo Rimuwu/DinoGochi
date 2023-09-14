@@ -6,7 +6,7 @@ from bot.modules.dinosaur import Dino
 dinosaurs = mongo_client.dinosaur.dinosaurs
 
 async def dino_notifications():
-    dinos = await dinosaurs.find({}).to_list(None) # type: ignore
+    dinos = await dinosaurs.find({}).to_list(None) 
     for dino in dinos:
         dino_id = dino['_id']
         for stat in dino['stats']:

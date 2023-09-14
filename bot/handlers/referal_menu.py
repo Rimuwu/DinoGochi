@@ -40,7 +40,7 @@ async def create_custom_code(code: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     
-    if take_coins(userid, GS['referal']['custom_price'], True):
+    if await take_coins(userid, GS['referal']['custom_price'], True):
         await create_referal(userid, code)
 
         iambot = await bot.get_me()
