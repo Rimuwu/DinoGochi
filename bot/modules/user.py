@@ -451,7 +451,7 @@ async def user_info(data_user: teleUser, lang: str, secret: bool = False):
             else:
                 dino_owner = t(f'user_profile.dino_owner.noowner', lang)
             
-            age = await dino.age
+            age = await dino.age()
             return_text += t('user_profile.dino', lang,
                             dino_name=escape_markdown(dino.name), 
                             dino_status=dino_status,
@@ -459,7 +459,7 @@ async def user_info(data_user: teleUser, lang: str, secret: bool = False):
                             owner=dino_owner,
                             age=seconds_to_str(age.days * 86400, lang, True)
                         )
-        
+
         for egg in eggs:
             egg_rare_dict = get_data(f'rare.{egg.quality}', lang)
             egg_rare = f'{egg_rare_dict[3]}'
@@ -473,10 +473,10 @@ async def user_info(data_user: teleUser, lang: str, secret: bool = False):
                      friends_col=friends_count,
                      requests_col=request_count
                      )
-    
+
     if not secret:
         items, count = await user.get_inventory()
-        
+
         return_text += '\n\n'
         return_text += t('user_profile.inventory', lang,
                         items_col=count
