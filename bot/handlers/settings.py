@@ -121,7 +121,7 @@ async def rename_dino_post_state(content: str, transmitted_data: dict):
     dino = transmitted_data['dino']
 
     last_name = dino.name
-    dino.update({'$set': {'name': content}})
+    await dino.update({'$set': {'name': content}})
 
     text = t('rename_dino.rename', lang, 
              last_name=last_name, dino_name=content)
