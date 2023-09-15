@@ -266,7 +266,8 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
     elif data_item['type'] == 'case':
         send_status = False
-        drop = data_item['drop_items']; shuffle(drop)
+        drop = data_item['drop_items']
+        shuffle(drop)
         drop_items = {}
 
         col_repit = random_dict(data_item['col_repit'])
@@ -279,17 +280,22 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                         break
 
             drop_col = random_dict(drop_item['col'])
-            if drop_item['id'] in drop_items: drop_items[drop_items['id']] += drop_col
-            else: drop_items[drop_items['id']] = drop_col
+            if drop_item['id'] in drop_items:
+                drop_items[drop_item['id']] += drop_col
+            else: drop_items[drop_item['id']] = drop_col
 
-            drop_item_data = get_data(drop_item['id'])
+        for item_id, col in drop_items.items():
+            await AddItemToUser(userid, item_id, count)
+
+            drop_item_data = get_data(item_id)
+            item_name = get_name(item_id, lang)
             image = open(f"images/items/{drop_item_data['image']}.png", 'rb')
 
             await bot.send_photo(userid, image, 
-                                 t('item_use.case.drop_item', lang), 
-                                 parse_mode='Markdown', reply_markup=
-                                 await markups_menu(userid, 'last_menu', lang))
-    
+                                    t('item_use.case.drop_item', lang, item_name=item_name, col=col), 
+                                    parse_mode='Markdown', reply_markup=
+                                    await markups_menu(userid, 'last_menu', lang))
+
     elif data_item['type'] == 'egg':
         user = await User().create(userid)
         dino_limit_col = await user.max_dino_col()
