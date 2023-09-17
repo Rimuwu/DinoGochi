@@ -65,7 +65,8 @@ async def invite_adp(friend, transmitted_data: dict):
     
     await send_action_invite(userid, friend.id, action, dino_alt, lang)
     # Возврат в меню
-    await send_message(chatid, t('back_text.actions_menu', lang), reply_markup= await m(userid, 'last_menu', lang))
+    await send_message(chatid, t('back_text.actions_menu', lang), 
+                       reply_markup= await m(userid, 'last_menu', lang))
 
 @bot.callback_query_handler(pass_bot=True, func=
                             lambda call: call.data.startswith('invite_to_action'), private=True)
