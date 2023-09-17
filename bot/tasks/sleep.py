@@ -2,9 +2,10 @@ from time import time
 from random import uniform, randint
 
 from bot.config import conf, mongo_client
-from bot.modules.dinosaur import end_sleep, mutate_dino_stat
+from bot.modules.dinosaur import end_sleep, mutate_dino_stat, get_owner
 from bot.taskmanager import add_task
 from bot.modules.mood import add_mood, check_inspiration
+from bot.modules.user import experience_enhancement
 
 sleepers = mongo_client.dino_activity.sleep
 dinosaurs = mongo_client.dinosaur.dinosaurs
@@ -24,6 +25,10 @@ async def one_time(sleeper, one_time_unit):
         sec_time = int(time()) - sleeper['sleep_start']
     elif sleeper['sleep_type'] == 'short':
         sec_time = sleeper['sleep_end'] - sleeper['sleep_start']
+
+    if randint(0, 1):
+        owner = await get_owner(dino._id)
+        await experience_enhancement(owner['userid'], randint(1, 2))
 
     if dino:
         energy = dino['stats']['energy']
