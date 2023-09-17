@@ -32,17 +32,17 @@ keys = [
 breakdowns = {
     'seclusion': {
         'cancel_mood': 35,
-        'duration_time': (3600, 14400),
+        'duration_time': (1800, 7200),
     },
 
     'hysteria': {
         'cancel_mood': 30,
-        'duration_time': (1800, 9000)
+        'duration_time': (1800, 4500)
     },
 
     'unrestrained_play': {
         'cancel_mood': 30,
-        'duration_time': (8300, 10800)
+        'duration_time': (4150, 5400)
     }, 
 
     'downgrade': {
