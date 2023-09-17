@@ -45,12 +45,8 @@ async def tavern_quest(user):
         try: await send_message(user['userid'], text)
         except: pass
 
-async def tavern_replic(in_tavern, user):
-    names = in_tavern.copy()
-    names.remove(user)
-
-    game_names = get_data('quests.authors', user['lang'])
-    names += game_names
+async def tavern_replic(user):
+    names = get_data('quests.authors', user['lang'])
 
     if names:
         random_name = choice(names)
@@ -74,7 +70,7 @@ async def tavern_life():
                         t('tavern_sleep', user['lang']))
             except: pass
 
-        elif randint(1, 10) == 5: await tavern_replic(in_tavern, user)
+        elif randint(1, 10) == 5: await tavern_replic(user)
         elif randint(1, 10) == 5: await tavern_quest(user)
 
 async def quest_managment():
