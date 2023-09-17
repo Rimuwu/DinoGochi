@@ -111,7 +111,7 @@ async def game_start(return_data: dict,
 
     game = return_data['game']
     code = return_data['time']
-    
+
     res_dino_status = await dinosaurs.find_one({"_id": dino._id}, {'status': 1})
     if res_dino_status:
         if res_dino_status['status'] != 'pass':
