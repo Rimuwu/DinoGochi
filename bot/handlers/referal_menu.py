@@ -68,7 +68,7 @@ async def custom_handler(message: Message, transmitted_data: dict):
     if len(code) == 0:
         text = t('referals.custom_code.min_len', lang)
     else:
-        res = referals.find_one({'code': code})
+        res = await referals.find_one({'code': code})
         if res:
             text = t('referals.custom_code.found_code', lang)
         else: status = True
