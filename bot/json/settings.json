@@ -65,11 +65,11 @@
     "first_dino_time_incub": 600, 
     "first_egg_rarity": "random",
 
-    "max_eat_items": 800,
-    "premium_max_eat_items": 1200,
+    "max_eat_items": 200,
+    "premium_max_eat_items": 300,
 
-    "max_collecting": 100,
-    "premium_max_collecting": 200,
+    "max_collecting": 50,
+    "premium_max_collecting": 100,
 
     "new_year_item": "gift_2023",
 
@@ -233,7 +233,7 @@
             "cost": {
                 "1": {
                     "USD": 1,
-                    "RUB": 80
+                    "RUB": 90
                 },
                 "2": {
                     "USD": 2,
@@ -252,7 +252,7 @@
             "cost": {
                 "1": {
                     "USD": 0.5,
-                    "RUB": 40
+                    "RUB": 50
                 }
             },
             "items": ["jar_honey", "jar_honey", "jar_honey", "jar_honey", "therapeutic_mixture", "therapeutic_mixture", "therapeutic_mixture", "medicinal_drink", "medicinal_drink", "meat_pie", "fish_cake", "berry_pie", "mushroom"]
@@ -262,7 +262,7 @@
             "cost": {
                 "1": {
                     "USD": 0.6,
-                    "RUB": 50
+                    "RUB": 60
                 }
             },
             "items": ["stone_resurrection"]
