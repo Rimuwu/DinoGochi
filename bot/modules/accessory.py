@@ -21,7 +21,8 @@ async def downgrade_accessory(dino: Dino, acc_type: str, max_unit: int = 2):
                 await dino.update({"$set": {f'activ_items.{acc_type}': None}})
                 await dino_notification(dino._id, 'broke_accessory', item_id=item['item_id'])
             else:
-                await dino.update({"$inc": {f'activ_items.{acc_type}.abilities.endurance': -num}})
+                await dino.update({"$inc": 
+                    {f'activ_items.{acc_type}.abilities.endurance': -num}})
             return True
         else: return False
     return False
@@ -37,10 +38,8 @@ async def check_accessory(dino: Dino, item_id: str, downgrade: bool=False) -> bo
         if acces_item['item_id'] == item_id:
             if downgrade:
                 return await downgrade_accessory(dino, data_item['type'])
-            else:
-                return True
-        else:
-            return False
+            else: return True
+        else: return False
     return False
 
 async def weapon_damage(dino: Dino, downgrade: bool = False):
