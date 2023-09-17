@@ -83,7 +83,7 @@ async def main_checks():
 
             if randint(1, 5) == 5:
                 owner = await get_owner(dino['_id'])
-                await experience_enhancement(owner['userid'], randint(1, 2))
+                await experience_enhancement(owner['owner_id'], randint(1, 2))
 
         # условие выполнения для питания и восстановления здоровья
         # если динозавр не испытывает голод, не находится в критическом запасе энергии, настроение находится выше среднего

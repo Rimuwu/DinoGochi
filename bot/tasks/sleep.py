@@ -28,7 +28,7 @@ async def one_time(sleeper, one_time_unit):
 
     if randint(0, 1):
         owner = await get_owner(dino['_id'])
-        await experience_enhancement(owner['userid'], randint(1, 2))
+        await experience_enhancement(owner['owner_id'], randint(1, 2))
 
     if dino:
         energy = dino['stats']['energy']
