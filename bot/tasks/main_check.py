@@ -4,8 +4,9 @@ from random import randint
 from bot.config import conf, mongo_client
 from bot.modules.dinosaur import mutate_dino_stat
 from bot.taskmanager import add_task
-from bot.modules.dinosaur import Dino
+from bot.modules.dinosaur import Dino, get_owner
 from bot.modules.mood import mood_while_if, calculation_points
+from bot.modules.user import experience_enhancement
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
 
@@ -60,33 +61,37 @@ async def main_checks():
                 await mutate_dino_stat(dino, 'energy', randint(*ENERGY_CHANGE))
 
         else:
-            # условие выполнения для понижения здоровья
+            # Понижение здоровья
             # если здоровье и еда находятся на критическом уровне
             if dino['stats']['energy'] <= CRITICAL_ENERGY and dino['stats']['eat'] <= CRITICAL_EAT and random.uniform(0, 1) <= P_HEAL:
                 await mutate_dino_stat(dino, 'heal', randint(*HEAL_CHANGE)*-1)
 
-            # условие выполнения для понижения питания
+            # Уменьшение еды
             # если динозавр спит, вероятность P_EAT_SLEEP
             # если динозавр не спит, вероятность P_EAT
             if (random.uniform(0, 1) <= P_EAT_SLEEP and is_sleeping) or (random.uniform(0, 1) <= P_EAT and not is_sleeping):
                 await mutate_dino_stat(dino, 'eat', randint(*EAT_CHANGE)*-1)
 
-            # условие выполнения если динозавр не играет
+            # Уменьшение энергии, если динозавр не играет
             if dino['status'] != 'game' and random.uniform(0, 1) <= P_GAME:
                 await mutate_dino_stat(dino, 'game', randint(*GAME_CHANGE)*-1)
 
-            # условие выполнения для восстановления энергии
+            # Уменьшение энергии
             # если динозавр не спит
             if not(is_sleeping) and (random.uniform(0, 1) <= P_ENERGY):
                 await mutate_dino_stat(dino, 'energy', randint(*ENERGY_CHANGE)*-1)
 
-            # условие выполнения для питания и восстановления здоровья
-            # если динозавр не испытывает голод, не находится в критическом запасе энергии, настроение находится выше среднего
-            if dino['stats']['eat'] > HIGH_EAT and dino['stats']['energy'] > CRITICAL_ENERGY and dino['stats']['mood'] > HIGH_MOOD:
-                if random.uniform(0, 1) <= P_HEAL_EAT:
+            if randint(1, 5) == 5:
+                owner = await get_owner(dino._id)
+                await experience_enhancement(owner['userid'], randint(1, 2))
 
-                    await mutate_dino_stat(dino, 'heal', randint(1, 4))
-                    if randint(0, 1): await mutate_dino_stat(dino, 'eat', -1)
+        # условие выполнения для питания и восстановления здоровья
+        # если динозавр не испытывает голод, не находится в критическом запасе энергии, настроение находится выше среднего
+        if dino['stats']['eat'] > HIGH_EAT and dino['stats']['energy'] > CRITICAL_ENERGY and dino['stats']['mood'] > HIGH_MOOD:
+            if random.uniform(0, 1) <= P_HEAL_EAT:
+
+                await mutate_dino_stat(dino, 'heal', randint(1, 4))
+                if randint(0, 1): await mutate_dino_stat(dino, 'eat', -1)
 
         # =================== Настроение ========================== #
 
@@ -141,7 +146,7 @@ async def main_checks():
             if random.uniform(0, 1) <= P_MOOD:
                 await mood_while_if(dino['_id'], 'multi_heal', 'heal', 60, 101, 1)
 
-        if dino['status'] != 'kindergarten':
+        if dino['status'] not in ['kindergarten', 'sleep']:
             if dino['stats']['mood'] >= 95:
                 if random.randint(0, 5) == 3:
                     await calculation_points(dino, 'inspiration')
