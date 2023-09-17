@@ -232,7 +232,7 @@ async def remove_friend(message: Message):
     lang = await get_lang(message.from_user.id)
 
     friends = await get_frineds(userid)
-    requests = friends['requests']
+    requests = friends['friends']
     options = {}
     a = 0
 
