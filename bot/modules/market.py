@@ -67,7 +67,7 @@ async def add_product(owner_id: int, product_type: str, items, price, in_stock: 
         data['min_add'] = add_arg['min_add']
         data['users'] = []
 
-    if product_type in ['coins_items', 'items_items']:
+    if product_type == 'items_items':
         for i in price: items_id.append(i['item_id'])
     for i in items: items_id.append(i['item_id'])
     data['items_id'] = items_id
@@ -113,7 +113,9 @@ async def seller_ui(owner_id: int, lang: str, my_market: bool, name: str = ''):
 
         text += f'{data["had"]} *{seller["name"]}*\n_{seller["description"]}_\n\n{data["owner"]} {owner}\n' \
                 f'{data["earned"]} {seller["earned"]} {data[status]}\n{data["conducted"]} {seller["conducted"]}\n' \
-                f'{data["products"]} {products_col}\n\n{data["my_option"]}'
+                f'{data["products"]} {products_col}'
+
+        if my_market: text += f'\n\n{data["my_option"]}'
 
         bt_data = {}
         d_but = data['buttons']
