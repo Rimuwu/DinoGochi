@@ -10,7 +10,7 @@ from bot.modules.dinosaur import Dino, end_journey, mutate_dino_stat
 from bot.modules.item import counts_items
 from bot.modules.localization import get_data, t
 from bot.modules.mood import add_mood
-from bot.modules.user import get_frineds, experience_enhancement
+from bot.modules.user import get_frineds
 from bot.modules.accessory import check_accessory, weapon_damage, armor_protection, downgrade_accessory
 from bot.modules.logs import log
 
@@ -220,7 +220,7 @@ locations = {
         "danger": 1.0,
         "items": {
             'com': ['jar_honey', 'cookie', 'blank_piece_paper', 'feather'],
-            'unc': ['timer', 'therapeutic_mixture', 'sweet_pancakes'],
+            'unc': ['timer', 'therapeutic_mixture', 'sweet_pancakes', 'blank_piece_paper'],
             'rar': ['bento_recipe', 'candy_recipe', 'drink_recipe', 'tooling'],
             'mys': ['salad_recipe', 'torch_recipe', 'popcorn_recipe'],
             'leg': ['soup_recipe', 'gourmet_herbs', 'board_games', 'book_forest', 'flour_recipe']
@@ -256,7 +256,7 @@ locations = {
             'mobs': ['dolphin', 'lobster', 'narwhal', 'orca', 'otter_pup', 'pelican', 'swan', 'whale', 'toucan', 'squid', 'seahorse', 'shark', 'octopus', 'wombat', 'turtle', 'snail', 'sloth', 'skunk', 'sheep', 'seagull', 'rooster', 'pigeon', 'peacock', 'parrot', 'ostrich', 'opossum', 'monkey', 'kangaroo', 'jaguar']
         },
         "items": {
-            'com': ['slice_pizza', 'fish_oil', 'twigs_tree', 'skin'],
+            'com': ['slice_pizza', 'fish_oil', 'twigs_tree', 'skin', 'blank_piece_paper'],
             'unc': ['tooling', 'therapeutic_mixture', 'sweet_pancakes'],
             'rar': ['curry_recipe', 'bread_recipe', 'tea_recipe', 'flour_recipe', 'timer', 'blank_piece_paper'],
             'mys': ['bear', 'clothing_recipe', 'meat_recipe'],
@@ -288,7 +288,7 @@ locations = {
     "desert": {
         "danger": 1.4,
         "items": {
-            'com': ['chocolate', 'candy', 'dango', 'flour_recipe', 'rope'],
+            'com': ['chocolate', 'candy', 'dango', 'flour_recipe', 'rope', 'blank_piece_paper'],
             'unc': ['juice_recipe', 'hot_chocolate_recipe', 'cake_recipe', 'tooling'],
             'rar': ['pouch_recipe', 'sword_recipe', 'onion_recipe', 'arrow_recipe'],
             'mys': ['backpack_recipe', 'shield_recipe', 'pickaxe_recipe'],
@@ -324,7 +324,7 @@ locations = {
     "mountains": {
         "danger": 1.8,
         "items": {
-            'com': ['sandwich', 'dango', 'mushroom', 'therapeutic_mixture'],
+            'com': ['sandwich', 'dango', 'mushroom', 'therapeutic_mixture', 'blank_piece_paper'],
             'unc': ['bacon_recipe', 'bento_recipe', 'sandwich_recipe'],
             'rar': ['berry_pie_recipe', 'fish_pie_recipe', 'meat_pie_recipe'],
             'mys': ['basket_recipe', 'net_recipe', 'rod_recipe'],
@@ -696,16 +696,21 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
                 col = event['remove_item']
                 items: list = journey_base['items']
                 data['remove_items'] = []
+                no_items = False
 
                 for _ in range(col):
                     if items: 
                         it = choice(items)
                         items.remove(it)
                         data['remove_items'].append(it)
-                    else: break
-
-                await journey.update_one({'_id': journey_base['_id']}, 
+                    else: 
+                        no_items = True
+                        break
+                if not no_items and \
+                    not await check_accessory(dino, 'lock_bag', True):
+                    await journey.update_one({'_id': journey_base['_id']}, 
                                     {'$set': {'items': items}})
+                else: return True
 
         else: data['cancel'] = True
 
