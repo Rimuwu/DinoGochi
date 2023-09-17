@@ -27,7 +27,7 @@ async def one_time(sleeper, one_time_unit):
         sec_time = sleeper['sleep_end'] - sleeper['sleep_start']
 
     if randint(0, 1):
-        owner = await get_owner(dino._id)
+        owner = await get_owner(dino['_id'])
         await experience_enhancement(owner['userid'], randint(1, 2))
 
     if dino:
