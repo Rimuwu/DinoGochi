@@ -82,7 +82,7 @@ async def main_checks():
                 await mutate_dino_stat(dino, 'energy', randint(*ENERGY_CHANGE)*-1)
 
             if randint(1, 5) == 5:
-                owner = await get_owner(dino._id)
+                owner = await get_owner(dino['_id'])
                 await experience_enhancement(owner['userid'], randint(1, 2))
 
         # условие выполнения для питания и восстановления здоровья
