@@ -17,11 +17,9 @@ collecting_task = mongo_client.dino_activity.collecting
 dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = mongo_client.dinosaur.dino_owners
 
-REPEAT_MINUTS = 10
-ENERGY_DOWN = 0.03 * REPEAT_MINUTS
-ENERGY_DOWN2 = 0.5 * REPEAT_MINUTS
+REPEAT_MINUTS = 4
+ENERGY_DOWN = 0.1 * REPEAT_MINUTS
 LVL_CHANCE = 0.125 * REPEAT_MINUTS
-COLLECTING_CHANCE = 0.8 * REPEAT_MINUTS
 
 async def stop_collect(coll_data):
     try:
@@ -44,36 +42,63 @@ async def collecting_process():
     data = list(await collecting_task.find({}).to_list(None)).copy()
 
     for coll_data in data:
+        coll_type = coll_data["collecting_type"]
         if coll_data['now_count'] >= coll_data['max_count']:
             await stop_collect(coll_data)
         else:
-            if random.uniform(0, 1) <= ENERGY_DOWN:
-                if random.uniform(0, 1) <= ENERGY_DOWN2: 
-                    dino = await dinosaurs.find_one({'_id': coll_data['dino_id']})
-                    if dino: await mutate_dino_stat(dino, 'energy', -1)
-
             dino = await Dino().create(coll_data['dino_id'])
-            if await check_accessory(dino, 'tooling'): chance = 0.25
-            else: chance = 0.2
+            rare_list = [50, 25, 15, 9, 1]
 
+            # Понижение энергии
+            if random.uniform(0, 1) <= ENERGY_DOWN:
+                dino = await dinosaurs.find_one({'_id': coll_data['dino_id']})
+                if dino: await mutate_dino_stat(dino, 'energy', -1)
+
+            # Расчёт шанса
             res = await check_inspiration(coll_data['dino_id'], 'collecting')
-            if res: chance *= 2
+            if res: chance = 0.9
+            else: chance = 0.45
 
-            if random.uniform(0, 1) <= chance: 
+            if await check_accessory(dino, 'tooling'): chance += 0.25
+
+            # Выдача опыта
+            if random.uniform(0, 1) <= LVL_CHANCE: 
                 await experience_enhancement(coll_data['sended'], 
-                                             randint(1, 5))
+                                             randint(1, 3))
 
-            if random.uniform(0, 1) <= COLLECTING_CHANCE:
+            # Выдача еды
+            if random.uniform(0, 1) <= chance:
                 await check_accessory(dino, 'tooling', True)
 
-                items = GAME_SETTINGS['collecting_items'][coll_data["collecting_type"]]
+                # Повышение шанса редкости
+                if coll_type == 'fishing' and \
+                    await check_accessory(dino, 'rod', True):
+                        # Аксессуар удочка задействован
+                        rare_list[0] -= 10
+                        rare_list[1] -= 7
+
+                        rare_list[2] += 10
+                        rare_list[3] += 5
+                        rare_list[4] += 2
+
+                elif coll_type == 'hunt' and \
+                    await check_accessory(dino, 'net', True):
+                        # Аксессуар сеть задействован
+                        rare_list[0] -= 10
+                        rare_list[1] -= 7
+
+                        rare_list[2] += 10
+                        rare_list[3] += 5
+                        rare_list[4] += 2
+
+                items = GAME_SETTINGS['collecting_items'][coll_type]
                 count = randint(1, 3)
 
                 if coll_data['now_count'] + count > coll_data['max_count']:
                     count = coll_data['max_count'] - coll_data['now_count']
 
                 for _ in range(count):
-                    rar = random.choices(list(items.keys()), [50, 25, 15, 9, 1])[0]
+                    rar = random.choices(list(items.keys()), rare_list)[0]
                     item = random.choice(items[rar])
 
                     if item in coll_data['items']:
