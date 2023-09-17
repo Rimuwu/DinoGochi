@@ -725,7 +725,7 @@
                     "🥕 *{dino_name}*: *{owner_name}*, I want to eat! ({unit} %)",
                     "🥕 *{dino_name}*: Feed me, *{owner_name}*. ({unit} %)"
                 ],
-                "inline_menu": "inventory"
+                "inline_menu": "feed_start"
             },
             "need_mood": {
                 "replics": [
@@ -789,6 +789,10 @@
             "kindergarten": {
                 "text": "🎈 | {dino_name} I returned from kindergarten.",
                 "inline_menu": "dino_profile"
+            },
+            "feed_start": {
+                "text": "🥙 Feed",
+                "callback": "feed_inl {alt_id}"
             }
         },
         "breakdown": {
@@ -2461,7 +2465,7 @@
             "game": "⌚ Play {now} / {min} minutes.",
             "journey": "⌚ Travel {now} / {min} minutes.",
             "feed": "🍿 Feed the dinosaur:\n {eat_list}",
-            "collecting": "🥦 Collect {now} / {max} items.",
+            "collecting": "🥦 Collect {now} / {max} herb items.",
             "fishing": "🐟 Collect {now} / {max} items.",
             "hunt": "🍖 Catch {now} / {max} items.",
             "time_end": "_⏳ After {time_end}, the quest will be transferred to another player._",
@@ -2525,7 +2529,7 @@
                         "Walking along the path, the dinosaur noticed candies that lead somewhere into the bushes. 1, 2, 3. Here the dinosaur is already near the bushes, but the dinosaur has already eaten enough and moved on."
                     ],
                     "influences_game": [
-                        "The dinosaur jumped through the puddles after the jozh."
+                        "The dinosaur jumped through the puddles after the joj."
                     ],
                     "influences_energy": [
                         "The dinosaur took a nap in the clearing, now it's time to move on!"
@@ -2545,7 +2549,7 @@
                         "While walking, the dinosaur saw a felled tree, he was very upset because of this ..."
                     ],
                     "influences_eat": [
-                        "Actively traveling, the dinosaur is progaladasya."
+                        "Actively traveling, the dinosaur is hungry."
                     ],
                     "influences_game": [
                         "Walking through the monaton forest, the dinosaur is bored, he wants to play."
@@ -3487,6 +3491,8 @@
             "time_end": "🎠 Enter the end time, 0 is infinite. `/string_to_sec` - Do not forget about the memo.",
             "code": "🎃 Enter the tracking code.",
             "chose_item": "🧮 Choose an item to add"
-        }
+        },
+        "max_count": "❌ | Your inventory is bursting with food, now there are {eat_count} / {max_count} units of food in it!",
+        "max_friend_count": "❌ | You can't transfer items, your friend's inventory is already bursting with food."
     }
 }
