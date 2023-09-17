@@ -564,7 +564,7 @@ async def max_eat(userid: int):
     """
 
     col = await col_dinos(userid)
-    if premium(userid):
+    if await premium(userid):
         per_one = GS['premium_max_eat_items']
     else: per_one = GS['max_eat_items']
 
