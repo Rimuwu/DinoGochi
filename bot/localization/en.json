@@ -789,10 +789,6 @@
             "kindergarten": {
                 "text": "🎈 | {dino_name} I returned from kindergarten.",
                 "inline_menu": "dino_profile"
-            },
-            "feed_start": {
-                "text": "🥙 Feed",
-                "callback": "feed_inl {alt_id}"
             }
         },
         "breakdown": {
@@ -890,6 +886,10 @@
             "product_info": {
                 "text": "🍜 About the product",
                 "callback": "product_info info {alt_id}"
+            },
+            "feed_start": {
+                "text": "🥙 Feed",
+                "callback": "feed_inl {alt_id}"
             }
         },
         "states": {
