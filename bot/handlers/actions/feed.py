@@ -1,5 +1,5 @@
 
-from telebot.types import Message
+from telebot.types import Message, CallbackQuery
 
 from bot.config import mongo_client
 from bot.exec import bot
@@ -81,4 +81,20 @@ async def feed(message: Message):
         'dino': await user.get_last_dino()
     }
     
+    await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
+
+@bot.callback_query_handler(pass_bot=True, func=
+                            lambda call: call.data.startswith('feed_inl'))
+async def feed_inl(callback: CallbackQuery):
+    lang = await get_lang(callback.from_user.id)
+    chatid = callback.message.chat.id
+    alt_id = callback.data.split()[1]
+    userid = callback.from_user.id
+
+    transmitted_data = {
+        'chatid': chatid,
+        'lang': lang,
+        'dino': await Dino().create(alt_id)
+    }
+
     await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
