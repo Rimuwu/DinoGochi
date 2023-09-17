@@ -19,7 +19,7 @@ from bot.modules.markup import (confirm_markup, count_markup,
 from bot.modules.mood import add_mood
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
-from bot.modules.user import User, experience_enhancement, get_dead_dinos
+from bot.modules.user import User, experience_enhancement, get_dead_dinos, max_eat, count_inventory_items
 from bot.modules.over_functions import send_message
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
@@ -36,18 +36,25 @@ async def exchange(return_data: dict, transmitted_data: dict):
     lang = transmitted_data['lang']
     username = transmitted_data['username']
 
-    preabil = {}
-    if 'abilities' in item: preabil = item['abilities']
+    item_type = get_data(item['item_id'])
+    eat_count = await count_inventory_items(userid, ['eat'])
 
-    status = await RemoveItemFromUser(userid, item['item_id'], count, preabil)
-    if status:
-        await AddItemToUser(friend.id, item['item_id'], count, preabil)
+    if item_type == 'eat' and eat_count >= await max_eat(userid):
+        await send_message(chatid, t('max_friend_count', lang),
+                            reply_markup=await markups_menu(userid, 'last_menu', lang))
+    else:
+        preabil = {}
+        if 'abilities' in item: preabil = item['abilities']
 
-        await send_message(friend.id, t('exchange', lang, 
-                            items=counts_items([item['item_id']]*count, lang),username=username))
+        status = await RemoveItemFromUser(userid, item['item_id'], count, preabil)
+        if status:
+            await AddItemToUser(friend.id, item['item_id'], count, preabil)
 
-        await send_message(chatid, t('exchange_me', lang),
-                               reply_markup=await markups_menu(userid, 'last_menu', lang))
+            await send_message(friend.id, t('exchange', lang, 
+                                items=counts_items([item['item_id']]*count, lang),username=username))
+
+            await send_message(chatid, t('exchange_me', lang),
+                                reply_markup=await markups_menu(userid, 'last_menu', lang))
 
 
 async def exchange_item(userid: int, chatid: int, item: dict,
