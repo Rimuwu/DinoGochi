@@ -3,17 +3,16 @@ from random import randint
 from time import time
 
 from bot.config import conf, mongo_client
-from bot.const import GAME_SETTINGS
-from bot.exec import bot
 from bot.handlers.actions.journey import send_logs
 from bot.modules.accessory import check_accessory
 from bot.modules.dinosaur import (Dino, end_collecting, end_journey,
                                   get_dino_language, mutate_dino_stat)
-from bot.modules.item import counts_items
 from bot.modules.journey import random_event
 from bot.modules.quests import quest_process
 from bot.modules.user import experience_enhancement
 from bot.taskmanager import add_task
+from bot.modules.accessory import check_accessory
+from bot.modules.mood import check_inspiration
 
 journey = mongo_client.dino_activity.journey
 dinosaurs = mongo_client.dinosaur.dinosaurs
@@ -39,8 +38,21 @@ async def events():
         {'journey_end': {'$gte': int(time())}}).to_list(None)).copy()
 
     for i in data:
-        if random.uniform(0, 1) <= EVENT_CHANCE:
+        chance = EVENT_CHANCE
+        dino = await Dino().create(i['dino_id'])
+
+        res = await check_inspiration(i['dino_id'], 'journey')
+        if res: chance *= 2
+
+        if await check_accessory(dino, 'hiking_bag'):
+            chance += 0.6 * REPEAT_MINUTS
+
+        if random.uniform(0, 1) <= chance:
             await random_event(i['dino_id'], i['location'])
+            await check_accessory(dino, 'hiking_bag', True)
+
+            if randint(0, 1): 
+                await experience_enhancement(i['sended'], randint(1, 2))
 
 if __name__ != '__main__':
     if conf.active_tasks: 
