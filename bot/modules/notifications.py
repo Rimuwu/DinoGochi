@@ -221,12 +221,17 @@ async def user_notification(user_id: int, not_type: str,
 async def notification_manager(dino_id: ObjectId, stat: str, unit: int):
     """ Автоматически отсылает / удаляет уведомления
     """
+    kwargs = {}
     notif = f'need_{stat}'
+
+    if stat in ['eat']:
+        dino_data = await dinosaurs.find_one({'_id': dino_id})
+        if dino_data: kwargs['alt_id'] = dino_data['alt_id']
 
     if critical_line[stat] >= unit:
         if await check_dino_notification(dino_id, notif, False):
             # Отправка уведомления
-            await dino_notification(dino_id, notif, unit=unit)
+            await dino_notification(dino_id, notif, unit=unit, **kwargs)
 
     elif unit >= critical_line[stat] + 20:
         # Удаляем уведомление 
