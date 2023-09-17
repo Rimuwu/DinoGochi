@@ -12,9 +12,10 @@ from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseStepState
-from bot.modules.user import User, count_inventory_items, premium
+from bot.modules.user import User, count_inventory_items, premium, max_eat
 from bot.modules.quests import quest_process
 from bot.modules.over_functions import send_message
+from bot.modules.accessory import check_accessory
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
 collecting_task = mongo_client.dino_activity.collecting
@@ -28,11 +29,7 @@ async def collecting_adapter(return_data, transmitted_data):
     lang = transmitted_data['lang']
 
     eat_count = await count_inventory_items(userid, ['eat'])
-    st_premium = await premium(userid)
-
-    if st_premium and eat_count + count > GAME_SETTINGS['premium_max_eat_items'] \
-        or not st_premium and \
-        eat_count + count > GAME_SETTINGS['max_eat_items']:
+    if eat_count + count > await max_eat(userid):
 
         text = t(f'collecting.max_count', lang,
                 eat_count=eat_count)
@@ -46,6 +43,7 @@ async def collecting_adapter(return_data, transmitted_data):
                 return
 
             await dino.collecting(userid, option, count)
+            await check_accessory(dino, 'basket', True)
 
             image = dino_collecting(dino.data_id, option)
             text = t(f'collecting.result.{option}', lang,
@@ -74,6 +72,9 @@ async def collecting_button(message: Message):
             if await user.premium:
                 max_count = GAME_SETTINGS['premium_max_collecting']
             else: max_count = GAME_SETTINGS['max_collecting']
+
+            have_basket = await check_accessory(last_dino, 'basket')
+            if have_basket: max_count += 20
 
             data_options = get_data('collecting.buttons', lang)
             options = dict(zip(data_options.values(), data_options.keys()))
