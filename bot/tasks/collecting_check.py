@@ -51,8 +51,7 @@ async def collecting_process():
 
             # Понижение энергии
             if random.uniform(0, 1) <= ENERGY_DOWN:
-                dino = await dinosaurs.find_one({'_id': coll_data['dino_id']})
-                if dino: await mutate_dino_stat(dino, 'energy', -1)
+                if dino: await mutate_dino_stat(dino.__dict__, 'energy', -1)
 
             # Расчёт шанса
             res = await check_inspiration(coll_data['dino_id'], 'collecting')
