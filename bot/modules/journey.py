@@ -493,6 +493,7 @@ async def random_event(dinoid, location: str, ignored_events: list=[], friend_di
                 if event['type'] not in ignored_events: 
                     stop = True
                     break
+                print(event)
             if event:
                 res = await activate_event(dinoid, event, friend_dino)
                 if res: 
@@ -618,9 +619,13 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
                 dino_hp, loot, status = 0, [], True
                 data['mobs'] = []
 
+                print('1')
                 damage = await weapon_damage(dino, True)
+                print('223')
                 have_acs = await check_accessory(dino, 'skinning_knife', True)
+                print(';34')
                 protection = await armor_protection(dino, False)
+                print('3434')
 
                 for mob in event['mobs']:
                     dam_col = mob['hp'] // damage
@@ -765,8 +770,7 @@ async def generate_event_message(event: dict, lang: str, journey_id: ObjectId, e
             add = ''
             if i in event['dino_edit']:
                 if event["dino_edit"][i] != 0:
-                    if worldview == 'positive': add = '+'
-                    else: add = ''
+                    if event["dino_edit"][i] > 0: add = '+'
                     add_list.append(f'{add}{event["dino_edit"][i]}{signs[i]}')
 
     if 'location_events' in event:
