@@ -97,7 +97,7 @@ async def daily_award_notif():
                         {'userid': 1, 'settings': 1}).to_list(None) 
 
     for uid in users_ids:
-        if not daily_data.find_one({'owner_id': uid['userid']}):
+        if not await daily_data.find_one({'owner_id': uid['userid']}):
             if uid['settings']['notifications']:
                 await user_notification(uid['userid'], 'daily_award')
 
