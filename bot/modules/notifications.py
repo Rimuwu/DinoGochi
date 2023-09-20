@@ -174,10 +174,11 @@ async def user_notification(user_id: int, not_type: str,
     """
     text, markup_inline = not_type, InlineKeyboardMarkup()
     standart_notification = [
-        'donation', 'lvl_up', 
+        'donation', 'lvl_up',
         'product_delete' # необходим preview
     ]
     unstandart_notification = [
+        'referal_award',
         'incubation_ready', # необходим dino_alt_id_markup, user_name
         'send_request', #необходим user_name
         'not_independent_dead', 'independent_dead', 'daily_award',
@@ -198,7 +199,8 @@ async def user_notification(user_id: int, not_type: str,
     elif not_type in unstandart_notification:
         data = get_data(f'notifications.{not_type}', lang)
         text = data['text'].format(**kwargs)
-        markup_inline = inline_menu(data['inline_menu'], lang, **kwargs)
+        if 'inline_menu' in data:
+            markup_inline = inline_menu(data['inline_menu'], lang, **kwargs)
 
     else:
         log(prefix='Notification not_type', 
