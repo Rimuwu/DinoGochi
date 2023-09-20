@@ -218,7 +218,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
 
         else:
             add_back_button = False
-            dino = await last_dino(user)
+            dino = await user.get_last_dino()
             if dino:
                 dino_button = f'notranslate.{t("commands_name.actions.dino_button", language_code)} {crop_text(dino.name, 6)}'
 
