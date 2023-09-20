@@ -70,7 +70,7 @@ class User:
     def UpdateData(self, data):
         if data: self.__dict__ = data
 
-    async def get_dinos(self, all_dinos: bool=True) -> list:
+    async def get_dinos(self, all_dinos: bool=True) -> list[Dino]:
         """Возвращает список с объектами динозавров.
            all_dinos - Если False то не запросит совместных динозавров 
         """
@@ -208,7 +208,7 @@ async def insert_user(userid: int, lang: str):
         user = await User().create(userid)
         return await users.insert_one(user.__dict__)
 
-async def get_dinos(userid: int, all_dinos: bool = True) -> list:
+async def get_dinos(userid: int, all_dinos: bool = True) -> list[Dino]:
     """Возвращает список с объектами динозавров."""
     dino_list = []
 
@@ -269,9 +269,9 @@ async def last_dino(user: User):
     """
     last_dino = user.settings['last_dino']
     if last_dino:
-        dino = await dinosaurs.find_one({'_id': last_dino}, {"_id": 1})
-        if dino:
-            return await Dino().create(dino['_id'])
+        dino_data = await dinosaurs.find_one({'_id': last_dino}, {"_id": 1})
+        if dino_data:
+            return await Dino().create(dino_data['_id'])
         else:
             await user.update({'$set': {'settings.last_dino': None}})
             return await last_dino(user)
@@ -394,7 +394,7 @@ async def experience_enhancement(userid: int, xp: int):
                     random_item = choice(GS['referal']['award_items'])
                     item_name = get_name(random_item, lang)
 
-                    await AddItemToUser(userid, random_item)
+                    await AddItemToUser(code_owner, random_item)
                     await user_notification(code_owner, 'referal_award', lang, 
                                         user_name=name,
                                         lvl=user['lvl'] + lvl, item_name=item_name)
