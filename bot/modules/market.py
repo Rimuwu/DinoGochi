@@ -5,7 +5,7 @@ from bson.objectid import ObjectId
 from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, random_code, seconds_to_str
-from bot.modules.item import counts_items, get_item_dict, AddItemToUser, CheckCountItemFromUser, RemoveItemFromUser
+from bot.modules.item import counts_items, get_item_dict, AddItemToUser, CheckCountItemFromUser, RemoveItemFromUser, item_code
 from bot.modules.item import get_data as get_item_data
 from bot.modules.images import market_image
 from bot.modules.localization import get_data, t, get_lang
@@ -450,11 +450,22 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                 status = await take_coins(userid, -col_price, True)
 
                 if status:
+                    dct_items = {}
                     for item in list(product['items']):
-                        item_id = item['item_id']
-                        if 'abillities' in item: abil = item['abillities']
+                        cd = item_code(item)
+                        if cd in dct_items:
+                            dct_items[cd]['col'] += 1
+                        else: 
+                            dct_items[cd] = {
+                                'item': item,
+                                'col': 1
+                            }
+
+                    for key, data in dct_items.items():
+                        item_id = data['item']['item_id']
+                        if 'abillities' in data['item']: abil = data['item']['abillities']
                         else: abil = {}
-                        await AddItemToUser(userid, item_id, col, abil)
+                        await AddItemToUser(userid, item_id, data['col'] * col, abil)
 
                     # Выдача монет владельцу
                     await take_coins(owner, col_price - two_percent, True)
