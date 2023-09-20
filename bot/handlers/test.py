@@ -25,7 +25,7 @@ from bot.modules.localization import get_data, t
 from bot.modules.markup import count_markup, down_menu, list_to_keyboard, confirm_markup
 from bot.modules.notifications import user_notification, notification_manager
 from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
-from bot.modules.user import User, max_dino_col, award_premium, count_inventory_items
+from bot.modules.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement
 from bot.modules.statistic import get_now_statistic
 from bot.modules.quests import create_quest, quest_ui, save_quest
 from bot.modules.journey import create_event, random_event, activate_event
@@ -64,5 +64,13 @@ async def command(message):
             print('user', ad_user, 'id:', item_id, 'col:', col)
             res = await AddItemToUser(ad_user, item_id, col)
             print(res)
+    else:
+        print(user.id, 'not in devs')
+
+@bot.message_handler(pass_bot=True, commands=['1xp'], is_admin=True)
+async def command2(message):
+    user = message.from_user
+    if user.id in conf.bot_devs:
+        await experience_enhancement(user.id, 1)
     else:
         print(user.id, 'not in devs')
