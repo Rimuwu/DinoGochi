@@ -1,7 +1,7 @@
 
 from bot.config import mongo_client
 from bot.modules.data_format import list_to_inline, seconds_to_str
-from bot.modules.item import counts_items
+from bot.modules.item import counts_items, AddItemToUser
 from bot.modules.localization import get_data, t
 from bot.modules.market import generate_items_pages
 from bot.modules.markup import answer_markup, cancel_markup, count_markup
@@ -271,15 +271,26 @@ async def use_promo(code: str, userid: int, lang: str):
 
                             text = t('promo_commands.activate', lang)
                             if data['coins']:
+                                await users.update_one({'userid': userid}, {'$inc': {'coins': data['coins']}})
+
                                 text += t('promo_commands.coins', lang,
                                           coins=data['coins']
                                           )
                             if data['items']:
-                                id_list = []
-                                for i in list(data['items']): id_list.append(i['item_id'])
+                                id_dict, id_list = {}, []
+                                for i in list(data['items']):
+                                    id_list.append(i['item_id'])
+
+                                    if i['item_id'] in id_dict:
+                                        id_dict[i['item_id']] += 1
+                                    else: id_dict[i['item_id']] = 1
+
+                                for key, count in id_dict.items(): await AddItemToUser(userid, key, count)
+
                                 text += t('promo_commands.items', lang,
                                           items=counts_items(id_list, lang)
                                           )
+
                             return 'ok', text
                         else:
                             text = t('promo_commands.already_use', lang)

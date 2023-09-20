@@ -149,7 +149,7 @@ async def promo_call(call: CallbackQuery):
 
                     if res['time'] != 'inf':
                         res['time_end'] = int(time()) + res['time']
-                        
+
                         await promo.update_one({'_id': res['_id']}, {"$set": {
                             "time_end": res['time_end'],
                             'active': True
@@ -220,7 +220,7 @@ async def link_promo(message):
                 await send_message(user.id, text_dict['not_found'])
 
 @bot.message_handler(commands=['inf_premium'], is_admin=True)
-async def give_me_premium(message):
+async def inf_premium(message):
     msg_args = message.text.split()
     
     if len(msg_args) > 1:
