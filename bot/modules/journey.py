@@ -618,14 +618,10 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
             if 'mobs' in event:
                 dino_hp, loot, status = 0, [], True
                 data['mobs'] = []
-
-                print('1')
+    
                 damage = await weapon_damage(dino, True)
-                print('223')
                 have_acs = await check_accessory(dino, 'skinning_knife', True)
-                print(';34')
                 protection = await armor_protection(dino, False)
-                print('3434')
 
                 for mob in event['mobs']:
                     dam_col = mob['hp'] // damage
@@ -737,16 +733,19 @@ async def generate_event_message(event: dict, lang: str, journey_id: ObjectId, e
     signs = get_data('journey.signs', lang)
 
     journey_text = get_data(f'journey', lang)
-    if location in journey_text:
-        if worldview in journey_text[location]:
-            if event_type in journey_text[location][worldview]:
-                text_list = get_data(f'journey.{location}.{worldview}.{event_type}', lang)
+    if event_type in journey_text:
+        text_list = get_data(f'journey.{event_type}', lang)
+    else:
+        if location in journey_text:
+            if worldview in journey_text[location]:
+                if event_type in journey_text[location][worldview]:
+                    text_list = get_data(f'journey.{location}.{worldview}.{event_type}', lang)
+                else:
+                    text_list = get_data(f'journey.{location}.{event_type}', lang)
             else:
                 text_list = get_data(f'journey.{location}.{event_type}', lang)
         else:
-            text_list = get_data(f'journey.{location}.{event_type}', lang)
-    else:
-        text_list = get_data(f'journey.{worldview}.{event_type}', lang)
+            text_list = get_data(f'journey.{worldview}.{event_type}', lang)
 
     if 'replic' not in event:
         # Сохраняем id репликии

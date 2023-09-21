@@ -24,7 +24,7 @@ async def mood_check():
                 if dino_id in upd_data:
                     upd_data[dino_id]['unit'] += mood_data['unit']
                 else: upd_data[dino_id] = {'unit': mood_data['unit'], 
-                                        'while': [], 'events': []
+                                           'while': [], 'events': []
                                         }
 
             if mood_data['type'] == 'mood_edit':
@@ -39,16 +39,6 @@ async def mood_check():
                 upd_data[dino_id]['while'].append(while_data)
 
             if mood_data['type'] in ['breakdown', 'inspiration']:
-                if dino_id not in upd_data: upd_data[dino_id] = {
-                    'unit': 0, 'events': []
-                    }
-                upd_data[dino_id]['events'].append(
-                    {'_id': mood_data['_id'], 
-                    'cancel_mood': mood_data['cancel_mood'],
-                    'type': mood_data['type']
-                    }
-                )
-
                 if int(time()) >= mood_data['end_time']:
                     # Закончилось время эффекта
                     await dino_mood.delete_one({'_id': mood_data['_id']})
@@ -56,6 +46,17 @@ async def mood_check():
                     if mood_data['action'] == 'hysteria':
                         await dinosaurs.update_one({'_id': dino_id}, 
                                             {'$set': {'status': 'pass'}})
+                else:
+                    if dino_id not in upd_data: upd_data[dino_id] = {
+                        'unit': 0, 'events': []
+                        }
+                    upd_data[dino_id]['events'].append(
+                        {'_id': mood_data['_id'], 
+                        'cancel_mood': mood_data['cancel_mood'],
+                        'type': mood_data['type'],
+                        'action': mood_data['action']
+                        }
+                    )
         except Exception as e:
             log(f'mood_data error {e}, {mood_data}')
 
@@ -67,11 +68,12 @@ async def mood_check():
                 if data['unit'] != 0:
                     await mutate_dino_stat(dino, 'mood', data['unit'])
 
-                for while_data in data['while']:
-                    char = while_data['characteristic']
-                    if while_data['min_unit'] >= dino['stats'][char] or \
-                        dino['stats'][char] >= while_data['max_unit']:
-                            await dino_mood.delete_one({'_id': while_data['_id']})
+                if 'while' in data:
+                    for while_data in data['while']:
+                        char = while_data['characteristic']
+                        if while_data['min_unit'] >= dino['stats'][char] or \
+                            dino['stats'][char] >= while_data['max_unit']:
+                                await dino_mood.delete_one({'_id': while_data['_id']})
 
                 for event_data in data['events']:
                     if event_data['type'] == 'breakdown':
