@@ -340,7 +340,9 @@ async def ChooseInline(callback: CallbackQuery):
         transmitted_data['temp']['message_data'] = callback.message
         
         if 'steps' in transmitted_data:
-            transmitted_data['steps'][transmitted_data['process']]['bmessageid'] = callback.message.id
+            try:
+                transmitted_data['steps'][transmitted_data['process']]['bmessageid'] = callback.message.id
+            except: pass
         else: transmitted_data['bmessageid'] = callback.message.id
 
         await func(code, transmitted_data=transmitted_data)
