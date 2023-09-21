@@ -222,8 +222,10 @@ async def support_buttons(call: CallbackQuery):
                         reply_markup=markup_inline,
                         parse_mode='Markdown')
         else:
-            await bot.edit_message_media(
+            try:
+                await bot.edit_message_media(
                         chat_id=chatid,
                         message_id=messageid,
                         reply_markup=markup_inline,
                         media=InputMedia(type='photo', media=image, caption=text, parse_mode='Markdown'))
+            except: pass
