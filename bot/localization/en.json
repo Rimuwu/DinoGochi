@@ -2506,6 +2506,7 @@
         },
         "journey": {
             "forest": {
+                "forced_exit": ["The dinosaur turned neither way and came out of the forest."],
                 "without_influence": [
                     "Walking through the beautiful forest, the dinosaur noticed the butterfly, glazing over it and did not notice how it became darker."
                 ],
@@ -2569,6 +2570,7 @@
                 }
             },
             "lost-islands": {
+                "forced_exit": ["The dinosaur turned neither there and went out on the already familiar road home."],
                 "without_influence": [
                     "Walking along the beach, the dinosaur renewed a beautiful shell."
                 ],
@@ -2638,6 +2640,7 @@
                 }
             },
             "desert": {
+                "forced_exit": ["The dinosaur turned neither way and finally left the desert."],
                 "without_influence": [
                     "Walking among the sands, the dinosaur saw water, but quickly realized that it was a mirage."
                 ],
@@ -2707,6 +2710,7 @@
                 }
             },
             "mountains": {
+                "forced_exit": ["The dinosaur turned neither there and descended from the mountains."],
                 "without_influence": [
                     "The dinosaur saw snowflakes falling beautifully from the sky."
                 ],
@@ -2776,6 +2780,7 @@
                 }
             },
             "magic-forest": {
+                "forced_exit": ["The dinosaur turned neither there nor out of the magical forest."],
                 "without_influence": [
                     "Walking through the magical forest, the dinosaur noticed how beautifully the leaves shimmer."
                 ],
