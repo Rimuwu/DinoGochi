@@ -310,7 +310,7 @@ async def CheckCountItemFromUser(userid: int, count: int, itemid: str,
     find_items = await items.find({'owner_id': userid, 'items_data': item}, 
                             {'_id': 1, 'count': 1}).to_list(None) 
     find_list = list(find_items)
-    
+
     for iterable_item in find_list: max_count += iterable_item['count']
     if count > max_count: return False
     return True
@@ -451,7 +451,7 @@ def sort_materials(not_sort_list: list, lang: str,
 
 def get_case_content(content: list, lang: str, separator: str = ' |'):
     items_list = []
-    
+
     for item in content:
         name = get_name(item['id'], lang)
         percent = int((item['chance'][0] / item['chance'][1]) * 100)
