@@ -44,9 +44,6 @@ items = mongo_client.items.items
 users = mongo_client.user.users
 friends = mongo_client.user.friends
 
-with open('bot/json/old_ids.json', encoding='utf-8') as f: 
-    ids = json.load(f)
-
 @bot.message_handler(pass_bot=True, commands=['add_item', 'item_add'], is_admin=True)
 async def command(message):
     user = message.from_user
