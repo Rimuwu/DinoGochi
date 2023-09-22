@@ -57,7 +57,7 @@ async def ChoseDino(message: Message):
     if message.text in ret_data.keys():
         await bot.delete_state(userid, message.chat.id)
         await bot.reset_data(message.from_user.id, message.chat.id)
-        if 'steps' in transmitted_data:
+        if 'steps' in transmitted_data and 'process' in transmitted_data:
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.id
         else: transmitted_data['umessageid'] = message.id
 
@@ -101,8 +101,9 @@ async def ChooseInt(message: Message):
                 number = number, min = min_int))
     else:
         await bot.delete_state(userid, message.chat.id)
-        await bot.reset_data(message.from_user.id,  message.chat.id)
-        if 'steps' in transmitted_data:
+        await bot.reset_data(message.from_user.id, message.chat.id)
+
+        if 'steps' in transmitted_data and 'process' in transmitted_data:
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.id
         else: transmitted_data['umessageid'] = message.id
 
@@ -135,7 +136,7 @@ async def ChooseString(message: Message):
     else:
         await bot.delete_state(userid, message.chat.id)
         await bot.reset_data(message.from_user.id,  message.chat.id)
-        if 'steps' in transmitted_data:
+        if 'steps' in transmitted_data and 'process' in transmitted_data:
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.id
         else: transmitted_data['umessageid'] = message.id
 
@@ -169,7 +170,7 @@ async def ChooseConfirm(message: Message):
         else:
             await bot.delete_state(userid, message.chat.id)
             await bot.reset_data(message.from_user.id,  message.chat.id)
-            if 'steps' in transmitted_data:
+            if 'steps' in transmitted_data and 'process' in transmitted_data:
                 transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.id
             else: transmitted_data['umessageid'] = message.id
 
@@ -192,7 +193,7 @@ async def ChooseOption(message: Message):
         transmitted_data = data['transmitted_data']
 
     if message.text in options.keys():
-        if 'steps' in transmitted_data:
+        if 'steps' in transmitted_data and 'process' in transmitted_data:
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.id
         else: transmitted_data['umessageid'] = message.id
 
@@ -217,7 +218,7 @@ async def ChooseCustom(message: Message):
     result, answer = await custom_handler(message, transmitted_data) # Обязан возвращать bool, Any
     
     if result:
-        if 'steps' in transmitted_data:
+        if 'steps' in transmitted_data and 'process' in transmitted_data:
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.id
         else: transmitted_data['umessageid'] = message.id
 
@@ -254,7 +255,7 @@ async def ChooseOptionPages(message: Message):
         transmitted_data['options'] = options
         transmitted_data['key'] = message.text
 
-        if 'steps' in transmitted_data:
+        if 'steps' in transmitted_data and 'process' in transmitted_data:
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.id
         else: transmitted_data['umessageid'] = message.id
 
@@ -338,8 +339,8 @@ async def ChooseInline(callback: CallbackQuery):
 
         transmitted_data['temp'] = {}
         transmitted_data['temp']['message_data'] = callback.message
-        
-        if 'steps' in transmitted_data:
+
+        if 'steps' in transmitted_data and 'process' in transmitted_data:
             try:
                 transmitted_data['steps'][transmitted_data['process']]['bmessageid'] = callback.message.id
             except: pass
@@ -379,7 +380,7 @@ async def ChooseTime(message: Message):
     else:
         await bot.delete_state(userid, message.chat.id)
         await bot.reset_data(message.from_user.id,  message.chat.id)
-        if 'steps' in transmitted_data:
+        if 'steps' in transmitted_data and 'process' in transmitted_data:
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.id
         else: transmitted_data['umessageid'] = message.id
 
