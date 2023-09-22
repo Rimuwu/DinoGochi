@@ -38,35 +38,37 @@ def item_info_markup(item: dict, lang):
     buttons_dict = {}
 
     if item_data['type'] not in ['material', 'ammunition', 'dummy']:
-        buttons_dict[loc_data['use'][item_data['type']]] = f"item use {code}"
+        buttons_dict[loc_data['use'][item_data['type']]] = f'item use {code}'
 
     if not('abilities' in item and 'interact' in item['abilities'] and not(item['abilities']['interact'])):
-        buttons_dict[loc_data['delete']] = f"item delete {code}"
-        buttons_dict[loc_data['exchange']] = f"item exchange {code}"
+        buttons_dict[loc_data['delete']] = f'item delete {code}'
+        buttons_dict[loc_data['exchange']] = f'item exchange {code}'
 
     markup_inline = list_to_inline([buttons_dict], 2)
 
     if item_data['type'] == 'recipe':
-        for item_cr in item_data["create"]:
+        for item_cr in item_data['create']:
             data = get_item_dict(item_cr['item'])
             name = loc_data['created_item'].format(
                         item=get_name(item_cr['item'], lang))
 
             markup_inline.add(InlineKeyboardButton(text=name,
-                        callback_data=f"item info {item_code(data)}"))
+                        callback_data=f'item info {item_code(data)}'))
 
-    if "ns_craft" in item_data:
-        for cr_dct_id in item_data["ns_craft"].keys():
+    if 'ns_craft' in item_data:
+        for cr_dct_id in item_data['ns_craft'].keys():
             bt_text = ''
-            cr_dct = item_data["ns_craft"][cr_dct_id]
+            cr_dct = item_data['ns_craft'][cr_dct_id]
 
-            bt_text += counts_items(cr_dct["materials"], lang)
+            bt_text += counts_items(cr_dct['materials'], lang)
             bt_text += ' = '
-            bt_text += counts_items(cr_dct["create"], lang)
-            
-            markup_inline.add(InlineKeyboardButton(text=bt_text,
-                            callback_data=f"ns_craft {code} {cr_dct_id}"))
-    
+            bt_text += counts_items(cr_dct['create'], lang)
+
+            markup_inline.add(
+                InlineKeyboardButton(text=bt_text,
+                            callback_data=f'ns_craft {code} {cr_dct_id}')
+                )
+
     return markup_inline
 
 def dino_profile_markup(add_acs_button: bool, lang: str, 
