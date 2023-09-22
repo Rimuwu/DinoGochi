@@ -319,7 +319,7 @@ async def ns_craft(call: CallbackQuery):
         for iid in item['ns_craft'][ns_id]['materials']:
             await RemoveItemFromUser(userid, iid)
 
-        text =  t('ns_craft.create', lang, 
+        text = t('ns_craft.create', lang, 
                   items = counts_items(item['ns_craft'][ns_id]['create'], lang))
         await send_message(chatid, text)
     else:
