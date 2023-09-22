@@ -429,10 +429,10 @@ def trade_circle(userid, chatid, lang, items, prepare: bool = True):
             'function': trade_update_col
         },
         {
-            "type": 'int', "name": 'col_trade', "data": {"max_int": 10},
+            "type": 'int', "name": 'col_trade', "data": {"max_int": 100},
             "translate_message": True,
             'message': {'text': 'css.wait_count', 
-                        'reply_markup': None}
+                        'reply_markup': count_markup(100, lang)}
         },
         {
             "type": 'update_data', "name": None, "data": {}, 
