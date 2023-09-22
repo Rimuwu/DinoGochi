@@ -2,7 +2,7 @@ from telebot.types import CallbackQuery, Message
 
 from bot.config import mongo_client, conf
 from bot.exec import bot
-from bot.modules.data_format import list_to_inline, seconds_to_str
+from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds
 from bot.modules.states_tools import start_friend_menu
 from bot.modules.friends import get_frineds, insert_friend_connect
 from bot.modules.localization import get_data, t, get_lang
@@ -219,14 +219,21 @@ async def link_promo(message):
             else:
                 await send_message(user.id, text_dict['not_found'])
 
-@bot.message_handler(commands=['inf_premium'], is_admin=True)
+@bot.message_handler(commands=['add_premium'], is_admin=True)
 async def inf_premium(message):
+    """
+    Аргументы: /add_premium 0/userid None/str_time
+    """
     msg_args = message.text.split()
-    
-    if len(msg_args) > 1:
-        userid = int(msg_args[1])
-    else:
-        userid = message.from_user.id
+    arg_list = msg_args[2:]
 
-    await award_premium(userid, 'inf')
+    tt = 'inf'
+    if arg_list:
+        tt = str_to_seconds(' '.format(arg_list))
+
+    if msg_args[0] == 0:
+        userid = int(msg_args[1])
+    else: userid = message.from_user.id
+
+    await award_premium(userid, tt)
     await send_message(message.from_user.id, 'ok')
