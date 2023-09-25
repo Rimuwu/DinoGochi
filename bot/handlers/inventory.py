@@ -20,7 +20,9 @@ from bot.modules.item_tools import (AddItemToUser, CheckItemFromUser,
                                     delete_item_action, exchange_item)
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import markups_menu as m
+from bot.modules.markup import count_markup
 from bot.modules.over_functions import send_message
+from bot.modules.states_tools import ChooseIntState
 
 async def cancel(message):
     lang = await get_lang(message.from_user.id)
@@ -302,9 +304,28 @@ async def ns_craft(call: CallbackQuery):
     item = get_item_data(item_ns['item_id'])
     ns_id = call_data[2]
 
+    transmitted_data = {
+        'item': item,
+        'ns_id': ns_id
+    }
+    await ChooseIntState(ns_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
+    await send_message(chatid, t('css.wait_count', lang), 
+                       reply_markup=count_markup(25, lang))
+
+
+async def ns_end(count, transmitted_data: dict):
+    
+    userid = transmitted_data['userid']
+    item = transmitted_data['item']
+    ns_id = transmitted_data['ns_id']
+    lang = transmitted_data['lang']
+    chatid = transmitted_data['chatid']
+
     nd_data = item['ns_craft'][ns_id]
     materials = {}
     for i in nd_data['materials']: materials[i] = materials.get(i, 0) + 1
+
+    for key, col in materials.items(): materials[key] = col * count
 
     check_lst = []
     for key, value in materials.items():
@@ -314,13 +335,15 @@ async def ns_craft(call: CallbackQuery):
 
     if all(check_lst):
         for iid in item['ns_craft'][ns_id]['create']:
-            await AddItemToUser(userid, iid)
+            await AddItemToUser(userid, iid, count)
 
-        for iid in item['ns_craft'][ns_id]['materials']:
-            await RemoveItemFromUser(userid, iid)
+        for key, value in materials.items():
+            await RemoveItemFromUser(userid, key, value)
 
         text = t('ns_craft.create', lang, 
                   items = counts_items(item['ns_craft'][ns_id]['create'], lang))
-        await send_message(chatid, text)
+        await send_message(chatid, text, 
+                           reply_markup = await m(userid, 'last_menu', lang))
     else:
-        await send_message(chatid, t('ns_craft.not_materials', lang))
+        await send_message(chatid, t('ns_craft.not_materials', lang),
+                           reply_markup = await m(userid, 'last_menu', lang))

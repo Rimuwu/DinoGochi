@@ -297,7 +297,9 @@ async def award_premium(userid:int, end_time):
     """
     user_doc = await subscriptions.find_one({'userid': userid})
     if user_doc:
-        if type(end_time) == str:
+        if type(user_doc['sub_end']) == str and type(end_time) == int:
+            user_doc['sub_end'] = int(time()) + end_time
+        elif type(end_time) == str:
             user_doc['sub_end'] = end_time
         elif type(end_time) == int:
             user_doc['sub_end'] += end_time

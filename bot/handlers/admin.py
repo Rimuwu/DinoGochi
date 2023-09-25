@@ -229,7 +229,7 @@ async def inf_premium(message):
 
     tt = 'inf'
     if arg_list:
-        tt = str_to_seconds(' '.format(arg_list))
+        tt = str_to_seconds(' '.join(arg_list))
 
     if msg_args[0] == 0:
         userid = int(msg_args[1])
