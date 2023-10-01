@@ -41,7 +41,7 @@ def load_items_names() -> dict:
     for item_key in ITEMS:
         if item_key not in items_names:
             items_names[item_key] = {}
-        
+
         for loc_key in loc_items_names.keys():
             loc_name = loc_items_names[loc_key].get(item_key)
             if loc_name:

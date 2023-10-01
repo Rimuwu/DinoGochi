@@ -1946,7 +1946,7 @@
             "uses": 2
         },
         "act": 100,
-        "class": "Carnivore",
+        "class": "ALL",
         "image": "item106",
         "rank": "mystical",
         "type": "eat"

@@ -12,6 +12,7 @@ from bot.modules.localization import get_data as get_loc_data
 from bot.modules.localization import t
 from bot.modules.logs import log
 from bot.modules.markup import list_to_keyboard, down_menu
+from bot.modules.markup import markups_menu as m
 from bot.modules.user import get_inventory
 from bot.modules.over_functions import send_message
 
@@ -273,7 +274,8 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
     pages, row, items_data = inventory_pages(inventory, lang, inv_view, type_filter, item_filter)
 
     if not pages:
-        await send_message(chatid, t('inventory.null', lang))
+        await send_message(chatid, t('inventory.null', lang), 
+                           reply_markup=await m(chatid, 'last_menu', language_code=lang))
         return False, 'cancel'
     else:
         try:

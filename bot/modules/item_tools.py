@@ -110,7 +110,7 @@ async def end_craft(transmitted_data: dict):
     for create_data in data_item['create']:
         if create_data['type'] == 'create':
             preabil = create_data.get('abilities', {}) # Берёт характеристики если они есть
-            await AddItemToUser(userid, create_data['item'], 1, preabil)
+            await AddItemToUser(userid, create_data['item'], count, preabil)
 
     # Вычисление опыта за крафт
     if 'rank' in data_item.keys():
@@ -518,7 +518,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
             steps = [
                 {"type": 'int', "name": 'count', "data": {"max_int": max_count}, 
                     'message': {'text': t('css.wait_count', lang), 
-                                'reply_markup': count_markup(max_count)}}
+                                'reply_markup': count_markup(max_count, lang)}}
             ]
         elif type_item == 'weapon':
             steps = [
@@ -529,7 +529,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
             steps = [
                 {"type": 'int', "name": 'count', "data": {"max_int": max_count}, 
                     'message': {'text': t('css.wait_count', lang), 
-                                'reply_markup': count_markup(max_count)}}
+                                'reply_markup': count_markup(max_count, lang)}}
             ]
         elif type_item == 'egg':
             steps = []

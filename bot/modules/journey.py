@@ -82,7 +82,7 @@ events = {
                 'positive': {"min": 5, "max": 15, "type": "random"},
                 # Эффекты выставляются для первого уровня случайности
                 # Если на первом уровне это 5, то на 5-ом это 25
-                'negative': {"min": -10, "max": -2, "type": "random"}
+                'negative': {"min": -7, "max": -2, "type": "random"}
             }
         }
     },
