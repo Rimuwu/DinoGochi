@@ -3216,34 +3216,48 @@
         },
         "books": {
             "book_forest": [
-                "An ancient and mighty forest with gigantic trees, so they say about this forest...\nI, Fredrik Al Johnson, will check it out myself!",
-                "26.08.3--7 15:38: I just went into the forest, it looks like a forest, except for the huge trees!",
+                "An ancient and mighty forest with giant trees, so they say about this forest ... \n I, Fredrick Al Johnson, will check it out for myself!",
+                "26.08.3--7 15:38: I just went into the forest, it looks like just a forest, except for huge trees!",
                 "26.08.3--7 19:12: I saw a beautiful sunset, went to look for a place to rest. \n \n 8/26/2--7 9:01 PM: I didn't see any dangerous animals all day, just trees, trees, trees.",
-                "27.08.3--7 13:59: Crossed a turbulent river, almost lost all his belongings. \n \n 8/27/3--7: I've lost my watch somewhere, now I can't write the time, but it's getting dark. \n \n 8/27/3--7: I see light in the distance, I'll try to get closer.",
-                "27.08.3--7: I can't believe my eyes, are they... Dinosaurs?! Are you sure I'm not crazy?",
-                "I write quickly, I think some of them felt me, I run away.",
-                "_Empty_",
+                "27.08.3--7 13:59: Crossed a turbulent river, almost lost all his belongings. \n \n 8/27/3--7: I've lost my watch somewhere, now I can't write time, but it's getting dark. \n \n 8/27/3--7: I see light in the distance, I'll try to get closer.",
+                "8/27/3--7: I can't believe my eyes, is that... Dinosaurs?! Am I sure I'm not crazy?",
+                "I write quickly, one of them felt me, I wind up.",
+                "_Emptily_",
                 "_Emptily_",
                 "_Ink droplets_",
-                "28.08 +- 2 days: I do not know how long I have been sitting here, someone is constantly walking over me, I have not replenished my water and food supplies for a long time, soon I will have to resurface. I'm not sure I can stand up to the DINOSAURS (YES THEY can!)",
+                "28.08 +- 2 days: I don't know how long I've been sitting here, someone is constantly walking over me, I haven't replenished my water and food supplies for a long time, soon I'll have to replenish it. I'm not sure I can resist DINOSAURS (YES, THAT'S EXACTLY THEM!)",
                 "I'll leave it lying here, I hope I'll come back here.",
-                "_Empty_",
                 "_Emptily_",
                 "_Emptily_",
-                "_Empty_",
+                "_Emptily_",
+                "_Emptily_",
                 "_Emptily_"
             ],
             "book_lost-islands": [
-                "Emptily"
+                "_The Traveler's Book_",
+                "It's me Aoth again. Today Propane told me about the ancient ruins on the island and we go there.",
+                "When we went ashore, it got hot and we swam. \n \n After that, walking along the shore, we noticed the ruins of an old temple among the palm trees. \n \n Going inside, we were amazed by the grandeur of the ancient structure. There were columns everywhere, bas-reliefs were hollowed out in the walls.",
+                "After examining the temple, we found 300 coins! \n \n Propane suddenly tripped over something and sprawled on the ground. I took a look at it. It turned out to be a book. \n \n A little later we explored several more temples, found a cake and 3 mushrooms.",
+                "We fell asleep on the sand. \n \n And in the morning we returned home."
             ],
             "book_desert": [
-                "Empty"
+                "_The Traveler's Book_",
+                "Who doesn't know about the mysterious pyramids, sand dunes and poisonous snakes?",
+                "This short story on my behalf is about why it is worth it, and sometimes it is not necessary to go to the desert where dinosaurs roam. \n \n So let's get started. \n \n Stocking up on food, I set out to explore the desert. \n \n The first day was perfect... except that the sun was beating down mercilessly.",
+                "I found 50 square coins, where do they come from? \n \n The next day I reached the pyramid. And I'm not the only one on the campaign.\n \n A huge dinosaur was standing about 20 meters away from me. He pushed the wall and entered the interior, I waited about 5 minutes, and then also entered. The pyramid was huge, riddled with labyrinths and passages.",
+                "I will not fully describe the pyramid, because it will take a very long time. \n \n I can only say that I found parchment with the image of a backpack and strange symbols. \n \n I fell asleep right in the pyramid.",
+                "The next morning, I woke up feeling like someone was looking at me. I open my eyes and see... DINOSAUR! He stood right in front of me and looked at me with his head slightly tilted.",
+                "And then the dinosaur spoke. He said to me, \"Hello!\" \n \"Hello,\" I replied.\n -My name is Propane, how are you? \n -Aot. \n - Let's be friends? \n -Come on. \n \"Only I'm going to call you a messenger of darkness, because I don't know how you got here.\"",
+                "That's how I made friends with the dinosaur."
             ],
             "book_mountains": [
-                "Emptily"
+                "_The Traveler's Book_",
+                "Hi, it's me Aot again. Today Propane and I will go on a trip to the mountains.",
+                "The Crystal Mountains... How beautiful it is... And it's cold. Br-r-r. \n \n Walking through the snow, Propane suddenly fell into a snowdrift. I crawled out. And it failed again. Then he counted the coins, took out a square one and threw it into the snow. \n \n An hour later, it snowed and the dinosaur was upset.",
+                "As we sat around the fire, a polar bear approached us. Propane hit him in the side with his hind paw. The bear flew off a couple of meters, but still managed to hook the dinosaur. \n \n The next day we found an egg. It shimmered. Here it is white. And now it's green. And in a moment it is blue. Now lilac. Orange. And white again. \n \n We continued on our way. \n \n Propane bent down and picked up a sheet of parchment. \n \n This is a cake recipe,\" he explained, \"I love cakes. \n \n And suddenly there was a blizzard. \n \n We found ourselves in a forest of strange trees, and between the trunks we could see our house. \n \n We reached it and sat down to drink tea."
             ],
             "book_magic-forest": [
-                "Emptily"
+                "_The Traveler's Book_"
             ],
             "meow_book": [
                 "Meow meow, meow meow. Meow?",
