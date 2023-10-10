@@ -252,19 +252,19 @@ async def DowngradeItem(userid: int, item: dict, characteristic: str, unit: int)
         Понижает харрактеристику для предметов с одинаковыми данными из базы
         unit - число понижения харрактеристики для всех предметов
     """
-
     max_count, max_char = 0, 0
     find_items = await items.find({'owner_id': userid, 
                                    'items_data': item}).to_list(None) 
     find_list = list(find_items)
-    
+
     for iterable_item in find_list:
         max_count += iterable_item['count']
         max_char += iterable_item['items_data']['abilities'][characteristic]
 
-    if unit > max_char: return {'status': False, 'action': 'unit', 
-                                        'difference': unit - max_char}
-    
+    if unit > max_char * max_count:
+        return {'status': False, 'action': 'unit', 
+                'difference': unit - max_char}
+
     for iterable_item in find_list:
         item_char = iterable_item['items_data']['abilities'][characteristic]
         if unit > 0:
@@ -279,7 +279,7 @@ async def DowngradeItem(userid: int, item: dict, characteristic: str, unit: int)
                                 })
             unit -= item_char
         else: break
-        
+
     return {'status': True, 'action': 'deleted_edited'}
 
 async def CheckItemFromUser(userid: int, item_data: dict, count: int = 1) -> dict:
@@ -342,7 +342,7 @@ async def EditItemFromUser(userid: int, now_item: dict, new_data: dict):
         return False
 
 async def UseAutoRemove(userid: int, item: dict, count: int):
-    """Автомаатически определяет что делать с предметом, 
+    """Автоматически определяет что делать с предметом, 
        удалить или понизить количество использований
     """
 

@@ -483,19 +483,22 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
     limiter = 100 # Ограничение по количеству использований за раз
     adapter_function = adapter
 
-    base_item = await items.find_one({'owner_id': userid, 'items_data': item})
+    bases_item = await items.find({'owner_id': userid, 'items_data': item}
+                                 ).to_list(None) 
     transmitted_data = {'items_data': item}
     item_name = get_name(item_id, lang)
     steps = []
     ok = True
 
-    if type(base_item) is None:
+    if not bases_item:
         await send_message(chatid, t('item_use.no_item', lang))
-    elif type(base_item) is dict:
+    elif type(bases_item) is list:
+        max_count = 0
+        for base_item in bases_item:
 
-        if 'abilities' in item.keys() and 'uses' in item['abilities']:
-            max_count = base_item['count'] * base_item['items_data']['abilities']['uses']
-        else: max_count = base_item['count']
+            if 'abilities' in item.keys() and 'uses' in item['abilities']:
+                max_count += base_item['count'] * base_item['items_data']['abilities']['uses']
+            else: max_count += base_item['count']
 
         if max_count > limiter: max_count = limiter
 
