@@ -236,15 +236,12 @@ def CalculateDowngradeitem(item: dict, characteristic: str, unit: int):
     if item['abilities'][characteristic] > unit:
         new_item = get_item_dict(item['item_id'], item['abilities'])
         new_item['abilities'][characteristic] -= unit
-        
-        return {'status': 'edit', 'item': new_item}
 
-    elif item['abilities'][characteristic] == unit:
-        return {'status': 'remove'}
+        return {'status': 'edit', 'item': new_item, 'ost': 0}
 
-    else:
-        return {'status': 'cannot', 
-                'difference': unit - item['abilities'][characteristic]}
+    else: # <= 
+        return {'status': 'remove', 'item': item, 
+                'ost': unit - item['abilities'][characteristic]}
 
 
 async def DowngradeItem(userid: int, item: dict, characteristic: str, unit: int):

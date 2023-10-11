@@ -388,23 +388,33 @@ async def edit_craft(return_data: dict, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     items_data = []
+    ok = True
 
     for iterable_key in materials['edit']:
         for item_key, unit in materials['edit'][iterable_key].items():
             item = return_data[item_key]
-            ret_data = CalculateDowngradeitem(item, iterable_key, unit)
-            items_data.append({"data": ret_data, 'old_item': item})
+            find_items = await items.find({'owner_id': userid, 
+                                   'items_data': item}).to_list(None)
+            for find_item in find_items:
+                if unit > 0:
+                    ret_data = CalculateDowngradeitem(find_item['items_data'], 
+                                                      iterable_key, unit)
+                    items_data.append({"data": ret_data, 'old_item': item})
+                    unit = ret_data['ost']
+                else: break
+            if unit > 0: 
+                ok = False
+                break
+        if not ok: break
 
-    ok = True
-    for iterable_data in items_data.copy(): 
-        if iterable_data['data']['status'] == 'cannot':
-            ok = False
-            item_name = get_name(iterable_data['old_item']['item_id'], lang)
+    if not ok:
+        iterable_data = items_data[0]
+        item_name = get_name(iterable_data['old_item']['item_id'], lang)
 
-            await send_message(chatid, 
-                t('item_use.recipe.enough_characteristics', lang, item_name=item_name), 
-                parse_mode='Markdown', 
-                reply_markup=await markups_menu(userid, 'last_menu', lang))
+        await send_message(chatid, 
+            t('item_use.recipe.enough_characteristics', lang, item_name=item_name), 
+            parse_mode='Markdown', 
+            reply_markup=await markups_menu(userid, 'last_menu', lang))
 
     if ok:
         for iterable_data in items_data.copy(): 
