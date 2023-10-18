@@ -492,7 +492,7 @@ async def premium(userid: int):
     res = await subscriptions.find_one({'userid': userid})
     return bool(res)
 
-async def take_coins(userid: int, col: int, update: bool = False) -> Tuple:
+async def take_coins(userid: int, col: int, update: bool = False) -> Tuple[bool, int]:
     """Функция проверяет, можно ли отнять / добавить col монет у / к пользователя[ю]
        Если updatе - то обновляет данные
 
