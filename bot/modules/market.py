@@ -325,7 +325,8 @@ async def delete_product(baseid = None, alt_id = None):
 
         elif ptype == 'coins_items':
             coins = p['price'] * remained
-            if coins: await take_coins(owner, coins, True)
+            status, _ = await take_coins(owner, coins, True)
+            if coins: status
 
         if ptype == 'auction':
             for user in list(product['users']):
@@ -434,6 +435,7 @@ def preview_product(items: list, price, ptype: str, lang: str):
 async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: str=''):
     """ Покупка продукта / участние в аукционе
     """
+    global coins
     product = await products.find_one({'_id': pro_id})
     if product:
         p_tp = product['type']
@@ -441,13 +443,13 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
         earned = 0
 
         if col > product['in_stock'] - product['bought'] and product['type'] != 'auction':
-            return False, 'erro_max_col'
+            return False, t(f'buy.erro_max_col', lang)
         else:
             if p_tp == 'items_coins':
                 col_price = col * product['price']
                 two_percent = (col_price // 100) * 2
 
-                status = await take_coins(userid, -col_price, True)
+                status, coins = await take_coins(userid, -col_price, True)
 
                 if status:
                     dct_items = {}
@@ -470,7 +472,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                     # Выдача монет владельцу
                     await take_coins(owner, col_price - two_percent, True)
 
-                else: return False, 'error_no_coins'
+                else: return False, t(f'buy.error_no_coins', lang, coins=coins)
 
             elif p_tp == 'coins_items':
                 items_status, n = [], 0
@@ -488,7 +490,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                 await take_coins(userid, col_price, True)
 
                 if not all(items_status):
-                    return False, 'error_no_items'
+                    return False, t(f'buy.error_no_items', lang)
                 else:
                     for item in list(product['items']):
                         item_id = item['item_id']
@@ -505,12 +507,12 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                     if 'abillities' in item: abil = item['abillities']
                     else: abil = {}
 
-                    status = await CheckCountItemFromUser(userid, col, item_id, abil)
+                    status, coins = await CheckCountItemFromUser(userid, col, item_id, abil)
                     items_status.append(status)
                     n += 1
 
                 if not all(items_status):
-                    return False, 'error_no_items'
+                    return False, t(f'buy.error_no_items', lang)
                 else: 
                     for item in list(product['price']):
                         item_id = item['item_id']
@@ -527,10 +529,10 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
             elif p_tp == 'auction':
                 # col - ставка пользователя
 
-                status = await take_coins(userid, -col, True)
+                status, coins = await take_coins(userid, -col, True)
                 if status:
                     await new_participant(pro_id, userid, col, name, lang)
-                else: return False, 'error_no_coins'
+                else: return False, t(f'buy.error_no_coins', lang, coins=coins)
 
             if p_tp != 'auction':
                 if p_tp not in ['coins_items', 'items_items']: 
@@ -553,10 +555,10 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                     product['items'], product['price'], product['type'], owner_lang)
                 await user_notification(owner, 'product_buy', owner_lang,
                                         preview=preview, col=col, price=earned, name=name, alt_id=product['alt_id'])
-            if p_tp != 'auction': return True, 'ok'
-            else: return True, 'participant'
+            if p_tp != 'auction': return True, t(f'buy.ok', lang, coins=coins)
+            else: return True, t(f'buy.participant', lang)
 
-    return False, 'erro_no_product'
+    return False, t(f'buy.erro_no_product', lang)
 
 async def create_preferential(product_id: ObjectId, seconds: int, owner_id: int):
 

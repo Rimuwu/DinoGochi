@@ -377,7 +377,7 @@ async def transfer_coins(col: int, transmitted_data: dict):
     friendid = transmitted_data['friendid']
     username = transmitted_data['username']
 
-    status = await take_coins(userid, col*-1, True)
+    status, _ = await take_coins(userid, col*-1, True)
 
     if status:
         text = t('take_money.send', lang)

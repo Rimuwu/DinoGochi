@@ -18,6 +18,8 @@ from bot.modules.notifications import user_notification
 from bot.modules.referals import get_code_owner, get_user_sub
 from datetime import datetime, timedelta
 
+from typing import Tuple
+
 users = mongo_client.user.users
 items = mongo_client.items.items
 dinosaurs = mongo_client.dinosaur.dinosaurs
@@ -490,22 +492,22 @@ async def premium(userid: int):
     res = await subscriptions.find_one({'userid': userid})
     return bool(res)
 
-async def take_coins(userid: int, col: int, update: bool = False) -> bool:
+async def take_coins(userid: int, col: int, update: bool = False) -> Tuple:
     """Функция проверяет, можно ли отнять / добавить col монет у / к пользователя[ю]
        Если updatе - то обновляет данные
-       
+
        ЕСЛИ ХОТИМ ОТНЯТЬ, НЕ ЗАБЫВАЕМ В COL УКАЗЫВАТЬ ОТРИЦАТЕЛЬНОЕ ЧИСЛО
     """
     user = await users.find_one({'userid': userid})
     if user:
         coins = user['coins']
-        if coins + col < 0: return False
+        if coins + col < 0: return False, coins
         else: 
             if update:
                 await users.update_one({'userid': userid}, 
                                  {'$inc': {'coins': col}})
-            return True
-    return False
+            return True, coins
+    return False, 0
 
 async def get_dead_dinos(userid: int):
     return list(await dead_dinos.find({'owner_id': userid}).to_list(None)) 

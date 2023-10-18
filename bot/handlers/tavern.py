@@ -159,7 +159,7 @@ async def edit_appearance(return_data, transmitted_data):
     userid = transmitted_data['userid']
     dino: Dino = return_data['dino']
 
-    coins_st = await take_coins(userid, -GS['change_appearance']['coins'])
+    coins_st, _ = await take_coins(userid, -GS['change_appearance']['coins'])
     if coins_st:
         status = []
         for i in GS['change_appearance']['items']:
@@ -200,7 +200,7 @@ async def end_edit(code, transmitted_data):
     coins = GS['change_rarity'][code]['coins']
     items = GS['change_rarity'][code]['materials']
 
-    coins_st = await take_coins(userid, -coins)
+    coins_st, _ = await take_coins(userid, -coins)
     if coins_st:
         status = []
         for i in items:

@@ -51,7 +51,7 @@ async def end(return_data, transmitted_data):
 
     if option == 'coins_items':  
         # Проверить количество монет 
-        res = await take_coins(userid, -price*in_stock, True)
+        res, _ = await take_coins(userid, -price*in_stock, True)
         if not res:
             product_status = False
             text = t('add_product.few_coins', lang, coins=price*in_stock)
@@ -515,7 +515,7 @@ async def edit_price(new_price: int, transmitted_data: dict):
         if product['type'] == 'coins_items':
             stock = product['in_stock']
             price = (product['price'] * stock) - (new_price * stock)
-            res = await take_coins(userid, price, True)
+            res, _ = await take_coins(userid, price, True)
 
         if res:
             await products.update_one({'alt_id': productid}, 
@@ -576,7 +576,7 @@ async def add_stock(in_stock: int, transmitted_data: dict):
                                     {'$inc': {'in_stock': in_stock}})
 
         elif product['type'] == 'coins_items':
-            res = await take_coins(userid, product['price'] * in_stock, True)
+            res, _ = await take_coins(userid, product['price'] * in_stock, True)
             if res:
                 await products.update_one({'alt_id': productid}, 
                                     {'$inc': {'in_stock': in_stock}})
@@ -724,9 +724,8 @@ async def end_buy(unit: int, transmitted_data: dict):
     name = transmitted_data['name']
     messageid = transmitted_data['messageid']
 
-    status, code = await buy_product(pid, unit, userid, name, lang)
-    await send_message(chatid, t(f'buy.{code}', lang), 
-                           reply_markup= await m(userid, 'last_menu', lang))
+    status, buy_text = await buy_product(pid, unit, userid, name, lang)
+    await send_message(chatid, buy_text, reply_markup= await m(userid, 'last_menu', lang))
 
     if status:
         text, markup = await product_ui(lang, pid, False)
@@ -781,12 +780,14 @@ async def promotion(_: bool, transmitted_data: dict):
 
     if cd == 1: text = t('promotion.max', lang)
     elif cd == 2: text = t('promotion.already', lang)
-    elif not await take_coins(userid, -1_890, True):
-        text = t('promotion.no_coins', lang)
-        stat = False
-    else: 
-        text = t('promotion.ok', lang)
-        await create_preferential(pid, 43_200, userid)
+    else:
+        status, _ = not await take_coins(userid, -1_890, True)
+        if status:
+            text = t('promotion.no_coins', lang)
+            stat = False
+        else:
+            text = t('promotion.ok', lang)
+            await create_preferential(pid, 43_200, userid)
 
     await send_message(chatid, text, 
                     reply_markup= await m(userid, 'last_menu', lang))

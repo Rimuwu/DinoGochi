@@ -253,7 +253,8 @@ async def buy_ale(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
 
     friend = int(data[1])
-    if await take_coins(userid, -50, True):
+    status, _ = await take_coins(userid, -50, True)
+    if status:
         await AddItemToUser(friend, 'ale')
 
         text = t('buy_ale.me', lang)

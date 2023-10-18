@@ -3432,9 +3432,9 @@
             "auction": "🧵 Enter your bet, keep in mind that your bet should be minimum {unit} 🪙",
             "max_min": "❌ There is an error in specifying the maximum number. Most likely, you do not have enough coins to bet on or the product has already been sold out.",
             "erro_max_col": "🥞 The specified number is greater than the maximum amount of stock!",
-            "error_no_coins": "🍳 You don't have enough coins to buy!",
+            "error_no_coins": "🍳 You don't have enough coins to buy! Need {coins} more coins",
             "error_no_items": "🥙 You don't have any items to exchange!",
-            "ok": "🍣 Congratulations on your purchase!",
+            "ok": "🍣 Congratulations on your purchase! You have: {coins} coins left",
             "participant": "🎢 You have been added to the auction!"
         },
         "promotion": {
