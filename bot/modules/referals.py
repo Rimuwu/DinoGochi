@@ -23,7 +23,7 @@ async def create_referal(userid: int, code: str = ''):
         если не указан код, генерирует его
     """
 
-    if not await referals.find_one({'userid': userid}):
+    if not await referals.find_one({'userid': userid, 'type': 'general'}):
         if not code: 
             while not code:
                 c = random_code(10)
