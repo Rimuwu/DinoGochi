@@ -195,7 +195,7 @@ async def about_menu(message: Message):
     iambot = await bot.get_me()
     bot_name = iambot.username
     col_u, col_d, col_i, update_time = '?', '?', '?', '?'
-    
+
     statistic = await get_now_statistic()
     if statistic:
         col_u = statistic['users']
@@ -207,14 +207,6 @@ async def about_menu(message: Message):
         delta: timedelta = now - create
         
         update_time = seconds_to_str(delta.seconds, lang, True)
-    
-    # await send_message(message.chat.id, t(
-    #     'menu_text.about', lang, bot_name=bot_name,
-    #     col_u=col_u, col_d=col_d, col_i=col_i, update_time=update_time
-    #     ), 
-    #                        reply_markup= await m(userid, 'about_menu', lang),
-    #                        parse_mode='HTML'
-    #                        )
 
     photo = open('images/remain/about/menu.png', 'rb')
     await bot.send_photo(message.chat.id, photo, 
