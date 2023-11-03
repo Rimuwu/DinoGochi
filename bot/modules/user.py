@@ -335,7 +335,7 @@ async def max_dino_col(lvl: int, user_id: int=0, premium_st: bool=False):
     }
 
     if premium_st: col['standart']['limit'] += 1
-    col['standart']['limit'] += (lvl // 20 + 1) - lvl // 80
+    col['standart']['limit'] += ((lvl // 20 + 1) - lvl // 80) - 1
 
     if user_id:
         dinos = await dino_owners.find({'owner_id': user_id}).to_list(None) 
@@ -343,6 +343,9 @@ async def max_dino_col(lvl: int, user_id: int=0, premium_st: bool=False):
             if dino['type'] == 'owner': col['standart']['now'] += 1
             else: col['additional']['now'] += 1
 
+        eggs = await incubations.find({'owner_id': user_id}).to_list(None)
+        for _ in eggs: col['standart']['now'] += 1
+ 
     return col
 
 def max_lvl_xp(lvl: int): return 5 * lvl * lvl + 50 * lvl + 100

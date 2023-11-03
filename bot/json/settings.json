@@ -329,12 +329,12 @@
 
     "daily_award": {
         "lvl1": {
-            "items": ["medicinal_drink", "ale"],
-            "coins": 122
+            "items": ["ale"],
+            "coins": 222
         },
         "lvl2": {
-            "items": ["medicinal_drink", "ale", "sandwich", "pizza"],
-            "coins": 222
+            "items": ["ale", "pizza"],
+            "coins": 322
         },
         "bonus": {
             "items": ["taco", "broth", "hot_chocolate"],

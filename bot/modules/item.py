@@ -144,6 +144,8 @@ async def AddItemToUser(userid: int, itemid: str, count: int = 1, preabil: dict 
     """
     assert count >= 0, f'AddItemToUser, count == {count}'
 
+    print(userid, itemid, count)
+
     item = get_item_dict(itemid, preabil)
     find_res = await items.find_one({'owner_id': userid, 
                                      'items_data': item}, {'_id': 1})

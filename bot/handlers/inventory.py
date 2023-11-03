@@ -23,6 +23,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.markup import count_markup
 from bot.modules.over_functions import send_message
 from bot.modules.states_tools import ChooseIntState
+from bot.modules.user import User
 
 async def cancel(message):
     lang = await get_lang(message.from_user.id)
@@ -159,21 +160,27 @@ async def item_callback(call: CallbackQuery):
                 preabil = item['abilities']
 
             if ret_data['status']:
-                egg_id = call_data[3]
-                item_data = get_item_data(item['item_id'])
-                end_time = seconds_to_str(item_data['incub_time'], lang)
-                i_name = get_name(item['item_id'], lang)
-
-                if await RemoveItemFromUser(userid, item['item_id'], 1, preabil):
-                    await send_message(chatid, 
-                        t('item_use.egg.incubation', lang, 
-                          item_name = i_name, end_time=end_time),  
-                          reply_markup= await m(userid, 'last_menu', lang))
-                    
-                    await incubation_egg(int(egg_id), userid, item_data['incub_time'], item_data['inc_type'])
+                user = await User().create(userid)
                 
-                    new_text = t('item_use.egg.edit_content', lang)
-                    await bot.edit_message_caption(new_text, chatid, call.message.id, reply_markup=None)
+                limit = await user.max_dino_col()
+                limit_now = limit['standart']['limit'] - limit['standart']['now']
+                
+                if limit_now > 0:
+                    egg_id = call_data[3]
+                    item_data = get_item_data(item['item_id'])
+                    end_time = seconds_to_str(item_data['incub_time'], lang)
+                    i_name = get_name(item['item_id'], lang)
+
+                    if await RemoveItemFromUser(userid, item['item_id'], 1, preabil):
+                        await send_message(chatid, 
+                            t('item_use.egg.incubation', lang, 
+                            item_name = i_name, end_time=end_time),  
+                            reply_markup= await m(userid, 'last_menu', lang))
+
+                        await incubation_egg(int(egg_id), userid, item_data['incub_time'], item_data['inc_type'])
+
+                        new_text = t('item_use.egg.edit_content', lang)
+                        await bot.edit_message_caption(new_text, chatid, call.message.id, reply_markup=None)
             else:
                 await send_message(chatid, 
                         t('item_use.cannot_be_used', lang),  

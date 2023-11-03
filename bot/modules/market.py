@@ -305,6 +305,7 @@ async def create_push(owner_id: int, channel_id: int, lang: str):
     await puhs.insert_one(data)
 
 async def delete_product(baseid = None, alt_id = None):
+    print('delete_product')
     if baseid:
         product = await products.find_one({'_id': baseid})
     else:
@@ -315,6 +316,8 @@ async def delete_product(baseid = None, alt_id = None):
         ptype = p['type']
         remained = p['in_stock'] - p['bought'] # Осталось / в запасе
         owner = p['owner_id']
+        
+        print(remained, p['in_stock'], p['bought'])
 
         if ptype in ['items_coins', 'items_items', 'auction']: 
             for item in list(p['items']):
@@ -541,10 +544,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                     'conducted': col
                 }})
 
-                if product['bought'] + col >= product['in_stock']:
-                    await delete_product(pro_id)
-                else:
-                    await products.update_one({'_id': pro_id}, 
+                await products.update_one({'_id': pro_id}, 
                                               {'$inc': {'bought': col}})
 
                 # Уведомление о покупке
@@ -553,6 +553,11 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                     product['items'], product['price'], product['type'], owner_lang)
                 await user_notification(owner, 'product_buy', owner_lang,
                                         preview=preview, col=col, price=earned, name=name, alt_id=product['alt_id'])
+
+                if product['bought'] + col >= product['in_stock']:
+                    await delete_product(pro_id)
+                    return True, 'delete'
+                    
             if p_tp != 'auction': return True, 'ok'
             else: return True, 'participant'
 

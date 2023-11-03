@@ -80,7 +80,7 @@ async def mood_check():
                         if dino['stats']['mood'] >= event_data['cancel_mood']:
                             await dino_mood.delete_one({'_id': event_data['_id']})
 
-                            if upd_data['action'] == 'hysteria':
+                            if event_data['action'] == 'hysteria':
                                 await dinosaurs.update_one({'_id': dino_id}, 
                                                     {'$set': {'status': 'pass'}})
 
