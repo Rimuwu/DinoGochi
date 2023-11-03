@@ -305,7 +305,6 @@ async def create_push(owner_id: int, channel_id: int, lang: str):
     await puhs.insert_one(data)
 
 async def delete_product(baseid = None, alt_id = None):
-    print('delete_product')
     if baseid:
         product = await products.find_one({'_id': baseid})
     else:
@@ -316,8 +315,6 @@ async def delete_product(baseid = None, alt_id = None):
         ptype = p['type']
         remained = p['in_stock'] - p['bought'] # Осталось / в запасе
         owner = p['owner_id']
-        
-        print(remained, p['in_stock'], p['bought'])
 
         if ptype in ['items_coins', 'items_items', 'auction']: 
             for item in list(p['items']):
