@@ -556,8 +556,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
 
                 if product['bought'] + col >= product['in_stock']:
                     await delete_product(pro_id)
-                    return True, 'delete'
-                    
+
             if p_tp != 'auction': return True, 'ok'
             else: return True, 'participant'
 

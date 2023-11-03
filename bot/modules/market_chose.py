@@ -730,10 +730,10 @@ async def end_buy(unit: int, transmitted_data: dict):
 
     if status:
         text, markup = await product_ui(lang, pid, False)
-        if code == 'delete':
-            await bot.delete_message(chatid, messageid)
-        else:
+        try:
             await bot.edit_message_text(text, chatid, messageid, reply_markup=markup, parse_mode='Markdown')
+        except:
+            await bot.delete_message(chatid, messageid)
 
 async def buy_item(userid: int, chatid: int, lang: str, product: dict, name: str, 
                    messageid: int):
