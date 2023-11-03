@@ -207,7 +207,7 @@ async def RemoveItemFromUser(userid: int, itemid: str,
 def ReverseCalculateAbilitie(itemid: str, unit: int, characteristic: str):
     """Обратное CalculateAbilitie функция, получает количество 
         харрактеристики и говорит какое количество соответсвует этому количеству харрактеристики.
-         
+
        Пример:
         Предмет, макс прочность 100, переданная прочность 140,
         Вернёт количество - 2 и прочность 40.
