@@ -1494,15 +1494,13 @@
             "links": "** 🔗 | The Great Connection** \n Horror dinosaurs are everywhere! \n \n 📢 News channel - @DinoGochi\n \n 👥 Forum - @DinoForum\n \n 🧧 YouTube - [@DinoGochi](https://www.youtube.com/@dinogochi)"
         },
         "support_command": {
-            "maket": "{subscription}#$#{count}#$#In the \"Your name\" area, specify {user_id} In the amount area, specify the minimum {amount}{currency}. Do not change the text to work correctly!",
             "info": "💸 | Coin support\n We are a team working on the bot only on our own. The bot is free and works without ads. If you like the bot, then you could support it with a coin! \n \n 🎨 | Support Methods\n \n",
             "items": "🎨 Items in the set: {items}",
             "currency_answer": "💲 Select the currency for payment by clicking on the button below  ->",
             "currency": "💲 Selected currency: {currency}",
             "col_answer": "🌟 Select the quantity by clicking on the button below  ->",
-            "buy": "⌚ There is very little left! \n The screenshot shows the approximate filling of the donation. \n \n 🔗 Click on the button below the message and go to the site for payment. \n \n 💬 | Your data to fill in\n (can be clicked and copied) \n \n Your name: `{user_id}` \n Your amount: `{amount}` \n Your currency: `{currency}` \n \n Your message: `{maket}` \n \n \n 🧳 Copy and paste everything as on the screen, then click send, fill in the data and pay. \n ⌛ Wait for 5 minutes. \n ❌ In case of a problem, contact @AS1AW",
-            "buy_button": "✨ Go to filling in the data",
-            "buy_button_reserve": "🧧 (Fallback link)",
+            "buy": "⌚ There is very little left!\n🔗 Click on the button under the message and go to the donation instructions.\n\n💬 | Your data, forward the message to the developer after payment. (you can click and copy)\n\nYour id: `{user_id}`\nYour product: `{product_key}`\n\nYour amount: `{amount}`\nYour currency: `{currency}`\nYour col: `{count}`\n\n🧳 Read and follow the instructions on the link.\n❌ In case of a problem, please contact @AS1AW",
+            "buy_button": "✨ Instructions for donating",
             "products_bio": {
                 "non_repayable": {
                     "name": "☕ Gratuitous",

@@ -116,7 +116,7 @@ async def support_buttons(call: CallbackQuery):
 
     if action == "main":
         image, text, markup_inline = main_support_menu(lang)
-        
+
         await bot.edit_message_media(
                 chat_id=chatid,
                 message_id=messageid,
@@ -125,18 +125,18 @@ async def support_buttons(call: CallbackQuery):
     else:
         if product_key != 'non_repayable': product = products[product_key]
         markup_inline = InlineKeyboardMarkup(row_width=2)
-        
+
         text_data = get_data('support_command', lang)
         product_bio = text_data['products_bio'][product_key]
         image = open(product_bio['image'], 'rb')
         text = f'{product_bio["name"]} — {product_bio["short"]}\n\n{product_bio["description"]}'
-        
+
         if product_key != 'non_repayable' and product['items']:
             text += f'\n\n{text_data["items"].format(items=counts_items(product["items"], lang))}'
 
         if action == "info":
             text += f'\n\n{text_data["currency_answer"]}'
-            
+
             if product_key != 'non_repayable':
                 markup_inline.add(*[
                 InlineKeyboardButton(
@@ -159,20 +159,20 @@ async def support_buttons(call: CallbackQuery):
         elif action == "currency":
             currency = call.data.split()[3]
             buttons = {}
-            
+
             text += f'\n\n{text_data["currency"].format(currency=currency)}'
             text += f'\n{text_data["col_answer"]}'
-            
+
             if product['type'] == 'subscription':
                 for key, item in product['cost'].items():
                     name = f'{seconds_to_str(product["time"]*int(key), lang)} = {item[currency]}{currency}'
-                
+
                     buttons[name] = f'support buy {product_key} {currency} {key}'
             elif product['type'] == 'kit':
                 for key, item in product['cost'].items():
                     name = f'x{key} = {item[currency]}{currency}'
                     buttons[name] = f'support buy {product_key} {currency} {key}'
-            
+
             markup_inline.add(*[
             InlineKeyboardButton(
                 text=key, 
@@ -184,29 +184,21 @@ async def support_buttons(call: CallbackQuery):
                 text=t('buttons_name.back', lang), 
                 callback_data=f'support info {product_key}'
             ))
-        
+
         elif action == "buy":
             currency = call.data.split()[3]
             count = call.data.split()[4]
             amount = product['cost'][count][currency]
-            
-            image = open('images/remain/support/faq.png', 'rb')
 
-            maket = text_data['maket'].format(
-                subscription=product_key, count=count, user_id=user_id,
-                currency=currency, amount=amount
-                )
-            
+            image = open('images/remain/support/placeholder.png', 'rb')
+
             text = text_data['buy'].format(
-                count=count, user_id=user_id,
-                currency=currency, amount=amount, maket=maket)
-            
+                count=count, user_id=user_id, product_key=product_key,
+                currency=currency, amount=amount)
+
             markup_inline.add(InlineKeyboardButton(
                 text=text_data['buy_button'], 
-                url='https://www.donationalerts.com/r/dinogochi'))
-            markup_inline.add(InlineKeyboardButton(
-                text=text_data['buy_button_reserve'], 
-                url='https://www.donationalerts.com/c/dinogochi'))
+                url='https://telegra.ph/Donation-DinoGochi-11-05'))
             
             markup_inline.add(
             InlineKeyboardButton(
