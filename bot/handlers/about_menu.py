@@ -145,10 +145,7 @@ async def support_buttons(call: CallbackQuery):
             else:
                 markup_inline.add(InlineKeyboardButton(
                     text=text_data['buy_button'], 
-                    url='https://www.donationalerts.com/r/dinogochi'))
-                markup_inline.add(InlineKeyboardButton(
-                    text=text_data['buy_button_reserve'], 
-                    url='https://www.donationalerts.com/c/dinogochi'))
+                    url='https://telegra.ph/Donation-DinoGochi-11-05'))
 
             markup_inline.add(
             InlineKeyboardButton(
