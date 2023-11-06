@@ -1,5 +1,6 @@
 import asyncio
 from bot.modules.logs import log
+from time import strftime
 
 ioloop = asyncio.get_event_loop()
 tasks = []
@@ -11,13 +12,16 @@ async def _task_executor(function, repeat_time: float, delay: float, **kwargs):
 
     if repeat_time:
         while True:
+            print('Start ' + function.__name__, strftime('%Y %m-%d %H.%M.%S'))
             try:
                 await function(**kwargs)
             except Exception as error:
                 log(prefix=f"{function.__name__} task_error", message=str(error), lvl=3)
 
+            print('End ' + function.__name__, strftime('%Y %m-%d %H.%M.%S'))
             await asyncio.sleep(repeat_time)
     else:
+        print('Start, not repeat ' + function.__name__, strftime('%Y %m-%d %H.%M.%S'))
         try:
             await function(**kwargs)
         except Exception as error:
