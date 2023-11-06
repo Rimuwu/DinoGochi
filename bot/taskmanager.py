@@ -1,6 +1,7 @@
 import asyncio
 from bot.modules.logs import log
-from time import strftime
+from time import time, strftime
+from colorama import Fore, Style
 
 ioloop = asyncio.get_event_loop()
 tasks = []
@@ -12,13 +13,19 @@ async def _task_executor(function, repeat_time: float, delay: float, **kwargs):
 
     if repeat_time:
         while True:
-            print('Start ' + function.__name__, strftime('%Y %m-%d %H.%M.%S'))
+            t_st = time()
             try:
                 await function(**kwargs)
             except Exception as error:
                 log(prefix=f"{function.__name__} task_error", message=str(error), lvl=3)
 
-            print('End ' + function.__name__, strftime('%Y %m-%d %H.%M.%S'))
+            ttt = round(time()-t_st, 4)
+            if ttt > 1: style = Fore.RED
+            elif ttt > 0.1: style = Fore.YELLOW
+            else: style = Style.RESET_ALL
+
+            text = style + 'End ' + function.__name__ + ' ' + strftime('%Y %m-%d %H.%M.%S') + f' time delta {ttt}' + Style.RESET_ALL
+            log(text, prefix='threads')
             await asyncio.sleep(repeat_time)
     else:
         print('Start, not repeat ' + function.__name__, strftime('%Y %m-%d %H.%M.%S'))
