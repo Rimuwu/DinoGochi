@@ -21,4 +21,4 @@ async def dino_notifications():
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(dino_notifications, 10, 10.0)
+        add_task(dino_notifications, 15, 10.0)

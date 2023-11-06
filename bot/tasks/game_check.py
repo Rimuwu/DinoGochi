@@ -13,7 +13,7 @@ game_task = mongo_client.dino_activity.game
 dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = mongo_client.dinosaur.dino_owners
 
-REPEAT_MINUTS = 1
+REPEAT_MINUTS = 3
 ENERGY_DOWN = 0.03 * REPEAT_MINUTS
 ENERGY_DOWN2 = 0.5 * REPEAT_MINUTS
 LVL_CHANCE = 0.125 * REPEAT_MINUTS

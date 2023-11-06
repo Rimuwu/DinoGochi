@@ -18,7 +18,7 @@ journey = mongo_client.dino_activity.journey
 dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = mongo_client.dinosaur.dino_owners
 
-REPEAT_MINUTS = 3
+REPEAT_MINUTS = 6
 EVENT_CHANCE = 0.17 * REPEAT_MINUTS
 
 async def end_journey_time():

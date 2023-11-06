@@ -8,7 +8,7 @@ from bot.modules.logs import log
 dino_mood = mongo_client.dinosaur.dino_mood
 dinosaurs = mongo_client.dinosaur.dinosaurs
 
-REPEAT_MINUTES = 5
+REPEAT_MINUTES = 10
 
 async def mood_check():
     """ Проверяет и выдаёт настроение

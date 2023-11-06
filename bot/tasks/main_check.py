@@ -24,7 +24,7 @@ HIGH_EAT = 80
 LOW_EAT = 20
 HIGH_MOOD = 50
 
-REPEAT_MINUTS = 2
+REPEAT_MINUTS = 4
 
 # Переменные вероятности
 P_HEAL = 0.05 * REPEAT_MINUTS

@@ -151,7 +151,7 @@ async def support_buttons(call: CallbackQuery):
                 text=t('buttons_name.back', lang), 
                 callback_data='support main 0'
             ))
-    
+
         elif action == "currency":
             currency = call.data.split()[3]
             buttons = {}
