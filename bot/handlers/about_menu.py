@@ -135,9 +135,8 @@ async def support_buttons(call: CallbackQuery):
             text += f'\n\n{text_data["items"].format(items=counts_items(product["items"], lang))}'
 
         if action == "info":
-            text += f'\n\n{text_data["currency_answer"]}'
-
             if product_key != 'non_repayable':
+                text += f'\n\n{text_data["currency_answer"]}'
                 markup_inline.add(*[
                 InlineKeyboardButton(
                     text=currency, 
