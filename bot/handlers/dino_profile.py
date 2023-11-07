@@ -21,6 +21,7 @@ from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
 from bot.modules.user import User, premium
 from bot.modules.kindergarten import check_hours, m_hours, hours_now, minus_hours, dino_kind
 from bot.modules.over_functions import send_message
+from bot.modules.logs import asinc_decor
 
 collecting_task = mongo_client.dino_activity.collecting
 game_task = mongo_client.dino_activity.game
@@ -29,6 +30,7 @@ dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = mongo_client.dinosaur.dino_owners
 journey_task = mongo_client.dino_activity.journey
 
+@asinc_decor().cpu
 async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_url: str):
     text = ''
 
