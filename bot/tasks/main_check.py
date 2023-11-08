@@ -27,11 +27,11 @@ HIGH_MOOD = 50
 REPEAT_MINUTS = 4
 
 # Переменные вероятности
-P_HEAL = 0.05 * REPEAT_MINUTS
+P_HEAL = 0.1 * REPEAT_MINUTS
 P_EAT = 0.05 * REPEAT_MINUTS
 P_EAT_SLEEP = 0.075 * REPEAT_MINUTS
 P_GAME = 0.1 * REPEAT_MINUTS
-P_ENERGY = 0.2 * REPEAT_MINUTS
+P_ENERGY = 0.05 * REPEAT_MINUTS
 P_MOOD = 0.2 * REPEAT_MINUTS
 P_HEAL_EAT = 0.1 * REPEAT_MINUTS
 EVENT_CHANCE = 0.05 * REPEAT_MINUTS
@@ -63,7 +63,10 @@ async def main_checks():
         else:
             # Понижение здоровья
             # если здоровье и еда находятся на критическом уровне
-            if dino['stats']['energy'] <= CRITICAL_ENERGY and dino['stats']['eat'] <= CRITICAL_EAT and random.uniform(0, 1) <= P_HEAL:
+            if dino['stats']['energy'] <= CRITICAL_ENERGY and random.uniform(0, 1) <= P_HEAL:
+                await mutate_dino_stat(dino, 'heal', randint(*HEAL_CHANGE)*-1)
+
+            elif dino['stats']['eat'] <= CRITICAL_EAT and random.uniform(0, 1) <= P_HEAL:
                 await mutate_dino_stat(dino, 'heal', randint(*HEAL_CHANGE)*-1)
 
             # Уменьшение еды

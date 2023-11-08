@@ -71,3 +71,13 @@ async def command2(message):
         await experience_enhancement(user.id, 1)
     else:
         print(user.id, 'not in devs')
+
+
+
+@bot.message_handler(pass_bot=True, commands=['hh'], is_admin=True)
+async def command3(message):
+    user = message.from_user
+    
+    dd = list(await dinosaurs.find({'status': 'sleep'}).to_list(None))
+    for i in dd:
+        await dinosaurs.update_one({'_id': i['_id']}, {'status': 'pass', 'stats.sleep': 100})
