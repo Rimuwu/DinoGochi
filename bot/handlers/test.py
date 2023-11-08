@@ -80,4 +80,4 @@ async def command3(message):
     
     dd = list(await dinosaurs.find({'status': 'sleep'}).to_list(None))
     for i in dd:
-        await dinosaurs.update_one({'_id': i['_id']}, {'status': 'pass', 'stats.sleep': 100})
+        await dinosaurs.update_one({'_id': i['_id']}, {"$set": {'status': 'pass', 'stats.sleep': 100}})
