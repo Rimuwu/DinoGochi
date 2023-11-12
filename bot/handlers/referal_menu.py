@@ -41,6 +41,7 @@ async def create_custom_code(code: str, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     
     if await take_coins(userid, GS['referal']['custom_price'], True):
+        code = code.replace(' ', '')
         await create_referal(userid, code)
 
         iambot = await bot.get_me()
@@ -133,11 +134,11 @@ async def check_code(code: str, transmitted_data: dict):
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
-    
+
     coins = GS['referal']['coins']
     items = GS['referal']['items']
     names = counts_items(items, lang)
-    
+
     result = await connect_referal(code, userid)
     text = t(f'referals.enter_code.{result}', lang, coins=coins, items=names)
     await send_message(chatid, text, parse_mode='Markdown', 
@@ -152,6 +153,6 @@ async def enter_code(message: Message):
     ref = await referals.find_one({'userid': userid, 'type': 'sub'})
     if not ref:
         await send_message(chatid, t('referals.enter_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
-        await ChooseStringState(check_code, userid, chatid, lang)
+        await ChooseStringState(check_code, userid, chatid, lang, max_len=100)
     else:
         await send_message(chatid, t('referals.enter_code.have_code', lang), parse_mode='Markdown')
