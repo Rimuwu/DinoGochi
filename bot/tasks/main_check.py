@@ -28,8 +28,8 @@ REPEAT_MINUTS = 4
 
 # Переменные вероятности
 P_HEAL = 0.1 * REPEAT_MINUTS
-P_EAT = 0.05 * REPEAT_MINUTS
-P_EAT_SLEEP = 0.075 * REPEAT_MINUTS
+P_EAT = 0.045 * REPEAT_MINUTS
+P_EAT_SLEEP = 0.035 * REPEAT_MINUTS
 P_GAME = 0.1 * REPEAT_MINUTS
 P_ENERGY = 0.05 * REPEAT_MINUTS
 P_MOOD = 0.2 * REPEAT_MINUTS
@@ -64,10 +64,10 @@ async def main_checks():
             # Понижение здоровья
             # если здоровье и еда находятся на критическом уровне
             if dino['stats']['energy'] <= CRITICAL_ENERGY and random.uniform(0, 1) <= P_HEAL:
-                await mutate_dino_stat(dino, 'heal', randint(*HEAL_CHANGE)*-1)
+                await mutate_dino_stat(dino, 'heal', -1)
 
             elif dino['stats']['eat'] <= CRITICAL_EAT and random.uniform(0, 1) <= P_HEAL:
-                await mutate_dino_stat(dino, 'heal', randint(*HEAL_CHANGE)*-1)
+                await mutate_dino_stat(dino, 'heal', -1)
 
             # Уменьшение еды
             # если динозавр спит, вероятность P_EAT_SLEEP
@@ -90,10 +90,10 @@ async def main_checks():
 
         # условие выполнения для питания и восстановления здоровья
         # если динозавр не испытывает голод, не находится в критическом запасе энергии, настроение находится выше среднего
-        if dino['stats']['eat'] > HIGH_EAT and dino['stats']['energy'] > CRITICAL_ENERGY and dino['stats']['mood'] > HIGH_MOOD:
+        if dino['stats']['eat'] > HIGH_EAT and dino['stats']['energy'] > 50:
             if random.uniform(0, 1) <= P_HEAL_EAT:
 
-                await mutate_dino_stat(dino, 'heal', randint(1, 4))
+                await mutate_dino_stat(dino, 'heal', randint(1, 2))
                 if randint(0, 1): await mutate_dino_stat(dino, 'eat', -1)
 
         # =================== Настроение ========================== #

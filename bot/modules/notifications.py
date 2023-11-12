@@ -33,7 +33,7 @@ replics_notifications = [
 ] # Уведомления которые имею разные реплики
 
 critical_line = {
-    'heal': 30, 'eat': 40, 
+    'heal': 50, 'eat': 40, 
     'game': 50, 'mood': 50,
     'energy': 30
 }

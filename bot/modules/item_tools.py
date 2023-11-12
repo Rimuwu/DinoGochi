@@ -330,17 +330,18 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     
     elif data_item['type'] == 'special' and dino:
         user = await User().create(userid)
+        dct_dino: dict = dino #type: ignore
 
         if data_item['class'] == 'reborn':
             dino_limit_col = await user.max_dino_col()
             dino_limit = dino_limit_col['standart']  
 
             if dino_limit['now'] < dino_limit['limit']:
-                res, alt_id = await insert_dino(userid, dino.data_id, 
-                                          dino.quality)
+                res, alt_id = await insert_dino(userid, dct_dino['data_id'], 
+                                          dct_dino['quality'])
                 if res:
-                    await dinosaurs.update_one({'_id': res.inserted_id}, {'$set': {'name': dino.name}}) 
-                    await dead_dinos.delete_one({'_id': dino._id}) 
+                    await dinosaurs.update_one({'_id': res.inserted_id}, {'$set': {'name': dct_dino['name']}}) 
+                    await dead_dinos.delete_one({'_id': dct_dino['_id']}) 
                     return_text = t('item_use.special.reborn.ok', lang, 
                             limit=dino_limit['limit'])
                 else: use_status = False
