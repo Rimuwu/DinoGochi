@@ -20,10 +20,11 @@ from bot.modules.promo import create_promo_start, get_promo_pages, promo_ui, use
 from time import time
 from bot.modules.user import User, max_dino_col, award_premium
 from bot.modules.over_functions import send_message
-
+from asyncio import sleep
 
 management = mongo_client.other.management
 promo = mongo_client.other.promo
+langs = mongo_client.user.lang
 
 @bot.message_handler(pass_bot=True, commands=['s_message'], is_admin=True)
 async def s_message(message: Message):
@@ -54,8 +55,8 @@ async def create_track(name, transmitted_data: dict):
         url = f'https://t.me/{bot_name}/?promo={name}'
         text = t("create_tracking.ok", lang, url=url)
     elif res == 0: text = 'error no document'
-    elif res == -1: text = 'error name no find'
-    elif res == -2: text = t("create_tracking.already", lang)
+    elif res == -1: text = 'error name find'
+    elif res == 1: text = t("create_tracking.already", lang)
 
     await send_message(chatid, text, parse_mode='Markdown')
 
@@ -220,7 +221,7 @@ async def link_promo(message):
                 await send_message(user.id, text_dict['not_found'])
 
 @bot.message_handler(commands=['add_premium'], is_admin=True)
-async def inf_premium(message):
+async def add_premium(message):
     """
     Аргументы: /add_premium 0/userid None/str_time
     """
@@ -237,3 +238,75 @@ async def inf_premium(message):
 
     await award_premium(userid, tt)
     await send_message(message.from_user.id, 'ok')
+    
+@bot.message_handler(commands=['copy_m'], is_admin=True)
+async def copy_m(message):
+
+    """
+    Аргументы: /copy_m lang
+    """
+    msg_args = message.text.split()
+    arg_list = msg_args[1:]
+
+    userid = message.from_user.id
+    chatid = message.chat.id
+    lang = await get_lang(userid)
+
+    fw = message.reply_to_message
+    try:
+        fw_chat_id = fw.forward_from_chat.id
+        fw_ms_id = fw.forward_from_message_id
+    except:
+        fw_chat_id = fw.chat.id
+        fw_ms_id = fw.id
+
+    fw_reply = fw.reply_markup
+
+    await bot.copy_message(chatid, fw_chat_id, fw_ms_id, reply_markup=fw_reply)
+
+    trs_data = {
+        'forward_chat': fw_chat_id,
+        'forward_message': fw_ms_id,
+        'markup': fw_reply,
+        'to_lang': arg_list[0],
+        'start_chat': chatid,
+        'start_lang': lang
+    }
+
+    users_sends = list(await langs.find({'lang': arg_list[0]}).to_list(None))
+
+    await ChooseConfirmState(confirm_send, userid, chatid, lang, True, trs_data)
+    await send_message(chatid, f"Confirm the newsletter for {len(users_sends)} users with language {arg_list[0]}", reply_markup=confirm_markup(lang))
+
+async def confirm_send(_, transmitted_data: dict):
+    forward_chat = transmitted_data['forward_chat']
+    forward_message = transmitted_data['forward_message']
+    markup = transmitted_data['markup']
+    to_lang = transmitted_data['to_lang']
+
+    start_chat = transmitted_data['start_chat']
+    start_lang = transmitted_data['start_lang']
+    
+    await send_message(start_chat, f"🍡", reply_markup=await m(start_chat, 'last_menu', start_lang))
+
+    users_sends = list(await langs.find({'lang': to_lang}).to_list(None))
+    start_time = time()
+    col = 0
+
+    for user in users_sends:
+        try:
+            await bot.copy_message(user['userid'], forward_chat, forward_message, reply_markup=markup)
+            col += 1
+        except:
+            await sleep(0.1)
+            try:
+                await bot.copy_message(user['userid'], forward_chat, forward_message, reply_markup=markup)
+                col += 1
+            except:
+                await sleep(0.3)
+                try:
+                    await bot.copy_message(user['userid'], forward_chat, forward_message, reply_markup=markup)
+                    col += 1
+                except: pass
+
+    await send_message(start_chat, f"Completed in {round(time() - start_time, 2)}, sent for {col} / {len(users_sends)}")
