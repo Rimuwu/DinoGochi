@@ -168,10 +168,10 @@ def create_dino_image(dino_id: int, stats: dict, quality: str='com', profile_vie
             sz, x, y = vertical_resizing(age, *p_data['age_resizing'])
         else:
             sz, x, y = horizontal_resizing(age, *p_data['age_resizing'])
-        
+
         for char in ['heal', 'eat', 'game', 'mood', 'energy']:
-             idraw.text(p_data[char], f'{stats[char]}%', font = line)
-    
+            idraw.text(p_data[char], f'{stats[char]}%', font = line)
+
     elif profile_view == 4:
         sz, x, y = horizontal_resizing(age, 450, randint(170, 550), randint(-180, -100))
         if randint(0, 1):

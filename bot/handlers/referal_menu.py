@@ -115,7 +115,7 @@ async def my_code(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    referal = await referals.find_one({'userid': userid})
+    referal = await referals.find_one({'userid': userid, 'type': 'general'})
     if referal:
         code = referal['code']
         referal_find = await referals.find(
