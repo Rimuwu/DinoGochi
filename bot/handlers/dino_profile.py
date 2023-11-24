@@ -29,6 +29,7 @@ dino_mood = mongo_client.dinosaur.dino_mood
 dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = mongo_client.dinosaur.dino_owners
 journey_task = mongo_client.dino_activity.journey
+users = mongo_client.user.users
 
 @asinc_decor().cpu
 async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_url: str):
@@ -323,6 +324,7 @@ async def cnacel_joint(_:bool, transmitted_data:dict):
 
     await dino_owners.delete_one({'dino_id': dinoid, 'owner_id': userid})
     await send_message(userid, '✅', reply_markup= await m(userid, 'last_menu', lang))
+    await users.update_one({"userid": userid}, {"$set": {"settings.last_dino": None}})
 
 async def cnacel_myjoint(_:bool, transmitted_data:dict):
     user = transmitted_data['user']
@@ -333,8 +335,10 @@ async def cnacel_myjoint(_:bool, transmitted_data:dict):
     res = await dino_owners.find_one({'dino_id': dinoid, 'type': 'add_owner'})
     if res: 
         await dino_owners.delete_one({'_id': res['_id']})
+
         text = t("my_joint.m_for_add_owner", lang, username=user_name(user))
         await send_message(res['owner_id'], text, reply_markup= await m(userid, 'last_menu', lang))
+        await users.update_one({"userid": userid}, {"$set": {"settings.last_dino": None}})
 
     await send_message(userid, '✅', reply_markup= await m(userid, 'last_menu', lang))
 
