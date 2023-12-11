@@ -220,7 +220,7 @@ locations = {
         "danger": 1.0,
         "items": {
             'com': ['jar_honey', 'cookie', 'blank_piece_paper', 'feather'],
-            'unc': ['timer', 'therapeutic_mixture', 'sweet_pancakes', 'blank_piece_paper'],
+            'unc': ['timer', 'therapeutic_mixture', 'sweet_pancakes', 'blank_piece_paper', 'drink_recipe'],
             'rar': ['bento_recipe', 'candy_recipe', 'drink_recipe', 'tooling'],
             'mys': ['salad_recipe', 'torch_recipe', 'popcorn_recipe'],
             'leg': ['soup_recipe', 'gourmet_herbs', 'board_games', 'book_forest', 'flour_recipe']
@@ -257,7 +257,7 @@ locations = {
         },
         "items": {
             'com': ['slice_pizza', 'fish_oil', 'twigs_tree', 'skin', 'blank_piece_paper'],
-            'unc': ['tooling', 'therapeutic_mixture', 'sweet_pancakes'],
+            'unc': ['tooling', 'therapeutic_mixture', 'sweet_pancakes', 'drink_recipe'],
             'rar': ['curry_recipe', 'bread_recipe', 'tea_recipe', 'flour_recipe', 'timer', 'blank_piece_paper'],
             'mys': ['bear', 'clothing_recipe', 'meat_recipe'],
             'leg': ['taco_recipe', 'sandwich_recipe', 'hot_chocolate_recipe', 'book_lost-islands']
@@ -291,7 +291,7 @@ locations = {
             'com': ['chocolate', 'candy', 'dango', 'flour_recipe', 'rope', 'blank_piece_paper'],
             'unc': ['juice_recipe', 'hot_chocolate_recipe', 'cake_recipe', 'tooling'],
             'rar': ['pouch_recipe', 'sword_recipe', 'onion_recipe', 'arrow_recipe'],
-            'mys': ['backpack_recipe', 'shield_recipe', 'pickaxe_recipe'],
+            'mys': ['backpack_recipe', 'shield_recipe', 'pickaxe_recipe', 'drink_recipe'],
             'leg': ['steak_recipe', 'broth_recipe', 'sushi_recipe', 'book_desert']
         },
         'mobs': {
@@ -324,7 +324,7 @@ locations = {
     "mountains": {
         "danger": 1.8,
         "items": {
-            'com': ['sandwich', 'dango', 'mushroom', 'therapeutic_mixture', 'blank_piece_paper'],
+            'com': ['sandwich', 'dango', 'mushroom', 'therapeutic_mixture', 'blank_piece_paper', 'drink_recipe'],
             'unc': ['bacon_recipe', 'bento_recipe', 'sandwich_recipe'],
             'rar': ['berry_pie_recipe', 'fish_pie_recipe', 'meat_pie_recipe'],
             'mys': ['basket_recipe', 'net_recipe', 'rod_recipe'],

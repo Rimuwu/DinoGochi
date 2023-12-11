@@ -31,7 +31,7 @@ dino_owners = mongo_client.dinosaur.dino_owners
 journey_task = mongo_client.dino_activity.journey
 users = mongo_client.user.users
 
-@asinc_decor().cpu
+# @asinc_decor().cpu
 async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_url: str):
     text = ''
 

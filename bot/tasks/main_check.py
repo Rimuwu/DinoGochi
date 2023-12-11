@@ -69,6 +69,9 @@ async def main_checks():
             elif dino['stats']['eat'] <= CRITICAL_EAT and random.uniform(0, 1) <= P_HEAL:
                 await mutate_dino_stat(dino, 'heal', -1)
 
+            elif is_sleeping and randint(0, 1):
+                await mutate_dino_stat(dino, 'heal', 1)
+
             # Уменьшение еды
             # если динозавр спит, вероятность P_EAT_SLEEP
             # если динозавр не спит, вероятность P_EAT
