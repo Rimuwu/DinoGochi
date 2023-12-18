@@ -88,7 +88,7 @@ async def exchange_item(userid: int, chatid: int, item: dict,
                                       chatid, lang, steps, transmitted_data)
 
 async def end_craft(transmitted_data: dict):
-    """ Завершает крафт удаляя и создавая предметы (не понижает прочность предметов и не удаляет сам рецепт)
+    """ Завершает крафт удаляя и создавая предметы
     """
     materials = transmitted_data['materials']
     userid = transmitted_data['userid']
@@ -292,7 +292,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             else: drop_items[drop_item['id']] = drop_col
 
         for item_id, col in drop_items.items():
-            await AddItemToUser(userid, item_id, count)
+            await AddItemToUser(userid, item_id, col)
 
             drop_item_data = get_data(item_id)
             item_name = get_name(item_id, lang)

@@ -335,20 +335,13 @@ async def order_update_col(transmitted_data):
     else:
         item_data = transmitted_data['return_data']['items']
 
-    items_res = await items.find({'items_data': item_data, "owner_id": userid}).to_list(None)  
-    if items_res:
-        max_count = 20
+    # Добавление данных для выбора количества
+    transmitted_data['exclude'].append(item_data['item_id'])
+    # Очистка лишних данных
+    transmitted_data['steps'][step-1] = {}
 
-        # Добавление данных для выбора количества
-        transmitted_data['steps'][step+1]['data']['max_int'] = max_count
-        transmitted_data['steps'][step+1]['message']['reply_markup'] = count_markup(max_count, lang)
-        transmitted_data['exclude'].append(item_data['item_id'])
+    return transmitted_data, True
 
-        # Очистка лишних данных
-        transmitted_data['steps'][step-1] = {}
-
-        return transmitted_data, True
-    else: return transmitted_data, False
 
 """ Функция выставляет максимальное количетсво предмета для типа items_items.2
     а так же очищает некоторые данные
@@ -397,10 +390,10 @@ def circle_data(userid, chatid, lang, items, option, prepare: bool = True):
             'function': update_function
         },
         {
-            "type": 'int', "name": 'col', "data": {"max_int": 10},
+            "type": 'int', "name": 'col', "data": {"max_int": 20},
             "translate_message": True,
             'message': {'text': 'add_product.wait_count', 
-                        'reply_markup': None}
+                        'reply_markup': count_markup(20, lang)}
         },
         {
             "type": 'update_data', "name": None, "data": {}, 

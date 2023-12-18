@@ -242,7 +242,6 @@ def AddItemToUser(userid: int, itemid: str, count: int = 1, preabil: dict = {}):
     """Добавление стандартного предмета в инвентарь
     """
     assert count >= 0, f'AddItemToUser, count == {count}'
-    
 
     item = get_item_dict(itemid, preabil)
     find_res = items.find_one({'owner_id': userid, 'items_data': item}, {'_id': 1})

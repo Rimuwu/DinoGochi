@@ -282,8 +282,6 @@ async def insert_dino(owner_id: int=0, dino_id: int=0, quality: str='random'):
     """Создания динозавра в базе
        + связь с владельцем если передан owner_id 
     """
-    
-    print(owner_id, quality)
 
     if quality in ['random', 'ran']: quality = random_quality()
     if not dino_id: dino_id = random_dino(quality)

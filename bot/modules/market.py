@@ -123,7 +123,7 @@ async def seller_ui(owner_id: int, lang: str, my_market: bool, name: str = ''):
             if products_col:
                 bt_data[d_but['market_products']] = f"seller all {owner_id}"
             else: bt_data[d_but['no_products']] = f" "
-            bt_data[d_but['сomplain']] = f'seller сomplain {owner_id}'
+            # bt_data[d_but['сomplain']] = f'seller сomplain {owner_id}'
         else:
             bt_data.update(
                 {
@@ -269,6 +269,8 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False):
                 ]
                 if product_type == 'auction':
                     data_buttons[0][b_data['auction']] = f"product_info buy {alt_id}"
+                elif product_type == 'coins_items':
+                    data_buttons[0][b_data['sell']] = f"product_info buy {alt_id}"
                 else:
                     data_buttons[0][b_data['buy']] = f"product_info buy {alt_id}"
 
@@ -369,6 +371,8 @@ async def delete_product(baseid = None, alt_id = None):
                                 preview=preview)
 
         await products.delete_one({'_id': product['_id']})
+        await preferential.delete_many({"product_id": product['_id']})
+        
         return True
     else: return False
 

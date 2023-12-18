@@ -230,6 +230,7 @@ async def search_message(message: Message):
         await bot.set_state(userid, InventoryStates.Inventory, chatid)
         async with bot.retrieve_data(userid, chatid) as data: 
             data['pages'] = pages
+            data['settings']['page'] = 0
             data['items'] = searched
         await swipe_page(userid, chatid)
     else:
