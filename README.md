@@ -35,6 +35,11 @@
     pip install -r requirements.txt
 
 - Запустите файл **config.py** для создания файла конфигурации
+- Файл должен быть создан в той же директории, что и файл "main.py"
+- Пример запуска: (Или просто кликните 2 раза по файлу если вы с Windows)
+> - ...\DinoGochi> cd bot
+> - ...\DinoGochi\bot> python config.py
+
 - В config.json обязательно укажите, 
 > - bot_token: "Токен бота из BotFather"
 > - bot_devs: [id админов бота]
