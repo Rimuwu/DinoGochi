@@ -23,16 +23,7 @@ class Config:
         self.logs_dir = 'logs'
         self.active_tasks = True
         self.bot_group_id = 0
-        self.ssh = False
-
-        # self.ssh = False
         self.mongo_url = 'mongodb://localhost:27017'
-
-        # self.ssh = True
-        self.ssh_host = 'db.example.com'
-        self.ssh_port = 21
-        self.ssh_user = 'user'
-        self.ssh_password = 'password'
 
         self.debug = False
         self.donation_token = ''
@@ -99,20 +90,7 @@ if __name__ == '__main__':
         sys.exit(f"{CONFIG_PATH} created! Please don't forget to set it up!")
 else:
     load()
-    # if conf.ssh:
-    #     from ssh_pymongo import MongoSession
-
-    #     session = MongoSession(
-    #         host=conf.ssh_host,
-    #         port=conf.ssh_port,
-    #         user=conf.ssh_user,
-    #         password=conf.ssh_password,
-    #     )
-    #     mongo_client = session.connection
-    # else:
     mongo_client = motor.motor_asyncio.AsyncIOMotorClient(conf.mongo_url)
-    # asyncio.run(check_base(mongo_client)) # Проверка базы данных на наличие коллекций
-    
+
     ioloop = asyncio.get_event_loop()
     ioloop.run_until_complete(check_base(mongo_client)) # Проверка базы данных на наличие коллекций
-    # ioloop.close()
