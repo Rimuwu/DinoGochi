@@ -12,7 +12,7 @@ from motor.core import AgnosticClient
 
 import asyncio
 
-CONFIG_PATH = 'config.json'
+CONFIG_PATH = '../config.json'
 
 class Config:
     def __init__(self) -> None:
