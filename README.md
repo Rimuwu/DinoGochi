@@ -40,7 +40,7 @@
 > - ...\DinoGochi> cd bot
 > - ...\DinoGochi\bot> python config.py
 
-- В config.json обязательно укажите, 
+- В config.json обязательно укажите: 
 > - bot_token: "Токен бота из BotFather"
 > - bot_devs: [id админов бота]
 > - mongo_url: (Если база не на локальном сервере) "mongo url кластера"
