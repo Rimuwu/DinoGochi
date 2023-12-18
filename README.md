@@ -43,7 +43,7 @@
 - В config.json обязательно укажите: 
 > - bot_token: "Токен бота из BotFather"
 > - bot_devs: [id админов бота]
-> - mongo_url: (Если база не на локальном сервере) "mongo url кластера"
+> - mongo_url: (Если база не на локальном сервере) "[mongo url кластера](https://gist.github.com/DeltaCoderr/0de27e6088822302dcb27db1827d64c1?permalink_comment_id=3676453)"
 
 - Запустите файл main.py и наслаждайтесь!
 
