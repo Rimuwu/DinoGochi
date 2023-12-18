@@ -5,6 +5,7 @@ from telebot.types import Message
 from bot.exec import bot
 from bot.config import mongo_client
 from time import time as time_now
+from time import time
 
 DEFAULT_RATE_LIMIT = 0.2
 users = mongo_client.user.users
@@ -15,9 +16,10 @@ class AntifloodMiddleware(BaseMiddleware):
     def __init__(self, limit=DEFAULT_RATE_LIMIT):
         self.last_time = {}
         self.limit = limit
-        self.update_types = ['message']
+        self.update_types = ['message', 'callback_query']
 
     async def pre_process(self, message: Message, data: dict):
+
         if not message.from_user.id in self.last_time:
             self.last_time[message.from_user.id] = time_now()
             return
