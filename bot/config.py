@@ -73,8 +73,8 @@ async def check_base(client: AgnosticClient):
 conf = Config()
 
 def load():
-    if os.path.exists("../" + CONFIG_PATH):
-        with open("../" + CONFIG_PATH, 'r') as f: conf.fromJSON(f.read()) # Загрузка настроек
+    if os.path.exists(CONFIG_PATH):
+        with open(CONFIG_PATH, 'r') as f: conf.fromJSON(f.read()) # Загрузка настроек
     else:
         sys.exit(f"{CONFIG_PATH} missed! Please, run {__name__}")
 
