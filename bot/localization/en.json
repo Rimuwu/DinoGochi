@@ -1157,18 +1157,18 @@
                     "0": "*└* __I'm insanely tired :(__"
                 }
             },
-            "profile_text": "{em_name} *┌* Name: {dino_name} \n {em_status} *├* Status: {status} \n {em_rare} *├* Rarity: {qual} \n {em_age} *└* Age: {age}",
+            "profile_text": "{em_name} *┌* Name: {dino_name}\n{em_status} *├* Status: {status}\n{em_rare} *├* Rarity: {qual}\n{em_age} *└* Age: {age}",
             "journey": {
                 "text": "{em_journey_act} *┌* Journey",
-                "info": "🏮 *├* Location: {location} \n ⌛ *├* Travels {journey_time} \n 🍭 *└* Events: {col}"
+                "info": "🏮 *├* Location: {location}\n⌛ *├* Travels {journey_time}\n🍭 *└* Events: {col}"
             },
             "game": {
-                "text": "\n \n {em_game_act} *┌* Game",
+                "text": "\n\n {em_game_act} *┌* Game",
                 "game_end": "\n 🎟 *├* Will stop after {end}",
                 "game_duration": "\n ⏳ *└* Passed {duration}"
             },
             "collecting": {
-                "text": "\n \n {em_coll_act} *┌* Gathering food\n",
+                "text": "\n\n {em_coll_act} *┌* Gathering food\n",
                 "progress": {
                     "collecting": "🌿 *└* The dinosaur collected {now} / {max_count} herbs.",
                     "hunt": "🍖 *└* The dinosaur collected {now} / {max_count}.",

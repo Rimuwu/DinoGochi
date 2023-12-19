@@ -118,7 +118,10 @@ async def my_market(message: Message):
     res = await sellers.find_one({'owner_id': userid})
     if res:
         text, markup, image = await seller_ui(userid, lang, True)
-        await bot.send_photo(chatid, image, text, parse_mode='Markdown', reply_markup=markup)
+        try:
+            await bot.send_photo(chatid, image, text, parse_mode='Markdown', reply_markup=markup)
+        except:
+            await bot.send_photo(chatid, image, text, reply_markup=markup)
 
 @bot.message_handler(pass_bot=True, text='commands_name.seller_profile.add_product', is_authorized=True)
 async def add_product_com(message: Message):
@@ -253,7 +256,10 @@ async def seller(call: CallbackQuery):
             except: name = '-'
 
             text, markup, image = await seller_ui(owner_id, lang, my_status, name)
-            await bot.send_photo(chatid, image, text, parse_mode='Markdown', reply_markup=markup)
+            try:
+                await bot.send_photo(chatid, image, text, parse_mode='Markdown', reply_markup=markup)
+            except:
+                await bot.send_photo(chatid, image, text, reply_markup=markup)
 
     elif call_type == 'all':
         user_prd = list(await products.find({'owner_id': owner_id}).to_list(None))
