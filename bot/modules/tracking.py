@@ -60,7 +60,7 @@ async def track_info(code: str, lang: str):
 
             tt = seconds_to_str(int(time()) - data['start'], lang)
 
-            url = f'https://t.me/{bot_name}/?promo={code}'
+            url = f'https://t.me/{bot_name}/?start={code}'
             text = text_data['text'].format(
                 url=url, code=code, t=tt, use=data['col']
             )

@@ -20,6 +20,7 @@ from bot.modules.tracking import add_track
 
 stickers = bot.get_sticker_set('Stickers_by_DinoGochi_bot')
 referals = mongo_client.user.referals
+management = mongo_client.other.management
 
 @bot.message_handler(pass_bot=True, commands=['start'], is_authorized=True, private=True)
 async def start_command_auth(message: types.Message):
@@ -39,6 +40,10 @@ async def start_command_auth(message: types.Message):
                          {'userid': message.from_user.id,
                           'chatid': message.chat.id,
                           'lang': await get_lang(message.from_user.id)})
+
+        promo_c = await management.find_one({'_id': 'tracking_links'})
+        if str(content[1]) in promo_c['links']:
+            await management.update_one({'_id': 'tracking_links'}, {"$inc": {f"{referal}.col": 1}})
 
 @bot.message_handler(text='commands_name.start_game', is_authorized=False)
 async def start_game(message: types.Message, code: str = '', code_type: str = ''):
