@@ -1,6 +1,6 @@
 
 import aiohttp
-from config import conf
+from bot.config import conf
 from bot.modules.user import premium
 from bot.modules.logs import log
 
