@@ -26,7 +26,10 @@ class Config:
         self.mongo_url = 'mongodb://localhost:27017'
 
         self.debug = False
+        self.show_advert = False
+
         self.donation_token = ''
+        self.advert_token = ''
 
     def fromJSON(self, js: str) -> None:
         """Десереализует строку в данные
