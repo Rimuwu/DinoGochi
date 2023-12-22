@@ -34,6 +34,13 @@
     # Linux
     pip install -r requirements.txt
 
+- Установите базу данных на пк
+• [# Windows](
+    https://metanit.com/nosql/mongodb/1.2.php
+   )
+• [# Linux](
+    https://www.dmosk.ru/miniinstruktions.php?mini=mongodb-ubuntu
+   )
 - Запустите файл **config.py** для создания файла конфигурации
 - Файл должен быть создан и перемещён в ту же директории, что и файл "main.py"
 - Пример запуска: (Или просто кликните 2 раза по файлу если вы с Windows)
