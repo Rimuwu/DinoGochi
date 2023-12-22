@@ -22,7 +22,7 @@ async def infouser(message: Message):
     text = await user_info(message.from_user, lang)
     photos = await bot.get_user_profile_photos(userid, limit=1)
     if photos.photos:
-        photo_id = photos.photos[0][0].file_id 
+        photo_id = photos.photos[0][0].file_id #type: ignore
         await bot.send_photo(chatid, photo_id, text, parse_mode='Markdown')
     else:
         await send_message(message.chat.id, text, parse_mode='Markdown')
@@ -36,7 +36,7 @@ async def infouser_com(message: Message):
     text = await user_info(message.from_user, lang)
     photos = await bot.get_user_profile_photos(userid, limit=1)
     if photos.photos:
-        photo_id = photos.photos[0][0].file_id 
+        photo_id = photos.photos[0][0].file_id #type: ignore
         await bot.send_photo(chatid, photo_id, text, parse_mode='Markdown')
     else:
         await send_message(message.chat.id, text, parse_mode='Markdown')

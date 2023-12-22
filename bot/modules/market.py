@@ -138,7 +138,7 @@ async def seller_ui(owner_id: int, lang: str, my_market: bool, name: str = ''):
 
         markup = list_to_inline([bt_data])
         if 'custom_image' in seller and seller['custom_image'] and await premium(owner_id):
-            img = market_image(seller['custom_image'], status)
+            img = await market_image(seller['custom_image'], status)
         else:
             img = open(f'images/remain/market/{status}.png', 'rb')
 

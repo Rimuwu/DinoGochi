@@ -143,14 +143,14 @@ class User:
         """
         #запрашиваем все связи с владельцем
         dinos_conn = list(await dino_owners.find(
-            {'owner_id': self.userid}).to_list(None)) 
+            {'owner_id': self.userid}).to_list(None)) #type: ignore
         for conn in dinos_conn:
             #Если он главный
             if conn['type'] == 'owner':
                 #Запрашиваем всех владельцев динозавра (тут уже не будет главного)
                 alt_conn_fo_dino = list(await dino_owners.find(
                     {'dino_id': conn['dino_id'], 'type': 'add_owner'}
-                        ).to_list(None)) 
+                        ).to_list(None)) #type: ignore
 
                 #Проверяем, пустой ли список
                 if len(alt_conn_fo_dino) > 1:
@@ -166,9 +166,9 @@ class User:
 
         # Удаление связи с друзьями
         friends_conn = list(await friends.find(
-            {'userid': self.userid}).to_list(None)) 
+            {'userid': self.userid}).to_list(None)) #type: ignore
         friends_conn2 = list(await friends.find(
-            {'friendid': self.userid}).to_list(None)) 
+            {'friendid': self.userid}).to_list(None)) #type: ignore
 
         for conn in [friends_conn, friends_conn2]:
             for obj in conn: await friends.delete_one({'_id': obj['_id']})
@@ -214,11 +214,11 @@ async def get_dinos(userid: int, all_dinos: bool = True) -> list[Dino]:
 
     if all_dinos:
         res = list(await dino_owners.find({'owner_id': userid}, 
-                                          {'dino_id': 1}).to_list(None))  
+                                          {'dino_id': 1}).to_list(None))  #type: ignore
     else:
         res = list(await dino_owners.find(
             {'owner_id': userid, 'type': 'owner'}, {'dino_id': 1}
-                ).to_list(None))  
+                ).to_list(None))  #type: ignore
 
     for dino_obj in res:
         dino_list.append(await Dino().create(dino_obj['dino_id']))
@@ -228,19 +228,19 @@ async def get_dinos(userid: int, all_dinos: bool = True) -> list[Dino]:
 async def get_dinos_and_owners(userid: int) -> list:
     """Возвращает список с объектами динозавров и их владельцами, а так же правами на динозавра"""
     data = []
-    for dino_obj in await dino_owners.find({'owner_id': userid}).to_list(None): 
+    for dino_obj in await dino_owners.find({'owner_id': userid}).to_list(None): #type: ignore
         data.append({'dino': await Dino().create(dino_obj['dino_id']), 'owner_type': dino_obj['type']})
 
     return data
 
 async def col_dinos(userid: int) -> int:
     return len(list(
-        await dino_owners.find({'owner_id': userid}, {'_id': 1}).to_list(None))) 
+        await dino_owners.find({'owner_id': userid}, {'_id': 1}).to_list(None))) #type: ignore
 
 async def get_eggs(userid: int) -> list:
     """Возвращает список с объектами динозавров."""
     eggs_list = []
-    for egg in await incubations.find({'owner_id': userid}).to_list(None): 
+    for egg in await incubations.find({'owner_id': userid}).to_list(None): #type: ignore
         eggs_list.append(await Egg().create(egg['_id']))
 
     return eggs_list
@@ -248,7 +248,7 @@ async def get_eggs(userid: int) -> list:
 async def get_inventory(userid: int, exclude_ids: list = []):
     inv, count = [], 0
     data_inv = await items.find({'owner_id': userid}, 
-                                {'_id': 0, 'owner_id': 0}).to_list(None)
+                                {'_id': 0, 'owner_id': 0}).to_list(None) #type: ignore
     for item_dict in data_inv:
         if item_dict['items_data']['item_id'] not in exclude_ids:
             item = {
@@ -260,7 +260,7 @@ async def get_inventory(userid: int, exclude_ids: list = []):
     return inv, count
 
 async def items_count(userid: int):
-    return len(list(await items.find({'owner_id': userid}, {'_id': 1}).to_list(None))) 
+    return len(list(await items.find({'owner_id': userid}, {'_id': 1}).to_list(None))) #type: ignore
 
 async def last_dino(user: User):
     """Возвращает последнего выбранного динозавра.
@@ -338,12 +338,12 @@ async def max_dino_col(lvl: int, user_id: int=0, premium_st: bool=False):
     col['standart']['limit'] += ((lvl // 20 + 1) - lvl // 80)
 
     if user_id:
-        dinos = await dino_owners.find({'owner_id': user_id}).to_list(None) 
+        dinos = await dino_owners.find({'owner_id': user_id}).to_list(None) #type: ignore
         for dino in dinos:
             if dino['type'] == 'owner': col['standart']['now'] += 1
             else: col['additional']['now'] += 1
 
-        eggs = await incubations.find({'owner_id': user_id}).to_list(None)
+        eggs = await incubations.find({'owner_id': user_id}).to_list(None) #type: ignore
         for _ in eggs: col['standart']['now'] += 1
  
     return col
@@ -440,7 +440,7 @@ async def user_info(data_user: teleUser, lang: str, secret: bool = False):
                      )
     return_text += '\n\n'
     if not secret:
-        dd = await dead_dinos.find({'owner_id': user.userid}).to_list(None) 
+        dd = await dead_dinos.find({'owner_id': user.userid}).to_list(None) #type: ignore
         return_text += t(f'user_profile.dinosaurs', lang,
                         dead=len(list(dd)), dino_col = len(dinos)
                         )
@@ -496,7 +496,7 @@ async def premium(userid: int):
 async def take_coins(userid: int, col: int, update: bool = False) -> bool:
     """Функция проверяет, можно ли отнять / добавить col монет у / к пользователя[ю]
        Если updatе - то обновляет данные
-       
+
        ЕСЛИ ХОТИМ ОТНЯТЬ, НЕ ЗАБЫВАЕМ В COL УКАЗЫВАТЬ ОТРИЦАТЕЛЬНОЕ ЧИСЛО
     """
     user = await users.find_one({'userid': userid})
@@ -511,14 +511,14 @@ async def take_coins(userid: int, col: int, update: bool = False) -> bool:
     return False
 
 async def get_dead_dinos(userid: int):
-    return list(await dead_dinos.find({'owner_id': userid}).to_list(None)) 
+    return list(await dead_dinos.find({'owner_id': userid}).to_list(None)) #type: ignore
 
 async def count_inventory_items(userid: int, find_type: list):
     """ Считает сколько предметов нужных типов в инвентаре
     """
     result = 0
     for item in await items.find({'owner_id': userid}, 
-                                {'_id': 0, 'owner_id': 0}).to_list(None): 
+                                {'_id': 0, 'owner_id': 0}).to_list(None): #type: ignore
         item_data = get_item_data(item['items_data']['item_id'])
         try:
             item_type = item_data['type']

@@ -45,7 +45,7 @@ async def collecting_adapter(return_data, transmitted_data):
             await dino.collecting(userid, option, count)
             await check_accessory(dino, 'basket', True)
 
-            image = dino_collecting(dino.data_id, option)
+            image = await dino_collecting(dino.data_id, option)
             text = t(f'collecting.result.{option}', lang,
                     dino_name=dino.name, count=count)
             stop_button = t(f'collecting.stop_button.{option}', lang)

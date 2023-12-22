@@ -137,7 +137,7 @@ class Dino:
         """Сгенерировать изображение объекта
         """
         age = await self.age()
-        return create_dino_image(self.data_id, self.stats, self.quality, profile_view, age.days, custom_url)
+        return await create_dino_image(self.data_id, self.stats, self.quality, profile_view, age.days, custom_url)
 
     async def collecting(self, owner_id: int, coll_type: str, max_count: int):
         return await start_collecting(self._id, owner_id, coll_type, max_count)
@@ -214,11 +214,11 @@ class Egg:
     async def delete(self):
         await incubations.delete_one({'_id': self._id})
 
-    def image(self, lang: str='en'):
+    async def image(self, lang: str='en'):
         """Сгенерировать изображение объекта.
         """
         t_inc = self.remaining_incubation_time()
-        return create_egg_image(egg_id=self.egg_id, rare=self.quality, seconds=t_inc, lang=lang)
+        return await create_egg_image(egg_id=self.egg_id, rare=self.quality, seconds=t_inc, lang=lang)
     
     def remaining_incubation_time(self):
         return self.incubation_time - int(time())

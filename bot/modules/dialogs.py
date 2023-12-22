@@ -90,7 +90,7 @@ async def dead_last_dino(userid: int, name: str, lang: str,
                                          {'interact': False})
 
                 buttons = {}
-                image, eggs = create_eggs_image()
+                image, eggs = await create_eggs_image()
                 code = item_code(itm_data)
 
                 for i in range(3): 

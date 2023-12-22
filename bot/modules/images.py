@@ -81,7 +81,7 @@ def trans_paste(fg_img: Image.Image, bg_img: Image.Image,
 
     return bg_img
 
-def create_eggs_image():
+async def create_eggs_image():
     """Создаёт изображение выбора яиц.
     """
     id_l = [] #Хранит id яиц
@@ -97,7 +97,7 @@ def create_eggs_image():
 
     return pil_image_to_file(bg_p), id_l
 
-def create_egg_image(egg_id: int, rare: str='random', seconds: int=0, lang: str='en'):
+async def create_egg_image(egg_id: int, rare: str='random', seconds: int=0, lang: str='en'):
     """Создаёт изобраение инкубации яйца
        Args:
        egg_id - id яйца
@@ -132,7 +132,7 @@ def create_egg_image(egg_id: int, rare: str='random', seconds: int=0, lang: str=
     
     return pil_image_to_file(img)
 
-def create_dino_image(dino_id: int, stats: dict, quality: str='com', profile_view: int=1, age: int = 30, custom_url: str=''):
+async def create_dino_image(dino_id: int, stats: dict, quality: str='com', profile_view: int=1, age: int = 30, custom_url: str=''):
     """Создание изображения динозавра
        Args:
        dino_id - id картинки динозавра
@@ -185,7 +185,7 @@ def create_dino_image(dino_id: int, stats: dict, quality: str='com', profile_vie
 
     return pil_image_to_file(img)
 
-def dino_game(dino_id: int, add_dino_id: int = 0):
+async def dino_game(dino_id: int, add_dino_id: int = 0):
     n_img = randint(1, 2)
     img = Image.open(f"images/actions/game/{n_img}.png")
 
@@ -211,7 +211,7 @@ def dino_game(dino_id: int, add_dino_id: int = 0):
                       (x + y, y, sz + x + y, sz + y))
     return pil_image_to_file(img)
 
-def dino_journey(dino_id: int, journey_way: str, add_dino_id: int = 0):
+async def dino_journey(dino_id: int, journey_way: str, add_dino_id: int = 0):
     assert journey_way in ['desert', 'forest', 'magic-forest', 'mountains', 'lost-islands'], f'Путь путешествия {journey_way} не найден'
 
     n_img, sz = randint(1, 12), 350
@@ -237,7 +237,7 @@ def dino_journey(dino_id: int, journey_way: str, add_dino_id: int = 0):
 
     return pil_image_to_file(img)
 
-def dino_collecting(dino_id: int, col_type: str):
+async def dino_collecting(dino_id: int, col_type: str):
     img = Image.open(f"images/actions/collecting/{col_type}.png")
 
     dino_data = DINOS['elements'][str(dino_id)]
@@ -252,7 +252,7 @@ def dino_collecting(dino_id: int, col_type: str):
                       (x + y, y, sz + x + y, sz + y))
     return pil_image_to_file(img)
 
-def market_image(custom_url, status):
+async def market_image(custom_url, status):
     try:
         response = requests.get(custom_url, stream = True)
         response = Image.open(io.BytesIO(response.content)).convert("RGBA")

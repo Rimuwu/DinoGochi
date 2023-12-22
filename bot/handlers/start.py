@@ -54,7 +54,7 @@ async def start_game(message: types.Message, code: str = '', code_type: str = ''
     await send_message(message.chat.id, text, parse_mode='html', reply_markup=markup_inline)
 
     #Создание изображения
-    img, id_l = create_eggs_image()
+    img, id_l = await create_eggs_image()
 
     markup_inline = types.InlineKeyboardMarkup()
     markup_inline.add(*[types.InlineKeyboardButton(

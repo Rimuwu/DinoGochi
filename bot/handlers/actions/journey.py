@@ -36,7 +36,7 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
     last_mess_id = transmitted_data['steps'][-1]['bmessageid']
     
     data_time = get_data(f'journey_start.time_text.{time_key}', lang)
-    image = dino_journey(dino.data_id, location, friend)
+    image = await dino_journey(dino.data_id, location, friend)
     await action_journey(dino._id, userid, data_time['time'], location)
 
     loc_name = get_data(f'journey_start.locations.{location}', lang)['name']

@@ -142,7 +142,7 @@ async def game_start(return_data: dict,
 
                 text_m = t('entertainments.dino_join', lang, 
                             dinoname=dino.name)
-                image = dino_game(friend_dino_id, dino.data_id)
+                image = await dino_game(friend_dino_id, dino.data_id)
                 await bot.send_photo(friend, image, text_m)
 
     r_t = get_data('entertainments', lang)['time'][code]['data']
@@ -152,7 +152,7 @@ async def game_start(return_data: dict,
     if res: percent += 1.0
 
     await dino.game(game_time, percent)
-    image = dino_game(dino.data_id, friend_dino_id)
+    image = await dino_game(dino.data_id, friend_dino_id)
 
     text = t(f'entertainments.game_text.m{str(repeat)}', lang, 
             game=t(f'entertainments.game.{game}', lang)) + '\n'

@@ -60,7 +60,7 @@ async def exchange(return_data: dict, transmitted_data: dict):
 async def exchange_item(userid: int, chatid: int, item: dict,
                         lang: str, username: str):
     items_data = await items.find({'items_data': item, 
-                                   "owner_id": userid}).to_list(None) 
+                                   "owner_id": userid}).to_list(None) #type: ignore
     max_count = 0
 
     for i in items_data: max_count += i['count']
@@ -191,8 +191,8 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
         else:
             if dino.activ_items[type_item]:
                 await AddItemToUser(userid, 
-                              dino.activ_items[type_item]['item_id'], 1, 
-                              dino.activ_items[type_item]['abilities'])
+                              dino.activ_items[type_item]['item_id'], 1,  #type: ignore
+                              dino.activ_items[type_item]['abilities'])  #type: ignore
             if is_standart(item):
                 # Защита от вечных аксессуаров
                 dino_update_list.append({
@@ -312,7 +312,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
         if dino_limit['now'] < dino_limit['limit']:
             send_status = False
             buttons = {}
-            image, eggs = create_eggs_image()
+            image, eggs = await create_eggs_image()
             code = item_code(item)
 
             for i in range(3): buttons[f'🥚 {i+1}'] = f'item egg {code} {eggs[i]}'
@@ -395,7 +395,7 @@ async def edit_craft(return_data: dict, transmitted_data: dict):
         for item_key, unit in materials['edit'][iterable_key].items():
             item = return_data[item_key]
             find_items = await items.find({'owner_id': userid, 
-                                   'items_data': item}).to_list(None)
+                                   'items_data': item}).to_list(None) #type: ignore
             for find_item in find_items:
                 if unit > 0:
                     ret_data = CalculateDowngradeitem(find_item['items_data'], 
@@ -495,7 +495,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
     adapter_function = adapter
 
     bases_item = await items.find({'owner_id': userid, 'items_data': item}
-                                 ).to_list(None) 
+                                 ).to_list(None)  #type: ignore
     transmitted_data = {'items_data': item}
     item_name = get_name(item_id, lang)
     steps = []
@@ -515,7 +515,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
 
         if type_item == 'eat':
             adapter_function = eat_adapter
-            transmitted_data['max_count'] = max_count
+            transmitted_data['max_count'] = max_count 
 
             steps = [
                 {"type": 'dino', "name": 'dino', "data": {"add_egg": False}, 
@@ -626,17 +626,17 @@ async def delete_action(return_data: dict, transmitted_data: dict):
 async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
     steps = []
     find_items = await items.find({'owner_id': userid, 
-                             'items_data': item}).to_list(None) 
+                             'items_data': item}).to_list(None) #type: ignore
     transmitted_data = {'items_data': item, 'item_name': ''}
     max_count = 0
     item_id = item['item_id']
-    
+
     for base_item in find_items: max_count += base_item['count']
-    
+
     if max_count:
         item_name = get_name(item_id, lang)
         transmitted_data['item_name'] = item_name
-        
+
         steps.append({"type": 'int', "name": 'count', 
                         "data": {"max_int": max_count}, 
                         'message': {'text': t('css.wait_count', lang), 

@@ -41,7 +41,7 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
     joint_dino, my_joint = False, False
 
     user = await User().create(userid)
-    owners = list(await dino_owners.find({'dino_id': dino._id}).to_list(None))
+    owners = list(await dino_owners.find({'dino_id': dino._id}).to_list(None)) #type: ignore
 
     for owner in owners:
         if owner['owner_id'] == userid and owner['type'] == 'add_owner':
@@ -157,7 +157,7 @@ async def egg_profile(chatid: int, egg: Egg, lang: str):
              time_end=seconds_to_str(
         egg.remaining_incubation_time(), lang)
         )
-    img = egg.image(lang)
+    img = await egg.image(lang)
     await bot.send_photo(chatid, img, text, 
                          reply_markup=await m(chatid, 'last_menu', language_code=lang))
 
@@ -238,7 +238,7 @@ async def dino_menu(call: types.CallbackQuery):
 
             elif action == 'mood_log':
                 mood_list = list(await dino_mood.find(
-                    {'dino_id': dino['_id']}).to_list(None))
+                    {'dino_id': dino['_id']}).to_list(None)) #type: ignore
                 mood_dict, text, event_text = {}, '', ''
                 res, event_end = 0, 0
 

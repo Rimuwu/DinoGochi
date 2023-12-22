@@ -261,9 +261,9 @@ async def joint(return_data: dict,
     username = transmitted_data['username']
     dino: Dino = return_data['dino']
 
-    res = await dino_owners.find({'dino_id': dino._id}).to_list(None)
+    res = await dino_owners.find({'dino_id': dino._id}).to_list(None) #type: ignore
     res2 = await dino_owners.find(
-        {'owner_id': friendid, 'type': 'add_owner'}).to_list(None)
+        {'owner_id': friendid, 'type': 'add_owner'}).to_list(None) #type: ignore
 
     if len(list(res)) >= 2:
         text = t('joint_dinosaur.max_owners', lang)
@@ -319,14 +319,14 @@ async def take_dino(call: CallbackQuery):
     await bot.delete_message(chatid, call.message.id)
 
     res2 = await dino_owners.find(
-        {'owner_id': userid, 'type': 'add_owner'}).to_list(None)
+        {'owner_id': userid, 'type': 'add_owner'}).to_list(None) #type: ignore
     if len(list(res2)) >= 1:
         text = t('take_dino.max_dino', lang)
         await send_message(chatid, text)
     else:
         dino = await dinosaurs.find_one({'alt_id': dino_alt})
         if dino:
-            res = await dino_owners.find({'dino_id': dino['_id']}).to_list(None)
+            res = await dino_owners.find({'dino_id': dino['_id']}).to_list(None) #type: ignore
 
             # Получение владельца
             owner = 0
