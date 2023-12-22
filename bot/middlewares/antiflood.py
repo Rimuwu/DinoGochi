@@ -3,9 +3,9 @@
 from telebot.asyncio_handler_backends import BaseMiddleware, SkipHandler
 from telebot.types import Message
 from bot.exec import bot
-from bot.config import mongo_client
+from bot.config import mongo_client, conf
 from time import time as time_now
-from time import time
+from bot.modules.advert import show_advert
 
 DEFAULT_RATE_LIMIT = 0.2
 users = mongo_client.user.users
@@ -29,6 +29,7 @@ class AntifloodMiddleware(BaseMiddleware):
 
     async def post_process(self, message, data, exception):
         await users.update_one({'userid': message.from_user.id}, {'$set': {'last_message_time': message.date}})
+        if conf.show_advert: await show_advert(message.from_user.id)
 
 
 bot.setup_middleware(AntifloodMiddleware())
