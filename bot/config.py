@@ -50,7 +50,7 @@ class Config:
  
 async def check_base(client: AgnosticClient):
     from bot.const import GAME_SETTINGS
-    if client.server_info(): print(f"{client.address}, mongo connected")
+    if client.server_info(): print(f"{client.HOST}, mongo connected")
 
     #Создаёт документы и базы, необходимы для работы бота
     collections = GAME_SETTINGS['collections']
@@ -67,10 +67,10 @@ async def check_base(client: AgnosticClient):
         for col in necessary_create[base]:
             collection = database[col]
             for doc in necessary_create[base][col]:
-                fnd_doc = collection.find_one({"_id": doc['_id']}, {'_id': 1})
+                fnd_doc = await collection.find_one({"_id": doc['_id']}, {'_id': 1})
                 if not fnd_doc:
                     await collection.insert_one(doc)
-    
+
     print('The databases are checked and prepared for use.')
 
 conf = Config()
