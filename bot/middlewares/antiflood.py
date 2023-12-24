@@ -6,6 +6,7 @@ from bot.exec import bot
 from bot.config import mongo_client, conf
 from time import time as time_now
 from bot.modules.advert import show_advert
+from datetime import datetime, timezone
 
 DEFAULT_RATE_LIMIT = 0.2
 users = mongo_client.user.users
@@ -28,8 +29,16 @@ class AntifloodMiddleware(BaseMiddleware):
         self.last_time[message.from_user.id] = time_now()
 
     async def post_process(self, message, data, exception):
-        await users.update_one({'userid': message.from_user.id}, {'$set': {'last_message_time': message.date}})
-        if conf.show_advert: await show_advert(message.from_user.id)
+        user = await users.find_one({'userid': message.from_user.id})
+        if user:
+            await users.update_one({'userid': message.from_user.id}, 
+                                   {'$set': {'last_message_time': message.date}})
+            if conf.show_advert:
+                create = user['_id'].generation_time
+                now = datetime.now(timezone.utc)
+                delta = now - create
+
+                if delta.seconds >= 1209600: await show_advert(message.from_user.id)
 
 
 bot.setup_middleware(AntifloodMiddleware())
