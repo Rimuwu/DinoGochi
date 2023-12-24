@@ -22,6 +22,8 @@ from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User, experience_enhancement, get_dead_dinos, max_eat, count_inventory_items
 from bot.modules.over_functions import send_message
 
+from typing import Union
+
 dinosaurs = mongo_client.dinosaur.dinosaurs
 items = mongo_client.items.items
 dead_dinos = mongo_client.dinosaur.dead_dinos
@@ -131,7 +133,7 @@ async def end_craft(transmitted_data: dict):
                            parse_mode='Markdown', reply_markup=await markups_menu(userid, 'last_menu', lang))
 
 async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1, 
-                   dino: Dino | None=None, combine_item: dict = {}):
+                   dino: Union[Dino, None]=None, combine_item: dict = {}):
     return_text = ''
     dino_update_list = []
     use_status, send_status, use_baff_status = True, True, True

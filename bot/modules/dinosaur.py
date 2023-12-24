@@ -16,6 +16,8 @@ from bot.modules.localization import log, get_lang
 from bot.modules.notifications import (dino_notification, notification_manager,
                                        user_notification)
 
+from typing import Union
+
 users = mongo_client.user.users
 dinosaurs = mongo_client.dinosaur.dinosaurs
 incubations = mongo_client.dinosaur.incubation
@@ -53,7 +55,7 @@ class Dino:
         self.activ_items = {
                 'game': None, 'collecting': None,
                 'journey': None, 'sleep': None,
-                
+
                 'armor': None,  'weapon': None,
                 'backpack': None
         }
@@ -68,7 +70,7 @@ class Dino:
             'eat': []
         }
 
-    async def create(self, baseid: ObjectId | str = ''):
+    async def create(self, baseid: Union[ObjectId, str]):
         find_result = await dinosaurs.find_one({"_id": baseid})
         if not find_result:
             find_result = await dinosaurs.find_one({"alt_id": baseid})

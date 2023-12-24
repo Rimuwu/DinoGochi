@@ -6,6 +6,7 @@ from typing import Any
 from bot.modules.logs import log
 from bot.config import conf, mongo_client
 
+
 languages = {}
 available_locales = []
 langs = mongo_client.user.lang
