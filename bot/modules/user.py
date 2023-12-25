@@ -184,7 +184,7 @@ class User:
     async def get_last_dino(self):
         """Возвращает последнего динозавра или None
         """
-        return await last_dino(self)
+        return await last_dino(self) # type: ignore
 
     async def max_dino_col(self):
         """Возвращает доступное количесвто динозавров, беря во внимание уровень и статус,

@@ -25,14 +25,14 @@ async def get_frineds(userid: int) -> dict:
 
     for st in ['userid', 'friendid']:
         data_list = await friends.find({st: userid, 
-                                  'type': 'friends'}).to_list(None) 
+                                  'type': 'friends'}).to_list(None) #type: ignore
 
         for conn_data in data_list:
             friends_dict['friends'].append(conn_data[alt[st]])
 
         if st == 'friendid':
             data_list = await friends.find({st: userid, 
-                                      'type': 'request'}).to_list(None) 
+                                      'type': 'request'}).to_list(None) #type: ignore
 
             for conn_data in data_list:
                 friends_dict['requests'].append(conn_data[alt[st]])

@@ -27,7 +27,7 @@ def log(message: str, lvl: int = 1, prefix: str = 'Бот') -> None:
     3 - error\n
     4 - critical
     """
-    
+
     if lvl == 0:
         if conf.debug:
             logging.info(f'DEBUG: {message}')
