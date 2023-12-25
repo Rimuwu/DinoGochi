@@ -167,7 +167,7 @@ async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', p
     """Создание изображения динозавра
        Args:
        dino_id - id картинки динозавра
-       stats - словарь с харрактеристиками динозавра ( {'heal': 0, 'eat': 0, 'sleep': 0, 'game': 0, 'mood': 0} )
+       stats - словарь с харрактеристиками динозавра ( {'heal': 0, 'eat': 0, 'energy': 0, 'game': 0, 'mood': 0} )
     """
 
     # Получение данных
@@ -220,7 +220,7 @@ async def create_dino_image(dino_id: int, stats: dict, quality: str='com', profi
     """Создание изображения динозавра
        Args:
        dino_id - id картинки динозавра
-       stats - словарь с харрактеристиками динозавра ( {'heal': 0, 'eat': 0, 'sleep': 0, 'game': 0, 'mood': 0} )
+       stats - словарь с харрактеристиками динозавра ( {'heal': 0, 'eat': 0, 'energy': 0, 'game': 0, 'mood': 0} )
     """
 
     loop = asyncio.get_running_loop()
