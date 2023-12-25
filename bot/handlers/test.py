@@ -33,6 +33,7 @@ from bot.modules.journey import create_event, random_event, activate_event
 from bot.modules.market import (add_product, create_seller,
                                 generate_sell_pages, product_ui, seller_ui)
 from bson.objectid import ObjectId
+from bot.modules.images import create_dino_image, create_dino_image_pst
 
 from typing import Optional
 
@@ -71,3 +72,47 @@ async def command2(message):
         await experience_enhancement(user.id, 1)
     else:
         print(user.id, 'not in devs')
+
+
+@bot.message_handler(pass_bot=True, commands=['test_img'], is_admin=True)
+async def test_img(message):
+    user = message.from_user
+
+    uu = await User().create(user.id)
+    dinos = await uu.get_dinos()
+    
+    dino = dinos[0]
+    
+    t1_list = []
+
+    for i in range(100):
+        st_t = time()
+        res = await create_dino_image_pst(dino.data_id, 
+                        {'heal': 0, 'eat': 0, 'energy': 0, 'game': 0, 'mood': 0}, "leg", 1, 30)
+
+        tt = time() - st_t
+        # await bot.send_photo(user.id, res, f"test {i} {tt}")
+        t1_list.append(tt)
+    
+    t2_list = []
+
+    for i in range(100):
+        st_t = time()
+        res = await create_dino_image(dino.data_id, 
+                        {'heal': 0, 'eat': 0, 'energy': 0, 'game': 0, 'mood': 0}, "leg", 1, 30)
+
+        tt = time() - st_t
+        # await bot.send_photo(user.id, res, f"test {i} {tt}")
+        t2_list.append(tt)
+ 
+    
+    t1 = sum(t1_list) / len(t1_list)
+    t2 = sum(t2_list) / len(t2_list)
+        
+    print("t1", t1, "t2", t2, t1-t2)
+
+@bot.message_handler(pass_bot=True, commands=['fix_sleep'], is_admin=True)
+async def fix_sleep(message):
+    
+    await dinosaurs.update_many(
+        {'stats.sleep': {'$ne': None}}, {"$unset": {'stats.sleep': 1}})
