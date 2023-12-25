@@ -8,6 +8,11 @@ from telebot.util import pil_image_to_file
 from bot.const import DINOS, GAME_SETTINGS
 from bot.modules.data_format import seconds_to_str
 from bot.modules.localization import get_data
+import asyncio
+
+from concurrent.futures import ThreadPoolExecutor
+POOL = ThreadPoolExecutor()
+
 
 FONTS = {
     'line30': ImageFont.truetype('fonts/Aqum.otf', size=30),
@@ -71,7 +76,7 @@ def horizontal_resizing(age: int, max_size, max_x, max_y, days = 30):
     y = int(age * ((max_y-100) / days)+100)
     return f, x, y
 
-def trans_paste(fg_img: Image.Image, bg_img: Image.Image, 
+async def trans_paste(fg_img: Image.Image, bg_img: Image.Image, 
                 alpha=10.0, box=(0, 0)):
     """Накладывает одно изображение на другое.
     """
@@ -81,7 +86,7 @@ def trans_paste(fg_img: Image.Image, bg_img: Image.Image,
 
     return bg_img
 
-async def create_eggs_image():
+async def create_eggs_image_pst():
     """Создаёт изображение выбора яиц.
     """
     id_l = [] #Хранит id яиц
@@ -92,12 +97,22 @@ async def create_eggs_image():
     for i in range(3):
         rid = str(choice(list(DINOS['data']['egg']))) #Выбираем рандомное яйцо
         image = Image.open('images/' + str(DINOS['elements'][rid]['image']))
-        bg_p = trans_paste(image, bg_p, 1.0, (i * 512, 0)) #Накладываем изображение
+        bg_p = await trans_paste(image, bg_p, 1.0, (i * 512, 0)) #Накладываем изображение
         id_l.append(rid)
 
     return pil_image_to_file(bg_p), id_l
 
-async def create_egg_image(egg_id: int, rare: str='random', seconds: int=0, lang: str='en'):
+async def create_eggs_image():
+    """Создаёт изображение выбора яиц.
+    """
+    loop = asyncio.get_running_loop()
+    result = await loop.run_in_executor(POOL, create_eggs_image_pst)
+
+    rss = await result
+    return rss
+
+async def create_egg_image_pst(egg_id: int, rare: str='random', 
+                               seconds: int=0, lang: str='en'):
     """Создаёт изобраение инкубации яйца
        Args:
        egg_id - id яйца
@@ -115,7 +130,7 @@ async def create_egg_image(egg_id: int, rare: str='random', seconds: int=0, lang
     bg_p = Image.open(f'images/remain/egg_profile.png')
     egg = Image.open(f'images/{DINOS["elements"][str(egg_id)]["image"]}')
     egg = egg.resize((290, 290), Image.Resampling.LANCZOS)
-    img = trans_paste(egg, bg_p, 1.0, (-50, 40))
+    img = await trans_paste(egg, bg_p, 1.0, (-50, 40))
     idraw = ImageDraw.Draw(img)
 
     idraw.text((310, 120), text_dict['text_info'], 
@@ -129,10 +144,26 @@ async def create_egg_image(egg_id: int, rare: str='random', seconds: int=0, lang
             font=FONTS['line45'])
     idraw.text(text_dict['rare_position'], quality_text, 
             font=FONTS['line35'], fill=fill)
-    
+
     return pil_image_to_file(img)
 
-async def create_dino_image(dino_id: int, stats: dict, quality: str='com', profile_view: int=1, age: int = 30, custom_url: str=''):
+async def create_egg_image(egg_id: int, rare: str='random', 
+                           seconds: int=0, lang: str='en'):
+    """Создаёт изобраение инкубации яйца
+       Args:
+       egg_id - id яйца
+       rare - редкость (от этого зависит цвет надписи)
+       seconds - секунды до конца инкубации
+       lang - язык текста
+    """
+    loop = asyncio.get_running_loop()
+    result = await loop.run_in_executor(POOL, create_egg_image_pst, 
+                                        egg_id, rare, seconds, lang)
+
+    rss = await result
+    return rss
+
+async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', profile_view: int=1, age: int = 30, custom_url: str=''):
     """Создание изображения динозавра
        Args:
        dino_id - id картинки динозавра
@@ -155,7 +186,7 @@ async def create_dino_image(dino_id: int, stats: dict, quality: str='com', profi
     if profile_view != 4:
         panel_i = Image.open(
             f'images/remain/panels/v{profile_view}_{quality}.png')
-        img = trans_paste(panel_i, img, 1.0)
+        img = await trans_paste(panel_i, img, 1.0)
 
     dino_image = Image.open(f'images/{dino_data["image"]}')
     dino_image = dino_image.resize((1024, 1024), Image.Resampling.LANCZOS)
@@ -181,11 +212,24 @@ async def create_dino_image(dino_id: int, stats: dict, quality: str='com', profi
     # idraw.rectangle((y + x, y, sz + y + x, sz + y), outline=(255, 0, 0))
 
     dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
-    img = trans_paste(dino_image, img, 1.0, (y + x, y, sz + y + x, sz + y))
+    img = await trans_paste(dino_image, img, 1.0, (y + x, y, sz + y + x, sz + y))
 
     return pil_image_to_file(img)
 
-async def dino_game(dino_id: int, add_dino_id: int = 0):
+async def create_dino_image(dino_id: int, stats: dict, quality: str='com', profile_view: int=1, age: int = 30, custom_url: str=''):
+    """Создание изображения динозавра
+       Args:
+       dino_id - id картинки динозавра
+       stats - словарь с харрактеристиками динозавра ( {'heal': 0, 'eat': 0, 'sleep': 0, 'game': 0, 'mood': 0} )
+    """
+
+    loop = asyncio.get_running_loop()
+    result = await loop.run_in_executor(POOL, create_dino_image_pst, dino_id, stats, quality, profile_view, age, custom_url)
+
+    rss = await result
+    return rss
+
+async def dino_game_pst(dino_id: int, add_dino_id: int = 0):
     n_img = randint(1, 2)
     img = Image.open(f"images/actions/game/{n_img}.png")
 
@@ -198,20 +242,28 @@ async def dino_game(dino_id: int, add_dino_id: int = 0):
         dino_data = DINOS['elements'][str(add_dino_id)]
         dino_image = Image.open(f'images/{dino_data["image"]}')
         dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
-        img = trans_paste(dino_image, img, 1.0, 
+        img = await trans_paste(dino_image, img, 1.0, 
                         (x2 + y2, y2, sz + x2 + y2, sz + y2))
-    
+
     dino_data = DINOS['elements'][str(dino_id)]
     dino_image = Image.open(f'images/{dino_data["image"]}')
 
     dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
     dino_image = dino_image.transpose(Image.FLIP_LEFT_RIGHT)
 
-    img = trans_paste(dino_image, img, 1.0, 
+    img = await trans_paste(dino_image, img, 1.0, 
                       (x + y, y, sz + x + y, sz + y))
     return pil_image_to_file(img)
 
-async def dino_journey(dino_id: int, journey_way: str, add_dino_id: int = 0):
+async def dino_game(dino_id: int, add_dino_id: int = 0):
+    loop = asyncio.get_running_loop()
+    result = await loop.run_in_executor(POOL, dino_game_pst, 
+            dino_id, add_dino_id)
+
+    rss = await result
+    return rss
+
+async def dino_journey_pst(dino_id: int, journey_way: str, add_dino_id: int = 0):
     assert journey_way in ['desert', 'forest', 'magic-forest', 'mountains', 'lost-islands'], f'Путь путешествия {journey_way} не найден'
 
     n_img, sz = randint(1, 12), 350
@@ -224,7 +276,7 @@ async def dino_journey(dino_id: int, journey_way: str, add_dino_id: int = 0):
     dino_image = dino_image.transpose(Image.FLIP_LEFT_RIGHT)
 
     x, y = 80, 25
-    img = trans_paste(dino_image, bg_p, 1.0, (x + y, y, sz + x + y, sz + y))
+    img = await trans_paste(dino_image, bg_p, 1.0, (x + y, y, sz + x + y, sz + y))
 
     if add_dino_id:
         sz = 320
@@ -233,26 +285,42 @@ async def dino_journey(dino_id: int, journey_way: str, add_dino_id: int = 0):
         dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
 
         x, y = 450, 35
-        img = trans_paste(dino_image, bg_p, 1.0, (x + y, y, sz + x + y, sz + y))
+        img = await trans_paste(dino_image, bg_p, 1.0, (x + y, y, sz + x + y, sz + y))
 
     return pil_image_to_file(img)
 
-async def dino_collecting(dino_id: int, col_type: str):
+async def dino_journey(dino_id: int, journey_way: str, add_dino_id: int = 0):
+    loop = asyncio.get_running_loop()
+    result = await loop.run_in_executor(POOL, dino_journey_pst, 
+            dino_id, journey_way, add_dino_id)
+
+    rss = await result
+    return rss
+
+async def dino_collecting_pst(dino_id: int, col_type: str):
     img = Image.open(f"images/actions/collecting/{col_type}.png")
 
     dino_data = DINOS['elements'][str(dino_id)]
     dino_image = Image.open(f'images/{dino_data["image"]}')
-    
+
     sz, x, y = 350, 50, 10
 
     dino_image = dino_image.resize((sz, sz), Image.Resampling.BILINEAR)
     dino_image = dino_image.transpose(Image.FLIP_LEFT_RIGHT)
 
-    img = trans_paste(dino_image, img, 1.0, 
+    img = await trans_paste(dino_image, img, 1.0, 
                       (x + y, y, sz + x + y, sz + y))
     return pil_image_to_file(img)
 
-async def market_image(custom_url, status):
+async def dino_collecting(dino_id: int, col_type: str):
+    loop = asyncio.get_running_loop()
+    result = await loop.run_in_executor(POOL, dino_collecting_pst, 
+            dino_id, col_type)
+
+    rss = await result
+    return rss
+
+async def market_image_pst(custom_url, status):
     try:
         response = requests.get(custom_url, stream = True)
         response = Image.open(io.BytesIO(response.content)).convert("RGBA")
@@ -261,3 +329,11 @@ async def market_image(custom_url, status):
     except: 
         img = open(f'images/remain/market/{status}.png', 'rb')
     return img
+
+async def market_image(custom_url, status):
+    loop = asyncio.get_running_loop()
+    result = await loop.run_in_executor(POOL, market_image_pst, 
+            custom_url, status)
+
+    rss = await result
+    return rss
