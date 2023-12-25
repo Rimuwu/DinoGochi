@@ -8,16 +8,18 @@ dinosaurs = mongo_client.dinosaur.dinosaurs
 async def dino_notifications():
     dinos = await dinosaurs.find({}).to_list(None) 
     for dino in dinos:
-        dino_id = dino['_id']
-        for stat in dino['stats']:
+        try:
+            dino_id = dino['_id']
+            for stat in dino['stats']:
 
-            if dino['stats']['heal'] <= 0:
-                dino_cl = await Dino().create(dino['_id'])
-                await dino_cl.dead()
-                continue
+                if dino['stats']['heal'] <= 0:
+                    dino_cl = await Dino().create(dino['_id'])
+                    await dino_cl.dead()
+                    continue
 
-            unit = dino['stats'][stat]
-            await notification_manager(dino_id, stat, unit)
+                unit = dino['stats'][stat]
+                await notification_manager(dino_id, stat, unit)
+        except Exception as e: pass
 
 if __name__ != '__main__':
     if conf.active_tasks:
