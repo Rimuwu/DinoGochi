@@ -70,7 +70,7 @@ class Dino:
             'eat': []
         }
 
-    async def create(self, baseid: Union[ObjectId, str]):
+    async def create(self, baseid: Union[ObjectId, str, None] = None):
         find_result = await dinosaurs.find_one({"_id": baseid})
         if not find_result:
             find_result = await dinosaurs.find_one({"alt_id": baseid})
@@ -130,9 +130,8 @@ class Dino:
                     await AddItemToUser(user['userid'], 
                                         GS['dead_dino_item'], 1, {'interact': False})
 
-                asyncio.run_coroutine_threadsafe(
-                    user_notification(owner['owner_id'], way, 
-                            dino_name=self.name), asyncio.get_event_loop())
+                await user_notification(owner['owner_id'], way, 
+                            dino_name=self.name)
         await self.delete()
 
     async def image(self, profile_view: int=1, custom_url: str=''):
