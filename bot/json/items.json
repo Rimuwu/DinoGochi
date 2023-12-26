@@ -3106,14 +3106,14 @@
         "type": "book"
     },
     "gift_2024": {
-        "cant_sell": true,
+        "cant_sell": false,
         "col_repit": {
             "act": 1,
             "type": "static"
         },
         "drop_items": [
             {
-                "abilities": {},
+                "abilities": {"interact": false},
                 "chance": [
                     1,
                     50
@@ -3125,7 +3125,7 @@
                 "id": "mystic_egg"
             },
             {
-                "abilities": {},
+                "abilities": {"interact": false},
                 "chance": [
                     1,
                     50
@@ -3137,31 +3137,31 @@
                 "id": "legendary_egg"
             },
             {
-                "abilities": {},
+                "abilities": {"interact": false},
                 "chance": [
                     2,
                     10
                 ],
                 "col": {
-                    "act": 1,
-                    "type": "static"
+                    "min": 1, "max": 5,
+                    "type": "random"
                 },
                 "id": "chest_food"
             },
             {
-                "abilities": {},
+                "abilities": {"interact": false},
                 "chance": [
                     2,
                     10
                 ],
                 "col": {
-                    "act": 1,
-                    "type": "static"
+                    "min": 1, "max": 5,
+                    "type": "random"
                 },
                 "id": "recipe_chest"
             },
             {
-                "abilities": {},
+                "abilities": {"interact": false},
                 "chance": [
                     1,
                     1000
@@ -3173,7 +3173,7 @@
                 "id": "stone_resurrection"
             },
             {
-                "abilities": {},
+                "abilities": {"interact": false},
                 "chance": [
                     1,
                     1000
