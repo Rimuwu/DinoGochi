@@ -125,3 +125,4 @@ async def new_year(message):
     
     ev = await create_event("new_year")
     await add_event(ev)
+    await bot.send_message(conf.bot_group_id, t("events.new_year"))
