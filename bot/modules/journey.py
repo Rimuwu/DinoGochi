@@ -223,7 +223,7 @@ locations = {
             'unc': ['timer', 'therapeutic_mixture', 'sweet_pancakes', 'blank_piece_paper', 'drink_recipe'],
             'rar': ['bento_recipe', 'candy_recipe', 'drink_recipe', 'tooling'],
             'mys': ['salad_recipe', 'torch_recipe', 'popcorn_recipe'],
-            'leg': ['soup_recipe', 'gourmet_herbs', 'board_games', 'book_forest', 'flour_recipe']
+            'leg': ['soup_recipe', 'gourmet_herbs', 'board_games', 'book_forest', 'flour_recipe', 'magic_stone']
         },
         "positive": {
             'com': ['influences_mood', 'without_influence', 
@@ -260,7 +260,7 @@ locations = {
             'unc': ['tooling', 'therapeutic_mixture', 'sweet_pancakes', 'drink_recipe'],
             'rar': ['curry_recipe', 'bread_recipe', 'tea_recipe', 'flour_recipe', 'timer', 'blank_piece_paper'],
             'mys': ['bear', 'clothing_recipe', 'meat_recipe'],
-            'leg': ['taco_recipe', 'sandwich_recipe', 'hot_chocolate_recipe', 'book_lost-islands']
+            'leg': ['taco_recipe', 'sandwich_recipe', 'hot_chocolate_recipe', 'book_lost-islands', 'magic_stone']
         },
         "positive": {
             'com': ['influences_mood', 'without_influence', 
@@ -292,7 +292,7 @@ locations = {
             'unc': ['juice_recipe', 'hot_chocolate_recipe', 'cake_recipe', 'tooling'],
             'rar': ['pouch_recipe', 'sword_recipe', 'onion_recipe', 'arrow_recipe'],
             'mys': ['backpack_recipe', 'shield_recipe', 'pickaxe_recipe', 'drink_recipe'],
-            'leg': ['steak_recipe', 'broth_recipe', 'sushi_recipe', 'book_desert']
+            'leg': ['steak_recipe', 'broth_recipe', 'sushi_recipe', 'book_desert', 'magic_stone']
         },
         'mobs': {
             'mobs_hp': {"min": 1, "max": 5, "type": "random"},
@@ -328,7 +328,7 @@ locations = {
             'unc': ['bacon_recipe', 'bento_recipe', 'sandwich_recipe'],
             'rar': ['berry_pie_recipe', 'fish_pie_recipe', 'meat_pie_recipe'],
             'mys': ['basket_recipe', 'net_recipe', 'rod_recipe'],
-            'leg': ['mysterious_egg', 'unusual_egg', 'rare_egg', 'mystic_egg', 'legendary_egg', 'book_mountains']
+            'leg': ['mysterious_egg', 'unusual_egg', 'rare_egg', 'mystic_egg', 'legendary_egg', 'book_mountains', 'magic_stone']
         },
         'mobs': {
             'mobs_hp': {"min": 2, "max": 6, "type": "random"},
@@ -363,7 +363,7 @@ locations = {
             'unc': ['croissant_recipe', 'therapeutic_mixture'],
             'rar': ['bag_goodies', 'rubik_cube', 'lock_bag', 'skinning_knife'],
             'mys': ['chest_food', 'recipe_chest', 'magic_stone'],
-            'leg': ['mysterious_egg', 'unusual_egg', 'rare_egg', 'mystic_egg', 'legendary_egg', 'book_magic-forest']
+            'leg': ['mysterious_egg', 'unusual_egg', 'rare_egg', 'mystic_egg', 'legendary_egg', 'book_magic-forest', 'magic_stone']
         },
         'mobs': {
             'mobs_hp': {"min": 1, "max": 10, "type": "random"},
@@ -554,7 +554,7 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
                     res = await journey.find({
                         'sended': friend_id, 
                         'location': journey_base['location']}
-                                       ).to_list(None) 
+                                       ).to_list(None) # type: ignore
                     for i in list(res): in_loc.append(i['dino_id'])
 
                 if not in_loc: return True
