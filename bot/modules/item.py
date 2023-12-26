@@ -451,7 +451,7 @@ def get_case_content(content: list, lang: str, separator: str = ' |'):
 
     for item in content:
         name = get_name(item['id'], lang)
-        percent = int((item['chance'][0] / item['chance'][1]) * 100)
+        percent = round((item['chance'][0] / item['chance'][1]) * 100, 4)
         if item['col']['type'] == 'random':
             col = f"x({item['col']['min']} - {item['col']['max']})"
         else:
