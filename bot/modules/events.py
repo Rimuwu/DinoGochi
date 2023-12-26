@@ -2,7 +2,9 @@ import time
 from bot.modules.data_format import random_dict
 from bot.const import GAME_SETTINGS as GS
 from random import choice, randint
-from bot.config import mongo_client
+from bot.config import mongo_client, conf
+from bot.exec import bot
+from bot.modules.localization import t
 
 events = mongo_client.other.events
 
@@ -68,18 +70,20 @@ async def add_event(event: dict):
 async def auto_event():
     """ Проверка системных событий
     """
+
     # Проверка на время года
     time_year = await get_event('time_year')
     ty_event = await create_event('time_year')
     if time_year:
         if time_year['data']['season'] != ty_event['data']['season']:
             await events.update_one({'type': 'time_year'}, {"$set": {'data': ty_event['data']}})
-    else: await add_event(ty_event)
+    else:
+        await add_event(ty_event)
 
     # Проверка на новогоднее событие
-    new_year = await get_event('time_year')
-    if not new_year:
+    if not await check_event('new_year'):
         day_n = int(time.strftime("%j"))
-        if day_n >= 358:
+        if day_n >= 365:
             new_year_event = await create_event('new_year')
             await add_event(new_year_event)
+            await bot.send_message(conf.bot_group_id, t("events.new_year"))
