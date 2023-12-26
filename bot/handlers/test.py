@@ -35,6 +35,8 @@ from bot.modules.market import (add_product, create_seller,
 from bson.objectid import ObjectId
 from bot.modules.images import create_dino_image, create_dino_image_pst
 
+from bot.modules.events import create_event, add_event, get_event
+
 from typing import Optional
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
@@ -116,3 +118,10 @@ async def fix_sleep(message):
     
     await dinosaurs.update_many(
         {'stats.sleep': {'$ne': None}}, {"$unset": {'stats.sleep': 1}})
+
+
+@bot.message_handler(pass_bot=True, commands=['new_year'], is_admin=True)
+async def new_year(message):
+    
+    ev = await create_event("new_year")
+    await add_event(ev)

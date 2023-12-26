@@ -11,6 +11,7 @@ from bot.modules.markup import down_menu, get_answer_keyboard
 from bot.modules.markup import markups_menu as m
 from bot.modules.user import User, get_frineds, user_info, user_name
 from bot.modules.over_functions import send_message
+from bot.modules.events import check_event
 
 import inspect
 
@@ -313,7 +314,7 @@ async def ChoosePagesState(function, userid: int,
 
             data['page'] = 0
             data['one_element'] = one_element
-            
+
             data['settings'] = {'horizontal': horizontal, "vertical": vertical}
 
         await update_page_function(pages, 0, chatid, lang)
@@ -334,12 +335,14 @@ async def friend_handler(friend, transmitted_data: dict):
     buttons = {}
 
     for key, text_b in get_data('friend_list.buttons', lang).items():
-        buttons[text_b] = f'{key} {friend.id}'
+        if key != "new_year" or key == "new_year" and await check_event("new_year"):
+            buttons[text_b] = f'{key} {friend.id}'
+
     markup = list_to_inline([buttons], 2)
 
     photos = await bot.get_user_profile_photos(friend.id, limit=1)
     if photos.photos:
-        photo_id = photos.photos[0][0].file_id 
+        photo_id = photos.photos[0][0].file_id #type: ignore
         await bot.send_photo(chatid, photo_id, text, parse_mode='Markdown', reply_markup=markup)
     else:
         await send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)

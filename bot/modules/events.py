@@ -11,6 +11,11 @@ async def get_event(event_type: str=''):
     if res: return res
     return {}
 
+async def check_event(event_type: str='') -> bool:
+    res = await events.find_one({'type': event_type}, {"_id": 1})
+    if res: return True
+    return False
+
 async def create_event(event_type: str = ''):
 
     if not event_type:
@@ -25,7 +30,7 @@ async def create_event(event_type: str = ''):
 
     if event_type == 'time_year':
         month_n = int(time.strftime("%m"))
-        
+
         if month_n < 3 or month_n > 11:
             event['data']['season'] = 'winter'
         elif 6 > month_n > 2:
@@ -70,7 +75,7 @@ async def auto_event():
         if time_year['data']['season'] != ty_event['data']['season']:
             await events.update_one({'type': 'time_year'}, {"$set": {'data': ty_event['data']}})
     else: await add_event(ty_event)
-    
+
     # Проверка на новогоднее событие
     new_year = await get_event('time_year')
     if not new_year:

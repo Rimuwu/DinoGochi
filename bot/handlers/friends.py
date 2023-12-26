@@ -14,11 +14,15 @@ from bot.modules.states_tools import (ChooseConfirmState, ChooseCustomState,
 from bot.modules.user import user_name, take_coins
 from bot.modules.dinosaur import Dino, create_dino_connection
 from bot.modules.over_functions import send_message
+from bot.modules.events import get_event
+from bot.const import GAME_SETTINGS
+from bot.modules.item import AddItemToUser, get_name
 
 users = mongo_client.user.users
 friends = mongo_client.user.friends
 dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = mongo_client.dinosaur.dino_owners
+events = mongo_client.other.events
 
 @bot.message_handler(pass_bot=True, text='commands_name.friends.add_friend')
 async def add_friend(message: Message):
@@ -151,7 +155,6 @@ async def adp_requests(data: dict, transmitted_data: dict):
         return {'status': 'edit', 'elements': {'delete': [
             f'✅ {data["key"]}', f'❌ {data["key"]}', data['name']
             ]}}
-        
 
 async def request_open(userid: int, chatid: int, lang: str):
     friends = await get_frineds(userid)
@@ -203,7 +206,7 @@ async def delete_friend(_: bool, transmitted_data: dict):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
-    
+
     friendid = transmitted_data['friendid']
 
     await friends.delete_one({"userid": userid, 'friendid': friendid, 'type': 'friends'})
@@ -420,3 +423,29 @@ async def send_request(call: CallbackQuery):
                 await bot.answer_callback_query(call.id, text)
     else:
         await bot.answer_callback_query(call.id, '❌')
+
+@bot.callback_query_handler(pass_bot=True, func=lambda call: 
+    call.data.startswith('new_year'), private=True)
+async def new_year(call: CallbackQuery):
+    lang = await get_lang(call.from_user.id)
+    userid = call.from_user.id
+    data = call.data.split()
+
+    friendid = int(data[1])
+    ev_data = await get_event("new_year")
+    if ev_data:
+        if friendid in ev_data['data']['send']:
+            text = t('new_year.not', lang)
+            await bot.answer_callback_query(call.id, text)
+        else:
+            text = t('new_year.ok', lang)
+            await bot.answer_callback_query(call.id, text)
+
+            await AddItemToUser(friendid, GAME_SETTINGS['new_year_item'])
+            await events.update_one({"type": "new_year"}, 
+                                    {"$push": {"data.send": friendid}})
+
+            lang = await get_lang(friendid)
+            text = t('new_year.to_friend', lang, 
+                     item=get_name(GAME_SETTINGS['new_year_item'], lang))
+            await send_message(friendid, text)
