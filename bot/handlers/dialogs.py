@@ -12,7 +12,7 @@ from bot.modules.over_functions import send_message
 @bot.callback_query_handler(pass_bot=True, 
                             func=lambda call: call.data.startswith('dialog'),   
                             is_authorized=True)
-async def rename_button(callback: CallbackQuery):
+async def dialog(callback: CallbackQuery):
     dialog_key = callback.data.split()[1]
     dialog_action = callback.data.split()[2]
     lang = await get_lang(callback.from_user.id)
