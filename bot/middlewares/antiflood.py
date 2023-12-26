@@ -17,7 +17,7 @@ class AntifloodMiddleware(BaseMiddleware):
     def __init__(self, limit=DEFAULT_RATE_LIMIT):
         self.last_time = {}
         self.limit = limit
-        self.update_types = ['message', 'callback_query']
+        self.update_types = ['message']
 
     async def pre_process(self, message: Message, data: dict):
 
@@ -29,7 +29,7 @@ class AntifloodMiddleware(BaseMiddleware):
         self.last_time[message.from_user.id] = time_now()
 
     async def post_process(self, message, data, exception):
-        user = await users.find_one({'userid': message.from_user.id})
+        user = await users.find_one({'userid': message.from_user.id}, {"_id": 1})
         if user:
             await users.update_one({'userid': message.from_user.id}, 
                                    {'$set': {'last_message_time': message.date}})
@@ -41,4 +41,4 @@ class AntifloodMiddleware(BaseMiddleware):
                 if delta.seconds >= 1209600: await show_advert(message.from_user.id)
 
 
-bot.setup_middleware(AntifloodMiddleware())
+bot.setup_middleware(AntifloodMiddleware())  
