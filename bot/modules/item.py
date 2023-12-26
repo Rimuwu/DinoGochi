@@ -531,10 +531,12 @@ def item_info(item: dict, lang: str):
     # Быстрая обработка предметов без фич
     if type_item in standart:
         dp_text += loc_d['type_info'][type_loc]['add_text']
+
     #Еда
     elif type_item == 'eat':
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(act=data_item['act'])
+        
     # Аксы
     elif type_item in ['game', 'sleep', 'journey', 'collecting']:
         dp_text += loc_d['type_info'][
@@ -594,6 +596,9 @@ def item_info(item: dict, lang: str):
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
                 content=get_case_content(data_item['drop_items'], lang, '\n'))
+        desc = get_description(item_id, lang)
+        if desc: dp_text += f"\n\n{desc}"
+
     # Яйца
     elif type_item == 'egg':
         end_time = seconds_to_str(data_item['incub_time'], lang)
@@ -601,13 +606,6 @@ def item_info(item: dict, lang: str):
             type_loc]['add_text'].format(
                 inc_time=end_time, 
                 rarity=get_loc_data(f'rare.{data_item["inc_type"]}', lang)[1])
-
-    elif type_item == 'recipe':
-        dp_text += loc_d['type_info'][
-            type_loc]['add_text'].format(
-                create=sort_materials(data_item['create'], lang),
-                materials=sort_materials(data_item['materials'], lang),
-                item_description=get_description(item_id, lang))
 
     # Информация о внутренних свойствах
     if 'abilities' in item.keys():
