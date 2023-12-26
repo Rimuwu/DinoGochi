@@ -3104,5 +3104,89 @@
         "image": "book",
         "rank": "legendary",
         "type": "book"
+    },
+    "gift_2024": {
+        "cant_sell": true,
+        "col_repit": {
+            "act": 1,
+            "type": "static"
+        },
+        "drop_items": [
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    50
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "mystic_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    50
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "legendary_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "chest_food"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "recipe_chest"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    1000
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "stone_resurrection"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    1000
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "gift_2023"
+            }
+        ],
+        "image": "case",
+        "rank": "mythical",
+        "type": "case"
     }
 }

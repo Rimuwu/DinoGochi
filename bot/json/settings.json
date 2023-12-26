@@ -71,7 +71,7 @@
     "max_collecting": 50,
     "premium_max_collecting": 100,
 
-    "new_year_item": "gift_2023",
+    "new_year_item": "gift_2024",
 
     "max_eat_price": {
         "common": 200,
@@ -95,9 +95,9 @@
         "com": {"coins": 2000,  "materials": ["regular_egg"] },
         "unc": {"coins": 4000,  "materials": ["unusual_egg"] },
         "rar": {"coins": 8000,  "materials": ["rare_egg"] },
-        "mys": {"coins": 16000, "materials": ["mystic_egg"] },
-        "leg": {"coins": 32000, "materials": ["legendary_egg"] },
-        "random": {"coins": 5000,  "materials": ["mysterious_egg" ] }
+        "mys": {"coins": 16000, "materials": ["mystic_egg", "magic_stone"] },
+        "leg": {"coins": 32000, "materials": ["legendary_egg", "magic_stone"] },
+        "random": {"coins": 5000,  "materials": ["mysterious_egg"] }
     },
 
     "change_appearance": {

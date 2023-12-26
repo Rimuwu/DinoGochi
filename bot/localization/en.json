@@ -558,6 +558,9 @@
             "gift_2023": {
                 "name": "🎁 Gift 2023"
             },
+            "gift_2024": {
+                "name": "🎁 Gift 2024"
+            },
             "rod": {
                 "name": "🎣 Rod",
                 "description": "A great fishing rod for fishing. Increases the skill of the dinosaur."
@@ -1056,7 +1059,8 @@
             },
             "buttons": {
                 "take_money": "✨ Transfer coins",
-                "joint_dinosaur": "🦕 Will share a dinosaur"
+                "joint_dinosaur": "🦕 Will share a dinosaur",
+                "new_year": "🎁 Send a gift"
             }
         },
         "requests": {
@@ -3511,6 +3515,11 @@
             "chose_item": "🧮 Choose an item to add"
         },
         "max_count": "❌ | Your inventory is bursting with food, now there are {eat_count} / {max_count} units of food in it!",
-        "max_friend_count": "❌ | You can't transfer items, your friend's inventory is already bursting with food."
+        "max_friend_count": "❌ | You can't transfer items, your friend's inventory is already bursting with food.",
+        "new_year": {
+            "ok": "🎁 A New Year's gift has been sent to the user!",
+            "not": "🎩 The user has already received his New Year's gift!",
+            "to_friend": "❤ A New Year's gift has been sent to you! Search the inventory for {item}"
+        }
     }
 }
