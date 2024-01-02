@@ -21,7 +21,6 @@ from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
 from bot.modules.user import User, premium
 from bot.modules.kindergarten import check_hours, m_hours, hours_now, minus_hours, dino_kind
 from bot.modules.over_functions import send_message
-from bot.modules.logs import asinc_decor
 
 collecting_task = mongo_client.dino_activity.collecting
 game_task = mongo_client.dino_activity.game

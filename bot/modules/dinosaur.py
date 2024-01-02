@@ -1,4 +1,3 @@
-import asyncio
 import datetime
 from datetime import datetime, timezone
 from random import choice, randint
@@ -398,8 +397,8 @@ async def start_journey(dino_baseid: ObjectId, owner_id: int,
             'coins': 0
         }
         result = await journey_task.insert_one(game)
-        await dinosaurs.update_one({"_id": dino_baseid}, 
-                            {'$set': {'status': 'journey'}})
+        await set_status(dino_baseid, "journey")
+
     return result
 
 async def end_journey(dino_id: ObjectId):
@@ -522,6 +521,8 @@ async def set_status(dino_id: ObjectId, new_status: str, now_status: str = ''):
             await end_sleep(dino_id, sleeper['_id'], sleep_time)
 
     elif now_status == 'game': await end_game(dino_id)
+    
+    elif now_status == 'journey': await end_journey(dino_id)
 
     elif now_status == 'collecting':
         data = await collecting_task.find_one({'dino_id': dino_id})
