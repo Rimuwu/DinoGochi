@@ -133,7 +133,11 @@ async def end_craft(transmitted_data: dict):
                            parse_mode='Markdown', reply_markup=await markups_menu(userid, 'last_menu', lang))
 
 async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1, 
-                   dino: Union[Dino, None]=None, combine_item: dict = {}):
+                   dino: Union[Dino, None]=None, combine_item: dict = {}, delete: bool = False):
+    """ Использование предмета
+    
+        delete - Принудительно не удалять предмет послле использования
+    """
     return_text = ''
     dino_update_list = []
     use_status, send_status, use_baff_status = True, True, True
@@ -221,7 +225,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                 if 'endurance' not in materials['edit']:
                     materials['edit']['endurance'] = {}
                 materials['edit']['endurance'][iterable_id] = iterable_item['act'] * count
-                
+
         materials['delete'] = materials['delete'] * count
         deleted_items, not_enough_items = {}, []
 
@@ -383,7 +387,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
         if upd_values: await dino_now.update({'$inc': upd_values})
 
-    if use_status: await UseAutoRemove(userid, item, count)
+    if use_status and delete: await UseAutoRemove(userid, item, count)
     return send_status, return_text
 
 async def edit_craft(return_data: dict, transmitted_data: dict):
