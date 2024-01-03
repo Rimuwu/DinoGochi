@@ -2,9 +2,64 @@ import random
 from bot.config import mongo_client
 from bson.objectid import ObjectId
 from typing import Union, Any
-from motor import Neve
+from bot.modules.data_format import user_name
+from bot.exec import bot
 
 lobbys = mongo_client.dungeon.lobby
+users = mongo_client.user.users
+
+class DungPlayer:
+
+    def __init__(self) -> None:
+        self._id: ObjectId = ObjectId() # Id данных юзера
+        self.name: str = '' # Имя пользователя
+
+        self.message: int = 0 # Активное сообщени
+        self.page: str = "main" # Страница в сообщении
+
+        self.coins: int = 0 # Количество монет, взятое в подземелье
+        self.dinos: list[ObjectId] = [] # Id данных динозавров юзера
+        self.inventory: list[dict] = [] # Список с предметами
+
+    def __getitem__(self, item):
+        return self.__dict__[item]
+
+    async def __setitem__(self, item, value) -> None:
+        self.__dict__[item] = value
+        await self.save()
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
+
+    async def create(self, user_id:int, message:int, 
+                     coins:int = 0, dinos:list[ObjectId] = [], 
+                     inventory:list[dict] = []):
+        user = await users.find_one({"userid": user_id})
+        if user:
+            teleuser = await bot.get_chat_member(user_id, user_id)
+
+            self._id = user['_id']
+            self.name = user_name(teleuser.user)
+            self.message = message
+            self.coins = coins
+            self.dinos = dinos
+            self.inventory = inventory
+
+        return self
+
+    def FromDict(self, data:dict, userid:int, dungeonid:int):
+        self.__dict__ = data
+        self.dungeonid = dungeonid
+        self.userid = userid
+        return self
+
+    async def save(self):
+        data = self.__dict__.copy()
+        dungeonid = data['dungeonid']
+        del data['dungeonid']
+
+        await lobbys.update_one({"dungeonid": dungeonid}, 
+                                {"$set": {f"users.{self.userid}": self.__dict__}})
 
 class Lobby:
 
@@ -35,7 +90,19 @@ class Lobby:
     def __str__(self) -> str:
         return str(self.__dict__)
 
-    async def create(self, lobbyid:Union[int, ObjectId]):
+    async def create(self, user_id:int, message:int):
+        find_result = await lobbys.find_one({"dungeonid": user_id})
+        if not find_result:
+            self.dungeonid = user_id
+            owner = await DungPlayer().create(user_id, message)
+            await self.add_player(owner, user_id)
+
+            await lobbys.insert_one(self.ToBaseFormat)
+            return self
+
+        else: return await self.FromBase(find_result['_id'])
+
+    async def FromBase(self, lobbyid:Union[int, ObjectId]):
         """ Создание класса лобби на основе данных из базы
         """
         find_result = await lobbys.find_one({"_id": lobbyid})
@@ -51,42 +118,28 @@ class Lobby:
 
         return self
 
-
-class DungPlayer:
-
-    def __init__(self) -> None:
-        self._id: ObjectId = ObjectId() # Id данных юзера
-
-        self.message: int = 0 # Активное сообщени
-        self.page: str = "main" # Страница в сообщении
-
-        self.coins: int = 0 # Количество монет, взятое в подземелье
-        self.dinos: list[ObjectId] = [] # Id данных динозавров юзера
-        self.inventory: list[dict] = [] # Список с предметами
-
-    def __getitem__(self, item):
-        return self.__dict__[item]
-
-    async def __setitem__(self, item, value) -> None:
-        self.__dict__[item] = value
-        await self.save()
-
-    def __str__(self) -> str:
-        return str(self.__dict__)
-
-    def FromDict(self, data:dict, userid:int, dungeonid:int):
-        self.__dict__ = data
-        self.dungeonid = dungeonid
-        self.userid = userid
-        return self
-
-    async def save(self):
+    @property
+    def ToBaseFormat(self) -> dict:
         data = self.__dict__.copy()
-        dungeonid = data['dungeonid']
-        del data['dungeonid']
 
-        await lobbys.update_one({"dungeonid": dungeonid}, 
-                                {"$set": {f"users.{self.userid}": self.__dict__}})
+        for var in ('users', 'floor', 'rooms'):
+            for key, value in self[var].items(): 
+                data['users'][key] = value.__dict__
+
+        return data
+
+    @property
+    async def delete(self): await lobbys.delete_one({"_id": self._id})
+
+    async def add_player(self, user:DungPlayer, user_id:int):
+        self['users'][str(user_id)] = user
+        await lobbys.update_one({"_id": self._id}, 
+                                {"$set": {f"user.{user_id}": user.__dict__}})
+
+    async def delete_player(self, user_id:int):
+        del self['users'][str(user_id)]
+        await lobbys.update_one({"_id": self._id}, 
+                                {"$unset": {f"user.{user_id}": 0}})
 
 class Room:
 
