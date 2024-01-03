@@ -14,7 +14,7 @@ from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import back_menu
 from bot.modules.markup import markups_menu as m
 from bot.modules.statistic import get_now_statistic
-from bot.modules.user import User, take_coins, user_name
+from bot.modules.user import User, take_coins
 from bot.modules.market import preview_product
 from bot.modules.over_functions import send_message
 
