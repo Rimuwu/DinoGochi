@@ -171,6 +171,24 @@ async def AddItemToUser(userid: int, itemid: str, count: int = 1, preabil: dict 
         await items.insert_one(item_dict)
     return action
 
+async def AddListItems(userid: int, items: list[dict]):
+    """ items - [ {"item_id":str, "abilities":dict} ]
+    """
+    repeat_items, res = [], []
+
+    for item in items:
+        if item not in repeat_items:
+            repeat_items.append(item)
+
+            col = items.count(item)
+            preabil = {}
+
+            if "abilities" in item: preabil = item['abilities']
+            res_s = await AddItemToUser(userid, item['item_id'], col, preabil)
+            res.append(res_s)
+
+    return res
+
 async def RemoveItemFromUser(userid: int, itemid: str, 
             count: int = 1, preabil: dict = {}):
     """Удаление предмета из инвентаря
