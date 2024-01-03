@@ -72,7 +72,7 @@ def list_to_keyboard(buttons: list, row_width: int = 3, resize_keyboard: bool = 
     markup = ReplyKeyboardMarkup(row_width=row_width, 
                                  resize_keyboard=resize_keyboard, 
                                  one_time_keyboard=one_time_keyboard)
-    
+
     for line in buttons:
         try:
             if type(line) == list:
