@@ -11,11 +11,12 @@ async def show_advert(user_id: int):
             async with session.post(
                 'https://api.gramads.net/ad/SendPost',
                 headers={
-                    'Authorization': conf.donation_token,
+                    'Authorization': conf.advert_token,
                     'Content-Type': 'application/json',
                 },
                 json={'SendToChatId': user_id},
             ) as response:
+
                 if not response.ok:
                     log('Gramads: %s' % str(await response.json()), 2)
 
