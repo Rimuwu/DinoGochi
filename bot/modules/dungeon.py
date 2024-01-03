@@ -4,6 +4,8 @@ from bson.objectid import ObjectId
 from typing import Union, Any
 from bot.modules.data_format import user_name
 from bot.exec import bot
+from bot.modules.user import take_coins
+from bot.modules.item import AddListItems
 
 lobbys = mongo_client.dungeon.lobby
 users = mongo_client.user.users
@@ -72,7 +74,7 @@ class Lobby:
         self.floor: dict[str, Any] = {} # Данные этажа
         self.rooms: dict[str, Room] = {} # Комнаты
 
-        self.dungeon_stage: str = 'preparation' # Этап
+        self.stage: str = 'preparation' # Этап
         self.stage_data: dict[str, Any] = {} # Данные этапа
         self.settings: dict[str, Any] = {} # Настройки
 
@@ -129,7 +131,9 @@ class Lobby:
         return data
 
     @property
-    async def delete(self): await lobbys.delete_one({"_id": self._id})
+    async def delete(self):
+        for userkey in self.users.keys(): await self.delete_player(int(userkey))
+        await lobbys.delete_one({"_id": self._id})
 
     async def add_player(self, user:DungPlayer, user_id:int):
         self['users'][str(user_id)] = user
@@ -137,6 +141,12 @@ class Lobby:
                                 {"$set": {f"user.{user_id}": user.__dict__}})
 
     async def delete_player(self, user_id:int):
+        player:DungPlayer = self['users'][str(user_id)].copy()
+
+        if self.stage == 'preparation':
+            await take_coins(user_id, player.coins, True)
+            await AddListItems(user_id, player.inventory)
+
         del self['users'][str(user_id)]
         await lobbys.update_one({"_id": self._id}, 
                                 {"$unset": {f"user.{user_id}": 0}})
@@ -147,7 +157,6 @@ class Room:
 
         self.type: str = ""
         self.next_room: bool = True
-        self.ready: list = []
         self.image: str = ''
 
 class Mob:
