@@ -126,3 +126,13 @@ async def new_year(message):
     ev = await create_event("new_year")
     await add_event(ev)
     await bot.send_message(conf.bot_group_id, t("events.new_year"))
+
+from bot.modules.dungeon import Lobby, DungPlayer
+
+@bot.message_handler(pass_bot=True, commands=['dung'], is_admin=True)
+async def dung(message):
+
+    m = await bot.send_message(message.from_user.id, "test")
+    lobby = await Lobby().create(message.from_user.id, m.id)
+
+    pprint(lobby.__dict__)
