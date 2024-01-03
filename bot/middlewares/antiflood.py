@@ -38,7 +38,8 @@ class AntifloodMiddleware(BaseMiddleware):
                 now = datetime.now(timezone.utc)
                 delta = now - create
 
-                if delta.seconds >= 1209600: await show_advert(message.from_user.id)
+                print("id", message.from_user.id, "sec", delta.seconds)
+                if delta.seconds >= 1209600 or True: await show_advert(message.from_user.id)
 
 
 bot.setup_middleware(AntifloodMiddleware())  

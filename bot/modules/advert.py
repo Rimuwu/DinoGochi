@@ -7,7 +7,7 @@ from bot.modules.logs import log
 async def show_advert(user_id: int):
     if not await premium(user_id):
         async with aiohttp.ClientSession() as session:
-
+            print(user_id, "send")
             async with session.post(
                 'https://api.gramads.net/ad/SendPost',
                 headers={
