@@ -16,7 +16,6 @@ async def show_advert(user_id: int):
                 },
                 json={'SendToChatId': user_id},
             ) as response:
-                print(response)
                 if not response.ok:
                     log('Gramads: %s' % str(await response.json()), 2)
 
