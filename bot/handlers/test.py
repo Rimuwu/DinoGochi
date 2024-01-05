@@ -136,3 +136,18 @@ async def dung(message):
     lobby = await Lobby().create(message.from_user.id, m.id)
 
     pprint(lobby.__dict__)
+
+@bot.message_handler(pass_bot=True, commands=['delete'], is_admin=True)
+async def delete(message):
+
+    lobby = await Lobby().FromBase(message.from_user.id)
+    await lobby.delete
+
+@bot.message_handler(pass_bot=True, commands=['add_to'], is_admin=True)
+async def add_to(message):
+
+    lobby = await Lobby().FromBase(1191252229)
+
+    m = await bot.send_message(message.from_user.id, "test")
+    player = await DungPlayer().create(message.from_user.id, m.id)
+    await lobby.add_player(player, message.from_user.id)
