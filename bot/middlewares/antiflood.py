@@ -12,10 +12,10 @@ DEFAULT_RATE_LIMIT = 0.2
 users = mongo_client.user.users
 
 class AntifloodMiddleware(BaseMiddleware):
-    throttle_dict = {}
 
     def __init__(self, limit=DEFAULT_RATE_LIMIT):
         self.last_time = {}
+        self.last_ads = {}
         self.limit = limit
         self.update_types = ['message']
 
@@ -38,7 +38,13 @@ class AntifloodMiddleware(BaseMiddleware):
                 now = datetime.now(timezone.utc)
                 delta = now - create
 
-                if delta.seconds >= 1209600 or True: await show_advert(message.from_user.id)
+                if delta.seconds >= 1209600: 
+                    if message.from_user.id in self.last_ads:
+                        if time_now() - self.last_ads[message.from_user.id] < 7_200:
+                            return
+
+                    await show_advert(message.from_user.id)
+                    self.last_ads[message.from_user.id] = time_now()
 
 
 bot.setup_middleware(AntifloodMiddleware())  
