@@ -29,10 +29,6 @@ class AntifloodMiddleware(BaseMiddleware):
         self.last_time[message.from_user.id] = time_now()
 
     async def post_process(self, message: Message, data, exception):
-        
-        if 1191252229 == message.from_user.id:
-            print("START", time_now())
-        
         if int(time_now()) - self.last_time[message.from_user.id] > self.limit:
             if message.chat.type == "private":
                 user = await users.find_one({'userid': message.from_user.id}, {"_id": 1})
@@ -55,9 +51,6 @@ class AntifloodMiddleware(BaseMiddleware):
                                 self.last_ads[message.from_user.id] = int(time_now())
 
                             await show_advert(message.from_user.id)
-
-        if 1191252229 == message.from_user.id:
-            print("START", time_now())
 
 
 bot.setup_middleware(AntifloodMiddleware())  
