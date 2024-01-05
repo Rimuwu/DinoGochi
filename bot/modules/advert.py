@@ -5,7 +5,6 @@ from bot.modules.user import premium
 from bot.modules.logs import log
 
 async def show_advert(user_id: int):
-    print(user_id, "ads")
     if not await premium(user_id):
         async with aiohttp.ClientSession() as session:
 
