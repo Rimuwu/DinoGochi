@@ -133,7 +133,7 @@ async def end_craft(transmitted_data: dict):
                            parse_mode='Markdown', reply_markup=await markups_menu(userid, 'last_menu', lang))
 
 async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1, 
-                   dino: Union[Dino, None]=None, combine_item: dict = {}, delete: bool = False):
+                   dino: Union[Dino, None]=None, combine_item: dict = {}, delete: bool = True):
     """ Использование предмета
     
         delete - Принудительно не удалять предмет послле использования
