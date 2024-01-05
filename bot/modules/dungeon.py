@@ -63,6 +63,11 @@ class DungPlayer:
         await lobbys.update_one({"dungeonid": dungeonid}, 
                                 {"$set": {f"users.{self.userid}": self.__dict__}})
 
+    @property
+    async def user_id(self):
+        user = await users.find_one({"_id": self._id}, {"userid": 1})
+        if user: return user['userid']
+
 class Lobby:
 
     def __init__(self) -> None:
@@ -138,7 +143,7 @@ class Lobby:
     async def add_player(self, user:DungPlayer, user_id:int):
         self['users'][str(user_id)] = user
         await lobbys.update_one({"_id": self._id}, 
-                                {"$set": {f"user.{user_id}": user.__dict__}})
+                                {"$set": {f"users.{user_id}": user.__dict__}})
 
     async def delete_player(self, user_id:int):
         player:DungPlayer = self['users'][str(user_id)].copy()
@@ -149,7 +154,7 @@ class Lobby:
 
         del self['users'][str(user_id)]
         await lobbys.update_one({"_id": self._id}, 
-                                {"$unset": {f"user.{user_id}": 0}})
+                                {"$unset": {f"users.{user_id}": 0}})
 
 class Room:
 
