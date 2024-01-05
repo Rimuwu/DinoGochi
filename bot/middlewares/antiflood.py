@@ -41,8 +41,7 @@ class AntifloodMiddleware(BaseMiddleware):
                         now = datetime.now(timezone.utc)
                         delta = now - create
 
-                        print(message.from_user.id, delta.days)
-                        if delta.seconds >= 1209600:
+                        if delta.days >= 14:
 
                             if message.from_user.id in self.last_ads.keys():
                                 if int(time_now()) - self.last_ads[message.from_user.id] >= 7_200:
