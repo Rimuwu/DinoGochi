@@ -19,5 +19,6 @@ from . import tavern
 from . import market
 
 from . import actions
+from . import super_coins
 
 from . import post_handler # Должен загружаться последний!
