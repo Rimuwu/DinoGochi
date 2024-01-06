@@ -21,7 +21,7 @@ from bot.modules.states_tools import (ChooseConfirmState, ChooseCustomState,
                                       ChooseDinoState, ChooseInlineState,
                                       ChoosePagesState, ChooseStepState)
 from bot.modules.user import (AddItemToUser, check_name, daily_award_con,
-                              take_coins, user_in_chat, user_name)
+                              take_coins, user_in_chat, get_dinos)
 from bot.modules.over_functions import send_message
 
 events = mongo_client.other.events
@@ -112,6 +112,12 @@ async def daily_award(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
     lang = await get_lang(callback.from_user.id)
+    
+    col = len(await get_dinos(userid))
+    if not col:
+        text = t('no_dinos', lang)
+        await send_message(chatid, text)
+        return
 
     if sec := await daily_award_con(userid):
         award_data = GS['daily_award']
