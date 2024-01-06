@@ -1,7 +1,6 @@
 
 import aiohttp
 from bot.config import conf
-from bot.modules.user import premium
 from bot.modules.logs import log
 from bot.config import mongo_client
 import json
@@ -12,7 +11,7 @@ users = mongo_client.user.users
 
 async def show_advert(user_id: int):
     """ Показ рекламы через площадку gramads.net
-    
+
     Undefined = 0,
     Success = 1,
     RevokedTokenError = 2,
@@ -27,24 +26,24 @@ async def show_advert(user_id: int):
     Banned=10,
     InReview=11
     """
+
     res = 6
-    if not await premium(user_id):
-        async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession() as session:
 
-            async with session.post(
-                'https://api.gramads.net/ad/SendPost',
-                headers={
-                    'Authorization': conf.advert_token,
-                    'Content-Type': 'application/json',
-                },
-                json={'SendToChatId': user_id},
-            ) as response:
-                data = json.loads(await response.read())
-                res = data['SendPostResult']
+        async with session.post(
+            'https://api.gramads.net/ad/SendPost',
+            headers={
+                'Authorization': conf.advert_token,
+                'Content-Type': 'application/json',
+            },
+            json={'SendToChatId': user_id},
+        ) as response:
+            data = json.loads(await response.read())
+            res = data['SendPostResult']
 
-                if not response.ok:
-                    log('Gramads: %s' % str(await response.json()), 2)
-    
+            if not response.ok:
+                log('Gramads: %s' % str(await response.json()), 2)
+
     if res == 1:
         await users.update_one({"userid": user_id}, {'$inc': {"super_coins": 1}})
 

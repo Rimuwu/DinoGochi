@@ -7,6 +7,7 @@ from bot.config import mongo_client, conf
 from time import time as time_now
 from bot.modules.advert import show_advert
 from datetime import datetime, timezone
+from bot.modules.user import premium
 
 DEFAULT_RATE_LIMIT = 0.2
 users = mongo_client.user.users
@@ -49,7 +50,8 @@ class AntifloodMiddleware(BaseMiddleware):
                         else:
                             self.last_ads[message.from_user.id] = int(time_now())
 
-                        await show_advert(message.from_user.id)
+                        if not await premium(message.from_user.id):
+                            await show_advert(message.from_user.id)
 
 
 bot.setup_middleware(AntifloodMiddleware())  
