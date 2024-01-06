@@ -1517,7 +1517,7 @@
                     "name": "⚡ DinoUltima",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "An ultra subscription for you and your dinosaurs!",
-                    "description": "🖼 The ability to set any picture instead of the background! \n 🍼 Keep an eye on my dinosaur - send the dinosaur to kindergarten at any time! \n ✨ Display Ultra status in all lists. \n 🧶 Increasing food collection limits. \n 🏝 Additional locations on the journey. \n 🎮 Additional games. \n 🦕 +1 to the dinosaur limit. \n 🎠 Setting any picture for the store menu. \n 🕹 Increasing promotion limits."
+                    "description": "🖼 The ability to set any picture instead of the background! \n 🍼 Keep an eye on my dinosaur - send the dinosaur to kindergarten at any time! \n ✨ Display Ultra status in all lists. \n 🧶 Increasing food collection limits. \n 🏝 Additional locations on the journey. \n 🎮 Additional games. \n 🦕 +1 to the dinosaur limit. \n 🎠 Setting any picture for the store menu. \n 🕹 Increasing promotion limits.\n🎟️ There is no automatic advertising."
                 },
                 "rescue_kit": {
                     "name": "❤ Rescue kit",
@@ -3521,6 +3521,17 @@
             "ok": "🎁 A New Year's gift has been sent to the user!",
             "not": "🎩 The user has already received his New Year's gift!",
             "to_friend": "❤ A New Year's gift has been sent to you! Search the inventory for {item}"
-        }
+        },
+        "super_coins": {
+            "plus_one": "👑 You have received *+1 Super coin* for watching ads.\nCheck the balance on the command /super",
+            "info": "🌸 Coins you have: *{coins}*\n⚡ You have brought to the bot: *{dollars}$*\n\n☕️ For each viewed advertisement you receive *1 Super coin*, which can be exchanged for exclusive goods.\n\n🎋 Ads automatically appear every *2* hours when using the bot, however you can also view them manually. (No more than once every *3* minutes)",
+            "buttons": {
+                "super_coins view": "👀 Watch ads",
+                "super_coins products": "🎟️ Store"
+            },
+            "limit": "⏳ You've already watched the ad in the last 3 minutes, expect it.",
+            "noads": "Oops! It looks like there are no ads at the moment! Try again later."
+        },
+        "no_dinos": "⚡ You can't use this feature because you don't have dinosaurs!"
     }
 }
