@@ -27,7 +27,7 @@ async def super_c(message: Message):
         inl_buttons = dict(zip(buttons.values(), buttons.keys()))
         markup = list_to_inline([inl_buttons], 1)
 
-        await send_message(chatid, text, reply_markup=markup)
+        await send_message(chatid, text, reply_markup=markup, parse_mode="Markdown")
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('super_coins'), private=True)
