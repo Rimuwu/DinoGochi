@@ -53,6 +53,8 @@ class User:
         self.notifications = []
 
         self.coins = 100
+        self.super_coins = 0
+
         self.lvl = 0
         self.xp = 0
 
@@ -226,7 +228,7 @@ async def get_dinos(userid: int, all_dinos: bool = True) -> list[Dino]:
     return dino_list
 
 async def get_dinos_and_owners(userid: int) -> list:
-    """Возвращает список с объектами динозавров и их владельцами, а так же правами на динозавра"""
+    """Возвращает список с объектами динозавров, а так же правами на динозавра"""
     data = []
     for dino_obj in await dino_owners.find({'owner_id': userid}).to_list(None): #type: ignore
         data.append({'dino': await Dino().create(dino_obj['dino_id']), 'owner_type': dino_obj['type']})
