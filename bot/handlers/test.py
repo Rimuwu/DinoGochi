@@ -38,6 +38,7 @@ from bot.modules.images import create_dino_image, create_dino_image_pst
 from bot.modules.events import create_event, add_event, get_event
 
 from typing import Optional
+from bot.modules.advert import show_advert
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
 products = mongo_client.market.products
@@ -151,3 +152,9 @@ async def add_to(message):
     m = await bot.send_message(message.from_user.id, "test")
     player = await DungPlayer().create(message.from_user.id, m.id)
     await lobby.add_player(player, message.from_user.id)
+
+
+@bot.message_handler(pass_bot=True, commands=['super_coin'], is_admin=True)
+async def super_coin(message):
+    
+    await users.update_many({}, {'$set': {"super_coins": 0}})
