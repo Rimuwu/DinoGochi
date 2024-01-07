@@ -34,20 +34,27 @@ async def statistic_check():
 
 async def rayting_check():
     loc_users = list(await users.find({}, 
-                        {'userid': 1, 'lvl': 1, 'xp': 1, 'coins': 1}).to_list(None))
+                    {'userid': 1, 'lvl': 1, 'xp': 1, 'coins': 1, 'super_coins': 1}
+                    ).to_list(None))
 
     coins_list = list(sorted(loc_users, key=lambda x: x['coins'], reverse=True))
-    lvl_list = list(sorted(loc_users, key=lambda x: (x['lvl'] - 1) * max_lvl_xp(x['lvl']) + x['xp'], reverse=True))
+    lvl_list = list(sorted(loc_users, key=lambda x: 
+        (x['lvl'] - 1) * max_lvl_xp(x['lvl']) + x['xp'], reverse=True))
+    super_list = list(sorted(loc_users, key=lambda x: x['super_coins'], reverse=True))
 
-    coins_ids, lvl_ids = [], []
+    coins_ids, lvl_ids, super_ids = [], [], []
 
     for i in coins_list: coins_ids.append(i['userid'])
     for i in lvl_list: lvl_ids.append(i['userid'])
+    for i in super_list: super_ids.append(i['userid'])
 
     await management.update_one({'_id': 'rayting_coins'}, 
                           {'$set': {'data': coins_list, 'ids': coins_ids}})
     await management.update_one({'_id': 'rayting_lvl'}, 
                           {'$set': {'data': lvl_list, 'ids': lvl_ids}})
+    await management.update_one({'_id': 'rayting_super'}, 
+                          {'$set': {'data': super_list, 'ids': super_ids}})
+
     await management.update_one({'_id': 'rayt_update'}, 
                           {'$set': {'time': int(time())}})
 
