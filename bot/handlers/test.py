@@ -152,3 +152,7 @@ async def add_to(message):
     m = await bot.send_message(message.from_user.id, "test")
     player = await DungPlayer().create(message.from_user.id, m.id)
     await lobby.add_player(player, message.from_user.id)
+
+@bot.message_handler(pass_bot=True, commands=['gramads'], is_admin=True)
+async def gramads(message):
+    await show_advert(message.from_user.id)

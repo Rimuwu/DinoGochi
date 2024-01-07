@@ -1,6 +1,6 @@
 {
     "collections": {
-        "user": ["users", "lang", "referals", "friends", "subscriptions"],
+        "user": ["users", "lang", "referals", "friends", "subscriptions", "ads"],
         "dinosaur": ["dinosaurs", "dead_dinos", "incubation", "dino_owners", "dino_mood"],
         "dino_activity": ["game", "journey", "sleep", "collecting", "kindergarten"],
         "market": ["products", "sellers", "preferential", "puhs"],

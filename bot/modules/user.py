@@ -31,6 +31,7 @@ subscriptions = mongo_client.user.subscriptions
 referals = mongo_client.user.referals
 daily_award_data = mongo_client.tavern.daily_award
 langs = mongo_client.user.lang
+ads = mongo_client.user.ads
 
 class User:
 
@@ -136,7 +137,7 @@ class User:
         for collection in [items, products, dead_dinos, incubations]:
             await collection.delete_many({'owner_id': self.userid})
 
-        for collection in [referals, langs]:
+        for collection in [referals, langs, ads]:
             await collection.delete_many({'userid': self.userid})
 
         """ При полном удалении есть возможность, что у динозавра
