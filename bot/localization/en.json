@@ -942,7 +942,7 @@
             }
         },
         "help_command": {
-            "all": "<b>🎨 | Help Team</b>\n <i>Are you so pathetic that you ask me for help?) \n Pfff... Okay.</i>\n \n /help - A plea for help from a higher mind. \n \n /start - Start bot / main menu (only hp)\n \n /profile - Open the user's profile. \n \n /add_me - Send a message with an active button to add friends. (group only) \n \n /promo (code) - Enter the promo code. \n \n /message_update - refresh the dungeon message. \n \n",
+            "all": "<b>🎨 | Help Team</b>\n <i>Are you so pathetic that you ask me for help?) \n Pfff... Okay.</i>\n \n /help - A plea for help from a higher mind. \n \n /start - Start bot / main menu (only hp)\n \n /profile - Open the user's profile. \n \n /add_me - Send a message with an active button to add friends. (group only) \n \n /promo (code) - Enter the promo code.\n\n/super - Cabinet of super coins.",
             "dev": "/stats - statistics on the bot. \n \n /add_item item_id col user_id - add an item to the user. \n \n /dungeon_delete - delete your dungeon. \n \n /stats_100 - set the characteristics of all your dinosaurs to 100. \n \n /link_promo (code) - bind the button with the promo code to the message from the channel. (needs to reply to message) \n \n /unlink_promo - remove the button (a reply to the message is required)\n \n /create_promo col | inf time | inf money - create a promo code. \n \n /copy_m - send a message to all users of the bot."
         },
         "additem_command": {
@@ -1079,13 +1079,16 @@
             "lvl": "🎢 Level",
             "coins": "🗝 Coins",
             "dungeon": "🗻 Dungeon",
+            "super": "👑 Super Coins",
             "no_rayting": "❌ The rating is not yet available...",
             "place": "*├* Your place in the ranking: #{place}",
             "my_place": "🦕 My rivals",
             "lvl_text": "*└* Level: {lvl} Experience: {xp}",
             "coins_text": "*└* Coins: {coins}",
+            "super_text": "*└* Coins: {super_coins}",
             "rayting_lvl": "*┌* 🎢 Ranking by level:",
             "rayting_coins": "*┌* 🎢 Coin Rating:",
+            "rayting_super": "*┌* 🎢 Super coins Rating:",
             "premium": "*├* Subscriber ✨ DinoUltima"
         },
         "put_to_bed": {
@@ -1539,7 +1542,7 @@
         },
         "user_profile": {
             "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Name:* {name}\n*├* *ID:* `{userid}`\n*└* *Subscription:* {premium_status} ",
-            "level": "*┌*🏮 *ʟᴇᴠᴇʟ*\n*├* *Level:* {lvl}\n*├* *Experience:* {xp_now} | {max_xp}\n*└* *Coins:* {coins}",
+            "level": "*┌*🏮 *ʟᴇᴠᴇʟ*\n*├* *Level:* {lvl}\n*├* *Experience:* {xp_now} | {max_xp}\n*├* *Super coins:* {super_coins}\n*└* *Coins:* {coins}",
             "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Forgotten*: {dead}\n*├* *Living:* {dino_col}",
             "dino": "   *└* 🦕 *{dino_name}* ({owner})\n      *├* *Status:* {dino_status}\n      *├* *Rarity:* {dino_rare}\n      *└* *Age:* {age}\n\n",
             "egg": "   *└* 🥚 *{egg_quality}*\n      *└* *Left:* {remained}\n\n",
@@ -3524,9 +3527,9 @@
         },
         "super_coins": {
             "plus_one": "👑 You have received *+1 Super coin* for watching ads.\nCheck the balance on the command /super",
-            "info": "🌸 Coins you have: *{coins}*\n⚡ You have brought to the bot: *{dollars}$*\n\n☕️ For each viewed advertisement you receive *1 Super coin*, which can be exchanged for exclusive goods.\n\n🎋 Ads automatically appear every *2* hours when using the bot, however you can also view them manually. (No more than once every *3* minutes)",
+            "info": "🌸 Coins you have: *{coins}*\n⚡ You have brought to the bot: *{dollars}$*\n\n☕️ For each viewed advertisement you receive *1 Super coin*, which can be exchanged for exclusive goods.\n\n🎋 Ads automatically appear every *2* hours when using the bot, however, you can reset this limit and watch the ads. (After viewing, the limit will appear again)",
             "buttons": {
-                "super_coins view": "👀 Watch ads",
+                "super_coins view": "👀 Reset the limit",
                 "super_coins products": "🎟️ Store"
             },
             "limit": "⏳ You've already watched the ad in the last 3 minutes, expect it.",
