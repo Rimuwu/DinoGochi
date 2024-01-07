@@ -24,10 +24,11 @@ async def super_c(message: Message):
         text = t("super_coins.info", lang, coins=coins, dollars=dollars)
         buttons = get_data("super_coins.buttons", lang)
 
-        inl_buttons = dict(zip(buttons.values(), buttons.keys()))
-        markup = list_to_inline([inl_buttons], 1)
+        # inl_buttons = dict(zip(buttons.values(), buttons.keys()))
+        # markup = list_to_inline([inl_buttons], 1)
 
-        await send_message(chatid, text, reply_markup=markup, parse_mode="Markdown")
+        # await send_message(chatid, text, reply_markup=markup, parse_mode="Markdown")
+        await send_message(chatid, text, parse_mode="Markdown")
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('super_coins'), private=True)
