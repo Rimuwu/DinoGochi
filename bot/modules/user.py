@@ -438,7 +438,8 @@ async def user_info(data_user: teleUser, lang: str, secret: bool = False):
     return_text += t('user_profile.level', lang,
                      lvl=user.lvl, xp_now=user.xp,
                      max_xp=max_lvl_xp(user.lvl),
-                     coins=user.coins
+                     coins=user.coins,
+                     super_coins=user.super_coins
                      )
     return_text += '\n\n'
     if not secret:
