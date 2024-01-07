@@ -23,6 +23,11 @@
                     "ids": []
                 },
                 {
+                    "_id": "rayting_super",
+                    "data": [],
+                    "ids": []
+                },
+                {
                     "_id": "rayting_lvl",
                     "data": [],
                     "ids": []
