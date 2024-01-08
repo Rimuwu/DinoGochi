@@ -69,8 +69,9 @@ async def check_limit(user_id:int):
 
     last = ads_cabinet['last_ads']
     limit = ads_cabinet['limit']
-
-    if int(time_now()) >= last + limit: return True
+    
+    if limit != "inf":
+        if int(time_now()) >= last + limit: return True
     return False 
 
 async def save_last_ads(user_id:int):
