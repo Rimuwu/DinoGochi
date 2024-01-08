@@ -3527,13 +3527,23 @@
         },
         "super_coins": {
             "plus_one": "👑 You have received *+1 Super coin* for watching ads.\nCheck the balance on the command /super",
-            "info": "🌸 Coins you have: *{coins}*\n⚡ You have brought to the bot: *{dollars}$*\n\n☕️ For each viewed advertisement you receive *1 Super coin*, which can be exchanged for exclusive goods.\n\n🎋 Ads automatically appear every *2* hours when using the bot, however, you can reset this limit and watch the ads. (After viewing, the limit will appear again)",
+            "info": "🌸 Coins you have: *{coins}*\n⚡ You have brought to the bot: *{dollars}$*\n\n☕️ For each ad you watch, you get *1 Super Coin*, which can be exchanged for exclusive products.\n\n🎋 Ads automatically appear every *{limit}* when using the bot, however, you can adjust the limit for yourself.",
             "buttons": {
-                "super_coins view": "👀 Reset the limit",
+                "super_coins view": "👀 Setting the limit",
                 "super_coins products": "🎟️ Store"
             },
-            "limit": "⏳ You've already watched the ad in the last 3 minutes, expect it.",
-            "noads": "Oops! It looks like there are no ads at the moment! Try again later."
+            "view": {
+                "buttons": {
+                    "kl5d": {"text": "⌛ 3 minutes", "data": 180},
+                    "FDj4": {"text": "⌛ 15 minutes", "data": 900},
+                    "7845": {"text": "⌛ 30 minutes", "data": 1800},
+                    "s98j": {"text": "⌛ 60 minutes", "data": 3600},
+                    "erlt": {"text": "⌛ 90 minutes", "data": 5400},
+                    "74js": {"text": "⌛ 120 minutes", "data": 7200},
+                    "no_ads": {"text": "❌ Disable ads", "data": "inf"}
+                },
+                 "info": "☄ Select the minimum time that should elapse between the display of the ad ->"
+            }
         },
         "no_dinos": "⚡ You can't use this feature because you don't have dinosaurs!"
     }
