@@ -176,7 +176,9 @@ def seconds_to_str(seconds: int, lang: str='en', mini: bool=False, max_lvl='seco
        > seconds=3900 max_lvl=hour
        > 1ч.
     """
+    if seconds == 'inf': return "♾"
     if seconds < 0: seconds = 0
+
     time_format = dict(get_data('time_format', lang)) # type: dict
     result = ''
 
