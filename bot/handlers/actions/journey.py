@@ -101,8 +101,7 @@ async def start_journey(userid: int, chatid: int, lang: str,
     await send_message(chatid, t('journey_start.cancel_text', lang), 
                            reply_markup=cancel_markup(lang))
 
-@bot.message_handler(pass_bot=True, text='commands_name.actions.journey', 
-                     nothing_state=True)
+@bot.message_handler(pass_bot=True, text='commands_name.actions.journey', dino_pass=True, nothing_state=True)
 async def journey_com(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
