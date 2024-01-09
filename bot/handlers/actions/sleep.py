@@ -163,7 +163,7 @@ async def awaken(message: Message):
                                                reply_markup= await m(userid, 'last_menu', lang))
                 elif sleeper['sleep_type'] == 'short':
                     sleep_time = sleeper['sleep_end'] - sleeper['sleep_start']
-                    await end_sleep(last_dino._id, sleeper['_id'], sleep_time)
+                    await end_sleep(last_dino._id, sleep_time, False)
             else:
                 await last_dino.update({'$set': {'status': 'pass'}})
                 await send_message(chatid, t('awaken.not_sleep', lang),
