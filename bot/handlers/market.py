@@ -1,4 +1,3 @@
-from asyncio import sleep
 from random import choice
 
 from telebot.types import CallbackQuery, Message, InlineKeyboardMarkup
@@ -6,26 +5,25 @@ from telebot.types import CallbackQuery, Message, InlineKeyboardMarkup
 from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import (escape_markdown, list_to_inline,
-                                     list_to_keyboard, seconds_to_str,
-                                     user_name)
-from bot.modules.item import AddItemToUser, counts_items, get_name, item_info
-from bot.modules.localization import get_data, get_lang, t
-from bot.modules.market import (add_product, buy_product, create_seller,
-                                delete_product, preview_product, product_ui,
+                                     list_to_keyboard, user_name)
+from bot.modules.item import  item_info
+from bot.modules.localization import get_lang, t
+from bot.modules.market import (create_seller, delete_product, preview_product, product_ui,
                                 seller_ui, create_push)
 from bot.modules.market_chose import (buy_item, find_prepare,
                                       pr_edit_description, pr_edit_image,
                                       pr_edit_name, prepare_add,
-                                      prepare_data_option, prepare_delete_all,
+                                      prepare_delete_all,
                                       prepare_edit_price, promotion_prepare,
                                       send_info_pr)
-from bot.modules.markup import answer_markup, cancel_markup, count_markup
+from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import (ChooseOptionState, ChoosePagesState,
-                                      ChooseStepState, prepare_steps)
+                                      ChooseStepState)
 from bot.modules.user import premium
 from bot.modules.over_functions import send_message
 
+from bot.modules.add_product.add_product import prepare_data_option
 
 users = mongo_client.user.users
 sellers = mongo_client.market.sellers
