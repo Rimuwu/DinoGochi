@@ -553,3 +553,32 @@ async def dead_check(userid: int):
 
         if all([not col_dinos, not col_eggs, lvl]): return True
     return False
+
+async def check_status(dino_id:ObjectId):
+
+    data = ['sleep', 'game', 'journey', 'collecting', 'dungeon', 'freezing', 'kindergarten', 'hysteria']
+    dino = await dinosaurs.find_one({'_id': dino_id}, 
+                                    {'status': 1})
+    if dino:
+
+        in_sleep = await sleep_task.find_one({'dino_id': dino_id})
+        in_game = await game_task.find_one({'dino_id': dino_id})
+        in_journey = await journey_task.find_one({'dino_id': dino_id})
+        in_collecting = await collecting_task.find_one({'dino_id': dino_id})
+
+        dungeon = False
+        freezing = dino['status'] == 'freezing'
+
+        in_kindergarten = await kindergarten.find_one({'dinoid': dino_id})
+        hysteria = await dino_mood.find_one({'dino_id': dino_id, 
+                              'type': 'breakdown', 'action': 'hysteria'})
+
+        checks = [bool(in_sleep), bool(in_game), bool(in_journey), bool(in_collecting), bool(dungeon), bool(freezing), bool(in_kindergarten), bool(hysteria)]
+
+        if True in checks:
+            activity = data[checks.index(True)]
+        else:
+            activity = 'pass'
+
+        return activity
+    return 'pass'
