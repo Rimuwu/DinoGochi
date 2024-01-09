@@ -3351,12 +3351,12 @@
         "add_product": {
             "options_info": "🎠 | Select the type of transaction. \n \n 🍕 ➞ 🪙 - Items for coins. You sell items, the buyer pays the coins you specify. \n \n 🪙 ➞ 🍕 - Coins for items. You place an order for items, the buyer sells you the items for the amount specified by you. \n \n 🍕 ➞ 🍕 - Items on items. Exchange of items. \n \n 🍕 ➞ ⏳ - Auction. You list items, specify the starting price, end time, and minimum bid. The winner of the auction takes the goods.",
             "chose_item": {
-                "items_coins": "🎟 Select an item to add to the items sold",
+                "items_coins": "🎟 Select an item to add to the products",
                 "coins_items": "🎟 Select the item to add to the order",
                 "items_items": "🎟 Select an item to add to the exchange",
                 "auction": "🎟 Select an item to add to the auction"
             },
-            "trade_items": "🍷 Select the item you want to receive in return",
+            "items_items": "🍷 Select the item you want to receive in return",
             "wait_count": "🎎 Enter the quantity",
             "add_item": "🎞 Want to add another item?",
             "coins": {
@@ -3403,7 +3403,7 @@
                 "alredy_promotion": "💚 Moving",
                 "items_info": "🎈 Condition of items"
             },
-            "owner_message": "_The commission from the sale is 2%, the product will be removed from the market after {time} _",
+            "owner_message": "The commission from the sale is 2%, the product will be removed from the market after {time}",
             "no_action_users": "_There's no one here_"
         },
         "auction": {
