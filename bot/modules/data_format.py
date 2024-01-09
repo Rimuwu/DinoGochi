@@ -282,6 +282,20 @@ def count_elements(lst: list) -> str:
     for key, value in dct.items(): text_list.append(f'{key} x{value}')
     return ', '.join(text_list)
 
+def item_list(items:list[dict]):
+    """ Добавляет к каждому предмету ключ count c количеством 
+    """
+    res, individual = [], []
+
+    for i in items:
+        if i not in individual:
+            individual.append(i.copy())
+
+            if 'count' not in i: i['count'] = items.count(i)
+            res.append(i)
+
+    return res
+
 def str_to_seconds(text: str):
     """ Преобразует текст в секнудны
     """
