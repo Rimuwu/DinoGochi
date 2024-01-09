@@ -15,7 +15,7 @@ from bot.const import GAME_SETTINGS, ITEMS
 from bot.exec import bot
 from bot.handlers.dino_profile import transition
 from bot.modules.currency import convert
-from bot.modules.data_format import seconds_to_str, str_to_seconds
+from bot.modules.data_format import seconds_to_str, str_to_seconds, item_list
 from bot.modules.donation import check_donations, get_donations
 from bot.modules.images import create_egg_image, dino_collecting, dino_game
 from bot.modules.inventory_tools import inventory_pages
@@ -156,3 +156,9 @@ async def add_to(message):
 @bot.message_handler(pass_bot=True, commands=['gramads'], is_admin=True)
 async def gramads(message):
     await show_advert(message.from_user.id)
+
+@bot.message_handler(pass_bot=True, commands=['teste'], is_admin=True)
+async def teste(message):
+    
+    lst = [{"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}]
+    item_list(lst)

@@ -156,7 +156,7 @@ def save(data):
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 def add_product(userid: int, user_products):
-    
+
     if userid not in products_d['users']:
     
         for key, value in user_products['products'].items():
