@@ -511,6 +511,7 @@ async def take_coins(userid: int, col: int, update: bool = False) -> bool:
             if update:
                 await users.update_one({'userid': userid}, 
                                  {'$inc': {'coins': col}})
+                log(f"Edit coins: user: {userid} col: {col}", 0, "take_coins")
             return True
     return False
 
