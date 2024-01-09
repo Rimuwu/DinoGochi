@@ -16,6 +16,7 @@ from bot.exec import bot
 from bot.handlers.dino_profile import transition
 from bot.modules.currency import convert
 from bot.modules.data_format import seconds_to_str, str_to_seconds, item_list
+from bot.modules.dinosaur import check_status
 from bot.modules.donation import check_donations, get_donations
 from bot.modules.images import create_egg_image, dino_collecting, dino_game
 from bot.modules.inventory_tools import inventory_pages
@@ -162,3 +163,13 @@ async def teste(message):
     
     lst = [{"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}]
     item_list(lst)
+
+@bot.message_handler(pass_bot=True, commands=['status'], is_admin=True)
+async def status(message):
+    
+    
+    user = await User().create(message.from_user.id)
+    dinos = await user.get_dinos()
+    
+    dino = dinos[0]
+    print(await check_status(dino._id))

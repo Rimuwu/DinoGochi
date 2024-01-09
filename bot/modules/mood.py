@@ -28,7 +28,6 @@ keys = [
 ]
 
 
-
 breakdowns = {
     'seclusion': {
         'cancel_mood': 35,
@@ -98,7 +97,7 @@ async def add_mood(dino: ObjectId, key: str, unit: int, duration: int,
             'start_time': int(time()),
             'type': 'mood_edit'
         }
-        # print('add_mood', dino, key, unit, duration)
+
         await dino_mood.insert_one(data)
         return True
     return False
