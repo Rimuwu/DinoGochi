@@ -1,0 +1,57 @@
+from telebot.types import Message, InputMedia
+
+from bot.config import mongo_client
+from bot.modules.add_product.auction import auction
+from bot.modules.states_tools import ChooseStepState
+
+from bot.modules.market import generate_sell_pages, generate_items_pages
+
+from bot.modules.add_product.general import coins_stock
+from bot.modules.add_product.items_coins import circle_data as is_circle_data
+from bot.modules.add_product.coins_items import circle_data as si_circle_data
+from bot.modules.add_product.auction import circle_data as au_circle_data
+from bot.modules.add_product.items_items import items_items, trade_circle
+
+MAX_PRICE = 10_000_000
+
+users = mongo_client.user.users
+sellers = mongo_client.market.sellers
+items = mongo_client.items.items
+products = mongo_client.market.products
+
+
+""" Старт всех проверок
+"""
+async def prepare_data_option(option, transmitted_data):
+    chatid = transmitted_data['chatid']
+    userid = transmitted_data['userid']
+    lang = transmitted_data['lang']
+
+    if option == 'items_coins': 
+        ret_function = coins_stock
+        items, exclude = await generate_sell_pages(userid)
+        circle_fun = is_circle_data
+
+    elif option == 'coins_items':
+        ret_function = coins_stock
+        items, exclude = generate_items_pages()
+        circle_fun = si_circle_data
+
+    elif option == 'items_items':
+        ret_function = items_items
+        items, exclude = await generate_sell_pages(userid)
+        circle_fun = trade_circle
+
+    else: # auction
+        ret_function = auction
+        items, exclude = await generate_sell_pages(userid)
+        circle_fun = au_circle_data
+
+    transmitted_data = {
+        'exclude': exclude, 'option': option
+    }
+
+    steps = circle_fun(userid, chatid, lang, items, option, False)
+    await ChooseStepState(ret_function, userid, chatid, 
+                          lang, steps, 
+                          transmitted_data=transmitted_data)

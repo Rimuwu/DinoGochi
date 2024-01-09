@@ -4,8 +4,8 @@ from bson.objectid import ObjectId
 
 from bot.config import mongo_client
 from bot.exec import bot
-from bot.modules.data_format import list_to_inline, random_code, seconds_to_str
-from bot.modules.item import counts_items, get_item_dict, AddItemToUser, CheckCountItemFromUser, RemoveItemFromUser, item_code
+from bot.modules.data_format import list_to_inline, random_code, seconds_to_str, item_list
+from bot.modules.item import AddListItems, counts_items, get_item_dict, AddItemToUser, CheckCountItemFromUser, RemoveItemFromUser, item_code
 from bot.modules.item import get_data as get_item_data
 from bot.modules.images import market_image
 from bot.modules.localization import get_data, t, get_lang
@@ -26,7 +26,7 @@ async def generation_code(owner_id):
         code = await generation_code(owner_id)
     return code
 
-async def add_product(owner_id: int, product_type: str, items, price, in_stock: int = 1,
+async def add_product(owner_id: int, product_type: str, items: list, price, in_stock: int = 1,
                 add_arg: dict = {}):
     """ Добавление продукта в базу данных
 
@@ -50,14 +50,16 @@ async def add_product(owner_id: int, product_type: str, items, price, in_stock: 
     """
     assert product_type in ['items_coins', 'coins_items', 'items_items', 'auction'], f'Тип ({product_type}) не совпадает c доступными'
 
-    items_id = []
     data = {
-        'add_time': int(time()),
-        'type': product_type,
-        'owner_id': owner_id,
-        'alt_id': await generation_code(owner_id),
-        'items': items,
-        'price': price,
+        'add_time': int(time()), # Время добавления
+        'type': product_type, # Тип сделки
+        'owner_id': owner_id, # id владельца
+        'alt_id': await generation_code(owner_id), # id для инлайн кнопок
+
+        'items': items, # Покупаемые предметы
+        'items_id': [], # индексация id предметов
+        'price': price, # Цена (Монеты / предметы)
+
         'in_stock': in_stock, # В запасе, сколько раз можно купить товар
         'bought': 0 # Уже кипили раз
     }
@@ -68,9 +70,9 @@ async def add_product(owner_id: int, product_type: str, items, price, in_stock: 
         data['users'] = []
 
     if product_type == 'items_items':
-        for i in price: items_id.append(i['item_id'])
-    for i in items: items_id.append(i['item_id'])
-    data['items_id'] = items_id
+        for i in price: data['items_id'].append(i['item_id'])
+
+    for i in data['items']: data['items_id'].append(i['item_id'])
 
     res = await products.insert_one(data)
     await send_view_product(res.inserted_id, owner_id)
@@ -152,8 +154,10 @@ def generate_items_pages(ignored_id: list = [], ignore_cant: bool = False):
     for key, item in ITEMS.items():
         data = get_item_dict(key)
         if 'cant_sell' in item and item['cant_sell'] and not ignore_cant:
-            exclude.append(key)
-        else: items.append({'item': data, 'count': 1})
+            if key not in exclude:
+                exclude.append(key)
+        elif key not in exclude:
+            items.append({'item': data, 'count': 1})
     return items, exclude
 
 async def generate_sell_pages(user_id: int, ignored_id: list = []):
@@ -189,7 +193,12 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False):
             price = product['price']
 
             items_id = []
-            for i in items: items_id.append(i['item_id'])
+            for i in items: 
+                if 'count' in i:
+                    items_id += [i['item_id']] * i['count']
+                else: 
+                    items_id.append(i['item_id'])
+
             items_text = counts_items(items_id, lang)
 
             if product_type in ['items_coins', 'coins_items', 'auction']:
@@ -199,7 +208,7 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False):
             elif product_type in ['items_items']:
                 # price: list
                 items_price = []
-                for i in price: items_price.append(i['item_id'])
+                for i in price: items_price.append(i['item_id']) # type: ignore
                 coins_text = counts_items(items_price, lang)
 
             text += t('product_ui.cap', lang) + '\n\n'
@@ -236,7 +245,7 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False):
             if i_owner:
                 add_time = product['add_time']
                 time_end = (add_time + 86_400 * 31) - int(time())
-                
+
                 if product_type in ['auction', 'items_coins']:
                     text += f'\n\n' + t(f'product_ui.owner_message', lang, 
                                         time=seconds_to_str(time_end, lang, max_lvl='day'))
@@ -313,55 +322,79 @@ async def delete_product(baseid = None, alt_id = None):
         product = await products.find_one({'alt_id': alt_id})
 
     if product:
-        p = product
+        p = product.copy()
         ptype = p['type']
         remained = p['in_stock'] - p['bought'] # Осталось / в запасе
         owner = p['owner_id']
 
-        if ptype in ['items_coins', 'items_items', 'auction']: 
-            for item in list(p['items']):
+        if ptype in ['items_coins', 'items_items']:
+
+            col_items = item_list(p['items'])
+            for item in col_items:
+                col = item['count']
+
                 if 'abillities' in item: abil = item['abillities']
                 else: abil = {}
                 if remained:
-                    await AddItemToUser(owner, item['item_id'], remained, abil)
+                    await AddItemToUser(owner, item['item_id'], remained * col, abil)
 
         elif ptype == 'coins_items':
             coins = p['price'] * remained
             if coins: await take_coins(owner, coins, True)
 
         if ptype == 'auction':
-            for user in list(product['users']):
-                if user['status'] == 'win':
-                    # Выдача предметов победителю
-                    for item in list(p['items']):
-                        if 'abillities' in item: abil = item['abillities']
-                        else: abil = {}
-                        if remained:
-                            await AddItemToUser(owner, item['item_id'], remained, abil)
 
-                    # Выдача монет создателю аукциона
-                    two_percent = (product['price'] // 100) * 2
-                    await take_coins(owner, user['coins'], True)
-
-                    # Сообщение
-                    id_list = []
-                    for i in list(product['items']): id_list.append(i['item_id'])
-                    c_items = counts_items(id_list, user['lang'])
-                    text = t('auction.delete_auction', user['lang'], items=c_items)
-
+            winner = None
+            for user in list(p['users']):
+                if user['status'] == 'win': winner = user
                 else:
-                    # Не победитель
+                    # Не победитель, возврат монет
                     await take_coins(user['userid'], user['coins'], True)
 
                     # Сообщение
                     id_list = []
-                    for i in list(product['items']): id_list.append(i['item_id'])
+                    for i in list(p['items']): id_list.append(i['item_id'])
                     c_items = counts_items(id_list, user['lang'])
                     text = t('auction.delete_auction', user['lang'], items=c_items)
 
-                try:
-                    await send_message(user['userid'], text)
+                    try: await send_message(user['userid'], text)
+                    except: pass
+
+            if winner:
+                # Выдача предметов победителю
+
+                col_items = item_list(product['items'])
+                for item in col_items:
+                    col = item['count']
+
+                    if 'abillities' in item: abil = item['abillities']
+                    else: abil = {}
+                    if remained:
+                        await AddItemToUser(winner['userid'], item['item_id'], remained * col, abil)
+
+                # Выдача монет создателю аукциона
+                two_percent = (p['price'] // 100) * 2
+                await take_coins(owner, winner['coins'] - two_percent, True)
+
+                # Сообщение
+                id_list = []
+                for i in list(p['items']): id_list.append(i['item_id'])
+                c_items = counts_items(id_list, winner['lang'])
+                text = t('auction.win', winner['lang'], items=c_items)
+                
+                try: await send_message(winner['userid'], text)
                 except: pass
+
+            else:
+                # Не было участников
+                col_items = item_list(product['items'])
+                for item in col_items:
+                    col = item['count']
+
+                    if 'abillities' in item: abil = item['abillities']
+                    else: abil = {}
+                    if remained:
+                        await AddItemToUser(owner, item['item_id'], remained * col, abil)
 
         # Уведомление о удаление товара
         owner_lang = await get_lang(owner)
@@ -372,7 +405,7 @@ async def delete_product(baseid = None, alt_id = None):
 
         await products.delete_one({'_id': product['_id']})
         await preferential.delete_many({"product_id": product['_id']})
-        
+
         return True
     else: return False
 
@@ -419,7 +452,13 @@ def preview_product(items: list, price, ptype: str, lang: str):
     text = ''
 
     id_list = []
-    for i in items: id_list.append(i['item_id'])
+    for i in items: 
+
+        if 'count' in i:
+            id_list += [i['item_id']] * i['count']
+        else: 
+            id_list.append(i['item_id'])
+
     items_text = counts_items(id_list, lang)
 
     if type(price) == int: price_text = f'{price} 🪙'
@@ -454,22 +493,14 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                 status = await take_coins(userid, -col_price, True)
 
                 if status:
-                    dct_items = {}
-                    for item in list(product['items']):
-                        cd = item_code(item)
-                        if cd in dct_items:
-                            dct_items[cd]['col'] += 1
-                        else: 
-                            dct_items[cd] = {
-                                'item': item,
-                                'col': 1
-                            }
+                    col_items = item_list(product['items'])
+                    for item in col_items:
+                        itme_col = item['count']
 
-                    for key, data in dct_items.items():
-                        item_id = data['item']['item_id']
-                        if 'abillities' in data['item']: abil = data['item']['abillities']
+                        item_id = item['item_id']
+                        if 'abillities' in item: abil = item['abillities']
                         else: abil = {}
-                        await AddItemToUser(userid, item_id, data['col'] * col, abil)
+                        await AddItemToUser(userid, item_id, itme_col * col, abil)
 
                     # Выдача монет владельцу
                     await take_coins(owner, col_price - two_percent, True)
@@ -480,7 +511,8 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                 items_status, n = [], 0
                 col_price = col * product['price']
 
-                for item in list(product['items']):
+                col_items = item_list(product['items'])
+                for item in col_items:
                     item_id = item['item_id']
                     if 'abillities' in item: abil = item['abillities']
                     else: abil = {}
@@ -494,18 +526,24 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                 if not all(items_status):
                     return False, 'error_no_items'
                 else:
-                    for item in list(product['items']):
+                    col_items = item_list(product['items'])
+                    for item in col_items:
+                        itme_col = item['count']
+
                         item_id = item['item_id']
                         if 'abillities' in item: abil = item['abillities']
                         else: abil = {}
-                        await RemoveItemFromUser(userid, item_id, col, abil)
-                        await AddItemToUser(owner, item_id, col, abil)
+
+                        await AddItemToUser(userid, item_id, itme_col * col, abil)
+                        await RemoveItemFromUser(userid, item_id, itme_col * col, abil)
 
                     await take_coins(userid, -col_price, True)
 
             elif p_tp == 'item_items':
                 items_status, n = [], 0
-                for item in list(product['price']):
+
+                col_items = item_list(product['items'])
+                for item in col_items:
                     item_id = item['item_id']
                     if 'abillities' in item: abil = item['abillities']
                     else: abil = {}
@@ -517,17 +555,23 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                 if not all(items_status):
                     return False, 'error_no_items'
                 else: 
-                    for item in list(product['price']):
-                        item_id = item['item_id']
-                        if 'abillities' in item: abil = item['abillities']
-                        else: abil = {}
-                        await RemoveItemFromUser(userid, item_id, col, abil)
+                    col_items = item_list(product['price'])
+                    for item in col_items:
+                        itme_col = item['count']
 
-                    for item in list(product['items']):
                         item_id = item['item_id']
                         if 'abillities' in item: abil = item['abillities']
                         else: abil = {}
-                        await AddItemToUser(userid, item_id, col, abil)
+                        await AddItemToUser(userid, item_id, itme_col * col, abil)
+
+                    col_items = item_list(product['items'])
+                    for item in col_items:
+                        itme_col = item['count']
+
+                        item_id = item['item_id']
+                        if 'abillities' in item: abil = item['abillities']
+                        else: abil = {}
+                        await AddItemToUser(userid, item_id, itme_col * col, abil)
 
             elif p_tp == 'auction':
                 # col - ставка пользователя
@@ -554,7 +598,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                 preview = preview_product(
                     product['items'], product['price'], product['type'], owner_lang)
                 await user_notification(owner, 'product_buy', owner_lang,
-                                        preview=preview, col=col, price=earned, name=name, alt_id=product['alt_id'])
+                                        preview=preview, col=col, price=col * product['price'], name=name, alt_id=product['alt_id'])
 
                 if product['bought'] + col >= product['in_stock']:
                     await delete_product(pro_id)
