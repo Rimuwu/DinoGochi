@@ -143,6 +143,7 @@ async def AddItemToUser(userid: int, itemid: str, count: int = 1, preabil: dict 
     """Добавление стандартного предмета в инвентарь
     """
     assert count >= 0, f'AddItemToUser, count == {count}'
+    log(f"userid {userid}, itemid {itemid}, count {count}", 0, "Add item")
 
     item = get_item_dict(itemid, preabil)
     find_res = await items.find_one({'owner_id': userid, 
@@ -173,6 +174,7 @@ async def AddItemToUser(userid: int, itemid: str, count: int = 1, preabil: dict 
 
 async def AddListItems(userid: int, items: list[dict]):
     """ items - [ {"item_id":str, "abilities":dict} ]
+        Если у предмета есть count то умножает количество 
     """
     repeat_items, res = [], []
 
@@ -181,6 +183,7 @@ async def AddListItems(userid: int, items: list[dict]):
             repeat_items.append(item)
 
             col = items.count(item)
+            if 'count' in item: col *= item['count']
             preabil = {}
 
             if "abilities" in item: preabil = item['abilities']
@@ -198,13 +201,14 @@ async def RemoveItemFromUser(userid: int, itemid: str,
        False - предмета нет или количесвто слишком большое
     """
     assert count >= 0, f'RemoveItemFromUser, count == {count}'
+    log(f"userid {userid}, itemid {itemid}, count {count}", 0, "Remove item")
 
     item = get_item_dict(itemid, preabil)
     max_count = 0
     find_items = await items.find({'owner_id': userid, 'items_data': item}, 
                             {'_id': 1, 'count': 1}).to_list(None) 
     find_list = list(find_items)
-    
+
     for iterable_item in find_list: max_count += iterable_item['count']
     if count > max_count: return False
     else:
@@ -495,13 +499,13 @@ def counts_items(id_list: list, lang: str, separator: str = ','):
     """
     dct, items_list = {}, []
     for i in id_list: dct[i] = dct.get(i, 0) + 1
-    
+
     for item, col in dct.items():
         name = get_name(item, lang)
         if col > 1: name += f" x{col}"
-        
+
         items_list.append(name)
-    
+
     if items_list:
         return f"{separator} ".join(items_list)
     else: return '-'
