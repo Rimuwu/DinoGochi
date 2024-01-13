@@ -4,7 +4,7 @@ from bot.config import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
-                                     random_dict)
+                                     random_dict, seconds_to_str)
 from bot.modules.dinosaur import Dino, edited_stats, insert_dino
 from bot.modules.images import create_eggs_image
 from bot.modules.item import (AddItemToUser, CalculateDowngradeitem,
@@ -19,7 +19,7 @@ from bot.modules.markup import (confirm_markup, count_markup,
 from bot.modules.mood import add_mood
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
-from bot.modules.user import User, experience_enhancement, get_dead_dinos, max_eat, count_inventory_items
+from bot.modules.user import User, experience_enhancement, get_dead_dinos, max_eat, count_inventory_items, award_premium
 from bot.modules.over_functions import send_message
 
 from typing import Union
@@ -357,6 +357,11 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                             limit=dino_limit['limit'])
                 use_status = False
 
+        if data_item['class'] == 'premium':
+            await award_premium(userid, data_item['premium_time'] * count)
+            return_text = t('item_use.special.premium', lang, 
+                            premium_time=seconds_to_str(data_item['premium_time'] * count, lang))
+
     if data_item.get('buffs', []) and use_status and use_baff_status and dino:
         # Применяем бонусы от предметов
         return_text += '\n\n'
@@ -559,6 +564,15 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
 
             if data_item['class'] in ['freezing', 'defrosting']:
                 ...
+            elif data_item['class'] in ['premium']:
+                steps = [
+                    {"type": 'int', "name": 'count', "data":
+                        {"max_int": max_count}, 
+                        'message': {
+                            'text': t('css.wait_count', lang), 
+                            'reply_markup': count_markup(max_count, lang)}}
+                ]
+
             elif data_item['class'] in ['reborn']:
                 dead = await get_dead_dinos(userid)
                 options, markup = {}, []
