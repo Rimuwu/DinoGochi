@@ -6,6 +6,8 @@ from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.localization import  get_lang, t, get_data
 from bot.modules.over_functions import send_message
 from bot.modules.user import premium
+from bot.modules.item import counts_items, AddItemToUser
+from bot.const import GAME_SETTINGS
 
 users = mongo_client.user.users
 ads = mongo_client.user.ads
@@ -61,8 +63,25 @@ async def super_coins(call: CallbackQuery):
                                     reply_markup=markup)
 
     elif code == "products":
-        text = "It will be soon, you still don't have that many coins yet..."
-        await send_message(chatid, text)
+
+        shop_items = GAME_SETTINGS['super_shop']
+        text = t("super_coins.shop", lang) + '\n\n'
+        mrk_list = []
+
+        a = 0
+        for key, value in shop_items.items():
+            a += 1
+            key_text = f'{a}. {value["price"]} ➞ {counts_items(value["items"], lang)}\n'
+            text += key_text
+
+            mrk_list.append({key_text: f"super_shop buy {key}"})
+
+        mrk_list.append(
+            {t('buttons_name.back',lang): 'super_shop back'})
+
+        markup = list_to_inline(mrk_list, 2)
+        await bot.edit_message_text(text, chatid, call.message.id,
+                                    reply_markup=markup)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('ads_limit'), private=True)
@@ -87,4 +106,38 @@ async def ads_limit(call: CallbackQuery):
 
     text, markup = await main_message(user_id)
     await bot.edit_message_text(text, chatid, call.message.id,
+                                    reply_markup=markup, parse_mode="Markdown")
+
+@bot.callback_query_handler(pass_bot=True, func=lambda call: 
+    call.data.startswith('super_shop'), private=True)
+async def super_shop(call: CallbackQuery):
+    chatid = call.message.chat.id
+    user_id = call.from_user.id
+    lang = await get_lang(call.from_user.id)
+
+    code = call.data.split()[1]
+
+    if code == 'back':
+        text, markup = await main_message(user_id)
+        await bot.edit_message_text(text, chatid, call.message.id,
+                                    reply_markup=markup, parse_mode="Markdown")
+
+    elif code == 'buy':
+        product_code = call.data.split()[2]
+        products = GAME_SETTINGS['super_shop']
+        user = await users.find_one({'userid': user_id})
+
+        product = products[product_code]
+        price = product['price']
+        items = product['items']
+
+        if user and user['super_coins'] >= price:
+            await users.update_one({'_id': user['_id']}, 
+                                   {'$inc': {'super_coins': -price}})
+            for i in items: await AddItemToUser(user_id, i)
+
+            await send_message(chatid, t('super_coins.buy', lang))
+
+            text, markup = await main_message(user_id)
+            await bot.edit_message_text(text, chatid, call.message.id,
                                     reply_markup=markup, parse_mode="Markdown")
