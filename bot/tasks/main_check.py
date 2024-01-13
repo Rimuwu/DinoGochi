@@ -27,7 +27,7 @@ HIGH_MOOD = 50
 REPEAT_MINUTS = 4
 
 # Переменные вероятности
-P_HEAL = 0.05 * REPEAT_MINUTS
+P_HEAL = 0.03 * REPEAT_MINUTS
 P_EAT = 0.045 * REPEAT_MINUTS
 P_EAT_SLEEP = 0.035 * REPEAT_MINUTS
 P_GAME = 0.1 * REPEAT_MINUTS
@@ -89,7 +89,8 @@ async def main_checks():
 
             if randint(1, 5) == 5:
                 owner = await get_owner(dino['_id'])
-                await experience_enhancement(owner['owner_id'], randint(1, 2))
+                if owner:
+                    await experience_enhancement(owner['owner_id'], randint(1, 2))
 
         # условие выполнения для питания и восстановления здоровья
         # если динозавр не испытывает голод, не находится в критическом запасе энергии, настроение находится выше среднего
