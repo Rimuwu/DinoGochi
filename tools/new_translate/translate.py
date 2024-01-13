@@ -3,6 +3,8 @@ import time
 import random
 import os
 import emoji
+from pprint import pprint
+import copy
 
 # import translators
 # from langdetect import DetectorFactory, detect
@@ -24,6 +26,20 @@ langs_path = '/languages/'
 damp_path = '/damps/'
 
 ex = os.path.dirname(__file__) # Путь к этому файлу
+
+
+def replace_data(dct: dict, lst: str, new) -> dict:
+    lst = way.split('.')
+    current_dict = dct
+
+    for key in lst[:-1]:
+        current_dict = current_dict.get(key, {})
+    
+    if type(current_dict) == list and lst[-1].isdigit():
+        lst[-1] = int(lst[-1])  # type: ignore
+
+    current_dict[lst[-1]] = new # type: ignore
+    return dct
 
 def get_damp(lang_code:str):
     """Получает данные дампа"""
@@ -60,10 +76,19 @@ def get_translate_langs():
 
 def translate(data, to_lang:str):
     """Возвращает переведённый текст"""
-    if type(data) == int: return data
-    if type(data) == str: return f'{data} - {to_lang}'
-    
-    print(f"Не переведено {data}")
+    if type(data) == int: data = data
+    elif type(data) == str: data =  f'{data} - {to_lang}'
+
+    elif type(data) == dict:
+        for key, value in data.items():
+            data[key] = translate(value, to_lang)
+
+    elif type(data) == list:
+        lst = []
+        for i in data: lst.append(translate(i, to_lang))
+        data = lst
+
+    else: print(f"Не переведено {data}")
     return data
 
 def check_damp():
@@ -78,6 +103,8 @@ def save(data, lang, dr='languages'):
 
 def dict_way(dct:dict, way:str):
     """ Получает значение следуя по пути"""
+    
+    print(way)
 
     for way_key in way.split('.'):
         if way_key.isdigit() and type(dct) == list:
@@ -89,27 +116,8 @@ def dict_way(dct:dict, way:str):
                     dct = dct[way_key]  # type: ignore
                 except: return None
         else: return None
-    return dct
-
-def save_key_to_way(dct:dict, way:str, new_data):
-    """ Получает значение следуя по пути"""
-    lst = way.split('.')
-    last = lst[-1]
-    lst.remove(last)
-
-    for way_key in lst:
-        if way_key.isdigit() and type(dct) == list:
-            way_key = int(way_key)
-
-        if way_key in dct or type(way_key) == int:
-            if way_key or way_key == 0:
-                dct = dct[way_key]  # type: ignore
-
-    print(last, 'last', dct)
-    if last.isdigit():
-        dct[int(last)] = new_data
-    else:
-        dct[last] = new_data # type: ignore
+    
+    print(dct)
     return dct
 
 def way_check(main_direct, damp_direct, way: str):
@@ -119,7 +127,6 @@ def way_check(main_direct, damp_direct, way: str):
     """
     way_main = dict_way(main_direct, way)
     way_damp = dict_way(damp_direct, way)
-    print(way, way_main, way_damp, 'cchk')
 
     if way_damp is None: return way
     
@@ -165,14 +172,20 @@ for lang_code in to_langs:
         if res: 
             if type(res) == list: nt_keys += res
             else: nt_keys.append(res)
-    
-    print(nt_keys, 'nt')
-    
-    for way in nt_keys:
-        trs_lang[lang_code] = save_key_to_way(trs_lang[lang_code], way,  # type: ignore
-            translate(dict_way(main_lang, way), lang_code))
 
-        damp[lang_code] = save_key_to_way(damp[lang_code], way, dict_way(main_lang, way))
+    print(nt_keys, 'nt')
+
+    for way in nt_keys:
+        # trs_lang[lang_code] = save_key_to_way(trs_lang[lang_code], way,  # type: ignore
+        #     translate(dict_way(main_lang, way), lang_code))
+        
+        trs_lang[lang_code] = replace_data(trs_lang[lang_code], way, 
+                                translate(dict_way(main_lang, way), lang_code))
+
+        print('damps ====================================================')
+        damp[lang_code] = replace_data(damp[lang_code], way, dict_way(main_lang, way))
+
+        # damp[lang_code] = save_key_to_way(damp[lang_code], way, dict_way(main_lang, way))
 
         save(trs_lang, lang_code)
         save(damp, lang_code, 'damps')
