@@ -3188,5 +3188,85 @@
         "image": "case",
         "rank": "mythical",
         "type": "case"
+    },
+    "premium_activator": {
+        "image": "null",
+        "rank": "legendary",
+        "type": "special",
+        "class": "premium",
+        "premium_time": 2592000,
+        "cant_sell": true
+    },
+    "egg_case": {
+        "cant_sell": false,
+        "col_repit": {
+            "act": 1,
+            "type": "static"
+        },
+        "drop_items": [
+            {
+                "abilities": {},
+                "chance": [
+                    50,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "regular_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    25,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "unusual_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    15,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "rare_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    9,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "mystic_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "legendary_egg"
+            }
+        ],
+        "image": "case",
+        "rank": "mythical",
+        "type": "case"
     }
 }
