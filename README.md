@@ -27,11 +27,7 @@
 - Бот может стоять как на старой 3.8, так и на новой 3.11 (Основной бот работает на 3.11)
 - Далее, установите все библиотеки из файла requirements.txt
 >
-    # Windows
-    pip install requirements.txt
-
->
-    # Linux
+    # Windows or Linux
     pip install -r requirements.txt
 
 - Установите базу данных на пк
