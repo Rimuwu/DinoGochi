@@ -345,5 +345,13 @@
             "items": ["taco", "broth", "hot_chocolate"],
             "coins": 178
         }
+    },
+
+    "super_shop": {
+        "pa": {"items": ["premium_activator"], "price": 700},
+        "sr": {"items": ["stone_resurrection"], "price": 450},
+        "ec": {"items": ["egg_case"], "price": 200},
+        "rc": {"items": ["recipe_chest"], "price": 200},
+        "cf": {"items": ["chest_food"], "price": 200}
     }
 } 
