@@ -335,8 +335,10 @@ async def friend_handler(friend, transmitted_data: dict):
     buttons = {}
 
     for key, text_b in get_data('friend_list.buttons', lang).items():
-        if key != "new_year" or key == "new_year" and await check_event("new_year"):
-            buttons[text_b] = f'{key} {friend.id}'
+        buttons[text_b] = f'{key} {friend.id}'
+
+    if not await check_event("new_year"):
+        del buttons[get_data(f'friend_list.buttons.new_year', lang)]
 
     markup = list_to_inline([buttons], 2)
 
