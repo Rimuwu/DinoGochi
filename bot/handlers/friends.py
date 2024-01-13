@@ -365,12 +365,38 @@ async def take_money(call: CallbackQuery):
         if max_int > 0:
             await ChooseIntState(transfer_coins, userid, chatid, lang, 
                                 max_int=max_int, transmitted_data={'friendid': friendid, 'username': user_name(call.from_user)})
-            
+
             text = t('take_money.col_coins', lang, max_int=max_int)
             await send_message(chatid, text, reply_markup=
                                 count_markup(max_int, lang))
         else:
             text = t('take_money.zero_coins', lang)
+            await send_message(chatid, text)
+
+
+@bot.callback_query_handler(pass_bot=True, func=lambda call: 
+    call.data.startswith('take_coins'), private=True)
+async def take_super_coins(call: CallbackQuery):
+    lang = await get_lang(call.from_user.id)
+    chatid = call.message.chat.id
+    userid = call.from_user.id
+    data = call.data.split()
+
+    friendid = int(data[1])
+    user = await users.find_one({'userid': userid})
+
+    if user:
+        max_int = user['super_coins']
+        if max_int > 0:
+            await ChooseIntState(transfer_super_coins, userid, 
+                                 chatid, lang, 
+                                max_int=max_int, transmitted_data={'friendid': friendid, 'username': user_name(call.from_user)})
+
+            text = t('take_coins.col_coins', lang, max_int=max_int)
+            await send_message(chatid, text, reply_markup=
+                                count_markup(max_int, lang))
+        else:
+            text = t('take_coins.zero_coins', lang)
             await send_message(chatid, text)
 
 async def transfer_coins(col: int, transmitted_data: dict):
@@ -386,16 +412,33 @@ async def transfer_coins(col: int, transmitted_data: dict):
         text = t('take_money.send', lang)
         await send_message(chatid, text, 
                             reply_markup= await m(userid, 'last_menu', lang))
-        
+
         text = t('take_money.transfer', lang, username=username, coins=col)
-        await send_message(friendid, text, 
-                            reply_markup= await m(userid, 'last_menu', lang))
-        await users.update_one({'userid': friendid}, {'$inc': {'coins': col}})
+        await send_message(friendid, text)
+        await users.update_one({'userid': userid}, {'$inc': {'super_coins': -col}})
+        await users.update_one({'userid': friendid}, {'$inc': {'super_coins': col}})
 
     else:
         text = t('take_money.no_coins', lang)
         await send_message(chatid, text, 
                             reply_markup= await m(userid, 'last_menu', lang))
+
+async def transfer_super_coins(col: int, transmitted_data: dict):
+    lang = transmitted_data['lang']
+    chatid = transmitted_data['chatid']
+    userid = transmitted_data['userid']
+    friendid = transmitted_data['friendid']
+    username = transmitted_data['username']
+
+    text = t('take_coins.send', lang)
+    await send_message(chatid, text, 
+                        reply_markup= await m(userid, 'last_menu', lang))
+
+    text = t('take_coins.transfer', lang, username=username, coins=col)
+    await send_message(friendid, text)
+    await users.update_one({'userid': friendid}, 
+                            {'$inc': {'super_coins': col}})
+
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('send_request'), private=False)
