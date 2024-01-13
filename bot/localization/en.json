@@ -655,6 +655,13 @@
             "meow_book": {
                 "name": "📔 Meow Edition",
                 "description": "Meow meow, meow meow meow... Meow!"
+            },
+            "premium_activator": {
+                "name": "✨ Premium Activator",
+                "description": "Activates a premium subscription for 1 month"
+            },
+            "egg_case": {
+                "name": "📦 A case with eggs"
             }
         },
         "notifications": {
@@ -1060,6 +1067,7 @@
             },
             "buttons": {
                 "take_money": "✨ Transfer coins",
+                "take_coins": "🪔 Transfer coins",
                 "joint_dinosaur": "🦕 Will share a dinosaur",
                 "new_year": "🎁 Send a gift"
             }
@@ -1475,7 +1483,8 @@
                     "ok": "🦕 The dinosaur has been revived!",
                     "limit": "🦕 | At the moment, you can only have {limit} dinosaur(s). Take a look at the handbook for more information.",
                     "no_dinos": "🦕 | You are such a beautiful person, the world does not remember your lost dinosaurs!"
-                }
+                },
+                "premium": "🎆 | Congratulations on activating the premium on {premium_time}!"
             },
             "buff": {
                 "+mood": "😀 | The dinosaur got +{unit} % to the mood! \n",
@@ -2140,6 +2149,12 @@
             "send": "👑 | Coins have been sent!",
             "no_coins": "❌ Failed to send coins",
             "zero_coins": "🦕 Dinosaurs cry because you don't have coins :("
+        },
+        "take_coins": {
+            "col_coins": "🍡 | Specify how many coins you want to transfer, the maximum amount is {max_int}",
+            "transfer": "🦄 | Unicorn courier brought the parcel\n\n🖼 Sender: {username}\n👑 Super coins: {coins}",
+            "send": "👑 | Coins have been sent!",
+            "zero_coins": "🦕 Dinosaurs are crying because you don't have any coins :("
         },
         "remove_accessory": {
             "choose_item": "⏲ Choose which item to remove",
@@ -3542,8 +3557,10 @@
                     "74js": {"text": "⌛ 120 minutes", "data": 7200},
                     "no_ads": {"text": "❌ Disable ads", "data": "inf"}
                 },
-                 "info": "☄ Select the minimum time that should elapse between the display of the ad ->"
-            }
+                "info": "☄ Select the minimum time that should elapse between the display of the ad ->"
+            },
+            "shop": "🎍 Shop for super coins\n(Click to buy, without confirmation)",
+            "buy": "Thank you for watching the ad!"
         },
         "no_dinos": "⚡ You can't use this feature because you don't have dinosaurs!"
     }
