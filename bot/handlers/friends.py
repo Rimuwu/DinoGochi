@@ -416,8 +416,8 @@ async def transfer_coins(col: int, transmitted_data: dict):
 
         text = t('take_money.transfer', lang, username=username, coins=col)
         await send_message(friendid, text)
-        await users.update_one({'userid': userid}, {'$inc': {'super_coins': -col}})
-        await users.update_one({'userid': friendid}, {'$inc': {'super_coins': col}})
+
+        await users.update_one({'userid': friendid}, {'$inc': {'coins': col}})
 
     else:
         text = t('take_money.no_coins', lang)
@@ -437,8 +437,9 @@ async def transfer_super_coins(col: int, transmitted_data: dict):
 
     text = t('take_coins.transfer', lang, username=username, coins=col)
     await send_message(friendid, text)
-    await users.update_one({'userid': friendid}, 
-                            {'$inc': {'super_coins': col}})
+
+    await users.update_one({'userid': userid}, {'$inc': {'super_coins': -col}})
+    await users.update_one({'userid': friendid}, {'$inc': {'super_coins': col}})
 
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
