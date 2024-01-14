@@ -63,7 +63,6 @@ async def super_coins(call: CallbackQuery):
                                     reply_markup=markup)
 
     elif code == "products":
-        return
 
         shop_items = GAME_SETTINGS['super_shop']
         text = t("super_coins.shop", lang) + '\n\n'

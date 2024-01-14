@@ -381,7 +381,6 @@ async def take_super_coins(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id
     data = call.data.split()
-    return
 
     friendid = int(data[1])
     user = await users.find_one({'userid': userid})
