@@ -6,9 +6,11 @@ import emoji
 from pprint import pprint
 import copy
 
-# import translators
-# from langdetect import DetectorFactory, detect
+import translators
+from langdetect import DetectorFactory, detect
 
+
+DetectorFactory.seed = 0
 
 """
 Процесс
@@ -26,6 +28,130 @@ langs_path = '/languages/'
 damp_path = '/damps/'
 
 ex = os.path.dirname(__file__) # Путь к этому файлу
+
+k_list = ['*', '`']
+repl_words = {
+    '(444!)': {'text': '\n\n\n\n', 'translate': False},
+    '(333!)': {'text': '\n\n\n', 'translate': False},
+    '(222!)': {'text': '\n\n', 'translate': False},
+    '(111!)': {'text': '\n', 'translate': False},
+    '(100!)': {'text': 'ᴜsᴇʀ ᴘʀᴏғɪʟᴇ', 'translate': False},
+    '(200!)': {'text': 'ʟᴇᴠᴇʟ', 'translate': False},
+    '(300!)': {'text': 'ᴅɪɴᴏsᴀᴜʀs', 'translate': False},
+    '(400!)': {'text': 'ɪɴᴠᴇɴᴛᴏʀʏ', 'translate': False},
+    '(500!)': {'text': '->', 'translate': False},
+    '(600!)': {'text': '</code>', 'translate': False},
+    '(700!)': {'text': '<code>', 'translate': False},
+    '(800!)': {'text': '<i>', 'translate': False},
+    '(900!)': {'text': '</i>', 'translate': False},
+}
+
+def undoreplace(text: str, to_lang: str):
+    txt = None
+    for _ in range(4):
+        for key, data in repl_words.items():
+
+            if data['translate']:
+                if len(data['text']) > 3 and data['text'][1] == '(' and data['text'][-2] == ')': 
+                    txt = data['text']
+                else:
+                    txt = trs(data['text'], to_lang)
+            else: 
+                txt = data['text']
+
+            if 'sml' in data:
+                txt = data['sml'] + txt + data['sml']
+
+            if not txt: txt = key
+            text = text.replace(key, txt)
+    return text
+
+def replace_simbols(text: str):
+    for key, item in repl_words.items(): text = text.replace(item['text'], key)
+    word, st = '', False
+
+    for i in emoji.emoji_list(text):
+        k_name = f'({len(repl_words)}{len(repl_words)}!)'
+        repl_words[k_name] = {
+            'text': i['emoji'],
+            'translate': False
+        }
+        text = text.replace(i['emoji'], k_name)
+        word = ''
+
+    word, st = '', False
+
+    for i in text:
+        if i == '{':
+            st = True
+            word += i
+
+        if i == '}':
+            st = False
+            word += i
+
+            word = word[1:]
+
+            k_name = f'({len(repl_words)}{len(repl_words)}!)'
+            repl_words[k_name] = {
+                'text': word,
+                'translate': False
+            }
+            text = text.replace(word, k_name)
+            word = ''
+
+        if st: word += i
+
+    for i in text:
+        if i in k_list and st: 
+            st = False
+            translate_st = True
+            word += i
+            end_word = word[1:-1]
+
+            if len(end_word) == 1: translate_st = False
+
+            k_name = f'({len(repl_words)}{len(repl_words)}!)'
+            repl_words[k_name] = {
+                'text': end_word,
+                'translate': translate_st,
+                'sml': i
+            }
+            text = text.replace(word, k_name)
+            word = ''
+
+        elif i in k_list and not st: st = True
+        if st: word += i
+
+    return text
+
+def trs(text: str, to_lang:str, trans='bing') -> str:
+    from_language = main_code
+    if trans == 'myMemory': from_language = 'ru-RU'
+
+    elif trans == 'myMemory' and to_lang == 'uk': to_lang = 'uk-UA'
+    elif trans == 'baidu' and to_lang == 'uk': to_lang = 'ukr'
+
+    if text:
+        try: lang = detect(text)
+        except: lang = 'emoji'
+
+        if lang not in ['en', 'it', 'emoji']:
+            ret = translators.translate_text(text, 
+                from_language=from_language,
+                to_language=to_lang, translator=trans) 
+            print("\n#TEXT#", text, '\n#translatore#', trans, '\nRETURN TEXT#', ret, '\nlang', lang)
+            return ret # type: ignore
+
+    return text
+
+def text_translate(text: str, to_lang: str):
+    """ Перевод """
+    new_text = replace_simbols(text)
+    new_text = trs(new_text, to_lang)
+    new_text = undoreplace(new_text, to_lang)
+
+    return new_text
 
 def remove_non_dict_or_list(dct):
     keys_to_remove = []
@@ -114,7 +240,10 @@ def translate(data, to_lang:str):
     """Возвращает переведённый текст"""
 
     if isinstance(data, (int, float)): data = data
-    elif isinstance(data, str): data =  f'{data} - {to_lang}'
+    elif isinstance(data, str): 
+        data = text_translate(data, to_lang)
+        
+        print(data, '=============================')
 
     elif isinstance(data, dict):
         out_data = data.copy()
@@ -200,7 +329,7 @@ def way_check(main_direct, damp_direct, way: str, non: bool = True):
     if way_damp is None and non: 
         return [way]
 
-    if isinstance(way_main, (int, str, float)):
+    if isinstance(way_main, (int, str, float, list)):
         if way_main != way_damp: return [way]
 
     elif isinstance(way_main, dict):
@@ -210,16 +339,6 @@ def way_check(main_direct, damp_direct, way: str, non: bool = True):
             if res: lst += res
 
         if lst: return lst
-
-    elif isinstance(way_main, list):
-        lst = []
-        for i in way_main:
-            ind = way_main.index(i)
-            res = way_check(main_direct, damp_direct, way+f'.{ind}')
-            if res: lst += res
-
-        if lst: return lst
-    
     else:
         print(type(way_main), 'error')
     return []
