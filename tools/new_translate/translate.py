@@ -55,14 +55,26 @@ def replace_data(dct: dict, way: str, new) -> dict:
         if isinstance(current_dict, list):
             if key.isdigit():
                 key = int(key)
-            current_dict = current_dict[key]
+            current_dict = current_dict[key] # type: ignore
         else:
             current_dict = current_dict.get(key, {})
 
     if isinstance(current_dict, list) and lst[-1].isdigit():
         lst[-1] = int(lst[-1])  # type: ignore
 
-    current_dict[lst[-1]] = new # type: ignore
+    if new is None:
+        if isinstance(current_dict, list):
+            current_dict.pop(lst[-1]) # type: ignore
+        elif isinstance(current_dict, dict):
+            del current_dict[lst[-1]] # type: ignore
+    else:
+        if isinstance(current_dict, list):
+            if lst[-1] + 1 >= len(current_dict):
+                current_dict.insert(lst[-1], new) # type: ignore
+            else:
+                current_dict[lst[-1]] = new # type: ignore
+        elif isinstance(current_dict, dict):
+            current_dict[lst[-1]] = new # type: ignore
     return new_dct
 
 def get_damp(lang_code:str):
@@ -121,6 +133,7 @@ def translate(data, to_lang:str):
 
 def save(data, lang, dr='languages'):
     """Сохраняет файл языка"""
+    print('Сохранение данных')
 
     with open(f'{ex}\{dr}\{lang}.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
@@ -128,7 +141,8 @@ def save(data, lang, dr='languages'):
 
 def dict_way(dct:dict, way:str):
     """ Получает значение следуя по пути"""
-    new_dct = dct.copy()
+    dct = dct.copy()
+    new_dct = dct
 
     for way_key in way.split('.'):
         if way_key.isdigit() and isinstance(new_dct, list):
@@ -138,19 +152,38 @@ def dict_way(dct:dict, way:str):
             if way_key or way_key == 0:
                 try:
                     new_dct = new_dct[way_key]  # type: ignore
-                except: return None
-        else: return None
+                except: 
+                    return None
+        else:
+            return None
 
     return new_dct
 
-# def keys_check(main_direct, damp_direct,  way: str):
-#     """ Проверяет каких ключей из словаря main_direct нет в damp_direct
-#     """
-    
-#     if isinstance(main_direct, dict):
-#         for key in main_direct.keys():
-#             if isinstance(main_direct[key], dict):
-#                 keys_check()
+def key_check(direct, way: str, non: bool = True):
+    """ 
+    """
+    way_main = dict_way(direct, way)
+
+    if way_main is None and non: 
+        return [way]
+
+    if isinstance(way_main, dict):
+        lst = []
+        for key in way_main.keys():
+            res = key_check(way_main, key)
+            if res: lst += res
+
+        if lst: return lst
+
+    elif isinstance(way_main, list):
+        lst = []
+        for i in way_main:
+            ind = way_main.index(i)
+            res = key_check(way_main, str(ind))
+            if not res: lst += res
+
+        if lst: return lst
+    return []
 
 
 def way_check(main_direct, damp_direct, way: str, non: bool = True):
@@ -189,75 +222,88 @@ def way_check(main_direct, damp_direct, way: str, non: bool = True):
     
     else:
         print(type(way_main), 'error')
-
     return []
 
 
-to_langs = get_translate_langs() # Языки на которые надо переводить
+def main():
+    to_langs = get_translate_langs() # Языки на которые надо переводить
 
-for lang_code in to_langs:
-    damp = get_damp(lang_code)
-    trs_lang = get_lang(lang_code)
+    for lang_code in to_langs:
+        damp = get_damp(lang_code)
+        trs_lang = get_lang(lang_code)
 
-    main_lang = get_lang(main_code)[main_code] # Данные главного языка
-    copy_for_damp = main_lang.copy() # Не изменяемая копия языка
+        main_lang = get_lang(main_code)[main_code] # Данные главного языка
 
-    if lang_code not in trs_lang:
-        trs_lang = {lang_code:{}}
-        save(trs_lang, lang_code)
+        if lang_code not in trs_lang:
+            trs_lang = {lang_code:{}}
+            save(trs_lang, lang_code)
 
-    if lang_code not in damp:
-        damp = {lang_code:{}}
-        save(damp, lang_code, 'damps')
+        if lang_code not in damp:
+            damp = {lang_code:{}}
+            save(damp, lang_code, 'damps')
 
+        """ Удаление удалённых ключей """
+        for key, value in damp[lang_code].items():
+            res = key_check(main_lang.copy(), key)
+            print(res, 'del')
 
-    # rm_dct = main_lang.copy()
-    # rm_dct = remove_non_dict_or_list(rm_dct)
+            for way in res:
+                trs_lang[lang_code] = replace_data(
+                    trs_lang[lang_code].copy(), way, None)
 
-    # rm_trs_dct = trs_lang.copy()
-    # rm_trs_dct = remove_non_dict_or_list(trs_lang)
-    # ed = False
+                damp[lang_code] = replace_data(
+                    damp[lang_code].copy(), way, None)
+            
+            if res:
+                save(trs_lang, lang_code)
+                save(damp, lang_code, 'damps')
+                damp = get_damp(lang_code)
+                trs_lang = get_lang(lang_code)
 
-    # for key, value in rm_dct.items():
-    #     res = way_check(rm_dct, rm_trs_dct[lang_code], key)
-    #     res2 = way_check(main_lang, trs_lang[lang_code], key)
+        """ Создание структуры данных """
+        rm_dct = remove_non_dict_or_list(main_lang.copy())
+        main_lang = get_lang(main_code)[main_code] # Данные главного языка
 
-    #     if res: ed = True
+        rm_trs_dct = remove_non_dict_or_list(trs_lang.copy())
+        trs_lang = get_lang(lang_code)
 
-    #     print(res, res2, 'resres')
+        ed = False
+        for key, value in rm_dct.items():
+            res = key_check(rm_trs_dct[lang_code].copy(), key)
 
-    #     for nn_way in res:
-    #         current = trs_lang[lang_code]
-    #         cur_rm = rm_dct
+            print(res, 'struct')
 
-    #         trs_lang[lang_code] = replace_data(trs_lang[lang_code], nn_way, dict_way(rm_dct, nn_way))
+            if res: 
+                ed = True
+                for nn_way in res:
+                    trs_lang[lang_code] = replace_data(trs_lang[lang_code].copy(), nn_way, dict_way(rm_dct.copy(), nn_way))
+        if ed:
+            save(trs_lang, lang_code)
+            save(trs_lang, lang_code, 'damps')
+            main_lang = get_lang(main_code)[main_code]
 
-    # if ed:
-    #     save(trs_lang, lang_code)
-    #     save(trs_lang, lang_code, 'damps')
-    #     main_lang = get_lang(main_code)[main_code]
+        """ Определение не достающих ключей"""
+        nt_keys = []
+        for key, value in main_lang.items():
+            res = way_check(main_lang.copy(), damp[lang_code].copy(), key, False)
+            if res: nt_keys += res
 
-    nt_keys = []
-    for key, value in main_lang.items():
-        res = way_check(main_lang, damp[lang_code], key)
-        if res: 
-            if type(res) == list: nt_keys += res
-            else: nt_keys.append(res)
+        print(nt_keys, 'nt')
+        damp = get_damp(lang_code)
 
-    print(nt_keys)
-    damp = get_damp(lang_code)
+        """ Перевод ключей """
+        for way in nt_keys:
+            trs_lang[lang_code] = replace_data(
+                trs_lang[lang_code].copy(), way, 
+                    translate(dict_way(main_lang.copy(), way), lang_code)
+                        )
 
-    for way in nt_keys:
-        print(way)
-        trs_lang[lang_code] = replace_data(
-            trs_lang[lang_code], way, 
-                translate(dict_way(main_lang, way), lang_code)
-                    )
+            damp[lang_code] = replace_data(
+                damp[lang_code].copy(), way, 
+                    dict_way(main_lang.copy(), way)
+                        )
 
-        damp[lang_code] = replace_data(
-            damp[lang_code], way, 
-                dict_way(copy_for_damp, way)
-                    )
-
-        save(trs_lang, lang_code)
-        save(damp, lang_code, 'damps')
+            save(trs_lang, lang_code)
+            save(damp, lang_code, 'damps')
+        
+main()
