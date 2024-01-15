@@ -1,5 +1,9 @@
 {
     "es": {
-        "n2": "Toro Tiburón Toro Toro"
+        "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Nombre:* {name}\n*├* *IDENTIFICACIÓN:* `{userid}`\n*└* *Suscripción:* {premium_status} ",
+        "level": "**┌**🏮 *ʟᴇᴠᴇʟ*\n**├** *Nivel:* {lvl}\n**├** *Experiencia:* {xp_now} | {max_xp}\n**├** *Súper Monedas:* {super_coins}\n**└** *Monedas:* {coins}",
+        "dinosaurs": "***┌***🦖 *ᴅɪɴᴏsᴀᴜʀs*\n***├*** *Olvidado*: {dead}\n***├*** *Viviente:* {dino_col}",
+        "dino": "   ***└*** 🦕 *{dino_name}* ({owner})\n      ****├**** *Estado:* {dino_status}\n      ****├**** *Rareza:* {dino_rare}\n      ***└*** *Edad:* {age}\n\n",
+        "egg": "   ****└**** 🥚 *{egg_quality}*\n      ****└**** *Izquierda:* {remained}\n\n"
     }
 }

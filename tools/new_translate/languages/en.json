@@ -1,5 +1,9 @@
 {
     "en": {
-        "n2": "Shark Bull Bull Bull"
+        "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Name:* {name}\n*├* *ID:* `{userid}`\n*└* *Subscription:* {premium_status} ",
+        "level": "**┌**🏮 *ʟᴇᴠᴇʟ*\n**├** *Level:* {lvl}\n**├** *Experience:* {xp_now} | {max_xp}\n**├** *Super Coins:* {super_coins}\n**└** *Coins:* {coins}",
+        "dinosaurs": "***┌***🦖 *ᴅɪɴᴏsᴀᴜʀs*\n***├*** *Forgotten*: {dead}\n***├*** *Living:* {dino_col}",
+        "dino": "   ***└*** 🦕 *{dino_name}* ({owner})\n      ****├**** *Status:* {dino_status}\n      ****├**** *Rarity:* {dino_rare}\n      ***└*** *Age:* {age}\n\n",
+        "egg": "   ****└**** 🥚 *{egg_quality}*\n      ****└**** *Left:* {remained}\n\n"
     }
 }

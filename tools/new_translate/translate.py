@@ -4,58 +4,45 @@ import random
 import os
 import emoji
 from pprint import pprint
-import copy
 
 import translators
 from langdetect import DetectorFactory, detect
 
-
 DetectorFactory.seed = 0
-
-"""
-Процесс
-
-0. Проверить есть ли сохранение языка и его перевод
-  1.1 Если нет перевода - перевести
-  1.2 Если есть перевод и дамп текста на main_lang языке - анализ всех ключей
-1. Если есть несоответсвующие / отсутсвующие ключи - Перевести
-2. Сохранить новые данные ключ в дамп памяти
-
-"""
-
-main_code = 'ru'
-langs_path = '/languages/'
-damp_path = '/damps/'
-
 ex = os.path.dirname(__file__) # Путь к этому файлу
 
-k_list = ['*', '`']
-repl_words = {
-    '(444!)': {'text': '\n\n\n\n', 'translate': False},
-    '(333!)': {'text': '\n\n\n', 'translate': False},
-    '(222!)': {'text': '\n\n', 'translate': False},
-    '(111!)': {'text': '\n', 'translate': False},
-    '(100!)': {'text': 'ᴜsᴇʀ ᴘʀᴏғɪʟᴇ', 'translate': False},
-    '(200!)': {'text': 'ʟᴇᴠᴇʟ', 'translate': False},
-    '(300!)': {'text': 'ᴅɪɴᴏsᴀᴜʀs', 'translate': False},
-    '(400!)': {'text': 'ɪɴᴠᴇɴᴛᴏʀʏ', 'translate': False},
-    '(500!)': {'text': '->', 'translate': False},
-    '(600!)': {'text': '</code>', 'translate': False},
-    '(700!)': {'text': '<code>', 'translate': False},
-    '(800!)': {'text': '<i>', 'translate': False},
-    '(900!)': {'text': '</i>', 'translate': False},
-}
+base_names = {}
+
+with open(f'{ex}/settings.json', encoding='utf-8') as f: 
+    """ Загружаем константы из файла найстроек """
+    settings = json.load(f) # type: dict
+
+    replace_codes = settings['replace_codes']
+    replace_words = settings['replace_words']
+    one_replace_s = settings['one_replace_s']
+    translators_names = settings['translators']
+
+    main_code = settings['main_code']
+    langs_path = settings['langs_path']
+    damp_path = settings['damp_path']
+
+    zero_translator = settings['zero_translator']
+    ignore_translate_keys = settings['ignore_translate_keys']
 
 def undoreplace(text: str, to_lang: str):
-    txt = None
+    """ Функция из закодированного для переводчика текста, превращает его в читаемый
+    """
+    global replace_words
+
     for _ in range(4):
-        for key, data in repl_words.items():
+        for key, data in replace_words.items():
+            txt = None
 
             if data['translate']:
                 if len(data['text']) > 3 and data['text'][1] == '(' and data['text'][-2] == ')': 
                     txt = data['text']
                 else:
-                    txt = trs(data['text'], to_lang)
+                    txt = translator(data['text'], to_lang)
             else: 
                 txt = data['text']
 
@@ -67,90 +54,121 @@ def undoreplace(text: str, to_lang: str):
     return text
 
 def replace_simbols(text: str):
-    for key, item in repl_words.items(): text = text.replace(item['text'], key)
+    """ Функция заменяет специальные символы на коды, для корректности работы словаря
+    """
+    global replace_words
+
+    for key, item in replace_words.items(): text = text.replace(item['text'], key)
     word, st = '', False
 
-    for i in emoji.emoji_list(text):
-        k_name = f'({len(repl_words)}{len(repl_words)}!)'
-        repl_words[k_name] = {
-            'text': i['emoji'],
+    for i1 in emoji.emoji_list(text):
+        k_name = f'({len(replace_words)}{len(replace_words)}!)'
+        replace_words[k_name] = {
+            'text': i1['emoji'],
             'translate': False
         }
-        text = text.replace(i['emoji'], k_name)
+        text = text.replace(i1['emoji'], k_name)
         word = ''
 
     word, st = '', False
 
-    for i in text:
-        if i == '{':
+    for i2 in text:
+        if i2 == '{':
             st = True
-            word += i
+            word += i2
 
-        if i == '}':
+        elif i2 == '}':
             st = False
-            word += i
+            word += i2
 
             word = word[1:]
 
-            k_name = f'({len(repl_words)}{len(repl_words)}!)'
-            repl_words[k_name] = {
+            k_name = f'({len(replace_words)}{len(replace_words)}!)'
+            replace_words[k_name] = {
                 'text': word,
                 'translate': False
             }
             text = text.replace(word, k_name)
             word = ''
 
-        if st: word += i
+        if st: word += i2
 
-    for i in text:
-        if i in k_list and st: 
+    for i3 in text:
+        if i3 in one_replace_s and st: 
             st = False
             translate_st = True
-            word += i
+            word += i3
             end_word = word[1:-1]
 
             if len(end_word) == 1: translate_st = False
 
-            k_name = f'({len(repl_words)}{len(repl_words)}!)'
-            repl_words[k_name] = {
+            k_name = f'({len(replace_words)}{len(replace_words)}!)'
+            replace_words[k_name] = {
                 'text': end_word,
                 'translate': translate_st,
-                'sml': i
+                'sml': i3
             }
             text = text.replace(word, k_name)
             word = ''
 
-        elif i in k_list and not st: st = True
-        if st: word += i
-
+        elif i3 in one_replace_s and not st: st = True
+        if st: word += i3
     return text
 
-def trs(text: str, to_lang:str, trans='bing') -> str:
-    from_language = main_code
-    if trans == 'myMemory': from_language = 'ru-RU'
+def translator(text: str, to_lang:str, trans='bing') -> str:
+    """ Единственная функция в этом коде перевода, которая переводит!
+    """
+    global base_names
 
-    elif trans == 'myMemory' and to_lang == 'uk': to_lang = 'uk-UA'
-    elif trans == 'baidu' and to_lang == 'uk': to_lang = 'ukr'
+    # Замены ключей
+    from_language = main_code
+    if trans in replace_codes:
+        if from_language in replace_codes[trans]:
+            from_language = replace_codes[trans][from_language]
+
+        if to_lang in replace_codes[trans]:
+            to_lang = replace_codes[trans][to_lang]
 
     if text:
-        try: lang = detect(text)
+        try: lang = detect(text) # Определяем язык текста
         except: lang = 'emoji'
 
         if lang not in ['en', 'it', 'emoji']:
-            ret = translators.translate_text(text, 
-                from_language=from_language,
-                to_language=to_lang, translator=trans) 
-            print("\n#TEXT#", text, '\n#translatore#', trans, '\nRETURN TEXT#', ret, '\nlang', lang)
-            return ret # type: ignore
 
+            if text in base_names: return base_names[text]
+            else:
+                r_t = random.uniform(0, 1)
+                time.sleep(r_t)
+
+                ret = translators.translate_text(text, 
+                    from_language=from_language,
+                    to_language=to_lang, translator=trans) 
+                pprint({
+                    "Text in": text, 'translator': trans, 
+                    'Text out': ret, 'from_language': from_language,
+                    'to_lang': to_lang}
+                )
+                base_names[text] = ret
+                return ret # type: ignore
     return text
 
-def text_translate(text: str, to_lang: str):
+def text_translate(text: str, to_lang: str, 
+                   trans:str = zero_translator, repl:bool = True):
     """ Перевод """
-    new_text = replace_simbols(text)
-    new_text = trs(new_text, to_lang)
-    new_text = undoreplace(new_text, to_lang)
+    if text == '': return text
+    if repl: text = replace_simbols(text)
+    new_text = ''
 
+    try:
+    # if 1:
+        new_text = translator(text, to_lang, trans)
+    except: pass
+
+    if new_text == '':
+        rand_trans = random.choice(translators_names)
+        new_text = text_translate(text, to_lang, rand_trans, False)
+
+    new_text = undoreplace(new_text, to_lang)
     return new_text
 
 def remove_non_dict_or_list(dct):
@@ -195,7 +213,7 @@ def replace_data(dct: dict, way: str, new) -> dict:
             del current_dict[lst[-1]] # type: ignore
     else:
         if isinstance(current_dict, list):
-            if lst[-1] + 1 >= len(current_dict):
+            if lst[-1] + 1 >= len(current_dict): # type: ignore
                 current_dict.insert(lst[-1], new) # type: ignore
             else:
                 current_dict[lst[-1]] = new # type: ignore
@@ -242,14 +260,15 @@ def translate(data, to_lang:str):
     if isinstance(data, (int, float)): data = data
     elif isinstance(data, str): 
         data = text_translate(data, to_lang)
-        
-        print(data, '=============================')
 
     elif isinstance(data, dict):
         out_data = data.copy()
 
         for key, value in data.items():
-            out_data[key] = translate(value, to_lang)
+            if key not in ignore_translate_keys:
+                out_data[key] = translate(value, to_lang)
+            else:
+                out_data[key] = value
         return out_data
 
     elif isinstance(data, list):
@@ -264,7 +283,7 @@ def save(data, lang, dr='languages'):
     """Сохраняет файл языка"""
     print('Сохранение данных')
 
-    with open(f'{ex}\{dr}\{lang}.json', 'w', encoding='utf-8') as f:
+    with open(f'{ex}/{dr}/{lang}.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
@@ -288,13 +307,11 @@ def dict_way(dct:dict, way:str):
 
     return new_dct
 
-def key_check(direct, way: str, non: bool = True):
-    """ 
+def key_check(direct, way: str):
+    """ Проверяет есть ли в словаре ключ следуя по пути way
     """
     way_main = dict_way(direct, way)
-
-    if way_main is None and non: 
-        return [way]
+    if way_main is None: return [way]
 
     if isinstance(way_main, dict):
         lst = []
@@ -339,20 +356,27 @@ def way_check(main_direct, damp_direct, way: str, non: bool = True):
             if res: lst += res
 
         if lst: return lst
-    else:
-        print(type(way_main), 'error')
     return []
 
 
 def main():
+    global replace_words, base_names
     to_langs = get_translate_langs() # Языки на которые надо переводить
 
     for lang_code in to_langs:
+
+        base_names = {}
+        with open(f'{ex}/settings.json', encoding='utf-8') as f: 
+            settings = json.load(f) # type: dict
+            replace_words = settings['replace_words']
+        
         damp = get_damp(lang_code)
         trs_lang = get_lang(lang_code)
 
         main_lang = get_lang(main_code)[main_code] # Данные главного языка
 
+
+        """ Создаёт главный ключ языка если нет """
         if lang_code not in trs_lang:
             trs_lang = {lang_code:{}}
             save(trs_lang, lang_code)
@@ -360,6 +384,7 @@ def main():
         if lang_code not in damp:
             damp = {lang_code:{}}
             save(damp, lang_code, 'damps')
+
 
         """ Удаление удалённых ключей """
         for key, value in damp[lang_code].items():
@@ -372,12 +397,13 @@ def main():
 
                 damp[lang_code] = replace_data(
                     damp[lang_code].copy(), way, None)
-            
+
             if res:
                 save(trs_lang, lang_code)
                 save(damp, lang_code, 'damps')
                 damp = get_damp(lang_code)
                 trs_lang = get_lang(lang_code)
+
 
         """ Создание структуры данных """
         rm_dct = remove_non_dict_or_list(main_lang.copy())
@@ -401,6 +427,7 @@ def main():
             save(trs_lang, lang_code, 'damps')
             main_lang = get_lang(main_code)[main_code]
 
+
         """ Определение не достающих ключей"""
         nt_keys = []
         for key, value in main_lang.items():
@@ -409,6 +436,7 @@ def main():
 
         print(nt_keys, 'nt')
         damp = get_damp(lang_code)
+
 
         """ Перевод ключей """
         for way in nt_keys:
@@ -424,5 +452,4 @@ def main():
 
             save(trs_lang, lang_code)
             save(damp, lang_code, 'damps')
-        
 main()
