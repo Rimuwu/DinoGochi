@@ -104,9 +104,15 @@ async def end_craft(transmitted_data: dict):
     await UseAutoRemove(userid, delete_item, count)
 
     # Удаление материалов
+    inv = []
     for iteriable_item in materials['delete']:
-        item_id = iteriable_item['item_id']
-        await RemoveItemFromUser(userid, item_id)
+        if iteriable_item not in inv:
+            item_id = iteriable_item['item_id']
+
+            count = materials['delete'].count(iteriable_item)
+            inv.append(iteriable_item)
+
+            await RemoveItemFromUser(userid, item_id, count)
 
     # Добавление предметов
     for create_data in data_item['create']:
@@ -247,7 +253,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                         'materials': materials,
                         'data_item': data_item,
                         'delete_item': item
-                                    }
+                    }
 
                 for iterable_key in materials['edit']:
                     for iterable_id in materials['edit'][iterable_key]:
@@ -334,7 +340,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
         else:
             return_text = t('item_use.egg.egg_limit', lang, 
                             limit=dino_limit['limit'])
-    
+
     elif data_item['type'] == 'special' and dino:
         user = await User().create(userid)
         dct_dino: dict = dino #type: ignore
@@ -527,7 +533,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
 
         if type_item == 'eat':
             adapter_function = eat_adapter
-            transmitted_data['max_count'] = max_count 
+            transmitted_data['max_count'] = max_count  # type: ignore
 
             steps = [
                 {"type": 'dino', "name": 'dino', "data": {"add_egg": False}, 

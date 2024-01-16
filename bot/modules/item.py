@@ -102,7 +102,7 @@ def get_item_dict(itemid: str, preabil: dict = {}) -> dict:
             elif type(data['abilities'][k]) == dict:
                 abl[k] = random_dict(data['abilities'][k])
 
-        d_it['abilities'] = abl 
+        d_it['abilities'] = abl  # type: ignore
 
     if preabil != {}:
         if 'abilities' in d_it.keys():
@@ -110,12 +110,12 @@ def get_item_dict(itemid: str, preabil: dict = {}) -> dict:
                 if ak in preabil.keys():
 
                     if type(preabil[ak]) == int:
-                        d_it['abilities'][ak] = preabil[ak] 
+                        d_it['abilities'][ak] = preabil[ak]  # type: ignore
 
                     elif type(preabil[ak]) == dict:
-                        d_it['abilities'][ak] = random_dict(preabil[ak]) 
+                        d_it['abilities'][ak] = random_dict(preabil[ak])  # type: ignore
         else: 
-            d_it['abilities'] = preabil 
+            d_it['abilities'] = preabil  # type: ignore
 
     return d_it
 
@@ -206,7 +206,7 @@ async def RemoveItemFromUser(userid: int, itemid: str,
     item = get_item_dict(itemid, preabil)
     max_count = 0
     find_items = await items.find({'owner_id': userid, 'items_data': item}, 
-                            {'_id': 1, 'count': 1}).to_list(None) 
+                            {'_id': 1, 'count': 1}).to_list(None)  # type: ignore
     find_list = list(find_items)
 
     for iterable_item in find_list: max_count += iterable_item['count']
@@ -273,7 +273,7 @@ async def DowngradeItem(userid: int, item: dict, characteristic: str, unit: int)
     """
     max_count, max_char = 0, 0
     find_items = await items.find({'owner_id': userid, 
-                                   'items_data': item}).to_list(None) 
+                                   'items_data': item}).to_list(None)  # type: ignore
     find_list = list(find_items)
 
     for iterable_item in find_list:
@@ -327,7 +327,7 @@ async def CheckCountItemFromUser(userid: int, count: int, itemid: str,
     item = get_item_dict(itemid, preabil)
     max_count = 0
     find_items = await items.find({'owner_id': userid, 'items_data': item}, 
-                            {'_id': 1, 'count': 1}).to_list(None) 
+                            {'_id': 1, 'count': 1}).to_list(None)  # type: ignore
     find_list = list(find_items)
 
     for iterable_item in find_list: max_count += iterable_item['count']

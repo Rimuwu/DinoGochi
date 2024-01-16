@@ -3113,7 +3113,7 @@
         },
         "drop_items": [
             {
-                "abilities": {"interact": false},
+                "abilities": {},
                 "chance": [
                     1,
                     50
@@ -3125,7 +3125,7 @@
                 "id": "mystic_egg"
             },
             {
-                "abilities": {"interact": false},
+                "abilities": {},
                 "chance": [
                     1,
                     50
