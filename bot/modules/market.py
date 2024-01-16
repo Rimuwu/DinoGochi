@@ -521,8 +521,6 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                     items_status.append(status)
                     n += 1
 
-                await take_coins(userid, col_price, True)
-
                 if not all(items_status):
                     return False, 'error_no_items'
                 else:
@@ -534,10 +532,10 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                         if 'abillities' in item: abil = item['abillities']
                         else: abil = {}
 
-                        await AddItemToUser(userid, item_id, itme_col * col, abil)
+                        await AddItemToUser(owner, item_id, itme_col * col, abil)
                         await RemoveItemFromUser(userid, item_id, itme_col * col, abil)
 
-                    await take_coins(userid, -col_price, True)
+                    await take_coins(userid, col_price, True)
 
             elif p_tp == 'item_items':
                 items_status, n = [], 0
