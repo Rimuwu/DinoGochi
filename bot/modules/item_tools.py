@@ -109,10 +109,10 @@ async def end_craft(transmitted_data: dict):
         if iteriable_item not in inv:
             item_id = iteriable_item['item_id']
 
-            count = materials['delete'].count(iteriable_item)
+            col = materials['delete'].count(iteriable_item)
             inv.append(iteriable_item)
 
-            await RemoveItemFromUser(userid, item_id, count)
+            await RemoveItemFromUser(userid, item_id, col)
 
     # Добавление предметов
     for create_data in data_item['create']:
