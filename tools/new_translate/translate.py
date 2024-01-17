@@ -12,6 +12,7 @@ DetectorFactory.seed = 0
 ex = os.path.dirname(__file__) # Путь к этому файлу
 
 base_names = {}
+cash_replaces = {}
 
 with open(f'{ex}/settings.json', encoding='utf-8') as f: 
     """ Загружаем константы из файла найстроек """
@@ -32,10 +33,10 @@ with open(f'{ex}/settings.json', encoding='utf-8') as f:
 def undoreplace(text: str, to_lang: str):
     """ Функция из закодированного для переводчика текста, превращает его в читаемый
     """
-    global replace_words
+    replaces = dict(list(cash_replaces.items()) + list(replace_words.items()))
 
-    for _ in range(4):
-        for key, data in replace_words.items():
+    for _ in range(6):
+        for key, data in replaces.items():
             txt = None
 
             if data['translate']:
@@ -43,7 +44,7 @@ def undoreplace(text: str, to_lang: str):
                     txt = data['text']
                 else:
                     txt = translator(data['text'], to_lang)
-            else: 
+            else:
                 txt = data['text']
 
             if 'sml' in data:
@@ -56,14 +57,13 @@ def undoreplace(text: str, to_lang: str):
 def replace_simbols(text: str):
     """ Функция заменяет специальные символы на коды, для корректности работы словаря
     """
-    global replace_words
 
     for key, item in replace_words.items(): text = text.replace(item['text'], key)
     word, st = '', False
 
     for i1 in emoji.emoji_list(text):
-        k_name = f'({len(replace_words)}{len(replace_words)}!)'
-        replace_words[k_name] = {
+        k_name = f'({len(cash_replaces)}{len(cash_replaces)}!)'
+        cash_replaces[k_name] = {
             'text': i1['emoji'],
             'translate': False
         }
@@ -73,6 +73,7 @@ def replace_simbols(text: str):
     word, st = '', False
 
     for i2 in text:
+        k_name = ''
         if i2 == '{':
             st = True
             word += i2
@@ -83,17 +84,24 @@ def replace_simbols(text: str):
 
             word = word[1:]
 
-            k_name = f'({len(replace_words)}{len(replace_words)}!)'
-            replace_words[k_name] = {
-                'text': word,
-                'translate': False
-            }
+            add = True
+            for repl_key, repl_value in cash_replaces.items():
+                if repl_value['text'] == word:
+                    add = False
+                    k_name = repl_key
+            if add:
+                k_name = f'({len(cash_replaces)}{len(cash_replaces)}!)'
+                cash_replaces[k_name] = {
+                    'text': word,
+                    'translate': False
+                }
             text = text.replace(word, k_name)
             word = ''
 
         if st: word += i2
 
     for i3 in text:
+        k_name = '1'
         if i3 in one_replace_s and st: 
             st = False
             translate_st = True
@@ -101,13 +109,21 @@ def replace_simbols(text: str):
             end_word = word[1:-1]
 
             if len(end_word) == 1: translate_st = False
+            if end_word in cash_replaces.keys(): translate_st = False
 
-            k_name = f'({len(replace_words)}{len(replace_words)}!)'
-            replace_words[k_name] = {
-                'text': end_word,
-                'translate': translate_st,
-                'sml': i3
-            }
+            add = True
+            for repl_key, repl_value in cash_replaces.items():
+                if repl_value['text'] == end_word and repl_value['sml'] == i3:
+                    add = False
+                    k_name = repl_key
+                    break
+            if add:
+                k_name = f'({len(cash_replaces)}{len(cash_replaces)}!)'
+                cash_replaces[k_name] = {
+                    'text': end_word,
+                    'translate': translate_st,
+                    'sml': i3
+                }
             text = text.replace(word, k_name)
             word = ''
 
@@ -139,15 +155,17 @@ def translator(text: str, to_lang:str, trans='bing') -> str:
             else:
                 r_t = random.uniform(0, 1)
                 time.sleep(r_t)
-
-                ret = translators.translate_text(text, 
-                    from_language=from_language,
-                    to_language=to_lang, translator=trans) 
-                pprint({
-                    "Text in": text, 'translator': trans, 
-                    'Text out': ret, 'from_language': from_language,
-                    'to_lang': to_lang}
-                )
+                
+                try:
+                    ret = translators.translate_text(text, 
+                        from_language=from_language,
+                        to_language=to_lang, translator=trans) 
+                    pprint({
+                        "Text in": text, 'translator': trans, 
+                        'Text out': ret, 'from_language': from_language,
+                        'to_lang': to_lang}
+                    )
+                except: return ''
                 base_names[text] = ret
                 return ret # type: ignore
     return text
@@ -160,7 +178,6 @@ def text_translate(text: str, to_lang: str,
     new_text = ''
 
     try:
-    # if 1:
         new_text = translator(text, to_lang, trans)
     except: pass
 
@@ -168,7 +185,6 @@ def text_translate(text: str, to_lang: str,
         rand_trans = random.choice(translators_names)
         new_text = text_translate(text, to_lang, rand_trans, False)
 
-    new_text = undoreplace(new_text, to_lang)
     return new_text
 
 def remove_non_dict_or_list(dct):
@@ -260,6 +276,7 @@ def translate(data, to_lang:str):
     if isinstance(data, (int, float)): data = data
     elif isinstance(data, str): 
         data = text_translate(data, to_lang)
+        data = undoreplace(data, to_lang)
 
     elif isinstance(data, dict):
         out_data = data.copy()
@@ -360,21 +377,17 @@ def way_check(main_direct, damp_direct, way: str, non: bool = True):
 
 
 def main():
-    global replace_words, base_names
+    global base_names, cash_replaces
     to_langs = get_translate_langs() # Языки на которые надо переводить
 
     for lang_code in to_langs:
-
+        cash_replaces = {}
         base_names = {}
-        with open(f'{ex}/settings.json', encoding='utf-8') as f: 
-            settings = json.load(f) # type: dict
-            replace_words = settings['replace_words']
-        
+
         damp = get_damp(lang_code)
         trs_lang = get_lang(lang_code)
 
         main_lang = get_lang(main_code)[main_code] # Данные главного языка
-
 
         """ Создаёт главный ключ языка если нет """
         if lang_code not in trs_lang:

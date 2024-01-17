@@ -7,6 +7,11 @@
     },
 
     "replace_words": {
+        "(999!)": {"text": "       ", "translate": false},
+        "(888!)": {"text": "      ", "translate": false},
+        "(777!)": {"text": "     ", "translate": false},
+        "(666!)": {"text": "    ", "translate": false},
+        "(555!)": {"text": "   ", "translate": false},
         "(444!)": {"text": "\n\n\n\n", "translate": false},
         "(333!)": {"text": "\n\n\n", "translate": false},
         "(222!)": {"text": "\n\n", "translate": false},
