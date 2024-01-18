@@ -10,6 +10,7 @@ from langdetect import DetectorFactory, detect
 
 DetectorFactory.seed = 0
 ex = os.path.dirname(__file__) # Путь к этому файлу
+#"langs_path": "../../bot/localization",
 
 base_names = {}
 cash_replaces = {}
@@ -39,7 +40,7 @@ def undoreplace(text: str, to_lang: str):
         for key, data in replaces.items(): # Перебираем все ключи с сохранённым текстом
             txt = None
 
-            if text.find(key): # Проверяем есть ли ключ в тексте
+            if text.find(key) or text.find(key) == 0: # Проверяем есть ли ключ в тексте
                 if data['translate']:
                     if len(data['text']) > 3 and data['text'][1] == '(' and data['text'][-2] == ')': 
                         # Если текста состоит из ключа, то его нет смысла переводить
@@ -174,7 +175,7 @@ def translator(text: str, to_lang:str, trans='bing') -> str:
                     pprint({
                         "Text in": text, 'translator': trans, 
                         'Text out': ret, 'from_language': from_language,
-                        'to_lang': to_lang}
+                        'to_lang': to_lang, 'detect': lang}
                     )
                 except: return ''
                 base_names[text] = ret
@@ -491,4 +492,7 @@ def main():
 
             save(trs_lang, lang_code)
             save(damp, lang_code, 'damps')
+
+st = time.time()
 main()
+print(time.time() - st)
