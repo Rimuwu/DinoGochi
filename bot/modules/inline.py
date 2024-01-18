@@ -69,6 +69,10 @@ def item_info_markup(item: dict, lang):
                             callback_data=f'ns_craft {code} {cr_dct_id}')
                 )
 
+    if 'buyer' not in item_data or (item_data['buyer'] == True):
+        # Скупщик
+        pass
+
     return markup_inline
 
 def dino_profile_markup(add_acs_button: bool, lang: str, 
