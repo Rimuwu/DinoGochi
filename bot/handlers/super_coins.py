@@ -7,6 +7,7 @@ from bot.modules.localization import  get_lang, t, get_data
 from bot.modules.over_functions import send_message
 from bot.modules.user import premium
 from bot.modules.item import counts_items, AddItemToUser
+from bot.modules.advert import create_ads_data
 from bot.const import GAME_SETTINGS
 
 users = mongo_client.user.users
@@ -18,7 +19,7 @@ async def main_message(user_id):
 
     lang = await get_lang(user_id)
     user = await users.find_one({"userid": user_id})
-    ads_cabinet = await ads.find_one({'userid': user_id})
+    ads_cabinet = await create_ads_data(user_id)
     if user and ads_cabinet:
         coins = user['super_coins']
         dollars = round(coins*0.0015, 4)

@@ -48,6 +48,7 @@ puhs = mongo_client.market.puhs
 items = mongo_client.items.items
 users = mongo_client.user.users
 friends = mongo_client.user.friends
+ads = mongo_client.user.ads
 
 @bot.message_handler(pass_bot=True, commands=['add_item', 'item_add'], is_admin=True)
 async def command(message):
@@ -173,3 +174,9 @@ async def status(message):
     
     dino = dinos[0]
     print(await check_status(dino._id))
+
+@bot.message_handler(pass_bot=True, commands=['ddt'], is_admin=True)
+async def ddt(message):
+    await ads.update_many(
+        {'limit': {'$lte': 1800}}, {'$set': {'limit': 1800}}
+    )
