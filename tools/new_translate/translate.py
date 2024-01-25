@@ -10,6 +10,7 @@ from langdetect import DetectorFactory, detect
 
 DetectorFactory.seed = 0
 ex = os.path.dirname(__file__) # Путь к этому файлу
+#"langs_path": "../../bot/localization",
 
 base_names = {}
 cash_replaces = {}
@@ -33,35 +34,40 @@ with open(f'{ex}/settings.json', encoding='utf-8') as f:
 def undoreplace(text: str, to_lang: str):
     """ Функция из закодированного для переводчика текста, превращает его в читаемый
     """
-    replaces = dict(list(cash_replaces.items()) + list(replace_words.items()))
+    replaces = dict(list(cash_replaces.items()) + list(replace_words.items())) # Объединяем словари для проверки кодов
 
-    for _ in range(6):
-        for key, data in replaces.items():
+    for _ in range(6): # 6 раз - потому что в коде уже может быть ссылка на другой код
+        for key, data in replaces.items(): # Перебираем все ключи с сохранённым текстом
             txt = None
 
-            if data['translate']:
-                if len(data['text']) > 3 and data['text'][1] == '(' and data['text'][-2] == ')': 
-                    txt = data['text']
+            if text.find(key) or text.find(key) == 0: # Проверяем есть ли ключ в тексте
+                if data['translate']:
+                    if len(data['text']) > 3 and data['text'][1] == '(' and data['text'][-2] == ')': 
+                        # Если текста состоит из ключа, то его нет смысла переводить
+                        txt = data['text']
+                    else:
+                        txt = translator(data['text'], to_lang)
                 else:
-                    txt = translator(data['text'], to_lang)
-            else:
-                txt = data['text']
+                    txt = data['text']
 
-            if 'sml' in data:
-                txt = data['sml'] + txt + data['sml']
+                if 'sml' in data:
+                    # Если мы должны вставить символ форматирования
+                    txt = data['sml'] + txt + data['sml']
 
-            if not txt: txt = key
-            text = text.replace(key, txt)
+                if not txt: txt = key
+                text = text.replace(key, txt)
     return text
 
 def replace_simbols(text: str):
     """ Функция заменяет специальные символы на коды, для корректности работы словаря
     """
 
+    # Заменяем все заранее известные символы
     for key, item in replace_words.items(): text = text.replace(item['text'], key)
     word, st = '', False
 
-    for i1 in emoji.emoji_list(text):
+    for i1 in emoji.emoji_list(text): # Получеам эмоджи из текста
+        # Прячем за кодом эмоджи
         k_name = f'({len(cash_replaces)}{len(cash_replaces)}!)'
         cash_replaces[k_name] = {
             'text': i1['emoji'],
@@ -73,6 +79,8 @@ def replace_simbols(text: str):
     word, st = '', False
 
     for i2 in text:
+        # Убираем все конструкции вставки переменных (прячим за кодом)
+        # {name} -> (1111!)
         k_name = ''
         if i2 == '{':
             st = True
@@ -81,9 +89,9 @@ def replace_simbols(text: str):
         elif i2 == '}':
             st = False
             word += i2
-
             word = word[1:]
 
+            # Это означает, что название вставки перемнной закончена, можем сохранять
             add = True
             for repl_key, repl_value in cash_replaces.items():
                 if repl_value['text'] == word:
@@ -102,6 +110,7 @@ def replace_simbols(text: str):
 
     for i3 in text:
         k_name = '1'
+        # Замена конструкций форматирования *такие например* -> (1212!)
         if i3 in one_replace_s and st: 
             st = False
             translate_st = True
@@ -150,20 +159,23 @@ def translator(text: str, to_lang:str, trans='bing') -> str:
         except: lang = 'emoji'
 
         if lang not in ['en', 'it', 'emoji']:
-
+            
+            # Если текст есть в базе, его не надо переводить снова
             if text in base_names: return base_names[text]
             else:
+                # Попытка не отхватывать люлей
                 r_t = random.uniform(0, 1)
                 time.sleep(r_t)
-                
+
                 try:
+                    # Перевод
                     ret = translators.translate_text(text, 
                         from_language=from_language,
                         to_language=to_lang, translator=trans) 
                     pprint({
                         "Text in": text, 'translator': trans, 
                         'Text out': ret, 'from_language': from_language,
-                        'to_lang': to_lang}
+                        'to_lang': to_lang, 'detect': lang}
                     )
                 except: return ''
                 base_names[text] = ret
@@ -182,12 +194,15 @@ def text_translate(text: str, to_lang: str,
     except: pass
 
     if new_text == '':
+        # Если переводчик возвращает пустоту, значит он вызывает ошибку, значит он скорее всего перегрелся от запросов, рандомим другой переводчик
         rand_trans = random.choice(translators_names)
         new_text = text_translate(text, to_lang, rand_trans, False)
 
     return new_text
 
 def remove_non_dict_or_list(dct):
+    """ Функция заменяет вcе значения ключей на NOTEXT, тем самым копируя структуру словаря
+    """
     keys_to_remove = []
     for key, value in dct.items():
         if not isinstance(value, (dict, list)):
@@ -201,12 +216,12 @@ def remove_non_dict_or_list(dct):
                 else:
                     value[value.index(item)] = 'NOTEXT'
 
-    for key in keys_to_remove:
-        dct[key] = 'NOTEXT'
-
+    for key in keys_to_remove: dct[key] = 'NOTEXT'
     return dct
 
 def replace_data(dct: dict, way: str, new) -> dict:
+    """ Заменяет данные в ключе словаря, идя по пути ключей way
+    """
     lst = way.split('.')
     new_dct = dct.copy()
     current_dict = new_dct
@@ -271,7 +286,8 @@ def get_translate_langs():
     return res
 
 def translate(data, to_lang:str):
-    """Возвращает переведённый текст"""
+    """ Распределяет какие типы надо переводить, а что надо оставить в том же виде
+    """
 
     if isinstance(data, (int, float)): data = data
     elif isinstance(data, str): 
@@ -305,7 +321,7 @@ def save(data, lang, dr='languages'):
 
 
 def dict_way(dct:dict, way:str):
-    """ Получает значение следуя по пути"""
+    """ Получает значение следуя по пути ключей way"""
     dct = dct.copy()
     new_dct = dct
 
@@ -401,7 +417,7 @@ def main():
 
         """ Удаление удалённых ключей """
         for key, value in damp[lang_code].items():
-            res = key_check(main_lang.copy(), key)
+            res = way_check(damp[lang_code], main_lang, key)
             print(res, 'del')
 
             for way in res:
@@ -435,10 +451,13 @@ def main():
                 ed = True
                 for nn_way in res:
                     trs_lang[lang_code] = replace_data(trs_lang[lang_code].copy(), nn_way, dict_way(rm_dct.copy(), nn_way))
+
+                    damp[lang_code] = replace_data(damp[lang_code].copy(), nn_way, dict_way(rm_dct.copy(), nn_way))
         if ed:
             save(trs_lang, lang_code)
-            save(trs_lang, lang_code, 'damps')
+            save(damp, lang_code, 'damps')
             main_lang = get_lang(main_code)[main_code]
+            damp = get_damp(lang_code)
 
 
         """ Определение не достающих ключей"""
@@ -453,10 +472,18 @@ def main():
 
         """ Перевод ключей """
         for way in nt_keys:
-            trs_lang[lang_code] = replace_data(
-                trs_lang[lang_code].copy(), way, 
-                    translate(dict_way(main_lang.copy(), way), lang_code)
-                        )
+            last_key = way.split('.')[-1]
+
+            if last_key in ignore_translate_keys:
+                trs_lang[lang_code] = replace_data(
+                    trs_lang[lang_code].copy(), way, 
+                        dict_way(main_lang.copy(), way)
+                            )
+            else:
+                trs_lang[lang_code] = replace_data(
+                    trs_lang[lang_code].copy(), way, 
+                        translate(dict_way(main_lang.copy(), way), lang_code)
+                            )
 
             damp[lang_code] = replace_data(
                 damp[lang_code].copy(), way, 
@@ -465,4 +492,7 @@ def main():
 
             save(trs_lang, lang_code)
             save(damp, lang_code, 'damps')
+
+st = time.time()
 main()
+print(time.time() - st)

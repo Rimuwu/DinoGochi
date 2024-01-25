@@ -353,5 +353,14 @@
         "ec": {"items": ["egg_case"], "price": 200},
         "rc": {"items": ["recipe_chest"], "price": 200},
         "cf": {"items": ["chest_food"], "price": 200}
+    },
+
+    "buyer": {
+        "common": 1,
+        "uncommon": 20,
+        "rare": 50,
+        "mystical": 100,
+        "legendary": 1000,
+        "mythical": 10000
     }
 } 

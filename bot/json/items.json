@@ -2719,6 +2719,7 @@
     },
     "gift_2023": {
         "cant_sell": true,
+        "buyer": false,
         "col_repit": {
             "act": 1,
             "type": "static"
@@ -3107,6 +3108,7 @@
     },
     "gift_2024": {
         "cant_sell": false,
+        "buyer": false,
         "col_repit": {
             "act": 1,
             "type": "static"

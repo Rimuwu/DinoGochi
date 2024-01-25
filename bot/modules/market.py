@@ -486,6 +486,29 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
         if col > product['in_stock'] - product['bought'] and product['type'] != 'auction':
             return False, 'erro_max_col'
         else:
+            if p_tp != 'auction':
+                if p_tp not in ['coins_items', 'items_items']: 
+                    earned = col * product['price']
+
+                await sellers.update_one({'owner_id': owner}, {"$inc": {
+                    'earned': earned,
+                    'conducted': col
+                }})
+
+                await products.update_one({'_id': pro_id}, 
+                                              {'$inc': {'bought': col}})
+
+                if product['bought'] + col >= product['in_stock']:
+                    await delete_product(pro_id)
+
+                # Уведомление о покупке
+                owner_lang = await get_lang(owner)
+                preview = preview_product(
+                    product['items'], product['price'], product['type'], owner_lang)
+                await user_notification(owner, 'product_buy', owner_lang,
+                                        preview=preview, col=col, price=col * product['price'], name=name, alt_id=product['alt_id'])
+
+
             if p_tp == 'items_coins':
                 col_price = col * product['price']
                 two_percent = (col_price // 100) * 2
@@ -578,28 +601,6 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                 if status:
                     await new_participant(pro_id, userid, col, name, lang)
                 else: return False, 'error_no_coins'
-
-            if p_tp != 'auction':
-                if p_tp not in ['coins_items', 'items_items']: 
-                    earned = col * product['price']
-
-                await sellers.update_one({'owner_id': owner}, {"$inc": {
-                    'earned': earned,
-                    'conducted': col
-                }})
-
-                await products.update_one({'_id': pro_id}, 
-                                              {'$inc': {'bought': col}})
-
-                # Уведомление о покупке
-                owner_lang = await get_lang(owner)
-                preview = preview_product(
-                    product['items'], product['price'], product['type'], owner_lang)
-                await user_notification(owner, 'product_buy', owner_lang,
-                                        preview=preview, col=col, price=col * product['price'], name=name, alt_id=product['alt_id'])
-
-                if product['bought'] + col >= product['in_stock']:
-                    await delete_product(pro_id)
 
             if p_tp != 'auction': return True, 'ok'
             else: return True, 'participant'
