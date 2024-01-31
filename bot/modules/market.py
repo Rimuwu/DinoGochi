@@ -486,7 +486,10 @@ async def upd_data(p_tp:str, col: int, product: dict, owner:int, pro_id: ObjectI
         'conducted': col
     }})
 
-    await products.update_one({'_id': pro_id}, 
+    if product['bought'] + col >= product['in_stock']:
+        await delete_product(pro_id)
+    else:
+        await products.update_one({'_id': pro_id}, 
                                     {'$inc': {'bought': col}})
 
     # Уведомление о покупке
