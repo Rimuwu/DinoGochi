@@ -474,6 +474,29 @@ def preview_product(items: list, price, ptype: str, lang: str):
 
     return text
 
+async def upd_data(p_tp:str, col: int, product: dict, owner:int, pro_id: ObjectId, name: str):
+    """ Обновление карточки товара (Для всех типов кроме аукциона)"""
+    earned = 0
+
+    if p_tp not in ['coins_items', 'items_items']: 
+        earned = col * product['price']
+
+    await sellers.update_one({'owner_id': owner}, {"$inc": {
+        'earned': earned,
+        'conducted': col
+    }})
+
+    await products.update_one({'_id': pro_id}, 
+                                    {'$inc': {'bought': col}})
+
+    # Уведомление о покупке
+    owner_lang = await get_lang(owner)
+    preview = preview_product(
+        product['items'], product['price'], product['type'], owner_lang)
+    await user_notification(owner, 'product_buy', owner_lang,
+                            preview=preview, col=col, price=col * product['price'], name=name, alt_id=product['alt_id'])
+
+
 async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: str=''):
     """ Покупка продукта / участние в аукционе
     """
@@ -481,34 +504,10 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
     if product:
         p_tp = product['type']
         owner = product['owner_id']
-        earned = 0
 
         if col > product['in_stock'] - product['bought'] and product['type'] != 'auction':
             return False, 'erro_max_col'
         else:
-            if p_tp != 'auction':
-                if p_tp not in ['coins_items', 'items_items']: 
-                    earned = col * product['price']
-
-                await sellers.update_one({'owner_id': owner}, {"$inc": {
-                    'earned': earned,
-                    'conducted': col
-                }})
-
-                await products.update_one({'_id': pro_id}, 
-                                              {'$inc': {'bought': col}})
-
-                if product['bought'] + col >= product['in_stock']:
-                    await delete_product(pro_id)
-
-                # Уведомление о покупке
-                owner_lang = await get_lang(owner)
-                preview = preview_product(
-                    product['items'], product['price'], product['type'], owner_lang)
-                await user_notification(owner, 'product_buy', owner_lang,
-                                        preview=preview, col=col, price=col * product['price'], name=name, alt_id=product['alt_id'])
-
-
             if p_tp == 'items_coins':
                 col_price = col * product['price']
                 two_percent = (col_price // 100) * 2
@@ -516,6 +515,8 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                 status = await take_coins(userid, -col_price, True)
 
                 if status:
+                    await upd_data(p_tp, col, product, owner, pro_id, name)
+
                     col_items = item_list(product['items'])
                     for item in col_items:
                         itme_col = item['count']
@@ -547,6 +548,8 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                 if not all(items_status):
                     return False, 'error_no_items'
                 else:
+                    await upd_data(p_tp, col, product, owner, pro_id, name)
+
                     col_items = item_list(product['items'])
                     for item in col_items:
                         itme_col = item['count']
@@ -575,7 +578,9 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
 
                 if not all(items_status):
                     return False, 'error_no_items'
-                else: 
+                else:
+                    await upd_data(p_tp, col, product, owner, pro_id, name)
+
                     col_items = item_list(product['price'])
                     for item in col_items:
                         itme_col = item['count']
