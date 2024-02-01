@@ -7,6 +7,7 @@ from bot.modules.localization import  get_lang, t, get_data
 from bot.modules.over_functions import send_message
 from bot.modules.user import premium
 from bot.modules.item import counts_items, AddItemToUser
+from bot.modules.advert import create_ads_data
 from bot.const import GAME_SETTINGS
 
 users = mongo_client.user.users
@@ -36,7 +37,8 @@ async def main_message(user_id):
 async def super_c(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
-
+    
+    await create_ads_data(userid)
     text, markup = await main_message(userid)
     await send_message(chatid, text, reply_markup=markup, parse_mode="Markdown")
 
@@ -71,17 +73,17 @@ async def super_coins(call: CallbackQuery):
         a = 0
         for key, value in shop_items.items():
             a += 1
-            key_text = f'{a}. {value["price"]} ➞ {counts_items(value["items"], lang)}\n'
-            text += key_text
+            key_text = f'{value["price"]} ➞ {counts_items(value["items"], lang)}\n'
+            text += f'*{a}.* ' + key_text
 
-            mrk_list.append({key_text: f"super_shop buy {key}"})
+            mrk_list.append({f'{a}. ' + key_text: f"super_shop buy {key}"})
 
         mrk_list.append(
             {t('buttons_name.back',lang): 'super_shop back'})
 
         markup = list_to_inline(mrk_list, 2)
         await bot.edit_message_text(text, chatid, call.message.id,
-                                    reply_markup=markup)
+                                    reply_markup=markup, parse_mode='Markdown')
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('ads_limit'), private=True)

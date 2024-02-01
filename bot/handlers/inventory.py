@@ -2,7 +2,7 @@
 from fuzzywuzzy import fuzz
 from telebot.types import CallbackQuery, Message
 
-from bot.config import mongo_client
+from bot.const import GAME_SETTINGS
 from bot.exec import bot
 from bot.modules.data_format import seconds_to_str, user_name
 from bot.modules.dinosaur import incubation_egg
@@ -322,7 +322,7 @@ async def ns_craft(call: CallbackQuery):
 
 
 async def ns_end(count, transmitted_data: dict):
-    
+
     userid = transmitted_data['userid']
     item = transmitted_data['item']
     ns_id = transmitted_data['ns_id']
@@ -355,3 +355,42 @@ async def ns_end(count, transmitted_data: dict):
     else:
         await send_message(chatid, t('ns_craft.not_materials', lang),
                            reply_markup = await m(userid, 'last_menu', lang))
+
+
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('buyer'), private=True)
+async def buyer(call: CallbackQuery):
+    call_data = call.data.split()
+    chatid = call.message.chat.id
+    userid = call.from_user.id
+    lang = await get_lang(call.from_user.id)
+
+    item_decode = decode_item(call_data[1])
+    item = get_item_data(item_decode['item_id'])
+    item_rank = item['rank']
+
+    buyer_data = GAME_SETTINGS['buyer'][item_rank]
+    one_col = buyer_data['one_col']
+    price = buyer_data['price']
+    emoji = get_name(item_decode['item_id'], lang)[0]
+
+    transmitted_data = {
+        'item': item,
+        'one_col': one_col,
+        'price': price
+    }
+    await ChooseIntState(buyer_end, userid, chatid, lang, max_int=25, min_int=one_col, transmitted_data=transmitted_data)
+    await send_message(chatid, t('buyer.choose', lang,
+                                 emoji=emoji, one_col=one_col,
+                                 price=price), 
+                       reply_markup=count_markup(25, lang))
+
+
+async def buyer_end(count, transmitted_data: dict):
+
+    userid = transmitted_data['userid']
+    item = transmitted_data['item']
+    lang = transmitted_data['lang']
+    chatid = transmitted_data['chatid']
+
+    one_col = transmitted_data['one_col']
+    price = transmitted_data['price']

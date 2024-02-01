@@ -197,7 +197,7 @@ async def RemoveItemFromUser(userid: int, itemid: str,
     """Удаление предмета из инвентаря
        return
        True - всё нормально, удалил
-       
+
        False - предмета нет или количесвто слишком большое
     """
     assert count >= 0, f'RemoveItemFromUser, count == {count}'

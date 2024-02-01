@@ -46,6 +46,14 @@ def item_info_markup(item: dict, lang):
 
     markup_inline = list_to_inline([buttons_dict], 2)
 
+    if 'buyer' not in item_data or (item_data['buyer'] == True):
+        # Скупщик
+
+        markup_inline.add(
+                InlineKeyboardButton(text=loc_data['buyer'],
+                            callback_data=f'buyer {code}')
+                )
+
     if item_data['type'] == 'recipe':
         for item_cr in item_data['create']:
             data = get_item_dict(item_cr['item'])
@@ -68,10 +76,6 @@ def item_info_markup(item: dict, lang):
                 InlineKeyboardButton(text=bt_text,
                             callback_data=f'ns_craft {code} {cr_dct_id}')
                 )
-
-    if 'buyer' not in item_data or (item_data['buyer'] == True):
-        # Скупщик
-        pass
 
     return markup_inline
 

@@ -356,11 +356,29 @@
     },
 
     "buyer": {
-        "common": 1,
-        "uncommon": 20,
-        "rare": 50,
-        "mystical": 100,
-        "legendary": 1000,
-        "mythical": 10000
+        "common": {
+            "price": 1,
+            "one_col": 4
+        },
+        "uncommon": {
+            "price": 1,
+            "one_col": 4
+        },
+        "rare": {
+            "price": 250,
+            "one_col": 5
+        },
+        "mystical": {
+            "price": 3000,
+            "one_col": 3
+        },
+        "legendary": {
+            "price": 10000,
+            "one_col": 2
+        },
+        "mythical": {
+            "price": 100000,
+            "one_col": 1
+        }
     }
 } 
