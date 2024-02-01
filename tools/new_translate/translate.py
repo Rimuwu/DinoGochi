@@ -329,7 +329,7 @@ def dict_way(dct:dict, way:str):
         if way_key.isdigit() and isinstance(new_dct, list):
             way_key = int(way_key)
 
-        if way_key in new_dct or isinstance(way_key, int):
+        elif way_key in new_dct or isinstance(way_key, int):
             if way_key or way_key == 0:
                 try:
                     new_dct = new_dct[way_key]  # type: ignore
@@ -417,7 +417,7 @@ def main():
 
         """ Удаление удалённых ключей """
         for key, value in damp[lang_code].items():
-            res = way_check(damp[lang_code], main_lang, key)
+            res = key_check(main_lang, key)
             print(res, 'del')
 
             for way in res:
