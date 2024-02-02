@@ -486,11 +486,11 @@ async def upd_data(p_tp:str, col: int, product: dict, owner:int, pro_id: ObjectI
         'conducted': col
     }})
 
+    await products.update_one({'_id': pro_id}, 
+                                    {'$inc': {'bought': col}})
+
     if product['bought'] + col >= product['in_stock']:
         await delete_product(pro_id)
-    else:
-        await products.update_one({'_id': pro_id}, 
-                                    {'$inc': {'bought': col}})
 
     # Уведомление о покупке
     owner_lang = await get_lang(owner)
@@ -527,6 +527,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                         item_id = item['item_id']
                         if 'abillities' in item: abil = item['abillities']
                         else: abil = {}
+                        print('sdfk')
                         await AddItemToUser(userid, item_id, itme_col * col, abil)
 
                     # Выдача монет владельцу
