@@ -12,7 +12,7 @@ from bot.modules.inventory_tools import (InventoryStates, back_button,
                                          inventory_pages, search_menu,
                                          send_item_info, start_inv, swipe_page)
 from bot.modules.item import (CheckItemFromUser, RemoveItemFromUser,
-                              counts_items, decode_item)
+                              counts_items, decode_item, CheckCountItemFromUser)
 from bot.modules.item import get_data as get_item_data
 from bot.modules.item import get_item_dict, get_name
 from bot.modules.item_tools import (AddItemToUser, CheckItemFromUser,
@@ -23,7 +23,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.markup import count_markup
 from bot.modules.over_functions import send_message
 from bot.modules.states_tools import ChooseIntState
-from bot.modules.user import User
+from bot.modules.user import User, take_coins
 
 async def cancel(message):
     lang = await get_lang(message.from_user.id)
@@ -374,15 +374,17 @@ async def buyer(call: CallbackQuery):
     emoji = get_name(item_decode['item_id'], lang)[0]
 
     transmitted_data = {
-        'item': item,
+        'item': item_decode,
         'one_col': one_col,
         'price': price
     }
-    await ChooseIntState(buyer_end, userid, chatid, lang, max_int=25, min_int=one_col, transmitted_data=transmitted_data)
+    await ChooseIntState(buyer_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
+
     await send_message(chatid, t('buyer.choose', lang,
                                  emoji=emoji, one_col=one_col,
                                  price=price), 
-                       reply_markup=count_markup(25, lang))
+                       reply_markup=count_markup(25, lang),
+                       parse_mode='Markdown')
 
 
 async def buyer_end(count, transmitted_data: dict):
@@ -393,4 +395,23 @@ async def buyer_end(count, transmitted_data: dict):
     chatid = transmitted_data['chatid']
 
     one_col = transmitted_data['one_col']
-    price = transmitted_data['price']
+    price = transmitted_data['price'] * count
+
+    if 'abilities' in item:
+        preabil = item['abilities']
+    else: preabil = {}
+
+    need_col = one_col * count
+    status = await CheckCountItemFromUser(userid, need_col, 
+                                          item['item_id'], preabil.copy())
+
+    if status:
+
+        await RemoveItemFromUser(userid, item['item_id'], need_col, preabil)
+        await take_coins(userid, price, True)
+
+        await send_message(chatid, t('buyer.ok', lang), 
+                           reply_markup=await m(userid, 'last_menu', lang))
+    else:
+        await send_message(chatid, t('buyer.no', lang), 
+                           reply_markup=await m(userid, 'last_menu', lang))

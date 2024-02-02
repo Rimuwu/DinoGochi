@@ -357,11 +357,11 @@
 
     "buyer": {
         "common": {
-            "price": 1,
-            "one_col": 4
+            "price": 10,
+            "one_col": 6
         },
         "uncommon": {
-            "price": 1,
+            "price": 50,
             "one_col": 4
         },
         "rare": {
