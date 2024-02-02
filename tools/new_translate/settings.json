@@ -2,43 +2,47 @@
     "replace_codes": {
         "myMemory": {
             "ru": "ru-RU",
-            "uk": "uk-UA"
+            "uk": "uk-UA",
+            "es": "es-ES"
+        },
+        "modernMt": {
+            "es": "es-ES"
         }
     },
 
     "replace_words": {
-        "(120!)": {"text": "        ", "translate": false},
-        "(119!)": {"text": "       ", "translate": false},
-        "(118!)": {"text": "      ", "translate": false},
-        "(117!)": {"text": "     ", "translate": false},
-        "(116!)": {"text": "    ", "translate": false},
-        "(115!)": {"text": "   ", "translate": false},
-        "(114!)": {"text": "\n\n\n\n", "translate": false},
-        "(113!)": {"text": "\n\n\n", "translate": false},
-        "(112!)": {"text": "\n\n", "translate": false},
-        "(111!)": {"text": "\n", "translate": false},
-        "(100!)": {"text": "ᴜsᴇʀ ᴘʀᴏғɪʟᴇ", "translate": false},
-        "(200!)": {"text": "ʟᴇᴠᴇʟ", "translate": false},
-        "(300!)": {"text": "ᴅɪɴᴏsᴀᴜʀs", "translate": false},
-        "(400!)": {"text": "ɪɴᴠᴇɴᴛᴏʀʏ", "translate": false},
-        "(500!)": {"text": "->", "translate": false},
-        "(801!)": {"text": "</code>", "translate": false},
-        "(800!)": {"text": "<code>", "translate": false},
-        "(901!)": {"text": "<i>", "translate": false},
-        "(900!)": {"text": "</i>", "translate": false},
-        "(700!)": {"text": "<b>", "translate": false},
-        "(701!)": {"text": "</b>", "translate": false}
+        "(120)": {"text": "        ", "translate": false},
+        "(119)": {"text": "       ", "translate": false},
+        "(118)": {"text": "      ", "translate": false},
+        "(117)": {"text": "     ", "translate": false},
+        "(116)": {"text": "    ", "translate": false},
+        "(115)": {"text": "   ", "translate": false},
+        "(114)": {"text": "\n\n\n\n", "translate": false},
+        "(113)": {"text": "\n\n\n", "translate": false},
+        "(112)": {"text": "\n\n", "translate": false},
+        "(111)": {"text": "\n", "translate": false},
+        "(100)": {"text": "ᴜsᴇʀ ᴘʀᴏғɪʟᴇ", "translate": false},
+        "(200)": {"text": "ʟᴇᴠᴇʟ", "translate": false},
+        "(300)": {"text": "ᴅɪɴᴏsᴀᴜʀs", "translate": false},
+        "(400)": {"text": "ɪɴᴠᴇɴᴛᴏʀʏ", "translate": false},
+        "(500)": {"text": "->", "translate": false},
+        "(801)": {"text": "</code>", "translate": false},
+        "(800)": {"text": "<code>", "translate": false},
+        "(901)": {"text": "<i>", "translate": false},
+        "(900)": {"text": "</i>", "translate": false},
+        "(700)": {"text": "<b>", "translate": false},
+        "(701)": {"text": "</b>", "translate": false}
 
     },
 
     "one_replace_s": ["*", "`"],
 
-    "translators": ["myMemory", "bing", "modernMt"],
+    "translators": ["bing"],
     "zero_translator": "bing",
 
     "main_code": "ru",
-    "langs_path": "/languages/",
+    "langs_path": "/../../bot/localization",
     "damp_path": "/damps/",
 
-    "ignore_translate_keys": ["data", "callback", "inline_menu"]
+    "ignore_translate_keys": ["data", "callback", "inline_menu", "keys"]
 }

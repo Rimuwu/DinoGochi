@@ -3,12 +3,13 @@
 # Прямой запуск используется для создания файла настроек
 
 # Как модуль предоставляет лишь чтение настроек и доступ к ним
-
+from tools.new_translate.translate import main as check_locs
 import json
 import os
 import sys
 import motor.motor_asyncio
-from motor.core import AgnosticClient 
+from motor.core import AgnosticClient
+import pprint
 
 import asyncio
 
@@ -30,6 +31,8 @@ class Config:
 
         self.donation_token = ''
         self.advert_token = ''
+
+        self.check_translate = False
 
     def fromJSON(self, js: str) -> None:
         """Десереализует строку в данные
@@ -93,6 +96,13 @@ if __name__ == '__main__':
         sys.exit(f"{CONFIG_PATH} created! Please don't forget to set it up!")
 else:
     load()
+    if conf.check_translate:
+        print("Запуск автоматической проверки файлов локализации.")
+        res = check_locs()
+        print("Обновлённые данные:")
+        pprint.pprint(res)
+        print()
+
     mongo_client = motor.motor_asyncio.AsyncIOMotorClient(conf.mongo_url)
 
     ioloop = asyncio.get_event_loop()

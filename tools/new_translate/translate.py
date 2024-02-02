@@ -68,7 +68,7 @@ def replace_simbols(text: str):
 
     for i1 in emoji.emoji_list(text): # Получеам эмоджи из текста
         # Прячем за кодом эмоджи
-        k_name = f'({len(cash_replaces)}{len(cash_replaces)}!)'
+        k_name = f'({len(cash_replaces)}{len(cash_replaces)})'
         cash_replaces[k_name] = {
             'text': i1['emoji'],
             'translate': False
@@ -80,7 +80,7 @@ def replace_simbols(text: str):
 
     for i2 in text:
         # Убираем все конструкции вставки переменных (прячим за кодом)
-        # {name} -> (1111!)
+        # {name} -> (1111)
         k_name = ''
         if i2 == '{':
             st = True
@@ -98,7 +98,7 @@ def replace_simbols(text: str):
                     add = False
                     k_name = repl_key
             if add:
-                k_name = f'({len(cash_replaces)}{len(cash_replaces)}!)'
+                k_name = f'({len(cash_replaces)}{len(cash_replaces)})'
                 cash_replaces[k_name] = {
                     'text': word,
                     'translate': False
@@ -110,7 +110,8 @@ def replace_simbols(text: str):
 
     for i3 in text:
         k_name = '1'
-        # Замена конструкций форматирования *такие например* -> (1212!)
+        # Замена конструкций форматирования *такие например* -> (1212)
+        if i3 == '/' and st: st = False
         if i3 in one_replace_s and st: 
             st = False
             translate_st = True
@@ -127,7 +128,7 @@ def replace_simbols(text: str):
                     k_name = repl_key
                     break
             if add:
-                k_name = f'({len(cash_replaces)}{len(cash_replaces)}!)'
+                k_name = f'({len(cash_replaces)}{len(cash_replaces)})'
                 cash_replaces[k_name] = {
                     'text': end_word,
                     'translate': translate_st,
@@ -177,7 +178,10 @@ def translator(text: str, to_lang:str, trans='bing') -> str:
                         'Text out': ret, 'from_language': from_language,
                         'to_lang': to_lang, 'detect': lang}
                     )
-                except: return ''
+                except Exception as e: 
+                    print(e)
+                    print(trans)
+                    return ''
                 base_names[text] = ret
                 return ret # type: ignore
     return text
@@ -314,10 +318,13 @@ def translate(data, to_lang:str):
 
 def save(data, lang, dr='languages'):
     """Сохраняет файл языка"""
-    print('Сохранение данных')
+    if dr == 'languages':
+        path = f'{ex}{langs_path}/{lang}.json'
+    else:
+        path = f'{ex}{damp_path}/{lang}.json'
 
-    with open(f'{ex}/{dr}/{lang}.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+    with open(path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
 
 
 def dict_way(dct:dict, way:str):
@@ -329,12 +336,11 @@ def dict_way(dct:dict, way:str):
         if way_key.isdigit() and isinstance(new_dct, list):
             way_key = int(way_key)
 
-        elif way_key in new_dct or isinstance(way_key, int):
-            if way_key or way_key == 0:
-                try:
-                    new_dct = new_dct[way_key]  # type: ignore
-                except: 
-                    return None
+        if way_key in new_dct or isinstance(way_key, int):
+            try:
+                new_dct = new_dct[way_key]  # type: ignore
+            except: 
+                return None
         else:
             return None
 
@@ -362,6 +368,7 @@ def key_check(direct, way: str):
             if not res: lst += res
 
         if lst: return lst
+
     return []
 
 
@@ -396,9 +403,17 @@ def main():
     global base_names, cash_replaces
     to_langs = get_translate_langs() # Языки на которые надо переводить
 
+    data = {}
+
     for lang_code in to_langs:
         cash_replaces = {}
         base_names = {}
+        data = {
+            lang_code: {
+                "del": [],
+                "upd": []
+            }
+        }
 
         damp = get_damp(lang_code)
         trs_lang = get_lang(lang_code)
@@ -416,9 +431,9 @@ def main():
 
 
         """ Удаление удалённых ключей """
-        for key, value in damp[lang_code].items():
+        for key in damp[lang_code].keys():
             res = key_check(main_lang, key)
-            print(res, 'del')
+            data[lang_code]['del'] += res
 
             for way in res:
                 trs_lang[lang_code] = replace_data(
@@ -442,10 +457,8 @@ def main():
         trs_lang = get_lang(lang_code)
 
         ed = False
-        for key, value in rm_dct.items():
+        for key in rm_dct.keys():
             res = key_check(rm_trs_dct[lang_code].copy(), key)
-
-            print(res, 'struct')
 
             if res: 
                 ed = True
@@ -462,16 +475,19 @@ def main():
 
         """ Определение не достающих ключей"""
         nt_keys = []
-        for key, value in main_lang.items():
+        for key in main_lang.keys():
             res = way_check(main_lang.copy(), damp[lang_code].copy(), key, False)
             if res: nt_keys += res
 
-        print(nt_keys, 'nt')
         damp = get_damp(lang_code)
-
 
         """ Перевод ключей """
         for way in nt_keys:
+            data[lang_code]['upd'].append(way)
+
+            if len(cash_replaces.keys()) >= 400:
+                cash_replaces = {}
+
             last_key = way.split('.')[-1]
 
             if last_key in ignore_translate_keys:
@@ -493,6 +509,4 @@ def main():
             save(trs_lang, lang_code)
             save(damp, lang_code, 'damps')
 
-st = time.time()
-main()
-print(time.time() - st)
+    return data
