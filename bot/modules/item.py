@@ -304,7 +304,7 @@ async def DowngradeItem(userid: int, item: dict, characteristic: str, unit: int)
 async def CheckItemFromUser(userid: int, item_data: dict, count: int = 1) -> dict:
     """Проверяет есть ли count предметов у человека
     """
-    
+
     find_res = await items.find_one({'owner_id': userid, 
                                'items_data': item_data,
                                'count': {'$gte': count}
