@@ -20,12 +20,13 @@ class AntifloodMiddleware(BaseMiddleware):
         self.update_types = ['message']
 
     async def pre_process(self, message: Message, data: dict):
-        if not message.from_user.id in self.last_time:
-            self.last_time[message.from_user.id] = time_now()
-            return 
-        if time_now() - self.last_time[message.from_user.id] < self.limit:
-            return SkipHandler()
-        self.last_time[message.from_user.id] = time_now()
+        return
+        # if not message.from_user.id in self.last_time:
+        #     self.last_time[message.from_user.id] = time_now()
+        #     return 
+        # if time_now() - self.last_time[message.from_user.id] < self.limit:
+        #     return SkipHandler()
+        # self.last_time[message.from_user.id] = time_now()
 
     async def post_process(self, message: Message, data, exception):
         user_id = message.from_user.id
