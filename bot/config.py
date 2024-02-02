@@ -3,7 +3,6 @@
 # Прямой запуск используется для создания файла настроек
 
 # Как модуль предоставляет лишь чтение настроек и доступ к ним
-from tools.new_translate.translate import main as check_locs
 import json
 import os
 import sys
@@ -97,6 +96,8 @@ if __name__ == '__main__':
 else:
     load()
     if conf.check_translate:
+        from tools.new_translate.translate import main as check_locs
+
         print("Запуск автоматической проверки файлов локализации.")
         res = check_locs()
         print("Обновлённые данные:")
