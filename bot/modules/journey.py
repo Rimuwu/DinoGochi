@@ -291,7 +291,7 @@ locations = {
             'com': ['chocolate', 'candy', 'dango', 'flour_recipe', 'rope', 'blank_piece_paper'],
             'unc': ['juice_recipe', 'hot_chocolate_recipe', 'cake_recipe', 'tooling'],
             'rar': ['pouch_recipe', 'sword_recipe', 'onion_recipe', 'arrow_recipe'],
-            'mys': ['backpack_recipe', 'shield_recipe', 'pickaxe_recipe', 'drink_recipe'],
+            'mys': ['backpack_recipe', 'shield_recipe', 'pickaxe_recipe', 'drink_recipe', 'magic_stone'],
             'leg': ['steak_recipe', 'broth_recipe', 'sushi_recipe', 'book_desert', 'magic_stone']
         },
         'mobs': {
@@ -327,7 +327,7 @@ locations = {
             'com': ['sandwich', 'dango', 'mushroom', 'therapeutic_mixture', 'blank_piece_paper', 'drink_recipe'],
             'unc': ['bacon_recipe', 'bento_recipe', 'sandwich_recipe'],
             'rar': ['berry_pie_recipe', 'fish_pie_recipe', 'meat_pie_recipe'],
-            'mys': ['basket_recipe', 'net_recipe', 'rod_recipe'],
+            'mys': ['basket_recipe', 'net_recipe', 'rod_recipe', 'magic_stone'],
             'leg': ['mysterious_egg', 'unusual_egg', 'rare_egg', 'mystic_egg', 'legendary_egg', 'book_mountains', 'magic_stone']
         },
         'mobs': {
