@@ -1,0 +1,3592 @@
+{
+    "in": {
+        "language_name": "NOTEXT",
+        "localization_author": "NOTEXT",
+        "buttons_name": {
+            "back": "NOTEXT",
+            "enable": "NOTEXT",
+            "disable": "NOTEXT",
+            "confirm": "NOTEXT",
+            "yes": "NOTEXT",
+            "no": "NOTEXT",
+            "cancel": "NOTEXT"
+        },
+        "commands_name": {
+            "start_game": "NOTEXT",
+            "dino_profile": "NOTEXT",
+            "settings_menu": "NOTEXT",
+            "friends_menu": "NOTEXT",
+            "actions_menu": "NOTEXT",
+            "profile_menu": "NOTEXT",
+            "dino-tavern_menu": "NOTEXT",
+            "settings": {
+                "notification": "NOTEXT",
+                "dino_name": "NOTEXT",
+                "inventory": "NOTEXT",
+                "dino_profile": "NOTEXT",
+                "delete_me": "NOTEXT",
+                "settings_page_2": "NOTEXT"
+            },
+            "settings2": {
+                "my_name": "NOTEXT",
+                "custom_profile": "NOTEXT",
+                "lang": "NOTEXT"
+            },
+            "profile": {
+                "information": "NOTEXT",
+                "inventory": "NOTEXT",
+                "rayting": "NOTEXT",
+                "about": "NOTEXT",
+                "market": "NOTEXT"
+            },
+            "friends": {
+                "add_friend": "NOTEXT",
+                "friends_list": "NOTEXT",
+                "remove_friend": "NOTEXT",
+                "requests": "NOTEXT",
+                "referal": "NOTEXT"
+            },
+            "market": {
+                "random": "NOTEXT",
+                "find": "NOTEXT",
+                "seller_profile": "NOTEXT"
+            },
+            "seller_profile": {
+                "add_product": "NOTEXT",
+                "my_market": "NOTEXT",
+                "my_products": "NOTEXT",
+                "create_market": "NOTEXT"
+            },
+            "actions": {
+                "no_dino": "NOTEXT",
+                "entertainments": "NOTEXT",
+                "stop_game": "NOTEXT",
+                "feed": "NOTEXT",
+                "journey": "NOTEXT",
+                "events": "NOTEXT",
+                "put_to_bed": "NOTEXT",
+                "awaken": "NOTEXT",
+                "collecting": "NOTEXT",
+                "progress": "NOTEXT",
+                "dino_button": "NOTEXT"
+            },
+            "dino_tavern": {
+                "dungeon": "NOTEXT",
+                "edit": "NOTEXT",
+                "quests": "NOTEXT",
+                "daily_award": "NOTEXT",
+                "events": "NOTEXT"
+            },
+            "about": {
+                "team": "NOTEXT",
+                "support": "NOTEXT",
+                "faq": "NOTEXT",
+                "links": "NOTEXT"
+            },
+            "referal": {
+                "code": "NOTEXT",
+                "enter_code": "NOTEXT",
+                "my_code": "NOTEXT",
+                "friend_code": "NOTEXT"
+            }
+        },
+        "rare": {
+            "com": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "unc": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "rar": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "mys": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "leg": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "myt": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "random": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ]
+        },
+        "time_format": {
+            "second": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "minute": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "hour": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "day": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "weekly": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "month": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ]
+        },
+        "owner": "NOTEXT",
+        "items_names": {
+            "jar_honey": {
+                "name": "NOTEXT"
+            },
+            "cookie": {
+                "name": "NOTEXT"
+            },
+            "mysterious_egg": {
+                "name": "NOTEXT"
+            },
+            "timer": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "wild_boar_meat": {
+                "name": "NOTEXT"
+            },
+            "bunch_herbs": {
+                "name": "NOTEXT"
+            },
+            "fish": {
+                "name": "NOTEXT"
+            },
+            "wolf_meat": {
+                "name": "NOTEXT"
+            },
+            "grasses_from_fields": {
+                "name": "NOTEXT"
+            },
+            "seafood": {
+                "name": "NOTEXT"
+            },
+            "berries": {
+                "name": "NOTEXT"
+            },
+            "chicken_leg": {
+                "name": "NOTEXT"
+            },
+            "small_fish": {
+                "name": "NOTEXT"
+            },
+            "cloak": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "tooling": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "bear": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "therapeutic_mixture": {
+                "name": "NOTEXT"
+            },
+            "slice_pizza": {
+                "name": "NOTEXT"
+            },
+            "sweet_pancakes": {
+                "name": "NOTEXT"
+            },
+            "unusual_egg": {
+                "name": "NOTEXT"
+            },
+            "regular_egg": {
+                "name": "NOTEXT"
+            },
+            "rare_egg": {
+                "name": "NOTEXT"
+            },
+            "mystic_egg": {
+                "name": "NOTEXT"
+            },
+            "legendary_egg": {
+                "name": "NOTEXT"
+            },
+            "blank_piece_paper": {
+                "name": "NOTEXT"
+            },
+            "skin": {
+                "name": "NOTEXT"
+            },
+            "wool": {
+                "name": "NOTEXT"
+            },
+            "rope": {
+                "name": "NOTEXT"
+            },
+            "feather": {
+                "name": "NOTEXT"
+            },
+            "twigs_tree": {
+                "name": "NOTEXT"
+            },
+            "fish_oil": {
+                "name": "NOTEXT"
+            },
+            "leather_clothing": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "clothing_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "torch": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "torch_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "medicinal_drink": {
+                "name": "NOTEXT"
+            },
+            "drink_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "gourmet_herbs": {
+                "name": "NOTEXT"
+            },
+            "tea": {
+                "name": "NOTEXT"
+            },
+            "tea_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "roasted_meat": {
+                "name": "NOTEXT"
+            },
+            "meat_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "salad": {
+                "name": "NOTEXT"
+            },
+            "salad_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "soup": {
+                "name": "NOTEXT"
+            },
+            "soup_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "board_games": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "hiking_bag": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "pouch_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "set_cookies": {
+                "name": "NOTEXT"
+            },
+            "pizza": {
+                "name": "NOTEXT"
+            },
+            "magic_stone": {
+                "name": "NOTEXT"
+            },
+            "taco": {
+                "name": "NOTEXT"
+            },
+            "bone": {
+                "name": "NOTEXT"
+            },
+            "iron": {
+                "name": "NOTEXT"
+            },
+            "bone_sword": {
+                "name": "NOTEXT"
+            },
+            "bone_arrow": {
+                "name": "NOTEXT"
+            },
+            "bone_onions": {
+                "name": "NOTEXT"
+            },
+            "taco_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "sword_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "onion_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "arrow_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "regular_backpack": {
+                "name": "NOTEXT"
+            },
+            "backpack_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "bone_shield": {
+                "name": "NOTEXT"
+            },
+            "shield_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "bone_pickaxe": {
+                "name": "NOTEXT"
+            },
+            "pickaxe_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "freezing": {
+                "name": "NOTEXT"
+            },
+            "defrost": {
+                "name": "NOTEXT"
+            },
+            "chocolate": {
+                "name": "NOTEXT"
+            },
+            "candy": {
+                "name": "NOTEXT"
+            },
+            "candy_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "maize": {
+                "name": "NOTEXT"
+            },
+            "popcorn": {
+                "name": "NOTEXT"
+            },
+            "popcorn_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "juice": {
+                "name": "NOTEXT"
+            },
+            "juice_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "spices": {
+                "name": "NOTEXT"
+            },
+            "spicy_steak": {
+                "name": "NOTEXT"
+            },
+            "steak_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "banana": {
+                "name": "NOTEXT"
+            },
+            "crab": {
+                "name": "NOTEXT"
+            },
+            "coffee": {
+                "name": "NOTEXT"
+            },
+            "mushroom": {
+                "name": "NOTEXT"
+            },
+            "broth": {
+                "name": "NOTEXT"
+            },
+            "broth_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "rice": {
+                "name": "NOTEXT"
+            },
+            "sushi": {
+                "name": "NOTEXT"
+            },
+            "sushi_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "hot_chocolate": {
+                "name": "NOTEXT"
+            },
+            "hot_chocolate_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "cake": {
+                "name": "NOTEXT"
+            },
+            "cake_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "curry": {
+                "name": "NOTEXT"
+            },
+            "curry_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "dango": {
+                "name": "NOTEXT"
+            },
+            "grain": {
+                "name": "NOTEXT"
+            },
+            "bread": {
+                "name": "NOTEXT"
+            },
+            "bread_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "berry_pie": {
+                "name": "NOTEXT"
+            },
+            "fish_cake": {
+                "name": "NOTEXT"
+            },
+            "meat_pie": {
+                "name": "NOTEXT"
+            },
+            "berry_pie_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "fish_pie_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "meat_pie_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "bacon": {
+                "name": "NOTEXT"
+            },
+            "bacon_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "bento": {
+                "name": "NOTEXT"
+            },
+            "bento_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "sandwich": {
+                "name": "NOTEXT"
+            },
+            "sandwich_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "chest_food": {
+                "name": "NOTEXT"
+            },
+            "recipe_chest": {
+                "name": "NOTEXT"
+            },
+            "gift_2023": {
+                "name": "NOTEXT"
+            },
+            "gift_2024": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "rod": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "stone_resurrection": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "ale": {
+                "name": "NOTEXT"
+            },
+            "basket": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "net": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "book_forest": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "book_lost-islands": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "book_desert": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "book_mountains": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "book_magic-forest": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "bag_goodies": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "rubik_cube": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "lock_bag": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "skinning_knife": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "flour": {
+                "name": "NOTEXT"
+            },
+            "flour_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "croissant": {
+                "name": "NOTEXT"
+            },
+            "croissant_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "carrot": {
+                "name": "NOTEXT"
+            },
+            "tomato": {
+                "name": "NOTEXT"
+            },
+            "potato": {
+                "name": "NOTEXT"
+            },
+            "basket_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "net_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "rod_recipe": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "meow_book": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "premium_activator": {
+                "name": "NOTEXT",
+                "description": "NOTEXT"
+            },
+            "egg_case": {
+                "name": "NOTEXT"
+            }
+        },
+        "notifications": {
+            "daily_award": {
+                "text": "NOTEXT",
+                "inline_menu": [
+                    "NOTEXT"
+                ]
+            },
+            "incubation_ready": {
+                "text": "NOTEXT",
+                "inline_menu": [
+                    "NOTEXT",
+                    "NOTEXT"
+                ]
+            },
+            "donation": {
+                "reward": "NOTEXT",
+                "amount_error": "NOTEXT",
+                "currency_key_error": "NOTEXT",
+                "product_key_error": "NOTEXT",
+                "subscription_end_day": "NOTEXT",
+                "subscription_end": "NOTEXT"
+            },
+            "lvl_up": {
+                "standart": "NOTEXT",
+                "20": "NOTEXT",
+                "40": "NOTEXT",
+                "50": "NOTEXT",
+                "60": "NOTEXT",
+                "80": "NOTEXT",
+                "100": "NOTEXT"
+            },
+            "send_request": {
+                "text": "NOTEXT",
+                "inline_menu": "NOTEXT"
+            },
+            "referal_award": {
+                "text": "NOTEXT"
+            },
+            "sleep_end": {
+                "text": "NOTEXT",
+                "inline_menu": "NOTEXT"
+            },
+            "game_end": {
+                "replics": [
+                    "NOTEXT",
+                    "NOTEXT",
+                    "NOTEXT"
+                ],
+                "inline_menu": "NOTEXT"
+            },
+            "end_collecting": {
+                "text": "NOTEXT",
+                "inline_menu": "NOTEXT"
+            },
+            "broke_accessory": {
+                "text": "NOTEXT",
+                "inline_menu": "NOTEXT"
+            },
+            "need_heal": {
+                "replics": [
+                    "NOTEXT",
+                    "NOTEXT",
+                    "NOTEXT"
+                ],
+                "inline_menu": "NOTEXT"
+            },
+            "need_eat": {
+                "replics": [
+                    "NOTEXT",
+                    "NOTEXT",
+                    "NOTEXT"
+                ],
+                "inline_menu": "NOTEXT"
+            },
+            "need_mood": {
+                "replics": [
+                    "NOTEXT",
+                    "NOTEXT",
+                    "NOTEXT"
+                ],
+                "inline_menu": "NOTEXT"
+            },
+            "need_game": {
+                "replics": [
+                    "NOTEXT",
+                    "NOTEXT",
+                    "NOTEXT"
+                ],
+                "inline_menu": "NOTEXT"
+            },
+            "need_energy": {
+                "replics": [
+                    "NOTEXT",
+                    "NOTEXT",
+                    "NOTEXT"
+                ],
+                "inline_menu": "NOTEXT"
+            },
+            "independent_dead": {
+                "text": "NOTEXT",
+                "inline_menu": [
+                    "NOTEXT",
+                    "NOTEXT"
+                ]
+            },
+            "not_independent_dead": {
+                "text": "NOTEXT",
+                "inline_menu": [
+                    "NOTEXT",
+                    "NOTEXT"
+                ]
+            },
+            "breakdown": {
+                "replics": [
+                    "NOTEXT",
+                    "NOTEXT",
+                    "NOTEXT"
+                ],
+                "inline_menu": "NOTEXT"
+            },
+            "inspiration": {
+                "replics": [
+                    "NOTEXT",
+                    "NOTEXT",
+                    "NOTEXT"
+                ],
+                "inline_menu": "NOTEXT"
+            },
+            "product_delete": "NOTEXT",
+            "product_buy": {
+                "text": "NOTEXT",
+                "inline_menu": "NOTEXT"
+            },
+            "kindergarten": {
+                "text": "NOTEXT",
+                "inline_menu": "NOTEXT"
+            }
+        },
+        "breakdown": {
+            "seclusion": "NOTEXT",
+            "hysteria": "NOTEXT",
+            "unrestrained_play": "NOTEXT",
+            "downgrade": "NOTEXT"
+        },
+        "inspiration": {
+            "game": "NOTEXT",
+            "collecting": "NOTEXT",
+            "journey": "NOTEXT",
+            "sleep": "NOTEXT"
+        },
+        "back_text": {
+            "main_menu": "NOTEXT",
+            "profile_menu": "NOTEXT",
+            "friends_menu": "NOTEXT",
+            "actions_menu": "NOTEXT",
+            "dungeon_menu": "NOTEXT",
+            "dino_tavern_menu": "NOTEXT",
+            "settings_menu": "NOTEXT",
+            "market_menu": "NOTEXT"
+        },
+        "menu_text": {
+            "actions": "NOTEXT",
+            "profile": "NOTEXT",
+            "friends": "NOTEXT",
+            "settings": "NOTEXT",
+            "market": {
+                "info": "NOTEXT",
+                "products": "NOTEXT"
+            },
+            "dino_tavern": {
+                "info": "NOTEXT",
+                "friends": "NOTEXT",
+                "friends2": "NOTEXT",
+                "tavern_col": "NOTEXT",
+                "went": "NOTEXT",
+                "button": "NOTEXT"
+            },
+            "about": "NOTEXT",
+            "referal": "NOTEXT",
+            "referal_separator": "NOTEXT",
+            "settings2": "NOTEXT",
+            "seller": "NOTEXT"
+        },
+        "no_text_key": "NOTEXT",
+        "edit_dino_button": {
+            "edit": "NOTEXT",
+            "notfouned": "NOTEXT",
+            "susseful": "NOTEXT"
+        },
+        "inline_menu": {
+            "delete_message": {
+                "text": "NOTEXT",
+                "callback": "NOTEXT"
+            },
+            "dino_profile": {
+                "text": "NOTEXT",
+                "callback": "NOTEXT"
+            },
+            "dino_rename": {
+                "text": "NOTEXT",
+                "callback": "NOTEXT"
+            },
+            "send_request": {
+                "text": "NOTEXT",
+                "callback": "NOTEXT"
+            },
+            "requests": {
+                "text": "NOTEXT",
+                "callback": "NOTEXT"
+            },
+            "inventory": {
+                "text": "NOTEXT",
+                "callback": "NOTEXT"
+            },
+            "rescue": {
+                "text": "NOTEXT",
+                "callback": "NOTEXT"
+            },
+            "reborn": {
+                "text": "NOTEXT",
+                "callback": "NOTEXT"
+            },
+            "dead_dialog": {
+                "text": "NOTEXT",
+                "callback": "NOTEXT"
+            },
+            "daily_award": {
+                "text": "NOTEXT",
+                "callback": "NOTEXT"
+            },
+            "product_info": {
+                "text": "NOTEXT",
+                "callback": "NOTEXT"
+            },
+            "feed_start": {
+                "text": "NOTEXT",
+                "callback": "NOTEXT"
+            }
+        },
+        "states": {
+            "ChooseDino": {
+                "error_not_dino": "NOTEXT"
+            },
+            "ChooseInt": {
+                "error_not_int": "NOTEXT",
+                "error_max_int": "NOTEXT",
+                "error_min_int": "NOTEXT"
+            },
+            "ChooseString": {
+                "error_max_len": "NOTEXT",
+                "error_min_len": "NOTEXT"
+            },
+            "ChooseConfirm": {
+                "error_not_confirm": "NOTEXT"
+            },
+            "ChooseOption": {
+                "error_not_option": "NOTEXT"
+            },
+            "ChooseTime": {
+                "zero_seconds": "NOTEXT",
+                "error_max_int": "NOTEXT",
+                "error_min_int": "NOTEXT"
+            }
+        },
+        "no_use_interface": "NOTEXT",
+        "no_account": "NOTEXT",
+        "add_me": "NOTEXT",
+        "in_development": "NOTEXT",
+        "start_command": {
+            "referal": "NOTEXT",
+            "first_message": "NOTEXT",
+            "request_subscribe": {
+                "text": "NOTEXT",
+                "buttons": [
+                    "NOTEXT",
+                    "NOTEXT"
+                ]
+            },
+            "start_game": "NOTEXT",
+            "end_answer": {
+                "edited_text": "NOTEXT",
+                "send_text": "NOTEXT"
+            }
+        },
+        "help_command": {
+            "all": "NOTEXT"
+        },
+        "additem_command": {
+            "err": "NOTEXT",
+            "user": "NOTEXT",
+            "dev": "NOTEXT"
+        },
+        "promo_commands": {
+            "ui": {
+                "text": "NOTEXT",
+                "buttons": [
+                    "NOTEXT",
+                    "NOTEXT",
+                    "NOTEXT"
+                ]
+            },
+            "link": {
+                "button_name": "NOTEXT",
+                "create": "NOTEXT",
+                "not_found": "NOTEXT"
+            },
+            "unlink": {
+                "delete": "NOTEXT",
+                "not_found": "NOTEXT"
+            },
+            "promo_open": "NOTEXT",
+            "activate": "NOTEXT",
+            "coins": "NOTEXT",
+            "items": "NOTEXT",
+            "already_use": "NOTEXT",
+            "time_end": "NOTEXT",
+            "max_col": "NOTEXT",
+            "deactivated": "NOTEXT",
+            "not_found": "NOTEXT",
+            "no_user": "NOTEXT"
+        },
+        "dungeon_err": "NOTEXT",
+        "start_game": "NOTEXT",
+        "command_dino_prof": "NOTEXT",
+        "faq": {
+            "text": "NOTEXT",
+            "inline_buttons": {
+                "faq general": "NOTEXT",
+                "faq eat": "NOTEXT",
+                "faq accessories": "NOTEXT",
+                "faq dungeon": "NOTEXT"
+            },
+            "general": "NOTEXT",
+            "eat": "NOTEXT",
+            "accessories": "NOTEXT",
+            "dungeon": "NOTEXT"
+        },
+        "not_set": {
+            "info": "NOTEXT",
+            "True": "NOTEXT",
+            "False": "NOTEXT"
+        },
+        "inv_set_pages": {
+            "info": "NOTEXT",
+            "accept": "NOTEXT",
+            "ans": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ]
+        },
+        "profile_view": {
+            "info": "NOTEXT",
+            "result": "NOTEXT",
+            "ans": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ]
+        },
+        "rename_dino": {
+            "info": "NOTEXT",
+            "rename": "NOTEXT"
+        },
+        "my_name": {
+            "info": "NOTEXT",
+            "end": "NOTEXT"
+        },
+        "add_friend": {
+            "var": "NOTEXT",
+            "var_buttons": {
+                "add_friend id": "NOTEXT",
+                "add_friend message": "NOTEXT"
+            },
+            "check": {
+                "nonint": "NOTEXT",
+                "nonbase": "NOTEXT",
+                "notyou": "NOTEXT",
+                "forward": "NOTEXT",
+                "friends": "NOTEXT",
+                "requests": "NOTEXT"
+            },
+            "var_messages": {
+                "id": "NOTEXT",
+                "message": "NOTEXT"
+            },
+            "correct": "NOTEXT",
+            "already": "NOTEXT"
+        },
+        "friend_list": {
+            "wait": "NOTEXT",
+            "new_year": {
+                "button": "NOTEXT",
+                "send": "NOTEXT",
+                "no_send": "NOTEXT"
+            },
+            "buttons": {
+                "take_money": "NOTEXT",
+                "take_coins": "NOTEXT",
+                "joint_dinosaur": "NOTEXT",
+                "new_year": "NOTEXT"
+            }
+        },
+        "requests": {
+            "wait": "NOTEXT",
+            "accept": "NOTEXT",
+            "decline": "NOTEXT"
+        },
+        "friend_delete": {
+            "delete_info": "NOTEXT",
+            "confirm": "NOTEXT",
+            "delete": "NOTEXT"
+        },
+        "rayting": {
+            "info": "NOTEXT",
+            "lvl": "NOTEXT",
+            "coins": "NOTEXT",
+            "dungeon": "NOTEXT",
+            "super": "NOTEXT",
+            "no_rayting": "NOTEXT",
+            "place": "NOTEXT",
+            "my_place": "NOTEXT",
+            "lvl_text": "NOTEXT",
+            "coins_text": "NOTEXT",
+            "super_text": "NOTEXT",
+            "rayting_lvl": "NOTEXT",
+            "rayting_coins": "NOTEXT",
+            "rayting_super": "NOTEXT",
+            "premium": "NOTEXT"
+        },
+        "put_to_bed": {
+            "dont_want": "NOTEXT",
+            "sleep": "NOTEXT",
+            "buttons": [
+                "NOTEXT"
+            ],
+            "choice": "NOTEXT",
+            "choice_time": "NOTEXT"
+        },
+        "awaken": {
+            "down_mood": "NOTEXT",
+            "not_sleep": "NOTEXT"
+        },
+        "p_profile": {
+            "no_dino_no_egg": "NOTEXT",
+            "dialog": "NOTEXT",
+            "text_info": "NOTEXT",
+            "text_ost": "NOTEXT",
+            "rare_name": "NOTEXT",
+            "time_position": [
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "rare_position": [
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "incubation_text": "NOTEXT",
+            "stats": {
+                "pass": "NOTEXT",
+                "sleep": "NOTEXT",
+                "game": "NOTEXT",
+                "journey": "NOTEXT",
+                "collecting": "NOTEXT",
+                "dungeon": "NOTEXT",
+                "freezing": "NOTEXT",
+                "kindergarten": "NOTEXT",
+                "hysteria": "NOTEXT"
+            },
+            "replics": {
+                "heal": {
+                    "80": "NOTEXT",
+                    "40": "NOTEXT",
+                    "20": "NOTEXT",
+                    "0": "NOTEXT"
+                },
+                "eat": {
+                    "80": "NOTEXT",
+                    "40": "NOTEXT",
+                    "20": "NOTEXT",
+                    "0": "NOTEXT"
+                },
+                "game": {
+                    "80": "NOTEXT",
+                    "40": "NOTEXT",
+                    "20": "NOTEXT",
+                    "0": "NOTEXT"
+                },
+                "mood": {
+                    "80": "NOTEXT",
+                    "40": "NOTEXT",
+                    "20": "NOTEXT",
+                    "0": "NOTEXT"
+                },
+                "energy": {
+                    "80": "NOTEXT",
+                    "40": "NOTEXT",
+                    "20": "NOTEXT",
+                    "0": "NOTEXT"
+                }
+            },
+            "profile_text": "NOTEXT",
+            "journey": {
+                "text": "NOTEXT",
+                "info": "NOTEXT"
+            },
+            "game": {
+                "text": "NOTEXT",
+                "game_end": "NOTEXT",
+                "game_duration": "NOTEXT"
+            },
+            "collecting": {
+                "text": "NOTEXT",
+                "progress": {
+                    "collecting": "NOTEXT",
+                    "hunt": "NOTEXT",
+                    "fishing": "NOTEXT",
+                    "all": "NOTEXT"
+                }
+            },
+            "no_item": "NOTEXT",
+            "accs": "NOTEXT",
+            "return": "NOTEXT",
+            "inline_menu": {
+                "reset_activ_item": {
+                    "text": "NOTEXT",
+                    "data": "NOTEXT"
+                },
+                "mood_log": {
+                    "text": "NOTEXT",
+                    "data": "NOTEXT"
+                },
+                "joint_dino": {
+                    "text": "NOTEXT",
+                    "data": "NOTEXT"
+                },
+                "my_joint": {
+                    "text": "NOTEXT",
+                    "data": "NOTEXT"
+                },
+                "kindergarten": {
+                    "text": "NOTEXT",
+                    "data": "NOTEXT"
+                }
+            },
+            "joint": "NOTEXT"
+        },
+        "inventory": {
+            "null": "NOTEXT",
+            "no_filter": "NOTEXT",
+            "filters_data": {
+                "fb12": {
+                    "name": "NOTEXT",
+                    "keys": [
+                        "NOTEXT"
+                    ]
+                },
+                "fb45": {
+                    "name": "NOTEXT",
+                    "keys": [
+                        "NOTEXT"
+                    ]
+                },
+                "k63d": {
+                    "name": "NOTEXT",
+                    "keys": [
+                        "NOTEXT",
+                        "NOTEXT",
+                        "NOTEXT",
+                        "NOTEXT"
+                    ]
+                },
+                "jd34": {
+                    "name": "NOTEXT",
+                    "keys": [
+                        "NOTEXT"
+                    ]
+                },
+                "ns83": {
+                    "name": "NOTEXT",
+                    "keys": [
+                        "NOTEXT"
+                    ]
+                },
+                "n48s": {
+                    "name": "NOTEXT",
+                    "keys": [
+                        "NOTEXT",
+                        "NOTEXT",
+                        "NOTEXT"
+                    ]
+                },
+                "n41s": {
+                    "name": "NOTEXT",
+                    "keys": [
+                        "NOTEXT",
+                        "NOTEXT",
+                        "NOTEXT"
+                    ]
+                },
+                "null": {
+                    "name": "NOTEXT",
+                    "keys": [
+                        "NOTEXT"
+                    ]
+                }
+            },
+            "choice_filter": "NOTEXT",
+            "search": "NOTEXT",
+            "search_null": "NOTEXT",
+            "menu": "NOTEXT",
+            "clear_filters": "NOTEXT",
+            "update_page": "NOTEXT",
+            "update_search": "NOTEXT",
+            "update_filter": "NOTEXT"
+        },
+        "copy_m": {
+            "info": "NOTEXT",
+            "no_message": "NOTEXT"
+        },
+        "item_info": {
+            "type_info": {
+                "ALL": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "Flying": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "Herbivore": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "Carnivore": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "freezing": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "defrosting": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "egg": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "game": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "sleep": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "journey": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "collecting": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "dummy": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "material": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "recipe": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "far": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "near": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "ammunition": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "armor": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "backpack": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "case": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "book": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                },
+                "special": {
+                    "type_name": "NOTEXT",
+                    "add_text": "NOTEXT"
+                }
+            },
+            "rank": {
+                "common": "NOTEXT",
+                "uncommon": "NOTEXT",
+                "rare": "NOTEXT",
+                "mystical": "NOTEXT",
+                "legendary": "NOTEXT",
+                "mythical": "NOTEXT",
+                "null": "NOTEXT"
+            },
+            "static": {
+                "cap": "NOTEXT",
+                "name": "NOTEXT",
+                "rank": "NOTEXT",
+                "type": "NOTEXT",
+                "uses": "NOTEXT",
+                "endurance": "NOTEXT",
+                "mana": "NOTEXT",
+                "stack": "NOTEXT",
+                "add_bonus": "NOTEXT",
+                "add_penaltie": "NOTEXT",
+                "buttons": {
+                    "use": {
+                        "eat": "NOTEXT",
+                        "egg": "NOTEXT",
+                        "game": "NOTEXT",
+                        "sleep": "NOTEXT",
+                        "journey": "NOTEXT",
+                        "collecting": "NOTEXT",
+                        "recipe": "NOTEXT",
+                        "weapon": "NOTEXT",
+                        "backpack": "NOTEXT",
+                        "armor": "NOTEXT",
+                        "case": "NOTEXT",
+                        "special": "NOTEXT",
+                        "book": "NOTEXT"
+                    },
+                    "delete": "NOTEXT",
+                    "exchange": "NOTEXT",
+                    "created_item": "NOTEXT",
+                    "buyer": "NOTEXT"
+                }
+            },
+            "bonuses": {
+                "+heal": "NOTEXT",
+                "+energy": "NOTEXT",
+                "+eat": "NOTEXT",
+                "+mood": "NOTEXT"
+            },
+            "penalties": {
+                "-heal": "NOTEXT",
+                "-energy": "NOTEXT",
+                "-eat": "NOTEXT",
+                "-mood": "NOTEXT"
+            }
+        },
+        "item_use": {
+            "cannot_be_used": "NOTEXT",
+            "no_item": "NOTEXT",
+            "eat": {
+                "great": "NOTEXT",
+                "bad": "NOTEXT",
+                "sleep": "NOTEXT",
+                "repeat": {
+                    "m0": "NOTEXT",
+                    "m1": "NOTEXT",
+                    "m2": "NOTEXT",
+                    "m3": "NOTEXT",
+                    "m4": "NOTEXT",
+                    "m5": "NOTEXT"
+                }
+            },
+            "accessory": {
+                "no_change": "NOTEXT",
+                "change": "NOTEXT"
+            },
+            "recipe": {
+                "not_enough_m": "NOTEXT",
+                "consumable_item": "NOTEXT",
+                "create": "NOTEXT",
+                "enough_characteristics": "NOTEXT"
+            },
+            "case": {
+                "drop_item": "NOTEXT"
+            },
+            "egg": {
+                "egg_limit": "NOTEXT",
+                "egg_answer": "NOTEXT",
+                "plug": "NOTEXT",
+                "incubation": "NOTEXT",
+                "edit_content": "NOTEXT"
+            },
+            "ammunition": {
+                "one_item": "NOTEXT",
+                "combination": "NOTEXT",
+                "comb_err": "NOTEXT"
+            },
+            "special": {
+                "reborn": {
+                    "ok": "NOTEXT",
+                    "limit": "NOTEXT",
+                    "no_dinos": "NOTEXT"
+                },
+                "premium": "NOTEXT"
+            },
+            "buff": {
+                "+mood": "NOTEXT",
+                "-mood": "NOTEXT",
+                "+eat": "NOTEXT",
+                "-eat": "NOTEXT",
+                "+energy": "NOTEXT",
+                "-energy": "NOTEXT",
+                "+heal": "NOTEXT",
+                "-heal": "NOTEXT"
+            }
+        },
+        "css": {
+            "no_dino": "NOTEXT",
+            "wait_count": "NOTEXT",
+            "confirm": "NOTEXT",
+            "combine": "NOTEXT",
+            "delete": "NOTEXT",
+            "dino": "NOTEXT",
+            "friend": "NOTEXT"
+        },
+        "about_menu": {
+            "team": "NOTEXT",
+            "links": "NOTEXT"
+        },
+        "support_command": {
+            "info": "NOTEXT",
+            "items": "NOTEXT",
+            "currency_answer": "NOTEXT",
+            "currency": "NOTEXT",
+            "col_answer": "NOTEXT",
+            "buy": "NOTEXT",
+            "buy_button": "NOTEXT",
+            "products_bio": {
+                "non_repayable": {
+                    "name": "NOTEXT",
+                    "image": "NOTEXT",
+                    "short": "NOTEXT",
+                    "description": "NOTEXT"
+                },
+                "dino_ultima": {
+                    "name": "NOTEXT",
+                    "image": "NOTEXT",
+                    "short": "NOTEXT",
+                    "description": "NOTEXT"
+                },
+                "rescue_kit": {
+                    "name": "NOTEXT",
+                    "image": "NOTEXT",
+                    "short": "NOTEXT",
+                    "description": "NOTEXT"
+                },
+                "reborn": {
+                    "name": "NOTEXT",
+                    "image": "NOTEXT",
+                    "short": "NOTEXT",
+                    "description": "NOTEXT"
+                }
+            }
+        },
+        "delete_action": {
+            "delete": "NOTEXT",
+            "error": "NOTEXT"
+        },
+        "user_profile": {
+            "user": "NOTEXT",
+            "level": "NOTEXT",
+            "dinosaurs": "NOTEXT",
+            "dino": "NOTEXT",
+            "egg": "NOTEXT",
+            "dino_owner": {
+                "owner": "NOTEXT",
+                "noowner": "NOTEXT"
+            },
+            "friends": "NOTEXT",
+            "inventory": "NOTEXT",
+            "no_premium": "NOTEXT",
+            "stats": {
+                "pass": "NOTEXT",
+                "sleep": "NOTEXT",
+                "game": "NOTEXT",
+                "journey": "NOTEXT",
+                "collecting": "NOTEXT",
+                "dungeon": "NOTEXT",
+                "freezing": "NOTEXT",
+                "kindergarten": "NOTEXT",
+                "hysteria": "NOTEXT"
+            }
+        },
+        "custom_profile": {
+            "manual": "NOTEXT",
+            "ok": "NOTEXT"
+        },
+        "delete_me": {
+            "confirm": "NOTEXT",
+            "dead_dino": "NOTEXT",
+            "rex_boss": "NOTEXT",
+            "code": "NOTEXT",
+            "incorrect_code": "NOTEXT",
+            "delete": "NOTEXT"
+        },
+        "tavern_dialogs": [
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT"
+        ],
+        "tavern_enter": [
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT"
+        ],
+        "entertainments": {
+            "answer_game": "NOTEXT",
+            "game": {
+                "console": "NOTEXT",
+                "snake": "NOTEXT",
+                "pin-pong": "NOTEXT",
+                "ball": "NOTEXT",
+                "puzzles": "NOTEXT",
+                "chess": "NOTEXT",
+                "jenga": "NOTEXT",
+                "dnd": "NOTEXT",
+                "monopolia": "NOTEXT",
+                "bowling": "NOTEXT",
+                "darts": "NOTEXT",
+                "golf": "NOTEXT"
+            },
+            "game_text": {
+                "m0": "NOTEXT",
+                "m1": "NOTEXT",
+                "m2": "NOTEXT",
+                "m3": "NOTEXT",
+                "penalty": "NOTEXT"
+            },
+            "answer_text": "NOTEXT",
+            "time": {
+                "sdj4": {
+                    "text": "NOTEXT",
+                    "data": [
+                        "NOTEXT",
+                        "NOTEXT"
+                    ]
+                },
+                "34ns": {
+                    "text": "NOTEXT",
+                    "data": [
+                        "NOTEXT",
+                        "NOTEXT"
+                    ]
+                },
+                "sd4s": {
+                    "text": "NOTEXT",
+                    "data": [
+                        "NOTEXT",
+                        "NOTEXT"
+                    ]
+                },
+                "fso3": {
+                    "text": "NOTEXT",
+                    "data": [
+                        "NOTEXT",
+                        "NOTEXT"
+                    ]
+                }
+            },
+            "invite_friend": {
+                "text": "NOTEXT",
+                "button": "NOTEXT"
+            },
+            "dino_join": "NOTEXT",
+            "join_end": "NOTEXT",
+            "zero": "NOTEXT"
+        },
+        "stop_game": {
+            "dislike": "NOTEXT",
+            "like": "NOTEXT",
+            "whatever": "NOTEXT",
+            "dont_tear": "NOTEXT",
+            "unrestrained_play": "NOTEXT"
+        },
+        "collecting": {
+            "way": "NOTEXT",
+            "result": {
+                "collecting": "NOTEXT",
+                "hunt": "NOTEXT",
+                "fishing": "NOTEXT",
+                "all": "NOTEXT"
+            },
+            "buttons": {
+                "collecting": "NOTEXT",
+                "hunt": "NOTEXT",
+                "fishing": "NOTEXT",
+                "all": "NOTEXT"
+            },
+            "wait_count": "NOTEXT",
+            "stop_button": {
+                "collecting": "NOTEXT",
+                "hunt": "NOTEXT",
+                "fishing": "NOTEXT",
+                "all": "NOTEXT"
+            },
+            "progress": {
+                "collecting": "NOTEXT",
+                "hunt": "NOTEXT",
+                "fishing": "NOTEXT",
+                "all": "NOTEXT"
+            },
+            "max_count": "NOTEXT"
+        },
+        "optionplus": {
+            "update_page": "NOTEXT"
+        },
+        "referals": {
+            "have_code": "NOTEXT",
+            "generate": "NOTEXT",
+            "var_buttons": {
+                "generate_referal random": "NOTEXT",
+                "generate_referal custom": "NOTEXT"
+            },
+            "code": "NOTEXT",
+            "my_code": "NOTEXT",
+            "custom_code": {
+                "start": "NOTEXT",
+                "max_len": "NOTEXT",
+                "min_len": "NOTEXT",
+                "found_code": "NOTEXT",
+                "no_coins": "NOTEXT"
+            },
+            "enter_code": {
+                "start": "NOTEXT",
+                "True": "NOTEXT",
+                "False": "NOTEXT",
+                "have_code": "NOTEXT"
+            }
+        },
+        "dialogs": {
+            "dead_last_dino": {
+                "people_name": "NOTEXT",
+                "start": {
+                    "system": "NOTEXT",
+                    "text": "NOTEXT",
+                    "buttons": {
+                        "m1": {
+                            "text": "NOTEXT",
+                            "answer": "NOTEXT"
+                        }
+                    }
+                },
+                "m1": {
+                    "text": "NOTEXT",
+                    "previous": "NOTEXT",
+                    "buttons": {
+                        "m2-n": {
+                            "text": "NOTEXT",
+                            "answer": "NOTEXT"
+                        },
+                        "m2-y": {
+                            "text": "NOTEXT",
+                            "answer": "NOTEXT"
+                        }
+                    }
+                },
+                "m2-y": {
+                    "text": "NOTEXT",
+                    "previous": "NOTEXT",
+                    "buttons": {
+                        "m3-y": {
+                            "text": "NOTEXT",
+                            "answer": "NOTEXT"
+                        }
+                    }
+                },
+                "m2-n": {
+                    "text": "NOTEXT",
+                    "previous": "NOTEXT",
+                    "buttons": {
+                        "m3-n": {
+                            "text": "NOTEXT",
+                            "answer": "NOTEXT"
+                        }
+                    }
+                },
+                "m3-n": {
+                    "text": "NOTEXT",
+                    "previous": "NOTEXT",
+                    "system": "NOTEXT",
+                    "buttons": {
+                        "m2-y": {
+                            "text": "NOTEXT",
+                            "answer": "NOTEXT"
+                        },
+                        "m4-n": {
+                            "text": "NOTEXT",
+                            "answer": "NOTEXT"
+                        }
+                    }
+                },
+                "m3-y": {
+                    "text": "NOTEXT",
+                    "previous": "NOTEXT",
+                    "buttons": {
+                        "m4-y": {
+                            "text": "NOTEXT",
+                            "answer": "NOTEXT"
+                        }
+                    }
+                },
+                "m4-n": {
+                    "text": "NOTEXT",
+                    "previous": "NOTEXT",
+                    "buttons": {
+                        "m5-n": {
+                            "text": "NOTEXT",
+                            "answer": "NOTEXT"
+                        }
+                    }
+                },
+                "m4-y": {
+                    "text": "NOTEXT",
+                    "previous": "NOTEXT",
+                    "system": "NOTEXT",
+                    "buttons": {
+                        "end-y": {
+                            "text": "NOTEXT",
+                            "answer": "NOTEXT"
+                        }
+                    }
+                },
+                "m5-n": {
+                    "text": "NOTEXT",
+                    "previous": "NOTEXT",
+                    "system": "NOTEXT",
+                    "buttons": {
+                        "end-n": {
+                            "text": "NOTEXT",
+                            "answer": "NOTEXT"
+                        }
+                    }
+                },
+                "end-y": {
+                    "text": "NOTEXT",
+                    "previous": "NOTEXT"
+                },
+                "end-n": {
+                    "text": "NOTEXT",
+                    "previous": "NOTEXT"
+                }
+            }
+        },
+        "mood_log": {
+            "info": "NOTEXT",
+            "event_info": "NOTEXT",
+            "breakdown": {
+                "seclusion": "NOTEXT",
+                "hysteria": "NOTEXT",
+                "unrestrained_play": "NOTEXT"
+            },
+            "inspiration": {
+                "game": "NOTEXT",
+                "collecting": "NOTEXT",
+                "journey": "NOTEXT",
+                "sleep": "NOTEXT"
+            },
+            "good_sleep": "NOTEXT",
+            "end_game": "NOTEXT",
+            "multi_games": "NOTEXT",
+            "multi_heal": "NOTEXT",
+            "multi_eat": "NOTEXT",
+            "multi_energy": "NOTEXT",
+            "dream": "NOTEXT",
+            "good_eat": "NOTEXT",
+            "playing_together": "NOTEXT",
+            "bad_sleep": "NOTEXT",
+            "stop_game": "NOTEXT",
+            "little_game": "NOTEXT",
+            "little_heal": "NOTEXT",
+            "little_eat": "NOTEXT",
+            "little_energy": "NOTEXT",
+            "bad_dream": "NOTEXT",
+            "bad_eat": "NOTEXT",
+            "repeat_eat": "NOTEXT",
+            "journey_event": "NOTEXT",
+            "sunshine": "NOTEXT",
+            "breeze": "NOTEXT",
+            "rain": "NOTEXT",
+            "cold_wind": "NOTEXT",
+            "meeting_friend": "NOTEXT",
+            "drought": "NOTEXT",
+            "snowfall": "NOTEXT",
+            "magic_light": "NOTEXT",
+            "magic_animal": "NOTEXT"
+        },
+        "journey_start": {
+            "ask_loc": "NOTEXT",
+            "cancel_text": "NOTEXT",
+            "complexity": {
+                "text": "NOTEXT",
+                "button": "NOTEXT"
+            },
+            "locations": {
+                "forest": {
+                    "name": "NOTEXT",
+                    "text": "NOTEXT"
+                },
+                "lost-islands": {
+                    "name": "NOTEXT",
+                    "text": "NOTEXT"
+                },
+                "desert": {
+                    "name": "NOTEXT",
+                    "text": "NOTEXT"
+                },
+                "mountains": {
+                    "name": "NOTEXT",
+                    "text": "NOTEXT"
+                },
+                "magic-forest": {
+                    "name": "NOTEXT",
+                    "text": "NOTEXT"
+                }
+            },
+            "time_info": "NOTEXT",
+            "time_text": {
+                "t10": {
+                    "text": "NOTEXT",
+                    "time": "NOTEXT"
+                },
+                "t30": {
+                    "text": "NOTEXT",
+                    "time": "NOTEXT"
+                },
+                "t60": {
+                    "text": "NOTEXT",
+                    "time": "NOTEXT"
+                },
+                "t90": {
+                    "text": "NOTEXT",
+                    "time": "NOTEXT"
+                },
+                "t120": {
+                    "text": "NOTEXT",
+                    "time": "NOTEXT"
+                },
+                "t240": {
+                    "text": "NOTEXT",
+                    "time": "NOTEXT"
+                }
+            },
+            "start": "NOTEXT",
+            "start_2": "NOTEXT"
+        },
+        "journey_complexity": "NOTEXT",
+        "send_action": {
+            "game": {
+                "send": "NOTEXT",
+                "send_button": "NOTEXT",
+                "for_me": "NOTEXT"
+            },
+            "journey": {
+                "send": "NOTEXT",
+                "send_button": "NOTEXT",
+                "for_me": "NOTEXT"
+            },
+            "error": "NOTEXT"
+        },
+        "invite_to_action": "NOTEXT",
+        "join_to_action": {
+            "one_dino": "NOTEXT"
+        },
+        "alredy_busy": "NOTEXT",
+        "joint_dinosaur": {
+            "check": "NOTEXT",
+            "message_to_friend": "NOTEXT",
+            "button": [
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "max_owners": "NOTEXT",
+            "max_dino": "NOTEXT",
+            "ok": "NOTEXT"
+        },
+        "take_dino": {
+            "max_dino": "NOTEXT",
+            "max_owners": "NOTEXT",
+            "ok": "NOTEXT",
+            "message_to_owner": "NOTEXT"
+        },
+        "cancle_joint": {
+            "confirm": "NOTEXT"
+        },
+        "my_joint": {
+            "confirm": "NOTEXT",
+            "m_for_add_owner": "NOTEXT"
+        },
+        "take_money": {
+            "col_coins": "NOTEXT",
+            "transfer": "NOTEXT",
+            "send": "NOTEXT",
+            "no_coins": "NOTEXT",
+            "zero_coins": "NOTEXT"
+        },
+        "take_coins": {
+            "col_coins": "NOTEXT",
+            "transfer": "NOTEXT",
+            "send": "NOTEXT",
+            "zero_coins": "NOTEXT"
+        },
+        "remove_accessory": {
+            "choose_item": "NOTEXT",
+            "remove": "NOTEXT"
+        },
+        "buy_ale": {
+            "me": "NOTEXT",
+            "friend": "NOTEXT",
+            "no_coins": "NOTEXT"
+        },
+        "tavern_sleep": "NOTEXT",
+        "quests": {
+            "authors": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "get": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "kill": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "game": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "journey": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "fishing": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "collecting": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "feed": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "hunt": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ]
+        },
+        "quest": {
+            "had": "NOTEXT",
+            "complexity": "NOTEXT",
+            "comp_element": "NOTEXT",
+            "type": "NOTEXT",
+            "types": {
+                "get": "NOTEXT",
+                "journey": "NOTEXT",
+                "hunt": "NOTEXT",
+                "collecting": "NOTEXT",
+                "fishing": "NOTEXT",
+                "game": "NOTEXT",
+                "kill": "NOTEXT",
+                "feed": "NOTEXT"
+            },
+            "reward": {
+                "had": "NOTEXT",
+                "coins": "NOTEXT",
+                "items": "NOTEXT"
+            },
+            "buttons": {
+                "quest end": "NOTEXT",
+                "quest delete": "NOTEXT"
+            },
+            "quest_menu": "NOTEXT",
+            "delete_button": "NOTEXT",
+            "end_quest_button": "NOTEXT",
+            "not_found": "NOTEXT",
+            "time_end_h": "NOTEXT",
+            "get": "NOTEXT",
+            "game": "NOTEXT",
+            "journey": "NOTEXT",
+            "feed": "NOTEXT",
+            "collecting": "NOTEXT",
+            "fishing": "NOTEXT",
+            "hunt": "NOTEXT",
+            "time_end": "NOTEXT",
+            "new": "NOTEXT",
+            "resаmpling": "NOTEXT",
+            "end_quest": "NOTEXT",
+            "conditions": "NOTEXT"
+        },
+        "not_authorized": "NOTEXT",
+        "events": {
+            "time_year": {
+                "winter": "NOTEXT",
+                "spring": "NOTEXT",
+                "summer": "NOTEXT",
+                "autumn": "NOTEXT"
+            },
+            "add_hunting": "NOTEXT",
+            "add_fishing": "NOTEXT",
+            "add_collecting": "NOTEXT",
+            "add_all": "NOTEXT",
+            "new_year": "NOTEXT",
+            "info": "NOTEXT"
+        },
+        "daily_award": {
+            "info": "NOTEXT",
+            "bonus_text": "NOTEXT",
+            "lvl_now": "NOTEXT",
+            "1": "NOTEXT",
+            "2": "NOTEXT",
+            "bonus": "NOTEXT",
+            "buttons": {
+                "channel_url": "NOTEXT",
+                "rename": "NOTEXT",
+                "activate": "NOTEXT"
+            },
+            "in_base": "NOTEXT",
+            "use": "NOTEXT"
+        },
+        "journey": {
+            "forest": {
+                "forced_exit": [
+                    "NOTEXT"
+                ],
+                "without_influence": [
+                    "NOTEXT"
+                ],
+                "influences_health": [
+                    "NOTEXT"
+                ],
+                "meeting_friend": [
+                    "NOTEXT"
+                ],
+                "trade_item": [
+                    "NOTEXT"
+                ],
+                "edit_location": [
+                    "NOTEXT"
+                ],
+                "positive": {
+                    "influences_mood": [
+                        "NOTEXT"
+                    ],
+                    "influences_eat": [
+                        "NOTEXT"
+                    ],
+                    "influences_game": [
+                        "NOTEXT"
+                    ],
+                    "influences_energy": [
+                        "NOTEXT"
+                    ],
+                    "coins": [
+                        "NOTEXT"
+                    ],
+                    "item": [
+                        "NOTEXT"
+                    ],
+                    "quest": [
+                        "NOTEXT"
+                    ]
+                },
+                "negative": {
+                    "influences_mood": [
+                        "NOTEXT"
+                    ],
+                    "influences_eat": [
+                        "NOTEXT"
+                    ],
+                    "influences_game": [
+                        "NOTEXT"
+                    ],
+                    "influences_energy": [
+                        "NOTEXT"
+                    ],
+                    "coins": [
+                        "NOTEXT"
+                    ],
+                    "item": [
+                        "NOTEXT"
+                    ],
+                    "quest": [
+                        "NOTEXT"
+                    ]
+                }
+            },
+            "lost-islands": {
+                "forced_exit": [
+                    "NOTEXT"
+                ],
+                "without_influence": [
+                    "NOTEXT"
+                ],
+                "influences_health": [
+                    "NOTEXT"
+                ],
+                "meeting_friend": [
+                    "NOTEXT"
+                ],
+                "trade_item": [
+                    "NOTEXT"
+                ],
+                "edit_location": [
+                    "NOTEXT"
+                ],
+                "positive": {
+                    "influences_mood": [
+                        "NOTEXT"
+                    ],
+                    "influences_eat": [
+                        "NOTEXT"
+                    ],
+                    "influences_game": [
+                        "NOTEXT"
+                    ],
+                    "influences_energy": [
+                        "NOTEXT"
+                    ],
+                    "coins": [
+                        "NOTEXT"
+                    ],
+                    "item": [
+                        "NOTEXT"
+                    ],
+                    "quest": [
+                        "NOTEXT"
+                    ],
+                    "battle": [
+                        "NOTEXT"
+                    ]
+                },
+                "negative": {
+                    "influences_mood": [
+                        "NOTEXT"
+                    ],
+                    "influences_eat": [
+                        "NOTEXT"
+                    ],
+                    "influences_game": [
+                        "NOTEXT"
+                    ],
+                    "influences_energy": [
+                        "NOTEXT"
+                    ],
+                    "coins": [
+                        "NOTEXT"
+                    ],
+                    "item": [
+                        "NOTEXT"
+                    ],
+                    "quest": [
+                        "NOTEXT"
+                    ],
+                    "battle": [
+                        "NOTEXT"
+                    ]
+                }
+            },
+            "desert": {
+                "forced_exit": [
+                    "NOTEXT"
+                ],
+                "without_influence": [
+                    "NOTEXT"
+                ],
+                "influences_health": [
+                    "NOTEXT"
+                ],
+                "meeting_friend": [
+                    "NOTEXT"
+                ],
+                "trade_item": [
+                    "NOTEXT"
+                ],
+                "edit_location": [
+                    "NOTEXT"
+                ],
+                "positive": {
+                    "influences_mood": [
+                        "NOTEXT"
+                    ],
+                    "influences_eat": [
+                        "NOTEXT"
+                    ],
+                    "influences_game": [
+                        "NOTEXT"
+                    ],
+                    "influences_energy": [
+                        "NOTEXT"
+                    ],
+                    "coins": [
+                        "NOTEXT"
+                    ],
+                    "item": [
+                        "NOTEXT"
+                    ],
+                    "quest": [
+                        "NOTEXT"
+                    ],
+                    "battle": [
+                        "NOTEXT"
+                    ]
+                },
+                "negative": {
+                    "influences_mood": [
+                        "NOTEXT"
+                    ],
+                    "influences_eat": [
+                        "NOTEXT"
+                    ],
+                    "influences_game": [
+                        "NOTEXT"
+                    ],
+                    "influences_energy": [
+                        "NOTEXT"
+                    ],
+                    "coins": [
+                        "NOTEXT"
+                    ],
+                    "item": [
+                        "NOTEXT"
+                    ],
+                    "quest": [
+                        "NOTEXT"
+                    ],
+                    "battle": [
+                        "NOTEXT"
+                    ]
+                }
+            },
+            "mountains": {
+                "forced_exit": [
+                    "NOTEXT"
+                ],
+                "without_influence": [
+                    "NOTEXT"
+                ],
+                "influences_health": [
+                    "NOTEXT"
+                ],
+                "meeting_friend": [
+                    "NOTEXT"
+                ],
+                "trade_item": [
+                    "NOTEXT"
+                ],
+                "edit_location": [
+                    "NOTEXT"
+                ],
+                "positive": {
+                    "influences_mood": [
+                        "NOTEXT"
+                    ],
+                    "influences_eat": [
+                        "NOTEXT"
+                    ],
+                    "influences_game": [
+                        "NOTEXT"
+                    ],
+                    "influences_energy": [
+                        "NOTEXT"
+                    ],
+                    "coins": [
+                        "NOTEXT"
+                    ],
+                    "item": [
+                        "NOTEXT"
+                    ],
+                    "quest": [
+                        "NOTEXT"
+                    ],
+                    "battle": [
+                        "NOTEXT"
+                    ]
+                },
+                "negative": {
+                    "influences_mood": [
+                        "NOTEXT"
+                    ],
+                    "influences_eat": [
+                        "NOTEXT"
+                    ],
+                    "influences_game": [
+                        "NOTEXT"
+                    ],
+                    "influences_energy": [
+                        "NOTEXT"
+                    ],
+                    "coins": [
+                        "NOTEXT"
+                    ],
+                    "item": [
+                        "NOTEXT"
+                    ],
+                    "quest": [
+                        "NOTEXT"
+                    ],
+                    "battle": [
+                        "NOTEXT"
+                    ]
+                }
+            },
+            "magic-forest": {
+                "forced_exit": [
+                    "NOTEXT"
+                ],
+                "without_influence": [
+                    "NOTEXT"
+                ],
+                "influences_health": [
+                    "NOTEXT"
+                ],
+                "meeting_friend": [
+                    "NOTEXT"
+                ],
+                "trade_item": [
+                    "NOTEXT"
+                ],
+                "edit_location": [
+                    "NOTEXT"
+                ],
+                "positive": {
+                    "influences_mood": [
+                        "NOTEXT"
+                    ],
+                    "influences_eat": [
+                        "NOTEXT"
+                    ],
+                    "influences_game": [
+                        "NOTEXT"
+                    ],
+                    "influences_energy": [
+                        "NOTEXT"
+                    ],
+                    "coins": [
+                        "NOTEXT"
+                    ],
+                    "item": [
+                        "NOTEXT"
+                    ],
+                    "quest": [
+                        "NOTEXT"
+                    ],
+                    "battle": [
+                        "NOTEXT"
+                    ]
+                },
+                "negative": {
+                    "influences_mood": [
+                        "NOTEXT"
+                    ],
+                    "influences_eat": [
+                        "NOTEXT"
+                    ],
+                    "influences_game": [
+                        "NOTEXT"
+                    ],
+                    "influences_energy": [
+                        "NOTEXT"
+                    ],
+                    "coins": [
+                        "NOTEXT"
+                    ],
+                    "item": [
+                        "NOTEXT"
+                    ],
+                    "quest": [
+                        "NOTEXT"
+                    ],
+                    "battle": [
+                        "NOTEXT"
+                    ]
+                }
+            },
+            "signs": {
+                "coins": "NOTEXT",
+                "heal": "NOTEXT",
+                "energy": "NOTEXT",
+                "game": "NOTEXT",
+                "eat": "NOTEXT",
+                "sunshine": "NOTEXT",
+                "breeze": "NOTEXT",
+                "rain": "NOTEXT",
+                "anti_rain": "NOTEXT",
+                "cold_wind": "NOTEXT",
+                "anti_cold_wind": "NOTEXT",
+                "drought": "NOTEXT",
+                "snowfall": "NOTEXT",
+                "magic_light": "NOTEXT",
+                "magic_animal": "NOTEXT"
+            },
+            "cancel": "NOTEXT"
+        },
+        "mobs": {
+            "crocodile": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "lion": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "tiger": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "bear": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "wolf": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "shark": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "snake": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "rhino": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "elephant": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "gorilla": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "spider": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "scorpion": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "camel": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "puma": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "fox": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "hyena": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "hippo": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "otter": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "panther": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "raccoon": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "deer": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "bear_cub": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "bat": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "coyote": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "cougar": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "dolphin": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "dragon": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "eagle": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "falcon": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "fennec_fox": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "giraffe": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "goat": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "grizzly": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "hamster": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "hedgehog": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "horse": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "jackal": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "jaguar": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "kangaroo": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "komodo_dragon": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "lemur": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "leopard": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "lobster": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "lynx": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "meerkat": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "mole": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "monkey": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "moose": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "narwhal": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "octopus": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "opossum": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "orca": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "ostrich": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "otter_pup": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "owl": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "panda": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "parrot": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "peacock": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "pelican": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "penguin": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "pig": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "pigeon": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "polar_bear": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "porcupine": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "rabbit": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "rattlesnake": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "red_panda": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "reindeer": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "rooster": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "seagull": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "seahorse": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "seal": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "sheep": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "skunk": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "sloth": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "snail": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "snow_leopard": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "squid": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "swan": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "toucan": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "turtle": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "walrus": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "weasel": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "whale": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "wombat": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            },
+            "zebra": {
+                "name": "NOTEXT",
+                "emoji": "NOTEXT"
+            }
+        },
+        "books": {
+            "book_forest": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "book_lost-islands": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "book_desert": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "book_mountains": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ],
+            "book_magic-forest": [
+                "NOTEXT"
+            ],
+            "meow_book": [
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT",
+                "NOTEXT"
+            ]
+        },
+        "not_found_key": "NOTEXT",
+        "journey_last_event": {
+            "info": "NOTEXT",
+            "last_event": "NOTEXT",
+            "button": "NOTEXT"
+        },
+        "journey_log": "NOTEXT",
+        "ns_craft": {
+            "not_materials": "NOTEXT",
+            "create": "NOTEXT"
+        },
+        "lang_set": "NOTEXT",
+        "new_lang": "NOTEXT",
+        "exchange": "NOTEXT",
+        "exchange_me": "NOTEXT",
+        "confirm_exchange": "NOTEXT",
+        "market_create": {
+            "name": "NOTEXT",
+            "description": "NOTEXT",
+            "create": "NOTEXT",
+            "lvl": "NOTEXT",
+            "name_error": "NOTEXT"
+        },
+        "market_ui": {
+            "had": "NOTEXT",
+            "owner": "NOTEXT",
+            "me_owner": "NOTEXT",
+            "earned": "NOTEXT",
+            "needy": "NOTEXT",
+            "stable": "NOTEXT",
+            "rich": "NOTEXT",
+            "conducted": "NOTEXT",
+            "products": "NOTEXT",
+            "not_found": "NOTEXT",
+            "my_option": "NOTEXT",
+            "buttons": {
+                "market_products": "NOTEXT",
+                "no_products": "NOTEXT",
+                "сomplain": "NOTEXT",
+                "edit_image": "NOTEXT",
+                "edit_text": "NOTEXT",
+                "edit_name": "NOTEXT",
+                "cancel_all": "NOTEXT"
+            }
+        },
+        "add_product": {
+            "options_info": "NOTEXT",
+            "chose_item": {
+                "items_coins": "NOTEXT",
+                "coins_items": "NOTEXT",
+                "items_items": "NOTEXT",
+                "auction": "NOTEXT",
+                "trade_items": "NOTEXT"
+            },
+            "wait_count": "NOTEXT",
+            "add_item": "NOTEXT",
+            "coins": {
+                "items_coins": "NOTEXT",
+                "coins_items": "NOTEXT",
+                "auction": "NOTEXT"
+            },
+            "stock": {
+                "items_coins": "NOTEXT",
+                "coins_items": "NOTEXT",
+                "items_items": "NOTEXT"
+            },
+            "time_end": "NOTEXT",
+            "min_add": "NOTEXT",
+            "few_coins": "NOTEXT",
+            "all_good": "NOTEXT",
+            "no_items": "NOTEXT"
+        },
+        "product_ui": {
+            "cap": "NOTEXT",
+            "type": "NOTEXT",
+            "in_stock": "NOTEXT",
+            "types": {
+                "items_coins": "NOTEXT",
+                "coins_items": "NOTEXT",
+                "items_items": "NOTEXT",
+                "auction": "NOTEXT"
+            },
+            "text": {
+                "items_coins": "NOTEXT",
+                "coins_items": "NOTEXT",
+                "items_items": "NOTEXT",
+                "auction": "NOTEXT"
+            },
+            "buttons": {
+                "edit_price": "NOTEXT",
+                "add": "NOTEXT",
+                "buy": "NOTEXT",
+                "sell": "NOTEXT",
+                "delete": "NOTEXT",
+                "auction": "NOTEXT",
+                "view": "NOTEXT",
+                "promotion": "NOTEXT",
+                "alredy_promotion": "NOTEXT",
+                "items_info": "NOTEXT"
+            },
+            "owner_message": "NOTEXT",
+            "no_action_users": "NOTEXT"
+        },
+        "auction": {
+            "delete_auction": "NOTEXT",
+            "win": "NOTEXT"
+        },
+        "product_info": {
+            "delete": "NOTEXT",
+            "error": "NOTEXT",
+            "new_price": "NOTEXT",
+            "add_stock": "NOTEXT",
+            "update_price": "NOTEXT",
+            "not_coins": "NOTEXT",
+            "no_items": "NOTEXT",
+            "stock": "NOTEXT"
+        },
+        "seller": {
+            "confirm_delete_all": "NOTEXT",
+            "error": "NOTEXT",
+            "delete_all": "NOTEXT",
+            "edit_name": "NOTEXT",
+            "new_name": "NOTEXT",
+            "edit_description": "NOTEXT",
+            "new_description": "NOTEXT",
+            "edit_image": "NOTEXT",
+            "new_image": "NOTEXT",
+            "delete_image": "NOTEXT"
+        },
+        "no_premium": "NOTEXT",
+        "no_products": "NOTEXT",
+        "buy": {
+            "common_buy": "NOTEXT",
+            "auction": "NOTEXT",
+            "max_min": "NOTEXT",
+            "erro_max_col": "NOTEXT",
+            "error_no_coins": "NOTEXT",
+            "error_no_items": "NOTEXT",
+            "ok": "NOTEXT",
+            "participant": "NOTEXT"
+        },
+        "promotion": {
+            "buy": "NOTEXT",
+            "max": "NOTEXT",
+            "ok": "NOTEXT",
+            "no_coins": "NOTEXT",
+            "already": "NOTEXT"
+        },
+        "products": {
+            "search": "NOTEXT",
+            "null": "NOTEXT"
+        },
+        "find_product": {
+            "choose": "NOTEXT",
+            "info": "NOTEXT",
+            "not_found": "NOTEXT"
+        },
+        "push": {
+            "not_management": "NOTEXT",
+            "not_admin": "NOTEXT",
+            "ok": "NOTEXT",
+            "new": "NOTEXT",
+            "update": "NOTEXT",
+            "push_info": "NOTEXT"
+        },
+        "edit_dino": {
+            "info": "NOTEXT",
+            "buttons": {
+                "transformation rare": "NOTEXT",
+                "transformation appearance": "NOTEXT",
+                "transformation all": "NOTEXT"
+            },
+            "dino": "NOTEXT",
+            "new_rare": "NOTEXT",
+            "appearance": "NOTEXT",
+            "rare": "NOTEXT",
+            "all": "NOTEXT",
+            "no_coins": "NOTEXT",
+            "no_items": "NOTEXT",
+            "new": "NOTEXT",
+            "return": "NOTEXT"
+        },
+        "kindergarten": {
+            "info": "NOTEXT",
+            "button_name": "NOTEXT",
+            "cancel_name": "NOTEXT",
+            "choose_house": "NOTEXT",
+            "no_hours": "NOTEXT",
+            "ok": "NOTEXT",
+            "in_kindergarten": "NOTEXT",
+            "stop": "NOTEXT"
+        },
+        "create_tracking": {
+            "name": "NOTEXT",
+            "already": "NOTEXT",
+            "ok": "NOTEXT"
+        },
+        "track": {
+            "text": "NOTEXT",
+            "delete": "NOTEXT",
+            "clear": "NOTEXT"
+        },
+        "track_open": "NOTEXT",
+        "track_clear": "NOTEXT",
+        "track_delete": "NOTEXT",
+        "string_to_str": {
+            "info": "NOTEXT"
+        },
+        "promo": {
+            "coins": "NOTEXT",
+            "count": "NOTEXT",
+            "time_end": "NOTEXT",
+            "code": "NOTEXT",
+            "chose_item": "NOTEXT"
+        },
+        "max_count": "NOTEXT",
+        "max_friend_count": "NOTEXT",
+        "new_year": {
+            "ok": "NOTEXT",
+            "not": "NOTEXT",
+            "to_friend": "NOTEXT"
+        },
+        "super_coins": {
+            "plus_one": "NOTEXT",
+            "info": "NOTEXT",
+            "buttons": {
+                "super_coins view": "NOTEXT",
+                "super_coins products": "NOTEXT"
+            },
+            "view": {
+                "buttons": {
+                    "7845": {
+                        "text": "NOTEXT",
+                        "data": "NOTEXT"
+                    },
+                    "s98j": {
+                        "text": "NOTEXT",
+                        "data": "NOTEXT"
+                    },
+                    "erlt": {
+                        "text": "NOTEXT",
+                        "data": "NOTEXT"
+                    },
+                    "74js": {
+                        "text": "NOTEXT",
+                        "data": "NOTEXT"
+                    },
+                    "no_ads": {
+                        "text": "NOTEXT",
+                        "data": "NOTEXT"
+                    }
+                },
+                "info": "NOTEXT"
+            },
+            "shop": "NOTEXT",
+            "buy": "NOTEXT"
+        },
+        "no_dinos": "NOTEXT",
+        "buyer": {
+            "choose": "NOTEXT",
+            "ok": "NOTEXT",
+            "no": "NOTEXT"
+        }
+    }
+}
