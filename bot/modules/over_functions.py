@@ -67,13 +67,21 @@ async def send_message(chat_id: int, text: str,
     if last_message == int(time()):
         if col_now < 30:
             col_now += 1
-            return await bot.send_message(chat_id, text, parse_mode, **kwargs)
+            try:
+                msg = await bot.send_message(chat_id, text, parse_mode, **kwargs)
+            except Exception as e:
+                log(str(e), 2)
+                if 'parse_mode' in kwargs:
+                    del kwargs['parse_mode']
+                msg = await bot.send_message(chat_id, text, parse_mode, **kwargs)
         else:
             st = float(int(time()) + 1) - time()
             log(f'Достигнуто ограничение по сообщениям в секунду. Сон {st}')
             await sleep(st)
-            return await bot.send_message(chat_id, text, parse_mode, **kwargs)
+            msg = await bot.send_message(chat_id, text, parse_mode, **kwargs)
     else:
         last_message = int(time())
         col_now = 0
-        return await bot.send_message(chat_id, text, parse_mode, **kwargs)
+        msg = await bot.send_message(chat_id, text, parse_mode, **kwargs)
+
+    return msg
