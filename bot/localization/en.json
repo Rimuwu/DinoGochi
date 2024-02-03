@@ -2489,7 +2489,7 @@
             "collecting": "🥦 Collect {now} / {max} herb items.",
             "fishing": "🐟 Catch {now} / {max} items.",
             "hunt": "🍖 Catch {now} / {max} items.",
-            "time_end": "_⏳ After {time_end} the quest will be transferred to another player.",
+            "time_end": "_⏳ After {time_end} the quest will be transferred to another player._",
             "new": "🆕 | You've been given a new quest!",
             "resаmpling": "🗝️ | You've been given another player's quest!",
             "end_quest": "✨ Quest *{name}* completed, *{author_name}* was satisfied with your work and gave you a reward!",
@@ -2514,9 +2514,9 @@
             "info": "🎋 *|* *Daily Reward* \n By logging in every day, you can get nice bonuses\n\n 🏮 *|* *Level 1*: *Player* - Nice login bonuses, here's what you can get: _{lvl_1} 🪙 _\n\n 🎏 *Level 2*: *Trainer* - Nice bonuses for logging in and subscribing to the channel, here's what you can get by clicking on the button: {lvl_2} 🪙",
             "bonus_text": "\n\n 🎍 *|* *Additionally*: - If you add *Dinogochi* to your name, the following will be added to your daily reward: _{bonus} _ 🪙 \n\n 🎍 Example add:\n {name_dino}",
             "lvl_now": "\n\n 👑 At the moment, you will receive a reward level \n",
-            "1": "*🏮 Player*",
-            "2": "**",
-            "bonus": " + **",
+            "1": " *🏮 Player*",
+            "2": " *🎏 Trainer*",
+            "bonus": "+ *🎍 Ext. Name Bonus*",
             "buttons": {
                 "channel_url": "🗝️ Subscribe",
                 "rename": "🦕 Change Name",
@@ -3391,7 +3391,7 @@
             },
             "stock": {
                 "items_coins": "🎨 Specify the quantity of the item in stock. \n\n _For example, you added 2 carrots and 1 tomato to the product, if you enter 3 now, then 6 carrots and 3 tomatoes will be removed from your inventory, as well as 3 people will be able to purchase your product.",
-                "coins_items": "🎨 How many times can the order be executed\n\n For example, if you specify 2 and you want to exchange 2 carrots for 100 coins in the reader, you will spend a total of 400 coins for 4 carrots.",
+                "coins_items": "🎨 How many times can the order be executed\n\n_For example, if you specify 2 and you want to exchange 2 carrots for 100 coins in the reader, you will spend a total of 400 coins for 4 carrots.",
                 "items_items": "🎨 Specify the number of times you can share resources."
             },
             "time_end": "🎩 Specify the end time of the auction, you are required to enter the time in the form of text. \n\n ⏰ Write '/string_to_sec' to receive a memo.",
