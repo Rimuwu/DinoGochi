@@ -96,7 +96,7 @@ if __name__ == '__main__':
 else:
     load()
     if conf.check_translate:
-        from tools.new_translate.translate import main as check_locs
+        from tools.translate.translate import main as check_locs
 
         print("Запуск автоматической проверки файлов локализации.")
         res = check_locs()
