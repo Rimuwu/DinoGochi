@@ -1899,7 +1899,7 @@
                 },
                 "m1": {
                     "text": "Saludos, querido {user_name}. Hemos recibido un informe sobre el exterminio de dinosaurios, ¿confirmas esta información?",
-                    "previous": "empezar",
+                    "previous": "start",
                     "buttons": {
                         "m2-n": {
                             "text": "❌ ¡No!",
@@ -1933,7 +1933,7 @@
                 },
                 "m3-n": {
                     "text": "{people_name} te mira con una sonrisa. Ya está claro, él sabe que estás mintiendo.",
-                    "previous": "M2-N",
+                    "previous": "m2-n",
                     "system": true,
                     "buttons": {
                         "m2-y": {
@@ -1948,7 +1948,7 @@
                 },
                 "m3-y": {
                     "text": "De acuerdo con su reputación, tenemos una cotización para usted. Aquí hay un vistazo al contrato.",
-                    "previous": "m2-año",
+                    "previous": "m2-y",
                     "buttons": {
                         "m4-y": {
                             "text": "📃 Ver ahora",
@@ -1958,7 +1958,7 @@
                 },
                 "m4-n": {
                     "text": "Veo que no quieres hacerlo en el buen sentido... Me gusta, necesitamos a los audaces en nuestro negocio, aquí, fírmalo.",
-                    "previous": "M3-N",
+                    "previous": "m3-n",
                     "buttons": {
                         "m5-n": {
                             "text": "📃 Ver ahora",
@@ -1979,7 +1979,7 @@
                 },
                 "m5-n": {
                     "text": "📃 Después de leer el contrato, descubres que regalas el 70% de tus ahorros y todo el inventario a la organización, y a cambio, la organización te da un huevo de rareza indeterminada.",
-                    "previous": "M4-N",
+                    "previous": "m4-n",
                     "system": true,
                     "buttons": {
                         "end-n": {
@@ -1990,11 +1990,11 @@
                 },
                 "end-y": {
                     "text": "Genial, encantado de hacer negocios contigo)",
-                    "previous": "M4-Y"
+                    "previous": "m4-y"
                 },
                 "end-n": {
                     "text": "Genial, encantado de hacer negocios contigo)",
-                    "previous": "M5-N"
+                    "previous": "m5-n"
                 }
             }
         },
