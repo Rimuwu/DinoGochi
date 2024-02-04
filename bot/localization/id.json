@@ -1,0 +1,3595 @@
+{
+    "id": {
+        "language_name": "🇮🇩 Indonesia",
+        "localization_author": "Lokalisasi Sistem",
+        "buttons_name": {
+            "back": "↪️ Kembali",
+            "enable": "✅ Aktifkan",
+            "disable": "❌ Matikan",
+            "confirm": "✅ Konfirmasi",
+            "yes": "✅ Ya",
+            "no": "❌ Tidak",
+            "cancel": "❌ Batal"
+        },
+        "commands_name": {
+            "start_game": "🍡 Mulai mainkan",
+            "dino_profile": "🦖 Dinosaurus",
+            "settings_menu": "🔧 Pengaturan",
+            "friends_menu": "👥 Teman",
+            "actions_menu": "🕹 Tindakan",
+            "profile_menu": "👁‍🗨 Profil",
+            "dino-tavern_menu": "🍺 Kedai Dino",
+            "settings": {
+                "notification": "❗ Pemberitahuan",
+                "dino_name": "💬 Ubah nama dinosaurus",
+                "inventory": "🎞 Inventaris",
+                "dino_profile": "🦕 Profil",
+                "delete_me": "🗑 Hapus akun",
+                "settings_page_2": "➡ Halaman 2"
+            },
+            "settings2": {
+                "my_name": "🎠 Telepon saya",
+                "custom_profile": "🌟 Latar belakang dinosaurus",
+                "lang": "👅 Bahasa"
+            },
+            "profile": {
+                "information": "Informasi 📜",
+                "inventory": "🎮 Inventaris",
+                "rayting": "🎢 penilaian",
+                "about": "🤖 Tentang bot",
+                "market": "🛒 Pasar"
+            },
+            "friends": {
+                "add_friend": "➕ Tambahkan",
+                "friends_list": "📜 Daftar",
+                "remove_friend": "➖ Hapus",
+                "requests": "💌 Permintaan",
+                "referal": "❤ Undang teman"
+            },
+            "market": {
+                "random": "🛒 Item acak",
+                "find": "🔍 Pencarian produk",
+                "seller_profile": "🛒 Menu toko"
+            },
+            "seller_profile": {
+                "add_product": "☄ Tambahkan produk",
+                "my_market": "📜 Toko saya",
+                "my_products": "🌂 Produk saya",
+                "create_market": "🛍 Buat toko"
+            },
+            "actions": {
+                "no_dino": "🧵 Anda tidak memiliki dinosaurus",
+                "entertainments": "🎮 Hiburan",
+                "stop_game": "❌ Hentikan permainannya",
+                "feed": "🍣 Umpan",
+                "journey": "🎋 Perjalanan",
+                "events": "🎋 Acara",
+                "put_to_bed": "🌙 Ditidurkan",
+                "awaken": "🌙 Bangun",
+                "collecting": "🍕 Mengumpulkan makanan",
+                "progress": "🍕 Kemajuan",
+                "dino_button": "🦖 Dinosaurus:"
+            },
+            "dino_tavern": {
+                "dungeon": "🗻 Ruang bawah tanah",
+                "edit": "♻ Transformasi",
+                "quests": "⛓ Pencarian",
+                "daily_award": "🎁 Bonus",
+                "events": "🎈 Acara"
+            },
+            "about": {
+                "team": "🤼 Tim",
+                "support": "💸 Dukungan",
+                "faq": "❗ Direktori",
+                "links": "🔗 Referensi"
+            },
+            "referal": {
+                "code": "🎲 Buat kode",
+                "enter_code": "🎞 Masukkan kode",
+                "my_code": "🎲 Kode saya:",
+                "friend_code": "🎞 Teman:"
+            }
+        },
+        "rare": {
+            "com": [
+                "Biasa",
+                "Biasa",
+                "🤍",
+                "Biasa"
+            ],
+            "unc": [
+                "Luar biasa",
+                "Luar biasa",
+                "💚",
+                "Luar biasa"
+            ],
+            "rar": [
+                "Langka",
+                "Langka",
+                "💙",
+                "Langka"
+            ],
+            "mys": [
+                "Mystic",
+                "Mistik",
+                "💜",
+                "Mistik"
+            ],
+            "leg": [
+                "Legendaris",
+                "Legendaris",
+                "🧡",
+                "Legendaris"
+            ],
+            "myt": [
+                "Mitos",
+                "Mitos",
+                "❤",
+                "Mitos"
+            ],
+            "random": [
+                "Disengaja",
+                "Acak",
+                "🎲",
+                "Acak"
+            ]
+        },
+        "time_format": {
+            "second": [
+                "kedua",
+                "Detik",
+                "Detik",
+                "k."
+            ],
+            "minute": [
+                "menit",
+                "Menit",
+                "Menit",
+                "m."
+            ],
+            "hour": [
+                "jam",
+                "Jam",
+                "Jam",
+                "j."
+            ],
+            "day": [
+                "hari",
+                "Hari",
+                "Hari",
+                "H."
+            ],
+            "weekly": [
+                "minggu",
+                "Minggu",
+                "Minggu",
+                "M."
+            ],
+            "month": [
+                "bulan",
+                "Bulan",
+                "Bulan",
+                "B."
+            ]
+        },
+        "owner": "Tuan",
+        "items_names": {
+            "jar_honey": {
+                "name": "🍯 Toples madu"
+            },
+            "cookie": {
+                "name": "🍪 Biskuit"
+            },
+            "mysterious_egg": {
+                "name": "🥚 Telur Misterius"
+            },
+            "timer": {
+                "name": "⏲ Timer",
+                "description": "Memungkinkan Anda mengetahui berapa lama permainan akan berlangsung."
+            },
+            "wild_boar_meat": {
+                "name": "🍖 Daging babi hutan"
+            },
+            "bunch_herbs": {
+                "name": "🌿 Banyak herbal"
+            },
+            "fish": {
+                "name": "🍤 Ikan"
+            },
+            "wolf_meat": {
+                "name": "🥩 Daging serigala"
+            },
+            "grasses_from_fields": {
+                "name": "🌾 Herbal dari ladang"
+            },
+            "seafood": {
+                "name": "🍣 Makanan Laut"
+            },
+            "berries": {
+                "name": "🍒 Buah beri"
+            },
+            "chicken_leg": {
+                "name": "🍗 Kaki ayam"
+            },
+            "small_fish": {
+                "name": "🦪 Ikan kecil"
+            },
+            "cloak": {
+                "name": "🧥 Jubah",
+                "description": "Membatalkan penalti untuk acara hujan."
+            },
+            "tooling": {
+                "name": "🛠 alat",
+                "description": "Mempercepat panen pangan."
+            },
+            "bear": {
+                "name": "🧸 Mishka",
+                "description": "Menambahkan mode tidur."
+            },
+            "therapeutic_mixture": {
+                "name": "🧪 Campuran obat"
+            },
+            "slice_pizza": {
+                "name": "🍕 Sepotong pizza"
+            },
+            "sweet_pancakes": {
+                "name": "🥞 Panekuk manis"
+            },
+            "unusual_egg": {
+                "name": "🥚 Telur yang tidak biasa"
+            },
+            "regular_egg": {
+                "name": "🥚 Telur Biasa"
+            },
+            "rare_egg": {
+                "name": "🥚 Telur Langka"
+            },
+            "mystic_egg": {
+                "name": "🥚 Telur Mistik"
+            },
+            "legendary_egg": {
+                "name": "🥚 Telur Legendaris"
+            },
+            "blank_piece_paper": {
+                "name": "📄 Selembar kertas kosong"
+            },
+            "skin": {
+                "name": "👢 Kulit"
+            },
+            "wool": {
+                "name": "🐑 Wol"
+            },
+            "rope": {
+                "name": "🎗 Tali"
+            },
+            "feather": {
+                "name": "🐦 Pena"
+            },
+            "twigs_tree": {
+                "name": "🥢 Ranting pohon"
+            },
+            "fish_oil": {
+                "name": "🐡 Minyak ikan"
+            },
+            "leather_clothing": {
+                "name": "🧤 Pakaian Kulit",
+                "description": "Menghangatkan dinosaurus."
+            },
+            "clothing_recipe": {
+                "name": "📜 Resep Pakaian",
+                "description": "Resep untuk membuat jaket kulit yang indah."
+            },
+            "torch": {
+                "name": "🔥 Obor",
+                "description": "Saat panen, ada peluang untuk menemukan lebih banyak tumbuhan halus."
+            },
+            "torch_recipe": {
+                "name": "📜 Resep Obor",
+                "description": "Resep untuk membuat obor yang akan menerangi jalan Anda."
+            },
+            "medicinal_drink": {
+                "name": "🍵 Minuman Obat"
+            },
+            "drink_recipe": {
+                "name": "📜 Resep Minuman",
+                "description": "Resep untuk membuat minuman yang menjijikkan, tetapi menyembuhkan."
+            },
+            "gourmet_herbs": {
+                "name": "🍀 Bumbu Gourmet"
+            },
+            "tea": {
+                "name": "🍵 Teh"
+            },
+            "tea_recipe": {
+                "name": "📜 Resep Teh",
+                "description": "Resep untuk membuat teh harum."
+            },
+            "roasted_meat": {
+                "name": "🥩 Daging Panggang"
+            },
+            "meat_recipe": {
+                "name": "📜 Resep Daging",
+                "description": "Siapa yang tidak suka makan sepotong daging yang dimasak dengan baik? Seekor dinosaurus juga tidak akan menolak."
+            },
+            "salad": {
+                "name": "🥗 Salad"
+            },
+            "salad_recipe": {
+                "name": "📜 Resep Salad",
+                "description": "Bukankah dinosaurus lelah makan rumput sendirian? Mungkin lebih baik membuat salad dengan beberapa bumbu? Dinosaurus saya menyukai hasilnya!"
+            },
+            "soup": {
+                "name": "🥣 Sup"
+            },
+            "soup_recipe": {
+                "name": "📜 Resep Sup",
+                "description": "'Ikan hidup di air, mengapa saya memakannya kering?' - Itulah yang mungkin dipikirkan setiap dinosaurus, dia hanya belum mencicipi sup ikan."
+            },
+            "board_games": {
+                "name": "🧩 Permainan Meja",
+                "description": "Menambahkan 4 permainan papan dinosaurus!"
+            },
+            "hiking_bag": {
+                "name": "👜 Kantong Berkemah",
+                "description": "Meningkatkan kemungkinan peristiwa dalam perjalanan."
+            },
+            "pouch_recipe": {
+                "name": "📜 Resep kantong",
+                "description": "Selama perjalanan, dinosaurus membutuhkan tempat untuk menyimpan semua hal yang ditemukannya, di sini kita akan membutuhkan tas hiking!"
+            },
+            "set_cookies": {
+                "name": "🍪 Set Cookie"
+            },
+            "pizza": {
+                "name": "🍕 Pizza"
+            },
+            "magic_stone": {
+                "name": "🔮 Batu Ajaib"
+            },
+            "taco": {
+                "name": "🌮 Taco"
+            },
+            "bone": {
+                "name": "🦴 Tulang"
+            },
+            "iron": {
+                "name": "🧱 Besi"
+            },
+            "bone_sword": {
+                "name": "🗡 Pedang Tulang"
+            },
+            "bone_arrow": {
+                "name": "💘 Panah Tulang"
+            },
+            "bone_onions": {
+                "name": "🏹 Busur Tulang"
+            },
+            "taco_recipe": {
+                "name": "📜 Resep taco",
+                "description": "Taco, makanan luar biasa yang disukai semua dinosaurus dari semua spesies!"
+            },
+            "sword_recipe": {
+                "name": "📜 Resep Pedang",
+                "description": "Pedang tajam yang terbuat dari tulang mayat hidup."
+            },
+            "onion_recipe": {
+                "name": "📜 Resep Bawang",
+                "description": "Busur yang terbuat dari sepasang tulang, menembak dengan benar."
+            },
+            "arrow_recipe": {
+                "name": "📜 Resep Panah",
+                "description": "Tulang patah tulang."
+            },
+            "regular_backpack": {
+                "name": "🎒 Ransel Reguler"
+            },
+            "backpack_recipe": {
+                "name": "📜 Resep Ransel",
+                "description": "Ransel sekolah yang dilengkapi untuk penjara bawah tanah."
+            },
+            "bone_shield": {
+                "name": "🛡 Perisai Tulang"
+            },
+            "shield_recipe": {
+                "name": "📜 Resep Perisai",
+                "description": "Perisai tulang, hanya perisai."
+            },
+            "bone_pickaxe": {
+                "name": "⛏ Beliung Tulang"
+            },
+            "pickaxe_recipe": {
+                "name": "📜 Resep beliung",
+                "description": "Tulangan Beliung tidak efektif dalam pertempuran, karena semua orang tahu bahwa kapak adalah senjata yang lebih tangguh. Di sisi lain, ini efektif dalam mengekstraksi sumber daya."
+            },
+            "freezing": {
+                "name": "❄ Bekukan"
+            },
+            "defrost": {
+                "name": "🔥 Pencairan es"
+            },
+            "chocolate": {
+                "name": "🍫 Cokelat"
+            },
+            "candy": {
+                "name": "🍬 Permen"
+            },
+            "candy_recipe": {
+                "name": "📜 Resep Permen",
+                "description": "Resep untuk membuat sejumlah besar cokelat"
+            },
+            "maize": {
+                "name": "🌽 Jagung"
+            },
+            "popcorn": {
+                "name": "🍿 Popcorn"
+            },
+            "popcorn_recipe": {
+                "name": "📜 Resep Popcorn",
+                "description": "Resep untuk membuat popcorn. Saatnya menonton film!"
+            },
+            "juice": {
+                "name": "🧃 Jus"
+            },
+            "juice_recipe": {
+                "name": "📜 Resep Jus",
+                "description": "Resep untuk membuat jus segar"
+            },
+            "spices": {
+                "name": "🌶️ Rempah-rempah"
+            },
+            "spicy_steak": {
+                "name": "🥩 Steak Pedas"
+            },
+            "steak_recipe": {
+                "name": "📜 Resep Steak",
+                "description": "Resep untuk membuat steak pedas tapi lezat"
+            },
+            "banana": {
+                "name": "🍌 Pisang"
+            },
+            "crab": {
+                "name": "🦀 Kepiting"
+            },
+            "coffee": {
+                "name": "☕️ Kopi"
+            },
+            "mushroom": {
+                "name": "🍄 Jamur"
+            },
+            "broth": {
+                "name": "🍲 Kaldu"
+            },
+            "broth_recipe": {
+                "name": "📜 Resep Kaldu",
+                "description": "Resep untuk membuat kaldu daging yang kaya"
+            },
+            "rice": {
+                "name": "🍚 Gambar"
+            },
+            "sushi": {
+                "name": "🍣 Sushi"
+            },
+            "sushi_recipe": {
+                "name": "📜 Resep Sushi",
+                "description": "Resep untuk membuat sushi. Dikatakan sebagai makanan seimbang sempurna"
+            },
+            "hot_chocolate": {
+                "name": "☕️ Cokelat Panas"
+            },
+            "hot_chocolate_recipe": {
+                "name": "📜 Resep Cokelat Panas",
+                "description": "Resep untuk membuat cokelat panas. Sempurna untuk membuat Anda tetap hangat di musim dingin"
+            },
+            "cake": {
+                "name": "🎂 Kue"
+            },
+            "cake_recipe": {
+                "name": "📜 Resep Kue",
+                "description": "Resep untuk membuat kue besar. Kue itu bohong"
+            },
+            "curry": {
+                "name": "🍛 Kari"
+            },
+            "curry_recipe": {
+                "name": "📜 Resep Kari",
+                "description": "Resep untuk membuat kari. Ini hidangan pedas dengan nasi"
+            },
+            "dango": {
+                "name": "🍡 Dango"
+            },
+            "grain": {
+                "name": "🥜 Biji"
+            },
+            "bread": {
+                "name": "🍞 Roti"
+            },
+            "bread_recipe": {
+                "name": "📜 Resep Roti",
+                "description": "Resep untuk membuat roti"
+            },
+            "berry_pie": {
+                "name": "🥧 Pai Berry"
+            },
+            "fish_cake": {
+                "name": "🥘 Kue Ikan"
+            },
+            "meat_pie": {
+                "name": "🍲 Pai Daging"
+            },
+            "berry_pie_recipe": {
+                "name": "📜 Resep Berry Pie",
+                "description": "Resep untuk pai termanis"
+            },
+            "fish_pie_recipe": {
+                "name": "📜 Resep Kue Ikan",
+                "description": "Resep untuk membuat pai paling sehat"
+            },
+            "meat_pie_recipe": {
+                "name": "📜 Resep Pai Daging",
+                "description": "Resep untuk membuat pai paling hangat"
+            },
+            "bacon": {
+                "name": "🥓 Daging asap"
+            },
+            "bacon_recipe": {
+                "name": "📜 Resep Bacon",
+                "description": "Resep Bacon"
+            },
+            "bento": {
+                "name": "🍱 Bento"
+            },
+            "bento_recipe": {
+                "name": "📜 Resep Bento",
+                "description": "Resep untuk membuat bento. Semuanya untuk camilan lengkap dikumpulkan di sini."
+            },
+            "sandwich": {
+                "name": "🥪 Roti lapis"
+            },
+            "sandwich_recipe": {
+                "name": "📜 Resep Sandwich",
+                "description": "Resep untuk membuat sandwich. Nyaman untuk camilan cepat"
+            },
+            "chest_food": {
+                "name": "📦 Peti Makanan"
+            },
+            "recipe_chest": {
+                "name": "📦 Resep Peti"
+            },
+            "gift_2023": {
+                "name": "🎁 Hadiah 2023"
+            },
+            "gift_2024": {
+                "name": "🎁 Hadiah 2024",
+                "description": "Untuk orang-orang paling cantik di planet ini! ❤"
+            },
+            "rod": {
+                "name": "🎣 Pancing",
+                "description": "Pancing yang bagus untuk memancing. Meningkatkan penguasaan dinosaurus."
+            },
+            "stone_resurrection": {
+                "name": "💎 Batu Kebangkitan",
+                "description": "Sebuah batu yang dapat mengambil dinosaurus apa pun dari ingatan alam semesta!"
+            },
+            "ale": {
+                "name": "🍺 Ale"
+            },
+            "basket": {
+                "name": "👒 Keranjang belanja",
+                "description": "Keranjang untuk memetik buah beri. Meningkatkan jumlah maksimum makanan yang dikumpulkan."
+            },
+            "net": {
+                "name": "🕸 Jaringan",
+                "description": "Jaring perangkap untuk berburu binatang."
+            },
+            "book_forest": {
+                "name": "📔 Buku tentang hutan",
+                "description": "Sebuah buku karya petualang yang sudah lama terlupakan. Dia berbicara tentang hutan."
+            },
+            "book_lost-islands": {
+                "name": "📔 Kitab Kepulauan",
+                "description": "Sebuah buku karya petualang yang sudah lama terlupakan. Dia bercerita tentang pulau-pulau yang hilang."
+            },
+            "book_desert": {
+                "name": "📔 Kitab Gurun",
+                "description": "Sebuah buku karya petualang yang sudah lama terlupakan."
+            },
+            "book_mountains": {
+                "name": "📔 Kitab Pegunungan",
+                "description": "Sebuah buku karya petualang yang sudah lama terlupakan."
+            },
+            "book_magic-forest": {
+                "name": "📔 Kitab Hutan Ajaib",
+                "description": "Sebuah buku karya petualang yang sudah lama terlupakan."
+            },
+            "bag_goodies": {
+                "name": "👜 Tas Makanan",
+                "description": "Penyimpanan untuk barang dalam perjalanan Anda."
+            },
+            "rubik_cube": {
+                "name": "🎲 Kubus Rubik",
+                "description": "Dinosaurus selalu memiliki permainan favoritnya bersamanya."
+            },
+            "lock_bag": {
+                "name": "👜 Tas dengan kunci",
+                "description": "Tas travel yang lebih aman."
+            },
+            "skinning_knife": {
+                "name": "🔪 Pisau pengulitan",
+                "description": "Ini membantu mengumpulkan kulit dari hewan dengan lebih akurat. Tanpa kehilangan bagiannya."
+            },
+            "flour": {
+                "name": "🌫 Tepung"
+            },
+            "flour_recipe": {
+                "name": "📜 Resep Tepung",
+                "description": "Resep untuk membuat tepung untuk enak."
+            },
+            "croissant": {
+                "name": "🥐 Croissant"
+            },
+            "croissant_recipe": {
+                "name": "📜 Resep Croissant",
+                "description": "Resep untuk membuat croissant panas dan menggugah selera."
+            },
+            "carrot": {
+                "name": "🥕 Wortel"
+            },
+            "tomato": {
+                "name": "🍅 Tomat"
+            },
+            "potato": {
+                "name": "🥔 Kentang"
+            },
+            "basket_recipe": {
+                "name": "📜 Resep keranjang",
+                "description": "Resep untuk membuat keranjang untuk mengumpulkan makanan."
+            },
+            "net_recipe": {
+                "name": "📜 Jaringan Resep",
+                "description": "Resep untuk membuat jaring untuk berburu."
+            },
+            "rod_recipe": {
+                "name": "📜 Resep Pancing",
+                "description": "Resep untuk membuat pancing."
+            },
+            "meow_book": {
+                "name": "📔 Edisi Meong",
+                "description": "mi mi, mi mi mi ... mi!"
+            },
+            "premium_activator": {
+                "name": "✨ Aktivator Premium",
+                "description": "Mengaktifkan langganan premium 1 bulan"
+            },
+            "egg_case": {
+                "name": "📦 Kotak Telur"
+            }
+        },
+        "notifications": {
+            "daily_award": {
+                "text": "🎩 | Jangan lupa untuk mengklaim bonus harian Anda! \nPemberitahuan harian dapat dimatikan di pengaturan.",
+                "inline_menu": [
+                    "daily_award"
+                ]
+            },
+            "incubation_ready": {
+                "text": "🦖 | {user_name}, dinosaurus Anda telah menetas! 🎉",
+                "inline_menu": [
+                    "dino_profile",
+                    "dino_rename"
+                ]
+            },
+            "donation": {
+                "reward": "🦕 Pembayaran diterima! \n\n❤ Kami berterima kasih kepada Anda karena telah mendukung bot, kami berjanji untuk terus melakukan yang terbaik untuk Anda! Bebaskan dinosaurus!",
+                "amount_error": "Pembayaran berhasil, tetapi satu masalah ... Anda menentukan dan membayar kurang dari biaya produk, dalam jumlah {col}. Perbedaannya adalah: {difference} {currency}. Hubungi @AS1AW untuk mendapatkan bantuan dengan mengirim pesan ini.",
+                "currency_key_error": "Wah, Anda telah menentukan mata uang ({currency}) yang tidak dapat kami proses, silakan hubungi @AS1AW untuk bantuan dengan mengirim pesan ini.",
+                "product_key_error": "Hei, kami tidak tahu produk mana yang Anda cantumkan ({product_key})... Hubungi @AS1AW untuk mendapatkan bantuan dengan mengirim pesan ini.",
+                "subscription_end_day": "❤ | Hei! Langganan Anda berakhir di {end_text}, jika Anda menyukai fitur berlangganan, maka bayarlah untuk bulan berikutnya!",
+                "subscription_end": "❤ | Langganan Anda sudah berakhir, terima kasih telah bersama kami!"
+            },
+            "lvl_up": {
+                "standart": "🎉 | {user_name}, levelmu telah dinaikkan! ({lvl})",
+                "20": "🎉 | {user_name}, levelmu telah dinaikkan! ({lvl}) \n✨ | Anda sekarang memiliki slot dinosaurus +1!",
+                "40": "🎉 | {user_name}, levelmu telah dinaikkan! ({lvl}) \n✨ | Anda sekarang memiliki slot dinosaurus +1!",
+                "50": "🎉 | {user_name}, levelmu telah dinaikkan! ({lvl}) \n🎴 | Anda setengah jalan ke level maksimum, pertahankan!",
+                "60": "🎉 | {user_name}, levelmu telah dinaikkan! ({lvl}) \n✨ | Anda sekarang memiliki slot dinosaurus +1!",
+                "80": "🎉 | {user_name}, levelmu telah dinaikkan! ({lvl}) \n✨ | Anda sekarang memiliki slot dinosaurus +1!",
+                "100": "🎉 | {user_name}, levelmu telah dinaikkan! ({lvl}) \n🎴 | Anda telah mencapai level maksimum!"
+            },
+            "send_request": {
+                "text": "💞 | Anda telah menerima permintaan pertemanan dari {user_name}, periksa permintaan Anda!",
+                "inline_menu": "requests"
+            },
+            "referal_award": {
+                "text": "🎁 | Teman Anda {user_name} telah mencapai level {lvl}, terima kasih banyak telah mengundang teman-teman Anda, Anda dihargai dengan {item_name}!"
+            },
+            "sleep_end": {
+                "text": "🦕 | {dino_name} bangun dan penuh energi. \n⌛ | Dinosaurus tidur {time_end}.",
+                "inline_menu": "dino_profile"
+            },
+            "game_end": {
+                "replics": [
+                    "🎮 *{dino_name}*: *{owner_name}*, saya sudah berhenti bermain!",
+                    "🎮 *{dino_name}*: *{owner_name}*, saya bermain!",
+                    "🎮 *{dino_name}*: *{owner_name}*, saya sudah cukup!"
+                ],
+                "inline_menu": "dino_profile"
+            },
+            "end_collecting": {
+                "text": "🍱 | {dino_name} selesai mengumpulkan makanan. \n\n🍡 | Item yang dikumpulkan: {items_names}",
+                "inline_menu": "dino_profile"
+            },
+            "broke_accessory": {
+                "text": "💥 | Dinosaurus {dino_name} item aktif {item_name} rusak.",
+                "inline_menu": "dino_profile"
+            },
+            "need_heal": {
+                "replics": [
+                    "💔 *{dino_name}*: Ahem, batuk, *{owner_name}*, aku merasa sangat buruk... ({unit}%)",
+                    "💔 *{dino_name}*: *{owner_name}*, saya merasa sangat buruk, bantu saya... ({unit}%)",
+                    "💔 *{dino_name}*: *{owner_name}*, saya pikir saya butuh bantuan, saya merasa tidak enak badan... ({unit}%)"
+                ],
+                "inline_menu": "rescue"
+            },
+            "need_eat": {
+                "replics": [
+                    "🥕 *{dino_name}*: *{owner_name}*, saya lapar, apa yang akan saya coba hari ini? ({unit}%)",
+                    "🥕 *{dino_name}*: *{owner_name}*, aku lapar! ({unit}%)",
+                    "🥕 *{dino_name}*: Beri aku makan, *{owner_name}*. ({unit}%)"
+                ],
+                "inline_menu": "feed_start"
+            },
+            "need_mood": {
+                "replics": [
+                    "😥 *{dino_name}*: *{owner_name}*, saya sangat sedih... ({unit}%)",
+                    "😥 *{dino_name}*: *{owner_name}*, mengapa hari ini sangat membosankan? ({unit}%)",
+                    "😥 *{dino_name}*: *{owner_name}*, sangat membosankan... ({unit}%)"
+                ],
+                "inline_menu": "dino_profile"
+            },
+            "need_game": {
+                "replics": [
+                    "🎮 *{dino_name}*: *{owner_name}*, sudah lama sekali saya tidak bermain... ({unit}%)",
+                    "🎮 *{dino_name}*: *{owner_name}*, bermainlah denganku! ({unit}%)",
+                    "🎮 *{dino_name}*: *{owner_name}*, saya berharap saya bisa bermain sekarang... ({unit}%)"
+                ],
+                "inline_menu": "dino_profile"
+            },
+            "need_energy": {
+                "replics": [
+                    "✨ *{dino_name}*: *{owner_name}*, saya ingin tidur... ({unit}%)",
+                    "✨ *{dino_name}*: *{owner_name}*, aku benar-benar lelah, ayo tidur? ({unit}%)",
+                    "✨ *{dino_name}*: *{owner_name}*, aku lelah... ({unit}%)"
+                ],
+                "inline_menu": "dino_profile"
+            },
+            "independent_dead": {
+                "text": "❤ Sayangnya... Dinosaurus Anda *{dino_name}* ... Meninggal... \n\n🥚 | Jangan khawatir, Anda telah diberi telur lagi, lihat inventaris Anda!",
+                "inline_menu": [
+                    "inventory",
+                    "reborn"
+                ]
+            },
+            "not_independent_dead": {
+                "text": "❤ Sayangnya... Dinosaurus Anda *{dino_name}* ... Meninggal... \n\n✉ | Anda akan menerima email dari organisasi. Buka itu.",
+                "inline_menu": [
+                    "dead_dialog",
+                    "reborn"
+                ]
+            },
+            "breakdown": {
+                "replics": [
+                    "😭 *{dino_name}*: *{owner_name}*, kamu sama sekali tidak mencintaiku, bagaimana kamu bisa mencetak gol pada temanmu seperti itu? \n😭 *{dino_name}*: _menangis_\n\n_{message}_",
+                    "😭 *{dino_name}*: *{owner_name}*, bagaimana Anda bisa memperlakukan saya dengan sangat buruk ?! \n😭 *{dino_name}*: _Menangis_\n\n_{message}_",
+                    "😭 *{dino_name}*: *{owner_name}*, kamu sama sekali tidak mencintaiku! \n😭 *{dino_name}*: _Menangis_\n\n_{message}_"
+                ],
+                "inline_menu": "dino_profile"
+            },
+            "inspiration": {
+                "replics": [
+                    "😀 *{dino_name}*: *{owner_name}*, saya merasa sangat hebat! \n\n_{message}_",
+                    "😀 *{dino_name}*: *{owner_name}*, suasana hati saya sedang bagus, sekarang saya siap untuk bertualang! \n\n_{message}_",
+                    "😀 *{dino_name}*: *{owner_name}*, saya siap memindahkan gunung! \n\n_{message}_"
+                ],
+                "inline_menu": "dino_profile"
+            },
+            "product_delete": "🍟 Produk ({preview}) telah dihapus dari pasar.",
+            "product_buy": {
+                "text": "🍜 Produk ({preview}) dibeli {col} kali dengan jumlah {price} 🪙 oleh pengguna {name}",
+                "inline_menu": "product_info"
+            },
+            "kindergarten": {
+                "text": "🎈 | {dino_name} kembali dari taman kanak-kanak.",
+                "inline_menu": "dino_profile"
+            }
+        },
+        "breakdown": {
+            "seclusion": "🔇 Dinosaurus menolak untuk berbicara dengan Anda untuk sementara waktu, jadi Anda tidak akan menerima pemberitahuan darinya.",
+            "hysteria": "❌ Dinosaurus itu sangat kesal, dia meringkuk di kamarnya sambil menangis.",
+            "unrestrained_play": "🎮 Dinosaurus itu sangat kesal, dia memutuskan untuk pergi bermain untuk menghibur dirinya sendiri.",
+            "downgrade": "💥 Karena suasana hati yang buruk, dinosaurus melemparkan benda itu dengan sangat keras. Item ini bisa saja aksesori."
+        },
+        "inspiration": {
+            "game": "🥭 Karena suasana hati yang luar biasa, dinosaurus mendapat bonus x {bonus} untuk penguasaan permainan!",
+            "collecting": "🍍 Karena suasana hati yang baik, dinosaurus mendapat bonus x {bonus} untuk kecepatan mengumpulkan makanan!",
+            "journey": "🌽 Karena suasana hati yang baik, dinosaurus mendapat bonus x {bonus} untuk jumlah acara dalam perjalanan!",
+            "sleep": "🍏 Karena suasana hati yang baik, dinosaurus mendapat bonus x {bonus} untuk kualitas tidur!"
+        },
+        "back_text": {
+            "main_menu": "🦕 Kembali ke Menu Utama",
+            "profile_menu": "🎮 Kembali ke Menu Profil",
+            "friends_menu": "👥 Kembali ke Menu Teman",
+            "actions_menu": "🦕 Kembali ke Menu Aktivitas",
+            "dungeon_menu": "🗻 Kembali ke menu dungeon",
+            "dino_tavern_menu": "🍻 Kembali ke Menu Tavern",
+            "settings_menu": "🔗 Menu Pengaturan (Halaman 1)",
+            "market_menu": "🛒 Kembali ke Menu Pasar"
+        },
+        "menu_text": {
+            "actions": "🕹 | Bilah aksi terbuka!",
+            "profile": "👁‍🗨 | Panel profil terbuka!",
+            "friends": "👥 | Panel Teman terbuka!",
+            "settings": "🔧 | Menu Pengaturan Diaktifkan\n\n🔔 Pemberitahuan Harian: {notif}\n🎞 Mode Profil: {profile_view}\n📚 Mode Inventaris: {inv_view}",
+            "market": {
+                "info": "🛒 | Panel Pasar terbuka! \n_Promoted produk mungkin muncul here_",
+                "products": "📯 Dan berikut adalah beberapa produk yang mungkin berguna bagi Anda!"
+            },
+            "dino_tavern": {
+                "info": "🍺 Anda telah memasuki Dino Tavern! \n\n📜 Saat berada di kedai, Anda bisa mendapatkan pencarian atau mendengar informasi yang berguna!",
+                "friends": "🍺 Teman di Kedai: Mencari melalui kerumunan ...",
+                "friends2": "🍺 Teman di Kedai:",
+                "tavern_col": "🔮 Jumlah Kedai: {col}",
+                "went": "🍺 {name} pergi ke kedai ...",
+                "button": "🍻 Beli bir seharga 50🪙"
+            },
+            "about": "🤖 | Halo! Saya @{bot_name}, dan inilah beberapa informasi tentang saya! \n\n🗝️ | Statistik: 👥 <code>{col_u}</code> 🦕 <code>{col_d}</code> 🔮 <code>{col_i}</code>\n<i>{update_time} yang lalu. </i>",
+            "referal": "🤍 | Redirect ke menu sistem referral! \n\n💜 | *Setelah mencapai level {lvl}* teman Anda, Anda akan mendapatkan {award_text}! \n\n❤️ | Seorang teman akan menerima bonus sejumlah: {coins} koin, {items}",
+            "referal_separator": "atau",
+            "settings2": "🔧 | Menu Pengaturan (Halaman 2)\n\n🦕 Akses: {my_name}",
+            "seller": "🎇 Buka menu manajemen toko"
+        },
+        "no_text_key": "❌ Kunci pencocokan teks {key} tidak ditemukan, hubungi pengembang @AS1AW!",
+        "edit_dino_button": {
+            "edit": "🦕 | Pilih dinosaurus aktif ->",
+            "notfouned": "❌ | Dinosaurus Tidak Ditemukan",
+            "susseful": "🦕 | Dinosaurus aktif berubah menjadi {name}"
+        },
+        "inline_menu": {
+            "delete_message": {
+                "text": "⚙ | Menghapus pesan",
+                "callback": "delete_message"
+            },
+            "dino_profile": {
+                "text": "🦕 | Buka Profil",
+                "callback": "dino_profile {dino_alt_id_markup}"
+            },
+            "dino_rename": {
+                "text": "💬 | Beri nama",
+                "callback": "rename_dino {dino_alt_id_markup}"
+            },
+            "send_request": {
+                "text": "💎 | Kirim Permintaan",
+                "callback": "send_request {userid}"
+            },
+            "requests": {
+                "text": "👥 | Pertanyaan",
+                "callback": "requests"
+            },
+            "inventory": {
+                "text": "🍭 | Buka Inventaris",
+                "callback": "inventory_start"
+            },
+            "rescue": {
+                "text": "❤ | Selamatkan Dinosaurus",
+                "callback": "support info rescue_kit"
+            },
+            "reborn": {
+                "text": "❤ | Menghidupkan kembali",
+                "callback": "support info reborn"
+            },
+            "dead_dialog": {
+                "text": "✉ | Buka",
+                "callback": "dialog dead_last_dino start"
+            },
+            "daily_award": {
+                "text": "🎁 | Di bawa",
+                "callback": "daily_message"
+            },
+            "product_info": {
+                "text": "🍜 Tentang produk",
+                "callback": "product_info info {alt_id}"
+            },
+            "feed_start": {
+                "text": "🥙 Umpan",
+                "callback": "feed_inl {alt_id}"
+            }
+        },
+        "states": {
+            "ChooseDino": {
+                "error_not_dino": "❓ | Dinosaurus bukanlah angka, teks, atau emoji, mereka adalah makhluk hidup, coba lagi. Atau, ketik /cancel untuk membatalkan."
+            },
+            "ChooseInt": {
+                "error_not_int": "❓ | Setelah melakukan analisis struktural data, kami memutuskan bahwa Anda tidak memasukkan angka, silakan coba lagi. Atau, ketik /cancel untuk membatalkan.",
+                "error_max_int": "❓ | Jumlah yang ditentukan lebih besar dari jumlah maksimum ({number} > {max}), silakan coba lagi. Atau, ketik /cancel untuk membatalkan.",
+                "error_min_int": "❓ | Angka yang ditentukan kurang dari minimum ({number} < {min}), coba lagi. Atau, ketik /cancel untuk membatalkan."
+            },
+            "ChooseString": {
+                "error_max_len": "❓ | Jika pesan lebih panjang dari yang diizinkan ({number} > {max}), coba lagi. Atau, ketik /cancel untuk membatalkan.",
+                "error_min_len": "❓ | Panjang pesan kurang dari panjang yang diizinkan ({number} < {min}), coba lagi. Atau, ketik /cancel untuk membatalkan."
+            },
+            "ChooseConfirm": {
+                "error_not_confirm": "❓ | Pilih salah satu opsi. Atau, ketik /cancel untuk membatalkan."
+            },
+            "ChooseOption": {
+                "error_not_option": "❓ | Apakah Anda mencoba melampaui batas-batas dunia? Jangan. Pilih dari opsi yang tersedia. Atau, ketik /cancel untuk membatalkan."
+            },
+            "ChooseTime": {
+                "zero_seconds": "❓ | Anda harus memasukkan pesan dalam format waktu, gunakan pengingat - /string_to_sec klik\nAtau ketik /batal untuk membatalkan.",
+                "error_max_int": "❓ | Waktu yang Anda tentukan lebih lama dari maksimum ({number} > {max}), silakan coba lagi. Atau, ketik /cancel untuk membatalkan.",
+                "error_min_int": "❓ | Waktu yang Anda tentukan kurang dari minimum ({number} < {min}), silakan coba lagi. Atau, ketik /cancel untuk membatalkan."
+            }
+        },
+        "no_use_interface": "❌ Saat berada di dungeon, gunakan antarmuka dungeon! \n\n Jika ada kesalahan dan Anda meninggalkan ruang bawah tanah, tulis /check_dinos",
+        "no_account": "Anda tidak memiliki akun terdaftar di bot, silakan buka bot dan daftar untuk mendapatkan akses ke perintah ini.",
+        "add_me": "❤ | Siapa pun dapat mengirim permintaan pertemanan <a href='tg://user?id={userid}'>{username}</a> dengan mengklik tombol di bawah ini!",
+        "in_development": "Fitur ini sedang dalam pengembangan, nantikan untuk mengetahui kapan tim akan aktif dan berjalan!",
+        "start_command": {
+            "referal": "🔗 Saya perhatikan mengklik tautan rujukan saat ini!",
+            "first_message": "🦖 | Hei <b> {username} </b>, senang bertemu denganmu! \n Saya adalah bot game tipe Tamagotchi kecil, hanya dengan dinosaurus! \n\n <b>🥚 | Apa itu Tamagotchi? </b> \n Tamagotchi adalah permainan dengan hewan peliharaan virtual yang perlu diberi makan, dirawat, dimainkan, dll. \n\n <b>🗻 | Jenis bot apa? </b> \nDalam bot ini, Anda harus merawat hewan peliharaan Anda, bepergian, menaklukkan ruang bawah tanah, dan sepenuhnya membenamkan diri dalam dunia RPG ini! \n\n <b>🎮 | Bagaimana cara mulai bermain? </b> \nKlik <b>🍡 Mulai bermain</b>! \n\n <b>❤ | Bersiaplah untuk memperhatikan dinosaurus Anda, semoga berhasil! </b>",
+            "request_subscribe": {
+                "text": "📜 | Pengguna yang terhormat! \n\n🎭 | Bot memiliki saluran dan grup telegram resmi, pergi ke grup untuk menemukan topik percakapan atau mengajukan pertanyaan, serta berlangganan saluran untuk menerima bonus dan berita menarik! \n\n❤ | Ini tidak wajib, tapi kami akan sangat berterima kasih! \n\n⏳ | Tunggu sebentar, gambar akan dihasilkan ...",
+                "buttons": [
+                    "🦖 | Berlangganan",
+                    "🔮 | Ikat"
+                ]
+            },
+            "start_game": "🥚 | Pilih telur dinosaurus! \n\n🦖 | Apa pun telur yang Anda pilih, Anda akan mendapatkan dinosaurus yang lucu.",
+            "end_answer": {
+                "edited_text": "🥚 | Selamat, telur Anda diinkubasi!",
+                "send_text": "🧸 | Selamat, Anda memiliki dinosaurus pertama Anda! \n\n🍱 | Saat ini, telur sedang mengerami dan di `{inc_time}` itu akan menetas menjadi dinosaurus! \n\n🎋 | Untuk melihat informasi terbaru tentang telur, tekan tombol `🦖 Dinosaurus`! \n\n📔 | Sambil menunggu, pelajari antarmuka, baca FAQ, dan sesuaikan bot untuk Anda sendiri!"
+            }
+        },
+        "help_command": {
+            "all": "<b>🎨 | Tim Bantuan </b> \n <i> Apakah Anda begitu menyedihkan sehingga Anda meminta bantuan saya?) \nPfff... Oke. </i> \n\n / bantuan - Permintaan bantuan dari kecerdasan yang lebih tinggi. \n\n/start - Mulai bot / menu utama (hanya DM)\n\n/profile - Buka profil pengguna. \n\n/add_me - Kirim pesan dengan tombol tambah teman aktif. (khusus grup) \n\n/promo (kode) - Masukkan kode promo. \n\n/super - Kabinet Super Coin."
+        },
+        "additem_command": {
+            "err": "Format masukan:\nID Item\nKuantitas\nID Pengguna",
+            "user": "💎 | Yo, sistemnya murah hati dan memberi Anda {item}",
+            "dev": "💚 | Perintah Dieksekusi\n🧨 | Barang {item}\n🎭 | Pengguna {username}\n🌐 | Postingan Status {message_status}"
+        },
+        "promo_commands": {
+            "ui": {
+                "text": "🔮 Kode promo: `{code}`\n\nAktivitas: {status}\nKegunaan: {col}\nAkhir: {txt_time}\nKoin: {coins}\nItem: {items}",
+                "buttons": [
+                    "✅ Aktifkan",
+                    "🗑 Hapus",
+                    "🎋 Gunakan"
+                ]
+            },
+            "link": {
+                "button_name": "🥙 Tukarkan kode promo!",
+                "create": "Tombol telah dibuat!",
+                "not_found": "Kode promo tidak ditemukan!"
+            },
+            "unlink": {
+                "delete": "Tombolnya telah dihapus!",
+                "not_found": "Pesan tidak ditemukan!"
+            },
+            "promo_open": "♾ Pilih kode untuk melihat informasi.",
+            "activate": "🎁 | Kode promo diaktifkan! \n\n",
+            "coins": "🎟 | Koin: {coins}\n",
+            "items": "📦 | Barang: {items}",
+            "already_use": "🧸 | Anda telah menggunakan kode promo ini!",
+            "time_end": "🎨 | Waktu untuk kode promo ini sudah habis ...",
+            "max_col": "🧨 | Kode promo telah digunakan maksimal berapa kali!",
+            "deactivated": "✨ | Kode promo ini saat ini dinonaktifkan!",
+            "not_found": "🎍 | Kode promo tidak ditemukan, coba masukkan lagi!",
+            "no_user": "🎩 | Anda tidak terdaftar di bot!"
+        },
+        "dungeon_err": "Pembersihan selesai.",
+        "start_game": "🥚 | Pilih telur dinosaurus!",
+        "command_dino_prof": "🥚 | Anda tidak memiliki dinosaurus saat ini, silakan periksa inventaris Anda. Dalam inventaris Anda, Anda harus memiliki telur yang dapat Anda inkubasi!",
+        "faq": {
+            "text": "🍿 | Hei, bot kami cukup besar dan ada banyak informasi. Berikut adalah beberapa kategori untuk Anda, pilih informasi apa yang ingin Anda dapatkan >",
+            "inline_buttons": {
+                "faq general": "🎈 Umum",
+                "faq eat": "🥙 Makanan",
+                "faq accessories": "🧵 Aksesori",
+                "faq dungeon": "🗻 Ruang bawah tanah"
+            },
+            "general": "🎈*Kelangkaan*\nPeristiwa dan dinosaurus dibagi menjadi kelangkaan.\nSemakin besar kelangkaan, semakin manis ganjarannya.\n\n 1. Reguler - 50%\n 2. Tidak biasa - 25%\n 3. Langka - 15%\n 4. Mistik - 9%\n 5. Legendaris - 1%\n\n🕹*Interaksi*\nUntuk berinteraksi dengan dinosaurus, buka `🕹 Tindakan`.\n\n 1. Untuk memberi makan dinosaurus, Anda perlu mendapatkan makanan, klik `🕹 Tindakan`> `🍕 Mengumpulkan makanan` dan ikuti petunjuknya.\n\n 2. Untuk memberi makan dinosaurus, tekan `🕹 Tindakan`> `🍣 Umpan` dan pilih makanan yang sesuai.\n\n 3. Di `🎮 Hiburan`, kamu dapat memilih game dan menghibur dinosaurus untuk menghiburnya.\n\n 4. Di `🎑 Perjalanan` Anda dapat menemukan item yang berbeda, bertemu teman dan melihat banyak hal menarik!\n\n 5. `🌙 Ditidurkan` dinosaurus perlu tidur setiap hari, jangan lupa untuk menidurkannya!\n\n🎮*Profil*\n Untuk melihat inventaris atau melihat statistik Anda, buka `👁‍🗨 Profil`\n\n🔧*Pengaturan*\nDi Pengaturan, Anda dapat mengganti nama dinosaurus, menonaktifkan pemberitahuan, atau mengganti bahasa.\n\n🛒*Pasar*\nAnda dapat menjual atau membeli barang - barang yang Anda butuhkan di pasar.\n\n👥*Teman*\nDi menu teman, Anda dapat mengelola teman dan sistem rujukan Anda. Semakin banyak teman, semakin banyak kesempatan untuk mendapatkan beberapa bonus. Selain itu, dengan mengundang teman melalui sistem rujukan, Anda dan teman Anda akan menerima bonus yang menyenangkan.\n\n🦕*Jumlah dinosaurus*\nSetiap tingkat 20 jumlah dinosaurus meningkat sebesar 1.\n tingkat 20 - 2 dinosaurus.\n tingkat 40 - 3 dinosaurus...\n\n",
+            "eat": "🥙 *Apa yang dimakan dinosaurus saya?*\nLihatlah profil dinosaurus Anda, dinosaurus hidup di lingkungan asalnya. \n\n Herbivora di mana ada banyak rumput, predator di hutan / rimba, dan mereka yang suka ikan terbang di awan. \n\n🍕 *Permen*\n🍯 Toples madu, 🥞 Pancake manis - dinosaurus suka camilan dan apa pun jenisnya, mereka akan dengan senang hati memakannya! \n\n Makanan ini juga memberikan bonus untuk suasana hati / kesehatan, dll. \n\nAnda dapat menemukan semua informasi tentang item dalam inventaris!",
+            "accessories": "🏓 *Aksesoris*\nAksesori memberi Anda lebih banyak opsi atau mempercepat aktivitas Anda. \nAksesori dapat dipasang saat dinosaurus tidak melakukan apa-apa dengan menggunakannya dalam inventaris. \n Aksesori dapat ditemukan dalam perjalanan atau di bawah tanah. \n\n🎲 *Inilah beberapa di antaranya...*\n 🧸 Teddy Bear - memungkinkan Anda memilih mode tidur. \n 🛠 Alat - Mempercepat pengumpulan makanan.",
+            "dungeon": "📜 *Quests*\n\nDi kedai Anda bisa mendapatkan pencarian (tunggu saja di dalamnya), pencarian memberikan bonus menarik untuk tindakan yang paling umum! \n\n🗻 *Dungeons*\nMulailah petualangan seru bersama teman-teman Anda! Petualangan, bos, item unik! \n Anda hanya perlu 200 koin untuk memasuki ruang bawah tanah! \n Tidak diperlukan perlengkapan pemula, dan dinosaurus Anda tidak bisa mati di dalamnya. \n\n🍺 *Kedai Dino*\nLihatlah `🍺 Kedai Dino`, di mana Anda dapat menemukan informasi dari pengunjung, menemukan pemain lain. Dan juga dapatkan quest!"
+        },
+        "not_set": {
+            "info": "❗ Berinteraksi dengan Pengaturan Notifikasi, Pilih Aktivitas Notifikasi >",
+            "True": "🔧 Pemberitahuan telah diaktifkan!",
+            "False": "🔧 Pemberitahuan telah dinonaktifkan!"
+        },
+        "inv_set_pages": {
+            "info": "🎞 Pilih Mode Tampilan Inventaris (Standar 2 | 3)",
+            "accept": "♠ Horizontal: {gr}\n♣ Vertikal: {vr}",
+            "ans": [
+                "2 | 3",
+                "3 | 3",
+                "2 | 2",
+                "2 | 4",
+                "1 | 4",
+                "1 | 10"
+            ]
+        },
+        "profile_view": {
+            "info": "🦕 Pilih jenis tampilan panel di profil dinosaurus:",
+            "result": "👁 Mode dipilih: {res}",
+            "ans": [
+                "▶ Sisi",
+                "🔽 Bawah",
+                "🔼 Atas",
+                "❌ Tanpa panel"
+            ]
+        },
+        "rename_dino": {
+            "info": "🦖 | Masukkan nama baru untuk {last_name}\nUkuran: 20 karakter atau kurang >",
+            "rename": "🦖 | Dinosaurus berganti nama menjadi {last_name} > {dino_name}"
+        },
+        "my_name": {
+            "info": "🎩 Masukkan apa yang dinosaurus Anda akan memanggil Anda. Dapat berupa nama, kata, atau frasa Anda tidak lebih dari 20 karakter ->",
+            "end": "🦕 Dinosaurus Anda sekarang akan memanggil Anda \"{owner_name}\""
+        },
+        "add_friend": {
+            "var": "*👥 | Pilih cara yang ingin Anda tambahkan sebagai teman.*\n\n🎣 1. *Melalui ID*. Ada nomor pengguna individu di profil pengguna, pilih metode dan kirimkan ke bot. \n\n💬 2. *Melalui Pesan*. Teruskan kepada saya pesan apa pun dari pengguna. Ingatlah bahwa teman masa depan Anda memiliki privasi telegram dalam pengaturan, item \"Meneruskan pesan\" harus \"Semua\".",
+            "var_buttons": {
+                "add_friend id": "🎣 ID",
+                "add_friend message": "💬 Pesan"
+            },
+            "check": {
+                "nonint": "😣 Anda tidak mengirimi saya id! Id adalah angka, inilah id Anda - {userid}\n\nCoba lagi!",
+                "nonbase": "❓ Saya tidak dapat menemukan orang ini di antara para pemain, mungkin dia belum mulai mengerami telur. \n\n Coba lagi!",
+                "notyou": "🎲 Sayangnya, Anda tidak dapat menambahkan diri Anda sebagai teman. Kami berjanji bahwa suatu hari nanti kami akan memperbaiki bug ini! \n\n Coba lagi!",
+                "forward": "😣 Saya tidak bisa mendapatkan data penulis pesan. \n\n Coba lagi!",
+                "friends": "👥 Setelah memeriksa dan mewawancarai para tersangka, kami menemukan bahwa Anda sudah berteman!",
+                "requests": "👥 Setelah memeriksa dan mewawancarai para tersangka, kami menemukan bahwa beberapa dari Anda telah mengirim permintaan pertemanan!"
+            },
+            "var_messages": {
+                "id": "🎣 Oke, kirimkan saya ID pengguna, dan saya akan mengurus hal-hal rutin seperti memeriksa database dan keberadaan pengguna.",
+                "message": "💬 Oke, kirimi saya pesan dari teman Anda, dan saya akan mengurus hal-hal rutin seperti memeriksa database dan keberadaan pengguna."
+            },
+            "correct": "✅ Permintaan pertemanan telah dikirim ke pengguna!",
+            "already": "🧨 Orang tersebut telah menerima permintaan pertemanan dari Anda!"
+        },
+        "friend_list": {
+            "wait": "👥 | Mengunggah Teman Anda",
+            "new_year": {
+                "button": "🎁 Kirim hadiah",
+                "send": "🎁 | Hei {name}, temanmu {friend} mengirimimu hadiah!",
+                "no_send": "🎁 | Pengguna ini telah menerima hadiah liburan!"
+            },
+            "buttons": {
+                "take_money": "✨ Transfer Koin",
+                "take_coins": "🪔 Transfer Koin",
+                "joint_dinosaur": "🦕 Bagikan dinosaurus",
+                "new_year": "🎁 Kirim hadiah"
+            }
+        },
+        "requests": {
+            "wait": "👥 | Permintaan Pengunggahan",
+            "accept": "✅ | {user_name} dan Anda berteman sekarang!",
+            "decline": "❌ | Permintaan pertemanan dari {user_name} ditolak."
+        },
+        "friend_delete": {
+            "delete_info": "➖ | Pilih seseorang untuk menghapus pertemanan >",
+            "confirm": "✅ | Apakah Anda yakin ingin menghapus pertemanan {name}?",
+            "delete": "👥 | Pengguna telah dihapus pertemanannya!"
+        },
+        "rayting": {
+            "info": "👁‍🗨 | Peringkat mana yang Anda minati?",
+            "lvl": "Tingkat 🎢",
+            "coins": "🗝 Koin",
+            "dungeon": "🗻 Ruang bawah tanah",
+            "super": "👑 Koin Super",
+            "no_rayting": "❌ Peringkat belum tersedia...",
+            "place": "*├* Tempat Anda di peringkat: #{place}",
+            "my_place": "🦕 Saingan Saya",
+            "lvl_text": "*└* Tingkat: {lvl} Pengalaman: {xp}",
+            "coins_text": "*└* Koin: {coins}",
+            "super_text": "*└* Koin: {super_coins}",
+            "rayting_lvl": "*┌* 🎢 Peringkat berdasarkan level:",
+            "rayting_coins": "*┌* 🎢 Peringkat Koin:",
+            "rayting_super": "*┌* 🎢 Peringkat Super Coin:",
+            "premium": "*├* Pelanggan ✨ DinoUltima"
+        },
+        "put_to_bed": {
+            "dont_want": "🌙 Dinosaurus tidak mau tidur!",
+            "sleep": "🌙 Anda telah menidurkan dinosaurus!",
+            "buttons": [
+                [
+                    "🛌 Tidur Panjang",
+                    "🛌 Tidur siang singkat"
+                ]
+            ],
+            "choice": "🌙 | Pilih tipe mimpi untuk dinosaurus >",
+            "choice_time": "🌙 | Masukkan waktu tidur REM (tidur 2 kali lebih cepat dari tidur panjang) dalam hitungan menit >"
+        },
+        "awaken": {
+            "down_mood": "🌙 Dinosaurus Anda telah terbangun. Dia tidak senang Anda membangunkannya! \n⌛ Dinosaurus tidur {time_end}.",
+            "not_sleep": "🌙 Dinosaurus tidak tidur!"
+        },
+        "p_profile": {
+            "no_dino_no_egg": "🦕 | Anda tidak memiliki dinosaurus / telur untuk dilihat! Periksa inventaris, harus ada telur di sana.",
+            "dialog": "🍭 Anda punya surat dari sebuah perusahaan, ini tentang dinosaurus ...",
+            "text_info": "Informasi",
+            "text_ost": "Kiri:",
+            "rare_name": "Kelangkaan:",
+            "time_position": [
+                465,
+                220
+            ],
+            "rare_position": [
+                465,
+                280
+            ],
+            "incubation_text": "🥚 | Telur diinkubasi, tersisa: {time_end}",
+            "stats": {
+                "pass": "Tidak melakukan apa-apa 💭",
+                "sleep": "Tidur 🌙",
+                "game": "Bermain 🎮",
+                "journey": "Perjalanan 🎴",
+                "collecting": "Mengumpulkan makanan 🥞",
+                "dungeon": "Menaklukkan Dungeon 🗻",
+                "freezing": "Saya membeku ❄",
+                "kindergarten": "Di TK 🏡",
+                "hysteria": "Saya histeris! 💥"
+            },
+            "replics": {
+                "heal": {
+                    "80": "*┌* Wow, itu bagus!",
+                    "40": "*┌* Makanan Sehat",
+                    "20": "*┌* Ahem, ahem, aku sedang tidak enak badan...",
+                    "0": "*┌* __I dying...__"
+                },
+                "eat": {
+                    "80": "*├* Perut penuh",
+                    "40": "*├* Situs",
+                    "20": "*├* Lapar",
+                    "0": "*├* __Dying kelaparan!__"
+                },
+                "game": {
+                    "80": "*├* Saya Spider-Man!",
+                    "40": "*├* Saya tidak ingin bermain",
+                    "20": "*├* Aku merindukanmu...",
+                    "0": "*├* __Dying kebosanan!__"
+                },
+                "mood": {
+                    "80": "*├* Saya ingin berbuat baik",
+                    "40": "*├* Dalam suasana hati yang baik",
+                    "20": "*├* Tidak masalah",
+                    "0": "*├* __I sad...__"
+                },
+                "energy": {
+                    "80": "*└* Saya siap memindahkan gunung!",
+                    "40": "*└* Penuh energi!",
+                    "20": "*└* Saya memiliki kekuatan",
+                    "0": "*└* __I sangat lelah :(__"
+                }
+            },
+            "profile_text": "{em_name}*┌* Nama: {dino_name}\n{em_status}*├* Status: {status}\n{em_rare}*├* Kelangkaan: {qual}\n{em_age}*└* Umur: {age}",
+            "journey": {
+                "text": "{em_journey_act} *┌* Perjalanan",
+                "info": "🏮 *├* Lokasi: {location}\n⌛ *├* Perjalanan {journey_time}\n🍭 *└* Acara: {col}"
+            },
+            "game": {
+                "text": "\n\n{em_game_act} *┌* Permainan",
+                "game_end": "\n🎟 *├* Akan berhenti di {end}",
+                "game_duration": "\n⏳ *└* Lulus {duration}"
+            },
+            "collecting": {
+                "text": "\n\n{em_coll_act} *┌* Pertemuan\n",
+                "progress": {
+                    "collecting": "🌿 *└* Dinosaurus mengumpulkan {now} / {max_count} tumbuhan.",
+                    "hunt": "🍖 *└* Dinosaurus dikumpulkan {now} / {max_count}.",
+                    "fishing": "🍤 *└* Dinosaurus memancing {now} / {max_count} ikan.",
+                    "all": "🥗 *└* Dinosaurus dikumpulkan {now} / {max_count}."
+                }
+            },
+            "no_item": "Tidak ada masalah",
+            "accs": "\n{em_game}*┌* Perjalanan: {journey}\n{em_coll}*├* Mencari Makan: {collecting}\n{em_jour}*├* Game: {game}\n{em_sleep}*├* Tidur: {sleep}\n{em_weapon}*├* Senjata: {weapon}\n{em_armor}*├* Pertahanan: {armor}\n{em_backpack}*└* Penyimpanan: {backpack}\n",
+            "return": "🔮 Kembali ke Menu Utama!",
+            "inline_menu": {
+                "reset_activ_item": {
+                    "text": "💍 Hapus Item",
+                    "data": "dino_menu reset_activ_item {dino}"
+                },
+                "mood_log": {
+                    "text": "📜 Tentang suasana hati",
+                    "data": "dino_menu mood_log {dino}"
+                },
+                "joint_dino": {
+                    "text": "❌ Tinggalkan",
+                    "data": "dino_menu joint_cancel {dino}"
+                },
+                "my_joint": {
+                    "text": "❌ Berbagi",
+                    "data": "dino_menu my_joint_cancel {dino}"
+                },
+                "kindergarten": {
+                    "text": "🏡 Taman Kanak-kanak (⭐)",
+                    "data": "dino_menu kindergarten {dino}"
+                }
+            },
+            "joint": "(Bersama)"
+        },
+        "inventory": {
+            "null": "💥 | Persediaan kosong.",
+            "no_filter": "❌",
+            "filters_data": {
+                "fb12": {
+                    "name": "🍕",
+                    "keys": [
+                        "eat"
+                    ]
+                },
+                "fb45": {
+                    "name": "🥚",
+                    "keys": [
+                        "egg"
+                    ]
+                },
+                "k63d": {
+                    "name": "💍",
+                    "keys": [
+                        "game",
+                        "journey",
+                        "collecting",
+                        "sleep"
+                    ]
+                },
+                "jd34": {
+                    "name": "👢",
+                    "keys": [
+                        "material"
+                    ]
+                },
+                "ns83": {
+                    "name": "📜",
+                    "keys": [
+                        "recipe"
+                    ]
+                },
+                "n48s": {
+                    "name": "🗻",
+                    "keys": [
+                        "weapon",
+                        "armor",
+                        "ammunition"
+                    ]
+                },
+                "n41s": {
+                    "name": "🔮",
+                    "keys": [
+                        "case",
+                        "special",
+                        "book"
+                    ]
+                },
+                "null": {
+                    "name": "📚 Tanpa filter",
+                    "keys": [
+                        "null"
+                    ]
+                }
+            },
+            "choice_filter": "⚙️ | Pilih filter untuk inventaris di bawah ini\n\n*Daftar:*\n🥚 | Telur\n🔮 | Lainnya\n📜 | Resep\n💍 | Aksesoris\n⛰ | Ruang bawah tanah\n🍕 | Makanan\n👢 | Bahan Kerajinan\n\n_✅ | Klik tanda centang di bawah ini untuk menyimpan pengaturan filter Anda.",
+            "search": "🔎 | Masukkan nama item yang ingin Anda cari:\n❌ | Klik tanda silang di bawah pesan untuk keluar dari pencarian.",
+            "search_null": "❌ | Tidak ada yang ditemukan untuk kueri, coba masukkan nama yang lebih akurat!",
+            "menu": "🎍 | Halaman *{page}* / *{col}*\n\n📜 | Gunakan *Panah* untuk bergerak. \n🔎 | Gunakan tombol *Magnifier* untuk mengaktifkan pencarian. \n⚙️ | Gunakan tombol *Gigi* untuk memilih filter.",
+            "clear_filters": "\n🗑 | Klik tempat sampah untuk menghapus filter.",
+            "update_page": "🔁 | Halaman diperbarui",
+            "update_search": "🔁 | Pencarian Diaktifkan",
+            "update_filter": "🔁 | Pilihan filter aktif"
+        },
+        "copy_m": {
+            "info": "Balasan pesan dengan teks untuk pengiriman diperlukan",
+            "no_message": "Harus ada balasan untuk pesan itu!"
+        },
+        "item_info": {
+            "type_info": {
+                "ALL": {
+                    "type_name": "🍔 Makanan",
+                    "add_text": "*└* Efisiensi: {act}"
+                },
+                "Flying": {
+                    "type_name": "🐟 Makanan",
+                    "add_text": "*└* Efisiensi: {act}"
+                },
+                "Herbivore": {
+                    "type_name": "🌾 Makanan",
+                    "add_text": "*└* Efisiensi: {act}"
+                },
+                "Carnivore": {
+                    "type_name": "🥩 Makanan",
+                    "add_text": "*└* Efisiensi: {act}"
+                },
+                "freezing": {
+                    "type_name": "❄ Pembekuan",
+                    "add_text": "*└* Item ini menghentikan metabolisme dinosaurus dan membekukannya."
+                },
+                "defrosting": {
+                    "type_name": "🔥 Pencairan es",
+                    "add_text": "*└* Mengembalikan metabolisme dinosaurus."
+                },
+                "egg": {
+                    "type_name": "🥚 Telur Dinosaurus",
+                    "add_text": "*├* Inkubasi: {inc_time}\n*└* Kelangkaan telur: {rarity}"
+                },
+                "game": {
+                    "type_name": "🎮 Item Aktif",
+                    "add_text": "*└* {item_description}"
+                },
+                "sleep": {
+                    "type_name": "🌙 Item Aktif",
+                    "add_text": "*└* {item_description}"
+                },
+                "journey": {
+                    "type_name": "🎍 Item Aktif",
+                    "add_text": "*└* {item_description}"
+                },
+                "collecting": {
+                    "type_name": "🕸 Item Aktif",
+                    "add_text": "*└* {item_description}"
+                },
+                "dummy": {
+                    "type_name": "🕳 Dot",
+                    "add_text": "*└* Tidak melakukan apa-apa dan tidak butuh apa-apa"
+                },
+                "material": {
+                    "type_name": "🧱 Bahan",
+                    "add_text": "*└* Item ini dibuat."
+                },
+                "recipe": {
+                    "type_name": "📜 Resep",
+                    "add_text": "*├* Membuat: {create}\n*└* Bahan: {materials}\n\n📚 {item_description}"
+                },
+                "far": {
+                    "type_name": "🔫 Senjata",
+                    "add_text": "*├* Amunisi: {ammunition}\n*└* Kerusakan: {min} - {max}"
+                },
+                "near": {
+                    "type_name": "🗡 Senjata",
+                    "add_text": "*├* Stamina: {endurance}\n*└* Kerusakan: {min} - {max}"
+                },
+                "ammunition": {
+                    "type_name": "🌠 Amunisi",
+                    "add_text": "*├* Tambahan Kerusakan: {add_damage}\n*└* Efek: ..."
+                },
+                "armor": {
+                    "type_name": "🛡 Baju zirah",
+                    "add_text": "*└* Renungan: {reflection}\n"
+                },
+                "backpack": {
+                    "type_name": "🎒 Penyimpanan",
+                    "add_text": "*└* Kapasitas: {capacity}"
+                },
+                "case": {
+                    "type_name": "📦 Kotak Keberuntungan",
+                    "add_text": "*└* Kandungan:\n{content}"
+                },
+                "book": {
+                    "type_name": "📚 Posting",
+                    "add_text": "*└* {item_description}"
+                },
+                "special": {
+                    "type_name": "🐠 Item Unik",
+                    "add_text": "*└* {item_description}"
+                }
+            },
+            "rank": {
+                "common": "🤍 Normal",
+                "uncommon": "💚 Tidak biasa",
+                "rare": "💙 Langka",
+                "mystical": "💜 Mistik",
+                "legendary": "💛 Legendaris",
+                "mythical": "❤ Mythic (Di luar)",
+                "null": "➖ Tidak"
+            },
+            "static": {
+                "cap": "*┌* *🎴 Informasi Barang*",
+                "name": "*├* Judul: {name}",
+                "rank": "*├* Peringkat: {rank}",
+                "type": "*├* Jenis: {type}",
+                "uses": "*├* Kegunaan: 🎞 {0} / {1}",
+                "endurance": "*├* Daya tahan: 💎 {0} / {1}",
+                "mana": "*├* Mana: 🔮 {0} / {1}",
+                "stack": "*├* Termasuk: 🧊 {stack} pcs",
+                "add_bonus": "\n\n*┌* *🍡 Bonus Ekstra*\n",
+                "add_penaltie": "\n\n*┌* *📌 Hukuman tambahan*\n",
+                "buttons": {
+                    "use": {
+                        "eat": "🍔 Umpan",
+                        "egg": "🥚 Inkubasi",
+                        "game": "👒 Terapkan",
+                        "sleep": "👒 Terapkan",
+                        "journey": "👒 Terapkan",
+                        "collecting": "👒 Terapkan",
+                        "recipe": "⚒ Buat",
+                        "weapon": "🛡 Lengkapi",
+                        "backpack": "🛡 Lengkapi",
+                        "armor": "🛡 Lengkapi",
+                        "case": "📦 Buka",
+                        "special": "🔮 Gunakan",
+                        "book": "📕 Baca"
+                    },
+                    "delete": "🗑 Buang",
+                    "exchange": "🔁 Lulus",
+                    "created_item": "🛠 Item yang Dapat Diciptakan: {item}",
+                    "buyer": "💰 Pemain anggar"
+                }
+            },
+            "bonuses": {
+                "+heal": "Peningkatan Kesehatan: {0}%",
+                "+energy": "Peningkatan Energi: {0}%",
+                "+eat": "Peningkatan rasa kenyang: {0}%",
+                "+mood": "Peningkatan suasana hati: {0}%"
+            },
+            "penalties": {
+                "-heal": "Penurunan Kesehatan: {0}%",
+                "-energy": "Pengurangan Energi: {0}%",
+                "-eat": "Penurunan rasa kenyang: {0}%",
+                "-mood": "Suasana hati rendah: {0}%"
+            }
+        },
+        "item_use": {
+            "cannot_be_used": "❌ Item ini tidak dapat digunakan!",
+            "no_item": "❓ Item telah diubah atau tidak lagi ada dalam inventaris, interaksi dengannya tidak tersedia.",
+            "eat": {
+                "great": "🍕 | Dinosaurus makan {item_name}, penuh di {eat_stat}%",
+                "bad": "🍕 | Dinosaurus tidak suka {item_name}, ia kehilangan {loses_eat}% kenyang!",
+                "sleep": "🌙 Jangan memberi makan dinosaurus saat tidur.",
+                "repeat": {
+                    "m0": "❤ | Dinosaurus mencoba sesuatu yang baru, bonus nutrisi {percent}%",
+                    "m1": "❣ | Dinosaurus puas dengan makanan, nilai gizi {percent}%",
+                    "m2": "🌯 | Dinosaurus tidak keberatan mencoba sesuatu yang baru, nutrisi {percent}%",
+                    "m3": "🥙 | Dinosaurus sedikit lelah makan hal yang sama, nilai gizi {percent}%",
+                    "m4": "🥞 | Dinosaurus sedikit lelah makan hal yang sama, nilai gizi {percent}%",
+                    "m5": "🥙 | Dinosaurus telah makan hal yang sama untuk waktu yang lama, dia tidak puas, nilai gizi {percent}%"
+                }
+            },
+            "accessory": {
+                "no_change": "⚒ Anda tidak dapat mengubah aksesori untuk aktivitas yang sedang dilakukan dinosaurus!",
+                "change": "🎴 | Item Aktif Terpasang!"
+            },
+            "recipe": {
+                "not_enough_m": "❗ | Bahan hilang: {materials}",
+                "consumable_item": "🧶 | Pilih barang habis pakai untuk digunakan ->",
+                "create": "🛠 Resep telah digunakan, item yang telah dibuat: {items}",
+                "enough_characteristics": "❗ | Item {item_name} tidak cukup untuk digunakan!"
+            },
+            "case": {
+                "drop_item": "📦 | Anda punya {item_name} x {col} dari kotak ajaib!"
+            },
+            "egg": {
+                "egg_limit": "🥚 | Saat ini, Anda hanya dapat memiliki dinosaurus {limit}). Lihatlah buku pegangan untuk informasi lebih lanjut.",
+                "egg_answer": "🥚 | Pilih telur dinosaurus!",
+                "plug": "🏝 | Tombol selalu aktif, tetapi hanya berfungsi jika Anda memiliki telur di inventaris Anda.",
+                "incubation": "{item_name} dikirim untuk inkubasi! \n⌛ | Berakhir di {end_time}",
+                "edit_content": "🥚 | Telur dipilih!"
+            },
+            "ammunition": {
+                "one_item": "❌ | Anda tidak dapat menggabungkan objek dengan dirinya sendiri.",
+                "combination": "🛠 | Item telah terhubung!",
+                "comb_err": "❌ | Terjadi kesalahan selama kombinasi, silakan hubungi pengembang!"
+            },
+            "special": {
+                "reborn": {
+                    "ok": "🦕 Dinosaurus telah terlahir kembali!",
+                    "limit": "🦕 | Saat ini, Anda hanya dapat memiliki dinosaurus {limit}). Lihatlah buku pegangan untuk informasi lebih lanjut.",
+                    "no_dinos": "🦕 | Anda adalah orang yang sangat cantik, dunia tidak mengingat dinosaurus Anda yang hilang!"
+                },
+                "premium": "🎆 | Selamat telah mengaktifkan premi Anda di {premium_time}!"
+            },
+            "buff": {
+                "+mood": "😀 | Dinosaurus mendapat +{unit}% untuk suasana hati! \n",
+                "-mood": "😥 | Dinosaurus mendapat -{unit}% untuk suasana hati! \n",
+                "+eat": "🥪 | Dinosaurus memulihkan {unit}% kenyang! \n",
+                "-eat": "🥪 | Dinosaurus kehilangan {unit}% kenyang! \n",
+                "+energy": "⚡ | Dinosaurus memulihkan energi {unit}%! \n",
+                "-energy": "⚡ | Dinosaurus kehilangan energi {unit}%! \n",
+                "+heal": "❤ | Dinosaurus memulihkan kesehatan {unit}%! \n",
+                "-heal": "❤ | Dinosaurus Anda telah kehilangan {unit}% Kesehatan! \n"
+            }
+        },
+        "css": {
+            "no_dino": "🧵 Anda tidak memiliki dinosaurus untuk berinteraksi",
+            "wait_count": "📅 Masukkan jumlah penggunaan atau pilih dari daftar ->",
+            "confirm": "🛠 Konfirmasi Penggunaan {name}",
+            "combine": "⚒ Pilih item untuk digabungkan dengan {name} ->",
+            "delete": "🗑 Konfirmasi penghapusan {name}",
+            "dino": "🦕 Pilih dinosaurus / telur dari daftar",
+            "friend": "🎮 Pilih teman ->"
+        },
+        "about_menu": {
+            "team": "<b>🎭 | Tim Bot </b> \n <i> Kita semua melakukan banyak hal sekaligus, tetapi kita semua memiliki peran untuk dimainkan ... </i> \n\n💻 @AS1AW - Pengembang\n💻 @magecode - Pengembang\n💽 @KatranLife - Penyediaan Host\n\n🎨 @unknown_cat13 - Desainer\n🧸 @myasoyakich - Kreator Komunitas\n\n<b>🗝 | Penulis lokalisasi</b>\n<i>Setiap orang dapat menerjemahkan bot ke dalam bahasa asli mereka. \n Ingin membantu penerjemahan? Lihat @AS1AW\n\n</i>{lang_name} - {author}",
+            "links": "**🔗 | Koneksi Hebat**\nDinosaurus horor ada di mana-mana! \n\n📢 News channel - @DinoGochi\n\n👥 Forum - @DinoForum\n\n🧧 YouTube - [@DinoGochi](https://www.youtube.com/@dinogochi)"
+        },
+        "support_command": {
+            "info": "💸 | Dukungan Koin\nKami adalah tim yang mengerjakan bot hanya sendiri. Bot ini gratis dan bebas iklan. Jika Anda menyukai bot, maka Anda dapat mendukungnya dengan koin! \n\n🎨 | Metode Dukungan\n\n",
+            "items": "🎨 Item Set: {items}",
+            "currency_answer": "💲 Pilih mata uang yang akan dibayar dengan mengklik tombol di bawah ini ->",
+            "currency": "💲 Mata uang yang dipilih: {currency}",
+            "col_answer": "🌟 Pilih kuantitas dengan mengklik tombol di bawah ini ->",
+            "buy": "⌚ Tidak banyak yang tersisa! \n🔗 Klik tombol di bawah pesan dan buka petunjuk donasi. \n\n💬 | Detail Anda, kirim pesan ke pengembang setelah pembayaran. (dapat diklik dan disalin) \n\n ID Anda: `{user_id}`\nProduk Anda: `{product_key}`\n\nJumlah Anda: `{amount}`\nMata uang Anda: `{currency}`\nKol Anda: `{count}`\n\n🧳 Baca dan ikuti petunjuknya di sini. \n❌ Jika terjadi masalah, silakan hubungi @AS1AW",
+            "buy_button": "✨ Instruksi donasi",
+            "products_bio": {
+                "non_repayable": {
+                    "name": "☕ Serampangan",
+                    "image": "Gambar/Sisa/Dukungan/Non_Repable.PNG",
+                    "short": "Kami berterima kasih atas jumlah berapa pun!",
+                    "description": "🔮 Jumlah berapa pun memberi kita keyakinan pada hari esok, di mana kita bermain dan bepergian dengan dinosaurus kita!"
+                },
+                "dino_ultima": {
+                    "name": "⚡ DinoUltima",
+                    "image": "images/remain/support/dinoultima.png",
+                    "short": "Ultra berlangganan untuk Anda dan dinosaurus Anda!",
+                    "description": "🖼 Kemampuan untuk mengatur gambar apa pun alih-alih latar belakang! \n🍼 Awasi dinosaurus saya - kirim dinosaurus Anda ke taman kanak-kanak selama yang Anda mau! \n✨ Menampilkan status Ultra di semua daftar. \n🧶 Peningkatan batas pengumpulan makanan. \n🏝 Lokasi tambahan dalam perjalanan. \n🎮 Game tambahan. \n🦕 +1 batas dinosaurus. \n🎠 Atur gambar apa pun untuk menu toko. \n🕹 Meningkatkan batas promosi. \n🎟️ Tidak ada iklan otomatis."
+                },
+                "rescue_kit": {
+                    "name": "❤ Kit Penyelamatan",
+                    "image": "Gambar/Sisa/Dukungan/Reskyu_China_PNG",
+                    "short": "Selamatkan dinosaurus saya!",
+                    "description": "😣 Apakah Anda lupa tentang dinosaurus Anda dan sekarang rasanya sangat buruk dan perlu melakukan sesuatu yang mendesak ?! \n❤ Di sinilah kit penyelamat masuk! Ini memiliki semua yang Anda butuhkan!"
+                },
+                "reborn": {
+                    "name": "💥 Kebangkitan dinosaurus",
+                    "image": "images/remain/support/reborn.png",
+                    "short": "Bangkitkan dinosaurus saya!",
+                    "description": "🔮 Sihir level 10 akan menghidupkan kembali dinosaurus Anda!"
+                }
+            }
+        },
+        "delete_action": {
+            "delete": "🗑 | Item {name} x{count} telah dihapus!",
+            "error": "❌ | Item belum dihapus, mungkin tidak ada dalam inventaris"
+        },
+        "user_profile": {
+            "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Nama:* {name}\n*├* *ID:* `{userid}`\n*└* *Abonemen:* {premium_status} ",
+            "level": "*┌*🏮 *ʟᴇᴠᴇʟ*\n*├* *Tingkat:* {lvl}\n*├* *Mengalami:* {xp_now} | {max_xp}\n*├* *Koin Super:* {super_coins}\n*└* *Koin:* {coins}",
+            "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Lupa*: {dead}\n*├* *Hidup:* {dino_col}",
+            "dino": "   *└* 🦕 *{dino_name}* ({owner})\n      *├* *Keadaan:* {dino_status}\n      *├* *Kelangkaan:* {dino_rare}\n      *└* *Umur:* {age}\n\n",
+            "egg": "   *└* 🥚 *{egg_quality}*\n      *└* *Kiri:* {remained}\n\n",
+            "dino_owner": {
+                "owner": "Dia",
+                "noowner": "Sendi"
+            },
+            "friends": "*┌*👥 *ғʀɪᴇɴᴅs*\n*├* *Teman:* {friends_col}\n*└* *Kueri:* {requests_col}",
+            "inventory": "*┌* 🎈 *ɪɴᴠᴇɴᴛᴏʀʏ*\n*└* *Item:* {items_col}",
+            "no_premium": "❌",
+            "stats": {
+                "pass": "💭 Istirahat",
+                "sleep": "🌙 Tidur",
+                "game": "🎮 Bermain",
+                "journey": "🎴 Perjalanan",
+                "collecting": "🥞 Mengumpulkan makanan",
+                "dungeon": "🗻 Menaklukkan Dungeon",
+                "freezing": "Beku ❄",
+                "kindergarten": "Di taman kanak-kanak 🏡",
+                "hysteria": "Histeris 💥"
+            }
+        },
+        "custom_profile": {
+            "manual": "🖼 | Masukkan tautan yang mengarah ke foto untuk mengaturnya ke latar belakang profil dinosaurus. \n\n🎏 | Untuk menghapus latar belakang, ketik \"-\"",
+            "ok": "✨ | Tautan diatur, jika latar belakang profil dinosaurus tidak berubah, maka tautan tidak mengarah ke foto."
+        },
+        "delete_me": {
+            "confirm": "❓ | Apakah Anda yakin ingin menghapus SEMUA data akun?",
+            "dead_dino": "❓ | Apakah Anda siap bertanggung jawab untuk membunuh semua dinosaurus hidup, serta menghapus semua dinosaurus tua dari ingatan?",
+            "rex_boss": "❓ | Apakah Anda yakin menyerahkan semua koin dan item Anda ke RexBoss?",
+            "code": "🎞 | Masukkan `{code}` untuk mengonfirmasi tindakan Anda (ini jelas merupakan captcha terakhir)",
+            "incorrect_code": "... Saya melihat Anda tidak benar-benar ingin menghapus akun Anda, tetapi saya akan tetap memberikan item dan koin Anda kepada bos.",
+            "delete": "🎨 Terima kasih telah bermain, jika ada, kami selalu di sini."
+        },
+        "tavern_dialogs": [
+            "Mereka mengatakan monster mengerikan berkeliaran di ruang bawah tanah ...",
+            "Dinosaurus saya bisa merobohkan 20 dari ini!",
+            "Jangan bilang, ha ha ha!",
+            "Mereka mengatakan item di dungeon kelas atas ...",
+            "Kemarin saya sedang berjalan, semacam batu bercahaya jatuh ke tangan saya ...",
+            "Pernahkah Anda melihat betapa mengerikannya wajah goblin ini ?!",
+            "Ya, saya memakannya untuk sarapan!",
+            "Bagaimana mereka bertarung dengan pedang tumpul ini?",
+            "Saya tidak akan kembali ke sana!",
+            "Apakah kamu takut turun ke dungeon ?!",
+            "Teman saya Bari pergi ke sana 21 tahun yang lalu, saya masih menunggu ...",
+            "Kemarin saya melihat Pahlawan keluar dari penjara bawah tanah dengan pedang emas!",
+            "Jangan ceritakan dongeng, tidak ada yang menakutkan di sana!",
+            "Katakan padaku bagaimana kamu kehilangan matamu di penjara bawah tanah ini ...",
+            "Saya tidak takut! Hanya saja tidak ada koin untuk masuk ...",
+            "Jam berapa itu, tanggal 21? Dan berapa banyak yang sudah Anda ambil dari sana?",
+            "ya uh ...",
+            "Tidak, tidak ...",
+            "Bercanda?",
+            "AHA HA HA!",
+            "Ho ho ho ...",
+            "Apakah kamu menangis ?!",
+            "Minum?!",
+            "Kabar baik, tuangkan!",
+            "Babi Babi",
+            "Setan....",
+            "Mereka bilang ada banyak harta karun yang tersembunyi di ruang bawah tanah ...",
+            "Dinosaurus saya dapat mengiris monster apa pun menjadi beberapa bagian!",
+            "Dikatakan bahwa ruang bawah tanah dihuni oleh roh-roh jahat kuno ...",
+            "Saya menemukan 2 koin emas di ruang bawah tanah!",
+            "Saya pernah mendengar bahwa Anda dapat menemukan jalan rahasia ke harta karun di penjara bawah tanah ...",
+            "Pahlawan sejati dengan dua kaki, dan pahlawan dinosaurus saya dengan empat kaki!",
+            "Dikatakan bahwa peninggalan kuno hanya dapat ditemukan di ruang bawah tanah ...",
+            "Dinosaurus saya sangat cepat sehingga berlari di sekitar monster apa pun!",
+            "Penjara bawah tanahnya keren, tempat yang sempurna untuk berpetualang di hari musim panas ...",
+            "Saya tahu di mana beberapa peti dengan banyak permata disembunyikan!",
+            "Hei, sudah kubilang dinosaurusku lebih keren!",
+            "Itu selalu ide yang baik untuk berada di tim dengan dinosaurus yang kuat ...",
+            "Kemenangan atas monster itu secara eksklusif ada di tangan pedang berharga!",
+            "Saya memiliki peta yang mengarah langsung ke kekayaan di penjara bawah tanah ...",
+            "Pemenang akan mendapatkan semua kesempatan!",
+            "Saya baru saja mengalahkan monster. Itu sangat mudah!",
+            "Mereka bilang ada banyak koin emas yang bisa ditemukan!",
+            "Dinosaurus saya adalah predator nyata!!",
+            "Saya merasa seperti pahlawan sejati!",
+            "Itu adalah pertempuran termudah sepanjang masa!",
+            "Dikatakan bahwa bahkan penyihir yang paling berpengalaman pun tidak akan bisa melewati level ini!",
+            "Saya sudah membaca panduannya - penjara bawah tanah penuh dengan tempat-tempat yang bermanfaat!",
+            "Monster di penjara bawah tanah sudah gemetar dengan nama kita!",
+            "Saya tahu cara memenangkan pertempuran bawah tanah apa pun!",
+            "Saya memiliki baju besi favorit yang tidak pernah mengkhianati saya!",
+            "Ulat membawa tim saya bersama-sama dan saya tahu mereka tidak akan pernah meninggalkan saya ...",
+            "Jangan memberi makan monster orang lain - menang!",
+            "Cara terbaik untuk mengekang monster adalah dengan hanya meraih ekornya!",
+            "Ladron ini mencuri cairan dan barang-barang bergunaku, bukan ?!",
+            "Aku tahu di mana monster bersembunyi, tapi aku tidak akan memberitahumu ...",
+            "Tebas, blokir, dan hindari! Ini adalah aturan terpenting dalam manual!",
+            "Penjara bawah tanah dipenuhi dengan pengetahuan misterius ...",
+            "Mungkin itu pemandangan untuk memburu kita dengan mainan ini, tapi aku siap untuk itu!",
+            "Kemenangan adalah satu-satunya jalan menuju kekayaan!",
+            "Lihatlah dinosaurus saya, dia benar-benar binatang buas!",
+            "Dengan segala cara dan sumber daya, Anda harus menang!",
+            "Saya akan tahu formula ajaib ini selama sisa hidup saya!",
+            "Seluruh gambaran ini membutuhkan kemampuan mental kita untuk menjadi penguasaan sejati!",
+            "Saya sudah menyiapkan segalanya untuk menang cepat!",
+            "Pekerjaan tidak selesai sampai pertempuran dimenangkan!",
+            "Dinosaurus saya adalah raja penjara bawah tanah yang sebenarnya",
+            "Ketika impian kita menjadi kenyataan!",
+            "Monster ini sudah merasakan kita, tapi kita akan mengalahkannya!",
+            "Semua ruang bawah tanah yang saya tahu dan dinosaurus saya adalah yang terbaik dari yang terbaik!",
+            "Aku tidak pernah lelah bertarung di dungeon ini!",
+            "Saya telah menemukan formula ajaib yang akan memastikan kami menang!",
+            "Penjara bawah tanah ini memiliki semua kesempatan untuk belajar dan menjadi pemain top!",
+            "Tim kami adalah keajaiban nyata bagi monster!",
+            "Ini adalah dunia bawah kita, dan kita adalah raja di sini!",
+            "Dinosaurus saya bisa mengalahkan makhluk apa pun di penjara bawah tanah ini!",
+            "Dikatakan bahwa pengetahuan kuno tersembunyi di bawah obelisk ini ...",
+            "Aku tidak percaya aku benar-benar menemukan pedang ajaib ini!",
+            "Kami berhasil menguasai harta ini - itu sangat mudah!",
+            "Tim kami memiliki kemampuan dan teknologi unik untuk menang!",
+            "Dinosaurus saya tidak akan diam dalam hal menang!",
+            "Sungguh pertempuran yang luar biasa !!",
+            "Aku telah menemukan kunci gerbang yang mengarah ke harta karun!",
+            "Dinosaurus kami adalah tim terbaik dan tidak ada yang akan menghentikan kami!",
+            "Kami akan memenangkan pertempuran ini karena kami adalah tim yang terdiri dari orang-orang yang berpikiran sama!",
+            "Monster ini tidak akan pernah tahu bahwa ada pemenang yang menunggunya!",
+            "Mungkin saya satu-satunya yang perlu menang, tetapi dinosaurus saya tidak akan menyerah kepada siapa pun.",
+            "Ini adalah tempat yang menakutkan, tapi saya senang dinosaurus saya ada di dekat saya.",
+            "Aku pernah mendengar bahwa dungeon ini adalah rumah bagi monster menakutkan, tapi aku siap untuk mereka!",
+            "Bertarung di dungeon ini adalah tujuan kami di sini.",
+            "Dikatakan bahwa ada harta karun tersembunyi di suatu tempat di dalam penjara bawah tanah ini.",
+            "Dinosaurus saya adalah petarung yang sangat terampil dan saya tidak ragu bahwa kami akan mengalahkan monster apa pun di jalan kami.",
+            "Sekarang aku yakin tidak ada yang bisa menghentikanku atau dinosaurusku bertarung di dungeon ini.",
+            "Kami di sini untuk menang, dan kami tidak akan pergi sampai kami menemukan apa yang kami cari.",
+            "Saya pernah mendengar tentang monster menakutkan dan roh jahat, tetapi dengan dinosaurus saya, itu bukan masalah.",
+            "Tim kami dapat mengalahkan siapa pun di penjara bawah tanah ini!",
+            "Dinosaurus saya dan saya siap menghadapi tantangan apa pun yang menghampiri kami di lingkungan ini.",
+            "Ruang bawah tanah bisa gelap dan menakutkan, tetapi mereka menyembunyikan pengetahuan terdalam.",
+            "Melewati semua labirin dan pertempuran ini jelas merupakan petualangan yang tidak akan pernah saya lupakan.",
+            "Saya pikir dinosaurus kita adalah salah satu yang terbaik di dunia bawah tanah ini.",
+            "Setiap level yang kami selesaikan membuktikan bahwa dinosaurus saya adalah yang terbaik dari yang terbaik.",
+            "Mereka mengatakan teknik sangat penting, dan kami memiliki yang terbaik.",
+            "Aku menemukan peti emas pertama di penjara bawah tanah ini!",
+            "Mungkin saya menemukan monster di setiap kesempatan, tetapi dinosaurus saya siap untuk mengalahkan mereka semua.",
+            "Di dunia bawah ini, Anda harus siap menghadapi kesulitan apa pun dalam perjalanan menuju kemenangan.",
+            "Kami tidak memiliki kerangka atas untuk memenangkan penjara bawah tanah ini - selalu ada lebih banyak yang bisa kami lakukan.",
+            "Saya tidak tahu apa yang lebih saya takuti daripada apa pun - monster atau kehilangan dinosaurus saya.",
+            "Dinosaurus saya bisa mengalahkan monster atau kendaraan segala medan di dunia bawah ini.",
+            "Mereka mengatakan harta karun di dalam dungeon ini ada di sini di suatu tempat, tapi kami terus mencari...",
+            "Salah satu trik kami adalah membakar semua baju besi lawan Anda!",
+            "Tim kami adalah petarung sejati yang bisa menang kapan saja!",
+            "Tidak ada yang bisa lebih baik dariku dan dinosaurusku di dunia bawah ini!",
+            "Saya menemukan cara lain untuk memenangkan pertempuran ini dengan dinosaurus saya.",
+            "Jika dinosaurus saya dan saya tetap bersama, saya tahu kita bisa berbuat lebih banyak.",
+            "Mereka mengatakan ada predator puncak di sini, tetapi dinosaurus saya adalah pengecualian.",
+            "Kita harus pergi sejauh mungkin untuk menghindari monster yang marah.",
+            "Adalah tugas kita untuk menemukan cara untuk menang di dunia bawah ini.",
+            "Dinosaurus saya selalu menghasilkan kesulitan monster teknis!",
+            "Aku belajar sesuatu yang baru setiap hari dan meningkatkan keterampilan tempur kita di dunia bawah ini.",
+            "Kami melewati beberapa level paling gelap dan paling rumit di dunia bawah tanah ini.",
+            "Mereka mengatakan jika Anda ingin menang, Anda harus memiliki dinosaurus yang kuat.",
+            "Kami terus mencari harta karun di dunia bawah tanah ini, dan saya yakin kami akan menemukannya.",
+            "Tim kami mengatasi semua rintangan di dunia bawah tanah ini.",
+            "Saya menemukan cara lain untuk bermain sampai akhir perjalanan kami dengan dinosaurus saya.",
+            "Dungeon ini adalah elemenku dan aku merasa nyaman di sini.",
+            "Dinosaurus saya sangat kuat sehingga dapat menghancurkan musuh dalam hitungan detik.",
+            "Tidak ada yang menghentikan kami karena kami terus meningkatkan keterampilan kami di dunia bawah tanah ini.",
+            "Aku menghabiskan setiap hari di sini di dungeon ini untuk memastikan kita bisa menangani masalah apa pun.",
+            "Di sinilah saya merasa seperti pahlawan sejati.",
+            "Saya tahu apa yang akan dikatakan orang, tetapi saya adalah pemain top sejati di dunia bawah tanah ini.",
+            "Tim kami mampu mengalahkan siapa pun di dunia bawah tanah ini, dan kami akan membuktikannya!",
+            "Aku telah menemukan perjalanan lain untuk kita di dunia bawah ini, dan aku yakin bahwa kita akan muncul sebagai pemenang.",
+            "Untuk dinosaurusku, tidak ada tempat yang lebih baik dari dungeon ini.",
+            "Saya siap untuk lebih, dan dinosaurus saya siap dengan saya.",
+            "Pertarungan ini bisa sulit, tetapi saya tahu bahwa dinosaurus saya dan saya bisa menang.",
+            "Saya yakin bahwa dengan tim kami, kami dapat membuat jalan kami sepanjang jalan di dunia bawah tanah ini."
+        ],
+        "tavern_enter": [
+            "Saat memasuki kedai, Anda merasakan kesejukan yang menyenangkan dan mendengar suara furnitur kayu yang berderit, aroma makanan dan minuman kemudian membuat Anda keluar dari rasa lapar.",
+            "Ketika Anda kembali ke kedai, Anda melihat banyak meja bermandikan bir dan jus segar, serta masyarakat yang ramai yang beristirahat dengan keras dan ceria setelah hari yang panjang.",
+            "Di pintu masuk, Anda akan disambut oleh lampu-lampu terang dan suasana penuh perasaan di sekitar tempat ini, penuh sesak dengan turis dan penduduk setempat yang menyambut hangat setiap tamu baru.",
+            "Saat Anda berjalan masuk, Anda melihat bar besar yang penuh dengan berbagai minuman dan kerumunan yang bising menyumbat setiap sudut kedai, yang ramai dengan kehidupan dan makanan yang menggoda.",
+            "Melihat sekeliling, Anda melihat interior gelap yang direndam dalam alkohol dan produk merokok, dan sekelompok musisi bermain di atas panggung di tengah aula mengingatkan Anda pada kehidupan di jalan.",
+            "Anda memasuki sebuah kedai kecil yang dihiasi dengan tong kayu yang melapisi dinding dan tangki lantai yang menopang tangki bawah tanah, sementara seorang bartender yang berdiri di konter menyiapkan koktail favorit Anda dengan senyum di wajahnya.",
+            "Lingkungan kedai terbenam dalam stillso terukur, ketika Anda masuk ke dalam, Anda melihat ketenangan yang cenderung relaksasi, dan dinding ditutupi dengan gambar lama dan prasasti yang diekstraksi oleh para tamu, yang menciptakan suasana hangat.",
+            "Memasuki kedai besar, Anda akan menemukan beberapa area nyaman di mana Anda dapat menghabiskan waktu bersama keluarga dan teman, lantai atas mengejutkan Anda dengan sistem pencahayaan dinamis yang unik, itu membuat aula bernyanyi dan menari dengan damai, menyatu dengan atap bangunan yang unik.",
+            "Pada malam yang tenang ini, penuh dengan aroma makanan buatan sendiri yang lezat, Anda mengunci pintu aula utama kedai dan sudut spiritual yang tenang terbuka untuk Anda di tengah menara kabut, yang mempesona dengan kedalaman dan misterinya.",
+            "Memasuki sebuah kedai kecil, Anda melihat ramuan yang nyaman dan mengundang, di mana musik alternatif dan aroma makanan cepat saji bermain, menciptakan waktu luang yang benar-benar riang.",
+            "Ketika Anda melewati ambang kedai, Anda merasakan keajaiban hangat dan bertemu dengan konter bar yang luas, di mana para tamu yang bahagia sudah menonton apa yang terjadi.",
+            "Begitu Anda memasuki kedai, Anda akan langsung merasakan suasana keramahan, relaksasi, dan kenikmatan masakan kerajaan.",
+            "Anda tersenyum kecut dan duduk di meja panjang yang penuh dengan makanan dan minuman, di mana ada layar besar yang menampilkan permainan.",
+            "Begitu masuk, Anda segera tahu bahwa dia mewakili semua yang Anda harapkan dari sebuah kedai minuman, di mana percakapan keras, musik live, dan makanan berlimpah berhak menempati posisi teratas.",
+            "Dipeluk oleh aroma gala dinner gourmet, Anda menatap steak juicy dan botol anggur mahal, di mana gelas dan sol bersinar membuat para tamu bersantai dan menikmati malam.",
+            "Di dalam kedai, Anda dapat melihat bar yang terpasang, tamu yang mengobrol dengan meriah, dan pabrik berapi-api yang membuat suasana semakin berapi-api.",
+            "Membuka pintu kedai, lihat wajah para bartender yang tersenyum dengan tiga liter cangkir, segera menciptakan sudut yang damai dan penuh perasaan untuk bersantai dan berolahraga sepanjang minggu.",
+            "Dikelilingi oleh plester gelap, Anda dapat mencium aroma roti yang baru dipanggang dan rempah-rempah saat aroma terbang ke lubang hidung para tamu, menciptakan suasana yang menyenangkan.",
+            "Segala sesuatu di kedai, di mana musik live dimainkan, dipenuhi dengan cita rasa nasional dan keaktifan penduduk setempat, yang menawarkan berbagai minuman dan makanan ringan saat bepergian.",
+            "Memasuki aula, di mana semua hal paling menarik terjadi, Anda menemukan tempat yang nyaman di sofa, musik membuat Anda bernyanyi dan menari, murah hati dengan suasana hati yang penuh perasaan untuk para tamu.",
+            "Dengan lampu yang berfungsi dan kebisingan lembut, kedai ini menarik dengan romansa dan aroma makanannya yang dalam, dan pengunjung tetap selalu siap menyambut tamu baru.",
+            "Di kursi yang nyaman di dalam, nada lembut gitar beresonansi, menciptakan kenyamanan bagi mereka yang ingin duduk di lingkungan yang nyaman setelah seharian bekerja keras.",
+            "Begitu Anda memasuki aula yang didekorasi dengan indah, Anda akan merasakan sambutan hangat, selain area dapur yang harum dengan hidangan nasional yang kaya.",
+            "Dengan dentingan cangkir dan pewarnaan warna-warni yang halus, para tamu kedai berada di sini untuk bersantai dan menikmati kesenangan estetika dari lekukan tarian yang terpuji, aroma makanan dan minuman.",
+            "Diselimuti kabut obat bius dan kekeruhan, kedai ini menarik dengan suasananya yang nyaman dan penuh perasaan, serta penambahan nostalgia estetika.",
+            "Dengan derit furnitur kayu dan barang-barang berharga yang dipasang di dinding melengkung, Anda merasa hangat dan nyaman.",
+            "Suasana keramahan dan kelimpahan yang menyenangkan terletak di setiap sudut kedai ini, di mana musik diputar dan keramahan bartender yang ramah tidak akan membuat Anda acuh tak acuh.",
+            "Di aula berkabut yang dihiasi dengan confetti dan lentera hijau, para tamu bersantai di berbagai zona, merokok hookah dan menikmati berbagai makanan nasional.",
+            "Aroma minuman keras, serta makanan goreng panas, andal mengingatkan kita pada kehidupan dalam kunci kesenangan riang, yang melekat pada kedai ini.",
+            "Membuka pintu kedai ini, suasana nyaman membeli Anda dengan kehangatan, ringan dan kesenangan optimis, memberikan relaksasi dan hiburan bagi para tamu.",
+            "Terhubung dengan sensasi dari hari-hari terbaik masa kecil Anda, Anda segera berakar di antara pelikan, jaket dan bergabung dengan bratva ceria, yang mengerutkan kening pada kehidupan, merokok, bersosialisasi dan minum di perusahaan kedai.",
+            "Ketika Anda bersantai, Anda merasakan kedamaian dan kecerahan di dalam kedai ini, di mana musik keras, kerinduan, makanan panas, serta minuman, berada di tempat pertama.",
+            "Saat memasuki kedai, Anda dikelilingi oleh kelimpahan dan keramahan, di mana para tamu menikmati makanan yang digoreng, musik yang bagus, dan suasana hati yang ceria.",
+            "Memasuki kedai, yang diterangi oleh lampu, Anda akan menemukan kerumunan yang hidup berteriak keras dan membenturkan botol sebagai ucapan terima kasih kepada para bartender yang ramah dan makanan enak."
+        ],
+        "entertainments": {
+            "answer_game": "🎮 | Pilih apa yang akan dimainkan dinosaurus >\n\n⌛ | Hal terakhir yang dimainkan dinosaurus: {last_game}",
+            "game": {
+                "console": "🎮 Konsol",
+                "snake": "🪁 Ular",
+                "pin-pong": "🏓 Ping Pong",
+                "ball": "🏐 Bola",
+                "puzzles": "🧩 Teka-teki",
+                "chess": "♟ Catur",
+                "jenga": "🧱 Jenga",
+                "dnd": "🎲 D &D",
+                "monopolia": "🎩 Monopoli",
+                "bowling": "🎳 Bowling",
+                "darts": "🎯 Anak panah",
+                "golf": "⛳ Golf"
+            },
+            "game_text": {
+                "m0": "☺ | Betapa menyenangkannya bermain {game}!",
+                "m1": "😃 | Lagi {game}? Yah, sepertinya menarik.",
+                "m2": "😐 | Sepertinya kita tidak memiliki apa-apa selain {game}...",
+                "m3": "😣 | Mengapa saya hanya bermain {game} sepanjang waktu?",
+                "penalty": "❗ | Persentase kesenangan adalah {percent}%"
+            },
+            "answer_text": "🎮 Tentukan jumlah waktu yang diizinkan untuk bermain, dan dinosaurus akan memilih berapa lama ia akan bermain >",
+            "time": {
+                "sdj4": {
+                    "text": "15 - 30 menit",
+                    "data": [
+                        15,
+                        30
+                    ]
+                },
+                "34ns": {
+                    "text": "30 - 60 menit",
+                    "data": [
+                        30,
+                        60
+                    ]
+                },
+                "sd4s": {
+                    "text": "60 - 90 menit",
+                    "data": [
+                        60,
+                        90
+                    ]
+                },
+                "fso3": {
+                    "text": "90 - 120 menit",
+                    "data": [
+                        90,
+                        120
+                    ]
+                }
+            },
+            "invite_friend": {
+                "text": "🦕 | Dinosaurus jauh lebih menyenangkan untuk bermain dengan teman-teman, mengapa tidak mengundang mereka?",
+                "button": "🎩 Undang"
+            },
+            "dino_join": "🦕 Dinosaurus {dinoname} telah bergabung dengan permainan!",
+            "join_end": "🦕 Dinosaurus sudah berhenti bermain!",
+            "zero": "🎮 Dinosaurus akan memilih berapa banyak yang akan dimainkannya dalam interval ini. \n\n⏲ Jika dinosaurus memiliki timer di item aktif, Anda akan dapat melihat berapa banyak waktu yang tersisa hingga akhir permainan."
+        },
+        "stop_game": {
+            "dislike": "🎮 | Dinosaurus tidak terlalu suka bermain, dia tidak kehilangan semangatnya.",
+            "like": "🎮 | Dinosaurus tidak senang Anda menghentikannya!",
+            "whatever": "🎮 | Dinosaurus berhenti bermain.",
+            "dont_tear": "🎮 | Anda tidak dapat merobek dinosaurus dari permainan, coba lagi. Pikiran Anda, dinosaurus akan marah.",
+            "unrestrained_play": "🎮 | Dinosaurus dalam keadaan gangguan saraf, lebih baik tidak menyentuhnya."
+        },
+        "collecting": {
+            "way": "🌴 | Pilih ke mana dinosaurus akan mencari makan >",
+            "result": {
+                "collecting": "🌿 | {dino_name} Pergi memetik buah beri dan rempah-rempah. \n🎲 | Target: {count} 🥬",
+                "hunt": "🍖 | {dino_name} pergi berburu. \n🎲 | Target: {count} 🥩",
+                "fishing": "🍤 | {dino_name} Pergi memancing. \n🎲 | Target: {count} 🐟",
+                "all": "🥗 | {dino_name} Pergi ke pertemuan makanan umum. \n🎲 | Target: {count} 🍟"
+            },
+            "buttons": {
+                "collecting": "🌿 Margin",
+                "hunt": "🍖 Hutan",
+                "fishing": "🍤 Danau",
+                "all": "🥗 Semua Bersama"
+            },
+            "wait_count": "📅 Masukkan berapa banyak dinosaurus yang perlu dikumpulkan >",
+            "stop_button": {
+                "collecting": "❌ Hentikan Koleksi",
+                "hunt": "❌ Hentikan Perburuan",
+                "fishing": "❌ Berhenti Memancing",
+                "all": "❌ Hentikan Koleksi"
+            },
+            "progress": {
+                "collecting": "🌿 | Dinosaurus mengumpulkan {now} / {max_count} herbal.",
+                "hunt": "🍖 | Dinosaurus dikumpulkan {now} / {max_count}.",
+                "fishing": "🍤 | Dinosaurus memancing {now} / {max_count} ikan.",
+                "all": "🥗 | Dinosaurus dikumpulkan {now} / {max_count}."
+            },
+            "max_count": "❌ | Inventaris Anda penuh dengan makanan, sekarang memiliki {eat_count} unit makanan!"
+        },
+        "optionplus": {
+            "update_page": "🔁 | Halaman diperbarui"
+        },
+        "referals": {
+            "have_code": "🎲 Anda sudah memiliki kode yang dihasilkan!",
+            "generate": "👥 | Bagaimana Anda ingin menghasilkan kode? \n\n🎲 Acak - Bot akan menghasilkan kode dari karakter acak. \n👛 Harga: Gratis\n\n🎩 Kustom - Masukkan kata apa saja dan itu akan menjadi kode Anda. \n👛 Biaya: {price} koin",
+            "var_buttons": {
+                "generate_referal random": "🎲 Acak",
+                "generate_referal custom": "🎩 Milik Anda sendiri"
+            },
+            "code": "🎲 Kode Anda telah ditambahkan ke database, jangan lupa untuk membagikannya dengan teman-teman Anda! \n\n🎩 Kode: `{code}`\n\n🔗 Referensi: `{url}`",
+            "my_code": "🎩 Kode: `{code}`\n\n🔗 Referensi: `{url}`\n\n🥕 Kegunaan: `{uses}`",
+            "custom_code": {
+                "start": "🎩 Masukkan kata apa saja tanpa menggunakan karakter khusus, tidak lebih dari 10 karakter ->",
+                "max_len": "🎩 Kode Anda lebih dari 10 karakter, coba lagi!",
+                "min_len": "🎩 Jangan gunakan karakter khusus dan coba lagi!",
+                "found_code": "🎩 Kode ini sudah diambil, coba lagi!",
+                "no_coins": "🎩 Anda tidak memiliki cukup koin untuk membuat kode, coba buat kode acak!"
+            },
+            "enter_code": {
+                "start": "🔗 Masukkan kode teman Anda ->",
+                "True": "🎩 Kode teman telah diaktifkan! \n🎁 Hadiah: {coins} koin, {items}",
+                "False": "❌ Kode teman tidak ditemukan atau kode Anda sendiri!",
+                "have_code": "👤 Anda sudah mengaktifkan kode teman!"
+            }
+        },
+        "dialogs": {
+            "dead_last_dino": {
+                "people_name": "👤 Tidak diketahui",
+                "start": {
+                    "system": true,
+                    "text": "✉ Anda memiliki pesan dari sumber yang tidak dikenal.",
+                    "buttons": {
+                        "m1": {
+                            "text": "✉ Buka",
+                            "answer": "Mari kita lihat apa yang ada di luar sana..."
+                        }
+                    }
+                },
+                "m1": {
+                    "text": "Salam, sayang {user_name}. Kami telah menerima laporan tentang pemusnahan dinosaurus, apakah Anda mengkonfirmasi informasi ini?",
+                    "previous": "start",
+                    "buttons": {
+                        "m2-n": {
+                            "text": "❌ Tidak!",
+                            "answer": "Tidak, saya tidak tahu apa-apa tentang itu."
+                        },
+                        "m2-y": {
+                            "text": "✅ Ya...",
+                            "answer": "Ya... Itu terjadi secara tidak sengaja ..."
+                        }
+                    }
+                },
+                "m2-y": {
+                    "text": "Mulia, berikan saya tiket reputasi Anda",
+                    "previous": "m1",
+                    "buttons": {
+                        "m3-y": {
+                            "text": "🔗 Transfer data",
+                            "answer": "Sini.. Kembali... Saya benar-benar minta maaf ..."
+                        }
+                    }
+                },
+                "m2-n": {
+                    "text": "Ya? Menurut data kami, inilah masalahnya.",
+                    "previous": "m1",
+                    "buttons": {
+                        "m3-n": {
+                            "text": "✅ Terus berbohong",
+                            "answer": "Mungkin saudara kembarku ..."
+                        }
+                    }
+                },
+                "m3-n": {
+                    "text": "{people_name} menatapmu sambil tersenyum. Sudah jelas, dia tahu Anda berbohong.",
+                    "previous": "m2-n",
+                    "system": true,
+                    "buttons": {
+                        "m2-y": {
+                            "text": "❌ Akui saja",
+                            "answer": ""
+                        },
+                        "m4-n": {
+                            "text": "✅ Kebohongan",
+                            "answer": "Ya, ya, ya! Kakakku adalah pria yang menjijikkan!"
+                        }
+                    }
+                },
+                "m3-y": {
+                    "text": "Menurut reputasi Anda, kami memiliki kutipan untuk Anda. Berikut adalah tampilan kontraknya.",
+                    "previous": "m2-y",
+                    "buttons": {
+                        "m4-y": {
+                            "text": "📃 Tonton sekarang",
+                            "answer": "Oke, mari kita lihat."
+                        }
+                    }
+                },
+                "m4-n": {
+                    "text": "Saya melihat Anda tidak ingin melakukannya dengan cara yang baik ... Saya menyukainya, kami membutuhkan yang berani dalam bisnis kami, di sini, tanda tangani.",
+                    "previous": "m3-n",
+                    "buttons": {
+                        "m5-n": {
+                            "text": "📃 Tonton sekarang",
+                            "answer": "Oke, mari kita lihat."
+                        }
+                    }
+                },
+                "m4-y": {
+                    "text": "📃 Setelah membaca kontrak, Anda mengetahui bahwa Anda memberikan 80% dari tabungan Anda dan semua inventaris kepada organisasi, dan sebagai imbalannya, organisasi memberi Anda telur dengan kelangkaan yang tidak pasti.",
+                    "previous": "m3-y",
+                    "system": true,
+                    "buttons": {
+                        "end-y": {
+                            "text": "🖋 Tanda",
+                            "answer": "Saya menyukainya, saya menandatanganinya."
+                        }
+                    }
+                },
+                "m5-n": {
+                    "text": "📃 Setelah membaca kontrak, Anda mengetahui bahwa Anda memberikan 70% dari tabungan Anda dan semua inventaris kepada organisasi, dan sebagai imbalannya, organisasi memberi Anda telur kelangkaan yang tidak pasti.",
+                    "previous": "m4-n",
+                    "system": true,
+                    "buttons": {
+                        "end-n": {
+                            "text": "🖋 Tanda",
+                            "answer": "Saya menyukainya, saya menandatanganinya."
+                        }
+                    }
+                },
+                "end-y": {
+                    "text": "Hebat, senang berbisnis dengan Anda)",
+                    "previous": "m4-y"
+                },
+                "end-n": {
+                    "text": "Hebat, senang berbisnis dengan Anda)",
+                    "previous": "m5-n"
+                }
+            }
+        },
+        "mood_log": {
+            "info": "🎠 Pengubah Suasana Hati Umum: `{result}`\n",
+            "event_info": "🎋 Status: {action} ({event_time})\n",
+            "breakdown": {
+                "seclusion": "💥 Privasi",
+                "hysteria": "😭 Histeria",
+                "unrestrained_play": "🎮 Kesenangan Tak Terkendali"
+            },
+            "inspiration": {
+                "game": "Inspirasi untuk game",
+                "collecting": "Inspirasi untuk Berkumpul",
+                "journey": "Inspirasi Perjalanan",
+                "sleep": "Inspirasi untuk Tidur"
+            },
+            "good_sleep": "Tidur nyenyak",
+            "end_game": "Bermain bagus",
+            "multi_games": "Sangat menyenangkan",
+            "multi_heal": "Kesejahteraan",
+            "multi_eat": "Fed",
+            "multi_energy": "Banyak energi",
+            "dream": "Saya bermimpi",
+            "good_eat": "Makan makanan lezat",
+            "playing_together": "Bermain dengan teman",
+            "bad_sleep": "Saya tidak banyak tidur",
+            "stop_game": "Permainan terganggu",
+            "little_game": "Tidak cukup hiburan",
+            "little_heal": "Merasa tidak enak badan",
+            "little_eat": "Lapar",
+            "little_energy": "Lelah",
+            "bad_dream": "Saya mengalami mimpi buruk",
+            "bad_eat": "Makanan yang tidak enak",
+            "repeat_eat": "Makanan berulang",
+            "journey_event": "Acara Perjalanan",
+            "sunshine": "Cuaca cerah",
+            "breeze": "Angin sepoi-sepoi yang menyenangkan",
+            "rain": "Terjebak dalam hujan",
+            "cold_wind": "Angin dingin bertiup",
+            "meeting_friend": "Bertemu Teman",
+            "drought": "Udara kering",
+            "snowfall": "Terperangkap dalam hujan salju",
+            "magic_light": "Melihat cahaya ajaib",
+            "magic_animal": "Melihat binatang ajaib"
+        },
+        "journey_start": {
+            "ask_loc": "🌳 | Pilih ke mana dinosaurus akan pergi kali ini\n\n",
+            "cancel_text": "🎈 Pilih lokasi dengan mengklik tombol. Jika Anda membatalkan, tombol tidak akan tersedia.",
+            "complexity": {
+                "text": "🎏 | Anda dapat membaca tentang kompleksitas dan apa artinya di sini",
+                "button": "🎈 Tentang kompleksitas"
+            },
+            "locations": {
+                "forest": {
+                    "name": "🌲 Hutan",
+                    "text": "🌲 Hutan dengan pohon-pohon raksasa di mana dinosaurus dapat menjelajahi berbagai flora dan fauna. \n*🐘 Kesulitan*: 🟢 Mudah"
+                },
+                "lost-islands": {
+                    "name": "🏝 Kepulauan yang Hilang",
+                    "text": "🏝 Pulau yang hilang di mana dinosaurus dapat menjelajahi dunia kuno yang telah lama hilang. \n*🐘 Kesulitan*: 🟢 Mudah (Ada hewan yang tidak berbahaya)"
+                },
+                "desert": {
+                    "name": "🏜 Gurun",
+                    "text": "🏜 Gurun tempat dinosaurus dapat menjelajahi piramida kuno atau bertemu ular megah! \n*🐘 Tingkat kesulitan*: 🟡 Sedang"
+                },
+                "mountains": {
+                    "name": "🗻 Pegunungan",
+                    "text": "🗻 Pegunungan dengan gua kristal tempat dinosaurus bisa berburu naga dan melawan goblin. \n*🐘 Kesulitan*: 🔴 Sulit"
+                },
+                "magic-forest": {
+                    "name": "🔮 Hutan Ajaib",
+                    "text": "🔮 Hutan ajaib tempat dinosaurus harus melewati perangkap, mempelajari rahasia hutan. \n*🐘 Kesulitan*: 🔴 Hard\n_✨ Tersedia dengan langganan DinoUltima_"
+                }
+            },
+            "time_info": "⌛ | Pilih berapa lama dinosaurus akan menjelajahi lokasi",
+            "time_text": {
+                "t10": {
+                    "text": "10m",
+                    "time": 600
+                },
+                "t30": {
+                    "text": "30m",
+                    "time": 1800
+                },
+                "t60": {
+                    "text": "60m",
+                    "time": 3600
+                },
+                "t90": {
+                    "text": "90m",
+                    "time": 5400
+                },
+                "t120": {
+                    "text": "120m",
+                    "time": 7200
+                },
+                "t240": {
+                    "text": "240 menit",
+                    "time": 14400
+                }
+            },
+            "start": "🎏 | Dinosaurus pergi ke {loc_name} ke {time_text}",
+            "start_2": "📜 | Periksa acara terbaru di perjalanan untuk mengetahui apa yang telah dilakukan dinosaurus Anda!"
+        },
+        "journey_complexity": "*🖼 | Tentang kesulitan perjalanan*\n\n*🟢 Mudah* - Tidak ada risiko atau tabrakan berbahaya, cocok untuk pemula. Peristiwa hanya mempengaruhi suasana hati, dinosaurus tidak akan dirugikan. \n\n*🟡 Sedang* - Situasi berbahaya dapat terjadi di lokasi seperti itu, tetapi kebanyakan dari mereka netral. \n\n*🔴 Keras* - Ada banyak peristiwa yang lebih berbahaya daripada yang netral, Anda harus pergi ke sini siap. \n\n_The semakin besar risikonya, semakin besar reward_",
+        "send_action": {
+            "game": {
+                "send": "🎩 | Pemain {username} dinosaurus mengundang Anda untuk bermain bersama. \n🦕 | Ketika dinosaurus bermain bersama, permainan mereka lebih menarik dan suasana hati mereka meningkat!",
+                "send_button": "🎩 Gabung",
+                "for_me": "🐘 | Undangan dikirim ke pemain Dinosaurus {friendname}, Anda akan menerima pemberitahuan segera setelah teman bergabung dengan permainan!"
+            },
+            "journey": {
+                "send": "",
+                "send_button": "🎩 Gabung",
+                "for_me": ""
+            },
+            "error": "❌ | Tidak dapat mengirim pesan ke seseorang"
+        },
+        "invite_to_action": "🔮 | Pilih pengguna yang akan diundang",
+        "join_to_action": {
+            "one_dino": "🎏 | Anda tidak dapat menggunakan dinosaurus yang sama"
+        },
+        "alredy_busy": "❗ | Dinosaurus Anda sudah sibuk, lihat profilnya!",
+        "joint_dinosaur": {
+            "check": "🦕 | Apakah Anda yakin ingin berbagi dinosaurus?",
+            "message_to_friend": "🦕 | Anda telah menerima tawaran dari {username} untuk mengelola dinosaurus {dinoname}.",
+            "button": [
+                "🔮 Terima",
+                "💥 Menolak"
+            ],
+            "max_owners": "🦕 | Seekor dinosaurus tidak dapat memiliki lebih dari 2 inang!",
+            "max_dino": "🎋 | Pengguna ini sudah memiliki dinosvr bersama!",
+            "ok": "🎮 | Penawaran telah dikirim ke pengguna!"
+        },
+        "take_dino": {
+            "max_dino": "🎋 | Anda sudah memiliki dinosaurus bersama!",
+            "max_owners": "🦕 | Seekor dinosaurus tidak dapat memiliki lebih dari 2 inang!",
+            "ok": "🦕 | Selamat! Sekarang {dinoname} tersedia di daftar dinosaurus Anda!",
+            "message_to_owner": "🦕 | {username} sekarang dapat mengontrol dinosaurus Anda {dinoname}!"
+        },
+        "cancle_joint": {
+            "confirm": "🎩 | Apakah Anda yakin ingin melepaskan kendali dinosaurus?"
+        },
+        "my_joint": {
+            "confirm": "🎩 | Apakah Anda yakin ingin berhenti berbagi dinosaurus Anda?",
+            "m_for_add_owner": "🎩 | {username} membatalkan berbagi dinosaurus Anda."
+        },
+        "take_money": {
+            "col_coins": "🍡 | Tentukan berapa banyak koin yang ingin Anda transfer, jumlah maksimumnya adalah {max_int}",
+            "transfer": "🦄 | Kurir unicorn membawa parsel\n\n🖼 Pengirim: {username}\n👑 Koin: {coins}",
+            "send": "👑 | Koin dikirim!",
+            "no_coins": "❌ Gagal mengirim koin",
+            "zero_coins": "🦕 Dinosaurus menangis karena Anda tidak memiliki koin :("
+        },
+        "take_coins": {
+            "col_coins": "🍡 | Tentukan berapa banyak koin yang ingin Anda transfer, jumlah maksimumnya adalah {max_int}",
+            "transfer": "🦄 | Kurir unicorn membawa parsel\n\n🖼 Pengirim: {username}\n👑 Koin super: {coins}",
+            "send": "👑 | Koin telah dikirim!",
+            "zero_coins": "🦕 Dinosaurus menangis karena Anda tidak memiliki koin :("
+        },
+        "remove_accessory": {
+            "choose_item": "⏲ Pilih item mana yang akan dihapus",
+            "remove": "💍 Aksesori telah dihapus dan ditempatkan di inventaris Anda!"
+        },
+        "buy_ale": {
+            "me": "🍻 | Bartender menyerahkan secangkir 🍺 ale kepada teman Anda",
+            "friend": "🍻 | Bartender memberi Anda secangkir 🍺 dari Ale dan menunjuk ke teman Anda {username}",
+            "no_coins": "❌ | Anda tidak memiliki banyak koin!"
+        },
+        "tavern_sleep": "🌙 Anda tertidur di meja di kedai.",
+        "quests": {
+            "authors": [
+                "Craven Lear",
+                "Thorburn Drogh",
+                "Sungai Gracewood",
+                "Irinia Lungreen",
+                "Eliada Teneris",
+                "Hanard yang Gelap",
+                "Tangan Emas Dragmil",
+                "Api Dingin Melvorn",
+                "Scarlett Dyst",
+                "Keputusasaan Kirkwood",
+                "Hutan lebat",
+                "Badai Midgard",
+                "Liis Shadowbow",
+                "Keldrin Kekuatan Tak Terbatas",
+                "Darah Hitam Furvin",
+                "Dahan Perak Bryna",
+                "Drakar Stormhammer",
+                "Pericles berbisik tentang Ular",
+                "Pisau Baja Hertwig",
+                "Layeen Lair dari Timbangan",
+                "Carys Bunga Bulan",
+                "Doa Lyle Thunder",
+                "Malaikat Jatuh Colmena",
+                "Prajurit Bintang Ulimar",
+                "Orin Peri",
+                "Serangan Pedang Senyap",
+                "Ordo Mordokai Warlock",
+                "Bukit Putih Isolah",
+                "Rekrut Moonlight",
+                "Nancy mengerutkan kening",
+                "Permainan Babi Hutan Timberlin",
+                "Stasil si Kuda Liar",
+                "Dinamit Gavin",
+                "Elaryn si Ular Lernaean",
+                "Belram Cinta Air",
+                "Pedang Annison Archon",
+                "Belati Gibon dari Prajurit",
+                "Saedis Api Paku",
+                "Grundor si Orc yang Mengamuk",
+                "Kirbrach si Pemanah Kegelapan",
+                "Pedang Besar Tiara",
+                "Belati Darah Sanjay",
+                "Bunga Kehidupan Kaylen",
+                "Emera si Hati Singa",
+                "Arryn si Pemburu Hantu",
+                "Pisau Tajam Halloween",
+                "Lyren si Penyihir Gila",
+                "Kaarr si Naga Fundamental",
+                "Elang Putih Hilla",
+                "Program Pertumpahan Darah Farion"
+            ],
+            "get": [
+                "Aliansi Perdagangan Rahasia",
+                "Mencari ketentuan",
+                "Mengumpulkan Sumber Daya",
+                "Pengadaan untuk Kelangsungan Hidup",
+                "Penyelundupan persediaan",
+                "Operasi Terselubung: Mencari Stok",
+                "Negosiasi Pasar",
+                "Pertempuran untuk Persediaan",
+                "Misi di pasar",
+                "Operasi perdagangan aktif",
+                "Mencari persediaan!",
+                "Persediaan siaga",
+                "Pengadaan Operasi",
+                "Pasar gelap",
+                "Pengumpulan Pasokan Selektif",
+                "Berjalan melalui pasar",
+                "Perburuan Diet",
+                "Ekstraksi Sumber Daya Produksi",
+                "Untuk mendapatkan persediaan",
+                "Mari kita bicara tentang persediaan",
+                "Penawaran Rahasia",
+                "Transportasi Pasokan",
+                "Persediaan cadangan jika terjadi bencana alam",
+                "Perburuan Sumber Daya",
+                "Manuver Perdagangan",
+                "Pengumpulan Pasokan Tanpa Henti",
+                "Perdagangan Pasar",
+                "Gudang pribadi",
+                "Mengais-ngais Persediaan",
+                "Menemukan Diet",
+                "Beli berdasarkan ketersediaan",
+                "Pengiriman Manusiawi",
+                "Sumber Daya Penyelundupan",
+                "Harta karun di pasar",
+                "Kontrak Komersial",
+                "Pertambangan & Transportasi",
+                "Pertukaran barang",
+                "Operasi Predator",
+                "Prospek Pasar",
+                "Mengamankan gudang",
+                "Sumber Daya Berguna di Pasar",
+                "Berinvestasi dalam sumber daya",
+                "Perburuan Pasokan",
+                "Pencarian Pasar",
+                "Penyelundupan untuk bertahan hidup",
+                "Rantai Pasokan",
+                "Pasar: Sumber Persediaan",
+                "Keamanan dan perlindungan gudang",
+                "Logistik Pasokan",
+                "Penetrasi Pasar Terselubung"
+            ],
+            "kill": [
+                "Pisau petir",
+                "Jari berdarah",
+                "Pedang Racun",
+                "Perbatasan Gila",
+                "Pemburu yang menakutkan",
+                "Tatapan Mematikan",
+                "Teka-teki Bayangan",
+                "Jalan Berdarah",
+                "Pembunuh Raksasa",
+                "Jantung Kegelapan",
+                "Pedang Perburuan Liar",
+                "Final Berdarah",
+                "Jam Panen",
+                "Alarm Berduri",
+                "Mogok Darah",
+                "Pedang malam",
+                "Kreta yang mematikan",
+                "Tembakan Terakhir",
+                "Angin Darah",
+                "Pembunuh Binatang",
+                "Kutukan Racun",
+                "Kemarahan Hunter",
+                "Nafas Terakhir",
+                "Pusaran Pembunuhan",
+                "Perang Berdarah",
+                "Zilch Terakhir",
+                "Pedang Pembunuh",
+                "Pembantaian Mematikan",
+                "Pemburu Iblis",
+                "Pembunuh Tanpa Ampun",
+                "Denyut Kematian",
+                "Atas Nama Kemenangan",
+                "Murka Berdarah",
+                "Racun yang menyegarkan",
+                "Pedang Pendarahan",
+                "Kawanan Darah",
+                "Wyvern Kematian",
+                "Pedang Bonecrushing",
+                "Blade of Unstoppability",
+                "Belalang Pembunuh",
+                "Petualangan Berdarah",
+                "Pedang Malapetaka",
+                "Serangan pamungkas",
+                "Ritual Darah",
+                "Perangkap Petir",
+                "Baut Pembunuh",
+                "Pedang Kekacauan",
+                "Kemarahan Kegilaan",
+                "Perburuan Terakhir",
+                "Perang Melawan Para Pembunuh"
+            ],
+            "game": [
+                "Pencari Telur",
+                "Kompetisi Kecepatan",
+                "Petak Umpet di Hutan",
+                "Menyeberangi sungai",
+                "Berlari di sepanjang ngarai",
+                "Memanen akar pohon",
+                "Pencarian Gua",
+                "Pertarungan Pedang",
+                "Cari Kota yang Hilang",
+                "Bentrokan Raksasa",
+                "Pertambangan Mineral",
+                "Pertarungan Judo",
+                "Naik helikopter",
+                "Mengumpulkan Emas",
+                "Perburuan Dinosaurus",
+                "Reli di sepanjang pantai",
+                "Memetik buah beri",
+                "Panahan",
+                "Menjual di pasar",
+                "Cari"
+            ],
+            "journey": [
+                "Mengikuti jejak hewan purba",
+                "Perburuan Bertanduk Tiga",
+                "Traversal Zona Gurun",
+                "Menjelajahi Piramida Kuno",
+                "Trekking melalui medan glasial",
+                "Perjalanan melalui hutan",
+                "Sungai Raksasa",
+                "Mengikuti jejak orang-orang primitif",
+                "Melalui Lembah yang Dalam",
+                "Mencari Peninggalan Peradaban Kuno",
+                "Mendaki ke puncak gunung yang tinggi",
+                "Menyeberangi sungai yang lebar",
+                "Menjelajahi Gua Gelap",
+                "Kelangsungan hidup selama Era Mesozoikum",
+                "Cari Peninggalan Kuno",
+                "Perjalanan melalui tanah yang belum dipetakan",
+                "Tanah Berbahaya untuk Bertahan Hidup",
+                "Peta Harta Karun Dinosaurus",
+                "Mendaki melalui rawa-rawa berbahaya",
+                "Berkendara Maju"
+            ],
+            "fishing": [
+                "Mencari Buaya Mutiara",
+                "Di luasnya perairan danau",
+                "Ke dalam perangkap dinosaurus",
+                "Ke pangkalan pemancingan",
+                "Naik Ombak",
+                "Memancing Jackpot",
+                "Mencari Ikan Merah",
+                "Pertempuran untuk Menangkap",
+                "Kejuaraan Memancing",
+                "Memancing di sungai yang tidak disebutkan namanya",
+                "Perjalanan perahu",
+                "Menyeberangi sungai",
+                "Kepiting rebus",
+                "Nelayan No. 1 di Masa Lalu",
+                "Memancing Ikan Mas",
+                "Dinamika di danau",
+                "Pertempuran ke Dasar Sungai",
+                "Memancing di gua",
+                "Pemancingan Legendaris",
+                "Mencari ikan manis dan asin"
+            ],
+            "collecting": [
+                "Mencari Dictosphere",
+                "Memetik berry di lembah terpencil",
+                "Unta dan dinosaurus",
+                "Menemukan Spice Caravan",
+                "Memanah untuk hewan",
+                "Festival Dinosaurus",
+                "Mencari Sumber Oksigen",
+                "Petualangan Makan Siang Panas",
+                "Membuat Hewan Melakukan Hal yang Berguna",
+                "Bertahan hidup di wilayah yang belum dipetakan",
+                "Tunjukkan Keterampilan Bertahan Hidup Anda"
+            ],
+            "feed": [
+                "Rasa Lezat",
+                "Perjalanan ke dunia kuliner",
+                "Temukan rasa baru",
+                "Hidangan Paling Lezat",
+                "Jelajahi palatabilitas",
+                "Jalan Gastronomi",
+                "Rasa Spesial",
+                "Temuan Kuliner",
+                "Kreativitas dengan makanan",
+                "Hidangan gourmet",
+                "Bereksperimenlah dengan rasa",
+                "Kombinasi Kuliner yang Luar Biasa",
+                "Penemuan gastronomi",
+                "Pengalaman Rasa yang Mengesankan",
+                "Resep asli",
+                "Keajaiban Rasa",
+                "Komposisi kuliner yang menggoda",
+                "Mengungkap semua rahasia rasa",
+                "Hidup dalam Rasa",
+                "Hidangan eksklusif"
+            ],
+            "hunt": [
+                "Perburuan Serigala",
+                "Rahasia Hutan",
+                "Mengejar Binatang",
+                "Legenda Pemanah",
+                "Pemburu Gigi",
+                "Jalan Pemburu",
+                "Berburu Rubah",
+                "Jejak Beruang",
+                "Rahasia Perburuan",
+                "Mangsa yang Terlupakan",
+                "Perburuan Angsa Liar",
+                "Pemburu Tanduk",
+                "Investigasi Ulang Babi Liar",
+                "Jejak Felina",
+                "Berburu ungulata",
+                "Master Busur",
+                "Misteri Jejak",
+                "Berburu babi hutan",
+                "Pemburu di Jalan Setapak",
+                "Perburuan Bayangan",
+                "Jalur Perak",
+                "Legenda Serpihan",
+                "Pengejaran Panther",
+                "Pemburu Harimau",
+                "Jarahan Tersembunyi",
+                "Perburuan Game Besar"
+            ]
+        },
+        "quest": {
+            "had": "📜 *|* *{name}*\n\n📌  *Memerintahkan*: {author}",
+            "complexity": "🎭 *Kompleksitas*: {complexity}",
+            "comp_element": "⭐",
+            "type": "🎨 *Maksud*: {qtype}",
+            "types": {
+                "get": "🔎 Pencarian",
+                "journey": "🖼 Perjalanan",
+                "hunt": "🏹 Berburu",
+                "collecting": "🐇 Mengumpulkan makanan",
+                "fishing": "🍤 Memancing",
+                "game": "🎮 Permainan",
+                "kill": "🔪 Pembunuhan",
+                "feed": "🥟 Pemeriksa Rasa"
+            },
+            "reward": {
+                "had": "🍀 *|* *Hadiah*",
+                "coins": "🪙 Koin: {coins}",
+                "items": "🎱 barang: {items}"
+            },
+            "buttons": {
+                "quest end": "📌 Selesai",
+                "quest delete": "🔗 Hapus"
+            },
+            "quest_menu": "📜 | Menu Quest\n\n🔚 Selesai: {end}\n🎭 Aktif: {act}",
+            "delete_button": "Anda telah meninggalkan pencarian",
+            "end_quest_button": "Menyelesaikan pencarian",
+            "not_found": "💥 | Quest tidak ditemukan!",
+            "time_end_h": "⌛ Waktu pencarian habis! Quest telah ditransfer ke pemain lain dengan kemajuan saat ini.",
+            "get": "🔎 Temukan dan transfer item:\n{items_list}",
+            "game": "⌚ Putar {now} / {min} menit.",
+            "journey": "⌚ Perjalanan {now} / {min} menit.",
+            "feed": "🍿 Memberi makan dinosaurus:\n{eat_list}",
+            "collecting": "🥦 Kumpulkan {now} / {max} item ramuan.",
+            "fishing": "🐟 Tangkap item {now} / {max}.",
+            "hunt": "🍖 Tangkap item {now} / {max}.",
+            "time_end": "_⏳ Setelah {time_end}, quest akan dipindahkan ke player._ lain",
+            "new": "🆕 | Anda telah diberi tugas baru!",
+            "resаmpling": "🗝️ | Anda telah diberi pencarian pemain lain!",
+            "end_quest": "✨ Quest *{name}* selesai, *{author_name}* puas dengan pekerjaanmu dan memberimu hadiah!",
+            "conditions": "🎃 Kondisi quest belum terpenuhi!"
+        },
+        "not_authorized": "🎋 Anda tidak masuk ke bot, ketik /start untuk memulai!",
+        "events": {
+            "time_year": {
+                "winter": "❄ Saat ini dingin, acara menampilkan suhu, dan profilnya telah diubah menjadi tema musim dingin.",
+                "spring": "🌸 Suhu berfluktuasi, tetapi semakin hangat, tampilan profil telah diubah agar sesuai dengan tema musim semi.",
+                "summer": "☀ Matahari bersinar, cuaca cerah di dunia, dan tampilan profil telah diubah untuk musim panas.",
+                "autumn": "🍁 Alam bersiap-siap untuk musim dingin, suhunya berfluktuasi, dan latar belakang profil dicat dengan warna-warna paling cerah!"
+            },
+            "add_hunting": "🍖 Saat ini, Anda dapat menemukan sesuatu yang menarik di hutan.",
+            "add_fishing": "🐠 Tidak tenang di dalam air, mungkin Anda akan menemukan sesuatu yang menarik di sana!",
+            "add_collecting": "🌿 Herbal bersinar dengan warna yang berbeda, Anda pasti dapat menemukan rumput yang menakjubkan di sana!",
+            "add_all": "🍭 Ada masalah dalam mode pencarian umum, permen jatuh dari langit!",
+            "new_year": "🎄 Saatnya merayakan dan memberikan hadiah kepada teman-teman! Lihat daftar teman Anda!",
+            "info": "🎨 | Acara Aktif\n\n"
+        },
+        "daily_award": {
+            "info": "🎋 *|* *Hadiah Harian*\nDengan masuk setiap hari, Anda bisa mendapatkan bonus menarik\n\n🏮 *|* *Tingkat 1*: *Pemain* - Bonus login yang bagus, inilah yang bisa Anda dapatkan: _{lvl_1} 🪙_\n\n🎏 *Tingkat 2*: *Pelatih* - Bonus bagus untuk masuk dan berlangganan saluran, inilah yang bisa Anda dapatkan dengan mengklik tombol: {lvl_2} 🪙",
+            "bonus_text": "\n\n🎍 *|* *Selain itu*: - Jika Anda menambahkan *Dinogochi* ke nama Anda, berikut ini akan ditambahkan ke hadiah harian Anda: _{bonus}_ 🪙\n\n🎍 Contoh tambahkan:\n{name_dino}",
+            "lvl_now": "\n\n👑 Saat ini Anda akan menerima hadiah level\n",
+            "1": " *🏮 Pemain*",
+            "2": " *🎏 Pelatih*",
+            "bonus": "+ *🎍 Ext. Nama Bonus*",
+            "buttons": {
+                "channel_url": "🗝️ Berlangganan",
+                "rename": "🦕 Ganti nama",
+                "activate": "🎋 Klaim hadiah"
+            },
+            "in_base": "🎋 Anda sudah mengklaim hadiah harian hari ini, kembalilah besok!",
+            "use": "👑 Hadiah harian diterima, jangan lupa klaim lagi via {time}! \n\n🌸 Hari ini Anda menerima: {items}, {coins} 🪙"
+        },
+        "journey": {
+            "forest": {
+                "forced_exit": [
+                    "Dinosaurus berbelok ke arah yang salah dan keluar dari hutan."
+                ],
+                "without_influence": [
+                    "Berjalan melalui hutan yang indah, dinosaurus melihat kupu-kupu, menatapnya dan tidak memperhatikan bagaimana itu menjadi lebih gelap."
+                ],
+                "influences_health": [
+                    "Berjalan di bawah mahkota pohon raksasa, dinosaurus melihat rumput. Dia segera ingat bagaimana mereka diberitahu tentang rumput Gulgameshev di sekolah. Dengan menerapkannya, dinosaurus merasa lebih sehat."
+                ],
+                "meeting_friend": [
+                    "Berjalan di sepanjang jalan, saya keluar untuk bertemu - {friend}! Dinosaurus sangat senang bertemu satu sama lain!"
+                ],
+                "trade_item": [
+                    "Bepergian melalui hutan, dinosaurus menemukan seorang pedagang keliling, pedagang menawarkan dinosaurus beberapa kemungkinan kesepakatan."
+                ],
+                "edit_location": [
+                    "Bepergian melalui hutan, dinosaurus menemukan jalan yang sama sekali baru yang tidak dia sadari sebelumnya, dia memutuskan untuk mengikutinya. Selanjutnya, lingkungan mulai berubah."
+                ],
+                "positive": {
+                    "influences_mood": [
+                        "Berjalan di sepanjang jalan setapak, dinosaurus melihat pelangi yang indah, dinosaurus langsung merasa lebih hangat di jiwanya."
+                    ],
+                    "influences_eat": [
+                        "Berjalan di sepanjang jalan, dinosaurus melihat permen yang mengarah ke suatu tempat ke semak-semak. 1, 2, 3. Dinosaurus sudah berada di dekat semak-semak, tetapi dinosaurus sudah cukup makan dan melanjutkan."
+                    ],
+                    "influences_game": [
+                        "Seekor dinosaurus melompat ke genangan air setelah hujan."
+                    ],
+                    "influences_energy": [
+                        "Dinosaurus tidur siang di tempat terbuka, sekarang saatnya untuk melanjutkan!"
+                    ],
+                    "coins": [
+                        "Berjalan di sepanjang jalan dan melihat ke bawah batu, dinosaurus menemukan sesuatu yang keemasan dan membawanya."
+                    ],
+                    "item": [
+                        "Melewati pohon itu, dinosaurus merasa aneh karena ada begitu banyak jejak kaki di sekitarnya. Setelah menjelajahi daerah tersebut, dinosaurus menemukan sesuatu yang menarik!"
+                    ],
+                    "quest": [
+                        "Saat berjalan, dinosaurus bertemu dengan dinosaurus yang sedih. Dia bilang dia telah kehilangan topi merahnya. Dinosaurus Anda segera mencarinya. Dinosaurus menemukan topi itu (meskipun warnanya hijau) dan mendapat hadiahnya!"
+                    ]
+                },
+                "negative": {
+                    "influences_mood": [
+                        "Saat berjalan, dinosaurus melihat pohon yang ditebang, dia sangat kesal tentang hal itu ..."
+                    ],
+                    "influences_eat": [
+                        "Saya aktif bepergian, dinosaurus telah berlalu."
+                    ],
+                    "influences_game": [
+                        "Berjalan melalui hutan monaton, dinosaurus bosan, dia ingin bermain."
+                    ],
+                    "influences_energy": [
+                        "Memanjat di bawah setiap batu, dinosaurus menjadi sangat lelah dan duduk untuk beristirahat."
+                    ],
+                    "coins": [
+                        "Saat memilah-milah barang-barang yang dia temukan, dinosaurus mengira koin persegi itu palsu dan membuangnya."
+                    ],
+                    "item": [
+                        "Sebuah lubang telah terbentuk di ransel dinosaurus, yang mungkin menyebabkan dinosaurus kehilangan sesuatu."
+                    ],
+                    "quest": [
+                        "Sambil berjalan, dinosaurus melihat dinosaurus menangis, mendekati dinosaurus tidak bisa memahami kata-katanya. Setelah mengobrak-abrik corman, dinosaurus Anda menawarkan sesuatu kepada orang malang itu untuk dimakan, tetapi dia pergi begitu saja."
+                    ]
+                }
+            },
+            "lost-islands": {
+                "forced_exit": [
+                    "Dinosaurus itu berbelok ke arah yang salah dan keluar ke jalan pulang yang sudah dikenalnya."
+                ],
+                "without_influence": [
+                    "Saat berjalan di pantai, dinosaurus menemukan cangkang yang indah."
+                ],
+                "influences_health": [
+                    "Sambil bersantai di pantai, dinosaurus itu bisa bersantai di bawah matahari."
+                ],
+                "meeting_friend": [
+                    "Melihat ombak, dinosaurus melihat {friend} berjemur tidak jauh darinya."
+                ],
+                "trade_item": [
+                    "Saat berjalan di pantai, dinosaurus melihat kepiting dengan tas besar. Kepiting memberi tahu dinosaurus bahwa dia adalah seorang pedagang dan bahwa dia suka membeli dan menjual segala macam barang."
+                ],
+                "edit_location": [
+                    "Berjalan dekat dengan pantai, dinosaurus tidak memperhatikan ombak, ia diliputi oleh air, dan ketika bangun, ia tidak lagi berada di pantai."
+                ],
+                "positive": {
+                    "influences_mood": [
+                        "Dinosaurus membangun istana pasir, dinosaurus bangga pada dirinya sendiri."
+                    ],
+                    "influences_eat": [
+                        "Melihat ke atas, dinosaurus menemukan buah yang tidak diketahui. Dinosaurus itu cepat memakan buah manis ini."
+                    ],
+                    "influences_game": [
+                        "Dinosaurus melihat kepiting bermain dengan bola dan bergabung dengan mereka."
+                    ],
+                    "influences_energy": [
+                        "Setelah berjemur di pantai, dinosaurus siap untuk bepergian lagi!"
+                    ],
+                    "coins": [
+                        "Saat mengumpulkan cangkang, dinosarv melihat sesuatu yang mengkilap, yang ternyata adalah koin."
+                    ],
+                    "item": [
+                        "Saat menggali pasir, dinosaurus tiba-tiba menemukan sebuah peti. Memukul kunci dengan keras, dinosaurus membuka peti dan menyembunyikan semuanya dari sana di ranselnya."
+                    ],
+                    "quest": [
+                        "Saat berjalan di sepanjang pantai, dinosaurus melihat lumba-lumba terdampar, dinosaurus membantunya, dan lumba-lumba memberinya hadiah."
+                    ],
+                    "battle": [
+                        "Hewan agresif muncul di jalan dinosaurus, mereka pasti ingin melakukan sesuatu yang buruk pada dinosaurus. Dinosaurus mengibas-ngibaskan ekornya dan lihatlah, tidak ada yang pergi."
+                    ]
+                },
+                "negative": {
+                    "influences_mood": [
+                        "Berjalan di sepanjang pantai, dinosaurus melihat dinosaurus melarikan diri dari kepiting di sisi lain. Dia merasa sedih, karena terkadang makhluk lucu pun bisa berbahaya."
+                    ],
+                    "influences_eat": [
+                        "Aktif berenang di air, dinosaurus menjadi gila."
+                    ],
+                    "influences_game": [
+                        "Dinosaurus bosan dengan lingkungan yang tenang."
+                    ],
+                    "influences_energy": [
+                        "Berlari di atas pasir, dinosaurus lupa bahwa ia tahu bagaimana menjadi lelah."
+                    ],
+                    "coins": [
+                        "Berlari dan melompat, dinosaurus benar-benar lupa tentang ransel. Kepiting tidak membuang waktu dan mencuri beberapa koin."
+                    ],
+                    "item": [
+                        "Berlari dan melompat, dinosaurus benar-benar lupa tentang ransel. Kepiting tidak membuang waktu dan mencuri barang-barang penting dinosaurus."
+                    ],
+                    "quest": [
+                        "Saat berjalan melalui tanaman merambat, dinosaurus mendengar seseorang mencari teman untuk bermain bola. Berlari ke sumber suara, dinosaurus melihat buaya berwarna hitam, yang menuntut tebusan dari dinosaurus."
+                    ],
+                    "battle": [
+                        "Saat berjalan, dinosaurus tidak memperhatikan sama sekali bagaimana ia mendekati pangkalan \"Hewan Berbahaya\", sehingga ia harus melarikan diri dengan ekornya."
+                    ]
+                }
+            },
+            "desert": {
+                "forced_exit": [
+                    "Dinosaurus mengambil belokan yang salah dan akhirnya meninggalkan gurun."
+                ],
+                "without_influence": [
+                    "Berjalan di antara pasir, dinosaurus melihat air, tetapi dengan cepat menyadari bahwa itu adalah fatamorgana."
+                ],
+                "influences_health": [
+                    "Saat bepergian melalui padang pasir, dinosaurus menemukan tanaman tak dikenal yang tumbuh sendirian di antara pasir. Seekor dinosaurus memakannya ..."
+                ],
+                "meeting_friend": [
+                    "Di antara pasir, dinosaurus melihat sesuatu yang putih cerah. Ini {friend}! Dinosaurus sangat senang bertemu satu sama lain!"
+                ],
+                "trade_item": [
+                    "Seekor binatang misterius muncul di jalan, ia membuka tasnya dan menunjukkan mengkilap, dinosaurus tertarik pada sesuatu ..."
+                ],
+                "edit_location": [
+                    "Badai naik, Anda tidak dapat melihat apa-apa, tetapi sekarang, dinosaurus membersihkan matanya dari pasir, dan tidak lagi berada di padang pasir."
+                ],
+                "positive": {
+                    "influences_mood": [
+                        "Angin sepoi-sepoi bertiup, yang sangat menyenangkan dalam cuaca panas seperti itu."
+                    ],
+                    "influences_eat": [
+                        "Dalam kondisi seperti itu, terkadang Anda menginginkan sesuatu yang eksotis, seperti kaktus. Dinosaurus menyukainya."
+                    ],
+                    "influences_game": [
+                        "Melompat di pasir seolah-olah di atas ombak, dinosaurus membayangkan dirinya sebagai hiu."
+                    ],
+                    "influences_energy": [
+                        "Setelah beristirahat di bawah naungan pohon palem, Anda dapat melanjutkan perjalanan Anda."
+                    ],
+                    "coins": [
+                        "Angin menggali sebuah desa kuno, berjalan melewatinya, dinosaurus mengumpulkan beberapa koin."
+                    ],
+                    "item": [
+                        "Di jalan dinosaurus ada struktur raksasa - piramida, setelah mempelajarinya, dinosaurus menemukan sesuatu yang menarik."
+                    ],
+                    "quest": [
+                        "Berjalan di atas pasir, dinosaurus memperhatikan seekor harimau tua, yang meminta air. Dinosaurus dengan senang hati berbagi air dan menerima hadiah."
+                    ],
+                    "battle": [
+                        "Panas yang belum pernah terjadi sebelumnya telah mengubah hewan menjadi monster, mereka siap melakukan apa saja untuk makanan. Tapi Dinozarv selalu siap membela dirinya sendiri."
+                    ]
+                },
+                "negative": {
+                    "influences_mood": [
+                        "Dinosaurus merasa kesepian di antara pasir-pasir ini, sungguh menyedihkan."
+                    ],
+                    "influences_eat": [
+                        "Hanya ada pasir di mana-mana, tidak ada yang enak, dinosaurus lapar."
+                    ],
+                    "influences_game": [
+                        "Bermain pasir tidak lagi begitu menarik, saya ingin memainkan sesuatu yang lebih menarik."
+                    ],
+                    "influences_energy": [
+                        "Sangat sulit untuk berjalan dalam panas seperti itu, dinosaurus lelah."
+                    ],
+                    "coins": [
+                        "Tiba-tiba, angin kencang bertiup, dan tas dinosaurus terbang beberapa meter darinya. Ketika dia mengambilnya, dia tidak menemukan beberapa koin."
+                    ],
+                    "item": [
+                        "Tiba-tiba, angin kencang bertiup, dan tas dinosaurus terbang beberapa meter darinya. Dinosaurus mengambilnya dan berjalan, tasnya terasa lebih ringan."
+                    ],
+                    "quest": [
+                        "Ada pagar di depan, sepertinya membentang ratusan meter, agar tidak berputar, Anda harus membayar."
+                    ],
+                    "battle": [
+                        "Hewan agresif berdiri di depan dinosaurus, dinosaurus tidak mau bertarung, jadi kami harus melarikan diri."
+                    ]
+                }
+            },
+            "mountains": {
+                "forced_exit": [
+                    "Dinosaurus mengambil belokan yang salah dan turun dari pegunungan."
+                ],
+                "without_influence": [
+                    "Dinosaurus melihat kepingan salju jatuh dengan indah dari langit."
+                ],
+                "influences_health": [
+                    "Dinosaurus melakukan ritual untuk mengeraskan tubuhnya, memulihkan dorovnya."
+                ],
+                "meeting_friend": [
+                    "Di antara tumpukan salju, dinosaurus melihat sesuatu yang terang, itu {friend}! Dinosaurus senang bertemu satu sama lain!"
+                ],
+                "trade_item": [
+                    "Berjalan di sepanjang jalan setapak, dinosaurus bertemu beruang kutub, yang mengatakan kepadanya bahwa ia juga bepergian dan ingin bertukar beberapa barang."
+                ],
+                "edit_location": [
+                    "Dinosaurus telah berjalan di salju begitu lama sehingga tertidur ketika membuka matanya, itu pasti tidak di pegunungan."
+                ],
+                "positive": {
+                    "influences_mood": [
+                        "Dinosaurus membuat malaikat salju di salju, dia sangat menyukainya."
+                    ],
+                    "influences_eat": [
+                        "Berjalan di sepanjang jalan setapak, sepotong kue jatuh di kepala dinosaurus, ternyata sangat enak."
+                    ],
+                    "influences_game": [
+                        "Berlari mengejar kepingan salju dan mengetuk kristal, dinosaurus itu tidak menyadari bagaimana beberapa jam telah berlalu."
+                    ],
+                    "influences_energy": [
+                        "Dinosaurus berbaring untuk beristirahat di sebuah gua dengan batu di bawah kepalanya."
+                    ],
+                    "coins": [
+                        "Tanpa sengaja memecahkan salah satu kristal, dinosaurus menemukan beberapa koin."
+                    ],
+                    "item": [
+                        "Saat menggali salju, dinosaurus menemukan sesuatu yang sulit, dan dia memutuskan untuk membawa \"sesuatu\" itu bersamanya."
+                    ],
+                    "quest": [
+                        "Saat berjalan di sepanjang jalan, dinosaurus bertemu kelinci. Kelinci mengatakan bahwa dia tidak bisa mendapatkan topinya, yang dia tinggalkan di gua yang gelap. Dinosaurus pergi ke gua dan dengan cepat menemukan topi dengan bantuan obor."
+                    ],
+                    "battle": [
+                        "Hewan agresif melihat dinosaurus menghangatkan diri di dekat api dan memutuskan untuk membawanya pergi. Tapi dinosaurus itu bukan pengecut, dia membela dirinya sendiri dan api."
+                    ]
+                },
+                "negative": {
+                    "influences_mood": [
+                        "Dinosaurus itu basah kuyup di salju, membuatnya sedih."
+                    ],
+                    "influences_eat": [
+                        "Tidak ada yang bisa dimakan di antara bebatuan dan gua, dinosaurus lapar."
+                    ],
+                    "influences_game": [
+                        "Ini badai salju, dinosaurus berlindung di gua, tapi tidak ada yang bisa dimainkan di sini."
+                    ],
+                    "influences_energy": [
+                        "Sangat sulit untuk berjalan di salju, dinosaurus lelah."
+                    ],
+                    "coins": [
+                        "Berjalan di sepanjang jalan, dinosaurus jatuh ke tumpukan salju, memanjat keluar dari sana ia mencuri beberapa koin."
+                    ],
+                    "item": [
+                        "Berjalan di sepanjang jalan setapak, dinosaurus jatuh ke tumpukan salju, memanjat keluar, mengutuk sesuatu, tetapi tidak ingin naik ke sana lagi."
+                    ],
+                    "quest": [
+                        "Pergi ke tempat terbuka, dinosaurus melihat serigala yang terjebak di bawah salju, dinosaurus segera mencoba membantu. Ternyata itu jebakan, dan dinosaurus kehilangan sesuatu dari ranselnya saat melarikan diri."
+                    ],
+                    "battle": [
+                        "Berlari melalui hutan, dinosaurus bahkan tidak menyadari bagaimana ia berlari ke sarang binatang liar, jadi ia harus melarikan diri."
+                    ]
+                }
+            },
+            "magic-forest": {
+                "forced_exit": [
+                    "Dinosaurus mengambil belokan yang salah dan keluar dari hutan ajaib."
+                ],
+                "without_influence": [
+                    "Berjalan melalui hutan ajaib, dinosaurus memperhatikan betapa indahnya dedaunan berkilauan."
+                ],
+                "influences_health": [
+                    "Saat berjalan di sepanjang jalan, dinosaurus bertemu dengan peri yang menyembuhkan luka-lukanya."
+                ],
+                "meeting_friend": [
+                    "Saat bepergian melalui hutan ajaib, dinosaurus bertemu temannya {friend}!"
+                ],
+                "trade_item": [
+                    "Mengikuti jalan ajaib, dinosaurus bertemu dengan seorang pedagang ajaib. Dinosaurus itu sangat tertarik dengan produknya."
+                ],
+                "edit_location": [
+                    "Mengambil belokan yang salah, dinosaurus mengambil jalan yang sama sekali berbeda dan keluar dari hutan ajaib."
+                ],
+                "positive": {
+                    "influences_mood": [
+                        "Berjalan di sepanjang jalan, dinosaurus melihat peri bermain satu sama lain, dinosaurus itu sangat geli."
+                    ],
+                    "influences_eat": [
+                        "Setelah mengumpulkan rempah-rempah ajaib dari semak-semak dan memakannya, dinosaurus merasa sudah muak."
+                    ],
+                    "influences_game": [
+                        "Berjalan di sepanjang jalan dan melihat ke belakang dervo, dinosaurus menemukan kejuaraan tenis ajaib di sana!"
+                    ],
+                    "influences_energy": [
+                        "Duduk di bawah pohon, dinosaurus tiba-tiba menyadari bagaimana kekuatannya kembali!"
+                    ],
+                    "coins": [
+                        "Hendak pergi ke arah lain, dinosaurus tiba-tiba melihat sesuatu bersinar di semak-semak, ternyata itu adalah beberapa koin."
+                    ],
+                    "item": [
+                        "Melewati pohon itu, dinosaurus merasa aneh karena ada begitu banyak jejak kaki di sekitarnya. Setelah menjelajahi daerah tersebut, dinosaurus menemukan sesuatu yang menarik!"
+                    ],
+                    "quest": [
+                        "Setelah menerima tugas dari peri, dinosaurus pergi mencari rumput Volga. Ketika dia kembali, dia menerima hadiahnya!"
+                    ],
+                    "battle": [
+                        "Hewan jahat dari hutan terdekat hendak merusak hutan, tetapi dinosaurus dengan bangga berjaga-jaga!"
+                    ]
+                },
+                "negative": {
+                    "influences_mood": [
+                        "Saat berjalan, dinosaurus melihat pohon yang ditebang, dia sangat kesal tentang hal itu ..."
+                    ],
+                    "influences_eat": [
+                        "Saya aktif bepergian, dinosaurus telah berlalu."
+                    ],
+                    "influences_game": [
+                        "Berjalan melalui hutan monaton, dinosaurus bosan, dia ingin bermain."
+                    ],
+                    "influences_energy": [
+                        "Memanjat di bawah setiap batu, dinosaurus menjadi sangat lelah dan duduk untuk beristirahat."
+                    ],
+                    "coins": [
+                        "Saat memilah-milah barang-barang yang dia temukan, dinosaurus mengira koin persegi itu palsu dan membuangnya."
+                    ],
+                    "item": [
+                        "Sebuah lubang telah terbentuk di ransel dinosaurus, yang mungkin menyebabkan dinosaurus kehilangan sesuatu."
+                    ],
+                    "quest": [
+                        "Sambil berjalan, dinosaurus melihat dinosaurus menangis, mendekati dinosaurus tidak bisa memahami kata-katanya. Setelah mengobrak-abrik corman, dinosaurus Anda menawarkan sesuatu kepada orang malang itu untuk dimakan, tetapi dia pergi begitu saja."
+                    ],
+                    "battle": [
+                        "Hewan-hewan liar tidak suka dinosaurus menyelamatkan hutan mereka, dinosaurus harus berlari dan mengubah arah."
+                    ]
+                }
+            },
+            "signs": {
+                "coins": "🪙",
+                "heal": "❤",
+                "energy": "⚡",
+                "game": "🎮",
+                "eat": "🍕",
+                "sunshine": "☀ Cerah",
+                "breeze": "🍃 Angin sepoi-sepoi",
+                "rain": "🌧 Hujan",
+                "anti_rain": "☂ Tidak basah karena hujan",
+                "cold_wind": "❄ Angin Dingin",
+                "anti_cold_wind": "🧤 Saya tidak kedinginan berkat pakaian saya",
+                "drought": "🏜 Kekeringan",
+                "snowfall": "🌨 Hujan salju",
+                "magic_light": "🌳 Cahaya Ajaib",
+                "magic_animal": "🦁 Hewan Ajaib"
+            },
+            "cancel": "❌ Dibatalkan oleh item kosmetik"
+        },
+        "mobs": {
+            "crocodile": {
+                "name": "Buaya",
+                "emoji": "🐊"
+            },
+            "lion": {
+                "name": "Singa",
+                "emoji": "🦁"
+            },
+            "tiger": {
+                "name": "Harimau",
+                "emoji": "🐅"
+            },
+            "bear": {
+                "name": "Beruang",
+                "emoji": "🐻"
+            },
+            "wolf": {
+                "name": "Serigala",
+                "emoji": "🐺"
+            },
+            "shark": {
+                "name": "Ikan hiu",
+                "emoji": "🦈"
+            },
+            "snake": {
+                "name": "Ular",
+                "emoji": "🐍"
+            },
+            "rhino": {
+                "name": "Badak",
+                "emoji": "🦏"
+            },
+            "elephant": {
+                "name": "Gajah",
+                "emoji": "🐘"
+            },
+            "gorilla": {
+                "name": "Gorilla",
+                "emoji": "🦍"
+            },
+            "spider": {
+                "name": "Laba-laba",
+                "emoji": "🕷"
+            },
+            "scorpion": {
+                "name": "Kalajengking",
+                "emoji": "🦂"
+            },
+            "camel": {
+                "name": "Unta",
+                "emoji": "🐪"
+            },
+            "puma": {
+                "name": "Puma",
+                "emoji": "🐆"
+            },
+            "fox": {
+                "name": "Rubah",
+                "emoji": "🦊"
+            },
+            "hyena": {
+                "name": "Dubuk",
+                "emoji": "🐃"
+            },
+            "hippo": {
+                "name": "Kuda nil",
+                "emoji": "🦛"
+            },
+            "otter": {
+                "name": "Berang-berang",
+                "emoji": "🦦"
+            },
+            "panther": {
+                "name": "Puma",
+                "emoji": "🐆"
+            },
+            "raccoon": {
+                "name": "Rakun",
+                "emoji": "🦝"
+            },
+            "deer": {
+                "name": "Rusa",
+                "emoji": "🦌"
+            },
+            "bear_cub": {
+                "name": "Anak beruang",
+                "emoji": "🐻‍❄️"
+            },
+            "bat": {
+                "name": "Kelelawar",
+                "emoji": "🦇"
+            },
+            "coyote": {
+                "name": "Coyote",
+                "emoji": "🐺"
+            },
+            "cougar": {
+                "name": "Puma",
+                "emoji": "🐅"
+            },
+            "dolphin": {
+                "name": "Lumba-lumba",
+                "emoji": "🐬"
+            },
+            "dragon": {
+                "name": "Naga",
+                "emoji": "🐉"
+            },
+            "eagle": {
+                "name": "Elang",
+                "emoji": "🦅"
+            },
+            "falcon": {
+                "name": "Falcon",
+                "emoji": "🦅"
+            },
+            "fennec_fox": {
+                "name": "Fennec",
+                "emoji": "🦊"
+            },
+            "giraffe": {
+                "name": "Jerapah",
+                "emoji": "🦒"
+            },
+            "goat": {
+                "name": "Kambing",
+                "emoji": "🐐"
+            },
+            "grizzly": {
+                "name": "Beruang grizzly",
+                "emoji": "🐻"
+            },
+            "hamster": {
+                "name": "Hamster",
+                "emoji": "🐹"
+            },
+            "hedgehog": {
+                "name": "Landak",
+                "emoji": "🦔"
+            },
+            "horse": {
+                "name": "Kuda",
+                "emoji": "🐎"
+            },
+            "jackal": {
+                "name": "Jackal",
+                "emoji": "🐺"
+            },
+            "jaguar": {
+                "name": "Jaguar",
+                "emoji": "🐆"
+            },
+            "kangaroo": {
+                "name": "Kanguru",
+                "emoji": "🦘"
+            },
+            "komodo_dragon": {
+                "name": "Komodo Dragon",
+                "emoji": "🦎"
+            },
+            "lemur": {
+                "name": "Lemur",
+                "emoji": "🐒"
+            },
+            "leopard": {
+                "name": "Macan tutul",
+                "emoji": "🐆"
+            },
+            "lobster": {
+                "name": "Udang laut",
+                "emoji": "🦞"
+            },
+            "lynx": {
+                "name": "Lynx",
+                "emoji": "🐆"
+            },
+            "meerkat": {
+                "name": "Meerkat",
+                "emoji": "🐾"
+            },
+            "mole": {
+                "name": "Mol",
+                "emoji": "🐾"
+            },
+            "monkey": {
+                "name": "Monyet",
+                "emoji": "🐒"
+            },
+            "moose": {
+                "name": "Elk",
+                "emoji": "🦌"
+            },
+            "narwhal": {
+                "name": "Narwhal",
+                "emoji": "🐳"
+            },
+            "octopus": {
+                "name": "Gurita",
+                "emoji": "🐙"
+            },
+            "opossum": {
+                "name": "Oposum",
+                "emoji": "🦝"
+            },
+            "orca": {
+                "name": "Paus pembunuh",
+                "emoji": "🐋"
+            },
+            "ostrich": {
+                "name": "Burung unta",
+                "emoji": "🦩"
+            },
+            "otter_pup": {
+                "name": "Berang-berang",
+                "emoji": "🦦"
+            },
+            "owl": {
+                "name": "Burung hantu",
+                "emoji": "🦉"
+            },
+            "panda": {
+                "name": "Panda",
+                "emoji": "🐼"
+            },
+            "parrot": {
+                "name": "Nuri",
+                "emoji": "🦜"
+            },
+            "peacock": {
+                "name": "Merak",
+                "emoji": "🦚"
+            },
+            "pelican": {
+                "name": "Pelikan",
+                "emoji": "🦢"
+            },
+            "penguin": {
+                "name": "Penguin",
+                "emoji": "🐧"
+            },
+            "pig": {
+                "name": "Babi",
+                "emoji": "🐖"
+            },
+            "pigeon": {
+                "name": "Merpati",
+                "emoji": "🐦"
+            },
+            "polar_bear": {
+                "name": "Beruang kutub",
+                "emoji": "🐻‍❄️"
+            },
+            "porcupine": {
+                "name": "Landak",
+                "emoji": "🦔"
+            },
+            "rabbit": {
+                "name": "Kelinci",
+                "emoji": "🐇"
+            },
+            "rattlesnake": {
+                "name": "Rattlesnake",
+                "emoji": "🐍"
+            },
+            "red_panda": {
+                "name": "Panda Merah",
+                "emoji": "🦝"
+            },
+            "reindeer": {
+                "name": "Rusa kutub",
+                "emoji": "🦌"
+            },
+            "rooster": {
+                "name": "Ayam jago",
+                "emoji": "🐓"
+            },
+            "seagull": {
+                "name": "Camar",
+                "emoji": "🐦"
+            },
+            "seahorse": {
+                "name": "Seahorse",
+                "emoji": "🐎"
+            },
+            "seal": {
+                "name": "Cap",
+                "emoji": "🦭"
+            },
+            "sheep": {
+                "name": "Domba",
+                "emoji": "🐑"
+            },
+            "skunk": {
+                "name": "Sigung",
+                "emoji": "🦨"
+            },
+            "sloth": {
+                "name": "Kemalasan",
+                "emoji": "🦥"
+            },
+            "snail": {
+                "name": "Siput",
+                "emoji": "🐌"
+            },
+            "snow_leopard": {
+                "name": "Macan Tutul Salju",
+                "emoji": "🐆"
+            },
+            "squid": {
+                "name": "Cumi-cumi",
+                "emoji": "🦑"
+            },
+            "swan": {
+                "name": "Angsa",
+                "emoji": "🦢"
+            },
+            "toucan": {
+                "name": "Tukan",
+                "emoji": "🦜"
+            },
+            "turtle": {
+                "name": "Penyu",
+                "emoji": "🐢"
+            },
+            "walrus": {
+                "name": "Walrus",
+                "emoji": "🦭"
+            },
+            "weasel": {
+                "name": "Musang",
+                "emoji": "🐾"
+            },
+            "whale": {
+                "name": "Ikan paus",
+                "emoji": "🐳"
+            },
+            "wombat": {
+                "name": "Wombat",
+                "emoji": "🦘"
+            },
+            "zebra": {
+                "name": "Zebra",
+                "emoji": "🦓"
+            }
+        },
+        "books": {
+            "book_forest": [
+                "Hutan kuno dan perkasa dengan pohon-pohon raksasa, itulah yang mereka katakan tentang hutan ini ... \n Saya, Fredric Al Johnson, akan memeriksanya sendiri!",
+                "8/26/3--7 3:38 PM: Saya baru saja memasuki hutan, terlihat seperti hutan, kecuali pohon-pohon besar!",
+                "8/26/3--7 7:12 PM: Saya melihat matahari terbenam yang indah dan pergi mencari tempat untuk beristirahat. \n\n26.08.2--7 21:01: Saya tidak melihat binatang berbahaya sepanjang hari, hanya pohon, pohon, pohon.",
+                "8/27/3--7 13:59: Menyeberangi sungai yang bergolak, hampir kehilangan semua barang-barang saya. \n\n27.08.3--7: Saya kehilangan jam tangan saya di suatu tempat, saya tidak bisa menulis waktu sekarang, tetapi hari mulai gelap. \n\n27.08.3--7: Saya melihat cahaya di kejauhan, saya akan mencoba mendekat.",
+                "8/27/3--7: Aku tidak percaya mataku, apa itu... Dinosaurus?! Apakah saya yakin saya tidak gila?",
+                "Saya menulis dengan cepat, salah satu dari mereka merasakan saya, saya menariknya.",
+                "_Emptily_",
+                "_Emptily_",
+                "_Ink drops_",
+                "28.08 +- 2 hari: Saya tidak tahu sudah berapa lama saya duduk di sini, seseorang terus-menerus berjalan di atas saya, saya belum mengisi kembali persediaan air dan makanan saya untuk waktu yang lama, segera saya harus menjadi gila. Saya tidak yakin saya bisa melawan DINOSAURUS (ya, itu sudah pasti!)",
+                "Saya akan membiarkannya tergeletak di sini, saya harap saya akan kembali ke sini.",
+                "_Emptily_",
+                "_Emptily_",
+                "_Emptily_",
+                "_Emptily_",
+                "_Emptily_"
+            ],
+            "book_lost-islands": [
+                "_Traveler Book_",
+                "Ini aku Aot lagi. Hari ini Propana memberi tahu saya tentang reruntuhan kuno di pulau itu dan kami akan pergi ke sana.",
+                "Ketika kami pergi ke darat, cuaca menjadi panas dan kami pergi berenang. \n\n Setelah itu, sambil berjalan di sepanjang pantai, kami melihat reruntuhan kuil tua di antara pohon-pohon palem. \n\n Ketika kami masuk ke dalam, kami dikejutkan oleh kemegahan bangunan kuno itu. Ada kolom di mana-mana, relief dilubangi di dinding.",
+                "Setelah menjelajahi kuil, kami menemukan 300 koin! \n\n Propana tiba-tiba tersandung sesuatu dan tergeletak di tanah. Saya melihatnya. Ternyata itu sebuah buku. \n\n Beberapa saat kemudian, kami menjelajahi beberapa kuil lagi dan menemukan kue dan 3 jamur.",
+                "Kami tertidur di pasir. \n\n Dan pada pagi hari mereka kembali ke rumah."
+            ],
+            "book_desert": [
+                "_Traveler Book_",
+                "Siapa yang tidak tahu tentang piramida misterius, bukit pasir, dan ular berbisa?",
+                "Ini adalah cerita pendek dari sudut pandang saya tentang mengapa itu sepadan, dan kadang-kadang tidak perlu pergi ke padang pasir tempat dinosaurus berkeliaran. \n\n Jadi, mari kita mulai. \n\n Setelah menimbun makanan, aku berangkat menjelajahi padang gurun. \n\n Hari pertama berjalan dengan sempurna... kecuali bahwa matahari terbenam tanpa ampun.",
+                "Saya menemukan 50 koin persegi, dari mana asalnya? \n\n Keesokan harinya aku sampai di piramida. Dan aku bukan satu-satunya yang mendaki.\n\n Seekor dinosaurus besar berdiri sekitar 20 meter dariku. Dia mendorong dinding dan masuk ke dalam, saya menunggu selama 5 menit dan kemudian masuk juga. Piramida itu sangat besar, penuh dengan labirin dan lorong-lorong.",
+                "Saya tidak akan menggambarkan piramida secara lengkap, karena akan memakan waktu yang sangat lama. \n\n Saya hanya akan mengatakan bahwa saya menemukan perkamen dengan gambar ransel dan simbol-simbol aneh. \n\n Aku tertidur tepat di piramida.",
+                "Keesokan paginya, saya bangun dengan perasaan bahwa seseorang sedang menatap saya. Aku membuka mataku dan melihat... DINOSAURUS! Dia berdiri tepat di depanku dan menatapku dengan kepala sedikit miring.",
+                "Dan kemudian dinosaurus berbicara. Dia berkata kepada saya, \"Halo!\" \n-\"Halo,\" jawabku.\n-Namaku propana, dan apa kabar? \n-Aot. \n \"Mari kita berteman?\" \n \"Ayo. \n \"Hanya Aku yang akan menyebut engkau utusan kegelapan, karena aku tidak tahu bagaimana engkau datang ke sini.",
+                "Begitulah cara saya berteman dengan dinosaurus."
+            ],
+            "book_mountains": [
+                "_Traveler Book_",
+                "Hai, sekali lagi saya Aot. Hari ini Propane dan saya akan melakukan perjalanan ke pegunungan.",
+                "Pegunungan Kristal ... Betapa indahnya itu ... Dan itu dingin. Br-r-r. \n\n Ketika berjalan di salju, Propana tiba-tiba jatuh ke tumpukan salju. Saya merangkak keluar. Dan dia gagal lagi. Kemudian dia menghitung koin, mengeluarkan yang persegi, dan melemparkannya ke salju. \n\n Satu jam kemudian, salju mulai turun, dan dinosaurus itu marah.",
+                "Saat kami duduk di dekat api, seekor beruang kutub mendekati kami. Propana memukulnya di samping dengan kaki belakangnya. Beruang itu terbang beberapa meter, tetapi masih berhasil menangkap dinosaurus. \n\n Keesokan harinya kami menemukan telur itu. Itu berkilauan. Ini dia, putih. Dan sekarang hijau. Dan saat berikutnya berwarna biru. Sekarang ungu. Jeruk. Dan putih lagi. \n\n Kami melanjutkan perjalanan. \n\n Propana membungkuk dan mengambil selembar perkamen. \n\n \"Ini resep kue,\" jelasnya, \"Saya suka kue. \n\n Tiba-tiba badai salju menyapu. \n\n Kami mendapati diri kami berada di hutan yang dipenuhi pohon-pohon aneh, dan di antara batang-batang pohon itu kami dapat melihat rumah kami. \n\n Kami mencapainya dan duduk untuk minum teh."
+            ],
+            "book_magic-forest": [
+                "_Traveler Book_"
+            ],
+            "meow_book": [
+                "mi mi, mi mi mi. mi?",
+                "mi! Meoooo, mi, mi. mi, mi, mi.",
+                "mi, mi, mi. mi mi, mi mi mi. mi? mi! Meoooo, mi, mi. mi, mi, mi.",
+                "mi mi, mi mi mi. mi? mi! Meoooo, mi, mi.",
+                "mi, mi, mi. mi mi, mi mi mi. mi? mi! Meoooo, mi, mi. mi, mi, mi.",
+                "meong",
+                "mi mi, mi mi mi. mi?",
+                "mi! Meoooo, mi, mi. mi, mi, mi.",
+                "mi, mi, mi. mi mi, mi mi mi. mi? mi! Meoooo, mi, mi. mi, mi, mi.",
+                "mi...",
+                "mi mi, mi mi mi. mi? mi! Meoooo, mi, mi.",
+                "mi, mi, mi. mi mi, mi mi mi. mi? mi! Meoooo, mi, mi. mi, mi, mi.",
+                "mi mi, mi mi mi. mi?",
+                "mi! Meoooo, mi, mi. mi, mi, mi.",
+                "mi mi, mi mi mi. mi? mi! Meoooo, mi, mi.",
+                "mi, mi, mi. mi mi, mi mi mi. mi? mi! Meoooo, mi, mi. mi, mi, mi.",
+                "mi, mi, mi. mi mi, mi mi mi. mi? mi! Meoooo, mi, mi. mi, mi, mi.",
+                "mi mi, mi mi mi. mi?",
+                "mi! Meoooo, mi, mi. mi, mi, mi.",
+                "meong",
+                "mi mi, mi mi mi. mi? mi! Meoooo, mi, mi.",
+                "mi, mi, mi. mi mi, mi mi mi. mi? mi! Meoooo, mi, mi. mi, mi, mi.",
+                "mi mi, mi mi mi. mi?",
+                "mi! Meoooo, mi, mi. mi, mi, mi.",
+                "mi mi, mi mi mi. mi? mi! Meoooo, mi, mi.",
+                "mi, mi, mi. mi mi, mi mi mi. mi? mi! Meoooo, mi, mi. mi, mi, mi.",
+                "mi mi, mi mi mi. mi?",
+                "mi! Meoooo, mi, mi. mi, mi, mi.",
+                "mi mi, mi mi mi. mi? mi! Meoooo, mi, mi.",
+                "mi, mi, mi. mi mi, mi mi mi. mi? mi! Meoooo, mi, mi. mi, mi, mi.",
+                "meong",
+                "meong",
+                "meong",
+                "meong",
+                "Special for Cat`s"
+            ]
+        },
+        "not_found_key": "❌ | Kunci bahasa perintah tidak ditemukan, mungkin ada kesalahan, atau Anda mungkin telah mengubah bahasa aplikasi. Ketik /start untuk masuk ke menu utama.",
+        "journey_last_event": {
+            "info": "🍱 | Perjalanan Dinosaurus\n🏮 Lokasi: {location}\n⌛ Perjalanan {journey_time}\n🍭 Acara: {col}",
+            "last_event": "📦 | Acara Terakhir\n{last_event}",
+            "button": "🦕 Kembali"
+        },
+        "journey_log": "🎋 | Dinosaurus {name} kembali dari perjalanan\n⏳ Bepergian: {time}\n🍭 Acara: {col}\n\n🪙 Koin: {coins}\n🗝️ Item: {items}",
+        "ns_craft": {
+            "not_materials": "❌ | Anda kehabisan bahan!",
+            "create": "🍩 | Item {items} dibuat!"
+        },
+        "lang_set": "🎏 Anda dapat menemukan informasi tentang transfer di bagian bot. \n🎍 Pilih bahasa bot ->",
+        "new_lang": "🎏 Bahasa baru diinstal!",
+        "exchange": "🦄 | Kurir unicorn membawa paket\n\n🖼 Pengirim: {username}\n👑 Item: {items}",
+        "exchange_me": "🦄 Item ditransfer!",
+        "confirm_exchange": "🛠 Konfirmasi Transfer {name}",
+        "market_create": {
+            "name": "🎞 Masukkan nama toko, panjangnya tidak lebih dari 50 karakter",
+            "description": "🧵 Masukkan deskripsi toko, panjangnya tidak lebih dari 500 karakter",
+            "create": "🎁 Toko telah dibuat!",
+            "lvl": "🎭 Untuk membuat toko, Anda harus memiliki setidaknya level 2!",
+            "name_error": "👿 Toko dengan nama ini sudah ada"
+        },
+        "market_ui": {
+            "had": "🎏 |",
+            "owner": "🎃 Pemilik:",
+            "me_owner": "Kamu",
+            "earned": "🎡 Diperoleh:",
+            "needy": "(Miskin)",
+            "stable": "(Stabil)",
+            "rich": "(Kaya)",
+            "conducted": "🎱 Perdagangan selesai:",
+            "products": "📯 Perdagangan aktif:",
+            "not_found": "🧨 Penjual Tidak Terdeteksi",
+            "my_option": "🎩 Bot dapat secara otomatis mengirim pemberitahuan tentang produk baru ke grup atau saluran, untuk informasi lebih lanjut, tulis `/push_info`",
+            "buttons": {
+                "market_products": "👜 Perdagangan Aktif",
+                "no_products": "❌ Tidak Ada Perdagangan Aktif",
+                "сomplain": "❗ Laporan",
+                "edit_image": "🖼 Latar Belakang (⭐)",
+                "edit_text": "🎏 Deskripsi",
+                "edit_name": "🎃 Nama",
+                "cancel_all": "🎫 Selesaikan semua perdagangan"
+            }
+        },
+        "add_product": {
+            "options_info": "🎠 | Pilih jenis transaksi. \n\n🍕 ➞ 🪙 - Item untuk koin. Anda menjual barang, pembeli membayar koin yang Anda tentukan. \n\n🪙 ➞ 🍕 - Koin item. Anda memesan barang, pembeli menjual barang kepada Anda dengan jumlah yang Anda tentukan. \n\n🍕 ➞ 🍕 - Item untuk item. Penukaran barang. \n\n🍕 ➞ ⏳ - Lelang. Anda mencantumkan item, menentukan harga awal, waktu berakhir, dan tawaran minimum. Pemenang lelang mengambil barang.",
+            "chose_item": {
+                "items_coins": "🎟 Pilih item untuk ditambahkan ke item yang Anda jual",
+                "coins_items": "🎟 Pilih item untuk ditambahkan ke pesanan",
+                "items_items": "🎟 Pilih item untuk ditambahkan ke perdagangan",
+                "auction": "🎟 Pilih item untuk ditambahkan ke rumah lelang",
+                "trade_items": "🍷 Pilih barang yang ingin Anda dapatkan sebagai imbalan"
+            },
+            "wait_count": "🎎 Masukkan jumlah produk",
+            "add_item": "🎞 Ingin menambahkan lebih banyak item?",
+            "coins": {
+                "items_coins": "🎐 Masukkan harga total item",
+                "coins_items": "🎐 Tunjukkan berapa banyak Anda bersedia membayar untuk semua item ini",
+                "auction": "🎐 Tentukan harga awal produk"
+            },
+            "stock": {
+                "items_coins": "🎨 Masukkan jumlah produk dalam stok. \n\n_For contoh, Anda telah menambahkan 2 wortel dan 1 tomat ke produk, jika Anda memasukkan 3 sekarang, maka 6 wortel dan 3 tomat akan dihapus dari inventaris Anda, serta 3 orang akan dapat membeli produk Anda.",
+                "coins_items": "🎨 Berapa kali order dapat dieksekusi\n\n_For contoh, jika Anda menentukan 2 dan Anda ingin menukar 2 wortel dengan 100 koin di pembaca, Anda akan menghabiskan total 400 koin untuk 4 wortel.",
+                "items_items": "🎨 Tentukan berapa kali Anda ingin berbagi sumber daya."
+            },
+            "time_end": "🎩 Tentukan waktu berakhir lelang, Anda diminta untuk memasukkan waktu dalam bentuk teks. \n\n⏰ Tulis `/string_to_sec` untuk menerima memo.",
+            "min_add": "☄ Tentukan tawaran minimum, ini adalah jumlah di mana orang minimum harus menaikkan harga untuk berpartisipasi dalam pelelangan.",
+            "few_coins": "❌ Anda tidak memiliki cukup koin {coins} untuk melakukan pemesanan beli!",
+            "all_good": "🎩 Produk Anda ada di pasaran!",
+            "no_items": "❌ Tidak semua barang yang Anda jual ada di inventaris Anda!"
+        },
+        "product_ui": {
+            "cap": "*🎴 | Detail Produk*",
+            "type": "*🍷 Jenis:* {type}",
+            "in_stock": "*🎡 Dibeli:* {now} | {all}",
+            "types": {
+                "items_coins": "🍗 Menjual Barang",
+                "coins_items": "🔎 Oder untuk Item",
+                "items_items": "📦 Penukaran Barang",
+                "auction": "⏰ Lelang Barang"
+            },
+            "text": {
+                "items_coins": "*🪙 Harga:* {price} koin. \n*🧵 Produk untuk dijual:*\n{items}",
+                "coins_items": "*🪙 Harga yang disarankan:* {price} koin. \n*🧵 Membeli Item:*\n{items}",
+                "items_items": "*🧵 Penjual memberi:* {items}\n*🎉 Ingin mendapatkan imbalan:* {price}",
+                "auction": "*🧵 Rumah lelang untuk barang-barang berikut:* {items}\n\n*🪙 Harga saat ini:* {price} koin. \n*⌚ Berakhir di:* {end_time}\n*💚 Taruhan minimum:* +{min_add}\n\n*〽 3 pesaing teratas:*\n{users}"
+            },
+            "buttons": {
+                "edit_price": "🎩 Ubah harga",
+                "add": "➕ Tambahkan Saham",
+                "buy": "🛒 Beli",
+                "sell": "🛒 Jual",
+                "delete": "❌ Hapus produk",
+                "auction": "〽 Berpartisipasi",
+                "view": "🔎 Tonton sekarang",
+                "promotion": "👜 Promosikan",
+                "alredy_promotion": "💚 Kemajuan",
+                "items_info": "🎈 Status Barang"
+            },
+            "owner_message": "Komisi penjualan adalah 2%, produk akan dihapus dari pasar di {time}",
+            "no_action_users": "_There bukan siapa-siapa here_"
+        },
+        "auction": {
+            "delete_auction": "🧵 Rumah lelang yang Anda ikuti untuk item {items} telah dihapus atau berakhir. Dana telah dikembalikan.",
+            "win": "🍡 Selamat, Anda telah memenangkan lelang untuk item berikut: {items}!"
+        },
+        "product_info": {
+            "delete": "🎍 Produk telah dihapus!",
+            "error": "🎞 Produk tidak ditemukan, mungkin sudah dihapus instalannya atau mungkin telah dibeli sebanyak mungkin.",
+            "new_price": "🪙 Masukkan harga baru produk",
+            "add_stock": "🌮 Tentukan jumlah stok tambahan",
+            "update_price": "🧵 Harga barang diperbarui!",
+            "not_coins": "❌ Anda tidak memiliki banyak koin!",
+            "no_items": "💥 Anda tidak memiliki semua item untuk ditambahkan ke inventaris Anda",
+            "stock": "❣ Stok produk telah diperbarui!"
+        },
+        "seller": {
+            "confirm_delete_all": "🍚 Apakah Anda yakin bahwa Anda ingin menghapus semua produk Anda dari pasar?",
+            "error": "🍚 Tidak ada penjual yang ditemukan!",
+            "delete_all": "⭐ Semua proyek telah dihapus dari pasar!",
+            "edit_name": "🎏 Masukkan nama baru, atau klik batal.",
+            "new_name": "🍚 Nama berubah!",
+            "edit_description": "🎏 Masukkan deskripsi toko baru atau klik batal.",
+            "new_description": "🍚 Deskripsi berubah, berubah!",
+            "edit_image": "🖼 | Masukkan tautan yang mengarah ke foto untuk mengaturnya ke latar belakang profil dinosaurus. \n\n🎏 | Untuk menghapus latar belakang, ketik \"-\"",
+            "new_image": "🍚 Gambar kustom diinstal!",
+            "delete_image": "❌ Gambar kustom dihapus!"
+        },
+        "no_premium": "✨ | Anda tidak memiliki langganan untuk mengakses fitur ini! \nTulis /premium untuk informasi tentang fitur berbayar.",
+        "no_products": "❗ Anda tidak memiliki produk apa pun!",
+        "buy": {
+            "common_buy": "☄ Pilih berapa kali Anda ingin membeli produk ini?",
+            "auction": "🧵 Masukkan taruhan Anda, perlu diingat bahwa taruhan Anda harus setidaknya {unit} 🪙",
+            "max_min": "❌ Kesalahan menentukan jumlah maksimum. Kemungkinan besar, Anda tidak memiliki cukup koin untuk bertaruh atau produk telah terjual habis.",
+            "erro_max_col": "🥞 Jumlah yang ditunjukkan lebih dari jumlah stok maksimum!",
+            "error_no_coins": "🍳 Anda tidak memiliki cukup koin untuk dibeli!",
+            "error_no_items": "🥙 Anda tidak memiliki item untuk diperdagangkan!",
+            "ok": "🍣 Selamat atas pembelian Anda!",
+            "participant": "🎢 Anda telah ditambahkan ke lelang!"
+        },
+        "promotion": {
+            "buy": "🍿 Mengaktifkan promosi akan memungkinkan Anda menempatkan produk ini selama 12 jam dalam daftar acak produk yang ditampilkan saat memasuki pasar. \n🥪 Harga: 1890 koin.",
+            "max": "🥓 Anda memiliki jumlah maksimum produk yang dipromosikan!",
+            "ok": "🍠 Produk telah ditambahkan ke daftar produk yang dipromosikan. Saat memasuki toko, pemain akan melihat 3 item acak dari semua yang dipromosikan.",
+            "no_coins": "🥠 Anda tidak memiliki cukup koin untuk mengaktifkan promosi!",
+            "already": "🥩 Produk telah ditambahkan ke promosi. \n🥪 Perlu diingat, tanpa premium Anda dapat mempromosikan 5 produk sekaligus, dengan premium Anda dapat mempromosikan 10!"
+        },
+        "products": {
+            "search": "🎃 Pilih produk untuk dilihat",
+            "null": "🧧 Sepertinya tidak ada seorang pun di pasar hari ini, kembali lagi nanti ..."
+        },
+        "find_product": {
+            "choose": "🍳 Pilih barang yang ingin Anda temukan di pasar",
+            "info": "🍡 Pilih jenis transaksi yang Anda minati:\n\n🍕 ➞ 🪙 - Membeli barang dengan koin\n🪙 ➞ 🍕 - Mendapatkan koin untuk item\n🍕 ➞ 🍕 - Tukar item dengan item\n🍕 ➞ ⏳ - Lelang Item. \n❌ - Lihat semua jenis perdagangan.",
+            "not_found": "☀ Tidak ada produk dengan parameter pencarian ini yang ditemukan di pasar, cobalah untuk membuat jenis kesepakatan yang berbeda atau terima bahwa pasar tidak menjual barang-barang tersebut."
+        },
+        "push": {
+            "not_management": "🎏 Bot berada di saluran/grup, tetapi tidak memiliki hak untuk mengirim pesan, memberikan bot hak \"Posting pesan\" untuk dapat mengirim pesan",
+            "not_admin": "🎏 Bot ada di saluran/grup, tetapi orang yang menambahkannya (Anda) tidak memiliki hak untuk mengelola saluran.",
+            "ok": "☄ Bot dan Anda memiliki semua hak yang diperlukan untuk membuat pemberitahuan tentang produk baru di saluran. Konfirmasikan koneksi.",
+            "new": "🍣 Saluran baru telah ditambahkan ke pemberitahuan push, bahasa push diatur seperti pada pengaturan bot.",
+            "update": "🍜 Pemberitahuan push ini telah diperbarui, saluran dan bahasa telah diperbarui.",
+            "push_info": "🎢 *Hubungkan notifikasi*\n\n🥓 Bot dapat mengirim pemberitahuan ke saluran atau grup saat dibuat di pasar. Untuk melakukan ini, tambahkan bot sebagai administrator dengan hak istimewa (Posting posting) ke saluran atau grup. Kemudian ikuti petunjuknya. \n\n🧵 1 orang hanya dapat memposting pemberitahuan ke 1 tempat, tetapi sebanyak mungkin orang yang mereka inginkan dapat memposting ke 1 tempat."
+        },
+        "edit_dino": {
+            "info": "🧬 | *Mengubah Dinosaurus*\n_A dinosaurus dapat diubah menjadi dinosaurus lain. Dengan bantuan teknologi terbaru, adalah mungkin untuk mengubah penampilan dan gen dinosaurus!_\n\n🎍 | Ada 3 cara untuk mengubah: \n\n *🎭 Kelangkaan* - Hanya kelangkaan dinosaurus yang akan berubah. \n\n*🎠 Penampilan* - Perubahan penampilan. Kelangkaannya akan tetap sama, tetapi penampilannya akan berubah sesuai dengan kelangkaan dinosaurus. \n\n*🎑 Penuh* - Perubahan penampilan dan kelangkaan dinosaurus. \n\n_As akibat mutasi, selera dinosaurus Anda mungkin change._",
+            "buttons": {
+                "transformation rare": "🎭 Kelangkaan",
+                "transformation appearance": "🎠 Penampilan",
+                "transformation all": "🎑 Selesai"
+            },
+            "dino": "🍡 | Pilih dinosaurus untuk diubah",
+            "new_rare": "🍡 | Klik pada tombol untuk memilih kelangkaan baru",
+            "appearance": "🥓 Konfirmasikan perubahan penampilan. \nBiaya: {items}, {coins} 🪙",
+            "rare": "🍡 Tentukan kelangkaan yang ingin Anda ubah menjadi dinosaurus\n\n",
+            "all": "🍡 Tentukan menjadi dinosaurus langka yang ingin Anda ubah dino\n\n",
+            "no_coins": "❌ | Anda tidak memiliki banyak koin!",
+            "no_items": "❌ | Anda tidak memiliki semua item untuk diubah!",
+            "new": "☄ Para ilmuwan dan dokter telah berjalan masuk dan keluar ruangan dengan dinosaurus Anda untuk waktu yang lama. Tapi begitulah! Dinosaurus baru muncul dari ruangan!",
+            "return": "🎈 Jangan lupa memberi tip!"
+        },
+        "kindergarten": {
+            "info": "*🎶 | Menu TK*\n_You tidak dapat mengirim dinosaurus ke taman kanak-kanak untuk waktu yang lama, jika tidak maka akan kehilangan you_\n\n🧸 Jam yang dihabiskan: {hours_now}\n🧮 Jam tersisa: {remained}\n🎨 Sampai diatur ulang: {days}\n\n🎏 Jam hari ini: {hours} / {remained_today}",
+            "button_name": "⚽ Kirim ke TK",
+            "cancel_name": "💢 Kembali ke rumah",
+            "choose_house": "🎃 Pilih dari daftar berapa jam untuk mengirim dinosaurus ke taman kanak-kanak.",
+            "no_hours": "🎨 Anda tidak punya jam tersisa bulan ini / untuk hari ini!",
+            "ok": "🧵 Dinosaurus telah pergi ke taman kanak-kanak!",
+            "in_kindergarten": "🎏 Ketika dinosaurus kembali, arloji tidak dikembalikan.",
+            "stop": "🎈 Dinosaurus kembali dari taman kanak-kanak."
+        },
+        "create_tracking": {
+            "name": "⛏ Masukkan kode pelacakan",
+            "already": "👿 Kode sudah dilacak",
+            "ok": "🍡 Kode telah ditambahkan, Anda dapat melihat informasi pada kode dengan menulis /tracking\n\nLink - `{url}`"
+        },
+        "track": {
+            "text": "☄ | Pelacakan\n\n🧮 Digunakan: {use}\n\n🍜 Referensi: `{url}`\n🔎 Kode: `{code}`\n🥞 Dibuat: {t}",
+            "delete": "❌ Hapus",
+            "clear": "⛏ ulang"
+        },
+        "track_open": "🎀 Menu pelacakan terbuka",
+        "track_clear": "🥠 Jumlah klik diatur ulang ke nol",
+        "track_delete": "🎩 Dihapus",
+        "string_to_str": {
+            "info": "⚽ Dalam beberapa perintah, akan lebih mudah untuk menunjukkan waktu bukan dalam angka, tetapi dalam teks, inilah memo. \n\n Jika Anda dikirim ke sini, maka Anda dapat menggunakan metode memasukkan waktu dengan teks. Anda dapat mencobanya di sini, tulis `/string_to_sec` `1d` `1j` `12m`\nAnda akan menerima 90720 sebagai tanggapan - ini adalah jumlah detik yang dihitung dari pesan Anda. \n\n Simbol apa yang dapat digunakan? \n`w` - Minggu, `d` - hari, `h` - jam, `m` - menit, `s` - detik (Anda tidak perlu menentukan huruf)\n\n_By caranya, Anda dapat menentukan 1 dan tanda yang sama sebanyak yang Anda inginkan dan dalam order._"
+        },
+        "promo": {
+            "coins": "🍡 Masukkan jumlah koin atau 0",
+            "count": "☄ Masukkan jumlah penggunaan, 0 - tak terbatas",
+            "time_end": "🎠 Masukkan waktu akhir, 0 tidak terbatas. `/string_to_sec` - Jangan lupa tentang memo itu.",
+            "code": "🎃 Masukkan kode pelacakan.",
+            "chose_item": "🧮 Pilih item untuk ditambahkan"
+        },
+        "max_count": "❌ | Inventaris Anda penuh dengan makanan, sekarang berisi {eat_count} / {max_count} unit makanan!",
+        "max_friend_count": "❌ | Anda tidak dapat mentransfer barang, inventaris teman Anda sudah penuh dengan makanan.",
+        "new_year": {
+            "ok": "🎁 Hadiah Tahun Baru untuk dikirim ke pengguna!",
+            "not": "🎩 Pengguna telah menerima hadiah Tahun Baru mereka!",
+            "to_friend": "❤ Hadiah Tahun Baru telah dikirimkan kepada Anda! Lihat di inventaris {item}"
+        },
+        "super_coins": {
+            "plus_one": "👑 Anda mendapat *+1 Koin Super* untuk menonton iklan. \nPeriksa saldo Anda dengan mengikuti /super\n_We jangan memoderasi iklan dan tidak tahu konteks iklan.",
+            "info": "🌸 Anda memiliki *{coins}*\n⚡ Anda membawa bot: *{dollars}$*\n\n☕️ Untuk setiap iklan yang Anda lihat, Anda mendapatkan *1 Koin Super*, yang dapat ditukar dengan produk eksklusif. \n\n🎋 Iklan secara otomatis muncul setiap *{limit}* saat Anda menggunakan bot, tetapi Anda dapat menyesuaikan batas sesuai keinginan Anda.",
+            "buttons": {
+                "super_coins view": "👀 Mengatur batas",
+                "super_coins products": "🎟️ Belanja"
+            },
+            "view": {
+                "buttons": {
+                    "7845": {
+                        "text": "⌛ 30 menit",
+                        "data": 1800
+                    },
+                    "s98j": {
+                        "text": "⌛ 60 menit",
+                        "data": 3600
+                    },
+                    "erlt": {
+                        "text": "⌛ 90 menit",
+                        "data": 5400
+                    },
+                    "74js": {
+                        "text": "⌛ 120 menit",
+                        "data": 7200
+                    },
+                    "no_ads": {
+                        "text": "❌ Nonaktifkan iklan",
+                        "data": 0
+                    }
+                },
+                "info": "☄ Pilih jumlah waktu minimum yang ingin Anda lewati di antara tayangan iklan ->"
+            },
+            "shop": "🎍 Selamat datang di Super Coin Store! \n\n_(Tidak ada konfirmasi pada saat pembelian)_",
+            "buy": "🎎 Terima kasih telah menonton iklannya!"
+        },
+        "no_dinos": "⚡ Anda tidak dapat menggunakan fitur ini karena Anda tidak memiliki dinosaurus! \n✨ Untuk informasi premium, ketik /premium",
+        "buyer": {
+            "choose": "👑 Pembeli menyambut Anda, saat ini dia siap membeli produk dari Anda dengan rasio `{emoji} x{one_col} = {price} 🪙`",
+            "ok": "🎏 Uang telah ditransfer ke akun Anda, silakan kunjungi lagi.",
+            "no": "✨ Anda tidak memiliki cukup item dalam inventaris Anda."
+        }
+    }
+}
