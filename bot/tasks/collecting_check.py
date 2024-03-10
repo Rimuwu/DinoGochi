@@ -17,7 +17,7 @@ collecting_task = mongo_client.dino_activity.collecting
 dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = mongo_client.dinosaur.dino_owners
 
-REPEAT_MINUTS = 6
+REPEAT_MINUTS = 3
 ENERGY_DOWN = 0.1 * REPEAT_MINUTS
 LVL_CHANCE = 0.125 * REPEAT_MINUTS
 

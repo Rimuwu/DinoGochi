@@ -527,7 +527,6 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                         item_id = item['item_id']
                         if 'abillities' in item: abil = item['abillities']
                         else: abil = {}
-                        print('sdfk')
                         await AddItemToUser(userid, item_id, itme_col * col, abil)
 
                     # Выдача монет владельцу
