@@ -152,9 +152,12 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     data_item: dict = get_data(item_id)
     item_name: str = get_name(item_id, lang)
     type_item: str = data_item['type']
+    
+    print(item)
+    print(data_item)
 
     if type_item == 'eat' and dino:
-        
+    
         if dino.status == 'sleep':
             # Если динозавр спит, отменяем использование и говорим что он спит.
             return_text = t('item_use.eat.sleep', lang)
@@ -344,6 +347,8 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     elif data_item['type'] == 'special' and dino:
         user = await User().create(userid)
         dct_dino: dict = dino #type: ignore
+        
+        print(data_item)
 
         if data_item['class'] == 'reborn':
             dino_limit_col = await user.max_dino_col()
@@ -362,6 +367,10 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                 return_text = t('item_use.special.reborn.limit', lang, 
                             limit=dino_limit['limit'])
                 use_status = False
+
+    elif data_item['type'] == 'special':
+        user = await User().create(userid)
+        dct_dino: dict = dino #type: ignore
 
         if data_item['class'] == 'premium':
             await award_premium(userid, data_item['premium_time'] * count)
