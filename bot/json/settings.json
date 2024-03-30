@@ -73,8 +73,8 @@
     "max_eat_items": 200,
     "premium_max_eat_items": 300,
 
-    "max_collecting": 50,
-    "premium_max_collecting": 100,
+    "max_collecting": 100,
+    "premium_max_collecting": 200,
 
     "new_year_item": "gift_2024",
 
