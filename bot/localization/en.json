@@ -3371,7 +3371,7 @@
             "conducted": "🎱 Completed transactions:",
             "products": "📯 Active trades:",
             "not_found": "🧨 Seller Not Detected",
-            "my_option": "🎩 The bot can automatically send a notification about a new product to a group or channel, for more information, type '/push_info'",
+            "my_option": "🎩 The bot can automatically send a notification about a new product to a group or channel, for more information write `/pushinfo`",
             "buttons": {
                 "market_products": "👜 Active Trades",
                 "no_products": "❌ No Active Trades",

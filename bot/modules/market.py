@@ -112,7 +112,7 @@ async def seller_ui(owner_id: int, lang: str, my_market: bool, name: str = ''):
         if seller['earned'] <= 1000: status = 'needy'
         elif seller['earned'] <= 10000: status = 'stable'
         else: status = 'rich'
-        
+
         description = escape_markdown(seller["description"])
 
         text += f'{data["had"]} *{seller["name"]}*\n_{description}_\n\n{data["owner"]} {owner}\n' \

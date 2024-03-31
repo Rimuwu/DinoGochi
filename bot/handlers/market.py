@@ -117,9 +117,9 @@ async def my_market(message: Message):
     if res:
         text, markup, image = await seller_ui(userid, lang, True)
         try:
-            await bot.send_photo(chatid, image, text, parse_mode='Markdown', reply_markup=markup)
+            await bot.send_photo(chatid, image, text, parse_mode="Markdown", reply_markup=markup)
         except:
-            await bot.send_photo(chatid, image, text, reply_markup=markup)
+            await bot.send_photo(chatid, image, text, reply_markup=markup, parse_mode=None)
 
 @bot.message_handler(pass_bot=True, text='commands_name.seller_profile.add_product', is_authorized=True)
 async def add_product_com(message: Message):

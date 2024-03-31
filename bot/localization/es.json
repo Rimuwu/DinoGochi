@@ -3371,7 +3371,7 @@
             "conducted": "🎱 Operaciones completadas:",
             "products": "📯 Operaciones activas:",
             "not_found": "🧨 Vendedor no detectado",
-            "my_option": "🎩 El bot puede enviar automáticamente una notificación sobre un nuevo producto a un grupo o canal, para obtener más información escriba `/push_info`",
+            "my_option": "🎩 El bot puede enviar automáticamente una notificación sobre un nuevo producto a un grupo o canal, para más información escriba `/pushinfo`",
             "buttons": {
                 "market_products": "👜 Operaciones activas",
                 "no_products": "❌ No hay operaciones activas",
