@@ -10,14 +10,12 @@ from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.dinosaur import Dino, random_dino, random_quality
-from bot.modules.friends import get_frineds, insert_friend_connect
-from bot.modules.item import counts_items, RemoveItemFromUser, CheckCountItemFromUser
+from bot.modules.item import counts_items, RemoveItemFromUser, CheckCountItemFromUser, counts_items
 from bot.modules.localization import get_data, t, get_lang
-from bot.modules.markup import cancel_markup, confirm_markup, count_markup
+from bot.modules.markup import cancel_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.inline import inline_menu
-from bot.modules.notifications import user_notification
-from bot.modules.states_tools import (ChooseConfirmState, ChooseCustomState,
+from bot.modules.states_tools import (
                                       ChooseDinoState, ChooseInlineState,
                                       ChoosePagesState, ChooseStepState)
 from bot.modules.user import (AddItemToUser, check_name, daily_award_con,
@@ -41,10 +39,17 @@ async def events_c(message: Message):
         if event['type'] == 'time_year':
             season = event['data']['season']
             event_text = t(f"events.time_year.{season}", lang)
-        else: event_text = t(f"events.{event['type']}", lang)
+        else: 
+            event_text = t(f"events.{event['type']}", lang)
+
+        if 'items' in event['data'].keys():
+            event_text += f"\n _{counts_items(event['data']['items'], lang)}_"
+        
+        if event["time_end"] != 0:
+            text += f'_{seconds_to_str(event["time_end"] - int(time()), lang, max_lvl="minute")}_\n'
         text += f'{a}. {event_text}\n\n'
 
-    await send_message(chatid, text)
+    await send_message(chatid, text, parse_mode='Markdown')
 
 async def bonus_message(user, message, lang):
     userid = user.id
