@@ -110,7 +110,7 @@ async def auto_event():
             for i in events_lst: await add_event(i)
             await bot.send_message(conf.bot_group_id, t("events.april_1"))
 
-        if today.strftime("%m-%d") == "03-31":
+        if today.strftime("%m-%d") == "04-05":
             time_end = (86400 * 3) + int(time.time())
             april_event = await create_event('april_5', time_end)
 
