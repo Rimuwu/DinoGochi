@@ -21,7 +21,7 @@ async def random_event():
     not_system = []
     
     for i in events_data:
-        if i['type'] not in ['new_year', 'time_year']: not_system.append(i['type'])
+        if i['type'] not in ['new_year', 'time_year', 'april_1', 'april_5']: not_system.append(i['type'])
 
     if (True or randint(1, 18) == 18) and len(not_system) == 0:
         event = await create_event()
