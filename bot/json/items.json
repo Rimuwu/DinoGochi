@@ -3270,5 +3270,24 @@
         "image": "case",
         "rank": "mythical",
         "type": "case"
+    },
+    "fried_egg": {
+        "buyer": false,
+        "buffs": {
+            "mood": -666
+        },
+        "act": 100,
+        "class": "ALL",
+        "image": "unknown",
+        "rank": "legendary",
+        "type": "eat"
+    },
+    "3_days_premium": {
+        "image": "null",
+        "rank": "mythical",
+        "type": "special",
+        "class": "premium",
+        "premium_time": 259200,
+        "cant_sell": true
     }
 }
