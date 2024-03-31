@@ -152,9 +152,6 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     data_item: dict = get_data(item_id)
     item_name: str = get_name(item_id, lang)
     type_item: str = data_item['type']
-    
-    print(item)
-    print(data_item)
 
     if type_item == 'eat' and dino:
     
@@ -347,8 +344,6 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     elif data_item['type'] == 'special' and dino:
         user = await User().create(userid)
         dct_dino: dict = dino #type: ignore
-        
-        print(data_item)
 
         if data_item['class'] == 'reborn':
             dino_limit_col = await user.max_dino_col()
