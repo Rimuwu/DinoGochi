@@ -662,6 +662,13 @@
             },
             "egg_case": {
                 "name": "📦 Caja de huevos"
+            },
+            "fried_egg": {
+                "name": "🍳 Huevos revueltos"
+            },
+            "3_days_premium": {
+                "name": "✨ Suscripción de prueba",
+                "description": "Activa una suscripción premium de 3 días"
             }
         },
         "notifications": {
@@ -2508,7 +2515,9 @@
             "add_collecting": "🌿 Las hierbas brillan con diferentes colores, ¡definitivamente puedes encontrar hierba increíble allí!",
             "add_all": "🍭 Hay problemas en el modo de búsqueda general, ¡los caramelos están cayendo del cielo!",
             "new_year": "🎄 ¡Es hora de celebrar y dar regalos a los amigos! ¡Echa un vistazo a tu lista de amigos!",
-            "info": "🎨 | Eventos Activos\n\n"
+            "info": "🎨 | Eventos Activos\n\n",
+            "april_1": "❓ No se recomienda vestir de blanco.",
+            "april_5": "🎂 ¡Feliz cumpleaños DinoGochi!"
         },
         "daily_award": {
             "info": "🎋 *|* **\nAl iniciar sesión todos los días, puede obtener buenos bonos\n\n🏮 *|* **: ** - Buenas bonificaciones de inicio de sesión, esto es lo que puede obtener: _{lvl_1} 🪙_\n\n🎏 **: ** - Buenas bonificaciones por iniciar sesión y suscribirse al canal, esto es lo que puede obtener haciendo clic en el botón: {lvl_2} 🪙",

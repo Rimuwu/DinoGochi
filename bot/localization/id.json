@@ -662,6 +662,13 @@
             },
             "egg_case": {
                 "name": "📦 Kotak Telur"
+            },
+            "fried_egg": {
+                "name": "🍳 Orak-arik telur"
+            },
+            "3_days_premium": {
+                "name": "✨ Langganan Uji Coba",
+                "description": "Mengaktifkan langganan premium 3 hari"
             }
         },
         "notifications": {
@@ -2508,7 +2515,9 @@
             "add_collecting": "🌿 Herbal bersinar dengan warna yang berbeda, Anda pasti dapat menemukan rumput yang menakjubkan di sana!",
             "add_all": "🍭 Ada masalah dalam mode pencarian umum, permen jatuh dari langit!",
             "new_year": "🎄 Saatnya merayakan dan memberikan hadiah kepada teman-teman! Lihat daftar teman Anda!",
-            "info": "🎨 | Acara Aktif\n\n"
+            "info": "🎨 | Acara Aktif\n\n",
+            "april_1": "❓ Tidak disarankan memakai pakaian putih.",
+            "april_5": "🎂 Selamat Ulang Tahun DinoGochi!"
         },
         "daily_award": {
             "info": "🎋 *|* *Hadiah Harian*\nDengan masuk setiap hari, Anda bisa mendapatkan bonus menarik\n\n🏮 *|* *Tingkat 1*: *Pemain* - Bonus login yang bagus, inilah yang bisa Anda dapatkan: _{lvl_1} 🪙_\n\n🎏 *Tingkat 2*: *Pelatih* - Bonus bagus untuk masuk dan berlangganan saluran, inilah yang bisa Anda dapatkan dengan mengklik tombol: {lvl_2} 🪙",
