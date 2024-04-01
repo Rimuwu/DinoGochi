@@ -97,7 +97,7 @@ async def collecting_process():
                 if event != {}:
                     for _ in range(2):
                         for i in event['data']['items']:
-                            items[random.choices(list(items.keys()))] += i
+                            items[random.choice(list(items.keys()))].append(i)
 
                 count = randint(1, 3)
 
