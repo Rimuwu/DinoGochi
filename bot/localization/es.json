@@ -1528,7 +1528,7 @@
             "products_bio": {
                 "non_repayable": {
                     "name": "☕ Gratuito",
-                    "image": "Imágenes/Permanecer/Soporte/Non_Repable.PNG",
+                    "image": "images/remain/support/non_repayable.png",
                     "short": "¡Estamos agradecidos por cualquier cantidad!",
                     "description": "🔮 ¡Cualquier cantidad nos da fe en el mañana, donde jugamos y viajamos con nuestros dinosaurios!"
                 },
@@ -1540,7 +1540,7 @@
                 },
                 "rescue_kit": {
                     "name": "❤ Kit de rescate",
-                    "image": "Imagen/Permanecer/Soporte/Reskyu_China_PNG",
+                    "image": "images/remain/support/rescue_kit.png",
                     "short": "¡Salva a mi dinosaurio!",
                     "description": "😣 ¿Te has olvidado de tu dinosaurio y ahora se siente muy mal y necesita hacer algo urgentemente? \n❤ ¡Aquí es donde entra en juego el kit de rescate! ¡Tiene todo lo que necesitas!"
                 },

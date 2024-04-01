@@ -1528,7 +1528,7 @@
             "products_bio": {
                 "non_repayable": {
                     "name": "☕ Serampangan",
-                    "image": "Gambar/Sisa/Dukungan/Non_Repable.PNG",
+                    "image": "images/remain/support/non_repayable.png",
                     "short": "Kami berterima kasih atas jumlah berapa pun!",
                     "description": "🔮 Jumlah berapa pun memberi kita keyakinan pada hari esok, di mana kita bermain dan bepergian dengan dinosaurus kita!"
                 },
@@ -1540,7 +1540,7 @@
                 },
                 "rescue_kit": {
                     "name": "❤ Kit Penyelamatan",
-                    "image": "Gambar/Sisa/Dukungan/Reskyu_China_PNG",
+                    "image": "images/remain/support/rescue_kit.png",
                     "short": "Selamatkan dinosaurus saya!",
                     "description": "😣 Apakah Anda lupa tentang dinosaurus Anda dan sekarang rasanya sangat buruk dan perlu melakukan sesuatu yang mendesak ?! \n❤ Di sinilah kit penyelamat masuk! Ini memiliki semua yang Anda butuhkan!"
                 },
