@@ -94,8 +94,6 @@ async def collecting_process():
                 items = GAME_SETTINGS['collecting_items'][coll_type]
                 event = await get_event(f'add_{coll_type}')
 
-                print(len(items['leg']), items['leg'])
-
                 if event != {}:
                     for _ in range(2):
                         for i in event['data']['items']:
@@ -125,4 +123,4 @@ async def collecting_process():
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(collecting_process, 1, 1.0)
+        add_task(collecting_process, REPEAT_MINUTS * 60.0, 1.0)
