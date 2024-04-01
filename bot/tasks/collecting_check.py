@@ -91,13 +91,19 @@ async def collecting_process():
                         rare_list[3] += 5
                         rare_list[4] += 2
 
-                items = GAME_SETTINGS['collecting_items'][coll_type].copy()
+                items = GAME_SETTINGS['collecting_items'][coll_type]
                 event = await get_event(f'add_{coll_type}')
+
+                print(len(items['leg']), items['leg'])
 
                 if event != {}:
                     for _ in range(2):
                         for i in event['data']['items']:
-                            items[random.choice(['leg', 'mys'])].append(i)
+                            items[random.choice(['leg', 'mys', 'rar'])].append(i)
+
+                for i in items.keys(): 
+                    items[i] = set(items[i])
+                    items[i] = list(items[i])
 
                 count = randint(1, 3)
 
@@ -119,4 +125,4 @@ async def collecting_process():
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(collecting_process, REPEAT_MINUTS * 60.0, 1.0)
+        add_task(collecting_process, 1, 1.0)

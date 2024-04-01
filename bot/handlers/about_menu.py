@@ -43,7 +43,7 @@ def main_support_menu(lang: str):
         a += 1
         text += f'{a}. *{bio["name"]}* — {bio["short"]}\n\n'
         buttons[bio["name"]] = f'support info {key}'
-    
+
     markup_inline = InlineKeyboardMarkup(row_width=1)
     markup_inline.add(*[
         InlineKeyboardButton(
