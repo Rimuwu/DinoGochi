@@ -32,4 +32,4 @@ if __name__ != '__main__':
     if conf.active_tasks:
         add_task(auto_event, 3600, 5.0)
         add_task(old_events, 240, 1.0)
-        add_task(random_event, 3600, 1.0)
+        add_task(random_event, 3600, 10.0)
