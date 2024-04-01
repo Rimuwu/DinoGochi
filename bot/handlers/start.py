@@ -18,20 +18,19 @@ from bot.modules.promo import use_promo
 from bot.modules.over_functions import send_message
 from bot.modules.tracking import add_track
 
-stickers = bot.get_sticker_set('Stickers_by_DinoGochi_bot')
 referals = mongo_client.user.referals
 management = mongo_client.other.management
 
 @bot.message_handler(pass_bot=True, commands=['start'], is_authorized=True, private=True)
 async def start_command_auth(message: types.Message):
-    stickers = await bot.get_sticker_set('Stickers_by_DinoGochi_bot')
-    sticker = choice(list(stickers.stickers)).file_id
+    # stickers = await bot.get_sticker_set('Stickers_by_DinoGochi_bot')
+    # sticker = choice(list(stickers.stickers)).file_id
 
-    lang = await get_lang(message.from_user.id)
-    await bot.send_sticker(message.chat.id, sticker, 
-                           reply_markup=await m(message.from_user.id, language_code=lang))
+    # lang = await get_lang(message.from_user.id)
+    # await bot.send_sticker(message.chat.id, sticker, 
+    #                        reply_markup=await m(message.from_user.id, language_code=lang))
 
-    await cancel(message, '')
+    await cancel(message, '🦕')
 
     content = str(message.text).split()
     if len(content) > 1: 
@@ -91,7 +90,7 @@ async def start_game_message(message: types.Message):
 
     image = open('images/remain/start/placeholder.png', 'rb')
     text = t('start_command.first_message', langue_code, username=username)
-    
+
     await bot.send_photo(message.chat.id, image, text, reply_markup=markup, parse_mode='HTML')
 
     if add_referal:
