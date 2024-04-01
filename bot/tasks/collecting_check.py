@@ -12,6 +12,7 @@ from bot.modules.mood import check_inspiration
 from bot.modules.quests import quest_process
 from bot.modules.user import experience_enhancement
 from bot.taskmanager import add_task
+from bot.modules.events import get_event
 
 collecting_task = mongo_client.dino_activity.collecting
 dinosaurs = mongo_client.dinosaur.dinosaurs
@@ -90,7 +91,14 @@ async def collecting_process():
                         rare_list[3] += 5
                         rare_list[4] += 2
 
-                items = GAME_SETTINGS['collecting_items'][coll_type]
+                items = GAME_SETTINGS['collecting_items'][coll_type].copy()
+                event = await get_event(f'add_{coll_type}')
+
+                if event != {}:
+                    for _ in range(2):
+                        for i in event['data']['items']:
+                            items[random.choices(items.keys())] += i
+
                 count = randint(1, 3)
 
                 if coll_data['now_count'] + count > coll_data['max_count']:
