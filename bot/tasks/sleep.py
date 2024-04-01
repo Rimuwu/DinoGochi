@@ -10,7 +10,7 @@ from bot.modules.user import experience_enhancement
 sleepers = mongo_client.dino_activity.sleep
 dinosaurs = mongo_client.dinosaur.dinosaurs
 
-LONG_SLEEP_COLDOWN_MIN = 8
+LONG_SLEEP_COLDOWN_MIN = 7
 
 DREAM_CHANCE = 0.01
 
@@ -70,7 +70,7 @@ async def check_notification():
 
 async def short_check():
     data = list(await sleepers.find({'sleep_type': 'short'}).to_list(None)).copy() 
-    for sleeper in data: await one_time(sleeper, 1)
+    for sleeper in data: await one_time(sleeper, 2)
 
 async def long_check():
     data = list(await sleepers.find({'sleep_type': 'long'}).to_list(None)).copy() 
