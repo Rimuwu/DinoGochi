@@ -3371,7 +3371,7 @@
             "conducted": "🎱 Perdagangan selesai:",
             "products": "📯 Perdagangan aktif:",
             "not_found": "🧨 Penjual Tidak Terdeteksi",
-            "my_option": "🎩 Bot dapat secara otomatis mengirim pemberitahuan tentang produk baru ke grup atau saluran, untuk informasi lebih lanjut, tulis `/push_info`",
+            "my_option": "🎩 Bot dapat secara otomatis mengirim pemberitahuan tentang produk baru ke grup atau saluran, untuk informasi lebih lanjut tulis `/pushinfo`",
             "buttons": {
                 "market_products": "👜 Perdagangan Aktif",
                 "no_products": "❌ Tidak Ada Perdagangan Aktif",

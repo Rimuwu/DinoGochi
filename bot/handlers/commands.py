@@ -42,7 +42,7 @@ async def string_time(message):
         sec = str_to_seconds(txt)
         await send_message(chatid, str(sec))
 
-@bot.message_handler(pass_bot=True, commands=['push_info'])
+@bot.message_handler(pass_bot=True, commands=['pushinfo'])
 async def push_info(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
