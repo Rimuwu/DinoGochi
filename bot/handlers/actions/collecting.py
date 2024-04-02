@@ -114,7 +114,7 @@ async def collecting_progress(message: Message):
             stop_button = t(
                 f'collecting.stop_button.{data["collecting_type"]}', lang)
 
-            image = open(f'images/actions/collecting/{data["collecting_type"]}.png', 'rb')
+            image = await dino_collecting(last_dino.data_id, data["collecting_type"])
             text = t(f'collecting.progress.{data["collecting_type"]}', lang,
                     now = data['now_count'], max_count=data['max_count']
                     )
