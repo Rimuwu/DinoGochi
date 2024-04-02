@@ -93,16 +93,6 @@ async def collecting_process():
 
                 items = GAME_SETTINGS['collecting_items'][coll_type]
                 event = await get_event(f'add_{coll_type}')
-
-                if event != {}:
-                    for _ in range(2):
-                        for i in event['data']['items']:
-                            items[random.choice(['leg', 'mys', 'rar'])].append(i)
-
-                for i in items.keys(): 
-                    items[i] = set(items[i])
-                    items[i] = list(items[i])
-
                 count = randint(1, 3)
 
                 if coll_data['now_count'] + count > coll_data['max_count']:
@@ -111,6 +101,17 @@ async def collecting_process():
                 for _ in range(count):
                     rar = random.choices(list(items.keys()), rare_list)[0]
                     item = random.choice(items[rar])
+
+                    if coll_type == 'collecting' and \
+                        random.uniform(0, 1) <= 0.7 and \
+                            await check_accessory(dino, 'torch', True):
+                                # 0.7 выдать редкий предмет
+                                item = 'gourmet_herbs'
+
+                    elif event != {} and \
+                        random.uniform(0, 1) <= 0.5:
+                            # 0.5 Шанс выдать предмет из ивента
+                            item = random.choice(event['data']['items'])
 
                     if item in coll_data['items']:
                         coll_data['items'][item] += 1
