@@ -155,6 +155,8 @@ async def swipe_page(userid: int, chatid: int):
         settings = data['settings']
         items = data['items']
         filters = data['filters']
+        main_message = data['main_message']
+        up_message = data['up_message']
 
     keyboard = list_to_keyboard(pages[settings['page']], settings['row'])
 
@@ -167,7 +169,8 @@ async def swipe_page(userid: int, chatid: int):
     text = t('inventory.update_page', settings['lang'])
     buttons = {
         '⏮': 'inventory_menu first_page', '🔎': 'inventory_menu search', 
-        '⚙️': 'inventory_menu filters', '⏭': 'inventory_menu end_page'
+        '⚙️': 'inventory_menu filters', '⏭': 'inventory_menu end_page',
+        '♻️': 'inventory_menu remessage'
         }
 
     if not settings['changing_filters']:
@@ -187,15 +190,32 @@ async def swipe_page(userid: int, chatid: int):
     if items and settings['changing_filters']:
         buttons['❌🔎'] = 'inventory_menu clear_search'
 
+
     inl_menu = list_to_inline([buttons], 4)
-    await send_message(chatid, text, reply_markup=keyboard)
-    await send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
+    if main_message == 0:
+        new_main = await send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
+        async with bot.retrieve_data(userid, chatid) as data:
+            data['main_message'] = new_main.message_id
+    else:
+        await bot.edit_message_text(menu_text, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
+    
+    if up_message == 0:
+        new_up = await send_message(chatid, text, reply_markup=keyboard)
+    else:
+        new_up = await send_message(chatid, text, reply_markup=keyboard)
+        await bot.delete_message(chatid, up_message)
+
+    async with bot.retrieve_data(userid, chatid) as data:
+        data['up_message'] = new_up.message_id
+
 
 async def search_menu(userid: int, chatid: int):
     """ Панель-сообщение поиска
     """
     async with bot.retrieve_data(userid, chatid) as data:
         settings = data['settings']
+        main_message = data['main_message']
+        up_message = data['up_message']
 
     menu_text = t('inventory.search', settings['lang'])
     buttons = {'❌': 'inventory_search close'}
@@ -203,17 +223,30 @@ async def search_menu(userid: int, chatid: int):
 
     text = t('inventory.update_search', settings['lang'])
     keyboard = list_to_keyboard([ t('buttons_name.cancel', settings['lang']) ])
-
-    await send_message(chatid, text, reply_markup=keyboard)
-    await send_message(chatid, menu_text, 
-                           parse_mode='Markdown', reply_markup=inl_menu)
     
-async def filter_menu(userid: int, chatid: int):
+    if up_message == 0:
+        await send_message(chatid, text, reply_markup=keyboard)
+    else:
+        new_up = await send_message(chatid, text, reply_markup=keyboard)
+        await bot.delete_message(chatid, up_message)
+        async with bot.retrieve_data(userid, chatid) as data:
+            data['up_message'] = new_up.message_id
+    
+    if main_message == 0:
+        new_main = await send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
+        async with bot.retrieve_data(userid, chatid) as data:
+            data['main_message'] = new_main.message_id
+    else:
+        await bot.edit_message_text(menu_text, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
+    
+async def filter_menu(userid: int, chatid: int, upd_up_m: bool = True):
     """ Панель-сообщение выбора фильтра
     """
     async with bot.retrieve_data(userid, chatid) as data:
         settings = data['settings']
         filters = data['filters']
+        main_message = data['main_message']
+        up_message = data['up_message']
 
     menu_text = t('inventory.choice_filter', settings['lang'])
     filters_data = get_loc_data('inventory.filters_data', settings['lang'])
@@ -231,17 +264,33 @@ async def filter_menu(userid: int, chatid: int):
     text = t('inventory.update_filter', settings['lang'])
     keyboard = list_to_keyboard([ t('buttons_name.cancel', settings['lang']) ])
 
-    if 'edited_message' in settings and settings['edited_message']:
-        try:
-            await bot.edit_message_text(menu_text, chatid, settings['edited_message'], reply_markup=inl_menu, parse_mode='Markdown')
-        except: pass
+    if upd_up_m:
+        if up_message == 0:
+            await send_message(chatid, text, reply_markup=keyboard)
+        else:
+            new_up = await send_message(chatid, text, reply_markup=keyboard)
+            await bot.delete_message(chatid, up_message)
+            async with bot.retrieve_data(userid, chatid) as data:
+                data['up_message'] = new_up.message_id
+    
+    if main_message == 0:
+        new_main = await send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
+        async with bot.retrieve_data(userid, chatid) as data:
+            data['main_message'] = new_main.message_id
     else:
-        await send_message(chatid, text, reply_markup=keyboard)
-        msg = await send_message(chatid, menu_text, 
-                            parse_mode='Markdown', reply_markup=inl_menu)
+        await bot.edit_message_text(menu_text, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
+
+    # if 'edited_message' in settings and settings['edited_message']:
+    #     try:
+    #         await bot.edit_message_text(menu_text, chatid, settings['edited_message'], reply_markup=inl_menu, parse_mode='Markdown')
+    #     except: pass
+    # else:
+    #     await send_message(chatid, text, reply_markup=keyboard)
+    #     msg = await send_message(chatid, menu_text, 
+    #                         parse_mode='Markdown', reply_markup=inl_menu)
         
-        async with bot.retrieve_data(
-            userid, chatid) as data: data['settings']['edited_message'] = msg.id
+    #     async with bot.retrieve_data(
+    #         userid, chatid) as data: data['settings']['edited_message'] = msg.id
 
 async def start_inv(function, userid: int, chatid: int, lang: str, 
                     type_filter: list = [], item_filter: list = [], 
@@ -301,6 +350,8 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
                                 'changing_filters': changing_filters,
                                 'delete_search': delete_search
                                 }
+            data['main_message'] = 0
+            data['up_message'] = 0
 
             data['function'] = function
             data['transmitted_data'] = transmitted_data

@@ -24,6 +24,7 @@ from bot.modules.markup import count_markup
 from bot.modules.over_functions import send_message
 from bot.modules.states_tools import ChooseIntState
 from bot.modules.user import User, take_coins
+from asyncio import sleep
 
 async def cancel(message):
     lang = await get_lang(message.from_user.id)
@@ -32,7 +33,7 @@ async def cancel(message):
     await bot.delete_state(message.from_user.id, message.chat.id)
     await bot.reset_data(message.from_user.id,  message.chat.id)
 
-@bot.message_handler(pass_bot=True, text='commands_name.profile.inventory', is_authorized=True, state=None)
+@bot.message_handler(pass_bot=True, text='commands_name.profile.inventory', is_authorized=True, nothing_state=True)
 async def open_inventory(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -58,25 +59,31 @@ async def inventory(message: Message):
         pages = data['pages']
         items_data = data['items_data']
         page = data['settings']['page']
+        main_message = data['main_message']
+        up_message = data['up_message']
 
         function = data['function']
         transmitted_data = data['transmitted_data']
 
     names = list(items_data.keys())
 
-    if content == back_button:
-        if page == 0: page = len(pages) - 1
-        else: page -= 1
+    if content in [back_button, forward_button]:
+    
+        if content == back_button:
+            if page == 0: page = len(pages) - 1
+            else: page -= 1
 
-        async with bot.retrieve_data(userid, chatid) as data: data['settings']['page'] = page
+        elif content == forward_button:
+            if page >= len(pages) - 1: page = 0
+            else: page += 1
+
+        async with bot.retrieve_data(userid, chatid) as data: 
+            data['settings']['page'] = page
+            data['main_message'] = 0
+
         await swipe_page(userid, chatid)
-
-    elif content == forward_button:
-        if page >= len(pages) - 1: page = 0
-        else: page += 1
-
-        async with bot.retrieve_data(userid, chatid) as data: data['settings']['page'] = page
-        await swipe_page(userid, chatid)
+        await bot.delete_message(chatid, main_message)
+        await bot.delete_message(chatid, message.message_id)
 
     elif content in names:
         await function(items_data[content], transmitted_data)
@@ -134,6 +141,17 @@ async def inv_callback(call: CallbackQuery):
             data['pages'] = pages
             data['filters'] = []
         await swipe_page(userid, chatid)
+    
+    elif call_data == 'remessage':
+        # Переотправка сообщения
+        async with bot.retrieve_data(userid, chatid) as data: 
+            main_message = data['main_message']
+
+        async with bot.retrieve_data(userid, chatid) as data: 
+            data['main_message'] = 0
+
+        await swipe_page(userid, chatid)
+        await bot.delete_message(chatid, main_message)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('item'), private=True)
 async def item_callback(call: CallbackQuery):
@@ -211,6 +229,7 @@ async def search_message(message: Message):
     async with bot.retrieve_data(userid, chatid) as data:
         items_data = data['items_data']
         sett = data['settings']
+
     names = list(items_data.keys())
 
     for item in names:
@@ -234,7 +253,10 @@ async def search_message(message: Message):
             data['items'] = searched
         await swipe_page(userid, chatid)
     else:
-        await send_message(chatid, t('inventory.search_null', lang))
+        m = await send_message(chatid, t('inventory.search_null', lang))
+        await sleep(10.0)
+        await bot.delete_message(chatid, m.message_id)
+        await bot.delete_message(chatid, message.message_id)
 
 #Фильтры
 @bot.callback_query_handler(pass_bot=True, state=InventoryStates.InventorySetFilters, func=lambda call: call.data.startswith('inventory_filter'), private=True)
@@ -251,6 +273,7 @@ async def filter_callback(call: CallbackQuery):
             sett = data['settings']
             items = data['items_data']
             itm_fil = data['items']
+            data['settings']['page'] = 0
 
         if 'edited_message' in sett:
             await bot.delete_message(chatid, sett['edited_message'])
@@ -272,7 +295,7 @@ async def filter_callback(call: CallbackQuery):
             async with bot.retrieve_data(userid, chatid) as data:
                 data['filters'] = []
             if filters:
-                await filter_menu(userid, chatid)
+                await filter_menu(userid, chatid, False)
         else:
             data_list_filters = filters_data[call_data[2]]['keys']
 
@@ -286,7 +309,7 @@ async def filter_callback(call: CallbackQuery):
             async with bot.retrieve_data(userid, chatid) as data:
                 data['filters'] = filters
 
-            await filter_menu(userid, chatid)
+            await filter_menu(userid, chatid, False)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('book'), private=True)
 async def book(call: CallbackQuery):
