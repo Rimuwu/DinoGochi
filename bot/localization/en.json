@@ -1288,7 +1288,7 @@
             "choice_filter": "⚙️ | Select a filter for the inventory below\n\n ** \n 🥚 | Eggs\n 🔮 | Other\n 📜 | Recipes\n 💍 | Accessories\n ⛰ | Dungeon\n 🍕 | Food\n 👢 | Crafting Materials\n\n _✅ | Click on the checkmark below to save your filter settings.",
             "search": "🔎 | Enter the name of the item you want to search:\n ❌ | Click on the cross below the message to exit the search.",
             "search_null": "❌ | Nothing matched your search terms, try entering a more accurate name!",
-            "menu": "🎍 | Page *{page}* / *{col}* \n\n 📜 | Use *Arrows* to move. \n 🔎 | Use the *Magnifier* button to activate the search. \n ⚙️ | Use the *Gear* button to select a filter.",
+            "menu": "🎍 | Page *{page}* / *{col}*\n\n📜 | Use *Arrows* to move. \n🔎 | Use the *Magnifier* button to activate the search. \n⚙️ | Use the *Gear* button to select a filter. \n♻️ | Refresh the page.",
             "clear_filters": "\n 🗑 | Click on the trash can to clear the filters.",
             "update_page": "🔁 | Page updated",
             "update_search": "🔁 | Search Activated",

@@ -1288,7 +1288,7 @@
             "choice_filter": "⚙️ | Pilih filter untuk inventaris di bawah ini\n\n*Daftar:*\n🥚 | Telur\n🔮 | Lainnya\n📜 | Resep\n💍 | Aksesoris\n⛰ | Ruang bawah tanah\n🍕 | Makanan\n👢 | Bahan Kerajinan\n\n_✅ | Klik tanda centang di bawah ini untuk menyimpan pengaturan filter Anda._",
             "search": "🔎 | Masukkan nama item yang ingin Anda cari:\n❌ | Klik tanda silang di bawah pesan untuk keluar dari pencarian.",
             "search_null": "❌ | Tidak ada yang ditemukan untuk kueri, coba masukkan nama yang lebih akurat!",
-            "menu": "🎍 | Halaman *{page}* / *{col}*\n\n📜 | Gunakan *Panah* untuk bergerak. \n🔎 | Gunakan tombol *Magnifier* untuk mengaktifkan pencarian. \n⚙️ | Gunakan tombol *Gigi* untuk memilih filter.",
+            "menu": "🎍 | Halaman *{page}* / *{col}*\n\n📜 | Gunakan *Panah* untuk bergerak. \n🔎 | Gunakan tombol *Magnifier* untuk mengaktifkan pencarian. \n⚙️ | Gunakan tombol *Gigi* untuk memilih filter. \n♻️ | Refresh halaman.",
             "clear_filters": "\n🗑 | Klik tempat sampah untuk menghapus filter.",
             "update_page": "🔁 | Halaman diperbarui",
             "update_search": "🔁 | Pencarian Diaktifkan",

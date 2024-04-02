@@ -1288,7 +1288,7 @@
             "choice_filter": "⚙️ | Seleccione un filtro para el inventario a continuación\n\n*Lista:*\n🥚 | Huevos\n🔮 | Otros\n📜 | Recetas\n💍 | Accesorios\n⛰ | Mazmorra\n🍕 | Comida\n👢 | Materiales de artesanía\n\n_✅ | Haga clic en la marca de verificación a continuación para guardar la configuración de su filtro.",
             "search": "🔎 | Introduzca el nombre del elemento que desea buscar:\n❌ | Haga clic en la cruz debajo del mensaje para salir de la búsqueda.",
             "search_null": "❌ | No se encontró nada para la consulta, ¡intente ingresar un nombre más preciso!",
-            "menu": "🎍 | Página *{page}* / *{col}*\n\n📜 | Usa *Flechas* para moverte. \n🔎 | Utilice el botón *Lupa* para activar la búsqueda. \n⚙️ | Utilice el botón *Engranaje* para seleccionar un filtro.",
+            "menu": "🎍 | Página *{page}* / *{col}*\n\n📜 | Usa *Flechas* para moverte. \n🔎 | Utilice el botón *Lupa* para activar la búsqueda. \n⚙️ | Utilice el botón *Engranaje* para seleccionar un filtro. \n♻️ | Actualice la página.",
             "clear_filters": "\n🗑 | Haga clic en la papelera para borrar los filtros.",
             "update_page": "🔁 | Página actualizada",
             "update_search": "🔁 | Búsqueda activada",
