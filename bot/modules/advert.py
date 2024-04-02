@@ -7,6 +7,7 @@ import json
 from bot.exec import bot
 from bot.modules.localization import t, get_lang
 from time import time as time_now
+from datetime import datetime, timezone
 
 users = mongo_client.user.users
 ads = mongo_client.user.ads
@@ -83,3 +84,20 @@ async def save_last_ads(user_id:int):
 
     lang = await get_lang(user_id)
     await bot.send_message(user_id, t('super_coins.plus_one', lang), parse_mode="Markdown")
+
+
+async def auto_ads(message):
+    user_id = message.from_user.id
+    if message.chat.type == "private":
+        user = await users.find_one({'userid': user_id}, {"_id": 1})
+        if user:
+            await users.update_one({'userid': user_id}, 
+                                {'$set': {'last_message_time': message.date}})
+            if conf.show_advert:
+
+                create = user['_id'].generation_time
+                now = datetime.now(timezone.utc)
+                delta = now - create
+
+                if delta.days >= 7:
+                    if await check_limit(user_id): await show_advert(user_id)
