@@ -109,8 +109,8 @@ async def collecting_process():
                                 item = 'gourmet_herbs'
 
                     elif event != {} and \
-                        random.uniform(0, 1) <= 0.5:
-                            # 0.5 Шанс выдать предмет из ивента
+                        random.uniform(0, 1) <= 0.2:
+                            # 0.2 Шанс выдать предмет из ивента
                             item = random.choice(event['data']['items'])
 
                     if item in coll_data['items']:
