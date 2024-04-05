@@ -185,7 +185,7 @@ async def ddt(message):
 
 @bot.message_handler(pass_bot=True, commands=['fix'], is_admin=True)
 async def fix(message):
-    
+
     find_res = await items.find(
         {'items_data.abilities': {"$ne": None}, "count": {"$ne": 1}}
                                 ).to_list(None)

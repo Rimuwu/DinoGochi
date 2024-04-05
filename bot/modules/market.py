@@ -155,11 +155,16 @@ def generate_items_pages(ignored_id: list = [], ignore_cant: bool = False):
     exclude = ignored_id
     for key, item in ITEMS.items():
         data = get_item_dict(key)
-        if 'cant_sell' in item and item['cant_sell'] and not ignore_cant:
-            if key not in exclude:
-                exclude.append(key)
-        elif key not in exclude:
+
+        if not ignore_cant:
+            if 'cant_sell' in item and item['cant_sell']:
+                if key not in exclude:
+                    exclude.append(key)
+            elif key not in exclude:
+                items.append({'item': data, 'count': 1})
+        else:
             items.append({'item': data, 'count': 1})
+
     return items, exclude
 
 async def generate_sell_pages(user_id: int, ignored_id: list = []):
