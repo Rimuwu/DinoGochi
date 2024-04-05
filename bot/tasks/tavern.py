@@ -42,7 +42,7 @@ async def tavern_quest(user):
             await save_quest(quest, user['userid'])
             text = t('quest.new', lang)
 
-        try: await send_message(user['userid'], text)
+        try: await bot.send_message(user['userid'], text)
         except: pass
 
 async def tavern_replic(user):
@@ -56,7 +56,7 @@ async def tavern_replic(user):
 
         text = f'👤 {random_name}: {random_replic}'
         try:
-            await send_message(user['userid'], text)
+            await bot.send_message(user['userid'], text)
         except Exception: pass
 
 async def tavern_life():
@@ -66,7 +66,7 @@ async def tavern_life():
         if user['time_in'] + 3600 <= int(time()):
             await tavern.delete_one({'_id': user['_id']})
             try:
-                await send_message(user['userid'], 
+                await bot.send_message(user['userid'], 
                         t('tavern_sleep', user['lang']))
             except: pass
 

@@ -24,12 +24,12 @@ async def my_update(data: ChatMemberUpdated):
         if not res:
             if status not in ['creator', 'administrator']:
                 text = t('push.not_admin', lang)
-                await send_message(userid, text)
+                await bot.send_message(userid, text)
                 return
 
             elif not can_manage_chat:
                 text = t('push.not_management', lang)
-                await send_message(userid, text)
+                await bot.send_message(userid, text)
                 return
 
             else:
@@ -37,7 +37,7 @@ async def my_update(data: ChatMemberUpdated):
                 buttons = [{t('buttons_name.confirm', lang): f'create_push {data.chat.id}'}]
                 markup = list_to_inline(buttons)
 
-                await send_message(userid, text, reply_markup=markup)
+                await bot.send_message(userid, text, reply_markup=markup)
 
     elif data.new_chat_member.status == 'left':
         res = await puhs.find_one({'owner_id': userid})

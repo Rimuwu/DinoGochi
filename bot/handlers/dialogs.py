@@ -26,7 +26,7 @@ async def dialog(callback: CallbackQuery):
     if status:
 
         if dialog_action == 'start':
-            await send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
+            await bot.send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
             await bot.edit_message_reply_markup(chatid, message.id, 
                                    reply_markup=InlineKeyboardMarkup())
         else:

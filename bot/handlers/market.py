@@ -40,7 +40,7 @@ async def create_adapter(return_data, transmitted_data):
     description = escape_markdown(description)
     await create_seller(userid, name, description)
 
-    await send_message(chatid, t('market_create.create', lang), 
+    await bot.send_message(chatid, t('market_create.create', lang), 
                            reply_markup= await m(userid, 'seller_menu', lang), parse_mode='Markdown')
 
 async def custom_name(message: Message, transmitted_data):
@@ -55,15 +55,15 @@ async def custom_name(message: Message, transmitted_data):
     name = escape_markdown(content)
 
     if content_len > max_len:
-        await send_message(message.chat.id, 
+        await bot.send_message(message.chat.id, 
                 t('states.ChooseString.error_max_len', lang,
                 number = content_len, max = max_len))
     elif content_len < min_len:
-        await send_message(message.chat.id, 
+        await bot.send_message(message.chat.id, 
                 t('states.ChooseString.error_min_len', lang,
                 number = content_len, min = min_len))
     elif await sellers.find_one({'name': name}):
-        await send_message(message.chat.id, 
+        await bot.send_message(message.chat.id, 
                 t('market_create.name_error', lang))
     else: 
         return True, name
@@ -79,10 +79,10 @@ async def create_market(message: Message):
     user = await users.find_one({'userid': userid})
 
     if res or not user:
-        await send_message(message.chat.id, t('menu_text.seller', lang), 
+        await bot.send_message(message.chat.id, t('menu_text.seller', lang), 
                            reply_markup= await m(userid, 'market_menu', lang))
     elif user['lvl'] < 2:
-        await send_message(message.chat.id, t('market_create.lvl', lang))
+        await bot.send_message(message.chat.id, t('market_create.lvl', lang))
     else:
         transmitted_data = {}
         steps = [
@@ -139,7 +139,7 @@ async def add_product_com(message: Message):
         [b_list, t('buttons_name.cancel', lang)], 2
     )
 
-    await send_message(chatid, t('add_product.options_info', lang), reply_markup=markup)
+    await bot.send_message(chatid, t('add_product.options_info', lang), reply_markup=markup)
     await ChooseOptionState(prepare_data_option, userid, chatid, lang, options)
 
 @bot.message_handler(pass_bot=True, text='commands_name.seller_profile.my_products', is_authorized=True)
@@ -158,12 +158,12 @@ async def my_products(message: Message):
                                 product['type'], lang)
             ] = product['_id']
 
-        await send_message(chatid, t('products.search', lang))
+        await bot.send_message(chatid, t('products.search', lang))
         await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
     else:
         text = t('no_products', lang)
-        await send_message(chatid, text,  parse_mode='Markdown')
+        await bot.send_message(chatid, text,  parse_mode='Markdown')
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('product_info'))
 async def product_info(call: CallbackQuery):
@@ -202,7 +202,7 @@ async def product_info(call: CallbackQuery):
                         try:
                             await bot.send_photo(chatid, image, text, 'Markdown')
                         except:
-                            await send_message(chatid, text, parse_mode='Markdown')
+                            await bot.send_message(chatid, text, parse_mode='Markdown')
 
             elif call_type == 'buy' and product['owner_id'] != userid:
                 if product['owner_id'] != userid:
@@ -212,7 +212,7 @@ async def product_info(call: CallbackQuery):
             elif call_type == 'info':
                 text, markup = await product_ui(lang, product['_id'], 
                                           product['owner_id'] == userid)
-                await send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
+                await bot.send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
 
             elif call_type == 'promotion' and product['owner_id'] == userid:
                 await promotion_prepare(userid, chatid, lang, product['_id'], 
@@ -239,7 +239,7 @@ async def seller(call: CallbackQuery):
         if await premium(userid):
             await pr_edit_image(userid, chatid, lang, call.message.id)
         else:
-            await send_message(chatid, t('no_premium', lang))
+            await bot.send_message(chatid, t('no_premium', lang))
 
     # Кнопки вызываемые не владельцем
     elif call_type == 'info':
@@ -269,7 +269,7 @@ async def seller(call: CallbackQuery):
                                 product['type'], lang)
             ] = product['_id']
 
-        await send_message(chatid, t('products.search', lang))
+        await bot.send_message(chatid, t('products.search', lang))
         await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
     
@@ -299,11 +299,11 @@ async def random_products(message: Message):
                     ] = product['_id']
             else: break
 
-        await send_message(chatid, t('products.search', lang))
+        await bot.send_message(chatid, t('products.search', lang))
         await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
     else:
-        await send_message(chatid, t('products.null', lang))
+        await bot.send_message(chatid, t('products.null', lang))
 
 @bot.message_handler(pass_bot=True, text='commands_name.market.find', is_authorized=True)
 async def find_products(message: Message):
@@ -331,7 +331,7 @@ async def push(call: CallbackQuery):
         await create_push(userid, channel_id, lang)
         text = t('push.new', lang)
 
-    await send_message(userid, text)
+    await bot.send_message(userid, text)
     await bot.edit_message_reply_markup(chatid, call.message.id, 
                                         reply_markup=InlineKeyboardMarkup())
     

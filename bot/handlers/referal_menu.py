@@ -30,9 +30,9 @@ async def code(message: Message):
         inl_buttons = dict(zip(buttons.values(), buttons.keys()))
         markup = list_to_inline([inl_buttons])
         
-        await send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
     else:
-        await send_message(message.chat.id, t('referals.have_code', lang))
+        await bot.send_message(message.chat.id, t('referals.have_code', lang))
 
 
 async def create_custom_code(code: str, transmitted_data: dict):
@@ -52,7 +52,7 @@ async def create_custom_code(code: str, transmitted_data: dict):
     else:
         text = t('referals.custom_code.no_coins', lang)
 
-    await send_message(chatid, text, parse_mode='Markdown', 
+    await bot.send_message(chatid, text, parse_mode='Markdown', 
                         reply_markup= await m(userid, 'last_menu', lang, True))
 
 async def custom_handler(message: Message, transmitted_data: dict):
@@ -75,7 +75,7 @@ async def custom_handler(message: Message, transmitted_data: dict):
         else: status = True
 
     if not status:
-        await send_message(chatid, text, parse_mode='Markdown')
+        await bot.send_message(chatid, text, parse_mode='Markdown')
     return status, code
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
@@ -95,16 +95,16 @@ async def generate_code(call: CallbackQuery):
             bot_name = iambot.username
 
             url = f'https://t.me/{bot_name}/?start={code}'
-            await send_message(chatid, t('referals.code', lang, 
+            await bot.send_message(chatid, t('referals.code', lang, 
                                     code=code, url=url), parse_mode='Markdown', reply_markup= await m(userid, 'last_menu', lang, True))
             
         elif action == 'custom':
-            await send_message(chatid, 
+            await bot.send_message(chatid, 
                                    t('referals.custom_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
             await ChooseCustomState(create_custom_code, custom_handler, 
                                     userid, chatid, lang)
     else:
-        await send_message(chatid, t('referals.have_code', lang))
+        await bot.send_message(chatid, t('referals.have_code', lang))
 
 
 @bot.message_handler(pass_bot=True, textstart='commands_name.referal.my_code')
@@ -127,7 +127,7 @@ async def my_code(message: Message):
         bot_name = iambot.username
         url = f'https://t.me/{bot_name}/?start={code}'
 
-        await send_message(chatid, t('referals.my_code', lang, 
+        await bot.send_message(chatid, t('referals.my_code', lang, 
                                 code=code, url=url, uses=uses), parse_mode='Markdown')
 
 async def check_code(code: str, transmitted_data: dict):
@@ -141,7 +141,7 @@ async def check_code(code: str, transmitted_data: dict):
 
     result = await connect_referal(code, userid)
     text = t(f'referals.enter_code.{result}', lang, coins=coins, items=names)
-    await send_message(chatid, text, parse_mode='Markdown', 
+    await bot.send_message(chatid, text, parse_mode='Markdown', 
                         reply_markup= await m(userid, 'last_menu', lang, True))
 
 @bot.message_handler(pass_bot=True, text='commands_name.referal.enter_code', is_authorized=True)
@@ -152,7 +152,7 @@ async def enter_code(message: Message):
 
     ref = await referals.find_one({'userid': userid, 'type': 'sub'})
     if not ref:
-        await send_message(chatid, t('referals.enter_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
+        await bot.send_message(chatid, t('referals.enter_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
         await ChooseStringState(check_code, userid, chatid, lang, max_len=100)
     else:
-        await send_message(chatid, t('referals.enter_code.have_code', lang), parse_mode='Markdown')
+        await bot.send_message(chatid, t('referals.enter_code.have_code', lang), parse_mode='Markdown')

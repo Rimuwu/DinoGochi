@@ -42,12 +42,13 @@ async def main_checks():
 
     dinos = await dinosaurs.find({}).to_list(None)  # type: ignore
     for dino in dinos:
+        dino: dict
         if dino['status'] == 'inactive': continue
         is_sleeping = dino['status'] == 'sleep'
 
         if dino['stats']['heal'] <= 0:
-            dino = await Dino().create(dino['_id'])
-            await dino.dead()
+            dino_cl = await Dino().create(dino['_id'])
+            await dino_cl.dead()
             continue
 
         if dino['status'] == 'kindergarten':

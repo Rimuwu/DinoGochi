@@ -33,13 +33,13 @@ async def collecting_adapter(return_data, transmitted_data):
 
         text = t(f'collecting.max_count', lang,
                 eat_count=eat_count)
-        await send_message(chatid, text, reply_markup= await m(
+        await bot.send_message(chatid, text, reply_markup= await m(
             userid, 'last_menu', lang))
     else:
         res_dino_status = await dinosaurs.find_one({"_id": dino._id}, {'status': 1})
         if res_dino_status:
             if res_dino_status['status'] != 'pass':
-                await send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
+                await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
                 return
 
             await dino.collecting(userid, option, count)
@@ -53,7 +53,7 @@ async def collecting_adapter(return_data, transmitted_data):
                 {stop_button: f'collecting stop {dino.alt_id}'}])
 
             await bot.send_photo(chatid, image, text, reply_markup=markup)
-            await send_message(chatid, t('back_text.actions_menu', lang),
+            await bot.send_message(chatid, t('back_text.actions_menu', lang),
                                         reply_markup= await m(userid, 'last_menu', lang)
                                         )
 
@@ -124,7 +124,7 @@ async def collecting_progress(message: Message):
                                   [{stop_button: f'collecting stop {last_dino.alt_id}'}]
                                      ))
         else:
-            await send_message(chatid, '❌',
+            await bot.send_message(chatid, '❌',
                                     reply_markup= await m(userid, 'last_menu', lang)
                                     )
     

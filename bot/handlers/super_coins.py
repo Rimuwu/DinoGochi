@@ -40,7 +40,7 @@ async def super_c(message: Message):
     
     await create_ads_data(userid)
     text, markup = await main_message(userid)
-    await send_message(chatid, text, reply_markup=markup, parse_mode="Markdown")
+    await bot.send_message(chatid, text, reply_markup=markup, parse_mode="Markdown")
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('super_coins'), private=True)
@@ -98,7 +98,7 @@ async def ads_limit(call: CallbackQuery):
     if code == 'no_ads':
         if not await premium(user_id):
             text = t("no_premium", lang)
-            await send_message(chatid, text)
+            await bot.send_message(chatid, text)
         else:
             await ads.update_one({'userid': user_id}, 
                                  {"$set": {'limit': 'inf'}})
@@ -138,7 +138,7 @@ async def super_shop(call: CallbackQuery):
                                    {'$inc': {'super_coins': -price}})
             for i in items: await AddItemToUser(user_id, i)
 
-            await send_message(chatid, t('super_coins.buy', lang))
+            await bot.send_message(chatid, t('super_coins.buy', lang))
 
             text, markup = await main_message(user_id)
             await bot.edit_message_text(text, chatid, call.message.id,

@@ -50,7 +50,7 @@ async def events_c(message: Message):
             text += f'_{seconds_to_str(event["time_end"] - int(time()), lang, max_lvl="minute")}_\n'
         text += f'{a}. {event_text}\n\n'
 
-    await send_message(chatid, text, parse_mode='Markdown')
+    await bot.send_message(chatid, text, parse_mode='Markdown')
 
 async def bonus_message(user, message, lang):
     userid = user.id
@@ -95,7 +95,7 @@ async def bonus_message(user, message, lang):
     markup_inline.add(InlineKeyboardButton(text=award, 
                             callback_data='daily_award'))
 
-    photo = await async_open('images/remain/taverna/dino_reward.png', 'rb')
+    photo = await async_open('images/remain/taverna/dino_reward.png', True)
     await bot.send_photo(message.chat.id, photo, 
             text, parse_mode='Markdown', reply_markup=markup_inline)
 
@@ -122,7 +122,7 @@ async def daily_award(callback: CallbackQuery):
     col = len(await get_dinos(userid))
     if not col:
         text = t('no_dinos', lang)
-        await send_message(chatid, text)
+        await bot.send_message(chatid, text)
         return
 
     if sec := await daily_award_con(userid):
@@ -144,13 +144,13 @@ async def daily_award(callback: CallbackQuery):
 
         text = t('daily_award.use', lang, time=strtime, 
                  items=str_items, coins=coins)
-        await send_message(chatid, text, parse_mode='Markdown')
+        await bot.send_message(chatid, text, parse_mode='Markdown')
 
         for i in items: await AddItemToUser(userid, i)
         await take_coins(userid, coins, True)
     else:
         text = t('daily_award.in_base', lang)
-        await send_message(chatid, text, parse_mode='Markdown')
+        await bot.send_message(chatid, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.edit', is_authorized=True)
 async def edit(message: Message):
@@ -162,7 +162,7 @@ async def edit(message: Message):
     b_mark = dict(zip(btn.values(), btn.keys()))
     mark = list_to_inline([b_mark], 2)
 
-    image = await async_open('images/remain/taverna/transformation.png', 'rb')
+    image = await async_open('images/remain/taverna/transformation.png', True)
     await bot.send_photo(chatid, image, text, parse_mode='Markdown', reply_markup=mark)
 
 async def edit_appearance(return_data, transmitted_data):
@@ -187,16 +187,16 @@ async def edit_appearance(return_data, transmitted_data):
             await dino.update({'$set': {'data_id': n_id}})
 
             text = t('edit_dino.new', lang)
-            await send_message(chatid, text, parse_mode='Markdown', 
+            await bot.send_message(chatid, text, parse_mode='Markdown', 
                                    reply_markup=inline_menu('dino_profile', lang, dino_alt_id_markup=dino.alt_id))
-            await send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
+            await bot.send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
                                    reply_markup= await m(userid, 'last_menu', lang))
             return
 
         else: text = t('edit_dino.no_items', lang)
     else: text = t('edit_dino.no_coins', lang)
 
-    await send_message(chatid, text, parse_mode='Markdown', 
+    await bot.send_message(chatid, text, parse_mode='Markdown', 
                            reply_markup= await m(userid, 'last_menu', lang))
 
 async def end_edit(code, transmitted_data):
@@ -235,17 +235,17 @@ async def end_edit(code, transmitted_data):
                 await dino.update({'$set': {'quality': quality}})
 
             text = t('edit_dino.new', lang)
-            await send_message(chatid, text, parse_mode='Markdown', 
+            await bot.send_message(chatid, text, parse_mode='Markdown', 
                                    reply_markup=inline_menu('dino_profile', lang, dino_alt_id_markup=dino.alt_id))
 
-            await send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
+            await bot.send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
                                    reply_markup= await m(userid, 'last_menu', lang))
             return
 
         else: text = t('edit_dino.no_items', lang)
     else: text = t('edit_dino.no_coins', lang)
 
-    await send_message(chatid, text, parse_mode='Markdown', 
+    await bot.send_message(chatid, text, parse_mode='Markdown', 
                            reply_markup= await m(userid, 'last_menu', lang))
 
 
@@ -266,10 +266,10 @@ async def dino_now(return_data, transmitted_data):
             buttons[f'{t("rare."+key+".2", lang)} {t("rare."+key+".1", lang)}'] = f'chooseinline {code} {key}'
     
     mark = list_to_inline([buttons], 2)
-    await send_message(chatid, text, parse_mode='Markdown', reply_markup=mark)
+    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=mark)
 
     await ChooseInlineState(end_edit, userid, chatid, lang, str(code), {'dino': dino, 'type': o_type})
-    await send_message(chatid,  t('edit_dino.new_rare', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
+    await bot.send_message(chatid,  t('edit_dino.new_rare', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('transformation') , is_authorized=True)
 async def transformation(callback: CallbackQuery):

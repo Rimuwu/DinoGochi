@@ -86,13 +86,13 @@ async def send_action_invite(userid: int, friendid: int, action: str, dino_alt: 
     button = t(f'send_action.{action}.send_button', friend_lang)
     markup = list_to_inline([{button: f'join_to_action {action} {dino_alt} {userid}'}])
     try:
-        await send_message(friendid, send_text, reply_markup=markup)
+        await bot.send_message(friendid, send_text, reply_markup=markup)
         ok = True
     except: ok = False
 
     if chat2_user and ok:
         for_me = t(f'send_action.{action}.for_me', lang, 
                    friendname=user_name(chat2_user.user))
-        await send_message(userid, for_me)
+        await bot.send_message(userid, for_me)
     else:
-        await send_message(userid, t('send_action.error', lang))
+        await bot.send_message(userid, t('send_action.error', lang))

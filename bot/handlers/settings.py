@@ -23,7 +23,7 @@ async def notification(result: bool, transmitted_data: dict):
     chatid = transmitted_data['chatid']
 
     text = t(f'not_set.{result}', lang)
-    await send_message(chatid, text, 
+    await bot.send_message(chatid, text, 
                     reply_markup= await m(userid, 'last_menu', lang))
     await users.update_one({'userid': userid}, {"$set": {'settings.notifications': result}})
 
@@ -43,7 +43,7 @@ async def notification_set(message: Message):
     keyboard = list_to_keyboard(translated, 2)
     
     await ChooseConfirmState(notification, userid, chatid, lang)
-    await send_message(userid, t('not_set.info', lang), 
+    await bot.send_message(userid, t('not_set.info', lang), 
                            reply_markup=keyboard)
 
 async def dino_profile(result: bool, transmitted_data: dict):
@@ -53,7 +53,7 @@ async def dino_profile(result: bool, transmitted_data: dict):
 
     data = get_data('profile_view.ans', lang)
     text = t(f'profile_view.result', lang, res = data[result-1])
-    await send_message(chatid, text, 
+    await bot.send_message(chatid, text, 
                     reply_markup= await m(userid, 
                     'last_menu', lang))
     await users.update_one({'userid': userid}, {"$set": {'settings.profile_view': result}})
@@ -77,7 +77,7 @@ async def dino_profile_set(message: Message):
 
     keyboard = list_to_keyboard(buttons, 2)
     await ChooseOptionState(dino_profile, userid, chatid, lang, settings_data)
-    await send_message(userid, t('profile_view.info', lang), 
+    await bot.send_message(userid, t('profile_view.info', lang), 
                            reply_markup=keyboard)
 
 
@@ -89,7 +89,7 @@ async def inventory(result: list, transmitted_data: dict):
     text = t(f'inv_set_pages.accept', lang, 
              gr = result[0], vr = result[1]
             )
-    await send_message(chatid, text, 
+    await bot.send_message(chatid, text, 
                     reply_markup= await m(userid, 'last_menu', lang))
     await users.update_one({'userid': userid}, {"$set": {'settings.inv_view': result}})
 
@@ -111,7 +111,7 @@ async def inventory_set(message: Message):
     keyboard = list_to_keyboard(buttons, 2)
 
     await ChooseOptionState(inventory, userid, chatid, lang, settings_data)
-    await send_message(userid, t('inv_set_pages.info', lang), 
+    await bot.send_message(userid, t('inv_set_pages.info', lang), 
                            reply_markup=keyboard)
 
 async def rename_dino_post_state(content: str, transmitted_data: dict):
@@ -125,7 +125,7 @@ async def rename_dino_post_state(content: str, transmitted_data: dict):
 
     text = t('rename_dino.rename', lang, 
              last_name=last_name, dino_name=content)
-    await send_message(chatid, text, 
+    await bot.send_message(chatid, text, 
                     reply_markup= await m(userid, 'last_menu', lang))
 
 
@@ -144,7 +144,7 @@ async def transition(dino: Dino, transmitted_data: dict):
     await ChooseStringState(rename_dino_post_state, userid, 
                             chatid, lang, max_len=20, transmitted_data=data)
 
-    await send_message(userid, text, reply_markup=markup)
+    await bot.send_message(userid, text, reply_markup=markup)
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings.dino_name', 
                      is_authorized=True)
@@ -161,7 +161,7 @@ async def custom_profile_adapter(content: str, transmitted_data: dict):
     chatid = transmitted_data['chatid']
 
     text = t('custom_profile.ok', lang)
-    await send_message(chatid, text, 
+    await bot.send_message(chatid, text, 
                            reply_markup= await m(userid, 'last_menu', lang))
 
     await users.update_one({'userid': userid}, 
@@ -177,11 +177,11 @@ async def custom_profile(message: Message):
     if await premium(userid):
         markup = list_to_keyboard([t('buttons_name.cancel', lang)])
         text = t('custom_profile.manual', lang)
-        await send_message(userid, text, reply_markup=markup)
+        await bot.send_message(userid, text, reply_markup=markup)
         await ChooseStringState(custom_profile_adapter, userid, chatid, lang, max_len=200)
     else:
         text = t('no_premium', lang)
-        await send_message(userid, text)
+        await bot.send_message(userid, text)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('rename_dino'), is_authorized=True, private=True)
 async def rename_button(callback: CallbackQuery):
@@ -204,7 +204,7 @@ async def adapter_delete(return_data, transmitted_data):
     lang = transmitted_data['lang']
 
     if return_data['code'] != transmitted_data['code']:
-        await send_message(chatid, t('delete_me.incorrect_code', lang),     
+        await bot.send_message(chatid, t('delete_me.incorrect_code', lang),     
                                parse_mode='Markdown', 
                                reply_markup= await m(userid, 'last_menu', lang))
 
@@ -213,7 +213,7 @@ async def adapter_delete(return_data, transmitted_data):
         await user.full_delete()
         r = list_to_keyboard([t('commands_name.start_game', lang)])
 
-        await send_message(chatid, t('delete_me.delete', lang),     
+        await bot.send_message(chatid, t('delete_me.delete', lang),     
                                parse_mode='Markdown', 
                                reply_markup=r)
 
@@ -276,7 +276,7 @@ async def my_name_end(content: str, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     name = escape_markdown(content)
     
-    await send_message(chatid, t('my_name.end', lang,
+    await bot.send_message(chatid, t('my_name.end', lang,
                                      owner_name=name),
                                parse_mode='Markdown', 
                                reply_markup= await m(userid, 'last_menu', lang))
@@ -289,7 +289,7 @@ async def my_name(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
     
-    await send_message(chatid, t('my_name.info', lang),
+    await bot.send_message(chatid, t('my_name.info', lang),
                                parse_mode='Markdown', 
                                reply_markup=cancel_markup(lang))
 
@@ -301,7 +301,7 @@ async def lang_set(new_lang: str, transmitted_data: dict):
 
     await langs.update_one({'userid': userid}, {'$set': {'lang': new_lang}})
 
-    await send_message(chatid, t('new_lang', new_lang),
+    await bot.send_message(chatid, t('new_lang', new_lang),
                                reply_markup= await m(userid, 'last_menu', new_lang))
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings2.lang', is_authorized=True)
@@ -317,7 +317,7 @@ async def lang(message: Message):
     buttons = list_to_keyboard(b_list)
     options = dict(zip(lang_data.values(), lang_data.keys()))
 
-    await send_message(chatid, t('lang_set', lang),
+    await bot.send_message(chatid, t('lang_set', lang),
                                reply_markup=buttons)
 
     await ChooseOptionState(lang_set, userid, chatid, lang, options)

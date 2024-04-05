@@ -264,7 +264,7 @@ async def stock(return_data, transmitted_data):
 
     await ChooseIntState(stock_adapter, userid, chatid, lang, 1, 20, transmitted_data=transmitted_data)
 
-    await send_message(chatid, t(f'add_product.stock.{option}', lang), reply_markup=cancel_markup(lang), parse_mode='Markdown')
+    await bot.send_message(chatid, t(f'add_product.stock.{option}', lang), reply_markup=cancel_markup(lang), parse_mode='Markdown')
 
 async def stock_adapter(in_stock:int, transmitted_data:dict):
     """ Запращивает запас у пользователя (конец)

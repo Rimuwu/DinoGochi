@@ -27,7 +27,7 @@ async def timer(message: Message):
         try:
             text = seconds_to_str(int(num), lang, mini, max_lvl)
         except: text = 'error'
-        await send_message(chatid, text)
+        await bot.send_message(chatid, text)
 
 @bot.message_handler(pass_bot=True, commands=['string_to_sec'], private=True)
 async def string_time(message):
@@ -37,10 +37,10 @@ async def string_time(message):
 
     if txt == '':
         text = t('string_to_str.info', lang)
-        await send_message(chatid, text, parse_mode='Markdown')
+        await bot.send_message(chatid, text, parse_mode='Markdown')
     else:
         sec = str_to_seconds(txt)
-        await send_message(chatid, str(sec))
+        await bot.send_message(chatid, str(sec))
 
 @bot.message_handler(pass_bot=True, commands=['pushinfo'])
 async def push_info(message: Message):
@@ -48,7 +48,7 @@ async def push_info(message: Message):
     lang = await get_lang(message.from_user.id)
 
     text = t('push.push_info', lang)
-    await send_message(chatid, text, parse_mode='Markdown')
+    await bot.send_message(chatid, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, commands=['add_me'], private=False)
 async def profile(message: Message):
@@ -73,7 +73,7 @@ async def promo(message: Message):
         user = await users.find_one({'userid': userid})
         if user:
             status, text = await use_promo(code, userid, lang)
-            await send_message(chatid, text, parse_mode='Markdown')
+            await bot.send_message(chatid, text, parse_mode='Markdown')
         else:
             await start_game(message, code, 'promo')
 
@@ -82,4 +82,4 @@ async def help(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
     
-    await send_message(chatid, t('help_command.all', lang), parse_mode='html')
+    await bot.send_message(chatid, t('help_command.all', lang), parse_mode='html')

@@ -28,7 +28,7 @@ from asyncio import sleep
 
 async def cancel(message):
     lang = await get_lang(message.from_user.id)
-    await send_message(message.chat.id, "❌", 
+    await bot.send_message(message.chat.id, "❌", 
           reply_markup= await m(message.from_user.id, 'last_menu', lang))
     await bot.delete_state(message.from_user.id, message.chat.id)
     await bot.reset_data(message.from_user.id,  message.chat.id)
@@ -190,7 +190,7 @@ async def item_callback(call: CallbackQuery):
                     i_name = get_name(item['item_id'], lang)
 
                     if await RemoveItemFromUser(userid, item['item_id'], 1, preabil):
-                        await send_message(chatid, 
+                        await bot.send_message(chatid, 
                             t('item_use.egg.incubation', lang, 
                             item_name = i_name, end_time=end_time),  
                             reply_markup= await m(userid, 'last_menu', lang))
@@ -200,7 +200,7 @@ async def item_callback(call: CallbackQuery):
                         new_text = t('item_use.egg.edit_content', lang)
                         await bot.edit_message_caption(new_text, chatid, call.message.id, reply_markup=None)
             else:
-                await send_message(chatid, 
+                await bot.send_message(chatid, 
                         t('item_use.cannot_be_used', lang),  
                           reply_markup= await m(userid, 'last_menu', lang))
         else: print('item_callback', call_data[1])
@@ -253,7 +253,7 @@ async def search_message(message: Message):
             data['items'] = searched
         await swipe_page(userid, chatid)
     else:
-        m = await send_message(chatid, t('inventory.search_null', lang))
+        m = await bot.send_message(chatid, t('inventory.search_null', lang))
         await sleep(10.0)
         await bot.delete_message(chatid, m.message_id)
         await bot.delete_message(chatid, message.message_id)
@@ -340,7 +340,7 @@ async def ns_craft(call: CallbackQuery):
         'ns_id': ns_id
     }
     await ChooseIntState(ns_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
-    await send_message(chatid, t('css.wait_count', lang), 
+    await bot.send_message(chatid, t('css.wait_count', lang), 
                        reply_markup=count_markup(25, lang))
 
 
@@ -373,10 +373,10 @@ async def ns_end(count, transmitted_data: dict):
 
         text = t('ns_craft.create', lang, 
                   items = counts_items(item['ns_craft'][ns_id]['create'], lang))
-        await send_message(chatid, text, 
+        await bot.send_message(chatid, text, 
                            reply_markup = await m(userid, 'last_menu', lang))
     else:
-        await send_message(chatid, t('ns_craft.not_materials', lang),
+        await bot.send_message(chatid, t('ns_craft.not_materials', lang),
                            reply_markup = await m(userid, 'last_menu', lang))
 
 
@@ -403,7 +403,7 @@ async def buyer(call: CallbackQuery):
     }
     await ChooseIntState(buyer_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
 
-    await send_message(chatid, t('buyer.choose', lang,
+    await bot.send_message(chatid, t('buyer.choose', lang,
                                  emoji=emoji, one_col=one_col,
                                  price=price), 
                        reply_markup=count_markup(25, lang),
@@ -433,8 +433,8 @@ async def buyer_end(count, transmitted_data: dict):
         await RemoveItemFromUser(userid, item['item_id'], need_col, preabil)
         await take_coins(userid, price, True)
 
-        await send_message(chatid, t('buyer.ok', lang), 
+        await bot.send_message(chatid, t('buyer.ok', lang), 
                            reply_markup=await m(userid, 'last_menu', lang))
     else:
-        await send_message(chatid, t('buyer.no', lang), 
+        await bot.send_message(chatid, t('buyer.no', lang), 
                            reply_markup=await m(userid, 'last_menu', lang))

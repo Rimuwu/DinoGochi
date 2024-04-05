@@ -94,7 +94,7 @@ async def delete_markup(transmitted_data):
     lang = transmitted_data['lang']
     
     text = t(f'entertainments.zero', lang)
-    await send_message(chatid, text, reply_markup=cancel_markup(lang))
+    await bot.send_message(chatid, text, reply_markup=cancel_markup(lang))
     return transmitted_data, 0
 
 async def game_start(return_data: dict, 
@@ -115,7 +115,7 @@ async def game_start(return_data: dict,
     res_dino_status = await dinosaurs.find_one({"_id": dino._id}, {'status': 1})
     if res_dino_status:
         if res_dino_status['status'] != 'pass':
-            await send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
+            await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
             return
 
     percent, repeat = await dino.memory_percent('games', game)
@@ -128,7 +128,7 @@ async def game_start(return_data: dict,
             if not res: 
                 join_dino = 0
                 text_m = t('entertainments.join_end', lang)
-                await send_message(chatid, text_m)
+                await bot.send_message(chatid, text_m)
             else: 
                 percent += 0.5
 
@@ -171,7 +171,7 @@ async def game_start(return_data: dict,
         markup = list_to_inline([
             {button: f'invite_to_action game {dino.alt_id}'}
         ])
-        await send_message(chatid, text, reply_markup=markup)
+        await bot.send_message(chatid, text, reply_markup=markup)
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions.entertainments', dino_pass=True, nothing_state=True)
 async def entertainments(message: Message):
@@ -229,11 +229,11 @@ async def stop_game(message: Message):
                 else:
                     # Невозможно оторвать от игры
                     text = t('stop_game.dont_tear', lang)
-                await send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang, True))
+                await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang, True))
 
             else:
                 if last_dino.status == 'game':
                     await last_dino.update({'$set': {'status': 'pass'}})
-                await send_message(chatid, '❌', reply_markup= await m(userid, 'last_menu', lang, True))
+                await bot.send_message(chatid, '❌', reply_markup= await m(userid, 'last_menu', lang, True))
         else:
-            await send_message(chatid, t('stop_game.unrestrained_play', lang))
+            await bot.send_message(chatid, t('stop_game.unrestrained_play', lang))

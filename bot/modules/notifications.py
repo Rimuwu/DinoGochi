@@ -4,6 +4,7 @@ from asyncio import sleep
 
 from bson.objectid import ObjectId
 from telebot.types import InlineKeyboardMarkup
+from telebot.util import antiflood
 
 from bot.config import mongo_client, conf
 from bot.exec import bot
@@ -140,9 +141,10 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
                 try:
                     try:
                         await sleep(0.05)
-                        await send_message(owner['owner_id'], text, reply_markup=markup_inline, parse_mode='Markdown')
+                        antiflood
+                        await bot.send_message(owner['owner_id'], text, reply_markup=markup_inline, parse_mode='Markdown')
                     except Exception:
-                        await send_message(owner['owner_id'], text, reply_markup=markup_inline)
+                        await bot.send_message(owner['owner_id'], text, reply_markup=markup_inline)
                 except Exception as error:
                     if conf.debug:
                         log(prefix='DinoNotification Error', 
@@ -211,10 +213,10 @@ async def user_notification(user_id: int, not_type: str,
         message=f'User: {user_id}, Data: {not_type} Kwargs: {kwargs}', lvl=0)
     try:
         try:
-            await sleep(0.05)
-            await send_message(user_id, text, reply_markup=markup_inline, parse_mode='Markdown')
+            
+            await bot.send_message(user_id, text, reply_markup=markup_inline, parse_mode='Markdown')
         except Exception:
-            await send_message(user_id, text, reply_markup=markup_inline)
+            await bot.send_message(user_id, text, reply_markup=markup_inline)
     except Exception as error: 
         log(prefix='Notification Error', 
             message=f'User: {user_id}, Data: {not_type} Error: {error}', 

@@ -57,7 +57,7 @@ async def ChooseDinoState(function, userid: int, chatid: int,
 
     if ret_data['case'] == 0:
         if send_error:
-            await send_message(chatid, 
+            await bot.send_message(chatid, 
                 t('css.no_dino', lang),
                 reply_markup= await m(userid, 'last_menu', lang))
         return False, 'cancel'
@@ -75,7 +75,7 @@ async def ChooseDinoState(function, userid: int, chatid: int,
             data['dino_names'] = ret_data['data_names']
             data['transmitted_data'] = transmitted_data
 
-        await send_message(chatid, t('css.dino', lang), reply_markup=ret_data['keyboard'])
+        await bot.send_message(chatid, t('css.dino', lang), reply_markup=ret_data['keyboard'])
         return True, 'dino'
 
     else: return False, 'error'
@@ -261,7 +261,7 @@ async def update_page(pages: list, page: int, chat_id: int, lang: str):
     keyboard = list_to_keyboard(pages[page])
     keyboard = down_menu(keyboard, len(pages) > 1, lang)
 
-    await send_message(chat_id, t('optionplus.update_page', lang), reply_markup=keyboard)
+    await bot.send_message(chat_id, t('optionplus.update_page', lang), reply_markup=keyboard)
 
 async def ChoosePagesState(function, userid: int, 
                          chatid: int, lang: str,
@@ -348,7 +348,7 @@ async def friend_handler(friend, transmitted_data: dict):
         photo_id = photos.photos[0][0].file_id #type: ignore
         await bot.send_photo(chatid, photo_id, text, parse_mode='Markdown', reply_markup=markup)
     else:
-        await send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
 async def start_friend_menu(function, 
                 userid: int, chatid: int, lang: str, 
@@ -596,7 +596,7 @@ async def next_step(answer, transmitted_data: dict, start: bool=False):
                         bmessage = await bot.send_photo(chatid, photo=photo, parse_mode='Markdown', **ret_data['message'])
                     else:
                         if 'text' in ret_data['message']:
-                            bmessage = await send_message(chatid, parse_mode='Markdown', **ret_data['message'])
+                            bmessage = await bot.send_message(chatid, parse_mode='Markdown', **ret_data['message'])
                             ret_data['bmessageid'] = bmessage.id
 
         # Обновление данных состояния

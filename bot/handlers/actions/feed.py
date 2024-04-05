@@ -28,7 +28,7 @@ async def adapter_function(return_dict, transmitted_data):
     send_status, return_text = await use_item(userid, chatid, lang, item, count, dino)
     
     if send_status:
-        await send_message(chatid, return_text, parse_mode='Markdown', reply_markup= await m(userid, 'last_menu', lang))
+        await bot.send_message(chatid, return_text, parse_mode='Markdown', reply_markup= await m(userid, 'last_menu', lang))
 
 async def inventory_adapter(item, transmitted_data):
     userid = transmitted_data['userid']

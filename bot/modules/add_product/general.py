@@ -117,10 +117,10 @@ async def end(return_data, transmitted_data):
         m_text, markup = await product_ui(lang, pr_id, True)
 
         try:
-            await send_message(chatid, m_text, reply_markup=markup,
+            await bot.send_message(chatid, m_text, reply_markup=markup,
                                    parse_mode='Markdown')
         except Exception as e:
             print(e)
-            await send_message(chatid, m_text, reply_markup=markup)
+            await bot.send_message(chatid, m_text, reply_markup=markup)
 
-    await send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang), parse_mode='Markdown')
+    await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang), parse_mode='Markdown')

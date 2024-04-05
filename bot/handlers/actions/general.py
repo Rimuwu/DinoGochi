@@ -33,7 +33,7 @@ async def edit_dino_buttom(message: Message):
         data_names[txt] = f'activ_dino {element.alt_id}'
     
     inline = list_to_inline([data_names], 2)
-    await send_message(user_id, 
+    await bot.send_message(user_id, 
                            t('edit_dino_button.edit', lang), 
                            reply_markup=inline)
 
@@ -54,7 +54,7 @@ async def answer_edit(callback: CallbackQuery):
     dino = await dinosaurs.find_one({'alt_id': data}, {'_id': 1, 'name': 1})
     if dino:
         await user.update({'$set': {'settings.last_dino': dino['_id']}})
-        await send_message(user_id, 
+        await bot.send_message(user_id, 
                 t('edit_dino_button.susseful', lang, name=dino['name']),
                 reply_markup= await m(user_id, 'actions_menu', lang, True))
 
@@ -67,7 +67,7 @@ async def invite_adp(friend, transmitted_data: dict):
     
     await send_action_invite(userid, friend.id, action, dino_alt, lang)
     # Возврат в меню
-    await send_message(chatid, t('back_text.actions_menu', lang), 
+    await bot.send_message(chatid, t('back_text.actions_menu', lang), 
                        reply_markup= await m(userid, 'last_menu', lang))
 
 @bot.callback_query_handler(pass_bot=True, func=
@@ -90,7 +90,7 @@ async def invite_to_action(callback: CallbackQuery):
             await start_friend_menu(invite_adp, userid, chatid, lang, True, transmitted_data)
 
             text = t('invite_to_action', lang)
-            await send_message(chatid, text, parse_mode='Markdown')
+            await bot.send_message(chatid, text, parse_mode='Markdown')
 
 async def join_adp(dino: Dino, transmitted_data):
     userid = transmitted_data['userid']
@@ -108,7 +108,7 @@ async def join_adp(dino: Dino, transmitted_data):
         text = t('alredy_busy', lang)
 
     if text:
-        await send_message(chatid, text, parse_mode='Markdown', reply_markup= await m(userid, 'last_menu', lang))
+        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup= await m(userid, 'last_menu', lang))
     
     else:
         if action == 'game':
@@ -132,7 +132,7 @@ async def join(callback: CallbackQuery):
         res = await game_task.find_one({'dino_id': dino['_id']})
         if not res: 
             text = t('entertainments.join_end', lang)
-            await send_message(chatid, text)
+            await bot.send_message(chatid, text)
         else:
             transmitted_data = {
                 'action': action,

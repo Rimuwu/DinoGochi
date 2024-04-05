@@ -40,7 +40,7 @@ async def create_tracking(message: Message):
     lang = await get_lang(message.from_user.id)
 
     await ChooseStringState(create_track, userid, chatid, lang, 1, 0)
-    await send_message(chatid, t("create_tracking.name", lang), parse_mode='Markdown')
+    await bot.send_message(chatid, t("create_tracking.name", lang), parse_mode='Markdown')
 
 async def create_track(name, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -58,7 +58,7 @@ async def create_track(name, transmitted_data: dict):
     elif res == -1: text = 'error name find'
     elif res == 1: text = t("create_tracking.already", lang)
 
-    await send_message(chatid, text, parse_mode='Markdown')
+    await bot.send_message(chatid, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, commands=['tracking'], is_admin=True)
 async def tracking(message: Message):
@@ -68,14 +68,14 @@ async def tracking(message: Message):
 
     options = await get_track_pages()
     res = await ChoosePagesState(track_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False)
-    await send_message(chatid, t("track_open", lang), parse_mode='Markdown')
+    await bot.send_message(chatid, t("track_open", lang), parse_mode='Markdown')
 
 async def track_info_adp(data, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
     text, markup = await track_info(data, lang)
-    await send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('track'), private=True)
 async def track(call: CallbackQuery):
@@ -99,7 +99,7 @@ async def track(call: CallbackQuery):
             await management.update_one({'_id': 'tracking_links'}, 
                                 {'$set': {f'links.{code}.col': 0}})
 
-        await send_message(chatid, text)
+        await bot.send_message(chatid, text)
 
 @bot.message_handler(pass_bot=True, commands=['create_promo'], is_admin=True)
 async def create_promo(message: Message):
@@ -117,14 +117,14 @@ async def promos(message: Message):
 
     options = await get_promo_pages()
     res = await ChoosePagesState(promo_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False)
-    await send_message(chatid, t("promo_commands.promo_open", lang), parse_mode='Markdown')
+    await bot.send_message(chatid, t("promo_commands.promo_open", lang), parse_mode='Markdown')
 
 async def promo_info_adp(code, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
     text, markup = await promo_ui(code, lang)
-    await send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('promo'))
 async def promo_call(call: CallbackQuery):
@@ -179,9 +179,9 @@ async def promo_call(call: CallbackQuery):
 
         elif action == 'use':
             status, text = await use_promo(code, userid, lang)
-            await send_message(userid, text, parse_mode='Markdown')
+            await bot.send_message(userid, text, parse_mode='Markdown')
     else:
-        await send_message(userid, t('promo_commands.not_found', lang), parse_mode='Markdown')
+        await bot.send_message(userid, t('promo_commands.not_found', lang), parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, commands=['link_promo'])
 async def link_promo(message):
@@ -215,10 +215,10 @@ async def link_promo(message):
 
                     markup_inline = list_to_inline([but])
                     await bot.edit_message_reply_markup(fw_chat_id, fw_ms_id, reply_markup=markup_inline)
-                    await send_message(user.id, text_dict['create'])
+                    await bot.send_message(user.id, text_dict['create'])
 
             else:
-                await send_message(user.id, text_dict['not_found'])
+                await bot.send_message(user.id, text_dict['not_found'])
 
 @bot.message_handler(commands=['add_premium'], is_admin=True)
 async def add_premium(message):
@@ -237,7 +237,7 @@ async def add_premium(message):
     else: userid = message.from_user.id
 
     await award_premium(userid, tt)
-    await send_message(message.from_user.id, 'ok')
+    await bot.send_message(message.from_user.id, 'ok')
     
 @bot.message_handler(commands=['copy_m'], is_admin=True)
 async def copy_m(message):
@@ -273,10 +273,10 @@ async def copy_m(message):
         'start_lang': lang
     }
 
-    users_sends = list(await langs.find({'lang': arg_list[0]}).to_list(None))
+    users_sends = list(await langs.find({'lang': arg_list[0]}).to_list(None)) #type: ignore
 
     await ChooseConfirmState(confirm_send, userid, chatid, lang, True, trs_data)
-    await send_message(chatid, f"Confirm the newsletter for {len(users_sends)} users with language {arg_list[0]}", reply_markup=confirm_markup(lang))
+    await bot.send_message(chatid, f"Confirm the newsletter for {len(users_sends)} users with language {arg_list[0]}", reply_markup=confirm_markup(lang))
 
 async def confirm_send(_, transmitted_data: dict):
     forward_chat = transmitted_data['forward_chat']
@@ -287,7 +287,7 @@ async def confirm_send(_, transmitted_data: dict):
     start_chat = transmitted_data['start_chat']
     start_lang = transmitted_data['start_lang']
     
-    await send_message(start_chat, f"🍡", reply_markup=await m(start_chat, 'last_menu', start_lang))
+    await bot.send_message(start_chat, f"🍡", reply_markup=await m(start_chat, 'last_menu', start_lang))
 
     users_sends = list(await langs.find({'lang': to_lang}).to_list(None))
     start_time = time()
@@ -309,4 +309,4 @@ async def confirm_send(_, transmitted_data: dict):
                     col += 1
                 except: pass
 
-    await send_message(start_chat, f"Completed in {round(time() - start_time, 2)}, sent for {col} / {len(users_sends)}")
+    await bot.send_message(start_chat, f"Completed in {round(time() - start_time, 2)}, sent for {col} / {len(users_sends)}")

@@ -137,14 +137,14 @@ async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
     else: markup = None
 
     if not image:
-        await send_message(chatid, text, 'Markdown',
+        await bot.send_message(chatid, text, 'Markdown',
                             reply_markup=markup)
     else:
         try:
             await bot.send_photo(chatid, image, text, 'Markdown', 
                             reply_markup=markup)
         except: 
-             await send_message(chatid, text,
+             await bot.send_message(chatid, text,
                             reply_markup=markup)
 
 async def swipe_page(userid: int, chatid: int):
@@ -193,16 +193,16 @@ async def swipe_page(userid: int, chatid: int):
 
     inl_menu = list_to_inline([buttons], 4)
     if main_message == 0:
-        new_main = await send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
+        new_main = await bot.send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
         async with bot.retrieve_data(userid, chatid) as data:
             data['main_message'] = new_main.message_id
     else:
         await bot.edit_message_text(menu_text, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
     
     if up_message == 0:
-        new_up = await send_message(chatid, text, reply_markup=keyboard)
+        new_up = await bot.send_message(chatid, text, reply_markup=keyboard)
     else:
-        new_up = await send_message(chatid, text, reply_markup=keyboard)
+        new_up = await bot.send_message(chatid, text, reply_markup=keyboard)
         await bot.delete_message(chatid, up_message)
 
     async with bot.retrieve_data(userid, chatid) as data:
@@ -225,15 +225,15 @@ async def search_menu(userid: int, chatid: int):
     keyboard = list_to_keyboard([ t('buttons_name.cancel', settings['lang']) ])
     
     if up_message == 0:
-        await send_message(chatid, text, reply_markup=keyboard)
+        await bot.send_message(chatid, text, reply_markup=keyboard)
     else:
-        new_up = await send_message(chatid, text, reply_markup=keyboard)
+        new_up = await bot.send_message(chatid, text, reply_markup=keyboard)
         await bot.delete_message(chatid, up_message)
         async with bot.retrieve_data(userid, chatid) as data:
             data['up_message'] = new_up.message_id
     
     if main_message == 0:
-        new_main = await send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
+        new_main = await bot.send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
         async with bot.retrieve_data(userid, chatid) as data:
             data['main_message'] = new_main.message_id
     else:
@@ -266,15 +266,15 @@ async def filter_menu(userid: int, chatid: int, upd_up_m: bool = True):
 
     if upd_up_m:
         if up_message == 0:
-            await send_message(chatid, text, reply_markup=keyboard)
+            await bot.send_message(chatid, text, reply_markup=keyboard)
         else:
-            new_up = await send_message(chatid, text, reply_markup=keyboard)
+            new_up = await bot.send_message(chatid, text, reply_markup=keyboard)
             await bot.delete_message(chatid, up_message)
             async with bot.retrieve_data(userid, chatid) as data:
                 data['up_message'] = new_up.message_id
     
     if main_message == 0:
-        new_main = await send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
+        new_main = await bot.send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
         async with bot.retrieve_data(userid, chatid) as data:
             data['main_message'] = new_main.message_id
     else:
@@ -285,8 +285,8 @@ async def filter_menu(userid: int, chatid: int, upd_up_m: bool = True):
     #         await bot.edit_message_text(menu_text, chatid, settings['edited_message'], reply_markup=inl_menu, parse_mode='Markdown')
     #     except: pass
     # else:
-    #     await send_message(chatid, text, reply_markup=keyboard)
-    #     msg = await send_message(chatid, menu_text, 
+    #     await bot.send_message(chatid, text, reply_markup=keyboard)
+    #     msg = await bot.send_message(chatid, menu_text, 
     #                         parse_mode='Markdown', reply_markup=inl_menu)
         
     #     async with bot.retrieve_data(
@@ -323,7 +323,7 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
     pages, row, items_data = inventory_pages(inventory, lang, inv_view, type_filter, item_filter)
 
     if not pages:
-        await send_message(chatid, t('inventory.null', lang), 
+        await bot.send_message(chatid, t('inventory.null', lang), 
                            reply_markup=await m(chatid, 'last_menu', language_code=lang))
         return False, 'cancel'
     else:

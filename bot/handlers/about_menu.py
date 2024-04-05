@@ -19,7 +19,7 @@ async def team(message: Message):
     lang_text = t('language_name', lang)
     author_loc = t('localization_author', lang)
 
-    await send_message(chatid, t('about_menu.team', lang, 
+    await bot.send_message(chatid, t('about_menu.team', lang, 
                                      lang_name=lang_text,
                                      author=author_loc
                                     ), parse_mode='html')
@@ -30,7 +30,7 @@ async def links(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await send_message(chatid, t('about_menu.links', lang), parse_mode='Markdown')
+    await bot.send_message(chatid, t('about_menu.links', lang), parse_mode='Markdown')
 
 async def main_support_menu(lang: str):
     image = await async_open('images/remain/support/placeholder.png', True)
@@ -90,7 +90,7 @@ async def faq(message: Message):
             callback_data=key
         ) for key, name in buttons.items()])
 
-    await send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline)
+    await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('faq'))
@@ -100,7 +100,7 @@ async def faq_buttons(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
 
     text = t(f'faq.{data}', lang)
-    await send_message(chatid, text, parse_mode='Markdown')
+    await bot.send_message(chatid, text, parse_mode='Markdown')
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('support'))
