@@ -7,6 +7,7 @@ from bot.modules.notifications import user_notification
 from bot.taskmanager import add_task
 from bot.modules.donation import check_donations
 from bot.modules.localization import  get_lang
+from asyncio import sleep
 
 subscriptions = mongo_client.user.subscriptions
 users = mongo_client.bot.users
@@ -26,6 +27,7 @@ async def subscription_notification():
                                 add_way='subscription_end_day'
                                 )
         await subscriptions.update_one({'_id': sub['_id']}, {'$set': {'end_notif': True}})
+        await sleep(0.25)
 
 async def subscription_check():
     data = list(await subscriptions.find(
