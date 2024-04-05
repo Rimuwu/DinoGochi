@@ -150,11 +150,12 @@ async def AddItemToUser(userid: int, itemid: str, count: int = 1, preabil: dict 
                                      'items_data': item}, {'_id': 1})
 
     if find_res: action = 'plus_count'
-    elif 'abilities' in item or preabil: action = 'new_edited_item'
+    if 'abilities' in item or preabil: action = 'new_edited_item' # Хочешь сломать всего бота? Поменяй if на elif
     else: action = 'new_item'
 
     if action == 'plus_count' and find_res:
         await items.update_one({'_id': find_res['_id']}, {'$inc': {'count': count}})
+
     elif action == 'new_edited_item':
         for _ in range(count):
             item_dict = {

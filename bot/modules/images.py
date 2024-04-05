@@ -226,8 +226,7 @@ async def create_dino_image(dino_id: int, stats: dict, quality: str='com', profi
     loop = asyncio.get_running_loop()
     result = await loop.run_in_executor(POOL, create_dino_image_pst, dino_id, stats, quality, profile_view, age, custom_url)
 
-    rss = await result
-    return rss
+    return await result
 
 async def dino_game_pst(dino_id: int, add_dino_id: int = 0):
     n_img = randint(1, 2)

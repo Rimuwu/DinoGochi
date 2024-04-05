@@ -3,11 +3,9 @@
 from telebot.asyncio_handler_backends import BaseMiddleware, SkipHandler
 from telebot.types import Message
 from bot.exec import bot
-from bot.config import mongo_client, conf
+from bot.config import mongo_client
 from time import time as time_now
 from bot.modules.advert import auto_ads
- 
-from bot.modules.user import premium
 
 DEFAULT_RATE_LIMIT = 0.2
 users = mongo_client.user.users
@@ -31,4 +29,4 @@ class AntifloodMiddleware(BaseMiddleware):
         await auto_ads(message)
 
 
-bot.setup_middleware(AntifloodMiddleware())  
+bot.setup_middleware(AntifloodMiddleware())
