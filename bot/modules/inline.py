@@ -43,7 +43,7 @@ def item_info_markup(item: dict, lang):
     if not('abilities' in item and 'interact' in item['abilities'] and not(item['abilities']['interact'])):
         buttons_dict[loc_data['delete']] = f'item delete {code}'
 
-        if not item_data['cant_sell']:
+        if 'cant_sell' not in item_data or ('cant_sell' in item_data and not item_data['cant_sell']):
             buttons_dict[loc_data['exchange']] = f'item exchange {code}'
 
     markup_inline = list_to_inline([buttons_dict], 2)
