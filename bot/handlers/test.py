@@ -34,11 +34,13 @@ from bot.modules.journey import create_event, random_event, activate_event
 from bot.modules.market import (add_product, create_seller,
                                 generate_sell_pages, product_ui, seller_ui)
 from bson.objectid import ObjectId
-from bot.modules.images import create_dino_image, create_dino_image_pst
+from bot.modules.images import create_dino_image, create_dino_image_pst, async_open
 
 from bot.modules.events import create_event, add_event, get_event
 
 from typing import Optional
+from PIL import Image
+
 from bot.modules.advert import show_advert
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
@@ -201,3 +203,28 @@ async def fix(message):
             await AddItemToUser(i['owner_id'], i['items_data']['item_id'], i['count'], preabil)
     
     print("Nice!")
+
+
+async def f1():
+    
+    bg_p = Image.open(
+        f'images/remain/egg_ask/back.png'
+        )
+
+async def f2():
+    bg_p = await async_open(
+        f'images/remain/egg_ask/back.png'
+    )
+
+
+@bot.message_handler(pass_bot=True, commands=['t12'], is_admin=True)
+async def t12(message):
+
+
+    st = time()
+    await f1()
+    print(time() - st)
+    
+    st = time()
+    await f2()
+    print(time() - st)

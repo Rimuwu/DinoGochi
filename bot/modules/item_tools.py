@@ -6,7 +6,7 @@ from bot.exec import bot
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      random_dict, seconds_to_str)
 from bot.modules.dinosaur import Dino, edited_stats, insert_dino
-from bot.modules.images import create_eggs_image
+from bot.modules.images import async_open, create_eggs_image
 from bot.modules.item import (AddItemToUser, CalculateDowngradeitem,
                               CheckItemFromUser, EditItemFromUser,
                               RemoveItemFromUser, UseAutoRemove, counts_items,
@@ -309,7 +309,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
             drop_item_data = get_data(item_id)
             item_name = get_name(item_id, lang)
-            image = open(f"images/items/{drop_item_data['image']}.png", 'rb')
+            image = await async_open(f"images/items/{drop_item_data['image']}.png", True)
 
             await bot.send_photo(userid, image, 
                                     t('item_use.case.drop_item', lang, item_name=item_name, col=data['col']), 

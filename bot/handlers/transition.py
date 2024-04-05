@@ -9,6 +9,7 @@ from bot.config import mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, seconds_to_str, user_name
+from bot.modules.images import async_open
 from bot.modules.item import counts_items, AddItemToUser
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import back_menu
@@ -131,7 +132,7 @@ async def tavern_menu(message: Message):
     lang = await get_lang(message.from_user.id)
     text = ''
 
-    photo = open('images/remain/taverna/dino_taverna.png', 'rb')
+    photo = await async_open('images/remain/taverna/dino_taverna.png', 'rb')
     await bot.send_photo(message.chat.id, photo, 
             t('menu_text.dino_tavern.info', lang))
 
@@ -208,7 +209,7 @@ async def about_menu(message: Message):
         
         update_time = seconds_to_str(delta.seconds, lang, True)
 
-    photo = open('images/remain/about/menu.png', 'rb')
+    photo = await async_open('images/remain/about/menu.png', 'rb')
     await bot.send_photo(message.chat.id, photo, 
             t('menu_text.about', lang, bot_name=bot_name,
               col_u=col_u, col_d=col_d, 

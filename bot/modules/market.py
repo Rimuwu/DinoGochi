@@ -7,7 +7,7 @@ from bot.exec import bot
 from bot.modules.data_format import list_to_inline, random_code, seconds_to_str, item_list, escape_markdown
 from bot.modules.item import AddListItems, counts_items, get_item_dict, AddItemToUser, CheckCountItemFromUser, RemoveItemFromUser, item_code
 from bot.modules.item import get_data as get_item_data
-from bot.modules.images import market_image
+from bot.modules.images import async_open, market_image
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.user import get_inventory, take_coins, premium
 from bot.const import ITEMS
@@ -144,7 +144,7 @@ async def seller_ui(owner_id: int, lang: str, my_market: bool, name: str = ''):
         if 'custom_image' in seller and seller['custom_image'] and await premium(owner_id):
             img = await market_image(seller['custom_image'], status)
         else:
-            img = open(f'images/remain/market/{status}.png', 'rb')
+            img = await async_open(f'images/remain/market/{status}.png', True)
 
     return text, markup, img
 

@@ -8,7 +8,7 @@ from bot.exec import bot
 from bot.handlers.states import cancel
 from bot.modules.data_format import list_to_keyboard, seconds_to_str, user_name
 from bot.modules.dinosaur import incubation_egg
-from bot.modules.images import create_eggs_image
+from bot.modules.images import async_open, create_eggs_image
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import markups_menu as m
 from bot.modules.user import insert_user
@@ -88,7 +88,7 @@ async def start_game_message(message: types.Message):
         buttons_list = [get_data('commands_name.start_game', locale=langue_code)]
         markup = list_to_keyboard(buttons_list)
 
-    image = open('images/remain/start/placeholder.png', 'rb')
+    image = await async_open('images/remain/start/placeholder.png', True)
     text = t('start_command.first_message', langue_code, username=username)
 
     await bot.send_photo(message.chat.id, image, text, reply_markup=markup, parse_mode='HTML')

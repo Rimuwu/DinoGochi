@@ -61,6 +61,20 @@ img_dates = {
     'leg': (255, 212, 59)
 }
 
+async def async_open(image_path, to_file: bool = False):
+    loop = asyncio.get_running_loop()
+
+    try:
+        img = await loop.run_in_executor(None, Image.open, image_path)
+        if to_file:
+            return pil_image_to_file(img)
+        return img
+    except Exception as err:
+        print(f"Error loading image at path {image_path} with exception: {err}")
+
+    return Image.new('RGB', (100, 100))
+
+
 def age_size(age, max_size, days): return age * ((max_size-150) // days) + 150
 
 def vertical_resizing(age: int, max_size, max_x, max_y, days = 30):
@@ -90,13 +104,13 @@ async def create_eggs_image_pst():
     """Создаёт изображение выбора яиц.
     """
     id_l = [] #Хранит id яиц
-    bg_p = Image.open(
+    bg_p = await async_open(
         f'images/remain/egg_ask/{choice(GAME_SETTINGS["egg_ask_backs"])}.png'
         ) #Случайный фон
 
     for i in range(3):
         rid = str(choice(list(DINOS['data']['egg']))) #Выбираем рандомное яйцо
-        image = Image.open('images/' + str(DINOS['elements'][rid]['image']))
+        image = await async_open('images/' + str(DINOS['elements'][rid]['image']))
         bg_p = await trans_paste(image, bg_p, 1.0, (i * 512, 0)) #Накладываем изображение
         id_l.append(rid)
 
@@ -127,8 +141,8 @@ async def create_egg_image_pst(egg_id: int, rare: str='random',
     quality_text = rares[rare][1]
     fill = img_dates[rare]
 
-    bg_p = Image.open(f'images/remain/egg_profile.png')
-    egg = Image.open(f'images/{DINOS["elements"][str(egg_id)]["image"]}')
+    bg_p = await async_open(f'images/remain/egg_profile.png')
+    egg = await async_open(f'images/{DINOS["elements"][str(egg_id)]["image"]}')
     egg = egg.resize((290, 290), Image.Resampling.LANCZOS)
     img = await trans_paste(egg, bg_p, 1.0, (-50, 40))
     idraw = ImageDraw.Draw(img)
@@ -172,23 +186,24 @@ async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', p
 
     # Получение данных
     dino_data = DINOS['elements'][str(dino_id)]
-    img = Image.open(
+    img = await async_open(
             f'images/remain/backgrounds/{dino_data["class"].lower()}.png')
 
     # Получение кастом картинки
     if custom_url:
         try:
             response = requests.get(custom_url, stream = True)
-            response = Image.open(io.BytesIO(response.content)).convert("RGBA")
+            response = await async_open(io.BytesIO(response.content))
+            response = response.convert("RGBA")
             img = response.resize((900, 350), Image.Resampling.LANCZOS)
         except: custom_url = ''
 
     if profile_view != 4:
-        panel_i = Image.open(
+        panel_i = await async_open(
             f'images/remain/panels/v{profile_view}_{quality}.png')
         img = await trans_paste(panel_i, img, 1.0)
 
-    dino_image = Image.open(f'images/{dino_data["image"]}')
+    dino_image = await async_open(f'images/{dino_data["image"]}')
     dino_image = dino_image.resize((1024, 1024), Image.Resampling.LANCZOS)
     idraw = ImageDraw.Draw(img)
 
@@ -230,7 +245,7 @@ async def create_dino_image(dino_id: int, stats: dict, quality: str='com', profi
 
 async def dino_game_pst(dino_id: int, add_dino_id: int = 0):
     n_img = randint(1, 2)
-    img = Image.open(f"images/actions/game/{n_img}.png")
+    img = await async_open(f"images/actions/game/{n_img}.png")
 
     if not add_dino_id:
         sz, x, y = 412, randint(120, 340), randint(-65, -35)
@@ -239,13 +254,13 @@ async def dino_game_pst(dino_id: int, add_dino_id: int = 0):
         x2, y2 = 420, -15
 
         dino_data = DINOS['elements'][str(add_dino_id)]
-        dino_image = Image.open(f'images/{dino_data["image"]}')
+        dino_image = await async_open(f'images/{dino_data["image"]}')
         dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
         img = await trans_paste(dino_image, img, 1.0, 
                         (x2 + y2, y2, sz + x2 + y2, sz + y2))
 
     dino_data = DINOS['elements'][str(dino_id)]
-    dino_image = Image.open(f'images/{dino_data["image"]}')
+    dino_image = await async_open(f'images/{dino_data["image"]}')
 
     dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
     dino_image = dino_image.transpose(Image.FLIP_LEFT_RIGHT)
@@ -267,9 +282,10 @@ async def dino_journey_pst(dino_id: int, journey_way: str, add_dino_id: int = 0)
 
     n_img, sz = randint(1, 12), 350
 
-    bg_p = Image.open(f"images/actions/journey/{journey_way}/{n_img}.png").resize((900, 350), Image.Resampling.LANCZOS)
+    bg_p = await async_open(f"images/actions/journey/{journey_way}/{n_img}.png")
+    bg_p = bg_p.resize((900, 350), Image.Resampling.LANCZOS)
 
-    dino_image = Image.open("images/" + 
+    dino_image = await async_open("images/" + 
                         str(DINOS['elements'][str(dino_id)]['image']))
     dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
     dino_image = dino_image.transpose(Image.FLIP_LEFT_RIGHT)
@@ -279,7 +295,7 @@ async def dino_journey_pst(dino_id: int, journey_way: str, add_dino_id: int = 0)
 
     if add_dino_id:
         sz = 320
-        dino_image = Image.open("images/" + str(
+        dino_image = await async_open("images/" + str(
             DINOS['elements'][str(add_dino_id)]['image']))
         dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
 
@@ -297,10 +313,10 @@ async def dino_journey(dino_id: int, journey_way: str, add_dino_id: int = 0):
     return rss
 
 async def dino_collecting_pst(dino_id: int, col_type: str):
-    img = Image.open(f"images/actions/collecting/{col_type}.png")
+    img = await async_open(f"images/actions/collecting/{col_type}.png")
 
     dino_data = DINOS['elements'][str(dino_id)]
-    dino_image = Image.open(f'images/{dino_data["image"]}')
+    dino_image = await async_open(f'images/{dino_data["image"]}')
 
     sz, x, y = 350, 50, 10
 
@@ -322,11 +338,12 @@ async def dino_collecting(dino_id: int, col_type: str):
 async def market_image_pst(custom_url, status):
     try:
         response = requests.get(custom_url, stream = True)
-        response = Image.open(io.BytesIO(response.content)).convert("RGBA")
+        response = await async_open(io.BytesIO(response.content))
+        response = response.convert("RGBA")
         img = response.resize((900, 350), Image.Resampling.LANCZOS)
         img = pil_image_to_file(img)
     except: 
-        img = open(f'images/remain/market/{status}.png', 'rb')
+        img = await async_open(f'images/remain/market/{status}.png', True)
     return img
 
 async def market_image(custom_url, status):

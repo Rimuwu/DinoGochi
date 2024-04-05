@@ -131,7 +131,7 @@ async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
 
-    text, image = item_info(item, lang)
+    text, image = await item_info(item, lang)
 
     if mark: markup = item_info_markup(item, lang)
     else: markup = None

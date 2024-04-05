@@ -10,6 +10,7 @@ from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.dinosaur import Dino, random_dino, random_quality
+from bot.modules.images import async_open
 from bot.modules.item import counts_items, RemoveItemFromUser, CheckCountItemFromUser, counts_items
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import cancel_markup, confirm_markup
@@ -94,7 +95,7 @@ async def bonus_message(user, message, lang):
     markup_inline.add(InlineKeyboardButton(text=award, 
                             callback_data='daily_award'))
 
-    photo = open('images/remain/taverna/dino_reward.png', 'rb')
+    photo = await async_open('images/remain/taverna/dino_reward.png', 'rb')
     await bot.send_photo(message.chat.id, photo, 
             text, parse_mode='Markdown', reply_markup=markup_inline)
 
@@ -161,7 +162,7 @@ async def edit(message: Message):
     b_mark = dict(zip(btn.values(), btn.keys()))
     mark = list_to_inline([b_mark], 2)
 
-    image = open('images/remain/taverna/transformation.png', 'rb')
+    image = await async_open('images/remain/taverna/transformation.png', 'rb')
     await bot.send_photo(chatid, image, text, parse_mode='Markdown', reply_markup=mark)
 
 async def edit_appearance(return_data, transmitted_data):

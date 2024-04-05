@@ -17,6 +17,7 @@
 from bot.config import mongo_client
 from bot.const import ITEMS
 from bot.modules.data_format import random_dict, seconds_to_str
+from bot.modules.images import async_open
 from bot.modules.localization import get_all_locales, t
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
@@ -511,7 +512,7 @@ def counts_items(id_list: list, lang: str, separator: str = ','):
         return f"{separator} ".join(items_list)
     else: return '-'
 
-def item_info(item: dict, lang: str):
+async def item_info(item: dict, lang: str):
     """Собирает информацию и предмете, пригодную для чтения
 
     Args:
@@ -671,7 +672,7 @@ def item_info(item: dict, lang: str):
     # Картиночка
     if 'image' in data_item.keys():
         try:
-            image = open(f"images/items/{data_item['image']}.png", 'rb')
+            image = await async_open(f"images/items/{data_item['image']}.png", True)
         except:
             log(f'Item {item_id} image incorrect', 4)
 

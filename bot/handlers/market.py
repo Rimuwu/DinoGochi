@@ -197,7 +197,7 @@ async def product_info(call: CallbackQuery):
                 for item in product['items']:
                     if item not in itm:
                         itm.append(item)
-                        text, image = item_info(item, lang)
+                        text, image = await item_info(item, lang)
 
                         try:
                             await bot.send_photo(chatid, image, text, 'Markdown')

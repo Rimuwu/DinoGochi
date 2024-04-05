@@ -11,6 +11,7 @@ from bot.modules.data_format import (list_to_keyboard, near_key_number,
                                      seconds_to_str, user_name, list_to_inline)
 from bot.modules.dinosaur import Dino, Egg, dead_check
 from bot.modules.events import get_event
+from bot.modules.images import async_open
 from bot.modules.inline import dino_profile_markup, inline_menu
 from bot.modules.item import AddItemToUser, get_name
 from bot.modules.localization import get_data, t, get_lang
@@ -133,7 +134,7 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
         text += t('p_profile.accs', lang, formating=False).format(**acsess)
 
     # затычка на случай если не сгенерируется изображение
-    generate_image = open(f'images/remain/no_generate.png', 'rb')
+    generate_image = await async_open(f'images/remain/no_generate.png', True)
     msg = await bot.send_photo(chatid, generate_image, text,
                 parse_mode='Markdown', reply_markup=menu)
 

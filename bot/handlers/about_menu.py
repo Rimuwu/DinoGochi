@@ -3,6 +3,7 @@ from telebot.types import (CallbackQuery, InlineKeyboardButton,
 
 from bot.config import mongo_client
 from bot.exec import bot
+from bot.modules.images import async_open
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.currency import get_all_currency, get_products
 from bot.modules.item import counts_items
@@ -30,9 +31,9 @@ async def links(message: Message):
     chatid = message.chat.id
 
     await send_message(chatid, t('about_menu.links', lang), parse_mode='Markdown')
-    
-def main_support_menu(lang: str):
-    image = open('images/remain/support/placeholder.png', 'rb')
+
+async def main_support_menu(lang: str):
+    image = await async_open('images/remain/support/placeholder.png', True)
     text_data = get_data('support_command', lang)
     text = text_data['info']
     prd_text = text_data['products_bio']
@@ -59,7 +60,7 @@ async def support(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    image, text, markup_inline = main_support_menu(lang)
+    image, text, markup_inline = await main_support_menu(lang)
     
     await bot.send_photo(chatid, image, text, reply_markup=markup_inline, parse_mode='Markdown')
 
@@ -69,7 +70,7 @@ async def support_com(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    image, text, markup_inline = main_support_menu(lang)
+    image, text, markup_inline = await main_support_menu(lang)
     
     await bot.send_photo(chatid, image, text, reply_markup=markup_inline, parse_mode='Markdown')
 
@@ -115,7 +116,7 @@ async def support_buttons(call: CallbackQuery):
     messageid = call.message.id
 
     if action == "main":
-        image, text, markup_inline = main_support_menu(lang)
+        image, text, markup_inline = await main_support_menu(lang)
 
         await bot.edit_message_media(
                 chat_id=chatid,
@@ -128,7 +129,8 @@ async def support_buttons(call: CallbackQuery):
 
         text_data = get_data('support_command', lang)
         product_bio = text_data['products_bio'][product_key]
-        image = open(product_bio['image'], 'rb')
+
+        image = await async_open(product_bio['image'], True)
         text = f'{product_bio["name"]} — {product_bio["short"]}\n\n{product_bio["description"]}'
 
         if product_key != 'non_repayable' and product['items']:
@@ -186,7 +188,7 @@ async def support_buttons(call: CallbackQuery):
             count = call.data.split()[4]
             amount = product['cost'][count][currency]
 
-            image = open('images/remain/support/placeholder.png', 'rb')
+            image = await async_open('images/remain/support/placeholder.png', True)
 
             text = text_data['buy'].format(
                 count=count, user_id=user_id, product_key=product_key,

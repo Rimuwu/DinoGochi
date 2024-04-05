@@ -5,6 +5,7 @@ from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import (chunk_pages, list_to_inline,
                                      list_to_keyboard)
+from bot.modules.images import async_open
 from bot.modules.inventory_tools import start_inv
 from bot.modules.localization import get_data, t
 from bot.modules.markup import down_menu, get_answer_keyboard
@@ -590,7 +591,7 @@ async def next_step(answer, transmitted_data: dict, start: bool=False):
                     bmessage = last_message.id
                 else:
                     if 'image' in ret_data:
-                        photo = open(ret_data['image'], 'rb')
+                        photo = await async_open(ret_data['image'], True)
 
                         bmessage = await bot.send_photo(chatid, photo=photo, parse_mode='Markdown', **ret_data['message'])
                     else:
