@@ -171,7 +171,7 @@ async def create_egg_image(egg_id: int, rare: str='random',
        lang - язык текста
     """
     loop = asyncio.get_running_loop()
-    result = await loop.run_in_executor(POOL, create_egg_image_pst, 
+    result = await loop.run_in_executor(None, create_egg_image_pst, 
                                         egg_id, rare, seconds, lang)
 
     rss = await result
@@ -271,7 +271,7 @@ async def dino_game_pst(dino_id: int, add_dino_id: int = 0):
 
 async def dino_game(dino_id: int, add_dino_id: int = 0):
     loop = asyncio.get_running_loop()
-    result = await loop.run_in_executor(POOL, dino_game_pst, 
+    result = await loop.run_in_executor(None, dino_game_pst, 
             dino_id, add_dino_id)
 
     rss = await result
@@ -306,7 +306,7 @@ async def dino_journey_pst(dino_id: int, journey_way: str, add_dino_id: int = 0)
 
 async def dino_journey(dino_id: int, journey_way: str, add_dino_id: int = 0):
     loop = asyncio.get_running_loop()
-    result = await loop.run_in_executor(POOL, dino_journey_pst, 
+    result = await loop.run_in_executor(None, dino_journey_pst, 
             dino_id, journey_way, add_dino_id)
 
     rss = await result
@@ -329,7 +329,7 @@ async def dino_collecting_pst(dino_id: int, col_type: str):
 
 async def dino_collecting(dino_id: int, col_type: str):
     loop = asyncio.get_running_loop()
-    result = await loop.run_in_executor(POOL, dino_collecting_pst, 
+    result = await loop.run_in_executor(None, dino_collecting_pst, 
             dino_id, col_type)
 
     rss = await result
@@ -348,7 +348,7 @@ async def market_image_pst(custom_url, status):
 
 async def market_image(custom_url, status):
     loop = asyncio.get_running_loop()
-    result = await loop.run_in_executor(POOL, market_image_pst, 
+    result = await loop.run_in_executor(None, market_image_pst, 
             custom_url, status)
 
     rss = await result
