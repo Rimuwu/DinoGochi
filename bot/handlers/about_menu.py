@@ -8,7 +8,7 @@ from bot.modules.localization import get_data, t, get_lang
 from bot.modules.currency import get_all_currency, get_products
 from bot.modules.item import counts_items
 from bot.modules.data_format import seconds_to_str
-from bot.modules.over_functions import send_message
+ 
 
 @bot.message_handler(pass_bot=True, text='commands_name.about.team', 
                      is_authorized=True)

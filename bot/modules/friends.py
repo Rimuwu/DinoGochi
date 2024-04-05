@@ -4,7 +4,7 @@ from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, user_name
 from bot.modules.localization import t, get_lang
-from bot.modules.over_functions import send_message
+ 
 
 friends = mongo_client.user.friends
 

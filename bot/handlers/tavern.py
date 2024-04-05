@@ -21,7 +21,7 @@ from bot.modules.states_tools import (
                                       ChoosePagesState, ChooseStepState)
 from bot.modules.user import (AddItemToUser, check_name, daily_award_con,
                               take_coins, user_in_chat, get_dinos)
-from bot.modules.over_functions import send_message
+ 
 
 events = mongo_client.other.events
 

@@ -13,7 +13,7 @@ from bot.modules.inline import inline_menu
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.logs import log
 from bot.modules.item import get_name
-from bot.modules.over_functions import send_message
+from bot.modules.over_functions import async_antiflood
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = mongo_client.dinosaur.dino_owners
@@ -140,11 +140,15 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
                     message=f'User: {owner["owner_id"]} DinoId: {dino_id}, Data: {not_type} Kwargs: {kwargs}', lvl=0)
                 try:
                     try:
-                        await sleep(0.05)
-                        antiflood
-                        await bot.send_message(owner['owner_id'], text, reply_markup=markup_inline, parse_mode='Markdown')
+                        await async_antiflood(
+                            bot.send_message, owner['owner_id'], text, reply_markup=markup_inline, parse_mode='Markdown',
+                            number_retries=3
+                        )
                     except Exception:
-                        await bot.send_message(owner['owner_id'], text, reply_markup=markup_inline)
+                        await async_antiflood(
+                            bot.send_message, owner['owner_id'], text, reply_markup=markup_inline,
+                            number_retries=3
+                        )
                 except Exception as error:
                     if conf.debug:
                         log(prefix='DinoNotification Error', 

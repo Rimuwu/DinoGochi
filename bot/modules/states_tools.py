@@ -11,7 +11,7 @@ from bot.modules.localization import get_data, t
 from bot.modules.markup import down_menu, get_answer_keyboard
 from bot.modules.markup import markups_menu as m
 from bot.modules.user import User, get_frineds, user_info, user_name
-from bot.modules.over_functions import send_message
+ 
 from bot.modules.events import check_event
 
 import inspect

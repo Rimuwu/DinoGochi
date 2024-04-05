@@ -12,7 +12,7 @@ from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
                                       ChooseOptionState, ChooseStringState, ChooseStepState)
 from bot.modules.user import premium, User
 from random import randint
-from bot.modules.over_functions import send_message
+ 
 
 users = mongo_client.user.users
 langs = mongo_client.user.lang

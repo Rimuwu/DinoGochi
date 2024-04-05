@@ -4,7 +4,7 @@ from telebot import types
 from bot.exec import bot
 from bot.modules.logs import log
 from bot.modules.localization import t, get_lang
-from bot.modules.over_functions import send_message
+ 
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('delete_message'))
 async def delete_message(call: types.CallbackQuery):

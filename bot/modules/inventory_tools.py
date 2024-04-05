@@ -14,7 +14,7 @@ from bot.modules.logs import log
 from bot.modules.markup import list_to_keyboard, down_menu
 from bot.modules.markup import markups_menu as m
 from bot.modules.user import get_inventory
-from bot.modules.over_functions import send_message
+ 
 
 users = mongo_client.user.users
 back_button, forward_button = gs['back_button'], gs['forward_button']

@@ -11,7 +11,7 @@ from bot.modules.item import AddItemToUser
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.quests import quest_resampling, quest_ui, check_quest
 from bot.modules.user import take_coins
-from bot.modules.over_functions import send_message
+ 
 
 quests_data = mongo_client.tavern.quests
 users = mongo_client.user.users

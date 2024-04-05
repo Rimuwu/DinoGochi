@@ -2,7 +2,7 @@ from bot.modules.data_format import item_list
 from bot.modules.item import CheckCountItemFromUser, RemoveItemFromUser
 from bot.modules.localization import t
 from bot.modules.market import add_product, product_ui
-from bot.modules.over_functions import send_message
+ 
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import take_coins
 from bot.modules.markup import cancel_markup, markups_menu as m

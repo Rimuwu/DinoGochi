@@ -19,7 +19,7 @@ from bot.modules.tracking import creat_track, get_track_pages, track_info
 from bot.modules.promo import create_promo_start, get_promo_pages, promo_ui, use_promo
 from time import time
 from bot.modules.user import User, max_dino_col, award_premium
-from bot.modules.over_functions import send_message
+ 
 from asyncio import sleep
 
 management = mongo_client.other.management

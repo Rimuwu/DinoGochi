@@ -13,7 +13,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User
 from bot.modules.localization import  get_lang
-from bot.modules.over_functions import send_message
+ 
 
 items = mongo_client.items.items
 

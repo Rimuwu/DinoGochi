@@ -10,7 +10,7 @@ from bot.modules.states_tools import ChooseStepState, prepare_steps
 from bot.modules.markup import markups_menu as m
 from bot.modules.market import generate_items_pages
 from time import time
-from bot.modules.over_functions import send_message
+ 
 
 promo = mongo_client.other.promo
 users = mongo_client.user.users

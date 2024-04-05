@@ -13,7 +13,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.mood import add_mood
 from bot.modules.states_tools import ChooseIntState, ChooseOptionState
 from bot.modules.user import User
-from bot.modules.over_functions import send_message
+ 
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
 sleep_task = mongo_client.dino_activity.sleep

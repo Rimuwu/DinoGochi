@@ -18,7 +18,7 @@ from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User
 from random import randint
-from bot.modules.over_functions import send_message
+ 
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
 journey_task = mongo_client.dino_activity.journey

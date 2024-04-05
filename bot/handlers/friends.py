@@ -13,7 +13,7 @@ from bot.modules.states_tools import (ChooseConfirmState, ChooseCustomState,
                                       ChoosePagesState, ChooseDinoState, ChooseStepState, ChooseIntState)
 from bot.modules.user import user_name, take_coins
 from bot.modules.dinosaur import Dino, create_dino_connection
-from bot.modules.over_functions import send_message
+ 
 from bot.modules.events import get_event
 from bot.const import GAME_SETTINGS
 from bot.modules.item import AddItemToUser, get_name

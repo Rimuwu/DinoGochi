@@ -7,7 +7,7 @@ from bot.modules.inline import inline_menu
 from bot.modules.localization import  get_lang, t
 from bot.modules.promo import use_promo
 from bot.handlers.start import start_game
-from bot.modules.over_functions import send_message
+ 
 
 
 users = mongo_client.user.users

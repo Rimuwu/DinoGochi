@@ -9,7 +9,7 @@ from bot.modules.localization import get_data, t
 from bot.modules.notifications import user_notification
 from bot.modules.quests import create_quest, quest_resampling, save_quest
 from bot.taskmanager import add_task
-from bot.modules.over_functions import send_message
+ 
 
 users = mongo_client.user.users
 tavern = mongo_client.tavern.tavern

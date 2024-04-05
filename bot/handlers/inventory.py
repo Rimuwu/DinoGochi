@@ -21,7 +21,7 @@ from bot.modules.item_tools import (AddItemToUser, CheckItemFromUser,
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import markups_menu as m
 from bot.modules.markup import count_markup
-from bot.modules.over_functions import send_message
+ 
 from bot.modules.states_tools import ChooseIntState
 from bot.modules.user import User, take_coins
 from asyncio import sleep

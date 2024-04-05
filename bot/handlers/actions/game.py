@@ -18,7 +18,7 @@ from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User, premium
 from bot.modules.quests import quest_process
 from time import time
-from bot.modules.over_functions import send_message
+ 
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
 game_task = mongo_client.dino_activity.game

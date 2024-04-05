@@ -8,7 +8,7 @@ from bot.modules.localization import get_data, t, get_lang
 from bot.modules.logs import log
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import GeneralStates
-from bot.modules.over_functions import send_message
+ 
 
 async def cancel(message, text:str = "❌"):
     lang = await get_lang(message.from_user.id)

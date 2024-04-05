@@ -12,7 +12,7 @@ from bot.modules.localization import t, get_lang
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseDinoState
 from bot.modules.user import User
-from bot.modules.over_functions import send_message
+ 
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
 game_task = mongo_client.dino_activity.game

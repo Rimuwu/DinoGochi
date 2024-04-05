@@ -15,7 +15,7 @@ from bot.modules.user import insert_user
 from bot.modules.referals import connect_referal
 from bot.handlers.referal_menu import check_code
 from bot.modules.promo import use_promo
-from bot.modules.over_functions import send_message
+ 
 from bot.modules.tracking import add_track
 
 referals = mongo_client.user.referals

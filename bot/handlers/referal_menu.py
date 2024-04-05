@@ -11,7 +11,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.referals import connect_referal, create_referal
 from bot.modules.states_tools import ChooseCustomState, ChooseStringState
 from bot.modules.user import take_coins
-from bot.modules.over_functions import send_message
+ 
 
 referals = mongo_client.user.referals
 

@@ -17,7 +17,7 @@ from bot.modules.states_tools import (ChooseIntState, ChooseStringState,
 from bot.modules.markup import markups_menu as m
 from bot.modules.user import take_coins
 from random import choice
-from bot.modules.over_functions import send_message
+ 
 
 
 MAX_PRICE = 10_000_000

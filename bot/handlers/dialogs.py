@@ -5,7 +5,7 @@ from bot.exec import bot
 from bot.modules.data_format import user_name
 from bot.modules.dialogs import dialogs
 from bot.modules.localization import  get_lang
-from bot.modules.over_functions import send_message
+ 
 
 
 

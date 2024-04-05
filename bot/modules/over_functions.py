@@ -6,13 +6,7 @@ from bot.modules.logs import log
 from bot.modules.data_format import seconds_to_str
 from typing import Any, Callable
 
-last_message = 0
-col_now = 0
-
-async def send_message():
-    return 0
-
-async def antiflood(function: Callable, *args, number_retries=5, **kwargs):
+async def async_antiflood(function: Callable, *args, number_retries=5, **kwargs):
     """
     Use this function inside loops in order to avoid getting TooManyRequests error.
     Example:

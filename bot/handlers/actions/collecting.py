@@ -14,7 +14,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User, count_inventory_items, premium, max_eat
 from bot.modules.quests import quest_process
-from bot.modules.over_functions import send_message
+ 
 from bot.modules.accessory import check_accessory
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
