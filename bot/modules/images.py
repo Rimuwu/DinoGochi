@@ -10,8 +10,8 @@ from bot.modules.data_format import seconds_to_str
 from bot.modules.localization import get_data
 import asyncio
 
-from concurrent.futures import ThreadPoolExecutor
-POOL = ThreadPoolExecutor()
+# from concurrent.futures import ThreadPoolExecutor
+# POOL = ThreadPoolExecutor()
 
 
 FONTS = {
@@ -239,7 +239,7 @@ async def create_dino_image(dino_id: int, stats: dict, quality: str='com', profi
     """
 
     loop = asyncio.get_running_loop()
-    result = await loop.run_in_executor(POOL, create_dino_image_pst, dino_id, stats, quality, profile_view, age, custom_url)
+    result = await loop.run_in_executor(None, create_dino_image_pst, dino_id, stats, quality, profile_view, age, custom_url)
 
     return await result
 
