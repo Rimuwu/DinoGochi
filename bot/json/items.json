@@ -3197,7 +3197,8 @@
         "type": "special",
         "class": "premium",
         "premium_time": 2592000,
-        "cant_sell": true
+        "cant_sell": true,
+        "buyer": false
     },
     "egg_case": {
         "cant_sell": false,
