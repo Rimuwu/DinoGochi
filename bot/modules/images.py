@@ -189,7 +189,7 @@ async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', p
     # Получение данных
     dino_data = DINOS['elements'][str(dino_id)]
     img = await async_open(
-            f'images/remain/backgrounds/{dino_data["class"].lower()}.png', True)
+            f'images/remain/backgrounds/{dino_data["class"].lower()}.png')
 
     # Получение кастом картинки
     if custom_url:
