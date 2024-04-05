@@ -21,7 +21,7 @@ from bot.modules.donation import check_donations, get_donations
 from bot.modules.images import create_egg_image, dino_collecting, dino_game
 from bot.modules.inventory_tools import inventory_pages
 from bot.modules.item import (AddItemToUser, DowngradeItem, get_data,
-                              get_item_dict, get_name)
+                              get_item_dict, get_name, RemoveItemFromUser)
 from bot.modules.localization import get_data, t
 from bot.modules.markup import count_markup, down_menu, list_to_keyboard, confirm_markup
 from bot.modules.notifications import user_notification, notification_manager
@@ -63,10 +63,12 @@ async def command(message):
             ad_user = int(msg_args[1])
             item_id = msg_args[2]
             col = int(msg_args[3])
-            
+
             print('user', ad_user, 'id:', item_id, 'col:', col)
             res = await AddItemToUser(ad_user, item_id, col)
             print(res)
+
+            await bot.send_message(message.from_user.id, res)
     else:
         print(user.id, 'not in devs')
 
@@ -180,3 +182,22 @@ async def ddt(message):
     await ads.update_many(
         {'limit': {'$lte': 1800}}, {'$set': {'limit': 1800}}
     )
+
+@bot.message_handler(pass_bot=True, commands=['fix'], is_admin=True)
+async def fix(message):
+    
+    find_res = await items.find(
+        {'items_data.abilities': {"$ne": None}, "count": {"$ne": 1}}
+                                ).to_list(None)
+
+    for i in find_res:
+        preabil = {}
+
+        if 'abilities' in i['items_data']:
+            preabil = i['items_data']['abilities']
+        ok = await RemoveItemFromUser(i['owner_id'], i['items_data']['item_id'], i['count'], preabil)
+
+        if ok:
+            await AddItemToUser(i['owner_id'], i['items_data']['item_id'], i['count'], preabil)
+    
+    print("Nice!")
