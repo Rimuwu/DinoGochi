@@ -72,7 +72,9 @@ async def async_open(image_path, to_file: bool = False):
     except Exception as err:
         print(f"Error loading image at path {image_path} with exception: {err}")
 
-    return Image.new('RGB', (100, 100))
+    if to_file:
+        return open(image_path, 'rb')
+    return open(image_path)
 
 
 def age_size(age, max_size, days): return age * ((max_size-150) // days) + 150
