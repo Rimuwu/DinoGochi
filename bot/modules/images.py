@@ -120,7 +120,7 @@ async def create_eggs_image():
     """Создаёт изображение выбора яиц.
     """
     loop = asyncio.get_running_loop()
-    result = await loop.run_in_executor(POOL, create_eggs_image_pst)
+    result = await loop.run_in_executor(None, create_eggs_image_pst)
 
     rss = await result
     return rss
