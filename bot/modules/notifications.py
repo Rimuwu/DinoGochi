@@ -217,7 +217,6 @@ async def user_notification(user_id: int, not_type: str,
         message=f'User: {user_id}, Data: {not_type} Kwargs: {kwargs}', lvl=0)
     try:
         try:
-            
             await bot.send_message(user_id, text, reply_markup=markup_inline, parse_mode='Markdown')
         except Exception:
             await bot.send_message(user_id, text, reply_markup=markup_inline)

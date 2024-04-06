@@ -32,14 +32,13 @@ async def async_antiflood(function: Callable, *args, number_retries=5, **kwargs)
     :return: None
     """
     from telebot.apihelper import ApiTelegramException
-    from time import sleep
 
     for _ in range(number_retries - 1):
         try:
             return await function(*args, **kwargs)
         except ApiTelegramException as ex:
             if ex.error_code == 429:
-                sleep(ex.result_json['parameters']['retry_after'])
+                await sleep(ex.result_json['parameters']['retry_after'])
             else:
                 raise
     else:
