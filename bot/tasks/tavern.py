@@ -9,6 +9,7 @@ from bot.modules.localization import get_data, t
 from bot.modules.notifications import user_notification
 from bot.modules.quests import create_quest, quest_resampling, save_quest
 from bot.taskmanager import add_task
+from asyncio import sleep
  
 
 users = mongo_client.user.users
@@ -99,7 +100,9 @@ async def daily_award_notif():
     for uid in users_ids:
         if not await daily_data.find_one({'owner_id': uid['userid']}):
             if uid['settings']['notifications']:
-                await user_notification(uid['userid'], 'daily_award')
+                res = await user_notification(uid['userid'], 'daily_award')
+
+                if res: await sleep(0.25)
 
 if __name__ != '__main__':
     if conf.active_tasks:

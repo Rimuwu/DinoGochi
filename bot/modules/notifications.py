@@ -217,13 +217,17 @@ async def user_notification(user_id: int, not_type: str,
         message=f'User: {user_id}, Data: {not_type} Kwargs: {kwargs}', lvl=0)
     try:
         try:
-            await bot.send_message(user_id, text, reply_markup=markup_inline, parse_mode='Markdown')
+            await async_antiflood(bot.send_message, user_id, text, reply_markup=markup_inline, parse_mode='Markdown')
+            return True
         except Exception:
-            await bot.send_message(user_id, text, reply_markup=markup_inline)
+            await async_antiflood(bot.send_message, user_id, text, reply_markup=markup_inline)
+            return True
     except Exception as error: 
         log(prefix='Notification Error', 
             message=f'User: {user_id}, Data: {not_type} Error: {error}', 
             lvl=0)
+    
+    return False
 
 async def notification_manager(dino_id: ObjectId, stat: str, unit: int):
     """ Автоматически отсылает / удаляет уведомления

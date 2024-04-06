@@ -19,7 +19,7 @@ async def old_events():
 async def random_event():
     events_data = list(await events.find({}, {'type'}).to_list(None)).copy()
     not_system = []
-    
+
     for i in events_data:
         if i['type'] not in ['new_year', 'time_year', 'april_1', 'april_5']: not_system.append(i['type'])
 
