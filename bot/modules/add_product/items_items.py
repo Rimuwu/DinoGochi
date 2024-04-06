@@ -1,6 +1,8 @@
 from bot.config import mongo_client
 from bot.modules.localization import t
 
+from bot.exec import bot
+
 from bot.modules.markup import answer_markup, cancel_markup, count_markup
  
 from bot.modules.states_tools import (ChooseIntState, ChooseStepState, prepare_steps)
