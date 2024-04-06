@@ -151,6 +151,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         buttons = [
             ['random', 'find'],
             ['seller_profile'],
+            ['']
         ]
 
     elif markup_key == 'seller_menu':

@@ -28,7 +28,10 @@ def alternative_language(lang: str):
     languages = {
         'ua': 'ru'
     }
-    if lang in languages: return languages[lang]
+    try:
+        if lang in languages: return languages[lang]
+    except:
+        log(f"Not found lang {lang}", 3)
     return lang
 
 def get_data(key: str, locale: str) -> Any:
