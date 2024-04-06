@@ -228,3 +228,8 @@ async def t12(message):
     st = time()
     await f2()
     print(time() - st)
+
+
+@bot.message_handler(pass_bot=True, commands=['t56'], is_admin=True)
+async def t54(message):
+    pass

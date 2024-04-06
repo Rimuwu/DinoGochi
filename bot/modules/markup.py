@@ -20,6 +20,7 @@ async def back_menu(userid) -> str:
     menus_list = ['main_menu', 'settings_menu', 'settings2_menu',
                   'main_menu', 'actions_menu', 
                   'main_menu', 'profile_menu', 'market_menu', 'seller_menu',
+                  'main_menu', 'profile_menu', 'market_menu', 'bot_market_menu',
                   'main_menu', 'profile_menu', 'about_menu',
                   'main_menu', 'friends_menu', 'referal_menu',
                   'main_menu', 'dino_tavern_menu', 'dungeon_menu'
@@ -151,7 +152,15 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         buttons = [
             ['random', 'find'],
             ['seller_profile'],
-            # ['']
+            # ['bot_market']
+        ]
+
+    elif markup_key == 'bot_market_menu':
+        # Меню разных магазинов
+        prefix = 'commands_name.bot_market.'
+        add_back_button = True
+        buttons = [
+            ['background_market']
         ]
 
     elif markup_key == 'seller_menu':

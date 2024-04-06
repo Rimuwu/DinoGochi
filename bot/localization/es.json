@@ -49,7 +49,8 @@
             "market": {
                 "random": "🛒 Objetos aleatorios",
                 "find": "🔍 Búsqueda de productos",
-                "seller_profile": "🛒 Menú de la tienda"
+                "seller_profile": "🛒 Mi tienda",
+                "bot_market": "🔮 Tienda de bots"
             },
             "seller_profile": {
                 "add_product": "☄ Añadir producto",
@@ -88,6 +89,9 @@
                 "enter_code": "🎞 Ingrese el código",
                 "my_code": "🎲 Mi código:",
                 "friend_code": "🎞 Amigo:"
+            },
+            "bot_market": {
+                "background_market": "🖼️ Fondos"
             }
         },
         "rare": {
@@ -852,7 +856,8 @@
             "referal": "🤍 | ¡Redirige al menú del sistema de referidos! \n\n💜 | *Al alcanzar el nivel {lvl}* tu amigo, obtendrás {award_text}! \n\n❤️ | Un amigo recibirá un bono por la cantidad de: {coins} monedas, {items}",
             "referal_separator": "o",
             "settings2": "🔧 | Menú de configuración (página 2)\n\n🦕 Acceso: {my_name}",
-            "seller": "🎇 Ir al menú de gestión de la tienda"
+            "seller": "🎇 Ir al menú de gestión de la tienda",
+            "bot_market": "🎍 | ¿Qué ofrecerá el bot hoy? ¡Echa un vistazo!"
         },
         "no_text_key": "❌ Clave de coincidencia de texto {key} no encontrada, ¡póngase en contacto con el desarrollador de @AS1AW!",
         "edit_dino_button": {
@@ -3560,7 +3565,7 @@
             "to_friend": "❤ ¡Te hemos enviado un regalo de Año Nuevo! Inventario de búsqueda {item}"
         },
         "super_coins": {
-            "plus_one": "👑 Tienes *+1 Súper Moneda* para ver anuncios.\nVerifique el saldo en el comando /super\n_No moderamos la publicidad y no conocemos el contexto de la publicidad._",
+            "plus_one": "👑 Tienes *+1 Súper Moneda* para ver anuncios.\nComprueba tu saldo con /super\n_We no moderas anuncios y no conocemos el contexto de los anuncios._",
             "info": "🌸 Tienes *{coins}*\n⚡ Trajiste el bot: *{dollars}$*\n\n☕️ Por cada anuncio que veas, obtienes *1 Súper Moneda*, que se puede canjear por productos exclusivos. \n\n🎋 Los anuncios aparecen automáticamente cada *{limit}* cuando usas el bot, pero puedes personalizar el límite a tu gusto.",
             "buttons": {
                 "super_coins view": "👀 Establecer el límite",
