@@ -49,7 +49,8 @@
             "market": {
                 "random": "🛒 Random Items",
                 "find": "🔍 Product Finder",
-                "seller_profile": "🛒 Shop Menu"
+                "seller_profile": "🛒 My Store",
+                "bot_market": "🔮 Bot Shop"
             },
             "seller_profile": {
                 "add_product": "☄ Add a product",
@@ -88,6 +89,9 @@
                 "enter_code": "🎞 Enter code",
                 "my_code": "🎲 My code:",
                 "friend_code": "🎞 A friend:"
+            },
+            "bot_market": {
+                "background_market": "🖼️ Backgrounds"
             }
         },
         "rare": {
@@ -852,7 +856,8 @@
             "referal": "🤍 | Redirect to the referral system menu! \n\n 💜 | *Upon reaching level {lvl}* your friend, you'll get {award_text}! \n\n ❤️ | A friend will receive a bonus in the amount of: {coins} coins, {items}",
             "referal_separator": "or",
             "settings2": "🔧 | Settings Menu (Page 2)\n\n 🦕 Address: {my_name}",
-            "seller": "🎇 Go to the store management menu"
+            "seller": "🎇 Go to the store management menu",
+            "bot_market": "🎍 | What will the bot offer today? Take a look!"
         },
         "no_text_key": "❌ The text corresponding to the key {key} is not found, contact the developer @AS1AW!",
         "edit_dino_button": {
@@ -3560,7 +3565,7 @@
             "to_friend": "❤ A New Year's gift has been sent to you! Search Inventory {item}"
         },
         "super_coins": {
-            "plus_one": "👑 You earned ** for viewing ads.\nCheck the balance by command /super\n_We do not moderate advertising and do not know the context of advertising._",
+            "plus_one": "👑 You got *+1 Super Coin* for watching ads.\nCheck your balance with /super\n_We don't moderate ads and we don't know the context of the ads._",
             "info": "🌸 Coins you have: *{coins}* \n ⚡ You've brought the bot: *{dollars}$* \n\n ☕ ️ For every ad you view, you get *1 Super Coin*, which can be exchanged for exclusive products. \n\n 🎋 Ads automatically appear every *{limit}* when using the bot, but you can set the limit for yourself.",
             "buttons": {
                 "super_coins view": "👀 Setting the Limit",

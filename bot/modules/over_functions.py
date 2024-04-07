@@ -6,7 +6,7 @@ from bot.modules.data_format import seconds_to_str
 from typing import Any, Callable
 from telebot.apihelper import ApiTelegramException
 
-async def async_antiflood(function: Callable, *args, number_retries=5, **kwargs):
+async def async_antiflood(function: Callable, *args, number_retries=3, **kwargs):
     """
     Use this function inside loops in order to avoid getting TooManyRequests error.
     Example:

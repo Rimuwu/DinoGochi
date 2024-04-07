@@ -37,7 +37,8 @@ class Dino:
         self._id: ObjectId = ObjectId()
 
         self.data_id = 0
-        self.alt_id = 'alt_id' #альтернативный id 
+        self.alt_id = 'alt_id' #альтернативный id
+        self.profile_id = 'standart'
 
         self.status = 'pass' # game, journey, sleep, collecting, dungeon...
         self.name = 'name'

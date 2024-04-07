@@ -49,7 +49,8 @@
             "market": {
                 "random": "🛒 Item acak",
                 "find": "🔍 Pencarian produk",
-                "seller_profile": "🛒 Menu toko"
+                "seller_profile": "🛒 Toko Saya",
+                "bot_market": "🔮 Toko Bot"
             },
             "seller_profile": {
                 "add_product": "☄ Tambahkan produk",
@@ -88,6 +89,9 @@
                 "enter_code": "🎞 Masukkan kode",
                 "my_code": "🎲 Kode saya:",
                 "friend_code": "🎞 Teman:"
+            },
+            "bot_market": {
+                "background_market": "🖼️ Latar Belakang"
             }
         },
         "rare": {
@@ -852,7 +856,8 @@
             "referal": "🤍 | Redirect ke menu sistem referral! \n\n💜 | *Setelah mencapai level {lvl}* teman Anda, Anda akan mendapatkan {award_text}! \n\n❤️ | Seorang teman akan menerima bonus sejumlah: {coins} koin, {items}",
             "referal_separator": "atau",
             "settings2": "🔧 | Menu Pengaturan (Halaman 2)\n\n🦕 Akses: {my_name}",
-            "seller": "🎇 Buka menu manajemen toko"
+            "seller": "🎇 Buka menu manajemen toko",
+            "bot_market": "🎍 | Apa yang akan ditawarkan bot hari ini? Coba lihat!"
         },
         "no_text_key": "❌ Kunci pencocokan teks {key} tidak ditemukan, hubungi pengembang @AS1AW!",
         "edit_dino_button": {
@@ -3560,7 +3565,7 @@
             "to_friend": "❤ Hadiah Tahun Baru telah dikirimkan kepada Anda! Lihat di inventaris {item}"
         },
         "super_coins": {
-            "plus_one": "👑 Anda mendapat *+1 Koin Super* untuk menonton iklan. \nPeriksa saldo Anda dengan mengikuti /super\n_We jangan memoderasi iklan dan tidak tahu konteks iklan.",
+            "plus_one": "👑 Anda mendapat *+1 Koin Super* untuk menonton iklan. \nPeriksa saldo Anda dengan /super\n_We jangan memoderasi iklan dan kami tidak mengetahui konteks iklan._",
             "info": "🌸 Anda memiliki *{coins}*\n⚡ Anda membawa bot: *{dollars}$*\n\n☕️ Untuk setiap iklan yang Anda lihat, Anda mendapatkan *1 Koin Super*, yang dapat ditukar dengan produk eksklusif. \n\n🎋 Iklan secara otomatis muncul setiap *{limit}* saat Anda menggunakan bot, tetapi Anda dapat menyesuaikan batas sesuai keinginan Anda.",
             "buttons": {
                 "super_coins view": "👀 Mengatur batas",
