@@ -14,7 +14,7 @@ from bot.modules.logs import log
 from bot.modules.markup import list_to_keyboard, down_menu
 from bot.modules.markup import markups_menu as m
 from bot.modules.user import get_inventory
- 
+from pprint import pprint
 
 users = mongo_client.user.users
 back_button, forward_button = gs['back_button'], gs['forward_button']
@@ -60,8 +60,7 @@ def filter_items_data(items: dict, type_filter: list = [],
 
     return new_items
 
-def inventory_pages(items: list, lang: str = 'en', 
-                    view: list = [2, 3], type_filter: list = [],
+async def inventory_pages(items: list, lang: str = 'en', type_filter: list = [],
                     item_filter: list = []):
     """ Создаёт и сортируем страницы инвентаря
 
@@ -78,7 +77,6 @@ def inventory_pages(items: list, lang: str = 'en',
     }
     """
     items_data = {}
-    horizontal, vertical = view
 
     code_items = {}
     for base_item in items:
@@ -124,8 +122,7 @@ def inventory_pages(items: list, lang: str = 'en',
             end_name = f"{name} ({code}){count_name}"
         items_data[end_name] = item
 
-    pages, horizontal = generate(items_data, horizontal, vertical)
-    return pages, horizontal, items_data
+    return items_data
 
 async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
     lang = transmitted_data['lang']
@@ -320,7 +317,8 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
 
     if not inventory:
         inventory, count = await get_inventory(userid, exclude_ids)
-    pages, row, items_data = inventory_pages(inventory, lang, inv_view, type_filter, item_filter)
+    items_data = await inventory_pages(inventory, lang, type_filter, item_filter)
+    pages, row = generate(items_data, *inv_view)
 
     if not pages:
         await bot.send_message(chatid, t('inventory.null', lang), 
@@ -364,3 +362,5 @@ async def open_inv(userid: int, chatid: int):
     """
     await bot.set_state(userid, InventoryStates.Inventory, chatid)
     await swipe_page(userid, chatid)
+
+
