@@ -102,7 +102,7 @@ async def daily_award_notif():
             if uid['settings']['notifications']:
                 res = await user_notification(uid['userid'], 'daily_award')
 
-                if res: await sleep(0.25)
+                if res: await sleep(0.5)
 
 if __name__ != '__main__':
     if conf.active_tasks:

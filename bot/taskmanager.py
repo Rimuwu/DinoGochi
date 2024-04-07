@@ -14,6 +14,7 @@ async def _task_executor(function, repeat_time: float, delay: float, **kwargs):
     if repeat_time:
         while True:
             try:
+                log(message=f'{function.__name__} start', lvl=0)
                 await function(**kwargs)
             except Exception as error:
                 log(prefix=f"{function.__name__} task_error", message=str(error), lvl=3)
