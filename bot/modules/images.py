@@ -67,7 +67,7 @@ async def async_open(image_path, to_file: bool = False):
     try:
         img = await loop.run_in_executor(None, Image.open, image_path)
         if to_file:
-            return pil_image_to_file(img)
+            return pil_image_to_file(img, quality='maximum')
         return img
     except Exception as err:
         print(f"Error loading image at path {image_path} with exception: {err}")
@@ -116,7 +116,7 @@ async def create_eggs_image_pst():
         bg_p = await trans_paste(image, bg_p, 1.0, (i * 512, 0)) #Накладываем изображение
         id_l.append(rid)
 
-    return pil_image_to_file(bg_p), id_l
+    return pil_image_to_file(bg_p, quality='maximum'), id_l
 
 async def create_eggs_image():
     """Создаёт изображение выбора яиц.
@@ -161,7 +161,7 @@ async def create_egg_image_pst(egg_id: int, rare: str='random',
     idraw.text(text_dict['rare_position'], quality_text, 
             font=FONTS['line35'], fill=fill)
 
-    return pil_image_to_file(img)
+    return pil_image_to_file(img, quality='maximum')
 
 async def create_egg_image(egg_id: int, rare: str='random', 
                            seconds: int=0, lang: str='en'):
@@ -231,7 +231,7 @@ async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', p
     dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
     img = await trans_paste(dino_image, img, 1.0, (y + x, y, sz + y + x, sz + y))
 
-    return pil_image_to_file(img)
+    return pil_image_to_file(img, quality='maximum')
 
 async def create_dino_image(dino_id: int, stats: dict, quality: str='com', profile_view: int=1, age: int = 30, custom_url: str=''):
     """Создание изображения динозавра
@@ -269,7 +269,7 @@ async def dino_game_pst(dino_id: int, add_dino_id: int = 0):
 
     img = await trans_paste(dino_image, img, 1.0, 
                       (x + y, y, sz + x + y, sz + y))
-    return pil_image_to_file(img)
+    return pil_image_to_file(img, quality='maximum')
 
 async def dino_game(dino_id: int, add_dino_id: int = 0):
     loop = asyncio.get_running_loop()
@@ -304,7 +304,7 @@ async def dino_journey_pst(dino_id: int, journey_way: str, add_dino_id: int = 0)
         x, y = 450, 35
         img = await trans_paste(dino_image, bg_p, 1.0, (x + y, y, sz + x + y, sz + y))
 
-    return pil_image_to_file(img)
+    return pil_image_to_file(img, quality='maximum')
 
 async def dino_journey(dino_id: int, journey_way: str, add_dino_id: int = 0):
     loop = asyncio.get_running_loop()
@@ -327,7 +327,7 @@ async def dino_collecting_pst(dino_id: int, col_type: str):
 
     img = await trans_paste(dino_image, img, 1.0, 
                       (x + y, y, sz + x + y, sz + y))
-    return pil_image_to_file(img)
+    return pil_image_to_file(img, quality='maximum')
 
 async def dino_collecting(dino_id: int, col_type: str):
     loop = asyncio.get_running_loop()
@@ -343,7 +343,7 @@ async def market_image_pst(custom_url, status):
         response = await async_open(io.BytesIO(response.content))
         response = response.convert("RGBA")
         img = response.resize((900, 350), Image.Resampling.LANCZOS)
-        img = pil_image_to_file(img)
+        img = pil_image_to_file(img, quality='maximum')
     except: 
         img = await async_open(f'images/remain/market/{status}.png', True)
     return img
