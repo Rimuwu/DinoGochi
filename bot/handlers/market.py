@@ -325,7 +325,7 @@ async def push(call: CallbackQuery):
     res = await puhs.find_one({'owner_id': userid})
     if res:
         await puhs.update_one({'owner_id': userid}, 
-                        {'channel_id': channel_id, 'lang': lang})
+                        {"$set": {'channel_id': channel_id, 'lang': lang}})
         text = t('push.update', lang)
     else: 
         await create_push(userid, channel_id, lang)
