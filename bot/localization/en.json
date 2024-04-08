@@ -3404,8 +3404,8 @@
                 "auction": "🎐 Specify the starting price of the product"
             },
             "stock": {
-                "items_coins": "🎨 Specify the quantity of the item in stock. \n\n _For example, you added 2 carrots and 1 tomato to the product, if you enter 3 now, then 6 carrots and 3 tomatoes will be removed from your inventory, as well as 3 people will be able to purchase your product.",
-                "coins_items": "🎨 How many times can the order be executed\n\n_For example, if you specify 2 and you want to exchange 2 carrots for 100 coins in the reader, you will spend a total of 400 coins for 4 carrots.",
+                "items_coins": "🎨 Specify the quantity of the item in stock. \n\n _For example, you added 2 carrots and 1 tomato to the product, if you enter 3 now, then 6 carrots and 3 tomatoes will be removed from your inventory, as well as 3 people will be able to purchase your product._",
+                "coins_items": "🎨 How many times can the order be executed\n\n_For example, if you specify 2 and you want to exchange 2 carrots for 100 coins in the reader, you will spend a total of 400 coins for 4 carrots._",
                 "items_items": "🎨 Specify the number of times you can share resources."
             },
             "time_end": "🎩 Specify the end time of the auction, you are required to enter the time in the form of text. \n\n ⏰ Write '/string_to_sec' to receive a memo.",
