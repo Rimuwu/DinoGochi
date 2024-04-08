@@ -329,6 +329,9 @@ async def delete_product(baseid = None, alt_id = None):
         product = await products.find_one({'alt_id': alt_id})
 
     if product:
+        await products.delete_one({'_id': product['_id']})
+        await preferential.delete_many({"product_id": product['_id']})
+
         p = product.copy()
         ptype = p['type']
         remained = p['in_stock'] - p['bought'] # Осталось / в запасе
@@ -388,7 +391,7 @@ async def delete_product(baseid = None, alt_id = None):
                 for i in list(p['items']): id_list.append(i['item_id'])
                 c_items = counts_items(id_list, winner['lang'])
                 text = t('auction.win', winner['lang'], items=c_items)
-                
+
                 try: await bot.send_message(winner['userid'], text)
                 except: pass
 
@@ -409,9 +412,6 @@ async def delete_product(baseid = None, alt_id = None):
             product['items'], product['price'], product['type'], owner_lang)
         await user_notification(owner, 'product_delete', owner_lang,
                                 preview=preview)
-
-        await products.delete_one({'_id': product['_id']})
-        await preferential.delete_many({"product_id": product['_id']})
 
         return True
     else: return False

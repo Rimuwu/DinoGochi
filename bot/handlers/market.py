@@ -178,6 +178,9 @@ async def product_info(call: CallbackQuery):
     if product:
         if call_type == 'delete':
             if product['owner_id'] == userid:
+
+                await bot.edit_message_reply_markup(chatid, call.message.id, reply_markup=list_to_inline([]))
+
                 status = await delete_product(None, alt_id)
 
                 if status: text = t('product_info.delete', lang)
