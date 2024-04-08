@@ -353,7 +353,9 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
 
             data['function'] = function
             data['transmitted_data'] = transmitted_data
-
+        
+        log(f'open inventory userid {userid} count {count}')
+        
         await swipe_page(userid, chatid)
         return True, 'inv'
 
