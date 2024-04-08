@@ -306,6 +306,7 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
         inventory - Возможность закинуть уже обработанный инвентарь, если пусто - сам сгенерирует инвентарь
     """
     if not transmitted_data: transmitted_data = {}
+    count = 0
 
     if 'userid' not in transmitted_data: transmitted_data['userid'] = userid
     if 'chatid' not in transmitted_data: transmitted_data['chatid'] = chatid
