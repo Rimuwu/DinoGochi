@@ -17,6 +17,7 @@ from . import dialogs
 from . import quests
 from . import tavern
 from . import market
+from . import backgrounds
 
 from . import actions
 from . import super_coins
