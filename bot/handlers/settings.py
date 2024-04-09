@@ -154,35 +154,6 @@ async def rename_dino(message: Message):
 
     await ChooseDinoState(transition, userid, message.chat.id, lang, False)
 
-
-async def custom_profile_adapter(content: str, transmitted_data: dict):
-    userid = transmitted_data['userid']
-    lang = transmitted_data['lang']
-    chatid = transmitted_data['chatid']
-
-    text = t('custom_profile.ok', lang)
-    await bot.send_message(chatid, text, 
-                           reply_markup= await m(userid, 'last_menu', lang))
-
-    await users.update_one({'userid': userid}, 
-                     {'$set': {'settings.custom_url': content}})
-
-@bot.message_handler(pass_bot=True, text='commands_name.settings2.custom_profile', 
-                     is_authorized=True)
-async def custom_profile(message: Message):
-    userid = message.from_user.id
-    lang = await get_lang(message.from_user.id)
-    chatid = message.chat.id
-
-    if await premium(userid):
-        markup = list_to_keyboard([t('buttons_name.cancel', lang)])
-        text = t('custom_profile.manual', lang)
-        await bot.send_message(userid, text, reply_markup=markup)
-        await ChooseStringState(custom_profile_adapter, userid, chatid, lang, max_len=200)
-    else:
-        text = t('no_premium', lang)
-        await bot.send_message(userid, text)
-
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('rename_dino'), is_authorized=True, private=True)
 async def rename_button(callback: CallbackQuery):
     dino_data = callback.data.split()[1]
