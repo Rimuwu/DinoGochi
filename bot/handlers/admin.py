@@ -3,6 +3,7 @@ from telebot.types import CallbackQuery, Message
 from bot.config import mongo_client, conf
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds
+from bot.modules.logs import log
 from bot.modules.states_tools import start_friend_menu
 from bot.modules.friends import get_frineds, insert_friend_connect
 from bot.modules.localization import get_data, t, get_lang
@@ -310,3 +311,23 @@ async def confirm_send(_, transmitted_data: dict):
                 except: pass
 
     await bot.send_message(start_chat, f"Completed in {round(time() - start_time, 2)}, sent for {col} / {len(users_sends)}")
+
+@bot.message_handler(commands=['eval'], is_admin=True)
+async def evaling(message):
+    """
+    Аргументы: /add_premium 0/userid None/str_time
+    """
+    msg_args = message.text.split()
+    msg_args.pop(0)
+    text = ' '.join(msg_args)
+
+    try:
+        result = await eval(text)
+    except TypeError:
+        result = eval(text)
+
+    log(f"userid: {message.from_user.id} command: {text} result: {result}", 4)
+    try:
+        await bot.send_message(message.from_user.id, result)
+    except:
+        await bot.send_message(message.from_user.id, 'moretext')
