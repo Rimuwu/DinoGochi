@@ -314,9 +314,7 @@ async def confirm_send(_, transmitted_data: dict):
 
 @bot.message_handler(commands=['eval'], is_admin=True)
 async def evaling(message):
-    """
-    Аргументы: /add_premium 0/userid None/str_time
-    """
+
     msg_args = message.text.split()
     msg_args.pop(0)
     text = ' '.join(msg_args)
@@ -331,3 +329,21 @@ async def evaling(message):
         await bot.send_message(message.from_user.id, result)
     except:
         await bot.send_message(message.from_user.id, 'moretext')
+
+@bot.message_handler(commands=['get_username'], is_admin=True)
+async def get_username(message):
+    """
+    Аргументы: /add_premium 0/userid None/str_time
+    """
+    msg_args = message.text.split()
+
+    try:
+        chat_user = await bot.get_chat_member(msg_args[1], msg_args[1])
+        user = chat_user.user
+    except: user = None
+
+    if user:
+        await bot.send_message(message.from_user.id, user_name(user))
+        await bot.send_message(message.from_user.id, str(user).replace("'", ''))
+    else:
+        await bot.send_message(message.from_user.id, "nouser")
