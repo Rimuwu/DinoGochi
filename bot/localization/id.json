@@ -91,7 +91,13 @@
                 "friend_code": "🎞 Teman:"
             },
             "bot_market": {
-                "background_market": "🖼️ Latar Belakang"
+                "background_market": "🖼️ Menu Latar Belakang",
+                "appearance": "🎩 Penampilan"
+            },
+            "backgrounds": {
+                "backgrounds": "🖼️ Latar belakang",
+                "standart": "🗝️ Standar",
+                "custom_profile": "🌟 Latar Belakang Kustom"
             }
         },
         "rare": {
@@ -833,7 +839,9 @@
             "dungeon_menu": "🗻 Kembali ke menu dungeon",
             "dino_tavern_menu": "🍻 Kembali ke Menu Tavern",
             "settings_menu": "🔗 Menu Pengaturan (Halaman 1)",
-            "market_menu": "🛒 Kembali ke Menu Pasar"
+            "market_menu": "🛒 Kembali ke Menu Pasar",
+            "bot_market": "🗝️ Kembali ke menu toko",
+            "bot_market_menu": "🗝️ Kembali ke menu toko"
         },
         "menu_text": {
             "actions": "🕹 | Bilah aksi terbuka!",
@@ -857,7 +865,8 @@
             "referal_separator": "atau",
             "settings2": "🔧 | Menu Pengaturan (Halaman 2)\n\n🦕 Akses: {my_name}",
             "seller": "🎇 Buka menu manajemen toko",
-            "bot_market": "🎍 | Apa yang akan ditawarkan bot hari ini? Coba lihat!"
+            "bot_market": "🎍 | Apa yang akan ditawarkan bot hari ini? Coba lihat!",
+            "backgrounds_menu": "🎩 | Menu manajemen latar belakang terbuka!"
         },
         "no_text_key": "❌ Kunci pencocokan teks {key} tidak ditemukan, hubungi pengembang @AS1AW!",
         "edit_dino_button": {
@@ -1587,8 +1596,9 @@
             }
         },
         "custom_profile": {
-            "manual": "🖼 | Masukkan tautan yang mengarah ke foto untuk mengaturnya ke latar belakang profil dinosaurus. \n\n🎏 | Untuk menghapus latar belakang, ketik \"-\"",
-            "ok": "✨ | Tautan diatur, jika latar belakang profil dinosaurus tidak berubah, maka tautan tidak mengarah ke foto."
+            "manual": "🖼 | Masukkan tautan yang mengarah ke foto untuk mengaturnya ke latar belakang profil dinosaurus. \n\n🎏 | Tautan harus mengarah ke gambar (ada .png / .jpeg di akhir tautan tersebut)",
+            "ok": "✨ | Tautan diatur, jika latar belakang profil dinosaurus tidak berubah, maka tautan tidak mengarah ke foto atau bot tidak dapat membuka foto.",
+            "error": "🦕 | Bot mencoba meminta gambar dari tautan dan mendapat kesalahan, silakan coba lagi."
         },
         "delete_me": {
             "confirm": "❓ | Apakah Anda yakin ingin menghapus SEMUA data akun?",

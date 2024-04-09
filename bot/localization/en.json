@@ -91,7 +91,13 @@
                 "friend_code": "🎞 A friend:"
             },
             "bot_market": {
-                "background_market": "🖼️ Backgrounds"
+                "background_market": "🖼️ Background Menu",
+                "appearance": "🎩 Appearance"
+            },
+            "backgrounds": {
+                "backgrounds": "🖼️ Backgrounds",
+                "standart": "🗝️ Standard",
+                "custom_profile": "🌟 Custom Background"
             }
         },
         "rare": {
@@ -833,7 +839,9 @@
             "dungeon_menu": "🗻 Return to the Dungeon Menu",
             "dino_tavern_menu": "🍻 Return to Tavern Menu",
             "settings_menu": "🔗 Settings Menu (Page 1)",
-            "market_menu": "🛒 Return to Market Menu"
+            "market_menu": "🛒 Return to Market Menu",
+            "bot_market": "🗝️ Return in the store menu",
+            "bot_market_menu": "🗝️ Return in the store menu"
         },
         "menu_text": {
             "actions": "🕹 | The action bar is open!",
@@ -857,7 +865,8 @@
             "referal_separator": "or",
             "settings2": "🔧 | Settings Menu (Page 2)\n\n 🦕 Address: {my_name}",
             "seller": "🎇 Go to the store management menu",
-            "bot_market": "🎍 | What will the bot offer today? Take a look!"
+            "bot_market": "🎍 | What will the bot offer today? Take a look!",
+            "backgrounds_menu": "🎩 | The background management menu is open!"
         },
         "no_text_key": "❌ The text corresponding to the key {key} is not found, contact the developer @AS1AW!",
         "edit_dino_button": {
@@ -1587,8 +1596,9 @@
             }
         },
         "custom_profile": {
-            "manual": "🖼 | Enter the link that leads to the photo to set it to the background of the dinosaur profile. \n\n 🎏 | To remove the background, type \"-\"",
-            "ok": "✨ | The link is set, if the background of the dinosaur's profile has not changed, then the link does not lead to the photo."
+            "manual": "🖼 | Enter the link that leads to the photo to set it to the background of the dinosaur profile. \n\n🎏 | The link should lead to the image (there is a .png / .jpeg at the end of such links)",
+            "ok": "✨ | The link is set, if the background of the dinosaur's profile has not changed, then the link does not lead to the photo or the bot cannot open the photo.",
+            "error": "🦕 | The bot tried to request a picture from the link and got an error, please try again."
         },
         "delete_me": {
             "confirm": "❓ | Are you sure you want to delete ALL account data?",

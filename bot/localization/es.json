@@ -91,7 +91,13 @@
                 "friend_code": "🎞 Amigo:"
             },
             "bot_market": {
-                "background_market": "🖼️ Fondos"
+                "background_market": "🖼️ Menú de fondo",
+                "appearance": "🎩 Apariencia"
+            },
+            "backgrounds": {
+                "backgrounds": "🖼️ Fondos",
+                "standart": "🗝️ Estándar",
+                "custom_profile": "🌟 Fondo personalizado"
             }
         },
         "rare": {
@@ -833,7 +839,9 @@
             "dungeon_menu": "🗻 Volver al menú de la mazmorra",
             "dino_tavern_menu": "🍻 Volver al menú de la taberna",
             "settings_menu": "🔗 Menú de configuración (página 1)",
-            "market_menu": "🛒 Volver al mercado Menú"
+            "market_menu": "🛒 Volver al mercado Menú",
+            "bot_market": "🗝️ Volver en el menú de la tienda",
+            "bot_market_menu": "🗝️ Volver en el menú de la tienda"
         },
         "menu_text": {
             "actions": "🕹 | ¡La barra de acción está abierta!",
@@ -857,7 +865,8 @@
             "referal_separator": "o",
             "settings2": "🔧 | Menú de configuración (página 2)\n\n🦕 Acceso: {my_name}",
             "seller": "🎇 Ir al menú de gestión de la tienda",
-            "bot_market": "🎍 | ¿Qué ofrecerá el bot hoy? ¡Echa un vistazo!"
+            "bot_market": "🎍 | ¿Qué ofrecerá el bot hoy? ¡Echa un vistazo!",
+            "backgrounds_menu": "🎩 | ¡El menú de gestión en segundo plano está abierto!"
         },
         "no_text_key": "❌ Clave de coincidencia de texto {key} no encontrada, ¡póngase en contacto con el desarrollador de @AS1AW!",
         "edit_dino_button": {
@@ -1587,8 +1596,9 @@
             }
         },
         "custom_profile": {
-            "manual": "🖼 | Introduzca el enlace que conduce a la foto para colocarla en el fondo del perfil de dinosaurio.\n\n🎏 | Para eliminar el fondo, escriba \"-\"",
-            "ok": "✨ | El enlace está configurado, si el fondo del perfil del dinosaurio no ha cambiado, entonces el enlace no conduce a la foto."
+            "manual": "🖼 | Ingrese el enlace que lleva a la foto para configurarla en el fondo del perfil del dinosaurio. \n\n🎏 | El enlace debe llevar a la imagen (hay una .png / .jpeg al final de dichos enlaces)",
+            "ok": "✨ | El enlace está configurado, si el fondo del perfil del dinosaurio no ha cambiado, entonces el enlace no conduce a la foto o el bot no puede abrir la foto.",
+            "error": "🦕 | El bot intentó solicitar una imagen desde el enlace y obtuvo un error, inténtelo de nuevo."
         },
         "delete_me": {
             "confirm": "❓ | ¿Estás seguro de que quieres eliminar TODOS los datos de la cuenta?",
