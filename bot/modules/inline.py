@@ -1,7 +1,7 @@
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from bot.modules.data_format import list_to_inline
-from bot.modules.item import counts_items
+from bot.modules.item import counts_items, is_standart
 from bot.modules.item import get_data as get_item_data
 from bot.modules.item import get_item_dict, get_name, item_code
 from bot.modules.localization import get_data as get_loc_data
@@ -48,13 +48,14 @@ def item_info_markup(item: dict, lang):
 
     markup_inline = list_to_inline([buttons_dict], 2)
 
-    if 'buyer' not in item_data or (item_data['buyer'] == True):
-        # Скупщик
+    if is_standart(item):
+        if 'buyer' not in item_data or (item_data['buyer'] == True):
+            # Скупщик
 
-        markup_inline.add(
-                InlineKeyboardButton(text=loc_data['buyer'],
-                            callback_data=f'buyer {code}')
-                )
+            markup_inline.add(
+                    InlineKeyboardButton(text=loc_data['buyer'],
+                                callback_data=f'buyer {code}')
+                    )
 
     if item_data['type'] == 'recipe':
         for item_cr in item_data['create']:
