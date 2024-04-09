@@ -20,7 +20,7 @@ async def back_menu(userid) -> str:
     menus_list = ['main_menu', 'settings_menu', 'settings2_menu',
                   'main_menu', 'actions_menu', 
                   'main_menu', 'profile_menu', 'market_menu', 'seller_menu',
-                  'main_menu', 'profile_menu', 'market_menu', 'bot_market_menu',
+                  'main_menu', 'profile_menu', 'market_menu', 'bot_market_menu', 'backgrounds_menu',
                   'main_menu', 'profile_menu', 'about_menu',
                   'main_menu', 'friends_menu', 'referal_menu',
                   'main_menu', 'dino_tavern_menu', 'dungeon_menu'
@@ -115,8 +115,6 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         buttons = [
             ['my_name', 'lang'],
         ]
-        
-        if await premium(userid): buttons[0].append('custom_profile')
 
     elif markup_key == 'profile_menu':
         # Меню профиля
@@ -152,7 +150,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         buttons = [
             ['random', 'find'],
             ['seller_profile'],
-            # ['bot_market']
+            ['bot_market']
         ]
 
     elif markup_key == 'bot_market_menu':
@@ -162,6 +160,16 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         buttons = [
             ['background_market']
         ]
+    
+    elif markup_key == 'backgrounds_menu':
+        # Меню разных магазинов
+        prefix = 'commands_name.backgrounds.'
+        add_back_button = True
+        buttons = [
+            ['backgrounds', 'standart']
+        ]
+
+        if await premium(userid): buttons.append(['custom_profile'])
 
     elif markup_key == 'seller_menu':
         # Меню магазина
