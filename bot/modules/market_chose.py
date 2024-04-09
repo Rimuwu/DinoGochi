@@ -4,7 +4,7 @@ from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      seconds_to_str, user_name, escape_markdown)
-from bot.modules.item import (AddItemToUser, CheckCountItemFromUser,
+from bot.modules.item import (CheckCountItemFromUser,
                               RemoveItemFromUser, counts_items, get_name)
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.market import buy_product, check_preferential, create_preferential, delete_product, generate_items_pages, preview_product, product_ui, seller_ui

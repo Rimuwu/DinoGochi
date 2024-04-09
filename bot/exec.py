@@ -14,7 +14,7 @@ class TracebackHandler(ExceptionHandler):
         log(f'{traceback.format_exc()} {exception}', 3)
 
 bot = AsyncTeleBot(conf.bot_token, exception_handler=TracebackHandler())
-# bot.enable_saving_states()
+bot.enable_saving_states()
 
 def run():
     log('Привет! Я вижу ты так и не починил тот самый баг на 46-ой строчке...')
