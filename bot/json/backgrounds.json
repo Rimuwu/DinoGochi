@@ -2,50 +2,50 @@
     "1": {
         "price": {
             "coins": 10000,
-            "super_coins": 20,
-            "show": true
-        }
+            "super_coins": 20
+        },
+        "show": true
     },
     "2": {
         "price": {
             "coins": 10000,
-            "super_coins": 20,
-            "show": true
-        }
+            "super_coins": 20
+        },
+        "show": true
     },
     "3": {
         "price": {
             "coins": 10000,
-            "super_coins": 20,
-            "show": true
-        }
+            "super_coins": 20
+        },
+        "show": true
     },
     "4": {
         "price": {
             "coins": 10000,
-            "super_coins": 20,
-            "show": true
-        }
+            "super_coins": 20
+        },
+        "show": true
     },
     "5": {
         "price": {
             "coins": 10000,
-            "super_coins": 20,
-            "show": true
-        }
+            "super_coins": 20
+        },
+        "show": true
     },
     "6": {
         "price": {
             "coins": 10000,
-            "super_coins": 20,
-            "show": true
-        }
+            "super_coins": 20
+        },
+        "show": true
     },
     "7": {
         "price": {
             "coins": 10000,
-            "super_coins": 20,
-            "show": true
-        }
+            "super_coins": 20
+        },
+        "show": true
     }
 }
