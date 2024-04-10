@@ -50,7 +50,8 @@
                 "random": "🛒 Objetos aleatorios",
                 "find": "🔍 Búsqueda de productos",
                 "seller_profile": "🛒 Mi tienda",
-                "bot_market": "🔮 Tienda de bots"
+                "bot_market": "🔮 Tienda de bots",
+                "background_market": "🖼️ Menú de fondo"
             },
             "seller_profile": {
                 "add_product": "☄ Añadir producto",
@@ -1235,6 +1236,10 @@
                 "kindergarten": {
                     "text": "🏡 Jardín de infantes (⭐)",
                     "data": "dino_menu kindergarten {dino}"
+                },
+                "backgrounds": {
+                    "text": "🖼️ Antecedentes",
+                    "data": "dino_menu backgrounds_menu {dino}"
                 }
             },
             "joint": "(Articulación)"
@@ -3614,6 +3619,7 @@
             "choose": "👑 El comprador le da la bienvenida, en este momento está listo para comprarle el producto en una proporción de `{emoji} x{one_col} = {price} 🪙`",
             "ok": "🎏 Dinero transferido a tu cuenta, vuelve de nuevo.",
             "no": "✨ No tienes suficientes artículos en tu inventario."
-        }
+        },
+        "standart_background": "🗝️ El fondo del perfil se ha establecido en estándar."
     }
 }

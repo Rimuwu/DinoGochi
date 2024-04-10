@@ -50,7 +50,8 @@
                 "random": "🛒 Item acak",
                 "find": "🔍 Pencarian produk",
                 "seller_profile": "🛒 Toko Saya",
-                "bot_market": "🔮 Toko Bot"
+                "bot_market": "🔮 Toko Bot",
+                "background_market": "🖼️ Menu Latar Belakang"
             },
             "seller_profile": {
                 "add_product": "☄ Tambahkan produk",
@@ -1235,6 +1236,10 @@
                 "kindergarten": {
                     "text": "🏡 Taman Kanak-kanak (⭐)",
                     "data": "dino_menu kindergarten {dino}"
+                },
+                "backgrounds": {
+                    "text": "🖼️ Latar belakang",
+                    "data": "dino_menu backgrounds_menu {dino}"
                 }
             },
             "joint": "(Bersama)"
@@ -3614,6 +3619,7 @@
             "choose": "👑 Pembeli menyambut Anda, saat ini dia siap membeli produk dari Anda dengan rasio `{emoji} x{one_col} = {price} 🪙`",
             "ok": "🎏 Uang telah ditransfer ke akun Anda, silakan kunjungi lagi.",
             "no": "✨ Anda tidak memiliki cukup item dalam inventaris Anda."
-        }
+        },
+        "standart_background": "🗝️ Latar belakang profil telah ditetapkan ke standar."
     }
 }

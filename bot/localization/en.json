@@ -50,7 +50,8 @@
                 "random": "🛒 Random Items",
                 "find": "🔍 Product Finder",
                 "seller_profile": "🛒 My Store",
-                "bot_market": "🔮 Bot Shop"
+                "bot_market": "🔮 Bot Shop",
+                "background_market": "🖼️ Background Menu"
             },
             "seller_profile": {
                 "add_product": "☄ Add a product",
@@ -1235,6 +1236,10 @@
                 "kindergarten": {
                     "text": "🏡 Kindergarten (⭐)",
                     "data": "dino_menu kindergarten {dino}"
+                },
+                "backgrounds": {
+                    "text": "🖼️ Background",
+                    "data": "dino_menu backgrounds_menu {dino}"
                 }
             },
             "joint": "(Joint)"
@@ -3614,6 +3619,7 @@
             "choose": "👑 The buyer welcomes you, right now he is ready to buy the goods from you in the ratio of `{emoji} x{one_col} = {price} 🪙`",
             "ok": "🎏 The money has been transferred to your account, come back again.",
             "no": "✨ You don't have enough items in your inventory."
-        }
+        },
+        "standart_background": "🗝️ The profile background has been set to standard."
     }
 }
