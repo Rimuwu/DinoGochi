@@ -5,6 +5,7 @@ from telebot.types import Message
 from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.accessory import check_accessory
+from bot.modules.advert import auto_ads
 from bot.modules.data_format import list_to_keyboard, seconds_to_str
 from bot.modules.dinosaur import Dino, end_sleep, start_sleep
 from bot.modules.inline import inline_menu
@@ -34,10 +35,11 @@ async def short_sleep(number: int, transmitted_data: dict):
 
     await check_accessory(dino, 'bear', True)
     await start_sleep(dino._id, 'short', number * 60)
-    await bot.send_message(chatid, 
+    message = await bot.send_message(chatid, 
                 t('put_to_bed.sleep', lang),
                 reply_markup= await m(userid, 'last_menu', lang, True)
                 )
+    await auto_ads(message)
 
 async def long_sleep(dino: Dino, userid: int, lang: str):
     """ Отправляем дино в длинный сон
@@ -50,10 +52,11 @@ async def long_sleep(dino: Dino, userid: int, lang: str):
             return
 
     await start_sleep(dino._id, 'long')
-    await bot.send_message(userid, 
+    message = await bot.send_message(userid, 
                 t('put_to_bed.sleep', lang),
                 reply_markup= await m(userid, 'last_menu', lang, True)
                 )
+    await auto_ads(message)
 
 async def end_choice(option: str, transmitted_data: dict):
     """Функция обработки выбора варианта (длинный или короткий сон)
@@ -174,3 +177,5 @@ async def awaken(message: Message):
     else:
         await bot.send_message(chatid, t('edit_dino_button.notfouned', lang),
                 reply_markup= await m(userid, 'last_menu', lang))
+
+    await auto_ads(message)

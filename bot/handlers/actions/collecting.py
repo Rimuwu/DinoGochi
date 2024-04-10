@@ -4,6 +4,7 @@ from telebot.types import CallbackQuery, Message
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
+from bot.modules.advert import auto_ads
 from bot.modules.data_format import list_to_inline, list_to_keyboard
 from bot.modules.dinosaur import Dino, end_collecting
 from bot.modules.images import dino_collecting
@@ -53,9 +54,11 @@ async def collecting_adapter(return_data, transmitted_data):
                 {stop_button: f'collecting stop {dino.alt_id}'}])
 
             await bot.send_photo(chatid, image, text, reply_markup=markup)
-            await bot.send_message(chatid, t('back_text.actions_menu', lang),
+            message = await bot.send_message(chatid, t('back_text.actions_menu', lang),
                                         reply_markup= await m(userid, 'last_menu', lang)
                                         )
+    
+            await auto_ads(message)
 
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions.collecting', 

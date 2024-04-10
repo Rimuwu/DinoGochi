@@ -6,6 +6,7 @@ from telebot.types import (CallbackQuery, InlineKeyboardMarkup, InputMedia,
 
 from bot.config import mongo_client
 from bot.exec import bot
+from bot.modules.advert import auto_ads
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.dinosaur import Dino, end_journey
 from bot.modules.dinosaur import start_journey as action_journey
@@ -48,7 +49,9 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
         InputMedia(
             type='photo', media=image, caption=text),
         chatid, last_mess_id)
-    await bot.send_message(chatid, t('journey_start.start_2', lang), reply_markup= await m(userid, 'last_menu', lang))
+    message = await bot.send_message(chatid, t('journey_start.start_2', lang), reply_markup= await m(userid, 'last_menu', lang))
+
+    await auto_ads(message)
 
 async def start_journey(userid: int, chatid: int, lang: str, 
                         friend: int = 0):
@@ -150,6 +153,8 @@ async def events(message: Message):
         else:
             await bot.send_message(chatid, '❌', reply_markup= await m(userid, 'last_menu', lang))
 
+    await auto_ads(message)
+
 @bot.callback_query_handler(pass_bot=True, func=
                             lambda call: call.data.startswith('journey_stop'))
 async def journey_stop(callback: CallbackQuery):
@@ -166,6 +171,8 @@ async def journey_stop(callback: CallbackQuery):
         if data:
             await quest_process(data['sended'], 'journey', (int(time()) - data['journey_start']) // 60)
             await send_logs(data['sended'], lang, data, dino['name'])
+
+    await auto_ads(callback.message)
 
 async def send_logs(chatid: int, lang: str, data: dict, dino_name: str):
     logs = data['journey_log']

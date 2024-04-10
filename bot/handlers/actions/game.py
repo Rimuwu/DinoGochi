@@ -6,6 +6,7 @@ from bot.config import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
 from bot.modules.accessory import check_accessory
+from bot.modules.advert import auto_ads
 from bot.modules.data_format import list_to_inline
 from bot.modules.dinosaur import Dino, end_game
 from bot.modules.friends import send_action_invite
@@ -159,7 +160,7 @@ async def game_start(return_data: dict,
     if percent < 1.0:
         text += t(f'entertainments.game_text.penalty', lang, percent=int(percent*100))
 
-    await bot.send_photo(chatid, image, text, 
+    message = await bot.send_photo(chatid, image, text, 
                          reply_markup=await m(userid, 'last_menu', lang, True))
 
     # Пригласить друга
@@ -172,6 +173,8 @@ async def game_start(return_data: dict,
             {button: f'invite_to_action game {dino.alt_id}'}
         ])
         await bot.send_message(chatid, text, reply_markup=markup)
+
+    await auto_ads(message)
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions.entertainments', dino_pass=True, nothing_state=True)
 async def entertainments(message: Message):
