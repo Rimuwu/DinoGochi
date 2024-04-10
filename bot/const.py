@@ -19,3 +19,6 @@ with open('bot/json/quests_data.json', encoding='utf-8') as f:
 
 with open('bot/json/settings.json', encoding='utf-8') as f: 
     GAME_SETTINGS = json.load(f) # type: dict
+
+with open('bot/json/backgrounds.json', encoding='utf-8') as f: 
+    BACKGROUNDS = json.load(f) # type: dict
