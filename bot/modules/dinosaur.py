@@ -38,7 +38,6 @@ class Dino:
 
         self.data_id = 0
         self.alt_id = 'alt_id' #альтернативный id
-        self.profile_id = 'standart'
 
         self.status = 'pass' # game, journey, sleep, collecting, dungeon...
         self.name = 'name'
@@ -68,6 +67,11 @@ class Dino:
         self.memory = {
             'games': [],
             'eat': []
+        }
+
+        self.profile = {
+            'background_type': 'standart',
+            'background_id': 0
         }
 
     async def create(self, baseid: Union[ObjectId, str, None] = None):
