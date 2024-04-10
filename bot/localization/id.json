@@ -3620,6 +3620,14 @@
             "ok": "🎏 Uang telah ditransfer ke akun Anda, silakan kunjungi lagi.",
             "no": "✨ Anda tidak memiliki cukup item dalam inventaris Anda."
         },
-        "standart_background": "🗝️ Latar belakang profil telah ditetapkan ke standar."
+        "standart_background": "🗝️ Latar belakang profil telah ditetapkan ke standar.",
+        "backgrounds": {
+            "buttons": {
+                "set": "🖼️ Pasang",
+                "page_n": "🗝️ Nomor"
+            },
+            "description_buy": "🎍 | Gunakan panah untuk pergi ke latar belakang\n🗝️ | Masukkan nomor\n❤️ | Beli dengan Koin (🪙) atau Koin Super (👑)\n\n_Purchased latar belakang akan tetap bersama Anda selamanya dan dapat dipasang kapan time._",
+            "description_set": "🎍 | Gunakan panah untuk pergi ke latar belakang\n🗝️ | Masukkan nomor\n🖼️ | Klik Instal dan pilih dinosaurus."
+        }
     }
 }

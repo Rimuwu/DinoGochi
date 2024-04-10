@@ -3620,6 +3620,14 @@
             "ok": "🎏 The money has been transferred to your account, come back again.",
             "no": "✨ You don't have enough items in your inventory."
         },
-        "standart_background": "🗝️ The profile background has been set to standard."
+        "standart_background": "🗝️ The profile background has been set to standard.",
+        "backgrounds": {
+            "buttons": {
+                "set": "🖼️ Install",
+                "page_n": "🗝️ Number"
+            },
+            "description_buy": "🎍 | Use the arrows to go to the backgrounds\n🗝️ | Enter the number\n❤️ | Buy with Coins (🪙) or Super Coins (👑)\n\n_Purchased backgrounds will remain with you forever and can be installed at any time._",
+            "description_set": "🎍 | Use the arrows to go to the backgrounds\n🗝️ | Enter the number\n🖼️ | Click Install and select the dinosaur."
+        }
     }
 }
