@@ -165,11 +165,14 @@ async def transition(element, transmitted_data: dict):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
-    user = await User().create(userid)
     custom_url = ''
 
-    if user and await user.premium and 'custom_url' in user.settings:
-        custom_url = user.settings['custom_url']
+    if element.profile['background_type'] == 'custom':
+        custom_url = element.profile['background_id']
+
+    if element.profile['background_type'] == 'saved':
+        idm = element.profile['background_id']
+        custom_url = await async_open(f'images/backgrounds/{idm}.png')
 
     if type(element) == Dino:
         await dino_profile(userid, chatid, element, lang, custom_url)
@@ -315,6 +318,10 @@ async def dino_menu(call: types.CallbackQuery):
                             }])
                     await bot.send_message(userid, text, parse_mode='Markdown', 
                                            reply_markup=reply_buttons)
+            
+            elif action == 'backgrounds_menu':
+                await bot.send_message(chatid, t('menu_text.backgrounds_menu', lang), 
+                           reply_markup= await m(userid, 'backgrounds_menu', lang))
 
 
 async def cnacel_joint(_:bool, transmitted_data:dict):
