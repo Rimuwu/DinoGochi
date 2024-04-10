@@ -15,6 +15,7 @@ from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
                                       ChooseOptionState, ChooseStringState, ChooseStepState)
 from bot.modules.user import premium, User
 from random import randint
+from bot.const import BACKGROUNDS
 
 users = mongo_client.user.users
 langs = mongo_client.user.lang
@@ -98,3 +99,30 @@ async def standart_end(dino: Dino, transmitted_data: dict):
 
     await bot.send_message(chatid, t('standart_background', lang), 
                             reply_markup= await m(userid, 'last_menu', lang))
+
+
+async def back_page(userid: int, page: int):
+    user = users.find_one({"userid": userid})
+
+    if page in user['saved']['backgrounds']:
+        buttons = {
+            "◀": f"page {}",
+            "": ""
+            "▶": f"page {}"
+        }
+    
+    else:
+        buttons = {
+            "◀": f"page {}",
+            "🛒": f"buy {page}"
+            "▶": f"page {}"
+        }
+
+@bot.message_handler(pass_bot=True, text='commands_name.backgrounds.backgrounds', 
+                     is_authorized=True)
+async def backgrounds(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+    chatid = message.chat.id
+    
+    
