@@ -73,3 +73,28 @@ async def custom_profile(message: Message):
     else:
         text = t('no_premium', lang)
         await bot.send_message(userid, text)
+
+
+@bot.message_handler(pass_bot=True, text='commands_name.backgrounds.standart', 
+                     is_authorized=True)
+async def standart(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+    chatid = message.chat.id
+    
+    await ChooseDinoState(standart_end, userid, message.chat.id, lang, False)
+    
+async def standart_end(dino: Dino, transmitted_data: dict):
+    userid = transmitted_data['userid']
+    lang = transmitted_data['lang']
+    chatid = transmitted_data['chatid']
+    
+    await dino.update({
+            '$set': {
+                "profile.background_type": 'standart',
+                'profile.background_id': 0
+            }
+        })
+
+    await bot.send_message(chatid, t('standart_background', lang), 
+                            reply_markup= await m(userid, 'last_menu', lang))
