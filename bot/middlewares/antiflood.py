@@ -13,20 +13,21 @@ users = mongo_client.user.users
 class AntifloodMiddleware(BaseMiddleware):
 
     def __init__(self, limit=DEFAULT_RATE_LIMIT):
-        self.last_time = {}
-        self.limit = limit
+        # self.last_time = {}
+        # self.limit = limit
         self.update_types = ['message']
 
     async def pre_process(self, message: Message, data: dict):
-        if not message.from_user.id in self.last_time:
-            self.last_time[message.from_user.id] = time_now()
-            return 
-        if time_now() - self.last_time[message.from_user.id] < self.limit:
-            return SkipHandler()
-        self.last_time[message.from_user.id] = time_now()
+        # if not message.from_user.id in self.last_time:
+        #     self.last_time[message.from_user.id] = time_now()
+        #     return 
+        # if time_now() - self.last_time[message.from_user.id] < self.limit:
+        #     return SkipHandler()
+        # self.last_time[message.from_user.id] = time_now()
+        return
 
     async def post_process(self, message: Message, data, exception):
         await auto_ads(message)
 
 
-bot.setup_middleware(AntifloodMiddleware())
+# bot.setup_middleware(AntifloodMiddleware())
