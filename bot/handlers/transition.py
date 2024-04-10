@@ -126,14 +126,6 @@ async def actions_menu(message: Message):
     await bot.send_message(message.chat.id, t('menu_text.actions', lang), 
                            reply_markup = await m(userid, 'actions_menu', lang))
 
-@bot.message_handler(pass_bot=True, text='commands_name.market.bot_market', is_authorized=True)
-async def bot_market(message: Message):
-    userid = message.from_user.id
-    lang = await get_lang(message.from_user.id)
-
-    await bot.send_message(message.chat.id, t('menu_text.bot_market', lang), 
-                           reply_markup = await m(userid, 'bot_market_menu', lang))
-
 @bot.message_handler(pass_bot=True, text='commands_name.dino-tavern_menu', is_authorized=True)
 async def tavern_menu(message: Message):
     userid = message.from_user.id
@@ -274,3 +266,11 @@ async def seller_profile(message: Message):
 
     await bot.send_message(message.chat.id, t('menu_text.seller', lang), 
                            reply_markup= await m(userid, 'seller_menu', lang))
+    
+@bot.message_handler(pass_bot=True, text='commands_name.market.background_market', is_authorized=True)
+async def backgrounds(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+
+    await bot.send_message(message.chat.id, t('menu_text.backgrounds_menu', lang), 
+                           reply_markup= await m(userid, 'backgrounds_menu', lang))

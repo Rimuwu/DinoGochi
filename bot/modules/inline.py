@@ -102,6 +102,7 @@ def dino_profile_markup(add_acs_button: bool, lang: str,
         buttons[rai['my_joint']['text']] = rai['my_joint']['data']
 
     buttons[rai['kindergarten']['text']] = rai['kindergarten']['data']
+    buttons[rai['backgrounds']['text']] = rai['backgrounds']['data']
 
     for but in buttons: buttons[but] = buttons[but].format(dino=alt_id)
     return list_to_inline([buttons], 2)
