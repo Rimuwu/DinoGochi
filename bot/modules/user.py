@@ -64,6 +64,10 @@ class User:
             'dungeon_ended': 0
         }
 
+        self.saved = {
+            'backgrounds': []
+        }
+
     async def create(self, userid: int):
         self.userid = userid
         data = await users.find_one({"userid": userid})
