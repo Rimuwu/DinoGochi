@@ -179,7 +179,7 @@ async def create_egg_image(egg_id: int, rare: str='random',
     rss = await result
     return rss
 
-async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', profile_view: int=1, age: int = 30, custom_url: str=''):
+async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', profile_view: int=1, age: int = 30, custom_url = ''):
     """Создание изображения динозавра
        Args:
        dino_id - id картинки динозавра
@@ -193,12 +193,15 @@ async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', p
 
     # Получение кастом картинки
     if custom_url:
-        try:
-            response = requests.get(custom_url, stream = True)
-            response = await async_open(io.BytesIO(response.content))
-            response = response.convert("RGBA")
-            img = response.resize((900, 350), Image.Resampling.LANCZOS)
-        except: custom_url = ''
+        if isinstance(custom_url, str):
+            try:
+                response = requests.get(custom_url, stream = True)
+                response = await async_open(io.BytesIO(response.content))
+                response = response.convert("RGBA")
+                img = response.resize((900, 350), Image.Resampling.LANCZOS)
+            except: custom_url = ''
+        else:
+            img = custom_url
 
     if profile_view != 4:
         panel_i = await async_open(
@@ -243,7 +246,8 @@ async def create_dino_image(dino_id: int, stats: dict, quality: str='com', profi
     loop = asyncio.get_running_loop()
     result = await loop.run_in_executor(None, create_dino_image_pst, dino_id, stats, quality, profile_view, age, custom_url)
 
-    return await result
+    rss = await result
+    return rss
 
 async def dino_game_pst(dino_id: int, add_dino_id: int = 0):
     n_img = randint(1, 2)
