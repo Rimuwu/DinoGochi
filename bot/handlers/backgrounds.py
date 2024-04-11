@@ -91,7 +91,7 @@ async def standart_end(dino: Dino, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
-    
+
     await dino.update({
             '$set': {
                 "profile.background_type": 'standart',
