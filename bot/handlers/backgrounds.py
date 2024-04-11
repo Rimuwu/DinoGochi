@@ -1,6 +1,6 @@
 import io
 import requests
-from telebot.types import CallbackQuery, Message
+from telebot.types import CallbackQuery, Message, InputMedia
 
 from bot.config import mongo_client
 from bot.exec import bot
@@ -16,6 +16,7 @@ from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
 from bot.modules.user import premium, User
 from random import randint
 from bot.const import BACKGROUNDS
+from bot.modules.inline import list_to_inline
 
 users = mongo_client.user.users
 langs = mongo_client.user.lang
@@ -100,23 +101,61 @@ async def standart_end(dino: Dino, transmitted_data: dict):
     await bot.send_message(chatid, t('standart_background', lang), 
                             reply_markup= await m(userid, 'last_menu', lang))
 
+def near_back(key: int, step: int, storage: list[int] = []):
+    if BACKGROUNDS[str(key)]['show']:
+        return key
+    else:
+        while key != 1 or str(key) != list(BACKGROUNDS.keys())[-1]:
+            key += step
+            if BACKGROUNDS[str(key)]['show']:
+                return key
+            elif key in storage:
+                return key
+        return key
 
-async def back_page(userid: int, page: int):
-    user = users.find_one({"userid": userid})
+async def back_page(userid: int, page: int, lang: str):
+    user = await users.find_one({"userid": userid})
+    text_data = get_data('backgrounds', lang)
+    storage = user['saved']['backgrounds']
+    back = BACKGROUNDS[str(page)]
 
-    if page in user['saved']['backgrounds']:
+    if page - 1 < 1:
+        left = near_back(int(list(BACKGROUNDS.keys())[-1]), 
+                         -1, storage)
+    else:
+        left = near_back(page - 1, -1, storage)
+
+    if str(page + 1) not in list(BACKGROUNDS.keys()):
+        right = near_back(1, 1, storage)
+    else:
+        right = near_back(page + 1, 1, storage)
+
+    if page in storage:
         buttons = {
-            "◀": f"page {}",
-            "": ""
-            "▶": f"page {}"
+            "◀": f"back_m page {left}",
+            text_data['buttons']['page_n']: f"back_m page_n {page}",
+            "▶": f"back_m page {right}",
+            text_data['buttons']['set']: f"back_m set {page}",
         }
-    
+
+        text = text_data['description_buy']
+
     else:
         buttons = {
-            "◀": f"page {}",
-            "🛒": f"buy {page}"
-            "▶": f"page {}"
+            "◀": f"back_m page {left}",
+            text_data['buttons']['page_n']: f"back_m page_n {page}",
+            "▶": f"back_m page {right}",
+            f"{back['price']['coins']} 🪙": f'back_m buy_coins {page}',
+            f"{back['price']['super_coins']} 👑": f'back_m buy_super_coins {page}',
         }
+    
+        text = text_data['description_buy']
+    
+    text += f'\n\n({left}) < {page} > ({right})'
+
+    markup = list_to_inline([buttons])
+    image = await async_open(f'images/backgrounds/{page}.png', True)
+    return text, markup, image
 
 @bot.message_handler(pass_bot=True, text='commands_name.backgrounds.backgrounds', 
                      is_authorized=True)
@@ -124,5 +163,30 @@ async def backgrounds(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
+
+    text, markup, image = await back_page(userid, 1, lang)
+    await bot.send_photo(chatid, image, text,
+                parse_mode='Markdown', reply_markup=markup)
+
+
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('back_m '), private=True)
+async def kindergarten(call: CallbackQuery):
+    split_d = call.data.split()
+    action = split_d[1]
+    b_id = int(split_d[2])
+
+    userid = call.from_user.id
+    chatid = call.message.chat.id
+    lang = await get_lang(call.from_user.id)
     
-    
+    if action == 'page':
+        
+        text, markup, image = await back_page(userid, b_id, lang)
+        await bot.edit_message_media(
+        chat_id=chatid,
+        message_id=call.message.id,
+        media=InputMedia(
+            type='photo', media=image, 
+            parse_mode='Markdown', caption=text),
+        reply_markup=markup
+        )

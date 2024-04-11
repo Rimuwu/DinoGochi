@@ -3620,6 +3620,14 @@
             "ok": "🎏 Dinero transferido a tu cuenta, vuelve de nuevo.",
             "no": "✨ No tienes suficientes artículos en tu inventario."
         },
-        "standart_background": "🗝️ El fondo del perfil se ha establecido en estándar."
+        "standart_background": "🗝️ El fondo del perfil se ha establecido en estándar.",
+        "backgrounds": {
+            "buttons": {
+                "set": "🖼️ Instalar",
+                "page_n": "🗝️ Número"
+            },
+            "description_buy": "🎍 | Usa las flechas para ir a los fondos\n🗝️ | Introduzca el número\n❤️ | Compre con Monedas (🪙) o Super Coins (👑)\n\n_Purchased fondos permanecerán con usted para siempre y se pueden instalar en cualquier time._",
+            "description_set": "🎍 | Usa las flechas para ir a los fondos\n🗝️ | Introduzca el número\n🖼️ | Haga clic en Instalar y seleccione el dinosaurio."
+        }
     }
 }
