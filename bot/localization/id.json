@@ -3626,7 +3626,7 @@
                 "set": "🖼️ Pasang",
                 "page_n": "🗝️ Nomor"
             },
-            "description_buy": "🎍 | Gunakan panah untuk pergi ke latar belakang\n🗝️ | Masukkan nomor\n❤️ | Beli dengan Koin (🪙) atau Koin Super (👑){add_text}\n\n_Purchased latar belakang akan tetap bersama Anda selamanya dan dapat dipasang kapan time._",
+            "description_buy": "🎍 | Gunakan *Panah* untuk menavigasi. \n🗝 | Tentukan *angka* latar belakang. \n⛓ | Beli untuk *Koin* 🪙 atau *Koin Super* 👑{add_text}\n\n_Purchased latar belakang akan tetap bersama Anda selamanya dan dapat diinstal kapan time._",
             "description_set": "🎍 | Gunakan panah untuk pergi ke latar belakang\n🗝️ | Masukkan nomor\n🖼️ | Klik Instal dan pilih dinosaurus.{add_text}",
             "page": "🧧 | Masukkan jumlah halaman yang ingin Anda buka ->",
             "page_set": "🧵 Set latar belakang.",
@@ -3635,7 +3635,7 @@
             "buy": "🖼 | Latar belakang telah dibeli, sekarang Anda dapat mengaturnya untuk dinosaurus apa pun!",
             "choose_dino": "🦕 Pilih dinosaurus untuk mengatur latar belakang ->",
             "set": "🖼️ Latar belakang sudah diatur!",
-            "author": "✨ | Pengarang:"
+            "author": "🤍 | Pengarang:"
         }
     }
 }

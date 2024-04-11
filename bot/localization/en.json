@@ -3626,7 +3626,7 @@
                 "set": "🖼️ Install",
                 "page_n": "🗝️ Number"
             },
-            "description_buy": "🎍 | Use the arrows to go to the backgrounds\n🗝️ | Enter the number\n❤️ | Buy with Coins (🪙) or Super Coins (👑){add_text}\n\n_Purchased backgrounds will remain with you forever and can be installed at any time._",
+            "description_buy": "🎍 | Use *Arrows* to navigate. \n🗝 | Specify *number* of the background. \n⛓ | Purchase for *Coins* 🪙 or *Super Coins* 👑{add_text}\n\n_Purchased backgrounds will remain with you forever and can be installed at any time._",
             "description_set": "🎍 | Use the arrows to go to the backgrounds\n🗝️ | Enter the number\n🖼️ | Click Install and select the dinosaur.{add_text}",
             "page": "🧧 | Enter the number of the page you want to go to ->",
             "page_set": "🧵 Background set.",
@@ -3635,7 +3635,7 @@
             "buy": "🖼 | The background has been purchased, now you can set it for any dinosaur!",
             "choose_dino": "🦕 Choose a dinosaur to set the background ->",
             "set": "🖼️ The background is set!",
-            "author": "✨ | Author:"
+            "author": "🤍 | Author:"
         }
     }
 }
