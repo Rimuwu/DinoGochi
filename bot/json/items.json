@@ -3291,5 +3291,14 @@
         "class": "premium",
         "premium_time": 259200,
         "cant_sell": true
+    },
+    "background": {
+        "buyer": false,
+        "rank": "legendary",
+        "type": "special",
+        "class": "background",
+        "abilities": {
+            "data_id": 1
+        }
     }
 }
