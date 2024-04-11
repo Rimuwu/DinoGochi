@@ -6,7 +6,7 @@ from bot.exec import bot
 from bot.modules.dinosaur import Dino
 from bot.modules.inventory_tools import start_inv
 from bot.modules.item import get_data as get_item_data
-from bot.modules.item import get_name
+from bot.modules.item import get_name, CheckItemFromUser
 from bot.modules.item_tools import use_item
 from bot.modules.markup import feed_count_markup
 from bot.modules.markup import markups_menu as m
@@ -45,16 +45,22 @@ async def inventory_adapter(item, transmitted_data):
     base_item = await items.find_one({'owner_id': userid, 'items_data': item})
 
     if base_item:
-        if 'abilities' in item.keys() and 'uses' in item['abilities']:
-            max_count = base_item['count'] * base_item['items_data']['abilities']['uses']
-        else: max_count = base_item['count']
+        max_count = 0
+        all_items = await items.find({'owner_id': userid, 'items_data': item}).to_list(None)
+        
+        for i in all_items:
+            if 'abilities' in item.keys() and 'uses' in item['abilities']:
+                max_count += i['items_data']['abilities']['uses']
+            else:
+                max_count += i['count']
+            if max_count >= limiter: break
 
         if max_count > limiter: max_count = limiter
 
         percent = 1
         age = await dino.age()
         if age.days >= 10:
-            percent, repeat = await dino.memory_percent('games', item['item_id'], False)
+            percent, repeat = await dino.memory_percent('eat', item['item_id'], False)
 
         steps = [
             {"type": 'int', "name": 'count', "data": {
