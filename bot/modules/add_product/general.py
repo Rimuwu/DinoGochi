@@ -85,7 +85,7 @@ async def end(return_data, transmitted_data):
             item_id = item['item_id']
             count = item['count']
 
-            if 'abillities' in item: abil = item['abillities']
+            if 'abilities' in item: abil = item['abilities']
             else: abil = {}
 
             status = await CheckCountItemFromUser(userid, 
@@ -100,7 +100,7 @@ async def end(return_data, transmitted_data):
                 item_id = item['item_id']
                 count = item['count']
 
-                if 'abillities' in item: abil = item['abillities']
+                if 'abilities' in item: abil = item['abilities']
                 else: abil = {}
 
                 await RemoveItemFromUser(userid, item_id, count * in_stock, abil)

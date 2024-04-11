@@ -343,7 +343,7 @@ async def delete_product(baseid = None, alt_id = None):
             for item in col_items:
                 col = item['count']
 
-                if 'abillities' in item: abil = item['abillities']
+                if 'abilities' in item: abil = item['abilities']
                 else: abil = {}
                 if remained:
                     await AddItemToUser(owner, item['item_id'], remained * col, abil)
@@ -377,7 +377,7 @@ async def delete_product(baseid = None, alt_id = None):
                 for item in col_items:
                     col = item['count']
 
-                    if 'abillities' in item: abil = item['abillities']
+                    if 'abilities' in item: abil = item['abilities']
                     else: abil = {}
                     if remained:
                         await AddItemToUser(winner['userid'], item['item_id'], remained * col, abil)
@@ -401,7 +401,7 @@ async def delete_product(baseid = None, alt_id = None):
                 for item in col_items:
                     col = item['count']
 
-                    if 'abillities' in item: abil = item['abillities']
+                    if 'abilities' in item: abil = item['abilities']
                     else: abil = {}
                     if remained:
                         await AddItemToUser(owner, item['item_id'], remained * col, abil)
@@ -532,7 +532,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                         itme_col = item['count']
 
                         item_id = item['item_id']
-                        if 'abillities' in item: abil = item['abillities']
+                        if 'abilities' in item: abil = item['abilities']
                         else: abil = {}
                         await AddItemToUser(userid, item_id, itme_col * col, abil)
 
@@ -548,7 +548,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                 col_items = item_list(product['items'])
                 for item in col_items:
                     item_id = item['item_id']
-                    if 'abillities' in item: abil = item['abillities']
+                    if 'abilities' in item: abil = item['abilities']
                     else: abil = {}
 
                     status = await CheckCountItemFromUser(userid, col, item_id, abil)
@@ -565,7 +565,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                         itme_col = item['count']
 
                         item_id = item['item_id']
-                        if 'abillities' in item: abil = item['abillities']
+                        if 'abilities' in item: abil = item['abilities']
                         else: abil = {}
 
                         await AddItemToUser(owner, item_id, itme_col * col, abil)
@@ -579,7 +579,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                 col_items = item_list(product['items'])
                 for item in col_items:
                     item_id = item['item_id']
-                    if 'abillities' in item: abil = item['abillities']
+                    if 'abilities' in item: abil = item['abilities']
                     else: abil = {}
 
                     status = await CheckCountItemFromUser(userid, col, item_id, abil)
@@ -596,7 +596,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                         itme_col = item['count']
 
                         item_id = item['item_id']
-                        if 'abillities' in item: abil = item['abillities']
+                        if 'abilities' in item: abil = item['abilities']
                         else: abil = {}
                         await AddItemToUser(userid, item_id, itme_col * col, abil)
 
@@ -605,7 +605,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                         itme_col = item['count']
 
                         item_id = item['item_id']
-                        if 'abillities' in item: abil = item['abillities']
+                        if 'abilities' in item: abil = item['abilities']
                         else: abil = {}
                         await AddItemToUser(userid, item_id, itme_col * col, abil)
 
