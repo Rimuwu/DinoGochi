@@ -1518,7 +1518,7 @@
             },
             "buff": {
                 "+mood": "😀 | Dinosaurus mendapat +{unit}% untuk suasana hati! \n",
-                "-mood": "😥 | Dinosaurus mendapat -{unit}% untuk suasana hati! \n",
+                "-mood": "😥 | Dinosaurus mendapat {unit}% untuk suasana hati! \n",
                 "+eat": "🥪 | Dinosaurus memulihkan {unit}% kenyang! \n",
                 "-eat": "🥪 | Dinosaurus kehilangan {unit}% kenyang! \n",
                 "+energy": "⚡ | Dinosaurus memulihkan energi {unit}%! \n",

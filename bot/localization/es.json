@@ -1518,7 +1518,7 @@
             },
             "buff": {
                 "+mood": "😀 | ¡El dinosaurio tiene +{unit}% en el estado de ánimo! \n",
-                "-mood": "😥 | ¡El dinosaurio tiene -{unit}% al estado de ánimo! \n",
+                "-mood": "😥 | ¡El dinosaurio tiene {unit}% al estado de ánimo! \n",
                 "+eat": "🥪 | ¡Dinosaurio restaurado {unit}% saciedad! \n",
                 "-eat": "🥪 | ¡El dinosaurio perdió {unit}% de saciedad! \n",
                 "+energy": "⚡ | ¡El dinosaurio recuperó {unit}% de energía! \n",
