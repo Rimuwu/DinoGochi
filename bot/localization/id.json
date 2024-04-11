@@ -3640,7 +3640,9 @@
             "buy": "🖼 | Latar belakang telah dibeli, sekarang Anda dapat mengaturnya untuk dinosaurus apa pun!",
             "choose_dino": "🦕 Pilih dinosaurus untuk mengatur latar belakang ->",
             "set": "🖼️ Latar belakang sudah diatur!",
-            "author": "🤍 | Pengarang:"
+            "author": "🤍 | Pengarang:",
+            "add_to_storage": "🎍 | Latar belakang telah ditambahkan ke perpustakaan latar belakang!",
+            "in_st": "🎎 | Latar belakang sudah ada di koleksi Anda."
         }
     }
 }

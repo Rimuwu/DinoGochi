@@ -3640,7 +3640,9 @@
             "buy": "🖼 | The background has been purchased, now you can set it for any dinosaur!",
             "choose_dino": "🦕 Choose a dinosaur to set the background ->",
             "set": "🖼️ The background is set!",
-            "author": "🤍 | Author:"
+            "author": "🤍 | Author:",
+            "add_to_storage": "🎍 | The background has been added to the background library!",
+            "in_st": "🎎 | The background is already in your collection."
         }
     }
 }

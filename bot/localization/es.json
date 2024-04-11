@@ -3640,7 +3640,9 @@
             "buy": "🖼 | El fondo ha sido comprado, ¡ahora puedes configurarlo para cualquier dinosaurio!",
             "choose_dino": "🦕 Elige un dinosaurio para establecer el fondo ->",
             "set": "🖼️ ¡El fondo está listo!",
-            "author": "🤍 | Autor:"
+            "author": "🤍 | Autor:",
+            "add_to_storage": "🎍 | ¡El fondo se ha añadido a la biblioteca de fondos!",
+            "in_st": "🎎 | El fondo ya está en tu colección."
         }
     }
 }
