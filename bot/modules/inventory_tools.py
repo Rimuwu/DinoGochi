@@ -195,7 +195,7 @@ async def swipe_page(userid: int, chatid: int):
             data['main_message'] = new_main.message_id
     else:
         await bot.edit_message_text(menu_text, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
-    
+
     if up_message == 0:
         new_up = await bot.send_message(chatid, text, reply_markup=keyboard)
     else:
