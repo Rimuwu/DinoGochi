@@ -38,11 +38,17 @@ async def start_command_auth(message: types.Message):
         await check_code(referal, 
                          {'userid': message.from_user.id,
                           'chatid': message.chat.id,
-                          'lang': await get_lang(message.from_user.id)})
+                          'lang': await get_lang(message.from_user.id)}, False)
 
-        promo_c = await management.find_one({'_id': 'tracking_links'})
-        if str(content[1]) in promo_c['links']:
+        track = await management.find_one({'_id': 'tracking_links'})
+        if str(content[1]) in track['links']:
             await management.update_one({'_id': 'tracking_links'}, {"$inc": {f"{referal}.col": 1}})
+
+        lang = await get_lang(message.from_user.id)
+        st, text = await use_promo(str(content[1]), message.from_user.id, lang)
+        
+        if st == 'ok':
+            await bot.send_message(message.chat.id, text)
 
 @bot.message_handler(text='commands_name.start_game', is_authorized=False)
 async def start_game(message: types.Message, code: str = '', code_type: str = ''):

@@ -130,7 +130,7 @@ async def my_code(message: Message):
         await bot.send_message(chatid, t('referals.my_code', lang, 
                                 code=code, url=url, uses=uses), parse_mode='Markdown')
 
-async def check_code(code: str, transmitted_data: dict):
+async def check_code(code: str, transmitted_data: dict, send: bool = True):
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
@@ -140,8 +140,10 @@ async def check_code(code: str, transmitted_data: dict):
     names = counts_items(items, lang)
 
     result = await connect_referal(code, userid)
-    text = t(f'referals.enter_code.{result}', lang, coins=coins, items=names)
-    await bot.send_message(chatid, text, parse_mode='Markdown', 
+
+    if send or result:
+        text = t(f'referals.enter_code.{result}', lang, coins=coins, items=names)
+        await bot.send_message(chatid, text, parse_mode='Markdown', 
                         reply_markup= await m(userid, 'last_menu', lang, True))
 
 @bot.message_handler(pass_bot=True, text='commands_name.referal.enter_code', is_authorized=True)
