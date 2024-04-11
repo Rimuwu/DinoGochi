@@ -3627,7 +3627,7 @@
                 "page_n": "🗝️ Número"
             },
             "description_buy": "🎍 | Use *Flechas* para navegar. \n🗝 | Especifique *número* del fondo. \n⛓ | Compra por *Monedas* 🪙 o *Súper Monedas* 👑{add_text}\n\n_Purchased fondos permanecerán contigo para siempre y se pueden instalar en cualquier time._",
-            "description_set": "🎍 | Usa las flechas para ir a los fondos\n🗝️ | Introduzca el número\n🖼️ | Haz clic en Instalar y selecciona el dinosaurio.{add_text}",
+            "description_set": "🎍 | Use *Flechas* para navegar. \n🗝 | Especifique *número* del fondo. \n⛓ | Cómpralo por *Monedas* 🪙 o *Súper Monedas* 👑{add_text}",
             "page": "🧧 | Introduzca el número de la página a la que desea ir ->",
             "page_set": "🧵 Conjunto de fondos.",
             "confirm": "🎗 Confirme la compra del fondo.",
