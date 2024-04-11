@@ -678,8 +678,6 @@ async def item_info(item: dict, lang: str):
         except:
             log(f'Item {item_id} image incorrect', 4)
 
-    print(data_item, type_item)
-
     if type_item == 'special' and data_item['class'] == 'background':
         data_id = item['abilities']['data_id']
         image = await async_open(f"images/backgrounds/{data_id}.png", True)
