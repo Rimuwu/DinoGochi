@@ -23,7 +23,7 @@ async def subscription_notification():
         except: lang = 'en'
 
         await user_notification(sub['userid'], 'donation', lang, 
-                                end_text=seconds_to_str(time() - sub['sub_end'], lang),
+                                end_text=seconds_to_str(int(time() - sub['sub_end']), lang),
                                 add_way='subscription_end_day'
                                 )
         await subscriptions.update_one({'_id': sub['_id']}, {'$set': {'end_notif': True}})
