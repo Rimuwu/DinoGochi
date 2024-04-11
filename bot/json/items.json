@@ -3192,7 +3192,7 @@
         "type": "case"
     },
     "premium_activator": {
-        "image": "null",
+        "image": "activator",
         "rank": "mythical",
         "type": "special",
         "class": "premium",
@@ -3285,7 +3285,7 @@
     },
     "3_days_premium": {
         "buyer": false,
-        "image": "null",
+        "image": "activator",
         "rank": "mythical",
         "type": "special",
         "class": "premium",
