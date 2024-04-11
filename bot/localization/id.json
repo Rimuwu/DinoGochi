@@ -680,6 +680,10 @@
             "3_days_premium": {
                 "name": "✨ Langganan Uji Coba",
                 "description": "Mengaktifkan langganan premium 3 hari"
+            },
+            "background": {
+                "name": "🖼 Latar belakang",
+                "description": "Menambahkan latar belakang ke koleksi."
             }
         },
         "notifications": {
@@ -1304,7 +1308,7 @@
                     ]
                 }
             },
-            "choice_filter": "⚙️ | Pilih filter untuk inventaris di bawah ini\n\n*Daftar:*\n🥚 | Telur\n🔮 | Lainnya\n📜 | Resep\n💍 | Aksesoris\n⛰ | Ruang bawah tanah\n🍕 | Makanan\n👢 | Bahan Kerajinan\n\n_✅ | Klik tanda centang di bawah ini untuk menyimpan pengaturan filter Anda._",
+            "choice_filter": "⚙️ | Pilih filter untuk inventaris di bawah ini\n\n*Daftar:*\n🥚 | Telur\n🔮 | Lainnya\n📜 | Resep\n💍 | Aksesoris\n⛰ | Ruang bawah tanah\n🍕 | Makanan\n👢 | Bahan Kerajinan\n\n_✅ | Klik tanda centang di bawah ini untuk menyimpan pengaturan filter Anda. _",
             "search": "🔎 | Masukkan nama item yang ingin Anda cari:\n❌ | Klik tanda silang di bawah pesan untuk keluar dari pencarian.",
             "search_null": "❌ | Tidak ada yang ditemukan untuk kueri, coba masukkan nama yang lebih akurat!",
             "menu": "🎍 | Halaman *{page}* / *{col}*\n\n📜 | Gunakan *Panah* untuk bergerak. \n🔎 | Gunakan tombol *Magnifier* untuk mengaktifkan pencarian. \n⚙️ | Gunakan tombol *Gigi* untuk memilih filter. \n♻️ | Refresh halaman.",
@@ -3570,7 +3574,8 @@
             "count": "☄ Masukkan jumlah penggunaan, 0 - tak terbatas",
             "time_end": "🎠 Masukkan waktu akhir, 0 tidak terbatas. `/string_to_sec` - Jangan lupa tentang memo itu.",
             "code": "🎃 Masukkan kode pelacakan.",
-            "chose_item": "🧮 Pilih item untuk ditambahkan"
+            "chose_item": "🧮 Pilih item untuk ditambahkan",
+            "abilities": "🧵 Masukkan kemampuan untuk item atau \"0\""
         },
         "max_count": "❌ | Inventaris Anda penuh dengan makanan, sekarang berisi {eat_count} / {max_count} unit makanan!",
         "max_friend_count": "❌ | Anda tidak dapat mentransfer barang, inventaris teman Anda sudah penuh dengan makanan.",

@@ -680,6 +680,10 @@
             "3_days_premium": {
                 "name": "✨ Trial Subscription",
                 "description": "Activates a 3-day premium subscription"
+            },
+            "background": {
+                "name": "🖼 Background",
+                "description": "Adds a background to the collection."
             }
         },
         "notifications": {
@@ -1304,7 +1308,7 @@
                     ]
                 }
             },
-            "choice_filter": "⚙️ | Select a filter for the inventory below\n\n ** \n 🥚 | Eggs\n 🔮 | Other\n 📜 | Recipes\n 💍 | Accessories\n ⛰ | Dungeon\n 🍕 | Food\n 👢 | Crafting Materials\n\n _✅ | Click on the checkmark below to save your filter settings.",
+            "choice_filter": "⚙️ | Select the filter for the inventory below\n\n*List:*\n🥚 | Eggs\n🔮 | Other\n📜 | Recipes\n💍 | Accessories\n⛰ | Dungeon\n🍕 | Food\n👢 | Crafting Materials\n\n_✅ | Click on the checkmark below to save your filter settings. _",
             "search": "🔎 | Enter the name of the item you want to search:\n ❌ | Click on the cross below the message to exit the search.",
             "search_null": "❌ | Nothing matched your search terms, try entering a more accurate name!",
             "menu": "🎍 | Page *{page}* / *{col}*\n\n📜 | Use *Arrows* to move. \n🔎 | Use the *Magnifier* button to activate the search. \n⚙️ | Use the *Gear* button to select a filter. \n♻️ | Refresh the page.",
@@ -3570,7 +3574,8 @@
             "count": "☄ Enter the quantities of uses, 0 - infinite",
             "time_end": "🎠 Enter the end time, 0 is infinite. '/string_to_sec' - Don't forget about the memo.",
             "code": "🎃 Enter the tracking code.",
-            "chose_item": "🧮 Choose an item to add"
+            "chose_item": "🧮 Choose an item to add",
+            "abilities": "🧵 Enter abilities for the item or \"0\""
         },
         "max_count": "❌ | Your inventory is full of food, now it contains {eat_count} / {max_count} units of food!",
         "max_friend_count": "❌ | You can't transfer items, your friend's inventory is already bursting with food.",
