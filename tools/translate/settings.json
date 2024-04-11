@@ -12,6 +12,7 @@
     },
 
     "replace_words": {
+        "(121)": {"text": "_", "translate": false},
         "(120)": {"text": "        ", "translate": false},
         "(119)": {"text": "       ", "translate": false},
         "(118)": {"text": "      ", "translate": false},
