@@ -1,50 +1,79 @@
 {
     "1": {
         "price": {
-            "coins": 10000,
-            "super_coins": 20
+            "coins": 5000,
+            "super_coins": 10
         },
         "show": true
     },
     "2": {
         "price": {
-            "coins": 10000,
-            "super_coins": 20
+            "coins": 5000,
+            "super_coins": 10
         },
         "show": true
     },
     "3": {
         "price": {
-            "coins": 10000,
-            "super_coins": 20
+            "coins": 5000,
+            "super_coins": 10
         },
         "show": true
     },
     "4": {
         "price": {
-            "coins": 10000,
-            "super_coins": 20
+            "coins": 5000,
+            "super_coins": 10
         },
         "show": true
     },
     "5": {
         "price": {
-            "coins": 10000,
-            "super_coins": 20
+            "coins": 5000,
+            "super_coins": 10
         },
         "show": true
     },
     "6": {
         "price": {
-            "coins": 10000,
-            "super_coins": 20
+            "coins": 5000,
+            "super_coins": 10
         },
         "show": true
     },
     "7": {
         "price": {
-            "coins": 10000,
-            "super_coins": 20
+            "coins": 5000,
+            "super_coins": 10
+        },
+        "show": true
+    },
+    "8": {
+        "price": {
+            "coins": 50000,
+            "super_coins": 100
+        },
+        "show": true,
+        "author": "unknown_cat13"
+    },
+    "9": {
+        "price": {
+            "coins": 2500,
+            "super_coins": 5
+        },
+        "show": true
+    },
+    "10": {
+        "price": {
+            "coins": 5000,
+            "super_coins": 10
+        },
+        "show": true
+    },
+    "11": {
+        "price": {
+            "coins": 5000,
+            "super_coins": 10
         },
         "show": true
     }
