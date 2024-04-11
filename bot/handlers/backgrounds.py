@@ -137,9 +137,9 @@ async def back_page(userid: int, page: int, lang: str):
 
     if page in storage:
         buttons = {
-            "◀": f"back_m page {left}",
+            f"◀ {left}": f"back_m page {left}",
             text_data['buttons']['page_n']: f"back_m page_n {page}",
-            "▶": f"back_m page {right}",
+            f"{right} ▶": f"back_m page {right}",
             text_data['buttons']['set']: f"back_m set {page}",
         }
 
@@ -147,15 +147,15 @@ async def back_page(userid: int, page: int, lang: str):
 
     else:
         buttons = {
-            "◀": f"back_m page {left}",
+            f"◀ {left}": f"back_m page {left}",
             text_data['buttons']['page_n']: f"back_m page_n {page}",
-            "▶": f"back_m page {right}",
+            f"{right} ▶": f"back_m page {right}",
             f"{back['price']['coins']} 🪙": f'back_m buy_coins {page}',
             f"{back['price']['super_coins']} 👑": f'back_m buy_super_coins {page}',
         }
         text = t('backgrounds.description_buy', lang, add_text=add_text)
 
-    text += f'\n\n({left}) < {page} > ({right})'
+    text += f'\n\n*№ {page}*'
 
     markup = list_to_inline([buttons])
     image = await async_open(f'images/backgrounds/{page}.png', True)
