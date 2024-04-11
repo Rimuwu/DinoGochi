@@ -231,5 +231,18 @@ async def t12(message):
 
 
 @bot.message_handler(pass_bot=True, commands=['t56'], is_admin=True)
-async def t54(message):
-    pass
+async def t56(message):
+    
+    await users.update_many(
+        {}, {"$set": {'saved': {
+            'backgrounds': []
+            }
+        }
+    })
+
+    await dinosaurs.update_many(
+        {}, {"$set": {
+            'profile': {
+                'background_type': 'standart',
+                'background_id': 0
+        }}})
