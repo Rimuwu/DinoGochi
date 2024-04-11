@@ -167,12 +167,14 @@ async def transition(element, transmitted_data: dict):
     lang = transmitted_data['lang']
     custom_url = ''
 
-    if element.profile['background_type'] == 'custom':
-        custom_url = element.profile['background_id']
+    if isinstance(element, Dino):
 
-    if element.profile['background_type'] == 'saved':
-        idm = element.profile['background_id']
-        custom_url = await async_open(f'images/backgrounds/{idm}.png')
+        if element.profile['background_type'] == 'custom':
+            custom_url = element.profile['background_id']
+
+        if element.profile['background_type'] == 'saved':
+            idm = element.profile['background_id']
+            custom_url = await async_open(f'images/backgrounds/{idm}.png')
 
     if type(element) == Dino:
         await dino_profile(userid, chatid, element, lang, custom_url)
