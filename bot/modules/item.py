@@ -402,9 +402,12 @@ def item_code(item: dict, v_id: bool = True) -> str:
             if v_id:
                 text += f".{key[:2]}{item}"
             else:
+                text += '.'
                 if type(item) == bool:
                     text += str(int(item))
                 else: text += str(item)
+    
+    if not v_id: text = text[1:]
     return text
 
 def decode_item(code: str) -> dict:
