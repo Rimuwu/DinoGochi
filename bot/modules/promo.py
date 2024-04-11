@@ -10,6 +10,7 @@ from bot.modules.states_tools import ChooseStepState, prepare_steps
 from bot.modules.markup import markups_menu as m
 from bot.modules.market import generate_items_pages
 from time import time
+import json
  
 
 promo = mongo_client.other.promo
@@ -73,6 +74,12 @@ def circle_data(userid, chatid, lang, items, prepare: bool = True):
             'message': {'text': f'promo.chose_item'}
         },
         {
+            "type": 'str', "name": 'abilities', "data": {"max_len": 0, "min_len": 1},
+            "translate_message": True,
+            'message': {'text': 'promo.abilities', 
+                        'reply_markup': cancel_markup(lang)}
+        },
+        {
             "type": 'update_data', "name": None, "data": {}, 
             'function': update_col
         },
@@ -102,6 +109,12 @@ def update_col(transmitted_data):
         item_data = transmitted_data['return_data']['items'][-1]
     else:
         item_data = transmitted_data['return_data']['items']
+    
+    abil = transmitted_data['return_data']['abilities'].replace("'", '"')
+    if abil != '0':
+        item_data.update(
+            abilities=json.loads(abil)
+        )
 
     # Добавление данных для выбора количества
     transmitted_data['steps'][step+1]['data']['max_int'] = 1000
@@ -172,11 +185,13 @@ async def end(return_data, transmitted_data):
     time_end = transmitted_data['time_end']
 
     if type(return_data['items']) != list:
-        add_items = [return_data['items']] * return_data['col']
-    else:     
+        return_data['items']['count'] = return_data['col']
+        add_items = [return_data['items']]
+    else:
         add_items, a = [], 0
         for item in return_data['items']:
-            add_items += [item] * return_data['col'][a]
+            item['count'] = return_data['col'][a]
+            add_items.append(item)
             a += 1
 
     if time_end == 0: time_end = 'inf'
@@ -278,15 +293,18 @@ async def use_promo(code: str, userid: int, lang: str):
                                           coins=data['coins']
                                           )
                             if data['items']:
-                                id_dict, id_list = {}, []
-                                for i in list(data['items']):
-                                    id_list.append(i['item_id'])
+                                id_list = []
+                                for item in data['items']:
+                                    count = 1
+                                    if 'count' in item: count = item['count']
 
-                                    if i['item_id'] in id_dict:
-                                        id_dict[i['item_id']] += 1
-                                    else: id_dict[i['item_id']] = 1
+                                    abil = {}
+                                    if 'abilities' in item: abil = item['abilities']
 
-                                for key, count in id_dict.items(): await AddItemToUser(userid, key, count)
+                                    item_id = item['item_id']
+ 
+                                    await AddItemToUser(userid, item_id, count, abil)
+                                    id_list.append(item_id)
 
                                 text += t('promo_commands.items', lang,
                                           items=counts_items(id_list, lang)
