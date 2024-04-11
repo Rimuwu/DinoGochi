@@ -27,6 +27,7 @@ from typing import Union
 dinosaurs = mongo_client.dinosaur.dinosaurs
 items = mongo_client.items.items
 dead_dinos = mongo_client.dinosaur.dead_dinos
+users = mongo_client.user.users
 
 
 async def exchange(return_data: dict, transmitted_data: dict):
@@ -341,11 +342,16 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             return_text = t('item_use.egg.egg_limit', lang, 
                             limit=dino_limit['limit'])
 
-    elif data_item['type'] == 'special' and dino:
+    elif data_item['type'] == 'special':
         user = await User().create(userid)
         dct_dino: dict = dino #type: ignore
 
-        if data_item['class'] == 'reborn':
+        if data_item['class'] == 'premium':
+            await award_premium(userid, data_item['premium_time'] * count)
+            return_text = t('item_use.special.premium', lang, 
+                            premium_time=seconds_to_str(data_item['premium_time'] * count, lang))
+
+        elif data_item['class'] == 'reborn':
             dino_limit_col = await user.max_dino_col()
             dino_limit = dino_limit_col['standart']  
 
@@ -363,14 +369,18 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                             limit=dino_limit['limit'])
                 use_status = False
 
-    elif data_item['type'] == 'special':
-        user = await User().create(userid)
-        dct_dino: dict = dino #type: ignore
+        elif data_item['class'] == 'background':
+            user = await users.find_one({"userid": userid})
+            
+            if item['abilities']['data_id'] in user['saved']['backgrounds']:
+                use_status = False
+                return_text = t('backgrounds.in_st', lang)
+            else:
+                await users.update_one({'userid': userid}, {'$push': {
+                    'saved.backgrounds': item['abilities']['data_id']
+                }})
 
-        if data_item['class'] == 'premium':
-            await award_premium(userid, data_item['premium_time'] * count)
-            return_text = t('item_use.special.premium', lang, 
-                            premium_time=seconds_to_str(data_item['premium_time'] * count, lang))
+                return_text = t('backgrounds.add_to_storage', lang)
 
     if data_item.get('buffs', []) and use_status and use_baff_status and dino:
         # Применяем бонусы от предметов
