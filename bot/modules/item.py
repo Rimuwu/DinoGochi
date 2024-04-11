@@ -99,24 +99,23 @@ def get_item_dict(itemid: str, preabil: dict = {}) -> dict:
         abl = {}
         for k in data['abilities'].keys():
 
-            if type(data['abilities'][k]) == int:
-                abl[k] = data['abilities'][k]
-
-            elif type(data['abilities'][k]) == dict:
+            if type(data['abilities'][k]) == dict:
                 abl[k] = random_dict(data['abilities'][k])
+
+            else:
+                abl[k] = data['abilities'][k]
 
         d_it['abilities'] = abl  # type: ignore
 
     if preabil != {}:
         if 'abilities' in d_it.keys():
-            for ak in d_it['abilities']:
-                if ak in preabil.keys():
+            for ak in preabil:
 
-                    if type(preabil[ak]) == int:
-                        d_it['abilities'][ak] = preabil[ak]  # type: ignore
+                if type(preabil[ak]) == dict:
+                    d_it['abilities'][ak] = random_dict(preabil[ak])  # type: ignore
 
-                    elif type(preabil[ak]) == dict:
-                        d_it['abilities'][ak] = random_dict(preabil[ak])  # type: ignore
+                else:
+                    d_it['abilities'][ak] = preabil[ak]  # type: ignore
         else: 
             d_it['abilities'] = preabil  # type: ignore
 
