@@ -66,6 +66,8 @@ def get_name(itemid: str, lang: str='en', endurance: int=0) -> str:
                 name = items_names[itemid][lang]['name']
         else:
             name = items_names[itemid][lang]['name']
+    else:
+        print(f'Имя для {itemid} не найдено')
     return name
 
 def get_description(itemid: str, lang: str='en') -> str:
@@ -410,10 +412,10 @@ def decode_item(code: str) -> dict:
     """Превращает код в словарь
     """
     split = code.split('.')
-    ids = {
+    ids = { # первые 2 символа
         'us': 'uses', 'en': 'endurance',
         'ma': 'mana', 'st': 'stack',
-        'in': 'interact'
+        'in': 'interact', 'da': 'data_id'
     }
     data = {}
 
@@ -675,5 +677,11 @@ async def item_info(item: dict, lang: str):
             image = await async_open(f"images/items/{data_item['image']}.png", True)
         except:
             log(f'Item {item_id} image incorrect', 4)
+
+    print(data_item, type_item)
+
+    if type_item == 'special' and data_item['class'] == 'background':
+        data_id = item['abilities']['data_id']
+        image = await async_open(f"images/backgrounds/{data_id}.png", True)
 
     return text, image
