@@ -4,7 +4,6 @@ from time import time
 
 from bot.config import conf, mongo_client
 from bot.exec import bot
-from bot.modules.data_format import seconds_to_str
 from bot.modules.localization import get_data, t
 from bot.modules.notifications import user_notification
 from bot.modules.quests import create_quest, quest_resampling, save_quest
@@ -94,7 +93,7 @@ async def daily_award_old():
     for i in list(data): await daily_data.delete_one({'_id': i['_id']})
 
 async def daily_award_notif():
-    users_ids = await users.find({}, 
+    users_ids = await users.find({"last_message_time": {'$gte': int(time()) - 86400 * 7}}, 
                         {'userid': 1, 'settings': 1}).to_list(None) 
 
     for uid in users_ids:
