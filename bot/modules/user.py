@@ -576,11 +576,12 @@ async def daily_award_con(userid: int):
 async def max_eat(userid: int):
     """ Функция проверяет количество еды в инвентаре
     """
-
     col = await col_dinos(userid)
+
     if await premium(userid):
         per_one = GS['premium_max_eat_items']
-    else: per_one = GS['max_eat_items']
+    else: 
+        per_one = GS['max_eat_items']
 
-    max_col = col * per_one
+    max_col = col * per_one + 50
     return max_col

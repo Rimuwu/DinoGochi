@@ -15,14 +15,14 @@ from bot.const import GAME_SETTINGS, ITEMS
 from bot.exec import bot
 from bot.handlers.dino_profile import transition
 from bot.modules.currency import convert
-from bot.modules.data_format import seconds_to_str, str_to_seconds, item_list
+from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, item_list
 from bot.modules.dinosaur import check_status
 from bot.modules.donation import check_donations, get_donations
 from bot.modules.images import create_egg_image, dino_collecting, dino_game
 from bot.modules.inventory_tools import inventory_pages
 from bot.modules.item import (AddItemToUser, DowngradeItem, get_data,
                               get_item_dict, get_name, RemoveItemFromUser)
-from bot.modules.localization import get_data, t
+from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import count_markup, down_menu, list_to_keyboard, confirm_markup
 from bot.modules.notifications import user_notification, notification_manager
 from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
@@ -233,7 +233,13 @@ async def t12(message):
 @bot.message_handler(pass_bot=True, commands=['t56'], is_admin=True)
 async def t56(message):
     
-    users_ids = await users.find({"last_message_time": {'$gte': int(time()) - 86400 * 7}}, 
-                        {'userid': 1, 'settings': 1}).to_list(None) 
+    promo = 'mark'
+    lang = await get_lang(message.from_user.id)
+    text = t('dead_user.situation1', lang)
+    button = t('dead_user.buttons.game', lang)
     
-    print(users_ids)
+    markup = list_to_inline(
+        [{button: f'start_cmd {promo}'}]
+    )
+
+    await bot.send_message(message.from_user.id, text, reply_markup=markup)
