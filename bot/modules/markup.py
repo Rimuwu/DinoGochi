@@ -319,6 +319,8 @@ def count_markup(max_count: int=1, lang: str='en') -> ReplyKeyboardMarkup:
 
 def feed_count_markup(dino_eat: int, item_act: int, 
                       max_col: int, item_name: str, lang):
+    if item_act == 0: item_act = 1
+
     col_to_full = (100 - dino_eat) // item_act
     one_col = dino_eat + item_act
     return_list = []
