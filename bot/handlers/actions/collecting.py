@@ -33,7 +33,10 @@ async def collecting_adapter(return_data, transmitted_data):
     if eat_count + count > await max_eat(userid):
 
         text = t(f'collecting.max_count', lang,
-                eat_count=eat_count)
+                eat_count=eat_count,
+                add_count=count,
+                max_c=await max_eat(userid)
+                )
         await bot.send_message(chatid, text, reply_markup= await m(
             userid, 'last_menu', lang))
     else:
