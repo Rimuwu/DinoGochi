@@ -23,30 +23,29 @@ management = mongo_client.other.management
 
 @bot.message_handler(pass_bot=True, commands=['start'], is_authorized=True, private=True)
 async def start_command_auth(message: types.Message):
-    # stickers = await bot.get_sticker_set('Stickers_by_DinoGochi_bot')
-    # sticker = choice(list(stickers.stickers)).file_id
+    stickers = await bot.get_sticker_set('Stickers_by_DinoGochi_bot')
+    sticker = choice(list(stickers.stickers)).file_id
 
-    # lang = await get_lang(message.from_user.id)
-    # await bot.send_sticker(message.chat.id, sticker, 
-    #                        reply_markup=await m(message.from_user.id, language_code=lang))
-
-    await cancel(message, '🦕')
+    lang = await get_lang(message.from_user.id)
+    await bot.send_sticker(message.chat.id, sticker, 
+                           reply_markup=await m(message.from_user.id, language_code=lang))
 
     content = str(message.text).split()
-    if len(content) > 1: 
+    if len(content) > 1:
         referal = str(content[1])
+
         await check_code(referal, 
                          {'userid': message.from_user.id,
                           'chatid': message.chat.id,
                           'lang': await get_lang(message.from_user.id)}, False)
 
         track = await management.find_one({'_id': 'tracking_links'})
-        if str(content[1]) in track['links']:
+        if referal in track['links']:
             await management.update_one({'_id': 'tracking_links'}, {"$inc": {f"{referal}.col": 1}})
 
         lang = await get_lang(message.from_user.id)
-        st, text = await use_promo(str(content[1]), message.from_user.id, lang)
-        
+        st, text = await use_promo(referal, message.from_user.id, lang)
+
         if st == 'ok':
             await bot.send_message(message.chat.id, text)
 
@@ -134,3 +133,38 @@ async def egg_answer_callback(callback: types.CallbackQuery):
         if callback.data.split()[2] == 'promo':
             code = callback.data.split()[3]
             await use_promo(code, userid, lang)
+
+@bot.callback_query_handler(pass_bot=True, is_authorized=True, 
+                            func=lambda call: call.data.startswith('start_cmd'), private=True)
+async def start_inl(callback: types.CallbackQuery):
+    """ start_cmd promo/  
+    """
+    lang = await get_lang(callback.from_user.id)
+    userid = callback.from_user.id
+    content = ''
+
+    spl = callback.data.split()
+    if len(spl) > 1: content = spl[1]
+
+    stickers = await bot.get_sticker_set('Stickers_by_DinoGochi_bot')
+    sticker = choice(list(stickers.stickers)).file_id
+
+    lang = await get_lang(userid)
+    await bot.send_sticker(callback.message.chat.id, sticker, 
+                           reply_markup=await m(userid, language_code=lang))
+
+    if len(content) > 1:
+        await check_code(content, 
+                         {'userid': userid,
+                          'chatid': callback.message.chat.id,
+                          'lang': await get_lang(userid)}, False)
+
+        track = await management.find_one({'_id': 'tracking_links'})
+        if content in track['links']:
+            await management.update_one({'_id': 'tracking_links'}, {"$inc": {f"{content}.col": 1}})
+
+        lang = await get_lang(userid)
+        st, text = await use_promo(content, userid, lang)
+
+        if st == 'ok':
+            await bot.send_message(callback.message.chat.id, text)
