@@ -100,9 +100,8 @@ async def daily_award_notif():
     for uid in users_ids:
         if not await daily_data.find_one({'owner_id': uid['userid']}):
             if uid['settings']['notifications']:
-                res = await user_notification(uid['userid'], 'daily_award')
-
-                if res: await sleep(0.5)
+                await user_notification(uid['userid'], 'daily_award')
+                await sleep(0.5)
 
 if __name__ != '__main__':
     if conf.active_tasks:
