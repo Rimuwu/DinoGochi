@@ -103,5 +103,5 @@ async def auto_ads(message):
                 now = datetime.now(timezone.utc)
                 delta = now - create
 
-                if delta.days >= 7:
+                if delta.days >= 4:
                     if await check_limit(user_id): await show_advert(user_id)
