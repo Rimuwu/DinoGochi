@@ -94,14 +94,11 @@ async def auto_ads(message):
     user_id = message.from_user.id
     if message.chat.type == "private":
         user = await users.find_one({'userid': user_id}, {"_id": 1})
-        if user:
-            await users.update_one({'userid': user_id}, 
-                                {'$set': {'last_message_time': message.date}})
-            if conf.show_advert:
+        if conf.show_advert and user:
 
-                create = user['_id'].generation_time
-                now = datetime.now(timezone.utc)
-                delta = now - create
+            create = user['_id'].generation_time
+            now = datetime.now(timezone.utc)
+            delta = now - create
 
-                if delta.days >= 4:
-                    if await check_limit(user_id): await show_advert(user_id)
+            if delta.days >= 4:
+                if await check_limit(user_id): await show_advert(user_id)
