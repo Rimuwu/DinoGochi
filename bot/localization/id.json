@@ -1887,7 +1887,7 @@
                 "fishing": "🍤 | Dinosaurus memancing {now} / {max_count} ikan.",
                 "all": "🥗 | Dinosaurus dikumpulkan {now} / {max_count}."
             },
-            "max_count": "❌ | Inventaris Anda penuh dengan makanan, sekarang memiliki {eat_count} unit makanan!"
+            "max_count": "❌ | Inventaris Anda penuh dengan makanan, sekarang memiliki {eat_count} unit makanan! ({eat_count} + {add_count} > {max_c})"
         },
         "optionplus": {
             "update_page": "🔁 | Halaman diperbarui"
@@ -3634,7 +3634,7 @@
             "description_buy": "🎍 | Gunakan *Panah* untuk menavigasi. \n🗝 | Tentukan *angka* latar belakang. \n⛓ | Beli untuk *Koin* 🪙 atau *Koin Super* 👑{add_text}\n\n_Purchased latar belakang akan tetap bersama Anda selamanya dan dapat diinstal kapan time._",
             "description_set": "🎍 | Gunakan *Panah* untuk menavigasi. \n🗝 | Tentukan *angka* latar belakang. \n⛓ | Beli seharga *Koin*, 🪙, atau *Koin Super*, 👑{add_text}",
             "page": "🧧 | Masukkan jumlah halaman yang ingin Anda buka ->",
-            "page_set": "🧵 Set latar belakang.",
+            "page_set": "🧵 Nomor sudah diatur.",
             "confirm": "🎗 Konfirmasikan pembelian latar belakang.",
             "no_coins": "🪙 Tidak cukup koin!",
             "buy": "🖼 | Latar belakang telah dibeli, sekarang Anda dapat mengaturnya untuk dinosaurus apa pun!",
@@ -3643,6 +3643,12 @@
             "author": "🤍 | Pengarang:",
             "add_to_storage": "🎍 | Latar belakang telah ditambahkan ke perpustakaan latar belakang!",
             "in_st": "🎎 | Latar belakang sudah ada di koleksi Anda."
+        },
+        "dead_user": {
+            "situation1": "❤️ | Hai, kami perhatikan bahwa Anda sudah lama tidak bermain bot. Mungkin karena dinosaurus Anda mati mendadak. Bagaimana kalau Anda mencoba lagi, tetapi dengan lebih banyak tanggung jawab? Kami percaya pada Anda! \n\n🦕 | Jika Anda tidak bermain karena alasan lain (misalnya, karena bug di bot), maka tulis @dinogochi _ bug.",
+            "buttons": {
+                "game": "🔮 Bermain!"
+            }
         }
     }
 }

@@ -1887,7 +1887,7 @@
                 "fishing": "🍤 | Dinosaurio pez pescado {now} / {max_count}.",
                 "all": "🥗 | Dinosaurio coleccionado {now} / {max_count}."
             },
-            "max_count": "❌ | Tu inventario está repleto de comida, ¡ahora tiene {eat_count} unidades de comida!"
+            "max_count": "❌ | Tu inventario está repleto de comida, ¡ahora tiene {eat_count} unidades de comida! ({eat_count} + {add_count} > {max_c})"
         },
         "optionplus": {
             "update_page": "🔁 | Página actualizada"
@@ -3634,7 +3634,7 @@
             "description_buy": "🎍 | Use *Flechas* para navegar. \n🗝 | Especifique *número* del fondo. \n⛓ | Compra por *Monedas* 🪙 o *Súper Monedas* 👑{add_text}\n\n_Purchased fondos permanecerán contigo para siempre y se pueden instalar en cualquier time._",
             "description_set": "🎍 | Use *Flechas* para navegar. \n🗝 | Especifique *número* del fondo. \n⛓ | Cómpralo por *Monedas* 🪙 o *Súper Monedas* 👑{add_text}",
             "page": "🧧 | Introduzca el número de la página a la que desea ir ->",
-            "page_set": "🧵 Conjunto de fondos.",
+            "page_set": "🧵 El número está establecido.",
             "confirm": "🎗 Confirme la compra del fondo.",
             "no_coins": "🪙 ¡No hay suficientes monedas!",
             "buy": "🖼 | El fondo ha sido comprado, ¡ahora puedes configurarlo para cualquier dinosaurio!",
@@ -3643,6 +3643,12 @@
             "author": "🤍 | Autor:",
             "add_to_storage": "🎍 | ¡El fondo se ha añadido a la biblioteca de fondos!",
             "in_st": "🎎 | El fondo ya está en tu colección."
+        },
+        "dead_user": {
+            "situation1": "❤️ | Hola, nos hemos dado cuenta de que no has estado jugando al bot durante mucho tiempo. Tal vez sea porque tu dinosaurio murió repentinamente. ¿Qué tal si lo intentas de nuevo, pero con más responsabilidad? ¡Creemos en ti! \n\n🦕 | Si no juegas por alguna otra razón (por ejemplo, debido a errores en el bot), escribe @dinogochi_bugs.",
+            "buttons": {
+                "game": "🔮 ¡Juega!"
+            }
         }
     }
 }

@@ -1887,7 +1887,7 @@
                 "fishing": "🍤 | Dinosaur fished {now} / {max_count} fish.",
                 "all": "🥗 | Dinosaur collected {now} / {max_count}."
             },
-            "max_count": "❌ | Your inventory is full of food, now it contains {eat_count} units of food!"
+            "max_count": "❌ | Your inventory is bursting with food, now it has {eat_count} units of food! ({eat_count} + {add_count} > {max_c})"
         },
         "optionplus": {
             "update_page": "🔁 | Page updated"
@@ -3634,7 +3634,7 @@
             "description_buy": "🎍 | Use *Arrows* to navigate. \n🗝 | Specify *number* of the background. \n⛓ | Purchase for *Coins* 🪙 or *Super Coins* 👑{add_text}\n\n_Purchased backgrounds will remain with you forever and can be installed at any time._",
             "description_set": "🎍 | Use *Arrows* to navigate. \n🗝 | Specify *number* of the background. \n⛓ | Buy for *Coins* 🪙 or *Super Coins* 👑{add_text}",
             "page": "🧧 | Enter the number of the page you want to go to ->",
-            "page_set": "🧵 Background set.",
+            "page_set": "🧵 The number is set.",
             "confirm": "🎗 Confirm the purchase of the background.",
             "no_coins": "🪙 Not enough coins!",
             "buy": "🖼 | The background has been purchased, now you can set it for any dinosaur!",
@@ -3643,6 +3643,12 @@
             "author": "🤍 | Author:",
             "add_to_storage": "🎍 | The background has been added to the background library!",
             "in_st": "🎎 | The background is already in your collection."
+        },
+        "dead_user": {
+            "situation1": "❤️ | Hi, we've noticed that you haven't been playing bot for a long time. Perhaps it's because your dinosaur died suddenly. How about you try again, but with more responsibility? We believe in you! \n\n🦕 | If you don't play for some other reason (for example, due to bugs in the bot), then write @dinogochi_bugs.",
+            "buttons": {
+                "game": "🔮 Play!"
+            }
         }
     }
 }
