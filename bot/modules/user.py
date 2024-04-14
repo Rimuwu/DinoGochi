@@ -22,7 +22,10 @@ users = mongo_client.user.users
 items = mongo_client.items.items
 dinosaurs = mongo_client.dinosaur.dinosaurs
 products = mongo_client.market.products
+sellers = mongo_client.market.sellers
+puhs = mongo_client.market.puhs
 dead_dinos = mongo_client.dinosaur.dead_dinos
+tavern = mongo_client.tavern.tavern
 
 incubations = mongo_client.dinosaur.incubation
 dino_owners = mongo_client.dinosaur.dino_owners
@@ -32,6 +35,7 @@ referals = mongo_client.user.referals
 daily_award_data = mongo_client.tavern.daily_award
 langs = mongo_client.user.lang
 ads = mongo_client.user.ads
+dead_users = mongo_client.other.dead_users
 
 class User:
 
@@ -138,10 +142,10 @@ class User:
         """Удаление юзера и всё с ним связанное из базы.
         """
 
-        for collection in [items, products, dead_dinos, incubations]:
+        for collection in [items, products, dead_dinos, incubations, sellers, puhs, daily_award_data]:
             await collection.delete_many({'owner_id': self.userid})
 
-        for collection in [referals, langs, ads]:
+        for collection in [referals, langs, ads, dead_users, subscriptions, tavern, dead_users]:
             await collection.delete_many({'userid': self.userid})
 
         """ При полном удалении есть возможность, что у динозавра
@@ -187,6 +191,7 @@ class User:
         """Удаление юзера из базы.
         """
         await users.delete_one({'userid': self.userid})
+        log(f'Удаление {self.userid} из базы.', 0)
 
     async def get_last_dino(self):
         """Возвращает последнего динозавра или None
