@@ -3647,8 +3647,10 @@
         "dead_user": {
             "situation1": "❤️ | Hai, kami perhatikan bahwa Anda sudah lama tidak bermain bot. Mungkin karena dinosaurus Anda mati mendadak. Bagaimana kalau Anda mencoba lagi, tetapi dengan lebih banyak tanggung jawab? Kami percaya pada Anda! \n\n🦕 | Jika Anda tidak bermain karena alasan lain (misalnya, karena bug di bot), maka tulis @dinogochi _ bug.",
             "buttons": {
-                "game": "🔮 Bermain!"
-            }
+                "game": "🔮 Bermain!",
+                "promo": "🎩 Mulai cepat!"
+            },
+            "situation2": "🦕 | Hai, sudah lama sekali sejak ({st_time}) memainkan bot, kami merindukanmu ... Apakah kamu tidak ingin kembali? \n\n❤️ | Berikut kode promo untuk 3 hari premium! \n\n🦕 | Jika Anda tidak bermain karena alasan lain (misalnya, karena bug di bot), maka tulis @dinogochi _ bug."
         }
     }
 }

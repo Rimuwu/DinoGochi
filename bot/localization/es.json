@@ -3647,8 +3647,10 @@
         "dead_user": {
             "situation1": "❤️ | Hola, nos hemos dado cuenta de que no has estado jugando al bot durante mucho tiempo. Tal vez sea porque tu dinosaurio murió repentinamente. ¿Qué tal si lo intentas de nuevo, pero con más responsabilidad? ¡Creemos en ti! \n\n🦕 | Si no juegas por alguna otra razón (por ejemplo, debido a errores en el bot), escribe @dinogochi_bugs.",
             "buttons": {
-                "game": "🔮 ¡Juega!"
-            }
+                "game": "🔮 ¡Juega!",
+                "promo": "🎩 ¡Inicio rápido!"
+            },
+            "situation2": "🦕 | Hola, ha pasado tanto tiempo desde que ({st_time}) jugué un bot, te extrañamos... ¿No quieres volver? \n\n❤️ | ¡Aquí tienes un código promocional para 3 días de premium! \n\n🦕 | Si no juegas por alguna otra razón (por ejemplo, debido a errores en el bot), escribe @dinogochi_bugs."
         }
     }
 }

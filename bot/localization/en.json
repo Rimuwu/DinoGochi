@@ -2556,7 +2556,7 @@
                 "activate": "🎋 Claim Reward"
             },
             "in_base": "🎋 You've already claimed the Daily Reward today, come back for it tomorrow!",
-            "use": "👑 The daily reward has been received, don't forget to claim it again in {time}! \n\n 🌸 Today you got: {items}, {coins} 🪙"
+            "use": "👑 Daily reward received, don't forget to claim it again via {time}! \n\n🌸 Today you received: {items}, {coins} 🪙"
         },
         "journey": {
             "forest": {
@@ -3647,8 +3647,10 @@
         "dead_user": {
             "situation1": "❤️ | Hi, we've noticed that you haven't been playing bot for a long time. Perhaps it's because your dinosaur died suddenly. How about you try again, but with more responsibility? We believe in you! \n\n🦕 | If you don't play for some other reason (for example, due to bugs in the bot), then write @dinogochi_bugs.",
             "buttons": {
-                "game": "🔮 Play!"
-            }
+                "game": "🔮 Play!",
+                "promo": "🎩 Quick start!"
+            },
+            "situation2": "🦕 | Hi, it's been so long since ({st_time}) played a bot, we miss you... Don't you want to come back? \n\n❤️ | Here's a promo code for 3 days of premium! \n\n🦕 | If you don't play for some other reason (for example, due to bugs in the bot), then write @dinogochi_bugs."
         }
     }
 }
