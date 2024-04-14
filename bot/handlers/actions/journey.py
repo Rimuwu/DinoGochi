@@ -35,21 +35,26 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
     location = return_data['location']
     time_key = return_data['time_key']
     last_mess_id = transmitted_data['steps'][-1]['bmessageid']
-    
+
     data_time = get_data(f'journey_start.time_text.{time_key}', lang)
-    image = await dino_journey(dino.data_id, location, friend)
-    await action_journey(dino._id, userid, data_time['time'], location)
+    res = await action_journey(dino._id, userid, data_time['time'], location)
 
-    loc_name = get_data(f'journey_start.locations.{location}', lang)['name']
-    time_text = data_time['text']
-    text = t('journey_start.start', lang, 
-             loc_name=loc_name, time_text=time_text)
+    if res:
+        image = await dino_journey(dino.data_id, location, friend)
 
-    await bot.edit_message_media(
-        InputMedia(
-            type='photo', media=image, caption=text),
-        chatid, last_mess_id)
-    message = await bot.send_message(chatid, t('journey_start.start_2', lang), reply_markup= await m(userid, 'last_menu', lang))
+        loc_name = get_data(f'journey_start.locations.{location}', lang)['name']
+        time_text = data_time['text']
+        text = t('journey_start.start', lang, 
+                loc_name=loc_name, time_text=time_text)
+
+        await bot.edit_message_media(
+            InputMedia(
+                type='photo', media=image, caption=text),
+            chatid, last_mess_id)
+        message = await bot.send_message(chatid, t('journey_start.start_2', lang), reply_markup= await m(userid, 'last_menu', lang))
+
+    else:
+        message = await bot.send_message(chatid, '❌', reply_markup= await m(userid, 'last_menu', lang))
 
     await auto_ads(message)
 
