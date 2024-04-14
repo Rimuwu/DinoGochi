@@ -153,16 +153,7 @@ async def start_inl(callback: types.CallbackQuery):
     await bot.send_sticker(callback.message.chat.id, sticker, 
                            reply_markup=await m(userid, language_code=lang))
 
-    if len(content) > 1:
-        await check_code(content, 
-                         {'userid': userid,
-                          'chatid': callback.message.chat.id,
-                          'lang': await get_lang(userid)}, False)
-
-        track = await management.find_one({'_id': 'tracking_links'})
-        if content in track['links']:
-            await management.update_one({'_id': 'tracking_links'}, {"$inc": {f"{content}.col": 1}})
-
+    if content:
         lang = await get_lang(userid)
         st, text = await use_promo(content, userid, lang)
 
