@@ -206,19 +206,25 @@ async def end(return_data, transmitted_data):
         await bot.send_message(chatid, text, reply_markup=markup)
     await bot.send_message(chatid, '✅', reply_markup= await m(userid, 'last_menu', lang))
 
-async def create_promo(code: str, col, seconds, coins: int, items: list):
-    data = {
-        "code": code,
-        "users": [],
-        "col": col,
-        "time_end": seconds,
-        "time": seconds,
-        "coins": coins,
-        "items": items,
-        "active": False
-    }
+async def create_promo(code: str, col, seconds, coins: int, items: list, active: bool = False):
 
-    await promo.insert_one(data)
+    promo_check = await promo.find_one({'code': code})
+
+    if not promo_check:
+        data = {
+            "code": code,
+            "users": [],
+            "col": col,
+            "time_end": seconds,
+            "time": seconds,
+            "coins": coins,
+            "items": items,
+            "active": active
+        }
+
+        await promo.insert_one(data)
+        return True
+    return False
 
 async def promo_ui(code: str, lang: str):
     data = await promo.find_one({"code": code})
