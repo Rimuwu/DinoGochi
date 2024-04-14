@@ -10,7 +10,6 @@ from bot.modules.localization import  get_lang
 from asyncio import sleep
 
 subscriptions = mongo_client.user.subscriptions
-users = mongo_client.bot.users
 
 async def subscription_notification():
     data = list(await subscriptions.find({'sub_end': {'$lte': int(time()) - 86400}, 
