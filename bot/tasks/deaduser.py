@@ -1,3 +1,4 @@
+from asyncio import sleep
 from time import time
 
 from bot.config import conf, mongo_client
@@ -44,8 +45,6 @@ async def DeadUser_return():
                                  ).to_list(None) 
 
     del_u = 0
-    sit1_u = 0
-
     for us in users_ids:
         if await col_dinos(us['userid']):
             delta_days = (int(time()) - us['last_message_time']) // 86400
@@ -108,6 +107,10 @@ async def DeadUser_return():
                             # - Если нельзя отправить спустя месяц - удалить акк
                             user = await User().create(userid)
                             await user.full_delete()
+                            del_u += 1
+
+        await sleep(0.5)
+    log(f'Завершил работу. Проверено {len(users_ids)}, удалено: {del_u}', 0, 'DeadUsers')
 
 
 async def clear_data():
@@ -126,7 +129,7 @@ async def clear_data():
                 })
 
 
-# if __name__ != '__main__':
-#     if conf.active_tasks: 
-#         add_task(clear_data, 36000.0, 500.0)
-#         add_task(DeadUser_return, 36000.0, 100.0)
+if __name__ != '__main__':
+    if conf.active_tasks: 
+        add_task(clear_data, 36000.0, 500.0)
+        add_task(DeadUser_return, 36000.0, 100.0)
