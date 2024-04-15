@@ -49,8 +49,7 @@ async def DeadUser_return():
     del_u = 0
     for us in users_ids:
         col_d = await col_dinos(us['userid'])
-        print(f"{us['userid']} dino_col: {col_d}")
-        if col_d:
+        if col_d == 0:
             delta_days = (int(time()) - us['last_message_time']) // 86400
 
             res = await dead_users.find_one({'userid': us['userid']}, {'_id': 0}) # type: dict
@@ -60,7 +59,8 @@ async def DeadUser_return():
                 userid, type_send, promo, last_m = us['userid'], '0', '', int(time())
 
             lat_days = (int(time()) - last_m) // 86400
-
+            print(f"{us['userid']} dino_col: {col_d} delta_days: {delta_days} lat_days: {lat_days}")
+            
             if delta_days >= 7 and delta_days < 30 and type_send != 'situation1':
                 # - Если можно отправить спустя неделю - просто сообщение с напоминанием
 
