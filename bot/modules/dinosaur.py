@@ -48,7 +48,11 @@ class Dino:
         self.stats = {
                 'heal': 10, 'eat': 10,
                 'game': 10, 'mood': 10,
-                'energy': 10
+                'energy': 10,
+
+                'power': 0, 'dexterity': 0,
+                'endurance': 0, 'intelligence': 0,
+                'wisdom': 0, 'charisma': 0
         }
 
         self.activ_items = {
