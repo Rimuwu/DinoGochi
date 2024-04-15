@@ -8,6 +8,7 @@ from bot.modules.promo import create_promo
 from bot.modules.user import col_dinos
 from bot.taskmanager import add_task
 from bot.modules.user import User
+from bot.modules.logs import log
  
 
 users = mongo_client.user.users
@@ -41,6 +42,9 @@ async def DeadUser_return():
     users_ids = await users.find({"last_message_time": 
         {'$lte': int(time()) - 86400 * 7}}, {'_id': 1, 'last_message_time': 1, 'userid': 1}
                                  ).to_list(None) 
+
+    del_u = 0
+    sit1_u = 0
 
     for us in users_ids:
         if await col_dinos(us['userid']):
@@ -122,7 +126,7 @@ async def clear_data():
                 })
 
 
-if __name__ != '__main__':
-    if conf.active_tasks: 
-        add_task(clear_data, 36000.0, 500.0)
-        add_task(DeadUser_return, 36000.0, 100.0)
+# if __name__ != '__main__':
+#     if conf.active_tasks: 
+#         add_task(clear_data, 36000.0, 500.0)
+#         add_task(DeadUser_return, 36000.0, 100.0)
