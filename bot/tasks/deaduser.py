@@ -40,15 +40,17 @@ async def save_d(userid: int, type_send: str, last_m: int, promo: str = ''):
         await dead_users.insert_one(data)
 
 async def DeadUser_return():
-    users_ids = await users.find({"last_message_time": 
+    users_ids = list(await users.find({"last_message_time": 
         {'$lte': int(time()) - 86400 * 7}}, {'_id': 1, 'last_message_time': 1, 'userid': 1}
-                                 ).to_list(None) 
+                                 ).to_list(None))
 
     log(f'Начата проверка {len(users_ids)}')
 
     del_u = 0
     for us in users_ids:
-        if await col_dinos(us['userid']):
+        col_d = await col_dinos(us['userid'])
+        print(f"{us['userid']} dino_col: {col_d}")
+        if col_d:
             delta_days = (int(time()) - us['last_message_time']) // 86400
 
             res = await dead_users.find_one({'userid': us['userid']}, {'_id': 0}) # type: dict
