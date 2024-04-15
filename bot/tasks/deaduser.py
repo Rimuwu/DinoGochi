@@ -1,19 +1,13 @@
-from datetime import datetime, timezone, timedelta
-from random import choice, randint, choices
 from time import time
 
 from bot.config import conf, mongo_client
 from bot.exec import bot
 from bot.modules.data_format import random_code, seconds_to_str, list_to_inline
-from bot.modules.localization import get_data, t, get_lang
-from bot.modules.notifications import user_notification
-from bot.modules.over_functions import async_antiflood
+from bot.modules.localization import t, get_lang
 from bot.modules.promo import create_promo
-from bot.modules.quests import create_quest, quest_resampling, save_quest
 from bot.modules.user import col_dinos
 from bot.taskmanager import add_task
 from bot.modules.user import User
-from telebot.apihelper import ApiTelegramException
  
 
 users = mongo_client.user.users
@@ -35,7 +29,7 @@ async def save_d(userid: int, type_send: str, last_m: int, promo: str = ''):
         'promo': promo,
         'last_m': last_m
     }
-    
+
     res = await dead_users.find_one({'userid': userid})
     if res:
         await dead_users.update_one({'userid': userid}, {'$set':
