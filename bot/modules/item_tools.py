@@ -172,8 +172,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                     percent, repeat = await dino.memory_percent('eat', item_id)
                     return_text = t(f'item_use.eat.repeat.m{repeat}', lang, percent=int(percent*100)) + '\n'
 
-                    if repeat >= 3:
-                        await add_mood(dino._id, 'repeat_eat', -1, 900)
+                    if repeat >= 3: await add_mood(dino._id, 'repeat_eat', -1, 900)
 
                 dino.stats['eat'] = edited_stats(dino.stats['eat'], 
                                     int((data_item['act'] * count)*percent))
@@ -371,7 +370,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
         elif data_item['class'] == 'background':
             user = await users.find_one({"userid": userid})
-            
+
             if item['abilities']['data_id'] in user['saved']['backgrounds']:
                 use_status = False
                 return_text = t('backgrounds.in_st', lang)
