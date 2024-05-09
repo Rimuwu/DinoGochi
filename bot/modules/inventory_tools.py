@@ -1,6 +1,6 @@
 from telebot.asyncio_handler_backends import State, StatesGroup
 
-from bot.config import mongo_client
+from bot.config import mongo_client, conf
 from bot.const import GAME_SETTINGS as gs
 from bot.exec import bot
 from bot.modules.data_format import (chunks, filling_with_emptiness,
@@ -127,8 +127,10 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list = [],
 async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
+    userid = transmitted_data['userid']
+    dev = userid in conf.bot_devs
 
-    text, image = await item_info(item, lang)
+    text, image = await item_info(item, lang, dev)
 
     if mark: markup = item_info_markup(item, lang)
     else: markup = None
