@@ -680,7 +680,7 @@ async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
         steps.append({"type": 'int', "name": 'count', 
                         "data": {"max_int": max_count}, 
                         'message': {'text': t('css.wait_count', lang), 
-                                    'reply_markup': count_markup(max_count)}}
+                                    'reply_markup': count_markup(max_count, lang)}}
         )
         steps.insert(0, {
                 "type": 'bool', "name": 'confirm', 
