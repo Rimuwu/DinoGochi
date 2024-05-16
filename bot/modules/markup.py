@@ -311,10 +311,10 @@ def count_markup(max_count: int=1, lang: str='en') -> ReplyKeyboardMarkup:
         max_count (int): Максимальное доступное вводимое число
         lang (str): Язык кнопки отмены
     """
-    counts = ["x1"]
-    if max_count > 1: counts.append(f"x{max_count}")
-    if max_count >= 4: counts.insert(1, f"x{max_count // 2}")
-    
+    counts = ["1"]
+    if max_count > 1: counts.append(f"{max_count}")
+    if max_count >= 4: counts.insert(1, f"{max_count // 2}")
+
     return list_to_keyboard([counts, t('buttons_name.cancel', lang)])
 
 def feed_count_markup(dino_eat: int, item_act: int, 

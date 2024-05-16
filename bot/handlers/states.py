@@ -84,10 +84,6 @@ async def ChooseInt(message: Message):
         if iter_word.isdigit():
             number = int(iter_word)
 
-        elif iter_word.startswith('x') and \
-            iter_word[1:].isdigit():
-            number = int(iter_word[1:])
-
     if not number and number != 0:
         await bot.send_message(message.chat.id, 
                 t('states.ChooseInt.error_not_int', lang))
