@@ -329,11 +329,11 @@ def feed_count_markup(dino_eat: int, item_act: int,
     if col_to_full > max_col: col_to_full = max_col
     if one_col > 100: one_col = 100
 
-    bt_1 = f"{one_col}% = {item_name[:1]} x1"
-    bt_2 = f"{dino_eat + item_act * col_to_full}% = {item_name[:1]} x{col_to_full}"
+    bt_1 = f"{one_col}% = {item_name[:1]} 1"
+    bt_2 = f"{dino_eat + item_act * col_to_full}% = {item_name[:1]} {col_to_full}"
 
     if dino_eat + item_act * col_to_full < 100:
-        bt_3 = f"100% = {item_name[:1]} x{col_to_full + 1}"
+        bt_3 = f"100% = {item_name[:1]} {col_to_full + 1}"
 
     if col_to_full == 1:
         if bt_3: return_list += [bt_1, bt_3]
@@ -342,7 +342,7 @@ def feed_count_markup(dino_eat: int, item_act: int,
     elif col_to_full != 1 and col_to_full != 0:
         if bt_3: return_list += [bt_1, bt_2, bt_3]
         else: return_list += [bt_1, bt_2]
-    
+
     if not return_list: return_list += [bt_1]
 
     return list_to_keyboard([return_list, [t('buttons_name.cancel', lang)]])
