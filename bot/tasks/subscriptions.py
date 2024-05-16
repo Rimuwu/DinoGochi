@@ -5,7 +5,6 @@ from bot.exec import bot
 from bot.modules.data_format import seconds_to_str
 from bot.modules.notifications import user_notification
 from bot.taskmanager import add_task
-from bot.modules.donation import check_donations
 from bot.modules.localization import  get_lang
 from asyncio import sleep
 
