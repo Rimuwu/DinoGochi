@@ -18,13 +18,13 @@ async def cancel(message, text:str = "❌"):
     await bot.delete_state(message.from_user.id, message.chat.id)
     await bot.reset_data(message.from_user.id,  message.chat.id)
 
-@bot.message_handler(pass_bot=True, text='buttons_name.cancel', state='*')
+@bot.message_handler(pass_bot=True, text='buttons_name.cancel', state='*', private=True)
 async def cancel_m(message: Message):
     """Состояние отмены
     """
     await cancel(message)
 
-@bot.message_handler(pass_bot=True, commands=['cancel'], state='*')
+@bot.message_handler(pass_bot=True, commands=['cancel'], state='*', private=True)
 async def cancel_c(message: Message):
     """Команда отмены
     """

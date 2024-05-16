@@ -16,7 +16,7 @@ from bot.modules.user import take_coins
 quests_data = mongo_client.tavern.quests
 users = mongo_client.user.users
 
-@bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.quests', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.quests', is_authorized=True, private=True)
 async def check_quests(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)

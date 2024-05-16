@@ -65,7 +65,7 @@ async def transition_back(dino: Dino, transmitted_data: dict):
     await bot.send_message(userid, text, reply_markup=markup)
 
 @bot.message_handler(pass_bot=True, text='commands_name.backgrounds.custom_profile', 
-                     is_authorized=True)
+                     is_authorized=True, private=True)
 async def custom_profile(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -79,7 +79,7 @@ async def custom_profile(message: Message):
 
 
 @bot.message_handler(pass_bot=True, text='commands_name.backgrounds.standart', 
-                     is_authorized=True)
+                     is_authorized=True, private=True)
 async def standart(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -162,7 +162,7 @@ async def back_page(userid: int, page: int, lang: str):
     return text, markup, image
 
 @bot.message_handler(pass_bot=True, text='commands_name.backgrounds.backgrounds', 
-                     is_authorized=True)
+                     is_authorized=True, private=True)
 async def backgrounds(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)

@@ -32,7 +32,7 @@ journey_task = mongo_client.dino_activity.journey
 users = mongo_client.user.users
 
 # @asinc_decor().cpu
-async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_url: str):
+async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_url):
     text = ''
 
     text_rare = get_data('rare', lang)
@@ -181,7 +181,7 @@ async def transition(element, transmitted_data: dict):
     elif type(element) == Egg:
         await egg_profile(chatid, element, lang)
 
-@bot.message_handler(pass_bot=True, text='commands_name.dino_profile', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.dino_profile', is_authorized=True, private=True)
 async def dino_handler(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)

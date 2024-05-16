@@ -25,7 +25,7 @@ from bot.modules.user import (AddItemToUser, check_name, daily_award_con,
 
 events = mongo_client.other.events
 
-@bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.events', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.events', is_authorized=True, private=True)
 async def events_c(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -99,7 +99,7 @@ async def bonus_message(user, message, lang):
     await bot.send_photo(message.chat.id, photo, 
             text, parse_mode='Markdown', reply_markup=markup_inline)
 
-@bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.daily_award', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.daily_award', is_authorized=True, private=True)
 async def bonus(message: Message):
     lang = await get_lang(message.from_user.id)
     user = message.from_user
@@ -152,7 +152,7 @@ async def daily_award(callback: CallbackQuery):
         text = t('daily_award.in_base', lang)
         await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.edit', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.edit', is_authorized=True, private=True)
 async def edit(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id

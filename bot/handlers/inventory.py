@@ -33,7 +33,7 @@ async def cancel(message):
     await bot.delete_state(message.from_user.id, message.chat.id)
     await bot.reset_data(message.from_user.id,  message.chat.id)
 
-@bot.message_handler(pass_bot=True, text='commands_name.profile.inventory', is_authorized=True, nothing_state=True)
+@bot.message_handler(pass_bot=True, text='commands_name.profile.inventory', is_authorized=True, nothing_state=True, private=True)
 async def open_inventory(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -49,7 +49,7 @@ async def start_callback(call: CallbackQuery):
 
     await start_inv(None, userid, chatid, lang)
 
-@bot.message_handler(state=InventoryStates.Inventory, is_authorized=True)
+@bot.message_handler(state=InventoryStates.Inventory, is_authorized=True, private=True)
 async def inventory(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
@@ -218,7 +218,7 @@ async def search_callback(call: CallbackQuery):
         await bot.set_state(userid, InventoryStates.Inventory, chatid)
         await swipe_page(userid, chatid)
 
-@bot.message_handler(pass_bot=True, state=InventoryStates.InventorySearch, is_authorized=True)
+@bot.message_handler(pass_bot=True, state=InventoryStates.InventorySearch, is_authorized=True, private=True)
 async def search_message(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
