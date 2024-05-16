@@ -92,19 +92,19 @@ async def daily_award_old():
         {'time_end': {'$lte': int(time())}}).to_list(None)  
     for i in list(data): await daily_data.delete_one({'_id': i['_id']})
 
-async def daily_award_notif():
-    users_ids = await users.find({"last_message_time": {'$gte': int(time()) - 86400 * 7}}, 
-                        {'userid': 1, 'settings': 1}).to_list(None) 
+# async def daily_award_notif():
+#     users_ids = await users.find({"last_message_time": {'$gte': int(time()) - 86400 * 7}}, 
+#                         {'userid': 1, 'settings': 1}).to_list(None) 
 
-    for uid in users_ids:
-        if not await daily_data.find_one({'owner_id': uid['userid']}):
-            if uid['settings']['notifications']:
-                await user_notification(uid['userid'], 'daily_award')
-                await sleep(0.5)
+#     for uid in users_ids:
+#         if not await daily_data.find_one({'owner_id': uid['userid']}):
+#             if uid['settings']['notifications']:
+#                 await user_notification(uid['userid'], 'daily_award')
+#                 await sleep(0.5)
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(daily_award_notif, 36000.0, 10800.0)
+        # add_task(daily_award_notif, 36000.0, 10800.0)
         add_task(daily_award_old, 7200.0, 1.0)
         add_task(tavern_life, 180.0, 10.0)
         add_task(quest_managment, 240.0, 10.0)
