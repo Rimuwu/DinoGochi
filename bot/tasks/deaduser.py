@@ -15,7 +15,6 @@ from bot.modules.logs import log
 users = mongo_client.user.users
 tavern = mongo_client.tavern.tavern
 quests_data = mongo_client.tavern.quests
-daily_data = mongo_client.tavern.daily_award
 dead_users = mongo_client.other.dead_users
 
 # - Если нельзя отправить спустя неделю - ничего
