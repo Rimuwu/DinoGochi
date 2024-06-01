@@ -112,7 +112,7 @@ async def DeadUser_return():
                             await user.full_delete()
                             del_u += 1
 
-        await sleep(0.5)
+        await sleep(1.5)
     log(f'Завершил работу. Проверено {len(users_ids)}, удалено: {del_u}', 0, 'DeadUsers')
 
 
