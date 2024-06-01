@@ -202,6 +202,7 @@ async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', p
             except: custom_url = ''
         else:
             img = custom_url
+            img = img.resize((900, 350), Image.Resampling.LANCZOS)
 
     if profile_view != 4:
         panel_i = await async_open(
