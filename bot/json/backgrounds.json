@@ -131,6 +131,7 @@
             "coins": 6666,
             "super_coins": 10
         },
-        "show": true
+        "show": true,
+        "author": "unknown_cat13"
     }
 }
