@@ -125,5 +125,12 @@
             "super_coins": 10
         },
         "show": true
+    },
+    "19": {
+        "price": {
+            "coins": 6666,
+            "super_coins": 10
+        },
+        "show": true
     }
 }
