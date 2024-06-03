@@ -34,4 +34,4 @@ class AntifloodMiddleware(BaseMiddleware):
                                     {'$set': {'last_message_time': message.date}})
 
 
-bot.setup_middleware(AntifloodMiddleware())
+# bot.setup_middleware(AntifloodMiddleware())
