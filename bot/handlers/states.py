@@ -18,13 +18,13 @@ async def cancel(message, text:str = "❌"):
     await bot.delete_state(message.from_user.id, message.chat.id)
     await bot.reset_data(message.from_user.id,  message.chat.id)
 
-@bot.message_handler(pass_bot=True, text='buttons_name.cancel', state='*')
+@bot.message_handler(pass_bot=True, text='buttons_name.cancel', state='*', private=True)
 async def cancel_m(message: Message):
     """Состояние отмены
     """
     await cancel(message)
 
-@bot.message_handler(pass_bot=True, commands=['cancel'], state='*')
+@bot.message_handler(pass_bot=True, commands=['cancel'], state='*', private=True)
 async def cancel_c(message: Message):
     """Команда отмены
     """
@@ -83,10 +83,6 @@ async def ChooseInt(message: Message):
     for iter_word in str(message.text).split():
         if iter_word.isdigit():
             number = int(iter_word)
-
-        elif iter_word.startswith('x') and \
-            iter_word[1:].isdigit():
-            number = int(iter_word[1:])
 
     if not number and number != 0:
         await bot.send_message(message.chat.id, 

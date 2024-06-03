@@ -13,7 +13,7 @@ from time import time
 management = mongo_client.other.management
 
 @bot.message_handler(pass_bot=True, text='commands_name.profile.information', 
-                     is_authorized=True)
+                     is_authorized=True, private=True)
 async def infouser(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
@@ -27,7 +27,7 @@ async def infouser(message: Message):
     else:
         await bot.send_message(message.chat.id, text, parse_mode='Markdown')
 
-@bot.message_handler(pass_bot=True, commands=['profile'], is_authorized=True)
+@bot.message_handler(pass_bot=True, commands=['profile'], is_authorized=True, private=True)
 async def infouser_com(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
@@ -42,7 +42,7 @@ async def infouser_com(message: Message):
         await bot.send_message(message.chat.id, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, text='commands_name.profile.rayting', 
-                     is_authorized=True)
+                     is_authorized=True, private=True)
 async def rayting(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)

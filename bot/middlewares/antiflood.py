@@ -5,9 +5,11 @@ from telebot.types import Message
 from bot.exec import bot
 from bot.config import mongo_client
 from time import time as time_now
+from bot.modules.notifications import user_notification
 
 DEFAULT_RATE_LIMIT = 0.1
 users = mongo_client.user.users
+daily_data = mongo_client.tavern.daily_award
 
 class AntifloodMiddleware(BaseMiddleware):
 
@@ -28,10 +30,25 @@ class AntifloodMiddleware(BaseMiddleware):
     async def post_process(self, message: Message, data, exception):
         user_id = message.from_user.id
         if message.chat.type == "private":
-            user = await users.find_one({'userid': user_id}, {"_id": 1})
+            user = await users.find_one({'userid': user_id}, {"_id": 1, 
+                                                    "settings": 1, 'notifications': 1})
             if user:
                 await users.update_one({'userid': user_id}, 
                                     {'$set': {'last_message_time': message.date}})
+
+                if await daily_data.find_one({'owner_id': user_id}) == None:
+                    if user['settings']['notifications']:
+                        for key, value in user['notifications'].items():
+
+                            if key == 'daily_award' and \
+                                value + 8 * 3600 > int(time_now()):
+                                break
+                        else:
+                            res = await user_notification(user_id, 'daily_award')
+
+                            if res:
+                                await users.update_one({'userid': user_id}, 
+                                    {'$set': {'notifications.daily_award': int(time_now())}})
 
 
 # bot.setup_middleware(AntifloodMiddleware())

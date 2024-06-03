@@ -67,7 +67,7 @@ def get_name(itemid: str, lang: str='en', endurance: int=0) -> str:
         else:
             name = items_names[itemid][lang]['name']
     else:
-        print(f'Имя для {itemid} не найдено')
+        log(f'Имя для {itemid} не найдено')
     return name
 
 def get_description(itemid: str, lang: str='en') -> str:
@@ -150,10 +150,11 @@ async def AddItemToUser(userid: int, itemid: str, count: int = 1, preabil: dict 
     item = get_item_dict(itemid, preabil)
     find_res = await items.find_one({'owner_id': userid, 
                                      'items_data': item}, {'_id': 1})
+    action = ''
 
     if find_res: action = 'plus_count'
     if 'abilities' in item or preabil: action = 'new_edited_item' # Хочешь сломать всего бота? Поменяй if на elif
-    else: action = 'new_item'
+    if not action: action = 'new_item'
 
     if action == 'plus_count' and find_res:
         await items.update_one({'_id': find_res['_id']}, {'$inc': {'count': count}})
@@ -516,7 +517,7 @@ def counts_items(id_list: list, lang: str, separator: str = ','):
         return f"{separator} ".join(items_list)
     else: return '-'
 
-async def item_info(item: dict, lang: str):
+async def item_info(item: dict, lang: str, owner: bool = False):
     """Собирает информацию и предмете, пригодную для чтения
 
     Args:
@@ -683,5 +684,8 @@ async def item_info(item: dict, lang: str):
     if type_item == 'special' and data_item['class'] == 'background':
         data_id = item['abilities']['data_id']
         image = await async_open(f"images/backgrounds/{data_id}.png", True)
+    
+    if owner:
+        text += f'\n\n`{item} {data_item}`'
 
     return text, image

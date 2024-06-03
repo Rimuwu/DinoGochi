@@ -33,7 +33,7 @@ async def main_message(user_id):
 
     return text, markup
 
-@bot.message_handler(pass_bot=True, commands=['super'])
+@bot.message_handler(pass_bot=True, commands=['super'], private=True)
 async def super_c(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id

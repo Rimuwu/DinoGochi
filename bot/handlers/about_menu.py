@@ -11,7 +11,7 @@ from bot.modules.data_format import seconds_to_str
  
 
 @bot.message_handler(pass_bot=True, text='commands_name.about.team', 
-                     is_authorized=True)
+                     is_authorized=True, private=True)
 async def team(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -25,7 +25,7 @@ async def team(message: Message):
                                     ), parse_mode='html')
 
 @bot.message_handler(pass_bot=True, text='commands_name.about.links', 
-                     is_authorized=True)
+                     is_authorized=True, private=True)
 async def links(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -55,7 +55,7 @@ async def main_support_menu(lang: str):
     return image, text, markup_inline
 
 @bot.message_handler(pass_bot=True, text='commands_name.about.support', 
-                     is_authorized=True)
+                     is_authorized=True, private=True)
 async def support(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -65,7 +65,7 @@ async def support(message: Message):
     await bot.send_photo(chatid, image, text, reply_markup=markup_inline, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, commands=['premium'], 
-                     is_authorized=True)
+                     is_authorized=True, private=True)
 async def support_com(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -75,7 +75,7 @@ async def support_com(message: Message):
     await bot.send_photo(chatid, image, text, reply_markup=markup_inline, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, text='commands_name.about.faq', 
-                     is_authorized=True)
+                     is_authorized=True, private=True)
 async def faq(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id

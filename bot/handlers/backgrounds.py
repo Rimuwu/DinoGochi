@@ -65,7 +65,7 @@ async def transition_back(dino: Dino, transmitted_data: dict):
     await bot.send_message(userid, text, reply_markup=markup)
 
 @bot.message_handler(pass_bot=True, text='commands_name.backgrounds.custom_profile', 
-                     is_authorized=True)
+                     is_authorized=True, private=True)
 async def custom_profile(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -79,7 +79,7 @@ async def custom_profile(message: Message):
 
 
 @bot.message_handler(pass_bot=True, text='commands_name.backgrounds.standart', 
-                     is_authorized=True)
+                     is_authorized=True, private=True)
 async def standart(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -162,7 +162,7 @@ async def back_page(userid: int, page: int, lang: str):
     return text, markup, image
 
 @bot.message_handler(pass_bot=True, text='commands_name.backgrounds.backgrounds', 
-                     is_authorized=True)
+                     is_authorized=True, private=True)
 async def backgrounds(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -227,10 +227,10 @@ async def kindergarten(call: CallbackQuery):
             await ChooseConfirmState(buy, userid, chatid, lang, transmitted_data=data)
     
     elif action == 'set':
-        mes = await bot.send_message(chatid, t('backgrounds.choose_dino', lang),
-                                        reply_markup=confirm_markup(lang)
-                                        )
-        data = { 'delete_id': mes.id, 'page': b_id }
+        # mes = await bot.send_message(chatid, t('backgrounds.choose_dino', lang),
+        #                                 reply_markup=confirm_markup(lang)
+        #                                 )
+        data = { 'page': b_id } # 'delete_id': mes.id,
         await ChooseDinoState(set_back, userid, chatid, lang, False, True, data)
         
 async def set_back(dino: Dino, transmitted_data: dict):
@@ -250,7 +250,7 @@ async def set_back(dino: Dino, transmitted_data: dict):
     if 'umessageid' in transmitted_data:
         await bot.delete_message(chatid, transmitted_data['umessageid'])
 
-    await bot.delete_message(chatid, transmitted_data['delete_id'])
+    # await bot.delete_message(chatid, transmitted_data['delete_id'])
 
 async def buy(_: bool, transmitted_data: dict):
     userid = transmitted_data['userid']

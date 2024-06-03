@@ -24,7 +24,7 @@ dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = mongo_client.dinosaur.dino_owners
 events = mongo_client.other.events
 
-@bot.message_handler(pass_bot=True, text='commands_name.friends.add_friend')
+@bot.message_handler(pass_bot=True, text='commands_name.friends.add_friend', private=True)
 async def add_friend(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
@@ -111,7 +111,7 @@ async def add_friend_callback(call: CallbackQuery):
                             user_id, chatid, lang, 
                             transmitted_data)
 
-@bot.message_handler(pass_bot=True, text='commands_name.friends.friends_list')
+@bot.message_handler(pass_bot=True, text='commands_name.friends.friends_list', private=True)
 async def friend_list(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -183,7 +183,7 @@ async def request_open(userid: int, chatid: int, lang: str):
         horizontal=3, vertical=3,
         autoanswer=False, one_element=False)
 
-@bot.message_handler(pass_bot=True, text='commands_name.friends.requests')
+@bot.message_handler(pass_bot=True, text='commands_name.friends.requests', private=True)
 async def requests_list(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -228,7 +228,7 @@ async def adp_delte(friendid: int, transmitted_data: dict):
                            reply_markup=confirm_markup
                            (lang))
 
-@bot.message_handler(pass_bot=True, text='commands_name.friends.remove_friend')
+@bot.message_handler(pass_bot=True, text='commands_name.friends.remove_friend', private=True)
 async def remove_friend(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id

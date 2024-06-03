@@ -76,5 +76,62 @@
             "super_coins": 10
         },
         "show": true
+    },
+    "12": {
+        "price": {
+            "coins": 5000,
+            "super_coins": 10
+        },
+        "show": true
+    },
+    "13": {
+        "price": {
+            "coins": 5000,
+            "super_coins": 10
+        },
+        "show": true
+    },
+    "14": {
+        "price": {
+            "coins": 5000,
+            "super_coins": 10
+        },
+        "show": true
+    },
+    "15": {
+        "price": {
+            "coins": 5000,
+            "super_coins": 10
+        },
+        "show": true
+    },
+    "16": {
+        "price": {
+            "coins": 5000,
+            "super_coins": 10
+        },
+        "show": true
+    },
+    "17": {
+        "price": {
+            "coins": 5000,
+            "super_coins": 10
+        },
+        "show": true
+    },
+    "18": {
+        "price": {
+            "coins": 5000,
+            "super_coins": 10
+        },
+        "show": true
+    },
+    "19": {
+        "price": {
+            "coins": 6666,
+            "super_coins": 10
+        },
+        "show": true,
+        "author": "unknown_cat13"
     }
 }

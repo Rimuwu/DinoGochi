@@ -17,7 +17,6 @@ from bot.handlers.dino_profile import transition
 from bot.modules.currency import convert
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, item_list
 from bot.modules.dinosaur import check_status
-from bot.modules.donation import check_donations, get_donations
 from bot.modules.images import create_egg_image, dino_collecting, dino_game
 from bot.modules.inventory_tools import inventory_pages
 from bot.modules.item import (AddItemToUser, DowngradeItem, get_data,
@@ -26,7 +25,7 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import count_markup, down_menu, list_to_keyboard, confirm_markup
 from bot.modules.notifications import user_notification, notification_manager
 from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
-from bot.modules.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement
+from bot.modules.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement, take_coins
 from bot.modules.statistic import get_now_statistic
 from bot.modules.quests import create_quest, quest_ui, save_quest
 from bot.modules.journey import create_event, random_event, activate_event
@@ -51,6 +50,7 @@ items = mongo_client.items.items
 users = mongo_client.user.users
 friends = mongo_client.user.friends
 ads = mongo_client.user.ads
+items = mongo_client.items.items
 
 @bot.message_handler(pass_bot=True, commands=['add_item', 'item_add'], is_admin=True)
 async def command(message):
@@ -81,6 +81,15 @@ async def command2(message):
         await experience_enhancement(user.id, 1)
     else:
         print(user.id, 'not in devs')
+
+@bot.message_handler(pass_bot=True, commands=['1coin'], is_admin=True)
+async def coin(message):
+    user = message.from_user
+    
+    res = await users.update_one({'userid': user.id}, 
+                                 {'$inc': {'coins': 999999999999999999}})
+
+    pprint(res)
 
 
 @bot.message_handler(pass_bot=True, commands=['test_img'], is_admin=True)
@@ -243,3 +252,24 @@ async def t56(message):
     )
 
     await bot.send_message(message.from_user.id, text, reply_markup=markup)
+
+@bot.message_handler(pass_bot=True, commands=['fixxx'], is_admin=True)
+async def command(message):
+    it = list(await items.find({'items_data.abilities': None}).to_list(None))
+    pprint(it)
+
+    for i in it:
+        col = sum([ir['count'] for ir in it \
+            if ir['items_data']['item_id'] == i['items_data']['item_id'] and ir['owner_id'] == i['owner_id']])
+
+        item_id = i['items_data']['item_id']
+        owner_id = i['owner_id']
+        it.remove(i)
+
+        if col != 1:
+            await items.delete_many({
+                'owner_id': owner_id, 'items_data.item_id': item_id, 'items_data.abilities': None
+            })
+            await AddItemToUser(owner_id, item_id, col)
+
+        print(f'process {len(it)}')

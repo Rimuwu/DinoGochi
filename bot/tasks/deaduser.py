@@ -15,7 +15,6 @@ from bot.modules.logs import log
 users = mongo_client.user.users
 tavern = mongo_client.tavern.tavern
 quests_data = mongo_client.tavern.quests
-daily_data = mongo_client.tavern.daily_award
 dead_users = mongo_client.other.dead_users
 
 # - Если нельзя отправить спустя неделю - ничего
@@ -60,7 +59,7 @@ async def DeadUser_return():
 
             lat_days = (int(time()) - last_m) // 86400
             print(f"{us['userid']} dino_col: {col_d} delta_days: {delta_days} lat_days: {lat_days}")
-            
+
             if delta_days >= 7 and delta_days < 30 and type_send != 'situation1':
                 # - Если можно отправить спустя неделю - просто сообщение с напоминанием
 
@@ -113,7 +112,7 @@ async def DeadUser_return():
                             await user.full_delete()
                             del_u += 1
 
-        await sleep(0.5)
+        await sleep(1.5)
     log(f'Завершил работу. Проверено {len(users_ids)}, удалено: {del_u}', 0, 'DeadUsers')
 
 

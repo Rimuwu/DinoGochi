@@ -25,7 +25,7 @@ tavern = mongo_client.tavern.tavern
 preferential = mongo_client.market.preferential
 products = mongo_client.market.products
 
-@bot.message_handler(pass_bot=True, text='buttons_name.back', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='buttons_name.back', is_authorized=True, private=True)
 async def back_buttom(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -36,7 +36,7 @@ async def back_buttom(message: Message):
     await bot.send_message(message.chat.id, text, 
                            reply_markup=await m(userid, back_m, lang))
 
-@bot.message_handler(pass_bot=True, text='commands_name.settings_menu', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.settings_menu', is_authorized=True, private=True)
 async def settings_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -57,7 +57,7 @@ async def settings_menu(message: Message):
     
         await auto_ads(message)
 
-@bot.message_handler(pass_bot=True, text='commands_name.settings.settings_page_2', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.settings.settings_page_2', is_authorized=True, private=True)
 async def settings2_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -77,7 +77,7 @@ async def settings2_menu(message: Message):
         
         await auto_ads(message)
 
-@bot.message_handler(pass_bot=True, text='commands_name.profile_menu', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.profile_menu', is_authorized=True, private=True)
 async def profile_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -87,7 +87,7 @@ async def profile_menu(message: Message):
 
     await auto_ads(message)
     
-@bot.message_handler(pass_bot=True, text='commands_name.friends_menu', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.friends_menu', is_authorized=True, private=True)
 async def friends_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -97,7 +97,7 @@ async def friends_menu(message: Message):
 
     await auto_ads(message)
 
-@bot.message_handler(pass_bot=True, text='commands_name.profile.market', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.profile.market', is_authorized=True, private=True)
 async def market_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -129,7 +129,7 @@ async def market_menu(message: Message):
     await auto_ads(message)
 
 
-@bot.message_handler(pass_bot=True, text='commands_name.actions_menu', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.actions_menu', is_authorized=True, private=True)
 async def actions_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -139,7 +139,7 @@ async def actions_menu(message: Message):
     
     await auto_ads(message)
 
-@bot.message_handler(pass_bot=True, text='commands_name.dino-tavern_menu', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.dino-tavern_menu', is_authorized=True, private=True)
 async def tavern_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -203,7 +203,7 @@ async def tavern_menu(message: Message):
     
     await auto_ads(message)
 
-@bot.message_handler(pass_bot=True, text='commands_name.profile.about', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.profile.about', is_authorized=True, private=True)
 async def about_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -235,7 +235,7 @@ async def about_menu(message: Message):
 
     await auto_ads(message)
 
-@bot.message_handler(pass_bot=True, text='commands_name.friends.referal', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.friends.referal', is_authorized=True, private=True)
 async def referal_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -278,7 +278,7 @@ async def buy_ale(callback: CallbackQuery):
         text = t('buy_ale.no_coins', lang)
         await bot.send_message(friend, text)
 
-@bot.message_handler(pass_bot=True, text='commands_name.market.seller_profile', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.market.seller_profile', is_authorized=True, private=True)
 async def seller_profile(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -288,7 +288,7 @@ async def seller_profile(message: Message):
     
     await auto_ads(message)
     
-@bot.message_handler(pass_bot=True, text='commands_name.market.background_market', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.market.background_market', is_authorized=True, private=True)
 async def backgrounds(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)

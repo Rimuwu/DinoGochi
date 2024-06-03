@@ -69,7 +69,7 @@ async def custom_name(message: Message, transmitted_data):
         return True, name
     return False, None
 
-@bot.message_handler(pass_bot=True, text='commands_name.seller_profile.create_market', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.seller_profile.create_market', is_authorized=True, private=True)
 async def create_market(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -107,7 +107,7 @@ async def create_market(message: Message):
                               lang, steps, 
                               transmitted_data=transmitted_data)
 
-@bot.message_handler(pass_bot=True, text='commands_name.seller_profile.my_market', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.seller_profile.my_market', is_authorized=True, private=True)
 async def my_market(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -121,7 +121,7 @@ async def my_market(message: Message):
         except:
             await bot.send_photo(chatid, image, text, reply_markup=markup, parse_mode=None)
 
-@bot.message_handler(pass_bot=True, text='commands_name.seller_profile.add_product', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.seller_profile.add_product', is_authorized=True, private=True)
 async def add_product_com(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -142,7 +142,7 @@ async def add_product_com(message: Message):
     await bot.send_message(chatid, t('add_product.options_info', lang), reply_markup=markup)
     await ChooseOptionState(prepare_data_option, userid, chatid, lang, options)
 
-@bot.message_handler(pass_bot=True, text='commands_name.seller_profile.my_products', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.seller_profile.my_products', is_authorized=True, private=True)
 async def my_products(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -279,7 +279,7 @@ async def seller(call: CallbackQuery):
     elif call_type == 'сomplain':
         ...
 
-@bot.message_handler(pass_bot=True, text='commands_name.market.random', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.market.random', is_authorized=True, private=True)
 async def random_products(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -308,7 +308,7 @@ async def random_products(message: Message):
     else:
         await bot.send_message(chatid, t('products.null', lang))
 
-@bot.message_handler(pass_bot=True, text='commands_name.market.find', is_authorized=True)
+@bot.message_handler(pass_bot=True, text='commands_name.market.find', is_authorized=True, private=True)
 async def find_products(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)

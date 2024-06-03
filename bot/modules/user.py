@@ -55,7 +55,7 @@ class User:
             'my_name': '' # Как вас называет динозавр
             }
 
-        self.notifications = []
+        self.notifications = {}
 
         self.coins = 100
         self.super_coins = 0
