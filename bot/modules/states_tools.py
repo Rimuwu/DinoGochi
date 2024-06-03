@@ -8,6 +8,7 @@ from bot.modules.data_format import (chunk_pages, list_to_inline,
 from bot.modules.images import async_open
 from bot.modules.inventory_tools import start_inv
 from bot.modules.localization import get_data, t
+from bot.modules.logs import log
 from bot.modules.markup import down_menu, get_answer_keyboard
 from bot.modules.markup import markups_menu as m
 from bot.modules.user import User, get_frineds, user_info, user_name
@@ -366,6 +367,8 @@ async def start_friend_menu(function,
             friend = chat_user.user
         except: friend = None
         if friend: options[user_name(friend, False)] = friend
+    
+    log(f'friend request len {len(friends)} from {userid}')
 
     await ChoosePagesState(
         function, userid, chatid, lang, options, 

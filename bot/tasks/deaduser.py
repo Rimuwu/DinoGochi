@@ -58,7 +58,7 @@ async def DeadUser_return():
                 userid, type_send, promo, last_m = us['userid'], '0', '', int(time())
 
             lat_days = (int(time()) - last_m) // 86400
-            print(f"{us['userid']} dino_col: {col_d} delta_days: {delta_days} lat_days: {lat_days}")
+            # print(f"{us['userid']} dino_col: {col_d} delta_days: {delta_days} lat_days: {lat_days}")
 
             if delta_days >= 7 and delta_days < 30 and type_send != 'situation1':
                 # - Если можно отправить спустя неделю - просто сообщение с напоминанием

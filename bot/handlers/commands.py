@@ -51,7 +51,7 @@ async def push_info(message: Message):
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, commands=['add_me'], private=False)
-async def profile(message: Message):
+async def add_me_с(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
