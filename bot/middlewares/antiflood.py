@@ -6,8 +6,9 @@ from bot.exec import bot
 from bot.config import mongo_client
 from time import time as time_now
 from bot.modules.notifications import user_notification
+from bot.modules.logs import log
 
-DEFAULT_RATE_LIMIT = 0.1
+DEFAULT_RATE_LIMIT = 0.5
 users = mongo_client.user.users
 daily_data = mongo_client.tavern.daily_award
 
@@ -19,6 +20,9 @@ class AntifloodMiddleware(BaseMiddleware):
         self.update_types = ['message']
 
     async def pre_process(self, message: Message, data: dict):
+        if message.date + 120 < int(time_now()):
+            log(f'message timeout: {message.text} from {message.from_user.id} {int(time_now() - message.date)}', 4, 'middleware')
+
         if not message.from_user.id in self.last_time:
             self.last_time[message.from_user.id] = time_now()
             return 
@@ -51,4 +55,4 @@ class AntifloodMiddleware(BaseMiddleware):
                                     {'$set': {'notifications.daily_award': int(time_now())}})
 
 
-# bot.setup_middleware(AntifloodMiddleware())
+bot.setup_middleware(AntifloodMiddleware())
