@@ -21,7 +21,7 @@ class AntifloodMiddleware(BaseMiddleware):
 
     async def pre_process(self, message: Message, data: dict):
         if message.date + 120 < int(time_now()):
-            log(f'message timeout: {message.text}', 4, 'middleware')
+            log(f'message timeout: {message.text} from {message.from_user.id} {int(time_now() - message.date)}', 4, 'middleware')
 
         if not message.from_user.id in self.last_time:
             self.last_time[message.from_user.id] = time_now()
