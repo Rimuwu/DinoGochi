@@ -23,13 +23,13 @@ class AntifloodMiddleware(BaseMiddleware):
         if message.date + 120 < int(time_now()):
             log(f'message timeout: {message.text}', 4, 'middleware')
 
-        if not message.from_user.id in self.last_time:
-            self.last_time[message.from_user.id] = time_now()
-            return 
-        if time_now() - self.last_time[message.from_user.id] < self.limit:
-            return SkipHandler()
-        self.last_time[message.from_user.id] = time_now()
-        return
+        # if not message.from_user.id in self.last_time:
+        #     self.last_time[message.from_user.id] = time_now()
+        #     return 
+        # if time_now() - self.last_time[message.from_user.id] < self.limit:
+        #     return SkipHandler()
+        # self.last_time[message.from_user.id] = time_now()
+        # return
 
     async def post_process(self, message: Message, data, exception):
         user_id = message.from_user.id
