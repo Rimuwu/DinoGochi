@@ -4,7 +4,7 @@ from time import strftime
 from colorama import Fore, Style
 # import psutil
 from functools import wraps
-import time
+import telebot
 
 from bot.config import conf
 
@@ -17,6 +17,11 @@ logging.basicConfig(
         datefmt="%F %T", 
         level=logging.INFO
         )
+
+import logging
+
+logger = telebot.logger
+telebot.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
 
 def log(message: str, lvl: int = 1, prefix: str = 'Бот') -> None:
     """
