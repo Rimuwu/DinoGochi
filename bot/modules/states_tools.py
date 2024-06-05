@@ -16,6 +16,7 @@ from bot.modules.user import User, get_frineds, user_info, user_name
 from bot.modules.events import check_event
 
 import inspect
+from asyncio import sleep
 
 class GeneralStates(StatesGroup):
     ChooseDino = State() # Состояние для выбора динозавра
@@ -366,8 +367,9 @@ async def start_friend_menu(function,
             chat_user = await bot.get_chat_member(friend_id, friend_id)
             friend = chat_user.user
         except: friend = None
+        await sleep(0.5)
         if friend: options[user_name(friend, False)] = friend
-    
+
     log(f'friend request len {len(friends)} from {userid}')
 
     await ChoosePagesState(
