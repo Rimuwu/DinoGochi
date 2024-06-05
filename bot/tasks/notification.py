@@ -2,6 +2,7 @@ from bot.config import conf, mongo_client
 from bot.modules.notifications import notification_manager
 from bot.taskmanager import add_task
 from bot.modules.dinosaur import Dino
+from asyncio import sleep
 
 dinosaurs = mongo_client.dinosaur.dinosaurs
 
@@ -18,9 +19,11 @@ async def dino_notifications():
                     continue
 
                 unit = dino['stats'][stat]
-                await notification_manager(dino_id, stat, unit)
+                res = await notification_manager(dino_id, stat, unit)
+                if res: await sleep(0.5)
+
         except Exception as e: pass
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(dino_notifications, 15, 10.0)
+        add_task(dino_notifications, 30, 10.0)
