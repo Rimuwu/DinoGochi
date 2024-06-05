@@ -144,16 +144,22 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
                             bot.send_message, owner['owner_id'], text, reply_markup=markup_inline, parse_mode='Markdown',
                             number_retries=3
                         )
+                        return 1
+
                     except Exception:
                         await async_antiflood(
                             bot.send_message, owner['owner_id'], text, reply_markup=markup_inline,
                             number_retries=3
                         )
+                        return 1
+
                 except Exception as error:
                     if conf.debug:
                         log(prefix='DinoNotification Error', 
                             message=f'User: {owner["owner_id"]} DinoId: {dino_id}, Data: {not_type} Error: {error}', 
                             lvl=3)
+        return 0
+
     if dino: # type: dict
         kwargs['dino_name'] = dino['name']
         kwargs['dino_alt_id_markup'] = dino['alt_id']
@@ -165,12 +171,15 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
 
                 if await check_dino_notification(dino_id, not_type):
                     await save_notification(dino_id, not_type)
-                    await send_not(text, markup_inline)
+                    return await send_not(text, markup_inline)
                 else:
                     log(prefix='Notification Repeat', 
                         message=f'DinoId: {dino_id}, Data: {not_type} Kwargs: {kwargs}', lvl=0)
 
-            else: await send_not(text, markup_inline)
+            else: 
+                return await send_not(text, markup_inline)
+
+    return 0
 
 async def user_notification(user_id: int, not_type: str, 
                             lang: str='', **kwargs):
@@ -242,8 +251,10 @@ async def notification_manager(dino_id: ObjectId, stat: str, unit: int):
     if critical_line[stat] >= unit:
         if await check_dino_notification(dino_id, notif, False):
             # Отправка уведомления
-            await dino_notification(dino_id, notif, unit=unit, **kwargs)
+            return await dino_notification(dino_id, notif, unit=unit, **kwargs)
 
     elif unit >= critical_line[stat] + 20:
         # Удаляем уведомление 
         await dino_notification_delete(dino_id, notif)
+
+    return 0
