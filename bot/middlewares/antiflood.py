@@ -28,7 +28,7 @@ class AntifloodMiddleware(BaseMiddleware):
         self.update_types = ['message']
 
     async def pre_process(self, message: Message, data: dict):
-        if message.date < int(time_now()):
+        if message.date + 10 < int(time_now()):
             log(f'message timeout: {message.text} from {message.from_user.id} ping1 {int(time_now() - message.date)} ping2 {await ping()}ms', 4, 'middleware')
 
         if not message.from_user.id in self.last_time:
