@@ -7,10 +7,17 @@ from bot.config import mongo_client
 from time import time as time_now
 from bot.modules.notifications import user_notification
 from bot.modules.logs import log
+import requests
 
 DEFAULT_RATE_LIMIT = 0.5
 users = mongo_client.user.users
 daily_data = mongo_client.tavern.daily_award
+
+
+def ping():
+    st = time_now
+    r = requests.post('https://api.telegram.org')
+    return round(time_now - st, 3)
 
 class AntifloodMiddleware(BaseMiddleware):
 
@@ -20,8 +27,8 @@ class AntifloodMiddleware(BaseMiddleware):
         self.update_types = ['message']
 
     async def pre_process(self, message: Message, data: dict):
-        if message.date + 120 < int(time_now()):
-            log(f'message timeout: {message.text} from {message.from_user.id} {int(time_now() - message.date)}', 4, 'middleware')
+        if message.date + 30 < int(time_now()):
+            log(f'message timeout: {message.text} from {message.from_user.id} ping1 {int(time_now() - message.date)} ping2 {ping()} ms', 4, 'middleware')
 
         if not message.from_user.id in self.last_time:
             self.last_time[message.from_user.id] = time_now()
