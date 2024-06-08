@@ -23,10 +23,13 @@ async def _task_executor(function, repeat_time: float, delay: float, **kwargs):
 
             await asyncio.sleep(repeat_time)
     else:
-        try:
+        if function.__name__ == 'infinity_polling':
             await function(**kwargs)
-        except Exception as error:
-            log(prefix=f"{function.__name__} task_error", message=str(error), lvl=4)
+        else:
+            try:
+                await function(**kwargs)
+            except Exception as error:
+                log(prefix=f"{function.__name__} task_error", message=str(error), lvl=4)
 
 
 def add_task(function, repeat_time: float=0, delay: float=0, **kwargs):

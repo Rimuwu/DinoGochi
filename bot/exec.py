@@ -8,6 +8,7 @@ from telebot.asyncio_storage import StateMemoryStorage
 from bot.config import conf
 from bot.modules.logs import log
 from bot.taskmanager import add_task, run as run_taskmanager
+import asyncio
 
 class TracebackHandler(ExceptionHandler):
     def handle(self, exception):
@@ -29,4 +30,3 @@ def run():
     add_task(bot.infinity_polling, skip_pending=True)
     log('Все готово! Взлетаем!', prefix='Start')
     run_taskmanager()
-    print(' ')
