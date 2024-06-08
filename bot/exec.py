@@ -29,3 +29,4 @@ def run():
     add_task(bot.infinity_polling, skip_pending=True)
     log('Все готово! Взлетаем!', prefix='Start')
     run_taskmanager()
+    print(' ')
