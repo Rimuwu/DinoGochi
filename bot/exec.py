@@ -8,6 +8,7 @@ from telebot.asyncio_storage import StateMemoryStorage
 from bot.config import conf
 from bot.modules.logs import log
 from bot.taskmanager import add_task, run as run_taskmanager
+import asyncio
 
 class TracebackHandler(ExceptionHandler):
     def handle(self, exception):
@@ -16,7 +17,7 @@ class TracebackHandler(ExceptionHandler):
 bot = AsyncTeleBot(conf.bot_token, exception_handler=TracebackHandler())
 bot.enable_saving_states()
 
-def run():
+async def run():
     log('Привет! Я вижу ты так и не починил тот самый баг на 46-ой строчке...')
     log('Это не баг, а фича!')
     log('Ваша фича наминирована на оскар!')
@@ -26,6 +27,8 @@ def run():
     log('Кстати, в создании бота поучаствовал ChatGPT')
     log('Ой, да что там ваш ChatGPT?! *Stable Diffusion подключился*')
 
-    add_task(bot.infinity_polling, skip_pending=True)
+    # add_task(bot.infinity_polling, skip_pending=True)
+
+    await bot.infinity_polling()
     log('Все готово! Взлетаем!', prefix='Start')
     run_taskmanager()
