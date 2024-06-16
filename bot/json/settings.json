@@ -237,37 +237,46 @@
             "type": "subscription",
             "cost": {
                 "1": {
-                    "USD": 1,
-                    "RUB": 90
+                    "XTR": 50
                 },
                 "2": {
-                    "USD": 2,
-                    "RUB": 160
+                    "XTR": 90
                 },
                 "3": {
-                    "USD": 2.5,
-                    "RUB": 200
+                    "XTR": 120
                 }
             }, 
             "time": 2592000,
             "items": []
         },
         "rescue_kit": {
+            "photo_url": "",
             "type": "kit",
             "cost": {
                 "1": {
-                    "USD": 0.5,
-                    "RUB": 50
+                    "XTR": 25
+                },
+                "2": {
+                    "XTR": 45
+                },
+                "3": {
+                    "XTR": 60
                 }
             },
             "items": ["jar_honey", "jar_honey", "jar_honey", "jar_honey", "therapeutic_mixture", "therapeutic_mixture", "therapeutic_mixture", "medicinal_drink", "medicinal_drink", "meat_pie", "fish_cake", "berry_pie", "mushroom"]
         },
         "reborn": {
+            "photo_url": "",
             "type": "kit",
             "cost": {
                 "1": {
-                    "USD": 0.6,
-                    "RUB": 60
+                    "XTR": 30
+                },
+                "2": {
+                    "XTR": 50
+                },
+                "3": {
+                    "XTR": 75
                 }
             },
             "items": ["stone_resurrection"]
