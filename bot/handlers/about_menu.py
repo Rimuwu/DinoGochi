@@ -2,13 +2,16 @@ from telebot.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message, InputMedia)
 
 from bot.config import mongo_client
+from bot.const import GAME_SETTINGS
 from bot.exec import bot
+from bot.modules.donation import send_inv
 from bot.modules.images import async_open
 from bot.modules.localization import get_data, t, get_lang
-from bot.modules.currency import get_all_currency, get_products
 from bot.modules.item import counts_items
 from bot.modules.data_format import seconds_to_str
- 
+from bot.modules.states_tools import ChooseIntState
+from bot.modules.markup import cancel_markup, list_to_keyboard
+from bot.modules.markup import markups_menu as m
 
 @bot.message_handler(pass_bot=True, text='commands_name.about.team', 
                      is_authorized=True, private=True)
@@ -107,7 +110,7 @@ async def faq_buttons(call: CallbackQuery):
 async def support_buttons(call: CallbackQuery):
     action = call.data.split()[1]
     product_key = call.data.split()[2]
-    products = get_products()
+    products = GAME_SETTINGS['products']
     product = {}
 
     chatid = call.message.chat.id
@@ -138,15 +141,30 @@ async def support_buttons(call: CallbackQuery):
 
         if action == "info":
             if product_key != 'non_repayable':
-                text += f'\n\n{text_data["currency_answer"]}'
+                currency = 'XTR'
+                buttons = {}
+
+                text += f'\n{text_data["col_answer"]}'
+
+                if product['type'] == 'subscription':
+                    for key, item in product['cost'].items():
+                        name = f'{seconds_to_str(product["time"]*int(key), lang)} = {item[currency]}🌟'
+
+                        buttons[name] = f'support buy {product_key} {key}'
+                elif product['type'] == 'kit':
+                    for key, item in product['cost'].items():
+                        name = f'x{key} = {item[currency]}🌟'
+                        buttons[name] = f'support buy {product_key} {key}'
+
                 markup_inline.add(*[
-                InlineKeyboardButton(
-                    text=currency, 
-                    callback_data=f'support currency {product_key} {currency}') for currency in get_all_currency()])
+                    InlineKeyboardButton(
+                        text=key, 
+                        callback_data=item) for key, item in buttons.items()]
+                                    )
+
             else:
-                markup_inline.add(InlineKeyboardButton(
-                    text=text_data['buy_button'], 
-                    url='https://telegra.ph/Donation-DinoGochi-11-05'))
+                await ChooseIntState(tips, user_id, chatid, lang, 1, 100_000)
+                await bot.send_message(chatid, text_data['free_enter'], reply_markup=cancel_markup(lang))
 
             markup_inline.add(
             InlineKeyboardButton(
@@ -154,28 +172,13 @@ async def support_buttons(call: CallbackQuery):
                 callback_data='support main 0'
             ))
 
-        elif action == "currency":
-            currency = call.data.split()[3]
-            buttons = {}
+        elif action == "buy":
+            currency = 'XTR'
+            count = call.data.split()[3]
 
-            text += f'\n\n{text_data["currency"].format(currency=currency)}'
-            text += f'\n{text_data["col_answer"]}'
+            image = await async_open('images/remain/support/placeholder.png', True)
 
-            if product['type'] == 'subscription':
-                for key, item in product['cost'].items():
-                    name = f'{seconds_to_str(product["time"]*int(key), lang)} = {item[currency]}{currency}'
-
-                    buttons[name] = f'support buy {product_key} {currency} {key}'
-            elif product['type'] == 'kit':
-                for key, item in product['cost'].items():
-                    name = f'x{key} = {item[currency]}{currency}'
-                    buttons[name] = f'support buy {product_key} {currency} {key}'
-
-            markup_inline.add(*[
-            InlineKeyboardButton(
-                text=key, 
-                callback_data=item) for key, item in buttons.items()]
-                            )
+            text = text_data['buy']
 
             markup_inline.add(
             InlineKeyboardButton(
@@ -183,26 +186,7 @@ async def support_buttons(call: CallbackQuery):
                 callback_data=f'support info {product_key}'
             ))
 
-        elif action == "buy":
-            currency = call.data.split()[3]
-            count = call.data.split()[4]
-            amount = product['cost'][count][currency]
-
-            image = await async_open('images/remain/support/placeholder.png', True)
-
-            text = text_data['buy'].format(
-                count=count, user_id=user_id, product_key=product_key,
-                currency=currency, amount=amount)
-
-            markup_inline.add(InlineKeyboardButton(
-                text=text_data['buy_button'], 
-                url='https://telegra.ph/Donation-DinoGochi-11-05'))
-            
-            markup_inline.add(
-            InlineKeyboardButton(
-                text=t('buttons_name.back', lang), 
-                callback_data=f'support currency {product_key} {currency}'
-            ))
+            await send_inv(user_id, product_key, count, lang)
 
         if call.message.content_type == 'text':
             await bot.send_photo(
@@ -219,3 +203,12 @@ async def support_buttons(call: CallbackQuery):
                         reply_markup=markup_inline,
                         media=InputMedia(type='photo', media=image, caption=text, parse_mode='Markdown'))
             except: pass
+
+
+async def tips(col, transmitted_data):
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    lang = transmitted_data['lang']
+
+    await send_inv(userid, 'non_repayable', 1, lang, col)
+    await bot.send_message(chatid, t('support_command.create_invoice', lang), reply_markup=await m(userid, 'last_menu', lang))
