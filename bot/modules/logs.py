@@ -18,9 +18,9 @@ logging.basicConfig(
         level=logging.INFO
         )
 
-if conf.debug:
-    logger = telebot.logger
-    telebot.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
+# if conf.debug:
+#     logger = telebot.logger
+#     telebot.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
 
 def log(message: str, lvl: int = 1, prefix: str = 'Бот') -> None:
     """

@@ -89,6 +89,7 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
     if 'unit' in kwargs and kwargs['unit'] < 0: kwargs['unit'] = 0
 
     async def send_not(text, markup_inline):
+        send_status = False
         for owner in owners:
             lang = await get_lang(owner["owner_id"])
 
@@ -144,21 +145,21 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
                             bot.send_message, owner['owner_id'], text, reply_markup=markup_inline, parse_mode='Markdown',
                             number_retries=3
                         )
-                        return 1
+                        send_status = True
 
                     except Exception:
                         await async_antiflood(
                             bot.send_message, owner['owner_id'], text, reply_markup=markup_inline,
                             number_retries=3
                         )
-                        return 1
+                        send_status = True
 
                 except Exception as error:
                     if conf.debug:
                         log(prefix='DinoNotification Error', 
                             message=f'User: {owner["owner_id"]} DinoId: {dino_id}, Data: {not_type} Error: {error}', 
                             lvl=3)
-        return 0
+        return send_status
 
     if dino: # type: dict
         kwargs['dino_name'] = dino['name']
