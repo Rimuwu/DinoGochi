@@ -46,5 +46,5 @@
     "langs_path": "/../../bot/localization",
     "damp_path": "/damps/",
 
-    "ignore_translate_keys": ["data", "callback", "inline_menu", "keys", "previous", "image"]
+    "ignore_translate_keys": ["data", "callback", "inline_menu", "keys", "previous", "image", "photo_url", "url"]
 }
