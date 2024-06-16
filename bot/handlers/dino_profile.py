@@ -30,6 +30,7 @@ dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = mongo_client.dinosaur.dino_owners
 journey_task = mongo_client.dino_activity.journey
 users = mongo_client.user.users
+kindergarten_bd = mongo_client.dino_activity.kindergarten
 
 # @asinc_decor().cpu
 async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_url):
@@ -407,8 +408,9 @@ async def kindergarten(call: types.CallbackQuery):
 
         elif action == 'stop':
             if dino['status'] == 'kindergarten':
-                await dinosaurs.update_one({'_id': dino}, 
+                await dinosaurs.update_one({'_id': dino['_id']}, 
                          {'$set': {'status': 'pass'}})
+                kindergarten_bd.delete_one({'dinoid': dino['_id']})
                 await bot.send_message(userid, t('kindergarten.stop', lang))
 
 async def start_kind(col, transmitted_data):
