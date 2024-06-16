@@ -706,7 +706,8 @@
                 "currency_key_error": "Wah, Anda telah menentukan mata uang ({currency}) yang tidak dapat kami proses, silakan hubungi @AS1AW untuk bantuan dengan mengirim pesan ini.",
                 "product_key_error": "Hei, kami tidak tahu produk mana yang Anda cantumkan ({product_key})... Hubungi @AS1AW untuk mendapatkan bantuan dengan mengirim pesan ini.",
                 "subscription_end_day": "❤ | Hei! Langganan Anda berakhir di {end_text}, jika Anda menyukai fitur berlangganan, maka bayarlah untuk bulan berikutnya!",
-                "subscription_end": "❤ | Langganan Anda sudah berakhir, terima kasih telah bersama kami!"
+                "subscription_end": "❤ | Langganan Anda sudah berakhir, terima kasih telah bersama kami!",
+                "pre_check_error": "🐱 🐉 Ada yang tidak beres, coba lagi dalam beberapa menit."
             },
             "lvl_up": {
                 "standart": "🎉 | {user_name}, levelmu telah dinaikkan! ({lvl})",
@@ -722,7 +723,7 @@
                 "inline_menu": "requests"
             },
             "referal_award": {
-                "text": "🎁 | Teman Anda {user_name} telah mencapai level {lvl}, terima kasih banyak telah mengundang teman-teman Anda, Anda dihargai dengan {item_name}!"
+                "text": "🎁 | Teman Anda {user_name} telah mencapai {lvl}, terima kasih banyak telah mengundang teman-teman Anda, Anda dihargai dengan {item_name}!"
             },
             "sleep_end": {
                 "text": "🦕 | {dino_name} bangun dan penuh energi. \n⌛ | Dinosaurus tidur {time_end}.",
@@ -975,7 +976,7 @@
             }
         },
         "help_command": {
-            "all": "<b>🎨 | Tim Bantuan </b> \n <i> Apakah Anda begitu menyedihkan sehingga Anda meminta bantuan saya?) \nPfff... Oke. </i> \n\n / bantuan - Permintaan bantuan dari kecerdasan yang lebih tinggi. \n\n/start - Mulai bot / menu utama (hanya DM)\n\n/profile - Buka profil pengguna. \n\n/add_me - Kirim pesan dengan tombol tambah teman aktif. (khusus grup) \n\n/promo (kode) - Masukkan kode promo. \n\n/super - Kabinet Super Coin."
+            "all": "<b>🎨 | Tim Bantuan</b>\n<i>Kamu sangat menyedihkan sehingga kamu meminta bantuanku?) \n Pfff... Oke. </i> \n\n / bantuan - Permohonan bantuan dari pikiran yang lebih tinggi. \n\n/start - Mulai bot / menu utama (hanya LS)\n\n/profile - Buka profil pengguna. \n\n/add_me - Kirim pesan dengan tombol tambah teman aktif. (khusus grup) \n\n/promo (kode) - Masukkan kode promo. \n\n/super - Ruang Super Coin."
         },
         "additem_command": {
             "err": "Format masukan:\nID Item\nKuantitas\nID Pengguna",
@@ -1022,7 +1023,7 @@
                 "faq accessories": "🧵 Aksesori",
                 "faq dungeon": "🗻 Ruang bawah tanah"
             },
-            "general": "🎈*Kelangkaan*\nPeristiwa dan dinosaurus dibagi menjadi kelangkaan.\nSemakin besar kelangkaan, semakin manis ganjarannya.\n\n 1. Reguler - 50%\n 2. Tidak biasa - 25%\n 3. Langka - 15%\n 4. Mistik - 9%\n 5. Legendaris - 1%\n\n🕹*Interaksi*\nUntuk berinteraksi dengan dinosaurus, buka `🕹 Tindakan`.\n\n 1. Untuk memberi makan dinosaurus, Anda perlu mendapatkan makanan, klik `🕹 Tindakan`> `🍕 Mengumpulkan makanan` dan ikuti petunjuknya.\n\n 2. Untuk memberi makan dinosaurus, tekan `🕹 Tindakan`> `🍣 Umpan` dan pilih makanan yang sesuai.\n\n 3. Di `🎮 Hiburan`, kamu dapat memilih game dan menghibur dinosaurus untuk menghiburnya.\n\n 4. Di `🎑 Perjalanan` Anda dapat menemukan item yang berbeda, bertemu teman dan melihat banyak hal menarik!\n\n 5. `🌙 Ditidurkan` dinosaurus perlu tidur setiap hari, jangan lupa untuk menidurkannya!\n\n🎮*Profil*\n Untuk melihat inventaris atau melihat statistik Anda, buka `👁‍🗨 Profil`\n\n🔧*Pengaturan*\nDi Pengaturan, Anda dapat mengganti nama dinosaurus, menonaktifkan pemberitahuan, atau mengganti bahasa.\n\n🛒*Pasar*\nAnda dapat menjual atau membeli barang - barang yang Anda butuhkan di pasar.\n\n👥*Teman*\nDi menu teman, Anda dapat mengelola teman dan sistem rujukan Anda. Semakin banyak teman, semakin banyak kesempatan untuk mendapatkan beberapa bonus. Selain itu, dengan mengundang teman melalui sistem rujukan, Anda dan teman Anda akan menerima bonus yang menyenangkan.\n\n🦕*Jumlah dinosaurus*\nSetiap tingkat 20 jumlah dinosaurus meningkat sebesar 1.\n tingkat 20 - 2 dinosaurus.\n tingkat 40 - 3 dinosaurus...\n\n",
+            "general": "🎈*Kelangkaan*\nPeristiwa dan dinosaurus dibagi menjadi kelangkaan.\nSemakin besar kelangkaan, semakin manis ganjarannya.\n\n 1. Reguler - 50%\n 2. Tidak biasa - 25%\n 3. Langka - 15%\n 4. Mistik - 9%\n 5. Legendaris - 1%\n\n🕹 *Interaksi*\nUntuk berinteraksi dengan dinosaurus, buka `🕹 Tindakan`.\n\n 1. Untuk memberi makan dinosaurus, Anda perlu mendapatkan makanan, klik `🕹 Tindakan`> `🍕 Pertemuan Makanan` dan ikuti petunjuknya.\n\n 2. Untuk memberi makan dinosaurus, klik `🕹 Tindakan`> `🍣 Umpan` dan pilih makanan yang sesuai.\n\n 3. Di `🎮 Hiburan`, kamu dapat memilih game dan menghibur dinosaurus untuk menghiburnya.\n\n 4. Di `🎑 Perjalanan` Anda dapat menemukan item yang berbeda, bertemu teman dan melihat banyak hal menarik!\n\n 5. `🌙 Ditidurkan` dinosaurus perlu tidur setiap hari, jangan lupa untuk menidurkannya!\n\n🎮*Profil*\n Untuk melihat inventaris atau melihat statistik Anda, buka `👁‍🗨 Profil`\n\n🔧*Pengaturan*\nDi Pengaturan, Anda dapat mengganti nama dinosaurus, menonaktifkan pemberitahuan, atau mengganti bahasa.\n\n🛒*Pasar*\nAnda dapat menjual atau membeli barang yang Anda butuhkan di pasar.\n\n👥*Teman*\nDi menu teman, Anda dapat mengelola teman dan sistem rujukan Anda. Semakin banyak teman, semakin banyak kesempatan untuk mendapatkan beberapa bonus. Selain itu, dengan mengundang teman melalui sistem rujukan, Anda dan teman Anda akan menerima bonus yang menyenangkan.\n\n🦕*Jumlah dinosaurus*\nSetiap tingkat 20 jumlah dinosaurus meningkat sebesar 1.\n tingkat 20 - 2 dinosaurus.\n tingkat 40 - 3 dinosaurus...\n\n",
             "eat": "🥙 *Apa yang dimakan dinosaurus saya?*\nLihatlah profil dinosaurus Anda, dinosaurus hidup di lingkungan asalnya. \n\n Herbivora di mana ada banyak rumput, predator di hutan / rimba, dan mereka yang suka ikan terbang di awan. \n\n🍕 *Permen*\n🍯 Toples madu, 🥞 Pancake manis - dinosaurus suka camilan dan apa pun jenisnya, mereka akan dengan senang hati memakannya! \n\n Makanan ini juga memberikan bonus untuk suasana hati / kesehatan, dll. \n\nAnda dapat menemukan semua informasi tentang item dalam inventaris!",
             "accessories": "🏓 *Aksesoris*\nAksesori memberi Anda lebih banyak opsi atau mempercepat aktivitas Anda. \nAksesori dapat dipasang saat dinosaurus tidak melakukan apa-apa dengan menggunakannya dalam inventaris. \n Aksesori dapat ditemukan dalam perjalanan atau di bawah tanah. \n\n🎲 *Inilah beberapa di antaranya...*\n 🧸 Teddy Bear - memungkinkan Anda memilih mode tidur. \n 🛠 Alat - Mempercepat pengumpulan makanan.",
             "dungeon": "📜 *Quests*\n\nDi kedai Anda bisa mendapatkan pencarian (tunggu saja di dalamnya), pencarian memberikan bonus menarik untuk tindakan yang paling umum! \n\n🗻 *Dungeons*\nMulailah petualangan seru bersama teman-teman Anda! Petualangan, bos, item unik! \n Anda hanya perlu 200 koin untuk memasuki ruang bawah tanah! \n Tidak diperlukan perlengkapan pemula, dan dinosaurus Anda tidak bisa mati di dalamnya. \n\n🍺 *Kedai Dino*\nLihatlah `🍺 Kedai Dino`, di mana Anda dapat menemukan informasi dari pengunjung, menemukan pemain lain. Dan juga dapatkan quest!"
@@ -1137,7 +1138,7 @@
             "choice_time": "🌙 | Masukkan waktu tidur REM (tidur 2 kali lebih cepat dari tidur panjang) dalam hitungan menit >"
         },
         "awaken": {
-            "down_mood": "🌙 Dinosaurus Anda telah terbangun. Dia tidak senang Anda membangunkannya! \n⌛ Dinosaurus tidur {time_end}.",
+            "down_mood": "🌙 Dinosaurus Anda telah terbangun. Dia sangat tidak senang Anda membangunkannya! \n⌛ Dinosaurus tidur {time_end}.",
             "not_sleep": "🌙 Dinosaurus tidak tidur!"
         },
         "p_profile": {
@@ -1546,34 +1547,40 @@
             "currency_answer": "💲 Pilih mata uang yang akan dibayar dengan mengklik tombol di bawah ini ->",
             "currency": "💲 Mata uang yang dipilih: {currency}",
             "col_answer": "🌟 Pilih kuantitas dengan mengklik tombol di bawah ini ->",
-            "buy": "⌚ Tidak banyak yang tersisa! \n🔗 Klik tombol di bawah pesan dan buka petunjuk donasi. \n\n💬 | Detail Anda, kirim pesan ke pengembang setelah pembayaran. (dapat diklik dan disalin) \n\n ID Anda: `{user_id}`\nProduk Anda: `{product_key}`\n\nJumlah Anda: `{amount}`\nMata uang Anda: `{currency}`\nKol Anda: `{count}`\n\n🧳 Baca dan ikuti petunjuknya di sini. \n❌ Jika terjadi masalah, silakan hubungi @AS1AW",
+            "buy": "🦕 Pesanan Anda telah dilakukan, pesan untuk pembayaran telah muncul di bagian bawah!",
             "buy_button": "✨ Instruksi donasi",
             "products_bio": {
                 "non_repayable": {
                     "name": "☕ Serampangan",
                     "image": "images/remain/support/non_repayable.png",
                     "short": "Kami berterima kasih atas jumlah berapa pun!",
-                    "description": "🔮 Jumlah berapa pun memberi kita keyakinan pada hari esok, di mana kita bermain dan bepergian dengan dinosaurus kita!"
+                    "description": "🔮 Jumlah berapa pun memberi kita keyakinan pada hari esok, di mana kita bermain dan bepergian dengan dinosaurus kita!",
+                    "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/non_repayable.png?raw=true"
                 },
                 "dino_ultima": {
                     "name": "⚡ DinoUltima",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "Ultra berlangganan untuk Anda dan dinosaurus Anda!",
-                    "description": "🖼 Kemampuan untuk mengatur gambar apa pun alih-alih latar belakang! \n🍼 Awasi dinosaurus saya - kirim dinosaurus Anda ke taman kanak-kanak selama yang Anda mau! \n✨ Menampilkan status Ultra di semua daftar. \n🧶 Peningkatan batas pengumpulan makanan. \n🏝 Lokasi tambahan dalam perjalanan. \n🎮 Game tambahan. \n🦕 +1 batas dinosaurus. \n🎠 Atur gambar apa pun untuk menu toko. \n🕹 Meningkatkan batas promosi. \n🎟️ Tidak ada iklan otomatis."
+                    "description": "🖼 Kemampuan untuk mengatur gambar apa pun alih-alih latar belakang! \n🍼 Jaga dinosaurus saya - kirim dinosaurus Anda ke taman kanak-kanak kapan saja! \n✨ Tampilkan status Ultra di semua daftar. \n🧶 Meningkatkan batas pengumpulan makanan. \n🏝 Lokasi tambahan dalam perjalanan. \n🎮 Permainan tambahan. \n🦕 +1 hingga batas dinosaurus. \n🎠 Atur gambar apa pun untuk menu toko. \n🕹 Peningkatan batas promosi. \n🎟️ Iklan dapat dinonaktifkan.",
+                    "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true"
                 },
                 "rescue_kit": {
                     "name": "❤ Kit Penyelamatan",
                     "image": "images/remain/support/rescue_kit.png",
                     "short": "Selamatkan dinosaurus saya!",
-                    "description": "😣 Apakah Anda lupa tentang dinosaurus Anda dan sekarang rasanya sangat buruk dan perlu melakukan sesuatu yang mendesak ?! \n❤ Di sinilah kit penyelamat masuk! Ini memiliki semua yang Anda butuhkan!"
+                    "description": "😣 Apakah Anda lupa tentang dinosaurus Anda dan sekarang rasanya sangat buruk dan perlu melakukan sesuatu yang mendesak ?! \n❤ Di sinilah kit penyelamat masuk! Ini memiliki semua yang Anda butuhkan!",
+                    "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/rescue_kit.png?raw=true"
                 },
                 "reborn": {
                     "name": "💥 Kebangkitan dinosaurus",
                     "image": "images/remain/support/reborn.png",
                     "short": "Bangkitkan dinosaurus saya!",
-                    "description": "🔮 Sihir level 10 akan menghidupkan kembali dinosaurus Anda!"
+                    "description": "🔮 Sihir level 10 akan menghidupkan kembali dinosaurus Anda!",
+                    "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/reborn.png?raw=true"
                 }
-            }
+            },
+            "free_enter": "🎥 Masukkan di bawah berapa banyak bintang yang ingin Anda kirim ke pengembang.",
+            "create_invoice": "🎩 Akun dibuat!"
         },
         "delete_action": {
             "delete": "🗑 | Item {name} x{count} telah dihapus!",

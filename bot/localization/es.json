@@ -706,7 +706,8 @@
                 "currency_key_error": "Vaya, ha especificado una moneda ({currency}) que no pudimos procesar, comuníquese con @AS1AW para obtener ayuda enviando este mensaje.",
                 "product_key_error": "Oye, no pudimos averiguar qué producto publicaste ({product_key})... Comunícate con @AS1AW para obtener ayuda enviando este mensaje.",
                 "subscription_end_day": "❤ | ¡Eh! Su suscripción termina en {end_text}, si le gustan las funciones de suscripción, ¡pague el mes siguiente!",
-                "subscription_end": "❤ | Tu suscripción ha terminado, ¡gracias por estar con nosotros!"
+                "subscription_end": "❤ | Tu suscripción ha terminado, ¡gracias por estar con nosotros!",
+                "pre_check_error": "🐱 🐉 Algo salió mal, inténtalo de nuevo en unos minutos."
             },
             "lvl_up": {
                 "standart": "🎉 | {user_name}, ¡tu nivel ha subido! ({lvl})",
@@ -722,7 +723,7 @@
                 "inline_menu": "requests"
             },
             "referal_award": {
-                "text": "🎁 | Tu amigo {user_name} ha alcanzado el nivel {lvl}, muchas gracias por invitar a tus amigos, ¡eres recompensado con {item_name}!"
+                "text": "🎁 | Tu amigo {user_name} ha llegado al {lvl}, muchas gracias por invitar a tus amigos, ¡fuiste recompensado con el {item_name}!"
             },
             "sleep_end": {
                 "text": "🦕 | {dino_name} desperté y lleno de energía. \n⌛ | El dinosaurio durmió {time_end}.",
@@ -975,7 +976,7 @@
             }
         },
         "help_command": {
-            "all": "<b>🎨 | Equipo de ayuda</b>\n <i>¿Eres tan patético que me pides dinero?)\nPfft... Muy bien.</i>\n\n/ayuda - Pide ayuda a la mente superior.\n\n/inicio - Bot inicio/menú principal (solo ps)\n\n/perfil - Abrir perfil de usuario.\n\n/add_me - Enviar un mensaje con el botón activo añadir a amigos. (solo grupo)\n\n/promo (código) - Introducir el código promo.\n\n/super - Gabinete de súper monedas."
+            "all": "<b>🎨 | Equipo de ayuda</b>\n<i>¿Eres tan lamentable que me estás pidiendo ayuda?) \n Pfff... Bien. </i> \n\n/help - Una súplica de ayuda de una mente superior. \n\n/start - Iniciar bot / menú principal (solo LS)\n\n/profile - Abrir perfil de usuario. \n\n/add_me - Envía un mensaje con el botón de añadir amigo activo. (solo para grupos) \n\n/promo (código) - Introduce el código promocional. \n\n/super - Súper Sala de Monedas."
         },
         "additem_command": {
             "err": "Formato de entrada:\nID de artículo\nnúmero\nID de usuario",
@@ -1022,7 +1023,7 @@
                 "faq accessories": "🧵 Accesorios",
                 "faq dungeon": "🗻 Mazmorra"
             },
-            "general": "🎈 *Rareza*\nLos eventos y dinosaurios se dividen en rarezas.\nCuanto mayor es la rareza, más dulce es la recompensa.\n\n 1. Regular - 50%\n 2. Inusual - 25%\n 3. Raro - 15%\n 4. Místico - 9%\n 5. Legendario - 1%\n\n🕹 *Interacción*\nPara interactuar con el dinosaurio, vaya a `🕹 Acciones`.\n\n 1. Para alimentar al dinosaurio, debes obtener comida, hacer clic en `🕹 Acciones` > `🍕 Recolectando comida` y seguir las instrucciones.\n\n 2. Para alimentar al dinosaurio, oprima `🕹 Acciones` > `🍣 Alimentación` y seleccione el alimento apropiado.\n\n 3. En `🎮 Entretenimiento`, puedes elegir un juego y entretener al dinosaurio para animarlo.\n\n 4. ¡En `🎑 Viajes` puedes encontrar diferentes artículos, conocer amigos y ver muchas cosas interesantes!\n\n 5. `🌙 Ir a la cama` dinosaurio necesita dormir todos los días, ¡no olvides ponerlo a dormir!\n\n🎮 *Perfil*\n Para ver el inventario o tus estadísticas, ve a `👁‍🗨 Perfil`\n\n🔧 **\nEn Configuración, puedes cambiar el nombre de un dinosaurio, desactivar las notificaciones o cambiar de idioma.\n\n🛒 **\nPuedes vender o comprar las cosas que necesitas en el mercado.\n\n👥 **\nEn el menú de amigos, puedes administrar tus amigos y el sistema de referidos. Cuantos más amigos, más oportunidades de obtener algunos bonos. Además, al invitar a un amigo a través del sistema de referidos, usted y su amigo recibirán bonificaciones agradables.\n\n🦕 **\nCada 20º nivel el número de dinosaurios aumenta en 1.\n20º nivel - 2 dinosaurios.\n 40º nivel - 3 dinosaurios...\n\n",
+            "general": "🎈 *Rareza*\nLos eventos y dinosaurios se dividen en rarezas.\nCuanto mayor es la rareza, más dulce es la recompensa.\n\n 1. Regular - 50%\n 2. Inusual - 25%\n 3. Raro - 15%\n 4. Místico - 9%\n 5. Legendario - 1%\n\n🕹 *Interacción*\nPara interactuar con el dinosaurio, vaya a `🕹 Acciones`.\n\n 1. Para alimentar al dinosaurio, necesitas conseguir comida, haz clic en `🕹 Acciones` > `🍕 Recolección de alimentos` y sigue las instrucciones.\n\n 2. Para alimentar al dinosaurio, haga clic en `🕹 Acciones` > `🍣 Alimentación` y seleccione el alimento apropiado.\n\n 3. En `🎮 Entretenimiento`, puedes elegir un juego y entretener al dinosaurio para animarlo.\n\n 4. ¡En `🎑 Viajes` puedes encontrar diferentes artículos, conocer amigos y ver muchas cosas interesantes!\n\n 5. `🌙 Ir a la cama` dinosaurio necesita dormir todos los días, ¡no olvides ponerlo a dormir!\n\n🎮 *Perfil*\n Para ver el inventario o tus estadísticas, ve a `👁‍🗨 Perfil`\n\n🔧 *Configuración*\nEn Configuración, puedes cambiar el nombre de un dinosaurio, deshabilitar las notificaciones o cambiar de idioma.\n\n🛒 *Mercado*\nPuedes vender o comprar las cosas que necesitas en el mercado.\n\n👥 *Amigos*\nEn el menú de amigos, puedes administrar tus amigos y el sistema de referidos. Cuantos más amigos, más oportunidades de obtener algunos bonos. Además, al invitar a un amigo a través del sistema de referidos, usted y su amigo recibirán bonificaciones agradables.\n\n🦕 *Número de dinosaurios*\nCada 20º nivel el número de dinosaurios aumenta en 1.\n20º nivel - 2 dinosaurios.\n 40º nivel - 3 dinosaurios...\n\n",
             "eat": "🥙 *¿Qué come mi dinosaurio?*\nMira el perfil de tu dinosaurio, los dinosaurios viven en su entorno nativo. \n\n Los herbívoros donde abundan las hierbas, los depredadores en los bosques/selvas y los amantes de los peces vuelan en las nubes. \n\n🍕 *Dulce*\n🍯 Tarro de miel, 🥞 Panqueques dulces: a los dinosaurios les encantan las golosinas y, sin importar de qué tipo sean, ¡se las comerán felizmente! \n\n Este alimento también da bonificaciones al estado de ánimo/salud, etc. \n\n¡Puede encontrar toda la información sobre el artículo en el inventario!",
             "accessories": "🏓 *Accesorios*\nLos accesorios te dan más opciones o aceleran tu actividad. \nLos accesorios pueden instalarse mientras el dinosaurio no está haciendo nada utilizándolos en el inventario. \n Los accesorios se pueden encontrar en el transporte de viajes o en el metro. \n\n🎲 *Estos son algunos de ellos...*\n 🧸 Osito de peluche: le permite seleccionar un modo de suspensión. \n 🛠 Herramientas - Acelera la recolección de alimentos.",
             "dungeon": "📜 *Misiones*\n\nEn la taberna puedes obtener una misión (solo espera en ella), ¡las misiones dan bonificaciones interesantes para las acciones más comunes! \n\n🗻 *Mazmorras*\n¡Embárcate en una emocionante aventura con tus amigos! ¡Aventuras, jefes, objetos únicos! \n ¡Solo necesitas 200 monedas para entrar en la mazmorra! \n No se necesita equipo de inicio, y tus dinosaurios no pueden morir en él. \n\n🍺 *Taberna de dinosaurios*\nEcha un vistazo a `🍺 Taberna Dino`, donde puedes encontrar información de los visitantes, encontrar otros jugadores. ¡Y también consigue misiones!"
@@ -1137,7 +1138,7 @@
             "choice_time": "🌙 | Ingrese el tiempo de sueño REM (el sueño es 2 veces más rápido que el sueño largo) en minutos >"
         },
         "awaken": {
-            "down_mood": "🌙 Tu dinosaurio ha despertado. ¡No está contento de que lo hayas despertado! \n⌛ Dinosaurio dormido {time_end}.",
+            "down_mood": "🌙 Tu dinosaurio ha despertado. ¡Está muy descontento de que lo hayas despertado! \n⌛ Dinosaurio dormido {time_end}.",
             "not_sleep": "🌙 ¡El dinosaurio no duerme!"
         },
         "p_profile": {
@@ -1546,34 +1547,40 @@
             "currency_answer": "💲 Seleccione la moneda a pagar haciendo clic en el botón de abajo ->",
             "currency": "💲 Moneda seleccionada: {currency}",
             "col_answer": "🌟 Seleccione la cantidad haciendo clic en el botón de abajo ->",
-            "buy": "⌚ ¡No queda mucho! \n🔗 Haga clic en el botón debajo del mensaje y vaya a las instrucciones de donación. \n\n💬 | Sus datos, envíe un mensaje al desarrollador después del pago. (se puede hacer clic y copiar) \n\n Su identificación: `{user_id}`\nSu producto: `{product_key}`\n\nSu cantidad: `{amount}`\nSu moneda: `{currency}`\nSu col: `{count}`\n\n🧳 Lea y siga las instrucciones aquí. \n❌ En caso de problema, póngase en contacto con @AS1AW",
+            "buy": "🦕 ¡Tu pedido ha sido realizado, ha aparecido un mensaje de pago en la parte inferior!",
             "buy_button": "✨ Instrucciones para donar",
             "products_bio": {
                 "non_repayable": {
                     "name": "☕ Gratuito",
                     "image": "images/remain/support/non_repayable.png",
                     "short": "¡Estamos agradecidos por cualquier cantidad!",
-                    "description": "🔮 ¡Cualquier cantidad nos da fe en el mañana, donde jugamos y viajamos con nuestros dinosaurios!"
+                    "description": "🔮 ¡Cualquier cantidad nos da fe en el mañana, donde jugamos y viajamos con nuestros dinosaurios!",
+                    "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/non_repayable.png?raw=true"
                 },
                 "dino_ultima": {
                     "name": "⚡ DinoUltima",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "¡Suscripción Ultra para ti y tus dinosaurios!",
-                    "description": "🖼 ¡Posibilidad de establecer cualquier imagen en lugar del fondo! \n🍼 Vigila a mi dinosaurio: ¡envía a tu dinosaurio al jardín de infantes todo el tiempo que quieras! \n✨ Muestra el estado Ultra en todas las listas. \n🧶 Aumento de los límites de recolección de alimentos. \n🏝 Ubicaciones adicionales en el viaje. \n🎮 Juegos adicionales. \n🦕 +1 límite de dinosaurios. \n🎠 Establecer cualquier imagen para el menú de la tienda. \n🕹 Aumento de los límites de promoción. \n🎟️ Sin anuncios automáticos."
+                    "description": "🖼 ¡Posibilidad de establecer cualquier imagen en lugar de fondo! \n🍼 Cuida de mi dinosaurio: ¡envía a tu dinosaurio al jardín de infantes en cualquier momento! \n✨ Mostrar el estado Ultra en todas las listas. \n🧶 Aumento de los límites en la recolección de alimentos. \n🏝 Ubicaciones adicionales en el viaje. \n🎮 Juegos adicionales. \n🦕 +1 al límite de dinosaurios. \n🎠 Establece cualquier imagen para el menú de la tienda. \n🕹 Aumento de los límites de promoción. \n🎟️ Los anuncios se pueden desactivar.",
+                    "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true"
                 },
                 "rescue_kit": {
                     "name": "❤ Kit de rescate",
                     "image": "images/remain/support/rescue_kit.png",
                     "short": "¡Salva a mi dinosaurio!",
-                    "description": "😣 ¿Te has olvidado de tu dinosaurio y ahora se siente muy mal y necesita hacer algo urgentemente? \n❤ ¡Aquí es donde entra en juego el kit de rescate! ¡Tiene todo lo que necesitas!"
+                    "description": "😣 ¿Te has olvidado de tu dinosaurio y ahora se siente muy mal y necesita hacer algo urgentemente? \n❤ ¡Aquí es donde entra en juego el kit de rescate! ¡Tiene todo lo que necesitas!",
+                    "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/rescue_kit.png?raw=true"
                 },
                 "reborn": {
                     "name": "💥 Renacimiento de dinosaurios",
                     "image": "images/remain/support/reborn.png",
                     "short": "¡Resucita a mi dinosaurio!",
-                    "description": "🔮 ¡La magia de nivel 10 revivirá a tu dinosaurio!"
+                    "description": "🔮 ¡La magia de nivel 10 revivirá a tu dinosaurio!",
+                    "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/reborn.png?raw=true"
                 }
-            }
+            },
+            "free_enter": "🎥 Ingrese a continuación cuántas estrellas desea enviar al desarrollador.",
+            "create_invoice": "🎩 ¡Cuenta creada!"
         },
         "delete_action": {
             "delete": "🗑 | ¡Se ha eliminado el artículo {name} x{count}!",

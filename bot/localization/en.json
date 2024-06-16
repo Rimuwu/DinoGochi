@@ -706,7 +706,8 @@
                 "currency_key_error": "Whoa, you have specified a currency ({currency}) that we were unable to process, please contact @AS1AW for assistance by sending this message.",
                 "product_key_error": "Hey, we couldn't figure out which product you listed ({product_key}) ... Reach out to @AS1AW for help by sending this message.",
                 "subscription_end_day": "❤ | Hey! Your subscription ends in {end_text}, if you like the subscription features, then pay for the next month!",
-                "subscription_end": "❤ | Your subscription is over, thank you for being with us!"
+                "subscription_end": "❤ | Your subscription is over, thank you for being with us!",
+                "pre_check_error": "🐱 🐉 Something went wrong, try again in a few minutes."
             },
             "lvl_up": {
                 "standart": "🎉 | {user_name}, your level has been raised! ({lvl})",
@@ -722,7 +723,7 @@
                 "inline_menu": "requests"
             },
             "referal_award": {
-                "text": "🎁 | Your friend {user_name} has reached level {lvl}, thank you so much for inviting your friends, you have been rewarded with {item_name}!"
+                "text": "🎁 | Your friend {user_name} has reached {lvl}, thank you so much for inviting your friends, you were rewarded with {item_name}!"
             },
             "sleep_end": {
                 "text": "🦕 | {dino_name} I woke up and was full of energy. \n ⌛ | The dinosaur was asleep {time_end}.",
@@ -975,7 +976,7 @@
             }
         },
         "help_command": {
-            "all": "<b> 🎨 | Help Team</b> \n <i> You're so pathetic that you're asking me for help?) \n Pfff... Okay. </i> \n\n /help - A plea for help from a higher intelligence. \n\n /start - Start bot / main menu (DM only)\n\n /profile - Open the user's profile. \n\n /add_me - Send a message with an active friend button. (group only) \n\n /promo (code) - Enter a promo code. \n\n /super - Super Coin Cabinet."
+            "all": "<b>🎨 | Help Team</b>\n<i>You're so pitiful that you're asking me for help?) \n Pfff... Okay. </i> \n\n/help - A plea for help from a higher mind. \n\n/start - Start bot / main menu (only LS)\n\n/profile - Open user profile. \n\n/add_me - Send a message with the add friend button active. (group only) \n\n/promo (code) - Enter the promo code. \n\n/super - Super Coin Room."
         },
         "additem_command": {
             "err": "Input Format:\n Item ID\n Quantity\n User's ID",
@@ -1022,7 +1023,7 @@
                 "faq accessories": "🧵 Accessories",
                 "faq dungeon": "🗻 Dungeon"
             },
-            "general": "🎈 *Rarity*\nEvents and dinosaurs are divided into rarities.\nThe greater the rarity, the sweeter the reward.\n\n 1. Regular - 50%\n 2. Unusual - 25%\n 3. Rare - 15%\n 4. Mystical - 9%\n 5. Legendary - 1%\n\n🕹 *Interaction*\nTo interact with a dinosaur, go to `🕹 Actions`.\n\n 1. In order to feed the dinosaur, you need to get food, click on `🕹 Actions` > `` and follow the instructions.\n\n 2. To feed the dinosaur, click on `🕹 Actions` > `` and select the appropriate food.\n\n 3. In ``, you can choose a game and entertain the dinosaur to cheer it up.\n\n 4. In `` you can find different items, meet friends and see a lot of interesting things!\n\n 5. `` the dinosaur needs sleep every day, don't forget to put it to sleep!\n\n🎮 **\n To view inventory or see your stats, go to ``\n\n🔧 **\nIn the settings, you can rename the dinosaur, disable notifications, or switch the language.\n\n🛒 **\nIn the market, you can sell or buy the things you need.\n\n👥 **\nYou can manage your friends and referral system from your friends menu. The more friends, the more opportunities to get some bonuses. Also, by inviting a friend through the referral system, you and your friend will receive pleasant bonuses.\n\n🦕 **\nEvery 20th level, the number of dinosaurs increases by 1.\n20th level - 2 dinosaurs.\n 40th level - 3 dinosaurs...\n\n",
+            "general": "🎈 *Rarity*\nEvents and dinosaurs are divided into rarities.\nThe greater the rarity, the sweeter the reward.\n\n 1. Regular - 50%\n 2. Unusual - 25%\n 3. Rare - 15%\n 4. Mystical - 9%\n 5. Legendary - 1%\n\n🕹 *Interaction*\nTo interact with the dinosaur, go to `🕹 Actions`.\n\n 1. To feed the dinosaur, you need to get food, click on `🕹 Actions` > `🍕 Food Gathering` and follow the instructions.\n\n 2. To feed the dinosaur, click on `🕹 Actions` > `🍣 Feed` and select the appropriate food.\n\n 3. In `🎮 Entertainment`, you can choose a game and entertain the dinosaur to cheer it up.\n\n 4. In `🎑 Travel` you can find different items, meet friends and see a lot of interesting things!\n\n 5. `🌙 Put to bed` dinosaur needs sleep every day, don't forget to put him to sleep!\n\n🎮 *Profile*\n To view inventory or see your stats, go to `👁‍🗨 Profile`\n\n🔧 *Settings*\nIn Settings, you can rename a dinosaur, disable notifications, or switch language.\n\n🛒 *Market*\nYou can sell or buy the things you need on the market.\n\n👥 *Friends*\nIn the friends menu, you can manage your friends and referral system. The more friends, the more opportunities to get some bonuses. Also, by inviting a friend through the referral system, you and your friend will receive pleasant bonuses.\n\n🦕 *Number of dinosaurs*\nEvery 20th level the number of dinosaurs increases by 1.\n20th level - 2 dinosaurs.\n 40th level - 3 dinosaurs...\n\n",
             "eat": "🥙 *What does my dinosaur eat?* \n Look at the profile of your dinosaur, dinosaurs live in their native environment. \n\n Herbivores are where there are a lot of grasses, predators are in forests/jungles, and those who like fish fly in the clouds. \n\n 🍕 *Sweets* \n 🍯 Jar of honey, 🥞 Sweet pancakes - dinosaurs love yummy treats and no matter what kind they are, they will happily eat them! \n\n Also, this food gives bonuses to mood / health, etc. \n\n You can find all the information about the item in the inventory!",
             "accessories": "🏓 *Accessories* \n Accessories open up additional possibilities or speed up the type of activity. \n Accessories can be installed while the dinosaur is not doing anything by using it in the inventory. \n Accessories can be found in travels or dungeons. \n\n 🎲 *Here are some of them...* \n 🧸 Teddy Bear - allows you to choose a sleep mode. \n 🛠 Tools - Speed up the collection of food.",
             "dungeon": "📜 *Quests* \n\n In the tavern you can get a quest (just wait in it), quests give interesting bonuses for the most ordinary actions! \n\n 🗻 *Dungeons* \n Embark on an exciting adventure with your friends! Adventures, bosses, unique items! \n You only need 200 coins to get into the dungeon! \n You don't need any starter equipment, and your dinosaurs can't die in it. \n\n 🍺 *Dino Tavern* \n Take a look at `‍🍺 Dino Tavern`, there you can find information from visitors, find other players. And also get quests!"
@@ -1137,7 +1138,7 @@
             "choice_time": "🌙 | Enter the time of REM sleep (sleep is 2 times faster than long sleep) in minutes >"
         },
         "awaken": {
-            "down_mood": "🌙 Your dinosaur has awakened. He's not happy that you woke him up! \n ⌛ The dinosaur was asleep {time_end}.",
+            "down_mood": "🌙 Your dinosaur has awakened. He is very unhappy that you woke him up! \n⌛ Dinosaur slept {time_end}.",
             "not_sleep": "🌙 The dinosaur doesn't sleep!"
         },
         "p_profile": {
@@ -1546,34 +1547,40 @@
             "currency_answer": "💲 Select the currency you want to pay by clicking on the button below ->",
             "currency": "💲 Selected currency: {currency}",
             "col_answer": "🌟 Select the number by clicking on the button below ->",
-            "buy": "⌚ There's not much left to do! \n 🔗 Click on the button below the message and go to the donation instructions. \n\n 💬 | Your details, send a message to the developer after payment. (can be clicked and copied) \n\n Your id: `{user_id}` \n Your product: `{product_key}` \n\n Your amount: `{amount}` \n Your currency: `{currency}` \n Your col: `{count}` \n\n 🧳 Read and follow the instructions here. \n ❌ If you have a problem, please contact @AS1AW",
+            "buy": "🦕 Your order has been placed, a message for payment has appeared at the bottom!",
             "buy_button": "✨ Donation Instructions",
             "products_bio": {
                 "non_repayable": {
                     "name": "☕ Gratuitous",
                     "image": "images/remain/support/non_repayable.png",
                     "short": "We are grateful for any amount!",
-                    "description": "🔮 Any amount gives us faith in a tomorrow where we play and travel with our dinosaurs!"
+                    "description": "🔮 Any amount gives us faith in a tomorrow where we play and travel with our dinosaurs!",
+                    "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/non_repayable.png?raw=true"
                 },
                 "dino_ultima": {
                     "name": "⚡ DinoUltima",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "Ultra subscription for you and your dinosaurs!",
-                    "description": "🖼 Ability to set any picture instead of a background! \n 🍼 Keep an eye on my dinosaur - send your dinosaur to kindergarten for as long as you want! \n ✨ Display Ultra status in all lists. \n 🧶 Increasing food collection limits. \n 🏝 Additional locations on the journey. \n 🎮 Additional games. \n 🦕 +1 dinosaur limit. \n 🎠 Set any picture for the store menu. \n 🕹 Increase in promotion limits. \n 🎟️ No automatic ads."
+                    "description": "🖼 Ability to set any picture instead of background! \n🍼 Look after my dinosaur - send your dinosaur to kindergarten for any time! \n✨ Display Ultra status in all lists. \n🧶 Increasing the limits on food collection. \n🏝 Additional locations on the trip. \n🎮 Additional games. \n🦕 +1 to the dinosaur limit. \n🎠 Set any image for the store menu. \n🕹 Increase in promotion limits. \n🎟️ Ads can be disabled.",
+                    "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true"
                 },
                 "rescue_kit": {
                     "name": "❤ Rescue Kit",
                     "image": "images/remain/support/rescue_kit.png",
                     "short": "Save my dinosaur!",
-                    "description": "😣 Have you forgotten about your dinosaur and now it is very bad and needs to do something urgently?! \n ❤ This is where the rescue kit comes in! It has everything you need!"
+                    "description": "😣 Have you forgotten about your dinosaur and now it is very bad and needs to do something urgently?! \n ❤ This is where the rescue kit comes in! It has everything you need!",
+                    "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/rescue_kit.png?raw=true"
                 },
                 "reborn": {
                     "name": "💥 Dinosaur Revival",
                     "image": "images/remain/support/reborn.png",
                     "short": "Resurrect my dinosaur!",
-                    "description": "🔮 Level 10 magic will revive your dinosaur!"
+                    "description": "🔮 Level 10 magic will revive your dinosaur!",
+                    "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/reborn.png?raw=true"
                 }
-            }
+            },
+            "free_enter": "🎥 Enter below how many stars you want to send to the developer.",
+            "create_invoice": "🎩 Account created!"
         },
         "delete_action": {
             "delete": "🗑 | Item {name} x{count} removed!",
