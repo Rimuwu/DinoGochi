@@ -14,12 +14,14 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.logs import log
 from time import time
 
+products = GAME_SETTINGS['products']
+
 @bot.pre_checkout_query_handler(func=lambda query: True)
 async def checkout(pre_checkout_query: PreCheckoutQuery):
     lang = get_lang(pre_checkout_query.from_user.language_code)
 
     res = await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True,
-                                  error_message=t('donation.pre_check_error', lang, formating=False))
+                                  error_message=t('notifications.donation.pre_check_error', lang, formating=False))
 
     log(f'Был выдан ответ на pre_checkout_query_handler -> {res}, user: {pre_checkout_query.from_user.id}', 4)
 
@@ -37,15 +39,15 @@ async def got_payment(message: Message):
     product_key = message_split[0]
     col = int(message_split[1])
 
-    if product_key in product:
+    if product_key in products:
         donation_data = save_donation(
             chat_user.user.first_name, 
             total_price, 'done', 
             product_key, True, int(time()),
             col
         )
-        
-        processed_donations[str(random_code(5)+'_'+user_id)] = donation_data
+
+        processed_donations[f"{random_code(5)}_{user_id}"] = donation_data
         save(processed_donations)
 
         await give_reward(user_id, product_key, col)
