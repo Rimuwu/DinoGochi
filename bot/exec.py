@@ -8,8 +8,6 @@ from telebot.asyncio_storage import StateMemoryStorage
 from bot.config import conf
 from bot.modules.logs import log
 from bot.taskmanager import add_task, run as run_taskmanager
-import asyncio
-
 class TracebackHandler(ExceptionHandler):
     def handle(self, exception):
         log(f'{traceback.format_exc()} {exception}', 3)

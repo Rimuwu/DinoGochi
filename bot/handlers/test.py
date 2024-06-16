@@ -8,15 +8,15 @@ import json
 from random import choice
 
 from telebot.types import (InlineKeyboardButton, InlineKeyboardMarkup,
-                           InlineQueryResultContact, Message)
+                           InlineQueryResultContact, Message, LabeledPrice)
 
 from bot.config import conf, mongo_client
 from bot.const import GAME_SETTINGS, ITEMS
 from bot.exec import bot
 from bot.handlers.dino_profile import transition
-from bot.modules.currency import convert
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, item_list
 from bot.modules.dinosaur import check_status
+from bot.modules.donation import send_inv
 from bot.modules.images import create_egg_image, dino_collecting, dino_game
 from bot.modules.inventory_tools import inventory_pages
 from bot.modules.item import (AddItemToUser, DowngradeItem, get_data,
@@ -273,3 +273,10 @@ async def command(message):
             await AddItemToUser(owner_id, item_id, col)
 
         print(f'process {len(it)}')
+
+
+@bot.message_handler(pass_bot=True, commands=['star_invoice'], is_admin=True)
+async def command(message: Message):
+
+
+    await send_inv(message.from_user.id, 'reborn', 3, 'ru')
