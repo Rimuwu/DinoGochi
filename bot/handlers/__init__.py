@@ -23,3 +23,4 @@ from . import actions
 from . import super_coins
 
 from . import post_handler # Должен загружаться последний!
+from . import stars_invoice
