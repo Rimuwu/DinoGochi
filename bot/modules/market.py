@@ -75,7 +75,9 @@ async def add_product(owner_id: int, product_type: str, items: list, price, in_s
     for i in data['items']: data['items_id'].append(i['item_id'])
 
     res = await products.insert_one(data)
-    await send_view_product(res.inserted_id, owner_id)
+    try:
+        await send_view_product(res.inserted_id, owner_id)
+    except: pass
 
     return res.inserted_id
 
