@@ -7,10 +7,9 @@ from bot.modules.inline import inline_menu
 from bot.modules.localization import  get_lang, t
 from bot.modules.promo import use_promo
 from bot.handlers.start import start_game
- 
-
 
 users = mongo_client.user.users
+puhs = mongo_client.market.puhs
 
 @bot.message_handler(pass_bot=True, commands=['timer'])
 async def timer(message: Message):
@@ -49,6 +48,14 @@ async def push_info(message: Message):
 
     text = t('push.push_info', lang)
     await bot.send_message(chatid, text, parse_mode='Markdown')
+
+@bot.message_handler(pass_bot=True, commands=['delete_push'])
+async def delete_push(message: Message):
+    chatid = message.chat.id
+    userid = message.from_user.id
+
+    await puhs.delete_one({'owner_id': userid})
+    await bot.send_message(chatid, '👍', parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, commands=['add_me'], private=False)
 async def add_me_с(message: Message):
