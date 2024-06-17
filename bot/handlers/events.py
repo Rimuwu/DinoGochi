@@ -7,7 +7,6 @@ from bot.modules.localization import get_data, t, get_lang
 from bot.modules.item import counts_items
 from bot.modules.data_format import seconds_to_str, list_to_inline
 from bot.modules.user import user_in_chat
- 
 
 puhs = mongo_client.market.puhs
 

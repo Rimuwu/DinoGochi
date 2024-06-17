@@ -591,3 +591,7 @@ async def check_status(dino_id:ObjectId):
 
         return activity
     return 'pass'
+
+
+# def set_standart_specifications(dino_type: str):
+    
