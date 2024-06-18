@@ -1,6 +1,6 @@
 import datetime
 from datetime import datetime, timezone
-from random import choice, randint
+from random import choice, randint, choices, uniform
 from time import time
 
 from bson.objectid import ObjectId
@@ -592,6 +592,34 @@ async def check_status(dino_id:ObjectId):
         return activity
     return 'pass'
 
+quality_spec = {
+    'com': [0.1, 0.5],
+    'unc': [0.1, 1],
+    'rar': [0.1, 1.5],
+    'mys': [0.1, 2], 
+    'leg': [0.1, 3]
+}
 
-# def set_standart_specifications(dino_type: str):
+def set_standart_specifications(dino_type: str, dino_quality: str):
     
+    power = 0
+    dexterity = 0 # Ловкость
+    endurance = 0
+    intelligence = 0
+    wisdom = 0 # Мудрость
+    charisma = 0
+
+    for i in [power, dexterity, endurance, intelligence, wisdom, charisma]:
+        i = round(uniform( *quality_spec[dino_quality] ), 1)
+
+    if dino_type == 'Herbivore':
+        charisma += 0
+        intelligence += 0
+
+    elif dino_type == 'Carnivore':
+        power += 0
+        endurance += 0
+
+    elif dino_type == 'Flying':
+        dexterity += 0
+        wisdom += 0
