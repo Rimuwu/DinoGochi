@@ -16,7 +16,7 @@
 
 from bot.config import mongo_client
 from bot.const import ITEMS
-from bot.modules.data_format import random_dict, seconds_to_str
+from bot.modules.data_format import random_dict, seconds_to_str, near_key_number
 from bot.modules.images import async_open
 from bot.modules.localization import get_all_locales, t
 from bot.modules.localization import get_data as get_loc_data
@@ -61,9 +61,9 @@ def get_name(itemid: str, lang: str='en', endurance: int=0) -> str:
         if lang not in items_names[itemid]: lang = 'en'
         if endurance and 'alternative_name' in items_names[itemid][lang]:
             if str(endurance) in items_names[itemid][lang]['alternative_name']:
-                name = items_names[itemid][lang]['alternative_name'][endurance]
+                name = items_names[itemid][lang]['alternative_name'][str(endurance)]
             else: 
-                name = items_names[itemid][lang]['name']
+                name = near_key_number(endurance, items_names[itemid][lang], 'name') #type: ignore
         else:
             name = items_names[itemid][lang]['name']
     else:
@@ -418,7 +418,8 @@ def decode_item(code: str) -> dict:
     ids = { # первые 2 символа
         'us': 'uses', 'en': 'endurance',
         'ma': 'mana', 'st': 'stack',
-        'in': 'interact', 'da': 'data_id'
+        'in': 'interact', 'da': 'data_id',
+        'ty': 'type'
     }
     data = {}
 
@@ -432,8 +433,12 @@ def decode_item(code: str) -> dict:
             if value in ['True', 'False']:
                 if value == 'True': value = True
                 else: value = False
+
                 data['abilities'][ ids[scode] ] = value
-            else: data['abilities'][ ids[scode] ] = int(value)
+            else: 
+                if value.isdigit():
+                    data['abilities'][ ids[scode] ] = int(value)
+                else: data['abilities'][ ids[scode] ] = value
     return data
 
 def sort_materials(not_sort_list: list, lang: str, 
