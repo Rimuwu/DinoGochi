@@ -10,15 +10,16 @@ from bot.modules.item import counts_items, AddItemToUser
 from bot.modules.advert import create_ads_data
 from bot.const import GAME_SETTINGS
 
-users = mongo_client.user.users
-ads = mongo_client.user.ads
+from bot.modules.overwriting.DataCalsses import DBconstructor
+users = DBconstructor(mongo_client.user.users)
+ads = DBconstructor(mongo_client.user.ads)
 
 async def main_message(user_id):
     text = ''
     markup = InlineKeyboardMarkup()
 
     lang = await get_lang(user_id)
-    user = await users.find_one({"userid": user_id})
+    user = await users.find_one({"userid": user_id}, comment='main_message_super_c_user')
     ads_cabinet = await create_ads_data(user_id)
     if user and ads_cabinet:
         coins = user['super_coins']
@@ -37,7 +38,7 @@ async def main_message(user_id):
 async def super_c(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
-    
+
     await create_ads_data(userid)
     text, markup = await main_message(userid)
     await bot.send_message(chatid, text, reply_markup=markup, parse_mode="Markdown")
@@ -101,10 +102,10 @@ async def ads_limit(call: CallbackQuery):
             await bot.send_message(chatid, text)
         else:
             await ads.update_one({'userid': user_id}, 
-                                 {"$set": {'limit': 'inf'}})
+                                 {"$set": {'limit': 'inf'}}, comment='ads_limit')
     else:
         limit = buttons[code]['data']
-        await ads.update_one({'userid': user_id}, {"$set": {'limit': limit}})
+        await ads.update_one({'userid': user_id}, {"$set": {'limit': limit}}, comment='ads_limit_limit')
 
     text, markup = await main_message(user_id)
     await bot.edit_message_text(text, chatid, call.message.id,
@@ -127,7 +128,7 @@ async def super_shop(call: CallbackQuery):
     elif code == 'buy':
         product_code = call.data.split()[2]
         products = GAME_SETTINGS['super_shop']
-        user = await users.find_one({'userid': user_id})
+        user = await users.find_one({'userid': user_id}, comment='super_shop_user')
 
         product = products[product_code]
         price = product['price']
@@ -135,7 +136,7 @@ async def super_shop(call: CallbackQuery):
 
         if user and user['super_coins'] >= price:
             await users.update_one({'_id': user['_id']}, 
-                                   {'$inc': {'super_coins': -price}})
+                                   {'$inc': {'super_coins': -price}}, comment='super_shop_price')
             for i in items: await AddItemToUser(user_id, i)
 
             await bot.send_message(chatid, t('super_coins.buy', lang))

@@ -12,9 +12,10 @@ from bot.modules.market import generate_items_pages
 from time import time
 import json
  
+from bot.modules.overwriting.DataCalsses import DBconstructor
+promo = DBconstructor(mongo_client.other.promo)
+users = DBconstructor(mongo_client.user.users)
 
-promo = mongo_client.other.promo
-users = mongo_client.user.users
 
 async def create_promo_start(userid: int, chatid: int, lang: str):
 
@@ -208,7 +209,7 @@ async def end(return_data, transmitted_data):
 
 async def create_promo(code: str, col, seconds, coins: int, items: list, active: bool = False):
 
-    promo_check = await promo.find_one({'code': code})
+    promo_check = await promo.find_one({'code': code}, comment='create_promo_promo_check')
 
     if not promo_check:
         data = {
@@ -222,12 +223,12 @@ async def create_promo(code: str, col, seconds, coins: int, items: list, active:
             "active": active
         }
 
-        await promo.insert_one(data)
+        await promo.insert_one(data, comment='create_promo')
         return True
     return False
 
 async def promo_ui(code: str, lang: str):
-    data = await promo.find_one({"code": code})
+    data = await promo.find_one({"code": code}, comment='promo_ui')
     text, markup = '', None
 
     if data:
@@ -259,15 +260,15 @@ async def promo_ui(code: str, lang: str):
     return text, markup
 
 async def get_promo_pages() -> dict:
-    res = list(await promo.find({}).to_list(None)) 
+    res = await promo.find({}, comment='get_promo_pages')
     data = {}
     if res: 
         for i in res: data[i['code']] = i['code']
     return data
 
 async def use_promo(code: str, userid: int, lang: str):
-    data = await promo.find_one({"code": code})
-    user = await users.find_one({'userid': userid}, {'userid': 1})
+    data = await promo.find_one({"code": code}, comment='use_promo')
+    user = await users.find_one({'userid': userid}, {'userid': 1}, comment='use_promo_user')
     text = ''
 
     if user:
@@ -285,15 +286,15 @@ async def use_promo(code: str, userid: int, lang: str):
 
                             await promo.update_one({'_id': data['_id']},
                                              {"$push": {f'users': userid}
-                                              })
+                                              }, comment='use_promo_1')
 
                             if data['col'] != 'inf':
                                 await promo.update_one({'_id': data['_id']},
-                                                 {"$inc": {f'col': -1}})
+                                                 {"$inc": {f'col': -1}}, comment='use_promo_2')
 
                             text = t('promo_commands.activate', lang)
                             if data['coins']:
-                                await users.update_one({'userid': userid}, {'$inc': {'coins': data['coins']}})
+                                await users.update_one({'userid': userid}, {'$inc': {'coins': data['coins']}}, comment='use_promo_3')
 
                                 text += t('promo_commands.coins', lang,
                                           coins=data['coins']

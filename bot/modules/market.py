@@ -13,16 +13,17 @@ from bot.modules.user import get_inventory, take_coins, premium
 from bot.const import ITEMS
 from bot.modules.localization import t
 from bot.modules.notifications import user_notification
- 
 
-products = mongo_client.market.products
-sellers = mongo_client.market.sellers
-puhs = mongo_client.market.puhs
-preferential = mongo_client.market.preferential
+
+from bot.modules.overwriting.DataCalsses import DBconstructor
+products = DBconstructor(mongo_client.market.products)
+sellers = DBconstructor(mongo_client.market.sellers)
+puhs = DBconstructor(mongo_client.market.puhs)
+preferential = DBconstructor(mongo_client.market.preferential)
 
 async def generation_code(owner_id):
     code = f'{owner_id}_{random_code(8)}'
-    if await products.find_one({'alt_id': code}):
+    if await products.find_one({'alt_id': code}, comment='generation_code_products'):
         code = await generation_code(owner_id)
     return code
 
@@ -74,7 +75,7 @@ async def add_product(owner_id: int, product_type: str, items: list, price, in_s
 
     for i in data['items']: data['items_id'].append(i['item_id'])
 
-    res = await products.insert_one(data)
+    res = await products.insert_one(data, comment='add_product_res')
     try:
         await send_view_product(res.inserted_id, owner_id)
     except: pass
@@ -85,8 +86,8 @@ async def create_seller(owner_id: int, name: str, description: str):
     """ Создание продавца / магазина
     """
 
-    if not await sellers.find_one({'owner_id': owner_id}):
-        if not await sellers.find_one({'name': name}):
+    if not await sellers.find_one({'owner_id': owner_id}, comment='create_seller_1'):
+        if not await sellers.find_one({'name': name}, comment='create_seller_2'):
             data = {
                 'owner_id': owner_id,
                 'earned': 0, # заработано монет
@@ -95,17 +96,17 @@ async def create_seller(owner_id: int, name: str, description: str):
                 'description': description,
                 'custom_image': ''
             }
-            await sellers.insert_one(data)
+            await sellers.insert_one(data, comment='create_seller_3')
             return True
     return False
 
 async def seller_ui(owner_id: int, lang: str, my_market: bool, name: str = ''):
     text, markup, img = '', None, None
 
-    seller = await sellers.find_one({'owner_id': owner_id})
+    seller = await sellers.find_one({'owner_id': owner_id}, comment='seller_ui_seller')
     if seller:
         data = get_data('market_ui', lang)
-        products_col = await products.count_documents({'owner_id': owner_id})
+        products_col = await products.count_documents({'owner_id': owner_id}, comment='seller_ui_products_col')
 
         if my_market: owner = data['me_owner']
         else: owner = name
@@ -193,9 +194,9 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False):
     """
     text, coins_text, data_buttons = '', '', []
 
-    product = await products.find_one({'_id': product_id})
+    product = await products.find_one({'_id': product_id}, comment='product_ui_product')
     if product:
-        seller = await sellers.find_one({'owner_id': product['owner_id']})
+        seller = await sellers.find_one({'owner_id': product['owner_id']}, comment='product_ui_seller')
         if seller:
             product_type = product['type']
             items = list(product['items'])
@@ -296,8 +297,8 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False):
     return text, buttons
 
 async def send_view_product(product_id: ObjectId, owner_id: int):
-    res = await puhs.find_one({'owner_id': owner_id})
-    product = await products.find_one({'_id': product_id})
+    res = await puhs.find_one({'owner_id': owner_id}, comment='send_view_product_res')
+    product = await products.find_one({'_id': product_id}, comment='send_view_product_product')
 
     if res and product:
         channel = res['channel_id']
@@ -322,17 +323,17 @@ async def create_push(owner_id: int, channel_id: int, lang: str):
         'lang': lang
     }
 
-    await puhs.insert_one(data)
+    await puhs.insert_one(data, comment='create_push')
 
 async def delete_product(baseid = None, alt_id = None):
     if baseid:
-        product = await products.find_one({'_id': baseid})
+        product = await products.find_one({'_id': baseid}, comment='delete_product_product')
     else:
-        product = await products.find_one({'alt_id': alt_id})
+        product = await products.find_one({'alt_id': alt_id}, comment='delete_product_product_1')
 
     if product:
-        await products.delete_one({'_id': product['_id']})
-        await preferential.delete_many({"product_id": product['_id']})
+        await products.delete_one({'_id': product['_id']}, comment='delete_product_2')
+        await preferential.delete_many({"product_id": product['_id']}, comment='delete_product_3')
 
         p = product.copy()
         ptype = p['type']
@@ -422,7 +423,7 @@ async def new_participant(baseid: ObjectId, userid: int, coins: int, name: str, 
     """ Добавляет нового участника аукциона к продукту
     """
     ind = None
-    product = await products.find_one({'_id': baseid})
+    product = await products.find_one({'_id': baseid}, comment='new_participant_product')
     if product:
         if product['type'] == 'auction':
             data = {
@@ -442,13 +443,13 @@ async def new_participant(baseid: ObjectId, userid: int, coins: int, name: str, 
                 await products.update_one({'_id': baseid}, {
                     '$push': {'users': data}, 
                     '$set': {'price': coins}
-                })
+                }, comment='new_participant_3')
             else:
                 await products.update_one({'_id': baseid}, {
                     '$set': {'price': coins,
                              f'users.{ind}': data
                             }
-                })
+                }, comment='new_participant_4')
             return True
     return False
 
@@ -493,10 +494,10 @@ async def upd_data(p_tp:str, col: int, product: dict, owner:int, pro_id: ObjectI
     await sellers.update_one({'owner_id': owner}, {"$inc": {
         'earned': earned,
         'conducted': col
-    }})
+    }}, comment='upd_data_2')
 
     await products.update_one({'_id': pro_id}, 
-                                    {'$inc': {'bought': col}})
+                                    {'$inc': {'bought': col}}, comment='upd_data')
 
     if product['bought'] + col >= product['in_stock']:
         await delete_product(pro_id)
@@ -512,7 +513,7 @@ async def upd_data(p_tp:str, col: int, product: dict, owner:int, pro_id: ObjectI
 async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: str=''):
     """ Покупка продукта / участние в аукционе
     """
-    product = await products.find_one({'_id': pro_id})
+    product = await products.find_one({'_id': pro_id}, comment='buy_product_product')
     if product:
         p_tp = product['type']
         owner = product['owner_id']
@@ -632,13 +633,13 @@ async def create_preferential(product_id: ObjectId, seconds: int, owner_id: int)
         'owner_id': owner_id
     }
 
-    await preferential.insert_one(data)
+    await preferential.insert_one(data, comment='create_preferential')
 
 async def check_preferential(owner_id: int, product_id: ObjectId):
     """ Проверка на максимальное количество продвигаемых продуктов, а так же добавлен ли он в продвижение
     """
-    col = await preferential.count_documents({'owner_id': owner_id})
-    perf = await preferential.count_documents({'product_id': product_id})
+    col = await preferential.count_documents({'owner_id': owner_id}, comment='check_preferential_col')
+    perf = await preferential.count_documents({'product_id': product_id}, comment='check_preferential_perf')
     premium_st = await premium(owner_id)
 
     if premium_st: un = 10
@@ -649,5 +650,5 @@ async def check_preferential(owner_id: int, product_id: ObjectId):
     return True, 0
 
 async def is_promotion(product_id: ObjectId):
-    col = await preferential.count_documents({'product_id': product_id})
+    col = await preferential.count_documents({'product_id': product_id}, comment='is_promotion')
     return col

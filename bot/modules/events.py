@@ -7,15 +7,16 @@ from bot.exec import bot
 from bot.modules.localization import t
 import datetime
 
-events = mongo_client.other.events
+from bot.modules.overwriting.DataCalsses import DBconstructor
+events = DBconstructor(mongo_client.other.events)
 
 async def get_event(event_type: str=''):
-    res = await events.find_one({'type': event_type})
+    res = await events.find_one({'type': event_type}, comment='get_event_res')
     if res: return res
     return {}
 
 async def check_event(event_type: str='') -> bool:
-    res = await events.find_one({'type': event_type}, {"_id": 1})
+    res = await events.find_one({'type': event_type}, {"_id": 1}, comment='check_event_res')
     if res: return True
     return False
 
@@ -63,9 +64,9 @@ async def create_event(event_type: str = '', time_end: int = 0):
     return event
 
 async def add_event(event: dict):
-    res = await events.find_one({'type': event['type']})
+    res = await events.find_one({'type': event['type']}, comment='add_event_res')
     if not res:
-        await events.insert_one(event)
+        await events.insert_one(event, comment='add_event')
         return True
     else: return False
 
@@ -78,7 +79,8 @@ async def auto_event():
     ty_event = await create_event('time_year')
     if time_year:
         if time_year['data']['season'] != ty_event['data']['season']:
-            await events.update_one({'type': 'time_year'}, {"$set": {'data': ty_event['data']}})
+            await events.update_one({'type': 'time_year'}, {"$set": {'data': ty_event['data']}}, 
+                                    comment='auto_event')
     else:
         await add_event(ty_event)
 
@@ -113,7 +115,7 @@ async def auto_event():
     if not await check_event('april_5'):
         today = datetime.date.today()
         day_n = int(time.strftime("%j"))
-        
+
         if today.strftime("%m-%d") == "04-05":
             time_end = (86400 * 3) + int(time.time())
             april_event = await create_event('april_5', time_end)

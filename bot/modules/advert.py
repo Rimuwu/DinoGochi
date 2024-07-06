@@ -9,8 +9,9 @@ from bot.modules.localization import t, get_lang
 from time import time as time_now
 from datetime import datetime, timezone
 
-users = mongo_client.user.users
-ads = mongo_client.user.ads
+from bot.modules.overwriting.DataCalsses import DBconstructor
+users = DBconstructor(mongo_client.user.users)
+ads = DBconstructor(mongo_client.user.ads)
 
 async def show_advert(user_id: int):
     """ Показ рекламы через площадку gramads.net
@@ -51,14 +52,14 @@ async def show_advert(user_id: int):
     return res
 
 async def create_ads_data(user_id:int, limit: int = 7200): 
-    ads_cabinet = await ads.find_one({'userid': user_id})
+    ads_cabinet = await ads.find_one({'userid': user_id}, comment='create_ads_data_ads_cabinet')
     if not ads_cabinet:
         data = {
             'userid': user_id,
             'limit': limit,
             'last_ads': 0
         }
-        await ads.insert_one(data)
+        await ads.insert_one(data, comment='create_ads_data')
         return data
 
     return ads_cabinet
@@ -79,11 +80,12 @@ async def save_last_ads(user_id:int):
     ads_cabinet = await create_ads_data(user_id)
 
     await ads.update_one({'_id': ads_cabinet['_id']}, 
-                         {"$set": {'last_ads': int(time_now())}})
-    await users.update_one({"userid": user_id}, {'$inc': {"super_coins": 1}})
+                         {"$set": {'last_ads': int(time_now())}}, comment='save_last_ads')
+    await users.update_one({"userid": user_id}, {'$inc': {"super_coins": 1}},
+                           comment='save_last_ads')
 
     lang = await get_lang(user_id)
-    
+
     try:
         await bot.send_message(user_id, t('super_coins.plus_one', lang), parse_mode="Markdown")
     except:
@@ -93,7 +95,7 @@ async def save_last_ads(user_id:int):
 async def auto_ads(message):
     user_id = message.from_user.id
     if message.chat.type == "private":
-        user = await users.find_one({'userid': user_id}, {"_id": 1})
+        user = await users.find_one({'userid': user_id}, {"_id": 1}, comment='auto_ads_user')
         if conf.show_advert and user:
 
             create = user['_id'].generation_time

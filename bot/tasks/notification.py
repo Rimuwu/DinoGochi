@@ -4,10 +4,11 @@ from bot.taskmanager import add_task
 from bot.modules.dinosaur import Dino
 from asyncio import sleep
 
-dinosaurs = mongo_client.dinosaur.dinosaurs
+from bot.modules.overwriting.DataCalsses import DBconstructor
+dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 
 async def dino_notifications():
-    dinos = await dinosaurs.find({}).to_list(None) 
+    dinos = await dinosaurs.find({}, comment='dino_notifications_dinos')
     for dino in dinos:
         try:
             dino_id = dino['_id']

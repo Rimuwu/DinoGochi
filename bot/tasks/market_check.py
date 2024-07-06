@@ -7,21 +7,23 @@ from bot.modules.user import take_coins
 from time import time
 from bot.modules.market import delete_product
 
-products = mongo_client.market.products
-sellers = mongo_client.market.sellers
-users = mongo_client.user.users
-preferential = mongo_client.market.preferential
+
+from bot.modules.overwriting.DataCalsses import DBconstructor
+products = DBconstructor(mongo_client.market.products)
+users = DBconstructor(mongo_client.user.users)
+preferential = DBconstructor(mongo_client.market.preferential)
+
 
 async def market_delete():
     # Удаляет старые продукты
-    data = await products.find({'add_time': {'$lte': int(time()) - 86_400 * 31}}
-                                    ).to_list(None)   # type: ignore
+    data = await products.find({'add_time': {'$lte': int(time()) - 86_400 * 31}}, comment='market_delete_data'
+                                    )
     for i in data: await delete_product(i['_id'])
 
 async def auction_end():
     # Завершение аукциона
-    data = await products.find({'end': {'$lte': int(time())}}
-                              ).to_list(None)  # type: ignore
+    data = await products.find({'end': {'$lte': int(time())}}, comment='auction_end_data'
+                              )
 
     for i in data:
         users_data = list(i['users'])
@@ -29,7 +31,7 @@ async def auction_end():
         max_coins = 0
         winner = None
         for user in users_data:
-            status = await users.find_one({'userid': user['userid']})
+            status = await users.find_one({'userid': user['userid']}, comment='auction_end_status')
             if status and user['coins'] >= max_coins:
 
                 max_coins = user['coins']
@@ -37,14 +39,14 @@ async def auction_end():
 
         if winner != None:
             s = await products.update_one({'_id': i['_id']}, 
-                    {'$set': {f'users.{winner}.status': 'win'}})
+                    {'$set': {f'users.{winner}.status': 'win'}}, comment='auction_end_s')
             s.raw_result
 
         await delete_product(i['_id'])
 
 async def preferential_delete():
     # Удаляет продвижение
-    await preferential.delete_many({'end': {'$lte': int(time())}})
+    await preferential.delete_many({'end': {'$lte': int(time())}}, comment='preferential_delete')
 
 if __name__ != '__main__':
     if conf.active_tasks:

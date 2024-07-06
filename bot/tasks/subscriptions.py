@@ -6,13 +6,13 @@ from bot.modules.data_format import seconds_to_str
 from bot.modules.notifications import user_notification
 from bot.taskmanager import add_task
 from bot.modules.localization import  get_lang
-from asyncio import sleep
 
-subscriptions = mongo_client.user.subscriptions
+from bot.modules.overwriting.DataCalsses import DBconstructor
+subscriptions = DBconstructor(mongo_client.user.subscriptions)
 
 async def subscription_notification():
-    data = list(await subscriptions.find({'sub_end': {'$lte': int(time()) - 86400}, 
-                    'end_notif': False}).to_list(None)).copy()  
+    data = await subscriptions.find({'sub_end': {'$lte': int(time()) - 86400}, 
+                    'end_notif': False}, comment='subscription_notification_data')
 
     for sub in data:
         try:
@@ -24,14 +24,15 @@ async def subscription_notification():
                                 end_text=seconds_to_str(int(time() - sub['sub_end']), lang),
                                 add_way='subscription_end_day'
                                 )
-        await subscriptions.update_one({'_id': sub['_id']}, {'$set': {'end_notif': True}})
+        await subscriptions.update_one({'_id': sub['_id']}, {'$set': {'end_notif': True}}, 
+                                       comment='subscription_notification_1')
 
 async def subscription_check():
-    data = list(await subscriptions.find(
-        {'sub_end': {'$lte': int(time())}}).to_list(None)).copy()  
+    data = await subscriptions.find(
+        {'sub_end': {'$lte': int(time())}}, comment='subscription_check_data')
 
     for sub in data:
-        await subscriptions.delete_one({'_id': sub['_id']})
+        await subscriptions.delete_one({'_id': sub['_id']}, comment='subscription_check_1')
 
         try:
             chat_user = await bot.get_chat_member(sub['userid'], sub['userid'])

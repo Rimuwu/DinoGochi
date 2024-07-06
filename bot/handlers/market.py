@@ -25,10 +25,11 @@ from bot.modules.user import premium
 
 from bot.modules.add_product.add_product import prepare_data_option
 
-users = mongo_client.user.users
-sellers = mongo_client.market.sellers
-products = mongo_client.market.products
-puhs = mongo_client.market.puhs
+from bot.modules.overwriting.DataCalsses import DBconstructor
+users = DBconstructor(mongo_client.user.users)
+sellers = DBconstructor(mongo_client.market.sellers)
+products = DBconstructor(mongo_client.market.products)
+puhs = DBconstructor(mongo_client.market.puhs)
 
 async def create_adapter(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
@@ -62,7 +63,7 @@ async def custom_name(message: Message, transmitted_data):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseString.error_min_len', lang,
                 number = content_len, min = min_len))
-    elif await sellers.find_one({'name': name}):
+    elif await sellers.find_one({'name': name}, comment='custom_name'):
         await bot.send_message(message.chat.id, 
                 t('market_create.name_error', lang))
     else: 
@@ -75,8 +76,8 @@ async def create_market(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    res = await sellers.find_one({'owner_id': userid})
-    user = await users.find_one({'userid': userid})
+    res = await sellers.find_one({'owner_id': userid}, comment='create_market_res')
+    user = await users.find_one({'userid': userid}, comment='create_market_user')
 
     if res or not user:
         await bot.send_message(message.chat.id, t('menu_text.seller', lang), 
@@ -113,7 +114,7 @@ async def my_market(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    res = await sellers.find_one({'owner_id': userid})
+    res = await sellers.find_one({'owner_id': userid}, comment='my_market_res')
     if res:
         text, markup, image = await seller_ui(userid, lang, True)
         try:
@@ -148,7 +149,7 @@ async def my_products(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    user_prd = list(await products.find({'owner_id': userid}).to_list(None))
+    user_prd = await products.find({'owner_id': userid}, comment='my_products_user_prd')
     rand_p = {}
 
     if user_prd:
@@ -174,7 +175,7 @@ async def product_info(call: CallbackQuery):
 
     call_type = call_data[1]
     alt_id = call_data[2]
-    product = await products.find_one({'alt_id': alt_id})
+    product = await products.find_one({'alt_id': alt_id}, comment='product_info_product')
     if product:
         if call_type == 'delete':
             if product['owner_id'] == userid:
@@ -248,7 +249,7 @@ async def seller(call: CallbackQuery):
     elif call_type == 'info':
         my_status = owner_id == userid
 
-        seller = await sellers.find_one({'owner_id': owner_id})
+        seller = await sellers.find_one({'owner_id': owner_id}, comment='seller_seller')
         if seller:
             try:
                 chat_user = await bot.get_chat_member(seller['owner_id'], 
@@ -263,7 +264,7 @@ async def seller(call: CallbackQuery):
                 await bot.send_photo(chatid, image, text, reply_markup=markup)
 
     elif call_type == 'all':
-        user_prd = list(await products.find({'owner_id': owner_id}).to_list(None))
+        user_prd = await products.find({'owner_id': owner_id}, comment='seller_user_prd_all')
 
         rand_p = {}
         for product in user_prd:
@@ -275,7 +276,7 @@ async def seller(call: CallbackQuery):
         await bot.send_message(chatid, t('products.search', lang))
         await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
-    
+
     elif call_type == 'сomplain':
         ...
 
@@ -285,7 +286,8 @@ async def random_products(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    products_all = list(await products.find({"owner_id": {"$ne": userid}}).to_list(None)).copy()
+    products_all = await products.find({"owner_id": {"$ne": userid}}, 
+                                       comment='random_products_products_all')
     rand_p = {}
 
     if products_all:
@@ -294,7 +296,7 @@ async def random_products(message: Message):
                 prd = choice(products_all)
                 products_all.remove(prd)
 
-                product = await products.find_one({'_id': prd['_id']})
+                product = await products.find_one({'_id': prd['_id']}, comment='random_products_product')
                 if product:
                     rand_p[
                         preview_product(product['items'], product['price'], 
@@ -325,10 +327,11 @@ async def push(call: CallbackQuery):
 
     channel_id = int(call_data[1])
 
-    res = await puhs.find_one({'owner_id': userid})
+    res = await puhs.find_one({'owner_id': userid}, comment='push_res')
     if res:
         await puhs.update_one({'owner_id': userid}, 
-                        {"$set": {'channel_id': channel_id, 'lang': lang}})
+                        {"$set": {'channel_id': channel_id, 'lang': lang}},
+                        comment='push_res2')
         text = t('push.update', lang)
     else: 
         await create_push(userid, channel_id, lang)

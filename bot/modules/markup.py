@@ -7,11 +7,13 @@ from bot.modules.dinosaur import Dino, Egg
 from bot.modules.localization import t, tranlate_data
 from bot.modules.logs import log
 from bot.modules.referals import get_user_code, get_user_sub
-from bot.modules.user import User, last_dino, premium
+from bot.modules.user import User, premium
 
-users = mongo_client.user.users
-tavern = mongo_client.tavern.tavern
-sellers = mongo_client.market.sellers
+
+from bot.modules.overwriting.DataCalsses import DBconstructor
+users = DBconstructor(mongo_client.user.users)
+tavern = DBconstructor(mongo_client.tavern.tavern)
+sellers = DBconstructor(mongo_client.market.sellers)
 
 async def back_menu(userid) -> str:
     """Возвращает предыдущее меню
@@ -27,7 +29,7 @@ async def back_menu(userid) -> str:
                   'main_menu', 'dino_tavern_menu', 'dungeon_menu'
                  ] # схема всех путей меню клавиатур
     user_dict = await users.find_one(
-        {'userid': userid}, {'last_markup': 1}
+        {'userid': userid}, {'last_markup': 1}, comment='back_menu_user_dict'
     )
     if user_dict:
         markup_key = user_dict.get('last_markup', 'main_menu')
@@ -65,16 +67,16 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
     add_back_button = False
     kwargs = {}
     old_last_menu = None
-    
+
     user_dict = await users.find_one(
-           {'userid': userid}, {'last_markup': 1}
+           {'userid': userid}, {'last_markup': 1}, comment='markups_menu_user_dict'
         )
 
     if markup_key == 'last_menu':
        """Возращает к последнему меню
        """
        user_dict = await users.find_one(
-           {'userid': userid}, {'last_markup': 1}
+           {'userid': userid}, {'last_markup': 1}, comment='markups_menu_user_dict'
         )
        if user_dict:
            markup_key = user_dict.get('last_markup')
@@ -82,15 +84,15 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
     else: #Сохранение последнего markup
         if last_markup:
             user_dict = await users.find_one(
-                {'userid': userid}, {'last_markup': 1}
+                {'userid': userid}, {'last_markup': 1}, comment='markups_menu_user_dict_2'
                 )
             if user_dict:
                 old_last_menu = user_dict.get('last_markup')
 
-        await users.update_one({"userid": userid}, {'$set': {'last_markup': markup_key}})
+        await users.update_one({"userid": userid}, {'$set': {'last_markup': markup_key}}, comment='markups_menu_1')
 
     if user_dict and user_dict['last_markup'] == "dino_tavern_menu":
-        await tavern.delete_one({'userid': userid})
+        await tavern.delete_one({'userid': userid}, comment='markups_menu_3')
 
     if markup_key == 'main_menu':
         # Главное меню
@@ -167,8 +169,8 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         # Меню магазина
         prefix = 'commands_name.seller_profile.'
         add_back_button = True
-        
-        if await sellers.find_one({'owner_id': userid}):
+
+        if await sellers.find_one({'owner_id': userid}, comment='markups_menu_4'):
             buttons = [
                 ['add_product', 'my_products'],
                 ['my_market'],
@@ -258,7 +260,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
     result = list_to_keyboard(buttons)
     if last_markup:
         user_dict = await users.find_one(
-           {'userid': userid}, {'last_markup': 1}
+           {'userid': userid}, {'last_markup': 1}, comment='markups_menu_user_dict'
         )
         if user_dict:
             if not old_last_menu:

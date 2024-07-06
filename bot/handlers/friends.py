@@ -10,7 +10,7 @@ from bot.modules.markup import cancel_markup, confirm_markup, count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.notifications import user_notification
 from bot.modules.states_tools import (ChooseConfirmState, ChooseCustomState,
-                                      ChoosePagesState, ChooseDinoState, ChooseStepState, ChooseIntState)
+                                      ChoosePagesState, ChooseStepState, ChooseIntState)
 from bot.modules.user import user_name, take_coins
 from bot.modules.dinosaur import Dino, create_dino_connection
  
@@ -18,11 +18,12 @@ from bot.modules.events import get_event
 from bot.const import GAME_SETTINGS
 from bot.modules.item import AddItemToUser, get_name
 
-users = mongo_client.user.users
-friends = mongo_client.user.friends
-dinosaurs = mongo_client.dinosaur.dinosaurs
-dino_owners = mongo_client.dinosaur.dino_owners
-events = mongo_client.other.events
+from bot.modules.overwriting.DataCalsses import DBconstructor
+users = DBconstructor(mongo_client.user.users)
+friends = DBconstructor(mongo_client.user.friends)
+dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
+events = DBconstructor(mongo_client.other.events)
 
 @bot.message_handler(pass_bot=True, text='commands_name.friends.add_friend', private=True)
 async def add_friend(message: Message):
@@ -58,7 +59,7 @@ async def friend_add_handler(message: Message, transmitted_data: dict):
         else: text = t('add_friend.check.forward', lang)
 
     if friendid:
-        result = await users.find_one({'userid': friendid})
+        result = await users.find_one({'userid': friendid}, comment='friend_add_handler')
         if result:
             if userid == friendid:
                 text = t('add_friend.check.notyou', lang)
@@ -131,7 +132,7 @@ async def adp_requests(data: dict, transmitted_data: dict):
             {'userid': data['friend'],
              'friendid': userid,
              'type': 'request'
-             }
+             }, comment='adp_requests_delete'
             )
 
         await bot.send_message(userid, t('requests.decline', lang, user_name=data['name']))
@@ -144,12 +145,12 @@ async def adp_requests(data: dict, transmitted_data: dict):
             {'userid': data['friend'],
              'friendid': userid,
              'type': 'request'
-             }
+             }, comment='adp_requests_add'
             )
 
         if res:
             await friends.update_one({'_id': res['_id']}, 
-                               {'$set': {'type': 'friends'}})
+                               {'$set': {'type': 'friends'}}, comment='adp_requests_add_res')
 
         await bot.send_message(chatid, t('requests.accept', lang, user_name=data['name']))
         return {'status': 'edit', 'elements': {'delete': [
@@ -209,8 +210,10 @@ async def delete_friend(_: bool, transmitted_data: dict):
 
     friendid = transmitted_data['friendid']
 
-    await friends.delete_one({"userid": userid, 'friendid': friendid, 'type': 'friends'})
-    await friends.delete_one({"friendid": userid, 'userid': friendid, 'type': 'friends'})
+    await friends.delete_one({"userid": userid, 'friendid': friendid, 'type': 'friends'}
+                             , comment='delete_friend1')
+    await friends.delete_one({"friendid": userid, 'userid': friendid, 'type': 'friends'}
+                             , comment='delete_friend1')
 
     await bot.send_message(chatid, t('friend_delete.delete', lang), 
                            reply_markup= await m(userid, 'last_menu', lang))
@@ -264,9 +267,9 @@ async def joint(return_data: dict,
     username = transmitted_data['username']
     dino: Dino = return_data['dino']
 
-    res = await dino_owners.find({'dino_id': dino._id}).to_list(None) #type: ignore
+    res = await dino_owners.find({'dino_id': dino._id}, comment='joint_res')
     res2 = await dino_owners.find(
-        {'owner_id': friendid, 'type': 'add_owner'}).to_list(None) #type: ignore
+        {'owner_id': friendid, 'type': 'add_owner'}, comment='joint_res2')
 
     if len(list(res)) >= 2:
         text = t('joint_dinosaur.max_owners', lang)
@@ -322,14 +325,14 @@ async def take_dino(call: CallbackQuery):
     await bot.delete_message(chatid, call.message.id)
 
     res2 = await dino_owners.find(
-        {'owner_id': userid, 'type': 'add_owner'}).to_list(None) #type: ignore
+        {'owner_id': userid, 'type': 'add_owner'}, comment='take_dino_res2')
     if len(list(res2)) >= 1:
         text = t('take_dino.max_dino', lang)
         await bot.send_message(chatid, text)
     else:
-        dino = await dinosaurs.find_one({'alt_id': dino_alt})
+        dino = await dinosaurs.find_one({'alt_id': dino_alt}, comment='take_dino_dino')
         if dino:
-            res = await dino_owners.find({'dino_id': dino['_id']}).to_list(None) #type: ignore
+            res = await dino_owners.find({'dino_id': dino['_id']}, comment='take_dino_res')
 
             # Получение владельца
             owner = 0
@@ -358,7 +361,7 @@ async def take_money(call: CallbackQuery):
     data = call.data.split()
 
     friendid = int(data[1])
-    user = await users.find_one({'userid': userid})
+    user = await users.find_one({'userid': userid}, comment='take_money')
 
     if user:
         max_int = user['coins']
@@ -383,7 +386,7 @@ async def take_super_coins(call: CallbackQuery):
     data = call.data.split()
 
     friendid = int(data[1])
-    user = await users.find_one({'userid': userid})
+    user = await users.find_one({'userid': userid}, comment='take_super_coins')
 
     if user:
         max_int = user['super_coins']
@@ -416,7 +419,8 @@ async def transfer_coins(col: int, transmitted_data: dict):
         text = t('take_money.transfer', lang, username=username, coins=col)
         await bot.send_message(friendid, text)
 
-        await users.update_one({'userid': friendid}, {'$inc': {'coins': col}})
+        await users.update_one({'userid': friendid}, {'$inc': {'coins': col}}, 
+                               comment='transfer_coins')
 
     else:
         text = t('take_money.no_coins', lang)
@@ -437,8 +441,10 @@ async def transfer_super_coins(col: int, transmitted_data: dict):
     text = t('take_coins.transfer', lang, username=username, coins=col)
     await bot.send_message(friendid, text)
 
-    await users.update_one({'userid': userid}, {'$inc': {'super_coins': -col}})
-    await users.update_one({'userid': friendid}, {'$inc': {'super_coins': col}})
+    await users.update_one({'userid': userid}, {'$inc': {'super_coins': -col}}, 
+                           comment='transfer_super_coins')
+    await users.update_one({'userid': friendid}, {'$inc': {'super_coins': col}}, 
+                           comment='transfer_super_coins')
 
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
@@ -472,7 +478,6 @@ async def send_request(call: CallbackQuery):
     call.data.startswith('new_year'), private=True)
 async def new_year(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
-    userid = call.from_user.id
     data = call.data.split()
 
     friendid = int(data[1])
@@ -487,7 +492,7 @@ async def new_year(call: CallbackQuery):
 
             await AddItemToUser(friendid, GAME_SETTINGS['new_year_item'])
             await events.update_one({"type": "new_year"}, 
-                                    {"$push": {"data.send": friendid}})
+                                    {"$push": {"data.send": friendid}}, comment='new_year')
 
             lang = await get_lang(friendid)
             text = t('new_year.to_friend', lang, 

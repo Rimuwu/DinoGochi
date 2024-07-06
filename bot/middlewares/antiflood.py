@@ -10,8 +10,10 @@ from bot.modules.logs import log
 import requests
 
 DEFAULT_RATE_LIMIT = 0.5
-users = mongo_client.user.users
-daily_data = mongo_client.tavern.daily_award
+
+from bot.modules.overwriting.DataCalsses import DBconstructor
+users = DBconstructor(mongo_client.user.users)
+daily_data = DBconstructor(mongo_client.tavern.daily_award)
 
 
 async def ping():
@@ -43,12 +45,14 @@ class AntifloodMiddleware(BaseMiddleware):
         user_id = message.from_user.id
         if message.chat.type == "private":
             user = await users.find_one({'userid': user_id}, {"_id": 1, 
-                                                    "settings": 1, 'notifications': 1})
+                                                    "settings": 1, 'notifications': 1}, 
+                                        comment='post_process_user')
             if user:
                 await users.update_one({'userid': user_id}, 
-                                    {'$set': {'last_message_time': message.date}})
+                                    {'$set': {'last_message_time': message.date}}, 
+                                    comment='post_process_1')
 
-                if await daily_data.find_one({'owner_id': user_id}) == None:
+                if await daily_data.find_one({'owner_id': user_id}, comment='post_process_check') == None:
                     if user['settings']['notifications']:
                         for key, value in user['notifications'].items():
 
@@ -60,7 +64,8 @@ class AntifloodMiddleware(BaseMiddleware):
 
                             if res:
                                 await users.update_one({'userid': user_id}, 
-                                    {'$set': {'notifications.daily_award': int(time_now())}})
+                                    {'$set': {'notifications.daily_award': int(time_now())}}, 
+                                    comment='post_process_2')
 
 
 bot.setup_middleware(AntifloodMiddleware())

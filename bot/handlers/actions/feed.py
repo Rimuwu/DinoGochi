@@ -12,10 +12,10 @@ from bot.modules.markup import feed_count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User
-from bot.modules.localization import  get_lang
+from bot.modules.localization import get_lang
  
-
-items = mongo_client.items.items
+from bot.modules.overwriting.DataCalsses import DBconstructor
+items = DBconstructor(mongo_client.items.items)
 
 async def adapter_function(return_dict, transmitted_data):
     count = return_dict['count']
@@ -24,9 +24,9 @@ async def adapter_function(return_dict, transmitted_data):
     chatid = transmitted_data['chatid']
     dino = transmitted_data['dino']
     lang = transmitted_data['lang']
-    
+
     send_status, return_text = await use_item(userid, chatid, lang, item, count, dino)
-    
+
     if send_status:
         await bot.send_message(chatid, return_text, parse_mode='Markdown', reply_markup= await m(userid, 'last_menu', lang))
 
@@ -42,12 +42,14 @@ async def inventory_adapter(item, transmitted_data):
     item_data = get_item_data(item['item_id'])
     item_name = get_name(item['item_id'], lang)
 
-    base_item = await items.find_one({'owner_id': userid, 'items_data': item})
+    base_item = await items.find_one({'owner_id': userid, 'items_data': item},
+                                     comment="inventory_adapter_base_item")
 
     if base_item:
         max_count = 0
-        all_items = await items.find({'owner_id': userid, 'items_data': item}).to_list(None)
-        
+        all_items = await items.find({'owner_id': userid, 'items_data': item},
+                                     comment="inventory_adapter_all_items")
+
         for i in all_items:
             if 'abilities' in item.keys() and 'uses' in item['abilities']:
                 max_count += i['items_data']['abilities']['uses']

@@ -8,8 +8,9 @@ from bot.modules.localization import  get_lang, t
 from bot.modules.promo import use_promo
 from bot.handlers.start import start_game
 
-users = mongo_client.user.users
-puhs = mongo_client.market.puhs
+from bot.modules.overwriting.DataCalsses import DBconstructor
+users = DBconstructor(mongo_client.user.users)
+puhs = DBconstructor(mongo_client.market.puhs)
 
 @bot.message_handler(pass_bot=True, commands=['timer'])
 async def timer(message: Message):
@@ -54,7 +55,7 @@ async def delete_push(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
 
-    await puhs.delete_one({'owner_id': userid})
+    await puhs.delete_one({'owner_id': userid}, comment='delete_push')
     await bot.send_message(chatid, '👍', parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, commands=['add_me'], private=False)
@@ -77,7 +78,7 @@ async def promo(message: Message):
 
     if len(msg_args) > 1:
         code = msg_args[1]
-        user = await users.find_one({'userid': userid})
+        user = await users.find_one({'userid': userid}, comment='promo_user')
         if user:
             status, text = await use_promo(code, userid, lang)
             await bot.send_message(chatid, text, parse_mode='Markdown')

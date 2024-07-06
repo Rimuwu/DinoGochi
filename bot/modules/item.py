@@ -23,7 +23,9 @@ from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
 
 items_names = {}
-items = mongo_client.items.items
+
+from bot.modules.overwriting.DataCalsses import DBconstructor
+items = DBconstructor(mongo_client.items.items)
 
 def get_data(itemid: str) -> dict:
     """Получение данных из json"""
@@ -149,7 +151,7 @@ async def AddItemToUser(userid: int, itemid: str, count: int = 1, preabil: dict 
 
     item = get_item_dict(itemid, preabil)
     find_res = await items.find_one({'owner_id': userid, 
-                                     'items_data': item}, {'_id': 1})
+                                     'items_data': item}, {'_id': 1}, comment='AddItemToUser_find_res')
     action = ''
 
     if find_res: action = 'plus_count'
@@ -157,7 +159,7 @@ async def AddItemToUser(userid: int, itemid: str, count: int = 1, preabil: dict 
     if not action: action = 'new_item'
 
     if action == 'plus_count' and find_res:
-        await items.update_one({'_id': find_res['_id']}, {'$inc': {'count': count}})
+        await items.update_one({'_id': find_res['_id']}, {'$inc': {'count': count}}, comment='AddItemToUser_1')
 
     elif action == 'new_edited_item':
         for _ in range(count):
@@ -166,27 +168,27 @@ async def AddItemToUser(userid: int, itemid: str, count: int = 1, preabil: dict 
                 'items_data': item,
                 'count': 1
             }
-            await items.insert_one(item_dict, True)
+            await items.insert_one(item_dict, True, comment='AddItemToUser_new_edited_item')
     else:
         item_dict = {
             'owner_id': userid,
             'items_data': item,
             'count': count
         }
-        await items.insert_one(item_dict)
+        await items.insert_one(item_dict, comment='AddItemToUser_1')
     return action
 
-async def AddListItems(userid: int, items: list[dict]):
+async def AddListItems(userid: int, items_l: list[dict]):
     """ items - [ {"item_id":str, "abilities":dict} ]
         Если у предмета есть count то умножает количество 
     """
     repeat_items, res = [], []
 
-    for item in items:
+    for item in items_l:
         if item not in repeat_items:
             repeat_items.append(item)
 
-            col = items.count(item)
+            col = items_l.count(item)
             if 'count' in item: col *= item['count']
             preabil = {}
 
@@ -210,7 +212,7 @@ async def RemoveItemFromUser(userid: int, itemid: str,
     item = get_item_dict(itemid, preabil)
     max_count = 0
     find_items = await items.find({'owner_id': userid, 'items_data': item}, 
-                            {'_id': 1, 'count': 1}).to_list(None)  # type: ignore
+                            {'_id': 1, 'count': 1}, comment='RemoveItemFromUser_find_items')
     find_list = list(find_items)
 
     for iterable_item in find_list: max_count += iterable_item['count']
@@ -219,13 +221,13 @@ async def RemoveItemFromUser(userid: int, itemid: str,
         for iterable_item in find_list:
             if count > 0:
                 if count >= iterable_item['count']:
-                    await items.delete_one({'_id': iterable_item['_id']})
-                    
+                    await items.delete_one({'_id': iterable_item['_id']}, comment='RemoveItemFromUser_1')
+
                 elif count < iterable_item['count']:
                     await items.update_one({'_id': iterable_item['_id']}, 
                                 {'$inc': 
-                                    {'count': count * -1}})
-                
+                                    {'count': count * -1}}, comment='RemoveItemFromUser')
+
                 count -= iterable_item['count']
             else: break
         return True
@@ -277,7 +279,7 @@ async def DowngradeItem(userid: int, item: dict, characteristic: str, unit: int)
     """
     max_count, max_char = 0, 0
     find_items = await items.find({'owner_id': userid, 
-                                   'items_data': item}).to_list(None)  # type: ignore
+                                   'items_data': item}, comment='DowngradeItem_1')
     find_list = list(find_items)
 
     for iterable_item in find_list:
@@ -292,14 +294,14 @@ async def DowngradeItem(userid: int, item: dict, characteristic: str, unit: int)
         item_char = iterable_item['items_data']['abilities'][characteristic]
         if unit > 0:
             if unit >= item_char:
-                await items.delete_one({'_id': iterable_item['_id']})
+                await items.delete_one({'_id': iterable_item['_id']}, comment='DowngradeItem_2')
 
             elif unit < item_char:
                 await items.update_one({'_id': iterable_item['_id']}, 
                             {'$inc': 
                                 {f'items_data.abilities.{characteristic}': 
                                     unit * -1}
-                                })
+                                }, comment='DowngradeItem_3')
             unit -= item_char
         else: break
 
@@ -312,14 +314,14 @@ async def CheckItemFromUser(userid: int, item_data: dict, count: int = 1) -> dic
     find_res = await items.find_one({'owner_id': userid, 
                                'items_data': item_data,
                                'count': {'$gte': count}
-                               })
+                               }, comment='CheckItemFromUser')
     if find_res: 
         return {"status": True, 'item': find_res}
     else:
         find_res = await items.find_one({'owner_id': userid, 
                                'items_data': item_data,
                                'count': {'$gt': 1}
-                               })
+                               }, comment='CheckItemFromUser_1')
         if find_res: difference = count - find_res['count']
         else: difference = count
         return {"status": False, "item": find_res, 'difference': difference}
@@ -331,7 +333,7 @@ async def CheckCountItemFromUser(userid: int, count: int, itemid: str,
     item = get_item_dict(itemid, preabil)
     max_count = 0
     find_items = await items.find({'owner_id': userid, 'items_data': item}, 
-                            {'_id': 1, 'count': 1}).to_list(None)  # type: ignore
+                            {'_id': 1, 'count': 1}, comment='CheckCountItemFromUser')
     find_list = list(find_items)
 
     for iterable_item in find_list: max_count += iterable_item['count']
@@ -356,10 +358,10 @@ async def EditItemFromUser(userid: int, now_item: dict, new_data: dict):
     """
     find_res = await items.find_one({'owner_id': userid, 
                                'items_data': now_item,
-                               }, {'_id': 1})
+                               }, {'_id': 1}, comment='EditItemFromUser_find_res')
     if find_res:
         await items.update_one({'_id': find_res['_id']}, 
-                         {'$set': {'items_data': new_data}})
+                         {'$set': {'items_data': new_data}}, comment='EditItemFromUser_1')
         return True
     else:
         return False

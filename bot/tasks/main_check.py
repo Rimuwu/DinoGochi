@@ -8,7 +8,8 @@ from bot.modules.dinosaur import Dino, get_owner
 from bot.modules.mood import mood_while_if, calculation_points
 from bot.modules.user import experience_enhancement
 
-dinosaurs = mongo_client.dinosaur.dinosaurs
+from bot.modules.overwriting.DataCalsses import DBconstructor
+dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 
 # Переменные изменения харрактеристик
 HEAL_CHANGE = 1, 2
@@ -40,7 +41,7 @@ async def main_checks():
     """Главная проверка динозавров
     """
 
-    dinos = await dinosaurs.find({}).to_list(None)  # type: ignore
+    dinos = await dinosaurs.find({}, comment='main_checks_dinos')
     for dino in dinos:
         dino: dict
         if dino['status'] == 'inactive': continue

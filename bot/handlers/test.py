@@ -42,15 +42,9 @@ from PIL import Image
 
 from bot.modules.advert import show_advert
 
-dinosaurs = mongo_client.dinosaur.dinosaurs
-products = mongo_client.market.products
-sellers = mongo_client.market.sellers
-puhs = mongo_client.market.puhs
-items = mongo_client.items.items
-users = mongo_client.user.users
-friends = mongo_client.user.friends
-ads = mongo_client.user.ads
-items = mongo_client.items.items
+from bot.modules.overwriting.DataCalsses import DBconstructor
+
+users = DBconstructor(mongo_client.user.users)
 
 @bot.message_handler(pass_bot=True, commands=['add_item', 'item_add'], is_admin=True)
 async def command(message):
@@ -87,7 +81,7 @@ async def coin(message):
     user = message.from_user
     
     res = await users.update_one({'userid': user.id}, 
-                                 {'$inc': {'coins': 999999999999999999}})
+                                 {'$inc': {'coins': 999999999999999999}}, comment='9999')
 
     pprint(res)
 
@@ -129,20 +123,6 @@ async def test_img(message):
         
     print("t1", t1, "t2", t2, t1-t2)
 
-@bot.message_handler(pass_bot=True, commands=['fix_sleep'], is_admin=True)
-async def fix_sleep(message):
-    
-    await dinosaurs.update_many(
-        {'stats.sleep': {'$ne': None}}, {"$unset": {'stats.sleep': 1}})
-
-
-@bot.message_handler(pass_bot=True, commands=['new_year'], is_admin=True)
-async def new_year(message):
-    
-    ev = await create_event("new_year")
-    await add_event(ev)
-    await bot.send_message(conf.bot_group_id, t("events.new_year"))
-
 from bot.modules.dungeon import Lobby, DungPlayer
 
 @bot.message_handler(pass_bot=True, commands=['dung'], is_admin=True)
@@ -167,116 +147,3 @@ async def add_to(message):
     m = await bot.send_message(message.from_user.id, "test")
     player = await DungPlayer().create(message.from_user.id, m.id)
     await lobby.add_player(player, message.from_user.id)
-
-@bot.message_handler(pass_bot=True, commands=['gramads'], is_admin=True)
-async def gramads(message):
-    await show_advert(message.from_user.id)
-
-@bot.message_handler(pass_bot=True, commands=['teste'], is_admin=True)
-async def teste(message):
-    
-    lst = [{"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}, {"1": 1}]
-    item_list(lst)
-
-@bot.message_handler(pass_bot=True, commands=['status'], is_admin=True)
-async def status(message):
-    
-    
-    user = await User().create(message.from_user.id)
-    dinos = await user.get_dinos()
-    
-    dino = dinos[0]
-    print(await check_status(dino._id))
-
-@bot.message_handler(pass_bot=True, commands=['ddt'], is_admin=True)
-async def ddt(message):
-    await ads.update_many(
-        {'limit': {'$lte': 1800}}, {'$set': {'limit': 1800}}
-    )
-
-@bot.message_handler(pass_bot=True, commands=['fix'], is_admin=True)
-async def fix(message):
-
-    find_res = await items.find(
-        {'items_data.abilities': {"$ne": None}, "count": {"$ne": 1}}
-                                ).to_list(None)
-
-    for i in find_res:
-        preabil = {}
-
-        if 'abilities' in i['items_data']:
-            preabil = i['items_data']['abilities']
-        ok = await RemoveItemFromUser(i['owner_id'], i['items_data']['item_id'], i['count'], preabil)
-
-        if ok:
-            await AddItemToUser(i['owner_id'], i['items_data']['item_id'], i['count'], preabil)
-    
-    print("Nice!")
-
-
-async def f1():
-    
-    bg_p = Image.open(
-        f'images/remain/egg_ask/back.png'
-        )
-
-async def f2():
-    bg_p = await async_open(
-        f'images/remain/egg_ask/back.png'
-    )
-
-
-@bot.message_handler(pass_bot=True, commands=['t12'], is_admin=True)
-async def t12(message):
-
-
-    st = time()
-    await f1()
-    print(time() - st)
-    
-    st = time()
-    await f2()
-    print(time() - st)
-
-
-@bot.message_handler(pass_bot=True, commands=['t56'], is_admin=True)
-async def t56(message):
-    
-    promo = 'mark'
-    lang = await get_lang(message.from_user.id)
-    text = t('dead_user.situation1', lang)
-    button = t('dead_user.buttons.game', lang)
-    
-    markup = list_to_inline(
-        [{button: f'start_cmd {promo}'}]
-    )
-
-    await bot.send_message(message.from_user.id, text, reply_markup=markup)
-
-@bot.message_handler(pass_bot=True, commands=['fixxx'], is_admin=True)
-async def command(message):
-    it = list(await items.find({'items_data.abilities': None}).to_list(None))
-    pprint(it)
-
-    for i in it:
-        col = sum([ir['count'] for ir in it \
-            if ir['items_data']['item_id'] == i['items_data']['item_id'] and ir['owner_id'] == i['owner_id']])
-
-        item_id = i['items_data']['item_id']
-        owner_id = i['owner_id']
-        it.remove(i)
-
-        if col != 1:
-            await items.delete_many({
-                'owner_id': owner_id, 'items_data.item_id': item_id, 'items_data.abilities': None
-            })
-            await AddItemToUser(owner_id, item_id, col)
-
-        print(f'process {len(it)}')
-
-
-@bot.message_handler(pass_bot=True, commands=['star_invoice'], is_admin=True)
-async def command(message: Message):
-
-
-    await send_inv(message.from_user.id, 'reborn', 3, 'ru')

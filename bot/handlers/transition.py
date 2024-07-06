@@ -18,12 +18,13 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.statistic import get_now_statistic
 from bot.modules.user import User, take_coins
 from bot.modules.market import preview_product
- 
 
-users = mongo_client.user.users
-tavern = mongo_client.tavern.tavern
-preferential = mongo_client.market.preferential
-products = mongo_client.market.products
+from bot.modules.overwriting.DataCalsses import DBconstructor
+
+users = DBconstructor(mongo_client.user.users)
+tavern = DBconstructor(mongo_client.tavern.tavern)
+preferential = DBconstructor(mongo_client.market.preferential)
+products = DBconstructor(mongo_client.market.products)
 
 @bot.message_handler(pass_bot=True, text='buttons_name.back', is_authorized=True, private=True)
 async def back_buttom(message: Message):
@@ -42,7 +43,7 @@ async def settings_menu(message: Message):
     lang = await get_lang(message.from_user.id)
     prf_view_ans = get_data('profile_view.ans', lang)
 
-    user = await users.find_one({'userid': userid})
+    user = await users.find_one({'userid': userid}, comment='settings_menu_user')
     if user:
         settings = user['settings']
         text = t('menu_text.settings', lang, 
@@ -62,7 +63,7 @@ async def settings2_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    user = await users.find_one({'userid': userid})
+    user = await users.find_one({'userid': userid}, comment='settings2_menu_user')
     if user:
         my_name = None
         settings = user['settings']
@@ -105,7 +106,8 @@ async def market_menu(message: Message):
     await bot.send_message(message.chat.id, t('menu_text.market.info', lang), 
                            reply_markup= await m(userid, 'market_menu', lang), parse_mode='Markdown')
 
-    products_pref = list(await preferential.find({"owner_id": {"$ne": userid}}).to_list(None)).copy()
+    products_pref = await preferential.find({"owner_id": {"$ne": userid}}, 
+                                            comment='market_menu_products_pref')
     rand_p = {}
 
     if products_pref:
@@ -114,7 +116,8 @@ async def market_menu(message: Message):
                 prd = choice(products_pref)
                 products_pref.remove(prd)
 
-                product = await products.find_one({'_id': prd['product_id']})
+                product = await products.find_one({'_id': prd['product_id']}, 
+                                                  comment='market_menu_product')
                 if product:
                     rand_p[
                         preview_product(product['items'], product['price'], 
@@ -157,16 +160,17 @@ async def tavern_menu(message: Message):
     text = f'🍻 {choice(data_enter)}'
     await bot.send_message(message.chat.id, text, reply_markup= await m(userid, 'dino_tavern_menu', lang))
 
-    if not await tavern.find_one({'userid': userid}):
+    if not await tavern.find_one({'userid': userid}, comment='tavern_menu_1'):
         await tavern.insert_one({
             'userid': userid,
             'time_in': int(time()),
             'lang': lang,
             'name': user_name(message.from_user, False)
-        })
+        }, comment='tavern_menu')
         friends_in_tavern = []
         for i in friends:
-            if await tavern.find_one({"userid": i}): friends_in_tavern.append(i)
+            if await tavern.find_one({"userid": i}, comment='tavern_menu_friends'): 
+                friends_in_tavern.append(i)
 
         msg = await bot.send_message(message.chat.id, 
                 t('menu_text.dino_tavern.friends', lang))
@@ -195,9 +199,9 @@ async def tavern_menu(message: Message):
                                 friendid, text_to_friend, reply_markup=buttons)
                         except: pass
         else: text += '❌'
-        
+
         text += '\n' + t('menu_text.dino_tavern.tavern_col', lang,
-                col = await tavern.count_documents({}))
+                col = await tavern.count_documents({}), comment='tavern_menu')
 
         await bot.edit_message_text(text=text, chat_id=userid, message_id=msg.message_id)
     

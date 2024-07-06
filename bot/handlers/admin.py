@@ -2,30 +2,25 @@ from telebot.types import CallbackQuery, Message
 
 from bot.config import mongo_client, conf
 from bot.exec import bot
-from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds
+from bot.modules.data_format import list_to_inline, str_to_seconds
 from bot.modules.logs import log
-from bot.modules.states_tools import start_friend_menu
-from bot.modules.friends import get_frineds, insert_friend_connect
 from bot.modules.localization import get_data, t, get_lang
-from bot.modules.markup import cancel_markup, confirm_markup, count_markup
+from bot.modules.markup import confirm_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.notifications import user_notification
-from bot.modules.states_tools import (ChooseConfirmState, ChooseCustomState,
-                                      ChoosePagesState, ChooseDinoState, ChooseStepState, ChooseStringState)
-from bot.modules.user import user_name, take_coins
-from bot.modules.dinosaur import Dino, create_dino_connection
-from bot.modules.states_tools import (ChooseOptionState, ChoosePagesState,
-                                      ChooseStepState, prepare_steps, ChooseStringState)
+from bot.modules.states_tools import (ChooseConfirmState, ChoosePagesState, ChooseStringState)
+from bot.modules.user import user_name
+from bot.modules.states_tools import (ChoosePagesState, ChooseStringState)
 from bot.modules.tracking import creat_track, get_track_pages, track_info
 from bot.modules.promo import create_promo_start, get_promo_pages, promo_ui, use_promo
 from time import time
-from bot.modules.user import User, max_dino_col, award_premium
+from bot.modules.user import award_premium
  
 from asyncio import sleep
 
-management = mongo_client.other.management
-promo = mongo_client.other.promo
-langs = mongo_client.user.lang
+from bot.modules.overwriting.DataCalsses import DBconstructor
+management = DBconstructor(mongo_client.other.management)
+promo = DBconstructor(mongo_client.other.promo)
+langs = DBconstructor(mongo_client.user.lang)
 
 @bot.message_handler(pass_bot=True, commands=['s_message'], is_admin=True)
 async def s_message(message: Message):
@@ -87,18 +82,18 @@ async def track(call: CallbackQuery):
     chatid = call.message.chat.id
     lang = await get_lang(call.from_user.id)
 
-    res = await management.find_one({'_id': 'tracking_links'})
+    res = await management.find_one({'_id': 'tracking_links'}, comment='track1')
     if res:
         text = '-'
         if action == 'delete':
             text = t("track_delete", lang)
             await management.update_one({'_id': 'tracking_links'}, 
-                                {'$unset': {f'links.{code}': 0}})
+                                {'$unset': {f'links.{code}': 0}}, comment='track2')
 
         elif action == 'clear':
             text = t("track_clear", lang)
             await management.update_one({'_id': 'tracking_links'}, 
-                                {'$set': {f'links.{code}.col': 0}})
+                                {'$set': {f'links.{code}.col': 0}}, comment='track3')
 
         await bot.send_message(chatid, text)
 
@@ -134,15 +129,14 @@ async def promo_call(call: CallbackQuery):
     code = split_d[1]
 
     userid = call.from_user.id
-    chatid = call.message.chat.id
     lang = await get_lang(call.from_user.id)
 
-    res = await promo.find_one({"code": code})
+    res = await promo.find_one({"code": code}, comment='promo_call_res')
     if res:
         if action in ['activ', 'delete'] and userid in conf.bot_devs:
 
             if action == 'delete': 
-                await promo.delete_one({'_id': res['_id']})
+                await promo.delete_one({'_id': res['_id']}, comment='promo_call_delete')
                 await bot.delete_message(userid, call.message.id)
 
             elif action == 'activ':
@@ -155,11 +149,11 @@ async def promo_call(call: CallbackQuery):
                         await promo.update_one({'_id': res['_id']}, {"$set": {
                             "time_end": res['time_end'],
                             'active': True
-                        }})
+                        }}, comment='promo_call_activ')
                     else:
                         await promo.update_one({'_id': res['_id']}, {"$set": {
                             'active': True
-                        }})
+                        }}, comment='promo_call_121')
 
                 else:
                     res['active'] = False
@@ -169,11 +163,11 @@ async def promo_call(call: CallbackQuery):
                         await promo.update_one({'_id': res['_id']}, {"$set": {
                             "time": res['time'],
                             'active': False
-                        }})
+                        }}, comment='promo_call_activ_false')
                     else:
                         await promo.update_one({'_id': res['_id']}, {"$set": {
                             'active': False
-                        }})
+                        }}, comment='promo_call_2')
 
                 text, markup = await promo_ui(code, lang)
                 await bot.edit_message_text(text, userid, call.message.message_id, reply_markup=markup, parse_mode='markdown')
@@ -200,7 +194,7 @@ async def link_promo(message):
                 but_name = msg_args[2]
             else: but_name = '🎁'
 
-            res = await promo.find_one({"code": promo_code})
+            res = await promo.find_one({"code": promo_code}, comment='link_promo_res')
 
             if res:
 
@@ -274,7 +268,7 @@ async def copy_m(message):
         'start_lang': lang
     }
 
-    users_sends = list(await langs.find({'lang': arg_list[0]}).to_list(None)) #type: ignore
+    users_sends = await langs.find({'lang': arg_list[0]}, comment='copy_m_users_sends')
 
     await ChooseConfirmState(confirm_send, userid, chatid, lang, True, trs_data)
     await bot.send_message(chatid, f"Confirm the newsletter for {len(users_sends)} users with language {arg_list[0]}", reply_markup=confirm_markup(lang))
@@ -290,7 +284,7 @@ async def confirm_send(_, transmitted_data: dict):
     
     await bot.send_message(start_chat, f"🍡", reply_markup=await m(start_chat, 'last_menu', start_lang))
 
-    users_sends = list(await langs.find({'lang': to_lang}).to_list(None))
+    users_sends = await langs.find({'lang': to_lang}, comment='confirm_send_users_sends')
     start_time = time()
     col = 0
 

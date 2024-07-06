@@ -8,18 +8,20 @@ from time import time
 from bot.modules.notifications import user_notification
 from bot.modules.dinosaur import get_owner, get_dino_language
 
-dinosaurs = mongo_client.dinosaur.dinosaurs
-users = mongo_client.user.users
-items = mongo_client.items.items
-statistic = mongo_client.other.statistic
-management = mongo_client.other.management
-kindergarten = mongo_client.dino_activity.kindergarten
+
+from bot.modules.overwriting.DataCalsses import DBconstructor
+dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+users = DBconstructor(mongo_client.user.users)
+items = DBconstructor(mongo_client.items.items)
+statistic = DBconstructor(mongo_client.other.statistic)
+management = DBconstructor(mongo_client.other.management)
+kindergarten = DBconstructor(mongo_client.dino_activity.kindergarten)
 
 # Чек статистики, запускать раз в час
 async def statistic_check():
-    items_len = await items.count_documents({})
-    users_len = await users.count_documents({})
-    dinosaurs_len = await dinosaurs.count_documents({})
+    items_len = await items.count_documents({}, comment='statistic_check_items_len')
+    users_len = await users.count_documents({}, comment='statistic_check_users_len')
+    dinosaurs_len = await dinosaurs.count_documents({}, comment='statistic_check_dinosaurs_len')
 
     data = {
         'date': str(datetime.now().date()),
@@ -27,15 +29,16 @@ async def statistic_check():
         'users': users_len,
         'items': items_len
     }
-    if res := await statistic.find_one({'date': data['date']}):
-        await statistic.delete_one({'_id': res['_id']})
+    if res := await statistic.find_one({'date': data['date']}, comment='statistic_check_res'):
+        await statistic.delete_one({'_id': res['_id']}, comment='statistic_check_2')
 
-    await statistic.insert_one(data)
+    await statistic.insert_one(data, comment='statistic_check_1')
 
 async def rayting_check():
     loc_users = list(await users.find({}, 
-                    {'userid': 1, 'lvl': 1, 'xp': 1, 'coins': 1, 'super_coins': 1}
-                    ).to_list(None))
+                    {'userid': 1, 'lvl': 1, 'xp': 1, 'coins': 1, 'super_coins': 1}, 
+                    comment='rayting_check_loc_users'
+                    ))
 
     coins_list = list(sorted(loc_users, key=lambda x: x['coins'], reverse=True))
     lvl_list = list(sorted(loc_users, key=lambda x: 
@@ -49,32 +52,34 @@ async def rayting_check():
     for i in super_list: super_ids.append(i['userid'])
 
     await management.update_one({'_id': 'rayting_coins'}, 
-                          {'$set': {'data': coins_list, 'ids': coins_ids}})
+                          {'$set': {'data': coins_list, 'ids': coins_ids}}, comment='rayting_check_1')
     await management.update_one({'_id': 'rayting_lvl'}, 
-                          {'$set': {'data': lvl_list, 'ids': lvl_ids}})
+                          {'$set': {'data': lvl_list, 'ids': lvl_ids}}, comment='rayting_check_2')
     await management.update_one({'_id': 'rayting_super'}, 
-                          {'$set': {'data': super_list, 'ids': super_ids}})
+                          {'$set': {'data': super_list, 'ids': super_ids}}, comment='rayting_check_3')
 
     await management.update_one({'_id': 'rayt_update'}, 
-                          {'$set': {'time': int(time())}})
+                          {'$set': {'time': int(time())}}, comment='rayting_check_4')
 
 async def kindergarten_update():
     data = list(await kindergarten.find({'type': 'save',
-                                   'end': {'$lte': int(time())}}).to_list(None)
+                                   'end': {'$lte': int(time())}}, comment='kindergarten_update')
                 ).copy()
 
-    for i in data: await kindergarten.delete_one({'_id': i['_id']})
+    for i in data: await kindergarten.delete_one({'_id': i['_id']}, comment='kindergarten_update_1')
 
 async def dino_kindergarten():
     data = list(await kindergarten.find({'type': 'dino',
-                                   'end': {'$lte': int(time())}}).to_list(None)
+                                   'end': {'$lte': int(time())}}, comment='dino_kindergarten_data')
                 ).copy()
 
     for i in data: 
-        await dinosaurs.update_one({'_id': i['dinoid']}, {'$set': {'status': 'pass'}})
-        await kindergarten.delete_one({'_id': i['_id']})
+        await dinosaurs.update_one({'_id': i['dinoid']}, {'$set': {'status': 'pass'}}, 
+                                   comment='dino_kindergarten')
+        await kindergarten.delete_one({'_id': i['_id']}, comment='dino_kindergarten_1')
 
-        dino = await dinosaurs.find_one({'_id': i['dinoid']})
+        dino = await dinosaurs.find_one({'_id': i['dinoid']}, 
+                                        comment='dino_kindergarten_dino')
         if dino:
             owner = await get_owner(i['dinoid'])
             if owner:

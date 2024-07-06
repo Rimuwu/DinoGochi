@@ -10,7 +10,7 @@ from bot.modules.localization import get_data, t, get_lang
 from bot.modules.item import counts_items
 from bot.modules.data_format import seconds_to_str
 from bot.modules.states_tools import ChooseIntState
-from bot.modules.markup import cancel_markup, list_to_keyboard
+from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
 
 @bot.message_handler(pass_bot=True, text='commands_name.about.team', 

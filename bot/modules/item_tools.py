@@ -20,14 +20,14 @@ from bot.modules.mood import add_mood
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User, experience_enhancement, get_dead_dinos, max_eat, count_inventory_items, award_premium
- 
-
 from typing import Union
 
-dinosaurs = mongo_client.dinosaur.dinosaurs
-items = mongo_client.items.items
-dead_dinos = mongo_client.dinosaur.dead_dinos
-users = mongo_client.user.users
+
+from bot.modules.overwriting.DataCalsses import DBconstructor
+dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+items = DBconstructor(mongo_client.items.items)
+dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
+users = DBconstructor(mongo_client.user.users)
 
 
 async def exchange(return_data: dict, transmitted_data: dict):
@@ -63,7 +63,7 @@ async def exchange(return_data: dict, transmitted_data: dict):
 async def exchange_item(userid: int, chatid: int, item: dict,
                         lang: str, username: str):
     items_data = await items.find({'items_data': item, 
-                                   "owner_id": userid}).to_list(None) #type: ignore
+                                   "owner_id": userid}, comment='exchange_item_items_data')
     max_count = 0
 
     for i in items_data: max_count += i['count']
@@ -358,8 +358,10 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                 res, alt_id = await insert_dino(userid, dct_dino['data_id'], 
                                           dct_dino['quality'])
                 if res:
-                    await dinosaurs.update_one({'_id': res.inserted_id}, {'$set': {'name': dct_dino['name']}}) 
-                    await dead_dinos.delete_one({'_id': dct_dino['_id']}) 
+                    await dinosaurs.update_one({'_id': res.inserted_id}, 
+                                               {'$set': {'name': dct_dino['name']}}, 
+                                               comment='use_item_reborn') 
+                    await dead_dinos.delete_one({'_id': dct_dino['_id']}, comment='use_item_reborn') 
                     return_text = t('item_use.special.reborn.ok', lang, 
                             limit=dino_limit['limit'])
                 else: use_status = False
@@ -369,7 +371,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                 use_status = False
 
         elif data_item['class'] == 'background':
-            user = await users.find_one({"userid": userid})
+            user = await users.find_one({"userid": userid}, comment='use_item_background')
 
             if item['abilities']['data_id'] in user['saved']['backgrounds']:
                 use_status = False
@@ -377,7 +379,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             else:
                 await users.update_one({'userid': userid}, {'$push': {
                     'saved.backgrounds': item['abilities']['data_id']
-                }})
+                }}, comment='use_item_background_1')
 
                 return_text = t('backgrounds.add_to_storage', lang)
 
@@ -426,7 +428,7 @@ async def edit_craft(return_data: dict, transmitted_data: dict):
         for item_key, unit in materials['edit'][iterable_key].items():
             item = return_data[item_key]
             find_items = await items.find({'owner_id': userid, 
-                                   'items_data': item}).to_list(None) #type: ignore
+                                   'items_data': item}, comment='edit_craft_find_items')
             for find_item in find_items:
                 if unit > 0:
                     ret_data = CalculateDowngradeitem(find_item['items_data'], 
@@ -525,8 +527,8 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
     limiter = 100 # Ограничение по количеству использований за раз
     adapter_function = adapter
 
-    bases_item = await items.find({'owner_id': userid, 'items_data': item}
-                                 ).to_list(None)  #type: ignore
+    bases_item = await items.find({'owner_id': userid, 'items_data': item}, 
+                                  comment='data_for_use_item_bases_item')
     transmitted_data = {'items_data': item}
     item_name = get_name(item_id, lang)
     steps = []
@@ -666,7 +668,7 @@ async def delete_action(return_data: dict, transmitted_data: dict):
 async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
     steps = []
     find_items = await items.find({'owner_id': userid, 
-                             'items_data': item}).to_list(None) #type: ignore
+                             'items_data': item}, comment='delete_item_action')
     transmitted_data = {'items_data': item, 'item_name': ''}
     max_count = 0
     item_id = item['item_id']

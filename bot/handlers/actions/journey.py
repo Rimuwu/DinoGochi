@@ -20,9 +20,9 @@ from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User
 from random import randint
  
-
-dinosaurs = mongo_client.dinosaur.dinosaurs
-journey_task = mongo_client.dino_activity.journey
+from bot.modules.overwriting.DataCalsses import DBconstructor
+dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+journey_task = DBconstructor(mongo_client.dino_activity.journey)
 
 premium_loc = ['magic-forest']
 
@@ -135,7 +135,7 @@ async def events(message: Message):
     user = await User().create(userid)
     last_dino = await user.get_last_dino()
     if last_dino:
-        journey_data = await journey_task.find_one({'dino_id': last_dino._id})
+        journey_data = await journey_task.find_one({'dino_id': last_dino._id}, comment='events_journey_data')
         last_event = None
 
         if journey_data:
@@ -167,11 +167,11 @@ async def journey_stop(callback: CallbackQuery):
     chatid = callback.message.chat.id
     code = callback.data.split()[1]
 
-    dino = await dinosaurs.find_one({'alt_id': code})
+    dino = await dinosaurs.find_one({'alt_id': code}, comment='journey_stop_dino')
     if dino and dino['status'] == 'journey':
         await bot.edit_message_reply_markup(chatid, callback.message.id, 
                                    reply_markup=InlineKeyboardMarkup())
-        data = await journey_task.find_one({'dino_id': dino['_id']})
+        data = await journey_task.find_one({'dino_id': dino['_id']}, comment='journey_stop_data')
         await end_journey(dino['_id'])
         if data:
             await quest_process(data['sended'], 'journey', (int(time()) - data['journey_start']) // 60)

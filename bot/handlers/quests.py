@@ -12,9 +12,9 @@ from bot.modules.localization import get_data, t, get_lang
 from bot.modules.quests import quest_resampling, quest_ui, check_quest
 from bot.modules.user import take_coins
  
-
-quests_data = mongo_client.tavern.quests
-users = mongo_client.user.users
+from bot.modules.overwriting.DataCalsses import DBconstructor
+quests_data = DBconstructor(mongo_client.tavern.quests)
+users = DBconstructor(mongo_client.user.users)
 
 @bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.quests', is_authorized=True, private=True)
 async def check_quests(message: Message):
@@ -22,9 +22,9 @@ async def check_quests(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    user = await users.find_one({'userid': userid})
+    user = await users.find_one({'userid': userid}, comment='check_quests_user')
     if user:
-        quests = list(await quests_data.find({'owner_id': userid}).to_list(None))
+        quests = await quests_data.find({'owner_id': userid}, comment='check_quests_quests')
 
         text = t('quest.quest_menu', lang, 
                 end=user['dungeon']['quest_ended'], act=len(quests))
@@ -47,7 +47,7 @@ async def quest(call: CallbackQuery):
     data = call.data.split()
     alt_id = data[2]
 
-    quest = await quests_data.find_one({'alt_id': alt_id, 'owner_id': userid})
+    quest = await quests_data.find_one({'alt_id': alt_id, 'owner_id': userid}, comment='quest_quest')
     if quest:
         if int(time()) > quest['time_end']:
             await quest_resampling(quest['_id'])
@@ -79,8 +79,8 @@ async def quest(call: CallbackQuery):
                     for i in quest['reward']['items']: 
                         await AddItemToUser(userid, i)
 
-                    await quests_data.delete_one({'_id': quest['_id']})
-                    await users.update_one({'userid': userid}, {'$inc': {'dungeon.quest_ended': 1}})
+                    await quests_data.delete_one({'_id': quest['_id']}, comment='quest_2')
+                    await users.update_one({'userid': userid}, {'$inc': {'dungeon.quest_ended': 1}}, comment='quest_end')
 
                 else: text = t('quest.conditions', lang)
 

@@ -14,9 +14,11 @@ from bot.modules.logs import log
 from bot.modules.markup import list_to_keyboard, down_menu
 from bot.modules.markup import markups_menu as m
 from bot.modules.user import get_inventory
-from pprint import pprint
 
-users = mongo_client.user.users
+
+from bot.modules.overwriting.DataCalsses import DBconstructor
+users = DBconstructor(mongo_client.user.users)
+
 back_button, forward_button = gs['back_button'], gs['forward_button']
 
 class InventoryStates(StatesGroup):
@@ -314,7 +316,7 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
     if 'chatid' not in transmitted_data: transmitted_data['chatid'] = chatid
     if 'lang' not in transmitted_data: transmitted_data['lang'] = lang
 
-    user_settings = await users.find_one({'userid': userid}, {'settings': 1})
+    user_settings = await users.find_one({'userid': userid}, {'settings': 1}, comment='start_inv_user_settings')
     if user_settings: inv_view = user_settings['settings']['inv_view']
     else: inv_view = [2, 3]
 

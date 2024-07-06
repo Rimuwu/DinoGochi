@@ -15,9 +15,9 @@ from bot.modules.mood import add_mood
 from bot.modules.states_tools import ChooseIntState, ChooseOptionState
 from bot.modules.user import User
  
-
-dinosaurs = mongo_client.dinosaur.dinosaurs
-sleep_task = mongo_client.dino_activity.sleep
+from bot.modules.overwriting.DataCalsses import DBconstructor
+dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+sleep_task = DBconstructor(mongo_client.dino_activity.sleep)
 
 async def short_sleep(number: int, transmitted_data: dict):
     """ Отправляем в которкий сон
@@ -27,7 +27,7 @@ async def short_sleep(number: int, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     dino = transmitted_data['last_dino']
 
-    res_dino_status = await dinosaurs.find_one({"_id": dino._id}, {'status': 1})
+    res_dino_status = await dinosaurs.find_one({"_id": dino._id}, {'status': 1}, comment='short_sleep_res_dino_status')
     if res_dino_status:
         if res_dino_status['status'] != 'pass':
             await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
@@ -45,7 +45,7 @@ async def long_sleep(dino: Dino, userid: int, lang: str):
     """ Отправляем дино в длинный сон
     """
 
-    res_dino_status = await dinosaurs.find_one({"_id": dino._id}, {'status': 1})
+    res_dino_status = await dinosaurs.find_one({"_id": dino._id}, {'status': 1}, comment='long_sleep_res_dino_status')
     if res_dino_status:
         if res_dino_status['status'] != 'pass':
             await bot.send_message(userid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
@@ -145,7 +145,7 @@ async def awaken(message: Message):
 
     if last_dino:
         if last_dino.status == 'sleep':
-            sleeper = await sleep_task.find_one({'dino_id': last_dino._id})
+            sleeper = await sleep_task.find_one({'dino_id': last_dino._id}, comment='awaken_sleeper')
             if sleeper:
                 if sleeper['sleep_type'] == 'long':
                     sleep_time = int(time()) - sleeper['sleep_start']

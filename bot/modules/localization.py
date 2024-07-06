@@ -4,12 +4,14 @@ import json
 import os
 from typing import Any
 from bot.modules.logs import log
-from bot.config import conf, mongo_client
+from bot.config import mongo_client
 
 
 languages = {}
 available_locales = []
-langs = mongo_client.user.lang
+
+from bot.modules.overwriting.DataCalsses import DBconstructor
+langs = DBconstructor(mongo_client.user.lang)
 
 def load() -> None:
     """Загрузка локализации"""
@@ -160,7 +162,7 @@ async def get_lang(userid: int, alternative: str = 'en') -> str:
     """ Получает язык пользователя
     """
     lang = alternative
-    data = await langs.find_one({'userid': userid})
+    data = await langs.find_one({'userid': userid}, comment='get_lang')
 
     if data: lang = data['lang']
     return lang

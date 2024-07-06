@@ -9,7 +9,8 @@ from bot.modules.data_format import seconds_to_str
 from bot.modules.data_format import list_to_inline
 from time import time
 
-management = mongo_client.other.management
+from bot.modules.overwriting.DataCalsses import DBconstructor
+management = DBconstructor(mongo_client.other.management)
 
 async def creat_track(name: str):
     """Создаёт ссылку отслеживания 
@@ -18,7 +19,7 @@ async def creat_track(name: str):
         -2 - уже отслеживается
         1 - всё супер!
     """
-    res = await management.find_one({'_id': 'tracking_links'})
+    res = await management.find_one({'_id': 'tracking_links'}, comment='creat_track_res')
     if res:
         links = res['links']
         if name not in res['links'].keys():
@@ -27,9 +28,9 @@ async def creat_track(name: str):
                 'start': int(time())
             }
             await management.update_one({'_id': 'tracking_links'}, 
-                                {'$set': {f'links.{name}': data}})
+                                {'$set': {f'links.{name}': data}}, comment='creat_track_1')
 
-            res = await management.find_one({'_id': 'tracking_links'})
+            res = await management.find_one({'_id': 'tracking_links'}, comment='creat_track_res_2')
             if res:
                 if name in links.keys(): return 1
                 else: return -1
@@ -37,7 +38,7 @@ async def creat_track(name: str):
     return 0
 
 async def get_track_pages() -> dict:
-    res = await management.find_one({'_id': 'tracking_links'})
+    res = await management.find_one({'_id': 'tracking_links'}, comment='get_track_pages_res')
     data = {}
     if res:
         links = list(res['links'])
@@ -46,7 +47,7 @@ async def get_track_pages() -> dict:
     return data
 
 async def track_info(code: str, lang: str):
-    res = await management.find_one({'_id': 'tracking_links'})
+    res = await management.find_one({'_id': 'tracking_links'}, comment='track_info_res')
     text, markup = 'not found', None
 
     if res:
@@ -74,10 +75,10 @@ async def track_info(code: str, lang: str):
     return text, markup
 
 async def add_track(name:str):
-    res = await management.find_one({'_id': 'tracking_links'})
+    res = await management.find_one({'_id': 'tracking_links'}, comment='add_track_res')
     if res:
         if name in res['links'].keys():
             await management.update_one({'_id': 'tracking_links'}, 
-                                {'$inc': {f'links.{name}.col': 1}})
+                                {'$inc': {f'links.{name}.col': 1}}, comment='add_track')
             return True
     return False

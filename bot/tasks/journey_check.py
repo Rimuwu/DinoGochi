@@ -14,18 +14,18 @@ from bot.taskmanager import add_task
 from bot.modules.accessory import check_accessory
 from bot.modules.mood import check_inspiration
 
-journey = mongo_client.dino_activity.journey
-dinosaurs = mongo_client.dinosaur.dinosaurs
-dino_owners = mongo_client.dinosaur.dino_owners
+from bot.modules.overwriting.DataCalsses import DBconstructor
+journey = DBconstructor(mongo_client.dino_activity.journey)
+dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 
 REPEAT_MINUTS = 6
 EVENT_CHANCE = 0.17 * REPEAT_MINUTS
 
 async def end_journey_time():
-    data = list(await journey.find(
-        {'journey_end': {'$lte': int(time())}}).to_list(None)).copy()
+    data = await journey.find(
+        {'journey_end': {'$lte': int(time())}}, comment='end_journey_time_data')
     for i in data:
-        dino = await dinosaurs.find_one({'_id': i['dino_id']})
+        dino = await dinosaurs.find_one({'_id': i['dino_id']}, comment='end_journey_time_dino')
         if dino:
             await end_journey(i['dino_id'])
             await quest_process(i['sended'], 'journey', (int(time()) - i['journey_start']) // 60)
@@ -34,8 +34,8 @@ async def end_journey_time():
             await send_logs(i['sended'], lang, i, dino['name'])
 
 async def events():
-    data = list(await journey.find(
-        {'journey_end': {'$gte': int(time())}}).to_list(None)).copy()
+    data = await journey.find(
+        {'journey_end': {'$gte': int(time())}}, comment='events_data')
 
     for i in data:
         chance = EVENT_CHANCE

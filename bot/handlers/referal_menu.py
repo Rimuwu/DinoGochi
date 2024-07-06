@@ -11,9 +11,10 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.referals import connect_referal, create_referal
 from bot.modules.states_tools import ChooseCustomState, ChooseStringState
 from bot.modules.user import take_coins
- 
 
-referals = mongo_client.user.referals
+from bot.modules.overwriting.DataCalsses import DBconstructor
+referals = DBconstructor(mongo_client.user.referals)
+
 
 @bot.message_handler(pass_bot=True, text='commands_name.referal.code', is_authorized=True, private=True)
 async def code(message: Message):
@@ -21,7 +22,7 @@ async def code(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    if not await referals.find_one({'ownerid': userid}):
+    if not await referals.find_one({'ownerid': userid}, comment='code'):
         price = GS['referal']['custom_price']
 
         text = t('referals.generate', lang, price=price)
@@ -53,7 +54,7 @@ async def create_custom_code(code: str, transmitted_data: dict):
         text = t('referals.custom_code.no_coins', lang)
 
     await bot.send_message(chatid, text, parse_mode='Markdown', 
-                        reply_markup= await m(userid, 'last_menu', lang, True))
+                        reply_markup = await m(userid, 'last_menu', lang, True))
 
 async def custom_handler(message: Message, transmitted_data: dict):
     lang = transmitted_data['lang']
@@ -69,7 +70,7 @@ async def custom_handler(message: Message, transmitted_data: dict):
     if len(code) == 0:
         text = t('referals.custom_code.min_len', lang)
     else:
-        res = await referals.find_one({'code': code})
+        res = await referals.find_one({'code': code}, comment='custom_handler_refer_res')
         if res:
             text = t('referals.custom_code.found_code', lang)
         else: status = True
@@ -86,7 +87,7 @@ async def generate_code(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
     action = call.data.split()[1]
 
-    if not await referals.find_one({'ownerid': userid}):
+    if not await referals.find_one({'ownerid': userid}, comment='generate_code_1'):
         if action == 'random':
             ref = await create_referal(userid)
             code = ref[1]
@@ -97,7 +98,7 @@ async def generate_code(call: CallbackQuery):
             url = f'https://t.me/{bot_name}/?start={code}'
             await bot.send_message(chatid, t('referals.code', lang, 
                                     code=code, url=url), parse_mode='Markdown', reply_markup= await m(userid, 'last_menu', lang, True))
-            
+
         elif action == 'custom':
             await bot.send_message(chatid, 
                                    t('referals.custom_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
@@ -115,11 +116,11 @@ async def my_code(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    referal = await referals.find_one({'userid': userid, 'type': 'general'})
+    referal = await referals.find_one({'userid': userid, 'type': 'general'}, comment='my_code_referal')
     if referal:
         code = referal['code']
         referal_find = await referals.find(
-            {'code': code, 'type': 'sub'}).to_list(None)
+            {'code': code, 'type': 'sub'}, comment='my_code_referal_find')
 
         uses = len(list(referal_find))
 
@@ -152,7 +153,7 @@ async def enter_code(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    ref = await referals.find_one({'userid': userid, 'type': 'sub'})
+    ref = await referals.find_one({'userid': userid, 'type': 'sub'}, comment='enter_code_ref')
     if not ref:
         await bot.send_message(chatid, t('referals.enter_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
         await ChooseStringState(check_code, userid, chatid, lang, max_len=100)

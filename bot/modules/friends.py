@@ -5,8 +5,8 @@ from bot.exec import bot
 from bot.modules.data_format import list_to_inline, user_name
 from bot.modules.localization import t, get_lang
  
-
-friends = mongo_client.user.friends
+from bot.modules.overwriting.DataCalsses import DBconstructor
+friends = DBconstructor(mongo_client.user.friends)
 
 async def get_frineds(userid: int) -> dict:
     """ Получает друзей (id) и запросы к пользователю
@@ -25,14 +25,14 @@ async def get_frineds(userid: int) -> dict:
 
     for st in ['userid', 'friendid']:
         data_list = await friends.find({st: userid, 
-                                  'type': 'friends'}).to_list(None) #type: ignore
+                                  'type': 'friends'}, comment='get_frineds_data_list')
 
         for conn_data in data_list:
             friends_dict['friends'].append(conn_data[alt[st]])
 
         if st == 'friendid':
             data_list = await friends.find({st: userid, 
-                                      'type': 'request'}).to_list(None) #type: ignore
+                                      'type': 'request'}, comment='get_frineds_data_list_1')
 
             for conn_data in data_list:
                 friends_dict['requests'].append(conn_data[alt[st]])
@@ -48,13 +48,13 @@ async def insert_friend_connect(userid: int, friendid: int, action: str):
         'userid': userid,
         'friendid': friendid,
         'type': action
-    })
+    }, comment='insert_friend_connect_res')
 
     res2 = await friends.find_one({
         'userid': friendid,
         'friendid': userid,
         'type': action
-    })
+    }, comment='insert_friend_connect_res2')
 
     if not res and not res2:
         data = {
@@ -62,7 +62,7 @@ async def insert_friend_connect(userid: int, friendid: int, action: str):
             'friendid': friendid,
             'type': action
         }
-        return await friends.insert_one(data)
+        return await friends.insert_one(data, comment='insert_friend_connect')
     return False
 
 async def send_action_invite(userid: int, friendid: int, action: str, dino_alt: str, lang: str):

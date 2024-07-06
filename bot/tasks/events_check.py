@@ -5,19 +5,20 @@ from time import time
 from random import randint
 from bot.modules.logs import log
 
-events = mongo_client.other.events
+from bot.modules.overwriting.DataCalsses import DBconstructor
+events = DBconstructor(mongo_client.other.events)
 
 async def old_events():
     """ Удаляет истёкшие события
     """
-    events_data = list(await events.find({}, {'type': 1, 'time_end': 1}).to_list(None)).copy()
+    events_data = await events.find({}, {'type': 1, 'time_end': 1}, comment='old_events_events_data')
 
     for i in events_data:
         if i['time_end'] != 0 and int(time()) >= i['time_end']:
-            await events.delete_one({'type': i['type']})
+            await events.delete_one({'type': i['type']}, comment='old_events_1')
 
 async def random_event():
-    events_data = list(await events.find({}, {'type'}).to_list(None)).copy()
+    events_data = await events.find({}, {'type': 1}, comment='random_event_events_data')
     not_system = []
 
     for i in events_data:

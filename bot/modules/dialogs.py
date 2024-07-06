@@ -8,11 +8,11 @@ from bot.modules.images import create_eggs_image
 from bot.modules.item import get_item_dict, item_code
 from bot.modules.item_tools import AddItemToUser
 from bot.modules.localization import get_data, t
-from bot.modules.user import get_eggs, max_dino_col
 from bot.modules.dinosaur import dead_check
 
-users = mongo_client.user.users
-items = mongo_client.items.items
+from bot.modules.overwriting.DataCalsses import DBconstructor
+users = DBconstructor(mongo_client.user.users)
+items = DBconstructor(mongo_client.items.items)
 
 def dialog_system(name: str, lang: str, 
                   key: str = 'start', end_keys: list = [], 
@@ -21,20 +21,20 @@ def dialog_system(name: str, lang: str,
     """
     text = ''
     markup = InlineKeyboardMarkup()
-    
+
     end_status = False
     data = get_data('dialogs.' + dialog_name, lang)
-    
+
     now_data = data[key]
     previous_data = {}
-    
+
     user_name = escape_markdown(name)
     people_content: str = data[key]["text"].format(
         user_name = escape_markdown(name),
         people_name = data["people_name"],
         **kwargs
     )
-    
+
     if 'previous' in now_data:
         previous_data = data[now_data['previous']]
 
@@ -60,12 +60,12 @@ async def dead_last_dino(userid: int, name: str, lang: str,
                    key: str = 'start'):
     end_keys = ['end-y', 'end-n']
     dialog_name = 'dead_last_dino'
-    
+
     markup = InlineKeyboardMarkup()
     status = False
     text = ''
-    
-    user = await users.find_one({'userid': userid})
+
+    user = await users.find_one({'userid': userid}, comment='dead_last_dino_user')
     if user:
 
         if await dead_check(userid):
@@ -81,8 +81,8 @@ async def dead_last_dino(userid: int, name: str, lang: str,
                     coins = (user['coins'] // 100) * 70
 
                 await users.update_one({'userid': userid}, {'$inc': 
-                    {'coins': -coins}})
-                await items.delete_many({'owner_id': userid})
+                    {'coins': -coins}}, comment='dead_last_dino_1')
+                await items.delete_many({'owner_id': userid}, comment='dead_last_dino')
 
                 await AddItemToUser(userid, GS['dead_dialog_item'], 1, 
                               {'interact': False})

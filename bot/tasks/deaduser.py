@@ -12,10 +12,9 @@ from bot.modules.user import User
 from bot.modules.logs import log
  
 
-users = mongo_client.user.users
-tavern = mongo_client.tavern.tavern
-quests_data = mongo_client.tavern.quests
-dead_users = mongo_client.other.dead_users
+from bot.modules.overwriting.DataCalsses import DBconstructor
+users = DBconstructor(mongo_client.user.users)
+dead_users = DBconstructor(mongo_client.other.dead_users)
 
 # - Если нельзя отправить спустя неделю - ничего
 # - Если нельзя отправить спустя месяц - удаление аккаунта
@@ -31,17 +30,17 @@ async def save_d(userid: int, type_send: str, last_m: int, promo: str = ''):
         'last_m': last_m
     }
 
-    res = await dead_users.find_one({'userid': userid})
+    res = await dead_users.find_one({'userid': userid}, comment='save_d_res')
     if res:
         await dead_users.update_one({'userid': userid}, {'$set':
-            data})
+            data}, comment='save_d_check')
     else:
-        await dead_users.insert_one(data)
+        await dead_users.insert_one(data, comment='save_d_1')
 
 async def DeadUser_return():
     users_ids = list(await users.find({"last_message_time": 
         {'$lte': int(time()) - 86400 * 7}}, {'_id': 1, 'last_message_time': 1, 'userid': 1}
-                                 ).to_list(None))
+                                 ))
 
     log(f'Начата проверка {len(users_ids)}')
 
@@ -51,7 +50,7 @@ async def DeadUser_return():
         if col_d == 0:
             delta_days = (int(time()) - us['last_message_time']) // 86400
 
-            res = await dead_users.find_one({'userid': us['userid']}, {'_id': 0}) # type: dict
+            res = await dead_users.find_one({'userid': us['userid']}, {'_id': 0}, comment='DeadUser_return_res') # type: dict
             if res:
                 userid, type_send, promo, last_m = list(res.values())
             else:
@@ -118,18 +117,18 @@ async def DeadUser_return():
 
 async def clear_data():
     users_ids = await dead_users.find({},
-                                      {'_id': 1, 'userid': 1}).to_list(None)
+                                      {'_id': 1, 'userid': 1}, comment='clear_data')
 
     for user in users_ids:
         res = await users.find_one({
             'userid': user['userid']
-        }, {'last_message_time': 1})
+        }, {'last_message_time': 1}, comment='clear_data_res')
         
         if res:
             if (int(time()) - res['last_message_time']) // 86400 < 7:
                 await dead_users.delete_one({
                     '_id': user['_id']
-                })
+                }, comment='clear_data_1')
 
 
 if __name__ != '__main__':

@@ -3,14 +3,12 @@ from telebot.types import Message, CallbackQuery
 from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.localization import  get_lang, t, get_data
-from bot.modules.markup import markups_menu as m
 from bot.modules.user import user_info, premium
 from bot.modules.data_format import list_to_inline, seconds_to_str, user_name, escape_markdown
 from time import time
 
- 
-
-management = mongo_client.other.management
+from bot.modules.overwriting.DataCalsses import DBconstructor
+management = DBconstructor(mongo_client.other.management)
 
 @bot.message_handler(pass_bot=True, text='commands_name.profile.information', 
                      is_authorized=True, private=True)
@@ -48,7 +46,7 @@ async def rayting(message: Message):
     lang = await get_lang(message.from_user.id)
     time_update_rayt = 0
 
-    t_upd = await management.find_one({'_id': 'rayt_update'})
+    t_upd = await management.find_one({'_id': 'rayt_update'}, comment='rayting_t_upd')
     if t_upd:
         time_update_rayt = seconds_to_str(int(time()) - t_upd['time'], lang)
         if t_upd['time'] == 0:
@@ -74,7 +72,8 @@ async def rayting_call(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     rayt_data = {}
 
-    rayt_data = await management.find_one({'_id': f'rayting_{data[1]}'})
+    rayt_data = await management.find_one({'_id': f'rayting_{data[1]}'},    
+                                          comment='rayting_call_rayt_data')
     if len(data) > 2: 
         max_ind = int(data[2]) + 4
         min_ind = max_ind - 10

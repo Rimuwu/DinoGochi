@@ -5,8 +5,6 @@ from bot.exec import bot
 from bot.modules.data_format import user_name
 from bot.modules.dialogs import dialogs
 from bot.modules.localization import  get_lang
- 
-
 
 
 @bot.callback_query_handler(pass_bot=True, 

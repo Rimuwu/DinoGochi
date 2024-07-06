@@ -7,8 +7,9 @@ from bot.exec import bot
 from bot.modules.user import take_coins
 from bot.modules.item import AddListItems
 
-lobbys = mongo_client.dungeon.lobby
-users = mongo_client.user.users
+from bot.modules.overwriting.DataCalsses import DBconstructor
+lobbys = DBconstructor(mongo_client.dungeon.lobby)
+users = DBconstructor(mongo_client.user.users)
 
 class DungPlayer:
 
@@ -36,7 +37,7 @@ class DungPlayer:
     async def create(self, user_id:int, message:int, 
                      coins:int = 0, dinos:list[ObjectId] = [], 
                      inventory:list[dict] = []):
-        user = await users.find_one({"userid": user_id})
+        user = await users.find_one({"userid": user_id}, comment='DungPlayer_create')
         if user:
             teleuser = await bot.get_chat_member(user_id, user_id)
 
@@ -61,11 +62,11 @@ class DungPlayer:
         del data['dungeonid']
 
         await lobbys.update_one({"dungeonid": dungeonid}, 
-                                {"$set": {f"users.{self.userid}": self.__dict__}})
+                                {"$set": {f"users.{self.userid}": self.__dict__}}, comment='DungPlayer_save')
 
     @property
     async def user_id(self):
-        user = await users.find_one({"_id": self._id}, {"userid": 1})
+        user = await users.find_one({"_id": self._id}, {"userid": 1}, comment='DungPlayer_user_id')
         if user: return user['userid']
 
 class Lobby:
@@ -92,19 +93,20 @@ class Lobby:
             lobby["settings"]["lang"] = "en" - НЕ СРАБОТАЕТ!
         """
         self.__dict__[item] = value
-        await lobbys.update_one({"dungeonid": self.dungeonid}, {"$set": {item:value}})
+        await lobbys.update_one({"dungeonid": self.dungeonid}, {"$set": {item:value}}, 
+                                comment='Lobby__setitem__')
 
     def __str__(self) -> str:
         return str(self.__dict__)
 
     async def create(self, user_id:int, message:int):
-        find_result = await lobbys.find_one({"dungeonid": user_id})
+        find_result = await lobbys.find_one({"dungeonid": user_id}, comment='Lobby_create_find_result')
         if not find_result:
             self.dungeonid = user_id
             owner = await DungPlayer().create(user_id, message)
             await self.add_player(owner, user_id)
 
-            await lobbys.insert_one(self.ToBaseFormat)
+            await lobbys.insert_one(self.ToBaseFormat, comment='Lobby_create')
             return self
 
         else: return await self.FromBase(find_result['_id'])
@@ -112,9 +114,9 @@ class Lobby:
     async def FromBase(self, lobbyid:Union[int, ObjectId]):
         """ Создание класса лобби на основе данных из базы
         """
-        find_result = await lobbys.find_one({"_id": lobbyid})
+        find_result = await lobbys.find_one({"_id": lobbyid}, comment='Lobby_FromBase')
         if not find_result:
-            find_result = await lobbys.find_one({"dungeonid": lobbyid})
+            find_result = await lobbys.find_one({"dungeonid": lobbyid}, comment='Lobby_FromBase_1')
         if find_result: 
             self.__dict__ = find_result
 
@@ -138,12 +140,12 @@ class Lobby:
     @property
     async def delete(self):
         for userkey in self.users.keys(): await self.delete_player(int(userkey))
-        await lobbys.delete_one({"_id": self._id})
+        await lobbys.delete_one({"_id": self._id}, comment='Lobby_delete')
 
     async def add_player(self, user:DungPlayer, user_id:int):
         self['users'][str(user_id)] = user
         await lobbys.update_one({"_id": self._id}, 
-                                {"$set": {f"users.{user_id}": user.__dict__}})
+                                {"$set": {f"users.{user_id}": user.__dict__}}, comment='Lobby_add_player')
 
     async def delete_player(self, user_id:int):
         player:DungPlayer = self['users'][str(user_id)].copy()
@@ -154,7 +156,7 @@ class Lobby:
 
         del self['users'][str(user_id)]
         await lobbys.update_one({"_id": self._id}, 
-                                {"$unset": {f"users.{user_id}": 0}})
+                                {"$unset": {f"users.{user_id}": 0}}, comment='delete_player')
 
 class Room:
 

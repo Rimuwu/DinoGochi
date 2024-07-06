@@ -6,7 +6,6 @@ from bot.modules.states_tools import prepare_steps
 from bot.modules.market import generate_items_pages
 
 MAX_PRICE = 10_000_000
-items = mongo_client.items.items
 
 def circle_data(userid, chatid, lang, items, option, prepare: bool = True):
     """ Создай данные для запроса: предмета, количества, надо ли повторить

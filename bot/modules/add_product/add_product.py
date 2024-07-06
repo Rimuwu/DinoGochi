@@ -14,11 +14,6 @@ from bot.modules.add_product.items_items import items_items, trade_circle
 
 MAX_PRICE = 10_000_000
 
-users = mongo_client.user.users
-sellers = mongo_client.market.sellers
-items = mongo_client.items.items
-products = mongo_client.market.products
-
 
 """ Старт всех проверок
 """

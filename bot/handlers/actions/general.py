@@ -13,10 +13,9 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseDinoState
 from bot.modules.user import User
  
-
-dinosaurs = mongo_client.dinosaur.dinosaurs
-game_task = mongo_client.dino_activity.game
-collecting_task = mongo_client.dino_activity.collecting
+from bot.modules.overwriting.DataCalsses import DBconstructor
+dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+game_task = DBconstructor(mongo_client.dino_activity.game)
 
 @bot.message_handler(pass_bot=True, textstart='commands_name.actions.dino_button')
 async def edit_dino_buttom(message: Message):
@@ -51,7 +50,7 @@ async def answer_edit(callback: CallbackQuery):
     try:
         await bot.delete_message(user_id, message.id)
     except: pass
-    dino = await dinosaurs.find_one({'alt_id': data}, {'_id': 1, 'name': 1})
+    dino = await dinosaurs.find_one({'alt_id': data}, {'_id': 1, 'name': 1}, comment='answer_edit_dino')
     if dino:
         await user.update({'$set': {'settings.last_dino': dino['_id']}})
         await bot.send_message(user_id, 
@@ -83,9 +82,9 @@ async def invite_to_action(callback: CallbackQuery):
         'dino_alt': data[2]
     }
 
-    dino = await dinosaurs.find_one({'alt_id': data[2]})
+    dino = await dinosaurs.find_one({'alt_id': data[2]}, comment='invite_to_action_dino')
     if dino:
-        res = await game_task.find_one({'dino_id': dino['_id']})
+        res = await game_task.find_one({'dino_id': dino['_id']}, comment='invite_to_action_res')
         if res: 
             await start_friend_menu(invite_adp, userid, chatid, lang, True, transmitted_data)
 
@@ -127,9 +126,9 @@ async def join(callback: CallbackQuery):
     friend_dino = data[2]
     friendid = data[3]
 
-    dino = await dinosaurs.find_one({'alt_id': friend_dino})
+    dino = await dinosaurs.find_one({'alt_id': friend_dino}, comment='join_dino')
     if dino:
-        res = await game_task.find_one({'dino_id': dino['_id']})
+        res = await game_task.find_one({'dino_id': dino['_id']}, comment='join_res')
         if not res: 
             text = t('entertainments.join_end', lang)
             await bot.send_message(chatid, text)

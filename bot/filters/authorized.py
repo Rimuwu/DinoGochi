@@ -4,7 +4,8 @@ from telebot.types import Message
 from bot.config import mongo_client
 from bot.exec import bot
 
-users = mongo_client.user.users
+from bot.modules.overwriting.DataCalsses import DBconstructor
+users = DBconstructor(mongo_client.user.users)
 
 class IsAuthorizedUser(AdvancedCustomFilter):
     key = 'is_authorized'
@@ -12,7 +13,8 @@ class IsAuthorizedUser(AdvancedCustomFilter):
     async def check(self, message: Message, status: bool):
         is_authorized = await users.find_one(
                 { 'userid': message.from_user.id
-                }, {'_id': 1}) is not None
+                }, {'_id': 1}, comment='authorized_check'
+                ) is not None
 
         if status: result = is_authorized
         else: result = not is_authorized

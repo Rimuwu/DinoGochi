@@ -10,12 +10,12 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.markup import tranlate_data
 from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
                                       ChooseOptionState, ChooseStringState, ChooseStepState)
-from bot.modules.user import premium, User
+from bot.modules.user import User
 from random import randint
  
-
-users = mongo_client.user.users
-langs = mongo_client.user.lang
+from bot.modules.overwriting.DataCalsses import DBconstructor
+users = DBconstructor(mongo_client.user.users)
+langs = DBconstructor(mongo_client.user.lang)
 
 async def notification(result: bool, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -25,7 +25,10 @@ async def notification(result: bool, transmitted_data: dict):
     text = t(f'not_set.{result}', lang)
     await bot.send_message(chatid, text, 
                     reply_markup= await m(userid, 'last_menu', lang))
-    await users.update_one({'userid': userid}, {"$set": {'settings.notifications': result}})
+    await users.update_one({'userid': userid}, 
+                           {"$set": {'settings.notifications': result}}, 
+                           comment='notification_1'
+                           )
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings.notification', 
                      is_authorized=True, private=True)
@@ -56,7 +59,10 @@ async def dino_profile(result: bool, transmitted_data: dict):
     await bot.send_message(chatid, text, 
                     reply_markup= await m(userid, 
                     'last_menu', lang))
-    await users.update_one({'userid': userid}, {"$set": {'settings.profile_view': result}})
+    await users.update_one({'userid': userid}, 
+                           {"$set": {'settings.profile_view': result}}, 
+                           comment='dino_profile_1'
+                           )
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings.dino_profile', 
                      is_authorized=True, private=True)
@@ -87,11 +93,14 @@ async def inventory(result: list, transmitted_data: dict):
     chatid = transmitted_data['chatid']
 
     text = t(f'inv_set_pages.accept', lang, 
-             gr = result[0], vr = result[1]
-            )
+             gr = result[0], vr = result[1])
+
     await bot.send_message(chatid, text, 
                     reply_markup= await m(userid, 'last_menu', lang))
-    await users.update_one({'userid': userid}, {"$set": {'settings.inv_view': result}})
+    await users.update_one({'userid': userid}, 
+                           {"$set": {'settings.inv_view': result}}, 
+                           comment='inventory_1'
+                           )
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings.inventory', 
                      is_authorized=True, private=True)
@@ -252,7 +261,10 @@ async def my_name_end(content: str, transmitted_data: dict):
                                parse_mode='Markdown', 
                                reply_markup= await m(userid, 'last_menu', lang))
 
-    await users.update_one({'userid': userid}, {'$set': {'settings.my_name': name}})
+    await users.update_one({'userid': userid}, 
+                           {'$set': {'settings.my_name': name}}, 
+                           comment='my_name_end'
+                           )
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings2.my_name', is_authorized=True, private=True)
 async def my_name(message: Message):
@@ -270,7 +282,9 @@ async def lang_set(new_lang: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
 
-    await langs.update_one({'userid': userid}, {'$set': {'lang': new_lang}})
+    await langs.update_one({'userid': userid}, 
+                           {'$set': {'lang': new_lang}},
+                           comment='lang_set')
 
     await bot.send_message(chatid, t('new_lang', new_lang),
                                reply_markup= await m(userid, 'last_menu', new_lang))

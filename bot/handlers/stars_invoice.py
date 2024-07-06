@@ -1,16 +1,11 @@
-from itertools import product
-from telebot.types import CallbackQuery, Message, PreCheckoutQuery
+
+from telebot.types import Message, PreCheckoutQuery
 
 from bot.const import GAME_SETTINGS
-from bot.config import mongo_client
-from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
-from bot.modules.data_format import escape_markdown, list_to_inline, random_code
+from bot.modules.data_format import  random_code
 from bot.modules.donation import OpenDonatData, give_reward, save, save_donation
-from bot.modules.item import AddItemToUser, counts_items
-from bot.modules.localization import get_data, t, get_lang
-from bot.modules.markup import cancel_markup
-from bot.modules.markup import markups_menu as m
+from bot.modules.localization import t, get_lang
 from bot.modules.logs import log
 from time import time
 

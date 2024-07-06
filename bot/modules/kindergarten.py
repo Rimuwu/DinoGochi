@@ -1,7 +1,9 @@
 from bot.config import mongo_client
 from time import time, strftime
 
-kindergarten = mongo_client.dino_activity.kindergarten
+from bot.modules.overwriting.DataCalsses import DBconstructor
+kindergarten = DBconstructor(mongo_client.dino_activity.kindergarten)
+
 m_hours = 120
 
 async def add_moth_data(userid: int):
@@ -16,7 +18,7 @@ async def add_moth_data(userid: int):
             "hours": 0
         }
     }
-    await kindergarten.insert_one(data)
+    await kindergarten.insert_one(data, comment='add_moth_data')
 
 async def dino_kind(dinoid, hours: int = 1):
     data = {
@@ -26,10 +28,10 @@ async def dino_kind(dinoid, hours: int = 1):
         "end": int(time()) + hours * 3600
     }
 
-    await kindergarten.insert_one(data)
+    await kindergarten.insert_one(data, comment='dino_kind')
 
 async def check_hours(userid: int):
-    st = await kindergarten.find_one({'userid': userid})
+    st = await kindergarten.find_one({'userid': userid}, comment='check_hours')
 
     if st: return st['total'], st['end']
     else:
@@ -37,7 +39,7 @@ async def check_hours(userid: int):
         return m_hours, int(time()) + 2_592_000
 
 async def minus_hours(userid: int, hours: int = 1):
-    st = await kindergarten.find_one({'userid': userid})
+    st = await kindergarten.find_one({'userid': userid}, comment='minus_hours')
     if st:
         if (st['total'] - hours) < 0: return False
         else:
@@ -45,20 +47,20 @@ async def minus_hours(userid: int, hours: int = 1):
                 {'userid': userid}, 
                 {'$inc': {'total': -hours, 'now.hours': hours},
                  '$set': {'now.data': strftime('%j')}
-                }
+                }, comment='minus_hours'
             )
             return True
     else: return False
 
 async def hours_now(userid: int):
-    st = await kindergarten.find_one({'userid': userid})
+    st = await kindergarten.find_one({'userid': userid}, comment='hours_now_st')
     if st:
         if st['now']['data'] == strftime('%j'):
             return st['now']['hours']
         else:
             await kindergarten.update_one({'userid': userid}, 
                                     {'$set': {'now.data': strftime('%j'), 
-                                             'now.hours': 0}}
+                                             'now.hours': 0}}, comment='hours_now'
                                     )
             return 0
     else: return 0

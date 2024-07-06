@@ -18,8 +18,9 @@ from bot.modules.promo import use_promo
  
 from bot.modules.tracking import add_track
 
-referals = mongo_client.user.referals
-management = mongo_client.other.management
+from bot.modules.overwriting.DataCalsses import DBconstructor
+referals = DBconstructor(mongo_client.user.referals)
+management = DBconstructor(mongo_client.other.management)
 
 @bot.message_handler(pass_bot=True, commands=['start'], is_authorized=True, private=True)
 async def start_command_auth(message: types.Message):
@@ -39,9 +40,11 @@ async def start_command_auth(message: types.Message):
                           'chatid': message.chat.id,
                           'lang': await get_lang(message.from_user.id)}, False)
 
-        track = await management.find_one({'_id': 'tracking_links'})
+        track = await management.find_one({'_id': 'tracking_links'}, comment='start_command_auth_track')
         if referal in track['links']:
-            await management.update_one({'_id': 'tracking_links'}, {"$inc": {f"{referal}.col": 1}})
+            await management.update_one({'_id': 'tracking_links'}, 
+                                        {"$inc": {f"{referal}.col": 1}}, 
+                                        comment='start_command_auth_management')
 
         lang = await get_lang(message.from_user.id)
         st, text = await use_promo(referal, message.from_user.id, lang)
@@ -86,7 +89,7 @@ async def start_game_message(message: types.Message):
 
     if len(content) > 1: 
         referal = str(content[1])
-        if await referals.find_one({'code': referal}): add_referal = True
+        if await referals.find_one({'code': referal}, comment='start_game_message'): add_referal = True
         await add_track(content[1])
 
     if not add_referal:

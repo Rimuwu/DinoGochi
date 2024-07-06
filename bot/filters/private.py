@@ -1,7 +1,6 @@
 from telebot.asyncio_filters import AdvancedCustomFilter
-from telebot.types import Message, CallbackQuery
+from telebot.types import CallbackQuery
 
-from bot.config import conf
 from bot.exec import bot
 
 class IsPrivateChat(AdvancedCustomFilter):

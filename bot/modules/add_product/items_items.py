@@ -12,7 +12,8 @@ from bot.modules.add_product.general import end
 
 MAX_PRICE = 10_000_000
 
-items = mongo_client.items.items
+from bot.modules.overwriting.DataCalsses import DBconstructor
+items = DBconstructor(mongo_client.items.items)
 
 
 def trade_circle(userid, chatid, lang, items, option, prepare: bool = True):
@@ -57,7 +58,7 @@ async def trade_update_col(transmitted_data):
         item_data = transmitted_data['return_data']['items']
 
     items_res = await items.find({'items_data': item_data, 
-                                  "owner_id": userid}).to_list(None) # type: ignore
+                                  "owner_id": userid}, comment='trade_update_col_items_res')
     if items_res:
         max_count = 0
         for i in items_res: max_count += i['count']

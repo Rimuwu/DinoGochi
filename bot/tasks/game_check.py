@@ -9,9 +9,10 @@ from bot.modules.user import experience_enhancement
 from bot.taskmanager import add_task
 from bot.modules.quests import quest_process
 
-game_task = mongo_client.dino_activity.game
-dinosaurs = mongo_client.dinosaur.dinosaurs
-dino_owners = mongo_client.dinosaur.dino_owners
+from bot.modules.overwriting.DataCalsses import DBconstructor
+game_task = DBconstructor(mongo_client.dino_activity.game)
+dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 
 REPEAT_MINUTS = 3
 ENERGY_DOWN = 0.03 * REPEAT_MINUTS
@@ -20,8 +21,8 @@ LVL_CHANCE = 0.125 * REPEAT_MINUTS
 GAME_CHANCE = 0.17 * REPEAT_MINUTS
 
 async def game_end():
-    data = list(await game_task.find({'game_end': 
-        {'$lte': int(time())}}).to_list(None)).copy()
+    data = await game_task.find({'game_end': 
+        {'$lte': int(time())}}, comment='game_end_data')
 
     for i in data:
         await end_game(i['dino_id'])
@@ -34,12 +35,12 @@ async def game_end():
                  int((game_time // 2) * i['game_percent']))
 
 async def game_process():
-    data = list(await game_task.find(
-        {'game_end': {'$gte': int(time())}}).to_list(None)).copy()
+    data = await game_task.find(
+        {'game_end': {'$gte': int(time())}}, comment='game_process_data')
 
     for game_data in data:
         percent = game_data['game_percent']
-        dino = await dinosaurs.find_one({'_id': game_data['dino_id']})
+        dino = await dinosaurs.find_one({'_id': game_data['dino_id']}, comment='game_process_dino')
 
         if dino:
             if random.uniform(0, 1) <= ENERGY_DOWN:
@@ -49,7 +50,8 @@ async def game_process():
             if dino['stats']['game'] < 100:
                 if random.uniform(0, 1) <= LVL_CHANCE: 
                     if not await check_breakdown(dino['_id'], 'unrestrained_play'):
-                        dino_con = await dino_owners.find_one({'dino_id': dino['_id']})
+                        dino_con = await dino_owners.find_one({'dino_id': dino['_id']}, 
+                                                              comment='game_process_dino_con')
                         if dino_con:
                             userid = dino_con['owner_id']
                             await experience_enhancement(userid, randint(1, 19))

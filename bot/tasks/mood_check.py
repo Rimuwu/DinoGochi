@@ -5,15 +5,16 @@ from bot.modules.dinosaur import mutate_dino_stat
 from bot.taskmanager import add_task
 from bot.modules.logs import log
 
-dino_mood = mongo_client.dinosaur.dino_mood
-dinosaurs = mongo_client.dinosaur.dinosaurs
+from bot.modules.overwriting.DataCalsses import DBconstructor
+dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
+dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 
 REPEAT_MINUTES = 10
 
 async def mood_check():
     """ Проверяет и выдаёт настроение
     """
-    res = list(await dino_mood.find({}).to_list(None)) 
+    res = await dino_mood.find({}, comment='mood_check_res')
     upd_data = {}
 
     for mood_data in res:
@@ -30,7 +31,7 @@ async def mood_check():
             if mood_data['type'] == 'mood_edit':
                 if int(time()) >= mood_data['end_time']:
                     # Закончилось время эффекта
-                    await dino_mood.delete_one({'_id': mood_data['_id']})
+                    await dino_mood.delete_one({'_id': mood_data['_id']}, comment='mood_check_3')
 
             elif mood_data['type'] == 'mood_while':
                 while_data = mood_data['while']
@@ -41,11 +42,11 @@ async def mood_check():
             if mood_data['type'] in ['breakdown', 'inspiration']:
                 if int(time()) >= mood_data['end_time']:
                     # Закончилось время эффекта
-                    await dino_mood.delete_one({'_id': mood_data['_id']})
+                    await dino_mood.delete_one({'_id': mood_data['_id']}, comment='mood_check_2')
 
                     if mood_data['action'] == 'hysteria':
                         await dinosaurs.update_one({'_id': dino_id}, 
-                                            {'$set': {'status': 'pass'}})
+                                            {'$set': {'status': 'pass'}}, comment='mood_check_1')
                 else:
                     if dino_id not in upd_data: upd_data[dino_id] = {
                         'unit': 0, 'events': []
@@ -62,7 +63,7 @@ async def mood_check():
 
     for dino_id, data in upd_data.items():
         try:
-            dino = await dinosaurs.find_one({'_id': dino_id})
+            dino = await dinosaurs.find_one({'_id': dino_id}, comment='mood_check_123')
 
             if dino:
                 if data['unit'] != 0:
@@ -73,34 +74,34 @@ async def mood_check():
                         char = while_data['characteristic']
                         if while_data['min_unit'] >= dino['stats'][char] or \
                             dino['stats'][char] >= while_data['max_unit']:
-                                await dino_mood.delete_one({'_id': while_data['_id']})
+                                await dino_mood.delete_one({'_id': while_data['_id']}, comment='mood_check_1')
 
                 for event_data in data['events']:
                     if event_data['type'] == 'breakdown':
                         if dino['stats']['mood'] >= event_data['cancel_mood']:
-                            await dino_mood.delete_one({'_id': event_data['_id']})
+                            await dino_mood.delete_one({'_id': event_data['_id']}, comment='mood_check_2')
 
                             if event_data['action'] == 'hysteria':
                                 await dinosaurs.update_one({'_id': dino_id}, 
-                                                    {'$set': {'status': 'pass'}})
+                                                    {'$set': {'status': 'pass'}}, comment='mood_check_3')
 
                     if event_data['type'] == 'inspiration':
                         if dino['stats']['mood'] <= event_data['cancel_mood']:
-                            await dino_mood.delete_one({'_id': event_data['_id']})
-            else: await dino_mood.delete_many({'dino_id': dino_id})
+                            await dino_mood.delete_one({'_id': event_data['_id']}, comment='mood_check_3')
+            else: await dino_mood.delete_many({'dino_id': dino_id}, comment='mood_check_4')
         except Exception as e:
             log(f'upd_data error {e}, {data} {dino_id}')
 
 
 async def break_down():
-    res = list(await dinosaurs.find({'status': 'hysteria'}).to_list(None))
+    res = await dinosaurs.find({'status': 'hysteria'}, comment='break_down_2')
 
     for i in res:
         dino_id = i['_id']
-        res_s = await dino_mood.find_one({'dino_id': dino_id, 'action': 'hysteria'})
+        res_s = await dino_mood.find_one({'dino_id': dino_id, 'action': 'hysteria'}, comment='break_down_1')
 
         if not res_s:
-            await dinosaurs.update_one({'_id': dino_id}, {'$set': {'status': 'pass'}})
+            await dinosaurs.update_one({'_id': dino_id}, {'$set': {'status': 'pass'}}, comment='break_down_3')
 
 if __name__ != '__main__':
     if conf.active_tasks:

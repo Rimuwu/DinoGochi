@@ -121,14 +121,14 @@ def AddItemToUser(userid: int, itemid: str, count: int = 1, preabil: dict = {}):
                 'items_data': item,
                 'count': 1
             }
-            items.insert_one(item_dict, True)
+            items.insert_one(item_dict, True, comment='')
     else:
         item_dict = {
             'owner_id': userid,
             'items_data': item,
             'count': count
         }
-        items.insert_one(item_dict)
+        items.insert_one(item_dict, comment='')
 
     return action
 def random_code(length: int=10):

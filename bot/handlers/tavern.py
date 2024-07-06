@@ -16,14 +16,12 @@ from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import cancel_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.inline import inline_menu
-from bot.modules.states_tools import (
-                                      ChooseDinoState, ChooseInlineState,
-                                      ChoosePagesState, ChooseStepState)
+from bot.modules.states_tools import (ChooseInlineState, ChooseStepState)
 from bot.modules.user import (AddItemToUser, check_name, daily_award_con,
                               take_coins, user_in_chat, get_dinos)
- 
 
-events = mongo_client.other.events
+from bot.modules.overwriting.DataCalsses import DBconstructor
+events = DBconstructor(mongo_client.other.events)
 
 @bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.events', is_authorized=True, private=True)
 async def events_c(message: Message):
@@ -32,7 +30,7 @@ async def events_c(message: Message):
 
     text = t('events.info', lang)
 
-    res = list(await events.find({}).to_list(None))
+    res = await events.find({}, comment='events_c_res')
     a = 0
     for event in res:
         a += 1

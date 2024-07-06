@@ -18,8 +18,9 @@ from bot.modules.quests import quest_process
  
 from bot.modules.accessory import check_accessory
 
-dinosaurs = mongo_client.dinosaur.dinosaurs
-collecting_task = mongo_client.dino_activity.collecting
+from bot.modules.overwriting.DataCalsses import DBconstructor
+dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+collecting_task = DBconstructor(mongo_client.dino_activity.collecting)
 
 async def collecting_adapter(return_data, transmitted_data):
     dino = transmitted_data['dino'] # type: Dino
@@ -40,7 +41,8 @@ async def collecting_adapter(return_data, transmitted_data):
         await bot.send_message(chatid, text, reply_markup= await m(
             userid, 'last_menu', lang))
     else:
-        res_dino_status = await dinosaurs.find_one({"_id": dino._id}, {'status': 1})
+        res_dino_status = await dinosaurs.find_one({"_id": dino._id}, {'status': 1},
+                                    comment='collecting_adapter__dino_status')
         if res_dino_status:
             if res_dino_status['status'] != 'pass':
                 await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
@@ -115,7 +117,8 @@ async def collecting_progress(message: Message):
     last_dino = await user.get_last_dino()
     if last_dino:
         
-        data = await collecting_task.find_one({'dino_id': last_dino._id})
+        data = await collecting_task.find_one({'dino_id': last_dino._id},
+                                              comment="collecting_progress_data")
         if data:
             stop_button = t(
                 f'collecting.stop_button.{data["collecting_type"]}', lang)
@@ -144,7 +147,8 @@ async def collecting_callback(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
 
     dino = await Dino().create(dino_data)
-    data = await collecting_task.find_one({'dino_id': dino._id})
+    data = await collecting_task.find_one({'dino_id': dino._id},
+                                          comment="collecting_callback")
     if data and dino and data:
         items_list = []
         for key, count in data['items'].items():

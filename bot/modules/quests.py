@@ -10,8 +10,9 @@ seconds_to_str)
 from bot.modules.item import counts_items, get_name, RemoveItemFromUser
 from bot.modules.localization import get_data, t
 
-quests_data = mongo_client.tavern.quests
-items = mongo_client.items.items
+from bot.modules.overwriting.DataCalsses import DBconstructor
+quests_data = DBconstructor(mongo_client.tavern.quests)
+items = DBconstructor(mongo_client.items.items)
 
 complex_time = {
     1: {"min": 36000, "max": 57600, "type": "random"},
@@ -177,26 +178,26 @@ async def save_quest(quest: dict, owner_id: int):
     """
     async def generation_code():
         code = random_code(10)
-        if await quests_data.find_one({'alt_id': code}):
+        if await quests_data.find_one({'alt_id': code}, comment='save_quest'):
             code = generation_code()
         return code
 
     quest['alt_id'] = await generation_code()
     quest['owner_id'] = owner_id
 
-    await quests_data.insert_one(quest)
+    await quests_data.insert_one(quest, comment='save_quest')
     return quest['alt_id']
 
 async def quest_resampling(questid: ObjectId):
     """ Убирает владельца квеста, тем самым предоставляя квест для распределния на новых участников
     """
-    await quests_data.update_one({'_id': questid}, {'$set': {'owner_id': 0}})
+    await quests_data.update_one({'_id': questid}, {'$set': {'owner_id': 0}}, comment='quest_resampling')
 
 async def quest_process(userid: int, quest_type: str, unit: int = 0, items: list = []):
     """ Заносит данные в квест
     """
     quests = await quests_data.find({"owner_id": userid, 
-                                     'type': quest_type}).to_list(None) 
+                                     'type': quest_type}, comment='quest_process_quests')
 
     for quest in quests:
         if quest_type in ['journey', 'game']:
@@ -206,7 +207,8 @@ async def quest_process(userid: int, quest_type: str, unit: int = 0, items: list
             else: plus = unit
 
             if plus:
-                await quests_data.update_one({'_id': quest['_id']}, {"$inc": {'data.minutes.1': plus}})
+                await quests_data.update_one({'_id': quest['_id']}, 
+                                             {"$inc": {'data.minutes.1': plus}}, comment='quest_process_1')
 
         elif quest_type in ['fishing', 'collecting', 'hunt']:
             count = quest['data']['count']
@@ -215,14 +217,14 @@ async def quest_process(userid: int, quest_type: str, unit: int = 0, items: list
             else: plus = unit
             if plus:
                 await quests_data.update_one({'_id': quest['_id']}, 
-                                       {"$inc": {'data.count.1': plus+1}})
+                                       {"$inc": {'data.count.1': plus+1}}, comment='quest_process_2')
 
         elif quest_type == 'feed':
             for i in items:
                 if i in quest['data']['items']:
                     if quest['data']['items'][i][1] < quest['data']['items'][i][0]:
                         await quests_data.update_one({'_id': quest['_id']}, 
-                                               {"$inc": {f'data.items.{i}.1': 1}})
+                                               {"$inc": {f'data.items.{i}.1': 1}}, comment='quest_process_3')
 
 async def check_quest(quest: dict):
     """ Проверяет квест на выполнение, если тип квеста "get" то в случае выполнения удалит предметы
@@ -238,7 +240,8 @@ async def check_quest(quest: dict):
 
         # Проверяем на наличие
         for key, value in count_items.items():
-            result = await items.find({"items_data.item_id": key, "owner_id": quest['owner_id']}).to_list(None) 
+            result = await items.find(
+                {"items_data.item_id": key, "owner_id": quest['owner_id']}, comment='check_quest_result')
 
             if not result: return False
             else:
