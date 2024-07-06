@@ -133,5 +133,13 @@
         },
         "show": true,
         "author": "unknown_cat13"
+    },
+    "20": {
+        "price": {
+            "coins": 100000000000,
+            "super_coins": 10000
+        },
+        "show": false,
+        "author": "unknown_cat13"
     }
 }
