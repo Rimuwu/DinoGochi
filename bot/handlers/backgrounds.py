@@ -5,22 +5,19 @@ from telebot.types import CallbackQuery, Message, InputMedia
 
 from bot.config import mongo_client
 from bot.exec import bot
-from bot.modules.data_format import chunks, list_to_keyboard, escape_markdown
+from bot.modules.data_format import list_to_keyboard, escape_markdown
 from bot.modules.dinosaur import Dino
 from bot.modules.images import async_open
-from bot.modules.localization import get_data, t, get_lang, get_all_locales
-from bot.modules.markup import confirm_markup, cancel_markup, count_markup
+from bot.modules.localization import get_data, t, get_lang
+from bot.modules.markup import confirm_markup, count_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.markup import tranlate_data
-from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
-                                      ChooseOptionState, ChooseStringState, ChooseIntState)
-from bot.modules.user import premium, User, take_coins
-from random import randint
+from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState, ChooseStringState, ChooseIntState)
+from bot.modules.user import premium, take_coins
 from bot.const import BACKGROUNDS
 from bot.modules.inline import list_to_inline
 
-users = mongo_client.user.users
-langs = mongo_client.user.lang
+from bot.modules.overwriting.DataCalsses import DBconstructor
+users = DBconstructor(mongo_client.user.users)
 
 async def back_edit(content: str, transmitted_data: dict):
     dino = transmitted_data['dino']
@@ -106,16 +103,10 @@ def near_back(key: int, step: int, storage: list[int] = []):
     if BACKGROUNDS[str(key)]['show']:
         return key
     else:
-        while key != 1 or str(key) != list(BACKGROUNDS.keys())[-1]:
-            key += step
-            if BACKGROUNDS[str(key)]['show']:
-                return key
-            elif key in storage:
-                return key
         return key
 
 async def back_page(userid: int, page: int, lang: str):
-    user = await users.find_one({"userid": userid})
+    user = await users.find_one({"userid": userid}, comment='back_page_user')
     text_data = get_data('backgrounds', lang)
     storage = user['saved']['backgrounds']
     back = BACKGROUNDS[str(page)]
@@ -150,9 +141,12 @@ async def back_page(userid: int, page: int, lang: str):
             f"◀ {left}": f"back_m page {left}",
             text_data['buttons']['page_n']: f"back_m page_n {page}",
             f"{right} ▶": f"back_m page {right}",
-            f"{back['price']['coins']} 🪙": f'back_m buy_coins {page}',
-            f"{back['price']['super_coins']} 👑": f'back_m buy_super_coins {page}',
         }
+
+        if back['show']:
+            buttons[ f"{back['price']['coins']} 🪙" ] = f'back_m buy_coins {page}'
+            buttons[ f"{back['price']['super_coins']} 👑" ] = f'back_m buy_super_coins {page}'
+
         text = t('backgrounds.description_buy', lang, add_text=add_text)
 
     text += f'\n\n*№ {page}*'
@@ -210,7 +204,7 @@ async def kindergarten(call: CallbackQuery):
 
 
     elif action in ['buy_coins', 'buy_super_coins']:
-        user = await users.find_one({"userid": userid})
+        user = await users.find_one({"userid": userid}, comment='kindergarten_user')
         storage = user['saved']['backgrounds']
 
         if int(b_id) not in storage:
@@ -263,13 +257,12 @@ async def buy(_: bool, transmitted_data: dict):
     page = transmitted_data['page']
 
     if buy_type == 'buy_super_coins':
-        user = await users.find_one({"userid": userid})
+        user = await users.find_one({"userid": userid}, comment='buy_user')
         if price['super_coins'] <= user['super_coins']:
             res = True
 
             await users.update_one({'userid': userid}, {'$inc': {
-            'super_coins': price['super_coins']
-        }})
+            'super_coins': price['super_coins']}}, comment='buy_await')
 
     else:
         res = await take_coins(userid, -price['coins'], True)
@@ -280,7 +273,7 @@ async def buy(_: bool, transmitted_data: dict):
 
         await users.update_one({'userid': userid}, {'$push': {
             'saved.backgrounds': int(page)
-        }})
+        }}, comment='buy_res')
 
         text, markup, image = await back_page(userid, int(page), lang)
         await bot.edit_message_media(
@@ -305,7 +298,7 @@ async def page_n(number: int, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     message_id = transmitted_data['message_id']
 
-    user = await users.find_one({"userid": userid})
+    user = await users.find_one({"userid": userid}, comment='page_n_user')
     storage = user['saved']['backgrounds']
 
     page = near_back(number, -1, storage)
