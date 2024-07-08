@@ -2,18 +2,15 @@ from telebot.types import Message, InputMedia
 
 from bot.config import mongo_client
 from bot.exec import bot
-from bot.modules.data_format import (list_to_inline, list_to_keyboard,
-                                     seconds_to_str, user_name, escape_markdown)
+from bot.modules.data_format import (list_to_keyboard, escape_markdown)
 from bot.modules.item import (CheckCountItemFromUser,
-                              RemoveItemFromUser, counts_items, get_name)
-from bot.modules.localization import get_data, get_lang, t
+                              RemoveItemFromUser)
+from bot.modules.localization import t
 from bot.modules.market import buy_product, check_preferential, create_preferential, delete_product, generate_items_pages, preview_product, product_ui, seller_ui
 
-
-
-from bot.modules.markup import answer_markup, cancel_markup, count_markup, confirm_markup
+from bot.modules.markup import cancel_markup, count_markup, confirm_markup
 from bot.modules.states_tools import (ChooseIntState, ChooseStringState,
-                                      ChooseStepState, prepare_steps, ChooseConfirmState, ChoosePagesState)
+                                      ChooseStepState, ChooseConfirmState, ChoosePagesState)
 from bot.modules.markup import markups_menu as m
 from bot.modules.user import take_coins
 from random import choice

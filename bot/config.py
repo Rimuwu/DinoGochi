@@ -32,6 +32,7 @@ class Config:
         self.advert_token = ''
 
         self.check_translate = False
+        self.base_logging = False
 
     def fromJSON(self, js: str) -> None:
         """Десереализует строку в данные

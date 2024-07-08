@@ -10,6 +10,14 @@
         "other": ["management", "statistic", "events", "promo", "dead_users"]
     },
 
+    "indexes": [
+        {"collection": "user", "base": "users", 
+         "indexes": [
+            {}
+        ]
+        }
+    ],
+
     "please_create_this": {
         "other": {
             "management": [

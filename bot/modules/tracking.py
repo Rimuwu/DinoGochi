@@ -1,10 +1,7 @@
-from telebot.types import (CallbackQuery, InlineKeyboardButton,
-                           InlineKeyboardMarkup, Message, InputMedia)
 
 from bot.config import mongo_client
 from bot.exec import bot
-from bot.modules.localization import get_data, t, get_lang
-from bot.modules.item import counts_items
+from bot.modules.localization import get_data
 from bot.modules.data_format import seconds_to_str
 from bot.modules.data_format import list_to_inline
 from time import time

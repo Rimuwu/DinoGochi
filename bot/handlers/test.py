@@ -37,6 +37,8 @@ from bot.modules.images import create_dino_image, create_dino_image_pst, async_o
 
 from bot.modules.events import create_event, add_event, get_event
 
+from bot.modules.user import get_inventory
+
 from typing import Optional
 from PIL import Image
 
@@ -147,3 +149,21 @@ async def add_to(message):
     m = await bot.send_message(message.from_user.id, "test")
     player = await DungPlayer().create(message.from_user.id, m.id)
     await lobby.add_player(player, message.from_user.id)
+
+
+@bot.message_handler(pass_bot=True, commands=['test'])
+async def test(message: Message):
+    lang = await get_lang(message.from_user.id)
+    chatid = message.chat.id
+    
+    res = []
+    
+    for i in range(100):
+        st = time()
+        await get_inventory(chatid)
+        res.append(time()-st)
+    
+    result = 0
+    for i in res: result += i
+
+    print(round(result / 10, 4))

@@ -25,6 +25,7 @@ logging.basicConfig(
 def log(message: str, lvl: int = 1, prefix: str = 'Бот') -> None:
     """
     LVL: \n
+    -1 - Base Log
     0 - debug (активируется в config)\n
     1 - info\n
     2 - warning\n
@@ -37,8 +38,9 @@ def log(message: str, lvl: int = 1, prefix: str = 'Бот') -> None:
             logging.info(f'DEBUG: {message}')
             print(Fore.CYAN + f"{strftime('%Y %m-%d %H.%M.%S')} {prefix}: {message}" + Style.RESET_ALL)
     elif lvl == -1: # Цвет для логов базы
-        logging.error(message)
-        print(Fore.LIGHTBLACK_EX + f"{strftime('%Y %m-%d %H.%M.%S')} DB {prefix}: {message}" + Style.RESET_ALL)
+        if conf.base_logging:
+            logging.info(message)
+            print(Fore.LIGHTBLACK_EX + f"{strftime('%Y %m-%d %H.%M.%S')} DB {prefix}: {message}" + Style.RESET_ALL)
     elif lvl == 1:
         logging.info(message)
         print(Fore.GREEN + f"{strftime('%Y %m-%d %H.%M.%S')} {prefix}: {message}" + Style.RESET_ALL)
