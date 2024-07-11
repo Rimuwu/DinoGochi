@@ -165,6 +165,8 @@ async def get_lang(userid: int, alternative: str = 'en') -> str:
     data = await langs.find_one({'userid': userid}, comment='get_lang')
 
     if data: lang = data['lang']
+    else:
+        await langs.insert_one({'userid': userid, 'lang': lang}, comment='get_lang_isert_lang')
     return lang
 
 if __name__ == '__main__':
