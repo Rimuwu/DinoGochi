@@ -82,9 +82,11 @@ class Dino:
     async def create(self, baseid: Union[ObjectId, str, None] = None):
         find_result = await dinosaurs.find_one({"_id": baseid}, comment='create_find_result')
         if not find_result:
-            find_result = await dinosaurs.find_one({"alt_id": baseid}, comment='create_find_result')
+            find_result = await dinosaurs.find_one({"alt_id": baseid}, comment='create_find_result1')
         if find_result:
             self.UpdateData(find_result)
+        else:
+            await dino_owners.delete_one({"dino_id": baseid}, comment='delete_because_not_found')
         return self
 
     def UpdateData(self, data):
