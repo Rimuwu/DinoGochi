@@ -631,7 +631,6 @@ def set_standart_specifications(dino_type: str, dino_quality: str):
 
     if dino_type == 'Herbivore':
         charisma += round(uniform( *quality_spec[dino_quality] ), 1)
-        intelligence += round(uniform( *quality_spec[dino_quality] ), 1)
 
     elif dino_type == 'Carnivore':
         power += round(uniform( *quality_spec[dino_quality] ), 1)
