@@ -11,7 +11,7 @@ from bot.modules.dinosaur import incubation_egg
 from bot.modules.images import async_open, create_eggs_image
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import markups_menu as m
-from bot.modules.user import insert_user
+from bot.modules.user import award_premium, insert_user
 from bot.modules.referals import connect_referal
 from bot.handlers.referal_menu import check_code
 from bot.modules.promo import use_promo
@@ -21,6 +21,7 @@ from bot.modules.tracking import add_track
 from bot.modules.overwriting.DataCalsses import DBconstructor
 referals = DBconstructor(mongo_client.user.referals)
 management = DBconstructor(mongo_client.other.management)
+dead_users = DBconstructor(mongo_client.other.dead_users)
 
 @bot.message_handler(pass_bot=True, commands=['start'], is_authorized=True, private=True)
 async def start_command_auth(message: types.Message):
@@ -148,17 +149,23 @@ async def start_inl(callback: types.CallbackQuery):
 
     spl = callback.data.split()
     if len(spl) > 1: content = spl[1]
-
-    stickers = await bot.get_sticker_set('Stickers_by_DinoGochi_bot')
-    sticker = choice(list(stickers.stickers)).file_id
-
-    lang = await get_lang(userid)
-    await bot.send_sticker(callback.message.chat.id, sticker, 
-                           reply_markup=await m(userid, language_code=lang))
-
+    
     if content:
-        lang = await get_lang(userid)
-        st, text = await use_promo(content, userid, lang)
+        # Активация премиума после возвращения 
+        fr = await dead_users.find_one({'promo': content})
+        if fr:
+            await award_premium(fr['userid'], 259_200) # 3 дня
+            await dead_users.delete_one({'_id': fr['_id']})
 
-        if st == 'ok':
-            await bot.send_message(callback.message.chat.id, text)
+            lang = await get_lang(userid)
+            text = '✨'
+            await bot.send_message(callback.message.chat.id, text, 
+                            reply_markup=await m(userid, language_code=lang))
+    
+    else:
+        stickers = await bot.get_sticker_set('Stickers_by_DinoGochi_bot')
+        sticker = choice(list(stickers.stickers)).file_id
+
+        lang = await get_lang(userid)
+        await bot.send_sticker(callback.message.chat.id, sticker, 
+                            reply_markup=await m(userid, language_code=lang))

@@ -50,14 +50,14 @@ async def DeadUser_return():
         if col_d == 0:
             delta_days = (int(time()) - us['last_message_time']) // 86400
 
-            res = await dead_users.find_one({'userid': us['userid']}, {'_id': 0}, comment='DeadUser_return_res') # type: dict
+            res = await dead_users.find_one({'userid': us['userid']}, {'_id': 0}, 
+                                            comment='DeadUser_return_res') # type: dict
             if res:
                 userid, type_send, promo, last_m = list(res.values())
             else:
                 userid, type_send, promo, last_m = us['userid'], '0', '', int(time())
 
             lat_days = (int(time()) - last_m) // 86400
-            # print(f"{us['userid']} dino_col: {col_d} delta_days: {delta_days} lat_days: {lat_days}")
 
             if delta_days >= 7 and delta_days < 30 and type_send != 'situation1':
                 # - Если можно отправить спустя неделю - просто сообщение с напоминанием
@@ -77,17 +77,9 @@ async def DeadUser_return():
 
                 await save_d(userid, 'situation1', int(time()))
 
-            elif delta_days >= 30 and type_send != 'situation2' \
-                or type_send == 'situation2' and lat_days >= 30:
+            elif delta_days >= 31 and type_send != 'situation2' \
+                or type_send == 'situation2' and lat_days >= 31:
                     code = random_code()
-                    promo = await create_promo(
-                        code, 1, int(time()) + 30*86400, 0,
-                        [
-                            {'item_id': '3_days_premium', 
-                             'abilities': {"interact": False}
-                             }
-                        ], True
-                    )
 
                     await save_d(userid, 'situation2', int(time()), code)
                     lang = await get_lang(userid)
