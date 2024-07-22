@@ -33,7 +33,7 @@ journey_task = DBconstructor(mongo_client.dino_activity.journey)
 users = DBconstructor(mongo_client.user.users)
 kindergarten_bd = DBconstructor(mongo_client.dino_activity.kindergarten)
 
-# @asinc_decor().cpu
+
 async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_url):
     text = ''
 

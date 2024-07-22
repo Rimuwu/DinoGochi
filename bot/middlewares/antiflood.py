@@ -45,7 +45,7 @@ class AntifloodMiddleware(BaseMiddleware):
         user_id = message.from_user.id
         if message.chat.type == "private":
             user = await users.find_one({'userid': user_id}, {"_id": 1, 
-                                                    "settings": 1, 'notifications': 1}, 
+                                         "settings": 1, 'notifications': 1}, 
                                         comment='post_process_user')
             if user:
                 await users.update_one({'userid': user_id}, 
