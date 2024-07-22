@@ -1,0 +1,3905 @@
+[
+    {
+        "buffs": {
+            "heal": 15
+        },
+        "act": 4,
+        "class": "ALL",
+        "image": "item1",
+        "rank": "common",
+        "type": "eat",
+        "name": "🍯 Баночка мёда",
+        "original_key": "jar_honey",
+        "recipes": [
+            "📜 Рецепт торта"
+        ]
+    },
+    {
+        "buffs": {
+            "mood": 10
+        },
+        "act": 4,
+        "class": "ALL",
+        "image": "item2",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "set_cookies"
+                ],
+                "materials": [
+                    "cookie",
+                    "cookie",
+                    "cookie",
+                    "cookie",
+                    "cookie",
+                    "cookie",
+                    "cookie",
+                    "cookie",
+                    "cookie",
+                    "cookie",
+                    "cookie",
+                    "cookie",
+                    "cookie",
+                    "cookie",
+                    "cookie"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat",
+        "name": "🍪 Печенье",
+        "original_key": "cookie",
+        "recipes": [
+            "📜 Рецепт торта"
+        ]
+    },
+    {
+        "image": "item3",
+        "inc_type": "random",
+        "incub_time": 43200,
+        "rank": "rare",
+        "type": "egg",
+        "name": "🥚 Загадочное яйцо",
+        "original_key": "mysterious_egg"
+    },
+    {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item4",
+        "rank": "uncommon",
+        "type": "game",
+        "name": "⏲ Таймер",
+        "original_key": "timer",
+        "description": "Даёт возможность узнать сколько времени продлится игра.",
+        "recipes": [
+            "📜 Рецепт супа"
+        ]
+    },
+    {
+        "act": 17,
+        "class": "Carnivore",
+        "image": "item5",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "chicken_leg"
+                ],
+                "materials": [
+                    "wild_boar_meat"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat",
+        "name": "🍖 Мясо кабана",
+        "original_key": "wild_boar_meat",
+        "recipes": [
+            "📜 Рецепт бульона",
+            "📜 Рецепт бекона"
+        ]
+    },
+    {
+        "act": 18,
+        "class": "Herbivore",
+        "image": "item6",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "berries"
+                ],
+                "materials": [
+                    "bunch_herbs"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat",
+        "name": "🌿 Связка трав",
+        "original_key": "bunch_herbs",
+        "recipes": [
+            "📜 Рецепт салата"
+        ]
+    },
+    {
+        "act": 19,
+        "class": "Flying",
+        "image": "item7",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "crab"
+                ],
+                "materials": [
+                    "fish",
+                    "fish"
+                ]
+            },
+            "2": {
+                "create": [
+                    "small_fish"
+                ],
+                "materials": [
+                    "fish"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat",
+        "name": "🍤 Рыба",
+        "original_key": "fish",
+        "recipes": [
+            "📜 Рецепт рыбного пирога",
+            "📜 Рецепт суши"
+        ]
+    },
+    {
+        "act": 11,
+        "class": "Carnivore",
+        "image": "item8",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "chicken_leg"
+                ],
+                "materials": [
+                    "wolf_meat",
+                    "wolf_meat"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat",
+        "name": "🥩 Мясо волка",
+        "original_key": "wolf_meat",
+        "recipes": [
+            "📜 Рецепт тако",
+            "📜 Рецепт стейка",
+            "📜 Рецепт мясного пирога",
+            "📜 Рецепт бутерброда",
+            "📜 Рецепт мяса"
+        ]
+    },
+    {
+        "act": 12,
+        "class": "Herbivore",
+        "image": "item9",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "berries"
+                ],
+                "materials": [
+                    "grasses_from_fields",
+                    "grasses_from_fields"
+                ]
+            },
+            "2": {
+                "create": [
+                    "grain"
+                ],
+                "materials": [
+                    "grasses_from_fields"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat",
+        "name": "🌾 Травы с полей",
+        "original_key": "grasses_from_fields",
+        "recipes": [
+            "📜 Рецепт тако",
+            "📜 Рецепт бутерброда",
+            "📜 Рецепт стейка",
+            "📜 Рецепт салата"
+        ]
+    },
+    {
+        "act": 13,
+        "class": "Flying",
+        "image": "item10",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "small_fish"
+                ],
+                "materials": [
+                    "seafood",
+                    "seafood"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat",
+        "name": "🍣 Морепродукты",
+        "original_key": "seafood",
+        "recipes": [
+            "📜 Рецепт супа"
+        ]
+    },
+    {
+        "act": 16,
+        "class": "Herbivore",
+        "image": "item11",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "grasses_from_fields"
+                ],
+                "materials": [
+                    "berries"
+                ]
+            },
+            "2": {
+                "create": [
+                    "bunch_herbs"
+                ],
+                "materials": [
+                    "berries",
+                    "berries"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat",
+        "name": "🍒 Ягоды",
+        "original_key": "berries",
+        "recipes": [
+            "📜 Рецепт торта",
+            "📜 Рецепт сока",
+            "📜 Рецепт салата",
+            "📜 Рецепт ягодного пирога"
+        ]
+    },
+    {
+        "act": 14,
+        "class": "Carnivore",
+        "image": "item12",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "wolf_meat"
+                ],
+                "materials": [
+                    "chicken_leg"
+                ]
+            },
+            "2": {
+                "create": [
+                    "wild_boar_meat"
+                ],
+                "materials": [
+                    "chicken_leg",
+                    "chicken_leg"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat",
+        "name": "🍗 Куриная ножка",
+        "original_key": "chicken_leg"
+    },
+    {
+        "act": 16,
+        "class": "Flying",
+        "image": "item13",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "fish"
+                ],
+                "materials": [
+                    "small_fish",
+                    "small_fish"
+                ]
+            },
+            "2": {
+                "create": [
+                    "seafood"
+                ],
+                "materials": [
+                    "small_fish"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat",
+        "name": "🦪 Мелкая рыба",
+        "original_key": "small_fish"
+    },
+    {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item14",
+        "rank": "uncommon",
+        "type": "journey",
+        "name": "🧥 Плащ",
+        "original_key": "cloak",
+        "description": "Отменяет штраф за событие дождь."
+    },
+    {
+        "abilities": {
+            "endurance": 100
+        },
+        "act": 10,
+        "image": "item15",
+        "rank": "uncommon",
+        "type": "collecting",
+        "name": "🛠 Инструменты",
+        "original_key": "tooling",
+        "description": "Ускоряют сбор пищи.",
+        "recipes": [
+            "📜 Рецепт лука",
+            "📜 Рецепт мешочка",
+            "📜 Рецепт меча",
+            "📜 Рецепт стрел"
+        ]
+    },
+    {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item16",
+        "rank": "uncommon",
+        "type": "sleep",
+        "name": "🧸 Мишка",
+        "original_key": "bear",
+        "description": "Добавляет режимы сна."
+    },
+    {
+        "buffs": {
+            "heal": 15
+        },
+        "act": 1,
+        "class": "ALL",
+        "image": "item17",
+        "rank": "uncommon",
+        "type": "eat",
+        "name": "🧪 Лечебная смесь",
+        "original_key": "therapeutic_mixture"
+    },
+    {
+        "buffs": {
+            "mood": 13
+        },
+        "act": 8,
+        "class": "ALL",
+        "image": "item18",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "pizza"
+                ],
+                "materials": [
+                    "slice_pizza",
+                    "slice_pizza",
+                    "slice_pizza",
+                    "slice_pizza",
+                    "slice_pizza",
+                    "slice_pizza",
+                    "slice_pizza",
+                    "slice_pizza",
+                    "slice_pizza"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat",
+        "name": "🍕 Кусочек пиццы",
+        "original_key": "slice_pizza"
+    },
+    {
+        "buffs": {
+            "mood": 20
+        },
+        "act": 16,
+        "class": "ALL",
+        "image": "item19",
+        "rank": "common",
+        "type": "eat",
+        "name": "🥞 Сладкие блинчики",
+        "original_key": "sweet_pancakes"
+    },
+    {
+        "image": "item20",
+        "inc_type": "unc",
+        "incub_time": 86400,
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "rare_egg"
+                ],
+                "materials": [
+                    "unusual_egg",
+                    "unusual_egg",
+                    "unusual_egg",
+                    "unusual_egg",
+                    "unusual_egg",
+                    "unusual_egg",
+                    "unusual_egg",
+                    "unusual_egg",
+                    "unusual_egg",
+                    "unusual_egg"
+                ]
+            }
+        },
+        "rank": "mystical",
+        "type": "egg",
+        "name": "🥚 Необычное яйцо",
+        "original_key": "unusual_egg"
+    },
+    {
+        "image": "item21",
+        "inc_type": "com",
+        "incub_time": 1800,
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "unusual_egg"
+                ],
+                "materials": [
+                    "regular_egg",
+                    "regular_egg",
+                    "regular_egg",
+                    "regular_egg",
+                    "regular_egg",
+                    "regular_egg",
+                    "regular_egg",
+                    "regular_egg",
+                    "regular_egg",
+                    "regular_egg"
+                ]
+            }
+        },
+        "rank": "mystical",
+        "type": "egg",
+        "name": "🥚 Обычное яйцо",
+        "original_key": "regular_egg"
+    },
+    {
+        "image": "item22",
+        "inc_type": "rar",
+        "incub_time": 172800,
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "mystic_egg"
+                ],
+                "materials": [
+                    "rare_egg",
+                    "rare_egg",
+                    "rare_egg",
+                    "rare_egg",
+                    "rare_egg",
+                    "rare_egg",
+                    "rare_egg",
+                    "rare_egg",
+                    "rare_egg",
+                    "rare_egg"
+                ]
+            }
+        },
+        "rank": "mystical",
+        "type": "egg",
+        "name": "🥚 Редкое яйцо",
+        "original_key": "rare_egg"
+    },
+    {
+        "image": "item23",
+        "inc_type": "mys",
+        "incub_time": 259200,
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "legendary_egg"
+                ],
+                "materials": [
+                    "mystic_egg",
+                    "mystic_egg",
+                    "mystic_egg",
+                    "mystic_egg",
+                    "mystic_egg",
+                    "mystic_egg",
+                    "mystic_egg",
+                    "mystic_egg",
+                    "mystic_egg",
+                    "mystic_egg"
+                ]
+            }
+        },
+        "rank": "mystical",
+        "type": "egg",
+        "name": "🥚 Мистическое яйцо",
+        "original_key": "mystic_egg"
+    },
+    {
+        "image": "item24",
+        "inc_type": "leg",
+        "incub_time": 396000,
+        "rank": "legendary",
+        "type": "egg",
+        "name": "🥚 Легендарное яйцо",
+        "original_key": "legendary_egg"
+    },
+    {
+        "image": "item25",
+        "rank": "common",
+        "type": "material",
+        "name": "📄 Пустая бумажка",
+        "original_key": "blank_piece_paper",
+        "recipes": [
+            "📜 Рецепт факела"
+        ]
+    },
+    {
+        "image": "item26",
+        "rank": "common",
+        "type": "material",
+        "name": "👢 Кожа",
+        "original_key": "skin",
+        "recipes": [
+            "📜 Рецепт рюкзака",
+            "📜 Рецепт одежды",
+            "📜 Рецепт мешочка"
+        ]
+    },
+    {
+        "image": "item27",
+        "rank": "common",
+        "type": "material",
+        "name": "🥢 Веточки дерева",
+        "original_key": "twigs_tree",
+        "recipes": [
+            "📜 Рецепт корзины",
+            "📜 Рецепт факела",
+            "📜 Рецепт мешочка",
+            "📜 Рецепт удочки"
+        ]
+    },
+    {
+        "image": "item28",
+        "rank": "common",
+        "type": "material",
+        "name": "🐡 Рыбий жир",
+        "original_key": "fish_oil",
+        "recipes": [
+            "📜 Рецепт напитка"
+        ]
+    },
+    {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item29",
+        "rank": "uncommon",
+        "type": "journey",
+        "name": "🧤 Кожаная одежда",
+        "original_key": "leather_clothing",
+        "description": "Согревает динозавра."
+    },
+    {
+        "abilities": {
+            "uses": 3
+        },
+        "create": [
+            {
+                "item": "leather_clothing",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт одежды",
+        "original_key": "clothing_recipe",
+        "description": " Рецепт создания красивой кожаной куртки.",
+        "loc_create": [
+            "🧤 Кожаная одежда"
+        ]
+    },
+    {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item31",
+        "rank": "uncommon",
+        "type": "collecting",
+        "name": "🔥 Факел",
+        "original_key": "torch",
+        "description": "Во время сбора пищи, есть шанс найти более изысканные травы.",
+        "recipes": [
+            "📜 Рецепт бекона",
+            "📜 Рецепт стейка",
+            "📜 Рецепт попкорна",
+            "📜 Рецепт бульона",
+            "📜 Рецепт мяса",
+            "📜 Рецепт круассана"
+        ]
+    },
+    {
+        "abilities": {
+            "uses": 1
+        },
+        "create": [
+            {
+                "item": "torch",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "twigs_tree",
+                "type": "delete"
+            },
+            {
+                "item": "twigs_tree",
+                "type": "delete"
+            },
+            {
+                "item": "twigs_tree",
+                "type": "delete"
+            },
+            {
+                "item": "twigs_tree",
+                "type": "delete"
+            },
+            {
+                "item": "blank_piece_paper",
+                "type": "delete"
+            },
+            {
+                "item": "blank_piece_paper",
+                "type": "delete"
+            },
+            {
+                "item": "blank_piece_paper",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт факела",
+        "original_key": "torch_recipe",
+        "description": "Рецепт создания факела, который осветит ваш путь.",
+        "loc_create": [
+            "🔥 Факел"
+        ]
+    },
+    {
+        "buffs": {
+            "heal": 25,
+            "mood": -10
+        },
+        "act": 5,
+        "class": "ALL",
+        "drink": true,
+        "image": "item33",
+        "rank": "rare",
+        "type": "eat",
+        "name": "🍵 Лекарственный напиток",
+        "original_key": "medicinal_drink"
+    },
+    {
+        "abilities": {
+            "uses": 10
+        },
+        "create": [
+            {
+                "item": "medicinal_drink",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "fish_oil",
+                "type": "delete"
+            },
+            {
+                "item": "fish_oil",
+                "type": "delete"
+            },
+            {
+                "item": "fish_oil",
+                "type": "delete"
+            },
+            {
+                "item": "fish_oil",
+                "type": "delete"
+            },
+            {
+                "item": "fish_oil",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт напитка",
+        "original_key": "drink_recipe",
+        "description": "Рецепт изготовления отвратительного на вкус, но лечебного напитка.",
+        "loc_create": [
+            "🍵 Лекарственный напиток"
+        ]
+    },
+    {
+        "act": 30,
+        "class": "Herbivore",
+        "image": "item35",
+        "rank": "rare",
+        "type": "eat",
+        "name": "🍀 Изысканные травы",
+        "original_key": "gourmet_herbs",
+        "recipes": [
+            "📜 Рецепт чая"
+        ]
+    },
+    {
+        "buffs": {
+            "energy": 25
+        },
+        "act": -30,
+        "class": "ALL",
+        "drink": true,
+        "image": "item36",
+        "rank": "rare",
+        "type": "eat",
+        "name": "🍵 Чай",
+        "original_key": "tea"
+    },
+    {
+        "abilities": {
+            "uses": 10
+        },
+        "create": [
+            {
+                "item": "tea",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "gourmet_herbs",
+                "type": "delete"
+            },
+            {
+                "item": "gourmet_herbs",
+                "type": "delete"
+            },
+            {
+                "item": "gourmet_herbs",
+                "type": "delete"
+            },
+            {
+                "item": "gourmet_herbs",
+                "type": "delete"
+            },
+            {
+                "item": "gourmet_herbs",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт чая",
+        "original_key": "tea_recipe",
+        "description": "Рецепт изготовления ароматного чая.",
+        "loc_create": [
+            "🍵 Чай"
+        ]
+    },
+    {
+        "act": 40,
+        "class": "Carnivore",
+        "image": "item38",
+        "rank": "rare",
+        "type": "eat",
+        "name": "🥩 Жареное мясо",
+        "original_key": "roasted_meat",
+        "recipes": [
+            "📜 Рецепт бенто"
+        ]
+    },
+    {
+        "abilities": {
+            "uses": 10
+        },
+        "create": [
+            {
+                "item": "roasted_meat",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "act": 10,
+                "item": "torch",
+                "type": "endurance"
+            },
+            {
+                "item": "wolf_meat",
+                "type": "delete"
+            },
+            {
+                "item": "wolf_meat",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт мяса",
+        "original_key": "meat_recipe",
+        "description": "Кто не любит съесть кусочек хорошо приготовленного мяса? Динозавр тоже не откажется. ",
+        "loc_create": [
+            "🥩 Жареное мясо"
+        ]
+    },
+    {
+        "act": 53,
+        "class": "Herbivore",
+        "image": "item40",
+        "rank": "rare",
+        "type": "eat",
+        "name": "🥗 Салат",
+        "original_key": "salad",
+        "recipes": [
+            "📜 Рецепт бенто"
+        ]
+    },
+    {
+        "abilities": {
+            "uses": 40
+        },
+        "create": [
+            {
+                "item": "salad",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "bunch_herbs",
+                "type": "delete"
+            },
+            {
+                "item": "grasses_from_fields",
+                "type": "delete"
+            },
+            {
+                "item": "berries",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт салата",
+        "original_key": "salad_recipe",
+        "description": "Не надоело ли динозавру питаться одной травой? Может лучше сделаем салат из нескольких трав? Моему динозавру понравился результат!",
+        "loc_create": [
+            "🥗 Салат"
+        ]
+    },
+    {
+        "act": 55,
+        "class": "Flying",
+        "image": "item42",
+        "rank": "rare",
+        "type": "eat",
+        "name": "🥣 Суп",
+        "original_key": "soup"
+    },
+    {
+        "abilities": {
+            "uses": 40
+        },
+        "create": [
+            {
+                "item": "soup",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "seafood",
+                "type": "delete"
+            },
+            {
+                "item": "seafood",
+                "type": "delete"
+            },
+            {
+                "item": "seafood",
+                "type": "delete"
+            },
+            {
+                "act": 10,
+                "item": "timer",
+                "type": "endurance"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт супа",
+        "original_key": "soup_recipe",
+        "description": "'Рыба живёт в воде, почему я ем её сухой?' - Так наверно думает каждый динозавр, он просто ещё не пробовал рыбный суп.",
+        "loc_create": [
+            "🥣 Суп"
+        ]
+    },
+    {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item44",
+        "rank": "uncommon",
+        "type": "game",
+        "name": "🧩 Настольные игры",
+        "original_key": "board_games",
+        "description": "Добавляет 4 настольные игры для динозавра!"
+    },
+    {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item45",
+        "rank": "rare",
+        "type": "journey",
+        "name": "👜 Походный мешочек",
+        "original_key": "hiking_bag",
+        "description": "Увеличивает шанс событий в путешествии."
+    },
+    {
+        "abilities": {
+            "uses": 2
+        },
+        "create": [
+            {
+                "item": "hiking_bag",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "twigs_tree",
+                "type": "delete"
+            },
+            {
+                "item": "twigs_tree",
+                "type": "delete"
+            },
+            {
+                "act": 30,
+                "item": "tooling",
+                "type": "endurance"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт мешочка",
+        "original_key": "pouch_recipe",
+        "description": "Во время путешествия динозавру требуется место для хранения всех найденных вещей, тут нам поможет походный мешочек!",
+        "loc_create": [
+            "👜 Походный мешочек"
+        ]
+    },
+    {
+        "buffs": {
+            "mood": 10
+        },
+        "abilities": {
+            "uses": 15
+        },
+        "act": 5,
+        "class": "ALL",
+        "image": "item47",
+        "rank": "uncommon",
+        "type": "eat",
+        "name": "🍪 Набор печенек",
+        "original_key": "set_cookies"
+    },
+    {
+        "buffs": {
+            "mood": 15
+        },
+        "abilities": {
+            "uses": 9
+        },
+        "act": 10,
+        "class": "ALL",
+        "image": "item48",
+        "rank": "uncommon",
+        "type": "eat",
+        "name": "🍕 Пицца",
+        "original_key": "pizza"
+    },
+    {
+        "abilities": {
+            "mana": 0
+        },
+        "image": "item49",
+        "rank": "rare",
+        "type": "material",
+        "name": "🔮 Магический камень",
+        "original_key": "magic_stone"
+    },
+    {
+        "buffs": {
+            "mood": 40
+        },
+        "act": 65,
+        "class": "ALL",
+        "image": "item50",
+        "rank": "rare",
+        "type": "eat",
+        "name": "🌮 Тако",
+        "original_key": "taco"
+    },
+    {
+        "image": "item51",
+        "rank": "common",
+        "type": "material",
+        "name": "🦴 Кость",
+        "original_key": "bone",
+        "recipes": [
+            "📜 Рецепт кирки",
+            "📜 Рецепт меча",
+            "📜 Рецепт щита",
+            "📜 Рецепт стрел",
+            "📜 Рецепт лука"
+        ]
+    },
+    {
+        "image": "item52",
+        "rank": "uncommon",
+        "type": "material",
+        "name": "🧱 Железо",
+        "original_key": "iron"
+    },
+    {
+        "abilities": {
+            "endurance": 50
+        },
+        "class": "near",
+        "damage": {
+            "max": 3,
+            "min": 1
+        },
+        "image": "item53",
+        "rank": "uncommon",
+        "type": "weapon",
+        "name": "🗡 Костяной меч",
+        "original_key": "bone_sword"
+    },
+    {
+        "add_damage": 0,
+        "add_effects": [],
+        "image": "item54",
+        "rank": "uncommon",
+        "type": "ammunition",
+        "name": "💘 Костяная стрела",
+        "original_key": "bone_arrow"
+    },
+    {
+        "abilities": {
+            "endurance": 70
+        },
+        "ammunition": [
+            "bone_arrow"
+        ],
+        "class": "far",
+        "damage": {
+            "max": 5,
+            "min": 1
+        },
+        "image": "item55",
+        "rank": "uncommon",
+        "type": "weapon",
+        "name": "🏹 Костяной лук",
+        "original_key": "bone_onions"
+    },
+    {
+        "abilities": {
+            "uses": 5
+        },
+        "create": [
+            {
+                "item": "taco",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "grasses_from_fields",
+                "type": "delete"
+            },
+            {
+                "item": "grasses_from_fields",
+                "type": "delete"
+            },
+            {
+                "item": "grasses_from_fields",
+                "type": "delete"
+            },
+            {
+                "item": "wolf_meat",
+                "type": "delete"
+            },
+            {
+                "item": "wolf_meat",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт тако",
+        "original_key": "taco_recipe",
+        "description": "Тако, превосходная еда, которую обожают все динозавры любых видов!",
+        "loc_create": [
+            "🌮 Тако"
+        ]
+    },
+    {
+        "abilities": {
+            "uses": 2
+        },
+        "create": [
+            {
+                "item": "bone_sword",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "act": 30,
+                "item": "tooling",
+                "type": "endurance"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт меча",
+        "original_key": "sword_recipe",
+        "description": "Остро заточенный меч из костей нежити.",
+        "loc_create": [
+            "🗡 Костяной меч"
+        ]
+    },
+    {
+        "abilities": {
+            "uses": 2
+        },
+        "create": [
+            {
+                "item": "bone_onions",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "act": 30,
+                "item": "tooling",
+                "type": "endurance"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "rope",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт лука",
+        "original_key": "onion_recipe",
+        "description": "Лук из пары костей, стреляет исправно.",
+        "loc_create": [
+            "🏹 Костяной лук"
+        ]
+    },
+    {
+        "abilities": {
+            "uses": 11
+        },
+        "create": [
+            {
+                "abilities": {
+                    "stack": 3
+                },
+                "item": "bone_arrow",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "act": 10,
+                "item": "tooling",
+                "type": "endurance"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт стрел",
+        "original_key": "arrow_recipe",
+        "description": "Кость, ломающая кости.",
+        "loc_create": [
+            "💘 Костяная стрела"
+        ]
+    },
+    {
+        "capacity": 10,
+        "image": "item45",
+        "rank": "rare",
+        "type": "backpack",
+        "name": "🎒 Обычный рюкзак",
+        "original_key": "regular_backpack"
+    },
+    {
+        "abilities": {
+            "uses": 2
+        },
+        "create": [
+            {
+                "item": "regular_backpack",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт рюкзака",
+        "original_key": "backpack_recipe",
+        "description": "Школьный рюкзак, оборудованный для подземелья.",
+        "loc_create": [
+            "🎒 Обычный рюкзак"
+        ]
+    },
+    {
+        "abilities": {
+            "endurance": 120
+        },
+        "image": "item62",
+        "rank": "uncommon",
+        "reflection": 2,
+        "type": "armor",
+        "name": "🛡 Костяной щит",
+        "original_key": "bone_shield"
+    },
+    {
+        "abilities": {
+            "uses": 2
+        },
+        "create": [
+            {
+                "item": "bone_shield",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe",
+        "name": "📜 Рецепт щита",
+        "original_key": "shield_recipe",
+        "description": "Щит из костей, просто щит.",
+        "loc_create": [
+            "🛡 Костяной щит"
+        ]
+    },
+    {
+        "abilities": {
+            "endurance": 20
+        },
+        "class": "near",
+        "damage": {
+            "max": 1,
+            "min": 0
+        },
+        "effectiv": 2,
+        "image": "item64",
+        "rank": "uncommon",
+        "type": "weapon",
+        "name": "⛏ Костяная кирка",
+        "original_key": "bone_pickaxe"
+    },
+    {
+        "abilities": {
+            "uses": 2
+        },
+        "create": [
+            {
+                "item": "bone_pickaxe",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            },
+            {
+                "item": "bone",
+                "type": "delete"
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe",
+        "name": "📜 Рецепт кирки",
+        "original_key": "pickaxe_recipe",
+        "description": "Костяная кирка не эффективна в бою, ведь все знают, что топор более грозное оружие. Зато эффективная в добыче ресурсов.",
+        "loc_create": [
+            "⛏ Костяная кирка"
+        ]
+    },
+    {
+        "cant_sell": true,
+        "image": "item66",
+        "rank": "mythical",
+        "time": "forever",
+        "type": "special",
+        "class": "freezing",
+        "name": "❄ Заморозка",
+        "original_key": "freezing"
+    },
+    {
+        "cant_sell": true,
+        "image": "item67",
+        "rank": "mythical",
+        "type": "special",
+        "class": "defrosting",
+        "name": "🔥 Разморозка",
+        "original_key": "defrost"
+    },
+    {
+        "buffs": {
+            "energy": 5
+        },
+        "act": 8,
+        "class": "ALL",
+        "image": "item68",
+        "rank": "common",
+        "type": "eat",
+        "name": "🍫 Шоколад",
+        "original_key": "chocolate",
+        "recipes": [
+            "📜 Рецепт торта",
+            "📜 Рецепт конфет",
+            "📜 Рецепт горячего шоколада",
+            "📜 Рецепт круассана"
+        ]
+    },
+    {
+        "buffs": {
+            "energy": 2,
+            "mood": 5
+        },
+        "abilities": {
+            "uses": 10
+        },
+        "act": 3,
+        "class": "ALL",
+        "image": "item69",
+        "rank": "uncommon",
+        "type": "eat",
+        "name": "🍬 Конфеты",
+        "original_key": "candy"
+    },
+    {
+        "abilities": {
+            "uses": 5
+        },
+        "create": [
+            {
+                "item": "candy",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "chocolate",
+                "type": "delete"
+            },
+            {
+                "item": "chocolate",
+                "type": "delete"
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe",
+        "name": "📜 Рецепт конфет",
+        "original_key": "candy_recipe",
+        "description": "Рецепт создания целой кучи шоколадных конфет",
+        "loc_create": [
+            "🍬 Конфеты"
+        ]
+    },
+    {
+        "act": 7,
+        "class": "Herbivore",
+        "image": "item71",
+        "rank": "common",
+        "type": "eat",
+        "name": "🌽 Кукуруза",
+        "original_key": "maize",
+        "recipes": [
+            "📜 Рецепт попкорна"
+        ]
+    },
+    {
+        "buffs": {
+            "mood": 25
+        },
+        "act": 17,
+        "class": "ALL",
+        "image": "item72",
+        "rank": "uncommon",
+        "type": "eat",
+        "name": "🍿 Попкорн",
+        "original_key": "popcorn"
+    },
+    {
+        "abilities": {
+            "uses": 5
+        },
+        "create": [
+            {
+                "item": "popcorn",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "act": 5,
+                "item": "torch",
+                "type": "endurance"
+            },
+            {
+                "item": "maize",
+                "type": "delete"
+            },
+            {
+                "item": "maize",
+                "type": "delete"
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe",
+        "name": "📜 Рецепт попкорна",
+        "original_key": "popcorn_recipe",
+        "description": "Рецепт создания попкорна. Время посмотреть фильм!",
+        "loc_create": [
+            "🍿 Попкорн"
+        ]
+    },
+    {
+        "buffs": {
+            "mood": 20
+        },
+        "act": 10,
+        "class": "ALL",
+        "drink": true,
+        "image": "item74",
+        "rank": "uncommon",
+        "type": "eat",
+        "name": "🧃 Сок",
+        "original_key": "juice"
+    },
+    {
+        "abilities": {
+            "uses": 10
+        },
+        "create": [
+            {
+                "item": "juice",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "berries",
+                "type": "delete"
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe",
+        "name": "📜 Рецепт сока",
+        "original_key": "juice_recipe",
+        "description": "Рецепт создания свежевыжатого сока",
+        "loc_create": [
+            "🧃 Сок"
+        ]
+    },
+    {
+        "buffs": {
+            "heal": 1
+        },
+        "act": 5,
+        "class": "Herbivore",
+        "image": "item76",
+        "rank": "common",
+        "type": "eat",
+        "name": "🌶️ Специи",
+        "original_key": "spices",
+        "recipes": [
+            "📜 Рецепт стейка",
+            "📜 Рецепт карри"
+        ]
+    },
+    {
+        "act": 39,
+        "class": "Carnivore",
+        "image": "item77",
+        "rank": "rare",
+        "type": "eat",
+        "name": "🥩 Острый стейк",
+        "original_key": "spicy_steak"
+    },
+    {
+        "abilities": {
+            "uses": 5
+        },
+        "create": [
+            {
+                "item": "spicy_steak",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "act": 10,
+                "item": "torch",
+                "type": "endurance"
+            },
+            {
+                "item": "wolf_meat",
+                "type": "delete"
+            },
+            {
+                "item": "grasses_from_fields",
+                "type": "delete"
+            },
+            {
+                "item": "spices",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт стейка",
+        "original_key": "steak_recipe",
+        "description": "Рецепт создания острого, но вкусного стейка",
+        "loc_create": [
+            "🥩 Острый стейк"
+        ]
+    },
+    {
+        "act": 11,
+        "class": "Herbivore",
+        "image": "item79",
+        "rank": "common",
+        "type": "eat",
+        "name": "🍌 Банан",
+        "original_key": "banana"
+    },
+    {
+        "act": 46,
+        "class": "Flying",
+        "image": "item80",
+        "rank": "rare",
+        "type": "eat",
+        "name": "🦀 Краб",
+        "original_key": "crab"
+    },
+    {
+        "buffs": {
+            "energy": 30
+        },
+        "act": 5,
+        "class": "ALL",
+        "drink": true,
+        "image": "item81",
+        "rank": "rare",
+        "type": "eat",
+        "name": "☕️ Кофе",
+        "original_key": "coffee"
+    },
+    {
+        "buffs": {
+            "heal": -2,
+            "mood": 12
+        },
+        "act": 13,
+        "class": "Herbivore",
+        "image": "item82",
+        "rank": "uncommon",
+        "type": "eat",
+        "name": "🍄 Гриб",
+        "original_key": "mushroom"
+    },
+    {
+        "buffs": {
+            "heal": 10
+        },
+        "act": 38,
+        "class": "ALL",
+        "image": "item83",
+        "rank": "rare",
+        "type": "eat",
+        "name": "🍲 Бульон",
+        "original_key": "broth"
+    },
+    {
+        "abilities": {
+            "uses": 5
+        },
+        "create": [
+            {
+                "item": "broth",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "act": 10,
+                "item": "torch",
+                "type": "endurance"
+            },
+            {
+                "item": "wild_boar_meat",
+                "type": "delete"
+            },
+            {
+                "item": "wild_boar_meat",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт бульона",
+        "original_key": "broth_recipe",
+        "description": "Рецепт создания наваристого мясного бульона",
+        "loc_create": [
+            "🍲 Бульон"
+        ]
+    },
+    {
+        "act": 10,
+        "class": "Herbivore",
+        "image": "item85",
+        "rank": "common",
+        "type": "eat",
+        "name": "🍚 Рис",
+        "original_key": "rice",
+        "recipes": [
+            "📜 Рецепт карри",
+            "📜 Рецепт суши"
+        ]
+    },
+    {
+        "act": 30,
+        "class": "ALL",
+        "image": "item86",
+        "rank": "common",
+        "type": "eat",
+        "name": "🍣 Суши",
+        "original_key": "sushi",
+        "recipes": [
+            "📜 Рецепт бенто"
+        ]
+    },
+    {
+        "abilities": {
+            "uses": 5
+        },
+        "create": [
+            {
+                "item": "sushi",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "rice",
+                "type": "delete"
+            },
+            {
+                "item": "fish",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт суши",
+        "original_key": "sushi_recipe",
+        "description": "Рецепт создания суши. Говорят, это идеально сбалансированная еда",
+        "loc_create": [
+            "🍣 Суши"
+        ]
+    },
+    {
+        "buffs": {
+            "energy": 20
+        },
+        "act": 10,
+        "class": "ALL",
+        "drink": true,
+        "image": "item88",
+        "rank": "uncommon",
+        "type": "eat",
+        "name": "☕️ Горячий шоколад",
+        "original_key": "hot_chocolate"
+    },
+    {
+        "abilities": {
+            "uses": 5
+        },
+        "create": [
+            {
+                "item": "hot_chocolate",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "chocolate",
+                "type": "delete"
+            },
+            {
+                "item": "chocolate",
+                "type": "delete"
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe",
+        "name": "📜 Рецепт горячего шоколада",
+        "original_key": "hot_chocolate_recipe",
+        "description": "Рецепт создания горячего шоколада. Идеально подходит чтобы согреться зимой",
+        "loc_create": [
+            "☕️ Горячий шоколад"
+        ]
+    },
+    {
+        "buffs": {
+            "mood": 100
+        },
+        "abilities": {
+            "uses": 6
+        },
+        "act": 40,
+        "class": "ALL",
+        "image": "item90",
+        "rank": "mystical",
+        "type": "eat",
+        "name": "🎂 Торт",
+        "original_key": "cake"
+    },
+    {
+        "abilities": {
+            "uses": 2
+        },
+        "create": [
+            {
+                "item": "cake",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "chocolate",
+                "type": "delete"
+            },
+            {
+                "item": "chocolate",
+                "type": "delete"
+            },
+            {
+                "item": "chocolate",
+                "type": "delete"
+            },
+            {
+                "item": "flour",
+                "type": "delete"
+            },
+            {
+                "item": "berries",
+                "type": "delete"
+            },
+            {
+                "item": "berries",
+                "type": "delete"
+            },
+            {
+                "item": "berries",
+                "type": "delete"
+            },
+            {
+                "item": "berries",
+                "type": "delete"
+            },
+            {
+                "item": "berries",
+                "type": "delete"
+            },
+            {
+                "item": "jar_honey",
+                "type": "delete"
+            },
+            {
+                "item": "cookie",
+                "type": "delete"
+            },
+            {
+                "item": "cookie",
+                "type": "delete"
+            }
+        ],
+        "rank": "mystical",
+        "type": "recipe",
+        "name": "📜 Рецепт торта",
+        "original_key": "cake_recipe",
+        "description": "Рецепт создания большого торта. Торт это ложь",
+        "loc_create": [
+            "🎂 Торт"
+        ]
+    },
+    {
+        "act": 46,
+        "class": "ALL",
+        "image": "item92",
+        "rank": "rare",
+        "type": "eat",
+        "name": "🍛 Карри",
+        "original_key": "curry"
+    },
+    {
+        "abilities": {
+            "uses": 5
+        },
+        "create": [
+            {
+                "item": "curry",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "rice",
+                "type": "delete"
+            },
+            {
+                "item": "rice",
+                "type": "delete"
+            },
+            {
+                "item": "spices",
+                "type": "delete"
+            },
+            {
+                "item": "spices",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт карри",
+        "original_key": "curry_recipe",
+        "description": "Рецепт создания карри. Это такое острое блюдо с рисом",
+        "loc_create": [
+            "🍛 Карри"
+        ]
+    },
+    {
+        "buffs": {
+            "mood": 15
+        },
+        "act": 20,
+        "class": "ALL",
+        "image": "item94",
+        "rank": "rare",
+        "type": "eat",
+        "name": "🍡 Данго",
+        "original_key": "dango"
+    },
+    {
+        "act": 10,
+        "class": "Herbivore",
+        "image": "item95",
+        "rank": "common",
+        "type": "eat",
+        "name": "🥜 Зёрна",
+        "original_key": "grain",
+        "recipes": [
+            "📜 Рецепт муки"
+        ]
+    },
+    {
+        "act": 27,
+        "class": "ALL",
+        "image": "item96",
+        "rank": "uncommon",
+        "type": "eat",
+        "name": "🍞 Хлеб",
+        "original_key": "bread",
+        "recipes": [
+            "📜 Рецепт бутерброда"
+        ]
+    },
+    {
+        "abilities": {
+            "uses": 10
+        },
+        "create": [
+            {
+                "item": "bread",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "flour",
+                "type": "delete"
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe",
+        "name": "📜 Рецепт хлеба",
+        "original_key": "bread_recipe",
+        "description": "Рецепт создания хлеба",
+        "loc_create": [
+            "🍞 Хлеб"
+        ]
+    },
+    {
+        "buffs": {
+            "mood": 20
+        },
+        "act": 50,
+        "class": "Herbivore",
+        "image": "item98",
+        "rank": "uncommon",
+        "type": "eat",
+        "name": "🥧 Ягодный пирог",
+        "original_key": "berry_pie"
+    },
+    {
+        "buffs": {
+            "energy": 10
+        },
+        "act": 50,
+        "class": "Flying",
+        "image": "item99",
+        "rank": "uncommon",
+        "type": "eat",
+        "name": "🥘 Рыбный пирог",
+        "original_key": "fish_cake"
+    },
+    {
+        "buffs": {
+            "heal": 10
+        },
+        "act": 50,
+        "class": "Carnivore",
+        "image": "item100",
+        "rank": "uncommon",
+        "type": "eat",
+        "name": "🍲 Мясной пирог",
+        "original_key": "meat_pie"
+    },
+    {
+        "abilities": {
+            "uses": 5
+        },
+        "create": [
+            {
+                "item": "berry_pie",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "flour",
+                "type": "delete"
+            },
+            {
+                "item": "berries",
+                "type": "delete"
+            },
+            {
+                "item": "berries",
+                "type": "delete"
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe",
+        "name": "📜 Рецепт ягодного пирога",
+        "original_key": "berry_pie_recipe",
+        "description": "Рецепт создания самого сладкого пирога",
+        "loc_create": [
+            "🥧 Ягодный пирог"
+        ]
+    },
+    {
+        "abilities": {
+            "uses": 5
+        },
+        "create": [
+            {
+                "item": "fish_cake",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "flour",
+                "type": "delete"
+            },
+            {
+                "item": "fish",
+                "type": "delete"
+            },
+            {
+                "item": "fish",
+                "type": "delete"
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe",
+        "name": "📜 Рецепт рыбного пирога",
+        "original_key": "fish_pie_recipe",
+        "description": "Рецепт создания самого полезного пирога",
+        "loc_create": [
+            "🥘 Рыбный пирог"
+        ]
+    },
+    {
+        "abilities": {
+            "uses": 5
+        },
+        "create": [
+            {
+                "item": "meat_pie",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "flour",
+                "type": "delete"
+            },
+            {
+                "item": "wolf_meat",
+                "type": "delete"
+            },
+            {
+                "item": "wolf_meat",
+                "type": "delete"
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe",
+        "name": "📜 Рецепт мясного пирога",
+        "original_key": "meat_pie_recipe",
+        "description": "Рецепт создания самого сытного пирога",
+        "loc_create": [
+            "🍲 Мясной пирог"
+        ]
+    },
+    {
+        "act": 14,
+        "class": "Carnivore",
+        "image": "item104",
+        "rank": "uncommon",
+        "type": "eat",
+        "name": "🥓 Бекон",
+        "original_key": "bacon"
+    },
+    {
+        "abilities": {
+            "uses": 10
+        },
+        "create": [
+            {
+                "item": "bacon",
+                "type": "create"
+            },
+            {
+                "item": "bacon",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "act": 10,
+                "item": "torch",
+                "type": "endurance"
+            },
+            {
+                "item": "wild_boar_meat",
+                "type": "delete"
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe",
+        "name": "📜 Рецепт бекона",
+        "original_key": "bacon_recipe",
+        "description": "Рецепт создания бекона",
+        "loc_create": [
+            "🥓 Бекон"
+        ]
+    },
+    {
+        "buffs": {
+            "heal": 20,
+            "mood": 20
+        },
+        "abilities": {
+            "uses": 2
+        },
+        "act": 100,
+        "class": "ALL",
+        "image": "item106",
+        "rank": "mystical",
+        "type": "eat",
+        "name": "🍱 Бенто",
+        "original_key": "bento"
+    },
+    {
+        "abilities": {
+            "uses": 2
+        },
+        "create": [
+            {
+                "item": "bento",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "roasted_meat",
+                "type": "delete"
+            },
+            {
+                "item": "sushi",
+                "type": "delete"
+            },
+            {
+                "item": "salad",
+                "type": "delete"
+            }
+        ],
+        "rank": "mystical",
+        "type": "recipe",
+        "name": "📜 Рецепт бенто",
+        "original_key": "bento_recipe",
+        "description": "Рецепт создания бенто. Здесь собрано все для полноценного перекуса.",
+        "loc_create": [
+            "🍱 Бенто"
+        ]
+    },
+    {
+        "act": 31,
+        "class": "ALL",
+        "image": "item108",
+        "rank": "rare",
+        "type": "eat",
+        "name": "🥪 Бутерброд",
+        "original_key": "sandwich"
+    },
+    {
+        "abilities": {
+            "uses": 5
+        },
+        "create": [
+            {
+                "item": "sandwich",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "bread",
+                "type": "delete"
+            },
+            {
+                "item": "wolf_meat",
+                "type": "delete"
+            },
+            {
+                "item": "grasses_from_fields",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт бутерброда",
+        "original_key": "sandwich_recipe",
+        "description": "Рецепт создания бутерброда. Удобно для быстрого перекуса",
+        "loc_create": [
+            "🥪 Бутерброд"
+        ]
+    },
+    {
+        "col_repit": {
+            "act": 4,
+            "type": "static"
+        },
+        "drop_items": [
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "roasted_meat"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "salad"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "soup"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "pizza"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 2,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "taco"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 10,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "chocolate"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "candy"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "popcorn"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "juice"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "spicy_steak"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 20,
+                    "min": 5,
+                    "type": "random"
+                },
+                "id": "banana"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 10,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "crab"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "coffee"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "broth"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 10,
+                    "min": 5,
+                    "type": "random"
+                },
+                "id": "rice"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 5,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "sushi"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "hot_chocolate"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    10
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "cake"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "curry"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 5,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "dango"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    5,
+                    100
+                ],
+                "col": {
+                    "max": 30,
+                    "min": 10,
+                    "type": "random"
+                },
+                "id": "grain"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    10
+                ],
+                "col": {
+                    "max": 6,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "bread"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "berry_pie"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "fish_cake"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "meat_pie"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 10,
+                    "min": 4,
+                    "type": "random"
+                },
+                "id": "bacon"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    3,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "bento"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 10,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "sandwich"
+            }
+        ],
+        "image": "case",
+        "rank": "mythical",
+        "type": "case",
+        "name": "📦 Сундук с едой",
+        "original_key": "chest_food"
+    },
+    {
+        "col_repit": {
+            "act": 4,
+            "type": "static"
+        },
+        "drop_items": [
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "clothing_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "torch_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    3,
+                    10
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "drink_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    3,
+                    10
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "tea_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "meat_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "salad"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "soup_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "pouch_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "taco_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "candy_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "popcorn_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "juice_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "steak_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "broth_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "sushi_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "hot_chocolate_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 3,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "cake_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "curry_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    3,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "bread_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "berry_pie_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "fish_pie_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "meat_pie_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "bacon_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "bento_recipe"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "sandwich_recipe"
+            }
+        ],
+        "image": "case",
+        "rank": "mythical",
+        "type": "case",
+        "name": "📦 Сундук рецептов",
+        "original_key": "recipe_chest"
+    },
+    {
+        "cant_sell": true,
+        "buyer": false,
+        "col_repit": {
+            "act": 1,
+            "type": "static"
+        },
+        "drop_items": [
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "mystic_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    1000
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "legendary_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "chest_food"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "recipe_chest"
+            }
+        ],
+        "image": "case",
+        "rank": "mythical",
+        "type": "case",
+        "name": "🎁 Подарок 2023",
+        "original_key": "gift_2023"
+    },
+    {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item113",
+        "rank": "rare",
+        "type": "collecting",
+        "name": "🎣 Удочка",
+        "original_key": "rod",
+        "description": "Прекрасная удочка для рыбалки. Повышает мастерство динозавра."
+    },
+    {
+        "image": "null",
+        "rank": "legendary",
+        "type": "special",
+        "class": "reborn",
+        "cant_sell": true,
+        "name": "💎 Камень воскрешения",
+        "original_key": "stone_resurrection",
+        "description": "Камень, который способен достать из памяти вселенной любого динозавра!"
+    },
+    {
+        "buffs": {
+            "heal": 5,
+            "energy": 5,
+            "mood": 5
+        },
+        "act": 1,
+        "class": "ALL",
+        "drink": true,
+        "image": "item114",
+        "rank": "common",
+        "type": "eat",
+        "name": "🍺 Эль",
+        "original_key": "ale"
+    },
+    {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item115",
+        "rank": "rare",
+        "type": "collecting",
+        "name": "🕸 Сеть",
+        "original_key": "net",
+        "description": "Сетка-ловушка для охоты на животных."
+    },
+    {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "basket",
+        "rank": "rare",
+        "type": "collecting",
+        "name": "👒 Корзина",
+        "original_key": "basket",
+        "description": "Корзинка для сбора ягод. Увеличивает максимальное количество сбора пищи."
+    },
+    {
+        "image": "rope",
+        "rank": "common",
+        "type": "material",
+        "name": "🎗 Верёвка",
+        "original_key": "rope",
+        "recipes": [
+            "📜 Рецепт сети",
+            "📜 Рецепт удочки",
+            "📜 Рецепт корзины",
+            "📜 Рецепт лука"
+        ]
+    },
+    {
+        "image": "wool",
+        "rank": "common",
+        "type": "material",
+        "name": "🐑 Шерсть",
+        "original_key": "wool"
+    },
+    {
+        "image": "feather",
+        "rank": "common",
+        "type": "material",
+        "name": "🐦 Перо",
+        "original_key": "feather"
+    },
+    {
+        "image": "book",
+        "rank": "mystical",
+        "type": "book",
+        "name": "📔 Книга про лес",
+        "original_key": "book_forest",
+        "description": "Книга давно забытого искателя приключений. Рассказывает про лес."
+    },
+    {
+        "image": "book",
+        "rank": "mystical",
+        "type": "book",
+        "name": "📔 Книга о островах",
+        "original_key": "book_lost-islands",
+        "description": "Книга давно забытого искателя приключений. Рассказывает про затерянных островах."
+    },
+    {
+        "image": "book",
+        "rank": "mystical",
+        "type": "book",
+        "name": "📔 Книга о пустыне",
+        "original_key": "book_desert",
+        "description": "Книга давно забытого искателя приключений."
+    },
+    {
+        "image": "book",
+        "rank": "mystical",
+        "type": "book",
+        "name": "📔 Книга о горах",
+        "original_key": "book_mountains",
+        "description": "Книга давно забытого искателя приключений."
+    },
+    {
+        "image": "book",
+        "rank": "mystical",
+        "type": "book",
+        "name": "📔 Книга о магическом лесе",
+        "original_key": "book_magic-forest",
+        "description": "Книга давно забытого искателя приключений."
+    },
+    {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "bag_goodies",
+        "rank": "uncommon",
+        "type": "journey",
+        "name": "👜 Сумка с вкусняшками",
+        "original_key": "bag_goodies",
+        "description": "Хранилище для вкусностей в путешествие."
+    },
+    {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "rubik_cube",
+        "rank": "uncommon",
+        "type": "journey",
+        "name": "🎲 Кубик рубика",
+        "original_key": "rubik_cube",
+        "description": "У динозавра с собой всегда его любимая игра."
+    },
+    {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "lock_bag",
+        "rank": "uncommon",
+        "type": "journey",
+        "name": "👜 Сумка с замком",
+        "original_key": "lock_bag",
+        "description": "Более защищённая сумка для путешествий."
+    },
+    {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "skinning_knife",
+        "rank": "uncommon",
+        "type": "journey",
+        "name": "🔪 Нож для снятия шкур",
+        "original_key": "skinning_knife",
+        "description": "Помогает более точно собирать шкуру с животных. Без потери её частей."
+    },
+    {
+        "image": "flour",
+        "rank": "uncommon",
+        "type": "material",
+        "recipes": [
+            "📜 Рецепт хлеба",
+            "📜 Рецепт торта",
+            "📜 Рецепт мясного пирога",
+            "📜 Рецепт рыбного пирога",
+            "📜 Рецепт ягодного пирога",
+            "📜 Рецепт круассана"
+        ],
+        "name": "🌫 Мука",
+        "original_key": "flour"
+    },
+    {
+        "abilities": {
+            "uses": 5
+        },
+        "create": [
+            {
+                "item": "flour",
+                "type": "create"
+            },
+            {
+                "item": "flour",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "grain",
+                "type": "delete"
+            },
+            {
+                "item": "grain",
+                "type": "delete"
+            },
+            {
+                "item": "grain",
+                "type": "delete"
+            },
+            {
+                "item": "grain",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт муки",
+        "original_key": "flour_recipe",
+        "description": "Рецепт создания муки для вкусняшек.",
+        "loc_create": [
+            "🌫 Мука"
+        ]
+    },
+    {
+        "buffs": {
+            "energy": 3,
+            "mood": 19
+        },
+        "act": 17,
+        "class": "ALL",
+        "image": "null",
+        "rank": "rare",
+        "type": "eat",
+        "name": "🥐 Круассан",
+        "original_key": "croissant"
+    },
+    {
+        "abilities": {
+            "uses": 5
+        },
+        "create": [
+            {
+                "item": "croissant",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "flour",
+                "type": "delete"
+            },
+            {
+                "item": "chocolate",
+                "type": "delete"
+            },
+            {
+                "item": "chocolate",
+                "type": "delete"
+            },
+            {
+                "act": 10,
+                "item": "torch",
+                "type": "endurance"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт круассана",
+        "original_key": "croissant_recipe",
+        "description": "Рецепт создания горячего и аппетитного круассана.",
+        "loc_create": [
+            "🥐 Круассан"
+        ]
+    },
+    {
+        "abilities": {
+            "uses": 1
+        },
+        "create": [
+            {
+                "item": "basket",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "twigs_tree",
+                "type": "delete"
+            },
+            {
+                "item": "twigs_tree",
+                "type": "delete"
+            },
+            {
+                "item": "twigs_tree",
+                "type": "delete"
+            },
+            {
+                "item": "rope",
+                "type": "delete"
+            },
+            {
+                "item": "rope",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт корзины",
+        "original_key": "basket_recipe",
+        "description": "Рецепт создания корзины для сбора пищи.",
+        "loc_create": [
+            "👒 Корзина"
+        ]
+    },
+    {
+        "abilities": {
+            "uses": 1
+        },
+        "create": [
+            {
+                "item": "net",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "rope",
+                "type": "delete"
+            },
+            {
+                "item": "rope",
+                "type": "delete"
+            },
+            {
+                "item": "rope",
+                "type": "delete"
+            },
+            {
+                "item": "rope",
+                "type": "delete"
+            },
+            {
+                "item": "rope",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт сети",
+        "original_key": "net_recipe",
+        "description": "Рецепт создания сети для охоты.",
+        "loc_create": [
+            "🕸 Сеть"
+        ]
+    },
+    {
+        "abilities": {
+            "uses": 1
+        },
+        "create": [
+            {
+                "item": "rod",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "rope",
+                "type": "delete"
+            },
+            {
+                "item": "rope",
+                "type": "delete"
+            },
+            {
+                "item": "twigs_tree",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "name": "📜 Рецепт удочки",
+        "original_key": "rod_recipe",
+        "description": "Рецепт создания удочки для рыбалки.",
+        "loc_create": [
+            "🎣 Удочка"
+        ]
+    },
+    {
+        "act": 16,
+        "class": "Herbivore",
+        "image": "null",
+        "rank": "common",
+        "type": "eat",
+        "name": "🥕 Морковь",
+        "original_key": "carrot"
+    },
+    {
+        "act": 21,
+        "class": "Herbivore",
+        "image": "null",
+        "rank": "common",
+        "type": "eat",
+        "name": "🍅 Помидор",
+        "original_key": "tomato"
+    },
+    {
+        "act": 22,
+        "class": "Herbivore",
+        "image": "null",
+        "rank": "common",
+        "type": "eat",
+        "name": "🥔 Картошка",
+        "original_key": "potato"
+    },
+    {
+        "cant_sell": true,
+        "image": "book",
+        "rank": "legendary",
+        "type": "book",
+        "name": "📔 Мяу издание",
+        "original_key": "meow_book",
+        "description": "Meow meow, meow meow meow... Meow!"
+    },
+    {
+        "cant_sell": false,
+        "buyer": false,
+        "col_repit": {
+            "act": 1,
+            "type": "static"
+        },
+        "drop_items": [
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    50
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "mystic_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    50
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "legendary_egg"
+            },
+            {
+                "abilities": {
+                    "interact": false
+                },
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "min": 1,
+                    "max": 5,
+                    "type": "random"
+                },
+                "id": "chest_food"
+            },
+            {
+                "abilities": {
+                    "interact": false
+                },
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "min": 1,
+                    "max": 5,
+                    "type": "random"
+                },
+                "id": "recipe_chest"
+            },
+            {
+                "abilities": {
+                    "interact": false
+                },
+                "chance": [
+                    1,
+                    1000
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "stone_resurrection"
+            },
+            {
+                "abilities": {
+                    "interact": false
+                },
+                "chance": [
+                    1,
+                    1000
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "gift_2023"
+            }
+        ],
+        "image": "case",
+        "rank": "mythical",
+        "type": "case",
+        "name": "🎁 Подарок 2024",
+        "original_key": "gift_2024",
+        "description": "Для самых прекрасных людей на планете! ❤"
+    },
+    {
+        "image": "activator",
+        "rank": "mythical",
+        "type": "special",
+        "class": "premium",
+        "premium_time": 2592000,
+        "cant_sell": true,
+        "buyer": false,
+        "name": "✨ Активатор премиума",
+        "original_key": "premium_activator",
+        "description": "Активирует премиум подписку на 1 месяц"
+    },
+    {
+        "cant_sell": false,
+        "col_repit": {
+            "act": 1,
+            "type": "static"
+        },
+        "drop_items": [
+            {
+                "abilities": {},
+                "chance": [
+                    50,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "regular_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    25,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "unusual_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    15,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "rare_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    9,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "mystic_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "legendary_egg"
+            }
+        ],
+        "image": "case",
+        "rank": "mythical",
+        "type": "case",
+        "name": "📦 Кейс с яйцами",
+        "original_key": "egg_case"
+    },
+    {
+        "buyer": false,
+        "buffs": {
+            "mood": -666
+        },
+        "act": 100,
+        "class": "ALL",
+        "image": "unknown",
+        "rank": "legendary",
+        "type": "eat",
+        "name": "🍳 Яичница",
+        "original_key": "fried_egg"
+    },
+    {
+        "buyer": false,
+        "image": "activator",
+        "rank": "mythical",
+        "type": "special",
+        "class": "premium",
+        "premium_time": 259200,
+        "cant_sell": true,
+        "name": "✨ Пробная подписка",
+        "original_key": "3_days_premium",
+        "description": "Активирует премиум подписку на 3 дня"
+    },
+    {
+        "buyer": false,
+        "rank": "legendary",
+        "type": "special",
+        "class": "background",
+        "abilities": {
+            "data_id": 1
+        },
+        "name": "🖼 Фон",
+        "original_key": "background",
+        "description": "Добавляет фон в коллекцию."
+    }
+]
