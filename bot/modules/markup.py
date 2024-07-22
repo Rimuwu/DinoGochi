@@ -350,7 +350,9 @@ def feed_count_markup(dino_eat: int, item_act: int,
     bt_2 = f"{dino_eat + item_act * col_to_full}% = {item_name[:1]} {col_to_full}"
 
     if dino_eat + item_act * col_to_full < 100:
-        bt_3 = f"100% = {item_name[:1]} {col_to_full + 1}"
+        mxx = dino_eat + item_act * (col_to_full + 1)
+        if mxx > 100: mxx = 100
+        bt_3 = f"{mxx}% = {item_name[:1]} {col_to_full + 1}"
 
     if col_to_full == 1:
         if bt_3: return_list += [bt_1, bt_3]

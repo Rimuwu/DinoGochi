@@ -110,8 +110,12 @@ def update_col(transmitted_data):
         item_data = transmitted_data['return_data']['items'][-1]
     else:
         item_data = transmitted_data['return_data']['items']
-    
-    abil = transmitted_data['return_data']['abilities'].replace("'", '"')
+
+    if type(transmitted_data['return_data']['items']) == list:
+        abil = transmitted_data['return_data']['abilities'][-1].replace("'", '"')
+    else:
+        abil = transmitted_data['return_data']['abilities'].replace("'", '"')
+
     if abil != '0':
         item_data.update(
             abilities=json.loads(abil)
