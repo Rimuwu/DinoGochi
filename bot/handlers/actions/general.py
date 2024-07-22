@@ -17,7 +17,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 game_task = DBconstructor(mongo_client.dino_activity.game)
 
-@bot.message_handler(pass_bot=True, textstart='commands_name.actions.dino_button')
+@bot.message_handler(pass_bot=True, textstart='commands_name.action_ask.dino_button')
 async def edit_dino_buttom(message: Message):
     """ Изменение последнего динозавра (команда)
     """
@@ -95,7 +95,7 @@ async def join_adp(dino: Dino, transmitted_data):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
-    
+
     action = transmitted_data['action']
     friend_dino = transmitted_data['friend_dino']
     friend = transmitted_data['friendid']

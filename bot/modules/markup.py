@@ -20,7 +20,9 @@ async def back_menu(userid) -> str:
     """
     markup_key = 'main_menu'
     menus_list = ['main_menu', 'settings_menu', 'settings2_menu',
-                  'main_menu', 'actions_menu', 
+                  'main_menu', 'action_ask_menu', 'live_actions',
+                  'main_menu', 'action_ask_menu', 'speed_actions',
+                  'main_menu', 'action_ask_menu', 'skills_actions',
                   'main_menu', 'backgrounds_menu',
                   'main_menu', 'profile_menu', 'market_menu', 'seller_menu',
                   'main_menu', 'profile_menu', 'market_menu',
@@ -206,9 +208,9 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         if friend_code:
             buttons[0][1] = f'notranslate.{t("commands_name.referal.friend_code", language_code)} {friend_code["code"]}'
 
-    elif markup_key == 'actions_menu':
+    elif markup_key == 'action_ask_menu':
         # Меню действий
-        prefix = 'commands_name.actions.'
+        prefix = 'commands_name.action_ask.'
         add_back_button = True
         user = await User().create(userid)
         col_dinos = await user.get_col_dinos #Сохраняем кол. динозавров
@@ -234,14 +236,27 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
             if dino:
                 dino_button = f'notranslate.{t("commands_name.actions.dino_button", language_code)} {crop_text(dino.name, 6)}'
 
-                dp_buttons = get_buttons(dino)
                 buttons = [
-                    ["feed"],
-                    [dp_buttons[3], dp_buttons[0]],
-                    [dp_buttons[1], dp_buttons[2]],
                     [dino_button, "noprefix.buttons_name.back"]
                 ]
-    
+
+    elif markup_key == 'live_actions_menu':
+        # Меню действий жизненных активностей
+        prefix = 'commands_name.actions.'
+        add_back_button = False
+
+        user = await User().create(userid)
+        dino = await user.get_last_dino()
+        if dino:
+
+            dp_buttons = get_buttons(dino)
+            buttons = [
+                ["feed"],
+                [dp_buttons[3], dp_buttons[0]],
+                [dp_buttons[1], dp_buttons[2]],
+                ["noprefix.buttons_name.back"]
+            ]
+
     else:
         log(prefix='Markup', 
             message=f'not_found_key User: {userid}, Data: {markup_key}', lvl=2)

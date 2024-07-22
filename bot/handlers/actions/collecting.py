@@ -66,7 +66,7 @@ async def collecting_adapter(return_data, transmitted_data):
             await auto_ads(message)
 
 
-@bot.message_handler(pass_bot=True, text='commands_name.actions.collecting', 
+@bot.message_handler(pass_bot=True, text='commands_name.live_actions.collecting', 
                      dino_pass=True, nothing_state=True)
 async def collecting_button(message: Message):
     userid = message.from_user.id
@@ -107,7 +107,7 @@ async def collecting_button(message: Message):
                                         lang, steps, 
                                     transmitted_data={'dino': last_dino, 'delete_steps': True})
 
-@bot.message_handler(pass_bot=True, text='commands_name.actions.progress')
+@bot.message_handler(pass_bot=True, text='commands_name.live_actions.progress')
 async def collecting_progress(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id

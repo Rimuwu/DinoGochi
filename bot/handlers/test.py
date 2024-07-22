@@ -46,6 +46,7 @@ from bot.modules.advert import show_advert
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 
+
 users = DBconstructor(mongo_client.user.users)
 
 @bot.message_handler(pass_bot=True, commands=['add_item', 'item_add'], is_admin=True)
@@ -150,20 +151,21 @@ async def add_to(message):
     player = await DungPlayer().create(message.from_user.id, m.id)
     await lobby.add_player(player, message.from_user.id)
 
+def log_command(f):
+    async def _fn():
+        starttime = time.time()
+        await f()
+        print(
+            "child function run time is ",
+            (time.time() - starttime) * 1000,
+            "ms",
+        )
 
+    return _fn
+
+
+@log_command
 @bot.message_handler(pass_bot=True, commands=['test'])
 async def test(message: Message):
-    lang = await get_lang(message.from_user.id)
-    chatid = message.chat.id
     
-    res = []
-    
-    for i in range(100):
-        st = time()
-        await get_inventory(chatid)
-        res.append(time()-st)
-    
-    result = 0
-    for i in res: result += i
-
-    print(round(result / 10, 4))
+    print('testtt')
