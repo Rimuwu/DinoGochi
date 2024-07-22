@@ -1,8 +1,9 @@
-![[{{image}}.png]]
+<!-- ![[{{image}}.png]] -->
 
 {{type}} {{rank}}
 
 key - {{original_key}}
+image - {{image}}
 
 {{#if description}}
 Description - {{description}}
