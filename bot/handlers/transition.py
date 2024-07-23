@@ -312,3 +312,23 @@ async def live_actions(message: Message):
                            reply_markup= await m(userid, 'live_actions_menu', lang))
 
     await auto_ads(message)
+
+@bot.message_handler(pass_bot=True, text='commands_name.action_ask.extraction', is_authorized=True, private=True)
+async def extraction(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+
+    await bot.send_message(message.chat.id, t('menu_text.extraction', lang), 
+            reply_markup= await m(userid, 'extraction_actions_menu', lang))
+
+    await auto_ads(message)
+
+@bot.message_handler(pass_bot=True, text='commands_name.action_ask.skills_actions', is_authorized=True, private=True)
+async def skills_actions(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+
+    await bot.send_message(message.chat.id, t('menu_text.skills_actions', lang), 
+            reply_markup= await m(userid, 'skills_actions_menu', lang))
+
+    await auto_ads(message)

@@ -123,7 +123,7 @@ class Dino:
 
         if owner:
             user = await users.find_one({"userid": owner['owner_id']}, comment='dead_user')
-            await users.update_one({'$set': {'settings.last_dino': None}})
+            await users.update_one({"userid": owner['owner_id']}, {'$set': {'settings.last_dino': None}}, comment='dead_last_dino_none')
 
             save_data = {
                 'data_id': self.data_id,
@@ -525,6 +525,8 @@ async def get_dino_language(dino_id: ObjectId) -> str:
 async def set_status(dino_id: ObjectId, new_status: str, now_status: str = ''):
     """ Устанавливает состояние динозавра. Делает это грубо.
     """
+
+    # Новые статусы - on_farm, in_mine, in_bank, in_sawmill, in_gym, in_library, in_park, in_swimming_pool
 
     assert new_status in ['pass', 'sleep', 'game', 'journey', 'collecting', 'dungeon', 'freezing', 'kindergarten', 'hysteria'], f'Состояние {new_status} не найдено!'
 
