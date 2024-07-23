@@ -109,7 +109,7 @@ async def start_journey(userid: int, chatid: int, lang: str,
     await bot.send_message(chatid, t('journey_start.cancel_text', lang), 
                            reply_markup=cancel_markup(lang))
 
-@bot.message_handler(pass_bot=True, text='commands_name.live_actions.journey', dino_pass=True, nothing_state=True)
+@bot.message_handler(pass_bot=True, text='commands_name.actions.journey', dino_pass=True, nothing_state=True)
 async def journey_com(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -126,7 +126,7 @@ async def journey_complexity(callback: CallbackQuery):
     text = t('journey_complexity', lang)
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.message_handler(pass_bot=True, text='commands_name.live_actions.events')
+@bot.message_handler(pass_bot=True, text='commands_name.actions.events')
 async def events(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)

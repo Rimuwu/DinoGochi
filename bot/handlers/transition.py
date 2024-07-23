@@ -301,3 +301,14 @@ async def backgrounds(message: Message):
                            reply_markup= await m(userid, 'backgrounds_menu', lang))
 
     await auto_ads(message)
+
+
+@bot.message_handler(pass_bot=True, text='commands_name.action_ask.live_actions', is_authorized=True, private=True)
+async def live_actions(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+
+    await bot.send_message(message.chat.id, t('menu_text.live_actions', lang), 
+                           reply_markup= await m(userid, 'live_actions_menu', lang))
+
+    await auto_ads(message)

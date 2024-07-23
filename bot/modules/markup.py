@@ -20,9 +20,10 @@ async def back_menu(userid) -> str:
     """
     markup_key = 'main_menu'
     menus_list = ['main_menu', 'settings_menu', 'settings2_menu',
-                  'main_menu', 'action_ask_menu', 'live_actions',
-                  'main_menu', 'action_ask_menu', 'speed_actions',
-                  'main_menu', 'action_ask_menu', 'skills_actions',
+                  'main_menu', 'actions_menu', 'live_actions_menu',
+                  'main_menu', 'actions_menu', 'speed_actions_menu',
+                  'main_menu', 'actions_menu', 'skills_actions_menu',
+                  'main_menu', 'actions_menu', 'extraction_actions_menu',
                   'main_menu', 'backgrounds_menu',
                   'main_menu', 'profile_menu', 'market_menu', 'seller_menu',
                   'main_menu', 'profile_menu', 'market_menu',
@@ -208,7 +209,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         if friend_code:
             buttons[0][1] = f'notranslate.{t("commands_name.referal.friend_code", language_code)} {friend_code["code"]}'
 
-    elif markup_key == 'action_ask_menu':
+    elif markup_key == 'actions_menu':
         # Меню действий
         prefix = 'commands_name.action_ask.'
         add_back_button = True
@@ -220,23 +221,20 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
                 ['no_dino', 'noprefix.buttons_name.back']
             ]
         if col_dinos == 1:
-            dinos = await user.get_dinos()
-            dino = dinos[0]
-            dp_buttons = get_buttons(dino)
-
             buttons = [
-                ["feed"],
-                [dp_buttons[3], dp_buttons[0]],
-                [dp_buttons[1], dp_buttons[2]]
+                ['speed_actions'],
+                ['skills_actions', 'live_actions', 'extraction']
             ]
 
         else:
             add_back_button = False
             dino = await user.get_last_dino()
             if dino:
-                dino_button = f'notranslate.{t("commands_name.actions.dino_button", language_code)} {crop_text(dino.name, 6)}'
+                dino_button = f'notranslate.{t("commands_name.action_ask.dino_button", language_code)} {crop_text(dino.name, 6)}'
 
                 buttons = [
+                    ['speed_actions'],
+                    ['skills_actions', 'live_actions', 'extraction'],
                     [dino_button, "noprefix.buttons_name.back"]
                 ]
 
@@ -248,12 +246,10 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         user = await User().create(userid)
         dino = await user.get_last_dino()
         if dino:
-
             dp_buttons = get_buttons(dino)
             buttons = [
-                ["feed"],
-                [dp_buttons[3], dp_buttons[0]],
-                [dp_buttons[1], dp_buttons[2]],
+                ["feed", dp_buttons[1]],
+                [dp_buttons[3], dp_buttons[0], dp_buttons[2]],
                 ["noprefix.buttons_name.back"]
             ]
 
