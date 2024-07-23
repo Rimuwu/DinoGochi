@@ -123,6 +123,7 @@ class Dino:
 
         if owner:
             user = await users.find_one({"userid": owner['owner_id']}, comment='dead_user')
+            await users.update_one({'$set': {'settings.last_dino': None}})
 
             save_data = {
                 'data_id': self.data_id,
