@@ -391,7 +391,7 @@ locations = {
             "positive": ['magic_light', 'breeze', 'sunshine', 'magic_animal'],
             "negative": ['rain', 'cold_wind']
         }
-    },
+    }
 }
 
 chance = {
