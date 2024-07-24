@@ -1,23 +1,23 @@
 
-from telebot.types import CallbackQuery, Message
-
 from bot.config import mongo_client
 from bot.exec import bot
 from bot.handlers.actions.game import start_game_ent
 from bot.modules.data_format import list_to_inline
+from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur import Dino
-from bot.modules.states_tools import start_friend_menu
 from bot.modules.friends import send_action_invite
-from bot.modules.localization import t, get_lang
+from bot.modules.localization import get_lang, t
 from bot.modules.markup import markups_menu as m
-from bot.modules.states_tools import ChooseDinoState
-from bot.modules.user import User
- 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.states_tools import ChooseDinoState, start_friend_menu
+from bot.modules.user import User
+from telebot.types import CallbackQuery, Message
+
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 @bot.message_handler(pass_bot=True, textstart='commands_name.action_ask.dino_button')
+@HDMessage
 async def edit_dino_buttom(message: Message):
     """ Изменение последнего динозавра (команда)
     """
@@ -37,6 +37,7 @@ async def edit_dino_buttom(message: Message):
                            reply_markup=inline)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('activ_dino'))
+@HDCallback
 async def answer_edit(callback: CallbackQuery):
     """ Изменение последнего динозавра (кнопка)
     """
@@ -71,6 +72,7 @@ async def invite_adp(friend, transmitted_data: dict):
 
 @bot.callback_query_handler(pass_bot=True, func=
                             lambda call: call.data.startswith('invite_to_action'), private=True)
+@HDCallback
 async def invite_to_action(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id
@@ -116,6 +118,7 @@ async def join_adp(dino: Dino, transmitted_data):
 
 @bot.callback_query_handler(pass_bot=True, func=
                             lambda call: call.data.startswith('join_to_action'))
+@HDCallback
 async def join(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id

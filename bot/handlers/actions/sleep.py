@@ -14,6 +14,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.mood import add_mood
 from bot.modules.states_tools import ChooseIntState, ChooseOptionState
 from bot.modules.user import User
+from bot.modules.decorators import HDCallback, HDMessage
  
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
@@ -90,6 +91,7 @@ async def end_choice(option: str, transmitted_data: dict):
             dino_alt_id_markup=last_dino.alt_id))
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions.put_to_bed', dino_pass=True)
+@HDMessage
 async def put_to_bed(message: Message):
     """Уложить спать динозавра
     """
@@ -133,6 +135,7 @@ async def put_to_bed(message: Message):
                 reply_markup= await m(userid, 'last_menu', lang))
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions.awaken')
+@HDMessage
 async def awaken(message: Message):
     """Пробуждение динозавра
     """

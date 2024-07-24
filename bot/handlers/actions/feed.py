@@ -1,20 +1,20 @@
 
-from telebot.types import Message, CallbackQuery
-
 from bot.config import mongo_client
 from bot.exec import bot
+from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur import Dino
 from bot.modules.inventory_tools import start_inv
 from bot.modules.item import get_data as get_item_data
-from bot.modules.item import get_name, CheckItemFromUser
+from bot.modules.item import get_name
 from bot.modules.item_tools import use_item
+from bot.modules.localization import get_lang
 from bot.modules.markup import feed_count_markup
 from bot.modules.markup import markups_menu as m
+from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User
-from bot.modules.localization import get_lang
- 
-from bot.modules.overwriting.DataCalsses import DBconstructor
+from telebot.types import CallbackQuery, Message
+
 items = DBconstructor(mongo_client.items.items)
 
 async def adapter_function(return_dict, transmitted_data):
@@ -78,6 +78,7 @@ async def inventory_adapter(item, transmitted_data):
                               transmitted_data=transmitted_data)
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions.feed')
+@HDMessage
 async def feed(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -94,6 +95,7 @@ async def feed(message: Message):
 
 @bot.callback_query_handler(pass_bot=True, func=
                             lambda call: call.data.startswith('feed_inl'))
+@HDCallback
 async def feed_inl(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id

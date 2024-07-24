@@ -1,26 +1,27 @@
 
+from random import randint
 from time import time
-
-from telebot.types import (CallbackQuery, InlineKeyboardMarkup, InputMedia,
-                           Message)
 
 from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.advert import auto_ads
 from bot.modules.data_format import list_to_inline, seconds_to_str
+from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur import Dino, check_status, end_journey
 from bot.modules.dinosaur import start_journey as action_journey
 from bot.modules.images import dino_journey
 from bot.modules.item import counts_items
 from bot.modules.journey import all_log, generate_event_message
-from bot.modules.localization import get_data, t, get_lang
-from bot.modules.markup import cancel_markup, markups_menu as m
+from bot.modules.localization import get_data, get_lang, t
+from bot.modules.markup import cancel_markup
+from bot.modules.markup import markups_menu as m
+from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User
-from random import randint
- 
-from bot.modules.overwriting.DataCalsses import DBconstructor
+from telebot.types import (CallbackQuery, InlineKeyboardMarkup, InputMedia,
+                           Message)
+
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
@@ -110,6 +111,7 @@ async def start_journey(userid: int, chatid: int, lang: str,
                            reply_markup=cancel_markup(lang))
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions.journey', dino_pass=True, nothing_state=True)
+@HDMessage
 async def journey_com(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -119,6 +121,7 @@ async def journey_com(message: Message):
 
 @bot.callback_query_handler(pass_bot=True, func=
                             lambda call: call.data.startswith('journey_complexity'), private=True)
+@HDCallback
 async def journey_complexity(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id
@@ -127,6 +130,7 @@ async def journey_complexity(callback: CallbackQuery):
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions.events')
+@HDMessage
 async def events(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -162,6 +166,7 @@ async def events(message: Message):
 
 @bot.callback_query_handler(pass_bot=True, func=
                             lambda call: call.data.startswith('journey_stop'))
+@HDCallback
 async def journey_stop(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id

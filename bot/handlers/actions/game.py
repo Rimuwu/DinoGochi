@@ -1,6 +1,5 @@
 from random import randint
-
-from telebot.types import Message
+from time import time
 
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS
@@ -8,19 +7,20 @@ from bot.exec import bot
 from bot.modules.accessory import check_accessory
 from bot.modules.advert import auto_ads
 from bot.modules.data_format import list_to_inline
+from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur import Dino, end_game, set_status
 from bot.modules.friends import send_action_invite
 from bot.modules.images import dino_game
-from bot.modules.localization import get_data, t, get_lang
+from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.mood import add_mood, check_breakdown, check_inspiration
+from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user import User, premium
-from bot.modules.quests import quest_process
-from time import time
- 
-from bot.modules.overwriting.DataCalsses import DBconstructor
+from telebot.types import Message
+
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
@@ -180,6 +180,7 @@ async def game_start(return_data: dict,
     await auto_ads(message)
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions.entertainments', dino_pass=True, nothing_state=True)
+@HDMessage
 async def entertainments(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -190,6 +191,7 @@ async def entertainments(message: Message):
     if dino: await start_game_ent(userid, chatid, lang, dino)
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions.stop_game')
+@HDMessage
 async def stop_game(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)

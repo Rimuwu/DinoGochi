@@ -1,24 +1,23 @@
 
-from telebot.types import CallbackQuery, Message
-
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
+from bot.modules.accessory import check_accessory
 from bot.modules.advert import auto_ads
 from bot.modules.data_format import list_to_inline, list_to_keyboard
+from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur import Dino, check_status, end_collecting
 from bot.modules.images import dino_collecting
 from bot.modules.item import counts_items
-from bot.modules.localization import get_data, t, get_lang
+from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import count_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.states_tools import ChooseStepState
-from bot.modules.user import User, count_inventory_items, premium, max_eat
-from bot.modules.quests import quest_process
- 
-from bot.modules.accessory import check_accessory
-
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.quests import quest_process
+from bot.modules.states_tools import ChooseStepState
+from bot.modules.user import User, count_inventory_items, max_eat, premium
+from telebot.types import CallbackQuery, Message
+
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
@@ -67,6 +66,7 @@ async def collecting_adapter(return_data, transmitted_data):
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions.collecting', 
                      dino_pass=True, nothing_state=True)
+@HDMessage
 async def collecting_button(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
@@ -107,6 +107,7 @@ async def collecting_button(message: Message):
                                     transmitted_data={'dino': last_dino, 'delete_steps': True})
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions.progress')
+@HDMessage
 async def collecting_progress(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
@@ -139,6 +140,7 @@ async def collecting_progress(message: Message):
 
 @bot.callback_query_handler(pass_bot=True, func=
                             lambda call: call.data.startswith('collecting'), is_authorized=True, private=True)
+@HDCallback
 async def collecting_callback(callback: CallbackQuery):
     dino_data = callback.data.split()[2]
     action = callback.data.split()[1]
