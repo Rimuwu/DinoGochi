@@ -1,30 +1,31 @@
 
-from fuzzywuzzy import fuzz
-from telebot.types import CallbackQuery, Message
+from asyncio import sleep
 
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
 from bot.modules.data_format import seconds_to_str, user_name
+from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur import incubation_egg
 from bot.modules.inventory_tools import (InventoryStates, back_button,
                                          filter_items_data, filter_menu,
                                          forward_button, generate,
                                          inventory_pages, search_menu,
                                          send_item_info, start_inv, swipe_page)
-from bot.modules.item import (CheckItemFromUser, RemoveItemFromUser,
-                              counts_items, decode_item, CheckCountItemFromUser)
+from bot.modules.item import (CheckCountItemFromUser, CheckItemFromUser,
+                              RemoveItemFromUser, counts_items, decode_item)
 from bot.modules.item import get_data as get_item_data
 from bot.modules.item import get_item_dict, get_name
 from bot.modules.item_tools import (AddItemToUser, CheckItemFromUser,
                                     book_page, data_for_use_item,
                                     delete_item_action, exchange_item)
 from bot.modules.localization import get_data, get_lang, t
-from bot.modules.markup import markups_menu as m
 from bot.modules.markup import count_markup
- 
+from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseIntState
 from bot.modules.user import User, take_coins
-from asyncio import sleep
+from fuzzywuzzy import fuzz
+from telebot.types import CallbackQuery, Message
+
 
 async def cancel(message):
     lang = await get_lang(message.from_user.id)
@@ -34,6 +35,7 @@ async def cancel(message):
     await bot.reset_data(message.from_user.id,  message.chat.id)
 
 @bot.message_handler(pass_bot=True, text='commands_name.profile.inventory', is_authorized=True, nothing_state=True, private=True)
+@HDMessage
 async def open_inventory(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -42,6 +44,7 @@ async def open_inventory(message: Message):
     await start_inv(None, userid, chatid, lang)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('inventory_start'), private=True)
+@HDCallback
 async def start_callback(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id
@@ -50,6 +53,7 @@ async def start_callback(call: CallbackQuery):
     await start_inv(None, userid, chatid, lang)
 
 @bot.message_handler(state=InventoryStates.Inventory, is_authorized=True, private=True)
+@HDMessage
 async def inventory(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
@@ -90,6 +94,7 @@ async def inventory(message: Message):
     else: await cancel(message)
 
 @bot.callback_query_handler(pass_bot=True, state=InventoryStates.Inventory, func=lambda call: call.data.startswith('inventory_menu'), private=True)
+@HDCallback
 async def inv_callback(call: CallbackQuery):
     call_data = call.data.split()[1]
     chatid = call.message.chat.id
@@ -154,6 +159,7 @@ async def inv_callback(call: CallbackQuery):
         await bot.delete_message(chatid, main_message)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('item'), private=True)
+@HDCallback
 async def item_callback(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -208,6 +214,7 @@ async def item_callback(call: CallbackQuery):
 # Поиск внутри инвентаря
 @bot.callback_query_handler(pass_bot=True, state=InventoryStates.InventorySearch, 
                             func=lambda call: call.data.startswith('inventory_search'), private=True)
+@HDCallback
 async def search_callback(call: CallbackQuery):
     call_data = call.data.split()[1]
     chatid = call.message.chat.id
@@ -219,6 +226,7 @@ async def search_callback(call: CallbackQuery):
         await swipe_page(userid, chatid)
 
 @bot.message_handler(pass_bot=True, state=InventoryStates.InventorySearch, is_authorized=True, private=True)
+@HDMessage
 async def search_message(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -260,6 +268,7 @@ async def search_message(message: Message):
 
 #Фильтры
 @bot.callback_query_handler(pass_bot=True, state=InventoryStates.InventorySetFilters, func=lambda call: call.data.startswith('inventory_filter'), private=True)
+@HDCallback
 async def filter_callback(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -312,6 +321,7 @@ async def filter_callback(call: CallbackQuery):
             await filter_menu(userid, chatid, False)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('book'), private=True)
+@HDCallback
 async def book(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -325,6 +335,7 @@ async def book(call: CallbackQuery):
     except: pass
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('ns_craft'), private=True)
+@HDCallback
 async def ns_craft(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -381,6 +392,7 @@ async def ns_end(count, transmitted_data: dict):
 
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('buyer'), private=True)
+@HDCallback
 async def buyer(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id

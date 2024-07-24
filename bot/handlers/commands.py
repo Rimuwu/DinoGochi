@@ -1,18 +1,19 @@
+from bot.config import mongo_client
+from bot.exec import bot
+from bot.handlers.start import start_game
+from bot.modules.data_format import seconds_to_str, str_to_seconds, user_name
+from bot.modules.decorators import HDCallback, HDMessage
+from bot.modules.inline import inline_menu
+from bot.modules.localization import get_lang, t
+from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.promo import use_promo
 from telebot.types import Message
 
-from bot.exec import bot
-from bot.config import mongo_client
-from bot.modules.data_format import seconds_to_str, user_name, str_to_seconds
-from bot.modules.inline import inline_menu
-from bot.modules.localization import  get_lang, t
-from bot.modules.promo import use_promo
-from bot.handlers.start import start_game
-
-from bot.modules.overwriting.DataCalsses import DBconstructor
 users = DBconstructor(mongo_client.user.users)
 puhs = DBconstructor(mongo_client.market.puhs)
 
 @bot.message_handler(pass_bot=True, commands=['timer'])
+@HDMessage
 async def timer(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
@@ -30,6 +31,7 @@ async def timer(message: Message):
         await bot.send_message(chatid, text)
 
 @bot.message_handler(pass_bot=True, commands=['string_to_sec'], private=True)
+@HDMessage
 async def string_time(message):
     txt = message.text.replace('/string_to_sec', '')
     chatid = message.chat.id
@@ -43,6 +45,7 @@ async def string_time(message):
         await bot.send_message(chatid, str(sec))
 
 @bot.message_handler(pass_bot=True, commands=['pushinfo'])
+@HDMessage
 async def push_info(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
@@ -51,6 +54,7 @@ async def push_info(message: Message):
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, commands=['delete_push'])
+@HDMessage
 async def delete_push(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -59,6 +63,7 @@ async def delete_push(message: Message):
     await bot.send_message(chatid, '👍', parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, commands=['add_me'], private=False)
+@HDMessage
 async def add_me_с(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -70,6 +75,7 @@ async def add_me_с(message: Message):
                     )
 
 @bot.message_handler(pass_bot=True, commands=['promo'])
+@HDMessage
 async def promo(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -86,6 +92,7 @@ async def promo(message: Message):
             await start_game(message, code, 'promo')
 
 @bot.message_handler(pass_bot=True, commands=['help'])
+@HDMessage
 async def help(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id

@@ -1,22 +1,23 @@
 from asyncio import sleep
 from time import time
 
-from telebot.types import (CallbackQuery, InlineKeyboardButton,
-                           InlineKeyboardMarkup, InputMedia, Message)
-
 from bot.config import mongo_client
 from bot.exec import bot
-from bot.modules.data_format import list_to_inline, seconds_to_str
+from bot.modules.data_format import list_to_inline
+from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.item import AddItemToUser
-from bot.modules.localization import get_data, t, get_lang
-from bot.modules.quests import quest_resampling, quest_ui, check_quest
-from bot.modules.user import take_coins
- 
+from bot.modules.localization import get_data, get_lang, t
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.quests import check_quest, quest_resampling, quest_ui
+from bot.modules.user import take_coins
+from telebot.types import (CallbackQuery,
+                           InlineKeyboardMarkup, Message)
+
 quests_data = DBconstructor(mongo_client.tavern.quests)
 users = DBconstructor(mongo_client.user.users)
 
 @bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.quests', is_authorized=True, private=True)
+@HDMessage
 async def check_quests(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -38,6 +39,7 @@ async def check_quests(message: Message):
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('quest'), private=True)
+@HDCallback
 async def quest(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id

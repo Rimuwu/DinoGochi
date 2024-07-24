@@ -1,23 +1,23 @@
-from telebot.types import CallbackQuery, Message
+from asyncio import sleep
+from time import time
 
-from bot.config import mongo_client, conf
+from bot.config import conf, mongo_client
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, str_to_seconds
+from bot.modules.decorators import HDCallback, HDMessage
+from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
-from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import confirm_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.states_tools import (ChooseConfirmState, ChoosePagesState, ChooseStringState)
-from bot.modules.user import user_name
-from bot.modules.states_tools import (ChoosePagesState, ChooseStringState)
-from bot.modules.tracking import creat_track, get_track_pages, track_info
-from bot.modules.promo import create_promo_start, get_promo_pages, promo_ui, use_promo
-from time import time
-from bot.modules.user import award_premium
- 
-from asyncio import sleep
-
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.promo import (create_promo_start, get_promo_pages, promo_ui,
+                               use_promo)
+from bot.modules.states_tools import (ChooseConfirmState, ChoosePagesState,
+                                      ChooseStringState)
+from bot.modules.tracking import creat_track, get_track_pages, track_info
+from bot.modules.user import award_premium, user_name
+from telebot.types import CallbackQuery, Message
+
 management = DBconstructor(mongo_client.other.management)
 promo = DBconstructor(mongo_client.other.promo)
 langs = DBconstructor(mongo_client.user.lang)
@@ -30,6 +30,7 @@ async def s_message(message: Message):
     # Рассылка
 
 @bot.message_handler(pass_bot=True, commands=['create_tracking'], is_admin=True)
+@HDMessage
 async def create_tracking(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -57,6 +58,7 @@ async def create_track(name, transmitted_data: dict):
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, commands=['tracking'], is_admin=True)
+@HDMessage
 async def tracking(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -74,6 +76,7 @@ async def track_info_adp(data, transmitted_data: dict):
     await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('track'), private=True)
+@HDCallback
 async def track(call: CallbackQuery):
     split_d = call.data.split()
     action = split_d[1]
@@ -98,6 +101,7 @@ async def track(call: CallbackQuery):
         await bot.send_message(chatid, text)
 
 @bot.message_handler(pass_bot=True, commands=['create_promo'], is_admin=True)
+@HDMessage
 async def create_promo(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -106,6 +110,7 @@ async def create_promo(message: Message):
     await create_promo_start(userid, chatid, lang)
 
 @bot.message_handler(pass_bot=True, commands=['promos'], is_admin=True)
+@HDMessage
 async def promos(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -123,6 +128,7 @@ async def promo_info_adp(code, transmitted_data: dict):
     await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('promo'))
+@HDCallback
 async def promo_call(call: CallbackQuery):
     split_d = call.data.split()
     action = split_d[2]
@@ -179,6 +185,7 @@ async def promo_call(call: CallbackQuery):
         await bot.send_message(userid, t('promo_commands.not_found', lang), parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, commands=['link_promo'])
+@HDMessage
 async def link_promo(message):
     user = message.from_user
     msg_args = message.text.split()
@@ -216,6 +223,7 @@ async def link_promo(message):
                 await bot.send_message(user.id, text_dict['not_found'])
 
 @bot.message_handler(commands=['add_premium'], is_admin=True)
+@HDMessage
 async def add_premium(message):
     """
     Аргументы: /add_premium 0/userid None/str_time
@@ -235,6 +243,7 @@ async def add_premium(message):
     await bot.send_message(message.from_user.id, 'ok')
     
 @bot.message_handler(commands=['copy_m'], is_admin=True)
+@HDMessage
 async def copy_m(message):
 
     """
@@ -307,6 +316,7 @@ async def confirm_send(_, transmitted_data: dict):
     await bot.send_message(start_chat, f"Completed in {round(time() - start_time, 2)}, sent for {col} / {len(users_sends)}")
 
 @bot.message_handler(commands=['eval'], is_admin=True)
+@HDMessage
 async def evaling(message):
 
     msg_args = message.text.split()
@@ -325,6 +335,7 @@ async def evaling(message):
         await bot.send_message(message.from_user.id, 'moretext')
 
 @bot.message_handler(commands=['get_username'], is_admin=True)
+@HDMessage
 async def get_username(message):
     """
     Аргументы: /add_premium 0/userid None/str_time

@@ -1,14 +1,14 @@
 
-from telebot.types import Message, CallbackQuery
-
 from bot.const import GAME_SETTINGS as gs
 from bot.exec import bot
-from bot.modules.data_format import seconds_to_str, chunk_pages, str_to_seconds
-from bot.modules.localization import get_data, t, get_lang
+from bot.modules.data_format import chunk_pages, seconds_to_str, str_to_seconds
+from bot.modules.decorators import HDCallback, HDMessage
+from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import GeneralStates
- 
+from telebot.types import CallbackQuery, Message
+
 
 async def cancel(message, text:str = "❌"):
     lang = await get_lang(message.from_user.id)
@@ -19,12 +19,14 @@ async def cancel(message, text:str = "❌"):
     await bot.reset_data(message.from_user.id,  message.chat.id)
 
 @bot.message_handler(pass_bot=True, text='buttons_name.cancel', state='*', private=True)
+@HDMessage
 async def cancel_m(message: Message):
     """Состояние отмены
     """
     await cancel(message)
 
 @bot.message_handler(pass_bot=True, commands=['cancel'], state='*', private=True)
+@HDMessage
 async def cancel_c(message: Message):
     """Команда отмены
     """
@@ -32,6 +34,7 @@ async def cancel_c(message: Message):
 
 
 @bot.message_handler(pass_bot=True, commands=['state'])
+@HDMessage
 async def get_state(message: Message):
     """Состояние
     """
@@ -43,6 +46,7 @@ async def get_state(message: Message):
     except: pass
 
 @bot.message_handler(pass_bot=True, state=GeneralStates.ChooseDino, is_authorized=True)
+@HDMessage
 async def ChoseDino(message: Message):
     """Общая функция для выбора динозавра
     """
@@ -67,6 +71,7 @@ async def ChoseDino(message: Message):
                 t('states.ChooseDino.error_not_dino', lang))
 
 @bot.message_handler(pass_bot=True, state=GeneralStates.ChooseInt, is_authorized=True)
+@HDMessage
 async def ChooseInt(message: Message):
     """Общая функция для ввода числа
     """
@@ -106,6 +111,7 @@ async def ChooseInt(message: Message):
         await func(number, transmitted_data=transmitted_data)
 
 @bot.message_handler(pass_bot=True, state=GeneralStates.ChooseString, is_authorized=True)
+@HDMessage
 async def ChooseString(message: Message):
     """Общая функция для ввода сообщения
     """
@@ -139,6 +145,7 @@ async def ChooseString(message: Message):
         await func(content, transmitted_data=transmitted_data)
 
 @bot.message_handler(pass_bot=True, state=GeneralStates.ChooseConfirm, is_authorized=True)
+@HDMessage
 async def ChooseConfirm(message: Message):
     """Общая функция для подтверждения
     """
@@ -177,6 +184,7 @@ async def ChooseConfirm(message: Message):
                 t('states.ChooseConfirm.error_not_confirm', lang))
 
 @bot.message_handler(pass_bot=True, state=GeneralStates.ChooseOption, is_authorized=True)
+@HDMessage
 async def ChooseOption(message: Message):
     """Общая функция для выбора из предложенных вариантов
     """
@@ -201,6 +209,7 @@ async def ChooseOption(message: Message):
                 t('states.ChooseOption.error_not_option', lang))
 
 @bot.message_handler(pass_bot=True, state=GeneralStates.ChooseCustom, is_authorized=True)
+@HDMessage
 async def ChooseCustom(message: Message):
     """Кастомный обработчик, принимает данные и отправляет в обработчик
     """
@@ -223,6 +232,7 @@ async def ChooseCustom(message: Message):
         await func(answer, transmitted_data=transmitted_data)
     
 @bot.message_handler(pass_bot=True, state=GeneralStates.ChoosePagesState, is_authorized=True)
+@HDMessage
 async def ChooseOptionPages(message: Message):
     """Кастомный обработчик, принимает данные и отправляет в обработчик
     """
@@ -318,6 +328,7 @@ async def ChooseOptionPages(message: Message):
 
 @bot.callback_query_handler(pass_bot=True, state=GeneralStates.ChooseInline, is_authorized=True, 
                             func=lambda call: call.data.startswith('chooseinline'))
+@HDCallback
 async def ChooseInline(callback: CallbackQuery):
     code = callback.data.split()
     chatid = callback.message.chat.id
@@ -345,6 +356,7 @@ async def ChooseInline(callback: CallbackQuery):
         await func(code, transmitted_data=transmitted_data)
 
 @bot.message_handler(pass_bot=True, state=GeneralStates.ChooseTime, is_authorized=True)
+@HDMessage
 async def ChooseTime(message: Message):
     """Общая функция для ввода времени
     """

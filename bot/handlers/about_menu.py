@@ -1,20 +1,21 @@
-from telebot.types import (CallbackQuery, InlineKeyboardButton,
-                           InlineKeyboardMarkup, Message, InputMedia)
-
-from bot.config import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
+from bot.modules.data_format import seconds_to_str
+from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.donation import send_inv
 from bot.modules.images import async_open
-from bot.modules.localization import get_data, t, get_lang
 from bot.modules.item import counts_items
-from bot.modules.data_format import seconds_to_str
-from bot.modules.states_tools import ChooseIntState
+from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
+from bot.modules.states_tools import ChooseIntState
+from telebot.types import (CallbackQuery, InlineKeyboardButton,
+                           InlineKeyboardMarkup, InputMedia, Message)
+
 
 @bot.message_handler(pass_bot=True, text='commands_name.about.team', 
                      is_authorized=True, private=True)
+@HDMessage
 async def team(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -29,6 +30,7 @@ async def team(message: Message):
 
 @bot.message_handler(pass_bot=True, text='commands_name.about.links', 
                      is_authorized=True, private=True)
+@HDMessage
 async def links(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -59,6 +61,7 @@ async def main_support_menu(lang: str):
 
 @bot.message_handler(pass_bot=True, text='commands_name.about.support', 
                      is_authorized=True, private=True)
+@HDMessage
 async def support(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -69,6 +72,7 @@ async def support(message: Message):
 
 @bot.message_handler(pass_bot=True, commands=['premium'], 
                      is_authorized=True, private=True)
+@HDMessage
 async def support_com(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -79,6 +83,7 @@ async def support_com(message: Message):
 
 @bot.message_handler(pass_bot=True, text='commands_name.about.faq', 
                      is_authorized=True, private=True)
+@HDMessage
 async def faq(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -97,6 +102,7 @@ async def faq(message: Message):
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('faq'))
+@HDCallback
 async def faq_buttons(call: CallbackQuery):
     data = call.data.split()[1]
     chatid = call.message.chat.id
@@ -107,6 +113,7 @@ async def faq_buttons(call: CallbackQuery):
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('support'))
+@HDCallback
 async def support_buttons(call: CallbackQuery):
     action = call.data.split()[1]
     product_key = call.data.split()[2]
@@ -210,5 +217,5 @@ async def tips(col, transmitted_data):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
-    await send_inv(userid, 'non_repayable', 1, lang, col)
+    await send_inv(userid, 'non_repayable', '1', lang, col)
     await bot.send_message(chatid, t('support_command.create_invoice', lang), reply_markup=await m(userid, 'last_menu', lang))

@@ -11,12 +11,14 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.referals import connect_referal, create_referal
 from bot.modules.states_tools import ChooseCustomState, ChooseStringState
 from bot.modules.user import take_coins
+from bot.modules.decorators import HDCallback, HDMessage
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 referals = DBconstructor(mongo_client.user.referals)
 
 
 @bot.message_handler(pass_bot=True, text='commands_name.referal.code', is_authorized=True, private=True)
+@HDMessage
 async def code(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -81,6 +83,7 @@ async def custom_handler(message: Message, transmitted_data: dict):
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('generate_referal'), private=True)
+@HDCallback
 async def generate_code(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id
@@ -109,6 +112,7 @@ async def generate_code(call: CallbackQuery):
 
 
 @bot.message_handler(pass_bot=True, textstart='commands_name.referal.my_code', private=True)
+@HDMessage
 async def my_code(message: Message):
     """ Кнопка - мой код ...
     """
@@ -148,6 +152,7 @@ async def check_code(code: str, transmitted_data: dict, send: bool = True):
                         reply_markup= await m(userid, 'last_menu', lang, True))
 
 @bot.message_handler(pass_bot=True, text='commands_name.referal.enter_code', is_authorized=True, private=True)
+@HDMessage
 async def enter_code(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)

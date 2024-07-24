@@ -3,23 +3,22 @@ from datetime import datetime, timedelta, timezone
 from random import choice
 from time import time
 
-from telebot.types import Message, CallbackQuery, InlineKeyboardMarkup
-
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
 from bot.modules.advert import auto_ads
 from bot.modules.data_format import list_to_inline, seconds_to_str, user_name
+from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.images import async_open
-from bot.modules.item import counts_items, AddItemToUser
-from bot.modules.localization import get_data, t, get_lang
+from bot.modules.item import AddItemToUser, counts_items
+from bot.modules.localization import get_data, get_lang, t
+from bot.modules.market import preview_product
 from bot.modules.markup import back_menu
 from bot.modules.markup import markups_menu as m
+from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.statistic import get_now_statistic
 from bot.modules.user import User, take_coins
-from bot.modules.market import preview_product
-
-from bot.modules.overwriting.DataCalsses import DBconstructor
+from telebot.types import CallbackQuery, InlineKeyboardMarkup, Message
 
 users = DBconstructor(mongo_client.user.users)
 tavern = DBconstructor(mongo_client.tavern.tavern)
@@ -27,6 +26,7 @@ preferential = DBconstructor(mongo_client.market.preferential)
 products = DBconstructor(mongo_client.market.products)
 
 @bot.message_handler(pass_bot=True, text='buttons_name.back', is_authorized=True, private=True)
+@HDMessage
 async def back_buttom(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -38,6 +38,7 @@ async def back_buttom(message: Message):
                            reply_markup=await m(userid, back_m, lang))
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings_menu', is_authorized=True, private=True)
+@HDMessage
 async def settings_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -59,6 +60,7 @@ async def settings_menu(message: Message):
         await auto_ads(message)
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings.settings_page_2', is_authorized=True, private=True)
+@HDMessage
 async def settings2_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -79,6 +81,7 @@ async def settings2_menu(message: Message):
         await auto_ads(message)
 
 @bot.message_handler(pass_bot=True, text='commands_name.profile_menu', is_authorized=True, private=True)
+@HDMessage
 async def profile_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -89,6 +92,7 @@ async def profile_menu(message: Message):
     await auto_ads(message)
     
 @bot.message_handler(pass_bot=True, text='commands_name.friends_menu', is_authorized=True, private=True)
+@HDMessage
 async def friends_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -99,6 +103,7 @@ async def friends_menu(message: Message):
     await auto_ads(message)
 
 @bot.message_handler(pass_bot=True, text='commands_name.profile.market', is_authorized=True, private=True)
+@HDMessage
 async def market_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -133,6 +138,7 @@ async def market_menu(message: Message):
 
 
 @bot.message_handler(pass_bot=True, text='commands_name.actions_menu', is_authorized=True, private=True)
+@HDMessage
 async def actions_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -143,6 +149,7 @@ async def actions_menu(message: Message):
     await auto_ads(message)
 
 @bot.message_handler(pass_bot=True, text='commands_name.dino-tavern_menu', is_authorized=True, private=True)
+@HDMessage
 async def tavern_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -208,6 +215,7 @@ async def tavern_menu(message: Message):
     await auto_ads(message)
 
 @bot.message_handler(pass_bot=True, text='commands_name.profile.about', is_authorized=True, private=True)
+@HDMessage
 async def about_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -240,6 +248,7 @@ async def about_menu(message: Message):
     await auto_ads(message)
 
 @bot.message_handler(pass_bot=True, text='commands_name.friends.referal', is_authorized=True, private=True)
+@HDMessage
 async def referal_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -262,6 +271,7 @@ async def referal_menu(message: Message):
     await auto_ads(message)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('buy_ale'))
+@HDCallback
 async def buy_ale(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
@@ -283,6 +293,7 @@ async def buy_ale(callback: CallbackQuery):
         await bot.send_message(friend, text)
 
 @bot.message_handler(pass_bot=True, text='commands_name.market.seller_profile', is_authorized=True, private=True)
+@HDMessage
 async def seller_profile(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -293,6 +304,7 @@ async def seller_profile(message: Message):
     await auto_ads(message)
     
 @bot.message_handler(pass_bot=True, text='commands_name.market.background_market', is_authorized=True, private=True)
+@HDMessage
 async def backgrounds(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -304,6 +316,7 @@ async def backgrounds(message: Message):
 
 
 @bot.message_handler(pass_bot=True, text='commands_name.action_ask.live_actions', is_authorized=True, private=True)
+@HDMessage
 async def live_actions(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -314,6 +327,7 @@ async def live_actions(message: Message):
     await auto_ads(message)
 
 @bot.message_handler(pass_bot=True, text='commands_name.action_ask.extraction', is_authorized=True, private=True)
+@HDMessage
 async def extraction(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -324,6 +338,7 @@ async def extraction(message: Message):
     await auto_ads(message)
 
 @bot.message_handler(pass_bot=True, text='commands_name.action_ask.skills_actions', is_authorized=True, private=True)
+@HDMessage
 async def skills_actions(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)

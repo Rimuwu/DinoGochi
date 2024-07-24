@@ -1,16 +1,15 @@
-from telebot.types import Message, CallbackQuery, InlineKeyboardMarkup 
-
-from bot.exec import bot
 from bot.config import mongo_client
-from bot.modules.data_format import list_to_inline, seconds_to_str
-from bot.modules.localization import  get_lang, t, get_data
- 
-from bot.modules.user import premium
-from bot.modules.item import counts_items, AddItemToUser
-from bot.modules.advert import create_ads_data
 from bot.const import GAME_SETTINGS
-
+from bot.exec import bot
+from bot.modules.advert import create_ads_data
+from bot.modules.data_format import list_to_inline, seconds_to_str
+from bot.modules.decorators import HDCallback, HDMessage
+from bot.modules.item import AddItemToUser, counts_items
+from bot.modules.localization import get_data, get_lang, t
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.user import premium
+from telebot.types import CallbackQuery, InlineKeyboardMarkup, Message
+
 users = DBconstructor(mongo_client.user.users)
 ads = DBconstructor(mongo_client.user.ads)
 
@@ -35,6 +34,7 @@ async def main_message(user_id):
     return text, markup
 
 @bot.message_handler(pass_bot=True, commands=['super'], private=True)
+@HDMessage
 async def super_c(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -45,6 +45,7 @@ async def super_c(message: Message):
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('super_coins'), private=True)
+@HDCallback
 async def super_coins(call: CallbackQuery):
     chatid = call.message.chat.id
     user_id = call.from_user.id
@@ -88,6 +89,7 @@ async def super_coins(call: CallbackQuery):
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('ads_limit'), private=True)
+@HDCallback
 async def ads_limit(call: CallbackQuery):
     chatid = call.message.chat.id
     user_id = call.from_user.id
@@ -113,6 +115,7 @@ async def ads_limit(call: CallbackQuery):
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('super_shop'), private=True)
+@HDCallback
 async def super_shop(call: CallbackQuery):
     chatid = call.message.chat.id
     user_id = call.from_user.id

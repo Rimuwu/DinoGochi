@@ -1,11 +1,14 @@
 # Тестовые команды
 
+from functools import wraps
 import statistics
 from asyncio import sleep
 from pprint import pprint
 from time import time
 import json
 from random import choice
+from time import sleep
+from asyncio import sleep as asleep
 
 from telebot.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            InlineQueryResultContact, Message, LabeledPrice)
@@ -45,6 +48,7 @@ from PIL import Image
 from bot.modules.advert import show_advert
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.decorators import HDMessage
 
 
 users = DBconstructor(mongo_client.user.users)
@@ -164,8 +168,26 @@ def log_command(f):
     return _fn
 
 
-@log_command
+
+class sa(object):
+    def a(self, fun):
+
+        @wraps(fun)
+        async def wrapper(*args):
+            print(1)
+            print(args)
+            return await fun(*args)
+
+        return wrapper
+
+n = sa()
+
+
 @bot.message_handler(pass_bot=True, commands=['test'])
+@HDMessage
 async def test(message: Message):
     
     print('testtt')
+    await asleep(5)
+
+    return 0

@@ -1,19 +1,21 @@
-from telebot.types import CallbackQuery, Message
+from random import randint
 
 from bot.config import mongo_client
 from bot.exec import bot
-from bot.modules.data_format import chunks, list_to_keyboard, escape_markdown
+from bot.modules.data_format import chunks, escape_markdown, list_to_keyboard
+from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur import Dino
-from bot.modules.localization import get_data, t, get_lang, get_all_locales
-from bot.modules.markup import confirm_markup, cancel_markup
+from bot.modules.localization import get_all_locales, get_data, get_lang, t
+from bot.modules.markup import cancel_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.markup import tranlate_data
-from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
-                                      ChooseOptionState, ChooseStringState, ChooseStepState)
-from bot.modules.user import User
-from random import randint
- 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
+                                      ChooseOptionState, ChooseStepState,
+                                      ChooseStringState)
+from bot.modules.user import User
+from telebot.types import CallbackQuery, Message
+
 users = DBconstructor(mongo_client.user.users)
 langs = DBconstructor(mongo_client.user.lang)
 
@@ -32,6 +34,7 @@ async def notification(result: bool, transmitted_data: dict):
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings.notification', 
                      is_authorized=True, private=True)
+@HDMessage
 async def notification_set(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -66,6 +69,7 @@ async def dino_profile(result: bool, transmitted_data: dict):
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings.dino_profile', 
                      is_authorized=True, private=True)
+@HDMessage
 async def dino_profile_set(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -104,6 +108,7 @@ async def inventory(result: list, transmitted_data: dict):
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings.inventory', 
                      is_authorized=True, private=True)
+@HDMessage
 async def inventory_set(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -157,6 +162,7 @@ async def transition(dino: Dino, transmitted_data: dict):
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings.dino_name', 
                      is_authorized=True, private=True)
+@HDMessage
 async def rename_dino(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -164,6 +170,7 @@ async def rename_dino(message: Message):
     await ChooseDinoState(transition, userid, message.chat.id, lang, False)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('rename_dino'), is_authorized=True, private=True)
+@HDCallback
 async def rename_button(callback: CallbackQuery):
     dino_data = callback.data.split()[1]
     lang = await get_lang(callback.from_user.id)
@@ -200,6 +207,7 @@ async def adapter_delete(return_data, transmitted_data):
     
 @bot.message_handler(pass_bot=True, text='commands_name.settings.delete_me', 
                      is_authorized=True, private=True)
+@HDMessage
 async def delete_me(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -267,6 +275,7 @@ async def my_name_end(content: str, transmitted_data: dict):
                            )
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings2.my_name', is_authorized=True, private=True)
+@HDMessage
 async def my_name(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -290,6 +299,7 @@ async def lang_set(new_lang: str, transmitted_data: dict):
                                reply_markup= await m(userid, 'last_menu', new_lang))
 
 @bot.message_handler(pass_bot=True, text='commands_name.settings2.lang', is_authorized=True, private=True)
+@HDMessage
 async def lang(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)

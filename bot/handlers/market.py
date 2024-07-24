@@ -1,31 +1,28 @@
 from random import choice
 
-from telebot.types import CallbackQuery, Message, InlineKeyboardMarkup
-
 from bot.config import mongo_client
 from bot.exec import bot
+from bot.modules.add_product.add_product import prepare_data_option
 from bot.modules.data_format import (escape_markdown, list_to_inline,
                                      list_to_keyboard, user_name)
-from bot.modules.item import  item_info
+from bot.modules.decorators import HDCallback, HDMessage
+from bot.modules.item import item_info
 from bot.modules.localization import get_lang, t
-from bot.modules.market import (create_seller, delete_product, preview_product, product_ui,
-                                seller_ui, create_push)
+from bot.modules.market import (create_push, create_seller, delete_product,
+                                preview_product, product_ui, seller_ui)
 from bot.modules.market_chose import (buy_item, find_prepare,
                                       pr_edit_description, pr_edit_image,
                                       pr_edit_name, prepare_add,
-                                      prepare_delete_all,
-                                      prepare_edit_price, promotion_prepare,
-                                      send_info_pr)
+                                      prepare_delete_all, prepare_edit_price,
+                                      promotion_prepare, send_info_pr)
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
+from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import (ChooseOptionState, ChoosePagesState,
                                       ChooseStepState)
 from bot.modules.user import premium
- 
+from telebot.types import CallbackQuery, InlineKeyboardMarkup, Message
 
-from bot.modules.add_product.add_product import prepare_data_option
-
-from bot.modules.overwriting.DataCalsses import DBconstructor
 users = DBconstructor(mongo_client.user.users)
 sellers = DBconstructor(mongo_client.market.sellers)
 products = DBconstructor(mongo_client.market.products)
@@ -71,6 +68,7 @@ async def custom_name(message: Message, transmitted_data):
     return False, None
 
 @bot.message_handler(pass_bot=True, text='commands_name.seller_profile.create_market', is_authorized=True, private=True)
+@HDMessage
 async def create_market(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -109,6 +107,7 @@ async def create_market(message: Message):
                               transmitted_data=transmitted_data)
 
 @bot.message_handler(pass_bot=True, text='commands_name.seller_profile.my_market', is_authorized=True, private=True)
+@HDMessage
 async def my_market(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -123,6 +122,7 @@ async def my_market(message: Message):
             await bot.send_photo(chatid, image, text, reply_markup=markup, parse_mode=None)
 
 @bot.message_handler(pass_bot=True, text='commands_name.seller_profile.add_product', is_authorized=True, private=True)
+@HDMessage
 async def add_product_com(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -144,6 +144,7 @@ async def add_product_com(message: Message):
     await ChooseOptionState(prepare_data_option, userid, chatid, lang, options)
 
 @bot.message_handler(pass_bot=True, text='commands_name.seller_profile.my_products', is_authorized=True, private=True)
+@HDMessage
 async def my_products(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -167,6 +168,7 @@ async def my_products(message: Message):
         await bot.send_message(chatid, text,  parse_mode='Markdown')
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('product_info'))
+@HDCallback
 async def product_info(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -223,6 +225,7 @@ async def product_info(call: CallbackQuery):
                                         call.message.id)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('seller'), private=True)
+@HDCallback
 async def seller(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -277,10 +280,8 @@ async def seller(call: CallbackQuery):
         await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
 
-    elif call_type == 'сomplain':
-        ...
-
 @bot.message_handler(pass_bot=True, text='commands_name.market.random', is_authorized=True, private=True)
+@HDMessage
 async def random_products(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -311,6 +312,7 @@ async def random_products(message: Message):
         await bot.send_message(chatid, t('products.null', lang))
 
 @bot.message_handler(pass_bot=True, text='commands_name.market.find', is_authorized=True, private=True)
+@HDMessage
 async def find_products(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -319,6 +321,7 @@ async def find_products(message: Message):
     await find_prepare(userid, chatid, lang)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('create_push'), private=True)
+@HDCallback
 async def push(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id

@@ -1,29 +1,29 @@
 from random import choice
 
-from telebot import types
-
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
+from bot.handlers.referal_menu import check_code
 from bot.handlers.states import cancel
 from bot.modules.data_format import list_to_keyboard, seconds_to_str, user_name
+from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur import incubation_egg
 from bot.modules.images import async_open, create_eggs_image
-from bot.modules.localization import get_data, t, get_lang
+from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import markups_menu as m
-from bot.modules.user import award_premium, insert_user
-from bot.modules.referals import connect_referal
-from bot.handlers.referal_menu import check_code
-from bot.modules.promo import use_promo
- 
-from bot.modules.tracking import add_track
-
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.promo import use_promo
+from bot.modules.referals import connect_referal
+from bot.modules.tracking import add_track
+from bot.modules.user import award_premium, insert_user
+from telebot import types
+
 referals = DBconstructor(mongo_client.user.referals)
 management = DBconstructor(mongo_client.other.management)
 dead_users = DBconstructor(mongo_client.other.dead_users)
 
 @bot.message_handler(pass_bot=True, commands=['start'], is_authorized=True, private=True)
+@HDMessage
 async def start_command_auth(message: types.Message):
     stickers = await bot.get_sticker_set('Stickers_by_DinoGochi_bot')
     sticker = choice(list(stickers.stickers)).file_id
@@ -54,6 +54,7 @@ async def start_command_auth(message: types.Message):
             await bot.send_message(message.chat.id, text)
 
 @bot.message_handler(text='commands_name.start_game', is_authorized=False)
+@HDMessage
 async def start_game(message: types.Message, code: str = '', code_type: str = ''):
 
     #Сообщение-реклама
@@ -79,6 +80,7 @@ async def start_game(message: types.Message, code: str = '', code_type: str = ''
     await bot.send_photo(message.chat.id, img, start_game, reply_markup=markup_inline)
 
 @bot.message_handler(pass_bot=True, commands=['start'], is_authorized=False)
+@HDMessage
 async def start_game_message(message: types.Message):
     langue_code = message.from_user.language_code
     username = user_name(message.from_user)
@@ -111,6 +113,7 @@ async def start_game_message(message: types.Message):
 
 @bot.callback_query_handler(pass_bot=True, is_authorized=False, 
                             func=lambda call: call.data.startswith('start_egg'), private=True)
+@HDCallback
 async def egg_answer_callback(callback: types.CallbackQuery):
     egg_id = int(callback.data.split()[1])
     lang = callback.from_user.language_code
@@ -140,6 +143,7 @@ async def egg_answer_callback(callback: types.CallbackQuery):
 
 @bot.callback_query_handler(pass_bot=True, is_authorized=True, 
                             func=lambda call: call.data.startswith('start_cmd'), private=True)
+@HDCallback
 async def start_inl(callback: types.CallbackQuery):
     """ start_cmd promo/  
     """

@@ -1,22 +1,24 @@
-from asyncio import sleep
-import io
-import requests
-from telebot.types import CallbackQuery, Message, InputMedia
 
+import io
+
+import requests
 from bot.config import mongo_client
+from bot.const import BACKGROUNDS
 from bot.exec import bot
-from bot.modules.data_format import list_to_keyboard, escape_markdown
+from bot.modules.data_format import escape_markdown, list_to_keyboard
+from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur import Dino
 from bot.modules.images import async_open
-from bot.modules.localization import get_data, t, get_lang
+from bot.modules.inline import list_to_inline
+from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import confirm_markup, count_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState, ChooseStringState, ChooseIntState)
-from bot.modules.user import premium, take_coins
-from bot.const import BACKGROUNDS
-from bot.modules.inline import list_to_inline
-
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
+                                      ChooseIntState, ChooseStringState)
+from bot.modules.user import premium, take_coins
+from telebot.types import CallbackQuery, InputMedia, Message
+
 users = DBconstructor(mongo_client.user.users)
 
 async def back_edit(content: str, transmitted_data: dict):
@@ -63,6 +65,7 @@ async def transition_back(dino: Dino, transmitted_data: dict):
 
 @bot.message_handler(pass_bot=True, text='commands_name.backgrounds.custom_profile', 
                      is_authorized=True, private=True)
+@HDMessage
 async def custom_profile(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -77,6 +80,7 @@ async def custom_profile(message: Message):
 
 @bot.message_handler(pass_bot=True, text='commands_name.backgrounds.standart', 
                      is_authorized=True, private=True)
+@HDMessage
 async def standart(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -157,6 +161,7 @@ async def back_page(userid: int, page: int, lang: str):
 
 @bot.message_handler(pass_bot=True, text='commands_name.backgrounds.backgrounds', 
                      is_authorized=True, private=True)
+@HDMessage
 async def backgrounds(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -168,6 +173,7 @@ async def backgrounds(message: Message):
 
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('back_m '), private=True)
+@HDCallback
 async def kindergarten(call: CallbackQuery):
     split_d = call.data.split()
     action = split_d[1]

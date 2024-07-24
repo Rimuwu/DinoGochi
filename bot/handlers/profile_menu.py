@@ -1,17 +1,20 @@
-from telebot.types import Message, CallbackQuery
+from time import time
 
 from bot.config import mongo_client
 from bot.exec import bot
-from bot.modules.localization import  get_lang, t, get_data
-from bot.modules.user import user_info, premium
-from bot.modules.data_format import list_to_inline, seconds_to_str, user_name, escape_markdown
-from time import time
-
+from bot.modules.data_format import (escape_markdown, list_to_inline,
+                                     seconds_to_str, user_name)
+from bot.modules.decorators import HDCallback, HDMessage
+from bot.modules.localization import get_data, get_lang, t
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.user import premium, user_info
+from telebot.types import CallbackQuery, Message
+
 management = DBconstructor(mongo_client.other.management)
 
 @bot.message_handler(pass_bot=True, text='commands_name.profile.information', 
                      is_authorized=True, private=True)
+@HDMessage
 async def infouser(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
@@ -26,6 +29,7 @@ async def infouser(message: Message):
         await bot.send_message(message.chat.id, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, commands=['profile'], is_authorized=True, private=True)
+@HDMessage
 async def infouser_com(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
@@ -41,6 +45,7 @@ async def infouser_com(message: Message):
 
 @bot.message_handler(pass_bot=True, text='commands_name.profile.rayting', 
                      is_authorized=True, private=True)
+@HDMessage
 async def rayting(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
@@ -65,6 +70,7 @@ async def rayting(message: Message):
             await bot.send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('rayting'))
+@HDCallback
 async def rayting_call(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id

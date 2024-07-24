@@ -1,15 +1,16 @@
 
-from telebot.types import CallbackQuery, InlineKeyboardMarkup
-
 from bot.exec import bot
 from bot.modules.data_format import user_name
+from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dialogs import dialogs
-from bot.modules.localization import  get_lang
+from bot.modules.localization import get_lang
+from telebot.types import CallbackQuery, InlineKeyboardMarkup
 
 
 @bot.callback_query_handler(pass_bot=True, 
                             func=lambda call: call.data.startswith('dialog'),   
                             is_authorized=True)
+@HDCallback
 async def dialog(callback: CallbackQuery):
     dialog_key = callback.data.split()[1]
     dialog_action = callback.data.split()[2]

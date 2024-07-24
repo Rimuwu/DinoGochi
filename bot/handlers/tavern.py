@@ -1,29 +1,31 @@
 from datetime import datetime, timedelta
-from time import time
 from random import randint
-
-from telebot.types import (CallbackQuery, InlineKeyboardButton,
-                           InlineKeyboardMarkup, Message)
+from time import time
 
 from bot.config import conf, mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
+from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur import Dino, random_dino, random_quality
 from bot.modules.images import async_open
-from bot.modules.item import counts_items, RemoveItemFromUser, CheckCountItemFromUser, counts_items
-from bot.modules.localization import get_data, t, get_lang
+from bot.modules.inline import inline_menu
+from bot.modules.item import (CheckCountItemFromUser, RemoveItemFromUser,
+                              counts_items)
+from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.inline import inline_menu
-from bot.modules.states_tools import (ChooseInlineState, ChooseStepState)
-from bot.modules.user import (AddItemToUser, check_name, daily_award_con,
-                              take_coins, user_in_chat, get_dinos)
-
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.states_tools import ChooseInlineState, ChooseStepState
+from bot.modules.user import (AddItemToUser, check_name, daily_award_con,
+                              get_dinos, take_coins, user_in_chat)
+from telebot.types import (CallbackQuery, InlineKeyboardButton,
+                           InlineKeyboardMarkup, Message)
+
 events = DBconstructor(mongo_client.other.events)
 
 @bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.events', is_authorized=True, private=True)
+@HDMessage
 async def events_c(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -98,6 +100,7 @@ async def bonus_message(user, message, lang):
             text, parse_mode='Markdown', reply_markup=markup_inline)
 
 @bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.daily_award', is_authorized=True, private=True)
+@HDMessage
 async def bonus(message: Message):
     lang = await get_lang(message.from_user.id)
     user = message.from_user
@@ -105,6 +108,7 @@ async def bonus(message: Message):
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data == 'daily_message', is_authorized=True)
+@HDCallback
 async def daily_message(callback: CallbackQuery):
     user = callback.from_user
     lang = await get_lang(callback.from_user.id)
@@ -112,6 +116,7 @@ async def daily_message(callback: CallbackQuery):
     await bonus_message(user, message, lang)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data == 'daily_award', is_authorized=True)
+@HDCallback
 async def daily_award(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
@@ -151,6 +156,7 @@ async def daily_award(callback: CallbackQuery):
         await bot.send_message(chatid, text, parse_mode='Markdown')
 
 @bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.edit', is_authorized=True, private=True)
+@HDMessage
 async def edit(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -270,6 +276,7 @@ async def dino_now(return_data, transmitted_data):
     await bot.send_message(chatid,  t('edit_dino.new_rare', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('transformation') , is_authorized=True)
+@HDCallback
 async def transformation(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id

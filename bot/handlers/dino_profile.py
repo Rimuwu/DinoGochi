@@ -1,30 +1,29 @@
 from time import time
 
-from telebot import types
-from telebot.types import Message
-
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
 from bot.modules.accessory import check_accessory
-from bot.modules.data_format import (list_to_keyboard, near_key_number,
-                                     seconds_to_str, user_name, list_to_inline)
+from bot.modules.data_format import (list_to_inline, list_to_keyboard,
+                                     near_key_number, seconds_to_str,
+                                     user_name)
+from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur import Dino, Egg, check_status, dead_check
 from bot.modules.events import get_event
 from bot.modules.images import async_open
 from bot.modules.inline import dino_profile_markup, inline_menu
 from bot.modules.item import AddItemToUser, get_name
-from bot.modules.localization import get_data, t, get_lang
+from bot.modules.kindergarten import (check_hours, dino_kind, hours_now,
+                                      m_hours, minus_hours)
+from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import confirm_markup
 from bot.modules.markup import markups_menu as m
+from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
                                       ChooseOptionState)
 from bot.modules.user import User, premium
-from bot.modules.kindergarten import check_hours, m_hours, hours_now, minus_hours, dino_kind
- 
- 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-
+from telebot import types
+from telebot.types import Message
 
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
@@ -186,6 +185,7 @@ async def transition(element, transmitted_data: dict):
         await egg_profile(chatid, element, lang)
 
 @bot.message_handler(pass_bot=True, text='commands_name.dino_profile', is_authorized=True, private=True)
+@HDMessage
 async def dino_handler(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -199,6 +199,7 @@ async def dino_handler(message: Message):
             await bot.send_message(userid, t(f'p_profile.no_dino_no_egg', lang))
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('dino_profile'))
+@HDCallback
 async def answer_edit(call: types.CallbackQuery):
     dino_data = call.data.split()[1]
     await bot.delete_state(call.from_user.id, call.message.chat.id)
@@ -216,6 +217,7 @@ async def answer_edit(call: types.CallbackQuery):
     await transition(dino, trans_data)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('dino_menu'), private=True)
+@HDCallback
 async def dino_menu(call: types.CallbackQuery):
     split_d = call.data.split()
     action = split_d[1]
@@ -369,6 +371,7 @@ async def remove_accessory(option: list, transmitted_data:dict):
                            reply_markup= await m(userid, 'last_menu', lang))
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('kindergarten'), private=True)
+@HDCallback
 async def kindergarten(call: types.CallbackQuery):
     split_d = call.data.split()
     action = split_d[1]

@@ -81,7 +81,7 @@ async def give_reward(userid:int, product_key:str, col:int):
 
     await send_donat_notification(userid, 'reward')
 
-async def send_inv(user_id: int, product_id: str, col: int, lang: str, cost: int = 0):
+async def send_inv(user_id: int, product_id: str, col: str, lang: str, cost: int = 0):
     products = GAME_SETTINGS['products']
     if product_id != 'non_repayable':
         product = products[product_id]
