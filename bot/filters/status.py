@@ -18,7 +18,7 @@ class DinoPassStatus(AdvancedCustomFilter):
         lang = await user.lang
 
         if last_dino:
-            if last_dino.status == 'pass': return True
+            if await last_dino.status == 'pass': return True
             else:
                 await bot.send_message(chatid, t('alredy_busy', lang),
                         reply_markup=inline_menu('dino_profile', lang, 

@@ -156,7 +156,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
     if type_item == 'eat' and dino:
     
-        if dino.status == 'sleep':
+        if await dino.status == 'sleep':
             # Если динозавр спит, отменяем использование и говорим что он спит.
             return_text = t('item_use.eat.sleep', lang)
             use_status = False
@@ -196,7 +196,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
     elif type_item in ['game', "journey", "collecting", "sleep", 'weapon', 'armor', 'backpack'] and dino:
 
-        if dino.status == type_item:
+        if await dino.status == type_item:
             # Запрещает менять активный предмет во время совпадающий с его типом активности
             return_text = t('item_use.accessory.no_change', lang)
             use_status = False

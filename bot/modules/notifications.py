@@ -9,6 +9,7 @@ from telebot.util import antiflood
 from bot.config import mongo_client, conf
 from bot.exec import bot
 from bot.modules.data_format import seconds_to_str
+from bot.modules.dino_status import check_status
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.logs import log
@@ -167,7 +168,7 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
         res = await dino_mood.find_one({'dino_id': dino_id, 
                             'type': 'breakdown', 'action': 'seclusion'}, comment='dino_notification_res')
         # Отменя уведолмения если динозавр спит или у него нервный срыв
-        if dino['status'] != 'sleep' and not res:
+        if await check_status(dino['_id']) != 'sleep' and not res:
             if not_type in tracked_notifications:
 
                 if await check_dino_notification(dino_id, not_type):

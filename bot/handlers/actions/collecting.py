@@ -6,7 +6,7 @@ from bot.const import GAME_SETTINGS
 from bot.exec import bot
 from bot.modules.advert import auto_ads
 from bot.modules.data_format import list_to_inline, list_to_keyboard
-from bot.modules.dinosaur import Dino, end_collecting
+from bot.modules.dinosaur import Dino, check_status, end_collecting
 from bot.modules.images import dino_collecting
 from bot.modules.item import counts_items
 from bot.modules.localization import get_data, t, get_lang
@@ -20,7 +20,7 @@ from bot.modules.accessory import check_accessory
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-collecting_task = DBconstructor(mongo_client.dino_activity.collecting)
+long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 async def collecting_adapter(return_data, transmitted_data):
     dino = transmitted_data['dino'] # type: Dino
@@ -41,10 +41,9 @@ async def collecting_adapter(return_data, transmitted_data):
         await bot.send_message(chatid, text, reply_markup= await m(
             userid, 'last_menu', lang))
     else:
-        res_dino_status = await dinosaurs.find_one({"_id": dino._id}, {'status': 1},
-                                    comment='collecting_adapter__dino_status')
+        res_dino_status = await check_status(dino._id)
         if res_dino_status:
-            if res_dino_status['status'] != 'pass':
+            if res_dino_status != 'pass':
                 await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
                 return
 
@@ -117,7 +116,8 @@ async def collecting_progress(message: Message):
     last_dino = await user.get_last_dino()
     if last_dino:
         
-        data = await collecting_task.find_one({'dino_id': last_dino._id},
+        data = await long_activity.find_one({'dino_id': last_dino._id, 
+                                               'activity_type': 'collecting'},
                                               comment="collecting_progress_data")
         if data:
             stop_button = t(
@@ -134,7 +134,7 @@ async def collecting_progress(message: Message):
                                      ))
         else:
             await bot.send_message(chatid, '❌',
-                                    reply_markup= await m(userid, 'last_menu', lang)
+                        reply_markup= await m(userid, 'last_menu', lang)
                                     )
     
 
@@ -147,7 +147,8 @@ async def collecting_callback(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
 
     dino = await Dino().create(dino_data)
-    data = await collecting_task.find_one({'dino_id': dino._id},
+    data = await long_activity.find_one({'dino_id': dino._id, 
+                                         'activity_type': 'collecting'},
                                           comment="collecting_callback")
     if data and dino and data:
         items_list = []

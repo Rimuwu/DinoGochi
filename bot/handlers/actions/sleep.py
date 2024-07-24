@@ -7,7 +7,7 @@ from bot.exec import bot
 from bot.modules.accessory import check_accessory
 from bot.modules.advert import auto_ads
 from bot.modules.data_format import list_to_keyboard, seconds_to_str
-from bot.modules.dinosaur import Dino, end_sleep, start_sleep
+from bot.modules.dinosaur import Dino, check_status, end_sleep, set_status, start_sleep
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import markups_menu as m
@@ -17,7 +17,7 @@ from bot.modules.user import User
  
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-sleep_task = DBconstructor(mongo_client.dino_activity.sleep)
+long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 async def short_sleep(number: int, transmitted_data: dict):
     """ Отправляем в которкий сон
@@ -27,9 +27,9 @@ async def short_sleep(number: int, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     dino = transmitted_data['last_dino']
 
-    res_dino_status = await dinosaurs.find_one({"_id": dino._id}, {'status': 1}, comment='short_sleep_res_dino_status')
+    res_dino_status = await check_status(dino['_id'])
     if res_dino_status:
-        if res_dino_status['status'] != 'pass':
+        if res_dino_status != 'pass':
             await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
             return
 
@@ -45,9 +45,9 @@ async def long_sleep(dino: Dino, userid: int, lang: str):
     """ Отправляем дино в длинный сон
     """
 
-    res_dino_status = await dinosaurs.find_one({"_id": dino._id}, {'status': 1}, comment='long_sleep_res_dino_status')
+    res_dino_status = await check_status(dino['_id'])
     if res_dino_status:
-        if res_dino_status['status'] != 'pass':
+        if res_dino_status != 'pass':
             await bot.send_message(userid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
             return
 
@@ -66,7 +66,7 @@ async def end_choice(option: str, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     last_dino = transmitted_data['last_dino']
 
-    if last_dino.status == 'pass':
+    if await last_dino.status == 'pass':
         if option == 'short':
             # Если короткий, то спрашиваем сколько дино должен спать
             cancel_button = t('buttons_name.cancel', lang)
@@ -144,8 +144,9 @@ async def awaken(message: Message):
     last_dino = await user.get_last_dino()
 
     if last_dino:
-        if last_dino.status == 'sleep':
-            sleeper = await sleep_task.find_one({'dino_id': last_dino._id}, comment='awaken_sleeper')
+        if await last_dino.status == 'sleep':
+            sleeper = await long_activity.find_one({'dino_id': last_dino._id,
+            'activity_type': 'sleep'}, comment='awaken_sleeper')
             if sleeper:
                 if sleeper['sleep_type'] == 'long':
                     sleep_time = int(time()) - sleeper['sleep_start']
@@ -168,7 +169,7 @@ async def awaken(message: Message):
                     sleep_time = sleeper['sleep_end'] - sleeper['sleep_start']
                     await end_sleep(last_dino._id, sleep_time, False)
             else:
-                await last_dino.update({'$set': {'status': 'pass'}})
+                await set_status(last_dino._id, 'pass')
                 await bot.send_message(chatid, t('awaken.not_sleep', lang),
                 reply_markup= await m(userid, 'last_menu', lang))
         else:

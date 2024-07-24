@@ -8,7 +8,7 @@ from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.advert import auto_ads
 from bot.modules.data_format import list_to_inline, seconds_to_str
-from bot.modules.dinosaur import Dino, end_journey
+from bot.modules.dinosaur import Dino, check_status, end_journey
 from bot.modules.dinosaur import start_journey as action_journey
 from bot.modules.images import dino_journey
 from bot.modules.item import counts_items
@@ -22,7 +22,7 @@ from random import randint
  
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-journey_task = DBconstructor(mongo_client.dino_activity.journey)
+long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 premium_loc = ['magic-forest']
 
@@ -135,7 +135,7 @@ async def events(message: Message):
     user = await User().create(userid)
     last_dino = await user.get_last_dino()
     if last_dino:
-        journey_data = await journey_task.find_one({'dino_id': last_dino._id}, comment='events_journey_data')
+        journey_data = await long_activity.find_one({'dino_id': last_dino._id,'activity_type': 'journey'}, comment='events_journey_data')
         last_event = None
 
         if journey_data:
@@ -168,10 +168,11 @@ async def journey_stop(callback: CallbackQuery):
     code = callback.data.split()[1]
 
     dino = await dinosaurs.find_one({'alt_id': code}, comment='journey_stop_dino')
-    if dino and dino['status'] == 'journey':
+    if dino and await check_status(dino['_id']) == 'journey':
         await bot.edit_message_reply_markup(chatid, callback.message.id, 
                                    reply_markup=InlineKeyboardMarkup())
-        data = await journey_task.find_one({'dino_id': dino['_id']}, comment='journey_stop_data')
+        data = await long_activity.find_one({'dino_id': dino['_id'], 
+                         'activity_type': 'journey'}, comment='journey_stop_data')
         await end_journey(dino['_id'])
         if data:
             await quest_process(data['sended'], 'journey', (int(time()) - data['journey_start']) // 60)

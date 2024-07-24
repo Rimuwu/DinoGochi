@@ -10,7 +10,7 @@ from bot.taskmanager import add_task
 from bot.modules.quests import quest_process
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
-game_task = DBconstructor(mongo_client.dino_activity.game)
+long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 
@@ -21,8 +21,8 @@ LVL_CHANCE = 0.125 * REPEAT_MINUTS
 GAME_CHANCE = 0.17 * REPEAT_MINUTS
 
 async def game_end():
-    data = await game_task.find({'game_end': 
-        {'$lte': int(time())}}, comment='game_end_data')
+    data = await long_activity.find({'game_end': 
+        {'$lte': int(time())},'activity_type': 'game'}, comment='game_end_data')
 
     for i in data:
         await end_game(i['dino_id'])
@@ -35,8 +35,9 @@ async def game_end():
                  int((game_time // 2) * i['game_percent']))
 
 async def game_process():
-    data = await game_task.find(
-        {'game_end': {'$gte': int(time())}}, comment='game_process_data')
+    data = await long_activity.find(
+        {'game_end': {'$gte': int(time())},
+            'activity_type': 'game'}, comment='game_process_data')
 
     for game_data in data:
         percent = game_data['game_percent']

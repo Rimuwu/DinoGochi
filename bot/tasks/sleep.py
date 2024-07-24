@@ -8,7 +8,7 @@ from bot.modules.mood import add_mood, check_inspiration
 from bot.modules.user import experience_enhancement
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
-sleepers = DBconstructor(mongo_client.dino_activity.sleep)
+long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 
 LONG_SLEEP_COLDOWN_MIN = 7
@@ -48,13 +48,14 @@ async def one_time(sleeper, one_time_unit):
 
             await mutate_dino_stat(dino, 'energy', add_energy)
     else:
-        await sleepers.delete_one({"_id": sleeper['_id']}, comment='one_time_1')
+        await long_activity.delete_one({"_id": sleeper['_id']}, comment='one_time_1')
 
 async def check_notification():
     """Уведомления и окончание сна
     """
-    data = await sleepers.find(
-                    {'sleep_end': {'$lte': int(time())}}, comment='check_notification_data')
+    data = await long_activity.find(
+                    {'sleep_end': {'$lte': int(time())}, 
+                     'activity_type': 'sleep'}, comment='check_notification_data')
 
     for sleeper in data:
         dino = await dinosaurs.find_one({'_id': sleeper['dino_id']}, comment='check_notification_dino')
@@ -68,11 +69,11 @@ async def check_notification():
             await add_mood(dino['_id'], 'good_sleep', 1, mood_time)
 
 async def short_check():
-    data = await sleepers.find({'sleep_type': 'short'}, comment='short_check_data')
+    data = await long_activity.find({'sleep_type': 'short', 'activity_type': 'sleep'}, comment='short_check_data')
     for sleeper in data: await one_time(sleeper, 2)
 
 async def long_check():
-    data = await sleepers.find({'sleep_type': 'long'}, comment='long_check_data')
+    data = await long_activity.find({'sleep_type': 'long', 'activity_type': 'sleep'}, comment='long_check_data')
     for sleeper in data: await one_time(sleeper, 1)
 
 if __name__ != '__main__':

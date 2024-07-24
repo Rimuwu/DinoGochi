@@ -15,15 +15,15 @@ from bot.modules.accessory import check_accessory
 from bot.modules.mood import check_inspiration
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
-journey = DBconstructor(mongo_client.dino_activity.journey)
+long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 
 REPEAT_MINUTS = 6
 EVENT_CHANCE = 0.17 * REPEAT_MINUTS
 
 async def end_journey_time():
-    data = await journey.find(
-        {'journey_end': {'$lte': int(time())}}, comment='end_journey_time_data')
+    data = await long_activity.find(
+        {'journey_end': {'$lte': int(time())}, 'activity_type': 'journey'}, comment='end_journey_time_data')
     for i in data:
         dino = await dinosaurs.find_one({'_id': i['dino_id']}, comment='end_journey_time_dino')
         if dino:
@@ -34,8 +34,8 @@ async def end_journey_time():
             await send_logs(i['sended'], lang, i, dino['name'])
 
 async def events():
-    data = await journey.find(
-        {'journey_end': {'$gte': int(time())}}, comment='events_data')
+    data = await long_activity.find(
+        {'journey_end': {'$gte': int(time())}, 'activity_type': 'journey'}, comment='events_data')
 
     for i in data:
         chance = EVENT_CHANCE

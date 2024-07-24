@@ -9,7 +9,7 @@ from bot.exec import bot
 from bot.modules.accessory import check_accessory
 from bot.modules.data_format import (list_to_keyboard, near_key_number,
                                      seconds_to_str, user_name, list_to_inline)
-from bot.modules.dinosaur import Dino, Egg, dead_check
+from bot.modules.dinosaur import Dino, Egg, check_status, dead_check
 from bot.modules.events import get_event
 from bot.modules.images import async_open
 from bot.modules.inline import dino_profile_markup, inline_menu
@@ -24,12 +24,13 @@ from bot.modules.kindergarten import check_hours, m_hours, hours_now, minus_hour
  
  
 from bot.modules.overwriting.DataCalsses import DBconstructor
-collecting_task = DBconstructor(mongo_client.dino_activity.collecting)
-game_task = DBconstructor(mongo_client.dino_activity.game)
+
+
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
-journey_task = DBconstructor(mongo_client.dino_activity.journey)
+
+long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 users = DBconstructor(mongo_client.user.users)
 kindergarten_bd = DBconstructor(mongo_client.dino_activity.kindergarten)
 
@@ -39,7 +40,7 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
 
     text_rare = get_data('rare', lang)
     replics = get_data('p_profile.replics', lang)
-    status_rep = t(f'p_profile.stats.{dino.status}', lang)
+    status_rep = t(f'p_profile.stats.{await dino.status}', lang)
     joint_dino, my_joint = False, False
 
     user = await User().create(userid)
@@ -78,9 +79,10 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
     }
     text = t('p_profile.profile_text', lang, formating=False).format(**kwargs)
 
-    if dino.status == 'journey':
+    if await dino.status == 'journey':
         text += '\n\n'
-        journey_data = await journey_task.find_one({'dino_id': dino._id}, comment='dino_profile_journey')
+        journey_data = await long_activity.find_one({'dino_id': dino._id, 
+                                'activity_type': 'journey'}, comment='dino_profile_journey')
 
         if journey_data:
             st = journey_data['journey_start']
@@ -93,8 +95,8 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
                       em_journey_act = tem['em_journey_act']) + '\n'
             text += t('p_profile.journey.info', lang, journey_time=journey_time, location=loc_name, col=col)
 
-    if dino.status == 'game':
-        data = await game_task.find_one({'dino_id': dino._id}, comment='dino_profile_game')
+    if await dino.status == 'game':
+        data = await long_activity.find_one({'dino_id': dino._id, 'activity_type': 'game'}, comment='dino_profile_game')
         text += t(
                 f'p_profile.game.text', lang, em_game_act=tem['em_game_act'])
         if data:
@@ -106,8 +108,8 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
             text += t(
                 f'p_profile.game.game_duration', lang, duration=duration)
 
-    if dino.status == 'collecting':
-        data = await collecting_task.find_one({'dino_id': dino._id}, comment='dino_profile_collecting')
+    if await dino.status == 'collecting':
+        data = await long_activity.find_one({'dino_id': dino._id, 'activity_type': 'collecting'}, comment='dino_profile_collecting')
         if data:
             text += t(
                 f'p_profile.collecting.text', lang, em_coll_act=tem['em_coll_act'])
@@ -310,7 +312,7 @@ async def dino_menu(call: types.CallbackQuery):
                              hours=hours, remained_today=6
                              )
 
-                    if dino['status'] == 'kindergarten':
+                    if await check_status(dino['_id']) == 'kindergarten':
                         reply_buttons = list_to_inline([
                             {
                                 t('kindergarten.cancel_name', lang): f'kindergarten stop {alt_key}'
@@ -379,7 +381,7 @@ async def kindergarten(call: types.CallbackQuery):
     dino = await dinosaurs.find_one({'alt_id': alt_key}, comment='kindergarten_dino')
     if dino:
         if action == 'start':
-            if dino['status'] == 'pass':
+            if await check_status(dino['_id']) == 'pass':
                 all_h, end = await check_hours(userid)
                 h = await hours_now(userid)
 
@@ -408,7 +410,7 @@ async def kindergarten(call: types.CallbackQuery):
                 await bot.send_message(userid, t('alredy_busy', lang))
 
         elif action == 'stop':
-            if dino['status'] == 'kindergarten':
+            if await check_status(dino['_id']) == 'kindergarten':
                 await dinosaurs.update_one({'_id': dino['_id']}, 
                          {'$set': {'status': 'pass'}}, comment='kindergarten_stop')
                 await kindergarten_bd.delete_one({'dinoid': dino['_id']}, comment='kindergarten_stop')

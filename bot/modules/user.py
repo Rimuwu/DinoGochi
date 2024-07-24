@@ -196,7 +196,7 @@ class User:
         await users.delete_one({'userid': self.userid}, comment='User_delete')
         log(f'Удаление {self.userid} из базы.', 0)
 
-    async def get_last_dino(self):
+    async def get_last_dino(self) -> Dino:
         """Возвращает последнего динозавра или None
         """
         return await last_dino(self) # type: ignore
@@ -463,7 +463,7 @@ async def user_info(data_user: teleUser, lang: str, secret: bool = False):
         return_text += '\n\n'
         for iter_data in dinos:
             dino = iter_data['dino']
-            dino_status = t(f'user_profile.stats.{dino.status}', lang)
+            dino_status = t(f'user_profile.stats.{await dino.status}', lang)
             dino_rare_dict = get_data(f'rare.{dino.quality}', lang)
             dino_rare = f'{dino_rare_dict[2]} {dino_rare_dict[1]}'
             
@@ -471,7 +471,7 @@ async def user_info(data_user: teleUser, lang: str, secret: bool = False):
                 dino_owner = t(f'user_profile.dino_owner.owner', lang)
             else:
                 dino_owner = t(f'user_profile.dino_owner.noowner', lang)
-            
+
             age = await dino.age()
             return_text += t('user_profile.dino', lang,
                             dino_name=escape_markdown(dino.name), 

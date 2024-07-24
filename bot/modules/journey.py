@@ -15,7 +15,7 @@ from bot.modules.accessory import check_accessory, weapon_damage, armor_protecti
 from bot.modules.logs import log
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
-journey = DBconstructor(mongo_client.dino_activity.journey)
+long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 
 with open('bot/json/journey.json', encoding='utf-8') as f: 
@@ -499,8 +499,8 @@ async def random_event(dinoid, location: str, ignored_events: list=[], friend_di
                 res = await activate_event(dinoid, event, friend_dino)
                 if res: 
                     if event['type'] == 'exit': 
-                        await journey.update_one({'dino_id': dinoid}, 
-                                                 {'journey_end': int(time())}, 
+                        await long_activity.update_one({'dino_id': dinoid}, 
+                                                 {'journey_end': int(time()),'activity_type': 'journey'}, 
                                                  comment='random_event_12')
                     return True
         else: break
@@ -511,7 +511,7 @@ async def random_event(dinoid, location: str, ignored_events: list=[], friend_di
 async def activate_event(dinoid, event: dict, friend_dino = None):
     """ При соответствии условий, создаёт событие
     """
-    journey_base = await journey.find_one({'dino_id': dinoid}, comment='activate_event_journey_base')
+    journey_base = await long_activity.find_one({'dino_id': dinoid, 'activity_type': 'journey'}, comment='activate_event_journey_base')
     dino = await Dino().create(dinoid)
     active_consequences = True
     event_data = events[event['type']]
@@ -553,9 +553,9 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
                 friends = res['friends']
                 in_loc = []
                 for friend_id in friends:
-                    res = await journey.find({
+                    res = await long_activity.find({
                         'sended': friend_id, 
-                        'location': journey_base['location']}, comment='activate_event_res'
+                        'location': journey_base['location'], 'activity_type': 'journey'}, comment='activate_event_res'
                                        )
                     for i in list(res): in_loc.append(i['dino_id'])
 
@@ -588,7 +588,7 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
                 ran_locs.remove(data['location'])
 
                 new_loc = choice(ran_locs)
-                await journey.update_one({'_id': journey_base['_id']}, 
+                await long_activity.update_one({'_id': journey_base['_id']}, 
                                    {'$set': {'location': new_loc}}, comment='activate_event_123')
                 data['old_location'] = new_loc
 
@@ -660,7 +660,7 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
                 data['coins'] = event['coins']
                 if journey_base['coins'] < 0: journey_base['coins'] = 0
 
-                await journey.update_one({'_id': journey_base['_id']}, 
+                await long_activity.update_one({'_id': journey_base['_id']}, 
                                     {'$set': {'coins': journey_base['coins']}}, comment='activate_event_2q3w2')
 
             if 'dino_edit' in event:
@@ -678,7 +678,7 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
             if 'items' in event:
                 data['items'] = event['items'] 
                 for i in data['items']:
-                    await journey.update_one(
+                    await long_activity.update_one(
                         {'_id': journey_base['_id']}, {'$push': {'items': i}}, comment='activate_event_233')
 
             if 'mood_keys' in event:
@@ -711,13 +711,13 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
                         break
                 if not no_items and \
                     not await check_accessory(dino, 'lock_bag', True):
-                    await journey.update_one({'_id': journey_base['_id']}, 
+                    await long_activity.update_one({'_id': journey_base['_id']}, 
                                     {'$set': {'items': items}}, comment='activate_event_3422')
                 else: return True
 
         else: data['cancel'] = True
 
-        await journey.update_one({'_id': journey_base['_id']}, 
+        await long_activity.update_one({'_id': journey_base['_id']}, 
                            {'$push': {'journey_log': data}}, comment='activate_event_2333')
         if friend_dino:
             event['friend'] = dinoid
@@ -753,10 +753,10 @@ async def generate_event_message(event: dict, lang: str, journey_id: ObjectId, e
         # Сохраняем id репликии
         text = choice(text_list)
         repl_id = text_list.index(text)
-        journey_data = await journey.find_one({'_id': journey_id}, comment='activate_event_journey_data')
+        journey_data = await long_activity.find_one({'_id': journey_id}, comment='activate_event_journey_data')
         if journey_data and journey_data['journey_log']:
             log_index = journey_data['journey_log'].index(event)
-            await journey.update_one({'_id': journey_id}, 
+            await long_activity.update_one({'_id': journey_id}, 
                         {'$set': {f'journey_log.{log_index}.replic': repl_id}}, comment='activate_event_2343')
     else: text = text_list[event['replic']]
 

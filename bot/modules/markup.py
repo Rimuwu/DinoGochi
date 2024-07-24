@@ -43,12 +43,13 @@ async def back_menu(userid) -> str:
         return result
     else: return 'main_menu'
 
-def get_buttons(dino: Dino) -> list:
+async def get_buttons(dino: Dino) -> list:
+    status = await dino.status
     data = ['journey', 'put_to_bed', 'collecting', 'entertainments']
-    if dino.status == 'journey': data[0] = 'events'
-    elif dino.status == 'sleep': data[1] = 'awaken'
-    elif dino.status == 'collecting': data[2] = 'progress'
-    elif dino.status == 'game': data[3] = 'stop_game'
+    if status == 'journey': data[0] = 'events'
+    elif status == 'sleep': data[1] = 'awaken'
+    elif status == 'collecting': data[2] = 'progress'
+    elif status == 'game': data[3] = 'stop_game'
     return data
 
 async def markups_menu(userid: int, markup_key: str = 'main_menu', 
@@ -246,7 +247,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         user = await User().create(userid)
         dino = await user.get_last_dino()
         if dino:
-            dp_buttons = get_buttons(dino)
+            dp_buttons = await get_buttons(dino)
             buttons = [
                 ["feed", dp_buttons[1]],
                 [dp_buttons[3], dp_buttons[0], dp_buttons[2]],
@@ -268,7 +269,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
                 ['sawmill', 'farm']
             ]
 
-            if dino.status in ['on_farm', 'in_mine', 'in_bank', 'in_sawmill']:
+            if await dino.status in ['on_farm', 'in_mine', 'in_bank', 'in_sawmill']:
                 buttons.append(
                     ['stop_work']
                 )
@@ -288,7 +289,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
                 ['park', 'swimming_pool']
             ]
 
-            if dino.status in ['on_farm', 'in_mine', 'in_bank', 'in_sawmill']:
+            if await dino.status in ['on_farm', 'in_mine', 'in_bank', 'in_sawmill']:
                 buttons.append(
                     ['stop_work']
                 )

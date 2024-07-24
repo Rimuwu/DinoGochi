@@ -1,7 +1,7 @@
 from time import time
 
 from bot.config import conf, mongo_client
-from bot.modules.dinosaur import mutate_dino_stat
+from bot.modules.dinosaur import mutate_dino_stat, set_status
 from bot.taskmanager import add_task
 from bot.modules.logs import log
 
@@ -45,8 +45,7 @@ async def mood_check():
                     await dino_mood.delete_one({'_id': mood_data['_id']}, comment='mood_check_2')
 
                     if mood_data['action'] == 'hysteria':
-                        await dinosaurs.update_one({'_id': dino_id}, 
-                                            {'$set': {'status': 'pass'}}, comment='mood_check_1')
+                        await set_status(dino_id, 'pass')
                 else:
                     if dino_id not in upd_data: upd_data[dino_id] = {
                         'unit': 0, 'events': []
@@ -82,8 +81,7 @@ async def mood_check():
                             await dino_mood.delete_one({'_id': event_data['_id']}, comment='mood_check_2')
 
                             if event_data['action'] == 'hysteria':
-                                await dinosaurs.update_one({'_id': dino_id}, 
-                                                    {'$set': {'status': 'pass'}}, comment='mood_check_3')
+                                await set_status(dino_id, 'pass')
 
                     if event_data['type'] == 'inspiration':
                         if dino['stats']['mood'] <= event_data['cancel_mood']:
@@ -92,18 +90,6 @@ async def mood_check():
         except Exception as e:
             log(f'upd_data error {e}, {data} {dino_id}')
 
-
-async def break_down():
-    res = await dinosaurs.find({'status': 'hysteria'}, comment='break_down_2')
-
-    for i in res:
-        dino_id = i['_id']
-        res_s = await dino_mood.find_one({'dino_id': dino_id, 'action': 'hysteria'}, comment='break_down_1')
-
-        if not res_s:
-            await dinosaurs.update_one({'_id': dino_id}, {'$set': {'status': 'pass'}}, comment='break_down_3')
-
 if __name__ != '__main__':
     if conf.active_tasks:
         add_task(mood_check, REPEAT_MINUTES * 60.0, 5.0)
-        add_task(break_down, REPEAT_MINUTES * 60.0, 10.0)

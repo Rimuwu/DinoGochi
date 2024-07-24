@@ -9,6 +9,7 @@ from bot.config import mongo_client
 from bot.const import DINOS
 from bot.const import GAME_SETTINGS as GS
 from bot.modules.data_format import random_code, random_quality
+from bot.modules.dino_status import check_status
 from bot.modules.images import create_dino_image, create_egg_image
 from bot.modules.item import AddItemToUser
 from bot.modules.localization import log, get_lang
@@ -25,11 +26,9 @@ dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 
-game_task = DBconstructor(mongo_client.dino_activity.game)
-sleep_task = DBconstructor(mongo_client.dino_activity.sleep)
-journey_task = DBconstructor(mongo_client.dino_activity.journey)
-collecting_task = DBconstructor(mongo_client.dino_activity.collecting)
 kindergarten = DBconstructor(mongo_client.dino_activity.kindergarten)
+kd_activity = DBconstructor(mongo_client.dino_activity.kd_activity)
+long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 class Dino:
 
@@ -40,7 +39,6 @@ class Dino:
         self.data_id = 0
         self.alt_id = 'alt_id' #альтернативный id
 
-        self.status = 'pass' # game, journey, sleep, collecting, dungeon...
         self.name = 'name'
         self.quality = 'com'
 
@@ -111,8 +109,7 @@ class Dino:
         """ Удаление всего, что связано с дино
         """
         await dinosaurs.delete_one({'_id': self._id}, comment='Dino_delete')
-        for collection in [game_task, sleep_task, journey_task, 
-                           collecting_task, dino_owners, dino_mood]:
+        for collection in [kd_activity, long_activity, dino_owners, dino_mood, kindergarten]:
             await collection.delete_many({'dino_id': self._id}, comment='delete_213')
 
     async def dead(self):
@@ -194,6 +191,9 @@ class Dino:
     async def age(self): return await get_age(self._id)
 
     async def get_owner(self): return await get_owner(self._id)
+
+    @property
+    async def status(self): return await check_status(self)
 
 
 class Egg:
@@ -340,25 +340,25 @@ async def start_game(dino_baseid: ObjectId, duration: int=1800,
     """
 
     result = False
-    if not await game_task.find_one({'dino_id': dino_baseid}, comment='start_game'):
+    if not await long_activity.find_one({'dino_id': dino_baseid,
+            'activity_type': 'game'}, comment='start_game'):
         game = {
             'dino_id': dino_baseid,
             'game_start': int(time()),
             'game_end': int(time()) + duration,
-            'game_percent': percent
+            'game_percent': percent,
+            'activity_type': 'game'
         }
-        result = await game_task.insert_one(game, comment='game_task_result')
+        result = await long_activity.insert_one(game, comment='game_task_result')
 
         dino = await dinosaurs.find_one({'_id': dino_baseid}, comment='start_game_dino')
-        if dino: await set_status(dino_baseid, 'game', dino['status'])
+        if dino: await set_status(dino_baseid, 'game')
     return result
 
 async def end_game(dino_id: ObjectId, send_notif: bool=True):
     """Заканчивает игру и отсылает уведомление.
     """
-    await dinosaurs.update_one({'_id': dino_id}, 
-                            {'$set': {'status': 'pass'}}, comment='end_game')
-    await game_task.delete_many({'dino_id': dino_id}, comment='end_game') 
+    await long_activity.delete_many({'dino_id': dino_id}, comment='end_game') 
 
     if send_notif: await dino_notification(dino_id, 'game_end')
 
@@ -372,16 +372,18 @@ async def start_sleep(dino_baseid: ObjectId, s_type: str='long',
     assert s_type in ['long', 'short'], f'Неподходящий аргумент {s_type}'
 
     result = False
-    if not await sleep_task.find_one({'dino_id': dino_baseid}, comment='start_sleep_1'):
+    if not await long_activity.find_one({'dino_id': dino_baseid,
+            'activity_type': 'sleep'}, comment='start_sleep_1'):
         sleep = {
             'dino_id': dino_baseid,
             'sleep_start': int(time()),
-            'sleep_type': s_type
+            'sleep_type': s_type,
+            'activity_type': 'sleep'
         }
         if s_type == 'short':
             sleep['sleep_end'] = int(time()) + duration
 
-        result = await sleep_task.insert_one(sleep, comment='start_sleep_2')
+        result = await long_activity.insert_one(sleep, comment='start_sleep_2')
         await dinosaurs.update_one({"_id": dino_baseid}, 
                             {'$set': {'status': 'sleep'}}, comment='start_sleep_3')
     return result
@@ -391,10 +393,7 @@ async def end_sleep(dino_id: ObjectId,
     """Заканчивает сон и отсылает уведомление.
        sec_time - время в секундах, сколько спал дино.
     """
-    await sleep_task.delete_many({'dino_id': dino_id}, comment='end_sleep_1')
-
-    await dinosaurs.update_one({'_id': dino_id}, 
-                         {'$set': {'status': 'pass'}}, comment='end_sleep')
+    await long_activity.delete_many({'dino_id': dino_id}, comment='end_sleep_1')
     if send_notif:
         await dino_notification(dino_id, 'sleep_end', 
                             add_time_end=True,
@@ -407,7 +406,8 @@ async def start_journey(dino_baseid: ObjectId, owner_id: int,
        + Изменение статуса динозавра 
     """
     result = False
-    if not await journey_task.find_one({'dino_id': dino_baseid}, comment='start_journey'):
+    if not await long_activity.find_one({'dino_id': dino_baseid,
+            'activity_type': 'journey'}, comment='start_journey'):
         game = {
             'sended': owner_id, # Так как у нас может быть несколько владельцев
             'dino_id': dino_baseid,
@@ -416,23 +416,24 @@ async def start_journey(dino_baseid: ObjectId, owner_id: int,
 
             'location': location,
             'journey_log': [], 'items': [],
-            'coins': 0
+            'coins': 0,
+
+            'activity_type': 'journey'
         }
-        result = await journey_task.insert_one(game, comment='start_journey_result')
+        result = await long_activity.insert_one(game, comment='start_journey_result')
         await set_status(dino_baseid, "journey")
 
     return result
 
 async def end_journey(dino_id: ObjectId):
-    data = await journey_task.find_one({'dino_id': dino_id}, comment='end_journey_data')
+    data = await long_activity.find_one({'dino_id': dino_id,
+            'activity_type': 'journey'}, comment='end_journey_data')
     if data:
         for i in data['items']: 
             await AddItemToUser(data['sended'], i)
         await users.update_one({'userid': data['sended']}, {'$inc': {'coins': data['coins']}}, comment='end_journey')
 
-        await journey_task.delete_many({'dino_id': dino_id}, comment='end_journey')
-        await dinosaurs.update_one({'_id': dino_id}, 
-                            {'$set': {'status': 'pass'}}, comment='end_journey')
+        await long_activity.delete_many({'dino_id': dino_id}, comment='end_journey')
 
 async def start_collecting(dino_baseid: ObjectId, owner_id: int, coll_type: str, max_count: int):
     """Запуск активности "сбор пищи". 
@@ -440,18 +441,21 @@ async def start_collecting(dino_baseid: ObjectId, owner_id: int, coll_type: str,
     """
     
     assert coll_type in ['collecting', 'hunt', 'fishing', 'all'], f'Неподходящий аргумент {coll_type}'
-    
+
     result = False
-    if not await collecting_task.find_one({'dino_id': dino_baseid}, comment='start_collecting'):
-        game = {
+    if not await long_activity.find_one({'dino_id': dino_baseid,
+            'activity_type': 'collecting'}, comment='start_collecting'):
+        collecting = {
             'sended': owner_id, # Так как у нас может быть несколько владельцев
             'dino_id': dino_baseid,
             'collecting_type': coll_type,
             'max_count': max_count,
             'now_count': 0,
-            'items': {}
+            'items': {},
+
+            'activity_type': 'collecting'
         }
-        result = await collecting_task.insert_one(game, comment='start_collecting_result')
+        result = await long_activity.insert_one(collecting, comment='start_collecting_result')
         await dinosaurs.update_one({"_id": dino_baseid}, 
                             {'$set': {'status': 'collecting'}}, comment='start_collecting_1')
     return result
@@ -464,10 +468,7 @@ async def end_collecting(dino_id: ObjectId, items: dict, recipient: int,
        items - словарь типа {'id': count: int} с предметами для добавления
        recipient - тот кто получит собранные предметы
     """
-
-    await collecting_task.delete_many({'dino_id': dino_id}, comment='end_collecting_1')
-    await dinosaurs.update_one({'_id': dino_id}, 
-                        {'$set': {'status': 'pass'}}, comment='end_collecting')
+    await long_activity.delete_many({'dino_id': dino_id}, comment='end_collecting_1')
 
     for key_id, count in items.items():
         await AddItemToUser(recipient, key_id, count)
@@ -522,44 +523,6 @@ async def get_dino_language(dino_id: ObjectId) -> str:
     if owner: lang = await get_lang(owner['owner_id'])
     return lang
 
-async def set_status(dino_id: ObjectId, new_status: str, now_status: str = ''):
-    """ Устанавливает состояние динозавра. Делает это грубо.
-    """
-
-    # Новые статусы - on_farm, in_mine, in_bank, in_sawmill, in_gym, in_library, in_park, in_swimming_pool
-
-    assert new_status in ['pass', 'sleep', 'game', 'journey', 'collecting', 'dungeon', 'freezing', 'kindergarten', 'hysteria'], f'Состояние {new_status} не найдено!'
-
-    if not now_status:
-        dino = await dinosaurs.find_one({'_id': dino_id}, comment='set_status_dino')
-        if dino: now_status = dino['status']
-
-    if now_status == 'sleep':
-        sleeper = await sleep_task.find_one({'dino_id': dino_id}, comment='set_status_sleeper')
-        if sleeper:
-            sleep_time = int(time()) - sleeper['sleep_start']
-            await end_sleep(dino_id, sleeper['_id'], sleep_time)
-
-    elif now_status == 'game': await end_game(dino_id)
-    
-    elif now_status == 'journey': await end_journey(dino_id)
-
-    elif now_status == 'collecting':
-        data = await collecting_task.find_one({'dino_id': dino_id}, comment='set_status_data')
-        if data:
-            items_list = []
-            for key, count in data['items'].items(): 
-                items_list += [key] * count
-
-            await end_collecting(dino_id, data['items'], 
-                                        data['sended'], '', False)
-
-    elif now_status == 'kindergarten':
-        data = await kindergarten.find_one({'dinoid': dino_id}, comment='set_status_data')
-        if data: await kindergarten.delete_one({'_id': data['_id']}, comment='set_status_1')
-
-    await dinosaurs.update_one({'_id': dino_id}, {'$set': {'status': new_status}}, comment='set_status_end')
-
 async def dead_check(userid: int):
     """ False - не соответствует условиям выдачи диалога
         True - отправить диалог
@@ -574,39 +537,42 @@ async def dead_check(userid: int):
         if all([not col_dinos, not col_eggs, lvl]): return True
     return False
 
-async def check_status(dino_id:ObjectId):
+async def set_status(dino_id: ObjectId, new_status: str, now_status: str = ''):
+    """ Устанавливает состояние динозавра. Делает это грубо.
+    """
 
-    data = ['sleep', 'game', 'journey', 'collecting', 'dungeon', 'freezing', 'kindergarten', 'hysteria']
-    dino = await dinosaurs.find_one({'_id': dino_id}, 
-                                    {'status': 1}, comment='check_status_dino')
-    if dino:
+    assert new_status in ['pass', 'sleep', 'game', 'journey', 'collecting', 'dungeon', 'freezing', 'kindergarten', 'hysteria'], f'Состояние {new_status} не найдено!'
 
-        in_sleep = await sleep_task.find_one({'dino_id': dino_id}, 
-                                            comment='check_status_in_sleep')
-        in_game = await game_task.find_one({'dino_id': dino_id}, 
-                                            comment='check_status_in_game')
-        in_journey = await journey_task.find_one({'dino_id': dino_id}, 
-                                            comment='check_status_in_journey')
-        in_collecting = await collecting_task.find_one({'dino_id': dino_id}, 
-                                            comment='check_status_in_collecting')
+    if not now_status:
+        now_status = await check_status(dino_id)
 
-        dungeon = False
-        freezing = dino['status'] == 'freezing'
+    if now_status == 'sleep':
+        sleeper = await long_activity.find_one({'dino_id': dino_id,
+            'activity_type': 'sleep'}, comment='set_status_sleeper')
+        if sleeper:
+            sleep_time = int(time()) - sleeper['sleep_start']
+            await end_sleep(dino_id, sleeper['_id'], sleep_time)
 
-        in_kindergarten = await kindergarten.find_one({'dinoid': dino_id}, 
-                                                      comment='check_status_in_kindergarten')
-        hysteria = await dino_mood.find_one({'dino_id': dino_id, 
-                              'type': 'breakdown', 'action': 'hysteria'}, comment='check_status_hysteria')
+    elif now_status == 'game': await end_game(dino_id)
+    
+    elif now_status == 'journey': await end_journey(dino_id)
 
-        checks = [bool(in_sleep), bool(in_game), bool(in_journey), bool(in_collecting), bool(dungeon), bool(freezing), bool(in_kindergarten), bool(hysteria)]
+    elif now_status == 'collecting':
+        data = await long_activity.find_one({'dino_id': dino_id,
+            'activity_type': 'collecting'}, comment='set_status_data')
+        if data:
+            items_list = []
+            for key, count in data['items'].items(): 
+                items_list += [key] * count
 
-        if True in checks:
-            activity = data[checks.index(True)]
-        else:
-            activity = 'pass'
+            await end_collecting(dino_id, data['items'], 
+                                        data['sended'], '', False)
 
-        return activity
-    return 'pass'
+    elif now_status == 'kindergarten':
+        data = await kindergarten.find_one({'dinoid': dino_id}, comment='set_status_data')
+        if data: await kindergarten.delete_one({'_id': data['_id']}, comment='set_status_1')
+
+    await dinosaurs.update_one({'_id': dino_id}, {'$set': {'status': new_status}}, comment='set_status_end')
 
 quality_spec = {
     'com': [0.1, 0.5],

@@ -2,9 +2,9 @@
     "collections": {
         "user": ["users", "lang", "referals", "friends", "subscriptions", "ads"],
         "dinosaur": ["dinosaurs", "dead_dinos", "incubation", "dino_owners", "dino_mood"],
-        "dino_activity": ["game", "journey", "sleep", "collecting", "kindergarten"],
+        "dino_activity": ["kd_activity", "long_activity", "kindergarten"],
         "market": ["products", "sellers", "preferential", "puhs"],
-        "items": ["items"],
+        "items": ["items", "farm", "item_craft"],
         "tavern": ["quests", "tavern", "daily_award"],
         "dungeon": ["lobby", "dungeon_statistic"],
         "other": ["management", "statistic", "events", "promo", "dead_users"]
@@ -258,7 +258,6 @@
             "items": []
         },
         "rescue_kit": {
-            "photo_url": "",
             "type": "kit",
             "cost": {
                 "1": {
@@ -274,7 +273,6 @@
             "items": ["jar_honey", "jar_honey", "jar_honey", "jar_honey", "therapeutic_mixture", "therapeutic_mixture", "therapeutic_mixture", "medicinal_drink", "medicinal_drink", "meat_pie", "fish_cake", "berry_pie", "mushroom"]
         },
         "reborn": {
-            "photo_url": "",
             "type": "kit",
             "cost": {
                 "1": {

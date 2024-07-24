@@ -6,7 +6,7 @@ from datetime import datetime
 from bot.modules.user import max_lvl_xp
 from time import time
 from bot.modules.notifications import user_notification
-from bot.modules.dinosaur import get_owner, get_dino_language
+from bot.modules.dinosaur import get_owner, get_dino_language, set_status
 
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -74,8 +74,7 @@ async def dino_kindergarten():
                 ).copy()
 
     for i in data: 
-        await dinosaurs.update_one({'_id': i['dinoid']}, {'$set': {'status': 'pass'}}, 
-                                   comment='dino_kindergarten')
+        await set_status(i['_id'], 'pass')
         await kindergarten.delete_one({'_id': i['_id']}, comment='dino_kindergarten_1')
 
         dino = await dinosaurs.find_one({'_id': i['dinoid']}, 

@@ -15,7 +15,7 @@ from bot.modules.user import User
  
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-game_task = DBconstructor(mongo_client.dino_activity.game)
+long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 @bot.message_handler(pass_bot=True, textstart='commands_name.action_ask.dino_button')
 async def edit_dino_buttom(message: Message):
@@ -84,7 +84,7 @@ async def invite_to_action(callback: CallbackQuery):
 
     dino = await dinosaurs.find_one({'alt_id': data[2]}, comment='invite_to_action_dino')
     if dino:
-        res = await game_task.find_one({'dino_id': dino['_id']}, comment='invite_to_action_res')
+        res = await long_activity.find_one({'dino_id': dino['_id'], 'activity_type': 'game'}, comment='invite_to_action_res')
         if res: 
             await start_friend_menu(invite_adp, userid, chatid, lang, True, transmitted_data)
 
@@ -103,7 +103,7 @@ async def join_adp(dino: Dino, transmitted_data):
 
     if dino.alt_id == friend_dino:
         text = t('join_to_action.one_dino', lang)
-    elif dino.status != 'pass':
+    elif await dino.status != 'pass':
         text = t('alredy_busy', lang)
 
     if text:
@@ -128,7 +128,8 @@ async def join(callback: CallbackQuery):
 
     dino = await dinosaurs.find_one({'alt_id': friend_dino}, comment='join_dino')
     if dino:
-        res = await game_task.find_one({'dino_id': dino['_id']}, comment='join_res')
+        res = await long_activity.find_one({'dino_id': dino['_id'], 
+                                    'activity_type': 'game'}, comment='join_res')
         if not res: 
             text = t('entertainments.join_end', lang)
             await bot.send_message(chatid, text)

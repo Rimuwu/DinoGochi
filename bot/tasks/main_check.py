@@ -2,7 +2,7 @@ import random
 from random import randint
 
 from bot.config import conf, mongo_client
-from bot.modules.dinosaur import mutate_dino_stat
+from bot.modules.dinosaur import check_status, mutate_dino_stat
 from bot.taskmanager import add_task
 from bot.modules.dinosaur import Dino, get_owner
 from bot.modules.mood import mood_while_if, calculation_points
@@ -41,18 +41,19 @@ async def main_checks():
     """Главная проверка динозавров
     """
 
-    dinos = await dinosaurs.find({}, comment='main_checks_dinos')
+    dinos: list[dict] = await dinosaurs.find({}, comment='main_checks_dinos')
     for dino in dinos:
-        dino: dict
-        if dino['status'] == 'inactive': continue
-        is_sleeping = dino['status'] == 'sleep'
+
+        status = await check_status(dino['_id'])
+        if status == 'inactive': continue
+        is_sleeping = status == 'sleep'
 
         if dino['stats']['heal'] <= 0:
             dino_cl = await Dino().create(dino['_id'])
             await dino_cl.dead()
             continue
 
-        if dino['status'] == 'kindergarten':
+        if status == 'kindergarten':
             if random.uniform(0, 1) <= P_EAT_SLEEP:
                 await mutate_dino_stat(dino, 'eat', randint(*EAT_CHANGE))
 
@@ -81,7 +82,7 @@ async def main_checks():
                 await mutate_dino_stat(dino, 'eat', randint(*EAT_CHANGE)*-1)
 
             # Уменьшение энергии, если динозавр не играет
-            if dino['status'] != 'game' and random.uniform(0, 1) <= P_GAME:
+            if status != 'game' and random.uniform(0, 1) <= P_GAME:
                 await mutate_dino_stat(dino, 'game', randint(*GAME_CHANGE)*-1)
 
             # Уменьшение энергии
@@ -155,7 +156,7 @@ async def main_checks():
             if random.uniform(0, 1) <= P_MOOD:
                 await mood_while_if(dino['_id'], 'multi_heal', 'heal', 60, 101, 1)
 
-        if dino['status'] not in ['kindergarten', 'sleep']:
+        if status not in ['kindergarten', 'sleep']:
             if dino['stats']['mood'] >= 95:
                 if random.randint(0, 5) == 3:
                     await calculation_points(dino, 'inspiration')

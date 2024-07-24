@@ -16,7 +16,7 @@ from bot.modules.events import get_event
 
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
-collecting_task = DBconstructor(mongo_client.dino_activity.collecting)
+long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 REPEAT_MINUTS = 2
 ENERGY_DOWN = 0.1 * REPEAT_MINUTS
@@ -40,7 +40,7 @@ async def stop_collect(coll_data):
     await quest_process(coll_data['sended'], coll_data['collecting_type'], coll_data['now_count'])
 
 async def collecting_process():
-    data = await collecting_task.find({}, comment='collecting_process_data')
+    data = await long_activity.find({'activity_type': 'collecting'}, comment='collecting_process_data')
 
     for coll_data in data:
         coll_type = coll_data["collecting_type"]
@@ -117,7 +117,7 @@ async def collecting_process():
                         coll_data['items'][item] += 1
                     else: coll_data['items'][item] = 1
 
-                await collecting_task.update_one({'_id': coll_data['_id']}, 
+                await long_activity.update_one({'_id': coll_data['_id']}, 
                                                  {'$set': {'items': coll_data['items'] },'$inc': {'now_count': count}}, comment='collecting_task_1')
 
                 if coll_data['now_count'] + count == coll_data['max_count']:

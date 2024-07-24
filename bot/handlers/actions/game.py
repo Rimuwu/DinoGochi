@@ -8,7 +8,7 @@ from bot.exec import bot
 from bot.modules.accessory import check_accessory
 from bot.modules.advert import auto_ads
 from bot.modules.data_format import list_to_inline
-from bot.modules.dinosaur import Dino, end_game
+from bot.modules.dinosaur import Dino, end_game, set_status
 from bot.modules.friends import send_action_invite
 from bot.modules.images import dino_game
 from bot.modules.localization import get_data, t, get_lang
@@ -22,8 +22,8 @@ from time import time
  
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-game_task = DBconstructor(mongo_client.dino_activity.game)
 
+long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 async def start_game_ent(userid: int, chatid: int, 
                          lang: str, dino: Dino, 
@@ -114,10 +114,9 @@ async def game_start(return_data: dict,
     game = return_data['game']
     code = return_data['time']
 
-    res_dino_status = await dinosaurs.find_one({"_id": dino._id}, {'status': 1},
-                                               comment="game_start_res_dino_status")
+    res_dino_status = await dino.status
     if res_dino_status:
-        if res_dino_status['status'] != 'pass':
+        if res_dino_status != 'pass':
             await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
             return
 
@@ -127,7 +126,7 @@ async def game_start(return_data: dict,
         dino_f = await dinosaurs.find_one({'alt_id': join_dino}, comment="game_start_dino_f")
         if dino_f:
             friend_dino_id = dino_f['data_id']
-            res = await game_task.find_one({'dino_id': dino_f['_id']}, comment="game_start_res1")
+            res = await long_activity.find_one({'dino_id': dino_f['_id'], 'activity_type': 'game'}, comment="game_start_res1")
             if not res: 
                 join_dino = 0
                 text_m = t('entertainments.join_end', lang)
@@ -135,9 +134,9 @@ async def game_start(return_data: dict,
             else: 
                 percent += 0.5
 
-                res = await game_task.find_one({'dino_id': dino_f['data_id']}, comment="game_start_res2")
+                res = await long_activity.find_one({'dino_id': dino_f['data_id'], 'activity_type': 'game'}, comment="game_start_res2")
                 if res and res['game_percent'] < 2.0:
-                    await game_task.update_one({'dino_id': dino_f['data_id']}, 
+                    await long_activity.update_one({'dino_id': dino_f['data_id'], 'activity_type': 'game'}, 
                                         {'$inc': {'game_percent': 0.5}}, 
                                         comment="game_start_game_percent")
 
@@ -199,7 +198,8 @@ async def stop_game(message: Message):
     last_dino = await user.get_last_dino()
     if last_dino:
         penalties = GAME_SETTINGS['penalties']["games"]
-        game_data = await game_task.find_one({'dino_id': last_dino._id}, 
+        game_data = await long_activity.find_one({'dino_id': last_dino._id, 
+                                                  'activity_type': 'game'}, 
                                              comment='stop_game_game_data')
         random_tear, text = 1, ''
 
@@ -218,7 +218,7 @@ async def stop_game(message: Message):
                     random_tear = 0
 
                 if randint(1, 2) == 1 or not random_tear:
-                    
+
                     if random_tear == 1:
                         # Дебафф к настроению
                         text = t('stop_game.like', lang)
@@ -239,8 +239,8 @@ async def stop_game(message: Message):
                 await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang, True))
 
             else:
-                if last_dino.status == 'game':
-                    await last_dino.update({'$set': {'status': 'pass'}})
+                if await last_dino.status == 'game':
+                    await set_status(last_dino._id, 'pass')
                 await bot.send_message(chatid, '❌', reply_markup= await m(userid, 'last_menu', lang, True))
         else:
             await bot.send_message(chatid, t('stop_game.unrestrained_play', lang))
