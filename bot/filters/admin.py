@@ -9,7 +9,7 @@ class IsAdminUser(AdvancedCustomFilter):
 
     async def check(self, message: Message, status: bool):
         is_authorized = message.from_user.id in conf.bot_devs
-        
+
         if status: result = is_authorized
         else: result = not is_authorized
         return result
