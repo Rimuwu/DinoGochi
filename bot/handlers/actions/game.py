@@ -134,7 +134,8 @@ async def game_start(return_data: dict,
             else: 
                 percent += 0.5
 
-                res = await long_activity.find_one({'dino_id': dino_f['data_id'], 'activity_type': 'game'}, comment="game_start_res2")
+                res = await long_activity.find_one({'dino_id': dino_f['data_id'], 
+                            'activity_type': 'game'}, comment="game_start_res2")
                 if res and res['game_percent'] < 2.0:
                     await long_activity.update_one({'dino_id': dino_f['data_id'], 'activity_type': 'game'}, 
                                         {'$inc': {'game_percent': 0.5}}, 

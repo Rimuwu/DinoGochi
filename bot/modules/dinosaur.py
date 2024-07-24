@@ -351,8 +351,6 @@ async def start_game(dino_baseid: ObjectId, duration: int=1800,
         }
         result = await long_activity.insert_one(game, comment='game_task_result')
 
-        dino = await dinosaurs.find_one({'_id': dino_baseid}, comment='start_game_dino')
-        if dino: await set_status(dino_baseid, 'game')
     return result
 
 async def end_game(dino_id: ObjectId, send_notif: bool=True):
@@ -384,8 +382,6 @@ async def start_sleep(dino_baseid: ObjectId, s_type: str='long',
             sleep['sleep_end'] = int(time()) + duration
 
         result = await long_activity.insert_one(sleep, comment='start_sleep_2')
-        await dinosaurs.update_one({"_id": dino_baseid}, 
-                            {'$set': {'status': 'sleep'}}, comment='start_sleep_3')
     return result
 
 async def end_sleep(dino_id: ObjectId,
@@ -421,7 +417,6 @@ async def start_journey(dino_baseid: ObjectId, owner_id: int,
             'activity_type': 'journey'
         }
         result = await long_activity.insert_one(game, comment='start_journey_result')
-        await set_status(dino_baseid, "journey")
 
     return result
 

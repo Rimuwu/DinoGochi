@@ -136,7 +136,6 @@ async def collecting_progress(message: Message):
             await bot.send_message(chatid, '❌',
                         reply_markup= await m(userid, 'last_menu', lang)
                                     )
-    
 
 @bot.callback_query_handler(pass_bot=True, func=
                             lambda call: call.data.startswith('collecting'), is_authorized=True, private=True)

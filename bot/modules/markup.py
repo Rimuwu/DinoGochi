@@ -189,7 +189,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.dino_tavern.'
         add_back_button = True
         buttons = [
-            ['dungeon', 'quests'],
+            ['hoarder', 'quests'],
             ['edit', 'daily_award', 'events'],
         ]
 
@@ -273,7 +273,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
                 buttons.append(
                     ['stop_work']
                 )
-    
+
     elif markup_key == 'skills_actions_menu':
         # Меню повышения навыков
         prefix = 'commands_name.skills_actions.'
