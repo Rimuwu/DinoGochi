@@ -4,17 +4,17 @@ from telebot.types import Message
 
 from bot.config import mongo_client
 from bot.exec import bot
-from bot.modules.accessory import check_accessory
-from bot.modules.advert import auto_ads
+from bot.modules.items.accessory import check_accessory
+from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_keyboard, seconds_to_str
-from bot.modules.dinosaur import Dino, check_status, end_sleep, set_status, start_sleep
+from bot.modules.dinosaur.dinosaur  import Dino, check_status, end_sleep, set_status, start_sleep
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import markups_menu as m
-from bot.modules.mood import add_mood
+from bot.modules.dinosaur.mood import add_mood
 from bot.modules.states_tools import ChooseIntState, ChooseOptionState
-from bot.modules.user import User
-from bot.modules.decorators import HDCallback, HDMessage
+from bot.modules.user.user import User
+from bot.modules.decorators import HDMessage
  
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)

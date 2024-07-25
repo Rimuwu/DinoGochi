@@ -5,10 +5,10 @@ from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
 from bot.modules.data_format import escape_markdown, list_to_inline
 from bot.modules.images import create_eggs_image
-from bot.modules.item import get_item_dict, item_code
-from bot.modules.item_tools import AddItemToUser
+from bot.modules.items.item import get_item_dict, item_code
+from bot.modules.items.item_tools import AddItemToUser
 from bot.modules.localization import get_data, t
-from bot.modules.dinosaur import dead_check
+from bot.modules.dinosaur.dinosaur  import dead_check
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 users = DBconstructor(mongo_client.user.users)

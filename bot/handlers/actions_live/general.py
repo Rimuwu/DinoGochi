@@ -1,16 +1,16 @@
 
 from bot.config import mongo_client
 from bot.exec import bot
-from bot.handlers.actions.game import start_game_ent
+from bot.handlers.actions_live.game import start_game_ent
 from bot.modules.data_format import list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur import Dino
-from bot.modules.friends import send_action_invite
+from bot.modules.dinosaur.dinosaur  import Dino
+from bot.modules.user.friends import send_action_invite
 from bot.modules.localization import get_lang, t
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import ChooseDinoState, start_friend_menu
-from bot.modules.user import User
+from bot.modules.user.user import User
 from telebot.types import CallbackQuery, Message
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)

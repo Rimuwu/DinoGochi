@@ -2,13 +2,13 @@
 from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
-from bot.modules.item import counts_items, AddItemToUser
+from bot.modules.items.item import counts_items, AddItemToUser
 from bot.modules.localization import get_data, t
-from bot.modules.market import generate_items_pages
+from bot.modules.market.market import generate_items_pages
 from bot.modules.markup import answer_markup, cancel_markup, count_markup
 from bot.modules.states_tools import ChooseStepState, prepare_steps
 from bot.modules.markup import markups_menu as m
-from bot.modules.market import generate_items_pages
+from bot.modules.market.market import generate_items_pages
 from time import time
 import json
  

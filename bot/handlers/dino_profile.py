@@ -3,17 +3,17 @@ from time import time
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
-from bot.modules.accessory import check_accessory
+from bot.modules.items.accessory import check_accessory
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      near_key_number, seconds_to_str,
                                      user_name)
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur import Dino, Egg, check_status, dead_check
-from bot.modules.events import get_event
+from bot.modules.dinosaur.dinosaur import Dino, Egg, check_status, dead_check
+from bot.modules.managment.events import get_event
 from bot.modules.images import async_open
 from bot.modules.inline import dino_profile_markup, inline_menu
-from bot.modules.item import AddItemToUser, get_name
-from bot.modules.kindergarten import (check_hours, dino_kind, hours_now,
+from bot.modules.items.item import AddItemToUser, get_name
+from bot.modules.dinosaur.kindergarten import (check_hours, dino_kind, hours_now,
                                       m_hours, minus_hours)
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import confirm_markup
@@ -21,7 +21,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
                                       ChooseOptionState)
-from bot.modules.user import User, premium
+from bot.modules.user.user import User, premium
 from telebot import types
 from telebot.types import Message
 

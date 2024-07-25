@@ -6,18 +6,18 @@ from time import time
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
-from bot.modules.advert import auto_ads
+from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline, seconds_to_str, user_name
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.images import async_open
-from bot.modules.item import AddItemToUser, counts_items
+from bot.modules.items.item import AddItemToUser, counts_items
 from bot.modules.localization import get_data, get_lang, t
-from bot.modules.market import preview_product
+from bot.modules.market.market import preview_product
 from bot.modules.markup import back_menu
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.statistic import get_now_statistic
-from bot.modules.user import User, take_coins
+from bot.modules.managment.statistic import get_now_statistic
+from bot.modules.user.user import User, take_coins
 from telebot.types import CallbackQuery, InlineKeyboardMarkup, Message
 
 users = DBconstructor(mongo_client.user.users)

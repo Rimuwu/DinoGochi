@@ -7,7 +7,7 @@ from bot.modules.markup import answer_markup, cancel_markup, count_markup
  
 from bot.modules.states_tools import (ChooseIntState, ChooseStepState, prepare_steps)
 
-from bot.modules.market import generate_items_pages, generate_sell_pages
+from bot.modules.market.market import generate_items_pages, generate_sell_pages
 from bot.modules.add_product.general import end
 
 MAX_PRICE = 10_000_000

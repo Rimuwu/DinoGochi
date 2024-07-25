@@ -7,7 +7,7 @@ from bot.config import mongo_client
 from bot.const import ITEMS, QUESTS
 from bot.modules.data_format import (list_to_inline, random_code, random_dict,
 seconds_to_str)
-from bot.modules.item import counts_items, get_name, RemoveItemFromUser
+from bot.modules.items.item import counts_items, get_name, RemoveItemFromUser
 from bot.modules.localization import get_data, t
 
 from bot.modules.overwriting.DataCalsses import DBconstructor

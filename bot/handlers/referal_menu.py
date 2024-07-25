@@ -4,13 +4,13 @@ from bot.config import mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
 from bot.modules.data_format import escape_markdown, list_to_inline
-from bot.modules.item import counts_items
+from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.referals import connect_referal, create_referal
+from bot.modules.managment.referals import connect_referal, create_referal
 from bot.modules.states_tools import ChooseCustomState, ChooseStringState
-from bot.modules.user import take_coins
+from bot.modules.user.user import take_coins
 from bot.modules.decorators import HDCallback, HDMessage
 
 from bot.modules.overwriting.DataCalsses import DBconstructor

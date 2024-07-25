@@ -4,11 +4,11 @@ from bot.exec import bot
 from telebot.types import LabeledPrice
 
 from bot.const import GAME_SETTINGS
-from bot.modules.item import AddItemToUser
+from bot.modules.items.item import AddItemToUser
 from bot.modules.localization import get_data, get_lang
 from bot.modules.logs import log
 from bot.modules.notifications import user_notification
-from bot.modules.user import award_premium
+from bot.modules.user.user import award_premium
 
 directory = 'bot/data/donations.json'
 products = GAME_SETTINGS['products']

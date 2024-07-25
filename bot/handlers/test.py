@@ -18,34 +18,34 @@ from bot.const import GAME_SETTINGS, ITEMS
 from bot.exec import bot
 from bot.handlers.dino_profile import transition
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, item_list
-from bot.modules.dinosaur import check_status
+from bot.modules.dinosaur.dinosaur import check_status
 from bot.modules.donation import send_inv
 from bot.modules.images import create_egg_image, dino_collecting, dino_game
 from bot.modules.inventory_tools import inventory_pages
-from bot.modules.item import (AddItemToUser, DowngradeItem, get_data,
+from bot.modules.items.item import (AddItemToUser, DowngradeItem, get_data,
                               get_item_dict, get_name, RemoveItemFromUser)
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import count_markup, down_menu, list_to_keyboard, confirm_markup
 from bot.modules.notifications import user_notification, notification_manager
 from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
-from bot.modules.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement, take_coins
-from bot.modules.statistic import get_now_statistic
+from bot.modules.user.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement, take_coins
+from bot.modules.managment.statistic import get_now_statistic
 from bot.modules.quests import create_quest, quest_ui, save_quest
-from bot.modules.journey import create_event, random_event, activate_event
+from bot.modules.dinosaur.journey import create_event, random_event, activate_event
 
-from bot.modules.market import (add_product, create_seller,
+from bot.modules.market.market import (add_product, create_seller,
                                 generate_sell_pages, product_ui, seller_ui)
 from bson.objectid import ObjectId
 from bot.modules.images import create_dino_image, create_dino_image_pst, async_open
 
-from bot.modules.events import create_event, add_event, get_event
+from bot.modules.managment.events import create_event, add_event, get_event
 
-from bot.modules.user import get_inventory
+from bot.modules.user.user import get_inventory
 
 from typing import Optional
 from PIL import Image
 
-from bot.modules.advert import show_advert
+from bot.modules.user.advert import show_advert
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.decorators import HDMessage
@@ -130,7 +130,7 @@ async def test_img(message):
         
     print("t1", t1, "t2", t2, t1-t2)
 
-from bot.modules.dungeon import Lobby, DungPlayer
+from bot.modules.dungeon.dungeon import Lobby, DungPlayer
 
 @bot.message_handler(pass_bot=True, commands=['dung'], is_admin=True)
 async def dung(message):

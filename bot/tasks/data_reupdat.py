@@ -3,10 +3,10 @@
 from bot.config import conf, mongo_client
 from bot.taskmanager import add_task
 from datetime import datetime
-from bot.modules.user import max_lvl_xp
+from bot.modules.user.user import max_lvl_xp
 from time import time
 from bot.modules.notifications import user_notification
-from bot.modules.dinosaur import get_owner, get_dino_language, set_status
+from bot.modules.dinosaur.dinosaur  import get_owner, get_dino_language, set_status
 
 
 from bot.modules.overwriting.DataCalsses import DBconstructor

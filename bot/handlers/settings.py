@@ -4,7 +4,7 @@ from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import chunks, escape_markdown, list_to_keyboard
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur import Dino
+from bot.modules.dinosaur.dinosaur import Dino
 from bot.modules.localization import get_all_locales, get_data, get_lang, t
 from bot.modules.markup import cancel_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
@@ -13,7 +13,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
                                       ChooseOptionState, ChooseStepState,
                                       ChooseStringState)
-from bot.modules.user import User
+from bot.modules.user.user import User
 from telebot.types import CallbackQuery, Message
 
 users = DBconstructor(mongo_client.user.users)

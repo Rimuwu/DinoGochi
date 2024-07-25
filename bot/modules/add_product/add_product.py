@@ -1,10 +1,8 @@
-from telebot.types import Message, InputMedia
 
-from bot.config import mongo_client
 from bot.modules.add_product.auction import auction
 from bot.modules.states_tools import ChooseStepState
 
-from bot.modules.market import generate_sell_pages, generate_items_pages
+from bot.modules.market.market import generate_sell_pages, generate_items_pages
 
 from bot.modules.add_product.general import coins_stock
 from bot.modules.add_product.items_coins import circle_data as is_circle_data

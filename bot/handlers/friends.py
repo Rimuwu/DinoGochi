@@ -3,10 +3,10 @@ from bot.const import GAME_SETTINGS
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur import Dino, create_dino_connection
-from bot.modules.events import get_event
-from bot.modules.friends import get_frineds, insert_friend_connect
-from bot.modules.item import AddItemToUser, get_name
+from bot.modules.dinosaur.dinosaur  import Dino, create_dino_connection
+from bot.modules.managment.events import get_event
+from bot.modules.user.friends import get_frineds, insert_friend_connect
+from bot.modules.items.item import AddItemToUser, get_name
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup, confirm_markup, count_markup
 from bot.modules.markup import markups_menu as m
@@ -15,7 +15,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import (ChooseConfirmState, ChooseCustomState,
                                       ChooseIntState, ChoosePagesState,
                                       ChooseStepState, start_friend_menu)
-from bot.modules.user import take_coins, user_name
+from bot.modules.user.user import take_coins, user_name
 from telebot.types import CallbackQuery, Message
 
 users = DBconstructor(mongo_client.user.users)

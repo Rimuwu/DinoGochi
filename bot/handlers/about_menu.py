@@ -4,7 +4,7 @@ from bot.modules.data_format import seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.donation import send_inv
 from bot.modules.images import async_open
-from bot.modules.item import counts_items
+from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m

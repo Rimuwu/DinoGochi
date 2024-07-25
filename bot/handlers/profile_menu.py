@@ -7,7 +7,7 @@ from bot.modules.data_format import (escape_markdown, list_to_inline,
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.user import premium, user_info
+from bot.modules.user.user import premium, user_info
 from telebot.types import CallbackQuery, Message
 
 management = DBconstructor(mongo_client.other.management)

@@ -1,11 +1,11 @@
 from bot.modules.data_format import item_list
-from bot.modules.item import CheckCountItemFromUser, RemoveItemFromUser
+from bot.modules.items.item import CheckCountItemFromUser, RemoveItemFromUser
 from bot.modules.localization import t
 from bot.exec import bot
-from bot.modules.market import add_product, product_ui
+from bot.modules.market.market import add_product, product_ui
  
 from bot.modules.states_tools import ChooseStepState
-from bot.modules.user import take_coins
+from bot.modules.user.user import take_coins
 from bot.modules.markup import cancel_markup, markups_menu as m
 
 MAX_PRICE = 10_000_000

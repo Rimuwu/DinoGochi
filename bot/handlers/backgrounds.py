@@ -7,7 +7,7 @@ from bot.const import BACKGROUNDS
 from bot.exec import bot
 from bot.modules.data_format import escape_markdown, list_to_keyboard
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur import Dino
+from bot.modules.dinosaur.dinosaur  import Dino
 from bot.modules.images import async_open
 from bot.modules.inline import list_to_inline
 from bot.modules.localization import get_data, get_lang, t
@@ -16,7 +16,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
                                       ChooseIntState, ChooseStringState)
-from bot.modules.user import premium, take_coins
+from bot.modules.user.user import premium, take_coins
 from telebot.types import CallbackQuery, InputMedia, Message
 
 users = DBconstructor(mongo_client.user.users)

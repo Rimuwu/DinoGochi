@@ -9,12 +9,12 @@ from telebot.util import antiflood
 from bot.config import mongo_client, conf
 from bot.exec import bot
 from bot.modules.data_format import seconds_to_str
-from bot.modules.dino_status import check_status
+from bot.modules.dinosaur.dino_status import check_status
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.logs import log
-from bot.modules.item import get_name
-from bot.modules.over_functions import async_antiflood
+from bot.modules.items.item import get_name
+from bot.modules.overwriting.over_functions import async_antiflood
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)

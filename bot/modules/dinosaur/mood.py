@@ -4,8 +4,8 @@ from time import time
 from bson.objectid import ObjectId
 
 from bot.config import mongo_client
-from bot.modules.dinosaur import set_status, start_game, Dino
-from bot.modules.accessory import downgrade_accessory
+from bot.modules.dinosaur.dinosaur import set_status, start_game, Dino
+from bot.modules.items.accessory import downgrade_accessory
 from bot.modules.notifications import dino_notification
 from bot.const import GAME_SETTINGS
 

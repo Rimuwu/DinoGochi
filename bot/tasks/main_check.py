@@ -2,11 +2,11 @@ import random
 from random import randint
 
 from bot.config import conf, mongo_client
-from bot.modules.dinosaur import check_status, mutate_dino_stat
+from bot.modules.dinosaur.dinosaur  import check_status, mutate_dino_stat
 from bot.taskmanager import add_task
-from bot.modules.dinosaur import Dino, get_owner
-from bot.modules.mood import mood_while_if, calculation_points
-from bot.modules.user import experience_enhancement
+from bot.modules.dinosaur.dinosaur  import Dino, get_owner
+from bot.modules.dinosaur.mood import mood_while_if, calculation_points
+from bot.modules.user.user import experience_enhancement
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)

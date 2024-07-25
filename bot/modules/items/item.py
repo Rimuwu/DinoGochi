@@ -18,7 +18,7 @@ from bot.config import mongo_client
 from bot.const import ITEMS
 from bot.modules.data_format import random_dict, seconds_to_str, near_key_number
 from bot.modules.images import async_open
-from bot.modules.localization import get_all_locales, t
+from bot.modules.localization import get_all_locales
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
 

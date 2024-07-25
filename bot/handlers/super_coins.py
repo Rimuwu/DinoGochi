@@ -1,13 +1,13 @@
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
-from bot.modules.advert import create_ads_data
+from bot.modules.user.advert import create_ads_data
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.item import AddItemToUser, counts_items
+from bot.modules.items.item import AddItemToUser, counts_items
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.user import premium
+from bot.modules.user.user import premium
 from telebot.types import CallbackQuery, InlineKeyboardMarkup, Message
 
 users = DBconstructor(mongo_client.user.users)

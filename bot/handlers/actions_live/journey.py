@@ -4,21 +4,21 @@ from time import time
 
 from bot.config import mongo_client
 from bot.exec import bot
-from bot.modules.advert import auto_ads
+from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur import Dino, check_status, end_journey
-from bot.modules.dinosaur import start_journey as action_journey
+from bot.modules.dinosaur.dinosaur  import Dino, check_status, end_journey
+from bot.modules.dinosaur.dinosaur  import start_journey as action_journey
 from bot.modules.images import dino_journey
-from bot.modules.item import counts_items
-from bot.modules.journey import all_log, generate_event_message
+from bot.modules.items.item import counts_items
+from bot.modules.dinosaur.journey import all_log, generate_event_message
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
-from bot.modules.user import User
+from bot.modules.user.user import User
 from telebot.types import (CallbackQuery, InlineKeyboardMarkup, InputMedia,
                            Message)
 

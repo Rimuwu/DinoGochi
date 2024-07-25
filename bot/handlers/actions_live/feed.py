@@ -2,17 +2,17 @@
 from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur import Dino
+from bot.modules.dinosaur.dinosaur  import Dino
 from bot.modules.inventory_tools import start_inv
-from bot.modules.item import get_data as get_item_data
-from bot.modules.item import get_name
-from bot.modules.item_tools import use_item
+from bot.modules.items.item import get_data as get_item_data
+from bot.modules.items.item import get_name
+from bot.modules.items.item_tools import use_item
 from bot.modules.localization import get_lang
 from bot.modules.markup import feed_count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import ChooseStepState
-from bot.modules.user import User
+from bot.modules.user.user import User
 from telebot.types import CallbackQuery, Message
 
 items = DBconstructor(mongo_client.items.items)

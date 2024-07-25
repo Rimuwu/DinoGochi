@@ -3,16 +3,16 @@ from telebot.types import Message, InputMedia
 from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import (list_to_keyboard, escape_markdown)
-from bot.modules.item import (CheckCountItemFromUser,
+from bot.modules.items.item import (CheckCountItemFromUser,
                               RemoveItemFromUser)
 from bot.modules.localization import t
-from bot.modules.market import buy_product, check_preferential, create_preferential, delete_product, generate_items_pages, preview_product, product_ui, seller_ui
+from bot.modules.market.market import buy_product, check_preferential, create_preferential, delete_product, generate_items_pages, preview_product, product_ui, seller_ui
 
 from bot.modules.markup import cancel_markup, count_markup, confirm_markup
 from bot.modules.states_tools import (ChooseIntState, ChooseStringState,
                                       ChooseStepState, ChooseConfirmState, ChoosePagesState)
 from bot.modules.markup import markups_menu as m
-from bot.modules.user import take_coins
+from bot.modules.user.user import take_coins
 from random import choice
  
 

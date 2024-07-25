@@ -1,7 +1,6 @@
 import asyncio
 from bot.modules.logs import log
-from time import time, strftime
-from colorama import Fore, Style
+from time import time
 
 ioloop = asyncio.get_event_loop()
 tasks = []

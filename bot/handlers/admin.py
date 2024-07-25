@@ -10,12 +10,12 @@ from bot.modules.logs import log
 from bot.modules.markup import confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.promo import (create_promo_start, get_promo_pages, promo_ui,
+from bot.modules.managment.promo import (create_promo_start, get_promo_pages, promo_ui,
                                use_promo)
 from bot.modules.states_tools import (ChooseConfirmState, ChoosePagesState,
                                       ChooseStringState)
-from bot.modules.tracking import creat_track, get_track_pages, track_info
-from bot.modules.user import award_premium, user_name
+from bot.modules.managment.tracking import creat_track, get_track_pages, track_info
+from bot.modules.user.user import award_premium, user_name
 from telebot.types import CallbackQuery, Message
 
 management = DBconstructor(mongo_client.other.management)

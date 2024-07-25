@@ -9,9 +9,9 @@ from bot.config import mongo_client
 from bot.const import DINOS
 from bot.const import GAME_SETTINGS as GS
 from bot.modules.data_format import random_code, random_quality
-from bot.modules.dino_status import check_status
+from bot.modules.dinosaur.dino_status import check_status
 from bot.modules.images import create_dino_image, create_egg_image
-from bot.modules.item import AddItemToUser
+from bot.modules.items.item import AddItemToUser
 from bot.modules.localization import log, get_lang
 from bot.modules.notifications import (dino_notification, notification_manager,
                                        user_notification)

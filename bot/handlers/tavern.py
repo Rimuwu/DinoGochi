@@ -7,17 +7,17 @@ from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur import Dino, random_dino, random_quality
+from bot.modules.dinosaur.dinosaur  import Dino, random_dino, random_quality
 from bot.modules.images import async_open
 from bot.modules.inline import inline_menu
-from bot.modules.item import (CheckCountItemFromUser, RemoveItemFromUser,
+from bot.modules.items.item import (CheckCountItemFromUser, RemoveItemFromUser,
                               counts_items)
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import ChooseInlineState, ChooseStepState
-from bot.modules.user import (AddItemToUser, check_name, daily_award_con,
+from bot.modules.user.user import (AddItemToUser, check_name, daily_award_con,
                               get_dinos, take_coins, user_in_chat)
 from telebot.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message)

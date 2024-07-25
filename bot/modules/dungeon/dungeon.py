@@ -4,8 +4,8 @@ from bson.objectid import ObjectId
 from typing import Union, Any
 from bot.modules.data_format import user_name
 from bot.exec import bot
-from bot.modules.user import take_coins
-from bot.modules.item import AddListItems
+from bot.modules.user.user import take_coins
+from bot.modules.items.item import AddListItems
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 lobbys = DBconstructor(mongo_client.dungeon.lobby)

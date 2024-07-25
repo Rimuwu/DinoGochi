@@ -4,7 +4,7 @@ from time import time
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
 from bot.modules.data_format import random_code
-from bot.modules.decorators import HDCallback, HDMessage
+from bot.modules.decorators import HDMessage
 from bot.modules.donation import (OpenDonatData, give_reward, save,
                                   save_donation)
 from bot.modules.localization import get_lang, t

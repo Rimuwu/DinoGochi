@@ -1,7 +1,7 @@
 from random import randint
 
-from bot.modules.dinosaur import Dino
-from bot.modules.item import get_data
+from bot.modules.dinosaur.dinosaur import Dino
+from bot.modules.items.item import get_data
 from bot.modules.notifications import dino_notification
 
 

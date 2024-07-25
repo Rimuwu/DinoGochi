@@ -1,11 +1,7 @@
-import random
-from random import randint
-
 from bot.config import conf, mongo_client
 from bot.taskmanager import add_task
-from bot.modules.user import take_coins
 from time import time
-from bot.modules.market import delete_product
+from bot.modules.market.market import delete_product
 
 
 from bot.modules.overwriting.DataCalsses import DBconstructor

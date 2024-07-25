@@ -4,15 +4,15 @@ from random import randint
 from bot.config import conf, mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
-from bot.modules.accessory import check_accessory
-from bot.modules.dinosaur import Dino, end_collecting, mutate_dino_stat
-from bot.modules.item import counts_items
+from bot.modules.items.accessory import check_accessory
+from bot.modules.dinosaur.dinosaur  import Dino, end_collecting, mutate_dino_stat
+from bot.modules.items.item import counts_items
 from bot.modules.localization import  get_lang
-from bot.modules.mood import check_inspiration
+from bot.modules.dinosaur.mood import check_inspiration
 from bot.modules.quests import quest_process
-from bot.modules.user import experience_enhancement
+from bot.modules.user.user import experience_enhancement
 from bot.taskmanager import add_task
-from bot.modules.events import get_event
+from bot.modules.managment.events import get_event
 
 
 from bot.modules.overwriting.DataCalsses import DBconstructor

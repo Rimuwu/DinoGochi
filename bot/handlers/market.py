@@ -6,11 +6,11 @@ from bot.modules.add_product.add_product import prepare_data_option
 from bot.modules.data_format import (escape_markdown, list_to_inline,
                                      list_to_keyboard, user_name)
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.item import item_info
+from bot.modules.items.item import item_info
 from bot.modules.localization import get_lang, t
-from bot.modules.market import (create_push, create_seller, delete_product,
+from bot.modules.market.market import (create_push, create_seller, delete_product,
                                 preview_product, product_ui, seller_ui)
-from bot.modules.market_chose import (buy_item, find_prepare,
+from bot.modules.market.market_chose import (buy_item, find_prepare,
                                       pr_edit_description, pr_edit_image,
                                       pr_edit_name, prepare_add,
                                       prepare_delete_all, prepare_edit_price,
@@ -20,7 +20,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import (ChooseOptionState, ChoosePagesState,
                                       ChooseStepState)
-from bot.modules.user import premium
+from bot.modules.user.user import premium
 from telebot.types import CallbackQuery, InlineKeyboardMarkup, Message
 
 users = DBconstructor(mongo_client.user.users)

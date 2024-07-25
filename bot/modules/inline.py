@@ -1,9 +1,9 @@
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from bot.modules.data_format import list_to_inline
-from bot.modules.item import counts_items, is_standart
-from bot.modules.item import get_data as get_item_data
-from bot.modules.item import get_item_dict, get_name, item_code
+from bot.modules.items.item import counts_items, is_standart
+from bot.modules.items.item import get_data as get_item_data
+from bot.modules.items.item import get_item_dict, get_name, item_code
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.localization import t
 from bot.modules.logs import log

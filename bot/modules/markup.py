@@ -3,11 +3,11 @@ from telebot.types import ReplyKeyboardMarkup
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS as gs
 from bot.modules.data_format import chunks, crop_text, list_to_keyboard
-from bot.modules.dinosaur import Dino, Egg
+from bot.modules.dinosaur.dinosaur import Dino, Egg
 from bot.modules.localization import t, tranlate_data
 from bot.modules.logs import log
-from bot.modules.referals import get_user_code, get_user_sub
-from bot.modules.user import User, premium, last_dino
+from bot.modules.managment.referals import get_user_code, get_user_sub
+from bot.modules.user.user import User, premium
 
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -267,6 +267,26 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
             buttons = [
                 ['mine', 'bank'],
                 ['sawmill', 'farm']
+            ]
+
+            if await dino.status in ['on_farm', 'in_mine', 'in_bank', 'in_sawmill']:
+                buttons.append(
+                    ['stop_work']
+                )
+
+    elif markup_key == 'skills_actions_menu':
+        # Меню повышения навыков
+        prefix = 'commands_name.skills_actions.'
+        add_back_button = True
+        buttons = []
+
+        user = await User().create(userid)
+        dino = await user.get_last_dino()
+
+        if dino:
+            buttons = [
+                ['gym', 'library'],
+                ['park', 'swimming_pool']
             ]
 
             if await dino.status in ['on_farm', 'in_mine', 'in_bank', 'in_sawmill']:

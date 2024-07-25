@@ -6,14 +6,14 @@ from bot.exec import bot
 from bot.modules.data_format import (chunks, filling_with_emptiness,
                                      list_to_inline)
 from bot.modules.inline import item_info_markup
-from bot.modules.item import (get_data, get_name, is_standart, item_code,
+from bot.modules.items.item import (get_data, get_name, is_standart, item_code,
                               item_info)
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.localization import t
 from bot.modules.logs import log
 from bot.modules.markup import list_to_keyboard, down_menu
 from bot.modules.markup import markups_menu as m
-from bot.modules.user import get_inventory
+from bot.modules.user.user import get_inventory
 
 
 from bot.modules.overwriting.DataCalsses import DBconstructor

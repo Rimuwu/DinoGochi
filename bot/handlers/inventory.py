@@ -5,24 +5,23 @@ from bot.const import GAME_SETTINGS
 from bot.exec import bot
 from bot.modules.data_format import seconds_to_str, user_name
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur import incubation_egg
+from bot.modules.dinosaur.dinosaur  import incubation_egg
 from bot.modules.inventory_tools import (InventoryStates, back_button,
                                          filter_items_data, filter_menu,
-                                         forward_button, generate,
-                                         inventory_pages, search_menu,
+                                         forward_button, generate, search_menu,
                                          send_item_info, start_inv, swipe_page)
-from bot.modules.item import (CheckCountItemFromUser, CheckItemFromUser,
+from bot.modules.items.item import (CheckCountItemFromUser, CheckItemFromUser,
                               RemoveItemFromUser, counts_items, decode_item)
-from bot.modules.item import get_data as get_item_data
-from bot.modules.item import get_item_dict, get_name
-from bot.modules.item_tools import (AddItemToUser, CheckItemFromUser,
+from bot.modules.items.item import get_data as get_item_data
+from bot.modules.items.item import get_item_dict, get_name
+from bot.modules.items.item_tools import (AddItemToUser, CheckItemFromUser,
                                     book_page, data_for_use_item,
                                     delete_item_action, exchange_item)
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseIntState
-from bot.modules.user import User, take_coins
+from bot.modules.user.user import User, take_coins
 from fuzzywuzzy import fuzz
 from telebot.types import CallbackQuery, Message
 

@@ -2,10 +2,10 @@ from time import time
 from random import uniform, randint
 
 from bot.config import conf, mongo_client
-from bot.modules.dinosaur import end_sleep, mutate_dino_stat, get_owner
+from bot.modules.dinosaur.dinosaur  import end_sleep, mutate_dino_stat, get_owner
 from bot.taskmanager import add_task
-from bot.modules.mood import add_mood, check_inspiration
-from bot.modules.user import experience_enhancement
+from bot.modules.dinosaur.mood import add_mood, check_inspiration
+from bot.modules.user.user import experience_enhancement
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)

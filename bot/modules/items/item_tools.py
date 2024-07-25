@@ -5,9 +5,9 @@ from bot.const import GAME_SETTINGS
 from bot.exec import bot
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      random_dict, seconds_to_str)
-from bot.modules.dinosaur import Dino, edited_stats, insert_dino
+from bot.modules.dinosaur.dinosaur  import Dino, edited_stats, insert_dino
 from bot.modules.images import async_open, create_eggs_image
-from bot.modules.item import (AddItemToUser, CalculateDowngradeitem,
+from bot.modules.items.item import (AddItemToUser, CalculateDowngradeitem,
                               CheckItemFromUser, EditItemFromUser,
                               RemoveItemFromUser, UseAutoRemove, counts_items,
                               get_data, get_item_dict, get_name, is_standart,
@@ -16,10 +16,10 @@ from bot.modules.localization import get_data as get_loca_data
 from bot.modules.localization import t
 from bot.modules.markup import (confirm_markup, count_markup,
                                 feed_count_markup, markups_menu)
-from bot.modules.mood import add_mood
+from bot.modules.dinosaur.mood import add_mood
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
-from bot.modules.user import User, experience_enhancement, get_dead_dinos, max_eat, count_inventory_items, award_premium
+from bot.modules.user.user import User, experience_enhancement, get_dead_dinos, max_eat, count_inventory_items, award_premium
 from typing import Union
 
 

@@ -5,10 +5,9 @@ from bot.config import conf, mongo_client
 from bot.exec import bot
 from bot.modules.data_format import random_code, seconds_to_str, list_to_inline
 from bot.modules.localization import t, get_lang
-from bot.modules.promo import create_promo
-from bot.modules.user import col_dinos
+from bot.modules.user.user import col_dinos
 from bot.taskmanager import add_task
-from bot.modules.user import User
+from bot.modules.user.user import User
 from bot.modules.logs import log
  
 

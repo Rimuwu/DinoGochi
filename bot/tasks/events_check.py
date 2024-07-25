@@ -1,6 +1,6 @@
 from bot.config import conf, mongo_client
 from bot.taskmanager import add_task
-from bot.modules.events import auto_event, create_event, add_event
+from bot.modules.managment.events import auto_event, create_event, add_event
 from time import time
 from random import randint
 from bot.modules.logs import log

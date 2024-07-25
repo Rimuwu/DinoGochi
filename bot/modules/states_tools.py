@@ -1,7 +1,6 @@
 from telebot.asyncio_handler_backends import State, StatesGroup
 from telebot.types import InlineKeyboardMarkup
 
-from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import (chunk_pages, list_to_inline,
                                      list_to_keyboard)
@@ -11,9 +10,9 @@ from bot.modules.localization import get_data, t
 from bot.modules.logs import log
 from bot.modules.markup import down_menu, get_answer_keyboard
 from bot.modules.markup import markups_menu as m
-from bot.modules.user import User, get_frineds, user_info, user_name
+from bot.modules.user.user import User, get_frineds, user_info, user_name
  
-from bot.modules.events import check_event
+from bot.modules.managment.events import check_event
 
 import inspect
 from asyncio import sleep

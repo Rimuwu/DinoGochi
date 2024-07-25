@@ -2,20 +2,20 @@
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
-from bot.modules.accessory import check_accessory
-from bot.modules.advert import auto_ads
+from bot.modules.items.accessory import check_accessory
+from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline, list_to_keyboard
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur import Dino, check_status, end_collecting
+from bot.modules.dinosaur.dinosaur  import Dino, check_status, end_collecting
 from bot.modules.images import dino_collecting
-from bot.modules.item import counts_items
+from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
-from bot.modules.user import User, count_inventory_items, max_eat, premium
+from bot.modules.user.user import User, count_inventory_items, max_eat, premium
 from telebot.types import CallbackQuery, Message
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)

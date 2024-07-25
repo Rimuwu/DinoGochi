@@ -2,11 +2,11 @@ from bot.config import mongo_client
 from bot.exec import bot
 from bot.handlers.start import start_game
 from bot.modules.data_format import seconds_to_str, str_to_seconds, user_name
-from bot.modules.decorators import HDCallback, HDMessage
+from bot.modules.decorators import HDMessage
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_lang, t
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.promo import use_promo
+from bot.modules.managment.promo import use_promo
 from telebot.types import Message
 
 users = DBconstructor(mongo_client.user.users)

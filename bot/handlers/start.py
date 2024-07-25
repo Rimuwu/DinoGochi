@@ -7,15 +7,15 @@ from bot.handlers.referal_menu import check_code
 from bot.handlers.states import cancel
 from bot.modules.data_format import list_to_keyboard, seconds_to_str, user_name
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur import incubation_egg
+from bot.modules.dinosaur.dinosaur import incubation_egg
 from bot.modules.images import async_open, create_eggs_image
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.promo import use_promo
-from bot.modules.referals import connect_referal
-from bot.modules.tracking import add_track
-from bot.modules.user import award_premium, insert_user
+from bot.modules.managment.promo import use_promo
+from bot.modules.managment.referals import connect_referal
+from bot.modules.managment.tracking import add_track
+from bot.modules.user.user import award_premium, insert_user
 from telebot import types
 
 referals = DBconstructor(mongo_client.user.referals)

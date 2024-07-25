@@ -6,12 +6,12 @@ from bson.objectid import ObjectId
 
 from bot.config import mongo_client
 from bot.modules.data_format import encoder_text, random_dict, count_elements
-from bot.modules.dinosaur import Dino, end_journey, mutate_dino_stat
-from bot.modules.item import counts_items
+from bot.modules.dinosaur.dinosaur import Dino, mutate_dino_stat
+from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, t
-from bot.modules.mood import add_mood
-from bot.modules.user import get_frineds
-from bot.modules.accessory import check_accessory, weapon_damage, armor_protection, downgrade_accessory
+from bot.modules.dinosaur.mood import add_mood
+from bot.modules.user.user import get_frineds
+from bot.modules.items.accessory import check_accessory, weapon_damage, armor_protection, downgrade_accessory
 from bot.modules.logs import log
 
 from bot.modules.overwriting.DataCalsses import DBconstructor

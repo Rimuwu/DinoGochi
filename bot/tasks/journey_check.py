@@ -3,16 +3,16 @@ from random import randint
 from time import time
 
 from bot.config import conf, mongo_client
-from bot.handlers.actions.journey import send_logs
-from bot.modules.accessory import check_accessory
-from bot.modules.dinosaur import (Dino, end_collecting, end_journey,
+from bot.handlers.actions_live.journey import send_logs
+from bot.modules.items.accessory import check_accessory
+from bot.modules.dinosaur.dinosaur  import (Dino, end_collecting, end_journey,
                                   get_dino_language, mutate_dino_stat)
-from bot.modules.journey import random_event
+from bot.modules.dinosaur.journey import random_event
 from bot.modules.quests import quest_process
-from bot.modules.user import experience_enhancement
+from bot.modules.user.user import experience_enhancement
 from bot.taskmanager import add_task
-from bot.modules.accessory import check_accessory
-from bot.modules.mood import check_inspiration
+from bot.modules.items.accessory import check_accessory
+from bot.modules.dinosaur.mood import check_inspiration
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)

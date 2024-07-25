@@ -4,7 +4,7 @@ from bot.modules.add_product.general import end
 from bot.modules.markup import answer_markup, cancel_markup, count_markup
 from bot.modules.states_tools import (ChooseStepState, prepare_steps)
 
-from bot.modules.market import generate_sell_pages
+from bot.modules.market.market import generate_sell_pages
 
 MAX_PRICE = 10_000_000
 from bot.modules.overwriting.DataCalsses import DBconstructor

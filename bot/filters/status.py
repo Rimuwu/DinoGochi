@@ -5,7 +5,7 @@ from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.inline import inline_menu
 from bot.modules.localization import t
-from bot.modules.user import User
+from bot.modules.user.user import User
 
 class DinoPassStatus(AdvancedCustomFilter):
     key = 'dino_pass'

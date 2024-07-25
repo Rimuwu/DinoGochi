@@ -2,9 +2,6 @@ import logging
 from time import strftime
 
 from colorama import Fore, Style
-# import psutil
-from functools import wraps
-import telebot
 
 from bot.config import conf
 

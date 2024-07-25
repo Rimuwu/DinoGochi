@@ -14,13 +14,20 @@ DEFAULT_RATE_LIMIT = 0.5
 from bot.modules.overwriting.DataCalsses import DBconstructor
 users = DBconstructor(mongo_client.user.users)
 daily_data = DBconstructor(mongo_client.tavern.daily_award)
-
+ads = DBconstructor(mongo_client.user.ads)
 
 async def ping():
     st = time_now()
     r = requests.post('https://api.telegram.org')
     dt = round(time_now() - st, 3)
     return dt
+
+async def check_ads(user_id):
+    ads_cabinet = await ads.find_one({'userid': user_id}, comment='check_ads_midl')
+
+    if ads_cabinet is None: return 1000
+    else: return int(time_now() - ads_cabinet['last_ads'])
+
 
 class AntifloodMiddleware(BaseMiddleware):
 
@@ -52,7 +59,8 @@ class AntifloodMiddleware(BaseMiddleware):
                                     {'$set': {'last_message_time': message.date}}, 
                                     comment='post_process_1')
 
-                if await daily_data.find_one({'owner_id': user_id}, comment='post_process_check') == None:
+                if await daily_data.find_one({'owner_id': user_id}, comment='post_process_check') == None and \
+                    await check_ads(user_id) > 10:
                     if user['settings']['notifications']:
                         for key, value in user['notifications'].items():
 

@@ -5,11 +5,11 @@ from bot.config import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.item import AddItemToUser
+from bot.modules.items.item import AddItemToUser
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import check_quest, quest_resampling, quest_ui
-from bot.modules.user import take_coins
+from bot.modules.user.user import take_coins
 from telebot.types import (CallbackQuery,
                            InlineKeyboardMarkup, Message)
 

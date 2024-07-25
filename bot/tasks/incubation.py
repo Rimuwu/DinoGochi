@@ -3,7 +3,7 @@ from time import time
 from bot.config import conf, mongo_client
 from bot.exec import bot
 from bot.modules.data_format import user_name
-from bot.modules.dinosaur import insert_dino
+from bot.modules.dinosaur.dinosaur  import insert_dino
 from bot.modules.notifications import user_notification
 from bot.taskmanager import add_task
 from bot.modules.localization import get_lang

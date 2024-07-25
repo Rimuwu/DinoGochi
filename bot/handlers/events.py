@@ -3,7 +3,7 @@ from bot.exec import bot
 from bot.modules.data_format import list_to_inline
 from bot.modules.localization import get_lang, t
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.user import user_in_chat
+from bot.modules.user.user import user_in_chat
 from telebot.types import ChatMemberUpdated
 
 puhs = DBconstructor(mongo_client.market.puhs)

@@ -1,9 +1,8 @@
-from bot.config import mongo_client
 
 from bot.modules.markup import answer_markup, count_markup
 from bot.modules.states_tools import prepare_steps
 
-from bot.modules.market import generate_items_pages
+from bot.modules.market.market import generate_items_pages
 
 MAX_PRICE = 10_000_000
 
