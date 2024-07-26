@@ -305,18 +305,21 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         dino = await user.get_last_dino()
 
         if dino:
-            kd = check_all_activity(dino._id)
-
-            # dino_button = f'notranslate.{t("commands_name.action_ask.dino_button", language_code)} {crop_text(dino.name, 6)}'
+            kd = await check_all_activity(dino._id)
 
             bd = {
-                'pet': f'notranslate.{t('commands_name.speed_actions.pet')}',
-                'fighting': f'notranslate.{t('commands_name.speed_actions.pet')}',
-                'talk': f'notranslate.{t('commands_name.speed_actions.pet')}',
+                'pet': f"notranslate.{t('commands_name.speed_actions.pet', language_code)}",
+                'fighting': f"notranslate.{t('commands_name.speed_actions.fighting', language_code)}",
+                'talk': f"notranslate.{t('commands_name.speed_actions.talk', language_code)}",
             }
-            
+
             for key, value in kd.items():
-                bd[key] += f' {seconds_to_str()}'
+                bd[key] += f' ({seconds_to_str(value, language_code, True, "hour")})'
+
+            buttons = [
+                [bd['pet'], bd['talk']],
+                [bd['fighting']]
+            ]
 
 
     else:
