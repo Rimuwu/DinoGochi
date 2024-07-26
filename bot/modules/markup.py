@@ -2,8 +2,9 @@ from telebot.types import ReplyKeyboardMarkup
 
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS as gs
-from bot.modules.data_format import chunks, crop_text, list_to_keyboard
+from bot.modules.data_format import chunks, crop_text, list_to_keyboard, seconds_to_str
 from bot.modules.dinosaur.dinosaur import Dino, Egg
+from bot.modules.dinosaur.kd_activity import check_all_activity
 from bot.modules.localization import t, tranlate_data
 from bot.modules.logs import log
 from bot.modules.managment.referals import get_user_code, get_user_sub
@@ -294,9 +295,9 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
                     ['stop_work']
                 )
 
-    elif markup_key == 'skills_actions_menu':
+    elif markup_key == 'speed_actions_menu':
         # Меню повышения навыков
-        prefix = 'commands_name.skills_actions.'
+        prefix = 'commands_name.speed_actions.'
         add_back_button = True
         buttons = []
 
@@ -304,15 +305,19 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         dino = await user.get_last_dino()
 
         if dino:
-            buttons = [
-                ['gym', 'library'],
-                ['park', 'swimming_pool']
-            ]
+            kd = check_all_activity(dino._id)
 
-            if await dino.status in ['on_farm', 'in_mine', 'in_bank', 'in_sawmill']:
-                buttons.append(
-                    ['stop_work']
-                )
+            # dino_button = f'notranslate.{t("commands_name.action_ask.dino_button", language_code)} {crop_text(dino.name, 6)}'
+
+            bd = {
+                'pet': f'notranslate.{t('commands_name.speed_actions.pet')}',
+                'fighting': f'notranslate.{t('commands_name.speed_actions.pet')}',
+                'talk': f'notranslate.{t('commands_name.speed_actions.pet')}',
+            }
+            
+            for key, value in kd.items():
+                bd[key] += f' {seconds_to_str()}'
+
 
     else:
         log(prefix='Markup', 
