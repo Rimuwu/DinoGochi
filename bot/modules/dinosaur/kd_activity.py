@@ -14,7 +14,7 @@ async def save_kd(dino_id: ObjectId, activity_type: str, kd_time: int) -> dict:
         kd = {
             'dino_id': dino_id,
             'activity_type': activity_type,
-            'kd_time': kd_time + int(time_now)
+            'kd_time': kd_time + int(time_now())
         }
 
         await kd_activity.insert_one(kd)
