@@ -18,7 +18,7 @@ class HendlerDecorator(object):
 
             result = await func(*args)
 
-            log(f"command: {func.__name__} userid: {user_id} work.time: {round(time() - time_save, 4)} result: {result}", 0, 'HandlerStart')
+            log(f"command: {func.__name__} userid: {user_id} work.time: {round(time() - time_save, 4)} result: {result}", 0, 'HandlerEnd')
 
         return wrapper
 
@@ -30,11 +30,11 @@ class HendlerDecorator(object):
             user_id = callback.from_user.id
             time_save = time()
 
-            log(f"buttonclick: {func.__name__} userid: {user_id}", 0, 'HandlerStart')
+            log(f"ButtonClickStart: {func.__name__} userid: {user_id}", 0, 'HandlerStart')
 
             result = await func(*args)
 
-            log(f"buttonclick: {func.__name__} userid: {user_id} work.time: {round(time() - time_save, 4)} result: {result}", 0, 'HandlerStart')
+            log(f"ButtonClickEnd: {func.__name__} userid: {user_id} work.time: {round(time() - time_save, 4)} result: {result}", 0, 'HandlerStart')
 
         return wrapper
 
