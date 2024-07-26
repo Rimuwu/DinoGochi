@@ -347,3 +347,14 @@ async def skills_actions(message: Message):
             reply_markup= await m(userid, 'skills_actions_menu', lang))
 
     await auto_ads(message)
+
+@bot.message_handler(pass_bot=True, text='commands_name.action_ask.speed_actions', is_authorized=True, private=True)
+@HDMessage
+async def speed_actions(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+
+    await bot.send_message(message.chat.id, t('menu_text.speed_actions', lang), 
+            reply_markup= await m(userid, 'speed_actions_menu', lang))
+
+    await auto_ads(message)
