@@ -19,6 +19,7 @@ from bot.exec import bot
 from bot.handlers.dino_profile import transition
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, item_list
 from bot.modules.dinosaur.dinosaur import check_status
+from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.donation import send_inv
 from bot.modules.images import create_egg_image, dino_collecting, dino_game
 from bot.modules.inventory_tools import inventory_pages
@@ -155,39 +156,13 @@ async def add_to(message):
     player = await DungPlayer().create(message.from_user.id, m.id)
     await lobby.add_player(player, message.from_user.id)
 
-def log_command(f):
-    async def _fn():
-        starttime = time.time()
-        await f()
-        print(
-            "child function run time is ",
-            (time.time() - starttime) * 1000,
-            "ms",
-        )
-
-    return _fn
-
-
-
-class sa(object):
-    def a(self, fun):
-
-        @wraps(fun)
-        async def wrapper(*args):
-            print(1)
-            print(args)
-            return await fun(*args)
-
-        return wrapper
-
-n = sa()
-
-
 @bot.message_handler(pass_bot=True, commands=['test'])
 @HDMessage
 async def test(message: Message):
     
-    print('testtt')
-    await asleep(5)
-
-    return 0
+    uu = await User().create(message.from_user.id)
+    ld = await uu.get_last_dino()
+    
+    await save_kd(ld._id, 'pet', 180)
+    await save_kd(ld._id, 'talk', 3600*2)
+    await save_kd(ld._id, 'fighting', 3600)
