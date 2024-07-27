@@ -42,7 +42,7 @@ async def start_command_auth(message: types.Message):
                           'lang': await get_lang(message.from_user.id)}, False)
 
         track = await management.find_one({'_id': 'tracking_links'}, comment='start_command_auth_track')
-        if referal in track['links']:
+        if referal in track['links']: # type: ignore
             await management.update_one({'_id': 'tracking_links'}, 
                                         {"$inc": {f"{referal}.col": 1}}, 
                                         comment='start_command_auth_management')
