@@ -49,9 +49,8 @@ class Dino:
                 'game': 10, 'mood': 10,
                 'energy': 10,
 
-                'power': 0, 'dexterity': 0,
-                'endurance': 0, 'intelligence': 0,
-                'wisdom': 0, 'charisma': 0
+                'power': 0.0, 'dexterity': 0.0,
+                'intelligence': 0.0, 'charisma': 0.0
         }
 
         self.activ_items = {
@@ -69,7 +68,8 @@ class Dino:
 
         self.memory = {
             'games': [],
-            'eat': []
+            'eat': [],
+            'action': []
         }
 
         self.profile = {
@@ -173,7 +173,10 @@ class Dino:
         percent = GS['penalties'][memory_type][str(repeat)]
 
         if update:
-            max_repeat = {'games': 3, 'eat': 5}
+            max_repeat = {'games': 3, 'eat': 5, 'action': 8}
+            # При повторении активностей добавлять -1 к настроению 
+            # "Занимаюсь одним и тем же"
+            # Записывать активность как = путешествие.локация
 
             if len(self.memory[memory_type]) < max_repeat[memory_type]:
                 await self.update({'$push': {f'memory.{memory_type}': obj}})
@@ -188,12 +191,12 @@ class Dino:
     @property
     def data(self): return get_dino_data(self.data_id)
 
+    @property
+    async def status(self): return await check_status(self)
+
     async def age(self): return await get_age(self._id)
 
     async def get_owner(self): return await get_owner(self._id)
-
-    @property
-    async def status(self): return await check_status(self)
 
 
 class Egg:
