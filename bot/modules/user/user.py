@@ -179,10 +179,10 @@ class User:
             await dino_owners.delete_one({'_id': conn['_id']}, comment='full_delete_2')
 
         # Удаление связи с друзьями
-        friends_conn = list(await friends.find(
-            {'userid': self.userid}), comment='full_delete_friends_conn')
-        friends_conn2 = list(await friends.find(
-            {'friendid': self.userid}), comment='full_delete_friends_conn2')
+        friends_conn = await friends.find(
+            {'userid': self.userid}, comment='full_delete_friends_conn')
+        friends_conn2 = await friends.find(
+            {'friendid': self.userid}, comment='full_delete_friends_conn2')
 
         for conn in [friends_conn, friends_conn2]:
             for obj in conn: await friends.delete_one({'_id': obj['_id']}, comment='full_delete_conn')
