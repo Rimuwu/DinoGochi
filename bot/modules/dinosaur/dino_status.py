@@ -29,7 +29,7 @@ async def check_status(dino_id):
                 {'_id': 1, 'activity_type': 1}, comment="check_all_status")
         if activity == None: status = 'pass'
         else:
-            status = activity['activity_type']
+            status: str = activity['activity_type']
 
         on_farm = status == 'farm'
         in_mine = status == 'mine'
