@@ -17,13 +17,14 @@ max_stack = 5
 
 keys = [
     'good_sleep', 'end_game', 'multi_games', 'multi_heal', 
-    'multi_eat', 'multi_energy', 'dream', 'good_eat', 'playing_together', 'sunshine', 'breeze', 'meeting_friend', 'magic_animal', 'magic_light'
+    'multi_eat', 'multi_energy', 'dream', 'good_eat', 'playing_together', 'sunshine', 'breeze', 'meeting_friend', 'magic_animal', 'magic_light', 'pet', 'talk_good', 'simple_work'
     # Положительное 
 
     'bad_sleep', 'stop_game', 'little_game', 'little_heal',
-    'little_eat', 'little_energy', 'bad_dream', 'bad_eat', 'repeat_eat', 'rain', 'cold_wind', 'snowfall', 'drought'
+    'little_eat', 'little_energy', 'bad_dream', 'bad_eat', 'repeat_eat', 'rain', 'cold_wind', 'snowfall', 'drought',
+    'break', 'bad_talk', 'hard_work'
     # Отрицательное
-    
+
     'journey_event' 
     # Любое
 ]
@@ -248,11 +249,16 @@ async def check_inspiration(dino_id: ObjectId, action_type: str) -> bool:
                               'type': 'inspiration', 'action': action_type}, comment='check_inspiration_res')
     return bool(res)
 
-async def check_breakdown(dino_id: ObjectId, action_type: str) -> bool:
-    """ Проверяет есть ли у динозавра нервный срыв данного типа
+async def check_breakdown(dino_id: ObjectId, action_type: str = '') -> bool:
+    """ Проверяет есть ли у динозавра нервный срыв данного типа (если не указано, то есть ли в общем)
     """
     assert action_type in list(breakdowns.keys()), f'Тип {action_type} не существует!'
 
-    res = await dino_mood.find_one({'dino_id': dino_id, 
+    if action_type:
+        res = await dino_mood.find_one({'dino_id': dino_id, 
                               'type': 'breakdown', 'action': action_type}, comment='check_breakdown_res')
+    else:
+        res = await dino_mood.find_one({'dino_id': dino_id, 
+                            'type': 'breakdown'}, comment='check_breakdown_res1')
+
     return bool(res)
