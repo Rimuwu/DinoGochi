@@ -11,18 +11,19 @@ dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 """
 90 дней на прокачку силы до максимума - 0.11 за 1.5 часа (рандом 0.05-0.15)
 
+Погладить - (рандом -(0.001, 0.01))
 
 """
 
 
 async def add_skill_point(dino_id: ObjectId, skill: str, point: float):
-    
+
     """ -1  -  максимальный / минимальный уровень навыка
          1  -  добавлен
 
         point - отрицательное / положительное число 
     """
-    
+
     assert skill in ['charisma', 'intelligence', 'dexterity', 'power'], f'Skill {skill} не в списке'
 
     dino = await dinosaurs.find_one({"dino_id": dino_id}, comment='add_skill_point')
@@ -33,5 +34,6 @@ async def add_skill_point(dino_id: ObjectId, skill: str, point: float):
         elif skill_stat + point <= 0.0: return -1
         else:
             await dinosaurs.update_one({'_id': dino['_id']}, 
-                                        {'$inc': {f'stats.{skill}': point}})
+                                        {'$inc': {f'stats.{skill}': 
+                                            round(point, 4)}})
             return 1
