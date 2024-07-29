@@ -20,6 +20,7 @@ from . import market
 from . import backgrounds
 
 from . import actions_live
+from . import actions_speed
 from . import super_coins
 
 from . import stars_invoice
