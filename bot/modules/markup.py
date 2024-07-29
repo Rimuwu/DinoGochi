@@ -254,7 +254,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
                 [dp_buttons[3], dp_buttons[0], dp_buttons[2]],
                 ["noprefix.buttons_name.back"]
             ]
-    
+
     elif markup_key == 'extraction_actions_menu':
         # Меню работ
         prefix = 'commands_name.extraction_actions.'
@@ -314,7 +314,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
             }
 
             for key, value in kd.items():
-                bd[key] += f' ({seconds_to_str(value, language_code, True, "hour")})'
+                bd[key] += f' ({seconds_to_str(value, language_code, True, "minute")})'
 
             buttons = [
                 [bd['pet'], bd['talk']],
