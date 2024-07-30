@@ -154,7 +154,7 @@ class Dino:
     async def collecting(self, owner_id: int, coll_type: str, max_count: int):
         return await start_collecting(self._id, owner_id, coll_type, max_count)
 
-    async def game(self, duration: int=1800, percent: int=1):
+    async def game(self, duration: int=1800, percent: float=1.0):
         return await start_game(self._id, duration, percent)
 
     async def journey(self, owner_id: int, duration: int=1800):
@@ -186,6 +186,7 @@ class Dino:
                 await self.update({'$set': 
                     {f'memory.{memory_type}': self.memory[memory_type]}}
                             )
+
         return percent, repeat
 
     @property
@@ -454,8 +455,6 @@ async def start_collecting(dino_baseid: ObjectId, owner_id: int, coll_type: str,
             'activity_type': 'collecting'
         }
         result = await long_activity.insert_one(collecting, comment='start_collecting_result')
-        await dinosaurs.update_one({"_id": dino_baseid}, 
-                            {'$set': {'status': 'collecting'}}, comment='start_collecting_1')
     return result
 
 async def end_collecting(dino_id: ObjectId, items: dict, recipient: int,
@@ -569,8 +568,6 @@ async def set_status(dino_id: ObjectId, new_status: str, now_status: str = ''):
     elif now_status == 'kindergarten':
         data = await kindergarten.find_one({'dinoid': dino_id}, comment='set_status_data')
         if data: await kindergarten.delete_one({'_id': data['_id']}, comment='set_status_1')
-
-    await dinosaurs.update_one({'_id': dino_id}, {'$set': {'status': new_status}}, comment='set_status_end')
 
 quality_spec = {
     'com': [0.1, 0.5],
