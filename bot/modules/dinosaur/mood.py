@@ -22,7 +22,7 @@ keys = [
 
     'bad_sleep', 'stop_game', 'little_game', 'little_heal',
     'little_eat', 'little_energy', 'bad_dream', 'bad_eat', 'repeat_eat', 'rain', 'cold_wind', 'snowfall', 'drought',
-    'break', 'bad_talk', 'hard_work'
+    'break', 'bad_talk', 'hard_work', 'repeat_activity'
     # Отрицательное
 
     'journey_event' 
@@ -119,7 +119,7 @@ async def mood_while_if(dino: ObjectId, key: str, characteristic: str,
                 'dino_id': dino,
                 'action': key,
                 'unit': unit,
-                
+
                 'while': {
                     'min_unit': min_unit,
                     'max_unit': max_unit,
@@ -262,3 +262,8 @@ async def check_breakdown(dino_id: ObjectId, action_type: str = '') -> bool:
                             'type': 'breakdown'}, comment='check_breakdown_res1')
 
     return bool(res)
+
+async def repeat_activity(dino_id: ObjectId, percent: float):
+    if percent != 0:
+        if randint(0, 100) <= percent:
+            await add_mood(dino_id, 'repeat_activity', -1, 3600, True)
