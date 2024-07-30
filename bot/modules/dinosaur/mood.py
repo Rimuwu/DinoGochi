@@ -17,12 +17,12 @@ max_stack = 5
 
 keys = [
     'good_sleep', 'end_game', 'multi_games', 'multi_heal', 
-    'multi_eat', 'multi_energy', 'dream', 'good_eat', 'playing_together', 'sunshine', 'breeze', 'meeting_friend', 'magic_animal', 'magic_light', 'pet', 'talk_good', 'simple_work'
+    'multi_eat', 'multi_energy', 'dream', 'good_eat', 'playing_together', 'sunshine', 'breeze', 'meeting_friend', 'magic_animal', 'magic_light', 'pet', 'talk_good', 'simple_work', 'positive_talk',
     # Положительное 
 
     'bad_sleep', 'stop_game', 'little_game', 'little_heal',
-    'little_eat', 'little_energy', 'bad_dream', 'bad_eat', 'repeat_eat', 'rain', 'cold_wind', 'snowfall', 'drought',
-    'break', 'bad_talk', 'hard_work', 'repeat_activity'
+    'little_eat', 'little_energy', 'bad_dream', 'bad_eat', 'repeat_eat', 'rain', 'cold_wind', 'snowfall', 'drought', 'negative_talk',
+    'break', 'bad_talk', 'hard_work', 'repeat_activity',
     # Отрицательное
 
     'journey_event' 
