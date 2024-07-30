@@ -414,8 +414,6 @@ async def kindergarten(call: types.CallbackQuery):
 
         elif action == 'stop':
             if await check_status(dino['_id']) == 'kindergarten':
-                await dinosaurs.update_one({'_id': dino['_id']}, 
-                         {'$set': {'status': 'pass'}}, comment='kindergarten_stop')
                 await kindergarten_bd.delete_one({'dinoid': dino['_id']}, comment='kindergarten_stop')
                 await bot.send_message(userid, t('kindergarten.stop', lang))
 
@@ -426,8 +424,6 @@ async def start_kind(col, transmitted_data):
     dino = transmitted_data['dino']
 
     await minus_hours(userid, col)
-    await dinosaurs.update_one({'_id': dino}, 
-                         {'$set': {'status': 'kindergarten'}}, comment='start_kind')
     await dino_kind(dino, col)
     await bot.send_message(chatid, t('kindergarten.ok', lang), 
                            reply_markup= await m(userid, 'last_menu', lang))
