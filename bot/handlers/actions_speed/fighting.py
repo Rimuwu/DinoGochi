@@ -1,0 +1,69 @@
+from random import choice, randint, uniform
+
+from bot.config import mongo_client
+from bot.exec import bot
+from bot.modules.dinosaur.kd_activity import save_kd
+from bot.modules.dinosaur.skills import add_skill_point
+from bot.modules.decorators import HDMessage
+from bot.modules.localization import get_data, t
+from bot.modules.markup import markups_menu as m
+from bot.modules.dinosaur.mood import add_mood, repeat_activity
+from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.user.user import User
+from telebot.types import Message
+
+dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
+dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
+
+@bot.message_handler(textstart='commands_name.speed_actions.fighting', dino_pass=True, nothing_state=True, kd_check='fighting')
+@HDMessage
+async def fighting(message: Message):
+    userid = message.from_user.id
+    user = await User().create(userid)
+    lang = await user.lang
+    last_dino = await user.get_last_dino()
+    chatid = message.chat.id
+
+    dex_status, block_status = False, False
+
+    percent, _ = await last_dino.memory_percent('action', 'fighting', True)
+    await repeat_activity(last_dino._id, percent)
+    await save_kd(last_dino._id, 'fighting', 2400)
+
+    if uniform(1, 10) < 4 + 0.4 * last_dino.stats['dexterity']:
+        dex_status = True
+
+    elif uniform(1, 10) < 4 + 0.4 * last_dino.stats['power']:
+        block_status = True
+
+    else:
+        heal = randint(1, 5)
+        await add_mood(last_dino._id, 'break', -1, 1200)
+        await add_skill_point(last_dino._id, 'power', uniform(0.001, 0.01))
+        await last_dino.update(
+            {'$inc': {'stats.heal': -heal}}
+        )
+
+        text = t(f'fighting.hit', lang, heal=heal)
+        await bot.send_message(chatid, text,  parse_mode='Markdown',
+            reply_markup=await m(userid, 'speed_actions_menu', lang, True))
+        return
+
+    if all([dex_status, block_status]): code_s = randint(1, 2)
+    elif dex_status: code_s = 1
+    elif block_status: code_s = 2
+
+    if code_s == 1: # Уклонился
+        await add_skill_point(last_dino._id, 'dexterity', uniform(0.001, 0.01))
+
+        text = t(f'fighting.avoid', lang)
+        await bot.send_message(chatid, text,  parse_mode='Markdown',
+            reply_markup=await m(userid, 'speed_actions_menu', lang, True))
+
+    elif code_s == 2: # Заблокировал удар
+        await add_skill_point(last_dino._id, 'power', uniform(0.001, 0.01))
+
+        text = t(f'fighting.block', lang)
+        await bot.send_message(chatid, text,  parse_mode='Markdown',
+            reply_markup=await m(userid, 'speed_actions_menu', lang, True))
