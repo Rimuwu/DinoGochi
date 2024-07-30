@@ -51,8 +51,10 @@ from bot.modules.user.advert import show_advert
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.decorators import HDMessage
 
+from bson.objectid import ObjectId
+from bson.son import SON
 
-users = DBconstructor(mongo_client.user.users)
+users = mongo_client.user.users
 
 @bot.message_handler(pass_bot=True, commands=['add_item', 'item_add'], is_admin=True)
 async def command(message):
@@ -160,9 +162,19 @@ async def add_to(message):
 @HDMessage
 async def test(message: Message):
     
-    uu = await User().create(message.from_user.id)
-    ld = await uu.get_last_dino()
+    # uu = await User().create(message.from_user.id)
+    # ld = await uu.get_last_dino()
     
-    await save_kd(ld._id, 'pet', 180)
-    await save_kd(ld._id, 'talk', 3600*2)
-    await save_kd(ld._id, 'fighting', 3600)
+    # await save_kd(ld._id, 'pet', 180)
+    # await save_kd(ld._id, 'talk', 3600*2)
+    # await save_kd(ld._id, 'fighting', 3600)
+
+
+    async for index in users.list_indexes():
+        index: SON
+        print(index)
+        print(dict(index['key']))
+
+    await users.create_index(())
+    
+    resp = users.create_index([ ("field_to_index", -1) ], unique = True)
