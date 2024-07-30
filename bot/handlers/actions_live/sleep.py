@@ -46,7 +46,7 @@ async def long_sleep(dino: Dino, userid: int, lang: str):
     """ Отправляем дино в длинный сон
     """
 
-    res_dino_status = await check_status(dino['_id'])
+    res_dino_status = await check_status(dino._id)
     if res_dino_status:
         if res_dino_status != 'pass':
             await bot.send_message(userid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
