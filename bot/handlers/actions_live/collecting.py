@@ -48,6 +48,7 @@ async def collecting_adapter(return_data, transmitted_data):
 
             await dino.collecting(userid, option, count)
             await check_accessory(dino, 'basket', True)
+            await dino.memory_percent('action', f'collecting.{option}', True)
 
             image = await dino_collecting(dino.data_id, option)
             text = t(f'collecting.result.{option}', lang,

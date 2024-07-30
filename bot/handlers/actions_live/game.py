@@ -121,6 +121,7 @@ async def game_start(return_data: dict,
             return
 
     percent, repeat = await dino.memory_percent('games', game)
+    await dino.memory_percent('action', f'game.{game}', True)
 
     if friend and join_status and join_dino:
         dino_f = await dinosaurs.find_one({'alt_id': join_dino}, comment="game_start_dino_f")

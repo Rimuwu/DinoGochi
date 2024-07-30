@@ -39,6 +39,7 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
 
     data_time = get_data(f'journey_start.time_text.{time_key}', lang)
     res = await action_journey(dino._id, userid, data_time['time'], location)
+    await dino.memory_percent('action', f'journey.{location}', True)
 
     if res:
         image = await dino_journey(dino.data_id, location, friend)
