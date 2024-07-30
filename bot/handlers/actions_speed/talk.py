@@ -35,6 +35,7 @@ async def talk(message: Message):
 
     await add_mood(last_dino._id, f'{status}_talk', 1, 600)
     await save_kd(last_dino._id, 'talk', 900)
+    await add_skill_point(last_dino._id, 'charisma', uniform(0.001, 0.01))
 
     text_l: list = get_data(f'talk.themes.{status}', lang)
     theme = choice(text_l)
