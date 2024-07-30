@@ -4,6 +4,7 @@ from time import time
 
 from bot.config import mongo_client
 from bot.exec import bot
+from bot.modules.dinosaur.mood import repeat_activity
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
@@ -39,7 +40,8 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
 
     data_time = get_data(f'journey_start.time_text.{time_key}', lang)
     res = await action_journey(dino._id, userid, data_time['time'], location)
-    await dino.memory_percent('action', f'journey.{location}', True)
+    percent, _ = await dino.memory_percent('action', f'journey.{location}', True)
+    await repeat_activity(dino._id, percent)
 
     if res:
         image = await dino_journey(dino.data_id, location, friend)

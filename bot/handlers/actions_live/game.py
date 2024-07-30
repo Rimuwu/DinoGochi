@@ -14,7 +14,7 @@ from bot.modules.images import dino_game
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.dinosaur.mood import add_mood, check_breakdown, check_inspiration
+from bot.modules.dinosaur.mood import add_mood, check_breakdown, check_inspiration, repeat_activity
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
@@ -121,7 +121,8 @@ async def game_start(return_data: dict,
             return
 
     percent, repeat = await dino.memory_percent('games', game)
-    await dino.memory_percent('action', f'game.{game}', True)
+    percent_act, _1 = await dino.memory_percent('action', f'game.{game}', True)
+    await repeat_activity(dino._id, percent_act)
 
     if friend and join_status and join_dino:
         dino_f = await dinosaurs.find_one({'alt_id': join_dino}, comment="game_start_dino_f")

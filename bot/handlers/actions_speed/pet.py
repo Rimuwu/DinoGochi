@@ -1,28 +1,18 @@
 from random import choice, randint, uniform
-from time import time
 
 from bot.config import mongo_client
-from bot.const import GAME_SETTINGS
 from bot.exec import bot
-from bot.modules.dinosaur.kd_activity import check_activity, save_kd
+from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.dinosaur.skills import add_skill_point
-from bot.modules.items.accessory import check_accessory
-from bot.modules.user.advert import auto_ads
-from bot.modules.data_format import list_to_inline, user_name
-from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur  import Dino, end_game, set_status
-from bot.modules.user.friends import send_action_invite
-from bot.modules.images import dino_game
-from bot.modules.localization import get_data, get_lang, t
-from bot.modules.markup import cancel_markup
+from bot.modules.data_format import user_name
+from bot.modules.decorators import HDMessage
+from bot.modules.dinosaur.dinosaur import  set_status
+from bot.modules.localization import get_data, t
 from bot.modules.markup import markups_menu as m
-from bot.modules.dinosaur.mood import add_mood, check_breakdown, check_inspiration
+from bot.modules.dinosaur.mood import add_mood, repeat_activity
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.quests import quest_process
-from bot.modules.states_tools import ChooseStepState
-from bot.modules.user.user import User, premium
+from bot.modules.user.user import User
 from telebot.types import Message
-from bot.modules.data_format import seconds_to_str
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
@@ -40,6 +30,9 @@ async def pet(message: Message):
 
     await add_mood(last_dino._id, 'pet', 1, 600)
     await save_kd(last_dino._id, 'pet', 900)
+
+    percent, _ = await last_dino.memory_percent('action', 'pet', True)
+    await repeat_activity(last_dino._id, percent)
 
     lst_skills = [
         'power', 'dexterity', 'intelligence', 'charisma'

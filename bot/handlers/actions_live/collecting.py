@@ -2,6 +2,7 @@
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
+from bot.modules.dinosaur.mood import repeat_activity
 from bot.modules.items.accessory import check_accessory
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline, list_to_keyboard
@@ -48,7 +49,8 @@ async def collecting_adapter(return_data, transmitted_data):
 
             await dino.collecting(userid, option, count)
             await check_accessory(dino, 'basket', True)
-            await dino.memory_percent('action', f'collecting.{option}', True)
+            percent, _ = await dino.memory_percent('action', f'collecting.{option}', True)
+            await repeat_activity(dino._id, percent)
 
             image = await dino_collecting(dino.data_id, option)
             text = t(f'collecting.result.{option}', lang,
@@ -61,7 +63,7 @@ async def collecting_adapter(return_data, transmitted_data):
             message = await bot.send_message(chatid, t('back_text.actions_menu', lang),
                                         reply_markup= await m(userid, 'last_menu', lang)
                                         )
-    
+
             await auto_ads(message)
 
 
