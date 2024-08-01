@@ -218,70 +218,74 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     elif type_item == 'recipe':
         materials = {'delete': [], 'edit': {}}
         send_status, use_status = False, False 
-        #Проверка может завершится позднее завершения функции, отправим текст самостоятельно, так же юзер может и отказаться, удалим предмет сами
+        # Проверка может завершится позднее завершения функции, отправим текст самостоятельно, так же юзер может и отказаться, удалим предмет сами
 
-        for iterable_item in data_item['materials']:
-            iterable_id: str = iterable_item['item']
+        
 
-            if iterable_item['type'] == 'delete':
-                materials['delete'].append(get_item_dict(
-                    iterable_id))
+        # for iterable_item in data_item['materials']:
+        #     iterable_id: str = iterable_item['item']
 
-            elif iterable_item['type'] == 'endurance':
-                if 'endurance' not in materials['edit']:
-                    materials['edit']['endurance'] = {}
-                materials['edit']['endurance'][iterable_id] = iterable_item['act'] * count
+        #     if iterable_item['type'] == 'delete':
+        #         materials['delete'].append(get_item_dict(
+        #             iterable_id))
 
-        materials['delete'] = materials['delete'] * count
-        deleted_items, not_enough_items = {}, []
+        #     elif iterable_item['type'] == 'endurance':
+        #         if 'endurance' not in materials['edit']:
+        #             materials['edit']['endurance'] = {}
+        #         materials['edit']['endurance'][iterable_id] = iterable_item['act'] * count
 
-        for iterable_item in materials['delete']:
-            iter_id = iterable_item['item_id']
-            if iter_id not in deleted_items and iter_id not in not_enough_items:
-                ret_data_f = await CheckItemFromUser(userid, iterable_item, 
-                                    materials['delete'].count(iterable_item))
-                if ret_data_f['status']:
-                    deleted_items[iter_id] = materials['delete'].count(iterable_item)
-                else:
-                    not_enough_items += [iter_id] * ret_data_f["difference"]
+        # materials['delete'] = materials['delete'] * count
+        # deleted_items, not_enough_items = {}, []
 
-        if not not_enough_items:
-            if materials['edit']:
-                steps = []
-                transmitted_data = {
-                        'count': count, 
-                        'materials': materials,
-                        'data_item': data_item,
-                        'delete_item': item
-                    }
+        # for iterable_item in materials['delete']:
+        #     iter_id = iterable_item['item_id']
+        #     if iter_id not in deleted_items and iter_id not in not_enough_items:
+        #         ret_data_f = await CheckItemFromUser(userid, iterable_item, 
+        #                             materials['delete'].count(iterable_item))
+        #         if ret_data_f['status']:
+        #             deleted_items[iter_id] = materials['delete'].count(iterable_item)
+        #         else:
+        #             not_enough_items += [iter_id] * ret_data_f["difference"]
 
-                for iterable_key in materials['edit']:
-                    for iterable_id in materials['edit'][iterable_key]:
-                        steps.append(
-                            {"type": 'inv', "name": iterable_id, "data":     
-                                {'item_filter': [iterable_id], 
-                                'changing_filters': False,
-                                },
-                                "translate_message": True,
-                                'message': 'item_use.recipe.consumable_item',
-                                            }
-                        )
-                await ChooseStepState(edit_craft, userid, 
-                                      chatid, lang, steps, transmitted_data)
-            else:
-                transmitted_data = {
-                    'userid': userid,
-                    'chatid': chatid,
-                    'lang': lang,
-                    'materials': materials,
-                    'count': count,
-                    'data_item': data_item,
-                    'delete_item': item
-                }
-                await end_craft(transmitted_data)
-        else:
-            use_status, send_status = False, True
-            return_text = t('item_use.recipe.not_enough_m', lang, materials=counts_items(not_enough_items, lang))
+        # if not not_enough_items:
+        #     if materials['edit']:
+        #         steps = []
+        #         transmitted_data = {
+        #                 'count': count, 
+        #                 'materials': materials,
+        #                 'data_item': data_item,
+        #                 'delete_item': item
+        #             }
+
+        #         for iterable_key in materials['edit']:
+        #             for iterable_id in materials['edit'][iterable_key]:
+        #                 steps.append(
+        #                     {
+        #                         "type": 'inv', "name": iterable_id, "data":
+        #                         {
+        #                             'item_filter': [iterable_id], 
+        #                             'changing_filters': False,
+        #                         },
+        #                         "translate_message": True,
+        #                         'message': 'item_use.recipe.consumable_item',
+        #                     }
+        #                 )
+        #         await ChooseStepState(edit_craft, userid, 
+        #                               chatid, lang, steps, transmitted_data)
+        #     else:
+        #         transmitted_data = {
+        #             'userid': userid,
+        #             'chatid': chatid,
+        #             'lang': lang,
+        #             'materials': materials,
+        #             'count': count,
+        #             'data_item': data_item,
+        #             'delete_item': item
+        #         }
+        #         await end_craft(transmitted_data)
+        # else:
+        #     use_status, send_status = False, True
+        #     return_text = t('item_use.recipe.not_enough_m', lang, materials=counts_items(not_enough_items, lang))
 
     elif data_item['type'] == 'case':
         send_status = False
@@ -372,14 +376,14 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
         elif data_item['class'] == 'background':
             user = await users.find_one({"userid": userid}, comment='use_item_background')
-
-            if item['abilities']['data_id'] in user['saved']['backgrounds']:
-                use_status = False
-                return_text = t('backgrounds.in_st', lang)
-            else:
-                await users.update_one({'userid': userid}, {'$push': {
-                    'saved.backgrounds': item['abilities']['data_id']
-                }}, comment='use_item_background_1')
+            if user:
+                if item['abilities']['data_id'] in user['saved']['backgrounds']:
+                    use_status = False
+                    return_text = t('backgrounds.in_st', lang)
+                else:
+                    await users.update_one({'userid': userid}, {'$push': {
+                        'saved.backgrounds': item['abilities']['data_id']
+                    }}, comment='use_item_background_1')
 
                 return_text = t('backgrounds.add_to_storage', lang)
 
