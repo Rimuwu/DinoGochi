@@ -21,8 +21,7 @@ from bot.modules.images import async_open
 from bot.modules.localization import get_all_locales
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
-
-items_names = {}
+from bot.modules.items.items_groups import get_custom_groups
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 items = DBconstructor(mongo_client.items.items)
