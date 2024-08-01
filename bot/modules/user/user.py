@@ -593,3 +593,17 @@ async def max_eat(userid: int):
 
     max_col = col * per_one + 50
     return max_col
+
+async def get_inventory_from_i(userid: int, items_l: list = []):
+    inv = []
+    data_inv = await items.find(
+        {'owner_id': userid}, 
+        {'_id': 0, 'owner_id': 0}, comment='get_inventory')
+    for item_dict in data_inv:
+        if item_dict['items_data']['item_id'] in items_l:
+            item = {
+                'item': item_dict['items_data'], 
+                "count": item_dict['count']
+                }
+            inv.append(item)
+    return inv
