@@ -178,3 +178,6 @@ async def test(message: Message):
     await users.create_index(())
     
     resp = users.create_index([ ("field_to_index", -1) ], unique = True)
+    
+    
+
