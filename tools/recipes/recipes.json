@@ -1,0 +1,95 @@
+{
+    "clothing_recipe_old": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": [
+            {
+                "item": "leather_clothing",
+                "type": "create"
+            }
+        ],
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            },
+            {
+                "item": "skin",
+                "type": "delete"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+
+
+    "clothing_recipe_new": {
+        "create": {
+            "main": [ // Тип создаваемого рецепта, main используется для отображения в инфо, создаётся по умолчанию и должен быть всегда
+                {
+                    "item": "leather_clothing", // Создаваемый предме
+                    "type": "create", // Тут create | repair (не создан)
+                    "abilities": {}, // Харрактеристики предмета
+                    "col": 1 // Количество создания вместо повторов
+                }
+            ],
+            "carrot": [ // Тип создаваемого рецепта, main используется для отображения в инфо, создаётся по умолчанию и должен быть всегда
+                {
+                    "item": "leather_clothing", // Создаваемый предме
+                    "type": "create", // Тут create | repair (не создан)
+                    "abilities": {"act": { "random": [2, 10] }}, // Код должен при проверке ключей увидеть что у act данные - словарь, в словаре 1 ключь с именем random 
+                    // После, если в списке 2 элемента - и оба число - randint иначе choice
+                    "col": 1 // Количество создания вместо повторов
+                }
+            ]
+        },
+        "materials": [
+            {
+                "item": "skin", // Удаляемый предмет
+                "type": "delete", // delete | endurance удаление | понижение харрактеристики предмета 
+                "col": 5 // col - delte | act - сколько нужно отнять 
+            },
+            {
+                "item": {"type": "group", "group": "vegetables"}, // Предложет выбрать из группы предметов овощей (те что есть в инвентаре)
+                "type": "delete", // delete | endurance удаление | понижение харрактеристики предмета 
+                "col": 5, // col - delte | act - сколько нужно отнять 
+                "save_choose": true // По умолчанию поставить в коде False
+                // В случае если true, код будет искать в create ключ с выбранным предметом
+                // Например выбрали carrot - будут выданы предметы не из main, а carrot
+                // Если нет ключа carrot создать main
+            },
+            {
+                "item": {"type": "list", "list": ["carrot", "leather"]}, // Предложет выбрать из списка предметов (те что есть в инвентаре)
+                "type": "delete", // delete | endurance удаление | понижение харрактеристики предмета 
+                "col": 5, // col - delte | act - сколько нужно отнять 
+                "save_choose": true // По умолчанию поставить в коде False
+                // В случае если true, код будет искать в create ключ с выбранным предметом
+                // Например выбрали carrot - будут выданы предметы не из main, а carrot
+                // Если нет ключа carrot создать main
+            }
+        ],
+        "abilities": { // Харрактеристики самого рецепта
+            "uses": 3
+        },
+
+        "rank": "rare",
+        "image": "recipe",
+        "type": "recipe",
+
+        "groups": [] // Группы которые могут быть использованы для отображения
+    }
+}
