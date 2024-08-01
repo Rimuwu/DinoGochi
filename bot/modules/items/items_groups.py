@@ -22,9 +22,17 @@ def load_groups():
 
 items_groups, type_groups = load_groups()
 
-def get_group():
+def get_group(group: str):
     """Возвращает список с id всех предметов в ней
     """
+    result = []
+
+    if group in items_groups:
+        result = items_groups[group]
+    if group in type_groups:
+        result = result | type_groups[group]
+
+    return result
 
 def get_custom_groups():
     """ Возвращает весь словарь кастомных групп
