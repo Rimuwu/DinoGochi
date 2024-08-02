@@ -595,15 +595,20 @@ async def max_eat(userid: int):
     return max_col
 
 async def get_inventory_from_i(userid: int, items_l: list = []):
+    """ Возвращает список для инвенторя выбора предметов (возвращает по 1-му)
+    """
     inv = []
     data_inv = await items.find(
         {'owner_id': userid}, 
         {'_id': 0, 'owner_id': 0}, comment='get_inventory_from_i')
     for item_dict in data_inv:
         if item_dict['items_data']['item_id'] in items_l:
+            if 'abilities' in item_dict['items_data']:
+                del item_dict['items_data']['abilities']
             item = {
                 'item': item_dict['items_data'], 
-                "count": item_dict['count']
+                "count": 1
                 }
-            inv.append(item)
+            if item not in inv:
+                inv.append(item)
     return inv
