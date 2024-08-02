@@ -46,25 +46,27 @@ def item_info_markup(item: dict, lang):
         if 'cant_sell' not in item_data or ('cant_sell' in item_data and not item_data['cant_sell']):
             buttons_dict[loc_data['exchange']] = f'item exchange {code}'
 
-    markup_inline = list_to_inline([buttons_dict], 2)
 
     if is_standart(item):
         if 'buyer' not in item_data or (item_data['buyer'] == True):
             # Скупщик
 
-            markup_inline.add(
-                    InlineKeyboardButton(text=loc_data['buyer'],
-                                callback_data=f'buyer {code}')
-                    )
+            buttons_dict[loc_data['buyer']] = f'buyer {code}'
+
+    markup_inline = list_to_inline([buttons_dict], 2)
 
     if item_data['type'] == 'recipe':
-        for item_cr in item_data['create']:
-            data = get_item_dict(item_cr['item'])
-            name = loc_data['created_item'].format(
-                        item=get_name(item_cr['item'], lang))
+        ignore_craft = item_data.get('ignore_preview', [])
+        
+        for rep in item_data['create']:
+            if rep not in ignore_craft:
+                for item_cr in item_data['create'][rep]:
+                    data = get_item_dict(item_cr['item'])
+                    name = loc_data['created_item'].format(
+                                item=get_name(item_cr['item'], lang))
 
-            markup_inline.add(InlineKeyboardButton(text=name,
-                        callback_data=f'item info {item_code(data)}'))
+                    markup_inline.add(InlineKeyboardButton(text=name,
+                                callback_data=f'item info {item_code(data)}'))
 
     if 'ns_craft' in item_data:
         for cr_dct_id in item_data['ns_craft'].keys():
