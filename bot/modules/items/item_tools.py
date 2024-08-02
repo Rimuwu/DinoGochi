@@ -7,6 +7,7 @@ from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      random_dict, seconds_to_str)
 from bot.modules.dinosaur.dinosaur  import Dino, edited_stats, insert_dino
 from bot.modules.images import async_open, create_eggs_image
+from bot.modules.items.craft_recipe import craft_recipe
 from bot.modules.items.item import (AddItemToUser, CalculateDowngradeitem,
                               CheckItemFromUser, EditItemFromUser,
                               RemoveItemFromUser, UseAutoRemove, counts_items,
@@ -220,7 +221,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
         send_status, use_status = False, False 
         # Проверка может завершится позднее завершения функции, отправим текст самостоятельно, так же юзер может и отказаться, удалим предмет сами
 
-        
+        await craft_recipe(userid, chatid, lang, item, count)
 
         # for iterable_item in data_item['materials']:
         #     iterable_id: str = iterable_item['item']
