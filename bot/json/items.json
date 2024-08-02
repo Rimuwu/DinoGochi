@@ -875,12 +875,14 @@
     "bone": {
         "image": "item51",
         "rank": "common",
-        "type": "material"
+        "type": "material",
+        "groups": ["durable_materials"]
     },
     "iron": {
         "image": "item52",
         "rank": "uncommon",
-        "type": "material"
+        "type": "material",
+        "groups": ["durable_materials"]
     },
     "bone_sword": {
         "abilities": {
@@ -890,6 +892,19 @@
         "damage": {
             "max": 3,
             "min": 1
+        },
+        "image": "item53",
+        "rank": "uncommon",
+        "type": "weapon"
+    },
+    "iron_sword": {
+        "abilities": {
+            "endurance": 50
+        },
+        "class": "near",
+        "damage": {
+            "max": 5,
+            "min": 2
         },
         "image": "item53",
         "rank": "uncommon",
@@ -958,42 +973,36 @@
         "abilities": {
             "uses": 2
         },
-        "create": [
-            {
-                "item": "bone_sword",
-                "type": "create"
-            }
-        ],
+        "create": {
+            "main": [
+                {
+                    "item": "bone_sword",
+                    "type": "create"
+                }
+            ],
+            "iron": [
+                {
+                    "item": "iron_sword",
+                    "type": "create"
+                }
+            ]
+        },
         "image": "recipe",
         "materials": [
             {
-                "item": "bone",
-                "type": "delete"
-            },
-            {
-                "item": "bone",
-                "type": "delete"
+                "item": {"group": "durable_materials"},
+                "type": "delete",
+                "col": 5
             },
             {
                 "act": 30,
                 "item": "tooling",
                 "type": "endurance"
-            },
-            {
-                "item": "bone",
-                "type": "delete"
-            },
-            {
-                "item": "bone",
-                "type": "delete"
-            },
-            {
-                "item": "bone",
-                "type": "delete"
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "ignore_preview": ["iron"]
     },
     "onion_recipe": {
         "abilities": {
