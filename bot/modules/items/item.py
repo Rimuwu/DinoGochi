@@ -14,14 +14,15 @@
     }
 """
 
+import json
 from bot.config import mongo_client
 from bot.const import ITEMS
 from bot.modules.data_format import random_dict, seconds_to_str, near_key_number
 from bot.modules.images import async_open
-from bot.modules.localization import get_all_locales
+from bot.modules.localization import get_all_locales, t
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
-from bot.modules.items.items_groups import get_custom_groups
+from bot.modules.items.items_groups import get_custom_groups, get_group
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 items = DBconstructor(mongo_client.items.items)
@@ -389,6 +390,15 @@ async def UseAutoRemove(userid: int, item: dict, count: int):
             return False
     return True
 
+
+
+ids = { # первые 2 символа
+    'us': 'uses', 'en': 'endurance',
+    'ma': 'mana', 'st': 'stack',
+    'in': 'interact', 'da': 'data_id',
+    'ty': 'type'
+}
+
 def item_code(item: dict, v_id: bool = True) -> str:
     """Создаёт код-строку предмета, основываясь на его
        харрактеристиках.
@@ -404,24 +414,23 @@ def item_code(item: dict, v_id: bool = True) -> str:
             if v_id:
                 text += f".{key[:2]}{item}"
             else:
-                text += '.'
-                if type(item) == bool:
-                    text += str(int(item))
-                else: text += str(item)
-    
+                if key[:2] in ids:
+                    text += '.'
+                    if type(item) == bool:
+                        text += str(int(item))
+                    else: text += str(item)
+
     if not v_id: text = text[1:]
+
+    if len(text) > 128:
+        log("item_code получился больше чем 128 символов, возможно что он не будет работать в callback data", 4)
+
     return text
 
 def decode_item(code: str) -> dict:
     """Превращает код в словарь
     """
     split = code.split('.')
-    ids = { # первые 2 символа
-        'us': 'uses', 'en': 'endurance',
-        'ma': 'mana', 'st': 'stack',
-        'in': 'interact', 'da': 'data_id',
-        'ty': 'type'
-    }
     data = {}
 
     for part in split:
@@ -442,6 +451,8 @@ def decode_item(code: str) -> dict:
                 else: data['abilities'][ ids[scode] ] = value
     return data
 
+
+
 def sort_materials(not_sort_list: list, lang: str, 
                    separator: str = ',') -> str:
     """Создание сообщение нужных материалов для крафта
@@ -458,23 +469,40 @@ def sort_materials(not_sort_list: list, lang: str,
     """
     col_dict, items_list, check_items = {}, [], []
 
-    # Счмтает предметы
+    # Считает предметы
     for i in not_sort_list:
         item = i['item']
+        if isinstance(item, list) or isinstance(item, dict):
+            item = json.dumps(item)
+
         if item not in col_dict: col_dict[item] = 1
         else: col_dict[item] += 1
 
     # Собирает текст
     for i in not_sort_list:
         item = i['item']
-        col = col_dict[item]
-        
+        text = ''
+
         if i not in check_items:
-            text = get_name(item, lang)
+            if isinstance(item, str):
+                col = col_dict[item]
+                text = get_name(item, lang)
+
+            elif isinstance(item, list):
+                lst = []
+                col = col_dict[json.dumps(i['item'])]
+                for i_item in item: lst.append(get_name(i_item, lang))
+
+                text = f'({" | ".join(lst)})'
+
+            elif isinstance(item, dict):
+                col = col_dict[json.dumps(i['item'])]
+                text = t(f'groups.{item["group"]}', lang)
+
             if i['type'] == 'endurance':
                 text += f" (⬇ -{i['act']})"
             if col > 1:
-                text += f' x{col_dict[item]}'
+                text += f' x{col}'
 
             items_list.append(text)
             check_items.append(i)
@@ -592,9 +620,15 @@ async def item_info(item: dict, lang: str, owner: bool = False):
 
     # Рецепты
     elif type_item == 'recipe':
+        cr_list = []
+        ignore_craft = data_item.get('ignore_preview', [])
+        for key, value in data_item['create'].items():
+            if key not in ignore_craft:
+                cr_list.append(sort_materials(value, lang))
+
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                create=sort_materials(data_item['create'], lang),
+                create=' | '.join(cr_list),
                 materials=sort_materials(data_item['materials'], lang),
                 item_description=get_description(item_id, lang))
     # Оружие
