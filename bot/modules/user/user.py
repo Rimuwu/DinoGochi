@@ -598,7 +598,7 @@ async def get_inventory_from_i(userid: int, items_l: list = []):
     inv = []
     data_inv = await items.find(
         {'owner_id': userid}, 
-        {'_id': 0, 'owner_id': 0}, comment='get_inventory')
+        {'_id': 0, 'owner_id': 0}, comment='get_inventory_from_i')
     for item_dict in data_inv:
         if item_dict['items_data']['item_id'] in items_l:
             item = {
