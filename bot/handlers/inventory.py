@@ -71,7 +71,7 @@ async def inventory(message: Message):
     names = list(items_data.keys())
 
     if content in [back_button, forward_button]:
-    
+
         if content == back_button:
             if page == 0: page = len(pages) - 1
             else: page -= 1
@@ -169,7 +169,7 @@ async def item_callback(call: CallbackQuery):
 
     if item:
         if call_data[1] == 'info':
-            await send_item_info(item, {'chatid': chatid, 'lang': lang}, False)
+            await send_item_info(item, {'chatid': chatid, 'lang': lang, 'userid': userid}, False)
         elif call_data[1] == 'use':
             await data_for_use_item(item, userid, chatid, lang)
         elif call_data[1] == 'delete':
