@@ -96,7 +96,7 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list = [],
                 try:
                     if data['type'] in type_filter: add_item = True
                     if item['item_id'] in item_filter: add_item = True
-                except: log(str(data), 2)
+                except: log(f'{data} inventory_pages', 2)
 
             # Если предмет показывается на страницах
             if add_item:
@@ -108,6 +108,7 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list = [],
                 else:
                     code_items[code] = {'item': item, 'count': count}
 
+    a = -1
     for code, data_item in code_items.items():
         item = data_item['item']
         count = data_item['count']
@@ -117,14 +118,24 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list = [],
         count_name = f' x{count}'
         if count == 1: count_name = ''
 
-        if standart: 
-            end_name = f"{name}{count_name}"
-        else:
-            code = item_code(item, False)
-            end_name = f"{name} ({code}){count_name}"
+        end_name = name_end(item, standart, name, count_name)
+
+        if end_name in items_data and items_data[end_name] != item:
+            a =+ 1
+            name += f' #{a}'
+            end_name = name_end(item, standart, name, count_name)
+
         items_data[end_name] = item
 
     return items_data
+
+def name_end(item, standart, name, count_name):
+    if standart: 
+        end_name = f"{name}{count_name}"
+    else:
+        code = item_code(item, False)
+        end_name = f"{name} ({code}){count_name}"
+    return end_name
 
 async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
     lang = transmitted_data['lang']
