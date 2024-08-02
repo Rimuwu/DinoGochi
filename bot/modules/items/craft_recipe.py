@@ -1,6 +1,5 @@
 
 
-
 from typing import Any, Union
 
 from bot.modules.dinosaur.dinosaur import Dino
@@ -22,11 +21,13 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
     materials, steps = [], []
     a = -1
 
-    for material in item['materials']:
+    for material in data_item['materials']:
         a += 1
+        if 'col' not in material: material['col'] = 1
+
+        material['col'] *= count
         if isinstance(material['item'], str):
             # В материалах указан предмет
-            material['col'] *= count
 
             materials.append(
                 material
@@ -46,7 +47,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
                         'changing_filters': False
                     },
                     'translate_message': True,
-                    'message': 'item_use.recipe.consumable_item',
+                    'message': {'text': 'item_use.recipe.consumable_item'}
                 }
             )
             
@@ -69,7 +70,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
                         'changing_filters': False
                     },
                     'translate_message': True,
-                    'message': 'item_use.recipe.consumable_item',
+                    'message': {'text': 'item_use.recipe.consumable_item'}
                 }
             )
 
@@ -93,15 +94,43 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
         await check_items_in_inventory(materials, item, count, userid, chatid, lang)
 
 
-async def end_choose_items(items: Union[str, list[str]], transmitted_data: dict[str, Any]):
-    materials, item, count, userid, chatid, lang = transmitted_data.values()
+async def end_choose_items(items: Union[dict, list[dict]], transmitted_data: dict[str, Any]):
+    """ Смотрим на данные, преобразовываем так, чтобы они подошли под check_items_in_inventory
+    """
+    if isinstance(items, dict): items = [items]
+    materials, count, item, userid, chatid, lang, steps = transmitted_data.values()
+
+    choosed_items = [] # Записываем какие предметы были выбраны
+    finded_items = [] # Записываем данные выбранных предметов
 
 
-    await check_items_in_inventory(materials, item, count, userid, chatid, lang)
+    # Заменяем данные в материалах на выбранные предметы
+    data_of_keys = {}
+    for choosed in items:
+        choosed: dict
+        key_material = list(choosed.keys())[0]
+
+        data_of_keys[key_material] = choosed[key_material]
+        choosed_items.append(key_material['item_id'])
+
+    for material in materials:
+        material: dict
+
+        if material['item'] in data_of_keys:
+            material['item'] = data_of_keys[ material['item']['item_id'] ]
+            finded_items.append(material['item'])
+
+    way = '-'.join(choosed_items) # Вариация рецепта (По умолчанию main)
+    await check_items_in_inventory(materials, item, count, userid, chatid, lang, finded_items, way)
 
 
-async def check_items_in_inventory(materials, item, count, userid, chatid, lang):
-    ...
+async def check_items_in_inventory(materials, item, count, 
+                                   userid, chatid, lang, finded_items = [], way = 'main'):
+    item_id: str = item['item_id']
+    data_item: dict = get_data(item_id)
+    finded_items = finded_items
+
+    if way not in data_item['create']: way = 'main' # Если не найдена вариация, возвращаемся к базовой
 
 
 async def end_craft():
