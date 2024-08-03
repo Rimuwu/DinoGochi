@@ -1,9 +1,9 @@
 
 
 from typing import Any, Union
-
-from bot.modules.dinosaur.dinosaur import Dino
-from bot.modules.items.item import get_name, get_data
+from bot.config import mongo_client
+# from bot.modules.inventory_tools import inventory_pages
+from bot.modules.items.item import check_and_return_dif, get_name, get_data
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import t
 from bot.modules.markup import markups_menu
@@ -11,6 +11,8 @@ from bot.modules.states_tools import ChooseStepState
 from bot.modules.user.user import get_inventory_from_i
 from bot.exec import bot
 
+from bot.modules.overwriting.DataCalsses import DBconstructor
+items = DBconstructor(mongo_client.items.items)
 
 async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: int=1):
     """ Сформировать список проверяемых предметов, подготовить данные для выбора предметов
@@ -114,11 +116,93 @@ async def check_items_in_inventory(materials, item, count,
 
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id)
-    finded_items = []
+    finded_items, steps = [], []
+    not_find = []
 
-    if way not in data_item['create']: way = 'main' # Если не найдена вариация, возвращаемся к базовой
+    if way not in data_item['create']: 
+        way = 'main' # Если не найдена вариация, возвращаемся к базовой
 
-    print(finded_items, materials)
+    print(materials)
+    a = -1
+    for material in materials:
+        find_items = await items.find({'owner_id': userid, 
+                                       'items_data.item_id': material['item']},
+                                      {'_id': 0, 'owner_id': 0},
+                     comment='check_items_in_inventory')
+
+        print(material, find_items)
+
+        # Нет предметов
+        if len(find_items) == 0:
+            
+            not_find.append({'item': material['item'], 'diff': material['col']})
+            continue
+
+        else:
+            find_set = []
+            for i in find_items:
+                if i['items_data'] not in find_set:
+                    find_set.append(i['items_data'])
+
+            # У предметов нет альтернатив
+            if len(find_set) == 1:
+                print('091', i['items_data'])
+
+                count_material = await check_and_return_dif(userid, *i['items_data'])
+                print(count_material)
+                if count_material >= material['col']:
+                    finded_items.append(i['items_data'])
+                else:
+                    not_find.append({'item': i['items_data'], 
+                                     'diff': material['col'] - count_material})
+                    continue
+
+            # Есть варианты для выбора
+            elif len(find_set) > 1:
+                a += 1
+                steps.append(
+                    {
+                        'type': 'inv',
+                        'name': str(a)+'_step',
+                        'data': {
+                            'inventory': [], #await inventory_pages(find_items),
+                            'changing_filters': False
+                        },
+                        'translate_message': False,
+                        'message': {'text': t('item_use.recipe.choose_copy', lang, 
+                                              item_name=get_name(material['item'], lang))}
+                    }
+                )
+                finded_items.append(str(a)+'_step')
+
+    if not_find:
+        nt_materials = []
+        for i in not_find:
+            nt_materials.append(
+                f'{get_name(i["item"]["item_id"], lang)} x{i["diff"]}'
+            )
+
+        text = t('item_use.recipe.not_enough_m', lang, materials=', '.join(nt_materials))
+        await bot.send_message(chatid, 
+                    text, 
+                    parse_mode='Markdown', 
+                    reply_markup=await markups_menu(userid, 'last_menu', lang))
+        return
+
+    elif steps:
+        transmitted_data = {
+            'finded_items': finded_items,
+            'count': count,
+            'item': item
+        }
+
+        await ChooseStepState(pre_end, userid, chatid, lang, steps, transmitted_data)
+    
+    else:
+        await end_craft()
+
+async def pre_end(items: Union[dict, list[dict]], transmitted_data):
+    print(items)
 
 
 async def end_craft():
