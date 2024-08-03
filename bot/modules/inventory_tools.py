@@ -1,3 +1,5 @@
+from ctypes import Union
+from pyclbr import Function
 from telebot.asyncio_handler_backends import State, StatesGroup
 
 from bot.config import mongo_client, conf
@@ -26,7 +28,7 @@ class InventoryStates(StatesGroup):
     InventorySearch = State() # Состояние поиска в инвентаре
     InventorySetFilters = State() # Состояние настройки фильтров в инвентаре
 
-def generate(items_data: dict, horizontal: int, vertical: int):
+async def generate(items_data: dict, horizontal: int, vertical: int):
     items_names = list(items_data.keys())
     items_names.sort()
 
@@ -309,7 +311,10 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
                     exclude_ids: list = [],
                     start_page: int = 0, changing_filters: bool = True,
                     inventory: list = [], delete_search: bool = False,
-                    transmitted_data = None):
+                    transmitted_data = None,
+
+                    inline_func = None, inline_code = ''
+                    ):
     """ Функция запуска инвентаря
         type_filter - фильтр типов предметов
         item_filter - фильтр по id предметам
@@ -319,6 +324,8 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
         one_time_pages - сколько генерировать страниц за раз, все если 0
         delete_search - Убрать поиск
         inventory - Возможность закинуть уже обработанный инвентарь, если пусто - сам сгенерирует инвентарь
+        inline_func - Если нужна функция для обработки калбек запросов 
+            - Все кнопки должны начинаться с "inventoryinline {inline_code}" 
     """
     if not transmitted_data: transmitted_data = {}
     count = 0
@@ -334,7 +341,7 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
     if not inventory:
         inventory, count = await get_inventory(userid, exclude_ids)
     items_data = await inventory_pages(inventory, lang, type_filter, item_filter)
-    pages, row = generate(items_data, *inv_view)
+    pages, row = await generate(items_data, *inv_view)
 
     if not pages:
         await bot.send_message(chatid, t('inventory.null', lang), 
@@ -351,7 +358,7 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
         except: 
             # Если не передана функция, то вызывается функция информация о передмете
             if function is None: function = send_item_info
-            
+
         await bot.set_state(userid, InventoryStates.Inventory, chatid)
         async with bot.retrieve_data(userid, chatid) as data:
             data['pages'] = pages
@@ -369,9 +376,14 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
 
             data['function'] = function
             data['transmitted_data'] = transmitted_data
-        
+
+        if inline_func is not None:
+            async with bot.retrieve_data(userid, chatid) as data:
+                data['inline_func'] = inline_func
+                data['custom_code'] = inline_code
+
         log(f'open inventory userid {userid} count {count}')
-        
+
         await swipe_page(userid, chatid)
         return True, 'inv'
 

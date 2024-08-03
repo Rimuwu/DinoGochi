@@ -366,7 +366,7 @@ async def start_friend_menu(function,
             chat_user = await bot.get_chat_member(friend_id, friend_id)
             friend = chat_user.user
         except: friend = None
-        await sleep(0.5)
+        await sleep(0.1)
         if friend: options[user_name(friend, False)] = friend
 
     log(f'friend request len {len(friends)} from {userid}')
@@ -480,7 +480,7 @@ async def next_step(answer, transmitted_data: dict, start: bool=False):
         answer (_type_): Ответ переданный из функции ожидания
         transmitted_data (dict): Переданная дата
         start (bool, optional): Является ли функция стартом КСС Defaults to False.
-        
+
         Для фото, добавить в message ключ image с путём до фото
 
         Для edit_message требуется добавление message_data в transmitted_data.temp
