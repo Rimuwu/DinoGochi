@@ -63,7 +63,6 @@ async def inventory(message: Message):
         items_data = data['items_data']
         page = data['settings']['page']
         main_message = data['main_message']
-        up_message = data['up_message']
 
         function = data['function']
         transmitted_data = data['transmitted_data']
@@ -109,11 +108,11 @@ async def inv_callback(call: CallbackQuery):
         # Активирует поиск
         if not ('delete_search' in data['settings'] and data['settings']['delete_search']):
             await bot.set_state(userid, InventoryStates.InventorySearch, chatid)
-            await search_menu(chatid, chatid)
+            await search_menu(userid, chatid)
 
     elif call_data == 'clear_search' and changing_filter:
         # Очищает поиск
-        pages, _ = generate(items, *sett['view'])
+        pages, _ = await generate(items, *sett['view'])
 
         async with bot.retrieve_data(userid, chatid) as data: 
             data['pages'] = pages
@@ -123,23 +122,25 @@ async def inv_callback(call: CallbackQuery):
     elif call_data == 'filters' and changing_filter:
         # Активирует настройку филтров
         await bot.set_state(userid, InventoryStates.InventorySetFilters, chatid)
-        await filter_menu(chatid, chatid)
+        await filter_menu(userid, chatid)
 
     elif call_data in ['end_page', 'first_page']:
         # Быстрый переходи к 1-ой / полседней странице
         page = 0
+        page_now = sett['page']
         async with bot.retrieve_data(userid, chatid) as data:
             pages = data['pages']
 
         if call_data == 'first_page': page = 0
         elif call_data == 'end_page': page = len(pages) - 1
 
-        async with bot.retrieve_data(userid, chatid) as data: data['settings']['page'] = page
-        await swipe_page(chatid, chatid)
+        if page != page_now:
+            async with bot.retrieve_data(userid, chatid) as data: data['settings']['page'] = page
+            await swipe_page(userid, chatid)
 
     elif call_data == 'clear_filters' and changing_filter:
         # Очищает фильтры
-        pages, _ = generate(items, *sett['view'])
+        pages, _ = await generate(items, *sett['view'])
 
         async with bot.retrieve_data(userid, chatid) as data: 
             data['pages'] = pages
@@ -251,7 +252,7 @@ async def search_message(message: Message):
 
     if searched:
         new_items = filter_items_data(items_data, item_filter=searched)
-        pages, _ = generate(new_items, *sett['view'])
+        pages, _ = await generate(new_items, *sett['view'])
 
         await bot.set_state(userid, InventoryStates.Inventory, chatid)
         async with bot.retrieve_data(userid, chatid) as data: 
@@ -287,7 +288,7 @@ async def filter_callback(call: CallbackQuery):
             await bot.delete_message(chatid, sett['edited_message'])
 
         new_items = filter_items_data(items, filters, itm_fil)
-        pages, _ = generate(new_items, *sett['view'])
+        pages, _ = await generate(new_items, *sett['view'])
 
         await bot.set_state(userid, InventoryStates.Inventory, chatid)
         async with bot.retrieve_data(userid, chatid) as data: 
@@ -449,3 +450,32 @@ async def buyer_end(count, transmitted_data: dict):
     else:
         await bot.send_message(chatid, t('buyer.no', lang), 
                            reply_markup=await m(userid, 'last_menu', lang))
+
+
+@bot.callback_query_handler(pass_bot=True, state=InventoryStates.Inventory, is_authorized=True, func=lambda call: call.data.startswith('inventoryinline'))
+@HDCallback
+async def InventoryInline(callback: CallbackQuery):
+    code = callback.data.split()
+    chatid = callback.message.chat.id
+    userid = callback.from_user.id
+
+    async with bot.retrieve_data(userid, chatid) as data:
+        func = data['inline_func']
+        transmitted_data = data['transmitted_data']
+        custom_code = data['custom_code']
+
+    code.pop(0)
+    if code[0] == str(custom_code):
+        code.pop(0)
+        if len(code) == 1: code = code[0]
+
+        transmitted_data['temp'] = {}
+        transmitted_data['temp']['message_data'] = callback.message
+
+        if 'steps' in transmitted_data and 'process' in transmitted_data:
+            try:
+                transmitted_data['steps'][transmitted_data['process']]['bmessageid'] = callback.message.id
+            except: pass
+        else: transmitted_data['bmessageid'] = callback.message.id
+
+        await func(code, transmitted_data=transmitted_data)
