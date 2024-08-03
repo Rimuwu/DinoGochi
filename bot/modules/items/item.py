@@ -22,7 +22,6 @@ from bot.modules.images import async_open
 from bot.modules.localization import get_all_locales, t
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
-from bot.modules.items.items_groups import get_custom_groups, get_group
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 items = DBconstructor(mongo_client.items.items)
@@ -339,6 +338,17 @@ async def CheckCountItemFromUser(userid: int, count: int, itemid: str,
     for iterable_item in find_list: max_count += iterable_item['count']
     if count > max_count: return False
     return True
+
+async def check_and_return_dif(userid: int, itemid: str, preabil: dict = {}):
+    """ Проверяет не конкретный документ на count а всю базу, возвращая количество
+    """
+    item = get_item_dict(itemid, preabil)
+    max_count = 0
+    find_items = await items.find({'owner_id': userid, 'items_data': item}, 
+                            {'_id': 1, 'count': 1}, comment='CheckCountItemFromUser')
+
+    for iterable_item in find_items: max_count += iterable_item['count']
+    return max_count
 
 async def EditItemFromUser(userid: int, now_item: dict, new_data: dict):
     """Функция ищет предмет по now_item и в случае успеха изменяет его данные на new_data.
