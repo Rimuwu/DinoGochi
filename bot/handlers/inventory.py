@@ -63,6 +63,7 @@ async def inventory(message: Message):
         items_data = data['items_data']
         page = data['settings']['page']
         main_message = data['main_message']
+        settings = data['settings']
 
         function = data['function']
         transmitted_data = data['transmitted_data']
@@ -88,7 +89,11 @@ async def inventory(message: Message):
         await bot.delete_message(chatid, message.message_id)
 
     elif content in names:
-        await function(items_data[content], transmitted_data)
+        if 'inline_func' in settings:
+            transmitted_data['inline_code'] = settings['inline_code'] 
+            await settings['inline_func'](items_data[content], transmitted_data)
+        else:
+            await function(items_data[content], transmitted_data)
     else: await cancel(message)
 
 @bot.callback_query_handler(pass_bot=True, state=InventoryStates.Inventory, func=lambda call: call.data.startswith('inventory_menu'), private=True)
@@ -97,7 +102,6 @@ async def inv_callback(call: CallbackQuery):
     call_data = call.data.split()[1]
     chatid = call.message.chat.id
     userid = call.from_user.id
-    lang = await get_lang(call.from_user.id)
 
     async with bot.retrieve_data(userid, chatid) as data:
         changing_filter = data['settings']['changing_filters']
@@ -460,9 +464,11 @@ async def InventoryInline(callback: CallbackQuery):
     userid = callback.from_user.id
 
     async with bot.retrieve_data(userid, chatid) as data:
-        func = data['inline_func']
+        settings = data['settings']
         transmitted_data = data['transmitted_data']
-        custom_code = data['custom_code']
+        function = data['function']
+
+    custom_code = settings['inline_code']
 
     code.pop(0)
     if code[0] == str(custom_code):
@@ -477,5 +483,5 @@ async def InventoryInline(callback: CallbackQuery):
                 transmitted_data['steps'][transmitted_data['process']]['bmessageid'] = callback.message.id
             except: pass
         else: transmitted_data['bmessageid'] = callback.message.id
-
-        await func(code, transmitted_data=transmitted_data)
+        del transmitted_data['inline_code']
+        await function(decode_item(code), transmitted_data=transmitted_data)
