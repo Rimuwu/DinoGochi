@@ -19,7 +19,6 @@ items = DBconstructor(mongo_client.items.items)
 async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: int=1):
     """ Сформировать список проверяемых предметов, подготовить данные для выбора предметов
     """
-    add_choose_item = False
 
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id)
@@ -33,7 +32,6 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
 
         material['col'] *= count
         if not isinstance(material['item'], str):
-            add_choose_item = True
 
             if isinstance(material['item'], dict):
                 # В материалах указана группа
@@ -52,23 +50,27 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
                     reply_markup=await markups_menu(userid, 'last_menu', lang))
                 return
 
-            steps.append(
-                {
-                    'type': 'inv',
-                    'name': str(a)+'_step',
-                    'data': {
-                        'inventory': inv,
-                        'changing_filters': False
-                    },
-                    'translate_message': True,
-                    'message': {'text': 'item_use.recipe.consumable_item'}
-                }
-            )
+            elif len(inv) == 1:
+                material['item'] = inv[0]['item']['item_id']
 
-            material['item'] = str(a)+'_step'
+            elif len(inv) > 1:
+                steps.append(
+                    {
+                        'type': 'inv',
+                        'name': str(a)+'_step',
+                        'data': {
+                            'inventory': inv,
+                            'changing_filters': False
+                        },
+                        'translate_message': True,
+                        'message': {'text': 'item_use.recipe.consumable_item'}
+                    }
+                )
+
+                material['item'] = str(a)+'_step'
         materials.append(material)
 
-    if add_choose_item:
+    if steps:
 
         transmitted_data = {
             'materials': materials,
@@ -79,25 +81,26 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
         await ChooseStepState(end_choose_items, userid, chatid, lang, steps, transmitted_data)
 
     else:
-        await check_items_in_inventory(materials, item, count, userid, chatid, lang)
+        data = {
+            "way": 'main'
+        }
+        await check_items_in_inventory(materials, item, count, 
+                                       userid, chatid, lang, data)
 
 
-async def end_choose_items(items: Union[dict, list[dict]], transmitted_data: dict[str, Any]):
+async def end_choose_items(items: dict, transmitted_data: dict[str, Any]):
     """ Смотрим на данные, преобразовываем так, чтобы они подошли под check_items_in_inventory
     """
-    if isinstance(items, dict): items = [items]
     materials, count, item, userid, chatid, lang, steps = transmitted_data.values()
-
     choosed_items = [] # Записываем какие предметы были выбраны
 
     # Заменяем данные в материалах на выбранные предметы
     data_of_keys = {}
-    for choosed in items:
+    for key_material, choosed in items.items():
         choosed: dict
-        key_material = list(choosed.keys())[0]
 
-        data_of_keys[key_material] = choosed[key_material]
-        choosed_items.append(data_of_keys[key_material]['item_id'])
+        data_of_keys[key_material] = choosed
+        choosed_items.append(choosed['item_id'])
 
     for material in materials:
         material: dict
@@ -105,12 +108,15 @@ async def end_choose_items(items: Union[dict, list[dict]], transmitted_data: dic
         if material['item'] in data_of_keys:
             material['item'] = data_of_keys[ material['item'] ]['item_id']
 
-    way = '-'.join(choosed_items) # Вариация рецепта (По умолчанию main)
-    await check_items_in_inventory(materials, item, count, userid, chatid, lang, way)
+    data = {
+        "way": '-'.join(choosed_items) # Вариация рецепта (По умолчанию main)
+    }
+    await check_items_in_inventory(materials, item, count, 
+                                   userid, chatid, lang, data)
 
 
 async def check_items_in_inventory(materials, item, count, 
-                                   userid, chatid, lang, way = 'main'):
+                                   userid, chatid, lang, data: dict):
     
     """ Должна проверить предметы, выявить есть ли у игрока для каждого предмета разные вариации и если да - дать выбрать их (сделать через выдачу краткой информации и кнопки - применить)
     """
@@ -119,9 +125,6 @@ async def check_items_in_inventory(materials, item, count,
     data_item: dict = get_data(item_id)
     finded_items, steps = [], []
     not_find = []
-
-    if way not in data_item['create']: 
-        way = 'main' # Если не найдена вариация, возвращаемся к базовой
 
     a = -1
     for material in materials:
@@ -146,7 +149,10 @@ async def check_items_in_inventory(materials, item, count,
             if len(find_set) == 1:
                 count_material = await check_and_return_dif(userid, **i['items_data'])
                 if count_material >= material['col']:
-                    finded_items.append(i['items_data'])
+                    finded_items.append(
+                        {'item': i['items_data'],
+                         'count': material['col']}
+                    )
                 else:
                     not_find.append({'item': i['items_data'], 
                                      'diff': material['col'] - count_material})
@@ -170,13 +176,14 @@ async def check_items_in_inventory(materials, item, count,
                                               item_name=get_name(material['item'], lang))}
                     }
                 )
-                finded_items.append(str(a)+'_step')
+                finded_items.append({'item': str(a)+'_step', 
+                                     'count': material['col']})
 
     if not_find:
         nt_materials = []
         for i in not_find:
             nt_materials.append(
-                f'{get_name(i["item"]["item_id"], lang)} x{i["diff"]}'
+                f'{get_name(i["item"], lang)} x{i["diff"]}'
             )
 
         text = t('item_use.recipe.not_enough_m', lang, materials=', '.join(nt_materials))
@@ -189,14 +196,17 @@ async def check_items_in_inventory(materials, item, count,
     elif steps:
         transmitted_data = {
             'finded_items': finded_items,
+            'data': data,
             'count': count,
             'item': item
         }
 
-        await ChooseStepState(pre_end, userid, chatid, lang, steps, transmitted_data)
-    
+        await ChooseStepState(pre_check, userid, chatid, lang, 
+                              steps, transmitted_data)
+
     else:
-        await end_craft()
+        await check_endurance_and_col(finded_items, count, item, 
+                                      userid, chatid, lang, data)
 
 async def send_item_info(item: dict, transmitted_data: dict):
     lang = transmitted_data['lang']
@@ -221,12 +231,32 @@ async def send_item_info(item: dict, transmitted_data: dict):
              await bot.send_message(chatid, text,
                             reply_markup=markup)
 
-async def pre_end(items: Union[dict, list[dict]], transmitted_data):
-    print('2333333333333333')
-    pprint.pprint(transmitted_data)
-    finded_items, count, item, userid, chatid, lang, steps = transmitted_data.values()
-    print(items)
+async def pre_check(items: dict, transmitted_data):
+    finded_items, data, count, item, userid, chatid, lang, steps = transmitted_data.values()
+    result_list = []
 
+    for i in finded_items:
+        if isinstance(i['item'], dict):
+            result_list.append(i)
 
-async def end_craft():
-    ...
+        elif isinstance(i['item'], str):
+            result_list.append({'item': items[i['item']]})
+
+    await check_endurance_and_col(result_list, count, 
+                                  item, userid, chatid, lang, data)
+
+async def check_endurance_and_col(finded_items, count, item,
+                                  userid, chatid, lang, data):
+
+    item_id: str = item['item_id']
+    data_item: dict = get_data(item_id)
+
+    if data['way'] not in data_item['create']: 
+        way = 'main' # Если не найдена вариация, возвращаемся к базовой
+    else:
+        way = data['way']
+
+    pprint.pprint(finded_items)
+    print(item)
+    print(count)
+    print('end')
