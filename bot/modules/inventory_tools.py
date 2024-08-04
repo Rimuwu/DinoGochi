@@ -72,8 +72,8 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list = [],
     item_filter - если не пустой то отбирает предметы по id
     !: Предмет добавляется если соответствует хотя бы одному фильтру
 
-    item: {
-        items_data: {
+    base_item: {
+        item: {
             item_id: str
             abilities: dict (может отсутствовать)
         },
@@ -84,7 +84,10 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list = [],
 
     code_items = {}
     for base_item in items:
-        item = base_item['item'] # Сам предмет
+        if 'item' in base_item:
+            item = base_item['item'] # Сам предмет
+        else: item = base_item['items_data'] # Сам предмет (для закидки туда предметов из базы)
+
         data = get_data(item['item_id']) # Дата из json
         add_item = False
 
@@ -324,6 +327,14 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
         one_time_pages - сколько генерировать страниц за раз, все если 0
         delete_search - Убрать поиск
         inventory - Возможность закинуть уже обработанный инвентарь, если пусто - сам сгенерирует инвентарь
+
+
+        >> Создано для steps, при активации перенаправляет данные при нажатии
+        на inline_func, а при нажатии на кнопку начинающийся на inventoryinline {inline_code}
+        перенаправляет данные, выбранные по кнопке в function
+
+        >> В inline_func так же передаётся inline_code в transmitted_data
+
         inline_func - Если нужна функция для обработки калбек запросов 
             - Все кнопки должны начинаться с "inventoryinline {inline_code}" 
     """
@@ -379,8 +390,8 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
 
         if inline_func is not None:
             async with bot.retrieve_data(userid, chatid) as data:
-                data['inline_func'] = inline_func
-                data['custom_code'] = inline_code
+                data['settings']['inline_func'] = inline_func
+                data['settings']['inline_code'] = inline_code
 
         log(f'open inventory userid {userid} count {count}')
 
