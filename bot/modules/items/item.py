@@ -1,7 +1,7 @@
 """Пояснение:
     >>> Стандартный предмет - предмет никак не изменённый пользователем, сгенерированный из json.
     >>> abilities - словарь с индивидуальными харрактеристиками предмета, прочность, использования и тд.
-    >>> preabil - используется только для предмета создаваемого из базы, используется для создания нестандартного предмета.
+    >>> abilities - используется только для предмета создаваемого из базы, используется для создания нестандартного предмета.
     
     >>> Формат предмета из базы данных
     {
@@ -26,12 +26,12 @@ from bot.modules.logs import log
 from bot.modules.overwriting.DataCalsses import DBconstructor
 items = DBconstructor(mongo_client.items.items)
 
-def get_data(itemid: str) -> dict:
+def get_data(item_id: str) -> dict:
     """Получение данных из json"""
 
     # Проверяем еть ли предмет с таким ключём в items.json
-    if itemid in ITEMS.keys():
-        return ITEMS[itemid]
+    if item_id in ITEMS.keys():
+        return ITEMS[item_id]
     else: return {}
 
 def load_items_names() -> dict:
@@ -54,34 +54,34 @@ def load_items_names() -> dict:
 
 items_names = load_items_names()
 
-def get_name(itemid: str, lang: str='en', endurance: int=0) -> str:
+def get_name(item_id: str, lang: str='en', endurance: int=0) -> str:
     """Получение имени предмета"""
     name = ''
 
-    if itemid in items_names:
-        if lang not in items_names[itemid]: lang = 'en'
-        if endurance and 'alternative_name' in items_names[itemid][lang]:
-            if str(endurance) in items_names[itemid][lang]['alternative_name']:
-                name = items_names[itemid][lang]['alternative_name'][str(endurance)]
+    if item_id in items_names:
+        if lang not in items_names[item_id]: lang = 'en'
+        if endurance and 'alternative_name' in items_names[item_id][lang]:
+            if str(endurance) in items_names[item_id][lang]['alternative_name']:
+                name = items_names[item_id][lang]['alternative_name'][str(endurance)]
             else: 
-                name = near_key_number(endurance, items_names[itemid][lang], 'name') #type: ignore
+                name = near_key_number(endurance, items_names[item_id][lang], 'name') #type: ignore
         else:
-            name = items_names[itemid][lang]['name']
+            name = items_names[item_id][lang]['name']
     else:
-        log(f'Имя для {itemid} не найдено')
+        log(f'Имя для {item_id} не найдено')
     return name
 
-def get_description(itemid: str, lang: str='en') -> str:
+def get_description(item_id: str, lang: str='en') -> str:
     """Получение описания предмета"""
     description = ''
    
-    if itemid in items_names:
-        if lang not in items_names[itemid]:
+    if item_id in items_names:
+        if lang not in items_names[item_id]:
             lang = 'en'
-        description = items_names[itemid][lang].get('description', '')
+        description = items_names[item_id][lang].get('description', '')
     return description
 
-def get_item_dict(itemid: str, preabil: dict = {}) -> dict:
+def get_item_dict(item_id: str, abilities: dict = {}) -> dict:
     ''' Создание словаря, хранящийся в инвентаре пользователя.\n
 
         Примеры: 
@@ -93,8 +93,8 @@ def get_item_dict(itemid: str, preabil: dict = {}) -> dict:
                 >>> f(30, {'uses': 10})
                 >>> {'item_id': "30", 'abilities': {'uses': 10}}
     '''
-    d_it = {'item_id': itemid}
-    data = get_data(itemid)
+    d_it = {'item_id': item_id}
+    data = get_data(item_id)
 
     if 'abilities' in data.keys():
         abl = {}
@@ -108,17 +108,17 @@ def get_item_dict(itemid: str, preabil: dict = {}) -> dict:
 
         d_it['abilities'] = abl  # type: ignore
 
-    if preabil != {}:
+    if abilities != {}:
         if 'abilities' in d_it.keys():
-            for ak in preabil:
+            for ak in abilities:
 
-                if type(preabil[ak]) == dict:
-                    d_it['abilities'][ak] = random_dict(preabil[ak])  # type: ignore
+                if type(abilities[ak]) == dict:
+                    d_it['abilities'][ak] = random_dict(abilities[ak])  # type: ignore
 
                 else:
-                    d_it['abilities'][ak] = preabil[ak]  # type: ignore
+                    d_it['abilities'][ak] = abilities[ak]  # type: ignore
         else: 
-            d_it['abilities'] = preabil  # type: ignore
+            d_it['abilities'] = abilities  # type: ignore
 
     return d_it
 
@@ -142,19 +142,19 @@ def is_standart(item: dict) -> bool:
             else: return True
         else: return True
 
-async def AddItemToUser(userid: int, itemid: str, count: int = 1, preabil: dict = {}):
+async def AddItemToUser(userid: int, item_id: str, count: int = 1, abilities: dict = {}):
     """Добавление стандартного предмета в инвентарь
     """
     assert count >= 0, f'AddItemToUser, count == {count}'
-    log(f"userid {userid}, itemid {itemid}, count {count}", 0, "Add item")
+    log(f"userid {userid}, item_id {item_id}, count {count}", 0, "Add item")
 
-    item = get_item_dict(itemid, preabil)
+    item = get_item_dict(item_id, abilities)
     find_res = await items.find_one({'owner_id': userid, 
                                      'items_data': item}, {'_id': 1}, comment='AddItemToUser_find_res')
     action = ''
 
     if find_res: action = 'plus_count'
-    if 'abilities' in item or preabil: action = 'new_edited_item' # Хочешь сломать всего бота? Поменяй if на elif
+    if 'abilities' in item or abilities: action = 'new_edited_item' # Хочешь сломать всего бота? Поменяй if на elif
     if not action: action = 'new_item'
 
     if action == 'plus_count' and find_res:
@@ -189,16 +189,16 @@ async def AddListItems(userid: int, items_l: list[dict]):
 
             col = items_l.count(item)
             if 'count' in item: col *= item['count']
-            preabil = {}
+            abilities = {}
 
-            if "abilities" in item: preabil = item['abilities']
-            res_s = await AddItemToUser(userid, item['item_id'], col, preabil)
+            if "abilities" in item: abilities = item['abilities']
+            res_s = await AddItemToUser(userid, item['item_id'], col, abilities)
             res.append(res_s)
 
     return res
 
-async def RemoveItemFromUser(userid: int, itemid: str, 
-            count: int = 1, preabil: dict = {}):
+async def RemoveItemFromUser(userid: int, item_id: str, 
+            count: int = 1, abilities: dict = {}):
     """Удаление предмета из инвентаря
        return
        True - всё нормально, удалил
@@ -206,9 +206,9 @@ async def RemoveItemFromUser(userid: int, itemid: str,
        False - предмета нет или количесвто слишком большое
     """
     assert count >= 0, f'RemoveItemFromUser, count == {count}'
-    log(f"userid {userid}, itemid {itemid}, count {count}", 0, "Remove item")
+    log(f"userid {userid}, item_id {item_id}, count {count}", 0, "Remove item")
 
-    item = get_item_dict(itemid, preabil)
+    item = get_item_dict(item_id, abilities)
     max_count = 0
     find_items = await items.find({'owner_id': userid, 'items_data': item}, 
                             {'_id': 1, 'count': 1}, comment='RemoveItemFromUser_find_items')
@@ -231,7 +231,7 @@ async def RemoveItemFromUser(userid: int, itemid: str,
             else: break
         return True
 
-def ReverseCalculateAbilitie(itemid: str, unit: int, characteristic: str):
+def ReverseCalculateAbilitie(item_id: str, unit: int, characteristic: str):
     """Обратное CalculateAbilitie функция, получает количество 
         харрактеристики и говорит какое количество соответсвует этому количеству харрактеристики.
 
@@ -242,8 +242,8 @@ def ReverseCalculateAbilitie(itemid: str, unit: int, characteristic: str):
        Return 
         0 - несоответсвие требованиям функции
     """
-    item_data = get_item_dict(itemid)
-    
+    item_data = get_item_dict(item_id)
+
     if 'abilities' not in item_data: return 0, 0 # Нет харрактеристик
     if characteristic not in item_data['abilities']: return 0, 0 # Нет харрактеристики
     
@@ -325,11 +325,11 @@ async def CheckItemFromUser(userid: int, item_data: dict, count: int = 1) -> dic
         else: difference = count
         return {"status": False, "item": find_res, 'difference': difference}
 
-async def CheckCountItemFromUser(userid: int, count: int, itemid: str, 
-                           preabil: dict = {}):
+async def CheckCountItemFromUser(userid: int, count: int, item_id: str, 
+                           abilities: dict = {}):
     """ Проверяет не конкретный документ на count а всю базу, возвращая ответ на вопрос - Есть ли у человек count предметов
     """
-    item = get_item_dict(itemid, preabil)
+    item = get_item_dict(item_id, abilities)
     max_count = 0
     find_items = await items.find({'owner_id': userid, 'items_data': item}, 
                             {'_id': 1, 'count': 1}, comment='CheckCountItemFromUser')
@@ -339,15 +339,16 @@ async def CheckCountItemFromUser(userid: int, count: int, itemid: str,
     if count > max_count: return False
     return True
 
-async def check_and_return_dif(userid: int, itemid: str, preabil: dict = {}):
+async def check_and_return_dif(userid: int, item_id: str, abilities: dict = {}):
     """ Проверяет не конкретный документ на count а всю базу, возвращая количество
     """
-    item = get_item_dict(itemid, preabil)
+    item = get_item_dict(item_id, abilities)
     max_count = 0
     find_items = await items.find({'owner_id': userid, 'items_data': item}, 
                             {'_id': 1, 'count': 1}, comment='CheckCountItemFromUser')
-
-    for iterable_item in find_items: max_count += iterable_item['count']
+    find_list = list(find_items)
+    for iterable_item in find_list: 
+        max_count += iterable_item['count']
     return max_count
 
 async def EditItemFromUser(userid: int, now_item: dict, new_data: dict):
@@ -485,8 +486,14 @@ def sort_materials(not_sort_list: list, lang: str,
         if isinstance(item, list) or isinstance(item, dict):
             item = json.dumps(item)
 
-        if item not in col_dict: col_dict[item] = 1
-        else: col_dict[item] += 1
+        if item not in col_dict:
+            if 'col' in i:
+                col_dict[item] = i['col']
+            else: col_dict[item] = 1
+        else: 
+            if 'col' in i:
+                col_dict[item] += i['col']
+            else: col_dict[item] += 1
 
     # Собирает текст
     for i in not_sort_list:
@@ -506,8 +513,8 @@ def sort_materials(not_sort_list: list, lang: str,
                 text = f'({" | ".join(lst)})'
 
             elif isinstance(item, dict):
-                col = col_dict[json.dumps(i['item'])]
-                text = t(f'groups.{item["group"]}', lang)
+                col = col_dict[json.dumps(item)]
+                text = "(" + t(f'groups.{item["group"]}', lang) + ")"
 
             if i['type'] == 'endurance':
                 text += f" (⬇ -{i['act']})"
@@ -609,7 +616,7 @@ async def item_info(item: dict, lang: str, owner: bool = False):
     elif type_item == 'eat':
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(act=data_item['act'])
-        
+
     # Аксы
     elif type_item in ['game', 'sleep', 'journey', 'collecting']:
         dp_text += loc_d['type_info'][
