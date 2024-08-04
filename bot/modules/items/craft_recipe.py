@@ -1,9 +1,11 @@
 
 
+import pprint
 from typing import Any, Union
 from bot.config import mongo_client
-# from bot.modules.inventory_tools import inventory_pages
-from bot.modules.items.item import check_and_return_dif, get_name, get_data
+from bot.modules.data_format import list_to_inline, random_code
+from bot.modules.inventory_tools import inventory_pages
+from bot.modules.items.item import check_and_return_dif, get_name, get_data, item_code, item_info
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import t
 from bot.modules.markup import markups_menu
@@ -21,7 +23,6 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
 
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id)
-    item_name: str = get_name(item_id, lang)
 
     materials, steps = [], []
     a = -1
@@ -122,7 +123,6 @@ async def check_items_in_inventory(materials, item, count,
     if way not in data_item['create']: 
         way = 'main' # Если не найдена вариация, возвращаемся к базовой
 
-    print(materials)
     a = -1
     for material in materials:
         find_items = await items.find({'owner_id': userid, 
@@ -130,11 +130,9 @@ async def check_items_in_inventory(materials, item, count,
                                       {'_id': 0, 'owner_id': 0},
                      comment='check_items_in_inventory')
 
-        print(material, find_items)
-
         # Нет предметов
         if len(find_items) == 0:
-            
+
             not_find.append({'item': material['item'], 'diff': material['col']})
             continue
 
@@ -146,10 +144,7 @@ async def check_items_in_inventory(materials, item, count,
 
             # У предметов нет альтернатив
             if len(find_set) == 1:
-                print('091', i['items_data'])
-
-                count_material = await check_and_return_dif(userid, *i['items_data'])
-                print(count_material)
+                count_material = await check_and_return_dif(userid, **i['items_data'])
                 if count_material >= material['col']:
                     finded_items.append(i['items_data'])
                 else:
@@ -165,8 +160,10 @@ async def check_items_in_inventory(materials, item, count,
                         'type': 'inv',
                         'name': str(a)+'_step',
                         'data': {
-                            'inventory': [], #await inventory_pages(find_items),
-                            'changing_filters': False
+                            'inventory': find_items,
+                            'changing_filters': False,
+                            'inline_func': send_item_info,
+                            'inline_code': random_code()
                         },
                         'translate_message': False,
                         'message': {'text': t('item_use.recipe.choose_copy', lang, 
@@ -201,7 +198,33 @@ async def check_items_in_inventory(materials, item, count,
     else:
         await end_craft()
 
+async def send_item_info(item: dict, transmitted_data: dict):
+    lang = transmitted_data['lang']
+    chatid = transmitted_data['chatid']
+
+    custom_code = transmitted_data['inline_code']
+
+    text, image = await item_info(item, lang)
+    markup = list_to_inline([
+        {t('item_use.recipe.inl_button_conf', lang): 
+            f'inventoryinline {custom_code} {item_code(item)}'}
+    ])
+
+    if not image:
+        await bot.send_message(chatid, text, 'Markdown',
+                            reply_markup=markup)
+    else:
+        try:
+            await bot.send_photo(chatid, image, text, 'Markdown', 
+                            reply_markup=markup)
+        except: 
+             await bot.send_message(chatid, text,
+                            reply_markup=markup)
+
 async def pre_end(items: Union[dict, list[dict]], transmitted_data):
+    print('2333333333333333')
+    pprint.pprint(transmitted_data)
+    finded_items, count, item, userid, chatid, lang, steps = transmitted_data.values()
     print(items)
 
 
