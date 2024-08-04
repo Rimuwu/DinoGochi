@@ -469,6 +469,9 @@ async def exit_chose(transmitted_data):
     del transmitted_data['return_data']
     del transmitted_data['process']
 
+    if 'temp' in transmitted_data:
+        del transmitted_data['temp']
+
     await return_function(return_data, transmitted_data)
 
 # Должен быть ниже всех других обработчиков, 
