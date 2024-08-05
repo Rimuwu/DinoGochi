@@ -82,7 +82,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
 
     else:
         data = {
-            "way": 'main'
+            "choosed_items": []
         }
         await check_items_in_inventory(materials, item, count, 
                                        userid, chatid, lang, data)
@@ -109,7 +109,7 @@ async def end_choose_items(items: dict, transmitted_data: dict[str, Any]):
             material['item'] = data_of_keys[ material['item'] ]['item_id']
 
     data = {
-        "way": '-'.join(choosed_items) # Вариация рецепта (По умолчанию main)
+        "choosed_items": choosed_items
     }
     await check_items_in_inventory(materials, item, count, 
                                    userid, chatid, lang, data)
@@ -251,10 +251,24 @@ async def check_endurance_and_col(finded_items, count, item,
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id)
 
-    if data['way'] not in data_item['create']: 
-        way = 'main' # Если не найдена вариация, возвращаемся к базовой
+    # if data['way'] not in data_item['create']: 
+    #     way = 'main' # Если не найдена вариация, возвращаемся к базовой
+    # else:
+    #     way = data['way']
+    
+    choosed_items = data['choosed_items']
+    temp_way, way = ''
+    if choosed_items == []:
+        way = 'main'
     else:
-        way = data['way']
+        for i in choosed_items:
+            if not temp_way:
+                temp_way = i
+            else:
+                temp_way += f'-{i}'
+            
+            if temp_way in data_item['create']:
+                way = temp_way
 
     pprint.pprint(finded_items)
     print(item)
