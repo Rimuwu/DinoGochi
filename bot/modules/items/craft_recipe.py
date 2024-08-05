@@ -5,7 +5,7 @@ from typing import Any, Union
 from bot.config import mongo_client
 from bot.modules.data_format import list_to_inline, random_code
 from bot.modules.inventory_tools import inventory_pages
-from bot.modules.items.item import check_and_return_dif, get_name, get_data, item_code, item_info
+from bot.modules.items.item import CheckCountItemFromUser, DeleteAbilItem, check_and_return_dif, get_name, get_data, item_code, item_info
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import t
 from bot.modules.markup import markups_menu
@@ -120,11 +120,7 @@ async def check_items_in_inventory(materials, item, count,
     
     """ Должна проверить предметы, выявить есть ли у игрока для каждого предмета разные вариации и если да - дать выбрать их (сделать через выдачу краткой информации и кнопки - применить)
     """
-
-    item_id: str = item['item_id']
-    data_item: dict = get_data(item_id)
-    finded_items, steps = [], []
-    not_find = []
+    finded_items, steps, not_find = [], [], []
 
     a = -1
     for material in materials:
@@ -250,27 +246,53 @@ async def check_endurance_and_col(finded_items, count, item,
 
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id)
+    materials = finded_items
 
-    # if data['way'] not in data_item['create']: 
-    #     way = 'main' # Если не найдена вариация, возвращаемся к базовой
-    # else:
-    #     way = data['way']
-    
-    choosed_items = data['choosed_items']
-    temp_way, way = ''
-    if choosed_items == []:
-        way = 'main'
-    else:
-        for i in choosed_items:
-            if not temp_way:
-                temp_way = i
-            else:
-                temp_way += f'-{i}'
-            
-            if temp_way in data_item['create']:
-                way = temp_way
+    for material in data_item['materials']:
+        ind = data_item['materials'].index(material)
+        materials[ind]['type'] = material['type']
+
+    not_found = [] 
+    for material in materials:
+        ind = materials.index(material)
+
+        if material['type'] == 'delete':
+            mat_col = await check_and_return_dif(userid, **material['item'])
+            if mat_col < material['count']:
+                not_found.append(
+                    {'item': material['item']['item_id'], 'type': material['type'],
+                     'count': material['count'] - mat_col
+                     }
+                )
+
+        elif material['type'] == 'endurance':
+            status, dct_data = await DeleteAbilItem(material['item'], 'endurance', 
+                                 material['act'], count, userid)
+            if not status:
+                not_found.append(
+                    {'item': material['item']['item_id'], 'type': material['type'],
+                     'count': dct_data['ost']
+                     }
+                )
 
     pprint.pprint(finded_items)
     print(item)
     print(count)
     print('end')
+
+
+# async def end_craft():
+    
+    # choosed_items = data['choosed_items']
+    # temp_way, way = ''
+    # if choosed_items == []:
+    #     way = 'main'
+    # else:
+    #     for i in choosed_items:
+    #         if not temp_way:
+    #             temp_way = i
+    #         else:
+    #             temp_way += f'-{i}'
+            
+    #         if temp_way in data_item['create']:
+    #             way = temp_way
