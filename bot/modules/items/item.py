@@ -231,31 +231,6 @@ async def RemoveItemFromUser(userid: int, item_id: str,
             else: break
         return True
 
-def ReverseCalculateAbilitie(item_id: str, unit: int, characteristic: str):
-    """Обратное CalculateAbilitie функция, получает количество 
-        харрактеристики и говорит какое количество соответсвует этому количеству харрактеристики.
-
-       Пример:
-        Предмет, макс прочность 100, переданная прочность 140,
-        Вернёт количество - 2 и прочность 40.
-    
-       Return 
-        0 - несоответсвие требованиям функции
-    """
-    item_data = get_item_dict(item_id)
-
-    if 'abilities' not in item_data: return 0, 0 # Нет харрактеристик
-    if characteristic not in item_data['abilities']: return 0, 0 # Нет харрактеристики
-    
-    max_abilitie = item_data['abilities'][characteristic]
-    count = unit // max_abilitie
-    remains = unit % max_abilitie
-    if remains: 
-        #Потому что не может быть у нас количество 0
-        #и харрактеристика например 40
-        count += 1 
-    return count, remains
-
 def CalculateDowngradeitem(item: dict, characteristic: str, unit: int):
     """Объясняет что надо сделать с 1-им предметом
        Удалить / изменить или данные действия сделать нельзя
@@ -269,6 +244,46 @@ def CalculateDowngradeitem(item: dict, characteristic: str, unit: int):
     else: # <= 
         return {'status': 'remove', 'item': item, 
                 'ost': unit - item['abilities'][characteristic]}
+
+async def DeleteAbilItem(item_data: dict, characteristic: str, 
+                         unit: int, count: int, userid: int):
+    """ return
+        - False, {} - Не хватает предметов, {'ost'} - сколько прочности не хватает\n
+        - True,  {} - delete (то что надо удалить)\n
+                      edit (предмет, что надо изменить)\n
+                      set (сколько надо установить хар предмету из edit)
+    """
+    need_char = unit * count
+    retur_dict = {'delete': [], 'edit': '', 'set': 0}
+    find_items = await items.find({'owner_id': userid, 
+                                   'items_data': item_data}, comment='DeleteAbilItem')
+
+    for item in find_items:
+        if need_char <= 0: break
+        data: dict = item['items_data']
+
+        if 'abilities' in data and characteristic in data['abilities']:
+            item_unit = data['abilities'][characteristic]
+
+            if item_unit > need_char:
+                retur_dict['edit'] = data['_id']
+                retur_dict['set'] = item_unit - need_char
+
+            elif item_unit == need_char:
+                retur_dict['delete'].append(data['_id'])
+
+            elif item_unit < need_char:
+                retur_dict['delete'].append(data['_id'])
+
+            need_char -= item_unit
+
+    if need_char > 0:
+        # Значит предметов недостаточно 
+        return False, {'ost': need_char}
+
+    else:
+        # Значит у игрока предметов с хар больше чем надо или именно столько сколько надо.
+        return True, retur_dict
 
 
 async def DowngradeItem(userid: int, item: dict, characteristic: str, unit: int):
