@@ -247,14 +247,18 @@ async def check_endurance_and_col(finded_items, count, item,
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id)
     materials = finded_items
+    
+    print()
+
+    data['end'] = []
 
     for material in data_item['materials']:
-        ind = data_item['materials'].index(material)
+        # ind = data_item['materials'].index(material)
         materials[ind]['type'] = material['type']
 
     not_found = [] 
     for material in materials:
-        ind = materials.index(material)
+        # ind = materials.index(material)
 
         if material['type'] == 'delete':
             mat_col = await check_and_return_dif(userid, **material['item'])
@@ -264,6 +268,10 @@ async def check_endurance_and_col(finded_items, count, item,
                      'count': material['count'] - mat_col
                      }
                 )
+            else:
+                dct_data = material
+                dct_data['type'] = material['type']
+                data['end'].append(dct_data)
 
         elif material['type'] == 'endurance':
             status, dct_data = await DeleteAbilItem(material['item'], 'endurance', 
@@ -274,25 +282,53 @@ async def check_endurance_and_col(finded_items, count, item,
                      'count': dct_data['ost']
                      }
                 )
+            else:
+                dct_data['type'] = material['type']
+                data['end'].append(dct_data)
 
-    pprint.pprint(finded_items)
-    print(item)
-    print(count)
-    print('end')
+    if not_found:
+        nt_materials = []
+        for i in not_found:
+            if i['type'] == 'delete':
+                nt_materials.append(
+                    f'{get_name(i["item"], lang)} x{i["count"]}'
+                )
+        if i['type'] == 'endurance':
+            nt_materials.append(
+                    f'{get_name(i["item"], lang)} (⬇ -{i["count"]} )'
+                )
 
+        text = t('item_use.recipe.not_enough_m', lang, materials=', '.join(nt_materials))
+        await bot.send_message(chatid, 
+                    text, 
+                    parse_mode='Markdown', 
+                    reply_markup=await markups_menu(userid, 'last_menu', lang))
+        return
 
-# async def end_craft():
+    else:
+        await end_craft(finded_items, count, item, userid, chatid, lang, data)
+
+async def end_craft(finded_items, count, item,
+                                  userid, chatid, lang, data):
+
+    item_id: str = item['item_id']
+    data_item: dict = get_data(item_id)
+
+    choosed_items = data['choosed_items']
+    temp_way, way = ''
+    if choosed_items == []:
+        way = 'main'
+    else:
+        for i in choosed_items:
+            if not temp_way:
+                temp_way = i
+            else:
+                temp_way += f'-{i}'
+            if temp_way in data_item['create']:
+                way = temp_way
     
-    # choosed_items = data['choosed_items']
-    # temp_way, way = ''
-    # if choosed_items == []:
-    #     way = 'main'
-    # else:
-    #     for i in choosed_items:
-    #         if not temp_way:
-    #             temp_way = i
-    #         else:
-    #             temp_way += f'-{i}'
-            
-    #         if temp_way in data_item['create']:
-    #             way = temp_way
+    print(way)
+    pprint.pprint(finded_items)
+    pprint.pprint(data)
+    
+    print('end')
