@@ -266,14 +266,14 @@ async def DeleteAbilItem(item_data: dict, characteristic: str,
             item_unit = data['abilities'][characteristic]
 
             if item_unit > need_char:
-                retur_dict['edit'] = data['_id']
+                retur_dict['edit'] = item['_id']
                 retur_dict['set'] = item_unit - need_char
 
             elif item_unit == need_char:
-                retur_dict['delete'].append(data['_id'])
+                retur_dict['delete'].append(item['_id'])
 
             elif item_unit < need_char:
-                retur_dict['delete'].append(data['_id'])
+                retur_dict['delete'].append(item['_id'])
 
             need_char -= item_unit
 
