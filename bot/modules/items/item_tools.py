@@ -217,7 +217,6 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             return_text = t('item_use.accessory.change', lang)
 
     elif type_item == 'recipe':
-        materials = {'delete': [], 'edit': {}}
         send_status, use_status = False, False 
         # Проверка может завершится позднее завершения функции, отправим текст самостоятельно, так же юзер может и отказаться, удалим предмет сами
 
