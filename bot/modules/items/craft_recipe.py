@@ -1,17 +1,18 @@
 
-
+from bot.const import GAME_SETTINGS
 import pprint
 from typing import Any, Union
 from bot.config import mongo_client
 from bot.modules.data_format import list_to_inline, random_code
 from bot.modules.inventory_tools import inventory_pages
-from bot.modules.items.item import CheckCountItemFromUser, DeleteAbilItem, check_and_return_dif, get_name, get_data, item_code, item_info
+from bot.modules.items.item import AddItemToUser, CheckCountItemFromUser, DeleteAbilItem, RemoveItemFromUser, UseAutoRemove, check_and_return_dif, counts_items, get_name, get_data, item_code, item_info
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import t
 from bot.modules.markup import markups_menu
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user.user import get_inventory_from_i
 from bot.exec import bot
+from bot.modules.user.user import experience_enhancement
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 items = DBconstructor(mongo_client.items.items)
@@ -28,7 +29,6 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
 
     for material in data_item['materials']:
         if 'col' not in material: material['col'] = 1
-        a += 1
 
         material['col'] *= count
         if not isinstance(material['item'], str):
@@ -54,10 +54,12 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
                 material['item'] = inv[0]['item']['item_id']
 
             elif len(inv) > 1:
+                a += 1
+                name = f'{a}_step'
                 steps.append(
                     {
                         'type': 'inv',
-                        'name': str(a)+'_step',
+                        'name': name,
                         'data': {
                             'inventory': inv,
                             'changing_filters': False
@@ -67,10 +69,10 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
                     }
                 )
 
-                material['item'] = str(a)+'_step'
+                material['item'] = name
         materials.append(material)
 
-    if steps:
+    if len(steps) > 0:
 
         transmitted_data = {
             'materials': materials,
@@ -131,7 +133,6 @@ async def check_items_in_inventory(materials, item, count,
 
         # Нет предметов
         if len(find_items) == 0:
-
             not_find.append({'item': material['item'], 'diff': material['col']})
             continue
 
@@ -157,10 +158,11 @@ async def check_items_in_inventory(materials, item, count,
             # Есть варианты для выбора
             elif len(find_set) > 1:
                 a += 1
+                name = f'{a}_step'
                 steps.append(
                     {
                         'type': 'inv',
-                        'name': str(a)+'_step',
+                        'name': name,
                         'data': {
                             'inventory': find_items,
                             'changing_filters': False,
@@ -172,7 +174,7 @@ async def check_items_in_inventory(materials, item, count,
                                               item_name=get_name(material['item'], lang))}
                     }
                 )
-                finded_items.append({'item': str(a)+'_step', 
+                finded_items.append({'item': name, 
                                      'count': material['col']})
 
     if not_find:
@@ -247,18 +249,16 @@ async def check_endurance_and_col(finded_items, count, item,
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id)
     materials = finded_items
-    
-    print()
 
     data['end'] = []
 
     for material in data_item['materials']:
-        # ind = data_item['materials'].index(material)
+        ind = data_item['materials'].index(material)
         materials[ind]['type'] = material['type']
 
     not_found = [] 
     for material in materials:
-        # ind = materials.index(material)
+        ind = materials.index(material)
 
         if material['type'] == 'delete':
             mat_col = await check_and_return_dif(userid, **material['item'])
@@ -275,7 +275,7 @@ async def check_endurance_and_col(finded_items, count, item,
 
         elif material['type'] == 'endurance':
             status, dct_data = await DeleteAbilItem(material['item'], 'endurance', 
-                                 material['act'], count, userid)
+                                data_item['materials'][ind]['act'], count, userid)
             if not status:
                 not_found.append(
                     {'item': material['item']['item_id'], 'type': material['type'],
@@ -306,16 +306,16 @@ async def check_endurance_and_col(finded_items, count, item,
         return
 
     else:
-        await end_craft(finded_items, count, item, userid, chatid, lang, data)
+        await end_craft(count, item, userid, chatid, lang, data)
 
-async def end_craft(finded_items, count, item,
-                                  userid, chatid, lang, data):
+async def end_craft(count, item, userid, chatid, lang, data):
 
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id)
 
+    # Оперделение цели крафта
     choosed_items = data['choosed_items']
-    temp_way, way = ''
+    temp_way, way = '', ''
     if choosed_items == []:
         way = 'main'
     else:
@@ -324,11 +324,52 @@ async def end_craft(finded_items, count, item,
                 temp_way = i
             else:
                 temp_way += f'-{i}'
-            if temp_way in data_item['create']:
+            if temp_way in data_item['create'].keys():
                 way = temp_way
-    
-    print(way)
-    pprint.pprint(finded_items)
-    pprint.pprint(data)
-    
-    print('end')
+        if not way:
+            way = 'main'
+
+    # Удаление материалов
+    for material in data['end']:
+
+        if material['type'] == 'delete':
+            await UseAutoRemove(userid, material['item'], material['count'])
+
+        elif material['type'] == 'endurance':
+            for i in material['delete']:
+                await items.delete_one({'_id': i})
+
+            if material['edit']:
+                await items.update_one({'_id': material['edit']}, 
+                         {'$set': {'items_data.abilities.endurance': 
+                             material['set']} })
+
+    # Выдача крафта
+    created_items = []
+    for create_data in data_item['create'][way]:
+
+        if create_data['type'] == 'create':
+            preabil = create_data.get('abilities', {}) # Берёт характеристики если они есть
+            add_count = create_data.get('count', 0)
+            await AddItemToUser(userid, create_data['item'],
+                                count + add_count, preabil)
+
+            for _ in range(count + add_count):
+                created_items.append(create_data['item'])
+
+    # Понижение прочности рецепта
+    await UseAutoRemove(userid, item, count)
+
+    # Вычисление опыта за крафт
+    if 'rank' in data_item.keys():
+        xp = GAME_SETTINGS['xp_craft'][data_item['rank']] * count
+    else:
+        xp = GAME_SETTINGS['xp_craft']['common'] * count
+
+    # Начисление опыта за крафт
+    await experience_enhancement(userid, xp)
+
+    # Создание сообщения
+    await bot.send_message(chatid, t('item_use.recipe.create', lang, 
+                                     items=counts_items(created_items, lang)), 
+                           parse_mode='Markdown', reply_markup=await markups_menu(userid, 'last_menu', lang))
