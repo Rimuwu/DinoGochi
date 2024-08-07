@@ -1,9 +1,10 @@
 
+import random
 from bot.const import GAME_SETTINGS
 import pprint
 from typing import Any, Union
 from bot.config import mongo_client
-from bot.modules.data_format import list_to_inline, random_code
+from bot.modules.data_format import list_to_inline, random_code, random_data
 from bot.modules.inventory_tools import inventory_pages
 from bot.modules.items.item import AddItemToUser, CheckCountItemFromUser, DeleteAbilItem, RemoveItemFromUser, UseAutoRemove, check_and_return_dif, counts_items, get_name, get_data, item_code, item_info
 from bot.modules.items.items_groups import get_group
@@ -16,6 +17,70 @@ from bot.modules.user.user import experience_enhancement
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 items = DBconstructor(mongo_client.items.items)
+
+"""
+    "clothing_recipe_new": {
+        "create": {
+            "main": [ // Тип создаваемого рецепта, main используется для отображения в инфо, создаётся по умолчанию и должен быть всегда
+                {
+                    "item": "leather_clothing", // Создаваемый предмет
+                    "type": "create", // Тут create | repair (не создан)
+                    "abilities": {}, // Характеристики предмета
+                    "col": 1 // Количество создания вместо повторов
+                }
+            ],
+            "carrot": [ // Тип создаваемого рецепта, main используется для отображения в инфо, создаётся по умолчанию и должен быть всегда
+                {
+                    "item": "leather_clothing", // Создаваемый предмет
+                    "type": "create", // Тут create | repair (не создан)
+                    "abilities": {"act": { "random-int": [2, 10] }}, // Рандомная число от 2 до 10
+                    // После, если в списке 2 элемента - и оба число - randint иначе choice
+                    "col": 1 // Количество создания вместо повторов
+                }
+            ]
+        },
+        "materials": [
+            {
+                "item": "skin", // Удаляемый предмет
+                "type": "delete", // delete | endurance удаление | понижение характеристики предмета 
+                "col": 5 // col - delete | act - сколько нужно отнять 
+                "abilities": {}, // Характеристики предмета
+            },
+            {
+                "item": {"group": "vegetables"}, // Предложит выбрать из группы предметов овощей (те что есть в инвентаре)
+                "type": "delete", // delete | endurance удаление | понижение характеристики предмета 
+                "col": 5, // col - delete | act - сколько нужно отнять 
+                "save_choose": true // По умолчанию поставить в коде False
+                // В случае если true, код будет искать в create ключ с выбранным предметом
+                // Например выбрали carrot - будут выданы предметы не из main, а carrot
+                // Если нет ключа carrot создать main
+                // Если выбора несколько ставить между выбором "-"
+            },
+            {
+                "item": ["carrot", "leather"], // Предложет выбрать из списка предметов (те что есть в инвентаре)
+                "type": "delete", // delete | endurance удаление | понижение характеристики предмета 
+                "col": 5, // col - delete | act - сколько нужно отнять 
+                "copy_abilitie": "key" // Будет копировать ключь из выбранного предмета и добавлять к новому
+                // код будет искать в create ключ с выбранным предметом
+                // Например выбрали carrot - будут выданы предметы не из main, а carrot
+                // Если нет ключа carrot создать main
+                // Если выбора несколько ставить между выбором "-"
+            }
+        ],
+        "abilities": { // Характеристики самого рецепта
+            "uses": 3
+        },
+
+        "rank": "rare",
+        "image": "recipe",
+        "type": "recipe",
+        "ignore_preview": [], // Указать какие итоги крафта не отображать в инфо о крафте
+        
+        "time_craft": 10000, # Время крафта 
+
+        "groups": [] // Группы которые могут быть использованы для отображения
+    }
+"""
 
 async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: int=1):
     """ Сформировать список проверяемых предметов, подготовить данные для выбора предметов
@@ -41,6 +106,18 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
                 # В материалах указан список предметов которых можно использовать
                 find_items = material['item']
 
+
+            if 'abilities' in material:
+                find_items = list(
+                        map(lambda i: {'item_id': i, 
+                                       'abilities': material['abilities']}, 
+                            find_items)
+                    )
+            else:
+                find_items = list(
+                        map(lambda i: {'item_id': i}, find_items)
+                    )
+
             inv = await get_inventory_from_i(userid, find_items)
 
             if not inv:
@@ -52,6 +129,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
 
             elif len(inv) == 1:
                 material['item'] = inv[0]['item']['item_id']
+                materials.append(material)
 
             elif len(inv) > 1:
                 a += 1
@@ -70,7 +148,9 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
                 )
 
                 material['item'] = name
-        materials.append(material)
+                materials.append(material)
+        else:
+            materials.append(material)
 
     if len(steps) > 0:
 
@@ -350,6 +430,11 @@ async def end_craft(count, item, userid, chatid, lang, data):
 
         if create_data['type'] == 'create':
             preabil = create_data.get('abilities', {}) # Берёт характеристики если они есть
+
+            if preabil:
+                for key, value in preabil.items():
+                    preabil[key] = random_data(value)
+
             add_count = create_data.get('count', 0)
             await AddItemToUser(userid, create_data['item'],
                                 count + add_count, preabil)

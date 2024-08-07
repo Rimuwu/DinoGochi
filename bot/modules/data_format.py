@@ -1,6 +1,7 @@
 import random
 import re
 import string
+from typing import Union
 
 from telebot.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            ReplyKeyboardMarkup, User)
@@ -47,7 +48,7 @@ def random_dict(data: dict) -> int:
             if data['min'] < data['max']:
                 return random.randint(data['min'], data['max'])
             else: return data['min']
-        
+
         elif data["type"] == "choice":
             if data['act']: return random.choice(data['act'])
             else: return 0
@@ -282,7 +283,7 @@ def count_elements(lst: list) -> str:
     for key, value in dct.items(): text_list.append(f'{key} x{value}')
     return ', '.join(text_list)
 
-def item_list(items:list[dict]):
+def item_list(items: list[dict]):
     """ Добавляет к каждому предмету ключ count c количеством 
     """
     res, individual = [], []
@@ -319,3 +320,26 @@ def str_to_seconds(text: str):
 
                     seconds += int(number) * mn
     return seconds
+
+def random_data(data: Union[int, str, list, dict, None]):
+
+    if isinstance(data, int): 
+        return data
+
+    elif isinstance(data, str): 
+        return data
+
+    elif isinstance(data, list): 
+        return data
+
+    elif isinstance(data, dict): 
+
+        if 'random-int' in data.keys():
+            # В данных должен быть список типа [min, max]
+            return random.randint(*data['random-int'])
+
+        elif 'random-choice' in data.keys():
+            # В данных должен быть список с Х элементами из списка
+            return random.choice(data['random-choice'])
+
+    else: return data

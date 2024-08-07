@@ -6,7 +6,7 @@ from telebot.types import User as teleUser
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
-from bot.modules.data_format import escape_markdown, seconds_to_str, user_name
+from bot.modules.data_format import escape_markdown, item_list, seconds_to_str, user_name
 from bot.modules.dinosaur.dinosaur import Dino, Egg
 from bot.modules.user.friends import get_frineds
 from bot.modules.items.item import AddItemToUser
@@ -594,21 +594,27 @@ async def max_eat(userid: int):
     max_col = col * per_one + 50
     return max_col
 
-async def get_inventory_from_i(userid: int, items_l: list = []):
-    """ Возвращает список для инвенторя выбора предметов (возвращает по 1-му)
+async def get_inventory_from_i(userid: int, items_l: list[dict] = []):
+    """ 
+        items_l - [ {'item_id': int, 'abilities': dict} ]
     """
-    inv = []
-    data_inv = await items.find(
-        {'owner_id': userid}, 
-        {'_id': 0, 'owner_id': 0}, comment='get_inventory_from_i')
-    for item_dict in data_inv:
-        if item_dict['items_data']['item_id'] in items_l:
-            if 'abilities' in item_dict['items_data']:
-                del item_dict['items_data']['abilities']
-            item = {
-                'item': item_dict['items_data'], 
-                "count": 1
-                }
-            if item not in inv:
-                inv.append(item)
-    return inv
+
+    find_i = []
+    for item in items_l:
+        item_id: int = item['item_id']
+        abilities: dict = item.get('abilities', {})
+
+        if abilities:
+            find_data = {'owner_id': userid, 
+                         'items_data.item_id': item_id, 
+                         'items_data.abilities': abilities}
+        else:
+            find_data = {'owner_id': userid, 'items_data.item_id': item_id}
+
+        fi = await items.find(find_data, {'_id': 0, 'owner_id': 0})
+        pre_l = list(map(
+            lambda i: {'item': i['items_data'], 'count': i['count']}, fi))
+        find_i += pre_l
+
+    result = item_list(find_i)
+    return result
