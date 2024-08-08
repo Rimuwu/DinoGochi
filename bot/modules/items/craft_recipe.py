@@ -443,7 +443,6 @@ async def end_craft(count, item, userid, chatid, lang, data):
 
 
     # Сохранение характеристик предмета и подготовка создаваемых редметов
-    create = []
     for material in data['end']:
         ind = data['end'].index(material)
         material_data = data_item['materials'][ind]
