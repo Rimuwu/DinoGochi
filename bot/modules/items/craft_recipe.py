@@ -44,7 +44,7 @@ items = DBconstructor(mongo_client.items.items)
                 "item": "skin", // Удаляемый предмет
                 "type": "delete", // delete | endurance удаление | понижение характеристики предмета 
                 "col": 5 // col - delete | act - сколько нужно отнять 
-                "abilities": {}, // Характеристики предмета
+                "abilities": {}, // Характеристики предмета (используются для поиска)
             },
             {
                 "item": {"group": "vegetables"}, // Предложит выбрать из группы предметов овощей (те что есть в инвентаре)
@@ -94,8 +94,12 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
 
     for material in data_item['materials']:
         if 'col' not in material: material['col'] = 1
+        copy_mat = material.copy()
 
-        material['col'] *= count
+        copy_mat['col'] *= count
+        if 'abilities' in material:
+            copy_mat['abilities'] = material['abilities']
+
         if not isinstance(material['item'], str):
 
             if isinstance(material['item'], dict):
@@ -106,13 +110,13 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
                 # В материалах указан список предметов которых можно использовать
                 find_items = material['item']
 
-
             if 'abilities' in material:
                 find_items = list(
                         map(lambda i: {'item_id': i, 
                                        'abilities': material['abilities']}, 
                             find_items)
                     )
+
             else:
                 find_items = list(
                         map(lambda i: {'item_id': i}, find_items)
@@ -128,8 +132,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
                 return
 
             elif len(inv) == 1:
-                material['item'] = inv[0]['item']['item_id']
-                materials.append(material)
+                copy_mat['item'] = inv[0]['item']['item_id']
 
             elif len(inv) > 1:
                 a += 1
@@ -147,10 +150,9 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
                     }
                 )
 
-                material['item'] = name
-                materials.append(material)
-        else:
-            materials.append(material)
+                copy_mat['item'] = name
+
+        materials.append(copy_mat)
 
     if len(steps) > 0:
 
@@ -166,6 +168,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
         data = {
             "choosed_items": []
         }
+
         await check_items_in_inventory(materials, item, count, 
                                        userid, chatid, lang, data)
 
@@ -206,15 +209,21 @@ async def check_items_in_inventory(materials, item, count,
 
     a = -1
     for material in materials:
-        find_items = await items.find({'owner_id': userid, 
-                                       'items_data.item_id': material['item']},
-                                      {'_id': 0, 'owner_id': 0},
+        if 'abilities' in material:
+            find_data = {'owner_id': userid, 
+                         'items_data.item_id': material['item'],
+                         'items_data.abilities': material['abilities']
+                         }
+        else:
+            find_data = {'owner_id': userid, 
+                         'items_data.item_id': material['item']}
+
+        find_items = await items.find(find_data, {'_id': 0, 'owner_id': 0},
                      comment='check_items_in_inventory')
 
         # Нет предметов
         if len(find_items) == 0:
             not_find.append({'item': material['item'], 'diff': material['col']})
-            continue
 
         else:
             find_set = []
@@ -233,7 +242,6 @@ async def check_items_in_inventory(materials, item, count,
                 else:
                     not_find.append({'item': i['items_data'], 
                                      'diff': material['col'] - count_material})
-                    continue
 
             # Есть варианты для выбора
             elif len(find_set) > 1:
@@ -251,7 +259,9 @@ async def check_items_in_inventory(materials, item, count,
                         },
                         'translate_message': False,
                         'message': {'text': t('item_use.recipe.choose_copy', lang, 
-                                              item_name=get_name(material['item'], lang))}
+                                              item_name=get_name(
+                                                  material['item'], lang, 
+                                                  material.get('abilities', {})))}
                     }
                 )
                 finded_items.append({'item': name, 
@@ -261,7 +271,7 @@ async def check_items_in_inventory(materials, item, count,
         nt_materials = []
         for i in not_find:
             nt_materials.append(
-                f'{get_name(i["item"], lang)} x{i["diff"]}'
+                f'{get_name(i["item"], lang, i.get("abilities", {}))} x{i["diff"]}'
             )
 
         text = t('item_use.recipe.not_enough_m', lang, materials=', '.join(nt_materials))
@@ -371,11 +381,11 @@ async def check_endurance_and_col(finded_items, count, item,
         for i in not_found:
             if i['type'] == 'delete':
                 nt_materials.append(
-                    f'{get_name(i["item"], lang)} x{i["count"]}'
+                    f'{get_name(i["item"], lang, i.get("abilities", {}))} x{i["count"]}'
                 )
         if i['type'] == 'endurance':
             nt_materials.append(
-                    f'{get_name(i["item"], lang)} (⬇ -{i["count"]} )'
+                    f'{get_name(i["item"], lang, i.get("abilities", {}))} (⬇ -{i["count"]} )'
                 )
 
         text = t('item_use.recipe.not_enough_m', lang, materials=', '.join(nt_materials))
