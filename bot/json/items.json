@@ -977,13 +977,15 @@
             "main": [
                 {
                     "item": "bone_sword",
-                    "type": "create"
+                    "type": "create",
+                    "count": 1
                 }
             ],
             "iron": [
                 {
                     "item": "iron_sword",
-                    "type": "create"
+                    "type": "create",
+                    "count": 1
                 }
             ]
         },
