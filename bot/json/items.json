@@ -999,10 +999,7 @@
             {
                 "act": 30,
                 "item": "tooling",
-                "type": "endurance",
-                "abilities": {
-                    "$gte": {"endurance": 50}
-                }
+                "type": "endurance"
             }
         ],
         "rank": "rare",
