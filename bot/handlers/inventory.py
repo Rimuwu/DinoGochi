@@ -197,7 +197,7 @@ async def item_callback(call: CallbackQuery):
                     egg_id = call_data[3]
                     item_data = get_item_data(item['item_id'])
                     end_time = seconds_to_str(item_data['incub_time'], lang)
-                    i_name = get_name(item['item_id'], lang)
+                    i_name = get_name(item['item_id'], lang, item.get('abilities', {}))
 
                     if await RemoveItemFromUser(userid, item['item_id'], 1, preabil):
                         await bot.send_message(chatid, 

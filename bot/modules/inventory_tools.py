@@ -117,7 +117,8 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list = [],
     for code, data_item in code_items.items():
         item = data_item['item']
         count = data_item['count']
-        name = get_name(item['item_id'], lang)
+        name = get_name(item['item_id'], 
+                        lang, item.get('abilities', {}))
         standart = is_standart(item)
 
         count_name = f' x{count}'

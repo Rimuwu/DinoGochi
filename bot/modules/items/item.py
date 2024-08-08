@@ -54,12 +54,17 @@ def load_items_names() -> dict:
 
 items_names = load_items_names()
 
-def get_name(item_id: str, lang: str='en', endurance: int=0) -> str:
+def get_name(item_id: str, lang: str='en', abilities: dict = {}) -> str:
     """Получение имени предмета"""
     name = ''
 
+    if 'endurance' in abilities:
+        endurance = abilities['endurance']
+    else: endurance = 0
+
     if item_id in items_names:
         if lang not in items_names[item_id]: lang = 'en'
+
         if endurance and 'alternative_name' in items_names[item_id][lang]:
             if str(endurance) in items_names[item_id][lang]['alternative_name']:
                 name = items_names[item_id][lang]['alternative_name'][str(endurance)]
@@ -513,17 +518,18 @@ def sort_materials(not_sort_list: list, lang: str,
     # Собирает текст
     for i in not_sort_list:
         item = i['item']
+        abilities = i.get('abilities', {})
         text = ''
 
         if i not in check_items:
             if isinstance(item, str):
                 col = col_dict[item]
-                text = get_name(item, lang)
+                text = get_name(item, lang, abilities)
 
             elif isinstance(item, list):
                 lst = []
                 col = col_dict[json.dumps(i['item'])]
-                for i_item in item: lst.append(get_name(i_item, lang))
+                for i_item in item: lst.append(get_name(i_item, lang, abilities))
 
                 text = f'({" | ".join(lst)})'
 

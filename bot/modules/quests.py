@@ -140,7 +140,7 @@ def quest_ui(quest: dict, lang: str, quest_id: str=''):
     elif quest['type'] == 'feed':
         eat_list = ''
         for ikey, ivalue in quest['data']['items'].items():
-            eat_list += f'{get_name(ikey, lang)}: {ivalue[1]} / {ivalue[0]}\n'
+            eat_list += f'{get_name(ikey, lang, ivalue.get("abilities", {}))}: {ivalue[1]} / {ivalue[0]}\n'
         text += t('quest.feed', lang, eat_list=eat_list)[:-1]
 
     elif quest['type'] == 'collecting':

@@ -41,7 +41,7 @@ async def inventory_adapter(item, transmitted_data):
 
     limiter = 100 # Ограничение по количеству использований за раз
     item_data = get_item_data(item['item_id'])
-    item_name = get_name(item['item_id'], lang)
+    item_name = get_name(item['item_id'], lang, item.get('abilities', {}))
 
     base_item = await items.find_one({'owner_id': userid, 'items_data': item},
                                      comment="inventory_adapter_base_item")

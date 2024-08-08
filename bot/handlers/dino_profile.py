@@ -127,11 +127,11 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
            acsess[key] = t(f'p_profile.no_item', lang)
         else:
             add_blok = True
-            name = get_name(item['item_id'], lang)
+            name = get_name(item['item_id'], lang, item.get('abilities', {}))
             if 'abilities' in item.keys() and 'endurance' in item['abilities'].keys():
                acsess[key] = f'{name} \[ *{item["abilities"]["endurance"]}* ]'
             else: acsess[key] = f'{name}'
-                
+
     menu = dino_profile_markup(add_blok, lang, dino.alt_id, joint_dino, my_joint)
     if add_blok:
         text += t('p_profile.accs', lang, formating=False).format(**acsess)
@@ -236,7 +236,8 @@ async def dino_menu(call: types.CallbackQuery):
             if action == 'reset_activ_item':
                 activ_items = {}
                 for key, item in dino['activ_items'].items():
-                    if item: activ_items[get_name(item['item_id'], lang)] = [key, item]
+                    if item: activ_items[get_name(item['item_id'], 
+                                    lang, item.get('abilities', {}))] = [key, item]
 
                 result, sn = await ChooseOptionState(remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']})
 

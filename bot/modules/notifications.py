@@ -117,7 +117,8 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
 
                 if 'item_id' in kwargs:
                     # Получение имени предмета
-                    kwargs['item_name'] = get_name(kwargs['item_id'], lang)
+                    kwargs['item_name'] = get_name(kwargs['item_id'], lang, 
+                                                   kwargs.get("abilities", {}))
 
                 # Формирование текста
                 if not_type in replics_notifications:
