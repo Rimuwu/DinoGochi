@@ -60,7 +60,13 @@ items = DBconstructor(mongo_client.items.items)
                 "item": ["carrot", "leather"], // Предложет выбрать из списка предметов (те что есть в инвентаре)
                 "type": "delete", // delete | endurance удаление | понижение характеристики предмета 
                 "col": 5, // col - delete | act - сколько нужно отнять 
-                "copy_abilitie": "key" // Будет копировать ключь из выбранного предмета и добавлять к новому
+                "copy_abilities": [
+                    {
+                        "copy": ["endurance"], // Копирует указанную хар предмета
+                        "to_items": [0], // Устанавливает её указанным предметам
+                        "action": "set" | "inc" | "add"
+                    }
+                ]
                 // код будет искать в create ключ с выбранным предметом
                 // Например выбрали carrot - будут выданы предметы не из main, а carrot
                 // Если нет ключа carrot создать main
@@ -432,7 +438,34 @@ async def end_craft(count, item, userid, chatid, lang, data):
             if material['edit']:
                 await items.update_one({'_id': material['edit']}, 
                          {'$set': {'items_data.abilities.endurance': 
-                             material['set']} })
+                             material['set']} 
+                          })
+
+
+    # Сохранение характеристик предмета и подготовка создаваемых редметов
+    create = []
+    for material in data['end']:
+        ind = data['end'].index(material)
+        material_data = data_item['materials'][ind]
+
+        if 'copy_abilities' in material_data and 'abilities' in material['item']:
+            data_cop = material_data['copy_abilities']
+
+            for cr_item in data_cop['to_items']:
+
+                for abil in data_cop['copy']:
+                    if abil in material['item']['abilities']:
+                        if 'abilities' not in data_item['create'][way][cr_item]:
+                            data_item['create'][way][cr_item]['abilities'] = {}
+
+                        if data_cop['action'] == 'set':
+                            data_item['create'][way][cr_item]['abilities'][abil] = material['item']['abilities'][abil]
+
+                        elif data_cop['action'] == 'inc':
+                            if abil in data_item['create'][way][cr_item]['abilities']:
+                                data_item['create'][way][cr_item]['abilities'][abil] += material['item']['abilities'][abil]
+                            else:
+                                data_item['create'][way][cr_item]['abilities'][abil] = material['item']['abilities'][abil]
 
     # Выдача крафта
     created_items = []
