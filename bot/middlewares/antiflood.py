@@ -1,6 +1,6 @@
 # Система антифлуда
 
-from telebot.asyncio_handler_backends import BaseMiddleware, SkipHandler
+from telebot.asyncio_handler_backends import BaseMiddleware, CancelUpdate
 from telebot.types import Message
 from bot.exec import bot
 from bot.config import mongo_client
@@ -44,7 +44,7 @@ class AntifloodMiddleware(BaseMiddleware):
             self.last_time[message.from_user.id] = time_now()
             return 
         if time_now() - self.last_time[message.from_user.id] < self.limit:
-            return SkipHandler()
+            return CancelUpdate()
         self.last_time[message.from_user.id] = time_now()
         return
 

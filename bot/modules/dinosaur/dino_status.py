@@ -59,12 +59,16 @@ async def check_status(dino_id):
         return status
     return 'pass'
 
-async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, down: str, up_unit: float, down_unit: float):
+async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, down: str, up_unit: float, down_unit: float, time_end: int):
     """ up_unit | down_unit - float число сколько сколько понижается / повышается 
         за 10 минут
     """
 
     assert activity in ['gym', 'library', 'swimming_pool', 'park'], f'{activity} не подходит для старта'
+
+    assert up in ['charisma', 'intelligence', 'dexterity', 'power'], f'{up} не соответствует скилам'
+
+    assert down in ['charisma', 'intelligence', 'dexterity', 'power'], f'{down} не соответствует скилам'
 
     if not await long_activity.find_one({'dino_id': dino_id,
             'activity_type': activity}, comment=f'start_{activity}_check'):

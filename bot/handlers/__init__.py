@@ -20,6 +20,7 @@ from . import market
 from . import backgrounds
 
 from . import actions_live
+from . import skills_actions
 from . import actions_speed
 from . import super_coins
 

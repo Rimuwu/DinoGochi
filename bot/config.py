@@ -19,20 +19,18 @@ class Config:
         """Класс настроек бота. Все основные переменные хранятся здесь
         """
         self.bot_token = 'NOTOKEN'
-        self.bot_devs = []
-        self.logs_dir = 'logs'
-        self.active_tasks = True
-        self.bot_group_id = 0
+        self.bot_devs = [] # Доступ к админ командам
+        self.logs_dir = 'logs' # Директория логов
+        self.active_tasks = True # Активация тасков
+        self.bot_group_id = 0 # Уведомления событий
         self.mongo_url = 'mongodb://localhost:27017'
 
-        self.debug = False
-        self.show_advert = False
+        self.debug = False # Больше логов
+        self.show_advert = False # Отображения рекламы
+        self.advert_token = '' # Рекламный токен
 
-        self.donation_token = ''
-        self.advert_token = ''
-
-        self.check_translate = False
-        self.base_logging = False
+        self.check_translate = False # Синхронизация перевода
+        self.base_logging = False # Логирование БД
 
     def fromJSON(self, js: str) -> None:
         """Десереализует строку в данные

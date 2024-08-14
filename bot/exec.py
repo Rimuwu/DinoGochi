@@ -1,9 +1,7 @@
 # Исполнитель бота
-
 import traceback
 
 from telebot.async_telebot import AsyncTeleBot, ExceptionHandler
-from telebot.asyncio_storage import StateMemoryStorage
 
 from bot.config import conf
 from bot.modules.logs import log
@@ -12,7 +10,9 @@ class TracebackHandler(ExceptionHandler):
     def handle(self, exception):
         log(f'{traceback.format_exc()} {exception}', 3)
 
-bot = AsyncTeleBot(conf.bot_token, exception_handler=TracebackHandler())
+bot = AsyncTeleBot(conf.bot_token, 
+                   exception_handler=TracebackHandler()
+                   )
 bot.enable_saving_states()
 
 def run():
@@ -25,6 +25,7 @@ def run():
     log('Кстати, в создании бота поучаствовал ChatGPT')
     log('Ой, да что там ваш ChatGPT?! *Stable Diffusion подключился*')
 
+    # Запуск тасков и бота
     add_task(bot.infinity_polling, skip_pending=True)
     log('Все готово! Взлетаем!', prefix='Start')
     run_taskmanager()

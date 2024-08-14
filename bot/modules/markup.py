@@ -314,7 +314,8 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
             }
 
             for key, value in kd.items():
-                bd[key] += f' ({seconds_to_str(value, language_code, True, "minute")})'
+                if key in bd:
+                    bd[key] += f' ({seconds_to_str(value, language_code, True, "minute")})'
 
             buttons = [
                 [bd['pet'], bd['talk']],
