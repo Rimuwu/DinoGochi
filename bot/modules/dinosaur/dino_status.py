@@ -90,14 +90,14 @@ async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, down: 
             'up_unit': 0.0 # Считаем, сколько было повышено и вычитаем 50% при отмене заранее.
         }
         result = await long_activity.insert_one(act, comment=f'start_{activity}')
-    return result
+    return act
 
 async def end_skill_activity(dino_id: ObjectId):
 
     res = await long_activity.find_one({'dino_id': dino_id}, comment=f'end_skill_activity')
 
     if res and res['activity_type'] in ['gym', 'library', 'swimming_pool', 'park']:
-        await long_activity.delete_one({'_id': res['_id']})
-        
+        await long_activity.delete_one({'_id': res['_id']}, comment='end_skill_act_del')
+
         return 1
     else: return 0

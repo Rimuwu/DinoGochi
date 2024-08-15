@@ -285,12 +285,25 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         dino = await user.get_last_dino()
 
         if dino:
-            buttons = [
-                ['gym', 'library'],
-                ['park', 'swimming_pool']
-            ]
+            kd = await check_all_activity(dino._id)
 
-            if await dino.status in ['on_farm', 'in_mine', 'in_bank', 'in_sawmill']:
+            bd = {
+                'gym': f"notranslate.{t('commands_name.skills_actions.gym', language_code)}",
+                'library': f"notranslate.{t('commands_name.skills_actions.library', language_code)}",
+                'park': f"notranslate.{t('commands_name.skills_actions.park', language_code)}",
+                'swimming_pool': f"notranslate.{t('commands_name.skills_actions.swimming_pool', language_code)}",
+            }
+
+            for key, value in kd.items():
+                if key in bd:
+                    bd[key] += f' ({seconds_to_str(value, language_code, True, "hour")})'
+
+            buttons = [
+                [bd['gym'], bd['library']],
+                [bd['park'], bd['swimming_pool']]
+            ]
+            
+            if await dino.status in ['gym', 'library', 'park', 'swimming_pool']:
                 buttons.append(
                     ['stop_work']
                 )
