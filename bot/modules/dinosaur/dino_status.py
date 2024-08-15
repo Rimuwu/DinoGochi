@@ -2,6 +2,7 @@
 from bson.objectid import ObjectId
 from bot.config import mongo_client
 
+from bot.modules.data_format import random_code
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from time import time
 
@@ -59,7 +60,7 @@ async def check_status(dino_id):
         return status
     return 'pass'
 
-async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, down: str, up_unit: float, down_unit: float, time_end: int):
+async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, down: str, up_unit: float, down_unit: float, time_end: int, sended: int):
     """ up_unit | down_unit - float число сколько сколько понижается / повышается 
         за 10 минут
     """
@@ -73,13 +74,20 @@ async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, down: 
     if not await long_activity.find_one({'dino_id': dino_id,
             'activity_type': activity}, comment=f'start_{activity}_check'):
         act = {
+            'send': sended, # Id того, кто отправил дино, чтобы воровать из его инвентаря энергетики
+            'use_energy': False,
+
             'dino_id': dino_id,
+
             'up_skill': up, 'down_skill': down,
             'up_unit': up_unit, 'down_unit': down_unit,
 
-            'end_time': int(time()), 'last_check': int(time()),
+            'end_time': time_end + int(time()), 'last_check': int(time()),
 
-            'activity_type': activity
+            'activity_type': activity,
+            'alt_code': random_code(),
+
+            'up_unit': 0.0 # Считаем, сколько было повышено и вычитаем 50% при отмене заранее.
         }
         result = await long_activity.insert_one(act, comment=f'start_{activity}')
     return result

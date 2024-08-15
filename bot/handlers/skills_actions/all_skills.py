@@ -11,6 +11,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.dinosaur.mood import add_mood, repeat_activity
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import ChooseOptionState
+from bot.modules.user import user
 from bot.modules.user.user import User
 from telebot.types import Message
 from bot.modules.data_format import seconds_to_str, list_to_keyboard
@@ -49,16 +50,22 @@ async def gym(message: Message):
 
 async def start_gym(time_sec: int, transmitted_data: dict):
     last_dino = transmitted_data['last_dino']
+    userid = transmitted_data['userid']
+    lang = transmitted_data['lang']
+    chatid = transmitted_data['chatid']
 
     await save_kd(last_dino._id, 'gym', 3600 * 12)
     percent, _ = await last_dino.memory_percent('action', 'gym', True)
     await repeat_activity(last_dino._id, percent)
 
-    
-    print(time_sec)
-    return
-    await start_skill_activity(
+    res = await start_skill_activity(
         last_dino._id, 'gym', 
         'power', 'dexterity',
-        0.0123, 0.006, 100
+        0.0123, 0.006, time_sec, userid
     )
+
+    alt_code = res.__dict__['alt_code']
+
+    text = t(f'all_skills.gym', lang)
+    await bot.send_message(chatid, text, parse_mode='Markdown',
+        reply_markup=await m(userid, 'last_menu', lang))
