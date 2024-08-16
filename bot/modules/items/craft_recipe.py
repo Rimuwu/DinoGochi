@@ -4,10 +4,11 @@ from bot.const import GAME_SETTINGS
 import pprint
 from typing import Any, Union
 from bot.config import mongo_client
-from bot.modules.data_format import list_to_inline, random_code, random_data
+from bot.modules.data_format import list_to_inline, random_code, random_data, seconds_to_str
 from bot.modules.inventory_tools import inventory_pages
 from bot.modules.items.item import AddItemToUser, CheckCountItemFromUser, DeleteAbilItem, RemoveItemFromUser, UseAutoRemove, check_and_return_dif, counts_items, get_name, get_data, item_code, item_info
 from bot.modules.items.items_groups import get_group
+from bot.modules.items.time_craft import add_time_craft
 from bot.modules.localization import t
 from bot.modules.markup import markups_menu
 from bot.modules.states_tools import ChooseStepState
@@ -405,6 +406,8 @@ async def check_endurance_and_col(finded_items, count, item,
         await end_craft(count, item, userid, chatid, lang, data)
 
 async def end_craft(count, item, userid, chatid, lang, data):
+    
+    print(count, item)
 
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id)
@@ -468,6 +471,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
 
     # Выдача крафта
     created_items = []
+    create = []
     for create_data in data_item['create'][way]:
 
         if create_data['type'] == 'create':
@@ -478,8 +482,10 @@ async def end_craft(count, item, userid, chatid, lang, data):
                     preabil[key] = random_data(value)
 
             add_count = create_data.get('count', 0)
-            await AddItemToUser(userid, create_data['item'],
-                                count + add_count, preabil)
+            create.append({'item': {'item_id': create_data['item'], 
+                                    'abilities': preabil}, 
+                           'count': count * add_count
+                           })
 
             for _ in range(count + add_count):
                 created_items.append(create_data['item'])
@@ -496,7 +502,33 @@ async def end_craft(count, item, userid, chatid, lang, data):
     # Начисление опыта за крафт
     await experience_enhancement(userid, xp)
 
+    if 'time_craft' in data_item:
+        tc = await add_time_craft(userid, data_item['time_craft'], create)
+        text = t('time_craft.text_start', lang, 
+                 items=counts_items(created_items, lang),
+                 craft_time=seconds_to_str(data_item['time_craft'], lang)
+                 )
+        markup = list_to_inline(
+            [
+                {t('time_craft.button', lang): f"time_craft {tc['alt_code']}  send_dino"}
+            ]
+        )
+
+    else:
+        for i in create:
+            await AddItemToUser(userid, i['item']['item_id'], 
+                                i['count'], i['item']['abilities'])
+        text = t('item_use.recipe.create', lang, 
+                 items=counts_items(created_items, lang))
+        markup = await markups_menu(userid, 'last_menu', lang)
+
     # Создание сообщения
-    await bot.send_message(chatid, t('item_use.recipe.create', lang, 
-                                     items=counts_items(created_items, lang)), 
-                           parse_mode='Markdown', reply_markup=await markups_menu(userid, 'last_menu', lang))
+    await bot.send_message(chatid, text, parse_mode='Markdown', 
+                           reply_markup = markup)
+
+    if 'time_craft' in data_item:
+        text = t('time_craft.text2', lang,
+                 command='/craftlist')
+        markup = await markups_menu(userid, 'last_menu', lang)
+        await bot.send_message(chatid, text, parse_mode='Markdown', 
+                           reply_markup = markup)

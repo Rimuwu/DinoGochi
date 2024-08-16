@@ -87,7 +87,7 @@ async def start_gym(time_sec: int, transmitted_data: dict):
     res = await start_skill_activity(
         last_dino._id, 'gym', 
         'power', 'dexterity',
-        [0.01, 0.015], [0.005,  0.007], time_sec, userid
+        [0.01, 0.015], [0.005, 0.007], time_sec, userid
     )
 
     text = t(f'all_skills.gym', lang)

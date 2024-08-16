@@ -664,6 +664,11 @@ async def item_info(item: dict, lang: str, owner: bool = False):
             if key not in ignore_craft:
                 cr_list.append(sort_materials(value, lang))
 
+        if 'time_craft' in data_item:
+            dp_text += loc_d['static']['time_craft'].format(
+                times=seconds_to_str(data_item['time_craft'], lang))
+            dp_text += '\n'
+
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
                 create=' | '.join(cr_list),

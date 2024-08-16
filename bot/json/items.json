@@ -1004,7 +1004,7 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "ignore_preview": ["iron"]
+        "time_craft": 7200
     },
     "onion_recipe": {
         "abilities": {
