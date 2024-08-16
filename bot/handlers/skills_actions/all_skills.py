@@ -87,7 +87,7 @@ async def start_gym(time_sec: int, transmitted_data: dict):
     res = await start_skill_activity(
         last_dino._id, 'gym', 
         'power', 'dexterity',
-        0.0123, 0.006, time_sec, userid
+        [0.01, 0.015], [0.005,  0.007], time_sec, userid
     )
 
     text = t(f'all_skills.gym', lang)
@@ -97,10 +97,66 @@ async def start_gym(time_sec: int, transmitted_data: dict):
     alt_code = res['alt_code']
     await use_energy(chatid, lang, alt_code)
 
+@bot.message_handler(textstart='commands_name.skills_actions.library', dino_pass=True, nothing_state=True, kd_check='library')
+@HDMessage
+async def library(message: Message):
+    userid = message.from_user.id
+    user = await User().create(userid)
+    lang = await user.lang
+    last_dino = await user.get_last_dino()
+    chatid = message.chat.id
+
+    options = {
+        "⏳ " + seconds_to_str(1800, lang): 1800,
+        "⏳ " + seconds_to_str(3600, lang): 3600,
+        "⏳ " + seconds_to_str(7200, lang): 7200,
+    }
+    mrk = list_to_keyboard(
+        [
+            list(options.keys()),
+            [t('buttons_name.cancel', lang)]
+        ], 2
+    )
+    await bot.send_message(chatid, 
+        t('all_skills.choose_time', lang), 
+        reply_markup = mrk,
+        parse_mode ='Markdown'
+    )
+    await ChooseOptionState(
+        start_library, userid, chatid, 
+        lang, options,
+        {'last_dino': last_dino}
+    )
+
+
+async def start_library(time_sec: int, transmitted_data: dict):
+    last_dino = transmitted_data['last_dino']
+    userid = transmitted_data['userid']
+    lang = transmitted_data['lang']
+    chatid = transmitted_data['chatid']
+
+    await save_kd(last_dino._id, 'library', 3600 * 12)
+    percent, _ = await last_dino.memory_percent('action', 'library', True)
+    await repeat_activity(last_dino._id, percent)
+
+    res = await start_skill_activity(
+        last_dino._id, 'library', 
+        'intelligence', 'power',
+        0.0123, 0.006, time_sec, userid
+    )
+
+    text = t(f'all_skills.library', lang)
+    await bot.send_message(chatid, text, parse_mode='Markdown',
+        reply_markup=await m(userid, 'last_menu', lang))
+
+    alt_code = res['alt_code']
+    await use_energy(chatid, lang, alt_code)
+
+
 
 @bot.message_handler(textstart='commands_name.skills_actions.stop_work', nothing_state=True)
 @HDMessage
-async def gym(message: Message):
+async def stop_work(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
     lang = await user.lang
@@ -125,7 +181,7 @@ async def gym(message: Message):
 @bot.callback_query_handler(pass_bot=True, func=lambda call: 
     call.data.startswith('stop_work'))
 @HDCallback
-async def stop_work(call: CallbackQuery):
+async def stop_work_calb(call: CallbackQuery):
     userid = call.from_user.id
     chatid = call.message.chat.id
     user = await User().create(userid)
@@ -136,7 +192,7 @@ async def stop_work(call: CallbackQuery):
     res = await long_activity.find_one(
         {'dino_id': dino_id})
 
-    if res: 
+    if res and messageid: 
         unit_percent = res['up_unit'] / 2
         await add_skill_point(dino_id, res['up_skill'], unit_percent)
 

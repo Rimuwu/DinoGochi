@@ -60,9 +60,11 @@ async def check_status(dino_id):
         return status
     return 'pass'
 
-async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, down: str, up_unit: float, down_unit: float, time_end: int, sended: int):
-    """ up_unit | down_unit - float число сколько сколько понижается / повышается 
-        за 10 минут
+async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, down: str, 
+                               up_unit: list[float], down_unit: list[float],
+                               time_end: int, sended: int):
+    """ up_unit | down_unit - list[float, float] минимум и максимум число которое может быть выдано
+        - за 10 минут
     """
 
     assert activity in ['gym', 'library', 'swimming_pool', 'park'], f'{activity} не подходит для старта'

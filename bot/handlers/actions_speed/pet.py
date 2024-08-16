@@ -39,7 +39,7 @@ async def pet(message: Message):
     ]
     r_skill = choice(lst_skills)
 
-    await add_skill_point(last_dino._id, r_skill, -uniform(0.001, 0.01))
+    await add_skill_point(last_dino._id, r_skill, -uniform(0.0001, 0.001))
 
     if randint(1, 4) == 2:
         res = await dino_mood.find_one({'dino_id': last_dino._id, 'type': 'breakdown'}, comment='pet_res')
