@@ -82,6 +82,8 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
         Если передать add_time_end=True то в аргументы дополнительно будет добавлен ключ time_end в формате времени, секудны берутся из ключа secs.
         
         Если мы хотим добавить какое то сообщение в тексте, но мы не хотим запрашивать владельца и получать его язык, мы можем добавить ключ add_message c путём к тексту.
+        
+        Если добавить ключ item_id, то будет добавлен ключ с именем item_name
     """
     dino = await dinosaurs.find_one({"_id": dino_id}, comment='dino_notification_dino')
     owners = await dino_owners.find({'dino_id': dino_id}, comment='dino_notification_owners')
@@ -193,6 +195,7 @@ async def user_notification(user_id: int, not_type: str,
     text, markup_inline = not_type, InlineKeyboardMarkup()
     standart_notification = [
         'donation', 'lvl_up',
+        'item_crafted', # необходим items
         'product_delete' # необходим preview
     ]
     unstandart_notification = [
@@ -201,7 +204,7 @@ async def user_notification(user_id: int, not_type: str,
         'send_request', #необходим user_name
         'not_independent_dead', 'independent_dead', 'daily_award',
         'product_buy', # необходим col, price, name, alt_id
-        'kindergarten' # dino_name dino_alt_id_markup
+        'kindergarten', # dino_name dino_alt_id_markup
     ]
     add_way = '.'+kwargs.get('add_way', '')
 
