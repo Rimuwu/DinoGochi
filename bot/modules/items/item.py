@@ -589,6 +589,43 @@ def counts_items(id_list: list, lang: str, separator: str = ','):
         return f"{separator} ".join(items_list)
     else: return '-'
 
+def get_items_names(items_list: list[dict], lang: str, separator: str = ','):
+    """Считает предмете, полученные в формате строки, 
+       и преобразовывает в текс.
+
+    Args:
+        id_list (list): Список с предметами
+            example: [{'items_data': {'item_id'}}]
+        lang (str): Язык
+        separator (str, optional): Символы, разделяющие элементы. Defaults to ','.
+
+    Returns:
+        str: Возвращает строку с предметами
+    """
+    dct, i_names = {}, []
+    for i in items_list: 
+        add_count = i.get('count', 1)
+        dct_to_str = json.dumps(i)
+        dct[dct_to_str] = dct.get(dct_to_str, 0) + add_count
+
+    for item_s, col in dct.items():
+        item = json.loads(item_s)
+        item_data = item.get(
+            'items_data', item.get('item', {})
+        )
+
+        items_id = item_data['item_id']
+        abilities = item_data.get('abilities', {})
+        
+        name = get_name(items_id, lang, abilities)
+        if col > 1: name += f" x{col}"
+        i_names.append(name)
+
+    if i_names:
+        return f"{separator} ".join(i_names)
+    else: return '-'
+
+
 async def item_info(item: dict, lang: str, owner: bool = False):
     """Собирает информацию и предмете, пригодную для чтения
 
