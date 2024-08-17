@@ -33,6 +33,7 @@ async def check_status(dino_id):
         else:
             status: str = activity['activity_type']
 
+        on_craft = status == 'craft'
         on_farm = status == 'farm'
         in_mine = status == 'mine'
         in_bank = status == 'bank'
@@ -53,8 +54,8 @@ async def check_status(dino_id):
         hysteria = await dino_mood.find_one({'dino_id': dino_id, 
                               'type': 'breakdown', 'action': 'hysteria'}, comment='check_status_hysteria')
 
-        data = ['sleep', 'game', 'journey', 'collecting', 'dungeon', 'kindergarten', 'hysteria', 'farm', 'mine', 'bank', 'sawmill', 'gym', 'library', 'park', 'swimming_pool']
-        checks = [bool(in_sleep), bool(in_game), bool(in_journey), bool(in_collecting), bool(dungeon), bool(in_kindergarten), bool(hysteria),  bool(on_farm), bool(in_mine), bool(in_bank), bool(in_sawmill), bool(in_gym), bool(in_library), bool(in_park), bool(in_swimming_pool)]
+        data = ['sleep', 'game', 'journey', 'collecting', 'dungeon', 'kindergarten', 'hysteria', 'farm', 'mine', 'bank', 'sawmill', 'gym', 'library', 'park', 'swimming_pool', 'craft']
+        checks = [bool(in_sleep), bool(in_game), bool(in_journey), bool(in_collecting), bool(dungeon), bool(in_kindergarten), bool(hysteria),  bool(on_farm), bool(in_mine), bool(in_bank), bool(in_sawmill), bool(in_gym), bool(in_library), bool(in_park), bool(in_swimming_pool), bool(on_craft)]
 
         if True in checks: status = data[checks.index(True)]
         return status
