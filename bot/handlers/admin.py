@@ -338,7 +338,7 @@ async def evaling(message):
 @HDMessage
 async def get_username(message):
     """
-    Аргументы: /add_premium 0/userid None/str_time
+    Аргументы: /get_username userid
     """
     msg_args = message.text.split()
 
