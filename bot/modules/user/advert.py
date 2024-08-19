@@ -13,22 +13,22 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 users = DBconstructor(mongo_client.user.users)
 ads = DBconstructor(mongo_client.user.ads)
 
-async def show_advert(user_id: int):
+async def show_advert_gramads(user_id: int):
     """ Показ рекламы через площадку gramads.net
 
-    Undefined = 0,
-    Success = 1,
-    RevokedTokenError = 2,
-    UserForbiddenError = 3,
-    ToManyRequestsError = 4,
-    OtherBotApiError = 5,
-    OtherError = 6,
+    Undefined = 0
+    Success = 1
+    RevokedTokenError = 2
+    UserForbiddenError = 3
+    ToManyRequestsError = 4
+    OtherBotApiError = 5
+    OtherError = 6
 
-    AdLimited = 7,
-    NoAds = 8,
-    BotIsNotEnabled=9,
-    Banned=10,
-    InReview=11
+    AdLimited = 7
+    NoAds = 8
+    BotIsNotEnabled = 9
+    Banned = 10
+    InReview = 11
     """
 
     res = 6
@@ -49,6 +49,7 @@ async def show_advert(user_id: int):
                 log('Gramads: %s' % str(await response.json()), 2)
 
     if res == 1: await save_last_ads(user_id)
+    else: log(f'gramads status - {res}', 4)
     return res
 
 async def create_ads_data(user_id:int, limit: int = 7200): 
@@ -92,7 +93,7 @@ async def save_last_ads(user_id:int):
         await bot.send_message(user_id, t('super_coins.plus_one', lang))
 
 
-async def auto_ads(message):
+async def auto_ads(message, only_parthner: bool = False):
     user_id = message.from_user.id
     if message.chat.type == "private":
         user = await users.find_one({'userid': user_id}, {"_id": 1}, comment='auto_ads_user')
@@ -103,4 +104,5 @@ async def auto_ads(message):
             delta = now - create
 
             if delta.days >= 4:
-                if await check_limit(user_id): await show_advert(user_id)
+                if await check_limit(user_id):
+                    await show_advert_gramads(user_id)

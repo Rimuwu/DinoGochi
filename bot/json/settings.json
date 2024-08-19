@@ -7,7 +7,7 @@
         "items": ["items", "farm", "item_craft"],
         "tavern": ["quests", "tavern", "daily_award"],
         "dungeon": ["lobby", "dungeon_statistic"],
-        "other": ["management", "statistic", "events", "promo", "dead_users"]
+        "other": ["management", "statistic", "events", "promo", "dead_users", "companies", "message_log"]
     },
 
     "indexes": [
