@@ -24,6 +24,7 @@ from . import skills_actions
 from . import actions_speed
 from . import super_coins
 from . import time_craft
+from . import companies
 
 from . import stars_invoice
 from . import post_handler # Должен загружаться последний!

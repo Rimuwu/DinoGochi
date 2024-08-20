@@ -27,6 +27,7 @@ class GeneralStates(StatesGroup):
     ChoosePagesState = State() # Состояние для выбора среди вариантов, а так же поддерживает страницы
     ChooseCustom = State() # Состояние для кастомного обработчика
     ChooseTime = State() # Состояние для ввода времени
+    ChooseImage = State() # Состояние для ввода загрузки изображения
 
 def add_if_not(data: dict, userid: int, chatid: int, lang: str):
     """Добавляет минимальные данные для работы"""
@@ -378,6 +379,25 @@ async def start_friend_menu(function,
         transmitted_data=transmitted_data)
     return True, 'friend'
 
+async def ChooseImageState(function, userid: int, 
+                         chatid: int, lang: str,
+                         need_image: bool = True,
+                         transmitted_data=None):
+    """ Устанавливает состояние ожидания вводу изображения
+        if need_image == True: даёт возможность на ответ 0 возвращать не file_id, а 'no_image'
+
+        В function передаёт 
+        >>> image_url: str transmitted_data: dict
+    """
+    if not transmitted_data: transmitted_data = {}
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
+
+    await bot.set_state(userid, GeneralStates.ChooseImage, chatid)
+    async with bot.retrieve_data(userid, chatid) as data:
+        data['function'] = function
+        data['need_image'] = need_image
+        data['transmitted_data'] = transmitted_data
+    return True, 'image'
 
 chooses = {
     'dino': ChooseDinoState,
@@ -390,7 +410,8 @@ chooses = {
     'custom': ChooseCustomState,
     'pages': ChoosePagesState,
     'inv': start_inv,
-    'friend': start_friend_menu
+    'friend': start_friend_menu,
+    'image': ChooseImageState
 }
 
 def prepare_steps(steps: list, userid: int, chatid: int, lang: str):

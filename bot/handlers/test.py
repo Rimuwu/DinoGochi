@@ -26,7 +26,7 @@ from bot.modules.inventory_tools import inventory_pages
 from bot.modules.items.item import (AddItemToUser, DowngradeItem, get_data,
                               get_item_dict, get_name, RemoveItemFromUser)
 from bot.modules.localization import get_data, get_lang, t
-from bot.modules.markup import count_markup, down_menu, list_to_keyboard, confirm_markup
+from bot.modules.markup import answer_markup, cancel_markup, count_markup, down_menu, list_to_keyboard, confirm_markup
 from bot.modules.notifications import user_notification, notification_manager
 from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
 from bot.modules.user.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement, take_coins
@@ -46,7 +46,7 @@ from bot.modules.user.user import get_inventory
 from typing import Optional
 from PIL import Image
 
-from bot.modules.user.advert import show_advert
+
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.decorators import HDMessage
@@ -158,9 +158,9 @@ async def add_to(message):
     player = await DungPlayer().create(message.from_user.id, m.id)
     await lobby.add_player(player, message.from_user.id)
 
-@bot.message_handler(pass_bot=True, commands=['test'])
-@HDMessage
-async def test(message: Message):
+# @bot.message_handler(pass_bot=True, commands=['test'])
+# @HDMessage
+# async def test(message: Message):
     
     # uu = await User().create(message.from_user.id)
     # ld = await uu.get_last_dino()
@@ -170,14 +170,144 @@ async def test(message: Message):
     # await save_kd(ld._id, 'fighting', 3600)
 
 
-    async for index in users.list_indexes():
-        index: SON
-        print(index)
-        print(dict(index['key']))
+    # async for index in users.list_indexes():
+    #     index: SON
+    #     print(index)
+    #     print(dict(index['key']))
 
-    await users.create_index(())
+    # await users.create_index(())
     
-    resp = users.create_index([ ("field_to_index", -1) ], unique = True)
+    # resp = users.create_index([ ("field_to_index", -1) ], unique = True)
     
     
 
+
+@bot.message_handler(pass_bot=True, commands=['test'])
+@HDMessage
+async def test(message: Message):
+    
+    lang = 'ru'
+    userid = message.from_user.id
+    chatid = message.chat.id
+    
+    steps = [
+        {
+            'type': 'int', 'name': 'owner',
+            'data': {
+                'max_int': 1000000000000,
+                'min_int': 0
+            },
+            'translate_message': True,
+            'message': {
+                'text': 'companies.owner',
+                'reply_markup': cancel_markup(lang)
+            }
+        },
+        
+        {
+            'type': 'time', 'name': 'time_end',
+            'data': {
+                'max_int': 1000000000000,
+                'min_int': 0
+                },
+            'translate_message': True,
+            'message': {
+                'text': 'companies.time_end',
+                'reply_markup': cancel_markup(lang)
+            }
+        },
+
+        {
+            'type': 'int', 'name': 'max_count',
+            'data': {
+                'max_int': 1000000000000,
+                'min_int': 0
+            },
+            'translate_message': True,
+            'message': {
+                'text': 'companies.max_count',
+                'reply_markup': cancel_markup(lang)
+            }
+        },
+
+        {
+            'type': 'bool', 'name': 'priority',
+            'data': {},
+            'translate_message': True,
+            'message': {
+                'text': 'companies.priority',
+                'reply_markup': answer_markup(lang)
+            }
+        },
+
+        {
+            'type': 'bool', 'name': 'one_message',
+            'data': {},
+            'translate_message': True,
+            'message': {
+                'text': 'companies.one_message',
+                'reply_markup': answer_markup(lang)
+            }
+        },
+
+        {
+            'type': 'bool', 'name': 'pin_message',
+            'data': {},
+            'translate_message': True,
+            'message': {
+                'text': 'companies.pin_message',
+                'reply_markup': answer_markup(lang)
+            }
+        },
+
+        {
+            'type': 'int', 'name': 'coin_price',
+            'data': {
+                'max_int': 100,
+                'min_int': 0
+            },
+            'translate_message': True,
+            'message': {
+                'text': 'companies.coin_price',
+                'reply_markup': cancel_markup(lang)
+            }
+        },
+
+        {
+            'type': 'bool', 'name': 'delete_after',
+            'data': {},
+            'translate_message': True,
+            'message': {
+                'text': 'companies.delete_after',
+                'reply_markup': answer_markup(lang)
+            }
+        },
+
+        {
+            'type': 'bool', 'name': 'ignore_system_timeout',
+            'data': {},
+            'translate_message': True,
+            'message': {
+                'text': 'companies.ignore_system_timeout',
+                'reply_markup': answer_markup(lang)
+            }
+        },
+
+        {
+            'type': 'int', 'name': 'min_timeout',
+            'data': {
+                'max_int': 1000000000000,
+                'min_int': 0
+            },
+            'translate_message': True,
+            'message': {
+                'text': 'companies.min_timeout',
+                'reply_markup': cancel_markup(lang)
+            }
+        }
+    ]
+
+    await ChooseStepState(end, userid, chatid, lang, steps, {'delete_steps': True})
+
+async def end(data, transmitted_data):
+    print(data, transmitted_data)

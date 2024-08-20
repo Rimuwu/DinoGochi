@@ -1,4 +1,5 @@
 
+from asyncio import sleep
 from bot.const import GAME_SETTINGS as gs
 from bot.exec import bot
 from bot.modules.data_format import chunk_pages, seconds_to_str, str_to_seconds
@@ -7,7 +8,7 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import GeneralStates
-from telebot.types import CallbackQuery, Message
+from telebot.types import CallbackQuery, Message, InputMedia
 
 
 async def cancel(message, text:str = "❌"):
@@ -393,3 +394,36 @@ async def ChooseTime(message: Message):
         else: transmitted_data['umessageid'] = message.id
 
         await func(number, transmitted_data=transmitted_data)
+
+@bot.message_handler(content_types=['photo'], pass_bot=True, is_authorized=True, state=GeneralStates.ChooseImage)
+@HDMessage
+async def ChooseImage(message: Message):
+    """Общая функция для получения изображения
+    """
+    userid = message.from_user.id
+
+    async with bot.retrieve_data(userid, message.chat.id) as data:
+        func = data['function']
+        transmitted_data = data['transmitted_data']
+
+    fileID = message.photo[-1].file_id
+    await func(fileID, transmitted_data=transmitted_data)
+
+@bot.message_handler(pass_bot=True, is_authorized=True, state=GeneralStates.ChooseImage)
+@HDMessage
+async def ChooseImage(message: Message):
+    """Общая функция для получения изображения
+    """
+    userid = message.from_user.id
+
+    if message.text == '0':
+        async with bot.retrieve_data(userid, message.chat.id) as data:
+            func = data['function']
+            transmitted_data = data['transmitted_data']
+            need_image = data['need_image']
+
+        if need_image:
+            await func('no_image', transmitted_data=transmitted_data)
+
+
+
