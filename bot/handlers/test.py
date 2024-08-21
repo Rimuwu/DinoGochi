@@ -86,15 +86,6 @@ async def command2(message):
     else:
         print(user.id, 'not in devs')
 
-@bot.message_handler(pass_bot=True, commands=['1coin'], is_admin=True)
-async def coin(message):
-    user = message.from_user
-    
-    res = await users.update_one({'userid': user.id}, 
-                                 {'$inc': {'coins': 999999999999999999}}, comment='9999')
-
-    pprint(res)
-
 
 @bot.message_handler(pass_bot=True, commands=['test_img'], is_admin=True)
 async def test_img(message):
