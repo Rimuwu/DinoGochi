@@ -1191,6 +1191,14 @@
                     "dev": true,
                     "dm": true,
                     "group": false
+                },
+                "create_company": {
+                    "short": "Создать компанию",
+                    "long": "🛡️ Создать рекламную компанию",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 }
             }
         },

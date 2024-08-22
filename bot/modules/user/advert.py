@@ -1,6 +1,7 @@
 
 import aiohttp
 from bot.config import conf
+from bot.modules.companies import generate_message, nextinqueue, save_message
 from bot.modules.logs import log
 from bot.config import mongo_client
 import json
@@ -97,12 +98,24 @@ async def auto_ads(message, only_parthner: bool = False):
     user_id = message.from_user.id
     if message.chat.type == "private":
         user = await users.find_one({'userid': user_id}, {"_id": 1}, comment='auto_ads_user')
-        if conf.show_advert and user:
+        print(user)
+        if user:
+            if conf.show_advert:
 
-            create = user['_id'].generation_time
-            now = datetime.now(timezone.utc)
-            delta = now - create
+                create = user['_id'].generation_time
+                now = datetime.now(timezone.utc)
+                delta = now - create
 
-            if delta.days >= 4:
-                if await check_limit(user_id):
-                    await show_advert_gramads(user_id)
+                if delta.days >= 4:
+                    if await check_limit(user_id):
+                        await show_advert_gramads(user_id)
+
+            if only_parthner:
+                lang = await get_lang(user_id)
+                comp_id = await nextinqueue(user_id, lang)
+                print(comp_id)
+
+                if comp_id:
+                    m_id = await generate_message(user_id, comp_id, lang)
+                    if m_id:
+                        await save_message(comp_id, user_id, m_id)

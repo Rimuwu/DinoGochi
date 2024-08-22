@@ -411,7 +411,7 @@ async def ChooseImage(message: Message):
 
 @bot.message_handler(pass_bot=True, is_authorized=True, state=GeneralStates.ChooseImage)
 @HDMessage
-async def ChooseImage(message: Message):
+async def ChooseImage_0(message: Message):
     """Общая функция для получения изображения
     """
     userid = message.from_user.id

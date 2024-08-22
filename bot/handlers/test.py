@@ -17,6 +17,7 @@ from bot.config import conf, mongo_client
 from bot.const import GAME_SETTINGS, ITEMS
 from bot.exec import bot
 from bot.handlers.dino_profile import transition
+from bot.modules.companies import nextinqueue, save_message
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, item_list
 from bot.modules.dinosaur.dinosaur import check_status
 from bot.modules.dinosaur.kd_activity import save_kd
@@ -29,6 +30,7 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import answer_markup, cancel_markup, count_markup, down_menu, list_to_keyboard, confirm_markup
 from bot.modules.notifications import user_notification, notification_manager
 from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
+from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement, take_coins
 from bot.modules.managment.statistic import get_now_statistic
 from bot.modules.quests import create_quest, quest_ui, save_quest
@@ -181,124 +183,25 @@ async def test(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
     
-    steps = [
-        {
-            'type': 'int', 'name': 'owner',
-            'data': {
-                'max_int': 1000000000000,
-                'min_int': 0
-            },
-            'translate_message': True,
-            'message': {
-                'text': 'companies.owner',
-                'reply_markup': cancel_markup(lang)
-            }
-        },
-        
-        {
-            'type': 'time', 'name': 'time_end',
-            'data': {
-                'max_int': 1000000000000,
-                'min_int': 0
-                },
-            'translate_message': True,
-            'message': {
-                'text': 'companies.time_end',
-                'reply_markup': cancel_markup(lang)
-            }
-        },
+    r = await nextinqueue(userid)
+    print(r)
 
-        {
-            'type': 'int', 'name': 'max_count',
-            'data': {
-                'max_int': 1000000000000,
-                'min_int': 0
-            },
-            'translate_message': True,
-            'message': {
-                'text': 'companies.max_count',
-                'reply_markup': cancel_markup(lang)
-            }
-        },
 
-        {
-            'type': 'bool', 'name': 'priority',
-            'data': {},
-            'translate_message': True,
-            'message': {
-                'text': 'companies.priority',
-                'reply_markup': answer_markup(lang)
-            }
-        },
+@bot.message_handler(pass_bot=True, commands=['test2'])
+@HDMessage
+async def test2(message: Message):
+    
+    lang = 'ru'
+    userid = message.from_user.id
+    chatid = message.chat.id
+    
+    m = await bot.send_message(chatid, 'text')
+    await auto_ads(m, True)
 
-        {
-            'type': 'bool', 'name': 'one_message',
-            'data': {},
-            'translate_message': True,
-            'message': {
-                'text': 'companies.one_message',
-                'reply_markup': answer_markup(lang)
-            }
-        },
+    # aid = await nextinqueue(userid)
+    # if aid:
+    #     m = await bot.send_message(chatid, 'text')
+    #     await save_message(aid, userid, m.id)
+    # else:
+    #     print('NO companies')
 
-        {
-            'type': 'bool', 'name': 'pin_message',
-            'data': {},
-            'translate_message': True,
-            'message': {
-                'text': 'companies.pin_message',
-                'reply_markup': answer_markup(lang)
-            }
-        },
-
-        {
-            'type': 'int', 'name': 'coin_price',
-            'data': {
-                'max_int': 100,
-                'min_int': 0
-            },
-            'translate_message': True,
-            'message': {
-                'text': 'companies.coin_price',
-                'reply_markup': cancel_markup(lang)
-            }
-        },
-
-        {
-            'type': 'bool', 'name': 'delete_after',
-            'data': {},
-            'translate_message': True,
-            'message': {
-                'text': 'companies.delete_after',
-                'reply_markup': answer_markup(lang)
-            }
-        },
-
-        {
-            'type': 'bool', 'name': 'ignore_system_timeout',
-            'data': {},
-            'translate_message': True,
-            'message': {
-                'text': 'companies.ignore_system_timeout',
-                'reply_markup': answer_markup(lang)
-            }
-        },
-
-        {
-            'type': 'int', 'name': 'min_timeout',
-            'data': {
-                'max_int': 1000000000000,
-                'min_int': 0
-            },
-            'translate_message': True,
-            'message': {
-                'text': 'companies.min_timeout',
-                'reply_markup': cancel_markup(lang)
-            }
-        }
-    ]
-
-    await ChooseStepState(end, userid, chatid, lang, steps, {'delete_steps': True})
-
-async def end(data, transmitted_data):
-    print(data, transmitted_data)

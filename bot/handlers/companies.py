@@ -1,6 +1,7 @@
 from bot.config import mongo_client
 from bot.exec import bot
 from bot.handlers.start import start_game
+from bot.modules.companies import create_company
 from bot.modules.data_format import seconds_to_str, str_to_seconds, user_name
 from bot.modules.decorators import HDMessage
 from bot.modules.inline import inline_menu
@@ -16,7 +17,7 @@ langs = DBconstructor(mongo_client.user.lang)
 
 @bot.message_handler(pass_bot=True, commands=['create_company'])
 @HDMessage
-async def create_company(message: Message):
+async def create_company_com(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -288,5 +289,6 @@ async def end(data, transmitted_data):
         'delete_after': data['delete_after'],
         'ignore_system_timeout': data['ignore_system_timeout']
     }
-    
+
     await create_company(**return_data)
+    await bot.send_message(chatid, '✅')
