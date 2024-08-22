@@ -41,7 +41,7 @@ async def DeadUser_return():
         {'$lte': int(time()) - 86400 * 7}}, {'_id': 1, 'last_message_time': 1, 'userid': 1}
                                  ))
 
-    log(f'Начата проверка {len(users_ids)}')
+    log(f'Начата проверка {len(users_ids)}', 0)
 
     del_u = 0
     for us in users_ids:

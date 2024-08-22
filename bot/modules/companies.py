@@ -11,21 +11,28 @@ import random
 from time import time
 from typing import Union
 from bson import ObjectId
-from bot.config import mongo_client
+from bot.config import mongo_client, conf
 from bot.exec import bot
-from telebot.types import InlineKeyboardMarkup
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from bot.modules.data_format import list_to_inline
-from bot.modules.localization import get_lang, t
+from bot.modules.data_format import list_to_inline, random_code, seconds_to_str
+from bot.modules.localization import get_lang, t, get_data
+
 from bot.modules.overwriting.DataCalsses import DBconstructor
 companies = DBconstructor(mongo_client.other.companies)
 message_log = DBconstructor(mongo_client.other.message_log)
+users = DBconstructor(mongo_client.user.users)
 
+async def generation_code(owner_id):
+    code = f'{owner_id}_{random_code(4)}'
+    if await companies.find_one({'alt_id': code}, comment='generation_code_companies'):
+        code = await generation_code(owner_id)
+    return code
 
 async def create_company(owner: int, message: dict, time_end: int, 
                         count: int, coin_price: int, priority: bool, 
                         one_message: bool, pin_message: bool, min_timeout: int,
-                        delete_after: bool, ignore_system_timeout: bool):
+                        delete_after: bool, ignore_system_timeout: bool, name: str):
     """
     owner: int
 
@@ -62,16 +69,19 @@ async def create_company(owner: int, message: dict, time_end: int,
 
     """
 
+    if time_end == 0: end = 0
+    else: end = time_end + int(time())
+
     data = {
         'owner': owner,
         'message': message,
 
-        'langs': [list(message.keys())],
+        'langs': list(message.keys()),
 
-        'time_end': time_end + int(time()),
+        'time_end': end,
         'time_start': int(time()),
 
-        'max_count': count, 'show_chount': 0,
+        'max_count': count, 'show_count': 0,
         'coin_price': coin_price,
 
         'priority': priority,
@@ -82,7 +92,9 @@ async def create_company(owner: int, message: dict, time_end: int,
 
         'min_timeout': min_timeout,
 
-        'status': False
+        'status': False,
+        'name': name,
+        'alt_id': generation_code(owner)
     }
 
     await companies.insert_one(data)
@@ -104,6 +116,7 @@ async def save_message(advert_id: ObjectId, userid: int,
     }
 
     await message_log.insert_one(data)
+    await companies.update_one({'_id': advert_id}, {'$inc': {'show_count': 1}})
 
 async def end_company(advert_id: ObjectId):
     companie = await companies.find_one({'_id': advert_id})
@@ -117,26 +130,30 @@ async def end_company(advert_id: ObjectId):
                     try:
                         await bot.unpin_chat_message(mes['userid'],
                                                      mes['message_id'])
-                    except:
-                        pass
-
+                    except: pass
                 try:
                     await bot.delete_message(mes['userid'],
                                              mes['message_id'])
-                except:
-                    pass
-
+                except: pass
                 await message_log.delete_one({'_id': mes['_id']})
 
         else:
             await message_log.delete_one({'advert_id': advert_id})
 
-        lang = await get_lang(companie['owner'])
-        await bot.send_message(companie['owner'],
-            t('companies.end_company', lang)
-        )
+        await companies.delete_one({'_id': advert_id})
 
-async def generate_message(userid: int, company_id: ObjectId, lang = None):
+        for i in set([companie['owner']] + conf.bot_devs):
+            lang = await get_lang(i)
+            await bot.send_message(i,
+                t('companies.end_company', lang, 
+                time_work = seconds_to_str(int(time()) - companie['time_start'], lang),
+                show_count = companie['show_count'],
+                max_count = companie['max_count'],
+                name = companie['name'])
+                )
+
+async def generate_message(userid: int, company_id: ObjectId, lang = None, 
+                           save = True):
     """ Собирает сообщение и публикует его у пользователя
 
         message: {
@@ -159,10 +176,14 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None):
         parse_mode = message['parse_mode']
         image = message['image']
 
-        b_dct = {}
-        for key, value in message['markup'].items():
-            b_dct[key] =  {'url': value}
-        inline = InlineKeyboardMarkup(b_dct)
+        inline = InlineKeyboardMarkup()
+        for i in message['markup']:
+            for key, value in i.items():
+                inline.add(
+                    InlineKeyboardButton(
+                        text=key, 
+                        url=value
+                ))
 
         if image:
             m = await bot.send_photo(userid, image, text, parse_mode, 
@@ -170,6 +191,28 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None):
         else:
             m = await bot.send_message(userid, text, 
                                        parse_mode=parse_mode, reply_markup=inline)
+
+        # Закрепляем
+        if companie['pin_message'] and save:
+            s = await bot.pin_chat_message(m.chat.id, m.id)
+            if s: await bot.delete_message(m.chat.id, m.id + 1)
+
+        # Сохраняем
+        if m and save:
+            await save_message(company_id, userid, m.id)
+
+            # Награда
+            if companie['coin_price'] > 0:
+                await users.update_one({"userid": userid}, 
+                                    {'$inc':
+                                        {"super_coins": companie['coin_price']}},
+                                comment='generate_message')
+                try:
+                    await bot.send_message(userid, 
+                                        t('super_coins.moder_reward', lang, coin=companie['coin_price']), parse_mode="Markdown")
+                except:
+                    await bot.send_message(userid, 
+                                        t('super_coins.moder_reward', lang, coin=companie['coin_price']))
         return m.id
     return None
 
@@ -184,15 +227,23 @@ async def nextinqueue(userid: int, lang = None) -> Union[ObjectId, None]:
     # Получаем активные компании
     comps = await companies.find(
         {'status': True, 'langs': {'$in': [lang]} }, 
-        {'_id': 1, 'one_message': 1, 'min_timeout': 1})
+        {'_id': 1, 'one_message': 1, 'min_timeout': 1,
+         'time_end': 1, 'show_count': 1, 'max_count': 1})
 
     # Создаём структуру 
-    for i in comps: 
-        count_dct[i['_id']] = 0
-        permissions[i['_id']] = {'one_message': i['one_message'],
-                                 'min_timeout': i['min_timeout'],
-                                 'last_send': -1
-                                 }
+    for i in comps:
+        if i['show_count'] >= i['max_count'] and i['max_count'] != 0:
+            await end_company(i['_id'])
+
+        elif int(time()) > i['time_end'] and i['time_end'] != 0:
+            await end_company(i['_id'])
+
+        else:
+            count_dct[i['_id']] = 0
+            permissions[i['_id']] = {'one_message': i['one_message'],
+                                    'min_timeout': i['min_timeout'],
+                                    'last_send': -1
+                                    }
 
     # Проверяем, есть ли активные компании
     if count_dct:
@@ -228,3 +279,39 @@ async def nextinqueue(userid: int, lang = None) -> Union[ObjectId, None]:
 
             return r_key
     return None
+
+async def priority_and_timeout(companie_id: ObjectId):
+    f = await companies.find_one({'_id': companie_id})
+    if f: return f['priority'], f['ignore_system_timeout']
+    return False, False
+
+async def info(companie_id: ObjectId, lang = None):
+    c = await companies.find_one({'_id': companie_id})
+    text = ''
+    mrk = InlineKeyboardMarkup()
+
+    if c:
+        text = t('companies.info', lang,
+                 name=c['name'],
+                 end=seconds_to_str(c['time_end']-int(time()), lang),
+                 delta=seconds_to_str(time()-c['time_start'], lang),
+                 show=c['show_count'],
+                 max_c=c['max_count'],
+                 coin=c['coin_price'],
+                 priority=c['priority'],
+                 pin=c['pin_message'],
+                 timeout=c['min_timeout'],
+                 sys_timeout=c['ignore_system_timeout'],
+                 dlete_after=c['delete_after'],
+                 status=c['status'])
+
+        btn = get_data('companies.buttons', lang)
+        new_btn = {}
+        for key, value in btn.items():
+            new_btn[
+                value
+            ] = f'company_info {key} {c["alt_id"]}'
+
+        mrk = list_to_inline([new_btn])
+
+    return text, mrk

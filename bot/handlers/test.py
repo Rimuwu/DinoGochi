@@ -195,8 +195,8 @@ async def test2(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
     
-    m = await bot.send_message(chatid, 'text')
-    await auto_ads(m, True)
+    # m = await bot.send_message(chatid, 'text')
+    await auto_ads(message, True)
 
     # aid = await nextinqueue(userid)
     # if aid:

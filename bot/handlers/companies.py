@@ -1,21 +1,22 @@
 from bot.config import mongo_client
 from bot.exec import bot
 from bot.handlers.start import start_game
-from bot.modules.companies import create_company
+from bot.modules.companies import create_company, end_company, generate_message, info
 from bot.modules.data_format import seconds_to_str, str_to_seconds, user_name
-from bot.modules.decorators import HDMessage
+from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.inline import inline_menu
-from bot.modules.localization import get_lang, t, get_all_locales
-from bot.modules.markup import cancel_markup, confirm_markup, answer_markup
-from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.localization import get_all_locales, get_lang, t
 from bot.modules.managment.promo import use_promo
-from telebot.types import Message
-from bot.modules.states_tools import ChooseStepState
+from bot.modules.markup import answer_markup, cancel_markup, confirm_markup
+from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.states_tools import ChoosePagesState, ChooseStepState
+from telebot.types import CallbackQuery, Message
 
 users = DBconstructor(mongo_client.user.users)
+companies = DBconstructor(mongo_client.other.companies)
 langs = DBconstructor(mongo_client.user.lang)
 
-@bot.message_handler(pass_bot=True, commands=['create_company'])
+@bot.message_handler(pass_bot=True, is_admin=True, commands=['create_company'])
 @HDMessage
 async def create_company_com(message: Message):
     chatid = message.chat.id
@@ -262,7 +263,19 @@ async def pre_check(data, transmitted_data):
                 'text': 'companies.min_timeout',
                 'reply_markup': cancel_markup(lang)
             }
-        }
+        },
+        
+        {
+            'type': 'str', 'name': 'name',
+            'data': {
+                'max_len': 200
+            },
+            'translate_message': True,
+            'message': {
+                'text': 'companies.name',
+                'reply_markup': cancel_markup(lang)
+            }
+        },
     ]
 
     await ChooseStepState(end, userid, chatid, lang, steps, transmitted_data)
@@ -270,11 +283,9 @@ async def pre_check(data, transmitted_data):
 async def end(data, transmitted_data):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
-    lang = transmitted_data['lang']
     message = transmitted_data['message']
-    
-    if data['owner'] == 0:
-        data['owner'] = userid
+
+    if data['owner'] == 0: data['owner'] = userid
 
     return_data = {
         'owner': data['owner'],
@@ -287,8 +298,73 @@ async def end(data, transmitted_data):
         'coin_price': data['coin_price'],
         'min_timeout': data['min_timeout'],
         'delete_after': data['delete_after'],
-        'ignore_system_timeout': data['ignore_system_timeout']
+        'ignore_system_timeout': data['ignore_system_timeout'],
+        'name': data['name']
     }
 
     await create_company(**return_data)
     await bot.send_message(chatid, '✅')
+
+@bot.message_handler(pass_bot=True, commands=['companies'], is_admin=True)
+async def companies_c(message: Message):
+    chatid = message.chat.id
+    lang = await get_lang(message.from_user.id)
+    userid = message.from_user.id
+    
+    comps = await companies.find({})
+    options = {}
+
+    for i in comps:
+        options[i['name']] = i['_id']
+
+    await ChoosePagesState(comp_info, userid, chatid, lang, options)
+
+async def comp_info(com_id, transmitted_data):
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    lang = transmitted_data['lang']
+
+    text, mrk = await info(com_id, lang)
+    await bot.send_message(
+        chatid, text, reply_markup=mrk
+    )
+
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('company_info') , is_authorized=True)
+@HDCallback
+async def company_info(callback: CallbackQuery):
+    chatid = callback.message.chat.id
+    userid = callback.from_user.id
+    lang = await get_lang(callback.from_user.id)
+    data = callback.data.split()
+
+    action = data[1]
+    alt_id = data[2]
+
+    c = await companies.find_one({'alt_id': alt_id})
+
+    if c:
+        if action == 'delete':
+            await end_company(c['_id'])
+            await bot.delete_message(chatid, callback.message.id)
+
+        elif action == 'activate':
+            await companies.update_one({'_id': c['_id']}, {'$set': {'status': True}})
+
+            text, mrk = await info(c['_id'], lang)
+            await bot.edit_message_text(
+                text, chatid, callback.message.id, reply_markup=mrk
+            )
+
+        elif action == 'stop':
+            await companies.update_one({'_id': c['_id']}, {'$set': {'status': False}})
+
+            text, mrk = await info(c['_id'], lang)
+            await bot.edit_message_text(
+                text, chatid, callback.message.id, reply_markup=mrk
+            )
+        
+        elif action == 'message':
+            langs = c['message'].keys()
+            
+            for i in langs:
+                await generate_message(userid, c['_id'], i, False)

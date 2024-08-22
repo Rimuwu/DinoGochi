@@ -22,13 +22,6 @@ management = DBconstructor(mongo_client.other.management)
 promo = DBconstructor(mongo_client.other.promo)
 langs = DBconstructor(mongo_client.user.lang)
 
-@bot.message_handler(pass_bot=True, commands=['s_message'], is_admin=True)
-async def s_message(message: Message):
-    chatid = message.chat.id
-    lang = await get_lang(message.from_user.id)
-    
-    # Рассылка
-
 @bot.message_handler(pass_bot=True, commands=['create_tracking'], is_admin=True)
 @HDMessage
 async def create_tracking(message: Message):
