@@ -9,6 +9,8 @@ from bot.modules.notifications import user_notification
 from bot.modules.logs import log
 import requests
 
+from bot.modules.user.advert import auto_ads
+
 DEFAULT_RATE_LIMIT = 0.5
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -59,8 +61,11 @@ class AntifloodMiddleware(BaseMiddleware):
                                     {'$set': {'last_message_time': message.date}}, 
                                     comment='post_process_1')
 
-                if await daily_data.find_one({'owner_id': user_id}, comment='post_process_check') == None and \
-                    await check_ads(user_id) > 10:
+                daily = await daily_data.find_one({'owner_id': user_id}, comment='post_process_check')
+                last_ads_time = await check_ads(user_id)
+                send = False
+
+                if daily == None and last_ads_time >= 10:
                     if user['settings']['notifications']:
                         for key, value in user['notifications'].items():
 
@@ -69,11 +74,16 @@ class AntifloodMiddleware(BaseMiddleware):
                                 break
                         else:
                             res = await user_notification(user_id, 'daily_award')
+                            send = True
 
                             if res:
                                 await users.update_one({'userid': user_id}, 
                                     {'$set': {'notifications.daily_award': int(time_now())}}, 
                                     comment='post_process_2')
+
+                if last_ads_time >= 10 and not send:
+                    # Рекламные сообщения
+                    await auto_ads(message, True)
 
 
 bot.setup_middleware(AntifloodMiddleware())

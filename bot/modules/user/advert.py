@@ -1,7 +1,7 @@
 
 import aiohttp
 from bot.config import conf
-from bot.modules.companies import generate_message, nextinqueue, priority_and_timeout, save_message
+from bot.modules.companies import generate_message, nextinqueue, priority_and_timeout
 from bot.modules.logs import log
 from bot.config import mongo_client
 import json
@@ -106,14 +106,15 @@ async def auto_ads(message, only_parthner: bool = False):
                 now = datetime.now(timezone.utc)
                 delta = now - create
 
-                comp_id = await nextinqueue(user_id)
-                priory, ign_timeout = await priority_and_timeout(comp_id)
                 lim = await check_limit(user_id)
+                comp_id = await nextinqueue(user_id)
+                if comp_id:
+                    priory, ign_timeout = await priority_and_timeout(comp_id)
 
-                # Проверяем приоритет компании
-                if comp_id and priory:
-                    if ign_timeout or lim:
-                        await generate_message(user_id, comp_id)
+                    # Проверяем приоритет компании
+                    if comp_id and priory:
+                        if ign_timeout or lim:
+                            await generate_message(user_id, comp_id)
 
                 # Если не в приоритете пытаемся отослать рекламу
                 elif delta.days >= 4:
@@ -131,5 +132,7 @@ async def auto_ads(message, only_parthner: bool = False):
                 comp_id = await nextinqueue(user_id, lang)
                 lim = await check_limit(user_id)
 
-                if comp_id and lim:
-                    await generate_message(user_id, comp_id, lang)
+                if comp_id:
+                    priory, ign_timeout = await priority_and_timeout(comp_id)
+                    if ign_timeout or lim:
+                        await generate_message(user_id, comp_id, lang)

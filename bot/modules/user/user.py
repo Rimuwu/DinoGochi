@@ -8,6 +8,7 @@ from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
 from bot.modules.data_format import escape_markdown, item_list, seconds_to_str, user_name
 from bot.modules.dinosaur.dinosaur import Dino, Egg
+from bot.modules.user.advert import create_ads_data
 from bot.modules.user.friends import get_frineds
 from bot.modules.items.item import AddItemToUser
 from bot.modules.items.item import get_data as get_item_data
@@ -38,6 +39,11 @@ daily_award_data = DBconstructor(mongo_client.tavern.daily_award)
 langs = DBconstructor(mongo_client.user.lang)
 ads = DBconstructor(mongo_client.user.ads)
 dead_users = DBconstructor(mongo_client.other.dead_users)
+
+quests = DBconstructor(mongo_client.tavern.quests)
+message_log = DBconstructor(mongo_client.other.message_log)
+item_craft = DBconstructor(mongo_client.items.item_craft)
+preferential = DBconstructor(mongo_client.market.preferential)
 
 class User:
 
@@ -144,10 +150,10 @@ class User:
         """Удаление юзера и всё с ним связанное из базы.
         """
 
-        for collection in [items, products, dead_dinos, incubations, sellers, puhs, daily_award_data]:
+        for collection in [items, products, dead_dinos, incubations, sellers, puhs, daily_award_data, quests]:
             await collection.delete_many({'owner_id': self.userid}, comment='User_full_delete')
 
-        for collection in [referals, langs, ads, dead_users, subscriptions, tavern, dead_users]:
+        for collection in [referals, langs, ads, dead_users, subscriptions, tavern, dead_users, message_log, item_craft, preferential]:
             await collection.delete_many({'userid': self.userid}, comment='User_full_delete_1')
 
         """ При полном удалении есть возможность, что у динозавра
@@ -214,13 +220,14 @@ class User:
 
 async def insert_user(userid: int, lang: str):
     """Создание пользователя"""
-    log(prefix='InsertUser', message=f'User: {userid}', lvl=0)
 
     if not await users.find_one({'userid': userid}, comment='insert_user'):
+        log(prefix='InsertUser', message=f'User: {userid}', lvl=0)
         if lang not in available_locales: lang = 'en'
         await langs.insert_one({'userid': userid, 'lang': lang}, comment='insert_user_1')
 
         user = await User().create(userid)
+        await create_ads_data(userid, 1800)
         return await users.insert_one(user.__dict__, comment='insert_user')
 
 async def get_dinos(userid: int, all_dinos: bool = True) -> list[Dino]:

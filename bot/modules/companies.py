@@ -19,9 +19,11 @@ from bot.modules.data_format import list_to_inline, random_code, seconds_to_str
 from bot.modules.localization import get_lang, t, get_data
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+
 companies = DBconstructor(mongo_client.other.companies)
 message_log = DBconstructor(mongo_client.other.message_log)
 users = DBconstructor(mongo_client.user.users)
+ads = DBconstructor(mongo_client.user.ads)
 
 async def generation_code(owner_id):
     code = f'{owner_id}_{random_code(4)}'
@@ -94,7 +96,7 @@ async def create_company(owner: int, message: dict, time_end: int,
 
         'status': False,
         'name': name,
-        'alt_id': generation_code(owner)
+        'alt_id': await generation_code(owner)
     }
 
     await companies.insert_one(data)
@@ -117,6 +119,11 @@ async def save_message(advert_id: ObjectId, userid: int,
 
     await message_log.insert_one(data)
     await companies.update_one({'_id': advert_id}, {'$inc': {'show_count': 1}})
+
+    ads_cabinet = await ads.find_one({'userid': userid}, comment='save_message')
+    if ads_cabinet:
+        await ads.update_one({'_id': ads_cabinet['_id']}, 
+                         {"$set": {'last_ads': int(time())}}, comment='save_message')
 
 async def end_company(advert_id: ObjectId):
     companie = await companies.find_one({'_id': advert_id})
@@ -291,6 +298,7 @@ async def info(companie_id: ObjectId, lang = None):
     mrk = InlineKeyboardMarkup()
 
     if c:
+        if not lang: lang = await get_lang(c['owner'])
         text = t('companies.info', lang,
                  name=c['name'],
                  end=seconds_to_str(c['time_end']-int(time()), lang),
