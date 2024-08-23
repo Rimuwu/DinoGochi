@@ -33,24 +33,25 @@ async def show_advert_gramads(user_id: int):
     """
 
     res = 6
-    async with aiohttp.ClientSession() as session:
+    if conf.advert_token:
+        async with aiohttp.ClientSession() as session:
 
-        async with session.post(
-            'https://api.gramads.net/ad/SendPost',
-            headers={
-                'Authorization': conf.advert_token,
-                'Content-Type': 'application/json',
-            },
-            json={'SendToChatId': user_id},
-        ) as response:
-            data = json.loads(await response.read())
-            res = data['SendPostResult']
+            async with session.post(
+                'https://api.gramads.net/ad/SendPost',
+                headers={
+                    'Authorization': conf.advert_token,
+                    'Content-Type': 'application/json',
+                },
+                json={'SendToChatId': user_id},
+            ) as response:
+                data = json.loads(await response.read())
+                res = data['SendPostResult']
 
-            if not response.ok:
-                log('Gramads: %s' % str(await response.json()), 2)
+                if not response.ok:
+                    log('Gramads: %s' % str(await response.json()), 2)
 
-    if res == 1: await save_last_ads(user_id)
-    else: log(f'gramads status - {res}', 4)
+        if res == 1: await save_last_ads(user_id)
+        else: log(f'gramads status - {res}', 4)
     return res
 
 async def create_ads_data(user_id:int, limit: int = 7200): 
