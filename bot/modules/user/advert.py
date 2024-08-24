@@ -136,4 +136,6 @@ async def auto_ads(message, only_parthner: bool = False):
                 if comp_id:
                     priory, ign_timeout = await priority_and_timeout(comp_id)
                     if ign_timeout or lim:
-                        await generate_message(user_id, comp_id, lang)
+                        state =  await bot.get_state(user_id, message.chat.id)
+                        if not state:
+                            await generate_message(user_id, comp_id, lang)

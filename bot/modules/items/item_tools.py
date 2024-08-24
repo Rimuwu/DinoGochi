@@ -178,8 +178,16 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
                 dino.stats['eat'] = edited_stats(dino.stats['eat'], 
                                     int((data_item['act'] * count)*percent))
-                return_text += t('item_use.eat.great', lang, 
-                         item_name=item_name, eat_stat=dino.stats['eat'])
+
+                # Определяем текст Выпил / Съел
+                activ_text = t(f'item_use.eat.eat', lang)
+                if 'drink' in data_item and data_item['drink']:
+                    activ_text = t(f'item_use.eat.drink', lang)
+
+                return_text += t('item_use.eat.great', lang,
+                         item_name=item_name, eat_stat=dino.stats['eat'],
+                         dino_name=dino.name, activ=activ_text
+                         )
                 await add_mood(dino._id, 'good_eat', 1, 900)
 
             else:
@@ -190,8 +198,10 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                 # Получаем конечную характеристики
                 dino.stats['eat'] = edited_stats(dino.stats['eat'], loses_eat)
 
-                return_text = t('item_use.eat.bad', lang, item_name=item_name,
-                         loses_eat=loses_eat)
+                return_text = t('item_use.eat.bad', lang, 
+                                item_name=item_name, loses_eat=loses_eat,
+                                dino_name=dino.name
+                                )
 
                 await add_mood(dino._id, 'bad_eat', -1, 1200)
             await quest_process(userid, 'feed', items=[item_id] * count)

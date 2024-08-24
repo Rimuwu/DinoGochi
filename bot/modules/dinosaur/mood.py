@@ -22,7 +22,7 @@ keys = [
 
     'bad_sleep', 'stop_game', 'little_game', 'little_heal',
     'little_eat', 'little_energy', 'bad_dream', 'bad_eat', 'repeat_eat', 'rain', 'cold_wind', 'snowfall', 'drought', 'negative_talk',
-    'break', 'bad_talk', 'hard_work', 'repeat_activity',
+    'break', 'bad_talk', 'hard_work', 'repeat_activity', 'overloading',
     # Отрицательное
 
     'journey_event' 

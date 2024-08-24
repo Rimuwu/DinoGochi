@@ -47,6 +47,7 @@ async def main_checks():
         status = await check_status(dino['_id'])
         if status == 'inactive': continue
         is_sleeping = status == 'sleep'
+        skill_activ = status in ['gym', 'library', 'swimming_pool', 'park']
 
         if dino['stats']['heal'] <= 0:
             dino_cl = await Dino().create(dino['_id'])
@@ -89,6 +90,15 @@ async def main_checks():
             # если динозавр не спит
             if not(is_sleeping) and (random.uniform(0, 1) <= P_ENERGY):
                 await mutate_dino_stat(dino, 'energy', randint(*ENERGY_CHANGE)*-1)
+
+
+            # Во время тренировки более быстрое уменьшение еды и энергии
+            if skill_activ and (random.uniform(0, 1) <= P_ENERGY):
+                await mutate_dino_stat(dino, 'energy', -1)
+
+            elif skill_activ and (random.uniform(0, 1) <= P_EAT):
+                await mutate_dino_stat(dino, 'eat', -1)
+
 
             if randint(1, 5) == 5:
                 owner = await get_owner(dino['_id'])

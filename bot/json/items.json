@@ -622,7 +622,8 @@
         "drink": true,
         "image": "item36",
         "rank": "rare",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["energy_eat"]
     },
     "tea_recipe": {
         "abilities": {
@@ -1323,7 +1324,8 @@
         "class": "ALL",
         "image": "item68",
         "rank": "common",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["energy_eat"]
     },
     "candy": {
         "buffs": {
@@ -1337,7 +1339,8 @@
         "class": "ALL",
         "image": "item69",
         "rank": "uncommon",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["energy_eat"]
     },
     "candy_recipe": {
         "abilities": {
@@ -1513,7 +1516,8 @@
         "drink": true,
         "image": "item81",
         "rank": "rare",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["energy_eat"]
     },
     "mushroom": {
         "buffs": {
@@ -1612,7 +1616,8 @@
         "drink": true,
         "image": "item88",
         "rank": "uncommon",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["energy_eat"]
     },
     "hot_chocolate_recipe": {
         "abilities": {
@@ -1816,7 +1821,8 @@
         "class": "Flying",
         "image": "item99",
         "rank": "uncommon",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["energy_eat"]
     },
     "meat_pie": {
         "buffs": {
@@ -2815,7 +2821,8 @@
         "drink": true,
         "image": "item114",
         "rank": "common",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["energy_eat"]
     },
     "net": {
         "abilities": {
@@ -2955,7 +2962,8 @@
         "class": "ALL",
         "image": "null",
         "rank": "rare",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["energy_eat"]
     },
     "croissant_recipe": {
         "abilities": {

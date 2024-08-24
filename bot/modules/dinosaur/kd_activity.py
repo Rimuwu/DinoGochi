@@ -8,6 +8,7 @@ kd_activity = DBconstructor(mongo_client.dino_activity.kd_activity)
 
 async def save_kd(dino_id: ObjectId, activity_type: str, kd_time: int) -> dict:
     """ kd_time - просто количество секунд ожидания, код сам добавить настоящее время
+        Если существует - добавит время кд к активности
     """
 
     if not await kd_activity.find_one({'dino_id': dino_id, 'activity_type': activity_type}, comment='save_kd_1'):
@@ -19,6 +20,10 @@ async def save_kd(dino_id: ObjectId, activity_type: str, kd_time: int) -> dict:
 
         await kd_activity.insert_one(kd, comment='save_kd')
         return kd
+    else:
+        await kd_activity.update_one({'dino_id': dino_id, 'activity_type': activity_type},
+                                     {'$inc': {'kd_time': kd_time}},
+                                     comment='save_kd_2')
     return {}
 
 async def check_activity(dino_id: ObjectId, activity_type: str) -> int:

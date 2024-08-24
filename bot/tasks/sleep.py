@@ -26,11 +26,12 @@ async def one_time(sleeper, one_time_unit):
     elif sleeper['sleep_type'] == 'short':
         sec_time = sleeper['sleep_end'] - sleeper['sleep_start']
 
-    if randint(0, 1):
-        owner = await get_owner(dino['_id'])
-        await experience_enhancement(owner['owner_id'], randint(1, 2))
-
     if dino:
+        if randint(0, 1):
+            owner = await get_owner(dino['_id'])
+            if owner:
+                await experience_enhancement(owner['owner_id'], randint(1, 2))
+
         energy = dino['stats']['energy']
         if energy >= 100:
             await end_sleep(sleeper['dino_id'], sec_time)

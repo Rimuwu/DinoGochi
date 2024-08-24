@@ -1,4 +1,5 @@
 
+from random import randint
 from bson.objectid import ObjectId
 from bot.config import mongo_client
 
@@ -61,9 +62,19 @@ async def check_status(dino_id):
         return status
     return 'pass'
 
+
+skill_time = {
+    "gym": [5400, 10800],
+    "library": [1800, 7200],
+    "swimming_pool": [5400, 7200],
+    "park": [1200, 7200],
+}
+
+def get_skill_time(skill: str): return skill_time[skill]
+
 async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, down: str, 
                                up_unit: list[float], down_unit: list[float],
-                               time_end: int, sended: int):
+                               sended: int):
     """ up_unit | down_unit - list[float, float] минимум и максимум число которое может быть выдано
         - за 10 минут
     """
@@ -85,14 +96,19 @@ async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, down: 
             'up_skill': up, 'down_skill': down,
             'up_unit': up_unit, 'down_unit': down_unit,
 
-            'end_time': time_end + int(time()), 'last_check': int(time()),
+            'last_check': int(time()), 'start_time': int(time()),
 
             'activity_type': activity,
             'alt_code': random_code(),
 
-            'up_unit': 0.0 # Считаем, сколько было повышено и вычитаем 50% при отмене заранее.
+            'up': 0.0, # Считаем, сколько было повышено и вычитаем 50% при отмене заранее.
+            'min_time': skill_time[activity][0], 'max_time': skill_time[activity][1],
+            'ahtung_lvl': 0
+            # min_time - если меньше, то штраф к хррактеристикам
+            # max_time - Если больше на 20% - повышение кд на 5 часов (ahtung_lvl = 1)
+            #          - Если больше на 40% - штраф (ahtung_lvl = 2)
         }
-        result = await long_activity.insert_one(act, comment=f'start_{activity}')
+        await long_activity.insert_one(act, comment=f'start_{activity}')
     return act
 
 async def end_skill_activity(dino_id: ObjectId):

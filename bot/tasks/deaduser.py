@@ -50,7 +50,7 @@ async def DeadUser_return():
             delta_days = (int(time()) - us['last_message_time']) // 86400
 
             res = await dead_users.find_one({'userid': us['userid']}, {'_id': 0}, 
-                                            comment='DeadUser_return_res') # type: dict
+                                            comment='DeadUser_return_res')
             if res:
                 userid, type_send, promo, last_m = list(res.values())
             else:

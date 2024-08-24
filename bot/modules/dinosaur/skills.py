@@ -38,7 +38,8 @@ async def add_skill_point(dino_id: ObjectId, skill: str, point: float):
         if skill_stat + point >= 10.0: return -1
         elif skill_stat + point <= 0.0: return -1
         else:
-            await dinosaurs.update_one({'_id': dino['_id']}, 
-                                        {'$set': {f'stats.{skill}': 
-                                            round(point + dino['stats'][skill], 4)}})
+            if point:
+                await dinosaurs.update_one({'_id': dino['_id']}, 
+                                            {'$set': {f'stats.{skill}': 
+                                                round(point + dino['stats'][skill], 4)}})
             return 1

@@ -601,7 +601,7 @@ async def max_eat(userid: int):
     max_col = col * per_one + 50
     return max_col
 
-async def get_inventory_from_i(userid: int, items_l: list[dict] = []):
+async def get_inventory_from_i(userid: int, items_l: list[dict] = [], limit = None):
     """ 
         items_l - [ {'item_id': int, 'abilities': dict} ]
     """
@@ -618,7 +618,8 @@ async def get_inventory_from_i(userid: int, items_l: list[dict] = []):
         else:
             find_data = {'owner_id': userid, 'items_data.item_id': item_id}
 
-        fi = await items.find(find_data, {'_id': 0, 'owner_id': 0})
+        fi = await items.find(find_data, {'_id': 0, 'owner_id': 0}, 
+                              max_col=limit)
         pre_l = list(map(
             lambda i: {'item': i['items_data'], 'count': i['count']}, fi))
         find_i += pre_l
