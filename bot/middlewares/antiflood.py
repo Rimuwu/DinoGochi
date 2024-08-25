@@ -1,5 +1,6 @@
 # Система антифлуда
 
+from random import randint
 from telebot.asyncio_handler_backends import BaseMiddleware, CancelUpdate
 from telebot.types import Message
 from bot.exec import bot
@@ -83,7 +84,8 @@ class AntifloodMiddleware(BaseMiddleware):
 
                 if last_ads_time >= 10 and not send:
                     # Рекламные сообщения
-                    await auto_ads(message, True)
+                    if randint(1, 4) == 4:
+                        await auto_ads(message, True)
 
 
 bot.setup_middleware(AntifloodMiddleware())

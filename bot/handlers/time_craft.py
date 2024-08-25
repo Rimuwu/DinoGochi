@@ -5,9 +5,11 @@ from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur import Dino
 from bot.modules.items.item import get_items_names
+from bot.modules.items.time_craft import dino_craft, stop_craft
 from bot.modules.localization import get_lang
 from bot.modules.localization import t
-from bot.modules.states_tools import ChoosePagesState
+from bot.modules.states_tools import ChooseDinoState, ChoosePagesState
+from bot.modules.markup import markups_menu as m
 
 from bot.config import conf, mongo_client
 
@@ -41,21 +43,29 @@ async def info_craft(data, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
-    craft = await item_craft.find_one({'_id': data})
+    portable = False
+    if 'portable' in transmitted_data:
+        portable = transmitted_data['portable']
+
+    if not portable:
+        craft = await item_craft.find_one({'_id': data})
+    else:
+        craft = await item_craft.find_one({'alt_code': data})
+
     if craft:
         alt_code = craft['alt_code']
         b_l = []
         b_l.append({
-                t('time_craft.cancel', lang): f'time_craft {alt_code} send_dino'
+                t('time_craft.cancel', lang): f'time_craft {alt_code} cancel_craft'
             })
 
         if craft['dino_id']:
-            dino_acc = await Dino().create()
+            dino_acc = await Dino().create(craft['dino_id'])
             name = dino_acc.name
         else:
             name = '-'
             b_l.append({
-                t('time_craft.button', lang): f'time_craft {alt_code} cancel_craft'
+                t('time_craft.button', lang): f'time_craft {alt_code} send_dino'
             })
 
         mrk = list_to_inline(b_l)
@@ -64,12 +74,16 @@ async def info_craft(data, transmitted_data: dict):
                  craft_time=seconds_to_str(craft['time_end'] - int(time()), lang, False, 'minute'),
                  dino=name
                  )
-        await bot.send_message(chatid, info, parse_mode='Markdown',
+        
+        if not portable:
+            await bot.send_message(chatid, info, parse_mode='Markdown',
                                reply_markup=mrk)
+        else:
+            return info, mrk
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('transformation'), is_authorized=True)
+@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('time_craft'), is_authorized=True)
 @HDCallback
-async def transformation(callback: CallbackQuery):
+async def time_craft(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
     lang = await get_lang(callback.from_user.id)
@@ -79,6 +93,36 @@ async def transformation(callback: CallbackQuery):
     action = data[2]
 
     if action == 'send_dino':
-        ...
+        transmitted_data = {'ms_id': callback.message.id, 'alt_code': alt_code}
+        await ChooseDinoState(send_dino_to_craft, userid, chatid, 
+                              lang, False, False, transmitted_data)
+
     elif action == 'cancel_craft':
-        ...
+        await stop_craft(alt_code)
+        await bot.delete_message(chatid, callback.message.id)
+
+async def send_dino_to_craft(dino: Dino, transmitted_data: dict):
+    chatid = transmitted_data['chatid']
+    userid = transmitted_data['userid']
+    lang = transmitted_data['lang']
+    ms_id = transmitted_data['ms_id']
+    alt_code = transmitted_data['alt_code']
+
+    st, pers = await dino_craft(dino._id, alt_code)
+    if st:
+        text = t('time_craft.send_dino', lang, percent=pers)
+
+        transmitted_data = {
+            'portable': True,
+            'chatid': chatid,
+            'lang': lang
+        }
+        info, mrk = await info_craft(alt_code, transmitted_data) # type: ignore
+        await bot.edit_message_text(info, chatid, ms_id, reply_markup=mrk, parse_mode='Markdown')
+
+        await bot.send_message(chatid, text, parse_mode='Markdown',
+                               reply_markup=await m(userid, 'last_menu', lang))
+
+    else:
+        await bot.send_message(chatid, "❌", parse_mode='Markdown', 
+                           reply_markup= await m(userid, 'last_menu', lang))

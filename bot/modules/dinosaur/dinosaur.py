@@ -9,7 +9,7 @@ from bot.config import mongo_client
 from bot.const import DINOS
 from bot.const import GAME_SETTINGS as GS
 from bot.modules.data_format import random_code, random_quality
-from bot.modules.dinosaur.dino_status import check_status
+from bot.modules.dinosaur.dino_status import check_status, end_skill_activity
 from bot.modules.images import create_dino_image, create_egg_image
 from bot.modules.items.item import AddItemToUser
 from bot.modules.localization import log, get_lang
@@ -29,6 +29,7 @@ dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 kindergarten = DBconstructor(mongo_client.dino_activity.kindergarten)
 kd_activity = DBconstructor(mongo_client.dino_activity.kd_activity)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
+item_craft = DBconstructor(mongo_client.items.item_craft)
 
 class Dino:
 
@@ -535,10 +536,10 @@ async def dead_check(userid: int):
     return False
 
 async def set_status(dino_id: ObjectId, new_status: str, now_status: str = ''):
-    """ Устанавливает состояние динозавра. Делает это грубо.
+    """ НЕ вводит в состояние, лишь отменяет старое. Делает это грубо.
     """
 
-    assert new_status in ['pass', 'sleep', 'game', 'journey', 'collecting', 'dungeon', 'freezing', 'kindergarten', 'hysteria'], f'Состояние {new_status} не найдено!'
+    assert new_status in ['sleep', 'game', 'journey', 'collecting', 'dungeon', 'kindergarten', 'hysteria', 'farm', 'mine', 'bank', 'sawmill', 'gym', 'library', 'park', 'swimming_pool', 'craft', 'unrestrained_play'], f'Состояние {new_status} не найдено!'
 
     if not now_status:
         now_status = await check_status(dino_id)
@@ -551,7 +552,7 @@ async def set_status(dino_id: ObjectId, new_status: str, now_status: str = ''):
             await end_sleep(dino_id, sleeper['_id'], sleep_time)
 
     elif now_status == 'game': await end_game(dino_id)
-    
+
     elif now_status == 'journey': await end_journey(dino_id)
 
     elif now_status == 'collecting':
@@ -568,6 +569,40 @@ async def set_status(dino_id: ObjectId, new_status: str, now_status: str = ''):
     elif now_status == 'kindergarten':
         data = await kindergarten.find_one({'dinoid': dino_id}, comment='set_status_data')
         if data: await kindergarten.delete_one({'_id': data['_id']}, comment='set_status_1')
+
+    elif now_status == 'craft':
+
+        res = await item_craft.find_one({'dino_id': dino_id})
+        if res:
+            await dino_notification(dino_id, 'craft_end')
+            await item_craft.delete_one({'_id': res['_id']})
+
+        await long_activity.delete_one({
+            'dino_id': dino_id,
+            'activity_type': 'craft'
+        })
+
+    elif now_status in ['gym', 'library', 'park', 'swimming_pool']:
+        res = await long_activity.find_one(
+        {'dino_id': dino_id})
+
+        if res: 
+            traning_time = int(time()) - res['start_time']
+            way = ''
+
+            if traning_time < res['min_time']:
+                unit_percent = res['up_unit'] / 2
+
+                skill =  res['up_skill']
+                await dinosaurs.update_one({'_id': dino_id}, 
+                                            {'$inc': {f'stats.{skill}': 
+                                                round(-unit_percent)}
+                                             })
+                way = '_negative'
+
+            await dino_notification(dino_id, res['activity_type'] + '_end' + way)
+            await end_skill_activity(dino_id)
+
 
 quality_spec = {
     'com': [0.1, 0.5],

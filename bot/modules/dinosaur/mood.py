@@ -14,6 +14,7 @@ from bot.const import GAME_SETTINGS
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 max_stack = 5
 
@@ -168,8 +169,11 @@ async def dino_breakdown(dino: ObjectId):
         }
         await dino_mood.insert_one(data, comment='dino_breakdown')
 
-    if action == 'hysteria': await set_status(dino, 'hysteria')
-    elif action == 'unrestrained_play': await start_game(dino, 10800, 0.4)
+    if action == 'hysteria': 
+        await set_status(dino, 'pass')
+    elif action == 'unrestrained_play':
+        await set_status(dino, 'pass')
+        await start_game(dino, 10800, 0.4)
     elif action == 'downgrade':
         dino_cl = await Dino().create(dino)
 
@@ -178,7 +182,7 @@ async def dino_breakdown(dino: ObjectId):
             if dino_cl.activ_items[i]: allowed.append(i)
 
         if allowed:
-            await downgrade_accessory(dino_cl, choice(allowed))
+            await downgrade_accessory(dino_cl, choice(allowed), 30)
 
     # print('dino_nervous_breakdown', action, duration_s)
     return action
