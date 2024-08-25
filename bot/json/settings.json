@@ -407,5 +407,7 @@
             "price": 100000,
             "one_col": 1
         }
-    }
+    },
+    
+    "promotion_price": 5000
 } 

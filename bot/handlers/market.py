@@ -288,7 +288,7 @@ async def random_products(message: Message):
     chatid = message.chat.id
 
     products_all = await products.find({"owner_id": {"$ne": userid}}, 
-                                       comment='random_products_products_all')
+                                       comment='random_products_products_all', max_col=62)
     rand_p = {}
 
     if products_all:

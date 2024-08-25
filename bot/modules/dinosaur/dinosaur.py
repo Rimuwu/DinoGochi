@@ -1,6 +1,6 @@
 import datetime
 from datetime import datetime, timezone
-from random import choice, randint, choices, uniform
+from random import choice, randint, uniform
 from time import time
 
 from bson.objectid import ObjectId
@@ -438,7 +438,7 @@ async def start_collecting(dino_baseid: ObjectId, owner_id: int, coll_type: str,
     """Запуск активности "сбор пищи". 
        + Изменение статуса динозавра 
     """
-    
+
     assert coll_type in ['collecting', 'hunt', 'fishing', 'all'], f'Неподходящий аргумент {coll_type}'
 
     result = False

@@ -4,7 +4,9 @@ from time import time
 from bson.objectid import ObjectId
 
 from bot.config import mongo_client
+from bot.modules.data_format import transform
 from bot.modules.dinosaur.dinosaur import set_status, start_game, Dino
+from bot.modules.dinosaur.skills import check_skill
 from bot.modules.items.accessory import downgrade_accessory
 from bot.modules.notifications import dino_notification
 from bot.const import GAME_SETTINGS
@@ -81,6 +83,13 @@ async def add_mood(dino: ObjectId, key: str, unit: int, duration: int,
                               'action': key, 
                               'type': 'mood_edit'}, comment='add_mood_res'
                              )
+
+    if unit < 0:
+        # Шанс отмены плохого настроения при высокой харизмы
+        charisma = await check_skill(dino, 'charisma')
+        if charisma > 5:
+            if randint(1, transform(charisma, 20, 100)) > 70:
+                return True
 
     if not stacked and res: 
         await dino_mood.update_one({'_id': res[0]['_id']}, 

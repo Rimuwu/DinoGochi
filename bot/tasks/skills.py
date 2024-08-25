@@ -62,6 +62,9 @@ async def skills_work():
                         ahtung_lvl = 1
                         await save_kd(dino_id, skill_activ['activity_type'], 3600 * 5)
 
+                        text = t('all_skills.overloading', lang)
+                        await bot.send_message(sended, text, parse_mode='Markdown')
+
                     elif dif_percent >= 40 and skill_activ['ahtung_lvl'] == 1:
                         # Завершение
                         save = False

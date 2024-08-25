@@ -3,6 +3,7 @@ from bson.objectid import ObjectId
 from bot.config import mongo_client
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.user.user import get_dinos
 
 users = DBconstructor(mongo_client.user.users)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
@@ -43,3 +44,19 @@ async def add_skill_point(dino_id: ObjectId, skill: str, point: float):
                                             {'$set': {f'stats.{skill}': 
                                                 round(point + dino['stats'][skill], 4)}})
             return 1
+
+async def check_skill(dino_id: ObjectId, skill: str):
+    assert skill in ['charisma', 'intelligence', 'dexterity', 'power'], f'Skill {skill} не в списке'
+
+    dino = await dinosaurs.find_one({"_id": dino_id}, comment='check_skill')
+    if dino: return dino['stats'][skill]
+    return 0.0
+
+async def max_skill(owner: int, skill: str):
+    assert skill in ['charisma', 'intelligence', 'dexterity', 'power'], f'Skill {skill} не в списке'
+
+    dinos = await get_dinos(owner)
+    max_skill = 0
+
+    for dino in dinos: max_skill = max(dino.stats[skill])
+    return max_skill

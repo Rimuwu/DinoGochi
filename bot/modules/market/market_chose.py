@@ -2,7 +2,8 @@ from telebot.types import Message, InputMedia
 
 from bot.config import mongo_client
 from bot.exec import bot
-from bot.modules.data_format import (list_to_keyboard, escape_markdown)
+from bot.modules.data_format import (list_to_keyboard, escape_markdown, transform)
+from bot.modules.dinosaur.skills import max_skill
 from bot.modules.items.item import (CheckCountItemFromUser,
                               RemoveItemFromUser)
 from bot.modules.localization import t
@@ -15,7 +16,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.user.user import take_coins
 from random import choice
  
-
+from bot.const import GAME_SETTINGS
 
 MAX_PRICE = 10_000_000
 
@@ -300,13 +301,14 @@ async def promotion(_: bool, transmitted_data: dict):
     lang = transmitted_data['lang']
     pid = transmitted_data['id']
     message_id = transmitted_data['message_id']
+    price = transmitted_data['price']
 
     st, cd = await check_preferential(userid, pid)
     stat = True
 
     if cd == 1: text = t('promotion.max', lang)
     elif cd == 2: text = t('promotion.already', lang)
-    elif not await take_coins(userid, -1_890, True):
+    elif not await take_coins(userid, -price, True):
         text = t('promotion.no_coins', lang)
         stat = False
     else: 
@@ -325,12 +327,24 @@ async def promotion_prepare(userid: int, chatid: int, lang: str, product_id, mes
     """
     user = await users.find_one({'userid': userid}, comment='promotion_prepare_user')
     if user:
+        coins = GAME_SETTINGS['promotion_price']
+        max_charisma = await max_skill(userid, 'charisma')
+        discount = transform(max_charisma, 20, 60)
+
+        if discount >= 1:
+            coins -= (coins // 100) * discount
+            text_price = t('promotion.price_discount', 
+                           coins=coins, discount=discount)
+        else:
+            text_price = t('promotion.price', coins=coins)
+
         transmitted_data = {
             'id': product_id,
-            'message_id': message_id
+            'message_id': message_id,
+            'price': coins
         }
 
-        await bot.send_message(chatid, t('promotion.buy', lang), 
+        await bot.send_message(chatid, t('promotion.buy', lang) + text_price, 
                                 reply_markup=confirm_markup(lang))
         await ChooseConfirmState(promotion, userid, chatid, lang, True, transmitted_data)
 

@@ -231,7 +231,9 @@ async def insert_user(userid: int, lang: str):
         return await users.insert_one(user.__dict__, comment='insert_user')
 
 async def get_dinos(userid: int, all_dinos: bool = True) -> list[Dino]:
-    """Возвращает список с объектами динозавров."""
+    """Возвращает список с объектами динозавров.
+       all_dinos = вернёт в том числе и совместных дино
+    """
     dino_list = []
 
     if all_dinos:

@@ -4,6 +4,7 @@ from time import time
 
 from bot.config import conf, mongo_client
 from bot.handlers.actions_live.journey import send_logs
+from bot.modules.data_format import transform
 from bot.modules.items.accessory import check_accessory
 from bot.modules.dinosaur.dinosaur  import (Dino, end_collecting, end_journey,
                                   get_dino_language, mutate_dino_stat)
@@ -52,6 +53,9 @@ async def events():
             await check_accessory(dino, 'hiking_bag', True)
 
             if randint(0, 1): 
+                await experience_enhancement(i['sended'], randint(1, 2))
+
+            if randint(1, 100) + transform(dino.stats['charisma'], 20, 30) >= 80:
                 await experience_enhancement(i['sended'], randint(1, 2))
 
 if __name__ != '__main__':

@@ -3,6 +3,7 @@ from random import randint
 from time import time
 
 from bot.config import conf, mongo_client
+from bot.modules.data_format import transform
 from bot.modules.dinosaur.dinosaur  import end_game, mutate_dino_stat, get_owner
 from bot.modules.dinosaur.mood import add_mood, check_breakdown
 from bot.modules.user.user import experience_enhancement
@@ -44,6 +45,8 @@ async def game_process():
         dino = await dinosaurs.find_one({'_id': game_data['dino_id']}, comment='game_process_dino')
 
         if dino:
+            charisma = dino['stats']['charisma']
+
             if random.uniform(0, 1) <= ENERGY_DOWN:
                 if random.uniform(0, 1) <= ENERGY_DOWN2: 
                     await mutate_dino_stat(dino, 'energy', -1)
@@ -57,9 +60,17 @@ async def game_process():
                             userid = dino_con['owner_id']
                             await experience_enhancement(userid, randint(1, 19))
 
+                            if randint(1, 100) + transform(charisma, 20, 30) >= 80:
+                                await experience_enhancement(userid, randint(1, 5))
+
                 if dino['stats']['game'] < 100:
                     if random.uniform(0, 1) <= GAME_CHANCE:
-                       await mutate_dino_stat(dino, 'game', int(randint(2, 10) * percent))
+                        add_unit += 0
+
+                        if randint(1, 100) + transform(charisma, 20, 5) >= 80:
+                            add_unit = randint(1, 5)
+
+                        await mutate_dino_stat(dino, 'game', int(add_unit + randint(2, 10) * percent))
 
 if __name__ != '__main__':
     if conf.active_tasks:

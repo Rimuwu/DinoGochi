@@ -4,6 +4,8 @@ from random import randint
 from bot.config import conf, mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
+from bot.modules.data_format import transform
+from bot.modules.dinosaur.skills import check_skill
 from bot.modules.items.accessory import check_accessory
 from bot.modules.dinosaur.dinosaur  import Dino, end_collecting, mutate_dino_stat
 from bot.modules.items.item import counts_items
@@ -66,6 +68,9 @@ async def collecting_process():
                 await experience_enhancement(coll_data['sended'], 
                                              randint(1, 3))
 
+            if randint(1, 100) + transform(dino.stats['charisma'], 20, 30) >= 80:
+                await experience_enhancement(coll_data['sended'], randint(1, 5))
+
             # Выдача еды
             if random.uniform(0, 1) <= chance:
                 await check_accessory(dino, 'tooling', True)
@@ -90,6 +95,27 @@ async def collecting_process():
                         rare_list[2] += 10
                         rare_list[3] += 5
                         rare_list[4] += 2
+
+                # # ==== Повышение шанса в зависимости от навыка === #
+                if coll_type == 'collecting':
+                    char = dino.stats['intelligence']
+
+                elif coll_type == 'fishing':
+                    char = dino.stats['dexterity']
+
+                elif coll_type == 'hunt':
+                    char = dino.stats['dexterity']
+
+                elif coll_type == 'all':
+                    char = dino.stats['charisma']
+    
+                # Распределно по принципу distribute_number()
+                rare_list[0] -= transform(char, 20, 25)
+                rare_list[1] -= transform(char, 20, 12)
+
+                rare_list[2] += transform(char, 20, 22)
+                rare_list[3] += transform(char, 20, 13)
+                rare_list[4] += transform(char, 20, 2)
 
                 items = GAME_SETTINGS['collecting_items'][coll_type]
                 event = await get_event(f'add_{coll_type}')

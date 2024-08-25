@@ -406,8 +406,6 @@ async def check_endurance_and_col(finded_items, count, item,
         await end_craft(count, item, userid, chatid, lang, data)
 
 async def end_craft(count, item, userid, chatid, lang, data):
-    
-    print(count, item)
 
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id)

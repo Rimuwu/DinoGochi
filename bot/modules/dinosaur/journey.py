@@ -5,8 +5,9 @@ from time import time
 from bson.objectid import ObjectId
 
 from bot.config import mongo_client
-from bot.modules.data_format import encoder_text, random_dict, count_elements
+from bot.modules.data_format import encoder_text, random_dict, count_elements, transform
 from bot.modules.dinosaur.dinosaur import Dino, mutate_dino_stat
+from bot.modules.dinosaur.skills import check_skill
 from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, t
 from bot.modules.dinosaur.mood import add_mood
@@ -494,7 +495,6 @@ async def random_event(dinoid, location: str, ignored_events: list=[], friend_di
                 if event['type'] not in ignored_events: 
                     stop = True
                     break
-                print(event)
             if event:
                 res = await activate_event(dinoid, event, friend_dino)
                 if res: 
@@ -620,8 +620,9 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
             if 'mobs' in event:
                 dino_hp, loot, status = 0, [], True
                 data['mobs'] = []
-    
-                damage = await weapon_damage(dino, True)
+
+                power = await check_skill(dino._id, 'power')
+                damage = await weapon_damage(dino, True) + transform(power, 20, 10)
                 have_acs = await check_accessory(dino, 'skinning_knife', True)
                 protection = await armor_protection(dino, False)
 
