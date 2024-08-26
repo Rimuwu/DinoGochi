@@ -32,6 +32,8 @@ class Config:
         self.check_translate = False # Синхронизация перевода
         self.base_logging = False # Логирование БД
 
+        self.only_dev = False # Принимает сообщения только от разработчиков
+
     def fromJSON(self, js: str) -> None:
         """Десереализует строку в данные
 

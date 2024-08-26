@@ -7,7 +7,7 @@ from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur  import Dino, random_dino, random_quality
+from bot.modules.dinosaur.dinosaur  import Dino, get_dino_data, random_dino, random_quality, set_standart_specifications
 from bot.modules.images import async_open
 from bot.modules.inline import inline_menu
 from bot.modules.items.item import (CheckCountItemFromUser, RemoveItemFromUser,
@@ -275,6 +275,36 @@ async def dino_now(return_data, transmitted_data):
     await ChooseInlineState(end_edit, userid, chatid, lang, str(code), {'dino': dino, 'type': o_type})
     await bot.send_message(chatid,  t('edit_dino.new_rare', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
 
+async def reset_chars(return_data, transmitted_data):
+    chatid = transmitted_data['chatid']
+    lang = transmitted_data['lang']
+    userid = transmitted_data['userid']
+    dino: Dino = return_data['dino']
+
+    coins_st = await take_coins(userid, -GS['reset_chars']['coins'])
+    if coins_st:
+        await take_coins(userid, -GS['reset_chars']['coins'], True)
+
+        quality = dino.quality
+        din_data = get_dino_data(dino.data_id)
+        dino_type = din_data['class']
+        power, dexterity, intelligence, charisma = set_standart_specifications(dino_type, quality)
+
+        await dino.update({
+            "$set": {
+                'stats.power': power,
+                'stats.dexterity': dexterity,
+                'stats.intelligence': intelligence,
+                'stats.charisma': charisma,
+            }
+        })
+
+        text = t('edit_dino.new', lang)
+        await bot.send_message(chatid, text, parse_mode='Markdown', 
+                                reply_markup=inline_menu('dino_profile', lang, dino_alt_id_markup=dino.alt_id))
+        await bot.send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
+                                reply_markup= await m(userid, 'last_menu', lang))
+
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('transformation') , is_authorized=True)
 @HDCallback
 async def transformation(callback: CallbackQuery):
@@ -303,6 +333,21 @@ async def transformation(callback: CallbackQuery):
             "data": {'cancel': True}, 
             'message': {
                 'text': t('edit_dino.appearance', lang, items=items_text, coins=coins),
+                'reply_markup': confirm_markup(lang)
+                }
+            }
+        )
+
+    elif data[1] == 'chars':
+        coins = GS['change_appearance']['coins']
+        ret_f = reset_chars
+
+        steps.append(
+            {
+            "type": 'bool', "name": 'confirm', 
+            "data": {'cancel': True}, 
+            'message': {
+                'text': t('edit_dino.reset_chars', lang, coins=coins),
                 'reply_markup': confirm_markup(lang)
                 }
             }

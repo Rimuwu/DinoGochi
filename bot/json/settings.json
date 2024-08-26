@@ -128,6 +128,9 @@
     "change_appearance": {
         "coins": 1000, "items": ["mysterious_egg"]
     },
+    "reset_chars": {
+        "coins": 10000
+    },
 
     "egg_ask_backs": ["back", "back2", "back3", "back4", "back5"],
 

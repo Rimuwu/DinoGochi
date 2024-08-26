@@ -1,12 +1,16 @@
 import random
-from random import randint
+from random import choice, randint
 
 from bot.config import conf, mongo_client
+from bot.modules.data_format import transform
 from bot.modules.dinosaur.dinosaur  import check_status, mutate_dino_stat
+from bot.modules.localization import get_data, get_lang, t
 from bot.taskmanager import add_task
 from bot.modules.dinosaur.dinosaur  import Dino, get_owner
 from bot.modules.dinosaur.mood import check_inspiration, mood_while_if, calculation_points
 from bot.modules.user.user import experience_enhancement
+from bot.exec import bot
+from bot.modules.user.user import User
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
@@ -175,6 +179,28 @@ async def main_checks():
             elif dino['stats']['mood'] <= 5:
                 if random.randint(0, 5) == 3:
                     await calculation_points(dino, 'breakdown')
+        
+        # ========== Мысли вслух ========== # 
+        if status == 'pass':
+            chance = randint(1, 20) + transform(dino['stats']['charisma'], 20, 5)
+            if chance >= 20:
+                owner = await get_owner(dino['_id'])
+
+                if owner:
+                    user = await User().create(owner['owner_id'])
+                    lang = await get_lang(owner['owner_id'])
+
+                    if not user.settings.get('my_name', False):
+                        owner_name = t('owner', lang)
+                    else: owner_name = user.settings['my_name']
+
+                    text = choice(get_data('pass_messages', lang))
+                    text = text.format(owner=owner_name)
+                    try:
+                        await bot.send_message(
+                            owner['owner_id'], f'🦕 {dino["name"]}: {text}'
+                        )
+                    except: pass
 
 if __name__ != '__main__':
     if conf.active_tasks:

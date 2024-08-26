@@ -127,7 +127,13 @@ class Dino:
                 'data_id': self.data_id,
                 'quality': self.quality,
                 'name': self.name,
-                'owner_id': owner['owner_id']
+                'owner_id': owner['owner_id'],
+                'stats': {
+                    'charisma': self.stats['charisma'],
+                    'intelligence': self.stats['intelligence'],
+                    'dexterity': self.stats['dexterity'],
+                    'power': self.stats['power'],
+                }
             }
             await dead_dinos.insert_one(save_data, comment='dead')
 
@@ -616,11 +622,11 @@ async def set_status(dino_id: ObjectId, new_status: str, now_status: str = ''):
 
 
 quality_spec = {
-    'com': [0.1, 0.5],
-    'unc': [0.1, 1],
-    'rar': [0.1, 1.5],
-    'mys': [0.1, 2], 
-    'leg': [0.1, 3]
+    'com': [0, 1],
+    'unc': [0, 2],
+    'rar': [0, 3],
+    'mys': [0, 4], 
+    'leg': [0, 5]
 }
 
 def set_standart_specifications(dino_type: str, dino_quality: str):
@@ -634,18 +640,18 @@ def set_standart_specifications(dino_type: str, dino_quality: str):
     intelligence = 0
     charisma = 0
 
-    power = round(uniform( *quality_spec[dino_quality] ), 1)
-    dexterity = round(uniform( *quality_spec[dino_quality] ), 1)
-    intelligence = round(uniform( *quality_spec[dino_quality] ), 1)
-    charisma = round(uniform( *quality_spec[dino_quality] ), 1)
+    power = round(uniform( *quality_spec[dino_quality] ), 4)
+    dexterity = round(uniform( *quality_spec[dino_quality] ), 4)
+    intelligence = round(uniform( *quality_spec[dino_quality] ), 4)
+    charisma = round(uniform( *quality_spec[dino_quality] ), 4)
 
     if dino_type == 'Herbivore':
-        charisma += round(uniform( *quality_spec[dino_quality] ), 1)
+        charisma += round(uniform( *quality_spec[dino_quality] ), 4)
 
     elif dino_type == 'Carnivore':
-        power += round(uniform( *quality_spec[dino_quality] ), 1)
+        power += round(uniform( *quality_spec[dino_quality] ), 4)
 
     elif dino_type == 'Flying':
-        dexterity += round(uniform( *quality_spec[dino_quality] ), 1)
+        dexterity += round(uniform( *quality_spec[dino_quality] ), 4)
 
-    return power, dexterity, intelligence, charisma
+    return round(power, 4), round(dexterity, 4), round(intelligence, 4), round(charisma, 4)

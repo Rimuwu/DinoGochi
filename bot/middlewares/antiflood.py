@@ -4,8 +4,9 @@ from random import randint
 from telebot.asyncio_handler_backends import BaseMiddleware, CancelUpdate
 from telebot.types import Message
 from bot.exec import bot
-from bot.config import mongo_client
+from bot.config import mongo_client, conf
 from time import time as time_now
+from bot.modules.localization import get_lang, t
 from bot.modules.notifications import user_notification
 from bot.modules.logs import log
 import requests
@@ -40,6 +41,11 @@ class AntifloodMiddleware(BaseMiddleware):
         self.update_types = ['message']
 
     async def pre_process(self, message: Message, data: dict):
+        if conf.only_dev and message.from_user.id not in conf.bot_devs:
+            lang = await get_lang(message.from_user.id)
+            await bot.send_message(message.chat.id, t('only_dev_mode', lang))
+            return CancelUpdate()
+
         if message.date + 10 < int(time_now()):
             log(f'message timeout: {message.text} from {message.from_user.id} ping1 {int(time_now() - message.date)} ping2 {await ping()}ms', 4, 'middleware')
 

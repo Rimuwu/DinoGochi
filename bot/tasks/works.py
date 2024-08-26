@@ -4,11 +4,12 @@ from time import time
 
 from bot.config import conf, mongo_client
 from bot.exec import bot
+from bot.modules.data_format import transform
 from bot.modules.dinosaur.dino_status import end_skill_activity
 from bot.modules.dinosaur.dinosaur import Dino, mutate_dino_stat
 from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.dinosaur.mood import add_mood
-from bot.modules.dinosaur.skills import add_skill_point
+from bot.modules.dinosaur.skills import add_skill_point, check_skill
 from bot.modules.dinosaur.works import end_work
 from bot.modules.items.item import get_items_names
 from bot.modules.items.item_tools import use_item
@@ -21,11 +22,6 @@ from bot.taskmanager import add_task
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
-
-
-# async def end_work(skill_activ, dino_id):
-#     # Завершаем тренировку 
-
 
 data = {
     'bank': 'recipe',
@@ -42,6 +38,19 @@ async def work():
 
     for work in res_list:
         save = True
+
+        dp_chance = 0
+        if work['activity_type'] == 'sawmill':
+            dexterity = await check_skill(work['dino_id'], 'dexterity')
+            dp_chance = randint(0, transform(dexterity, 20, 50) + 50) > 60
+
+        elif work['activity_type'] == 'bank':
+            charisma = await check_skill(work['dino_id'], 'charisma')
+            dp_chance = randint(0, transform(charisma, 20, 50) + 50) > 60
+
+        elif work['activity_type'] == 'mine':
+            power = await check_skill(work['dino_id'], 'power')
+            dp_chance = randint(0, transform(power, 20, 50) + 50) > 60
 
         if int(time()) >= work['end_time']:
             save = False
@@ -60,7 +69,7 @@ async def work():
                                     results=text
                                     )
 
-        elif randint(0, 1):
+        elif save and (randint(0, 1) or dp_chance):
             # Добавляем прдеметы / монеты
             if 'coins' in work:
                 if work['coins'] < work['max_coins']:
@@ -98,7 +107,7 @@ async def work():
                             'items': work['items']
                         }
                     })
-        else:
+        elif save:
             # Отбираем прдеметы / монеты
             if 'coins' in work:
                 if work['coins'] != 0:

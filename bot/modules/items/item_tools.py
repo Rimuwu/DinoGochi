@@ -375,7 +375,13 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                 if res:
                     await dinosaurs.update_one({'_id': res.inserted_id}, 
                                                {'$set': {'name': dct_dino['name']}}, 
-                                               comment='use_item_reborn') 
+                                               comment='use_item_reborn')
+
+                    if 'stats' in dct_dino:
+                        await dinosaurs.update_one({'_id': res.inserted_id}, 
+                                               {'$set': {'stats': dct_dino}}, 
+                                               comment='use_item_reborn_1')
+
                     await dead_dinos.delete_one({'_id': dct_dino['_id']}, comment='use_item_reborn') 
                     return_text = t('item_use.special.reborn.ok', lang, 
                             limit=dino_limit['limit'])
