@@ -77,7 +77,8 @@
                 "edit": "♻ Transformación",
                 "quests": "⛓ Misiones",
                 "daily_award": "🎁 Bonificación",
-                "events": "🎈 Eventos"
+                "events": "🎈 Eventos",
+                "hoarder": "🪈 Acaparador"
             },
             "about": {
                 "team": "🤼 Equipo",
@@ -99,6 +100,39 @@
                 "backgrounds": "🖼️ Fondos",
                 "standart": "🗝️ Estándar",
                 "custom_profile": "🌟 Fondo personalizado"
+            },
+            "action_ask": {
+                "speed_actions": "⛸ Acciones rápidas",
+                "skills_actions": "📍 Habilidades",
+                "live_actions": "🍬 Vida",
+                "extraction": "👔 Trabajo",
+                "no_dino": "🧵 No tienes un dinosaurio",
+                "dino_button": "🦖 Dinosaurio:"
+            },
+            "speed_actions": {
+                "pet": "🖐 Mascota",
+                "fighting": "🎯 Lucha libre",
+                "talk": "🦜 Hablar"
+            },
+            "skills_actions": {
+                "gym": "🥏 Gimnasio",
+                "library": "📚 Biblioteca",
+                "park": "🌳 Parque",
+                "swimming_pool": "💧 Piscina",
+                "stop_work": "💥 Regreso de entrenamiento"
+            },
+            "extraction_actions": {
+                "mine": "⛏️ Mío",
+                "sawmill": "🪵 Aserradero",
+                "bank": "🏦 Banco",
+                "farm": "🧺 Granja",
+                "stop_work": "💥 Regreso del trabajo"
+            },
+            "farm": {
+                "sow": "🧑‍🌾 Cerda",
+                "plant_care": "⛏️ Cuidado de las plantas",
+                "plants": "🎋 Plantas",
+                "stop_work": "💥 Volver de los campos"
             }
         },
         "rare": {
@@ -684,6 +718,9 @@
             "background": {
                 "name": "🖼 Antecedentes",
                 "description": "Añade un fondo a la colección."
+            },
+            "iron_sword": {
+                "name": "🗡 Espada de hierro"
             }
         },
         "notifications": {
@@ -823,6 +860,46 @@
             "kindergarten": {
                 "text": "🎈 | {dino_name} Regresó del jardín de infantes.",
                 "inline_menu": "dino_profile"
+            },
+            "item_crafted": {
+                "standart": "🧨 Se ha completado la elaboración de artículos. \n🪀 Creado: {items}",
+                "bonus": "🧨 Se ha completado la elaboración de artículos. \n🪀 Creado por: {items}\n_🪈 ¡Gracias a sus grandes habilidades, el dinosaurio pudo crear un artículo adicional a partir de materiales sobrantes!_"
+            },
+            "gym_end": {
+                "text": "🥏 | {dino_name} regresó del gimnasio. El dinosaurio ha estado entrenando mucho y duro, ¡ahora se siente mucho más fuerte!",
+                "inline_menu": "dino_profile"
+            },
+            "library_end": {
+                "text": "📖 | {dino_name} devuelto de la biblioteca. La cabeza del dinosaurio está rebosante de conocimiento, ¡quiere crear e inventar!",
+                "inline_menu": "dino_profile"
+            },
+            "swimming_pool_end": {
+                "text": "🌊 | {dino_name} regresado de la piscina. ¡Después de entrenar, se siente más flexible!",
+                "inline_menu": "dino_profile"
+            },
+            "park_end": {
+                "text": "🌳 | {dino_name} Regreso de un paseo por el parque. ¡El dinosaurio aprendió mucho sobre sus parientes y memorizó nuevas palabras!",
+                "inline_menu": "dino_profile"
+            },
+            "gym_end_negative": {
+                "text": "🥏 | {dino_name} regresó del gimnasio. \n❗ El entrenamiento se realizó incorrectamente, por lo que se redujeron las estadísticas. (-50% de lo comprado)",
+                "inline_menu": "dino_profile"
+            },
+            "library_end_negative": {
+                "text": "📖 | {dino_name} devuelto de la biblioteca. \n❗ El entrenamiento se realizó incorrectamente, por lo que se redujeron las estadísticas. (-50% de lo comprado)",
+                "inline_menu": "dino_profile"
+            },
+            "swimming_pool_end_negative": {
+                "text": "🌊 | {dino_name} regresado de la piscina. \n❗ El entrenamiento se realizó incorrectamente, por lo que se redujeron las estadísticas. (-50% de lo comprado)",
+                "inline_menu": "dino_profile"
+            },
+            "park_end_negative": {
+                "text": "🌳 | {dino_name} Regreso de un paseo por el parque. \n❗ El entrenamiento se realizó incorrectamente, por lo que se redujeron las estadísticas. (-50% de lo comprado)",
+                "inline_menu": "dino_profile"
+            },
+            "craft_end": {
+                "text": "⛏️ | {dino_name} ¡De vuelta del taller! Puedes comprobar la fabricación activa ordenando /craftlist",
+                "inline_menu": "dino_profile"
             }
         },
         "breakdown": {
@@ -832,10 +909,20 @@
             "downgrade": "💥 Debido a un mal humor, el dinosaurio arrojó el objeto con mucha fuerza. Este artículo podría haber sido un accesorio."
         },
         "inspiration": {
-            "game": "🥭 ¡Debido al gran estado de ánimo, el dinosaurio obtiene una bonificación x{bonus} a la maestría del juego!",
-            "collecting": "🍍 ¡Debido al gran estado de ánimo, el dinosaurio obtiene una bonificación de x{bonus} a la velocidad de recolección de alimentos!",
-            "journey": "🌽 ¡Debido al gran estado de ánimo, el dinosaurio obtiene una bonificación x{bonus} al número de eventos en el viaje!",
-            "sleep": "🍏 ¡Debido al gran estado de ánimo, el dinosaurio obtiene una bonificación x{bonus} a la calidad del sueño!"
+            "game": "🥭 ¡Debido al gran estado de ánimo, el dinosaurio recibe un bono x{bonus} a la habilidad del juego! 💚 ¡Envía un dinosaurio al juego para usar inspiración!",
+            "collecting": "🍍 ¡Debido al gran estado de ánimo, el dinosaurio obtiene una bonificación x{bonus} a la velocidad de recolección de comida! 💚 ¡Envía un dinosaurio a recolectar comida para usar inspiración!",
+            "journey": "🌽 ¡Debido al gran estado de ánimo, el dinosaurio recibe una bonificación x{bonus} al número de eventos en el viaje! 💚 ¡Lleva a un dinosaurio en un viaje para usar la inspiración!",
+            "sleep": "🍏 ¡Debido a su gran estado de ánimo, el dinosaurio obtiene un bono x{bonus} para la calidad del sueño! 💚 ¡Envía al dinosaurio a dormir para usar inspiración!",
+            "craft": "🥝 ¡Debido al gran estado de ánimo, el dinosaurio recibe una bonificación x{bonus} a la velocidad de elaboración de objetos! 💚 ¡Envía un dinosaurio a crear un objeto para usar la inspiración!",
+            "farm": "🥬 ¡Debido al gran estado de ánimo, el dinosaurio recibe una bonificación x{bonus} por el dominio del cuidado de las plantas! 💚 ¡Envía un dinosaurio a la granja para usar inspiración!",
+            "mine": "🍒 ¡Debido al gran estado de ánimo, el dinosaurio recibe una bonificación x{bonus} a la velocidad de trabajo en la mina! 💚 ¡Envía el dinosaurio a la mina para usar inspiración!",
+            "bank": "🥭 ¡Debido al gran estado de ánimo, el dinosaurio recibe un bono x{bonus} por la calidad del trabajo en el banco! 💚 ¡Envía el dinosaurio al banco para usar inspiración!",
+            "sawmill": "🌽 ¡Debido al gran estado de ánimo, el dinosaurio obtiene una bonificación x{bonus} a la velocidad de trabajo en el aserradero! 💚 ¡Envía el dinosaurio al aserradero para usar inspiración!",
+            "gym": "🌶 ¡Debido al gran estado de ánimo, el dinosaurio recibe una bonificación x{bonus} a la velocidad de aumentar la fuerza! 💚 ¡Envía el dinosaurio a la sala para usar inspiración!",
+            "library": "🍇 ¡Debido al gran estado de ánimo, el dinosaurio recibe una bonificación x{bonus} a la velocidad de aumentar la inteligencia! 💚 ¡Envía el dinosaurio a la biblioteca para que te inspire!",
+            "park": "🥕 ¡Debido al gran estado de ánimo, el dinosaurio obtiene una bonificación x{bonus} a la velocidad de nivelar el carisma! 💚 ¡Envía el dinosaurio al parque para usar inspiración!",
+            "swimming_pool": "🍎 ¡Debido al gran estado de ánimo, el dinosaurio obtiene una bonificación x{bonus} a la velocidad de la agilidad de nivelación! 💚 ¡Envía el dinosaurio a la piscina para usar inspiración!",
+            "exp_boost": "🍌 ¡Debido al gran estado de ánimo, el dinosaurio recibe un bono x{bonus} para ganar experiencia!"
         },
         "back_text": {
             "main_menu": "🦕 Volver al menú principal",
@@ -872,7 +959,11 @@
             "settings2": "🔧 | Menú de configuración (página 2)\n\n🦕 Acceso: {my_name}",
             "seller": "🎇 Ir al menú de gestión de la tienda",
             "bot_market": "🎍 | ¿Qué ofrecerá el bot hoy? ¡Echa un vistazo!",
-            "backgrounds_menu": "🎩 | ¡El menú de gestión en segundo plano está abierto!"
+            "backgrounds_menu": "🎩 | ¡El menú de gestión en segundo plano está abierto!",
+            "live_actions": "🍬 | ¡Ve al menú de actividades de la vida!",
+            "extraction": "⛏️ | ¡Ve al menú de obras! Para obtener el resultado, debe llevar el asunto hasta el final.",
+            "skills_actions": "📍 | ¡Ve al menú de nivelación de habilidades! \n\n💪 | Subir de nivel las habilidades es un proceso difícil y largo, cuando envíes a un dinosaurio a entrenar, ¡asegúrate de que esté lleno y también tenga suficiente fuerza para entrenar! \n\n❗ | Ten en cuenta que el dinosaurio no regresa del entrenamiento por sí solo sin consecuencias, debes hacerlo tú. ¡Vigila el estado del dinosaurio y sigue las recomendaciones!",
+            "speed_actions": "⌚ | Acciones rápidas: funciona al instante, pero se puede volver a usar después de un tiempo."
         },
         "no_text_key": "❌ Clave de coincidencia de texto {key} no encontrada, ¡póngase en contacto con el desarrollador de @AS1AW!",
         "edit_dino_button": {
@@ -976,7 +1067,204 @@
             }
         },
         "help_command": {
-            "all": "<b>🎨 | Equipo de ayuda</b>\n<i>¿Eres tan lamentable que me estás pidiendo ayuda?) \n Pfff... Bien. </i> \n\n/help - Una súplica de ayuda de una mente superior. \n\n/start - Iniciar bot / menú principal (solo LS)\n\n/profile - Abrir perfil de usuario. \n\n/add_me - Envía un mensaje con el botón de añadir amigo activo. (solo para grupos) \n\n/promo (código) - Introduce el código promocional. \n\n/super - Súper Sala de Monedas."
+            "all": "🥡 Referencia de comandos",
+            "for_dm": "🧤 Chat personal",
+            "for_group": "🍇 Para grupos",
+            "for_dev": "🧧 Para desarrolladores",
+            "commands": {
+                "help": {
+                    "short": "Lista de todos los comandos de bot",
+                    "long": "🥏 Lista de todos los comandos en el bot.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": true
+                },
+                "cancel": {
+                    "short": "Cancelación de un estado",
+                    "long": "🛡️ Cancelar cualquier estado de selección. \n🪀 Ejemplo: Está creando un producto para el mercado para deshacerlo en cualquier etapa - use este comando.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "start": {
+                    "short": "Bot de inicio / Menú principal",
+                    "long": "💥 Lo primero que ve el bot es inicio, pero en otros casos, puedes ir al menú principal con este comando.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "profile": {
+                    "short": "Perfil de usuario",
+                    "long": "🎋 Una alternativa al comando de información, un resumen general del usuario.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": true
+                },
+                "add_me": {
+                    "short": "¡Añádeme!",
+                    "long": "🎃 Un comando para agregar amigos rápidamente a través de un grupo.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
+                },
+                "promo": {
+                    "short": "Canjear código promocional",
+                    "long": "⛏️ ¡Siga las noticias en el canal para obtener códigos promocionales más a menudo!",
+                    "arguments": "(código)",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "super": {
+                    "short": "Menú Super Coin",
+                    "long": "🧺 ¡Mira anuncios - obtén súper monedas - cámbialas en la tienda premium!",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "timer": {
+                    "short": "Convierte segundos en tiempo",
+                    "long": "⏳ Introduzca el número de segundos que se convertirán en tiempo en la salida.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "string_to_sec": {
+                    "short": "Solicitud para introducir la hora",
+                    "long": "🪵 Solicitud para ingresar la hora en lugares como crear una subasta.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "pushinfo": {
+                    "short": "Información sobre herramientas para publicar productos en el canal",
+                    "long": "🪵 Solicitud para ingresar la hora en lugares como crear una subasta.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "delete_push": {
+                    "short": "Eliminar una notificación de producto",
+                    "long": "🪵 Eliminar una notificación a un canal.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "craftlist": {
+                    "short": "Lista de objetos que se pueden fabricar",
+                    "long": "🎀 Lista de objetos fabricables",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "create_tracking": {
+                    "short": "Creación de un enlace de pista",
+                    "long": "💥 Crear un enlace de seguimiento para iniciar sesión de seguimiento a través de /start",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "tracking": {
+                    "short": "Lista de enlaces de pistas",
+                    "long": "🛡️ Lista de enlaces de pista rastreados a través de /start",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "create_promo": {
+                    "short": "Crear un código promocional",
+                    "long": "🏦 Creando un código promocional",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "promos": {
+                    "short": "Enumerar y administrar códigos promocionales",
+                    "long": "🛡️ Lista y gestión de códigos promocionales",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "link_promo": {
+                    "short": "Vincular el botón de código promocional",
+                    "long": "🛡️ Para vincular el botón de código promocional a un mensaje, debe responder al mensaje con un comando, el bot también debe estar en el canal.",
+                    "arguments": "(Promoción) (nombre)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "add_premium": {
+                    "short": "Emisión de una suscripción premium",
+                    "long": "🛡️ Emitir una suscripción premium para time\n0 - darse una suscripción premium a usted mismo, str_time - formato de hora. El segundo argumento es que si está vacío, entonces para siempre, de lo contrario, por un tiempo.",
+                    "arguments": "(0/userid) (/str_time)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "copy_m": {
+                    "short": "Boletín Lingüístico",
+                    "long": "🛡️ Argumento - código de idioma (ru en id)",
+                    "arguments": "(código lang_)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "eval": {
+                    "short": "Ejecución de código",
+                    "long": "🛡️ Ejecución de código",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "get_username": {
+                    "short": "Devolución de la clase User por userid",
+                    "long": "🛡️ Devolver la clase de usuario por userid",
+                    "arguments": "(ID de usuario)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "add_item": {
+                    "short": "Adición de elementos",
+                    "long": "🛡️ Adición de elementos",
+                    "arguments": "(userid) (item_id) (col)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "create_company": {
+                    "short": "Constituir una empresa",
+                    "long": "🛡️ Crear una campaña publicitaria",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "companies": {
+                    "short": "Ver Empresas",
+                    "long": "🛡️ Visualización de campañas publicitarias",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                }
+            }
         },
         "additem_command": {
             "err": "Formato de entrada:\nID de artículo\nnúmero\nID de usuario",
@@ -1165,7 +1453,17 @@
                 "dungeon": "Conquistando la Mazmorra 🗻",
                 "freezing": "Estoy congelado ❄",
                 "kindergarten": "En el jardín de infantes 🏡",
-                "hysteria": "¡Estoy histérica! 💥"
+                "hysteria": "¡Estoy histérica! 💥",
+                "farm": "En la Granja 🥕",
+                "mine": "En la mina ⛏️",
+                "bank": "En el banco 👛",
+                "sawmill": "En el Cortador de Madera 🪚",
+                "gym": "En el pabellón 🏋️",
+                "library": "En la biblioteca 📚",
+                "park": "Caminando 🏞️",
+                "swimming_pool": "Natación 💦",
+                "craft": "Objeto de artesanía ⚒️",
+                "unrestrained_play": "Juego sin parar 😟"
             },
             "replics": {
                 "heal": {
@@ -1453,7 +1751,8 @@
                     "exchange": "🔁 Transferencia",
                     "created_item": "🛠 Artículo creado: {item}",
                     "buyer": "💰 Esgrimista"
-                }
+                },
+                "time_craft": "*├* Tiempo de creación: ⏳ {times}"
             },
             "bonuses": {
                 "+heal": "Aumento de salud: {0}%",
@@ -1472,8 +1771,8 @@
             "cannot_be_used": "❌ ¡Este artículo no se puede usar!",
             "no_item": "❓ El artículo ha sido cambiado o ya no está en el inventario, la interacción con él no está disponible.",
             "eat": {
-                "great": "🍕 | El dinosaurio se comió {item_name}, está lleno en {eat_stat}%",
-                "bad": "🍕 | ¡Al dinosaurio no le gusta el {item_name}, pierde el {loses_eat}% de saciedad!",
+                "great": "🍕 | {dino_name} {activ} {item_name}, está harto de {eat_stat}%",
+                "bad": "🍕 | {dino_name} no sabe {item_name}, pierde {loses_eat}% de saciedad!",
                 "sleep": "🌙 No alimentes al dinosaurio mientras duerme.",
                 "repeat": {
                     "m0": "❤ | Dinosaurio probó algo nuevo, bono de nutrición {percent}%",
@@ -1482,7 +1781,9 @@
                     "m3": "🥙 | El dinosaurio está un poco cansado de comer lo mismo, valor nutricional {percent}%",
                     "m4": "🥞 | El dinosaurio está un poco cansado de comer lo mismo, valor nutricional {percent}%",
                     "m5": "🥙 | El dinosaurio ha estado comiendo lo mismo durante mucho tiempo, no está satisfecho, valor nutricional {percent}%"
-                }
+                },
+                "eat": "ato",
+                "drink": "bebió"
             },
             "accessory": {
                 "no_change": "⚒ ¡No puedes cambiar el accesorio de la actividad que el dinosaurio está haciendo en ese momento!",
@@ -1490,9 +1791,12 @@
             },
             "recipe": {
                 "not_enough_m": "❗ | Materiales faltantes: {materials}",
-                "consumable_item": "🧶 | Elige un objeto consumible para usar ->",
+                "consumable_item": "🧶 | Elige un objeto para usarlo en la fabricación (el resultado puede cambiar dependiendo de la selección) ->",
                 "create": "🛠 Se ha utilizado la receta, artículos que se han fabricado: {items}",
-                "enough_characteristics": "❗ | ¡El artículo {item_name} no tiene suficiente para usar!"
+                "enough_characteristics": "❗ | ¡El artículo {item_name} no tiene suficiente para usar!",
+                "not_choosed": "💥 | ¡No hay objetos para elegir para usar en la elaboración!",
+                "choose_copy": "🍿 | Seleccione una variación para el artículo {item_name}\n(Después de hacer clic, se mostrará la información del artículo, haga clic en el botón debajo del mensaje para confirmar)",
+                "inl_button_conf": "✅ Seleccionar opciones"
             },
             "case": {
                 "drop_item": "📦 | ¡Tienes {item_name} x{col} fuera de la caja mágica!"
@@ -1538,7 +1842,7 @@
             "friend": "🎮 Elige un amigo ->"
         },
         "about_menu": {
-            "team": "<b>🎭 | Bot Team</b>\n<i>Todos hacemos muchas cosas a la vez, pero todos tenemos un papel que desempeñar... </i> \n\n💻 @AS1AW - Desarrollador\n💻 @magecode - Desarrollador\n💽 @KatranLife - Aprovisionamiento de host\n\n🎨 @unknown_cat13 - Diseñador\n🧸 @myasoyakich - Creador de la comunidad\n\n<b>🗝 | Localización author</b>\n<i>Todo el mundo puede traducir el bot a su lengua materna. \n ¿Quieres ayudar con la traducción? Consulte @AS1AW\n\n</i>{lang_name} - {author}",
+            "team": "<b>🎭 | Equipo de bots </b> \n <i> Todos hacemos muchas cosas a la vez, pero todos tienen un papel que desempeñar ... </i> \n\n💻 @AS1AW - Desarrollador\n💻 @magecode - Desarrollador\n💽 @KatranLife - Aprovisionamiento de host\n\n🎨 @unknown_cat13 - Diseñador\n\n<b>🗝 | Autor de localization</b>\n<i>Todos pueden traducir el bot a su idioma nativo. \n ¿Le gustaría ayudar con la traducción? Consulte @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "**🔗 | La Gran Conexión**\n¡Los dinosaurios de terror están en todas partes! \n\n📢 Canal de noticias - @DinoGochi\n\n👥 Foro - @DinoForum\n\n🧧 YouTube - [@DinoGochi](https://www.youtube.com/@dinogochi)"
         },
         "support_command": {
@@ -1606,9 +1910,19 @@
                 "journey": "🎴 Viajes",
                 "collecting": "🥞 Recolectando comida",
                 "dungeon": "🗻 Conquista la mazmorra",
-                "freezing": "Congelado ❄",
-                "kindergarten": "En el jardín de infantes 🏡",
-                "hysteria": "Histérica 💥"
+                "freezing": "❄ Congelado",
+                "kindergarten": "🏡 En el jardín de infantes",
+                "hysteria": "💥 Histérico",
+                "farm": "🥕 En la granja",
+                "mine": "⛏️ En la mina",
+                "bank": "👛 En el banco",
+                "sawmill": "🪚 En el picador de madera",
+                "gym": "🏋️ En el pasillo",
+                "library": "📚 En la biblioteca",
+                "park": "🏞️ En el parque",
+                "swimming_pool": "💦 Natación.",
+                "craft": "⚒️ Crea un artículo",
+                "unrestrained_play": "😟 Juega para calmarse"
             }
         },
         "custom_profile": {
@@ -2077,7 +2391,15 @@
             "drought": "Aire seco",
             "snowfall": "Atrapado en una nevada",
             "magic_light": "Vi la luz mágica",
-            "magic_animal": "Vi un animal mágico"
+            "magic_animal": "Vi un animal mágico",
+            "pet": "¡Me acariciaron!",
+            "break": "Fui golpeado 💥",
+            "positive_talk": "Interesante conversación",
+            "negative_talk": "La conversación no fue bien...",
+            "hard_work": "Trabajo duro...",
+            "simple_work": "¡Trabajo fácil!",
+            "repeat_activity": "Yo estoy haciendo lo mismo...",
+            "overloading": "Sobrecargado de entrenamiento..."
         },
         "journey_start": {
             "ask_loc": "🌳 | Elige a dónde irá el dinosaurio esta vez\n\n",
@@ -3510,11 +3832,13 @@
             "participant": "🎢 ¡Te han añadido a la subasta!"
         },
         "promotion": {
-            "buy": "🍿 Habilitar la promoción le permitirá colocar este producto durante 12 horas en una lista aleatoria de productos mostrados al ingresar al mercado. \n🥪 Precio: 1890 monedas.",
+            "buy": "🍿 Habilitar la promoción le permitirá colocar este producto durante 12 horas en una lista aleatoria de productos mostrados al ingresar al mercado.",
             "max": "🥓 ¡Tienes el número máximo de productos promocionados!",
             "ok": "🍠 El producto se ha añadido a la lista de productos promocionados. Al ingresar a la tienda, los jugadores verán 3 artículos aleatorios de todos los promocionados.",
             "no_coins": "🥠 ¡No tienes suficientes monedas para habilitar la promoción!",
-            "already": "🥩 El producto ya ha sido añadido a la promoción. \n🥪 Ten en cuenta que sin premium puedes promocionar 5 productos al mismo tiempo, ¡con premium puedes promocionar 10!"
+            "already": "🥩 El producto ya ha sido añadido a la promoción. \n🥪 Ten en cuenta que sin premium puedes promocionar 5 productos al mismo tiempo, ¡con premium puedes promocionar 10!",
+            "price": "\n🥪 Valor de las monedas {coins}.",
+            "price_discount": "\n🥪 Costo de {coins} (-{discount}%) monedas."
         },
         "products": {
             "search": "🎃 Seleccione un producto para ver",
@@ -3624,7 +3948,8 @@
                 "info": "☄ Seleccione la cantidad mínima de tiempo que desea transcurrir entre impresiones de anuncios ->"
             },
             "shop": "🎍 ¡Bienvenido a la tienda Super Coin! \n\n_(No hay confirmación en el momento de la compra)_",
-            "buy": "🎎 ¡Gracias por ver el anuncio!"
+            "buy": "🎎 ¡Gracias por ver el anuncio!",
+            "moder_reward": "🎋 Recibiste *+{coin} Súper Moneda(s)* por ver un mensaje. \nVerifique su saldo con el comando /super"
         },
         "no_dinos": "⚡ ¡No puedes usar esta función porque no tienes dinosaurios! \n✨ Para obtener información sobre primas, escriba /premium",
         "buyer": {
@@ -3658,6 +3983,119 @@
                 "promo": "🎩 ¡Inicio rápido!"
             },
             "situation2": "🦕 | Hola, ha pasado tanto tiempo desde que ({st_time}) jugué un bot, te extrañamos... ¿No quieres volver? \n\n❤️ | ¡Aquí tienes un código promocional para 3 días de premium! \n\n🦕 | Si no juegas por alguna otra razón (por ejemplo, debido a errores en el bot), escribe @dinogochi_bugs."
+        },
+        "kd_coldown": "🪈 | Esta actividad está en tiempo de reutilización, inténtalo de nuevo después de {ss}",
+        "pet": {
+            "cancel_breakdown": "❤️ | ¡Tienes suerte, el ataque de nervios del dinosaurio ha pasado!",
+            "lst": [
+                {
+                    "reaction": "El dinosaurio cierra los ojos y comienza a ronronear, demostrando que es agradable.",
+                    "message": "{owner}, ¡es tan bonito cuando me acaricias!"
+                },
+                {
+                    "reaction": "El dinosaurio comienza a mover la cola y a saltar de alegría.",
+                    "message": "{owner}, ¡es muy divertido! ¡Acaríciame de nuevo!"
+                },
+                {
+                    "reaction": "El dinosaurio bosteza y despliega sus alas.",
+                    "message": "{owner}, ¡me acariciaste tan bien que casi me quedo dormido!"
+                },
+                {
+                    "reaction": "El dinosaurio se acerca y frota su cabeza contra tu mano.",
+                    "message": "{owner}, ¡Vamos a hacer más! ¡Me encanta esta atención!"
+                },
+                {
+                    "reaction": "El dinosaurio comienza a arrullar silenciosamente y a acariciarte.",
+                    "message": "{owner}, acaríciame aquí mismo, ¡me encanta!"
+                }
+            ]
+        },
+        "talk": {
+            "themes": {
+                "negative": [
+                    "Sobre la caída del meteorito",
+                    "Sobre la extinción de los dinosaurios",
+                    "Sobre la mala ecología y la contaminación",
+                    "Sobre el ataque de los depredadores a los dinosaurios",
+                    "Sobre la escasez de alimentos en la antigüedad",
+                    "Sobre personas crueles que cazaban dinosaurios"
+                ],
+                "positive": [
+                    "Sobre los logros de los dinosaurios en el deporte",
+                    "Sobre la amistad con otros dinosaurios",
+                    "Sobre los grandes espacios abiertos para jugar",
+                    "Acerca de los hábitos divertidos de los dinosaurios",
+                    "Acerca de golosinas y golosinas deliciosas",
+                    "Sobre viajes por el mundo antiguo y aventuras"
+                ]
+            },
+            "positive": "🤗 | Has hablado con el dinosaurio \"{theme}\". \n _ ¡La conversación causó una impresión positiva en el dinosaurio! _",
+            "negative": "😮 | Has hablado con el dinosaurio \"{theme}\". \n _ ¡La conversación trastornó al dinosaurio! _"
+        },
+        "fighting": {
+            "hit": "💥 | En la pelea contigo, el dinosaurio fue golpeado y se molestó un poco ... \n\n❤️ | El dinosaurio perdió {heal}% de salud.",
+            "avoid": "🪀 | ¡En la pelea contigo, el dinosaurio pudo esquivar con éxito tu golpe!",
+            "block": "🛡️ | ¡En la lucha contra ti, el dinosaurio pudo bloquear tu golpe!"
+        },
+        "groups": {
+            "durable_materials": "🎞 Materiales duraderos"
+        },
+        "all_skills": {
+            "stoping": {
+                "text": "🪈 | Para detener el entrenamiento, presione el botón, pero tenga en cuenta que si el dinosaurio ha hecho muy poco ejercicio, ¡entonces *multa* se aplicará a las estadísticas!",
+                "button": "❌ Volver"
+            },
+            "choose_time": "⌚ Elige tu tiempo de entrenamiento >",
+            "use_energy": {
+                "text": "⚡ ¿Darle acceso a un dinosaurio a un refrigerador con bebidas energéticas? \n _ Si hay falta de energía, el dinosaurio tomará objetos como el té de allí. _",
+                "buttons": [
+                    "✅ Uso",
+                    "❌ No usar"
+                ]
+            },
+            "gym": "💪 ¡Dinosaurio fue al salón para bombear su fuerza y poder! \n🏋️‍♂️ ¡Con cada nuevo ejercicio, se vuelve no solo más fuerte, sino también más seguro! \n🏉 El tiempo mínimo de entrenamiento para un dinosaurio es {min_time}",
+            "library": "📖 ¡Dinosaurio lee libros con entusiasmo, desarrollando su inteligencia! \n📚 A medida que profundiza en el conocimiento, se vuelve más inteligente y fuerte, abriendo nuevos horizontes para sus aventuras. \n✨ El tiempo mínimo de entrenamiento para un dinosaurio es {min_time}",
+            "park": "🌳 ¡El dinosaurio salió a dar un paseo por el parque para aumentar su carisma! \n😄 ¡Con cada nuevo conocido y conversación con los transeúntes, se vuelve más encantador y seguro de sí mismo! \n✨ El tiempo mínimo de entrenamiento para un dinosaurio es {min_time}",
+            "swimming_pool": "💦 ¡Dinozav fue a la piscina para mejorar su agilidad! \n🏊‍♂️ ¡Sumergiéndose en el agua, sorprende a todos con trucos acrobáticos! \n🌊 El tiempo mínimo de entrenamiento para un dinosaurio es {min_time}",
+            "use_item": "\n🚚 | El dinosaurio tomó este artículo por su cuenta, ya que está en entrenamiento.",
+            "overloading": "❗ {dino_name} está sobrecargado de entrenamiento, debido a esto, ¡su tiempo de descanso para este entrenamiento aumentará! ¡Date prisa y trae al dinosaurio de vuelta del entrenamiento!"
+        },
+        "time_craft": {
+            "text_start": "🛡️ Los objetos tardan en fabricarse. \n🪀 Artículos: {items}\n⏳ Tiempo de fabricación: {craft_time}\n🎃 Envía a un dinosaurio a usar sus habilidades para fabricar un artículo.",
+            "text2": "_🪈 Para ver todos los objetos fabricables, envía el comando {command}_",
+            "button": "🦕 Envía un dinosaurio",
+            "cancel": "❌ Deshacer la creación",
+            "craft_info": "🪀 Artículos: {items}\n⏳ Tiempo restante: {craft_time}\n🦕 Dinosaurio activo: {dino}\n\n🎃 Si envías un dinosaurio, solo podrás devolverlo si dejas de fabricar el artículo. \n🧨 Si se cancela la creación, todos los materiales se perderán.",
+            "send_dino": "⏳ El dinosaurio fue a crear un artículo. El tiempo de fabricación se ha incrementado en {percent}%"
+        },
+        "companies": {
+            "end_company": "🎋 La campaña {name} se completó en {time_work}. \n⛏️ Número de impresiones: {show_count} | {max_count}",
+            "owner": "Ingrese el id del usuario: el creador de la empresa o \"0\" si se convierte en el propietario.",
+            "text": "Introduzca el texto de la empresa (máx. 1024)",
+            "lang": "Seleccione el idioma para el que será la empresa (si ya hay una empresa para el idioma, se sobrescribirá)",
+            "name_button": "Introduzca el texto del botón (máximo 100 caracteres)",
+            "button_url": "Entra en los botones de url",
+            "parse_mode": "Seleccione el tipo de formato -",
+            "no_parse": "Sin formato",
+            "image_choose": "Establezca la imagen o escriba \"0\"",
+            "add_new_lang": "¿Agregar un idioma para la lista de correo?",
+            "time_end": "Introduzca el tiempo después del cual la empresa terminará en el formato especificado en /string_to_sec (por ejemplo, 1d) o 0",
+            "max_count": "Introduzca el número máximo de impresiones o 0 para infinito",
+            "priority": "¿La empresa tiene prioridad sobre los gramads?",
+            "one_message": "Si se debe limitar la visualización del mensaje a 1 para cada usuario",
+            "pin_message": "¿Anclar un mensaje de chat?",
+            "coin_price": "Especifica la recompensa en súper monedas por 1 impresión",
+            "delete_after": "¿Eliminar todos los mensajes después del final de la empresa?",
+            "ignore_system_timeout": "Se RECOMIENDA ignorar el tiempo de espera del usuario (configuración de anuncios) para los mensajes del sistema",
+            "min_timeout": "Tiempo de espera mínimo entre mensajes o 0 para la configuración de usuario (formato de tiempo (1d))",
+            "name": "Ponle un nombre a tu empresa",
+            "info": "🏦 Empresa {name}\n⏳ Terminar en: {end} ({delta})\n🪵 Impresiones: {show} | {max_c}\n👑 Recompensa: {coin}\n🎃 Prioridad: {priority}\n💬 Fijación: {pin}\n🎀 Retraso entre impresiones: {timeout}\n🛡️ Ignorar el sistema. Tiempo de espera: {sys_timeout}\n❤️‍🩹 Eliminación al finalizar: {dlete_after}\n\n⛏️ Estado: {status}",
+            "buttons": {
+                "delete": "Terminar",
+                "activate": "Activar",
+                "stop": "Parar",
+                "message": "Mensaje de prueba"
+            }
         }
     }
 }

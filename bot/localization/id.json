@@ -77,7 +77,8 @@
                 "edit": "♻ Transformasi",
                 "quests": "⛓ Pencarian",
                 "daily_award": "🎁 Bonus",
-                "events": "🎈 Acara"
+                "events": "🎈 Acara",
+                "hoarder": "🪈 Penimbun"
             },
             "about": {
                 "team": "🤼 Tim",
@@ -99,6 +100,39 @@
                 "backgrounds": "🖼️ Latar belakang",
                 "standart": "🗝️ Standar",
                 "custom_profile": "🌟 Latar Belakang Kustom"
+            },
+            "action_ask": {
+                "speed_actions": "⛸ Tindakan Cepat",
+                "skills_actions": "📍 Keterampilan",
+                "live_actions": "🍬 Hidup",
+                "extraction": "👔 Bekerja",
+                "no_dino": "🧵 Kamu tidak memiliki dinosaurus",
+                "dino_button": "🦖 Dinosaurus:"
+            },
+            "speed_actions": {
+                "pet": "🖐 Hewan peliharaan",
+                "fighting": "🎯 Gulat",
+                "talk": "🦜 Bicara"
+            },
+            "skills_actions": {
+                "gym": "🥏 Gym",
+                "library": "📚 Perpustakaan",
+                "park": "🌳 Taman",
+                "swimming_pool": "💧 Kolam renang",
+                "stop_work": "💥 Kembali dari latihan"
+            },
+            "extraction_actions": {
+                "mine": "⛏️ Tambang",
+                "sawmill": "🪵 Penggergajian",
+                "bank": "🏦 Bank",
+                "farm": "🧺 Peternakan",
+                "stop_work": "💥 Kembali dari pekerjaan"
+            },
+            "farm": {
+                "sow": "🧑‍🌾 Tabur",
+                "plant_care": "⛏️ Perawatan tanaman",
+                "plants": "🎋 Tanaman",
+                "stop_work": "💥 Kembali dari bidang"
             }
         },
         "rare": {
@@ -684,6 +718,9 @@
             "background": {
                 "name": "🖼 Latar belakang",
                 "description": "Menambahkan latar belakang ke koleksi."
+            },
+            "iron_sword": {
+                "name": "🗡 Pedang Besi"
             }
         },
         "notifications": {
@@ -823,6 +860,46 @@
             "kindergarten": {
                 "text": "🎈 | {dino_name} kembali dari taman kanak-kanak.",
                 "inline_menu": "dino_profile"
+            },
+            "item_crafted": {
+                "standart": "🧨 Pembuatan item selesai. \n🪀 Dibuat: {items}",
+                "bonus": "🧨 Kerajinan item selesai. \n🪀 Dibuat oleh: {items}\n_🪈 Berkat keterampilannya yang tinggi, dinosaurus itu mampu membuat item tambahan dari bahan berlebih! _"
+            },
+            "gym_end": {
+                "text": "🥏 | {dino_name} kembali dari gym. Dinosaurus telah berlatih lama dan keras, sekarang dia merasa jauh lebih kuat!",
+                "inline_menu": "dino_profile"
+            },
+            "library_end": {
+                "text": "📖 | {dino_name} dikembalikan dari perpustakaan. Kepala dinosaurus dipenuhi dengan pengetahuan, dia ingin menciptakan dan menciptakan!",
+                "inline_menu": "dino_profile"
+            },
+            "swimming_pool_end": {
+                "text": "🌊 | {dino_name} dikembalikan dari kolam. Setelah pelatihan, dia merasa lebih fleksibel!",
+                "inline_menu": "dino_profile"
+            },
+            "park_end": {
+                "text": "🌳 | {dino_name} kembali dari berjalan-jalan di taman. Dinosaurus belajar banyak tentang kerabatnya dan menghafal kata-kata baru!",
+                "inline_menu": "dino_profile"
+            },
+            "gym_end_negative": {
+                "text": "🥏 | {dino_name} kembali dari gym. \n❗ Pelatihan dilakukan secara tidak benar, sehingga statistiknya berkurang. (-50% dari pembelian)",
+                "inline_menu": "dino_profile"
+            },
+            "library_end_negative": {
+                "text": "📖 | {dino_name} dikembalikan dari perpustakaan. \n❗ Pelatihan dilakukan secara tidak benar, sehingga statistiknya berkurang. (-50% dari pembelian)",
+                "inline_menu": "dino_profile"
+            },
+            "swimming_pool_end_negative": {
+                "text": "🌊 | {dino_name} dikembalikan dari kolam. \n❗ Pelatihan dilakukan secara tidak benar, sehingga statistiknya berkurang. (-50% dari pembelian)",
+                "inline_menu": "dino_profile"
+            },
+            "park_end_negative": {
+                "text": "🌳 | {dino_name} kembali dari berjalan-jalan di taman. \n❗ Pelatihan dilakukan secara tidak benar, sehingga statistiknya berkurang. (-50% dari pembelian)",
+                "inline_menu": "dino_profile"
+            },
+            "craft_end": {
+                "text": "⛏️ | {dino_name} Kembali dari bengkel! Anda dapat memeriksa kerajinan aktif dengan memerintahkan /craftlist",
+                "inline_menu": "dino_profile"
             }
         },
         "breakdown": {
@@ -832,10 +909,20 @@
             "downgrade": "💥 Karena suasana hati yang buruk, dinosaurus melemparkan benda itu dengan sangat keras. Item ini bisa saja aksesori."
         },
         "inspiration": {
-            "game": "🥭 Karena suasana hati yang luar biasa, dinosaurus mendapat bonus x {bonus} untuk penguasaan permainan!",
-            "collecting": "🍍 Karena suasana hati yang baik, dinosaurus mendapat bonus x {bonus} untuk kecepatan mengumpulkan makanan!",
-            "journey": "🌽 Karena suasana hati yang baik, dinosaurus mendapat bonus x {bonus} untuk jumlah acara dalam perjalanan!",
-            "sleep": "🍏 Karena suasana hati yang baik, dinosaurus mendapat bonus x {bonus} untuk kualitas tidur!"
+            "game": "🥭 Karena suasana hati yang hebat, dinosaurus menerima bonus x{bonus} untuk keterampilan permainan! 💚 Kirim dinosaurus ke game untuk menggunakan inspirasi!",
+            "collecting": "🍍 Karena suasana hati yang hebat, dinosaurus mendapat bonus x{bonus} dengan kecepatan mengumpulkan makanan! 💚 Kirim dinosaurus untuk mengumpulkan makanan untuk menggunakan inspirasi!",
+            "journey": "🌽 Karena suasana hati yang luar biasa, dinosaurus menerima bonus x{bonus} untuk jumlah peristiwa dalam perjalanan! 💚 Ajak dinosaurus dalam perjalanan untuk menggunakan inspirasi!",
+            "sleep": "🍏 Karena suasana hatinya yang hebat, dinosaurus mendapat bonus x{bonus} untuk kualitas tidur! 💚 Kirim dinosaurus ke tidur untuk menggunakan inspirasi!",
+            "craft": "🥝 Karena suasana hati yang hebat, dinosaurus menerima bonus x{bonus} untuk kecepatan membuat item! 💚 Kirim dinosaurus untuk membuat item untuk menggunakan inspirasi!",
+            "farm": "🥬 Karena suasana hati yang luar biasa, dinosaurus menerima bonus x{bonus} untuk penguasaan perawatan tanaman! 💚 Kirim dinosaurus ke peternakan untuk menggunakan inspirasi!",
+            "mine": "🍒 Karena suasana hati yang luar biasa, dinosaurus menerima bonus x{bonus} dengan kecepatan bekerja di tambang! 💚 Kirim dinosaurus ke tambang untuk menggunakan inspirasi!",
+            "bank": "🥭 Karena suasana hati yang baik, dinosaurus menerima bonus x{bonus} untuk kualitas pekerjaan di bank! 💚 Kirim dinosaurus ke bank untuk menggunakan inspirasi!",
+            "sawmill": "🌽 Karena suasana hati yang hebat, dinosaurus mendapat bonus x{bonus} untuk kecepatan bekerja di penggergajian! 💚 Kirim dinosaurus ke penggergajian untuk menggunakan inspirasi!",
+            "gym": "🌶 Karena suasana hati yang hebat, dinosaurus menerima bonus x{bonus} dengan kecepatan meningkatkan kekuatan! 💚 Kirim dinosaurus ke aula untuk menggunakan inspirasi!",
+            "library": "🍇 Karena suasana hati yang hebat, dinosaurus menerima bonus x{bonus} dengan kecepatan meningkatkan kecerdasan! 💚 Kirimkan dinosaurus ke perpustakaan untuk menggunakan inspirasi!",
+            "park": "🥕 Karena suasana hati yang hebat, dinosaurus mendapat bonus x{bonus} dengan kecepatan meratakan karisma! 💚 Kirim dinosaurus ke taman untuk menggunakan inspirasi!",
+            "swimming_pool": "🍎 Karena suasana hati yang hebat, dinosaurus mendapat bonus x{bonus} dengan kecepatan kelincahan leveling! 💚 Kirim dinosaurus ke kolam untuk menggunakan inspirasi!",
+            "exp_boost": "🍌 Karena suasana hati yang hebat, dinosaurus menerima bonus x{bonus} untuk mendapatkan pengalaman!"
         },
         "back_text": {
             "main_menu": "🦕 Kembali ke Menu Utama",
@@ -872,7 +959,11 @@
             "settings2": "🔧 | Menu Pengaturan (Halaman 2)\n\n🦕 Akses: {my_name}",
             "seller": "🎇 Buka menu manajemen toko",
             "bot_market": "🎍 | Apa yang akan ditawarkan bot hari ini? Coba lihat!",
-            "backgrounds_menu": "🎩 | Menu manajemen latar belakang terbuka!"
+            "backgrounds_menu": "🎩 | Menu manajemen latar belakang terbuka!",
+            "live_actions": "🍬 | Buka menu aktivitas hidup!",
+            "extraction": "⛏️ | Buka menu karya! Untuk mendapatkan hasilnya, Anda perlu menyelesaikan masalah ini.",
+            "skills_actions": "📍 | Buka menu leveling keterampilan! \n\n💪 | Meningkatkan keterampilan adalah proses yang sulit dan panjang, saat mengirim dinosaurus ke pelatihan, pastikan dia kenyang, dan juga memiliki kekuatan yang cukup untuk berlatih! \n\n❗ | Perlu diingat bahwa dinosaurus tidak kembali dari pelatihan sendiri tanpa konsekuensi, Anda harus melakukannya. Awasi kondisi dinosaurus dan ikuti rekomendasinya!",
+            "speed_actions": "⌚ | Tindakan cepat - bekerja secara instan, tetapi dapat digunakan lagi setelah beberapa saat."
         },
         "no_text_key": "❌ Kunci pencocokan teks {key} tidak ditemukan, hubungi pengembang @AS1AW!",
         "edit_dino_button": {
@@ -976,7 +1067,204 @@
             }
         },
         "help_command": {
-            "all": "<b>🎨 | Tim Bantuan</b>\n<i>Kamu sangat menyedihkan sehingga kamu meminta bantuanku?) \n Pfff... Oke. </i> \n\n / bantuan - Permohonan bantuan dari pikiran yang lebih tinggi. \n\n/start - Mulai bot / menu utama (hanya LS)\n\n/profile - Buka profil pengguna. \n\n/add_me - Kirim pesan dengan tombol tambah teman aktif. (khusus grup) \n\n/promo (kode) - Masukkan kode promo. \n\n/super - Ruang Super Coin."
+            "all": "🥡 Referensi Perintah",
+            "for_dm": "🧤 Obrolan pribadi",
+            "for_group": "🍇 Untuk grup",
+            "for_dev": "🧧 Untuk pengembang",
+            "commands": {
+                "help": {
+                    "short": "Daftar semua perintah bot",
+                    "long": "🥏 Daftar semua perintah di bot.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": true
+                },
+                "cancel": {
+                    "short": "Membatalkan status",
+                    "long": "🛡️ Batalkan status pilihan apa pun. \n🪀 Contoh: Anda membuat produk untuk pasar untuk membatalkannya pada tahap apa pun - gunakan perintah ini.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "start": {
+                    "short": "Mulai Bot / Menu Utama",
+                    "long": "💥 Hal pertama yang dilihat bot dari Anda adalah mulai, tetapi dalam kasus lain, Anda dapat pergi ke menu utama dengan perintah ini.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "profile": {
+                    "short": "Profil Pengguna",
+                    "long": "🎋 Alternatif untuk perintah informasi, ringkasan umum pengguna.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": true
+                },
+                "add_me": {
+                    "short": "Tambahkan saya!",
+                    "long": "🎃 Perintah untuk menambahkan teman dengan cepat melalui grup.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
+                },
+                "promo": {
+                    "short": "Tukarkan Kode Promo",
+                    "long": "⛏️ Ikuti berita di saluran untuk mendapatkan kode promo lebih sering!",
+                    "arguments": "(kode)",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "super": {
+                    "short": "Menu Koin Super",
+                    "long": "🧺 Tonton iklan - dapatkan koin super - tukarkan di toko premium!",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "timer": {
+                    "short": "Mengonversi detik ke waktu",
+                    "long": "⏳ Masukkan jumlah detik yang akan dikonversi ke waktu dalam output.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "string_to_sec": {
+                    "short": "Prompt untuk memasukkan waktu",
+                    "long": "🪵 Prompt untuk memasukkan waktu di tempat-tempat seperti membuat lelang.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "pushinfo": {
+                    "short": "Tooltip untuk memublikasikan produk di channel",
+                    "long": "🪵 Prompt untuk memasukkan waktu di tempat-tempat seperti membuat lelang.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "delete_push": {
+                    "short": "Menghapus pemberitahuan produk",
+                    "long": "🪵 Hapus pemberitahuan ke saluran.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "craftlist": {
+                    "short": "Daftar item yang dapat dibuat",
+                    "long": "🎀 Daftar item yang dapat dibuat",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "create_tracking": {
+                    "short": "Membuat Link Track",
+                    "long": "💥 Buat tautan trek untuk melacak login melalui /start",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "tracking": {
+                    "short": "Daftar Link Track",
+                    "long": "🛡️ Daftar tautan trek yang dilacak melalui /start",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "create_promo": {
+                    "short": "Membuat kode promo",
+                    "long": "🏦 Membuat kode promo",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "promos": {
+                    "short": "Mencantumkan dan mengelola kode promo",
+                    "long": "🛡️ Daftar dan pengelolaan kode promo",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "link_promo": {
+                    "short": "Menautkan tombol kode promo",
+                    "long": "🛡️ Untuk mengikat tombol kode promo ke pesan, Anda perlu menanggapi pesan dengan perintah, bot juga harus berada di saluran.",
+                    "arguments": "(promo) (nama)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "add_premium": {
+                    "short": "Penerbitan langganan premium",
+                    "long": "🛡️ Mengeluarkan langganan premium untuk time\n0 - berikan langganan premium untuk diri sendiri, str_time - format waktu. Argumen kedua adalah bahwa jika kosong, maka selamanya, sebaliknya untuk sementara waktu.",
+                    "arguments": "(0/userid) (/str_time)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "copy_m": {
+                    "short": "Buletin Bahasa",
+                    "long": "🛡️ Argumen - kode bahasa (ru en id)",
+                    "arguments": "(kode) lang_)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "eval": {
+                    "short": "Eksekusi kode",
+                    "long": "🛡️ Eksekusi Kode",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "get_username": {
+                    "short": "Mengembalikan kelas User dengan userid",
+                    "long": "🛡️ Mengembalikan kelas User dengan userid",
+                    "arguments": "(id pengguna)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "add_item": {
+                    "short": "Menambahkan Item",
+                    "long": "🛡️ Menambahkan Item",
+                    "arguments": "(userid) (item_id) (col)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "create_company": {
+                    "short": "Mendirikan perusahaan",
+                    "long": "🛡️ Buat kampanye iklan",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "companies": {
+                    "short": "Lihat Perusahaan",
+                    "long": "🛡️ Melihat kampanye iklan",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                }
+            }
         },
         "additem_command": {
             "err": "Format masukan:\nID Item\nKuantitas\nID Pengguna",
@@ -1165,7 +1453,17 @@
                 "dungeon": "Menaklukkan Dungeon 🗻",
                 "freezing": "Saya membeku ❄",
                 "kindergarten": "Di TK 🏡",
-                "hysteria": "Saya histeris! 💥"
+                "hysteria": "Saya histeris! 💥",
+                "farm": "Di Peternakan 🥕",
+                "mine": "Di tambang ⛏️",
+                "bank": "Di bank 👛",
+                "sawmill": "Di Pencacah Kayu 🪚",
+                "gym": "Di aula 🏋️",
+                "library": "Di perpustakaan 📚",
+                "park": "Berjalan 🏞️",
+                "swimming_pool": "Berenang 💦",
+                "craft": "Item kerajinan ⚒️",
+                "unrestrained_play": "Saya bermain tanpa henti 😟"
             },
             "replics": {
                 "heal": {
@@ -1453,7 +1751,8 @@
                     "exchange": "🔁 Lulus",
                     "created_item": "🛠 Item yang Dapat Diciptakan: {item}",
                     "buyer": "💰 Pemain anggar"
-                }
+                },
+                "time_craft": "*├* Waktu pembuatan: ⏳ {times}"
             },
             "bonuses": {
                 "+heal": "Peningkatan Kesehatan: {0}%",
@@ -1472,8 +1771,8 @@
             "cannot_be_used": "❌ Item ini tidak dapat digunakan!",
             "no_item": "❓ Item telah diubah atau tidak lagi ada dalam inventaris, interaksi dengannya tidak tersedia.",
             "eat": {
-                "great": "🍕 | Dinosaurus makan {item_name}, penuh di {eat_stat}%",
-                "bad": "🍕 | Dinosaurus tidak suka {item_name}, ia kehilangan {loses_eat}% kenyang!",
+                "great": "🍕 | {dino_name} {activ} {item_name}, dia muak dengan {eat_stat}%",
+                "bad": "🍕 | {dino_name} tidak terasa {item_name}, kehilangan rasa kenyang {loses_eat}%!",
                 "sleep": "🌙 Jangan memberi makan dinosaurus saat tidur.",
                 "repeat": {
                     "m0": "❤ | Dinosaurus mencoba sesuatu yang baru, bonus nutrisi {percent}%",
@@ -1482,7 +1781,9 @@
                     "m3": "🥙 | Dinosaurus sedikit lelah makan hal yang sama, nilai gizi {percent}%",
                     "m4": "🥞 | Dinosaurus sedikit lelah makan hal yang sama, nilai gizi {percent}%",
                     "m5": "🥙 | Dinosaurus telah makan hal yang sama untuk waktu yang lama, dia tidak puas, nilai gizi {percent}%"
-                }
+                },
+                "eat": "Makan",
+                "drink": "Minum"
             },
             "accessory": {
                 "no_change": "⚒ Anda tidak dapat mengubah aksesori untuk aktivitas yang sedang dilakukan dinosaurus!",
@@ -1490,9 +1791,12 @@
             },
             "recipe": {
                 "not_enough_m": "❗ | Bahan hilang: {materials}",
-                "consumable_item": "🧶 | Pilih barang habis pakai untuk digunakan ->",
+                "consumable_item": "🧶 | Pilih item yang akan digunakan dalam kerajinan (hasilnya dapat berubah tergantung pada pilihan) ->",
                 "create": "🛠 Resep telah digunakan, item yang telah dibuat: {items}",
-                "enough_characteristics": "❗ | Item {item_name} tidak cukup untuk digunakan!"
+                "enough_characteristics": "❗ | Item {item_name} tidak cukup untuk digunakan!",
+                "not_choosed": "💥 | Tidak ada item yang bisa dipilih untuk digunakan dalam kerajinan!",
+                "choose_copy": "🍿 | Pilih variasi untuk item {item_name}\n(Setelah mengklik, informasi item akan ditampilkan, klik tombol di bawah pesan untuk mengonfirmasi)",
+                "inl_button_conf": "✅ Pilih opsi"
             },
             "case": {
                 "drop_item": "📦 | Anda punya {item_name} x {col} dari kotak ajaib!"
@@ -1538,7 +1842,7 @@
             "friend": "🎮 Pilih teman ->"
         },
         "about_menu": {
-            "team": "<b>🎭 | Tim Bot </b> \n <i> Kita semua melakukan banyak hal sekaligus, tetapi kita semua memiliki peran untuk dimainkan ... </i> \n\n💻 @AS1AW - Pengembang\n💻 @magecode - Pengembang\n💽 @KatranLife - Penyediaan Host\n\n🎨 @unknown_cat13 - Desainer\n🧸 @myasoyakich - Kreator Komunitas\n\n<b>🗝 | Penulis lokalisasi</b>\n<i>Setiap orang dapat menerjemahkan bot ke dalam bahasa asli mereka. \n Ingin membantu penerjemahan? Lihat @AS1AW\n\n</i>{lang_name} - {author}",
+            "team": "<b>🎭 | Bot Team</b>\n<i>Kita semua melakukan banyak hal sekaligus, tetapi setiap orang memiliki peran untuk dimainkan... </i> \n\n💻 @AS1AW - Pengembang\n💻 @magecode - Pengembang\n💽 @KatranLife - Penyediaan host\n\n🎨 @unknown_cat13 - Perancang\n\n<b>🗝 | Penulis pelokalan</b>\n<i>Setiap orang dapat menerjemahkan bot ke dalam bahasa ibu mereka. \n Maukah Saudara membantu menerjemahkannya? Lihat @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "**🔗 | Koneksi Hebat**\nDinosaurus horor ada di mana-mana! \n\n📢 News channel - @DinoGochi\n\n👥 Forum - @DinoForum\n\n🧧 YouTube - [@DinoGochi](https://www.youtube.com/@dinogochi)"
         },
         "support_command": {
@@ -1606,9 +1910,19 @@
                 "journey": "🎴 Perjalanan",
                 "collecting": "🥞 Mengumpulkan makanan",
                 "dungeon": "🗻 Menaklukkan Dungeon",
-                "freezing": "Beku ❄",
-                "kindergarten": "Di taman kanak-kanak 🏡",
-                "hysteria": "Histeris 💥"
+                "freezing": "❄ Beku",
+                "kindergarten": "🏡 Di taman kanak-kanak",
+                "hysteria": "💥 histeris",
+                "farm": "🥕 Di peternakan",
+                "mine": "⛏️ Di tambang",
+                "bank": "👛 Di bank",
+                "sawmill": "🪚 Di Pemotong Kayu",
+                "gym": "🏋️ Di Aula",
+                "library": "📚 Di perpustakaan",
+                "park": "🏞️ Di Taman",
+                "swimming_pool": "💦 Berenang.",
+                "craft": "⚒️ Membuat item",
+                "unrestrained_play": "😟 Bermain untuk menenangkan diri"
             }
         },
         "custom_profile": {
@@ -2077,7 +2391,15 @@
             "drought": "Udara kering",
             "snowfall": "Terperangkap dalam hujan salju",
             "magic_light": "Melihat cahaya ajaib",
-            "magic_animal": "Melihat binatang ajaib"
+            "magic_animal": "Melihat binatang ajaib",
+            "pet": "Saya dibelai!",
+            "break": "Saya dipukul 💥",
+            "positive_talk": "Percakapan yang menarik",
+            "negative_talk": "Percakapan tidak berjalan dengan baik ...",
+            "hard_work": "Kerja keras...",
+            "simple_work": "Pekerjaan mudah!",
+            "repeat_activity": "Saya melakukan hal yang sama...",
+            "overloading": "Kelebihan beban dengan pelatihan..."
         },
         "journey_start": {
             "ask_loc": "🌳 | Pilih ke mana dinosaurus akan pergi kali ini\n\n",
@@ -3510,11 +3832,13 @@
             "participant": "🎢 Anda telah ditambahkan ke lelang!"
         },
         "promotion": {
-            "buy": "🍿 Mengaktifkan promosi akan memungkinkan Anda menempatkan produk ini selama 12 jam dalam daftar acak produk yang ditampilkan saat memasuki pasar. \n🥪 Harga: 1890 koin.",
+            "buy": "🍿 Mengaktifkan promosi akan memungkinkan Anda untuk menempatkan produk ini selama 12 jam dalam daftar acak produk yang ditampilkan saat memasuki pasar.",
             "max": "🥓 Anda memiliki jumlah maksimum produk yang dipromosikan!",
             "ok": "🍠 Produk telah ditambahkan ke daftar produk yang dipromosikan. Saat memasuki toko, pemain akan melihat 3 item acak dari semua yang dipromosikan.",
             "no_coins": "🥠 Anda tidak memiliki cukup koin untuk mengaktifkan promosi!",
-            "already": "🥩 Produk telah ditambahkan ke promosi. \n🥪 Perlu diingat, tanpa premium Anda dapat mempromosikan 5 produk sekaligus, dengan premium Anda dapat mempromosikan 10!"
+            "already": "🥩 Produk telah ditambahkan ke promosi. \n🥪 Perlu diingat, tanpa premium Anda dapat mempromosikan 5 produk sekaligus, dengan premium Anda dapat mempromosikan 10!",
+            "price": "\n🥪 Nilai koin {coins}.",
+            "price_discount": "\n🥪 Biaya koin {coins} (-{discount}%)."
         },
         "products": {
             "search": "🎃 Pilih produk untuk dilihat",
@@ -3624,7 +3948,8 @@
                 "info": "☄ Pilih jumlah waktu minimum yang ingin Anda lewati di antara tayangan iklan ->"
             },
             "shop": "🎍 Selamat datang di Super Coin Store! \n\n_(Tidak ada konfirmasi pada saat pembelian)_",
-            "buy": "🎎 Terima kasih telah menonton iklannya!"
+            "buy": "🎎 Terima kasih telah menonton iklannya!",
+            "moder_reward": "🎋 Anda menerima *+{coin} Koin Super* untuk melihat pesan. \nPeriksa saldo Anda dengan perintah /super"
         },
         "no_dinos": "⚡ Anda tidak dapat menggunakan fitur ini karena Anda tidak memiliki dinosaurus! \n✨ Untuk informasi premium, ketik /premium",
         "buyer": {
@@ -3658,6 +3983,119 @@
                 "promo": "🎩 Mulai cepat!"
             },
             "situation2": "🦕 | Hai, sudah lama sekali sejak ({st_time}) memainkan bot, kami merindukanmu ... Apakah kamu tidak ingin kembali? \n\n❤️ | Berikut kode promo untuk 3 hari premium! \n\n🦕 | Jika Anda tidak bermain karena alasan lain (misalnya, karena bug di bot), maka tulis @dinogochi _ bug."
+        },
+        "kd_coldown": "🪈 | Aktivitas ini sedang cooldown, coba lagi setelah {ss}",
+        "pet": {
+            "cancel_breakdown": "❤️ | Anda beruntung, gangguan saraf dinosaurus telah berlalu!",
+            "lst": [
+                {
+                    "reaction": "Dinosaurus menutup matanya dan mulai mendengkur, menunjukkan bahwa itu menyenangkan.",
+                    "message": "{owner}, sangat menyenangkan ketika kamu membelaiku!"
+                },
+                {
+                    "reaction": "Dinosaurus mulai mengibaskan ekornya dan melompat kegirangan.",
+                    "message": "{owner}, sangat menyenangkan! Belaiku lagi!"
+                },
+                {
+                    "reaction": "Dinosaurus menguap dan melebarkan sayapnya.",
+                    "message": "{owner}, kamu membelaiku dengan sangat baik sehingga aku hampir tertidur!"
+                },
+                {
+                    "reaction": "Dinosaurus itu mencondongkan tubuh lebih dekat dan menggosokkan kepalanya ke tangan Anda.",
+                    "message": "{owner}, mari kita lakukan lebih banyak! Saya suka perhatian ini!"
+                },
+                {
+                    "reaction": "Dinosaurus mulai mendengkur dengan tenang dan membelai Anda.",
+                    "message": "{owner}, belaiku di sini, aku menyukainya!"
+                }
+            ]
+        },
+        "talk": {
+            "themes": {
+                "negative": [
+                    "Tentang jatuhnya meteorit",
+                    "Tentang kepunahan dinosaurus",
+                    "Tentang ekologi dan polusi yang buruk",
+                    "Tentang serangan predator pada dinosaurus",
+                    "Tentang Kekurangan Makanan di Zaman Kuno",
+                    "Tentang orang-orang kejam yang berburu dinosaurus"
+                ],
+                "positive": [
+                    "Tentang pencapaian dinosaurus dalam olahraga",
+                    "Tentang persahabatan dengan dinosaurus lain",
+                    "Tentang ruang terbuka yang luas untuk bermain",
+                    "Tentang Kebiasaan Lucu Dinosaurus",
+                    "Tentang suguhan dan suguhan lezat",
+                    "Tentang perjalanan melalui dunia kuno dan petualangan"
+                ]
+            },
+            "positive": "🤗 | Anda telah berbicara dengan dinosaurus \"{theme}\". \n _ Percakapan itu membuat kesan positif pada dinosaurus itu! _",
+            "negative": "😮 | Anda telah berbicara dengan dinosaurus \"{theme}\". \n _ Percakapan itu membuat dinosaurus kesal! _"
+        },
+        "fighting": {
+            "hit": "💥 | Dalam pertarungan denganmu, dinosaurus itu dipukul dan sedikit kesal... \n\n❤️ | Dinosaurus kehilangan kesehatan {heal}%.",
+            "avoid": "🪀 | Dalam pertarungan dengan Anda, dinosaurus itu berhasil menghindari pukulan Anda!",
+            "block": "🛡️ | Dalam pertarungan melawan Anda, dinosaurus mampu memblokir pukulan Anda!"
+        },
+        "groups": {
+            "durable_materials": "🎞 Bahan Tahan Lama"
+        },
+        "all_skills": {
+            "stoping": {
+                "text": "🪈 | Untuk menghentikan pelatihan, tekan tombol, tetapi perlu diingat bahwa jika dinosaurus telah berolahraga terlalu sedikit, maka *halus* akan diterapkan pada statistik!",
+                "button": "❌ Kembali"
+            },
+            "choose_time": "⌚ Pilih waktu latihan Anda >",
+            "use_energy": {
+                "text": "⚡ Beri dinosaurus akses ke lemari es dengan minuman energi? \n _ Jika ada kekurangan energi, dinosaurus akan mengambil benda-benda seperti teh dari sana. _",
+                "buttons": [
+                    "✅ Penggunaan",
+                    "❌ Jangan gunakan"
+                ]
+            },
+            "gym": "💪 Dinosaurus pergi ke aula untuk memompa kekuatan dan kekuatannya! \n🏋️‍♂️ Dengan setiap latihan baru, dia menjadi tidak hanya lebih kuat, tetapi juga lebih percaya diri! \n🏉 Waktu pelatihan minimum untuk dinosaurus adalah {min_time}",
+            "library": "📖 Dinosaurus dengan antusias membaca buku, mengembangkan kecerdasannya!! \n📚 Saat dia menggali lebih dalam pengetahuan, dia menjadi lebih pintar dan lebih kuat, membuka cakrawala baru untuk petualangannya. \n✨ Waktu pelatihan minimum untuk dinosaurus adalah {min_time}",
+            "park": "🌳 Dinosaurus itu berjalan-jalan di taman untuk memompa karismanya! \n😄 Dengan setiap kenalan baru dan percakapan dengan orang yang lewat, dia menjadi lebih menawan dan percaya diri! \n✨ Waktu pelatihan minimum untuk dinosaurus adalah {min_time}",
+            "swimming_pool": "💦 Dinozav pergi ke kolam renang untuk meningkatkan kelincahannya! \n🏊‍♂️ Menyelam ke dalam air, dia mengejutkan semua orang dengan trik akrobatik! \n🌊 Waktu pelatihan minimum untuk dinosaurus adalah {min_time}",
+            "use_item": "\n🚚 | Dinosaurus mengambil item ini sendiri, karena dia sedang dalam pelatihan.",
+            "overloading": "❗ {dino_name} kelebihan beban dengan latihan, karena itu, waktu istirahatnya untuk latihan ini akan ditingkatkan! Cepat dan bawa dinosaurus kembali dari pelatihan!"
+        },
+        "time_craft": {
+            "text_start": "🛡️ Item membutuhkan waktu untuk dibuat. \n🪀 Item: {items}\n⏳ Waktu Kerajinan: {craft_time}\n🎃 Kirim dinosaurus untuk menggunakan keahliannya untuk membuat item.",
+            "text2": "_🪈 Untuk melihat semua item yang dapat dibuat, kirim perintah {command}_",
+            "button": "🦕 Kirim dinosaurus",
+            "cancel": "❌ Batalkan pembuatan",
+            "craft_info": "🪀 Item: {items}\n⏳ Waktu Tersisa: {craft_time}\n🦕 Dinosaurus Aktif: {dino}\n\n🎃 Jika Anda mengirim Dinosaurus, Anda hanya dapat mengembalikannya jika Anda berhenti membuat item tersebut. \n🧨 Jika kreasi dibatalkan, semua materi akan hilang.",
+            "send_dino": "⏳ Dinosaurus pergi untuk membuat item. Waktu kerajinan telah meningkat sebesar {percent}%"
+        },
+        "companies": {
+            "end_company": "🎋 Kampanye {name} selesai pada {time_work}. \n⛏️ Jumlah tayangan: {show_count} | {max_count}",
+            "owner": "Masukkan id pengguna - pencipta perusahaan atau \"0\" jika Anda menjadikan diri Anda sebagai pemilik.",
+            "text": "Masukkan teks perusahaan (maks 1024)",
+            "lang": "Pilih bahasa mana yang akan digunakan perusahaan (jika sudah ada perusahaan untuk bahasa tersebut, maka akan ditimpa)",
+            "name_button": "Masukkan teks tombol (maksimal 100 karakter)",
+            "button_url": "Masukkan tombol url",
+            "parse_mode": "Pilih Jenis Pemformatan -",
+            "no_parse": "Tidak ada pemformatan",
+            "image_choose": "Atur gambar atau ketik \"0\"",
+            "add_new_lang": "Tambahkan bahasa untuk milis?",
+            "time_end": "Masukkan waktu setelah perusahaan akan berakhir dalam format yang ditentukan dalam /string_to_sec (misalnya 1d) atau 0",
+            "max_count": "Masukkan jumlah tayangan maksimum atau 0 untuk tak terbatas",
+            "priority": "Apakah perusahaan memiliki prioritas di atas gramad?",
+            "one_message": "Apakah akan membatasi tampilan pesan hingga 1 untuk setiap pengguna",
+            "pin_message": "Sematkan pesan obrolan?",
+            "coin_price": "Tentukan hadiah dalam koin super untuk 1 tayangan",
+            "delete_after": "Hapus semua pesan setelah akhir perusahaan?",
+            "ignore_system_timeout": "Abaikan waktu tunggu pengguna (setelan iklan) DIREKOMENDASIKAN untuk pesan sistem",
+            "min_timeout": "Batas waktu minimum antara pesan atau 0 untuk konfigurasi pengguna (format waktu (1d))",
+            "name": "Beri nama perusahaan Anda",
+            "info": "🏦 Perusahaan {name}\n⏳ Berakhir di: {end} ({delta})\n🪵 Tayangan: {show} | {max_c}\n👑 Hadiah: {coin}\n🎃 Prioritas: {priority}\n💬 Penyematan: {pin}\n🎀 Penundaan antar tayangan: {timeout}\n🛡️ Mengabaikan sys. Batas waktu: {sys_timeout}\n❤️‍🩹 Penghapusan setelah selesai: {dlete_after}\n\n⛏️ Status: {status}",
+            "buttons": {
+                "delete": "Selesai",
+                "activate": "Mengaktifkan",
+                "stop": "Stop",
+                "message": "Pesan pengujian"
+            }
         }
     }
 }
