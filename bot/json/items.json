@@ -455,7 +455,8 @@
     "twigs_tree": {
         "image": "item27",
         "rank": "common",
-        "type": "material"
+        "type": "material",
+        "groups": ["wood"]
     },
     "fish_oil": {
         "image": "item28",
@@ -877,13 +878,19 @@
         "image": "item51",
         "rank": "common",
         "type": "material",
-        "groups": ["durable_materials"]
+        "groups": ["durable_materials", "ore"]
     },
     "iron": {
         "image": "item52",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["durable_materials"]
+        "groups": ["durable_materials", "ore"]
+    },
+    "wood": {
+        "image": "",
+        "rank": "uncommon",
+        "type": "material",
+        "groups": ["wood"]
     },
     "bone_sword": {
         "abilities": {

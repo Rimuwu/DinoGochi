@@ -31,7 +31,10 @@ async def one_time(sleeper, one_time_unit):
         if randint(0, 1):
             owner = await get_owner(dino['_id'])
             if owner:
-                await experience_enhancement(owner['owner_id'], randint(1, 2))
+                if await check_inspiration(dino['_id'], 'exp_boost'):
+                    await experience_enhancement(owner['owner_id'], randint(1, 4))
+                else:
+                    await experience_enhancement(owner['owner_id'], randint(1, 2))
 
                 if randint(1, 100) + transform(dino.stats['charisma'], 20, 30) >= 80:
                     await experience_enhancement(owner, randint(1, 2))

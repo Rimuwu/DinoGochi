@@ -52,8 +52,11 @@ async def events():
             await random_event(i['dino_id'], i['location'])
             await check_accessory(dino, 'hiking_bag', True)
 
-            if randint(0, 1): 
-                await experience_enhancement(i['sended'], randint(1, 2))
+            if randint(0, 1):
+                if await check_inspiration(dino._id, 'exp_boost'):
+                    await experience_enhancement(i['sended'], randint(1, 4))
+                else:
+                    await experience_enhancement(i['sended'], randint(1, 2))
 
             if randint(1, 100) + transform(dino.stats['charisma'], 20, 30) >= 80:
                 await experience_enhancement(i['sended'], randint(1, 2))

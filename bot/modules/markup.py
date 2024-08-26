@@ -271,9 +271,9 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
             ]
 
             if await dino.status in ['farm', 'mine', 'bank', 'sawmill']:
-                buttons.append(
-                    ['stop_work']
-                )
+                buttons = [
+                    ['progress', 'stop_work']
+                ]
 
     elif markup_key == 'skills_actions_menu':
         # Меню повышения навыков

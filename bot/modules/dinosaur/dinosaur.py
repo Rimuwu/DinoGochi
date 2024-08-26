@@ -603,6 +603,17 @@ async def set_status(dino_id: ObjectId, new_status: str, now_status: str = ''):
             await dino_notification(dino_id, res['activity_type'] + '_end' + way)
             await end_skill_activity(dino_id)
 
+    elif now_status in ['bank', 'mine', 'sawmill']:
+        res = await long_activity.find_one(
+            {'activity_type': {'$in': ['bank', 'mine', 'sawmill']}, 
+             'dino_id': dino_id}
+        )
+
+        if res:
+            await long_activity.delete_one({'_id': res['_id']})
+            await dino_notification(dino_id, f'{now_status}_end')
+
+
 
 quality_spec = {
     'com': [0.1, 0.5],

@@ -20,7 +20,7 @@ from bot.modules.markup import (confirm_markup, count_markup,
 from bot.modules.dinosaur.mood import add_mood
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
-from bot.modules.user.user import User, experience_enhancement, get_dead_dinos, max_eat, count_inventory_items, award_premium
+from bot.modules.user.user import User, get_dead_dinos, max_eat, count_inventory_items, award_premium
 from typing import Union
 
 

@@ -70,6 +70,46 @@ inspiration = {
     'sleep': {
         'cancel_mood': 75,
         'duration_time': (3600, 9000),
+    },
+    'craft': {
+        'cancel_mood': 75,
+        'duration_time': (1200, 3600),
+    },
+    'farm': {
+        'cancel_mood': 75,
+        'duration_time': (3600, 10800),
+    },
+    'mine': {
+        'cancel_mood': 75,
+        'duration_time': (3600, 9000),
+    },
+    'bank': {
+        'cancel_mood': 75,
+        'duration_time': (3600, 9000),
+    },
+    'sawmill': {
+        'cancel_mood': 75,
+        'duration_time': (3600, 9000),
+    },
+    'gym': {
+        'cancel_mood': 75,
+        'duration_time': (3600, 7200),
+    },
+    'library': {
+        'cancel_mood': 75,
+        'duration_time': (3600, 7200),
+    },
+    'park': {
+        'cancel_mood': 75,
+        'duration_time': (1800, 7200),
+    },
+    'swimming_pool': {
+        'cancel_mood': 75,
+        'duration_time': (3600, 7200),
+    },
+    "exp_boost": {
+        'cancel_mood': 75,
+        'duration_time': (1800, 3600),
     }
 }
 
@@ -188,7 +228,7 @@ async def dino_breakdown(dino: ObjectId):
     return action
 
 async def dino_inspiration(dino: ObjectId): 
-    """ Вызывает вдохновение у динозавра на duration секунд. Чтобы отменить вдохновение, требуется повысить настроение до cancel_mood или оно закончится после определённого времени.
+    """ Вызывает вдохновение у динозавра на duration секунд. Чтобы отменить вдохновение, требуется понизить настроение до cancel_mood или оно закончится после определённого времени.
     
     Все вдохновения ускоряют действие в 2 раза.
     """

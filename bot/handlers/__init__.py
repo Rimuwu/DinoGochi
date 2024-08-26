@@ -25,6 +25,7 @@ from . import actions_speed
 from . import super_coins
 from . import time_craft
 from . import companies
+from . import works
 
 from . import stars_invoice
 from . import post_handler # Должен загружаться последний!

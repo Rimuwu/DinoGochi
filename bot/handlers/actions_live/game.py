@@ -7,7 +7,7 @@ from bot.exec import bot
 from bot.modules.items.accessory import check_accessory
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline
-from bot.modules.decorators import HDCallback, HDMessage
+from bot.modules.decorators import HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino, end_game, set_status
 from bot.modules.user.friends import send_action_invite
 from bot.modules.images import dino_game

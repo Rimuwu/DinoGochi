@@ -1,4 +1,4 @@
-from random import choice, randint, uniform
+
 from time import time
 
 from bot.config import mongo_client
@@ -7,17 +7,14 @@ from bot.modules.dinosaur.dino_status import end_skill_activity, get_skill_time,
 from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.dinosaur.skills import add_skill_point
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.localization import get_data, get_lang, t
+from bot.modules.localization import get_lang, t
 from bot.modules.markup import markups_menu as m
-from bot.modules.dinosaur.mood import add_mood, repeat_activity
+from bot.modules.dinosaur.mood import repeat_activity
 from bot.modules.notifications import dino_notification
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.states_tools import ChooseOptionState
-from bot.modules.user import user
 from bot.modules.user.user import User
 from telebot.types import Message, CallbackQuery
-from bot.modules.data_format import list_to_inline, seconds_to_str, list_to_keyboard
-from bot.modules.dinosaur.dinosaur import Dino
+from bot.modules.data_format import list_to_inline, seconds_to_str
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)

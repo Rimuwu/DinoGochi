@@ -5,7 +5,7 @@ from time import time
 from bot.config import conf, mongo_client
 from bot.modules.data_format import transform
 from bot.modules.dinosaur.dinosaur  import end_game, mutate_dino_stat, get_owner
-from bot.modules.dinosaur.mood import add_mood, check_breakdown
+from bot.modules.dinosaur.mood import add_mood, check_breakdown, check_inspiration
 from bot.modules.user.user import experience_enhancement
 from bot.taskmanager import add_task
 from bot.modules.quests import quest_process
@@ -58,7 +58,10 @@ async def game_process():
                                                               comment='game_process_dino_con')
                         if dino_con:
                             userid = dino_con['owner_id']
-                            await experience_enhancement(userid, randint(1, 19))
+                            if await check_inspiration(dino['_id'], 'exp_boost'):
+                                await experience_enhancement(userid, randint(1, 10))
+                            else:
+                                await experience_enhancement(userid, randint(1, 20))
 
                             if randint(1, 100) + transform(charisma, 20, 30) >= 80:
                                 await experience_enhancement(userid, randint(1, 5))

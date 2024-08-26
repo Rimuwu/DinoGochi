@@ -387,3 +387,36 @@ def distribute_number(number: int, ratios: list[int]):
     distribution = [(ratio / total_ratios) * number for ratio in ratios]  # Распределяем число
     return [round(value) for value in distribution]  # Округляем результаты
 
+def progress_bar(now, end, col_emoji, 
+                 activ_emoji, passive_emoji,
+                 start_text = '[', end_text = ']',
+                 percent_visible: bool = True):
+    """
+    # Пример использования
+        now = 4
+        end = 12
+        col_emoji = 10
+        activ_emoji = '🔵'
+        passive_emoji = '⚪️'
+
+    >>> 33% [🔵🔵🔵⚪️⚪️⚪️⚪️⚪️⚪️⚪️] 100%
+    """
+    if end <= 0:
+        return "Invalid end time. It must be greater than 0."
+
+    # Вычисляем процент завершения
+    percent_complete = min(int((now / end) * 100), 100)
+    
+    # Вычисляем количество активных и неактивных эмодзи
+    progress_length = int((now / end) * col_emoji)  # количество активных эмодзи
+    if progress_length > col_emoji:
+        progress_length = col_emoji  # ограничиваем максимальным количеством эмодзи
+    
+    active_part = activ_emoji * progress_length
+    passive_part = passive_emoji * (col_emoji - progress_length)
+
+    # Формируем строку прогресс бара с процентом и 100% в конце
+    bar = f'{start_text}{active_part}{passive_part}{end_text}'
+    if percent_visible:
+        return f"{percent_complete}% {bar} 100%" 
+    return bar

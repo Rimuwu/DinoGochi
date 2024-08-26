@@ -5,7 +5,7 @@ from bot.config import conf, mongo_client
 from bot.modules.dinosaur.dinosaur  import check_status, mutate_dino_stat
 from bot.taskmanager import add_task
 from bot.modules.dinosaur.dinosaur  import Dino, get_owner
-from bot.modules.dinosaur.mood import mood_while_if, calculation_points
+from bot.modules.dinosaur.mood import check_inspiration, mood_while_if, calculation_points
 from bot.modules.user.user import experience_enhancement
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -99,11 +99,13 @@ async def main_checks():
             elif skill_activ and (random.uniform(0, 1) <= P_EAT):
                 await mutate_dino_stat(dino, 'eat', -1)
 
-
             if randint(1, 5) == 5:
                 owner = await get_owner(dino['_id'])
                 if owner:
-                    await experience_enhancement(owner['owner_id'], randint(1, 2))
+                    if await check_inspiration(dino['_id'], 'exp_boost'):
+                        await experience_enhancement(owner['owner_id'], randint(1, 4))
+                    else:
+                        await experience_enhancement(owner['owner_id'], randint(1, 2))
 
         # условие выполнения для питания и восстановления здоровья
         # если динозавр не испытывает голод, не находится в критическом запасе энергии, настроение находится выше среднего

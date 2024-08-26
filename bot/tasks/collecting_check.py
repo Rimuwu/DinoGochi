@@ -64,11 +64,15 @@ async def collecting_process():
             if await check_accessory(dino, 'tooling'): chance += 0.25
 
             # Выдача опыта
-            if random.uniform(0, 1) <= LVL_CHANCE: 
-                await experience_enhancement(coll_data['sended'], 
+            if random.uniform(0, 1) <= LVL_CHANCE:
+                if await check_inspiration(dino._id, 'exp_boost'):
+                    await experience_enhancement(coll_data['sended'], 
+                                             randint(1, 6))
+                else:
+                    await experience_enhancement(coll_data['sended'], 
                                              randint(1, 3))
 
-            if randint(1, 100) + transform(dino.stats['charisma'], 20, 30) >= 80:
+            if randint(1, 100) + transform(dino.stats['charisma'], 20, 30) >= 90:
                 await experience_enhancement(coll_data['sended'], randint(1, 5))
 
             # Выдача еды

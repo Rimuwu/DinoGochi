@@ -504,8 +504,8 @@ def main(pp=False):
         for way in nt_keys:
             data[lang_code]['upd'].append(way)
 
-            if len(cash_replaces.keys()) >= 400:
-                cash_replaces = {}
+            # if len(cash_replaces.keys()) >= 400:
+            #     cash_replaces = {}
 
             last_key = way.split('.')[-1]
 

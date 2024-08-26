@@ -38,8 +38,8 @@ async def check_status(dino_id):
 
         in_mine = status == 'mine'
         in_bank = status == 'bank'
-
         in_sawmill = status == 'sawmill'
+
         in_gym = status == 'gym'
         in_library = status == 'library'
         in_park = status == 'park'
