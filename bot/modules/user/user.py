@@ -10,7 +10,7 @@ from bot.modules.data_format import escape_markdown, item_list, seconds_to_str, 
 from bot.modules.dinosaur.dinosaur import Dino, Egg
 from bot.modules.user.advert import create_ads_data
 from bot.modules.user.friends import get_frineds
-from bot.modules.items.item import AddItemToUser
+from bot.modules.items.item import AddItemToUser, get_item_dict
 from bot.modules.items.item import get_data as get_item_data
 from bot.modules.items.item import get_name
 from bot.modules.localization import get_data, t, get_lang, available_locales
@@ -603,10 +603,13 @@ async def max_eat(userid: int):
     max_col = col * per_one + 50
     return max_col
 
-async def get_inventory_from_i(userid: int, items_l: list[dict] = [], limit = None):
+async def get_inventory_from_i(userid: int, items_l: list[dict] = [], 
+                               limit = None, one_count = False):
     """ 
         items_l - [ {'item_id': int, 'abilities': dict} ]
+        one_count - стандартные значения хар и 1 количество (советую использовать с limit = 1)
     """
+    if one_count: id_list = []
 
     find_i = []
     for item in items_l:
@@ -624,7 +627,21 @@ async def get_inventory_from_i(userid: int, items_l: list[dict] = [], limit = No
                               max_col=limit)
         pre_l = list(map(
             lambda i: {'item': i['items_data'], 'count': i['count']}, fi))
-        find_i += pre_l
+        if one_count:
+
+            for i in pre_l:
+                if i['item']['item_id'] not in id_list:
+                    id_list.append(i['item']['item_id'])
+
+                    item = get_item_dict(i['item']['item_id'])
+                    find_i.append(
+                        {
+                            "item": item,
+                            "count": i['count']
+                        }
+                    )
+        else:
+            find_i += pre_l
 
     result = item_list(find_i)
     return result

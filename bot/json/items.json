@@ -56,7 +56,8 @@
         },
         "image": "item4",
         "rank": "uncommon",
-        "type": "game"
+        "type": "game",
+        "groups": ["repairing"]
     },
     "wild_boar_meat": {
         "act": 17,
@@ -264,7 +265,8 @@
         },
         "image": "item14",
         "rank": "uncommon",
-        "type": "journey"
+        "type": "journey",
+        "groups": ["repairing"]
     },
     "tooling": {
         "abilities": {
@@ -281,7 +283,8 @@
         },
         "image": "item16",
         "rank": "uncommon",
-        "type": "sleep"
+        "type": "sleep",
+        "groups": ["repairing"]
     },
     "therapeutic_mixture": {
         "buffs": {
@@ -469,7 +472,8 @@
         },
         "image": "item29",
         "rank": "uncommon",
-        "type": "journey"
+        "type": "journey",
+        "groups": ["repairing"]
     },
     "clothing_recipe": {
         "abilities": {
@@ -513,7 +517,8 @@
         },
         "image": "item31",
         "rank": "uncommon",
-        "type": "collecting"
+        "type": "collecting",
+        "groups": ["repairing"]
     },
     "torch_recipe": {
         "abilities": {
@@ -779,7 +784,8 @@
         },
         "image": "item44",
         "rank": "uncommon",
-        "type": "game"
+        "type": "game",
+        "groups": ["repairing"]
     },
     "hiking_bag": {
         "abilities": {
@@ -787,7 +793,8 @@
         },
         "image": "item45",
         "rank": "rare",
-        "type": "journey"
+        "type": "journey",
+        "groups": ["repairing"]
     },
     "pouch_recipe": {
         "abilities": {
@@ -903,11 +910,12 @@
         },
         "image": "item53",
         "rank": "uncommon",
-        "type": "weapon"
+        "type": "weapon",
+        "groups": ["repairing"]
     },
     "iron_sword": {
         "abilities": {
-            "endurance": 50
+            "endurance": 80
         },
         "class": "near",
         "damage": {
@@ -916,7 +924,8 @@
         },
         "image": "item53",
         "rank": "uncommon",
-        "type": "weapon"
+        "type": "weapon",
+        "groups": ["repairing"]
     },
     "bone_arrow": {
         "add_damage": 0,
@@ -939,7 +948,8 @@
         },
         "image": "item55",
         "rank": "uncommon",
-        "type": "weapon"
+        "type": "weapon",
+        "groups": ["repairing"]
     },
     "taco_recipe": {
         "abilities": {
@@ -1002,7 +1012,7 @@
             {
                 "item": {"group": "durable_materials"},
                 "type": "delete",
-                "col": 5
+                "count": 5
             },
             {
                 "act": 30,
@@ -1172,7 +1182,8 @@
         "image": "item62",
         "rank": "uncommon",
         "reflection": 2,
-        "type": "armor"
+        "type": "armor",
+        "groups": ["repairing"]
     },
     "shield_recipe": {
         "abilities": {
@@ -1262,7 +1273,8 @@
         "effectiv": 2,
         "image": "item64",
         "rank": "uncommon",
-        "type": "weapon"
+        "type": "weapon",
+        "groups": ["repairing"]
     },
     "pickaxe_recipe": {
         "abilities": {
@@ -2808,7 +2820,8 @@
         },
         "image": "item113",
         "rank": "rare",
-        "type": "collecting"
+        "type": "collecting",
+        "groups": ["repairing"]
     },
     "stone_resurrection": {
         "image": "null",
@@ -2837,7 +2850,8 @@
         },
         "image": "item115",
         "rank": "rare",
-        "type": "collecting"
+        "type": "collecting",
+        "groups": ["repairing"]
     },
     "basket": {
         "abilities": {
@@ -2845,7 +2859,8 @@
         },
         "image": "basket",
         "rank": "rare",
-        "type": "collecting"
+        "type": "collecting",
+        "groups": ["repairing"]
     },
     "rope": {
         "image": "rope",
@@ -2893,7 +2908,8 @@
         },
         "image": "bag_goodies",
         "rank": "uncommon",
-        "type": "journey"
+        "type": "journey",
+        "groups": ["repairing"]
     },
     "rubik_cube": {
         "abilities": {
@@ -2901,7 +2917,8 @@
         },
         "image": "rubik_cube",
         "rank": "uncommon",
-        "type": "journey"
+        "type": "journey",
+        "groups": ["repairing"]
     },
     "lock_bag": {
         "abilities": {
@@ -2909,7 +2926,8 @@
         },
         "image": "lock_bag",
         "rank": "uncommon",
-        "type": "journey"
+        "type": "journey",
+        "groups": ["repairing"]
     },
     "skinning_knife": {
         "abilities": {
@@ -2917,7 +2935,8 @@
         },
         "image": "skinning_knife",
         "rank": "uncommon",
-        "type": "journey"
+        "type": "journey",
+        "groups": ["repairing"]
     },
     "flour": {
         "image": "flour",
@@ -3326,5 +3345,44 @@
         "abilities": {
             "data_id": 1
         }
+    },
+    "SYSTEM_ITEM_REPAIR": {
+        "type": "dummy",
+        "rank": "common"
+    },
+    "repair_tool": {
+        "abilities": {
+            "uses": 10
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "SYSTEM_ITEM_REPAIR",
+                    "type": "preview",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": {"group": "repairing"},
+                "type": "to_create",
+                "count": 1
+            },
+            {
+                "act": 50,
+                "item": "tooling",
+                "type": "endurance",
+                "copy_abilities": {
+                    "copy": ["endurance"], 
+                    "max_unit": 50, 
+                    "to_items": [0],
+                    "action": "inc"
+                }
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
     }
 }

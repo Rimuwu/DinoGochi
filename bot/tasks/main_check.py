@@ -182,25 +182,27 @@ async def main_checks():
         
         # ========== Мысли вслух ========== # 
         if status == 'pass':
-            chance = randint(1, 20) + transform(dino['stats']['charisma'], 20, 5)
-            if chance >= 20:
+            chance = randint(1, 60) + transform(dino['stats']['charisma'], 20, 5)
+            if chance >= 60:
                 owner = await get_owner(dino['_id'])
 
                 if owner:
                     user = await User().create(owner['owner_id'])
                     lang = await get_lang(owner['owner_id'])
 
-                    if not user.settings.get('my_name', False):
-                        owner_name = t('owner', lang)
-                    else: owner_name = user.settings['my_name']
+                    state = await bot.get_state(user.userid, user.userid)
+                    if state == None:
+                        if not user.settings.get('my_name', False):
+                            owner_name = t('owner', lang)
+                        else: owner_name = user.settings['my_name']
 
-                    text = choice(get_data('pass_messages', lang))
-                    text = text.format(owner=owner_name)
-                    try:
-                        await bot.send_message(
-                            owner['owner_id'], f'🦕 {dino["name"]}: {text}'
-                        )
-                    except: pass
+                        text = choice(get_data('pass_messages', lang))
+                        text = text.format(owner=owner_name)
+                        try:
+                            await bot.send_message(
+                                owner['owner_id'], f'🦕 {dino["name"]}: {text}'
+                            )
+                        except: pass
 
 if __name__ != '__main__':
     if conf.active_tasks:

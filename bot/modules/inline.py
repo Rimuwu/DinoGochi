@@ -62,12 +62,14 @@ def item_info_markup(item: dict, lang):
             if rep not in ignore_craft:
                 for item_cr in item_data['create'][rep]:
                     data = get_item_dict(item_cr['item'])
-                    name = loc_data['created_item'].format(
-                                item=get_name(item_cr['item'], 
-                                              lang, item_cr.get('abilities', {})))
 
-                    markup_inline.add(InlineKeyboardButton(text=name,
-                                callback_data=f'item info {item_code(data)}'))
+                    if item_cr['type'] != 'preview':
+                        name = loc_data['created_item'].format(
+                                    item=get_name(item_cr['item'], 
+                                                lang, item_cr.get('abilities', {})))
+
+                        markup_inline.add(InlineKeyboardButton(text=name,
+                                    callback_data=f'item info {item_code(data)}'))
 
     if 'ns_craft' in item_data:
         for cr_dct_id in item_data['ns_craft'].keys():

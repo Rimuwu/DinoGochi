@@ -6,7 +6,7 @@ from typing import Any, Union
 from bot.config import mongo_client
 from bot.modules.data_format import list_to_inline, random_code, random_data, seconds_to_str
 from bot.modules.inventory_tools import inventory_pages
-from bot.modules.items.item import AddItemToUser, CheckCountItemFromUser, DeleteAbilItem, RemoveItemFromUser, UseAutoRemove, check_and_return_dif, counts_items, get_name, get_data, item_code, item_info
+from bot.modules.items.item import AddItemToUser, CheckCountItemFromUser, DeleteAbilItem, RemoveItemFromUser, UseAutoRemove, check_and_return_dif, counts_items, get_item_dict, get_items_names, get_name, get_data, item_code, item_info
 from bot.modules.items.items_groups import get_group
 from bot.modules.items.time_craft import add_time_craft
 from bot.modules.localization import t
@@ -25,32 +25,33 @@ items = DBconstructor(mongo_client.items.items)
             "main": [ // Тип создаваемого рецепта, main используется для отображения в инфо, создаётся по умолчанию и должен быть всегда
                 {
                     "item": "leather_clothing", // Создаваемый предмет
-                    "type": "create", // Тут create | repair (не создан)
+                    "type": "create", // Тут create | preview (не создаётся, только превью)
                     "abilities": {}, // Характеристики предмета
-                    "col": 1 // Количество создания вместо повторов
+                    "count": 1 // Количество создания вместо повторов
                 }
             ],
             "carrot": [ // Тип создаваемого рецепта, main используется для отображения в инфо, создаётся по умолчанию и должен быть всегда
                 {
                     "item": "leather_clothing", // Создаваемый предмет
-                    "type": "create", // Тут create | repair (не создан)
+                    "type": "create", // Тут create 
                     "abilities": {"act": { "random-int": [2, 10] }}, // Рандомная число от 2 до 10
                     // После, если в списке 2 элемента - и оба число - randint иначе choice
-                    "col": 1 // Количество создания вместо повторов
+                    "count": 1 // Количество создания вместо повторов
                 }
             ]
         },
         "materials": [
             {
                 "item": "skin", // Удаляемый предмет
-                "type": "delete", // delete | endurance удаление | понижение характеристики предмета 
-                "col": 5 // col - delete | act - сколько нужно отнять 
+                "type": "delete", // delete | endurance удаление | понижение характеристики предмета | to_create
+                # to_create - переносит предмет в создаваемые (удаляет как материал и создаёт его с теме же хар )
+                "count": 5 // count - delete | act - сколько нужно отнять 
                 "abilities": {}, // Характеристики предмета (используются для поиска)
             },
             {
                 "item": {"group": "vegetables"}, // Предложит выбрать из группы предметов овощей (те что есть в инвентаре)
                 "type": "delete", // delete | endurance удаление | понижение характеристики предмета 
-                "col": 5, // col - delete | act - сколько нужно отнять 
+                "count": 5, // count - delete | act - сколько нужно отнять 
                 "save_choose": true // По умолчанию поставить в коде False
                 // В случае если true, код будет искать в create ключ с выбранным предметом
                 // Например выбрали carrot - будут выданы предметы не из main, а carrot
@@ -60,12 +61,13 @@ items = DBconstructor(mongo_client.items.items)
             {
                 "item": ["carrot", "leather"], // Предложет выбрать из списка предметов (те что есть в инвентаре)
                 "type": "delete", // delete | endurance удаление | понижение характеристики предмета 
-                "col": 5, // col - delete | act - сколько нужно отнять 
+                "count": 5, // count - delete | act - сколько нужно отнять 
                 "copy_abilities": [
                     {
                         "copy": ["endurance"], // Копирует указанную хар предмета
+                        "max_unit": 50, // Сколько максимально может быть передано единиц (для inc)
                         "to_items": [0], // Устанавливает её указанным предметам
-                        "action": "set" | "inc" | "add"
+                        "action": "set" | "inc" 
                     }
                 ]
                 // код будет искать в create ключ с выбранным предметом
@@ -100,10 +102,10 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
     a = -1
 
     for material in data_item['materials']:
-        if 'col' not in material: material['col'] = 1
+        if 'count' not in material: material['count'] = 1
         copy_mat = material.copy()
 
-        copy_mat['col'] *= count
+        copy_mat['count'] *= count
         if 'abilities' in material:
             copy_mat['abilities'] = material['abilities']
 
@@ -230,7 +232,7 @@ async def check_items_in_inventory(materials, item, count,
 
         # Нет предметов
         if len(find_items) == 0:
-            not_find.append({'item': material['item'], 'diff': material['col']})
+            not_find.append({'item': material['item'], 'diff': material['count']})
 
         else:
             find_set = []
@@ -241,14 +243,14 @@ async def check_items_in_inventory(materials, item, count,
             # У предметов нет альтернатив
             if len(find_set) == 1:
                 count_material = await check_and_return_dif(userid, **i['items_data'])
-                if count_material >= material['col']:
+                if count_material >= material['count']:
                     finded_items.append(
                         {'item': i['items_data'],
-                         'count': material['col']}
+                         'count': material['count']}
                     )
                 else:
                     not_find.append({'item': i['items_data'], 
-                                     'diff': material['col'] - count_material})
+                                     'diff': material['count'] - count_material})
 
             # Есть варианты для выбора
             elif len(find_set) > 1:
@@ -272,7 +274,7 @@ async def check_items_in_inventory(materials, item, count,
                     }
                 )
                 finded_items.append({'item': name, 
-                                     'count': material['col']})
+                                     'count': material['count']})
 
     if not_find:
         nt_materials = []
@@ -335,7 +337,7 @@ async def pre_check(items: dict, transmitted_data):
             result_list.append(i)
 
         elif isinstance(i['item'], str):
-            result_list.append({'item': items[i['item']]})
+            result_list.append({'item': items[i['item']], 'count': i['count']})
 
     await check_endurance_and_col(result_list, count, 
                                   item, userid, chatid, lang, data)
@@ -357,7 +359,7 @@ async def check_endurance_and_col(finded_items, count, item,
     for material in materials:
         ind = materials.index(material)
 
-        if material['type'] == 'delete':
+        if material['type'] in ['delete', 'to_create']:
             mat_col = await check_and_return_dif(userid, **material['item'])
             if mat_col < material['count']:
                 not_found.append(
@@ -381,12 +383,13 @@ async def check_endurance_and_col(finded_items, count, item,
                 )
             else:
                 dct_data['type'] = material['type']
+                dct_data['item'] = material['item']
                 data['end'].append(dct_data)
 
     if not_found:
         nt_materials = []
         for i in not_found:
-            if i['type'] == 'delete':
+            if i['type'] in ['delete', 'to_create']:
                 nt_materials.append(
                     f'{get_name(i["item"], lang, i.get("abilities", {}))} x{i["count"]}'
                 )
@@ -427,6 +430,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
             way = 'main'
 
     # Удаление материалов
+    print(data['end'])
     for material in data['end']:
 
         if material['type'] == 'delete':
@@ -442,6 +446,25 @@ async def end_craft(count, item, userid, chatid, lang, data):
                              material['set']} 
                           })
 
+        elif material['type'] == 'to_create':
+            print(material, '--2323')
+            r = await UseAutoRemove(userid, material['item'], material['count'])
+            print(r)
+            if r:
+
+                data_item['create'][way].append( {
+                    "type": "create",
+                    "item": material['item']['item_id'],
+                    "count": material['count'],
+                    "abilities": material['item'].get('abilities', {})
+                } )
+
+    # Очищаем создание от ненужных предметов
+    to_create: list = data_item['create'][way]
+    for create in data_item['create'][way]:
+
+        if create['type'] == 'preview':
+            to_create.remove(create)
 
     # Сохранение характеристик предмета и подготовка создаваемых редметов
     for material in data['end']:
@@ -452,25 +475,35 @@ async def end_craft(count, item, userid, chatid, lang, data):
             data_cop = material_data['copy_abilities']
 
             for cr_item in data_cop['to_items']:
+                standart_item = get_item_dict(to_create[cr_item]['item'])
+                standart_abil = standart_item.get('abilities', {})
 
                 for abil in data_cop['copy']:
                     if abil in material['item']['abilities']:
-                        if 'abilities' not in data_item['create'][way][cr_item]:
-                            data_item['create'][way][cr_item]['abilities'] = {}
+                        if 'abilities' not in to_create[cr_item]:
+                            to_create[cr_item]['abilities'] = {}
 
                         if data_cop['action'] == 'set':
-                            data_item['create'][way][cr_item]['abilities'][abil] = material['item']['abilities'][abil]
+                            to_create[cr_item]['abilities'][abil] = material['item']['abilities'][abil]
 
                         elif data_cop['action'] == 'inc':
-                            if abil in data_item['create'][way][cr_item]['abilities']:
-                                data_item['create'][way][cr_item]['abilities'][abil] += material['item']['abilities'][abil]
-                            else:
-                                data_item['create'][way][cr_item]['abilities'][abil] = material['item']['abilities'][abil]
+                            if abil in standart_abil and to_create[cr_item]['abilities'][abil] != standart_abil[abil]:
+                                abil_unit = material['item']['abilities'][abil]
+                                if 'max_unit' in data_cop:
+                                    if abil_unit > data_cop['max_unit']:
+                                        abil_unit = data_cop['max_unit']
+
+                                if abil in to_create[cr_item]['abilities']:
+                                    to_create[cr_item]['abilities'][abil] += abil_unit
+                                else:
+                                    to_create[cr_item]['abilities'][abil] = abil_unit
+
+                                if abil in standart_abil and to_create[cr_item]['abilities'][abil] > standart_abil[abil]:
+                                    to_create[cr_item]['abilities'][abil] = standart_abil[abil]
 
     # Выдача крафта
-    created_items = []
     create = []
-    for create_data in data_item['create'][way]:
+    for create_data in to_create:
 
         if create_data['type'] == 'create':
             preabil = create_data.get('abilities', {}) # Берёт характеристики если они есть
@@ -484,9 +517,6 @@ async def end_craft(count, item, userid, chatid, lang, data):
                                     'abilities': preabil}, 
                            'count': count * add_count
                            })
-
-            for _ in range(count + add_count):
-                created_items.append(create_data['item'])
 
     # Понижение прочности рецепта
     await UseAutoRemove(userid, item, count)
@@ -503,7 +533,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
     if 'time_craft' in data_item:
         tc = await add_time_craft(userid, data_item['time_craft'], create)
         text = t('time_craft.text_start', lang, 
-                 items=counts_items(created_items, lang),
+                 items=get_items_names(create, lang),
                  craft_time=seconds_to_str(data_item['time_craft'], lang)
                  )
         markup = list_to_inline(
@@ -517,7 +547,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
             await AddItemToUser(userid, i['item']['item_id'], 
                                 i['count'], i['item']['abilities'])
         text = t('item_use.recipe.create', lang, 
-                 items=counts_items(created_items, lang))
+                 items=get_items_names(create, lang))
         markup = await markups_menu(userid, 'last_menu', lang)
 
     # Создание сообщения
