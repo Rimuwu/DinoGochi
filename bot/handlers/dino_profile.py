@@ -10,7 +10,7 @@ from bot.modules.data_format import (list_to_inline, list_to_keyboard,
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur import Dino, Egg, check_status, dead_check
 from bot.modules.managment.events import get_event
-from bot.modules.images import async_open
+from bot.modules.images import async_open, create_skill_image
 from bot.modules.inline import dino_profile_markup, inline_menu
 from bot.modules.items.item import AddItemToUser, get_name
 from bot.modules.dinosaur.kindergarten import (check_hours, dino_kind, hours_now,
@@ -331,6 +331,24 @@ async def dino_menu(call: types.CallbackQuery):
             elif action == 'backgrounds_menu':
                 await bot.send_message(chatid, t('menu_text.backgrounds_menu', lang), 
                            reply_markup= await m(userid, 'backgrounds_menu', lang))
+
+            elif action == 'skills':
+                await skills_profile(userid, chatid, dino, lang)
+
+async def skills_profile(userid, chatid, dino_data: dict, lang):
+    dino = await Dino().create(dino_data['_id'])
+    age = await dino.age()
+    image = await create_skill_image(dino.data_id, 
+                                     age.days, lang, dino.stats)
+    data_skills = {}
+
+    for i in ['power', 'dexterity', 'intelligence', 'charisma']:
+        data_skills[i] = near_key_number(
+            dino.stats[i], get_data(f'skills_profile.{i}', lang)
+        )
+
+    text = t('skills_profile.info', lang, **data_skills)
+    await bot.send_photo(chatid, image, text, parse_mode='Markdown')
 
 
 async def cnacel_joint(_:bool, transmitted_data:dict):

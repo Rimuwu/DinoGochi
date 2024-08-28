@@ -258,6 +258,7 @@ async def notification_manager(dino_id: ObjectId, stat: str, unit: int):
         if await check_dino_notification(dino_id, notif, False):
             # Отправка уведомления
             return await dino_notification(dino_id, notif, unit=unit, **kwargs)
+        return 1
 
     elif unit >= critical_line[stat] + 20:
         # Удаляем уведомление 

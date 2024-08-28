@@ -22,7 +22,7 @@ from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_secon
 from bot.modules.dinosaur.dinosaur import check_status
 from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.donation import send_inv
-from bot.modules.images import create_egg_image, dino_collecting, dino_game
+from bot.modules.images import create_egg_image, create_skill_image, dino_collecting, dino_game
 from bot.modules.inventory_tools import inventory_pages
 from bot.modules.items.item import (AddItemToUser, DowngradeItem, get_data,
                               get_item_dict, get_name, RemoveItemFromUser)
@@ -191,17 +191,11 @@ async def test(message: Message):
 @HDMessage
 async def test2(message: Message):
     
-    lang = 'ru'
-    userid = message.from_user.id
-    chatid = message.chat.id
+    chars = {
+        'power': 1.83454,
+        'dexterity': 10.2323,
+     'intelligence': 19.23213,
+     'charisma': 18.23
+    }
     
-    # m = await bot.send_message(chatid, 'text')
-    await auto_ads(message, True)
-
-    # aid = await nextinqueue(userid)
-    # if aid:
-    #     m = await bot.send_message(chatid, 'text')
-    #     await save_message(aid, userid, m.id)
-    # else:
-    #     print('NO companies')
-
+    await create_skill_image('244', 1, 'ru', chars)

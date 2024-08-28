@@ -19,6 +19,7 @@ from bot.config import mongo_client
 from bot.const import ITEMS
 from bot.modules.data_format import random_dict, seconds_to_str, near_key_number
 from bot.modules.images import async_open
+from bot.modules.items.items_groups import get_group
 from bot.modules.localization import get_all_locales, t
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
@@ -551,7 +552,21 @@ def get_case_content(content: list, lang: str, separator: str = ' |'):
     items_list = []
 
     for item in content:
-        name = get_name(item['id'], lang)
+        
+        if isinstance(item['id'], str):
+            name = get_name(item['id'], lang)
+
+        if isinstance(item['id'], dict):
+            # В материалах указана группа
+            group = item["id"]["group"]
+            name = "(" + t(f'groups.{group}', lang) + ")"
+
+        elif isinstance(item['id'], list):
+            # В материалах указан список предметов которых можно использовать
+            names = []
+            for i in item['id']: names.append(get_name(i, lang))
+            name = '(' + ', '.join(names) + ')'
+
         percent = round((item['chance'][0] / item['chance'][1]) * 100, 4)
         if item['col']['type'] == 'random':
             col = f"x({item['col']['min']} - {item['col']['max']})"

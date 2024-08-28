@@ -1,4 +1,4 @@
-from random import randint, shuffle
+from random import choice, randint, shuffle
 
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS
@@ -13,6 +13,7 @@ from bot.modules.items.item import (AddItemToUser, CalculateDowngradeitem,
                               RemoveItemFromUser, UseAutoRemove, counts_items,
                               get_data, get_item_dict, get_name, is_standart,
                               item_code)
+from bot.modules.items.items_groups import get_group
 from bot.modules.localization import get_data as get_loca_data
 from bot.modules.localization import t
 from bot.modules.markup import (confirm_markup, count_markup,
@@ -309,8 +310,17 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             drop_item = None
             while drop_item == None:
                 for iterable_data in drop:
-                    if randint(1, iterable_data['chance'][1]) <= iterable_data['chance'][0]:
-                        drop_item = iterable_data
+                    if iterable_data['chance'][1] == iterable_data['chance'][0] or randint(1, iterable_data['chance'][1]) <= iterable_data['chance'][0]:
+                        drop_item = iterable_data.copy()
+
+                        if isinstance(drop_item['id'], dict):
+                            # В материалах указана группа
+                            drop_item['id'] = choice(get_group(drop_item['id']['group']))
+
+                        elif isinstance(drop_item['id'], list):
+                            # В материалах указан список предметов которых можно использовать
+                            drop_item['id'] = choice(drop_item['id'])
+
                         break
 
             drop_col = random_dict(drop_item['col'])
@@ -486,6 +496,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
 
 async def adapter(return_data: dict, transmitted_data: dict):
+    
     if 'confirm' in return_data: del return_data['confirm']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']

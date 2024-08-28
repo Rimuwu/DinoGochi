@@ -7,7 +7,7 @@ from telebot.util import pil_image_to_file
 
 from bot.const import DINOS, GAME_SETTINGS
 from bot.modules.data_format import seconds_to_str
-from bot.modules.localization import get_data
+from bot.modules.localization import get_data, t
 import asyncio
 
 # from concurrent.futures import ThreadPoolExecutor
@@ -20,6 +20,7 @@ FONTS = {
     'line35': ImageFont.truetype('fonts/Aqum.otf', size=35),
     'line45': ImageFont.truetype('fonts/Aqum.otf', size=45),
     'line55': ImageFont.truetype('fonts/Aqum.otf', size=55),
+    'comf35': ImageFont.truetype('fonts/Comfortaa.ttf', size=35)
 }
 
 positions = {
@@ -60,6 +61,85 @@ img_dates = {
     'mys': (230, 103, 175),
     'leg': (255, 212, 59)
 }
+
+def centre_var(image, font, message, start_var=0, end_var=250):
+    """ Возвращает координату середины для текста 
+    """
+    draw = ImageDraw.Draw(image)
+    _, _, w, h = draw.textbbox((0, 0), message, font=font)
+    var = (end_var - start_var - w) / 2 + start_var
+
+    return var
+
+def crop_right(image_path, crop_percentage):
+    """
+    Обрезает изображение с правой стороны на заданное количество процентов (X%).
+
+    :param image_path: Путь к исходному изображению.
+    :param crop_percentage: Процент от ширины изображения, который нужно обрезать.
+    :return: Обрезанное изображение.
+    """
+    # Открываем изображение
+    image = Image.open(image_path)
+    
+    # Получаем размеры изображения
+    width, height = image.size
+    
+    # Вычисляем количество пикселей для обрезки
+    crop_width = int(width * (crop_percentage / 100))
+    
+    # Обрезаем изображение
+    cropped_image = image.crop((0, 0, width - crop_width, height))
+    
+    return cropped_image
+
+def apply_mask(mask, image):
+    # Открываем оригинальное изображение и маску
+    image = image.convert("RGBA")
+    mask = mask.convert('L')  # Конвертируем маску в градации серого
+
+    # Создаём новый пустой RGBA-изображение с теми же размерами
+    transparent_image = Image.new("RGBA", image.size, (0, 0, 0, 0))
+
+    # Применяем маску к изображению
+    masked_image = Image.composite(image, transparent_image, mask)
+
+    return masked_image
+
+def replace_right_with_transparency(image_path, replace_percentage):
+    """
+    Заменяет X% области изображения справа на прозрачность.
+    
+    :param image_path: Путь к исходному изображению.
+    :param replace_percentage: Процент от ширины изображения, который нужно заменить на прозрачность.
+    :return: Изображение с заменённой областью.
+    """
+    # Открываем изображение
+    image = Image.open(image_path).convert("RGBA")  # Конвертируем в RGBA для поддержки альфа-канала
+
+    # Получаем размеры изображения
+    width, height = image.size
+
+    # Вычисляем количество пикселей для замены
+    replace_width = int(width * (replace_percentage / 100))
+
+    # Создаем новый массив пикселей для изображения с прозрачностью
+    data = image.getdata()
+
+    # Создаем новое изображение с прозрачным слоем
+    new_data = []
+    for i, item in enumerate(data):
+        # Заменяем пиксели из правой части на прозрачные
+        if (i % width) >= (width - replace_width):
+            new_data.append((0, 0, 0, 0))  # Прозрачный пиксель
+        else:
+            new_data.append(item)  # Оригинальный пиксель
+    
+    # Создаем новое изображение с обновленными данными
+    new_image = Image.new("RGBA", image.size)
+    new_image.putdata(new_data)
+
+    return new_image
 
 async def async_open(image_path, to_file: bool = False):
     loop = asyncio.get_running_loop()
@@ -360,3 +440,52 @@ async def market_image(custom_url, status):
 
     rss = await result
     return rss
+
+bar_position = {
+    'power': 83,
+    'dexterity': 151,
+    'intelligence': 220,
+    'charisma': 289
+}
+
+async def create_skill_image(dino_id, age, lang, chars: dict):
+    img = Image.open('images/skills/bg.png')
+    idraw = ImageDraw.Draw(img)
+
+    font = FONTS['comf35']
+    dino_data = DINOS['elements'][str(dino_id)]
+    
+    p_data = positions[1]
+    dino_image = await async_open(f'images/{dino_data["image"]}')
+    dino_image = dino_image.resize((1024, 1024), Image.Resampling.LANCZOS)
+
+    sz, x, y = vertical_resizing(age, *p_data['age_resizing'])
+    dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
+    img = await trans_paste(dino_image, img, 1.0, (y + x, y, sz + y + x, sz + y))
+
+    y, x = 43, 467
+    y_plus = 68
+
+    a = -1
+    for char in ['power', 'dexterity', 'intelligence', 'charisma']:
+        if lang not in ['ru', 'en']: lang = 'en'
+        text = t(f'skills_profile.chars.{char}', lang)
+        a += 1
+
+        x = centre_var(img, font, text, 467, 754)
+        idraw.text(
+            (x, y + (y_plus * a)), text, 'white', font=font, stroke_width=0
+        )
+
+        percnet = chars[char] * 5
+        char_fill = replace_right_with_transparency(
+                        f'images/skills/{char}.png',  100 - percnet)
+        mask = Image.open('images/skills/progress_mask.png')
+
+        bar = apply_mask(mask, char_fill)
+        width, height = bar.size
+        bar = bar.resize((width // 2, height // 2))
+
+        img = await trans_paste(bar, img, 1, (450, bar_position[char]) )
+
+    return img

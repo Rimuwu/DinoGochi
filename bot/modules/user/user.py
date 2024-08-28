@@ -44,6 +44,7 @@ quests = DBconstructor(mongo_client.tavern.quests)
 message_log = DBconstructor(mongo_client.other.message_log)
 item_craft = DBconstructor(mongo_client.items.item_craft)
 preferential = DBconstructor(mongo_client.market.preferential)
+inside_shop = DBconstructor(mongo_client.market.inside_shop)
 
 class User:
 
@@ -150,10 +151,10 @@ class User:
         """Удаление юзера и всё с ним связанное из базы.
         """
 
-        for collection in [items, products, dead_dinos, incubations, sellers, puhs, daily_award_data, quests]:
+        for collection in [items, products, dead_dinos, incubations, sellers, puhs, daily_award_data, quests, inside_shop]:
             await collection.delete_many({'owner_id': self.userid}, comment='User_full_delete')
 
-        for collection in [referals, langs, ads, dead_users, subscriptions, tavern, dead_users, message_log, item_craft, preferential]:
+        for collection in [referals, langs, ads, dead_users, subscriptions, tavern, dead_users, message_log, item_craft, preferential, inside_shop]:
             await collection.delete_many({'userid': self.userid}, comment='User_full_delete_1')
 
         """ При полном удалении есть возможность, что у динозавра

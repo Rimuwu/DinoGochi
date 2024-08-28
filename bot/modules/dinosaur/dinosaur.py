@@ -513,9 +513,11 @@ async def mutate_dino_stat(dino: dict, key: str, value: int):
         dino_d = await Dino().create(dino['_id'])
         await dino_d.dead()
     else:
-        await notification_manager(dino['_id'], key, now)
+        r = await notification_manager(dino['_id'], key, now)
         await dinosaurs.update_one({'_id': dino['_id']}, 
                             {'$inc': {f'stats.{key}': value}}, comment='mutate_dino_stat')
+        return r
+    return 0
 
 async def get_owner(dino_id: ObjectId):
     return await dino_owners.find_one({'dino_id': dino_id, 'type': 'owner'}, comment='get_owner')

@@ -2433,324 +2433,42 @@
             {
                 "abilities": {},
                 "chance": [
-                    2,
-                    10
-                ],
-                "col": {
-                    "act": 1,
-                    "type": "static"
-                },
-                "id": "clothing_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    2,
-                    10
-                ],
-                "col": {
-                    "act": 1,
-                    "type": "static"
-                },
-                "id": "torch_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    3,
-                    10
-                ],
-                "col": {
-                    "act": 1,
-                    "type": "static"
-                },
-                "id": "drink_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    3,
-                    10
-                ],
-                "col": {
-                    "act": 1,
-                    "type": "static"
-                },
-                "id": "tea_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    2,
-                    10
-                ],
-                "col": {
-                    "act": 1,
-                    "type": "static"
-                },
-                "id": "meat_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    2,
-                    10
+                    1,
+                    1
                 ],
                 "col": {
                     "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "salad"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    2,
-                    10
-                ],
-                "col": {
-                    "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "soup_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "act": 1,
-                    "type": "static"
-                },
-                "id": "pouch_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "act": 1,
-                    "type": "static"
-                },
-                "id": "taco_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "candy_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "popcorn_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "juice_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "steak_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "broth_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "sushi_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "hot_chocolate_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "max": 3,
                     "min": 1,
                     "type": "random"
                 },
-                "id": "cake_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "curry_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    3,
-                    10
-                ],
-                "col": {
-                    "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "bread_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "berry_pie_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "fish_pie_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "meat_pie_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "bacon_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "bento_recipe"
-            },
-            {
-                "abilities": {},
-                "chance": [
-                    4,
-                    10
-                ],
-                "col": {
-                    "max": 4,
-                    "min": 2,
-                    "type": "random"
-                },
-                "id": "sandwich_recipe"
+                "id": {"group": "recipe"}
             }
         ],
         "image": "case",
         "rank": "mythical",
+        "type": "case"
+    },
+    "recipe_chest_simple": {
+        "col_repit": {
+            "act": 1,
+            "type": "static"
+        },
+        "drop_items": [
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    1
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": {"group": "recipe"}
+            }
+        ],
+        "image": "case",
+        "rank": "rare",
         "type": "case"
     },
     "gift_2023": {

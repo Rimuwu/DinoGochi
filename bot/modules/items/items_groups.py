@@ -30,7 +30,7 @@ def get_group(group: str):
     if group in items_groups:
         result = items_groups[group]
     if group in type_groups:
-        result = result | type_groups[group]
+        result = list(set(result) | set(type_groups[group]))
 
     return result
 

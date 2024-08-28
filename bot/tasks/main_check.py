@@ -47,6 +47,7 @@ async def main_checks():
 
     dinos: list[dict] = await dinosaurs.find({}, comment='main_checks_dinos')
     for dino in dinos:
+        r = 0
 
         status = await check_status(dino['_id'])
         if status == 'inactive': continue
@@ -60,48 +61,48 @@ async def main_checks():
 
         if status == 'kindergarten':
             if random.uniform(0, 1) <= P_EAT_SLEEP:
-                await mutate_dino_stat(dino, 'eat', randint(*EAT_CHANGE))
+                r = await mutate_dino_stat(dino, 'eat', randint(*EAT_CHANGE))
 
             if random.uniform(0, 1) <= P_GAME:
-                await mutate_dino_stat(dino, 'game', randint(*GAME_CHANGE))
+                r = await mutate_dino_stat(dino, 'game', randint(*GAME_CHANGE))
 
             if random.uniform(0, 1) <= P_ENERGY:
-                await mutate_dino_stat(dino, 'energy', randint(*ENERGY_CHANGE))
+                r = await mutate_dino_stat(dino, 'energy', randint(*ENERGY_CHANGE))
 
         else:
             # Понижение здоровья
             # если здоровье и еда находятся на критическом уровне
             if dino['stats']['energy'] <= CRITICAL_ENERGY and random.uniform(0, 1) <= P_HEAL:
-                await mutate_dino_stat(dino, 'heal', -1)
+                r = await mutate_dino_stat(dino, 'heal', -1)
 
             elif dino['stats']['eat'] <= CRITICAL_EAT and random.uniform(0, 1) <= P_HEAL:
-                await mutate_dino_stat(dino, 'heal', -1)
+                r = await mutate_dino_stat(dino, 'heal', -1)
 
             elif is_sleeping and randint(0, 1):
-                await mutate_dino_stat(dino, 'heal', 1)
+                r = await mutate_dino_stat(dino, 'heal', 1)
 
             # Уменьшение еды
             # если динозавр спит, вероятность P_EAT_SLEEP
             # если динозавр не спит, вероятность P_EAT
             if (random.uniform(0, 1) <= P_EAT_SLEEP and is_sleeping) or (random.uniform(0, 1) <= P_EAT and not is_sleeping):
-                await mutate_dino_stat(dino, 'eat', randint(*EAT_CHANGE)*-1)
+                r = await mutate_dino_stat(dino, 'eat', randint(*EAT_CHANGE)*-1)
 
             # Уменьшение энергии, если динозавр не играет
             if status != 'game' and random.uniform(0, 1) <= P_GAME:
-                await mutate_dino_stat(dino, 'game', randint(*GAME_CHANGE)*-1)
+                r = await mutate_dino_stat(dino, 'game', randint(*GAME_CHANGE)*-1)
 
             # Уменьшение энергии
             # если динозавр не спит
             if not(is_sleeping) and (random.uniform(0, 1) <= P_ENERGY):
-                await mutate_dino_stat(dino, 'energy', randint(*ENERGY_CHANGE)*-1)
+                r = await mutate_dino_stat(dino, 'energy', randint(*ENERGY_CHANGE)*-1)
 
 
             # Во время тренировки более быстрое уменьшение еды и энергии
             if skill_activ and (random.uniform(0, 1) <= P_ENERGY):
-                await mutate_dino_stat(dino, 'energy', -1)
+                r = await mutate_dino_stat(dino, 'energy', -1)
 
             elif skill_activ and (random.uniform(0, 1) <= P_EAT):
-                await mutate_dino_stat(dino, 'eat', -1)
+                r = await mutate_dino_stat(dino, 'eat', -1)
 
             if randint(1, 5) == 5:
                 owner = await get_owner(dino['_id'])
@@ -116,8 +117,9 @@ async def main_checks():
         if dino['stats']['eat'] > HIGH_EAT and dino['stats']['energy'] > 50:
             if random.uniform(0, 1) <= P_HEAL_EAT:
 
-                await mutate_dino_stat(dino, 'heal', randint(1, 2))
-                if randint(0, 1): await mutate_dino_stat(dino, 'eat', -1)
+                r = await mutate_dino_stat(dino, 'heal', randint(1, 2))
+                if randint(0, 1): 
+                    r = await mutate_dino_stat(dino, 'eat', -1)
 
         # =================== Настроение ========================== #
 
@@ -181,7 +183,7 @@ async def main_checks():
                     await calculation_points(dino, 'breakdown')
         
         # ========== Мысли вслух ========== # 
-        if status == 'pass':
+        if status == 'pass' and r == 0:
             chance = randint(1, 60) + transform(dino['stats']['charisma'], 20, 5)
             if chance >= 60:
                 owner = await get_owner(dino['_id'])
