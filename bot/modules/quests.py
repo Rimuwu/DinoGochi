@@ -4,15 +4,18 @@ from time import time
 from bson.objectid import ObjectId
 
 from bot.config import mongo_client
-from bot.const import ITEMS, QUESTS
+from bot.const import  QUESTS
 from bot.modules.data_format import (list_to_inline, random_code, random_dict,
 seconds_to_str)
 from bot.modules.items.item import counts_items, get_name, RemoveItemFromUser
 from bot.modules.localization import get_data, t
+from bot.modules.items.collect_items import get_all_items
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 quests_data = DBconstructor(mongo_client.tavern.quests)
 items = DBconstructor(mongo_client.items.items)
+
+ITEMS = get_all_items()
 
 complex_time = {
     1: {"min": 36000, "max": 57600, "type": "random"},

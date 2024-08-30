@@ -1,0 +1,51 @@
+{
+    "3_days_premium": {
+        "buyer": false,
+        "image": "activator",
+        "rank": "mythical",
+        "type": "special",
+        "class": "premium",
+        "premium_time": 259200,
+        "cant_sell": true
+    },
+    "background": {
+        "buyer": false,
+        "rank": "legendary",
+        "type": "special",
+        "class": "background",
+        "abilities": {
+            "data_id": 1
+        }
+    },
+    "premium_activator": {
+        "image": "activator",
+        "rank": "mythical",
+        "type": "special",
+        "class": "premium",
+        "premium_time": 2592000,
+        "cant_sell": true,
+        "buyer": false
+    },
+    "freezing": {
+        "cant_sell": true,
+        "image": "item66",
+        "rank": "mythical",
+        "time": "forever",
+        "type": "special",
+        "class": "freezing"
+    },
+    "defrost": {
+        "cant_sell": true,
+        "image": "item67",
+        "rank": "mythical",
+        "type": "special",
+        "class": "defrosting"
+    },
+    "stone_resurrection": {
+        "image": "null",
+        "rank": "legendary",
+        "type": "special",
+        "class": "reborn",
+        "cant_sell": true
+    }
+}

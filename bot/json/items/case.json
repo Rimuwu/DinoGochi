@@ -1,0 +1,593 @@
+{
+    "chest_food": {
+        "col_repit": {
+            "act": 4,
+            "type": "static"
+        },
+        "drop_items": [
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "roasted_meat"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "salad"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "soup"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "pizza"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 2,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "taco"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 10,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "chocolate"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "candy"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "popcorn"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "juice"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "spicy_steak"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 20,
+                    "min": 5,
+                    "type": "random"
+                },
+                "id": "banana"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 10,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "crab"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "coffee"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "broth"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 10,
+                    "min": 5,
+                    "type": "random"
+                },
+                "id": "rice"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 5,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "sushi"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "hot_chocolate"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    10
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "cake"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "curry"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 5,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "dango"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    5,
+                    100
+                ],
+                "col": {
+                    "max": 30,
+                    "min": 10,
+                    "type": "random"
+                },
+                "id": "grain"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    10
+                ],
+                "col": {
+                    "max": 6,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "bread"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "berry_pie"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "fish_cake"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "meat_pie"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "max": 10,
+                    "min": 4,
+                    "type": "random"
+                },
+                "id": "bacon"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    3,
+                    10
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": "bento"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    4,
+                    10
+                ],
+                "col": {
+                    "max": 10,
+                    "min": 2,
+                    "type": "random"
+                },
+                "id": "sandwich"
+            }
+        ],
+        "image": "case",
+        "rank": "mythical",
+        "type": "case"
+    },
+    "recipe_chest": {
+        "col_repit": {
+            "act": 4,
+            "type": "static"
+        },
+        "drop_items": [
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    1
+                ],
+                "col": {
+                    "max": 4,
+                    "min": 1,
+                    "type": "random"
+                },
+                "id": {"group": "recipe"}
+            }
+        ],
+        "image": "case",
+        "rank": "mythical",
+        "type": "case"
+    },
+    "recipe_chest_simple": {
+        "col_repit": {
+            "act": 1,
+            "type": "static"
+        },
+        "drop_items": [
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    1
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": {"group": "recipe"}
+            }
+        ],
+        "image": "case",
+        "rank": "rare",
+        "type": "case"
+    },
+    "gift_2023": {
+        "cant_sell": true,
+        "buyer": false,
+        "col_repit": {
+            "act": 1,
+            "type": "static"
+        },
+        "drop_items": [
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "mystic_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    1000
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "legendary_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "chest_food"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "recipe_chest"
+            }
+        ],
+        "image": "case",
+        "rank": "mythical",
+        "type": "case"
+    },
+    "gift_2024": {
+        "cant_sell": false,
+        "buyer": false,
+        "col_repit": {
+            "act": 1,
+            "type": "static"
+        },
+        "drop_items": [
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    50
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "mystic_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    50
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "legendary_egg"
+            },
+            {
+                "abilities": {"interact": false},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "min": 1, "max": 5,
+                    "type": "random"
+                },
+                "id": "chest_food"
+            },
+            {
+                "abilities": {"interact": false},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "min": 1, "max": 5,
+                    "type": "random"
+                },
+                "id": "recipe_chest"
+            },
+            {
+                "abilities": {"interact": false},
+                "chance": [
+                    1,
+                    1000
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "stone_resurrection"
+            },
+            {
+                "abilities": {"interact": false},
+                "chance": [
+                    1,
+                    1000
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "gift_2023"
+            }
+        ],
+        "image": "case",
+        "rank": "mythical",
+        "type": "case"
+    },
+    "egg_case": {
+        "cant_sell": false,
+        "col_repit": {
+            "act": 1,
+            "type": "static"
+        },
+        "drop_items": [
+            {
+                "abilities": {},
+                "chance": [
+                    50,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": {"group": "egg"}
+            }
+        ],
+        "image": "case",
+        "rank": "mythical",
+        "type": "case"
+    }
+}

@@ -1,0 +1,1017 @@
+{
+    "clothing_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "leather_clothing",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "skin",
+                "type": "delete",
+                "count": 5
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "torch_recipe": {
+        "abilities": {
+            "uses": 1
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "torch",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "twigs_tree",
+                "type": "delete",
+                "count": 4
+            },
+            {
+                "item": "blank_piece_paper",
+                "type": "delete",
+                "count": 3
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "drink_recipe": {
+        "abilities": {
+            "uses": 10
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "medicinal_drink",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "fish_oil",
+                "type": "delete",
+                "count": 5
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "tea_recipe": {
+        "abilities": {
+            "uses": 10
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "tea",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "gourmet_herbs",
+                "type": "delete",
+                "count": 5
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "meat_recipe": {
+        "abilities": {
+            "uses": 10
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "roasted_meat",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "act": 10,
+                "item": "torch",
+                "type": "endurance",
+                "count": 1
+            },
+            {
+                "item": "wolf_meat",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "salad_recipe": {
+        "abilities": {
+            "uses": 40
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "salad",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "bunch_herbs",
+                "type": "delete",
+                "count": 1
+            },
+            {
+                "item": "berries",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "soup_recipe": {
+        "abilities": {
+            "uses": 40
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "soup",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "seafood",
+                "type": "delete",
+                "count": 3
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "pouch_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "hiking_bag",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "skin",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "twigs_tree",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "taco_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "taco",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "grasses_from_fields",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "wolf_meat",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "onion_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "bone_onions",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "bone",
+                "type": "delete",
+                "count": 4
+            },
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "arrow_recipe": {
+        "abilities": {
+            "uses": 11
+        },
+        "create": {
+            "main": [
+                {
+                    "abilities": {
+                        "stack": 3
+                    },
+                    "item": "bone_arrow",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "bone",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "backpack_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "regular_backpack",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "skin",
+                "type": "delete",
+                "count": 15
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "shield_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "bone_shield",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "bone",
+                "type": "delete",
+                "count": 15
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe"
+    },
+    "pickaxe_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "bone_pickaxe",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "bone",
+                "type": "delete",
+                "count": 7
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe"
+    },
+    "candy_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "candy",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "chocolate",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe"
+    },
+    "popcorn_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "popcorn",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "act": 5,
+                "item": "torch",
+                "type": "endurance",
+                "count": 1
+            },
+            {
+                "item": "maize",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe"
+    },
+    "juice_recipe": {
+        "abilities": {
+            "uses": 10
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "juice",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "berries",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe"
+    },
+    "steak_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "spicy_steak",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "act": 10,
+                "item": "torch",
+                "type": "endurance",
+                "count": 1
+            },
+            {
+                "item": "grasses_from_fields",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "broth_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "broth",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "act": 10,
+                "item": "torch",
+                "type": "endurance",
+                "count": 1
+            },
+            {
+                "item": "wild_boar_meat",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "sushi_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "sushi",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "rice",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "hot_chocolate_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "hot_chocolate",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "chocolate",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe"
+    },
+    "cake_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "cake",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "chocolate",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "berries",
+                "type": "delete",
+                "count": 5
+            },
+            {
+                "item": "cookie",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "mystical",
+        "type": "recipe"
+    },
+    "curry_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "curry",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "rice",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "spices",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "bread_recipe": {
+        "abilities": {
+            "uses": 10
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "bread",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "flour",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe"
+    },
+    "berry_pie_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "berry_pie",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "flour",
+                "type": "delete",
+                "count": 1
+            },
+            {
+                "item": "berries",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe"
+    },
+    "fish_pie_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "fish_cake",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "flour",
+                "type": "delete",
+                "count": 1
+            },
+            {
+                "item": "fish",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe"
+    },
+    "meat_pie_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "meat_pie",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "flour",
+                "type": "delete",
+                "count": 1
+            },
+            {
+                "item": "wolf_meat",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe"
+    },
+    "bacon_recipe": {
+        "abilities": {
+            "uses": 10
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "bacon",
+                    "type": "create",
+                    "count": 2
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "act": 10,
+                "item": "torch",
+                "type": "endurance",
+                "count": 1
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe"
+    },
+    "bento_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "bento",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "roasted_meat",
+                "type": "delete",
+                "count": 1
+            },
+            {
+                "item": "salad",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "mystical",
+        "type": "recipe"
+    },
+    "sandwich_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "sandwich",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "bread",
+                "type": "delete",
+                "count": 1
+            },
+            {
+                "item": "grasses_from_fields",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "flour_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "flour",
+                    "type": "create",
+                    "count": 2
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "grain",
+                "type": "delete",
+                "count": 4
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "croissant_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "croissant",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "flour",
+                "type": "delete",
+                "count": 1
+            },
+            {
+                "item": "chocolate",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "basket_recipe": {
+        "abilities": {
+            "uses": 1
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "basket",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "twigs_tree",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "net_recipe": {
+        "abilities": {
+            "uses": 1
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "net",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 5
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "rod_recipe": {
+        "abilities": {
+            "uses": 1
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "rod",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    },
+    "sword_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "bone_sword",
+                    "type": "create",
+                    "count": 1
+                }
+            ],
+            "iron": [
+                {
+                    "item": "iron_sword",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": {"group": "durable_materials"},
+                "type": "delete",
+                "count": 5
+            },
+            {
+                "act": 30,
+                "item": "tooling",
+                "type": "endurance"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 7200
+    },
+    "repair_tool": {
+        "abilities": {
+            "uses": 10
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "SYSTEM_ITEM_REPAIR",
+                    "type": "preview",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": {"group": "repairing"},
+                "type": "to_create",
+                "count": 1
+            },
+            {
+                "act": 50,
+                "item": "tooling",
+                "type": "endurance",
+                "copy_abilities": {
+                    "copy": ["endurance"], 
+                    "max_unit": 50, 
+                    "to_items": [0],
+                    "action": "inc"
+                }
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe"
+    }
+}

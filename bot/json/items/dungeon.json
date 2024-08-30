@@ -1,0 +1,85 @@
+{
+    "bone_sword": {
+        "abilities": {
+            "endurance": 50
+        },
+        "class": "near",
+        "damage": {
+            "max": 3,
+            "min": 1
+        },
+        "image": "item53",
+        "rank": "uncommon",
+        "type": "weapon",
+        "groups": ["repairing"]
+    },
+    "iron_sword": {
+        "abilities": {
+            "endurance": 80
+        },
+        "class": "near",
+        "damage": {
+            "max": 5,
+            "min": 2
+        },
+        "image": "item53",
+        "rank": "uncommon",
+        "type": "weapon",
+        "groups": ["repairing"]
+    },
+    "bone_arrow": {
+        "add_damage": 0,
+        "add_effects": [],
+        "image": "item54",
+        "rank": "uncommon",
+        "type": "ammunition"
+    },
+    "bone_onions": {
+        "abilities": {
+            "endurance": 70
+        },
+        "ammunition": [
+            "bone_arrow"
+        ],
+        "class": "far",
+        "damage": {
+            "max": 5,
+            "min": 1
+        },
+        "image": "item55",
+        "rank": "uncommon",
+        "type": "weapon",
+        "groups": ["repairing"]
+    },
+    "regular_backpack": {
+        "capacity": 10,
+        "image": "item45",
+        "rank": "rare",
+        "type": "backpack"
+    },
+    "bone_pickaxe": {
+        "abilities": {
+            "endurance": 20
+        },
+        "class": "near",
+        "damage": {
+            "max": 1,
+            "min": 0
+        },
+        "effectiv": 2,
+        "image": "item64",
+        "rank": "uncommon",
+        "type": "weapon",
+        "groups": ["repairing"]
+    },
+    "bone_shield": {
+        "abilities": {
+            "endurance": 120
+        },
+        "image": "item62",
+        "rank": "uncommon",
+        "reflection": 2,
+        "type": "armor",
+        "groups": ["repairing"]
+    }
+}

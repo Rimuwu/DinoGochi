@@ -306,22 +306,23 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
         drop_items = {}
 
         col_repit = random_dict(data_item['col_repit'])
-        for _ in range(col_repit):
-            drop_item = None
-            while drop_item == None:
-                for iterable_data in drop:
-                    if iterable_data['chance'][1] == iterable_data['chance'][0] or randint(1, iterable_data['chance'][1]) <= iterable_data['chance'][0]:
-                        drop_item = iterable_data.copy()
+        for _ in range(count):
+            for _ in range(col_repit):
+                drop_item = None
+                while drop_item == None:
+                    for iterable_data in drop:
+                        if iterable_data['chance'][1] == iterable_data['chance'][0] or randint(1, iterable_data['chance'][1]) <= iterable_data['chance'][0]:
+                            drop_item = iterable_data.copy()
 
-                        if isinstance(drop_item['id'], dict):
-                            # В материалах указана группа
-                            drop_item['id'] = choice(get_group(drop_item['id']['group']))
+                            if isinstance(drop_item['id'], dict):
+                                # В материалах указана группа
+                                drop_item['id'] = choice(get_group(drop_item['id']['group']))
 
-                        elif isinstance(drop_item['id'], list):
-                            # В материалах указан список предметов которых можно использовать
-                            drop_item['id'] = choice(drop_item['id'])
+                            elif isinstance(drop_item['id'], list):
+                                # В материалах указан список предметов которых можно использовать
+                                drop_item['id'] = choice(drop_item['id'])
 
-                        break
+                            break
 
             drop_col = random_dict(drop_item['col'])
             if drop_item['id'] in drop_items:

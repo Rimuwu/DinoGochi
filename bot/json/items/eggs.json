@@ -1,0 +1,94 @@
+{
+    "mysterious_egg": {
+        "image": "item3",
+        "inc_type": "random",
+        "incub_time": 43200,
+        "rank": "rare",
+        "type": "egg"
+    },
+    "regular_egg": {
+        "image": "item21",
+        "inc_type": "com",
+        "incub_time": 1800,
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "unusual_egg"
+                ],
+                "materials": [
+                    {"item_id": "regular_egg", "count": 10}
+                ]
+            }
+        },
+        "rank": "mystical",
+        "type": "egg"
+    },
+    "unusual_egg": {
+        "image": "item20",
+        "inc_type": "unc",
+        "incub_time": 86400,
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "rare_egg"
+                ],
+                "materials": [
+                    {"item_id": "unusual_egg", "count": 10}
+                ]
+            }
+        },
+        "rank": "mystical",
+        "type": "egg"
+    },
+    "rare_egg": {
+        "image": "item22",
+        "inc_type": "rar",
+        "incub_time": 172800,
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "mystic_egg"
+                ],
+                "materials": [
+                    {"item_id": "rare_egg", "count": 10}
+                ]
+            }
+        },
+        "rank": "mystical",
+        "type": "egg"
+    },
+    "mystic_egg": {
+        "image": "item23",
+        "inc_type": "mys",
+        "incub_time": 259200,
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "legendary_egg"
+                ],
+                "materials": [
+                    {"item_id": "mystic_egg", "count": 10}
+                ]
+            }
+        },
+        "rank": "mystical",
+        "type": "egg"
+    },
+    "legendary_egg": {
+        "image": "item24",
+        "inc_type": "leg",
+        "incub_time": 396000,
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "egg_case"
+                ],
+                "materials": [
+                    {"item_id": "legendary_egg", "count": 1}
+                ]
+            }
+        },
+        "rank": "legendary",
+        "type": "egg"
+    }
+}

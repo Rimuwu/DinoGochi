@@ -1,0 +1,24 @@
+{
+    "therapeutic_mixture": {
+        "buffs": {
+            "heal": 15
+        },
+        "act": 1,
+        "class": "ALL",
+        "image": "item17",
+        "rank": "uncommon",
+        "type": "eat"
+    },
+    "medicinal_drink": {
+        "buffs": {
+            "heal": 25,
+            "mood": -10
+        },
+        "act": 5,
+        "class": "ALL",
+        "drink": true,
+        "image": "item33",
+        "rank": "rare",
+        "type": "eat"
+    }
+}

@@ -1,0 +1,6 @@
+{
+    "SYSTEM_ITEM_REPAIR": {
+        "type": "dummy",
+        "rank": "common"
+    }
+}

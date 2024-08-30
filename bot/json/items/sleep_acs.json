@@ -1,0 +1,11 @@
+{
+    "bear": {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item16",
+        "rank": "uncommon",
+        "type": "sleep",
+        "groups": ["repairing"]
+    }
+}

@@ -1,0 +1,47 @@
+{
+    "tooling": {
+        "abilities": {
+            "endurance": 100
+        },
+        "act": 10,
+        "image": "item15",
+        "rank": "uncommon",
+        "type": "collecting"
+    },
+    "rod": {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item113",
+        "rank": "rare",
+        "type": "collecting",
+        "groups": ["repairing"]
+    },
+    "net": {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item115",
+        "rank": "rare",
+        "type": "collecting",
+        "groups": ["repairing"]
+    },
+    "basket": {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "basket",
+        "rank": "rare",
+        "type": "collecting",
+        "groups": ["repairing"]
+    },
+    "torch": {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item31",
+        "rank": "uncommon",
+        "type": "collecting",
+        "groups": ["repairing"]
+    }
+}

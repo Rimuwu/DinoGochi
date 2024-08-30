@@ -16,6 +16,7 @@ bot = AsyncTeleBot(conf.bot_token,
 bot.enable_saving_states()
 
 def run():
+    log('# ====== Inicialization Start ====== #', 2)
     log('Привет! Я вижу ты так и не починил тот самый баг на 46-ой строчке...')
     log('Это не баг, а фича!')
     log('Ваша фича наминирована на оскар!')

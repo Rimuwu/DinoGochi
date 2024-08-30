@@ -1,0 +1,20 @@
+{
+    "timer": {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item4",
+        "rank": "uncommon",
+        "type": "game",
+        "groups": ["repairing"]
+    },
+    "board_games": {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item44",
+        "rank": "uncommon",
+        "type": "game",
+        "groups": ["repairing"]
+    }
+}

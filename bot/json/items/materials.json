@@ -1,0 +1,80 @@
+{
+    "blank_piece_paper": {
+        "image": "item25",
+        "rank": "common",
+        "type": "material",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "recipe_chest_simple"
+                ],
+                "materials": [
+                    {"item_id": "blank_piece_paper",
+                     "count": 50}
+                ]
+            }
+        }
+    },
+    "skin": {
+        "image": "item26",
+        "rank": "common",
+        "type": "material"
+    },
+    "twigs_tree": {
+        "image": "item27",
+        "rank": "common",
+        "type": "material",
+        "groups": ["wood"]
+    },
+    "fish_oil": {
+        "image": "item28",
+        "rank": "common",
+        "type": "material"
+    },
+    "rope": {
+        "image": "rope",
+        "rank": "common",
+        "type": "material"
+    },
+    "wool": {
+        "image": "wool",
+        "rank": "common",
+        "type": "material"
+    },
+    "feather": {
+        "image": "feather",
+        "rank": "common",
+        "type": "material"
+    },
+    "flour": {
+        "image": "flour",
+        "rank": "uncommon",
+        "type": "material"
+    },
+    "magic_stone": {
+        "abilities": {
+            "mana": 0
+        },
+        "image": "item49",
+        "rank": "rare",
+        "type": "material"
+    },
+    "bone": {
+        "image": "item51",
+        "rank": "common",
+        "type": "material",
+        "groups": ["durable_materials", "ore"]
+    },
+    "iron": {
+        "image": "item52",
+        "rank": "uncommon",
+        "type": "material",
+        "groups": ["durable_materials", "ore"]
+    },
+    "wood": {
+        "image": "",
+        "rank": "uncommon",
+        "type": "material",
+        "groups": ["wood"]
+    }
+}

@@ -369,7 +369,15 @@ async def ns_end(count, transmitted_data: dict):
 
     nd_data = item['ns_craft'][ns_id]
     materials = {}
-    for i in nd_data['materials']: materials[i] = materials.get(i, 0) + 1
+    for i in nd_data['materials']: 
+        if isinstance(i, str):
+            materials[i] = materials.get(i, 0) + 1
+
+        elif isinstance(i, dict):
+            item_i = i['item_id']
+            count_i = i['count']
+
+            materials[item_i] = materials.get(item_i, 0) + count_i
 
     for key, col in materials.items(): materials[key] = col * count
 
@@ -380,14 +388,24 @@ async def ns_end(count, transmitted_data: dict):
         check_lst.append(res['status'])
 
     if all(check_lst):
+        craft_list = []
         for iid in item['ns_craft'][ns_id]['create']:
-            await AddItemToUser(userid, iid, count)
+            if isinstance(iid, dict):
+                item_i = iid['item_id']
+                count_i = iid['count']
+                craft_list.append(item_i)
+
+                await AddItemToUser(userid, item_i, count_i * count)
+
+            elif isinstance(iid, str):
+                craft_list.append(iid)
+                await AddItemToUser(userid, iid, count)
 
         for key, value in materials.items():
             await RemoveItemFromUser(userid, key, value)
 
         text = t('ns_craft.create', lang, 
-                  items = counts_items(item['ns_craft'][ns_id]['create'], lang))
+                  items = counts_items(craft_list, lang))
         await bot.send_message(chatid, text, 
                            reply_markup = await m(userid, 'last_menu', lang))
     else:

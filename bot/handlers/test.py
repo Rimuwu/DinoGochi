@@ -14,7 +14,7 @@ from telebot.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            InlineQueryResultContact, Message, LabeledPrice)
 
 from bot.config import conf, mongo_client
-from bot.const import GAME_SETTINGS, ITEMS
+from bot.const import GAME_SETTINGS
 from bot.exec import bot
 from bot.handlers.dino_profile import transition
 from bot.modules.companies import nextinqueue, save_message

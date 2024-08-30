@@ -267,7 +267,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         if dino:
             buttons = [
                 ['mine', 'bank'],
-                ['sawmill', 'farm']
+                ['sawmill'] # farm
             ]
 
             if await dino.status in ['farm', 'mine', 'bank', 'sawmill']:

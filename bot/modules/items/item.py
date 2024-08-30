@@ -16,16 +16,18 @@
 
 import json
 from bot.config import mongo_client
-from bot.const import ITEMS
 from bot.modules.data_format import random_dict, seconds_to_str, near_key_number
 from bot.modules.images import async_open
-from bot.modules.items.items_groups import get_group
 from bot.modules.localization import get_all_locales, t
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
+from bot.modules.items.collect_items import get_all_items
+from bot.exec import bot
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 items = DBconstructor(mongo_client.items.items)
+
+ITEMS = get_all_items()
 
 def get_data(item_id: str) -> dict:
     """Получение данных из json"""
@@ -34,6 +36,9 @@ def get_data(item_id: str) -> dict:
     if item_id in ITEMS.keys():
         return ITEMS[item_id]
     else: return {}
+
+def get_all_items():
+    return ITEMS.copy()
 
 def load_items_names() -> dict:
     """Загружает все имена предметов из локалищации в один словарь. 
@@ -508,12 +513,12 @@ def sort_materials(not_sort_list: list, lang: str,
             item = json.dumps(item)
 
         if item not in col_dict:
-            if 'col' in i:
-                col_dict[item] = i['col']
+            if 'count' in i:
+                col_dict[item] = i['count']
             else: col_dict[item] = 1
         else: 
-            if 'col' in i:
-                col_dict[item] += i['col']
+            if 'count' in i:
+                col_dict[item] += i['count']
             else: col_dict[item] += 1
 
     # Собирает текст
@@ -592,7 +597,16 @@ def counts_items(id_list: list, lang: str, separator: str = ','):
         str: Возвращает строку для вывода материалов крафта
     """
     dct, items_list = {}, []
-    for i in id_list: dct[i] = dct.get(i, 0) + 1
+    for i in id_list:
+        if isinstance(i, str):
+            dct[i] = dct.get(i, 0) + 1
+
+        elif isinstance(i, dict):
+            item_i = i['item_id']
+            count_i = i['count']
+
+            dct[item_i] = dct.get(item_i, 0) + count_i
+
 
     for item, col in dct.items():
         name = get_name(item, lang)
@@ -610,7 +624,7 @@ def get_items_names(items_list: list[dict], lang: str, separator: str = ','):
 
     Args:
         id_list (list): Список с предметами
-            example: [{'items_data': {'item_id'}}]
+            example: [{'items_data': {'item_id'}, 'count': Optional[int]}]
         lang (str): Язык
         separator (str, optional): Символы, разделяющие элементы. Defaults to ','.
 

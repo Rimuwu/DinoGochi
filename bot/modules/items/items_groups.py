@@ -1,4 +1,5 @@
-from bot.const import ITEMS
+from bot.modules.items.collect_items import get_all_items
+ITEMS = get_all_items()
 
 def load_groups():
     """ Загружает и формирует группы
@@ -28,7 +29,7 @@ def get_group(group: str):
     result = []
 
     if group in items_groups:
-        result = items_groups[group]
+        result = items_groups[group].copy()
     if group in type_groups:
         result = list(set(result) | set(type_groups[group]))
 

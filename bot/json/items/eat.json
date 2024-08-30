@@ -1,0 +1,643 @@
+{
+    "jar_honey": {
+        "buffs": {
+            "heal": 15
+        },
+        "act": 4,
+        "class": "ALL",
+        "image": "item1",
+        "rank": "common",
+        "type": "eat"
+    },
+    "cookie": {
+        "buffs": {
+            "mood": 10
+        },
+        "act": 4,
+        "class": "ALL",
+        "image": "item2",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "set_cookies"
+                ],
+                "materials": [
+                    {"item_id": "cookie", "count": 15}
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat"
+    },
+    "wild_boar_meat": {
+        "act": 17,
+        "class": "Carnivore",
+        "image": "item5",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "chicken_leg"
+                ],
+                "materials": [
+                    "wild_boar_meat"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat"
+    },
+    "bunch_herbs": {
+        "act": 18,
+        "class": "Herbivore",
+        "image": "item6",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "berries"
+                ],
+                "materials": [
+                    "bunch_herbs"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat"
+    },
+    "fish": {
+        "act": 19,
+        "class": "Flying",
+        "image": "item7",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "crab"
+                ],
+                "materials": [
+                    "fish",
+                    "fish"
+                ]
+            },
+            "2": {
+                "create": [
+                    "small_fish"
+                ],
+                "materials": [
+                    "fish"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat"
+    },
+    "wolf_meat": {
+        "act": 11,
+        "class": "Carnivore",
+        "image": "item8",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "chicken_leg"
+                ],
+                "materials": [
+                    "wolf_meat",
+                    "wolf_meat"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat"
+    },
+    "grasses_from_fields": {
+        "act": 12,
+        "class": "Herbivore",
+        "image": "item9",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "berries"
+                ],
+                "materials": [
+                    "grasses_from_fields",
+                    "grasses_from_fields"
+                ]
+            },
+            "2": {
+                "create": [
+                    "grain"
+                ],
+                "materials": [
+                    "grasses_from_fields"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat"
+    },
+    "seafood": {
+        "act": 13,
+        "class": "Flying",
+        "image": "item10",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "small_fish"
+                ],
+                "materials": [
+                    "seafood",
+                    "seafood"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat"
+    },
+    "berries": {
+        "act": 16,
+        "class": "Herbivore",
+        "image": "item11",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "grasses_from_fields"
+                ],
+                "materials": [
+                    "berries"
+                ]
+            },
+            "2": {
+                "create": [
+                    "bunch_herbs"
+                ],
+                "materials": [
+                    "berries",
+                    "berries"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat"
+    },
+    "chicken_leg": {
+        "act": 14,
+        "class": "Carnivore",
+        "image": "item12",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "wolf_meat"
+                ],
+                "materials": [
+                    "chicken_leg"
+                ]
+            },
+            "2": {
+                "create": [
+                    "wild_boar_meat"
+                ],
+                "materials": [
+                    "chicken_leg",
+                    "chicken_leg"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat"
+    },
+    "small_fish": {
+        "act": 16,
+        "class": "Flying",
+        "image": "item13",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "fish"
+                ],
+                "materials": [
+                    "small_fish",
+                    "small_fish"
+                ]
+            },
+            "2": {
+                "create": [
+                    "seafood"
+                ],
+                "materials": [
+                    "small_fish"
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat"
+    },
+    "slice_pizza": {
+        "buffs": {
+            "mood": 13
+        },
+        "act": 8,
+        "class": "ALL",
+        "image": "item18",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "pizza"
+                ],
+                "materials": [
+                    {"item_id": "slice_pizza", "count": 9}
+                ]
+            }
+        },
+        "rank": "common",
+        "type": "eat"
+    },
+    "sweet_pancakes": {
+        "buffs": {
+            "mood": 20
+        },
+        "act": 16,
+        "class": "ALL",
+        "image": "item19",
+        "rank": "common",
+        "type": "eat"
+    },
+    "fried_egg": {
+        "buyer": false,
+        "buffs": {
+            "mood": -666
+        },
+        "act": 100,
+        "class": "ALL",
+        "image": "unknown",
+        "rank": "legendary",
+        "type": "eat"
+    },
+    "gourmet_herbs": {
+        "act": 30,
+        "class": "Herbivore",
+        "image": "item35",
+        "rank": "rare",
+        "type": "eat"
+    },
+    "tea": {
+        "buffs": {
+            "energy": 25
+        },
+        "act": -30,
+        "class": "ALL",
+        "drink": true,
+        "image": "item36",
+        "rank": "rare",
+        "type": "eat",
+        "groups": ["energy_eat"]
+    },
+    "roasted_meat": {
+        "act": 40,
+        "class": "Carnivore",
+        "image": "item38",
+        "rank": "rare",
+        "type": "eat"
+    },
+    "carrot": {
+        "act": 16,
+        "class": "Herbivore",
+        "image": "null",
+        "rank": "common",
+        "type": "eat"
+    },
+    "tomato": {
+        "act": 21,
+        "class": "Herbivore",
+        "image": "null",
+        "rank": "common",
+        "type": "eat"
+    },
+    "potato": {
+        "act": 22,
+        "class": "Herbivore",
+        "image": "null",
+        "rank": "common",
+        "type": "eat"
+    },
+    "croissant": {
+        "buffs": {
+            "energy": 3,
+            "mood": 19
+        },
+        "act": 17,
+        "class": "ALL",
+        "image": "null",
+        "rank": "rare",
+        "type": "eat",
+        "groups": ["energy_eat"]
+    },
+    "ale": {
+        "buffs": {
+            "heal": 5,
+            "energy": 5,
+            "mood": 5
+        },
+        "act": 1,
+        "class": "ALL",
+        "drink": true,
+        "image": "item114",
+        "rank": "common",
+        "type": "eat",
+        "groups": ["energy_eat"]
+    },
+    "sandwich": {
+        "act": 31,
+        "class": "ALL",
+        "image": "item108",
+        "rank": "rare",
+        "type": "eat"
+    },
+    "bento": {
+        "buffs": {
+            "heal": 20,
+            "mood": 20
+        },
+        "abilities": {
+            "uses": 2
+        },
+        "act": 100,
+        "class": "ALL",
+        "image": "item106",
+        "rank": "mystical",
+        "type": "eat"
+    },
+    "bacon": {
+        "act": 14,
+        "class": "Carnivore",
+        "image": "item104",
+        "rank": "uncommon",
+        "type": "eat"
+    },
+    "berry_pie": {
+        "buffs": {
+            "mood": 20
+        },
+        "act": 50,
+        "class": "Herbivore",
+        "image": "item98",
+        "rank": "uncommon",
+        "type": "eat"
+    },
+    "fish_cake": {
+        "buffs": {
+            "energy": 10
+        },
+        "act": 50,
+        "class": "Flying",
+        "image": "item99",
+        "rank": "uncommon",
+        "type": "eat",
+        "groups": ["energy_eat"]
+    },
+    "meat_pie": {
+        "buffs": {
+            "heal": 10
+        },
+        "act": 50,
+        "class": "Carnivore",
+        "image": "item100",
+        "rank": "uncommon",
+        "type": "eat"
+    },
+    "dango": {
+        "buffs": {
+            "mood": 15
+        },
+        "act": 20,
+        "class": "ALL",
+        "image": "item94",
+        "rank": "rare",
+        "type": "eat"
+    },
+    "grain": {
+        "act": 10,
+        "class": "Herbivore",
+        "image": "item95",
+        "rank": "common",
+        "type": "eat"
+    },
+    "bread": {
+        "act": 27,
+        "class": "ALL",
+        "image": "item96",
+        "rank": "uncommon",
+        "type": "eat"
+    },
+    "curry": {
+        "act": 46,
+        "class": "ALL",
+        "image": "item92",
+        "rank": "rare",
+        "type": "eat"
+    },
+    "cake": {
+        "buffs": {
+            "mood": 100
+        },
+        "abilities": {
+            "uses": 6
+        },
+        "act": 40,
+        "class": "ALL",
+        "image": "item90",
+        "rank": "mystical",
+        "type": "eat"
+    },
+    "hot_chocolate": {
+        "buffs": {
+            "energy": 20
+        },
+        "act": 10,
+        "class": "ALL",
+        "drink": true,
+        "image": "item88",
+        "rank": "uncommon",
+        "type": "eat",
+        "groups": ["energy_eat"]
+    },
+    "sushi": {
+        "act": 30,
+        "class": "ALL",
+        "image": "item86",
+        "rank": "common",
+        "type": "eat"
+    },
+    "rice": {
+        "act": 10,
+        "class": "Herbivore",
+        "image": "item85",
+        "rank": "common",
+        "type": "eat"
+    },
+    "banana": {
+        "act": 11,
+        "class": "Herbivore",
+        "image": "item79",
+        "rank": "common",
+        "type": "eat"
+    },
+    "crab": {
+        "act": 46,
+        "class": "Flying",
+        "image": "item80",
+        "rank": "rare",
+        "type": "eat"
+    },
+    "coffee": {
+        "buffs": {
+            "energy": 30
+        },
+        "act": 5,
+        "class": "ALL",
+        "drink": true,
+        "image": "item81",
+        "rank": "rare",
+        "type": "eat",
+        "groups": ["energy_eat"]
+    },
+    "mushroom": {
+        "buffs": {
+            "heal": -2,
+            "mood": 12
+        },
+        "act": 13,
+        "class": "Herbivore",
+        "image": "item82",
+        "rank": "uncommon",
+        "type": "eat"
+    },
+    "broth": {
+        "buffs": {
+            "heal": 10
+        },
+        "act": 38,
+        "class": "ALL",
+        "image": "item83",
+        "rank": "rare",
+        "type": "eat"
+    },
+    "spices": {
+        "buffs": {
+            "heal": 1
+        },
+        "act": 5,
+        "class": "Herbivore",
+        "image": "item76",
+        "rank": "common",
+        "type": "eat"
+    },
+    "spicy_steak": {
+        "act": 39,
+        "class": "Carnivore",
+        "image": "item77",
+        "rank": "rare",
+        "type": "eat"
+    },
+    "juice": {
+        "buffs": {
+            "mood": 20
+        },
+        "act": 10,
+        "class": "ALL",
+        "drink": true,
+        "image": "item74",
+        "rank": "uncommon",
+        "type": "eat"
+    },
+    "maize": {
+        "act": 7,
+        "class": "Herbivore",
+        "image": "item71",
+        "rank": "common",
+        "type": "eat"
+    },
+    "popcorn": {
+        "buffs": {
+            "mood": 25
+        },
+        "act": 17,
+        "class": "ALL",
+        "image": "item72",
+        "rank": "uncommon",
+        "type": "eat"
+    },
+    "chocolate": {
+        "buffs": {
+            "energy": 5
+        },
+        "act": 8,
+        "class": "ALL",
+        "image": "item68",
+        "rank": "common",
+        "type": "eat",
+        "groups": ["energy_eat"]
+    },
+    "candy": {
+        "buffs": {
+            "energy": 2,
+            "mood": 5
+        },
+        "abilities": {
+            "uses": 10
+        },
+        "act": 3,
+        "class": "ALL",
+        "image": "item69",
+        "rank": "uncommon",
+        "type": "eat",
+        "groups": ["energy_eat"]
+    },
+    "set_cookies": {
+        "buffs": {
+            "mood": 10
+        },
+        "abilities": {
+            "uses": 15
+        },
+        "act": 5,
+        "class": "ALL",
+        "image": "item47",
+        "rank": "uncommon",
+        "type": "eat"
+    },
+    "pizza": {
+        "buffs": {
+            "mood": 15
+        },
+        "abilities": {
+            "uses": 9
+        },
+        "act": 10,
+        "class": "ALL",
+        "image": "item48",
+        "rank": "uncommon",
+        "type": "eat"
+    },
+    "taco": {
+        "buffs": {
+            "mood": 40
+        },
+        "act": 65,
+        "class": "ALL",
+        "image": "item50",
+        "rank": "rare",
+        "type": "eat"
+    },
+    "soup": {
+        "act": 55,
+        "class": "Flying",
+        "image": "item42",
+        "rank": "rare",
+        "type": "eat"
+    },
+    "salad": {
+        "act": 53,
+        "class": "Herbivore",
+        "image": "item40",
+        "rank": "rare",
+        "type": "eat"
+    }
+}

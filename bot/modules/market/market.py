@@ -10,10 +10,11 @@ from bot.modules.items.item import get_data as get_item_data
 from bot.modules.images import async_open, market_image
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.user.user import get_inventory, take_coins, premium
-from bot.const import ITEMS
 from bot.modules.localization import t
 from bot.modules.notifications import user_notification
+from bot.modules.items.collect_items import get_all_items
 
+ITEMS = get_all_items()
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 products = DBconstructor(mongo_client.market.products)

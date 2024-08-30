@@ -1,0 +1,65 @@
+{
+    "cloak": {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item14",
+        "rank": "uncommon",
+        "type": "journey",
+        "groups": ["repairing"]
+    },
+    "leather_clothing": {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item29",
+        "rank": "uncommon",
+        "type": "journey",
+        "groups": ["repairing"]
+    },
+    "hiking_bag": {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "item45",
+        "rank": "rare",
+        "type": "journey",
+        "groups": ["repairing"]
+    },
+    "bag_goodies": {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "bag_goodies",
+        "rank": "uncommon",
+        "type": "journey",
+        "groups": ["repairing"]
+    },
+    "rubik_cube": {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "rubik_cube",
+        "rank": "uncommon",
+        "type": "journey",
+        "groups": ["repairing"]
+    },
+    "lock_bag": {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "lock_bag",
+        "rank": "uncommon",
+        "type": "journey",
+        "groups": ["repairing"]
+    },
+    "skinning_knife": {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "skinning_knife",
+        "rank": "uncommon",
+        "type": "journey",
+        "groups": ["repairing"]
+    }
+}

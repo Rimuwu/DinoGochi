@@ -18,7 +18,13 @@ class HendlerDecorator(object):
 
             result = await func(*args)
 
-            log(f"command: {func.__name__} userid: {user_id} work.time: {round(time() - time_save, 4)} result: {result}", 0, 'HandlerEnd')
+            work_time = round(time() - time_save, 4)
+            add_message = ''
+            if work_time >= 60:
+                add_message = 'AHTUNG 60'
+            elif work_time >= 10:
+                add_message = 'AHTUNG 10'
+            log(f"command: {func.__name__} userid: {user_id} work.time: {work_time} result: {result} {add_message}", 0, 'HandlerEnd')
 
         return wrapper
 
@@ -34,7 +40,13 @@ class HendlerDecorator(object):
 
             result = await func(*args)
 
-            log(f"ButtonClickEnd: {func.__name__} userid: {user_id} work.time: {round(time() - time_save, 4)} result: {result}", 0, 'HandlerStart')
+            work_time = round(time() - time_save, 4)
+            add_message = ''
+            if work_time >= 60:
+                add_message = 'AHTUNG 60'
+            elif work_time >= 10:
+                add_message = 'AHTUNG 10'
+            log(f"ButtonClickEnd: {func.__name__} userid: {user_id} work.time: {work_time} result: {result} {add_message}", 0, 'HandlerStart')
 
         return wrapper
 

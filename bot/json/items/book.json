@@ -1,0 +1,33 @@
+{
+    "meow_book": {
+        "cant_sell": true,
+        "image": "book",
+        "rank": "legendary",
+        "type": "book"
+    },
+    "book_forest": {
+        "image": "book",
+        "rank": "mystical",
+        "type": "book"
+    },
+    "book_lost-islands": {
+        "image": "book",
+        "rank": "mystical",
+        "type": "book"
+    },
+    "book_desert": {
+        "image": "book",
+        "rank": "mystical",
+        "type": "book"
+    },
+    "book_mountains": {
+        "image": "book",
+        "rank": "mystical",
+        "type": "book"
+    },
+    "book_magic-forest": {
+        "image": "book",
+        "rank": "mystical",
+        "type": "book"
+    }
+}
