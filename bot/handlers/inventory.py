@@ -3,7 +3,7 @@ from asyncio import sleep
 
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
-from bot.modules.data_format import seconds_to_str, user_name
+from bot.modules.data_format import list_to_inline, seconds_to_str, user_name
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import incubation_egg
 from bot.modules.inventory_tools import (InventoryStates, back_button,
@@ -11,14 +11,15 @@ from bot.modules.inventory_tools import (InventoryStates, back_button,
                                          forward_button, generate, search_menu,
                                          send_item_info, start_inv, swipe_page)
 from bot.modules.items.item import (CheckCountItemFromUser, CheckItemFromUser,
-                              RemoveItemFromUser, counts_items, decode_item)
+                              RemoveItemFromUser, counts_items, decode_item, get_items_names)
 from bot.modules.items.item import get_data as get_item_data
 from bot.modules.items.item import get_item_dict, get_name
 from bot.modules.items.item_tools import (AddItemToUser, CheckItemFromUser,
                                     book_page, data_for_use_item,
                                     delete_item_action, exchange_item)
+from bot.modules.items.time_craft import add_time_craft
 from bot.modules.localization import get_data, get_lang, t
-from bot.modules.markup import count_markup
+from bot.modules.markup import count_markup, markups_menu
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseIntState
 from bot.modules.user.user import User, take_coins
@@ -389,25 +390,72 @@ async def ns_end(count, transmitted_data: dict):
 
     if all(check_lst):
         craft_list = []
-        for iid in item['ns_craft'][ns_id]['create']:
-            if isinstance(iid, dict):
-                item_i = iid['item_id']
-                count_i = iid['count']
-                craft_list.append(item_i)
 
-                await AddItemToUser(userid, item_i, count_i * count)
+        if 'time_craft' in item['ns_craft'][ns_id]:
 
-            elif isinstance(iid, str):
-                craft_list.append(iid)
-                await AddItemToUser(userid, iid, count)
+            items_tcraft = []
+            for iid in item['ns_craft'][ns_id]['create']:
+                if isinstance(iid, dict):
+                    items_tcraft.append(
+                        {'item': {
+                            'item_id': iid['item_id'] 
+                            },
+                         'count': iid['count']
+                        }
+                    )
 
-        for key, value in materials.items():
-            await RemoveItemFromUser(userid, key, value)
+                elif isinstance(iid, str):
+                    items_tcraft.append(
+                        {'item': {
+                            'item_id': iid 
+                            },
+                         'count': 1
+                        }
+                    )
 
-        text = t('ns_craft.create', lang, 
-                  items = counts_items(craft_list, lang))
-        await bot.send_message(chatid, text, 
-                           reply_markup = await m(userid, 'last_menu', lang))
+            tt = item['ns_craft'][ns_id]['items_tcraft']
+            tc = await add_time_craft(userid, 
+                                 tt, 
+                                 items_tcraft)
+            text = t('time_craft.text_start', lang, 
+                    items=get_items_names(items_tcraft, lang),
+                    craft_time=seconds_to_str(tt, lang)
+                    )
+            markup = list_to_inline(
+                [
+                    {t('time_craft.button', lang): f"time_craft {tc['alt_code']}  send_dino"}
+                ]
+            )
+
+            await bot.send_message(chatid, text, parse_mode='Markdown', 
+                           reply_markup = markup)
+
+            text = t('time_craft.text2', lang,
+                    command='/craftlist')
+            markup = await markups_menu(userid, 'last_menu', lang)
+            await bot.send_message(chatid, text, parse_mode='Markdown', 
+                            reply_markup = markup)
+        
+        else:
+            for iid in item['ns_craft'][ns_id]['create']:
+                if isinstance(iid, dict):
+                    item_i = iid['item_id']
+                    count_i = iid['count']
+                    craft_list.append(item_i)
+
+                    await AddItemToUser(userid, item_i, count_i * count)
+
+                elif isinstance(iid, str):
+                    craft_list.append(iid)
+                    await AddItemToUser(userid, iid, count)
+
+            for key, value in materials.items():
+                await RemoveItemFromUser(userid, key, value)
+
+            text = t('ns_craft.create', lang, 
+                    items = counts_items(craft_list, lang))
+            await bot.send_message(chatid, text, 
+                            reply_markup = await m(userid, 'last_menu', lang))
     else:
         await bot.send_message(chatid, t('ns_craft.not_materials', lang),
                            reply_markup = await m(userid, 'last_menu', lang))

@@ -2,5 +2,37 @@
     "SYSTEM_ITEM_REPAIR": {
         "type": "dummy",
         "rank": "common"
+    },
+    "rustycan": {
+        "type": "dummy",
+        "rank": "common"
+    },
+    "wornoutticket": {
+        "type": "dummy",
+        "rank": "common"
+    },
+    "brokenkey": {
+        "type": "dummy",
+        "rank": "common"
+    },
+    "lostglove": {
+        "type": "dummy",
+        "rank": "common"
+    },
+    "shatteredbottle": {
+        "type": "dummy",
+        "rank": "common"
+    },
+    "oldbucket": {
+        "type": "dummy",
+        "rank": "common"
+    },
+    "crumpledpaper": {
+        "type": "dummy",
+        "rank": "common"
+    },
+    "wiltedleaf": {
+        "type": "dummy",
+        "rank": "common"
     }
 }
