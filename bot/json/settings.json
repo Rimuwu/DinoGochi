@@ -409,6 +409,7 @@
 
     "super_shop": {
         "pa": {"items": ["premium_activator"], "price": 700},
+        "ny": {"items": ["freezing_1moth", "defrost"], "price": 1000},
         "sr": {"items": ["stone_resurrection"], "price": 450},
         "ec": {"items": ["egg_case"], "price": 200},
         "rc": {"items": ["recipe_chest"], "price": 200},

@@ -221,11 +221,11 @@ locations = {
     "forest": {
         "danger": 1.0,
         "items": {
-            'com': ['jar_honey', 'cookie', 'blank_piece_paper', 'feather'],
-            'unc': ['timer', 'therapeutic_mixture', 'sweet_pancakes', 'blank_piece_paper', 'drink_recipe'],
-            'rar': ['bento_recipe', 'candy_recipe', 'drink_recipe', 'tooling'],
+            'com': ['rustycan', 'wornoutticket', 'brokenkey', 'lostglove', 'shatteredbottle', 'oldbucket', 'crumpledpaper', 'wiltedleaf', 'jar_honey', 'cookie', 'blank_piece_paper', 'feather'],
+            'unc': ['therapeutic_mixture', 'sweet_pancakes', 'blank_piece_paper', 'drink_recipe', 'rod_recipe'],
+            'rar': ['bento_recipe', 'candy_recipe', 'drink_recipe', 'gear_recipe'],
             'mys': ['salad_recipe', 'torch_recipe', 'popcorn_recipe'],
-            'leg': ['soup_recipe', 'gourmet_herbs', 'board_games', 'book_forest', 'flour_recipe', 'magic_stone']
+            'leg': ['soup_recipe', 'gourmet_herbs', 'book_forest', 'flour_recipe', 'magic_stone']
         },
         "positive": {
             'com': ['influences_mood', 'without_influence', 
@@ -258,10 +258,10 @@ locations = {
             'mobs': ['dolphin', 'lobster', 'narwhal', 'orca', 'otter_pup', 'pelican', 'swan', 'whale', 'toucan', 'squid', 'seahorse', 'shark', 'octopus', 'wombat', 'turtle', 'snail', 'sloth', 'skunk', 'sheep', 'seagull', 'rooster', 'pigeon', 'peacock', 'parrot', 'ostrich', 'opossum', 'monkey', 'kangaroo', 'jaguar']
         },
         "items": {
-            'com': ['slice_pizza', 'fish_oil', 'twigs_tree', 'skin', 'blank_piece_paper'],
-            'unc': ['tooling', 'therapeutic_mixture', 'sweet_pancakes', 'drink_recipe'],
-            'rar': ['curry_recipe', 'bread_recipe', 'tea_recipe', 'flour_recipe', 'timer', 'blank_piece_paper'],
-            'mys': ['bear', 'clothing_recipe', 'meat_recipe'],
+            'com': ['rustycan', 'wornoutticket', 'brokenkey', 'lostglove', 'shatteredbottle', 'oldbucket', 'crumpledpaper', 'wiltedleaf', 'slice_pizza', 'fish_oil', 'twigs_tree', 'skin', 'blank_piece_paper'],
+            'unc': ['therapeutic_mixture', 'sweet_pancakes', 'drink_recipe'],
+            'rar': ['curry_recipe', 'bread_recipe', 'tea_recipe', 'flour_recipe', 'blank_piece_paper'],
+            'mys': ['clothing_recipe', 'meat_recipe'],
             'leg': ['taco_recipe', 'sandwich_recipe', 'hot_chocolate_recipe', 'book_lost-islands', 'magic_stone']
         },
         "positive": {
@@ -290,8 +290,8 @@ locations = {
     "desert": {
         "danger": 1.4,
         "items": {
-            'com': ['chocolate', 'candy', 'dango', 'flour_recipe', 'rope', 'blank_piece_paper'],
-            'unc': ['juice_recipe', 'hot_chocolate_recipe', 'cake_recipe', 'tooling'],
+            'com': ['rustycan', 'wornoutticket', 'brokenkey', 'lostglove', 'shatteredbottle','chocolate', 'candy', 'dango', 'flour_recipe', 'rope', 'blank_piece_paper'],
+            'unc': ['juice_recipe', 'hot_chocolate_recipe', 'cake_recipe'],
             'rar': ['pouch_recipe', 'sword_recipe', 'onion_recipe', 'arrow_recipe'],
             'mys': ['backpack_recipe', 'shield_recipe', 'pickaxe_recipe', 'drink_recipe', 'magic_stone'],
             'leg': ['steak_recipe', 'broth_recipe', 'sushi_recipe', 'book_desert', 'magic_stone']
@@ -326,7 +326,7 @@ locations = {
     "mountains": {
         "danger": 1.8,
         "items": {
-            'com': ['sandwich', 'dango', 'mushroom', 'therapeutic_mixture', 'blank_piece_paper', 'drink_recipe'],
+            'com': ['rustycan', 'wornoutticket', 'brokenkey', 'lostglove', 'sandwich', 'dango', 'mushroom', 'therapeutic_mixture', 'blank_piece_paper', 'drink_recipe'],
             'unc': ['bacon_recipe', 'bento_recipe', 'sandwich_recipe'],
             'rar': ['berry_pie_recipe', 'fish_pie_recipe', 'meat_pie_recipe'],
             'mys': ['basket_recipe', 'net_recipe', 'rod_recipe', 'magic_stone'],
@@ -361,9 +361,9 @@ locations = {
     "magic-forest": {
         "danger": 2.0,
         "items": {
-            'com': ['tea', 'tooling', 'bear', 'rope', 'gourmet_herbs'],
+            'com': ['rustycan', 'tea', 'bear', 'rope', 'gourmet_herbs'],
             'unc': ['croissant_recipe', 'therapeutic_mixture'],
-            'rar': ['bag_goodies', 'rubik_cube', 'lock_bag', 'skinning_knife'],
+            'rar': ["tooling_recipe", 'repair_tool_recipe', 'skinning_knife_recipe', 'rod_recipe'],
             'mys': ['chest_food', 'recipe_chest', 'magic_stone'],
             'leg': ['mysterious_egg', 'unusual_egg', 'rare_egg', 'mystic_egg', 'legendary_egg', 'book_magic-forest', 'magic_stone']
         },

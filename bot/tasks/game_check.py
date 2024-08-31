@@ -37,12 +37,6 @@ async def game_end():
         await add_mood(i['dino_id'], 'end_game', 1, 
                  int((game_time // 2) * i['game_percent']))
 
-        dino = await Dino().create(i['dino_id'])
-        if await check_accessory(
-                dino, 'pillow', True
-            ):
-                await add_state(i['dino_id'], 'energy', 5, 3600)
-
 async def game_process():
     data = await long_activity.find(
         {'game_end': {'$gte': int(time())},
@@ -63,7 +57,7 @@ async def game_process():
                 if random.uniform(0, 1) <= LVL_CHANCE: 
                     if not await check_breakdown(dino['_id'], 'unrestrained_play'):
                         dino_con = await dino_owners.find_one({'dino_id': dino['_id']}, 
-                                                              comment='game_process_dino_con')
+                            comment='game_process_dino_con')
                         if dino_con:
                             userid = dino_con['owner_id']
                             if await check_inspiration(dino['_id'], 'exp_boost'):
@@ -80,6 +74,12 @@ async def game_process():
 
                         if randint(1, 100) + transform(charisma, 20, 5) >= 80:
                             add_unit = randint(1, 5)
+
+                        if randint(1, 4) == 4:
+                            if await check_accessory(
+                                dino, 'controller', True
+                                ):
+                                    add_unit = randint(1, 5)
 
                         await mutate_dino_stat(dino, 'game', int(add_unit + randint(2, 10) * percent))
 

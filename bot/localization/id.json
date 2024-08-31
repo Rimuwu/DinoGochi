@@ -926,6 +926,30 @@
             "pillow_recipe": {
                 "name": "📜 Resep Bantal",
                 "description": "Resep bantal"
+            },
+            "blanket": {
+                "name": "❤️‍🩹 Selimut",
+                "description": "Setelah tidur berakhir, dinosaurus mendapatkan peningkatan kesehatan sementara."
+            },
+            "blanket_recipe": {
+                "name": "📜 Resep Selimut",
+                "description": "Resep Selimut"
+            },
+            "toy_solider": {
+                "name": "🪀 Prajurit Mainan",
+                "description": "Meredakan titik stres saat tidur."
+            },
+            "toy_solider_recipe": {
+                "name": "📜 Resep Prajurit",
+                "description": "Resep prajurit mainan."
+            },
+            "controller": {
+                "name": "🎮 Pengontrol",
+                "description": "Mempercepat waktu permainan."
+            },
+            "controller_recipe": {
+                "name": "📜 Resep Pengontrol",
+                "description": "Resep untuk membuat pengontrol."
             }
         },
         "notifications": {

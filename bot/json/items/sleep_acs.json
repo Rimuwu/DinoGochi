@@ -10,11 +10,20 @@
     },
     "pillow": {
         "abilities": {
-            "endurance": 120
+            "endurance": 20
         },
-        "image": "item16",
-        "rank": "uncommon",
+        "image": "",
+        "rank": "rare",
         "type": "sleep",
         "groups": ["repairing"]
+    },
+    "toy_solider": {
+        "abilities": {
+            "endurance": 80
+        },
+        "image": "",
+        "rank": "uncommon",
+        "type": "sleep",
+        "groups": []
     }
 }

@@ -16,5 +16,14 @@
         "rank": "uncommon",
         "type": "game",
         "groups": ["repairing"]
+    },
+    "controller": {
+        "abilities": {
+            "endurance": 90
+        },
+        "image": "",
+        "rank": "rare",
+        "type": "game",
+        "groups": ["repairing"]
     }
 }

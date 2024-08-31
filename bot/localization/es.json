@@ -926,6 +926,30 @@
             "pillow_recipe": {
                 "name": "📜 Receta de almohada",
                 "description": "Receta de almohada"
+            },
+            "blanket": {
+                "name": "❤️‍🩹 Manta",
+                "description": "Una vez que termina el sueño, el dinosaurio obtiene un aumento temporal de salud."
+            },
+            "blanket_recipe": {
+                "name": "📜 Receta de manta",
+                "description": "Receta de manta"
+            },
+            "toy_solider": {
+                "name": "🪀 Soldado de juguete",
+                "description": "Alivia los puntos de estrés durante el sueño."
+            },
+            "toy_solider_recipe": {
+                "name": "📜 Receta de soldado",
+                "description": "Receta de soldaditos de juguete."
+            },
+            "controller": {
+                "name": "🎮 Controlador",
+                "description": "Acelera el tiempo de juego."
+            },
+            "controller_recipe": {
+                "name": "📜 Receta del controlador",
+                "description": "Receta para crear un controlador."
             }
         },
         "notifications": {

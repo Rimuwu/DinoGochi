@@ -926,6 +926,30 @@
             "pillow_recipe": {
                 "name": "📜 Pillow Recipe",
                 "description": "Pillow recipe"
+            },
+            "blanket": {
+                "name": "❤️‍🩹 Blanket",
+                "description": "After the sleep ends, the dinosaur gains a temporary health boost."
+            },
+            "blanket_recipe": {
+                "name": "📜 Blanket Recipe",
+                "description": "Blanket Recipe"
+            },
+            "toy_solider": {
+                "name": "🪀 Toy Soldier",
+                "description": "Relieves stress points during sleep."
+            },
+            "toy_solider_recipe": {
+                "name": "📜 Soldier Recipe",
+                "description": "Toy soldier recipe."
+            },
+            "controller": {
+                "name": "🎮 Controller",
+                "description": "Speeds up the game time."
+            },
+            "controller_recipe": {
+                "name": "📜 Controller Recipe",
+                "description": "Recipe for creating a controller."
             }
         },
         "notifications": {

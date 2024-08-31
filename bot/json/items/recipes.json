@@ -1709,8 +1709,98 @@
                 "count": 1
             }
         ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 1800
+    },
+    "blanket_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "blanket",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "wool",
+                "type": "delete",
+                "count": 10
+            },
+            {
+                "item": "skin",
+                "type": "delete",
+                "count": 3
+            }
+        ],
         "rank": "legendary",
         "type": "recipe",
         "time_craft": 1800
+    },
+    "toy_solider_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "toy_solider",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "wood-gear",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "wood-body",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "legendary",
+        "type": "recipe",
+        "time_craft": 1200
+    },
+    "controller_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "controller",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "iron-gear",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "copper-body",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 2800
     }
 }

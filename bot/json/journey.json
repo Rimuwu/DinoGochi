@@ -129,7 +129,8 @@
       "bear_cub": {
         "loot": [
           "skin",
-          "bone"
+          "bone",
+          "wool"
         ]
       },
       "bat": {
@@ -159,13 +160,15 @@
       "dragon": {
         "loot": [
           "skin",
-          "bone"
+          "bone",
+          "feather"
         ]
       },
       "eagle": {
         "loot": [
           "skin",
-          "bone"
+          "bone",
+          "feather"
         ]
       },
       "falcon": {
@@ -177,7 +180,8 @@
       "fennec_fox": {
         "loot": [
           "skin",
-          "bone"
+          "bone",
+          "wool"
         ]
       },
       "giraffe": {
@@ -189,7 +193,8 @@
       "goat": {
         "loot": [
           "skin",
-          "bone"
+          "bone",
+          "wool"
         ]
       },
       "grizzly": {
@@ -327,31 +332,36 @@
       "owl": {
         "loot": [
           "skin",
-          "bone"
+          "bone",
+          "feather"
         ]
       },
       "panda": {
         "loot": [
           "skin",
-          "bone"
+          "bone",
+          "wool"
         ]
       },
       "parrot": {
         "loot": [
           "skin",
-          "bone"
+          "bone",
+          "feather"
         ]
       },
       "peacock": {
         "loot": [
           "skin",
-          "bone"
+          "bone",
+          "feather"
         ]
       },
       "pelican": {
         "loot": [
           "skin",
-          "bone"
+          "bone",
+          "feather"
         ]
       },
       "penguin": {
@@ -369,7 +379,8 @@
       "pigeon": {
         "loot": [
           "skin",
-          "bone"
+          "bone",
+          "feather"
         ]
       },
       "polar_bear": {
@@ -411,7 +422,8 @@
       "rooster": {
         "loot": [
           "skin",
-          "bone"
+          "bone",
+          "feather"
         ]
       },
       "seagull": {
