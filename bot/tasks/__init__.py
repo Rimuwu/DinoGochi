@@ -16,3 +16,5 @@ from . import storage_clear
 from . import time_craft
 from . import skills
 from . import works
+from . import dino_states
+from . import freezing

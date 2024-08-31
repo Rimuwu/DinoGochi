@@ -1,7 +1,7 @@
 {
     "collections": {
         "user": ["users", "lang", "referals", "friends", "subscriptions", "ads"],
-        "dinosaur": ["dinosaurs", "dead_dinos", "incubation", "dino_owners", "dino_mood"],
+        "dinosaur": ["dinosaurs", "dead_dinos", "incubation", "dino_owners", "dino_mood", "states"],
         "dino_activity": ["kd_activity", "long_activity", "kindergarten"],
         "market": ["products", "sellers", "preferential", "puhs"],
         "items": ["items", "farm", "item_craft"],
@@ -301,6 +301,36 @@
                 }
             },
             "items": ["stone_resurrection"]
+        },
+        "moth_rest": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 100
+                },
+                "2": {
+                    "XTR": 180
+                },
+                "3": {
+                    "XTR": 260
+                }
+            },
+            "items": ["freezing_1moth", "defrost"]
+        },
+        "pause": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 200
+                },
+                "2": {
+                    "XTR": 360
+                },
+                "3": {
+                    "XTR": 420
+                }
+            },
+            "items": ["freezing", "defrost"]
         }
     },
     

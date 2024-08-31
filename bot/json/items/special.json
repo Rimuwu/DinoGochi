@@ -27,15 +27,20 @@
         "buyer": false
     },
     "freezing": {
-        "cant_sell": true,
         "image": "item66",
         "rank": "mythical",
         "time": "forever",
         "type": "special",
         "class": "freezing"
     },
+    "freezing_1moth": {
+        "image": "item66",
+        "rank": "mythical",
+        "time": 2592000,
+        "type": "special",
+        "class": "freezing"
+    },
     "defrost": {
-        "cant_sell": true,
         "image": "item67",
         "rank": "mythical",
         "type": "special",

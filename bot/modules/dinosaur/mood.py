@@ -54,6 +54,11 @@ breakdowns = {
     }
 }
 
+ # 'farm': {
+    #     'cancel_mood': 75,
+    #     'duration_time': (3600, 10800),
+    # },
+
 inspiration = {
     'game': {
         'cancel_mood': 75,
@@ -74,10 +79,6 @@ inspiration = {
     'craft': {
         'cancel_mood': 75,
         'duration_time': (1200, 3600),
-    },
-    'farm': {
-        'cancel_mood': 75,
-        'duration_time': (3600, 10800),
     },
     'mine': {
         'cancel_mood': 75,
@@ -300,6 +301,11 @@ async def check_inspiration(dino_id: ObjectId, action_type: str) -> bool:
 
     res = await dino_mood.find_one({'dino_id': dino_id, 
                               'type': 'inspiration', 'action': action_type}, comment='check_inspiration_res')
+    return bool(res)
+
+async def inspiration_end(dino_id: ObjectId, action_type: str):
+    res = await dino_mood.delete_one({'dino_id': dino_id, 
+                              'type': 'inspiration', 'action': action_type}, comment='end_inspiration_res')
     return bool(res)
 
 async def check_breakdown(dino_id: ObjectId, action_type: str = '') -> bool:

@@ -32,7 +32,7 @@ data = {
 async def work():
     res_list = await long_activity.find(
         {'activity_type': {'$in': ['bank', 'mine', 'sawmill']},
-         'last_check': {'$lte': int(time()) - 0}
+         'last_check': {'$lte': int(time()) - 600}
          }
     )
 
@@ -51,6 +51,8 @@ async def work():
         elif work['activity_type'] == 'mine':
             power = await check_skill(work['dino_id'], 'power')
             dp_chance = randint(0, transform(power, 20, 50) + 50) > 60
+
+            
 
         if int(time()) >= work['end_time']:
             save = False
@@ -89,7 +91,8 @@ async def work():
                 if count_items < work['max_items']:
                     if work['max_items'] - count_items == 1:
                         count = 1
-                    else: count = randint(1, 2)
+                    else:
+                        count = randint(1, 2)
 
                     items_group_ids = get_group(data[work["activity_type"]])
                     random_item = choice(items_group_ids)

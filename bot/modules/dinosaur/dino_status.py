@@ -50,6 +50,8 @@ async def check_status(dino_id):
         in_journey = status == 'journey'
         in_collecting = status == 'collecting'
 
+        inactive = status == 'inactive'
+
         dungeon = False
         in_kindergarten = await kindergarten.find_one({'dinoid': dino_id}, 
                                     comment='check_status_in_kindergarten')
@@ -59,8 +61,8 @@ async def check_status(dino_id):
         unrestrained_play = await dino_mood.find_one({'dino_id': dino_id, 
                               'type': 'breakdown', 'action': 'unrestrained_play'}, comment='check_status_unrestrained_play')
 
-        data = ['sleep', 'unrestrained_play', 'game', 'journey', 'collecting', 'dungeon', 'kindergarten', 'hysteria', 'farm', 'mine', 'bank', 'sawmill', 'gym', 'library', 'park', 'swimming_pool', 'craft']
-        checks = [bool(in_sleep), bool(unrestrained_play), bool(in_game), bool(in_journey), bool(in_collecting), bool(dungeon), bool(in_kindergarten), bool(hysteria),  bool(on_farm), bool(in_mine), bool(in_bank), bool(in_sawmill), bool(in_gym), bool(in_library), bool(in_park), bool(in_swimming_pool), bool(on_craft)]
+        data = ['sleep', 'unrestrained_play', 'game', 'journey', 'collecting', 'dungeon', 'kindergarten', 'hysteria', 'farm', 'mine', 'bank', 'sawmill', 'gym', 'library', 'park', 'swimming_pool', 'craft', 'inactive']
+        checks = [bool(in_sleep), bool(unrestrained_play), bool(in_game), bool(in_journey), bool(in_collecting), bool(dungeon), bool(in_kindergarten), bool(hysteria),  bool(on_farm), bool(in_mine), bool(in_bank), bool(in_sawmill), bool(in_gym), bool(in_library), bool(in_park), bool(in_swimming_pool), bool(on_craft), bool(inactive)]
 
         if True in checks: status = data[checks.index(True)]
         return status

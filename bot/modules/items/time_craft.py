@@ -7,6 +7,7 @@ from bot.config import mongo_client
 
 from bot.modules.data_format import random_code, transform
 
+from bot.modules.dinosaur.mood import check_inspiration, inspiration_end
 from bot.modules.dinosaur.skills import check_skill
 from bot.modules.notifications import dino_notification
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -15,7 +16,8 @@ long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 async def add_time_craft(userid: int, time_craft: int, 
                          items: list[dict]):
-    """ Создаёт задержку для выдачи предметов
+    """ 
+    Создаёт задержку для выдачи предметов
         items = [{
             'item': {
                 item_id: str
@@ -50,6 +52,12 @@ async def dino_craft(dino_id: ObjectId, craft_id: Union[ObjectId, str]):
         # Понижение времени в зависимости от ловкости
         dexterity = await check_skill(dino_id, 'dexterity')
         skip_percent = transform(dexterity, 20, 50)
+        
+        res = await check_inspiration(dino_id, 'craft')
+        if res: 
+            skip_percent *= 2
+            await inspiration_end(dino_id, 'craft')
+
         minus_time = 0
 
         if skip_percent > 0:

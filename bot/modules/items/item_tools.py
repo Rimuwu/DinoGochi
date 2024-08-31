@@ -1,11 +1,13 @@
 from random import choice, randint, shuffle
+import time
 
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      random_dict, seconds_to_str)
-from bot.modules.dinosaur.dinosaur  import Dino, edited_stats, insert_dino
+from bot.modules.dinosaur.dino_status import check_status
+from bot.modules.dinosaur.dinosaur  import Dino, edited_stats, insert_dino, set_status
 from bot.modules.images import async_open, create_eggs_image
 from bot.modules.items.craft_recipe import craft_recipe
 from bot.modules.items.item import (AddItemToUser, CalculateDowngradeitem,
@@ -30,7 +32,7 @@ dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 items = DBconstructor(mongo_client.items.items)
 dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
 users = DBconstructor(mongo_client.user.users)
-
+long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 async def exchange(return_data: dict, transmitted_data: dict):
     item = transmitted_data['item']
@@ -369,14 +371,49 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
     elif data_item['type'] == 'special':
         user = await User().create(userid)
-        dct_dino: dict = dino #type: ignore
 
-        if data_item['class'] == 'premium':
+        if data_item['class'] == 'defrosting' and dino:
+            status = await check_status(dino._id)
+
+            if status != 'inactive':
+                use_status = False
+                return_text = t('item_use.special.defrost.notinc', lang)
+
+            else:
+                return_text = t('item_use.special.defrost.ok', lang)
+                await long_activity.delete_one(
+                    {'dino_id': dino._id, 
+                    'activity_type': 'inactive'}
+                )
+
+        elif data_item['class'] == 'freezing' and dino:
+            status = await check_status(dino._id)
+            if status == 'pass':
+
+                if data_item['time'] == 'forever':
+                    end = 0
+                else:
+                    end = data_item['time'] + int(time.time())
+
+                data = {
+                    'activity_type': 'inactive',
+                    'dino_id': dino._id,
+                    'time_end': end
+                }
+
+                await long_activity.insert_one(data)
+                return_text = t('item_use.special.freez', lang)
+            else:
+                return_text = t('alredy_busy', lang)
+                use_status = False
+
+        elif data_item['class'] == 'premium':
             await award_premium(userid, data_item['premium_time'] * count)
             return_text = t('item_use.special.premium', lang, 
                             premium_time=seconds_to_str(data_item['premium_time'] * count, lang))
 
         elif data_item['class'] == 'reborn':
+            dct_dino: dict = dino #type: ignore
             dino_limit_col = await user.max_dino_col()
             dino_limit = dino_limit_col['standart']  
 
@@ -618,8 +655,18 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
 
         elif type_item == 'special':
 
-            if data_item['class'] in ['freezing', 'defrosting']:
-                ...
+            if data_item['class'] in ['defrosting']:
+                steps = [{"type": 'dino', 
+                         "name": 'dino', 
+                         "data": {"add_egg": False}, 
+                         'message': t('css.inactive_dino', lang)}]
+
+            if data_item['class'] in ['freezing']:
+                steps = [{"type": 'dino', 
+                         "name": 'dino', 
+                         "data": {"add_egg": False}, 
+                         'message': None}]
+
             elif data_item['class'] in ['premium']:
                 steps = [
                     {"type": 'int', "name": 'count', "data":

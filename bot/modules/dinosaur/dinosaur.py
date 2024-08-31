@@ -25,6 +25,7 @@ incubations = DBconstructor(mongo_client.dinosaur.incubation)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
+states = DBconstructor(mongo_client.dinosaur.states)
 
 kindergarten = DBconstructor(mongo_client.dino_activity.kindergarten)
 kd_activity = DBconstructor(mongo_client.dino_activity.kd_activity)
@@ -110,7 +111,7 @@ class Dino:
         """ Удаление всего, что связано с дино
         """
         await dinosaurs.delete_one({'_id': self._id}, comment='Dino_delete')
-        for collection in [kd_activity, long_activity, dino_owners, dino_mood, kindergarten]:
+        for collection in [kd_activity, long_activity, dino_owners, dino_mood, kindergarten, states]:
             await collection.delete_many({'dino_id': self._id}, comment='delete_213')
 
     async def dead(self):

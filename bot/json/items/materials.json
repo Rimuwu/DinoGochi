@@ -71,10 +71,70 @@
         "type": "material",
         "groups": ["durable_materials", "ore"]
     },
+    "copper": {
+        "image": "",
+        "rank": "uncommon",
+        "type": "material",
+        "groups": ["ore"]
+    },
     "wood": {
         "image": "",
         "rank": "uncommon",
         "type": "material",
         "groups": ["wood"]
+    },
+    "wood-body": {
+        "image": "",
+        "rank": "uncommon",
+        "type": "material",
+        "groups": []
+    },
+    "iron-body": {
+        "image": "",
+        "rank": "uncommon",
+        "type": "material",
+        "groups": []
+    },
+    "copper-body": {
+        "image": "",
+        "rank": "uncommon",
+        "type": "material",
+        "groups": []
+    },
+    "metal-gear": {
+        "image": "",
+        "rank": "uncommon",
+        "type": "material",
+        "groups": []
+    },
+    "wood-gear": {
+        "image": "",
+        "rank": "uncommon",
+        "type": "material",
+        "groups": []
+    },
+    "wood-rod": {
+        "image": "",
+        "rank": "uncommon",
+        "type": "material",
+        "groups": []
+    },
+    "iron-rod": {
+        "image": "",
+        "rank": "uncommon",
+        "type": "material",
+        "groups": []
+    },
+    "iron-ingot": {
+        "image": "",
+        "rank": "uncommon",
+        "type": "material",
+        "groups": []
+    },
+    "copper-ingot": {
+        "image": "",
+        "rank": "uncommon",
+        "type": "material",
+        "groups": []
     }
 }

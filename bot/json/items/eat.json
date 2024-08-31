@@ -19,7 +19,7 @@
         "ns_craft": {
             "1": {
                 "create": [
-                    "set_cookies"
+                    {"item_id": "set_cookies", "count": 1}
                 ],
                 "materials": [
                     {"item_id": "cookie", "count": 15}
@@ -36,10 +36,10 @@
         "ns_craft": {
             "1": {
                 "create": [
-                    "chicken_leg"
+                    {"item_id": "chicken_leg", "count": 1}
                 ],
                 "materials": [
-                    "wild_boar_meat"
+                    {"item_id": "wild_boar_meat", "count": 1}
                 ]
             }
         },
@@ -53,10 +53,10 @@
         "ns_craft": {
             "1": {
                 "create": [
-                    "berries"
+                    {"item_id": "berries", "count": 1}
                 ],
                 "materials": [
-                    "bunch_herbs"
+                    {"item_id": "bunch_herbs", "count": 1}
                 ]
             }
         },
@@ -70,19 +70,18 @@
         "ns_craft": {
             "1": {
                 "create": [
-                    "crab"
+                    {"item_id": "crab", "count": 1}
                 ],
                 "materials": [
-                    "fish",
-                    "fish"
+                    {"item_id": "fish", "count": 2}
                 ]
             },
             "2": {
                 "create": [
-                    "small_fish"
+                    {"item_id": "small_fish", "count": 1}
                 ],
                 "materials": [
-                    "fish"
+                    {"item_id": "fish", "count": 2}
                 ]
             }
         },
