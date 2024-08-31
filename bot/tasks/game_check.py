@@ -4,8 +4,10 @@ from time import time
 
 from bot.config import conf, mongo_client
 from bot.modules.data_format import transform
-from bot.modules.dinosaur.dinosaur  import end_game, mutate_dino_stat, get_owner
+from bot.modules.dinosaur.dinosaur  import Dino, end_game, mutate_dino_stat, get_owner
 from bot.modules.dinosaur.mood import add_mood, check_breakdown, check_inspiration
+from bot.modules.dinosaur.rpg_states import add_state
+from bot.modules.items.accessory import check_accessory
 from bot.modules.user.user import experience_enhancement
 from bot.taskmanager import add_task
 from bot.modules.quests import quest_process
@@ -34,6 +36,12 @@ async def game_end():
 
         await add_mood(i['dino_id'], 'end_game', 1, 
                  int((game_time // 2) * i['game_percent']))
+
+        dino = await Dino().create(i['dino_id'])
+        if await check_accessory(
+                dino, 'pillow', True
+            ):
+                await add_state(i['dino_id'], 'energy', 5, 3600)
 
 async def game_process():
     data = await long_activity.find(

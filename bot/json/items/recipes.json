@@ -321,14 +321,14 @@
         "rank": "rare",
         "type": "recipe"
     },
-    "shield_recipe": {
+    "reinforced_backpack_recipe": {
         "abilities": {
             "uses": 2
         },
         "create": {
             "main": [
                 {
-                    "item": "bone_shield",
+                    "item": "reinforced_backpack",
                     "type": "create",
                     "count": 1
                 }
@@ -337,36 +337,17 @@
         "image": "recipe",
         "materials": [
             {
-                "item": "bone",
+                "item": "skin",
                 "type": "delete",
                 "count": 15
-            }
-        ],
-        "rank": "uncommon",
-        "type": "recipe"
-    },
-    "pickaxe_recipe": {
-        "abilities": {
-            "uses": 2
-        },
-        "create": {
-            "main": [
-                {
-                    "item": "bone_pickaxe",
-                    "type": "create",
-                    "count": 1
-                }
-            ]
-        },
-        "image": "recipe",
-        "materials": [
+            },
             {
-                "item": "bone",
+                "item": ["iron-ingot", "copper-ingot"],
                 "type": "delete",
-                "count": 7
+                "count": 5
             }
         ],
-        "rank": "uncommon",
+        "rank": "rare",
         "type": "recipe"
     },
     "candy_recipe": {
@@ -918,14 +899,14 @@
         "rank": "rare",
         "type": "recipe"
     },
-    "rod_recipe": {
+    "fishing_rod_recipe": {
         "abilities": {
             "uses": 1
         },
         "create": {
             "main": [
                 {
-                    "item": "rod",
+                    "item": "fishing-rod",
                     "type": "create",
                     "count": 1
                 }
@@ -949,14 +930,28 @@
         "create": {
             "main": [
                 {
+                    "item": "SYSTEM_ITEM_SWORD",
+                    "type": "preview",
+                    "count": 1
+                }
+            ],
+            "bone": [
+                {
                     "item": "bone_sword",
                     "type": "create",
                     "count": 1
                 }
             ],
-            "iron": [
+            "iron-rod": [
                 {
                     "item": "iron_sword",
+                    "type": "create",
+                    "count": 1
+                }
+            ],
+            "copper-rod": [
+                {
+                    "item": "copper_sword",
                     "type": "create",
                     "count": 1
                 }
@@ -965,7 +960,7 @@
         "image": "recipe",
         "materials": [
             {
-                "item": {"group": "durable_materials"},
+                "item": {"group": "rod_group"},
                 "type": "delete",
                 "count": 5
             },
@@ -977,7 +972,8 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 7200
+        "time_craft": 7200,
+        "ignore_preview": ["iron-rod", "copper-rod", "bone"]
     },
     "repair_tool": {
         "abilities": {
@@ -1013,5 +1009,708 @@
         ],
         "rank": "rare",
         "type": "recipe"
+    },
+    "axe_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "SYSTEM_ITEM_AXE",
+                    "type": "preview",
+                    "count": 1
+                }
+            ],
+            "bone": [
+                {
+                    "item": "bone_axe",
+                    "type": "create",
+                    "count": 1
+                }
+            ],
+            "iron-rod": [
+                {
+                    "item": "iron_axe",
+                    "type": "create",
+                    "count": 1
+                }
+            ],
+            "copper-rod": [
+                {
+                    "item": "copper_axe",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": {"group": "rod_group"},
+                "type": "delete",
+                "count": 5
+            },
+            {
+                "act": 20,
+                "item": "tooling",
+                "type": "endurance"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 7200,
+        "ignore_preview": ["iron-rod", "copper-rod", "bone"]
+    },
+    "pickaxe_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "SYSTEM_ITEM_PICKAXE",
+                    "type": "preview",
+                    "count": 1
+                }
+            ],
+            "bone": [
+                {
+                    "item": "bone_pickaxe",
+                    "type": "create",
+                    "count": 1
+                }
+            ],
+            "iron-rod": [
+                {
+                    "item": "iron_pickaxe",
+                    "type": "create",
+                    "count": 1
+                }
+            ],
+            "copper-rod": [
+                {
+                    "item": "copper_pickaxe",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": {"group": "rod_group"},
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "act": 20,
+                "item": "tooling",
+                "type": "endurance"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 7200,
+        "ignore_preview": ["iron-rod", "copper-rod", "bone"]
+    },
+    "leather_jacket_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "leather_jacket",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "skin",
+                "type": "delete",
+                "count": 5
+            },
+            {
+                "item": "wool",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "act": 20,
+                "item": "tooling",
+                "type": "endurance"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 1000
+    },
+    "crossbow_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "crossbow",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "wood",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "iron-ingot",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "act": 20,
+                "item": "tooling",
+                "type": "endurance"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 1000
+    },
+    "shield_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "SYSTEM_ITEM_SHIELD",
+                    "type": "preview",
+                    "count": 1
+                }
+            ],
+            "wood-body": [
+                {
+                    "item": "wood_shield",
+                    "type": "create",
+                    "count": 1
+                }
+            ],
+            "iron-body": [
+                {
+                    "item": "iron_shield",
+                    "type": "create",
+                    "count": 1
+                }
+            ],
+            "copper-body": [
+                {
+                    "item": "copper_shield",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": {"group": "bodys"},
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "act": 20,
+                "item": "tooling",
+                "type": "endurance"
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 1000,
+        "ignore_preview": ["iron-body", "copper-body", "wood-body"]
+    },
+    "rod_recipe": {
+        "abilities": {
+            "uses": 10
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "SYSTEM_ITEM_ROD",
+                    "type": "preview",
+                    "count": 1
+                }
+            ],
+            "iron-ingot": [
+                {
+                    "item": "iron-rod",
+                    "type": "create",
+                    "count": 1
+                }
+            ],
+            "copper-ingot": [
+                {
+                    "item": "copper-rod",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": {"group": "ingot_group"},
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 600,
+        "ignore_preview": ["iron-ingot", "copper-ingot"]
+    },
+    "gear_recipe": {
+        "abilities": {
+            "uses": 10
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "SYSTEM_ITEM_GEAR",
+                    "type": "preview",
+                    "count": 1
+                }
+            ],
+            "iron-ingot": [
+                {
+                    "item": "metal-gear",
+                    "type": "create",
+                    "count": 1
+                }
+            ],
+            "copper-ingot": [
+                {
+                    "item": "copper-rod",
+                    "type": "create",
+                    "count": 1
+                }
+            ],
+            "wood": [
+                {
+                    "item": "wood-rod",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": ["wood", "iron-ingot", "copper-ingot"],
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 1200,
+        "ignore_preview": ["iron-ingot", "copper-ingot", "wood"]
+    },
+    "bear_recipe": {
+        "abilities": {
+            "uses": 10
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "bear",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "wool",
+                "type": "delete",
+                "count": 5
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 400
+    },
+    "tooling_recipe": {
+        "abilities": {
+            "uses": 20
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "tooling",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": ["iron-ingot", "copper-ingot"],
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "common",
+        "type": "recipe",
+        "time_craft": 400
+    },
+    "fishing-rod_recipe": {
+        "abilities": {
+            "uses": 4
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "fishing-rod",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "twigs_tree",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "common",
+        "type": "recipe",
+        "time_craft": 800
+    },
+    "timer_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "timer",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "wood-body",
+                "type": "delete",
+                "count": 1
+            },
+            {
+                "item": ["metal-gear", "wood-gear"],
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 400
+    },
+    "board_games_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "board_games",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "wood-body",
+                "type": "delete",
+                "count": 1
+            },
+            {
+                "item": "wood",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 500
+    },
+    "cloak_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "cloak",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "skin",
+                "type": "delete",
+                "count": 5
+            },
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 500
+    },
+    "leather_clothing_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "leather_clothing",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "skin",
+                "type": "delete",
+                "count": 10
+            },
+            {
+                "item": "feather",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 500
+    },
+    "bag_goodies_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "bag_goodies",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "skin",
+                "type": "delete",
+                "count": 8
+            },
+            {
+                "item": "feather",
+                "type": "delete",
+                "count": 3
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 1800
+    },
+    "rubik_cube_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "rubik_cube",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "wood-body",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "feather",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "mystical",
+        "type": "recipe",
+        "time_craft": 1800
+    },
+    "lock_bag_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "lock_bag",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "skin",
+                "type": "delete",
+                "count": 5
+            },
+            {
+                "item": "iron-ingot",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "mystical",
+        "type": "recipe",
+        "time_craft": 2000
+    },
+    "skinning_knife_recipe": {
+        "abilities": {
+            "uses": 4
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "lock_bag",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "skin",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": ["iron-rod", "copper-rod"],
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "mystical",
+        "type": "recipe",
+        "time_craft": 2000
+    },
+    "repair_tool_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "repair_tool",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "skin",
+                "type": "delete",
+                "count": 10
+            },
+            {
+                "item": "tooling",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "legendary",
+        "type": "recipe",
+        "time_craft": 1800
+    },
+    "pillow_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "pillow",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "feather",
+                "type": "delete",
+                "count": 10
+            },
+            {
+                "item": "skin",
+                "type": "delete",
+                "count": 10
+            },
+            {
+                "item": "tooling",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "legendary",
+        "type": "recipe",
+        "time_craft": 1800
     }
 }

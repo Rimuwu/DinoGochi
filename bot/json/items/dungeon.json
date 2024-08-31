@@ -15,7 +15,7 @@
     },
     "iron_sword": {
         "abilities": {
-            "endurance": 80
+            "endurance": 120
         },
         "class": "near",
         "damage": {
@@ -23,10 +23,25 @@
             "min": 2
         },
         "image": "item53",
-        "rank": "uncommon",
+        "rank": "mystical",
         "type": "weapon",
         "groups": ["repairing"]
     },
+    "copper_sword": {
+        "abilities": {
+            "endurance": 80
+        },
+        "class": "near",
+        "damage": {
+            "max": 6,
+            "min": 1
+        },
+        "image": "item53",
+        "rank": "rare",
+        "type": "weapon",
+        "groups": ["repairing"]
+    },
+
     "bone_arrow": {
         "add_damage": 0,
         "add_effects": [],
@@ -34,6 +49,7 @@
         "rank": "uncommon",
         "type": "ammunition"
     },
+
     "bone_onions": {
         "abilities": {
             "endurance": 70
@@ -47,16 +63,41 @@
             "min": 1
         },
         "image": "item55",
-        "rank": "uncommon",
+        "rank": "rare",
         "type": "weapon",
         "groups": ["repairing"]
     },
+    "crossbow": {
+        "abilities": {
+            "endurance": 150
+        },
+        "ammunition": [
+            "bone_arrow"
+        ],
+        "class": "far",
+        "damage": {
+            "max": 8,
+            "min": 1
+        },
+        "image": "item55",
+        "rank": "mystical",
+        "type": "weapon",
+        "groups": ["repairing"]
+    },
+
     "regular_backpack": {
         "capacity": 10,
         "image": "item45",
         "rank": "rare",
         "type": "backpack"
     },
+    "reinforced_backpack": {
+        "capacity": 20,
+        "image": "item45",
+        "rank": "mystical",
+        "type": "backpack"
+    },
+
     "bone_pickaxe": {
         "abilities": {
             "endurance": 20
@@ -72,14 +113,121 @@
         "type": "weapon",
         "groups": ["repairing"]
     },
-    "bone_shield": {
+    "iron_pickaxe": {
+        "abilities": {
+            "endurance": 60
+        },
+        "class": "near",
+        "damage": {
+            "max": 1,
+            "min": 0
+        },
+        "effectiv": 3,
+        "image": "item64",
+        "rank": "uncommon",
+        "type": "weapon",
+        "groups": ["repairing"]
+    },
+    "copper_pickaxe": {
+        "abilities": {
+            "endurance": 40
+        },
+        "class": "near",
+        "damage": {
+            "max": 1,
+            "min": 0
+        },
+        "effectiv": 3,
+        "image": "item64",
+        "rank": "uncommon",
+        "type": "weapon",
+        "groups": ["repairing"]
+    },
+
+    "wood_shield": {
         "abilities": {
             "endurance": 120
         },
         "image": "item62",
         "rank": "uncommon",
+        "reflection": 1,
+        "type": "armor",
+        "groups": ["repairing"]
+    },
+    "iron_shield": {
+        "abilities": {
+            "endurance": 200
+        },
+        "image": "item62",
+        "rank": "mystical",
         "reflection": 2,
         "type": "armor",
+        "groups": ["repairing"]
+    },
+    "copper_shield": {
+        "abilities": {
+            "endurance": 180
+        },
+        "image": "item62",
+        "rank": "rare",
+        "reflection": 3,
+        "type": "armor",
+        "groups": ["repairing"]
+    },
+    "leather_jacket": {
+        "abilities": {
+            "endurance": 100
+        },
+        "image": "",
+        "rank": "rare",
+        "reflection": 3,
+        "type": "armor",
+        "groups": ["repairing"]
+    },
+
+    "bone_axe": {
+        "abilities": {
+            "endurance": 20
+        },
+        "class": "near",
+        "damage": {
+            "max": 1,
+            "min": 0
+        },
+        "effectiv": 2,
+        "image": "",
+        "rank": "uncommon",
+        "type": "weapon",
+        "groups": ["repairing"]
+    },
+    "iron_axe": {
+        "abilities": {
+            "endurance": 60
+        },
+        "class": "near",
+        "damage": {
+            "max": 1,
+            "min": 0
+        },
+        "effectiv": 3,
+        "image": "",
+        "rank": "mystical",
+        "type": "weapon",
+        "groups": ["repairing"]
+    },
+    "copper_axe": {
+        "abilities": {
+            "endurance": 40
+        },
+        "class": "near",
+        "damage": {
+            "max": 1,
+            "min": 0
+        },
+        "effectiv": 3,
+        "image": "",
+        "rank": "rare",
+        "type": "weapon",
         "groups": ["repairing"]
     }
 }

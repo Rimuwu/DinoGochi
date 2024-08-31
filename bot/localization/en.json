@@ -126,7 +126,8 @@
                 "sawmill": "🪵 Sawmill",
                 "bank": "🏦 Bank",
                 "farm": "🧺 Farm",
-                "stop_work": "💥 Return from work"
+                "stop_work": "⌛ Return from Work",
+                "progress": "🌯 Progress"
             },
             "farm": {
                 "sow": "🧑‍🌾 Sow",
@@ -415,7 +416,7 @@
             },
             "sword_recipe": {
                 "name": "📜 Sword Recipe",
-                "description": "A sharpened sword made from the bones of the undead."
+                "description": "Recipe for a sharpened sword."
             },
             "onion_recipe": {
                 "name": "📜 Onion Recipe",
@@ -444,7 +445,7 @@
             },
             "pickaxe_recipe": {
                 "name": "📜 Pickaxe Recipe",
-                "description": "The Bone Pickaxe is not effective in combat, because everyone knows that the axe is a more formidable weapon. On the other hand, it is effective in extracting resources."
+                "description": "The pickaxe is not effective in battle, because everyone knows that the axe is a more formidable weapon. But it is effective in the extraction of resources."
             },
             "freezing": {
                 "name": "❄ Freezing"
@@ -694,8 +695,8 @@
                 "description": "A recipe for creating a net for hunting."
             },
             "rod_recipe": {
-                "name": "📜 Fishing Rod Recipe",
-                "description": "Recipe for creating a fishing rod."
+                "name": "📜 Rod recipe",
+                "description": "Necessary material for creating weapons."
             },
             "meow_book": {
                 "name": "📔 Meow Edition",
@@ -721,6 +722,210 @@
             },
             "iron_sword": {
                 "name": "🗡 Iron Sword"
+            },
+            "timer_recipe": {
+                "name": "📜 Timer Recipe",
+                "description": "Timer recipe."
+            },
+            "cloak_recipe": {
+                "name": "📜 Cloak Recipe",
+                "description": "Raincoat recipe."
+            },
+            "bear_recipe": {
+                "name": "📜 Bear Recipe",
+                "description": "Recipe for creating a bear for sleep."
+            },
+            "tooling_recipe": {
+                "name": "📜 Tools Recipe",
+                "description": "Recipe for creating tools."
+            },
+            "leather_clothing_recipe": {
+                "name": "📜 Leather Clothing Recipe",
+                "description": "Leather clothing recipe."
+            },
+            "board_games_recipe": {
+                "name": "📜 Board game recipe",
+                "description": "Recipe for creating board games."
+            },
+            "wood-body": {
+                "name": "📦 Wooden Case"
+            },
+            "iron-body": {
+                "name": "📦 Iron Hull"
+            },
+            "copper-body": {
+                "name": "📦 Copper Case"
+            },
+            "metal-gear": {
+                "name": "⚙ Metal Gear"
+            },
+            "wood-gear": {
+                "name": "⚙ Wooden Gear"
+            },
+            "iron-rod": {
+                "name": "🦯 Iron Rod"
+            },
+            "copper-rod": {
+                "name": "🦯 Copper Rod"
+            },
+            "iron-ingot": {
+                "name": "🧱 Iron Ingot"
+            },
+            "copper-ingot": {
+                "name": "🧱 Copper Ingot"
+            },
+            "copper": {
+                "name": "🧱 Copper"
+            },
+            "wood": {
+                "name": "🪵 Tree"
+            },
+            "gear_recipe": {
+                "name": "📜 Gear recipe",
+                "description": "The most important component in the mechanism."
+            },
+            "copper_sword": {
+                "name": "🗡 Copper Sword"
+            },
+            "crossbow": {
+                "name": "🏹 Crossbow"
+            },
+            "crossbow_recipe": {
+                "name": "📜 Crossbow Recipe",
+                "description": "Crossbow - powerful, fast, durable. Perfect for hunting!"
+            },
+            "wood_shield": {
+                "name": "🛡 Wooden Shield"
+            },
+            "iron_shield": {
+                "name": "🛡 Iron Shield"
+            },
+            "copper_shield": {
+                "name": "🛡 Copper Shield"
+            },
+            "leather_jacket": {
+                "name": "🧥 Leather jacket"
+            },
+            "iron_pickaxe": {
+                "name": "⛏ Iron Pickaxe"
+            },
+            "copper_pickaxe": {
+                "name": "⛏ Copper Pickaxe"
+            },
+            "bone_axe": {
+                "name": "🪓 Bone Axe"
+            },
+            "iron_axe": {
+                "name": "🪓 Iron Axe"
+            },
+            "copper_axe": {
+                "name": "🪓 Copper Axe"
+            },
+            "axe_recipe": {
+                "name": "📜 Axe Recipe",
+                "description": "An axe is not effective in battle, because everyone knows that a sword is a faster weapon. But it is effective in the extraction of resources."
+            },
+            "recipe_chest_simple": {
+                "name": "📦 Random recipe"
+            },
+            "fishing-rod": {
+                "name": "🎣 Fishing rod",
+                "description": "A great fishing rod for fishing. Increases the Dinosaur's Mastery."
+            },
+            "fishing-rod_recipe": {
+                "name": "📜 Fishing rod recipe",
+                "description": "Fishing rod recipe."
+            },
+            "bag_goodies_recipe": {
+                "name": "📜 Bag with goodies",
+                "description": "Recipe for creating a storage for goodies."
+            },
+            "rubik_cube_recipe": {
+                "name": "📜 Rubik's Cube",
+                "description": "Recipe for creating a Rubik's Cube."
+            },
+            "lock_bag_recipe": {
+                "name": "📜 Bag with lock",
+                "description": "Recipe for creating a bag with a lock."
+            },
+            "skinning_knife_recipe": {
+                "name": "📜 Skinning knife",
+                "description": "Recipe for creating a skinning knife."
+            },
+            "fishing_rod_recipe": {
+                "name": "📜 Fishing rod recipe",
+                "description": "Recipe for creating a fishing rod."
+            },
+            "repair_tool": {
+                "name": "🔧 Repair Kit",
+                "description": "A set for repairing accessories, weapons, armor. Repairs only broken items!"
+            },
+            "repair_tool_recipe": {
+                "name": "📜 Repair Kit",
+                "description": "Recipe for creating a repair kit."
+            },
+            "SYSTEM_ITEM_REPAIR": {
+                "name": "🔧 Repaired item"
+            },
+            "SYSTEM_ITEM_SWORD": {
+                "name": "🗡 Sword"
+            },
+            "SYSTEM_ITEM_AXE": {
+                "name": "🪓 Axe"
+            },
+            "SYSTEM_ITEM_PICKAXE": {
+                "name": "⛏ Pickaxe"
+            },
+            "SYSTEM_ITEM_SHIELD": {
+                "name": "🛡 Shield"
+            },
+            "SYSTEM_ITEM_GEAR": {
+                "name": "⚙ Gear"
+            },
+            "SYSTEM_ITEM_ROD": {
+                "name": "🦯 Rod"
+            },
+            "rustycan": {
+                "name": "🥫 Rusty Jar"
+            },
+            "wornoutticket": {
+                "name": "🎟️ Worn-out Ticket"
+            },
+            "brokenkey": {
+                "name": "🔧 Broken Key"
+            },
+            "lostglove": {
+                "name": "🧤 The Lost Glove"
+            },
+            "shatteredbottle": {
+                "name": "🍾 Broken Bottle"
+            },
+            "oldbucket": {
+                "name": "🪣 Old bucket"
+            },
+            "crumpledpaper": {
+                "name": "🧻 Crumpled piece of paper"
+            },
+            "wiltedleaf": {
+                "name": "🍂 Withered Leaf"
+            },
+            "freezing_1moth": {
+                "name": "🧊 Freeze for a month"
+            },
+            "reinforced_backpack": {
+                "name": "🎒 Reinforced Backpack"
+            },
+            "reinforced_backpack_recipe": {
+                "name": "📜 Reinforced backpack",
+                "description": "Recipe for a reinforced backpack."
+            },
+            "pillow": {
+                "name": "🧸 Pillow",
+                "description": "After the sleep ends, the dinosaur receives a temporary energy boost."
+            },
+            "pillow_recipe": {
+                "name": "📜 Pillow Recipe",
+                "description": "Pillow recipe"
             }
         },
         "notifications": {
@@ -899,6 +1104,18 @@
             },
             "craft_end": {
                 "text": "⛏️ | {dino_name} Back from the workshop! You can check active crafting by commanding /craftlist",
+                "inline_menu": "dino_profile"
+            },
+            "bank_end": {
+                "text": "🏦 | {dino_name} back from the bank! And here are the results of his work: {results}",
+                "inline_menu": "dino_profile"
+            },
+            "mine_end": {
+                "text": "⛏️ | {dino_name} returned from the mine! And here are the results of his work: {results}",
+                "inline_menu": "dino_profile"
+            },
+            "sawmill_end": {
+                "text": "🌲 | {dino_name} back from the sawmill! And here are the results of his work: {results}",
                 "inline_menu": "dino_profile"
             }
         },
@@ -1463,7 +1680,8 @@
                 "park": "Walking 🏞️",
                 "swimming_pool": "Swimming 💦",
                 "craft": "Crafting item ⚒️",
-                "unrestrained_play": "I play non-stop 😟"
+                "unrestrained_play": "I play non-stop 😟",
+                "inactive": "I'm frozen ❄"
             },
             "replics": {
                 "heal": {
@@ -1543,6 +1761,10 @@
                 "backgrounds": {
                     "text": "🖼️ Background",
                     "data": "dino_menu backgrounds_menu {dino}"
+                },
+                "skills": {
+                    "text": "⚡ Skills",
+                    "data": "dino_menu skills {dino}"
                 }
             },
             "joint": "(Joint)"
@@ -1819,7 +2041,12 @@
                     "limit": "🦕 | At the moment you can only have {limit} dinosaur(s). Take a look at the handbook for more information.",
                     "no_dinos": "🦕 | You are such a beautiful person, the world doesn't remember your lost dinosaurs!"
                 },
-                "premium": "🎆 | Congratulations on activating your premium at {premium_time}!"
+                "premium": "🎆 | Congratulations on activating your premium at {premium_time}!",
+                "defrost": {
+                    "notinc": "🦕 This dinosaur is not frozen!",
+                    "ok": "🧉 | The dinosaur has been thawed!"
+                },
+                "freez": "🧊 Dinosaur is frozen!"
             },
             "buff": {
                 "+mood": "😀 | Dinosaur got +{unit} % to Mood! \n",
@@ -1839,14 +2066,15 @@
             "combine": "⚒ Choose an item to combine with {name} ->",
             "delete": "🗑 Confirm the deletion {name}",
             "dino": "🦕 Select a dinosaur/egg from the list",
-            "friend": "🎮 Choose a friend ->"
+            "friend": "🎮 Choose a friend ->",
+            "inactive_dino": "🦕 Choose only frozen dinosaurs!"
         },
         "about_menu": {
             "team": "<b>🎭 | Bot Team</b>\n<i>We all do a lot of things at once, but everyone has a role to play... </i> \n\n💻 @AS1AW - Developer\n💻 @magecode - Developer\n💽 @KatranLife - Host provisioning\n\n🎨 @unknown_cat13 - Designer\n\n<b>🗝 | Author of localization</b>\n<i>Everyone can translate the bot into their native language. \n Would you like to help with the translation? Refer to @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "** 🔗 | The Great Bond** \n Horror dinosaurs are everywhere! \n\n 📢 News Channel - @DinoGochi\n\n 👥 Forum - @DinoForum\n\n 🧧 YouTube - [@DinoGochi](https://www.youtube.com/@dinogochi)"
         },
         "support_command": {
-            "info": "💸 | Coin Support\n We are a team working on the bot only on our own. The bot is free and ad-free. If you like the bot, then you could support it with a coin! \n\n 🎨 | Support Methods\n\n",
+            "info": "💸 | Coin support\nWe are a team working on the bot only on our own. The bot is free and constantly evolving for you. If you like the bot, then you could support it with a coin! \n\n🎨 | Support Methods\n\n",
             "items": "🎨 Set Items: {items}",
             "currency_answer": "💲 Select the currency you want to pay by clicking on the button below ->",
             "currency": "💲 Selected currency: {currency}",
@@ -1881,6 +2109,20 @@
                     "short": "Resurrect my dinosaur!",
                     "description": "🔮 Level 10 magic will revive your dinosaur!",
                     "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/reborn.png?raw=true"
+                },
+                "moth_rest": {
+                    "name": "🧊 Freeze Dinosaur (1 month)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/freezing.png",
+                    "image": "images/remain/support/freezing.png",
+                    "short": "A break from a dinosaur for 1 month!",
+                    "description": "🧊 Everyone needs a break sometimes, take a break for a month and don't worry that something will happen to the dinosaur!"
+                },
+                "pause": {
+                    "name": "🧊 Freeze Dinosaur",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/freezing.png",
+                    "image": "images/remain/support/freezing.png",
+                    "short": "Freeze my dinosaur!",
+                    "description": "🧊 Take a break from the dinosaur indefinitely, take care of your own life!"
                 }
             },
             "free_enter": "🎥 Enter below how many stars you want to send to the developer.",
@@ -1922,7 +2164,8 @@
                 "park": "🏞️ In the Park",
                 "swimming_pool": "💦 Swimming.",
                 "craft": "⚒️ Creates an item",
-                "unrestrained_play": "😟 Plays to calm down"
+                "unrestrained_play": "😟 Plays to calm down",
+                "inactive": "❄ Frozen"
             }
         },
         "custom_profile": {
@@ -3858,11 +4101,12 @@
             "push_info": "🎢 *Connect notifications*\n\n🥓 The bot is able to send a notification to a channel or group when it is created in the market. To do this, add the bot as an administrator with (Publish messages) rights to the channel or group. Next, follow the instructions. \n\n🧵 1 person can post notices only to 1 place, but as many people as you want can post to 1 place. \n\n🎠 To disable the channel from notifications - \"/delete_push\""
         },
         "edit_dino": {
-            "info": "🧬 | *Changing the Dinosaur* \n _A dinosaur can be transformed into another dinosaur. With the help of the latest technology, it is possible to change the appearance and genes of a dinosaur!_\n\n 🎍 | There are 3 ways to transform:\n\n *🎭 Rarity* - Only the rarity of the dinosaur will change. \n\n *🎠 Appearance* - Change of appearance. The rarity will remain the same, but the appearance will change according to the rarity of the dinosaur. \n\n *🎑 Full* - Changes in both the appearance and rarity of the dinosaur. \n\n _As a result of mutations, your dinosaur's tastes may change._",
+            "info": "🧬 | *Dinosaur Change*\n_A dinosaur can be transformed into another one. With the latest technology, it is possible to change the appearance and genes of a dinosaur! _ \n\n🎍 | There are 4 ways to transform:\n\n*🎭 Rarity* - Only the rarity of the dinosaur will change. \n\n*🎠 Appearance* - Change of appearance. The rarity will remain the same, but the appearance will change to match the dinosaur's rarity. \n\n*🎑 Full* - Dinosaur appearance change and rarity. \n\n*📚 Reset Characteristics* - Character reset and redistribution. \n\n _ As a result of mutations (a change in appearance), your dinosaur's tastes may change. _",
             "buttons": {
                 "transformation rare": "🎭 Rarity",
                 "transformation appearance": "🎠 Appearance",
-                "transformation all": "🎑 Full"
+                "transformation all": "🎑 Full",
+                "transformation chars": "📚 Reset Characteristics"
             },
             "dino": "🍡 | Choose a dinosaur to transform",
             "new_rare": "🍡 | Click on the button to select a new rarity",
@@ -3872,7 +4116,8 @@
             "no_coins": "❌ | You don't have that many coins!",
             "no_items": "❌ | You don't have all the items to transform!",
             "new": "☄ Scientists and doctors have been in and out of the room with your dinosaur for a long time. But now! A brand new dinosaur comes out of the room!",
-            "return": "🎈 Don't forget to tip!"
+            "return": "🎈 Don't forget to tip!",
+            "reset_chars": "💦 Confirm the reset of the characteristics of the dinosaur. \nPrice: {coins}"
         },
         "kindergarten": {
             "info": "*🎶 | Kindergarten Menu*\n_The dinosaur cannot be sent to kindergarten for long, otherwise it will miss you_\n\n🧸 Hours spent: {hours_now}\n🧮 Hours left: {remained}\n🎨 Before zeroing: {days}\n\n🎏 Hours Today: {hours} / {remained_today}",
@@ -4038,7 +4283,14 @@
             "block": "🛡️ | In the fight against you, the dinosaur was able to block your blow!"
         },
         "groups": {
-            "durable_materials": "🎞 Durable Materials"
+            "durable_materials": "🎞 Durable Materials",
+            "bodys": "📦 Enclosures",
+            "rod_group": "🦯 Rods or bones",
+            "ingot_group": "🧱 Bars",
+            "repairing": "🔧 Repairable items",
+            "recipe": "📜 Any recipe",
+            "eat": "🍔 Food",
+            "egg": "🥚 Eggs"
         },
         "all_skills": {
             "stoping": {
@@ -4096,6 +4348,226 @@
                 "stop": "Stop",
                 "message": "Test message"
             }
+        },
+        "works": {
+            "choosy_type": "🍜 Choose what the dinosaur will work for",
+            "buttons": {
+                "coins": "🪙 Remuneration",
+                "recipes": "📜 For Recipes",
+                "ore": "🧈 Per Ore",
+                "wood": "🪵 Per Tree",
+                "check": "👁 View Vault"
+            },
+            "start": {
+                "mine": "⛏️ Dinosaur went to the mine, keep an eye on his progress to try to take as much as you can!"
+            },
+            "progress": {
+                "mine": "*⛏️ | Work in the mine*\n\n🥥 *Opening hours:* {time_bar}\n🔑 *Repository:* {storage_bar}\n💨 *Checks left:* {check_bar}\n\n_If you still have checks, click on the button below to view the storage_",
+                "mine-emoji": [
+                    "💎",
+                    "⚪"
+                ],
+                "bank": "*🪙 | Work in a bank*\n\n🥥 *Opening hours:* {time_bar}\n🔑 *Repository:* {storage_bar}\n💨 *Checks left:* {check_bar}\n\n_If you still have checks, click on the button below to view the storage_",
+                "bank-emoji": [
+                    "🪙",
+                    "⚪"
+                ],
+                "sawmill": "*🪚 | Work at the sawmill*\n\n🥥 *Opening hours:* {time_bar}\n🔑 *Repository:* {storage_bar}\n💨 *Checks left:* {check_bar}\n\n_If you still have checks, click on the button below to view the storage_",
+                "sawmill-emoji": [
+                    "🪚",
+                    "⚪"
+                ]
+            },
+            "storage": {
+                "coins": "🪙 Coins: {coins} | {max_coins}",
+                "items": "📦 | Items: {items}\n💧 Fullness: {count} | {max_count}"
+            },
+            "stop": {
+                "coins": "\n 🪙 Coins: {coins}",
+                "items": "\n 📦 Items: {items}"
+            }
+        },
+        "pass_messages": [
+            "🌸 How nice it is in nature, freedom smells so good.🌲 Flowers, trees, grass - everything is beautiful.",
+            "{owner}, how I love this sun! 🌞 It's so warm and golden.",
+            "If I could, {owner}, I'd build a huge sand castle on the beach! 🏖️",
+            "Sometimes I feel like I can fly, {owner}! ✈️ How cool it would be to soar into the sky.",
+            "Have you ever dreamed of adventure, {owner}? 🗺️ I would go with you to many interesting places!",
+            "Look, {owner}, how beautifully the flowers bloom! 🌸 They seem to enjoy life.",
+            "I love our cozy home so much, {owner}. 🏡 It is always warm and calm here.",
+            "How delicious these grapes are, {owner}! 🍇 Let's eat it together.",
+            "{owner}, can you imagine how great it would be to have your own fruit garden? 🍏",
+            "Say, {owner}, have you ever thought about what it's like to be an astronaut? 🚀",
+            "Today is the perfect day to paint, {owner}! 🎨 Let's create a masterpiece.",
+            "I noticed {owner} how the stars shine brightly today. 🌟 It's so great to look at them.",
+            "Why don't we go for a bike ride, {owner}? 🚴 It's going to be fun!",
+            "I'm wondering, {owner}, what are your most cherished dreams. 💭 Let's discuss them.",
+            "Do you think, {owner}, does friendship exist between different animals? 🐾",
+            "I love it when you smile, {owner}. 😊 It gives me strength.",
+            "You know, {owner}, I'd love to explore the underwater world! 🌊 There must be a lot of secrets.",
+            "Do you think {owner} if we could travel back in time, where would we go? ⏳",
+            "Maybe we can make a holiday for all friends, {owner}? 🎉 I love fun company.",
+            "{owner}, have you ever imagined what would happen if trees could talk? 🌳",
+            "I think {owner} that we could start the morning with delicious pancakes and berries. 🥞🍓",
+            "{owner}, I'm wondering how you see your dream in the future. 🌈 Let's talk about it.",
+            "How nice it is to walk along the riverbank, {owner}. 🏞️ The water is so calm and clear.",
+            "Can you imagine, {owner}, what picturesque views open from the mountains? 🏔️ Let's climb to the top.",
+            "{owner}, it's great that we have time to travel together! ✈️ It creates a lot of memories.",
+            "Do you believe in magic, {owner}? ✨ I think there's something magical around us.",
+            "In the evening, the stars will be especially bright, {owner}. 🌌 This is the perfect time to daydream.",
+            "{owner}, you know how much I love hearing adventure stories! 📖 Let's come up with our own.",
+            "When I see a rainbow, {owner}, 🌈 I feel such joy! It's like a fairy tale.",
+            "It's great that we have each other, {owner}. 🤗 You always support me.",
+            "{owner}, inspires me to think about the future. 🔮 What will our world look like in 10 years?",
+            "We have a great plan tomorrow, {owner}! 🎊 I can't wait for us to get started.",
+            "How do you feel about the idea of climbing on the roof and looking at the stars, {owner}? 🏙️",
+            "I love our outdoor vacation so much, {owner}. 🌿 The air is so fresh and clean!",
+            "{owner}, I always have so much fun walking in the park with you! 🌳 The air is so fresh.",
+            "Do you believe in animal friendship, {owner}? 🐾 I think they can be good friends too.",
+            "How about having a picnic on the grass, {owner}? 🍉 This will be wonderful!",
+            "I love to watch the clouds, {owner}. ☁️ Each of them looks magical in its own way.",
+            "Recently I was thinking about how cool it would be to walk on water, {owner}. 🌊 That would be unusual!",
+            "Have you ever dreamed of having your own pet, {owner}? 🦜 I wish I had a parrot!",
+            "Let's dance to your favorite music now, {owner}! 💃 This will cheer you up.",
+            "I like the evening city, {owner}. 🌆 Lights sparkle like stars.",
+            "It's great when you laugh, {owner}! 😂 This fills the atmosphere with positivity.",
+            "Can you imagine, {owner}, what it's like to be in a fairy tale? 📚 Let's create our own story.",
+            "I always want to paint when I see the sunset, {owner}. 🌅 It's so beautiful!",
+            "What's your favorite movie, {owner}? 🎬 We could have a movie night!",
+            "I love the warmth of summer, {owner}. ☀️ It's a time of adventure and fun!",
+            "Have you ever tried doing something new, {owner}? 🎣 I was thinking about fishing!",
+            "Let's put together a puzzle, {owner}! 🧩 This will be a great way to spend time.",
+            "How do you feel about walking around the city at night, {owner}? 🌌 He's so mysterious.",
+            "I often think about how great it would be to go hiking, {owner}. ⛺️ It's an adventure!",
+            "What is your favorite time of year, {owner}? 🍂 I like autumn walks.",
+            "You know, {owner}, I want to learn how to play a musical instrument. 🎸 Would you like to too?",
+            "I'd like to learn how to cook, {owner}. 🍽️ What is your favorite recipe?",
+            "How do you like the idea of spending a weekend in nature, {owner}? 🍃 It's always inspiring!",
+            "Your laughter always makes my day better, {owner}. 😄 I appreciate him very much.",
+            "I dream of the future, {owner}. 🚀 How do you see your dreams?",
+            "No matter what, {owner}, I'm always there for you. 🤝 Let's support each other.",
+            "When I listen to music, {owner}, I feel free. 🎶 Which one do you like?",
+            "Have you already tried something completely new this month, {owner}? 🙌 Let's do it together!",
+            "Do you remember how we cooked together? 🍳 It was fun, let's do it again!",
+            "I'm inspired by the idea of seeing a beautiful place, {owner}. 🏞️ Where would you like to go?",
+            "Arrange a photo shoot on the street, {owner}? 📸 It's going to be fun and creative!",
+            "I love it when you tell stories, {owner}. 🗣️ You always have interesting ideas.",
+            "What's your favorite way to relax, {owner}? 🌙 I like to read in the evening.",
+            "Let's make a board game night, {owner}! 🎲 It's always perky.",
+            "How about trying a new hobby, {owner}? 🎨 Maybe drawing?",
+            "Tomorrow will be a great day to travel, {owner}! 🧳 Where will we go?"
+        ],
+        "only_dev_mode": "🌸 At the moment, technical work is underway, check out the news channel (in the bot's profile)!",
+        "timeout_message": "🧉 Stop for just a second and have some tea!",
+        "skills_profile": {
+            "chars": {
+                "power": "Strength",
+                "dexterity": "Dexterity",
+                "intelligence": "Intelligence",
+                "charisma": "Charisma"
+            },
+            "info": "*🌊 Viewing Characteristics*\n\n*⚡ Strength*\n{power}\n*🧱 Agility*\n{dexterity}\n*🧠 Intelligence*\n{intelligence}\n*😅 Charisma*\n{charisma}\n\n_Don't forget to develop your dinosaur skills, they make life quite easy for both you and the dinosaur_",
+            "power": {
+                "0": "A complete lack of power.",
+                "1": "Minimal force, barely noticeable.",
+                "2": "Very weak strength, insignificant impact.",
+                "3": "Weak strength, felt, but insignificant.",
+                "4": "Strength below average, noticeable, but ineffective.",
+                "5": "Moderate strength, can be felt, but not enough to influence.",
+                "6": "Medium strength, noticeable in action.",
+                "7": "Above average, quite a tangible strength.",
+                "8": "A strong force capable of influencing the situation.",
+                "9": "Very strong, manifested in a significant impact.",
+                "10": "A maximum force that can change the course of events.",
+                "11": "A power above the maximum, exceeding expectations.",
+                "12": "Extraordinary power, sharp and noticeable influence.",
+                "13": "An outstanding force, hard to ignore.",
+                "14": "A powerful force capable of great achievements.",
+                "15": "Tremendous power, creation or destruction.",
+                "16": "An invincible force capable of overcoming any obstacles.",
+                "17": "A power that evokes awe and respect.",
+                "18": "Epochal power that energizes those around you.",
+                "19": "A legendary power that defies description.",
+                "20": "Absolute power, the embodiment of power."
+            },
+            "dexterity": {
+                "0": "Complete lack of dexterity.",
+                "1": "Minimal dexterity, barely noticeable.",
+                "2": "Very low dexterity, poor coordination.",
+                "3": "Weak dexterity, noticeable difficulties.",
+                "4": "Below average, clumsiness in movements.",
+                "5": "Moderate dexterity, sometimes uncertain actions.",
+                "6": "Average dexterity, more or less coordination.",
+                "7": "Above average, quite confident movements.",
+                "8": "Strong dexterity, good coordination.",
+                "9": "Very good dexterity, ease of movement.",
+                "10": "Excellent dexterity, real grace.",
+                "11": "High agility, quick reaction.",
+                "12": "Extraordinary dexterity, amazing skill.",
+                "13": "Outstanding agility, skills at the highest level.",
+                "14": "Powerful agility, outstanding abilities.",
+                "15": "Immense agility, fully controls the movements.",
+                "16": "Invincible agility, physical achievements.",
+                "17": "The power of agility, easily overcomes obstacles.",
+                "18": "Epochal dexterity, inspires others.",
+                "19": "Legendary agility, impeccable precision.",
+                "20": "Absolute dexterity, the embodiment of grace."
+            },
+            "intelligence": {
+                "0": "Lack of intelligence.",
+                "1": "Minimum level of understanding.",
+                "2": "Very low intelligence, difficulties with perception.",
+                "3": "Weak intellect, often does not understand.",
+                "4": "Below average, slow assimilation of knowledge.",
+                "5": "Moderate intelligence, basic comprehension skills.",
+                "6": "Average intelligence, sometimes slowness.",
+                "7": "Above average, good analytical skills.",
+                "8": "Strong intelligence, good problem-solving skills.",
+                "9": "Very good intelligence, quick adaptation.",
+                "10": "Excellent intelligence, logical and quick-witted.",
+                "11": "High intelligence, inventive approach.",
+                "12": "Extraordinary intelligence, deep understanding.",
+                "13": "Outstanding intelligence, brilliant ideas.",
+                "14": "Powerful intellect, exceptional abilities.",
+                "15": "Huge intelligence, outstanding results.",
+                "16": "Invincible intellect, difficult tasks are possible.",
+                "17": "The power of intelligence, innovative thinking.",
+                "18": "Epoch-making intelligence, changes perceptions.",
+                "19": "Legendary intelligence, unique insight.",
+                "20": "Absolute intelligence, the embodiment of genius."
+            },
+            "charisma": {
+                "0": "A complete lack of charisma.",
+                "1": "Minimal attractiveness, does not attract attention.",
+                "2": "Very low charisma, barely noticeable.",
+                "3": "Weak charisma, sometimes arouses interest.",
+                "4": "Below average, rarely inspiring.",
+                "5": "Moderate charisma, you can listen.",
+                "6": "Average charisma, sometimes cheers up.",
+                "7": "Above average, attracts attention.",
+                "8": "Strong charisma, knows how to captivate.",
+                "9": "Very good charisma, trustworthy.",
+                "10": "Excellent charisma, able to inspire.",
+                "11": "High charisma, easily wins sympathy.",
+                "12": "Extraordinary charisma, memorable.",
+                "13": "Outstanding charisma, a magnet for people.",
+                "14": "Powerful charisma, exceptional influence.",
+                "15": "Huge charisma, easily controls attention.",
+                "16": "Invincible charisma becomes the center of attention.",
+                "17": "The power of charisma attracts to itself.",
+                "18": "Epochal charisma, changes the environment.",
+                "19": "The legendary charisma remains in the memory.",
+                "20": "Absolute charisma, the embodiment of attractiveness."
+            }
+        },
+        "inside_shop": {
+            "info": "📦 Interested in the product? Then take a look at it for yourself! \n\n",
+            "down": "_Products are updated once a day, we recommend updating the hoarder's message before buying_",
+            "item": "🥥 Item: {name}\n🔑 In stock: {col}\n🪙 Price (for 1): {price}",
+            "no_item": "🧨 This item is no longer sold by the Borahshchik! Refresh the store page",
+            "count": "🥕 Specify how many items you want to buy or choose an option from the list below",
+            "False": "👁 Not enough coins or the item is no longer sold in this form or quantity!",
+            "True": "🎟 Item added to inventory! Congratulations on your purchase!"
         }
     }
 }

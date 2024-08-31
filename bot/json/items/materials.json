@@ -26,16 +26,12 @@
         "type": "material",
         "groups": ["wood"]
     },
-    "fish_oil": {
-        "image": "item28",
-        "rank": "common",
-        "type": "material"
-    },
     "rope": {
         "image": "rope",
         "rank": "common",
         "type": "material"
     },
+
     "wool": {
         "image": "wool",
         "rank": "common",
@@ -46,11 +42,18 @@
         "rank": "common",
         "type": "material"
     },
+    "fish_oil": {
+        "image": "item28",
+        "rank": "common",
+        "type": "material"
+    },
+
     "flour": {
         "image": "flour",
         "rank": "uncommon",
         "type": "material"
     },
+
     "magic_stone": {
         "abilities": {
             "mana": 0
@@ -59,6 +62,7 @@
         "rank": "rare",
         "type": "material"
     },
+
     "bone": {
         "image": "item51",
         "rank": "common",
@@ -69,38 +73,85 @@
         "image": "item52",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["durable_materials", "ore"]
+        "groups": ["durable_materials", "ore"],
+        "ns_craft": {
+            "1": {
+                "time_craft": 3600, 
+                "create": [
+                    "iron-ingot"
+                ],
+                "materials": [
+                    {"item_id": "iron",
+                     "count": 2}
+                ]
+            }
+        }
     },
     "copper": {
         "image": "",
-        "rank": "uncommon",
+        "rank": "rare",
         "type": "material",
-        "groups": ["ore"]
+        "groups": ["durable_materials", "ore"],
+        "ns_craft": {
+            "1": {
+                "time_craft": 3600,
+                "create": [
+                    "copper-ingot"
+                ],
+                "materials": [
+                    {"item_id": "copper",
+                     "count": 2}
+                ]
+            }
+        }
     },
+
     "wood": {
         "image": "",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["wood"]
+        "groups": ["wood"],
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "twigs_tree"
+                ],
+                "materials": [
+                    {"item_id": "wood",
+                     "count": 1}
+                ]
+            },
+            "2": {
+                "create": [
+                    {"item_id": "blank_piece_paper", "count": 2}
+                ],
+                "materials": [
+                    {"item_id": "wood",
+                     "count": 5}
+                ]
+            }
+        }
     },
+
     "wood-body": {
         "image": "",
         "rank": "uncommon",
         "type": "material",
-        "groups": []
+        "groups": ["bodys"]
     },
     "iron-body": {
         "image": "",
         "rank": "uncommon",
         "type": "material",
-        "groups": []
+        "groups": ["bodys"]
     },
     "copper-body": {
         "image": "",
         "rank": "uncommon",
         "type": "material",
-        "groups": []
+        "groups": ["bodys"]
     },
+
     "metal-gear": {
         "image": "",
         "rank": "uncommon",
@@ -113,18 +164,20 @@
         "type": "material",
         "groups": []
     },
-    "wood-rod": {
-        "image": "",
-        "rank": "uncommon",
-        "type": "material",
-        "groups": []
-    },
+
     "iron-rod": {
         "image": "",
         "rank": "uncommon",
         "type": "material",
         "groups": []
     },
+    "copper-rod": {
+        "image": "",
+        "rank": "uncommon",
+        "type": "material",
+        "groups": []
+    },
+
     "iron-ingot": {
         "image": "",
         "rank": "uncommon",

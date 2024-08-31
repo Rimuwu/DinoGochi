@@ -3,7 +3,7 @@
         "buffs": {
             "heal": 15
         },
-        "act": 4,
+        "act": 2,
         "class": "ALL",
         "image": "item1",
         "rank": "common",
@@ -13,7 +13,7 @@
         "buffs": {
             "mood": 10
         },
-        "act": 4,
+        "act": 2,
         "class": "ALL",
         "image": "item2",
         "ns_craft": {
@@ -30,7 +30,7 @@
         "type": "eat"
     },
     "wild_boar_meat": {
-        "act": 17,
+        "act": 12,
         "class": "Carnivore",
         "image": "item5",
         "ns_craft": {
@@ -47,7 +47,7 @@
         "type": "eat"
     },
     "bunch_herbs": {
-        "act": 18,
+        "act": 14,
         "class": "Herbivore",
         "image": "item6",
         "ns_craft": {
@@ -64,7 +64,7 @@
         "type": "eat"
     },
     "fish": {
-        "act": 19,
+        "act": 16,
         "class": "Flying",
         "image": "item7",
         "ns_craft": {
@@ -89,7 +89,7 @@
         "type": "eat"
     },
     "wolf_meat": {
-        "act": 11,
+        "act": 8,
         "class": "Carnivore",
         "image": "item8",
         "ns_craft": {
@@ -107,7 +107,7 @@
         "type": "eat"
     },
     "grasses_from_fields": {
-        "act": 12,
+        "act": 6,
         "class": "Herbivore",
         "image": "item9",
         "ns_craft": {
@@ -133,7 +133,7 @@
         "type": "eat"
     },
     "seafood": {
-        "act": 13,
+        "act": 9,
         "class": "Flying",
         "image": "item10",
         "ns_craft": {
@@ -151,7 +151,7 @@
         "type": "eat"
     },
     "berries": {
-        "act": 16,
+        "act": 12,
         "class": "Herbivore",
         "image": "item11",
         "ns_craft": {
@@ -177,7 +177,7 @@
         "type": "eat"
     },
     "chicken_leg": {
-        "act": 14,
+        "act": 10,
         "class": "Carnivore",
         "image": "item12",
         "ns_craft": {
@@ -203,7 +203,7 @@
         "type": "eat"
     },
     "small_fish": {
-        "act": 16,
+        "act": 13,
         "class": "Flying",
         "image": "item13",
         "ns_craft": {
@@ -232,7 +232,7 @@
         "buffs": {
             "mood": 13
         },
-        "act": 8,
+        "act": 3,
         "class": "ALL",
         "image": "item18",
         "ns_craft": {
@@ -252,7 +252,7 @@
         "buffs": {
             "mood": 20
         },
-        "act": 16,
+        "act": 14,
         "class": "ALL",
         "image": "item19",
         "rank": "common",
@@ -270,7 +270,7 @@
         "type": "eat"
     },
     "gourmet_herbs": {
-        "act": 30,
+        "act": 20,
         "class": "Herbivore",
         "image": "item35",
         "rank": "rare",
@@ -289,28 +289,28 @@
         "groups": ["energy_eat"]
     },
     "roasted_meat": {
-        "act": 40,
+        "act": 50,
         "class": "Carnivore",
         "image": "item38",
         "rank": "rare",
         "type": "eat"
     },
     "carrot": {
-        "act": 16,
+        "act": 12,
         "class": "Herbivore",
         "image": "null",
         "rank": "common",
         "type": "eat"
     },
     "tomato": {
-        "act": 21,
+        "act": 16,
         "class": "Herbivore",
         "image": "null",
         "rank": "common",
         "type": "eat"
     },
     "potato": {
-        "act": 22,
+        "act": 18,
         "class": "Herbivore",
         "image": "null",
         "rank": "common",
@@ -321,7 +321,7 @@
             "energy": 3,
             "mood": 19
         },
-        "act": 17,
+        "act": 14,
         "class": "ALL",
         "image": "null",
         "rank": "rare",
@@ -343,7 +343,7 @@
         "groups": ["energy_eat"]
     },
     "sandwich": {
-        "act": 31,
+        "act": 25,
         "class": "ALL",
         "image": "item108",
         "rank": "rare",
@@ -364,7 +364,7 @@
         "type": "eat"
     },
     "bacon": {
-        "act": 14,
+        "act": 12,
         "class": "Carnivore",
         "image": "item104",
         "rank": "uncommon",
@@ -419,7 +419,7 @@
         "type": "eat"
     },
     "bread": {
-        "act": 27,
+        "act": 40,
         "class": "ALL",
         "image": "item96",
         "rank": "uncommon",
@@ -449,7 +449,7 @@
         "buffs": {
             "energy": 20
         },
-        "act": 10,
+        "act": 4,
         "class": "ALL",
         "drink": true,
         "image": "item88",
@@ -458,28 +458,28 @@
         "groups": ["energy_eat"]
     },
     "sushi": {
-        "act": 30,
+        "act": 40,
         "class": "ALL",
         "image": "item86",
         "rank": "common",
         "type": "eat"
     },
     "rice": {
-        "act": 10,
+        "act": 8,
         "class": "Herbivore",
         "image": "item85",
         "rank": "common",
         "type": "eat"
     },
     "banana": {
-        "act": 11,
+        "act": 7,
         "class": "Herbivore",
         "image": "item79",
         "rank": "common",
         "type": "eat"
     },
     "crab": {
-        "act": 46,
+        "act": 36,
         "class": "Flying",
         "image": "item80",
         "rank": "rare",
@@ -502,7 +502,7 @@
             "heal": -2,
             "mood": 12
         },
-        "act": 13,
+        "act": 10,
         "class": "Herbivore",
         "image": "item82",
         "rank": "uncommon",
@@ -529,7 +529,7 @@
         "type": "eat"
     },
     "spicy_steak": {
-        "act": 39,
+        "act": 46,
         "class": "Carnivore",
         "image": "item77",
         "rank": "rare",
@@ -539,7 +539,7 @@
         "buffs": {
             "mood": 20
         },
-        "act": 10,
+        "act": 18,
         "class": "ALL",
         "drink": true,
         "image": "item74",
@@ -557,7 +557,7 @@
         "buffs": {
             "mood": 25
         },
-        "act": 17,
+        "act": 27,
         "class": "ALL",
         "image": "item72",
         "rank": "uncommon",
@@ -626,14 +626,14 @@
         "type": "eat"
     },
     "soup": {
-        "act": 55,
+        "act": 62,
         "class": "Flying",
         "image": "item42",
         "rank": "rare",
         "type": "eat"
     },
     "salad": {
-        "act": 53,
+        "act": 67,
         "class": "Herbivore",
         "image": "item40",
         "rank": "rare",

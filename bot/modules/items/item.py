@@ -824,7 +824,7 @@ async def item_info(item: dict, lang: str, owner: bool = False):
             text += i
 
     # Картиночка
-    if 'image' in data_item.keys():
+    if 'image' in data_item.keys() and data_item['image']:
         try:
             image = await async_open(f"images/items/{data_item['image']}.png", True)
         except:

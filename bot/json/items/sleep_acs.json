@@ -7,5 +7,14 @@
         "rank": "uncommon",
         "type": "sleep",
         "groups": ["repairing"]
+    },
+    "pillow": {
+        "abilities": {
+            "endurance": 120
+        },
+        "image": "item16",
+        "rank": "uncommon",
+        "type": "sleep",
+        "groups": ["repairing"]
     }
 }

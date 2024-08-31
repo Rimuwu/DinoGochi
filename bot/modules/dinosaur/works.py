@@ -2,7 +2,9 @@
 from bson.objectid import ObjectId
 from bot.config import mongo_client
 
-from bot.modules.items.item import AddItemToUser, get_item_dict
+from bot.modules.dinosaur.dinosaur import Dino
+from bot.modules.items.accessory import check_accessory
+from bot.modules.items.item import AddItemToUser, get_item_dict, get_data
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from time import time
 
@@ -62,6 +64,21 @@ async def start_mine(dino_baseid: ObjectId, owner_id: int, action_type: str):
         data['max_items'] = works_data['mine']['max_items']
         data['item_per_hour'] = 3
 
+        dino = await Dino().create(dino_baseid)
+        for key in ['regular_backpack', 'reinforced_backpack']:
+            if await check_accessory(
+                dino, key, True
+            ):
+                item_data = get_data(key)
+                data['max_items'] += item_data['capacity']
+
+        for key in ['bone_pickaxe', 'iron_pickaxe', 'copper_pickaxe']:
+            if await check_accessory(
+                dino, key, True
+            ):
+                item_data = get_data(key)
+                data['item_per_hour'] += item_data['effectiv']
+
     await long_activity.insert_one(data)
 
 async def start_bank(dino_baseid: ObjectId, owner_id: int, action_type: str):
@@ -89,6 +106,21 @@ async def start_bank(dino_baseid: ObjectId, owner_id: int, action_type: str):
         data['max_items'] = works_data['bank']['max_items']
         data['item_per_hour'] = 1
 
+        dino = await Dino().create(dino_baseid)
+        for key in ['regular_backpack', 'reinforced_backpack']:
+            if await check_accessory(
+                dino, key, True
+            ):
+                item_data = get_data(key)
+                data['max_items'] += item_data['capacity']
+
+        for key in ['bone_axe', 'iron_axe', 'copper_axe']:
+            if await check_accessory(
+                dino, key, True
+            ):
+                item_data = get_data(key)
+                data['item_per_hour'] += item_data['effectiv']
+
     await long_activity.insert_one(data)
 
 async def start_sawmill(dino_baseid: ObjectId, owner_id: int, action_type: str):
@@ -115,6 +147,14 @@ async def start_sawmill(dino_baseid: ObjectId, owner_id: int, action_type: str):
         data['items'] = {}
         data['max_items'] = works_data['sawmill']['max_items']
         data['item_per_hour'] = 5
+
+        dino = await Dino().create(dino_baseid)
+        for key in ['regular_backpack', 'reinforced_backpack']:
+            if await check_accessory(
+                dino, key, True
+            ):
+                item_data = get_data(key)
+                data['max_items'] += item_data['capacity']
 
     await long_activity.insert_one(data)
 

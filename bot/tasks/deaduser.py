@@ -99,8 +99,9 @@ async def DeadUser_return():
                         if ex.error_code in [400, 403]:
                             # - Если нельзя отправить спустя месяц - удалить акк
                             user = await User().create(userid)
-                            await user.full_delete()
-                            del_u += 1
+                            if user:
+                                await user.full_delete()
+                                del_u += 1
 
         await sleep(1.5)
     log(f'Завершил работу. Проверено {len(users_ids)}, удалено: {del_u}', 0, 'DeadUsers')

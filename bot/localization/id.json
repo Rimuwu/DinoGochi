@@ -126,7 +126,8 @@
                 "sawmill": "🪵 Penggergajian",
                 "bank": "🏦 Bank",
                 "farm": "🧺 Peternakan",
-                "stop_work": "💥 Kembali dari pekerjaan"
+                "stop_work": "⌛ Kembali dari Kerja",
+                "progress": "🌯 Kemajuan"
             },
             "farm": {
                 "sow": "🧑‍🌾 Tabur",
@@ -415,7 +416,7 @@
             },
             "sword_recipe": {
                 "name": "📜 Resep Pedang",
-                "description": "Pedang tajam yang terbuat dari tulang mayat hidup."
+                "description": "Resep pedang tajam."
             },
             "onion_recipe": {
                 "name": "📜 Resep Bawang",
@@ -444,7 +445,7 @@
             },
             "pickaxe_recipe": {
                 "name": "📜 Resep beliung",
-                "description": "Tulangan Beliung tidak efektif dalam pertempuran, karena semua orang tahu bahwa kapak adalah senjata yang lebih tangguh. Di sisi lain, ini efektif dalam mengekstraksi sumber daya."
+                "description": "Beliung tidak efektif dalam pertempuran, karena semua orang tahu bahwa kapak adalah senjata yang lebih tangguh. Tetapi efektif dalam ekstraksi sumber daya."
             },
             "freezing": {
                 "name": "❄ Bekukan"
@@ -694,8 +695,8 @@
                 "description": "Resep untuk membuat jaring untuk berburu."
             },
             "rod_recipe": {
-                "name": "📜 Resep Pancing",
-                "description": "Resep untuk membuat pancing."
+                "name": "📜 Resep batang",
+                "description": "Bahan yang diperlukan untuk membuat senjata."
             },
             "meow_book": {
                 "name": "📔 Edisi Meong",
@@ -721,6 +722,210 @@
             },
             "iron_sword": {
                 "name": "🗡 Pedang Besi"
+            },
+            "timer_recipe": {
+                "name": "📜 Resep Timer",
+                "description": "Resep pengatur waktu."
+            },
+            "cloak_recipe": {
+                "name": "📜 Resep Jubah",
+                "description": "Resep jas hujan."
+            },
+            "bear_recipe": {
+                "name": "📜 Resep Beruang",
+                "description": "Resep untuk membuat beruang untuk tidur."
+            },
+            "tooling_recipe": {
+                "name": "📜 Resep Alat",
+                "description": "Resep untuk membuat alat."
+            },
+            "leather_clothing_recipe": {
+                "name": "📜 Resep Pakaian Kulit",
+                "description": "Resep pakaian kulit."
+            },
+            "board_games_recipe": {
+                "name": "📜 Resep permainan papan",
+                "description": "Resep untuk membuat permainan papan."
+            },
+            "wood-body": {
+                "name": "📦 Kotak Kayu"
+            },
+            "iron-body": {
+                "name": "📦 Lambung Besi"
+            },
+            "copper-body": {
+                "name": "📦 Casing Tembaga"
+            },
+            "metal-gear": {
+                "name": "⚙ Perlengkapan Logam"
+            },
+            "wood-gear": {
+                "name": "⚙ Perlengkapan Kayu"
+            },
+            "iron-rod": {
+                "name": "🦯 Batang Besi"
+            },
+            "copper-rod": {
+                "name": "🦯 Batang Tembaga"
+            },
+            "iron-ingot": {
+                "name": "🧱 Batang Besi"
+            },
+            "copper-ingot": {
+                "name": "🧱 Ingot Tembaga"
+            },
+            "copper": {
+                "name": "🧱 Tembaga"
+            },
+            "wood": {
+                "name": "🪵 Pohon"
+            },
+            "gear_recipe": {
+                "name": "📜 Resep perlengkapan",
+                "description": "Komponen terpenting dalam mekanisme."
+            },
+            "copper_sword": {
+                "name": "🗡 Pedang Tembaga"
+            },
+            "crossbow": {
+                "name": "🏹 Panah"
+            },
+            "crossbow_recipe": {
+                "name": "📜 Resep Panah",
+                "description": "Panah - kuat, cepat, tahan lama. Sempurna untuk berburu!"
+            },
+            "wood_shield": {
+                "name": "🛡 Perisai Kayu"
+            },
+            "iron_shield": {
+                "name": "🛡 Perisai Besi"
+            },
+            "copper_shield": {
+                "name": "🛡 Perisai Tembaga"
+            },
+            "leather_jacket": {
+                "name": "🧥 Jaket kulit"
+            },
+            "iron_pickaxe": {
+                "name": "⛏ Beliung Besi"
+            },
+            "copper_pickaxe": {
+                "name": "⛏ Beliung Tembaga"
+            },
+            "bone_axe": {
+                "name": "🪓 Kapak Tulang"
+            },
+            "iron_axe": {
+                "name": "🪓 Kapak Besi"
+            },
+            "copper_axe": {
+                "name": "🪓 Kapak Tembaga"
+            },
+            "axe_recipe": {
+                "name": "📜 Resep Kapak",
+                "description": "Kapak tidak efektif dalam pertempuran, karena semua orang tahu bahwa pedang adalah senjata yang lebih cepat. Tetapi efektif dalam ekstraksi sumber daya."
+            },
+            "recipe_chest_simple": {
+                "name": "📦 Resep acak"
+            },
+            "fishing-rod": {
+                "name": "🎣 Pancing",
+                "description": "Pancing yang bagus untuk memancing. Meningkatkan penguasaan dinosaurus."
+            },
+            "fishing-rod_recipe": {
+                "name": "📜 Resep pancing",
+                "description": "Resep pancing."
+            },
+            "bag_goodies_recipe": {
+                "name": "📜 Tas dengan barang",
+                "description": "Resep untuk membuat penyimpanan barang."
+            },
+            "rubik_cube_recipe": {
+                "name": "📜 Kubus Rubik",
+                "description": "Resep untuk membuat Kubus Rubik."
+            },
+            "lock_bag_recipe": {
+                "name": "📜 Tas dengan kunci",
+                "description": "Resep untuk membuat tas dengan kunci."
+            },
+            "skinning_knife_recipe": {
+                "name": "📜 Pisau menguliti",
+                "description": "Resep untuk membuat pisau menguliti."
+            },
+            "fishing_rod_recipe": {
+                "name": "📜 Resep pancing",
+                "description": "Resep untuk membuat pancing."
+            },
+            "repair_tool": {
+                "name": "🔧 Kit Perbaikan",
+                "description": "Satu set untuk memperbaiki aksesori, senjata, baju besi. Hanya memperbaiki barang yang rusak!"
+            },
+            "repair_tool_recipe": {
+                "name": "📜 Kit Perbaikan",
+                "description": "Resep untuk membuat kit perbaikan."
+            },
+            "SYSTEM_ITEM_REPAIR": {
+                "name": "🔧 Item yang diperbaiki"
+            },
+            "SYSTEM_ITEM_SWORD": {
+                "name": "🗡 Pedang"
+            },
+            "SYSTEM_ITEM_AXE": {
+                "name": "🪓 Kapak"
+            },
+            "SYSTEM_ITEM_PICKAXE": {
+                "name": "⛏ Beliung"
+            },
+            "SYSTEM_ITEM_SHIELD": {
+                "name": "🛡 Perisai"
+            },
+            "SYSTEM_ITEM_GEAR": {
+                "name": "⚙ Perlengkapan"
+            },
+            "SYSTEM_ITEM_ROD": {
+                "name": "🦯 Batang"
+            },
+            "rustycan": {
+                "name": "🥫 Toples Berkarat"
+            },
+            "wornoutticket": {
+                "name": "🎟️ Tiket usang"
+            },
+            "brokenkey": {
+                "name": "🔧 Kunci Rusak"
+            },
+            "lostglove": {
+                "name": "🧤 Sarung Tangan yang Hilang"
+            },
+            "shatteredbottle": {
+                "name": "🍾 Botol Pecah"
+            },
+            "oldbucket": {
+                "name": "🪣 Ember lama"
+            },
+            "crumpledpaper": {
+                "name": "🧻 Selembar kertas kusut"
+            },
+            "wiltedleaf": {
+                "name": "🍂 Daun Layu"
+            },
+            "freezing_1moth": {
+                "name": "🧊 Bekukan selama sebulan"
+            },
+            "reinforced_backpack": {
+                "name": "🎒 Ransel yang Diperkuat"
+            },
+            "reinforced_backpack_recipe": {
+                "name": "📜 Ransel yang diperkuat",
+                "description": "Resep untuk ransel yang diperkuat."
+            },
+            "pillow": {
+                "name": "🧸 Bantal",
+                "description": "Setelah tidur berakhir, dinosaurus menerima dorongan energi sementara."
+            },
+            "pillow_recipe": {
+                "name": "📜 Resep Bantal",
+                "description": "Resep bantal"
             }
         },
         "notifications": {
@@ -899,6 +1104,18 @@
             },
             "craft_end": {
                 "text": "⛏️ | {dino_name} Kembali dari bengkel! Anda dapat memeriksa kerajinan aktif dengan memerintahkan /craftlist",
+                "inline_menu": "dino_profile"
+            },
+            "bank_end": {
+                "text": "🏦 | {dino_name} Kembali dari bank! Dan inilah hasil karyanya: {results}",
+                "inline_menu": "dino_profile"
+            },
+            "mine_end": {
+                "text": "⛏️ | {dino_name} kembali dari tambang! Dan inilah hasil karyanya: {results}",
+                "inline_menu": "dino_profile"
+            },
+            "sawmill_end": {
+                "text": "🌲 | {dino_name} Kembali dari penggergajian! Dan inilah hasil karyanya: {results}",
                 "inline_menu": "dino_profile"
             }
         },
@@ -1463,7 +1680,8 @@
                 "park": "Berjalan 🏞️",
                 "swimming_pool": "Berenang 💦",
                 "craft": "Item kerajinan ⚒️",
-                "unrestrained_play": "Saya bermain tanpa henti 😟"
+                "unrestrained_play": "Saya bermain tanpa henti 😟",
+                "inactive": "Saya membeku ❄"
             },
             "replics": {
                 "heal": {
@@ -1543,6 +1761,10 @@
                 "backgrounds": {
                     "text": "🖼️ Latar belakang",
                     "data": "dino_menu backgrounds_menu {dino}"
+                },
+                "skills": {
+                    "text": "⚡ Keterampilan",
+                    "data": "dino_menu skills {dino}"
                 }
             },
             "joint": "(Bersama)"
@@ -1819,7 +2041,12 @@
                     "limit": "🦕 | Saat ini, Anda hanya dapat memiliki dinosaurus {limit}). Lihatlah buku pegangan untuk informasi lebih lanjut.",
                     "no_dinos": "🦕 | Anda adalah orang yang sangat cantik, dunia tidak mengingat dinosaurus Anda yang hilang!"
                 },
-                "premium": "🎆 | Selamat telah mengaktifkan premi Anda di {premium_time}!"
+                "premium": "🎆 | Selamat telah mengaktifkan premi Anda di {premium_time}!",
+                "defrost": {
+                    "notinc": "🦕 Dinosaurus ini tidak membeku!",
+                    "ok": "🧉 | Dinosaurus telah dicairkan!"
+                },
+                "freez": "🧊 Dinosaurus membeku!"
             },
             "buff": {
                 "+mood": "😀 | Dinosaurus mendapat +{unit}% untuk suasana hati! \n",
@@ -1839,14 +2066,15 @@
             "combine": "⚒ Pilih item untuk digabungkan dengan {name} ->",
             "delete": "🗑 Konfirmasi penghapusan {name}",
             "dino": "🦕 Pilih dinosaurus / telur dari daftar",
-            "friend": "🎮 Pilih teman ->"
+            "friend": "🎮 Pilih teman ->",
+            "inactive_dino": "🦕 Pilih hanya dinosaurus beku!"
         },
         "about_menu": {
             "team": "<b>🎭 | Bot Team</b>\n<i>Kita semua melakukan banyak hal sekaligus, tetapi setiap orang memiliki peran untuk dimainkan... </i> \n\n💻 @AS1AW - Pengembang\n💻 @magecode - Pengembang\n💽 @KatranLife - Penyediaan host\n\n🎨 @unknown_cat13 - Perancang\n\n<b>🗝 | Penulis pelokalan</b>\n<i>Setiap orang dapat menerjemahkan bot ke dalam bahasa ibu mereka. \n Maukah Saudara membantu menerjemahkannya? Lihat @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "**🔗 | Koneksi Hebat**\nDinosaurus horor ada di mana-mana! \n\n📢 News channel - @DinoGochi\n\n👥 Forum - @DinoForum\n\n🧧 YouTube - [@DinoGochi](https://www.youtube.com/@dinogochi)"
         },
         "support_command": {
-            "info": "💸 | Dukungan Koin\nKami adalah tim yang mengerjakan bot hanya sendiri. Bot ini gratis dan bebas iklan. Jika Anda menyukai bot, maka Anda dapat mendukungnya dengan koin! \n\n🎨 | Metode Dukungan\n\n",
+            "info": "💸 | Dukungan koin\nKami adalah tim yang mengerjakan bot hanya sendiri. Bot ini gratis dan terus berkembang untuk Anda. Jika Anda menyukai bot, maka Anda dapat mendukungnya dengan koin! \n\n🎨 | Metode Dukungan\n\n",
             "items": "🎨 Item Set: {items}",
             "currency_answer": "💲 Pilih mata uang yang akan dibayar dengan mengklik tombol di bawah ini ->",
             "currency": "💲 Mata uang yang dipilih: {currency}",
@@ -1881,6 +2109,20 @@
                     "short": "Bangkitkan dinosaurus saya!",
                     "description": "🔮 Sihir level 10 akan menghidupkan kembali dinosaurus Anda!",
                     "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/reborn.png?raw=true"
+                },
+                "moth_rest": {
+                    "name": "🧊 Freeze Dinosaurus (1 bulan)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/freezing.png",
+                    "image": "images/remain/support/freezing.png",
+                    "short": "Istirahat dari dinosaurus selama 1 bulan!",
+                    "description": "🧊 Setiap orang terkadang membutuhkan istirahat, istirahatlah selama sebulan dan jangan khawatir sesuatu akan terjadi pada dinosaurus!"
+                },
+                "pause": {
+                    "name": "🧊 Membekukan Dinosaurus",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/freezing.png",
+                    "image": "images/remain/support/freezing.png",
+                    "short": "Bekukan dinosaurus saya!",
+                    "description": "🧊 Beristirahatlah dari dinosaurus tanpa batas waktu, jaga hidupmu sendiri!"
                 }
             },
             "free_enter": "🎥 Masukkan di bawah berapa banyak bintang yang ingin Anda kirim ke pengembang.",
@@ -1922,7 +2164,8 @@
                 "park": "🏞️ Di Taman",
                 "swimming_pool": "💦 Berenang.",
                 "craft": "⚒️ Membuat item",
-                "unrestrained_play": "😟 Bermain untuk menenangkan diri"
+                "unrestrained_play": "😟 Bermain untuk menenangkan diri",
+                "inactive": "❄ Beku"
             }
         },
         "custom_profile": {
@@ -3858,11 +4101,12 @@
             "push_info": "🎢 *Hubungkan notifikasi*\n\n🥓 Bot dapat mengirim pemberitahuan ke saluran atau grup saat dibuat di pasar. Untuk melakukannya, tambahkan bot sebagai administrator dengan hak (Publikasikan pesan) ke saluran atau grup. Selanjutnya, ikuti instruksi. \n\n🧵 1 orang dapat memposting pemberitahuan hanya ke 1 tempat, tetapi sebanyak mungkin orang yang Anda inginkan dapat memposting ke 1 tempat. \n\n🎠 Untuk menonaktifkan saluran dari notifikasi - \"/delete_push\""
         },
         "edit_dino": {
-            "info": "🧬 | *Mengubah Dinosaurus*\n_A dinosaurus dapat diubah menjadi dinosaurus lain. Dengan bantuan teknologi terbaru, adalah mungkin untuk mengubah penampilan dan gen dinosaurus!_\n\n🎍 | Ada 3 cara untuk mengubah: \n\n *🎭 Kelangkaan* - Hanya kelangkaan dinosaurus yang akan berubah. \n\n*🎠 Penampilan* - Perubahan penampilan. Kelangkaannya akan tetap sama, tetapi penampilannya akan berubah sesuai dengan kelangkaan dinosaurus. \n\n*🎑 Penuh* - Perubahan penampilan dan kelangkaan dinosaurus. \n\n_As akibat mutasi, selera dinosaurus Anda mungkin change._",
+            "info": "🧬 | *Perubahan Dinosaurus*\n_Dinosaurus dapat diubah menjadi dinosaurus lain. Dengan teknologi terbaru, dimungkinkan untuk mengubah penampilan dan gen dinosaurus! _ \n\n🎍 | Ada 4 cara untuk berubah:\n\n*🎭 Kelangkaan* - Hanya kelangkaan dinosaurus yang akan berubah. \n\n*🎠 Penampilan* - Perubahan penampilan. Kelangkaannya akan tetap sama, tetapi penampilannya akan berubah sesuai dengan kelangkaan dinosaurus. \n\n*🎑 Penuh* - Perubahan penampilan dan kelangkaan dinosaurus. \n\n*📚 Atur Ulang Karakteristik* - Reset dan redistribusi karakter. \n\n _ Sebagai akibat dari mutasi (perubahan penampilan), selera dinosaurus Anda dapat berubah. _",
             "buttons": {
                 "transformation rare": "🎭 Kelangkaan",
                 "transformation appearance": "🎠 Penampilan",
-                "transformation all": "🎑 Selesai"
+                "transformation all": "🎑 Selesai",
+                "transformation chars": "📚 Atur Ulang Karakteristik"
             },
             "dino": "🍡 | Pilih dinosaurus untuk diubah",
             "new_rare": "🍡 | Klik pada tombol untuk memilih kelangkaan baru",
@@ -3872,7 +4116,8 @@
             "no_coins": "❌ | Anda tidak memiliki banyak koin!",
             "no_items": "❌ | Anda tidak memiliki semua item untuk diubah!",
             "new": "☄ Para ilmuwan dan dokter telah berjalan masuk dan keluar ruangan dengan dinosaurus Anda untuk waktu yang lama. Tapi begitulah! Dinosaurus baru muncul dari ruangan!",
-            "return": "🎈 Jangan lupa memberi tip!"
+            "return": "🎈 Jangan lupa memberi tip!",
+            "reset_chars": "💦 Konfirmasikan reset karakteristik dinosaurus. \nHarga: {coins}"
         },
         "kindergarten": {
             "info": "*🎶 | Menu TK*\n_You tidak dapat mengirim dinosaurus ke taman kanak-kanak untuk waktu yang lama, jika tidak maka akan kehilangan you_\n\n🧸 Jam yang dihabiskan: {hours_now}\n🧮 Jam tersisa: {remained}\n🎨 Sampai diatur ulang: {days}\n\n🎏 Jam hari ini: {hours} / {remained_today}",
@@ -4038,7 +4283,14 @@
             "block": "🛡️ | Dalam pertarungan melawan Anda, dinosaurus mampu memblokir pukulan Anda!"
         },
         "groups": {
-            "durable_materials": "🎞 Bahan Tahan Lama"
+            "durable_materials": "🎞 Bahan Tahan Lama",
+            "bodys": "📦 Penutup",
+            "rod_group": "🦯 Batang atau tulang",
+            "ingot_group": "🧱 Batang",
+            "repairing": "🔧 Item yang dapat diperbaiki",
+            "recipe": "📜 Resep apa saja",
+            "eat": "🍔 Makanan",
+            "egg": "🥚 Telur"
         },
         "all_skills": {
             "stoping": {
@@ -4096,6 +4348,226 @@
                 "stop": "Stop",
                 "message": "Pesan pengujian"
             }
+        },
+        "works": {
+            "choosy_type": "🍜 Pilih untuk apa dinosaurus akan bekerja",
+            "buttons": {
+                "coins": "🪙 Remunerasi",
+                "recipes": "📜 Untuk Resep",
+                "ore": "🧈 Per bijih",
+                "wood": "🪵 Per Pohon",
+                "check": "👁 Lihat Vault"
+            },
+            "start": {
+                "mine": "⛏️ Dinosaurus pergi ke tambang, awasi perkembangannya untuk mencoba mengambil sebanyak yang Anda bisa!"
+            },
+            "progress": {
+                "mine": "*⛏️ | Bekerja di tambang*\n\n🥥 *Buka:* {time_bar}\n🔑 *Repositori:* {storage_bar}\n💨 *Cek yang tersisa:* {check_bar}\n\n_Jika Anda masih memiliki cek, klik tombol di bawah ini untuk melihat penyimpanan_",
+                "mine-emoji": [
+                    "💎",
+                    "⚪"
+                ],
+                "bank": "*🪙 | Bekerja di bank*\n\n🥥 *Buka:* {time_bar}\n🔑 *Repositori:* {storage_bar}\n💨 *Cek yang tersisa:* {check_bar}\n\n_Jika Anda masih memiliki cek, klik tombol di bawah ini untuk melihat penyimpanan_",
+                "bank-emoji": [
+                    "🪙",
+                    "⚪"
+                ],
+                "sawmill": "*🪚 | Bekerja di penggergajian*\n\n🥥 *Buka:* {time_bar}\n🔑 *Repositori:* {storage_bar}\n💨 *Cek yang tersisa:* {check_bar}\n\n_Jika Anda masih memiliki cek, klik tombol di bawah ini untuk melihat penyimpanan_",
+                "sawmill-emoji": [
+                    "🪚",
+                    "⚪"
+                ]
+            },
+            "storage": {
+                "coins": "🪙 Koin: {coins} | {max_coins}",
+                "items": "📦 | Item: {items}\n💧 Kepenuhan: {count} | {max_count}"
+            },
+            "stop": {
+                "coins": "\n 🪙 Koin: {coins}",
+                "items": "\n 📦 Item: {items}"
+            }
+        },
+        "pass_messages": [
+            "🌸 Betapa indahnya di alam, kebebasan berbau sangat enak.🌲 Bunga, pohon, rumput - semuanya indah.",
+            "{owner}, betapa aku mencintai matahari ini! 🌞 Sangat hangat dan keemasan.",
+            "Jika saya bisa, {owner}, saya akan membangun kastil pasir besar di pantai! 🏖️",
+            "Terkadang saya merasa seperti saya bisa terbang, {owner}! ✈️ Betapa kerennya melayang ke langit.",
+            "Pernahkah Anda memimpikan petualangan, {owner}? 🗺️ Aku akan pergi bersamamu ke banyak tempat menarik!",
+            "Lihat, {owner}, betapa indahnya bunga-bunga itu mekar! 🌸 Mereka tampaknya menikmati hidup.",
+            "Saya sangat mencintai rumah kami yang nyaman, {owner}. 🏡 Di sini selalu hangat dan tenang.",
+            "Betapa lezatnya anggur ini, {owner}! 🍇 Ayo makan bersama.",
+            "{owner}, dapatkah Anda membayangkan betapa hebatnya memiliki kebun buah sendiri? 🍏",
+            "Katakanlah, {owner}, pernahkah Anda berpikir tentang bagaimana rasanya menjadi astronot? 🚀",
+            "Hari ini adalah hari yang sempurna untuk melukis, {owner}! 🎨 Mari kita buat mahakarya.",
+            "Saya memperhatikan {owner} bagaimana bintang-bintang bersinar terang hari ini. 🌟 Sangat menyenangkan melihat mereka.",
+            "Mengapa kita tidak pergi bersepeda, {owner}? 🚴 Ini akan menyenangkan!",
+            "Saya bertanya-tanya, {owner}, apa impian Anda yang paling berharga. 💭 Mari kita bahas mereka.",
+            "Apakah menurut Anda, {owner}, apakah persahabatan ada di antara hewan yang berbeda? 🐾",
+            "Saya suka ketika Anda tersenyum, {owner}. 😊 Itu memberi saya kekuatan.",
+            "Anda tahu, {owner}, saya ingin menjelajahi dunia bawah laut! 🌊 Pasti ada banyak rahasia.",
+            "Apakah menurut Anda {owner} jika kita bisa melakukan perjalanan kembali ke masa lalu, ke mana kita akan pergi? ⏳",
+            "Mungkin kita bisa membuat liburan untuk semua teman, {owner}? 🎉 Saya suka kebersamaan yang menyenangkan.",
+            "{owner}, pernahkah Anda membayangkan apa yang akan terjadi jika pohon bisa berbicara? 🌳",
+            "Saya pikir {owner} bahwa kita bisa memulai pagi dengan pancake dan buah beri yang lezat. 🥞🍓",
+            "{owner}, Aku ingin tahu bagaimana kamu melihat mimpimu di masa depan. 🌈 Mari kita bicarakan.",
+            "Betapa menyenangkannya berjalan di sepanjang tepi sungai, {owner}. 🏞️ Airnya sangat tenang dan jernih.",
+            "Dapatkah Anda bayangkan, {owner}, pemandangan indah apa yang terbuka dari pegunungan? 🏔️ Ayo naik ke puncak.",
+            "{owner}, senang sekali kita punya waktu untuk bepergian bersama! ✈️ Itu menciptakan banyak kenangan.",
+            "Apakah Anda percaya pada sihir, {owner}? ✨ Saya pikir ada sesuatu yang ajaib di sekitar kita.",
+            "Di malam hari, bintang-bintang akan sangat terang, {owner}. 🌌 Ini adalah waktu yang tepat untuk melamun.",
+            "{owner}, Anda tahu betapa saya suka mendengar cerita petualangan! 📖 Mari kita buat sendiri.",
+            "Ketika saya melihat pelangi, {owner}, 🌈 Saya merasakan kegembiraan yang luar biasa! Ini seperti dongeng.",
+            "Sangat menyenangkan bahwa kami memiliki satu sama lain, {owner}. 🤗 Kamu selalu mendukungku.",
+            "{owner}, menginspirasi saya untuk berpikir tentang masa depan. 🔮 Seperti apa dunia kita dalam 10 tahun?",
+            "Kami punya rencana bagus besok, {owner}! 🎊 Saya tidak sabar menunggu kita untuk memulai.",
+            "Bagaimana perasaan Anda tentang gagasan memanjat atap dan melihat bintang-bintang, {owner}? 🏙️",
+            "Saya sangat menyukai liburan luar ruangan kami, {owner}. 🌿 Udaranya sangat segar dan bersih!",
+            "{owner}, Aku selalu bersenang-senang berjalan-jalan di taman bersamamu! 🌳 Udaranya sangat segar.",
+            "Apakah Anda percaya pada persahabatan hewan, {owner}? 🐾 Saya pikir mereka juga bisa menjadi teman baik.",
+            "Bagaimana kalau piknik di rumput, {owner}? 🍉 Ini akan luar biasa!",
+            "Saya suka menonton awan, {owner}. ☁️ Masing-masing terlihat ajaib dengan caranya sendiri.",
+            "Baru-baru ini saya berpikir tentang betapa kerennya berjalan di atas air, {owner}. 🌊 Itu tidak biasa!",
+            "Pernahkah Anda bermimpi memiliki hewan peliharaan sendiri, {owner}? 🦜 Saya berharap saya memiliki burung beo!",
+            "Ayo menari mengikuti musik favorit Anda sekarang, {owner}! 💃 Ini akan menghibur Anda.",
+            "Saya suka kota malam, {owner}. 🌆 Lampu berkilau seperti bintang.",
+            "Sangat menyenangkan ketika Anda tertawa, {owner}! 😂 Ini mengisi suasana dengan kepositifan.",
+            "Dapatkah Anda bayangkan, {owner}, bagaimana rasanya berada dalam dongeng? 📚 Mari kita buat cerita kita sendiri.",
+            "Saya selalu ingin melukis ketika saya melihat matahari terbenam, {owner}. 🌅 Sangat indah!",
+            "Apa film favoritmu, {owner}? 🎬 Kita bisa memiliki malam film!",
+            "Saya suka kehangatan musim panas, {owner}. ☀️ Ini adalah waktu petualangan dan kesenangan!",
+            "Pernahkah Anda mencoba melakukan sesuatu yang baru, {owner}? 🎣 Saya sedang berpikir untuk memancing!",
+            "Mari kita susun teka-teki, {owner}! 🧩 Ini akan menjadi cara yang bagus untuk menghabiskan waktu.",
+            "Bagaimana perasaan Anda berjalan-jalan di sekitar kota di malam hari, {owner}? 🌌 Dia sangat misterius.",
+            "Saya sering berpikir tentang betapa hebatnya pergi hiking, {owner}. ⛺️ Ini adalah petualangan!",
+            "Apa waktu favorit Anda dalam setahun, {owner}? 🍂 Saya suka jalan-jalan musim gugur.",
+            "Anda tahu, {owner}, saya ingin belajar cara memainkan alat musik. 🎸 Apakah Anda juga ingin melakukannya?",
+            "Saya ingin belajar cara memasak, {owner}. 🍽️ Apa resep favoritmu?",
+            "Bagaimana Anda menyukai gagasan menghabiskan akhir pekan di alam, {owner}? 🍃 Itu selalu menginspirasi!",
+            "Tawamu selalu membuat hariku lebih baik, {owner}. 😄 Saya sangat menghargainya.",
+            "Saya memimpikan masa depan, {owner}. 🚀 Bagaimana Anda melihat impian Anda?",
+            "Tidak peduli apa, {owner}, aku selalu ada untukmu. 🤝 Mari saling mendukung.",
+            "Ketika saya mendengarkan musik, {owner}, saya merasa bebas. 🎶 Mana yang kamu suka?",
+            "Apakah Anda sudah mencoba sesuatu yang benar-benar baru bulan ini, {owner}? 🙌 Ayo lakukan bersama!",
+            "Apakah Anda ingat bagaimana kita memasak bersama? 🍳 Menyenangkan, ayo lakukan lagi!",
+            "Saya terinspirasi oleh gagasan melihat tempat yang indah, {owner}. 🏞️ Ke mana Anda ingin pergi?",
+            "Atur pemotretan di jalan, {owner}? 📸 Ini akan menyenangkan dan kreatif!",
+            "Saya suka ketika Anda bercerita, {owner}. 🗣️ Anda selalu memiliki ide-ide menarik.",
+            "Apa cara favorit Anda untuk bersantai, {owner}? 🌙 Saya suka membaca di malam hari.",
+            "Ayo buat malam permainan papan, {owner}! 🎲 Itu selalu ceria.",
+            "Bagaimana kalau mencoba hobi baru, {owner}? 🎨 Mungkin menggambar?",
+            "Besok akan menjadi hari yang menyenangkan untuk bepergian, {owner}! 🧳 Ke mana kita akan pergi?"
+        ],
+        "only_dev_mode": "🌸 Saat ini, pekerjaan teknis sedang berlangsung, lihat saluran berita (di profil bot)!",
+        "timeout_message": "🧉 Berhenti sejenak dan minum teh!",
+        "skills_profile": {
+            "chars": {
+                "power": "Kekuatan",
+                "dexterity": "Ketangkasan",
+                "intelligence": "Intelijen",
+                "charisma": "Karisma"
+            },
+            "info": "*🌊 Karakteristik Tampilan*\n\n*⚡ Kekuatan*\n{power}\n*🧱 Kelincahan*\n{dexterity}\n*🧠 Kecerdasan*\n{intelligence}\n*😅 Karisma*\n{charisma}\n\n_Jangan lupa untuk mengembangkan keterampilan dinosaurus Anda, mereka membuat hidup cukup mudah bagi Anda dan dinosaurus_",
+            "power": {
+                "0": "Kurangnya kekuatan total.",
+                "1": "Kekuatan minimal, hampir tidak terlihat.",
+                "2": "Kekuatan yang sangat lemah, dampak yang tidak signifikan.",
+                "3": "Kekuatan lemah, terasa, tetapi tidak signifikan.",
+                "4": "Kekuatan di bawah rata-rata, terlihat, tetapi tidak efektif.",
+                "5": "Kekuatan sedang, bisa dirasakan, tetapi tidak cukup untuk mempengaruhi.",
+                "6": "Kekuatan sedang, terlihat dalam tindakan.",
+                "7": "Di atas rata-rata, kekuatan yang cukup nyata.",
+                "8": "Kekuatan yang kuat yang mampu mempengaruhi situasi.",
+                "9": "Sangat kuat, dimanifestasikan dalam dampak yang signifikan.",
+                "10": "Kekuatan maksimum yang dapat mengubah jalannya peristiwa.",
+                "11": "Kekuatan di atas maksimum, melebihi ekspektasi.",
+                "12": "Kekuatan luar biasa, pengaruh yang tajam dan nyata.",
+                "13": "Kekuatan yang luar biasa, sulit untuk diabaikan.",
+                "14": "Kekuatan yang kuat yang mampu mencapai prestasi besar.",
+                "15": "Kekuatan, penciptaan atau kehancuran yang luar biasa.",
+                "16": "Kekuatan tak terkalahkan yang mampu mengatasi rintangan apa pun.",
+                "17": "Kekuatan yang membangkitkan kekaguman dan rasa hormat.",
+                "18": "Kekuatan zaman yang memberi energi kepada orang-orang di sekitar Anda.",
+                "19": "Kekuatan legendaris yang menentang deskripsi.",
+                "20": "Kekuatan absolut, perwujudan kekuasaan."
+            },
+            "dexterity": {
+                "0": "Kurangnya ketangkasan sama sekali.",
+                "1": "Ketangkasan minimal, hampir tidak terlihat.",
+                "2": "Ketangkasan yang sangat rendah, koordinasi yang buruk.",
+                "3": "Ketangkasan yang lemah, kesulitan yang nyata.",
+                "4": "Di bawah rata-rata, kecanggungan dalam gerakan.",
+                "5": "Ketangkasan sedang, terkadang tindakan yang tidak pasti.",
+                "6": "Ketangkasan rata-rata, kurang lebih koordinasi.",
+                "7": "Di atas rata-rata, gerakan yang cukup percaya diri.",
+                "8": "Ketangkasan yang kuat, koordinasi yang baik.",
+                "9": "Ketangkasan yang sangat baik, kemudahan gerakan.",
+                "10": "Ketangkasan yang sangat baik, keanggunan yang nyata.",
+                "11": "Kelincahan tinggi, reaksi cepat.",
+                "12": "Ketangkasan yang luar biasa, keterampilan yang luar biasa.",
+                "13": "Kelincahan yang luar biasa, keterampilan di tingkat tertinggi.",
+                "14": "Kelincahan yang kuat, kemampuan luar biasa.",
+                "15": "Kelincahan luar biasa, sepenuhnya mengontrol gerakan.",
+                "16": "Kelincahan tak terkalahkan, prestasi fisik.",
+                "17": "Kekuatan kelincahan, dengan mudah mengatasi rintangan.",
+                "18": "Ketangkasan zaman, menginspirasi orang lain.",
+                "19": "Kelincahan legendaris, presisi sempurna.",
+                "20": "Ketangkasan mutlak, perwujudan rahmat."
+            },
+            "intelligence": {
+                "0": "Kurangnya kecerdasan.",
+                "1": "Tingkat pemahaman minimum.",
+                "2": "Kecerdasan yang sangat rendah, kesulitan dengan persepsi.",
+                "3": "Kecerdasan yang lemah, seringkali tidak mengerti.",
+                "4": "Di bawah rata-rata, asimilasi pengetahuan yang lambat.",
+                "5": "Kecerdasan sedang, keterampilan pemahaman dasar.",
+                "6": "Kecerdasan rata-rata, terkadang lambat.",
+                "7": "Di atas rata-rata, keterampilan analitis yang baik.",
+                "8": "Kecerdasan yang kuat, keterampilan pemecahan masalah yang baik.",
+                "9": "Kecerdasan yang sangat baik, adaptasi cepat.",
+                "10": "Kecerdasan yang luar biasa, logis dan cerdas.",
+                "11": "Kecerdasan tinggi, pendekatan inventif.",
+                "12": "Kecerdasan luar biasa, pemahaman yang mendalam.",
+                "13": "Kecerdasan luar biasa, ide-ide brilian.",
+                "14": "Kecerdasan yang kuat, kemampuan luar biasa.",
+                "15": "Kecerdasan yang sangat besar, hasil yang luar biasa.",
+                "16": "Kecerdasan yang tak terkalahkan, tugas sulit dimungkinkan.",
+                "17": "Kekuatan kecerdasan, pemikiran inovatif.",
+                "18": "Kecerdasan pembuat zaman, mengubah persepsi.",
+                "19": "Kecerdasan legendaris, wawasan unik.",
+                "20": "Kecerdasan absolut, perwujudan kejeniusan."
+            },
+            "charisma": {
+                "0": "Kurangnya karisma.",
+                "1": "Daya tarik minimal, tidak menarik perhatian.",
+                "2": "Karisma yang sangat rendah, hampir tidak terlihat.",
+                "3": "Karisma yang lemah, terkadang membangkitkan minat.",
+                "4": "Di bawah rata-rata, jarang menginspirasi.",
+                "5": "Karisma moderat, Anda bisa mendengarkan.",
+                "6": "Karisma rata-rata, terkadang menghibur.",
+                "7": "Di atas rata-rata, menarik perhatian.",
+                "8": "Karisma yang kuat, tahu bagaimana memikat.",
+                "9": "Karisma yang sangat bagus, dapat dipercaya.",
+                "10": "Karisma yang luar biasa, mampu menginspirasi.",
+                "11": "Karisma tinggi, dengan mudah memenangkan simpati.",
+                "12": "Karisma luar biasa, berkesan.",
+                "13": "Karisma yang luar biasa, magnet bagi orang-orang.",
+                "14": "Karisma yang kuat, pengaruh yang luar biasa.",
+                "15": "Karisma besar, mudah mengontrol perhatian.",
+                "16": "Karisma yang tak terkalahkan menjadi pusat perhatian.",
+                "17": "Kekuatan karisma menarik dirinya sendiri.",
+                "18": "Karisma ezaman, mengubah lingkungan.",
+                "19": "Karisma legendaris tetap ada dalam ingatan.",
+                "20": "Karisma mutlak, perwujudan daya tarik."
+            }
+        },
+        "inside_shop": {
+            "info": "📦 Tertarik dengan produknya? Kemudian lihat sendiri! \n\n",
+            "down": "_Produk diperbarui sekali sehari, kami sarankan untuk memperbarui pesan penimbun sebelum membeli_",
+            "item": "🥥 Item: {name}\n🔑 Tersedia: {col}\n🪙 Harga (untuk 1): {price}",
+            "no_item": "🧨 Item ini tidak lagi dijual oleh Borahshchik! Menyegarkan halaman toko",
+            "count": "🥕 Tentukan berapa banyak item yang ingin Anda beli atau pilih opsi dari daftar di bawah ini",
+            "False": "👁 Koin tidak cukup atau barang tidak lagi dijual dalam bentuk atau jumlah ini!",
+            "True": "🎟 Item ditambahkan ke inventaris! Selamat atas pembelian Anda!"
         }
     }
 }

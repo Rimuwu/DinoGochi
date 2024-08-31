@@ -3,6 +3,30 @@
         "type": "dummy",
         "rank": "common"
     },
+    "SYSTEM_ITEM_SWORD": {
+        "type": "dummy",
+        "rank": "common"
+    },
+    "SYSTEM_ITEM_AXE": {
+        "type": "dummy",
+        "rank": "common"
+    },
+    "SYSTEM_ITEM_PICKAXE": {
+        "type": "dummy",
+        "rank": "common"
+    },
+    "SYSTEM_ITEM_SHIELD": {
+        "type": "dummy",
+        "rank": "common"
+    },
+    "SYSTEM_ITEM_ROD": {
+        "type": "dummy",
+        "rank": "common"
+    },
+    "SYSTEM_ITEM_GEAR": {
+        "type": "dummy",
+        "rank": "common"
+    },
     "rustycan": {
         "type": "dummy",
         "rank": "common"
