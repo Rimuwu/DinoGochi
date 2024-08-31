@@ -8,7 +8,7 @@ from bot.modules.data_format import transform
 from bot.modules.dinosaur.dino_status import end_skill_activity
 from bot.modules.dinosaur.dinosaur import Dino, mutate_dino_stat
 from bot.modules.dinosaur.kd_activity import save_kd
-from bot.modules.dinosaur.mood import add_mood
+from bot.modules.dinosaur.mood import add_mood, check_inspiration
 from bot.modules.dinosaur.skills import add_skill_point, check_skill
 from bot.modules.dinosaur.works import end_work
 from bot.modules.items.item import get_items_names
@@ -38,21 +38,8 @@ async def work():
 
     for work in res_list:
         save = True
-
+        insp = False
         dp_chance = 0
-        if work['activity_type'] == 'sawmill':
-            dexterity = await check_skill(work['dino_id'], 'dexterity')
-            dp_chance = randint(0, transform(dexterity, 20, 50) + 50) > 60
-
-        elif work['activity_type'] == 'bank':
-            charisma = await check_skill(work['dino_id'], 'charisma')
-            dp_chance = randint(0, transform(charisma, 20, 50) + 50) > 60
-
-        elif work['activity_type'] == 'mine':
-            power = await check_skill(work['dino_id'], 'power')
-            dp_chance = randint(0, transform(power, 20, 50) + 50) > 60
-
-            
 
         if int(time()) >= work['end_time']:
             save = False
@@ -71,11 +58,30 @@ async def work():
                                     results=text
                                     )
 
-        elif save and (randint(0, 1) or dp_chance):
+        elif work['activity_type'] == 'sawmill':
+            dexterity = await check_skill(work['dino_id'], 'dexterity')
+            dp_chance = randint(0, transform(dexterity, 20, 50) + 50) > 60
+
+        elif work['activity_type'] == 'bank':
+            charisma = await check_skill(work['dino_id'], 'charisma')
+            dp_chance = randint(0, transform(charisma, 20, 50) + 50) > 60
+
+        elif work['activity_type'] == 'mine':
+            power = await check_skill(work['dino_id'], 'power')
+            dp_chance = randint(0, transform(power, 20, 50) + 50) > 60
+
+        insp = await check_inspiration(work['dino_id'], work['activity_type'])
+
+        if save and (randint(0, 1) or dp_chance):
             # Добавляем прдеметы / монеты
             if 'coins' in work:
                 if work['coins'] < work['max_coins']:
-                    coins += randint(100, 400)
+
+                    if insp:
+                        coins = randint(100, 800)
+                    else:
+                        coins = randint(100, 400)
+
                     if coins + work['coins'] > work['max_coins']:
                         min_coins = coins + work['coins'] - work['max_coins']
                         coins -= min_coins
@@ -92,7 +98,10 @@ async def work():
                     if work['max_items'] - count_items == 1:
                         count = 1
                     else:
-                        count = randint(1, 2)
+                        if not insp:
+                            count = randint(1, 2)
+                        else:
+                            count = randint(1, 4)
 
                     items_group_ids = get_group(data[work["activity_type"]])
                     random_item = choice(items_group_ids)
@@ -123,7 +132,7 @@ async def work():
                             'coins': coins
                         }
                     })
-            
+
             else:
                 count_items = 0
                 for key, item in work['items'].items(): count_items += item['count']

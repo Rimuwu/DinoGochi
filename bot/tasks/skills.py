@@ -7,7 +7,7 @@ from bot.exec import bot
 from bot.modules.dinosaur.dino_status import end_skill_activity
 from bot.modules.dinosaur.dinosaur import Dino, mutate_dino_stat
 from bot.modules.dinosaur.kd_activity import save_kd
-from bot.modules.dinosaur.mood import add_mood
+from bot.modules.dinosaur.mood import add_mood, check_inspiration
 from bot.modules.dinosaur.skills import add_skill_point
 from bot.modules.items.item_tools import use_item
 from bot.modules.items.items_groups import get_group
@@ -48,6 +48,12 @@ async def skills_work():
         if dino:
             up_unit = uniform(*skill_activ['up_unit'])
             down_unit = uniform(*skill_activ['down_unit'])
+
+            insp = await check_inspiration(dino_id, skill_activ['activity_type'])
+
+            if insp:
+                up_unit *= 2
+                down_unit *= 2
 
             await add_skill_point(dino_id, skill_activ['up_skill'], up_unit)
             await add_skill_point(dino_id, skill_activ['down_skill'], down_unit)
