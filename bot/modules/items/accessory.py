@@ -37,7 +37,6 @@ async def check_accessory(dino: Dino, item_id: str, downgrade: bool=False) -> bo
     if acces_item:
         if acces_item['item_id'] == item_id:
             if downgrade:
-                print(132)
                 return await downgrade_accessory(dino, data_item['type'])
             else: return True
         else: return False

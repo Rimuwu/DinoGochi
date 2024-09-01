@@ -17,6 +17,15 @@
         "type": "sleep",
         "groups": ["repairing"]
     },
+    "blanket": {
+        "abilities": {
+            "endurance": 20
+        },
+        "image": "",
+        "rank": "rare",
+        "type": "sleep",
+        "groups": ["repairing"]
+    },
     "toy_solider": {
         "abilities": {
             "endurance": 80
