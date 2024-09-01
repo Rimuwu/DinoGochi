@@ -10,7 +10,7 @@ from bot.modules.localization import t
 from bot.modules.market.market import buy_product, check_preferential, create_preferential, delete_product, generate_items_pages, preview_product, product_ui, seller_ui
 
 from bot.modules.markup import cancel_markup, count_markup, confirm_markup
-from bot.modules.states_tools import (ChooseIntState, ChooseStringState,
+from bot.modules.states_tools import (ChooseImageState, ChooseIntState, ChooseStringState,
                                       ChooseStepState, ChooseConfirmState, ChoosePagesState)
 from bot.modules.markup import markups_menu as m
 from bot.modules.user.user import take_coins
@@ -210,7 +210,15 @@ async def edit_image(new_image: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     message_id = transmitted_data['message_id']
-    if new_image == '-': new_image = ''
+    if new_image == 'no_image': 
+        new_image = ''
+    else:
+        file_info = await bot.get_file(new_image)
+        downloaded_file = await bot.download_file(file_info.file_path)
+        if downloaded_file:
+            new_image = new_image
+        else:
+            new_image = ''
 
     await sellers.update_one({'owner_id': userid}, 
                         {'$set': {'custom_image': new_image}}, comment='edit_image_1')
@@ -236,7 +244,7 @@ async def pr_edit_image(userid: int, chatid: int, lang: str, message_id: int):
 
     await bot.send_message(chatid, t('seller.edit_image', lang), 
                            reply_markup=cancel_markup(lang))
-    await ChooseStringState(edit_image, userid, chatid, lang, max_len=200, transmitted_data=transmitted_data)
+    await ChooseImageState(edit_image, userid, chatid, lang, True, transmitted_data=transmitted_data)
 
 
 async def end_buy(unit: int, transmitted_data: dict):

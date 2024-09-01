@@ -1,7 +1,4 @@
 
-import io
-
-import requests
 from bot.config import mongo_client
 from bot.const import BACKGROUNDS
 from bot.exec import bot
@@ -14,29 +11,35 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import confirm_markup, count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
+from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState, ChooseImageState,
                                       ChooseIntState, ChooseStringState)
 from bot.modules.user.user import premium, take_coins
 from telebot.types import CallbackQuery, InputMedia, Message
 
 users = DBconstructor(mongo_client.user.users)
 
-async def back_edit(content: str, transmitted_data: dict):
+async def back_edit(content, transmitted_data: dict):
     dino = transmitted_data['dino']
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
 
-    try:
-        response = requests.get(content, stream = True)
-        response = await async_open(io.BytesIO(response.content))
-        response = response.convert("RGBA")
-    except: content = ''
-    
+    if content == 'no_image':
+        content = 1
+        tt = 'saved'
+    else:
+        tt = 'custom'
+        file_info = await bot.get_file(content)
+        downloaded_file = await bot.download_file(file_info.file_path)
+        if downloaded_file:
+            content = content
+        else:
+            content = 0
+
     if content:
         await dino.update({
             '$set': {
-                "profile.background_type": 'custom',
+                "profile.background_type": tt,
                 'profile.background_id': content
             }
         })
@@ -60,7 +63,7 @@ async def transition_back(dino: Dino, transmitted_data: dict):
     data = {
         'dino': dino
     }
-    await ChooseStringState(back_edit, userid, chatid, lang, max_len=200, transmitted_data=data)
+    await ChooseImageState(back_edit, userid, chatid, lang, True, transmitted_data=data)
     await bot.send_message(userid, text, reply_markup=markup)
 
 @bot.message_handler(pass_bot=True, text='commands_name.backgrounds.custom_profile', 

@@ -1,10 +1,10 @@
 import io
 from random import choice, randint
 
-import requests
 from PIL import Image, ImageDraw, ImageFont
 from telebot.util import pil_image_to_file
 
+from bot.exec import bot
 from bot.const import DINOS, GAME_SETTINGS
 from bot.modules.data_format import seconds_to_str
 from bot.modules.localization import get_data, t
@@ -275,10 +275,10 @@ async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', p
     if custom_url:
         if isinstance(custom_url, str):
             try:
-                response = requests.get(custom_url, stream = True)
-                response = await async_open(io.BytesIO(response.content))
-                response = response.convert("RGBA")
-                img = response.resize((900, 350), Image.Resampling.LANCZOS)
+                file_info = await bot.get_file(custom_url)
+                imageBinaryBytes = await bot.download_file(file_info.file_path)
+                imageStream = io.BytesIO(imageBinaryBytes)
+                img = Image.open(imageStream).resize((900, 350))
             except: custom_url = ''
         else:
             img = custom_url
@@ -424,10 +424,10 @@ async def dino_collecting(dino_id: int, col_type: str):
 
 async def market_image_pst(custom_url, status):
     try:
-        response = requests.get(custom_url, stream = True)
-        response = await async_open(io.BytesIO(response.content))
-        response = response.convert("RGBA")
-        img = response.resize((900, 350), Image.Resampling.LANCZOS)
+        file_info = await bot.get_file(custom_url)
+        imageBinaryBytes = await bot.download_file(file_info.file_path)
+        imageStream = io.BytesIO(imageBinaryBytes)
+        img = Image.open(imageStream).resize((900, 350), Image.Resampling.LANCZOS)
         img = pil_image_to_file(img, quality='maximum')
     except: 
         img = await async_open(f'images/remain/market/{status}.png', True)

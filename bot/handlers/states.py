@@ -406,7 +406,10 @@ async def ChooseImage(message: Message):
         func = data['function']
         transmitted_data = data['transmitted_data']
 
+    await bot.delete_state(userid, message.chat.id)
+    await bot.reset_data(message.from_user.id,  message.chat.id)
     fileID = message.photo[-1].file_id
+    transmitted_data['file'] = message.photo[-1]
     await func(fileID, transmitted_data=transmitted_data)
 
 @bot.message_handler(pass_bot=True, is_authorized=True, state=GeneralStates.ChooseImage)
@@ -423,6 +426,8 @@ async def ChooseImage_0(message: Message):
             need_image = data['need_image']
 
         if need_image:
+            await bot.delete_state(userid, message.chat.id)
+            await bot.reset_data(message.from_user.id,  message.chat.id)
             await func('no_image', transmitted_data=transmitted_data)
 
 

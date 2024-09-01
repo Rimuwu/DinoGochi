@@ -2197,9 +2197,9 @@
             }
         },
         "custom_profile": {
-            "manual": "🖼 | Masukkan tautan yang mengarah ke foto untuk mengaturnya ke latar belakang profil dinosaurus. \n\n🎏 | Tautan harus mengarah ke gambar (ada .png / .jpeg di akhir tautan tersebut)",
-            "ok": "✨ | Tautan diatur, jika latar belakang profil dinosaurus tidak berubah, maka tautan tidak mengarah ke foto atau bot tidak dapat membuka foto.",
-            "error": "🦕 | Bot mencoba meminta gambar dari tautan dan mendapat kesalahan, silakan coba lagi."
+            "manual": "🖼 | Kirim gambar kepada bot (jika bot tidak menanggapi pesan Anda dengan gambar, maka gambar tersebut tidak sesuai)\n\nJika Anda ingin menghapus gambar, masukkan 0",
+            "ok": "✨ | Set foto",
+            "error": "🦕 | Bot mencoba menginstal gambar dan menerima kesalahan ("
         },
         "delete_me": {
             "confirm": "❓ | Apakah Anda yakin ingin menghapus SEMUA data akun?",
@@ -4086,7 +4086,7 @@
             "new_name": "🍚 Nama berubah!",
             "edit_description": "🎏 Masukkan deskripsi toko baru atau klik batal.",
             "new_description": "🍚 Deskripsi berubah, berubah!",
-            "edit_image": "🖼 | Masukkan tautan yang mengarah ke foto untuk mengaturnya ke latar belakang profil dinosaurus. \n\n🎏 | Untuk menghapus latar belakang, ketik \"-\"",
+            "edit_image": "🖼 | Kirim foto (file). Jika bot tidak merespons foto Anda untuk waktu yang lama, maka format ini tidak didukung. \n\n🎏 | Untuk menghapus latar belakang, masukkan \"0\"",
             "new_image": "🍚 Gambar kustom diinstal!",
             "delete_image": "❌ Gambar kustom dihapus!"
         },

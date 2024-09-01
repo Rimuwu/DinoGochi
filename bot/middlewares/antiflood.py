@@ -9,7 +9,6 @@ from time import time as time_now
 from bot.modules.localization import get_lang, t
 from bot.modules.notifications import user_notification
 from bot.modules.logs import log
-import requests
 
 from bot.modules.user.advert import auto_ads
 

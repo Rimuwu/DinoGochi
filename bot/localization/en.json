@@ -2197,9 +2197,9 @@
             }
         },
         "custom_profile": {
-            "manual": "🖼 | Enter the link that leads to the photo to set it to the background of the dinosaur profile. \n\n🎏 | The link should lead to the image (there is a .png / .jpeg at the end of such links)",
-            "ok": "✨ | The link is set, if the background of the dinosaur's profile has not changed, then the link does not lead to the photo or the bot cannot open the photo.",
-            "error": "🦕 | The bot tried to request a picture from the link and got an error, please try again."
+            "manual": "🖼 | Send the bot an image (if the bot doesn't respond to your message with an image, then the image is not appropriate)\n\nIf you want to delete the image, enter 0",
+            "ok": "✨ | Photo set",
+            "error": "🦕 | The bot tried to install the image and received an error ("
         },
         "delete_me": {
             "confirm": "❓ | Are you sure you want to delete ALL account data?",
@@ -4086,7 +4086,7 @@
             "new_name": "🍚 Name changed!",
             "edit_description": "🎏 Enter a new store description or click Cancel.",
             "new_description": "🍚 Description changed, changed!",
-            "edit_image": "🖼 | Enter the link that leads to the photo to set it on the background of the dinosaur profile.\n\n🎏 | To remove the background, enter \"-\"",
+            "edit_image": "🖼 | Send a photo (file). If the bot does not respond to your photo for a long time, then this format is not supported. \n\n🎏 | To remove the background, enter \"0\"",
             "new_image": "🍚 Custom image installed!",
             "delete_image": "❌ Custom image deleted!"
         },

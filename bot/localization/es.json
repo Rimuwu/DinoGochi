@@ -2197,9 +2197,9 @@
             }
         },
         "custom_profile": {
-            "manual": "🖼 | Ingrese el enlace que lleva a la foto para configurarla en el fondo del perfil del dinosaurio. \n\n🎏 | El enlace debe llevar a la imagen (hay una .png / .jpeg al final de dichos enlaces)",
-            "ok": "✨ | El enlace está configurado, si el fondo del perfil del dinosaurio no ha cambiado, entonces el enlace no conduce a la foto o el bot no puede abrir la foto.",
-            "error": "🦕 | El bot intentó solicitar una imagen desde el enlace y obtuvo un error, inténtelo de nuevo."
+            "manual": "🖼 | Envíe al bot una imagen (si el bot no responde a su mensaje con una imagen, entonces la imagen no es apropiada)\n\nSi desea eliminar la imagen, ingrese 0",
+            "ok": "✨ | Conjunto de fotos",
+            "error": "🦕 | El bot intentó instalar la imagen y recibió un error ("
         },
         "delete_me": {
             "confirm": "❓ | ¿Estás seguro de que quieres eliminar TODOS los datos de la cuenta?",
@@ -4086,7 +4086,7 @@
             "new_name": "🍚 ¡Nombre cambiado!",
             "edit_description": "🎏 Ingrese una nueva descripción de la tienda o haga clic en cancelar.",
             "new_description": "🍚 ¡Descripción cambiada, cambiada!",
-            "edit_image": "🖼 | Ingrese el enlace que lleva a la foto para configurarla en el fondo del perfil del dinosaurio. \n\n🎏 | Para eliminar el fondo, escriba \"-\"",
+            "edit_image": "🖼 | Enviar una foto (archivo). Si el bot no responde a su foto durante mucho tiempo, entonces este formato no es compatible. \n\n🎏 | Para eliminar el fondo, introduzca \"0\"",
             "new_image": "🍚 ¡Imagen personalizada instalada!",
             "delete_image": "❌ ¡Imagen personalizada eliminada!"
         },
