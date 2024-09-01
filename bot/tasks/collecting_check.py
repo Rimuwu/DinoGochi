@@ -81,7 +81,7 @@ async def collecting_process():
 
                 # Повышение шанса редкости
                 if coll_type == 'fishing' and \
-                    await check_accessory(dino, 'rod', True):
+                    await check_accessory(dino, 'fishing-rod', True):
                         # Аксессуар удочка задействован
                         rare_list[0] -= 10
                         rare_list[1] -= 7
@@ -108,7 +108,7 @@ async def collecting_process():
                     char = dino.stats['dexterity']
 
                 elif coll_type == 'hunt':
-                    char = dino.stats['dexterity']
+                    char = dino.stats['power']
 
                 elif coll_type == 'all':
                     char = dino.stats['charisma']

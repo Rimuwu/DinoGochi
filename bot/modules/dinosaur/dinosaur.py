@@ -548,7 +548,7 @@ async def set_status(dino_id: ObjectId, new_status: str, now_status: str = ''):
     """ НЕ вводит в состояние, лишь отменяет старое. Делает это грубо.
     """
 
-    assert new_status in ['sleep', 'game', 'journey', 'collecting', 'dungeon', 'kindergarten', 'hysteria', 'farm', 'mine', 'bank', 'sawmill', 'gym', 'library', 'park', 'swimming_pool', 'craft', 'unrestrained_play'], f'Состояние {new_status} не найдено!'
+    assert new_status in ['sleep', 'game', 'journey', 'collecting', 'dungeon', 'kindergarten', 'hysteria', 'farm', 'mine', 'bank', 'sawmill', 'gym', 'library', 'park', 'swimming_pool', 'craft', 'unrestrained_play', 'pass'], f'Состояние {new_status} не найдено!'
 
     if not now_status:
         now_status = await check_status(dino_id)

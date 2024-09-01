@@ -23,7 +23,7 @@ long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 async def end_tranning(skill_activ, dino_id):
     # Завершаем тренировку 
-    unit_percent = skill_activ['up_unit'] / 2
+    unit_percent = skill_activ['up'] / 2
     await add_skill_point(dino_id, 
                             skill_activ['up_skill'], -unit_percent)
 
@@ -68,8 +68,11 @@ async def skills_work():
                         ahtung_lvl = 1
                         await save_kd(dino_id, skill_activ['activity_type'], 3600 * 5)
 
-                        text = t('all_skills.overloading', lang)
-                        await bot.send_message(sended, text, parse_mode='Markdown')
+                        lang = await get_lang(sended)
+                        text = t('all_skills.overloading', lang, dino_name=dino.name)
+                        try:
+                            await bot.send_message(sended, text)
+                        except: pass
 
                     elif dif_percent >= 40 and skill_activ['ahtung_lvl'] == 1:
                         # Завершение
@@ -78,7 +81,7 @@ async def skills_work():
 
                 elif randint(1, 10) == 5:
                     await dino.update(
-                        {'inc': {
+                        {'$inc': {
                             'stats.heal': -1
                         }}
                     )
@@ -95,14 +98,17 @@ async def skills_work():
                         lambda i: {'item_id': i}, energy_eat))
 
                     energy_items = await get_inventory_from_i(sended, data_for_f, 5)
-                    energy_item = choice(energy_items)
+                    if energy_items:
+                        energy_item = choice(energy_items)
 
-                    lang = await get_lang(sended)
-                    send_status, return_text = await use_item(sended, sended, lang, 
-                                   energy_item['item'], 1, dino)
-                    if send_status:
-                        return_text += t('all_skills.use_item', lang)
-                        await bot.send_message(sended, return_text, parse_mode='Markdown')
+                        lang = await get_lang(sended)
+                        send_status, return_text = await use_item(sended, sended, lang, 
+                                    energy_item['item'], 1, dino)
+                        if send_status:
+                            return_text += t('all_skills.use_item', lang)
+                            try:
+                                await bot.send_message(sended, return_text, parse_mode='Markdown')
+                            except: pass
 
                 if dino.stats['energy'] <= 30 or dino.stats['eat'] <= 15:
                     # Завершаем тренировку 
