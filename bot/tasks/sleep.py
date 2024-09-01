@@ -52,7 +52,7 @@ async def one_time(sleeper, one_time_unit):
                 else:
                     await experience_enhancement(owner['owner_id'], randint(1, 2))
 
-                if randint(1, 100) + transform(dino.stats['charisma'], 20, 30) >= 80:
+                if randint(1, 100) + transform(dino['stats']['charisma'], 20, 30) >= 80:
                     await experience_enhancement(owner, randint(1, 2))
 
         energy = dino['stats']['energy']
@@ -69,10 +69,11 @@ async def one_time(sleeper, one_time_unit):
                     await add_mood(dino['_id'], 'bad_dream', -1, 2700, True)
                 else:
                     await add_mood(dino['_id'], 'dream', 1, 2700, True)
-            
+
             if dino['mood']['breakdown'] != 0 and randint(1, 3) == 3:
+                dino_class = await Dino().create(dino['_id'])
                 if await check_accessory(
-                    dino, 'toy_solider', True
+                    dino_class, 'toy_solider', True
                     ):
                     await dinosaurs.update_one(
                         {'_id': dino['_id']}, 
