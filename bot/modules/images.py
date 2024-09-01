@@ -278,7 +278,7 @@ async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', p
                 file_info = await bot.get_file(custom_url)
                 imageBinaryBytes = await bot.download_file(file_info.file_path)
                 imageStream = io.BytesIO(imageBinaryBytes)
-                img = Image.open(imageStream).resize((900, 350))
+                img = Image.open(imageStream).resize((900, 350)).convert('RGBA')
             except: custom_url = ''
         else:
             img = custom_url
@@ -427,7 +427,7 @@ async def market_image_pst(custom_url, status):
         file_info = await bot.get_file(custom_url)
         imageBinaryBytes = await bot.download_file(file_info.file_path)
         imageStream = io.BytesIO(imageBinaryBytes)
-        img = Image.open(imageStream).resize((900, 350), Image.Resampling.LANCZOS)
+        img = Image.open(imageStream).resize((900, 350), Image.Resampling.LANCZOS).convert('RGBA')
         img = pil_image_to_file(img, quality='maximum')
     except: 
         img = await async_open(f'images/remain/market/{status}.png', True)
