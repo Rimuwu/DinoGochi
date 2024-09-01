@@ -194,7 +194,7 @@ async def stop_work_calb(call: CallbackQuery):
         way = ''
 
         if traning_time < res['min_time']:
-            unit_percent = res['up_unit'] / 2
+            unit_percent = res['up'] / 2
             await add_skill_point(dino_id, res['up_skill'], -unit_percent)
             way = '_negative'
 
