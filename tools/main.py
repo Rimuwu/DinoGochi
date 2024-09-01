@@ -5,6 +5,7 @@
 # Добавить идексы ко всем новым коллекциям
 
 import json
+import os
 from random import uniform
 import pymongo
 
@@ -16,8 +17,11 @@ dinosaurs = mongo_client.dinosaur.dinosaurs
 langs = mongo_client.user.lang
 users = mongo_client.user.users
 
-with open('bot/json/dino_data.json', encoding='utf-8') as f: 
+ex = os.path.dirname(__file__) # Путь к этому файлу
+with open(f'{ex}/../../bot/json/dino_data.json', encoding='utf-8') as f: 
+  
     DINOS = json.load(f).copy() # type: dict
+
 
 print('start money')
 users.update_many({}, {"$set": {'coins': 10000}})
