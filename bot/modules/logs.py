@@ -32,21 +32,21 @@ def log(message: str, lvl: int = 1, prefix: str = 'Бот') -> None:
 
     if lvl == 0:
         if conf.debug:
-            logging.info(f'DEBUG: {message}')
+            logging.info(f'{prefix}: DEBUG: {message}')
             print(Fore.CYAN + f"{strftime('%Y %m-%d %H.%M.%S')} {prefix}: {message}" + Style.RESET_ALL)
     elif lvl == -1: # Цвет для логов базы
         if conf.base_logging:
-            logging.info(message)
+            logging.info(f"{prefix}: message")
             print(Fore.LIGHTBLACK_EX + f"{strftime('%Y %m-%d %H.%M.%S')} DB {prefix}: {message}" + Style.RESET_ALL)
     elif lvl == 1:
-        logging.info(message)
+        logging.info(f"{prefix}: message")
         print(Fore.GREEN + f"{strftime('%Y %m-%d %H.%M.%S')} {prefix}: {message}" + Style.RESET_ALL)
     elif lvl == 2:
-        logging.warning(message)
+        logging.warning(f"{prefix}: message")
         print(Fore.BLUE + f"{strftime('%Y %m-%d %H.%M.%S')} {prefix}: {message}" + Style.RESET_ALL)
     elif lvl == 3:
-        logging.error(message)
+        logging.error(f"{prefix}: message")
         print(Fore.YELLOW + f"{strftime('%Y %m-%d %H.%M.%S')} {prefix}: {message}" + Style.RESET_ALL)
     else:
-        logging.critical(message)
+        logging.critical(f"{prefix}: message")
         print(Fore.RED + f"{strftime('%Y %m-%d %H.%M.%S')} {prefix}: {message}" + Style.RESET_ALL)
