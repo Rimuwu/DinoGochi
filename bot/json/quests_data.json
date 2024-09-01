@@ -18,7 +18,7 @@
     },
     "data": {
       "count": {"act": 1, "type": "static"},
-      "items": ["cloak", "tooling", "rod", "net", "basket", "board_games"]
+      "items": ["cloak", "tooling", "net", "basket", "board_games"]
     }
   },
 
