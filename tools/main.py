@@ -123,7 +123,7 @@ a = 0
 lld = len(users_data)
 for i in users_data:
     a += 1
-    print(a, 'dinos', lld)
+    print(a, 'users', lld)
     llg = list(langs.find({'userid': i['userid']}))
 
     if len(llg) == 0:

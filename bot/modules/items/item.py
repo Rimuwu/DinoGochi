@@ -77,7 +77,10 @@ def get_name(item_id: str, lang: str='en', abilities: dict = {}) -> str:
             else: 
                 name = near_key_number(endurance, items_names[item_id][lang], 'name') #type: ignore
         else:
-            name = items_names[item_id][lang]['name']
+            try:
+                name = items_names[item_id][lang]['name']
+            except:
+                log(f'Имя для {item_id} {lang} не найдено!', 4)
     else:
         log(f'Имя для {item_id} не найдено')
     return name

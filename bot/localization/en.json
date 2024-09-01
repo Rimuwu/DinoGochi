@@ -438,7 +438,7 @@
             },
             "shield_recipe": {
                 "name": "📜 Shield Recipe",
-                "description": "A shield of bones, just a shield."
+                "description": "A shield, just a shield."
             },
             "bone_pickaxe": {
                 "name": "⛏ Bone Pickaxe"
@@ -950,6 +950,10 @@
             "controller_recipe": {
                 "name": "📜 Controller Recipe",
                 "description": "Recipe for creating a controller."
+            },
+            "leather_jacket_recipe": {
+                "name": "📜 Leather Jacket",
+                "description": "Almost like a shield, but much lighter."
             }
         },
         "notifications": {
