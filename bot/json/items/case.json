@@ -370,7 +370,7 @@
             }
         ],
         "image": "case",
-        "rank": "mythical",
+        "rank": "legendary",
         "type": "case"
     },
     "recipe_chest": {
@@ -394,7 +394,7 @@
             }
         ],
         "image": "case",
-        "rank": "mythical",
+        "rank": "legendary",
         "type": "case"
     },
     "recipe_chest_simple": {
@@ -478,7 +478,7 @@
             }
         ],
         "image": "case",
-        "rank": "mythical",
+        "rank": "legendary",
         "type": "case"
     },
     "gift_2024": {
@@ -563,7 +563,7 @@
             }
         ],
         "image": "case",
-        "rank": "mythical",
+        "rank": "legendary",
         "type": "case"
     },
     "egg_case": {
@@ -587,7 +587,7 @@
             }
         ],
         "image": "case",
-        "rank": "mythical",
+        "rank": "legendary",
         "type": "case"
     }
 }
