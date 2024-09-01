@@ -89,12 +89,16 @@ def get_dino_data(data_id: int):
 print('start set chars')
 
 dinos = list(dinosaurs.find({}))
+lld = len(dinos)
+a = 0
 for dino in dinos:
+    a += 1
+    print(a, 'dinos', lld)
     dino: dict
     dino_data = get_dino_data(dino['data_id'])
 
     power, dexterity, intelligence, charisma = set_standart_specifications(dino_data['class'], dino['quality'])
-    
+
     dinosaurs.update_one({
         '_id': dino['_id']
     }, {
@@ -103,14 +107,20 @@ for dino in dinos:
             'stats.dexterity': dexterity,
             'stats.intelligence': intelligence,
             'stats.charisma': charisma,
+            'stats.heal': 100,
+            'stats.energy': 100,
+            'stats.eat': 100,
             'memory.action': []
         }
     })
 
 print('start langs')
 users_data = list(users.find({}))
+a = 0 
+lld = len(users_data)
 for i in users_data:
-
+    a += 1
+    print(a, 'dinos', lld)
     llg = list(langs.find({'userid': i['userid']}))
 
     if len(llg) == 0:
