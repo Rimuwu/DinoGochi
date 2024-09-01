@@ -20,12 +20,6 @@ users = DBconstructor(mongo_client.user.users)
 daily_data = DBconstructor(mongo_client.tavern.daily_award)
 ads = DBconstructor(mongo_client.user.ads)
 
-async def ping():
-    st = time_now()
-    r = requests.post('https://api.telegram.org')
-    dt = round(time_now() - st, 3)
-    return dt
-
 async def check_ads(user_id):
     ads_cabinet = await ads.find_one({'userid': user_id}, comment='check_ads_midl')
 
@@ -47,7 +41,12 @@ class AntifloodMiddleware(BaseMiddleware):
             return CancelUpdate()
 
         if message.date + 10 < int(time_now()):
-            log(f'message timeout: {message.text} from {message.from_user.id} ping1 {int(time_now() - message.date)} ping2 {await ping()}ms', 4, 'middleware')
+            log(f'message timeout: {message.text} from {message.from_user.id} ping1 {int(time_now() - message.date)}', 4, 'middleware')
+
+        # Отмена команды с задержкой в 60+ секунд
+        if int(time_now() - message.date) >= 60:
+            log(f'message: {message.text} from {message.from_user.id} ping1 {int(time_now() - message.date)}', 3, 'middlewareCancel')
+            return CancelUpdate()
 
         if not message.from_user.id in self.last_time:
             self.last_time[message.from_user.id] = time_now()
