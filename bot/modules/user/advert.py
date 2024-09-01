@@ -102,7 +102,19 @@ async def auto_ads(message, only_parthner: bool = False):
     if message.chat.type == "private":
         user = await users.find_one({'userid': user_id}, {"_id": 1}, comment='auto_ads_user')
         if user:
-            if conf.show_advert:
+            if only_parthner:
+                lang = await get_lang(user_id)
+                comp_id = await nextinqueue(user_id, lang)
+                lim = await check_limit(user_id)
+
+                if comp_id:
+                    priory, ign_timeout = await priority_and_timeout(comp_id)
+                    if ign_timeout or lim:
+                        state =  await bot.get_state(user_id, message.chat.id)
+                        if not state:
+                            await generate_message(user_id, comp_id, lang)
+
+            elif conf.show_advert:
                 grm = False
 
                 create = user['_id'].generation_time
@@ -129,15 +141,3 @@ async def auto_ads(message, only_parthner: bool = False):
                 if not grm and comp_id:
                     if ign_timeout or lim:
                         await generate_message(user_id, comp_id)
-
-            if only_parthner:
-                lang = await get_lang(user_id)
-                comp_id = await nextinqueue(user_id, lang)
-                lim = await check_limit(user_id)
-
-                if comp_id:
-                    priory, ign_timeout = await priority_and_timeout(comp_id)
-                    if ign_timeout or lim:
-                        state =  await bot.get_state(user_id, message.chat.id)
-                        if not state:
-                            await generate_message(user_id, comp_id, lang)
