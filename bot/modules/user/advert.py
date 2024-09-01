@@ -52,7 +52,7 @@ async def show_advert_gramads(user_id: int):
 
         if res == 1: await save_last_ads(user_id)
         else: 
-            if res != 8:
+            if res != [8, 7]:
                 log(f'gramads status - {res}', 4)
     return res
 
