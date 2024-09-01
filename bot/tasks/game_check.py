@@ -70,7 +70,7 @@ async def game_process():
 
                 if dino['stats']['game'] < 100:
                     if random.uniform(0, 1) <= GAME_CHANCE:
-                        add_unit += 0
+                        add_unit = 0
 
                         if randint(1, 100) + transform(charisma, 20, 5) >= 80:
                             add_unit = randint(1, 5)
