@@ -18,8 +18,7 @@ langs = mongo_client.user.lang
 users = mongo_client.user.users
 
 ex = os.path.dirname(__file__) # Путь к этому файлу
-with open(f'{ex}/../../bot/json/dino_data.json', encoding='utf-8') as f: 
-  
+with open(f'{ex}/dino_data.json', encoding='utf-8') as f: 
     DINOS = json.load(f).copy() # type: dict
 
 
