@@ -4384,7 +4384,9 @@
                 "check": "👁 Ver Bóveda"
             },
             "start": {
-                "mine": "⛏️ El dinosaurio fue a la mina, ¡vigila su progreso para tratar de tomar todo lo que puedas!"
+                "mine": "⛏️ El dinosaurio fue a la mina, ¡vigila su progreso para tratar de tomar todo lo que puedas!",
+                "bank": "🎰 El dinosaurio ha ido al banco, ¡vigila su progreso para intentar tomar todo lo que puedas!",
+                "sawmill": "🪓 Dinosaurio fue al aserradero, ¡vigila su progreso para tratar de tomar todo lo que pueda!"
             },
             "progress": {
                 "mine": "*⛏️ | Trabajo en la mina*\n\n🥥 *Horario:* {time_bar}\n🔑 *Depósito:* {storage_bar}\n💨 *Comprobaciones a la izquierda:* {check_bar}\n\n_Si todavía tiene comprobaciones, haga clic en el botón de abajo para ver el almacenamiento_",

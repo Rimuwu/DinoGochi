@@ -4384,7 +4384,9 @@
                 "check": "👁 View Vault"
             },
             "start": {
-                "mine": "⛏️ Dinosaur went to the mine, keep an eye on his progress to try to take as much as you can!"
+                "mine": "⛏️ Dinosaur went to the mine, keep an eye on his progress to try to take as much as you can!",
+                "bank": "🎰 Dinosaur has gone to the bank, keep an eye on his progress to try and take as much as you can!",
+                "sawmill": "🪓 Dinosaur went to the sawmill, keep an eye on his progress to try and take as much as he can!"
             },
             "progress": {
                 "mine": "*⛏️ | Work in the mine*\n\n🥥 *Opening hours:* {time_bar}\n🔑 *Repository:* {storage_bar}\n💨 *Checks left:* {check_bar}\n\n_If you still have checks, click on the button below to view the storage_",

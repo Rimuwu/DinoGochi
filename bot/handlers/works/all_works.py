@@ -9,7 +9,7 @@ from bot.modules.dinosaur.dinosaur import Dino
 from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.dinosaur.skills import add_skill_point
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.works import end_work, start_mine
+from bot.modules.dinosaur.works import end_work, start_bank, start_mine, start_sawmill
 from bot.modules.items.item import get_items_names
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import markups_menu as m
@@ -183,5 +183,89 @@ async def end_mine(data, transmitted_data: dict):
 
     await start_mine(last_dino._id, userid, data)
     text = t('works.start.mine', lang)
+    await bot.send_message(chatid, text, 
+                           reply_markup = await m(userid, 'last_menu', lang))
+
+@bot.message_handler(textstart='commands_name.extraction_actions.bank', 
+                     dino_pass=True, nothing_state=True)
+@HDMessage
+async def bank(message: Message):
+    userid = message.from_user.id
+    user = await User().create(userid)
+    lang = await user.lang
+    last_dino = await user.get_last_dino()
+    chatid = message.chat.id
+
+    options = {
+        t('works.buttons.coins', lang): 'coins',
+        t('works.buttons.recipes', lang): 'recipes'
+    }
+
+    rmk = list_to_keyboard([list(options.keys()),
+                            t('buttons_name.cancel', lang)
+                            ]
+                           )
+    text = t('works.choosy_type', lang)
+
+    transmitted_data = {
+        'last_dino': last_dino
+    }
+
+    await ChooseOptionState(end_bank, userid, chatid, lang, options, transmitted_data)
+    await bot.send_message(chatid, text, reply_markup=rmk)
+
+async def end_bank(data, transmitted_data: dict):
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    lang = transmitted_data['lang']
+    last_dino = transmitted_data['last_dino']
+
+    percent, _ = await last_dino.memory_percent('action', 'bank', True)
+    await repeat_activity(last_dino._id, percent)
+
+    await start_bank(last_dino._id, userid, data)
+    text = t('works.start.bank', lang)
+    await bot.send_message(chatid, text, 
+                           reply_markup = await m(userid, 'last_menu', lang))
+
+@bot.message_handler(textstart='commands_name.extraction_actions.sawmill', 
+                     dino_pass=True, nothing_state=True)
+@HDMessage
+async def sawmill(message: Message):
+    userid = message.from_user.id
+    user = await User().create(userid)
+    lang = await user.lang
+    last_dino = await user.get_last_dino()
+    chatid = message.chat.id
+
+    options = {
+        t('works.buttons.coins', lang): 'coins',
+        t('works.buttons.wood', lang): 'wood'
+    }
+
+    rmk = list_to_keyboard([list(options.keys()),
+                            t('buttons_name.cancel', lang)
+                            ]
+                           )
+    text = t('works.choosy_type', lang)
+
+    transmitted_data = {
+        'last_dino': last_dino
+    }
+
+    await ChooseOptionState(end_sawmill, userid, chatid, lang, options, transmitted_data)
+    await bot.send_message(chatid, text, reply_markup=rmk)
+
+async def end_sawmill(data, transmitted_data: dict):
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    lang = transmitted_data['lang']
+    last_dino = transmitted_data['last_dino']
+
+    percent, _ = await last_dino.memory_percent('action', 'sawmill', True)
+    await repeat_activity(last_dino._id, percent)
+
+    await start_sawmill(last_dino._id, userid, data)
+    text = t('works.start.sawmill', lang)
     await bot.send_message(chatid, text, 
                            reply_markup = await m(userid, 'last_menu', lang))

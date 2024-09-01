@@ -4384,7 +4384,9 @@
                 "check": "👁 Lihat Vault"
             },
             "start": {
-                "mine": "⛏️ Dinosaurus pergi ke tambang, awasi perkembangannya untuk mencoba mengambil sebanyak yang Anda bisa!"
+                "mine": "⛏️ Dinosaurus pergi ke tambang, awasi perkembangannya untuk mencoba mengambil sebanyak yang Anda bisa!",
+                "bank": "🎰 Dinosaurus telah pergi ke bank, awasi perkembangannya untuk mencoba dan mengambil sebanyak yang Anda bisa!",
+                "sawmill": "🪓 Dinosaurus pergi ke penggergajian, awasi perkembangannya untuk mencoba dan mengambil sebanyak yang dia bisa!"
             },
             "progress": {
                 "mine": "*⛏️ | Bekerja di tambang*\n\n🥥 *Buka:* {time_bar}\n🔑 *Repositori:* {storage_bar}\n💨 *Cek yang tersisa:* {check_bar}\n\n_Jika Anda masih memiliki cek, klik tombol di bawah ini untuk melihat penyimpanan_",
