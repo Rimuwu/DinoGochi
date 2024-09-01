@@ -35,8 +35,9 @@ class AntifloodMiddleware(BaseMiddleware):
 
     async def pre_process(self, message: Message, data: dict):
         if conf.only_dev and message.from_user.id not in conf.bot_devs:
-            lang = await get_lang(message.from_user.id)
-            await bot.send_message(message.chat.id, t('only_dev_mode', lang))
+            if message.chat.type == "private":
+                lang = await get_lang(message.from_user.id)
+                await bot.send_message(message.chat.id, t('only_dev_mode', lang))
             return CancelUpdate()
 
         if message.date + 10 < int(time_now()):
