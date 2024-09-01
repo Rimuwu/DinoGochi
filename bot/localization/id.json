@@ -4129,12 +4129,12 @@
             "push_info": "🎢 *Hubungkan notifikasi*\n\n🥓 Bot dapat mengirim pemberitahuan ke saluran atau grup saat dibuat di pasar. Untuk melakukannya, tambahkan bot sebagai administrator dengan hak (Publikasikan pesan) ke saluran atau grup. Selanjutnya, ikuti instruksi. \n\n🧵 1 orang dapat memposting pemberitahuan hanya ke 1 tempat, tetapi sebanyak mungkin orang yang Anda inginkan dapat memposting ke 1 tempat. \n\n🎠 Untuk menonaktifkan saluran dari notifikasi - \"/delete_push\""
         },
         "edit_dino": {
-            "info": "🧬 | *Perubahan Dinosaurus*\n_Dinosaurus dapat diubah menjadi dinosaurus lain. Dengan teknologi terbaru, dimungkinkan untuk mengubah penampilan dan gen dinosaurus! _ \n\n🎍 | Ada 4 cara untuk berubah:\n\n*🎭 Kelangkaan* - Hanya kelangkaan dinosaurus yang akan berubah. \n\n*🎠 Penampilan* - Perubahan penampilan. Kelangkaannya akan tetap sama, tetapi penampilannya akan berubah sesuai dengan kelangkaan dinosaurus. \n\n*🎑 Penuh* - Perubahan penampilan dan kelangkaan dinosaurus. \n\n*📚 Atur Ulang Karakteristik* - Reset dan redistribusi karakter. \n\n _ Sebagai akibat dari mutasi (perubahan penampilan), selera dinosaurus Anda dapat berubah. _",
+            "info": "🧬 | *Perubahan Dinosaurus*\n_Seekor dinosaurus dapat diubah menjadi yang lain. Dengan teknologi terbaru, dimungkinkan untuk mengubah penampilan dan gen dinosaurus! _ \n\n🎍 | Ada 4 cara untuk berubah:\n\n*🎭 Kelangkaan* - Hanya kelangkaan dinosaurus yang akan berubah. \n\n*🎠 Penampilan* - Perubahan penampilan. Kelangkaannya akan tetap sama, tetapi penampilannya akan berubah sesuai dengan kelangkaan dinosaurus. \n\n*🎑 Penuh* - Perubahan penampilan dinosaurus dan kelangkaan. \n\n*📚 Setel Ulang Statistik* - Atur ulang karakteristik dan redistribusi. \n\n _ Sebagai akibat dari mutasi (perubahan penampilan), selera dinosaurus Anda dapat berubah. _",
             "buttons": {
                 "transformation rare": "🎭 Kelangkaan",
                 "transformation appearance": "🎠 Penampilan",
                 "transformation all": "🎑 Selesai",
-                "transformation chars": "📚 Atur Ulang Karakteristik"
+                "transformation chars": "📚 Setel Ulang Statistik"
             },
             "dino": "🍡 | Pilih dinosaurus untuk diubah",
             "new_rare": "🍡 | Klik pada tombol untuk memilih kelangkaan baru",
@@ -4494,7 +4494,7 @@
                 "intelligence": "Intelijen",
                 "charisma": "Karisma"
             },
-            "info": "*🌊 Karakteristik Tampilan*\n\n*⚡ Kekuatan*\n{power}\n*🧱 Kelincahan*\n{dexterity}\n*🧠 Kecerdasan*\n{intelligence}\n*😅 Karisma*\n{charisma}\n\n_Jangan lupa untuk mengembangkan keterampilan dinosaurus Anda, mereka membuat hidup cukup mudah bagi Anda dan dinosaurus_",
+            "info": "*🎭 Lihat Spesifikasi*\n\n*⚡ Kekuatan*\n{power}\n\n*🌪️ Kelincahan*\n{dexterity}\n\n*🧠 Kecerdasan*\n{intelligence}\n\n*💫 Karisma*\n{charisma}\n\n_Kembangkan keterampilan dinosaurus Anda — itu akan membuat hidup lebih mudah bagi Anda dan dia_",
             "power": {
                 "0": "Kurangnya kekuatan total.",
                 "1": "Kekuatan minimal, hampir tidak terlihat.",

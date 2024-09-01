@@ -4129,12 +4129,12 @@
             "push_info": "🎢 *Connect notifications*\n\n🥓 The bot is able to send a notification to a channel or group when it is created in the market. To do this, add the bot as an administrator with (Publish messages) rights to the channel or group. Next, follow the instructions. \n\n🧵 1 person can post notices only to 1 place, but as many people as you want can post to 1 place. \n\n🎠 To disable the channel from notifications - \"/delete_push\""
         },
         "edit_dino": {
-            "info": "🧬 | *Dinosaur Change*\n_A dinosaur can be transformed into another one. With the latest technology, it is possible to change the appearance and genes of a dinosaur! _ \n\n🎍 | There are 4 ways to transform:\n\n*🎭 Rarity* - Only the rarity of the dinosaur will change. \n\n*🎠 Appearance* - Change of appearance. The rarity will remain the same, but the appearance will change to match the dinosaur's rarity. \n\n*🎑 Full* - Dinosaur appearance change and rarity. \n\n*📚 Reset Characteristics* - Character reset and redistribution. \n\n _ As a result of mutations (a change in appearance), your dinosaur's tastes may change. _",
+            "info": "🧬 | *Dinosaur Change*\n_A dinosaur can be transformed into another one. With the latest technology, it is possible to change the appearance and genes of a dinosaur! _ \n\n🎍 | There are 4 ways to transform:\n\n*🎭 Rarity* - Only the rarity of the dinosaur will change. \n\n*🎠 Appearance* - Change of appearance. The rarity will remain the same, but the appearance will change to match the dinosaur's rarity. \n\n*🎑 Full* - Dinosaur appearance change and rarity. \n\n*📚 Reset Stats* - Reset characteristics and redistribution. \n\n _ As a result of mutations (a change in appearance), your dinosaur's tastes may change. _",
             "buttons": {
                 "transformation rare": "🎭 Rarity",
                 "transformation appearance": "🎠 Appearance",
                 "transformation all": "🎑 Full",
-                "transformation chars": "📚 Reset Characteristics"
+                "transformation chars": "📚 Reset Stats"
             },
             "dino": "🍡 | Choose a dinosaur to transform",
             "new_rare": "🍡 | Click on the button to select a new rarity",
@@ -4494,7 +4494,7 @@
                 "intelligence": "Intelligence",
                 "charisma": "Charisma"
             },
-            "info": "*🌊 Viewing Characteristics*\n\n*⚡ Strength*\n{power}\n*🧱 Agility*\n{dexterity}\n*🧠 Intelligence*\n{intelligence}\n*😅 Charisma*\n{charisma}\n\n_Don't forget to develop your dinosaur skills, they make life quite easy for both you and the dinosaur_",
+            "info": "*🎭 View Specifications*\n\n*⚡ Strength*\n{power}\n\n*🌪️ Agility*\n{dexterity}\n\n*🧠 Intelligence*\n{intelligence}\n\n*💫 Charisma*\n{charisma}\n\n_Develop your dinosaur skills — it will make life easier for both you and him_",
             "power": {
                 "0": "A complete lack of power.",
                 "1": "Minimal force, barely noticeable.",
