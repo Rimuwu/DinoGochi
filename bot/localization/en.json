@@ -433,9 +433,6 @@
                 "name": "📜 Backpack Recipe",
                 "description": "A school backpack equipped for a dungeon."
             },
-            "bone_shield": {
-                "name": "🛡 Bone Shield"
-            },
             "shield_recipe": {
                 "name": "📜 Shield Recipe",
                 "description": "A shield, just a shield."

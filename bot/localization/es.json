@@ -433,9 +433,6 @@
                 "name": "📜 Receta de mochila",
                 "description": "Una mochila escolar equipada para una mazmorra."
             },
-            "bone_shield": {
-                "name": "🛡 Escudo óseo"
-            },
             "shield_recipe": {
                 "name": "📜 Receta de escudo",
                 "description": "Un escudo, solo un escudo."

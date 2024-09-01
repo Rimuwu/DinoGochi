@@ -3,6 +3,7 @@ from time import time
 from bot.modules.logs import log
 from telebot.types import Message, CallbackQuery
 
+send_logs = False
 
 class HendlerDecorator(object):
 
@@ -14,7 +15,8 @@ class HendlerDecorator(object):
             user_id = message.from_user.id
             time_save = time()
 
-            log(f"command: {func.__name__} userid: {user_id}", 0, 'HandlerStart')
+            if send_logs:
+                log(f"command: {func.__name__} userid: {user_id}", 0, 'HandlerStart')
 
             result = await func(*args)
 
@@ -24,7 +26,9 @@ class HendlerDecorator(object):
                 add_message = 'AHTUNG 60'
             elif work_time >= 10:
                 add_message = 'AHTUNG 10'
-            log(f"command: {func.__name__} userid: {user_id} work.time: {work_time} result: {result} {add_message}", 0, 'HandlerEnd')
+            
+            if send_logs:
+                log(f"command: {func.__name__} userid: {user_id} work.time: {work_time} result: {result} {add_message}", 0, 'HandlerEnd')
 
         return wrapper
 
@@ -36,7 +40,8 @@ class HendlerDecorator(object):
             user_id = callback.from_user.id
             time_save = time()
 
-            log(f"ButtonClickStart: {func.__name__} userid: {user_id}", 0, 'HandlerStart')
+            if send_logs:
+                log(f"ButtonClickStart: {func.__name__} userid: {user_id}", 0, 'HandlerStart')
 
             result = await func(*args)
 
@@ -46,7 +51,9 @@ class HendlerDecorator(object):
                 add_message = 'AHTUNG 60'
             elif work_time >= 10:
                 add_message = 'AHTUNG 10'
-            log(f"ButtonClickEnd: {func.__name__} userid: {user_id} work.time: {work_time} result: {result} {add_message}", 0, 'HandlerStart')
+            
+            if send_logs:
+                log(f"ButtonClickEnd: {func.__name__} userid: {user_id} work.time: {work_time} result: {result} {add_message}", 0, 'HandlerStart')
 
         return wrapper
 

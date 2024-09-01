@@ -51,7 +51,9 @@ async def show_advert_gramads(user_id: int):
                     log('Gramads: %s' % str(await response.json()), 2)
 
         if res == 1: await save_last_ads(user_id)
-        else: log(f'gramads status - {res}', 4)
+        else: 
+            if res != 8:
+                log(f'gramads status - {res}', 4)
     return res
 
 async def create_ads_data(user_id:int, limit: int = 7200): 
