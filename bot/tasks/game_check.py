@@ -47,6 +47,7 @@ async def game_process():
         dino = await dinosaurs.find_one({'_id': game_data['dino_id']}, comment='game_process_dino')
 
         if dino:
+            dino: dict
             charisma = dino['stats']['charisma']
 
             if random.uniform(0, 1) <= ENERGY_DOWN:
@@ -76,8 +77,9 @@ async def game_process():
                             add_unit = randint(1, 5)
 
                         if randint(1, 4) == 4:
+                            dino_class = await Dino().create(dino['_id'])
                             if await check_accessory(
-                                dino, 'controller', True
+                                dino_class, 'controller', True
                                 ):
                                     add_unit = randint(1, 5)
 
