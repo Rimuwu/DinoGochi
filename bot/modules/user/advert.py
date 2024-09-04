@@ -116,6 +116,7 @@ async def auto_ads(message, only_parthner: bool = False):
 
             elif conf.show_advert:
                 grm = False
+                sen_c = False
 
                 create = user['_id'].generation_time
                 now = datetime.now(timezone.utc)
@@ -130,14 +131,16 @@ async def auto_ads(message, only_parthner: bool = False):
                     if comp_id and priory:
                         if ign_timeout or lim:
                             await generate_message(user_id, comp_id)
+                            sen_c = True
 
                 # Если не в приоритете пытаемся отослать рекламу
-                elif delta.days >= 4:
+                if delta.days >= 4 and not sen_c:
                     if lim:
                         r = await show_advert_gramads(user_id)
                         if r == 1: grm = True
 
                 # Если реклама не сработала
-                if not grm and comp_id:
+                if not grm and comp_id and not sen_c:
                     if ign_timeout or lim:
                         await generate_message(user_id, comp_id)
+                        sen_c = True
