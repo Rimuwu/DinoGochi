@@ -388,7 +388,7 @@ async def EditItemFromUser(userid: int, now_item: dict, new_data: dict):
             "item_id": str,
             "abilities": dict #Есть не всегда
         }
-        
+
         new_data - 
         "items_data": {
             "item_id": str,

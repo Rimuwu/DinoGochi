@@ -242,15 +242,30 @@ async def check_items_in_inventory(materials, item, count,
 
             # У предметов нет альтернатив
             if len(find_set) == 1:
-                count_material = await check_and_return_dif(userid, **i['items_data'])
-                if count_material >= material['count']:
-                    finded_items.append(
-                        {'item': i['items_data'],
-                         'count': material['count']}
-                    )
-                else:
-                    not_find.append({'item': i['items_data'], 
-                                     'diff': material['count'] - count_material})
+
+                if material['type'] in ['delete', 'to_create']:
+                    count_material = await check_and_return_dif(userid, **find_set[a])
+                    if count_material >= material['count']:
+                        finded_items.append(
+                            {'item': i['items_data'],
+                            'count': material['count']}
+                        )
+                    else:
+                        not_find.append({'item': i['items_data'], 
+                                        'diff': material['count'] - count_material})
+
+                elif material['type'] == 'endurance':
+                    status, dct_data = await DeleteAbilItem(find_set[a], 'endurance', 
+                                material['act'], count, userid)
+                    if status:
+                        finded_items.append(
+                            {'item': i['items_data'],
+                            'count': material['count']}
+                        )
+                    else:
+                        count_material = len(dct_data['delete'])
+                        not_find.append({'item': i['items_data'], 
+                                        'diff': material['count'] - count_material})
 
             # Есть варианты для выбора
             elif len(find_set) > 1:
@@ -280,7 +295,7 @@ async def check_items_in_inventory(materials, item, count,
         nt_materials = []
         for i in not_find:
             nt_materials.append(
-                f'{get_name(i["item"], lang, i.get("abilities", {}))} x{i["diff"]}'
+                f'{get_name(i["item"]["item_id"], lang, i["item"].get("abilities", {}))} x{i["diff"]}'
             )
 
         text = t('item_use.recipe.not_enough_m', lang, materials=', '.join(nt_materials))
@@ -350,7 +365,7 @@ async def check_endurance_and_col(finded_items, count, item,
     materials = finded_items
 
     data['end'] = []
-
+    
     for material in data_item['materials']:
         ind = data_item['materials'].index(material)
         materials[ind]['type'] = material['type']
