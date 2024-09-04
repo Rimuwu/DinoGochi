@@ -193,11 +193,19 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None,
                 ))
 
         if image:
-            m = await bot.send_photo(userid, image, text, parse_mode, 
+            try:
+                m = await bot.send_photo(userid, image, text, parse_mode, 
+                                     reply_markup=inline)
+            except:
+                m = await bot.send_photo(userid, image, text, 
                                      reply_markup=inline)
         else:
-            m = await bot.send_message(userid, text, 
+            try:
+                m = await bot.send_message(userid, text, 
                                        parse_mode=parse_mode, reply_markup=inline)
+            except:
+                m = await bot.send_message(userid, text, 
+                                     reply_markup=inline)
 
         # Сохраняем
         if m and save:
