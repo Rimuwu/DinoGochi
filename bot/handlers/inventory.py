@@ -413,7 +413,7 @@ async def ns_end(count, transmitted_data: dict):
                         }
                     )
 
-            tt = item['ns_craft'][ns_id]['items_tcraft']
+            tt = item['ns_craft'][ns_id]['time_craft']
             tc = await add_time_craft(userid, 
                                  tt, 
                                  items_tcraft)
