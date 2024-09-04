@@ -34,7 +34,7 @@ def get_data(item_id: str) -> dict:
 
     # Проверяем еть ли предмет с таким ключём в items.json
     if item_id in ITEMS.keys():
-        return ITEMS[item_id]
+        return ITEMS[item_id].copy()
     else: return {}
 
 def get_all_items():
