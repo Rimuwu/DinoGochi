@@ -228,9 +228,15 @@ def near_key_number(n: int, data: dict, alternative: int=1):
 
         alterantive - если не получилось найти ключ, будет возвращён
     """
-    for key in data.keys():
-        if int(key) <= n: return data[key]
-    return data[alternative]
+    sorted_dict = dict(sorted(
+    ((int(key), value) for key, value in data.items() if isinstance(key, (int, str))),
+        key=lambda item: item[0],
+        reverse=True
+    ))
+
+    for key in sorted_dict.keys():
+        if int(key) <= n: return sorted_dict[key]
+    return sorted_dict[alternative]
 
 def crop_text(text: str, unit: int=10, postfix: str='...'):
     """Обрезает текст и добавляет postfix в конце, 
