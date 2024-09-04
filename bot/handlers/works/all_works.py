@@ -114,6 +114,8 @@ async def progress_work(call: CallbackQuery):
                           max_count=res['max_items'])
 
                 await bot.send_message(chatid, text, 'Markdown')
+                await bot.send_message(chatid, '✅', 
+                           reply_markup = await m(userid, 'last_menu', lang))
 
 @bot.message_handler(textstart='commands_name.extraction_actions.stop_work',
                      nothing_state=True)
