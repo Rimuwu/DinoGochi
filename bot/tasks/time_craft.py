@@ -30,7 +30,6 @@ async def check_items():
         if craft['dino_id']:
             # Проверяем, если дино, смотрим на его навыки и рандомим 
             # Возожность добавления +1 к крафту
-            add_way = 'bonus'
             dino = await Dino().create(craft['dino_id'])
             stat = dino.stats['intelligence']
             # Формула отвечает на вопрос - создать ли ещё 1 предмет
@@ -40,6 +39,7 @@ async def check_items():
             if suc:
                 r_item = choice(craft['items'])
                 r_item['count'] += 1
+                add_way = 'bonus'
 
             # Завершение активности динозавра
             await long_activity.delete_one({
