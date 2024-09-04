@@ -26,9 +26,9 @@ async def short_sleep(number: int, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
-    dino = transmitted_data['last_dino']
+    dino: Dino = transmitted_data['last_dino']
 
-    res_dino_status = await check_status(dino['_id'])
+    res_dino_status = await check_status(dino._id)
     if res_dino_status:
         if res_dino_status != 'pass':
             await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
