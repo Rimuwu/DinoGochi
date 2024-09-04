@@ -393,6 +393,9 @@ async def ns_end(count, transmitted_data: dict):
 
         if 'time_craft' in item['ns_craft'][ns_id]:
 
+            for key, value in materials.items():
+                await RemoveItemFromUser(userid, key, value)
+
             items_tcraft = []
             for iid in item['ns_craft'][ns_id]['create']:
                 if isinstance(iid, dict):
@@ -400,7 +403,7 @@ async def ns_end(count, transmitted_data: dict):
                         {'item': {
                             'item_id': iid['item_id'] 
                             },
-                         'count': iid['count']
+                         'count': iid['count'] * count
                         }
                     )
 
@@ -409,7 +412,7 @@ async def ns_end(count, transmitted_data: dict):
                         {'item': {
                             'item_id': iid 
                             },
-                         'count': 1
+                         'count': 1 * count
                         }
                     )
 
