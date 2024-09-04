@@ -199,27 +199,27 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None,
             m = await bot.send_message(userid, text, 
                                        parse_mode=parse_mode, reply_markup=inline)
 
+        # Сохраняем
+        if m and save:
+            await save_message(company_id, userid, m.id)
+
         # Закрепляем
         if companie['pin_message'] and save:
             s = await bot.pin_chat_message(m.chat.id, m.id)
             if s: await bot.delete_message(m.chat.id, m.id + 1)
 
-        # Сохраняем
-        if m and save:
-            await save_message(company_id, userid, m.id)
-
-            # Награда
-            if companie['coin_price'] > 0:
-                await users.update_one({"userid": userid}, 
-                                    {'$inc':
-                                        {"super_coins": companie['coin_price']}},
-                                comment='generate_message')
-                try:
-                    await bot.send_message(userid, 
-                                        t('super_coins.moder_reward', lang, coin=companie['coin_price']), parse_mode="Markdown")
-                except:
-                    await bot.send_message(userid, 
-                                        t('super_coins.moder_reward', lang, coin=companie['coin_price']))
+        # Награда
+        if companie['coin_price'] > 0 and m and save:
+            await users.update_one({"userid": userid}, 
+                                {'$inc':
+                                    {"super_coins": companie['coin_price']}},
+                            comment='generate_message')
+            try:
+                await bot.send_message(userid, 
+                                    t('super_coins.moder_reward', lang, coin=companie['coin_price']), parse_mode="Markdown")
+            except:
+                await bot.send_message(userid, 
+                                    t('super_coins.moder_reward', lang, coin=companie['coin_price']))
         return m.id
     return None
 
