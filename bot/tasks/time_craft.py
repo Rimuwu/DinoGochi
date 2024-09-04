@@ -50,8 +50,9 @@ async def check_items():
             await experience_enhancement(userid, randint(1, 15))
 
         for item in craft['items']:
+            abil = item['item'].get('abilities', {})
             await AddItemToUser(userid, item['item']['item_id'], 
-                                item['count'], item['item']['abilities'])
+                                item['count'], abil)
 
         await item_craft.delete_one({'_id': craft['_id']})
         await user_notification(userid, 'item_crafted', lang,
