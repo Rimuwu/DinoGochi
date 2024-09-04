@@ -240,6 +240,7 @@ async def check_items_in_inventory(materials, item, count,
 
             # У предметов нет альтернатив
             if len(find_set) == 1:
+                data['choosed_items'].append(find_set[0])
 
                 if material['type'] in ['delete', 'to_create']:
                     count_material = await check_and_return_dif(userid, **find_set[a])
@@ -425,22 +426,30 @@ async def end_craft(count, item, userid, chatid, lang, data):
 
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id)
+    
 
     # Оперделение цели крафта
     choosed_items = data['choosed_items']
     temp_way, way = '', ''
+
     if choosed_items == []:
         way = 'main'
     else:
         for i in choosed_items:
             if not temp_way:
-                temp_way = i
+                temp_way = i['item_id']
             else:
-                temp_way += f'-{i}'
-            if temp_way in data_item['create'].keys():
+                temp_way += f'-{i["item_id"]}'
+            if temp_way in list(data_item['create'].keys()):
                 way = temp_way
         if not way:
             way = 'main'
+
+    if way == 'main':
+        for i in choosed_items:
+            if choosed_items in list(data_item['create'].keys()):
+                way = i
+                break
 
     # Удаление материалов
     for material in data['end']:
