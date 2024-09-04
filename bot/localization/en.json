@@ -4142,7 +4142,7 @@
             "no_items": "❌ | You don't have all the items to transform!",
             "new": "☄ Scientists and doctors have been in and out of the room with your dinosaur for a long time. But now! A brand new dinosaur comes out of the room!",
             "return": "🎈 Don't forget to tip!",
-            "reset_chars": "💦 Confirm the reset of the characteristics of the dinosaur. \nPrice: {coins}"
+            "reset_chars": "💦 Confirm the reset of the dinosaur's stats. \nCost: {coins} 🪙"
         },
         "kindergarten": {
             "info": "*🎶 | Kindergarten Menu*\n_The dinosaur cannot be sent to kindergarten for long, otherwise it will miss you_\n\n🧸 Hours spent: {hours_now}\n🧮 Hours left: {remained}\n🎨 Before zeroing: {days}\n\n🎏 Hours Today: {hours} / {remained_today}",

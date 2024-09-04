@@ -339,7 +339,7 @@ async def transformation(callback: CallbackQuery):
         )
 
     elif data[1] == 'chars':
-        coins = GS['change_appearance']['coins']
+        coins = GS['reset_chars']['coins']
         ret_f = reset_chars
 
         steps.append(

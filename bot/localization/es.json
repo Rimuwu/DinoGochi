@@ -4142,7 +4142,7 @@
             "no_items": "❌ | ¡No tienes todos los elementos para transformar!",
             "new": "☄ Los científicos y los médicos han estado entrando y saliendo de la habitación con tu dinosaurio durante mucho tiempo. ¡Pero ahí lo tienes! ¡Un nuevo dinosaurio emerge de la habitación!",
             "return": "🎈 ¡No te olvides de dar propina!",
-            "reset_chars": "💦 Confirmar el restablecimiento de las características del dinosaurio. \nPrecio: {coins}"
+            "reset_chars": "💦 Confirma el reinicio de las estadísticas del dinosaurio. \nCosto: {coins} 🪙"
         },
         "kindergarten": {
             "info": "*🎶 | Menú de jardín de infantes*\n_You no puede enviar un dinosaurio al jardín de infantes durante mucho tiempo, de lo contrario se perderá you_\n\n🧸 Horas empleadas: {hours_now}\n🧮 Horas restantes: {remained}\n🎨 Hasta que se reinicie: {days}\n\n🎏 Horas hoy: {hours} / {remained_today}",

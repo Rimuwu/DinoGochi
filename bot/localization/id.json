@@ -4142,7 +4142,7 @@
             "no_items": "❌ | Anda tidak memiliki semua item untuk diubah!",
             "new": "☄ Para ilmuwan dan dokter telah berjalan masuk dan keluar ruangan dengan dinosaurus Anda untuk waktu yang lama. Tapi begitulah! Dinosaurus baru muncul dari ruangan!",
             "return": "🎈 Jangan lupa memberi tip!",
-            "reset_chars": "💦 Konfirmasikan reset karakteristik dinosaurus. \nHarga: {coins}"
+            "reset_chars": "💦 Konfirmasikan reset statistik dinosaurus. \nBiaya: {coins} 🪙"
         },
         "kindergarten": {
             "info": "*🎶 | Menu TK*\n_You tidak dapat mengirim dinosaurus ke taman kanak-kanak untuk waktu yang lama, jika tidak maka akan kehilangan you_\n\n🧸 Jam yang dihabiskan: {hours_now}\n🧮 Jam tersisa: {remained}\n🎨 Sampai diatur ulang: {days}\n\n🎏 Jam hari ini: {hours} / {remained_today}",
