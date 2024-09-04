@@ -295,7 +295,7 @@ async def check_items_in_inventory(materials, item, count,
         nt_materials = []
         for i in not_find:
             nt_materials.append(
-                f'{get_name(i["item"]["item_id"], lang, i["item"].get("abilities", {}))} x{i["diff"]}'
+                f'{get_name(i["item"]["item_id"], lang, i["item"])} x{i["diff"]}'
             )
 
         text = t('item_use.recipe.not_enough_m', lang, materials=', '.join(nt_materials))
@@ -406,11 +406,11 @@ async def check_endurance_and_col(finded_items, count, item,
         for i in not_found:
             if i['type'] in ['delete', 'to_create']:
                 nt_materials.append(
-                    f'{get_name(i["item"], lang, i.get("abilities", {}))} x{i["count"]}'
+                    f'{get_name(i["item"], lang)} x{i["count"]}'
                 )
         if i['type'] == 'endurance':
             nt_materials.append(
-                    f'{get_name(i["item"], lang, i.get("abilities", {}))} (⬇ -{i["count"]} )'
+                    f'{get_name(i["item"], lang)} (⬇ -{i["count"]} )'
                 )
 
         text = t('item_use.recipe.not_enough_m', lang, materials=', '.join(nt_materials))
