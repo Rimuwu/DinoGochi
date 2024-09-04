@@ -265,13 +265,15 @@ async def buy(_: bool, transmitted_data: dict):
     message_id = transmitted_data['message_id']
     page = transmitted_data['page']
 
+    res = False
+
     if buy_type == 'buy_super_coins':
         user = await users.find_one({"userid": userid}, comment='buy_user')
         if price['super_coins'] <= user['super_coins']:
             res = True
 
             await users.update_one({'userid': userid}, {'$inc': {
-            'super_coins': price['super_coins']}}, comment='buy_await')
+            'super_coins': -price['super_coins']}}, comment='buy_await')
 
     else:
         res = await take_coins(userid, -price['coins'], True)
