@@ -445,7 +445,6 @@ async def end_craft(count, item, userid, chatid, lang, data):
             way = 'main'
 
     # Удаление материалов
-    print(data['end'])
     for material in data['end']:
 
         if material['type'] == 'delete':
@@ -462,9 +461,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
                           })
 
         elif material['type'] == 'to_create':
-            print(material, '--2323')
             r = await UseAutoRemove(userid, material['item'], material['count'])
-            print(r)
             if r:
 
                 data_item['create'][way].append( {
