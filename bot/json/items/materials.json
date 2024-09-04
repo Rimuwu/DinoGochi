@@ -67,7 +67,7 @@
         "image": "item51",
         "rank": "common",
         "type": "material",
-        "groups": ["durable_materials", "ore"]
+        "groups": ["durable_materials", "ore", "rod_group"]
     },
     "iron": {
         "image": "item52",
