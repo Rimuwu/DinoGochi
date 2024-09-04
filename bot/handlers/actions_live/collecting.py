@@ -4,6 +4,7 @@ from bot.const import GAME_SETTINGS
 from bot.exec import bot
 from bot.modules.dinosaur.mood import repeat_activity
 from bot.modules.items.accessory import check_accessory
+from bot.modules.logs import log
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline, list_to_keyboard
 from bot.modules.decorators import HDCallback, HDMessage
@@ -29,6 +30,9 @@ async def collecting_adapter(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
+
+    if type(count) == dict:
+        log(f'collecting_adapter count {count} {userid}', 4)
 
     eat_count = await count_inventory_items(userid, ['eat'])
     if eat_count + count > await max_eat(userid):
