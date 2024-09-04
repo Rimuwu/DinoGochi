@@ -169,25 +169,25 @@
         "image": "",
         "rank": "uncommon",
         "type": "material",
-        "groups": []
+        "groups": ["rod_group"]
     },
     "copper-rod": {
         "image": "",
         "rank": "uncommon",
         "type": "material",
-        "groups": []
+        "groups": ["rod_group"]
     },
 
     "iron-ingot": {
         "image": "",
         "rank": "uncommon",
         "type": "material",
-        "groups": []
+        "groups": ["ingot_group"]
     },
     "copper-ingot": {
         "image": "",
         "rank": "uncommon",
         "type": "material",
-        "groups": []
+        "groups": ["ingot_group"]
     }
 }
