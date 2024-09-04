@@ -1789,7 +1789,7 @@
         "image": "recipe",
         "materials": [
             {
-                "item": "iron-gear",
+                "item": "metal-gear",
                 "type": "delete",
                 "count": 3
             },
