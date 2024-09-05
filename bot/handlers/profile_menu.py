@@ -63,7 +63,7 @@ async def rayting(message: Message):
             text_data = get_data('rayting', lang)
 
             buttons = {}
-            for i in ['lvl', 'coins', 'dungeon', 'super']:
+            for i in ['lvl', 'coins', 'super']: # 'dungeon',
                 buttons[text_data[i]] = f'rayting {i}'
 
             markup = list_to_inline([buttons])
