@@ -58,5 +58,5 @@ async def max_skill(owner: int, skill: str):
     dinos = await get_dinos(owner)
     max_skill = 0
 
-    for dino in dinos: max_skill = max(dino.stats[skill])
+    for dino in dinos: max_skill = max(max_skill, dino.stats[skill])
     return max_skill
