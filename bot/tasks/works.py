@@ -1,22 +1,17 @@
 
-from random import choice, randint, uniform
+from random import choice, randint
 from time import time
 
 from bot.config import conf, mongo_client
-from bot.exec import bot
 from bot.modules.data_format import transform
-from bot.modules.dinosaur.dino_status import end_skill_activity
-from bot.modules.dinosaur.dinosaur import Dino, mutate_dino_stat
-from bot.modules.dinosaur.kd_activity import save_kd
-from bot.modules.dinosaur.mood import add_mood, check_inspiration
-from bot.modules.dinosaur.skills import add_skill_point, check_skill
+from bot.modules.dinosaur.dinosaur import Dino
+from bot.modules.dinosaur.mood import check_inspiration
+from bot.modules.dinosaur.skills import check_skill
 from bot.modules.dinosaur.works import end_work
 from bot.modules.items.item import get_items_names
-from bot.modules.items.item_tools import use_item
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import get_lang, t
 from bot.modules.notifications import dino_notification
-from bot.modules.user.user import get_inventory_from_i
 from bot.taskmanager import add_task
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -77,10 +72,8 @@ async def work():
             if 'coins' in work:
                 if work['coins'] < work['max_coins']:
 
-                    if insp:
-                        coins = randint(100, 800)
-                    else:
-                        coins = randint(100, 400)
+                    if insp: coins = randint(100, 800)
+                    else: coins = randint(100, 400)
 
                     if coins + work['coins'] > work['max_coins']:
                         min_coins = coins + work['coins'] - work['max_coins']
@@ -98,10 +91,8 @@ async def work():
                     if work['max_items'] - count_items == 1:
                         count = 1
                     else:
-                        if not insp:
-                            count = randint(1, 2)
-                        else:
-                            count = randint(1, 4)
+                        if not insp: count = randint(1, 2)
+                        else: count = randint(1, 4)
 
                     items_group_ids = get_group(data[work["activity_type"]])
                     random_item = choice(items_group_ids)
