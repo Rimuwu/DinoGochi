@@ -316,3 +316,36 @@ async def lang(message: Message):
                                reply_markup=buttons)
 
     await ChooseOptionState(lang_set, userid, chatid, lang, options)
+
+async def dino_talk_set(result: bool, transmitted_data: dict):
+    userid = transmitted_data['userid']
+    lang = transmitted_data['lang']
+    chatid = transmitted_data['chatid']
+
+    text = t(f'no_talk.{result}', lang)
+    await bot.send_message(chatid, text, 
+                    reply_markup= await m(userid, 'last_menu', lang))
+    await users.update_one({'userid': userid}, 
+                           {"$set": {'settings.no_talk': result}}, 
+                           comment='no_talk_1'
+                           )
+
+@bot.message_handler(pass_bot=True, text='commands_name.settings2.dino_talk', 
+                     is_authorized=True, private=True)
+@HDMessage
+async def dino_talk(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+    chatid = message.chat.id
+
+    prefix = 'buttons_name.'
+    buttons = [
+        ['enable', 'disable'],
+        ['cancel']
+    ]
+    translated = tranlate_data(buttons, lang, prefix)
+    keyboard = list_to_keyboard(translated, 2)
+
+    await ChooseConfirmState(dino_talk_set, userid, chatid, lang)
+    await bot.send_message(userid, t('no_talk.info', lang), 
+                           reply_markup=keyboard)

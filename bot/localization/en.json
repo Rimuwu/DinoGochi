@@ -30,7 +30,8 @@
             "settings2": {
                 "my_name": "🎠 Call Me",
                 "custom_profile": "🌟 Dinosaur background",
-                "lang": "👅 Tongue"
+                "lang": "👅 Tongue",
+                "dino_talk": "✉ Talking to the Dinosaur"
             },
             "profile": {
                 "information": "📜 Information",
@@ -4595,6 +4596,11 @@
             "count": "🥕 Specify how many items you want to buy or choose an option from the list below",
             "False": "👁 Not enough coins or the item is no longer sold in this form or quantity!",
             "True": "🎟 Item added to inventory! Congratulations on your purchase!"
+        },
+        "no_talk": {
+            "info": "❗ Choose whether to disable self-talk",
+            "True": "🔧 The dinosaur will no longer write to you on its own!",
+            "False": "🔧 Dinosaur can now write to you on his own!"
         }
     }
 }

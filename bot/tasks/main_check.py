@@ -184,15 +184,18 @@ async def main_checks():
         
         # ========== Мысли вслух ========== # 
         if status == 'pass' and r == 0:
-            chance = randint(1, 60) + transform(dino['stats']['charisma'], 20, 5)
-            if chance >= 60:
+            chance = randint(1, 100) + transform(dino['stats']['charisma'], 20, 10)
+            if chance >= 90:
                 owner = await get_owner(dino['_id'])
 
                 if owner:
                     user = await User().create(owner['owner_id'])
-                    lang = await get_lang(owner['owner_id'])
+                    if 'no_talk' in user.settings and user.settings['no_talk']:
+                        continue
 
+                    lang = await get_lang(owner['owner_id'])
                     state = await bot.get_state(user.userid, user.userid)
+
                     if state == None:
                         if not user.settings.get('my_name', False):
                             owner_name = t('owner', lang)

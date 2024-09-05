@@ -30,7 +30,8 @@
             "settings2": {
                 "my_name": "🎠 Telepon saya",
                 "custom_profile": "🌟 Latar belakang dinosaurus",
-                "lang": "👅 Bahasa"
+                "lang": "👅 Bahasa",
+                "dino_talk": "✉ Berbicara dengan Dinosaurus"
             },
             "profile": {
                 "information": "Informasi 📜",
@@ -4595,6 +4596,11 @@
             "count": "🥕 Tentukan berapa banyak item yang ingin Anda beli atau pilih opsi dari daftar di bawah ini",
             "False": "👁 Koin tidak cukup atau barang tidak lagi dijual dalam bentuk atau jumlah ini!",
             "True": "🎟 Item ditambahkan ke inventaris! Selamat atas pembelian Anda!"
+        },
+        "no_talk": {
+            "info": "❗ Pilih apakah akan menonaktifkan self-talk",
+            "True": "🔧 Dinosaurus tidak akan lagi menulis kepada Anda sendiri!",
+            "False": "🔧 Dinosaurus sekarang dapat menulis kepada Anda sendiri!"
         }
     }
 }

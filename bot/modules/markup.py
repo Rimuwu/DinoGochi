@@ -122,6 +122,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         add_back_button = True
         buttons = [
             ['my_name', 'lang'],
+            ['dino_talk']
         ]
 
     elif markup_key == 'profile_menu':

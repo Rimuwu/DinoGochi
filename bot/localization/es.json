@@ -30,7 +30,8 @@
             "settings2": {
                 "my_name": "🎠 Llámame",
                 "custom_profile": "🌟 Fondo de dinosaurio",
-                "lang": "👅 Idioma"
+                "lang": "👅 Idioma",
+                "dino_talk": "✉ Hablando con el dinosaurio"
             },
             "profile": {
                 "information": "📜 Información",
@@ -4595,6 +4596,11 @@
             "count": "🥕 Especifique cuántos artículos desea comprar o elija una opción de la lista a continuación",
             "False": "👁 ¡No hay suficientes monedas o el artículo ya no se vende en esta forma o cantidad!",
             "True": "🎟 ¡Artículo agregado al inventario! ¡Felicidades por su compra!"
+        },
+        "no_talk": {
+            "info": "❗ Elige si deshabilitar el diálogo interno",
+            "True": "🔧 ¡El dinosaurio ya no te escribirá solo!",
+            "False": "🔧 ¡El dinosaurio ahora puede escribirte por su cuenta!"
         }
     }
 }

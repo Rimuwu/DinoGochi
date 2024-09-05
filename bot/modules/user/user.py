@@ -61,7 +61,8 @@ class User:
             'last_dino': None, #храним ObjectId
             'profile_view': 1,
             'inv_view': [2, 3],
-            'my_name': '' # Как вас называет динозавр
+            'my_name': '', # Как вас называет динозавр
+            'no_talk': False
             }
 
         self.notifications = {}
