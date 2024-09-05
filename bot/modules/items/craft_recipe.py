@@ -192,7 +192,7 @@ async def end_choose_items(items: dict, transmitted_data: dict[str, Any]):
         choosed: dict
 
         data_of_keys[key_material] = choosed
-        choosed_items.append(choosed['item_id'])
+        choosed_items.append(choosed)
 
     for material in materials:
         material: dict
@@ -240,7 +240,7 @@ async def check_items_in_inventory(materials, item, count,
 
             # У предметов нет альтернатив
             if len(find_set) == 1:
-                data['choosed_items'].append(find_set[0])
+                # data['choosed_items'].append(find_set[0])
 
                 if material['type'] in ['delete', 'to_create']:
                     count_material = await check_and_return_dif(userid, **find_set[a])
@@ -426,7 +426,6 @@ async def end_craft(count, item, userid, chatid, lang, data):
 
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id)
-    
 
     # Оперделение цели крафта
     choosed_items = data['choosed_items']
@@ -517,7 +516,8 @@ async def end_craft(count, item, userid, chatid, lang, data):
                                 else:
                                     to_create[cr_item]['abilities'][abil] = abil_unit
 
-                                if abil in standart_abil and to_create[cr_item]['abilities'][abil] > standart_abil[abil]:
+                                if abil in standart_abil and \
+                                    to_create[cr_item]['abilities'][abil] > standart_abil[abil]:
                                     to_create[cr_item]['abilities'][abil] = standart_abil[abil]
 
     # Выдача крафта
