@@ -4493,7 +4493,7 @@
                 "intelligence": "Intelijen",
                 "charisma": "Karisma"
             },
-            "info": "*🎭 Lihat Spesifikasi*\n\n*⚡ Kekuatan*\n{power}\n\n*🌪️ Kelincahan*\n{dexterity}\n\n*🧠 Kecerdasan*\n{intelligence}\n\n*💫 Karisma*\n{charisma}\n\n_Kembangkan keterampilan dinosaurus Anda — itu akan membuat hidup lebih mudah bagi Anda dan dia_",
+            "info": "*🎭 Lihat Spesifikasi*\n\n*⚡ Daya [{power_u}]*\n{power}\n\n*🌪️ Kelincahan [{dexterity_u}]*\n{dexterity}\n\n*🧠 Kecerdasan [{intelligence_u}]*\n{intelligence}\n\n*💫 Karisma [{charisma_u}]*\n{charisma}\n\n_Tingkatkan keterampilan dinosaurus Anda — itu akan membuat hidup lebih mudah bagi Anda dan dia_",
             "power": {
                 "0": "Kurangnya kekuatan total.",
                 "1": "Kekuatan minimal, hampir tidak terlihat.",

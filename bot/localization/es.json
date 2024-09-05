@@ -4493,7 +4493,7 @@
                 "intelligence": "Inteligencia",
                 "charisma": "Carisma"
             },
-            "info": "*🎭 Ver especificaciones*\n\n*⚡ Fuerza*\n{power}\n\n*🌪️ Agilidad*\n{dexterity}\n\n*🧠 Inteligencia*\n{intelligence}\n\n*💫 Carisma*\n{charisma}\n\n_Desarrolla tus habilidades con los dinosaurios: te hará la vida más fácil tanto a ti como a él_",
+            "info": "*🎭 Ver especificaciones*\n\n*⚡ Potencia [{power_u}]*\n{power}\n\n*🌪️ Agilidad [{dexterity_u}]*\n{dexterity}\n\n*🧠 Inteligencia [{intelligence_u}]*\n{intelligence}\n\n*💫 Carisma [{charisma_u}]*\n{charisma}\n\n_Mejora tus habilidades con los dinosaurios: te hará la vida más fácil tanto a ti como a él_",
             "power": {
                 "0": "Una falta total de poder.",
                 "1": "Fuerza mínima, apenas perceptible.",

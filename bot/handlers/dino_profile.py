@@ -346,6 +346,7 @@ async def skills_profile(userid, chatid, dino_data: dict, lang):
         data_skills[i] = near_key_number(
             dino.stats[i], get_data(f'skills_profile.{i}', lang)
         )
+        data_skills[i+'_u'] = round(dino.stats[i], 4)
 
     text = t('skills_profile.info', lang, **data_skills)
     await bot.send_photo(chatid, image, text, parse_mode='Markdown')

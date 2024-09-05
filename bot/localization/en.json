@@ -4493,7 +4493,7 @@
                 "intelligence": "Intelligence",
                 "charisma": "Charisma"
             },
-            "info": "*🎭 View Specifications*\n\n*⚡ Strength*\n{power}\n\n*🌪️ Agility*\n{dexterity}\n\n*🧠 Intelligence*\n{intelligence}\n\n*💫 Charisma*\n{charisma}\n\n_Develop your dinosaur skills — it will make life easier for both you and him_",
+            "info": "*🎭 View Specifications*\n\n*⚡ Power [{power_u}]*\n{power}\n\n*🌪️ Agility [{dexterity_u}]*\n{dexterity}\n\n*🧠 Intelligence [{intelligence_u}]*\n{intelligence}\n\n*💫 Charisma [{charisma_u}]*\n{charisma}\n\n_Improve your dinosaur skills — it will make life easier for both you and him_",
             "power": {
                 "0": "A complete lack of power.",
                 "1": "Minimal force, barely noticeable.",
