@@ -97,6 +97,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
     data_item: dict = get_data(item_id)
 
     materials, steps = [], []
+    choosed_items = []
     a = -1
 
     for material in data_item['materials']:
@@ -140,6 +141,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
 
             elif len(inv) == 1:
                 copy_mat['item'] = inv[0]['item']['item_id']
+                choosed_items.append(inv[0]['item'])
 
             elif len(inv) > 1:
                 a += 1
@@ -173,7 +175,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
 
     else:
         data = {
-            "choosed_items": []
+            "choosed_items": choosed_items
         }
 
         await check_items_in_inventory(materials, item, count, 
@@ -291,12 +293,17 @@ async def check_items_in_inventory(materials, item, count,
                                      'count': material['count']})
 
     if not_find:
-        print(not_find)
         nt_materials = []
         for i in not_find:
-            
+            if type(i['item']) == dict:
+                item_id = i["item"]["item_id"]
+                abil = i["item"]
+            else: 
+                item_id = i['item']
+                abil = {}
+
             nt_materials.append(
-                f'{get_name(i["item"]["item_id"], lang, i["item"])} x{i["diff"]}'
+                f'{get_name(item_id, lang, abil)} x{i["diff"]}'
             )
 
         text = t('item_use.recipe.not_enough_m', lang, materials=', '.join(nt_materials))
@@ -366,7 +373,7 @@ async def check_endurance_and_col(finded_items, count, item,
     materials = finded_items
 
     data['end'] = []
-    
+
     for material in data_item['materials']:
         ind = data_item['materials'].index(material)
         materials[ind]['type'] = material['type']
