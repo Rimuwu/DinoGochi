@@ -15,9 +15,6 @@ class IsEqual(AdvancedCustomFilter):
         if text == message.text:
             return True
         else:
-            if lang != 'en':
-                text = t(key, 'en')
-                return text == message.text
             return False
 
 class StartWith(AdvancedCustomFilter):
@@ -30,9 +27,6 @@ class StartWith(AdvancedCustomFilter):
         if text == message.text.startswith(text):
             return True
         else:
-            if lang != 'en':
-                text = t(key, 'en')
-                return text == message.text.startswith(text)
             return False
 
 bot.add_custom_filter(IsEqual())
