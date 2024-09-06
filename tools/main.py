@@ -18,9 +18,9 @@ langs = mongo_client.user.lang
 users = mongo_client.user.users
 sellers = mongo_client.market.sellers
 
-ex = os.path.dirname(__file__) # Путь к этому файлу
-with open(f'{ex}/dino_data.json', encoding='utf-8') as f: 
-    DINOS = json.load(f).copy() # type: dict
+# ex = os.path.dirname(__file__) # Путь к этому файлу
+# with open(f'{ex}/dino_data.json', encoding='utf-8') as f: 
+#     DINOS = json.load(f).copy() # type: dict
 
 
 # print('start money')
@@ -118,33 +118,35 @@ with open(f'{ex}/dino_data.json', encoding='utf-8') as f:
 #         }
 #     })
 
-# print('start langs')
-# users_data = list(users.find({}))
-# a = 0 
-# lld = len(users_data)
-# for i in users_data:
-#     a += 1
-#     print(a, 'users', lld)
-#     llg = list(langs.find({'userid': i['userid']}))
+print('start langs')
+users_data = list(users.find({}))
+a = 0 
+col = 0
+lld = len(users_data)
+for i in users_data:
+    a += 1
+    print(a, 'users', lld)
+    llg = list(langs.find({'userid': i['userid']}))
 
-#     if len(llg) == 0:
-#         langs.insert_one({'userid': i['userid'], 'lang': 'en'})
+    if len(llg) == 0:
+        langs.insert_one({'userid': i['userid'], 'lang': 'en'})
 
-#     elif len(llg) != 1:
-#         main_lang = llg[0]['lang']
-#         langs.delete_many({'userid': i['userid']})
+    elif len(llg) != 1:
+        main_lang = llg[0]['lang']
+        langs.delete_many({'userid': i['userid']})
 
-#         langs.insert_one({'userid': i['userid'], 'lang': main_lang})
+        langs.insert_one({'userid': i['userid'], 'lang': main_lang})
+        col += len(llg) - 1
 
-# print('end')
+print('end', col)
 
 
-dinosaurs.update_many({'profile.background_type': 'custom'}, {
-    "$set": {'profile.background_type': "standart",
-             'profile.background_id': 0
-        }
-})
+# dinosaurs.update_many({'profile.background_type': 'custom'}, {
+#     "$set": {'profile.background_type': "standart",
+#              'profile.background_id': 0
+#         }
+# })
 
-sellers.update_many({}, {
-    "$set": {'custom_image': ''}
-})
+# sellers.update_many({}, {
+#     "$set": {'custom_image': ''}
+# })
