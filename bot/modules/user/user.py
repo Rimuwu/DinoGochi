@@ -226,7 +226,9 @@ async def insert_user(userid: int, lang: str):
     if not await users.find_one({'userid': userid}, comment='insert_user'):
         log(prefix='InsertUser', message=f'User: {userid}', lvl=0)
         if lang not in available_locales: lang = 'en'
-        await langs.insert_one({'userid': userid, 'lang': lang}, comment='insert_user_1')
+        set_lang = await langs.find_one({'userid': userid}) == {}
+        if set_lang:
+            await langs.insert_one({'userid': userid, 'lang': lang}, comment='insert_user_1')
 
         user = await User().create(userid)
         await create_ads_data(userid, 1800)
