@@ -4334,7 +4334,7 @@
             "gym": "💪 Dinosaur went to the hall to pump his strength and power! \n🏋️‍♂️ With each new exercise, he becomes not only stronger, but also more confident! \n🏉 The minimum training time for a dinosaur is {min_time}",
             "library": "📖 Dinosaur enthusiastically reads books, developing his intelligence!! \n📚 As he delves deeper into knowledge, he becomes smarter and stronger, opening up new horizons for his adventures. \n✨ The minimum training time for a dinosaur is {min_time}",
             "park": "🌳 The dinosaur went for a walk in the park to pump up his charisma! \n😄 With each new acquaintance and conversation with passers-by, he becomes more charming and self-confident! \n✨ The minimum training time for a dinosaur is {min_time}",
-            "swimming_pool": "💦 Dinozav went to the pool to improve his agility! \n🏊‍♂️ Diving into the water, he surprises everyone with acrobatic tricks! \n🌊 The minimum training time for a dinosaur is {min_time}",
+            "swimming_pool": "💦 Dinosaur went to the pool to improve his agility! \n🏊‍♂️ Diving into the water, he surprises everyone with acrobatic tricks! \n🌊 The minimum training time for a dinosaur is {min_time}",
             "use_item": "\n🚚 | The dinosaur took this item on his own, as he is in training.",
             "overloading": "❗ {dino_name} is overloaded with training, because of this, his rest time for this workout will be increased! Hurry up and bring the dinosaur back from training!"
         },

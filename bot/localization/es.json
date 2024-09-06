@@ -4334,7 +4334,7 @@
             "gym": "💪 ¡Dinosaurio fue al salón para bombear su fuerza y poder! \n🏋️‍♂️ ¡Con cada nuevo ejercicio, se vuelve no solo más fuerte, sino también más seguro! \n🏉 El tiempo mínimo de entrenamiento para un dinosaurio es {min_time}",
             "library": "📖 ¡Dinosaurio lee libros con entusiasmo, desarrollando su inteligencia! \n📚 A medida que profundiza en el conocimiento, se vuelve más inteligente y fuerte, abriendo nuevos horizontes para sus aventuras. \n✨ El tiempo mínimo de entrenamiento para un dinosaurio es {min_time}",
             "park": "🌳 ¡El dinosaurio salió a dar un paseo por el parque para aumentar su carisma! \n😄 ¡Con cada nuevo conocido y conversación con los transeúntes, se vuelve más encantador y seguro de sí mismo! \n✨ El tiempo mínimo de entrenamiento para un dinosaurio es {min_time}",
-            "swimming_pool": "💦 ¡Dinozav fue a la piscina para mejorar su agilidad! \n🏊‍♂️ ¡Sumergiéndose en el agua, sorprende a todos con trucos acrobáticos! \n🌊 El tiempo mínimo de entrenamiento para un dinosaurio es {min_time}",
+            "swimming_pool": "💦 ¡Dinosaurio fue a la piscina para mejorar su agilidad! \n🏊‍♂️ ¡Sumergiéndose en el agua, sorprende a todos con trucos acrobáticos! \n🌊 El tiempo mínimo de entrenamiento para un dinosaurio es {min_time}",
             "use_item": "\n🚚 | El dinosaurio tomó este artículo por su cuenta, ya que está en entrenamiento.",
             "overloading": "❗ {dino_name} está sobrecargado de entrenamiento, debido a esto, ¡su tiempo de descanso para este entrenamiento aumentará! ¡Date prisa y trae al dinosaurio de vuelta del entrenamiento!"
         },

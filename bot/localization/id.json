@@ -4334,7 +4334,7 @@
             "gym": "💪 Dinosaurus pergi ke aula untuk memompa kekuatan dan kekuatannya! \n🏋️‍♂️ Dengan setiap latihan baru, dia menjadi tidak hanya lebih kuat, tetapi juga lebih percaya diri! \n🏉 Waktu pelatihan minimum untuk dinosaurus adalah {min_time}",
             "library": "📖 Dinosaurus dengan antusias membaca buku, mengembangkan kecerdasannya!! \n📚 Saat dia menggali lebih dalam pengetahuan, dia menjadi lebih pintar dan lebih kuat, membuka cakrawala baru untuk petualangannya. \n✨ Waktu pelatihan minimum untuk dinosaurus adalah {min_time}",
             "park": "🌳 Dinosaurus itu berjalan-jalan di taman untuk memompa karismanya! \n😄 Dengan setiap kenalan baru dan percakapan dengan orang yang lewat, dia menjadi lebih menawan dan percaya diri! \n✨ Waktu pelatihan minimum untuk dinosaurus adalah {min_time}",
-            "swimming_pool": "💦 Dinozav pergi ke kolam renang untuk meningkatkan kelincahannya! \n🏊‍♂️ Menyelam ke dalam air, dia mengejutkan semua orang dengan trik akrobatik! \n🌊 Waktu pelatihan minimum untuk dinosaurus adalah {min_time}",
+            "swimming_pool": "💦 Dinosaurus pergi ke kolam renang untuk meningkatkan kelincahannya! \n🏊‍♂️ Menyelam ke dalam air, dia mengejutkan semua orang dengan trik akrobatik! \n🌊 Waktu pelatihan minimum untuk dinosaurus adalah {min_time}",
             "use_item": "\n🚚 | Dinosaurus mengambil item ini sendiri, karena dia sedang dalam pelatihan.",
             "overloading": "❗ {dino_name} kelebihan beban dengan latihan, karena itu, waktu istirahatnya untuk latihan ini akan ditingkatkan! Cepat dan bawa dinosaurus kembali dari pelatihan!"
         },
