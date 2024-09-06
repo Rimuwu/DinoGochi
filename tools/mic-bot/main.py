@@ -89,7 +89,7 @@ def send_welcome(message):
     bot.reply_to(message, "Hi!")
 
 
-@bot.message_handler(commands=['translate', 't'])
+@bot.message_handler(commands=['translatem2', 'tm2'])
 def translate(message):
     args = message.text.split()
     lang = args[1]
@@ -97,7 +97,7 @@ def translate(message):
 
     chat_id = message.chat.id
 
-    bot.send_message(chat_id, t(text, lang, False))
+    bot.send_message(chat_id, t(text, lang, False), parse_mode='Markdown')
 
 
 if __name__ == '__main__':
