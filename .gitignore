@@ -7,4 +7,4 @@ venv
 .venv
 config.json
 .state-save
-tools/mic-bot
+.tools/mic-bot/main.py
