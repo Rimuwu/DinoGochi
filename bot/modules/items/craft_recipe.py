@@ -291,8 +291,10 @@ async def check_items_in_inventory(materials, item, count,
                                      'count': material['count']})
 
     if not_find:
+        print(not_find)
         nt_materials = []
         for i in not_find:
+            
             nt_materials.append(
                 f'{get_name(i["item"]["item_id"], lang, i["item"])} x{i["diff"]}'
             )
