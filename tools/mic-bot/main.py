@@ -1,7 +1,6 @@
 import json
 import os
 import sys
-#Привет
 
 from telebot import TeleBot
 

@@ -899,30 +899,6 @@
         "rank": "rare",
         "type": "recipe"
     },
-    "fishing_rod_recipe": {
-        "abilities": {
-            "uses": 1
-        },
-        "create": {
-            "main": [
-                {
-                    "item": "fishing-rod",
-                    "type": "create",
-                    "count": 1
-                }
-            ]
-        },
-        "image": "recipe",
-        "materials": [
-            {
-                "item": "rope",
-                "type": "delete",
-                "count": 2
-            }
-        ],
-        "rank": "rare",
-        "type": "recipe"
-    },
     "sword_recipe": {
         "abilities": {
             "uses": 2
