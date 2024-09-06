@@ -24,7 +24,7 @@ class StartWith(AdvancedCustomFilter):
         lang = await get_lang(message.from_user.id, message.from_user.language_code)
         text = t(key, lang, False)
 
-        if text == message.text.startswith(text):
+        if message.text.startswith(text):
             return True
         else:
             return False
