@@ -1625,7 +1625,7 @@
         "create": {
             "main": [
                 {
-                    "item": "lock_bag",
+                    "item": "skinning_knife",
                     "type": "create",
                     "count": 1
                 }
@@ -1639,9 +1639,9 @@
                 "count": 2
             },
             {
-                "item": ["iron-rod", "copper-rod"],
+                "item": ["iron-ingot", "copper-ingot"],
                 "type": "delete",
-                "count": 1
+                "count": 4
             }
         ],
         "rank": "mystical",
