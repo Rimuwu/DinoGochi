@@ -52,7 +52,7 @@ async def dino_craft(dino_id: ObjectId, craft_id: Union[ObjectId, str]):
         # Понижение времени в зависимости от ловкости
         dexterity = await check_skill(dino_id, 'dexterity')
         skip_percent = transform(dexterity, 20, 50)
-        
+
         res = await check_inspiration(dino_id, 'craft')
         if res: 
             skip_percent *= 2
