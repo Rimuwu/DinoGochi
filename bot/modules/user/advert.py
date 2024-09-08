@@ -107,7 +107,11 @@ async def auto_ads(message, only_parthner: bool = False):
                 comp_id = await nextinqueue(user_id, lang)
                 lim = await check_limit(user_id)
 
-                if comp_id:
+                create = user['_id'].generation_time
+                now = datetime.now(timezone.utc)
+                delta = now - create
+
+                if comp_id and delta.days >= 1:
                     priory, ign_timeout = await priority_and_timeout(comp_id)
                     if ign_timeout or lim:
                         state =  await bot.get_state(user_id, message.chat.id)
