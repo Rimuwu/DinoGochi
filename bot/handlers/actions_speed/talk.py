@@ -9,6 +9,7 @@ from bot.modules.localization import get_data, t
 from bot.modules.markup import markups_menu as m
 from bot.modules.dinosaur.mood import add_mood, repeat_activity
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User
 from telebot.types import Message
 
@@ -43,5 +44,6 @@ async def talk(message: Message):
     theme = choice(text_l)
 
     text = t(f'talk.{status}', lang, theme=theme)
-    await bot.send_message(chatid, text,  parse_mode='Markdown',
+    mes = await bot.send_message(chatid, text,  parse_mode='Markdown',
         reply_markup=await m(userid, 'speed_actions_menu', lang, True))
+    await auto_ads(mes)

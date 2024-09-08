@@ -11,6 +11,7 @@ from bot.modules.localization import get_data, t
 from bot.modules.markup import markups_menu as m
 from bot.modules.dinosaur.mood import add_mood, repeat_activity
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User
 from telebot.types import Message
 
@@ -58,8 +59,9 @@ async def pet(message: Message):
     mes = rand_d_act['message'].format(
         owner=owner)
     text = f"🦕 | __{rand_d_act['reaction']}__\n🪈 | {mes}"
-    await bot.send_message(chatid, text,  parse_mode='Markdown',
+    mes = await bot.send_message(chatid, text,  parse_mode='Markdown',
         reply_markup=await m(userid, 'speed_actions_menu', lang, True))
 
     if cancel_break:
         await bot.send_message(chatid, t('pet.cancel_breakdown', lang), parse_mode='Markdown')
+    await auto_ads(mes)
