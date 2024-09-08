@@ -2631,7 +2631,17 @@
                 "game": "Inspirasi untuk game",
                 "collecting": "Inspirasi untuk Berkumpul",
                 "journey": "Inspirasi Perjalanan",
-                "sleep": "Inspirasi untuk Tidur"
+                "sleep": "Inspirasi untuk Tidur",
+                "craft": "Inspirasi untuk berkreasi",
+                "farm": "Inspirasi untuk bertani",
+                "mine": "Inspirasi untuk menggali",
+                "bank": "Inspirasi untuk bekerja di bank",
+                "sawmill": "Inspirasi untuk memotong",
+                "gym": "Inspirasi untuk Olahraga Keras",
+                "library": "Inspirasi untuk membaca",
+                "park": "Inspirasi untuk berjalan-jalan",
+                "swimming_pool": "Inspirasi untuk berenang",
+                "exp_boost": "Inspirasi untuk pengalaman"
             },
             "good_sleep": "Tidur nyenyak",
             "end_game": "Bermain bagus",

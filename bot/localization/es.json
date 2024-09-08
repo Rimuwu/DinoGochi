@@ -2631,7 +2631,17 @@
                 "game": "Inspiración para juegos",
                 "collecting": "Inspiración para la reunión",
                 "journey": "Inspiración para viajar",
-                "sleep": "Inspiración para dormir"
+                "sleep": "Inspiración para dormir",
+                "craft": "Inspiración para la creación",
+                "farm": "Inspiración para la agricultura",
+                "mine": "Inspiración para cavar",
+                "bank": "Inspiración para trabajar en un banco",
+                "sawmill": "Inspiración para picar",
+                "gym": "Inspiración para el deporte duro",
+                "library": "Inspiración para la lectura",
+                "park": "Inspiración para un paseo",
+                "swimming_pool": "Inspiración para nadar",
+                "exp_boost": "Inspiración para la experiencia"
             },
             "good_sleep": "Dormí bien",
             "end_game": "Jugó bien",

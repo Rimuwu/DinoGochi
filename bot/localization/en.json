@@ -2631,7 +2631,17 @@
                 "game": "Inspiration for games",
                 "collecting": "Inspiration for Gathering",
                 "journey": "Travel Inspiration",
-                "sleep": "Inspiration for Sleep"
+                "sleep": "Inspiration for Sleep",
+                "craft": "Inspiration for creation",
+                "farm": "Inspiration for farming",
+                "mine": "Inspiration for digging",
+                "bank": "Inspiration for working in a bank",
+                "sawmill": "Inspiration for chopping",
+                "gym": "Inspiration for Hard Sport",
+                "library": "Inspiration for reading",
+                "park": "Inspiration for a walk",
+                "swimming_pool": "Inspiration for swimming",
+                "exp_boost": "Inspiration for experience"
             },
             "good_sleep": "Slept well",
             "end_game": "Played well",
