@@ -1,6 +1,8 @@
 from random import choice
 from time import time
+from typing import Union
 
+from bson import ObjectId
 from telebot.types import User as teleUser
 
 from bot.config import mongo_client
@@ -289,7 +291,7 @@ async def get_inventory(userid: int, exclude_ids: list = []):
 async def items_count(userid: int):
     return len(list(await items.find({'owner_id': userid}, {'_id': 1}, comment='items_count')))
 
-async def last_dino(user: User):
+async def last_dino(user: User) -> Union[Dino, None]:
     """Возвращает последнего выбранного динозавра.
        Если None - вернёт первого
        Если нет динозавров - None
@@ -301,7 +303,10 @@ async def last_dino(user: User):
             return await Dino().create(dino_data['_id'])
         else:
             await user.update({'$set': {'settings.last_dino': None}})
-            return await last_dino(user)
+            dino = await last_dino(user)
+            if isinstance(dino, ObjectId):
+                return await Dino().create(dino)
+            else: return dino
     else:
         dino_lst = await user.get_dinos()
         if dino_lst:
