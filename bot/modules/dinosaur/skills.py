@@ -36,7 +36,7 @@ async def add_skill_point(dino_id: ObjectId, skill: str, point: float):
     if dino:
         skill_stat = dino['stats'][skill]
 
-        if skill_stat + point >= 10.0: return -1
+        if skill_stat + point >= 20.0: return -1
         elif skill_stat + point <= 0.0: return -1
         else:
             if point:
