@@ -86,12 +86,18 @@
     },
 
     "regular_backpack": {
+        "abilities": {
+            "endurance": 80
+        },
         "capacity": 10,
         "image": "item45",
         "rank": "rare",
         "type": "backpack"
     },
     "reinforced_backpack": {
+        "abilities": {
+            "endurance": 110
+        },
         "capacity": 20,
         "image": "item45",
         "rank": "mystical",

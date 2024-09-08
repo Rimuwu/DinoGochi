@@ -382,10 +382,11 @@ async def remove_accessory(option: list, transmitted_data:dict):
     lang = transmitted_data['lang']
     dino_id = transmitted_data['dino_id']
     key, item = option
-    
+
     await dinosaurs.update_one({'_id': dino_id}, 
                          {'$set': {f'activ_items.{key}': None}}, comment='remove_accessory')
-    await AddItemToUser(userid, item['item_id'], 1, item['abilities'])
+    abil = item.get('abilities', {})
+    await AddItemToUser(userid, item['item_id'], 1, abil)
 
     await bot.send_message(userid, t("remove_accessory.remove", lang), 
                            reply_markup= await m(userid, 'last_menu', lang))
