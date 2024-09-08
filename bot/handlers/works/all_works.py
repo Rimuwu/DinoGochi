@@ -17,6 +17,7 @@ from bot.modules.dinosaur.mood import repeat_activity
 from bot.modules.notifications import dino_notification
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import ChooseOptionState
+from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User
 from telebot.types import Message, CallbackQuery
 from bot.modules.data_format import list_to_inline, list_to_keyboard, progress_bar, seconds_to_str
@@ -185,8 +186,10 @@ async def end_mine(data, transmitted_data: dict):
 
     await start_mine(last_dino._id, userid, data)
     text = t('works.start.mine', lang)
-    await bot.send_message(chatid, text, 
+    mes = await bot.send_message(chatid, text, 
                            reply_markup = await m(userid, 'last_menu', lang))
+
+    await auto_ads(mes)
 
 @bot.message_handler(textstart='commands_name.extraction_actions.bank', 
                      dino_pass=True, nothing_state=True)
@@ -227,8 +230,10 @@ async def end_bank(data, transmitted_data: dict):
 
     await start_bank(last_dino._id, userid, data)
     text = t('works.start.bank', lang)
-    await bot.send_message(chatid, text, 
+    mes = await bot.send_message(chatid, text, 
                            reply_markup = await m(userid, 'last_menu', lang))
+
+    await auto_ads(mes)
 
 @bot.message_handler(textstart='commands_name.extraction_actions.sawmill', 
                      dino_pass=True, nothing_state=True)
@@ -269,5 +274,7 @@ async def end_sawmill(data, transmitted_data: dict):
 
     await start_sawmill(last_dino._id, userid, data)
     text = t('works.start.sawmill', lang)
-    await bot.send_message(chatid, text, 
+    mes = await bot.send_message(chatid, text, 
                            reply_markup = await m(userid, 'last_menu', lang))
+
+    await auto_ads(mes)
