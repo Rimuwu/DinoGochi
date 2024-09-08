@@ -443,5 +443,6 @@
         }
     },
 
-    "promotion_price": 5000
+    "promotion_price": 5000,
+    "ignore_items_inside_shop": ["repair_tool"]
 } 
