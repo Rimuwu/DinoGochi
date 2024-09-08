@@ -94,55 +94,6 @@ async def exchange_item(userid: int, chatid: int, item: dict,
         await ChooseStepState(exchange, userid, 
                                       chatid, lang, steps, transmitted_data)
 
-# async def end_craft(transmitted_data: dict):
-#     """ Завершает крафт удаляя и создавая предметы
-#     """
-#     materials = transmitted_data['materials']
-#     userid = transmitted_data['userid']
-#     chatid = transmitted_data['chatid']
-#     data_item = transmitted_data['data_item']
-#     delete_item = transmitted_data['delete_item']
-#     count = transmitted_data['count']
-#     lang = transmitted_data['lang']
-
-#     # Удаление рецепта
-#     await UseAutoRemove(userid, delete_item, count)
-
-#     # Удаление материалов
-#     inv = []
-#     for iteriable_item in materials['delete']:
-#         if iteriable_item not in inv:
-#             item_id = iteriable_item['item_id']
-
-#             col = materials['delete'].count(iteriable_item)
-#             inv.append(iteriable_item)
-
-#             await RemoveItemFromUser(userid, item_id, col)
-
-#     # Добавление предметов
-#     for create_data in data_item['create']:
-#         if create_data['type'] == 'create':
-#             preabil = create_data.get('abilities', {}) # Берёт характеристики если они есть
-#             await AddItemToUser(userid, create_data['item'], count, preabil)
-
-#     # Вычисление опыта за крафт
-#     if 'rank' in data_item.keys():
-#         xp = GAME_SETTINGS['xp_craft'][data_item['rank']] * count
-#     else:
-#         xp = GAME_SETTINGS['xp_craft']['common'] * count
-
-#     # Начисление опыта за крафт
-#     await experience_enhancement(userid, xp)
-
-#     # Создание сообщения
-#     created_items = []
-#     for i in data_item['create']:
-#         created_items.append(i['item'])
-
-#     await bot.send_message(chatid, t('item_use.recipe.create', lang, 
-#                                      items=counts_items(created_items*count, lang)), 
-#                            parse_mode='Markdown', reply_markup=await markups_menu(userid, 'last_menu', lang))
-
 async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1, 
                    dino: Union[Dino, None]=None, delete: bool = True):
     """ Использование предмета
@@ -216,10 +167,11 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             return_text = t('item_use.accessory.no_change', lang)
             use_status = False
         else:
-            if dino.activ_items[type_item]:
+            if dino.activ_items[type_item] != None:
+                abil = dino.activ_items[type_item].get('abilities', {}) # type: ignore
                 await AddItemToUser(userid, 
-                              dino.activ_items[type_item]['item_id'], 1,  #type: ignore
-                              dino.activ_items[type_item]['abilities'])  #type: ignore
+                              dino.activ_items[type_item]['item_id'], 1, # type: ignore
+                              abil)
             if is_standart(item):
                 # Защита от вечных аксессуаров
                 dino_update_list.append({
@@ -235,71 +187,6 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
         # Проверка может завершится позднее завершения функции, отправим текст самостоятельно, так же юзер может и отказаться, удалим предмет сами
 
         await craft_recipe(userid, chatid, lang, item, count)
-
-        # for iterable_item in data_item['materials']:
-        #     iterable_id: str = iterable_item['item']
-
-        #     if iterable_item['type'] == 'delete':
-        #         materials['delete'].append(get_item_dict(
-        #             iterable_id))
-
-        #     elif iterable_item['type'] == 'endurance':
-        #         if 'endurance' not in materials['edit']:
-        #             materials['edit']['endurance'] = {}
-        #         materials['edit']['endurance'][iterable_id] = iterable_item['act'] * count
-
-        # materials['delete'] = materials['delete'] * count
-        # deleted_items, not_enough_items = {}, []
-
-        # for iterable_item in materials['delete']:
-        #     iter_id = iterable_item['item_id']
-        #     if iter_id not in deleted_items and iter_id not in not_enough_items:
-        #         ret_data_f = await CheckItemFromUser(userid, iterable_item, 
-        #                             materials['delete'].count(iterable_item))
-        #         if ret_data_f['status']:
-        #             deleted_items[iter_id] = materials['delete'].count(iterable_item)
-        #         else:
-        #             not_enough_items += [iter_id] * ret_data_f["difference"]
-
-        # if not not_enough_items:
-        #     if materials['edit']:
-        #         steps = []
-        #         transmitted_data = {
-        #                 'count': count, 
-        #                 'materials': materials,
-        #                 'data_item': data_item,
-        #                 'delete_item': item
-        #             }
-
-        #         for iterable_key in materials['edit']:
-        #             for iterable_id in materials['edit'][iterable_key]:
-        #                 steps.append(
-        #                     {
-        #                         "type": 'inv', "name": iterable_id, "data":
-        #                         {
-        #                             'item_filter': [iterable_id], 
-        #                             'changing_filters': False,
-        #                         },
-        #                         "translate_message": True,
-        #                         'message': 'item_use.recipe.consumable_item',
-        #                     }
-        #                 )
-        #         await ChooseStepState(edit_craft, userid, 
-        #                               chatid, lang, steps, transmitted_data)
-        #     else:
-        #         transmitted_data = {
-        #             'userid': userid,
-        #             'chatid': chatid,
-        #             'lang': lang,
-        #             'materials': materials,
-        #             'count': count,
-        #             'data_item': data_item,
-        #             'delete_item': item
-        #         }
-        #         await end_craft(transmitted_data)
-        # else:
-        #     use_status, send_status = False, True
-        #     return_text = t('item_use.recipe.not_enough_m', lang, materials=counts_items(not_enough_items, lang))
 
     elif data_item['type'] == 'case':
         send_status = False
@@ -485,56 +372,8 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     if use_status and delete: await UseAutoRemove(userid, item, count)
     return send_status, return_text
 
-# async def edit_craft(return_data: dict, transmitted_data: dict):
-#     materials = transmitted_data['materials']
-#     userid = transmitted_data['userid']
-#     chatid = transmitted_data['chatid']
-#     lang = transmitted_data['lang']
-#     items_data = []
-#     ok = True
-
-#     for iterable_key in materials['edit']:
-#         for item_key, unit in materials['edit'][iterable_key].items():
-#             item = return_data[item_key]
-#             find_items = await items.find({'owner_id': userid, 
-#                                    'items_data': item}, comment='edit_craft_find_items')
-#             for find_item in find_items:
-#                 if unit > 0:
-#                     ret_data = CalculateDowngradeitem(find_item['items_data'], 
-#                                                       iterable_key, unit)
-#                     items_data.append({"data": ret_data, 'old_item': item})
-#                     unit = ret_data['ost']
-#                 else: break
-#             if unit > 0: 
-#                 ok = False
-#                 break
-#         if not ok: break
-
-#     if not ok:
-#         iterable_data = items_data[0]
-#         item_name = get_name(iterable_data['old_item']['item_id'], lang)
-
-#         await bot.send_message(chatid, 
-#             t('item_use.recipe.enough_characteristics', lang, item_name=item_name), 
-#             parse_mode='Markdown', 
-#             reply_markup=await markups_menu(userid, 'last_menu', lang))
-
-#     if ok:
-#         for iterable_data in items_data.copy(): 
-#             iterable_item = iterable_data['old_item']
-
-#             if iterable_data['data']['status'] == 'remove':
-#                 await RemoveItemFromUser(userid, iterable_item['item_id'], 1,
-#                                    iterable_item['abilities'])
-#             elif iterable_data['data']['status'] == 'edit':
-#                 await EditItemFromUser(userid, iterable_item, iterable_data['data']['item'])
-
-#         await end_craft(transmitted_data)
-
-
-
 async def adapter(return_data: dict, transmitted_data: dict):
-    
+
     if 'confirm' in return_data: del return_data['confirm']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
