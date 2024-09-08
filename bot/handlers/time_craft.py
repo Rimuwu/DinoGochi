@@ -108,21 +108,25 @@ async def send_dino_to_craft(dino: Dino, transmitted_data: dict):
     ms_id = transmitted_data['ms_id']
     alt_code = transmitted_data['alt_code']
 
-    st, pers = await dino_craft(dino._id, alt_code)
-    if st:
-        text = t('time_craft.send_dino', lang, percent=pers)
+    if await dino.status == 'pass':
+        st, pers = await dino_craft(dino._id, alt_code)
+        if st:
+            text = t('time_craft.send_dino', lang, percent=pers)
 
-        transmitted_data = {
-            'portable': True,
-            'chatid': chatid,
-            'lang': lang
-        }
-        info, mrk = await info_craft(alt_code, transmitted_data) # type: ignore
-        await bot.edit_message_text(info, chatid, ms_id, reply_markup=mrk, parse_mode='Markdown')
+            transmitted_data = {
+                'portable': True,
+                'chatid': chatid,
+                'lang': lang
+            }
+            info, mrk = await info_craft(alt_code, transmitted_data) # type: ignore
+            await bot.edit_message_text(info, chatid, ms_id, reply_markup=mrk, parse_mode='Markdown')
 
-        await bot.send_message(chatid, text, parse_mode='Markdown',
-                               reply_markup=await m(userid, 'last_menu', lang))
+            await bot.send_message(chatid, text, parse_mode='Markdown',
+                                reply_markup=await m(userid, 'last_menu', lang))
 
+        else:
+            await bot.send_message(chatid, "❌", parse_mode='Markdown', 
+                            reply_markup= await m(userid, 'last_menu', lang))
     else:
-        await bot.send_message(chatid, "❌", parse_mode='Markdown', 
-                           reply_markup= await m(userid, 'last_menu', lang))
+        await bot.send_message(chatid,t('alredy_busy'), parse_mode='Markdown', 
+                            reply_markup= await m(userid, 'last_menu', lang))
