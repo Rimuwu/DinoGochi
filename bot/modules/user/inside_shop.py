@@ -29,6 +29,9 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import take_coins
 inside_shop = DBconstructor(mongo_client.tavern.inside_shop)
 
+
+ignore_items = GAME_SETTINGS['ignore_items_inside_shop']
+
 async def create_shop(onwer_id):
 
     data = {
@@ -51,6 +54,9 @@ async def update_shop(ins_id: ObjectId) -> dict:
             items = {}
 
             items_group = get_group('recipe').copy()
+            for i in ignore_items:
+                if i in items_group: items_group.remove(i)
+
             for _ in range(5):
                 count = randint(1, 3)
 
