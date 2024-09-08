@@ -5,6 +5,7 @@ from bot.handlers.actions_live.game import start_game_ent
 from bot.modules.data_format import list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino
+from bot.modules.logs import log
 from bot.modules.user.friends import send_action_invite
 from bot.modules.localization import get_lang, t
 from bot.modules.markup import markups_menu as m
@@ -64,10 +65,13 @@ async def invite_adp(friend, transmitted_data: dict):
     lang = transmitted_data['lang']
     action = transmitted_data['action']
     dino_alt = transmitted_data['dino_alt']
-    
-    await send_action_invite(userid, friend.id, action, dino_alt, lang)
-    # Возврат в меню
-    await bot.send_message(chatid, t('back_text.actions_menu', lang), 
+
+    if isinstance(friend, dict):
+        log(f'invite_adp error dict {friend}', 3)
+    else:
+        await send_action_invite(userid, friend.id, action, dino_alt, lang)
+        # Возврат в меню
+        await bot.send_message(chatid, t('back_text.actions_menu', lang), 
                        reply_markup= await m(userid, 'last_menu', lang))
 
 @bot.callback_query_handler(pass_bot=True, func=
