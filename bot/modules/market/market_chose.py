@@ -342,7 +342,7 @@ async def promotion_prepare(userid: int, chatid: int, lang: str, product_id, mes
         if discount >= 1:
             coins -= (coins // 100) * discount
             text_price = t('promotion.price_discount', 
-                           coins=coins, discount=discount)
+                           coins=coins, discount=discount, lang=lang)
         else:
             text_price = t('promotion.price', coins=coins)
 
