@@ -12,6 +12,7 @@ dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 kindergarten = DBconstructor(mongo_client.dino_activity.kindergarten)
 kd_activity = DBconstructor(mongo_client.dino_activity.kd_activity)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
+item_craft = DBconstructor(mongo_client.items.item_craft)
 
 async def check_status(dino_id):
 
@@ -33,7 +34,7 @@ async def check_status(dino_id):
         else:
             status: str = activity['activity_type']
 
-        on_craft = status == 'craft'
+        on_craft = await item_craft.find_one({'dino_id': dino_id}) != None
         on_farm = status == 'farm'
 
         in_mine = status == 'mine'
