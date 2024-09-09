@@ -4,18 +4,17 @@ services:
     depends_on:
       - mongo
     volumes:
-      - ./logs:/bot/logs
-      - ./config.json:/bot/config.json:ro
+      - ./logs:/bot/logs # Проброс каталога логов
+      - ./config.json:/bot/config.json:ro # Проброс конфига
     restart: unless-stopped
 
   mongo:
     image: mongo:latest
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    ports:
-      - "27017:27017"
+      MONGO_INITDB_ROOT_PASSWORD: example # Обязательно поменять пароль перед деплоем здесь и в config.json!!!
+    # ports:
+    #   - "27017:27017" # Раскомментировать если необходим доступ извне
     volumes:
-      - ./mongodb:/data/db
+      - ./mongodb:/data/db # Каталог с данными
     restart: unless-stopped
-

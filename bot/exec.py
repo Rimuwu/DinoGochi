@@ -1,11 +1,15 @@
 # Исполнитель бота
 import traceback
 
+from bot.startup_checker import check
 from telebot.async_telebot import AsyncTeleBot, ExceptionHandler
 
 from bot.config import conf
 from bot.modules.logs import log
-from bot.taskmanager import add_task, run as run_taskmanager
+from bot.taskmanager import add_task
+from bot.taskmanager import run as run_taskmanager
+
+
 class TracebackHandler(ExceptionHandler):
     def handle(self, exception):
         log(f'{traceback.format_exc()} {exception}', 3)
@@ -25,7 +29,8 @@ def run():
     log('Не вижу ошибок == нет ошибок!')
     log('Кстати, в создании бота поучаствовал ChatGPT')
     log('Ой, да что там ваш ChatGPT?! *Stable Diffusion подключился*')
-
+    # Проверка готовности
+    check()
     # Запуск тасков и бота
     add_task(bot.infinity_polling, skip_pending=True)
     log('Все готово! Взлетаем!', prefix='Start')
