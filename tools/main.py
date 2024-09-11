@@ -129,7 +129,8 @@ for i in users_data:
     llg = list(langs.find({'userid': i['userid']}))
 
     if len(llg) == 0:
-        langs.insert_one({'userid': i['userid'], 'lang': 'en'})
+        pass
+        # langs.insert_one({'userid': i['userid'], 'lang': 'en'})
 
     elif len(llg) != 1:
         main_lang = llg[0]['lang']
