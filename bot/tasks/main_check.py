@@ -176,10 +176,10 @@ async def main_checks():
 
         if status not in ['kindergarten', 'sleep']:
             if dino['stats']['mood'] >= 95:
-                if random.randint(0, 5) == 3:
+                if randint(0, 5) == 3:
                     await calculation_points(dino, 'inspiration')
             elif dino['stats']['mood'] <= 5:
-                if random.randint(0, 5) == 3:
+                if randint(0, 5) == 3:
                     await calculation_points(dino, 'breakdown')
 
         # ========== Мысли вслух ========== # 
