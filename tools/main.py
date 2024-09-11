@@ -119,25 +119,33 @@ sellers = mongo_client.market.sellers
 #     })
 
 print('start langs')
-users_data = list(users.find({}))
-a = 0 
+# users_data = list(users.find({}))
+# a = 0 
+# col = 0
+# lld = len(users_data)
+# for i in users_data:
+#     a += 1
+#     print(a, 'users', lld)
+#     llg = list(langs.find({'userid': i['userid']}))
+
+#     if len(llg) == 0:
+#         pass
+#         # langs.insert_one({'userid': i['userid'], 'lang': 'en'})
+
+#     elif len(llg) != 1:
+#         main_lang = llg[0]['lang']
+#         langs.delete_many({'userid': i['userid']})
+
+#         langs.insert_one({'userid': i['userid'], 'lang': main_lang})
+#         col += len(llg) - 1
+
+langs_data = list(langs.find({}))
 col = 0
-lld = len(users_data)
-for i in users_data:
-    a += 1
-    print(a, 'users', lld)
-    llg = list(langs.find({'userid': i['userid']}))
-
-    if len(llg) == 0:
-        pass
-        # langs.insert_one({'userid': i['userid'], 'lang': 'en'})
-
-    elif len(llg) != 1:
-        main_lang = llg[0]['lang']
-        langs.delete_many({'userid': i['userid']})
-
-        langs.insert_one({'userid': i['userid'], 'lang': main_lang})
-        col += len(llg) - 1
+for i in langs_data:
+    user_temp = users.find_one({'userid': i['userid']})
+    if not user_temp:
+        col += 1
+        langs.delete_many({'_id': i['_id']})
 
 print('end', col)
 
