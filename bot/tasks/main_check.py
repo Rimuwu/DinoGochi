@@ -1,5 +1,5 @@
 import random
-from random import choice, randint
+from random import choice, randint, random
 
 from bot.config import conf, mongo_client
 from bot.modules.data_format import transform
@@ -181,11 +181,11 @@ async def main_checks():
             elif dino['stats']['mood'] <= 5:
                 if random.randint(0, 5) == 3:
                     await calculation_points(dino, 'breakdown')
-        
+
         # ========== Мысли вслух ========== # 
         if status == 'pass' and r == 0:
-            chance = randint(1, 100) + transform(dino['stats']['charisma'], 20, 10)
-            if chance >= 90:
+            chance = round(random(), 2) + transform(dino['stats']['charisma'], 20, 10) // 100
+            if chance <= 0.05: # Шанс 5 процентов
                 owner = await get_owner(dino['_id'])
 
                 if owner:
