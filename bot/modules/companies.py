@@ -177,9 +177,7 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None,
     if not lang: lang = await get_lang(userid)
 
     companie = await companies.find_one({'_id': company_id})
-    print(companie)
     if companie and lang in companie['message'].keys():
-        print(9)
         message = companie['message'][lang]
 
         text = message['text']
