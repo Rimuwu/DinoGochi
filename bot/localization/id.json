@@ -4326,7 +4326,8 @@
             "repairing": "🔧 Item yang dapat diperbaiki",
             "recipe": "📜 Resep apa saja",
             "eat": "🍔 Makanan",
-            "egg": "🥚 Telur"
+            "egg": "🥚 Telur",
+            "meat": "🥩 Daging apa pun"
         },
         "all_skills": {
             "stoping": {
