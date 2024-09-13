@@ -726,9 +726,14 @@
         "image": "recipe",
         "materials": [
             {
-                "act": 10,
+                "act": 5,
                 "item": "torch",
                 "type": "endurance",
+                "count": 1
+            },
+            {
+                "item": {"group": "meat"},
+                "type": "delete",
                 "count": 1
             }
         ],

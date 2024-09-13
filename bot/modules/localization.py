@@ -11,6 +11,7 @@ available_locales = []
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 langs = DBconstructor(mongo_client.user.lang)
+users = DBconstructor(mongo_client.user.users)
 
 def load() -> None:
     """Загрузка локализации"""
@@ -165,7 +166,8 @@ async def get_lang(userid: int, alternative: str = 'en') -> str:
 
     if data: lang = data['lang']
     else:
-        await langs.insert_one({'userid': userid, 'lang': lang}, comment='get_lang_isert_lang')
+        if await users.find_one({'userid': userid}):
+            await langs.insert_one({'userid': userid, 'lang': lang}, comment='get_lang_isert_lang')
     return lang
 
 if __name__ == '__main__':

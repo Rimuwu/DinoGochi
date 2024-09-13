@@ -4326,7 +4326,8 @@
             "repairing": "🔧 Repairable items",
             "recipe": "📜 Any recipe",
             "eat": "🍔 Food",
-            "egg": "🥚 Eggs"
+            "egg": "🥚 Eggs",
+            "meat": "🥩 Any meat"
         },
         "all_skills": {
             "stoping": {

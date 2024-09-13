@@ -18,6 +18,7 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from bot.modules.data_format import list_to_inline, random_code, seconds_to_str
 from bot.modules.localization import get_lang, t, get_data
 
+from bot.modules.logs import log
 from bot.modules.overwriting.DataCalsses import DBconstructor
 
 companies = DBconstructor(mongo_client.other.companies)
@@ -192,18 +193,20 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None,
                         url=value
                 ))
 
-        if image:
+        if image != 'no_image':
             try:
                 m = await bot.send_photo(userid, image, text, parse_mode, 
                                      reply_markup=inline)
-            except:
+            except Exception as e:
+                log(f'generate_comp_message image error - {e}', 2)
                 m = await bot.send_photo(userid, image, text, 
                                      reply_markup=inline)
         else:
             try:
                 m = await bot.send_message(userid, text, 
                                        parse_mode=parse_mode, reply_markup=inline)
-            except:
+            except Exception as e:
+                log(f'generate_comp_message error - {e}', 2)
                 m = await bot.send_message(userid, text, 
                                      reply_markup=inline)
 
