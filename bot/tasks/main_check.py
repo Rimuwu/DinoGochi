@@ -1,7 +1,8 @@
 import random
 from random import choice, randint, random, uniform
 
-from bot.config import conf, mongo_client
+from bot.config import conf
+from bot.dbmanager import mongo_client
 from bot.modules.data_format import transform
 from bot.modules.dinosaur.dinosaur  import check_status, mutate_dino_stat
 from bot.modules.localization import get_data, get_lang, t

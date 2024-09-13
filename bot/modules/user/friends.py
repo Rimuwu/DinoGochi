@@ -1,6 +1,6 @@
 
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, user_name
 from bot.modules.localization import t, get_lang

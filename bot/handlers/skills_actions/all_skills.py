@@ -1,7 +1,7 @@
 
 from time import time
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.dinosaur.dino_status import end_skill_activity, get_skill_time, start_skill_activity
 from bot.modules.dinosaur.dinosaur import Dino

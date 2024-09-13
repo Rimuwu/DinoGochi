@@ -1,7 +1,7 @@
 # Исполнитель бота
 import traceback
 
-from bot.startup_checker import check
+from bot.dbmanager import check
 from telebot.async_telebot import AsyncTeleBot, ExceptionHandler
 
 from bot.config import conf
@@ -19,6 +19,10 @@ bot = AsyncTeleBot(conf.bot_token,
                    )
 bot.enable_saving_states()
 
+async def notify_devs_start():
+    for dev in conf.bot_devs:
+        await bot.send_message(dev, '✅ Бот запущен!')
+
 def run():
     log('# ====== Inicialization Start ====== #', 2)
     log('Привет! Я вижу ты так и не починил тот самый баг на 46-ой строчке...')
@@ -32,6 +36,7 @@ def run():
     # Проверка готовности
     check()
     # Запуск тасков и бота
+    add_task(notify_devs_start) # Уведомление запуска для разрабов
     add_task(bot.infinity_polling, skip_pending=True)
     log('Все готово! Взлетаем!', prefix='Start')
     run_taskmanager()

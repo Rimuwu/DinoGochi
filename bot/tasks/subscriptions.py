@@ -1,6 +1,7 @@
 from time import time
 
-from bot.config import conf, mongo_client
+from bot.config import conf
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import seconds_to_str
 from bot.modules.notifications import user_notification

@@ -1,6 +1,6 @@
 
 from bson.objectid import ObjectId
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 
 from bot.modules.dinosaur.dinosaur import Dino
 from bot.modules.items.accessory import check_accessory

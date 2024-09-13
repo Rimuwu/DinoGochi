@@ -1,6 +1,6 @@
 
 from bson.objectid import ObjectId
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import get_dinos

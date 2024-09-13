@@ -1,5 +1,5 @@
 import random
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bson.objectid import ObjectId
 from typing import Union, Any
 from bot.modules.data_format import user_name

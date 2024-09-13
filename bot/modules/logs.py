@@ -1,4 +1,5 @@
 import logging
+from logging.handlers import RotatingFileHandler
 from time import strftime
 
 from colorama import Fore, Style
@@ -6,9 +7,9 @@ from colorama import Fore, Style
 from bot.config import conf
 
 logging.basicConfig(
-    handlers=[logging.FileHandler(
+    handlers=[RotatingFileHandler(
         filename=f"{conf.logs_dir}/{strftime('%Y %m-%d %H.%M.%S')}.log", 
-        encoding='utf-8', mode='a+')
+        encoding='utf-8', mode='a+', backupCount=10, maxBytes=1024*1024*10)
               ],
         format="%(asctime)s %(levelname)s %(message)s", 
         datefmt="%F %T", 

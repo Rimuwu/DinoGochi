@@ -2,7 +2,7 @@ from time import time
 
 from bson.objectid import ObjectId
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, random_code, seconds_to_str, item_list, escape_markdown
 from bot.modules.items.item import counts_items, get_item_dict, AddItemToUser, CheckCountItemFromUser, RemoveItemFromUser

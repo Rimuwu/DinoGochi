@@ -1,5 +1,5 @@
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.items.item import counts_items, AddItemToUser

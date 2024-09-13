@@ -5,7 +5,7 @@ from time import time
 
 from bson.objectid import ObjectId
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.const import DINOS
 from bot.const import GAME_SETTINGS as GS
 from bot.modules.data_format import random_code, random_quality

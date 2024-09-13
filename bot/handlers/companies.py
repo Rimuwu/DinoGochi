@@ -1,4 +1,4 @@
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.handlers.start import start_game
 from bot.modules.companies import create_company, end_company, generate_message, info

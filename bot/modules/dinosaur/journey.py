@@ -4,7 +4,7 @@ from time import time
 
 from bson.objectid import ObjectId
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.modules.data_format import encoder_text, random_dict, count_elements, transform
 from bot.modules.dinosaur.dinosaur import Dino, mutate_dino_stat
 from bot.modules.dinosaur.skills import check_skill

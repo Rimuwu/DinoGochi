@@ -2,7 +2,7 @@ from ctypes import Union
 from pyclbr import Function
 from telebot.asyncio_handler_backends import State, StatesGroup
 
-from bot.config import mongo_client, conf
+from bot.dbmanager import mongo_client, conf
 from bot.const import GAME_SETTINGS as gs
 from bot.exec import bot
 from bot.modules.data_format import (chunks, filling_with_emptiness,

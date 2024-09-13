@@ -2,7 +2,8 @@ import random
 from random import randint
 from time import time
 
-from bot.config import conf, mongo_client
+from bot.config import conf
+from bot.dbmanager import mongo_client
 from bot.handlers.actions_live.journey import send_logs
 from bot.modules.data_format import transform
 from bot.modules.items.accessory import check_accessory

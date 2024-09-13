@@ -1,5 +1,5 @@
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.const import BACKGROUNDS
 from bot.exec import bot
 from bot.modules.data_format import escape_markdown, list_to_keyboard

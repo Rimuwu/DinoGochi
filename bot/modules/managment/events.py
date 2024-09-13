@@ -2,7 +2,7 @@ import time
 from bot.modules.data_format import random_dict
 from bot.const import GAME_SETTINGS as GS
 from random import choice, randint
-from bot.config import mongo_client, conf
+from bot.dbmanager import mongo_client, conf
 from bot.exec import bot
 from bot.modules.localization import t
 import datetime

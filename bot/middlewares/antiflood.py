@@ -4,7 +4,7 @@ from random import randint
 from telebot.asyncio_handler_backends import BaseMiddleware, CancelUpdate
 from telebot.types import Message
 from bot.exec import bot
-from bot.config import mongo_client, conf
+from bot.dbmanager import mongo_client, conf
 from time import time as time_now
 from bot.modules.localization import get_lang, t
 from bot.modules.notifications import user_notification

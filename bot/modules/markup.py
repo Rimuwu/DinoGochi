@@ -1,6 +1,6 @@
 from telebot.types import ReplyKeyboardMarkup
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as gs
 from bot.modules.data_format import chunks, crop_text, list_to_keyboard, seconds_to_str
 from bot.modules.dinosaur.dinosaur import Dino, Egg

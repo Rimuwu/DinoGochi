@@ -1,14 +1,17 @@
 import asyncio
 import os
 import pprint
-import sys
 from typing import Dict
 
 import motor.motor_asyncio
-from config import CONFIG_PATH, conf
+from bot.config import conf
 from motor.core import AgnosticClient
 
 from bot.const import GAME_SETTINGS
+
+
+mongo_client = motor.motor_asyncio.AsyncIOMotorClient(conf.mongo_url)
+
 
 # Проверка mongodb 
 async def check_db(client: AgnosticClient):
@@ -47,11 +50,6 @@ async def create_document_if_not_exists(collection, doc: Dict):
 
 
 def check():
-    if os.path.exists(CONFIG_PATH):
-        with open(CONFIG_PATH, 'r') as f: conf.from_json(f.read()) # Загрузка настроек
-    else:
-        sys.exit(f"{CONFIG_PATH} missed! Please, run {__name__}")
-
     for way in [conf.logs_dir]: # Проверка путей
         if not os.path.exists(way):
             os.mkdir(way) #Создаёт папку в директории  
@@ -65,8 +63,6 @@ def check():
         print("Обновлённые данные:")
         pprint.pprint(res)
         print()
-
-    mongo_client = motor.motor_asyncio.AsyncIOMotorClient(conf.mongo_url)
 
     ioloop = asyncio.get_event_loop()
     ioloop.run_until_complete(check_db(mongo_client)) # Проверка базы данных на наличие коллекций

@@ -1,7 +1,8 @@
 from time import time
 from random import uniform, randint
 
-from bot.config import conf, mongo_client
+from bot.config import conf
+from bot.dbmanager import mongo_client
 from bot.modules.data_format import transform
 from bot.modules.dinosaur.dinosaur  import Dino, end_sleep, mutate_dino_stat, get_owner
 from bot.modules.dinosaur.rpg_states import add_state

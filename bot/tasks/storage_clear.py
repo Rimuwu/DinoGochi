@@ -1,7 +1,8 @@
 import pickle
 from time import time
 
-from bot.config import conf, mongo_client
+from bot.config import conf
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.localization import get_lang
 from bot.modules.markup import markups_menu as m

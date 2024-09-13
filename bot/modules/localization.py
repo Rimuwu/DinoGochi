@@ -4,7 +4,7 @@ import json
 import os
 from typing import Any
 from bot.modules.logs import log
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 
 languages = {}
 available_locales = []

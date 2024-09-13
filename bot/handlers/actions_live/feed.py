@@ -1,5 +1,5 @@
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino

@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from random import choice
 from time import time
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, seconds_to_str, user_name

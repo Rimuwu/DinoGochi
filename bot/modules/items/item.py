@@ -15,7 +15,7 @@
 """
 
 import json
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.modules.data_format import random_dict, seconds_to_str, near_key_number
 from bot.modules.images import async_open
 from bot.modules.localization import get_all_locales, t

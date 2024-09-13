@@ -1,4 +1,4 @@
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from time import time, strftime
 
 from bot.modules.overwriting.DataCalsses import DBconstructor

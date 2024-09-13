@@ -1,6 +1,6 @@
 from telebot.types import Message, InputMedia
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import (list_to_keyboard, escape_markdown, transform)
 from bot.modules.dinosaur.skills import max_skill

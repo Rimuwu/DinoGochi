@@ -1,5 +1,5 @@
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.handlers.actions_live.game import start_game_ent
 from bot.modules.data_format import list_to_inline

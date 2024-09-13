@@ -1,6 +1,6 @@
 from random import randint
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import chunks, escape_markdown, list_to_keyboard
 from bot.modules.decorators import HDCallback, HDMessage

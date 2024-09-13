@@ -3,7 +3,7 @@ from time import time
 from bot.modules.logs import log
 from telebot.types import Message, CallbackQuery
 
-send_logs = False
+send_logs = True
 
 class HendlerDecorator(object):
 

@@ -3,7 +3,7 @@ from time import time
 
 from bson.objectid import ObjectId
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.modules.data_format import transform
 from bot.modules.dinosaur.dinosaur import set_status, start_game, Dino
 from bot.modules.dinosaur.skills import check_skill

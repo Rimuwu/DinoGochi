@@ -1,4 +1,5 @@
-from bot.config import conf, mongo_client
+from bot.config import conf
+from bot.dbmanager import mongo_client
 from bot.taskmanager import add_task
 from bot.modules.managment.events import auto_event, create_event, add_event
 from time import time

@@ -1,6 +1,6 @@
 from random import choice, randint, uniform
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.dinosaur.skills import add_skill_point

@@ -2,7 +2,8 @@
 from random import choice, randint
 from time import time
 
-from bot.config import conf, mongo_client
+from bot.config import conf
+from bot.dbmanager import mongo_client
 from bot.modules.data_format import transform
 from bot.modules.dinosaur.dinosaur import Dino
 from bot.modules.dinosaur.mood import check_inspiration
