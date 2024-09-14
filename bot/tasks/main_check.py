@@ -1,5 +1,4 @@
-import random
-from random import choice, randint, random, uniform
+from random import choice, randint, random
 
 from bot.config import conf, mongo_client
 from bot.modules.data_format import transform
@@ -60,22 +59,22 @@ async def main_checks():
             continue
 
         if status == 'kindergarten':
-            if uniform(0, 1) <= P_EAT_SLEEP:
+            if random() <= P_EAT_SLEEP:
                 r = await mutate_dino_stat(dino, 'eat', randint(*EAT_CHANGE))
 
-            if uniform(0, 1) <= P_GAME:
+            if random() <= P_GAME:
                 r = await mutate_dino_stat(dino, 'game', randint(*GAME_CHANGE))
 
-            if uniform(0, 1) <= P_ENERGY:
+            if random() <= P_ENERGY:
                 r = await mutate_dino_stat(dino, 'energy', randint(*ENERGY_CHANGE))
 
         else:
             # Понижение здоровья
             # если здоровье и еда находятся на критическом уровне
-            if dino['stats']['energy'] <= CRITICAL_ENERGY and uniform(0, 1) <= P_HEAL:
+            if dino['stats']['energy'] <= CRITICAL_ENERGY and random() <= P_HEAL:
                 r = await mutate_dino_stat(dino, 'heal', -1)
 
-            elif dino['stats']['eat'] <= CRITICAL_EAT and uniform(0, 1) <= P_HEAL:
+            elif dino['stats']['eat'] <= CRITICAL_EAT and random() <= P_HEAL:
                 r = await mutate_dino_stat(dino, 'heal', -1)
 
             elif is_sleeping and randint(0, 1):
@@ -84,24 +83,24 @@ async def main_checks():
             # Уменьшение еды
             # если динозавр спит, вероятность P_EAT_SLEEP
             # если динозавр не спит, вероятность P_EAT
-            if (uniform(0, 1) <= P_EAT_SLEEP and is_sleeping) or (uniform(0, 1) <= P_EAT and not is_sleeping):
+            if (random() <= P_EAT_SLEEP and is_sleeping) or (random() <= P_EAT and not is_sleeping):
                 r = await mutate_dino_stat(dino, 'eat', randint(*EAT_CHANGE)*-1)
 
             # Уменьшение энергии, если динозавр не играет
-            if status != 'game' and uniform(0, 1) <= P_GAME:
+            if status != 'game' and random() <= P_GAME:
                 r = await mutate_dino_stat(dino, 'game', randint(*GAME_CHANGE)*-1)
 
             # Уменьшение энергии
             # если динозавр не спит
-            if not(is_sleeping) and (uniform(0, 1) <= P_ENERGY):
+            if not(is_sleeping) and (random() <= P_ENERGY):
                 r = await mutate_dino_stat(dino, 'energy', randint(*ENERGY_CHANGE)*-1)
 
 
             # Во время тренировки более быстрое уменьшение еды и энергии
-            if skill_activ and (uniform(0, 1) <= P_ENERGY):
+            if skill_activ and (random() <= P_ENERGY):
                 r = await mutate_dino_stat(dino, 'energy', -1)
 
-            elif skill_activ and (uniform(0, 1) <= P_EAT):
+            elif skill_activ and (random() <= P_EAT):
                 r = await mutate_dino_stat(dino, 'eat', -1)
 
             if randint(1, 5) == 5:
@@ -115,7 +114,7 @@ async def main_checks():
         # условие выполнения для питания и восстановления здоровья
         # если динозавр не испытывает голод, не находится в критическом запасе энергии, настроение находится выше среднего
         if dino['stats']['eat'] > HIGH_EAT and dino['stats']['energy'] > 50:
-            if uniform(0, 1) <= P_HEAL_EAT:
+            if random() <= P_HEAL_EAT:
 
                 r = await mutate_dino_stat(dino, 'heal', randint(1, 2))
                 if randint(0, 1): 
@@ -126,52 +125,52 @@ async def main_checks():
         # Если игры меньше 14, то накладывает условие на настроение
         # На настроение будет наложен эффект -1 пока настроение не поднимется до 35
         if dino['stats']['game'] <= 15:
-            if uniform(0, 1) <= P_MOOD:
+            if random() <= P_MOOD:
                 await mood_while_if(dino['_id'], 'little_game', 'game', -1, 35, -1)
 
         # Если игры больше 84, то накладывается положительный эффект +1
         # Действует пока настроение не упадёт до 45
         elif dino['stats']['game'] >= 85:
-            if uniform(0, 1) <= P_MOOD:
+            if random() <= P_MOOD:
                 await mood_while_if(dino['_id'], 'multi_games', 'game', 45, 101, 1)
 
 
         # Если еды меньше чем LOW_EAT, то накладывает эффект -1 к настроению
         if dino['stats']['eat'] <= LOW_EAT and dino['stats']['eat'] >= 5:
-            if uniform(0, 1) <= P_MOOD:
+            if random() <= P_MOOD:
                 await mood_while_if(dino['_id'], 'little_eat', 'eat', 5, 50, -1)
 
         # Если еды меньше чем 5, то накладывает эффект -2 к настроению
         elif dino['stats']['eat'] < 5:
-            if uniform(0, 1) <= P_MOOD:
+            if random() <= P_MOOD:
                 await mood_while_if(dino['_id'], 'little_eat', 'eat', -1, 20, -2)
 
         # Если еды у динозавра больше 84 то получает бонус к настроению +1 пока настроение не будет меньше 60-ти
         elif dino['stats']['eat'] >= 85:
-            if uniform(0, 1) <= P_MOOD:
+            if random() <= P_MOOD:
                 await mood_while_if(dino['_id'], 'multi_eat', 'eat', 60, 101, 1)
 
 
         # Если энергии меньше 21-ти, понижает настроение на -1
         if dino['stats']['energy'] <= 20:
-            if uniform(0, 1) <= P_MOOD:
+            if random() <= P_MOOD:
                 await mood_while_if(dino['_id'], 'little_energy', 
                               'energy', -1, 40, -1)
 
         # Если у динозавра много энергии то настроение +1
         elif dino['stats']['energy'] >= 85:
-            if uniform(0, 1) <= P_MOOD:
+            if random() <= P_MOOD:
                 await mood_while_if(dino['_id'], 'multi_energy', 
                               'energy', 60, 101, 1)
 
 
         # Если здоровье меньше 21 то настроение -1
         if dino['stats']['heal'] <= 20:
-            if uniform(0, 1) <= P_MOOD:
+            if random() <= P_MOOD:
                 await mood_while_if(dino['_id'], 'little_heal', 'heal', -1, 40, -1)
 
         elif dino['stats']['heal'] >= 85:
-            if uniform(0, 1) <= P_MOOD:
+            if random() <= P_MOOD:
                 await mood_while_if(dino['_id'], 'multi_heal', 'heal', 60, 101, 1)
 
         if status not in ['kindergarten', 'sleep']:

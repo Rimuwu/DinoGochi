@@ -1,5 +1,5 @@
 from time import time
-from random import uniform, randint
+from random import randint, random
 
 from bot.config import conf, mongo_client
 from bot.modules.data_format import transform
@@ -64,7 +64,7 @@ async def one_time(sleeper, one_time_unit):
                 await pre_end(sleeper['dino_id'], sec_time)
             else: add_energy = one_time_unit
 
-            if uniform(0, 1) <= DREAM_CHANCE:
+            if random() <= DREAM_CHANCE:
                 if randint(1, 3) == 2:
                     await add_mood(dino['_id'], 'bad_dream', -1, 2700, True)
                 else:

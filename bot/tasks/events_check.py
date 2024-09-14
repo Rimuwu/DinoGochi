@@ -2,7 +2,7 @@ from bot.config import conf, mongo_client
 from bot.taskmanager import add_task
 from bot.modules.managment.events import auto_event, create_event, add_event
 from time import time
-from random import randint
+from random import random
 from bot.modules.logs import log
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -24,7 +24,7 @@ async def random_event():
     for i in events_data:
         if i['type'] not in ['new_year', 'time_year', 'april_1', 'april_5']: not_system.append(i['type'])
 
-    if (True or randint(1, 18) == 18) and len(not_system) == 0:
+    if random() <= 5 and len(not_system) < 3:
         event = await create_event()
         await add_event(event)
         log(f'Создано событие - {event}')

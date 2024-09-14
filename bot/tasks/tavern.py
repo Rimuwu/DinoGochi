@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from random import choice, randint, choices
+from random import choice, randint, choices, random
 from time import time
 
 from bot.config import conf, mongo_client
@@ -21,7 +21,7 @@ async def tavern_quest(user):
     lang = user['lang']
 
     if await quests_data.count_documents({'owner_id': user['userid']}, comment='tavern_quest_12') < 5:
-        if free_quests and not randint(0, 3):
+        if free_quests and random() <= 0.3:
             ran_quest = choice(free_quests)
             free_quests.remove(ran_quest)
 
@@ -69,8 +69,8 @@ async def tavern_life():
                         t('tavern_sleep', user['lang']))
             except: pass
 
-        elif randint(1, 10) == 5: await tavern_replic(user)
-        elif randint(1, 10) == 5: await tavern_quest(user)
+        elif random() <= 0.1: await tavern_replic(user)
+        elif random() <= 0.1: await tavern_quest(user)
 
 async def quest_managment():
     quests = await quests_data.find({}, comment='quest_managment')

@@ -1,5 +1,3 @@
-from ctypes import Union
-from pyclbr import Function
 from telebot.asyncio_handler_backends import State, StatesGroup
 
 from bot.config import mongo_client, conf

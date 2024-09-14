@@ -1,13 +1,11 @@
-import random
-from random import randint
+from random import randint, random
 from time import time
 
 from bot.config import conf, mongo_client
 from bot.handlers.actions_live.journey import send_logs
 from bot.modules.data_format import transform
 from bot.modules.items.accessory import check_accessory
-from bot.modules.dinosaur.dinosaur  import (Dino, end_collecting, end_journey,
-                                  get_dino_language, mutate_dino_stat)
+from bot.modules.dinosaur.dinosaur  import Dino, end_journey, get_dino_language
 from bot.modules.dinosaur.journey import random_event
 from bot.modules.quests import quest_process
 from bot.modules.user.user import experience_enhancement
@@ -48,7 +46,7 @@ async def events():
         if await check_accessory(dino, 'hiking_bag'):
             chance += 0.6 * REPEAT_MINUTS
 
-        if random.uniform(0, 1) <= chance:
+        if random() <= chance:
             await random_event(i['dino_id'], i['location'])
             await check_accessory(dino, 'hiking_bag', True)
 

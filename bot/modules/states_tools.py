@@ -552,7 +552,7 @@ async def next_step(answer, transmitted_data: dict, start: bool=False):
         if ret_data['type'] == 'update_data':
             # Обработчик данных между запросами
             # Теперь может быть последним!
-            
+
             if inspect.iscoroutinefunction(ret_data['function']):
                 transmitted_data, answer = await ret_data['function'](transmitted_data, **add_data)
             else:

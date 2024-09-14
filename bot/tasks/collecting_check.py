@@ -1,5 +1,4 @@
-import random
-from random import randint
+from random import randint, random, choices, choice
 
 from bot.config import conf, mongo_client
 from bot.const import GAME_SETTINGS
@@ -53,7 +52,7 @@ async def collecting_process():
             rare_list = [50, 25, 15, 9, 1]
 
             # Понижение энергии
-            if random.uniform(0, 1) <= ENERGY_DOWN:
+            if random() <= ENERGY_DOWN:
                 if dino: await mutate_dino_stat(dino.__dict__, 'energy', -1)
 
             # Расчёт шанса
@@ -64,7 +63,7 @@ async def collecting_process():
             if await check_accessory(dino, 'tooling'): chance += 0.25
 
             # Выдача опыта
-            if random.uniform(0, 1) <= LVL_CHANCE:
+            if random() <= LVL_CHANCE:
                 if await check_inspiration(dino._id, 'exp_boost'):
                     await experience_enhancement(coll_data['sended'], 
                                              randint(1, 6))
@@ -72,11 +71,11 @@ async def collecting_process():
                     await experience_enhancement(coll_data['sended'], 
                                              randint(1, 3))
 
-            if randint(1, 100) + transform(dino.stats['charisma'], 20, 30) >= 90:
+            if random() + transform(dino.stats['charisma'], 20, 0.3) >= 90:
                 await experience_enhancement(coll_data['sended'], randint(1, 5))
 
             # Выдача еды
-            if random.uniform(0, 1) <= chance:
+            if random() <= chance:
                 await check_accessory(dino, 'tooling', True)
 
                 # Повышение шанса редкости
@@ -129,19 +128,18 @@ async def collecting_process():
                     count = coll_data['max_count'] - coll_data['now_count']
 
                 for _ in range(count):
-                    rar = random.choices(list(items.keys()), rare_list)[0]
-                    item = random.choice(items[rar])
+                    rar = choices(list(items.keys()), rare_list)[0]
+                    item = choice(items[rar])
 
                     if coll_type == 'collecting' and \
-                        random.uniform(0, 1) <= 0.7 and \
+                       random() <= 0.7 and \
                             await check_accessory(dino, 'torch', True):
                                 # 0.7 выдать редкий предмет
                                 item = 'gourmet_herbs'
 
-                    elif event != {} and \
-                        random.uniform(0, 1) <= 0.2:
+                    elif event != {} and random() <= 0.2:
                             # 0.2 Шанс выдать предмет из ивента
-                            item = random.choice(event['data']['items'])
+                            item = choice(event['data']['items'])
 
                     if item in coll_data['items']:
                         coll_data['items'][item] += 1
