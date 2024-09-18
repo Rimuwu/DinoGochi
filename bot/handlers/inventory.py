@@ -249,11 +249,11 @@ async def search_message(message: Message):
         name = item[2:]
         tok_s = fuzz.token_sort_ratio(content, name)
         ratio = fuzz.ratio(content, name)
+        all_find = fuzz.partial_ratio(content, name)
 
-        if tok_s >= 60 or ratio >= 60:
+        if (tok_s + ratio + all_find) // 3 >= 60 or item == content:
             item_id = items_data[item]['item_id']
-            if item_id not in searched:
-                searched.append(item_id)
+            if item_id not in searched: searched.append(item_id)
 
     if searched:
         new_items = filter_items_data(items_data, item_filter=searched)
