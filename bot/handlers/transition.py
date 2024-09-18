@@ -245,8 +245,6 @@ async def about_menu(message: Message):
            parse_mode ='HTML'
            )
 
-    await auto_ads(message)
-
 @bot.message_handler(pass_bot=True, text='commands_name.friends.referal', is_authorized=True, private=True)
 @HDMessage
 async def referal_menu(message: Message):
