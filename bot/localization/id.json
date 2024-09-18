@@ -952,6 +952,12 @@
             "leather_jacket_recipe": {
                 "name": "📜 Jaket Kulit",
                 "description": "Hampir seperti perisai, tetapi jauh lebih ringan."
+            },
+            "body_recipe": {
+                "name": "📜 Resep Kasus"
+            },
+            "SYSTEM_ITEM_BODY": {
+                "name": "📦 Kandang"
             }
         },
         "notifications": {

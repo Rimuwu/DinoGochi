@@ -952,6 +952,12 @@
             "leather_jacket_recipe": {
                 "name": "📜 Leather Jacket",
                 "description": "Almost like a shield, but much lighter."
+            },
+            "body_recipe": {
+                "name": "📜 Hull Recipe"
+            },
+            "SYSTEM_ITEM_BODY": {
+                "name": "📦 Enclosure"
             }
         },
         "notifications": {

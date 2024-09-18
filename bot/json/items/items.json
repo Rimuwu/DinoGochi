@@ -27,6 +27,10 @@
         "type": "dummy",
         "rank": "common"
     },
+    "SYSTEM_ITEM_BODY": {
+        "type": "dummy",
+        "rank": "common"
+    },
     "rustycan": {
         "type": "dummy",
         "rank": "common"
