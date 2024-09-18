@@ -1169,7 +1169,7 @@
         },
         "back_text": {
             "main_menu": "🦕 | Return to the main menu",
-            "profile_menu": "🎮| Return to the profile menu",
+            "profile_menu": "🎮 | Return to the profile menu",
             "friends_menu": "👥 | Return to the Friends Menu",
             "actions_menu": "🦕 | Return to Activity Menu",
             "dungeon_menu": "🗻 | Return to the dungeon menu",
@@ -2096,7 +2096,7 @@
             "inactive_dino": "🦕 Choose only frozen dinosaurs!"
         },
         "about_menu": {
-            "team": "<b>🎭 | Bot Team</b>\n<i>We all do a lot of things at once, but everyone has a role to play... </i> \n\n💻 @AS1AW - Developer\n💻 @magecode - Developer\n💽 @KatranLife - Host provisioning\n\n🎨 @unknown_cat13 - Designer\n\n<b>🗝 | Author of localization</b>\n<i>Everyone can translate the bot into their native language. \n Would you like to help with the translation? Refer to @AS1AW\n\n</i>{lang_name} - {author}",
+            "team": "<b>🎭 | Bot Team</b>\n<i>We all do a lot of things at once, but everyone has a role to play... </i> \n\n💻 @AS1AW - Developer\n💻 @magecode - Developer\n💽 @KatranLife - Host Provisioning\n\n🎨 @unknown_cat13 - Designer\n\n⚽️ @despating - Tester\n\n<b>🗝 | Author of localization</b>\n<i>Everyone can translate the bot into their native language. \n Would you like to help with the translation? Refer to @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "** 🔗 | The Great Bond** \n Horror dinosaurs are everywhere! \n\n 📢 News Channel - @DinoGochi\n\n 👥 Forum - @DinoForum\n\n 🧧 YouTube - [@DinoGochi](https://www.youtube.com/@dinogochi)"
         },
         "support_command": {

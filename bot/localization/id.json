@@ -1169,7 +1169,7 @@
         },
         "back_text": {
             "main_menu": "🦕 | Kembali ke menu utama",
-            "profile_menu": "🎮| Kembali ke menu profil",
+            "profile_menu": "🎮 | Kembali ke menu profil",
             "friends_menu": "👥 | Kembali ke Menu Teman",
             "actions_menu": "🦕 | Kembali ke menu aktivitas",
             "dungeon_menu": "🗻 | Kembali ke menu penjara bawah tanah",
@@ -2096,7 +2096,7 @@
             "inactive_dino": "🦕 Pilih hanya dinosaurus beku!"
         },
         "about_menu": {
-            "team": "<b>🎭 | Bot Team</b>\n<i>Kita semua melakukan banyak hal sekaligus, tetapi setiap orang memiliki peran untuk dimainkan... </i> \n\n💻 @AS1AW - Pengembang\n💻 @magecode - Pengembang\n💽 @KatranLife - Penyediaan host\n\n🎨 @unknown_cat13 - Perancang\n\n<b>🗝 | Penulis pelokalan</b>\n<i>Setiap orang dapat menerjemahkan bot ke dalam bahasa ibu mereka. \n Maukah Saudara membantu menerjemahkannya? Lihat @AS1AW\n\n</i>{lang_name} - {author}",
+            "team": "<b>🎭 | Bot Team</b>\n<i>Kita semua melakukan banyak hal sekaligus, tetapi setiap orang memiliki peran untuk dimainkan... </i> \n\n💻 @AS1AW - Pengembang\n💻 @magecode - Pengembang\n💽 @KatranLife - Penyediaan Host\n\n🎨 @unknown_cat13 - Desainer\n\n⚽️ @despating - Penguji\n\n<b>🗝 | Penulis pelokalan</b>\n<i>Setiap orang dapat menerjemahkan bot ke dalam bahasa ibu mereka. \n Maukah Saudara membantu menerjemahkannya? Lihat @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "**🔗 | Koneksi Hebat**\nDinosaurus horor ada di mana-mana! \n\n📢 News channel - @DinoGochi\n\n👥 Forum - @DinoForum\n\n🧧 YouTube - [@DinoGochi](https://www.youtube.com/@dinogochi)"
         },
         "support_command": {
