@@ -1828,7 +1828,6 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 1300,
-        "ignore_preview": ["iron-ingot", "copper-ingot", "wood"]
+        "time_craft": 1300
     }
 }
