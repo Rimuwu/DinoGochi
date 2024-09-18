@@ -475,7 +475,8 @@ async def send_request(call: CallbackQuery):
             if res:
                 text = t('add_friend.correct', lang)
                 await bot.answer_callback_query(call.id, text)
-                await user_notification(friendid, 'send_request', lang, user_name=user_name(call.from_user))
+                await user_notification(friendid, 'send_request', 
+                                        user_name=user_name(call.from_user))
             else:
                 text = t('add_friend.already', lang)
                 await bot.answer_callback_query(call.id, text)
