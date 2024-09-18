@@ -1,4 +1,5 @@
 
+from bot.modules.logs import log
 from bot.config import mongo_client
 from bot.const import GAME_SETTINGS as gs
 from bot.modules.data_format import random_code
@@ -17,8 +18,9 @@ async def get_referal_award(userid: int):
 
     await users.update_one({'userid': userid}, 
                         {'$inc': {'coins': coins}}, comment='get_referal_award')
+    log(f"Edit coins: user: {userid} col: {coins}", 0, "take_coins")
     for item in items: await AddItemToUser(userid, item)
-    
+
 async def create_referal(userid: int, code: str = ''):
     """ Создаёт связь между кодом и владельцем, 
         если не указан код, генерирует его

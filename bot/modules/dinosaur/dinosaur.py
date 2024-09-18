@@ -439,6 +439,7 @@ async def end_journey(dino_id: ObjectId):
         for i in data['items']: 
             await AddItemToUser(data['sended'], i)
         await users.update_one({'userid': data['sended']}, {'$inc': {'coins': data['coins']}}, comment='end_journey')
+        log(f"Edit coins: user: {data['sended']} col: {data['coins']}", 0, "take_coins")
 
         await long_activity.delete_many({'dino_id': dino_id}, comment='end_journey')
 

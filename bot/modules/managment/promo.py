@@ -13,6 +13,7 @@ from time import time
 import json
  
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.user.user import take_coins
 promo = DBconstructor(mongo_client.other.promo)
 users = DBconstructor(mongo_client.user.users)
 
@@ -298,7 +299,7 @@ async def use_promo(code: str, userid: int, lang: str):
 
                             text = t('promo_commands.activate', lang)
                             if data['coins']:
-                                await users.update_one({'userid': userid}, {'$inc': {'coins': data['coins']}}, comment='use_promo_3')
+                                await take_coins(userid, data['coins'], True)
 
                                 text += t('promo_commands.coins', lang,
                                           coins=data['coins']
