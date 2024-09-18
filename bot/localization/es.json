@@ -1175,7 +1175,7 @@
         },
         "back_text": {
             "main_menu": "🦕 | Volver al menú principal",
-            "profile_menu": "🎮| Volver al menú de perfil",
+            "profile_menu": "🎮 | Volver al menú de perfil",
             "friends_menu": "👥 | Volver al menú de amigos",
             "actions_menu": "🦕 | Volver al menú de actividades",
             "dungeon_menu": "🗻 | Volver al menú de la mazmorra",
@@ -2102,7 +2102,7 @@
             "inactive_dino": "🦕 ¡Elige solo dinosaurios congelados!"
         },
         "about_menu": {
-            "team": "<b>🎭 | Equipo de bots </b> \n <i> Todos hacemos muchas cosas a la vez, pero todos tienen un papel que desempeñar ... </i> \n\n💻 @AS1AW - Desarrollador\n💻 @magecode - Desarrollador\n💽 @KatranLife - Aprovisionamiento de host\n\n🎨 @unknown_cat13 - Diseñador\n\n<b>🗝 | Autor de localization</b>\n<i>Todos pueden traducir el bot a su idioma nativo. \n ¿Le gustaría ayudar con la traducción? Consulte @AS1AW\n\n</i>{lang_name} - {author}",
+            "team": "<b>🎭 | Equipo de bots </b> \n <i> Todos hacemos muchas cosas a la vez, pero todos tienen un papel que desempeñar ... </i> \n\n💻 @AS1AW - Desarrollador\n💻 @magecode - Desarrollador\n💽 @KatranLife - Aprovisionamiento de host\n\n🎨 @unknown_cat13 - Diseñador\n\n⚽️ @despating - Probador\n\n<b>🗝 | Autor de localization</b>\n<i>Todos pueden traducir el bot a su idioma nativo. \n ¿Le gustaría ayudar con la traducción? Consulte @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "**🔗 | La Gran Conexión**\n¡Los dinosaurios de terror están en todas partes! \n\n📢 Canal de noticias - @DinoGochi\n\n👥 Foro - @DinoForum\n\n🧧 YouTube - [@DinoGochi](https://www.youtube.com/@dinogochi)"
         },
         "support_command": {
