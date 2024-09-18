@@ -53,7 +53,7 @@ async def ChooseDinoState(function, userid: int, chatid: int,
     elements = await user.get_dinos(all_dinos)
     if add_egg: elements += await user.get_eggs
     if not transmitted_data: transmitted_data = {}
-    
+
     transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
     ret_data = get_answer_keyboard(elements, lang)
 
