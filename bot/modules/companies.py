@@ -130,6 +130,20 @@ async def end_company(advert_id: ObjectId):
     companie = await companies.find_one({'_id': advert_id})
 
     if companie:
+        await companies.delete_one({'_id': advert_id})
+        
+        for i in set([companie['owner']] + conf.bot_devs):
+            lang = await get_lang(i)
+            try:
+                await bot.send_message(i,
+                    t('companies.end_company', lang, 
+                    time_work = seconds_to_str(int(time()) - companie['time_start'], lang),
+                    show_count = companie['show_count'],
+                    max_count = companie['max_count'],
+                    name = companie['name'])
+                    )
+            except: pass
+
         if companie['delete_after']:
             messages = await message_log.find({'advert_id': advert_id})
 
@@ -147,18 +161,6 @@ async def end_company(advert_id: ObjectId):
 
         else:
             await message_log.delete_one({'advert_id': advert_id})
-
-        await companies.delete_one({'_id': advert_id})
-
-        for i in set([companie['owner']] + conf.bot_devs):
-            lang = await get_lang(i)
-            await bot.send_message(i,
-                t('companies.end_company', lang, 
-                time_work = seconds_to_str(int(time()) - companie['time_start'], lang),
-                show_count = companie['show_count'],
-                max_count = companie['max_count'],
-                name = companie['name'])
-                )
 
 async def generate_message(userid: int, company_id: ObjectId, lang = None, 
                            save = True):
