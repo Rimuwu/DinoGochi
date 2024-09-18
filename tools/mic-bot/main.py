@@ -99,6 +99,16 @@ def translate(message):
 
     bot.send_message(chat_id, t(text, lang, False), parse_mode='Markdown')
 
+@bot.message_handler(commands=['translate', 't'])
+def translate(message):
+    args = message.text.split()
+    lang = args[1]
+    text = args[2]
+
+    chat_id = message.chat.id
+
+    bot.send_message(chat_id, t(text, lang, False))
+
 
 if __name__ == '__main__':
     print('start')
