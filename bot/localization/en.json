@@ -1277,11 +1277,11 @@
             "ChooseInt": {
                 "error_not_int": "❓ | After a structural analysis of the data, we determined that you did not enter a number, try again. Or enter /cancel to cancel.",
                 "error_max_int": "❓ | The specified number is greater than the maximum ({number} > {max}), please try again. Or enter /cancel to cancel.",
-                "error_min_int": "❓ | The specified number is less than the minimum ({number} &lt; {min}), try again. Alternatively, type /cancel to cancel."
+                "error_min_int": "❓ | The specified number is less than the minimum ({number} < {min}), try again. Alternatively, type /cancel to cancel."
             },
             "ChooseString": {
                 "error_max_len": "❓ | The length of the message is longer than allowed ({number} &gt; {max}), try again. Alternatively, type /cancel to cancel.",
-                "error_min_len": "❓ | The length of the message is less than allowed ({number} &lt; {min}), try again. Alternatively, type /cancel to cancel."
+                "error_min_len": "❓ | The length of the message is less than allowed ({number} < {min}), try again. Alternatively, type /cancel to cancel."
             },
             "ChooseConfirm": {
                 "error_not_confirm": "❓ | Select one of the options. Or enter /cancel to cancel."
