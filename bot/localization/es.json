@@ -952,6 +952,12 @@
             "leather_jacket_recipe": {
                 "name": "📜 Chaqueta de cuero",
                 "description": "Casi como un escudo, pero mucho más ligero."
+            },
+            "body_recipe": {
+                "name": "📜 Receta de casco"
+            },
+            "SYSTEM_ITEM_BODY": {
+                "name": "📦 Cuerpo"
             }
         },
         "notifications": {
@@ -1133,49 +1139,49 @@
                 "inline_menu": "dino_profile"
             },
             "bank_end": {
-                "text": "🏦 | {dino_name} ¡De vuelta del banco! Y aquí están los resultados de su trabajo: {results}",
+                "text": "🏦 | {dino_name} ¡De vuelta del banco! Estos son los resultados de su trabajo: {results}",
                 "inline_menu": "dino_profile"
             },
             "mine_end": {
-                "text": "⛏️ | {dino_name} ¡Regresado de la mina! Y aquí están los resultados de su trabajo: {results}",
+                "text": "¡⛏️ | {dino_name} regresó de la mina! Estos son los resultados de su trabajo: {results}",
                 "inline_menu": "dino_profile"
             },
             "sawmill_end": {
-                "text": "🌲 | {dino_name} ¡De vuelta del aserradero! Y aquí están los resultados de su trabajo: {results}",
+                "text": "🌲 | {dino_name} ¡De vuelta del aserradero! Estos son los resultados de su trabajo: {results}",
                 "inline_menu": "dino_profile"
             }
         },
         "breakdown": {
-            "seclusion": "🔇 El dinosaurio se niega a hablar contigo por un tiempo, por lo que no recibirás notificaciones de él.",
-            "hysteria": "❌ El dinosaurio está muy molesto, está acurrucado en su habitación llorando.",
-            "unrestrained_play": "🎮 El dinosaurio está muy molesto, decidió ir a jugar para animarse.",
-            "downgrade": "💥 Debido a un mal humor, el dinosaurio arrojó el objeto con mucha fuerza. Este artículo podría haber sido un accesorio."
+            "seclusion": "🔇 | El dinosaurio se niega a hablar contigo por un tiempo, por lo que no recibirás notificaciones de él.",
+            "hysteria": "❌ | El dinosaurio está muy molesto, se acurruca en su habitación y llora.",
+            "unrestrained_play": "🎮 | El dinosaurio está muy molesto, decidió ir a jugar para animarse.",
+            "downgrade": "💥 | Debido a su mal humor, el dinosaurio lanzó el objeto con mucha fuerza. Este artículo podría ser un accesorio."
         },
         "inspiration": {
-            "game": "🥭 ¡Debido al gran estado de ánimo, el dinosaurio recibe un bono x{bonus} a la habilidad del juego! 💚 ¡Envía un dinosaurio al juego para usar inspiración!",
-            "collecting": "🍍 ¡Debido al gran estado de ánimo, el dinosaurio obtiene una bonificación x{bonus} a la velocidad de recolección de comida! 💚 ¡Envía un dinosaurio a recolectar comida para usar inspiración!",
-            "journey": "🌽 ¡Debido al gran estado de ánimo, el dinosaurio recibe una bonificación x{bonus} al número de eventos en el viaje! 💚 ¡Lleva a un dinosaurio en un viaje para usar la inspiración!",
-            "sleep": "🍏 ¡Debido a su gran estado de ánimo, el dinosaurio obtiene un bono x{bonus} para la calidad del sueño! 💚 ¡Envía al dinosaurio a dormir para usar inspiración!",
-            "craft": "🥝 ¡Debido al gran estado de ánimo, el dinosaurio recibe una bonificación x{bonus} a la velocidad de elaboración de objetos! 💚 ¡Envía un dinosaurio a crear un objeto para usar la inspiración!",
-            "farm": "🥬 ¡Debido al gran estado de ánimo, el dinosaurio recibe una bonificación x{bonus} por el dominio del cuidado de las plantas! 💚 ¡Envía un dinosaurio a la granja para usar inspiración!",
-            "mine": "🍒 ¡Debido al gran estado de ánimo, el dinosaurio recibe una bonificación x{bonus} a la velocidad de trabajo en la mina! 💚 ¡Envía el dinosaurio a la mina para usar inspiración!",
-            "bank": "🥭 ¡Debido al gran estado de ánimo, el dinosaurio recibe un bono x{bonus} por la calidad del trabajo en el banco! 💚 ¡Envía el dinosaurio al banco para usar inspiración!",
-            "sawmill": "🌽 ¡Debido al gran estado de ánimo, el dinosaurio obtiene una bonificación x{bonus} a la velocidad de trabajo en el aserradero! 💚 ¡Envía el dinosaurio al aserradero para usar inspiración!",
-            "gym": "🌶 ¡Debido al gran estado de ánimo, el dinosaurio recibe una bonificación x{bonus} a la velocidad de aumentar la fuerza! 💚 ¡Envía el dinosaurio a la sala para usar inspiración!",
-            "library": "🍇 ¡Debido al gran estado de ánimo, el dinosaurio recibe una bonificación x{bonus} a la velocidad de aumentar la inteligencia! 💚 ¡Envía el dinosaurio a la biblioteca para que te inspire!",
-            "park": "🥕 ¡Debido al gran estado de ánimo, el dinosaurio obtiene una bonificación x{bonus} a la velocidad de nivelar el carisma! 💚 ¡Envía el dinosaurio al parque para usar inspiración!",
-            "swimming_pool": "🍎 ¡Debido al gran estado de ánimo, el dinosaurio obtiene una bonificación x{bonus} a la velocidad de la agilidad de nivelación! 💚 ¡Envía el dinosaurio a la piscina para usar inspiración!",
-            "exp_boost": "🍌 ¡Debido al gran estado de ánimo, el dinosaurio recibe un bono x{bonus} para ganar experiencia!"
+            "game": "🥭 | ¡Debido al gran estado de ánimo, el dinosaurio recibe un bono ** a la habilidad del juego! 💚 ¡Envía un dinosaurio a jugar para usar inspiración!",
+            "collecting": "🍍 | ¡Debido al gran estado de ánimo, el dinosaurio obtiene una bonificación *x{bonus}* a la velocidad de recolección de alimentos! 💚 ¡Envía a un dinosaurio a recolectar comida para usar inspiración!",
+            "journey": "🌽 | ¡Debido al gran estado de ánimo, el dinosaurio recibe una bonificación *x{bonus}* a la cantidad de eventos en el viaje! 💚 ¡Lleva a un dinosaurio en un viaje para usar la inspiración!",
+            "sleep": "🍏 | ¡Debido al gran estado de ánimo, el dinosaurio recibe un bono *x{bonus}* a la calidad del sueño! 💚 ¡Envía al dinosaurio a dormir para usar inspiración!",
+            "craft": "🥝 | ¡Debido al gran estado de ánimo, el dinosaurio recibe una bonificación *x{bonus}* a la velocidad de elaboración de artículos! 💚 ¡Envía un dinosaurio a crear un artículo para usar inspiración!",
+            "farm": "🥬 | ¡Debido al gran estado de ánimo, el dinosaurio recibe un bono *x{bonus}* a la habilidad de cuidar las plantas! 💚 ¡Envía un dinosaurio a la granja para usar inspiración!",
+            "mine": "🍒 | ¡Debido al gran estado de ánimo, el dinosaurio recibe un bono *x{bonus}* a la velocidad de trabajo en la mina! 💚 ¡Envía el dinosaurio a la mina para usar inspiración!",
+            "bank": "🥭 | ¡Debido al gran estado de ánimo, el dinosaurio recibe un bono *x{bonus}* a la calidad del trabajo en el banco! 💚 ¡Envía el dinosaurio al banco para que te inspire!",
+            "sawmill": "🌽 | ¡Debido al gran estado de ánimo, el dinosaurio recibe un bono *x{bonus}* a la velocidad de trabajo en el aserradero! 💚 ¡Envía el dinosaurio al aserradero para que te inspire!",
+            "gym": "🌶 | ¡Debido al gran estado de ánimo, el dinosaurio recibe una bonificación *x{bonus}* a la velocidad de aumento de fuerza! 💚 ¡Envía un dinosaurio a la sala para que te inspire!",
+            "library": "🍇 | ¡Debido al gran estado de ánimo, el dinosaurio recibe un bono *x{bonus}* a la velocidad de aumentar la inteligencia! 💚 ¡Envía un dinosaurio a la biblioteca para que te inspire!",
+            "park": "🥕 | ¡Debido al gran estado de ánimo, el dinosaurio recibe un bono *x{bonus}* a la velocidad de bombeo de carisma! 💚 ¡Envía el dinosaurio al parque para que te inspire!",
+            "swimming_pool": "🍎 | ¡Debido al gran estado de ánimo, el dinosaurio recibe una bonificación *x{bonus}* a la velocidad de nivelación de agilidad! 💚 ¡Envía el dinosaurio a la piscina para usar inspiración!",
+            "exp_boost": "🍌 | ¡Debido al gran estado de ánimo, el dinosaurio recibe un bono *x{bonus}* para ganar experiencia!"
         },
         "back_text": {
-            "main_menu": "🦕 Volver al menú principal",
-            "profile_menu": "🎮 Volver al menú de perfil",
-            "friends_menu": "👥 Volver al menú Amigos",
-            "actions_menu": "🦕 Volver al menú de actividades",
-            "dungeon_menu": "🗻 Volver al menú de la mazmorra",
-            "dino_tavern_menu": "🍻 Volver al menú de la taberna",
-            "settings_menu": "🔗 Menú de configuración (página 1)",
-            "market_menu": "🛒 Volver al mercado Menú",
+            "main_menu": "🦕 | Volver al menú principal",
+            "profile_menu": "🎮 | Volver al menú de perfil",
+            "friends_menu": "👥 | Volver al menú de amigos",
+            "actions_menu": "🦕 | Volver al menú de actividades",
+            "dungeon_menu": "🗻 | Volver al menú de la mazmorra",
+            "dino_tavern_menu": "🍻 | Volver al menú de la taberna",
+            "settings_menu": "🔗 | Menú de configuración (página 1)",
+            "market_menu": "🛒 | Volver al menú del mercado",
             "bot_market": "🗝️ Volver en el menú de la tienda",
             "bot_market_menu": "🗝️ Volver en el menú de la tienda"
         },
@@ -1186,7 +1192,7 @@
             "settings": "🔧 | Menú de configuración activado\n\n🔔 Notificaciones diarias: {notif}\n🎞 Modo de perfil: {profile_view}\n📚 Modo de inventario: {inv_view}",
             "market": {
                 "info": "🛒 | ¡El Panel de Mercado está abierto! \n_Promoted productos pueden parecer here_",
-                "products": "📯 ¡Y aquí hay algunos productos que pueden resultarle útiles!"
+                "products": "📯 | ¡Y aquí hay algunos artículos que pueden resultarle útiles!"
             },
             "dino_tavern": {
                 "info": "🍺 ¡Has entrado en la taberna de los dinosaurios! \n\n📜 Mientras estés en la taberna, ¡puedes obtener una misión o escuchar información útil!",
@@ -1203,7 +1209,7 @@
             "seller": "🎇 Ir al menú de gestión de la tienda",
             "bot_market": "🎍 | ¿Qué ofrecerá el bot hoy? ¡Echa un vistazo!",
             "backgrounds_menu": "🎩 | ¡El menú de gestión en segundo plano está abierto!",
-            "live_actions": "🍬 | ¡Ve al menú de actividades de la vida!",
+            "live_actions": "🌸 | ¡Ve al menú de actividades de la vida!",
             "extraction": "⛏️ | ¡Ve al menú de obras! Para obtener el resultado, debe llevar el asunto hasta el final.",
             "skills_actions": "📍 | ¡Ve al menú de nivelación de habilidades! \n\n💪 | Subir de nivel las habilidades es un proceso difícil y largo, cuando envíes a un dinosaurio a entrenar, ¡asegúrate de que esté lleno y también tenga suficiente fuerza para entrenar! \n\n❗ | Ten en cuenta que el dinosaurio no regresa del entrenamiento por sí solo sin consecuencias, debes hacerlo tú. ¡Vigila el estado del dinosaurio y sigue las recomendaciones!",
             "speed_actions": "⌚ | Acciones rápidas: funciona al instante, pero se puede volver a usar después de un tiempo."
@@ -1762,7 +1768,7 @@
             },
             "no_item": "No hay problema",
             "accs": "\n{em_game}*┌* Viajes: {journey}\n{em_coll}*├* Forrajeo: {collecting}\n{em_jour}*├* Juego: {game}\n{em_sleep}*├* Dormir: {sleep}\n{em_weapon}*├* Arma: {weapon}\n{em_armor}*├* Defensa: {armor}\n{em_backpack}*└* Almacenamiento: {backpack}\n",
-            "return": "🔮 ¡De vuelta al menú principal!",
+            "return": "🔮 | ¡De vuelta al menú principal!",
             "inline_menu": {
                 "reset_activ_item": {
                     "text": "💍 Eliminar elemento",
@@ -2096,7 +2102,7 @@
             "inactive_dino": "🦕 ¡Elige solo dinosaurios congelados!"
         },
         "about_menu": {
-            "team": "<b>🎭 | Equipo de bots </b> \n <i> Todos hacemos muchas cosas a la vez, pero todos tienen un papel que desempeñar ... </i> \n\n💻 @AS1AW - Desarrollador\n💻 @magecode - Desarrollador\n💽 @KatranLife - Aprovisionamiento de host\n\n🎨 @unknown_cat13 - Diseñador\n\n<b>🗝 | Autor de localization</b>\n<i>Todos pueden traducir el bot a su idioma nativo. \n ¿Le gustaría ayudar con la traducción? Consulte @AS1AW\n\n</i>{lang_name} - {author}",
+            "team": "<b>🎭 | Equipo de bots </b> \n <i> Todos hacemos muchas cosas a la vez, pero todos tienen un papel que desempeñar ... </i> \n\n💻 @AS1AW - Desarrollador\n💻 @magecode - Desarrollador\n💽 @KatranLife - Aprovisionamiento de host\n\n🎨 @unknown_cat13 - Diseñador\n\n⚽️ @despating - Probador\n\n<b>🗝 | Autor de localization</b>\n<i>Todos pueden traducir el bot a su idioma nativo. \n ¿Le gustaría ayudar con la traducción? Consulte @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "**🔗 | La Gran Conexión**\n¡Los dinosaurios de terror están en todas partes! \n\n📢 Canal de noticias - @DinoGochi\n\n👥 Foro - @DinoForum\n\n🧧 YouTube - [@DinoGochi](https://www.youtube.com/@dinogochi)"
         },
         "support_command": {
@@ -4310,11 +4316,11 @@
                     "Sobre viajes por el mundo antiguo y aventuras"
                 ]
             },
-            "positive": "🤗 | Has hablado con el dinosaurio \"{theme}\". \n _ ¡La conversación causó una impresión positiva en el dinosaurio! _",
-            "negative": "😮 | Has hablado con el dinosaurio \"{theme}\". \n _ ¡La conversación trastornó al dinosaurio! _"
+            "positive": "🤗 | Hablé con el dinosaurio *\"{theme}\"*. \n\n _ ¡La conversación causó una impresión positiva en el dinosaurio! _",
+            "negative": "😮 | Hablé con el dinosaurio *\"{theme}\"*. \n\n _ ¡La conversación trastornó al dinosaurio! _"
         },
         "fighting": {
-            "hit": "💥 | En la pelea contigo, el dinosaurio fue golpeado y se molestó un poco ... \n\n❤️ | El dinosaurio perdió {heal}% de salud.",
+            "hit": "💥 | En la lucha contra ti, el dinosaurio fue golpeado y se molestó un poco...\n\n❤️ | El dinosaurio perdió *{heal}%* salud.",
             "avoid": "🪀 | ¡En la pelea contigo, el dinosaurio pudo esquivar con éxito tu golpe!",
             "block": "🛡️ | ¡En la lucha contra ti, el dinosaurio pudo bloquear tu golpe!"
         },
@@ -4387,7 +4393,7 @@
             }
         },
         "works": {
-            "choosy_type": "🍜 Elige para qué funcionará el dinosaurio",
+            "choosy_type": "🍜 | Elige para qué funcionará el dinosaurio",
             "buttons": {
                 "coins": "🪙 Remuneración",
                 "recipes": "📜 Para recetas",
@@ -4396,34 +4402,34 @@
                 "check": "👁 Ver Bóveda"
             },
             "start": {
-                "mine": "⛏️ El dinosaurio fue a la mina, ¡vigila su progreso para tratar de tomar todo lo que puedas!",
-                "bank": "🎰 El dinosaurio ha ido al banco, ¡vigila su progreso para intentar tomar todo lo que puedas!",
-                "sawmill": "🪓 Dinosaurio fue al aserradero, ¡vigila su progreso para tratar de tomar todo lo que pueda!"
+                "mine": "⛏️ | El dinosaurio fue a **, ¡vigila su progreso para tratar de recoger tanto como sea posible!",
+                "bank": "🏦 | El dinosaurio fue a **, ¡sigue su progreso para intentar tomar todo lo que puedas!",
+                "sawmill": "🪓 | El dinosaurio fue a *Serrería*, ¡vigila su progreso para tratar de recoger tantos como sea posible!"
             },
             "progress": {
-                "mine": "*⛏️ | Trabajo en la mina*\n\n🥥 *Horario:* {time_bar}\n🔑 *Depósito:* {storage_bar}\n💨 *Comprobaciones a la izquierda:* {check_bar}\n\n_Si todavía tiene comprobaciones, haga clic en el botón de abajo para ver el almacenamiento_",
+                "mine": "*⛏️ | Trabajo en la mina*\n\n⏰ Tiempo de actividad: *{time_bar}*\n\n🔑 Almacenamiento: *{storage_bar}*\n\n💨 Comprobaciones a la izquierda: *{check_bar}*\n\n_Si todavía tiene comprobaciones, haga clic en el botón de abajo para ver el almacenamiento_",
                 "mine-emoji": [
                     "💎",
                     "⚪"
                 ],
-                "bank": "*🪙 | Trabajar en un banco*\n\n🥥 *Horario:* {time_bar}\n🔑 *Depósito:* {storage_bar}\n💨 *Comprobaciones a la izquierda:* {check_bar}\n\n_Si todavía tiene comprobaciones, haga clic en el botón de abajo para ver el almacenamiento_",
+                "bank": "*🪙 | Trabajar en un banco*\n\n⏰ Tiempo de actividad: *{time_bar}*\n🔑 Almacenamiento: *{storage_bar}*\n💨 Comprobaciones a la izquierda: *{check_bar}*\n\n_Si todavía tiene comprobaciones, haga clic en el botón de abajo para ver el almacenamiento_",
                 "bank-emoji": [
                     "🪙",
                     "⚪"
                 ],
-                "sawmill": "*🪚 | Trabajo en el aserradero*\n\n🥥 *Horario:* {time_bar}\n🔑 *Depósito:* {storage_bar}\n💨 *Comprobaciones a la izquierda:* {check_bar}\n\n_Si todavía tiene comprobaciones, haga clic en el botón de abajo para ver el almacenamiento_",
+                "sawmill": "*🪚 | Trabajo en el aserradero*\n\n⏰ Tiempo de actividad: *{time_bar}*\n🔑 Almacenamiento: *{storage_bar}*\n💨 Comprobaciones a la izquierda: *{check_bar}*\n\n_Si todavía tiene comprobaciones, haga clic en el botón de abajo para ver el almacenamiento_",
                 "sawmill-emoji": [
                     "🪚",
                     "⚪"
                 ]
             },
             "storage": {
-                "coins": "🪙 Monedas: {coins} | {max_coins}",
-                "items": "📦 | Artículos: {items}\n💧 Plenitud: {count} | {max_count}"
+                "coins": "🪙 | Monedas: *{coins}* | *{max_coins}*",
+                "items": "📦 | Artículos: *{items}*\n💧 | Plenitud: *{count}* | *{max_count}*"
             },
             "stop": {
-                "coins": "\n 🪙 Monedas: {coins}",
-                "items": "\n 📦 Artículos: {items}"
+                "coins": "\n 🪙 | Monedas: *{coins}*",
+                "items": "\n 📦 | Artículos: *{items}*"
             }
         },
         "pass_messages": [

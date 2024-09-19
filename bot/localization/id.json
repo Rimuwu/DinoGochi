@@ -952,6 +952,12 @@
             "leather_jacket_recipe": {
                 "name": "📜 Jaket Kulit",
                 "description": "Hampir seperti perisai, tetapi jauh lebih ringan."
+            },
+            "body_recipe": {
+                "name": "📜 Resep Kasus"
+            },
+            "SYSTEM_ITEM_BODY": {
+                "name": "📦 Kandang"
             }
         },
         "notifications": {
@@ -1133,49 +1139,49 @@
                 "inline_menu": "dino_profile"
             },
             "bank_end": {
-                "text": "🏦 | {dino_name} Kembali dari bank! Dan inilah hasil karyanya: {results}",
+                "text": "🏦 | {dino_name} Kembali dari bank! Berikut adalah hasil karyanya: {results}",
                 "inline_menu": "dino_profile"
             },
             "mine_end": {
-                "text": "⛏️ | {dino_name} kembali dari tambang! Dan inilah hasil karyanya: {results}",
+                "text": "⛏️ | {dino_name} Kembali dari tambang! Berikut adalah hasil karyanya: {results}",
                 "inline_menu": "dino_profile"
             },
             "sawmill_end": {
-                "text": "🌲 | {dino_name} Kembali dari penggergajian! Dan inilah hasil karyanya: {results}",
+                "text": "🌲 | {dino_name} Kembali dari Penggergajian! Berikut adalah hasil karyanya: {results}",
                 "inline_menu": "dino_profile"
             }
         },
         "breakdown": {
-            "seclusion": "🔇 Dinosaurus menolak untuk berbicara dengan Anda untuk sementara waktu, jadi Anda tidak akan menerima pemberitahuan darinya.",
-            "hysteria": "❌ Dinosaurus itu sangat kesal, dia meringkuk di kamarnya sambil menangis.",
-            "unrestrained_play": "🎮 Dinosaurus itu sangat kesal, dia memutuskan untuk pergi bermain untuk menghibur dirinya sendiri.",
-            "downgrade": "💥 Karena suasana hati yang buruk, dinosaurus melemparkan benda itu dengan sangat keras. Item ini bisa saja aksesori."
+            "seclusion": "🔇 | Dinosaurus menolak untuk berbicara dengan Anda untuk sementara waktu, jadi Anda tidak akan menerima pemberitahuan darinya.",
+            "hysteria": "❌ | Dinosaurus itu sangat kesal, dia meringkuk di kamarnya dan menangis.",
+            "unrestrained_play": "🎮 | Dinosaurus itu sangat kesal, dia memutuskan untuk pergi bermain untuk menghibur dirinya sendiri.",
+            "downgrade": "💥 | Karena suasana hatinya yang buruk, dinosaurus itu melemparkan benda itu dengan sangat keras. Item ini bisa menjadi aksesori."
         },
         "inspiration": {
-            "game": "🥭 Karena suasana hati yang hebat, dinosaurus menerima bonus x{bonus} untuk keterampilan permainan! 💚 Kirim dinosaurus ke game untuk menggunakan inspirasi!",
-            "collecting": "🍍 Karena suasana hati yang hebat, dinosaurus mendapat bonus x{bonus} dengan kecepatan mengumpulkan makanan! 💚 Kirim dinosaurus untuk mengumpulkan makanan untuk menggunakan inspirasi!",
-            "journey": "🌽 Karena suasana hati yang luar biasa, dinosaurus menerima bonus x{bonus} untuk jumlah peristiwa dalam perjalanan! 💚 Ajak dinosaurus dalam perjalanan untuk menggunakan inspirasi!",
-            "sleep": "🍏 Karena suasana hatinya yang hebat, dinosaurus mendapat bonus x{bonus} untuk kualitas tidur! 💚 Kirim dinosaurus ke tidur untuk menggunakan inspirasi!",
-            "craft": "🥝 Karena suasana hati yang hebat, dinosaurus menerima bonus x{bonus} untuk kecepatan membuat item! 💚 Kirim dinosaurus untuk membuat item untuk menggunakan inspirasi!",
-            "farm": "🥬 Karena suasana hati yang luar biasa, dinosaurus menerima bonus x{bonus} untuk penguasaan perawatan tanaman! 💚 Kirim dinosaurus ke peternakan untuk menggunakan inspirasi!",
-            "mine": "🍒 Karena suasana hati yang luar biasa, dinosaurus menerima bonus x{bonus} dengan kecepatan bekerja di tambang! 💚 Kirim dinosaurus ke tambang untuk menggunakan inspirasi!",
-            "bank": "🥭 Karena suasana hati yang baik, dinosaurus menerima bonus x{bonus} untuk kualitas pekerjaan di bank! 💚 Kirim dinosaurus ke bank untuk menggunakan inspirasi!",
-            "sawmill": "🌽 Karena suasana hati yang hebat, dinosaurus mendapat bonus x{bonus} untuk kecepatan bekerja di penggergajian! 💚 Kirim dinosaurus ke penggergajian untuk menggunakan inspirasi!",
-            "gym": "🌶 Karena suasana hati yang hebat, dinosaurus menerima bonus x{bonus} dengan kecepatan meningkatkan kekuatan! 💚 Kirim dinosaurus ke aula untuk menggunakan inspirasi!",
-            "library": "🍇 Karena suasana hati yang hebat, dinosaurus menerima bonus x{bonus} dengan kecepatan meningkatkan kecerdasan! 💚 Kirimkan dinosaurus ke perpustakaan untuk menggunakan inspirasi!",
-            "park": "🥕 Karena suasana hati yang hebat, dinosaurus mendapat bonus x{bonus} dengan kecepatan meratakan karisma! 💚 Kirim dinosaurus ke taman untuk menggunakan inspirasi!",
-            "swimming_pool": "🍎 Karena suasana hati yang hebat, dinosaurus mendapat bonus x{bonus} dengan kecepatan kelincahan leveling! 💚 Kirim dinosaurus ke kolam untuk menggunakan inspirasi!",
-            "exp_boost": "🍌 Karena suasana hati yang hebat, dinosaurus menerima bonus x{bonus} untuk mendapatkan pengalaman!"
+            "game": "🥭 | Karena suasana hati yang luar biasa, dinosaurus menerima bonus *x{bonus}* untuk keterampilan permainan! 💚 Kirim dinosaurus untuk bermain untuk menggunakan inspirasi!",
+            "collecting": "🍍 | Karena suasana hati yang luar biasa, dinosaurus ini mendapatkan bonus kecepatan pengumpulan makanan *x{bonus}*! 💚 Kirim dinosaurus untuk mengumpulkan makanan untuk digunakan sebagai inspirasi!",
+            "journey": "🌽 | Karena suasana hati yang luar biasa, dinosaurus mendapatkan bonus *x{bonus}* untuk jumlah acara dalam perjalanan! 💚 Bawa dinosaurus dalam perjalanan untuk menggunakan inspirasi!",
+            "sleep": "🍏 | Karena suasana hati yang hebat, dinosaurus mendapatkan bonus *x{bonus}* untuk kualitas tidur! 💚 Biarkan dinosaurus tidur untuk menggunakan inspirasi!",
+            "craft": "🥝 | Karena suasana hati yang luar biasa, dinosaurus menerima bonus *x{bonus}* untuk kecepatan membuat item! 💚 Kirim dinosaurus untuk membuat item untuk menggunakan inspirasi!",
+            "farm": "🥬 | Karena suasana hati yang hebat, dinosaurus menerima bonus *x{bonus}* untuk keterampilan merawat tanaman! 💚 Kirim dinosaurus ke peternakan untuk menggunakan inspirasi!",
+            "mine": "🍒 | Karena suasana hati yang luar biasa, dinosaurus mendapatkan bonus *x{bonus}* untuk kecepatan kerja di tambang! 💚 Kirim dinosaurus ke tambang untuk menggunakan inspirasi!",
+            "bank": "🥭 | Karena suasana hati yang hebat, dinosaurus mendapatkan bonus *x{bonus}* untuk kualitas pekerjaan di bank! 💚 Kirim dinosaurus ke bank untuk menggunakan inspirasi!",
+            "sawmill": "🌽 | Karena suasana hati yang hebat, dinosaurus mendapatkan bonus *x{bonus}* untuk kecepatan kerja di penggergajian! 💚 Kirim dinosaurus ke penggergajian untuk menggunakan inspirasi!",
+            "gym": "🌶 | Karena suasana hati yang hebat, dinosaurus menerima bonus *x{bonus}* dengan kecepatan meningkatkan kekuatan! 💚 Kirim dinosaurus ke aula untuk menggunakan inspirasi!",
+            "library": "🍇 | Karena suasana hati yang hebat, dinosaurus menerima bonus *x{bonus}* dengan kecepatan meningkatkan kecerdasan! 💚 Kirimkan dinosaurus ke perpustakaan untuk menggunakan inspirasi!",
+            "park": "🥕 | Karena suasana hati yang hebat, dinosaurus menerima bonus *x{bonus}* dengan kecepatan memompa karisma! 💚 Kirim dinosaurus ke taman untuk menggunakan inspirasi!",
+            "swimming_pool": "🍎 | Karena suasana hati yang hebat, dinosaurus menerima bonus *x{bonus}* dengan kecepatan leveling kelincahan! 💚 Kirim dinosaurus ke kolam untuk menggunakan inspirasi!",
+            "exp_boost": "🍌 | Karena suasana hati yang luar biasa, dinosaurus menerima bonus *x{bonus}* untuk mendapatkan pengalaman!"
         },
         "back_text": {
-            "main_menu": "🦕 Kembali ke Menu Utama",
-            "profile_menu": "🎮 Kembali ke Menu Profil",
-            "friends_menu": "👥 Kembali ke Menu Teman",
-            "actions_menu": "🦕 Kembali ke Menu Aktivitas",
-            "dungeon_menu": "🗻 Kembali ke menu dungeon",
-            "dino_tavern_menu": "🍻 Kembali ke Menu Tavern",
-            "settings_menu": "🔗 Menu Pengaturan (Halaman 1)",
-            "market_menu": "🛒 Kembali ke Menu Pasar",
+            "main_menu": "🦕 | Kembali ke menu utama",
+            "profile_menu": "🎮 | Kembali ke menu profil",
+            "friends_menu": "👥 | Kembali ke Menu Teman",
+            "actions_menu": "🦕 | Kembali ke menu aktivitas",
+            "dungeon_menu": "🗻 | Kembali ke menu penjara bawah tanah",
+            "dino_tavern_menu": "🍻 | Kembali ke menu kedai",
+            "settings_menu": "🔗 | Menu pengaturan (Halaman 1)",
+            "market_menu": "🛒 | Kembali ke Menu Pasar",
             "bot_market": "🗝️ Kembali ke menu toko",
             "bot_market_menu": "🗝️ Kembali ke menu toko"
         },
@@ -1186,7 +1192,7 @@
             "settings": "🔧 | Menu Pengaturan Diaktifkan\n\n🔔 Pemberitahuan Harian: {notif}\n🎞 Mode Profil: {profile_view}\n📚 Mode Inventaris: {inv_view}",
             "market": {
                 "info": "🛒 | Panel Pasar terbuka! \n_Promoted produk mungkin muncul here_",
-                "products": "📯 Dan berikut adalah beberapa produk yang mungkin berguna bagi Anda!"
+                "products": "📯 | Dan berikut adalah beberapa item yang mungkin berguna bagi Anda!"
             },
             "dino_tavern": {
                 "info": "🍺 Anda telah memasuki Dino Tavern! \n\n📜 Saat berada di kedai, Anda bisa mendapatkan pencarian atau mendengar informasi yang berguna!",
@@ -1203,7 +1209,7 @@
             "seller": "🎇 Buka menu manajemen toko",
             "bot_market": "🎍 | Apa yang akan ditawarkan bot hari ini? Coba lihat!",
             "backgrounds_menu": "🎩 | Menu manajemen latar belakang terbuka!",
-            "live_actions": "🍬 | Buka menu aktivitas hidup!",
+            "live_actions": "🌸 | Buka menu aktivitas hidup!",
             "extraction": "⛏️ | Buka menu karya! Untuk mendapatkan hasilnya, Anda perlu menyelesaikan masalah ini.",
             "skills_actions": "📍 | Buka menu leveling keterampilan! \n\n💪 | Meningkatkan keterampilan adalah proses yang sulit dan panjang, saat mengirim dinosaurus ke pelatihan, pastikan dia kenyang, dan juga memiliki kekuatan yang cukup untuk berlatih! \n\n❗ | Perlu diingat bahwa dinosaurus tidak kembali dari pelatihan sendiri tanpa konsekuensi, Anda harus melakukannya. Awasi kondisi dinosaurus dan ikuti rekomendasinya!",
             "speed_actions": "⌚ | Tindakan cepat - bekerja secara instan, tetapi dapat digunakan lagi setelah beberapa saat."
@@ -1762,7 +1768,7 @@
             },
             "no_item": "Tidak ada masalah",
             "accs": "\n{em_game}*┌* Perjalanan: {journey}\n{em_coll}*├* Mencari Makan: {collecting}\n{em_jour}*├* Game: {game}\n{em_sleep}*├* Tidur: {sleep}\n{em_weapon}*├* Senjata: {weapon}\n{em_armor}*├* Pertahanan: {armor}\n{em_backpack}*└* Penyimpanan: {backpack}\n",
-            "return": "🔮 Kembali ke Menu Utama!",
+            "return": "🔮 | Kembali ke menu utama!",
             "inline_menu": {
                 "reset_activ_item": {
                     "text": "💍 Hapus Item",
@@ -2096,7 +2102,7 @@
             "inactive_dino": "🦕 Pilih hanya dinosaurus beku!"
         },
         "about_menu": {
-            "team": "<b>🎭 | Bot Team</b>\n<i>Kita semua melakukan banyak hal sekaligus, tetapi setiap orang memiliki peran untuk dimainkan... </i> \n\n💻 @AS1AW - Pengembang\n💻 @magecode - Pengembang\n💽 @KatranLife - Penyediaan host\n\n🎨 @unknown_cat13 - Perancang\n\n<b>🗝 | Penulis pelokalan</b>\n<i>Setiap orang dapat menerjemahkan bot ke dalam bahasa ibu mereka. \n Maukah Saudara membantu menerjemahkannya? Lihat @AS1AW\n\n</i>{lang_name} - {author}",
+            "team": "<b>🎭 | Bot Team</b>\n<i>Kita semua melakukan banyak hal sekaligus, tetapi setiap orang memiliki peran untuk dimainkan... </i> \n\n💻 @AS1AW - Pengembang\n💻 @magecode - Pengembang\n💽 @KatranLife - Penyediaan Host\n\n🎨 @unknown_cat13 - Desainer\n\n⚽️ @despating - Penguji\n\n<b>🗝 | Penulis pelokalan</b>\n<i>Setiap orang dapat menerjemahkan bot ke dalam bahasa ibu mereka. \n Maukah Saudara membantu menerjemahkannya? Lihat @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "**🔗 | Koneksi Hebat**\nDinosaurus horor ada di mana-mana! \n\n📢 News channel - @DinoGochi\n\n👥 Forum - @DinoForum\n\n🧧 YouTube - [@DinoGochi](https://www.youtube.com/@dinogochi)"
         },
         "support_command": {
@@ -4310,11 +4316,11 @@
                     "Tentang perjalanan melalui dunia kuno dan petualangan"
                 ]
             },
-            "positive": "🤗 | Anda telah berbicara dengan dinosaurus \"{theme}\". \n _ Percakapan itu membuat kesan positif pada dinosaurus itu! _",
-            "negative": "😮 | Anda telah berbicara dengan dinosaurus \"{theme}\". \n _ Percakapan itu membuat dinosaurus kesal! _"
+            "positive": "🤗 | Berbicara dengan dinosaurus *\"{theme}\"*. \n\n _ Percakapan itu membuat kesan positif pada dinosaurus itu! _",
+            "negative": "😮 | Berbicara dengan dinosaurus *\"{theme}\"*. \n\n _ Percakapan itu membuat dinosaurus kesal! _"
         },
         "fighting": {
-            "hit": "💥 | Dalam pertarungan denganmu, dinosaurus itu dipukul dan sedikit kesal... \n\n❤️ | Dinosaurus kehilangan kesehatan {heal}%.",
+            "hit": "💥 | Dalam pertarungan denganmu, dinosaurus itu dipukul dan sedikit kesal... \n\n❤️ | Dinosaurus kehilangan kesehatan *{heal}%*.",
             "avoid": "🪀 | Dalam pertarungan dengan Anda, dinosaurus itu berhasil menghindari pukulan Anda!",
             "block": "🛡️ | Dalam pertarungan melawan Anda, dinosaurus mampu memblokir pukulan Anda!"
         },
@@ -4387,7 +4393,7 @@
             }
         },
         "works": {
-            "choosy_type": "🍜 Pilih untuk apa dinosaurus akan bekerja",
+            "choosy_type": "🍜 | Pilih untuk apa dinosaurus akan bekerja",
             "buttons": {
                 "coins": "🪙 Remunerasi",
                 "recipes": "📜 Untuk Resep",
@@ -4396,34 +4402,34 @@
                 "check": "👁 Lihat Vault"
             },
             "start": {
-                "mine": "⛏️ Dinosaurus pergi ke tambang, awasi perkembangannya untuk mencoba mengambil sebanyak yang Anda bisa!",
-                "bank": "🎰 Dinosaurus telah pergi ke bank, awasi perkembangannya untuk mencoba dan mengambil sebanyak yang Anda bisa!",
-                "sawmill": "🪓 Dinosaurus pergi ke penggergajian, awasi perkembangannya untuk mencoba dan mengambil sebanyak yang dia bisa!"
+                "mine": "⛏️ | Dinosaurus pergi ke *Tambang*, awasi perkembangannya untuk mencoba dan mengambil sebanyak mungkin!",
+                "bank": "🏦 | Dinosaurus pergi ke *bank*, ikuti kemajuannya untuk mencoba dan mengambil sebanyak yang Anda bisa!",
+                "sawmill": "🪓 | Dinosaurus pergi ke **, awasi kemajuannya untuk mencoba mengambil sebanyak mungkin!"
             },
             "progress": {
-                "mine": "*⛏️ | Bekerja di tambang*\n\n🥥 *Buka:* {time_bar}\n🔑 *Repositori:* {storage_bar}\n💨 *Cek yang tersisa:* {check_bar}\n\n_Jika Anda masih memiliki cek, klik tombol di bawah ini untuk melihat penyimpanan_",
+                "mine": "**\n\n⏰ Waktu Aktif: *{time_bar}*\n\n🔑 Penyimpanan: *{storage_bar}*\n\n💨 Cek Kiri: *{check_bar}*\n\n_Jika Anda masih memiliki cek, klik tombol di bawah ini untuk melihat penyimpanan_",
                 "mine-emoji": [
                     "💎",
                     "⚪"
                 ],
-                "bank": "*🪙 | Bekerja di bank*\n\n🥥 *Buka:* {time_bar}\n🔑 *Repositori:* {storage_bar}\n💨 *Cek yang tersisa:* {check_bar}\n\n_Jika Anda masih memiliki cek, klik tombol di bawah ini untuk melihat penyimpanan_",
+                "bank": "*🪙 | Bekerja di bank*\n\n⏰ Waktu Aktif: *{time_bar}*\n🔑 Penyimpanan: *{storage_bar}*\n💨 Cek Kiri: *{check_bar}*\n\n_Jika Anda masih memiliki cek, klik tombol di bawah ini untuk melihat penyimpanan_",
                 "bank-emoji": [
                     "🪙",
                     "⚪"
                 ],
-                "sawmill": "*🪚 | Bekerja di penggergajian*\n\n🥥 *Buka:* {time_bar}\n🔑 *Repositori:* {storage_bar}\n💨 *Cek yang tersisa:* {check_bar}\n\n_Jika Anda masih memiliki cek, klik tombol di bawah ini untuk melihat penyimpanan_",
+                "sawmill": "*🪚 | Bekerja di penggergajian*\n\n⏰ Waktu aktif: *{time_bar}*\n🔑 Penyimpanan: *{storage_bar}*\n💨 Cek Kiri: *{check_bar}*\n\n_Jika Anda masih memiliki cek, klik tombol di bawah ini untuk melihat penyimpanan_",
                 "sawmill-emoji": [
                     "🪚",
                     "⚪"
                 ]
             },
             "storage": {
-                "coins": "🪙 Koin: {coins} | {max_coins}",
-                "items": "📦 | Item: {items}\n💧 Kepenuhan: {count} | {max_count}"
+                "coins": "🪙 | Koin: *{coins}* | *{max_coins}*",
+                "items": "📦 | Item: *{items}*\n💧 | Kepenuhan: *{count}* | *{max_count}*"
             },
             "stop": {
-                "coins": "\n 🪙 Koin: {coins}",
-                "items": "\n 📦 Item: {items}"
+                "coins": "\n 🪙 | Koin: *{coins}*",
+                "items": "\n 📦 | Item: *{items}*"
             }
         },
         "pass_messages": [

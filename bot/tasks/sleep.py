@@ -1,5 +1,5 @@
 from time import time
-from random import uniform, randint
+from random import randint, random
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
@@ -65,7 +65,7 @@ async def one_time(sleeper, one_time_unit):
                 await pre_end(sleeper['dino_id'], sec_time)
             else: add_energy = one_time_unit
 
-            if uniform(0, 1) <= DREAM_CHANCE:
+            if random() <= DREAM_CHANCE:
                 if randint(1, 3) == 2:
                     await add_mood(dino['_id'], 'bad_dream', -1, 2700, True)
                 else:
@@ -96,7 +96,7 @@ async def check_notification():
         dino = await dinosaurs.find_one({'_id': sleeper['dino_id']}, comment='check_notification_dino')
         if dino:
             await pre_end(sleeper['dino_id'],
-                            sleeper['sleep_end'] - sleeper['sleep_start'])
+                            int(time()) - sleeper['sleep_start'])
             if sleeper['sleep_type'] == 'short':
                 mood_time = (int(time()) - sleeper['sleep_start']) // 2
             else: mood_time = 2700

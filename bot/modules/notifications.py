@@ -1,10 +1,8 @@
 from random import choice
 from time import time
-from asyncio import sleep
 
 from bson.objectid import ObjectId
 from telebot.types import InlineKeyboardMarkup
-from telebot.util import antiflood
 
 from bot.dbmanager import mongo_client, conf
 from bot.exec import bot

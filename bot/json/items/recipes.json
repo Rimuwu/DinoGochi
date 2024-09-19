@@ -1783,5 +1783,51 @@
         "rank": "rare",
         "type": "recipe",
         "time_craft": 2800
+    },
+    "body_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "SYSTEM_ITEM_BODY",
+                    "type": "preview",
+                    "count": 1
+                }
+            ],
+            "iron-ingot": [
+                {
+                    "item": "iron-body",
+                    "type": "create",
+                    "count": 1
+                }
+            ],
+            "copper-ingot": [
+                {
+                    "item": "copper-body",
+                    "type": "create",
+                    "count": 1
+                }
+            ],
+            "wood": [
+                {
+                    "item": "wood-body",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": ["iron-ingot", "copper-ingot", "wood"],
+                "type": "delete",
+                "count": 3
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "time_craft": 1300
     }
 }

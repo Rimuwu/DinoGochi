@@ -350,7 +350,7 @@ def random_data(data: Union[int, str, list, dict, None]):
 
     else: return data
 
-def transform(var: float, max_var: int, max_unit: int) -> int:
+def transform(var: float, max_var: int, max_unit: Union[int, float]) -> int:
     """ 
     Функция transform(var: float, max_var: int, max_unit: int) -> float предназначена для преобразования числа var, находящегося в диапазоне от 0 до max_var, в новое значение на основе указанного значения max_unit.
 

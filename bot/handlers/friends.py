@@ -418,7 +418,7 @@ async def transfer_coins(col: int, transmitted_data: dict):
     friendid = transmitted_data['friendid']
     username = transmitted_data['username']
 
-    status = await take_coins(userid, col*-1, True)
+    status = await take_coins(userid, -col, True)
 
     if status:
         text = t('take_money.send', lang)
@@ -427,9 +427,7 @@ async def transfer_coins(col: int, transmitted_data: dict):
 
         text = t('take_money.transfer', lang, username=username, coins=col)
         await bot.send_message(friendid, text)
-
-        await users.update_one({'userid': friendid}, {'$inc': {'coins': col}}, 
-                               comment='transfer_coins')
+        await take_coins(friendid, col, True)
 
     else:
         text = t('take_money.no_coins', lang)
@@ -477,7 +475,8 @@ async def send_request(call: CallbackQuery):
             if res:
                 text = t('add_friend.correct', lang)
                 await bot.answer_callback_query(call.id, text)
-                await user_notification(friendid, 'send_request', lang, user_name=user_name(call.from_user))
+                await user_notification(friendid, 'send_request', 
+                                        user_name=user_name(call.from_user))
             else:
                 text = t('add_friend.already', lang)
                 await bot.answer_callback_query(call.id, text)

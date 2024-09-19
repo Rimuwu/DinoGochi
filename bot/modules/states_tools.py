@@ -53,7 +53,7 @@ async def ChooseDinoState(function, userid: int, chatid: int,
     elements = await user.get_dinos(all_dinos)
     if add_egg: elements += await user.get_eggs
     if not transmitted_data: transmitted_data = {}
-    
+
     transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
     ret_data = get_answer_keyboard(elements, lang)
 
@@ -552,7 +552,7 @@ async def next_step(answer, transmitted_data: dict, start: bool=False):
         if ret_data['type'] == 'update_data':
             # Обработчик данных между запросами
             # Теперь может быть последним!
-            
+
             if inspect.iscoroutinefunction(ret_data['function']):
                 transmitted_data, answer = await ret_data['function'](transmitted_data, **add_data)
             else:

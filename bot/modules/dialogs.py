@@ -11,6 +11,7 @@ from bot.modules.localization import get_data, t
 from bot.modules.dinosaur.dinosaur  import dead_check
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.user.user import take_coins
 users = DBconstructor(mongo_client.user.users)
 items = DBconstructor(mongo_client.items.items)
 
@@ -80,8 +81,7 @@ async def dead_last_dino(userid: int, name: str, lang: str,
                 else:
                     coins = (user['coins'] // 100) * 70
 
-                await users.update_one({'userid': userid}, {'$inc': 
-                    {'coins': -coins}}, comment='dead_last_dino_1')
+                await take_coins(userid, -coins, True)
                 await items.delete_many({'owner_id': userid}, comment='dead_last_dino')
 
                 await AddItemToUser(userid, GS['dead_dialog_item'], 1, 

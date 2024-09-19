@@ -1,13 +1,12 @@
-from datetime import datetime, timezone
-from random import choice, randint, choices
+from random import choice, randint, random
 from time import time
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.modules.data_format import transform
 from bot.modules.dinosaur.dinosaur import Dino
-from bot.modules.items.item import AddItemToUser, counts_items
-from bot.modules.localization import get_data, get_lang, t
+from bot.modules.items.item import AddItemToUser
+from bot.modules.localization import get_lang
 from bot.modules.notifications import dino_notification, user_notification
 from bot.modules.user.user import experience_enhancement
 from bot.taskmanager import add_task
@@ -34,8 +33,8 @@ async def check_items():
             dino = await Dino().create(craft['dino_id'])
             stat = dino.stats['intelligence']
             # Формула отвечает на вопрос - создать ли ещё 1 предмет
-            # Главное условие - 20 уровень навыка = 60% успеха
-            suc = randint(0, 1) < (0.6 - max(0, (20 - stat) * 0.03))
+            # Главное условие - 20 уровень = 40% успеха
+            suc =  transform(stat, 20, 0.4) + random() >= 0.8
 
             if suc:
                 r_item = choice(craft['items'])

@@ -952,6 +952,12 @@
             "leather_jacket_recipe": {
                 "name": "📜 Leather Jacket",
                 "description": "Almost like a shield, but much lighter."
+            },
+            "body_recipe": {
+                "name": "📜 Hull Recipe"
+            },
+            "SYSTEM_ITEM_BODY": {
+                "name": "📦 Enclosure"
             }
         },
         "notifications": {
@@ -1133,49 +1139,49 @@
                 "inline_menu": "dino_profile"
             },
             "bank_end": {
-                "text": "🏦 | {dino_name} back from the bank! And here are the results of his work: {results}",
+                "text": "🏦 | {dino_name} Back from the bank! Here are the results of his work: {results}",
                 "inline_menu": "dino_profile"
             },
             "mine_end": {
-                "text": "⛏️ | {dino_name} returned from the mine! And here are the results of his work: {results}",
+                "text": "⛏️ | {dino_name} Back from the mine! Here are the results of his work: {results}",
                 "inline_menu": "dino_profile"
             },
             "sawmill_end": {
-                "text": "🌲 | {dino_name} back from the sawmill! And here are the results of his work: {results}",
+                "text": "🌲 | {dino_name} Back from the Sawmill! Here are the results of his work: {results}",
                 "inline_menu": "dino_profile"
             }
         },
         "breakdown": {
-            "seclusion": "🔇 The dinosaur refuses to talk to you for a while, so you won't receive notifications from it.",
-            "hysteria": "❌ The dinosaur is very upset, he is huddled in his room and crying.",
-            "unrestrained_play": "🎮 The dinosaur is very upset, he decided to go play to cheer himself up.",
-            "downgrade": "💥 Due to the bad mood, the dinosaur threw the object very hard. This item could have been an accessory."
+            "seclusion": "🔇 | The dinosaur refuses to talk to you for a while, so you won't receive notifications from it.",
+            "hysteria": "❌ | The dinosaur is very upset, he is huddled in his room and cries.",
+            "unrestrained_play": "🎮 | The dinosaur is very upset, he decided to go play to cheer himself up.",
+            "downgrade": "💥 | Due to his bad mood, the dinosaur threw the object very hard. This item could be an accessory."
         },
         "inspiration": {
-            "game": "🥭 Due to the great mood, the dinosaur receives a bonus x{bonus} to the skill of the game! 💚 Send a dinosaur to the game to use inspiration!",
-            "collecting": "🍍 Due to the great mood, the dinosaur gets a bonus x{bonus} to the speed of gathering food! 💚 Send a dinosaur out to gather food to use inspiration!",
-            "journey": "🌽 Due to the great mood, the dinosaur receives a bonus x{bonus} to the number of events in the journey! 💚 Take a dinosaur on a journey to use inspiration!",
-            "sleep": "🍏 Due to his great mood, the dinosaur gets a bonus x{bonus} to sleep quality! 💚 Send the dinosaur to sleep to use inspiration!",
-            "craft": "🥝 Due to the great mood, the dinosaur receives a bonus x{bonus} to the speed of crafting items! 💚 Send a dinosaur to craft an item to use inspiration!",
-            "farm": "🥬 Due to the great mood, the dinosaur receives a bonus x{bonus} to the mastery of plant care! 💚 Send a dinosaur to the farm to use inspiration!",
-            "mine": "🍒 Due to the great mood, the dinosaur receives a bonus x{bonus} to the speed of working in the mine! 💚 Send the dinosaur to the mine to use inspiration!",
-            "bank": "🥭 Due to the great mood, the dinosaur receives a bonus x{bonus} to the quality of work in the bank! 💚 Send the dinosaur to the bank to use inspiration!",
-            "sawmill": "🌽 Due to the great mood, the dinosaur gets a bonus x{bonus} to the speed of working at the sawmill! 💚 Send the dinosaur to the sawmill to use inspiration!",
-            "gym": "🌶 Due to the great mood, the dinosaur receives a bonus x{bonus} to the speed of increasing strength! 💚 Send the dinosaur to the hall to use inspiration!",
-            "library": "🍇 Due to the great mood, the dinosaur receives a bonus x{bonus} to the speed of increasing intelligence! 💚 Submit the dinosaur to the library to use inspiration!",
-            "park": "🥕 Because of the great mood, the dinosaur gets a bonus x{bonus} to the speed of leveling charisma! 💚 Send the dinosaur to the park to use inspiration!",
-            "swimming_pool": "🍎 Due to the great mood, the dinosaur gets a bonus x{bonus} to the speed of leveling agility! 💚 Send the dinosaur to the pool to use inspiration!",
-            "exp_boost": "🍌 Due to the great mood, the dinosaur receives a bonus x{bonus} to gaining experience!"
+            "game": "🥭 | Due to the great mood, the dinosaur receives a bonus *x{bonus}* to the skill of the game! 💚 Send a dinosaur to play to use inspiration!",
+            "collecting": "🍍 | Due to the great mood, the dinosaur gets a bonus *x{bonus}* to the speed of gathering food! 💚 Send a dinosaur out to gather food to use inspiration!",
+            "journey": "🌽 | Due to the great mood, the dinosaur receives a bonus *x{bonus}* to the number of events in the journey! 💚 Take a dinosaur on a journey to use inspiration!",
+            "sleep": "🍏 | Due to the great mood, the dinosaur receives a bonus *x{bonus}* to the quality of sleep! 💚 Send the dinosaur to sleep to use inspiration!",
+            "craft": "🥝 | Due to the great mood, the dinosaur receives a bonus *x{bonus}* to the speed of crafting items! 💚 Send a dinosaur to craft an item to use inspiration!",
+            "farm": "🥬 | Because of the great mood, the dinosaur receives a bonus *x{bonus}* to the skill of caring for plants! 💚 Send a dinosaur to the farm to use inspiration!",
+            "mine": "🍒 | Due to the great mood, the dinosaur receives a bonus *x{bonus}* to the speed of working in the mine! 💚 Send the dinosaur to the mine to use inspiration!",
+            "bank": "🥭 | Because of the great mood, the dinosaur receives a bonus *x{bonus}* to the quality of work in the bank! 💚 Send the dinosaur to the bank to use inspiration!",
+            "sawmill": "🌽 | Due to the great mood, the dinosaur receives a bonus *x{bonus}* to the speed of working at the sawmill! 💚 Send the dinosaur to the sawmill to use inspiration!",
+            "gym": "🌶 | Due to the great mood, the dinosaur receives a bonus *x{bonus}* to the speed of increasing strength! 💚 Send a dinosaur to the hall to use inspiration!",
+            "library": "🍇 | Because of the great mood, the dinosaur gets a bonus *x{bonus}* to the speed of increasing intelligence! 💚 Send a dinosaur to the library to use inspiration!",
+            "park": "🥕 | Because of the great mood, the dinosaur gets a bonus *x{bonus}* to the speed of pumping charisma! 💚 Send a dinosaur to the park to use inspiration!",
+            "swimming_pool": "🍎 | Due to the great mood, the dinosaur receives a bonus *x{bonus}* to the speed of agility leveling! 💚 Send the dinosaur to the pool to use inspiration!",
+            "exp_boost": "🍌 | Because of the great mood, the dinosaur gets a bonus *x{bonus}* to gain experience!"
         },
         "back_text": {
-            "main_menu": "🦕 Return to Main Menu",
-            "profile_menu": "🎮 Return to Profile Menu",
-            "friends_menu": "👥 Return to Friends Menu",
-            "actions_menu": "🦕 Return to the Activity Menu",
-            "dungeon_menu": "🗻 Return to the Dungeon Menu",
-            "dino_tavern_menu": "🍻 Return to Tavern Menu",
-            "settings_menu": "🔗 Settings Menu (Page 1)",
-            "market_menu": "🛒 Return to Market Menu",
+            "main_menu": "🦕 | Return to the main menu",
+            "profile_menu": "🎮 | Return to the profile menu",
+            "friends_menu": "👥 | Return to the Friends Menu",
+            "actions_menu": "🦕 | Return to Activity Menu",
+            "dungeon_menu": "🗻 | Return to the dungeon menu",
+            "dino_tavern_menu": "🍻 | Return to the tavern menu",
+            "settings_menu": "🔗 | Settings menu (Page 1)",
+            "market_menu": "🛒 | Return to the Market Menu",
             "bot_market": "🗝️ Return in the store menu",
             "bot_market_menu": "🗝️ Return in the store menu"
         },
@@ -1186,7 +1192,7 @@
             "settings": "🔧 | Settings Menu Activated\n\n 🔔 Daily Notifications: {notif} \n 🎞 Profile Mode: {profile_view} \n 📚 Inventory Mode: {inv_view}",
             "market": {
                 "info": "🛒 | The Market Panel is open! \n _Promoted products may appear here_",
-                "products": "📯 And here are a few products that may come in handy!"
+                "products": "📯 | And here are a few items that you might find useful!"
             },
             "dino_tavern": {
                 "info": "🍺 You've entered the Dino Tavern! \n\n 📜 While in the tavern, you can get a quest or hear useful information!",
@@ -1203,7 +1209,7 @@
             "seller": "🎇 Go to the store management menu",
             "bot_market": "🎍 | What will the bot offer today? Take a look!",
             "backgrounds_menu": "🎩 | The background management menu is open!",
-            "live_actions": "🍬 | Go to the life activities menu!",
+            "live_actions": "🌸 | Go to the life activities menu!",
             "extraction": "⛏️ | Go to the works menu! To get the result, you need to bring the matter to the end.",
             "skills_actions": "📍 | Go to the skill leveling menu! \n\n💪 | Leveling up skills is a difficult and long process, when sending a dinosaur to training, make sure that he is full, and also has enough strength to train! \n\n❗ | Keep in mind that the dinosaur does not return from training on its own without consequences, you must do it. Keep an eye on the condition of the dinosaur and follow the recommendations!",
             "speed_actions": "⌚ | Quick actions - works instantly, but can be used again after a while."
@@ -1271,11 +1277,11 @@
             "ChooseInt": {
                 "error_not_int": "❓ | After a structural analysis of the data, we determined that you did not enter a number, try again. Or enter /cancel to cancel.",
                 "error_max_int": "❓ | The specified number is greater than the maximum ({number} > {max}), please try again. Or enter /cancel to cancel.",
-                "error_min_int": "❓ | The specified number is less than the minimum ({number} &lt; {min}), try again. Alternatively, type /cancel to cancel."
+                "error_min_int": "❓ | The specified number is less than the minimum ({number} < {min}), try again. Alternatively, type /cancel to cancel."
             },
             "ChooseString": {
                 "error_max_len": "❓ | The length of the message is longer than allowed ({number} &gt; {max}), try again. Alternatively, type /cancel to cancel.",
-                "error_min_len": "❓ | The length of the message is less than allowed ({number} &lt; {min}), try again. Alternatively, type /cancel to cancel."
+                "error_min_len": "❓ | The length of the message is less than allowed ({number} < {min}), try again. Alternatively, type /cancel to cancel."
             },
             "ChooseConfirm": {
                 "error_not_confirm": "❓ | Select one of the options. Or enter /cancel to cancel."
@@ -1762,7 +1768,7 @@
             },
             "no_item": "No problem",
             "accs": "\n {em_game} *┌* Travel: {journey} \n {em_coll} *├* Foraging: {collecting} \n {em_jour} *├* Game: {game} \n {em_sleep} *├* Dream: {sleep} \n {em_weapon} *├* Weapons: {weapon} \n {em_armor} *├* Protection: {armor} \n {em_backpack} *└* Storage: {backpack} \n",
-            "return": "🔮 Back to the Main Menu!",
+            "return": "🔮 | Back to the main menu!",
             "inline_menu": {
                 "reset_activ_item": {
                     "text": "💍 Remove Item",
@@ -2096,7 +2102,7 @@
             "inactive_dino": "🦕 Choose only frozen dinosaurs!"
         },
         "about_menu": {
-            "team": "<b>🎭 | Bot Team</b>\n<i>We all do a lot of things at once, but everyone has a role to play... </i> \n\n💻 @AS1AW - Developer\n💻 @magecode - Developer\n💽 @KatranLife - Host provisioning\n\n🎨 @unknown_cat13 - Designer\n\n<b>🗝 | Author of localization</b>\n<i>Everyone can translate the bot into their native language. \n Would you like to help with the translation? Refer to @AS1AW\n\n</i>{lang_name} - {author}",
+            "team": "<b>🎭 | Bot Team</b>\n<i>We all do a lot of things at once, but everyone has a role to play... </i> \n\n💻 @AS1AW - Developer\n💻 @magecode - Developer\n💽 @KatranLife - Host Provisioning\n\n🎨 @unknown_cat13 - Designer\n\n⚽️ @despating - Tester\n\n<b>🗝 | Author of localization</b>\n<i>Everyone can translate the bot into their native language. \n Would you like to help with the translation? Refer to @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "** 🔗 | The Great Bond** \n Horror dinosaurs are everywhere! \n\n 📢 News Channel - @DinoGochi\n\n 👥 Forum - @DinoForum\n\n 🧧 YouTube - [@DinoGochi](https://www.youtube.com/@dinogochi)"
         },
         "support_command": {
@@ -4310,11 +4316,11 @@
                     "About travels through the ancient world and adventures"
                 ]
             },
-            "positive": "🤗 | You've talked to the dinosaur \"{theme}\". \n _ The conversation made a positive impression on the dinosaur! _",
-            "negative": "😮 | You've talked to the dinosaur \"{theme}\". \n _ The conversation upset the dinosaur! _"
+            "positive": "🤗 | Talked to dinosaur *\"{theme}\"*. \n\n _ The conversation made a positive impression on the dinosaur! _",
+            "negative": "😮 | Talked to dinosaur *\"{theme}\"*. \n\n _ The conversation upset the dinosaur! _"
         },
         "fighting": {
-            "hit": "💥 | In the fight with you, the dinosaur got hit and got a little upset... \n\n❤️ | The dinosaur lost {heal}% health.",
+            "hit": "💥 | In the fight with you, the dinosaur got hit and got a little upset... \n\n❤️ | The dinosaur lost *{heal}%* health.",
             "avoid": "🪀 | In the fight with you, the dinosaur was able to successfully dodge your blow!",
             "block": "🛡️ | In the fight against you, the dinosaur was able to block your blow!"
         },
@@ -4387,7 +4393,7 @@
             }
         },
         "works": {
-            "choosy_type": "🍜 Choose what the dinosaur will work for",
+            "choosy_type": "🍜 | Choose what the dinosaur will work for",
             "buttons": {
                 "coins": "🪙 Remuneration",
                 "recipes": "📜 For Recipes",
@@ -4396,34 +4402,34 @@
                 "check": "👁 View Vault"
             },
             "start": {
-                "mine": "⛏️ Dinosaur went to the mine, keep an eye on his progress to try to take as much as you can!",
-                "bank": "🎰 Dinosaur has gone to the bank, keep an eye on his progress to try and take as much as you can!",
-                "sawmill": "🪓 Dinosaur went to the sawmill, keep an eye on his progress to try and take as much as he can!"
+                "mine": "⛏️ | The dinosaur went to *Mine*, keep an eye on his progress to try and pick up as much as possible!",
+                "bank": "🏦 | The dinosaur went to *bank*, follow his progress to try and take as much as you can!",
+                "sawmill": "🪓 | The dinosaur went to *Sawmill*, keep an eye on his progress to try and pick up as many as possible!"
             },
             "progress": {
-                "mine": "*⛏️ | Work in the mine*\n\n🥥 *Opening hours:* {time_bar}\n🔑 *Repository:* {storage_bar}\n💨 *Checks left:* {check_bar}\n\n_If you still have checks, click on the button below to view the storage_",
+                "mine": "*⛏️ | Work in the mine*\n\n⏰ Uptime: *{time_bar}*\n\n🔑 Storage: *{storage_bar}*\n\n💨 Checks Left: *{check_bar}*\n\n_If you still have checks, click on the button below to view the storage_",
                 "mine-emoji": [
                     "💎",
                     "⚪"
                 ],
-                "bank": "*🪙 | Work in a bank*\n\n🥥 *Opening hours:* {time_bar}\n🔑 *Repository:* {storage_bar}\n💨 *Checks left:* {check_bar}\n\n_If you still have checks, click on the button below to view the storage_",
+                "bank": "*🪙 | Work in a bank*\n\n⏰ Uptime: *{time_bar}*\n🔑 Storage: *{storage_bar}*\n💨 Checks Left: *{check_bar}*\n\n_If you still have checks, click the button below to view the storage_",
                 "bank-emoji": [
                     "🪙",
                     "⚪"
                 ],
-                "sawmill": "*🪚 | Work at the sawmill*\n\n🥥 *Opening hours:* {time_bar}\n🔑 *Repository:* {storage_bar}\n💨 *Checks left:* {check_bar}\n\n_If you still have checks, click on the button below to view the storage_",
+                "sawmill": "*🪚 | Work at the sawmill*\n\n⏰ Uptime: *{time_bar}*\n🔑 Storage: *{storage_bar}*\n💨 Checks Left: *{check_bar}*\n\n_If you still have checks, click the button below to view the storage_",
                 "sawmill-emoji": [
                     "🪚",
                     "⚪"
                 ]
             },
             "storage": {
-                "coins": "🪙 Coins: {coins} | {max_coins}",
-                "items": "📦 | Items: {items}\n💧 Fullness: {count} | {max_count}"
+                "coins": "🪙 | Coins: *{coins}* | *{max_coins}*",
+                "items": "📦 | Items: *{items}*\n💧 | Fullness: *{count}* | *{max_count}*"
             },
             "stop": {
-                "coins": "\n 🪙 Coins: {coins}",
-                "items": "\n 📦 Items: {items}"
+                "coins": "\n 🪙 | Coins: *{coins}*",
+                "items": "\n 📦 | Items: *{items}*"
             }
         },
         "pass_messages": [

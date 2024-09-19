@@ -6,7 +6,7 @@ from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.dinosaur.dino_status import end_skill_activity
-from bot.modules.dinosaur.dinosaur import Dino, mutate_dino_stat
+from bot.modules.dinosaur.dinosaur import Dino
 from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.dinosaur.mood import add_mood, check_inspiration
 from bot.modules.dinosaur.skills import add_skill_point

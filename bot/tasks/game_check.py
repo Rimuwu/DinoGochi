@@ -1,5 +1,4 @@
-import random
-from random import randint
+from random import randint, random
 from time import time
 
 from bot.config import conf
@@ -45,18 +44,17 @@ async def game_process():
 
     for game_data in data:
         percent = game_data['game_percent']
-        dino = await dinosaurs.find_one({'_id': game_data['dino_id']}, comment='game_process_dino')
+        dino = await dinosaurs.find_one({'_id': game_data['dino_id']}, comment='game_process_dino') # type: dict | None
 
         if dino:
-            dino: dict
             charisma = dino['stats']['charisma']
 
-            if random.uniform(0, 1) <= ENERGY_DOWN:
-                if random.uniform(0, 1) <= ENERGY_DOWN2: 
+            if random() <= ENERGY_DOWN:
+                if random() <= ENERGY_DOWN2: 
                     await mutate_dino_stat(dino, 'energy', -1)
 
             if dino['stats']['game'] < 100:
-                if random.uniform(0, 1) <= LVL_CHANCE: 
+                if random() <= LVL_CHANCE: 
                     if not await check_breakdown(dino['_id'], 'unrestrained_play'):
                         dino_con = await dino_owners.find_one({'dino_id': dino['_id']}, 
                             comment='game_process_dino_con')
@@ -71,7 +69,7 @@ async def game_process():
                                 await experience_enhancement(userid, randint(1, 5))
 
                 if dino['stats']['game'] < 100:
-                    if random.uniform(0, 1) <= GAME_CHANCE:
+                    if random() <= GAME_CHANCE:
                         add_unit = 0
 
                         if randint(1, 100) + transform(charisma, 20, 5) >= 80:
