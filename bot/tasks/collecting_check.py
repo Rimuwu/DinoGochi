@@ -4,9 +4,8 @@ from bot.config import conf, mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
 from bot.modules.data_format import transform
-from bot.modules.dinosaur.skills import check_skill
 from bot.modules.items.accessory import check_accessory
-from bot.modules.dinosaur.dinosaur  import Dino, end_collecting, mutate_dino_stat
+from bot.modules.dinosaur.dinosaur import Dino, end_collecting, mutate_dino_stat
 from bot.modules.items.item import counts_items
 from bot.modules.localization import  get_lang
 from bot.modules.dinosaur.mood import check_inspiration
