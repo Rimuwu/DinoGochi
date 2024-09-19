@@ -27,6 +27,6 @@ def run():
     log('Ой, да что там ваш ChatGPT?! *Stable Diffusion подключился*')
 
     # Запуск тасков и бота
-    add_task(bot.infinity_polling, skip_pending=True)
+    add_task(bot.infinity_polling, skip_pending=True, timeout=5, request_timeout=20)
     log('Все готово! Взлетаем!', prefix='Start')
     run_taskmanager()
