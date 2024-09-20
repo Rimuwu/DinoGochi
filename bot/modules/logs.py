@@ -1,20 +1,28 @@
 import logging
-from logging.handlers import RotatingFileHandler
+from logging.handlers import RotatingFileHandler, QueueHandler, QueueListener
+from multiprocessing import Queue
 from time import strftime
 
 from colorama import Fore, Style
 
 from bot.config import conf
-
-logging.basicConfig(
-    handlers=[RotatingFileHandler(
+# Logger
+logger = logging.getLogger()
+# File logger
+log_filehandler = RotatingFileHandler(
         filename=f"{conf.logs_dir}/{strftime('%Y %m-%d %H.%M.%S')}.log", 
         encoding='utf-8', mode='a+', backupCount=10, maxBytes=1024*1024*10)
-              ],
-        format="%(asctime)s %(levelname)s %(message)s", 
-        datefmt="%F %T", 
-        level=logging.INFO
-        )
+log_formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s", datefmt="%F %T")
+log_filehandler.setFormatter(log_formatter)
+# Async queue logging
+log_queue = Queue()
+queue_handler = QueueHandler(log_queue)
+logger.addHandler(queue_handler)
+# Log listen
+queue_listener = QueueListener(log_queue, log_filehandler)
+
+logger.setLevel(logging.INFO)
+queue_listener.start()
 
 # if conf.debug:
 #     logger = telebot.logger
@@ -33,21 +41,21 @@ def log(message: str, lvl: int = 1, prefix: str = 'Бот') -> None:
 
     if lvl == 0:
         if conf.debug:
-            logging.info(f'{prefix}: DEBUG: {message}')
+            logger.info(f'{prefix}: DEBUG: {message}')
             print(Fore.CYAN + f"{strftime('%Y %m-%d %H.%M.%S')} {prefix}: {message}" + Style.RESET_ALL)
     elif lvl == -1: # Цвет для логов базы
         if conf.base_logging:
-            logging.info(f"{prefix}: {message}")
+            logger.info(f"{prefix}: {message}")
             print(Fore.LIGHTBLACK_EX + f"{strftime('%Y %m-%d %H.%M.%S')} DB {prefix}: {message}" + Style.RESET_ALL)
     elif lvl == 1:
-        logging.info(f"{prefix}: {message}")
+        logger.info(f"{prefix}: {message}")
         print(Fore.GREEN + f"{strftime('%Y %m-%d %H.%M.%S')} {prefix}: {message}" + Style.RESET_ALL)
     elif lvl == 2:
-        logging.warning(f"{prefix}: {message}")
+        logger.warning(f"{prefix}: {message}")
         print(Fore.BLUE + f"{strftime('%Y %m-%d %H.%M.%S')} {prefix}: {message}" + Style.RESET_ALL)
     elif lvl == 3:
-        logging.error(f"{prefix}: {message}")
+        logger.error(f"{prefix}: {message}")
         print(Fore.YELLOW + f"{strftime('%Y %m-%d %H.%M.%S')} {prefix}: {message}" + Style.RESET_ALL)
     else:
-        logging.critical(f"{prefix}: {message}")
+        logger.critical(f"{prefix}: {message}")
         print(Fore.RED + f"{strftime('%Y %m-%d %H.%M.%S')} {prefix}: {message}" + Style.RESET_ALL)
