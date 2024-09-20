@@ -9,4 +9,4 @@ config.json
 .state-save
 .tools/mic-bot/main.py
 mongodb
-docker-compose.yml
+docker-compose
