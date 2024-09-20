@@ -11,7 +11,7 @@ import random
 from time import time
 from typing import Union
 from bson import ObjectId
-from bot.config import mongo_client, conf
+from bot.dbmanager import mongo_client, conf
 from bot.exec import bot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 

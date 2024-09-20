@@ -1,4 +1,4 @@
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 
 from bot.modules.markup import answer_markup, count_markup
 from bot.modules.states_tools import prepare_steps

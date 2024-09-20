@@ -4,7 +4,7 @@ from time import time
 from bson.objectid import ObjectId
 from telebot.types import InlineKeyboardMarkup
 
-from bot.config import mongo_client, conf
+from bot.dbmanager import mongo_client, conf
 from bot.exec import bot
 from bot.modules.data_format import seconds_to_str
 from bot.modules.dinosaur.dino_status import check_status

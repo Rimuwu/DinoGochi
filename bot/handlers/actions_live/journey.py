@@ -2,7 +2,7 @@
 from random import randint
 from time import time
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.dinosaur.mood import repeat_activity
 from bot.modules.user.advert import auto_ads

@@ -11,7 +11,8 @@ from bot.modules.localization import t
 from bot.modules.states_tools import ChooseDinoState, ChoosePagesState
 from bot.modules.markup import markups_menu as m
 
-from bot.config import conf, mongo_client
+from bot.config import conf
+from bot.dbmanager import mongo_client
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 users = DBconstructor(mongo_client.user.users)

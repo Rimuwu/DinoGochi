@@ -1,7 +1,8 @@
 from asyncio import sleep
 from time import time
 
-from bot.config import conf, mongo_client
+from bot.config import conf
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import random_code, seconds_to_str, list_to_inline
 from bot.modules.localization import t, get_lang

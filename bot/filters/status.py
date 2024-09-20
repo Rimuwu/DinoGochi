@@ -1,7 +1,7 @@
 from telebot.asyncio_filters import AdvancedCustomFilter
 from telebot.types import Message
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.inline import inline_menu
 from bot.modules.localization import t

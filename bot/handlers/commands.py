@@ -1,6 +1,6 @@
 from email import message
 from bot.modules.localization import get_data
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.handlers.start import start_game
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, user_name

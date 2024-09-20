@@ -2,7 +2,8 @@
 from random import choice, randint, uniform
 from time import time
 
-from bot.config import conf, mongo_client
+from bot.config import conf
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.dinosaur.dino_status import end_skill_activity
 from bot.modules.dinosaur.dinosaur import Dino

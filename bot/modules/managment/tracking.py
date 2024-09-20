@@ -1,5 +1,5 @@
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.localization import get_data
 from bot.modules.data_format import seconds_to_str

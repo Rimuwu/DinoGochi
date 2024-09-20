@@ -2,7 +2,7 @@
 
 from typing import Any
 from bot.const import GAME_SETTINGS
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.modules.data_format import list_to_inline, random_code, random_data, seconds_to_str
 from bot.modules.items.item import AddItemToUser, DeleteAbilItem, UseAutoRemove, check_and_return_dif, get_item_dict, get_items_names, get_name, get_data, item_code, item_info
 from bot.modules.items.items_groups import get_group

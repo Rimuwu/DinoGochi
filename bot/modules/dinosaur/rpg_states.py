@@ -3,7 +3,7 @@ from time import time
 
 from bson.objectid import ObjectId
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.modules.dinosaur.dinosaur import mutate_dino_stat
 
 from bot.modules.overwriting.DataCalsses import DBconstructor

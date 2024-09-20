@@ -1,4 +1,4 @@
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline

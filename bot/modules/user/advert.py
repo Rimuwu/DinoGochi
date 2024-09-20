@@ -3,7 +3,7 @@ import aiohttp
 from bot.config import conf
 from bot.modules.companies import generate_message, nextinqueue, priority_and_timeout
 from bot.modules.logs import log
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 import json
 from bot.exec import bot
 from bot.modules.localization import t, get_lang

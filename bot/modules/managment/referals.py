@@ -1,6 +1,5 @@
-
+from bot.dbmanager import mongo_client
 from bot.modules.logs import log
-from bot.config import mongo_client
 from bot.const import GAME_SETTINGS as gs
 from bot.modules.data_format import random_code
 from bot.modules.user.friends import insert_friend_connect

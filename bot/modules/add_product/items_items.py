@@ -1,4 +1,4 @@
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.modules.localization import t
 
 from bot.exec import bot

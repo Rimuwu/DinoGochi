@@ -1,4 +1,5 @@
-from bot.config import conf, mongo_client
+from bot.config import conf
+from bot.dbmanager import mongo_client
 from bot.modules.notifications import notification_manager
 from bot.taskmanager import add_task
 from bot.modules.dinosaur.dinosaur  import Dino

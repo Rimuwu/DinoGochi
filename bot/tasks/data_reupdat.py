@@ -1,6 +1,7 @@
 # Чеки, обновляющие информацию о рейтинге или количестве объектов в базе
 # Дабы не собирать информацию каждый раз при запросе пользователя
-from bot.config import conf, mongo_client
+from bot.config import conf
+from bot.dbmanager import mongo_client
 from bot.taskmanager import add_task
 from datetime import datetime
 from bot.modules.user.user import max_lvl_xp

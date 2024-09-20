@@ -3,7 +3,7 @@ from time import time
 
 from bson.objectid import ObjectId
 
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.const import  QUESTS
 from bot.modules.data_format import (list_to_inline, random_code, random_dict,
 seconds_to_str)

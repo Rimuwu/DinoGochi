@@ -1,5 +1,5 @@
 from bson.objectid import ObjectId
-from bot.config import mongo_client
+from bot.dbmanager import mongo_client
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from time import time as time_now
 

@@ -1,7 +1,8 @@
 
 from time import time
 
-from bot.config import conf, mongo_client
+from bot.config import conf
+from bot.dbmanager import mongo_client
 from bot.modules.dinosaur.dinosaur import mutate_dino_stat
 from bot.taskmanager import add_task
 
