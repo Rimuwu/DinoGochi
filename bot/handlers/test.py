@@ -12,6 +12,9 @@ from asyncio import sleep as asleep
 
 from telebot.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            InlineQueryResultContact, Message, LabeledPrice)
+from bot.modules.images_save import send_SmartPhoto
+
+from bot.modules.logs import log
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
@@ -191,12 +194,8 @@ async def test(message: Message):
 @bot.message_handler(pass_bot=True, commands=['test2'])
 @HDMessage
 async def test2(message: Message):
+    st = time()
+    print(82323)
     
-    chars = {
-        'power': 1.83454,
-        'dexterity': 10.2323,
-     'intelligence': 19.23213,
-     'charisma': 18.23
-    }
-    
-    await create_skill_image('244', 1, 'ru', chars)
+    await send_SmartPhoto(message.chat.id, 'images/remain/taverna/dino_reward.png', None, 'Markdown', None)
+    log(f'test2 {time() - st} MEOW')

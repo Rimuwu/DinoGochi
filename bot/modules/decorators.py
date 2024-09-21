@@ -26,7 +26,7 @@ class HendlerDecorator(object):
                 add_message = 'AHTUNG 60'
             elif work_time >= 10:
                 add_message = 'AHTUNG 10'
-            
+
             if send_logs:
                 log(f"command: {func.__name__} userid: {user_id} work.time: {work_time} result: {result} {add_message}", 0, 'HandlerEnd')
 
