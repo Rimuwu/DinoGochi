@@ -5,7 +5,7 @@ services:
       - mongo # Зависит от mongo
     volumes:
       - ./logs:/bot/logs # Проброс каталога логов
-      - ./bot/data:/data # Проброс каталога данных
+      - ./bot/data:/bot/bot/data # Проброс каталога данных
       - ./config.json:/bot/config.json:ro # Проброс конфига
       - /etc/localtime:/etc/localtime:ro # Проброс времени
     restart: unless-stopped
