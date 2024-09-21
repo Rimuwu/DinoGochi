@@ -13,30 +13,25 @@ import telebot
 from bot.modules.logs import log
 
 storage = {}
-DIRECTORY = 'bot/json/file_base.json'
+DIRECTORY = 'bot/data/file_base.json'
 
 def get_storage():
-    # Проверка наличия файла с данными в temp/file_id_directorie.json
-    global storage
+    # Проверка наличия файла с данными в bot/data/file_base.json
 
-    with open(DIRECTORY, encoding='utf-8') as f: 
-        storage = json.load(f)
+    try:
+        with open(DIRECTORY, encoding='utf-8') as f: 
+            storage = json.load(f)
+    except Exception as error:
+        if not os.path.exists(DIRECTORY):
+            with open(DIRECTORY, 'w', encoding='utf-8') as f:
+                f.write('{}')
+            return {}
+    return storage
 
 def save(new_file: dict):
-    """
-    Saves the given new_file dictionary to the file at DIRECTORY.
-    If the file is not found, a FileNotFoundError is raised.
-    If the file is not a dictionary, a TypeError is raised.
-    """
-    if not isinstance(new_file, dict):
-        raise TypeError("new_file should be a dictionary")
-    try:
-        with open(DIRECTORY, 'w', encoding='utf-8') as f:
-            json.dump(new_file, f, sort_keys=True, indent=4, ensure_ascii=False)
-    except FileNotFoundError as e:
-        raise FileNotFoundError(f"File {DIRECTORY} not found") from e
-    except TypeError as e:
-        raise TypeError(f"new_file should be a dictionary, not {type(new_file)}") from e
+    with open(DIRECTORY, 'w', encoding='utf-8') as f:
+        json.dump(new_file, f, sort_keys=True, indent=4, ensure_ascii=False)
+
 
 async def send_SmartPhoto(chatid: int, photo_way: str, caption: Union[str, None], parse_mode: Union[str, None], reply_markup: Union[telebot.types.InlineKeyboardMarkup, None]):
     global storage
@@ -64,4 +59,4 @@ async def send_SmartPhoto(chatid: int, photo_way: str, caption: Union[str, None]
         save(storage)
 
 if __name__ != '__main__':
-    get_storage()
+    storage = get_storage()
