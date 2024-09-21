@@ -6,18 +6,22 @@ from time import strftime
 from colorama import Fore, Style
 
 from bot.config import conf
+
 # Logger
 logger = logging.getLogger()
+
 # File logger
 log_filehandler = RotatingFileHandler(
         filename=f"{conf.logs_dir}/{strftime('%Y %m-%d %H.%M.%S')}.log", 
         encoding='utf-8', mode='a+', backupCount=10, maxBytes=1024*1024*10)
 log_formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s", datefmt="%F %T")
 log_filehandler.setFormatter(log_formatter)
+
 # Async queue logging
 log_queue = Queue()
 queue_handler = QueueHandler(log_queue)
 logger.addHandler(queue_handler)
+
 # Log listen
 queue_listener = QueueListener(log_queue, log_filehandler)
 
