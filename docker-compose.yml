@@ -6,6 +6,7 @@ services:
     volumes:
       - ./logs:/bot/logs # Проброс каталога логов
       - ./config.json:/bot/config.json:ro # Проброс конфига
+      - ./file_base.json:/bot/json/file_base.json # Проброс каталога с данными
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
 
