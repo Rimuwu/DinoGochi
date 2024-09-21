@@ -2,21 +2,22 @@ services:
   bot:
     build: .
     depends_on:
-      - mongo
+      - mongo # Зависит от mongo
     volumes:
       - ./logs:/bot/logs # Проброс каталога логов
+      - ./bot/data:/data # Проброс каталога данных
       - ./config.json:/bot/config.json:ro # Проброс конфига
-      - ./file_base.json:/bot/json/file_base.json # Проброс каталога с данными
-      - /etc/localtime:/etc/localtime:ro
+      - /etc/localtime:/etc/localtime:ro # Проброс времени
     restart: unless-stopped
 
-  mongo:
-    image: mongo:latest
-    environment:
+  mongo: 
+    image: mongo:latest # Имя образа
+    environment: # Настройки
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: example # Обязательно поменять пароль перед деплоем здесь и в config.json!!!
-    ports:
+    ports: 
       - "27017:27017"
-    volumes:
+    volumes: # Каталоги
       - ./mongodb:/data/db # Каталог с данными
     restart: unless-stopped
+    command: mongod --quiet --logpath /dev/null 
