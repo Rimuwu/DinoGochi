@@ -13,4 +13,4 @@ COPY images/ ./images/
 COPY tools/ ./tools/
 COPY bot/ ./bot/
 # Запуск
-CMD ["python", "main.py"]
+CMD ["python","-u","main.py"]
