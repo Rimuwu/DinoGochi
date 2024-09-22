@@ -4,6 +4,7 @@ from bot.modules.data_format import seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.donation import send_inv
 from bot.modules.images import async_open
+from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
 from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup
@@ -38,7 +39,7 @@ async def links(message: Message):
     await bot.send_message(chatid, t('about_menu.links', lang), parse_mode='Markdown')
 
 async def main_support_menu(lang: str):
-    image = await async_open('images/remain/support/placeholder.png', True)
+    image = 'images/remain/support/placeholder.png'
     text_data = get_data('support_command', lang)
     text = text_data['info']
     prd_text = text_data['products_bio']
@@ -68,7 +69,7 @@ async def support(message: Message):
 
     image, text, markup_inline = await main_support_menu(lang)
     
-    await bot.send_photo(chatid, image, text, reply_markup=markup_inline, parse_mode='Markdown')
+    await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
 
 @bot.message_handler(pass_bot=True, commands=['premium'], 
                      is_authorized=True, private=True)
@@ -78,8 +79,8 @@ async def support_com(message: Message):
     chatid = message.chat.id
 
     image, text, markup_inline = await main_support_menu(lang)
-    
-    await bot.send_photo(chatid, image, text, reply_markup=markup_inline, parse_mode='Markdown')
+
+    await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
 
 @bot.message_handler(pass_bot=True, text='commands_name.about.faq', 
                      is_authorized=True, private=True)
@@ -127,12 +128,7 @@ async def support_buttons(call: CallbackQuery):
 
     if action == "main":
         image, text, markup_inline = await main_support_menu(lang)
-
-        await bot.edit_message_media(
-                chat_id=chatid,
-                message_id=messageid,
-                reply_markup=markup_inline,
-                media=InputMedia(type='photo', media=image, caption=text, parse_mode='Markdown'))
+        await edit_SmartPhoto(chatid, messageid, image, text, 'Markdown', markup_inline)
     else:
         if product_key != 'non_repayable': product = products[product_key]
         markup_inline = InlineKeyboardMarkup(row_width=2)
@@ -140,7 +136,8 @@ async def support_buttons(call: CallbackQuery):
         text_data = get_data('support_command', lang)
         product_bio = text_data['products_bio'][product_key]
 
-        image = await async_open(product_bio['image'], True)
+        image_way = product_bio['image']
+
         text = f'{product_bio["name"]} — {product_bio["short"]}\n\n{product_bio["description"]}'
 
         if product_key != 'non_repayable' and product['items']:
@@ -183,7 +180,7 @@ async def support_buttons(call: CallbackQuery):
             currency = 'XTR'
             count = call.data.split()[3]
 
-            image = await async_open('images/remain/support/placeholder.png', True)
+            image_way = 'images/remain/support/placeholder.png'
 
             text = text_data['buy']
 
@@ -196,19 +193,10 @@ async def support_buttons(call: CallbackQuery):
             await send_inv(user_id, product_key, count, lang)
 
         if call.message.content_type == 'text':
-            await bot.send_photo(
-                        chat_id=chatid,
-                        photo=image,
-                        caption=text,
-                        reply_markup=markup_inline,
-                        parse_mode='Markdown')
+            await send_SmartPhoto(chatid, image_way, text, 'Markdown', markup_inline)
         else:
             try:
-                await bot.edit_message_media(
-                        chat_id=chatid,
-                        message_id=messageid,
-                        reply_markup=markup_inline,
-                        media=InputMedia(type='photo', media=image, caption=text, parse_mode='Markdown'))
+                await edit_SmartPhoto(chatid, messageid, image_way, text, 'Markdown', markup_inline)
             except: pass
 
 
