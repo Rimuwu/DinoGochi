@@ -75,10 +75,11 @@ async def add_stock(in_stock: int, transmitted_data: dict):
 
             for item in items:
                 item_id = item['item_id']
+                count = item['count']
                 if 'abilities' in item: abil = item['abilities']
                 else: abil = {}
 
-                status = await CheckCountItemFromUser(userid, in_stock, item_id, abil)
+                status = await CheckCountItemFromUser(userid, in_stock * count, item_id, abil)
                 items_status.append(status)
                 n += 1
 
@@ -99,7 +100,7 @@ async def add_stock(in_stock: int, transmitted_data: dict):
                                     {'$inc': {'in_stock': in_stock}}, comment='add_stock_1')
 
         elif product['type'] == 'coins_items':
-            res = await take_coins(userid, product['price'] * in_stock, True)
+            res = await take_coins(userid, -product['price'] * in_stock, True)
             if res:
                 await products.update_one({'alt_id': productid}, 
                                     {'$inc': {'in_stock': in_stock}}, comment='add_stock_2')
