@@ -6,6 +6,7 @@ from bot.modules.data_format import escape_markdown, list_to_keyboard
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino
 from bot.modules.images import async_open
+from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
 from bot.modules.inline import list_to_inline
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import confirm_markup, count_markup
@@ -159,7 +160,7 @@ async def back_page(userid: int, page: int, lang: str):
     text += f'\n\n*№ {page}*'
 
     markup = list_to_inline([buttons])
-    image = await async_open(f'images/backgrounds/{page}.png', True)
+    image = f'images/backgrounds/{page}.png'
     return text, markup, image
 
 @bot.message_handler(pass_bot=True, text='commands_name.backgrounds.backgrounds', 
@@ -171,13 +172,12 @@ async def backgrounds(message: Message):
     chatid = message.chat.id
 
     text, markup, image = await back_page(userid, 1, lang)
-    await bot.send_photo(chatid, image, text,
-                parse_mode='Markdown', reply_markup=markup)
+    await send_SmartPhoto(chatid, image, text, 'Markdown', markup)
 
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('back_m '), private=True)
 @HDCallback
-async def kindergarten(call: CallbackQuery):
+async def background_menu(call: CallbackQuery):
     split_d = call.data.split()
     action = split_d[1]
     b_id = int(split_d[2])
@@ -191,14 +191,7 @@ async def kindergarten(call: CallbackQuery):
     if action == 'page':
 
         text, markup, image = await back_page(userid, b_id, lang)
-        await bot.edit_message_media(
-            chat_id=chatid,
-            message_id=call.message.id,
-            media=InputMedia(
-                type='photo', media=image, 
-                parse_mode='Markdown', caption=text),
-            reply_markup=markup
-        )
+        await edit_SmartPhoto(chatid, call.message.id, image, text, 'Markdown', markup)
 
     elif action == 'page_n':
         max_int = int(list(BACKGROUNDS.keys())[-1])
@@ -213,7 +206,7 @@ async def kindergarten(call: CallbackQuery):
 
 
     elif action in ['buy_coins', 'buy_super_coins']:
-        user = await users.find_one({"userid": userid}, comment='kindergarten_user')
+        user = await users.find_one({"userid": userid}, comment='buy_background')
         storage = user['saved']['backgrounds']
 
         if int(b_id) not in storage:
