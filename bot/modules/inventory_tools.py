@@ -5,6 +5,7 @@ from bot.const import GAME_SETTINGS as gs
 from bot.exec import bot
 from bot.modules.data_format import (chunks, filling_with_emptiness,
                                      list_to_inline)
+from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import item_info_markup
 from bot.modules.items.item import (get_data, get_name, is_standart, item_code,
                               item_info)
@@ -157,8 +158,7 @@ async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
                             reply_markup=markup)
     else:
         try:
-            await bot.send_photo(chatid, image, text, 'Markdown', 
-                            reply_markup=markup)
+            await send_SmartPhoto(chatid, image, text, 'Markdown', markup)
         except: 
              await bot.send_message(chatid, text,
                             reply_markup=markup)

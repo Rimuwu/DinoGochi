@@ -6,6 +6,7 @@ from bot.modules.add_product.add_product import prepare_data_option
 from bot.modules.data_format import (escape_markdown, list_to_inline,
                                      list_to_keyboard, user_name)
 from bot.modules.decorators import HDCallback, HDMessage
+from bot.modules.images_save import send_SmartPhoto
 from bot.modules.items.item import item_info
 from bot.modules.localization import get_lang, t
 from bot.modules.market.market import (create_push, create_seller, delete_product,
@@ -205,10 +206,8 @@ async def product_info(call: CallbackQuery):
                         itm.append(item)
                         text, image = await item_info(item, lang)
 
-                        try:
-                            await bot.send_photo(chatid, image, text, 'Markdown')
-                        except:
-                            await bot.send_message(chatid, text, parse_mode='Markdown')
+                        if image:
+                            await send_SmartPhoto(chatid, image, text, 'Markdown')
 
             elif call_type == 'buy' and product['owner_id'] != userid:
                 if product['owner_id'] != userid:

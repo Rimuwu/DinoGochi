@@ -3,6 +3,7 @@ from time import time
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import bot
+from bot.modules.images_save import send_SmartPhoto
 from bot.modules.items.accessory import check_accessory
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      near_key_number, seconds_to_str,
@@ -137,13 +138,12 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
         text += t('p_profile.accs', lang, formating=False).format(**acsess)
 
     # затычка на случай если не сгенерируется изображение
-    generate_image = await async_open(f'images/remain/no_generate.png', True)
-    msg = await bot.send_photo(chatid, generate_image, text,
-                parse_mode='Markdown', reply_markup=menu)
+    generate_image = 'images/remain/no_generate.png'
+    msg = await send_SmartPhoto(chatid, generate_image, text, 'Markdown', menu)
 
     await bot.send_message(chatid, t('p_profile.return', lang), 
                 reply_markup= await m(userid, 'last_menu', lang))
-    
+
     # изменение сообщения с уже нужным изображением
     image = await dino.image(user.settings['profile_view'], custom_url)
     await bot.edit_message_media(
@@ -154,6 +154,7 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
             parse_mode='Markdown', caption=text),
         reply_markup=menu
         )
+    
 
 async def egg_profile(chatid: int, egg: Egg, lang: str):
     text = t('p_profile.incubation_text', lang, 

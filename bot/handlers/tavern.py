@@ -10,6 +10,7 @@ from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino, get_dino_data, random_dino, random_quality, set_standart_specifications
 from bot.modules.images import async_open
+from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import inline_menu
 from bot.modules.items.item import (CheckCountItemFromUser, RemoveItemFromUser,
                               counts_items)
@@ -96,9 +97,8 @@ async def bonus_message(user, message, lang):
     markup_inline.add(InlineKeyboardButton(text=award, 
                             callback_data='daily_award'))
 
-    photo = await async_open('images/remain/taverna/dino_reward.png', True)
-    await bot.send_photo(message.chat.id, photo, 
-            text, parse_mode='Markdown', reply_markup=markup_inline)
+    photo = 'images/remain/taverna/dino_reward.png'
+    await send_SmartPhoto(message.chat.id, photo, text, 'Markdown', markup_inline)
 
 @bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.daily_award', is_authorized=True, private=True)
 @HDMessage
@@ -167,8 +167,8 @@ async def edit(message: Message):
     b_mark = dict(zip(btn.values(), btn.keys()))
     mark = list_to_inline([b_mark], 2)
 
-    image = await async_open('images/remain/taverna/transformation.png', True)
-    await bot.send_photo(chatid, image, text, parse_mode='Markdown', reply_markup=mark)
+    image = 'images/remain/taverna/transformation.png'
+    await send_SmartPhoto(chatid, image, text, 'Markdown', mark)
 
 async def edit_appearance(return_data, transmitted_data):
     chatid = transmitted_data['chatid']

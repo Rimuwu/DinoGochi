@@ -9,6 +9,7 @@ from bot.modules.data_format import list_to_keyboard, seconds_to_str, user_name
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur import incubation_egg
 from bot.modules.images import async_open, create_eggs_image
+from bot.modules.images_save import send_SmartPhoto
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -83,6 +84,8 @@ async def start_game(message: types.Message, code: str = '', code_type: str = ''
 @HDMessage
 async def start_game_message(message: types.Message):
     langue_code = message.from_user.language_code
+    if not langue_code: langue_code = 'en'
+
     username = user_name(message.from_user)
 
     content = str(message.text).split()
@@ -102,7 +105,7 @@ async def start_game_message(message: types.Message):
     image = await async_open('images/remain/start/placeholder.png', True)
     text = t('start_command.first_message', langue_code, username=username)
 
-    await bot.send_photo(message.chat.id, image, text, reply_markup=markup, parse_mode='HTML')
+    await send_SmartPhoto(message.chat.id, image, text, 'HTML', markup)
 
     if add_referal:
         text = t('start_command.referal', langue_code, username=username)

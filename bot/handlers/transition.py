@@ -6,6 +6,7 @@ from time import time
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
+from bot.modules.images_save import send_SmartPhoto
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline, seconds_to_str, user_name
 from bot.modules.decorators import HDCallback, HDMessage
@@ -155,9 +156,9 @@ async def tavern_menu(message: Message):
     lang = await get_lang(message.from_user.id)
     text = ''
 
-    photo = await async_open('images/remain/taverna/dino_taverna.png', True)
-    await bot.send_photo(message.chat.id, photo, 
-            t('menu_text.dino_tavern.info', lang))
+    photo = 'images/remain/taverna/dino_taverna.png'
+    await send_SmartPhoto(message.chat.id, photo, 
+                          t('menu_text.dino_tavern.info', lang), 'Markdown')
 
     user = await User().create(userid)
     friends_data = await user.get_friends
@@ -236,14 +237,13 @@ async def about_menu(message: Message):
         
         update_time = seconds_to_str(delta.seconds, lang, True)
 
-    photo = await async_open('images/remain/about/menu.png', True)
-    await bot.send_photo(message.chat.id, photo, 
+    photo = 'images/remain/about/menu.png'
+    await send_SmartPhoto(message.chat.id, photo, 
             t('menu_text.about', lang, bot_name=bot_name,
               col_u=col_u, col_d=col_d, 
-              col_i=col_i, update_time=update_time
-        ), reply_markup = await m(userid, 'about_menu', lang),
-           parse_mode ='HTML'
-           )
+              col_i=col_i, update_time=update_time), 'HTML',
+            await m(userid, 'about_menu', lang)
+        )
 
 @bot.message_handler(pass_bot=True, text='commands_name.friends.referal', is_authorized=True, private=True)
 @HDMessage

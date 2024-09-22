@@ -829,13 +829,13 @@ async def item_info(item: dict, lang: str, owner: bool = False):
     # Картиночка
     if 'image' in data_item.keys() and data_item['image']:
         try:
-            image = await async_open(f"images/items/{data_item['image']}.png", True)
+            image = f"images/items/{data_item['image']}.png"
         except:
             log(f'Item {item_id} image incorrect', 4)
 
     if type_item == 'special' and data_item['class'] == 'background':
         data_id = item['abilities']['data_id']
-        image = await async_open(f"images/backgrounds/{data_id}.png", True)
+        image = f"images/backgrounds/{data_id}.png"
 
     if owner:
         text += f'\n\n`{item} {data_item}`'

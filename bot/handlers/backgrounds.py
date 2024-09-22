@@ -280,14 +280,7 @@ async def buy(_: bool, transmitted_data: dict):
         }}, comment='buy_res')
 
         text, markup, image = await back_page(userid, int(page), lang)
-        await bot.edit_message_media(
-            chat_id=chatid,
-            message_id=message_id,
-            media=InputMedia(
-                type='photo', media=image, 
-                parse_mode='Markdown', caption=text),
-            reply_markup=markup
-        )
+        await edit_SmartPhoto(chatid, message_id, image, text, 'Markdown', markup)
 
     else:
         await bot.send_message(chatid, t('backgrounds.no_coins', lang), 
@@ -307,14 +300,7 @@ async def page_n(number: int, transmitted_data: dict):
 
     page = near_back(number, -1, storage)
     text, markup, image = await back_page(userid, page, lang)
-    await bot.edit_message_media(
-        chat_id=chatid,
-        message_id=message_id,
-        media=InputMedia(
-            type='photo', media=image, 
-            parse_mode='Markdown', caption=text),
-        reply_markup=markup
-    )
+    await edit_SmartPhoto(chatid, message_id, image, text, 'Markdown', markup)
 
     await bot.send_message(chatid, t('backgrounds.page_set', lang), 
                             reply_markup= await m(userid, 'last_menu', lang))
