@@ -89,10 +89,11 @@ async def add_stock(in_stock: int, transmitted_data: dict):
                 n = 0
                 for item in items:
                     item_id = item['item_id']
+                    count = item['count']
                     if 'abilities' in item: abil = item['abilities']
                     else: abil = {}
 
-                    await RemoveItemFromUser(userid, item_id, in_stock, abil)
+                    await RemoveItemFromUser(userid, item_id, in_stock * count, abil)
                     n += 1
 
                 text = t('product_info.stock', lang)
