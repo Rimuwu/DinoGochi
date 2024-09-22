@@ -1283,14 +1283,14 @@
             ],
             "copper-ingot": [
                 {
-                    "item": "copper-rod",
+                    "item": "metal-gear",
                     "type": "create",
                     "count": 1
                 }
             ],
             "wood": [
                 {
-                    "item": "wood-rod",
+                    "item": "wood-gear",
                     "type": "create",
                     "count": 1
                 }
