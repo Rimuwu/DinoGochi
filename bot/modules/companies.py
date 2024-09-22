@@ -288,7 +288,7 @@ async def nextinqueue(userid: int, lang = None) -> Union[ObjectId, None]:
                 # Если уже отправлено 1 сообщение по этой рассылке, то не выдаём его в очереди
                 if permissions[key]['one_message']: del result_dct[key]
                 # Если компания ещё не отдохнула от прошлого оповещения, то удаляем
-                if permissions[mes['advert_id']]['last_send'] < permissions[key]['min_timeout']:
+                if permissions[key]['last_send'] < permissions[key]['min_timeout']:
                     if key in result_dct:
                         del result_dct[key]
 
