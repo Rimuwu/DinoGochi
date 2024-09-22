@@ -184,18 +184,21 @@ async def tavern_menu(message: Message):
                 t('menu_text.dino_tavern.friends', lang))
 
         text = t('menu_text.dino_tavern.friends2', lang)
-        buttons = t('menu_text.dino_tavern.button', lang)
-        buttons = list_to_inline([{buttons: f"buy_ale {userid}"}])
 
         if len(friends_in_tavern):
             text += '\n'
             for friendid in friends_in_tavern:
+                friend_lang = await get_lang(friend.id)
                 friendChat = await bot.get_chat_member(friendid, friendid)
                 friend = friendChat.user
+
                 if friend:
+                    buttons = t('menu_text.dino_tavern.button', friend_lang)
+                    buttons = list_to_inline([{buttons: f"buy_ale {userid}"}])
+
                     text += f' 🎱 {user_name(friend)}\n'
                     text_to_friend = t('menu_text.dino_tavern.went', 
-                                    await get_lang(friend.id), 
+                                    friend_lang, 
                                     name=user_name(message.from_user))
                     try:
                         await bot.send_message(

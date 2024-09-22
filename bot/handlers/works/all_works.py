@@ -1,13 +1,8 @@
-from tabnanny import check
 from time import time
-import trace
 
 from bot.dbmanager import mongo_client
 from bot.exec import bot
-from bot.modules.dinosaur.dino_status import end_skill_activity, get_skill_time, start_skill_activity
 from bot.modules.dinosaur.dinosaur import Dino
-from bot.modules.dinosaur.kd_activity import save_kd
-from bot.modules.dinosaur.skills import add_skill_point
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.works import end_work, start_bank, start_mine, start_sawmill
 from bot.modules.items.item import get_items_names
@@ -20,7 +15,7 @@ from bot.modules.states_tools import ChooseOptionState
 from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User
 from telebot.types import Message, CallbackQuery
-from bot.modules.data_format import list_to_inline, list_to_keyboard, progress_bar, seconds_to_str
+from bot.modules.data_format import list_to_inline, list_to_keyboard, progress_bar
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
@@ -79,7 +74,6 @@ async def progress_work(call: CallbackQuery):
 
     chatid = call.message.chat.id
     userid = call.from_user.id
-    messageid = call.message.id
 
     action = call.data.split()[1]
     alt_code = call.data.split()[2]
@@ -186,7 +180,7 @@ async def end_mine(data, transmitted_data: dict):
 
     await start_mine(last_dino._id, userid, data)
     text = t('works.start.mine', lang)
-    mes = await bot.send_message(chatid, text, 
+    mes = await bot.send_message(chatid, text, 'Markdown',
                            reply_markup = await m(userid, 'last_menu', lang))
 
     await auto_ads(mes)
@@ -230,7 +224,7 @@ async def end_bank(data, transmitted_data: dict):
 
     await start_bank(last_dino._id, userid, data)
     text = t('works.start.bank', lang)
-    mes = await bot.send_message(chatid, text, 
+    mes = await bot.send_message(chatid, text, 'Markdown',
                            reply_markup = await m(userid, 'last_menu', lang))
 
     await auto_ads(mes)
@@ -274,7 +268,7 @@ async def end_sawmill(data, transmitted_data: dict):
 
     await start_sawmill(last_dino._id, userid, data)
     text = t('works.start.sawmill', lang)
-    mes = await bot.send_message(chatid, text, 
+    mes = await bot.send_message(chatid, text, 'Markdown',
                            reply_markup = await m(userid, 'last_menu', lang))
 
     await auto_ads(mes)

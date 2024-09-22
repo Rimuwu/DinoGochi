@@ -129,5 +129,5 @@ async def send_dino_to_craft(dino: Dino, transmitted_data: dict):
             await bot.send_message(chatid, "❌", parse_mode='Markdown', 
                             reply_markup= await m(userid, 'last_menu', lang))
     else:
-        await bot.send_message(chatid,t('alredy_busy'), parse_mode='Markdown', 
+        await bot.send_message(chatid,t('alredy_busy', lang), parse_mode='Markdown', 
                             reply_markup= await m(userid, 'last_menu', lang))

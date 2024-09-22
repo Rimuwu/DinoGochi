@@ -97,4 +97,4 @@ async def buy_item(count, transmitted_data):
 
     if res:
         text, rmk = await page_context(userid, lang)
-        await bot.edit_message_text(text, chatid, messageid, reply_markup=rmk)
+        await bot.edit_message_text(text, chatid, messageid, reply_markup=rmk, parse_mode='Markdown')

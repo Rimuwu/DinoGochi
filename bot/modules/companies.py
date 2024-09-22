@@ -219,7 +219,9 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None,
         # Закрепляем
         if companie['pin_message'] and save:
             s = await bot.pin_chat_message(m.chat.id, m.id)
-            if s: await bot.delete_message(m.chat.id, m.id + 1)
+            try:
+                if s: await bot.delete_message(m.chat.id, m.id + 1)
+            except: pass
 
         # Награда
         if companie['coin_price'] > 0 and m and save:
