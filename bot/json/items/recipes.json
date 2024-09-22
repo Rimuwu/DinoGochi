@@ -450,7 +450,12 @@
                 "count": 1
             },
             {
-                "item": "grasses_from_fields",
+                "item": "spices",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": {"group": "meat"},
                 "type": "delete",
                 "count": 1
             }
