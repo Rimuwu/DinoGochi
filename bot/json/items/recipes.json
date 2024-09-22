@@ -1687,12 +1687,13 @@
             {
                 "item": "skin",
                 "type": "delete",
-                "count": 10
+                "count": 5
             },
             {
                 "item": "tooling",
-                "type": "delete",
-                "count": 1
+                "type": "endurance",
+                "count": 1,
+                "act": 10
             }
         ],
         "rank": "rare",
