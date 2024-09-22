@@ -424,9 +424,10 @@ async def dino_collecting(dino_id: int, col_type: str):
 
 async def market_image_pst(custom_url, status):
     try:
-        imageBytes = await bot.download_file(custom_url)
-        img = Image.open(io.BytesIO(imageBytes)).resize((900, 350), Image.Resampling.LANCZOS).convert('RGBA')
-        img = pil_image_to_file(img, quality='maximum')
+        file_info = await bot.get_file(custom_url)
+        imageBinaryBytes = await bot.download_file(file_info.file_path)
+        imageStream = io.BytesIO(imageBinaryBytes)
+        img = Image.open(imageStream).resize((900, 350), Image.Resampling.LANCZOS).convert('RGBA')
     except: 
         img = await async_open(f'images/remain/market/{status}.png', True)
     return img
