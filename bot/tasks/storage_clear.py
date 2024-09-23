@@ -7,6 +7,7 @@ from bot.exec import bot
 from bot.modules.localization import get_lang
 from bot.modules.markup import markups_menu as m
 from bot.taskmanager import add_task
+from bot.modules.logs import log
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 users = DBconstructor(mongo_client.user.users)
@@ -27,10 +28,16 @@ async def storage_clear():
                 try:
                     await bot.send_message(chat_key, '❌', 
                         reply_markup= await m(user_key, 'last_menu', lang))
-                except: pass
-
-                await bot.delete_state(user_key, chat_key)
-                await bot.reset_data(user_key, chat_key)
+                except Exception as e:
+                    log(f"[storage_clear] Error on send message: {e}", 1)
+                try:
+                    await bot.delete_state(user_key, chat_key)
+                except Exception as e:
+                    log(f"[storage_clear] Error on delete state: {e}", 2)
+                try:
+                    await bot.reset_data(user_key, chat_key)
+                except Exception as e:
+                    log(f"[storage_clear] Error on reset data: {e}", 2)
 
 
 if __name__ != '__main__':

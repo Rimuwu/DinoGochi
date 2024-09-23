@@ -194,9 +194,8 @@ async def swipe_page(userid: int, chatid: int):
         del buttons['🔎']
 
     if 'delete_search' in settings and settings['delete_search']:
-        try:
+        if '🔎' in buttons:
             del buttons['🔎']
-        except: pass
 
     if filters:
         if settings['changing_filters'] and settings['changing_filters']:

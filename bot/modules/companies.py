@@ -142,7 +142,8 @@ async def end_company(advert_id: ObjectId):
                     max_count = companie['max_count'],
                     name = companie['name'])
                     )
-            except: pass
+            except Exception as e:
+                log(f'except in end_company {e}', 3)
 
         if companie['delete_after']:
             messages = await message_log.find({'advert_id': advert_id})

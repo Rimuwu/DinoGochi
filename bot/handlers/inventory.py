@@ -19,6 +19,7 @@ from bot.modules.items.item_tools import (AddItemToUser, CheckItemFromUser,
                                     delete_item_action, exchange_item)
 from bot.modules.items.time_craft import add_time_craft
 from bot.modules.localization import get_data, get_lang, t
+from bot.modules.logs import log
 from bot.modules.markup import count_markup, markups_menu
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseIntState
@@ -335,7 +336,8 @@ async def book(call: CallbackQuery):
     text, markup = book_page(book_id, page, lang)
     try:
         await bot.edit_message_text(text, chatid, call.message.id, reply_markup=markup, parse_mode='Markdown')
-    except: pass
+    except Exception as e: 
+        log(message=f'Book edit error {e}', lvl=2)
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('ns_craft'), private=True)
 @HDCallback
@@ -531,14 +533,18 @@ async def InventoryInline(callback: CallbackQuery):
     userid = callback.from_user.id
 
     async with bot.retrieve_data(userid, chatid) as data:
-        settings = data['settings']
-        transmitted_data = data['transmitted_data']
-        function = data['function']
+        settings = data.get('settings')
+        transmitted_data = data.get('transmitted_data')
+        function = data.get('function')
 
-    custom_code = settings['inline_code']
+    if not settings or not transmitted_data or not function:
+        log(f'InventoryInline data corrupted', lvl=2, prefix='InventoryInline')
+        return
+
+    custom_code = settings.get('inline_code')
 
     code.pop(0)
-    if code[0] == str(custom_code):
+    if code and code[0] == str(custom_code):
         code.pop(0)
         if len(code) == 1: code = code[0]
 
@@ -548,7 +554,12 @@ async def InventoryInline(callback: CallbackQuery):
         if 'steps' in transmitted_data and 'process' in transmitted_data:
             try:
                 transmitted_data['steps'][transmitted_data['process']]['bmessageid'] = callback.message.id
-            except: pass
+            except Exception as e:
+                log(f'Inline edit error {e}', lvl=2, prefix='InventoryInline')
         else: transmitted_data['bmessageid'] = callback.message.id
         del transmitted_data['inline_code']
-        await function(decode_item(code), transmitted_data=transmitted_data)
+
+        try:
+            await function(decode_item(code), transmitted_data=transmitted_data)
+        except Exception as e:
+            log(f'InventoryInline error {e}', lvl=2, prefix='InventoryInline')

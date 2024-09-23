@@ -42,7 +42,6 @@ def create_quest(complexity: int, qtype: str='', lang: str = 'en'):
     """ Создание данных для квеста
         complexity - [1, 5]
     """
-    quests = []
     assert 1 <= complexity <= 5, f"1 <= {complexity} <= 5"
 
     if not qtype:
@@ -50,68 +49,67 @@ def create_quest(complexity: int, qtype: str='', lang: str = 'en'):
         # 'kill', 
         qtype = choice(types)
 
-    for quest in QUESTS:
-        if quest['type'] == qtype and quest['complexity'] == complexity:
-            quests.append(quest)
+    quests = [quest for quest in QUESTS if quest['type'] == qtype and quest['complexity'] == complexity]
 
-    if quests:
-        quest_data, count = choice(quests), 0
-        coins_one = random_dict(quest_data['reward']['coins'])
+    if not quests:
+        return {}
 
-        quest = {
-            'reward': {'coins': 0, 'items': []},
-            'complexity': complexity,
-            'type': qtype,
-            'data': {}
-        }
+    quest_data, count = choice(quests), 0
+    coins_one = random_dict(quest_data['reward']['coins'])
 
-        if qtype == 'get':
-            quest['data']['items'] = []
-            col_items = random_dict(quest_data['data']['count'])
-            for _ in range(col_items):
-                quest['data']['items'].append(choice(quest_data['data']['items']))
+    quest = {
+        'reward': {'coins': 0, 'items': []},
+        'complexity': complexity,
+        'type': qtype,
+        'data': {}
+    }
 
-        elif qtype in ['journey', 'game']:
-            quest['data']['minutes'] = [random_dict(quest_data['data']['minutes']), 0]
+    if qtype == 'get':
+        quest['data']['items'] = []
+        col_items = random_dict(quest_data['data']['count'])
+        for _ in range(col_items):
+            quest['data']['items'].append(choice(quest_data['data']['items']))
 
-        elif qtype in ['fishing', 'collecting', 'hunt']:
-            count = random_dict(quest_data['data']['count'])
-            quest['data']['count'] = [count, 0]
+    elif qtype in ['journey', 'game']:
+        quest['data']['minutes'] = [random_dict(quest_data['data']['minutes']), 0]
 
-        elif qtype == 'feed':
-            count = random_dict(quest_data['data']['count'])
-            eat_rank = random_dict(quest_data['data']['eat_rare'])
-            data_items = {}
+    elif qtype in ['fishing', 'collecting', 'hunt']:
+        count = random_dict(quest_data['data']['count'])
+        quest['data']['count'] = [count, 0]
 
-            temp_count = count
-            while temp_count > 0:
-                if temp_count != 1:
-                    n = randint(1, temp_count)
-                else: n = 1
-                temp_count -= n
-                random_item = choice(EAT_DATA[eat_rank])
+    elif qtype == 'feed':
+        count = random_dict(quest_data['data']['count'])
+        eat_rank = random_dict(quest_data['data']['eat_rare'])
+        data_items = {}
 
-                data_items[random_item] = [n, 0]
+        temp_count = count
+        while temp_count > 0:
+            if temp_count != 1:
+                n = randint(1, temp_count)
+            else: n = 1
+            temp_count -= n
+            random_item = choice(EAT_DATA[eat_rank])
 
-            quest['data']['items'] = data_items
+            data_items[random_item] = [n, 0]
 
-        if count:
-            coins = coins_one * count
-        else: coins = coins_one
+        quest['data']['items'] = data_items
 
-        quest['reward']['coins'] = coins
+    if count:
+        coins = coins_one * count
+    else: coins = coins_one
 
-        authors = get_data('quests.authors', lang)
-        quest['author'] = choice(authors)
+    quest['reward']['coins'] = coins
 
-        names = get_data(f'quests.{qtype}', lang)
-        quest['name'] = choice(names)
+    authors = get_data('quests.authors', lang)
+    quest['author'] = choice(authors)
 
-        quest['time_end'] = int(time()) + random_dict(complex_time[complexity])
-        quest['time_start'] = int(time())
+    names = get_data(f'quests.{qtype}', lang)
+    quest['name'] = choice(names)
 
-        return quest
-    else: return {}
+    quest['time_end'] = int(time()) + random_dict(complex_time[complexity])
+    quest['time_start'] = int(time())
+
+    return quest
 
 def quest_ui(quest: dict, lang: str, quest_id: str=''):
     """ Генерация текста и клавиатуры о квесте

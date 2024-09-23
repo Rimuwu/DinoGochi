@@ -40,11 +40,15 @@ async def get_state(message: Message):
     """Состояние
     """
     state = await bot.get_state(message.from_user.id, message.chat.id)
-    await bot.send_message(message.chat.id, f'{state}')
+    if state is None:
+        await bot.send_message(message.chat.id, 'None')
+    else:
+        await bot.send_message(message.chat.id, f'{state}')
     try:
         async with bot.retrieve_data(message.from_user.id, 
                                  message.chat.id) as data: log(data)
-    except: pass
+    except Exception as e:
+        await bot.send_message(message.chat.id, str(e))
 
 @bot.message_handler(pass_bot=True, state=GeneralStates.ChooseDino, is_authorized=True)
 @HDMessage
@@ -336,9 +340,17 @@ async def ChooseInline(callback: CallbackQuery):
     userid = callback.from_user.id
 
     async with bot.retrieve_data(userid, chatid) as data:
-        func = data['function']
-        transmitted_data = data['transmitted_data']
-        custom_code = data['custom_code']
+        if not data:
+            log(f'ChooseInline data corrupted', lvl=2, prefix='ChooseInline')
+            return
+
+        func = data.get('function')
+        transmitted_data = data.get('transmitted_data')
+        custom_code = data.get('custom_code')
+
+        if not func or not transmitted_data or custom_code is None:
+            log(f'ChooseInline data corrupted', lvl=2, prefix='ChooseInline')
+            return
 
     code.pop(0)
     if code[0] == str(custom_code):
@@ -351,10 +363,14 @@ async def ChooseInline(callback: CallbackQuery):
         if 'steps' in transmitted_data and 'process' in transmitted_data:
             try:
                 transmitted_data['steps'][transmitted_data['process']]['bmessageid'] = callback.message.id
-            except: pass
+            except Exception as e:
+                log(f'ChooseInline error {e}', lvl=2, prefix='ChooseInline')
         else: transmitted_data['bmessageid'] = callback.message.id
 
-        await func(code, transmitted_data=transmitted_data)
+        try:
+            await func(code, transmitted_data=transmitted_data)
+        except Exception as e:
+            log(f'ChooseInline error {e}', lvl=3, prefix='ChooseInline')
 
 @bot.message_handler(pass_bot=True, state=GeneralStates.ChooseTime, is_authorized=True)
 @HDMessage
