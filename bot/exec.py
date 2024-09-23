@@ -37,6 +37,6 @@ def run():
     check()
     # Запуск тасков и бота
     add_task(notify_devs_start) # Уведомление запуска для разрабов
-    add_task(bot.infinity_polling, skip_pending=True, timeout=5)
+    add_task(bot.infinity_polling, skip_pending=True)
     log('Все готово! Взлетаем!', prefix='Start')
     run_taskmanager()
