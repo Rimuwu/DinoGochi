@@ -201,7 +201,7 @@ async def dino_handler(message: Message):
 
 @bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('dino_profile'))
 @HDCallback
-async def answer_edit(call: types.CallbackQuery):
+async def dino_profile(call: types.CallbackQuery):
     dino_data = call.data.split()[1]
     await bot.delete_state(call.from_user.id, call.message.chat.id)
 

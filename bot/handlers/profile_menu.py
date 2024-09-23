@@ -6,6 +6,7 @@ from bot.modules.data_format import (escape_markdown, list_to_inline,
                                      seconds_to_str, user_name)
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.localization import get_data, get_lang, t
+from bot.modules.logs import log
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import premium, user_info
 from telebot.types import CallbackQuery, Message
@@ -125,4 +126,5 @@ async def rayting_call(callback: CallbackQuery):
 
         try:
             await bot.edit_message_text(text, chatid, callback.message.id, parse_mode='Markdown', reply_markup=markup)
-        except: pass
+        except Exception as e:
+            log(message=f'Rayting edit error {e}', lvl=2)

@@ -305,7 +305,8 @@ async def confirm_send(_, transmitted_data: dict):
                 try:
                     await bot.copy_message(user['userid'], forward_chat, forward_message, reply_markup=markup)
                     col += 1
-                except: pass
+                except Exception as e:
+                    log(f'[copy_m] error: {e}', 2) 
 
     await bot.send_message(start_chat, f"Completed in {round(time() - start_time, 2)}, sent for {col} / {len(users_sends)}")
 

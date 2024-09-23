@@ -7,6 +7,7 @@ from bot.modules.images import async_open
 from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
 from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, get_lang, t
+from bot.modules.logs import log
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseIntState
@@ -197,7 +198,8 @@ async def support_buttons(call: CallbackQuery):
         else:
             try:
                 await edit_SmartPhoto(chatid, messageid, image_way, text, 'Markdown', markup_inline)
-            except: pass
+            except Exception as e:
+                log(f'edit_SmartPhoto error: {e}', 2) 
 
 
 async def tips(col, transmitted_data):
