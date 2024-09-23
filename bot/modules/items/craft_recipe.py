@@ -94,7 +94,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
     """
 
     item_id: str = item['item_id']
-    data_item: dict = get_data(item_id)
+    data_item: dict = get_data(item_id).copy()
 
     materials, steps = [], []
     choosed_items = []
@@ -369,7 +369,7 @@ async def check_endurance_and_col(finded_items, count, item,
                                   userid, chatid, lang, data):
 
     item_id: str = item['item_id']
-    data_item: dict = get_data(item_id)
+    data_item: dict = get_data(item_id).copy()
     materials = finded_items
 
     data['end'] = []
@@ -434,7 +434,7 @@ async def check_endurance_and_col(finded_items, count, item,
 async def end_craft(count, item, userid, chatid, lang, data):
 
     item_id: str = item['item_id']
-    data_item: dict = get_data(item_id)
+    data_item: dict = get_data(item_id).copy()
 
     # Оперделение цели крафта
     choosed_items = data['choosed_items']
