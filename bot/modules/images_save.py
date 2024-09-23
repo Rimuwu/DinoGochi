@@ -22,6 +22,7 @@ def get_storage():
         with open(DIRECTORY, encoding='utf-8') as f: 
             storage = json.load(f)
     except Exception as error:
+        storage = {}
         if not os.path.exists(DIRECTORY):
             with open(DIRECTORY, 'w', encoding='utf-8') as f:
                 f.write('{}')
@@ -52,7 +53,7 @@ async def send_SmartPhoto(chatid: int, photo_way, caption: Union[str, None] = No
                             parse_mode, reply_markup=reply_markup)
 
     # Сохраняем file_id
-    if mes and mes.photo:
+    if mes and mes.photo and type(photo_way) == str:
         file_id = mes.photo[-1].file_id
         storage[photo_way] = file_id
         save(storage)
@@ -81,7 +82,7 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
                 chatid, message_id, reply_markup=reply_markup)
 
     # Сохраняем file_id
-    if mes and mes.photo:
+    if mes and mes.photo and type(photo_way) == str:
         file_id = mes.photo[-1].file_id
         storage[photo_way] = file_id
         save(storage)
