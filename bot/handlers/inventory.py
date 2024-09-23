@@ -266,6 +266,7 @@ async def search_message(message: Message):
             data['items'] = searched
         await swipe_page(userid, chatid)
     else:
+        await bot.delete_message(chatid, message.id)
         await bot.answer_callback_query(message.id, t('inventory.search_null', lang))
 
 #Фильтры
