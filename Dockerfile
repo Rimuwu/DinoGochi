@@ -1,5 +1,5 @@
 # Необходимая версия python
-FROM python:3.11-slim
+FROM python:3.10-bookworm
 # Рабочий каталог в контейнере
 WORKDIR /bot
 # Отключение внутреннего буфера питона
@@ -15,4 +15,4 @@ COPY images/ ./images/
 COPY tools/ ./tools/
 COPY bot/ ./bot/
 # Запуск
-CMD ["python","main.py"]
+CMD ["python", "main.py"]
