@@ -46,7 +46,7 @@ def log(message: str, lvl: int = 1, prefix: str = 'Бот') -> None:
 
     if lvl == 0:
         if conf.debug:
-            logger.debug(f'{prefix}: {message}')
+            logger.info(f'{prefix} DEBUG: {message}')
     elif lvl == -1: # Цвет для логов базы
         if conf.base_logging:
             logger.info(f"{prefix}: {message}")
