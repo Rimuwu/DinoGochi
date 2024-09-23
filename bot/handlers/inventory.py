@@ -266,10 +266,7 @@ async def search_message(message: Message):
             data['items'] = searched
         await swipe_page(userid, chatid)
     else:
-        m = await bot.send_message(chatid, t('inventory.search_null', lang))
-        await sleep(10.0)
-        await bot.delete_message(chatid, m.message_id)
-        await bot.delete_message(chatid, message.message_id)
+        await bot.answer_callback_query(message.id, t('inventory.search_null', lang))
 
 #Фильтры
 @bot.callback_query_handler(pass_bot=True, state=InventoryStates.InventorySetFilters, func=lambda call: call.data.startswith('inventory_filter'), private=True)

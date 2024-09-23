@@ -1,7 +1,7 @@
 from bot.modules.data_format import item_list
 from bot.modules.items.item import CheckCountItemFromUser, RemoveItemFromUser
 from bot.modules.localization import t
-from bot.exec import bot
+from bot.exec import bot, log
 from bot.modules.market.market import add_product, product_ui
  
 from bot.modules.states_tools import ChooseStepState
@@ -121,7 +121,7 @@ async def end(return_data, transmitted_data):
             await bot.send_message(chatid, m_text, reply_markup=markup,
                                    parse_mode='Markdown')
         except Exception as e:
-            print(e)
+            log(e, 3)
             await bot.send_message(chatid, m_text, reply_markup=markup)
 
     await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang), parse_mode='Markdown')
