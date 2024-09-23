@@ -10,7 +10,7 @@ logger = logging.getLogger()
 
 # File logger
 log_filehandler = RotatingFileHandler(
-        filename=f"{conf.logs_dir}/{strftime('%Y_%m-%d_%H.%M.%S')}.log", 
+        filename=f"{conf.logs_dir}/{strftime('%Y-%m-%d_%H.%M.%S')}.log", 
         encoding='utf-8', mode='a+', backupCount=10, maxBytes=1024*1024*10)
 log_streamhandler = logging.StreamHandler()
 log_formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s", datefmt="%F %T")
