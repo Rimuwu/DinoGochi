@@ -4,6 +4,7 @@ from typing import Any
 from bot.const import GAME_SETTINGS
 from bot.dbmanager import mongo_client
 from bot.modules.data_format import list_to_inline, random_code, random_data, seconds_to_str
+from bot.modules.images_save import send_SmartPhoto
 from bot.modules.items.item import AddItemToUser, DeleteAbilItem, UseAutoRemove, check_and_return_dif, get_item_dict, get_items_names, get_name, get_data, item_code, item_info
 from bot.modules.items.items_groups import get_group
 from bot.modules.items.time_craft import add_time_craft
@@ -345,12 +346,7 @@ async def send_item_info(item: dict, transmitted_data: dict):
         await bot.send_message(chatid, text, 'Markdown',
                             reply_markup=markup)
     else:
-        try:
-            await bot.send_photo(chatid, image, text, 'Markdown', 
-                            reply_markup=markup)
-        except: 
-             await bot.send_message(chatid, text,
-                            reply_markup=markup)
+        await send_SmartPhoto(chatid, image, text, 'Markdown', markup)
 
 async def pre_check(items: dict, transmitted_data):
     finded_items, data, count, item, userid, chatid, lang, steps = transmitted_data.values()
