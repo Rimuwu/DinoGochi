@@ -35,15 +35,15 @@ def save(new_file: dict):
 
 
 async def send_SmartPhoto(chatid: int, photo_way, caption: Union[str, None] = None, parse_mode: Union[str, None] = None, reply_markup: Union[telebot.types.InlineKeyboardMarkup, None, telebot.types.ReplyKeyboardMarkup] = None):
-    # global storage
+    global storage
 
-    # if photo_way in storage:
-    #     file_id = storage[photo_way]
-    #     if await bot.get_file(file_id):
-    #         # Отпрляем файл по file_id
-    #         mes = await bot.send_photo(chatid, file_id, caption, 
-    #                              parse_mode, reply_markup=reply_markup)
-    #         return mes
+    if photo_way in storage:
+        file_id = storage[photo_way]
+        if await bot.get_file(file_id):
+            # Отпрляем файл по file_id
+            mes = await bot.send_photo(chatid, file_id, caption, 
+                                 parse_mode, reply_markup=reply_markup)
+            return mes
 
     # Либо файла нет, либо file_id устарело
     # Отправяем файл с пк + сохраняем file_id
@@ -55,26 +55,26 @@ async def send_SmartPhoto(chatid: int, photo_way, caption: Union[str, None] = No
     mes = await bot.send_photo(chatid, file_photo, caption, 
                             parse_mode, reply_markup=reply_markup)
 
-    # # Сохраняем file_id
-    # if mes and mes.photo and type(photo_way) == str:
-    #     file_id = mes.photo[-1].file_id
-    #     storage[photo_way] = file_id
-    #     save(storage)
+    # Сохраняем file_id
+    if mes and mes.photo and type(photo_way) == str:
+        file_id = mes.photo[-1].file_id
+        storage[photo_way] = file_id
+        save(storage)
 
     return mes
 
 async def edit_SmartPhoto(chatid: int, message_id: int, 
                           photo_way, caption: Union[str, None], parse_mode: Union[str, None], reply_markup: Union[telebot.types.InlineKeyboardMarkup, None]):
-    # global storage
+    global storage
 
-    # if photo_way in storage:
-    #     file_id = storage[photo_way]
-    #     if await bot.get_file(file_id):
-    #         # Отпряем файл по file_id
-    #         mes = await bot.edit_message_media(
-    #             telebot.types.InputMediaPhoto(file_id, caption, parse_mode), 
-    #             chatid, message_id, reply_markup=reply_markup)
-    #         return mes
+    if photo_way in storage:
+        file_id = storage[photo_way]
+        if await bot.get_file(file_id):
+            # Отпряем файл по file_id
+            mes = await bot.edit_message_media(
+                telebot.types.InputMediaPhoto(file_id, caption, parse_mode), 
+                chatid, message_id, reply_markup=reply_markup)
+            return mes
 
     # Либо файла нет, либо file_id устарело
     # Отправляем файл с пк + сохраняем file_id
@@ -87,13 +87,13 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
                 telebot.types.InputMediaPhoto(file_photo, caption, parse_mode), 
                 chatid, message_id, reply_markup=reply_markup)
 
-    # # Сохраняем file_id
-    # if mes and mes.photo and type(photo_way) == str:
-    #     file_id = mes.photo[-1].file_id
-    #     storage[photo_way] = file_id
-    #     save(storage)
+    # Сохраняем file_id
+    if mes and mes.photo and type(photo_way) == str:
+        file_id = mes.photo[-1].file_id
+        storage[photo_way] = file_id
+        save(storage)
 
     return mes
 
-# if __name__ != '__main__':
-#     storage = get_storage()
+if __name__ != '__main__':
+    storage = get_storage()
