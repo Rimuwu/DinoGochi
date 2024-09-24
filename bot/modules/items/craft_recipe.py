@@ -397,7 +397,7 @@ async def check_endurance_and_col(finded_items, count, item,
 
         elif material['type'] == 'endurance':
             status, dct_data = await DeleteAbilItem(material['item'], 'endurance', 
-                                data_item['materials'][ind]['act'], count, userid)
+                    data_item['materials'][ind]['act'], count, userid)
             if not status:
                 not_found.append(
                     {'item': material['item']['item_id'], 'type': material['type'],
@@ -435,6 +435,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
 
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id).copy()
+    super_create = data_item['create'].copy()
 
     # Оперделение цели крафта
     choosed_items = data['choosed_items']
@@ -448,14 +449,14 @@ async def end_craft(count, item, userid, chatid, lang, data):
                 temp_way = i['item_id']
             else:
                 temp_way += f'-{i["item_id"]}'
-            if temp_way in list(data_item['create'].keys()):
+            if temp_way in list(super_create.keys()):
                 way = temp_way
         if not way:
             way = 'main'
 
     if way == 'main':
         for i in choosed_items:
-            if choosed_items in list(data_item['create'].keys()):
+            if choosed_items in list(super_create.keys()):
                 way = i
                 break
 
@@ -479,7 +480,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
             r = await UseAutoRemove(userid, material['item'], material['count'])
             if r:
 
-                data_item['create'][way].append( {
+                super_create[way].append( {
                     "type": "create",
                     "item": material['item']['item_id'],
                     "count": material['count'],
@@ -487,8 +488,8 @@ async def end_craft(count, item, userid, chatid, lang, data):
                 } )
 
     # Очищаем создание от ненужных предметов
-    to_create: list = data_item['create'][way].copy()
-    for create in data_item['create'][way]:
+    to_create: list = super_create[way].copy()
+    for create in super_create[way]:
 
         if create['type'] == 'preview':
             to_create.remove(create)
