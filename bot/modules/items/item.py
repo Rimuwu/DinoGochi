@@ -34,11 +34,11 @@ def get_data(item_id: str) -> dict:
 
     # Проверяем еть ли предмет с таким ключём в items.json
     if item_id in ITEMS.keys():
-        return ITEMS[item_id].copy()
+        return ITEMS[item_id]
     else: return {}
 
 def get_all_items():
-    return ITEMS.copy()
+    return ITEMS
 
 def load_items_names() -> dict:
     """Загружает все имена предметов из локалищации в один словарь. 

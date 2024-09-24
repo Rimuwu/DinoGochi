@@ -94,7 +94,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
     """
 
     item_id: str = item['item_id']
-    data_item: dict = get_data(item_id).copy()
+    data_item: dict = get_data(item_id)
 
     materials, steps = [], []
     choosed_items = []
@@ -102,7 +102,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
 
     for material in data_item['materials']:
         if 'count' not in material: material['count'] = 1
-        copy_mat = material.copy()
+        copy_mat = material
 
         copy_mat['count'] *= count
         if 'abilities' in material:
@@ -369,7 +369,7 @@ async def check_endurance_and_col(finded_items, count, item,
                                   userid, chatid, lang, data):
 
     item_id: str = item['item_id']
-    data_item: dict = get_data(item_id).copy()
+    data_item: dict = get_data(item_id)
     materials = finded_items
 
     data['end'] = []
@@ -434,8 +434,8 @@ async def check_endurance_and_col(finded_items, count, item,
 async def end_craft(count, item, userid, chatid, lang, data):
 
     item_id: str = item['item_id']
-    data_item: dict = get_data(item_id).copy()
-    super_create = data_item['create'].copy()
+    data_item: dict = get_data(item_id)
+    super_create = data_item['create']
 
     # Оперделение цели крафта
     choosed_items = data['choosed_items']
@@ -488,7 +488,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
                 } )
 
     # Очищаем создание от ненужных предметов
-    to_create: list = super_create[way].copy()
+    to_create: list = super_create[way]
     for create in super_create[way]:
 
         if create['type'] == 'preview':
