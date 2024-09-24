@@ -8,6 +8,7 @@ from bot.modules.items.item import AddItemToUser, DeleteAbilItem, UseAutoRemove,
 from bot.modules.items.items_groups import get_group
 from bot.modules.items.time_craft import add_time_craft
 from bot.modules.localization import t
+from bot.modules.logs import log
 from bot.modules.markup import markups_menu
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user.user import get_inventory_from_i
@@ -544,7 +545,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
             add_count = create_data.get('count', 0)
             create.append({'item': {'item_id': create_data['item'], 
                                     'abilities': preabil}, 
-                           'count': count * add_count
+                           'count': add_count
                            })
 
     # Понижение прочности рецепта
