@@ -15,6 +15,7 @@ async def dino_notifications():
         try:
             dino_id = dino['_id']
             for stat in dino['stats']:
+                if stat not in ['heal', 'eat', 'mood', 'energy', 'game']: continue
 
                 if dino['stats']['heal'] <= 0:
                     dino_cl = await Dino().create(dino['_id'])
@@ -26,7 +27,7 @@ async def dino_notifications():
                 if res: await sleep(0.2)
 
         except Exception as e:
-            log(f'dino_notifications error {e}', 2)
+            log(f'dino_notifications ERROR dino_id: {dino_id} - {e}', 3)
 
 if __name__ != '__main__':
     if conf.active_tasks:
