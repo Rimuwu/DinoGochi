@@ -433,7 +433,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
 
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id)
-    super_create = data_item['create']
+    super_create = deepcopy(data_item['create'])
 
     # Оперделение цели крафта
     choosed_items = data['choosed_items']
@@ -529,7 +529,9 @@ async def end_craft(count, item, userid, chatid, lang, data):
 
     # Выдача крафта
     create = []
+    a = -1
     for create_data in to_create:
+        a += 1
 
         if create_data['type'] == 'create':
             preabil = create_data.get('abilities', {}) # Берёт характеристики если они есть
@@ -538,10 +540,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
                 for key, value in preabil.items():
                     preabil[key] = random_data(value)
 
-            if create_data['count'] == 1:
-                add_count = count
-            else:
-                add_count = create_data['count']
+            add_count = count * data_item['create'][way][a]['count']
 
             create.append({'item': {'item_id': create_data['item'], 
                                     'abilities': preabil}, 
