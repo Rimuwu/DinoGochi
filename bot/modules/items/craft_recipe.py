@@ -1,5 +1,7 @@
 
 
+from copy import deepcopy
+from operator import add
 from typing import Any
 from bot.const import GAME_SETTINGS
 from bot.dbmanager import mongo_client
@@ -104,11 +106,11 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
 
     for material in data_item['materials']:
         if 'count' not in material: material['count'] = 1
-        copy_mat = material
+        copy_mat = {**material}
 
         copy_mat['count'] *= count
         if 'abilities' in material:
-            copy_mat['abilities'] = material['abilities']
+            copy_mat['abilities'] = {**material['abilities']}
 
         if not isinstance(material['item'], str):
 
@@ -132,7 +134,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
                         map(lambda i: {'item_id': i}, find_items)
                     )
 
-            inv = await get_inventory_from_i(userid, find_items)
+            inv = await get_inventory_from_i(userid, find_items, one_count=True)
 
             if not inv:
                 await bot.send_message(chatid, 
@@ -244,7 +246,6 @@ async def check_items_in_inventory(materials, item, count,
 
             # У предметов нет альтернатив
             if len(find_set) == 1:
-                # data['choosed_items'].append(find_set[0])
 
                 if material['type'] in ['delete', 'to_create']:
                     count_material = await check_and_return_dif(userid, **find_set[a])
@@ -476,7 +477,6 @@ async def end_craft(count, item, userid, chatid, lang, data):
         elif material['type'] == 'to_create':
             r = await UseAutoRemove(userid, material['item'], material['count'])
             if r:
-
                 super_create[way].append( {
                     "type": "create",
                     "item": material['item']['item_id'],
@@ -538,7 +538,11 @@ async def end_craft(count, item, userid, chatid, lang, data):
                 for key, value in preabil.items():
                     preabil[key] = random_data(value)
 
-            add_count = create_data.get('count', 0)
+            if create_data['count'] == 1:
+                add_count = count
+            else:
+                add_count = create_data['count']
+
             create.append({'item': {'item_id': create_data['item'], 
                                     'abilities': preabil}, 
                            'count': add_count
