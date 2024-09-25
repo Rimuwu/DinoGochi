@@ -27,7 +27,7 @@ async def dino_notifications():
                 if res: await sleep(0.2)
 
         except Exception as e:
-            log(f'dino_notifications ERROR dino_id: {dino_id} - {e}', 3)
+            log(f'dino_notifications dino_id: {dino_id} - {e}', 3)
 
 if __name__ != '__main__':
     if conf.active_tasks:
