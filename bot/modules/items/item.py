@@ -295,7 +295,8 @@ async def DeleteAbilItem(item_data: dict, characteristic: str,
 
     if need_char > 0:
         # Значит предметов недостаточно 
-        return False, {'ost': need_char}
+        retur_dict['ost'] = need_char
+        return False, retur_dict
 
     else:
         # Значит у игрока предметов с хар больше чем надо или именно столько сколько надо.
