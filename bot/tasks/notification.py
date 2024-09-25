@@ -15,6 +15,7 @@ async def dino_notifications():
         try:
             dino_id = dino['_id']
             for stat in dino['stats']:
+                if stat not in ['heal', 'eat', 'mood', 'energy', 'game']: continue
 
                 if dino['stats']['heal'] <= 0:
                     dino_cl = await Dino().create(dino['_id'])

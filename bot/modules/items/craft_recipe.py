@@ -1,13 +1,17 @@
 
 
+from copy import deepcopy
+from operator import add
 from typing import Any
 from bot.const import GAME_SETTINGS
 from bot.dbmanager import mongo_client
 from bot.modules.data_format import list_to_inline, random_code, random_data, seconds_to_str
+from bot.modules.images_save import send_SmartPhoto
 from bot.modules.items.item import AddItemToUser, DeleteAbilItem, UseAutoRemove, check_and_return_dif, get_item_dict, get_items_names, get_name, get_data, item_code, item_info
 from bot.modules.items.items_groups import get_group
 from bot.modules.items.time_craft import add_time_craft
 from bot.modules.localization import t
+from bot.modules.logs import log
 from bot.modules.markup import markups_menu
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user.user import get_inventory_from_i
@@ -94,7 +98,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
     """
 
     item_id: str = item['item_id']
-    data_item: dict = get_data(item_id).copy()
+    data_item: dict = get_data(item_id)
 
     materials, steps = [], []
     choosed_items = []
@@ -102,11 +106,11 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
 
     for material in data_item['materials']:
         if 'count' not in material: material['count'] = 1
-        copy_mat = material.copy()
+        copy_mat = {**material}
 
         copy_mat['count'] *= count
         if 'abilities' in material:
-            copy_mat['abilities'] = material['abilities']
+            copy_mat['abilities'] = {**material['abilities']}
 
         if not isinstance(material['item'], str):
 
@@ -130,7 +134,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
                         map(lambda i: {'item_id': i}, find_items)
                     )
 
-            inv = await get_inventory_from_i(userid, find_items)
+            inv = await get_inventory_from_i(userid, find_items, one_count=True)
 
             if not inv:
                 await bot.send_message(chatid, 
@@ -242,7 +246,6 @@ async def check_items_in_inventory(materials, item, count,
 
             # У предметов нет альтернатив
             if len(find_set) == 1:
-                # data['choosed_items'].append(find_set[0])
 
                 if material['type'] in ['delete', 'to_create']:
                     count_material = await check_and_return_dif(userid, **find_set[a])
@@ -344,12 +347,7 @@ async def send_item_info(item: dict, transmitted_data: dict):
         await bot.send_message(chatid, text, 'Markdown',
                             reply_markup=markup)
     else:
-        try:
-            await bot.send_photo(chatid, image, text, 'Markdown', 
-                            reply_markup=markup)
-        except: 
-             await bot.send_message(chatid, text,
-                            reply_markup=markup)
+        await send_SmartPhoto(chatid, image, text, 'Markdown', markup)
 
 async def pre_check(items: dict, transmitted_data):
     finded_items, data, count, item, userid, chatid, lang, steps = transmitted_data.values()
@@ -369,7 +367,7 @@ async def check_endurance_and_col(finded_items, count, item,
                                   userid, chatid, lang, data):
 
     item_id: str = item['item_id']
-    data_item: dict = get_data(item_id).copy()
+    data_item: dict = get_data(item_id)
     materials = finded_items
 
     data['end'] = []
@@ -397,7 +395,7 @@ async def check_endurance_and_col(finded_items, count, item,
 
         elif material['type'] == 'endurance':
             status, dct_data = await DeleteAbilItem(material['item'], 'endurance', 
-                                data_item['materials'][ind]['act'], count, userid)
+                    data_item['materials'][ind]['act'], count, userid)
             if not status:
                 not_found.append(
                     {'item': material['item']['item_id'], 'type': material['type'],
@@ -434,7 +432,8 @@ async def check_endurance_and_col(finded_items, count, item,
 async def end_craft(count, item, userid, chatid, lang, data):
 
     item_id: str = item['item_id']
-    data_item: dict = get_data(item_id).copy()
+    data_item: dict = get_data(item_id)
+    super_create = deepcopy(data_item['create'])
 
     # Оперделение цели крафта
     choosed_items = data['choosed_items']
@@ -448,14 +447,14 @@ async def end_craft(count, item, userid, chatid, lang, data):
                 temp_way = i['item_id']
             else:
                 temp_way += f'-{i["item_id"]}'
-            if temp_way in list(data_item['create'].keys()):
+            if temp_way in list(super_create.keys()):
                 way = temp_way
         if not way:
             way = 'main'
 
     if way == 'main':
         for i in choosed_items:
-            if choosed_items in list(data_item['create'].keys()):
+            if choosed_items in list(super_create.keys()):
                 way = i
                 break
 
@@ -478,8 +477,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
         elif material['type'] == 'to_create':
             r = await UseAutoRemove(userid, material['item'], material['count'])
             if r:
-
-                data_item['create'][way].append( {
+                super_create[way].append( {
                     "type": "create",
                     "item": material['item']['item_id'],
                     "count": material['count'],
@@ -487,8 +485,8 @@ async def end_craft(count, item, userid, chatid, lang, data):
                 } )
 
     # Очищаем создание от ненужных предметов
-    to_create: list = data_item['create'][way].copy()
-    for create in data_item['create'][way]:
+    to_create: list = super_create[way]
+    for create in super_create[way]:
 
         if create['type'] == 'preview':
             to_create.remove(create)
@@ -531,7 +529,9 @@ async def end_craft(count, item, userid, chatid, lang, data):
 
     # Выдача крафта
     create = []
+    a = -1
     for create_data in to_create:
+        a += 1
 
         if create_data['type'] == 'create':
             preabil = create_data.get('abilities', {}) # Берёт характеристики если они есть
@@ -540,10 +540,11 @@ async def end_craft(count, item, userid, chatid, lang, data):
                 for key, value in preabil.items():
                     preabil[key] = random_data(value)
 
-            add_count = create_data.get('count', 0)
+            add_count = count * data_item['create'][way][a]['count']
+
             create.append({'item': {'item_id': create_data['item'], 
                                     'abilities': preabil}, 
-                           'count': count * add_count
+                           'count': add_count
                            })
 
     # Понижение прочности рецепта

@@ -2,6 +2,7 @@ import logging
 from logging.handlers import RotatingFileHandler, QueueHandler, QueueListener
 from multiprocessing import Queue
 from time import strftime
+import telebot
 
 from bot.config import conf
 
@@ -11,7 +12,7 @@ logger = logging.getLogger()
 # File logger
 log_filehandler = RotatingFileHandler(
         filename=f"{conf.logs_dir}/{strftime('%Y-%m-%d_%H.%M.%S')}.log", 
-        encoding='utf-8', mode='a+', backupCount=10, maxBytes=1024*1024*10)
+        encoding='utf-8', mode='a+', backupCount=100, maxBytes=1024*1024*10)
 log_streamhandler = logging.StreamHandler()
 log_formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s", datefmt="%F %T")
 log_filehandler.setFormatter(log_formatter)
@@ -29,9 +30,8 @@ queue_listener = QueueListener(log_queue, log_filehandler)
 logger.setLevel(logging.INFO)
 queue_listener.start()
 
-# if conf.debug:
-#     logger = telebot.logger
-#     telebot.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
+if conf.debug:
+    telebot.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
 
 def log(message: str, lvl: int = 1, prefix: str = 'Бот') -> None:
     """

@@ -4,6 +4,7 @@ services:
     depends_on:
       - mongo # Зависит от mongo
     volumes:
+      - ./.state-save:/bot/.state-save # Проброс каталога сохранения
       - ./logs:/bot/logs # Проброс каталога логов
       - ./bot/data:/bot/bot/data # Проброс каталога данных
       - ./config.json:/bot/config.json:ro # Проброс конфига

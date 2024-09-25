@@ -426,3 +426,24 @@ def progress_bar(now, end, col_emoji,
     if percent_visible:
         return f"{percent_complete}% {bar} 100%" 
     return bar
+
+def deepcopy(original):
+    if isinstance(original, dict):
+        # Создаем новый словарь
+        copy_dict = {}
+        for key, value in original.items():
+            # Рекурсивно копируем ключи и значения
+            copy_dict[deepcopy(key)] = deepcopy(value)
+        return copy_dict
+    elif isinstance(original, list):
+        # Если это список, создаем новый список
+        return [deepcopy(item) for item in original]
+    elif isinstance(original, set):
+        # Если это множество, создаем новое множество
+        return {deepcopy(item) for item in original}
+    elif isinstance(original, tuple):
+        # Если это кортеж, возвращаем новый кортеж
+        return tuple(deepcopy(item) for item in original)
+    else:
+        # Если это примитивное значение, просто возвращаем его
+        return original

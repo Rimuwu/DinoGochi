@@ -16,7 +16,7 @@
 
 import json
 from bot.dbmanager import mongo_client
-from bot.modules.data_format import random_dict, seconds_to_str, near_key_number
+from bot.modules.data_format import deepcopy, random_dict, seconds_to_str, near_key_number
 from bot.modules.images import async_open
 from bot.modules.localization import get_all_locales, t
 from bot.modules.localization import get_data as get_loc_data
@@ -27,18 +27,20 @@ from bot.exec import bot
 from bot.modules.overwriting.DataCalsses import DBconstructor
 items = DBconstructor(mongo_client.items.items)
 
-ITEMS = get_all_items()
+ITEMS: dict = get_all_items()
 
 def get_data(item_id: str) -> dict:
     """Получение данных из json"""
 
     # Проверяем еть ли предмет с таким ключём в items.json
     if item_id in ITEMS.keys():
-        return ITEMS[item_id].copy()
-    else: return {}
+        item_data = deepcopy(ITEMS[item_id])
+        return item_data # type: ignore
+    else: 
+        return {}
 
 def get_all_items():
-    return ITEMS.copy()
+    return ITEMS
 
 def load_items_names() -> dict:
     """Загружает все имена предметов из локалищации в один словарь. 
@@ -293,7 +295,8 @@ async def DeleteAbilItem(item_data: dict, characteristic: str,
 
     if need_char > 0:
         # Значит предметов недостаточно 
-        return False, {'ost': need_char}
+        retur_dict['ost'] = need_char
+        return False, retur_dict
 
     else:
         # Значит у игрока предметов с хар больше чем надо или именно столько сколько надо.
