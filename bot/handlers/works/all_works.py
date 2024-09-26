@@ -39,7 +39,7 @@ async def progress(message: Message):
             time_ost = int(time()) - activ['start_time']
             time_end = activ['end_time'] - activ['start_time']
             time_bar = progress_bar(time_ost, time_end, 5, '⌛', '⚪', 
-                                    '[[', ']]')
+                                    '[', ']')
 
             if 'coins' in activ:
                 storage_max = activ['max_coins']
@@ -51,13 +51,13 @@ async def progress(message: Message):
 
             storage_bar = progress_bar(storage_now, storage_max, 5, 
                                        *get_data(f'works.progress.{status}-emoji', lang),
-                                       start_text='[[', end_text=']]'
+                                       start_text='[', end_text=']'
                                        )
 
             check_max = 3
             check_now = activ['checks']
             check_bar = progress_bar(check_now, check_max, 3, '👁', '⚪', 
-                                    '[[', ']]')
+                                    '[', ']')
 
             text = t(f'works.progress.{status}', lang, time_bar=time_bar, storage_bar=storage_bar, check_bar=check_bar)
             if check_now != 0:
@@ -138,6 +138,8 @@ async def stop_work(message: Message):
                                 f'{res["activity_type"]}_end', 
                                 results=text
                                 )
+    else:
+        await bot.send_message(chatid, "❌", reply_markup = await m(userid, 'last_menu', lang))
 
 
 
