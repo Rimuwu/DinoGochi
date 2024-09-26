@@ -27,11 +27,11 @@ logger.addHandler(log_streamhandler)
 # Log listen
 queue_listener = QueueListener(log_queue, log_filehandler)
 
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 queue_listener.start()
 
-if conf.debug:
-    telebot.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
+# if conf.debug:
+#     telebot.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
 
 def log(message: str, lvl: int = 1, prefix: str = 'Бот') -> None:
     """
