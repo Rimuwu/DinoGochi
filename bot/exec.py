@@ -17,7 +17,7 @@ class TracebackHandler(ExceptionHandler):
 bot = AsyncTeleBot(conf.bot_token, 
                    exception_handler=TracebackHandler()
                    )
-bot.enable_saving_states()
+# bot.enable_saving_states()
 
 async def notify_devs_start():
     for dev in conf.bot_devs:
