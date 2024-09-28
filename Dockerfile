@@ -12,7 +12,6 @@ COPY main.py .
 # Каталоги
 COPY fonts/ ./fonts/
 COPY images/ ./images/
-COPY tools/ ./tools/
 COPY bot/ ./bot/
 # Запуск
 CMD ["python", "main.py"]

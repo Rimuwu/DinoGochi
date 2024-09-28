@@ -160,7 +160,7 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
                     if conf.debug:
                         log(prefix='DinoNotification Error', 
                             message=f'User: {owner["owner_id"]} DinoId: {dino_id}, Data: {not_type} Error: {error}', 
-                            lvl=3)
+                            lvl=2)
         return send_status
 
     if dino: # type: dict
