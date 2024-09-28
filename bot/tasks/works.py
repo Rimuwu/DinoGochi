@@ -1,5 +1,5 @@
 
-from random import choice, randint
+from random import choice, randint, random
 from time import time
 
 from bot.config import conf
@@ -33,9 +33,20 @@ async def work():
     )
 
     for work in res_list:
-        save = True
-        insp = False
+        save, insp = True, False
         dp_chance = 0
+        main_chance = random() <= 0.5
+
+        work_percent = ((int(time()) - work['start_time']) / (work['end_time'] - work['start_time'])) * 100 # Процент времени работы
+
+        if work_percent <= 10:
+            main_chance = random() <= 0.2
+        elif work_percent <= 50:
+            main_chance = random() <= 0.5
+        elif work_percent <= 80:
+            main_chance = random() <= 0.6
+        else:
+            main_chance = random() <= 0.7
 
         if int(time()) >= work['end_time']:
             save = False
@@ -54,21 +65,26 @@ async def work():
                                     results=text
                                     )
 
+        # Увеличивает шанс дропа предмета, если хар-ка соответствует
+        # типу работы
         elif work['activity_type'] == 'sawmill':
+            # ловкость (dexterity)
             dexterity = await check_skill(work['dino_id'], 'dexterity')
             dp_chance = randint(0, transform(dexterity, 20, 50) + 50) > 60
 
         elif work['activity_type'] == 'bank':
+            # харизма (charisma)
             charisma = await check_skill(work['dino_id'], 'charisma')
             dp_chance = randint(0, transform(charisma, 20, 50) + 50) > 60
 
         elif work['activity_type'] == 'mine':
+            # сила (power)
             power = await check_skill(work['dino_id'], 'power')
             dp_chance = randint(0, transform(power, 20, 50) + 50) > 60
 
         insp = await check_inspiration(work['dino_id'], work['activity_type'])
 
-        if save and (randint(0, 1) or dp_chance):
+        if save and (main_chance or dp_chance):
             # Добавляем прдеметы / монеты
             if 'coins' in work:
                 if work['coins'] < work['max_coins']:
