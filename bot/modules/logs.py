@@ -2,7 +2,6 @@ import logging
 from logging.handlers import RotatingFileHandler, QueueHandler, QueueListener
 from multiprocessing import Queue
 from time import strftime
-import telebot
 
 from bot.config import conf
 

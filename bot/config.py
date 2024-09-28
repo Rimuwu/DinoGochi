@@ -18,6 +18,7 @@ class Config:
         self.logs_dir = 'logs' # Директория логов
         self.active_tasks = True # Активация тасков
         self.bot_group_id = 0 # Уведомления событий
+        self.bot_report_id = 0 # Отчеты
         self.mongo_url = 'mongodb://root:example@mongo:27017'
 
         self.debug = False # Больше логов
@@ -46,6 +47,11 @@ class Config:
         """
         return json.dumps(self, default=lambda o: o.__dict__,
             sort_keys=True, indent=4)
+    
+    def get_report_ids(self) -> list:
+        report_ids = conf.bot_devs.copy()
+        if conf.bot_report_id: report_ids.append(conf.bot_report_id)
+        return report_ids
  
 conf = Config()
 

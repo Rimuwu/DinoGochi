@@ -8,6 +8,7 @@ from bot.config import conf
 from bot.modules.logs import log
 from bot.taskmanager import add_task
 from bot.taskmanager import run as run_taskmanager
+import asyncio
 
 
 class TracebackHandler(ExceptionHandler):
@@ -20,8 +21,17 @@ bot = AsyncTeleBot(conf.bot_token,
 # bot.enable_saving_states()
 
 async def notify_devs_start():
-    for dev in conf.bot_devs:
-        await bot.send_message(dev, '✅ Бот запущен!')
+    # id рассылки
+    report_ids = conf.get_report_ids()
+
+    tasks = []
+    for id in report_ids:
+        if isinstance(id, str):
+            channel_id, topic_id = id.split('_', 2)
+            tasks.append(bot.send_message(channel_id, '✅ Бот запущен!', parse_mode='Markdown', message_thread_id=int(topic_id)))
+        else: 
+            tasks.append(bot.send_message(id, '✅ Бот запущен!', parse_mode='Markdown'))
+    await asyncio.gather(*tasks)
 
 def run():
     log('# ====== Inicialization Start ====== #', 2)
