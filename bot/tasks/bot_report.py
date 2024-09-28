@@ -11,7 +11,7 @@ from bot.modules.logs import (MAX_ERRORS, get_errors_count,
                               get_errors_last_count, get_last_errors, log)
 from bot.taskmanager import add_task
 
-REPEAT_MINUTES = 1
+REPEAT_MINUTES = 60
 DELAY = 10
 
 # Создание отчета из последних ошибок и файла логов
