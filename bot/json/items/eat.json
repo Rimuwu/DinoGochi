@@ -392,8 +392,7 @@
         "class": "Flying",
         "image": "item99",
         "rank": "uncommon",
-        "type": "eat",
-        "groups": ["energy_eat"]
+        "type": "eat"
     },
     "meat_pie": {
         "buffs": {

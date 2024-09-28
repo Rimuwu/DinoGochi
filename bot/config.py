@@ -26,6 +26,7 @@ class Config:
 
         self.check_translate = False # Синхронизация перевода
         self.base_logging = False # Логирование БД
+        self.handlers_logging = False # Логирование обработчиков
 
         self.only_dev = False # Принимает сообщения только от разработчиков
 

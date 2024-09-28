@@ -2,8 +2,9 @@ from functools import wraps
 from time import time
 from bot.modules.logs import log
 from telebot.types import Message, CallbackQuery
+from bot.config import conf
 
-send_logs = True
+send_logs = conf.handlers_logging
 
 class HendlerDecorator(object):
 
