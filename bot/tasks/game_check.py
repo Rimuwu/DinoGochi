@@ -17,11 +17,11 @@ long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 
-REPEAT_MINUTS = 3
-ENERGY_DOWN = 0.03 * REPEAT_MINUTS
-ENERGY_DOWN2 = 0.5 * REPEAT_MINUTS
-LVL_CHANCE = 0.125 * REPEAT_MINUTS
-GAME_CHANCE = 0.17 * REPEAT_MINUTS
+REPEAT_MINUTES = 3
+ENERGY_DOWN = 0.03 * REPEAT_MINUTES
+ENERGY_DOWN2 = 0.5 * REPEAT_MINUTES
+LVL_CHANCE = 0.125 * REPEAT_MINUTES
+GAME_CHANCE = 0.17 * REPEAT_MINUTES
 
 async def game_end():
     data = await long_activity.find({'game_end': 
@@ -87,4 +87,4 @@ async def game_process():
 if __name__ != '__main__':
     if conf.active_tasks:
         add_task(game_end, 15, 3.0)
-        add_task(game_process, REPEAT_MINUTS * 60.0, 3.0)
+        add_task(game_process, REPEAT_MINUTES * 60.0, 3.0)

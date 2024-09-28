@@ -11,14 +11,14 @@ services:
       - /etc/localtime:/etc/localtime:ro # Проброс времени
     restart: unless-stopped
 
-  mongo: 
+  mongo:
     image: mongo:latest # Имя образа
-    environment: # Настройки
+    environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: example # Обязательно поменять пароль перед деплоем здесь и в config.json!!!
-    ports: 
+    ports:
       - "27017:27017"
-    volumes: # Каталоги
+    volumes:
       - ./mongodb:/data/db # Каталог с данными
     restart: unless-stopped
-    command: mongod --quiet --logpath /dev/null 
+    command: mongod --quiet --logpath /dev/null

@@ -1,3 +1,4 @@
+from . import bot_report
 from . import incubation
 from . import subscriptions
 from . import sleep
