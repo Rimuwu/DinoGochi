@@ -7,7 +7,7 @@ from bot.exec import bot
 from bot.modules.data_format import list_to_inline, str_to_seconds
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.localization import get_data, get_lang, t
-from bot.modules.logs import log
+from bot.modules.logs import log, last_errors
 from bot.modules.markup import confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -347,3 +347,12 @@ async def get_username(message):
         await bot.send_message(message.from_user.id, str(user).replace("'", ''))
     else:
         await bot.send_message(message.from_user.id, "nouser")
+
+@bot.message_handler(commands=['log'], is_admin=True)
+@HDMessage
+async def get_log(message):
+    error_text = ''
+    for i in range(len(last_errors)):
+        error_text += f'{i+1}) `{last_errors[i]}`\n'
+    
+    await bot.send_message(message.from_user.id, error_text, parse_mode='Markdown')
