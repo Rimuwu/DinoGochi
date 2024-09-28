@@ -1103,35 +1103,35 @@
                 "bonus": "🧨 Crafting of items is completed. \n🪀 Created by: {items}\n_🪈 Thanks to his high skills, the dinosaur was able to craft an additional item from surplus materials! _"
             },
             "gym_end": {
-                "text": "🥏 | {dino_name} returned from the gym. The dinosaur has been training long and hard, now he feels much stronger!",
+                "text": "🥏 | {dino_name} Back from the gym. The dinosaur has been training long and hard, now he feels much stronger! (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "library_end": {
-                "text": "📖 | {dino_name} returned from the library. The head of the dinosaur is overflowing with knowledge, he wants to create and invent!",
+                "text": "📖 | {dino_name} returned from the library. The head of the dinosaur is overflowing with knowledge, he wants to create and invent! (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "swimming_pool_end": {
-                "text": "🌊 | {dino_name} returned from the pool. After training, he feels more flexible!",
+                "text": "🌊 | {dino_name} Back from the pool. After training, he feels more flexible! (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "park_end": {
-                "text": "🌳 | {dino_name} returned from a walk in the park. The dinosaur learned a lot about its relatives and memorized new words!",
+                "text": "🌳 | {dino_name} returned from a walk in the park. The dinosaur learned a lot about its relatives and memorized new words! (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "gym_end_negative": {
-                "text": "🥏 | {dino_name} returned from the gym. \n❗ The training was done incorrectly, so the stats were reduced. (-50% of purchased)",
+                "text": "🥏 | {dino_name} Back from the gym. \n❗ The training was done incorrectly, so the stats were reduced. (-50% of purchased) (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "library_end_negative": {
-                "text": "📖 | {dino_name} returned from the library. \n❗ The training was done incorrectly, so the stats were reduced. (-50% of purchased)",
+                "text": "📖 | {dino_name} returned from the library. \n❗ The training was done incorrectly, so the stats were reduced. (-50% of purchased) (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "swimming_pool_end_negative": {
-                "text": "🌊 | {dino_name} returned from the pool. \n❗ The training was done incorrectly, so the stats were reduced. (-50% of purchased)",
+                "text": "🌊 | {dino_name} Back from the pool. \n❗ The training was done incorrectly, so the stats were reduced. (-50% of purchased) (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "park_end_negative": {
-                "text": "🌳 | {dino_name} returned from a walk in the park. \n❗ The training was done incorrectly, so the stats were reduced. (-50% of purchased)",
+                "text": "🌳 | {dino_name} returned from a walk in the park. \n❗ The training was done incorrectly, so the stats were reduced. (-50% of purchased) (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "craft_end": {
