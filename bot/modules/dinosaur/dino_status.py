@@ -77,7 +77,7 @@ skill_time = {
     "park": [1200, 7200],
 }
 
-def get_skill_time(skill: str): return skill_time[skill]
+def get_skill_time(skill: str): return skill_time[skill].copy()
 
 async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, down: str, 
                                up_unit: list[float], down_unit: list[float],
@@ -94,6 +94,7 @@ async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, down: 
 
     if not await long_activity.find_one({'dino_id': dino_id,
             'activity_type': activity}, comment=f'start_{activity}_check'):
+        skl_time = get_skill_time(activity)
         act = {
             'send': sended, # Id того, кто отправил дино, чтобы воровать из его инвентаря энергетики
             'use_energy': False,
@@ -109,7 +110,7 @@ async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, down: 
             'alt_code': random_code(),
 
             'up': 0.0, # Считаем, сколько было повышено и вычитаем 50% при отмене заранее.
-            'min_time': skill_time[activity][0], 'max_time': skill_time[activity][1],
+            'min_time': skl_time[0], 'max_time': skl_time[1],
             'ahtung_lvl': 0
             # min_time - если меньше, то штраф к хррактеристикам
             # max_time - Если больше на 20% - повышение кд на 5 часов (ahtung_lvl = 1)

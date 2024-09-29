@@ -1103,35 +1103,35 @@
                 "bonus": "🧨 Se ha completado la elaboración de artículos. \n🪀 Creado por: {items}\n_🪈 ¡Gracias a sus grandes habilidades, el dinosaurio pudo crear un artículo adicional a partir de materiales sobrantes!_"
             },
             "gym_end": {
-                "text": "🥏 | {dino_name} regresó del gimnasio. El dinosaurio ha estado entrenando mucho y duro, ¡ahora se siente mucho más fuerte!",
+                "text": "🥏 | {dino_name} De vuelta del gimnasio. El dinosaurio ha estado entrenando mucho y duro, ¡ahora se siente mucho más fuerte! (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "library_end": {
-                "text": "📖 | {dino_name} devuelto de la biblioteca. La cabeza del dinosaurio está rebosante de conocimiento, ¡quiere crear e inventar!",
+                "text": "📖 | {dino_name} Regresado de la biblioteca. La cabeza del dinosaurio está rebosante de conocimiento, ¡quiere crear e inventar! (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "swimming_pool_end": {
-                "text": "🌊 | {dino_name} regresado de la piscina. ¡Después de entrenar, se siente más flexible!",
+                "text": "🌊 | {dino_name} Regreso de la piscina. ¡Después de entrenar, se siente más flexible! (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "park_end": {
-                "text": "🌳 | {dino_name} Regreso de un paseo por el parque. ¡El dinosaurio aprendió mucho sobre sus parientes y memorizó nuevas palabras!",
+                "text": "🌳 | {dino_name} Regresó de un paseo por el parque. ¡El dinosaurio aprendió mucho sobre sus parientes y memorizó nuevas palabras! (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "gym_end_negative": {
-                "text": "🥏 | {dino_name} regresó del gimnasio. \n❗ El entrenamiento se realizó incorrectamente, por lo que se redujeron las estadísticas. (-50% de lo comprado)",
+                "text": "🥏 | {dino_name} De vuelta del gimnasio. \n❗ El entrenamiento se realizó incorrectamente, por lo que se redujeron las estadísticas. (-50% de lo comprado) (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "library_end_negative": {
-                "text": "📖 | {dino_name} devuelto de la biblioteca. \n❗ El entrenamiento se realizó incorrectamente, por lo que se redujeron las estadísticas. (-50% de lo comprado)",
+                "text": "📖 | {dino_name} Regresado de la biblioteca. \n❗ El entrenamiento se realizó incorrectamente, por lo que se redujeron las estadísticas. (-50% de lo comprado) (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "swimming_pool_end_negative": {
-                "text": "🌊 | {dino_name} regresado de la piscina. \n❗ El entrenamiento se realizó incorrectamente, por lo que se redujeron las estadísticas. (-50% de lo comprado)",
+                "text": "🌊 | {dino_name} Regreso de la piscina. \n❗ El entrenamiento se realizó incorrectamente, por lo que se redujeron las estadísticas. (-50% de lo comprado) (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "park_end_negative": {
-                "text": "🌳 | {dino_name} Regreso de un paseo por el parque. \n❗ El entrenamiento se realizó incorrectamente, por lo que se redujeron las estadísticas. (-50% de lo comprado)",
+                "text": "🌳 | {dino_name} Regresó de un paseo por el parque. \n❗ El entrenamiento se realizó incorrectamente, por lo que se redujeron las estadísticas. (-50% de lo comprado) (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "craft_end": {

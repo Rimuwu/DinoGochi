@@ -145,14 +145,14 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
                     try:
                         await async_antiflood(
                             bot.send_message, owner['owner_id'], text, reply_markup=markup_inline, parse_mode='Markdown',
-                            number_retries=3
+                            number_retries=2
                         )
                         send_status = True
 
                     except Exception:
                         await async_antiflood(
                             bot.send_message, owner['owner_id'], text, reply_markup=markup_inline,
-                            number_retries=3
+                            number_retries=2
                         )
                         send_status = True
 

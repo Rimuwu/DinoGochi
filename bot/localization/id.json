@@ -1103,35 +1103,35 @@
                 "bonus": "🧨 Kerajinan item selesai. \n🪀 Dibuat oleh: {items}\n_🪈 Berkat keterampilannya yang tinggi, dinosaurus itu mampu membuat item tambahan dari bahan berlebih! _"
             },
             "gym_end": {
-                "text": "🥏 | {dino_name} kembali dari gym. Dinosaurus telah berlatih lama dan keras, sekarang dia merasa jauh lebih kuat!",
+                "text": "🥏 | {dino_name} Kembali dari gym. Dinosaurus telah berlatih lama dan keras, sekarang dia merasa jauh lebih kuat! (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "library_end": {
-                "text": "📖 | {dino_name} dikembalikan dari perpustakaan. Kepala dinosaurus dipenuhi dengan pengetahuan, dia ingin menciptakan dan menciptakan!",
+                "text": "📖 | {dino_name} dikembalikan dari perpustakaan. Kepala dinosaurus dipenuhi dengan pengetahuan, dia ingin menciptakan dan menciptakan! (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "swimming_pool_end": {
-                "text": "🌊 | {dino_name} dikembalikan dari kolam. Setelah pelatihan, dia merasa lebih fleksibel!",
+                "text": "🌊 | {dino_name} Kembali dari kolam renang. Setelah pelatihan, dia merasa lebih fleksibel! (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "park_end": {
-                "text": "🌳 | {dino_name} kembali dari berjalan-jalan di taman. Dinosaurus belajar banyak tentang kerabatnya dan menghafal kata-kata baru!",
+                "text": "🌳 | {dino_name} kembali dari berjalan-jalan di taman. Dinosaurus belajar banyak tentang kerabatnya dan menghafal kata-kata baru! (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "gym_end_negative": {
-                "text": "🥏 | {dino_name} kembali dari gym. \n❗ Pelatihan dilakukan secara tidak benar, sehingga statistiknya berkurang. (-50% dari pembelian)",
+                "text": "🥏 | {dino_name} Kembali dari gym. \n❗ Pelatihan dilakukan secara tidak benar, sehingga statistiknya berkurang. (-50% dari pembelian) (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "library_end_negative": {
-                "text": "📖 | {dino_name} dikembalikan dari perpustakaan. \n❗ Pelatihan dilakukan secara tidak benar, sehingga statistiknya berkurang. (-50% dari pembelian)",
+                "text": "📖 | {dino_name} dikembalikan dari perpustakaan. \n❗ Pelatihan dilakukan secara tidak benar, sehingga statistiknya berkurang. (-50% dari pembelian) (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "swimming_pool_end_negative": {
-                "text": "🌊 | {dino_name} dikembalikan dari kolam. \n❗ Pelatihan dilakukan secara tidak benar, sehingga statistiknya berkurang. (-50% dari pembelian)",
+                "text": "🌊 | {dino_name} Kembali dari kolam renang. \n❗ Pelatihan dilakukan secara tidak benar, sehingga statistiknya berkurang. (-50% dari pembelian) (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "park_end_negative": {
-                "text": "🌳 | {dino_name} kembali dari berjalan-jalan di taman. \n❗ Pelatihan dilakukan secara tidak benar, sehingga statistiknya berkurang. (-50% dari pembelian)",
+                "text": "🌳 | {dino_name} kembali dari berjalan-jalan di taman. \n❗ Pelatihan dilakukan secara tidak benar, sehingga statistiknya berkurang. (-50% dari pembelian) (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "craft_end": {

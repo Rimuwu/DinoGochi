@@ -174,12 +174,14 @@ async def stop_work_calb(call: CallbackQuery):
         traning_time = int(time()) - res['start_time']
         way = ''
 
+        unit_percent = res['up']
         if traning_time < res['min_time']:
             unit_percent = res['up'] / 2
             await add_skill_point(dino_id, res['up_skill'], -unit_percent)
             way = '_negative'
 
-        await dino_notification(dino_id, res['activity_type'] + '_end' + way)
+        await dino_notification(dino_id, res['activity_type'] + '_end' + way, 
+                                add_unit=round(unit_percent, 4))
         await end_skill_activity(dino_id)
         await bot.delete_message(chatid, messageid)
 
