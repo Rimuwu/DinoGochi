@@ -12,7 +12,7 @@ from bot.modules.logs import (MAX_ERRORS, get_errors_count,
 from bot.taskmanager import add_task
 
 REPEAT_MINUTES = 60
-DELAY = 10
+DELAY = 300
 
 # Рассылка сообщения разрабам и дев группу
 async def report_message(message: str):
@@ -53,7 +53,6 @@ async def report_file(file_path: str, file_name: str):
         log(f"Ошибка при чтении файла лога: {e}", 3)
 
     await asyncio.gather(*tasks)
-    
 
 # Создание отчета из последних ошибок и файла логов
 async def create_report():
