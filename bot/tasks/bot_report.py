@@ -63,7 +63,9 @@ async def create_report():
     # Формируем текст отчета по ошибкам
     errors_text = ''
     if errors:
-        for i in range(len(errors)): errors_text += f"{i+1}) `{errors[i]}`\n"
+        for i in range(len(errors)): 
+            if len(errors_text + errors[i]) > 4096: break
+            errors_text += f"{i+1}) `{errors[i]}`\n"
     else: errors_text = 'Ошибок нет, так держать!'
     errors_report_text = f'Отчет по работе бота за `{REPEAT_MINUTES}м`:\nВсего ошибок `{get_errors_count()}`\nОшибок с последнего отчета: `{get_latest_errors_dif()}`\nПоследние `{MAX_ERRORS}` ошибок:\n\n{errors_text}'
 

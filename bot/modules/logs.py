@@ -6,7 +6,7 @@ from time import strftime
 from bot.config import conf
 
 latest_errors = []
-MAX_ERRORS = 5
+MAX_ERRORS = 10
 errors_counter = 0
 latest_errors_counter = 0
 
