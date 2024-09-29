@@ -1,8 +1,6 @@
 import logging
-from logging.handlers import RotatingFileHandler, QueueHandler, QueueListener
-from multiprocessing import Queue
+from logging.handlers import RotatingFileHandler
 from time import strftime
-
 from bot.config import conf
 
 latest_errors = []
@@ -22,17 +20,10 @@ log_formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s", datef
 log_filehandler.setFormatter(log_formatter)
 log_streamhandler.setFormatter(log_formatter)
 
-# Async queue logging
-log_queue = Queue()
-queue_handler = QueueHandler(log_queue)
-logger.addHandler(queue_handler)
+logger.addHandler(log_filehandler)
 logger.addHandler(log_streamhandler)
 
-# Log listen
-queue_listener = QueueListener(log_queue, log_filehandler)
-
 logger.setLevel(logging.INFO)
-queue_listener.start()
 
 # if conf.debug:
 #     telebot.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
