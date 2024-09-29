@@ -1,3 +1,4 @@
+from io import BytesIO
 import random
 import re
 import string
@@ -447,3 +448,10 @@ def deepcopy(original):
     else:
         # Если это примитивное значение, просто возвращаем его
         return original
+
+def pil_image_to_file(image, extension='JPEG', quality='web_low'):
+    photoBuffer = BytesIO()
+    image.convert('RGB').save(photoBuffer, extension, quality=quality)
+    photoBuffer.seek(0)
+
+    return photoBuffer
