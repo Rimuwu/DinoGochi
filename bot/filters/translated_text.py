@@ -6,7 +6,7 @@ from aiogram.types import Message
 from bot.exec import bot
 from bot.modules.localization import t, get_lang
 
-class IsEqual(BaseFilter):
+class Text(BaseFilter):
     def __init__(self, key: str) -> None:
         self.key: str = key
 
