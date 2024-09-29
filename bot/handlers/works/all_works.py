@@ -1,7 +1,7 @@
 from time import time
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import bot, botworker
 from bot.modules.dinosaur.dinosaur import Dino
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.works import end_work, start_bank, start_mine, start_sawmill
@@ -17,12 +17,19 @@ from bot.modules.user.user import User
 from aiogram.types import Message, CallbackQuery
 from bot.modules.data_format import list_to_inline, list_to_keyboard, progress_bar
 
+from bot.filters.translated_text import Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from aiogram import F
+
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 
-@bot.message(textstart='commands_name.extraction_actions.progress',
-                     nothing_state=True)
+@bot.message(Text('commands_name.extraction_actions.progress'))
 @HDMessage
 async def progress(message: Message):
     userid = message.from_user.id
@@ -65,7 +72,7 @@ async def progress(message: Message):
                     {t('works.buttons.check', lang): f'progress_work check {dino.alt_id}'}
                 ])
 
-            await bot.send_message(chatid, text, 'Markdown', reply_markup=rmk)
+            await botworker.send_message(chatid, text, 'Markdown', reply_markup=rmk)
 
 @bot.callback_query(F.data.startswith('progress_work'))
 @HDCallback

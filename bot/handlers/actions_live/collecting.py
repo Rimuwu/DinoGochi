@@ -75,7 +75,7 @@ async def collecting_adapter(return_data, transmitted_data):
 
 
 @bot.message(Text('commands_name.actions.collecting'),
-             NothingState(True), DinoPassStatus())
+             DinoPassStatus())
 @HDMessage
 async def collecting_button(message: Message):
     if message.from_user:

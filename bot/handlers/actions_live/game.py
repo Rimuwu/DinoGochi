@@ -20,7 +20,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user.user import User, premium
-from aiogram.types import Message
+from aiogram.types import Message, InputFile
 
 from bot.filters.translated_text import Text
 from bot.filters.states import NothingState
@@ -189,7 +189,7 @@ async def game_start(return_data: dict,
 
     await auto_ads(message)
 
-@bot.message(Text('commands_name.actions.entertainments'), DinoPassStatus(), NothingState(True))
+@bot.message(Text('commands_name.actions.entertainments'), DinoPassStatus())
 @HDMessage
 async def entertainments(message: Message):
     userid = message.from_user.id # type: ignore

@@ -1,6 +1,6 @@
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import bot, botworker
 from bot.handlers.actions_live.game import start_game_ent
 from bot.modules.data_format import list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
@@ -14,10 +14,17 @@ from bot.modules.states_tools import ChooseDinoState, start_friend_menu
 from bot.modules.user.user import User
 from aiogram.types import CallbackQuery, Message
 
+from bot.filters.translated_text import Text, StartWith
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from aiogram import F
+
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
-@bot.message(textstart='commands_name.action_ask.dino_button')
+@bot.message(StartWith('commands_name.action_ask.dino_button'))
 @HDMessage
 async def edit_dino_buttom(message: Message):
     """ Изменение последнего динозавра (команда)
@@ -33,8 +40,7 @@ async def edit_dino_buttom(message: Message):
         data_names[txt] = f'activ_dino {element.alt_id}'
     
     inline = list_to_inline([data_names], 2)
-    await bot.send_message(user_id, 
-                           t('edit_dino_button.edit', lang), 
+    await message.answer(t('edit_dino_button.edit', lang), 
                            reply_markup=inline)
 
 @bot.callback_query(F.data.startswith('activ_dino'))
@@ -50,12 +56,12 @@ async def answer_edit(callback: CallbackQuery):
     data = callback.data.split()[1]
 
     try:
-        await bot.delete_message(user_id, message.id)
+        await botworker.delete_message(user_id, message.id)
     except: pass
     dino = await dinosaurs.find_one({'alt_id': data}, {'_id': 1, 'name': 1}, comment='answer_edit_dino')
     if dino:
         await user.update({'$set': {'settings.last_dino': dino['_id']}})
-        await bot.send_message(user_id, 
+        await botworker.send_message(user_id, 
                 t('edit_dino_button.susseful', lang, name=dino['name']),
                 reply_markup= await m(user_id, 'actions_menu', lang, True))
 
@@ -71,7 +77,7 @@ async def invite_adp(friend, transmitted_data: dict):
     else:
         await send_action_invite(userid, friend.id, action, dino_alt, lang)
         # Возврат в меню
-        await bot.send_message(chatid, t('back_text.actions_menu', lang), 
+        await botworker.send_message(chatid, t('back_text.actions_menu', lang), 
                        reply_markup= await m(userid, 'last_menu', lang))
 
 @bot.callback_query(F.data.startswith('invite_to_action'), private=True)
@@ -94,7 +100,7 @@ async def invite_to_action(callback: CallbackQuery):
             await start_friend_menu(invite_adp, userid, chatid, lang, True, transmitted_data)
 
             text = t('invite_to_action', lang)
-            await bot.send_message(chatid, text, parse_mode='Markdown')
+            await botworker.send_message(chatid, text, parse_mode='Markdown')
 
 async def join_adp(dino: Dino, transmitted_data):
     userid = transmitted_data['userid']
@@ -112,8 +118,8 @@ async def join_adp(dino: Dino, transmitted_data):
         text = t('alredy_busy', lang)
 
     if text:
-        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup= await m(userid, 'last_menu', lang))
-    
+        await botworker.send_message(chatid, text, parse_mode='Markdown', reply_markup= await m(userid, 'last_menu', lang))
+
     else:
         if action == 'game':
             await start_game_ent(userid, chatid, lang, 
@@ -137,7 +143,7 @@ async def join(callback: CallbackQuery):
                                     'activity_type': 'game'}, comment='join_res')
         if not res: 
             text = t('entertainments.join_end', lang)
-            await bot.send_message(chatid, text)
+            await botworker.send_message(chatid, text)
         else:
             transmitted_data = {
                 'action': action,
