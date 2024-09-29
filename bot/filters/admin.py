@@ -5,15 +5,12 @@ from aiogram.types import Message
 from bot.config import conf
 
 class IsAdminUser(BaseFilter):
-    key = 'is_admin'
+    def __await__(self, status: bool):
+        self.status: bool = status
 
-    async def __call__(self, message: Message, status: bool):
+    async def __call__(self, message: Message):
         is_authorized = message.from_user.id in conf.bot_devs
 
-        if status: result = is_authorized
+        if self.status: result = is_authorized
         else: result = not is_authorized
         return result
-
-# bot.add_custom_filter(IsAdminUser())
-router = Router()
-router.message.filter(IsAdminUser())

@@ -11,8 +11,3 @@ class IsDigitFilter(BaseFilter):
 
     async def __call__(self, message: Message) -> bool:
         return message.text.isdigit() # type: ignore
-
-
-router = Router()
-router.message.filter(IsDigitFilter())
-router.message.filter(StateFilter())

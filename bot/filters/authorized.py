@@ -8,20 +8,15 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 users = DBconstructor(mongo_client.user.users)
 
 class IsAuthorizedUser(BaseFilter):
-    key = 'is_authorized'
+    def __await__(self, status: bool):
+        self.status: bool = status
 
-    def __init__(self) -> None:
-        pass
-
-    async def __call__(self, message: Message, status: bool) -> bool:
+    async def __call__(self, message: Message) -> bool:
         is_authorized = await users.find_one(
                 { 'userid': message.from_user.id
                 }, {'_id': 1}, comment='authorized_check'
                 ) is not None
 
-        if status: result = is_authorized
+        if self.status: result = is_authorized
         else: result = not is_authorized
         return result
-
-router = Router()
-router.message.filter(IsAuthorizedUser())

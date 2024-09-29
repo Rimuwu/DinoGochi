@@ -1,33 +1,39 @@
 # Фильтр текста на выбранном языке
 
-from telebot.asyncio_filters import AdvancedCustomFilter
-from telebot.types import Message
+from aiogram import Router
+from aiogram.filters import BaseFilter
+from aiogram.types import Message
 from bot.exec import bot
 from bot.modules.localization import t, get_lang
 
-class IsEqual(AdvancedCustomFilter):
+class IsEqual(BaseFilter):
     key = 'text'
 
-    async def check(self, message: Message, key: str):
-        lang = await get_lang(message.from_user.id, message.from_user.language_code)
-        text = t(key, lang)
+    def __init__(self, key: str) -> None:
+        self.key: str = key
+
+    async def __call__(self, message: Message):
+        lang = await get_lang(message.from_user.id, 
+                              message.from_user.language_code)
+        text = t(self.key, lang)
 
         if text == message.text:
             return True
         else:
             return False
 
-class StartWith(AdvancedCustomFilter):
+class StartWith(BaseFilter):
     key = 'textstart'
 
-    async def check(self, message: Message, key: str):
-        lang = await get_lang(message.from_user.id, message.from_user.language_code)
-        text = t(key, lang, False)
+    def __init__(self, key: str) -> None:
+        self.key: str = key
+
+    async def __call__(self, message: Message):
+        lang = await get_lang(message.from_user.id, 
+                              message.from_user.language_code)
+        text = t(self.key, lang, False)
 
         if message.text.startswith(text):
             return True
         else:
             return False
-
-bot.add_custom_filter(IsEqual())
-bot.add_custom_filter(StartWith())

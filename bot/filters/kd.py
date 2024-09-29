@@ -9,23 +9,18 @@ from bot.modules.user.user import User
 from bot.modules.markup import markups_menu as m
 
 class KDCheck(BaseFilter):
-    key = 'kd_check'
+    def __init__(self, var, activity: str) -> None:
+        self.var = var
+        self.activity: str = activity
 
-    def __init__(self) -> None:
-        pass
-
-    async def __call__(self, message: Message, var, activity: str) -> bool:
-        user = await User().create(var.from_user.id)
+    async def __call__(self, message: Message) -> bool:
+        user = await User().create(self.var.from_user.id)
         lang = await user.lang
         last_dino = await user.get_last_dino()
 
-        sec_col = await check_activity(last_dino._id, activity)
+        sec_col = await check_activity(last_dino._id, self.activity)
         if sec_col:
             text = t('kd_coldown', lang, ss=seconds_to_str(sec_col, lang))
             await message.answer(text, reply_markup=await m(user.userid, 'last_menu', lang))
             return False
         return True
-
-
-router = Router()
-router.message.filter(KDCheck())
