@@ -68,7 +68,7 @@ async def create_report():
                 break
             errors_text += s
     else: errors_text = 'Ошибок нет, так держать!'
-    errors_report_text = f'Отчет по работе бота за `{REPEAT_MINUTES}м`:\nВсего ошибок `{get_errors_count()}`\nОшибок с последнего отчета: `{get_latest_errors_dif()}`\nПоследние `{errors_count}` ошибок:\n\n{errors_text}'
+    errors_report_text = f'Отчет по работе бота за `{REPEAT_MINUTES}м`:\nВсего ошибок `{get_errors_count()}`\nОшибок с последнего отчета: `{get_latest_errors_dif()}`\nПоследние `{errors_count + 1}` ошибок:\n\n{errors_text}'
 
     await report_message(errors_report_text)
 
