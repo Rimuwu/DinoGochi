@@ -13,7 +13,7 @@ from bot.taskmanager import run as run_taskmanager
 import asyncio
 
 bot = Dispatcher(storage=MongoStorage(mongo_client))
-bot_object = Bot(conf.bot_token)
+BotWorker = Bot(conf.bot_token)
 
 @bot.error()
 async def error_handler(exception: ErrorEvent):
@@ -27,9 +27,9 @@ async def notify_devs_start():
     for id in report_ids:
         if isinstance(id, str):
             channel_id, topic_id = id.split('_', 2)
-            tasks.append(bot_object.send_message(channel_id, '✅ Бот запущен!', message_thread_id=int(topic_id)))
+            tasks.append(BotWorker.send_message(channel_id, '✅ Бот запущен!', message_thread_id=int(topic_id)))
         else: 
-            tasks.append(bot_object.send_message(id, '✅ Бот запущен!'))
+            tasks.append(BotWorker.send_message(id, '✅ Бот запущен!'))
     await asyncio.gather(*tasks)
 
 def run():
@@ -47,7 +47,7 @@ def run():
 
     # Запуск тасков и бота
     add_task(notify_devs_start) # Уведомление запуска для разрабов
-    add_task(bot.start_polling(bot_object))
+    add_task(bot.start_polling(BotWorker))
 
     log('Все готово! Взлетаем!', prefix='Start')
     run_taskmanager()
