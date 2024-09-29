@@ -93,7 +93,7 @@ async def feed(message: Message):
     
     await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
 
-@bot.callback_query_handler(func=
+@bot.callback_query(func=
                             lambda call: call.data.startswith('feed_inl'))
 @HDCallback
 async def feed_inl(callback: CallbackQuery):

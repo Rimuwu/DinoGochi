@@ -154,7 +154,7 @@ async def stop_work(message: Message):
         await bot.send_message(chatid, '❌', parse_mode='Markdown', reply_markup=await m(userid, 'last_menu', lang))
 
 
-@bot.callback_query_handler(func=lambda call: 
+@bot.callback_query(func=lambda call: 
     call.data.startswith('stop_work'))
 @HDCallback
 async def stop_work_calb(call: CallbackQuery):
@@ -185,7 +185,7 @@ async def stop_work_calb(call: CallbackQuery):
         await end_skill_activity(dino_id)
         await bot.delete_message(chatid, messageid)
 
-@bot.callback_query_handler(func=lambda call: 
+@bot.callback_query(func=lambda call: 
     call.data.startswith('use_energy'))
 @HDCallback
 async def use_energy_calb(call: CallbackQuery):

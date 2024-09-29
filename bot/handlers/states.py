@@ -331,7 +331,7 @@ async def ChooseOptionPages(message: Message):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseOption.error_not_option', lang))
 
-@bot.callback_query_handler(state=GeneralStates.ChooseInline, is_authorized=True, 
+@bot.callback_query(state=GeneralStates.ChooseInline, is_authorized=True, 
                             func=lambda call: call.data.startswith('chooseinline'))
 @HDCallback
 async def ChooseInline(callback: CallbackQuery):

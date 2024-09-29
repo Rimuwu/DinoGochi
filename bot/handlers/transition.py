@@ -271,7 +271,7 @@ async def referal_menu(message: Message):
 
     await auto_ads(message)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('buy_ale'))
+@bot.callback_query(func=lambda call: call.data.startswith('buy_ale'))
 @HDCallback
 async def buy_ale(callback: CallbackQuery):
     chatid = callback.message.chat.id

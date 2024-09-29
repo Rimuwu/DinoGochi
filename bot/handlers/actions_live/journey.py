@@ -122,7 +122,7 @@ async def journey_com(message: Message):
 
     await start_journey(userid, chatid, lang)
 
-@bot.callback_query_handler(func=
+@bot.callback_query(func=
                             lambda call: call.data.startswith('journey_complexity'), private=True)
 @HDCallback
 async def journey_complexity(callback: CallbackQuery):
@@ -167,7 +167,7 @@ async def events(message: Message):
 
     await auto_ads(message)
 
-@bot.callback_query_handler(func=
+@bot.callback_query(func=
                             lambda call: call.data.startswith('journey_stop'))
 @HDCallback
 async def journey_stop(callback: CallbackQuery):

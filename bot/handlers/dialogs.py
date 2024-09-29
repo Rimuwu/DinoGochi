@@ -7,7 +7,7 @@ from bot.modules.localization import get_lang
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup
 
 
-@bot.callback_query_handler(
+@bot.callback_query(
                             func=lambda call: call.data.startswith('dialog'),   
                             is_authorized=True)
 @HDCallback

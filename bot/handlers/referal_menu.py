@@ -81,7 +81,7 @@ async def custom_handler(message: Message, transmitted_data: dict):
         await bot.send_message(chatid, text, parse_mode='Markdown')
     return status, code
 
-@bot.callback_query_handler(func=lambda call: 
+@bot.callback_query(func=lambda call: 
     call.data.startswith('generate_referal'), private=True)
 @HDCallback
 async def generate_code(call: CallbackQuery):

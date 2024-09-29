@@ -7,18 +7,18 @@ from bot.modules.localization import t, get_lang
 from bot.modules.decorators import HDCallback, HDMessage
  
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('delete_message'))
+@bot.callback_query(func=lambda call: call.data.startswith('delete_message'))
 @HDCallback
 async def delete_message(call: types.CallbackQuery):
     chatid = call.message.chat.id
     await bot.delete_message(chatid, call.message.id)
     await bot.answer_callback_query(call.id, "🗑")
 
-@bot.callback_query_handler(func=lambda call: call.data == ' ')
+@bot.callback_query(func=lambda call: call.data == ' ')
 @HDCallback
 async def pass_h(call: types.CallbackQuery): pass
 
-@bot.callback_query_handler(func=lambda call: True)
+@bot.callback_query(func=lambda call: True)
 @HDCallback
 async def not_found(call: types.CallbackQuery):
     userid = call.from_user.id

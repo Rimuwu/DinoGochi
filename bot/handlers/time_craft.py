@@ -82,7 +82,7 @@ async def info_craft(data, transmitted_data: dict):
         else:
             return info, mrk
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('time_craft'), is_authorized=True)
+@bot.callback_query(func=lambda call: call.data.startswith('time_craft'), is_authorized=True)
 @HDCallback
 async def time_craft(callback: CallbackQuery):
     chatid = callback.message.chat.id

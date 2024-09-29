@@ -58,7 +58,7 @@ async def hoarder(message: Message):
     await bot.send_message(message.chat.id, text, parse_mode='Markdown',
           reply_markup = rmk)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('hoarder'), private=True)
+@bot.callback_query(func=lambda call: call.data.startswith('hoarder'), private=True)
 @HDCallback
 async def hoarder_calb(call: CallbackQuery):
     call_data = call.data.split()

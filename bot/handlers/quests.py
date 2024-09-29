@@ -37,7 +37,7 @@ async def check_quests(message: Message):
                             chatid, text, reply_markup=mark, parse_mode='Markdown')
             await sleep(0.3)
 
-@bot.callback_query_handler(func=lambda call: 
+@bot.callback_query(func=lambda call: 
     call.data.startswith('quest'), private=True)
 @HDCallback
 async def quest(call: CallbackQuery):

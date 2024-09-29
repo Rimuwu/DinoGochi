@@ -107,7 +107,7 @@ async def bonus(message: Message):
     user = message.from_user
     await bonus_message(user, message, lang)
 
-@bot.callback_query_handler(func=lambda call: 
+@bot.callback_query(func=lambda call: 
     call.data == 'daily_message', is_authorized=True)
 @HDCallback
 async def daily_message(callback: CallbackQuery):
@@ -116,7 +116,7 @@ async def daily_message(callback: CallbackQuery):
     message = callback.message
     await bonus_message(user, message, lang)
 
-@bot.callback_query_handler(func=lambda call: call.data == 'daily_award', is_authorized=True)
+@bot.callback_query(func=lambda call: call.data == 'daily_award', is_authorized=True)
 @HDCallback
 async def daily_award(callback: CallbackQuery):
     chatid = callback.message.chat.id
@@ -306,7 +306,7 @@ async def reset_chars(return_data, transmitted_data):
         await bot.send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
                                 reply_markup= await m(userid, 'last_menu', lang))
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('transformation') , is_authorized=True)
+@bot.callback_query(func=lambda call: call.data.startswith('transformation') , is_authorized=True)
 @HDCallback
 async def transformation(callback: CallbackQuery):
     chatid = callback.message.chat.id

@@ -169,7 +169,7 @@ async def rename_dino(message: Message):
 
     await ChooseDinoState(transition, userid, message.chat.id, lang, False)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('rename_dino'), is_authorized=True, private=True)
+@bot.callback_query(func=lambda call: call.data.startswith('rename_dino'), is_authorized=True, private=True)
 @HDCallback
 async def rename_button(callback: CallbackQuery):
     dino_data = callback.data.split()[1]

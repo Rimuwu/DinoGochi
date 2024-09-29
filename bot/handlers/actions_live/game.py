@@ -3,7 +3,7 @@ from time import time
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
-from bot.exec import bot
+from bot.exec import bot, botworker
 from bot.modules.items.accessory import check_accessory
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline

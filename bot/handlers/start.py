@@ -114,7 +114,7 @@ async def start_game_message(message: types.Message):
         await start_game(message, referal, 'referal') 
 
 
-@bot.callback_query_handler(is_authorized=False, 
+@bot.callback_query(is_authorized=False, 
                             func=lambda call: call.data.startswith('start_egg'), private=True)
 @HDCallback
 async def egg_answer_callback(callback: types.CallbackQuery):
@@ -144,7 +144,7 @@ async def egg_answer_callback(callback: types.CallbackQuery):
             code = callback.data.split()[3]
             await use_promo(code, userid, lang)
 
-@bot.callback_query_handler(is_authorized=True, 
+@bot.callback_query(is_authorized=True, 
                             func=lambda call: call.data.startswith('start_cmd'), private=True)
 @HDCallback
 async def start_inl(callback: types.CallbackQuery):

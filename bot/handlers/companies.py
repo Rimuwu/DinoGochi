@@ -329,7 +329,7 @@ async def comp_info(com_id, transmitted_data):
         chatid, text, reply_markup=mrk
     )
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('company_info') , is_authorized=True)
+@bot.callback_query(func=lambda call: call.data.startswith('company_info') , is_authorized=True)
 @HDCallback
 async def company_info(callback: CallbackQuery):
     chatid = callback.message.chat.id
