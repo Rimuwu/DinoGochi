@@ -1,4 +1,4 @@
-pyTelegramBotAPI==4.22.0
+aiogram==3.13.1
 aiohttp==3.10.1
 pymongo==4.8.0
 motor==3.5.1
