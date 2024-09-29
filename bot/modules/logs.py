@@ -5,10 +5,10 @@ from time import strftime
 
 from bot.config import conf
 
-last_errors = []
-MAX_ERRORS = 5
+latest_errors = []
+MAX_ERRORS = 10
 errors_counter = 0
-last_errors_counter = 0
+latest_errors_counter = 0
 
 # Logger
 logger = logging.getLogger()
@@ -60,24 +60,24 @@ def log(message: str, lvl: int = 1, prefix: str = 'Бот') -> None:
         logger.warning(f"{prefix}: {message}")
     elif lvl == 3:
         logger.error(f"{prefix}: {message}")
-        report_last_error(f"{prefix}: {message}")
+        save_latest_error(f"{prefix}: {message}")
     else:
         logger.critical(f"{prefix}: {message}")
-        report_last_error(f"{prefix}: {message}")
+        save_latest_error(f"{prefix}: {message}")
 
 # Храним последние ошибки
-def report_last_error(message: str):
+def save_latest_error(message: str):
     global errors_counter
     errors_counter += 1
-    if len(last_errors) >= MAX_ERRORS:
-        last_errors.pop(0)
+    if len(latest_errors) >= MAX_ERRORS:
+        latest_errors.pop(0)
 
-    last_errors.append(message)
+    latest_errors.append(message)
 
-def get_errors_last_count() -> int:
-    global last_errors_counter
-    errors_dif = errors_counter - last_errors_counter
-    last_errors_counter = errors_counter
+def get_latest_errors_dif() -> int:
+    global latest_errors_counter
+    errors_dif = errors_counter - latest_errors_counter
+    latest_errors_counter = errors_counter
     return errors_dif
 
 def get_errors_count() -> int:
@@ -85,7 +85,7 @@ def get_errors_count() -> int:
 
 
 # Получить последние ошибки
-def get_last_errors() -> list[str]:
-    last_errors_copy = last_errors.copy()
-    last_errors.clear()
+def get_latest_errors_and_clear() -> list[str]:
+    last_errors_copy = latest_errors.copy()
+    latest_errors.clear()
     return last_errors_copy

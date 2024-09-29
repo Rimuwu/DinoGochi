@@ -8,7 +8,7 @@ import telebot.types
 from bot.config import conf
 from bot.exec import bot
 from bot.modules.logs import (MAX_ERRORS, get_errors_count,
-                              get_errors_last_count, get_last_errors, log)
+                              get_latest_errors_dif, get_latest_errors_and_clear, log)
 from bot.taskmanager import add_task
 
 REPEAT_MINUTES = 60
@@ -57,25 +57,28 @@ async def report_file(file_path: str, file_name: str):
 # Создание отчета из последних ошибок и файла логов
 async def create_report():
     # Получаем последние ошибки
-    errors = get_last_errors()
+    errors = get_latest_errors_and_clear()
 
     # Формируем текст отчета по ошибкам
     errors_text = ''
     if errors:
-        for i in range(len(errors)): errors_text += f"{i+1}) `{errors[i]}`\n"
+        for i in range(len(errors)): 
+            if len(errors_text + errors[i]) > 4096: break
+            errors_text += f"{i+1}) `{errors[i]}`\n"
     else: errors_text = 'Ошибок нет, так держать!'
-    errors_report_text = f'Отчет по работе бота за `{REPEAT_MINUTES}м`:\nВсего ошибок `{get_errors_count()}`\nОшибок с последнего отчета: `{get_errors_last_count()}`\nПоследние `{MAX_ERRORS}` ошибок:\n\n{errors_text}'
+    errors_report_text = f'Отчет по работе бота за `{REPEAT_MINUTES}м`:\nВсего ошибок `{get_errors_count()}`\nОшибок с последнего отчета: `{get_latest_errors_dif()}`\nПоследние `{MAX_ERRORS}` ошибок:\n\n{errors_text}'
 
     await report_message(errors_report_text)
 
     # Получаем список файлов логов
-    logs = os.listdir(conf.logs_dir)
-    if not logs: 
+    log_files = os.listdir(conf.logs_dir)
+    latest_log_file = max(log_files, key=lambda x: os.path.getctime(os.path.join(conf.logs_dir, x)))
+    if not latest_log_file: 
         log("Файлы логов не найдены", 2)
     # Массив задач для асинхронной отправки сообщений
 
-    if logs:
-        await report_file(conf.logs_dir, logs[-1])
+    if latest_log_file:
+        await report_file(conf.logs_dir, latest_log_file)
 
 
 if __name__ != '__main__':

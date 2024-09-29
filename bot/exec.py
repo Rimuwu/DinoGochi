@@ -28,9 +28,9 @@ async def notify_devs_start():
     for id in report_ids:
         if isinstance(id, str):
             channel_id, topic_id = id.split('_', 2)
-            tasks.append(bot.send_message(channel_id, '✅ Бот запущен!', parse_mode='Markdown', message_thread_id=int(topic_id)))
+            tasks.append(bot.send_message(channel_id, '✅ Бот запущен!', message_thread_id=int(topic_id)))
         else: 
-            tasks.append(bot.send_message(id, '✅ Бот запущен!', parse_mode='Markdown'))
+            tasks.append(bot.send_message(id, '✅ Бот запущен!'))
     await asyncio.gather(*tasks)
 
 def run():
