@@ -1,6 +1,6 @@
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import bot, botworker
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino
 from bot.modules.inventory_tools import start_inv
@@ -15,6 +15,9 @@ from bot.modules.states_tools import ChooseStepState
 from bot.modules.user.user import User
 from aiogram.types import CallbackQuery, Message
 
+from bot.filters.translated_text import Text
+from aiogram import F
+
 items = DBconstructor(mongo_client.items.items)
 
 async def adapter_function(return_dict, transmitted_data):
@@ -28,7 +31,7 @@ async def adapter_function(return_dict, transmitted_data):
     send_status, return_text = await use_item(userid, chatid, lang, item, count, dino)
 
     if send_status:
-        await bot.send_message(chatid, return_text, parse_mode='Markdown', 
+        await botworker.send_message(chatid, return_text, parse_mode='Markdown', 
                                reply_markup= await m(userid, 'last_menu', lang))
 
 async def inventory_adapter(item, transmitted_data):
@@ -77,35 +80,38 @@ async def inventory_adapter(item, transmitted_data):
                               lang, steps, 
                               transmitted_data=transmitted_data)
 
-@bot.message(text='commands_name.actions.feed')
+@bot.message(Text('commands_name.actions.feed'))
 @HDMessage
 async def feed(message: Message):
-    userid = message.from_user.id
-    lang = await get_lang(message.from_user.id)
-    chatid = message.chat.id
-    user = await User().create(userid)
-    
-    transmitted_data = {
-        'chatid': chatid,
-        'lang': lang,
-        'dino': await user.get_last_dino()
-    }
-    
-    await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
+    if message.from_user:
+        userid = message.from_user.id
+        lang = await get_lang(message.from_user.id)
+        chatid = message.chat.id
+        user = await User().create(userid)
+        
+        transmitted_data = {
+            'chatid': chatid,
+            'lang': lang,
+            'dino': await user.get_last_dino()
+        }
 
-@bot.callback_query(func=
-                            lambda call: call.data.startswith('feed_inl'))
+        await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
+
+@bot.callback_query(F.data.startswith('feed_inl'))
 @HDCallback
 async def feed_inl(callback: CallbackQuery):
-    lang = await get_lang(callback.from_user.id)
-    chatid = callback.message.chat.id
-    alt_id = callback.data.split()[1]
-    userid = callback.from_user.id
+    if callback.message:
+        lang = await get_lang(callback.from_user.id)
+        chatid = callback.message.chat.id
 
-    transmitted_data = {
-        'chatid': chatid,
-        'lang': lang,
-        'dino': await Dino().create(alt_id)
-    }
+        if callback.data:
+            alt_id = callback.data.split()[1]
+            userid = callback.from_user.id
 
-    await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
+            transmitted_data = {
+                'chatid': chatid,
+                'lang': lang,
+                'dino': await Dino().create(alt_id)
+            }
+
+            await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)

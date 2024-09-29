@@ -78,98 +78,100 @@ async def collecting_adapter(return_data, transmitted_data):
              NothingState(True), DinoPassStatus())
 @HDMessage
 async def collecting_button(message: Message):
-    userid = message.from_user.id
-    chatid = message.chat.id
+    if message.from_user:
+        userid = message.from_user.id
+        chatid = message.chat.id
 
-    user = await User().create(userid)
-    lang = await user.lang
-    last_dino = await user.get_last_dino()
+        user = await User().create(userid)
+        lang = await user.lang
+        last_dino = await user.get_last_dino()
 
-    if last_dino:
-            if await user.premium:
-                max_count = GAME_SETTINGS['premium_max_collecting']
-            else: max_count = GAME_SETTINGS['max_collecting']
+        if last_dino:
+                if await user.premium:
+                    max_count = GAME_SETTINGS['premium_max_collecting']
+                else: max_count = GAME_SETTINGS['max_collecting']
 
-            have_basket = await check_accessory(last_dino, 'basket')
-            if have_basket: max_count += 20
+                have_basket = await check_accessory(last_dino, 'basket')
+                if have_basket: max_count += 20
 
-            data_options = get_data('collecting.buttons', lang)
-            options = dict(zip(data_options.values(), data_options.keys()))
-            markup = list_to_keyboard([list(data_options.values()), 
-                                    [t('buttons_name.cancel', lang)]], 2)
+                data_options = get_data('collecting.buttons', lang)
+                options = dict(zip(data_options.values(), data_options.keys()))
+                markup = list_to_keyboard([list(data_options.values()), 
+                                        [t('buttons_name.cancel', lang)]], 2)
 
-            steps = [
-                {"type": 'option', "name": 'option', 
-                 "data": {"options": options}, 
-                 "translate_message": True,
-                    'message': {'text': 'collecting.way', 
-                    'reply_markup': markup}
-                },
-                {"type": 'int', "name": 'count', 
-                 "data": {"max_int": max_count}, 
-                 "translate_message": True,
-                    'message': {'text': 'collecting.wait_count', 
-                    'reply_markup': count_markup(max_count, lang)}
-                }
-            ]
-            await ChooseStepState(collecting_adapter, userid, chatid, 
-                                        lang, steps, 
-                                    transmitted_data={'dino': last_dino, 'delete_steps': True})
+                steps = [
+                    {"type": 'option', "name": 'option', 
+                    "data": {"options": options}, 
+                    "translate_message": True,
+                        'message': {'text': 'collecting.way', 
+                        'reply_markup': markup}
+                    },
+                    {"type": 'int', "name": 'count', 
+                    "data": {"max_int": max_count}, 
+                    "translate_message": True,
+                        'message': {'text': 'collecting.wait_count', 
+                        'reply_markup': count_markup(max_count, lang)}
+                    }
+                ]
+                await ChooseStepState(collecting_adapter, userid, chatid, 
+                                            lang, steps, 
+                                        transmitted_data={'dino': last_dino, 'delete_steps': True})
 
 @bot.message(Text('commands_name.actions.progress'))
 @HDMessage
 async def collecting_progress(message: Message):
-    userid = message.from_user.id
-    chatid = message.chat.id
+    if message.from_user:
+        userid = message.from_user.id
+        chatid = message.chat.id
 
-    user = await User().create(userid)
-    lang = await user.lang
-    last_dino = await user.get_last_dino()
-    if last_dino:
-        
-        data = await long_activity.find_one({'dino_id': last_dino._id, 
-                                               'activity_type': 'collecting'},
-                                              comment="collecting_progress_data")
-        if data:
-            stop_button = t(
-                f'collecting.stop_button.{data["collecting_type"]}', lang)
+        user = await User().create(userid)
+        lang = await user.lang
+        last_dino = await user.get_last_dino()
+        if last_dino:
+            
+            data = await long_activity.find_one({'dino_id': last_dino._id, 
+                                                'activity_type': 'collecting'},
+                                                comment="collecting_progress_data")
+            if data:
+                stop_button = t(
+                    f'collecting.stop_button.{data["collecting_type"]}', lang)
 
-            image = await dino_collecting(last_dino.data_id, data["collecting_type"])
-            text = t(f'collecting.progress.{data["collecting_type"]}', lang,
-                    now = data['now_count'], max_count=data['max_count']
-                    )
+                image = await dino_collecting(last_dino.data_id, data["collecting_type"])
+                text = t(f'collecting.progress.{data["collecting_type"]}', lang,
+                        now = data['now_count'], max_count=data['max_count']
+                        )
 
-            await botworker.send_photo(chatid, image, text, 
-                                 reply_markup=list_to_inline(
-                                  [{stop_button: f'collecting stop {last_dino.alt_id}'}]
-                                     ))
-        else:
-            await botworker.send_message(chatid, '❌',
-                        reply_markup= await m(userid, 'last_menu', lang)
-                                    )
+                await botworker.send_photo(chatid, image, text, 
+                                    reply_markup=list_to_inline(
+                                    [{stop_button: f'collecting stop {last_dino.alt_id}'}]
+                                        ))
+            else:
+                await botworker.send_message(chatid, '❌',
+                            reply_markup = await m(userid, 'last_menu', lang))
 
 @bot.callback_query(F.data.startswith('collecting'), IsAuthorizedUser(), IsPrivateChat(True))
 @HDCallback
 async def collecting_callback(callback: CallbackQuery):
-    dino_data = callback.data.split()[2]
-    action = callback.data.split()[1]
+    if callback.data:
+        dino_data = callback.data.split()[2]
+        action = callback.data.split()[1]
 
-    lang = await get_lang(callback.from_user.id)
+        lang = await get_lang(callback.from_user.id)
 
-    dino = await Dino().create(dino_data)
-    data = await long_activity.find_one({'dino_id': dino._id, 
-                                         'activity_type': 'collecting'},
-                                          comment="collecting_callback")
-    if data and dino and data:
-        items_list = []
-        for key, count in data['items'].items():
-            items_list += [key] * count
+        dino = await Dino().create(dino_data)
+        data = await long_activity.find_one({'dino_id': dino._id, 
+                                            'activity_type': 'collecting'},
+                                            comment="collecting_callback")
+        if data and dino and data:
+            items_list = []
+            for key, count in data['items'].items():
+                items_list += [key] * count
 
-        items_names = counts_items(items_list, lang)
+            items_names = counts_items(items_list, lang)
 
-        if action == 'stop':
-            await end_collecting(dino._id, 
-                                 data['items'], data['sended'], 
-                                 items_names)
-            await quest_process(data['sended'], data['collecting_type'], 
-                          data['now_count'])
+            if action == 'stop':
+                await end_collecting(dino._id, 
+                                    data['items'], data['sended'], 
+                                    items_names)
+                await quest_process(data['sended'], data['collecting_type'], 
+                            data['now_count'])

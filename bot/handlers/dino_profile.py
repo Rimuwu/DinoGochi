@@ -199,7 +199,7 @@ async def dino_handler(message: Message):
         else:
             await bot.send_message(userid, t(f'p_profile.no_dino_no_egg', lang))
 
-@bot.callback_query(func=lambda call: call.data.startswith('dino_profile'))
+@bot.callback_query(F.data.startswith('dino_profile'))
 @HDCallback
 async def dino_profile_callback(call: types.CallbackQuery):
     dino_data = call.data.split()[1]
@@ -217,7 +217,7 @@ async def dino_profile_callback(call: types.CallbackQuery):
     dino = await Dino().create(dino_data)
     await transition(dino, trans_data)
 
-@bot.callback_query(func=lambda call: call.data.startswith('dino_menu'), private=True)
+@bot.callback_query(F.data.startswith('dino_menu'), private=True)
 @HDCallback
 async def dino_menu(call: types.CallbackQuery):
     split_d = call.data.split()
@@ -392,7 +392,7 @@ async def remove_accessory(option: list, transmitted_data:dict):
     await bot.send_message(userid, t("remove_accessory.remove", lang), 
                            reply_markup= await m(userid, 'last_menu', lang))
 
-@bot.callback_query(func=lambda call: call.data.startswith('kindergarten'), private=True)
+@bot.callback_query(F.data.startswith('kindergarten'), private=True)
 @HDCallback
 async def kindergarten(call: types.CallbackQuery):
     split_d = call.data.split()

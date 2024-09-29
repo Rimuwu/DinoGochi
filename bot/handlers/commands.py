@@ -105,7 +105,7 @@ async def help(message: Message):
     await bot.send_message(chatid, text, parse_mode='HTML', 
                            reply_markup=inl_m)
 
-@bot.callback_query(func=lambda call: call.data.startswith('help'), private=True)
+@bot.callback_query(F.data.startswith('help'), private=True)
 @HDCallback
 async def kindergarten(call: CallbackQuery):
     split_d = call.data.split()

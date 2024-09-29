@@ -70,7 +70,7 @@ async def rayting(message: Message):
             markup = list_to_inline([buttons])
             await bot.send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
 
-@bot.callback_query(func=lambda call: call.data.startswith('rayting'))
+@bot.callback_query(F.data.startswith('rayting'))
 @HDCallback
 async def rayting_call(callback: CallbackQuery):
     chatid = callback.message.chat.id

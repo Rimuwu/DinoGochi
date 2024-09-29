@@ -7,7 +7,7 @@ from bot.modules.localization import t, get_lang
 from bot.modules.decorators import HDCallback, HDMessage
  
 
-@bot.callback_query(func=lambda call: call.data.startswith('delete_message'))
+@bot.callback_query(F.data.startswith('delete_message'))
 @HDCallback
 async def delete_message(call: types.CallbackQuery):
     chatid = call.message.chat.id

@@ -115,7 +115,7 @@ async def start_game_message(message: types.Message):
 
 
 @bot.callback_query(is_authorized=False, 
-                            func=lambda call: call.data.startswith('start_egg'), private=True)
+                            F.data.startswith('start_egg'), private=True)
 @HDCallback
 async def egg_answer_callback(callback: types.CallbackQuery):
     egg_id = int(callback.data.split()[1])
@@ -145,7 +145,7 @@ async def egg_answer_callback(callback: types.CallbackQuery):
             await use_promo(code, userid, lang)
 
 @bot.callback_query(is_authorized=True, 
-                            func=lambda call: call.data.startswith('start_cmd'), private=True)
+                            F.data.startswith('start_cmd'), private=True)
 @HDCallback
 async def start_inl(callback: types.CallbackQuery):
     """ start_cmd promo/  

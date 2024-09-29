@@ -67,8 +67,7 @@ async def progress(message: Message):
 
             await bot.send_message(chatid, text, 'Markdown', reply_markup=rmk)
 
-@bot.callback_query(func=lambda call: 
-    call.data.startswith('progress_work'))
+@bot.callback_query(F.data.startswith('progress_work'))
 @HDCallback
 async def progress_work(call: CallbackQuery):
 

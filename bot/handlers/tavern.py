@@ -306,7 +306,7 @@ async def reset_chars(return_data, transmitted_data):
         await bot.send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
                                 reply_markup= await m(userid, 'last_menu', lang))
 
-@bot.callback_query(func=lambda call: call.data.startswith('transformation') , is_authorized=True)
+@bot.callback_query(F.data.startswith('transformation') , is_authorized=True)
 @HDCallback
 async def transformation(callback: CallbackQuery):
     chatid = callback.message.chat.id

@@ -168,7 +168,7 @@ async def my_products(message: Message):
         text = t('no_products', lang)
         await bot.send_message(chatid, text,  parse_mode='Markdown')
 
-@bot.callback_query(func=lambda call: call.data.startswith('product_info'))
+@bot.callback_query(F.data.startswith('product_info'))
 @HDCallback
 async def product_info(call: CallbackQuery):
     call_data = call.data.split()
@@ -223,7 +223,7 @@ async def product_info(call: CallbackQuery):
                 await promotion_prepare(userid, chatid, lang, product['_id'], 
                                         call.message.id)
 
-@bot.callback_query(func=lambda call: call.data.startswith('seller'), private=True)
+@bot.callback_query(F.data.startswith('seller'), private=True)
 @HDCallback
 async def seller(call: CallbackQuery):
     call_data = call.data.split()
@@ -319,7 +319,7 @@ async def find_products(message: Message):
 
     await find_prepare(userid, chatid, lang)
 
-@bot.callback_query(func=lambda call: call.data.startswith('create_push'), private=True)
+@bot.callback_query(F.data.startswith('create_push'), private=True)
 @HDCallback
 async def push(call: CallbackQuery):
     call_data = call.data.split()

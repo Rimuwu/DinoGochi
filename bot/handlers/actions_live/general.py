@@ -37,7 +37,7 @@ async def edit_dino_buttom(message: Message):
                            t('edit_dino_button.edit', lang), 
                            reply_markup=inline)
 
-@bot.callback_query(func=lambda call: call.data.startswith('activ_dino'))
+@bot.callback_query(F.data.startswith('activ_dino'))
 @HDCallback
 async def answer_edit(callback: CallbackQuery):
     """ Изменение последнего динозавра (кнопка)
@@ -74,8 +74,7 @@ async def invite_adp(friend, transmitted_data: dict):
         await bot.send_message(chatid, t('back_text.actions_menu', lang), 
                        reply_markup= await m(userid, 'last_menu', lang))
 
-@bot.callback_query(func=
-                            lambda call: call.data.startswith('invite_to_action'), private=True)
+@bot.callback_query(F.data.startswith('invite_to_action'), private=True)
 @HDCallback
 async def invite_to_action(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
@@ -120,8 +119,7 @@ async def join_adp(dino: Dino, transmitted_data):
             await start_game_ent(userid, chatid, lang, 
                                  dino, friend, True, friend_dino)
 
-@bot.callback_query(func=
-                            lambda call: call.data.startswith('join_to_action'))
+@bot.callback_query(F.data.startswith('join_to_action'))
 @HDCallback
 async def join(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)

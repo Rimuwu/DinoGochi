@@ -102,8 +102,7 @@ async def faq(message: Message):
 
     await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline)
 
-@bot.callback_query(func=lambda call: 
-    call.data.startswith('faq'))
+@bot.callback_query(F.data.startswith('faq'))
 @HDCallback
 async def faq_buttons(call: CallbackQuery):
     data = call.data.split()[1]
@@ -113,8 +112,7 @@ async def faq_buttons(call: CallbackQuery):
     text = t(f'faq.{data}', lang)
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.callback_query(func=lambda call: 
-    call.data.startswith('support'))
+@bot.callback_query(F.data.startswith('support'))
 @HDCallback
 async def support_buttons(call: CallbackQuery):
     action = call.data.split()[1]

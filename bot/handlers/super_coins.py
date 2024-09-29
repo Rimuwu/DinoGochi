@@ -43,8 +43,7 @@ async def super_c(message: Message):
     text, markup = await main_message(userid)
     await bot.send_message(chatid, text, reply_markup=markup, parse_mode="Markdown")
 
-@bot.callback_query(func=lambda call: 
-    call.data.startswith('super_coins'), private=True)
+@bot.callback_query(F.data.startswith('super_coins'), private=True)
 @HDCallback
 async def super_coins(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -87,8 +86,7 @@ async def super_coins(call: CallbackQuery):
         await bot.edit_message_text(text, chatid, call.message.id,
                                     reply_markup=markup, parse_mode='Markdown')
 
-@bot.callback_query(func=lambda call: 
-    call.data.startswith('ads_limit'), private=True)
+@bot.callback_query(F.data.startswith('ads_limit'), private=True)
 @HDCallback
 async def ads_limit(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -113,8 +111,7 @@ async def ads_limit(call: CallbackQuery):
     await bot.edit_message_text(text, chatid, call.message.id,
                                     reply_markup=markup, parse_mode="Markdown")
 
-@bot.callback_query(func=lambda call: 
-    call.data.startswith('super_shop'), private=True)
+@bot.callback_query(F.data.startswith('super_shop'), private=True)
 @HDCallback
 async def super_shop(call: CallbackQuery):
     chatid = call.message.chat.id

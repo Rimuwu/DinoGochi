@@ -175,7 +175,7 @@ async def backgrounds(message: Message):
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup)
 
 
-@bot.callback_query(func=lambda call: call.data.startswith('back_m '), private=True)
+@bot.callback_query(F.data.startswith('back_m '), private=True)
 @HDCallback
 async def background_menu(call: CallbackQuery):
     split_d = call.data.split()

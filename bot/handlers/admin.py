@@ -69,7 +69,7 @@ async def track_info_adp(data, transmitted_data: dict):
     text, markup = await track_info(data, lang)
     await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
-@bot.callback_query(func=lambda call: call.data.startswith('track'), private=True)
+@bot.callback_query(F.data.startswith('track'), private=True)
 @HDCallback
 async def track(call: CallbackQuery):
     split_d = call.data.split()
@@ -121,7 +121,7 @@ async def promo_info_adp(code, transmitted_data: dict):
     text, markup = await promo_ui(code, lang)
     await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
-@bot.callback_query(func=lambda call: call.data.startswith('promo'))
+@bot.callback_query(F.data.startswith('promo'))
 @HDCallback
 async def promo_call(call: CallbackQuery):
     split_d = call.data.split()

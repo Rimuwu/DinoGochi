@@ -95,8 +95,7 @@ async def add_friend_end(friendid: int, transmitted_data: dict):
             await bot.send_message(chatid, text, 
                                 reply_markup= await m(userid, 'last_menu', lang))
 
-@bot.callback_query(func=lambda call: 
-    call.data.startswith('add_friend'), nothing_state=True, private=True)
+@bot.callback_query(F.data.startswith('add_friend'), nothing_state=True, private=True)
 @HDCallback
 async def add_friend_callback(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -196,8 +195,7 @@ async def requests_list(message: Message):
     await bot.send_message(chatid, t('requests.wait', lang))
     await request_open(userid, chatid, lang)
     
-@bot.callback_query(func=lambda call: 
-    call.data.startswith('requests'), private=True)
+@bot.callback_query(F.data.startswith('requests'), private=True)
 @HDCallback
 async def requests_callback(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -294,8 +292,7 @@ async def joint(return_data: dict,
 
     await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang))
 
-@bot.callback_query(func=lambda call: 
-    call.data.startswith('joint_dinosaur'), private=True)
+@bot.callback_query(F.data.startswith('joint_dinosaur'), private=True)
 @HDCallback
 async def joint_dinosaur(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
@@ -319,8 +316,7 @@ async def joint_dinosaur(call: CallbackQuery):
 
     await ChooseStepState(joint, userid, chatid, lang, steps, {'friendid': int(data[1]), 'username': user_name(call.from_user)})
 
-@bot.callback_query(func=lambda call: 
-    call.data.startswith('take_dino'), private=True)
+@bot.callback_query(F.data.startswith('take_dino'), private=True)
 @HDCallback
 async def take_dino(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
@@ -359,8 +355,7 @@ async def take_dino(call: CallbackQuery):
                 text_to_owner = t('take_dino.message_to_owner', lang, dinoname=dino['name'], username=user_name(call.from_user))
                 if owner: await bot.send_message(owner, text_to_owner)
 
-@bot.callback_query(func=lambda call: 
-    call.data.startswith('take_money'), private=True)
+@bot.callback_query(F.data.startswith('take_money'), private=True)
 @HDCallback
 async def take_money(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
@@ -385,8 +380,7 @@ async def take_money(call: CallbackQuery):
             await bot.send_message(chatid, text)
 
 
-@bot.callback_query(func=lambda call: 
-    call.data.startswith('take_coins'), private=True)
+@bot.callback_query(F.data.startswith('take_coins'), private=True)
 @HDCallback
 async def take_super_coins(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
@@ -454,8 +448,7 @@ async def transfer_super_coins(col: int, transmitted_data: dict):
                            comment='transfer_super_coins')
 
 
-@bot.callback_query(func=lambda call: 
-    call.data.startswith('send_request'), private=False)
+@bot.callback_query(F.data.startswith('send_request'), private=False)
 @HDCallback
 async def send_request(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
@@ -483,8 +476,7 @@ async def send_request(call: CallbackQuery):
     else:
         await bot.answer_callback_query(call.id, '❌')
 
-@bot.callback_query(func=lambda call: 
-    call.data.startswith('new_year'), private=True)
+@bot.callback_query(F.data.startswith('new_year'), private=True)
 @HDCallback
 async def new_year(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
