@@ -353,7 +353,9 @@ async def get_username(message):
 async def get_log(message):
     errors_text = ''
     for i in range(len(latest_errors)): 
-            if len(errors_text + latest_errors[i]) > 4096: break
-            errors_text += f"{i+1}) `{latest_errors[i]}`\n"
+            s = f"{i+1}) ```{latest_errors[i]}```\n"
+            if len(errors_text + s) > 4096: 
+                break
+            errors_text += s
     
     await bot.send_message(message.from_user.id, errors_text, parse_mode='Markdown')
