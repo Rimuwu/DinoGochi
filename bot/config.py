@@ -47,11 +47,6 @@ class Config:
         """
         return json.dumps(self, default=lambda o: o.__dict__,
             sort_keys=True, indent=4)
-    
-    def get_report_ids(self) -> list:
-        report_ids = conf.bot_devs.copy()
-        if conf.bot_report_id: report_ids.append(conf.bot_report_id)
-        return report_ids
  
 conf = Config()
 

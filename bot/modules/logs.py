@@ -85,7 +85,5 @@ def get_errors_count() -> int:
 
 
 # Получить последние ошибки
-def get_latest_errors_and_clear() -> list[str]:
-    last_errors_copy = latest_errors.copy()
-    latest_errors.clear()
-    return last_errors_copy
+def get_latest_errors() -> list[str]:
+    return latest_errors
