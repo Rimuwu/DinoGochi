@@ -15,7 +15,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState, ChooseImageState,
                                       ChooseIntState, ChooseStringState)
 from bot.modules.user.user import premium, take_coins
-from telebot.types import CallbackQuery, InputMedia, Message
+from aiogram.types import CallbackQuery, InputMedia, Message
 
 users = DBconstructor(mongo_client.user.users)
 
@@ -67,7 +67,7 @@ async def transition_back(dino: Dino, transmitted_data: dict):
     await ChooseImageState(back_edit, userid, chatid, lang, True, transmitted_data=data)
     await bot.send_message(userid, text, reply_markup=markup)
 
-@bot.message_handler(pass_bot=True, text='commands_name.backgrounds.custom_profile', 
+@bot.message(text='commands_name.backgrounds.custom_profile', 
                      is_authorized=True, private=True)
 @HDMessage
 async def custom_profile(message: Message):
@@ -82,7 +82,7 @@ async def custom_profile(message: Message):
         await bot.send_message(userid, text)
 
 
-@bot.message_handler(pass_bot=True, text='commands_name.backgrounds.standart', 
+@bot.message(text='commands_name.backgrounds.standart', 
                      is_authorized=True, private=True)
 @HDMessage
 async def standart(message: Message):
@@ -163,7 +163,7 @@ async def back_page(userid: int, page: int, lang: str):
     image = f'images/backgrounds/{page}.png'
     return text, markup, image
 
-@bot.message_handler(pass_bot=True, text='commands_name.backgrounds.backgrounds', 
+@bot.message(text='commands_name.backgrounds.backgrounds', 
                      is_authorized=True, private=True)
 @HDMessage
 async def backgrounds(message: Message):
@@ -175,7 +175,7 @@ async def backgrounds(message: Message):
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup)
 
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('back_m '), private=True)
+@bot.callback_query_handler(func=lambda call: call.data.startswith('back_m '), private=True)
 @HDCallback
 async def background_menu(call: CallbackQuery):
     split_d = call.data.split()

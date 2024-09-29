@@ -9,7 +9,7 @@ from bot.modules.donation import (OpenDonatData, give_reward, save,
                                   save_donation)
 from bot.modules.localization import get_lang, t
 from bot.modules.logs import log
-from telebot.types import Message, PreCheckoutQuery
+from aiogram.types import Message, PreCheckoutQuery
 
 products = GAME_SETTINGS['products']
 
@@ -23,7 +23,7 @@ async def checkout(pre_checkout_query: PreCheckoutQuery):
     log(f'Был выдан ответ на pre_checkout_query_handler -> {res}, user: {pre_checkout_query.from_user.id}', 4)
 
 
-@bot.message_handler(content_types=['successful_payment'])
+@bot.message(content_types=['successful_payment'])
 @HDMessage
 async def got_payment(message: Message):
     """ Выдача товара за покупку """

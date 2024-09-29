@@ -4,10 +4,10 @@ from bot.modules.data_format import user_name
 from bot.modules.decorators import HDCallback
 from bot.modules.dialogs import dialogs
 from bot.modules.localization import get_lang
-from telebot.types import CallbackQuery, InlineKeyboardMarkup
+from aiogram.types import CallbackQuery, InlineKeyboardMarkup
 
 
-@bot.callback_query_handler(pass_bot=True, 
+@bot.callback_query_handler(
                             func=lambda call: call.data.startswith('dialog'),   
                             is_authorized=True)
 @HDCallback

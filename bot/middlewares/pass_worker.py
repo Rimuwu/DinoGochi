@@ -1,8 +1,7 @@
-# Система антифлуда
-
-from random import randint, random
-from telebot.asyncio_handler_backends import BaseMiddleware
-from telebot.types import Message
+from random import random
+from typing import Awaitable, Callable, Any
+from aiogram import BaseMiddleware
+from aiogram.types import Message
 from bot.exec import bot
 from bot.dbmanager import mongo_client
 from time import time as time_now
@@ -18,13 +17,16 @@ ads = DBconstructor(mongo_client.user.ads)
 
 class PassWorker(BaseMiddleware):
 
-    def __init__(self):
-        self.update_types = ['message']
+    async def __call__(self, 
+                handler: Callable[[Message, dict[str, Any]], Awaitable[Any]],
+                message: Message,
+                data: dict[str, Any]):
+        
+        result = await handler(message, data)
+        await self.post_process(message, data)
+        return result
 
-    async def pre_process(self, message: Message, data: dict):
-        pass
-
-    async def post_process(self, message: Message, data, exception):
+    async def post_process(self, message: Message, data):
         user_id = message.from_user.id
         if message.chat.type == "private":
             user = await users.find_one({'userid': user_id}, {"_id": 1, 
@@ -61,4 +63,4 @@ class PassWorker(BaseMiddleware):
                         await auto_ads(message, True)
 
 
-bot.setup_middleware(PassWorker())
+bot.message.middleware(PassWorker())

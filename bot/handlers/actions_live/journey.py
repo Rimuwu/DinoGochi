@@ -20,7 +20,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user.user import User
-from telebot.types import (CallbackQuery, InlineKeyboardMarkup, InputMedia,
+from aiogram.types import (CallbackQuery, InlineKeyboardMarkup, InputMedia,
                            Message)
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
@@ -113,7 +113,7 @@ async def start_journey(userid: int, chatid: int, lang: str,
     await bot.send_message(chatid, t('journey_start.cancel_text', lang), 
                            reply_markup=cancel_markup(lang))
 
-@bot.message_handler(pass_bot=True, text='commands_name.actions.journey', dino_pass=True, nothing_state=True)
+@bot.message(text='commands_name.actions.journey', dino_pass=True, nothing_state=True)
 @HDMessage
 async def journey_com(message: Message):
     userid = message.from_user.id
@@ -122,7 +122,7 @@ async def journey_com(message: Message):
 
     await start_journey(userid, chatid, lang)
 
-@bot.callback_query_handler(pass_bot=True, func=
+@bot.callback_query_handler(func=
                             lambda call: call.data.startswith('journey_complexity'), private=True)
 @HDCallback
 async def journey_complexity(callback: CallbackQuery):
@@ -132,7 +132,7 @@ async def journey_complexity(callback: CallbackQuery):
     text = t('journey_complexity', lang)
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.message_handler(pass_bot=True, text='commands_name.actions.events')
+@bot.message(text='commands_name.actions.events')
 @HDMessage
 async def events(message: Message):
     userid = message.from_user.id
@@ -167,7 +167,7 @@ async def events(message: Message):
 
     await auto_ads(message)
 
-@bot.callback_query_handler(pass_bot=True, func=
+@bot.callback_query_handler(func=
                             lambda call: call.data.startswith('journey_stop'))
 @HDCallback
 async def journey_stop(callback: CallbackQuery):

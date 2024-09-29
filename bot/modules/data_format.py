@@ -3,7 +3,7 @@ import re
 import string
 from typing import Union
 
-from telebot.types import (InlineKeyboardButton, InlineKeyboardMarkup,
+from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            ReplyKeyboardMarkup, User)
 
 from bot.const import GAME_SETTINGS

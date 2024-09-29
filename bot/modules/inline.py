@@ -1,4 +1,4 @@
-from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from bot.modules.data_format import list_to_inline
 from bot.modules.items.item import counts_items, is_standart

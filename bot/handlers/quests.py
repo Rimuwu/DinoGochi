@@ -10,13 +10,13 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import check_quest, quest_resampling, quest_ui
 from bot.modules.user.user import take_coins
-from telebot.types import (CallbackQuery,
+from aiogram.types import (CallbackQuery,
                            InlineKeyboardMarkup, Message)
 
 quests_data = DBconstructor(mongo_client.tavern.quests)
 users = DBconstructor(mongo_client.user.users)
 
-@bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.quests', is_authorized=True, private=True)
+@bot.message(text='commands_name.dino_tavern.quests', is_authorized=True, private=True)
 @HDMessage
 async def check_quests(message: Message):
     userid = message.from_user.id
@@ -37,7 +37,7 @@ async def check_quests(message: Message):
                             chatid, text, reply_markup=mark, parse_mode='Markdown')
             await sleep(0.3)
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: 
+@bot.callback_query_handler(func=lambda call: 
     call.data.startswith('quest'), private=True)
 @HDCallback
 async def quest(call: CallbackQuery):

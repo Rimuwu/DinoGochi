@@ -3,7 +3,7 @@ import io
 import os
 
 import aiofiles
-import telebot.types
+import aiogram.types
 
 from bot.config import conf
 from bot.exec import bot
@@ -42,7 +42,7 @@ async def report_file(file_path: str, file_name: str):
         async with aiofiles.open(f'{file_path}/{file_name}', mode='rb') as f:
             last_log_content = await f.read()  # Читаем содержимое файла
             for id in report_ids:
-                last_log = telebot.types.InputFile(io.BytesIO(last_log_content), file_name=file_name)
+                last_log = aiogram.types.InputFile(io.BytesIO(last_log_content), file_name=file_name)
                 if isinstance(id, str):
                     channel_id, topic_id = id.split('_', 2)
                     tasks.append(bot.send_document(channel_id, last_log, message_thread_id=int(topic_id)))

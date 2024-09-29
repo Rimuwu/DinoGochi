@@ -11,11 +11,11 @@ from bot.modules.logs import log
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseIntState
-from telebot.types import (CallbackQuery, InlineKeyboardButton,
+from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, InputMedia, Message)
 
 
-@bot.message_handler(pass_bot=True, text='commands_name.about.team', 
+@bot.message(text='commands_name.about.team', 
                      is_authorized=True, private=True)
 @HDMessage
 async def team(message: Message):
@@ -30,7 +30,7 @@ async def team(message: Message):
                                      author=author_loc
                                     ), parse_mode='html')
 
-@bot.message_handler(pass_bot=True, text='commands_name.about.links', 
+@bot.message(text='commands_name.about.links', 
                      is_authorized=True, private=True)
 @HDMessage
 async def links(message: Message):
@@ -61,7 +61,7 @@ async def main_support_menu(lang: str):
 
     return image, text, markup_inline
 
-@bot.message_handler(pass_bot=True, text='commands_name.about.support', 
+@bot.message(text='commands_name.about.support', 
                      is_authorized=True, private=True)
 @HDMessage
 async def support(message: Message):
@@ -72,7 +72,7 @@ async def support(message: Message):
     
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
 
-@bot.message_handler(pass_bot=True, commands=['premium'], 
+@bot.message(commands=['premium'], 
                      is_authorized=True, private=True)
 @HDMessage
 async def support_com(message: Message):
@@ -83,7 +83,7 @@ async def support_com(message: Message):
 
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
 
-@bot.message_handler(pass_bot=True, text='commands_name.about.faq', 
+@bot.message(text='commands_name.about.faq', 
                      is_authorized=True, private=True)
 @HDMessage
 async def faq(message: Message):
@@ -102,7 +102,7 @@ async def faq(message: Message):
 
     await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline)
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: 
+@bot.callback_query_handler(func=lambda call: 
     call.data.startswith('faq'))
 @HDCallback
 async def faq_buttons(call: CallbackQuery):
@@ -113,7 +113,7 @@ async def faq_buttons(call: CallbackQuery):
     text = t(f'faq.{data}', lang)
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: 
+@bot.callback_query_handler(func=lambda call: 
     call.data.startswith('support'))
 @HDCallback
 async def support_buttons(call: CallbackQuery):

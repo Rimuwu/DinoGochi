@@ -34,7 +34,7 @@ def save(new_file: dict):
         json.dump(new_file, f, sort_keys=True, indent=4, ensure_ascii=False)
 
 
-async def send_SmartPhoto(chatid: int, photo_way, caption: Union[str, None] = None, parse_mode: Union[str, None] = None, reply_markup: Union[telebot.types.InlineKeyboardMarkup, None, telebot.types.ReplyKeyboardMarkup] = None):
+async def send_SmartPhoto(chatid: int, photo_way, caption: Union[str, None] = None, parse_mode: Union[str, None] = None, reply_markup: Union[aiogram.types.InlineKeyboardMarkup, None, aiogram.types.ReplyKeyboardMarkup] = None):
     global storage
 
     if photo_way in storage:
@@ -64,7 +64,7 @@ async def send_SmartPhoto(chatid: int, photo_way, caption: Union[str, None] = No
     return mes
 
 async def edit_SmartPhoto(chatid: int, message_id: int, 
-                          photo_way, caption: Union[str, None], parse_mode: Union[str, None], reply_markup: Union[telebot.types.InlineKeyboardMarkup, None]):
+                          photo_way, caption: Union[str, None], parse_mode: Union[str, None], reply_markup: Union[aiogram.types.InlineKeyboardMarkup, None]):
     global storage
 
     if photo_way in storage:
@@ -72,7 +72,7 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
         if await bot.get_file(file_id):
             # Отпряем файл по file_id
             mes = await bot.edit_message_media(
-                telebot.types.InputMediaPhoto(file_id, caption, parse_mode), 
+                aiogram.types.InputMediaPhoto(file_id, caption, parse_mode), 
                 chatid, message_id, reply_markup=reply_markup)
             return mes
 
@@ -84,7 +84,7 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
         file_photo = photo_way
 
     mes = await bot.edit_message_media(
-                telebot.types.InputMediaPhoto(file_photo, caption, parse_mode), 
+                aiogram.types.InputMediaPhoto(file_photo, caption, parse_mode), 
                 chatid, message_id, reply_markup=reply_markup)
 
     # Сохраняем file_id

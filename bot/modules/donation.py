@@ -1,7 +1,7 @@
 import json
 import os
 from bot.exec import bot
-from telebot.types import LabeledPrice
+from aiogram.types import LabeledPrice
 
 from bot.const import GAME_SETTINGS
 from bot.modules.items.item import AddItemToUser

@@ -1,4 +1,4 @@
-from telebot.types import ReplyKeyboardMarkup
+from aiogram.types import ReplyKeyboardMarkup
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as gs

@@ -17,13 +17,13 @@ from bot.modules.states_tools import (ChooseConfirmState, ChoosePagesState,
                                       ChooseStringState)
 from bot.modules.managment.tracking import creat_track, get_track_pages, track_info
 from bot.modules.user.user import award_premium, user_name
-from telebot.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message
 
 management = DBconstructor(mongo_client.other.management)
 promo = DBconstructor(mongo_client.other.promo)
 langs = DBconstructor(mongo_client.user.lang)
 
-@bot.message_handler(pass_bot=True, commands=['create_tracking'], is_admin=True)
+@bot.message(commands=['create_tracking'], is_admin=True)
 @HDMessage
 async def create_tracking(message: Message):
     chatid = message.chat.id
@@ -51,7 +51,7 @@ async def create_track(name, transmitted_data: dict):
 
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.message_handler(pass_bot=True, commands=['tracking'], is_admin=True)
+@bot.message(commands=['tracking'], is_admin=True)
 @HDMessage
 async def tracking(message: Message):
     chatid = message.chat.id
@@ -69,7 +69,7 @@ async def track_info_adp(data, transmitted_data: dict):
     text, markup = await track_info(data, lang)
     await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('track'), private=True)
+@bot.callback_query_handler(func=lambda call: call.data.startswith('track'), private=True)
 @HDCallback
 async def track(call: CallbackQuery):
     split_d = call.data.split()
@@ -94,7 +94,7 @@ async def track(call: CallbackQuery):
 
         await bot.send_message(chatid, text)
 
-@bot.message_handler(pass_bot=True, commands=['create_promo'], is_admin=True)
+@bot.message(commands=['create_promo'], is_admin=True)
 @HDMessage
 async def create_promo(message: Message):
     chatid = message.chat.id
@@ -103,7 +103,7 @@ async def create_promo(message: Message):
 
     await create_promo_start(userid, chatid, lang)
 
-@bot.message_handler(pass_bot=True, commands=['promos'], is_admin=True)
+@bot.message(commands=['promos'], is_admin=True)
 @HDMessage
 async def promos(message: Message):
     chatid = message.chat.id
@@ -121,7 +121,7 @@ async def promo_info_adp(code, transmitted_data: dict):
     text, markup = await promo_ui(code, lang)
     await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('promo'))
+@bot.callback_query_handler(func=lambda call: call.data.startswith('promo'))
 @HDCallback
 async def promo_call(call: CallbackQuery):
     split_d = call.data.split()
@@ -178,7 +178,7 @@ async def promo_call(call: CallbackQuery):
     else:
         await bot.send_message(userid, t('promo_commands.not_found', lang), parse_mode='Markdown')
 
-@bot.message_handler(pass_bot=True, commands=['link_promo'])
+@bot.message(commands=['link_promo'])
 @HDMessage
 async def link_promo(message):
     user = message.from_user
@@ -216,7 +216,7 @@ async def link_promo(message):
             else:
                 await bot.send_message(user.id, text_dict['not_found'])
 
-@bot.message_handler(commands=['add_premium'], is_admin=True)
+@bot.message(commands=['add_premium'], is_admin=True)
 @HDMessage
 async def add_premium(message):
     """
@@ -236,7 +236,7 @@ async def add_premium(message):
     await award_premium(userid, tt)
     await bot.send_message(message.from_user.id, 'ok')
     
-@bot.message_handler(commands=['copy_m'], is_admin=True)
+@bot.message(commands=['copy_m'], is_admin=True)
 @HDMessage
 async def copy_m(message):
 
@@ -310,7 +310,7 @@ async def confirm_send(_, transmitted_data: dict):
 
     await bot.send_message(start_chat, f"Completed in {round(time() - start_time, 2)}, sent for {col} / {len(users_sends)}")
 
-@bot.message_handler(commands=['eval'], is_admin=True)
+@bot.message(commands=['eval'], is_admin=True)
 @HDMessage
 async def evaling(message):
 
@@ -329,7 +329,7 @@ async def evaling(message):
     except:
         await bot.send_message(message.from_user.id, 'moretext')
 
-@bot.message_handler(commands=['get_username'], is_admin=True)
+@bot.message(commands=['get_username'], is_admin=True)
 @HDMessage
 async def get_username(message):
     """
@@ -348,7 +348,7 @@ async def get_username(message):
     else:
         await bot.send_message(message.from_user.id, "nouser")
 
-@bot.message_handler(commands=['log'], is_admin=True)
+@bot.message(commands=['log'], is_admin=True)
 @HDMessage
 async def get_log(message):
     error_text = ''

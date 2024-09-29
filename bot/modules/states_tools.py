@@ -1,5 +1,5 @@
 from telebot.asyncio_handler_backends import State, StatesGroup
-from telebot.types import InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardMarkup
 
 from bot.exec import bot
 from bot.modules.data_format import (chunk_pages, list_to_inline,

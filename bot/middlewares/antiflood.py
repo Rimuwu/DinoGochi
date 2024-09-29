@@ -1,13 +1,14 @@
 # Система антифлуда
 
 
-from telebot.asyncio_handler_backends import BaseMiddleware, CancelUpdate
-from telebot.types import Message
-from bot.exec import bot
+from typing import Any, Awaitable, Callable
+from aiogram import BaseMiddleware
+from aiogram.types import Message
 from bot.dbmanager import mongo_client, conf
 from time import time as time_now
 from bot.modules.localization import get_lang, t
 from bot.modules.logs import log
+from bot.exec import bot
 
 DEFAULT_RATE_LIMIT = 0.5
 
@@ -22,7 +23,6 @@ async def check_ads(user_id):
     if ads_cabinet is None: return 1000
     else: return int(time_now() - ads_cabinet['last_ads'])
 
-
 class AntifloodMiddleware(BaseMiddleware):
 
     def __init__(self, limit=DEFAULT_RATE_LIMIT):
@@ -30,30 +30,32 @@ class AntifloodMiddleware(BaseMiddleware):
         self.limit = limit
         self.update_types = ['message']
 
-    async def pre_process(self, message: Message, data: dict):
-        if conf.only_dev and message.from_user.id not in conf.bot_devs:
-            if message.chat.type == "private":
-                lang = await get_lang(message.from_user.id)
-                await bot.send_message(message.chat.id, t('only_dev_mode', lang))
-            return CancelUpdate()
+    async def __call__(self, 
+                handler: Callable[[Message, dict[str, Any]], Awaitable[Any]],
+                message: Message,
+                data: dict[str, Any]):
 
-        if message.date + 10 < int(time_now()):
-            log(f'message timeout: {message.text} from {message.from_user.id} ping1 {int(time_now() - message.date)}', 4, 'middleware')
+        if message.from_user:
+            if conf.only_dev and message.from_user.id not in conf.bot_devs:
+                if message.chat.type == "private":
+                    lang = await get_lang(message.from_user.id)
+                    await message.answer(t('only_dev_mode', lang))
+                return 
 
-        # Отмена команды с задержкой в 60+ секунд
-        if int(time_now() - message.date) >= 60:
-            # log(f'message: {message.text} from {message.from_user.id} ping1 {int(time_now() - message.date)}', 3, 'middlewareCancel')
-            return CancelUpdate()
+            if message.date.timestamp() + 10 < int(time_now()):
+                log(f'message timeout: {message.text} from {message.from_user.id} ping1 {int(time_now() - message.date.timestamp())}', 4, 'middleware')
 
-        if not message.from_user.id in self.last_time:
+            # Отмена команды с задержкой в 60+ секунд
+            if int(time_now() - message.date.timestamp()) >= 60:
+                # log(f'message: {message.text} from {message.from_user.id} ping1 {int(time_now() - message.date)}', 3, 'middlewareCancel')
+                return 
+
+            if not message.from_user.id in self.last_time:
+                self.last_time[message.from_user.id] = time_now()
+                return await handler(message, data)
+            if time_now() - self.last_time[message.from_user.id] < self.limit:
+                return 
             self.last_time[message.from_user.id] = time_now()
-            return 
-        if time_now() - self.last_time[message.from_user.id] < self.limit:
-            return CancelUpdate()
-        self.last_time[message.from_user.id] = time_now()
-        return
+            return await handler(message, data)
 
-    async def post_process(self, message: Message, data: dict, exception: BaseException):
-        pass
-
-bot.setup_middleware(AntifloodMiddleware())
+bot.message.middleware(AntifloodMiddleware())

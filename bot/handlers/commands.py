@@ -9,13 +9,13 @@ from bot.modules.inline import inline_menu
 from bot.modules.localization import get_lang, t
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.managment.promo import use_promo
-from telebot.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery
 from bot.config import conf
 
 users = DBconstructor(mongo_client.user.users)
 puhs = DBconstructor(mongo_client.market.puhs)
 
-@bot.message_handler(pass_bot=True, commands=['timer'])
+@bot.message(commands=['timer'])
 @HDMessage
 async def timer(message: Message):
     chatid = message.chat.id
@@ -33,7 +33,7 @@ async def timer(message: Message):
         except: text = 'error'
         await bot.send_message(chatid, text)
 
-@bot.message_handler(pass_bot=True, commands=['string_to_sec'], private=True)
+@bot.message(commands=['string_to_sec'], private=True)
 @HDMessage
 async def string_time(message):
     txt = message.text.replace('/string_to_sec', '')
@@ -47,7 +47,7 @@ async def string_time(message):
         sec = str_to_seconds(txt)
         await bot.send_message(chatid, str(sec))
 
-@bot.message_handler(pass_bot=True, commands=['pushinfo'])
+@bot.message(commands=['pushinfo'])
 @HDMessage
 async def push_info(message: Message):
     chatid = message.chat.id
@@ -56,7 +56,7 @@ async def push_info(message: Message):
     text = t('push.push_info', lang)
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.message_handler(pass_bot=True, commands=['delete_push'])
+@bot.message(commands=['delete_push'])
 @HDMessage
 async def delete_push(message: Message):
     chatid = message.chat.id
@@ -65,7 +65,7 @@ async def delete_push(message: Message):
     await puhs.delete_one({'owner_id': userid}, comment='delete_push')
     await bot.send_message(chatid, '👍', parse_mode='Markdown')
 
-@bot.message_handler(pass_bot=True, commands=['add_me'], private=False)
+@bot.message(commands=['add_me'], private=False)
 @HDMessage
 async def add_me_с(message: Message):
     userid = message.from_user.id
@@ -77,7 +77,7 @@ async def add_me_с(message: Message):
                     reply_markup=inline_menu('send_request', lang, userid=userid)
                     )
 
-@bot.message_handler(pass_bot=True, commands=['promo'])
+@bot.message(commands=['promo'])
 @HDMessage
 async def promo(message: Message):
     userid = message.from_user.id
@@ -94,7 +94,7 @@ async def promo(message: Message):
         else:
             await start_game(message, code, 'promo')
 
-@bot.message_handler(pass_bot=True, commands=['help'])
+@bot.message(commands=['help'])
 @HDMessage
 async def help(message: Message):
     lang = await get_lang(message.from_user.id)
@@ -105,7 +105,7 @@ async def help(message: Message):
     await bot.send_message(chatid, text, parse_mode='HTML', 
                            reply_markup=inl_m)
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('help'), private=True)
+@bot.callback_query_handler(func=lambda call: call.data.startswith('help'), private=True)
 @HDCallback
 async def kindergarten(call: CallbackQuery):
     split_d = call.data.split()

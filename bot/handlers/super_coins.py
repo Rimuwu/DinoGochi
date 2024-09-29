@@ -8,7 +8,7 @@ from bot.modules.items.item import AddItemToUser, counts_items
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import premium
-from telebot.types import CallbackQuery, InlineKeyboardMarkup, Message
+from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
 users = DBconstructor(mongo_client.user.users)
 ads = DBconstructor(mongo_client.user.ads)
@@ -33,7 +33,7 @@ async def main_message(user_id):
 
     return text, markup
 
-@bot.message_handler(pass_bot=True, commands=['super'], private=True)
+@bot.message(commands=['super'], private=True)
 @HDMessage
 async def super_c(message: Message):
     chatid = message.chat.id
@@ -43,7 +43,7 @@ async def super_c(message: Message):
     text, markup = await main_message(userid)
     await bot.send_message(chatid, text, reply_markup=markup, parse_mode="Markdown")
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: 
+@bot.callback_query_handler(func=lambda call: 
     call.data.startswith('super_coins'), private=True)
 @HDCallback
 async def super_coins(call: CallbackQuery):
@@ -87,7 +87,7 @@ async def super_coins(call: CallbackQuery):
         await bot.edit_message_text(text, chatid, call.message.id,
                                     reply_markup=markup, parse_mode='Markdown')
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: 
+@bot.callback_query_handler(func=lambda call: 
     call.data.startswith('ads_limit'), private=True)
 @HDCallback
 async def ads_limit(call: CallbackQuery):
@@ -113,7 +113,7 @@ async def ads_limit(call: CallbackQuery):
     await bot.edit_message_text(text, chatid, call.message.id,
                                     reply_markup=markup, parse_mode="Markdown")
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: 
+@bot.callback_query_handler(func=lambda call: 
     call.data.startswith('super_shop'), private=True)
 @HDCallback
 async def super_shop(call: CallbackQuery):

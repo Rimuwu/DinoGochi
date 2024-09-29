@@ -15,7 +15,7 @@ from bot.modules.notifications import dino_notification
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User
-from telebot.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery
 from bot.modules.data_format import list_to_inline, seconds_to_str
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
@@ -86,7 +86,7 @@ async def start_skill(last_dino: Dino, userid, chatid, lang, skill):
     await use_energy(chatid, lang, alt_code)
     await auto_ads(mes)
 
-@bot.message_handler(textstart='commands_name.skills_actions.gym', dino_pass=True, nothing_state=True, kd_check='gym')
+@bot.message(textstart='commands_name.skills_actions.gym', dino_pass=True, nothing_state=True, kd_check='gym')
 @HDMessage
 async def gym(message: Message):
     userid = message.from_user.id
@@ -97,7 +97,7 @@ async def gym(message: Message):
 
     await start_skill(last_dino, userid, chatid, lang, 'gym')
 
-@bot.message_handler(textstart='commands_name.skills_actions.library', dino_pass=True, nothing_state=True, kd_check='library')
+@bot.message(textstart='commands_name.skills_actions.library', dino_pass=True, nothing_state=True, kd_check='library')
 @HDMessage
 async def library(message: Message):
     userid = message.from_user.id
@@ -108,7 +108,7 @@ async def library(message: Message):
 
     await start_skill(last_dino, userid, chatid, lang, 'library')
 
-@bot.message_handler(textstart='commands_name.skills_actions.park', dino_pass=True, nothing_state=True, kd_check='park')
+@bot.message(textstart='commands_name.skills_actions.park', dino_pass=True, nothing_state=True, kd_check='park')
 @HDMessage
 async def park(message: Message):
     userid = message.from_user.id
@@ -119,7 +119,7 @@ async def park(message: Message):
 
     await start_skill(last_dino, userid, chatid, lang, 'park')
 
-@bot.message_handler(textstart='commands_name.skills_actions.swimming_pool', dino_pass=True, nothing_state=True, kd_check='swimming_pool')
+@bot.message(textstart='commands_name.skills_actions.swimming_pool', dino_pass=True, nothing_state=True, kd_check='swimming_pool')
 @HDMessage
 async def swimming_pool(message: Message):
     userid = message.from_user.id
@@ -130,7 +130,7 @@ async def swimming_pool(message: Message):
 
     await start_skill(last_dino, userid, chatid, lang, 'swimming_pool')
 
-@bot.message_handler(textstart='commands_name.skills_actions.stop_work', nothing_state=True)
+@bot.message(textstart='commands_name.skills_actions.stop_work', nothing_state=True)
 @HDMessage
 async def stop_work(message: Message):
     userid = message.from_user.id
@@ -154,7 +154,7 @@ async def stop_work(message: Message):
         await bot.send_message(chatid, '❌', parse_mode='Markdown', reply_markup=await m(userid, 'last_menu', lang))
 
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: 
+@bot.callback_query_handler(func=lambda call: 
     call.data.startswith('stop_work'))
 @HDCallback
 async def stop_work_calb(call: CallbackQuery):
@@ -185,7 +185,7 @@ async def stop_work_calb(call: CallbackQuery):
         await end_skill_activity(dino_id)
         await bot.delete_message(chatid, messageid)
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: 
+@bot.callback_query_handler(func=lambda call: 
     call.data.startswith('use_energy'))
 @HDCallback
 async def use_energy_calb(call: CallbackQuery):

@@ -10,13 +10,13 @@ from bot.modules.managment.promo import use_promo
 from bot.modules.markup import answer_markup, cancel_markup, confirm_markup
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import ChoosePagesState, ChooseStepState
-from telebot.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message
 
 users = DBconstructor(mongo_client.user.users)
 companies = DBconstructor(mongo_client.other.companies)
 langs = DBconstructor(mongo_client.user.lang)
 
-@bot.message_handler(pass_bot=True, is_admin=True, commands=['create_company'])
+@bot.message(is_admin=True, commands=['create_company'])
 @HDMessage
 async def create_company_com(message: Message):
     chatid = message.chat.id
@@ -305,7 +305,7 @@ async def end(data, transmitted_data):
     await create_company(**return_data)
     await bot.send_message(chatid, '✅')
 
-@bot.message_handler(pass_bot=True, commands=['companies'], is_admin=True)
+@bot.message(commands=['companies'], is_admin=True)
 async def companies_c(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
@@ -329,7 +329,7 @@ async def comp_info(com_id, transmitted_data):
         chatid, text, reply_markup=mrk
     )
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('company_info') , is_authorized=True)
+@bot.callback_query_handler(func=lambda call: call.data.startswith('company_info') , is_authorized=True)
 @HDCallback
 async def company_info(callback: CallbackQuery):
     chatid = callback.message.chat.id

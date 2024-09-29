@@ -22,7 +22,7 @@ from bot.modules.states_tools import ChooseInlineState, ChooseIntState, ChooseSt
 from bot.modules.user.inside_shop import get_content, item_buyed
 from bot.modules.user.user import (AddItemToUser, check_name, daily_award_con,
                               get_dinos, take_coins, user_in_chat)
-from telebot.types import (CallbackQuery, InlineKeyboardButton,
+from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message)
 from bot.modules.markup import markups_menu as m
 
@@ -47,7 +47,7 @@ async def page_context(userid, lang):
     rmk = list_to_inline([rmk_data], 2)
     return text, rmk
 
-@bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.hoarder', is_authorized=True, private=True)
+@bot.message(text='commands_name.dino_tavern.hoarder', is_authorized=True, private=True)
 @HDMessage
 async def hoarder(message: Message):
     lang = await get_lang(message.from_user.id)
@@ -58,7 +58,7 @@ async def hoarder(message: Message):
     await bot.send_message(message.chat.id, text, parse_mode='Markdown',
           reply_markup = rmk)
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('hoarder'), private=True)
+@bot.callback_query_handler(func=lambda call: call.data.startswith('hoarder'), private=True)
 @HDCallback
 async def hoarder_calb(call: CallbackQuery):
     call_data = call.data.split()

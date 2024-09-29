@@ -10,7 +10,7 @@ from random import choice
 from time import sleep
 from asyncio import sleep as asleep
 
-from telebot.types import (InlineKeyboardButton, InlineKeyboardMarkup,
+from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            InlineQueryResultContact, Message, LabeledPrice)
 from bot.modules.images_save import send_SmartPhoto
 
@@ -62,7 +62,7 @@ from bson.son import SON
 
 users = mongo_client.user.users
 
-@bot.message_handler(pass_bot=True, commands=['add_item', 'item_add'], is_admin=True)
+@bot.message(commands=['add_item', 'item_add'], is_admin=True)
 async def command(message):
     user = message.from_user
     if user.id in conf.bot_devs:
@@ -84,7 +84,7 @@ async def command(message):
     else:
         print(user.id, 'not in devs')
 
-@bot.message_handler(pass_bot=True, commands=['1xp'], is_admin=True)
+@bot.message(commands=['1xp'], is_admin=True)
 async def command2(message):
     user = message.from_user
     if user.id in conf.bot_devs:
@@ -93,7 +93,7 @@ async def command2(message):
         print(user.id, 'not in devs')
 
 
-@bot.message_handler(pass_bot=True, commands=['test_img'], is_admin=True)
+@bot.message(commands=['test_img'], is_admin=True)
 async def test_img(message):
     user = message.from_user
 
@@ -132,7 +132,7 @@ async def test_img(message):
 
 from bot.modules.dungeon.dungeon import Lobby, DungPlayer
 
-@bot.message_handler(pass_bot=True, commands=['dung'], is_admin=True)
+@bot.message(commands=['dung'], is_admin=True)
 async def dung(message):
 
     m = await bot.send_message(message.from_user.id, "test")
@@ -140,13 +140,13 @@ async def dung(message):
 
     pprint(lobby.__dict__)
 
-@bot.message_handler(pass_bot=True, commands=['delete'], is_admin=True)
+@bot.message(commands=['delete'], is_admin=True)
 async def delete(message):
 
     lobby = await Lobby().FromBase(message.from_user.id)
     await lobby.delete
 
-@bot.message_handler(pass_bot=True, commands=['add_to'], is_admin=True)
+@bot.message(commands=['add_to'], is_admin=True)
 async def add_to(message):
 
     lobby = await Lobby().FromBase(1191252229)
@@ -155,7 +155,7 @@ async def add_to(message):
     player = await DungPlayer().create(message.from_user.id, m.id)
     await lobby.add_player(player, message.from_user.id)
 
-# @bot.message_handler(pass_bot=True, commands=['test'])
+# @bot.message(commands=['test'])
 # @HDMessage
 # async def test(message: Message):
     
@@ -179,7 +179,7 @@ async def add_to(message):
     
 
 
-@bot.message_handler(pass_bot=True, commands=['test'])
+@bot.message(commands=['test'])
 @HDMessage
 async def test(message: Message):
     
@@ -191,7 +191,7 @@ async def test(message: Message):
     print(r)
 
 
-@bot.message_handler(pass_bot=True, commands=['test2'])
+@bot.message(commands=['test2'])
 @HDMessage
 async def test2(message: Message):
     st = time()

@@ -13,7 +13,7 @@ from typing import Union
 from bson import ObjectId
 from bot.dbmanager import mongo_client, conf
 from bot.exec import bot
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from bot.modules.data_format import list_to_inline, random_code, seconds_to_str
 from bot.modules.localization import get_lang, t, get_data

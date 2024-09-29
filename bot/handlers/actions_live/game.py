@@ -19,7 +19,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user.user import User, premium
-from telebot.types import Message
+from aiogram.types import Message
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 
@@ -181,7 +181,7 @@ async def game_start(return_data: dict,
 
     await auto_ads(message)
 
-@bot.message_handler(pass_bot=True, text='commands_name.actions.entertainments', dino_pass=True, nothing_state=True)
+@bot.message(text='commands_name.actions.entertainments', dino_pass=True, nothing_state=True)
 @HDMessage
 async def entertainments(message: Message):
     userid = message.from_user.id
@@ -192,7 +192,7 @@ async def entertainments(message: Message):
     dino = await user.get_last_dino()
     if dino: await start_game_ent(userid, chatid, lang, dino)
 
-@bot.message_handler(pass_bot=True, text='commands_name.actions.stop_game')
+@bot.message(text='commands_name.actions.stop_game')
 @HDMessage
 async def stop_game(message: Message):
     userid = message.from_user.id

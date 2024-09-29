@@ -1,5 +1,5 @@
 from time import time
-from telebot.types import CallbackQuery
+from aiogram.types import CallbackQuery
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
@@ -18,7 +18,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 users = DBconstructor(mongo_client.user.users)
 item_craft = DBconstructor(mongo_client.items.item_craft)
 
-@bot.message_handler(pass_bot=True, commands=['craftlist'], private=True)
+@bot.message(commands=['craftlist'], private=True)
 @HDMessage
 async def craftlist(message):
     chatid = message.chat.id
@@ -82,7 +82,7 @@ async def info_craft(data, transmitted_data: dict):
         else:
             return info, mrk
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('time_craft'), is_authorized=True)
+@bot.callback_query_handler(func=lambda call: call.data.startswith('time_craft'), is_authorized=True)
 @HDCallback
 async def time_craft(callback: CallbackQuery):
     chatid = callback.message.chat.id

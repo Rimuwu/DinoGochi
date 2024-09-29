@@ -8,7 +8,7 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import GeneralStates
-from telebot.types import CallbackQuery, Message, InputMedia
+from aiogram.types import CallbackQuery, Message, InputMedia
 
 
 async def cancel(message, text:str = "❌"):
@@ -19,14 +19,14 @@ async def cancel(message, text:str = "❌"):
     await bot.delete_state(message.from_user.id, message.chat.id)
     await bot.reset_data(message.from_user.id,  message.chat.id)
 
-@bot.message_handler(pass_bot=True, text='buttons_name.cancel', state='*', private=True)
+@bot.message(text='buttons_name.cancel', state='*', private=True)
 @HDMessage
 async def cancel_m(message: Message):
     """Состояние отмены
     """
     await cancel(message)
 
-@bot.message_handler(pass_bot=True, commands=['cancel'], state='*', private=True)
+@bot.message(commands=['cancel'], state='*', private=True)
 @HDMessage
 async def cancel_c(message: Message):
     """Команда отмены
@@ -34,7 +34,7 @@ async def cancel_c(message: Message):
     await cancel(message)
 
 
-@bot.message_handler(pass_bot=True, commands=['state'])
+@bot.message(commands=['state'])
 @HDMessage
 async def get_state(message: Message):
     """Состояние
@@ -50,7 +50,7 @@ async def get_state(message: Message):
     except Exception as e:
         await bot.send_message(message.chat.id, str(e))
 
-@bot.message_handler(pass_bot=True, state=GeneralStates.ChooseDino, is_authorized=True)
+@bot.message(state=GeneralStates.ChooseDino, is_authorized=True)
 @HDMessage
 async def ChoseDino(message: Message):
     """Общая функция для выбора динозавра
@@ -75,7 +75,7 @@ async def ChoseDino(message: Message):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseDino.error_not_dino', lang))
 
-@bot.message_handler(pass_bot=True, state=GeneralStates.ChooseInt, is_authorized=True)
+@bot.message(state=GeneralStates.ChooseInt, is_authorized=True)
 @HDMessage
 async def ChooseInt(message: Message):
     """Общая функция для ввода числа
@@ -115,7 +115,7 @@ async def ChooseInt(message: Message):
 
         await func(number, transmitted_data=transmitted_data)
 
-@bot.message_handler(pass_bot=True, state=GeneralStates.ChooseString, is_authorized=True)
+@bot.message(state=GeneralStates.ChooseString, is_authorized=True)
 @HDMessage
 async def ChooseString(message: Message):
     """Общая функция для ввода сообщения
@@ -149,7 +149,7 @@ async def ChooseString(message: Message):
 
         await func(content, transmitted_data=transmitted_data)
 
-@bot.message_handler(pass_bot=True, state=GeneralStates.ChooseConfirm, is_authorized=True)
+@bot.message(state=GeneralStates.ChooseConfirm, is_authorized=True)
 @HDMessage
 async def ChooseConfirm(message: Message):
     """Общая функция для подтверждения
@@ -188,7 +188,7 @@ async def ChooseConfirm(message: Message):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseConfirm.error_not_confirm', lang))
 
-@bot.message_handler(pass_bot=True, state=GeneralStates.ChooseOption, is_authorized=True)
+@bot.message(state=GeneralStates.ChooseOption, is_authorized=True)
 @HDMessage
 async def ChooseOption(message: Message):
     """Общая функция для выбора из предложенных вариантов
@@ -213,7 +213,7 @@ async def ChooseOption(message: Message):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseOption.error_not_option', lang))
 
-@bot.message_handler(pass_bot=True, state=GeneralStates.ChooseCustom, is_authorized=True)
+@bot.message(state=GeneralStates.ChooseCustom, is_authorized=True)
 @HDMessage
 async def ChooseCustom(message: Message):
     """Кастомный обработчик, принимает данные и отправляет в обработчик
@@ -236,7 +236,7 @@ async def ChooseCustom(message: Message):
         await bot.reset_data(message.from_user.id,  message.chat.id)
         await func(answer, transmitted_data=transmitted_data)
     
-@bot.message_handler(pass_bot=True, state=GeneralStates.ChoosePagesState, is_authorized=True)
+@bot.message(state=GeneralStates.ChoosePagesState, is_authorized=True)
 @HDMessage
 async def ChooseOptionPages(message: Message):
     """Кастомный обработчик, принимает данные и отправляет в обработчик
@@ -331,7 +331,7 @@ async def ChooseOptionPages(message: Message):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseOption.error_not_option', lang))
 
-@bot.callback_query_handler(pass_bot=True, state=GeneralStates.ChooseInline, is_authorized=True, 
+@bot.callback_query_handler(state=GeneralStates.ChooseInline, is_authorized=True, 
                             func=lambda call: call.data.startswith('chooseinline'))
 @HDCallback
 async def ChooseInline(callback: CallbackQuery):
@@ -372,7 +372,7 @@ async def ChooseInline(callback: CallbackQuery):
         except Exception as e:
             log(f'ChooseInline error {e}', lvl=3, prefix='ChooseInline')
 
-@bot.message_handler(pass_bot=True, state=GeneralStates.ChooseTime, is_authorized=True)
+@bot.message(state=GeneralStates.ChooseTime, is_authorized=True)
 @HDMessage
 async def ChooseTime(message: Message):
     """Общая функция для ввода времени
@@ -411,7 +411,7 @@ async def ChooseTime(message: Message):
 
         await func(number, transmitted_data=transmitted_data)
 
-@bot.message_handler(content_types=['photo'], pass_bot=True, is_authorized=True, state=GeneralStates.ChooseImage)
+@bot.message(content_types=['photo'], pass_bot=True, is_authorized=True, state=GeneralStates.ChooseImage)
 @HDMessage
 async def ChooseImage(message: Message):
     """Общая функция для получения изображения
@@ -428,7 +428,7 @@ async def ChooseImage(message: Message):
     transmitted_data['file'] = message.photo[-1]
     await func(fileID, transmitted_data=transmitted_data)
 
-@bot.message_handler(pass_bot=True, is_authorized=True, state=GeneralStates.ChooseImage)
+@bot.message(is_authorized=True, state=GeneralStates.ChooseImage)
 @HDMessage
 async def ChooseImage_0(message: Message):
     """Общая функция для получения изображения

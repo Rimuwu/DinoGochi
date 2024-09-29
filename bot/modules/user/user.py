@@ -3,7 +3,7 @@ from time import time
 from typing import Union
 
 from bson import ObjectId
-from telebot.types import User as teleUser
+from aiogram.types import User as teleUser
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS

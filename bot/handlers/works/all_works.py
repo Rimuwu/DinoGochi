@@ -14,14 +14,14 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import ChooseOptionState
 from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User
-from telebot.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery
 from bot.modules.data_format import list_to_inline, list_to_keyboard, progress_bar
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 
-@bot.message_handler(textstart='commands_name.extraction_actions.progress',
+@bot.message(textstart='commands_name.extraction_actions.progress',
                      nothing_state=True)
 @HDMessage
 async def progress(message: Message):
@@ -67,7 +67,7 @@ async def progress(message: Message):
 
             await bot.send_message(chatid, text, 'Markdown', reply_markup=rmk)
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: 
+@bot.callback_query_handler(func=lambda call: 
     call.data.startswith('progress_work'))
 @HDCallback
 async def progress_work(call: CallbackQuery):
@@ -112,7 +112,7 @@ async def progress_work(call: CallbackQuery):
                 await bot.send_message(chatid, '✅', 
                            reply_markup = await m(userid, 'last_menu', lang))
 
-@bot.message_handler(textstart='commands_name.extraction_actions.stop_work',
+@bot.message(textstart='commands_name.extraction_actions.stop_work',
                      nothing_state=True)
 @HDMessage
 async def stop_work(message: Message):
@@ -143,7 +143,7 @@ async def stop_work(message: Message):
 
 
 
-@bot.message_handler(textstart='commands_name.extraction_actions.mine', 
+@bot.message(textstart='commands_name.extraction_actions.mine', 
                      dino_pass=True, nothing_state=True)
 @HDMessage
 async def mine(message: Message):
@@ -187,7 +187,7 @@ async def end_mine(data, transmitted_data: dict):
 
     await auto_ads(mes)
 
-@bot.message_handler(textstart='commands_name.extraction_actions.bank', 
+@bot.message(textstart='commands_name.extraction_actions.bank', 
                      dino_pass=True, nothing_state=True)
 @HDMessage
 async def bank(message: Message):
@@ -231,7 +231,7 @@ async def end_bank(data, transmitted_data: dict):
 
     await auto_ads(mes)
 
-@bot.message_handler(textstart='commands_name.extraction_actions.sawmill', 
+@bot.message(textstart='commands_name.extraction_actions.sawmill', 
                      dino_pass=True, nothing_state=True)
 @HDMessage
 async def sawmill(message: Message):

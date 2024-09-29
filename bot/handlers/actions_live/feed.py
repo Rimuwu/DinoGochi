@@ -13,7 +13,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user.user import User
-from telebot.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message
 
 items = DBconstructor(mongo_client.items.items)
 
@@ -77,7 +77,7 @@ async def inventory_adapter(item, transmitted_data):
                               lang, steps, 
                               transmitted_data=transmitted_data)
 
-@bot.message_handler(pass_bot=True, text='commands_name.actions.feed')
+@bot.message(text='commands_name.actions.feed')
 @HDMessage
 async def feed(message: Message):
     userid = message.from_user.id
@@ -93,7 +93,7 @@ async def feed(message: Message):
     
     await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
 
-@bot.callback_query_handler(pass_bot=True, func=
+@bot.callback_query_handler(func=
                             lambda call: call.data.startswith('feed_inl'))
 @HDCallback
 async def feed_inl(callback: CallbackQuery):

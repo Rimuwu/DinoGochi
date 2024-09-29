@@ -19,14 +19,14 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.managment.statistic import get_now_statistic
 from bot.modules.user.user import User, take_coins
-from telebot.types import CallbackQuery, InlineKeyboardMarkup, Message
+from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
 users = DBconstructor(mongo_client.user.users)
 tavern = DBconstructor(mongo_client.tavern.tavern)
 preferential = DBconstructor(mongo_client.market.preferential)
 products = DBconstructor(mongo_client.market.products)
 
-@bot.message_handler(pass_bot=True, text='buttons_name.back', is_authorized=True, private=True)
+@bot.message(text='buttons_name.back', is_authorized=True, private=True)
 @HDMessage
 async def back_buttom(message: Message):
     userid = message.from_user.id
@@ -38,7 +38,7 @@ async def back_buttom(message: Message):
     await bot.send_message(message.chat.id, text, 
                            reply_markup=await m(userid, back_m, lang))
 
-@bot.message_handler(pass_bot=True, text='commands_name.settings_menu', is_authorized=True, private=True)
+@bot.message(text='commands_name.settings_menu', is_authorized=True, private=True)
 @HDMessage
 async def settings_menu(message: Message):
     userid = message.from_user.id
@@ -60,7 +60,7 @@ async def settings_menu(message: Message):
     
         await auto_ads(message)
 
-@bot.message_handler(pass_bot=True, text='commands_name.settings.settings_page_2', is_authorized=True, private=True)
+@bot.message(text='commands_name.settings.settings_page_2', is_authorized=True, private=True)
 @HDMessage
 async def settings2_menu(message: Message):
     userid = message.from_user.id
@@ -81,7 +81,7 @@ async def settings2_menu(message: Message):
         
         await auto_ads(message)
 
-@bot.message_handler(pass_bot=True, text='commands_name.profile_menu', is_authorized=True, private=True)
+@bot.message(text='commands_name.profile_menu', is_authorized=True, private=True)
 @HDMessage
 async def profile_menu(message: Message):
     userid = message.from_user.id
@@ -92,7 +92,7 @@ async def profile_menu(message: Message):
 
     await auto_ads(message)
     
-@bot.message_handler(pass_bot=True, text='commands_name.friends_menu', is_authorized=True, private=True)
+@bot.message(text='commands_name.friends_menu', is_authorized=True, private=True)
 @HDMessage
 async def friends_menu(message: Message):
     userid = message.from_user.id
@@ -103,7 +103,7 @@ async def friends_menu(message: Message):
 
     await auto_ads(message)
 
-@bot.message_handler(pass_bot=True, text='commands_name.profile.market', is_authorized=True, private=True)
+@bot.message(text='commands_name.profile.market', is_authorized=True, private=True)
 @HDMessage
 async def market_menu(message: Message):
     userid = message.from_user.id
@@ -138,7 +138,7 @@ async def market_menu(message: Message):
     await auto_ads(message)
 
 
-@bot.message_handler(pass_bot=True, text='commands_name.actions_menu', is_authorized=True, private=True)
+@bot.message(text='commands_name.actions_menu', is_authorized=True, private=True)
 @HDMessage
 async def actions_menu(message: Message):
     userid = message.from_user.id
@@ -149,7 +149,7 @@ async def actions_menu(message: Message):
     
     await auto_ads(message)
 
-@bot.message_handler(pass_bot=True, text='commands_name.dino-tavern_menu', is_authorized=True, private=True)
+@bot.message(text='commands_name.dino-tavern_menu', is_authorized=True, private=True)
 @HDMessage
 async def tavern_menu(message: Message):
     userid = message.from_user.id
@@ -218,7 +218,7 @@ async def tavern_menu(message: Message):
     
     await auto_ads(message)
 
-@bot.message_handler(pass_bot=True, text='commands_name.profile.about', is_authorized=True, private=True)
+@bot.message(text='commands_name.profile.about', is_authorized=True, private=True)
 @HDMessage
 async def about_menu(message: Message):
     userid = message.from_user.id
@@ -248,7 +248,7 @@ async def about_menu(message: Message):
             await m(userid, 'about_menu', lang)
         )
 
-@bot.message_handler(pass_bot=True, text='commands_name.friends.referal', is_authorized=True, private=True)
+@bot.message(text='commands_name.friends.referal', is_authorized=True, private=True)
 @HDMessage
 async def referal_menu(message: Message):
     userid = message.from_user.id
@@ -271,7 +271,7 @@ async def referal_menu(message: Message):
 
     await auto_ads(message)
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('buy_ale'))
+@bot.callback_query_handler(func=lambda call: call.data.startswith('buy_ale'))
 @HDCallback
 async def buy_ale(callback: CallbackQuery):
     chatid = callback.message.chat.id
@@ -293,7 +293,7 @@ async def buy_ale(callback: CallbackQuery):
         text = t('buy_ale.no_coins', lang)
         await bot.send_message(friend, text)
 
-@bot.message_handler(pass_bot=True, text='commands_name.market.seller_profile', is_authorized=True, private=True)
+@bot.message(text='commands_name.market.seller_profile', is_authorized=True, private=True)
 @HDMessage
 async def seller_profile(message: Message):
     userid = message.from_user.id
@@ -304,7 +304,7 @@ async def seller_profile(message: Message):
     
     await auto_ads(message)
     
-@bot.message_handler(pass_bot=True, text='commands_name.market.background_market', is_authorized=True, private=True)
+@bot.message(text='commands_name.market.background_market', is_authorized=True, private=True)
 @HDMessage
 async def backgrounds(message: Message):
     userid = message.from_user.id
@@ -316,7 +316,7 @@ async def backgrounds(message: Message):
     await auto_ads(message)
 
 
-@bot.message_handler(pass_bot=True, text='commands_name.action_ask.live_actions', is_authorized=True, private=True)
+@bot.message(text='commands_name.action_ask.live_actions', is_authorized=True, private=True)
 @HDMessage
 async def live_actions(message: Message):
     userid = message.from_user.id
@@ -327,7 +327,7 @@ async def live_actions(message: Message):
 
     await auto_ads(message)
 
-@bot.message_handler(pass_bot=True, text='commands_name.action_ask.extraction', is_authorized=True, private=True)
+@bot.message(text='commands_name.action_ask.extraction', is_authorized=True, private=True)
 @HDMessage
 async def extraction(message: Message):
     userid = message.from_user.id
@@ -338,7 +338,7 @@ async def extraction(message: Message):
 
     await auto_ads(message)
 
-@bot.message_handler(pass_bot=True, text='commands_name.action_ask.skills_actions', is_authorized=True, private=True)
+@bot.message(text='commands_name.action_ask.skills_actions', is_authorized=True, private=True)
 @HDMessage
 async def skills_actions(message: Message):
     userid = message.from_user.id
@@ -349,7 +349,7 @@ async def skills_actions(message: Message):
 
     await auto_ads(message)
 
-@bot.message_handler(pass_bot=True, text='commands_name.action_ask.speed_actions', is_authorized=True, private=True)
+@bot.message(text='commands_name.action_ask.speed_actions', is_authorized=True, private=True)
 @HDMessage
 async def speed_actions(message: Message):
     userid = message.from_user.id

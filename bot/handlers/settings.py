@@ -14,7 +14,7 @@ from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
                                       ChooseOptionState, ChooseStepState,
                                       ChooseStringState)
 from bot.modules.user.user import User
-from telebot.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message
 
 users = DBconstructor(mongo_client.user.users)
 langs = DBconstructor(mongo_client.user.lang)
@@ -32,7 +32,7 @@ async def notification(result: bool, transmitted_data: dict):
                            comment='notification_1'
                            )
 
-@bot.message_handler(pass_bot=True, text='commands_name.settings.notification', 
+@bot.message(text='commands_name.settings.notification', 
                      is_authorized=True, private=True)
 @HDMessage
 async def notification_set(message: Message):
@@ -67,7 +67,7 @@ async def dino_profile(result: bool, transmitted_data: dict):
                            comment='dino_profile_1'
                            )
 
-@bot.message_handler(pass_bot=True, text='commands_name.settings.dino_profile', 
+@bot.message(text='commands_name.settings.dino_profile', 
                      is_authorized=True, private=True)
 @HDMessage
 async def dino_profile_set(message: Message):
@@ -106,7 +106,7 @@ async def inventory(result: list, transmitted_data: dict):
                            comment='inventory_1'
                            )
 
-@bot.message_handler(pass_bot=True, text='commands_name.settings.inventory', 
+@bot.message(text='commands_name.settings.inventory', 
                      is_authorized=True, private=True)
 @HDMessage
 async def inventory_set(message: Message):
@@ -160,7 +160,7 @@ async def transition(dino: Dino, transmitted_data: dict):
 
     await bot.send_message(userid, text, reply_markup=markup)
 
-@bot.message_handler(pass_bot=True, text='commands_name.settings.dino_name', 
+@bot.message(text='commands_name.settings.dino_name', 
                      is_authorized=True, private=True)
 @HDMessage
 async def rename_dino(message: Message):
@@ -169,7 +169,7 @@ async def rename_dino(message: Message):
 
     await ChooseDinoState(transition, userid, message.chat.id, lang, False)
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('rename_dino'), is_authorized=True, private=True)
+@bot.callback_query_handler(func=lambda call: call.data.startswith('rename_dino'), is_authorized=True, private=True)
 @HDCallback
 async def rename_button(callback: CallbackQuery):
     dino_data = callback.data.split()[1]
@@ -205,7 +205,7 @@ async def adapter_delete(return_data, transmitted_data):
                                reply_markup=r)
 
     
-@bot.message_handler(pass_bot=True, text='commands_name.settings.delete_me', 
+@bot.message(text='commands_name.settings.delete_me', 
                      is_authorized=True, private=True)
 @HDMessage
 async def delete_me(message: Message):
@@ -274,7 +274,7 @@ async def my_name_end(content: str, transmitted_data: dict):
                            comment='my_name_end'
                            )
 
-@bot.message_handler(pass_bot=True, text='commands_name.settings2.my_name', is_authorized=True, private=True)
+@bot.message(text='commands_name.settings2.my_name', is_authorized=True, private=True)
 @HDMessage
 async def my_name(message: Message):
     userid = message.from_user.id
@@ -298,7 +298,7 @@ async def lang_set(new_lang: str, transmitted_data: dict):
     await bot.send_message(chatid, t('new_lang', new_lang),
                                reply_markup= await m(userid, 'last_menu', new_lang))
 
-@bot.message_handler(pass_bot=True, text='commands_name.settings2.lang', is_authorized=True, private=True)
+@bot.message(text='commands_name.settings2.lang', is_authorized=True, private=True)
 @HDMessage
 async def lang(message: Message):
     userid = message.from_user.id
@@ -330,7 +330,7 @@ async def dino_talk_set(result: bool, transmitted_data: dict):
                            comment='no_talk_1'
                            )
 
-@bot.message_handler(pass_bot=True, text='commands_name.settings2.dino_talk', 
+@bot.message(text='commands_name.settings2.dino_talk', 
                      is_authorized=True, private=True)
 @HDMessage
 async def dino_talk(message: Message):

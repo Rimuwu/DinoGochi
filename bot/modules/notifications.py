@@ -2,7 +2,7 @@ from random import choice
 from time import time
 
 from bson.objectid import ObjectId
-from telebot.types import InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardMarkup
 
 from bot.dbmanager import mongo_client, conf
 from bot.exec import bot

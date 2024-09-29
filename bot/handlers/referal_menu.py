@@ -1,4 +1,4 @@
-from telebot.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
@@ -17,7 +17,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 referals = DBconstructor(mongo_client.user.referals)
 
 
-@bot.message_handler(pass_bot=True, text='commands_name.referal.code', is_authorized=True, private=True)
+@bot.message(text='commands_name.referal.code', is_authorized=True, private=True)
 @HDMessage
 async def code(message: Message):
     userid = message.from_user.id
@@ -81,7 +81,7 @@ async def custom_handler(message: Message, transmitted_data: dict):
         await bot.send_message(chatid, text, parse_mode='Markdown')
     return status, code
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: 
+@bot.callback_query_handler(func=lambda call: 
     call.data.startswith('generate_referal'), private=True)
 @HDCallback
 async def generate_code(call: CallbackQuery):
@@ -111,7 +111,7 @@ async def generate_code(call: CallbackQuery):
         await bot.send_message(chatid, t('referals.have_code', lang))
 
 
-@bot.message_handler(pass_bot=True, textstart='commands_name.referal.my_code', private=True)
+@bot.message(textstart='commands_name.referal.my_code', private=True)
 @HDMessage
 async def my_code(message: Message):
     """ Кнопка - мой код ...
@@ -151,7 +151,7 @@ async def check_code(code: str, transmitted_data: dict, send: bool = True):
         await bot.send_message(chatid, text, parse_mode='Markdown', 
                         reply_markup= await m(userid, 'last_menu', lang, True))
 
-@bot.message_handler(pass_bot=True, text='commands_name.referal.enter_code', is_authorized=True, private=True)
+@bot.message(text='commands_name.referal.enter_code', is_authorized=True, private=True)
 @HDMessage
 async def enter_code(message: Message):
     userid = message.from_user.id

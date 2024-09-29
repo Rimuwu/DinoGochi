@@ -17,13 +17,13 @@ from bot.modules.managment.promo import use_promo
 from bot.modules.managment.referals import connect_referal
 from bot.modules.managment.tracking import add_track
 from bot.modules.user.user import award_premium, insert_user
-from telebot import types
+from aiogram import types
 
 referals = DBconstructor(mongo_client.user.referals)
 management = DBconstructor(mongo_client.other.management)
 dead_users = DBconstructor(mongo_client.other.dead_users)
 
-@bot.message_handler(pass_bot=True, commands=['start'], is_authorized=True, private=True)
+@bot.message(commands=['start'], is_authorized=True, private=True)
 @HDMessage
 async def start_command_auth(message: types.Message):
     stickers = await bot.get_sticker_set('Stickers_by_DinoGochi_bot')
@@ -54,7 +54,7 @@ async def start_command_auth(message: types.Message):
         if st == 'ok':
             await bot.send_message(message.chat.id, text)
 
-@bot.message_handler(text='commands_name.start_game', is_authorized=False)
+@bot.message(text='commands_name.start_game', is_authorized=False)
 @HDMessage
 async def start_game(message: types.Message, code: str = '', code_type: str = ''):
 
@@ -80,7 +80,7 @@ async def start_game(message: types.Message, code: str = '', code_type: str = ''
     start_game = t('start_command.start_game', message.from_user.language_code)
     await bot.send_photo(message.chat.id, img, start_game, reply_markup=markup_inline)
 
-@bot.message_handler(pass_bot=True, commands=['start'], is_authorized=False)
+@bot.message(commands=['start'], is_authorized=False)
 @HDMessage
 async def start_game_message(message: types.Message):
     langue_code = message.from_user.language_code
@@ -114,7 +114,7 @@ async def start_game_message(message: types.Message):
         await start_game(message, referal, 'referal') 
 
 
-@bot.callback_query_handler(pass_bot=True, is_authorized=False, 
+@bot.callback_query_handler(is_authorized=False, 
                             func=lambda call: call.data.startswith('start_egg'), private=True)
 @HDCallback
 async def egg_answer_callback(callback: types.CallbackQuery):
@@ -144,7 +144,7 @@ async def egg_answer_callback(callback: types.CallbackQuery):
             code = callback.data.split()[3]
             await use_promo(code, userid, lang)
 
-@bot.callback_query_handler(pass_bot=True, is_authorized=True, 
+@bot.callback_query_handler(is_authorized=True, 
                             func=lambda call: call.data.startswith('start_cmd'), private=True)
 @HDCallback
 async def start_inl(callback: types.CallbackQuery):

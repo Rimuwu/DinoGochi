@@ -21,12 +21,12 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import ChooseInlineState, ChooseStepState
 from bot.modules.user.user import (AddItemToUser, check_name, daily_award_con,
                               get_dinos, take_coins, user_in_chat)
-from telebot.types import (CallbackQuery, InlineKeyboardButton,
+from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message)
 
 events = DBconstructor(mongo_client.other.events)
 
-@bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.events', is_authorized=True, private=True)
+@bot.message(text='commands_name.dino_tavern.events', is_authorized=True, private=True)
 @HDMessage
 async def events_c(message: Message):
     lang = await get_lang(message.from_user.id)
@@ -100,14 +100,14 @@ async def bonus_message(user, message, lang):
     photo = 'images/remain/taverna/dino_reward.png'
     await send_SmartPhoto(message.chat.id, photo, text, 'Markdown', markup_inline)
 
-@bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.daily_award', is_authorized=True, private=True)
+@bot.message(text='commands_name.dino_tavern.daily_award', is_authorized=True, private=True)
 @HDMessage
 async def bonus(message: Message):
     lang = await get_lang(message.from_user.id)
     user = message.from_user
     await bonus_message(user, message, lang)
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: 
+@bot.callback_query_handler(func=lambda call: 
     call.data == 'daily_message', is_authorized=True)
 @HDCallback
 async def daily_message(callback: CallbackQuery):
@@ -116,7 +116,7 @@ async def daily_message(callback: CallbackQuery):
     message = callback.message
     await bonus_message(user, message, lang)
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data == 'daily_award', is_authorized=True)
+@bot.callback_query_handler(func=lambda call: call.data == 'daily_award', is_authorized=True)
 @HDCallback
 async def daily_award(callback: CallbackQuery):
     chatid = callback.message.chat.id
@@ -156,7 +156,7 @@ async def daily_award(callback: CallbackQuery):
         text = t('daily_award.in_base', lang)
         await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.edit', is_authorized=True, private=True)
+@bot.message(text='commands_name.dino_tavern.edit', is_authorized=True, private=True)
 @HDMessage
 async def edit(message: Message):
     lang = await get_lang(message.from_user.id)
@@ -306,7 +306,7 @@ async def reset_chars(return_data, transmitted_data):
         await bot.send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
                                 reply_markup= await m(userid, 'last_menu', lang))
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('transformation') , is_authorized=True)
+@bot.callback_query_handler(func=lambda call: call.data.startswith('transformation') , is_authorized=True)
 @HDCallback
 async def transformation(callback: CallbackQuery):
     chatid = callback.message.chat.id

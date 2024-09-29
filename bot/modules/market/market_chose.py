@@ -1,4 +1,4 @@
-from telebot.types import Message, InputMedia
+from aiogram.types import Message, InputMedia
 
 from bot.dbmanager import mongo_client
 from bot.exec import bot
