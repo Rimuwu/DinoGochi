@@ -1,17 +1,19 @@
-from telebot.asyncio_filters import AdvancedCustomFilter
-from telebot.types import Message
+from aiogram import Router
+from aiogram.filters import BaseFilter
+from aiogram.types import Message
 
 from bot.config import conf
-from bot.exec import bot
 
-class IsAdminUser(AdvancedCustomFilter):
+class IsAdminUser(BaseFilter):
     key = 'is_admin'
 
-    async def check(self, message: Message, status: bool):
+    async def __call__(self, message: Message, status: bool):
         is_authorized = message.from_user.id in conf.bot_devs
 
         if status: result = is_authorized
         else: result = not is_authorized
         return result
 
-bot.add_custom_filter(IsAdminUser())
+# bot.add_custom_filter(IsAdminUser())
+router = Router()
+router.message.filter(IsAdminUser())

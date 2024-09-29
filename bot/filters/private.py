@@ -1,12 +1,14 @@
-from telebot.asyncio_filters import AdvancedCustomFilter
-from telebot.types import CallbackQuery
+from aiogram import Router
+from aiogram.filters import BaseFilter
+from aiogram.types import CallbackQuery, Message
 
-from bot.exec import bot
-
-class IsPrivateChat(AdvancedCustomFilter):
+class IsPrivateChat(BaseFilter):
     key = 'private'
 
-    async def check(self, var, status: bool):
+    def __init__(self) -> None:
+        pass
+
+    async def __call__(self, message: Message, var, status: bool) -> bool:
         if type(var) == CallbackQuery:
             is_private = var.message.chat.type == 'private'
         else: # Message
@@ -16,4 +18,5 @@ class IsPrivateChat(AdvancedCustomFilter):
         else: result = not is_private
         return result
 
-bot.add_custom_filter(IsPrivateChat())
+router = Router()
+router.message.filter(IsPrivateChat())
