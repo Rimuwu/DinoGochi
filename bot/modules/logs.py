@@ -28,6 +28,7 @@ logger.setLevel(logging.INFO)
 # if conf.debug:
 #     telebot.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
 
+# Лог
 def log(message: str, lvl: int = 1, prefix: str = 'Бот') -> None:
     """
     LVL: \n
