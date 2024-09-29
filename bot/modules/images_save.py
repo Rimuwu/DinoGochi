@@ -9,7 +9,7 @@ import os
 from typing import Union
 from bot.exec import bot
 from bot.modules.images import async_open
-import telebot
+import aiogram
 
 
 storage = {}

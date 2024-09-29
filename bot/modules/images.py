@@ -2,7 +2,7 @@ import io
 from random import choice, randint
 
 from PIL import Image, ImageDraw, ImageFont
-from telebot.util import pil_image_to_file
+from bot.modules.data_format import pil_image_to_file
 
 from bot.exec import bot
 from bot.const import DINOS, GAME_SETTINGS

@@ -1,4 +1,4 @@
-from telebot.asyncio_handler_backends import State, StatesGroup
+from aiogram.fsm.state import StatesGroup, State
 
 from bot.dbmanager import mongo_client, conf
 from bot.const import GAME_SETTINGS as gs

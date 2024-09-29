@@ -35,7 +35,7 @@ logger.setLevel(logging.INFO)
 queue_listener.start()
 
 # if conf.debug:
-#     telebot.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
+#     aiogram.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
 
 def log(message: str, lvl: int = 1, prefix: str = 'Бот') -> None:
     """

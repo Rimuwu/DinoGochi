@@ -1,4 +1,4 @@
-from telebot.asyncio_handler_backends import State, StatesGroup
+from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import InlineKeyboardMarkup
 
 from bot.exec import bot
