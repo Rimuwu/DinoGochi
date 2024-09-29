@@ -12,8 +12,11 @@ class NothingState(BaseFilter):
     async def __call__(self):
         if type(self.var) == CallbackQuery:
             state = self.var.from_user.__getstate__
-        else: # Message
-            state = self.var.from_user.__getstate__
+
+        if type(self.var) == Message:
+            if self.var.from_user:
+                state = self.var.from_user.__getstate__
+            else: return False
 
         if not state and self.status: return True
         elif not state and not self.status: return False

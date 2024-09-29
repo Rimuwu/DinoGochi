@@ -13,14 +13,16 @@ class IsEqual(BaseFilter):
         self.key: str = key
 
     async def __call__(self, message: Message):
-        lang = await get_lang(message.from_user.id, 
-                              message.from_user.language_code)
-        text = t(self.key, lang)
+        if message.from_user:
+            if isinstance(message.from_user.language_code, str):
+                lang_n = message.from_user.language_code
+            else: lang_n = 'en'
 
-        if text == message.text:
-            return True
-        else:
-            return False
+            lang = await get_lang(message.from_user.id, lang_n)
+            text = t(self.key, lang)
+
+            if text == message.text: return True
+        return False
 
 class StartWith(BaseFilter):
     key = 'textstart'
@@ -29,11 +31,14 @@ class StartWith(BaseFilter):
         self.key: str = key
 
     async def __call__(self, message: Message):
-        lang = await get_lang(message.from_user.id, 
-                              message.from_user.language_code)
-        text = t(self.key, lang, False)
+        if message.from_user:
+            if isinstance(message.from_user.language_code, str):
+                lang_n = message.from_user.language_code
+            else: lang_n = 'en'
 
-        if message.text.startswith(text):
-            return True
-        else:
-            return False
+            lang = await get_lang(message.from_user.id, lang_n)
+            text = t(self.key, lang, False)
+
+            if isinstance(message.text, str):
+                if message.text.startswith(text): return True
+        return False

@@ -12,10 +12,15 @@ class IsPrivateChat(BaseFilter):
         self.status: str = status
 
     async def __call__(self, message: Message) -> bool:
+        is_private = False
+
         if type(self.var) == CallbackQuery:
-            is_private = self.var.message.chat.type == 'private'
-        else: # Message
-            is_private = self.var.chat.type == 'private'
+            if self.var.message:
+                is_private = self.var.message.chat.type == 'private'
+
+        elif type(self.var) == Message:
+            if self.var:
+                is_private = self.var.chat.type == 'private'
 
         if self.status: result = is_private
         else: result = not is_private

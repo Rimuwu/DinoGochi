@@ -12,11 +12,13 @@ class IsAuthorizedUser(BaseFilter):
         self.status: bool = status
 
     async def __call__(self, message: Message) -> bool:
-        is_authorized = await users.find_one(
-                { 'userid': message.from_user.id
-                }, {'_id': 1}, comment='authorized_check'
-                ) is not None
+        if message.from_user:
+            is_authorized = await users.find_one(
+                    { 'userid': message.from_user.id
+                    }, {'_id': 1}, comment='authorized_check'
+                    ) is not None
 
-        if self.status: result = is_authorized
-        else: result = not is_authorized
-        return result
+            if self.status: result = is_authorized
+            else: result = not is_authorized
+            return result
+        return False

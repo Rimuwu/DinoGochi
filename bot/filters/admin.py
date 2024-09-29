@@ -9,8 +9,10 @@ class IsAdminUser(BaseFilter):
         self.status: bool = status
 
     async def __call__(self, message: Message):
-        is_authorized = message.from_user.id in conf.bot_devs
+        if message.from_user:
+            is_authorized = message.from_user.id in conf.bot_devs
 
-        if self.status: result = is_authorized
-        else: result = not is_authorized
-        return result
+            if self.status: result = is_authorized
+            else: result = not is_authorized
+            return result
+        return False
