@@ -351,8 +351,9 @@ async def get_username(message):
 @bot.message_handler(commands=['log'], is_admin=True)
 @HDMessage
 async def get_log(message):
-    error_text = ''
-    for i in range(len(latest_errors)):
-        error_text += f'{i+1}) `{latest_errors[i]}`\n'
+    errors_text = ''
+    for i in range(len(latest_errors)): 
+            if len(errors_text + latest_errors[i]) > 4096: break
+            errors_text += f"{i+1}) `{latest_errors[i]}`\n"
     
-    await bot.send_message(message.from_user.id, error_text, parse_mode='Markdown')
+    await bot.send_message(message.from_user.id, errors_text, parse_mode='Markdown')
