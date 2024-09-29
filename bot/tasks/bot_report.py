@@ -8,7 +8,7 @@ import telebot.types
 from bot.config import conf
 from bot.exec import bot
 from bot.modules.logs import (MAX_ERRORS, get_errors_count,
-                              get_latest_errors_dif, get_latest_errors_and_clear, log)
+                              get_latest_errors_dif, get_latest_errors, log)
 from bot.taskmanager import add_task
 
 REPEAT_MINUTES = 60
@@ -55,7 +55,7 @@ async def report_file(file_path: str, file_name: str):
 # Создание отчета из последних ошибок и файла логов
 async def create_report():
     # Получаем последние ошибки
-    errors = get_latest_errors_and_clear()
+    errors = get_latest_errors()
 
     # Формируем текст отчета по ошибкам
     errors_text = ''

@@ -357,5 +357,6 @@ async def get_log(message):
         if len(errors_text + s) > 4096: 
             break
         errors_text += s
+    if not errors_text: errors_text = 'Ошибок нет, так держать!'
     
     await bot.send_message(message.chat.id, errors_text, parse_mode='Markdown')
