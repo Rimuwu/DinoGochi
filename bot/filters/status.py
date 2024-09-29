@@ -7,8 +7,6 @@ from bot.modules.localization import t
 from bot.modules.user.user import User
 
 class DinoPassStatus(BaseFilter):
-    key = 'dino_pass'
-    
     def __init__(self) -> None:
         pass
 

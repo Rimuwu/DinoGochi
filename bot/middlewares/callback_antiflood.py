@@ -40,5 +40,5 @@ class CallbackQueryAntiFloodMiddleware(BaseMiddleware):
         self.last_query[message.from_user.id] = now
         # await message.answer()  # always answer callback query
         return await handler(message, data)
- 
+
 bot.callback_query.middleware(CallbackQueryAntiFloodMiddleware())

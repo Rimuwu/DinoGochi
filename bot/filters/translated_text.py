@@ -7,8 +7,6 @@ from bot.exec import bot
 from bot.modules.localization import t, get_lang
 
 class IsEqual(BaseFilter):
-    key = 'text'
-
     def __init__(self, key: str) -> None:
         self.key: str = key
 
@@ -25,8 +23,6 @@ class IsEqual(BaseFilter):
         return False
 
 class StartWith(BaseFilter):
-    key = 'textstart'
-
     def __init__(self, key: str) -> None:
         self.key: str = key
 

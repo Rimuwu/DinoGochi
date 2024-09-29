@@ -21,7 +21,7 @@ class PassWorker(BaseMiddleware):
                 handler: Callable[[Message, dict[str, Any]], Awaitable[Any]],
                 message: Message,
                 data: dict[str, Any]):
-        
+
         result = await handler(message, data)
         await self.post_process(message, data)
         return result
@@ -61,6 +61,5 @@ class PassWorker(BaseMiddleware):
                     # Рекламные сообщения
                     if random() <= 0.5:
                         await auto_ads(message, True)
-
 
 bot.message.middleware(PassWorker())

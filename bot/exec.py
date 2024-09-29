@@ -13,7 +13,7 @@ from bot.taskmanager import run as run_taskmanager
 import asyncio
 
 bot = Dispatcher(storage=MongoStorage(mongo_client))
-BotWorker = Bot(conf.bot_token)
+botworker = Bot(conf.bot_token)
 
 @bot.error()
 async def error_handler(exception: ErrorEvent):

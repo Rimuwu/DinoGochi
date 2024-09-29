@@ -4,8 +4,6 @@ from aiogram.filters import BaseFilter
 from aiogram.types import CallbackQuery, Message
 
 class IsPrivateChat(BaseFilter):
-    key = 'private'
-
     def __init__(self, var: Union[CallbackQuery, Message], 
                  status: str) -> None:
         self.var: Union[CallbackQuery, Message] = var
