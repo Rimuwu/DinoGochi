@@ -24,7 +24,7 @@ async def dino_notifications():
 
                 unit = dino['stats'][stat]
                 res = await notification_manager(dino_id, stat, unit)
-                # if res: await sleep(0.2)
+                if res: await sleep(0.5)
 
         except Exception as e:
             log(f'dino_notifications dino_id: {dino_id} - {e}', 3)
