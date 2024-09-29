@@ -2,7 +2,7 @@
 import traceback
 
 from bot.dbmanager import check
-from telebot.async_telebot import AsyncTeleBot, ExceptionHandler
+from aiogram import Bot, Dispatcher
 
 from bot.config import conf
 from bot.modules.logs import log
@@ -11,14 +11,13 @@ from bot.taskmanager import run as run_taskmanager
 import asyncio
 
 
-class TracebackHandler(ExceptionHandler):
-    def handle(self, exception):
-        log(f'{traceback.format_exc()} {exception}', 3)
+# class TracebackHandler(exception_handler):
+#     def handle(self, exception):
+#         log(f'{traceback.format_exc()} {exception}', 3)
 
-bot = AsyncTeleBot(conf.bot_token, 
-                   exception_handler=TracebackHandler()
-                   )
-bot.enable_saving_states()
+bot = Bot(conf.bot_token)
+# bot = Bot(conf.bot_token, exception_handler=TracebackHandler())
+# bot.enable_saving_states()
 
 async def notify_devs_start():
     # id рассылки
@@ -47,6 +46,6 @@ def run():
     check()
     # Запуск тасков и бота
     add_task(notify_devs_start) # Уведомление запуска для разрабов
-    add_task(bot.infinity_polling, skip_pending=True)
+    add_task(Dispatcher().start_polling(bot))
     log('Все готово! Взлетаем!', prefix='Start')
     run_taskmanager()
