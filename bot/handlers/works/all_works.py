@@ -17,7 +17,7 @@ from bot.modules.user.user import User
 from aiogram.types import Message, CallbackQuery
 from bot.modules.data_format import list_to_inline, list_to_keyboard, progress_bar
 
-from bot.filters.translated_text import Text
+from bot.filters.translated_text import StartWith, Text
 from bot.filters.states import NothingState
 from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
@@ -114,12 +114,11 @@ async def progress_work(call: CallbackQuery):
                           count=count,
                           max_count=res['max_items'])
 
-                await bot.send_message(chatid, text, 'Markdown')
-                await bot.send_message(chatid, '✅', 
+                await botworker.send_message(chatid, text, 'Markdown')
+                await botworker.send_message(chatid, '✅', 
                            reply_markup = await m(userid, 'last_menu', lang))
 
-@bot.message(textstart='commands_name.extraction_actions.stop_work',
-                     nothing_state=True)
+@bot.message(Text('commands_name.extraction_actions.stop_work'))
 @HDMessage
 async def stop_work(message: Message):
     userid = message.from_user.id
@@ -145,12 +144,12 @@ async def stop_work(message: Message):
                                 results=text
                                 )
     else:
-        await bot.send_message(chatid, "❌", reply_markup = await m(userid, 'last_menu', lang))
+        await botworker.send_message(chatid, "❌", reply_markup = await m(userid, 'last_menu', lang))
 
 
 
-@bot.message(textstart='commands_name.extraction_actions.mine', 
-                     dino_pass=True, nothing_state=True)
+@bot.message(Text('commands_name.extraction_actions.mine'), 
+                     DinoPassStatus())
 @HDMessage
 async def mine(message: Message):
     userid = message.from_user.id
@@ -175,7 +174,7 @@ async def mine(message: Message):
     }
 
     await ChooseOptionState(end_mine, userid, chatid, lang, options, transmitted_data)
-    await bot.send_message(chatid, text, reply_markup=rmk)
+    await botworker.send_message(chatid, text, reply_markup=rmk)
 
 async def end_mine(data, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -188,13 +187,13 @@ async def end_mine(data, transmitted_data: dict):
 
     await start_mine(last_dino._id, userid, data)
     text = t('works.start.mine', lang)
-    mes = await bot.send_message(chatid, text, 'Markdown',
+    mes = await botworker.send_message(chatid, text, 'Markdown',
                            reply_markup = await m(userid, 'last_menu', lang))
 
     await auto_ads(mes)
 
-@bot.message(textstart='commands_name.extraction_actions.bank', 
-                     dino_pass=True, nothing_state=True)
+@bot.message(StartWith('commands_name.extraction_actions.bank'), 
+                     DinoPassStatus())
 @HDMessage
 async def bank(message: Message):
     userid = message.from_user.id
@@ -219,7 +218,7 @@ async def bank(message: Message):
     }
 
     await ChooseOptionState(end_bank, userid, chatid, lang, options, transmitted_data)
-    await bot.send_message(chatid, text, reply_markup=rmk)
+    await botworker.send_message(chatid, text, reply_markup=rmk)
 
 async def end_bank(data, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -232,13 +231,13 @@ async def end_bank(data, transmitted_data: dict):
 
     await start_bank(last_dino._id, userid, data)
     text = t('works.start.bank', lang)
-    mes = await bot.send_message(chatid, text, 'Markdown',
+    mes = await botworker.send_message(chatid, text, 'Markdown',
                            reply_markup = await m(userid, 'last_menu', lang))
 
     await auto_ads(mes)
 
-@bot.message(textstart='commands_name.extraction_actions.sawmill', 
-                     dino_pass=True, nothing_state=True)
+@bot.message(StartWith('commands_name.extraction_actions.sawmill'), 
+                     DinoPassStatus())
 @HDMessage
 async def sawmill(message: Message):
     userid = message.from_user.id
@@ -263,7 +262,7 @@ async def sawmill(message: Message):
     }
 
     await ChooseOptionState(end_sawmill, userid, chatid, lang, options, transmitted_data)
-    await bot.send_message(chatid, text, reply_markup=rmk)
+    await botworker.send_message(chatid, text, reply_markup=rmk)
 
 async def end_sawmill(data, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -276,7 +275,7 @@ async def end_sawmill(data, transmitted_data: dict):
 
     await start_sawmill(last_dino._id, userid, data)
     text = t('works.start.sawmill', lang)
-    mes = await bot.send_message(chatid, text, 'Markdown',
+    mes = await botworker.send_message(chatid, text, 'Markdown',
                            reply_markup = await m(userid, 'last_menu', lang))
 
     await auto_ads(mes)

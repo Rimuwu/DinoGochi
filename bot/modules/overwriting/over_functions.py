@@ -9,7 +9,7 @@ async def async_antiflood(function: Callable, *args, number_retries=3, **kwargs)
 
     .. code-block:: python3
         for chat_id in chat_id_list:
-        msg = await async_antiflood(bot.send_message, chat_id, text)
+        msg = await async_antiflood(botworker.send_message, chat_id, text)
 
     :param function: The function to call
     :type function: :obj:`Callable`

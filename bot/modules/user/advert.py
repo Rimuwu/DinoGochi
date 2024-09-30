@@ -92,9 +92,9 @@ async def save_last_ads(user_id:int):
     lang = await get_lang(user_id)
 
     try:
-        await bot.send_message(user_id, t('super_coins.plus_one', lang), parse_mode="Markdown")
+        await botworker.send_message(user_id, t('super_coins.plus_one', lang), parse_mode="Markdown")
     except:
-        await bot.send_message(user_id, t('super_coins.plus_one', lang))
+        await botworker.send_message(user_id, t('super_coins.plus_one', lang))
 
 
 async def auto_ads(message, only_parthner: bool = False):

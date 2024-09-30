@@ -90,7 +90,7 @@ async def auto_event():
         if day_n >= 363:
             new_year_event = await create_event('new_year')
             await add_event(new_year_event)
-            await bot.send_message(conf.bot_group_id, t("events.new_year"))
+            await botworker.send_message(conf.bot_group_id, t("events.new_year"))
 
     # Проверка на 1-ое апреля
     if not await check_event('april_1'):
@@ -110,7 +110,7 @@ async def auto_event():
             await add_event(april_event)
 
             for i in events_lst: await add_event(i)
-            await bot.send_message(conf.bot_group_id, t("events.april_1"))
+            await botworker.send_message(conf.bot_group_id, t("events.april_1"))
             
     if not await check_event('april_5'):
         today = datetime.date.today()
@@ -140,4 +140,4 @@ async def auto_event():
             await add_event(april_event)
             for i in events_lst: await add_event(i)
 
-            await bot.send_message(conf.bot_group_id, t("events.april_5"))
+            await botworker.send_message(conf.bot_group_id, t("events.april_5"))

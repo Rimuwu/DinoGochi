@@ -2,7 +2,7 @@ from random import choice
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
-from bot.exec import bot
+from bot.exec import bot, botworker
 from bot.handlers.referal_menu import check_code
 from bot.handlers.states import cancel
 from bot.modules.data_format import list_to_keyboard, seconds_to_str, user_name
@@ -19,18 +19,29 @@ from bot.modules.managment.tracking import add_track
 from bot.modules.user.user import award_premium, insert_user
 from aiogram import types
 
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command
+
+
 referals = DBconstructor(mongo_client.user.referals)
 management = DBconstructor(mongo_client.other.management)
 dead_users = DBconstructor(mongo_client.other.dead_users)
 
-@bot.message(commands=['start'], is_authorized=True, private=True)
+@bot.message(Command(commands=['start']), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def start_command_auth(message: types.Message):
-    stickers = await bot.get_sticker_set('Stickers_by_DinoGochi_bot')
+    stickers = await botworker.get_sticker_set('Stickers_by_DinoGochi_bot')
     sticker = choice(list(stickers.stickers)).file_id
 
     lang = await get_lang(message.from_user.id)
-    await bot.send_sticker(message.chat.id, sticker, 
+    await botworker.send_sticker(message.chat.id, sticker, 
                            reply_markup=await m(message.from_user.id, language_code=lang))
 
     content = str(message.text).split()
@@ -52,9 +63,9 @@ async def start_command_auth(message: types.Message):
         st, text = await use_promo(referal, message.from_user.id, lang)
 
         if st == 'ok':
-            await bot.send_message(message.chat.id, text)
+            await botworker.send_message(message.chat.id, text)
 
-@bot.message(text='commands_name.start_game', is_authorized=False)
+@bot.message(Text('commands_name.start_game'), IsAuthorizedUser(False))
 @HDMessage
 async def start_game(message: types.Message, code: str = '', code_type: str = ''):
 
@@ -62,25 +73,27 @@ async def start_game(message: types.Message, code: str = '', code_type: str = ''
     text = t('start_command.request_subscribe.text', message.from_user.language_code)
     b1, b2 = get_data('start_command.request_subscribe.buttons', message.from_user.language_code)
 
-    markup_inline = types.InlineKeyboardMarkup()
-    markup_inline.add(types.InlineKeyboardButton(text=b1, url='https://t.me/DinoGochi'))
-    markup_inline.add(types.InlineKeyboardButton(text=b2, url='https://t.me/+pq9_21HXXYY4ZGQy'))
+    markup_inline = []
+    markup_inline.append(types.InlineKeyboardButton(text=b1, url='https://t.me/DinoGochi'))
+    markup_inline.append(types.InlineKeyboardButton(text=b2, url='https://t.me/+pq9_21HXXYY4ZGQy'))
 
-    await bot.send_message(message.chat.id, text, parse_mode='html', reply_markup=markup_inline)
+    inl = types.InlineKeyboardMarkup(inline_keyboard=markup_inline)
+    await botworker.send_message(message.chat.id, text, parse_mode='html', reply_markup=inl)
 
     #Создание изображения
     img, id_l = await create_eggs_image()
 
-    markup_inline = types.InlineKeyboardMarkup()
-    markup_inline.add(*[types.InlineKeyboardButton(
+    markup_inline = []
+    markup_inline.append(*[types.InlineKeyboardButton(
             text=f'🥚 {id_l.index(i) + 1}', 
             callback_data=f'start_egg {i} {code_type} {code}') for i in id_l]
     )
+    inl = types.InlineKeyboardMarkup(inline_keyboard=markup_inline)
 
     start_game = t('start_command.start_game', message.from_user.language_code)
-    await bot.send_photo(message.chat.id, img, start_game, reply_markup=markup_inline)
+    await botworker.send_photo(message.chat.id, img, start_game, reply_markup=inl)
 
-@bot.message(commands=['start'], is_authorized=False)
+@bot.message(Command(commands=['start']), is_authorized=False)
 @HDMessage
 async def start_game_message(message: types.Message):
     langue_code = message.from_user.language_code
@@ -109,13 +122,13 @@ async def start_game_message(message: types.Message):
 
     if add_referal:
         text = t('start_command.referal', langue_code, username=username)
-        await bot.send_message(message.chat.id, text)
+        await botworker.send_message(message.chat.id, text)
 
         await start_game(message, referal, 'referal') 
 
 
-@bot.callback_query(is_authorized=False, 
-                            F.data.startswith('start_egg'), private=True)
+@bot.callback_query(IsAuthorizedUser(False), 
+                            F.data.startswith('start_egg'), IsPrivateChat())
 @HDCallback
 async def egg_answer_callback(callback: types.CallbackQuery):
     egg_id = int(callback.data.split()[1])
@@ -127,8 +140,8 @@ async def egg_answer_callback(callback: types.CallbackQuery):
     send_text = t('start_command.end_answer.send_text', lang, inc_time=
                   seconds_to_str(GAME_SETTINGS['first_dino_time_incub'], lang))
 
-    await bot.edit_message_caption(edited_text, callback.message.chat.id, callback.message.message_id)
-    await bot.send_message(callback.message.chat.id, send_text, parse_mode='Markdown', 
+    await botworker.edit_message_caption(edited_text, callback.message.chat.id, callback.message.message_id)
+    await botworker.send_message(callback.message.chat.id, send_text, parse_mode='Markdown', 
                            reply_markup= await m(callback.from_user.id, language_code=lang))
 
     # Создание юзера и добавляем динозавра в инкубацию
@@ -144,8 +157,8 @@ async def egg_answer_callback(callback: types.CallbackQuery):
             code = callback.data.split()[3]
             await use_promo(code, userid, lang)
 
-@bot.callback_query(is_authorized=True, 
-                            F.data.startswith('start_cmd'), private=True)
+@bot.callback_query(IsAuthorizedUser(), 
+                            F.data.startswith('start_cmd'), IsPrivateChat())
 @HDCallback
 async def start_inl(callback: types.CallbackQuery):
     """ start_cmd promo/  
@@ -166,13 +179,13 @@ async def start_inl(callback: types.CallbackQuery):
 
             lang = await get_lang(userid)
             text = '✨'
-            await bot.send_message(callback.message.chat.id, text, 
+            await botworker.send_message(callback.message.chat.id, text, 
                             reply_markup=await m(userid, language_code=lang))
     
     else:
-        stickers = await bot.get_sticker_set('Stickers_by_DinoGochi_bot')
+        stickers = await botworker.get_sticker_set('Stickers_by_DinoGochi_bot')
         sticker = choice(list(stickers.stickers)).file_id
 
         lang = await get_lang(userid)
-        await bot.send_sticker(callback.message.chat.id, sticker, 
+        await botworker.send_sticker(callback.message.chat.id, sticker, 
                             reply_markup=await m(userid, language_code=lang))

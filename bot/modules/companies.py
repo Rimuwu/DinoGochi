@@ -135,7 +135,7 @@ async def end_company(advert_id: ObjectId):
         for i in set([companie['owner']] + conf.bot_devs):
             lang = await get_lang(i)
             try:
-                await bot.send_message(i,
+                await botworker.send_message(i,
                     t('companies.end_company', lang, 
                     time_work = seconds_to_str(int(time()) - companie['time_start'], lang),
                     show_count = companie['show_count'],
@@ -155,7 +155,7 @@ async def end_company(advert_id: ObjectId):
                                                      mes['message_id'])
                     except: pass
                 try:
-                    await bot.delete_message(mes['userid'],
+                    await botworker.delete_message(mes['userid'],
                                              mes['message_id'])
                 except: pass
                 await message_log.delete_one({'_id': mes['_id']})
@@ -198,19 +198,19 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None,
 
         if image != 'no_image':
             try:
-                m = await bot.send_photo(userid, image, text, parse_mode, 
+                m = await botworker.send_photo(userid, image, text, parse_mode, 
                                      reply_markup=inline)
             except Exception as e:
                 log(f'generate_comp_message image error - {e}', 2)
-                m = await bot.send_photo(userid, image, text, 
+                m = await botworker.send_photo(userid, image, text, 
                                      reply_markup=inline)
         else:
             try:
-                m = await bot.send_message(userid, text, 
+                m = await botworker.send_message(userid, text, 
                                        parse_mode=parse_mode, reply_markup=inline)
             except Exception as e:
                 log(f'generate_comp_message error - {e}', 2)
-                m = await bot.send_message(userid, text, 
+                m = await botworker.send_message(userid, text, 
                                      reply_markup=inline)
 
         # Сохраняем
@@ -221,7 +221,7 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None,
         if companie['pin_message'] and save:
             s = await bot.pin_chat_message(m.chat.id, m.id)
             try:
-                if s: await bot.delete_message(m.chat.id, m.id + 1)
+                if s: await botworker.delete_message(m.chat.id, m.id + 1)
             except: pass
 
         # Награда
@@ -231,10 +231,10 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None,
                                     {"super_coins": companie['coin_price']}},
                             comment='generate_message')
             try:
-                await bot.send_message(userid, 
+                await botworker.send_message(userid, 
                                     t('super_coins.moder_reward', lang, coin=companie['coin_price']), parse_mode="Markdown")
             except:
-                await bot.send_message(userid, 
+                await botworker.send_message(userid, 
                                     t('super_coins.moder_reward', lang, coin=companie['coin_price']))
         return m.id
     return None

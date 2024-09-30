@@ -200,7 +200,7 @@ async def entertainments(message: Message):
     dino = await user.get_last_dino()
     if dino: await start_game_ent(userid, chatid, lang, dino)
 
-@bot.message(text='commands_name.actions.stop_game')
+@bot.message(Text('commands_name.actions.stop_game')
 @HDMessage
 async def stop_game(message: Message):
     userid = message.from_user.id # type: ignore

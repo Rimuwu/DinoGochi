@@ -70,7 +70,7 @@ async def DeadUser_return():
                     [{button: f'start_cmd {promo}'}]
                 )
                 try:
-                    await bot.send_message(userid, text, reply_markup=markup)
+                    await botworker.send_message(userid, text, reply_markup=markup)
                 except: 
                     # - Если нельзя отправить спустя неделю - ничего
                     pass
@@ -95,7 +95,7 @@ async def DeadUser_return():
                         [{button: f'start_cmd {code}'}]
                     )
                     try:
-                        await bot.send_message(userid, text, reply_markup=markup)
+                        await botworker.send_message(userid, text, reply_markup=markup)
                     except Exception as ex:
                         if ex.error_code in [400, 403]:
                             # - Если нельзя отправить спустя месяц - удалить акк

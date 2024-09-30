@@ -24,7 +24,7 @@ dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 events = DBconstructor(mongo_client.other.events)
 
-@bot.message(text='commands_name.friends.add_friend', private=True)
+@bot.message(Text('commands_name.friends.add_friend', IsPrivateChat())
 @HDMessage
 async def add_friend(message: Message):
     chatid = message.chat.id
@@ -36,7 +36,7 @@ async def add_friend(message: Message):
     inl_buttons = dict(zip(buttons.values(), buttons.keys()))
     markup = list_to_inline([inl_buttons])
     
-    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+    await botworker.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
 async def friend_add_handler(message: Message, transmitted_data: dict):
     code = transmitted_data['code']
@@ -67,7 +67,7 @@ async def friend_add_handler(message: Message, transmitted_data: dict):
         else:
             text = t('add_friend.check.nonbase', lang)
 
-    if not status: await bot.send_message(chatid, text)
+    if not status: await botworker.send_message(chatid, text)
     return status, friendid
     
 async def add_friend_end(friendid: int, transmitted_data: dict):
@@ -80,22 +80,22 @@ async def add_friend_end(friendid: int, transmitted_data: dict):
     for act_type in ['friends', 'requests']:
         if friendid in frineds[act_type]:
             text = t(f'add_friend.check.{act_type}', lang)
-            await bot.send_message(chatid, text)
+            await botworker.send_message(chatid, text)
             return
     else:
         res = await insert_friend_connect(userid, friendid, 'request')
         if res:
             text = t('add_friend.correct', lang)
-            await bot.send_message(chatid, text, 
+            await botworker.send_message(chatid, text, 
                                 reply_markup= await m(userid, 'last_menu', lang))
             
             await user_notification(friendid, 'send_request', lang, user_name=user_name)
         else:
             text = t('add_friend.already', lang)
-            await bot.send_message(chatid, text, 
+            await botworker.send_message(chatid, text, 
                                 reply_markup= await m(userid, 'last_menu', lang))
 
-@bot.callback_query(F.data.startswith('add_friend'), nothing_state=True, private=True)
+@bot.callback_query(F.data.startswith('add_friend'), nothing_state=True, IsPrivateChat())
 @HDCallback
 async def add_friend_callback(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -106,20 +106,20 @@ async def add_friend_callback(call: CallbackQuery):
     transmitted_data = {'code': code, 'user_name': user_name(call.from_user)}
 
     text = t(f'add_friend.var_messages.{code}', lang)
-    await bot.send_message(chatid, text, reply_markup=cancel_markup(lang))
+    await botworker.send_message(chatid, text, reply_markup=cancel_markup(lang))
 
     await ChooseCustomState(add_friend_end, friend_add_handler, 
                             user_id, chatid, lang, 
                             transmitted_data)
 
-@bot.message(text='commands_name.friends.friends_list', private=True)
+@bot.message(Text('commands_name.friends.friends_list', IsPrivateChat())
 @HDMessage
 async def friend_list(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    await bot.send_message(chatid, t('friend_list.wait', lang))
+    await botworker.send_message(chatid, t('friend_list.wait', lang))
     await start_friend_menu(None, userid, chatid, lang, False)
 
 
@@ -136,7 +136,7 @@ async def adp_requests(data: dict, transmitted_data: dict):
              }, comment='adp_requests_delete'
             )
 
-        await bot.send_message(userid, t('requests.decline', lang, user_name=data['name']))
+        await botworker.send_message(userid, t('requests.decline', lang, user_name=data['name']))
         return {'status': 'edit', 'elements': {'delete': [
             f'✅ {data["key"]}', f'❌ {data["key"]}', data['name']
             ]}}
@@ -153,7 +153,7 @@ async def adp_requests(data: dict, transmitted_data: dict):
             await friends.update_one({'_id': res['_id']}, 
                                {'$set': {'type': 'friends'}}, comment='adp_requests_add_res')
 
-        await bot.send_message(chatid, t('requests.accept', lang, user_name=data['name']))
+        await botworker.send_message(chatid, t('requests.accept', lang, user_name=data['name']))
         return {'status': 'edit', 'elements': {'delete': [
             f'✅ {data["key"]}', f'❌ {data["key"]}', data['name']
             ]}}
@@ -166,7 +166,7 @@ async def request_open(userid: int, chatid: int, lang: str):
     
     for friend_id in requests:
         try:
-            chat_user = await bot.get_chat_member(friend_id, friend_id)
+            chat_user = await botworker.get_chat_member(friend_id, friend_id)
             friend = chat_user.user
         except: friend = None
         if friend:
@@ -185,24 +185,24 @@ async def request_open(userid: int, chatid: int, lang: str):
         horizontal=3, vertical=3,
         autoanswer=False, one_element=False)
 
-@bot.message(text='commands_name.friends.requests', private=True)
+@bot.message(Text('commands_name.friends.requests', IsPrivateChat())
 @HDMessage
 async def requests_list(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    await bot.send_message(chatid, t('requests.wait', lang))
+    await botworker.send_message(chatid, t('requests.wait', lang))
     await request_open(userid, chatid, lang)
     
-@bot.callback_query(F.data.startswith('requests'), private=True)
+@bot.callback_query(F.data.startswith('requests'), IsPrivateChat())
 @HDCallback
 async def requests_callback(call: CallbackQuery):
     chatid = call.message.chat.id
     user_id = call.from_user.id
     lang = await get_lang(call.from_user.id)
 
-    await bot.send_message(chatid, t('requests.wait', lang))
+    await botworker.send_message(chatid, t('requests.wait', lang))
     await request_open(user_id, chatid, lang)
 
 async def delete_friend(_: bool, transmitted_data: dict):
@@ -217,7 +217,7 @@ async def delete_friend(_: bool, transmitted_data: dict):
     await friends.delete_one({"friendid": userid, 'userid': friendid, 'type': 'friends'}
                              , comment='delete_friend1')
 
-    await bot.send_message(chatid, t('friend_delete.delete', lang), 
+    await botworker.send_message(chatid, t('friend_delete.delete', lang), 
                            reply_markup= await m(userid, 'last_menu', lang))
 
 async def adp_delte(friendid: int, transmitted_data: dict):
@@ -228,12 +228,12 @@ async def adp_delte(friendid: int, transmitted_data: dict):
     transmitted_data['friendid'] = friendid
 
     await ChooseConfirmState(delete_friend, userid, chatid, lang, True, transmitted_data)
-    await bot.send_message(chatid, t('friend_delete.confirm', lang,     
+    await botworker.send_message(chatid, t('friend_delete.confirm', lang,     
                                      name=transmitted_data['key']), 
                            reply_markup=confirm_markup
                            (lang))
 
-@bot.message(text='commands_name.friends.remove_friend', private=True)
+@bot.message(Text('commands_name.friends.remove_friend', IsPrivateChat())
 @HDMessage
 async def remove_friend(message: Message):
     chatid = message.chat.id
@@ -247,7 +247,7 @@ async def remove_friend(message: Message):
 
     for friend_id in requests:
         try:
-            chat_user = await bot.get_chat_member(friend_id, friend_id)
+            chat_user = await botworker.get_chat_member(friend_id, friend_id)
             friend = chat_user.user
         except: friend = None
         if friend:
@@ -256,7 +256,7 @@ async def remove_friend(message: Message):
             if name in options: name = name + str(a)
             options[name] = friend_id
 
-    await bot.send_message(chatid, t('friend_delete.delete_info', lang))
+    await botworker.send_message(chatid, t('friend_delete.delete_info', lang))
     await ChoosePagesState(
         adp_delte, userid, chatid, lang, options, 
         autoanswer=False, one_element=True)
@@ -288,11 +288,11 @@ async def joint(return_data: dict,
              transl_data[1]: "delete_message"
              }
         ])
-        await bot.send_message(friendid, friend_text, reply_markup=reply)
+        await botworker.send_message(friendid, friend_text, reply_markup=reply)
 
-    await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang))
+    await botworker.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang))
 
-@bot.callback_query(F.data.startswith('joint_dinosaur'), private=True)
+@bot.callback_query(F.data.startswith('joint_dinosaur'), IsPrivateChat())
 @HDCallback
 async def joint_dinosaur(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
@@ -316,7 +316,7 @@ async def joint_dinosaur(call: CallbackQuery):
 
     await ChooseStepState(joint, userid, chatid, lang, steps, {'friendid': int(data[1]), 'username': user_name(call.from_user)})
 
-@bot.callback_query(F.data.startswith('take_dino'), private=True)
+@bot.callback_query(F.data.startswith('take_dino'), IsPrivateChat())
 @HDCallback
 async def take_dino(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
@@ -325,13 +325,13 @@ async def take_dino(call: CallbackQuery):
     data = call.data.split()
 
     dino_alt = data[1]
-    await bot.delete_message(chatid, call.message.id)
+    await botworker.delete_message(chatid, call.message.id)
 
     res2 = await dino_owners.find(
         {'owner_id': userid, 'type': 'add_owner'}, comment='take_dino_res2')
     if len(list(res2)) >= 1:
         text = t('take_dino.max_dino', lang)
-        await bot.send_message(chatid, text)
+        await botworker.send_message(chatid, text)
     else:
         dino = await dinosaurs.find_one({'alt_id': dino_alt}, comment='take_dino_dino')
         if dino:
@@ -344,18 +344,18 @@ async def take_dino(call: CallbackQuery):
             
             if len(list(res)) >= 2:
                 text = t('take_dino.max_owners', lang)
-                await bot.send_message(chatid, text)
+                await botworker.send_message(chatid, text)
             else:
                 # Сообщение и свзяь для дополнительного владельца
                 await create_dino_connection(dino['_id'], userid, 'add_owner')
                 text = t('take_dino.ok', lang, dinoname=dino['name'])
-                await bot.send_message(chatid, text)
+                await botworker.send_message(chatid, text)
 
                 # Сообщение для владульца дино
                 text_to_owner = t('take_dino.message_to_owner', lang, dinoname=dino['name'], username=user_name(call.from_user))
-                if owner: await bot.send_message(owner, text_to_owner)
+                if owner: await botworker.send_message(owner, text_to_owner)
 
-@bot.callback_query(F.data.startswith('take_money'), private=True)
+@bot.callback_query(F.data.startswith('take_money'), IsPrivateChat())
 @HDCallback
 async def take_money(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
@@ -373,14 +373,14 @@ async def take_money(call: CallbackQuery):
                                 max_int=max_int, transmitted_data={'friendid': friendid, 'username': user_name(call.from_user)})
 
             text = t('take_money.col_coins', lang, max_int=max_int)
-            await bot.send_message(chatid, text, reply_markup=
+            await botworker.send_message(chatid, text, reply_markup=
                                 count_markup(max_int, lang))
         else:
             text = t('take_money.zero_coins', lang)
-            await bot.send_message(chatid, text)
+            await botworker.send_message(chatid, text)
 
 
-@bot.callback_query(F.data.startswith('take_coins'), private=True)
+@bot.callback_query(F.data.startswith('take_coins'), IsPrivateChat())
 @HDCallback
 async def take_super_coins(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
@@ -399,11 +399,11 @@ async def take_super_coins(call: CallbackQuery):
                                 max_int=max_int, transmitted_data={'friendid': friendid, 'username': user_name(call.from_user)})
 
             text = t('take_coins.col_coins', lang, max_int=max_int)
-            await bot.send_message(chatid, text, reply_markup=
+            await botworker.send_message(chatid, text, reply_markup=
                                 count_markup(max_int, lang))
         else:
             text = t('take_coins.zero_coins', lang)
-            await bot.send_message(chatid, text)
+            await botworker.send_message(chatid, text)
 
 async def transfer_coins(col: int, transmitted_data: dict):
     lang = transmitted_data['lang']
@@ -416,16 +416,16 @@ async def transfer_coins(col: int, transmitted_data: dict):
 
     if status:
         text = t('take_money.send', lang)
-        await bot.send_message(chatid, text, 
+        await botworker.send_message(chatid, text, 
                             reply_markup= await m(userid, 'last_menu', lang))
 
         text = t('take_money.transfer', lang, username=username, coins=col)
-        await bot.send_message(friendid, text)
+        await botworker.send_message(friendid, text)
         await take_coins(friendid, col, True)
 
     else:
         text = t('take_money.no_coins', lang)
-        await bot.send_message(chatid, text, 
+        await botworker.send_message(chatid, text, 
                             reply_markup= await m(userid, 'last_menu', lang))
 
 async def transfer_super_coins(col: int, transmitted_data: dict):
@@ -436,11 +436,11 @@ async def transfer_super_coins(col: int, transmitted_data: dict):
     username = transmitted_data['username']
 
     text = t('take_coins.send', lang)
-    await bot.send_message(chatid, text, 
+    await botworker.send_message(chatid, text, 
                         reply_markup= await m(userid, 'last_menu', lang))
 
     text = t('take_coins.transfer', lang, username=username, coins=col)
-    await bot.send_message(friendid, text)
+    await botworker.send_message(friendid, text)
 
     await users.update_one({'userid': userid}, {'$inc': {'super_coins': -col}}, 
                            comment='transfer_super_coins')
@@ -476,7 +476,7 @@ async def send_request(call: CallbackQuery):
     else:
         await bot.answer_callback_query(call.id, '❌')
 
-@bot.callback_query(F.data.startswith('new_year'), private=True)
+@bot.callback_query(F.data.startswith('new_year'), IsPrivateChat())
 @HDCallback
 async def new_year(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
@@ -499,4 +499,4 @@ async def new_year(call: CallbackQuery):
             lang = await get_lang(friendid)
             text = t('new_year.to_friend', lang, 
                      item=get_name(GAME_SETTINGS['new_year_item'], lang))
-            await bot.send_message(friendid, text)
+            await botworker.send_message(friendid, text)

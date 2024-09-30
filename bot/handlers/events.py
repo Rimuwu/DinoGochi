@@ -8,7 +8,7 @@ from aiogram.types import ChatMemberUpdated
 
 puhs = DBconstructor(mongo_client.market.puhs)
 
-@bot.my_chat_member_handler(pass_bot=True)
+@bot.my_chat_member_handler()
 async def my_update(data: ChatMemberUpdated):
     lang = await get_lang(data.from_user.id)
     userid = data.from_user.id
@@ -20,12 +20,12 @@ async def my_update(data: ChatMemberUpdated):
         if not res:
             if status not in ['creator', 'administrator']:
                 text = t('push.not_admin', lang)
-                await bot.send_message(userid, text)
+                await botworker.send_message(userid, text)
                 return
 
             elif not can_manage_chat:
                 text = t('push.not_management', lang)
-                await bot.send_message(userid, text)
+                await botworker.send_message(userid, text)
                 return
 
             else:
@@ -33,7 +33,7 @@ async def my_update(data: ChatMemberUpdated):
                 buttons = [{t('buttons_name.confirm', lang): f'create_push {data.chat.id}'}]
                 markup = list_to_inline(buttons)
 
-                await bot.send_message(userid, text, reply_markup=markup)
+                await botworker.send_message(userid, text, reply_markup=markup)
 
     elif data.new_chat_member.status == 'left':
         res = await puhs.find_one({'owner_id': userid}, comment='my_update')

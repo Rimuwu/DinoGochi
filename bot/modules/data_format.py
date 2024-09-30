@@ -9,7 +9,7 @@ from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
 
 from bot.const import GAME_SETTINGS
 from bot.modules.localization import get_data
-
+from aiogram.types import BufferedInputFile
 
 def escape_markdown(content: str) -> str:
     """ Экранирует символы Markdown в строке.
@@ -454,4 +454,4 @@ def pil_image_to_file(image, extension='JPEG', quality='web_low'):
     image.convert('RGB').save(photoBuffer, extension, quality=quality)
     photoBuffer.seek(0)
 
-    return photoBuffer
+    return BufferedInputFile(photoBuffer.read(), filename=f"DinoGochi.{extension}")

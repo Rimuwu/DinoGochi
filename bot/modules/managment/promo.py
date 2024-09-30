@@ -207,10 +207,10 @@ async def end(return_data, transmitted_data):
 
     text, markup = await promo_ui(code, lang)
     try:
-        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+        await botworker.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
     except:
-        await bot.send_message(chatid, text, reply_markup=markup)
-    await bot.send_message(chatid, '✅', reply_markup= await m(userid, 'last_menu', lang))
+        await botworker.send_message(chatid, text, reply_markup=markup)
+    await botworker.send_message(chatid, '✅', reply_markup= await m(userid, 'last_menu', lang))
 
 async def create_promo(code: str, col, seconds, coins: int, items: list, active: bool = False):
 

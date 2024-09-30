@@ -5,7 +5,7 @@ from aiogram.types import Message
 from bot.config import conf
 
 class IsAdminUser(BaseFilter):
-    def __await__(self, status: bool):
+    def __init__(self, status: bool = True):
         self.status: bool = status
 
     async def __call__(self, message: Message):

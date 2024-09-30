@@ -97,7 +97,7 @@ def translate(message):
 
     chat_id = message.chat.id
 
-    bot.send_message(chat_id, t(text, lang, False), parse_mode='Markdown')
+    botworker.send_message(chat_id, t(text, lang, False), parse_mode='Markdown')
 
 @bot.message_handler(commands=['translate', 't'])
 def translate(message):
@@ -107,7 +107,7 @@ def translate(message):
 
     chat_id = message.chat.id
 
-    bot.send_message(chat_id, t(text, lang, False))
+    botworker.send_message(chat_id, t(text, lang, False))
 
 
 if __name__ == '__main__':

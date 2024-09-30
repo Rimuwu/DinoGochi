@@ -25,7 +25,7 @@ LVL_CHANCE = 0.125 * REPEAT_MINUTS
 
 async def stop_collect(coll_data):
     try:
-        chat_user = await bot.get_chat_member(coll_data['sended'], coll_data['sended'])
+        chat_user = await botworker.get_chat_member(coll_data['sended'], coll_data['sended'])
         lang = await get_lang(chat_user.user.id)
     except: lang = 'en'
     

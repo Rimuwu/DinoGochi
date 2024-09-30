@@ -204,7 +204,7 @@ async def main_checks():
                         text = choice(get_data('pass_messages', lang))
                         text = text.format(owner=owner_name)
                         try:
-                            await bot.send_message(
+                            await botworker.send_message(
                                 owner['owner_id'], f'🦕 {dino["name"]}: {text}'
                             )
                         except: pass

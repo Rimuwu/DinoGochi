@@ -314,7 +314,7 @@ async def send_view_product(product_id: ObjectId, owner_id: int):
         ]
 
         markup = list_to_inline(buttons)
-        await bot.send_message(channel, text, reply_markup=markup, parse_mode='Markdown')
+        await botworker.send_message(channel, text, reply_markup=markup, parse_mode='Markdown')
 
 async def create_push(owner_id: int, channel_id: int, lang: str):
 
@@ -371,7 +371,7 @@ async def delete_product(baseid = None, alt_id = None):
                     c_items = counts_items(id_list, user['lang'])
                     text = t('auction.delete_auction', user['lang'], items=c_items)
 
-                    try: await bot.send_message(user['userid'], text)
+                    try: await botworker.send_message(user['userid'], text)
                     except: pass
 
             if winner:
@@ -396,7 +396,7 @@ async def delete_product(baseid = None, alt_id = None):
                 c_items = counts_items(id_list, winner['lang'])
                 text = t('auction.win', winner['lang'], items=c_items)
 
-                try: await bot.send_message(winner['userid'], text)
+                try: await botworker.send_message(winner['userid'], text)
                 except: pass
 
             else:

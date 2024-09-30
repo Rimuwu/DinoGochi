@@ -3,7 +3,7 @@ from time import time
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import bot, botworker
 from bot.modules.data_format import list_to_inline, str_to_seconds
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.localization import get_data, get_lang, t
@@ -19,11 +19,21 @@ from bot.modules.managment.tracking import creat_track, get_track_pages, track_i
 from bot.modules.user.user import award_premium, user_name
 from aiogram.types import CallbackQuery, Message
 
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command
+
 management = DBconstructor(mongo_client.other.management)
 promo = DBconstructor(mongo_client.other.promo)
 langs = DBconstructor(mongo_client.user.lang)
 
-@bot.message(commands=['create_tracking'], is_admin=True)
+@bot.message(Command(commands=['create_tracking']), IsAdminUser())
 @HDMessage
 async def create_tracking(message: Message):
     chatid = message.chat.id
@@ -31,7 +41,7 @@ async def create_tracking(message: Message):
     lang = await get_lang(message.from_user.id)
 
     await ChooseStringState(create_track, userid, chatid, lang, 1, 0)
-    await bot.send_message(chatid, t("create_tracking.name", lang), parse_mode='Markdown')
+    await botworker.send_message(chatid, t("create_tracking.name", lang), parse_mode='Markdown')
 
 async def create_track(name, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -40,7 +50,7 @@ async def create_track(name, transmitted_data: dict):
 
     res, text = await creat_track(name.lower()), '-'
     if res == 1:
-        iambot = await bot.get_me()
+        iambot = await botworker.get_me()
         bot_name = iambot.username
 
         url = f'https://t.me/{bot_name}/?promo={name}'
@@ -49,9 +59,9 @@ async def create_track(name, transmitted_data: dict):
     elif res == -1: text = 'error name find'
     elif res == 1: text = t("create_tracking.already", lang)
 
-    await bot.send_message(chatid, text, parse_mode='Markdown')
+    await botworker.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.message(commands=['tracking'], is_admin=True)
+@bot.message(Command(commands=['tracking'], IsAdminUser()))
 @HDMessage
 async def tracking(message: Message):
     chatid = message.chat.id
@@ -60,16 +70,16 @@ async def tracking(message: Message):
 
     options = await get_track_pages()
     res = await ChoosePagesState(track_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False)
-    await bot.send_message(chatid, t("track_open", lang), parse_mode='Markdown')
+    await botworker.send_message(chatid, t("track_open", lang), parse_mode='Markdown')
 
 async def track_info_adp(data, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
     text, markup = await track_info(data, lang)
-    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+    await botworker.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
-@bot.callback_query(F.data.startswith('track'), private=True)
+@bot.callback_query(F.data.startswith('track'), IsPrivateChat())
 @HDCallback
 async def track(call: CallbackQuery):
     split_d = call.data.split()
@@ -92,9 +102,9 @@ async def track(call: CallbackQuery):
             await management.update_one({'_id': 'tracking_links'}, 
                                 {'$set': {f'links.{code}.col': 0}}, comment='track3')
 
-        await bot.send_message(chatid, text)
+        await botworker.send_message(chatid, text)
 
-@bot.message(commands=['create_promo'], is_admin=True)
+@bot.message(Command(commands=['create_promo']), IsAdminUser())
 @HDMessage
 async def create_promo(message: Message):
     chatid = message.chat.id
@@ -103,7 +113,7 @@ async def create_promo(message: Message):
 
     await create_promo_start(userid, chatid, lang)
 
-@bot.message(commands=['promos'], is_admin=True)
+@bot.message(Command(commands=['promos']), IsAdminUser())
 @HDMessage
 async def promos(message: Message):
     chatid = message.chat.id
@@ -112,14 +122,14 @@ async def promos(message: Message):
 
     options = await get_promo_pages()
     res = await ChoosePagesState(promo_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False)
-    await bot.send_message(chatid, t("promo_commands.promo_open", lang), parse_mode='Markdown')
+    await botworker.send_message(chatid, t("promo_commands.promo_open", lang), parse_mode='Markdown')
 
 async def promo_info_adp(code, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
     text, markup = await promo_ui(code, lang)
-    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+    await botworker.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
 @bot.callback_query(F.data.startswith('promo'))
 @HDCallback
@@ -137,7 +147,7 @@ async def promo_call(call: CallbackQuery):
 
             if action == 'delete': 
                 await promo.delete_one({'_id': res['_id']}, comment='promo_call_delete')
-                await bot.delete_message(userid, call.message.id)
+                await botworker.delete_message(userid, call.message.id)
 
             elif action == 'activ':
                 if not res['active']:
@@ -170,15 +180,15 @@ async def promo_call(call: CallbackQuery):
                         }}, comment='promo_call_2')
 
                 text, markup = await promo_ui(code, lang)
-                await bot.edit_message_text(text, userid, call.message.message_id, reply_markup=markup, parse_mode='markdown')
+                await botworker.edit_message_text(text, None, userid, call.message.message_id, reply_markup=markup, parse_mode='markdown')
 
         elif action == 'use':
             status, text = await use_promo(code, userid, lang)
-            await bot.send_message(userid, text, parse_mode='Markdown')
+            await botworker.send_message(userid, text, parse_mode='Markdown')
     else:
-        await bot.send_message(userid, t('promo_commands.not_found', lang), parse_mode='Markdown')
+        await botworker.send_message(userid, t('promo_commands.not_found', lang), parse_mode='Markdown')
 
-@bot.message(commands=['link_promo'])
+@bot.message(Command(commands=['link_promo']))
 @HDMessage
 async def link_promo(message):
     user = message.from_user
@@ -210,13 +220,13 @@ async def link_promo(message):
                     }
 
                     markup_inline = list_to_inline([but])
-                    await bot.edit_message_reply_markup(fw_chat_id, fw_ms_id, reply_markup=markup_inline)
-                    await bot.send_message(user.id, text_dict['create'])
+                    await botworker.edit_message_reply_markup(None, fw_chat_id, fw_ms_id, reply_markup=markup_inline)
+                    await botworker.send_message(user.id, text_dict['create'])
 
             else:
-                await bot.send_message(user.id, text_dict['not_found'])
+                await botworker.send_message(user.id, text_dict['not_found'])
 
-@bot.message(commands=['add_premium'], is_admin=True)
+@bot.message(Command(commands=['add_premium'], IsAdminUser()))
 @HDMessage
 async def add_premium(message):
     """
@@ -234,9 +244,9 @@ async def add_premium(message):
     else: userid = message.from_user.id
 
     await award_premium(userid, tt)
-    await bot.send_message(message.from_user.id, 'ok')
+    await botworker.send_message(message.from_user.id, 'ok')
     
-@bot.message(commands=['copy_m'], is_admin=True)
+@bot.message(Command(commands=['copy_m'], IsAdminUser()))
 @HDMessage
 async def copy_m(message):
 
@@ -260,7 +270,7 @@ async def copy_m(message):
 
     fw_reply = fw.reply_markup
 
-    await bot.copy_message(chatid, fw_chat_id, fw_ms_id, reply_markup=fw_reply)
+    await botworker.copy_message(chatid, fw_chat_id, fw_ms_id, reply_markup=fw_reply)
 
     trs_data = {
         'forward_chat': fw_chat_id,
@@ -274,7 +284,7 @@ async def copy_m(message):
     users_sends = await langs.find({'lang': arg_list[0]}, comment='copy_m_users_sends')
 
     await ChooseConfirmState(confirm_send, userid, chatid, lang, True, trs_data)
-    await bot.send_message(chatid, f"Confirm the newsletter for {len(users_sends)} users with language {arg_list[0]}", reply_markup=confirm_markup(lang))
+    await botworker.send_message(chatid, f"Confirm the newsletter for {len(users_sends)} users with language {arg_list[0]}", reply_markup=confirm_markup(lang))
 
 async def confirm_send(_, transmitted_data: dict):
     forward_chat = transmitted_data['forward_chat']
@@ -285,7 +295,7 @@ async def confirm_send(_, transmitted_data: dict):
     start_chat = transmitted_data['start_chat']
     start_lang = transmitted_data['start_lang']
     
-    await bot.send_message(start_chat, f"🍡", reply_markup=await m(start_chat, 'last_menu', start_lang))
+    await botworker.send_message(start_chat, f"🍡", reply_markup=await m(start_chat, 'last_menu', start_lang))
 
     users_sends = await langs.find({'lang': to_lang}, comment='confirm_send_users_sends')
     start_time = time()
@@ -293,24 +303,24 @@ async def confirm_send(_, transmitted_data: dict):
 
     for user in users_sends:
         try:
-            await bot.copy_message(user['userid'], forward_chat, forward_message, reply_markup=markup)
+            await botworker.copy_message(user['userid'], forward_chat, forward_message, reply_markup=markup)
             col += 1
         except:
             await sleep(0.1)
             try:
-                await bot.copy_message(user['userid'], forward_chat, forward_message, reply_markup=markup)
+                await botworker.copy_message(user['userid'], forward_chat, forward_message, reply_markup=markup)
                 col += 1
             except:
                 await sleep(0.3)
                 try:
-                    await bot.copy_message(user['userid'], forward_chat, forward_message, reply_markup=markup)
+                    await botworker.copy_message(user['userid'], forward_chat, forward_message, reply_markup=markup)
                     col += 1
                 except Exception as e:
                     log(f'[copy_m] error: {e}', 2) 
 
-    await bot.send_message(start_chat, f"Completed in {round(time() - start_time, 2)}, sent for {col} / {len(users_sends)}")
+    await botworker.send_message(start_chat, f"Completed in {round(time() - start_time, 2)}, sent for {col} / {len(users_sends)}")
 
-@bot.message(commands=['eval'], is_admin=True)
+@bot.message(Command(commands=['eval']), IsAdminUser())
 @HDMessage
 async def evaling(message):
 
@@ -325,11 +335,11 @@ async def evaling(message):
 
     log(f"userid: {message.from_user.id} command: {text} result: {result}", 4)
     try:
-        await bot.send_message(message.from_user.id, result)
+        await botworker.send_message(message.from_user.id, result)
     except:
-        await bot.send_message(message.from_user.id, 'moretext')
+        await botworker.send_message(message.from_user.id, 'moretext')
 
-@bot.message(commands=['get_username'], is_admin=True)
+@bot.message(Command(commands=['get_username']), IsAdminUser())
 @HDMessage
 async def get_username(message):
     """
@@ -338,21 +348,21 @@ async def get_username(message):
     msg_args = message.text.split()
 
     try:
-        chat_user = await bot.get_chat_member(msg_args[1], msg_args[1])
+        chat_user = await botworker.get_chat_member(msg_args[1], msg_args[1])
         user = chat_user.user
     except: user = None
 
     if user:
-        await bot.send_message(message.from_user.id, user_name(user))
-        await bot.send_message(message.from_user.id, str(user).replace("'", ''))
+        await botworker.send_message(message.from_user.id, user_name(user))
+        await botworker.send_message(message.from_user.id, str(user).replace("'", ''))
     else:
-        await bot.send_message(message.from_user.id, "nouser")
+        await botworker.send_message(message.from_user.id, "nouser")
 
-@bot.message(commands=['log'], is_admin=True)
+@bot.message(Command(commands=['log']), IsAdminUser())
 @HDMessage
 async def get_log(message):
     error_text = ''
     for i in range(len(latest_errors)):
         error_text += f'{i+1}) `{latest_errors[i]}`\n'
     
-    await bot.send_message(message.from_user.id, error_text, parse_mode='Markdown')
+    await botworker.send_message(message.from_user.id, error_text, parse_mode='Markdown')

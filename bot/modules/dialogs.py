@@ -97,7 +97,7 @@ async def dead_last_dino(userid: int, name: str, lang: str,
                     buttons[f'🥚 {i+1}'] = f'item egg {code} {eggs[i]}'
                 buttons = list_to_inline([buttons])
 
-                await bot.send_photo(userid, image, 
+                await botworker.send_photo(userid, image, 
                                     t('item_use.egg.egg_answer', lang), 
                                     parse_mode='Markdown', reply_markup=buttons)
 

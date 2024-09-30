@@ -13,8 +13,8 @@ from aiogram.types import CallbackQuery, Message
 
 management = DBconstructor(mongo_client.other.management)
 
-@bot.message(text='commands_name.profile.information', 
-                     is_authorized=True, private=True)
+@bot.message(Text('commands_name.profile.information', 
+                     IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def infouser(message: Message):
     userid = message.from_user.id
@@ -25,11 +25,11 @@ async def infouser(message: Message):
     photos = await bot.get_user_profile_photos(userid, limit=1)
     if photos.photos:
         photo_id = photos.photos[0][0].file_id #type: ignore
-        await bot.send_photo(chatid, photo_id, text, parse_mode='Markdown')
+        await botworker.send_photo(chatid, photo_id, text, parse_mode='Markdown')
     else:
-        await bot.send_message(message.chat.id, text, parse_mode='Markdown')
+        await botworker.send_message(message.chat.id, text, parse_mode='Markdown')
 
-@bot.message(commands=['profile'], is_authorized=True, private=True)
+@bot.message(Command(commands=['profile'], IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def infouser_com(message: Message):
     userid = message.from_user.id
@@ -40,12 +40,12 @@ async def infouser_com(message: Message):
     photos = await bot.get_user_profile_photos(userid, limit=1)
     if photos.photos:
         photo_id = photos.photos[0][0].file_id #type: ignore
-        await bot.send_photo(chatid, photo_id, text, parse_mode='Markdown')
+        await botworker.send_photo(chatid, photo_id, text, parse_mode='Markdown')
     else:
-        await bot.send_message(message.chat.id, text, parse_mode='Markdown')
+        await botworker.send_message(message.chat.id, text, parse_mode='Markdown')
 
-@bot.message(text='commands_name.profile.rayting', 
-                     is_authorized=True, private=True)
+@bot.message(Text('commands_name.profile.rayting', 
+                     IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def rayting(message: Message):
     chatid = message.chat.id
@@ -58,7 +58,7 @@ async def rayting(message: Message):
         if t_upd['time'] == 0:
 
             text = t("rayting.no_rayting", lang)
-            await bot.send_message(chatid, text)
+            await botworker.send_message(chatid, text)
         else:
             text = f'{t("rayting.info", lang)}\n_{time_update_rayt}_'
             text_data = get_data('rayting', lang)
@@ -68,7 +68,7 @@ async def rayting(message: Message):
                 buttons[text_data[i]] = f'rayting {i}'
 
             markup = list_to_inline([buttons])
-            await bot.send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
+            await botworker.send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
 
 @bot.callback_query(F.data.startswith('rayting'))
 @HDCallback
@@ -103,7 +103,7 @@ async def rayting_call(callback: CallbackQuery):
             if user == top_10[-1]: sign = '*└*'
 
             try:
-                chat_user = await bot.get_chat_member(user['userid'], 
+                chat_user = await botworker.get_chat_member(user['userid'], 
                                                       user['userid'])
                 name = escape_markdown(user_name(chat_user.user, False))
             except: name = str(user['userid'])
@@ -125,6 +125,6 @@ async def rayting_call(callback: CallbackQuery):
             markup = list_to_inline(buttons)
 
         try:
-            await bot.edit_message_text(text, chatid, callback.message.id, parse_mode='Markdown', reply_markup=markup)
+            await botworker.edit_message_text(text, chatid, callback.message.id, parse_mode='Markdown', reply_markup=markup)
         except Exception as e:
             log(message=f'Rayting edit error {e}', lvl=2)

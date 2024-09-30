@@ -392,7 +392,7 @@ async def experience_enhancement(userid: int, xp: int):
         xp = user['xp'] + xp
 
         try:
-            chat_user = await bot.get_chat_member(userid, userid)
+            chat_user = await botworker.get_chat_member(userid, userid)
             lang = await get_lang(chat_user.user.id)
             name = user_name(chat_user.user)
         except: 
@@ -566,7 +566,7 @@ async def count_inventory_items(userid: int, find_type: list):
 async def user_in_chat(userid: int, chatid: int):
     statuss = ['creator', 'administrator', 'member']
     try:
-        result = await bot.get_chat_member(chat_id=chatid, user_id=userid)
+        result = await botworker.get_chat_member(chat_id=chatid, user_id=userid)
     except Exception as e: return False
 
     if result.status in statuss: return result.status

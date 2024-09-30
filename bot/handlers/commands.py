@@ -1,7 +1,7 @@
 from email import message
 from bot.modules.localization import get_data
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import bot, botworker
 from bot.handlers.start import start_game
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, user_name
 from bot.modules.decorators import HDCallback, HDMessage
@@ -12,10 +12,20 @@ from bot.modules.managment.promo import use_promo
 from aiogram.types import Message, CallbackQuery
 from bot.config import conf
 
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command
+
 users = DBconstructor(mongo_client.user.users)
 puhs = DBconstructor(mongo_client.market.puhs)
 
-@bot.message(commands=['timer'])
+@bot.message(Command(commands=['timer']))
 @HDMessage
 async def timer(message: Message):
     chatid = message.chat.id
@@ -31,9 +41,9 @@ async def timer(message: Message):
         try:
             text = seconds_to_str(int(num), lang, mini, max_lvl)
         except: text = 'error'
-        await bot.send_message(chatid, text)
+        await botworker.send_message(chatid, text)
 
-@bot.message(commands=['string_to_sec'], private=True)
+@bot.message(Command(commands=['string_to_sec']), IsPrivateChat())
 @HDMessage
 async def string_time(message):
     txt = message.text.replace('/string_to_sec', '')
@@ -42,30 +52,30 @@ async def string_time(message):
 
     if txt == '':
         text = t('string_to_str.info', lang)
-        await bot.send_message(chatid, text, parse_mode='Markdown')
+        await botworker.send_message(chatid, text, parse_mode='Markdown')
     else:
         sec = str_to_seconds(txt)
-        await bot.send_message(chatid, str(sec))
+        await botworker.send_message(chatid, str(sec))
 
-@bot.message(commands=['pushinfo'])
+@bot.message(Command(commands=['pushinfo']))
 @HDMessage
 async def push_info(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
 
     text = t('push.push_info', lang)
-    await bot.send_message(chatid, text, parse_mode='Markdown')
+    await botworker.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.message(commands=['delete_push'])
+@bot.message(Command(commands=['delete_push']))
 @HDMessage
 async def delete_push(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
 
     await puhs.delete_one({'owner_id': userid}, comment='delete_push')
-    await bot.send_message(chatid, '👍', parse_mode='Markdown')
+    await botworker.send_message(chatid, '👍', parse_mode='Markdown')
 
-@bot.message(commands=['add_me'], private=False)
+@bot.message(Command(commands=['add_me'], private=False))
 @HDMessage
 async def add_me_с(message: Message):
     userid = message.from_user.id
@@ -77,7 +87,7 @@ async def add_me_с(message: Message):
                     reply_markup=inline_menu('send_request', lang, userid=userid)
                     )
 
-@bot.message(commands=['promo'])
+@bot.message(Command(commands=['promo']))
 @HDMessage
 async def promo(message: Message):
     userid = message.from_user.id
@@ -90,11 +100,11 @@ async def promo(message: Message):
         user = await users.find_one({'userid': userid}, comment='promo_user')
         if user:
             status, text = await use_promo(code, userid, lang)
-            await bot.send_message(chatid, text, parse_mode='Markdown')
+            await botworker.send_message(chatid, text, parse_mode='Markdown')
         else:
             await start_game(message, code, 'promo')
 
-@bot.message(commands=['help'])
+@bot.message(Command(commands=['help']))
 @HDMessage
 async def help(message: Message):
     lang = await get_lang(message.from_user.id)
@@ -102,10 +112,10 @@ async def help(message: Message):
     userid = message.from_user.id
 
     text, inl_m = await help_generate(userid, message.chat.type, 1, lang)
-    await bot.send_message(chatid, text, parse_mode='HTML', 
+    await botworker.send_message(chatid, text, parse_mode='HTML', 
                            reply_markup=inl_m)
 
-@bot.callback_query(F.data.startswith('help'), private=True)
+@bot.callback_query(F.data.startswith('help'), IsPrivateChat())
 @HDCallback
 async def kindergarten(call: CallbackQuery):
     split_d = call.data.split()
@@ -115,9 +125,9 @@ async def kindergarten(call: CallbackQuery):
 
     text, inl_m = await help_generate(userid, call.message.chat.type, page)
     try:
-        await bot.edit_message_text(text, chatid, call.message.id, parse_mode='HTML', reply_markup=inl_m)
+        await botworker.edit_message_text(text, chatid, call.message.id, parse_mode='HTML', reply_markup=inl_m)
     except:
-        await bot.send_message(chatid, text, parse_mode='HTML', 
+        await botworker.send_message(chatid, text, parse_mode='HTML', 
                            reply_markup=inl_m)
 
 async def help_generate(userid: int, chat_type: str, page: int, lang = None):

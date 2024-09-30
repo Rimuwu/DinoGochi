@@ -52,7 +52,7 @@ async def track_info(code: str, lang: str):
             data = res['links'][code]
             text_data = get_data('track', lang)
 
-            iambot = await bot.get_me()
+            iambot = await botworker.get_me()
             bot_name = iambot.username
 
             tt = seconds_to_str(int(time()) - data['start'], lang)

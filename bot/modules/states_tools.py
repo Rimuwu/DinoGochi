@@ -1,7 +1,7 @@
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import InlineKeyboardMarkup
 
-from bot.exec import bot
+from bot.exec import botworker
 from bot.modules.data_format import (chunk_pages, list_to_inline,
                                      list_to_keyboard)
 from bot.modules.images import async_open
@@ -59,7 +59,7 @@ async def ChooseDinoState(function, userid: int, chatid: int,
 
     if ret_data['case'] == 0:
         if send_error:
-            await bot.send_message(chatid, 
+            await botworker.send_message(chatid, 
                 t('css.no_dino', lang),
                 reply_markup= await m(userid, 'last_menu', lang))
         return False, 'cancel'
@@ -77,7 +77,7 @@ async def ChooseDinoState(function, userid: int, chatid: int,
             data['dino_names'] = ret_data['data_names']
             data['transmitted_data'] = transmitted_data
 
-        await bot.send_message(chatid, t('css.dino', lang), reply_markup=ret_data['keyboard'])
+        await botworker.send_message(chatid, t('css.dino', lang), reply_markup=ret_data['keyboard'])
         return True, 'dino'
 
     else: return False, 'error'
@@ -263,7 +263,7 @@ async def update_page(pages: list, page: int, chat_id: int, lang: str):
     keyboard = list_to_keyboard(pages[page])
     keyboard = down_menu(keyboard, len(pages) > 1, lang)
 
-    await bot.send_message(chat_id, t('optionplus.update_page', lang), reply_markup=keyboard)
+    await botworker.send_message(chat_id, t('optionplus.update_page', lang), reply_markup=keyboard)
 
 async def ChoosePagesState(function, userid: int, 
                          chatid: int, lang: str,
@@ -348,9 +348,9 @@ async def friend_handler(friend, transmitted_data: dict):
     photos = await bot.get_user_profile_photos(friend.id, limit=1)
     if photos.photos:
         photo_id = photos.photos[0][0].file_id #type: ignore
-        await bot.send_photo(chatid, photo_id, text, parse_mode='Markdown', reply_markup=markup)
+        await botworker.send_photo(chatid, photo_id, text, parse_mode='Markdown', reply_markup=markup)
     else:
-        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+        await botworker.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
 async def start_friend_menu(function, 
                 userid: int, chatid: int, lang: str, 
@@ -364,7 +364,7 @@ async def start_friend_menu(function,
 
     for friend_id in friends:
         try:
-            chat_user = await bot.get_chat_member(friend_id, friend_id)
+            chat_user = await botworker.get_chat_member(friend_id, friend_id)
             friend = chat_user.user
         except: friend = None
         await sleep(0.1)
@@ -536,13 +536,13 @@ async def next_step(answer, transmitted_data: dict, start: bool=False):
 
         if steps[transmitted_data['process'] - 1]['type'] == 'inline':
             if 'delete_markup' in last_step and last_step['delete_markup']:
-                await bot.edit_message_reply_markup(chatid, last_step['messageid'], reply_markup=InlineKeyboardMarkup())
+                await botworker.edit_message_reply_markup(None, chatid, last_step['messageid'], reply_markup=InlineKeyboardMarkup())
 
         if 'delete_message' in last_step and last_step['delete_message']:
-            await bot.delete_message(chatid, last_step['bmessageid'])
+            await botworker.delete_message(chatid, last_step['bmessageid'])
 
         if 'delete_user_message' in last_step and last_step['delete_user_message']:
-            await bot.delete_message(chatid, last_step['umessageid'])
+            await botworker.delete_message(chatid, last_step['umessageid'])
 
     if transmitted_data['process'] < len(steps): #Получение данных по очереди
         ret_data = steps[transmitted_data['process']]
@@ -610,24 +610,24 @@ async def next_step(answer, transmitted_data: dict, start: bool=False):
 
                 if edit_message and transmitted_data['process'] != 0 and last_message:
                     if 'image' in steps[0] or 'caption' in ret_data['message']:
-                        await bot.edit_message_caption(
+                        await botworker.edit_message_caption(
                             chat_id=chatid, message_id=last_message.id,
                             parse_mode='Markdown', **ret_data['message'])
                     else:
-                        await bot.edit_message_text(
+                        await botworker.edit_message_text(
                             chat_id=chatid, message_id=last_message.id, parse_mode='Markdown', **ret_data['message'])
                     bmessage = last_message.id
                 else:
                     if 'image' in ret_data:
                         photo = await async_open(ret_data['image'], True)
 
-                        bmessage = await bot.send_photo(chatid, photo=photo, parse_mode='Markdown', **ret_data['message'])
+                        bmessage = await botworker.send_photo(chatid, photo=photo, parse_mode='Markdown', **ret_data['message'])
                     else:
                         if 'text' in ret_data['message']:
                             try:
-                                bmessage = await bot.send_message(chatid, parse_mode='Markdown', **ret_data['message'])
+                                bmessage = await botworker.send_message(chatid, parse_mode='Markdown', **ret_data['message'])
                             except:
-                                bmessage = await bot.send_message(chatid, **ret_data['message'])
+                                bmessage = await botworker.send_message(chatid, **ret_data['message'])
                             ret_data['bmessageid'] = bmessage.id
 
         # Обновление данных состояния

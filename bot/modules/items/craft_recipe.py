@@ -137,7 +137,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
             inv = await get_inventory_from_i(userid, find_items, one_count=True)
 
             if not inv:
-                await bot.send_message(chatid, 
+                await botworker.send_message(chatid, 
                     t('item_use.recipe.not_choosed', lang), 
                     parse_mode='Markdown', 
                     reply_markup=await markups_menu(userid, 'last_menu', lang))
@@ -310,7 +310,7 @@ async def check_items_in_inventory(materials, item, count,
             )
 
         text = t('item_use.recipe.not_enough_m', lang, materials=', '.join(nt_materials))
-        await bot.send_message(chatid, 
+        await botworker.send_message(chatid, 
                     text, 
                     parse_mode='Markdown', 
                     reply_markup=await markups_menu(userid, 'last_menu', lang))
@@ -344,7 +344,7 @@ async def send_item_info(item: dict, transmitted_data: dict):
     ])
 
     if not image:
-        await bot.send_message(chatid, text, 'Markdown',
+        await botworker.send_message(chatid, text, 'Markdown',
                             reply_markup=markup)
     else:
         await send_SmartPhoto(chatid, image, text, 'Markdown', markup)
@@ -420,7 +420,7 @@ async def check_endurance_and_col(finded_items, count, item,
                 )
 
         text = t('item_use.recipe.not_enough_m', lang, materials=', '.join(nt_materials))
-        await bot.send_message(chatid, 
+        await botworker.send_message(chatid, 
                     text, 
                     parse_mode='Markdown', 
                     reply_markup=await markups_menu(userid, 'last_menu', lang))
@@ -580,12 +580,12 @@ async def end_craft(count, item, userid, chatid, lang, data):
         markup = await markups_menu(userid, 'last_menu', lang)
 
     # Создание сообщения
-    await bot.send_message(chatid, text, parse_mode='Markdown', 
+    await botworker.send_message(chatid, text, parse_mode='Markdown', 
                            reply_markup = markup)
 
     if 'time_craft' in data_item:
         text = t('time_craft.text2', lang,
                  command='/craftlist')
         markup = await markups_menu(userid, 'last_menu', lang)
-        await bot.send_message(chatid, text, parse_mode='Markdown', 
+        await botworker.send_message(chatid, text, parse_mode='Markdown', 
                            reply_markup = markup)

@@ -23,9 +23,9 @@ async def report_message(message: str):
     for id in report_ids:
         if isinstance(id, str):
             channel_id, topic_id = id.split('_', 2)
-            tasks.append(bot.send_message(channel_id, message, parse_mode='Markdown', message_thread_id=int(topic_id)))
+            tasks.append(botworker.send_message(channel_id, message, parse_mode='Markdown', message_thread_id=int(topic_id)))
         else: 
-            tasks.append(bot.send_message(id, message, parse_mode='Markdown'))
+            tasks.append(botworker.send_message(id, message, parse_mode='Markdown'))
 
     await asyncio.gather(*tasks)
 

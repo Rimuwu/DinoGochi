@@ -275,8 +275,8 @@ async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', p
     if custom_url:
         if isinstance(custom_url, str):
             try:
-                file_info = await bot.get_file(custom_url)
-                imageBinaryBytes = await bot.download_file(file_info.file_path)
+                file_info = await botworker.get_file(custom_url)
+                imageBinaryBytes = await botworker.download_file(file_info.file_path)
                 imageStream = io.BytesIO(imageBinaryBytes)
                 img = Image.open(imageStream).resize((900, 350)).convert('RGBA')
             except: custom_url = ''
@@ -424,8 +424,8 @@ async def dino_collecting(dino_id: int, col_type: str):
 
 async def market_image_pst(custom_url, status):
     try:
-        file_info = await bot.get_file(custom_url)
-        imageBinaryBytes = await bot.download_file(file_info.file_path)
+        file_info = await botworker.get_file(custom_url)
+        imageBinaryBytes = await botworker.download_file(file_info.file_path)
         imageStream = io.BytesIO(imageBinaryBytes)
         img = Image.open(imageStream).resize((900, 350), Image.Resampling.LANCZOS).convert('RGBA')
     except: 

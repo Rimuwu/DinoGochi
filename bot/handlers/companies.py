@@ -1,5 +1,5 @@
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import bot, botworker
 from bot.handlers.start import start_game
 from bot.modules.companies import create_company, end_company, generate_message, info
 from bot.modules.data_format import seconds_to_str, str_to_seconds, user_name
@@ -12,11 +12,21 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import ChoosePagesState, ChooseStepState
 from aiogram.types import CallbackQuery, Message
 
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command
+
 users = DBconstructor(mongo_client.user.users)
 companies = DBconstructor(mongo_client.other.companies)
 langs = DBconstructor(mongo_client.user.lang)
 
-@bot.message(is_admin=True, commands=['create_company'])
+@bot.message(IsAdminUser(), Command(commands=['create_company']))
 @HDMessage
 async def create_company_com(message: Message):
     chatid = message.chat.id
@@ -303,9 +313,9 @@ async def end(data, transmitted_data):
     }
 
     await create_company(**return_data)
-    await bot.send_message(chatid, '✅')
+    await botworker.send_message(chatid, '✅')
 
-@bot.message(commands=['companies'], is_admin=True)
+@bot.message(Command(commands=['companies']), IsAdminUser())
 async def companies_c(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
@@ -325,11 +335,11 @@ async def comp_info(com_id, transmitted_data):
     lang = transmitted_data['lang']
 
     text, mrk = await info(com_id, lang)
-    await bot.send_message(
+    await botworker.send_message(
         chatid, text, reply_markup=mrk
     )
 
-@bot.callback_query(F.data.startswith('company_info') , is_authorized=True)
+@bot.callback_query(F.data.startswith('company_info') , IsAuthorizedUser())
 @HDCallback
 async def company_info(callback: CallbackQuery):
     chatid = callback.message.chat.id
@@ -345,13 +355,13 @@ async def company_info(callback: CallbackQuery):
     if c:
         if action == 'delete':
             await end_company(c['_id'])
-            await bot.delete_message(chatid, callback.message.id)
+            await botworker.delete_message(chatid, callback.message.id)
 
         elif action == 'activate':
             await companies.update_one({'_id': c['_id']}, {'$set': {'status': True}})
 
             text, mrk = await info(c['_id'], lang)
-            await bot.edit_message_text(
+            await botworker.edit_message_text(
                 text, chatid, callback.message.id, reply_markup=mrk
             )
 
@@ -359,7 +369,7 @@ async def company_info(callback: CallbackQuery):
             await companies.update_one({'_id': c['_id']}, {'$set': {'status': False}})
 
             text, mrk = await info(c['_id'], lang)
-            await bot.edit_message_text(
+            await botworker.edit_message_text(
                 text, chatid, callback.message.id, reply_markup=mrk
             )
         

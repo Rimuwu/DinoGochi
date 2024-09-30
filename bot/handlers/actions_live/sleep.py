@@ -141,7 +141,7 @@ async def put_to_bed(message: Message):
         await botworker.send_message(userid, t('edit_dino_button.notfouned', lang),
                 reply_markup= await m(userid, 'last_menu', lang))
 
-@bot.message(text='commands_name.actions.awaken')
+@bot.message(Text('commands_name.actions.awaken')
 @HDMessage
 async def awaken(message: Message):
     """Пробуждение динозавра

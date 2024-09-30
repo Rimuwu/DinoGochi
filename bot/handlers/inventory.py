@@ -30,12 +30,12 @@ from aiogram.types import CallbackQuery, Message
 
 async def cancel(message):
     lang = await get_lang(message.from_user.id)
-    await bot.send_message(message.chat.id, "❌", 
+    await botworker.send_message(message.chat.id, "❌", 
           reply_markup= await m(message.from_user.id, 'last_menu', lang))
     await bot.delete_state(message.from_user.id, message.chat.id)
     await bot.reset_data(message.from_user.id,  message.chat.id)
 
-@bot.message(text='commands_name.profile.inventory', is_authorized=True, nothing_state=True, private=True)
+@bot.message(Text('commands_name.profile.inventory', IsAuthorizedUser(), nothing_state=True, IsPrivateChat())
 @HDMessage
 async def open_inventory(message: Message):
     userid = message.from_user.id
@@ -44,7 +44,7 @@ async def open_inventory(message: Message):
 
     await start_inv(None, userid, chatid, lang)
 
-@bot.callback_query(F.data.startswith('inventory_start'), private=True)
+@bot.callback_query(F.data.startswith('inventory_start'), IsPrivateChat())
 @HDCallback
 async def start_callback(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -53,7 +53,7 @@ async def start_callback(call: CallbackQuery):
 
     await start_inv(None, userid, chatid, lang)
 
-@bot.message(state=InventoryStates.Inventory, is_authorized=True, private=True)
+@bot.message(state=InventoryStates.Inventory, IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def inventory(message: Message):
     userid = message.from_user.id
@@ -87,8 +87,8 @@ async def inventory(message: Message):
             data['main_message'] = 0
 
         await swipe_page(userid, chatid)
-        await bot.delete_message(chatid, main_message)
-        await bot.delete_message(chatid, message.message_id)
+        await botworker.delete_message(chatid, main_message)
+        await botworker.delete_message(chatid, message.message_id)
 
     elif content in names:
         if 'inline_func' in settings:
@@ -98,7 +98,7 @@ async def inventory(message: Message):
             await function(items_data[content], transmitted_data)
     else: await cancel(message)
 
-@bot.callback_query(state=InventoryStates.Inventory, F.data.startswith('inventory_menu'), private=True)
+@bot.callback_query(state=InventoryStates.Inventory, F.data.startswith('inventory_menu'), IsPrivateChat())
 @HDCallback
 async def inv_callback(call: CallbackQuery):
     call_data = call.data.split()[1]
@@ -162,9 +162,9 @@ async def inv_callback(call: CallbackQuery):
             data['main_message'] = 0
 
         await swipe_page(userid, chatid)
-        await bot.delete_message(chatid, main_message)
+        await botworker.delete_message(chatid, main_message)
 
-@bot.callback_query(F.data.startswith('item'), private=True)
+@bot.callback_query(F.data.startswith('item'), IsPrivateChat())
 @HDCallback
 async def item_callback(call: CallbackQuery):
     call_data = call.data.split()
@@ -202,7 +202,7 @@ async def item_callback(call: CallbackQuery):
                     i_name = get_name(item['item_id'], lang, item.get('abilities', {}))
 
                     if await RemoveItemFromUser(userid, item['item_id'], 1, preabil):
-                        await bot.send_message(chatid, 
+                        await botworker.send_message(chatid, 
                             t('item_use.egg.incubation', lang, 
                             item_name = i_name, end_time=end_time),  
                             reply_markup= await m(userid, 'last_menu', lang))
@@ -210,16 +210,16 @@ async def item_callback(call: CallbackQuery):
                         await incubation_egg(int(egg_id), userid, item_data['incub_time'], item_data['inc_type'])
 
                         new_text = t('item_use.egg.edit_content', lang)
-                        await bot.edit_message_caption(new_text, chatid, call.message.id, reply_markup=None)
+                        await botworker.edit_message_caption(new_text, chatid, call.message.id, reply_markup=None)
             else:
-                await bot.send_message(chatid, 
+                await botworker.send_message(chatid, 
                         t('item_use.cannot_be_used', lang),  
                           reply_markup= await m(userid, 'last_menu', lang))
         else: print('item_callback', call_data[1])
 
 # Поиск внутри инвентаря
 @bot.callback_query(state=InventoryStates.InventorySearch, 
-                            F.data.startswith('inventory_search'), private=True)
+                            F.data.startswith('inventory_search'), IsPrivateChat())
 @HDCallback
 async def search_callback(call: CallbackQuery):
     call_data = call.data.split()[1]
@@ -231,7 +231,7 @@ async def search_callback(call: CallbackQuery):
         await bot.set_state(userid, InventoryStates.Inventory, chatid)
         await swipe_page(userid, chatid)
 
-@bot.message(state=InventoryStates.InventorySearch, is_authorized=True, private=True)
+@bot.message(state=InventoryStates.InventorySearch, IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def search_message(message: Message):
     userid = message.from_user.id
@@ -267,10 +267,10 @@ async def search_message(message: Message):
             data['items'] = searched
         await swipe_page(userid, chatid)
     else:
-        await bot.send_message(userid, t('inventory.search_null', lang))
+        await botworker.send_message(userid, t('inventory.search_null', lang))
 
 #Фильтры
-@bot.callback_query(state=InventoryStates.InventorySetFilters, F.data.startswith('inventory_filter'), private=True)
+@bot.callback_query(state=InventoryStates.InventorySetFilters, F.data.startswith('inventory_filter'), IsPrivateChat())
 @HDCallback
 async def filter_callback(call: CallbackQuery):
     call_data = call.data.split()
@@ -288,7 +288,7 @@ async def filter_callback(call: CallbackQuery):
             data['settings']['page'] = 0
 
         if 'edited_message' in sett:
-            await bot.delete_message(chatid, sett['edited_message'])
+            await botworker.delete_message(chatid, sett['edited_message'])
 
         new_items = filter_items_data(items, filters, itm_fil)
         pages, _ = await generate(new_items, *sett['view'])
@@ -323,7 +323,7 @@ async def filter_callback(call: CallbackQuery):
 
             await filter_menu(userid, chatid, False)
 
-@bot.callback_query(F.data.startswith('book'), private=True)
+@bot.callback_query(F.data.startswith('book'), IsPrivateChat())
 @HDCallback
 async def book(call: CallbackQuery):
     call_data = call.data.split()
@@ -334,11 +334,11 @@ async def book(call: CallbackQuery):
     page = int(call_data[2])
     text, markup = book_page(book_id, page, lang)
     try:
-        await bot.edit_message_text(text, chatid, call.message.id, reply_markup=markup, parse_mode='Markdown')
+        await botworker.edit_message_text(text, chatid, call.message.id, reply_markup=markup, parse_mode='Markdown')
     except Exception as e: 
         log(message=f'Book edit error {e}', lvl=2)
 
-@bot.callback_query(F.data.startswith('ns_craft'), private=True)
+@bot.callback_query(F.data.startswith('ns_craft'), IsPrivateChat())
 @HDCallback
 async def ns_craft(call: CallbackQuery):
     call_data = call.data.split()
@@ -355,7 +355,7 @@ async def ns_craft(call: CallbackQuery):
         'ns_id': ns_id
     }
     await ChooseIntState(ns_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
-    await bot.send_message(chatid, t('css.wait_count', lang), 
+    await botworker.send_message(chatid, t('css.wait_count', lang), 
                        reply_markup=count_markup(25, lang))
 
 
@@ -429,13 +429,13 @@ async def ns_end(count, transmitted_data: dict):
                 ]
             )
 
-            await bot.send_message(chatid, text, parse_mode='Markdown', 
+            await botworker.send_message(chatid, text, parse_mode='Markdown', 
                            reply_markup = markup)
 
             text = t('time_craft.text2', lang,
                     command='/craftlist')
             markup = await markups_menu(userid, 'last_menu', lang)
-            await bot.send_message(chatid, text, parse_mode='Markdown', 
+            await botworker.send_message(chatid, text, parse_mode='Markdown', 
                             reply_markup = markup)
         
         else:
@@ -456,14 +456,14 @@ async def ns_end(count, transmitted_data: dict):
 
             text = t('ns_craft.create', lang, 
                     items = counts_items(craft_list, lang))
-            await bot.send_message(chatid, text, 
+            await botworker.send_message(chatid, text, 
                             reply_markup = await m(userid, 'last_menu', lang))
     else:
-        await bot.send_message(chatid, t('ns_craft.not_materials', lang),
+        await botworker.send_message(chatid, t('ns_craft.not_materials', lang),
                            reply_markup = await m(userid, 'last_menu', lang))
 
 
-@bot.callback_query(F.data.startswith('buyer'), private=True)
+@bot.callback_query(F.data.startswith('buyer'), IsPrivateChat())
 @HDCallback
 async def buyer(call: CallbackQuery):
     call_data = call.data.split()
@@ -487,7 +487,7 @@ async def buyer(call: CallbackQuery):
     }
     await ChooseIntState(buyer_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
 
-    await bot.send_message(chatid, t('buyer.choose', lang,
+    await botworker.send_message(chatid, t('buyer.choose', lang,
                                  emoji=emoji, one_col=one_col,
                                  price=price), 
                        reply_markup=count_markup(25, lang),
@@ -517,14 +517,14 @@ async def buyer_end(count, transmitted_data: dict):
         await RemoveItemFromUser(userid, item['item_id'], need_col, preabil)
         await take_coins(userid, price, True)
 
-        await bot.send_message(chatid, t('buyer.ok', lang), 
+        await botworker.send_message(chatid, t('buyer.ok', lang), 
                            reply_markup=await m(userid, 'last_menu', lang))
     else:
-        await bot.send_message(chatid, t('buyer.no', lang), 
+        await botworker.send_message(chatid, t('buyer.no', lang), 
                            reply_markup=await m(userid, 'last_menu', lang))
 
 
-@bot.callback_query(state=InventoryStates.Inventory, is_authorized=True, F.data.startswith('inventoryinline'))
+@bot.callback_query(state=InventoryStates.Inventory, IsAuthorizedUser(), F.data.startswith('inventoryinline'))
 @HDCallback
 async def InventoryInline(callback: CallbackQuery):
     code = callback.data.split()

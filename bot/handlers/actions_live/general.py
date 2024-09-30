@@ -80,7 +80,7 @@ async def invite_adp(friend, transmitted_data: dict):
         await botworker.send_message(chatid, t('back_text.actions_menu', lang), 
                        reply_markup= await m(userid, 'last_menu', lang))
 
-@bot.callback_query(F.data.startswith('invite_to_action'), private=True)
+@bot.callback_query(F.data.startswith('invite_to_action'), IsPrivateChat())
 @HDCallback
 async def invite_to_action(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)

@@ -30,7 +30,7 @@ async def got_payment(message: Message):
     payload = message.successful_payment.invoice_payload # Делаем строчку с кодом товара и количеством "dino_ultima#2"
     total_price = message.successful_payment.total_amount
     user_id = message.chat.id
-    chat_user = await bot.get_chat_member(user_id, user_id)
+    chat_user = await botworker.get_chat_member(user_id, user_id)
     processed_donations = OpenDonatData()
 
     message_split = payload.split('#')

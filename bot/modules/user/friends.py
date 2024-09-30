@@ -72,12 +72,12 @@ async def send_action_invite(userid: int, friendid: int, action: str, dino_alt: 
     chat_user, chat2_user = None, None
 
     try:
-        chat_user = await bot.get_chat_member(userid, userid)
+        chat_user = await botworker.get_chat_member(userid, userid)
         username = user_name(chat_user.user)
     except: username = '-'
 
     try:
-        chat2_user = await bot.get_chat_member(friendid, friendid)
+        chat2_user = await botworker.get_chat_member(friendid, friendid)
         friend_lang = await get_lang(chat2_user.user.id)
     except: friend_lang = lang
 
@@ -86,13 +86,13 @@ async def send_action_invite(userid: int, friendid: int, action: str, dino_alt: 
     button = t(f'send_action.{action}.send_button', friend_lang)
     markup = list_to_inline([{button: f'join_to_action {action} {dino_alt} {userid}'}])
     try:
-        await bot.send_message(friendid, send_text, reply_markup=markup)
+        await botworker.send_message(friendid, send_text, reply_markup=markup)
         ok = True
     except: ok = False
 
     if chat2_user and ok:
         for_me = t(f'send_action.{action}.for_me', lang, 
                    friendname=user_name(chat2_user.user))
-        await bot.send_message(userid, for_me)
+        await botworker.send_message(userid, for_me)
     else:
-        await bot.send_message(userid, t('send_action.error', lang))
+        await botworker.send_message(userid, t('send_action.error', lang))

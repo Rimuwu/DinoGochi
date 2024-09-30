@@ -39,7 +39,7 @@ class DungPlayer:
                      inventory:list[dict] = []):
         user = await users.find_one({"userid": user_id}, comment='DungPlayer_create')
         if user:
-            teleuser = await bot.get_chat_member(user_id, user_id)
+            teleuser = await botworker.get_chat_member(user_id, user_id)
 
             self._id = user['_id']
             self.name = user_name(teleuser.user)

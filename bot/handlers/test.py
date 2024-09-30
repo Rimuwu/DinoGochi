@@ -62,7 +62,7 @@ from bson.son import SON
 
 users = mongo_client.user.users
 
-@bot.message(commands=['add_item', 'item_add'], is_admin=True)
+@bot.message(Command(commands=['add_item', 'item_add'], IsAdminUser())
 async def command(message):
     user = message.from_user
     if user.id in conf.bot_devs:
@@ -80,11 +80,11 @@ async def command(message):
             res = await AddItemToUser(ad_user, item_id, col)
             print(res)
 
-            await bot.send_message(message.from_user.id, res)
+            await botworker.send_message(message.from_user.id, res)
     else:
         print(user.id, 'not in devs')
 
-@bot.message(commands=['1xp'], is_admin=True)
+@bot.message(Command(commands=['1xp'], IsAdminUser())
 async def command2(message):
     user = message.from_user
     if user.id in conf.bot_devs:
@@ -93,7 +93,7 @@ async def command2(message):
         print(user.id, 'not in devs')
 
 
-@bot.message(commands=['test_img'], is_admin=True)
+@bot.message(Command(commands=['test_img'], IsAdminUser())
 async def test_img(message):
     user = message.from_user
 
@@ -110,7 +110,7 @@ async def test_img(message):
                         {'heal': 0, 'eat': 0, 'energy': 0, 'game': 0, 'mood': 0}, "leg", 1, 30)
 
         tt = time() - st_t
-        # await bot.send_photo(user.id, res, f"test {i} {tt}")
+        # await botworker.send_photo(user.id, res, f"test {i} {tt}")
         t1_list.append(tt)
     
     t2_list = []
@@ -121,7 +121,7 @@ async def test_img(message):
                         {'heal': 0, 'eat': 0, 'energy': 0, 'game': 0, 'mood': 0}, "leg", 1, 30)
 
         tt = time() - st_t
-        # await bot.send_photo(user.id, res, f"test {i} {tt}")
+        # await botworker.send_photo(user.id, res, f"test {i} {tt}")
         t2_list.append(tt)
  
     
@@ -132,30 +132,30 @@ async def test_img(message):
 
 from bot.modules.dungeon.dungeon import Lobby, DungPlayer
 
-@bot.message(commands=['dung'], is_admin=True)
+@bot.message(Command(commands=['dung'], IsAdminUser())
 async def dung(message):
 
-    m = await bot.send_message(message.from_user.id, "test")
+    m = await botworker.send_message(message.from_user.id, "test")
     lobby = await Lobby().create(message.from_user.id, m.id)
 
     pprint(lobby.__dict__)
 
-@bot.message(commands=['delete'], is_admin=True)
+@bot.message(Command(commands=['delete'], IsAdminUser())
 async def delete(message):
 
     lobby = await Lobby().FromBase(message.from_user.id)
     await lobby.delete
 
-@bot.message(commands=['add_to'], is_admin=True)
+@bot.message(Command(commands=['add_to'], IsAdminUser())
 async def add_to(message):
 
     lobby = await Lobby().FromBase(1191252229)
 
-    m = await bot.send_message(message.from_user.id, "test")
+    m = await botworker.send_message(message.from_user.id, "test")
     player = await DungPlayer().create(message.from_user.id, m.id)
     await lobby.add_player(player, message.from_user.id)
 
-# @bot.message(commands=['test'])
+# @bot.message(Command(commands=['test'])
 # @HDMessage
 # async def test(message: Message):
     
@@ -179,7 +179,7 @@ async def add_to(message):
     
 
 
-@bot.message(commands=['test'])
+@bot.message(Command(commands=['test'])
 @HDMessage
 async def test(message: Message):
     
@@ -191,7 +191,7 @@ async def test(message: Message):
     print(r)
 
 
-@bot.message(commands=['test2'])
+@bot.message(Command(commands=['test2'])
 @HDMessage
 async def test2(message: Message):
     st = time()

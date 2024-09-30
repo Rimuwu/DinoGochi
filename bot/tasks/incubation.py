@@ -28,7 +28,7 @@ async def incubation():
 
         #отправляем уведомление
         try:
-            chat_user = await bot.get_chat_member(egg['owner_id'], egg['owner_id'])
+            chat_user = await botworker.get_chat_member(egg['owner_id'], egg['owner_id'])
             user = chat_user.user
         except: user = None
 

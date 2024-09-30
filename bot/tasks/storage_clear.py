@@ -26,7 +26,7 @@ async def storage_clear():
             if res is None or int(time()) - res['last_message_time'] > 3600:
                 lang = await get_lang(user_key)
                 try:
-                    await bot.send_message(chat_key, '❌', 
+                    await botworker.send_message(chat_key, '❌', 
                         reply_markup= await m(user_key, 'last_menu', lang))
                 except Exception as e:
                     log(f"[storage_clear] Error on send message: {e}", 1)

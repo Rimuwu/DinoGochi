@@ -8,7 +8,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 users = DBconstructor(mongo_client.user.users)
 
 class IsAuthorizedUser(BaseFilter):
-    def __await__(self, status: bool):
+    def __init__(self, status: bool = True):
         self.status: bool = status
 
     async def __call__(self, message: Message) -> bool:

@@ -39,7 +39,7 @@ async def create_adapter(return_data, transmitted_data):
     description = escape_markdown(description)
     await create_seller(userid, name, description)
 
-    await bot.send_message(chatid, t('market_create.create', lang), 
+    await botworker.send_message(chatid, t('market_create.create', lang), 
                            reply_markup= await m(userid, 'seller_menu', lang), parse_mode='Markdown')
 
 async def custom_name(message: Message, transmitted_data):
@@ -54,21 +54,21 @@ async def custom_name(message: Message, transmitted_data):
     name = escape_markdown(content)
 
     if content_len > max_len:
-        await bot.send_message(message.chat.id, 
+        await botworker.send_message(message.chat.id, 
                 t('states.ChooseString.error_max_len', lang,
                 number = content_len, max = max_len))
     elif content_len < min_len:
-        await bot.send_message(message.chat.id, 
+        await botworker.send_message(message.chat.id, 
                 t('states.ChooseString.error_min_len', lang,
                 number = content_len, min = min_len))
     elif await sellers.find_one({'name': name}, comment='custom_name'):
-        await bot.send_message(message.chat.id, 
+        await botworker.send_message(message.chat.id, 
                 t('market_create.name_error', lang))
     else: 
         return True, name
     return False, None
 
-@bot.message(text='commands_name.seller_profile.create_market', is_authorized=True, private=True)
+@bot.message(Text('commands_name.seller_profile.create_market', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def create_market(message: Message):
     userid = message.from_user.id
@@ -79,10 +79,10 @@ async def create_market(message: Message):
     user = await users.find_one({'userid': userid}, comment='create_market_user')
 
     if res or not user:
-        await bot.send_message(message.chat.id, t('menu_text.seller', lang), 
+        await botworker.send_message(message.chat.id, t('menu_text.seller', lang), 
                            reply_markup= await m(userid, 'market_menu', lang))
     elif user['lvl'] < 2:
-        await bot.send_message(message.chat.id, t('market_create.lvl', lang))
+        await botworker.send_message(message.chat.id, t('market_create.lvl', lang))
     else:
         transmitted_data = {}
         steps = [
@@ -107,7 +107,7 @@ async def create_market(message: Message):
                               lang, steps, 
                               transmitted_data=transmitted_data)
 
-@bot.message(text='commands_name.seller_profile.my_market', is_authorized=True, private=True)
+@bot.message(Text('commands_name.seller_profile.my_market', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def my_market(message: Message):
     userid = message.from_user.id
@@ -118,11 +118,11 @@ async def my_market(message: Message):
     if res:
         text, markup, image = await seller_ui(userid, lang, True)
         try:
-            await bot.send_photo(chatid, image, text, parse_mode="Markdown", reply_markup=markup)
+            await botworker.send_photo(chatid, image, text, parse_mode="Markdown", reply_markup=markup)
         except:
-            await bot.send_photo(chatid, image, text, reply_markup=markup, parse_mode=None)
+            await botworker.send_photo(chatid, image, text, reply_markup=markup, parse_mode=None)
 
-@bot.message(text='commands_name.seller_profile.add_product', is_authorized=True, private=True)
+@bot.message(Text('commands_name.seller_profile.add_product', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def add_product_com(message: Message):
     userid = message.from_user.id
@@ -141,10 +141,10 @@ async def add_product_com(message: Message):
         [b_list, t('buttons_name.cancel', lang)], 2
     )
 
-    await bot.send_message(chatid, t('add_product.options_info', lang), reply_markup=markup)
+    await botworker.send_message(chatid, t('add_product.options_info', lang), reply_markup=markup)
     await ChooseOptionState(prepare_data_option, userid, chatid, lang, options)
 
-@bot.message(text='commands_name.seller_profile.my_products', is_authorized=True, private=True)
+@bot.message(Text('commands_name.seller_profile.my_products', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def my_products(message: Message):
     userid = message.from_user.id
@@ -161,12 +161,12 @@ async def my_products(message: Message):
                                 product['type'], lang)
             ] = product['_id']
 
-        await bot.send_message(chatid, t('products.search', lang))
+        await botworker.send_message(chatid, t('products.search', lang))
         await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
     else:
         text = t('no_products', lang)
-        await bot.send_message(chatid, text,  parse_mode='Markdown')
+        await botworker.send_message(chatid, text,  parse_mode='Markdown')
 
 @bot.callback_query(F.data.startswith('product_info'))
 @HDCallback
@@ -183,7 +183,7 @@ async def product_info(call: CallbackQuery):
         if call_type == 'delete':
             if product['owner_id'] == userid:
 
-                await bot.edit_message_reply_markup(chatid, call.message.id, reply_markup=list_to_inline([]))
+                await botworker.edit_message_reply_markup(None, chatid, call.message.id, reply_markup=list_to_inline([]))
 
                 status = await delete_product(None, alt_id)
 
@@ -191,7 +191,7 @@ async def product_info(call: CallbackQuery):
                 else: text = t('product_info.error', lang)
 
                 markup = list_to_inline([])
-                await bot.edit_message_text(text, chatid, call.message.id, reply_markup=markup, parse_mode='Markdown')
+                await botworker.edit_message_text(text, chatid, call.message.id, reply_markup=markup, parse_mode='Markdown')
         else:
             if call_type == 'edit_price' and product['owner_id'] == userid:
                 await prepare_edit_price(userid, chatid, lang, alt_id)
@@ -217,13 +217,13 @@ async def product_info(call: CallbackQuery):
             elif call_type == 'info':
                 text, markup = await product_ui(lang, product['_id'], 
                                           product['owner_id'] == userid)
-                await bot.send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
+                await botworker.send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
 
             elif call_type == 'promotion' and product['owner_id'] == userid:
                 await promotion_prepare(userid, chatid, lang, product['_id'], 
                                         call.message.id)
 
-@bot.callback_query(F.data.startswith('seller'), private=True)
+@bot.callback_query(F.data.startswith('seller'), IsPrivateChat())
 @HDCallback
 async def seller(call: CallbackQuery):
     call_data = call.data.split()
@@ -245,7 +245,7 @@ async def seller(call: CallbackQuery):
         if await premium(userid):
             await pr_edit_image(userid, chatid, lang, call.message.id)
         else:
-            await bot.send_message(chatid, t('no_premium', lang))
+            await botworker.send_message(chatid, t('no_premium', lang))
 
     # Кнопки вызываемые не владельцем
     elif call_type == 'info':
@@ -254,16 +254,16 @@ async def seller(call: CallbackQuery):
         seller = await sellers.find_one({'owner_id': owner_id}, comment='seller_seller')
         if seller:
             try:
-                chat_user = await bot.get_chat_member(seller['owner_id'], 
+                chat_user = await botworker.get_chat_member(seller['owner_id'], 
                                                       seller['owner_id'])
                 name = user_name(chat_user.user)
             except: name = '-'
 
             text, markup, image = await seller_ui(owner_id, lang, my_status, name)
             try:
-                await bot.send_photo(chatid, image, text, parse_mode='Markdown', reply_markup=markup)
+                await botworker.send_photo(chatid, image, text, parse_mode='Markdown', reply_markup=markup)
             except:
-                await bot.send_photo(chatid, image, text, reply_markup=markup)
+                await botworker.send_photo(chatid, image, text, reply_markup=markup)
 
     elif call_type == 'all':
         user_prd = await products.find({'owner_id': owner_id}, comment='seller_user_prd_all')
@@ -275,11 +275,11 @@ async def seller(call: CallbackQuery):
                                 product['type'], lang)
             ] = product['_id']
 
-        await bot.send_message(chatid, t('products.search', lang))
+        await botworker.send_message(chatid, t('products.search', lang))
         await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
 
-@bot.message(text='commands_name.market.random', is_authorized=True, private=True)
+@bot.message(Text('commands_name.market.random', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def random_products(message: Message):
     userid = message.from_user.id
@@ -304,13 +304,13 @@ async def random_products(message: Message):
                     ] = product['_id']
             else: break
 
-        await bot.send_message(chatid, t('products.search', lang))
+        await botworker.send_message(chatid, t('products.search', lang))
         await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
     else:
-        await bot.send_message(chatid, t('products.null', lang))
+        await botworker.send_message(chatid, t('products.null', lang))
 
-@bot.message(text='commands_name.market.find', is_authorized=True, private=True)
+@bot.message(Text('commands_name.market.find', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def find_products(message: Message):
     userid = message.from_user.id
@@ -319,7 +319,7 @@ async def find_products(message: Message):
 
     await find_prepare(userid, chatid, lang)
 
-@bot.callback_query(F.data.startswith('create_push'), private=True)
+@bot.callback_query(F.data.startswith('create_push'), IsPrivateChat())
 @HDCallback
 async def push(call: CallbackQuery):
     call_data = call.data.split()
@@ -339,7 +339,7 @@ async def push(call: CallbackQuery):
         await create_push(userid, channel_id, lang)
         text = t('push.new', lang)
 
-    await bot.send_message(userid, text)
-    await bot.edit_message_reply_markup(chatid, call.message.id, 
+    await botworker.send_message(userid, text)
+    await botworker.edit_message_reply_markup(None, chatid, call.message.id, 
                                         reply_markup=InlineKeyboardMarkup())
     

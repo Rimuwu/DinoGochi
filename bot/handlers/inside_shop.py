@@ -47,7 +47,7 @@ async def page_context(userid, lang):
     rmk = list_to_inline([rmk_data], 2)
     return text, rmk
 
-@bot.message(text='commands_name.dino_tavern.hoarder', is_authorized=True, private=True)
+@bot.message(Text('commands_name.dino_tavern.hoarder', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def hoarder(message: Message):
     lang = await get_lang(message.from_user.id)
@@ -55,10 +55,10 @@ async def hoarder(message: Message):
     userid = message.from_user.id
 
     text, rmk = await page_context(userid, lang)
-    await bot.send_message(message.chat.id, text, parse_mode='Markdown',
+    await botworker.send_message(message.chat.id, text, parse_mode='Markdown',
           reply_markup = rmk)
 
-@bot.callback_query(F.data.startswith('hoarder'), private=True)
+@bot.callback_query(F.data.startswith('hoarder'), IsPrivateChat())
 @HDCallback
 async def hoarder_calb(call: CallbackQuery):
     call_data = call.data.split()
@@ -76,12 +76,12 @@ async def hoarder_calb(call: CallbackQuery):
             'messageid': call.message.id
         }
         await ChooseIntState(buy_item, userid, chatid, lang, max_int=item['count'], autoanswer=False, transmitted_data=transmitted_data)
-        await bot.send_message(chatid, t('inside_shop.count', lang), 
+        await botworker.send_message(chatid, t('inside_shop.count', lang), 
                                parse_mode='Markdown', 
                                reply_markup=count_markup(item['count'], lang))
 
     else:
-        await bot.send_message(chatid, t('inside_shop.no_item', lang), 
+        await botworker.send_message(chatid, t('inside_shop.no_item', lang), 
                                parse_mode='Markdown')
 
 async def buy_item(count, transmitted_data):
@@ -92,9 +92,9 @@ async def buy_item(count, transmitted_data):
     messageid = transmitted_data['messageid']
 
     res = await item_buyed(userid, item, count)
-    await bot.send_message(chatid, t(f'inside_shop.{res}', lang), 
+    await botworker.send_message(chatid, t(f'inside_shop.{res}', lang), 
                                parse_mode='Markdown', reply_markup = await m(userid, 'last_menu', lang))
 
     if res:
         text, rmk = await page_context(userid, lang)
-        await bot.edit_message_text(text, chatid, messageid, reply_markup=rmk, parse_mode='Markdown')
+        await botworker.edit_message_text(text, chatid, messageid, reply_markup=rmk, parse_mode='Markdown')
