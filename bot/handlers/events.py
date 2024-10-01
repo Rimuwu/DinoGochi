@@ -1,5 +1,5 @@
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import bot, botworker
 from bot.modules.data_format import list_to_inline
 from bot.modules.localization import get_lang, t
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -8,7 +8,7 @@ from aiogram.types import ChatMemberUpdated
 
 puhs = DBconstructor(mongo_client.market.puhs)
 
-@bot.my_chat_member_handler()
+@bot.my_chat_member()
 async def my_update(data: ChatMemberUpdated):
     lang = await get_lang(data.from_user.id)
     userid = data.from_user.id

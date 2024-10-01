@@ -125,7 +125,7 @@ async def kindergarten(call: CallbackQuery):
 
     text, inl_m = await help_generate(userid, call.message.chat.type, page)
     try:
-        await botworker.edit_message_text(text, chatid, call.message.id, parse_mode='HTML', reply_markup=inl_m)
+        await botworker.edit_message_text(text, None, chatid, call.message.id, parse_mode='HTML', reply_markup=inl_m)
     except:
         await botworker.send_message(chatid, text, parse_mode='HTML', 
                            reply_markup=inl_m)

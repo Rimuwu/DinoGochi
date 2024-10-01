@@ -1,4 +1,5 @@
 
+from typing import Union
 from bson.objectid import ObjectId
 from bot.dbmanager import mongo_client
 
@@ -14,7 +15,7 @@ kd_activity = DBconstructor(mongo_client.dino_activity.kd_activity)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 item_craft = DBconstructor(mongo_client.items.item_craft)
 
-async def check_status(dino_id):
+async def check_status(dino_id: Union[ObjectId, dict]) -> str:
 
     if isinstance(dino_id, ObjectId):
         dino = await dinosaurs.find_one({'_id': dino_id}, 

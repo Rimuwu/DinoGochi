@@ -213,7 +213,7 @@ async def dino_handler(message: Message):
 @HDCallback
 async def dino_profile_callback(call: types.CallbackQuery):
     dino_data = call.data.split()[1]
-    await botworker.delete_state(call.from_user.id, call.message.chat.id)
+    # await botworker.delete_state(call.from_user.id, call.message.chat.id)
 
 
     userid = call.from_user.id
@@ -361,7 +361,8 @@ async def skills_profile(userid, chatid, dino_data: dict, lang):
         data_skills[i+'_u'] = round(dino.stats[i], 4)
 
     text = t('skills_profile.info', lang, **data_skills)
-    await botworker.send_photo(chatid, image, text, parse_mode='Markdown')
+    await botworker.send_photo(chatid, image,
+                                text, parse_mode='Markdown')
 
 
 async def cnacel_joint(_:bool, transmitted_data:dict):

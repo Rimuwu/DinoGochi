@@ -4,7 +4,7 @@ from aiogram.filters import BaseFilter
 from aiogram.types import CallbackQuery, Message
 
 class NothingState(BaseFilter):
-    def __init__(self, status: bool) -> None:
+    def __init__(self, status: bool = True) -> None:
         self.status: bool = status
 
     async def __call__(self, var: Union[CallbackQuery, Message]):

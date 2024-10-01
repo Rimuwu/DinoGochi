@@ -18,6 +18,7 @@ from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user.user import User, count_inventory_items, max_eat
 from aiogram.types import CallbackQuery, Message
+from aiogram.fsm.context import FSMContext
 
 from bot.filters.translated_text import Text
 from bot.filters.states import NothingState
@@ -77,7 +78,7 @@ async def collecting_adapter(return_data, transmitted_data):
 @bot.message(Text('commands_name.actions.collecting'),
              DinoPassStatus())
 @HDMessage
-async def collecting_button(message: Message):
+async def collecting_button(message: Message, state: FSMContext):
     if message.from_user:
         userid = message.from_user.id
         chatid = message.chat.id
@@ -113,7 +114,7 @@ async def collecting_button(message: Message):
                         'reply_markup': count_markup(max_count, lang)}
                     }
                 ]
-                await ChooseStepState(collecting_adapter, userid, chatid, 
+                await ChooseStepState(collecting_adapter, state, userid, chatid, 
                                             lang, steps, 
                                         transmitted_data={'dino': last_dino, 'delete_steps': True})
 

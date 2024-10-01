@@ -120,7 +120,7 @@ async def send_dino_to_craft(dino: Dino, transmitted_data: dict):
                 'lang': lang
             }
             info, mrk = await info_craft(alt_code, transmitted_data) # type: ignore
-            await botworker.edit_message_text(info, chatid, ms_id, reply_markup=mrk, parse_mode='Markdown')
+            await botworker.edit_message_text(info, None, chatid, ms_id, reply_markup=mrk, parse_mode='Markdown')
 
             await botworker.send_message(chatid, text, parse_mode='Markdown',
                                 reply_markup=await m(userid, 'last_menu', lang))

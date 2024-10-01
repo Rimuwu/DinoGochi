@@ -41,4 +41,4 @@ async def dialog(callback: CallbackQuery):
                 content = text
             else:  content = str(message.text) + '\n\n' + text
 
-            await botworker.edit_message_text(content, chatid, message.id, reply_markup=markup, parse_mode='Markdown')
+            await botworker.edit_message_text(content, None, chatid, message.id, reply_markup=markup, parse_mode='Markdown')

@@ -5,7 +5,7 @@ from time import time
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
-from bot.exec import bot
+from bot.exec import bot, botworker
 from bot.handlers.states import ChooseInt
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
@@ -25,6 +25,16 @@ from bot.modules.user.user import (AddItemToUser, check_name, daily_award_con,
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message)
 from bot.modules.markup import markups_menu as m
+
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command
 
 inside_shop = DBconstructor(mongo_client.tavern.inside_shop)
 
@@ -47,7 +57,7 @@ async def page_context(userid, lang):
     rmk = list_to_inline([rmk_data], 2)
     return text, rmk
 
-@bot.message(Text('commands_name.dino_tavern.hoarder', IsAuthorizedUser(), IsPrivateChat())
+@bot.message(Text('commands_name.dino_tavern.hoarder'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def hoarder(message: Message):
     lang = await get_lang(message.from_user.id)
@@ -97,4 +107,4 @@ async def buy_item(count, transmitted_data):
 
     if res:
         text, rmk = await page_context(userid, lang)
-        await botworker.edit_message_text(text, chatid, messageid, reply_markup=rmk, parse_mode='Markdown')
+        await botworker.edit_message_text(text, None, chatid, messageid, reply_markup=rmk, parse_mode='Markdown')

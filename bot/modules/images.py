@@ -487,4 +487,4 @@ async def create_skill_image(dino_id, age, lang, chars: dict):
 
         img = await trans_paste(bar, img, 1, (450, bar_position[char]) )
 
-    return img
+    return pil_image_to_file(img, quality='maximum')

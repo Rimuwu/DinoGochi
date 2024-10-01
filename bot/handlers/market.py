@@ -191,7 +191,7 @@ async def product_info(call: CallbackQuery):
                 else: text = t('product_info.error', lang)
 
                 markup = list_to_inline([])
-                await botworker.edit_message_text(text, chatid, call.message.id, reply_markup=markup, parse_mode='Markdown')
+                await botworker.edit_message_text(text, None, chatid, call.message.id, reply_markup=markup, parse_mode='Markdown')
         else:
             if call_type == 'edit_price' and product['owner_id'] == userid:
                 await prepare_edit_price(userid, chatid, lang, alt_id)

@@ -264,7 +264,7 @@ async def end_buy(unit: int, transmitted_data: dict):
     if status:
         text, markup = await product_ui(lang, pid, False)
         try:
-            await botworker.edit_message_text(text, chatid, messageid, reply_markup=markup, parse_mode='Markdown')
+            await botworker.edit_message_text(text, None, chatid, messageid, reply_markup=markup, parse_mode='Markdown')
         except:
             await botworker.delete_message(chatid, messageid)
 

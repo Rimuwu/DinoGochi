@@ -362,7 +362,7 @@ async def company_info(callback: CallbackQuery):
 
             text, mrk = await info(c['_id'], lang)
             await botworker.edit_message_text(
-                text, chatid, callback.message.id, reply_markup=mrk
+                text, None, chatid, callback.message.id, reply_markup=mrk
             )
 
         elif action == 'stop':
@@ -370,9 +370,9 @@ async def company_info(callback: CallbackQuery):
 
             text, mrk = await info(c['_id'], lang)
             await botworker.edit_message_text(
-                text, chatid, callback.message.id, reply_markup=mrk
+                text, None, chatid, callback.message.id, reply_markup=mrk
             )
-        
+
         elif action == 'message':
             langs = c['message'].keys()
             

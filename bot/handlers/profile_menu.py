@@ -125,6 +125,6 @@ async def rayting_call(callback: CallbackQuery):
             markup = list_to_inline(buttons)
 
         try:
-            await botworker.edit_message_text(text, chatid, callback.message.id, parse_mode='Markdown', reply_markup=markup)
+            await botworker.edit_message_text(text, None, chatid, callback.message.id, parse_mode='Markdown', reply_markup=markup)
         except Exception as e:
             log(message=f'Rayting edit error {e}', lvl=2)

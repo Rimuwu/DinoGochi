@@ -1,8 +1,9 @@
 
 from asyncio import sleep
+from typing import Union
 
 from bot.const import GAME_SETTINGS
-from bot.exec import bot
+from bot.exec import bot, botworker
 from bot.modules.data_format import list_to_inline, seconds_to_str, user_name
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import incubation_egg
@@ -27,15 +28,27 @@ from bot.modules.user.user import User, take_coins
 from fuzzywuzzy import fuzz
 from aiogram.types import CallbackQuery, Message
 
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command, StateFilter
 
-async def cancel(message):
+from aiogram.fsm.context import FSMContext
+
+
+async def cancel(message, state: Union[FSMContext, None] = None):
     lang = await get_lang(message.from_user.id)
     await botworker.send_message(message.chat.id, "❌", 
           reply_markup= await m(message.from_user.id, 'last_menu', lang))
-    await bot.delete_state(message.from_user.id, message.chat.id)
-    await bot.reset_data(message.from_user.id,  message.chat.id)
 
-@bot.message(Text('commands_name.profile.inventory', IsAuthorizedUser(), nothing_state=True, IsPrivateChat())
+    if state: await state.clear()
+
+@bot.message(Text('commands_name.profile.inventory'), IsAuthorizedUser(), NothingState(), IsPrivateChat())
 @HDMessage
 async def open_inventory(message: Message):
     userid = message.from_user.id
@@ -53,14 +66,14 @@ async def start_callback(call: CallbackQuery):
 
     await start_inv(None, userid, chatid, lang)
 
-@bot.message(state=InventoryStates.Inventory, IsAuthorizedUser(), IsPrivateChat())
+@bot.message(StateFilter(InventoryStates.Inventory), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def inventory(message: Message):
+async def inventory(message: Message, state: FSMContext):
     userid = message.from_user.id
     chatid = message.chat.id
     content = message.text
 
-    async with bot.retrieve_data(userid, chatid) as data:
+    if data := await state.get_data():
         pages = data['pages']
         items_data = data['items_data']
         page = data['settings']['page']
@@ -82,9 +95,7 @@ async def inventory(message: Message):
             if page >= len(pages) - 1: page = 0
             else: page += 1
 
-        async with bot.retrieve_data(userid, chatid) as data: 
-            data['settings']['page'] = page
-            data['main_message'] = 0
+        await state.update_data(page=page, main_message=0)
 
         await swipe_page(userid, chatid)
         await botworker.delete_message(chatid, main_message)
@@ -98,14 +109,14 @@ async def inventory(message: Message):
             await function(items_data[content], transmitted_data)
     else: await cancel(message)
 
-@bot.callback_query(state=InventoryStates.Inventory, F.data.startswith('inventory_menu'), IsPrivateChat())
+@bot.callback_query(StateFilter(InventoryStates.Inventory), F.data.startswith('inventory_menu'), IsPrivateChat())
 @HDCallback
-async def inv_callback(call: CallbackQuery):
+async def inv_callback(call: CallbackQuery, state: FSMContext):
     call_data = call.data.split()[1]
     chatid = call.message.chat.id
     userid = call.from_user.id
 
-    async with bot.retrieve_data(userid, chatid) as data:
+    if data := await state.get_data():
         changing_filter = data['settings']['changing_filters']
         sett = data['settings']
         items = data['items_data']
@@ -113,6 +124,7 @@ async def inv_callback(call: CallbackQuery):
     if call_data == 'search' and changing_filter:
         # Активирует поиск
         if not ('delete_search' in data['settings'] and data['settings']['delete_search']):
+            
             await bot.set_state(userid, InventoryStates.InventorySearch, chatid)
             await search_menu(userid, chatid)
 
@@ -334,7 +346,7 @@ async def book(call: CallbackQuery):
     page = int(call_data[2])
     text, markup = book_page(book_id, page, lang)
     try:
-        await botworker.edit_message_text(text, chatid, call.message.id, reply_markup=markup, parse_mode='Markdown')
+        await botworker.edit_message_text(text, None, chatid, call.message.id, reply_markup=markup, parse_mode='Markdown')
     except Exception as e: 
         log(message=f'Book edit error {e}', lvl=2)
 

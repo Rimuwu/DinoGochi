@@ -12,7 +12,7 @@ from bot.modules.decorators import HDCallback, HDMessage
 async def delete_message(call: types.CallbackQuery):
     chatid = call.message.chat.id
     await botworker.delete_message(chatid, call.message.id)
-    await bot.answer_callback_query(call.id, "🗑")
+    await botworker.answer_callback_query(call.id, "🗑")
 
 @bot.callback_query(func=lambda call: call.data == ' ')
 @HDCallback

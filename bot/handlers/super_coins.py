@@ -62,7 +62,7 @@ async def super_coins(call: CallbackQuery):
                                ))
         markup = list_to_inline([inl_buttons], 2)
 
-        await botworker.edit_message_text(text, chatid, call.message.id,
+        await botworker.edit_message_text(text, None, chatid, call.message.id,
                                     reply_markup=markup)
 
     elif code == "products":
@@ -83,7 +83,7 @@ async def super_coins(call: CallbackQuery):
             {t('buttons_name.back',lang): 'super_shop back'})
 
         markup = list_to_inline(mrk_list, 2)
-        await botworker.edit_message_text(text, chatid, call.message.id,
+        await botworker.edit_message_text(text, None, chatid, call.message.id,
                                     reply_markup=markup, parse_mode='Markdown')
 
 @bot.callback_query(F.data.startswith('ads_limit'), IsPrivateChat())
@@ -108,7 +108,7 @@ async def ads_limit(call: CallbackQuery):
         await ads.update_one({'userid': user_id}, {"$set": {'limit': limit}}, comment='ads_limit_limit')
 
     text, markup = await main_message(user_id)
-    await botworker.edit_message_text(text, chatid, call.message.id,
+    await botworker.edit_message_text(text, None, chatid, call.message.id,
                                     reply_markup=markup, parse_mode="Markdown")
 
 @bot.callback_query(F.data.startswith('super_shop'), IsPrivateChat())
@@ -122,7 +122,7 @@ async def super_shop(call: CallbackQuery):
 
     if code == 'back':
         text, markup = await main_message(user_id)
-        await botworker.edit_message_text(text, chatid, call.message.id,
+        await botworker.edit_message_text(text, None, chatid, call.message.id,
                                     reply_markup=markup, parse_mode="Markdown")
 
     elif code == 'buy':
@@ -142,5 +142,5 @@ async def super_shop(call: CallbackQuery):
             await botworker.send_message(chatid, t('super_coins.buy', lang))
 
             text, markup = await main_message(user_id)
-            await botworker.edit_message_text(text, chatid, call.message.id,
+            await botworker.edit_message_text(text, None, chatid, call.message.id,
                                     reply_markup=markup, parse_mode="Markdown")

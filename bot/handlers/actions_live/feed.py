@@ -18,6 +18,8 @@ from aiogram.types import CallbackQuery, Message
 from bot.filters.translated_text import Text
 from aiogram import F
 
+from aiogram.fsm.context import FSMContext
+
 items = DBconstructor(mongo_client.items.items)
 
 async def adapter_function(return_dict, transmitted_data):
@@ -82,7 +84,7 @@ async def inventory_adapter(item, transmitted_data):
 
 @bot.message(Text('commands_name.actions.feed'))
 @HDMessage
-async def feed(message: Message):
+async def feed(message: Message, state: FSMContext):
     if message.from_user:
         userid = message.from_user.id
         lang = await get_lang(message.from_user.id)

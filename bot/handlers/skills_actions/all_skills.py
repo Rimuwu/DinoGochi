@@ -46,7 +46,7 @@ async def use_energy(chatid, lang, alt_code, messageid = 0):
             reply_markup=mrk)
         else:
             await botworker.edit_message_text(
-                text, chatid, messageid, reply_markup=mrk,
+                text, None, chatid, messageid, reply_markup=mrk,
                 parse_mode='Markdown'
             )
             

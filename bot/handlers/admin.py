@@ -61,7 +61,7 @@ async def create_track(name, transmitted_data: dict):
 
     await botworker.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.message(Command(commands=['tracking'], IsAdminUser()))
+@bot.message(Command(commands=['tracking']), IsAdminUser())
 @HDMessage
 async def tracking(message: Message):
     chatid = message.chat.id
@@ -180,7 +180,7 @@ async def promo_call(call: CallbackQuery):
                         }}, comment='promo_call_2')
 
                 text, markup = await promo_ui(code, lang)
-                await botworker.edit_message_text(text, None, userid, call.message.message_id, reply_markup=markup, parse_mode='markdown')
+                await botworker.edit_message_text(text, None, None, userid, call.message.message_id, reply_markup=markup, parse_mode='markdown')
 
         elif action == 'use':
             status, text = await use_promo(code, userid, lang)

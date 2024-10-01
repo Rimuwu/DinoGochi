@@ -1,6 +1,6 @@
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
-from bot.exec import bot
+from bot.exec import bot, botworker
 from bot.modules.data_format import list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino, create_dino_connection
@@ -18,13 +18,23 @@ from bot.modules.states_tools import (ChooseConfirmState, ChooseCustomState,
 from bot.modules.user.user import take_coins, user_name
 from aiogram.types import CallbackQuery, Message
 
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command
+
 users = DBconstructor(mongo_client.user.users)
 friends = DBconstructor(mongo_client.user.friends)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 events = DBconstructor(mongo_client.other.events)
 
-@bot.message(Text('commands_name.friends.add_friend', IsPrivateChat())
+@bot.message(Text('commands_name.friends.add_friend'), IsPrivateChat())
 @HDMessage
 async def add_friend(message: Message):
     chatid = message.chat.id
@@ -95,7 +105,7 @@ async def add_friend_end(friendid: int, transmitted_data: dict):
             await botworker.send_message(chatid, text, 
                                 reply_markup= await m(userid, 'last_menu', lang))
 
-@bot.callback_query(F.data.startswith('add_friend'), nothing_state=True, IsPrivateChat())
+@bot.callback_query(F.data.startswith('add_friend'), IsPrivateChat())
 @HDCallback
 async def add_friend_callback(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -112,7 +122,7 @@ async def add_friend_callback(call: CallbackQuery):
                             user_id, chatid, lang, 
                             transmitted_data)
 
-@bot.message(Text('commands_name.friends.friends_list', IsPrivateChat())
+@bot.message(Text('commands_name.friends.friends_list'), IsPrivateChat())
 @HDMessage
 async def friend_list(message: Message):
     chatid = message.chat.id
@@ -185,7 +195,7 @@ async def request_open(userid: int, chatid: int, lang: str):
         horizontal=3, vertical=3,
         autoanswer=False, one_element=False)
 
-@bot.message(Text('commands_name.friends.requests', IsPrivateChat())
+@bot.message(Text('commands_name.friends.requests'), IsPrivateChat())
 @HDMessage
 async def requests_list(message: Message):
     chatid = message.chat.id
@@ -233,7 +243,7 @@ async def adp_delte(friendid: int, transmitted_data: dict):
                            reply_markup=confirm_markup
                            (lang))
 
-@bot.message(Text('commands_name.friends.remove_friend', IsPrivateChat())
+@bot.message(Text('commands_name.friends.remove_friend'), IsPrivateChat())
 @HDMessage
 async def remove_friend(message: Message):
     chatid = message.chat.id
@@ -461,20 +471,20 @@ async def send_request(call: CallbackQuery):
         for act_type in ['friends', 'requests']:
             if friendid in frineds[act_type]:
                 text = t(f'add_friend.check.{act_type}', lang)
-                await bot.answer_callback_query(call.id, text)
+                await botworker.answer_callback_query(call.id, text)
                 return
         else:
             res = await insert_friend_connect(userid, friendid, 'request')
             if res:
                 text = t('add_friend.correct', lang)
-                await bot.answer_callback_query(call.id, text)
+                await botworker.answer_callback_query(call.id, text)
                 await user_notification(friendid, 'send_request', 
                                         user_name=user_name(call.from_user))
             else:
                 text = t('add_friend.already', lang)
-                await bot.answer_callback_query(call.id, text)
+                await botworker.answer_callback_query(call.id, text)
     else:
-        await bot.answer_callback_query(call.id, '❌')
+        await botworker.answer_callback_query(call.id, '❌')
 
 @bot.callback_query(F.data.startswith('new_year'), IsPrivateChat())
 @HDCallback
@@ -487,10 +497,10 @@ async def new_year(call: CallbackQuery):
     if ev_data:
         if friendid in ev_data['data']['send']:
             text = t('new_year.not', lang)
-            await bot.answer_callback_query(call.id, text)
+            await botworker.answer_callback_query(call.id, text)
         else:
             text = t('new_year.ok', lang)
-            await bot.answer_callback_query(call.id, text)
+            await botworker.answer_callback_query(call.id, text)
 
             await AddItemToUser(friendid, GAME_SETTINGS['new_year_item'])
             await events.update_one({"type": "new_year"}, 
