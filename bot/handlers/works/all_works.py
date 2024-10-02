@@ -25,6 +25,8 @@ from bot.filters.authorized import IsAuthorizedUser
 from bot.filters.kd import KDCheck
 from aiogram import F
 
+from aiogram.fsm.context import FSMContext
+
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
@@ -151,7 +153,7 @@ async def stop_work(message: Message):
 @bot.message(Text('commands_name.extraction_actions.mine'), 
                      DinoPassStatus())
 @HDMessage
-async def mine(message: Message):
+async def mine(message: Message, state: FSMContext):
     userid = message.from_user.id
     user = await User().create(userid)
     lang = await user.lang
@@ -173,7 +175,7 @@ async def mine(message: Message):
         'last_dino': last_dino
     }
 
-    await ChooseOptionState(end_mine, userid, chatid, lang, options, transmitted_data)
+    await ChooseOptionState(end_mine, state, userid, chatid, lang, options, transmitted_data)
     await botworker.send_message(chatid, text, reply_markup=rmk)
 
 async def end_mine(data, transmitted_data: dict):
@@ -195,7 +197,7 @@ async def end_mine(data, transmitted_data: dict):
 @bot.message(StartWith('commands_name.extraction_actions.bank'), 
                      DinoPassStatus())
 @HDMessage
-async def bank(message: Message):
+async def bank(message: Message, state: FSMContext):
     userid = message.from_user.id
     user = await User().create(userid)
     lang = await user.lang
@@ -217,7 +219,7 @@ async def bank(message: Message):
         'last_dino': last_dino
     }
 
-    await ChooseOptionState(end_bank, userid, chatid, lang, options, transmitted_data)
+    await ChooseOptionState(end_bank, state, userid, chatid, lang, options, transmitted_data)
     await botworker.send_message(chatid, text, reply_markup=rmk)
 
 async def end_bank(data, transmitted_data: dict):
@@ -239,7 +241,7 @@ async def end_bank(data, transmitted_data: dict):
 @bot.message(StartWith('commands_name.extraction_actions.sawmill'), 
                      DinoPassStatus())
 @HDMessage
-async def sawmill(message: Message):
+async def sawmill(message: Message, state: FSMContext):
     userid = message.from_user.id
     user = await User().create(userid)
     lang = await user.lang
@@ -261,7 +263,7 @@ async def sawmill(message: Message):
         'last_dino': last_dino
     }
 
-    await ChooseOptionState(end_sawmill, userid, chatid, lang, options, transmitted_data)
+    await ChooseOptionState(end_sawmill, state, userid, chatid, lang, options, transmitted_data)
     await botworker.send_message(chatid, text, reply_markup=rmk)
 
 async def end_sawmill(data, transmitted_data: dict):

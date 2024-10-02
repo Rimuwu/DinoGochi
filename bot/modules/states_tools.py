@@ -30,11 +30,12 @@ class GeneralStates(StatesGroup):
     ChooseTime = State() # Состояние для ввода времени
     ChooseImage = State() # Состояние для ввода загрузки изображения
 
-def add_if_not(data: dict, userid: int, chatid: int, lang: str):
+def add_if_not(data: dict, userid: int, chatid: int, lang: str, state: FSMContext):
     """Добавляет минимальные данные для работы"""
     if 'userid' not in data: data['userid'] = userid
     if 'chatid' not in data: data['chatid'] = chatid
     if 'lang' not in data: data['lang'] = lang
+    if 'state' not in data: data['state'] = state
     return data
 
 async def ChooseDinoState(function, state: FSMContext, 
@@ -56,7 +57,7 @@ async def ChooseDinoState(function, state: FSMContext,
     if add_egg: elements += await user.get_eggs
     if not transmitted_data: transmitted_data = {}
 
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
     ret_data = get_answer_keyboard(elements, lang)
 
     if ret_data['case'] == 0:
@@ -103,7 +104,7 @@ async def ChooseIntState(function, state: FSMContext,
     """
 
     if not transmitted_data: transmitted_data = {}
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
 
     if min_int != max_int or not autoanswer:
         await state.set_state(GeneralStates.ChooseInt)
@@ -134,7 +135,7 @@ async def ChooseStringState(function, state: FSMContext,
     """
     if not transmitted_data: transmitted_data = {}
 
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
     await state.set_state(GeneralStates.ChooseString)
 
     data = {}
@@ -161,7 +162,7 @@ async def ChooseTimeState(function, state: FSMContext,
     """
     if not transmitted_data: transmitted_data = {}
     
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
     await state.set_state(GeneralStates.ChooseTime)
 
     data = {}
@@ -190,7 +191,7 @@ async def ChooseConfirmState(function, state: FSMContext,
     if not transmitted_data: transmitted_data = {}
     transmitted_data['cancel'] = cancel
     
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
     await state.set_state(GeneralStates.ChooseConfirm)
 
     data = {}
@@ -216,7 +217,7 @@ async def ChooseOptionState(function, state: FSMContext,
          Возвращает True если был создано состояние, False если завершилось автоматически (1 вариант выбора)
     """
     if not transmitted_data: transmitted_data = {}
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
 
     if len(options) > 1:
         await state.set_state(GeneralStates.ChooseOption)
@@ -248,7 +249,7 @@ async def ChooseInlineState(function, state: FSMContext,
         >>> answer: list transmitted_data: dict
     """
     if not transmitted_data: transmitted_data = {}
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
 
     await state.set_state(GeneralStates.ChooseInline)
 
@@ -276,7 +277,7 @@ async def ChooseCustomState(function, state: FSMContext,
          result - второе возвращаемое из custom_handler
     """
     if not transmitted_data: transmitted_data = {}
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
 
     await state.set_state(GeneralStates.ChooseCustom)
 
@@ -329,7 +330,7 @@ async def ChoosePagesState(function, state: FSMContext,
          Возвращает True если был создано состояние, False если завершилось автоматически (1 вариант выбора)
     """
     if not transmitted_data: transmitted_data = {}
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
 
     # Чанкует страницы и добавляем пустые элементы для сохранения структуры
     pages = chunk_pages(options, horizontal, vertical)
@@ -421,7 +422,7 @@ async def ChooseImageState(function, state: FSMContext,
         >>> image_url: str transmitted_data: dict
     """
     if not transmitted_data: transmitted_data = {}
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
     await state.set_state(GeneralStates.ChooseImage)
 
     data = {}
@@ -447,13 +448,13 @@ chooses = {
     'image': ChooseImageState
 }
 
-def prepare_steps(steps: list, userid: int, chatid: int, lang: str):
+def prepare_steps(steps: list, userid: int, chatid: int, lang: str, state: FSMContext):
     for step in steps:
         if step['type'] in chooses:
             step['function'] = chooses[step['type']]
 
             step['data'] = dict(add_if_not(
-                step['data'], userid, chatid, lang))
+                step['data'], userid, chatid, lang, state))
         elif step['type'] == 'update_data': pass
             # В данных уже должен быть ключ function
             # function получает transmitted_data
@@ -498,10 +499,10 @@ async def ChooseStepState(function, state: FSMContext,
         >>> answer: dict, transmitted_data: dict
     """
     if not transmitted_data: transmitted_data = {}
-    steps = prepare_steps(steps, userid,  chatid, lang)
+    steps = prepare_steps(steps, userid,  chatid, lang, state)
 
     transmitted_data = dict(add_if_not(transmitted_data, 
-                            userid, chatid, lang))
+                            userid, chatid, lang, state))
     
     transmitted_data['steps'] = steps
     transmitted_data['return_function'] = function

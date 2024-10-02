@@ -1,4 +1,3 @@
-
 from bot.dbmanager import mongo_client
 from bot.exec import bot, botworker
 from bot.modules.decorators import HDCallback, HDMessage
@@ -40,6 +39,7 @@ async def inventory_adapter(item, transmitted_data):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
+    state: FSMContext = transmitted_data['state']
     dino: Dino = transmitted_data['dino']
 
     transmitted_data['item'] = item
@@ -78,7 +78,7 @@ async def inventory_adapter(item, transmitted_data):
                             'reply_markup': feed_count_markup(
                                 dino.stats['eat'], int(item_data['act'] * percent), max_count, item_name, lang)}}
                 ]
-        await ChooseStepState(adapter_function, userid, chatid, 
+        await ChooseStepState(adapter_function, state, userid, chatid, 
                               lang, steps, 
                               transmitted_data=transmitted_data)
 
@@ -97,11 +97,11 @@ async def feed(message: Message, state: FSMContext):
             'dino': await user.get_last_dino()
         }
 
-        await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
+        await start_inv(state, inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
 
 @bot.callback_query(F.data.startswith('feed_inl'))
 @HDCallback
-async def feed_inl(callback: CallbackQuery):
+async def feed_inl(callback: CallbackQuery, state: FSMContext):
     if callback.message:
         lang = await get_lang(callback.from_user.id)
         chatid = callback.message.chat.id
@@ -116,4 +116,4 @@ async def feed_inl(callback: CallbackQuery):
                 'dino': await Dino().create(alt_id)
             }
 
-            await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
+            await start_inv(state, inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)

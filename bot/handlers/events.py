@@ -1,10 +1,13 @@
+import traceback
 from bot.dbmanager import mongo_client
 from bot.exec import bot, botworker
 from bot.modules.data_format import list_to_inline
 from bot.modules.localization import get_lang, t
+from bot.modules.logs import log
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import user_in_chat
 from aiogram.types import ChatMemberUpdated
+from aiogram.types import ErrorEvent
 
 puhs = DBconstructor(mongo_client.market.puhs)
 
@@ -38,3 +41,7 @@ async def my_update(data: ChatMemberUpdated):
     elif data.new_chat_member.status == 'left':
         res = await puhs.find_one({'owner_id': userid}, comment='my_update')
         if res: await puhs.delete_one({'owner_id': userid}, comment='my_update')
+
+@bot.error()
+async def error_handler(exception: ErrorEvent):
+    log(f'{traceback.format_exc()} {exception}', 3)

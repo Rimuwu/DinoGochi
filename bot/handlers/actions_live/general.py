@@ -20,6 +20,7 @@ from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
+from aiogram.fsm.context import FSMContext
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
@@ -82,7 +83,7 @@ async def invite_adp(friend, transmitted_data: dict):
 
 @bot.callback_query(F.data.startswith('invite_to_action'), IsPrivateChat())
 @HDCallback
-async def invite_to_action(callback: CallbackQuery):
+async def invite_to_action(callback: CallbackQuery, state: FSMContext):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id
     userid = callback.from_user.id
@@ -97,7 +98,7 @@ async def invite_to_action(callback: CallbackQuery):
     if dino:
         res = await long_activity.find_one({'dino_id': dino['_id'], 'activity_type': 'game'}, comment='invite_to_action_res')
         if res: 
-            await start_friend_menu(invite_adp, userid, chatid, lang, True, transmitted_data)
+            await start_friend_menu(invite_adp, state, userid, chatid, lang, True, transmitted_data)
 
             text = t('invite_to_action', lang)
             await botworker.send_message(chatid, text, parse_mode='Markdown')
@@ -127,7 +128,7 @@ async def join_adp(dino: Dino, transmitted_data):
 
 @bot.callback_query(F.data.startswith('join_to_action'))
 @HDCallback
-async def join(callback: CallbackQuery):
+async def join(callback: CallbackQuery, state: FSMContext):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id
     userid = callback.from_user.id
@@ -151,4 +152,4 @@ async def join(callback: CallbackQuery):
                 'friendid': friendid
             }
 
-            await ChooseDinoState(join_adp, userid, chatid, lang, False, transmitted_data=transmitted_data)
+            await ChooseDinoState(join_adp, state, userid, chatid, lang, False, transmitted_data=transmitted_data)

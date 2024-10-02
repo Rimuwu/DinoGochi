@@ -35,14 +35,14 @@ async def cancel(message, text:str = "❌", state: Union[FSMContext, None] = Non
     # delete_state(message.from_user.id, message.chat.id)
     # await state.reset_data(message.from_user.id,  message.chat.id)
 
-@bot.message(Text('buttons_name.cancel'), IsPrivateChat(), StateFilter())
+@bot.message(Text('buttons_name.cancel'), IsPrivateChat(), StateFilter(None))
 @HDMessage
 async def cancel_m(message: Message, state: FSMContext):
     """Состояние отмены
     """
     await cancel(message, state=state)
 
-@bot.message(Command(commands=['cancel']), IsPrivateChat(), StateFilter())
+@bot.message(Command(commands=['cancel']), IsPrivateChat(), StateFilter(None))
 @HDMessage
 async def cancel_c(message: Message, state: FSMContext):
     """Команда отмены

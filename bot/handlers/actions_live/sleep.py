@@ -22,6 +22,8 @@ from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
+
+from aiogram.fsm.context import FSMContext
  
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
@@ -72,6 +74,7 @@ async def end_choice(option: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
+    state = transmitted_data['state']
     last_dino = transmitted_data['last_dino']
 
     if await last_dino.status == 'pass':
@@ -82,7 +85,7 @@ async def end_choice(option: str, transmitted_data: dict):
             transmitted_data = { 
                     'last_dino': last_dino
                 }
-            await ChooseIntState(short_sleep, userid, 
+            await ChooseIntState(short_sleep, state, userid, 
                                 chatid, lang, min_int=5, max_int=480, transmitted_data=transmitted_data)
 
             await botworker.send_message(userid, 
@@ -99,7 +102,7 @@ async def end_choice(option: str, transmitted_data: dict):
 
 @bot.message(Text('commands_name.actions.put_to_bed'), DinoPassStatus())
 @HDMessage
-async def put_to_bed(message: Message):
+async def put_to_bed(message: Message, state: FSMContext):
     """Уложить спать динозавра
     """
     userid = message.from_user.id
@@ -133,7 +136,7 @@ async def put_to_bed(message: Message):
                     'last_dino': last_dino
                 }
 
-                await ChooseOptionState(end_choice, userid, chatid, lang, options, trans_data) # Ожидаем выбор варианта
+                await ChooseOptionState(end_choice, state, userid, chatid, lang, options, trans_data) # Ожидаем выбор варианта
                 await botworker.send_message(userid, 
                         t('put_to_bed.choice', lang), 
                         reply_markup=buttons)
@@ -141,7 +144,7 @@ async def put_to_bed(message: Message):
         await botworker.send_message(userid, t('edit_dino_button.notfouned', lang),
                 reply_markup= await m(userid, 'last_menu', lang))
 
-@bot.message(Text('commands_name.actions.awaken')
+@bot.message(Text('commands_name.actions.awaken'))
 @HDMessage
 async def awaken(message: Message):
     """Пробуждение динозавра

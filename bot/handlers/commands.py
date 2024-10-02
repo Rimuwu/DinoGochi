@@ -1,4 +1,3 @@
-from email import message
 from bot.modules.localization import get_data
 from bot.dbmanager import mongo_client
 from bot.exec import bot, botworker
@@ -32,7 +31,8 @@ async def timer(message: Message):
     lang = await get_lang(message.from_user.id)
 
     num, mini, max_lvl = '1', False, 'seconds'
-    msg_args = str(message.text).split() 
+    msg_args = str(message.text).split()
+
     if len(msg_args) > 1: num: str = msg_args[1]
     if len(msg_args) > 2: max_lvl: str = msg_args[2]
     if len(msg_args) > 3: mini: bool = bool(msg_args[3])
@@ -75,7 +75,7 @@ async def delete_push(message: Message):
     await puhs.delete_one({'owner_id': userid}, comment='delete_push')
     await botworker.send_message(chatid, '👍', parse_mode='Markdown')
 
-@bot.message(Command(commands=['add_me'], private=False))
+@bot.message(Command(commands=['add_me']), IsPrivateChat(False))
 @HDMessage
 async def add_me_с(message: Message):
     userid = message.from_user.id
@@ -83,7 +83,7 @@ async def add_me_с(message: Message):
 
     name = user_name(message.from_user, False)
     text = t("add_me", lang, userid=userid, username=name)
-    await bot.reply_to(message, text, parse_mode='HTML',
+    await message.reply(text, parse_mode='HTML',
                     reply_markup=inline_menu('send_request', lang, userid=userid)
                     )
 
@@ -117,7 +117,7 @@ async def help(message: Message):
 
 @bot.callback_query(F.data.startswith('help'), IsPrivateChat())
 @HDCallback
-async def kindergarten(call: CallbackQuery):
+async def help_query(call: CallbackQuery):
     split_d = call.data.split()
     page = int(split_d[1])
     chatid = call.message.chat.id

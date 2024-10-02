@@ -29,6 +29,7 @@ from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
+from aiogram.fsm.context import FSMContext
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
@@ -70,6 +71,7 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
     await auto_ads(message)
 
 async def start_journey(userid: int, chatid: int, lang: str, 
+                        state: FSMContext,
                         friend: int = 0):
     user = await User().create(userid)
     last_dino = await user.get_last_dino()
@@ -115,19 +117,19 @@ async def start_journey(userid: int, chatid: int, lang: str,
         }
     ]
 
-    await ChooseStepState(journey_start_adp, userid, chatid, lang, steps, 
+    await ChooseStepState(journey_start_adp, state, userid, chatid, lang, steps, 
                           {'last_dino': last_dino, "edit_message": True, 'friend': friend, 'delete_steps': True})
     await botworker.send_message(chatid, t('journey_start.cancel_text', lang), 
                            reply_markup=cancel_markup(lang))
 
 @bot.message(Text('commands_name.actions.journey'), DinoPassStatus())
 @HDMessage
-async def journey_com(message: Message):
+async def journey_com(message: Message, state: FSMContext):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await start_journey(userid, chatid, lang)
+    await start_journey(userid, chatid, lang, state)
 
 @bot.callback_query(F.data.startswith('journey_complexity'), IsPrivateChat())
 @HDCallback

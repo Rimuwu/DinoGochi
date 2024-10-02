@@ -19,7 +19,7 @@ from bot.modules.logs import log
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
-from bot.exec import bot
+from bot.exec import bot, botworker
 from bot.handlers.dino_profile import transition
 from bot.modules.companies import nextinqueue, save_message
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, item_list
@@ -52,7 +52,15 @@ from bot.modules.user.user import get_inventory
 from typing import Optional
 from PIL import Image
 
-
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.decorators import HDMessage
@@ -62,7 +70,7 @@ from bson.son import SON
 
 users = mongo_client.user.users
 
-@bot.message(Command(commands=['add_item', 'item_add'], IsAdminUser())
+@bot.message(Command(commands=['add_item', 'item_add']), IsAdminUser())
 async def command(message):
     user = message.from_user
     if user.id in conf.bot_devs:
@@ -84,7 +92,7 @@ async def command(message):
     else:
         print(user.id, 'not in devs')
 
-@bot.message(Command(commands=['1xp'], IsAdminUser())
+@bot.message(Command(commands=['1xp']), IsAdminUser())
 async def command2(message):
     user = message.from_user
     if user.id in conf.bot_devs:
@@ -93,7 +101,7 @@ async def command2(message):
         print(user.id, 'not in devs')
 
 
-@bot.message(Command(commands=['test_img'], IsAdminUser())
+@bot.message(Command(commands=['test_img']), IsAdminUser())
 async def test_img(message):
     user = message.from_user
 
@@ -132,7 +140,7 @@ async def test_img(message):
 
 from bot.modules.dungeon.dungeon import Lobby, DungPlayer
 
-@bot.message(Command(commands=['dung'], IsAdminUser())
+@bot.message(Command(commands=['dung']), IsAdminUser())
 async def dung(message):
 
     m = await botworker.send_message(message.from_user.id, "test")
@@ -140,13 +148,13 @@ async def dung(message):
 
     pprint(lobby.__dict__)
 
-@bot.message(Command(commands=['delete'], IsAdminUser())
+@bot.message(Command(commands=['delete']), IsAdminUser())
 async def delete(message):
 
     lobby = await Lobby().FromBase(message.from_user.id)
     await lobby.delete
 
-@bot.message(Command(commands=['add_to'], IsAdminUser())
+@bot.message(Command(commands=['add_to']), IsAdminUser())
 async def add_to(message):
 
     lobby = await Lobby().FromBase(1191252229)
@@ -179,7 +187,7 @@ async def add_to(message):
     
 
 
-@bot.message(Command(commands=['test'])
+@bot.message(Command(commands=['test']))
 @HDMessage
 async def test(message: Message):
     
@@ -191,7 +199,7 @@ async def test(message: Message):
     print(r)
 
 
-@bot.message(Command(commands=['test2'])
+@bot.message(Command(commands=['test2']))
 @HDMessage
 async def test2(message: Message):
     st = time()
@@ -199,3 +207,9 @@ async def test2(message: Message):
     
     await send_SmartPhoto(message.chat.id, 'images/remain/taverna/dino_reward.png', None, 'Markdown', None)
     log(f'test2 {time() - st} MEOW')
+
+@bot.message(Command(commands=['errr']))
+@HDMessage
+async def super_test(message: Message):
+    
+    2 / 0

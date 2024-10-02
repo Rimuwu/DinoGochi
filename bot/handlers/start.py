@@ -93,7 +93,7 @@ async def start_game(message: types.Message, code: str = '', code_type: str = ''
     start_game = t('start_command.start_game', message.from_user.language_code)
     await botworker.send_photo(message.chat.id, img, start_game, reply_markup=inl)
 
-@bot.message(Command(commands=['start']), is_authorized=False)
+@bot.message(Command(commands=['start']), IsAuthorizedUser(False))
 @HDMessage
 async def start_game_message(message: types.Message):
     langue_code = message.from_user.language_code

@@ -28,6 +28,7 @@ from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
+from aiogram.fsm.context import FSMContext
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 
@@ -35,6 +36,7 @@ long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 async def start_game_ent(userid: int, chatid: int, 
                          lang: str, dino: Dino, 
+                         state: FSMContext,
                          friend: int = 0, join: bool = True, 
                          join_dino: str = ''):
     """ Запуск активности игра
@@ -97,7 +99,7 @@ async def start_game_ent(userid: int, chatid: int,
         }
     ]
 
-    await ChooseStepState(game_start, userid, chatid, lang, steps, transmitted_data)
+    await ChooseStepState(game_start, state, userid, chatid, lang, steps, transmitted_data)
 
 async def delete_markup(transmitted_data):
     chatid = transmitted_data['chatid']
@@ -191,16 +193,16 @@ async def game_start(return_data: dict,
 
 @bot.message(Text('commands_name.actions.entertainments'), DinoPassStatus())
 @HDMessage
-async def entertainments(message: Message):
+async def entertainments(message: Message, state: FSMContext):
     userid = message.from_user.id # type: ignore
     lang = await get_lang(message.from_user.id) # type: ignore
     chatid = message.chat.id
 
     user = await User().create(userid)
     dino = await user.get_last_dino()
-    if dino: await start_game_ent(userid, chatid, lang, dino)
+    if dino: await start_game_ent(userid, chatid, lang, dino, state)
 
-@bot.message(Text('commands_name.actions.stop_game')
+@bot.message(Text('commands_name.actions.stop_game'))
 @HDMessage
 async def stop_game(message: Message):
     userid = message.from_user.id # type: ignore
