@@ -59,14 +59,16 @@ from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from bot.filters.kd import KDCheck
 from bot.filters.admin import IsAdminUser
-from aiogram import F
-from aiogram.filters import Command
+from aiogram import F, Router
+from aiogram.filters import Command, StateFilter
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.decorators import HDMessage
 
 from bson.objectid import ObjectId
 from bson.son import SON
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import default_state
 
 users = mongo_client.user.users
 
@@ -213,3 +215,20 @@ async def test2(message: Message):
 async def super_test(message: Message):
     
     2 / 0
+
+@bot.message(Command(commands=['check_state']), StateFilter(default_state))
+@HDMessage
+async def check(message: Message, state: FSMContext):
+    
+    await message.answer('ok')
+    
+    
+    r = await state.get_state()
+    await message.answer(f"{r}")
+
+# @bot.message(Command(commands=['check_state']))
+# @HDMessage
+# async def check_n(message: Message, state: FSMContext):
+    
+#     r = await state.get_state()
+#     await message.answer(f"{r}")

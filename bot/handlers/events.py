@@ -42,6 +42,6 @@ async def my_update(data: ChatMemberUpdated):
         res = await puhs.find_one({'owner_id': userid}, comment='my_update')
         if res: await puhs.delete_one({'owner_id': userid}, comment='my_update')
 
-@bot.error()
-async def error_handler(exception: ErrorEvent):
-    log(f'{traceback.format_exc()} {exception}', 3)
+# @bot.error()
+# async def error_handler(exception: ErrorEvent):
+#     log(f'{traceback.format_exc()} {exception}', 3)
