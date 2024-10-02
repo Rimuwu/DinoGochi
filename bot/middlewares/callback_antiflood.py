@@ -3,7 +3,7 @@ from typing import Awaitable, Callable, Any
 
 from aiogram.types import CallbackQuery
 from aiogram import BaseMiddleware
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.localization import get_lang, t
 from bot.config import conf
 
@@ -41,4 +41,4 @@ class CallbackQueryAntiFloodMiddleware(BaseMiddleware):
         # await message.answer()  # always answer callback query
         return await handler(message, data)
 
-bot.callback_query.middleware(CallbackQueryAntiFloodMiddleware())
+main_router.callback_query.middleware(CallbackQueryAntiFloodMiddleware())

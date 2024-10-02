@@ -5,7 +5,7 @@ from bot.modules.companies import generate_message, nextinqueue, priority_and_ti
 from bot.modules.logs import log
 from bot.dbmanager import mongo_client
 import json
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.localization import t, get_lang
 from time import time as time_now
 from datetime import datetime, timezone
@@ -92,9 +92,9 @@ async def save_last_ads(user_id:int):
     lang = await get_lang(user_id)
 
     try:
-        await botworker.send_message(user_id, t('super_coins.plus_one', lang), parse_mode="Markdown")
+        await bot.send_message(user_id, t('super_coins.plus_one', lang), parse_mode="Markdown")
     except:
-        await botworker.send_message(user_id, t('super_coins.plus_one', lang))
+        await bot.send_message(user_id, t('super_coins.plus_one', lang))
 
 
 async def auto_ads(message, only_parthner: bool = False):

@@ -2,7 +2,7 @@ from random import random
 from typing import Awaitable, Callable, Any
 from aiogram import BaseMiddleware
 from aiogram.types import Message
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.dbmanager import mongo_client
 from time import time as time_now
 from bot.middlewares.antiflood import check_ads
@@ -62,4 +62,4 @@ class PassWorker(BaseMiddleware):
                     if random() <= 0.5:
                         await auto_ads(message, True)
 
-bot.message.middleware(PassWorker())
+main_router.message.middleware(PassWorker())

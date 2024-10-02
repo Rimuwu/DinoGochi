@@ -7,7 +7,7 @@ from aiogram.types import User as teleUser
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.data_format import escape_markdown, item_list, seconds_to_str, user_name
 from bot.modules.dinosaur.dinosaur import Dino, Egg
 from bot.modules.items.items_groups import get_group

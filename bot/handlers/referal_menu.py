@@ -2,7 +2,7 @@ from aiogram.types import CallbackQuery, Message
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
-from bot.exec import bot, botworker
+from bot.exec import main_router, bot
 from bot.modules.data_format import escape_markdown, list_to_inline
 from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, t, get_lang
@@ -29,7 +29,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 referals = DBconstructor(mongo_client.user.referals)
 
 
-@bot.message(Text('commands_name.referal.code'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(Text('commands_name.referal.code'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def code(message: Message):
     userid = message.from_user.id
@@ -45,9 +45,9 @@ async def code(message: Message):
         inl_buttons = dict(zip(buttons.values(), buttons.keys()))
         markup = list_to_inline([inl_buttons])
         
-        await botworker.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
     else:
-        await botworker.send_message(message.chat.id, t('referals.have_code', lang))
+        await bot.send_message(message.chat.id, t('referals.have_code', lang))
 
 
 async def create_custom_code(code: str, transmitted_data: dict):
@@ -59,7 +59,7 @@ async def create_custom_code(code: str, transmitted_data: dict):
         code = code.replace(' ', '')
         await create_referal(userid, code)
 
-        iambot = await botworker.get_me()
+        iambot = await bot.get_me()
         bot_name = iambot.username
 
         url = f'https://t.me/{bot_name}/?start={code}'
@@ -67,7 +67,7 @@ async def create_custom_code(code: str, transmitted_data: dict):
     else:
         text = t('referals.custom_code.no_coins', lang)
 
-    await botworker.send_message(chatid, text, parse_mode='Markdown', 
+    await bot.send_message(chatid, text, parse_mode='Markdown', 
                         reply_markup = await m(userid, 'last_menu', lang, True))
 
 async def custom_handler(message: Message, transmitted_data: dict):
@@ -90,10 +90,10 @@ async def custom_handler(message: Message, transmitted_data: dict):
         else: status = True
 
     if not status:
-        await botworker.send_message(chatid, text, parse_mode='Markdown')
+        await bot.send_message(chatid, text, parse_mode='Markdown')
     return status, code
 
-@bot.callback_query(F.data.startswith('generate_referal'), IsPrivateChat())
+@main_router.callback_query(F.data.startswith('generate_referal'), IsPrivateChat())
 @HDCallback
 async def generate_code(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -106,23 +106,23 @@ async def generate_code(call: CallbackQuery):
             ref = await create_referal(userid)
             code = ref[1]
 
-            iambot = await botworker.get_me()
+            iambot = await bot.get_me()
             bot_name = iambot.username
 
             url = f'https://t.me/{bot_name}/?start={code}'
-            await botworker.send_message(chatid, t('referals.code', lang, 
+            await bot.send_message(chatid, t('referals.code', lang, 
                                     code=code, url=url), parse_mode='Markdown', reply_markup= await m(userid, 'last_menu', lang, True))
 
         elif action == 'custom':
-            await botworker.send_message(chatid, 
+            await bot.send_message(chatid, 
                                    t('referals.custom_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
             await ChooseCustomState(create_custom_code, custom_handler, 
                                     userid, chatid, lang)
     else:
-        await botworker.send_message(chatid, t('referals.have_code', lang))
+        await bot.send_message(chatid, t('referals.have_code', lang))
 
 
-@bot.message(StartWith('commands_name.referal.my_code'), IsPrivateChat())
+@main_router.message(StartWith('commands_name.referal.my_code'), IsPrivateChat())
 @HDMessage
 async def my_code(message: Message):
     """ Кнопка - мой код ...
@@ -139,11 +139,11 @@ async def my_code(message: Message):
 
         uses = len(list(referal_find))
 
-        iambot = await botworker.get_me()
+        iambot = await bot.get_me()
         bot_name = iambot.username
         url = f'https://t.me/{bot_name}/?start={code}'
 
-        await botworker.send_message(chatid, t('referals.my_code', lang, 
+        await bot.send_message(chatid, t('referals.my_code', lang, 
                                 code=code, url=url, uses=uses), parse_mode='Markdown')
 
 async def check_code(code: str, transmitted_data: dict, send: bool = True):
@@ -159,10 +159,10 @@ async def check_code(code: str, transmitted_data: dict, send: bool = True):
 
     if send or result:
         text = t(f'referals.enter_code.{result}', lang, coins=coins, items=names)
-        await botworker.send_message(chatid, text, parse_mode='Markdown', 
+        await bot.send_message(chatid, text, parse_mode='Markdown', 
                         reply_markup= await m(userid, 'last_menu', lang, True))
 
-@bot.message(Text('commands_name.referal.enter_code'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(Text('commands_name.referal.enter_code'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def enter_code(message: Message):
     userid = message.from_user.id
@@ -171,7 +171,7 @@ async def enter_code(message: Message):
 
     ref = await referals.find_one({'userid': userid, 'type': 'sub'}, comment='enter_code_ref')
     if not ref:
-        await botworker.send_message(chatid, t('referals.enter_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
+        await bot.send_message(chatid, t('referals.enter_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
         await ChooseStringState(check_code, userid, chatid, lang, max_len=100)
     else:
-        await botworker.send_message(chatid, t('referals.enter_code.have_code', lang), parse_mode='Markdown')
+        await bot.send_message(chatid, t('referals.enter_code.have_code', lang), parse_mode='Markdown')

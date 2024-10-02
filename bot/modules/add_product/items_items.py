@@ -1,7 +1,7 @@
 from bot.dbmanager import mongo_client
 from bot.modules.localization import t
 
-from bot.exec import bot
+from bot.exec import main_router, bot
 
 from bot.modules.markup import answer_markup, cancel_markup, count_markup
  
@@ -267,7 +267,7 @@ async def stock(return_data, transmitted_data):
 
     await ChooseIntState(stock_adapter, userid, chatid, lang, 1, 20, transmitted_data=transmitted_data)
 
-    await botworker.send_message(chatid, t(f'add_product.stock.{option}', lang), reply_markup=cancel_markup(lang), parse_mode='Markdown')
+    await bot.send_message(chatid, t(f'add_product.stock.{option}', lang), reply_markup=cancel_markup(lang), parse_mode='Markdown')
 
 async def stock_adapter(in_stock:int, transmitted_data:dict):
     """ Запращивает запас у пользователя (конец)

@@ -22,7 +22,7 @@ from bot.modules.localization import get_all_locales, t
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
 from bot.modules.items.collect_items import get_all_items
-from bot.exec import bot
+from bot.exec import main_router, bot
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 items = DBconstructor(mongo_client.items.items)

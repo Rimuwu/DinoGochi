@@ -5,11 +5,13 @@ import string
 from typing import Union
 
 from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
-                           ReplyKeyboardMarkup, User)
+                           ReplyKeyboardMarkup, User, KeyboardButton)
 
 from bot.const import GAME_SETTINGS
 from bot.modules.localization import get_data
 from aiogram.types import BufferedInputFile
+
+from bot.modules.logs import log
 
 def escape_markdown(content: str) -> str:
     """ Экранирует символы Markdown в строке.
@@ -71,17 +73,21 @@ def list_to_keyboard(buttons: list, row_width: int = 3, resize_keyboard: bool = 
           отвяжись  
           ты кто?
     """
-    markup = ReplyKeyboardMarkup(row_width=row_width, 
-                                 resize_keyboard=resize_keyboard, 
-                                 one_time_keyboard=one_time_keyboard)
+    bt_l = []
 
     for line in buttons:
         try:
             if type(line) == list:
-                markup.add(*[i for i in line])
-            else: markup.add(line)
+                bt_l.append(*[KeyboardButton(text=i)
+                    for i in line])
+            else: bt_l.append(KeyboardButton(text=line))
         except Exception as e:
             print('list_to_keyboard', line, type(line), e)
+
+    markup = ReplyKeyboardMarkup(row_width=row_width, 
+                                 keyboard=bt_l,
+                                 resize_keyboard=resize_keyboard, 
+                                 one_time_keyboard=one_time_keyboard)
 
     return markup
 
@@ -100,16 +106,18 @@ def list_to_inline(buttons: list, row_width: int = 3) -> InlineKeyboardMarkup:
           отвяжись  
           ты кто?
     """
-    inline = InlineKeyboardMarkup(row_width=row_width)
+    buttons_il = []
 
     if len(buttons) == 1:
-        inline.add(
+        buttons_il.append(
             *[InlineKeyboardButton(
             text=key, callback_data=item) for key, item in buttons[0].items()])
     else:
         for line in buttons:
-            inline.add(*[InlineKeyboardButton(
+            buttons_il.append(*[InlineKeyboardButton(
                 text=key, callback_data=item) for key, item in line.items()])
+
+    inline = InlineKeyboardMarkup(row_width=row_width, inline_keyboard=buttons_il)
     return inline
 
 def user_name(user: User, username: bool = True) -> str:

@@ -3,7 +3,7 @@
 # from . import states
 from . import events
 
-# from . import start
+from . import start
 # from . import dino_profile
 from . import test
 # from . import settings

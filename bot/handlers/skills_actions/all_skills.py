@@ -2,7 +2,7 @@
 from time import time
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot, botworker
+from bot.exec import main_router, bot
 from bot.modules.dinosaur.dino_status import end_skill_activity, get_skill_time, start_skill_activity
 from bot.modules.dinosaur.dinosaur import Dino
 from bot.modules.dinosaur.kd_activity import save_kd
@@ -42,10 +42,10 @@ async def use_energy(chatid, lang, alt_code, messageid = 0):
         )
         text = t(f'all_skills.use_energy.text', lang)
         if not messageid:
-            await botworker.send_message(chatid, text, parse_mode='Markdown',
+            await bot.send_message(chatid, text, parse_mode='Markdown',
             reply_markup=mrk)
         else:
-            await botworker.edit_message_text(
+            await bot.edit_message_text(
                 text, None, chatid, messageid, reply_markup=mrk,
                 parse_mode='Markdown'
             )
@@ -87,14 +87,14 @@ async def start_skill(last_dino: Dino, userid, chatid, lang, skill):
     tran_time = get_skill_time(skill)[0]
     text = t(f'all_skills.{skill}', lang, 
              min_time=seconds_to_str(tran_time, lang))
-    mes = await botworker.send_message(chatid, text, parse_mode='Markdown',
+    mes = await bot.send_message(chatid, text, parse_mode='Markdown',
         reply_markup=await m(userid, 'last_menu', lang))
 
     alt_code = res['alt_code']
     await use_energy(chatid, lang, alt_code)
     await auto_ads(mes)
 
-@bot.message(StartWith('commands_name.skills_actions.gym'), DinoPassStatus(), KDCheck('gym'))
+@main_router.message(StartWith('commands_name.skills_actions.gym'), DinoPassStatus(), KDCheck('gym'))
 @HDMessage
 async def gym(message: Message):
     userid = message.from_user.id
@@ -105,7 +105,7 @@ async def gym(message: Message):
 
     await start_skill(last_dino, userid, chatid, lang, 'gym')
 
-@bot.message(StartWith('commands_name.skills_actions.library'), DinoPassStatus(), KDCheck('library'))
+@main_router.message(StartWith('commands_name.skills_actions.library'), DinoPassStatus(), KDCheck('library'))
 @HDMessage
 async def library(message: Message):
     userid = message.from_user.id
@@ -116,7 +116,7 @@ async def library(message: Message):
 
     await start_skill(last_dino, userid, chatid, lang, 'library')
 
-@bot.message(StartWith('commands_name.skills_actions.park'), DinoPassStatus(), KDCheck('park'))
+@main_router.message(StartWith('commands_name.skills_actions.park'), DinoPassStatus(), KDCheck('park'))
 @HDMessage
 async def park(message: Message):
     userid = message.from_user.id
@@ -127,7 +127,7 @@ async def park(message: Message):
 
     await start_skill(last_dino, userid, chatid, lang, 'park')
 
-@bot.message(StartWith('commands_name.skills_actions.swimming_pool'), DinoPassStatus(), KDCheck('swimming_pool'))
+@main_router.message(StartWith('commands_name.skills_actions.swimming_pool'), DinoPassStatus(), KDCheck('swimming_pool'))
 @HDMessage
 async def swimming_pool(message: Message):
     userid = message.from_user.id
@@ -138,7 +138,7 @@ async def swimming_pool(message: Message):
 
     await start_skill(last_dino, userid, chatid, lang, 'swimming_pool')
 
-@bot.message(StartWith('commands_name.skills_actions.stop_work'))
+@main_router.message(StartWith('commands_name.skills_actions.stop_work'))
 @HDMessage
 async def stop_work(message: Message):
     userid = message.from_user.id
@@ -152,17 +152,17 @@ async def stop_work(message: Message):
         mrk = list_to_inline([
             {t('all_skills.stoping.button', lang): 'stop_work'}
         ])
-        await botworker.send_message(chatid, 
+        await bot.send_message(chatid, 
             t('all_skills.stoping.text', lang), 
             reply_markup = mrk,
             parse_mode = 'Markdown'
         )
 
     else:
-        await botworker.send_message(chatid, '❌', parse_mode='Markdown', reply_markup=await m(userid, 'last_menu', lang))
+        await bot.send_message(chatid, '❌', parse_mode='Markdown', reply_markup=await m(userid, 'last_menu', lang))
 
 
-@bot.callback_query(F.data.startswith('stop_work'))
+@main_router.callback_query(F.data.startswith('stop_work'))
 @HDCallback
 async def stop_work_calb(call: CallbackQuery):
     userid = call.from_user.id
@@ -190,9 +190,9 @@ async def stop_work_calb(call: CallbackQuery):
         await dino_notification(dino_id, res['activity_type'] + '_end' + way, 
                                 add_unit=round(unit_percent, 4))
         await end_skill_activity(dino_id)
-        await botworker.delete_message(chatid, messageid)
+        await bot.delete_message(chatid, messageid)
 
-@bot.callback_query(F.data.startswith('use_energy'))
+@main_router.callback_query(F.data.startswith('use_energy'))
 @HDCallback
 async def use_energy_calb(call: CallbackQuery):
 

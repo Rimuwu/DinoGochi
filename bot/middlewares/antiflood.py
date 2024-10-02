@@ -8,7 +8,7 @@ from bot.dbmanager import mongo_client, conf
 from time import time as time_now
 from bot.modules.localization import get_lang, t
 from bot.modules.logs import log
-from bot.exec import bot
+from bot.exec import main_router, bot
 
 DEFAULT_RATE_LIMIT = 0.5
 
@@ -58,4 +58,4 @@ class AntifloodMiddleware(BaseMiddleware):
             self.last_time[message.from_user.id] = time_now()
             return await handler(message, data)
 
-bot.message.middleware(AntifloodMiddleware())
+main_router.message.middleware(AntifloodMiddleware())

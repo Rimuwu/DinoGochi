@@ -2,7 +2,7 @@ from aiogram.types import InlineKeyboardMarkup
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.data_format import escape_markdown, list_to_inline
 from bot.modules.images import create_eggs_image
 from bot.modules.items.item import get_item_dict, item_code
@@ -97,7 +97,7 @@ async def dead_last_dino(userid: int, name: str, lang: str,
                     buttons[f'🥚 {i+1}'] = f'item egg {code} {eggs[i]}'
                 buttons = list_to_inline([buttons])
 
-                await botworker.send_photo(userid, image, 
+                await bot.send_photo(userid, image, 
                                     t('item_use.egg.egg_answer', lang), 
                                     parse_mode='Markdown', reply_markup=buttons)
 

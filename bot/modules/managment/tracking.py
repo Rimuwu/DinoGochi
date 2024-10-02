@@ -1,6 +1,6 @@
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.localization import get_data
 from bot.modules.data_format import seconds_to_str
 from bot.modules.data_format import list_to_inline
@@ -52,7 +52,7 @@ async def track_info(code: str, lang: str):
             data = res['links'][code]
             text_data = get_data('track', lang)
 
-            iambot = await botworker.get_me()
+            iambot = await bot.get_me()
             bot_name = iambot.username
 
             tt = seconds_to_str(int(time()) - data['start'], lang)

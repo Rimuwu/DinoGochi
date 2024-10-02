@@ -3,7 +3,7 @@ from random import randint
 from time import time
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot, botworker
+from bot.exec import main_router, bot
 from bot.modules.dinosaur.mood import repeat_activity
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline, seconds_to_str
@@ -59,14 +59,14 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
         text = t('journey_start.start', lang, 
                 loc_name=loc_name, time_text=time_text)
 
-        await botworker.edit_message_media(
+        await bot.edit_message_media(
             InputMediaPhoto(
                media=image, caption=text),
             chatid, last_mess_id)
-        message = await botworker.send_message(chatid, t('journey_start.start_2', lang), reply_markup= await m(userid, 'last_menu', lang))
+        message = await bot.send_message(chatid, t('journey_start.start_2', lang), reply_markup= await m(userid, 'last_menu', lang))
 
     else:
-        message = await botworker.send_message(chatid, '❌', reply_markup= await m(userid, 'last_menu', lang))
+        message = await bot.send_message(chatid, '❌', reply_markup= await m(userid, 'last_menu', lang))
 
     await auto_ads(message)
 
@@ -96,7 +96,7 @@ async def start_journey(userid: int, chatid: int, lang: str,
     m1_reply = list_to_inline(buttons_complexity)
     m2_reply = list_to_inline([buttons], 2)
 
-    await botworker.send_message(chatid, text_complexity, 
+    await bot.send_message(chatid, text_complexity, 
                            reply_markup=m1_reply)
 
     buttons_time = [{}, {}, {}]
@@ -119,10 +119,10 @@ async def start_journey(userid: int, chatid: int, lang: str,
 
     await ChooseStepState(journey_start_adp, state, userid, chatid, lang, steps, 
                           {'last_dino': last_dino, "edit_message": True, 'friend': friend, 'delete_steps': True})
-    await botworker.send_message(chatid, t('journey_start.cancel_text', lang), 
+    await bot.send_message(chatid, t('journey_start.cancel_text', lang), 
                            reply_markup=cancel_markup(lang))
 
-@bot.message(Text('commands_name.actions.journey'), DinoPassStatus())
+@main_router.message(Text('commands_name.actions.journey'), DinoPassStatus())
 @HDMessage
 async def journey_com(message: Message, state: FSMContext):
     userid = message.from_user.id
@@ -131,16 +131,16 @@ async def journey_com(message: Message, state: FSMContext):
 
     await start_journey(userid, chatid, lang, state)
 
-@bot.callback_query(F.data.startswith('journey_complexity'), IsPrivateChat())
+@main_router.callback_query(F.data.startswith('journey_complexity'), IsPrivateChat())
 @HDCallback
 async def journey_complexity(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id
 
     text = t('journey_complexity', lang)
-    await botworker.send_message(chatid, text, parse_mode='Markdown')
+    await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.message(Text('commands_name.actions.events'))
+@main_router.message(Text('commands_name.actions.events'))
 @HDMessage
 async def events(message: Message):
     userid = message.from_user.id
@@ -168,14 +168,14 @@ async def events(message: Message):
             if last_event:
                 text += '\n\n' + t('journey_last_event.last_event', lang, last_event=last_event)
 
-            await botworker.send_message(chatid, text, parse_mode='html', reply_markup=list_to_inline(
+            await bot.send_message(chatid, text, parse_mode='html', reply_markup=list_to_inline(
                 [{button_name: f'journey_stop {last_dino.alt_id}'}]))
         else:
-            await botworker.send_message(chatid, '❌', reply_markup= await m(userid, 'last_menu', lang))
+            await bot.send_message(chatid, '❌', reply_markup= await m(userid, 'last_menu', lang))
 
     await auto_ads(message)
 
-@bot.callback_query(F.data.startswith('journey_stop'))
+@main_router.callback_query(F.data.startswith('journey_stop'))
 @HDCallback
 async def journey_stop(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
@@ -184,7 +184,7 @@ async def journey_stop(callback: CallbackQuery):
 
     dino = await dinosaurs.find_one({'alt_id': code}, comment='journey_stop_dino')
     if dino and await check_status(dino['_id']) == 'journey':
-        await botworker.edit_message_reply_markup(None, chat_id=chatid, message_id=callback.message.id, 
+        await bot.edit_message_reply_markup(None, chat_id=chatid, message_id=callback.message.id, 
                                    reply_markup=InlineKeyboardMarkup([]))
         data = await long_activity.find_one({'dino_id': dino['_id'], 
                          'activity_type': 'journey'}, comment='journey_stop_data')
@@ -199,7 +199,7 @@ async def send_logs(chatid: int, lang: str, data: dict, dino_name: str):
     logs = data['journey_log']
     if logs:
         for i in await all_log(logs, lang, data['_id']):
-            await botworker.send_message(chatid, i, parse_mode='html')
+            await bot.send_message(chatid, i, parse_mode='html')
 
     items_text = '-'
     coins = data['coins']
@@ -209,4 +209,4 @@ async def send_logs(chatid: int, lang: str, data: dict, dino_name: str):
     if items: items_text = counts_items(items, lang)
     text = t('journey_log', lang, coins=coins, 
              items=items_text, time=j_time, col=len(logs), name=dino_name)
-    await botworker.send_message(chatid, text, reply_markup= await m(chatid, 'actions_menu', lang, True))
+    await bot.send_message(chatid, text, reply_markup= await m(chatid, 'actions_menu', lang, True))

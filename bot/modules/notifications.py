@@ -5,7 +5,7 @@ from bson.objectid import ObjectId
 from aiogram.types import InlineKeyboardMarkup
 
 from bot.dbmanager import mongo_client, conf
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.data_format import seconds_to_str
 from bot.modules.dinosaur.dino_status import check_status
 from bot.modules.inline import inline_menu
@@ -144,14 +144,14 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
                 try:
                     try:
                         await async_antiflood(
-                            botworker.send_message, owner['owner_id'], text, reply_markup=markup_inline, parse_mode='Markdown',
+                            bot.send_message, owner['owner_id'], text, reply_markup=markup_inline, parse_mode='Markdown',
                             number_retries=2
                         )
                         send_status = True
 
                     except Exception:
                         await async_antiflood(
-                            botworker.send_message, owner['owner_id'], text, reply_markup=markup_inline,
+                            bot.send_message, owner['owner_id'], text, reply_markup=markup_inline,
                             number_retries=2
                         )
                         send_status = True
@@ -208,7 +208,7 @@ async def user_notification(user_id: int, not_type: str,
 
     if not lang:
         try:
-            chat_user = await botworker.get_chat_member(user_id, user_id)
+            chat_user = await bot.get_chat_member(user_id, user_id)
             lang = await get_lang(chat_user.user.id)
         except: lang = 'en'
 
@@ -230,10 +230,10 @@ async def user_notification(user_id: int, not_type: str,
         message=f'User: {user_id}, Data: {not_type} Kwargs: {kwargs}', lvl=0)
     try:
         try:
-            await async_antiflood(botworker.send_message, user_id, text, reply_markup=markup_inline, parse_mode='Markdown')
+            await async_antiflood(bot.send_message, user_id, text, reply_markup=markup_inline, parse_mode='Markdown')
             return True
         except Exception:
-            await async_antiflood(botworker.send_message, user_id, text, reply_markup=markup_inline)
+            await async_antiflood(bot.send_message, user_id, text, reply_markup=markup_inline)
             return True
     except Exception as error: 
         log(prefix='Notification Error', 

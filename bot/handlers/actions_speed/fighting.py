@@ -1,7 +1,7 @@
 from random import choice, randint, uniform
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot, botworker
+from bot.exec import main_router, bot
 from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.dinosaur.skills import add_skill_point
 from bot.modules.decorators import HDMessage
@@ -25,7 +25,7 @@ dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 
-@bot.message(Text('commands_name.speed_actions.fighting'), DinoPassStatus(), 
+@main_router.message(Text('commands_name.speed_actions.fighting'), DinoPassStatus(), 
              KDCheck('fighting'))
 @HDMessage
 async def fighting(message: Message):
@@ -56,7 +56,7 @@ async def fighting(message: Message):
         )
 
         text = t(f'fighting.hit', lang, heal=heal)
-        await botworker.send_message(chatid, text,  parse_mode='Markdown',
+        await bot.send_message(chatid, text,  parse_mode='Markdown',
             reply_markup=await m(userid, 'speed_actions_menu', lang, True))
         return
 
@@ -68,13 +68,13 @@ async def fighting(message: Message):
         await add_skill_point(last_dino._id, 'dexterity', uniform(0.001, 0.01))
 
         text = t(f'fighting.avoid', lang)
-        mes = await botworker.send_message(chatid, text,  parse_mode='Markdown',
+        mes = await bot.send_message(chatid, text,  parse_mode='Markdown',
             reply_markup=await m(userid, 'speed_actions_menu', lang, True))
 
     elif code_s == 2: # Заблокировал удар
         await add_skill_point(last_dino._id, 'power', uniform(0.001, 0.01))
 
         text = t(f'fighting.block', lang)
-        mes = await botworker.send_message(chatid, text,  parse_mode='Markdown',
+        mes = await bot.send_message(chatid, text,  parse_mode='Markdown',
             reply_markup=await m(userid, 'speed_actions_menu', lang, True))
     await auto_ads(mes)

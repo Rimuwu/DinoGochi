@@ -1,5 +1,5 @@
 from bot.dbmanager import mongo_client
-from bot.exec import bot, botworker
+from bot.exec import main_router, bot
 from bot.handlers.start import start_game
 from bot.modules.companies import create_company, end_company, generate_message, info
 from bot.modules.data_format import seconds_to_str, str_to_seconds, user_name
@@ -26,7 +26,7 @@ users = DBconstructor(mongo_client.user.users)
 companies = DBconstructor(mongo_client.other.companies)
 langs = DBconstructor(mongo_client.user.lang)
 
-@bot.message(IsAdminUser(), Command(commands=['create_company']))
+@main_router.message(IsAdminUser(), Command(commands=['create_company']))
 @HDMessage
 async def create_company_com(message: Message):
     chatid = message.chat.id
@@ -313,9 +313,9 @@ async def end(data, transmitted_data):
     }
 
     await create_company(**return_data)
-    await botworker.send_message(chatid, '✅')
+    await bot.send_message(chatid, '✅')
 
-@bot.message(Command(commands=['companies']), IsAdminUser())
+@main_router.message(Command(commands=['companies']), IsAdminUser())
 async def companies_c(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
@@ -335,11 +335,11 @@ async def comp_info(com_id, transmitted_data):
     lang = transmitted_data['lang']
 
     text, mrk = await info(com_id, lang)
-    await botworker.send_message(
+    await bot.send_message(
         chatid, text, reply_markup=mrk
     )
 
-@bot.callback_query(F.data.startswith('company_info') , IsAuthorizedUser())
+@main_router.callback_query(F.data.startswith('company_info') , IsAuthorizedUser())
 @HDCallback
 async def company_info(callback: CallbackQuery):
     chatid = callback.message.chat.id
@@ -355,13 +355,13 @@ async def company_info(callback: CallbackQuery):
     if c:
         if action == 'delete':
             await end_company(c['_id'])
-            await botworker.delete_message(chatid, callback.message.id)
+            await bot.delete_message(chatid, callback.message.id)
 
         elif action == 'activate':
             await companies.update_one({'_id': c['_id']}, {'$set': {'status': True}})
 
             text, mrk = await info(c['_id'], lang)
-            await botworker.edit_message_text(
+            await bot.edit_message_text(
                 text, None, chatid, callback.message.id, reply_markup=mrk
             )
 
@@ -369,7 +369,7 @@ async def company_info(callback: CallbackQuery):
             await companies.update_one({'_id': c['_id']}, {'$set': {'status': False}})
 
             text, mrk = await info(c['_id'], lang)
-            await botworker.edit_message_text(
+            await bot.edit_message_text(
                 text, None, chatid, callback.message.id, reply_markup=mrk
             )
 

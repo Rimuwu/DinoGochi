@@ -6,7 +6,7 @@ import aiofiles
 import aiogram.types
 
 from bot.config import conf
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.logs import (MAX_ERRORS, get_errors_count,
                               get_latest_errors_dif, get_latest_errors_and_clear, log)
 from bot.taskmanager import add_task
@@ -23,9 +23,9 @@ async def report_message(message: str):
     for id in report_ids:
         if isinstance(id, str):
             channel_id, topic_id = id.split('_', 2)
-            tasks.append(botworker.send_message(channel_id, message, parse_mode='Markdown', message_thread_id=int(topic_id)))
+            tasks.append(bot.send_message(channel_id, message, parse_mode='Markdown', message_thread_id=int(topic_id)))
         else: 
-            tasks.append(botworker.send_message(id, message, parse_mode='Markdown'))
+            tasks.append(bot.send_message(id, message, parse_mode='Markdown'))
 
     await asyncio.gather(*tasks)
 

@@ -1,6 +1,6 @@
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.user.advert import create_ads_data
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
@@ -33,7 +33,7 @@ async def main_message(user_id):
 
     return text, markup
 
-@bot.message(Command(commands=['super'], IsPrivateChat())
+@main_router.message(Command(commands=['super'], IsPrivateChat())
 @HDMessage
 async def super_c(message: Message):
     chatid = message.chat.id
@@ -41,9 +41,9 @@ async def super_c(message: Message):
 
     await create_ads_data(userid)
     text, markup = await main_message(userid)
-    await botworker.send_message(chatid, text, reply_markup=markup, parse_mode="Markdown")
+    await bot.send_message(chatid, text, reply_markup=markup, parse_mode="Markdown")
 
-@bot.callback_query(F.data.startswith('super_coins'), IsPrivateChat())
+@main_router.callback_query(F.data.startswith('super_coins'), IsPrivateChat())
 @HDCallback
 async def super_coins(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -62,7 +62,7 @@ async def super_coins(call: CallbackQuery):
                                ))
         markup = list_to_inline([inl_buttons], 2)
 
-        await botworker.edit_message_text(text, None, chatid, call.message.id,
+        await bot.edit_message_text(text, None, chatid, call.message.id,
                                     reply_markup=markup)
 
     elif code == "products":
@@ -83,10 +83,10 @@ async def super_coins(call: CallbackQuery):
             {t('buttons_name.back',lang): 'super_shop back'})
 
         markup = list_to_inline(mrk_list, 2)
-        await botworker.edit_message_text(text, None, chatid, call.message.id,
+        await bot.edit_message_text(text, None, chatid, call.message.id,
                                     reply_markup=markup, parse_mode='Markdown')
 
-@bot.callback_query(F.data.startswith('ads_limit'), IsPrivateChat())
+@main_router.callback_query(F.data.startswith('ads_limit'), IsPrivateChat())
 @HDCallback
 async def ads_limit(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -99,7 +99,7 @@ async def ads_limit(call: CallbackQuery):
     if code == 'no_ads':
         if not await premium(user_id):
             text = t("no_premium", lang)
-            await botworker.send_message(chatid, text)
+            await bot.send_message(chatid, text)
         else:
             await ads.update_one({'userid': user_id}, 
                                  {"$set": {'limit': 'inf'}}, comment='ads_limit')
@@ -108,10 +108,10 @@ async def ads_limit(call: CallbackQuery):
         await ads.update_one({'userid': user_id}, {"$set": {'limit': limit}}, comment='ads_limit_limit')
 
     text, markup = await main_message(user_id)
-    await botworker.edit_message_text(text, None, chatid, call.message.id,
+    await bot.edit_message_text(text, None, chatid, call.message.id,
                                     reply_markup=markup, parse_mode="Markdown")
 
-@bot.callback_query(F.data.startswith('super_shop'), IsPrivateChat())
+@main_router.callback_query(F.data.startswith('super_shop'), IsPrivateChat())
 @HDCallback
 async def super_shop(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -122,7 +122,7 @@ async def super_shop(call: CallbackQuery):
 
     if code == 'back':
         text, markup = await main_message(user_id)
-        await botworker.edit_message_text(text, None, chatid, call.message.id,
+        await bot.edit_message_text(text, None, chatid, call.message.id,
                                     reply_markup=markup, parse_mode="Markdown")
 
     elif code == 'buy':
@@ -139,8 +139,8 @@ async def super_shop(call: CallbackQuery):
                                    {'$inc': {'super_coins': -price}}, comment='super_shop_price')
             for i in items: await AddItemToUser(user_id, i)
 
-            await botworker.send_message(chatid, t('super_coins.buy', lang))
+            await bot.send_message(chatid, t('super_coins.buy', lang))
 
             text, markup = await main_message(user_id)
-            await botworker.edit_message_text(text, None, chatid, call.message.id,
+            await bot.edit_message_text(text, None, chatid, call.message.id,
                                     reply_markup=markup, parse_mode="Markdown")

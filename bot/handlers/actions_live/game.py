@@ -3,7 +3,7 @@ from time import time
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
-from bot.exec import bot, botworker
+from bot.exec import main_router, bot
 from bot.filters.status import DinoPassStatus
 from bot.modules.items.accessory import check_accessory
 from bot.modules.user.advert import auto_ads
@@ -106,7 +106,7 @@ async def delete_markup(transmitted_data):
     lang = transmitted_data['lang']
 
     text = t(f'entertainments.zero', lang)
-    await botworker.send_message(chatid, text, reply_markup=cancel_markup(lang))
+    await bot.send_message(chatid, text, reply_markup=cancel_markup(lang))
     return transmitted_data, 0
 
 async def game_start(return_data: dict, 
@@ -127,7 +127,7 @@ async def game_start(return_data: dict,
     res_dino_status = await dino.status
     if res_dino_status:
         if res_dino_status != 'pass':
-            await botworker.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
+            await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
             return
 
     percent, repeat = await dino.memory_percent('games', game)
@@ -142,7 +142,7 @@ async def game_start(return_data: dict,
             if not res: 
                 join_dino = 0
                 text_m = t('entertainments.join_end', lang)
-                await botworker.send_message(chatid, text_m)
+                await bot.send_message(chatid, text_m)
             else: 
                 percent += 0.5
 
@@ -159,7 +159,7 @@ async def game_start(return_data: dict,
                 text_m = t('entertainments.dino_join', lang, 
                             dinoname=dino.name)
                 image = await dino_game(friend_dino_id, dino.data_id)
-                await botworker.send_photo(friend, image, text_m)
+                await bot.send_photo(friend, image, text_m)
 
     r_t = get_data('entertainments', lang)['time'][code]['data']
     game_time = randint(*r_t) * 60
@@ -175,7 +175,7 @@ async def game_start(return_data: dict,
     if percent < 1.0:
         text += t(f'entertainments.game_text.penalty', lang, percent=int(percent*100))
 
-    message = await botworker.send_photo(chatid, image, text, 
+    message = await bot.send_photo(chatid, image, text, 
                          reply_markup=await m(userid, 'last_menu', lang, True))
 
     # Пригласить друга
@@ -187,11 +187,11 @@ async def game_start(return_data: dict,
         markup = list_to_inline([
             {button: f'invite_to_action game {dino.alt_id}'}
         ])
-        await botworker.send_message(chatid, text, reply_markup=markup)
+        await bot.send_message(chatid, text, reply_markup=markup)
 
     await auto_ads(message)
 
-@bot.message(Text('commands_name.actions.entertainments'), DinoPassStatus())
+@main_router.message(Text('commands_name.actions.entertainments'), DinoPassStatus())
 @HDMessage
 async def entertainments(message: Message, state: FSMContext):
     userid = message.from_user.id # type: ignore
@@ -202,7 +202,7 @@ async def entertainments(message: Message, state: FSMContext):
     dino = await user.get_last_dino()
     if dino: await start_game_ent(userid, chatid, lang, dino, state)
 
-@bot.message(Text('commands_name.actions.stop_game'))
+@main_router.message(Text('commands_name.actions.stop_game'))
 @HDMessage
 async def stop_game(message: Message):
     userid = message.from_user.id # type: ignore
@@ -251,11 +251,11 @@ async def stop_game(message: Message):
                 else:
                     # Невозможно оторвать от игры
                     text = t('stop_game.dont_tear', lang)
-                await botworker.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang, True))
+                await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang, True))
 
             else:
                 if await last_dino.status == 'game':
                     await set_status(last_dino._id, 'pass')
-                await botworker.send_message(chatid, '❌', reply_markup= await m(userid, 'last_menu', lang, True))
+                await bot.send_message(chatid, '❌', reply_markup= await m(userid, 'last_menu', lang, True))
         else:
-            await botworker.send_message(chatid, t('stop_game.unrestrained_play', lang))
+            await bot.send_message(chatid, t('stop_game.unrestrained_play', lang))

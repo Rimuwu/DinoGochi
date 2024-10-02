@@ -7,7 +7,7 @@
 import json
 import os
 from typing import Union
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.images import async_open
 import aiogram
 
@@ -39,9 +39,9 @@ async def send_SmartPhoto(chatid: int, photo_way, caption: Union[str, None] = No
 
     if photo_way in storage:
         file_id = storage[photo_way]
-        if await botworker.get_file(file_id):
+        if await bot.get_file(file_id):
             # Отпрляем файл по file_id
-            mes = await botworker.send_photo(chatid, file_id, caption, 
+            mes = await bot.send_photo(chatid, file_id, caption, 
                                  parse_mode, reply_markup=reply_markup)
             return mes
 
@@ -52,7 +52,7 @@ async def send_SmartPhoto(chatid: int, photo_way, caption: Union[str, None] = No
     else:
         file_photo = photo_way
 
-    mes = await botworker.send_photo(chatid, file_photo, caption, 
+    mes = await bot.send_photo(chatid, file_photo, caption, 
                             parse_mode, reply_markup=reply_markup)
 
     # Сохраняем file_id
@@ -69,9 +69,9 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
 
     if photo_way in storage:
         file_id = storage[photo_way]
-        if await botworker.get_file(file_id):
+        if await bot.get_file(file_id):
             # Отпряем файл по file_id
-            mes = await botworker.edit_message_media(
+            mes = await bot.edit_message_media(
                 aiogram.types.InputMediaPhoto(file_id, caption, parse_mode), 
                 chatid, message_id, reply_markup=reply_markup)
             return mes
@@ -83,7 +83,7 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
     else:
         file_photo = photo_way
 
-    mes = await botworker.edit_message_media(
+    mes = await bot.edit_message_media(
                 aiogram.types.InputMediaPhoto(file_photo, caption, parse_mode), 
                 chatid, message_id, reply_markup=reply_markup)
 

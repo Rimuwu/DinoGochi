@@ -19,7 +19,7 @@ from bot.modules.logs import log
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
-from bot.exec import bot, botworker
+from bot.exec import main_router, bot
 from bot.handlers.dino_profile import transition
 from bot.modules.companies import nextinqueue, save_message
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, item_list
@@ -67,12 +67,10 @@ from bot.modules.decorators import HDMessage
 
 from bson.objectid import ObjectId
 from bson.son import SON
-from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import default_state
 
 users = mongo_client.user.users
 
-@bot.message(Command(commands=['add_item', 'item_add']), IsAdminUser())
+@main_router.message(Command(commands=['add_item', 'item_add']), IsAdminUser())
 async def command(message):
     user = message.from_user
     if user.id in conf.bot_devs:
@@ -90,11 +88,11 @@ async def command(message):
             res = await AddItemToUser(ad_user, item_id, col)
             print(res)
 
-            await botworker.send_message(message.from_user.id, res)
+            await bot.send_message(message.from_user.id, res)
     else:
         print(user.id, 'not in devs')
 
-@bot.message(Command(commands=['1xp']), IsAdminUser())
+@main_router.message(Command(commands=['1xp']), IsAdminUser())
 async def command2(message):
     user = message.from_user
     if user.id in conf.bot_devs:
@@ -103,7 +101,7 @@ async def command2(message):
         print(user.id, 'not in devs')
 
 
-@bot.message(Command(commands=['test_img']), IsAdminUser())
+@main_router.message(Command(commands=['test_img']), IsAdminUser())
 async def test_img(message):
     user = message.from_user
 
@@ -120,7 +118,7 @@ async def test_img(message):
                         {'heal': 0, 'eat': 0, 'energy': 0, 'game': 0, 'mood': 0}, "leg", 1, 30)
 
         tt = time() - st_t
-        # await botworker.send_photo(user.id, res, f"test {i} {tt}")
+        # await bot.send_photo(user.id, res, f"test {i} {tt}")
         t1_list.append(tt)
     
     t2_list = []
@@ -131,7 +129,7 @@ async def test_img(message):
                         {'heal': 0, 'eat': 0, 'energy': 0, 'game': 0, 'mood': 0}, "leg", 1, 30)
 
         tt = time() - st_t
-        # await botworker.send_photo(user.id, res, f"test {i} {tt}")
+        # await bot.send_photo(user.id, res, f"test {i} {tt}")
         t2_list.append(tt)
  
     
@@ -142,30 +140,30 @@ async def test_img(message):
 
 from bot.modules.dungeon.dungeon import Lobby, DungPlayer
 
-@bot.message(Command(commands=['dung']), IsAdminUser())
+@main_router.message(Command(commands=['dung']), IsAdminUser())
 async def dung(message):
 
-    m = await botworker.send_message(message.from_user.id, "test")
+    m = await bot.send_message(message.from_user.id, "test")
     lobby = await Lobby().create(message.from_user.id, m.id)
 
     pprint(lobby.__dict__)
 
-@bot.message(Command(commands=['delete']), IsAdminUser())
+@main_router.message(Command(commands=['delete']), IsAdminUser())
 async def delete(message):
 
     lobby = await Lobby().FromBase(message.from_user.id)
     await lobby.delete
 
-@bot.message(Command(commands=['add_to']), IsAdminUser())
+@main_router.message(Command(commands=['add_to']), IsAdminUser())
 async def add_to(message):
 
     lobby = await Lobby().FromBase(1191252229)
 
-    m = await botworker.send_message(message.from_user.id, "test")
+    m = await bot.send_message(message.from_user.id, "test")
     player = await DungPlayer().create(message.from_user.id, m.id)
     await lobby.add_player(player, message.from_user.id)
 
-# @bot.message(Command(commands=['test'])
+# @main_router.message(Command(commands=['test'])
 # @HDMessage
 # async def test(message: Message):
     
@@ -189,7 +187,7 @@ async def add_to(message):
     
 
 
-@bot.message(Command(commands=['test']))
+@main_router.message(Command(commands=['test']))
 @HDMessage
 async def test(message: Message):
     
@@ -201,7 +199,7 @@ async def test(message: Message):
     print(r)
 
 
-@bot.message(Command(commands=['test2']))
+@main_router.message(Command(commands=['test2']))
 @HDMessage
 async def test2(message: Message):
     st = time()
@@ -210,23 +208,47 @@ async def test2(message: Message):
     await send_SmartPhoto(message.chat.id, 'images/remain/taverna/dino_reward.png', None, 'Markdown', None)
     log(f'test2 {time() - st} MEOW')
 
-@bot.message(Command(commands=['errr']))
+@main_router.message(Command(commands=['errr']))
 @HDMessage
 async def super_test(message: Message):
     
     2 / 0
 
-@bot.message(Command(commands=['check_state']), StateFilter(default_state))
+
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import default_state, StatesGroup, State
+
+class Form(StatesGroup):
+    name = State()
+    age = State()
+
 @HDMessage
+@main_router.message(Command(commands=['check_state']))
 async def check(message: Message, state: FSMContext):
     
     await message.answer('ok')
     
-    
     r = await state.get_state()
     await message.answer(f"{r}")
 
-# @bot.message(Command(commands=['check_state']))
+@HDMessage
+@main_router.message(Command(commands=['set_state']))
+async def check(message: Message, state: FSMContext):
+    
+    await message.answer('ok')
+    
+    r = await state.set_state(Form.name)
+    await state.set_data({'name': 'test', 'func': check, 'class': Form})
+    await message.answer(f"{r}")
+
+@HDMessage
+@main_router.message(Command(commands=['res_state']), StateFilter(Form.name))
+async def check(message: Message, state: FSMContext):
+    
+    await message.answer('ok')
+    await state.clear()
+
+# @main_router.message(Command(commands=['check_state']))
 # @HDMessage
 # async def check_n(message: Message, state: FSMContext):
     

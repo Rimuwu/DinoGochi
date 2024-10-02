@@ -1,7 +1,7 @@
 from random import choice, randint, uniform
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot, botworker
+from bot.exec import main_router, bot
 from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.dinosaur.skills import add_skill_point
 from bot.modules.decorators import HDMessage
@@ -25,7 +25,7 @@ dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 
-@bot.message(Text('commands_name.speed_actions.talk'), DinoPassStatus(), KDCheck('talk'))
+@main_router.message(Text('commands_name.speed_actions.talk'), DinoPassStatus(), KDCheck('talk'))
 @HDMessage
 async def talk(message: Message):
     userid = message.from_user.id
@@ -52,6 +52,6 @@ async def talk(message: Message):
     theme = choice(text_l)
 
     text = t(f'talk.{status}', lang, theme=theme)
-    mes = await botworker.send_message(chatid, text,  parse_mode='Markdown',
+    mes = await bot.send_message(chatid, text,  parse_mode='Markdown',
         reply_markup=await m(userid, 'speed_actions_menu', lang, True))
     await auto_ads(mes)

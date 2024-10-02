@@ -3,7 +3,7 @@ from random import randint, random, choices, choice
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.data_format import transform
 from bot.modules.items.accessory import check_accessory
 from bot.modules.dinosaur.dinosaur import Dino, end_collecting, mutate_dino_stat
@@ -25,7 +25,7 @@ LVL_CHANCE = 0.125 * REPEAT_MINUTS
 
 async def stop_collect(coll_data):
     try:
-        chat_user = await botworker.get_chat_member(coll_data['sended'], coll_data['sended'])
+        chat_user = await bot.get_chat_member(coll_data['sended'], coll_data['sended'])
         lang = await get_lang(chat_user.user.id)
     except: lang = 'en'
     

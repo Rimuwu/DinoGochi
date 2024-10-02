@@ -7,7 +7,7 @@ from aiogram.types import User as teleUser
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.data_format import escape_markdown, item_list, seconds_to_str, user_name
 from bot.modules.dinosaur.dinosaur import Dino, Egg
 from bot.modules.user.advert import create_ads_data
@@ -392,7 +392,7 @@ async def experience_enhancement(userid: int, xp: int):
         xp = user['xp'] + xp
 
         try:
-            chat_user = await botworker.get_chat_member(userid, userid)
+            chat_user = await bot.get_chat_member(userid, userid)
             lang = await get_lang(chat_user.user.id)
             name = user_name(chat_user.user)
         except: 
@@ -566,7 +566,7 @@ async def count_inventory_items(userid: int, find_type: list):
 async def user_in_chat(userid: int, chatid: int):
     statuss = ['creator', 'administrator', 'member']
     try:
-        result = await botworker.get_chat_member(chat_id=chatid, user_id=userid)
+        result = await bot.get_chat_member(chat_id=chatid, user_id=userid)
     except Exception as e: return False
 
     if result.status in statuss: return result.status

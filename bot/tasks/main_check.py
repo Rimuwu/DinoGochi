@@ -9,7 +9,7 @@ from bot.taskmanager import add_task
 from bot.modules.dinosaur.dinosaur  import Dino, get_owner
 from bot.modules.dinosaur.mood import check_inspiration, mood_while_if, calculation_points
 from bot.modules.user.user import experience_enhancement
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.user.user import User
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -204,7 +204,7 @@ async def main_checks():
                         text = choice(get_data('pass_messages', lang))
                         text = text.format(owner=owner_name)
                         try:
-                            await botworker.send_message(
+                            await bot.send_message(
                                 owner['owner_id'], f'🦕 {dino["name"]}: {text}'
                             )
                         except: pass

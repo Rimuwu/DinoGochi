@@ -1,7 +1,7 @@
 
 from bot.dbmanager import mongo_client
 from bot.const import BACKGROUNDS
-from bot.exec import bot, botworker
+from bot.exec import main_router, bot
 from bot.modules.data_format import escape_markdown, list_to_keyboard
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino
@@ -40,8 +40,8 @@ async def back_edit(content, transmitted_data: dict):
         tt = 'saved'
     else:
         tt = 'custom'
-        file_info = await botworker.get_file(content)
-        downloaded_file = await botworker.download_file(file_info.file_path)
+        file_info = await bot.get_file(content)
+        downloaded_file = await bot.download_file(file_info.file_path)
         if downloaded_file:
             content = content
         else:
@@ -59,7 +59,7 @@ async def back_edit(content, transmitted_data: dict):
     else:
         text = t('custom_profile.error', lang)
 
-    await botworker.send_message(chatid, text, 
+    await bot.send_message(chatid, text, 
                             reply_markup= await m(userid, 'last_menu', lang))
 
 async def transition_back(dino: Dino, transmitted_data: dict):
@@ -75,9 +75,9 @@ async def transition_back(dino: Dino, transmitted_data: dict):
         'dino': dino
     }
     await ChooseImageState(back_edit, userid, chatid, lang, True, transmitted_data=data)
-    await botworker.send_message(userid, text, reply_markup=markup)
+    await bot.send_message(userid, text, reply_markup=markup)
 
-@bot.message(Text('commands_name.backgrounds.custom_profile'), 
+@main_router.message(Text('commands_name.backgrounds.custom_profile'), 
                      IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def custom_profile(message: Message):
@@ -89,10 +89,10 @@ async def custom_profile(message: Message):
         await ChooseDinoState(transition_back, userid, message.chat.id, lang, False)
     else:
         text = t('no_premium', lang)
-        await botworker.send_message(userid, text)
+        await bot.send_message(userid, text)
 
 
-@bot.message(Text('commands_name.backgrounds.standart'), 
+@main_router.message(Text('commands_name.backgrounds.standart'), 
                      IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def standart(message: Message):
@@ -114,7 +114,7 @@ async def standart_end(dino: Dino, transmitted_data: dict):
             }
         })
 
-    await botworker.send_message(chatid, t('standart_background', lang), 
+    await bot.send_message(chatid, t('standart_background', lang), 
                             reply_markup= await m(userid, 'last_menu', lang))
 
 def near_back(key: int, step: int, storage: list[int] = []):
@@ -173,7 +173,7 @@ async def back_page(userid: int, page: int, lang: str):
     image = f'images/backgrounds/{page}.png'
     return text, markup, image
 
-@bot.message(Text('commands_name.backgrounds.backgrounds'), 
+@main_router.message(Text('commands_name.backgrounds.backgrounds'), 
                      IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def backgrounds(message: Message):
@@ -185,7 +185,7 @@ async def backgrounds(message: Message):
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup)
 
 
-@bot.callback_query(F.data.startswith('back_m '), IsPrivateChat())
+@main_router.callback_query(F.data.startswith('back_m '), IsPrivateChat())
 @HDCallback
 async def background_menu(call: CallbackQuery):
     split_d = call.data.split()
@@ -205,7 +205,7 @@ async def background_menu(call: CallbackQuery):
 
     elif action == 'page_n':
         max_int = int(list(BACKGROUNDS.keys())[-1])
-        mes = await botworker.send_message(chatid, t('backgrounds.page', lang),
+        mes = await bot.send_message(chatid, t('backgrounds.page', lang),
                                      reply_markup=count_markup(max_int, lang)
                                      )
 
@@ -226,14 +226,14 @@ async def background_menu(call: CallbackQuery):
                 'page': b_id,
                 'message_id': call.message.id
             }
-            mes = await botworker.send_message(chatid, t('backgrounds.confirm', lang),
+            mes = await bot.send_message(chatid, t('backgrounds.confirm', lang),
                                         reply_markup=confirm_markup(lang)
                                         )
             data['delete_id'] = mes.id
             await ChooseConfirmState(buy, userid, chatid, lang, transmitted_data=data)
     
     elif action == 'set':
-        # mes = await botworker.send_message(chatid, t('backgrounds.choose_dino', lang),
+        # mes = await bot.send_message(chatid, t('backgrounds.choose_dino', lang),
         #                                 reply_markup=confirm_markup(lang)
         #                                 )
         data = { 'page': b_id } # 'delete_id': mes.id,
@@ -251,12 +251,12 @@ async def set_back(dino: Dino, transmitted_data: dict):
         'profile.background_id': page 
         }})
 
-    await botworker.send_message(chatid, t('backgrounds.set', lang), 
+    await bot.send_message(chatid, t('backgrounds.set', lang), 
                         reply_markup= await m(userid, 'last_menu', lang))
     if 'umessageid' in transmitted_data:
-        await botworker.delete_message(chatid, transmitted_data['umessageid'])
+        await bot.delete_message(chatid, transmitted_data['umessageid'])
 
-    # await botworker.delete_message(chatid, transmitted_data['delete_id'])
+    # await bot.delete_message(chatid, transmitted_data['delete_id'])
 
 async def buy(_: bool, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -282,7 +282,7 @@ async def buy(_: bool, transmitted_data: dict):
         res = await take_coins(userid, -price['coins'], True)
 
     if res:
-        await botworker.send_message(chatid, t('backgrounds.buy', lang), 
+        await bot.send_message(chatid, t('backgrounds.buy', lang), 
                         reply_markup= await m(userid, 'last_menu', lang))
 
         await users.update_one({'userid': userid}, {'$push': {
@@ -293,11 +293,11 @@ async def buy(_: bool, transmitted_data: dict):
         await edit_SmartPhoto(chatid, message_id, image, text, 'Markdown', markup)
 
     else:
-        await botworker.send_message(chatid, t('backgrounds.no_coins', lang), 
+        await bot.send_message(chatid, t('backgrounds.no_coins', lang), 
                         reply_markup= await m(userid, 'last_menu', lang))
 
-    await botworker.delete_message(chatid, transmitted_data['delete_id'])
-    await botworker.delete_message(chatid, transmitted_data['umessageid'])
+    await bot.delete_message(chatid, transmitted_data['delete_id'])
+    await bot.delete_message(chatid, transmitted_data['umessageid'])
 
 async def page_n(number: int, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -312,8 +312,8 @@ async def page_n(number: int, transmitted_data: dict):
     text, markup, image = await back_page(userid, page, lang)
     await edit_SmartPhoto(chatid, message_id, image, text, 'Markdown', markup)
 
-    await botworker.send_message(chatid, t('backgrounds.page_set', lang), 
+    await bot.send_message(chatid, t('backgrounds.page_set', lang), 
                             reply_markup= await m(userid, 'last_menu', lang))
 
-    await botworker.delete_message(chatid, transmitted_data['delete_id'])
-    await botworker.delete_message(chatid, transmitted_data['umessageid'])
+    await bot.delete_message(chatid, transmitted_data['delete_id'])
+    await bot.delete_message(chatid, transmitted_data['umessageid'])

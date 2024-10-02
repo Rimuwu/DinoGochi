@@ -1,7 +1,7 @@
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
-from bot.exec import bot, botworker
+from bot.exec import main_router, bot
 from bot.modules.dinosaur.mood import repeat_activity
 from bot.modules.items.accessory import check_accessory
 from bot.modules.user.advert import auto_ads
@@ -46,13 +46,13 @@ async def collecting_adapter(return_data, transmitted_data):
                 add_count=count,
                 max_c=await max_eat(userid)
                 )
-        await botworker.send_message(chatid, text, reply_markup= await m(
+        await bot.send_message(chatid, text, reply_markup= await m(
             userid, 'last_menu', lang))
     else:
         res_dino_status = await check_status(dino._id)
         if res_dino_status:
             if res_dino_status != 'pass':
-                await botworker.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
+                await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
                 return
 
             await dino.collecting(userid, option, count)
@@ -67,15 +67,15 @@ async def collecting_adapter(return_data, transmitted_data):
             markup = list_to_inline([
                 {stop_button: f'collecting stop {dino.alt_id}'}])
 
-            await botworker.send_photo(chatid, image, text, reply_markup=markup)
-            message = await botworker.send_message(chatid, t('back_text.actions_menu', lang),
+            await bot.send_photo(chatid, image, text, reply_markup=markup)
+            message = await bot.send_message(chatid, t('back_text.actions_menu', lang),
                                         reply_markup = await m(userid, 'last_menu', lang)
                                         )
 
             await auto_ads(message)
 
 
-@bot.message(Text('commands_name.actions.collecting'),
+@main_router.message(Text('commands_name.actions.collecting'),
              DinoPassStatus())
 @HDMessage
 async def collecting_button(message: Message, state: FSMContext):
@@ -118,7 +118,7 @@ async def collecting_button(message: Message, state: FSMContext):
                                             lang, steps, 
                                         transmitted_data={'dino': last_dino, 'delete_steps': True})
 
-@bot.message(Text('commands_name.actions.progress'))
+@main_router.message(Text('commands_name.actions.progress'))
 @HDMessage
 async def collecting_progress(message: Message):
     if message.from_user:
@@ -142,15 +142,15 @@ async def collecting_progress(message: Message):
                         now = data['now_count'], max_count=data['max_count']
                         )
 
-                await botworker.send_photo(chatid, image, text, 
+                await bot.send_photo(chatid, image, text, 
                                     reply_markup=list_to_inline(
                                     [{stop_button: f'collecting stop {last_dino.alt_id}'}]
                                         ))
             else:
-                await botworker.send_message(chatid, '❌',
+                await bot.send_message(chatid, '❌',
                             reply_markup = await m(userid, 'last_menu', lang))
 
-@bot.callback_query(F.data.startswith('collecting'), IsAuthorizedUser(), IsPrivateChat(True))
+@main_router.callback_query(F.data.startswith('collecting'), IsAuthorizedUser(), IsPrivateChat(True))
 @HDCallback
 async def collecting_callback(callback: CallbackQuery):
     if callback.data:

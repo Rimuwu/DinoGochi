@@ -1,6 +1,6 @@
 from time import time
 from aiogram.types import CallbackQuery
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur import Dino
@@ -18,7 +18,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 users = DBconstructor(mongo_client.user.users)
 item_craft = DBconstructor(mongo_client.items.item_craft)
 
-@bot.message(Command(commands=['craftlist'], IsPrivateChat())
+@main_router.message(Command(commands=['craftlist'], IsPrivateChat())
 @HDMessage
 async def craftlist(message):
     chatid = message.chat.id
@@ -38,7 +38,7 @@ async def craftlist(message):
     if options:
         await ChoosePagesState(info_craft, userid, chatid, lang, options, one_element=False, autoanswer=False)
     else:
-        await botworker.send_message(chatid, '❌')
+        await bot.send_message(chatid, '❌')
 
 async def info_craft(data, transmitted_data: dict):
     chatid = transmitted_data['chatid']
@@ -77,12 +77,12 @@ async def info_craft(data, transmitted_data: dict):
                  )
         
         if not portable:
-            await botworker.send_message(chatid, info, parse_mode='Markdown',
+            await bot.send_message(chatid, info, parse_mode='Markdown',
                                reply_markup=mrk)
         else:
             return info, mrk
 
-@bot.callback_query(F.data.startswith('time_craft'), IsAuthorizedUser())
+@main_router.callback_query(F.data.startswith('time_craft'), IsAuthorizedUser())
 @HDCallback
 async def time_craft(callback: CallbackQuery):
     chatid = callback.message.chat.id
@@ -100,7 +100,7 @@ async def time_craft(callback: CallbackQuery):
 
     elif action == 'cancel_craft':
         await stop_craft(alt_code)
-        await botworker.delete_message(chatid, callback.message.id)
+        await bot.delete_message(chatid, callback.message.id)
 
 async def send_dino_to_craft(dino: Dino, transmitted_data: dict):
     chatid = transmitted_data['chatid']
@@ -120,14 +120,14 @@ async def send_dino_to_craft(dino: Dino, transmitted_data: dict):
                 'lang': lang
             }
             info, mrk = await info_craft(alt_code, transmitted_data) # type: ignore
-            await botworker.edit_message_text(info, None, chatid, ms_id, reply_markup=mrk, parse_mode='Markdown')
+            await bot.edit_message_text(info, None, chatid, ms_id, reply_markup=mrk, parse_mode='Markdown')
 
-            await botworker.send_message(chatid, text, parse_mode='Markdown',
+            await bot.send_message(chatid, text, parse_mode='Markdown',
                                 reply_markup=await m(userid, 'last_menu', lang))
 
         else:
-            await botworker.send_message(chatid, "❌", parse_mode='Markdown', 
+            await bot.send_message(chatid, "❌", parse_mode='Markdown', 
                             reply_markup= await m(userid, 'last_menu', lang))
     else:
-        await botworker.send_message(chatid,t('alredy_busy', lang), parse_mode='Markdown', 
+        await bot.send_message(chatid,t('alredy_busy', lang), parse_mode='Markdown', 
                             reply_markup= await m(userid, 'last_menu', lang))

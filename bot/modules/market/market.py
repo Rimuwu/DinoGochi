@@ -3,7 +3,7 @@ from time import time
 from bson.objectid import ObjectId
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, random_code, seconds_to_str, item_list, escape_markdown
 from bot.modules.items.item import counts_items, get_item_dict, AddItemToUser, CheckCountItemFromUser, RemoveItemFromUser
 from bot.modules.items.item import get_data as get_item_data
@@ -314,7 +314,7 @@ async def send_view_product(product_id: ObjectId, owner_id: int):
         ]
 
         markup = list_to_inline(buttons)
-        await botworker.send_message(channel, text, reply_markup=markup, parse_mode='Markdown')
+        await bot.send_message(channel, text, reply_markup=markup, parse_mode='Markdown')
 
 async def create_push(owner_id: int, channel_id: int, lang: str):
 
@@ -371,7 +371,7 @@ async def delete_product(baseid = None, alt_id = None):
                     c_items = counts_items(id_list, user['lang'])
                     text = t('auction.delete_auction', user['lang'], items=c_items)
 
-                    try: await botworker.send_message(user['userid'], text)
+                    try: await bot.send_message(user['userid'], text)
                     except: pass
 
             if winner:
@@ -396,7 +396,7 @@ async def delete_product(baseid = None, alt_id = None):
                 c_items = counts_items(id_list, winner['lang'])
                 text = t('auction.win', winner['lang'], items=c_items)
 
-                try: await botworker.send_message(winner['userid'], text)
+                try: await bot.send_message(winner['userid'], text)
                 except: pass
 
             else:

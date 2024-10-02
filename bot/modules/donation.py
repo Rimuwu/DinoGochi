@@ -1,6 +1,6 @@
 import json
 import os
-from bot.exec import bot
+from bot.exec import main_router, bot
 from aiogram.types import LabeledPrice
 
 from bot.const import GAME_SETTINGS
@@ -61,7 +61,7 @@ def save_donation(userid, amount, status, product,
 
 async def send_donat_notification(userid:int, message_key:str, **kwargs):
     try:
-        chat_user = await botworker.get_chat_member(userid, userid)
+        chat_user = await bot.get_chat_member(userid, userid)
         user = chat_user.user
         lang = await get_lang(user.id)
     except Exception as e:

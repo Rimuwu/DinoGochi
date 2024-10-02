@@ -1,7 +1,7 @@
 from time import time
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.data_format import (escape_markdown, list_to_inline,
                                      seconds_to_str, user_name)
 from bot.modules.decorators import HDCallback, HDMessage
@@ -13,7 +13,7 @@ from aiogram.types import CallbackQuery, Message
 
 management = DBconstructor(mongo_client.other.management)
 
-@bot.message(Text('commands_name.profile.information', 
+@main_router.message(Text('commands_name.profile.information', 
                      IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def infouser(message: Message):
@@ -25,11 +25,11 @@ async def infouser(message: Message):
     photos = await bot.get_user_profile_photos(userid, limit=1)
     if photos.photos:
         photo_id = photos.photos[0][0].file_id #type: ignore
-        await botworker.send_photo(chatid, photo_id, text, parse_mode='Markdown')
+        await bot.send_photo(chatid, photo_id, text, parse_mode='Markdown')
     else:
-        await botworker.send_message(message.chat.id, text, parse_mode='Markdown')
+        await bot.send_message(message.chat.id, text, parse_mode='Markdown')
 
-@bot.message(Command(commands=['profile'], IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(Command(commands=['profile'], IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def infouser_com(message: Message):
     userid = message.from_user.id
@@ -40,11 +40,11 @@ async def infouser_com(message: Message):
     photos = await bot.get_user_profile_photos(userid, limit=1)
     if photos.photos:
         photo_id = photos.photos[0][0].file_id #type: ignore
-        await botworker.send_photo(chatid, photo_id, text, parse_mode='Markdown')
+        await bot.send_photo(chatid, photo_id, text, parse_mode='Markdown')
     else:
-        await botworker.send_message(message.chat.id, text, parse_mode='Markdown')
+        await bot.send_message(message.chat.id, text, parse_mode='Markdown')
 
-@bot.message(Text('commands_name.profile.rayting', 
+@main_router.message(Text('commands_name.profile.rayting', 
                      IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def rayting(message: Message):
@@ -58,7 +58,7 @@ async def rayting(message: Message):
         if t_upd['time'] == 0:
 
             text = t("rayting.no_rayting", lang)
-            await botworker.send_message(chatid, text)
+            await bot.send_message(chatid, text)
         else:
             text = f'{t("rayting.info", lang)}\n_{time_update_rayt}_'
             text_data = get_data('rayting', lang)
@@ -68,9 +68,9 @@ async def rayting(message: Message):
                 buttons[text_data[i]] = f'rayting {i}'
 
             markup = list_to_inline([buttons])
-            await botworker.send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
+            await bot.send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
 
-@bot.callback_query(F.data.startswith('rayting'))
+@main_router.callback_query(F.data.startswith('rayting'))
 @HDCallback
 async def rayting_call(callback: CallbackQuery):
     chatid = callback.message.chat.id
@@ -103,7 +103,7 @@ async def rayting_call(callback: CallbackQuery):
             if user == top_10[-1]: sign = '*└*'
 
             try:
-                chat_user = await botworker.get_chat_member(user['userid'], 
+                chat_user = await bot.get_chat_member(user['userid'], 
                                                       user['userid'])
                 name = escape_markdown(user_name(chat_user.user, False))
             except: name = str(user['userid'])
@@ -125,6 +125,6 @@ async def rayting_call(callback: CallbackQuery):
             markup = list_to_inline(buttons)
 
         try:
-            await botworker.edit_message_text(text, None, chatid, callback.message.id, parse_mode='Markdown', reply_markup=markup)
+            await bot.edit_message_text(text, None, chatid, callback.message.id, parse_mode='Markdown', reply_markup=markup)
         except Exception as e:
             log(message=f'Rayting edit error {e}', lvl=2)

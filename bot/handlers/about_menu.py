@@ -1,5 +1,5 @@
 from bot.const import GAME_SETTINGS
-from bot.exec import bot, botworker
+from bot.exec import main_router, bot
 from bot.modules.data_format import seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.donation import send_inv
@@ -24,7 +24,7 @@ from aiogram.filters import Command
 from aiogram import F
 
 
-@bot.message(Text('commands_name.about.team'), 
+@main_router.message(Text('commands_name.about.team'), 
                      IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def team(message: Message):
@@ -34,19 +34,19 @@ async def team(message: Message):
     lang_text = t('language_name', lang)
     author_loc = t('localization_author', lang)
 
-    await botworker.send_message(chatid, t('about_menu.team', lang, 
+    await bot.send_message(chatid, t('about_menu.team', lang, 
                                      lang_name=lang_text,
                                      author=author_loc
                                     ), parse_mode='html')
 
-@bot.message(Text('commands_name.about.links'), 
+@main_router.message(Text('commands_name.about.links'), 
                      IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def links(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await botworker.send_message(chatid, t('about_menu.links', lang), parse_mode='Markdown')
+    await bot.send_message(chatid, t('about_menu.links', lang), parse_mode='Markdown')
 
 async def main_support_menu(lang: str):
     image = 'images/remain/support/placeholder.png'
@@ -70,7 +70,7 @@ async def main_support_menu(lang: str):
 
     return image, text, InlineKeyboardMarkup(row_width=1, inline_keyboard=markup_inline)
 
-@bot.message(Text('commands_name.about.support'), 
+@main_router.message(Text('commands_name.about.support'), 
                      IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def support(message: Message):
@@ -81,7 +81,7 @@ async def support(message: Message):
     
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
 
-@bot.message(Command(commands=['premium']),
+@main_router.message(Command(commands=['premium']),
                      IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def support_com(message: Message):
@@ -92,7 +92,7 @@ async def support_com(message: Message):
 
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
 
-@bot.message(Text('commands_name.about.faq'), 
+@main_router.message(Text('commands_name.about.faq'), 
                      IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def faq(message: Message):
@@ -110,9 +110,9 @@ async def faq(message: Message):
         ) for key, name in buttons.items()])
 
     inl = InlineKeyboardMarkup(row_width=2, inline_keyboard=markup_inline)
-    await botworker.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=inl)
+    await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=inl)
 
-@bot.callback_query(F.data.startswith('faq'))
+@main_router.callback_query(F.data.startswith('faq'))
 @HDCallback
 async def faq_buttons(call: CallbackQuery):
     data = call.data.split()[1]
@@ -120,9 +120,9 @@ async def faq_buttons(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
 
     text = t(f'faq.{data}', lang)
-    await botworker.send_message(chatid, text, parse_mode='Markdown')
+    await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.callback_query(F.data.startswith('support'))
+@main_router.callback_query(F.data.startswith('support'))
 @HDCallback
 async def support_buttons(call: CallbackQuery):
     action = call.data.split()[1]
@@ -177,7 +177,7 @@ async def support_buttons(call: CallbackQuery):
 
             else:
                 await ChooseIntState(tips, user_id, chatid, lang, 1, 500_000)
-                await botworker.send_message(chatid, text_data['free_enter'], reply_markup=cancel_markup(lang))
+                await bot.send_message(chatid, text_data['free_enter'], reply_markup=cancel_markup(lang))
 
             markup_inline.append(
             InlineKeyboardButton(
@@ -217,4 +217,4 @@ async def tips(col, transmitted_data):
     lang = transmitted_data['lang']
 
     await send_inv(userid, 'non_repayable', '1', lang, col)
-    await botworker.send_message(chatid, t('support_command.create_invoice', lang), reply_markup=await m(userid, 'last_menu', lang))
+    await bot.send_message(chatid, t('support_command.create_invoice', lang), reply_markup=await m(userid, 'last_menu', lang))

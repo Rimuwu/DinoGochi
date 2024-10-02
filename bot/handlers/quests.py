@@ -2,7 +2,7 @@ from asyncio import sleep
 from time import time
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.items.item import AddItemToUser
@@ -16,7 +16,7 @@ from aiogram.types import (CallbackQuery,
 quests_data = DBconstructor(mongo_client.tavern.quests)
 users = DBconstructor(mongo_client.user.users)
 
-@bot.message(Text('commands_name.dino_tavern.quests', IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(Text('commands_name.dino_tavern.quests', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def check_quests(message: Message):
     userid = message.from_user.id
@@ -29,15 +29,15 @@ async def check_quests(message: Message):
 
         text = t('quest.quest_menu', lang, 
                 end=user['dungeon']['quest_ended'], act=len(quests))
-        await botworker.send_message(chatid, text)
+        await bot.send_message(chatid, text)
 
         for quest in quests:
             text, mark = quest_ui(quest, lang, quest['alt_id'])
-            await botworker.send_message(
+            await bot.send_message(
                             chatid, text, reply_markup=mark, parse_mode='Markdown')
             await sleep(0.3)
 
-@bot.callback_query(F.data.startswith('quest'), IsPrivateChat())
+@main_router.callback_query(F.data.startswith('quest'), IsPrivateChat())
 @HDCallback
 async def quest(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -54,8 +54,8 @@ async def quest(call: CallbackQuery):
             await quest_resampling(quest['_id'])
 
             text = t('quest.time_end_h', lang)
-            await botworker.send_message(chatid, text)
-            await botworker.edit_message_reply_markup(None, chatid, message.id, 
+            await bot.send_message(chatid, text)
+            await bot.edit_message_reply_markup(None, chatid, message.id, 
                                    reply_markup=InlineKeyboardMarkup())
         else:
             if data[1] == 'delete':
@@ -63,7 +63,7 @@ async def quest(call: CallbackQuery):
 
                 text = t('quest.delete_button', lang)
                 mark = list_to_inline([{text: ' '}])
-                await botworker.edit_message_reply_markup(None, chatid, message.id, 
+                await bot.edit_message_reply_markup(None, chatid, message.id, 
                                     reply_markup=mark)
             elif data[1] == 'end':
                 result = await check_quest(quest)
@@ -74,7 +74,7 @@ async def quest(call: CallbackQuery):
                     b_name = t('quest.end_quest_button', lang)
                     mark = list_to_inline([{b_name: ' '}])
 
-                    await botworker.edit_message_reply_markup(None, chatid, message.id, reply_markup=mark)
+                    await bot.edit_message_reply_markup(None, chatid, message.id, reply_markup=mark)
 
                     await take_coins(userid, quest['reward']['coins'], True)
                     for i in quest['reward']['items']: 
@@ -85,9 +85,9 @@ async def quest(call: CallbackQuery):
 
                 else: text = t('quest.conditions', lang)
 
-                await botworker.send_message(chatid, text, parse_mode='Markdown')
+                await bot.send_message(chatid, text, parse_mode='Markdown')
     else:
         text = t('quest.not_found', lang)
-        await botworker.send_message(chatid, text)
-        await botworker.edit_message_reply_markup(None, chatid, message.id, 
+        await bot.send_message(chatid, text)
+        await bot.edit_message_reply_markup(None, chatid, message.id, 
                                    reply_markup=InlineKeyboardMarkup())

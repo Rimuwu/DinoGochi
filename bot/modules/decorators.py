@@ -12,6 +12,9 @@ class HendlerDecorator(object):
 
         @wraps(func)
         async def wrapper(*args):
+            
+            log(f'{args} args')
+            
             message: Message = args[0]
             user_id = message.from_user.id
             time_save = time()

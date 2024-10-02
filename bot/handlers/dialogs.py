@@ -1,5 +1,5 @@
 
-from bot.exec import bot, botworker
+from bot.exec import main_router, bot
 from bot.modules.data_format import user_name
 from bot.modules.decorators import HDCallback
 from bot.modules.dialogs import dialogs
@@ -16,7 +16,7 @@ from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
 
-@bot.callback_query(F.data.startswith('dialog'),   
+@main_router.callback_query(F.data.startswith('dialog'),   
                             IsAuthorizedUser())
 @HDCallback
 async def dialog(callback: CallbackQuery):
@@ -33,12 +33,12 @@ async def dialog(callback: CallbackQuery):
     if status:
 
         if dialog_action == 'start':
-            await botworker.send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
-            await botworker.edit_message_reply_markup(None, chatid, message.id, 
+            await bot.send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
+            await bot.edit_message_reply_markup(None, chatid, message.id, 
                                    reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
         else:
             if len(str(message.text) + text) + 4 >= 2000:
                 content = text
             else:  content = str(message.text) + '\n\n' + text
 
-            await botworker.edit_message_text(content, None, chatid, message.id, reply_markup=markup, parse_mode='Markdown')
+            await bot.edit_message_text(content, None, chatid, message.id, reply_markup=markup, parse_mode='Markdown')

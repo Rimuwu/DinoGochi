@@ -2,7 +2,7 @@ from time import time
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.data_format import user_name
 from bot.modules.dinosaur.dinosaur  import insert_dino
 from bot.modules.notifications import user_notification
@@ -28,7 +28,7 @@ async def incubation():
 
         #отправляем уведомление
         try:
-            chat_user = await botworker.get_chat_member(egg['owner_id'], egg['owner_id'])
+            chat_user = await bot.get_chat_member(egg['owner_id'], egg['owner_id'])
             user = chat_user.user
         except: user = None
 

@@ -5,7 +5,7 @@ from time import time
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
-from bot.exec import bot, botworker
+from bot.exec import main_router, bot
 from bot.handlers.states import ChooseInt
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
@@ -57,7 +57,7 @@ async def page_context(userid, lang):
     rmk = list_to_inline([rmk_data], 2)
     return text, rmk
 
-@bot.message(Text('commands_name.dino_tavern.hoarder'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(Text('commands_name.dino_tavern.hoarder'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def hoarder(message: Message):
     lang = await get_lang(message.from_user.id)
@@ -65,10 +65,10 @@ async def hoarder(message: Message):
     userid = message.from_user.id
 
     text, rmk = await page_context(userid, lang)
-    await botworker.send_message(message.chat.id, text, parse_mode='Markdown',
+    await bot.send_message(message.chat.id, text, parse_mode='Markdown',
           reply_markup = rmk)
 
-@bot.callback_query(F.data.startswith('hoarder'), IsPrivateChat())
+@main_router.callback_query(F.data.startswith('hoarder'), IsPrivateChat())
 @HDCallback
 async def hoarder_calb(call: CallbackQuery):
     call_data = call.data.split()
@@ -86,12 +86,12 @@ async def hoarder_calb(call: CallbackQuery):
             'messageid': call.message.id
         }
         await ChooseIntState(buy_item, userid, chatid, lang, max_int=item['count'], autoanswer=False, transmitted_data=transmitted_data)
-        await botworker.send_message(chatid, t('inside_shop.count', lang), 
+        await bot.send_message(chatid, t('inside_shop.count', lang), 
                                parse_mode='Markdown', 
                                reply_markup=count_markup(item['count'], lang))
 
     else:
-        await botworker.send_message(chatid, t('inside_shop.no_item', lang), 
+        await bot.send_message(chatid, t('inside_shop.no_item', lang), 
                                parse_mode='Markdown')
 
 async def buy_item(count, transmitted_data):
@@ -102,9 +102,9 @@ async def buy_item(count, transmitted_data):
     messageid = transmitted_data['messageid']
 
     res = await item_buyed(userid, item, count)
-    await botworker.send_message(chatid, t(f'inside_shop.{res}', lang), 
+    await bot.send_message(chatid, t(f'inside_shop.{res}', lang), 
                                parse_mode='Markdown', reply_markup = await m(userid, 'last_menu', lang))
 
     if res:
         text, rmk = await page_context(userid, lang)
-        await botworker.edit_message_text(text, None, chatid, messageid, reply_markup=rmk, parse_mode='Markdown')
+        await bot.edit_message_text(text, None, chatid, messageid, reply_markup=rmk, parse_mode='Markdown')

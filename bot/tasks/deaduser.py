@@ -3,7 +3,7 @@ from time import time
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.data_format import random_code, seconds_to_str, list_to_inline
 from bot.modules.localization import t, get_lang
 from bot.modules.user.user import col_dinos
@@ -70,7 +70,7 @@ async def DeadUser_return():
                     [{button: f'start_cmd {promo}'}]
                 )
                 try:
-                    await botworker.send_message(userid, text, reply_markup=markup)
+                    await bot.send_message(userid, text, reply_markup=markup)
                 except: 
                     # - Если нельзя отправить спустя неделю - ничего
                     pass
@@ -95,7 +95,7 @@ async def DeadUser_return():
                         [{button: f'start_cmd {code}'}]
                     )
                     try:
-                        await botworker.send_message(userid, text, reply_markup=markup)
+                        await bot.send_message(userid, text, reply_markup=markup)
                     except Exception as ex:
                         if ex.error_code in [400, 403]:
                             # - Если нельзя отправить спустя месяц - удалить акк

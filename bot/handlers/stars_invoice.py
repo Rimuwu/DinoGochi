@@ -2,7 +2,7 @@
 from time import time
 
 from bot.const import GAME_SETTINGS
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.data_format import random_code
 from bot.modules.decorators import HDMessage
 from bot.modules.donation import (OpenDonatData, give_reward, save,
@@ -13,7 +13,7 @@ from aiogram.types import Message, PreCheckoutQuery
 
 products = GAME_SETTINGS['products']
 
-@bot.pre_checkout_query_handler(func=lambda query: True)
+@main_router.pre_checkout_query(func=lambda query: True)
 async def checkout(pre_checkout_query: PreCheckoutQuery):
     lang = await get_lang(pre_checkout_query.from_user.id)
 
@@ -23,14 +23,14 @@ async def checkout(pre_checkout_query: PreCheckoutQuery):
     log(f'Был выдан ответ на pre_checkout_query_handler -> {res}, user: {pre_checkout_query.from_user.id}', 4)
 
 
-@bot.message(content_types=['successful_payment'])
+@main_router.message(content_types=['successful_payment'])
 @HDMessage
 async def got_payment(message: Message):
     """ Выдача товара за покупку """
     payload = message.successful_payment.invoice_payload # Делаем строчку с кодом товара и количеством "dino_ultima#2"
     total_price = message.successful_payment.total_amount
     user_id = message.chat.id
-    chat_user = await botworker.get_chat_member(user_id, user_id)
+    chat_user = await bot.get_chat_member(user_id, user_id)
     processed_donations = OpenDonatData()
 
     message_split = payload.split('#')
