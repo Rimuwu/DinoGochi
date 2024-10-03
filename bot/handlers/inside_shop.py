@@ -57,8 +57,8 @@ async def page_context(userid, lang):
     rmk = list_to_inline([rmk_data], 2)
     return text, rmk
 
-@main_router.message(Text('commands_name.dino_tavern.hoarder'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.dino_tavern.hoarder'), IsAuthorizedUser(), IsPrivateChat())
 async def hoarder(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -68,9 +68,9 @@ async def hoarder(message: Message):
     await bot.send_message(message.chat.id, text, parse_mode='Markdown',
           reply_markup = rmk)
 
-@main_router.callback_query(F.data.startswith('hoarder'), IsPrivateChat())
 @HDCallback
-async def hoarder_calb(call: CallbackQuery):
+@main_router.callback_query(F.data.startswith('hoarder'), IsPrivateChat())
+async def hoarder_calb(call: CallbackQuery, state):
     call_data = call.data.split()
     chatid = call.message.chat.id
     userid = call.from_user.id
@@ -85,7 +85,7 @@ async def hoarder_calb(call: CallbackQuery):
             'item': key,
             'messageid': call.message.id
         }
-        await ChooseIntState(buy_item, userid, chatid, lang, max_int=item['count'], autoanswer=False, transmitted_data=transmitted_data)
+        await ChooseIntState(buy_item, state, userid, chatid, lang, max_int=item['count'], autoanswer=False, transmitted_data=transmitted_data)
         await bot.send_message(chatid, t('inside_shop.count', lang), 
                                parse_mode='Markdown', 
                                reply_markup=count_markup(item['count'], lang))

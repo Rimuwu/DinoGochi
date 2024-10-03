@@ -122,8 +122,8 @@ async def start_journey(userid: int, chatid: int, lang: str,
     await bot.send_message(chatid, t('journey_start.cancel_text', lang), 
                            reply_markup=cancel_markup(lang))
 
-@main_router.message(Text('commands_name.actions.journey'), DinoPassStatus())
 @HDMessage
+@main_router.message(Text('commands_name.actions.journey'), DinoPassStatus())
 async def journey_com(message: Message, state: FSMContext):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -131,8 +131,8 @@ async def journey_com(message: Message, state: FSMContext):
 
     await start_journey(userid, chatid, lang, state)
 
-@main_router.callback_query(F.data.startswith('journey_complexity'), IsPrivateChat())
 @HDCallback
+@main_router.callback_query(F.data.startswith('journey_complexity'), IsPrivateChat())
 async def journey_complexity(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id
@@ -140,8 +140,8 @@ async def journey_complexity(callback: CallbackQuery):
     text = t('journey_complexity', lang)
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@main_router.message(Text('commands_name.actions.events'))
 @HDMessage
+@main_router.message(Text('commands_name.actions.events'))
 async def events(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -175,8 +175,8 @@ async def events(message: Message):
 
     await auto_ads(message)
 
-@main_router.callback_query(F.data.startswith('journey_stop'))
 @HDCallback
+@main_router.callback_query(F.data.startswith('journey_stop'))
 async def journey_stop(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id

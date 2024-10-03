@@ -26,8 +26,8 @@ users = DBconstructor(mongo_client.user.users)
 companies = DBconstructor(mongo_client.other.companies)
 langs = DBconstructor(mongo_client.user.lang)
 
-@main_router.message(IsAdminUser(), Command(commands=['create_company']))
 @HDMessage
+@main_router.message(IsAdminUser(), Command(commands=['create_company']))
 async def create_company_com(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -40,6 +40,7 @@ async def create_company_com(message: Message):
                     )
 
 async def new_cycle(userid, chatid, lang, transmitted_data):
+    state = transmitted_data['state']
     lang_data = get_all_locales('language_name')
     lang_options = {}
 
@@ -135,7 +136,7 @@ async def new_cycle(userid, chatid, lang, transmitted_data):
 
     ]
 
-    await ChooseStepState(pre_check, userid, chatid, lang, steps, transmitted_data)
+    await ChooseStepState(pre_check, state, userid, chatid, lang, steps, transmitted_data)
 
 
 async def pre_check(data, transmitted_data):
@@ -143,6 +144,7 @@ async def pre_check(data, transmitted_data):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     message = transmitted_data['message']
+    state = transmitted_data['state']
 
     message[data['lang']
     ] = {
@@ -288,7 +290,7 @@ async def pre_check(data, transmitted_data):
         },
     ]
 
-    await ChooseStepState(end, userid, chatid, lang, steps, transmitted_data)
+    await ChooseStepState(end, state, userid, chatid, lang, steps, transmitted_data)
 
 async def end(data, transmitted_data):
     userid = transmitted_data['userid']
@@ -315,8 +317,9 @@ async def end(data, transmitted_data):
     await create_company(**return_data)
     await bot.send_message(chatid, '✅')
 
+@HDMessage
 @main_router.message(Command(commands=['companies']), IsAdminUser())
-async def companies_c(message: Message):
+async def companies_c(message: Message, state):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
     userid = message.from_user.id
@@ -327,7 +330,7 @@ async def companies_c(message: Message):
     for i in comps:
         options[i['name']] = i['_id']
 
-    await ChoosePagesState(comp_info, userid, chatid, lang, options)
+    await ChoosePagesState(comp_info, state, userid, chatid, lang, options)
 
 async def comp_info(com_id, transmitted_data):
     userid = transmitted_data['userid']
@@ -339,8 +342,8 @@ async def comp_info(com_id, transmitted_data):
         chatid, text, reply_markup=mrk
     )
 
-@main_router.callback_query(F.data.startswith('company_info') , IsAuthorizedUser())
 @HDCallback
+@main_router.callback_query(F.data.startswith('company_info') , IsAuthorizedUser())
 async def company_info(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id

@@ -10,7 +10,7 @@ from bot.taskmanager import run as run_taskmanager
 import asyncio
 
 bot = Bot(conf.bot_token)
-dp = Dispatcher(storage=MongoStorage(mongo_client))
+dp = Dispatcher() #storage=MongoStorage(mongo_client)
 
 main_router = Router(name='MainRouter')
 dp.include_router(main_router)

@@ -24,6 +24,18 @@ from bot.modules.states_tools import (ChooseOptionState, ChoosePagesState,
 from bot.modules.user.user import premium
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command, StateFilter
+
+from aiogram.fsm.context import FSMContext
+
 users = DBconstructor(mongo_client.user.users)
 sellers = DBconstructor(mongo_client.market.sellers)
 products = DBconstructor(mongo_client.market.products)
@@ -68,9 +80,9 @@ async def custom_name(message: Message, transmitted_data):
         return True, name
     return False, None
 
-@main_router.message(Text('commands_name.seller_profile.create_market', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def create_market(message: Message):
+@main_router.message(Text('commands_name.seller_profile.create_market'), IsAuthorizedUser(), IsPrivateChat())
+async def create_market(message: Message, state: FSMContext):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -103,12 +115,12 @@ async def create_market(message: Message):
             }
         ]
 
-        await ChooseStepState(create_adapter, userid, chatid, 
+        await ChooseStepState(create_adapter, state, userid, chatid, 
                               lang, steps, 
                               transmitted_data=transmitted_data)
 
-@main_router.message(Text('commands_name.seller_profile.my_market', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.seller_profile.my_market'), IsAuthorizedUser(), IsPrivateChat())
 async def my_market(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -122,9 +134,9 @@ async def my_market(message: Message):
         except:
             await bot.send_photo(chatid, image, text, reply_markup=markup, parse_mode=None)
 
-@main_router.message(Text('commands_name.seller_profile.add_product', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def add_product_com(message: Message):
+@main_router.message(Text('commands_name.seller_profile.add_product'), IsAuthorizedUser(), IsPrivateChat())
+async def add_product_com(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -142,11 +154,11 @@ async def add_product_com(message: Message):
     )
 
     await bot.send_message(chatid, t('add_product.options_info', lang), reply_markup=markup)
-    await ChooseOptionState(prepare_data_option, userid, chatid, lang, options)
+    await ChooseOptionState(prepare_data_option, state, userid, chatid, lang, options)
 
-@main_router.message(Text('commands_name.seller_profile.my_products', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def my_products(message: Message):
+@main_router.message(Text('commands_name.seller_profile.my_products'), IsAuthorizedUser(), IsPrivateChat())
+async def my_products(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -162,14 +174,14 @@ async def my_products(message: Message):
             ] = product['_id']
 
         await bot.send_message(chatid, t('products.search', lang))
-        await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
+        await ChoosePagesState(send_info_pr, state, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
     else:
         text = t('no_products', lang)
         await bot.send_message(chatid, text,  parse_mode='Markdown')
 
-@main_router.callback_query(F.data.startswith('product_info'))
 @HDCallback
+@main_router.callback_query(F.data.startswith('product_info'))
 async def product_info(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -223,9 +235,9 @@ async def product_info(call: CallbackQuery):
                 await promotion_prepare(userid, chatid, lang, product['_id'], 
                                         call.message.id)
 
-@main_router.callback_query(F.data.startswith('seller'), IsPrivateChat())
 @HDCallback
-async def seller(call: CallbackQuery):
+@main_router.callback_query(F.data.startswith('seller'), IsPrivateChat())
+async def seller(call: CallbackQuery, state):
     call_data = call.data.split()
     chatid = call.message.chat.id
     userid = call.from_user.id
@@ -276,12 +288,12 @@ async def seller(call: CallbackQuery):
             ] = product['_id']
 
         await bot.send_message(chatid, t('products.search', lang))
-        await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
+        await ChoosePagesState(send_info_pr, state, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
 
-@main_router.message(Text('commands_name.market.random', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def random_products(message: Message):
+@main_router.message(Text('commands_name.market.random'), IsAuthorizedUser(), IsPrivateChat())
+async def random_products(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -305,12 +317,12 @@ async def random_products(message: Message):
             else: break
 
         await bot.send_message(chatid, t('products.search', lang))
-        await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
+        await ChoosePagesState(send_info_pr, state, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
     else:
         await bot.send_message(chatid, t('products.null', lang))
 
-@main_router.message(Text('commands_name.market.find', IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(Text('commands_name.market.find'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
 async def find_products(message: Message):
     userid = message.from_user.id
@@ -341,5 +353,5 @@ async def push(call: CallbackQuery):
 
     await bot.send_message(userid, text)
     await bot.edit_message_reply_markup(None, chatid, call.message.id, 
-                                        reply_markup=InlineKeyboardMarkup())
+                                        reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
     

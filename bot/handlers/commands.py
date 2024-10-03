@@ -24,8 +24,8 @@ from aiogram.filters import Command
 users = DBconstructor(mongo_client.user.users)
 puhs = DBconstructor(mongo_client.market.puhs)
 
-@main_router.message(Command(commands=['timer']))
 @HDMessage
+@main_router.message(Command(commands=['timer']))
 async def timer(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
@@ -43,8 +43,8 @@ async def timer(message: Message):
         except: text = 'error'
         await bot.send_message(chatid, text)
 
-@main_router.message(Command(commands=['string_to_sec']), IsPrivateChat())
 @HDMessage
+@main_router.message(Command(commands=['string_to_sec']), IsPrivateChat())
 async def string_time(message):
     txt = message.text.replace('/string_to_sec', '')
     chatid = message.chat.id
@@ -57,8 +57,8 @@ async def string_time(message):
         sec = str_to_seconds(txt)
         await bot.send_message(chatid, str(sec))
 
-@main_router.message(Command(commands=['pushinfo']))
 @HDMessage
+@main_router.message(Command(commands=['pushinfo']))
 async def push_info(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
@@ -66,8 +66,8 @@ async def push_info(message: Message):
     text = t('push.push_info', lang)
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@main_router.message(Command(commands=['delete_push']))
 @HDMessage
+@main_router.message(Command(commands=['delete_push']))
 async def delete_push(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -75,8 +75,8 @@ async def delete_push(message: Message):
     await puhs.delete_one({'owner_id': userid}, comment='delete_push')
     await bot.send_message(chatid, '👍', parse_mode='Markdown')
 
-@main_router.message(Command(commands=['add_me']), IsPrivateChat(False))
 @HDMessage
+@main_router.message(Command(commands=['add_me']), IsPrivateChat(False))
 async def add_me_с(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -87,8 +87,8 @@ async def add_me_с(message: Message):
                     reply_markup=inline_menu('send_request', lang, userid=userid)
                     )
 
-@main_router.message(Command(commands=['promo']))
 @HDMessage
+@main_router.message(Command(commands=['promo']))
 async def promo(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -104,8 +104,8 @@ async def promo(message: Message):
         else:
             await start_game(message, code, 'promo')
 
-@main_router.message(Command(commands=['help']))
 @HDMessage
+@main_router.message(Command(commands=['help']))
 async def help(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -115,8 +115,8 @@ async def help(message: Message):
     await bot.send_message(chatid, text, parse_mode='HTML', 
                            reply_markup=inl_m)
 
-@main_router.callback_query(F.data.startswith('help'), IsPrivateChat())
 @HDCallback
+@main_router.callback_query(F.data.startswith('help'), IsPrivateChat())
 async def help_query(call: CallbackQuery):
     split_d = call.data.split()
     page = int(split_d[1])

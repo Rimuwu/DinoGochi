@@ -191,8 +191,8 @@ async def game_start(return_data: dict,
 
     await auto_ads(message)
 
-@main_router.message(Text('commands_name.actions.entertainments'), DinoPassStatus())
 @HDMessage
+@main_router.message(Text('commands_name.actions.entertainments'), DinoPassStatus())
 async def entertainments(message: Message, state: FSMContext):
     userid = message.from_user.id # type: ignore
     lang = await get_lang(message.from_user.id) # type: ignore
@@ -202,8 +202,8 @@ async def entertainments(message: Message, state: FSMContext):
     dino = await user.get_last_dino()
     if dino: await start_game_ent(userid, chatid, lang, dino, state)
 
-@main_router.message(Text('commands_name.actions.stop_game'))
 @HDMessage
+@main_router.message(Text('commands_name.actions.stop_game'))
 async def stop_game(message: Message):
     userid = message.from_user.id # type: ignore
     lang = await get_lang(message.from_user.id) # type: ignore

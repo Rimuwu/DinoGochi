@@ -16,9 +16,9 @@ from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
 
+@HDCallback
 @main_router.callback_query(F.data.startswith('dialog'),   
                             IsAuthorizedUser())
-@HDCallback
 async def dialog(callback: CallbackQuery):
     dialog_key = callback.data.split()[1]
     dialog_action = callback.data.split()[2]

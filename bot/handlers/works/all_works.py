@@ -31,8 +31,8 @@ dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 
-@main_router.message(Text('commands_name.extraction_actions.progress'))
 @HDMessage
+@main_router.message(Text('commands_name.extraction_actions.progress'))
 async def progress(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
@@ -76,8 +76,8 @@ async def progress(message: Message):
 
             await bot.send_message(chatid, text, 'Markdown', reply_markup=rmk)
 
-@main_router.callback_query(F.data.startswith('progress_work'))
 @HDCallback
+@main_router.callback_query(F.data.startswith('progress_work'))
 async def progress_work(call: CallbackQuery):
 
     chatid = call.message.chat.id
@@ -120,8 +120,8 @@ async def progress_work(call: CallbackQuery):
                 await bot.send_message(chatid, '✅', 
                            reply_markup = await m(userid, 'last_menu', lang))
 
-@main_router.message(Text('commands_name.extraction_actions.stop_work'))
 @HDMessage
+@main_router.message(Text('commands_name.extraction_actions.stop_work'))
 async def stop_work(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
@@ -149,10 +149,9 @@ async def stop_work(message: Message):
         await bot.send_message(chatid, "❌", reply_markup = await m(userid, 'last_menu', lang))
 
 
-
+@HDMessage
 @main_router.message(Text('commands_name.extraction_actions.mine'), 
                      DinoPassStatus())
-@HDMessage
 async def mine(message: Message, state: FSMContext):
     userid = message.from_user.id
     user = await User().create(userid)
@@ -194,9 +193,9 @@ async def end_mine(data, transmitted_data: dict):
 
     await auto_ads(mes)
 
+@HDMessage
 @main_router.message(StartWith('commands_name.extraction_actions.bank'), 
                      DinoPassStatus())
-@HDMessage
 async def bank(message: Message, state: FSMContext):
     userid = message.from_user.id
     user = await User().create(userid)
@@ -238,9 +237,9 @@ async def end_bank(data, transmitted_data: dict):
 
     await auto_ads(mes)
 
+@HDMessage
 @main_router.message(StartWith('commands_name.extraction_actions.sawmill'), 
                      DinoPassStatus())
-@HDMessage
 async def sawmill(message: Message, state: FSMContext):
     userid = message.from_user.id
     user = await User().create(userid)

@@ -23,10 +23,9 @@ from bot.filters.kd import KDCheck
 from aiogram.filters import Command
 from aiogram import F
 
-
+@HDMessage
 @main_router.message(Text('commands_name.about.team'), 
                      IsAuthorizedUser(), IsPrivateChat())
-@HDMessage
 async def team(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -39,9 +38,9 @@ async def team(message: Message):
                                      author=author_loc
                                     ), parse_mode='html')
 
+@HDMessage
 @main_router.message(Text('commands_name.about.links'), 
                      IsAuthorizedUser(), IsPrivateChat())
-@HDMessage
 async def links(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -70,9 +69,9 @@ async def main_support_menu(lang: str):
 
     return image, text, InlineKeyboardMarkup(row_width=1, inline_keyboard=markup_inline)
 
+@HDMessage
 @main_router.message(Text('commands_name.about.support'), 
                      IsAuthorizedUser(), IsPrivateChat())
-@HDMessage
 async def support(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -81,9 +80,9 @@ async def support(message: Message):
     
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
 
+@HDMessage
 @main_router.message(Command(commands=['premium']),
                      IsAuthorizedUser(), IsPrivateChat())
-@HDMessage
 async def support_com(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -92,9 +91,9 @@ async def support_com(message: Message):
 
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
 
+@HDMessage
 @main_router.message(Text('commands_name.about.faq'), 
                      IsAuthorizedUser(), IsPrivateChat())
-@HDMessage
 async def faq(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -112,8 +111,8 @@ async def faq(message: Message):
     inl = InlineKeyboardMarkup(row_width=2, inline_keyboard=markup_inline)
     await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=inl)
 
-@main_router.callback_query(F.data.startswith('faq'))
 @HDCallback
+@main_router.callback_query(F.data.startswith('faq'))
 async def faq_buttons(call: CallbackQuery):
     data = call.data.split()[1]
     chatid = call.message.chat.id
@@ -122,9 +121,9 @@ async def faq_buttons(call: CallbackQuery):
     text = t(f'faq.{data}', lang)
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@main_router.callback_query(F.data.startswith('support'))
 @HDCallback
-async def support_buttons(call: CallbackQuery):
+@main_router.callback_query(F.data.startswith('support'))
+async def support_buttons(call: CallbackQuery, state):
     action = call.data.split()[1]
     product_key = call.data.split()[2]
     products = GAME_SETTINGS['products']
@@ -176,7 +175,7 @@ async def support_buttons(call: CallbackQuery):
                                     )
 
             else:
-                await ChooseIntState(tips, user_id, chatid, lang, 1, 500_000)
+                await ChooseIntState(tips, state, user_id, chatid, lang, 1, 500_000)
                 await bot.send_message(chatid, text_data['free_enter'], reply_markup=cancel_markup(lang))
 
             markup_inline.append(

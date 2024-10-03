@@ -41,10 +41,11 @@ async def back_edit(content, transmitted_data: dict):
     else:
         tt = 'custom'
         file_info = await bot.get_file(content)
-        downloaded_file = await bot.download_file(file_info.file_path)
-        if downloaded_file:
-            content = content
-        else:
+
+        downloaded_file = None
+        if file_info.file_path:
+            downloaded_file = await bot.download_file(file_info.file_path)
+        if not downloaded_file:
             content = 0
 
     if content:
@@ -66,6 +67,7 @@ async def transition_back(dino: Dino, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
+    state = transmitted_data['state']
 
     text = t('custom_profile.manual', lang)
     keyboard = [t('buttons_name.cancel', lang)]
@@ -74,33 +76,32 @@ async def transition_back(dino: Dino, transmitted_data: dict):
     data = {
         'dino': dino
     }
-    await ChooseImageState(back_edit, userid, chatid, lang, True, transmitted_data=data)
+    await ChooseImageState(back_edit, state, userid, chatid, lang, True, transmitted_data=data)
     await bot.send_message(userid, text, reply_markup=markup)
 
+@HDMessage
 @main_router.message(Text('commands_name.backgrounds.custom_profile'), 
                      IsAuthorizedUser(), IsPrivateChat())
-@HDMessage
-async def custom_profile(message: Message):
+async def custom_profile(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
     if await premium(userid):
-        await ChooseDinoState(transition_back, userid, message.chat.id, lang, False)
+        await ChooseDinoState(transition_back, state, userid, chatid, lang, False)
     else:
         text = t('no_premium', lang)
         await bot.send_message(userid, text)
 
-
+@HDMessage
 @main_router.message(Text('commands_name.backgrounds.standart'), 
                      IsAuthorizedUser(), IsPrivateChat())
-@HDMessage
-async def standart(message: Message):
+async def standart(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await ChooseDinoState(standart_end, userid, chatid, lang, False)
+    await ChooseDinoState(standart_end, state, userid, chatid, lang, False)
 
 async def standart_end(dino: Dino, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -117,12 +118,6 @@ async def standart_end(dino: Dino, transmitted_data: dict):
     await bot.send_message(chatid, t('standart_background', lang), 
                             reply_markup= await m(userid, 'last_menu', lang))
 
-def near_back(key: int, step: int, storage: list[int] = []):
-    if BACKGROUNDS[str(key)]['show']:
-        return key
-    else:
-        return key
-
 async def back_page(userid: int, page: int, lang: str):
     user = await users.find_one({"userid": userid}, comment='back_page_user')
     text_data = get_data('backgrounds', lang)
@@ -134,15 +129,14 @@ async def back_page(userid: int, page: int, lang: str):
     else: add_text = ' '
 
     if page - 1 < 1:
-        left = near_back(int(list(BACKGROUNDS.keys())[-1]), 
-                         -1, storage)
+        left = int(list(BACKGROUNDS.keys())[-1])
     else:
-        left = near_back(page - 1, -1, storage)
+        left = page - 1
 
     if str(page + 1) not in list(BACKGROUNDS.keys()):
-        right = near_back(1, 1, storage)
+        right = 1
     else:
-        right = near_back(page + 1, 1, storage)
+        right = page + 1
 
     if page in storage:
         buttons = {
@@ -173,9 +167,9 @@ async def back_page(userid: int, page: int, lang: str):
     image = f'images/backgrounds/{page}.png'
     return text, markup, image
 
+@HDMessage
 @main_router.message(Text('commands_name.backgrounds.backgrounds'), 
                      IsAuthorizedUser(), IsPrivateChat())
-@HDMessage
 async def backgrounds(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -184,10 +178,9 @@ async def backgrounds(message: Message):
     text, markup, image = await back_page(userid, 1, lang)
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup)
 
-
-@main_router.callback_query(F.data.startswith('back_m '), IsPrivateChat())
 @HDCallback
-async def background_menu(call: CallbackQuery):
+@main_router.callback_query(F.data.startswith('back_m '), IsPrivateChat())
+async def background_menu(call: CallbackQuery, state):
     split_d = call.data.split()
     action = split_d[1]
     b_id = int(split_d[2])
@@ -210,7 +203,7 @@ async def background_menu(call: CallbackQuery):
                                      )
 
         data = { 'message_id': call.message.id, 'delete_id': mes.id }
-        await ChooseIntState(page_n, userid, chatid, lang,
+        await ChooseIntState(page_n, state, userid, chatid, lang,
                              max_int=max_int, 
                              transmitted_data=data)
 
@@ -230,14 +223,14 @@ async def background_menu(call: CallbackQuery):
                                         reply_markup=confirm_markup(lang)
                                         )
             data['delete_id'] = mes.id
-            await ChooseConfirmState(buy, userid, chatid, lang, transmitted_data=data)
+            await ChooseConfirmState(buy, state, userid, chatid, lang, transmitted_data=data)
     
     elif action == 'set':
         # mes = await bot.send_message(chatid, t('backgrounds.choose_dino', lang),
         #                                 reply_markup=confirm_markup(lang)
         #                                 )
         data = { 'page': b_id } # 'delete_id': mes.id,
-        await ChooseDinoState(set_back, userid, chatid, lang, False, True, data)
+        await ChooseDinoState(set_back, state, userid, chatid, lang, False, True, data)
         
 async def set_back(dino: Dino, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -305,11 +298,7 @@ async def page_n(number: int, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     message_id = transmitted_data['message_id']
 
-    user = await users.find_one({"userid": userid}, comment='page_n_user')
-    storage = user['saved']['backgrounds']
-
-    page = near_back(number, -1, storage)
-    text, markup, image = await back_page(userid, page, lang)
+    text, markup, image = await back_page(userid, number, lang)
     await edit_SmartPhoto(chatid, message_id, image, text, 'Markdown', markup)
 
     await bot.send_message(chatid, t('backgrounds.page_set', lang), 

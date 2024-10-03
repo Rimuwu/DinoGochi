@@ -195,13 +195,13 @@ async def transition(element, transmitted_data: dict):
     elif type(element) == Egg:
         await egg_profile(chatid, element, lang)
 
-@main_router.message(Text('commands_name.dino_profile'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def dino_handler(message: Message):
+@main_router.message(Text('commands_name.dino_profile'), IsAuthorizedUser(), IsPrivateChat())
+async def dino_handler(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    bstatus, status = await ChooseDinoState(transition, userid, message.chat.id, lang, send_error=False) 
+    bstatus, status = await ChooseDinoState(transition, state, userid, message.chat.id, lang, send_error=False) 
 
     if not bstatus and status == 'cancel':
         if await dead_check(userid):
@@ -209,8 +209,8 @@ async def dino_handler(message: Message):
         else:
             await bot.send_message(userid, t(f'p_profile.no_dino_no_egg', lang))
 
-@main_router.callback_query(F.data.startswith('dino_profile'))
 @HDCallback
+@main_router.callback_query(F.data.startswith('dino_profile'))
 async def dino_profile_callback(call: types.CallbackQuery):
     dino_data = call.data.split()[1]
     # await bot.delete_state(call.from_user.id, call.message.chat.id)
@@ -228,9 +228,9 @@ async def dino_profile_callback(call: types.CallbackQuery):
     dino = await Dino().create(dino_data)
     await transition(dino, trans_data)
 
-@main_router.callback_query(F.data.startswith('dino_menu'), IsPrivateChat())
 @HDCallback
-async def dino_menu(call: types.CallbackQuery):
+@main_router.callback_query(F.data.startswith('dino_menu'), IsPrivateChat())
+async def dino_menu(call: types.CallbackQuery, state):
     split_d = call.data.split()
     action = split_d[1]
     alt_key = split_d[2]
@@ -251,7 +251,7 @@ async def dino_menu(call: types.CallbackQuery):
                     if item: activ_items[get_name(item['item_id'], 
                                     lang, item.get('abilities', {}))] = [key, item]
 
-                result, sn = await ChooseOptionState(remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']})
+                result, sn = await ChooseOptionState(remove_accessory, state, userid, chatid, lang, activ_items, {'dino_id': dino['_id']})
 
                 if result:
                     reply_buttons = [list(activ_items.keys()), [t(f'buttons_name.cancel', lang)]]
@@ -305,13 +305,13 @@ async def dino_menu(call: types.CallbackQuery):
                 # Октазать от совместного динозавра
                 text = t('cancle_joint.confirm', lang)
                 await bot.send_message(userid, text, parse_mode='Markdown', reply_markup=confirm_markup(lang))
-                await ChooseConfirmState(cnacel_joint, userid, chatid, lang, transmitted_data={'dinoid': dino['_id']})
+                await ChooseConfirmState(cnacel_joint, state, userid, chatid, lang, transmitted_data={'dinoid': dino['_id']})
 
             elif action == 'my_joint_cancel':
                 # Октазать от совместного динозавра
                 text = t('my_joint.confirm', lang)
                 await bot.send_message(userid, text, parse_mode='Markdown', reply_markup=confirm_markup(lang))
-                await ChooseConfirmState(cnacel_myjoint, userid, chatid, lang, transmitted_data={'dinoid': dino['_id'], 'user': call.from_user})
+                await ChooseConfirmState(cnacel_myjoint, state, userid, chatid, lang, transmitted_data={'dinoid': dino['_id'], 'user': call.from_user})
 
             elif action == 'kindergarten':
                 if not await premium(userid): 
@@ -404,9 +404,9 @@ async def remove_accessory(option: list, transmitted_data:dict):
     await bot.send_message(userid, t("remove_accessory.remove", lang), 
                            reply_markup= await m(userid, 'last_menu', lang))
 
-@main_router.callback_query(F.data.startswith('kindergarten'), IsPrivateChat())
 @HDCallback
-async def kindergarten(call: types.CallbackQuery):
+@main_router.callback_query(F.data.startswith('kindergarten'), IsPrivateChat())
+async def kindergarten(call: types.CallbackQuery, state):
     split_d = call.data.split()
     action = split_d[1]
     alt_key = split_d[2]
@@ -436,7 +436,7 @@ async def kindergarten(call: types.CallbackQuery):
                         list(options.keys()), [t('buttons_name.cancel', lang)]
                     ], 2)
 
-                    await ChooseOptionState(start_kind, userid, chatid, lang, options,
+                    await ChooseOptionState(start_kind, state, userid, chatid, lang, options,
                                             transmitted_data={'dino': dino['_id']}
                                             )
                     await bot.send_message(userid, t('kindergarten.choose_house', lang),

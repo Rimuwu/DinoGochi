@@ -75,9 +75,9 @@ async def collecting_adapter(return_data, transmitted_data):
             await auto_ads(message)
 
 
+@HDMessage
 @main_router.message(Text('commands_name.actions.collecting'),
              DinoPassStatus())
-@HDMessage
 async def collecting_button(message: Message, state: FSMContext):
     if message.from_user:
         userid = message.from_user.id
@@ -118,8 +118,8 @@ async def collecting_button(message: Message, state: FSMContext):
                                             lang, steps, 
                                         transmitted_data={'dino': last_dino, 'delete_steps': True})
 
-@main_router.message(Text('commands_name.actions.progress'))
 @HDMessage
+@main_router.message(Text('commands_name.actions.progress'))
 async def collecting_progress(message: Message):
     if message.from_user:
         userid = message.from_user.id
@@ -150,8 +150,8 @@ async def collecting_progress(message: Message):
                 await bot.send_message(chatid, '❌',
                             reply_markup = await m(userid, 'last_menu', lang))
 
-@main_router.callback_query(F.data.startswith('collecting'), IsAuthorizedUser(), IsPrivateChat(True))
 @HDCallback
+@main_router.callback_query(F.data.startswith('collecting'), IsAuthorizedUser(), IsPrivateChat(True))
 async def collecting_callback(callback: CallbackQuery):
     if callback.data:
         dino_data = callback.data.split()[2]

@@ -25,8 +25,8 @@ from aiogram.fsm.context import FSMContext
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
-@main_router.message(StartWith('commands_name.action_ask.dino_button'))
 @HDMessage
+@main_router.message(StartWith('commands_name.action_ask.dino_button'))
 async def edit_dino_buttom(message: Message):
     """ Изменение последнего динозавра (команда)
     """
@@ -44,8 +44,8 @@ async def edit_dino_buttom(message: Message):
     await message.answer(t('edit_dino_button.edit', lang), 
                            reply_markup=inline)
 
-@main_router.callback_query(F.data.startswith('activ_dino'))
 @HDCallback
+@main_router.callback_query(F.data.startswith('activ_dino'))
 async def answer_edit(callback: CallbackQuery):
     """ Изменение последнего динозавра (кнопка)
     """
@@ -81,8 +81,8 @@ async def invite_adp(friend, transmitted_data: dict):
         await bot.send_message(chatid, t('back_text.actions_menu', lang), 
                        reply_markup= await m(userid, 'last_menu', lang))
 
-@main_router.callback_query(F.data.startswith('invite_to_action'), IsPrivateChat())
 @HDCallback
+@main_router.callback_query(F.data.startswith('invite_to_action'), IsPrivateChat())
 async def invite_to_action(callback: CallbackQuery, state: FSMContext):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id
@@ -126,8 +126,8 @@ async def join_adp(dino: Dino, transmitted_data):
             await start_game_ent(userid, chatid, lang, 
                                  dino, friend, True, friend_dino)
 
-@main_router.callback_query(F.data.startswith('join_to_action'))
 @HDCallback
+@main_router.callback_query(F.data.startswith('join_to_action'))
 async def join(callback: CallbackQuery, state: FSMContext):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id

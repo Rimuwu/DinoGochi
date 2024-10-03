@@ -1,6 +1,7 @@
 # Тестовые команды
 
 from functools import wraps
+import stat
 import statistics
 from asyncio import sleep
 from pprint import pprint
@@ -229,9 +230,10 @@ async def check(message: Message, state: FSMContext):
     await message.answer('ok')
     
     r = await state.get_state()
-    await message.answer(f"{r}")
+    d = await state.get_data()
+    await message.answer(f"{r} {d}")
 
-@HDMessage
+
 @main_router.message(Command(commands=['set_state']))
 async def check(message: Message, state: FSMContext):
     
@@ -239,7 +241,7 @@ async def check(message: Message, state: FSMContext):
     
     r = await state.set_state(Form.name)
     await state.set_data({'name': 'test', 'func': check, 'class': Form})
-    await message.answer(f"{r}")
+    await message.answer(f"{await state.get_state()}")
 
 @HDMessage
 @main_router.message(Command(commands=['res_state']), StateFilter(Form.name))
@@ -247,6 +249,16 @@ async def check(message: Message, state: FSMContext):
     
     await message.answer('ok')
     await state.clear()
+
+@HDMessage
+@main_router.message(Command(commands=['upd_state']), StateFilter(Form.name))
+async def check(message: Message, state: FSMContext):
+    
+    await state.update_data(name='new_test')
+    
+    r = await state.get_state()
+    d = await state.get_data()
+    await message.answer(f"{r} {d}")
 
 # @main_router.message(Command(commands=['check_state']))
 # @HDMessage
