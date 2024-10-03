@@ -188,9 +188,9 @@ async def tavern_menu(message: Message):
         if len(friends_in_tavern):
             text += '\n'
             for friendid in friends_in_tavern:
+                friendChat = await bot.get_chat_member(friendid, friendid)
                 friend = friendChat.user
                 friend_lang = await get_lang(friend.id)
-                friendChat = await bot.get_chat_member(friendid, friendid)
 
                 if friend:
                     buttons = t('menu_text.dino_tavern.button', friend_lang)
