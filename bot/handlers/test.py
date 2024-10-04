@@ -266,3 +266,14 @@ async def check(message: Message, state: FSMContext):
     
 #     r = await state.get_state()
 #     await message.answer(f"{r}")
+
+@HDMessage
+@main_router.message(Command(commands=['nxt']))
+async def check(message: Message):
+
+    mrk = list_to_keyboard(
+        ['😅📦']
+    )
+    log(f'{mrk}')
+    
+    await message.answer('ok', reply_markup=mrk)

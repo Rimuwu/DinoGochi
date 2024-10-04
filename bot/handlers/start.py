@@ -1,5 +1,7 @@
 from random import choice
 
+import aiogram
+
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
@@ -11,6 +13,7 @@ from bot.modules.dinosaur.dinosaur import incubation_egg
 from bot.modules.images import async_open, create_eggs_image
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.localization import get_data, get_lang, t
+from bot.modules.logs import log
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.managment.promo import use_promo
@@ -29,13 +32,14 @@ from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
 
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 referals = DBconstructor(mongo_client.user.referals)
 management = DBconstructor(mongo_client.other.management)
 dead_users = DBconstructor(mongo_client.other.dead_users)
 
+@HDMessage
 @main_router.message(Command(commands=['start']), IsAuthorizedUser(), IsPrivateChat())
-# @HDMessage
 async def start_command_auth(message: types.Message):
     stickers = await bot.get_sticker_set('Stickers_by_DinoGochi_bot')
     sticker = choice(list(stickers.stickers)).file_id
@@ -65,36 +69,38 @@ async def start_command_auth(message: types.Message):
         if st == 'ok':
             await bot.send_message(message.chat.id, text)
 
+@HDMessage
 @main_router.message(Text('commands_name.start_game'), IsAuthorizedUser(False))
-# @HDMessage
 async def start_game(message: types.Message, code: str = '', code_type: str = ''):
+    if message.from_user:
+        #Сообщение-реклама
+        text = t('start_command.request_subscribe.text', message.from_user.language_code)
+        b1, b2 = get_data('start_command.request_subscribe.buttons', message.from_user.language_code)
 
-    #Сообщение-реклама
-    text = t('start_command.request_subscribe.text', message.from_user.language_code)
-    b1, b2 = get_data('start_command.request_subscribe.buttons', message.from_user.language_code)
+        markup_inline = InlineKeyboardBuilder()
+        markup_inline.add(types.InlineKeyboardButton(text=b1, 
+                            url=GAME_SETTINGS['bot_channel']))
+        markup_inline.add(types.InlineKeyboardButton(text=b2, 
+                            url=GAME_SETTINGS['bot_forum']))
 
-    markup_inline = []
-    markup_inline.append(types.InlineKeyboardButton(text=b1, url='https://t.me/DinoGochi'))
-    markup_inline.append(types.InlineKeyboardButton(text=b2, url='https://t.me/+pq9_21HXXYY4ZGQy'))
+        await bot.send_message(message.chat.id, text, parse_mode='html', 
+                            reply_markup=markup_inline.as_markup())
 
-    inl = types.InlineKeyboardMarkup(inline_keyboard=markup_inline)
-    await bot.send_message(message.chat.id, text, parse_mode='html', reply_markup=inl)
+        #Создание изображения
+        img, id_l = await create_eggs_image()
 
-    #Создание изображения
-    img, id_l = await create_eggs_image()
+        markup_inline = InlineKeyboardBuilder()
+        markup_inline.add(*[types.InlineKeyboardButton(
+                text=f'🥚 {id_l.index(i) + 1}', 
+                callback_data=f'start_egg {i} {code_type} {code}') for i in id_l]
+        )
 
-    markup_inline = []
-    markup_inline.append(*[types.InlineKeyboardButton(
-            text=f'🥚 {id_l.index(i) + 1}', 
-            callback_data=f'start_egg {i} {code_type} {code}') for i in id_l]
-    )
-    inl = types.InlineKeyboardMarkup(inline_keyboard=markup_inline)
+        start_game_text = t('start_command.start_game', message.from_user.language_code)
+        await bot.send_photo(message.chat.id, img, caption=start_game_text, 
+                            reply_markup=markup_inline.as_markup())
 
-    start_game = t('start_command.start_game', message.from_user.language_code)
-    await bot.send_photo(message.chat.id, img, start_game, reply_markup=inl)
-
+@HDMessage
 @main_router.message(Command(commands=['start']), IsAuthorizedUser(False))
-# @HDMessage
 async def start_game_message(message: types.Message):
     langue_code = message.from_user.language_code
     if not langue_code: langue_code = 'en'
@@ -113,12 +119,13 @@ async def start_game_message(message: types.Message):
 
     if not add_referal:
         buttons_list = [get_data('commands_name.start_game', locale=langue_code)]
+        log(f'{buttons_list}')
         markup = list_to_keyboard(buttons_list)
 
     image = await async_open('images/remain/start/placeholder.png', True)
     text = t('start_command.first_message', langue_code, username=username)
 
-    await send_SmartPhoto(message.chat.id, image, text, 'HTML', markup)
+    await send_SmartPhoto(message.chat.id, image, text, 'HTML', reply_markup=markup)
 
     if add_referal:
         text = t('start_command.referal', langue_code, username=username)
@@ -126,10 +133,9 @@ async def start_game_message(message: types.Message):
 
         await start_game(message, referal, 'referal') 
 
-
+@HDCallback
 @main_router.callback_query(IsAuthorizedUser(False), 
                             F.data.startswith('start_egg'), IsPrivateChat())
-# @HDCallback
 async def egg_answer_callback(callback: types.CallbackQuery):
     egg_id = int(callback.data.split()[1])
     lang = callback.from_user.language_code
@@ -140,9 +146,8 @@ async def egg_answer_callback(callback: types.CallbackQuery):
     send_text = t('start_command.end_answer.send_text', lang, inc_time=
                   seconds_to_str(GAME_SETTINGS['first_dino_time_incub'], lang))
 
-    await bot.edit_message_caption(edited_text, callback.message.chat.id, callback.message.message_id)
-    await bot.send_message(callback.message.chat.id, send_text, parse_mode='Markdown', 
-                           reply_markup= await m(callback.from_user.id, language_code=lang))
+    await bot.edit_message_caption(None, caption=edited_text, chat_id=callback.message.chat.id, message_id=callback.message.message_id)
+    await bot.send_message(callback.message.chat.id, send_text, parse_mode='Markdown', reply_markup= await m(callback.from_user.id, language_code=lang))
 
     # Создание юзера и добавляем динозавра в инкубацию
     await insert_user(callback.from_user.id, lang)
@@ -157,9 +162,9 @@ async def egg_answer_callback(callback: types.CallbackQuery):
             code = callback.data.split()[3]
             await use_promo(code, userid, lang)
 
+@HDCallback
 @main_router.callback_query(IsAuthorizedUser(), 
                             F.data.startswith('start_cmd'), IsPrivateChat())
-# @HDCallback
 async def start_inl(callback: types.CallbackQuery):
     """ start_cmd promo/  
     """
@@ -169,7 +174,7 @@ async def start_inl(callback: types.CallbackQuery):
 
     spl = callback.data.split()
     if len(spl) > 1: content = spl[1]
-    
+
     if content:
         # Активация премиума после возвращения 
         fr = await dead_users.find_one({'promo': content})

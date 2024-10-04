@@ -358,14 +358,14 @@ async def company_info(callback: CallbackQuery):
     if c:
         if action == 'delete':
             await end_company(c['_id'])
-            await bot.delete_message(chatid, callback.message.id)
+            await bot.delete_message(chatid, callback.message.message_id)
 
         elif action == 'activate':
             await companies.update_one({'_id': c['_id']}, {'$set': {'status': True}})
 
             text, mrk = await info(c['_id'], lang)
             await bot.edit_message_text(
-                text, None, chatid, callback.message.id, reply_markup=mrk
+                text, None, chatid, callback.message.message_id, reply_markup=mrk
             )
 
         elif action == 'stop':
@@ -373,7 +373,7 @@ async def company_info(callback: CallbackQuery):
 
             text, mrk = await info(c['_id'], lang)
             await bot.edit_message_text(
-                text, None, chatid, callback.message.id, reply_markup=mrk
+                text, None, chatid, callback.message.message_id, reply_markup=mrk
             )
 
         elif action == 'message':

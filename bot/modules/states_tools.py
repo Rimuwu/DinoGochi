@@ -640,13 +640,13 @@ async def next_step(answer, state: FSMContext,
 
                 if edit_message and transmitted_data['process'] != 0 and last_message:
                     if 'image' in steps[0] or 'caption' in ret_data['message']:
-                        await bot.edit_message_caption(
-                            chat_id=chatid, message_id=last_message.id,
+                        await bot.edit_message_caption(None, 
+                            chat_id=chatid, message_id=last_message.message_id,
                             parse_mode='Markdown', **ret_data['message'])
                     else:
                         await bot.edit_message_text(
-                            chat_id=chatid, message_id=last_message.id, parse_mode='Markdown', **ret_data['message'])
-                    bmessage = last_message.id
+                            chat_id=chatid, message_id=last_message.message_id, parse_mode='Markdown', **ret_data['message'])
+                    bmessage = last_message.message_id
                 else:
                     if 'image' in ret_data:
                         photo = await async_open(ret_data['image'], True)
@@ -658,7 +658,7 @@ async def next_step(answer, state: FSMContext,
                                 bmessage = await bot.send_message(chatid, parse_mode='Markdown', **ret_data['message'])
                             except:
                                 bmessage = await bot.send_message(chatid, **ret_data['message'])
-                            ret_data['bmessageid'] = bmessage.id
+                            ret_data['bmessageid'] = bmessage.message_id
 
         # Обновление данных состояния
         if not start and func_answer:

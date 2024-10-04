@@ -10,12 +10,24 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import premium
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command, StateFilter
+
+from aiogram.fsm.context import FSMContext
+
 users = DBconstructor(mongo_client.user.users)
 ads = DBconstructor(mongo_client.user.ads)
 
 async def main_message(user_id):
     text = ''
-    markup = InlineKeyboardMarkup()
+    markup = InlineKeyboardMarkup(inline_keyboard=[])
 
     lang = await get_lang(user_id)
     user = await users.find_one({"userid": user_id}, comment='main_message_super_c_user')
@@ -33,8 +45,8 @@ async def main_message(user_id):
 
     return text, markup
 
-@main_router.message(Command(commands=['super'], IsPrivateChat())
 @HDMessage
+@main_router.message(Command(commands=['super']), IsPrivateChat())
 async def super_c(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -43,8 +55,8 @@ async def super_c(message: Message):
     text, markup = await main_message(userid)
     await bot.send_message(chatid, text, reply_markup=markup, parse_mode="Markdown")
 
-@main_router.callback_query(F.data.startswith('super_coins'), IsPrivateChat())
 @HDCallback
+@main_router.callback_query(F.data.startswith('super_coins'), IsPrivateChat())
 async def super_coins(call: CallbackQuery):
     chatid = call.message.chat.id
     user_id = call.from_user.id
@@ -62,7 +74,7 @@ async def super_coins(call: CallbackQuery):
                                ))
         markup = list_to_inline([inl_buttons], 2)
 
-        await bot.edit_message_text(text, None, chatid, call.message.id,
+        await bot.edit_message_text(text, None, chatid, call.message.message_id,
                                     reply_markup=markup)
 
     elif code == "products":
@@ -83,11 +95,11 @@ async def super_coins(call: CallbackQuery):
             {t('buttons_name.back',lang): 'super_shop back'})
 
         markup = list_to_inline(mrk_list, 2)
-        await bot.edit_message_text(text, None, chatid, call.message.id,
+        await bot.edit_message_text(text, None, chatid, call.message.message_id,
                                     reply_markup=markup, parse_mode='Markdown')
 
-@main_router.callback_query(F.data.startswith('ads_limit'), IsPrivateChat())
 @HDCallback
+@main_router.callback_query(F.data.startswith('ads_limit'), IsPrivateChat())
 async def ads_limit(call: CallbackQuery):
     chatid = call.message.chat.id
     user_id = call.from_user.id
@@ -108,11 +120,11 @@ async def ads_limit(call: CallbackQuery):
         await ads.update_one({'userid': user_id}, {"$set": {'limit': limit}}, comment='ads_limit_limit')
 
     text, markup = await main_message(user_id)
-    await bot.edit_message_text(text, None, chatid, call.message.id,
+    await bot.edit_message_text(text, None, chatid, call.message.message_id,
                                     reply_markup=markup, parse_mode="Markdown")
 
-@main_router.callback_query(F.data.startswith('super_shop'), IsPrivateChat())
 @HDCallback
+@main_router.callback_query(F.data.startswith('super_shop'), IsPrivateChat())
 async def super_shop(call: CallbackQuery):
     chatid = call.message.chat.id
     user_id = call.from_user.id
@@ -122,7 +134,7 @@ async def super_shop(call: CallbackQuery):
 
     if code == 'back':
         text, markup = await main_message(user_id)
-        await bot.edit_message_text(text, None, chatid, call.message.id,
+        await bot.edit_message_text(text, None, chatid, call.message.message_id,
                                     reply_markup=markup, parse_mode="Markdown")
 
     elif code == 'buy':
@@ -142,5 +154,5 @@ async def super_shop(call: CallbackQuery):
             await bot.send_message(chatid, t('super_coins.buy', lang))
 
             text, markup = await main_message(user_id)
-            await bot.edit_message_text(text, None, chatid, call.message.id,
+            await bot.edit_message_text(text, None, chatid, call.message.message_id,
                                     reply_markup=markup, parse_mode="Markdown")

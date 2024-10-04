@@ -195,7 +195,7 @@ async def product_info(call: CallbackQuery):
         if call_type == 'delete':
             if product['owner_id'] == userid:
 
-                await bot.edit_message_reply_markup(None, chatid, call.message.id, reply_markup=list_to_inline([]))
+                await bot.edit_message_reply_markup(None, chatid, call.message.message_id, reply_markup=list_to_inline([]))
 
                 status = await delete_product(None, alt_id)
 
@@ -203,7 +203,7 @@ async def product_info(call: CallbackQuery):
                 else: text = t('product_info.error', lang)
 
                 markup = list_to_inline([])
-                await bot.edit_message_text(text, None, chatid, call.message.id, reply_markup=markup, parse_mode='Markdown')
+                await bot.edit_message_text(text, None, chatid, call.message.message_id, reply_markup=markup, parse_mode='Markdown')
         else:
             if call_type == 'edit_price' and product['owner_id'] == userid:
                 await prepare_edit_price(userid, chatid, lang, alt_id)
@@ -224,7 +224,7 @@ async def product_info(call: CallbackQuery):
             elif call_type == 'buy' and product['owner_id'] != userid:
                 if product['owner_id'] != userid:
                     await buy_item(userid, chatid, lang, product, 
-                                   user_name(call.from_user), call.message.id)
+                                   user_name(call.from_user), call.message.message_id)
 
             elif call_type == 'info':
                 text, markup = await product_ui(lang, product['_id'], 
@@ -233,7 +233,7 @@ async def product_info(call: CallbackQuery):
 
             elif call_type == 'promotion' and product['owner_id'] == userid:
                 await promotion_prepare(userid, chatid, lang, product['_id'], 
-                                        call.message.id)
+                                        call.message.message_id)
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('seller'), IsPrivateChat())
@@ -248,14 +248,14 @@ async def seller(call: CallbackQuery, state):
 
     # Кнопки вызываемые владельцем
     if call_type == 'cancel_all':
-        await prepare_delete_all(userid, chatid, lang, call.message.id)
+        await prepare_delete_all(userid, chatid, lang, call.message.message_id)
     elif call_type == 'edit_text':
-        await pr_edit_description(userid, chatid, lang, call.message.id)
+        await pr_edit_description(userid, chatid, lang, call.message.message_id, state)
     elif call_type == 'edit_name':
-        await pr_edit_name(userid, chatid, lang, call.message.id)
+        await pr_edit_name(userid, chatid, lang, call.message.message_id)
     elif call_type == 'edit_image':
         if await premium(userid):
-            await pr_edit_image(userid, chatid, lang, call.message.id)
+            await pr_edit_image(userid, chatid, lang, call.message.message_id)
         else:
             await bot.send_message(chatid, t('no_premium', lang))
 
@@ -352,6 +352,6 @@ async def push(call: CallbackQuery):
         text = t('push.new', lang)
 
     await bot.send_message(userid, text)
-    await bot.edit_message_reply_markup(None, chatid, call.message.id, 
+    await bot.edit_message_reply_markup(None, chatid, call.message.message_id, 
                                         reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
     

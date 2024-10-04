@@ -132,7 +132,7 @@ async def support_buttons(call: CallbackQuery, state):
     chatid = call.message.chat.id
     user_id = call.from_user.id
     lang = await get_lang(call.from_user.id)
-    messageid = call.message.id
+    messageid = call.message.message_id
 
     if action == "main":
         image, text, markup_inline = await main_support_menu(lang)

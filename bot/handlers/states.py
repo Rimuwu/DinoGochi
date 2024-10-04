@@ -35,22 +35,22 @@ async def cancel(message, text:str = "❌", state: Union[FSMContext, None] = Non
     # delete_state(message.from_user.id, message.chat.id)
     # await state.reset_data(message.from_user.id,  message.chat.id)
 
-@main_router.message(Text('buttons_name.cancel'), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('buttons_name.cancel'), IsPrivateChat())
 async def cancel_m(message: Message, state: FSMContext):
     """Состояние отмены
     """
     await cancel(message, state=state)
 
-@main_router.message(Command(commands=['cancel']), IsPrivateChat())
 @HDMessage
+@main_router.message(Command(commands=['cancel']), IsPrivateChat())
 async def cancel_c(message: Message, state: FSMContext):
     """Команда отмены
     """
     await cancel(message, state=state)
 
-@main_router.message(Command(commands=['state']))
 @HDMessage
+@main_router.message(Command(commands=['state']))
 async def get_state(message: Message, state: FSMContext):
     """Состояние
     """
@@ -64,8 +64,8 @@ async def get_state(message: Message, state: FSMContext):
     except Exception as e:
         await bot.send_message(message.chat.id, str(e))
 
-@main_router.message(StateFilter(GeneralStates.ChooseDino), IsAuthorizedUser())
 @HDMessage
+@main_router.message(StateFilter(GeneralStates.ChooseDino), IsAuthorizedUser())
 async def ChoseDino(message: Message, state: FSMContext):
     """Общая функция для выбора динозавра
     """
@@ -81,16 +81,16 @@ async def ChoseDino(message: Message, state: FSMContext):
         await state.clear()
 
         if 'steps' in transmitted_data and 'process' in transmitted_data:
-            transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.id
-        else: transmitted_data['umessageid'] = message.id
+            transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
+        else: transmitted_data['umessageid'] = message.message_id
 
         await func(ret_data[message.text], transmitted_data=transmitted_data)
     else:
         await bot.send_message(message.chat.id, 
                 t('states.ChooseDino.error_not_dino', lang))
 
-@main_router.message(StateFilter(GeneralStates.ChooseInt), IsAuthorizedUser())
 @HDMessage
+@main_router.message(StateFilter(GeneralStates.ChooseInt), IsAuthorizedUser())
 async def ChooseInt(message: Message, state: FSMContext):
     """Общая функция для ввода числа
     """
@@ -123,13 +123,13 @@ async def ChooseInt(message: Message, state: FSMContext):
         await state.clear()
 
         if 'steps' in transmitted_data and 'process' in transmitted_data:
-            transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.id
-        else: transmitted_data['umessageid'] = message.id
+            transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
+        else: transmitted_data['umessageid'] = message.message_id
 
         await func(number, transmitted_data=transmitted_data)
 
-@main_router.message(StateFilter(GeneralStates.ChooseString), IsAuthorizedUser())
 @HDMessage
+@main_router.message(StateFilter(GeneralStates.ChooseString), IsAuthorizedUser())
 async def ChooseString(message: Message, state: FSMContext):
     """Общая функция для ввода сообщения
     """
@@ -157,13 +157,13 @@ async def ChooseString(message: Message, state: FSMContext):
         await state.clear()
 
         if 'steps' in transmitted_data and 'process' in transmitted_data:
-            transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.id
-        else: transmitted_data['umessageid'] = message.id
+            transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
+        else: transmitted_data['umessageid'] = message.message_id
 
         await func(content, transmitted_data=transmitted_data)
 
-@main_router.message(StateFilter(GeneralStates.ChooseConfirm), IsAuthorizedUser())
 @HDMessage
+@main_router.message(StateFilter(GeneralStates.ChooseConfirm), IsAuthorizedUser())
 async def ChooseConfirm(message: Message, state: FSMContext):
     """Общая функция для подтверждения
     """
@@ -192,8 +192,8 @@ async def ChooseConfirm(message: Message, state: FSMContext):
             await state.clear()
 
             if 'steps' in transmitted_data and 'process' in transmitted_data:
-                transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.id
-            else: transmitted_data['umessageid'] = message.id
+                transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
+            else: transmitted_data['umessageid'] = message.message_id
 
             await func(buttons_data[content], transmitted_data=transmitted_data)
 
@@ -201,8 +201,8 @@ async def ChooseConfirm(message: Message, state: FSMContext):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseConfirm.error_not_confirm', lang))
 
-@main_router.message(StateFilter(GeneralStates.ChooseOption), IsAuthorizedUser())
 @HDMessage
+@main_router.message(StateFilter(GeneralStates.ChooseOption), IsAuthorizedUser())
 async def ChooseOption(message: Message, state: FSMContext):
     """Общая функция для выбора из предложенных вариантов
     """
@@ -216,8 +216,8 @@ async def ChooseOption(message: Message, state: FSMContext):
 
     if message.text in options.keys():
         if 'steps' in transmitted_data and 'process' in transmitted_data:
-            transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.id
-        else: transmitted_data['umessageid'] = message.id
+            transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
+        else: transmitted_data['umessageid'] = message.message_id
 
         await state.clear()
         await func(options[message.text], transmitted_data=transmitted_data)
@@ -225,8 +225,8 @@ async def ChooseOption(message: Message, state: FSMContext):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseOption.error_not_option', lang))
 
-@main_router.message(StateFilter(GeneralStates.ChooseCustom), IsAuthorizedUser())
 @HDMessage
+@main_router.message(StateFilter(GeneralStates.ChooseCustom), IsAuthorizedUser())
 async def ChooseCustom(message: Message, state: FSMContext):
     """Кастомный обработчик, принимает данные и отправляет в обработчик
     """
@@ -241,14 +241,14 @@ async def ChooseCustom(message: Message, state: FSMContext):
     
     if result:
         if 'steps' in transmitted_data and 'process' in transmitted_data:
-            transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.id
-        else: transmitted_data['umessageid'] = message.id
+            transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
+        else: transmitted_data['umessageid'] = message.message_id
 
         await state.clear()
         await func(answer, transmitted_data=transmitted_data)
-    
-@main_router.message(StateFilter(GeneralStates.ChoosePagesState), IsAuthorizedUser())
+
 @HDMessage
+@main_router.message(StateFilter(GeneralStates.ChoosePagesState), IsAuthorizedUser())
 async def ChooseOptionPages(message: Message, state: FSMContext):
     """Кастомный обработчик, принимает данные и отправляет в обработчик
     """
@@ -276,8 +276,8 @@ async def ChooseOptionPages(message: Message, state: FSMContext):
         transmitted_data['key'] = message.text
 
         if 'steps' in transmitted_data and 'process' in transmitted_data:
-            transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.id
-        else: transmitted_data['umessageid'] = message.id
+            transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
+        else: transmitted_data['umessageid'] = message.message_id
 
         res = await func(
             options[message.text], transmitted_data=transmitted_data)
@@ -330,9 +330,9 @@ async def ChooseOptionPages(message: Message, state: FSMContext):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseOption.error_not_option', lang))
 
+@HDCallback
 @main_router.callback_query(StateFilter(GeneralStates.ChooseInline), IsAuthorizedUser(), 
                             F.data.startswith('chooseinline'))
-@HDCallback
 async def ChooseInline(callback: CallbackQuery, state: FSMContext):
     code = callback.data.split()
     chatid = callback.message.chat.id
@@ -361,18 +361,18 @@ async def ChooseInline(callback: CallbackQuery, state: FSMContext):
 
         if 'steps' in transmitted_data and 'process' in transmitted_data:
             try:
-                transmitted_data['steps'][transmitted_data['process']]['bmessageid'] = callback.message.id
+                transmitted_data['steps'][transmitted_data['process']]['bmessageid'] = callback.message.message_id
             except Exception as e:
                 log(f'ChooseInline error {e}', lvl=2, prefix='ChooseInline')
-        else: transmitted_data['bmessageid'] = callback.message.id
+        else: transmitted_data['bmessageid'] = callback.message.message_id
 
         try:
             await func(code, transmitted_data=transmitted_data)
         except Exception as e:
             log(f'ChooseInline error {e}', lvl=3, prefix='ChooseInline')
 
-@main_router.message(StateFilter(GeneralStates.ChooseTime), IsAuthorizedUser())
 @HDMessage
+@main_router.message(StateFilter(GeneralStates.ChooseTime), IsAuthorizedUser())
 async def ChooseTime(message: Message, state: FSMContext):
     """Общая функция для ввода времени
     """
@@ -405,13 +405,13 @@ async def ChooseTime(message: Message, state: FSMContext):
         await state.clear()
 
         if 'steps' in transmitted_data and 'process' in transmitted_data:
-            transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.id
-        else: transmitted_data['umessageid'] = message.id
+            transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
+        else: transmitted_data['umessageid'] = message.message_id
 
         await func(number, transmitted_data=transmitted_data)
 
-@main_router.message(F.photo, IsAuthorizedUser(), StateFilter(GeneralStates.ChooseImage))
 @HDMessage
+@main_router.message(F.photo, IsAuthorizedUser(), StateFilter(GeneralStates.ChooseImage))
 async def ChooseImage(message: Message, state: FSMContext):
     """Общая функция для получения изображения
     """
@@ -427,8 +427,8 @@ async def ChooseImage(message: Message, state: FSMContext):
     transmitted_data['file'] = message.photo[-1]
     await func(fileID, transmitted_data=transmitted_data)
 
-@main_router.message(IsAuthorizedUser(), StateFilter(GeneralStates.ChooseImage))
 @HDMessage
+@main_router.message(IsAuthorizedUser(), StateFilter(GeneralStates.ChooseImage))
 async def ChooseImage_0(message: Message, state: FSMContext):
     """Общая функция для получения изображения
     """

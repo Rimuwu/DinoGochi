@@ -222,7 +222,7 @@ async def item_callback(call: CallbackQuery):
                         await incubation_egg(int(egg_id), userid, item_data['incub_time'], item_data['inc_type'])
 
                         new_text = t('item_use.egg.edit_content', lang)
-                        await bot.edit_message_caption(new_text, chatid, call.message.id, reply_markup=None)
+                        await bot.edit_message_caption(None, chat_id=chatid, message_id=call.message.message_id, caption=new_text, reply_markup=None)
             else:
                 await bot.send_message(chatid, 
                         t('item_use.cannot_be_used', lang),  
@@ -345,7 +345,7 @@ async def book(call: CallbackQuery):
     page = int(call_data[2])
     text, markup = book_page(book_id, page, lang)
     try:
-        await bot.edit_message_text(text, None, chatid, call.message.id, reply_markup=markup, parse_mode='Markdown')
+        await bot.edit_message_text(text, None, chatid, call.message.message_id, reply_markup=markup, parse_mode='Markdown')
     except Exception as e: 
         log(message=f'Book edit error {e}', lvl=2)
 
@@ -562,10 +562,10 @@ async def InventoryInline(callback: CallbackQuery, state):
 
         if 'steps' in transmitted_data and 'process' in transmitted_data:
             try:
-                transmitted_data['steps'][transmitted_data['process']]['bmessageid'] = callback.message.id
+                transmitted_data['steps'][transmitted_data['process']]['bmessageid'] = callback.message.message_id
             except Exception as e:
                 log(f'Inline edit error {e}', lvl=2, prefix='InventoryInline')
-        else: transmitted_data['bmessageid'] = callback.message.id
+        else: transmitted_data['bmessageid'] = callback.message.message_id
         del transmitted_data['inline_code']
 
         try:

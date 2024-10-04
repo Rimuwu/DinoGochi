@@ -300,7 +300,7 @@ async def filter_menu(chatid: int, state: FSMContext, upd_up_m: bool = True):
     #                         parse_mode='Markdown', reply_markup=inl_menu)
         
     #     async with bot.retrieve_data(
-    #         userid, chatid) as data: data['settings']['edited_message'] = msg.id
+    #         userid, chatid) as data: data['settings']['edited_message'] = msg.message_id
 
 async def start_inv(state: FSMContext,
                     function, userid: int, chatid: int, lang: str, 

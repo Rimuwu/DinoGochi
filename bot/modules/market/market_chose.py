@@ -139,7 +139,7 @@ async def delete_all(_: bool, transmitted_data: dict):
                            reply_markup= await m(userid, 'last_menu', lang))
 
     text, markup, image = await seller_ui(userid, lang, True)
-    await bot.edit_message_caption(text, chatid, message_id, parse_mode='Markdown', reply_markup=markup)
+    await bot.edit_message_caption(None, caption=text, chat_id=chatid, message_id=message_id, parse_mode='Markdown', reply_markup=markup)
 
 async def prepare_delete_all(userid: int, chatid: int, lang: str, message_id: int):
     transmitted_data = {
@@ -165,7 +165,7 @@ async def edit_name(name: str, transmitted_data: dict):
 
         text, markup, image = await seller_ui(userid, lang, True)
         try:
-            await bot.edit_message_caption(text, chatid, message_id, parse_mode='Markdown', reply_markup=markup)
+            await bot.edit_message_caption(None, caption=text, chat_id=chatid, message_id=message_id, parse_mode='Markdown', reply_markup=markup)
         except: pass
     else:
         text =  t('market_create.name_error', lang)
@@ -195,17 +195,17 @@ async def edit_description(description: str, transmitted_data: dict):
 
     text, markup, image = await seller_ui(userid, lang, True)
     try:
-        await bot.edit_message_caption(text, chatid, message_id, parse_mode='Markdown', reply_markup=markup)
+        await bot.edit_message_caption(None, caption=text, chat_id=chatid, message_id=message_id, parse_mode='Markdown', reply_markup=markup)
     except: pass
 
-async def pr_edit_description(userid: int, chatid: int, lang: str, message_id: int):
+async def pr_edit_description(userid: int, chatid: int, lang: str, message_id: int, state):
     transmitted_data = {
         'message_id': message_id
     }
 
     await bot.send_message(chatid, t('seller.edit_description', lang), 
                            reply_markup=cancel_markup(lang))
-    await ChooseStringState(edit_description, userid, chatid, lang, max_len=500, transmitted_data=transmitted_data)
+    await ChooseStringState(edit_description, state, userid, chatid, lang, max_len=500, transmitted_data=transmitted_data)
 
 async def edit_image(new_image: str, transmitted_data: dict):
     chatid = transmitted_data['chatid']

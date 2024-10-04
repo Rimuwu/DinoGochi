@@ -11,11 +11,23 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import premium, user_info
 from aiogram.types import CallbackQuery, Message
 
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command, StateFilter
+
+from aiogram.fsm.context import FSMContext
+
 management = DBconstructor(mongo_client.other.management)
 
-@main_router.message(Text('commands_name.profile.information', 
-                     IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.profile.information'), 
+                     IsAuthorizedUser(), IsPrivateChat())
 async def infouser(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
@@ -29,8 +41,8 @@ async def infouser(message: Message):
     else:
         await bot.send_message(message.chat.id, text, parse_mode='Markdown')
 
-@main_router.message(Command(commands=['profile'], IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Command(commands=['profile']), IsAuthorizedUser(), IsPrivateChat())
 async def infouser_com(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
@@ -44,9 +56,9 @@ async def infouser_com(message: Message):
     else:
         await bot.send_message(message.chat.id, text, parse_mode='Markdown')
 
-@main_router.message(Text('commands_name.profile.rayting', 
-                     IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.profile.rayting'), 
+                     IsAuthorizedUser(), IsPrivateChat())
 async def rayting(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
@@ -70,8 +82,8 @@ async def rayting(message: Message):
             markup = list_to_inline([buttons])
             await bot.send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
 
-@main_router.callback_query(F.data.startswith('rayting'))
 @HDCallback
+@main_router.callback_query(F.data.startswith('rayting'))
 async def rayting_call(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
@@ -125,6 +137,6 @@ async def rayting_call(callback: CallbackQuery):
             markup = list_to_inline(buttons)
 
         try:
-            await bot.edit_message_text(text, None, chatid, callback.message.id, parse_mode='Markdown', reply_markup=markup)
+            await bot.edit_message_text(text, None, chatid, callback.message.message_id, parse_mode='Markdown', reply_markup=markup)
         except Exception as e:
             log(message=f'Rayting edit error {e}', lvl=2)

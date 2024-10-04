@@ -57,7 +57,7 @@ async def answer_edit(callback: CallbackQuery):
     data = callback.data.split()[1]
 
     try:
-        await bot.delete_message(user_id, message.id)
+        await bot.delete_message(user_id, message.message_id)
     except: pass
     dino = await dinosaurs.find_one({'alt_id': data}, {'_id': 1, 'name': 1}, comment='answer_edit_dino')
     if dino:

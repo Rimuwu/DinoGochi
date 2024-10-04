@@ -7,10 +7,10 @@ from bot.modules.items.item import get_item_dict, get_name, item_code
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.localization import t
 from bot.modules.logs import log
-
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 def inline_menu(markup_data, lang: str = 'en', **kwargs):
-    markup_inline = InlineKeyboardMarkup()
+    markup_inline = InlineKeyboardBuilder()
     text, callback = '-', '-'
     standart_keys = get_loc_data('inline_menu', lang)
     # 'dino_profile', 'dino_rename' # dino_alt_id_markup
@@ -29,7 +29,7 @@ def inline_menu(markup_data, lang: str = 'en', **kwargs):
 
         markup_inline.add(
             InlineKeyboardButton(text=text, callback_data=callback))
-    return markup_inline
+    return markup_inline.as_markup()
 
 def item_info_markup(item: dict, lang):
     item_data = get_item_data(item['item_id'])

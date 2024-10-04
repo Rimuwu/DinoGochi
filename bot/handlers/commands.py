@@ -125,7 +125,7 @@ async def help_query(call: CallbackQuery):
 
     text, inl_m = await help_generate(userid, call.message.chat.type, page)
     try:
-        await bot.edit_message_text(text, None, chatid, call.message.id, parse_mode='HTML', reply_markup=inl_m)
+        await bot.edit_message_text(text, None, chatid, call.message.message_id, parse_mode='HTML', reply_markup=inl_m)
     except:
         await bot.send_message(chatid, text, parse_mode='HTML', 
                            reply_markup=inl_m)

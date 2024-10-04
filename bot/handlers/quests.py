@@ -13,11 +13,23 @@ from bot.modules.user.user import take_coins
 from aiogram.types import (CallbackQuery,
                            InlineKeyboardMarkup, Message)
 
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command, StateFilter
+
+from aiogram.fsm.context import FSMContext
+
 quests_data = DBconstructor(mongo_client.tavern.quests)
 users = DBconstructor(mongo_client.user.users)
 
-@main_router.message(Text('commands_name.dino_tavern.quests', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.dino_tavern.quests'), IsAuthorizedUser(), IsPrivateChat())
 async def check_quests(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -37,8 +49,8 @@ async def check_quests(message: Message):
                             chatid, text, reply_markup=mark, parse_mode='Markdown')
             await sleep(0.3)
 
-@main_router.callback_query(F.data.startswith('quest'), IsPrivateChat())
 @HDCallback
+@main_router.callback_query(F.data.startswith('quest'), IsPrivateChat())
 async def quest(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id
@@ -55,15 +67,15 @@ async def quest(call: CallbackQuery):
 
             text = t('quest.time_end_h', lang)
             await bot.send_message(chatid, text)
-            await bot.edit_message_reply_markup(None, chatid, message.id, 
-                                   reply_markup=InlineKeyboardMarkup())
+            await bot.edit_message_reply_markup(None, chatid, message.message_id, 
+                                   reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
         else:
             if data[1] == 'delete':
                 await quest_resampling(quest['_id'])
 
                 text = t('quest.delete_button', lang)
                 mark = list_to_inline([{text: ' '}])
-                await bot.edit_message_reply_markup(None, chatid, message.id, 
+                await bot.edit_message_reply_markup(None, chatid, message.message_id, 
                                     reply_markup=mark)
             elif data[1] == 'end':
                 result = await check_quest(quest)
@@ -74,7 +86,7 @@ async def quest(call: CallbackQuery):
                     b_name = t('quest.end_quest_button', lang)
                     mark = list_to_inline([{b_name: ' '}])
 
-                    await bot.edit_message_reply_markup(None, chatid, message.id, reply_markup=mark)
+                    await bot.edit_message_reply_markup(None, chatid, message.message_id, reply_markup=mark)
 
                     await take_coins(userid, quest['reward']['coins'], True)
                     for i in quest['reward']['items']: 
@@ -89,5 +101,5 @@ async def quest(call: CallbackQuery):
     else:
         text = t('quest.not_found', lang)
         await bot.send_message(chatid, text)
-        await bot.edit_message_reply_markup(None, chatid, message.id, 
-                                   reply_markup=InlineKeyboardMarkup())
+        await bot.edit_message_reply_markup(None, chatid, message.message_id, 
+                                   reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))

@@ -1,3 +1,4 @@
+from ast import Is
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
@@ -336,7 +337,7 @@ async def take_dino(call: CallbackQuery):
     data = call.data.split()
 
     dino_alt = data[1]
-    await bot.delete_message(chatid, call.message.id)
+    await bot.delete_message(chatid, call.message.message_id)
 
     res2 = await dino_owners.find(
         {'owner_id': userid, 'type': 'add_owner'}, comment='take_dino_res2')
@@ -458,7 +459,7 @@ async def transfer_super_coins(col: int, transmitted_data: dict):
                            comment='transfer_super_coins')
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('send_request'), private=False)
+@main_router.callback_query(F.data.startswith('send_request'), IsPrivateChat(False))
 async def send_request(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
     userid = call.from_user.id

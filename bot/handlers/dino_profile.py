@@ -158,7 +158,7 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
     image = await dino.image(user.settings['profile_view'], custom_url)
     await bot.edit_message_media(
         chat_id=chatid,
-        message_id=msg.id,
+        message_id=msg.message_id,
         media=types.InputMediaPhoto(
             media=image, 
             parse_mode='Markdown', caption=text),

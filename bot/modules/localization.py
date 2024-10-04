@@ -36,7 +36,7 @@ def alternative_language(lang: str):
         log(f"Not found lang {lang}", 3)
     return lang
 
-def get_data(key: str, locale: str) -> Any:
+def get_data(key: str, locale: str | None) -> Any:
     """Возвращает данные локализации
 
     Args:
@@ -46,6 +46,7 @@ def get_data(key: str, locale: str) -> Any:
     Returns:
         str | dict: возвращаемое
     """
+    if not locale: locale = 'en'
     locale = alternative_language(locale)
     if locale not in available_locales:
         locale = 'en' # Если язык не найден, установить тот что точно есть
@@ -69,7 +70,7 @@ def get_data(key: str, locale: str) -> Any:
     return localed_data
 
 
-def t(key: str, locale: str = "en", formating: bool = True, **kwargs) -> str:
+def t(key: str, locale: str | None = "en", formating: bool = True, **kwargs) -> str:
     """Возвращает текст на нужном языке
 
     Args:
@@ -79,6 +80,7 @@ def t(key: str, locale: str = "en", formating: bool = True, **kwargs) -> str:
     Returns:
         str: текст на нужном языке
     """
+    if not locale: locale = 'en'
     text = str(get_data(key, locale)) #Добавляем переменные в текст
     if formating:
         try:

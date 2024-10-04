@@ -184,7 +184,7 @@ async def journey_stop(callback: CallbackQuery):
 
     dino = await dinosaurs.find_one({'alt_id': code}, comment='journey_stop_dino')
     if dino and await check_status(dino['_id']) == 'journey':
-        await bot.edit_message_reply_markup(None, chat_id=chatid, message_id=callback.message.id, 
+        await bot.edit_message_reply_markup(None, chat_id=chatid, message_id=callback.message.message_id, 
                                    reply_markup=InlineKeyboardMarkup([]))
         data = await long_activity.find_one({'dino_id': dino['_id'], 
                          'activity_type': 'journey'}, comment='journey_stop_data')

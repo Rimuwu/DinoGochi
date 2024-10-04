@@ -13,6 +13,7 @@ from bot.modules.localization import get_data, t, get_lang
 from bot.modules.logs import log
 from bot.modules.items.item import get_name
 from bot.modules.overwriting.over_functions import async_antiflood
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
@@ -85,7 +86,7 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
     """
     dino = await dinosaurs.find_one({"_id": dino_id}, comment='dino_notification_dino')
     owners = await dino_owners.find({'dino_id': dino_id}, comment='dino_notification_owners')
-    text, markup_inline = not_type, InlineKeyboardMarkup()
+    text, markup_inline = not_type, InlineKeyboardBuilder()
 
     if 'unit' in kwargs and kwargs['unit'] < 0: kwargs['unit'] = 0
 
@@ -190,7 +191,7 @@ async def user_notification(user_id: int, not_type: str,
 
         add_way - дополнительный аргумент, учитывает уведомление по not_type но текст в зависимости от аргумента add_way 
     """
-    text, markup_inline = not_type, InlineKeyboardMarkup()
+    text, markup_inline = not_type, InlineKeyboardBuilder()
     standart_notification = [
         'donation', 'lvl_up',
         'item_crafted', # необходим items

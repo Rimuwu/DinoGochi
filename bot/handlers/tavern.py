@@ -24,10 +24,22 @@ from bot.modules.user.user import (AddItemToUser, check_name, daily_award_con,
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message)
 
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command, StateFilter
+
+from aiogram.fsm.context import FSMContext
+
 events = DBconstructor(mongo_client.other.events)
 
-@main_router.message(Text('commands_name.dino_tavern.events', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.dino_tavern.events'), IsAuthorizedUser(), IsPrivateChat())
 async def events_c(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -59,7 +71,7 @@ async def bonus_message(user, message, lang):
 
     add_text = ''
     award_data = GS['daily_award']
-    markup_inline = InlineKeyboardMarkup()
+    markup_inline = InlineKeyboardMarkup(inline_keyboard=[])
 
     lvl1 = counts_items(award_data['lvl1']['items'], lang) \
         + f', ' + str(award_data['lvl1']['coins'])
@@ -88,7 +100,7 @@ async def bonus_message(user, message, lang):
     if not res:
         url_b = t('daily_award.buttons.channel_url', lang)
         markup_inline.add(InlineKeyboardButton(text=url_b, 
-                            url='https://t.me/DinoGochi'))
+                            url=GS['bot_channel']))
     if not res2:
         rename = t('daily_award.buttons.rename', lang)
         markup_inline.add(InlineKeyboardButton(text=rename, 
@@ -100,24 +112,23 @@ async def bonus_message(user, message, lang):
     photo = 'images/remain/taverna/dino_reward.png'
     await send_SmartPhoto(message.chat.id, photo, text, 'Markdown', markup_inline)
 
-@main_router.message(Text('commands_name.dino_tavern.daily_award', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.dino_tavern.daily_award'), IsAuthorizedUser(), IsPrivateChat())
 async def bonus(message: Message):
     lang = await get_lang(message.from_user.id)
     user = message.from_user
     await bonus_message(user, message, lang)
 
-@main_router.callback_query(func=lambda call: 
-    call.data == 'daily_message', IsAuthorizedUser())
 @HDCallback
+@main_router.callback_query(F.data == 'daily_message', IsAuthorizedUser())
 async def daily_message(callback: CallbackQuery):
     user = callback.from_user
     lang = await get_lang(callback.from_user.id)
     message = callback.message
     await bonus_message(user, message, lang)
 
-@main_router.callback_query(func=lambda call: call.data == 'daily_award', IsAuthorizedUser())
 @HDCallback
+@main_router.callback_query(F.data == 'daily_award', IsAuthorizedUser())
 async def daily_award(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
@@ -156,8 +167,8 @@ async def daily_award(callback: CallbackQuery):
         text = t('daily_award.in_base', lang)
         await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@main_router.message(Text('commands_name.dino_tavern.edit', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.dino_tavern.edit'), IsAuthorizedUser(), IsPrivateChat())
 async def edit(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -260,6 +271,7 @@ async def dino_now(return_data, transmitted_data):
     userid = transmitted_data['userid']
     dino: Dino = return_data['dino']
     o_type = transmitted_data['type']
+    state = transmitted_data['state']
 
     text = t(f'edit_dino.{o_type}', lang)
     buttons = {}
@@ -273,7 +285,7 @@ async def dino_now(return_data, transmitted_data):
     mark = list_to_inline([buttons], 2)
     await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=mark)
 
-    await ChooseInlineState(end_edit, userid, chatid, lang, str(code), {'dino': dino, 'type': o_type})
+    await ChooseInlineState(end_edit, state, userid, chatid, lang, str(code), {'dino': dino, 'type': o_type})
     await bot.send_message(chatid,  t('edit_dino.new_rare', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
 
 async def reset_chars(return_data, transmitted_data):
@@ -306,9 +318,9 @@ async def reset_chars(return_data, transmitted_data):
         await bot.send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
                                 reply_markup= await m(userid, 'last_menu', lang))
 
-@main_router.callback_query(F.data.startswith('transformation') , IsAuthorizedUser())
 @HDCallback
-async def transformation(callback: CallbackQuery):
+@main_router.callback_query(F.data.startswith('transformation') , IsAuthorizedUser())
+async def transformation(callback: CallbackQuery, state):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
     lang = await get_lang(callback.from_user.id)
@@ -354,4 +366,4 @@ async def transformation(callback: CallbackQuery):
             }
         )
 
-    await ChooseStepState(ret_f, userid, chatid, lang, steps, {'type': data[1]})
+    await ChooseStepState(ret_f, state, userid, chatid, lang, steps, {'type': data[1]})

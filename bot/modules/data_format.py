@@ -7,6 +7,8 @@ from typing import Union
 from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            ReplyKeyboardMarkup, User, KeyboardButton)
 
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+
 from bot.const import GAME_SETTINGS
 from bot.modules.localization import get_data
 from aiogram.types import BufferedInputFile
@@ -73,23 +75,27 @@ def list_to_keyboard(buttons: list, row_width: int = 3, resize_keyboard: bool = 
           отвяжись  
           ты кто?
     """
-    bt_l = []
+    builder = ReplyKeyboardBuilder()
 
     for line in buttons:
-        try:
-            if type(line) == list:
-                bt_l.append(*[KeyboardButton(text=i)
-                    for i in line])
-            else: bt_l.append(KeyboardButton(text=line))
-        except Exception as e:
-            print('list_to_keyboard', line, type(line), e)
 
-    markup = ReplyKeyboardMarkup(row_width=row_width, 
-                                 keyboard=bt_l,
-                                 resize_keyboard=resize_keyboard, 
-                                 one_time_keyboard=one_time_keyboard)
+        # try:
+        if type(line) == list:
+            builder.row(*[KeyboardButton(text=i)
+                for i in line])
+        else:
+            builder.button(text=str(line))
+            # bt_l.append(KeyboardButton(text=str(line)))
+        # except Exception as e:
+        #     print('list_to_keyboard', line, type(line), e)
 
-    return markup
+    return builder.as_markup(row_width=row_width, resize_keyboard=resize_keyboard, one_time_keyboard=one_time_keyboard)
+
+    # markup = ReplyKeyboardMarkup(keyboard=bt_l,
+    #                              resize_keyboard=resize_keyboard, 
+    #                              one_time_keyboard=one_time_keyboard) # #row_width=row_width, 
+
+    # return markup
 
 def list_to_inline(buttons: list, row_width: int = 3) -> InlineKeyboardMarkup:
     """ Превращает список со списками в объект inlineKeyboard.
@@ -106,18 +112,18 @@ def list_to_inline(buttons: list, row_width: int = 3) -> InlineKeyboardMarkup:
           отвяжись  
           ты кто?
     """
-    buttons_il = []
+    inline = InlineKeyboardBuilder()
 
     if len(buttons) == 1:
-        buttons_il.append(
+        inline.row(
             *[InlineKeyboardButton(
             text=key, callback_data=item) for key, item in buttons[0].items()])
     else:
         for line in buttons:
-            buttons_il.append(*[InlineKeyboardButton(
+            inline.row(*[InlineKeyboardButton(
                 text=key, callback_data=item) for key, item in line.items()])
 
-    inline = InlineKeyboardMarkup(row_width=row_width, inline_keyboard=buttons_il)
+    inline = inline.as_markup(row_width=row_width)
     return inline
 
 def user_name(user: User, username: bool = True) -> str:

@@ -169,7 +169,7 @@ async def stop_work_calb(call: CallbackQuery):
     chatid = call.message.chat.id
     user = await User().create(userid)
     last_dino = await user.get_last_dino()
-    messageid = call.message.id
+    messageid = call.message.message_id
     dino_id = last_dino._id
 
     res = await long_activity.find_one(
@@ -199,7 +199,7 @@ async def use_energy_calb(call: CallbackQuery):
     alt_code = call.data.split()[1]
     chatid = call.message.chat.id
     userid = call.from_user.id
-    messageid = call.message.id
+    messageid = call.message.message_id
     lang = await get_lang(userid)
 
     res = await long_activity.find_one(

@@ -28,9 +28,8 @@ from aiogram.filters import Command
 from bot.modules.overwriting.DataCalsses import DBconstructor
 referals = DBconstructor(mongo_client.user.referals)
 
-
-@main_router.message(Text('commands_name.referal.code'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.referal.code'), IsAuthorizedUser(), IsPrivateChat())
 async def code(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -54,7 +53,7 @@ async def create_custom_code(code: str, transmitted_data: dict):
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
-    
+
     if await take_coins(userid, GS['referal']['custom_price'], True):
         code = code.replace(' ', '')
         await create_referal(userid, code)
@@ -93,9 +92,9 @@ async def custom_handler(message: Message, transmitted_data: dict):
         await bot.send_message(chatid, text, parse_mode='Markdown')
     return status, code
 
-@main_router.callback_query(F.data.startswith('generate_referal'), IsPrivateChat())
 @HDCallback
-async def generate_code(call: CallbackQuery):
+@main_router.callback_query(F.data.startswith('generate_referal'), IsPrivateChat())
+async def generate_code(call: CallbackQuery, state):
     chatid = call.message.chat.id
     userid = call.from_user.id
     lang = await get_lang(call.from_user.id)
@@ -116,14 +115,14 @@ async def generate_code(call: CallbackQuery):
         elif action == 'custom':
             await bot.send_message(chatid, 
                                    t('referals.custom_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
-            await ChooseCustomState(create_custom_code, custom_handler, 
+            await ChooseCustomState(create_custom_code, state, custom_handler, 
                                     userid, chatid, lang)
     else:
         await bot.send_message(chatid, t('referals.have_code', lang))
 
 
-@main_router.message(StartWith('commands_name.referal.my_code'), IsPrivateChat())
 @HDMessage
+@main_router.message(StartWith('commands_name.referal.my_code'), IsPrivateChat())
 async def my_code(message: Message):
     """ Кнопка - мой код ...
     """
@@ -162,9 +161,9 @@ async def check_code(code: str, transmitted_data: dict, send: bool = True):
         await bot.send_message(chatid, text, parse_mode='Markdown', 
                         reply_markup= await m(userid, 'last_menu', lang, True))
 
-@main_router.message(Text('commands_name.referal.enter_code'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def enter_code(message: Message):
+@main_router.message(Text('commands_name.referal.enter_code'), IsAuthorizedUser(), IsPrivateChat())
+async def enter_code(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -172,6 +171,6 @@ async def enter_code(message: Message):
     ref = await referals.find_one({'userid': userid, 'type': 'sub'}, comment='enter_code_ref')
     if not ref:
         await bot.send_message(chatid, t('referals.enter_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
-        await ChooseStringState(check_code, userid, chatid, lang, max_len=100)
+        await ChooseStringState(check_code, state, userid, chatid, lang, max_len=100)
     else:
         await bot.send_message(chatid, t('referals.enter_code.have_code', lang), parse_mode='Markdown')

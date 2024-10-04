@@ -149,7 +149,7 @@ async def promo_call(call: CallbackQuery):
 
             if action == 'delete': 
                 await promo.delete_one({'_id': res['_id']}, comment='promo_call_delete')
-                await bot.delete_message(userid, call.message.id)
+                await bot.delete_message(userid, call.message.message_id)
 
             elif action == 'activ':
                 if not res['active']:

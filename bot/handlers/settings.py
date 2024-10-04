@@ -16,6 +16,18 @@ from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
 from bot.modules.user.user import User
 from aiogram.types import CallbackQuery, Message
 
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command, StateFilter
+
+from aiogram.fsm.context import FSMContext
+
 users = DBconstructor(mongo_client.user.users)
 langs = DBconstructor(mongo_client.user.lang)
 
@@ -32,10 +44,10 @@ async def notification(result: bool, transmitted_data: dict):
                            comment='notification_1'
                            )
 
-@main_router.message(Text('commands_name.settings.notification', 
-                     IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def notification_set(message: Message):
+@main_router.message(Text('commands_name.settings.notification'), 
+                     IsAuthorizedUser(), IsPrivateChat())
+async def notification_set(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -48,7 +60,7 @@ async def notification_set(message: Message):
     translated = tranlate_data(buttons, lang, prefix)
     keyboard = list_to_keyboard(translated, 2)
     
-    await ChooseConfirmState(notification, userid, chatid, lang)
+    await ChooseConfirmState(notification, state, userid, chatid, lang)
     await bot.send_message(userid, t('not_set.info', lang), 
                            reply_markup=keyboard)
 
@@ -67,10 +79,10 @@ async def dino_profile(result: bool, transmitted_data: dict):
                            comment='dino_profile_1'
                            )
 
-@main_router.message(Text('commands_name.settings.dino_profile', 
-                     IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def dino_profile_set(message: Message):
+@main_router.message(Text('commands_name.settings.dino_profile'), 
+                     IsAuthorizedUser(), IsPrivateChat())
+async def dino_profile_set(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -86,7 +98,7 @@ async def dino_profile_set(message: Message):
     buttons.append([t('buttons_name.cancel', lang)])
 
     keyboard = list_to_keyboard(buttons, 2)
-    await ChooseOptionState(dino_profile, userid, chatid, lang, settings_data)
+    await ChooseOptionState(dino_profile, state, userid, chatid, lang, settings_data)
     await bot.send_message(userid, t('profile_view.info', lang), 
                            reply_markup=keyboard)
 
@@ -106,10 +118,10 @@ async def inventory(result: list, transmitted_data: dict):
                            comment='inventory_1'
                            )
 
-@main_router.message(Text('commands_name.settings.inventory', 
-                     IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def inventory_set(message: Message):
+@main_router.message(Text('commands_name.settings.inventory'), 
+                     IsAuthorizedUser(), IsPrivateChat())
+async def inventory_set(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -124,7 +136,7 @@ async def inventory_set(message: Message):
     buttons.append([t('buttons_name.cancel', lang)])
     keyboard = list_to_keyboard(buttons, 2)
 
-    await ChooseOptionState(inventory, userid, chatid, lang, settings_data)
+    await ChooseOptionState(inventory, state, userid, chatid, lang, settings_data)
     await bot.send_message(userid, t('inv_set_pages.info', lang), 
                            reply_markup=keyboard)
 
@@ -147,6 +159,7 @@ async def transition(dino: Dino, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
+    state = transmitted_data['state']
 
     text = t('rename_dino.info', lang, last_name=dino.name)
     keyboard = [t('buttons_name.cancel', lang)]
@@ -155,22 +168,22 @@ async def transition(dino: Dino, transmitted_data: dict):
     data = {
         'dino': dino
     }
-    await ChooseStringState(rename_dino_post_state, userid, 
+    await ChooseStringState(rename_dino_post_state, state, userid, 
                             chatid, lang, max_len=20, transmitted_data=data)
 
     await bot.send_message(userid, text, reply_markup=markup)
 
-@main_router.message(Text('commands_name.settings.dino_name', 
-                     IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def rename_dino(message: Message):
+@main_router.message(Text('commands_name.settings.dino_name'), 
+                     IsAuthorizedUser(), IsPrivateChat())
+async def rename_dino(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    await ChooseDinoState(transition, userid, message.chat.id, lang, False)
+    await ChooseDinoState(transition, state, userid, message.chat.id, lang, False)
 
-@main_router.callback_query(F.data.startswith('rename_dino'), IsAuthorizedUser(), IsPrivateChat())
 @HDCallback
+@main_router.callback_query(F.data.startswith('rename_dino'), IsAuthorizedUser(), IsPrivateChat())
 async def rename_button(callback: CallbackQuery):
     dino_data = callback.data.split()[1]
     lang = await get_lang(callback.from_user.id)
@@ -204,11 +217,10 @@ async def adapter_delete(return_data, transmitted_data):
                                parse_mode='Markdown', 
                                reply_markup=r)
 
-    
-@main_router.message(Text('commands_name.settings.delete_me', 
-                     IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def delete_me(message: Message):
+@main_router.message(Text('commands_name.settings.delete_me'), 
+                     IsAuthorizedUser(), IsPrivateChat())
+async def delete_me(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -254,7 +266,7 @@ async def delete_me(message: Message):
         }
     ]
     
-    await ChooseStepState(adapter_delete, userid, chatid, 
+    await ChooseStepState(adapter_delete, state, userid, chatid, 
                                   lang, steps, 
                                 transmitted_data=transmitted_data)
     
@@ -274,9 +286,9 @@ async def my_name_end(content: str, transmitted_data: dict):
                            comment='my_name_end'
                            )
 
-@main_router.message(Text('commands_name.settings2.my_name', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def my_name(message: Message):
+@main_router.message(Text('commands_name.settings2.my_name'), IsAuthorizedUser(), IsPrivateChat())
+async def my_name(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -285,7 +297,7 @@ async def my_name(message: Message):
                                parse_mode='Markdown', 
                                reply_markup=cancel_markup(lang))
 
-    await ChooseStringState(my_name_end, userid, chatid, lang, max_len=20)
+    await ChooseStringState(my_name_end, state, userid, chatid, lang, max_len=20)
 
 async def lang_set(new_lang: str, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -298,9 +310,9 @@ async def lang_set(new_lang: str, transmitted_data: dict):
     await bot.send_message(chatid, t('new_lang', new_lang),
                                reply_markup= await m(userid, 'last_menu', new_lang))
 
-@main_router.message(Text('commands_name.settings2.lang', IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def lang(message: Message):
+@main_router.message(Text('commands_name.settings2.lang'), IsAuthorizedUser(), IsPrivateChat())
+async def lang(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -315,7 +327,7 @@ async def lang(message: Message):
     await bot.send_message(chatid, t('lang_set', lang),
                                reply_markup=buttons)
 
-    await ChooseOptionState(lang_set, userid, chatid, lang, options)
+    await ChooseOptionState(lang_set, state, userid, chatid, lang, options)
 
 async def dino_talk_set(result: bool, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -330,10 +342,10 @@ async def dino_talk_set(result: bool, transmitted_data: dict):
                            comment='no_talk_1'
                            )
 
-@main_router.message(Text('commands_name.settings2.dino_talk', 
-                     IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def dino_talk(message: Message):
+@main_router.message(Text('commands_name.settings2.dino_talk'), 
+                     IsAuthorizedUser(), IsPrivateChat())
+async def dino_talk(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -346,6 +358,6 @@ async def dino_talk(message: Message):
     translated = tranlate_data(buttons, lang, prefix)
     keyboard = list_to_keyboard(translated, 2)
 
-    await ChooseConfirmState(dino_talk_set, userid, chatid, lang)
+    await ChooseConfirmState(dino_talk_set, state, userid, chatid, lang)
     await bot.send_message(userid, t('no_talk.info', lang), 
                            reply_markup=keyboard)

@@ -444,5 +444,8 @@
     },
 
     "promotion_price": 5000,
-    "ignore_items_inside_shop": ["repair_tool"]
+    "ignore_items_inside_shop": ["repair_tool"],
+
+    "bot_channel": "https://t.me/DinoGochi",
+    "bot_forum": "https://t.me/+pq9_21HXXYY4ZGQy"
 } 

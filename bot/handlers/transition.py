@@ -21,13 +21,25 @@ from bot.modules.managment.statistic import get_now_statistic
 from bot.modules.user.user import User, take_coins
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command, StateFilter
+
+from aiogram.fsm.context import FSMContext
+
 users = DBconstructor(mongo_client.user.users)
 tavern = DBconstructor(mongo_client.tavern.tavern)
 preferential = DBconstructor(mongo_client.market.preferential)
 products = DBconstructor(mongo_client.market.products)
 
-@main_router.message(Text('buttons_name.back'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('buttons_name.back'), IsAuthorizedUser(), IsPrivateChat())
 async def back_buttom(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -38,8 +50,8 @@ async def back_buttom(message: Message):
     await bot.send_message(message.chat.id, text, 
                            reply_markup=await m(userid, back_m, lang))
 
-@main_router.message(Text('commands_name.settings_menu'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.settings_menu'), IsAuthorizedUser(), IsPrivateChat())
 async def settings_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -60,8 +72,8 @@ async def settings_menu(message: Message):
     
         await auto_ads(message)
 
-@main_router.message(Text('commands_name.settings.settings_page_2'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.settings.settings_page_2'), IsAuthorizedUser(), IsPrivateChat())
 async def settings2_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -81,8 +93,8 @@ async def settings2_menu(message: Message):
         
         await auto_ads(message)
 
-@main_router.message(Text('commands_name.profile_menu'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.profile_menu'), IsAuthorizedUser(), IsPrivateChat())
 async def profile_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -91,9 +103,9 @@ async def profile_menu(message: Message):
                            reply_markup= await m(userid, 'profile_menu', lang))
 
     await auto_ads(message)
-    
-@main_router.message(Text('commands_name.friends_menu'), IsAuthorizedUser(), IsPrivateChat())
+
 @HDMessage
+@main_router.message(Text('commands_name.friends_menu'), IsAuthorizedUser(), IsPrivateChat())
 async def friends_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -103,8 +115,8 @@ async def friends_menu(message: Message):
 
     await auto_ads(message)
 
-@main_router.message(Text('commands_name.profile.market'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.profile.market'), IsAuthorizedUser(), IsPrivateChat())
 async def market_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -137,9 +149,8 @@ async def market_menu(message: Message):
     
     await auto_ads(message)
 
-
-@main_router.message(Text('commands_name.actions_menu'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.actions_menu'), IsAuthorizedUser(), IsPrivateChat())
 async def actions_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -149,8 +160,8 @@ async def actions_menu(message: Message):
     
     await auto_ads(message)
 
-@main_router.message(Text('commands_name.dino-tavern_menu'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.dino-tavern_menu'), IsAuthorizedUser(), IsPrivateChat())
 async def tavern_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -218,8 +229,8 @@ async def tavern_menu(message: Message):
     
     await auto_ads(message)
 
-@main_router.message(Text('commands_name.profile.about'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.profile.about'), IsAuthorizedUser(), IsPrivateChat())
 async def about_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -248,8 +259,8 @@ async def about_menu(message: Message):
             await m(userid, 'about_menu', lang)
         )
 
-@main_router.message(Text('commands_name.friends.referal'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.friends.referal'), IsAuthorizedUser(), IsPrivateChat())
 async def referal_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -271,8 +282,8 @@ async def referal_menu(message: Message):
 
     await auto_ads(message)
 
-@main_router.callback_query(F.data.startswith('buy_ale'))
 @HDCallback
+@main_router.callback_query(F.data.startswith('buy_ale'))
 async def buy_ale(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
@@ -284,7 +295,7 @@ async def buy_ale(callback: CallbackQuery):
         await AddItemToUser(friend, 'ale')
 
         text = t('buy_ale.me', lang)
-        await bot.edit_message_reply_markup(None, chatid, callback.message.id, reply_markup=InlineKeyboardMarkup())
+        await bot.edit_message_reply_markup(None, chatid, callback.message.message_id, reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
         await bot.answer_callback_query(callback.id, text, True)
 
         text = t('buy_ale.friend', lang, username=user_name(callback.from_user))
@@ -293,8 +304,8 @@ async def buy_ale(callback: CallbackQuery):
         text = t('buy_ale.no_coins', lang)
         await bot.send_message(friend, text)
 
-@main_router.message(Text('commands_name.market.seller_profile'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.market.seller_profile'), IsAuthorizedUser(), IsPrivateChat())
 async def seller_profile(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -303,9 +314,9 @@ async def seller_profile(message: Message):
                            reply_markup= await m(userid, 'seller_menu', lang))
     
     await auto_ads(message)
-    
-@main_router.message(Text('commands_name.market.background_market'), IsAuthorizedUser(), IsPrivateChat())
+
 @HDMessage
+@main_router.message(Text('commands_name.market.background_market'), IsAuthorizedUser(), IsPrivateChat())
 async def backgrounds(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -315,9 +326,8 @@ async def backgrounds(message: Message):
 
     await auto_ads(message)
 
-
-@main_router.message(Text('commands_name.action_ask.live_actions'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.action_ask.live_actions'), IsAuthorizedUser(), IsPrivateChat())
 async def live_actions(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -327,8 +337,8 @@ async def live_actions(message: Message):
 
     await auto_ads(message)
 
-@main_router.message(Text('commands_name.action_ask.extraction'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.action_ask.extraction'), IsAuthorizedUser(), IsPrivateChat())
 async def extraction(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -338,8 +348,8 @@ async def extraction(message: Message):
 
     await auto_ads(message)
 
-@main_router.message(Text('commands_name.action_ask.skills_actions'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.action_ask.skills_actions'), IsAuthorizedUser(), IsPrivateChat())
 async def skills_actions(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -349,8 +359,8 @@ async def skills_actions(message: Message):
 
     await auto_ads(message)
 
-@main_router.message(Text('commands_name.action_ask.speed_actions'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
+@main_router.message(Text('commands_name.action_ask.speed_actions'), IsAuthorizedUser(), IsPrivateChat())
 async def speed_actions(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)

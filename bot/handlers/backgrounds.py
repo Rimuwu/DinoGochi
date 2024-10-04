@@ -194,7 +194,7 @@ async def background_menu(call: CallbackQuery, state):
     if action == 'page':
 
         text, markup, image = await back_page(userid, b_id, lang)
-        await edit_SmartPhoto(chatid, call.message.id, image, text, 'Markdown', markup)
+        await edit_SmartPhoto(chatid, call.message.message_id, image, text, 'Markdown', markup)
 
     elif action == 'page_n':
         max_int = int(list(BACKGROUNDS.keys())[-1])
@@ -202,7 +202,7 @@ async def background_menu(call: CallbackQuery, state):
                                      reply_markup=count_markup(max_int, lang)
                                      )
 
-        data = { 'message_id': call.message.id, 'delete_id': mes.id }
+        data = { 'message_id': call.message.message_id, 'delete_id': mes.id }
         await ChooseIntState(page_n, state, userid, chatid, lang,
                              max_int=max_int, 
                              transmitted_data=data)
@@ -217,7 +217,7 @@ async def background_menu(call: CallbackQuery, state):
                 'price': back['price'],
                 'buy_type': action,
                 'page': b_id,
-                'message_id': call.message.id
+                'message_id': call.message.message_id
             }
             mes = await bot.send_message(chatid, t('backgrounds.confirm', lang),
                                         reply_markup=confirm_markup(lang)
