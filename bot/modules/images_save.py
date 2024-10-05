@@ -40,13 +40,13 @@ async def send_SmartPhoto(chat_id: int | str,
     photo_way: str,
     caption: str | None = None,
     parse_mode: str | None = None,
+    reply_markup: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply | None = None,
     show_caption_above_media: bool | None = None,
     has_spoiler: bool | None = None,
     disable_notification: bool | None = None,
     protect_content: bool | None = None,
     message_effect_id: str | None = None,
     reply_parameters: ReplyParameters | None = None,
-    reply_markup: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply | None = None,
     allow_sending_without_reply: bool | None = None,
     reply_to_message_id: int | None = None,
     request_timeout: int | None = None):
@@ -57,17 +57,16 @@ async def send_SmartPhoto(chat_id: int | str,
         if await bot.get_file(file_id):
             # Отпрляем файл по file_id
             mes = await bot.send_photo(chat_id, file_id, caption=caption, 
-                                 parse_mode=parse_mode, reply_markup=reply_markup
-                                 )
-            # show_caption_above_media=show_caption_above_media,
-            #                      has_spoiler=has_spoiler,
-            #                      disable_notification=disable_notification,
-            #                      protect_content=protect_content,
-            #                      message_effect_id=message_effect_id,
-            #                      reply_parameters=reply_parameters,
-            #                      allow_sending_without_reply=allow_sending_without_reply,
-            #                      reply_to_message_id=reply_to_message_id,
-            #                      request_timeout=request_timeout
+                                 parse_mode=parse_mode, reply_markup=reply_markup,
+                                 show_caption_above_media=show_caption_above_media,
+                                 has_spoiler=has_spoiler,
+                                 disable_notification=disable_notification,
+                                 protect_content=protect_content,
+                                 message_effect_id=message_effect_id,
+                                 reply_parameters=reply_parameters,
+                                 allow_sending_without_reply=allow_sending_without_reply,
+                                 reply_to_message_id=reply_to_message_id,
+                                 request_timeout=request_timeout)
             return mes
 
     # Либо файла нет, либо file_id устарело

@@ -169,7 +169,8 @@ async def tavern_menu(message: Message):
 
     photo = 'images/remain/taverna/dino_taverna.png'
     await send_SmartPhoto(message.chat.id, photo, 
-                          t('menu_text.dino_tavern.info', lang), 'Markdown')
+                          t('menu_text.dino_tavern.info', lang), 'Markdown',
+            show_caption_above_media=True)
 
     user = await User().create(userid)
     friends_data = await user.get_friends

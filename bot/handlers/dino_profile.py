@@ -149,7 +149,7 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
 
     # затычка на случай если не сгенерируется изображение
     generate_image = 'images/remain/no_generate.png'
-    msg = await send_SmartPhoto(chatid, generate_image, text, 'Markdown', menu)
+    msg = await send_SmartPhoto(chatid, generate_image, text, 'Markdown', reply_markup=menu)
 
     await bot.send_message(chatid, t('p_profile.return', lang), 
                 reply_markup= await m(userid, 'last_menu', lang))

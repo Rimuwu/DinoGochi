@@ -271,9 +271,6 @@ async def check(message: Message, state: FSMContext):
 @main_router.message(Command(commands=['nxt']))
 async def check(message: Message):
 
-    mrk = list_to_keyboard(
-        ['😅📦']
-    )
-    log(f'{mrk}')
+
     
-    await message.answer('ok', reply_markup=mrk)
+    await message.answer('ok', message_effect_id='5104841245755180586')

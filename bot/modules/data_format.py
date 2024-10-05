@@ -60,6 +60,7 @@ def random_dict(data: dict) -> int:
     elif type(data) == int: return data
     return 0
 
+
 def list_to_keyboard(buttons: list, row_width: int = 3, resize_keyboard: bool = True, one_time_keyboard = None) -> ReplyKeyboardMarkup:
     """ Превращает список со списками в объект клавиатуры.
         Example:
@@ -78,24 +79,12 @@ def list_to_keyboard(buttons: list, row_width: int = 3, resize_keyboard: bool = 
     builder = ReplyKeyboardBuilder()
 
     for line in buttons:
-
-        # try:
         if type(line) == list:
-            builder.row(*[KeyboardButton(text=i)
-                for i in line])
+            builder.row(*[KeyboardButton(text=i) for i in line], width=row_width)
         else:
-            builder.button(text=str(line))
-            # bt_l.append(KeyboardButton(text=str(line)))
-        # except Exception as e:
-        #     print('list_to_keyboard', line, type(line), e)
+            builder.add(KeyboardButton(text=str(line)))
 
     return builder.as_markup(row_width=row_width, resize_keyboard=resize_keyboard, one_time_keyboard=one_time_keyboard)
-
-    # markup = ReplyKeyboardMarkup(keyboard=bt_l,
-    #                              resize_keyboard=resize_keyboard, 
-    #                              one_time_keyboard=one_time_keyboard) # #row_width=row_width, 
-
-    # return markup
 
 def list_to_inline(buttons: list, row_width: int = 3) -> InlineKeyboardMarkup:
     """ Превращает список со списками в объект inlineKeyboard.
@@ -114,17 +103,14 @@ def list_to_inline(buttons: list, row_width: int = 3) -> InlineKeyboardMarkup:
     """
     inline = InlineKeyboardBuilder()
 
-    if len(buttons) == 1:
-        inline.row(
-            *[InlineKeyboardButton(
-            text=key, callback_data=item) for key, item in buttons[0].items()])
-    else:
-        for line in buttons:
-            inline.row(*[InlineKeyboardButton(
-                text=key, callback_data=item) for key, item in line.items()])
+    for line in buttons:
+        if type(line) == dict:
+            inline.row(*[InlineKeyboardButton(text=i, callback_data=j) for i, j in line.items()], width=row_width)
+        else:
+            inline.add(InlineKeyboardButton(text=str(line), callback_data='None'))
 
-    inline = inline.as_markup(row_width=row_width)
-    return inline
+
+    return inline.as_markup(row_width=row_width)
 
 def user_name(user: User, username: bool = True) -> str:
     """ Возвращает имя / ник, в зависимости от того, что есть
