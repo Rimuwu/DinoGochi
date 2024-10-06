@@ -1,24 +1,21 @@
+from math import log
 from typing import Union
 from aiogram import Router
 from aiogram.filters import BaseFilter
 from aiogram.types import CallbackQuery, Message
+from aiogram.fsm.context import FSMContext
 
 class NothingState(BaseFilter):
-    def __init__(self, status: bool = True) -> None:
+    def __init__(self, status: bool = True, state: FSMContext | None = None) -> None:
         self.status: bool = status
+        self.state: FSMContext | None = state
 
     async def __call__(self, var: Union[CallbackQuery, Message]):
-        if type(var) == CallbackQuery:
-            state = var.from_user.__getstate__
+        if self.state is None: return True
 
-        if type(var) == Message:
-            if var.from_user:
-                state = var.from_user.__getstate__
-            else: return False
+        if not self.state and self.status: return True
+        elif not self.state and not self.status: return False
 
-        if not state and self.status: return True
-        elif not state and not self.status: return False
-
-        elif state and self.status: return False
-        elif state and not self.status: return True
+        elif self.state and self.status: return False
+        elif self.state and not self.status: return True
 

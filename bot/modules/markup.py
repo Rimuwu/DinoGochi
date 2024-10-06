@@ -481,13 +481,13 @@ def down_menu(markup: ReplyKeyboardMarkup,
     """Добавления нижнего меню для страничных клавиатур
     """
 
-    markup_n = ReplyKeyboardBuilder(markup=markup.keyboard)
+    markup_n = ReplyKeyboardBuilder().from_markup(markup)
 
     if arrows:
-        markup_n.add(*[KeyboardButton(text=i) for i in [
+        markup_n.row(*[KeyboardButton(text=i) for i in [
             gs['back_button'], t('buttons_name.cancel', lang), gs['forward_button']]]
                      )
     else: 
-        markup_n.add(KeyboardButton(text=t('buttons_name.cancel', lang)))
+        markup_n.row(KeyboardButton(text=t('buttons_name.cancel', lang)))
 
     return markup_n.as_markup()

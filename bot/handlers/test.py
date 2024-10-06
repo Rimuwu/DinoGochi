@@ -15,6 +15,7 @@ from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            InlineQueryResultContact, Message, LabeledPrice)
 from bot.modules.images_save import send_SmartPhoto
 
+from bot.modules.inline import inline_menu
 from bot.modules.logs import log
 
 from bot.config import conf
@@ -274,3 +275,12 @@ async def check(message: Message):
 
     
     await message.answer('ok', message_effect_id='5104841245755180586')
+
+
+@HDMessage
+@main_router.message(Command(commands=['ttt']))
+async def check(message: Message):
+
+
+    inl = inline_menu('dino_profile', 'en', dino_alt_id_markup='werwr')
+    await message.answer('ok', message_effect_id='5104841245755180586', reply_markup=inl)

@@ -35,6 +35,7 @@ from aiogram import F
 from aiogram.filters import Command, StateFilter
 
 from aiogram.fsm.context import FSMContext
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 events = DBconstructor(mongo_client.other.events)
 
@@ -71,7 +72,7 @@ async def bonus_message(user, message, lang):
 
     add_text = ''
     award_data = GS['daily_award']
-    markup_inline = InlineKeyboardMarkup(inline_keyboard=[])
+    markup_inline = InlineKeyboardBuilder()
 
     lvl1 = counts_items(award_data['lvl1']['items'], lang) \
         + f', ' + str(award_data['lvl1']['coins'])
@@ -99,18 +100,18 @@ async def bonus_message(user, message, lang):
 
     if not res:
         url_b = t('daily_award.buttons.channel_url', lang)
-        markup_inline.add(InlineKeyboardButton(text=url_b, 
+        markup_inline.row(InlineKeyboardButton(text=url_b, 
                             url=GS['bot_channel']))
     if not res2:
         rename = t('daily_award.buttons.rename', lang)
-        markup_inline.add(InlineKeyboardButton(text=rename, 
+        markup_inline.row(InlineKeyboardButton(text=rename, 
                             url='tg://settings/edit_profile'))
 
-    markup_inline.add(InlineKeyboardButton(text=award, 
+    markup_inline.row(InlineKeyboardButton(text=award, 
                             callback_data='daily_award'))
 
     photo = 'images/remain/taverna/dino_reward.png'
-    await send_SmartPhoto(message.chat.id, photo, text, 'Markdown', markup_inline)
+    await send_SmartPhoto(message.chat.id, photo, text, 'Markdown', markup_inline.as_markup())
 
 @HDMessage
 @main_router.message(Text('commands_name.dino_tavern.daily_award'), IsAuthorizedUser(), IsPrivateChat())

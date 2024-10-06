@@ -14,7 +14,6 @@ from bot.modules.states_tools import GeneralStates
 from aiogram.types import CallbackQuery, Message, InputMedia
 from aiogram.fsm.context import FSMContext
 
-
 from bot.filters.translated_text import StartWith, Text
 from bot.filters.states import NothingState
 from bot.filters.status import DinoPassStatus
@@ -24,6 +23,20 @@ from bot.filters.kd import KDCheck
 from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command, StateFilter
+
+import inspect
+
+
+
+async def start_func(func, arg, transmitted_data: dict):
+    function_info = inspect.signature(func)
+    argument_names = function_info.parameters.values()
+
+    if 'state' in argument_names:
+        state = transmitted_data['state']
+        await start_func(func, arg, transmitted_data=transmitted_data, state=state)
+    else:
+        await start_func(func, arg, transmitted_data=transmitted_data)
 
 
 async def cancel(message, text:str = "❌", state: Union[FSMContext, None] = None):
@@ -84,7 +97,7 @@ async def ChoseDino(message: Message, state: FSMContext):
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
         else: transmitted_data['umessageid'] = message.message_id
 
-        await func(ret_data[message.text], transmitted_data=transmitted_data)
+        await start_func(func, ret_data[message.text], transmitted_data=transmitted_data)
     else:
         await bot.send_message(message.chat.id, 
                 t('states.ChooseDino.error_not_dino', lang))
@@ -126,7 +139,7 @@ async def ChooseInt(message: Message, state: FSMContext):
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
         else: transmitted_data['umessageid'] = message.message_id
 
-        await func(number, transmitted_data=transmitted_data)
+        await start_func(func, number, transmitted_data=transmitted_data)
 
 @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseString), IsAuthorizedUser())
@@ -160,7 +173,7 @@ async def ChooseString(message: Message, state: FSMContext):
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
         else: transmitted_data['umessageid'] = message.message_id
 
-        await func(content, transmitted_data=transmitted_data)
+        await start_func(func, content, transmitted_data=transmitted_data)
 
 @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseConfirm), IsAuthorizedUser())
@@ -195,7 +208,7 @@ async def ChooseConfirm(message: Message, state: FSMContext):
                 transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
             else: transmitted_data['umessageid'] = message.message_id
 
-            await func(buttons_data[content], transmitted_data=transmitted_data)
+            await start_func(func, buttons_data[content], transmitted_data=transmitted_data)
 
     else:
         await bot.send_message(message.chat.id, 
@@ -220,7 +233,7 @@ async def ChooseOption(message: Message, state: FSMContext):
         else: transmitted_data['umessageid'] = message.message_id
 
         await state.clear()
-        await func(options[message.text], transmitted_data=transmitted_data)
+        await start_func(func, options[message.text], transmitted_data=transmitted_data)
     else:
         await bot.send_message(message.chat.id, 
                 t('states.ChooseOption.error_not_option', lang))
@@ -245,7 +258,7 @@ async def ChooseCustom(message: Message, state: FSMContext):
         else: transmitted_data['umessageid'] = message.message_id
 
         await state.clear()
-        await func(answer, transmitted_data=transmitted_data)
+        await start_func(func, answer, transmitted_data=transmitted_data)
 
 @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChoosePagesState), IsAuthorizedUser())
@@ -279,7 +292,7 @@ async def ChooseOptionPages(message: Message, state: FSMContext):
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
         else: transmitted_data['umessageid'] = message.message_id
 
-        res = await func(
+        res = await start_func(func, 
             options[message.text], transmitted_data=transmitted_data)
 
         if not one_element and res and type(res) == dict and 'status' in res:
@@ -367,7 +380,7 @@ async def ChooseInline(callback: CallbackQuery, state: FSMContext):
         else: transmitted_data['bmessageid'] = callback.message.message_id
 
         try:
-            await func(code, transmitted_data=transmitted_data)
+            await start_func(func, code, transmitted_data=transmitted_data)
         except Exception as e:
             log(f'ChooseInline error {e}', lvl=3, prefix='ChooseInline')
 
@@ -408,7 +421,7 @@ async def ChooseTime(message: Message, state: FSMContext):
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
         else: transmitted_data['umessageid'] = message.message_id
 
-        await func(number, transmitted_data=transmitted_data)
+        await start_func(func, number, transmitted_data=transmitted_data)
 
 @HDMessage
 @main_router.message(F.photo, IsAuthorizedUser(), StateFilter(GeneralStates.ChooseImage))
@@ -425,7 +438,7 @@ async def ChooseImage(message: Message, state: FSMContext):
 
     fileID = message.photo[-1].file_id
     transmitted_data['file'] = message.photo[-1]
-    await func(fileID, transmitted_data=transmitted_data)
+    await start_func(func, fileID, transmitted_data=transmitted_data)
 
 @HDMessage
 @main_router.message(IsAuthorizedUser(), StateFilter(GeneralStates.ChooseImage))
@@ -442,7 +455,7 @@ async def ChooseImage_0(message: Message, state: FSMContext):
 
         if need_image:
             await state.clear()
-            await func('no_image', transmitted_data=transmitted_data)
+            await start_func(func, 'no_image', transmitted_data=transmitted_data)
 
 
 
