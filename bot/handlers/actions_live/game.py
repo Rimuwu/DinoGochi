@@ -159,7 +159,7 @@ async def game_start(return_data: dict,
                 text_m = t('entertainments.dino_join', lang, 
                             dinoname=dino.name)
                 image = await dino_game(friend_dino_id, dino.data_id)
-                await bot.send_photo(friend, image, text_m)
+                await bot.send_photo(friend, image, caption=text_m)
 
     r_t = get_data('entertainments', lang)['time'][code]['data']
     game_time = randint(*r_t) * 60
@@ -175,7 +175,7 @@ async def game_start(return_data: dict,
     if percent < 1.0:
         text += t(f'entertainments.game_text.penalty', lang, percent=int(percent*100))
 
-    message = await bot.send_photo(chatid, image, text, 
+    message = await bot.send_photo(chatid, image, caption=text, 
                          reply_markup=await m(userid, 'last_menu', lang, True))
 
     # Пригласить друга

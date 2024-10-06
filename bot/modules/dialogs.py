@@ -10,6 +10,8 @@ from bot.modules.items.item_tools import AddItemToUser
 from bot.modules.localization import get_data, t
 from bot.modules.dinosaur.dinosaur  import dead_check
 
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import take_coins
 users = DBconstructor(mongo_client.user.users)
@@ -20,8 +22,7 @@ def dialog_system(name: str, lang: str,
                   dialog_name: str = '', **kwargs):
     """ Основаная функция генерации текста для диалога, возвращает статус законченности, текст, клавиатуру, и последний обработанный ключ
     """
-    text = ''
-    markup = InlineKeyboardMarkup()
+    text, markup = '', None
 
     end_status = False
     data = get_data('dialogs.' + dialog_name, lang)
@@ -62,7 +63,7 @@ async def dead_last_dino(userid: int, name: str, lang: str,
     end_keys = ['end-y', 'end-n']
     dialog_name = 'dead_last_dino'
 
-    markup = InlineKeyboardMarkup()
+    markup = None
     status = False
     text = ''
 
@@ -98,7 +99,7 @@ async def dead_last_dino(userid: int, name: str, lang: str,
                 buttons = list_to_inline([buttons])
 
                 await bot.send_photo(userid, image, 
-                                    t('item_use.egg.egg_answer', lang), 
+                                    caption=t('item_use.egg.egg_answer', lang), 
                                     parse_mode='Markdown', reply_markup=buttons)
 
     return status, text, markup

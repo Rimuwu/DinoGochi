@@ -67,7 +67,7 @@ async def collecting_adapter(return_data, transmitted_data):
             markup = list_to_inline([
                 {stop_button: f'collecting stop {dino.alt_id}'}])
 
-            await bot.send_photo(chatid, image, text, reply_markup=markup)
+            await bot.send_photo(chatid, image, caption=text, reply_markup=markup)
             message = await bot.send_message(chatid, t('back_text.actions_menu', lang),
                                         reply_markup = await m(userid, 'last_menu', lang)
                                         )
@@ -142,7 +142,7 @@ async def collecting_progress(message: Message):
                         now = data['now_count'], max_count=data['max_count']
                         )
 
-                await bot.send_photo(chatid, image, text, 
+                await bot.send_photo(chatid, image, caption=text, 
                                     reply_markup=list_to_inline(
                                     [{stop_button: f'collecting stop {last_dino.alt_id}'}]
                                         ))

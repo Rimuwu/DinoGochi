@@ -145,7 +145,7 @@ from bot.modules.dungeon.dungeon import Lobby, DungPlayer
 async def dung(message):
 
     m = await bot.send_message(message.from_user.id, "test")
-    lobby = await Lobby().create(message.from_user.id, m.id)
+    lobby = await Lobby().create(message.from_user.id, m.message_id)
 
     pprint(lobby.__dict__)
 
@@ -161,7 +161,7 @@ async def add_to(message):
     lobby = await Lobby().FromBase(1191252229)
 
     m = await bot.send_message(message.from_user.id, "test")
-    player = await DungPlayer().create(message.from_user.id, m.id)
+    player = await DungPlayer().create(message.from_user.id, m.message_id)
     await lobby.add_player(player, message.from_user.id)
 
 # @main_router.message(Command(commands=['test'])

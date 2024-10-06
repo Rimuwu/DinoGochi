@@ -61,7 +61,8 @@ def random_dict(data: dict) -> int:
     return 0
 
 
-def list_to_keyboard(buttons: list, row_width: int = 3, resize_keyboard: bool = True, one_time_keyboard = None) -> ReplyKeyboardMarkup:
+def list_to_keyboard(buttons: list, row_width: int = 3, 
+                     resize_keyboard: bool = True, one_time_keyboard = None):
     """ Превращает список со списками в объект клавиатуры.
         Example:
             butttons = [ ['привет'], ['отвяжись', 'ты кто?'] ]
@@ -108,7 +109,6 @@ def list_to_inline(buttons: list, row_width: int = 3) -> InlineKeyboardMarkup:
             inline.row(*[InlineKeyboardButton(text=i, callback_data=j) for i, j in line.items()], width=row_width)
         else:
             inline.add(InlineKeyboardButton(text=str(line), callback_data='None'))
-
 
     return inline.as_markup(row_width=row_width)
 

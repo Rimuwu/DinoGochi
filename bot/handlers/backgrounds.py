@@ -202,7 +202,7 @@ async def background_menu(call: CallbackQuery, state):
                                      reply_markup=count_markup(max_int, lang)
                                      )
 
-        data = { 'message_id': call.message.message_id, 'delete_id': mes.id }
+        data = { 'message_id': call.message.message_id, 'delete_id': mes.message_id }
         await ChooseIntState(page_n, state, userid, chatid, lang,
                              max_int=max_int, 
                              transmitted_data=data)
@@ -222,14 +222,14 @@ async def background_menu(call: CallbackQuery, state):
             mes = await bot.send_message(chatid, t('backgrounds.confirm', lang),
                                         reply_markup=confirm_markup(lang)
                                         )
-            data['delete_id'] = mes.id
+            data['delete_id'] = mes.message_id
             await ChooseConfirmState(buy, state, userid, chatid, lang, transmitted_data=data)
     
     elif action == 'set':
         # mes = await bot.send_message(chatid, t('backgrounds.choose_dino', lang),
         #                                 reply_markup=confirm_markup(lang)
         #                                 )
-        data = { 'page': b_id } # 'delete_id': mes.id,
+        data = { 'page': b_id } # 'delete_id': mes.message_id,
         await ChooseDinoState(set_back, state, userid, chatid, lang, False, True, data)
         
 async def set_back(dino: Dino, transmitted_data: dict):

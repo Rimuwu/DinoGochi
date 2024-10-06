@@ -296,7 +296,8 @@ async def buy_ale(callback: CallbackQuery):
         await AddItemToUser(friend, 'ale')
 
         text = t('buy_ale.me', lang)
-        await bot.edit_message_reply_markup(None, chatid, callback.message.message_id, reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
+        await bot.edit_message_reply_markup(None, chatid, callback.message.message_id, 
+                                            reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
         await bot.answer_callback_query(callback.id, text, True)
 
         text = t('buy_ale.friend', lang, username=user_name(callback.from_user))

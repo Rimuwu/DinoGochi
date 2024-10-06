@@ -172,7 +172,7 @@ async def egg_profile(chatid: int, egg: Egg, lang: str):
         egg.remaining_incubation_time(), lang)
         )
     img = await egg.image(lang)
-    await bot.send_photo(chatid, img, text, 
+    await bot.send_photo(chatid, img, caption=text, 
                          reply_markup=await m(chatid, 'last_menu', language_code=lang))
 
 async def transition(element, transmitted_data: dict):
@@ -362,7 +362,7 @@ async def skills_profile(userid, chatid, dino_data: dict, lang):
 
     text = t('skills_profile.info', lang, **data_skills)
     await bot.send_photo(chatid, image,
-                                text, parse_mode='Markdown')
+                         caption=text, parse_mode='Markdown')
 
 
 async def cnacel_joint(_:bool, transmitted_data:dict):

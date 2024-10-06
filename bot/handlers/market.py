@@ -130,9 +130,9 @@ async def my_market(message: Message):
     if res:
         text, markup, image = await seller_ui(userid, lang, True)
         try:
-            await bot.send_photo(chatid, image, text, parse_mode="Markdown", reply_markup=markup)
+            await bot.send_photo(chatid, image, caption=text, parse_mode="Markdown", reply_markup=markup)
         except:
-            await bot.send_photo(chatid, image, text, reply_markup=markup, parse_mode=None)
+            await bot.send_photo(chatid, image, caption=text, reply_markup=markup, parse_mode=None)
 
 @HDMessage
 @main_router.message(Text('commands_name.seller_profile.add_product'), IsAuthorizedUser(), IsPrivateChat())
@@ -273,9 +273,9 @@ async def seller(call: CallbackQuery, state):
 
             text, markup, image = await seller_ui(owner_id, lang, my_status, name)
             try:
-                await bot.send_photo(chatid, image, text, parse_mode='Markdown', reply_markup=markup)
+                await bot.send_photo(chatid, image, caption=text, parse_mode='Markdown', reply_markup=markup)
             except:
-                await bot.send_photo(chatid, image, text, reply_markup=markup)
+                await bot.send_photo(chatid, image, caption=text, reply_markup=markup)
 
     elif call_type == 'all':
         user_prd = await products.find({'owner_id': owner_id}, comment='seller_user_prd_all')

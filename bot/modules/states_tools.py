@@ -380,7 +380,7 @@ async def friend_handler(friend, transmitted_data: dict):
     photos = await bot.get_user_profile_photos(friend.id, limit=1)
     if photos.photos:
         photo_id = photos.photos[0][0].file_id
-        await bot.send_photo(chatid, photo_id, text, parse_mode='Markdown', reply_markup=markup)
+        await bot.send_photo(chatid, photo_id, caption=text, parse_mode='Markdown', reply_markup=markup)
     else:
         await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 

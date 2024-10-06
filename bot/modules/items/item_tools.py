@@ -248,7 +248,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             buttons = list_to_inline([buttons])
 
             await bot.send_photo(userid, image, 
-                                 t('item_use.egg.egg_answer', lang), 
+                                 caption=t('item_use.egg.egg_answer', lang), 
                                  parse_mode='Markdown', reply_markup=buttons)
             await bot.send_message(userid, 
                                    t('item_use.egg.plug', lang),     

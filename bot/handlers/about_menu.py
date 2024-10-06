@@ -13,6 +13,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseIntState
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, InputMedia, Message, inline_keyboard_markup)
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 from bot.filters.translated_text import StartWith, Text
 from bot.filters.states import NothingState
@@ -60,14 +61,14 @@ async def main_support_menu(lang: str):
         text += f'{a}. *{bio["name"]}* — {bio["short"]}\n\n'
         buttons[bio["name"]] = f'support info {key}'
 
-    markup_inline = []
-    markup_inline.append(*[
+    markup_inline = InlineKeyboardBuilder()
+    markup_inline.row(*[
         InlineKeyboardButton(
             text=key, 
             callback_data=name
-        ) for key, name in buttons.items()])
+        ) for key, name in buttons.items()], width=1)
 
-    return image, text, InlineKeyboardMarkup(row_width=1, inline_keyboard=markup_inline)
+    return image, text, markup_inline.as_markup()
 
 @HDMessage
 @main_router.message(Text('commands_name.about.support'), 
@@ -101,15 +102,14 @@ async def faq(message: Message):
     faq_data = get_data('faq', lang)
     buttons = faq_data['inline_buttons']
 
-    markup_inline = []
-    markup_inline.append(*[
+    markup_inline = InlineKeyboardBuilder()
+    markup_inline.row(*[
         InlineKeyboardButton(
             text=name, 
             callback_data=key
-        ) for key, name in buttons.items()])
+        ) for key, name in buttons.items()], width=2)
 
-    inl = InlineKeyboardMarkup(row_width=2, inline_keyboard=markup_inline)
-    await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=inl)
+    await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline.as_markup())
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('faq'))
@@ -139,7 +139,7 @@ async def support_buttons(call: CallbackQuery, state):
         await edit_SmartPhoto(chatid, messageid, image, text, 'Markdown', markup_inline)
     else:
         if product_key != 'non_repayable': product = products[product_key]
-        markup_inline = []
+        markup_inline = InlineKeyboardBuilder()
 
         text_data = get_data('support_command', lang)
         product_bio = text_data['products_bio'][product_key]
@@ -168,21 +168,21 @@ async def support_buttons(call: CallbackQuery, state):
                         name = f'x{key} = {item[currency]}🌟'
                         buttons[name] = f'support buy {product_key} {key}'
 
-                markup_inline.append(*[
+                markup_inline.row(*[
                     InlineKeyboardButton(
                         text=key, 
-                        callback_data=item) for key, item in buttons.items()]
-                                    )
+                        callback_data=item) for key, item in buttons.items()],
+                        width=2)
 
             else:
                 await ChooseIntState(tips, state, user_id, chatid, lang, 1, 500_000)
                 await bot.send_message(chatid, text_data['free_enter'], reply_markup=cancel_markup(lang))
 
-            markup_inline.append(
-            InlineKeyboardButton(
-                text=t('buttons_name.back', lang), 
-                callback_data='support main 0'
-            ))
+            markup_inline.row(
+                InlineKeyboardButton(
+                    text=t('buttons_name.back', lang), 
+                    callback_data='support main 0'
+                ), width=2)
 
         elif action == "buy":
             currency = 'XTR'
@@ -192,20 +192,19 @@ async def support_buttons(call: CallbackQuery, state):
 
             text = text_data['buy']
 
-            markup_inline.append(
+            markup_inline.row(
                 InlineKeyboardButton(
                     text=t('buttons_name.back', lang), 
                     callback_data=f'support info {product_key}'
-                ))
+                ), width=2)
 
             await send_inv(user_id, product_key, count, lang)
 
-        inl = InlineKeyboardMarkup(row_width=2, inline_keyboard=markup_inline)
         if call.message.content_type == 'text':
-            await send_SmartPhoto(chatid, image_way, text, 'Markdown', inl)
+            await send_SmartPhoto(chatid, image_way, text, 'Markdown', markup_inline.as_markup())
         else:
             try:
-                await edit_SmartPhoto(chatid, messageid, image_way, text, 'Markdown', inl)
+                await edit_SmartPhoto(chatid, messageid, image_way, text, 'Markdown', markup_inline.as_markup())
             except Exception as e:
                 log(f'edit_SmartPhoto error: {e}', 2) 
 

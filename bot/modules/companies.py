@@ -21,6 +21,8 @@ from bot.modules.localization import get_lang, t, get_data
 from bot.modules.logs import log
 from bot.modules.overwriting.DataCalsses import DBconstructor
 
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+
 companies = DBconstructor(mongo_client.other.companies)
 message_log = DBconstructor(mongo_client.other.message_log)
 users = DBconstructor(mongo_client.user.users)
@@ -187,7 +189,7 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None,
         parse_mode = message['parse_mode']
         image = message['image']
 
-        inline = InlineKeyboardMarkup()
+        inline = InlineKeyboardBuilder()
         for i in message['markup']:
             for key, value in i.items():
                 inline.add(
@@ -198,30 +200,30 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None,
 
         if image != 'no_image':
             try:
-                m = await bot.send_photo(userid, image, text, parse_mode, 
-                                     reply_markup=inline)
+                m = await bot.send_photo(userid, image, caption=text, parse_mode=parse_mode, 
+                                         reply_markup=inline.as_markup())
             except Exception as e:
                 log(f'generate_comp_message image error - {e}', 2)
-                m = await bot.send_photo(userid, image, text, 
-                                     reply_markup=inline)
+                m = await bot.send_photo(userid, image, caption=text, 
+                                     reply_markup=inline.as_markup())
         else:
             try:
                 m = await bot.send_message(userid, text, 
-                                       parse_mode=parse_mode, reply_markup=inline)
+                                       parse_mode=parse_mode, reply_markup=inline.as_markup())
             except Exception as e:
                 log(f'generate_comp_message error - {e}', 2)
                 m = await bot.send_message(userid, text, 
-                                     reply_markup=inline)
+                                     reply_markup=inline.as_markup())
 
         # Сохраняем
         if m and save:
-            await save_message(company_id, userid, m.id)
+            await save_message(company_id, userid, m.message_id)
 
         # Закрепляем
         if companie['pin_message'] and save:
-            s = await bot.pin_chat_message(m.chat.id, m.id)
+            s = await bot.pin_chat_message(m.chat.id, m.message_id)
             try:
-                if s: await bot.delete_message(m.chat.id, m.id + 1)
+                if s: await bot.delete_message(m.chat.id, m.message_id + 1)
             except: pass
 
         # Награда
@@ -236,7 +238,7 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None,
             except:
                 await bot.send_message(userid, 
                                     t('super_coins.moder_reward', lang, coin=companie['coin_price']))
-        return m.id
+        return m.message_id
     return None
 
 async def nextinqueue(userid: int, lang = None) -> Union[ObjectId, None]:
@@ -311,8 +313,7 @@ async def priority_and_timeout(companie_id: ObjectId):
 
 async def info(companie_id: ObjectId, lang = None):
     c = await companies.find_one({'_id': companie_id})
-    text = ''
-    mrk = InlineKeyboardMarkup()
+    text, mrk = '', None
 
     if c:
         if not lang: lang = await get_lang(c['owner'])

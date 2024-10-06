@@ -57,16 +57,16 @@ async def send_SmartPhoto(chat_id: int | str,
         if await bot.get_file(file_id):
             # Отпрляем файл по file_id
             mes = await bot.send_photo(chat_id, file_id, caption=caption, 
-                                 parse_mode=parse_mode, reply_markup=reply_markup,
-                                 show_caption_above_media=show_caption_above_media,
-                                 has_spoiler=has_spoiler,
-                                 disable_notification=disable_notification,
-                                 protect_content=protect_content,
-                                 message_effect_id=message_effect_id,
-                                 reply_parameters=reply_parameters,
-                                 allow_sending_without_reply=allow_sending_without_reply,
-                                 reply_to_message_id=reply_to_message_id,
-                                 request_timeout=request_timeout)
+                            parse_mode=parse_mode, reply_markup=reply_markup,
+                            show_caption_above_media=show_caption_above_media,
+                            has_spoiler=has_spoiler,
+                            disable_notification=disable_notification,
+                            protect_content=protect_content,
+                            message_effect_id=message_effect_id,
+                            reply_parameters=reply_parameters,
+                            allow_sending_without_reply=allow_sending_without_reply,
+                            reply_to_message_id=reply_to_message_id,
+                            request_timeout=request_timeout)
             return mes
 
     # Либо файла нет, либо file_id устарело
@@ -77,17 +77,16 @@ async def send_SmartPhoto(chat_id: int | str,
         file_photo = photo_way
 
     mes = await bot.send_photo(chat_id, file_photo, caption=caption, 
-                            parse_mode=parse_mode, reply_markup=reply_markup)
-                            # show_caption_above_media=show_caption_above_media,
-                            # has_spoiler=has_spoiler,
-                            # disable_notification=disable_notification,
-                            # protect_content=protect_content,
-                            # message_effect_id=message_effect_id,
-                            # reply_parameters=reply_parameters,
-                            # allow_sending_without_reply=allow_sending_without_reply,
-                            # reply_to_message_id=reply_to_message_id,
-                            # request_timeout=request_timeout
-                            # )
+                    parse_mode=parse_mode, reply_markup=reply_markup,
+                    show_caption_above_media=show_caption_above_media,
+                    has_spoiler=has_spoiler,
+                    disable_notification=disable_notification,
+                    protect_content=protect_content,
+                    message_effect_id=message_effect_id,
+                    reply_parameters=reply_parameters,
+                    allow_sending_without_reply=allow_sending_without_reply,
+                    reply_to_message_id=reply_to_message_id,
+                    request_timeout=request_timeout)
 
     # Сохраняем file_id
     if mes and mes.photo and type(photo_way) == str:
