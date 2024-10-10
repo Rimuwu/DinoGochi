@@ -83,7 +83,7 @@ def list_to_keyboard(buttons: list, row_width: int = 3,
         if type(line) == list:
             builder.row(*[KeyboardButton(text=i) for i in line], width=row_width)
         else:
-            builder.add(KeyboardButton(text=str(line)))
+            builder.row(*[KeyboardButton(text=str(line))], width=row_width)
 
     return builder.as_markup(row_width=row_width, resize_keyboard=resize_keyboard, one_time_keyboard=one_time_keyboard)
 

@@ -11,6 +11,7 @@ from bot.modules.localization import get_data, t
 from bot.modules.logs import log
 from bot.modules.markup import down_menu, get_answer_keyboard
 from bot.modules.markup import markups_menu as m
+from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, get_frineds, user_info, user_name
  
 from bot.modules.managment.events import check_event
@@ -362,25 +363,25 @@ async def ChoosePagesState(function, state: FSMContext,
         return False, pages
 
 
-async def friend_handler(friend, transmitted_data: dict):
+async def friend_handler(friend: dict, transmitted_data: dict):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
+    friend_id = friend['userid']
+    avatar = friend['avatar']
 
-    text = await user_info(friend, lang)
+    text = await user_info(friend_id, lang, name = friend['name'])
     buttons = {}
 
     for key, text_b in get_data('friend_list.buttons', lang).items():
-        buttons[text_b] = f'{key} {friend.id}'
+        buttons[text_b] = f'{key} {friend_id}'
 
     if not await check_event("new_year"):
         del buttons[get_data(f'friend_list.buttons.new_year', lang)]
 
     markup = list_to_inline([buttons], 2)
 
-    photos = await bot.get_user_profile_photos(friend.id, limit=1)
-    if photos.photos:
-        photo_id = photos.photos[0][0].file_id
-        await bot.send_photo(chatid, photo_id, caption=text, parse_mode='Markdown', reply_markup=markup)
+    if avatar:
+        await bot.send_photo(chatid, avatar, caption=text, parse_mode='Markdown', reply_markup=markup)
     else:
         await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
@@ -395,14 +396,13 @@ async def start_friend_menu(function, state: FSMContext,
     if function == None: function = friend_handler
 
     for friend_id in friends:
-        try:
-            chat_user = await bot.get_chat_member(friend_id, friend_id)
-            friend = chat_user.user
-        except: friend = None
-        await sleep(0.1)
-        if friend: options[user_name(friend, False)] = friend
-
-    log(f'friend request len {len(friends)} from {userid}')
+        friend_res = await get_friend_data(friend_id, userid)
+        log(f'friend_res {friend_res}')
+        if friend_res:
+            options[friend_res['name']] = {
+                'userid': friend_id, 
+                'avatar': friend_res['avatar'], 
+                'name': friend_res['name']}
 
     await ChoosePagesState(
         function, state, userid, chatid, lang, options, 

@@ -28,7 +28,7 @@ async def stop_collect(coll_data):
         chat_user = await bot.get_chat_member(coll_data['sended'], coll_data['sended'])
         lang = await get_lang(chat_user.user.id)
     except: lang = 'en'
-    
+
     items_list = []
     for key, count in coll_data['items'].items():
         items_list += [key] * count

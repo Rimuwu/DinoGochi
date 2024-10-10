@@ -437,32 +437,38 @@ async def experience_enhancement(userid: int, xp: int):
                                         user_name=name,
                                         lvl=user['lvl'] + lvl, item_name=item_name)
 
-async def user_info(data_user: teleUser, lang: str, secret: bool = False):
-    user = await User().create(data_user.id)
+async def user_info(userid: int, lang: str, secret: bool = False, 
+                    name: str | None = None):
+    user = await User().create(userid)
     return_text = ''
 
     premium = t('user_profile.no_premium', lang)
     if await user.premium:
-        find = await subscriptions.find_one({'userid': data_user.id}, comment='user_info_find')
+        find = await subscriptions.find_one({'userid': userid}, comment='user_info_find')
         if find:
-            if find['sub_end'] == 'inf':
-                premium = '♾'
+            if find['sub_end'] == 'inf': premium = '♾'
             else:
                 premium = seconds_to_str(
                     find['sub_end'] - find['sub_start'], lang)
 
-    friends = await get_frineds(data_user.id)
+    friends = await get_frineds(userid)
     friends_count = len(friends['friends'])
     request_count = len(friends['requests'])
 
-    dinos = await get_dinos_and_owners(data_user.id)
-    eggs = await get_eggs(data_user.id)
+    dinos = await get_dinos_and_owners(userid)
+    eggs = await get_eggs(userid)
 
-    m_name = escape_markdown(user_name(data_user))
+    if name is None:
+        try:
+            chat_user = await bot.get_chat_member(userid, userid)
+            name = user_name(chat_user.user)
+        except: name = 'NoName'
+    else:
+        m_name = escape_markdown(name)
 
     return_text += t('user_profile.user', lang,
                      name = m_name,
-                     userid = data_user.id,
+                     userid = userid,
                      premium_status = premium
                      )
     return_text += '\n\n'

@@ -33,13 +33,16 @@ async def infouser(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
 
-    text = await user_info(message.from_user, lang)
-    photos = await bot.get_user_profile_photos(userid, limit=1)
-    if photos.photos:
-        photo_id = photos.photos[0][0].file_id #type: ignore
-        await bot.send_photo(chatid, photo_id, caption=text, parse_mode='Markdown')
-    else:
-        await bot.send_message(message.chat.id, text, parse_mode='Markdown')
+    if message.from_user:
+        text = await user_info(userid, lang, 
+                               name=user_name(message.from_user))
+
+        photos = await bot.get_user_profile_photos(userid, limit=1)
+        if photos.photos:
+            photo_id = photos.photos[0][0].file_id
+            await bot.send_photo(chatid, photo_id, caption=text, parse_mode='Markdown')
+        else:
+            await bot.send_message(message.chat.id, text, parse_mode='Markdown')
 
 @HDMessage
 @main_router.message(Command(commands=['profile']), IsAuthorizedUser(), IsPrivateChat())
@@ -48,13 +51,16 @@ async def infouser_com(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
 
-    text = await user_info(message.from_user, lang)
-    photos = await bot.get_user_profile_photos(userid, limit=1)
-    if photos.photos:
-        photo_id = photos.photos[0][0].file_id #type: ignore
-        await bot.send_photo(chatid, photo_id, caption=text, parse_mode='Markdown')
-    else:
-        await bot.send_message(message.chat.id, text, parse_mode='Markdown')
+    if message.from_user:
+        text = await user_info(userid, lang, 
+                               name=user_name(message.from_user))
+
+        photos = await bot.get_user_profile_photos(userid, limit=1)
+        if photos.photos:
+            photo_id = photos.photos[0][0].file_id 
+            await bot.send_photo(chatid, photo_id, caption=text, parse_mode='Markdown')
+        else:
+            await bot.send_message(message.chat.id, text, parse_mode='Markdown')
 
 @HDMessage
 @main_router.message(Text('commands_name.profile.rayting'), 

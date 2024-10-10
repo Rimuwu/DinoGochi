@@ -24,20 +24,18 @@ from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command, StateFilter
 
-import inspect
-
-
 
 async def start_func(func, arg, transmitted_data: dict):
-    function_info = inspect.signature(func)
-    argument_names = function_info.parameters.values()
-
-    if 'state' in argument_names:
+    res = None
+    try:
         state = transmitted_data['state']
-        await start_func(func, arg, transmitted_data=transmitted_data, state=state)
-    else:
-        await start_func(func, arg, transmitted_data=transmitted_data)
-
+        res = await func(arg, transmitted_data=transmitted_data, state=state)
+    except TypeError as e:
+        if 'unexpected keyword argument' in str(e):
+            res = await func(arg, transmitted_data=transmitted_data)
+        else:
+            log(f'start_func error {e}', lvl=3)
+    return res
 
 async def cancel(message, text:str = "❌", state: Union[FSMContext, None] = None):
     lang = await get_lang(message.from_user.id)
@@ -260,7 +258,7 @@ async def ChooseCustom(message: Message, state: FSMContext):
         await state.clear()
         await start_func(func, answer, transmitted_data=transmitted_data)
 
-@HDMessage
+# @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChoosePagesState), IsAuthorizedUser())
 async def ChooseOptionPages(message: Message, state: FSMContext):
     """Кастомный обработчик, принимает данные и отправляет в обработчик

@@ -1632,7 +1632,8 @@
                 "take_money": "✨ Transfer Koin",
                 "take_coins": "🪔 Transfer Koin",
                 "joint_dinosaur": "🦕 Bagikan dinosaurus",
-                "new_year": "🎁 Kirim hadiah"
+                "new_year": "🎁 Kirim hadiah",
+                "change_name": "👥 Ubah Nama"
             }
         },
         "requests": {

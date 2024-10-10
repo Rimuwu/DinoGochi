@@ -1,4 +1,5 @@
 from ast import Is
+import re
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
@@ -6,7 +7,7 @@ from bot.modules.data_format import list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino, create_dino_connection
 from bot.modules.managment.events import get_event
-from bot.modules.user.friends import get_frineds, insert_friend_connect
+from bot.modules.user.friends import get_frineds, insert_friend_connect, get_friend_data
 from bot.modules.items.item import AddItemToUser, get_name
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup, confirm_markup, count_markup
@@ -46,7 +47,7 @@ async def add_friend(message: Message):
 
     inl_buttons = dict(zip(buttons.values(), buttons.keys()))
     markup = list_to_inline([inl_buttons])
-    
+
     await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
 async def friend_add_handler(message: Message, transmitted_data: dict):
@@ -141,9 +142,10 @@ async def adp_requests(data: dict, transmitted_data: dict):
 
     if data['action'] == 'delete': 
         await friends.delete_one(
-            {'userid': data['friend'],
-             'friendid': userid,
-             'type': 'request'
+            {
+                'userid': data['friend'],
+                'friendid': userid,
+                'type': 'request'
              }, comment='adp_requests_delete'
             )
 
@@ -154,9 +156,10 @@ async def adp_requests(data: dict, transmitted_data: dict):
 
     elif data['action'] == 'add':
         res = await friends.find_one(
-            {'userid': data['friend'],
-             'friendid': userid,
-             'type': 'request'
+            {
+                'userid': data['friend'],
+                'friendid': userid,
+                'type': 'request'
              }, comment='adp_requests_add'
             )
 
@@ -169,52 +172,54 @@ async def adp_requests(data: dict, transmitted_data: dict):
             f'✅ {data["key"]}', f'❌ {data["key"]}', data['name']
             ]}}
 
-async def request_open(userid: int, chatid: int, lang: str):
+async def request_open(userid: int, chatid: int, lang: str, state):
     friends = await get_frineds(userid)
     requests = friends['requests']
     options = {}
     a = 0
-    
+
     for friend_id in requests:
-        try:
-            chat_user = await bot.get_chat_member(friend_id, friend_id)
-            friend = chat_user.user
-        except: friend = None
-        if friend:
+        friend_res = await get_friend_data(friend_id, userid)
+        if friend_res:
             a += 1
-            name = user_name(friend)
+
+            name = friend_res['name']
             if name in options: name = name + str(a)
 
-            options[f"✅ {a}"] = {'action': 'add', 'friend': friend_id, 'key': a, 'name': name}
-            
+            options[f"✅ {a}"] = {'action': 'add', 
+                                 'friend': friend_id, 
+                                 'key': a, 'name': name}
+
             options[name] = {'action': 'pass'}
-            
-            options[f"❌ {a}"] = {'action': 'delete', 'friend': friend_id, 'key': a, 'name': name}
-    
+
+            options[f"❌ {a}"] = {'action': 'delete', 
+                                 'friend': friend_id, 'key': a, 
+                                 'name': name}
+
     await ChoosePagesState(
-        adp_requests, userid, chatid, lang, options, 
+        adp_requests, state, userid, chatid, lang, options, 
         horizontal=3, vertical=3,
         autoanswer=False, one_element=False)
 
 @HDMessage
 @main_router.message(Text('commands_name.friends.requests'), IsPrivateChat())
-async def requests_list(message: Message):
+async def requests_list(message: Message, state):
     chatid = message.chat.id
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
     await bot.send_message(chatid, t('requests.wait', lang))
-    await request_open(userid, chatid, lang)
+    await request_open(userid, chatid, lang, state)
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('requests'), IsPrivateChat())
-async def requests_callback(call: CallbackQuery):
+async def requests_callback(call: CallbackQuery, state):
     chatid = call.message.chat.id
     user_id = call.from_user.id
     lang = await get_lang(call.from_user.id)
 
     await bot.send_message(chatid, t('requests.wait', lang))
-    await request_open(user_id, chatid, lang)
+    await request_open(user_id, chatid, lang, state)
 
 async def delete_friend(_: bool, transmitted_data: dict):
     lang = transmitted_data['lang']
@@ -258,13 +263,11 @@ async def remove_friend(message: Message, state):
     a = 0
 
     for friend_id in requests:
-        try:
-            chat_user = await bot.get_chat_member(friend_id, friend_id)
-            friend = chat_user.user
-        except: friend = None
-        if friend:
+        friend_res = await get_friend_data(friend_id, userid)
+        if friend_res:
             a += 1
-            name = user_name(friend)
+
+            name = friend_res['name']
             if name in options: name = name + str(a)
             options[name] = friend_id
 
@@ -510,3 +513,17 @@ async def new_year(call: CallbackQuery):
             text = t('new_year.to_friend', lang, 
                      item=get_name(GAME_SETTINGS['new_year_item'], lang))
             await bot.send_message(friendid, text)
+
+@HDCallback
+@main_router.callback_query(F.data.startswith('change_name'), IsPrivateChat())
+async def change_name(call: CallbackQuery, state):
+    lang = await get_lang(call.from_user.id)
+    chatid = call.message.chat.id
+    userid = call.from_user.id
+    data = call.data.split()
+
+    friendid = int(data[1])
+    user = await users.find_one({'userid': userid}, comment='change_name')
+
+    if user:
+        ...

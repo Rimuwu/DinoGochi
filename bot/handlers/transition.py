@@ -18,6 +18,7 @@ from bot.modules.markup import back_menu
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.managment.statistic import get_now_statistic
+from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, take_coins
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
@@ -200,23 +201,21 @@ async def tavern_menu(message: Message):
         if len(friends_in_tavern):
             text += '\n'
             for friendid in friends_in_tavern:
-                friend = friendChat.user
-                friend_lang = await get_lang(friend.id)
-                friendChat = await bot.get_chat_member(friendid, friendid)
+                friend_lang = await get_lang(friendid)
+                friend = await get_friend_data(friendid, friendid)
 
                 if friend:
                     buttons = t('menu_text.dino_tavern.button', friend_lang)
                     buttons = list_to_inline([{buttons: f"buy_ale {userid}"}])
 
-                    text += f' 🎱 {user_name(friend)}\n'
+                    text += f' 🎱 {friend["name"]}\n'
                     text_to_friend = t('menu_text.dino_tavern.went', 
                                     friend_lang, 
-                                    name=user_name(message.from_user))
+                                    name=friend["name"])
                     try:
                         await bot.send_message(
                             friendid, text_to_friend, reply_markup=buttons)
                     except:
-                        await sleep(0.3)
                         try: 
                             await bot.send_message(
                                 friendid, text_to_friend, reply_markup=buttons)

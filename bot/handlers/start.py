@@ -119,7 +119,6 @@ async def start_game_message(message: types.Message):
 
     if not add_referal:
         buttons_list = [get_data('commands_name.start_game', locale=langue_code)]
-        log(f'{buttons_list}')
         markup = list_to_keyboard(buttons_list)
 
     image = await async_open('images/remain/start/placeholder.png', True)

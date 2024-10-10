@@ -1632,7 +1632,8 @@
                 "take_money": "✨ Transfer Coins",
                 "take_coins": "🪔 Transfer Coins",
                 "joint_dinosaur": "🦕 Share a dinosaur",
-                "new_year": "🎁 Send a Gift"
+                "new_year": "🎁 Send a Gift",
+                "change_name": "👥 Change Name"
             }
         },
         "requests": {
