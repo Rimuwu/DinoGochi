@@ -2,11 +2,12 @@
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
-from bot.modules.data_format import list_to_inline, user_name
+from bot.modules.data_format import list_to_inline
 from bot.modules.localization import t, get_lang
  
 from bot.modules.overwriting.DataCalsses import DBconstructor
 friends = DBconstructor(mongo_client.user.friends)
+users = DBconstructor(mongo_client.user.users)
 
 async def get_frineds(userid: int) -> dict:
     """ Получает друзей (id) и запросы к пользователю
@@ -38,7 +39,9 @@ async def get_frineds(userid: int) -> dict:
                 friends_dict['requests'].append(conn_data[alt[st]])
     return friends_dict
 
-async def insert_friend_connect(userid: int, friendid: int, action: str):
+async def insert_friend_connect(userid: int, friendid: int, 
+                                action: str, user_name: str = '', 
+                                friend_name: str = ''):
     """ Создаёт связь между пользователями
         friends, request
     """
@@ -60,13 +63,11 @@ async def insert_friend_connect(userid: int, friendid: int, action: str):
         data = {
             'userid': userid,
             'user_data': {
-                'name': '',
-                'avatar': ''
+                'name': user_name
             },
             'friendid': friendid,
             'friend_data': {
-                'name': '',
-                'avatar': ''
+                'name': friend_name
             },
             'type': action
         }
@@ -77,14 +78,9 @@ async def send_action_invite(userid: int, friendid: int, action: str, dino_alt: 
     """ userid - отправитель
         friendid - тот кто присоединится к активности
     """
-    chat_user, chat2_user = None, None
-
-    try:
-        chat_user = await bot.get_chat_member(userid, userid)
-        username = user_name(chat_user.user)
-    except: username = '-'
-
     chat2_user = await get_friend_data(friendid, userid)
+    username = chat2_user['name'] # Имя друга / отправителя
+
     if chat2_user:
         friend_lang = await get_lang(friendid)
     else: friend_lang = 'en'
@@ -127,48 +123,30 @@ async def get_friend_data(friendid: int, userid: int):
 
     # Если данные есть, то смотрим, можем ли мы вернуть данные, а не запрашивать их из тг
     if res:
+        friendUser = await users.find_one({'userid': friendid}, comment='get_friend_data_friendUser')
         result = {}
 
-        # Определяем где хранятся данные друга
-        if friendid == res['userid']: data_path = 'user'
-        else: data_path = 'friend'
+        if friendUser:
+            # Определяем где хранятся данные друга
+            if friendid == res['userid']: data_path = 'user'
+            else: data_path = 'friend'
 
-        if f'{data_path}_data' in res:
-            # Проверяем, что данные есть, иначе это старый формат и создаём данные 
-            if res[f'{data_path}_data']['name']:
-                # Проверясем, что есть имя 
-                result['name'] = res[f'{data_path}_data']['name']
+            if f'{data_path}_data' in res:
+                # Проверяем, что данные есть, иначе это старый формат и создаём данные 
+                if res[f'{data_path}_data']['name']:
+                    # Проверясем, что есть имя 
+                    result['name'] = res[f'{data_path}_data']['name']
 
-            if res[f'{data_path}_data']['avatar']:
-                # Проверясем, что есть аватарку
-                result['avatar'] = res[f'{data_path}_data']['avatar']
-
-                if not await bot.get_file(result['avatar']):
-                    # Файла уже не существует, удаляем данные для обновления
-                    del result['avatar']
-
-        if 'avatar' not in result or 'name' not in result:
-            try:
-                chat_user = await bot.get_chat_member(friendid, friendid)
-                friend = chat_user.user
-            except: return {} # Если нет данных, то возвращаем пустой словарь
-
-            if friend:
-                name = user_name(friend)
+            if 'name' not in result:
+                name = friendUser['name'] or str(friendid)
                 result['name'] = name
 
-                photos = await bot.get_user_profile_photos(friend.id, 
-                                                            limit=1)
-                if photos.photos:
-                    photo_id = photos.photos[0][0].file_id
-                    result['avatar'] = photo_id
-                else: result['avatar'] = None
-
                 # Обновляем данные
-                await friends.update_one({'_id': res['_id']}, {
-                    '$set': {
-                        f'{data_path}_data': result
-                    }
-                })
+                if str(friendid) != name:
+                    await friends.update_one({'_id': res['_id']}, {
+                        '$set': {
+                            f'{data_path}_data.name': name
+                        }
+                    }, comment='get_friend_data_update')
         return result
     return {}

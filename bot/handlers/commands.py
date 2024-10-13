@@ -2,7 +2,7 @@ from bot.modules.localization import get_data
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.handlers.start import start_game
-from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, user_name
+from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_lang, t
@@ -20,6 +20,8 @@ from bot.filters.kd import KDCheck
 from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
+
+from bot.modules.user.user import User
 
 users = DBconstructor(mongo_client.user.users)
 puhs = DBconstructor(mongo_client.market.puhs)
@@ -81,8 +83,8 @@ async def add_me_с(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    name = user_name(message.from_user, False)
-    text = t("add_me", lang, userid=userid, username=name)
+    user = await User().create(userid)
+    text = t("add_me", lang, userid=userid, username=user.name)
     await message.reply(text, parse_mode='HTML',
                     reply_markup=inline_menu('send_request', lang, userid=userid)
                     )

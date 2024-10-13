@@ -2,7 +2,6 @@ import random
 from bot.dbmanager import mongo_client
 from bson.objectid import ObjectId
 from typing import Union, Any
-from bot.modules.data_format import user_name
 from bot.exec import main_router, bot
 from bot.modules.user.user import take_coins
 from bot.modules.items.item import AddListItems
@@ -42,7 +41,6 @@ class DungPlayer:
             teleuser = await bot.get_chat_member(user_id, user_id)
 
             self._id = user['_id']
-            self.name = user_name(teleuser.user)
             self.message = message
             self.coins = coins
             self.dinos = dinos

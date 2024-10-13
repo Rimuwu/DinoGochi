@@ -7,11 +7,10 @@ from aiogram.types import User as teleUser
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
-from bot.exec import main_router, bot
-from bot.modules.data_format import escape_markdown, item_list, seconds_to_str, user_name
+from bot.exec import bot
+from bot.modules.data_format import escape_markdown, item_list, seconds_to_str
 from bot.modules.dinosaur.dinosaur import Dino, Egg
 from bot.modules.user.advert import create_ads_data
-from bot.modules.user.friends import get_frineds
 from bot.modules.items.item import AddItemToUser, get_item_dict
 from bot.modules.items.item import get_data as get_item_data
 from bot.modules.items.item import get_name
@@ -21,8 +20,9 @@ from bot.modules.notifications import user_notification
 from bot.modules.managment.referals import get_code_owner, get_user_sub
 from datetime import datetime, timedelta
 
-
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.user.friends import get_frineds
+
 users = DBconstructor(mongo_client.user.users)
 items = DBconstructor(mongo_client.items.items)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
@@ -54,6 +54,8 @@ class User:
         """Создание объекта пользователя
         """
         self.userid = 0
+        self.name = 'NoName' # Имя пользователя
+        self.avatar = '' # file_id аватара
 
         self.last_message_time = 0
         self.last_markup = 'main_menu'
@@ -87,6 +89,11 @@ class User:
     async def create(self, userid: int):
         self.userid = userid
         data = await users.find_one({"userid": userid}, comment='User_create')
+
+        if data and not data['name']: 
+            # Долговременная мера по сохранению имени в базе
+            await user_name(userid) 
+
         self.UpdateData(data) #Обновление данных
         return self
 
@@ -221,8 +228,19 @@ class User:
         """
         return await max_dino_col(self.lvl, self.userid, await self.premium)
 
+    async def get_avatar(self) -> str:
+        """Возвращает аватарку пользователя, если файл устарел - обновляет и возвращает новую."""
+        if not self.avatar or not await bot.get_file(self.avatar):
+            # Файла уже не существует, удаляем данные для обновления
+            photos = await bot.get_user_profile_photos(self.userid, limit=1)
+            if photos.photos:
+                photo_id = photos.photos[0][0].file_id
 
-async def insert_user(userid: int, lang: str):
+                self.avatar = photo_id
+                await self.update({'$set': {'avatar': photo_id}})
+        return self.avatar
+
+async def insert_user(userid: int, lang: str, name = '', avatar = ''):
     """Создание пользователя"""
 
     if not await users.find_one({'userid': userid}, comment='insert_user'):
@@ -233,6 +251,10 @@ async def insert_user(userid: int, lang: str):
             await langs.insert_one({'userid': userid, 'lang': lang}, comment='insert_user_1')
 
         user = await User().create(userid)
+        if name != '': 
+            user.name = escape_markdown(name)
+        if avatar == '': user.avatar = avatar
+
         await create_ads_data(userid, 1800)
         return await users.insert_one(user.__dict__, comment='insert_user')
 
@@ -386,43 +408,37 @@ def max_lvl_xp(lvl: int): return 5 * lvl * lvl + 50 * lvl + 100
 async def experience_enhancement(userid: int, xp: int):
     """Повышает количество опыта, если выполнены условия то повышает уровень и отпарвляет уведомление
     """
-    user = await users.find_one({'userid': userid}, comment='experience_enhancement_user')
-    if user:
-        lvl = 0
-        xp = user['xp'] + xp
+    user = await User().create(userid)
+    lang = await user.lang
 
-        try:
-            chat_user = await bot.get_chat_member(userid, userid)
-            lang = await get_lang(chat_user.user.id)
-            name = user_name(chat_user.user)
-        except: 
-            lang = 'en'
-            name = 'name'
+    if user:
+        lvl, xp = 0, user.xp + xp
 
         lvl_messages = get_data('notifications.lvl_up', lang)
 
         while xp > 0:
-            max_xp = max_lvl_xp(user['lvl'])
+            max_xp = max_lvl_xp(user.lvl)
             if max_xp <= xp:
                 xp -= max_xp
                 lvl += 1
                 if lvl >= 100: break
 
-                if str(user['lvl'] + lvl) in lvl_messages: 
-                    add_way = str(user['lvl'] + lvl)
+                if str(user.lvl + lvl) in lvl_messages: 
+                    add_way = str(user.lvl + lvl)
                 else: add_way = 'standart'
 
                 await user_notification(userid, 'lvl_up', lang, 
-                                        user_name=name,
-                                        lvl=user['lvl'] + lvl, 
+                                        user_name=user.name,
+                                        lvl=user.lvl + lvl, 
                                         add_way=add_way)
             else: break
 
         if lvl: await users.update_one({'userid': userid}, {'$inc': {'lvl': lvl}}, comment='experience_enhancement_1')
-        await users.update_one({'userid': userid}, {'$set': {'xp': xp}}, comment='experience_enhancement_2')
+        await users.update_one({'userid': userid}, 
+                               {'$set': {'xp': xp}}, comment='experience_enhancement_2')
 
         # Выдача награда за реферал
-        if user['lvl'] < 5 and user['lvl'] + lvl >= GS['referal']['award_lvl']:
+        if user.lvl < 5 and user.lvl + lvl >= GS['referal']['award_lvl']:
             sub = await get_user_sub(userid)
             if sub:
                 code = sub['code']
@@ -434,8 +450,8 @@ async def experience_enhancement(userid: int, xp: int):
 
                     await AddItemToUser(code_owner, random_item)
                     await user_notification(code_owner, 'referal_award', lang, 
-                                        user_name=name,
-                                        lvl=user['lvl'] + lvl, item_name=item_name)
+                                        user_name=user.name,
+                                        lvl=user.lvl + lvl, item_name=item_name)
 
 async def user_info(userid: int, lang: str, secret: bool = False, 
                     name: str | None = None):
@@ -458,16 +474,10 @@ async def user_info(userid: int, lang: str, secret: bool = False,
     dinos = await get_dinos_and_owners(userid)
     eggs = await get_eggs(userid)
 
-    if name is None:
-        try:
-            chat_user = await bot.get_chat_member(userid, userid)
-            name = user_name(chat_user.user)
-        except: name = 'NoName'
-    else:
-        m_name = escape_markdown(name)
-
+    if name is None or name == '': name = user.name
+    if not name: name = await user_name(userid)
     return_text += t('user_profile.user', lang,
-                     name = m_name,
+                     name = name,
                      userid = userid,
                      premium_status = premium
                      )
@@ -527,7 +537,21 @@ async def user_info(userid: int, lang: str, secret: bool = False,
                         items_col=count
                         )
 
-    return return_text
+    return return_text, await user.get_avatar()
+
+async def user_name(userid: int):
+    user = await users.find_one({'userid': userid}, comment='user_name')
+    if user: 
+        if user['name'] or user['name'] != '':
+            return user['name']
+        else:
+            chat_user = await bot.get_chat_member(userid, userid)
+            if chat_user:
+                name = chat_user.user.first_name
+                await users.update_one({'userid': userid}, 
+                                       {'$set': {'name': name}}, comment='set_user_name_1')
+                return name
+    return 'NoName_NoUser'
 
 async def premium(userid: int):
     res = await subscriptions.find_one({'userid': userid}, comment='premium_res')

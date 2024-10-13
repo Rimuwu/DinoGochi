@@ -6,8 +6,7 @@ from bot.exec import main_router, bot
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.items.accessory import check_accessory
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
-                                     near_key_number, seconds_to_str,
-                                     user_name)
+                                     near_key_number, seconds_to_str)
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur import Dino, Egg, check_status, dead_check
 from bot.modules.managment.events import get_event
@@ -22,6 +21,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
                                       ChooseOptionState)
+from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, premium
 from aiogram import types
 from aiogram.types import Message
@@ -311,7 +311,9 @@ async def dino_menu(call: types.CallbackQuery, state):
                 # Октазать от совместного динозавра
                 text = t('my_joint.confirm', lang)
                 await bot.send_message(userid, text, parse_mode='Markdown', reply_markup=confirm_markup(lang))
-                await ChooseConfirmState(cnacel_myjoint, state, userid, chatid, lang, transmitted_data={'dinoid': dino['_id'], 'user': call.from_user})
+                await ChooseConfirmState(cnacel_myjoint, state, userid, chatid, lang, transmitted_data={
+                    'dinoid': dino['_id'], 
+                    'user': call.from_user})
 
             elif action == 'kindergarten':
                 if not await premium(userid): 
@@ -370,9 +372,13 @@ async def cnacel_joint(_:bool, transmitted_data:dict):
     lang = transmitted_data['lang']
     dinoid = transmitted_data['dinoid']
 
-    await dino_owners.delete_one({'dino_id': dinoid, 'owner_id': userid}, comment='cnacel_joint')
-    await bot.send_message(userid, '✅', reply_markup= await m(userid, 'last_menu', lang))
-    await users.update_one({"userid": userid}, {"$set": {"settings.last_dino": None}}, comment='cnacel_joint')
+    await dino_owners.delete_one({'dino_id': dinoid, 'owner_id': userid}, 
+                                 comment='cnacel_joint')
+    await bot.send_message(userid, '✅', 
+                           reply_markup = await m(userid, 'last_menu', lang))
+    await users.update_one({"userid": userid}, 
+                           {"$set": {"settings.last_dino": None}}, 
+                           comment='cnacel_joint')
 
 async def cnacel_myjoint(_:bool, transmitted_data:dict):
     user = transmitted_data['user']
@@ -382,13 +388,20 @@ async def cnacel_myjoint(_:bool, transmitted_data:dict):
 
     res = await dino_owners.find_one({'dino_id': dinoid, 'type': 'add_owner'}, comment='cnacel_myjoint')
     if res: 
-        await dino_owners.delete_one({'_id': res['_id']}, comment='cnacel_myjoint')
+        await dino_owners.delete_one({'_id': res['_id']}, 
+                                     comment='cnacel_myjoint')
+        myname_for_friend = await get_friend_data(res['owner_id'], userid)
+        myname_for_friend = myname_for_friend['name']
 
-        text = t("my_joint.m_for_add_owner", lang, username=user_name(user))
-        await bot.send_message(res['owner_id'], text, reply_markup= await m(userid, 'last_menu', lang))
-        await users.update_one({"userid": userid}, {"$set": {"settings.last_dino": None}}, comment='cnacel_myjoint')
+        text = t("my_joint.m_for_add_owner", lang, username=myname_for_friend)
+        await bot.send_message(res['owner_id'], text, 
+                               reply_markup = await m(userid, 'last_menu', lang))
+        await users.update_one({"userid": userid}, 
+                               {"$set": {"settings.last_dino": None}}, 
+                               comment='cnacel_myjoint')
 
-    await bot.send_message(userid, '✅', reply_markup= await m(userid, 'last_menu', lang))
+    await bot.send_message(userid, '✅', 
+                           reply_markup = await m(userid, 'last_menu', lang))
 
 async def remove_accessory(option: list, transmitted_data:dict):
     userid = transmitted_data['userid']

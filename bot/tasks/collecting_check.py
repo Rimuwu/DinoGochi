@@ -24,10 +24,7 @@ ENERGY_DOWN = 0.1 * REPEAT_MINUTS
 LVL_CHANCE = 0.125 * REPEAT_MINUTS
 
 async def stop_collect(coll_data):
-    try:
-        chat_user = await bot.get_chat_member(coll_data['sended'], coll_data['sended'])
-        lang = await get_lang(chat_user.user.id)
-    except: lang = 'en'
+    lang = await get_lang(coll_data['sended'])
 
     items_list = []
     for key, count in coll_data['items'].items():

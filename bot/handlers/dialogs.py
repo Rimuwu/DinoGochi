@@ -1,6 +1,5 @@
 
 from bot.exec import main_router, bot
-from bot.modules.data_format import user_name
 from bot.modules.decorators import HDCallback
 from bot.modules.dialogs import dialogs
 from bot.modules.localization import get_lang
@@ -16,6 +15,8 @@ from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
 
+from bot.modules.user.user import user_name
+
 @HDCallback
 @main_router.callback_query(F.data.startswith('dialog'),   
                             IsAuthorizedUser())
@@ -27,7 +28,7 @@ async def dialog(callback: CallbackQuery):
     chatid = callback.message.chat.id
     message = callback.message
 
-    name = user_name(callback.from_user)
+    name = await user_name(callback.from_user.id)
     if message:
         status, text, markup = await dialogs[dialog_key](userid, name, lang, dialog_action)
         if status:

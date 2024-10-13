@@ -31,6 +31,7 @@ async def start_func(func, arg, transmitted_data: dict):
         state = transmitted_data['state']
         res = await func(arg, transmitted_data=transmitted_data, state=state)
     except TypeError as e:
+        log(f'start_func error {e}', lvl=3)
         if 'unexpected keyword argument' in str(e):
             res = await func(arg, transmitted_data=transmitted_data)
         else:

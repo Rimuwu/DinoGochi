@@ -34,7 +34,8 @@ class PassWorker(BaseMiddleware):
                                         comment='post_process_user')
             if user:
                 await users.update_one({'userid': user_id}, 
-                                    {'$set': {'last_message_time': message.date}}, 
+                                    {'$set': {'last_message_time': 
+                                        int(message.date.timestamp())}}, 
                                     comment='post_process_1')
 
                 daily = await daily_data.find_one({'owner_id': user_id}, comment='post_process_check')

@@ -8,7 +8,7 @@ from bot.const import GAME_SETTINGS as GS
 from bot.exec import main_router, bot
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.user.advert import auto_ads
-from bot.modules.data_format import list_to_inline, seconds_to_str, user_name
+from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.images import async_open
 from bot.modules.items.item import AddItemToUser, counts_items
@@ -19,7 +19,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.managment.statistic import get_now_statistic
 from bot.modules.user.friends import get_friend_data
-from bot.modules.user.user import User, take_coins
+from bot.modules.user.user import User, take_coins, user_name
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
 from bot.filters.translated_text import StartWith, Text
@@ -186,7 +186,7 @@ async def tavern_menu(message: Message):
             'userid': userid,
             'time_in': int(time()),
             'lang': lang,
-            'name': user_name(message.from_user, False)
+            'name': await user_name(message.from_user.id)
         }, comment='tavern_menu')
         friends_in_tavern = []
         for i in friends:
@@ -299,7 +299,7 @@ async def buy_ale(callback: CallbackQuery):
                                             reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
         await bot.answer_callback_query(callback.id, text, True)
 
-        text = t('buy_ale.friend', lang, username=user_name(callback.from_user))
+        text = t('buy_ale.friend', lang, username=await user_name(userid))
         await bot.send_message(friend, text)
     else:
         text = t('buy_ale.no_coins', lang)

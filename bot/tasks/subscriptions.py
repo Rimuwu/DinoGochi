@@ -16,11 +16,7 @@ async def subscription_notification():
                     'end_notif': False}, comment='subscription_notification_data')
 
     for sub in data:
-        try:
-            chat_user = await bot.get_chat_member(sub['userid'], sub['userid'])
-            lang = await get_lang(chat_user.user.id)
-        except: lang = 'en'
-
+        lang = await get_lang(sub['userid'])
         await user_notification(sub['userid'], 'donation', lang, 
                                 end_text=seconds_to_str(int(time() - sub['sub_end']), lang),
                                 add_way='subscription_end_day'
@@ -35,10 +31,7 @@ async def subscription_check():
     for sub in data:
         await subscriptions.delete_one({'_id': sub['_id']}, comment='subscription_check_1')
 
-        try:
-            chat_user = await bot.get_chat_member(sub['userid'], sub['userid'])
-            lang = await get_lang(chat_user.user.id)
-        except: lang = 'en'
+        lang = await get_lang(sub['userid'])
         await user_notification(sub['userid'], 'donation', lang, 
                                 add_way='subscription_end'
                                 )

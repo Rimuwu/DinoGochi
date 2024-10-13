@@ -31,7 +31,9 @@
                 "my_name": "🎠 Telepon saya",
                 "custom_profile": "🌟 Latar belakang dinosaurus",
                 "lang": "👅 Bahasa",
-                "dino_talk": "✉ Berbicara dengan Dinosaurus"
+                "dino_talk": "✉ Berbicara dengan Dinosaurus",
+                "nick": "🎃 Nama panggilan",
+                "reset_avatar": "🎨 Setel Ulang Avatar"
             },
             "profile": {
                 "information": "Informasi 📜",
@@ -1633,7 +1635,8 @@
                 "take_coins": "🪔 Transfer Koin",
                 "joint_dinosaur": "🦕 Bagikan dinosaurus",
                 "new_year": "🎁 Kirim hadiah",
-                "change_name": "👥 Ubah Nama"
+                "change_name": "👥 Ubah Nama",
+                "change_friend_name": "👥 Ubah Nama"
             }
         },
         "requests": {
@@ -4619,6 +4622,12 @@
             "info": "❗ Pilih apakah akan menonaktifkan self-talk",
             "True": "🔧 Dinosaurus tidak akan lagi menulis kepada Anda sendiri!",
             "False": "🔧 Dinosaurus sekarang dapat menulis kepada Anda sendiri!"
-        }
+        },
+        "edit_friend_name": "🎨 Masukkan nama baru untuk {name} atau \"{none}\" untuk mengatur ulang.",
+        "edit_nick": "🎨 Masukkan nama panggilan baru yang akan terlihat oleh semua orang di bot ->\n🪙 Biaya: 7500",
+        "null_nick": "🎨 Nama panggilan tidak bisa kosong! (Semua karakter kompleks akan diganti dengan yang kosong)",
+        "no_coins": "🪙 Tidak cukup koin!",
+        "new_nick": "❤ Nama panggilan baru Anda: {nick}",
+        "reset_avatar": "📜 Avatar diatur ulang, itu akan diperbarui dengan foto terakhir di profil Anda."
     }
 }

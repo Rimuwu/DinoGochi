@@ -6,7 +6,7 @@ from typing import Union
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.handlers import settings
-from bot.modules.data_format import list_to_inline, seconds_to_str, user_name
+from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import incubation_egg
 from bot.modules.inventory_tools import (InventoryStates, back_button,
@@ -26,7 +26,7 @@ from bot.modules.logs import log
 from bot.modules.markup import count_markup, markups_menu
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseIntState
-from bot.modules.user.user import User, take_coins
+from bot.modules.user.user import User, take_coins, user_name
 from fuzzywuzzy import fuzz
 from aiogram.types import CallbackQuery, Message
 
@@ -195,7 +195,7 @@ async def item_callback(call: CallbackQuery):
             await delete_item_action(userid, chatid, item, lang)
         elif call_data[1] == 'exchange':
             await exchange_item(userid, chatid, item, lang, 
-                                user_name(call.from_user))
+                                await user_name(userid))
         elif call_data[1] == 'egg':
             ret_data = await CheckItemFromUser(userid, item)
             if 'abilities' in item:

@@ -5,7 +5,7 @@ from time import time
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
-from bot.modules.data_format import list_to_inline, str_to_seconds
+from bot.modules.data_format import list_to_inline, str_to_seconds, user_name_from_telegram
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log, latest_errors
@@ -17,7 +17,7 @@ from bot.modules.managment.promo import (create_promo_start, get_promo_pages, pr
 from bot.modules.states_tools import (ChooseConfirmState, ChoosePagesState,
                                       ChooseStringState)
 from bot.modules.managment.tracking import creat_track, get_track_pages, track_info
-from bot.modules.user.user import award_premium, user_name
+from bot.modules.user.user import award_premium
 from aiogram.types import CallbackQuery, Message
 
 from bot.filters.translated_text import StartWith, Text
@@ -355,7 +355,7 @@ async def get_username(message):
     except: user = None
 
     if user:
-        await bot.send_message(message.from_user.id, user_name(user))
+        await bot.send_message(message.from_user.id, user_name_from_telegram(user))
         await bot.send_message(message.from_user.id, str(user).replace("'", ''))
     else:
         await bot.send_message(message.from_user.id, "nouser")

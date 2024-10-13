@@ -112,7 +112,7 @@ def list_to_inline(buttons: list, row_width: int = 3) -> InlineKeyboardMarkup:
 
     return inline.as_markup(row_width=row_width)
 
-def user_name(user: User, username: bool = True) -> str:
+def user_name_from_telegram(user: User, username: bool = True) -> str:
     """ Возвращает имя / ник, в зависимости от того, что есть
     """
     if user.username is not None and username:

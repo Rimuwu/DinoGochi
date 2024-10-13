@@ -208,10 +208,7 @@ async def user_notification(user_id: int, not_type: str,
     add_way = '.'+kwargs.get('add_way', '')
 
     if not lang:
-        try:
-            chat_user = await bot.get_chat_member(user_id, user_id)
-            lang = await get_lang(chat_user.user.id)
-        except: lang = 'en'
+        lang = await get_lang(user_id)
 
     if not_type in standart_notification:
         text = t(f'notifications.{not_type}{add_way}', lang, **kwargs)

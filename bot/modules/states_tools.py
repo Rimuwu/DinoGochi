@@ -367,9 +367,8 @@ async def friend_handler(friend: dict, transmitted_data: dict):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
     friend_id = friend['userid']
-    avatar = friend['avatar']
 
-    text = await user_info(friend_id, lang, name = friend['name'])
+    text, avatar = await user_info(friend_id, lang)
     buttons = {}
 
     for key, text_b in get_data('friend_list.buttons', lang).items():
@@ -401,7 +400,6 @@ async def start_friend_menu(function, state: FSMContext,
         if friend_res:
             options[friend_res['name']] = {
                 'userid': friend_id, 
-                'avatar': friend_res['avatar'], 
                 'name': friend_res['name']}
 
     await ChoosePagesState(

@@ -7,7 +7,7 @@ from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.handlers.referal_menu import check_code
 from bot.handlers.states import cancel
-from bot.modules.data_format import list_to_keyboard, seconds_to_str, user_name
+from bot.modules.data_format import list_to_keyboard, seconds_to_str, user_name_from_telegram
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur import incubation_egg
 from bot.modules.images import async_open, create_eggs_image
@@ -105,7 +105,7 @@ async def start_game_message(message: types.Message):
     langue_code = message.from_user.language_code
     if not langue_code: langue_code = 'en'
 
-    username = user_name(message.from_user)
+    username = user_name_from_telegram(message.from_user)
 
     content = str(message.text).split()
     add_referal = False
@@ -137,7 +137,7 @@ async def start_game_message(message: types.Message):
                             F.data.startswith('start_egg'), IsPrivateChat())
 async def egg_answer_callback(callback: types.CallbackQuery):
     egg_id = int(callback.data.split()[1])
-    lang = callback.from_user.language_code
+    lang = callback.from_user.language_code or 'en'
     userid = callback.from_user.id
 
     # Сообщение
@@ -149,7 +149,12 @@ async def egg_answer_callback(callback: types.CallbackQuery):
     await bot.send_message(callback.message.chat.id, send_text, parse_mode='Markdown', reply_markup= await m(callback.from_user.id, language_code=lang))
 
     # Создание юзера и добавляем динозавра в инкубацию
-    await insert_user(callback.from_user.id, lang)
+    photos = await bot.get_user_profile_photos(userid, limit=1)
+    if photos.photos:
+        photo_id = photos.photos[0][0].file_id
+    else: photo_id = ''
+    await insert_user(callback.from_user.id, lang, callback.from_user.first_name, photo_id)
+
     await incubation_egg(egg_id, callback.from_user.id, quality=GAME_SETTINGS['first_egg_rarity'])
 
     if len(callback.data.split()) > 2:

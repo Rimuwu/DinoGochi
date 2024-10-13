@@ -1,11 +1,13 @@
 from ast import Is
+from curses.ascii import FS
 import re
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
-from bot.modules.data_format import list_to_inline
+from bot.modules.data_format import escape_markdown, list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino, create_dino_connection
+from bot.modules.logs import log
 from bot.modules.managment.events import get_event
 from bot.modules.user.friends import get_frineds, insert_friend_connect, get_friend_data
 from bot.modules.items.item import AddItemToUser, get_name
@@ -16,19 +18,13 @@ from bot.modules.notifications import user_notification
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import (ChooseConfirmState, ChooseCustomState,
                                       ChooseIntState, ChoosePagesState,
-                                      ChooseStepState, start_friend_menu)
+                                      ChooseStepState, ChooseStringState, start_friend_menu)
 from bot.modules.user.user import take_coins, user_name
 from aiogram.types import CallbackQuery, Message
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
+from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
-from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command
 
 users = DBconstructor(mongo_client.user.users)
 friends = DBconstructor(mongo_client.user.friends)
@@ -81,7 +77,7 @@ async def friend_add_handler(message: Message, transmitted_data: dict):
 
     if not status: await bot.send_message(chatid, text)
     return status, friendid
-    
+
 async def add_friend_end(friendid: int, transmitted_data: dict):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
@@ -100,7 +96,7 @@ async def add_friend_end(friendid: int, transmitted_data: dict):
             text = t('add_friend.correct', lang)
             await bot.send_message(chatid, text, 
                                 reply_markup= await m(userid, 'last_menu', lang))
-            
+
             await user_notification(friendid, 'send_request', lang, user_name=user_name)
         else:
             text = t('add_friend.already', lang)
@@ -115,7 +111,9 @@ async def add_friend_callback(call: CallbackQuery, state):
     lang = await get_lang(call.from_user.id)
 
     code = call.data.split()[1]
-    transmitted_data = {'code': code, 'user_name': user_name(call.from_user)}
+    transmitted_data = {'code': code, 
+                        'user_name': await user_name(user_id), 
+                        'chatid': chatid}
 
     text = t(f'add_friend.var_messages.{code}', lang)
     await bot.send_message(chatid, text, reply_markup=cancel_markup(lang))
@@ -329,7 +327,7 @@ async def joint_dinosaur(call: CallbackQuery, state):
         }
     ]
 
-    await ChooseStepState(joint, state, userid, chatid, lang, steps, {'friendid': int(data[1]), 'username': user_name(call.from_user)})
+    await ChooseStepState(joint, state, userid, chatid, lang, steps, {'friendid': int(data[1]), 'username': await user_name(userid)})
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('take_dino'), IsPrivateChat())
@@ -367,7 +365,7 @@ async def take_dino(call: CallbackQuery):
                 await bot.send_message(chatid, text)
 
                 # Сообщение для владульца дино
-                text_to_owner = t('take_dino.message_to_owner', lang, dinoname=dino['name'], username=user_name(call.from_user))
+                text_to_owner = t('take_dino.message_to_owner', lang, dinoname=dino['name'], username=await user_name(userid))
                 if owner: await bot.send_message(owner, text_to_owner)
 
 @HDCallback
@@ -385,7 +383,9 @@ async def take_money(call: CallbackQuery, state):
         max_int = user['coins']
         if max_int > 0:
             await ChooseIntState(transfer_coins, state, userid, chatid, lang, 
-                                max_int=max_int, transmitted_data={'friendid': friendid, 'username': user_name(call.from_user)})
+                                max_int=max_int, transmitted_data={
+                                    'friendid': friendid, 
+                                    'username': await user_name(userid)})
 
             text = t('take_money.col_coins', lang, max_int=max_int)
             await bot.send_message(chatid, text, reply_markup=
@@ -410,7 +410,9 @@ async def take_super_coins(call: CallbackQuery, state):
         if max_int > 0:
             await ChooseIntState(transfer_super_coins, state, userid, 
                                  chatid, lang, 
-                                max_int=max_int, transmitted_data={'friendid': friendid, 'username': user_name(call.from_user)})
+                                max_int=max_int, transmitted_data={
+                                    'friendid': friendid, 
+                                    'username': await user_name(userid)})
 
             text = t('take_coins.col_coins', lang, max_int=max_int)
             await bot.send_message(chatid, text, reply_markup=
@@ -482,7 +484,7 @@ async def send_request(call: CallbackQuery):
                 text = t('add_friend.correct', lang)
                 await bot.answer_callback_query(call.id, text)
                 await user_notification(friendid, 'send_request', 
-                                        user_name=user_name(call.from_user))
+                                        user_name=await user_name(userid))
             else:
                 text = t('add_friend.already', lang)
                 await bot.answer_callback_query(call.id, text)
@@ -515,8 +517,9 @@ async def new_year(call: CallbackQuery):
             await bot.send_message(friendid, text)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('change_name'), IsPrivateChat())
+@main_router.callback_query(F.data.startswith('change_friend_name'), IsPrivateChat())
 async def change_name(call: CallbackQuery, state):
+
     lang = await get_lang(call.from_user.id)
     chatid = call.message.chat.id
     userid = call.from_user.id
@@ -526,4 +529,48 @@ async def change_name(call: CallbackQuery, state):
     user = await users.find_one({'userid': userid}, comment='change_name')
 
     if user:
-        ...
+        text = t('edit_friend_name', lang, none='none', name=await user_name(friendid))
+        await bot.send_message(chatid, text, reply_markup=cancel_markup(lang))
+        await ChooseStringState(edit_name, state, userid, chatid, lang, max_len=30, transmitted_data={
+            'friendid': friendid
+        })
+
+
+async def edit_name(new_name: str, transmitted_data: dict):
+    log(f'edit_name {new_name}')
+    lang = transmitted_data['lang']
+    chatid = transmitted_data['chatid']
+    userid = transmitted_data['userid']
+    friendid = transmitted_data['friendid']
+
+    for i_key, f_key in [['friendid', 'userid'], ['userid', 'friendid']]:
+            res = await friends.find_one({
+                i_key: friendid,
+                f_key: userid
+            }, comment='get_friend_data_res')
+
+            if res: break
+    log(f'res {res}')
+    if res:
+        if friendid == res['userid']: data_path = 'user'
+        else: data_path = 'friend'
+
+        if new_name == 'none':
+                await friends.update_one({'_id': res['_id']}, 
+                                        {'$set': {f'{data_path}_data.name': ''}}, 
+                                        comment='edit_name')
+                await bot.send_message(chatid, '✅', 
+                                    reply_markup=await m(userid, 'last_menu', lang))
+                return
+
+        new_name = escape_markdown(new_name)
+        if new_name:
+            await friends.update_one({'_id': res['_id']}, 
+                                        {'$set': {f'{data_path}_data.name': new_name}}, 
+                                        comment='edit_name')
+            await bot.send_message(chatid, '✅', 
+                                    reply_markup=await m(userid, 'last_menu', lang))
+            return
+
+    await bot.send_message(chatid, '❌', 
+                            reply_markup=await m(userid, 'last_menu', lang))

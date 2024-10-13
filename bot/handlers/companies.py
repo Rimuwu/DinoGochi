@@ -2,7 +2,7 @@ from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.handlers.start import start_game
 from bot.modules.companies import create_company, end_company, generate_message, info
-from bot.modules.data_format import seconds_to_str, str_to_seconds, user_name
+from bot.modules.data_format import seconds_to_str, str_to_seconds
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_all_locales, get_lang, t

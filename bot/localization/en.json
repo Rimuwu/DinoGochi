@@ -31,7 +31,9 @@
                 "my_name": "🎠 Call Me",
                 "custom_profile": "🌟 Dinosaur background",
                 "lang": "👅 Tongue",
-                "dino_talk": "✉ Talking to the Dinosaur"
+                "dino_talk": "✉ Talking to the Dinosaur",
+                "nick": "🎃 Nick",
+                "reset_avatar": "🎨 Reset Avatar"
             },
             "profile": {
                 "information": "📜 Information",
@@ -1633,7 +1635,8 @@
                 "take_coins": "🪔 Transfer Coins",
                 "joint_dinosaur": "🦕 Share a dinosaur",
                 "new_year": "🎁 Send a Gift",
-                "change_name": "👥 Change Name"
+                "change_name": "👥 Change Name",
+                "change_friend_name": "👥 Change Name"
             }
         },
         "requests": {
@@ -4619,6 +4622,12 @@
             "info": "❗ Choose whether to disable self-talk",
             "True": "🔧 The dinosaur will no longer write to you on its own!",
             "False": "🔧 Dinosaur can now write to you on his own!"
-        }
+        },
+        "edit_friend_name": "🎨 Enter a new name for {name} or \"{none}\" to reset.",
+        "edit_nick": "🎨 Enter a new nickname that will be visible to everyone in the bot ->\n🪙 Cost: 7500",
+        "null_nick": "🎨 A nickname can't be empty! (All complex characters will be replaced with blank ones)",
+        "no_coins": "🪙 Not enough coins!",
+        "new_nick": "❤ Your new nickname: {nick}",
+        "reset_avatar": "📜 Avatar is reset, it will be updated with the last photo in your profile."
     }
 }

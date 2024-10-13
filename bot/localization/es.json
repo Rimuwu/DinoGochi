@@ -31,7 +31,9 @@
                 "my_name": "🎠 Llámame",
                 "custom_profile": "🌟 Fondo de dinosaurio",
                 "lang": "👅 Idioma",
-                "dino_talk": "✉ Hablando con el dinosaurio"
+                "dino_talk": "✉ Hablando con el dinosaurio",
+                "nick": "🎃 Nick",
+                "reset_avatar": "🎨 Restablecer avatar"
             },
             "profile": {
                 "information": "📜 Información",
@@ -1633,7 +1635,8 @@
                 "take_coins": "🪔 Transferir monedas",
                 "joint_dinosaur": "🦕 Compartir un dinosaurio",
                 "new_year": "🎁 Enviar un regalo",
-                "change_name": "👥 Cambiar nombre"
+                "change_name": "👥 Cambiar nombre",
+                "change_friend_name": "👥 Cambiar nombre"
             }
         },
         "requests": {
@@ -4619,6 +4622,12 @@
             "info": "❗ Elige si deshabilitar el diálogo interno",
             "True": "🔧 ¡El dinosaurio ya no te escribirá solo!",
             "False": "🔧 ¡El dinosaurio ahora puede escribirte por su cuenta!"
-        }
+        },
+        "edit_friend_name": "🎨 Ingrese un nuevo nombre para {name} o \"{none}\" para restablecer.",
+        "edit_nick": "🎨 Ingrese un nuevo apodo que será visible para todos en el bot ->\n🪙 Costo: 7500",
+        "null_nick": "🎨 ¡Un apodo no puede estar vacío! (Todos los caracteres complejos serán reemplazados por otros en blanco)",
+        "no_coins": "🪙 ¡No hay suficientes monedas!",
+        "new_nick": "❤ Tu nuevo apodo: {nick}",
+        "reset_avatar": "📜 El avatar se restablece, se actualizará con la última foto de tu perfil."
     }
 }

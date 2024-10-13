@@ -2,27 +2,22 @@ from time import time
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
-from bot.modules.data_format import (escape_markdown, list_to_inline,
-                                     seconds_to_str, user_name)
+from bot.modules.data_format import (list_to_inline,
+                                     seconds_to_str)
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.user.user import premium, user_info
+from bot.modules.user.user import premium, user_info, user_name
 from aiogram.types import CallbackQuery, Message
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
+from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import Command
 
-from aiogram.fsm.context import FSMContext
-
+users = DBconstructor(mongo_client.user.users)
 management = DBconstructor(mongo_client.other.management)
 
 @HDMessage
@@ -34,13 +29,10 @@ async def infouser(message: Message):
     lang = await get_lang(message.from_user.id)
 
     if message.from_user:
-        text = await user_info(userid, lang, 
-                               name=user_name(message.from_user))
+        text, avatar = await user_info(userid, lang)
 
-        photos = await bot.get_user_profile_photos(userid, limit=1)
-        if photos.photos:
-            photo_id = photos.photos[0][0].file_id
-            await bot.send_photo(chatid, photo_id, caption=text, parse_mode='Markdown')
+        if avatar:
+            await bot.send_photo(chatid, avatar, caption=text, parse_mode='Markdown')
         else:
             await bot.send_message(message.chat.id, text, parse_mode='Markdown')
 
@@ -52,13 +44,10 @@ async def infouser_com(message: Message):
     lang = await get_lang(message.from_user.id)
 
     if message.from_user:
-        text = await user_info(userid, lang, 
-                               name=user_name(message.from_user))
+        text, avatar = await user_info(userid, lang)
 
-        photos = await bot.get_user_profile_photos(userid, limit=1)
-        if photos.photos:
-            photo_id = photos.photos[0][0].file_id 
-            await bot.send_photo(chatid, photo_id, caption=text, parse_mode='Markdown')
+        if avatar:
+            await bot.send_photo(chatid, avatar, caption=text, parse_mode='Markdown')
         else:
             await bot.send_message(message.chat.id, text, parse_mode='Markdown')
 
@@ -120,11 +109,11 @@ async def rayting_call(callback: CallbackQuery):
             sign, add_text = '*├*', ''
             if user == top_10[-1]: sign = '*└*'
 
-            try:
-                chat_user = await bot.get_chat_member(user['userid'], 
-                                                      user['userid'])
-                name = escape_markdown(user_name(chat_user.user, False))
-            except: name = str(user['userid'])
+            rayt_user = await users.find_one({'userid': user['userid']}, 
+                                             comment='rayt_user')
+            if rayt_user: 
+                name = await user_name(user['userid'])
+                if name == 'NoName_NoUser': name = str(user['userid'])
 
             n = rayt_data['ids'].index(user['userid']) + 1
             if n == 1: n = '🥇'

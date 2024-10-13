@@ -4,7 +4,7 @@ from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.add_product.add_product import prepare_data_option
 from bot.modules.data_format import (escape_markdown, list_to_inline,
-                                     list_to_keyboard, user_name)
+                                     list_to_keyboard)
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.items.item import item_info
@@ -224,7 +224,7 @@ async def product_info(call: CallbackQuery):
             elif call_type == 'buy' and product['owner_id'] != userid:
                 if product['owner_id'] != userid:
                     await buy_item(userid, chatid, lang, product, 
-                                   user_name(call.from_user), call.message.message_id)
+                                   await user_name(userid), call.message.message_id)
 
             elif call_type == 'info':
                 text, markup = await product_ui(lang, product['_id'], 
@@ -265,11 +265,10 @@ async def seller(call: CallbackQuery, state):
 
         seller = await sellers.find_one({'owner_id': owner_id}, comment='seller_seller')
         if seller:
-            try:
-                chat_user = await bot.get_chat_member(seller['owner_id'], 
-                                                      seller['owner_id'])
-                name = user_name(chat_user.user)
-            except: name = '-'
+            seller_user = await users.find_one({'_id': owner_id}, comment='seller_user')
+            if seller_user: 
+                name = seller_user['name']
+            else: name = 'NoName'
 
             text, markup, image = await seller_ui(owner_id, lang, my_status, name)
             try:
