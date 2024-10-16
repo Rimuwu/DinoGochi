@@ -68,7 +68,7 @@ async def main_support_menu(lang: str):
             callback_data=name
         ) for key, name in buttons.items()], width=1)
 
-    return image, text, markup_inline.as_markup()
+    return image, text, markup_inline.as_markup(resize_keyboard=True)
 
 @HDMessage
 @main_router.message(Text('commands_name.about.support'), 
@@ -109,7 +109,7 @@ async def faq(message: Message):
             callback_data=key
         ) for key, name in buttons.items()], width=2)
 
-    await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline.as_markup())
+    await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline.as_markup(resize_keyboard=True))
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('faq'))
@@ -201,10 +201,10 @@ async def support_buttons(call: CallbackQuery, state):
             await send_inv(user_id, product_key, count, lang)
 
         if call.message.content_type == 'text':
-            await send_SmartPhoto(chatid, image_way, text, 'Markdown', markup_inline.as_markup())
+            await send_SmartPhoto(chatid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
         else:
             try:
-                await edit_SmartPhoto(chatid, messageid, image_way, text, 'Markdown', markup_inline.as_markup())
+                await edit_SmartPhoto(chatid, messageid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
             except Exception as e:
                 log(f'edit_SmartPhoto error: {e}', 2) 
 

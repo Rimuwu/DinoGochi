@@ -24,6 +24,7 @@ from bot.modules.markup import (confirm_markup, count_markup,
 from bot.modules.dinosaur.mood import add_mood
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
+from bot.modules.get_state import get_state
 from bot.modules.user.user import User, get_dead_dinos, max_eat, count_inventory_items, award_premium
 from typing import Union
 
@@ -91,8 +92,9 @@ async def exchange_item(userid: int, chatid: int, item: dict,
              }
         ]
 
+        state = await get_state(userid, chatid)
         transmitted_data = {'item': item, 'username': username}
-        await ChooseStepState(exchange, userid, 
+        await ChooseStepState(exchange, state, userid, 
                                       chatid, lang, steps, transmitted_data)
 
 async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1, 
@@ -399,6 +401,7 @@ async def eat_adapter(return_data: dict, transmitted_data: dict):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     max_count = transmitted_data['max_count']
+    state = transmitted_data['state']
 
     item = transmitted_data['items_data']
     item_data = get_data(item['item_id'])
@@ -416,7 +419,7 @@ async def eat_adapter(return_data: dict, transmitted_data: dict):
                         'reply_markup': feed_count_markup(
                             dino.stats['eat'], int(item_data['act'] * percent), max_count, item_name, lang)}}
             ]
-    await ChooseStepState(pre_adapter, userid, chatid, lang, steps, 
+    await ChooseStepState(pre_adapter, state, userid, chatid, lang, steps, 
                                 transmitted_data=transmitted_data)
 
 def book_page(book_id: str, page: int, lang: str):
@@ -562,7 +565,9 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                         'text': t('css.confirm', lang, name=item_name), 'reply_markup': confirm_markup(lang)
                         }
                     })
-            await ChooseStepState(adapter_function, userid, chatid, 
+
+            state = await get_state(userid, chatid)
+            await ChooseStepState(adapter_function, state, userid, chatid, 
                                   lang, steps, 
                                 transmitted_data=transmitted_data)
 
@@ -615,7 +620,9 @@ async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
                     'text': t('css.delete', lang, name=item_name), 'reply_markup': confirm_markup(lang)
                     }
                 })
-        await ChooseStepState(delete_action, userid, chatid, lang, steps, 
+
+        state = await get_state(userid, chatid)
+        await ChooseStepState(delete_action, state, userid, chatid, lang, steps, 
                             transmitted_data=transmitted_data)
     else:
         await bot.send_message(chatid, t('delete_action.error', lang), 

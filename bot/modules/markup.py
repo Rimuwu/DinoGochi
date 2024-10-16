@@ -491,4 +491,4 @@ def down_menu(markup: ReplyKeyboardMarkup,
     else: 
         markup_n.row(KeyboardButton(text=t('buttons_name.cancel', lang)))
 
-    return markup_n.as_markup()
+    return markup_n.as_markup(resize_keyboard=True)

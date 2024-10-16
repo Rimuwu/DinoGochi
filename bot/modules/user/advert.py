@@ -5,12 +5,14 @@ from bot.modules.companies import generate_message, nextinqueue, priority_and_ti
 from bot.modules.logs import log
 from bot.dbmanager import mongo_client
 import json
-from bot.exec import main_router, bot
+from bot.exec import bot
 from bot.modules.localization import t, get_lang
 from time import time as time_now
 from datetime import datetime, timezone
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.get_state import get_state
+
 users = DBconstructor(mongo_client.user.users)
 ads = DBconstructor(mongo_client.user.ads)
 
@@ -114,7 +116,7 @@ async def auto_ads(message, only_parthner: bool = False):
                 if comp_id and delta.days >= 1:
                     priory, ign_timeout = await priority_and_timeout(comp_id)
                     if ign_timeout or lim:
-                        state = await bot.get_state(user_id, message.chat.id)
+                        state = await get_state(user_id, message.chat.id)
                         if not state:
                             await generate_message(user_id, comp_id, lang)
 

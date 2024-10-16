@@ -84,7 +84,7 @@ async def start_game(message: types.Message, code: str = '', code_type: str = ''
                             url=GAME_SETTINGS['bot_forum']))
 
         await bot.send_message(message.chat.id, text, parse_mode='html', 
-                            reply_markup=markup_inline.as_markup())
+                            reply_markup=markup_inline.as_markup(resize_keyboard=True))
 
         #Создание изображения
         img, id_l = await create_eggs_image()
@@ -97,7 +97,7 @@ async def start_game(message: types.Message, code: str = '', code_type: str = ''
 
         start_game_text = t('start_command.start_game', message.from_user.language_code)
         await bot.send_photo(message.chat.id, img, caption=start_game_text, 
-                            reply_markup=markup_inline.as_markup())
+                            reply_markup=markup_inline.as_markup(resize_keyboard=True))
 
 @HDMessage
 @main_router.message(Command(commands=['start']), IsAuthorizedUser(False))

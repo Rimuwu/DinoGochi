@@ -21,7 +21,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import (ChooseOptionState, ChoosePagesState,
                                       ChooseStepState)
-from bot.modules.user.user import premium
+from bot.modules.user.user import premium, user_name
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
 from bot.filters.translated_text import StartWith, Text
@@ -182,7 +182,7 @@ async def my_products(message: Message, state):
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('product_info'))
-async def product_info(call: CallbackQuery):
+async def product_info(call: CallbackQuery, state):
     call_data = call.data.split()
     chatid = call.message.chat.id
     userid = call.from_user.id
@@ -224,7 +224,7 @@ async def product_info(call: CallbackQuery):
             elif call_type == 'buy' and product['owner_id'] != userid:
                 if product['owner_id'] != userid:
                     await buy_item(userid, chatid, lang, product, 
-                                   await user_name(userid), call.message.message_id)
+                                   await user_name(userid), call.message.message_id, state)
 
             elif call_type == 'info':
                 text, markup = await product_ui(lang, product['_id'], 

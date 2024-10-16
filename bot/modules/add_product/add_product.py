@@ -19,6 +19,7 @@ async def prepare_data_option(option, transmitted_data):
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
+    state = transmitted_data['state']
 
     if option == 'items_coins': 
         ret_function = coins_stock
@@ -45,6 +46,6 @@ async def prepare_data_option(option, transmitted_data):
     }
 
     steps = circle_fun(userid, chatid, lang, items, option, False)
-    await ChooseStepState(ret_function, userid, chatid, 
+    await ChooseStepState(ret_function, state, userid, chatid, 
                           lang, steps, 
                           transmitted_data=transmitted_data)

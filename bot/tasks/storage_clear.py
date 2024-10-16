@@ -40,6 +40,6 @@ async def storage_clear():
                     log(f"[storage_clear] Error on reset data: {e}", 2)
 
 
-if __name__ != '__main__':
-    if conf.active_tasks:
-        add_task(storage_clear, 7200, 200)
+# if __name__ != '__main__':
+#     if conf.active_tasks:
+#         add_task(storage_clear, 7200, 200)

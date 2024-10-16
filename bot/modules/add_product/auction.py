@@ -2,7 +2,7 @@ from bot.dbmanager import mongo_client
 from bot.modules.add_product.general import end
 
 from bot.modules.markup import answer_markup, cancel_markup, count_markup
-from bot.modules.states_tools import (ChooseStepState, prepare_steps)
+from bot.modules.states_tools import ChooseStepState, prepare_steps
 
 from bot.modules.market.market import generate_sell_pages
 
@@ -12,7 +12,7 @@ items = DBconstructor(mongo_client.items.items)
 
 # Все функции расположены в порядке вызова
 
-def circle_data(userid, chatid, lang, items, option, prepare: bool = True):
+def circle_data(userid, chatid, lang, items, option, state, prepare: bool = True):
     """ Создай данные для запроса: предмета, количества, надо ли повторить
     """
     not_p_steps = [
@@ -37,7 +37,7 @@ def circle_data(userid, chatid, lang, items, option, prepare: bool = True):
         }
     ]
     if prepare:
-        steps = prepare_steps(not_p_steps, userid, chatid, lang)
+        steps = prepare_steps(not_p_steps, userid, chatid, lang, state)
         return steps
     else: return not_p_steps
 
@@ -78,6 +78,7 @@ def check_items(transmitted_data):
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
+    state = transmitted_data['state']
 
     res = True
     if type(transmitted_data['return_data']['items']) == list and len(transmitted_data['return_data']['items']) >= 3: res = False
@@ -95,7 +96,7 @@ def check_items(transmitted_data):
                 'function': new_circle
             }
         ]
-        steps = prepare_steps(not_p_steps, userid, chatid, lang)
+        steps = prepare_steps(not_p_steps, userid, chatid, lang, state)
         transmitted_data['steps'] += steps
 
     return transmitted_data, True
@@ -109,10 +110,11 @@ async def new_circle(transmitted_data):
     add_res = transmitted_data['return_data']['add_item']
     exclude_ids = transmitted_data['exclude']
     option = transmitted_data['option']
+    state = transmitted_data['state']
 
     if add_res:
         items, exclude = await generate_sell_pages(userid, exclude_ids)
-        steps = circle_data(userid, chatid, lang, items, option)
+        steps = circle_data(userid, chatid, lang, items, option, state)
 
         transmitted_data['exclude'] = exclude
 
@@ -131,6 +133,7 @@ async def auction(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
+    state = transmitted_data['state']
 
     if type(return_data['items']) != list:
         return_data['items'] = [return_data['items']]
@@ -164,6 +167,6 @@ async def auction(return_data, transmitted_data):
         'in_stock': 1
     }
 
-    await ChooseStepState(end, userid, chatid, 
+    await ChooseStepState(end, state, userid, chatid, 
                           lang, steps, 
                           transmitted_data=transmitted_data)

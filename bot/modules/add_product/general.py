@@ -17,6 +17,7 @@ async def coins_stock(return_data, transmitted_data):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     option = transmitted_data['option']
+    state = transmitted_data['state']
 
     if type(return_data['items']) != list:
         return_data['items'] = [return_data['items']]
@@ -43,7 +44,7 @@ async def coins_stock(return_data, transmitted_data):
         'option': transmitted_data['option']
     }
 
-    await ChooseStepState(end, userid, chatid, 
+    await ChooseStepState(end, state, userid, chatid, 
                           lang, steps, 
                           transmitted_data=transmitted_data)
 
@@ -121,7 +122,7 @@ async def end(return_data, transmitted_data):
             await bot.send_message(chatid, m_text, reply_markup=markup,
                                    parse_mode='Markdown')
         except Exception as e:
-            log(e, 3)
+            log(str(e), 3)
             await bot.send_message(chatid, m_text, reply_markup=markup)
 
     await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang), parse_mode='Markdown')

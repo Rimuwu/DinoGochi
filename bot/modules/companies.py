@@ -201,19 +201,19 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None,
         if image != 'no_image':
             try:
                 m = await bot.send_photo(userid, image, caption=text, parse_mode=parse_mode, 
-                                         reply_markup=inline.as_markup())
+                                         reply_markup=inline.as_markup(resize_keyboard=True))
             except Exception as e:
                 log(f'generate_comp_message image error - {e}', 2)
                 m = await bot.send_photo(userid, image, caption=text, 
-                                     reply_markup=inline.as_markup())
+                                     reply_markup=inline.as_markup(resize_keyboard=True))
         else:
             try:
                 m = await bot.send_message(userid, text, 
-                                       parse_mode=parse_mode, reply_markup=inline.as_markup())
+                                       parse_mode=parse_mode, reply_markup=inline.as_markup(resize_keyboard=True))
             except Exception as e:
                 log(f'generate_comp_message error - {e}', 2)
                 m = await bot.send_message(userid, text, 
-                                     reply_markup=inline.as_markup())
+                                     reply_markup=inline.as_markup(resize_keyboard=True))
 
         # Сохраняем
         if m and save:

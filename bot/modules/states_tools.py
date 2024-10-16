@@ -1,7 +1,8 @@
+from optparse import Option
+from typing import Optional, Union
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.fsm.context import FSMContext
-
 from bot.exec import bot
 from bot.modules.data_format import (chunk_pages, list_to_inline,
                                      list_to_keyboard)
@@ -13,11 +14,9 @@ from bot.modules.markup import down_menu, get_answer_keyboard
 from bot.modules.markup import markups_menu as m
 from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, get_frineds, user_info, user_name
- 
+from aiogram.fsm.context import FSMContext
 from bot.modules.managment.events import check_event
-
 import inspect
-from asyncio import sleep
 
 class GeneralStates(StatesGroup):
     ChooseDino = State() # Состояние для выбора динозавра
@@ -412,13 +411,21 @@ async def start_friend_menu(function, state: FSMContext,
 async def ChooseImageState(function, state: FSMContext, 
                            userid: int, chatid: int, lang: str,
                            need_image: bool = True,
-                           transmitted_data=None):
+                           transmitted_data: Optional[dict] = None):
     """ Устанавливает состояние ожидания вводу изображения
         if need_image == True: даёт возможность на ответ 0 возвращать не file_id, а 'no_image'
 
         В function передаёт 
         >>> image_url: str transmitted_data: dict
     """
+
+    if not isinstance(userid, int): raise TypeError('userid must be int')
+    if not isinstance(chatid, int): raise TypeError('chatid must be int')
+    if not isinstance(lang, str): raise TypeError('lang must be str')
+    if not isinstance(need_image, bool): raise TypeError('need_image must be bool')
+    if transmitted_data is not None and not isinstance(transmitted_data, dict): raise TypeError('transmitted_data must be dict or None')
+    if not isinstance(state, FSMContext): raise TypeError('state must be FSMContext')
+
     if not transmitted_data: transmitted_data = {}
     transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
     await state.set_state(GeneralStates.ChooseImage)
@@ -496,12 +503,19 @@ async def ChooseStepState(function, state: FSMContext,
         В function передаёт 
         >>> answer: dict, transmitted_data: dict
     """
+
+    if not isinstance(steps, list): raise ValueError('steps must be list')
+    if not isinstance(userid, int): raise ValueError('userid must be int')
+    if not isinstance(chatid, int): raise ValueError('chatid must be int')
+    if not isinstance(lang, str): raise ValueError('lang must be str')
+    if not isinstance(state, FSMContext): raise ValueError('state must be FSMContext')
+
     if not transmitted_data: transmitted_data = {}
     steps = prepare_steps(steps, userid,  chatid, lang, state)
 
     transmitted_data = dict(add_if_not(transmitted_data, 
                             userid, chatid, lang, state))
-    
+
     transmitted_data['steps'] = steps
     transmitted_data['return_function'] = function
     transmitted_data['return_data'] = {}
@@ -539,42 +553,45 @@ async def next_step(answer, state: FSMContext,
         Для edit_message требуется добавление message_data в transmitted_data.temp
         (Использовать только для inline состояний, не подойдёт для MessageSteps)
     """
+    if not isinstance(state, FSMContext): raise ValueError('state must be FSMContext')
+    if not isinstance(transmitted_data, dict): raise ValueError('transmitted_data must be dict')
+    if not isinstance(start, bool): raise ValueError('start must be bool')
 
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
-    steps = transmitted_data['steps']
+    steps = transmitted_data.get('steps', [])
     temp = {}
 
     # Обновление внутренних данных
     if not start:
-        name = steps[transmitted_data['process']]['name']
+        name = steps[transmitted_data.get('process', 0)]['name']
         if name:
-            if name in transmitted_data['return_data']:
-                if type(transmitted_data['return_data'][name]) == list:
+            if name in transmitted_data.get('return_data', {}):
+                if isinstance(transmitted_data['return_data'][name], list):
                     transmitted_data['return_data'][name].append(answer)
                 else:
                     transmitted_data['return_data'][name] = [transmitted_data['return_data'][name], answer]
             else: transmitted_data['return_data'][name] = answer
-            transmitted_data['process'] += 1
+            transmitted_data['process'] = transmitted_data.get('process', 0) + 1
         else: print('Имя не указано, бесконечный запрос данных')
 
-    if transmitted_data['process'] - 1 >= 0:
-        last_step = steps[transmitted_data['process'] - 1]
+    if transmitted_data.get('process', 0) - 1 >= 0:
+        last_step = steps[transmitted_data.get('process', 0) - 1]
 
-        if steps[transmitted_data['process'] - 1]['type'] == 'inline':
+        if steps[transmitted_data.get('process', 0) - 1]['type'] == 'inline':
             if 'delete_markup' in last_step and last_step['delete_markup']:
-                await bot.edit_message_reply_markup(None, chatid, last_step['messageid'], reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
+                await bot.edit_message_reply_markup(None, chatid, last_step.get('messageid'), reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
 
         if 'delete_message' in last_step and last_step['delete_message']:
-            await bot.delete_message(chatid, last_step['bmessageid'])
+            await bot.delete_message(chatid, last_step.get('bmessageid', 0))
 
         if 'delete_user_message' in last_step and last_step['delete_user_message']:
-            await bot.delete_message(chatid, last_step['umessageid'])
+            await bot.delete_message(chatid, last_step.get('umessageid', 0))
 
-    if transmitted_data['process'] < len(steps): #Получение данных по очереди
-        ret_data = steps[transmitted_data['process']]
+    if transmitted_data.get('process', 0) < len(steps): #Получение данных по очереди
+        ret_data = steps[transmitted_data.get('process', 0)]
         add_data = {}
         if 'data' in ret_data: add_data = ret_data['data']
 
@@ -586,20 +603,19 @@ async def next_step(answer, state: FSMContext,
                 transmitted_data, answer = await ret_data['function'](transmitted_data, **add_data)
             else:
                 transmitted_data, answer = ret_data['function'](transmitted_data, **add_data)
-            steps = transmitted_data['steps']
-
+            steps = transmitted_data.get('steps', [])
             if ret_data['name']:
                 transmitted_data['return_data'][ret_data['name']] = answer
-            transmitted_data['process'] += 1
-            if transmitted_data['process'] < len(steps):
-                ret_data = steps[transmitted_data['process']]
+            transmitted_data['process'] = transmitted_data.get('process', 0) + 1
+            if transmitted_data.get('process', 0) < len(steps):
+                ret_data = steps[transmitted_data.get('process', 0)]
             else: # Заверщение
                 return await exit_chose(transmitted_data, state)
 
         # Очистка данных
-        if 'delete_steps' in transmitted_data and transmitted_data['delete_steps'] and transmitted_data['process'] != 0:
+        if 'delete_steps' in transmitted_data and transmitted_data['delete_steps'] and transmitted_data.get('process', 0) != 0:
             # Для экономия места мы можем удалять данные отработанных шагов
-            transmitted_data['steps'][transmitted_data['process']-1] = {}
+            transmitted_data['steps'][transmitted_data.get('process', 0)-1] = {}
 
         if 'temp' in transmitted_data: 
             temp = transmitted_data['temp'].copy()
@@ -616,7 +632,7 @@ async def next_step(answer, state: FSMContext,
 
         if func_answer:
             # Отправка сообщения / фото из image, если None - ничего
-            if ret_data['message']:
+            if ret_data.get('message'):
                 edit_message, last_message = False, None
                 trans_d = {}
 
@@ -636,7 +652,7 @@ async def next_step(answer, state: FSMContext,
                         elif 'text' in ret_data['message']:
                             ret_data['message']['text'] = t(ret_data['message']['text'], lang, **trans_d)
 
-                if edit_message and transmitted_data['process'] != 0 and last_message:
+                if edit_message and transmitted_data.get('process', 0) != 0 and last_message:
                     if 'image' in steps[0] or 'caption' in ret_data['message']:
                         await bot.edit_message_caption(None, 
                             chat_id=chatid, message_id=last_message.message_id,
@@ -664,4 +680,3 @@ async def next_step(answer, state: FSMContext,
 
     else: #Все данные получены
         return await exit_chose(transmitted_data, state)
-

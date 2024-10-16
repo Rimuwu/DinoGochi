@@ -107,12 +107,12 @@ async def track(call: CallbackQuery):
 
 @HDMessage
 @main_router.message(Command(commands=['create_promo']), IsAdminUser())
-async def create_promo(message: Message):
+async def create_promo(message: Message, state):
     chatid = message.chat.id
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    await create_promo_start(userid, chatid, lang)
+    await create_promo_start(userid, chatid, lang, state)
 
 @HDMessage
 @main_router.message(Command(commands=['promos']), IsAdminUser())

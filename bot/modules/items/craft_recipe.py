@@ -14,6 +14,7 @@ from bot.modules.localization import t
 from bot.modules.logs import log
 from bot.modules.markup import markups_menu
 from bot.modules.states_tools import ChooseStepState
+from bot.modules.get_state import get_state
 from bot.modules.user.user import get_inventory_from_i
 from bot.exec import main_router, bot
 from bot.modules.user.user import experience_enhancement
@@ -175,7 +176,8 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
             'item': item
         }
 
-        await ChooseStepState(end_choose_items, userid, chatid, lang, steps, transmitted_data)
+        state = await get_state(userid, chatid)
+        await ChooseStepState(end_choose_items, state, userid, chatid, lang, steps, transmitted_data)
 
     else:
         data = {
@@ -324,7 +326,8 @@ async def check_items_in_inventory(materials, item, count,
             'item': item
         }
 
-        await ChooseStepState(pre_check, userid, chatid, lang, 
+        state = await get_state(userid, chatid)
+        await ChooseStepState(pre_check, state, userid, chatid, lang, 
                               steps, transmitted_data)
 
     else:

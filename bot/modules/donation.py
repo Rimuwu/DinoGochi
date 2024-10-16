@@ -98,10 +98,9 @@ async def send_inv(user_id: int, product_id: str, col: str, lang: str, cost: int
     short = product_t_data['short']
     photo_url = product_t_data['photo_url']
 
-    product_label = LabeledPrice(name, product['cost'][str(col)]['XTR'])
+    product_label = LabeledPrice(label=name, amount=product['cost'][str(col)]['XTR'])
 
     await bot.send_invoice(
-        user_id, name, short + f' (x{col})', f"{product_id}#{col}", '', 'XTR', [product_label],
+        user_id, name, short + f' (x{col})', f"{product_id}#{col}", 'XTR', [product_label],
         photo_url=photo_url, photo_size=512, photo_height=360, photo_width=720, 
-        
     )

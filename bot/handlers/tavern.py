@@ -111,7 +111,7 @@ async def bonus_message(user, message, lang):
                             callback_data='daily_award'))
 
     photo = 'images/remain/taverna/dino_reward.png'
-    await send_SmartPhoto(message.chat.id, photo, text, 'Markdown', markup_inline.as_markup())
+    await send_SmartPhoto(message.chat.id, photo, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
 
 @HDMessage
 @main_router.message(Text('commands_name.dino_tavern.daily_award'), IsAuthorizedUser(), IsPrivateChat())

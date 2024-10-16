@@ -201,7 +201,7 @@ class Dino:
     def data(self): return get_dino_data(self.data_id)
 
     @property
-    async def status(self): return await check_status(self)
+    async def status(self): return await check_status(self) #type: ignore
 
     async def age(self): return await get_age(self._id)
 

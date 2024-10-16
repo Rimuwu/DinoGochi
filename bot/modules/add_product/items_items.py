@@ -16,7 +16,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 items = DBconstructor(mongo_client.items.items)
 
 
-def trade_circle(userid, chatid, lang, items, option, prepare: bool = True):
+def trade_circle(userid, chatid, lang, items, option, state, prepare: bool = True):
     """ Создаёт данные для круга получения данных предметов ПОЛЬЗОВАТЕЛЯ
     """
     not_p_steps = [
@@ -41,7 +41,7 @@ def trade_circle(userid, chatid, lang, items, option, prepare: bool = True):
         }
     ]
     if prepare:
-        steps = prepare_steps(not_p_steps, userid, chatid, lang)
+        steps = prepare_steps(not_p_steps, userid, chatid, lang, state)
         return steps
     else: return not_p_steps
 
@@ -83,6 +83,7 @@ def check_items_for_items(transmitted_data):
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
+    state = transmitted_data['state']
 
     res = True
     if type(transmitted_data['return_data']['items']) == list and len(transmitted_data['return_data']['items']) >= 3: res = False
@@ -100,7 +101,7 @@ def check_items_for_items(transmitted_data):
                 'function': new_circle
             }
         ]
-        steps = prepare_steps(not_p_steps, userid, chatid, lang)
+        steps = prepare_steps(not_p_steps, userid, chatid, lang, state)
         transmitted_data['steps'] += steps
 
     return transmitted_data, True
@@ -114,10 +115,11 @@ async def new_circle(transmitted_data):
     add_res = transmitted_data['return_data']['add_item']
     exclude_ids = transmitted_data['exclude']
     option = transmitted_data['option']
+    state = transmitted_data['state']
 
     if add_res:
         items, exclude = await generate_sell_pages(userid, exclude_ids)
-        steps = trade_circle(userid, chatid, lang, items, option)
+        steps = trade_circle(userid, chatid, lang, items, option, state)
 
         transmitted_data['exclude'] = exclude
 
@@ -136,6 +138,7 @@ async def items_items(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
+    state = transmitted_data['state']
 
     if type(return_data['items']) != list:
         return_data['items'] = [return_data['items']]
@@ -147,11 +150,11 @@ async def items_items(return_data, transmitted_data):
     steps = received_circle(userid, chatid, lang, inv_items, "trade_items", False)
     transmitted_data['exclude'] = exclude
 
-    await ChooseStepState(stock, userid, chatid, 
+    await ChooseStepState(stock, state, userid, chatid, 
                           lang, steps, 
                           transmitted_data=transmitted_data)
 
-def received_circle(userid, chatid, lang, items, option, prepare: bool = True):
+def received_circle(userid, chatid, lang, items, option, state, prepare: bool = True):
     """ Создаёт данные для круга получения данных ЗАПРАШИВАЕМЫХ предметов
     """
     not_p_steps = [
@@ -176,7 +179,7 @@ def received_circle(userid, chatid, lang, items, option, prepare: bool = True):
         }
     ]
     if prepare:
-        steps = prepare_steps(not_p_steps, userid, chatid, lang)
+        steps = prepare_steps(not_p_steps, userid, chatid, lang, state)
         return steps
     else: return not_p_steps
 
@@ -204,6 +207,7 @@ def chect_items_received(transmitted_data):
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
+    state = transmitted_data['state']
 
     res = True
     if type(transmitted_data['return_data']['trade_items']) == list and len(transmitted_data['return_data']['trade_items']) >= 3: res = False
@@ -221,7 +225,7 @@ def chect_items_received(transmitted_data):
                 'function': new_received_circle
             }
         ]
-        steps = prepare_steps(not_p_steps, userid, chatid, lang)
+        steps = prepare_steps(not_p_steps, userid, chatid, lang, state)
         transmitted_data['steps'] += steps
 
     return transmitted_data, True
@@ -235,10 +239,11 @@ async def new_received_circle(transmitted_data):
     add_res = transmitted_data['return_data']['add_item']
     exclude_ids = transmitted_data['exclude']
     option = transmitted_data['option']
+    state = transmitted_data['state']
 
     if add_res:
         items, exclude = generate_items_pages(exclude_ids)
-        steps = received_circle(userid, chatid, lang, items, option)
+        steps = received_circle(userid, chatid, lang, items, option, state)
 
         transmitted_data['exclude'] = exclude
 
@@ -258,6 +263,7 @@ async def stock(return_data, transmitted_data):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     option = transmitted_data['option']
+    state = transmitted_data['state']
 
     if type(return_data['trade_items']) != list:
         return_data['trade_items'] = [return_data['trade_items']]
@@ -265,7 +271,7 @@ async def stock(return_data, transmitted_data):
 
     for key, item in return_data.items(): transmitted_data[key] = item
 
-    await ChooseIntState(stock_adapter, userid, chatid, lang, 1, 20, transmitted_data=transmitted_data)
+    await ChooseIntState(stock_adapter, state, userid, chatid, lang, 1, 20, transmitted_data=transmitted_data)
 
     await bot.send_message(chatid, t(f'add_product.stock.{option}', lang), reply_markup=cancel_markup(lang), parse_mode='Markdown')
 
