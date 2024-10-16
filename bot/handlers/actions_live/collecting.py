@@ -114,7 +114,7 @@ async def collecting_button(message: Message, state: FSMContext):
                         'reply_markup': count_markup(max_count, lang)}
                     }
                 ]
-                await ChooseStepState(collecting_adapter, state, userid, chatid, 
+                await ChooseStepState(collecting_adapter, userid, chatid, 
                                             lang, steps, 
                                         transmitted_data={'dino': last_dino, 'delete_steps': True})
 

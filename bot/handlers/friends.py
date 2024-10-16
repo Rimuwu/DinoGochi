@@ -118,7 +118,7 @@ async def add_friend_callback(call: CallbackQuery, state):
     text = t(f'add_friend.var_messages.{code}', lang)
     await bot.send_message(chatid, text, reply_markup=cancel_markup(lang))
 
-    await ChooseCustomState(add_friend_end, state, friend_add_handler, 
+    await ChooseCustomState(add_friend_end, friend_add_handler, 
                             user_id, chatid, lang, 
                             transmitted_data)
 
@@ -130,7 +130,7 @@ async def friend_list(message: Message, state):
     lang = await get_lang(message.from_user.id)
 
     await bot.send_message(chatid, t('friend_list.wait', lang))
-    await start_friend_menu(None, state, userid, chatid, lang, False)
+    await start_friend_menu(None, userid, chatid, lang, False)
 
 
 async def adp_requests(data: dict, transmitted_data: dict):
@@ -195,7 +195,7 @@ async def request_open(userid: int, chatid: int, lang: str, state):
                                  'name': name}
 
     await ChoosePagesState(
-        adp_requests, state, userid, chatid, lang, options, 
+        adp_requests, userid, chatid, lang, options, 
         horizontal=3, vertical=3,
         autoanswer=False, one_element=False)
 
@@ -242,7 +242,7 @@ async def adp_delte(friendid: int, transmitted_data: dict):
 
     transmitted_data['friendid'] = friendid
 
-    await ChooseConfirmState(delete_friend, state, userid, chatid, lang, True, transmitted_data)
+    await ChooseConfirmState(delete_friend, userid, chatid, lang, True, transmitted_data)
     await bot.send_message(chatid, t('friend_delete.confirm', lang,     
                                      name=transmitted_data['key']), 
                            reply_markup=confirm_markup
@@ -271,7 +271,7 @@ async def remove_friend(message: Message, state):
 
     await bot.send_message(chatid, t('friend_delete.delete_info', lang))
     await ChoosePagesState(
-        adp_delte, state, userid, chatid, lang, options, 
+        adp_delte, userid, chatid, lang, options, 
         autoanswer=False, one_element=True)
 
 async def joint(return_data: dict, 
@@ -327,7 +327,7 @@ async def joint_dinosaur(call: CallbackQuery, state):
         }
     ]
 
-    await ChooseStepState(joint, state, userid, chatid, lang, steps, {'friendid': int(data[1]), 'username': await user_name(userid)})
+    await ChooseStepState(joint, userid, chatid, lang, steps, {'friendid': int(data[1]), 'username': await user_name(userid)})
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('take_dino'), IsPrivateChat())
@@ -382,7 +382,7 @@ async def take_money(call: CallbackQuery, state):
     if user:
         max_int = user['coins']
         if max_int > 0:
-            await ChooseIntState(transfer_coins, state, userid, chatid, lang, 
+            await ChooseIntState(transfer_coins, userid, chatid, lang, 
                                 max_int=max_int, transmitted_data={
                                     'friendid': friendid, 
                                     'username': await user_name(userid)})
@@ -408,7 +408,7 @@ async def take_super_coins(call: CallbackQuery, state):
     if user:
         max_int = user['super_coins']
         if max_int > 0:
-            await ChooseIntState(transfer_super_coins, state, userid, 
+            await ChooseIntState(transfer_super_coins, userid, 
                                  chatid, lang, 
                                 max_int=max_int, transmitted_data={
                                     'friendid': friendid, 
@@ -531,7 +531,7 @@ async def change_name(call: CallbackQuery, state):
     if user:
         text = t('edit_friend_name', lang, none='none', name=await user_name(friendid))
         await bot.send_message(chatid, text, reply_markup=cancel_markup(lang))
-        await ChooseStringState(edit_name, state, userid, chatid, lang, max_len=30, transmitted_data={
+        await ChooseStringState(edit_name, userid, chatid, lang, max_len=30, transmitted_data={
             'friendid': friendid
         })
 

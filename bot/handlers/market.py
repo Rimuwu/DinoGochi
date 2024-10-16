@@ -115,7 +115,7 @@ async def create_market(message: Message, state: FSMContext):
             }
         ]
 
-        await ChooseStepState(create_adapter, state, userid, chatid, 
+        await ChooseStepState(create_adapter, userid, chatid, 
                               lang, steps, 
                               transmitted_data=transmitted_data)
 
@@ -154,7 +154,7 @@ async def add_product_com(message: Message, state):
     )
 
     await bot.send_message(chatid, t('add_product.options_info', lang), reply_markup=markup)
-    await ChooseOptionState(prepare_data_option, state, userid, chatid, lang, options)
+    await ChooseOptionState(prepare_data_option, userid, chatid, lang, options)
 
 @HDMessage
 @main_router.message(Text('commands_name.seller_profile.my_products'), IsAuthorizedUser(), IsPrivateChat())
@@ -174,7 +174,7 @@ async def my_products(message: Message, state):
             ] = product['_id']
 
         await bot.send_message(chatid, t('products.search', lang))
-        await ChoosePagesState(send_info_pr, state, userid, chatid, lang, rand_p, 1, 3, 
+        await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
     else:
         text = t('no_products', lang)
@@ -287,7 +287,7 @@ async def seller(call: CallbackQuery, state):
             ] = product['_id']
 
         await bot.send_message(chatid, t('products.search', lang))
-        await ChoosePagesState(send_info_pr, state, userid, chatid, lang, rand_p, 1, 3, 
+        await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
 
 @HDMessage
@@ -316,7 +316,7 @@ async def random_products(message: Message, state):
             else: break
 
         await bot.send_message(chatid, t('products.search', lang))
-        await ChoosePagesState(send_info_pr, state, userid, chatid, lang, rand_p, 1, 3, 
+        await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
                                None, False, False)
     else:
         await bot.send_message(chatid, t('products.null', lang))

@@ -48,7 +48,7 @@ async def craftlist(message, state):
             name += f' #{a}'
         options[name] = craft['_id']
     if options:
-        await ChoosePagesState(info_craft, state, userid, chatid, lang, options, one_element=False, autoanswer=False)
+        await ChoosePagesState(info_craft, userid, chatid, lang, options, one_element=False, autoanswer=False)
     else:
         await bot.send_message(chatid, '❌')
 
@@ -107,7 +107,7 @@ async def time_craft(callback: CallbackQuery, state):
 
     if action == 'send_dino':
         transmitted_data = {'ms_id': callback.message.message_id, 'alt_code': alt_code}
-        await ChooseDinoState(send_dino_to_craft, state, userid, chatid, 
+        await ChooseDinoState(send_dino_to_craft, userid, chatid, 
                               lang, False, False, transmitted_data)
 
     elif action == 'cancel_craft':

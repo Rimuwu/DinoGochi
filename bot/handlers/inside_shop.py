@@ -85,7 +85,7 @@ async def hoarder_calb(call: CallbackQuery, state):
             'item': key,
             'messageid': call.message.message_id
         }
-        await ChooseIntState(buy_item, state, userid, chatid, lang, max_int=item['count'], autoanswer=False, transmitted_data=transmitted_data)
+        await ChooseIntState(buy_item, userid, chatid, lang, max_int=item['count'], autoanswer=False, transmitted_data=transmitted_data)
         await bot.send_message(chatid, t('inside_shop.count', lang), 
                                parse_mode='Markdown', 
                                reply_markup=count_markup(item['count'], lang))

@@ -57,7 +57,7 @@ async def open_inventory(message: Message, state):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await start_inv(state, None, userid, chatid, lang)
+    await start_inv(None, userid, chatid, lang)
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('inventory_start'), IsPrivateChat())
@@ -66,7 +66,7 @@ async def start_callback(call: CallbackQuery, state):
     userid = call.from_user.id
     lang = await get_lang(call.from_user.id)
 
-    await start_inv(state, None, userid, chatid, lang)
+    await start_inv(None, userid, chatid, lang)
 
 @HDMessage
 @main_router.message(StateFilter(InventoryStates.Inventory), IsAuthorizedUser(), IsPrivateChat())
@@ -320,7 +320,7 @@ async def filter_callback(call: CallbackQuery, state):
         if call_data[2] == 'null':
             await state.update_data(filters=[])
             if filters:
-                await filter_menu(chatid, state, False)
+                await filter_menu(chatid, False)
         else:
             data_list_filters = filters_data[call_data[2]]['keys']
 
@@ -332,7 +332,7 @@ async def filter_callback(call: CallbackQuery, state):
                     filters.append(i)
 
             await state.update_data(filters=filters)
-            await filter_menu(chatid, state, False)
+            await filter_menu(chatid, False)
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('book'), IsPrivateChat())
@@ -365,7 +365,7 @@ async def ns_craft(call: CallbackQuery, state):
         'item': item,
         'ns_id': ns_id
     }
-    await ChooseIntState(ns_end, state, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
+    await ChooseIntState(ns_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
     await bot.send_message(chatid, t('css.wait_count', lang), 
                        reply_markup=count_markup(25, lang))
 
@@ -495,7 +495,7 @@ async def buyer(call: CallbackQuery, state):
         'one_col': one_col,
         'price': price
     }
-    await ChooseIntState(buyer_end, state, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
+    await ChooseIntState(buyer_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
 
     await bot.send_message(chatid, t('buyer.choose', lang,
                                  emoji=emoji, one_col=one_col,

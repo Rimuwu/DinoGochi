@@ -47,7 +47,7 @@ async def create_promo_start(userid: int, chatid: int, lang: str, state):
         }
     ]
 
-    await ChooseStepState(start_items, state, userid, chatid, lang, steps)
+    await ChooseStepState(start_items, userid, chatid, lang, steps)
 
 async def start_items(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
@@ -63,14 +63,14 @@ async def start_items(return_data, transmitted_data):
     items, exclude = generate_items_pages(ignore_cant=True)
     steps = circle_data(userid, chatid, lang, items, state)
 
-    await ChooseStepState(end, state, userid, chatid, lang, steps,
+    await ChooseStepState(end, userid, chatid, lang, steps,
                           transmitted_data={'code': code, 'coins': coins,
                                             'count': count, 'time_end': time_end}
                           )
 
 """ Создаёт данные для круга получения данных для типа coins_items
 """
-def circle_data(userid, chatid, lang, items, state, prepare: bool = True):
+def circle_data(userid, chatid, lang, items, prepare: bool = True):
     not_p_steps = [
         {
             "type": 'inv', "name": 'items', "data": {'inventory': items}, 

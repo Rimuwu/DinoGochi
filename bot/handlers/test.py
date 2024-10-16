@@ -13,6 +13,7 @@ from asyncio import sleep as asleep
 
 from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            InlineQueryResultContact, Message, LabeledPrice)
+from bot.modules.get_state import get_state
 from bot.modules.images_save import send_SmartPhoto
 
 from bot.modules.inline import inline_menu
@@ -269,13 +270,12 @@ async def check(message: Message, state: FSMContext):
 #     await message.answer(f"{r}")
 
 @HDMessage
-@main_router.message(Command(commands=['nxt']))
+@main_router.message(Command(commands=['testt']))
 async def check(message: Message):
 
+    state = await get_state(message.from_user.id, message.chat.id)
 
-    
-    await message.answer('ok', message_effect_id='5104841245755180586')
-
+    await message.answer(f"{await state.get_state()}")
 
 @HDMessage
 @main_router.message(Command(commands=['ttt']))

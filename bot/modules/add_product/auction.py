@@ -12,7 +12,7 @@ items = DBconstructor(mongo_client.items.items)
 
 # Все функции расположены в порядке вызова
 
-def circle_data(userid, chatid, lang, items, option, state, prepare: bool = True):
+def circle_data(userid, chatid, lang, items, option, prepare: bool = True):
     """ Создай данные для запроса: предмета, количества, надо ли повторить
     """
     not_p_steps = [
@@ -167,6 +167,6 @@ async def auction(return_data, transmitted_data):
         'in_stock': 1
     }
 
-    await ChooseStepState(end, state, userid, chatid, 
+    await ChooseStepState(end, userid, chatid, 
                           lang, steps, 
                           transmitted_data=transmitted_data)

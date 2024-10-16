@@ -44,7 +44,7 @@ async def coins_stock(return_data, transmitted_data):
         'option': transmitted_data['option']
     }
 
-    await ChooseStepState(end, state, userid, chatid, 
+    await ChooseStepState(end, userid, chatid, 
                           lang, steps, 
                           transmitted_data=transmitted_data)
 

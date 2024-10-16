@@ -174,7 +174,7 @@ async def mine(message: Message, state: FSMContext):
         'last_dino': last_dino
     }
 
-    await ChooseOptionState(end_mine, state, userid, chatid, lang, options, transmitted_data)
+    await ChooseOptionState(end_mine, userid, chatid, lang, options, transmitted_data)
     await bot.send_message(chatid, text, reply_markup=rmk)
 
 async def end_mine(data, transmitted_data: dict):
@@ -218,7 +218,7 @@ async def bank(message: Message, state: FSMContext):
         'last_dino': last_dino
     }
 
-    await ChooseOptionState(end_bank, state, userid, chatid, lang, options, transmitted_data)
+    await ChooseOptionState(end_bank, userid, chatid, lang, options, transmitted_data)
     await bot.send_message(chatid, text, reply_markup=rmk)
 
 async def end_bank(data, transmitted_data: dict):
@@ -262,7 +262,7 @@ async def sawmill(message: Message, state: FSMContext):
         'last_dino': last_dino
     }
 
-    await ChooseOptionState(end_sawmill, state, userid, chatid, lang, options, transmitted_data)
+    await ChooseOptionState(end_sawmill, userid, chatid, lang, options, transmitted_data)
     await bot.send_message(chatid, text, reply_markup=rmk)
 
 async def end_sawmill(data, transmitted_data: dict):

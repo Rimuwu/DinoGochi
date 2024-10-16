@@ -78,7 +78,7 @@ async def inventory_adapter(item, transmitted_data):
                             'reply_markup': feed_count_markup(
                                 dino.stats['eat'], int(item_data['act'] * percent), max_count, item_name, lang)}}
                 ]
-        await ChooseStepState(adapter_function, state, userid, chatid, 
+        await ChooseStepState(adapter_function, userid, chatid, 
                               lang, steps, 
                               transmitted_data=transmitted_data)
 
@@ -97,7 +97,7 @@ async def feed(message: Message, state: FSMContext):
             'dino': await user.get_last_dino()
         }
 
-        await start_inv(state, inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
+        await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('feed_inl'))
@@ -116,4 +116,4 @@ async def feed_inl(callback: CallbackQuery, state: FSMContext):
                 'dino': await Dino().create(alt_id)
             }
 
-            await start_inv(state, inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
+            await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)

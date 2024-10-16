@@ -175,7 +175,7 @@ async def support_buttons(call: CallbackQuery, state):
                         width=2)
 
             else:
-                await ChooseIntState(tips, state, user_id, chatid, lang, 1, 500_000)
+                await ChooseIntState(tips, user_id, chatid, lang, 1, 500_000)
                 await bot.send_message(chatid, text_data['free_enter'], reply_markup=cancel_markup(lang))
 
             markup_inline.row(

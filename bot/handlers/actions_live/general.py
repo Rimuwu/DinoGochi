@@ -152,4 +152,4 @@ async def join(callback: CallbackQuery, state: FSMContext):
                 'friendid': friendid
             }
 
-            await ChooseDinoState(join_adp, state, userid, chatid, lang, False, transmitted_data=transmitted_data)
+            await ChooseDinoState(join_adp, userid, chatid, lang, False, transmitted_data=transmitted_data)

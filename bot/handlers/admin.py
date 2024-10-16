@@ -41,7 +41,7 @@ async def create_tracking(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    await ChooseStringState(create_track, state, userid, chatid, lang, 1, 0)
+    await ChooseStringState(create_track, userid, chatid, lang, 1, 0)
     await bot.send_message(chatid, t("create_tracking.name", lang), parse_mode='Markdown')
 
 async def create_track(name, transmitted_data: dict):
@@ -70,7 +70,7 @@ async def tracking(message: Message, state):
     lang = await get_lang(message.from_user.id)
 
     options = await get_track_pages()
-    res = await ChoosePagesState(track_info_adp, state, userid, chatid, lang, options, one_element=False, autoanswer=False)
+    res = await ChoosePagesState(track_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False)
     await bot.send_message(chatid, t("track_open", lang), parse_mode='Markdown')
 
 async def track_info_adp(data, transmitted_data: dict):
@@ -122,7 +122,7 @@ async def promos(message: Message, state):
     lang = await get_lang(message.from_user.id)
 
     options = await get_promo_pages()
-    res = await ChoosePagesState(promo_info_adp, state, userid, chatid, lang, options, 
+    res = await ChoosePagesState(promo_info_adp, userid, chatid, lang, options, 
                                  one_element=False, autoanswer=False)
     await bot.send_message(chatid, t("promo_commands.promo_open", lang), parse_mode='Markdown')
 
@@ -285,7 +285,7 @@ async def copy_m(message, state):
 
     users_sends = await langs.find({'lang': arg_list[0]}, comment='copy_m_users_sends')
 
-    await ChooseConfirmState(confirm_send, state, userid, chatid, lang, True, trs_data)
+    await ChooseConfirmState(confirm_send, userid, chatid, lang, True, trs_data)
     await bot.send_message(chatid, f"Confirm the newsletter for {len(users_sends)} users with language {arg_list[0]}", reply_markup=confirm_markup(lang))
 
 async def confirm_send(_, transmitted_data: dict):

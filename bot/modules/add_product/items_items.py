@@ -16,7 +16,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 items = DBconstructor(mongo_client.items.items)
 
 
-def trade_circle(userid, chatid, lang, items, option, state, prepare: bool = True):
+def trade_circle(userid, chatid, lang, items, option, prepare: bool = True):
     """ Создаёт данные для круга получения данных предметов ПОЛЬЗОВАТЕЛЯ
     """
     not_p_steps = [
@@ -150,11 +150,11 @@ async def items_items(return_data, transmitted_data):
     steps = received_circle(userid, chatid, lang, inv_items, "trade_items", False)
     transmitted_data['exclude'] = exclude
 
-    await ChooseStepState(stock, state, userid, chatid, 
+    await ChooseStepState(stock, userid, chatid, 
                           lang, steps, 
                           transmitted_data=transmitted_data)
 
-def received_circle(userid, chatid, lang, items, option, state, prepare: bool = True):
+def received_circle(userid, chatid, lang, items, option, prepare: bool = True):
     """ Создаёт данные для круга получения данных ЗАПРАШИВАЕМЫХ предметов
     """
     not_p_steps = [
@@ -271,7 +271,7 @@ async def stock(return_data, transmitted_data):
 
     for key, item in return_data.items(): transmitted_data[key] = item
 
-    await ChooseIntState(stock_adapter, state, userid, chatid, lang, 1, 20, transmitted_data=transmitted_data)
+    await ChooseIntState(stock_adapter, userid, chatid, lang, 1, 20, transmitted_data=transmitted_data)
 
     await bot.send_message(chatid, t(f'add_product.stock.{option}', lang), reply_markup=cancel_markup(lang), parse_mode='Markdown')
 

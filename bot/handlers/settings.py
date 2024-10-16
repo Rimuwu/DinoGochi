@@ -62,7 +62,7 @@ async def notification_set(message: Message, state):
     translated = tranlate_data(buttons, lang, prefix)
     keyboard = list_to_keyboard(translated, 2)
     
-    await ChooseConfirmState(notification, state, userid, chatid, lang)
+    await ChooseConfirmState(notification, userid, chatid, lang)
     await bot.send_message(userid, t('not_set.info', lang), 
                            reply_markup=keyboard)
 
@@ -100,7 +100,7 @@ async def dino_profile_set(message: Message, state):
     buttons.append([t('buttons_name.cancel', lang)])
 
     keyboard = list_to_keyboard(buttons, 2)
-    await ChooseOptionState(dino_profile, state, userid, chatid, lang, settings_data)
+    await ChooseOptionState(dino_profile, userid, chatid, lang, settings_data)
     await bot.send_message(userid, t('profile_view.info', lang), 
                            reply_markup=keyboard)
 
@@ -138,7 +138,7 @@ async def inventory_set(message: Message, state):
     buttons.append([t('buttons_name.cancel', lang)])
     keyboard = list_to_keyboard(buttons, 2)
 
-    await ChooseOptionState(inventory, state, userid, chatid, lang, settings_data)
+    await ChooseOptionState(inventory, userid, chatid, lang, settings_data)
     await bot.send_message(userid, t('inv_set_pages.info', lang), 
                            reply_markup=keyboard)
 
@@ -170,7 +170,7 @@ async def transition(dino: Dino, transmitted_data: dict):
     data = {
         'dino': dino
     }
-    await ChooseStringState(rename_dino_post_state, state, userid, 
+    await ChooseStringState(rename_dino_post_state, userid, 
                             chatid, lang, max_len=20, transmitted_data=data)
 
     await bot.send_message(userid, text, reply_markup=markup)
@@ -182,7 +182,7 @@ async def rename_dino(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    await ChooseDinoState(transition, state, userid, message.chat.id, lang, False)
+    await ChooseDinoState(transition, userid, message.chat.id, lang, False)
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('rename_dino'), IsAuthorizedUser(), IsPrivateChat())
@@ -268,7 +268,7 @@ async def delete_me(message: Message, state):
         }
     ]
     
-    await ChooseStepState(adapter_delete, state, userid, chatid, 
+    await ChooseStepState(adapter_delete, userid, chatid, 
                                   lang, steps, 
                                 transmitted_data=transmitted_data)
     
@@ -299,7 +299,7 @@ async def my_name(message: Message, state):
                                parse_mode='Markdown', 
                                reply_markup=cancel_markup(lang))
 
-    await ChooseStringState(my_name_end, state, userid, chatid, lang, max_len=20)
+    await ChooseStringState(my_name_end, userid, chatid, lang, max_len=20)
 
 async def lang_set(new_lang: str, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -329,7 +329,7 @@ async def lang(message: Message, state):
     await bot.send_message(chatid, t('lang_set', lang),
                                reply_markup=buttons)
 
-    await ChooseOptionState(lang_set, state, userid, chatid, lang, options)
+    await ChooseOptionState(lang_set, userid, chatid, lang, options)
 
 async def dino_talk_set(result: bool, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -360,7 +360,7 @@ async def dino_talk(message: Message, state):
     translated = tranlate_data(buttons, lang, prefix)
     keyboard = list_to_keyboard(translated, 2)
 
-    await ChooseConfirmState(dino_talk_set, state, userid, chatid, lang)
+    await ChooseConfirmState(dino_talk_set, userid, chatid, lang)
     await bot.send_message(userid, t('no_talk.info', lang), 
                            reply_markup=keyboard)
 
@@ -394,7 +394,7 @@ async def my_nick(message: Message, state):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await ChooseStringState(my_nick_set, state, userid, chatid, lang, max_len=20)
+    await ChooseStringState(my_nick_set, userid, chatid, lang, max_len=20)
     await bot.send_message(userid, t('edit_nick', lang), 
                            reply_markup=cancel_markup(lang))
 

@@ -286,7 +286,7 @@ async def dino_now(return_data, transmitted_data):
     mark = list_to_inline([buttons], 2)
     await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=mark)
 
-    await ChooseInlineState(end_edit, state, userid, chatid, lang, str(code), {'dino': dino, 'type': o_type})
+    await ChooseInlineState(end_edit, userid, chatid, lang, str(code), {'dino': dino, 'type': o_type})
     await bot.send_message(chatid,  t('edit_dino.new_rare', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
 
 async def reset_chars(return_data, transmitted_data):
@@ -367,4 +367,4 @@ async def transformation(callback: CallbackQuery, state):
             }
         )
 
-    await ChooseStepState(ret_f, state, userid, chatid, lang, steps, {'type': data[1]})
+    await ChooseStepState(ret_f, userid, chatid, lang, steps, {'type': data[1]})

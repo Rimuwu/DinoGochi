@@ -46,6 +46,6 @@ async def prepare_data_option(option, transmitted_data):
     }
 
     steps = circle_fun(userid, chatid, lang, items, option, False)
-    await ChooseStepState(ret_function, state, userid, chatid, 
+    await ChooseStepState(ret_function, userid, chatid, 
                           lang, steps, 
                           transmitted_data=transmitted_data)

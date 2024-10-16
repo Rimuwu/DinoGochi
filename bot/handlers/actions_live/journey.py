@@ -118,7 +118,7 @@ async def start_journey(userid: int, chatid: int, lang: str,
         }
     ]
 
-    await ChooseStepState(journey_start_adp, state, userid, chatid, lang, steps, 
+    await ChooseStepState(journey_start_adp, userid, chatid, lang, steps, 
                           {'last_dino': last_dino, "edit_message": True, 'friend': friend, 'delete_steps': True})
     await bot.send_message(chatid, t('journey_start.cancel_text', lang), 
                            reply_markup=cancel_markup(lang))

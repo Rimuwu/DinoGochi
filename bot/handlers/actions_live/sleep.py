@@ -85,7 +85,7 @@ async def end_choice(option: str, transmitted_data: dict):
             transmitted_data = { 
                     'last_dino': last_dino
                 }
-            await ChooseIntState(short_sleep, state, userid, 
+            await ChooseIntState(short_sleep, userid, 
                                 chatid, lang, min_int=5, max_int=480, transmitted_data=transmitted_data)
 
             await bot.send_message(userid, 
@@ -136,7 +136,7 @@ async def put_to_bed(message: Message, state: FSMContext):
                     'last_dino': last_dino
                 }
 
-                await ChooseOptionState(end_choice, state, userid, chatid, lang, options, trans_data) # Ожидаем выбор варианта
+                await ChooseOptionState(end_choice, userid, chatid, lang, options, trans_data) # Ожидаем выбор варианта
                 await bot.send_message(userid, 
                         t('put_to_bed.choice', lang), 
                         reply_markup=buttons)

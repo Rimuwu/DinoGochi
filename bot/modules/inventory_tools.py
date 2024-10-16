@@ -6,6 +6,7 @@ from bot.const import GAME_SETTINGS as gs
 from bot.exec import main_router, bot
 from bot.modules.data_format import (chunks, filling_with_emptiness,
                                      list_to_inline)
+from bot.modules.get_state import get_state
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import item_info_markup
 from bot.modules.items.item import (get_data, get_name, is_standart, item_code,
@@ -250,7 +251,7 @@ async def search_menu(chatid: int, state: FSMContext):
     else:
         await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
 
-async def filter_menu(chatid: int, state: FSMContext, upd_up_m: bool = True):
+async def filter_menu(chatid: int, upd_up_m: bool = True):
     """ Панель-сообщение выбора фильтра
     """
     if data := await state.get_data():
@@ -302,8 +303,7 @@ async def filter_menu(chatid: int, state: FSMContext, upd_up_m: bool = True):
     #     async with bot.retrieve_data(
     #         userid, chatid) as data: data['settings']['edited_message'] = msg.message_id
 
-async def start_inv(state: FSMContext,
-                    function, userid: int, chatid: int, lang: str, 
+async def start_inv(function, userid: int, chatid: int, lang: str, 
                     type_filter: list = [], item_filter: list = [], 
                     exclude_ids: list = [],
                     start_page: int = 0, changing_filters: bool = True,
@@ -332,6 +332,8 @@ async def start_inv(state: FSMContext,
         inline_func - Если нужна функция для обработки калбек запросов 
             - Все кнопки должны начинаться с "inventoryinline {inline_code}" 
     """
+
+    state = await get_state(userid, chatid)
     if not transmitted_data: transmitted_data = {}
     count = 0
 

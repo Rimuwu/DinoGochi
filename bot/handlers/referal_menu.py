@@ -115,7 +115,7 @@ async def generate_code(call: CallbackQuery, state):
         elif action == 'custom':
             await bot.send_message(chatid, 
                                    t('referals.custom_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
-            await ChooseCustomState(create_custom_code, state, custom_handler, 
+            await ChooseCustomState(create_custom_code, custom_handler, 
                                     userid, chatid, lang)
     else:
         await bot.send_message(chatid, t('referals.have_code', lang))
@@ -171,6 +171,6 @@ async def enter_code(message: Message, state):
     ref = await referals.find_one({'userid': userid, 'type': 'sub'}, comment='enter_code_ref')
     if not ref:
         await bot.send_message(chatid, t('referals.enter_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
-        await ChooseStringState(check_code, state, userid, chatid, lang, max_len=100)
+        await ChooseStringState(check_code, userid, chatid, lang, max_len=100)
     else:
         await bot.send_message(chatid, t('referals.enter_code.have_code', lang), parse_mode='Markdown')

@@ -136,7 +136,7 @@ async def new_cycle(userid, chatid, lang, transmitted_data):
 
     ]
 
-    await ChooseStepState(pre_check, state, userid, chatid, lang, steps, transmitted_data)
+    await ChooseStepState(pre_check, userid, chatid, lang, steps, transmitted_data)
 
 
 async def pre_check(data, transmitted_data):
@@ -290,7 +290,7 @@ async def pre_check(data, transmitted_data):
         },
     ]
 
-    await ChooseStepState(end, state, userid, chatid, lang, steps, transmitted_data)
+    await ChooseStepState(end, userid, chatid, lang, steps, transmitted_data)
 
 async def end(data, transmitted_data):
     userid = transmitted_data['userid']
@@ -330,7 +330,7 @@ async def companies_c(message: Message, state):
     for i in comps:
         options[i['name']] = i['_id']
 
-    await ChoosePagesState(comp_info, state, userid, chatid, lang, options)
+    await ChoosePagesState(comp_info, userid, chatid, lang, options)
 
 async def comp_info(com_id, transmitted_data):
     userid = transmitted_data['userid']

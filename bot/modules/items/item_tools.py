@@ -94,7 +94,7 @@ async def exchange_item(userid: int, chatid: int, item: dict,
 
         state = await get_state(userid, chatid)
         transmitted_data = {'item': item, 'username': username}
-        await ChooseStepState(exchange, state, userid, 
+        await ChooseStepState(exchange, userid, 
                                       chatid, lang, steps, transmitted_data)
 
 async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1, 
@@ -419,7 +419,7 @@ async def eat_adapter(return_data: dict, transmitted_data: dict):
                         'reply_markup': feed_count_markup(
                             dino.stats['eat'], int(item_data['act'] * percent), max_count, item_name, lang)}}
             ]
-    await ChooseStepState(pre_adapter, state, userid, chatid, lang, steps, 
+    await ChooseStepState(pre_adapter, userid, chatid, lang, steps, 
                                 transmitted_data=transmitted_data)
 
 def book_page(book_id: str, page: int, lang: str):
@@ -567,7 +567,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                     })
 
             state = await get_state(userid, chatid)
-            await ChooseStepState(adapter_function, state, userid, chatid, 
+            await ChooseStepState(adapter_function, userid, chatid, 
                                   lang, steps, 
                                 transmitted_data=transmitted_data)
 
@@ -622,7 +622,7 @@ async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
                 })
 
         state = await get_state(userid, chatid)
-        await ChooseStepState(delete_action, state, userid, chatid, lang, steps, 
+        await ChooseStepState(delete_action, userid, chatid, lang, steps, 
                             transmitted_data=transmitted_data)
     else:
         await bot.send_message(chatid, t('delete_action.error', lang), 

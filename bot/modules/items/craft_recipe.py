@@ -177,7 +177,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
         }
 
         state = await get_state(userid, chatid)
-        await ChooseStepState(end_choose_items, state, userid, chatid, lang, steps, transmitted_data)
+        await ChooseStepState(end_choose_items, userid, chatid, lang, steps, transmitted_data)
 
     else:
         data = {
@@ -327,7 +327,7 @@ async def check_items_in_inventory(materials, item, count,
         }
 
         state = await get_state(userid, chatid)
-        await ChooseStepState(pre_check, state, userid, chatid, lang, 
+        await ChooseStepState(pre_check, userid, chatid, lang, 
                               steps, transmitted_data)
 
     else:

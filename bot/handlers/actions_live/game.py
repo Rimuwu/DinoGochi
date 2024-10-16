@@ -99,7 +99,7 @@ async def start_game_ent(userid: int, chatid: int,
         }
     ]
 
-    await ChooseStepState(game_start, state, userid, chatid, lang, steps, transmitted_data)
+    await ChooseStepState(game_start, userid, chatid, lang, steps, transmitted_data)
 
 async def delete_markup(transmitted_data):
     chatid = transmitted_data['chatid']

@@ -76,7 +76,7 @@ async def transition_back(dino: Dino, transmitted_data: dict):
     data = {
         'dino': dino
     }
-    await ChooseImageState(back_edit, state, userid, chatid, lang, True, transmitted_data=data)
+    await ChooseImageState(back_edit, userid, chatid, lang, True, transmitted_data=data)
     await bot.send_message(userid, text, reply_markup=markup)
 
 @HDMessage
@@ -88,7 +88,7 @@ async def custom_profile(message: Message, state):
     chatid = message.chat.id
 
     if await premium(userid):
-        await ChooseDinoState(transition_back, state, userid, chatid, lang, False)
+        await ChooseDinoState(transition_back, userid, chatid, lang, False)
     else:
         text = t('no_premium', lang)
         await bot.send_message(userid, text)
@@ -101,7 +101,7 @@ async def standart(message: Message, state):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await ChooseDinoState(standart_end, state, userid, chatid, lang, False)
+    await ChooseDinoState(standart_end, userid, chatid, lang, False)
 
 async def standart_end(dino: Dino, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -203,7 +203,7 @@ async def background_menu(call: CallbackQuery, state):
                                      )
 
         data = { 'message_id': call.message.message_id, 'delete_id': mes.message_id }
-        await ChooseIntState(page_n, state, userid, chatid, lang,
+        await ChooseIntState(page_n, userid, chatid, lang,
                              max_int=max_int, 
                              transmitted_data=data)
 
@@ -223,14 +223,14 @@ async def background_menu(call: CallbackQuery, state):
                                         reply_markup=confirm_markup(lang)
                                         )
             data['delete_id'] = mes.message_id
-            await ChooseConfirmState(buy, state, userid, chatid, lang, transmitted_data=data)
+            await ChooseConfirmState(buy, userid, chatid, lang, transmitted_data=data)
     
     elif action == 'set':
         # mes = await bot.send_message(chatid, t('backgrounds.choose_dino', lang),
         #                                 reply_markup=confirm_markup(lang)
         #                                 )
         data = { 'page': b_id } # 'delete_id': mes.message_id,
-        await ChooseDinoState(set_back, state, userid, chatid, lang, False, True, data)
+        await ChooseDinoState(set_back, userid, chatid, lang, False, True, data)
         
 async def set_back(dino: Dino, transmitted_data: dict):
     userid = transmitted_data['userid']
