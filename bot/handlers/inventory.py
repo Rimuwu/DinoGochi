@@ -127,7 +127,7 @@ async def inv_callback(call: CallbackQuery, state: FSMContext):
     if call_data == 'search' and changing_filter:
         # Активирует поиск
         if not ('delete_search' in data['settings'] and data['settings']['delete_search']):
-            
+
             await state.set_state(InventoryStates.InventorySearch)
             await search_menu(chatid, state)
 
@@ -141,7 +141,7 @@ async def inv_callback(call: CallbackQuery, state: FSMContext):
     elif call_data == 'filters' and changing_filter:
         # Активирует настройку филтров
         await state.set_state(InventoryStates.InventorySetFilters)
-        await filter_menu(chatid, state)
+        await filter_menu(chatid)
 
     elif call_data in ['end_page', 'first_page']:
         # Быстрый переходи к 1-ой / полседней странице

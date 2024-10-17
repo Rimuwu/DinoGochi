@@ -1,3 +1,4 @@
+from typing import Union
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 
@@ -254,6 +255,8 @@ async def search_menu(chatid: int, state: FSMContext):
 async def filter_menu(chatid: int, upd_up_m: bool = True):
     """ Панель-сообщение выбора фильтра
     """
+    state = await get_state(chatid, chatid)
+
     if data := await state.get_data():
         settings = data['settings']
         filters = data['filters']
@@ -310,7 +313,8 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
                     inventory: list = [], delete_search: bool = False,
                     transmitted_data = None,
 
-                    inline_func = None, inline_code = ''
+                    inline_func = None, inline_code = '',
+                    state: Union[FSMContext, None] = None,
                     ):
     """ Функция запуска инвентаря
         type_filter - фильтр типов предметов
@@ -332,8 +336,7 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
         inline_func - Если нужна функция для обработки калбек запросов 
             - Все кнопки должны начинаться с "inventoryinline {inline_code}" 
     """
-
-    state = await get_state(userid, chatid)
+    if not state: state = await get_state(userid, chatid)
     if not transmitted_data: transmitted_data = {}
     count = 0
 

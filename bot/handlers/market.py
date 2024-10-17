@@ -206,10 +206,10 @@ async def product_info(call: CallbackQuery, state):
                 await bot.edit_message_text(text, None, chatid, call.message.message_id, reply_markup=markup, parse_mode='Markdown')
         else:
             if call_type == 'edit_price' and product['owner_id'] == userid:
-                await prepare_edit_price(userid, chatid, lang, alt_id)
+                await prepare_edit_price(userid, chatid, lang, alt_id, state)
 
             elif call_type == 'add' and product['owner_id'] == userid:
-                await prepare_add(userid, chatid, lang, alt_id)
+                await prepare_add(userid, chatid, lang, alt_id, state)
 
             elif call_type == 'items':
                 itm = []
@@ -233,7 +233,7 @@ async def product_info(call: CallbackQuery, state):
 
             elif call_type == 'promotion' and product['owner_id'] == userid:
                 await promotion_prepare(userid, chatid, lang, product['_id'], 
-                                        call.message.message_id)
+                                        call.message.message_id, state)
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('seller'), IsPrivateChat())
@@ -248,14 +248,14 @@ async def seller(call: CallbackQuery, state):
 
     # Кнопки вызываемые владельцем
     if call_type == 'cancel_all':
-        await prepare_delete_all(userid, chatid, lang, call.message.message_id)
+        await prepare_delete_all(userid, chatid, lang, call.message.message_id, state)
     elif call_type == 'edit_text':
         await pr_edit_description(userid, chatid, lang, call.message.message_id, state)
     elif call_type == 'edit_name':
-        await pr_edit_name(userid, chatid, lang, call.message.message_id)
+        await pr_edit_name(userid, chatid, lang, call.message.message_id, state)
     elif call_type == 'edit_image':
         if await premium(userid):
-            await pr_edit_image(userid, chatid, lang, call.message.message_id)
+            await pr_edit_image(userid, chatid, lang, call.message.message_id, state)
         else:
             await bot.send_message(chatid, t('no_premium', lang))
 
@@ -323,12 +323,12 @@ async def random_products(message: Message, state):
 
 @main_router.message(Text('commands_name.market.find'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def find_products(message: Message):
+async def find_products(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await find_prepare(userid, chatid, lang)
+    await find_prepare(userid, chatid, lang, state)
 
 @main_router.callback_query(F.data.startswith('create_push'), IsPrivateChat())
 @HDCallback
