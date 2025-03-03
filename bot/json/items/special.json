@@ -52,5 +52,14 @@
         "type": "special",
         "class": "reborn",
         "cant_sell": true
+    },
+    "transport_egg": {
+        "image": "transport_egg",
+        "rank": "mythical",
+        "type": "special",
+        "class": "transport",
+        "abilities": {
+            "data_id": 0
+        }
     }
 }
