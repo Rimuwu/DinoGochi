@@ -9,7 +9,8 @@
             "confirm": "✅ Confirm",
             "yes": "✅ Yes",
             "no": "❌ No",
-            "cancel": "❌ Cancel"
+            "cancel": "❌ Cancel",
+            "refresh": "🔄 Update"
         },
         "commands_name": {
             "start_game": "🍡 Start playing",
@@ -54,7 +55,8 @@
                 "find": "🔍 Product Finder",
                 "seller_profile": "🛒 My Store",
                 "bot_market": "🔮 Bot Shop",
-                "background_market": "🖼️ Background Menu"
+                "background_market": "🖼️ Background Menu",
+                "search_markets": "🍶 Store Finder"
             },
             "seller_profile": {
                 "add_product": "☄ Add a product",
@@ -4628,6 +4630,13 @@
         "null_nick": "🎨 A nickname can't be empty! (All complex characters will be replaced with blank ones)",
         "no_coins": "🪙 Not enough coins!",
         "new_nick": "❤ Your new nickname: {nick}",
-        "reset_avatar": "📜 Avatar is reset, it will be updated with the last photo in your profile."
+        "reset_avatar": "📜 Avatar is reset, it will be updated with the last photo in your profile.",
+        "search_markets": {
+            "text": "🍶 Choose whether you want to find a random store or find a specific one:",
+            "random": "🛒 Random Shops",
+            "find": "🔍 Find a store",
+            "no_markets": "🧨 At the moment, there are no open stores with a similar name.",
+            "find_market": "🔍 Enter the name of the store to find it:"
+        }
     }
 }

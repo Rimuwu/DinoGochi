@@ -9,7 +9,8 @@
             "confirm": "✅ Confirmar",
             "yes": "✅ Sí",
             "no": "❌ No",
-            "cancel": "❌ Cancelar"
+            "cancel": "❌ Cancelar",
+            "refresh": "🔄 Actualización"
         },
         "commands_name": {
             "start_game": "🍡 Empieza a jugar",
@@ -54,7 +55,8 @@
                 "find": "🔍 Búsqueda de productos",
                 "seller_profile": "🛒 Mi tienda",
                 "bot_market": "🔮 Tienda de bots",
-                "background_market": "🖼️ Menú de fondo"
+                "background_market": "🖼️ Menú de fondo",
+                "search_markets": "🍶 Buscador de tiendas"
             },
             "seller_profile": {
                 "add_product": "☄ Añadir producto",
@@ -4628,6 +4630,13 @@
         "null_nick": "🎨 ¡Un apodo no puede estar vacío! (Todos los caracteres complejos serán reemplazados por otros en blanco)",
         "no_coins": "🪙 ¡No hay suficientes monedas!",
         "new_nick": "❤ Tu nuevo apodo: {nick}",
-        "reset_avatar": "📜 El avatar se restablece, se actualizará con la última foto de tu perfil."
+        "reset_avatar": "📜 El avatar se restablece, se actualizará con la última foto de tu perfil.",
+        "search_markets": {
+            "text": "🍶 Elige si quieres encontrar una tienda al azar o encontrar una específica:",
+            "random": "🛒 Tiendas aleatorias",
+            "find": "🔍 Encuentra una tienda",
+            "no_markets": "🧨 Por el momento, no hay tiendas abiertas con un nombre similar.",
+            "find_market": "🔍 Ingresa el nombre de la tienda para encontrarla:"
+        }
     }
 }
