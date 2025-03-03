@@ -161,7 +161,6 @@ async def transition(dino: Dino, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
-    state = transmitted_data['state']
 
     text = t('rename_dino.info', lang, last_name=dino.name)
     keyboard = [t('buttons_name.cancel', lang)]
@@ -182,7 +181,7 @@ async def rename_dino(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    await ChooseDinoState(transition, userid, message.chat.id, lang, False)
+    await ChooseDinoState(transition, userid, message.chat.id, lang, False, state=state)
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('rename_dino'), IsAuthorizedUser(), IsPrivateChat())

@@ -74,7 +74,6 @@ async def end_choice(option: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
-    state = transmitted_data['state']
     last_dino = transmitted_data['last_dino']
 
     if await last_dino.status == 'pass':
