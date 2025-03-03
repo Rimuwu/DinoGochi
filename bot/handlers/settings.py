@@ -181,7 +181,7 @@ async def rename_dino(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    await ChooseDinoState(transition, userid, message.chat.id, lang, False)
+    await ChooseDinoState(transition, userid, message.chat.id, lang, False, state=state)
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('rename_dino'), IsAuthorizedUser(), IsPrivateChat())

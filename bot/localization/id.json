@@ -611,7 +611,8 @@
                 "description": "Untuk orang-orang paling cantik di planet ini! ❤"
             },
             "gift_2025": {
-                "name": "🎁 Hadiah 2025"
+                "name": "🎁 Hadiah 2025",
+                "description": "Untuk pemimpi dan orang percaya!"
             },
             "rod": {
                 "name": "🎣 Pancing",
@@ -1233,43 +1234,43 @@
         },
         "inline_menu": {
             "delete_message": {
-                "text": "⚙ | Menghapus pesan",
+                "text": "⚙ Hapus Postingan",
                 "callback": "delete_message"
             },
             "dino_profile": {
-                "text": "🦕 | Buka Profil",
+                "text": "🦕 Buka Profil",
                 "callback": "dino_profile {dino_alt_id_markup}"
             },
             "dino_rename": {
-                "text": "💬 | Beri nama",
+                "text": "💬 Beri nama",
                 "callback": "rename_dino {dino_alt_id_markup}"
             },
             "send_request": {
-                "text": "💎 | Kirim Permintaan",
+                "text": "💎 Kirim Pertanyaan",
                 "callback": "send_request {userid}"
             },
             "requests": {
-                "text": "👥 | Pertanyaan",
+                "text": "👥 Permintaan",
                 "callback": "requests"
             },
             "inventory": {
-                "text": "🍭 | Buka Inventaris",
+                "text": "🍭 Buka Inventaris",
                 "callback": "inventory_start"
             },
             "rescue": {
-                "text": "❤ | Selamatkan Dinosaurus",
+                "text": "❤ Selamatkan dinosaurusnya",
                 "callback": "support info rescue_kit"
             },
             "reborn": {
-                "text": "❤ | Menghidupkan kembali",
+                "text": "❤ Menghidupkan kembali",
                 "callback": "support info reborn"
             },
             "dead_dialog": {
-                "text": "✉ | Buka",
+                "text": "✉ Buka",
                 "callback": "dialog dead_last_dino start"
             },
             "daily_award": {
-                "text": "🎁 | Di bawa",
+                "text": "🎁 Penjemputan",
                 "callback": "daily_message"
             },
             "product_info": {

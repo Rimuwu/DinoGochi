@@ -370,7 +370,7 @@ async def send_info_pr(option, transmitted_data: dict):
     else:
         await bot.send_message(chatid,  t('product_info.error', lang))
 
-async def find_prepare(userid: int, chatid: int, lang: str, state):
+async def find_prepare(userid: int, chatid: int, lang: str):
 
     options = {
         "🍕 ➡ 🪙": 'items_coins',
@@ -402,7 +402,6 @@ async def find_end(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
-    state = transmitted_data['state']
 
     item = return_data['item']
     filt = return_data['option']

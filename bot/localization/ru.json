@@ -1216,43 +1216,43 @@
         },
         "inline_menu": {
             "delete_message": {
-                "text": "⚙ | Удалить сообщение",
+                "text": "⚙ Удалить сообщение",
                 "callback": "delete_message"
             },
             "dino_profile": {
-                "text": "🦕 | Открыть профиль",
+                "text": "🦕 Открыть профиль",
                 "callback": "dino_profile {dino_alt_id_markup}"
             },
             "dino_rename": {
-                "text": "💬 | Дать имя",
+                "text": "💬 Дать имя",
                 "callback": "rename_dino {dino_alt_id_markup}"
             },
             "send_request": {
-                "text": "💎 | Отправить запрос",
+                "text": "💎 Отправить запрос",
                 "callback": "send_request {userid}"
             },
             "requests": {
-                "text": "👥 | Запросы",
+                "text": "👥 Запросы",
                 "callback": "requests"
             },
             "inventory": {
-                "text": "🍭 | Открыть инвентарь",
+                "text": "🍭 Открыть инвентарь",
                 "callback": "inventory_start"
             },
             "rescue": {
-                "text": "❤ | Спасти динозавра",
+                "text": "❤ Спасти динозавра",
                 "callback": "support info rescue_kit"
             },
             "reborn": {
-                "text": "❤ | Возродить",
+                "text": "❤ Возродить",
                 "callback": "support info reborn"
             },
             "dead_dialog": {
-                "text": "✉ | Открыть",
+                "text": "✉ Открыть",
                 "callback": "dialog dead_last_dino start"
             },
             "daily_award": {
-                "text": "🎁 | Забрать",
+                "text": "🎁 Забрать",
                 "callback": "daily_message"
             },
             "product_info": {

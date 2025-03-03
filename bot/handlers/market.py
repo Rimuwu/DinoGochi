@@ -325,12 +325,12 @@ async def random_products(message: Message, state):
 
 @main_router.message(Text('commands_name.market.find'), IsAuthorizedUser(), IsPrivateChat())
 @HDMessage
-async def find_products(message: Message, state):
+async def find_products(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await find_prepare(userid, chatid, lang, state)
+    await find_prepare(userid, chatid, lang)
 
 @main_router.callback_query(F.data.startswith('create_push'), IsPrivateChat())
 @HDCallback

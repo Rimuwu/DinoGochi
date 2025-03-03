@@ -1,66 +1,82 @@
 {
     "SYSTEM_ITEM_REPAIR": {
         "type": "dummy",
-        "rank": "common"
+        "rank": "common",
+        "cant_sell": true
     },
     "SYSTEM_ITEM_SWORD": {
         "type": "dummy",
-        "rank": "common"
+        "rank": "common",
+        "cant_sell": true
     },
     "SYSTEM_ITEM_AXE": {
         "type": "dummy",
-        "rank": "common"
+        "rank": "common",
+        "cant_sell": true
     },
     "SYSTEM_ITEM_PICKAXE": {
         "type": "dummy",
-        "rank": "common"
+        "rank": "common",
+        "cant_sell": true
     },
     "SYSTEM_ITEM_SHIELD": {
         "type": "dummy",
-        "rank": "common"
+        "rank": "common",
+        "cant_sell": true
     },
     "SYSTEM_ITEM_ROD": {
         "type": "dummy",
-        "rank": "common"
+        "rank": "common",
+        "cant_sell": true
     },
     "SYSTEM_ITEM_GEAR": {
         "type": "dummy",
-        "rank": "common"
+        "rank": "common",
+        "cant_sell": true
     },
     "SYSTEM_ITEM_BODY": {
         "type": "dummy",
-        "rank": "common"
+        "rank": "common",
+        "cant_sell": true
     },
     "rustycan": {
         "type": "dummy",
-        "rank": "common"
+        "rank": "common",
+        "cant_sell": true
     },
     "wornoutticket": {
         "type": "dummy",
-        "rank": "common"
+        "rank": "common",
+        "cant_sell": true
     },
     "brokenkey": {
         "type": "dummy",
-        "rank": "common"
+        "rank": "common",
+        "cant_sell": true
     },
     "lostglove": {
         "type": "dummy",
-        "rank": "common"
+        "rank": "common",
+        "cant_sell": true
     },
     "shatteredbottle": {
         "type": "dummy",
-        "rank": "common"
+        "rank": "common",
+        "cant_sell": true
     },
     "oldbucket": {
         "type": "dummy",
-        "rank": "common"
+        "rank": "common",
+        "cant_sell": true
     },
     "crumpledpaper": {
         "type": "dummy",
-        "rank": "common"
+        "rank": "common",
+        "cant_sell": true
     },
     "wiltedleaf": {
         "type": "dummy",
-        "rank": "common"
+        "rank": "common",
+        "cant_sell": true
     }
 }

@@ -39,7 +39,6 @@ async def inventory_adapter(item, transmitted_data):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
-    state: FSMContext = transmitted_data['state']
     dino: Dino = transmitted_data['dino']
 
     transmitted_data['item'] = item
@@ -57,7 +56,7 @@ async def inventory_adapter(item, transmitted_data):
                                      comment="inventory_adapter_all_items")
 
         for i in all_items:
-            if 'abilities' in item.keys() and 'uses' in item['abilities']:
+            if 'abilities' in i['items_data'].keys() and 'uses' in i['items_data']['abilities']:
                 max_count += i['items_data']['abilities']['uses']
             else:
                 max_count += i['count']

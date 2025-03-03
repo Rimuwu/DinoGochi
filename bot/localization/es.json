@@ -611,7 +611,8 @@
                 "description": "¡Para las personas más bellas del planeta! ❤"
             },
             "gift_2025": {
-                "name": "🎁 Regalo 2025"
+                "name": "🎁 Regalo 2025",
+                "description": "¡Para soñadores y creyentes!"
             },
             "rod": {
                 "name": "🎣 Caña de pescar",
@@ -1233,43 +1234,43 @@
         },
         "inline_menu": {
             "delete_message": {
-                "text": "⚙ | Eliminar un mensaje",
+                "text": "⚙ Eliminar publicación",
                 "callback": "delete_message"
             },
             "dino_profile": {
-                "text": "🦕 | Abrir perfil",
+                "text": "🦕 Abrir perfil",
                 "callback": "dino_profile {dino_alt_id_markup}"
             },
             "dino_rename": {
-                "text": "💬 | Dar un nombre",
+                "text": "💬 Dar un nombre",
                 "callback": "rename_dino {dino_alt_id_markup}"
             },
             "send_request": {
-                "text": "💎 | Enviar consulta",
+                "text": "💎 Enviar consulta",
                 "callback": "send_request {userid}"
             },
             "requests": {
-                "text": "👥 | Consultas",
+                "text": "👥 Solicitudes",
                 "callback": "requests"
             },
             "inventory": {
-                "text": "🍭 | Inventario abierto",
+                "text": "🍭 Inventario abierto",
                 "callback": "inventory_start"
             },
             "rescue": {
-                "text": "❤ | Salva al dinosaurio",
+                "text": "❤ Salva al dinosaurio",
                 "callback": "support info rescue_kit"
             },
             "reborn": {
-                "text": "❤ | Revivir",
+                "text": "❤ Revivir",
                 "callback": "support info reborn"
             },
             "dead_dialog": {
-                "text": "✉ | Abrir",
+                "text": "✉ Abierto",
                 "callback": "dialog dead_last_dino start"
             },
             "daily_award": {
-                "text": "🎁 | A domicilio",
+                "text": "🎁 Recoger",
                 "callback": "daily_message"
             },
             "product_info": {

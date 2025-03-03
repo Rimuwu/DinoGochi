@@ -611,7 +611,8 @@
                 "description": "For the most beautiful people on the planet! ❤"
             },
             "gift_2025": {
-                "name": "🎁 Gift 2025"
+                "name": "🎁 Gift 2025",
+                "description": "For dreamers and believers!"
             },
             "rod": {
                 "name": "🎣 Fishing rod",
@@ -1233,43 +1234,43 @@
         },
         "inline_menu": {
             "delete_message": {
-                "text": "⚙ | Delete a message",
+                "text": "⚙ Delete Post",
                 "callback": "delete_message"
             },
             "dino_profile": {
-                "text": "🦕 | Open Profile",
+                "text": "🦕 Open Profile",
                 "callback": "dino_profile {dino_alt_id_markup}"
             },
             "dino_rename": {
-                "text": "💬 | Give a name",
+                "text": "💬 Give a name",
                 "callback": "rename_dino {dino_alt_id_markup}"
             },
             "send_request": {
-                "text": "💎 | Send Inquiry",
+                "text": "💎 Send Inquiry",
                 "callback": "send_request {userid}"
             },
             "requests": {
-                "text": "👥 | Enquiries",
+                "text": "👥 Requests",
                 "callback": "requests"
             },
             "inventory": {
-                "text": "🍭 | Open Inventory",
+                "text": "🍭 Open Inventory",
                 "callback": "inventory_start"
             },
             "rescue": {
-                "text": "❤ | Save the Dinosaur",
+                "text": "❤ Save the dinosaur",
                 "callback": "support info rescue_kit"
             },
             "reborn": {
-                "text": "❤ | Revive",
+                "text": "❤ Revive",
                 "callback": "support info reborn"
             },
             "dead_dialog": {
-                "text": "✉ | Open",
+                "text": "✉ Open",
                 "callback": "dialog dead_last_dino start"
             },
             "daily_award": {
-                "text": "🎁 | Take away",
+                "text": "🎁 Pick Up",
                 "callback": "daily_message"
             },
             "product_info": {
