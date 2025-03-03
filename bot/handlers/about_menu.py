@@ -163,7 +163,7 @@ async def support_buttons(call: CallbackQuery, state):
                         name = f'{seconds_to_str(product["time"]*int(key), lang)} = {item[currency]}🌟'
 
                         buttons[name] = f'support buy {product_key} {key}'
-                elif product['type'] == 'kit':
+                elif product['type'] in ['kit', 'super_coins']:
                     for key, item in product['cost'].items():
                         name = f'x{key} = {item[currency]}🌟'
                         buttons[name] = f'support buy {product_key} {key}'
