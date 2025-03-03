@@ -1,6 +1,7 @@
 # Тестовые команды
 
 from functools import wraps
+from hmac import new
 import stat
 import statistics
 from asyncio import sleep
@@ -284,3 +285,14 @@ async def check(message: Message):
 
     inl = inline_menu('dino_profile', 'en', dino_alt_id_markup='werwr')
     await message.answer('ok', message_effect_id='5104841245755180586', reply_markup=inl)
+    
+
+@main_router.message(Command(commands=['add_user_data']), IsAdminUser())
+async def add_user(message: Message):
+
+    new_user = {
+        "name": "",
+        "avatar": ""
+    }
+    await users.update_many({}, {"$set": new_user}, upsert=True)
+    await bot.send_message(message.from_user.id,"suf!")
