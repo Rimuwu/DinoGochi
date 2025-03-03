@@ -9,6 +9,7 @@ from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.items.item import item_info
 from bot.modules.localization import get_lang, t
+from bot.modules.logs import log
 from bot.modules.market.market import (create_push, create_seller, delete_product,
                                 preview_product, product_ui, seller_ui)
 from bot.modules.market.market_chose import (buy_item, find_prepare,
@@ -20,7 +21,7 @@ from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import (ChooseOptionState, ChoosePagesState,
-                                      ChooseStepState)
+                                      ChooseStepState, ChooseStringState)
 from bot.modules.user.user import premium, user_name
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
@@ -33,6 +34,7 @@ from bot.filters.kd import KDCheck
 from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command, StateFilter
+from fuzzywuzzy import fuzz
 
 from aiogram.fsm.context import FSMContext
 
@@ -353,4 +355,117 @@ async def push(call: CallbackQuery):
     await bot.send_message(userid, text)
     await bot.edit_message_reply_markup(None, chatid, call.message.message_id, 
                                         reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
+
+@main_router.message(Text('commands_name.market.search_markets'), IsAuthorizedUser(), IsPrivateChat())
+@HDMessage
+async def search_markets(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+    chatid = message.chat.id
+
+    mrk = list_to_inline([
+        {
+            t('search_markets.random', lang): 'random_markets',
+            t('search_markets.find', lang): 'find_markets'
+        }
+    ])
+
+    await bot.send_message(chatid, t('search_markets.text', lang),
+                          reply_markup=mrk)
+
+@main_router.callback_query(F.data.startswith('random_markets'), IsPrivateChat())
+@HDCallback
+async def random_markets(call: CallbackQuery):
+    call_data = call.data.split()
+    chatid = call.message.chat.id
+    userid = call.from_user.id
+
+    lang = await get_lang(userid)
+
+    # Получаем случайные магазины
+    markets = await sellers.find(
+        {"owner_id": {"$ne": userid}}, 
+        comment='random_markets_markets', 
+        max_col=15)
+
+    if not markets:
+        await bot.edit_message_text(
+            t('search_markets.no_markets', lang),
+            chat_id=chatid,
+            message_id=call.message.message_id
+        )
+        return
+
+    # Формируем список магазинов для отображения
+    market_list = {}
+    for market in markets: market_list[market['name']] = market['owner_id']
+
+    await ChoosePagesState(send_seller_info, userid, chatid, lang, 
+                           market_list, 1, 3, 
+                           None, False, False)
+
+async def send_seller_info(option, transmitted_data: dict):
+    chatid = transmitted_data['chatid']
+    lang = transmitted_data['lang']
+    userid = transmitted_data['userid']
+
+    text, markup, image = await seller_ui(option, lang, False)
+    try:
+        await bot.send_photo(chatid, image, caption=text, parse_mode="Markdown", reply_markup=markup)
+    except:
+        await bot.send_photo(chatid, image, caption=text, reply_markup=markup, parse_mode=None)
+
+@main_router.callback_query(F.data.startswith('find_markets'), IsPrivateChat())
+@HDCallback
+async def find_markets(call: CallbackQuery):
+    call_data = call.data.split()
+    chatid = call.message.chat.id
+    userid = call.from_user.id
+
+    lang = await get_lang(userid)
     
+    await bot.send_message(
+        chatid,
+        t('search_markets.find_market', lang),
+        reply_markup=cancel_markup(lang)
+    )
+
+    await ChooseStringState(find_prepare, userid, chatid, lang, 3, 50)
+
+async def find_prepare(return_data, transmitted_data):
+    chatid = transmitted_data['chatid']
+    lang = transmitted_data['lang']
+    userid = transmitted_data['userid']
+    name = return_data.lower()
+
+    # Получаем все магазины кроме своего
+    markets = await sellers.find(
+        {"owner_id": {"$ne": userid}},
+        comment='find_markets_sellers'
+    )
+
+    if not markets:
+        await bot.send_message(chatid, t('search_markets.no_markets', lang))
+        return
+
+    # Ищем совпадения имен
+    market_list = {}
+    for market in markets:
+        market_name = market['name'].lower()
+
+        # Считаем процент совпадения через fuzzywuzzy
+        log(f'{name} {market_name}')
+        similarity = fuzz.ratio(name, market_name)
+        log(f'{similarity}')
+
+        # Если совпадение больше 60%
+        if similarity >= 60:
+            market_list[market['name']] = market['owner_id']
+
+    if market_list:
+        await ChoosePagesState(send_seller_info, userid, chatid, lang,
+                              market_list, 1, 3,
+                              None, False, False)
+    else:
+        await bot.send_message(chatid, t('search_markets.no_markets', lang),
+                               reply_markup=await m(userid, 'last_menu', lang))
