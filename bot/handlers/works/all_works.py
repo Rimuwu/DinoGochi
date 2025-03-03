@@ -34,7 +34,10 @@ dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 @HDMessage
 @main_router.message(Text('commands_name.extraction_actions.progress'))
 async def progress(message: Message):
+    if not message or not message.from_user:
+        return
     userid = message.from_user.id
+
     user = await User().create(userid)
     lang = await user.lang
     dino = await user.get_last_dino()
@@ -80,11 +83,17 @@ async def progress(message: Message):
 @main_router.callback_query(F.data.startswith('progress_work'))
 async def progress_work(call: CallbackQuery):
 
+    if not call or not call.message or not call.from_user or not call.data:
+        return
+        
     chatid = call.message.chat.id
     userid = call.from_user.id
 
-    action = call.data.split()[1]
-    alt_code = call.data.split()[2]
+    try:
+        action = call.data.split()[1]
+        alt_code = call.data.split()[2]
+    except (IndexError, AttributeError):
+        return
 
     lang = await get_lang(userid)
     dino = await Dino().create(alt_code)
