@@ -159,7 +159,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         add_back_button = True
         buttons = [
             ['random', 'find'],
-            ['seller_profile'],
+            ['seller_profile', 'search_markets'],
         ]
     
     elif markup_key == 'backgrounds_menu':
