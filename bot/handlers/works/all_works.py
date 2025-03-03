@@ -77,7 +77,7 @@ async def progress(message: Message):
                     {t('works.buttons.check', lang): f'progress_work check {dino.alt_id}'}
                 ])
 
-            await bot.send_message(chatid, text, 'Markdown', reply_markup=rmk)
+            await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=rmk)
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('progress_work'))
@@ -125,7 +125,7 @@ async def progress_work(call: CallbackQuery):
                           count=count,
                           max_count=res['max_items'])
 
-                await bot.send_message(chatid, text, 'Markdown')
+                await bot.send_message(chatid, text, parse_mode='Markdown')
                 await bot.send_message(chatid, '✅', 
                            reply_markup = await m(userid, 'last_menu', lang))
 
@@ -197,7 +197,7 @@ async def end_mine(data, transmitted_data: dict):
 
     await start_mine(last_dino._id, userid, data)
     text = t('works.start.mine', lang)
-    mes = await bot.send_message(chatid, text, 'Markdown',
+    mes = await bot.send_message(chatid, text, parse_mode='Markdown',
                            reply_markup = await m(userid, 'last_menu', lang))
 
     await auto_ads(mes)
@@ -241,7 +241,7 @@ async def end_bank(data, transmitted_data: dict):
 
     await start_bank(last_dino._id, userid, data)
     text = t('works.start.bank', lang)
-    mes = await bot.send_message(chatid, text, 'Markdown',
+    mes = await bot.send_message(chatid, text, parse_mode='Markdown',
                            reply_markup = await m(userid, 'last_menu', lang))
 
     await auto_ads(mes)
@@ -285,7 +285,7 @@ async def end_sawmill(data, transmitted_data: dict):
 
     await start_sawmill(last_dino._id, userid, data)
     text = t('works.start.sawmill', lang)
-    mes = await bot.send_message(chatid, text, 'Markdown',
+    mes = await bot.send_message(chatid, text, parse_mode='Markdown',
                            reply_markup = await m(userid, 'last_menu', lang))
 
     await auto_ads(mes)
