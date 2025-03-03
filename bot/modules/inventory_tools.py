@@ -142,7 +142,10 @@ def name_end(item, standart, name, count_name):
         end_name = f"{name}{count_name}"
     else:
         code = item_code(item, False)
-        end_name = f"{name} ({code}){count_name}"
+        if code != '':
+            end_name = f"{name} ({code}){count_name}"
+        else:
+            end_name = f"{name}{count_name}"
     return end_name
 
 async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
@@ -157,7 +160,7 @@ async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
     else: markup = None
 
     if not image:
-        await bot.send_message(chatid, text, 'Markdown',
+        await bot.send_message(chatid, text, parse_mode='Markdown',
                             reply_markup=markup)
     else:
         try:
@@ -176,6 +179,8 @@ async def swipe_page(chatid: int, state: FSMContext):
         filters = data['filters']
         main_message = data['main_message']
         up_message = data['up_message']
+
+    if settings['page'] >= len(pages): settings['page'] = 0
 
     keyboard = list_to_keyboard(pages[settings['page']], settings['row'])
 
@@ -201,7 +206,7 @@ async def swipe_page(chatid: int, state: FSMContext):
             del buttons['🔎']
 
     if filters:
-        if settings['changing_filters'] and settings['changing_filters']:
+        if settings['changing_filters']:
             buttons['🗑'] = 'inventory_menu clear_filters'
             menu_text += t('inventory.clear_filters', settings['lang'])
 
