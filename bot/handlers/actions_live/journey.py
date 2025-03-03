@@ -1,9 +1,10 @@
 
 from random import randint
+import re
 from time import time
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.dinosaur.mood import repeat_activity
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline, seconds_to_str
@@ -20,8 +21,16 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user.user import User
-from telebot.types import (CallbackQuery, InlineKeyboardMarkup, InputMedia,
+from aiogram.types import (CallbackQuery, InlineKeyboardMarkup, InputMedia, InputMediaPhoto,
                            Message)
+
+from bot.filters.translated_text import Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from aiogram import F
+from aiogram.fsm.context import FSMContext
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
@@ -52,8 +61,8 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
                 loc_name=loc_name, time_text=time_text)
 
         await bot.edit_message_media(
-            InputMedia(
-                type='photo', media=image, caption=text),
+            InputMediaPhoto(
+               media=image, caption=text),
             chatid, last_mess_id)
         message = await bot.send_message(chatid, t('journey_start.start_2', lang), reply_markup= await m(userid, 'last_menu', lang))
 
@@ -63,6 +72,7 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
     await auto_ads(message)
 
 async def start_journey(userid: int, chatid: int, lang: str, 
+                        state: FSMContext,
                         friend: int = 0):
     user = await User().create(userid)
     last_dino = await user.get_last_dino()
@@ -113,18 +123,17 @@ async def start_journey(userid: int, chatid: int, lang: str,
     await bot.send_message(chatid, t('journey_start.cancel_text', lang), 
                            reply_markup=cancel_markup(lang))
 
-@bot.message_handler(pass_bot=True, text='commands_name.actions.journey', dino_pass=True, nothing_state=True)
 @HDMessage
-async def journey_com(message: Message):
+@main_router.message(Text('commands_name.actions.journey'), DinoPassStatus())
+async def journey_com(message: Message, state: FSMContext):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await start_journey(userid, chatid, lang)
+    await start_journey(userid, chatid, lang, state)
 
-@bot.callback_query_handler(pass_bot=True, func=
-                            lambda call: call.data.startswith('journey_complexity'), private=True)
 @HDCallback
+@main_router.callback_query(F.data.startswith('journey_complexity'), IsPrivateChat())
 async def journey_complexity(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id
@@ -132,8 +141,8 @@ async def journey_complexity(callback: CallbackQuery):
     text = t('journey_complexity', lang)
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.message_handler(pass_bot=True, text='commands_name.actions.events')
 @HDMessage
+@main_router.message(Text('commands_name.actions.events'))
 async def events(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -167,9 +176,8 @@ async def events(message: Message):
 
     await auto_ads(message)
 
-@bot.callback_query_handler(pass_bot=True, func=
-                            lambda call: call.data.startswith('journey_stop'))
 @HDCallback
+@main_router.callback_query(F.data.startswith('journey_stop'))
 async def journey_stop(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id
@@ -177,8 +185,8 @@ async def journey_stop(callback: CallbackQuery):
 
     dino = await dinosaurs.find_one({'alt_id': code}, comment='journey_stop_dino')
     if dino and await check_status(dino['_id']) == 'journey':
-        await bot.edit_message_reply_markup(chatid, callback.message.id, 
-                                   reply_markup=InlineKeyboardMarkup())
+        await bot.edit_message_reply_markup(None, chat_id=chatid, message_id=callback.message.message_id, 
+                                   reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
         data = await long_activity.find_one({'dino_id': dino['_id'], 
                          'activity_type': 'journey'}, comment='journey_stop_data')
         await end_journey(dino['_id'])

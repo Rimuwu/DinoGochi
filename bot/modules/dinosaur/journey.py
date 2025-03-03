@@ -294,7 +294,7 @@ locations = {
             'unc': ['juice_recipe', 'hot_chocolate_recipe', 'cake_recipe'],
             'rar': ['pouch_recipe', 'sword_recipe', 'onion_recipe', 'arrow_recipe'],
             'mys': ['backpack_recipe', 'shield_recipe', 'pickaxe_recipe', 'drink_recipe', 'magic_stone'],
-            'leg': ['steak_recipe', 'broth_recipe', 'sushi_recipe', 'book_desert', 'magic_stone']
+            'leg': ['steak_recipe', 'broth_recipe', 'sushi_recipe', 'book_desert', 'magic_stone', 'transport_egg']
         },
         'mobs': {
             'mobs_hp': {"min": 1, "max": 5, "type": "random"},
@@ -330,7 +330,7 @@ locations = {
             'unc': ['bacon_recipe', 'bento_recipe', 'sandwich_recipe'],
             'rar': ['berry_pie_recipe', 'fish_pie_recipe', 'meat_pie_recipe'],
             'mys': ['basket_recipe', 'net_recipe', 'rod_recipe', 'magic_stone'],
-            'leg': ['mysterious_egg', 'unusual_egg', 'rare_egg', 'mystic_egg', 'legendary_egg', 'book_mountains', 'magic_stone']
+            'leg': ['mysterious_egg', 'unusual_egg', 'rare_egg', 'mystic_egg', 'legendary_egg', 'book_mountains', 'magic_stone', 'transport_egg']
         },
         'mobs': {
             'mobs_hp': {"min": 2, "max": 6, "type": "random"},
@@ -365,7 +365,7 @@ locations = {
             'unc': ['croissant_recipe', 'therapeutic_mixture'],
             'rar': ["tooling_recipe", 'repair_tool_recipe', 'skinning_knife_recipe', 'rod_recipe'],
             'mys': ['chest_food', 'recipe_chest', 'magic_stone'],
-            'leg': ['mysterious_egg', 'unusual_egg', 'rare_egg', 'mystic_egg', 'legendary_egg', 'book_magic-forest', 'magic_stone']
+            'leg': ['mysterious_egg', 'unusual_egg', 'rare_egg', 'mystic_egg', 'legendary_egg', 'book_magic-forest', 'magic_stone', 'transport_egg']
         },
         'mobs': {
             'mobs_hp': {"min": 1, "max": 10, "type": "random"},

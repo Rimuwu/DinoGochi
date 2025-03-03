@@ -1,8 +1,8 @@
-from telebot.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.data_format import escape_markdown, list_to_inline
 from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, t, get_lang
@@ -13,12 +13,23 @@ from bot.modules.states_tools import ChooseCustomState, ChooseStringState
 from bot.modules.user.user import take_coins
 from bot.modules.decorators import HDCallback, HDMessage
 
+
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command
+
+
 from bot.modules.overwriting.DataCalsses import DBconstructor
 referals = DBconstructor(mongo_client.user.referals)
 
-
-@bot.message_handler(pass_bot=True, text='commands_name.referal.code', is_authorized=True, private=True)
 @HDMessage
+@main_router.message(Text('commands_name.referal.code'), IsAuthorizedUser(), IsPrivateChat())
 async def code(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -42,7 +53,7 @@ async def create_custom_code(code: str, transmitted_data: dict):
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
-    
+
     if await take_coins(userid, GS['referal']['custom_price'], True):
         code = code.replace(' ', '')
         await create_referal(userid, code)
@@ -81,10 +92,9 @@ async def custom_handler(message: Message, transmitted_data: dict):
         await bot.send_message(chatid, text, parse_mode='Markdown')
     return status, code
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: 
-    call.data.startswith('generate_referal'), private=True)
 @HDCallback
-async def generate_code(call: CallbackQuery):
+@main_router.callback_query(F.data.startswith('generate_referal'), IsPrivateChat())
+async def generate_code(call: CallbackQuery, state):
     chatid = call.message.chat.id
     userid = call.from_user.id
     lang = await get_lang(call.from_user.id)
@@ -111,8 +121,8 @@ async def generate_code(call: CallbackQuery):
         await bot.send_message(chatid, t('referals.have_code', lang))
 
 
-@bot.message_handler(pass_bot=True, textstart='commands_name.referal.my_code', private=True)
 @HDMessage
+@main_router.message(StartWith('commands_name.referal.my_code'), IsPrivateChat())
 async def my_code(message: Message):
     """ Кнопка - мой код ...
     """
@@ -151,9 +161,9 @@ async def check_code(code: str, transmitted_data: dict, send: bool = True):
         await bot.send_message(chatid, text, parse_mode='Markdown', 
                         reply_markup= await m(userid, 'last_menu', lang, True))
 
-@bot.message_handler(pass_bot=True, text='commands_name.referal.enter_code', is_authorized=True, private=True)
 @HDMessage
-async def enter_code(message: Message):
+@main_router.message(Text('commands_name.referal.enter_code'), IsAuthorizedUser(), IsPrivateChat())
+async def enter_code(message: Message, state):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id

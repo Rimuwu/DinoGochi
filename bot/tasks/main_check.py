@@ -5,6 +5,7 @@ from bot.dbmanager import mongo_client
 from bot.modules.data_format import transform
 from bot.modules.dinosaur.dinosaur  import check_status, mutate_dino_stat
 from bot.modules.localization import get_data, get_lang, t
+from bot.modules.get_state import get_state
 from bot.taskmanager import add_task
 from bot.modules.dinosaur.dinosaur  import Dino, get_owner
 from bot.modules.dinosaur.mood import check_inspiration, mood_while_if, calculation_points
@@ -194,7 +195,7 @@ async def main_checks():
                         continue
 
                     lang = await get_lang(owner['owner_id'])
-                    state = await bot.get_state(user.userid, user.userid)
+                    state = await get_state(user.userid, user.userid)
 
                     if state == None:
                         if not user.settings.get('my_name', False):

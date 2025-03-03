@@ -3,7 +3,8 @@ from time import time
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
-from bot.exec import bot
+from bot.exec import main_router, bot
+from bot.filters.status import DinoPassStatus
 from bot.modules.items.accessory import check_accessory
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline
@@ -19,7 +20,15 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user.user import User, premium
-from telebot.types import Message
+from aiogram.types import Message, InputFile
+
+from bot.filters.translated_text import Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from aiogram import F
+from aiogram.fsm.context import FSMContext
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 
@@ -27,6 +36,7 @@ long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 async def start_game_ent(userid: int, chatid: int, 
                          lang: str, dino: Dino, 
+                         state: FSMContext,
                          friend: int = 0, join: bool = True, 
                          join_dino: str = ''):
     """ Запуск активности игра
@@ -94,7 +104,7 @@ async def start_game_ent(userid: int, chatid: int,
 async def delete_markup(transmitted_data):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
-    
+
     text = t(f'entertainments.zero', lang)
     await bot.send_message(chatid, text, reply_markup=cancel_markup(lang))
     return transmitted_data, 0
@@ -149,7 +159,7 @@ async def game_start(return_data: dict,
                 text_m = t('entertainments.dino_join', lang, 
                             dinoname=dino.name)
                 image = await dino_game(friend_dino_id, dino.data_id)
-                await bot.send_photo(friend, image, text_m)
+                await bot.send_photo(friend, image, caption=text_m)
 
     r_t = get_data('entertainments', lang)['time'][code]['data']
     game_time = randint(*r_t) * 60
@@ -165,7 +175,7 @@ async def game_start(return_data: dict,
     if percent < 1.0:
         text += t(f'entertainments.game_text.penalty', lang, percent=int(percent*100))
 
-    message = await bot.send_photo(chatid, image, text, 
+    message = await bot.send_photo(chatid, image, caption=text, 
                          reply_markup=await m(userid, 'last_menu', lang, True))
 
     # Пригласить друга
@@ -181,22 +191,22 @@ async def game_start(return_data: dict,
 
     await auto_ads(message)
 
-@bot.message_handler(pass_bot=True, text='commands_name.actions.entertainments', dino_pass=True, nothing_state=True)
 @HDMessage
-async def entertainments(message: Message):
-    userid = message.from_user.id
-    lang = await get_lang(message.from_user.id)
+@main_router.message(Text('commands_name.actions.entertainments'), DinoPassStatus())
+async def entertainments(message: Message, state: FSMContext):
+    userid = message.from_user.id # type: ignore
+    lang = await get_lang(message.from_user.id) # type: ignore
     chatid = message.chat.id
 
     user = await User().create(userid)
     dino = await user.get_last_dino()
-    if dino: await start_game_ent(userid, chatid, lang, dino)
+    if dino: await start_game_ent(userid, chatid, lang, dino, state)
 
-@bot.message_handler(pass_bot=True, text='commands_name.actions.stop_game')
 @HDMessage
+@main_router.message(Text('commands_name.actions.stop_game'))
 async def stop_game(message: Message):
-    userid = message.from_user.id
-    lang = await get_lang(message.from_user.id)
+    userid = message.from_user.id # type: ignore
+    lang = await get_lang(message.from_user.id) # type: ignore
     chatid = message.chat.id
 
     user = await User().create(userid)

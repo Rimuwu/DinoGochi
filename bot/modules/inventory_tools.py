@@ -1,10 +1,13 @@
-from telebot.asyncio_handler_backends import State, StatesGroup
+from typing import Union
+from aiogram.fsm.state import StatesGroup, State
+from aiogram.fsm.context import FSMContext
 
 from bot.dbmanager import mongo_client, conf
 from bot.const import GAME_SETTINGS as gs
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.data_format import (chunks, filling_with_emptiness,
                                      list_to_inline)
+from bot.modules.get_state import get_state
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import item_info_markup
 from bot.modules.items.item import (get_data, get_name, is_standart, item_code,
@@ -139,7 +142,10 @@ def name_end(item, standart, name, count_name):
         end_name = f"{name}{count_name}"
     else:
         code = item_code(item, False)
-        end_name = f"{name} ({code}){count_name}"
+        if code != '':
+            end_name = f"{name} ({code}){count_name}"
+        else:
+            end_name = f"{name}{count_name}"
     return end_name
 
 async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
@@ -154,7 +160,7 @@ async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
     else: markup = None
 
     if not image:
-        await bot.send_message(chatid, text, 'Markdown',
+        await bot.send_message(chatid, text, parse_mode='Markdown',
                             reply_markup=markup)
     else:
         try:
@@ -163,16 +169,18 @@ async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
              await bot.send_message(chatid, text,
                             reply_markup=markup)
 
-async def swipe_page(userid: int, chatid: int):
+async def swipe_page(chatid: int, state: FSMContext):
     """ Панель-сообщение смены страницы инвентаря
     """
-    async with bot.retrieve_data(userid, chatid) as data:
+    if data := await state.get_data():
         pages = data['pages']
         settings = data['settings']
         items = data['items']
         filters = data['filters']
         main_message = data['main_message']
         up_message = data['up_message']
+
+    if settings['page'] >= len(pages): settings['page'] = 0
 
     keyboard = list_to_keyboard(pages[settings['page']], settings['row'])
 
@@ -198,22 +206,19 @@ async def swipe_page(userid: int, chatid: int):
             del buttons['🔎']
 
     if filters:
-        if settings['changing_filters'] and settings['changing_filters']:
+        if settings['changing_filters']:
             buttons['🗑'] = 'inventory_menu clear_filters'
             menu_text += t('inventory.clear_filters', settings['lang'])
 
     if items and settings['changing_filters']:
         buttons['❌🔎'] = 'inventory_menu clear_search'
 
-
     inl_menu = list_to_inline([buttons], 4)
     if main_message == 0:
         new_main = await bot.send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
-        async with bot.retrieve_data(userid, chatid) as data:
-            if data:
-                data['main_message'] = new_main.message_id
+        await state.update_data(main_message=new_main.message_id)
     else:
-        await bot.edit_message_text(menu_text, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
+        await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
 
     if up_message == 0:
         new_up = await bot.send_message(chatid, text, reply_markup=keyboard)
@@ -221,14 +226,13 @@ async def swipe_page(userid: int, chatid: int):
         new_up = await bot.send_message(chatid, text, reply_markup=keyboard)
         await bot.delete_message(chatid, up_message)
 
-    async with bot.retrieve_data(userid, chatid) as data:
-        data['up_message'] = new_up.message_id
+    await state.update_data(up_message=new_up.message_id)
 
 
-async def search_menu(userid: int, chatid: int):
+async def search_menu(chatid: int, state: FSMContext):
     """ Панель-сообщение поиска
     """
-    async with bot.retrieve_data(userid, chatid) as data:
+    if data := await state.get_data():
         settings = data['settings']
         main_message = data['main_message']
         up_message = data['up_message']
@@ -245,20 +249,20 @@ async def search_menu(userid: int, chatid: int):
     else:
         new_up = await bot.send_message(chatid, text, reply_markup=keyboard)
         await bot.delete_message(chatid, up_message)
-        async with bot.retrieve_data(userid, chatid) as data:
-            data['up_message'] = new_up.message_id
-    
+        await state.update_data(up_message=new_up.message_id)
+
     if main_message == 0:
         new_main = await bot.send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
-        async with bot.retrieve_data(userid, chatid) as data:
-            data['main_message'] = new_main.message_id
+        await state.update_data(main_message=new_main.message_id)
     else:
-        await bot.edit_message_text(menu_text, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
-    
-async def filter_menu(userid: int, chatid: int, upd_up_m: bool = True):
+        await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
+
+async def filter_menu(chatid: int, upd_up_m: bool = True):
     """ Панель-сообщение выбора фильтра
     """
-    async with bot.retrieve_data(userid, chatid) as data:
+    state = await get_state(chatid, chatid)
+
+    if data := await state.get_data():
         settings = data['settings']
         filters = data['filters']
         main_message = data['main_message']
@@ -286,15 +290,14 @@ async def filter_menu(userid: int, chatid: int, upd_up_m: bool = True):
         else:
             new_up = await bot.send_message(chatid, text, reply_markup=keyboard)
             await bot.delete_message(chatid, up_message)
-            async with bot.retrieve_data(userid, chatid) as data:
-                data['up_message'] = new_up.message_id
-    
+
+            await state.update_data(up_message=new_up.message_id)
+
     if main_message == 0:
         new_main = await bot.send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
-        async with bot.retrieve_data(userid, chatid) as data:
-            data['main_message'] = new_main.message_id
+        await state.update_data(main_message=new_main.message_id)
     else:
-        await bot.edit_message_text(menu_text, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
+        await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
 
     # if 'edited_message' in settings and settings['edited_message']:
     #     try:
@@ -306,7 +309,7 @@ async def filter_menu(userid: int, chatid: int, upd_up_m: bool = True):
     #                         parse_mode='Markdown', reply_markup=inl_menu)
         
     #     async with bot.retrieve_data(
-    #         userid, chatid) as data: data['settings']['edited_message'] = msg.id
+    #         userid, chatid) as data: data['settings']['edited_message'] = msg.message_id
 
 async def start_inv(function, userid: int, chatid: int, lang: str, 
                     type_filter: list = [], item_filter: list = [], 
@@ -315,7 +318,8 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
                     inventory: list = [], delete_search: bool = False,
                     transmitted_data = None,
 
-                    inline_func = None, inline_code = ''
+                    inline_func = None, inline_code = '',
+                    state: Union[FSMContext, None] = None,
                     ):
     """ Функция запуска инвентаря
         type_filter - фильтр типов предметов
@@ -337,6 +341,7 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
         inline_func - Если нужна функция для обработки калбек запросов 
             - Все кнопки должны начинаться с "inventoryinline {inline_code}" 
     """
+    if not state: state = await get_state(userid, chatid)
     if not transmitted_data: transmitted_data = {}
     count = 0
 
@@ -359,7 +364,8 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
         return False, 'cancel'
     else:
         try:
-            async with bot.retrieve_data(userid, chatid) as data:
+            data = await state.get_data() or {}
+            if data:
                 old_function = data['function']
                 old_transmitted_data = data['transmitted_data']
 
@@ -369,38 +375,38 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
             # Если не передана функция, то вызывается функция информация о передмете
             if function is None: function = send_item_info
 
-        await bot.set_state(userid, InventoryStates.Inventory, chatid)
-        async with bot.retrieve_data(userid, chatid) as data:
-            data['pages'] = pages
-            data['items_data'] = items_data
-            data['filters'] = type_filter
-            data['items'] = item_filter
+        await state.set_state(InventoryStates.Inventory)
 
-            data['settings'] = {'view': inv_view, 'lang': lang, 
-                                'row': row, 'page': start_page,
-                                'changing_filters': changing_filters,
-                                'delete_search': delete_search
-                                }
-            data['main_message'] = 0
-            data['up_message'] = 0
+        data['pages'] = pages
+        data['items_data'] = items_data
+        data['filters'] = type_filter
+        data['items'] = item_filter
 
-            data['function'] = function
-            data['transmitted_data'] = transmitted_data
+        data['settings'] = {'view': inv_view, 'lang': lang, 
+                            'row': row, 'page': start_page,
+                            'changing_filters': changing_filters,
+                            'delete_search': delete_search
+                            }
+        data['main_message'] = 0
+        data['up_message'] = 0
+
+        data['function'] = function
+        data['transmitted_data'] = transmitted_data
 
         if inline_func is not None:
-            async with bot.retrieve_data(userid, chatid) as data:
-                data['settings']['inline_func'] = inline_func
-                data['settings']['inline_code'] = inline_code
+            data['settings']['inline_func'] = inline_func
+            data['settings']['inline_code'] = inline_code
 
+        await state.set_data(data)
         log(f'open inventory userid {userid} count {count}')
 
-        await swipe_page(userid, chatid)
+        await swipe_page(chatid, state)
         return True, 'inv'
 
-async def open_inv(userid: int, chatid: int):
+async def open_inv(chatid: int, state: FSMContext):
     """ Внутренняя фунция для возврата в инвентарь
     """
-    await bot.set_state(userid, InventoryStates.Inventory, chatid)
-    await swipe_page(userid, chatid)
+    await state.set_state(InventoryStates.Inventory)
+    await swipe_page(chatid, state)
 
 

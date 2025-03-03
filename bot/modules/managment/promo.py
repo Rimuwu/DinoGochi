@@ -1,6 +1,6 @@
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.items.item import counts_items, AddItemToUser
 from bot.modules.localization import get_data, t
@@ -18,7 +18,7 @@ promo = DBconstructor(mongo_client.other.promo)
 users = DBconstructor(mongo_client.user.users)
 
 
-async def create_promo_start(userid: int, chatid: int, lang: str):
+async def create_promo_start(userid: int, chatid: int, lang: str, state):
 
     steps = [
         {
@@ -53,14 +53,16 @@ async def start_items(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
-    
+    state = transmitted_data['state']
+
     code = return_data['code']
     coins = return_data['coins']
     count = return_data['count']
     time_end = return_data['time_end']
 
     items, exclude = generate_items_pages(ignore_cant=True)
-    steps = circle_data(userid, chatid, lang, items)
+    steps = circle_data(userid, chatid, lang, items, state)
+
     await ChooseStepState(end, userid, chatid, lang, steps,
                           transmitted_data={'code': code, 'coins': coins,
                                             'count': count, 'time_end': time_end}
@@ -97,7 +99,7 @@ def circle_data(userid, chatid, lang, items, prepare: bool = True):
         }
     ]
     if prepare:
-        steps = prepare_steps(not_p_steps, userid, chatid, lang)
+        steps = prepare_steps(not_p_steps, userid, chatid, lang, state)
         return steps
     else: return not_p_steps
 
@@ -138,6 +140,7 @@ def check_items(transmitted_data):
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
+    state = transmitted_data['state']
 
     not_p_steps = [
         {
@@ -151,7 +154,7 @@ def check_items(transmitted_data):
             'function': new_circle
         }
     ]
-    steps = prepare_steps(not_p_steps, userid, chatid, lang)
+    steps = prepare_steps(not_p_steps, userid, chatid, lang, state)
     transmitted_data['steps'] += steps
 
     return transmitted_data, True
@@ -164,10 +167,11 @@ def new_circle(transmitted_data):
     chatid = transmitted_data['chatid']
     add_res = transmitted_data['return_data']['add_item']
     exclude_ids = transmitted_data['exclude']
+    state = transmitted_data['state']
 
     if add_res:
         items, exclude = generate_items_pages(exclude_ids, ignore_cant=True)
-        steps = circle_data(userid, chatid, lang, items)
+        steps = circle_data(userid, chatid, lang, items, state)
 
         transmitted_data['exclude'] = exclude
 

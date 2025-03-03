@@ -1,52 +1,59 @@
 from time import time
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot
-from bot.modules.data_format import (escape_markdown, list_to_inline,
-                                     seconds_to_str, user_name)
+from bot.exec import main_router, bot
+from bot.modules.data_format import (list_to_inline,
+                                     seconds_to_str)
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.user.user import premium, user_info
-from telebot.types import CallbackQuery, Message
+from bot.modules.user.user import premium, user_info, user_name
+from aiogram.types import CallbackQuery, Message
 
+from bot.filters.translated_text import Text
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from aiogram import F
+from aiogram.filters import Command
+
+users = DBconstructor(mongo_client.user.users)
 management = DBconstructor(mongo_client.other.management)
 
-@bot.message_handler(pass_bot=True, text='commands_name.profile.information', 
-                     is_authorized=True, private=True)
 @HDMessage
+@main_router.message(Text('commands_name.profile.information'), 
+                     IsAuthorizedUser(), IsPrivateChat())
 async def infouser(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
 
-    text = await user_info(message.from_user, lang)
-    photos = await bot.get_user_profile_photos(userid, limit=1)
-    if photos.photos:
-        photo_id = photos.photos[0][0].file_id #type: ignore
-        await bot.send_photo(chatid, photo_id, text, parse_mode='Markdown')
-    else:
-        await bot.send_message(message.chat.id, text, parse_mode='Markdown')
+    if message.from_user:
+        text, avatar = await user_info(userid, lang)
 
-@bot.message_handler(pass_bot=True, commands=['profile'], is_authorized=True, private=True)
+        if avatar:
+            await bot.send_photo(chatid, avatar, caption=text, parse_mode='Markdown')
+        else:
+            await bot.send_message(message.chat.id, text, parse_mode='Markdown')
+
 @HDMessage
+@main_router.message(Command(commands=['profile']), IsAuthorizedUser(), IsPrivateChat())
 async def infouser_com(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
 
-    text = await user_info(message.from_user, lang)
-    photos = await bot.get_user_profile_photos(userid, limit=1)
-    if photos.photos:
-        photo_id = photos.photos[0][0].file_id #type: ignore
-        await bot.send_photo(chatid, photo_id, text, parse_mode='Markdown')
-    else:
-        await bot.send_message(message.chat.id, text, parse_mode='Markdown')
+    if message.from_user:
+        text, avatar = await user_info(userid, lang)
 
-@bot.message_handler(pass_bot=True, text='commands_name.profile.rayting', 
-                     is_authorized=True, private=True)
+        if avatar:
+            await bot.send_photo(chatid, avatar, caption=text, parse_mode='Markdown')
+        else:
+            await bot.send_message(message.chat.id, text, parse_mode='Markdown')
+
 @HDMessage
+@main_router.message(Text('commands_name.profile.rayting'), 
+                     IsAuthorizedUser(), IsPrivateChat())
 async def rayting(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
@@ -70,8 +77,8 @@ async def rayting(message: Message):
             markup = list_to_inline([buttons])
             await bot.send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('rayting'))
 @HDCallback
+@main_router.callback_query(F.data.startswith('rayting'))
 async def rayting_call(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
@@ -102,11 +109,11 @@ async def rayting_call(callback: CallbackQuery):
             sign, add_text = '*├*', ''
             if user == top_10[-1]: sign = '*└*'
 
-            try:
-                chat_user = await bot.get_chat_member(user['userid'], 
-                                                      user['userid'])
-                name = escape_markdown(user_name(chat_user.user, False))
-            except: name = str(user['userid'])
+            rayt_user = await users.find_one({'userid': user['userid']}, 
+                                             comment='rayt_user')
+            if rayt_user: 
+                name = await user_name(user['userid'])
+                if name == 'NoName_NoUser': name = str(user['userid'])
 
             n = rayt_data['ids'].index(user['userid']) + 1
             if n == 1: n = '🥇'
@@ -125,6 +132,6 @@ async def rayting_call(callback: CallbackQuery):
             markup = list_to_inline(buttons)
 
         try:
-            await bot.edit_message_text(text, chatid, callback.message.id, parse_mode='Markdown', reply_markup=markup)
+            await bot.edit_message_text(text, None, chatid, callback.message.message_id, parse_mode='Markdown', reply_markup=markup)
         except Exception as e:
             log(message=f'Rayting edit error {e}', lvl=2)

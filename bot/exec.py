@@ -1,8 +1,7 @@
 # Исполнитель бота
-import traceback
-
-from bot.dbmanager import check
-from telebot.async_telebot import AsyncTeleBot, ExceptionHandler
+from bot.dbmanager import check, mongo_client
+from aiogram import Bot, Dispatcher, Router 
+from aiogram.fsm.storage.memory import MemoryStorage
 
 from bot.config import conf
 from bot.modules.logs import log
@@ -10,15 +9,12 @@ from bot.taskmanager import add_task
 from bot.taskmanager import run as run_taskmanager
 import asyncio
 
+bot = Bot(conf.bot_token)
+STORAGE = MemoryStorage()
+dp = Dispatcher(storage=STORAGE) #storage=MongoStorage(mongo_client)
 
-class TracebackHandler(ExceptionHandler):
-    def handle(self, exception):
-        log(f'{traceback.format_exc()} {exception}', 3)
-
-bot = AsyncTeleBot(conf.bot_token, 
-                   exception_handler=TracebackHandler()
-                   )
-bot.enable_saving_states()
+main_router = Router(name='MainRouter')
+dp.include_router(main_router)
 
 async def report_devs_start():
     tasks = []
@@ -41,10 +37,14 @@ def run():
     log('Не вижу ошибок == нет ошибок!')
     log('Кстати, в создании бота поучаствовал ChatGPT')
     log('Ой, да что там ваш ChatGPT?! *Stable Diffusion подключился*')
+
     # Проверка готовности
     check()
+
     # Запуск тасков и бота
-    add_task(report_devs_start) # Уведомление запуска для разрабов
-    add_task(bot.infinity_polling, skip_pending=True)
+    add_task(notify_devs_start) # Уведомление запуска для разрабов
+    add_task(dp.start_polling, bots=[bot], 
+             allowed_updates=dp.resolve_used_update_types())
+    
     log('Все готово! Взлетаем!', prefix='Start')
     run_taskmanager()

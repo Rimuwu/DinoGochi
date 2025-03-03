@@ -1,7 +1,7 @@
 import json
 import os
 from bot.exec import bot
-from telebot.types import LabeledPrice
+from aiogram.types import LabeledPrice
 
 from bot.const import GAME_SETTINGS
 from bot.modules.items.item import AddItemToUser
@@ -9,6 +9,11 @@ from bot.modules.localization import get_data, get_lang
 from bot.modules.logs import log
 from bot.modules.notifications import user_notification
 from bot.modules.user.user import award_premium
+from bot.dbmanager import mongo_client
+
+from bot.modules.overwriting.DataCalsses import DBconstructor
+
+users = DBconstructor(mongo_client.user.users)
 
 directory = 'bot/data/donations.json'
 products = GAME_SETTINGS['products']
@@ -75,6 +80,10 @@ async def give_reward(userid:int, product_key:str, col:int):
 
     if product['type'] == 'subscription':
         await award_premium(userid, product['time'] * col)
+    
+    elif product['type'] == 'super_coins':
+        await users.update_one({'userid': userid}, 
+            {'$inc': {'super_coins': col}}, comment='give_reward')
 
     for item_id in product['items'] * col:
         await AddItemToUser(userid, item_id)
@@ -98,10 +107,9 @@ async def send_inv(user_id: int, product_id: str, col: str, lang: str, cost: int
     short = product_t_data['short']
     photo_url = product_t_data['photo_url']
 
-    product_label = LabeledPrice(name, product['cost'][str(col)]['XTR'])
+    product_label = LabeledPrice(label=name, amount=product['cost'][str(col)]['XTR'])
 
     await bot.send_invoice(
-        user_id, name, short + f' (x{col})', f"{product_id}#{col}", '', 'XTR', [product_label],
+        user_id, name, short + f' (x{col})', f"{product_id}#{col}", 'XTR', [product_label],
         photo_url=photo_url, photo_size=512, photo_height=360, photo_width=720, 
-        
     )

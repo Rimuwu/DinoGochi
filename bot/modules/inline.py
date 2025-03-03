@@ -1,4 +1,4 @@
-from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from bot.modules.data_format import list_to_inline
 from bot.modules.items.item import counts_items, is_standart
@@ -7,10 +7,10 @@ from bot.modules.items.item import get_item_dict, get_name, item_code
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.localization import t
 from bot.modules.logs import log
-
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 def inline_menu(markup_data, lang: str = 'en', **kwargs):
-    markup_inline = InlineKeyboardMarkup()
+    markup_inline = InlineKeyboardBuilder()
     text, callback = '-', '-'
     standart_keys = get_loc_data('inline_menu', lang)
     # 'dino_profile', 'dino_rename' # dino_alt_id_markup
@@ -29,7 +29,7 @@ def inline_menu(markup_data, lang: str = 'en', **kwargs):
 
         markup_inline.add(
             InlineKeyboardButton(text=text, callback_data=callback))
-    return markup_inline
+    return markup_inline.as_markup()
 
 def item_info_markup(item: dict, lang):
     item_data = get_item_data(item['item_id'])
@@ -53,7 +53,8 @@ def item_info_markup(item: dict, lang):
 
             buttons_dict[loc_data['buyer']] = f'buyer {code}'
 
-    markup_inline = list_to_inline([buttons_dict], 2)
+    markup_st = list_to_inline([buttons_dict], 2)
+    markup_inline = InlineKeyboardBuilder().from_markup(markup_st)
 
     if item_data['type'] == 'recipe':
         ignore_craft = item_data.get('ignore_preview', [])
@@ -68,8 +69,8 @@ def item_info_markup(item: dict, lang):
                                     item=get_name(item_cr['item'], 
                                                 lang, item_cr.get('abilities', {})))
 
-                        markup_inline.add(InlineKeyboardButton(text=name,
-                                    callback_data=f'item info {item_code(data)}'))
+                        markup_inline.row(InlineKeyboardButton(text=name,
+                                    callback_data=f'item info {item_code(data)}'), width=2)
 
     if 'ns_craft' in item_data:
         for cr_dct_id in item_data['ns_craft'].keys():
@@ -80,12 +81,12 @@ def item_info_markup(item: dict, lang):
             bt_text += ' = '
             bt_text += counts_items(cr_dct['create'], lang)
 
-            markup_inline.add(
+            markup_inline.row(
                 InlineKeyboardButton(text=bt_text,
-                            callback_data=f'ns_craft {code} {cr_dct_id}')
+                            callback_data=f'ns_craft {code} {cr_dct_id}'), width=2
                 )
 
-    return markup_inline
+    return markup_inline.as_markup()
 
 def dino_profile_markup(add_acs_button: bool, lang: str, 
                         alt_id: str, joint_dino: bool, my_joint: bool):

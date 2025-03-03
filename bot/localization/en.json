@@ -9,7 +9,8 @@
             "confirm": "✅ Confirm",
             "yes": "✅ Yes",
             "no": "❌ No",
-            "cancel": "❌ Cancel"
+            "cancel": "❌ Cancel",
+            "refresh": "🔄 Update"
         },
         "commands_name": {
             "start_game": "🍡 Start playing",
@@ -31,7 +32,9 @@
                 "my_name": "🎠 Call Me",
                 "custom_profile": "🌟 Dinosaur background",
                 "lang": "👅 Tongue",
-                "dino_talk": "✉ Talking to the Dinosaur"
+                "dino_talk": "✉ Talking to the Dinosaur",
+                "nick": "🎃 Nick",
+                "reset_avatar": "🎨 Reset Avatar"
             },
             "profile": {
                 "information": "📜 Information",
@@ -52,7 +55,8 @@
                 "find": "🔍 Product Finder",
                 "seller_profile": "🛒 My Store",
                 "bot_market": "🔮 Bot Shop",
-                "background_market": "🖼️ Background Menu"
+                "background_market": "🖼️ Background Menu",
+                "search_markets": "🍶 Store Finder"
             },
             "seller_profile": {
                 "add_product": "☄ Add a product",
@@ -961,6 +965,10 @@
             },
             "SYSTEM_ITEM_BODY": {
                 "name": "📦 Enclosure"
+            },
+            "transport_egg": {
+                "name": "🦖 Transport Egg",
+                "description": "An egg for transporting a dinosaur."
             }
         },
         "notifications": {
@@ -1203,7 +1211,7 @@
                 "friends2": "🍺 Friends in the tavern:",
                 "tavern_col": "🔮 Total in the tavern: {col}",
                 "went": "🍺 {name} went to the tavern...",
-                "button": "🍻 Buy ale for 50 🪙"
+                "button": "🍻 Buy ale for 150 🪙"
             },
             "about": "🤖 | Hello! I'm @{bot_name}, but here's some information about me! \n\n 🗝️ | Stats: 👥 <code> {col_u} </code> 🦕 <code> {col_d} </code> 🔮 <code> {col_i} </code> \n <i> {update_time} Back. </i>",
             "referal": "🤍 | Redirect to the referral system menu! \n\n 💜 | *Upon reaching level {lvl}* your friend, you'll get {award_text}! \n\n ❤️ | A friend will receive a bonus in the amount of: {coins} coins, {items}",
@@ -1635,7 +1643,10 @@
                 "take_money": "✨ Transfer Coins",
                 "take_coins": "🪔 Transfer Coins",
                 "joint_dinosaur": "🦕 Share a dinosaur",
-                "new_year": "🎁 Send a Gift"
+                "new_year": "🎁 Send a Gift",
+                "change_name": "👥 Change Name",
+                "change_friend_name": "👥 Change Name",
+                "open_market": "🏪 Open shop"
             }
         },
         "requests": {
@@ -1871,7 +1882,8 @@
             "clear_filters": "\n 🗑 | Click on the trash can to clear the filters.",
             "update_page": "🔁 | Page updated",
             "update_search": "🔁 | Search Activated",
-            "update_filter": "🔁 | Filter selection is active"
+            "update_filter": "🔁 | Filter selection is active",
+            "filter_null": "❌ | There are no items for this filter."
         },
         "copy_m": {
             "info": "A reply to a message with a text for mailing is required",
@@ -2009,7 +2021,8 @@
                     "created_item": "🛠 Craftable Item: {item}",
                     "buyer": "💰 Fence"
                 },
-                "time_craft": "*├* Creation time: ⏳ {times}"
+                "time_craft": "*├* Creation time: ⏳ {times}",
+                "trs_dino": "*├* Dinosaur: {dino} {hp} / 100 ❤\n"
             },
             "bonuses": {
                 "+heal": "Health Boost: {0} %",
@@ -2158,6 +2171,13 @@
                     "image": "images/remain/support/freezing.png",
                     "short": "Freeze my dinosaur!",
                     "description": "🧊 Take a break from the dinosaur indefinitely, take care of your own life!"
+                },
+                "super_coins": {
+                    "name": "✨ Super Coins",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/super_coins.png",
+                    "image": "images/remain/support/super_coins.png",
+                    "short": "Super coins for super users!",
+                    "description": "✨ Top up your Super Coins balance to get access to Super Items!"
                 }
             },
             "free_enter": "🎥 Enter below how many stars you want to send to the developer.",
@@ -2201,6 +2221,11 @@
                 "craft": "⚒️ Creates an item",
                 "unrestrained_play": "😟 Plays to calm down",
                 "inactive": "❄ Frozen"
+            },
+            "market": {
+                "caption": "*┌* 🛍️ *ᴍᴀʀᴋᴇᴛ*",
+                "market_name": "*├* Title: *{market_name}*",
+                "earned": "*└* *Earned:* {coins}"
             }
         },
         "custom_profile": {
@@ -4621,6 +4646,25 @@
             "info": "❗ Choose whether to disable self-talk",
             "True": "🔧 The dinosaur will no longer write to you on its own!",
             "False": "🔧 Dinosaur can now write to you on his own!"
+        },
+        "edit_friend_name": "🎨 Enter a new name for {name} or \"{none}\" to reset.",
+        "edit_nick": "🎨 Enter a new nickname that will be visible to everyone in the bot ->\n🪙 Cost: 7500",
+        "null_nick": "🎨 A nickname can't be empty! (All complex characters will be replaced with blank ones)",
+        "no_coins": "🪙 Not enough coins!",
+        "new_nick": "❤ Your new nickname: {nick}",
+        "reset_avatar": "📜 Avatar is reset, it will be updated with the last photo in your profile.",
+        "search_markets": {
+            "text": "🍶 Choose whether you want to find a random store or find a specific one:",
+            "random": "🛒 Random Shops",
+            "find": "🔍 Find a store",
+            "no_markets": "🧨 At the moment, there are no open stores with a similar name.",
+            "find_market": "🔍 Enter the name of the store to find it:"
+        },
+        "transport": {
+            "add_dino": "🦈 A dinosaur has been added to an egg for storage!",
+            "delete_dino": "💡 A dinosaur was extracted from an egg!",
+            "error": "🎈 Dinosaur selection error!",
+            "max_dino": "🧨 You already have the maximum number of dinosaurs!"
         }
     }
 }

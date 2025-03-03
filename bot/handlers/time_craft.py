@@ -1,6 +1,6 @@
 from time import time
-from telebot.types import CallbackQuery
-from bot.exec import bot
+from aiogram.types import CallbackQuery
+from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur import Dino
@@ -14,13 +14,25 @@ from bot.modules.markup import markups_menu as m
 from bot.config import conf
 from bot.dbmanager import mongo_client
 
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command, StateFilter
+
+from aiogram.fsm.context import FSMContext
+
 from bot.modules.overwriting.DataCalsses import DBconstructor
 users = DBconstructor(mongo_client.user.users)
 item_craft = DBconstructor(mongo_client.items.item_craft)
 
-@bot.message_handler(pass_bot=True, commands=['craftlist'], private=True)
 @HDMessage
-async def craftlist(message):
+@main_router.message(Command(commands=['craftlist']), IsPrivateChat())
+async def craftlist(message, state):
     chatid = message.chat.id
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -75,16 +87,16 @@ async def info_craft(data, transmitted_data: dict):
                  craft_time=seconds_to_str(craft['time_end'] - int(time()), lang, False, 'minute'),
                  dino=name
                  )
-        
+
         if not portable:
             await bot.send_message(chatid, info, parse_mode='Markdown',
                                reply_markup=mrk)
         else:
             return info, mrk
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('time_craft'), is_authorized=True)
 @HDCallback
-async def time_craft(callback: CallbackQuery):
+@main_router.callback_query(F.data.startswith('time_craft'), IsAuthorizedUser())
+async def time_craft(callback: CallbackQuery, state):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
     lang = await get_lang(callback.from_user.id)
@@ -94,13 +106,13 @@ async def time_craft(callback: CallbackQuery):
     action = data[2]
 
     if action == 'send_dino':
-        transmitted_data = {'ms_id': callback.message.id, 'alt_code': alt_code}
+        transmitted_data = {'ms_id': callback.message.message_id, 'alt_code': alt_code}
         await ChooseDinoState(send_dino_to_craft, userid, chatid, 
                               lang, False, False, transmitted_data)
 
     elif action == 'cancel_craft':
         await stop_craft(alt_code)
-        await bot.delete_message(chatid, callback.message.id)
+        await bot.delete_message(chatid, callback.message.message_id)
 
 async def send_dino_to_craft(dino: Dino, transmitted_data: dict):
     chatid = transmitted_data['chatid']
@@ -120,7 +132,7 @@ async def send_dino_to_craft(dino: Dino, transmitted_data: dict):
                 'lang': lang
             }
             info, mrk = await info_craft(alt_code, transmitted_data) # type: ignore
-            await bot.edit_message_text(info, chatid, ms_id, reply_markup=mrk, parse_mode='Markdown')
+            await bot.edit_message_text(info, None, chatid, ms_id, reply_markup=mrk, parse_mode='Markdown')
 
             await bot.send_message(chatid, text, parse_mode='Markdown',
                                 reply_markup=await m(userid, 'last_menu', lang))

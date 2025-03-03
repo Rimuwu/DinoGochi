@@ -5,7 +5,7 @@ from time import time
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.handlers.states import ChooseInt
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
@@ -22,9 +22,19 @@ from bot.modules.states_tools import ChooseInlineState, ChooseIntState, ChooseSt
 from bot.modules.user.inside_shop import get_content, item_buyed
 from bot.modules.user.user import (AddItemToUser, check_name, daily_award_con,
                               get_dinos, take_coins, user_in_chat)
-from telebot.types import (CallbackQuery, InlineKeyboardButton,
+from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message)
 from bot.modules.markup import markups_menu as m
+
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command
 
 inside_shop = DBconstructor(mongo_client.tavern.inside_shop)
 
@@ -47,8 +57,8 @@ async def page_context(userid, lang):
     rmk = list_to_inline([rmk_data], 2)
     return text, rmk
 
-@bot.message_handler(pass_bot=True, text='commands_name.dino_tavern.hoarder', is_authorized=True, private=True)
 @HDMessage
+@main_router.message(Text('commands_name.dino_tavern.hoarder'), IsAuthorizedUser(), IsPrivateChat())
 async def hoarder(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -58,9 +68,9 @@ async def hoarder(message: Message):
     await bot.send_message(message.chat.id, text, parse_mode='Markdown',
           reply_markup = rmk)
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('hoarder'), private=True)
 @HDCallback
-async def hoarder_calb(call: CallbackQuery):
+@main_router.callback_query(F.data.startswith('hoarder'), IsPrivateChat())
+async def hoarder_calb(call: CallbackQuery, state):
     call_data = call.data.split()
     chatid = call.message.chat.id
     userid = call.from_user.id
@@ -73,7 +83,7 @@ async def hoarder_calb(call: CallbackQuery):
 
         transmitted_data = {
             'item': key,
-            'messageid': call.message.id
+            'messageid': call.message.message_id
         }
         await ChooseIntState(buy_item, userid, chatid, lang, max_int=item['count'], autoanswer=False, transmitted_data=transmitted_data)
         await bot.send_message(chatid, t('inside_shop.count', lang), 
@@ -97,4 +107,4 @@ async def buy_item(count, transmitted_data):
 
     if res:
         text, rmk = await page_context(userid, lang)
-        await bot.edit_message_text(text, chatid, messageid, reply_markup=rmk, parse_mode='Markdown')
+        await bot.edit_message_text(text, None, chatid, messageid, reply_markup=rmk, parse_mode='Markdown')

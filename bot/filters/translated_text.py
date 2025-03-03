@@ -1,33 +1,40 @@
 # Фильтр текста на выбранном языке
 
-from telebot.asyncio_filters import AdvancedCustomFilter
-from telebot.types import Message
-from bot.exec import bot
+from aiogram import Router
+from aiogram.filters import BaseFilter
+from aiogram.types import Message
+from bot.exec import main_router, bot
 from bot.modules.localization import t, get_lang
 
-class IsEqual(AdvancedCustomFilter):
-    key = 'text'
+class Text(BaseFilter):
+    def __init__(self, key: str) -> None:
+        self.key: str = key
 
-    async def check(self, message: Message, key: str):
-        lang = await get_lang(message.from_user.id, message.from_user.language_code)
-        text = t(key, lang)
+    async def __call__(self, message: Message):
+        if message.from_user:
+            if isinstance(message.from_user.language_code, str):
+                lang_n = message.from_user.language_code
+            else: lang_n = 'en'
 
-        if text == message.text:
-            return True
-        else:
-            return False
+            lang = await get_lang(message.from_user.id, lang_n)
+            text = t(self.key, lang)
 
-class StartWith(AdvancedCustomFilter):
-    key = 'textstart'
+            if text == message.text: return True
+        return False
 
-    async def check(self, message: Message, key: str):
-        lang = await get_lang(message.from_user.id, message.from_user.language_code)
-        text = t(key, lang, False)
+class StartWith(BaseFilter):
+    def __init__(self, key: str) -> None:
+        self.key: str = key
 
-        if message.text.startswith(text):
-            return True
-        else:
-            return False
+    async def __call__(self, message: Message):
+        if message.from_user:
+            if isinstance(message.from_user.language_code, str):
+                lang_n = message.from_user.language_code
+            else: lang_n = 'en'
 
-bot.add_custom_filter(IsEqual())
-bot.add_custom_filter(StartWith())
+            lang = await get_lang(message.from_user.id, lang_n)
+            text = t(self.key, lang, False)
+
+            if isinstance(message.text, str):
+                if message.text.startswith(text): return True
+        return False

@@ -1,21 +1,21 @@
-from telebot.asyncio_filters import AdvancedCustomFilter
-from telebot.types import CallbackQuery
+from math import log
+from typing import Union
+from aiogram import Router
+from aiogram.filters import BaseFilter
+from aiogram.types import CallbackQuery, Message
+from aiogram.fsm.context import FSMContext
 
-from bot.exec import bot
+class NothingState(BaseFilter):
+    def __init__(self, status: bool = True, state: FSMContext | None = None) -> None:
+        self.status: bool = status
+        self.state: FSMContext | None = state
 
-class NothingState(AdvancedCustomFilter):
-    key = 'nothing_state'
+    async def __call__(self, var: Union[CallbackQuery, Message]):
+        if self.state is None: return True
 
-    async def check(self, var, status: bool):
-        if type(var) == CallbackQuery:
-            state = await bot.get_state(var.from_user.id, var.message.chat.id)
-        else: # Message
-            state = await bot.get_state(var.from_user.id, var.chat.id)
+        if not self.state and self.status: return True
+        elif not self.state and not self.status: return False
 
-        if not state and status: return True
-        elif not state and not status: return False
+        elif self.state and self.status: return False
+        elif self.state and not self.status: return True
 
-        elif state and status: return False
-        elif state and not status: return True
-
-bot.add_custom_filter(NothingState())

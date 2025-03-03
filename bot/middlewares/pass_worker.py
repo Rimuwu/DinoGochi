@@ -1,9 +1,8 @@
-# Система антифлуда
-
-from random import randint, random
-from telebot.asyncio_handler_backends import BaseMiddleware
-from telebot.types import Message
-from bot.exec import bot
+from random import random
+from typing import Awaitable, Callable, Any
+from aiogram import BaseMiddleware
+from aiogram.types import Message
+from bot.exec import main_router, bot
 from bot.dbmanager import mongo_client
 from time import time as time_now
 from bot.middlewares.antiflood import check_ads
@@ -18,13 +17,16 @@ ads = DBconstructor(mongo_client.user.ads)
 
 class PassWorker(BaseMiddleware):
 
-    def __init__(self):
-        self.update_types = ['message']
+    async def __call__(self, 
+                handler: Callable[[Message, dict[str, Any]], Awaitable[Any]],
+                message: Message,
+                data: dict[str, Any]):
 
-    async def pre_process(self, message: Message, data: dict):
-        pass
+        result = await handler(message, data)
+        await self.post_process(message, data)
+        return result
 
-    async def post_process(self, message: Message, data, exception):
+    async def post_process(self, message: Message, data):
         user_id = message.from_user.id
         if message.chat.type == "private":
             user = await users.find_one({'userid': user_id}, {"_id": 1, 
@@ -32,7 +34,8 @@ class PassWorker(BaseMiddleware):
                                         comment='post_process_user')
             if user:
                 await users.update_one({'userid': user_id}, 
-                                    {'$set': {'last_message_time': message.date}}, 
+                                    {'$set': {'last_message_time': 
+                                        int(message.date.timestamp())}}, 
                                     comment='post_process_1')
 
                 daily = await daily_data.find_one({'owner_id': user_id}, comment='post_process_check')
@@ -60,5 +63,4 @@ class PassWorker(BaseMiddleware):
                     if random() <= 0.5:
                         await auto_ads(message, True)
 
-
-bot.setup_middleware(PassWorker())
+main_router.message.middleware(PassWorker())

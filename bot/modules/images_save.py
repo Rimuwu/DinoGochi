@@ -5,11 +5,13 @@
 #
 
 import json
+from math import fabs
 import os
-from typing import Union
-from bot.exec import bot
+from typing import Union, List
+from bot.exec import main_router, bot
 from bot.modules.images import async_open
-import telebot
+import aiogram
+from aiogram.types import InputFile, MessageEntity, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, ReplyParameters
 
 
 storage = {}
@@ -34,15 +36,37 @@ def save(new_file: dict):
         json.dump(new_file, f, sort_keys=True, indent=4, ensure_ascii=False)
 
 
-async def send_SmartPhoto(chatid: int, photo_way, caption: Union[str, None] = None, parse_mode: Union[str, None] = None, reply_markup: Union[telebot.types.InlineKeyboardMarkup, None, telebot.types.ReplyKeyboardMarkup] = None):
+async def send_SmartPhoto(chat_id: int | str,
+    photo_way: str,
+    caption: str | None = None,
+    parse_mode: str | None = None,
+    reply_markup: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply | None = None,
+    show_caption_above_media: bool | None = None,
+    has_spoiler: bool | None = None,
+    disable_notification: bool | None = None,
+    protect_content: bool | None = None,
+    message_effect_id: str | None = None,
+    reply_parameters: ReplyParameters | None = None,
+    allow_sending_without_reply: bool | None = None,
+    reply_to_message_id: int | None = None,
+    request_timeout: int | None = None):
     global storage
 
     if photo_way in storage:
         file_id = storage[photo_way]
         if await bot.get_file(file_id):
             # Отпрляем файл по file_id
-            mes = await bot.send_photo(chatid, file_id, caption, 
-                                 parse_mode, reply_markup=reply_markup)
+            mes = await bot.send_photo(chat_id, file_id, caption=caption, 
+                            parse_mode=parse_mode, reply_markup=reply_markup,
+                            show_caption_above_media=show_caption_above_media,
+                            has_spoiler=has_spoiler,
+                            disable_notification=disable_notification,
+                            protect_content=protect_content,
+                            message_effect_id=message_effect_id,
+                            reply_parameters=reply_parameters,
+                            allow_sending_without_reply=allow_sending_without_reply,
+                            reply_to_message_id=reply_to_message_id,
+                            request_timeout=request_timeout)
             return mes
 
     # Либо файла нет, либо file_id устарело
@@ -52,8 +76,17 @@ async def send_SmartPhoto(chatid: int, photo_way, caption: Union[str, None] = No
     else:
         file_photo = photo_way
 
-    mes = await bot.send_photo(chatid, file_photo, caption, 
-                            parse_mode, reply_markup=reply_markup)
+    mes = await bot.send_photo(chat_id, file_photo, caption=caption, 
+                    parse_mode=parse_mode, reply_markup=reply_markup,
+                    show_caption_above_media=show_caption_above_media,
+                    has_spoiler=has_spoiler,
+                    disable_notification=disable_notification,
+                    protect_content=protect_content,
+                    message_effect_id=message_effect_id,
+                    reply_parameters=reply_parameters,
+                    allow_sending_without_reply=allow_sending_without_reply,
+                    reply_to_message_id=reply_to_message_id,
+                    request_timeout=request_timeout)
 
     # Сохраняем file_id
     if mes and mes.photo and type(photo_way) == str:
@@ -64,7 +97,7 @@ async def send_SmartPhoto(chatid: int, photo_way, caption: Union[str, None] = No
     return mes
 
 async def edit_SmartPhoto(chatid: int, message_id: int, 
-                          photo_way, caption: Union[str, None], parse_mode: Union[str, None], reply_markup: Union[telebot.types.InlineKeyboardMarkup, None]):
+                          photo_way, caption: Union[str, None], parse_mode: Union[str, None], reply_markup: Union[aiogram.types.InlineKeyboardMarkup, None]):
     global storage
 
     if photo_way in storage:
@@ -72,8 +105,8 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
         if await bot.get_file(file_id):
             # Отпряем файл по file_id
             mes = await bot.edit_message_media(
-                telebot.types.InputMediaPhoto(file_id, caption, parse_mode), 
-                chatid, message_id, reply_markup=reply_markup)
+                aiogram.types.InputMediaPhoto(media=file_id, caption=caption, parse_mode=parse_mode), 
+                chat_id=chatid, message_id=message_id, reply_markup=reply_markup)
             return mes
 
     # Либо файла нет, либо file_id устарело
@@ -84,8 +117,8 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
         file_photo = photo_way
 
     mes = await bot.edit_message_media(
-                telebot.types.InputMediaPhoto(file_photo, caption, parse_mode), 
-                chatid, message_id, reply_markup=reply_markup)
+                aiogram.types.InputMediaPhoto(media=file_photo, caption=caption, parse_mode=parse_mode), 
+                chat_id=chatid, message_id=message_id, reply_markup=reply_markup)
 
     # Сохраняем file_id
     if mes and mes.photo and type(photo_way) == str:

@@ -1,14 +1,19 @@
+from io import BytesIO
 import random
 import re
 import string
 from typing import Union
 
-from telebot.types import (InlineKeyboardButton, InlineKeyboardMarkup,
-                           ReplyKeyboardMarkup, User)
+from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
+                           ReplyKeyboardMarkup, User, KeyboardButton)
+
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 from bot.const import GAME_SETTINGS
 from bot.modules.localization import get_data
+from aiogram.types import BufferedInputFile
 
+from bot.modules.logs import log
 
 def escape_markdown(content: str) -> str:
     """ Экранирует символы Markdown в строке.
@@ -55,7 +60,9 @@ def random_dict(data: dict) -> int:
     elif type(data) == int: return data
     return 0
 
-def list_to_keyboard(buttons: list, row_width: int = 3, resize_keyboard: bool = True, one_time_keyboard = None) -> ReplyKeyboardMarkup:
+
+def list_to_keyboard(buttons: list, row_width: int = 3, 
+                     resize_keyboard: bool = True, one_time_keyboard = None):
     """ Превращает список со списками в объект клавиатуры.
         Example:
             butttons = [ ['привет'], ['отвяжись', 'ты кто?'] ]
@@ -70,19 +77,15 @@ def list_to_keyboard(buttons: list, row_width: int = 3, resize_keyboard: bool = 
           отвяжись  
           ты кто?
     """
-    markup = ReplyKeyboardMarkup(row_width=row_width, 
-                                 resize_keyboard=resize_keyboard, 
-                                 one_time_keyboard=one_time_keyboard)
+    builder = ReplyKeyboardBuilder()
 
     for line in buttons:
-        try:
-            if type(line) == list:
-                markup.add(*[i for i in line])
-            else: markup.add(line)
-        except Exception as e:
-            print('list_to_keyboard', line, type(line), e)
+        if type(line) == list:
+            builder.row(*[KeyboardButton(text=i) for i in line], width=row_width)
+        else:
+            builder.row(*[KeyboardButton(text=str(line))], width=row_width)
 
-    return markup
+    return builder.as_markup(row_width=row_width, resize_keyboard=resize_keyboard, one_time_keyboard=one_time_keyboard)
 
 def list_to_inline(buttons: list, row_width: int = 3) -> InlineKeyboardMarkup:
     """ Превращает список со списками в объект inlineKeyboard.
@@ -99,19 +102,17 @@ def list_to_inline(buttons: list, row_width: int = 3) -> InlineKeyboardMarkup:
           отвяжись  
           ты кто?
     """
-    inline = InlineKeyboardMarkup(row_width=row_width)
+    inline = InlineKeyboardBuilder()
 
-    if len(buttons) == 1:
-        inline.add(
-            *[InlineKeyboardButton(
-            text=key, callback_data=item) for key, item in buttons[0].items()])
-    else:
-        for line in buttons:
-            inline.add(*[InlineKeyboardButton(
-                text=key, callback_data=item) for key, item in line.items()])
-    return inline
+    for line in buttons:
+        if type(line) == dict:
+            inline.row(*[InlineKeyboardButton(text=i, callback_data=j) for i, j in line.items()], width=row_width)
+        else:
+            inline.add(InlineKeyboardButton(text=str(line), callback_data='None'))
 
-def user_name(user: User, username: bool = True) -> str:
+    return inline.as_markup(row_width=row_width)
+
+def user_name_from_telegram(user: User, username: bool = True) -> str:
     """ Возвращает имя / ник, в зависимости от того, что есть
     """
     if user.username is not None and username:
@@ -447,3 +448,10 @@ def deepcopy(original):
     else:
         # Если это примитивное значение, просто возвращаем его
         return original
+
+def pil_image_to_file(image, extension='JPEG', quality='web_low'):
+    photoBuffer = BytesIO()
+    image.convert('RGB').save(photoBuffer, extension, quality=quality)
+    photoBuffer.seek(0)
+
+    return BufferedInputFile(photoBuffer.read(), filename=f"DinoGochi.{extension}")

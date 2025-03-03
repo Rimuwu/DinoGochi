@@ -30,3 +30,5 @@ from . import inside_shop
 
 from . import stars_invoice
 from . import post_handler # Должен загружаться последний!
+
+from . import commands

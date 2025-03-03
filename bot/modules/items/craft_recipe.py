@@ -14,8 +14,9 @@ from bot.modules.localization import t
 from bot.modules.logs import log
 from bot.modules.markup import markups_menu
 from bot.modules.states_tools import ChooseStepState
+from bot.modules.get_state import get_state
 from bot.modules.user.user import get_inventory_from_i
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.user.user import experience_enhancement
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -175,6 +176,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
             'item': item
         }
 
+        state = await get_state(userid, chatid)
         await ChooseStepState(end_choose_items, userid, chatid, lang, steps, transmitted_data)
 
     else:
@@ -324,6 +326,7 @@ async def check_items_in_inventory(materials, item, count,
             'item': item
         }
 
+        state = await get_state(userid, chatid)
         await ChooseStepState(pre_check, userid, chatid, lang, 
                               steps, transmitted_data)
 
@@ -344,7 +347,7 @@ async def send_item_info(item: dict, transmitted_data: dict):
     ])
 
     if not image:
-        await bot.send_message(chatid, text, 'Markdown',
+        await bot.send_message(chatid, text, parse_mode='Markdown',
                             reply_markup=markup)
     else:
         await send_SmartPhoto(chatid, image, text, 'Markdown', markup)

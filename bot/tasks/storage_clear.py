@@ -3,7 +3,7 @@ from time import time
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.localization import get_lang
 from bot.modules.markup import markups_menu as m
 from bot.taskmanager import add_task
@@ -40,6 +40,6 @@ async def storage_clear():
                     log(f"[storage_clear] Error on reset data: {e}", 2)
 
 
-if __name__ != '__main__':
-    if conf.active_tasks:
-        add_task(storage_clear, 7200, 200)
+# if __name__ != '__main__':
+#     if conf.active_tasks:
+#         add_task(storage_clear, 7200, 200)

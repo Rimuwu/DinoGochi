@@ -1,4 +1,4 @@
-from telebot.types import ReplyKeyboardMarkup
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as gs
@@ -9,7 +9,7 @@ from bot.modules.localization import t, tranlate_data
 from bot.modules.logs import log
 from bot.modules.managment.referals import get_user_code, get_user_sub
 from bot.modules.user.user import User, premium
-
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 users = DBconstructor(mongo_client.user.users)
@@ -122,7 +122,8 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         add_back_button = True
         buttons = [
             ['my_name', 'lang'],
-            ['dino_talk']
+            ['dino_talk', 'nick'],
+            ['reset_avatar'],
         ]
 
     elif markup_key == 'profile_menu':
@@ -158,7 +159,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         add_back_button = True
         buttons = [
             ['random', 'find'],
-            ['seller_profile'],
+            ['seller_profile', 'search_markets'],
         ]
     
     elif markup_key == 'backgrounds_menu':
@@ -480,8 +481,14 @@ def down_menu(markup: ReplyKeyboardMarkup,
               arrows: bool = True, lang: str = 'en'): 
     """Добавления нижнего меню для страничных клавиатур
     """
+
+    markup_n = ReplyKeyboardBuilder().from_markup(markup)
+
     if arrows:
-        markup.add(*[gs['back_button'], t('buttons_name.cancel', lang), gs['forward_button']])
-    else: markup.add(t('buttons_name.cancel', lang))
-    
-    return markup
+        markup_n.row(*[KeyboardButton(text=i) for i in [
+            gs['back_button'], t('buttons_name.cancel', lang), gs['forward_button']]]
+                     )
+    else: 
+        markup_n.row(KeyboardButton(text=t('buttons_name.cancel', lang)))
+
+    return markup_n.as_markup(resize_keyboard=True)

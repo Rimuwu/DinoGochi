@@ -1,6 +1,8 @@
 # Тестовые команды
 
 from functools import wraps
+from hmac import new
+import stat
 import statistics
 from asyncio import sleep
 from pprint import pprint
@@ -10,16 +12,18 @@ from random import choice
 from time import sleep
 from asyncio import sleep as asleep
 
-from telebot.types import (InlineKeyboardButton, InlineKeyboardMarkup,
+from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            InlineQueryResultContact, Message, LabeledPrice)
+from bot.modules.get_state import get_state
 from bot.modules.images_save import send_SmartPhoto
 
+from bot.modules.inline import inline_menu
 from bot.modules.logs import log
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.handlers.dino_profile import transition
 from bot.modules.companies import nextinqueue, save_message
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, item_list
@@ -52,7 +56,15 @@ from bot.modules.user.user import get_inventory
 from typing import Optional
 from PIL import Image
 
-
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F, Router
+from aiogram.filters import Command, StateFilter
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.decorators import HDMessage
@@ -62,7 +74,7 @@ from bson.son import SON
 
 users = mongo_client.user.users
 
-@bot.message_handler(pass_bot=True, commands=['add_item', 'item_add'], is_admin=True)
+@main_router.message(Command(commands=['add_item', 'item_add']), IsAdminUser())
 async def command(message):
     user = message.from_user
     if user.id in conf.bot_devs:
@@ -84,7 +96,7 @@ async def command(message):
     else:
         print(user.id, 'not in devs')
 
-@bot.message_handler(pass_bot=True, commands=['1xp'], is_admin=True)
+@main_router.message(Command(commands=['1xp']), IsAdminUser())
 async def command2(message):
     user = message.from_user
     if user.id in conf.bot_devs:
@@ -93,7 +105,7 @@ async def command2(message):
         print(user.id, 'not in devs')
 
 
-@bot.message_handler(pass_bot=True, commands=['test_img'], is_admin=True)
+@main_router.message(Command(commands=['test_img']), IsAdminUser())
 async def test_img(message):
     user = message.from_user
 
@@ -132,30 +144,30 @@ async def test_img(message):
 
 from bot.modules.dungeon.dungeon import Lobby, DungPlayer
 
-@bot.message_handler(pass_bot=True, commands=['dung'], is_admin=True)
+@main_router.message(Command(commands=['dung']), IsAdminUser())
 async def dung(message):
 
     m = await bot.send_message(message.from_user.id, "test")
-    lobby = await Lobby().create(message.from_user.id, m.id)
+    lobby = await Lobby().create(message.from_user.id, m.message_id)
 
     pprint(lobby.__dict__)
 
-@bot.message_handler(pass_bot=True, commands=['delete'], is_admin=True)
+@main_router.message(Command(commands=['delete']), IsAdminUser())
 async def delete(message):
 
     lobby = await Lobby().FromBase(message.from_user.id)
     await lobby.delete
 
-@bot.message_handler(pass_bot=True, commands=['add_to'], is_admin=True)
+@main_router.message(Command(commands=['add_to']), IsAdminUser())
 async def add_to(message):
 
     lobby = await Lobby().FromBase(1191252229)
 
     m = await bot.send_message(message.from_user.id, "test")
-    player = await DungPlayer().create(message.from_user.id, m.id)
+    player = await DungPlayer().create(message.from_user.id, m.message_id)
     await lobby.add_player(player, message.from_user.id)
 
-# @bot.message_handler(pass_bot=True, commands=['test'])
+# @main_router.message(Command(commands=['test'])
 # @HDMessage
 # async def test(message: Message):
     
@@ -179,7 +191,7 @@ async def add_to(message):
     
 
 
-@bot.message_handler(pass_bot=True, commands=['test'])
+@main_router.message(Command(commands=['test']))
 @HDMessage
 async def test(message: Message):
     
@@ -191,7 +203,7 @@ async def test(message: Message):
     print(r)
 
 
-@bot.message_handler(pass_bot=True, commands=['test2'])
+@main_router.message(Command(commands=['test2']))
 @HDMessage
 async def test2(message: Message):
     st = time()
@@ -199,3 +211,88 @@ async def test2(message: Message):
     
     await send_SmartPhoto(message.chat.id, 'images/remain/taverna/dino_reward.png', None, 'Markdown', None)
     log(f'test2 {time() - st} MEOW')
+
+@main_router.message(Command(commands=['errr']))
+@HDMessage
+async def super_test(message: Message):
+    
+    2 / 0
+
+
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import default_state, StatesGroup, State
+
+class Form(StatesGroup):
+    name = State()
+    age = State()
+
+@HDMessage
+@main_router.message(Command(commands=['check_state']))
+async def check(message: Message, state: FSMContext):
+    
+    await message.answer('ok')
+    
+    r = await state.get_state()
+    d = await state.get_data()
+    await message.answer(f"{r} {d}")
+
+
+@main_router.message(Command(commands=['set_state']))
+async def check(message: Message, state: FSMContext):
+    
+    await message.answer('ok')
+    
+    r = await state.set_state(Form.name)
+    await state.set_data({'name': 'test', 'func': check, 'class': Form})
+    await message.answer(f"{await state.get_state()}")
+
+@HDMessage
+@main_router.message(Command(commands=['res_state']), StateFilter(Form.name))
+async def check(message: Message, state: FSMContext):
+    
+    await message.answer('ok')
+    await state.clear()
+
+@HDMessage
+@main_router.message(Command(commands=['upd_state']), StateFilter(Form.name))
+async def check(message: Message, state: FSMContext):
+    
+    await state.update_data(name='new_test')
+    
+    r = await state.get_state()
+    d = await state.get_data()
+    await message.answer(f"{r} {d}")
+
+# @main_router.message(Command(commands=['check_state']))
+# @HDMessage
+# async def check_n(message: Message, state: FSMContext):
+    
+#     r = await state.get_state()
+#     await message.answer(f"{r}")
+
+@HDMessage
+@main_router.message(Command(commands=['testt']))
+async def check(message: Message):
+
+    state = await get_state(message.from_user.id, message.chat.id)
+
+    await message.answer(f"{await state.get_state()}")
+
+@HDMessage
+@main_router.message(Command(commands=['ttt']))
+async def check(message: Message):
+
+
+    inl = inline_menu('dino_profile', 'en', dino_alt_id_markup='werwr')
+    await message.answer('ok', message_effect_id='5104841245755180586', reply_markup=inl)
+    
+
+@main_router.message(Command(commands=['add_user_data']), IsAdminUser())
+async def add_user(message: Message):
+
+    new_user = {
+        "name": "",
+        "avatar": ""
+    }
+    await users.update_many({}, {"$set": new_user}, upsert=True)
+    await bot.send_message(message.from_user.id,"suf!")

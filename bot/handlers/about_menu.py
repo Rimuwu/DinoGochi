@@ -1,5 +1,5 @@
 from bot.const import GAME_SETTINGS
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.data_format import seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.donation import send_inv
@@ -11,13 +11,22 @@ from bot.modules.logs import log
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseIntState
-from telebot.types import (CallbackQuery, InlineKeyboardButton,
-                           InlineKeyboardMarkup, InputMedia, Message)
+from aiogram.types import (CallbackQuery, InlineKeyboardButton,
+                           InlineKeyboardMarkup, InputMedia, Message, inline_keyboard_markup)
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from aiogram.filters import Command
+from aiogram import F
 
-@bot.message_handler(pass_bot=True, text='commands_name.about.team', 
-                     is_authorized=True, private=True)
 @HDMessage
+@main_router.message(Text('commands_name.about.team'), 
+                     IsAuthorizedUser(), IsPrivateChat())
 async def team(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -30,9 +39,9 @@ async def team(message: Message):
                                      author=author_loc
                                     ), parse_mode='html')
 
-@bot.message_handler(pass_bot=True, text='commands_name.about.links', 
-                     is_authorized=True, private=True)
 @HDMessage
+@main_router.message(Text('commands_name.about.links'), 
+                     IsAuthorizedUser(), IsPrivateChat())
 async def links(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -52,18 +61,18 @@ async def main_support_menu(lang: str):
         text += f'{a}. *{bio["name"]}* — {bio["short"]}\n\n'
         buttons[bio["name"]] = f'support info {key}'
 
-    markup_inline = InlineKeyboardMarkup(row_width=1)
-    markup_inline.add(*[
+    markup_inline = InlineKeyboardBuilder()
+    markup_inline.row(*[
         InlineKeyboardButton(
             text=key, 
             callback_data=name
-        ) for key, name in buttons.items()])
+        ) for key, name in buttons.items()], width=1)
 
-    return image, text, markup_inline
+    return image, text, markup_inline.as_markup(resize_keyboard=True)
 
-@bot.message_handler(pass_bot=True, text='commands_name.about.support', 
-                     is_authorized=True, private=True)
 @HDMessage
+@main_router.message(Text('commands_name.about.support'), 
+                     IsAuthorizedUser(), IsPrivateChat())
 async def support(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -72,9 +81,9 @@ async def support(message: Message):
     
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
 
-@bot.message_handler(pass_bot=True, commands=['premium'], 
-                     is_authorized=True, private=True)
 @HDMessage
+@main_router.message(Command(commands=['premium']),
+                     IsAuthorizedUser(), IsPrivateChat())
 async def support_com(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -83,9 +92,9 @@ async def support_com(message: Message):
 
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
 
-@bot.message_handler(pass_bot=True, text='commands_name.about.faq', 
-                     is_authorized=True, private=True)
 @HDMessage
+@main_router.message(Text('commands_name.about.faq'), 
+                     IsAuthorizedUser(), IsPrivateChat())
 async def faq(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -93,18 +102,17 @@ async def faq(message: Message):
     faq_data = get_data('faq', lang)
     buttons = faq_data['inline_buttons']
 
-    markup_inline = InlineKeyboardMarkup(row_width=2)
-    markup_inline.add(*[
+    markup_inline = InlineKeyboardBuilder()
+    markup_inline.row(*[
         InlineKeyboardButton(
             text=name, 
             callback_data=key
-        ) for key, name in buttons.items()])
+        ) for key, name in buttons.items()], width=2)
 
-    await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline)
+    await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline.as_markup(resize_keyboard=True))
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: 
-    call.data.startswith('faq'))
 @HDCallback
+@main_router.callback_query(F.data.startswith('faq'))
 async def faq_buttons(call: CallbackQuery):
     data = call.data.split()[1]
     chatid = call.message.chat.id
@@ -113,10 +121,9 @@ async def faq_buttons(call: CallbackQuery):
     text = t(f'faq.{data}', lang)
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: 
-    call.data.startswith('support'))
 @HDCallback
-async def support_buttons(call: CallbackQuery):
+@main_router.callback_query(F.data.startswith('support'))
+async def support_buttons(call: CallbackQuery, state):
     action = call.data.split()[1]
     product_key = call.data.split()[2]
     products = GAME_SETTINGS['products']
@@ -125,14 +132,14 @@ async def support_buttons(call: CallbackQuery):
     chatid = call.message.chat.id
     user_id = call.from_user.id
     lang = await get_lang(call.from_user.id)
-    messageid = call.message.id
+    messageid = call.message.message_id
 
     if action == "main":
         image, text, markup_inline = await main_support_menu(lang)
         await edit_SmartPhoto(chatid, messageid, image, text, 'Markdown', markup_inline)
     else:
         if product_key != 'non_repayable': product = products[product_key]
-        markup_inline = InlineKeyboardMarkup(row_width=2)
+        markup_inline = InlineKeyboardBuilder()
 
         text_data = get_data('support_command', lang)
         product_bio = text_data['products_bio'][product_key]
@@ -156,26 +163,26 @@ async def support_buttons(call: CallbackQuery):
                         name = f'{seconds_to_str(product["time"]*int(key), lang)} = {item[currency]}🌟'
 
                         buttons[name] = f'support buy {product_key} {key}'
-                elif product['type'] == 'kit':
+                elif product['type'] in ['kit', 'super_coins']:
                     for key, item in product['cost'].items():
                         name = f'x{key} = {item[currency]}🌟'
                         buttons[name] = f'support buy {product_key} {key}'
 
-                markup_inline.add(*[
+                markup_inline.row(*[
                     InlineKeyboardButton(
                         text=key, 
-                        callback_data=item) for key, item in buttons.items()]
-                                    )
+                        callback_data=item) for key, item in buttons.items()],
+                        width=2)
 
             else:
-                await ChooseIntState(tips, user_id, chatid, lang, 1, 100_000)
+                await ChooseIntState(tips, user_id, chatid, lang, 1, 500_000)
                 await bot.send_message(chatid, text_data['free_enter'], reply_markup=cancel_markup(lang))
 
-            markup_inline.add(
-            InlineKeyboardButton(
-                text=t('buttons_name.back', lang), 
-                callback_data='support main 0'
-            ))
+            markup_inline.row(
+                InlineKeyboardButton(
+                    text=t('buttons_name.back', lang), 
+                    callback_data='support main 0'
+                ), width=2)
 
         elif action == "buy":
             currency = 'XTR'
@@ -185,19 +192,19 @@ async def support_buttons(call: CallbackQuery):
 
             text = text_data['buy']
 
-            markup_inline.add(
-            InlineKeyboardButton(
-                text=t('buttons_name.back', lang), 
-                callback_data=f'support info {product_key}'
-            ))
+            markup_inline.row(
+                InlineKeyboardButton(
+                    text=t('buttons_name.back', lang), 
+                    callback_data=f'support info {product_key}'
+                ), width=2)
 
             await send_inv(user_id, product_key, count, lang)
 
         if call.message.content_type == 'text':
-            await send_SmartPhoto(chatid, image_way, text, 'Markdown', markup_inline)
+            await send_SmartPhoto(chatid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
         else:
             try:
-                await edit_SmartPhoto(chatid, messageid, image_way, text, 'Markdown', markup_inline)
+                await edit_SmartPhoto(chatid, messageid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
             except Exception as e:
                 log(f'edit_SmartPhoto error: {e}', 2) 
 

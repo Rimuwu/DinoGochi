@@ -331,6 +331,21 @@
                 }
             },
             "items": ["freezing", "defrost"]
+        },
+        "super_coins": {
+            "type": "super_coins",
+            "cost": {
+                "100": {
+                    "XTR": 25
+                },
+                "500": {
+                    "XTR": 125
+                },
+                "1000": {
+                    "XTR": 250
+                }
+            },
+            "items": []
         }
     },
     
@@ -413,7 +428,8 @@
         "sr": {"items": ["stone_resurrection"], "price": 450},
         "ec": {"items": ["egg_case"], "price": 200},
         "rc": {"items": ["recipe_chest"], "price": 200},
-        "cf": {"items": ["chest_food"], "price": 200}
+        "cf": {"items": ["chest_food"], "price": 200},
+        "dh": {"items": ["transport_egg"], "price": 200}
     },
 
     "buyer": {
@@ -444,5 +460,8 @@
     },
 
     "promotion_price": 5000,
-    "ignore_items_inside_shop": ["repair_tool"]
+    "ignore_items_inside_shop": ["repair_tool"],
+
+    "bot_channel": "https://t.me/DinoGochi",
+    "bot_forum": "https://t.me/+pq9_21HXXYY4ZGQy"
 } 

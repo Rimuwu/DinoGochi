@@ -9,7 +9,8 @@
             "confirm": "✅ Konfirmasi",
             "yes": "✅ Ya",
             "no": "❌ Tidak",
-            "cancel": "❌ Batal"
+            "cancel": "❌ Batal",
+            "refresh": "🔄 Memperbarui"
         },
         "commands_name": {
             "start_game": "🍡 Mulai mainkan",
@@ -31,7 +32,9 @@
                 "my_name": "🎠 Telepon saya",
                 "custom_profile": "🌟 Latar belakang dinosaurus",
                 "lang": "👅 Bahasa",
-                "dino_talk": "✉ Berbicara dengan Dinosaurus"
+                "dino_talk": "✉ Berbicara dengan Dinosaurus",
+                "nick": "🎃 Nama panggilan",
+                "reset_avatar": "🎨 Setel Ulang Avatar"
             },
             "profile": {
                 "information": "Informasi 📜",
@@ -52,7 +55,8 @@
                 "find": "🔍 Pencarian produk",
                 "seller_profile": "🛒 Toko Saya",
                 "bot_market": "🔮 Toko Bot",
-                "background_market": "🖼️ Menu Latar Belakang"
+                "background_market": "🖼️ Menu Latar Belakang",
+                "search_markets": "🍶 Pencari Toko"
             },
             "seller_profile": {
                 "add_product": "☄ Tambahkan produk",
@@ -961,6 +965,10 @@
             },
             "SYSTEM_ITEM_BODY": {
                 "name": "📦 Kandang"
+            },
+            "transport_egg": {
+                "name": "🦖 Telur Transportasi",
+                "description": "Telur untuk mengangkut dinosaurus."
             }
         },
         "notifications": {
@@ -1203,7 +1211,7 @@
                 "friends2": "🍺 Teman di Kedai:",
                 "tavern_col": "🔮 Jumlah Kedai: {col}",
                 "went": "🍺 {name} pergi ke kedai ...",
-                "button": "🍻 Beli bir seharga 50🪙"
+                "button": "🍻 Beli bir seharga 150 🪙"
             },
             "about": "🤖 | Halo! Saya @{bot_name}, dan inilah beberapa informasi tentang saya! \n\n🗝️ | Statistik: 👥 <code>{col_u}</code> 🦕 <code>{col_d}</code> 🔮 <code>{col_i}</code>\n<i>{update_time} yang lalu. </i>",
             "referal": "🤍 | Redirect ke menu sistem referral! \n\n💜 | *Setelah mencapai level {lvl}* teman Anda, Anda akan mendapatkan {award_text}! \n\n❤️ | Seorang teman akan menerima bonus sejumlah: {coins} koin, {items}",
@@ -1635,7 +1643,10 @@
                 "take_money": "✨ Transfer Koin",
                 "take_coins": "🪔 Transfer Koin",
                 "joint_dinosaur": "🦕 Bagikan dinosaurus",
-                "new_year": "🎁 Kirim hadiah"
+                "new_year": "🎁 Kirim hadiah",
+                "change_name": "👥 Ubah Nama",
+                "change_friend_name": "👥 Ubah Nama",
+                "open_market": "🏪 Buka toko"
             }
         },
         "requests": {
@@ -1871,7 +1882,8 @@
             "clear_filters": "\n🗑 | Klik tempat sampah untuk menghapus filter.",
             "update_page": "🔁 | Halaman diperbarui",
             "update_search": "🔁 | Pencarian Diaktifkan",
-            "update_filter": "🔁 | Pilihan filter aktif"
+            "update_filter": "🔁 | Pilihan filter aktif",
+            "filter_null": "❌ | Tidak ada item untuk filter ini."
         },
         "copy_m": {
             "info": "Balasan pesan dengan teks untuk pengiriman diperlukan",
@@ -2009,7 +2021,8 @@
                     "created_item": "🛠 Item yang Dapat Diciptakan: {item}",
                     "buyer": "💰 Pemain anggar"
                 },
-                "time_craft": "*├* Waktu pembuatan: ⏳ {times}"
+                "time_craft": "*├* Waktu pembuatan: ⏳ {times}",
+                "trs_dino": "*├* Dinosaurus: {dino} {hp} / 100 ❤\n"
             },
             "bonuses": {
                 "+heal": "Peningkatan Kesehatan: {0}%",
@@ -2158,6 +2171,13 @@
                     "image": "images/remain/support/freezing.png",
                     "short": "Bekukan dinosaurus saya!",
                     "description": "🧊 Beristirahatlah dari dinosaurus tanpa batas waktu, jaga hidupmu sendiri!"
+                },
+                "super_coins": {
+                    "name": "✨ Koin Super",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/super_coins.png",
+                    "image": "images/remain/support/super_coins.png",
+                    "short": "Koin super untuk pengguna super!",
+                    "description": "✨ Isi ulang saldo Koin Super Anda untuk mendapatkan akses ke Item Super!"
                 }
             },
             "free_enter": "🎥 Masukkan di bawah berapa banyak bintang yang ingin Anda kirim ke pengembang.",
@@ -2201,6 +2221,11 @@
                 "craft": "⚒️ Membuat item",
                 "unrestrained_play": "😟 Bermain untuk menenangkan diri",
                 "inactive": "❄ Beku"
+            },
+            "market": {
+                "caption": "*┌* 🛍️ *ᴍᴀʀᴋᴇᴛ*",
+                "market_name": "*├* Judul: *{market_name}*",
+                "earned": "*└* *Diperoleh:* {coins}"
             }
         },
         "custom_profile": {
@@ -4621,6 +4646,25 @@
             "info": "❗ Pilih apakah akan menonaktifkan self-talk",
             "True": "🔧 Dinosaurus tidak akan lagi menulis kepada Anda sendiri!",
             "False": "🔧 Dinosaurus sekarang dapat menulis kepada Anda sendiri!"
+        },
+        "edit_friend_name": "🎨 Masukkan nama baru untuk {name} atau \"{none}\" untuk mengatur ulang.",
+        "edit_nick": "🎨 Masukkan nama panggilan baru yang akan terlihat oleh semua orang di bot ->\n🪙 Biaya: 7500",
+        "null_nick": "🎨 Nama panggilan tidak bisa kosong! (Semua karakter kompleks akan diganti dengan yang kosong)",
+        "no_coins": "🪙 Tidak cukup koin!",
+        "new_nick": "❤ Nama panggilan baru Anda: {nick}",
+        "reset_avatar": "📜 Avatar diatur ulang, itu akan diperbarui dengan foto terakhir di profil Anda.",
+        "search_markets": {
+            "text": "🍶 Pilih apakah Anda ingin menemukan toko acak atau menemukan yang tertentu:",
+            "random": "🛒 Toko Acak",
+            "find": "🔍 Temukan toko",
+            "no_markets": "🧨 Saat ini, tidak ada toko terbuka dengan nama serupa.",
+            "find_market": "🔍 Masukkan nama toko untuk menemukannya:"
+        },
+        "transport": {
+            "add_dino": "🦈 Seekor dinosaurus telah ditambahkan ke telur untuk disimpan!",
+            "delete_dino": "💡 Seekor dinosaurus diekstraksi dari telur!",
+            "error": "🎈 Kesalahan pemilihan dinosaurus!",
+            "max_dino": "🧨 Kamu sudah memiliki jumlah dinosaurus maksimum!"
         }
     }
 }

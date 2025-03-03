@@ -40,7 +40,7 @@ def undoreplace(text: str, to_lang: str):
         for key, data in replaces.items(): # Перебираем все ключи с сохранённым текстом
             txt = None
 
-            if text.find(key) or text.find(key) == 0: # Проверяем есть ли ключ в тексте
+            if key in text: # Исправлено условие проверки наличия ключа в тексте
                 if data['translate']:
                     if len(data['text']) > 3 and data['text'][1] == '#' and data['text'][-2] == '#': 
                         # Если текста состоит из ключа, то его нет смысла переводить
@@ -77,6 +77,8 @@ def undoreplace(text: str, to_lang: str):
 def replace_simbols(text: str):
     """ Функция заменяет специальные символы на коды, для корректности работы словаря
     """
+    if not text:  # Проверка на пустой текст
+        return text
 
     # Заменяем все заранее известные символы
     for key, item in replace_words.items(): text = text.replace(item['text'], key)
@@ -95,7 +97,7 @@ def replace_simbols(text: str):
     word, st = '', False
 
     for i2 in text:
-        # Убираем все конструкции вставки переменных (прячим за кодом)
+        # Убираем все конструкции вставки переменных (прячем за кодом)
         # {name} -> (1111)
         k_name = ''
         if i2 == '{':
@@ -162,6 +164,9 @@ def translator(text: str, to_lang:str, trans='bing') -> str:
     """
     global base_names
 
+    if not text:  # Проверка на пустой текст
+        return text
+
     # Замены ключей
     from_language = main_code
     if trans in replace_codes:
@@ -171,50 +176,57 @@ def translator(text: str, to_lang:str, trans='bing') -> str:
         if to_lang in replace_codes[trans]:
             to_lang = replace_codes[trans][to_lang]
 
-    if text:
-        try: lang = detect(text) # Определяем язык текста
-        except: lang = 'emoji'
+    try: 
+        lang = detect(text) # Определяем язык текста
+    except: 
+        lang = 'emoji'
 
-        if lang not in ['en', 'it', 'emoji']:
-            
-            # Если текст есть в базе, его не надо переводить снова
-            if text in base_names: return base_names[text]
-            else:
-                # Попытка не отхватывать люлей
-                r_t = random.uniform(0, 2)
-                time.sleep(r_t)
+    if lang not in ['en', 'it', 'emoji']:
+        # Если текст есть в базе, его не надо переводить снова
+        if text in base_names: 
+            return base_names[text]
+        else:
+            # Попытка не отхватывать люлей
+            r_t = random.uniform(0, 2)
+            time.sleep(r_t)
 
-                try:
-                    # Перевод
-                    ret = translators.translate_text(text, 
-                        from_language=from_language,
-                        to_language=to_lang, translator=trans)
+            try:
+                # Перевод
+                ret = translators.translate_text(text, 
+                    from_language=from_language,
+                    to_language=to_lang, translator=trans)
 
-                    pprint({
-                        "Text in": text, 'translator': trans, 
-                        'Text out': ret, 'from_language': from_language,
-                        'to_lang': to_lang, 'detect': lang}
-                    )
-                except Exception as e: 
-                    print(e)
-                    print(trans)
-                    return ''
-                base_names[text] = ret
-                return ret # type: ignore
+                pprint({
+                    "Text in": text, 'translator': trans, 
+                    'Text out': ret, 'from_language': from_language,
+                    'to_lang': to_lang, 'detect': lang}
+                )
+                
+                if ret:  # Проверка на пустой результат перевода
+                    base_names[text] = ret
+                    return ret
+                return text
+                
+            except Exception as e: 
+                print(e)
+                print(trans)
+                return text
     return text
 
 def text_translate(text: str, to_lang: str, 
                    trans:str = zero_translator, repl:bool = True):
     """ Перевод """
-    if text == '': return text
+    if not text: return text
     if repl: text = replace_simbols(text)
     new_text = ''
 
     try:
         new_text = translator(text, to_lang, trans)
-    except: pass
+    except Exception as e:
+        print(f"Translation error: {e}")
+        pass
 
-    if new_text == '':
+    if not new_text:
         # Если переводчик возвращает пустоту, значит он вызывает ошибку, значит он скорее всего перегрелся от запросов, рандомим другой переводчик
         rand_trans = random.choice(translators_names)
         new_text = text_translate(text, to_lang, rand_trans, False)
@@ -224,6 +236,9 @@ def text_translate(text: str, to_lang: str,
 def remove_non_dict_or_list(dct):
     """ Функция заменяет вcе значения ключей на NOTEXT, тем самым копируя структуру словаря
     """
+    if not dct:  # Проверка на пустой словарь
+        return dct
+        
     keys_to_remove = []
     for key, value in dct.items():
         if not isinstance(value, (dict, list)):
@@ -243,6 +258,9 @@ def remove_non_dict_or_list(dct):
 def replace_data(dct: dict, way: str, new) -> dict:
     """ Заменяет данные в ключе словаря, идя по пути ключей way
     """
+    if not dct or not way:  # Проверка на пустые входные данные
+        return dct
+        
     lst = way.split('.')
     new_dct = dct.copy()
     current_dict = new_dct
@@ -275,6 +293,9 @@ def replace_data(dct: dict, way: str, new) -> dict:
 
 def get_damp(lang_code:str):
     """Получает данные дампа"""
+    if not lang_code:  # Проверка на пустой код языка
+        return {}
+        
     path = f'{ex}{damp_path}/{lang_code}.json'
 
     if not os.path.exists(path):
@@ -287,6 +308,8 @@ def get_damp(lang_code:str):
 
 def get_lang(lang_code:str):
     """Получает данные файла"""
+    if not lang_code:  # Проверка на пустой код языка
+        return {}
 
     with open(f'{ex}{langs_path}/{lang_code}.json', encoding='utf-8') as f: 
         lang = json.load(f) # type: dict
@@ -294,6 +317,8 @@ def get_lang(lang_code:str):
 
 def get_translate_langs():
     """Проверяет дерикторию langs_path и получает оттуда название файлов (языки на которые надо переводить текст)"""
+    if not os.path.exists(ex + langs_path):  # Проверка существования директории
+        return []
 
     lst = os.listdir(ex + langs_path)
 
@@ -309,6 +334,8 @@ def get_translate_langs():
 def translate(data, to_lang:str):
     """ Распределяет какие типы надо переводить, а что надо оставить в том же виде
     """
+    if not to_lang:  # Проверка на пустой код языка
+        return data
 
     if isinstance(data, (int, float)): data = data
     elif isinstance(data, str): 
@@ -335,6 +362,9 @@ def translate(data, to_lang:str):
 
 def save(data, lang, dr='languages'):
     """Сохраняет файл языка"""
+    if not data or not lang:  # Проверка на пустые входные данные
+        return
+        
     if dr == 'languages':
         path = f'{ex}{langs_path}/{lang}.json'
     else:
@@ -346,6 +376,9 @@ def save(data, lang, dr='languages'):
 
 def dict_way(dct:dict, way:str):
     """ Получает значение следуя по пути ключей way"""
+    if not dct or not way:  # Проверка на пустые входные данные
+        return None
+        
     dct = dct.copy()
     new_dct = dct
 
@@ -366,6 +399,9 @@ def dict_way(dct:dict, way:str):
 def key_check(direct, way: str):
     """ Проверяет есть ли в словаре ключ следуя по пути way
     """
+    if not direct or not way:  # Проверка на пустые входные данные
+        return []
+        
     way_main = dict_way(direct, way)
     if way_main is None: return [way]
 
@@ -394,6 +430,9 @@ def way_check(main_direct, damp_direct, way: str, non: bool = True):
         На вход получает словари и проверяет их на совпадение
         На выход передаёт список с путём ключей
     """
+    if not main_direct or not damp_direct or not way:  # Проверка на пустые входные данные
+        return []
+        
     main_direct = main_direct.copy()
     damp_direct = damp_direct.copy()
 

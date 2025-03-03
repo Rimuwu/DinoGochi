@@ -1,8 +1,8 @@
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.handlers.start import start_game
 from bot.modules.companies import create_company, end_company, generate_message, info
-from bot.modules.data_format import seconds_to_str, str_to_seconds, user_name
+from bot.modules.data_format import seconds_to_str, str_to_seconds
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_all_locales, get_lang, t
@@ -10,14 +10,24 @@ from bot.modules.managment.promo import use_promo
 from bot.modules.markup import answer_markup, cancel_markup, confirm_markup
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import ChoosePagesState, ChooseStepState
-from telebot.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message
+
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from bot.filters.admin import IsAdminUser
+from aiogram import F
+from aiogram.filters import Command
 
 users = DBconstructor(mongo_client.user.users)
 companies = DBconstructor(mongo_client.other.companies)
 langs = DBconstructor(mongo_client.user.lang)
 
-@bot.message_handler(pass_bot=True, is_admin=True, commands=['create_company'])
 @HDMessage
+@main_router.message(IsAdminUser(), Command(commands=['create_company']))
 async def create_company_com(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -30,6 +40,7 @@ async def create_company_com(message: Message):
                     )
 
 async def new_cycle(userid, chatid, lang, transmitted_data):
+    state = transmitted_data['state']
     lang_data = get_all_locales('language_name')
     lang_options = {}
 
@@ -133,6 +144,7 @@ async def pre_check(data, transmitted_data):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     message = transmitted_data['message']
+    state = transmitted_data['state']
 
     message[data['lang']
     ] = {
@@ -305,8 +317,9 @@ async def end(data, transmitted_data):
     await create_company(**return_data)
     await bot.send_message(chatid, '✅')
 
-@bot.message_handler(pass_bot=True, commands=['companies'], is_admin=True)
-async def companies_c(message: Message):
+@HDMessage
+@main_router.message(Command(commands=['companies']), IsAdminUser())
+async def companies_c(message: Message, state):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
     userid = message.from_user.id
@@ -329,8 +342,8 @@ async def comp_info(com_id, transmitted_data):
         chatid, text, reply_markup=mrk
     )
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: call.data.startswith('company_info') , is_authorized=True)
 @HDCallback
+@main_router.callback_query(F.data.startswith('company_info') , IsAuthorizedUser())
 async def company_info(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
@@ -345,14 +358,14 @@ async def company_info(callback: CallbackQuery):
     if c:
         if action == 'delete':
             await end_company(c['_id'])
-            await bot.delete_message(chatid, callback.message.id)
+            await bot.delete_message(chatid, callback.message.message_id)
 
         elif action == 'activate':
             await companies.update_one({'_id': c['_id']}, {'$set': {'status': True}})
 
             text, mrk = await info(c['_id'], lang)
             await bot.edit_message_text(
-                text, chatid, callback.message.id, reply_markup=mrk
+                text, None, chatid, callback.message.message_id, reply_markup=mrk
             )
 
         elif action == 'stop':
@@ -360,9 +373,9 @@ async def company_info(callback: CallbackQuery):
 
             text, mrk = await info(c['_id'], lang)
             await bot.edit_message_text(
-                text, chatid, callback.message.id, reply_markup=mrk
+                text, None, chatid, callback.message.message_id, reply_markup=mrk
             )
-        
+
         elif action == 'message':
             langs = c['message'].keys()
             

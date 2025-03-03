@@ -1,7 +1,6 @@
 
 from asyncio import sleep
 from typing import Callable
-from telebot.apihelper import ApiTelegramException
 
 async def async_antiflood(function: Callable, *args, number_retries=3, **kwargs):
     """
@@ -9,8 +8,6 @@ async def async_antiflood(function: Callable, *args, number_retries=3, **kwargs)
     Example:
 
     .. code-block:: python3
-    
-        from telebot.util import antiflood
         for chat_id in chat_id_list:
         msg = await async_antiflood(bot.send_message, chat_id, text)
 
@@ -32,7 +29,7 @@ async def async_antiflood(function: Callable, *args, number_retries=3, **kwargs)
     for _ in range(number_retries - 1):
         try:
             return await function(*args, **kwargs)
-        except ApiTelegramException as ex:
+        except Exception as ex:
             if ex.error_code == 429:
                 await sleep(ex.result_json['parameters']['retry_after'])
             else:

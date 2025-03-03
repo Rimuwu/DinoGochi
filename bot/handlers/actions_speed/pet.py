@@ -1,10 +1,9 @@
 from random import choice, randint, uniform
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.dinosaur.skills import add_skill_point
-from bot.modules.data_format import user_name
 from bot.modules.decorators import HDMessage
 from bot.modules.dinosaur.dinosaur import set_status
 from bot.modules.localization import get_data, t
@@ -12,15 +11,20 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.dinosaur.mood import add_mood, repeat_activity
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.advert import auto_ads
-from bot.modules.user.user import User
-from telebot.types import Message
+from bot.modules.user.user import User, user_name
+from aiogram.types import Message
+
+from bot.filters.translated_text import Text
+from bot.filters.status import DinoPassStatus
+from bot.filters.kd import KDCheck
+from aiogram import F
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 
-@bot.message_handler(textstart='commands_name.speed_actions.pet', dino_pass=True, nothing_state=True, kd_check='pet')
 @HDMessage
+@main_router.message(Text('commands_name.speed_actions.pet'), DinoPassStatus(), KDCheck('pet'))
 async def pet(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
@@ -54,7 +58,7 @@ async def pet(message: Message):
 
             cancel_break = True
 
-    owner = user_name(message.from_user)
+    owner = await user_name(userid)
     rand_d_act = choice(get_data('pet.lst', lang))
     mes = rand_d_act['message'].format(
         owner=owner)

@@ -16,8 +16,11 @@ async def _task_executor(function, repeat_time: float, delay: float, **kwargs):
     await asyncio.sleep(delay)
 
     if not repeat_time:
-        if function.__name__ == 'infinity_polling':
-            await function(**kwargs)
+        if function.__name__ == 'start_polling':
+            bots = kwargs.get('bots', []).copy()
+            del kwargs['bots']
+
+            await function(*bots, **kwargs)
         else:
             try:
                 await function(**kwargs)

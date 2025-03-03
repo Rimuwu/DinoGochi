@@ -1,16 +1,17 @@
+from math import e
 from time import time
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.exec import bot
-from bot.modules.data_format import user_name
 from bot.modules.dinosaur.dinosaur  import insert_dino
 from bot.modules.notifications import user_notification
+from bot.modules.user.user import User
 from bot.taskmanager import add_task
 from bot.modules.localization import get_lang
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 incubations = DBconstructor(mongo_client.dinosaur.incubation)
+users = DBconstructor(mongo_client.user.users)
 
 async def incubation():
     """Проверка инкубируемых яиц
@@ -27,18 +28,12 @@ async def incubation():
         await incubations.delete_one({'_id': egg['_id']}, comment='incubation_1') 
 
         #отправляем уведомление
-        try:
-            chat_user = await bot.get_chat_member(egg['owner_id'], egg['owner_id'])
-            user = chat_user.user
-        except: user = None
+        user = await User().create(egg['owner_id'])
+        lang = await get_lang(user.userid)
+        await user_notification(egg['owner_id'], 
+                    'incubation_ready', lang, 
+                    user_name=user.name, dino_alt_id_markup=alt_id)
 
-        if user:
-            name = user_name(user)
-            lang = await get_lang(user.id)
-            await user_notification(egg['owner_id'], 
-                        'incubation_ready', lang, 
-                        user_name=name, dino_alt_id_markup=alt_id)
-    
 if __name__ != '__main__':
     if conf.active_tasks:
         add_task(incubation, 20.0, 1.0)

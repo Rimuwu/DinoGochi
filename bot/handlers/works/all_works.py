@@ -1,7 +1,7 @@
 from time import time
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.dinosaur.dinosaur import Dino
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.works import end_work, start_bank, start_mine, start_sawmill
@@ -14,18 +14,30 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import ChooseOptionState
 from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User
-from telebot.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery
 from bot.modules.data_format import list_to_inline, list_to_keyboard, progress_bar
+
+from bot.filters.translated_text import StartWith, Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from aiogram import F
+
+from aiogram.fsm.context import FSMContext
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 
-@bot.message_handler(textstart='commands_name.extraction_actions.progress',
-                     nothing_state=True)
 @HDMessage
+@main_router.message(Text('commands_name.extraction_actions.progress'))
 async def progress(message: Message):
+    if not message or not message.from_user:
+        return
     userid = message.from_user.id
+
     user = await User().create(userid)
     lang = await user.lang
     dino = await user.get_last_dino()
@@ -65,18 +77,23 @@ async def progress(message: Message):
                     {t('works.buttons.check', lang): f'progress_work check {dino.alt_id}'}
                 ])
 
-            await bot.send_message(chatid, text, 'Markdown', reply_markup=rmk)
+            await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=rmk)
 
-@bot.callback_query_handler(pass_bot=True, func=lambda call: 
-    call.data.startswith('progress_work'))
 @HDCallback
+@main_router.callback_query(F.data.startswith('progress_work'))
 async def progress_work(call: CallbackQuery):
 
+    if not call or not call.message or not call.from_user or not call.data:
+        return
+        
     chatid = call.message.chat.id
     userid = call.from_user.id
 
-    action = call.data.split()[1]
-    alt_code = call.data.split()[2]
+    try:
+        action = call.data.split()[1]
+        alt_code = call.data.split()[2]
+    except (IndexError, AttributeError):
+        return
 
     lang = await get_lang(userid)
     dino = await Dino().create(alt_code)
@@ -108,13 +125,12 @@ async def progress_work(call: CallbackQuery):
                           count=count,
                           max_count=res['max_items'])
 
-                await bot.send_message(chatid, text, 'Markdown')
+                await bot.send_message(chatid, text, parse_mode='Markdown')
                 await bot.send_message(chatid, '✅', 
                            reply_markup = await m(userid, 'last_menu', lang))
 
-@bot.message_handler(textstart='commands_name.extraction_actions.stop_work',
-                     nothing_state=True)
 @HDMessage
+@main_router.message(Text('commands_name.extraction_actions.stop_work'))
 async def stop_work(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
@@ -142,11 +158,10 @@ async def stop_work(message: Message):
         await bot.send_message(chatid, "❌", reply_markup = await m(userid, 'last_menu', lang))
 
 
-
-@bot.message_handler(textstart='commands_name.extraction_actions.mine', 
-                     dino_pass=True, nothing_state=True)
 @HDMessage
-async def mine(message: Message):
+@main_router.message(Text('commands_name.extraction_actions.mine'), 
+                     DinoPassStatus())
+async def mine(message: Message, state: FSMContext):
     userid = message.from_user.id
     user = await User().create(userid)
     lang = await user.lang
@@ -182,15 +197,15 @@ async def end_mine(data, transmitted_data: dict):
 
     await start_mine(last_dino._id, userid, data)
     text = t('works.start.mine', lang)
-    mes = await bot.send_message(chatid, text, 'Markdown',
+    mes = await bot.send_message(chatid, text, parse_mode='Markdown',
                            reply_markup = await m(userid, 'last_menu', lang))
 
     await auto_ads(mes)
 
-@bot.message_handler(textstart='commands_name.extraction_actions.bank', 
-                     dino_pass=True, nothing_state=True)
 @HDMessage
-async def bank(message: Message):
+@main_router.message(StartWith('commands_name.extraction_actions.bank'), 
+                     DinoPassStatus())
+async def bank(message: Message, state: FSMContext):
     userid = message.from_user.id
     user = await User().create(userid)
     lang = await user.lang
@@ -226,15 +241,15 @@ async def end_bank(data, transmitted_data: dict):
 
     await start_bank(last_dino._id, userid, data)
     text = t('works.start.bank', lang)
-    mes = await bot.send_message(chatid, text, 'Markdown',
+    mes = await bot.send_message(chatid, text, parse_mode='Markdown',
                            reply_markup = await m(userid, 'last_menu', lang))
 
     await auto_ads(mes)
 
-@bot.message_handler(textstart='commands_name.extraction_actions.sawmill', 
-                     dino_pass=True, nothing_state=True)
 @HDMessage
-async def sawmill(message: Message):
+@main_router.message(StartWith('commands_name.extraction_actions.sawmill'), 
+                     DinoPassStatus())
+async def sawmill(message: Message, state: FSMContext):
     userid = message.from_user.id
     user = await User().create(userid)
     lang = await user.lang
@@ -270,7 +285,7 @@ async def end_sawmill(data, transmitted_data: dict):
 
     await start_sawmill(last_dino._id, userid, data)
     text = t('works.start.sawmill', lang)
-    mes = await bot.send_message(chatid, text, 'Markdown',
+    mes = await bot.send_message(chatid, text, parse_mode='Markdown',
                            reply_markup = await m(userid, 'last_menu', lang))
 
     await auto_ads(mes)

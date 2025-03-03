@@ -1,4 +1,4 @@
-from telebot.types import Message, InputMedia
+from aiogram.types import InputMedia, InputMediaPhoto
 
 from bot.dbmanager import mongo_client
 from bot.exec import bot
@@ -49,7 +49,7 @@ async def edit_price(new_price: int, transmitted_data: dict):
 
     await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang), parse_mode='Markdown')
 
-async def prepare_edit_price(userid: int, chatid: int, lang: str, productid: str):
+async def prepare_edit_price(userid: int, chatid: int, lang: str, productid: str, state):
     transmitted_data = {
         'productid': productid,
     }
@@ -113,7 +113,7 @@ async def add_stock(in_stock: int, transmitted_data: dict):
 
     await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang), parse_mode='Markdown')
 
-async def prepare_add(userid: int, chatid: int, lang: str, productid: str):
+async def prepare_add(userid: int, chatid: int, lang: str, productid: str, state):
 
     transmitted_data = {
         'productid': productid,
@@ -139,9 +139,9 @@ async def delete_all(_: bool, transmitted_data: dict):
                            reply_markup= await m(userid, 'last_menu', lang))
 
     text, markup, image = await seller_ui(userid, lang, True)
-    await bot.edit_message_caption(text, chatid, message_id, parse_mode='Markdown', reply_markup=markup)
+    await bot.edit_message_caption(None, caption=text, chat_id=chatid, message_id=message_id, parse_mode='Markdown', reply_markup=markup)
 
-async def prepare_delete_all(userid: int, chatid: int, lang: str, message_id: int):
+async def prepare_delete_all(userid: int, chatid: int, lang: str, message_id: int, state):
     transmitted_data = {
         'message_id': message_id,
     }
@@ -165,14 +165,14 @@ async def edit_name(name: str, transmitted_data: dict):
 
         text, markup, image = await seller_ui(userid, lang, True)
         try:
-            await bot.edit_message_caption(text, chatid, message_id, parse_mode='Markdown', reply_markup=markup)
+            await bot.edit_message_caption(None, caption=text, chat_id=chatid, message_id=message_id, parse_mode='Markdown', reply_markup=markup)
         except: pass
     else:
         text =  t('market_create.name_error', lang)
         await bot.send_message(chatid, t('seller.confirm_delete_all', lang), 
                                reply_markup= await m(userid, 'last_menu', lang))
 
-async def pr_edit_name(userid: int, chatid: int, lang: str, message_id: int):
+async def pr_edit_name(userid: int, chatid: int, lang: str, message_id: int, state):
     transmitted_data = {
         'message_id': message_id
     }
@@ -195,10 +195,10 @@ async def edit_description(description: str, transmitted_data: dict):
 
     text, markup, image = await seller_ui(userid, lang, True)
     try:
-        await bot.edit_message_caption(text, chatid, message_id, parse_mode='Markdown', reply_markup=markup)
+        await bot.edit_message_caption(None, caption=text, chat_id=chatid, message_id=message_id, parse_mode='Markdown', reply_markup=markup)
     except: pass
 
-async def pr_edit_description(userid: int, chatid: int, lang: str, message_id: int):
+async def pr_edit_description(userid: int, chatid: int, lang: str, message_id: int, state):
     transmitted_data = {
         'message_id': message_id
     }
@@ -212,15 +212,14 @@ async def edit_image(new_image: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     message_id = transmitted_data['message_id']
-    if new_image == 'no_image': 
-        new_image = ''
-    else:
+    new_image = ''
+
+    if new_image != 'no_image': 
         file_info = await bot.get_file(new_image)
-        downloaded_file = await bot.download_file(file_info.file_path)
-        if downloaded_file:
-            new_image = new_image
-        else:
-            new_image = ''
+        if file_info.file_path:
+            downloaded_file = await bot.download_file(file_info.file_path)
+            if downloaded_file:
+                new_image = new_image
 
     await sellers.update_one({'owner_id': userid}, 
                         {'$set': {'custom_image': new_image}}, comment='edit_image_1')
@@ -232,14 +231,11 @@ async def edit_image(new_image: str, transmitted_data: dict):
                            reply_markup= await m(userid, 'last_menu', lang))
 
     text, markup, image = await seller_ui(userid, lang, True)
-    try:
-        await bot.edit_message_media(chat_id=chatid, message_id=message_id, reply_markup=markup,
-                    media=InputMedia(
-                        type='photo', media=image, 
-                        caption=text, parse_mode='Markdown'))
-    except: pass
 
-async def pr_edit_image(userid: int, chatid: int, lang: str, message_id: int):
+    await bot.edit_message_media(chat_id=chatid, message_id=message_id, reply_markup=markup,
+                media=InputMediaPhoto(media=image, caption=text, parse_mode='Markdown'))
+
+async def pr_edit_image(userid: int, chatid: int, lang: str, message_id: int, state):
     transmitted_data = {
         'message_id': message_id
     }
@@ -264,12 +260,12 @@ async def end_buy(unit: int, transmitted_data: dict):
     if status:
         text, markup = await product_ui(lang, pid, False)
         try:
-            await bot.edit_message_text(text, chatid, messageid, reply_markup=markup, parse_mode='Markdown')
+            await bot.edit_message_text(text, None, chatid, messageid, reply_markup=markup, parse_mode='Markdown')
         except:
             await bot.delete_message(chatid, messageid)
 
 async def buy_item(userid: int, chatid: int, lang: str, product: dict, name: str, 
-                   messageid: int):
+                   messageid: int, state):
     """ Покупка предмета
     """
     user = await users.find_one({'userid': userid}, comment='buy_item_user')
@@ -329,10 +325,10 @@ async def promotion(_: bool, transmitted_data: dict):
                     reply_markup= await m(userid, 'last_menu', lang))
     if stat:
         m_text, markup = await product_ui(lang, pid, True)
-        await bot.edit_message_reply_markup(chatid, message_id, 
+        await bot.edit_message_reply_markup(None, chatid, message_id, 
                                             reply_markup=markup)
 
-async def promotion_prepare(userid: int, chatid: int, lang: str, product_id, message_id: int):
+async def promotion_prepare(userid: int, chatid: int, lang: str, product_id, message_id: int, state):
     """ Включение promotion
     """
     user = await users.find_one({'userid': userid}, comment='promotion_prepare_user')
@@ -374,7 +370,7 @@ async def send_info_pr(option, transmitted_data: dict):
     else:
         await bot.send_message(chatid,  t('product_info.error', lang))
 
-async def find_prepare(userid: int, chatid: int, lang: str):
+async def find_prepare(userid: int, chatid: int, lang: str, state):
 
     options = {
         "🍕 ➡ 🪙": 'items_coins',
@@ -399,13 +395,14 @@ async def find_prepare(userid: int, chatid: int, lang: str):
             'message': {'text': 'find_product.info', 'reply_markup': markup}
         }
     ]
-    
+
     await ChooseStepState(find_end, userid, chatid, lang, steps)
 
 async def find_end(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
+    state = transmitted_data['state']
 
     item = return_data['item']
     filt = return_data['option']

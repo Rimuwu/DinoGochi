@@ -3,10 +3,10 @@ import io
 import os
 
 import aiofiles
-import telebot.types
+import aiogram.types
 
 from bot.config import conf
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.logs import (MAX_ERRORS, get_errors_count,
                               get_latest_errors_dif, get_latest_errors, log)
 from bot.taskmanager import add_task
@@ -40,12 +40,13 @@ async def report_file(file_path: str, file_name: str):
             # Открываем последний лог файл
         async with aiofiles.open(f'{file_path}/{file_name}', mode='rb') as f:
             last_log_content = await f.read()  # Читаем содержимое файла
-            last_log = telebot.types.InputFile(io.BytesIO(last_log_content), file_name=file_name)
-            if isinstance(report_id, str):
-                channel_id, topic_id = report_id.split('_', 2)
-                tasks.append(bot.send_document(channel_id, last_log, message_thread_id=int(topic_id)))
-            else: 
-                tasks.append(bot.send_document(report_id, last_log))
+            for id in report_ids:
+                last_log = aiogram.types.InputFile(io.BytesIO(last_log_content), file_name=file_name)
+                if isinstance(id, str):
+                    channel_id, topic_id = id.split('_', 2)
+                    tasks.append(bot.send_document(channel_id, last_log, message_thread_id=int(topic_id)))
+                else: 
+                    tasks.append(bot.send_document(id, last_log))
 
     except Exception as e:
         log(f"Ошибка при чтении файла лога: {e}", 3)

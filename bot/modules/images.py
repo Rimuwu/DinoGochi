@@ -2,9 +2,9 @@ import io
 from random import choice, randint
 
 from PIL import Image, ImageDraw, ImageFont
-from telebot.util import pil_image_to_file
+from bot.modules.data_format import pil_image_to_file
 
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.const import DINOS, GAME_SETTINGS
 from bot.modules.data_format import seconds_to_str
 from bot.modules.localization import get_data, t
@@ -487,4 +487,4 @@ async def create_skill_image(dino_id, age, lang, chars: dict):
 
         img = await trans_paste(bar, img, 1, (450, bar_position[char]) )
 
-    return img
+    return pil_image_to_file(img, quality='maximum')

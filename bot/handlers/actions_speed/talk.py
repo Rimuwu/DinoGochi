@@ -1,7 +1,7 @@
 from random import choice, randint, uniform
 
 from bot.dbmanager import mongo_client
-from bot.exec import bot
+from bot.exec import main_router, bot
 from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.dinosaur.skills import add_skill_point
 from bot.modules.decorators import HDMessage
@@ -11,14 +11,22 @@ from bot.modules.dinosaur.mood import add_mood, repeat_activity
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User
-from telebot.types import Message
+from aiogram.types import Message
+
+from bot.filters.translated_text import Text
+from bot.filters.states import NothingState
+from bot.filters.status import DinoPassStatus
+from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
+from bot.filters.kd import KDCheck
+from aiogram import F
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 
-@bot.message_handler(textstart='commands_name.speed_actions.talk', dino_pass=True, nothing_state=True, kd_check='talk')
 @HDMessage
+@main_router.message(Text('commands_name.speed_actions.talk'), DinoPassStatus(), KDCheck('talk'))
 async def talk(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
