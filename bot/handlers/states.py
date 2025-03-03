@@ -29,7 +29,9 @@ async def cancel(message, text:str = "❌", state: Union[FSMContext, None] = Non
     if text:
         await bot.send_message(message.chat.id, text, 
             reply_markup= await m(message.from_user.id, 'last_menu', lang))
-    if state: await state.clear()
+    if state: 
+        await state.clear()
+        await state.set_data({})
     # delete_state(message.from_user.id, message.chat.id)
     # await state.reset_data(message.from_user.id,  message.chat.id)
 

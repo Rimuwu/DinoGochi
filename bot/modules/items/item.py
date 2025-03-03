@@ -16,16 +16,15 @@
 
 import json
 from bot.dbmanager import mongo_client
-from bot.modules.data_format import deepcopy, random_dict, seconds_to_str, near_key_number
-from bot.modules.images import async_open
+from bot.modules.data_format import deepcopy, escape_markdown, random_dict, seconds_to_str, near_key_number
 from bot.modules.localization import get_all_locales, t
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
 from bot.modules.items.collect_items import get_all_items
-from bot.exec import main_router, bot
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 items = DBconstructor(mongo_client.items.items)
+dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 
 ITEMS: dict = get_all_items()
 
@@ -39,8 +38,7 @@ def get_data(item_id: str) -> dict:
     else: 
         return {}
 
-def get_all_items():
-    return ITEMS
+def get_all_items(): return ITEMS
 
 def load_items_names() -> dict:
     """Загружает все имена предметов из локалищации в один словарь. 
@@ -453,15 +451,17 @@ def item_code(item: dict, v_id: bool = True) -> str:
     if v_id: text = f"id{item['item_id']}"
 
     if 'abilities' in item.keys():
-        for key, item in item['abilities'].items():
+        for key, item_k in item['abilities'].items():
+            if key == 'data_id' and v_id == False and type(item_k) == str and len(item_k) >= 12:
+                continue
             if v_id:
-                text += f".{key[:2]}{item}"
+                text += f".{key[:2]}{item_k}"
             else:
                 if key[:2] in ids:
                     text += '.'
-                    if type(item) == bool:
-                        text += str(int(item))
-                    else: text += str(item)
+                    if type(item_k) == bool:
+                        text += str(int(item_k))
+                    else: text += str(item_k)
 
     if not v_id: text = text[1:]
 
@@ -727,6 +727,14 @@ async def item_info(item: dict, lang: str, owner: bool = False):
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
                 item_description=get_description(item_id, lang))
+
+        if data_item['class'] == 'transport':
+            if item['abilities']['data_id'] != 0:
+                dino = await dinosaurs.find_one({'alt_id': item['abilities']['data_id']})
+                if dino:
+                    text += loc_d['static']['trs_dino'].format(
+                        dino=escape_markdown(dino['name']), hp=dino['stats']['heal']
+                    )
 
     # Рецепты
     elif type_item == 'recipe':

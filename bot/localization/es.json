@@ -9,7 +9,8 @@
             "confirm": "✅ Confirmar",
             "yes": "✅ Sí",
             "no": "❌ No",
-            "cancel": "❌ Cancelar"
+            "cancel": "❌ Cancelar",
+            "refresh": "🔄 Actualización"
         },
         "commands_name": {
             "start_game": "🍡 Empieza a jugar",
@@ -54,7 +55,8 @@
                 "find": "🔍 Búsqueda de productos",
                 "seller_profile": "🛒 Mi tienda",
                 "bot_market": "🔮 Tienda de bots",
-                "background_market": "🖼️ Menú de fondo"
+                "background_market": "🖼️ Menú de fondo",
+                "search_markets": "🍶 Buscador de tiendas"
             },
             "seller_profile": {
                 "add_product": "☄ Añadir producto",
@@ -608,6 +610,9 @@
                 "name": "🎁 Regalo 2024",
                 "description": "¡Para las personas más bellas del planeta! ❤"
             },
+            "gift_2025": {
+                "name": "🎁 Regalo 2025"
+            },
             "rod": {
                 "name": "🎣 Caña de pescar",
                 "description": "Una gran caña de pescar para pescar. Aumenta la maestría del dinosaurio."
@@ -960,6 +965,10 @@
             },
             "SYSTEM_ITEM_BODY": {
                 "name": "📦 Cuerpo"
+            },
+            "transport_egg": {
+                "name": "🦖 Huevo de transporte",
+                "description": "Un huevo para transportar a un dinosaurio."
             }
         },
         "notifications": {
@@ -1202,7 +1211,7 @@
                 "friends2": "🍺 Amigos en la taberna:",
                 "tavern_col": "🔮 Total de taberna: {col}",
                 "went": "🍺 {name} fue a la taberna...",
-                "button": "🍻 Compra cerveza por 50🪙"
+                "button": "🍻 Comprar cerveza por 150 🪙"
             },
             "about": "🤖 | ¡Hola! Soy @{bot_name}, ¡y aquí hay información sobre mí! \n\n🗝️ | Estadísticas: 👥 <code>{col_u}</code> 🦕 <code>{col_d}</code> 🔮 <code>{col_i}</code>\n<i>{update_time} ago. </i>",
             "referal": "🤍 | ¡Redirige al menú del sistema de referidos! \n\n💜 | *Al alcanzar el nivel {lvl}* tu amigo, obtendrás {award_text}! \n\n❤️ | Un amigo recibirá un bono por la cantidad de: {coins} monedas, {items}",
@@ -1636,7 +1645,8 @@
                 "joint_dinosaur": "🦕 Compartir un dinosaurio",
                 "new_year": "🎁 Enviar un regalo",
                 "change_name": "👥 Cambiar nombre",
-                "change_friend_name": "👥 Cambiar nombre"
+                "change_friend_name": "👥 Cambiar nombre",
+                "open_market": "🏪 Abrir tienda"
             }
         },
         "requests": {
@@ -1872,7 +1882,8 @@
             "clear_filters": "\n🗑 | Haga clic en la papelera para borrar los filtros.",
             "update_page": "🔁 | Página actualizada",
             "update_search": "🔁 | Búsqueda activada",
-            "update_filter": "🔁 | La selección de filtro está activa"
+            "update_filter": "🔁 | La selección de filtro está activa",
+            "filter_null": "❌ | No hay elementos para este filtro."
         },
         "copy_m": {
             "info": "Se requiere una respuesta a un mensaje con un texto para enviar por correo",
@@ -2010,7 +2021,8 @@
                     "created_item": "🛠 Artículo creado: {item}",
                     "buyer": "💰 Esgrimista"
                 },
-                "time_craft": "*├* Tiempo de creación: ⏳ {times}"
+                "time_craft": "*├* Tiempo de creación: ⏳ {times}",
+                "trs_dino": "*├* Dinosaurio: {dino} {hp} / 100 ❤\n"
             },
             "bonuses": {
                 "+heal": "Aumento de salud: {0}%",
@@ -2159,6 +2171,13 @@
                     "image": "images/remain/support/freezing.png",
                     "short": "¡Congela mi dinosaurio!",
                     "description": "🧊 Tómate un descanso del dinosaurio indefinidamente, ¡cuida de tu propia vida!"
+                },
+                "super_coins": {
+                    "name": "✨ Súper Monedas",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/super_coins.png",
+                    "image": "images/remain/support/super_coins.png",
+                    "short": "¡Súper monedas para súper usuarios!",
+                    "description": "✨ ¡Recarga tu saldo de Super Coins para obtener acceso a Super Items!"
                 }
             },
             "free_enter": "🎥 Ingrese a continuación cuántas estrellas desea enviar al desarrollador.",
@@ -2202,6 +2221,11 @@
                 "craft": "⚒️ Crea un artículo",
                 "unrestrained_play": "😟 Juega para calmarse",
                 "inactive": "❄ Congelado"
+            },
+            "market": {
+                "caption": "*┌* 🛍️ *ᴍᴀʀᴋᴇᴛ*",
+                "market_name": "*├* Título: *{market_name}*",
+                "earned": "*└* *Ganado:* {coins}"
             }
         },
         "custom_profile": {
@@ -4628,6 +4652,19 @@
         "null_nick": "🎨 ¡Un apodo no puede estar vacío! (Todos los caracteres complejos serán reemplazados por otros en blanco)",
         "no_coins": "🪙 ¡No hay suficientes monedas!",
         "new_nick": "❤ Tu nuevo apodo: {nick}",
-        "reset_avatar": "📜 El avatar se restablece, se actualizará con la última foto de tu perfil."
+        "reset_avatar": "📜 El avatar se restablece, se actualizará con la última foto de tu perfil.",
+        "search_markets": {
+            "text": "🍶 Elige si quieres encontrar una tienda al azar o encontrar una específica:",
+            "random": "🛒 Tiendas aleatorias",
+            "find": "🔍 Encuentra una tienda",
+            "no_markets": "🧨 Por el momento, no hay tiendas abiertas con un nombre similar.",
+            "find_market": "🔍 Ingresa el nombre de la tienda para encontrarla:"
+        },
+        "transport": {
+            "add_dino": "🦈 ¡Se ha añadido un dinosaurio a un huevo para almacenarlo!",
+            "delete_dino": "💡 ¡Un dinosaurio fue extraído de un huevo!",
+            "error": "🎈 ¡Error de selección de dinosaurios!",
+            "max_dino": "🧨 ¡Ya tienes el número máximo de dinosaurios!"
+        }
     }
 }

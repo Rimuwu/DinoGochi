@@ -63,7 +63,7 @@ async def skills_work():
 
             # Добавляем / уменьшаем скилы
             await add_skill_point(dino_id, skill_activ['up_skill'], up_unit)
-            await add_skill_point(dino_id, skill_activ['down_skill'], -down_unit)
+            await add_skill_point(dino_id, skill_activ['down_skill'], down_unit)
 
             # Проверяем, не пришло ли время
             traning_time = int(time()) - skill_activ['start_time']

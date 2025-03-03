@@ -347,7 +347,7 @@ async def send_item_info(item: dict, transmitted_data: dict):
     ])
 
     if not image:
-        await bot.send_message(chatid, text, 'Markdown',
+        await bot.send_message(chatid, text, parse_mode='Markdown',
                             reply_markup=markup)
     else:
         await send_SmartPhoto(chatid, image, text, 'Markdown', markup)

@@ -13,11 +13,15 @@ from bot.modules.localization import get_data, t
 from bot.modules.logs import log
 from bot.modules.markup import down_menu, get_answer_keyboard
 from bot.modules.markup import markups_menu as m
+from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, get_frineds, user_info, user_name
 from aiogram.fsm.context import FSMContext
 from bot.modules.managment.events import check_event
 import inspect
+from bot.dbmanager import mongo_client
+
+sellers = DBconstructor(mongo_client.market.sellers)
 
 class GeneralStates(StatesGroup):
     ChooseDino = State() # Состояние для выбора динозавра
@@ -392,6 +396,10 @@ async def friend_handler(friend: dict, transmitted_data: dict):
 
     if not await check_event("new_year"):
         del buttons[get_data(f'friend_list.buttons.new_year', lang)]
+
+    market = await sellers.find_one({'owner_id': friend_id}, comment='friend_handler_market')
+    if not market:
+        del buttons[get_data(f'friend_list.buttons.open_market', lang)]
 
     markup = list_to_inline([buttons], 2)
 

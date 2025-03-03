@@ -363,8 +363,12 @@ async def get_username(message):
 @HDMessage
 @main_router.message(Command(commands=['log']), IsAdminUser())
 async def get_log(message):
-    error_text = ''
-    for i in range(len(latest_errors)):
-        error_text += f'{i+1}) `{latest_errors[i]}`\n'
+    errors_text = ''
+    for i in range(len(latest_errors)): 
+        s = f"{i+1}) ```{latest_errors[i]}```\n"
+        if len(errors_text + s) > 4096: 
+            break
+        errors_text += s
+    if not errors_text: errors_text = 'Ошибок нет, так держать!'
     
-    await bot.send_message(message.from_user.id, error_text, parse_mode='Markdown')
+    await bot.send_message(message.chat.id, errors_text, parse_mode='Markdown')

@@ -1,6 +1,3 @@
-from ast import Is
-from curses.ascii import FS
-import re
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
@@ -21,6 +18,7 @@ from bot.modules.states_tools import (ChooseConfirmState, ChooseCustomState,
                                       ChooseStepState, ChooseStringState, start_friend_menu)
 from bot.modules.user.user import take_coins, user_name
 from aiogram.types import CallbackQuery, Message
+from bot.modules.market.market import seller_ui
 
 from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
@@ -31,6 +29,7 @@ friends = DBconstructor(mongo_client.user.friends)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 events = DBconstructor(mongo_client.other.events)
+sellers = DBconstructor(mongo_client.market.sellers)
 
 @HDMessage
 @main_router.message(Text('commands_name.friends.add_friend'), IsPrivateChat())
@@ -574,3 +573,21 @@ async def edit_name(new_name: str, transmitted_data: dict):
 
     await bot.send_message(chatid, '❌', 
                             reply_markup=await m(userid, 'last_menu', lang))
+
+@HDCallback
+@main_router.callback_query(F.data.startswith('open_market'), IsPrivateChat())
+async def open_market_friend(call: CallbackQuery):
+    chatid = call.message.chat.id
+    userid = call.from_user.id
+    lang = await get_lang(call.from_user.id)
+
+    friendid = int(call.data.split()[1])
+    text, markup, img = await seller_ui(friendid, lang, False)
+    if text:
+        try:
+            await bot.send_photo(chatid, img, caption=text, parse_mode="Markdown", reply_markup=markup)
+        except:
+            await bot.send_photo(chatid, img, caption=text, reply_markup=markup, parse_mode=None)
+    else:
+        await bot.send_message(chatid, '❌', 
+                    reply_markup=await m(userid, 'last_menu', lang))

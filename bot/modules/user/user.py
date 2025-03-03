@@ -32,6 +32,7 @@ puhs = DBconstructor(mongo_client.market.puhs)
 dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
 tavern = DBconstructor(mongo_client.tavern.tavern)
 
+
 incubations = DBconstructor(mongo_client.dinosaur.incubation)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 friends = DBconstructor(mongo_client.user.friends)
@@ -536,6 +537,15 @@ async def user_info(userid: int, lang: str, secret: bool = False,
         return_text += t('user_profile.inventory', lang,
                         items_col=count
                         )
+
+    market = await sellers.find_one({'owner_id': userid}, comment='user_info_market')
+    if market:
+        return_text += '\n\n'
+        return_text += t('user_profile.market.caption', lang)
+        return_text += '\n'
+        return_text += t('user_profile.market.market_name', lang, market_name=escape_markdown(market['name']))
+        return_text += '\n'
+        return_text += t('user_profile.market.earned', lang, coins=market['earned'])
 
     return return_text, await user.get_avatar()
 

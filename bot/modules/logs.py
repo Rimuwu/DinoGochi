@@ -1,8 +1,6 @@
 import logging
-from logging.handlers import RotatingFileHandler, QueueHandler, QueueListener
-from multiprocessing import Queue
+from logging.handlers import RotatingFileHandler
 from time import strftime
-
 from bot.config import conf
 
 latest_errors = []
@@ -22,21 +20,15 @@ log_formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s", datef
 log_filehandler.setFormatter(log_formatter)
 log_streamhandler.setFormatter(log_formatter)
 
-# Async queue logging
-log_queue = Queue()
-queue_handler = QueueHandler(log_queue)
-logger.addHandler(queue_handler)
+logger.addHandler(log_filehandler)
 logger.addHandler(log_streamhandler)
 
-# Log listen
-queue_listener = QueueListener(log_queue, log_filehandler)
-
 logger.setLevel(logging.INFO)
-queue_listener.start()
 
 # if conf.debug:
 #     aiogram.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
 
+# Лог
 def log(message: str, lvl: int = 1, prefix: str = 'Бот') -> None:
     """
     LVL: \n
@@ -85,7 +77,5 @@ def get_errors_count() -> int:
 
 
 # Получить последние ошибки
-def get_latest_errors_and_clear() -> list[str]:
-    last_errors_copy = latest_errors.copy()
-    latest_errors.clear()
-    return last_errors_copy
+def get_latest_errors() -> list[str]:
+    return latest_errors

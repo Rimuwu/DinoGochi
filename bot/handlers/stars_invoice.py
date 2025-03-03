@@ -4,28 +4,16 @@ from time import time
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.data_format import random_code
-from bot.modules.decorators import HDMessage
 from bot.modules.donation import (OpenDonatData, give_reward, save,
                                   save_donation)
 from bot.modules.localization import get_lang, t
 from bot.modules.logs import log
 from aiogram.types import Message, PreCheckoutQuery
-
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
-from bot.filters.private import IsPrivateChat
-from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command, StateFilter
-
-from aiogram.fsm.context import FSMContext
 
 products = GAME_SETTINGS['products']
 
-@main_router.pre_checkout_query(F.successful_payment)
+@main_router.pre_checkout_query()
 async def checkout(pre_checkout_query: PreCheckoutQuery):
     lang = await get_lang(pre_checkout_query.from_user.id)
 
@@ -34,7 +22,6 @@ async def checkout(pre_checkout_query: PreCheckoutQuery):
 
     log(f'Был выдан ответ на pre_checkout_query_handler -> {res}, user: {pre_checkout_query.from_user.id}', 4)
 
-@HDMessage
 @main_router.message(F.successful_payment)
 async def got_payment(message: Message):
     """ Выдача товара за покупку """

@@ -590,4 +590,101 @@
         "rank": "legendary",
         "type": "case"
     }
-}
+},
+    "gift_2025": {
+        "cant_sell": false,
+        "buyer": false,
+        "col_repit": {
+            "act": 1,
+            "type": "static"
+        },
+        "drop_items": [
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    25
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "mystic_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    50
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "legendary_egg"
+            },
+            {
+                "abilities": {"interact": false},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "min": 1, "max": 5,
+                    "type": "random"
+                },
+                "id": "chest_food"
+            },
+            {
+                "abilities": {"interact": false},
+                "chance": [
+                    2,
+                    10
+                ],
+                "col": {
+                    "min": 1, "max": 5,
+                    "type": "random"
+                },
+                "id": "recipe_chest"
+            },
+            {
+                "abilities": {"interact": false},
+                "chance": [
+                    1,
+                    500
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "stone_resurrection"
+            },
+            {
+                "abilities": {"interact": false},
+                "chance": [
+                    1,
+                    1000
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "gift_2023"
+            },
+            {
+                "abilities": {"interact": false},
+                "chance": [
+                    1,
+                    1000
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "gift_2024"
+            }
+        ],
+        "image": "case",
+        "rank": "legendary",
+        "type": "case"
+    }

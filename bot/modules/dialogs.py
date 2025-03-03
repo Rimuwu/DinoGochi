@@ -2,15 +2,13 @@ from aiogram.types import InlineKeyboardMarkup
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
-from bot.exec import main_router, bot
+from bot.exec import bot
 from bot.modules.data_format import escape_markdown, list_to_inline
 from bot.modules.images import create_eggs_image
 from bot.modules.items.item import get_item_dict, item_code
 from bot.modules.items.item_tools import AddItemToUser
 from bot.modules.localization import get_data, t
 from bot.modules.dinosaur.dinosaur  import dead_check
-
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import take_coins

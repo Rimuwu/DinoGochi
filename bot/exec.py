@@ -16,17 +16,15 @@ dp = Dispatcher(storage=STORAGE) #storage=MongoStorage(mongo_client)
 main_router = Router(name='MainRouter')
 dp.include_router(main_router)
 
-async def notify_devs_start():
-    # id рассылки
-    report_ids = conf.get_report_ids()
-
+async def report_devs_start():
     tasks = []
-    for id in report_ids:
-        if isinstance(id, str):
-            channel_id, topic_id = id.split('_', 2)
-            tasks.append(bot.send_message(channel_id, '✅ Бот запущен!', message_thread_id=int(topic_id)))
-        else: 
-            tasks.append(bot.send_message(id, '✅ Бот запущен!'))
+    report_id = conf.bot_report_id
+    if isinstance(report_id, str):
+        channel_id, topic_id = report_id.split('_', 1)
+        tasks.append(bot.send_message(channel_id, '✅ Бот запущен!', message_thread_id=int(topic_id)))
+    else: 
+        tasks.append(bot.send_message(report_id, '✅ Бот запущен!'))
+        
     await asyncio.gather(*tasks)
 
 def run():
@@ -47,6 +45,6 @@ def run():
     add_task(notify_devs_start) # Уведомление запуска для разрабов
     add_task(dp.start_polling, bots=[bot], 
              allowed_updates=dp.resolve_used_update_types())
-
+    
     log('Все готово! Взлетаем!', prefix='Start')
     run_taskmanager()
