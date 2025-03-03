@@ -7,7 +7,7 @@ from bot.exec import main_router, bot
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      random_dict, seconds_to_str)
 from bot.modules.dinosaur.dino_status import check_status
-from bot.modules.dinosaur.dinosaur  import Dino, edited_stats, insert_dino, set_status
+from bot.modules.dinosaur.dinosaur  import Dino, create_dino_connection, edited_stats, insert_dino, set_status
 from bot.modules.images import async_open, create_eggs_image
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.items.craft_recipe import craft_recipe
@@ -25,12 +25,15 @@ from bot.modules.dinosaur.mood import add_mood
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.get_state import get_state
-from bot.modules.user.user import User, get_dead_dinos, max_eat, count_inventory_items, award_premium
+from bot.modules.user.user import User, col_dinos, get_dead_dinos, max_dino_col, max_eat, count_inventory_items, award_premium
 from typing import Union
+
+from bson import ObjectId
 
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 items = DBconstructor(mongo_client.items.items)
 dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
 users = DBconstructor(mongo_client.user.users)
@@ -57,9 +60,9 @@ async def exchange(return_data: dict, transmitted_data: dict):
 
         status = await RemoveItemFromUser(userid, item['item_id'], count, preabil)
         if status:
-            await AddItemToUser(friend.id, item['item_id'], count, preabil)
+            await AddItemToUser(friend['userid'], item['item_id'], count, preabil)
 
-            await bot.send_message(friend.id, t('exchange', lang, 
+            await bot.send_message(friend['userid'], t('exchange', lang, 
                                 items=counts_items([item['item_id']]*count, lang),username=username))
 
             await bot.send_message(chatid, t('exchange_me', lang),
@@ -344,6 +347,57 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
                 return_text = t('backgrounds.add_to_storage', lang)
 
+        elif data_item['class'] == 'transport':
+
+            if abilities.get('data_id', 0) == 0:
+                use_status = False
+
+                if isinstance(dino, Dino):
+                    await EditItemFromUser(userid, item, {
+                        'item_id': item['item_id'],
+                        'abilities': {
+                            'data_id': dino.alt_id
+                    }})
+
+                    data = {
+                        'activity_type': 'inactive',
+                        'dino_id': dino._id,
+                        'time_end': 0
+                    }
+                    await long_activity.insert_one(data)
+                    await dino_owners.delete_many({'dino_id': dino._id})
+
+                    return_text = t('transport.add_dino', lang)
+
+                else:
+                    return_text = t('transport.error', lang)
+
+            else:
+                user = await User().create(userid)
+                cuds = await user.get_col_dinos
+                max_dc = await user.max_dino_col()
+                max_dc_st = max_dc['standart']['limit']
+
+                if cuds + 1 > max_dc_st:
+                    use_status = False
+                    return_text = t('transport.max_dino', lang)
+
+                else:
+                    alt_id = item['abilities']['data_id']
+                    dino_dtc = await dinosaurs.find_one({'alt_id': alt_id}, comment='use_item_transport')
+                    if dino_dtc:
+                        dino_id = dino_dtc['_id']
+                        use_status = True
+
+                        await create_dino_connection(dino_id, userid)
+                        await long_activity.delete_many(
+                            {'dino_id': dino_id}
+                        )
+                        return_text = t('transport.delete_dino', lang)
+                    else: 
+                        use_status = False
+                        return_text = t('transport.error', lang)
+
     if data_item.get('buffs', []) and use_status and use_baff_status and dino:
         # Применяем бонусы от предметов
         return_text += '\n\n'
@@ -401,7 +455,6 @@ async def eat_adapter(return_data: dict, transmitted_data: dict):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     max_count = transmitted_data['max_count']
-    state = transmitted_data['state']
 
     item = transmitted_data['items_data']
     item_data = get_data(item['item_id'])
@@ -499,6 +552,15 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
             steps = []
 
         elif type_item == 'special':
+
+            if data_item['class'] in ['transport']:
+
+                if item['abilities']['data_id'] == 0:
+                    steps = [{"type": 'dino', 
+                            "name": 'dino', 
+                            "data": {"add_egg": False}, 
+                            'message': t('css.inactive_dino', lang)
+                    }]
 
             if data_item['class'] in ['defrosting']:
                 steps = [{"type": 'dino', 
