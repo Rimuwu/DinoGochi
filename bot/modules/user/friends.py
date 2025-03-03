@@ -1,7 +1,7 @@
 
 
 from bot.dbmanager import mongo_client
-from bot.exec import main_router, bot
+from bot.exec import bot
 from bot.modules.data_format import list_to_inline
 from bot.modules.localization import t, get_lang
  
@@ -118,7 +118,6 @@ async def get_friend_data(friendid: int, userid: int):
             i_key: friendid,
             f_key: userid
         }, comment='get_friend_data_res')
-
         if res: break
 
     # Если данные есть, то смотрим, можем ли мы вернуть данные, а не запрашивать их из тг
