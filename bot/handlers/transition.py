@@ -7,6 +7,7 @@ from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import main_router, bot
 from bot.modules.images_save import send_SmartPhoto
+from bot.modules.logs import log
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
@@ -202,13 +203,13 @@ async def tavern_menu(message: Message):
             text += '\n'
             for friendid in friends_in_tavern:
                 friend_lang = await get_lang(friendid)
-                friend = await get_friend_data(friendid, friendid)
+                friend = await get_friend_data(friendid, userid)
 
                 if friend:
                     buttons = t('menu_text.dino_tavern.button', friend_lang)
                     buttons = list_to_inline([{buttons: f"buy_ale {userid}"}])
 
-                    text += f' 🎱 {friend["name"]}\n'
+                    text += f' • {friend["name"]}\n'
                     text_to_friend = t('menu_text.dino_tavern.went', 
                                     friend_lang, 
                                     name=friend["name"])
@@ -291,7 +292,7 @@ async def buy_ale(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
 
     friend = int(data[1])
-    if await take_coins(userid, -50, True):
+    if await take_coins(userid, -150, True):
         await AddItemToUser(friend, 'ale')
 
         text = t('buy_ale.me', lang)
