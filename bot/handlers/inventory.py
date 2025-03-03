@@ -3,9 +3,9 @@ from asyncio import sleep
 from sre_parse import State
 from typing import Union
 
+from bot import filters
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
-from bot.handlers import settings
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import incubation_egg
@@ -23,22 +23,19 @@ from bot.modules.items.item_tools import (AddItemToUser, CheckItemFromUser,
 from bot.modules.items.time_craft import add_time_craft
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
-from bot.modules.markup import count_markup, markups_menu
+from bot.modules.markup import count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import ChooseIntState
 from bot.modules.user.user import User, take_coins, user_name
 from fuzzywuzzy import fuzz
 from aiogram.types import CallbackQuery, Message
 
-from bot.filters.translated_text import StartWith, Text
+from bot.filters.translated_text import Text
 from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import StateFilter
 
 from aiogram.fsm.context import FSMContext
 
@@ -97,7 +94,8 @@ async def inventory(message: Message, state: FSMContext):
             if page >= len(pages) - 1: page = 0
             else: page += 1
 
-        await state.update_data(page=page, main_message=0)
+        settings['page'] = page
+        await state.update_data(settings=settings, main_message=0)
 
         await swipe_page(chatid, state)
         await bot.delete_message(chatid, main_message)
@@ -163,7 +161,7 @@ async def inv_callback(call: CallbackQuery, state: FSMContext):
         # Очищает фильтры
         pages, _ = await generate(items, *sett['view'])
 
-        await state.update_data(items=[], pages=pages)
+        await state.update_data(items=[], pages=pages, filters=[])
         await swipe_page(chatid, state)
     
     elif call_data == 'remessage':
@@ -276,7 +274,6 @@ async def search_message(message: Message, state: FSMContext):
         data['settings']['page'] = 0
         await state.update_data(items=searched, pages=pages, settings=data['settings'])
 
-        await state.update_data()
         await swipe_page(chatid, state)
     else:
         await bot.send_message(userid, t('inventory.search_null', lang))
@@ -308,9 +305,15 @@ async def filter_callback(call: CallbackQuery, state):
         new_items = filter_items_data(items, filters, itm_fil)
         pages, _ = await generate(new_items, *sett['view'])
 
-        await state.set_state(InventoryStates.Inventory)
-        await state.update_data(pages=pages)
-        await swipe_page(chatid, state)
+        if not pages:
+            await bot.send_message(chatid, t('inventory.filter_null', lang))
+            await state.set_state(InventoryStates.Inventory)
+            await swipe_page(chatid, state)
+
+        else:
+            await state.set_state(InventoryStates.Inventory)
+            await state.update_data(pages=pages)
+            await swipe_page(chatid, state)
 
     elif call_data[1] == 'filter':
         if data := await state.get_data():
@@ -445,7 +448,7 @@ async def ns_end(count, transmitted_data: dict):
 
             text = t('time_craft.text2', lang,
                     command='/craftlist')
-            markup = await markups_menu(userid, 'last_menu', lang)
+            markup = await m(userid, 'last_menu', lang)
             await bot.send_message(chatid, text, parse_mode='Markdown', 
                             reply_markup = markup)
         
