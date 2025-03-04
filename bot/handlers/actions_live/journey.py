@@ -63,7 +63,7 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
         await bot.edit_message_media(
             InputMediaPhoto(
                media=image, caption=text),
-            chatid, last_mess_id)
+            chat_id=chatid, message_id=last_mess_id)
         message = await bot.send_message(chatid, t('journey_start.start_2', lang), reply_markup= await m(userid, 'last_menu', lang))
 
     else:
