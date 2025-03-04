@@ -28,13 +28,16 @@ async def tavern_quest(user):
 
             quest_id = ran_quest['_id']
 
-            new_time = ran_quest['time_end'] - ran_quest['time_start']
-            await quests_data.update_one({'_id': quest_id}, {"$set": {
-                'owner_id': user['userid'], 
-                'time_start': int(time()), 
-                'end_time': int(time()) + new_time}}, comment='tavern_quest_1')
+            # Попытка исправиль оишбку ERROR tavern_life task_error: 'time_end'
+            if 'time_end' in ran_quest:
+                new_time = ran_quest['time_end'] - ran_quest['time_start']
+                await quests_data.update_one({'_id': quest_id}, {"$set": {
+                    'owner_id': user['userid'], 
+                    'time_start': int(time()), 
+                    'end_time': int(time()) + new_time}}, comment='tavern_quest_1')
 
-            text = t('quest.resаmpling', lang)
+                text = t('quest.resаmpling', lang)
+
         else:
             compl = choices([2, 1], [0.25, 0.5])[0]
 
