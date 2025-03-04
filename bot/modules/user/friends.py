@@ -112,11 +112,6 @@ async def get_friend_data(friendid: int, userid: int):
     Передаём id друга, чтобы найти его имя и аватарку,
     userid - id юзера
     """
-    if userid == 1191252229 and friendid == 1100419933: 
-        flag = True
-        log("get_friend_data: =====================================")
-    else: flag = False
-
     # Ищим данные друга
     for i_key, f_key in [['friendid', 'userid'], ['userid', 'friendid']]:
         res = await friends.find_one({
@@ -124,30 +119,18 @@ async def get_friend_data(friendid: int, userid: int):
             f_key: userid
         }, comment='get_friend_data_res')
         if res: break
-    
-    if flag:
-        log(f'get_friend_data: {res}')
 
     # Если данные есть, то смотрим, можем ли мы вернуть данные, а не запрашивать их из тг
     if res:
         friendUser = await users.find_one({'userid': friendid}, comment='get_friend_data_friendUser')
         result = {}
-        
-        if flag:
-            log(f'get_friend_data: {friendUser}')
 
         if friendUser:
             # Определяем где хранятся данные друга
             if friendid == res['userid']: data_path = 'user'
             else: data_path = 'friend'
-            
-            if flag:
-                log(f'get_friend_data data: {data_path}')
 
             if f'{data_path}_data' in res:
-                
-                if flag:
-                    log(f'get_friend_data - name: {res[f"{data_path}_data"]["name"]}')
                 # Проверяем, что данные есть, иначе это старый формат и создаём данные 
                 if res[f'{data_path}_data']['name']:
                     # Проверясем, что есть имя 
@@ -166,11 +149,5 @@ async def get_friend_data(friendid: int, userid: int):
                                             {'$set': {'name': name}}, comment='set_user_name_23')
 
                         result['name'] = name
-                    else:
-                        result['name'] = str(friendid)
-        if flag:
-            log(f'get_friend_data - result: {result}')
         return result
-    if flag:
-        log(f'get_friend_data: WE4P5O4356POJ')
     return {}
