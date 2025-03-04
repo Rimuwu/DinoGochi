@@ -142,18 +142,19 @@ async def get_friend_data(friendid: int, userid: int):
             else: data_path = 'friend'
             
             if flag:
-                log(f'get_friend_data: {data_path}')
+                log(f'get_friend_data data: {data_path}')
 
             if f'{data_path}_data' in res:
                 
                 if flag:
-                    log(f'get_friend_data: {res[f"{data_path}_data"]["name"]}')
+                    log(f'get_friend_data - name: {res[f"{data_path}_data"]["name"]}')
                 # Проверяем, что данные есть, иначе это старый формат и создаём данные 
                 if res[f'{data_path}_data']['name']:
                     # Проверясем, что есть имя 
                     result['name'] = res[f'{data_path}_data']['name']
-                else:
-                    result['name'] = friendUser['name']
+
+            else:
+                result['name'] = friendUser['name']
 
             if 'name' not in result:
                 if not friendUser['name']:
@@ -168,7 +169,7 @@ async def get_friend_data(friendid: int, userid: int):
                     else:
                         result['name'] = str(friendid)
         if flag:
-            log(f'get_friend_data: {result}')
+            log(f'get_friend_data - result: {result}')
         return result
     if flag:
         log(f'get_friend_data: WE4P5O4356POJ')
