@@ -17,5 +17,4 @@ async def get_state(user_id: int, chat_id: int):
     key = StorageKey(bot_id=BOT_ID, user_id=user_id, chat_id=chat_id)
     # Создаем контекст FSM с хранилищем и ключом
     fsm_context = FSMContext(storage=STORAGE, key=key)
-    log(f'{await fsm_context.get_data()}')
     return fsm_context
