@@ -139,10 +139,10 @@ async def get_friend_data(friendid: int, userid: int):
             if 'name' not in result:
                 if not friendUser['name']:
                     # Если имени нет, то запрашиваем его из тг
-                    chat_user = await bot.get_chat_member(userid, userid)
+                    chat_user = await bot.get_chat_member(friendid, friendid)
                     if chat_user:
                         name = chat_user.user.first_name
-                        await users.update_one({'userid': userid}, 
+                        await users.update_one({'userid': friendid}, 
                                             {'$set': {'name': name}}, comment='set_user_name_23')
 
                         result['name'] = name
