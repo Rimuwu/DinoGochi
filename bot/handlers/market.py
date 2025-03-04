@@ -454,9 +454,7 @@ async def find_prepare(return_data, transmitted_data):
         market_name = market['name'].lower()
 
         # Считаем процент совпадения через fuzzywuzzy
-        log(f'{name} {market_name}')
         similarity = fuzz.ratio(name, market_name)
-        log(f'{similarity}')
 
         # Если совпадение больше 60%
         if similarity >= 60:
