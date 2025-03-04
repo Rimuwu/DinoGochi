@@ -30,8 +30,9 @@ async def async_antiflood(function: Callable, *args, number_retries=3, **kwargs)
         try:
             return await function(*args, **kwargs)
         except Exception as ex:
-            if ex.error_code == 429:
-                await sleep(ex.result_json['parameters']['retry_after'])
+            error_code = ex.args[0] if ex.args else None
+            if error_code == 429:
+                await sleep(5)
             else:
                 raise
     else:

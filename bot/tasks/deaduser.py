@@ -97,7 +97,8 @@ async def DeadUser_return():
                     try:
                         await bot.send_message(userid, text, reply_markup=markup)
                     except Exception as ex:
-                        if ex.error_code in [400, 403]:
+                        error_code = ex.args[0] if ex.args else None
+                        if error_code in [400, 403]:
                             # - Если нельзя отправить спустя месяц - удалить акк
                             user = await User().create(userid)
                             if user:
