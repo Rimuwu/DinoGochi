@@ -55,7 +55,7 @@ class User:
         """Создание объекта пользователя
         """
         self.userid = 0
-        self.name = 'NoName' # Имя пользователя
+        self.name = '' # Имя пользователя
         self.avatar = '' # file_id аватара
 
         self.last_message_time = 0
@@ -91,9 +91,15 @@ class User:
         self.userid = userid
         data = await users.find_one({"userid": userid}, comment='User_create')
 
-        if data and not data['name']: 
-            # Долговременная мера по сохранению имени в базе
-            await user_name(userid) 
+        if data:
+            if 'name' not in data:
+                data['name'] = ''
+                data['avatar']  = ''
+                await self.update({'$set': {'name': '', 'avatar': ''}})
+
+            if not data['name']:
+                # Долговременная мера по сохранению имени в базе
+                await user_name(userid) 
 
         self.UpdateData(data) #Обновление данных
         return self
