@@ -144,6 +144,8 @@ async def get_friend_data(friendid: int, userid: int):
                         name = chat_user.user.first_name
                         await users.update_one({'userid': userid}, 
                                             {'$set': {'name': name}}, comment='set_user_name_23')
+                    else:
+                        name = 'Unknown'
 
                 result['name'] = name
 
