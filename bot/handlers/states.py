@@ -332,7 +332,7 @@ async def ChooseOptionPages(message: Message):
 async def ChooseInline(callback: CallbackQuery):
     code = callback.data.split()
 
-    state = await get_state(message.from_user.id, message.chat.id)
+    state = await get_state(callback.from_user.id, callback.message.chat.id)
     if data := await state.get_data():
         if not data:
             log(f'ChooseInline data corrupted', lvl=2, prefix='ChooseInline')
