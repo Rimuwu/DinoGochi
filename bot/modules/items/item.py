@@ -38,8 +38,6 @@ def get_data(item_id: str) -> dict:
     else: 
         return {}
 
-def get_all_items(): return ITEMS
-
 def load_items_names() -> dict:
     """Загружает все имена предметов из локалищации в один словарь. 
     """
