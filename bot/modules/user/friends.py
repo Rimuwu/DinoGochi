@@ -4,6 +4,7 @@ from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import list_to_inline
 from bot.modules.localization import t, get_lang
+from bot.modules.user.user import user_name
  
 from bot.modules.overwriting.DataCalsses import DBconstructor
 friends = DBconstructor(mongo_client.user.friends)
@@ -137,15 +138,18 @@ async def get_friend_data(friendid: int, userid: int):
                     result['name'] = res[f'{data_path}_data']['name']
 
             if 'name' not in result:
-                name = friendUser['name'] or str(friendid)
+                if not friendUser['name']:
+                    # Если имени нет, то используем id
+                    name = await user_name(friendid)
+
                 result['name'] = name
 
-                # Обновляем данные
-                if str(friendid) != name:
-                    await friends.update_one({'_id': res['_id']}, {
-                        '$set': {
-                            f'{data_path}_data.name': name
-                        }
-                    }, comment='get_friend_data_update')
+                # # Обновляем данные
+                # if str(friendid) != name:
+                    # await friends.update_one({'_id': res['_id']}, {
+                    #     '$set': {
+                    #         f'{data_path}_data.name': name
+                    #     }
+                    # }, comment='get_friend_data_update')
         return result
     return {}
