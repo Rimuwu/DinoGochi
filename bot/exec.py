@@ -42,7 +42,7 @@ def run():
     check()
 
     # Запуск тасков и бота
-    add_task(notify_devs_start) # Уведомление запуска для разрабов
+    add_task(report_devs_start) # Уведомление запуска для разрабов
     add_task(dp.start_polling, bots=[bot], 
              allowed_updates=dp.resolve_used_update_types())
     
