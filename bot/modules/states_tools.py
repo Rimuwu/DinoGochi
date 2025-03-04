@@ -433,8 +433,6 @@ async def start_friend_menu(function,
                     'userid': friend_id, 
                     'name': friend_res['name']}
 
-    log(f'LEN FRIENDS LIST {len(friends)} - {len(options)}')
-
     await ChoosePagesState(
         function, userid, chatid, lang, options, 
         horizontal=2, vertical=3,
