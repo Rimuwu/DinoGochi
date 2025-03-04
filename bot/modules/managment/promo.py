@@ -2,6 +2,7 @@
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
+from bot.modules.get_state import get_state
 from bot.modules.items.item import counts_items, AddItemToUser
 from bot.modules.localization import get_data, t
 from bot.modules.market.market import generate_items_pages
@@ -71,6 +72,7 @@ async def start_items(return_data, transmitted_data):
 """ Создаёт данные для круга получения данных для типа coins_items
 """
 def circle_data(userid, chatid, lang, items, prepare: bool = True):
+    state = get_state(userid, chatid)
     not_p_steps = [
         {
             "type": 'inv', "name": 'items', "data": {'inventory': items}, 
@@ -99,7 +101,7 @@ def circle_data(userid, chatid, lang, items, prepare: bool = True):
         }
     ]
     if prepare:
-        steps = prepare_steps(not_p_steps, userid, chatid, lang, state)
+        steps = prepare_steps(not_p_steps, userid, chatid, lang)
         return steps
     else: return not_p_steps
 
