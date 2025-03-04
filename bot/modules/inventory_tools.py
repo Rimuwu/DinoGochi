@@ -345,8 +345,6 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
     if exclude_ids is None: exclude_ids = []
     if inventory is None: inventory = []
 
-    log(f'========== START INVENTORY {type_filter}, {item_filter}')
-    
     state = await get_state(userid, chatid)
     if not transmitted_data: transmitted_data = {}
     count = 0

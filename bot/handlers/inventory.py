@@ -308,6 +308,7 @@ async def filter_callback(call: CallbackQuery):
         pages, _ = await generate(new_items, *sett['view'])
 
         if not pages:
+            await state.update_data(filters=[])
             await bot.send_message(chatid, t('inventory.filter_null', lang))
             await state.set_state(InventoryStates.Inventory)
             await swipe_page(chatid, userid)
