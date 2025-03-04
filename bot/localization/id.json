@@ -2225,7 +2225,7 @@
             },
             "market": {
                 "caption": "*┌* 🛍️ *ᴍᴀʀᴋᴇᴛ*",
-                "market_name": "*├* Judul: *{market_name}*",
+                "market_name": "*├* *Nama:* {market_name}",
                 "earned": "*└* *Diperoleh:* {coins}"
             }
         },

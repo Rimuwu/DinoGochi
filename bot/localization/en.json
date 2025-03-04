@@ -2225,7 +2225,7 @@
             },
             "market": {
                 "caption": "*┌* 🛍️ *ᴍᴀʀᴋᴇᴛ*",
-                "market_name": "*├* Title: *{market_name}*",
+                "market_name": "*├* *Name:* {market_name}",
                 "earned": "*└* *Earned:* {coins}"
             }
         },
