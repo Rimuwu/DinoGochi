@@ -105,7 +105,7 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
         if await bot.get_file(file_id):
             # Отпряем файл по file_id
             mes = await bot.edit_message_media(
-                aiogram.types.InputMediaPhoto(media=file_id, caption=caption, parse_mode=parse_mode), 
+                media=aiogram.types.InputMediaPhoto(media=file_id, caption=caption, parse_mode=parse_mode), 
                 chat_id=chatid, message_id=message_id, reply_markup=reply_markup)
             return mes
 
