@@ -200,7 +200,7 @@ async def support_buttons(call: CallbackQuery, state):
 
             await send_inv(user_id, product_key, count, lang)
 
-        if call.message.content_type == 'text':
+        if isinstance(call.message, Message) and call.message.content_type == 'text':
             await send_SmartPhoto(chatid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
         else:
             try:
