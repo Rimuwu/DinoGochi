@@ -224,7 +224,9 @@ async def swipe_page(chatid: int, state: FSMContext):
         new_up = await bot.send_message(chatid, text, reply_markup=keyboard)
     else:
         new_up = await bot.send_message(chatid, text, reply_markup=keyboard)
-        await bot.delete_message(chatid, up_message)
+        try:
+            await bot.delete_message(chatid, up_message)
+        except: pass
 
     await state.update_data(up_message=new_up.message_id)
 
@@ -298,18 +300,6 @@ async def filter_menu(chatid: int, upd_up_m: bool = True):
         await state.update_data(main_message=new_main.message_id)
     else:
         await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
-
-    # if 'edited_message' in settings and settings['edited_message']:
-    #     try:
-    #         await bot.edit_message_text(menu_text, chatid, settings['edited_message'], reply_markup=inl_menu, parse_mode='Markdown')
-    #     except: pass
-    # else:
-    #     await bot.send_message(chatid, text, reply_markup=keyboard)
-    #     msg = await bot.send_message(chatid, menu_text, 
-    #                         parse_mode='Markdown', reply_markup=inl_menu)
-        
-    #     async with bot.retrieve_data(
-    #         userid, chatid) as data: data['settings']['edited_message'] = msg.message_id
 
 async def start_inv(function, userid: int, chatid: int, lang: str, 
                     type_filter: list = [], item_filter: list = [], 
