@@ -49,6 +49,8 @@ async def infouser_com(message: Message):
         user_id = userid
 
     if message.from_user:
+        user_exists = await users.find_one({'userid': user_id}, comment='check_user_exists')
+        if not user_exists: return
         text, avatar = await user_info(user_id, lang)
 
         if avatar:
