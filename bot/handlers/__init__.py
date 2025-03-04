@@ -28,6 +28,8 @@ from . import companies
 from . import works
 from . import inside_shop
 
+from . import minigames_handler
+
 from . import stars_invoice
 from . import post_handler # Должен загружаться последний!
 
