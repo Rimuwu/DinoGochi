@@ -420,7 +420,6 @@ async def start_friend_menu(function,
 
     for friend_id in friends:
         friend_res = await get_friend_data(friend_id, userid)
-        log(f'friend_res {friend_res}')
         if friend_res:
             options[friend_res['name']] = {
                 'userid': friend_id, 
