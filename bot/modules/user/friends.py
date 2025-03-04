@@ -112,7 +112,9 @@ async def get_friend_data(friendid: int, userid: int):
     Передаём id друга, чтобы найти его имя и аватарку,
     userid - id юзера
     """
-    if userid == 1191252229: flag = True
+    if userid == 1191252229: 
+        flag = True
+        log("get_friend_data: =====================================")
     else: flag = False
 
     # Ищим данные друга
@@ -167,5 +169,5 @@ async def get_friend_data(friendid: int, userid: int):
             log(f'get_friend_data: {result}')
         return result
     if flag:
-        log(f'get_friend_data: null')
+        log(f'get_friend_data: WE4P5O4356POJ')
     return {}
