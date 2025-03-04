@@ -152,6 +152,8 @@ async def get_friend_data(friendid: int, userid: int):
                 if res[f'{data_path}_data']['name']:
                     # Проверясем, что есть имя 
                     result['name'] = res[f'{data_path}_data']['name']
+                else:
+                    result['name'] = friendUser['name']
 
             if 'name' not in result:
                 if not friendUser['name']:
