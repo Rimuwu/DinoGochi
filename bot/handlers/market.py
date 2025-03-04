@@ -430,9 +430,9 @@ async def find_markets(call: CallbackQuery):
         reply_markup=cancel_markup(lang)
     )
 
-    await ChooseStringState(find_prepare, userid, chatid, lang, 3, 50)
+    await ChooseStringState(find_prepare_mk, userid, chatid, lang, 3, 50)
 
-async def find_prepare(return_data, transmitted_data):
+async def find_prepare_mk(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
