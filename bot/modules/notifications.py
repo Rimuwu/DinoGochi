@@ -12,7 +12,6 @@ from bot.modules.inline import inline_menu
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.logs import log
 from bot.modules.items.item import get_name
-from bot.modules.overwriting.over_functions import async_antiflood
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -144,17 +143,12 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
                     message=f'User: {owner["owner_id"]} DinoId: {dino_id}, Data: {not_type} Kwargs: {kwargs}', lvl=0)
                 try:
                     try:
-                        await async_antiflood(
-                            bot.send_message, owner['owner_id'], text, reply_markup=markup_inline, parse_mode='Markdown',
-                            number_retries=2
-                        )
+                        await bot.send_message(owner['owner_id'], text, 
+                                               reply_markup=markup_inline, parse_mode='Markdown')
                         send_status = True
 
                     except Exception:
-                        await async_antiflood(
-                            bot.send_message, owner['owner_id'], text, reply_markup=markup_inline,
-                            number_retries=2
-                        )
+                        await bot.send_message(owner['owner_id'], text, reply_markup=markup_inline)
                         send_status = True
 
                 except Exception as error:
@@ -191,7 +185,7 @@ async def user_notification(user_id: int, not_type: str,
 
         add_way - дополнительный аргумент, учитывает уведомление по not_type но текст в зависимости от аргумента add_way 
     """
-    text, markup_inline = not_type, InlineKeyboardBuilder()
+    text, markup_inline = not_type, None
     standart_notification = [
         'donation', 'lvl_up',
         'item_crafted', # необходим items
@@ -228,10 +222,10 @@ async def user_notification(user_id: int, not_type: str,
         message=f'User: {user_id}, Data: {not_type} Kwargs: {kwargs}', lvl=0)
     try:
         try:
-            await async_antiflood(bot.send_message, user_id, text, reply_markup=markup_inline, parse_mode='Markdown')
+            await bot.send_message(user_id, text, reply_markup=markup_inline, parse_mode='Markdown')
             return True
         except Exception:
-            await async_antiflood(bot.send_message, user_id, text, reply_markup=markup_inline)
+            await bot.send_message(user_id, text, reply_markup=markup_inline)
             return True
     except Exception as error: 
         log(prefix='Notification Error', 
