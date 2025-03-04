@@ -42,9 +42,14 @@ async def infouser_com(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
+    
+    if message.reply_to_message and message.reply_to_message.from_user:
+        user_id = message.reply_to_message.from_user.id
+    else:
+        user_id = userid
 
     if message.from_user:
-        text, avatar = await user_info(userid, lang)
+        text, avatar = await user_info(user_id, lang)
 
         if avatar:
             await bot.send_photo(chatid, avatar, caption=text, parse_mode='Markdown')
