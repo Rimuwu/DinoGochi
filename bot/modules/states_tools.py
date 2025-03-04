@@ -419,12 +419,21 @@ async def start_friend_menu(function,
 
     if function == None: function = friend_handler
 
+    a = 0
     for friend_id in friends:
         friend_res = await get_friend_data(friend_id, userid)
         if friend_res:
-            options[friend_res['name']] = {
-                'userid': friend_id, 
-                'name': friend_res['name']}
+            if friend_res['name'] in options:
+                a += 1 
+                options[friend_res['name'] + f'# {a}'] = {
+                    'userid': friend_id, 
+                    'name': friend_res['name']}
+            else:
+                options[friend_res['name']] = {
+                    'userid': friend_id, 
+                    'name': friend_res['name']}
+
+    log(f'LEN FRIENDS LIST {len(friends)} - {len(options)}')
 
     await ChoosePagesState(
         function, userid, chatid, lang, options, 
