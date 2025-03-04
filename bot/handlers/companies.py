@@ -40,7 +40,7 @@ async def create_company_com(message: Message):
                     )
 
 async def new_cycle(userid, chatid, lang, transmitted_data):
-    state = transmitted_data['state']
+    
     lang_data = get_all_locales('language_name')
     lang_options = {}
 
@@ -144,7 +144,7 @@ async def pre_check(data, transmitted_data):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     message = transmitted_data['message']
-    state = transmitted_data['state']
+    
 
     message[data['lang']
     ] = {
@@ -319,7 +319,7 @@ async def end(data, transmitted_data):
 
 @HDMessage
 @main_router.message(Command(commands=['companies']), IsAdminUser())
-async def companies_c(message: Message, state):
+async def companies_c(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
     userid = message.from_user.id

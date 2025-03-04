@@ -3,7 +3,7 @@ from typing import Union
 from bson.objectid import ObjectId
 from bot.dbmanager import mongo_client
 
-from bot.modules.data_format import random_code
+from bot.modules.data_format import deepcopy, random_code
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from time import time
 
@@ -78,7 +78,7 @@ skill_time = {
     "park": [1200, 7200],
 }
 
-def get_skill_time(skill: str): return skill_time[skill].copy()
+def get_skill_time(skill: str): return deepcopy(skill_time[skill])
 
 async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, down: str, 
                                up_unit: list[float], down_unit: list[float],

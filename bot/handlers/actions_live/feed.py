@@ -83,7 +83,7 @@ async def inventory_adapter(item, transmitted_data):
 
 @HDMessage
 @main_router.message(Text('commands_name.actions.feed'))
-async def feed(message: Message, state: FSMContext):
+async def feed(message: Message):
     if message.from_user:
         userid = message.from_user.id
         lang = await get_lang(message.from_user.id)
@@ -100,7 +100,7 @@ async def feed(message: Message, state: FSMContext):
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('feed_inl'))
-async def feed_inl(callback: CallbackQuery, state: FSMContext):
+async def feed_inl(callback: CallbackQuery):
     if callback.message:
         lang = await get_lang(callback.from_user.id)
         chatid = callback.message.chat.id

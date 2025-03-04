@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from bot.dbmanager import mongo_client, conf
 from bot.const import GAME_SETTINGS as gs
 from bot.exec import main_router, bot
-from bot.modules.data_format import (chunks, filling_with_emptiness,
+from bot.modules.data_format import (chunks, deepcopy, filling_with_emptiness,
                                      list_to_inline)
 from bot.modules.get_state import get_state
 from bot.modules.images_save import send_SmartPhoto
@@ -44,9 +44,12 @@ async def generate(items_data: dict, horizontal: int, vertical: int):
     if horizontal < 3 and len(pages) > 1: horizontal = 3
     return pages, horizontal
 
-def filter_items_data(items: dict, type_filter: list = [], 
-                      item_filter: list = []):
-    new_items = items.copy()
+def filter_items_data(items: dict, type_filter: list | None = None, 
+                      item_filter: list | None = None):
+    if type_filter is None: type_filter = []
+    if item_filter is None: item_filter = []
+
+    new_items = deepcopy(items) # type: dict
 
     for key, item in items.items():
         add_item = False
@@ -66,8 +69,8 @@ def filter_items_data(items: dict, type_filter: list = [],
 
     return new_items
 
-async def inventory_pages(items: list, lang: str = 'en', type_filter: list = [],
-                    item_filter: list = []):
+async def inventory_pages(items: list, lang: str = 'en', type_filter: list | None = None,
+                    item_filter: list | None = None):
     """ Создаёт и сортируем страницы инвентаря
 
     type_filter - если не пустой то отбирает предметы по их типу
@@ -82,6 +85,9 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list = [],
         count: int
     }
     """
+    if type_filter is None: type_filter = []
+    if item_filter is None: item_filter = []
+    
     items_data = {}
 
     code_items = {}
@@ -169,9 +175,11 @@ async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
              await bot.send_message(chatid, text,
                             reply_markup=markup)
 
-async def swipe_page(chatid: int, state: FSMContext):
+async def swipe_page(chatid: int, userid: int):
     """ Панель-сообщение смены страницы инвентаря
     """
+
+    state = await get_state(userid, chatid)
     if data := await state.get_data():
         pages = data['pages']
         settings = data['settings']
@@ -231,9 +239,11 @@ async def swipe_page(chatid: int, state: FSMContext):
     await state.update_data(up_message=new_up.message_id)
 
 
-async def search_menu(chatid: int, state: FSMContext):
+async def search_menu(chatid: int, userid: int):
     """ Панель-сообщение поиска
     """
+
+    state = await get_state(userid, chatid)
     if data := await state.get_data():
         settings = data['settings']
         main_message = data['main_message']
@@ -302,14 +312,12 @@ async def filter_menu(chatid: int, upd_up_m: bool = True):
         await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
 
 async def start_inv(function, userid: int, chatid: int, lang: str, 
-                    type_filter: list = [], item_filter: list = [], 
-                    exclude_ids: list = [],
+                    type_filter: list | None = None, item_filter: list | None = None, 
+                    exclude_ids: list | None = None,
                     start_page: int = 0, changing_filters: bool = True,
-                    inventory: list = [], delete_search: bool = False,
+                    inventory: list | None = None, delete_search: bool = False,
                     transmitted_data = None,
-
-                    inline_func = None, inline_code = '',
-                    state: Union[FSMContext, None] = None,
+                    inline_func = None, inline_code = ''
                     ):
     """ Функция запуска инвентаря
         type_filter - фильтр типов предметов
@@ -331,7 +339,15 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
         inline_func - Если нужна функция для обработки калбек запросов 
             - Все кнопки должны начинаться с "inventoryinline {inline_code}" 
     """
-    if not state: state = await get_state(userid, chatid)
+
+    if type_filter is None: type_filter = []
+    if item_filter is None: item_filter = []
+    if exclude_ids is None: exclude_ids = []
+    if inventory is None: inventory = []
+
+    log(f'========== START INVENTORY {type_filter}, {item_filter}')
+    
+    state = await get_state(userid, chatid)
     if not transmitted_data: transmitted_data = {}
     count = 0
 
@@ -390,13 +406,15 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
         await state.set_data(data)
         log(f'open inventory userid {userid} count {count}')
 
-        await swipe_page(chatid, state)
+        await swipe_page(chatid, userid)
         return True, 'inv'
 
-async def open_inv(chatid: int, state: FSMContext):
+async def open_inv(chatid: int, userid: int):
     """ Внутренняя фунция для возврата в инвентарь
     """
+
+    state = await get_state(userid, chatid)
     await state.set_state(InventoryStates.Inventory)
-    await swipe_page(chatid, state)
+    await swipe_page(chatid, userid)
 
 

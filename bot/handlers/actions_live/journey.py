@@ -1,6 +1,6 @@
 
 from random import randint
-import re
+
 from time import time
 
 from bot.dbmanager import mongo_client
@@ -21,16 +21,13 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.user.user import User
-from aiogram.types import (CallbackQuery, InlineKeyboardMarkup, InputMedia, InputMediaPhoto,
+from aiogram.types import (CallbackQuery, InlineKeyboardMarkup, InputMediaPhoto,
                            Message)
 
 from bot.filters.translated_text import Text
-from bot.filters.states import NothingState
 from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
-from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
-from aiogram.fsm.context import FSMContext
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
@@ -72,7 +69,6 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
     await auto_ads(message)
 
 async def start_journey(userid: int, chatid: int, lang: str, 
-                        state: FSMContext,
                         friend: int = 0):
     user = await User().create(userid)
     last_dino = await user.get_last_dino()
@@ -125,12 +121,12 @@ async def start_journey(userid: int, chatid: int, lang: str,
 
 @HDMessage
 @main_router.message(Text('commands_name.actions.journey'), DinoPassStatus())
-async def journey_com(message: Message, state: FSMContext):
+async def journey_com(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await start_journey(userid, chatid, lang, state)
+    await start_journey(userid, chatid, lang)
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('journey_complexity'), IsPrivateChat())

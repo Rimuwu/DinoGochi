@@ -67,7 +67,7 @@ async def transition_back(dino: Dino, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
-    state = transmitted_data['state']
+    
 
     text = t('custom_profile.manual', lang)
     keyboard = [t('buttons_name.cancel', lang)]
@@ -82,7 +82,7 @@ async def transition_back(dino: Dino, transmitted_data: dict):
 @HDMessage
 @main_router.message(Text('commands_name.backgrounds.custom_profile'), 
                      IsAuthorizedUser(), IsPrivateChat())
-async def custom_profile(message: Message, state):
+async def custom_profile(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -96,7 +96,7 @@ async def custom_profile(message: Message, state):
 @HDMessage
 @main_router.message(Text('commands_name.backgrounds.standart'), 
                      IsAuthorizedUser(), IsPrivateChat())
-async def standart(message: Message, state):
+async def standart(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -180,7 +180,7 @@ async def backgrounds(message: Message):
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('back_m '), IsPrivateChat())
-async def background_menu(call: CallbackQuery, state):
+async def background_menu(call: CallbackQuery):
     split_d = call.data.split()
     action = split_d[1]
     b_id = int(split_d[2])

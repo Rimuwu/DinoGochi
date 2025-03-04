@@ -1,8 +1,7 @@
-from optparse import Option
-from typing import Optional, Union
+
+from typing import Optional
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import InlineKeyboardMarkup
-from aiogram.fsm.context import FSMContext
 from bot.exec import bot
 from bot.modules.data_format import (chunk_pages, list_to_inline,
                                      list_to_keyboard)
@@ -10,13 +9,11 @@ from bot.modules.get_state import get_state
 from bot.modules.images import async_open
 from bot.modules.inventory_tools import start_inv
 from bot.modules.localization import get_data, t
-from bot.modules.logs import log
 from bot.modules.markup import down_menu, get_answer_keyboard
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.friends import get_friend_data
-from bot.modules.user.user import User, get_frineds, user_info, user_name
-from aiogram.fsm.context import FSMContext
+from bot.modules.user.user import User, get_frineds, user_info
 from bot.modules.managment.events import check_event
 import inspect
 from bot.dbmanager import mongo_client
@@ -35,19 +32,17 @@ class GeneralStates(StatesGroup):
     ChooseTime = State() # Состояние для ввода времени
     ChooseImage = State() # Состояние для ввода загрузки изображения
 
-def add_if_not(data: dict, userid: int, chatid: int, lang: str, state: FSMContext | None):
+def add_if_not(data: dict, userid: int, chatid: int, lang: str):
     """Добавляет минимальные данные для работы"""
     if 'userid' not in data: data['userid'] = userid
     if 'chatid' not in data: data['chatid'] = chatid
     if 'lang' not in data: data['lang'] = lang
-    if 'state' not in data: 
-        if state: data['state'] = state
     return data
 
 async def ChooseDinoState(function, 
                           userid: int, chatid: int, 
         lang: str, add_egg: bool=True, all_dinos: bool=True,
-        transmitted_data=None, send_error: bool = True, state: Union[FSMContext, None] = None):
+        transmitted_data=None, send_error: bool = True):
     """ Устанавливает состояние ожидания динозавра
         all_dinos - Если False то не будет совместных динозавров 
         send_error - Если True то будет уведомлять о том, что нет динозавров / яиц
@@ -58,7 +53,7 @@ async def ChooseDinoState(function,
        Return:
         Возвращает 2 если был создано состояние, 1 если завершилось автоматически (1 вариант выбора), 0 - невозможно завершить
     """
-    if not state: state = await get_state(userid, chatid)
+    state = await get_state(userid, chatid)
 
     user = await User().create(userid)
     elements = await user.get_dinos(all_dinos)
@@ -66,7 +61,7 @@ async def ChooseDinoState(function,
     if add_egg: elements += await user.get_eggs
     if not transmitted_data: transmitted_data = {}
 
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
     ret_data = get_answer_keyboard(elements, lang)
 
     if ret_data['case'] == 0:
@@ -100,7 +95,7 @@ async def ChooseIntState(function,
                          userid: int, chatid: int, lang: str,
                          min_int: int = 1, max_int: int = 10,
                          autoanswer: bool = True,
-                         transmitted_data=None, state: Union[FSMContext, None] = None):
+                         transmitted_data=None):
     """ Устанавливает состояние ожидания числа
 
         В function передаёт 
@@ -111,10 +106,10 @@ async def ChooseIntState(function,
         Return:
          Возвращает True если был создано состояние, False если завершилось автоматически (минимальный и максимальный вариант совпадают)
     """
-    if not state: state = await get_state(userid, chatid)
+    state = await get_state(userid, chatid)
 
     if not transmitted_data: transmitted_data = {}
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
 
     if min_int != max_int or not autoanswer:
         await state.set_state(GeneralStates.ChooseInt)
@@ -134,7 +129,7 @@ async def ChooseIntState(function,
 async def ChooseStringState(function, 
                             userid: int, chatid: int, lang: str,
                             min_len: int = 1, max_len: int = 10,
-                            transmitted_data=None, state: Union[FSMContext, None] = None):
+                            transmitted_data=None):
     """ Устанавливает состояние ожидания сообщения
 
         В function передаёт 
@@ -143,10 +138,10 @@ async def ChooseStringState(function,
         Return:
          Возвращает True если был создано состояние, не может завершится автоматически
     """
-    if not state: state = await get_state(userid, chatid)
+    state = await get_state(userid, chatid)
     if not transmitted_data: transmitted_data = {}
 
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
     await state.set_state(GeneralStates.ChooseString)
 
     data = {}
@@ -162,7 +157,7 @@ async def ChooseTimeState(function,
                           userid: int, 
                           chatid: int, lang: str,
                           min_int: int = 1, max_int: int = 10,
-                          transmitted_data=None, state: Union[FSMContext, None] = None):
+                          transmitted_data=None):
     """ Устанавливает состояние ожидания сообщения в формате времени
 
         В function передаёт 
@@ -171,10 +166,10 @@ async def ChooseTimeState(function,
         Return:
          Возвращает True если был создано состояние, не может завершится автоматически
     """
-    if not state: state = await get_state(userid, chatid)
+    state = await get_state(userid, chatid)
     if not transmitted_data: transmitted_data = {}
 
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
     await state.set_state(GeneralStates.ChooseTime)
 
     data = {}
@@ -189,7 +184,7 @@ async def ChooseTimeState(function,
 async def ChooseConfirmState(function, 
                              userid: int, 
                              chatid: int, lang: str, cancel: bool=False,
-                             transmitted_data=None, state: Union[FSMContext, None] = None):
+                             transmitted_data=None):
     """ Устанавливает состояние ожидания подтверждения действия
 
         В function передаёт 
@@ -200,12 +195,12 @@ async def ChooseConfirmState(function,
         Return:
          Возвращает True если был создано состояние, не может завершится автоматически
     """
-    if not state: state = await get_state(userid, chatid)
+    state = await get_state(userid, chatid)
 
     if not transmitted_data: transmitted_data = {}
     transmitted_data['cancel'] = cancel
 
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
     await state.set_state(GeneralStates.ChooseConfirm)
 
     data = {}
@@ -218,8 +213,8 @@ async def ChooseConfirmState(function,
 async def ChooseOptionState(function, 
                             userid: int, 
                             chatid: int, lang: str,
-                            options: dict = {},
-                            transmitted_data=None, state: Union[FSMContext, None] = None):
+                            options: dict | None = None,
+                            transmitted_data=None):
     """ Устанавливает состояние ожидания выбора опции
 
         В function передаёт 
@@ -230,10 +225,12 @@ async def ChooseOptionState(function,
         Return:
          Возвращает True если был создано состояние, False если завершилось автоматически (1 вариант выбора)
     """
-    if not state: state = await get_state(userid, chatid)
+    if options is None: options = {}
+    
+    state = await get_state(userid, chatid)
     if not transmitted_data: transmitted_data = {}
 
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
 
     if len(options) > 1:
         await state.set_state(GeneralStates.ChooseOption)
@@ -256,7 +253,7 @@ async def ChooseInlineState(function,
                             userid: int, 
                          chatid: int, lang: str,
                          custom_code: str,
-                         transmitted_data=None, state: Union[FSMContext, None] = None):
+                         transmitted_data=None):
     """ Устанавливает состояние ожидания нажатия кнопки
         Все ключи callback должны начинаться с 'chooseinline'
         custom_code - код сессии запроса кнопок (индекс 1)
@@ -264,10 +261,10 @@ async def ChooseInlineState(function,
         В function передаёт 
         >>> answer: list transmitted_data: dict
     """
-    if not state: state = await get_state(userid, chatid)
+    state = await get_state(userid, chatid)
     if not transmitted_data: transmitted_data = {}
 
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
 
     await state.set_state(GeneralStates.ChooseInline)
 
@@ -282,7 +279,7 @@ async def ChooseInlineState(function,
 async def ChooseCustomState(function, 
                             custom_handler, userid: int, 
                             chatid: int, lang: str,
-                            transmitted_data=None, state: Union[FSMContext, None] = None):
+                            transmitted_data=None):
     """ Устанавливает состояние ожидания чего либо, все проверки идут через custom_handler
     
         custom_handler -> bool, Any !
@@ -294,10 +291,10 @@ async def ChooseCustomState(function,
         Return:
          result - второе возвращаемое из custom_handler
     """
-    if not state: state = await get_state(userid, chatid)
+    state = await get_state(userid, chatid)
 
     if not transmitted_data: transmitted_data = {}
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
 
     await state.set_state(GeneralStates.ChooseCustom)
 
@@ -317,11 +314,11 @@ async def update_page(pages: list, page: int, chat_id: int, lang: str):
 
 async def ChoosePagesState(function, 
                            userid: int, chatid: int, lang: str,
-                           options: dict = {}, 
+                           options: dict | None = None, 
                            horizontal: int=2, vertical: int=3,
                            transmitted_data=None, 
                            autoanswer: bool = True, one_element: bool = True,
-                           update_page_function = update_page, state: Union[FSMContext, None] = None):
+                           update_page_function = update_page):
     """ Устанавливает состояние ожидания выбора опции
     
         options = {
@@ -349,10 +346,12 @@ async def ChoosePagesState(function,
         Return:
          Возвращает True если был создано состояние, False если завершилось автоматически (1 вариант выбора)
     """
-    if not state: state = await get_state(userid, chatid)
+    if options is None: options = {}
+    
+    state = await get_state(userid, chatid)
     if not transmitted_data: transmitted_data = {}
 
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
 
     # Чанкует страницы и добавляем пустые элементы для сохранения структуры
     pages = chunk_pages(options, horizontal, vertical)
@@ -412,7 +411,7 @@ async def friend_handler(friend: dict, transmitted_data: dict):
 async def start_friend_menu(function,
                 userid: int, chatid: int, lang: str, 
                 one_element: bool=False,
-                transmitted_data = None, state: Union[FSMContext, None] = None):
+                transmitted_data = None):
     res = await get_frineds(userid)
     friends = res['friends']
     options = {}
@@ -437,13 +436,13 @@ async def start_friend_menu(function,
         function, userid, chatid, lang, options, 
         horizontal=2, vertical=3,
         autoanswer=False, one_element=one_element,  
-        transmitted_data=transmitted_data, state=state)
+        transmitted_data=transmitted_data)
     return True, 'friend'
 
 async def ChooseImageState(function, 
                            userid: int, chatid: int, lang: str,
                            need_image: bool = True,
-                           transmitted_data: Optional[dict] = None, state: Union[FSMContext, None] = None):
+                           transmitted_data: Optional[dict] = None):
     """ Устанавливает состояние ожидания вводу изображения
         if need_image == True: даёт возможность на ответ 0 возвращать не file_id, а 'no_image'
 
@@ -457,10 +456,10 @@ async def ChooseImageState(function,
     if not isinstance(need_image, bool): raise TypeError('need_image must be bool')
     if transmitted_data is not None and not isinstance(transmitted_data, dict): raise TypeError('transmitted_data must be dict or None')
 
-    if not state: state = await get_state(userid, chatid)
+    state = await get_state(userid, chatid)
     if not transmitted_data: transmitted_data = {}
 
-    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang, state)
+    transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
     await state.set_state(GeneralStates.ChooseImage)
 
     data = {}
@@ -486,14 +485,13 @@ chooses = {
     'image': ChooseImageState
 }
 
-def prepare_steps(steps: list, userid: int, chatid: int, lang: str, 
-                  state: FSMContext | None = None):
+def prepare_steps(steps: list, userid: int, chatid: int, lang: str):
     for step in steps:
         if step['type'] in chooses:
             step['function'] = chooses[step['type']]
 
             step['data'] = dict(add_if_not(
-                step['data'], userid, chatid, lang, None))
+                step['data'], userid, chatid, lang))
         elif step['type'] == 'update_data': pass
             # В данных уже должен быть ключ function
             # function получает transmitted_data
@@ -503,8 +501,8 @@ def prepare_steps(steps: list, userid: int, chatid: int, lang: str,
 
 async def ChooseStepState(function,
                           userid: int, chatid: int, lang: str,
-                          steps: list = [],
-                          transmitted_data=None, state: Union[FSMContext, None] = None):
+                          steps: list | None = None,
+                          transmitted_data=None):
     """ Конвейерная Система Состояний
         Устанавливает ожидание нескольких ответов, запуская состояния по очереди.
         
@@ -537,13 +535,14 @@ async def ChooseStepState(function,
         В function передаёт 
         >>> answer: dict, transmitted_data: dict
     """
-    if not state: state = await get_state(userid, chatid)
+    if steps is None: steps = []
+
     if not transmitted_data: transmitted_data = {}
 
-    steps = prepare_steps(steps, userid,  chatid, lang, state)
+    steps = prepare_steps(steps, userid,  chatid, lang)
 
     transmitted_data = dict(add_if_not(transmitted_data, 
-                            userid, chatid, lang, state))
+                            userid, chatid, lang))
 
     transmitted_data['steps'] = steps
     transmitted_data['return_function'] = function
@@ -552,7 +551,10 @@ async def ChooseStepState(function,
     await next_step(0, transmitted_data, True)
 
 
-async def exit_chose(transmitted_data: dict, state: FSMContext):
+async def exit_chose(transmitted_data: dict):
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    state = await get_state(userid, chatid)
     await state.clear()
 
     return_function = transmitted_data['return_function']
@@ -569,7 +571,7 @@ async def exit_chose(transmitted_data: dict, state: FSMContext):
 # Должен быть ниже всех других обработчиков, 
 # для возможности их использования
 async def next_step(answer, 
-                    transmitted_data: dict, start: bool=False, state: Union[FSMContext, None] = None):
+                    transmitted_data: dict, start: bool=False):
     """Обработчик КСС*
 
     Args:
@@ -590,7 +592,7 @@ async def next_step(answer,
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
-    if not state: state = await get_state(userid, chatid)
+    state = await get_state(userid, chatid)
 
     steps = transmitted_data.get('steps', [])
     temp = {}
@@ -641,7 +643,7 @@ async def next_step(answer,
             if transmitted_data.get('process', 0) < len(steps):
                 ret_data = steps[transmitted_data.get('process', 0)]
             else: # Заверщение
-                return await exit_chose(transmitted_data, state)
+                return await exit_chose(transmitted_data)
 
         # Очистка данных
         if 'delete_steps' in transmitted_data and transmitted_data['delete_steps'] and transmitted_data.get('process', 0) != 0:
@@ -710,4 +712,4 @@ async def next_step(answer,
             await state.update_data(transmitted_data=transmitted_data)
 
     else: #Все данные получены
-        return await exit_chose(transmitted_data, state)
+        return await exit_chose(transmitted_data)

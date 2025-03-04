@@ -32,7 +32,7 @@ item_craft = DBconstructor(mongo_client.items.item_craft)
 
 @HDMessage
 @main_router.message(Command(commands=['craftlist']), IsPrivateChat())
-async def craftlist(message, state):
+async def craftlist(message):
     chatid = message.chat.id
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -96,7 +96,7 @@ async def info_craft(data, transmitted_data: dict):
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('time_craft'), IsAuthorizedUser())
-async def time_craft(callback: CallbackQuery, state):
+async def time_craft(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
     lang = await get_lang(callback.from_user.id)

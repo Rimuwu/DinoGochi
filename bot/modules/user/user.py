@@ -303,7 +303,9 @@ async def get_eggs(userid: int) -> list:
 
     return eggs_list
 
-async def get_inventory(userid: int, exclude_ids: list = []):
+async def get_inventory(userid: int, exclude_ids: list  | None = None):
+    if exclude_ids is None: exclude_ids = []
+    
     inv, count = [], 0
     data_inv = await items.find({'owner_id': userid}, 
                                 {'_id': 0, 'owner_id': 0}, comment='get_inventory')
@@ -658,12 +660,14 @@ async def max_eat(userid: int):
     max_col = col * per_one + 50
     return max_col
 
-async def get_inventory_from_i(userid: int, items_l: list[dict] = [], 
+async def get_inventory_from_i(userid: int, items_l: list[dict] | None = None, 
                                limit = None, one_count = False):
     """ 
         items_l - [ {'item_id': int, 'abilities': dict} ]
         one_count - стандартные значения хар и 1 количество (советую использовать с limit = 1)
     """
+    if items_l is None: items_l = []
+    
     if one_count: id_list = []
 
     find_i = []

@@ -37,7 +37,7 @@ def circle_data(userid, chatid, lang, items, option, prepare: bool = True):
         }
     ]
     if prepare:
-        steps = prepare_steps(not_p_steps, userid, chatid, lang, state)
+        steps = prepare_steps(not_p_steps, userid, chatid, lang)
         return steps
     else: return not_p_steps
 
@@ -78,7 +78,7 @@ def check_items(transmitted_data):
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
-    state = transmitted_data['state']
+    
 
     res = True
     if type(transmitted_data['return_data']['items']) == list and len(transmitted_data['return_data']['items']) >= 3: res = False
@@ -96,7 +96,7 @@ def check_items(transmitted_data):
                 'function': new_circle
             }
         ]
-        steps = prepare_steps(not_p_steps, userid, chatid, lang, state)
+        steps = prepare_steps(not_p_steps, userid, chatid, lang)
         transmitted_data['steps'] += steps
 
     return transmitted_data, True
@@ -110,11 +110,11 @@ async def new_circle(transmitted_data):
     add_res = transmitted_data['return_data']['add_item']
     exclude_ids = transmitted_data['exclude']
     option = transmitted_data['option']
-    state = transmitted_data['state']
+    
 
     if add_res:
         items, exclude = await generate_sell_pages(userid, exclude_ids)
-        steps = circle_data(userid, chatid, lang, items, option, state)
+        steps = circle_data(userid, chatid, lang, items, option)
 
         transmitted_data['exclude'] = exclude
 
@@ -133,7 +133,7 @@ async def auction(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
-    state = transmitted_data['state']
+    
 
     if type(return_data['items']) != list:
         return_data['items'] = [return_data['items']]

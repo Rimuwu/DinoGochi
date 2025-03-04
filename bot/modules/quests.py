@@ -194,9 +194,11 @@ async def quest_resampling(questid: ObjectId):
     """
     await quests_data.update_one({'_id': questid}, {'$set': {'owner_id': 0}}, comment='quest_resampling')
 
-async def quest_process(userid: int, quest_type: str, unit: int = 0, items: list = []):
+async def quest_process(userid: int, quest_type: str, unit: int = 0, items: list | None = None):
     """ Заносит данные в квест
     """
+    if items is None: items = []
+    
     quests = await quests_data.find({"owner_id": userid, 
                                      'type': quest_type}, comment='quest_process_quests')
 

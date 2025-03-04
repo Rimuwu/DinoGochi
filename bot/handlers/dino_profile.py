@@ -197,7 +197,7 @@ async def transition(element, transmitted_data: dict):
 
 @HDMessage
 @main_router.message(Text('commands_name.dino_profile'), IsAuthorizedUser(), IsPrivateChat())
-async def dino_handler(message: Message, state):
+async def dino_handler(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
@@ -230,7 +230,7 @@ async def dino_profile_callback(call: types.CallbackQuery):
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('dino_menu'), IsPrivateChat())
-async def dino_menu(call: types.CallbackQuery, state):
+async def dino_menu(call: types.CallbackQuery):
     split_d = call.data.split()
     action = split_d[1]
     alt_key = split_d[2]
@@ -419,7 +419,7 @@ async def remove_accessory(option: list, transmitted_data:dict):
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('kindergarten'), IsPrivateChat())
-async def kindergarten(call: types.CallbackQuery, state):
+async def kindergarten(call: types.CallbackQuery):
     split_d = call.data.split()
     action = split_d[1]
     alt_key = split_d[2]

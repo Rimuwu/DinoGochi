@@ -77,7 +77,7 @@ async def collecting_adapter(return_data, transmitted_data):
 @HDMessage
 @main_router.message(Text('commands_name.actions.collecting'),
              DinoPassStatus())
-async def collecting_button(message: Message, state: FSMContext):
+async def collecting_button(message: Message):
     if message.from_user:
         userid = message.from_user.id
         chatid = message.chat.id

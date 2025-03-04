@@ -272,7 +272,7 @@ async def dino_now(return_data, transmitted_data):
     userid = transmitted_data['userid']
     dino: Dino = return_data['dino']
     o_type = transmitted_data['type']
-    state = transmitted_data['state']
+    
 
     text = t(f'edit_dino.{o_type}', lang)
     buttons = {}
@@ -321,7 +321,7 @@ async def reset_chars(return_data, transmitted_data):
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('transformation') , IsAuthorizedUser())
-async def transformation(callback: CallbackQuery, state):
+async def transformation(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
     lang = await get_lang(callback.from_user.id)

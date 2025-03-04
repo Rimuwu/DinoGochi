@@ -29,7 +29,7 @@ async def generation_code(owner_id):
     return code
 
 async def add_product(owner_id: int, product_type: str, items: list, price, in_stock: int = 1,
-                add_arg: dict = {}):
+                add_arg: dict | None = None):
     """ Добавление продукта в базу данных
 
         product_type
@@ -50,6 +50,8 @@ async def add_product(owner_id: int, product_type: str, items: list, price, in_s
                 items: list - продаваемые предметы
                 price: int - указывается стартовая цена, каждый покупатель выставляет цену больше
     """
+    if add_arg is None: add_arg = {}
+    
     assert product_type in ['items_coins', 'coins_items', 'items_items', 'auction'], f'Тип ({product_type}) не совпадает c доступными'
 
     data = {
@@ -152,9 +154,11 @@ async def seller_ui(owner_id: int, lang: str, my_market: bool, name: str = ''):
 
     return text, markup, img
 
-def generate_items_pages(ignored_id: list = [], ignore_cant: bool = False):
+def generate_items_pages(ignored_id: list | None = None, ignore_cant: bool = False):
     """ Получение страниц со всеми предметами
     """
+    if ignored_id is None: ignored_id = []
+    
     items = []
     exclude = ignored_id
     for key, item in ITEMS.items():
@@ -171,9 +175,11 @@ def generate_items_pages(ignored_id: list = [], ignore_cant: bool = False):
 
     return items, exclude
 
-async def generate_sell_pages(user_id: int, ignored_id: list = []):
+async def generate_sell_pages(user_id: int, ignored_id: list | None = None):
     """ Получение инвентаря игрока с исключением предметов, которые нельзя продать 
     """
+    if ignored_id is None: ignored_id = []
+    
     items, count = await get_inventory(user_id, ignored_id)
     exclude = ignored_id
     for item in items:

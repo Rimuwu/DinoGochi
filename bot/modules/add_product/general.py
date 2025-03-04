@@ -17,7 +17,7 @@ async def coins_stock(return_data, transmitted_data):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     option = transmitted_data['option']
-    state = transmitted_data['state']
+    
 
     if type(return_data['items']) != list:
         return_data['items'] = [return_data['items']]

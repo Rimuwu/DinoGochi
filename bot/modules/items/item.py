@@ -58,8 +58,10 @@ def load_items_names() -> dict:
 
 items_names = load_items_names()
 
-def get_name(item_id: str, lang: str='en', abilities: dict = {}) -> str:
+def get_name(item_id: str, lang: str='en', abilities: dict | None = None) -> str:
     """Получение имени предмета"""
+    if abilities is None: abilities = {}
+    
     name = ''
 
     if 'endurance' in abilities:
@@ -93,7 +95,7 @@ def get_description(item_id: str, lang: str='en') -> str:
         description = items_names[item_id][lang].get('description', '')
     return description
 
-def get_item_dict(item_id: str, abilities: dict = {}) -> dict:
+def get_item_dict(item_id: str, abilities: dict | None = None) -> dict:
     ''' Создание словаря, хранящийся в инвентаре пользователя.\n
 
         Примеры: 
@@ -105,6 +107,8 @@ def get_item_dict(item_id: str, abilities: dict = {}) -> dict:
                 >>> f(30, {'uses': 10})
                 >>> {'item_id': "30", 'abilities': {'uses': 10}}
     '''
+    if abilities is None: abilities = {}
+    
     d_it = {'item_id': item_id}
     data = get_data(item_id)
 
@@ -154,9 +158,11 @@ def is_standart(item: dict) -> bool:
             else: return True
         else: return True
 
-async def AddItemToUser(userid: int, item_id: str, count: int = 1, abilities: dict = {}):
+async def AddItemToUser(userid: int, item_id: str, count: int = 1, abilities: dict | None = None):
     """Добавление стандартного предмета в инвентарь
     """
+    if abilities is None: abilities = {}
+    
     assert count >= 0, f'AddItemToUser, count == {count}'
     log(f"userid {userid}, item_id {item_id}, count {count}", 0, "Add item")
 
@@ -210,13 +216,15 @@ async def AddListItems(userid: int, items_l: list[dict]):
     return res
 
 async def RemoveItemFromUser(userid: int, item_id: str, 
-            count: int = 1, abilities: dict = {}):
+            count: int = 1, abilities: dict | None = None):
     """Удаление предмета из инвентаря
        return
        True - всё нормально, удалил
 
        False - предмета нет или количесвто слишком большое
     """
+    if abilities is None: abilities = {}
+
     assert count >= 0, f'RemoveItemFromUser, count == {count}'
     log(f"userid {userid}, item_id {item_id}, count {count}", 0, "Remove item")
 
@@ -354,9 +362,11 @@ async def CheckItemFromUser(userid: int, item_data: dict, count: int = 1) -> dic
         return {"status": False, "item": find_res, 'difference': difference}
 
 async def CheckCountItemFromUser(userid: int, count: int, item_id: str, 
-                           abilities: dict = {}):
+                           abilities: dict | None = None):
     """ Проверяет не конкретный документ на count а всю базу, возвращая ответ на вопрос - Есть ли у человек count предметов
     """
+    if abilities is None: abilities = {}
+    
     item = get_item_dict(item_id, abilities)
     max_count = 0
     find_items = await items.find({'owner_id': userid, 'items_data': item}, 
@@ -367,9 +377,11 @@ async def CheckCountItemFromUser(userid: int, count: int, item_id: str,
     if count > max_count: return False
     return True
 
-async def check_and_return_dif(userid: int, item_id: str, abilities: dict = {}):
+async def check_and_return_dif(userid: int, item_id: str, abilities: dict | None = None):
     """ Проверяет не конкретный документ на count а всю базу, возвращая количество
     """
+    if abilities is None: abilities = {}
+    
     item = get_item_dict(item_id, abilities)
     max_count = 0
     find_items = await items.find({'owner_id': userid, 'items_data': item}, 

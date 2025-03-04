@@ -70,7 +70,7 @@ async def hoarder(message: Message):
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('hoarder'), IsPrivateChat())
-async def hoarder_calb(call: CallbackQuery, state):
+async def hoarder_calb(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
     userid = call.from_user.id

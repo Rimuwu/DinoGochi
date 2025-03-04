@@ -1,59 +1,53 @@
 
-from asyncio import sleep
-from re import S
-import stat
-from typing import Union
+
 from bot.const import GAME_SETTINGS as gs
 from bot.exec import main_router, bot
 from bot.modules.data_format import chunk_pages, seconds_to_str, str_to_seconds
 from bot.modules.decorators import HDCallback, HDMessage
+from bot.modules.get_state import get_state
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_tools import GeneralStates
-from aiogram.types import CallbackQuery, Message, InputMedia
-from aiogram.fsm.context import FSMContext
+from aiogram.types import CallbackQuery, Message
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
+from bot.filters.translated_text import Text
+
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command, StateFilter
 
-async def cancel(message, text:str = "❌", state: Union[FSMContext, None] = None):
+async def cancel(message, text:str = "❌"):
     lang = await get_lang(message.from_user.id)
     if text:
         await bot.send_message(message.chat.id, text, 
             reply_markup= await m(message.from_user.id, 'last_menu', lang))
-    if state: 
-        await state.clear()
-        await state.set_data({})
-    # delete_state(message.from_user.id, message.chat.id)
-    # await state.reset_data(message.from_user.id,  message.chat.id)
+    
+    state = await get_state(message.from_user.id, message.chat.id)
+    if state: await state.clear()
 
 @HDMessage
 @main_router.message(Text('buttons_name.cancel'), IsPrivateChat())
-async def cancel_m(message: Message, state: FSMContext):
+async def cancel_m(message: Message):
     """Состояние отмены
     """
-    await cancel(message, state=state)
+    await cancel(message)
 
 @HDMessage
 @main_router.message(Command(commands=['cancel']), IsPrivateChat())
-async def cancel_c(message: Message, state: FSMContext):
+async def cancel_c(message: Message):
     """Команда отмены
     """
-    await cancel(message, state=state)
+    await cancel(message)
 
 @HDMessage
 @main_router.message(Command(commands=['state']))
-async def get_state(message: Message, state: FSMContext):
+async def get_state_cm(message: Message):
     """Состояние
     """
+    
+    state = await get_state(message.from_user.id, message.chat.id)
     if state is None:
         await bot.send_message(message.chat.id, 'None')
     else:
@@ -66,12 +60,13 @@ async def get_state(message: Message, state: FSMContext):
 
 @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseDino), IsAuthorizedUser())
-async def ChoseDino(message: Message, state: FSMContext):
+async def ChoseDino(message: Message):
     """Общая функция для выбора динозавра
     """
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
+    state = await get_state(userid, message.chat.id)
     if data := await state.get_data():
         ret_data = data['dino_names']
         func = data['function']
@@ -91,13 +86,13 @@ async def ChoseDino(message: Message, state: FSMContext):
 
 @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseInt), IsAuthorizedUser())
-async def ChooseInt(message: Message, state: FSMContext):
+async def ChooseInt(message: Message):
     """Общая функция для ввода числа
     """
-    userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     number = 0
 
+    state = await get_state(message.from_user.id, message.chat.id)
     if data := await state.get_data():
         min_int: int = data['min_int']
         max_int: int = data['max_int']
@@ -130,12 +125,12 @@ async def ChooseInt(message: Message, state: FSMContext):
 
 @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseString), IsAuthorizedUser())
-async def ChooseString(message: Message, state: FSMContext):
+async def ChooseString(message: Message):
     """Общая функция для ввода сообщения
     """
-    userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
+    state = await get_state(message.from_user.id, message.chat.id)
     if data := await state.get_data():
         max_len: int = data['max_len']
         min_len: int = data['min_len']
@@ -164,13 +159,13 @@ async def ChooseString(message: Message, state: FSMContext):
 
 @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseConfirm), IsAuthorizedUser())
-async def ChooseConfirm(message: Message, state: FSMContext):
+async def ChooseConfirm(message: Message):
     """Общая функция для подтверждения
     """
-    userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     content = str(message.text)
 
+    state = await get_state(message.from_user.id, message.chat.id)
     if data := await state.get_data():
         func = data['function']
         transmitted_data = data['transmitted_data']
@@ -203,12 +198,12 @@ async def ChooseConfirm(message: Message, state: FSMContext):
 
 @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseOption), IsAuthorizedUser())
-async def ChooseOption(message: Message, state: FSMContext):
+async def ChooseOption(message: Message):
     """Общая функция для выбора из предложенных вариантов
     """
-    userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
+    state = await get_state(message.from_user.id, message.chat.id)
     if data := await state.get_data():
         options: dict = data['options']
         func = data['function']
@@ -227,11 +222,11 @@ async def ChooseOption(message: Message, state: FSMContext):
 
 @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseCustom), IsAuthorizedUser())
-async def ChooseCustom(message: Message, state: FSMContext):
+async def ChooseCustom(message: Message):
     """Кастомный обработчик, принимает данные и отправляет в обработчик
     """
-    userid = message.from_user.id
 
+    state = await get_state(message.from_user.id, message.chat.id)
     if data := await state.get_data():
         custom_handler = data['custom_handler']
         func = data['function']
@@ -249,13 +244,14 @@ async def ChooseCustom(message: Message, state: FSMContext):
 
 # @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChoosePagesState), IsAuthorizedUser())
-async def ChooseOptionPages(message: Message, state: FSMContext):
+async def ChooseOptionPages(message: Message):
     """Кастомный обработчик, принимает данные и отправляет в обработчик
     """
     userid = message.from_user.id
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
 
+    state = await get_state(message.from_user.id, message.chat.id)
     if data := await state.get_data():
         func = data['function']
         update_page = data['update_page']
@@ -333,11 +329,10 @@ async def ChooseOptionPages(message: Message, state: FSMContext):
 @HDCallback
 @main_router.callback_query(StateFilter(GeneralStates.ChooseInline), IsAuthorizedUser(), 
                             F.data.startswith('chooseinline'))
-async def ChooseInline(callback: CallbackQuery, state: FSMContext):
+async def ChooseInline(callback: CallbackQuery):
     code = callback.data.split()
-    chatid = callback.message.chat.id
-    userid = callback.from_user.id
 
+    state = await get_state(message.from_user.id, message.chat.id)
     if data := await state.get_data():
         if not data:
             log(f'ChooseInline data corrupted', lvl=2, prefix='ChooseInline')
@@ -373,13 +368,13 @@ async def ChooseInline(callback: CallbackQuery, state: FSMContext):
 
 @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseTime), IsAuthorizedUser())
-async def ChooseTime(message: Message, state: FSMContext):
+async def ChooseTime(message: Message):
     """Общая функция для ввода времени
     """
-    userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     number = 0
 
+    state = await get_state(message.from_user.id, message.chat.id)
     if data := await state.get_data():
         min_int: int = data['min_int']
         max_int: int = data['max_int']
@@ -412,11 +407,12 @@ async def ChooseTime(message: Message, state: FSMContext):
 
 @HDMessage
 @main_router.message(F.photo, IsAuthorizedUser(), StateFilter(GeneralStates.ChooseImage))
-async def ChooseImage(message: Message, state: FSMContext):
+async def ChooseImage(message: Message):
     """Общая функция для получения изображения
     """
     userid = message.from_user.id
 
+    state = await get_state(message.from_user.id, message.chat.id)
     if data := await state.get_data():
         func = data['function']
         transmitted_data = data['transmitted_data']
@@ -429,11 +425,11 @@ async def ChooseImage(message: Message, state: FSMContext):
 
 @HDMessage
 @main_router.message(IsAuthorizedUser(), StateFilter(GeneralStates.ChooseImage))
-async def ChooseImage_0(message: Message, state: FSMContext):
+async def ChooseImage_0(message: Message):
     """Общая функция для получения изображения
     """
-    userid = message.from_user.id
 
+    state = await get_state(message.from_user.id, message.chat.id)
     if message.text == '0':
         if data := await state.get_data():
             func = data['function']

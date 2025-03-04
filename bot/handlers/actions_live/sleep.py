@@ -101,7 +101,7 @@ async def end_choice(option: str, transmitted_data: dict):
 
 @HDMessage
 @main_router.message(Text('commands_name.actions.put_to_bed'), DinoPassStatus())
-async def put_to_bed(message: Message, state: FSMContext):
+async def put_to_bed(message: Message):
     """Уложить спать динозавра
     """
     userid = message.from_user.id

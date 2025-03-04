@@ -1,11 +1,10 @@
 
 
-from copy import deepcopy
-from operator import add
+
 from typing import Any
 from bot.const import GAME_SETTINGS
 from bot.dbmanager import mongo_client
-from bot.modules.data_format import list_to_inline, random_code, random_data, seconds_to_str
+from bot.modules.data_format import deepcopy, list_to_inline, random_code, random_data, seconds_to_str
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.items.item import AddItemToUser, DeleteAbilItem, UseAutoRemove, check_and_return_dif, get_item_dict, get_items_names, get_name, get_data, item_code, item_info
 from bot.modules.items.items_groups import get_group
@@ -175,15 +174,12 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
             'count': count,
             'item': item
         }
-
-        state = await get_state(userid, chatid)
         await ChooseStepState(end_choose_items, userid, chatid, lang, steps, transmitted_data)
 
     else:
         data = {
             "choosed_items": choosed_items
         }
-
         await check_items_in_inventory(materials, item, count, 
                                        userid, chatid, lang, data)
 
@@ -326,7 +322,6 @@ async def check_items_in_inventory(materials, item, count,
             'item': item
         }
 
-        state = await get_state(userid, chatid)
         await ChooseStepState(pre_check, userid, chatid, lang, 
                               steps, transmitted_data)
 

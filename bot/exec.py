@@ -1,5 +1,5 @@
 # Исполнитель бота
-from bot.dbmanager import check, mongo_client
+from bot.dbmanager import check
 from aiogram import Bot, Dispatcher, Router 
 from aiogram.fsm.storage.memory import MemoryStorage
 

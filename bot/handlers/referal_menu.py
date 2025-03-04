@@ -94,7 +94,7 @@ async def custom_handler(message: Message, transmitted_data: dict):
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('generate_referal'), IsPrivateChat())
-async def generate_code(call: CallbackQuery, state):
+async def generate_code(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id
     lang = await get_lang(call.from_user.id)
@@ -163,7 +163,7 @@ async def check_code(code: str, transmitted_data: dict, send: bool = True):
 
 @HDMessage
 @main_router.message(Text('commands_name.referal.enter_code'), IsAuthorizedUser(), IsPrivateChat())
-async def enter_code(message: Message, state):
+async def enter_code(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id

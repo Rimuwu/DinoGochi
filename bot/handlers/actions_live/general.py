@@ -83,7 +83,7 @@ async def invite_adp(friend, transmitted_data: dict):
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('invite_to_action'), IsPrivateChat())
-async def invite_to_action(callback: CallbackQuery, state: FSMContext):
+async def invite_to_action(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id
     userid = callback.from_user.id
@@ -98,7 +98,7 @@ async def invite_to_action(callback: CallbackQuery, state: FSMContext):
     if dino:
         res = await long_activity.find_one({'dino_id': dino['_id'], 'activity_type': 'game'}, comment='invite_to_action_res')
         if res: 
-            await start_friend_menu(invite_adp, state, userid, chatid, lang, True, transmitted_data)
+            await start_friend_menu(invite_adp, userid, chatid, lang, True, transmitted_data)
 
             text = t('invite_to_action', lang)
             await bot.send_message(chatid, text, parse_mode='Markdown')
@@ -128,7 +128,7 @@ async def join_adp(dino: Dino, transmitted_data):
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('join_to_action'))
-async def join(callback: CallbackQuery, state: FSMContext):
+async def join(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id
     userid = callback.from_user.id

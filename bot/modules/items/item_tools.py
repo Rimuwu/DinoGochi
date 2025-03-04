@@ -95,7 +95,6 @@ async def exchange_item(userid: int, chatid: int, item: dict,
              }
         ]
 
-        state = await get_state(userid, chatid)
         transmitted_data = {'item': item, 'username': username}
         await ChooseStepState(exchange, userid, 
                                       chatid, lang, steps, transmitted_data)
@@ -628,7 +627,6 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                         }
                     })
 
-            state = await get_state(userid, chatid)
             await ChooseStepState(adapter_function, userid, chatid, 
                                   lang, steps, 
                                 transmitted_data=transmitted_data)
@@ -683,7 +681,6 @@ async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
                     }
                 })
 
-        state = await get_state(userid, chatid)
         await ChooseStepState(delete_action, userid, chatid, lang, steps, 
                             transmitted_data=transmitted_data)
     else:

@@ -1,11 +1,6 @@
-
-from asyncio import sleep
-from sre_parse import State
-from typing import Union
-
-from bot import filters
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
+from bot.modules.get_state import get_state
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import incubation_egg
@@ -40,16 +35,17 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
 
-async def cancel(message, state: Union[FSMContext, None] = None):
+async def cancel(message):
     lang = await get_lang(message.from_user.id)
     await bot.send_message(message.chat.id, "❌", 
           reply_markup= await m(message.from_user.id, 'last_menu', lang))
-
+    
+    state = await get_state(message.from_user.id, message.chat.id)
     if state: await state.clear()
 
 @HDMessage
 @main_router.message(Text('commands_name.profile.inventory'), IsAuthorizedUser(), NothingState(), IsPrivateChat())
-async def open_inventory(message: Message, state):
+async def open_inventory(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -58,7 +54,7 @@ async def open_inventory(message: Message, state):
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('inventory_start'), IsPrivateChat())
-async def start_callback(call: CallbackQuery, state):
+async def start_callback(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id
     lang = await get_lang(call.from_user.id)
@@ -67,11 +63,12 @@ async def start_callback(call: CallbackQuery, state):
 
 @HDMessage
 @main_router.message(StateFilter(InventoryStates.Inventory), IsAuthorizedUser(), IsPrivateChat())
-async def inventory(message: Message, state: FSMContext):
+async def inventory(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
     content = message.text
 
+    state = await get_state(userid, chatid)
     if data := await state.get_data():
         pages = data['pages']
         items_data = data['items_data']
@@ -97,7 +94,7 @@ async def inventory(message: Message, state: FSMContext):
         settings['page'] = page
         await state.update_data(settings=settings, main_message=0)
 
-        await swipe_page(chatid, state)
+        await swipe_page(chatid, userid)
         await bot.delete_message(chatid, main_message)
         await bot.delete_message(chatid, message.message_id)
 
@@ -112,11 +109,12 @@ async def inventory(message: Message, state: FSMContext):
 @HDCallback
 @main_router.callback_query(StateFilter(InventoryStates.Inventory), 
                             F.data.startswith('inventory_menu'), IsPrivateChat())
-async def inv_callback(call: CallbackQuery, state: FSMContext):
+async def inv_callback(call: CallbackQuery):
     call_data = call.data.split()[1]
     chatid = call.message.chat.id
     userid = call.from_user.id
 
+    state = await get_state(userid, chatid)
     if data := await state.get_data():
         changing_filter = data['settings']['changing_filters']
         sett = data['settings']
@@ -127,14 +125,14 @@ async def inv_callback(call: CallbackQuery, state: FSMContext):
         if not ('delete_search' in data['settings'] and data['settings']['delete_search']):
 
             await state.set_state(InventoryStates.InventorySearch)
-            await search_menu(chatid, state)
+            await search_menu(chatid, userid)
 
     elif call_data == 'clear_search' and changing_filter:
         # Очищает поиск
         pages, _ = await generate(items, *sett['view'])
 
         await state.update_data(items=[], pages=pages)
-        await swipe_page(chatid, state)
+        await swipe_page(chatid, userid)
 
     elif call_data == 'filters' and changing_filter:
         # Активирует настройку филтров
@@ -155,14 +153,14 @@ async def inv_callback(call: CallbackQuery, state: FSMContext):
             data['settings']['page'] = page
             await state.update_data(settings=data['settings'])
 
-            await swipe_page(chatid, state)
+            await swipe_page(chatid, userid)
 
     elif call_data == 'clear_filters' and changing_filter:
         # Очищает фильтры
         pages, _ = await generate(items, *sett['view'])
 
         await state.update_data(items=[], pages=pages, filters=[])
-        await swipe_page(chatid, state)
+        await swipe_page(chatid, userid)
     
     elif call_data == 'remessage':
         # Переотправка сообщения
@@ -171,7 +169,7 @@ async def inv_callback(call: CallbackQuery, state: FSMContext):
 
         await state.update_data(main_message=0)
 
-        await swipe_page(chatid, state)
+        await swipe_page(chatid, userid)
         await bot.delete_message(chatid, main_message)
 
 @HDCallback
@@ -231,25 +229,27 @@ async def item_callback(call: CallbackQuery):
 @HDCallback
 @main_router.callback_query(StateFilter(InventoryStates.InventorySearch), 
                             F.data.startswith('inventory_search'), IsPrivateChat())
-async def search_callback(call: CallbackQuery, state: FSMContext):
+async def search_callback(call: CallbackQuery):
     call_data = call.data.split()[1]
     chatid = call.message.chat.id
     userid = call.from_user.id
 
+    state = await get_state(userid, chatid)
     if call_data == 'close':
         # Данная функция не открывает новый инвентарь, а возвращает к меню
         await state.set_state(InventoryStates.Inventory)
-        await swipe_page(chatid, state)
+        await swipe_page(chatid, userid)
 
 @HDMessage
 @main_router.message(StateFilter(InventoryStates.InventorySearch), IsAuthorizedUser(), IsPrivateChat())
-async def search_message(message: Message, state: FSMContext):
+async def search_message(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
     content = message.text
     searched = []
 
+    state = await get_state(userid, chatid)
     if data := await state.get_data():
         items_data = data['items_data']
         sett = data['settings']
@@ -274,7 +274,7 @@ async def search_message(message: Message, state: FSMContext):
         data['settings']['page'] = 0
         await state.update_data(items=searched, pages=pages, settings=data['settings'])
 
-        await swipe_page(chatid, state)
+        await swipe_page(chatid, userid)
     else:
         await bot.send_message(userid, t('inventory.search_null', lang))
 
@@ -282,11 +282,13 @@ async def search_message(message: Message, state: FSMContext):
 @HDCallback
 @main_router.callback_query(StateFilter(InventoryStates.InventorySetFilters), 
                             F.data.startswith('inventory_filter'), IsPrivateChat())
-async def filter_callback(call: CallbackQuery, state):
+async def filter_callback(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
     userid = call.from_user.id
+
     lang = await get_lang(call.from_user.id)
+    state = await get_state(userid, chatid)
 
     if call_data[1] == 'close':
         # Данная функция не открывает новый инвентарь, а возвращает к меню
@@ -308,12 +310,12 @@ async def filter_callback(call: CallbackQuery, state):
         if not pages:
             await bot.send_message(chatid, t('inventory.filter_null', lang))
             await state.set_state(InventoryStates.Inventory)
-            await swipe_page(chatid, state)
+            await swipe_page(chatid, userid)
 
         else:
             await state.set_state(InventoryStates.Inventory)
             await state.update_data(pages=pages)
-            await swipe_page(chatid, state)
+            await swipe_page(chatid, userid)
 
     elif call_data[1] == 'filter':
         if data := await state.get_data():
@@ -354,7 +356,7 @@ async def book(call: CallbackQuery):
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('ns_craft'), IsPrivateChat())
-async def ns_craft(call: CallbackQuery, state):
+async def ns_craft(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
     userid = call.from_user.id
@@ -478,7 +480,7 @@ async def ns_end(count, transmitted_data: dict):
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('buyer'), IsPrivateChat())
-async def buyer(call: CallbackQuery, state):
+async def buyer(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
     userid = call.from_user.id
@@ -539,11 +541,12 @@ async def buyer_end(count, transmitted_data: dict):
 @HDCallback
 @main_router.callback_query(StateFilter(InventoryStates.Inventory), IsAuthorizedUser(), 
                             F.data.startswith('inventoryinline'))
-async def InventoryInline(callback: CallbackQuery, state):
+async def InventoryInline(callback: CallbackQuery):
     code = callback.data.split()
     chatid = callback.message.chat.id
     userid = callback.from_user.id
 
+    state = await get_state(userid, chatid)
     if data := await state.get_data():
         settings = data.get('settings')
         transmitted_data = data.get('transmitted_data')

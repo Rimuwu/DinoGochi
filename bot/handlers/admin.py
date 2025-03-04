@@ -36,7 +36,7 @@ langs = DBconstructor(mongo_client.user.lang)
 
 @HDMessage
 @main_router.message(Command(commands=['create_tracking']), IsAdminUser())
-async def create_tracking(message: Message, state):
+async def create_tracking(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -64,7 +64,7 @@ async def create_track(name, transmitted_data: dict):
 
 @HDMessage
 @main_router.message(Command(commands=['tracking']), IsAdminUser())
-async def tracking(message: Message, state):
+async def tracking(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -107,16 +107,16 @@ async def track(call: CallbackQuery):
 
 @HDMessage
 @main_router.message(Command(commands=['create_promo']), IsAdminUser())
-async def create_promo(message: Message, state):
+async def create_promo(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    await create_promo_start(userid, chatid, lang, state)
+    await create_promo_start(userid, chatid, lang)
 
 @HDMessage
 @main_router.message(Command(commands=['promos']), IsAdminUser())
-async def promos(message: Message, state):
+async def promos(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -250,7 +250,7 @@ async def add_premium(message):
 
 @HDMessage
 @main_router.message(Command(commands=['copy_m']), IsAdminUser())
-async def copy_m(message, state):
+async def copy_m(message):
 
     """
     Аргументы: /copy_m lang

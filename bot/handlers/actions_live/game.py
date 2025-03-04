@@ -35,8 +35,7 @@ dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 async def start_game_ent(userid: int, chatid: int, 
-                         lang: str, dino: Dino, 
-                         state: FSMContext,
+                         lang: str, dino: Dino,
                          friend: int = 0, join: bool = True, 
                          join_dino: str = ''):
     """ Запуск активности игра
@@ -193,14 +192,14 @@ async def game_start(return_data: dict,
 
 @HDMessage
 @main_router.message(Text('commands_name.actions.entertainments'), DinoPassStatus())
-async def entertainments(message: Message, state: FSMContext):
+async def entertainments(message: Message):
     userid = message.from_user.id # type: ignore
     lang = await get_lang(message.from_user.id) # type: ignore
     chatid = message.chat.id
 
     user = await User().create(userid)
     dino = await user.get_last_dino()
-    if dino: await start_game_ent(userid, chatid, lang, dino, state)
+    if dino: await start_game_ent(userid, chatid, lang, dino)
 
 @HDMessage
 @main_router.message(Text('commands_name.actions.stop_game'))

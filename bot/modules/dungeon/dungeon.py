@@ -34,11 +34,13 @@ class DungPlayer:
         return str(self.__dict__)
 
     async def create(self, user_id:int, message:int, 
-                     coins:int = 0, dinos:list[ObjectId] = [], 
-                     inventory:list[dict] = []):
+                     coins:int = 0, dinos:list[ObjectId] | None = None, 
+                     inventory:list[dict] | None = None):
+        if dinos is None: dinos = []
+        if inventory is None: inventory = []
+        
         user = await users.find_one({"userid": user_id}, comment='DungPlayer_create')
         if user:
-            teleuser = await bot.get_chat_member(user_id, user_id)
 
             self._id = user['_id']
             self.message = message

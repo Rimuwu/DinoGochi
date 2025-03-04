@@ -123,7 +123,7 @@ async def faq_buttons(call: CallbackQuery):
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('support'))
-async def support_buttons(call: CallbackQuery, state):
+async def support_buttons(call: CallbackQuery):
     action = call.data.split()[1]
     product_key = call.data.split()[2]
     products = GAME_SETTINGS['products']

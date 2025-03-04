@@ -161,7 +161,7 @@ async def stop_work(message: Message):
 @HDMessage
 @main_router.message(Text('commands_name.extraction_actions.mine'), 
                      DinoPassStatus())
-async def mine(message: Message, state: FSMContext):
+async def mine(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
     lang = await user.lang
@@ -205,7 +205,7 @@ async def end_mine(data, transmitted_data: dict):
 @HDMessage
 @main_router.message(StartWith('commands_name.extraction_actions.bank'), 
                      DinoPassStatus())
-async def bank(message: Message, state: FSMContext):
+async def bank(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
     lang = await user.lang
@@ -249,7 +249,7 @@ async def end_bank(data, transmitted_data: dict):
 @HDMessage
 @main_router.message(StartWith('commands_name.extraction_actions.sawmill'), 
                      DinoPassStatus())
-async def sawmill(message: Message, state: FSMContext):
+async def sawmill(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
     lang = await user.lang

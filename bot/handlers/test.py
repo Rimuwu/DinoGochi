@@ -44,7 +44,7 @@ from bot.modules.managment.statistic import get_now_statistic
 from bot.modules.quests import create_quest, quest_ui, save_quest
 from bot.modules.dinosaur.journey import create_event, random_event, activate_event
 
-from bot.modules.market.market import (add_product, create_seller,
+from bot.modules.market.market import (ITEMS, add_product, create_seller,
                                 generate_sell_pages, product_ui, seller_ui)
 from bson.objectid import ObjectId
 from bot.modules.images import create_dino_image, create_dino_image_pst, async_open
@@ -228,8 +228,10 @@ class Form(StatesGroup):
 
 @HDMessage
 @main_router.message(Command(commands=['check_state']))
-async def check(message: Message, state: FSMContext):
+async def check(message: Message):
     
+    
+    state = await get_state(message.from_user.id, message.chat.id)
     await message.answer('ok')
     
     r = await state.get_state()
@@ -238,61 +240,37 @@ async def check(message: Message, state: FSMContext):
 
 
 @main_router.message(Command(commands=['set_state']))
-async def check(message: Message, state: FSMContext):
+async def check(message: Message):
     
     await message.answer('ok')
     
+    state = await get_state(message.from_user.id, message.chat.id)
     r = await state.set_state(Form.name)
-    await state.set_data({'name': 'test', 'func': check, 'class': Form})
+    await state.set_data({'name': message.from_user.id, 'mef': message.chat.id})
     await message.answer(f"{await state.get_state()}")
+
+@main_router.message(Command(commands=['set_state1']))
+async def check(message: Message):
+    
+    await message.answer('ok')
+    
+    state = await get_state(message.from_user.id, message.chat.id)
+    r = await state.set_state(Form.name)
 
 @HDMessage
 @main_router.message(Command(commands=['res_state']), StateFilter(Form.name))
-async def check(message: Message, state: FSMContext):
+async def check(message: Message):
     
+    state = await get_state(message.from_user.id, message.chat.id)
     await message.answer('ok')
     await state.clear()
 
 @HDMessage
 @main_router.message(Command(commands=['upd_state']), StateFilter(Form.name))
-async def check(message: Message, state: FSMContext):
-    
+async def check(message: Message):
+    state = await get_state(message.from_user.id, message.chat.id)
     await state.update_data(name='new_test')
     
     r = await state.get_state()
     d = await state.get_data()
     await message.answer(f"{r} {d}")
-
-# @main_router.message(Command(commands=['check_state']))
-# @HDMessage
-# async def check_n(message: Message, state: FSMContext):
-    
-#     r = await state.get_state()
-#     await message.answer(f"{r}")
-
-@HDMessage
-@main_router.message(Command(commands=['testt']))
-async def check(message: Message):
-
-    state = await get_state(message.from_user.id, message.chat.id)
-
-    await message.answer(f"{await state.get_state()}")
-
-@HDMessage
-@main_router.message(Command(commands=['ttt']))
-async def check(message: Message):
-
-
-    inl = inline_menu('dino_profile', 'en', dino_alt_id_markup='werwr')
-    await message.answer('ok', message_effect_id='5104841245755180586', reply_markup=inl)
-    
-
-@main_router.message(Command(commands=['add_user_data']), IsAdminUser())
-async def add_user(message: Message):
-
-    new_user = {
-        "name": "",
-        "avatar": ""
-    }
-    await users.update_many({}, {"$set": new_user}, upsert=True)
-    await bot.send_message(message.from_user.id,"suf!")

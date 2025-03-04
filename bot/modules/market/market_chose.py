@@ -49,7 +49,7 @@ async def edit_price(new_price: int, transmitted_data: dict):
 
     await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang), parse_mode='Markdown')
 
-async def prepare_edit_price(userid: int, chatid: int, lang: str, productid: str, state):
+async def prepare_edit_price(userid: int, chatid: int, lang: str, productid: str):
     transmitted_data = {
         'productid': productid,
     }
@@ -113,7 +113,7 @@ async def add_stock(in_stock: int, transmitted_data: dict):
 
     await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang), parse_mode='Markdown')
 
-async def prepare_add(userid: int, chatid: int, lang: str, productid: str, state):
+async def prepare_add(userid: int, chatid: int, lang: str, productid: str):
 
     transmitted_data = {
         'productid': productid,
@@ -141,7 +141,7 @@ async def delete_all(_: bool, transmitted_data: dict):
     text, markup, image = await seller_ui(userid, lang, True)
     await bot.edit_message_caption(None, caption=text, chat_id=chatid, message_id=message_id, parse_mode='Markdown', reply_markup=markup)
 
-async def prepare_delete_all(userid: int, chatid: int, lang: str, message_id: int, state):
+async def prepare_delete_all(userid: int, chatid: int, lang: str, message_id: int):
     transmitted_data = {
         'message_id': message_id,
     }
@@ -172,7 +172,7 @@ async def edit_name(name: str, transmitted_data: dict):
         await bot.send_message(chatid, t('seller.confirm_delete_all', lang), 
                                reply_markup= await m(userid, 'last_menu', lang))
 
-async def pr_edit_name(userid: int, chatid: int, lang: str, message_id: int, state):
+async def pr_edit_name(userid: int, chatid: int, lang: str, message_id: int):
     transmitted_data = {
         'message_id': message_id
     }
@@ -198,7 +198,7 @@ async def edit_description(description: str, transmitted_data: dict):
         await bot.edit_message_caption(None, caption=text, chat_id=chatid, message_id=message_id, parse_mode='Markdown', reply_markup=markup)
     except: pass
 
-async def pr_edit_description(userid: int, chatid: int, lang: str, message_id: int, state):
+async def pr_edit_description(userid: int, chatid: int, lang: str, message_id: int):
     transmitted_data = {
         'message_id': message_id
     }
@@ -235,7 +235,7 @@ async def edit_image(new_image: str, transmitted_data: dict):
     await bot.edit_message_media(chat_id=chatid, message_id=message_id, reply_markup=markup,
                 media=InputMediaPhoto(media=image, caption=text, parse_mode='Markdown'))
 
-async def pr_edit_image(userid: int, chatid: int, lang: str, message_id: int, state):
+async def pr_edit_image(userid: int, chatid: int, lang: str, message_id: int):
     transmitted_data = {
         'message_id': message_id
     }
@@ -265,7 +265,7 @@ async def end_buy(unit: int, transmitted_data: dict):
             await bot.delete_message(chatid, messageid)
 
 async def buy_item(userid: int, chatid: int, lang: str, product: dict, name: str, 
-                   messageid: int, state):
+                   messageid: int):
     """ Покупка предмета
     """
     user = await users.find_one({'userid': userid}, comment='buy_item_user')
@@ -328,7 +328,7 @@ async def promotion(_: bool, transmitted_data: dict):
         await bot.edit_message_reply_markup(None, chatid, message_id, 
                                             reply_markup=markup)
 
-async def promotion_prepare(userid: int, chatid: int, lang: str, product_id, message_id: int, state):
+async def promotion_prepare(userid: int, chatid: int, lang: str, product_id, message_id: int):
     """ Включение promotion
     """
     user = await users.find_one({'userid': userid}, comment='promotion_prepare_user')

@@ -16,10 +16,12 @@ users = DBconstructor(mongo_client.user.users)
 items = DBconstructor(mongo_client.items.items)
 
 def dialog_system(name: str, lang: str, 
-                  key: str = 'start', end_keys: list = [], 
+                  key: str = 'start', end_keys: list | None = None, 
                   dialog_name: str = '', **kwargs):
     """ Основаная функция генерации текста для диалога, возвращает статус законченности, текст, клавиатуру, и последний обработанный ключ
     """
+    if end_keys is None: end_keys = []
+
     text, markup = '', None
 
     end_status = False
