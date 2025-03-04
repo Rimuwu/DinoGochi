@@ -24,7 +24,7 @@ async def report_devs_start():
         tasks.append(bot.send_message(channel_id, '✅ Бот запущен!', message_thread_id=int(topic_id)))
     else: 
         tasks.append(bot.send_message(report_id, '✅ Бот запущен!'))
-        
+
     await asyncio.gather(*tasks)
 
 def run():
