@@ -35,12 +35,13 @@ class GeneralStates(StatesGroup):
     ChooseTime = State() # Состояние для ввода времени
     ChooseImage = State() # Состояние для ввода загрузки изображения
 
-def add_if_not(data: dict, userid: int, chatid: int, lang: str, state: FSMContext):
+def add_if_not(data: dict, userid: int, chatid: int, lang: str, state: FSMContext | None):
     """Добавляет минимальные данные для работы"""
     if 'userid' not in data: data['userid'] = userid
     if 'chatid' not in data: data['chatid'] = chatid
     if 'lang' not in data: data['lang'] = lang
-    if 'state' not in data: data['state'] = state
+    if 'state' not in data: 
+        if state: data['state'] = state
     return data
 
 async def ChooseDinoState(function, 
@@ -478,13 +479,14 @@ chooses = {
     'image': ChooseImageState
 }
 
-def prepare_steps(steps: list, userid: int, chatid: int, lang: str, state: FSMContext):
+def prepare_steps(steps: list, userid: int, chatid: int, lang: str, 
+                  state: FSMContext | None = None):
     for step in steps:
         if step['type'] in chooses:
             step['function'] = chooses[step['type']]
 
             step['data'] = dict(add_if_not(
-                step['data'], userid, chatid, lang, state))
+                step['data'], userid, chatid, lang, None))
         elif step['type'] == 'update_data': pass
             # В данных уже должен быть ключ function
             # function получает transmitted_data
