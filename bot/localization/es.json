@@ -969,7 +969,7 @@
             },
             "transport_egg": {
                 "name": "🦖 Huevo de transporte",
-                "description": "Un huevo para transportar a un dinosaurio."
+                "description": "Un huevo para transportar a un dinosaurio. Uso: Si no hay dinosaurio, coloca el dinosaurio y congélalo. Si hay un dinosaurio: saca y descongela el dinosaurio. Se elimina después de 1 ciclo de uso."
             }
         },
         "notifications": {

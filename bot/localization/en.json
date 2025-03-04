@@ -969,7 +969,7 @@
             },
             "transport_egg": {
                 "name": "🦖 Transport Egg",
-                "description": "An egg for transporting a dinosaur."
+                "description": "An egg for transporting a dinosaur. Use: If there is no dinosaur, place the dinosaur and freeze it. If there is a dinosaur: pulls out and thaws the dinosaur. Deleted after 1 cycle of use."
             }
         },
         "notifications": {

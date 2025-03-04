@@ -969,7 +969,7 @@
             },
             "transport_egg": {
                 "name": "🦖 Telur Transportasi",
-                "description": "Telur untuk mengangkut dinosaurus."
+                "description": "Telur untuk mengangkut dinosaurus. Penggunaan: Jika tidak ada dinosaurus, letakkan dinosaurus dan bekukan. Jika ada dinosaurus: tarik keluar dan cairkan dinosaurus. Dihapus setelah 1 siklus penggunaan."
             }
         },
         "notifications": {
