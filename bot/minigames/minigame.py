@@ -20,9 +20,14 @@ class MiniGame:
         # ======== SESSION ======== #
         self._id = 0
         self.session_key = '0000'
-        self.message_id = 0
         self.chat_id = 0
         self.user_id = 0
+
+        # Дополнительные сообщения в формате {'function_key': message_id}
+        # function_key - просто ключ для чего юзается
+        self.session_masseges = {
+            'main': 0
+        }
 
         # ======== BUTTONS ======== #
         self.ButtonsRegister = {
@@ -87,26 +92,29 @@ class MiniGame:
     # ======== MESSAGE ======== #
     """ Код для генерации собщения и меню """
 
-    async def DeleteMessage(self) -> None:
+    async def DeleteMessage(self, func_key: str = 'main') -> None:
         """ Удаляет сообщение """
-        if self.message_id:
+        message_id = self.session_masseges.get(func_key, 0)
+
+        if message_id:
             try:
                 await bot.delete_message(
                     chat_id=self.chat_id,
-                    message_id=self.message_id
+                    message_id=message_id
                 )
             except: pass
-            self.message_id = 0
+            del self.session_masseges[func_key]
 
-    async def MesageUpdate(self, text, reply_markup) -> None:
+    async def MesageUpdate(self, func_key: str = 'main', text: str = '', reply_markup = None) -> None:
         """ Обновляет сообщение """
+        message_id = self.session_masseges.get(func_key, 0)
 
-        if self.message_id:
+        if message_id:
             try:
                 await bot.edit_message_text(
                     text=text,
                     chat_id=self.chat_id,
-                    message_id=self.message_id,
+                    message_id=message_id,
                     reply_markup=reply_markup
                 )
             except: pass
@@ -116,7 +124,7 @@ class MiniGame:
                 chat_id=self.chat_id,
                 reply_markup=reply_markup
             )
-            self.message_id = msg.message_id
+            self.session_masseges[func_key] = msg.message_id
             await self.Update()
 
     async def MessageGenerator(self) -> None:
