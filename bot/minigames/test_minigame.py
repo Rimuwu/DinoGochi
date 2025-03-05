@@ -14,10 +14,24 @@ class TestMiniGame(MiniGame):
         self.score = 0
         self.max_score = 3
         self.time_i = 0
+        self.max_time = 3
 
         self.ButtonsRegister = {
             "button1": 'button'
         }
+
+        self.ThreadsRegister['timer']['col_repeat'] = 'inf'
+
+    # ======== THREADS ======== #
+    async def timer(self):
+        """ Поток работы таймера """
+        if self.time_i < self.max_time - 1:
+            self.time_i += 1
+            await self.Update()
+            await self.MessageGenerator()
+        else:
+            await self.MessageGenerator(True)
+            await self.EndGame()
 
     # ======== MARKUP ======== #
     """ Код для работы с меню """
@@ -37,10 +51,13 @@ class TestMiniGame(MiniGame):
     async def MessageGenerator(self, end=False) -> None:
         """ Генерирует сообщение """
         if not end:
-            text = f'Score {self.score} - max {self.max_score}'
+            text = f'Score {self.score} - max {self.max_score}\nGame time: {self.time_i * 5}s. / {self.max_time * 5}s.'
             markup = await self.MarkupGenerator()
         else:
-            text = 'Game WIN!'
+            if self.score == self.max_score:
+                text = 'Game WIN!'
+            else:
+                text = 'You LOSE!'
             markup = None
 
         await self.MesageUpdate(text=text, reply_markup=markup)
