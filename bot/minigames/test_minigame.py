@@ -44,7 +44,7 @@ class TestMiniGame(MiniGame):
             text = 'Game WIN!'
             markup = None
 
-        await self.MesageUpdate(text, markup)
+        await self.MesageUpdate(text=text, reply_markup=markup)
 
     # ======== LOGIC ======== #
     """ Логика миниигры """
