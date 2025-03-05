@@ -10,6 +10,7 @@ from aiogram import types
 from bot.dbmanager import mongo_client
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.minigames.minigame_registartor import Registry
+from aiogram.filters import Command
 
 database = DBconstructor(mongo_client.minigames.online)
 
@@ -22,7 +23,7 @@ async def MiniGame_button(callback: types.CallbackQuery):
     code = callback.data.split(':')[1]
     session = await get_session(code)
     if session:
-        game_id = session['game_id']
+        game_id = session['GAME_ID']
         game = Registry.get_class_object(game_id, code)
 
         if game:

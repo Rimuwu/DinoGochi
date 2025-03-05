@@ -19,6 +19,9 @@ dp.include_router(main_router)
 async def report_devs_start():
     tasks = []
     report_id = conf.bot_report_id
+
+    if report_id == 0: return
+
     if isinstance(report_id, str):
         channel_id, topic_id = report_id.split('_', 1)
         tasks.append(bot.send_message(channel_id, '✅ Бот запущен!', message_thread_id=int(topic_id)))
@@ -45,6 +48,6 @@ def run():
     add_task(report_devs_start) # Уведомление запуска для разрабов
     add_task(dp.start_polling, bots=[bot], 
              allowed_updates=dp.resolve_used_update_types())
-    
+
     log('Все готово! Взлетаем!', prefix='Start')
     run_taskmanager()

@@ -23,7 +23,7 @@ async def _task_executor(function, repeat_time: float, delay: float, **kwargs):
             await function(*bots, **kwargs)
         else:
             try:
-                await function(**kwargs)
+                f = await function(**kwargs)
             except Exception as error:
                 log(prefix=f"{function.__name__} task_error", message=str(error), lvl=4)
     else:
