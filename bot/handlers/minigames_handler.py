@@ -1,40 +1,49 @@
 from aiogram import types
-from aiogram.filters import Command, StateFilter
 from aiogram import F
 from bot.exec import main_router
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.translated_text import StartWith
 from bot.modules.decorators import HDCallback, HDMessage
 
-from bot.minigames.test_minigame import database, MiniGame
+from bot.minigames.test_minigame import TestMiniGame
+from bot.minigames.minigame import database, get_session
+from aiogram import types
+from bot.dbmanager import mongo_client
+from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.minigames.minigame_registartor import Registry
 
+database = DBconstructor(mongo_client.minigames.online)
 
 @HDCallback
 @main_router.callback_query(IsAuthorizedUser(), 
                             F.data.startswith('minigame'))
 async def MiniGame_button(callback: types.CallbackQuery):
+    if not callback.data: return await callback.answer("Ошибка")
+
     code = callback.data.split(':')[1]
-    if code not in database:
-        return await callback.answer("Игра не найдена")
-    
+    session = await get_session(code)
+    if session:
+        game_id = session['game_id']
+        game = Registry.get_class_object(game_id, code)
+
+        if game:
+            await game.ContinueGame(code)
+            func = game.GetButton(callback.data.split(':')[2])
+            if func is not None:
+                await func( callback )
+
     else:
-        game = MiniGame()
-        await game.ContinueGame(code)
-        func = game.ButtonsRegistr(callback.data.split(':')[2])
-        await func(
-            callback
-        )
-    
+        return await callback.answer("Игра не найдена")
+
 @HDMessage
 @main_router.message(Command(commands=['minigame']))
 async def MiniGame_start(message: types.Message):
-    game = MiniGame()
+    game = TestMiniGame()
 
     await game.StartGame(message.chat.id, message.from_user.id)
     return await message.answer("Игра начата")
 
 @HDMessage
 @main_router.message(Command(commands=['database']))
-async def MiniGame_start(message: types.Message):
+async def database_f(message: types.Message):
     
     await message.answer(str(database))
