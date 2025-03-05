@@ -34,15 +34,27 @@ class MiniGame:
             "bn1": "button"
         }
 
+        # ======== TRADES ======== #
+        self.TradesRegister = {
+            "timer": {"repeat": 15, "col_repeat": 1, "function": 'timer',
+                      "last_start": 0
+                      }  # col_repeat - кол-во повторений (или 0)
+        }
+
         self.initialization()
 
     def initialization(self):
-        """Вызывается при инициализации, создан для того, чтобы не переписывать init"""
+        """ Вызывается при инициализации, создан для того, чтобы не переписывать init """
         # ======== DATA ======== #
         pass
 
     def __str__(self):
         return f'{self.GAME_ID}'
+    
+    # ======== TRADES ======== #
+    async def timer(self):
+        """ Поток работы таймера """
+        pass
 
     # ======== START ======== #
     """ Когда объект создан первый раз """
@@ -71,6 +83,7 @@ class MiniGame:
     async def EndGame(self): 
         """ Заканчивает игру """
         await delete_session(self.session_key)
+        Registry.delete_class_object(self.GAME_ID, self.session_key)
 
     # ======== MARKUP ======== #
     """ Код для работы с меню """

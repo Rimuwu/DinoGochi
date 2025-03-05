@@ -3,17 +3,26 @@ from aiogram import types
 from bot.modules.logs import log
 from bot.minigames.minigame import MiniGame
 
-class TestMiniGame(MiniGame):
+class FishingGame(MiniGame):
 
     # ======== CREATE ======== #
     """ Когда обхект класса создан """
 
     def initialization(self):
-        self.GAME_ID = 'TESTMINIGAME'
+        self.GAME_ID = 'FishingGame'
 
         self.score = 0
-        self.max_score = 3
-        self.time_i = 0
+        self.stage = ''
+        self.area = [
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0]
+        ]
+        
+        
 
         self.ButtonsRegister = {
             "button1": 'button'
@@ -47,15 +56,8 @@ class TestMiniGame(MiniGame):
 
     # ======== LOGIC ======== #
     """ Логика миниигры """
-
-    async def __on_score_change(self) -> None:
-        await self.Update()
-
-        if self.score >= self.max_score:
-            await self.EndGame()
-            await self.MessageGenerator(True)
-        else:
-            await self.MessageGenerator()
+    
+    
 
     # ======== BUTTONS ======== #
     """ Функции кнопок """
@@ -63,10 +65,6 @@ class TestMiniGame(MiniGame):
     async def button(self, callback: types.CallbackQuery):
         """ Обработка кнопки """
 
-        self.score += 1
-        log(f"Score: {self.score}")
-        await self.__on_score_change()
 
 
-
-TestMiniGame().RegistryMe() # Регистрация класса в реестре
+FishingGame().RegistryMe() # Регистрация класса в реестре

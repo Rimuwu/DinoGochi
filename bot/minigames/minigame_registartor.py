@@ -11,13 +11,23 @@ class MiniGameRegistrator:
         self.__base_session_objects = {}
         self.__minigames = {}
 
+        self.trades_list = []
+
     def save_class_object(self, game_id: str, 
                           session_id: str, minigame):
+        if game_id not in self.__base_session_objects:
+            self.__base_session_objects[game_id] = {}
         self.__base_session_objects[game_id][session_id] = minigame
 
     def get_class_object(self, game_id: str, session_id: str):
         return self.__base_session_objects[game_id].get(
             session_id, None)
+
+    def delete_class_object(self, game_id: str, session_id: str):
+        if game_id not in self.__base_session_objects: return
+        if session_id not in self.__base_session_objects[game_id]: return
+
+        del self.__base_session_objects[game_id][session_id]
 
     def register_game(self, game):
         self.__base_session_objects[game.GAME_ID] = {}
