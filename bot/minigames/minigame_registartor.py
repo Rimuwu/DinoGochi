@@ -30,9 +30,14 @@ class MiniGameRegistrator:
         del self.__base_session_objects[game_id][session_id]
 
     def register_game(self, game):
+        if game.GAME_ID in self.__minigames:
+            raise f"Game with ID {game.GAME_ID} is already registered."
+            
         self.__base_session_objects[game.GAME_ID] = {}
         self.__minigames[game.GAME_ID] = game
-    
+
+        log(f"Game with ID {game.GAME_ID} has been registered successfully.")
+
     def get_game(self, game_id: str):
         return self.__minigames.get(game_id, None)
 
