@@ -237,7 +237,14 @@ class User:
 
     async def get_avatar(self) -> str:
         """Возвращает аватарку пользователя, если файл устарел - обновляет и возвращает новую."""
-        if not self.avatar or not await bot.get_file(self.avatar):
+        try:
+            file = await bot.get_file(self.avatar)
+            file = None
+        except:
+            self.avatar = ''
+            await self.update({'$set': {'avatar': ''}})
+
+        if not self.avatar or not file:
             # Файла уже не существует, удаляем данные для обновления
             photos = await bot.get_user_profile_photos(self.userid, limit=1)
             if photos.photos:
