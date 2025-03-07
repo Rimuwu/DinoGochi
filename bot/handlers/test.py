@@ -294,15 +294,18 @@ async def check(message: Message):
 
     for owner in ownerss:
         total_owners += 1
-        if not await dinosaurs.count_documents({'_id': owner['dino_id']}):
+        res = await dinosaurs.count_documents({'_id': owner['dino_id']})
+        log(f'{owner["dino_id"]} {res}')
+        if not res:
             await dino_owners.delete_one({'_id': owner['_id']})
 
             deleted_count += 1
-        try:
-            await asyncio.sleep(0.1)
-            await msg.edit_text(f'Deleted noowner dinos: {deleted_count}/{total_owners} / {all_c}')
-        except:
-            await asyncio.sleep(10)
+        
+        if total_owners % 5 == 0:
+            try:
+                await msg.edit_text(f'Deleted noowner dinos: {deleted_count}/{total_owners} / {all_c}')
+            except:
+                await asyncio.sleep(10)
 
     await message.answer('ok')
     
