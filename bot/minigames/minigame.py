@@ -110,8 +110,7 @@ class MiniGame:
         # Отправляем сообщение
         await self.MessageGenerator()
 
-        # Запускаем доп процессы (Последняя строчка в функции)
-        await self.run_threads()
+        asyncio.create_task(self.run_threads())
 
     async def ContinueGame(self, code: str) -> None:
         """ Когда игра продолжается после неожиданного завершения"""
@@ -120,8 +119,7 @@ class MiniGame:
 
         await self.MessageGenerator()
 
-        # Запускаем доп процессы (Последняя строчка в функции)
-        await self.run_threads()
+        asyncio.create_task(self.run_threads())
 
     # ======== END ======== #
     """ Когда игра завершена """
