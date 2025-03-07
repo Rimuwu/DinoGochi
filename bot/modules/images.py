@@ -204,8 +204,7 @@ async def create_eggs_image():
     loop = asyncio.get_running_loop()
     result = await loop.run_in_executor(None, create_eggs_image_pst)
 
-    rss = await result
-    return rss
+    return result
 
 async def create_egg_image_pst(egg_id: int, rare: str='random', 
                                seconds: int=0, lang: str='en'):

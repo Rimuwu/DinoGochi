@@ -121,7 +121,7 @@ async def test_img(message):
     
     t1_list = []
 
-    for i in range(100):
+    for i in range(1000):
         st_t = time()
         res = await create_dino_image_pst(dino.data_id, 
                         {'heal': 0, 'eat': 0, 'energy': 0, 'game': 0, 'mood': 0}, "leg", 1, 30)
@@ -132,7 +132,7 @@ async def test_img(message):
     
     t2_list = []
 
-    for i in range(100):
+    for i in range(1000):
         st_t = time()
         res = await create_dino_image(dino.data_id, 
                         {'heal': 0, 'eat': 0, 'energy': 0, 'game': 0, 'mood': 0}, "leg", 1, 30)
@@ -145,7 +145,7 @@ async def test_img(message):
     t1 = sum(t1_list) / len(t1_list)
     t2 = sum(t2_list) / len(t2_list)
         
-    print("t1", t1, "t2", t2, t1-t2)
+    log(f"t1: {t1:.3f}, t2: {t2:.3f}, diff: {t1-t2:.3f}")
 
 from bot.modules.dungeon.dungeon import Lobby, DungPlayer
 
