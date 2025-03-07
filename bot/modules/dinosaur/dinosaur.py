@@ -121,7 +121,7 @@ class Dino:
         owner = await self.get_owner()
 
         if owner:
-            user = await users.find_one({"userid": owner['owner_id']}, comment='dead_user')
+            user = await users.find_one({"userid": owner['owner_id']}, comment='dead_find_user')
             await users.update_one({"userid": owner['owner_id']}, {'$set': {'settings.last_dino': None}}, comment='dead_last_dino_none')
 
             save_data = {
@@ -151,6 +151,7 @@ class Dino:
 
                 await user_notification(owner['owner_id'], way, 
                             dino_name=self.name)
+
         await self.delete()
 
     async def image(self, profile_view: int=1, custom_url: str=''):
