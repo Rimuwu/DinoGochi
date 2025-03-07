@@ -486,7 +486,7 @@ async def user_info(userid: int, lang: str, secret: bool = False,
     if name is None or name == '': name = user.name
     if not name: name = await user_name(userid)
     return_text += t('user_profile.user', lang,
-                     name = name,
+                     name = escape_markdown(name),
                      userid = userid,
                      premium_status = premium
                      )
