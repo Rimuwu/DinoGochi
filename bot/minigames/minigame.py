@@ -25,7 +25,7 @@ class MiniGame:
         self.thread_tick: int = 5
 
         # ======== SESSION ======== #
-        self._id: int = 0
+        self._id: ObjectId = ObjectId()
         self.session_key: str = '0000'
         self.chat_id: int = 0
         self.user_id: int = 0
@@ -85,7 +85,7 @@ class MiniGame:
                                 thread['col_repeat'] -= 1
 
                                 if thread['col_repeat'] <= 0:
-                                    del self.active_threads[key]
+                                    del self.ThreadsRegister[key]
 
                             await self.Update()
 
@@ -194,7 +194,7 @@ class MiniGame:
         text = f'MesageGenerator {self.session_key}'
         markup = await self.MarkupGenerator()
 
-        await self.MesageUpdate(text, markup)
+        await self.MesageUpdate(text=text, reply_markup=markup)
 
     # ======== LOGIC ======== #
     """ Логика миниигры """
