@@ -14,6 +14,7 @@ from asyncio import sleep as asleep
 
 from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            InlineQueryResultContact, Message, LabeledPrice)
+from bot.modules.dinosaur import dinosaur
 from bot.modules.get_state import get_state
 from bot.modules.images_save import send_SmartPhoto
 
@@ -73,6 +74,8 @@ from bson.objectid import ObjectId
 from bson.son import SON
 
 users = mongo_client.user.users
+dinosaurs = mongo_client.dinosaur.dinosaurs
+dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 
 @main_router.message(Command(commands=['add_item', 'item_add']), IsAdminUser())
 async def command(message):
@@ -274,3 +277,27 @@ async def check(message: Message):
     r = await state.get_state()
     d = await state.get_data()
     await message.answer(f"{r} {d}")
+
+@HDMessage
+@main_router.message(Command(commands=['delete_noowner_dinos']), IsAdminUser())
+async def check(message: Message):
+    
+    deleted_count = 0
+    total_owners = 0
+    all_c = 0
+
+    ownerss = await dino_owners.find({}, {'dino_id': 1})
+    all_c = len(ownerss)
+    
+    msg = await message.answer(f'0/{all_c}')
+    
+    for owner in ownerss:
+        total_owners += 1
+        if not await dinosaurs.count_documents({'_id': owner['dino_id']}):
+            await dino_owners.delete_one({'_id': owner['_id']})
+
+            deleted_count += 1
+        await msg.edit_text(f'Deleted noowner dinos: {deleted_count}/{total_owners} / {all_c}')
+
+    await message.answer('ok')
+    
