@@ -280,32 +280,15 @@ async def check(message: Message):
     await message.answer(f"{r} {d}")
 
 @HDMessage
-@main_router.message(Command(commands=['delete_noowner_dinos']), IsAdminUser())
+@main_router.message(Command(commands=['test_limits']), IsAdminUser())
 async def check(message: Message):
     
-    deleted_count = 0
-    total_owners = 0
-    all_c = 0
+    msg = await message.answer('0')
 
-    ownerss = await dino_owners.find({}, {'dino_id': 1})
-    all_c = len(ownerss)
-    
-    msg = await message.answer(f'0/{all_c}')
-
-    for owner in ownerss:
-        total_owners += 1
-        res = await dinosaurs.count_documents({'_id': owner['dino_id']})
-        log(f'{owner["dino_id"]} {res}')
-        if not res:
-            await dino_owners.delete_one({'_id': owner['_id']})
-
-            deleted_count += 1
+    for i in range(1, 3001):
         
-        if total_owners % 5 == 0:
+        if i % 5 == 0: 
             try:
-                await msg.edit_text(f'Deleted noowner dinos: {deleted_count}/{total_owners} / {all_c}')
-            except:
-                await asyncio.sleep(10)
-
-    await message.answer('ok')
-    
+                await msg.edit_text(str(i))
+            except Exception as e:
+                log(f"ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR {e}")

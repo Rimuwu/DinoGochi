@@ -535,7 +535,6 @@ async def change_name(call: CallbackQuery):
 
 
 async def edit_name(new_name: str, transmitted_data: dict):
-    log(f'edit_name {new_name}')
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
@@ -548,7 +547,6 @@ async def edit_name(new_name: str, transmitted_data: dict):
             }, comment='get_friend_data_res')
 
             if res: break
-    log(f'res {res}')
     if res:
         if friendid == res['userid']: data_path = 'user'
         else: data_path = 'friend'
