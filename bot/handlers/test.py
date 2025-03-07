@@ -144,8 +144,8 @@ async def test_img(message):
     
     t1 = sum(t1_list) / len(t1_list)
     t2 = sum(t2_list) / len(t2_list)
-        
-    log(f"t1: {t1:.3f}, t2: {t2:.3f}, diff: {t1-t2:.3f}")
+    
+    await message.answer(f"t1: {t1:.3f}, t2: {t2:.3f}, diff: {t1-t2:.3f}")
 
 from bot.modules.dungeon.dungeon import Lobby, DungPlayer
 

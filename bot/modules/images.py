@@ -10,6 +10,8 @@ from bot.modules.data_format import seconds_to_str
 from bot.modules.localization import get_data, t
 import asyncio
 
+from bot.modules.logs import log
+
 # from concurrent.futures import ThreadPoolExecutor
 # POOL = ThreadPoolExecutor()
 
@@ -264,6 +266,7 @@ async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', p
        dino_id - id картинки динозавра
        stats - словарь с харрактеристиками динозавра ( {'heal': 0, 'eat': 0, 'energy': 0, 'game': 0, 'mood': 0} )
     """
+    log(f'create_dino_image_pst {dino_id} {quality} {profile_view} {age} {custom_url}', 1, 'IMAGEGENERATOR')
 
     # Получение данных
     dino_data = DINOS['elements'][str(dino_id)]
