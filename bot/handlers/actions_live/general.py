@@ -74,7 +74,9 @@ async def invite_adp(friend, transmitted_data: dict):
     dino_alt = transmitted_data['dino_alt']
 
     if isinstance(friend, dict):
-        log(f'invite_adp error dict {friend}', 3)
+        await send_action_invite(userid, friend['userid'], action, dino_alt, lang)
+        await bot.send_message(chatid, t('back_text.actions_menu', lang), 
+                       reply_markup= await m(userid, 'last_menu', lang))
     else:
         await send_action_invite(userid, friend.id, action, dino_alt, lang)
         # Возврат в меню
