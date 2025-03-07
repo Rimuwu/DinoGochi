@@ -231,7 +231,7 @@ async def check_session(session_key: str) -> bool:
     return bool(res)
 
 async def update_session(_id: ObjectId, data: dict) -> None:
-    upd = await database.update_one({'_id': _id}, 
+    await database.update_one({'_id': _id}, 
                               {'$set': data},
                               comment='update_session_minigame')
     # if upd.modified_count == 0:
