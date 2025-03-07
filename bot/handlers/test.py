@@ -77,6 +77,7 @@ from bson.son import SON
 users = mongo_client.user.users
 dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
+items = DBconstructor(mongo_client.items.items)
 
 @main_router.message(Command(commands=['add_item', 'item_add']), IsAdminUser())
 async def command(message):
@@ -286,9 +287,10 @@ async def check(message: Message):
     msg = await message.answer('0')
 
     for i in range(1, 3001):
-        
-        if i % 5 == 0: 
+
+        if i % 10 == 0: 
             try:
+                itt = await items.find({})
                 await msg.edit_text(str(i))
             except Exception as e:
                 log(f"ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR {e}")
