@@ -8,8 +8,10 @@ class TestMiniGame(MiniGame):
     # ======== CREATE ======== #
     """ Когда обхект класса создан """
 
-    def initialization(self):
-        self.GAME_ID = 'TESTMINIGAME'
+    def get_GAME_ID(self): return 'TESTMINIGAME'
+
+    async def initialization(self):
+        self.DEBUG_MODE = True
 
         self.score = 0
         self.max_score = 3
@@ -20,7 +22,11 @@ class TestMiniGame(MiniGame):
             "button1": 'button'
         }
 
-        self.ThreadsRegister['timer']['col_repeat'] = 'inf'
+        self.ThreadsRegister['timer'] = {
+            "repeat": 5, 
+            "col_repeat": 'inf', "function": 'timer',
+            "last_start": 0
+        }
 
     # ======== THREADS ======== #
     async def timer(self):
@@ -28,9 +34,9 @@ class TestMiniGame(MiniGame):
         if self.time_i < self.max_time - 1:
             self.time_i += 1
             await self.Update()
-            await self.MessageGenerator()
+            await self.MainGenerator()
         else:
-            await self.MessageGenerator(True)
+            await self.MainGenerator(True)
             await self.EndGame()
 
     # ======== MARKUP ======== #
@@ -48,7 +54,7 @@ class TestMiniGame(MiniGame):
     # ======== MESSAGE ======== #
     """ Код для генерации собщения и меню """
 
-    async def MessageGenerator(self, end=False) -> None:
+    async def MainGenerator(self, end=False) -> None:
         """ Генерирует сообщение """
         if not end:
             text = f'Score {self.score} - max {self.max_score}\nGame time: {self.time_i * 5}s. / {self.max_time * 5}s.'
@@ -70,9 +76,9 @@ class TestMiniGame(MiniGame):
 
         if self.score >= self.max_score:
             await self.EndGame()
-            await self.MessageGenerator(True)
+            await self.MainGenerator(True)
         else:
-            await self.MessageGenerator()
+            await self.MainGenerator()
 
     # ======== BUTTONS ======== #
     """ Функции кнопок """
