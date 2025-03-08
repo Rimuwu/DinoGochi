@@ -19,10 +19,11 @@ class MiniGame:
     """ Когда обхект класса создан """
 
     def __init__(self):
-        self.GAME_ID: str = 'BASEMINIGAME' # Этот пункт обязательно должен быть изменён
+        self.GAME_ID: str = self.get_GAME_ID() # Этот пункт обязательно должен быть изменён через перезаписанную функцию GET_GAME_ID
+
         self.active_threads: bool = True # Служит для паузы тасков
         self.__threads_work: bool = True # Служит для отключения цикла
-        self.thread_tick: int = 5
+        self.THREAD_TICK: int = 5
 
         # ======== SESSION ======== #
         self._id: ObjectId = ObjectId()
@@ -30,42 +31,58 @@ class MiniGame:
         self.chat_id: int = 0
         self.user_id: int = 0
 
+        # ======== MESSAGES ======== #
+
         # Дополнительные сообщения в формате {'function_key': message_id}
         # function_key - просто ключ для чего юзается
         self.session_masseges: dict = {
             'main': 0
         }
 
+        # Функции отвечающие за генерацию текста для каждого типа сообщения
+        self.message_generators: dict = {
+            'main': 'MainGenerator' # Код генератора: имя функции
+        }
+
         # ======== BUTTONS ======== #
         self.ButtonsRegister: dict = {
-            "bn1": "button"
+            "bn1": "button" # Код кнопки: имя функции
         }
 
         # ======== THREADS ======== #
         # Желательно, чтобы repeat было кратно 5
 
         self.ThreadsRegister: dict = {
-            "timer": {"repeat": 5, "col_repeat": 1, "function": 'timer',
-                      "last_start": 0
-                      }  # col_repeat - кол-во повторений (или 'inf')
+            "check_session": {"repeat": 30, "col_repeat": 'inf', 
+                              "function": 'check_session',
+                              "last_start": 0}
         }
 
-        self.initialization()
+        self.TIME_START: float = time.time() # Время начала игры
+        self.LAST_ACTION: float = self.TIME_START
 
-    def initialization(self):
+        self.DEBUG_MODE: bool = False # Включение логирования
+
+        asyncio.get_event_loop().create_task(self.initialization())
+
+    def get_GAME_ID(self): return 'BASEMINIGAME'
+
+    async def initialization(self):
         """ Вызывается при инициализации, создан для того, чтобы не переписывать init """
         # ======== DATA ======== #
         pass
 
     def __str__(self):
-        return f'{self.GAME_ID}'
+        return f'{self.GAME_ID} {self.session_key}'
 
     # ======== THREADS ======== #
 
     async def run_threads(self):
         """ Запуск вечного цикла для проверки и выполнения потоков """
         while self.__threads_work:
-            await asyncio.sleep(self.thread_tick)
+            self.D_log(f'run_threads {list(self.ThreadsRegister.keys())}')
+
+            await asyncio.sleep(self.THREAD_TICK)
 
             if self.active_threads:
                 for key, thread in self.ThreadsRegister.items():
@@ -74,10 +91,13 @@ class MiniGame:
                     if (thread['last_start'] + thread['repeat'] < now) and (thread['col_repeat'] == 'inf' or thread['col_repeat'] > 0):
                         function = getattr(self, thread['function'], None)
                         if function:
+
+                            self.D_log(f'start_thread {thread["function"]} | repeat {thread["repeat"]} | col_repeat {thread["col_repeat"]}')
+                            
                             try:
                                 await function()
                             except Exception as e:
-                                log(f'MiniGame {self.__qualname__} ERROR in thread: {e}', 3)
+                                self.D_log(f'thread_error {thread["function"]} {e}')
 
                             thread['last_start'] = now
 
@@ -90,9 +110,10 @@ class MiniGame:
                             await self.Update()
 
     # ======== THREADS ======== #
-    async def timer(self):
-        """ Поток работы таймера """
-        pass
+    async def check_session(self):
+        """ Поток для отключения игры если в базе нет сессии"""
+        if not await check_session(self.session_key):
+            await self.EndGame()
 
     # ======== START ======== #
     """ Когда объект создан первый раз """
@@ -110,11 +131,18 @@ class MiniGame:
         # Отправляем сообщение
         await self.MessageGenerator()
 
+        await self.Custom_StartGame()
+
         asyncio.create_task(self.run_threads())
+
+    async def Custom_StartGame(self) -> None:
+        """ Когда игра запускается впервые (Создан, чтобы не переписывать StartGame) """
+        pass 
 
     async def ContinueGame(self, code: str) -> None:
         """ Когда игра продолжается после неожиданного завершения"""
         self.session_key = code
+        self.LAST_ACTION = time.time()
         await self.__LoadData()
 
         await self.MessageGenerator()
@@ -134,9 +162,11 @@ class MiniGame:
 
     # ======== MARKUP ======== #
     """ Код для работы с меню """
-    
+
     def CallbackGenerator(self, function_name: str, data: str = '') -> str:
-        text = f'minigame:{self.session_key}:{function_name}'
+        button_key = next((key for key, value in self.ButtonsRegister.items() if value == function_name), function_name)
+
+        text = f'minigame:{self.session_key}:{button_key}'
         if data: text += f':{data}'
         return text
 
@@ -151,6 +181,10 @@ class MiniGame:
 
     # ======== MESSAGE ======== #
     """ Код для генерации собщения и меню """
+
+    async def GetMessageGenerator(self, func_key: str = 'main'):
+        return self.message_generators.get(func_key, 
+                            list(self.message_generators.keys())[0]) 
 
     async def DeleteMessage(self, func_key: str = 'main') -> None:
         """ Удаляет сообщение """
@@ -167,6 +201,9 @@ class MiniGame:
 
     async def MesageUpdate(self, func_key: str = 'main', text: str = '', reply_markup = None) -> None:
         """ Обновляет сообщение """
+        if not text: return
+        self.D_log(f'MesageUpdate {func_key}')
+
         message_id = self.session_masseges.get(func_key, 0)
 
         if message_id:
@@ -187,15 +224,43 @@ class MiniGame:
             self.session_masseges[func_key] = msg.message_id
             await self.Update()
 
-    async def MessageGenerator(self) -> None:
+    async def MainGenerator(self) -> None:
         """ Генерирует сообщение """
         text = f'MesageGenerator {self.session_key}'
         markup = await self.MarkupGenerator()
 
         await self.MesageUpdate(text=text, reply_markup=markup)
 
+    async def MessageGenerator(self, func_key: str = 'main', 
+                               *args, **kwargs):
+        """ Функция определяет какая функция отвечает за генерацию текста """
+        func_name = await self.GetMessageGenerator(func_key)
+        Generator_func = getattr(self, func_name)
+
+        await Generator_func( *args, **kwargs )
+
     # ======== LOGIC ======== #
     """ Логика миниигры """
+
+    def check_user(self, func):
+        """ Проверяет, является ли пользователь авторизованным """
+
+        async def wrapper(self, callback: types.CallbackQuery):
+            user_id = callback.from_user.id
+            if user_id != self.user_id:
+                await callback.answer('Кнопку могут нажать только создатель игры', show_alert=True)
+                return
+            await func(self, callback)
+
+        return wrapper
+
+    def D_log(self, text: str, ignore: bool = False) -> None:
+        """ Логирование в дебаг моде """
+        if self.DEBUG_MODE or ignore:
+            log(
+                message=str(text), lvl=2, 
+                prefix=f'MiniGame {self.__str__()}'
+            )
 
     async def __LoadData(self) -> None:
         """ Загрузка данных из базы"""
@@ -203,20 +268,42 @@ class MiniGame:
 
     async def Update(self):
         """ Обновление данных в базе """
+
+        if self.DEBUG_MODE:
+            old_data = await get_session(self.session_key)
+            if old_data:
+                changed_keys = compare_dicts(old_data, self.__dict__)
+
+                if changed_keys:
+                    txt = '\n'.join([f'{key} | {old_value} -> {new_value}' for key, old_value, new_value in changed_keys])
+
+                    self.D_log(txt)
+
         await update_session(self._id, self.__dict__)
 
-    def GetButton(self, key: str):
+    async def GetButton(self, key: str, callback: types.CallbackQuery):
         """ Возвращение функции отвечающей за кнопку """
+        self.LAST_ACTION = time.time()
+        await self.Update()
+        self.D_log(f'GetButton {key}')
+
         if key not in self.ButtonsRegister:
             return None
-        return getattr(self, self.ButtonsRegister[key], None)
+        button_function = getattr(self, self.ButtonsRegister[key], None)
+        if button_function: 
+            self.D_log(f'button_function {key} {callback.data}')
+            await button_function(callback)
 
     def RegistryMe(self):
         """ Регистрирует класс в локальной базе данных """
+        self.D_log(f'Registry game {self.GAME_ID}', ignore=True)
         Registry.register_game(self)
 
     # ======== BUTTONS ======== #
     """ Функции кнопок """
+
+    async def DEV_BUTTON(self, callback: types.CallbackQuery):
+        pass
 
     async def button(self, callback: types.CallbackQuery):
         """ Обработка кнопки """
@@ -256,3 +343,18 @@ async def SessionGenerator(length: int = 4) -> str:
     if await check_session(code):
         return await SessionGenerator(length)
     return code
+
+def compare_dicts(d1, d2, path=''):
+    changed_keys = []
+    for k in d1.keys() | d2.keys():
+        new_path = f'{path}.{k}' if path else k
+        if k not in d1:
+            changed_keys.append((new_path, None, d2[k]))
+        elif k not in d2:
+            changed_keys.append((new_path, d1[k], None))
+        elif isinstance(d1[k], dict) and isinstance(d2[k], dict):
+            compare_dicts(d1[k], d2[k], new_path)
+        elif d1[k] != d2[k]:
+            changed_keys.append((new_path, d1[k], d2[k]))
+
+    return changed_keys
