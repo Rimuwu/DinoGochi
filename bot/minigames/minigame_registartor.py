@@ -31,8 +31,8 @@ class MiniGameRegistrator:
 
     def register_game(self, game):
         if game.GAME_ID in self.__minigames:
-            raise f"Game with ID {game.GAME_ID} is already registered."
-            
+            raise ValueError(f"Game with ID {game.GAME_ID} is already registered. -> {self.__minigames}")
+
         self.__base_session_objects[game.GAME_ID] = {}
         self.__minigames[game.GAME_ID] = game
 
