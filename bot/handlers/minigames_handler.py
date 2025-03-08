@@ -2,6 +2,7 @@ from aiogram import types
 from aiogram import F
 from bot.exec import main_router
 from bot.filters.authorized import IsAuthorizedUser
+from bot.minigames.minigame_fishing import FishingGame
 from bot.modules.decorators import HDCallback, HDMessage
 
 from bot.minigames.test_minigame import TestMiniGame
@@ -27,10 +28,8 @@ async def MiniGame_button(callback: types.CallbackQuery):
         game = Registry.get_class_object(game_id, code)
 
         if game:
-            await game.ContinueGame(code)
-            func = game.GetButton(callback.data.split(':')[2])
-            if func is not None:
-                await func( callback )
+            # await game.ContinueGame(code)
+            await game.GetButton(callback.data.split(':')[2], callback)
 
     else:
         return await callback.answer("Игра не найдена")
@@ -44,7 +43,8 @@ async def MiniGame_start(message: types.Message):
     return await message.answer("Игра начата")
 
 @HDMessage
-@main_router.message(Command(commands=['database']))
-async def database_f(message: types.Message):
-    
-    await message.answer(str(database))
+@main_router.message(Command(commands=['fishing']))
+async def MiniGame_start(message: types.Message):
+    game = FishingGame()
+
+    await game.StartGame(message.chat.id, message.from_user.id)
