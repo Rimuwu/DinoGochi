@@ -334,23 +334,20 @@ async def last_dino(user: User) -> Union[Dino, None]:
        Если None - вернёт первого
        Если нет динозавров - None
     """
-    last_dino = user.settings['last_dino']
-    if last_dino:
-        dino_data = await dinosaurs.find_one({'_id': last_dino}, {"_id": 1}, comment='last_dino')
+    last_dino_id = user.settings.get('last_dino')
+    if last_dino_id:
+        dino_data = await dinosaurs.find_one({'_id': last_dino_id}, {"_id": 1}, comment='last_dino')
         if dino_data:
             return await Dino().create(dino_data['_id'])
         else:
             await user.update({'$set': {'settings.last_dino': None}})
-            dino = await last_dino(user)
-            if isinstance(dino, ObjectId):
-                return await Dino().create(dino)
-            else: return dino
+            return await last_dino(user)
     else:
-        dino_lst = await user.get_dinos()
-        if dino_lst:
-            dino = dino_lst[0]
-            await user.update({'$set': {'settings.last_dino': dino._id}})
-            return dino
+        dino_list = await user.get_dinos()
+        if dino_list:
+            first_dino = dino_list[0]
+            await user.update({'$set': {'settings.last_dino': first_dino._id}})
+            return first_dino
         else:
             await user.update({'$set': {'settings.last_dino': None}})
             return None

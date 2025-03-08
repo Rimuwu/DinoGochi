@@ -73,6 +73,10 @@ async def start_journey(userid: int, chatid: int, lang: str,
     user = await User().create(userid)
     last_dino = await user.get_last_dino()
     content_data = get_data('journey_start', lang)
+    
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     text, a = content_data['ask_loc'], 1
     buttons = {}

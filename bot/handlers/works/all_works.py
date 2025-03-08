@@ -44,6 +44,10 @@ async def progress(message: Message):
     chatid = message.chat.id
     status = await dino.status
 
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
+
     if status in ['bank', 'mine', 'sawmill']:
         activ = await long_activity.find_one({'activity_type': status, 'dino_id': dino._id})
         if activ:
@@ -137,6 +141,10 @@ async def stop_work(message: Message):
     lang = await user.lang
     last_dino = await user.get_last_dino()
     chatid = message.chat.id
+    
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     res = await long_activity.find_one(
         {'activity_type': {'$in': ['bank', 'mine', 'sawmill']}, 'dino_id': last_dino._id}
@@ -167,6 +175,10 @@ async def mine(message: Message):
     lang = await user.lang
     last_dino = await user.get_last_dino()
     chatid = message.chat.id
+    
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     options = {
         t('works.buttons.coins', lang): 'coins',
@@ -211,6 +223,10 @@ async def bank(message: Message):
     lang = await user.lang
     last_dino = await user.get_last_dino()
     chatid = message.chat.id
+    
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     options = {
         t('works.buttons.coins', lang): 'coins',
@@ -255,6 +271,10 @@ async def sawmill(message: Message):
     lang = await user.lang
     last_dino = await user.get_last_dino()
     chatid = message.chat.id
+    
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     options = {
         t('works.buttons.coins', lang): 'coins',

@@ -33,6 +33,10 @@ async def talk(message: Message):
     lang = await user.lang
     last_dino = await user.get_last_dino()
     chatid = message.chat.id
+    
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     percent, _ = await last_dino.memory_percent('action', 'talk', True)
     await repeat_activity(last_dino._id, percent)

@@ -102,6 +102,10 @@ async def gym(message: Message):
     lang = await user.lang
     last_dino = await user.get_last_dino()
     chatid = message.chat.id
+    
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     await start_skill(last_dino, userid, chatid, lang, 'gym')
 
@@ -114,6 +118,10 @@ async def library(message: Message):
     last_dino = await user.get_last_dino()
     chatid = message.chat.id
 
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
+
     await start_skill(last_dino, userid, chatid, lang, 'library')
 
 @HDMessage
@@ -124,6 +132,10 @@ async def park(message: Message):
     lang = await user.lang
     last_dino = await user.get_last_dino()
     chatid = message.chat.id
+    
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     await start_skill(last_dino, userid, chatid, lang, 'park')
 
@@ -135,6 +147,10 @@ async def swimming_pool(message: Message):
     lang = await user.lang
     last_dino = await user.get_last_dino()
     chatid = message.chat.id
+    
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     await start_skill(last_dino, userid, chatid, lang, 'swimming_pool')
 
@@ -146,6 +162,10 @@ async def stop_work(message: Message):
     lang = await user.lang
     last_dino = await user.get_last_dino()
     chatid = message.chat.id
+    
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     if await last_dino.status in ['gym', 'library', 'park', 'swimming_pool']:
 
@@ -171,6 +191,10 @@ async def stop_work_calb(call: CallbackQuery):
     last_dino = await user.get_last_dino()
     messageid = call.message.message_id
     dino_id = last_dino._id
+    
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     res = await long_activity.find_one(
         {'dino_id': dino_id, 

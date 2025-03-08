@@ -6,12 +6,12 @@ from bot.modules.inventory_tools import start_inv
 from bot.modules.items.item import get_data as get_item_data
 from bot.modules.items.item import get_name
 from bot.modules.items.item_tools import use_item
-from bot.modules.localization import get_lang
+from bot.modules.localization import get_lang, t
 from bot.modules.markup import feed_count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_tools import ChooseStepState
-from bot.modules.user.user import User
+from bot.modules.user.user import User, last_dino
 from aiogram.types import CallbackQuery, Message
 
 from bot.filters.translated_text import Text
@@ -90,10 +90,16 @@ async def feed(message: Message):
         chatid = message.chat.id
         user = await User().create(userid)
         
+        last_dino = await user.get_last_dino()
+        
+        if not last_dino:
+            await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+            return
+        
         transmitted_data = {
             'chatid': chatid,
             'lang': lang,
-            'dino': await user.get_last_dino()
+            'dino': last_dino
         }
 
         await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
