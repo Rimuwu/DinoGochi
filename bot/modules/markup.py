@@ -26,11 +26,11 @@ async def back_menu(userid) -> str:
                   'main_menu', 'actions_menu', 'skills_actions_menu',
                   'main_menu', 'actions_menu', 'extraction_actions_menu',
                   'main_menu', 'backgrounds_menu',
-                  'main_menu', 'profile_menu', 'market_menu', 'seller_menu',
-                  'main_menu', 'profile_menu', 'market_menu',
+                  'main_menu', 'market_menu', 'seller_menu',
                   'main_menu', 'profile_menu', 'about_menu',
                   'main_menu', 'friends_menu', 'referal_menu',
-                  'main_menu', 'dino_tavern_menu', 'dungeon_menu'
+                  'main_menu', 'dino_tavern_menu',
+                  'main_menu', 'map_menu'
                  ] # схема всех путей меню клавиатур
     user_dict = await users.find_one(
         {'userid': userid}, {'last_markup': 1}, comment='back_menu_user_dict'
@@ -78,7 +78,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         )
 
     if markup_key == 'last_menu':
-       """Возращает к последнему меню
+       """ Возращает к последнему меню
        """
        user_dict = await users.find_one(
            {'userid': userid}, {'last_markup': 1}, comment='markups_menu_user_dict'
@@ -104,9 +104,9 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         buttons = [
             ['dino_profile', 'actions_menu', 'profile_menu'],
             ['settings_menu', 'friends_menu'],
-            ['dino-tavern_menu']
+            ['map-bt']
         ]
-    
+
     elif markup_key == 'settings_menu':
         # Меню настроек
         prefix = 'commands_name.settings.'
@@ -131,8 +131,8 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.profile.'
         add_back_button = True
         buttons = [
-            ['information', 'inventory'],
-            ['rayting', 'about', 'market'],
+            ['information', 'inventory', 'rayting'],
+            ['about', 'support'],
         ]
 
     elif markup_key == 'about_menu':
@@ -140,8 +140,8 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.about.'
         add_back_button = True
         buttons = [
-            ['team', 'support'],
-            ['faq', 'links'],
+            ['team'],
+            ['links', 'faq'],
         ]
 
     elif markup_key == 'friends_menu':
@@ -337,6 +337,14 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
                 [bd['fighting']]
             ]
 
+    elif markup_key == 'map_menu':
+        # Меню перехода в разные меню
+        prefix = 'commands_name.map.'
+        add_back_button = True
+
+        buttons = [
+            ['market', 'dino-tavern_menu']
+        ]
 
     else:
         log(prefix='Markup', 

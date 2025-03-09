@@ -118,7 +118,7 @@ async def friends_menu(message: Message):
     await auto_ads(message)
 
 @HDMessage
-@main_router.message(Text('commands_name.profile.market'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(Text('commands_name.map.market'), IsAuthorizedUser(), IsPrivateChat())
 async def market_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -163,7 +163,7 @@ async def actions_menu(message: Message):
     await auto_ads(message)
 
 @HDMessage
-@main_router.message(Text('commands_name.dino-tavern_menu'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(Text('commands_name.map.dino-tavern_menu'), IsAuthorizedUser(), IsPrivateChat())
 async def tavern_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
