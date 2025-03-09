@@ -6,6 +6,7 @@ from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.localization import get_data, t
+from bot.modules.logs import log
 from bot.modules.quests import create_quest, quest_resampling, save_quest
 from bot.taskmanager import add_task
  
@@ -78,13 +79,12 @@ async def tavern_life():
 
 async def quest_managment():
     quests = await quests_data.find({}, comment='quest_managment')
-    now = datetime.now(timezone.utc)
 
     for quest in quests:
-        create = quest['_id'].generation_time
-        delta = now - create
+        time_end = quest['time_end']
+        delta = datetime.fromtimestamp(int(time()), tz=timezone.utc) - datetime.fromtimestamp(time_end, tz=timezone.utc)
 
-        if delta.seconds >= 2592000:
+        if delta.days >= 14 and quest['owner_id'] == 0:
             await quests_data.delete_one({'_id': quest['_id']}, comment='quest_managment_1')
 
         elif int(time()) >= quest['time_end']:
