@@ -31,7 +31,7 @@ async def infouser(message: Message):
             await bot.send_message(message.chat.id, text, parse_mode='Markdown')
 
 @HDMessage
-@main_router.message(Command(commands=['profile']), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(Command(commands=['profile']), IsAuthorizedUser())
 async def infouser_com(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
