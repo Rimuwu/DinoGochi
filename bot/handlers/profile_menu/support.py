@@ -24,30 +24,6 @@ from bot.filters.kd import KDCheck
 from aiogram.filters import Command
 from aiogram import F
 
-@HDMessage
-@main_router.message(Text('commands_name.about.team'), 
-                     IsAuthorizedUser(), IsPrivateChat())
-async def team(message: Message):
-    lang = await get_lang(message.from_user.id)
-    chatid = message.chat.id
-
-    lang_text = t('language_name', lang)
-    author_loc = t('localization_author', lang)
-
-    await bot.send_message(chatid, t('about_menu.team', lang, 
-                                     lang_name=lang_text,
-                                     author=author_loc
-                                    ), parse_mode='html')
-
-@HDMessage
-@main_router.message(Text('commands_name.about.links'), 
-                     IsAuthorizedUser(), IsPrivateChat())
-async def links(message: Message):
-    lang = await get_lang(message.from_user.id)
-    chatid = message.chat.id
-
-    await bot.send_message(chatid, t('about_menu.links', lang), parse_mode='Markdown')
-
 async def main_support_menu(lang: str):
     image = 'images/remain/support/placeholder.png'
     text_data = get_data('support_command', lang)
@@ -71,7 +47,7 @@ async def main_support_menu(lang: str):
     return image, text, markup_inline.as_markup(resize_keyboard=True)
 
 @HDMessage
-@main_router.message(Text('commands_name.about.support'), 
+@main_router.message(Text('commands_name.profile.support'), 
                      IsAuthorizedUser(), IsPrivateChat())
 async def support(message: Message):
     lang = await get_lang(message.from_user.id)
@@ -92,34 +68,6 @@ async def support_com(message: Message):
 
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
 
-@HDMessage
-@main_router.message(Text('commands_name.about.faq'), 
-                     IsAuthorizedUser(), IsPrivateChat())
-async def faq(message: Message):
-    lang = await get_lang(message.from_user.id)
-    chatid = message.chat.id
-
-    faq_data = get_data('faq', lang)
-    buttons = faq_data['inline_buttons']
-
-    markup_inline = InlineKeyboardBuilder()
-    markup_inline.row(*[
-        InlineKeyboardButton(
-            text=name, 
-            callback_data=key
-        ) for key, name in buttons.items()], width=2)
-
-    await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline.as_markup(resize_keyboard=True))
-
-@HDCallback
-@main_router.callback_query(F.data.startswith('faq'))
-async def faq_buttons(call: CallbackQuery):
-    data = call.data.split()[1]
-    chatid = call.message.chat.id
-    lang = await get_lang(call.from_user.id)
-
-    text = t(f'faq.{data}', lang)
-    await bot.send_message(chatid, text, parse_mode='Markdown')
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('support'))

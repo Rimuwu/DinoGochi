@@ -26,7 +26,6 @@ from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
-from bot.handlers.dino_profile import transition
 from bot.modules.companies import nextinqueue, save_message
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, item_list
 from bot.modules.dinosaur.dinosaur import check_status
