@@ -41,7 +41,8 @@
                 "inventory": "🎮 Inventaris",
                 "rayting": "🎢 penilaian",
                 "about": "🤖 Tentang bot",
-                "market": "🛒 Pasar"
+                "market": "🛒 Pasar",
+                "support": "💸 Dukungan"
             },
             "friends": {
                 "add_friend": "➕ Tambahkan",
@@ -139,6 +140,11 @@
                 "plant_care": "⛏️ Perawatan tanaman",
                 "plants": "🎋 Tanaman",
                 "stop_work": "💥 Kembali dari bidang"
+            },
+            "map-bt": "🗺 Peta",
+            "map": {
+                "market": "🛒 Pasar",
+                "dino-tavern_menu": "🍺 Kedai Dino"
             }
         },
         "rare": {
@@ -4666,6 +4672,9 @@
             "delete_dino": "💡 Seekor dinosaurus diekstraksi dari telur!",
             "error": "🎈 Kesalahan pemilihan dinosaurus!",
             "max_dino": "🧨 Kamu sudah memiliki jumlah dinosaurus maksimum!"
+        },
+        "map": {
+            "text": "🧠 Pilih lokasi mana yang akan dituju:"
         }
     }
 }

@@ -41,7 +41,8 @@
                 "inventory": "🎮 Inventory",
                 "rayting": "🎢 Rating",
                 "about": "🤖 About the bot",
-                "market": "🛒 Market"
+                "market": "🛒 Market",
+                "support": "💸 Support"
             },
             "friends": {
                 "add_friend": "➕ Add",
@@ -139,6 +140,11 @@
                 "plant_care": "⛏️ Plant care",
                 "plants": "🎋 Plants",
                 "stop_work": "💥 Return from the fields"
+            },
+            "map-bt": "🗺 Map",
+            "map": {
+                "market": "🛒 Market",
+                "dino-tavern_menu": "🍺 Dino Tavern"
             }
         },
         "rare": {
@@ -4666,6 +4672,9 @@
             "delete_dino": "💡 A dinosaur was extracted from an egg!",
             "error": "🎈 Dinosaur selection error!",
             "max_dino": "🧨 You already have the maximum number of dinosaurs!"
+        },
+        "map": {
+            "text": "🧠 Choose which location to go to:"
         }
     }
 }

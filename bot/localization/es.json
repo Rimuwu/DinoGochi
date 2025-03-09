@@ -41,7 +41,8 @@
                 "inventory": "🎮 Inventario",
                 "rayting": "🎢 Clasificación",
                 "about": "🤖 Acerca del bot",
-                "market": "🛒 Mercado"
+                "market": "🛒 Mercado",
+                "support": "💸 Soporte"
             },
             "friends": {
                 "add_friend": "➕ Añadir",
@@ -139,6 +140,11 @@
                 "plant_care": "⛏️ Cuidado de las plantas",
                 "plants": "🎋 Plantas",
                 "stop_work": "💥 Volver de los campos"
+            },
+            "map-bt": "🗺 Mapa",
+            "map": {
+                "market": "🛒 Mercado",
+                "dino-tavern_menu": "🍺 Taberna de dinosaurios"
             }
         },
         "rare": {
@@ -4666,6 +4672,9 @@
             "delete_dino": "💡 ¡Un dinosaurio fue extraído de un huevo!",
             "error": "🎈 ¡Error de selección de dinosaurios!",
             "max_dino": "🧨 ¡Ya tienes el número máximo de dinosaurios!"
+        },
+        "map": {
+            "text": "🧠 Elige a qué ubicación ir:"
         }
     }
 }
