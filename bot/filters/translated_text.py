@@ -1,9 +1,7 @@
 # Фильтр текста на выбранном языке
 
-from aiogram import Router
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
-from bot.exec import main_router, bot
 from bot.modules.localization import t, get_lang
 
 class Text(BaseFilter):

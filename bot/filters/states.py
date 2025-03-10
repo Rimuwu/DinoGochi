@@ -1,6 +1,4 @@
-from math import log
 from typing import Union
-from aiogram import Router
 from aiogram.filters import BaseFilter
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext

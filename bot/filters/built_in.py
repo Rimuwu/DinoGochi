@@ -1,9 +1,7 @@
 #Активация встроенных фильтров
-from aiogram import Router
-from aiogram.filters import StateFilter, BaseFilter
-from aiogram.types import Message   
-from bot.exec import main_router, bot
 
+from aiogram.filters import BaseFilter
+from aiogram.types import Message   
 
 class IsDigitFilter(BaseFilter):
     def __init__(self) -> None:
