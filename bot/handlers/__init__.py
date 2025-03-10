@@ -4,12 +4,12 @@ from . import states
 from . import events
 
 from . import start
-from .main_menu import dino_profile
+from . import main_menu
 from . import test
 from . import settings
 from . import transition
 from . import inventory
-from .about_menu import about_menu
+from . import about_menu
 from . import profile_menu
 from . import friends
 from . import referal_menu
