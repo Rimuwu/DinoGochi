@@ -1,1 +1,1 @@
-from . import minigame_registartor, test_minigame
+from . import minigame_registartor
