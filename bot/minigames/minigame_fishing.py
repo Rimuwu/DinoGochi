@@ -80,10 +80,10 @@ class FishingGame(MiniGame):
         self.max_choosed_positions = 3
 
         self.ButtonsRegister = {
-            "button1": 'button',
-            "sbt": 'stop_game_bt',
-            "ср": 'choose_positions',
-            "sr": 'square'
+            "bn1": {'function': 'button', 'filters': []},
+            "bn2": {'function': 'stop_game_bt', 'filters': []},
+            "bn3": {'function': 'choose_positions', 'filters': []},
+            "bn4": {'function': 'square', 'filters': []}
         }
 
     async def Custom_StartGame(self) -> None:
