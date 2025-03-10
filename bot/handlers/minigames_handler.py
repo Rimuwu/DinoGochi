@@ -38,29 +38,6 @@ async def MiniGame_button(callback: types.CallbackQuery):
     else:
         return await callback.answer("Игра не найдена")
 
-@main_router.message(IsAuthorizedUser(), IsReply())
-async def WaiterHandler(message: types.Message):
-    if message.text is None: return
-    game_data = None
-
-    message_id = message.reply_to_message.message_id # type: ignore
-    game_data = await database.find_one(
-        {'session_masseges.main': message_id}, 
-        comment='get_session_minigame')
-
-    if game_data:
-        code = game_data['session_key']
-        game_id = game_data['GAME_ID']
-
-        game = Registry.get_class_object(game_id, code)
-
-        text_type = 'str'
-        if message.text.isdigit(): text_type = 'int'
-
-        if game:
-            await game.ActiveWaiter(text_type, message)
-
-
 @main_router.message(IsAuthorizedUser(), Command(commands=['context']))
 async def WaiterHandler_command(message: types.Message):
     if message.text is None: return
@@ -83,6 +60,28 @@ async def WaiterHandler_command(message: types.Message):
         if message.text.isdigit(): text_type = 'int'
 
         await game.ActiveWaiter(text_type, message)
+
+@main_router.message(IsAuthorizedUser(), IsReply())
+async def WaiterHandler(message: types.Message):
+    if message.text is None: return
+    game_data = None
+
+    message_id = message.reply_to_message.message_id # type: ignore
+    game_data = await database.find_one(
+        {'session_masseges.main': message_id}, 
+        comment='get_session_minigame')
+
+    if game_data:
+        code = game_data['session_key']
+        game_id = game_data['GAME_ID']
+
+        game = Registry.get_class_object(game_id, code)
+
+        text_type = 'str'
+        if message.text.isdigit(): text_type = 'int'
+
+        if game:
+            await game.ActiveWaiter(text_type, message)
 
 @HDMessage
 @main_router.message(Command(commands=['minigame']))

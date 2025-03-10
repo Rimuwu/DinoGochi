@@ -1,4 +1,5 @@
 import asyncio
+from email import message
 
 from bson import ObjectId
 from bot.exec import bot
@@ -38,7 +39,7 @@ class MiniGame:
         # Дополнительные сообщения в формате {'function_key': message_id}
         # function_key - просто ключ для чего юзается
         self.session_masseges: dict = {
-            'main': 0
+            'main': {'message_id': 0}
         }
 
         # Функции отвечающие за генерацию текста для каждого типа сообщения
@@ -172,9 +173,18 @@ class MiniGame:
         """ Заканчивает игру """
         self.__threads_work = False
         self.active_threads = False
+        
+        try:
+            await self.CustomEndGame()
+        except Exception as e:
+            self.D_log(f'CustomEndGame error {e}')
 
         await delete_session(self._id)
         Registry.delete_class_object(self.GAME_ID, self.session_key)
+    
+    async def CustomEndGame(self):
+        """ Заканчивает игру (Создан, чтобы не переписывать EndGame) """
+        pass
 
     # ======== MARKUP ======== #
     """ Код для работы с меню """
@@ -204,7 +214,9 @@ class MiniGame:
 
     async def DeleteMessage(self, func_key: str = 'main') -> None:
         """ Удаляет сообщение """
-        message_id = self.session_masseges.get(func_key, 0)
+        data = self.message_generators.get(func_key, {})
+        if data.get('message_id'): message_id = data['message_id']
+        else: message_id = 0
 
         if message_id:
             try:
@@ -215,30 +227,38 @@ class MiniGame:
             except: pass
             del self.session_masseges[func_key]
 
-    async def MesageUpdate(self, func_key: str = 'main', text: str = '', reply_markup = None) -> None:
+    async def MesageUpdate(self, func_key: str = 'main', text: str = '', reply_markup = None):
         """ Обновляет сообщение """
         if not text: return
         self.D_log(f'MesageUpdate {func_key}')
 
-        message_id = self.session_masseges.get(func_key, 0)
+        data = self.session_masseges.get(func_key, {})
+        if data.get('message_id'): message_id = data['message_id']
+        else: 
+            message_id = 0
+            self.session_masseges[func_key] = {'message_id': 0}
 
         if message_id:
             try:
-                await bot.edit_message_text(
+                msg = await bot.edit_message_text(
                     text=text,
                     chat_id=self.chat_id,
                     message_id=message_id,
                     reply_markup=reply_markup
                 )
-            except: pass
+            except:
+                await self.DeleteMessage(func_key)
+                return None
         else:
             msg = await bot.send_message(
                 text=text,
                 chat_id=self.chat_id,
                 reply_markup=reply_markup
             )
-            self.session_masseges[func_key] = msg.message_id
+            self.session_masseges[func_key]['message_id'] = msg.message_id
             await self.Update()
+
+        return msg
 
     async def MainGenerator(self) -> None:
         """ Генерирует сообщение """

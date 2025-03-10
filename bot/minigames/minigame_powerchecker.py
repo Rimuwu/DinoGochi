@@ -1,9 +1,7 @@
 
-from operator import call
-from random import randint
+
 import random
 import time
-
 
 from bot.modules.inline import list_to_inline
 from aiogram import types
@@ -12,8 +10,10 @@ from aiogram.types import InlineKeyboardButton
 
 from bot.minigames.minigame import MiniGame
 from typing import Any
+from bot.modules.user import user
+from bot.exec import bot
 
-from bot.modules.user.user import User, user_name
+from bot.modules.user.user import User, take_coins, user_name
 from bot.modules.dinosaur.dinosaur import Dino
 
 class PowerChecker(MiniGame):
@@ -34,9 +34,8 @@ class PowerChecker(MiniGame):
 
         self.bet: int = 0 # ставка (если не доиграли - возвращаем деньги обоим игрокам)
 
-        """ preparation - выбор динозавра автора и ожидание подключения оппонента 
+        """ preparation - выбор динозавра автора и ставки
             friend_wait - ожидание подключения другого игрока
-            choose_coins - выбор ставки
             game - игра 
             end_game - конец игры
             
@@ -77,6 +76,7 @@ class PowerChecker(MiniGame):
         self.message_generators: dict = {
             'main': 'MainGenerator',
             'dino_choose': 'DinoChooseGenerator',
+            'service': 'ServiceGenerator'
         }
 
         await self.Update()
@@ -85,8 +85,14 @@ class PowerChecker(MiniGame):
     async def Custom_StartGame(self) -> None:
         self.users['main']['name'] = await user_name(self.user_id)
         await self.Update()
-        
+
         await self.stage_edit('preparation')
+    
+    async def Custom_EndGame(self) -> None:
+        await take_coins(self.user_id, self.bet, True)
+
+        if self.opponent:
+            await take_coins(self.opponent, self.bet, True)
 
     # ======== MARKUP ======== #
     """ Код для работы с меню """
@@ -144,9 +150,39 @@ class PowerChecker(MiniGame):
         text = 'Выберите динозавра (список свободных дино): \n\n'
 
         await self.MesageUpdate('main', text=text, reply_markup=markup)
+    
+    async def BetGenerator(self) -> None:
+        """ Генерирует сообщение """
+        text = f'С помощью ответа на это сообщение введите сумму ставки в монетах, либо по команде /context {self.session_key} <значение>\n\nСумма будет снята с вашего баланса.'
+        
+        markup = list_to_inline([{
+            'Back': self.CallbackGenerator('back_to_preparation')}
+                                 ], 2)
+        await self.MesageUpdate('main', text=text, reply_markup=markup)
+    
+    async def ServiceGenerator(self, mtype: str) -> None:
+        """ Генерирует сообщение """
+
+        if mtype == 'no_coins':
+            text = 'Недостаточно монет.'
+        elif mtype == 'zero':
+            text = 'Ставка не может быть нулевой или меньше нуля.'
+
+        await self.DeleteMessage('service')
+        
+        await self.MesageUpdate('service', text=text)
+        self.session_masseges['service'] = {'message_id': 0, 
+                                            'last_action': time.time()}
 
     # ======== LOGIC ======== #
     """ Логика миниигры """
+    
+    async def service_deleter(self):
+        if 'service' not in self.session_masseges: return
+        if 'last_action' not in self.session_masseges['service']: return
+
+        if time.time() - self.session_masseges['service']['last_action'] >= 60:
+            await self.DeleteMessage('service')
 
     async def timer(self):
         """ Поток работы таймера """
@@ -164,6 +200,12 @@ class PowerChecker(MiniGame):
 
         if new_stage == 'preparation':
             self.stage = 'preparation'
+            
+            self.ThreadsRegister['service_deleter'] = {
+                "repeat": 20, 
+                "col_repeat": 'inf', "function": 'service_deleter',
+                "last_start": 0
+            }
 
         await self.Update()
         await self.MainGenerator()
@@ -183,6 +225,7 @@ class PowerChecker(MiniGame):
             "ns": {'function': 'next_stage', 'filters': ['check_user']},
             "eg": {'function': 'end_game', 'filters': ['check_user']},
         }
+        self.WaiterRegister['int']['active'] = False
         await self.Update()
         await self.MainGenerator()
 
@@ -220,6 +263,9 @@ class PowerChecker(MiniGame):
     async def choose_bet(self, callback: types.CallbackQuery):
         """ Обработка кнопки """
         self.WaiterRegister['int']['active'] = True
+        await self.Update()
+        
+        await self.BetGenerator()
 
     async def next_stage(self, callback: types.CallbackQuery):
         pass
@@ -232,7 +278,27 @@ class PowerChecker(MiniGame):
         pass
 
     async def IntWaiter(self, message: types.Message, command: bool = False):
-        pass
+        
+        if message.from_user.id != self.activ_user: return
+        if self.stage != 'preparation': return
+
+        coins = int(message.text)
+        if coins <= 0: 
+            await self.ServiceGenerator('zero')
+            await message.delete()
+            return
+
+        elif not await take_coins(-coins, False): 
+            await self.ServiceGenerator('no_coins')
+            await message.delete()
+            return 
+        
+        else:
+            await take_coins(-(coins-self.bet), True)
+            self.bet = coins
+            await self.Update()
+
+        await self.back_to_preparation(message)
 
     # ======== FILTERS ======== #
 
