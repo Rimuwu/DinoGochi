@@ -31,6 +31,8 @@ class MiniGame:
         self.chat_id: int = 0
         self.user_id: int = 0
 
+        self.PLAYERS: list = [] # Используется для проверки запуска игры
+
         # ======== MESSAGES ======== #
 
         # Дополнительные сообщения в формате {'function_key': message_id}
@@ -46,7 +48,19 @@ class MiniGame:
 
         # ======== BUTTONS ======== #
         self.ButtonsRegister: dict = {
-            "bn1": "button" # Код кнопки: имя функции
+            # Код для сокращения : {'function': имя функции, 'filters': [функции, которые вместе должны выдать True]}
+            "bn1": {'function': 'button', 'filters': ['simple_filter']} 
+        }
+
+        # ======== ContenWaiter ======== #
+        # str, int, image, sticker
+
+        # Отслеживание идёт только для main сообщения!
+        # или по команде /context session_key ...
+        self.WaiterRegister: dict = {
+            # Тип данных: {'function': имя функции, 
+            #              'active': True/False, 'data': ''}
+            "str": {'function': 'WaiterStr', 'active': True, 'data': {}} 
         }
 
         # ======== THREADS ======== #
@@ -123,6 +137,8 @@ class MiniGame:
         self.chat_id = chat_id
         self.user_id = user_id
 
+        self.PLAYERS.append(user_id)
+
         # Сохраняем данные в базе
         self.session_key = await SessionGenerator()
         Registry.save_class_object(self.GAME_ID, self.session_key, self)
@@ -145,7 +161,7 @@ class MiniGame:
         self.LAST_ACTION = time.time()
         await self.__LoadData()
 
-        await self.MessageGenerator()
+        # await self.MessageGenerator()
 
         asyncio.create_task(self.run_threads())
 
@@ -164,10 +180,10 @@ class MiniGame:
     """ Код для работы с меню """
 
     def CallbackGenerator(self, function_name: str, data: str = '') -> str:
-        button_key = next((key for key, value in self.ButtonsRegister.items() if value == function_name), function_name)
+        button_key = next((key for key, value in self.ButtonsRegister.items() if value['function'] == function_name), function_name)
 
         text = f'minigame:{self.session_key}:{button_key}'
-        if data: text += f':{data}'
+        if data: text += f':{data}' # 3-... аргумент
         return text
 
     async def MarkupGenerator(self):
@@ -242,18 +258,6 @@ class MiniGame:
     # ======== LOGIC ======== #
     """ Логика миниигры """
 
-    def check_user(self, func):
-        """ Проверяет, является ли пользователь авторизованным """
-
-        async def wrapper(self, callback: types.CallbackQuery):
-            user_id = callback.from_user.id
-            if user_id != self.user_id:
-                await callback.answer('Кнопку могут нажать только создатель игры', show_alert=True)
-                return
-            await func(self, callback)
-
-        return wrapper
-
     def D_log(self, text: str, ignore: bool = False) -> None:
         """ Логирование в дебаг моде """
         if self.DEBUG_MODE or ignore:
@@ -281,26 +285,48 @@ class MiniGame:
 
         await update_session(self._id, self.__dict__)
 
-    async def GetButton(self, key: str, callback: types.CallbackQuery):
-        """ Возвращение функции отвечающей за кнопку """
-        self.LAST_ACTION = time.time()
-        await self.Update()
-        self.D_log(f'GetButton {key}')
-
-        if key not in self.ButtonsRegister:
-            return None
-        button_function = getattr(self, self.ButtonsRegister[key], None)
-        if button_function: 
-            self.D_log(f'button_function {key} {callback.data}')
-            await button_function(callback)
-
     def RegistryMe(self):
         """ Регистрирует класс в локальной базе данных """
         self.D_log(f'Registry game {self.GAME_ID}', ignore=True)
         Registry.register_game(self)
 
+    # ======== FILTERS ======== #
+    """ Фильтры для кнопок, функции получают callback и должны вернуть bool"""
+    
+    async def simple_filter(self, callback: types.CallbackQuery) -> bool:
+        self.D_log(f'simple_filter {callback.data} -> True')
+        return True
+
     # ======== BUTTONS ======== #
     """ Функции кнопок """
+
+    async def ActiveButton(self, key: str, callback: types.CallbackQuery):
+        """ Запускает функции отвечающей за кнопку """
+        self.LAST_ACTION = time.time()
+        await self.Update()
+        self.D_log(f'ActiveButton {key} {callback.data}')
+
+        if key not in self.ButtonsRegister: 
+            self.D_log(f'ActiveButton {key} not found')
+            return False
+
+        button_function = getattr(self, 
+                                  self.ButtonsRegister[key]['function'], None)
+        self.D_log(f'button_function {button_function}')
+
+        if button_function:
+            # Проверка на фильтры
+            filters = self.ButtonsRegister[key].get('filters', [])
+            filter_results = [await getattr(self, filter_func)(callback) for filter_func in filters]
+            self.D_log(f'filter_results {filter_results}')
+
+            if all(filter_results):
+                self.D_log(f'button_function {key} {callback.data}')
+                await button_function(callback)
+                return True
+        else:
+            self.D_log(f'button_function {key} not found')
+        return False
 
     async def DEV_BUTTON(self, callback: types.CallbackQuery):
         pass
@@ -308,6 +334,28 @@ class MiniGame:
     async def button(self, callback: types.CallbackQuery):
         """ Обработка кнопки """
         ...
+
+    # ======== ContenWaiter ======== #
+
+    async def ActiveWaiter(self, key: str, message: types.Message, 
+                           command: bool = False):
+        """ Запускает функции отвечающей за ожидающие определённый контент """
+        self.LAST_ACTION = time.time()
+        await self.Update()
+        self.D_log(f'GetWaiter {key}')
+
+        if key not in self.WaiterRegister: 
+            return False
+        waiter_function = getattr(self, 
+                    self.WaiterRegister[key]['function'], None)
+        if waiter_function and self.WaiterRegister[key]['active']: 
+            self.D_log(f'waiter_function {key} {message.text}')
+            await waiter_function(message, command)
+            return True
+        return False
+
+    async def StrWaiter(self, message: types.Message, command: bool = False):
+        await message.answer(f'Standart message waiter -> {message.text}')
 
 
 async def check_session(session_key: str) -> bool:
