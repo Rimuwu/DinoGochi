@@ -19,7 +19,7 @@ class TestMiniGame(MiniGame):
         self.max_time = 3
 
         self.ButtonsRegister = {
-            "button1": 'button'
+            "button1": {'function': 'button', 'filters': ['simple_filter']} 
         }
 
         self.ThreadsRegister['timer'] = {
