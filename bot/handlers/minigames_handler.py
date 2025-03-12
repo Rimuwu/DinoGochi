@@ -5,7 +5,7 @@ from bot.filters.authorized import IsAuthorizedUser
 from bot.filters.reply_message import IsReply
 from bot.handlers.test import command
 from bot.minigames.minigame_fishing import FishingGame
-from bot.minigames.minigame_powerchecker import PowerChecker
+from bot.minigames.powerchecker.minigame_powerchecker import PowerChecker
 from bot.modules.decorators import HDCallback, HDMessage
 
 from bot.minigames.test_minigame import TestMiniGame
@@ -56,8 +56,10 @@ async def WaiterHandler_command(message: types.Message):
     game_id = game_data['GAME_ID']
     game = Registry.get_class_object(game_id, session_key)
     if game: 
+        new_message = ' '.join(message.text.split()[2:])
+
         text_type = 'str'
-        if message.text.isdigit(): text_type = 'int'
+        if new_message.isdigit(): text_type = 'int'
 
         await game.ActiveWaiter(text_type, message)
 
@@ -68,7 +70,7 @@ async def WaiterHandler(message: types.Message):
 
     message_id = message.reply_to_message.message_id # type: ignore
     game_data = await database.find_one(
-        {'session_masseges.main': message_id}, 
+        {'session_masseges.main.message_id': message_id}, 
         comment='get_session_minigame')
 
     if game_data:
@@ -77,10 +79,10 @@ async def WaiterHandler(message: types.Message):
 
         game = Registry.get_class_object(game_id, code)
 
-        text_type = 'str'
-        if message.text.isdigit(): text_type = 'int'
-
         if game:
+            text_type = 'str'
+            if message.text.isdigit(): text_type = 'int'
+
             await game.ActiveWaiter(text_type, message)
 
 @HDMessage
