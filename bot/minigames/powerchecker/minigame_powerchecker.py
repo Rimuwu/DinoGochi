@@ -22,8 +22,13 @@ class PowerChecker(MiniGame):
     """ Когда обхект класса создан """
 
     def get_GAME_ID(self): return 'PowerChecker'
+    
+    def edit_settings(self):
+        pass
+        # self.LOAD_DIRECTORIES = ['powerchecker.buttons']
 
     async def initialization(self, only_for: int = 0):
+
         self.DEBUG_MODE = True
         self.time_wait = 600
 
@@ -78,6 +83,9 @@ class PowerChecker(MiniGame):
             'dino_choose': 'DinoChooseGenerator',
             'service': 'ServiceGenerator'
         }
+        
+        methods = [method for method in dir(self) if callable(getattr(self, method)) and not method.startswith("__")]
+        self.D_log(f"Methods: {methods}", True)
 
         await self.Update()
 
@@ -89,6 +97,8 @@ class PowerChecker(MiniGame):
         await self.stage_edit('preparation')
     
     async def Custom_EndGame(self) -> None:
+        self.D_log(f'Custom_EndGame {self.bet}', True)
+        
         await take_coins(self.user_id, self.bet, True)
 
         if self.opponent:
@@ -110,6 +120,10 @@ class PowerChecker(MiniGame):
             if self.users['main']['dinosaur'] and self.bet:
                 data.append({'Start Game': self.CallbackGenerator('next_stage')})
 
+        if self.stage == 'friend_wait':
+            data = [{'Enter': self.CallbackGenerator('friend_enter')},
+                    {'End Game': self.CallbackGenerator('friend_cancel')}]
+
         return list_to_inline(data, 3)
 
     # ======== MESSAGE ======== #
@@ -130,6 +144,9 @@ class PowerChecker(MiniGame):
             if self.bet: bet_text = self.bet
 
             text = f'Тут идёт описание игры\n\n🦕 Динозавр: {dino_text}\n💸 Ставка: {bet_text}'
+        
+        if self.stage == 'friend_wait':
+            text = 'Тут идёт описание игры\n\nОжидание подключения другого игрока'
 
 
         await self.MesageUpdate(text=text, reply_markup=markup)
@@ -144,7 +161,7 @@ class PowerChecker(MiniGame):
                 f'{dino.name}': 
                     self.CallbackGenerator('check_dino_choose', dino.alt_id)
                 })
-        dino_list.append({'Back': self.CallbackGenerator('back_to_preparation')})
+        dino_list.append({'Back': self.CallbackGenerator('back_to')})
         markup = list_to_inline(dino_list, 2)
 
         text = 'Выберите динозавра (список свободных дино): \n\n'
@@ -156,7 +173,7 @@ class PowerChecker(MiniGame):
         text = f'С помощью ответа на это сообщение введите сумму ставки в монетах, либо по команде /context {self.session_key} <значение>\n\nСумма будет снята с вашего баланса.'
         
         markup = list_to_inline([{
-            'Back': self.CallbackGenerator('back_to_preparation')}
+            'Back': self.CallbackGenerator('back_to')}
                                  ], 2)
         await self.MesageUpdate('main', text=text, reply_markup=markup)
     
@@ -170,8 +187,9 @@ class PowerChecker(MiniGame):
 
         await self.DeleteMessage('service')
         
-        await self.MesageUpdate('service', text=text)
-        self.session_masseges['service'] = {'message_id': 0, 
+        msg = await self.MesageUpdate('service', text=text)
+        if isinstance(msg, types.Message):
+            self.session_masseges['service'] = {'message_id': msg.message_id, 
                                             'last_action': time.time()}
 
     # ======== LOGIC ======== #
@@ -206,6 +224,16 @@ class PowerChecker(MiniGame):
                 "col_repeat": 'inf', "function": 'service_deleter',
                 "last_start": 0
             }
+        
+        if new_stage == 'friend_wait':
+            self.stage = 'friend_wait'
+            self.activ_user = 0
+
+            self.ButtonsRegister = {
+                "fe": {'function': 'friend_enter', 
+                    'filters': ['check_user']},
+                "eg": {'function': 'end_game', 'filters': ['check_user']},
+            }
 
         await self.Update()
         await self.MainGenerator()
@@ -218,92 +246,47 @@ class PowerChecker(MiniGame):
     # ======== BUTTONS ======== #
     """ Функции кнопок """
     
-    async def back_to_preparation(self, callback: types.CallbackQuery):
-        self.ButtonsRegister = {
-            "cd": {'function': 'choose_dino', 'filters': ['check_user']},
-            "cb": {'function': 'choose_bet', 'filters': ['check_user']},
-            "ns": {'function': 'next_stage', 'filters': ['check_user']},
-            "eg": {'function': 'end_game', 'filters': ['check_user']},
-        }
-        self.WaiterRegister['int']['active'] = False
-        await self.Update()
-        await self.MainGenerator()
+    # Stage 1
+    
+    
 
-    async def choose_dino(self, callback: types.CallbackQuery):
-        """ Обработка кнопки """
-
-        self.ButtonsRegister = {
-            "bp": {'function': 'back_to_preparation', 
-                   'filters': ['check_user']},
-            "cdc": {'function': 'check_dino_choose', 
-                    'filters': ['check_user']}
-        }
-        await self.Update()
-        await self.DinoChooseGenerator(self.user_id)
-
-    async def check_dino_choose(self, callback: types.CallbackQuery):
-        args = callback.data.split(':')
-        if len(args) < 3: return
-        dino_alt_id = args[3]
-        
-        data_path = 'main'
-        if callback.from_user.id != self.user_id:
-            data_path = 'opponent'
-
-        dino = await Dino().create(dino_alt_id)
-        if dino: 
-
-            if await dino.status == 'pass':
-                self.users[data_path]['dinosaur'] = dino_alt_id
-                await self.Update()
-                await self.back_to_preparation(callback)
-            else:
-                await callback.answer('Динозавр занят', True)
-
-    async def choose_bet(self, callback: types.CallbackQuery):
-        """ Обработка кнопки """
-        self.WaiterRegister['int']['active'] = True
-        await self.Update()
-        
-        await self.BetGenerator()
-
-    async def next_stage(self, callback: types.CallbackQuery):
-        pass
-
-    async def end_game(self, callback: types.CallbackQuery):
-        pass
+    # Stage 2
 
     # ======== ContenWaiter ======== #
     async def StrWaiter(self, message: types.Message, command: bool = False):
         pass
 
     async def IntWaiter(self, message: types.Message, command: bool = False):
-        
+
         if message.from_user.id != self.activ_user: return
         if self.stage != 'preparation': return
+        
+        if command:
+            coins = int(message.text.split()[2]) # type: ignore
+        else: coins = int(message.text) # type: ignore
 
-        coins = int(message.text)
         if coins <= 0: 
             await self.ServiceGenerator('zero')
             await message.delete()
             return
 
-        elif not await take_coins(-coins, False): 
+        elif not await take_coins(self.activ_user, -coins, False): 
             await self.ServiceGenerator('no_coins')
             await message.delete()
             return 
-        
+
         else:
-            await take_coins(-(coins-self.bet), True)
+            await take_coins(self.activ_user, -(coins-self.bet), True)
             self.bet = coins
             await self.Update()
+            await message.delete()
 
-        await self.back_to_preparation(message)
+        await self.back_to()
 
     # ======== FILTERS ======== #
 
     async def check_user(self, callback: types.CallbackQuery) -> bool:
-        status = callback.from_user.id == self.activ_user
+        status = self.activ_user == 0 or callback.from_user.id == self.activ_user
         if not status:
             await callback.answer('У вас нет прав на нажатие', True)
         return status
