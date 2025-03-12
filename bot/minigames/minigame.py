@@ -1,5 +1,4 @@
 import asyncio
-from email import message
 
 from bson import ObjectId
 from bot.exec import bot
@@ -12,6 +11,7 @@ from bot.dbmanager import mongo_client
 from bot.modules.overwriting.DataCalsses import DBconstructor
 import time
 
+
 database = DBconstructor(mongo_client.minigames.online)
 
 class MiniGame:
@@ -20,17 +20,20 @@ class MiniGame:
     """ Когда обхект класса создан """
 
     def __init__(self):
+        # ======== GAME ======== #
         self.GAME_ID: str = self.get_GAME_ID() # Этот пункт обязательно должен быть изменён через перезаписанную функцию GET_GAME_ID
 
         self.active_threads: bool = True # Служит для паузы тасков
         self.__threads_work: bool = True # Служит для отключения цикла
-        self.THREAD_TICK: int = 5
 
         # ======== SESSION ======== #
         self._id: ObjectId = ObjectId()
         self.session_key: str = '0000'
         self.chat_id: int = 0
         self.user_id: int = 0
+
+        self.TIME_START: float = time.time() # Время начала игры
+        self.LAST_ACTION: float = self.TIME_START
 
         self.PLAYERS: list = [] # Используется для проверки запуска игры
 
@@ -53,7 +56,7 @@ class MiniGame:
             "bn1": {'function': 'button', 'filters': ['simple_filter']} 
         }
 
-        # ======== ContenWaiter ======== #
+        # ======== ContentWaiter ======== #
         # str, int, image, sticker
 
         # Отслеживание идёт только для main сообщения!
@@ -73,14 +76,18 @@ class MiniGame:
                               "last_start": 0}
         }
 
-        self.TIME_START: float = time.time() # Время начала игры
-        self.LAST_ACTION: float = self.TIME_START
+        # ======== SETTINGS ======== #
+        self.DEBUG_MODE: bool = True # Включение логирования
+        self.THREAD_TICK: int = 5
 
-        self.DEBUG_MODE: bool = False # Включение логирования
+        self.edit_settings() # Функция только для изменения настроек
 
         asyncio.get_event_loop().create_task(self.initialization())
+        self.D_log(f'Create MiniGame {self.__str__()}')
 
     def get_GAME_ID(self): return 'BASEMINIGAME'
+
+    def edit_settings(self): pass
 
     async def initialization(self):
         """ Вызывается при инициализации, создан для того, чтобы не переписывать init """
@@ -175,14 +182,14 @@ class MiniGame:
         self.active_threads = False
         
         try:
-            await self.CustomEndGame()
+            await self.Custom_EndGame()
         except Exception as e:
             self.D_log(f'CustomEndGame error {e}')
 
         await delete_session(self._id)
         Registry.delete_class_object(self.GAME_ID, self.session_key)
     
-    async def CustomEndGame(self):
+    async def Custom_EndGame(self):
         """ Заканчивает игру (Создан, чтобы не переписывать EndGame) """
         pass
 
@@ -214,11 +221,12 @@ class MiniGame:
 
     async def DeleteMessage(self, func_key: str = 'main') -> None:
         """ Удаляет сообщение """
-        data = self.message_generators.get(func_key, {})
+        data = self.session_masseges.get(func_key, {})
+
         if data.get('message_id'): message_id = data['message_id']
         else: message_id = 0
 
-        if message_id:
+        if message_id and message_id != 0:
             try:
                 await bot.delete_message(
                     chat_id=self.chat_id,
@@ -280,9 +288,12 @@ class MiniGame:
 
     def D_log(self, text: str, ignore: bool = False) -> None:
         """ Логирование в дебаг моде """
+        lvl = 1
+        if 'error' in text.lower(): lvl = 2
+
         if self.DEBUG_MODE or ignore:
             log(
-                message=str(text), lvl=2, 
+                message=str(text), lvl=lvl, 
                 prefix=f'MiniGame {self.__str__()}'
             )
 
@@ -307,8 +318,9 @@ class MiniGame:
 
     def RegistryMe(self):
         """ Регистрирует класс в локальной базе данных """
-        self.D_log(f'Registry game {self.GAME_ID}', ignore=True)
+        self.D_log(f'Registry game {self.GAME_ID} start', ignore=True)
         Registry.register_game(self)
+
 
     # ======== FILTERS ======== #
     """ Фильтры для кнопок, функции получают callback и должны вернуть bool"""
@@ -332,7 +344,6 @@ class MiniGame:
 
         button_function = getattr(self, 
                                   self.ButtonsRegister[key]['function'], None)
-        self.D_log(f'button_function {button_function}')
 
         if button_function:
             # Проверка на фильтры
@@ -362,7 +373,7 @@ class MiniGame:
         """ Запускает функции отвечающей за ожидающие определённый контент """
         self.LAST_ACTION = time.time()
         await self.Update()
-        self.D_log(f'GetWaiter {key}')
+        self.D_log(f'ActiveWaiter {key}')
 
         if key not in self.WaiterRegister: 
             return False
@@ -384,6 +395,9 @@ async def check_session(session_key: str) -> bool:
     return bool(res)
 
 async def update_session(_id: ObjectId, data: dict) -> None:
+
+    data = {key: value for key, value in data.items() if not callable(value)}
+
     await database.update_one({'_id': _id}, 
                               {'$set': data},
                               comment='update_session_minigame')
@@ -393,7 +407,9 @@ async def update_session(_id: ObjectId, data: dict) -> None:
     #                               comment='update_session_minigame')
     
 async def insert_session(data: dict) -> ObjectId:
-    del data['_id']
+    data['_id'] = ObjectId()
+    data = {key: value for key, value in data.items() if not callable(value)}
+
     result = await database.insert_one(data, comment='insert_session_minigame')
     return result.inserted_id
 
