@@ -4149,7 +4149,8 @@
             "error_no_coins": "🍳 Anda tidak memiliki cukup koin untuk dibeli!",
             "error_no_items": "🥙 Anda tidak memiliki item untuk diperdagangkan!",
             "ok": "🍣 Selamat atas pembelian Anda!",
-            "participant": "🎢 Anda telah ditambahkan ke lelang!"
+            "participant": "🎢 Anda telah ditambahkan ke lelang!",
+            "error_no_product": "🎩 Produk tidak ditemukan, kemungkinan besar sudah dihapus dari pasar."
         },
         "promotion": {
             "buy": "🍿 Mengaktifkan promosi akan memungkinkan Anda untuk menempatkan produk ini selama 12 jam dalam daftar acak produk yang ditampilkan saat memasuki pasar.",
@@ -4675,6 +4676,9 @@
         },
         "map": {
             "text": "🧠 Pilih lokasi mana yang akan dituju:"
+        },
+        "minigames_drive": {
+            "error_handler_waiter": "🎈 Terjadi kesalahan dalam mencari data minigame, coba balas pesan utama minigame atau gunakan perintah {command}"
         }
     }
 }

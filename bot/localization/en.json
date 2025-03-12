@@ -4149,7 +4149,8 @@
             "error_no_coins": "🍳 You don't have enough coins to buy!",
             "error_no_items": "🥙 You don't have any items to trade!",
             "ok": "🍣 Congratulations on your purchase!",
-            "participant": "🎢 You've been added to the auction!"
+            "participant": "🎢 You've been added to the auction!",
+            "error_no_product": "🎩 Product not found, most likely it has already been removed from the market."
         },
         "promotion": {
             "buy": "🍿 Enabling promotion will allow you to place this product for 12 hours in a random list of displayed products when entering the market.",
@@ -4675,6 +4676,9 @@
         },
         "map": {
             "text": "🧠 Choose which location to go to:"
+        },
+        "minigames_drive": {
+            "error_handler_waiter": "🎈 There was an error searching for minigame data, try replying to the main message of the minigame or use the command {command}"
         }
     }
 }

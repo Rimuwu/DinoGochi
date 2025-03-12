@@ -4149,7 +4149,8 @@
             "error_no_coins": "🍳 ¡No tienes suficientes monedas para comprar!",
             "error_no_items": "🥙 ¡No tienes ningún objeto para intercambiar!",
             "ok": "🍣 ¡Enhorabuena por tu compra!",
-            "participant": "🎢 ¡Te han añadido a la subasta!"
+            "participant": "🎢 ¡Te han añadido a la subasta!",
+            "error_no_product": "🎩 Producto no encontrado, lo más probable es que ya haya sido retirado del mercado."
         },
         "promotion": {
             "buy": "🍿 Habilitar la promoción le permitirá colocar este producto durante 12 horas en una lista aleatoria de productos mostrados al ingresar al mercado.",
@@ -4675,6 +4676,9 @@
         },
         "map": {
             "text": "🧠 Elige a qué ubicación ir:"
+        },
+        "minigames_drive": {
+            "error_handler_waiter": "🎈 Hubo un error al buscar datos del minijuego, intente responder al mensaje principal del minijuego o use el comando {command}"
         }
     }
 }
