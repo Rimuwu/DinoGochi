@@ -630,7 +630,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
             if p_tp != 'auction': return True, 'ok'
             else: return True, 'participant'
 
-    return False, 'erro_no_product'
+    return False, 'error_no_product'
 
 async def create_preferential(product_id: ObjectId, seconds: int, owner_id: int):
 
