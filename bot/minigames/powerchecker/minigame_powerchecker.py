@@ -290,4 +290,4 @@ class PowerChecker(MiniGame):
         return status
 
 
-# PowerChecker().RegistryMe() # Регистрация класса в реестре
+PowerChecker().RegistryMe() # Регистрация класса в реестре
