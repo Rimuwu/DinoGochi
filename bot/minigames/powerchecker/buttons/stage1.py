@@ -17,6 +17,7 @@ async def back_to(self, callback: types.CallbackQuery | None = None):
         }
         self.WaiterRegister['int']['active'] = False
     elif self.stage == 'friend_wait':
+        
         self.ButtonsRegister = {
             "fe": {'function': 'friend_enter', 'filters': ['check_user']},
             "eg": {'function': 'end_game', 'filters': ['check_user']},

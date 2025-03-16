@@ -4,7 +4,7 @@
 from aiogram import types
 from bot.minigames.powerchecker.minigame_powerchecker import PowerChecker
 from bot.modules.decorators import register_method
-from bot.modules.user.user import take_coins
+from bot.modules.user.user import take_coins, user_name
 
 @register_method(PowerChecker)
 async def friend_enter(self, callback: types.CallbackQuery):
@@ -17,8 +17,12 @@ async def friend_enter(self, callback: types.CallbackQuery):
                 await self.back_to()
                 return
 
+            
+            
+
             self.activ_user = callback.from_user.id
             self.opponent = callback.from_user.id
+            self.users['opponent']['name'] = await user_name(self.opponent)
             await self.Update()
 
             await take_coins(self.user_id, self.bet, True)

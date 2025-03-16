@@ -35,12 +35,13 @@ class PowerChecker(MiniGame):
         self.only_for: int = only_for # Если отправлено ответом на сообщение, то только для этого пользователя
 
         self.opponent: int = 0
-        self.activ_user: int = self.user_id
+        # self.activ_user: int = self.user_id
 
         self.bet: int = 0 # ставка (если не доиграли - возвращаем деньги обоим игрокам)
 
         """ preparation - выбор динозавра автора и ставки
             friend_wait - ожидание подключения другого игрока
+            wait_start - ожидание начала двойного подтверждения
             game - игра 
             end_game - конец игры
             
@@ -83,9 +84,6 @@ class PowerChecker(MiniGame):
             'dino_choose': 'DinoChooseGenerator',
             'service': 'ServiceGenerator'
         }
-        
-        methods = [method for method in dir(self) if callable(getattr(self, method)) and not method.startswith("__")]
-        self.D_log(f"Methods: {methods}", True)
 
         await self.Update()
 
@@ -95,7 +93,7 @@ class PowerChecker(MiniGame):
         await self.Update()
 
         await self.stage_edit('preparation')
-    
+
     async def Custom_EndGame(self) -> None:
         self.D_log(f'Custom_EndGame {self.bet}', True)
         
@@ -292,4 +290,4 @@ class PowerChecker(MiniGame):
         return status
 
 
-PowerChecker().RegistryMe() # Регистрация класса в реестре
+# PowerChecker().RegistryMe() # Регистрация класса в реестре
