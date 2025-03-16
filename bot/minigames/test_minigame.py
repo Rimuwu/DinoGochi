@@ -31,6 +31,9 @@ class TestMiniGame(MiniGame):
             last_start=0,
             active=True
         )
+    
+    async def Custom_StartGame(self) -> None:
+        ...
 
     # ======== THREADS ======== #
     async def timer(self):

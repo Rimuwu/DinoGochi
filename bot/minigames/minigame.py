@@ -13,12 +13,14 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 import time
 from typing import Optional
 
+from bot.modules.user.user import user_name
+
 database = DBconstructor(mongo_client.minigames.online)
 
 class MiniGame:
 
     # ======== CREATE ======== #
-    """ Когда обхект класса создан """
+    """ Когда объект класса создан """
 
     def __init__(self):
         # ======== GAME ======== #
@@ -34,19 +36,12 @@ class MiniGame:
         self.TIME_START: float = time.time() # Время начала игры
         self.LAST_ACTION: float = self.TIME_START
 
-        self.PLAYERS: dict[str, PlayerData] = {
-            str(0): PlayerData(user_id=0, chat_id=0,
-                               user_name='', stage='',
-                               data={})
-            } # Словарь игроков
+        self.PLAYERS: dict[str, PlayerData] = {} # Словарь игроков
 
         # ======== MESSAGES ======== #
 
-        # Дополнительные сообщения в формате {'function_key': message_id}
         # function_key - просто ключ для чего юзается
-        self.session_masseges: dict[str, SMessage] = {
-            'main': SMessage(message_id=0, chat_id=0, data={})
-        }
+        self.session_masseges: dict[str, SMessage] = {}
 
         # Функции отвечающие за генерацию текста для каждого типа сообщения
         self.message_generators: dict[str, str] = {
@@ -93,6 +88,7 @@ class MiniGame:
         # ======== SETTINGS ======== #
         self.DEBUG_MODE: bool = True # Включение логирования
         self.THREAD_TICK: int = 5
+        self.LANGUAGE: str = 'en'
 
         self.edit_settings() # Функция только для изменения настроек
 
@@ -288,11 +284,7 @@ class MiniGame:
 
     async def StartGame(self, chat_id: int, user_id: int) -> None:
         """ Когда игра запускается впервые """
-        self.chat_id = chat_id
-        self.user_id = user_id
-
-        self.PLAYERS[str(user_id)] = PlayerData(user_id=user_id, chat_id=chat_id, user_name='', stage='', 
-                                                data={})
+        await self.AddPlayer(user_id, chat_id, await user_name(user_id))
 
         # Сохраняем данные в базе
         self.session_key = await SessionGenerator()
@@ -300,6 +292,7 @@ class MiniGame:
         await insert_session(self.__dict__)
 
         # Отправляем сообщение
+        await self.CreateMessage('main', chat_id)
         await self.MessageGenerator()
 
         await self.Custom_StartGame()
@@ -371,15 +364,29 @@ class MiniGame:
         data = self.session_masseges.get(func_key, SMessage(message_id=0, chat_id=0, data={}))
 
         message_id = data.message_id
+        chat_id = data.chat_id
 
         if message_id and message_id != 0:
             try:
                 await bot.delete_message(
-                    chat_id=self.chat_id,
+                    chat_id=chat_id,
                     message_id=message_id
                 )
             except: pass
             del self.session_masseges[func_key]
+    
+    async def CreateMessage(self, func_key: str = 'main', chat_id: int = None):
+        """ Создает сообщение """
+        self.D_log(f'CreateMessage {func_key}')
+        
+        msg = await bot.send_message(
+            text='created message...',
+            chat_id=chat_id
+        )
+        self.session_masseges[func_key] = SMessage(message_id=msg.message_id, chat_id=msg.chat.id, data={})
+        await self.Update()
+
+        return msg
 
     async def MesageUpdate(self, func_key: str = 'main', text: str = '', reply_markup = None):
         """ Обновляет сообщение """
@@ -388,12 +395,13 @@ class MiniGame:
 
         data = self.session_masseges.get(func_key, SMessage(message_id=0, chat_id=0, data={}))
         message_id = data.message_id
+        chat_id = data.chat_id
 
         if message_id:
             try:
                 msg = await bot.edit_message_text(
                     text=text,
-                    chat_id=self.chat_id,
+                    chat_id=chat_id,
                     message_id=message_id,
                     reply_markup=reply_markup
                 )
@@ -403,7 +411,7 @@ class MiniGame:
         else:
             msg = await bot.send_message(
                 text=text,
-                chat_id=self.chat_id,
+                chat_id=chat_id,
                 reply_markup=reply_markup
             )
             self.session_masseges[func_key].message_id = msg.message_id
@@ -569,6 +577,56 @@ class MiniGame:
     async def button(self, callback: types.CallbackQuery):
         """ Обработка кнопки """
         ...
+    
+    # ======== PLAYER ======== #
+    """ Функции для работы с игроками """
+
+    @property
+    def owner(self):
+        return self.PLAYERS.get(
+            list(self.PLAYERS.keys())[0]
+        )
+
+    @property
+    def owner_id(self):
+        return self.PLAYERS.get(
+            list(self.PLAYERS.keys())[0]
+        ).user_id
+
+    async def AddPlayer(self, user_id: int, chat_id: int, user_name: str, stage: str = '', data: Optional[dict] = None):
+        """ Добавление игрока """
+        self.PLAYERS[str(user_id)] = PlayerData(
+            user_id=user_id, chat_id=chat_id,   
+            user_name=user_name, stage=stage, data=data or {})
+        await self.Update()
+        self.D_log(f'AddPlayer {user_id}')
+    
+    async def DeletePlayer(self, user_id: int):
+        """ Удаление игрока """
+        if str(user_id) in self.PLAYERS:
+            del self.PLAYERS[str(user_id)]
+            await self.Update()
+            self.D_log(f'DeletePlayer {user_id}')
+        else:
+            self.D_log(f'DeletePlayer {user_id} not found')
+    
+    async def EditPlayer(self, user_id: int, player: PlayerData):
+        """ Редактирование игрока """
+        if str(user_id) in self.PLAYERS:
+            self.PLAYERS[str(user_id)] = player
+            await self.Update()
+            self.D_log(f'EditPlayer {user_id}')
+        else:
+            self.D_log(f'EditPlayer {user_id} not found')
+
+    async def ClearPlayers(self):
+        """ Очистка игроков """
+        self.PLAYERS = {}
+        await self.Update()
+        self.D_log('ClearPlayers')
+    
+    async def GetPlayer(self, user_id: int) -> Optional[PlayerData]:
+        return self.PLAYERS.get(str(user_id), None)
 
     # ======== ContenWaiter ======== #
 
