@@ -293,3 +293,13 @@ async def check(message: Message):
                 await msg.edit_text(str(i))
             except Exception as e:
                 log(f"ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR {e}")
+
+
+@main_router.message(Command(commands=['save_users']), IsAdminUser())
+@HDMessage
+async def save_users_handler(message: Message):
+    cursor = users.find({}, {"_id": 1})
+    with open("bot/data/users.txt", "w", encoding="utf-8") as f:
+        async for doc in cursor:
+            f.write(str(doc["user_id"]) + "\n")
+    await message.answer("User IDs saved.")
