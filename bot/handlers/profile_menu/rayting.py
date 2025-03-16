@@ -17,7 +17,7 @@ from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
 
 management = DBconstructor(mongo_client.other.management)
-
+users = DBconstructor(mongo_client.user.users)
 
 @HDMessage
 @main_router.message(Text('commands_name.profile.rayting'), 
