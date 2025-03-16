@@ -298,8 +298,8 @@ async def check(message: Message):
 @main_router.message(Command(commands=['save_users']), IsAdminUser())
 @HDMessage
 async def save_users_handler(message: Message):
-    cursor = users.find({}, {"user_id": 1})
+    cursor = users.find({}, {"userid": 1})
     with open("bot/data/users.txt", "w", encoding="utf-8") as f:
         async for doc in cursor:
-            f.write(str(doc["user_id"]) + "\n")
+            f.write(str(doc["userid"]) + "\n")
     await message.answer("User IDs saved.")
