@@ -2,13 +2,15 @@ from bot.modules.inline import list_to_inline
 from aiogram import types
 from bot.modules.logs import log
 from bot.minigames.minigame import MiniGame
+from bot.dataclasess.minigame import Button, Thread
 
 class TestMiniGame(MiniGame):
 
     # ======== CREATE ======== #
-    """ Когда обхект класса создан """
+    """ Когда объект класса создан """
 
-    def get_GAME_ID(self): return 'TESTMINIGAME'
+    def get_GAME_ID(self): 
+        return 'TESTMINIGAME'
 
     async def initialization(self):
         self.DEBUG_MODE = True
@@ -19,18 +21,20 @@ class TestMiniGame(MiniGame):
         self.max_time = 3
 
         self.ButtonsRegister = {
-            "button1": {'function': 'button', 'filters': ['simple_filter']} 
+            "button1": Button(function='button', filters=['simple_filter'], active=True)
         }
 
-        self.ThreadsRegister['timer'] = {
-            "repeat": 5, 
-            "col_repeat": 'inf', "function": 'timer',
-            "last_start": 0
-        }
+        self.ThreadsRegister['timer'] = Thread(
+            repeat=5, 
+            col_repeat='inf', 
+            function='timer',
+            last_start=0,
+            active=True
+        )
 
     # ======== THREADS ======== #
     async def timer(self):
-        """ Поток работы таймера """
+        """ Поток работы таймера """
         if self.time_i < self.max_time - 1:
             self.time_i += 1
             await self.Update()
@@ -52,7 +56,7 @@ class TestMiniGame(MiniGame):
         )
 
     # ======== MESSAGE ======== #
-    """ Код для генерации собщения и меню """
+    """ Код для генерации сообщения и меню """
 
     async def MainGenerator(self, end=False) -> None:
         """ Генерирует сообщение """
@@ -89,7 +93,6 @@ class TestMiniGame(MiniGame):
         self.score += 1
         log(f"Score: {self.score}")
         await self.__on_score_change()
-
 
 
 TestMiniGame().RegistryMe() # Регистрация класса в реестре

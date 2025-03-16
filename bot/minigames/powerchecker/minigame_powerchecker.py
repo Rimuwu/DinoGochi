@@ -209,33 +209,6 @@ class PowerChecker(MiniGame):
             await self.Update()
             # await self.MessageGenerator('main')
 
-    async def stage_edit(self, new_stage: str) -> None:
-        self.D_log(f'stage_edit {self.stage} -> {new_stage}')
-
-        if self.stage == new_stage: return
-
-        if new_stage == 'preparation':
-            self.stage = 'preparation'
-            
-            self.ThreadsRegister['service_deleter'] = {
-                "repeat": 20, 
-                "col_repeat": 'inf', "function": 'service_deleter',
-                "last_start": 0
-            }
-        
-        if new_stage == 'friend_wait':
-            self.stage = 'friend_wait'
-            self.activ_user = 0
-
-            self.ButtonsRegister = {
-                "fe": {'function': 'friend_enter', 
-                    'filters': ['check_user']},
-                "eg": {'function': 'end_game', 'filters': ['check_user']},
-            }
-
-        await self.Update()
-        await self.MainGenerator()
-
     async def end_game_timer(self):
         if time.time() - self.LAST_ACTION >= self.time_wait: 
             await self.EndGame()
@@ -243,43 +216,14 @@ class PowerChecker(MiniGame):
 
     # ======== BUTTONS ======== #
     """ Функции кнопок """
-    
-    # Stage 1
-    
-    
 
-    # Stage 2
 
     # ======== ContenWaiter ======== #
     async def StrWaiter(self, message: types.Message, command: bool = False):
         pass
 
     async def IntWaiter(self, message: types.Message, command: bool = False):
-
-        if message.from_user.id != self.activ_user: return
-        if self.stage != 'preparation': return
-        
-        if command:
-            coins = int(message.text.split()[2]) # type: ignore
-        else: coins = int(message.text) # type: ignore
-
-        if coins <= 0: 
-            await self.ServiceGenerator('zero')
-            await message.delete()
-            return
-
-        elif not await take_coins(self.activ_user, -coins, False): 
-            await self.ServiceGenerator('no_coins')
-            await message.delete()
-            return 
-
-        else:
-            await take_coins(self.activ_user, -(coins-self.bet), True)
-            self.bet = coins
-            await self.Update()
-            await message.delete()
-
-        await self.back_to()
+        pass
 
     # ======== FILTERS ======== #
 
@@ -290,4 +234,4 @@ class PowerChecker(MiniGame):
         return status
 
 
-PowerChecker().RegistryMe() # Регистрация класса в реестре
+# PowerChecker().RegistryMe() # Регистрация класса в реестре

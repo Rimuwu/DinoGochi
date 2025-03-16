@@ -1,7 +1,7 @@
 import asyncio
 
 from bson import ObjectId
-from bot.dataclasess.minigame import Button, PlayerData, SMessage, Stage, Thread, Waiter
+from bot.dataclasess.minigame import Button, PlayerData, SMessage, Stage, Thread, Waiter, stageButton, stageThread, stageWaiter
 from bot.exec import bot
 import random
 from bot.minigames.minigame_registartor import Registry
@@ -11,10 +11,7 @@ from bot.modules.logs import log
 from bot.dbmanager import mongo_client
 from bot.modules.overwriting.DataCalsses import DBconstructor
 import time
-
-
-# Написать функции для управления юзерами, кнопками, вейтарами, тредами.
-
+from typing import Optional
 
 database = DBconstructor(mongo_client.minigames.online)
 
@@ -39,7 +36,8 @@ class MiniGame:
 
         self.PLAYERS: dict[str, PlayerData] = {
             str(0): PlayerData(user_id=0, chat_id=0,
-                               user_name='', data={})
+                               user_name='', stage='',
+                               data={})
             } # Словарь игроков
 
         # ======== MESSAGES ======== #
@@ -59,7 +57,8 @@ class MiniGame:
         self.ButtonsRegister: dict[str, Button] = {
             # Код для сокращения : {'function': имя функции, 'filters': [функции, которые вместе должны выдать True]}
             "bn1": Button(function='button', 
-                    filters=['simple_filter'], active=True)
+                          filters=['simple_filter'], 
+                          active=True)
         }
 
         # ======== ContentWaiter ======== #
@@ -68,10 +67,7 @@ class MiniGame:
         # Отслеживание идёт только для main сообщения!
         # или по команде /context session_key ...
         self.WaiterRegister: dict[str, Waiter] = {
-            # Тип данных: {'function': имя функции, 
-            #              'active': True/False, 'data': ''}
-            "str": Waiter(function='WaiterStr', 
-                          active=True, data={})
+            "str": Waiter(function='WaiterStr', active=True, data={})
         }
 
         # ======== THREADS ======== #
@@ -85,11 +81,11 @@ class MiniGame:
 
         self.stages: dict[str, Stage] = {
             'preparation': Stage(
-                [ {'thread': 'check_session', 'active': True} ], # Какие треды активировать
-                [ {'button': 'bn1', 'active': True} ], # Какие кнопки активировать 
-                [ {'waiter': 'str', 'active': True} ], # Какие вейтеры активиров
-                'MainGenerator', # Основной обработчик состояния
-                '', # Какую функцию запускае 
+                [ stageThread(thread='check_session', data={'active': True}) ], # Какие треды активировать
+                [ stageButton(button='bn1', data={'active': True}) ], # Какие кнопки активировать 
+                [ stageWaiter(waiter='str', data={'active': True}) ], # Какие вейтеры активиров
+                'main', # Ключ сообщения для
+                '', # Какую функцию запускает при переходе
                 {}
             )
         }
@@ -118,46 +114,135 @@ class MiniGame:
 
     def __str__(self):
         return f'{self.GAME_ID} {self.session_key}'
-    
+
     # ======== STAGES ======== #
-    
+
     async def AddStage(self, key: str, stage: Stage):
         """Добавляет новый этап в игру """
-        pass
-    
+        self.stages[key] = stage
+        await self.Update()
+        self.D_log(f'AddStage {key}')
+
     async def DeleteStage(self, key: str):
         """ Удаляет этап из игры по ключу"""
-        pass
+        if key in self.stages:
+            del self.stages[key]
+            await self.Update()
+            self.D_log(f'DeleteStage {key}')
+        else:
+            self.D_log(f'DeleteStage {key} not found')
 
     async def UserStage(self, user_id: int):
         """ Возвращает текущий этап пользователя """
-        pass
+        player = self.PLAYERS.get(str(user_id))
+        if player:
+            return player.stage
+        return None
 
-    async def SetStage(self, stage: str, user_id: int | None = None):
+    async def SetStage(self, stage: str, user_id: Optional[int] = None):
         """ Переходит к этапу для всех пользователей или для одного """ 
-        pass
+        if user_id is None:
+            for player in self.PLAYERS.values():
+                player.data['stage'] = stage
+        else:
+            player = self.PLAYERS.get(str(user_id))
+            if player:
+                player.data['stage'] = stage
+
+        await self.HandleStageChange(stage)
+        await self.Update()
+        self.D_log(f'SetStage {stage} for user {user_id}')
 
     async def EditStage(self, key: str, stage: Stage):
         """ Изменяет этап по ключу """
-        pass
+        if key in self.stages:
+            self.stages[key] = stage
+            await self.Update()
+            self.D_log(f'EditStage {key}')
+        else:
+            self.D_log(f'EditStage {key} not found')
+
+    async def ClearStage(self):
+        """ Очищает этапы """
+        self.stages = {}
+        await self.Update()
+        self.D_log('ClearStage')
+    
+    async def HandleStageChange(self, stage: str):
+        """ Обрабатывает изменения этапа """
+        current_stage = self.stages.get(stage)
+        if not current_stage:
+            self.D_log(f'Stage {stage} not found')
+            return
+
+        # Управление потоками
+        await self.ManageThreads(current_stage.threads_active)
+
+        # Управление кнопками
+        await self.ManageButtons(current_stage.buttons_active)
+
+        # Отправка сообщения
+        await self.MessageGenerator(current_stage.stage_generator)
+
+        await self.Update()
+
+        # Выполнение функций
+        function = getattr(self, current_stage.to_function, None)
+        if function: await function()
+
+    async def ManageThreads(self, threads: list[stageThread]):
+        """ Управляет потоками в зависимости от этапа """
+        for thread in threads:
+            key = thread.thread
+            data = thread.data
+
+            for attr, value in data.items():
+                setattr(self.ThreadsRegister[key], attr, value)
+
+    async def ManageButtons(self, buttons: list[stageButton]):
+        """ Управляет кнопками в зависимости от этапа """
+        for button in buttons:
+            key = button.button
+            data = button.data
+
+            for attr, value in data.items():
+                setattr(self.ButtonsRegister[key], attr, value)
 
     # ======== THREADS ======== #
 
-    async def AddThread(self, key: str, thread: dict):
-        """Добавляет новый поток в игру """
-        pass
-    
+    async def AddThread(self, key: str, thread: Thread):
+        """ Добавляет новый поток в игру """
+        self.ThreadsRegister[key] = thread
+        await self.Update()
+        self.D_log(f'AddThread {key}')
+
     async def DeleteThread(self, key: str):
         """ Удаляет поток из игры по ключу"""
-        pass
+        if key in self.ThreadsRegister:
+            del self.ThreadsRegister[key]
+            await self.Update()
+            self.D_log(f'DeleteThread {key}')
+        else:
+            self.D_log(f'DeleteThread {key} not found')
 
-    async def EditThread(self, key: str, thread: dict):
+    async def EditThread(self, key: str, thread: Thread):
         """ Изменяет поток по ключу """
-        pass
+        if key in self.ThreadsRegister:
+            self.ThreadsRegister[key] = thread
+            await self.Update()
+            self.D_log(f'EditThread {key}')
+        else:
+            self.D_log(f'EditThread {key} not found')
 
-    async def GetThread(self, key: str):
+    async def GetThread(self, key: str) -> Optional[Thread]:
         """ Возвращает поток по ключу """
-        pass
+        return self.ThreadsRegister.get(key)
+
+    async def ClearThreads(self):
+        """ Очищает потоки """
+        self.ThreadsRegister = {}
+        await self.Update()
+        self.D_log('ClearThreads')
 
     async def __run_threads(self):
         """ Запуск вечного цикла для проверки и выполнения потоков """
@@ -170,23 +255,23 @@ class MiniGame:
                 for key, thread in self.ThreadsRegister.items():
                     now = time.time()
 
-                    if (thread['last_start'] + thread['repeat'] < now) and (thread['col_repeat'] == 'inf' or thread['col_repeat'] > 0) and ('active' not in thread or thread['active']):
-                        function = getattr(self, thread['function'], None)
+                    if (thread.last_start + thread.repeat < now) and (thread.col_repeat == 'inf' or (isinstance(thread.col_repeat, int) and thread.col_repeat > 0)) and thread.active:
+                        function = getattr(self, thread.function, None)
                         if function:
 
-                            self.D_log(f'start_thread {thread["function"]} | repeat {thread["repeat"]} | col_repeat {thread["col_repeat"]}')
+                            self.D_log(f'start_thread {thread.function} | repeat {thread.repeat} | col_repeat {thread.col_repeat}')
 
                             try:
                                 await function()
                             except Exception as e:
-                                self.D_log(f'thread_error {thread["function"]} {e}')
+                                self.D_log(f'thread_error {thread.function} {e}')
 
-                            thread['last_start'] = now
+                            thread.last_start = now
 
-                            if thread['col_repeat'] != 'inf':
-                                thread['col_repeat'] -= 1
+                            if isinstance(thread.col_repeat, int):
+                                thread.col_repeat -= 1
 
-                                if thread['col_repeat'] <= 0:
+                                if thread.col_repeat <= 0:
                                     del self.ThreadsRegister[key]
 
                             await self.Update()
@@ -194,7 +279,7 @@ class MiniGame:
     # ======== THREADS ======== #
 
     async def check_session(self):
-        """ Поток для отключения игры если в базе нет сессии"""
+        """ Поток для отключения игры если в базе нет сессии """
         if not await check_session(self.session_key):
             await self.EndGame()
 
@@ -202,11 +287,12 @@ class MiniGame:
     """ Когда объект создан первый раз """
 
     async def StartGame(self, chat_id: int, user_id: int) -> None:
-        """ Когда игра запускается впервые"""
+        """ Когда игра запускается впервые """
         self.chat_id = chat_id
         self.user_id = user_id
 
-        self.PLAYERS.append(user_id)
+        self.PLAYERS[str(user_id)] = PlayerData(user_id=user_id, chat_id=chat_id, user_name='', stage='', 
+                                                data={})
 
         # Сохраняем данные в базе
         self.session_key = await SessionGenerator()
@@ -225,7 +311,7 @@ class MiniGame:
         pass 
 
     async def ContinueGame(self, code: str) -> None:
-        """ Когда игра продолжается после неожиданного завершения"""
+        """ Когда игра продолжается после неожиданного завершения """
         self.session_key = code
         self.LAST_ACTION = time.time()
         await self.__LoadData()
@@ -257,7 +343,8 @@ class MiniGame:
     """ Код для работы с меню """
 
     def CallbackGenerator(self, function_name: str, data: str = '') -> str:
-        button_key = next((key for key, value in self.ButtonsRegister.items() if value['function'] == function_name), function_name)
+        button_key = next((key for key, value in self.ButtonsRegister.items() 
+                          if value.function == function_name), function_name)
 
         text = f'minigame:{self.session_key}:{button_key}'
         if data: text += f':{data}' # 3-... аргумент
@@ -281,10 +368,9 @@ class MiniGame:
 
     async def DeleteMessage(self, func_key: str = 'main') -> None:
         """ Удаляет сообщение """
-        data = self.session_masseges.get(func_key, {})
+        data = self.session_masseges.get(func_key, SMessage(message_id=0, chat_id=0, data={}))
 
-        if data.get('message_id'): message_id = data['message_id']
-        else: message_id = 0
+        message_id = data.message_id
 
         if message_id and message_id != 0:
             try:
@@ -300,11 +386,8 @@ class MiniGame:
         if not text: return
         self.D_log(f'MesageUpdate {func_key}')
 
-        data = self.session_masseges.get(func_key, {})
-        if data.get('message_id'): message_id = data['message_id']
-        else: 
-            message_id = 0
-            self.session_masseges[func_key] = {'message_id': 0}
+        data = self.session_masseges.get(func_key, SMessage(message_id=0, chat_id=0, data={}))
+        message_id = data.message_id
 
         if message_id:
             try:
@@ -323,7 +406,7 @@ class MiniGame:
                 chat_id=self.chat_id,
                 reply_markup=reply_markup
             )
-            self.session_masseges[func_key]['message_id'] = msg.message_id
+            self.session_masseges[func_key].message_id = msg.message_id
             await self.Update()
 
         return msg
@@ -359,22 +442,51 @@ class MiniGame:
 
     async def __LoadData(self) -> None:
         """ Загрузка данных из базы"""
-        self.__dict__ = await get_session(self.session_key)
+
+        # Получаем данные сессии из базы данных
+        data = await get_session(self.session_key)
+
+        # Десериализация данных
+        self.PLAYERS = {k: PlayerData(**v) for k, v in data.get('PLAYERS', {}).items()}
+        self.session_masseges = {k: SMessage(**v) for k, v in data.get('session_masseges', {}).items()}
+        self.ButtonsRegister = {k: Button(**v) for k, v in data.get('ButtonsRegister', {}).items()}
+        self.WaiterRegister = {k: Waiter(**v) for k, v in data.get('WaiterRegister', {}).items()}
+        self.ThreadsRegister = {k: Thread(**v) for k, v in data.get('ThreadsRegister', {}).items()}
+        self.stages = {
+            k: Stage(
+            threads_active=[stageThread(**t) for t in v['threads_active']],
+            buttons_active=[stageButton(**b) for b in v['buttons_active']],
+            waiter_active=[stageWaiter(**w) for w in v['waiter_active']],
+            stage_generator=v['stage_generator'],
+            to_function=v['to_function'],
+            data=v['data']
+            ) for k, v in data.get('stages', {}).items()
+        }
+
+        # Обновление остальных атрибутов
+        for key, value in data.items():
+            if key not in ['PLAYERS', 'session_masseges', 'ButtonsRegister', 'WaiterRegister', 'ThreadsRegister', 'stages']: 
+                setattr(self, key, value)
 
     async def Update(self):
         """ Обновление данных в базе """
 
+        # Сериализация данных
+        serialized_data = {key: serialize(value) for key, value in self.__dict__.items() if not callable(value)}
+
+        # Красивый вывод логов
         if self.DEBUG_MODE:
             old_data = await get_session(self.session_key)
             if old_data:
-                changed_keys = compare_dicts(old_data, self.__dict__)
+                changed_keys = compare_dicts(old_data, serialized_data)
 
                 if changed_keys:
                     txt = '\n'.join([f'{key} | {old_value} -> {new_value}' for key, old_value, new_value in changed_keys])
 
                     self.D_log(txt)
 
-        await update_session(self._id, self.__dict__)
+        # Обновление в базе
+        await update_session(self._id, serialized_data)
 
     def RegistryMe(self):
         """ Регистрирует класс в локальной базе данных """
@@ -384,7 +496,7 @@ class MiniGame:
 
     # ======== FILTERS ======== #
     """ Фильтры для кнопок, функции получают callback и должны вернуть bool"""
-    
+
     async def simple_filter(self, callback: types.CallbackQuery) -> bool:
         self.D_log(f'simple_filter {callback.data} -> True')
         return True
@@ -392,19 +504,35 @@ class MiniGame:
     # ======== BUTTONS ======== #
     """ Функции кнопок """
     
-    async def AddButton(self, key: str, Button: Button):
+    async def AddButton(self, key: str, button: Button):
         """ Добавление кнопки """
-        pass
-    
+        self.ButtonsRegister[key] = button
+        await self.Update()
+        self.D_log(f'AddButton {key}')
+
     async def DeleteButton(self, key: str):
         """ Удаление кнопки """
-        pass
+        if key in self.ButtonsRegister:
+            del self.ButtonsRegister[key]
+            await self.Update()
+            self.D_log(f'DeleteButton {key}')
+        else:
+            self.D_log(f'DeleteButton {key} not found')
 
-    async def EditButton(self, key: str, Button: Button):
+    async def EditButton(self, key: str, button: Button):
         """ Редактирование кнопки """
-        pass
+        if key in self.ButtonsRegister:
+            self.ButtonsRegister[key] = button
+            await self.Update()
+            self.D_log(f'EditButton {key}')
+        else:
+            self.D_log(f'EditButton {key} not found')
 
-    
+    async def ClearButtons(self):
+        """ Очистка кнопок """
+        self.ButtonsRegister = {}
+        await self.Update()
+        self.D_log('ClearButtons')
 
     async def ActiveButton(self, key: str, callback: types.CallbackQuery):
         """ Запускает функции отвечающей за кнопку """
@@ -416,16 +544,16 @@ class MiniGame:
             self.D_log(f'ActiveButton {key} not found')
             return False
 
-        button_function = getattr(self, 
-                                  self.ButtonsRegister[key]['function'], None)
+        button = self.ButtonsRegister[key]
+        button_function = getattr(self, button.function, None)
 
         if button_function:
             # Проверка на фильтры
-            filters = self.ButtonsRegister[key].get('filters', [])
+            filters = button.filters
             filter_results = [await getattr(self, filter_func)(callback) for filter_func in filters]
             self.D_log(f'filter_results {filter_results}')
 
-            if all(filter_results) and ('active' not in self.ButtonsRegister[key] or self.ButtonsRegister[key]['active']):
+            if all(filter_results) and button.active:
                 self.D_log(f'button_function {key} {callback.data}')
                 await button_function(callback)
                 return True
@@ -444,6 +572,36 @@ class MiniGame:
 
     # ======== ContenWaiter ======== #
 
+    async def AddWaiter(self, key: str, waiter: Waiter):
+        """ Добавление ожидания """
+        self.WaiterRegister[key] = waiter
+        await self.Update()
+        self.D_log(f'AddWaiter {key}')
+
+    async def DeleteWaiter(self, key: str):
+        """ Удаление ожидания """
+        if key in self.WaiterRegister:
+            del self.WaiterRegister[key]
+            await self.Update()
+            self.D_log(f'DeleteWaiter {key}')
+        else:
+            self.D_log(f'DeleteWaiter {key} not found')
+
+    async def EditWaiter(self, key: str, waiter: Waiter):
+        """ Редактирование ожидания """
+        if key in self.WaiterRegister:
+            self.WaiterRegister[key] = waiter
+            await self.Update()
+            self.D_log(f'EditWaiter {key}')
+        else:
+            self.D_log(f'EditWaiter {key} not found')
+
+    async def ClearWaiters(self):
+        """ Очистка ожиданий """
+        self.WaiterRegister = {}
+        await self.Update()
+        self.D_log('ClearWaiters')
+
     async def ActiveWaiter(self, key: str, message: types.Message, 
                            command: bool = False):
         """ Запускает функции отвечающей за ожидающие определённый контент """
@@ -453,9 +611,11 @@ class MiniGame:
 
         if key not in self.WaiterRegister: 
             return False
-        waiter_function = getattr(self, 
-                    self.WaiterRegister[key]['function'], None)
-        if waiter_function and self.WaiterRegister[key]['active']: 
+
+        waiter = self.WaiterRegister[key]
+        waiter_function = getattr(self, waiter.function, None)
+
+        if waiter_function and waiter.active: 
             self.D_log(f'waiter_function {key} {message.text}')
             await waiter_function(message, command)
             return True
@@ -472,21 +632,15 @@ async def check_session(session_key: str) -> bool:
 
 async def update_session(_id: ObjectId, data: dict) -> None:
 
-    data = {key: value for key, value in data.items() if not callable(value)}
-
     await database.update_one({'_id': _id}, 
                               {'$set': data},
                               comment='update_session_minigame')
-    # if upd.modified_count == 0:
-    #     del data['_id']
-    #     await database.insert_one(data,
-    #                               comment='update_session_minigame')
-    
+
 async def insert_session(data: dict) -> ObjectId:
     data['_id'] = ObjectId()
-    data = {key: value for key, value in data.items() if not callable(value)}
+    serialized_data = {key: serialize(value) for key, value in data.items() if not callable(value)}
 
-    result = await database.insert_one(data, comment='insert_session_minigame')
+    result = await database.insert_one(serialized_data, comment='insert_session_minigame')
     return result.inserted_id
 
 async def delete_session(_id: ObjectId) -> None:
@@ -518,3 +672,15 @@ def compare_dicts(d1, d2, path=''):
             changed_keys.append((new_path, d1[k], d2[k]))
 
     return changed_keys
+
+def serialize(value):
+    if isinstance(value, dict):
+        return {k: serialize(v) for k, v in value.items()}
+    elif isinstance(value, list):
+        return [serialize(v) for v in value]
+    elif hasattr(value, '__dict__'):
+        return serialize(value.__dict__)
+    elif callable(value):
+        return None
+    else:
+        return value
