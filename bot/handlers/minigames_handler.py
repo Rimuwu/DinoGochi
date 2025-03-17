@@ -90,12 +90,12 @@ async def WaiterHandler(message: types.Message):
 async def MiniGame_start(message: types.Message):
     game = TestMiniGame()
 
-    await game.StartGame(message.chat.id, message.from_user.id)
+    await game.StartGame(message.chat.id, message.from_user.id, message)
     return await message.answer("Игра начата")
 
 @HDMessage
 @main_router.message(Command(commands=['power']))
-async def fishing_start(message: types.Message):
+async def power_start(message: types.Message):
     
     game = PowerChecker()
-    await game.StartGame(message.chat.id, message.from_user.id)
+    await game.StartGame(message.chat.id, message.from_user.id, message)
