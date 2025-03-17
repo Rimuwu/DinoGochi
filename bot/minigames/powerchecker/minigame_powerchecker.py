@@ -41,6 +41,9 @@ class PowerChecker(MiniGame):
 
             # Кнопка для выбора ставки
             'choose_bet_set': Button(function='ChooseBet_set', filters=['owner_filter'], active=False),
+
+            # Кнопка для начала игры
+            'wait_users_start': Button(function='WaitUsersStart', filters=['owner_filter'], active=False),
         }
 
         self.ThreadsRegister['end_game_timer'] = Thread(repeat=20, col_repeat='inf', 
@@ -72,7 +75,7 @@ class PowerChecker(MiniGame):
                 ],
                 waiter_active=[],
                 stage_generator='preparation',
-                to_function='',
+                to_function='on_preparation',
                 data={}
             ),
             'max_players': Stage(
@@ -167,8 +170,124 @@ class PowerChecker(MiniGame):
             for player in self.PLAYERS.values():
                 await take_coins(player.user_id, self.bet, update=True)
 
-    async def EndGame_c(self, callback) -> None:
-        await self.EndGame()
+
+    async def enter_filter(self, callback: types.CallbackQuery) -> bool:
+        if self.only_for != 0 and callback.from_user.id != self.only_for:
+            await callback.answer('Игра доступна только для одного пользователя')
+            return False
+
+        if callback.from_user.id == self.owner_id:
+            await callback.answer('Вы не можете вступить в свою же игру')
+            return False
+
+        if callback.from_user.id in self.PLAYERS:
+            await callback.answer('Вы уже вступили в игру')
+            return False
+
+        else:
+            await callback.answer('Вы вступили в игру')
+            return True
+
+    async def WaitUsersStart(self, callback) -> None:
+        self.WaiterRegister = {}
+
+        self.ButtonsRegister = {
+            'end_game': Button(function='Endandleave', 
+                               filters=['owner_filter'], active=False),
+
+            'enter': Button(function='Enter_user', 
+                            filters=['enter_filter'], active=False),
+
+            'cancel_choose': Button(function='CancelChoose',
+                                    filters=[], active=False),
+            'choose_dino': Button(function='ChooseDino', 
+                                filters=[], active=False),
+        }
+
+        self.message_generators = {
+            'main': 'WaitUsersStartGenerator'
+        }
+
+        self.Stages = {
+            'wait_user': Stage(
+                threads_active=[],
+                buttons_active=[
+                    stageButton(button='end_game', data={'active': True}),
+                    stageButton(button='cancel_choose', data={'active': True}),
+                    stageButton(button='enter', data={'active': True}),
+                ],
+                waiter_active=[],
+                stage_generator='main',
+                to_function='',
+                data={}
+            ),
+        }
+
+        await self.Update()
+        await self.SetStage('wait_user')
+
+    async def Endandleave(self, callback) -> None:
+        if callback.from_user.id == self.owner_id:
+            await self.EndGame()
+        else:
+            pass
+    
+    async def waituser_inline(self, user_id):
+        buttons = [
+            {'text': 'Вступить', 'callback_data': self.CallbackGenerator('enter')},
+            {'text': 'Отменить', 'callback_data': self.CallbackGenerator('end_game')},
+        ]
+        return self.list_to_inline(buttons, 2)
+
+    async def WaitUsersStartGenerator(self, user_id: int) -> None:
+        markup = await self.waituser_inline(user_id)
+        text = 'Ожидание игроков'
+        await self.MesageUpdate(text=text, reply_markup=markup)
+
+    async def Enter_user(self, callback) -> None:
+        user_id = callback.from_user.id
+
+        user = await User().create(user_id)
+
+        if user.coins < self.bet:
+            await callback.answer('Недостаточно монет для ставки')
+            return
+
+        dinos = await user.get_dinos(False)
+        if not any([await dino.is_free() for dino in dinos]):
+            await callback.answer('У вас нет свободных динозавров')
+            return
+
+        
+
+    async def CancelChoose(self, callback) -> None:
+        """ Отмена выбора динозавра и удаление сообщения с выбором """
+        pass
+
+    async def eneter_dino_markup(self, user_id):
+        
+        user = await User().create(user_id)
+        dinos = await user.get_dinos()
+        
+        buttons = [{'text': dino.name, 'callback_data': self.CallbackGenerator('choose_dino_set', f'{dino.alt_id}:{user_id}')} for dino in dinos]
+        buttons.append({'text': 'back', 'ignore_row': 'True', 
+                        'callback_data': self.CallbackGenerator('cancel_choose')})
+        return self.list_to_inline(buttons, 2)
+
+    async def ChooseDino_set(self, callback) -> None:
+        dino_name = callback.data.split(':')[3]
+        user_id = callback.from_user.id
+        player = await self.GetPlayer(user_id)
+        if player:
+            player.data['dino'] = dino_name
+            await self.EditPlayer(user_id, player)
+        await self.Update()
+        await self.SetStage('preparation')
+
+    async def enter_dino_generator(self, user_id) -> None:
+        markup = await self.eneter_dino_markup(user_id)
+        text = f'{user_id} Выберите динозавра:'
+        await self.MesageUpdate('main', text=text, reply_markup=markup)
 
 
 PowerChecker().RegistryMe() # Регистрация класса в реестре

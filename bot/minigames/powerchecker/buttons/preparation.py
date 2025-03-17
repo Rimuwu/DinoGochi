@@ -8,6 +8,23 @@ from bot.modules.user.user import User, take_coins
 from aiogram import types
 from bot.modules.dinosaur.dinosaur import Dino
 
+@register_method(PowerChecker)
+async def MainGenerator(self, user_id) -> None:
+    text = 'main'
+    await self.MesageUpdate(text=text)
+
+
+@register_method(PowerChecker)
+async def on_preparation(self) -> None:
+    owner_player = await self.GetPlayer(self.owner_id)
+    owner_has_dino = 'dino' in owner_player.data and owner_player.data['dino']
+
+    if owner_has_dino and self.bet > 0 and self.col_players > 1:
+        bt = self.ButtonsRegister['wait_users_start']
+        bt.active = True
+
+        await self.EditButton('wait_users_start', bt)
+        # await self.MessageGenerator('preparation', self.owner_id)
 
 @register_method(PowerChecker)
 async def PreparationMarkup(self):
@@ -15,14 +32,19 @@ async def PreparationMarkup(self):
         {'text': 'max players', 'callback_data': self.CallbackGenerator('max_col')},
         {'text': '🦕', 'callback_data': self.CallbackGenerator('choose_dino')},
         {'text': '💰', 'callback_data': self.CallbackGenerator('choose_bet')},
-        {'text': '🚪', 'callback_data': self.CallbackGenerator('end_game')},
+        {'text': '🚪', 'callback_data': self.CallbackGenerator('end_game'), 'ignore_row': 'True'},
     ]
-    return self.list_to_inline(buttons)
 
-@register_method(PowerChecker)
-async def MainGenerator(self, user_id) -> None:
-    text = 'main'
-    await self.MesageUpdate(text=text)
+    if self.only_for != 0: buttons.pop(0)
+
+    owner_player = await self.GetPlayer(self.owner_id)
+    owner_has_dino = 'dino' in owner_player.data and owner_player.data['dino']
+
+    if owner_has_dino and self.bet > 0 and self.col_players > 1:
+        buttons.append({
+            'text': 'Начать игру', 'callback_data': self.CallbackGenerator('wait_users_start')})
+
+    return self.list_to_inline(buttons)
 
 @register_method(PowerChecker)
 async def PreparationGenerator(self, user_id) -> None:
@@ -48,6 +70,7 @@ async def PreparationGenerator(self, user_id) -> None:
     markup = await self.PreparationMarkup()
     await self.MesageUpdate('main', text=text, reply_markup=markup)
 
+
 @register_method(PowerChecker)
 async def max_playersMarkup(self):
     buttons = [
@@ -59,17 +82,19 @@ async def max_playersMarkup(self):
     return self.list_to_inline(buttons, 3)
 
 @register_method(PowerChecker)
+async def MaxPlayersGenerator(self, user_id) -> None:
+    markup = await self.max_playersMarkup()
+    text = 'Выберите максимальное количество игроков:'
+    await self.MesageUpdate('main', text=text, reply_markup=markup)
+
+
+@register_method(PowerChecker)
 async def ColPlayers_set(self, callback) -> None:
     col_players = callback.data.split(':')[3]
     self.col_players = col_players
     await self.Update()
     await self.SetStage('preparation')
 
-@register_method(PowerChecker)
-async def MaxPlayersGenerator(self, user_id) -> None:
-    markup = await self.max_playersMarkup()
-    text = 'Выберите максимальное количество игроков:'
-    await self.MesageUpdate('main', text=text, reply_markup=markup)
 
 @register_method(PowerChecker)
 async def choose_dinoMarkup(self, user_id):
@@ -98,17 +123,20 @@ async def ChooseDinoGenerator(self, user_id) -> None:
     text = 'Выберите динозавра:'
     await self.MesageUpdate('main', text=text, reply_markup=markup)
 
+
 @register_method(PowerChecker)
 async def choose_betMarkup(self):
     buttons = [
         {'text': 'back', 'callback_data': self.CallbackGenerator('to_preparation')},
     ]
     return self.list_to_inline(buttons, 1)
+
 @register_method(PowerChecker)
 async def ChooseBetGenerator(self, user_id) -> None:
     markup = await self.choose_betMarkup()
     text = 'Выберите ставку:'
     await self.MesageUpdate('main', text=text, reply_markup=markup)
+
 
 @register_method(PowerChecker)
 async def IntWaiter(self, message: types.Message, command: bool = False):
@@ -149,3 +177,13 @@ async def IntWaiter(self, message: types.Message, command: bool = False):
             await take_coins(user_id, -coins, update=True)
 
         await self.SetStage('preparation')
+
+        waiter = self.WaiterRegister['int']
+        waiter.active = False
+
+        await self.EditWaiter('wait_bet', waiter)
+
+
+@register_method(PowerChecker)
+async def EndGame_c(self, callback) -> None:
+    await self.EndGame()

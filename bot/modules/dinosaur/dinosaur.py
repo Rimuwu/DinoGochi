@@ -208,6 +208,8 @@ class Dino:
 
     async def get_owner(self): return await get_owner(self._id)
 
+    async def is_free(self): return await self.status == 'pass'
+
 
 class Egg:
 

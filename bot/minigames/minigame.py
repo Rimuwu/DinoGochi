@@ -368,8 +368,7 @@ class MiniGame:
         """Генерирует callback для кнопки"""
 
         if button_key not in self.ButtonsRegister or not self.ButtonsRegister[button_key].active:
-            self.D_log(f'CallbackGenerator {button_key} not found or not active')
-            return ''
+            raise ValueError(f'CallbackGenerator {button_key} not found or not active')
 
         text = f'minigame:{self.session_key}:{button_key}'
         if data: text += f':{data}' # 3-... аргумент
@@ -581,6 +580,7 @@ class MiniGame:
         if key in self.ButtonsRegister:
             self.ButtonsRegister[key] = button
             await self.Update()
+
             self.D_log(f'EditButton {key}')
         else:
             self.D_log(f'EditButton {key} not found')
