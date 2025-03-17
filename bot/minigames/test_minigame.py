@@ -1,4 +1,4 @@
-from bot.modules.inline import list_to_inline
+
 from aiogram import types
 from bot.modules.logs import log
 from bot.minigames.minigame import MiniGame
@@ -31,9 +31,6 @@ class TestMiniGame(MiniGame):
             last_start=0,
             active=True
         )
-    
-    async def Custom_StartGame(self) -> None:
-        ...
 
     # ======== THREADS ======== #
     async def timer(self):
@@ -52,9 +49,9 @@ class TestMiniGame(MiniGame):
     async def MarkupGenerator(self):
         """ Генерация меню """
 
-        return list_to_inline(
+        return self.list_to_inline(
             [
-                {'button': self.CallbackGenerator('button1')}
+                {'text': 'button', 'callback_data': self.CallbackGenerator('button1')}
             ]
         )
 
