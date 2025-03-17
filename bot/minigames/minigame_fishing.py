@@ -240,4 +240,4 @@ class FishingGame(MiniGame):
         await self.MainGenerator()
 
 
-FishingGame().RegistryMe() # Регистрация класса в реестре
+# FishingGame().RegistryMe() # Регистрация класса в реестре
