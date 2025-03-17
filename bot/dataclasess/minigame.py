@@ -18,9 +18,10 @@ class PlayerData:
 
 @dataclass
 class Button:
-    function: str
     filters: list[str]
     active: bool
+    function: str = field(default='')
+    stage: str = field(default='')
 
 @dataclass
 class Waiter:

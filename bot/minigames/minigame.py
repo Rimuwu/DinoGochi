@@ -603,22 +603,28 @@ class MiniGame:
             return False
 
         button = self.ButtonsRegister[key]
-        button_function = getattr(self, button.function, None)
 
-        if button_function:
-            # Проверка на фильтры
-            filters = button.filters
-            filter_results = [await getattr(self, filter_func)(callback) for filter_func in filters]
-            self.D_log(f'filter_results {filter_results}')
+        # Проверка на фильтры
+        filters = button.filters
+        filter_results = [await getattr(self, filter_func)(callback) for filter_func in filters]
+        self.D_log(f'filter_results {filter_results}')
 
-            if all(filter_results) and button.active:
+        if all(filter_results) and button.active:
+            button_function = getattr(self, button.function, None)
+
+            if button_function:
                 self.D_log(f'button_function {key} {callback.data}')
                 await button_function(callback)
                 return True
-            else:
-                self.D_log(f'button_function {key} not active or filters not passed')
+
+            if button.stage and button.stage in self.Stages:
+                await self.SetStage(button.stage, callback.from_user.id)
+                return True
+
+            if not button.stage and button.stage not in self.Stages:
+                self.D_log(f'button_function {key} or stage not found')
         else:
-            self.D_log(f'button_function {key} not found')
+            self.D_log(f'button_function {key} not active or filters not passed')
         return False
 
     async def DEV_BUTTON(self, callback: types.CallbackQuery):
