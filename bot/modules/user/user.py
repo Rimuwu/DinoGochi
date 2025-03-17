@@ -562,7 +562,7 @@ async def user_info(userid: int, lang: str, secret: bool = False,
     return return_text, await user.get_avatar()
 
 async def user_name(userid: int):
-    user = await users.find_one({'userid': userid}, comment='user_name')
+    user = await users.find_one({'userid': int(userid)}, comment='user_name')
     if user: 
         if user['name'] or user['name'] != '':
             return user['name']
