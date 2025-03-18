@@ -5,7 +5,7 @@ import string
 from typing import Union
 
 from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
-                           ReplyKeyboardMarkup, User, KeyboardButton)
+                           ReplyKeyboardMarkup, User, KeyboardButton, InputFile)
 
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 

@@ -205,7 +205,8 @@ class PowerChecker(MiniGame):
         }
 
         self.message_generators = {
-            'main': 'WaitUsersStartGenerator'
+            'main': 'WaitUsersStartGenerator',
+            'choose_dino': 'enter_dino_generator',
         }
 
         self.Stages = {
@@ -231,7 +232,7 @@ class PowerChecker(MiniGame):
             await self.EndGame()
         else:
             pass
-    
+
     async def waituser_inline(self, user_id):
         buttons = [
             {'text': 'Вступить', 'callback_data': self.CallbackGenerator('enter')},
@@ -258,17 +259,20 @@ class PowerChecker(MiniGame):
             await callback.answer('У вас нет свободных динозавров')
             return
 
-        
+        await self.AddPlayer(user_id, callback.message.chat.id, 
+                             await user_name(user_id),
+                             self.STAGE, {'dino': ''}
+                             )
 
     async def CancelChoose(self, callback) -> None:
         """ Отмена выбора динозавра и удаление сообщения с выбором """
         pass
 
     async def eneter_dino_markup(self, user_id):
-        
+
         user = await User().create(user_id)
         dinos = await user.get_dinos()
-        
+
         buttons = [{'text': dino.name, 'callback_data': self.CallbackGenerator('choose_dino_set', f'{dino.alt_id}:{user_id}')} for dino in dinos]
         buttons.append({'text': 'back', 'ignore_row': 'True', 
                         'callback_data': self.CallbackGenerator('cancel_choose')})
