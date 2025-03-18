@@ -447,7 +447,8 @@ ids = { # первые 2 символа
     'us': 'uses', 'en': 'endurance',
     'ma': 'mana', 'st': 'stack',
     'in': 'interact', 'da': 'data_id',
-    'ty': 'type'
+    'ty': 'type', 'au': 'author',
+    'lvl': 'lvl'
 }
 
 def item_code(item: dict, v_id: bool = True) -> str:

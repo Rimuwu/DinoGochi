@@ -31,14 +31,15 @@ class PassWorker(BaseMiddleware):
         if message.chat.type == "private":
             user = await users.find_one({'userid': user_id}, {"_id": 1, 
                                          "settings": 1, 'notifications': 1}, 
-                                        comment='post_process_user')
+                                        comment = 'post_process_user')
             if user:
                 await users.update_one({'userid': user_id}, 
                                     {'$set': {'last_message_time': 
                                         int(message.date.timestamp())}}, 
-                                    comment='post_process_1')
+                                    comment = 'post_process_1')
 
-                daily = await daily_data.find_one({'owner_id': user_id}, comment='post_process_check')
+                daily = await daily_data.find_one({'owner_id': user_id}, 
+                                                  comment = 'post_process_check')
                 last_ads_time = await check_ads(user_id)
                 send = False
 
@@ -60,7 +61,6 @@ class PassWorker(BaseMiddleware):
 
                 if last_ads_time >= 10 and not send:
                     # Рекламные сообщения
-                    if random() <= 0.5:
-                        await auto_ads(message, True)
+                    if random() <= 0.5: await auto_ads(message, True)
 
 main_router.message.middleware(PassWorker())

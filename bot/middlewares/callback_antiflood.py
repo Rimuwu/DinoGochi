@@ -7,7 +7,7 @@ from bot.exec import main_router, bot
 from bot.modules.localization import get_lang, t
 from bot.config import conf
 
-DEFAULT_RATE_LIMIT = 1
+DEFAULT_RATE_LIMIT = 0.5
 
 class CallbackQueryAntiFloodMiddleware(BaseMiddleware):
     def __init__(self, timeout: float=DEFAULT_RATE_LIMIT):
