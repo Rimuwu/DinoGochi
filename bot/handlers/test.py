@@ -73,6 +73,8 @@ from bot.modules.decorators import HDMessage
 from bson.objectid import ObjectId
 from bson.son import SON
 
+from bot.modules.states_tools import ChooseImageState
+
 users = mongo_client.user.users
 dinosaurs = mongo_client.dinosaur.dinosaurs
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
@@ -303,3 +305,20 @@ async def save_users_handler(message: Message):
         async for doc in cursor:
             f.write(str(doc["userid"]) + "\n")
     await message.answer("User IDs saved.")
+    
+
+
+@main_router.message(Command(commands=['size']), IsAdminUser())
+@HDMessage
+async def size(message: Message):
+    
+    await ChooseImageState(f, message.from_user.id, message.chat.id, 'ru')
+    await bot.send_message(message.from_user.id, 'send photo')
+
+
+async def f(fileID, transmitted_data: dict):
+
+    file = await bot.get_file(fileID)
+    await bot.send_photo(transmitted_data['chatid'], file.file_id, 
+                        caption=f'size {file.file_size}'
+                        )
