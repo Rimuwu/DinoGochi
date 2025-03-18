@@ -557,6 +557,13 @@ class MiniGame:
             await callback.answer('Only for owner!')
         return status
 
+    
+    async def players_filter(self, callback: types.CallbackQuery) -> bool:
+        status = str(callback.from_user.id) in self.PLAYERS
+        if not status:
+            await callback.answer('Only for players!')
+        return status
+    
     # ======== BUTTONS ======== #
     """ Функции кнопок """
 
