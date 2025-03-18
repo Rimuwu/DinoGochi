@@ -1,5 +1,6 @@
 from time import time
 
+import aiogram
 from bson.objectid import ObjectId
 
 from bot.dbmanager import mongo_client
@@ -7,7 +8,7 @@ from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, random_code, seconds_to_str, item_list, escape_markdown
 from bot.modules.items.item import counts_items, get_item_dict, AddItemToUser, CheckCountItemFromUser, RemoveItemFromUser
 from bot.modules.items.item import get_data as get_item_data
-from bot.modules.images import async_open, market_image
+from bot.modules.images import async_open
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.user.user import get_inventory, take_coins, premium
 from bot.modules.localization import t
@@ -147,10 +148,12 @@ async def seller_ui(owner_id: int, lang: str, my_market: bool, name: str = ''):
                 bt_data[d_but['cancel_all']] = f'seller cancel_all {owner_id}'
 
         markup = list_to_inline([bt_data])
+        img = await async_open(f'images/remain/market/{status}.png', True)
+
         if 'custom_image' in seller and seller['custom_image'] and await premium(owner_id):
-            img = await market_image(seller['custom_image'], status)
-        else:
-            img = await async_open(f'images/remain/market/{status}.png', True)
+            file_info = await bot.get_file(seller['custom_image'])
+            if file_info:
+                img = seller['custom_image']
 
     return text, markup, img
 
