@@ -241,9 +241,11 @@ async def add_premium(message):
     if arg_list:
         tt = str_to_seconds(' '.join(arg_list))
 
-    if msg_args[0] != 0:
+    if msg_args[1] != '0':
         userid = int(msg_args[1])
     else: userid = message.from_user.id
+
+    log(f'add_premium userid: {userid} time: {tt}', 4)
 
     await award_premium(userid, tt)
     await bot.send_message(message.from_user.id, 'ok')
