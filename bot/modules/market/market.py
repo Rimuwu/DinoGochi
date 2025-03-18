@@ -1,6 +1,5 @@
 from time import time
 
-import aiogram
 from bson.objectid import ObjectId
 
 from bot.dbmanager import mongo_client
@@ -151,8 +150,7 @@ async def seller_ui(owner_id: int, lang: str, my_market: bool, name: str = ''):
         img = await async_open(f'images/remain/market/{status}.png', True)
 
         if 'custom_image' in seller and seller['custom_image'] and await premium(owner_id):
-            file_info = await bot.get_file(seller['custom_image'])
-            if file_info:
+            if await bot.get_file(seller['custom_image']):
                 img = seller['custom_image']
 
     return text, markup, img

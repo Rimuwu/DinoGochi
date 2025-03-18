@@ -10,6 +10,8 @@ from bot.modules.data_format import seconds_to_str
 from bot.modules.localization import get_data, t
 import asyncio
 
+from bot.modules.logs import log
+
 # from concurrent.futures import ThreadPoolExecutor
 # POOL = ThreadPoolExecutor()
 
@@ -276,10 +278,19 @@ async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', p
         if isinstance(custom_url, str):
             try:
                 file_info = await bot.get_file(custom_url)
-                imageBinaryBytes = await bot.download_file(file_info.file_path)
-                imageStream = io.BytesIO(imageBinaryBytes)
-                img = Image.open(imageStream).resize((900, 350)).convert('RGBA')
-            except: custom_url = ''
+                if file_info and file_info.file_path:
+                    imageBinaryBytes = await bot.download_file(file_info.file_path)
+                    if imageBinaryBytes:
+                        imageStream = io.BytesIO(imageBinaryBytes.read())
+                        img = Image.open(imageStream).resize((900, 350)).convert('RGBA')
+                    else:
+                        raise ValueError("Failed to download file: No data returned.")
+                else:
+                    raise ValueError("Invalid file path received from bot.get_file.")
+            except Exception as err: 
+                log(f'Error loading custom image {custom_url}')
+                log(str(err))
+                custom_url = ''
         else:
             img = custom_url
             img = img.resize((900, 350), Image.Resampling.LANCZOS)
@@ -418,24 +429,6 @@ async def dino_collecting(dino_id: int, col_type: str):
     loop = asyncio.get_running_loop()
     result = await loop.run_in_executor(None, dino_collecting_pst, 
             dino_id, col_type)
-
-    rss = await result
-    return rss
-
-async def market_image_pst(custom_url, status):
-    try:
-        file_info = await bot.get_file(custom_url)
-        imageBinaryBytes = await bot.download_file(file_info.file_path)
-        imageStream = io.BytesIO(imageBinaryBytes)
-        img = Image.open(imageStream).resize((900, 350), Image.Resampling.LANCZOS).convert('RGBA')
-    except: 
-        img = await async_open(f'images/remain/market/{status}.png', True)
-    return img
-
-async def market_image(custom_url, status):
-    loop = asyncio.get_running_loop()
-    result = await loop.run_in_executor(None, market_image_pst, 
-            custom_url, status)
 
     rss = await result
     return rss
