@@ -410,18 +410,32 @@ async def ChooseTime(message: Message):
 async def ChooseImage(message: Message):
     """Общая функция для получения изображения
     """
+    if not message.from_user or not message.from_user.id:
+        return
+
+    if not message.photo:
+        lang = await get_lang(message.from_user.id)
+        await bot.send_message(message.chat.id, t('css.no_photo', lang))
+        return
+
     userid = message.from_user.id
+    state = await get_state(userid, message.chat.id)
 
-    state = await get_state(message.from_user.id, message.chat.id)
-    if data := await state.get_data():
-        func = data['function']
-        transmitted_data = data['transmitted_data']
+    if state and (data := await state.get_data()):
+        func = data.get('function')
+        transmitted_data = data.get('transmitted_data', {})
 
-    await state.clear()
+        await state.clear()
 
-    fileID = message.photo[-1].file_id
-    transmitted_data['file'] = message.photo[-1]
-    await func(fileID, transmitted_data=transmitted_data)
+        if message.photo:
+            fileID = message.photo[-1].file_id
+            transmitted_data['file'] = message.photo[-1]
+        else:
+            lang = await get_lang(message.from_user.id)
+            await bot.send_message(message.chat.id, t('css.no_photo', lang))
+            return
+        if func:
+            await func(fileID, transmitted_data=transmitted_data)
 
 @HDMessage
 @main_router.message(IsAuthorizedUser(), StateFilter(GeneralStates.ChooseImage))
