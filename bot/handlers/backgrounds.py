@@ -40,7 +40,7 @@ async def back_edit(content, transmitted_data: dict):
         tt = 'saved'
     else:
         tt = 'custom'
-        file_info = await bot.get_file(content)
+        file_info = await bot.get_file(content, request_timeout=10)
 
         downloaded_file = None
         if file_info.file_path:
