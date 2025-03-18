@@ -212,7 +212,6 @@ async def edit_image(new_image: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     message_id = transmitted_data['message_id']
-    new_image = ''
 
     if new_image != 'no_image': 
         file_info = await bot.get_file(new_image)
@@ -233,7 +232,7 @@ async def edit_image(new_image: str, transmitted_data: dict):
     text, markup, image = await seller_ui(userid, lang, True)
 
     await bot.edit_message_media(chat_id=chatid, message_id=message_id, reply_markup=markup,
-                media=InputMediaPhoto(media=image, caption=text, parse_mode='Markdown'))
+                media=InputMediaPhoto(media=new_image, caption=text, parse_mode='Markdown'))
 
 async def pr_edit_image(userid: int, chatid: int, lang: str, message_id: int):
     transmitted_data = {
