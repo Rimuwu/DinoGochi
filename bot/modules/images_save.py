@@ -54,7 +54,7 @@ async def send_SmartPhoto(chat_id: int | str,
 
     if photo_way in storage:
         file_id = storage[photo_way]
-        if await bot.get_file(file_id):
+        if await bot.get_file(file_id, request_timeout=20):
             # Отпрляем файл по file_id
             mes = await bot.send_photo(chat_id, file_id, caption=caption, 
                             parse_mode=parse_mode, reply_markup=reply_markup,
