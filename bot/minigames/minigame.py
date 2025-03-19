@@ -1,4 +1,5 @@
 import asyncio
+from math import e
 
 from bson import ObjectId
 from bot.dataclasess.minigame import Button, PlayerData, SMessage, Stage, Thread, Waiter, stageButton, stageThread, stageWaiter
@@ -6,6 +7,7 @@ from bot.exec import bot
 import random
 from bot.minigames.minigame_registartor import Registry
 from aiogram import types
+from bot.modules.localization import get_lang
 from bot.modules.logs import log
 from bot.dbmanager import mongo_client
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -215,7 +217,10 @@ class MiniGame:
             data = thread.data
 
             for attr, value in data.items():
-                setattr(self.ThreadsRegister[key], attr, value)
+                if key in self.ThreadsRegister:
+                    setattr(self.ThreadsRegister[key], attr, value)
+                else:
+                    self.D_log(f'ManageThreads {key} not found')
 
     async def ManageButtons(self, buttons: list[stageButton]):
         """ Управляет кнопками в зависимости от этапа """
@@ -224,7 +229,10 @@ class MiniGame:
             data = button.data
 
             for attr, value in data.items():
-                setattr(self.ButtonsRegister[key], attr, value)
+                if key in self.ButtonsRegister:
+                    setattr(self.ButtonsRegister[key], attr, value)
+                else:
+                    self.D_log(f'ManageButtons {key} not found')
 
     async def ManageWaiters(self, waiters: list[stageWaiter]):
         """ Управляет ожиданиями в зависимости от этапа """
@@ -233,7 +241,10 @@ class MiniGame:
             data = waiter.data
 
             for attr, value in data.items():
-                setattr(self.WaiterRegister[key], attr, value)
+                if key in self.WaiterRegister:
+                    setattr(self.WaiterRegister[key], attr, value)
+                else:
+                    self.D_log(f'ManageWaiters {key} not found')
 
     # ======== THREADS ======== #
 
@@ -286,7 +297,7 @@ class MiniGame:
                         function = getattr(self, thread.function, None)
                         if function:
 
-                            self.D_log(f'start_thread {thread.function} | repeat {thread.repeat} | col_repeat {thread.col_repeat}')
+                            # self.D_log(f'start_thread {thread.function} | repeat {thread.repeat} | col_repeat {thread.col_repeat}')
 
                             try:
                                 await function()
@@ -316,6 +327,7 @@ class MiniGame:
     async def StartGame(self, chat_id: int, user_id: int, message: Message) -> None:
         """ Когда игра запускается впервые """
         await self.AddPlayer(user_id, chat_id, await user_name(user_id))
+        self.LANGUAGE = await get_lang(user_id)
 
         # Сохраняем данные в базе
         self.session_key = await SessionGenerator()
@@ -323,8 +335,8 @@ class MiniGame:
         await insert_session(self.__dict__)
 
         # Отправляем сообщение
-        await self.CreateMessage(user_id, chat_id, 'main')
-        await self.MessageGenerator('main', user_id)
+        await self.CreateMessage(user_id, chat_id, 'main', 
+                                 'preparation message for start game...')
 
         await self.Custom_StartGame(user_id, chat_id, message)
 
@@ -354,9 +366,18 @@ class MiniGame:
             await self.Custom_EndGame()
         except Exception as e:
             self.D_log(f'CustomEndGame error {e}')
+        
+        # Вызов функции EndGameGenerator
+        await self.EndGameGenerator()
+        
+        # Удаление всех сообщений, кроме 'main'
+        keys_to_delete = [key for key in self.session_masseges if key != 'main']
+        for key in keys_to_delete:
+            await self.DeleteMessage(func_key=key)
 
         await delete_session(self._id)
         Registry.delete_class_object(self.GAME_ID, self.session_key)
+
     async def Custom_EndGame(self):
         """ Заканчивает игру (Создан, чтобы не переписывать EndGame) """
         pass
@@ -367,8 +388,8 @@ class MiniGame:
     def CallbackGenerator(self, button_key: str, data: str = '') -> str:
         """Генерирует callback для кнопки"""
 
-        if button_key not in self.ButtonsRegister or not self.ButtonsRegister[button_key].active:
-            raise ValueError(f'CallbackGenerator {button_key} not found or not active')
+        if button_key not in self.ButtonsRegister:
+            raise ValueError(f'CallbackGenerator {button_key} not found')
 
         text = f'minigame:{self.session_key}:{button_key}'
         if data: text += f':{data}' # 3-... аргумент
@@ -384,10 +405,14 @@ class MiniGame:
 
     # ======== MESSAGE ======== #
     """ Код для генерации собщения и меню """
+    
+    async def EndGameGenerator(self):
+        text = f'Игра {self.session_key} завершена'
+        await self.MesageUpdate('main', text=text)
 
     async def GetMessageGenerator(self, func_key: str = 'main'):
         generator = self.message_generators.get(func_key, 'error_find_generator')
-        self.D_log(f'GetMessageGenerator {func_key} -> {generator}')
+        # self.D_log(f'GetMessageGenerator {func_key} -> {generator}')
         return generator
 
     async def DeleteMessage(self, func_key: str = 'main') -> None:
@@ -407,7 +432,7 @@ class MiniGame:
             del self.session_masseges[func_key]
 
     async def CreateMessage(self, user_id: int, chat_id: int, func_key: str = 'main', 
-                            text = 'created message...') -> types.Message:
+                            text = 'create message...') -> types.Message:
         """ Создает сообщение """
         self.D_log(f'CreateMessage {func_key}')
 
@@ -557,13 +582,23 @@ class MiniGame:
             await callback.answer('Only for owner!')
         return status
 
-    
-    async def players_filter(self, callback: types.CallbackQuery) -> bool:
+    async def player_filter(self, callback: types.CallbackQuery) -> bool:
         status = str(callback.from_user.id) in self.PLAYERS
         if not status:
             await callback.answer('Only for players!')
         return status
-    
+
+    async def message_author_filter(self, callback) -> bool:
+        if 'author' in self.session_masseges['main'].data:
+
+            for key, message_data in self.session_masseges.items():
+                if message_data.message_id == callback.message.message_id:
+                    if message_data.data['author'] == callback.from_user.id:
+                        return True
+
+        await callback.answer('Only for message author!')
+        return False
+
     # ======== BUTTONS ======== #
     """ Функции кнопок """
 
@@ -614,7 +649,6 @@ class MiniGame:
         # Проверка на фильтры
         filters = button.filters
         filter_results = [await getattr(self, filter_func)(callback) for filter_func in filters]
-        self.D_log(f'filter_results {filter_results}')
 
         if all(filter_results) and button.active:
             button_function = getattr(self, button.function, None)
@@ -625,13 +659,14 @@ class MiniGame:
                 return True
 
             if button.stage and button.stage in self.Stages:
+                self.D_log(f'button_stage {key} {callback.data}')
                 await self.SetStage(button.stage, callback.from_user.id)
                 return True
 
             if not button.stage and button.stage not in self.Stages:
-                self.D_log(f'button_function {key} or stage not found')
+                self.D_log(f'button_function {key} stage not found')
         else:
-            self.D_log(f'button_function {key} not active or filters not passed')
+            self.D_log(f'button_function {key} not active[{button.active}] or filters{filter_results} not passed')
         return False
 
     async def DEV_BUTTON(self, callback: types.CallbackQuery):
@@ -658,11 +693,18 @@ class MiniGame:
             ).user_id # type: ignore
         return None
 
+
+    def standart_player_data(self):
+        """ Стандартные данные для игрока НАДО ПЕРЕПИСЫВАТЬ!"""
+
+        return {}
+
     async def AddPlayer(self, user_id: int, chat_id: int, user_name: str, stage: str = '', data: Optional[dict] = None):
-        """ Добавление игрока """
+        """ Добавление игрока + данные из standart_player_data"""
         self.PLAYERS[str(user_id)] = PlayerData(
             user_id=user_id, chat_id=chat_id,   
-            user_name=user_name, stage=stage, data=data or {})
+            user_name=user_name, stage=stage, data=data or self.standart_player_data())
+
         await self.Update()
         self.D_log(f'AddPlayer {user_id}')
     
