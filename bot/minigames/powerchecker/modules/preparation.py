@@ -9,12 +9,6 @@ from aiogram import types
 from bot.modules.dinosaur.dinosaur import Dino
 
 @register_method(PowerChecker)
-async def MainGenerator(self, user_id) -> None:
-    text = 'main'
-    await self.MesageUpdate(text=text)
-
-
-@register_method(PowerChecker)
 async def on_preparation(self) -> None:
     owner_player = await self.GetPlayer(self.owner_id)
     owner_has_dino = 'dino' in owner_player.data and owner_player.data['dino']
@@ -48,7 +42,7 @@ async def PreparationMarkup(self):
 
 @register_method(PowerChecker)
 async def PreparationGenerator(self, user_id) -> None:
-    self.D_log(f'PreparationGenerator {user_id}')
+
     owner_player = await self.GetPlayer(user_id)
     if owner_player is None:
         self.D_log('Owner player not found')
@@ -91,20 +85,10 @@ async def MaxPlayersGenerator(self, user_id) -> None:
 @register_method(PowerChecker)
 async def ColPlayers_set(self, callback) -> None:
     col_players = callback.data.split(':')[3]
-    self.col_players = col_players
+
+    self.col_players = int(col_players)
     await self.Update()
     await self.SetStage('preparation')
-
-
-@register_method(PowerChecker)
-async def choose_dinoMarkup(self, user_id):
-    
-    user = await User().create(user_id)
-    dinos = await user.get_dinos()
-    
-    buttons = [{'text': dino.name, 'callback_data': self.CallbackGenerator('choose_dino_set', dino.alt_id)} for dino in dinos]
-    buttons.append({'text': 'back', 'ignore_row': 'True', 'callback_data': self.CallbackGenerator('to_preparation')})
-    return self.list_to_inline(buttons, 2)
 
 @register_method(PowerChecker)
 async def ChooseDino_set(self, callback) -> None:
@@ -119,7 +103,7 @@ async def ChooseDino_set(self, callback) -> None:
 
 @register_method(PowerChecker)
 async def ChooseDinoGenerator(self, user_id) -> None:
-    markup = await self.choose_dinoMarkup(user_id)
+    markup = await self.dino_markup(user_id)
     text = 'Выберите динозавра:'
     await self.MesageUpdate('main', text=text, reply_markup=markup)
 
