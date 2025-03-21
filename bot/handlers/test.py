@@ -98,7 +98,7 @@ async def command(message):
             res = await AddItemToUser(ad_user, item_id, col)
             print(res)
 
-            await bot.send_message(message.from_user.id, res)
+            await bot.send_message(message.from_user.id, str(res))
     else:
         print(user.id, 'not in devs')
 

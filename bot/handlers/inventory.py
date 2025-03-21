@@ -179,8 +179,11 @@ async def item_callback(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id
     lang = await get_lang(call.from_user.id)
-    item = decode_item(call_data[2])
+    item_id = call_data[2]
     preabil = {}
+
+    item_base = await decode_item(item_id)
+    item = item_base['items_data']
 
     if item:
         if call_data[1] == 'info':

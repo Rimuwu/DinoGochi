@@ -315,14 +315,11 @@ async def get_inventory(userid: int, exclude_ids: list  | None = None):
     
     inv, count = [], 0
     data_inv = await items.find({'owner_id': userid}, 
-                                {'_id': 0, 'owner_id': 0}, comment='get_inventory')
+                                {'owner_id': 0}, comment='get_inventory')
     for item_dict in data_inv:
         if item_dict['items_data']['item_id'] not in exclude_ids:
-            item = {
-                'item': item_dict['items_data'], 
-                "count": item_dict['count']
-                }
-            inv.append(item)
+            inv.append(item_dict)
+
             count += item_dict['count']
     return inv, count
 

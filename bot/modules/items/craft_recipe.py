@@ -332,13 +332,15 @@ async def check_items_in_inventory(materials, item, count,
 async def send_item_info(item: dict, transmitted_data: dict):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
+    userid = transmitted_data['userid']
 
     custom_code = transmitted_data['inline_code']
+    code = await item_code(item_dict=item, userid=userid)
 
     text, image = await item_info(item, lang)
     markup = list_to_inline([
         {t('item_use.recipe.inl_button_conf', lang): 
-            f'inventoryinline {custom_code} {item_code(item)}'}
+            f'inventoryinline {custom_code} {code}'}
     ])
 
     if not image:

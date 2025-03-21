@@ -246,7 +246,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             send_status = False
             buttons = {}
             image, eggs = await create_eggs_image()
-            code = item_code(item)
+            code = await item_code(item_dict=item, userid=userid)
 
             for i in range(3): buttons[f'🥚 {i+1}'] = f'item egg {code} {eggs[i]}'
             buttons = list_to_inline([buttons])

@@ -31,10 +31,10 @@ def inline_menu(markup_data, lang: str = 'en', **kwargs):
             InlineKeyboardButton(text=text, callback_data=callback))
     return markup_inline.as_markup()
 
-def item_info_markup(item: dict, lang):
+async def item_info_markup(item: dict, lang: str, userid: int):
     item_data = get_item_data(item['item_id'])
     loc_data = get_loc_data('item_info.static.buttons', lang)
-    code = item_code(item)
+    code = await item_code(item_dict=item, userid=userid)
     buttons_dict = {}
 
     if item_data['type'] not in ['material', 'ammunition', 'dummy']:
@@ -63,6 +63,7 @@ def item_info_markup(item: dict, lang):
             if rep not in ignore_craft:
                 for item_cr in item_data['create'][rep]:
                     data = get_item_dict(item_cr['item'])
+                    code_for_item = await item_code(item_dict=data, userid=userid)
 
                     if item_cr['type'] != 'preview':
                         name = loc_data['created_item'].format(
@@ -70,7 +71,7 @@ def item_info_markup(item: dict, lang):
                                                 lang, item_cr.get('abilities', {})))
 
                         markup_inline.row(InlineKeyboardButton(text=name,
-                                    callback_data=f'item info {item_code(data)}'), width=2)
+                                    callback_data=f'item info {code_for_item}'), width=2)
 
     if 'ns_craft' in item_data:
         for cr_dct_id in item_data['ns_craft'].keys():

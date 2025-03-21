@@ -114,12 +114,16 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list | Non
             # Если предмет показывается на страницах
             if add_item:
                 count = base_item['count']
-                code = item_code(item)
 
-                if code in code_items:
-                    code_items[code]['count'] += count
+                key_code_parts = []
+                for k, v in base_item['items_data'].items():
+                    key_code_parts.append(f"{k}-{v}")
+                key_code = ":".join(key_code_parts)
+
+                if key_code in code_items:
+                    code_items[key_code]['count'] += count
                 else:
-                    code_items[code] = {'item': item, 'count': count}
+                    code_items[key_code] = {'item': item, 'count': count}
 
     a = -1
     for code, data_item in code_items.items():
@@ -127,27 +131,33 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list | Non
         count = data_item['count']
         name = get_name(item['item_id'], 
                         lang, item.get('abilities', {}))
-        standart = is_standart(item)
 
         count_name = f' x{count}'
         if count == 1: count_name = ''
 
-        end_name = name_end(item, standart, name, count_name)
+        end_name = name_end(item, name, count_name)
 
         if end_name in items_data and items_data[end_name] != item:
             a =+ 1
             name += f' #{a}'
-            end_name = name_end(item, standart, name, count_name)
+            end_name = name_end(item, name, count_name)
 
         items_data[end_name] = item
 
     return items_data
 
-def name_end(item, standart, name, count_name):
-    if standart: 
+def name_end(item, name, count_name):
+    standart = is_standart(item)
+    if standart:
         end_name = f"{name}{count_name}"
     else:
-        code = item_code(item, False)
+        code = ''
+
+        if 'endurance' in item['abilities']:
+            code = item['abilities']['endurance']
+        elif 'uses' in item['abilities']:
+            code = item['abilities']['uses']
+
         if code != '':
             end_name = f"{name} ({code}){count_name}"
         else:
@@ -162,7 +172,8 @@ async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
 
     text, image = await item_info(item, lang, dev)
 
-    if mark: markup = item_info_markup(item, lang)
+    if mark: markup = await item_info_markup(item, 
+                        lang, userid)
     else: markup = None
 
     if not image:

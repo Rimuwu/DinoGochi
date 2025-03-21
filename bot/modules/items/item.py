@@ -15,6 +15,9 @@
 """
 
 import json
+from typing import Optional
+
+from bson import ObjectId
 from bot.dbmanager import mongo_client
 from bot.modules.data_format import deepcopy, escape_markdown, random_dict, seconds_to_str, near_key_number
 from bot.modules.localization import get_all_locales, t
@@ -176,7 +179,8 @@ async def AddItemToUser(userid: int, item_id: str, count: int = 1, abilities: di
     if not action: action = 'new_item'
 
     if action == 'plus_count' and find_res:
-        await items.update_one({'_id': find_res['_id']}, {'$inc': {'count': count}}, comment='AddItemToUser_1')
+        res = await items.update_one({'_id': find_res['_id']}, {'$inc': {'count': count}}, comment='AddItemToUser_1')
+        ret_id = res.upserted_id
 
     elif action == 'new_edited_item':
         for _ in range(count):
@@ -185,15 +189,18 @@ async def AddItemToUser(userid: int, item_id: str, count: int = 1, abilities: di
                 'items_data': item,
                 'count': 1
             }
-            await items.insert_one(item_dict, True, comment='AddItemToUser_new_edited_item')
+            res = await items.insert_one(item_dict, True, comment='AddItemToUser_new_edited_item')
+            ret_id = res.inserted_id
     else:
         item_dict = {
             'owner_id': userid,
             'items_data': item,
             'count': count
         }
-        await items.insert_one(item_dict, comment='AddItemToUser_1')
-    return action
+        res = await items.insert_one(item_dict, comment='AddItemToUser_1')
+        ret_id = res.inserted_id
+
+    return action, ret_id
 
 async def AddListItems(userid: int, items_l: list[dict]):
     """ items - [ {"item_id":str, "abilities":dict} ]
@@ -451,59 +458,39 @@ ids = { # первые 2 символа
     'lvl': 'lvl'
 }
 
-def item_code(item: dict, v_id: bool = True) -> str:
+async def item_code(item_dict: Optional[dict] = None, 
+              item_id: Optional[ObjectId] = None, 
+              userid: Optional[int] = None) -> str:
     """Создаёт код-строку предмета, основываясь на его
        харрактеристиках.
-       
-       v_id - определяет добавлять ли буквенный индефикатор
     """
-    text = ''
+    if item_dict is None and item_id is None:
+        raise ValueError('item_code: item_dict or item_id must be not None')
 
-    if v_id: text = f"id{item['item_id']}"
+    if item_dict is not None and userid is not None:
+        find_res = await items.find_one({'owner_id': userid, 'items_data': item_dict}, {'_id': 1}, comment='item_code_find_res')
+        if find_res:
+            text = find_res['_id'].__str__()
+        else:
+            raise ValueError('Item not found for the given userid and item_dict')
 
-    if 'abilities' in item.keys():
-        for key, item_k in item['abilities'].items():
-            if key == 'data_id' and v_id == False and type(item_k) == str and len(item_k) >= 12:
-                continue
-            if v_id:
-                text += f".{key[:2]}{item_k}"
-            else:
-                if key[:2] in ids:
-                    text += '.'
-                    if type(item_k) == bool:
-                        text += str(int(item_k))
-                    else: text += str(item_k)
-
-    if not v_id: text = text[1:]
+    elif item_id is not None:
+        text = item_id.__str__()
 
     if len(text) > 128:
         log("item_code получился больше чем 128 символов, возможно что он не будет работать в callback data", 4)
 
     return text
 
-def decode_item(code: str) -> dict:
-    """Превращает код в словарь
+async def decode_item(str_id) -> dict:
+    """ Превращает код в словарь
     """
-    split = code.split('.')
-    data = {}
+    item = {}
 
-    for part in split:
-        scode = part[:2]
-        value = part[2:]
-
-        if scode == 'id': data['item_id'] = value
-        else:
-            if 'abilities' not in data.keys(): data['abilities'] = {}
-            if value in ['True', 'False']:
-                if value == 'True': value = True
-                else: value = False
-
-                data['abilities'][ ids[scode] ] = value
-            else: 
-                if value.isdigit():
-                    data['abilities'][ ids[scode] ] = int(value)
-                else: data['abilities'][ ids[scode] ] = value
-    return data
+    _id = ObjectId(str_id)
+    item = await items.find_one({'_id': _id}, comment='decode_item')
+    if not item: return {}
+    else: return item
 
 
 
