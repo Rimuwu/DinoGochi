@@ -50,8 +50,7 @@
         "image": "null",
         "rank": "legendary",
         "type": "special",
-        "class": "reborn",
-        "cant_sell": true
+        "class": "reborn"
     },
     "transport_egg": {
         "image": "transport_egg",
