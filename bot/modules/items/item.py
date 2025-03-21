@@ -448,16 +448,6 @@ async def UseAutoRemove(userid: int, item: dict, count: int):
             return False
     return True
 
-
-
-ids = { # первые 2 символа
-    'us': 'uses', 'en': 'endurance',
-    'ma': 'mana', 'st': 'stack',
-    'in': 'interact', 'da': 'data_id',
-    'ty': 'type', 'au': 'author',
-    'lvl': 'lvl'
-}
-
 async def item_code(item_dict: Optional[dict] = None, 
               item_id: Optional[ObjectId] = None, 
               userid: Optional[int] = None) -> str:
@@ -482,7 +472,7 @@ async def item_code(item_dict: Optional[dict] = None,
 
     return text
 
-async def decode_item(str_id) -> dict:
+async def decode_item(str_id: str) -> dict:
     """ Превращает код в словарь
     """
     item = {}
@@ -491,8 +481,6 @@ async def decode_item(str_id) -> dict:
     item = await items.find_one({'_id': _id}, comment='decode_item')
     if not item: return {}
     else: return item
-
-
 
 def sort_materials(not_sort_list: list, lang: str, 
                    separator: str = ',') -> str:

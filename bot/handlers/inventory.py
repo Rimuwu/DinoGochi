@@ -366,7 +366,7 @@ async def ns_craft(call: CallbackQuery):
     userid = call.from_user.id
     lang = await get_lang(call.from_user.id)
 
-    item_ns = decode_item(call_data[1])
+    item_ns = await decode_item(call_data[1])
     item = get_item_data(item_ns['item_id'])
     ns_id = call_data[2]
 
@@ -490,7 +490,7 @@ async def buyer(call: CallbackQuery):
     userid = call.from_user.id
     lang = await get_lang(call.from_user.id)
 
-    item_decode = decode_item(call_data[1])
+    item_decode = await decode_item(call_data[1])
     item = get_item_data(item_decode['item_id'])
     item_rank = item['rank']
 
@@ -579,6 +579,6 @@ async def InventoryInline(callback: CallbackQuery):
         del transmitted_data['inline_code']
 
         try:
-            await function(decode_item(code), transmitted_data=transmitted_data)
+            await function(await decode_item(code), transmitted_data=transmitted_data)
         except Exception as e:
             log(f'InventoryInline error {e}', lvl=2, prefix='InventoryInline')
