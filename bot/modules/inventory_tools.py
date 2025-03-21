@@ -117,7 +117,11 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list | Non
 
                 key_code_parts = []
                 for k, v in base_item['items_data'].items():
-                    key_code_parts.append(f"{k}-{v}")
+                    if k == 'abilities' and isinstance(v, dict):
+                        for ability_key, ability_value in v.items():
+                            key_code_parts.append(f"{ability_key}-{ability_value}")
+                    else:
+                        key_code_parts.append(f"{k}-{v}")
                 key_code = ":".join(key_code_parts)
 
                 if key_code in code_items:
