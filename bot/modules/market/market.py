@@ -184,7 +184,7 @@ async def generate_sell_pages(user_id: int, ignored_id: list | None = None):
     items, count = await get_inventory(user_id, ignored_id)
     exclude = ignored_id
     for item in items:
-        i = item['item']
+        i = item['items_data']
         data = get_item_data(i['item_id'])
 
         if 'abilities' in i and 'interact' in i['abilities'] and not i['abilities']['interact']:
