@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardButton
 
 from bot.modules.data_format import list_to_inline
 from bot.modules.items.item import counts_items, is_standart
@@ -39,7 +39,12 @@ async def item_info_markup(item: dict, lang: str, userid: int):
     buttons_dict = {}
 
     if item_data['type'] not in ['material', 'ammunition', 'dummy']:
-        buttons_dict[loc_data['use'][item_data['type']]] = f'item use {code}'
+        use_text = loc_data['use'][item_data['type']]
+        
+        if 'abilities' in item and 'uses' in item['abilities'] and item['abilities']['uses'] != -666:
+            use_text += f' ({item["abilities"]["uses"]}/{item_data["abilities"]["uses"]})'
+        
+        buttons_dict[use_text] = f'item use {code}'
 
     if not('abilities' in item and 'interact' in item['abilities'] and not(item['abilities']['interact'])):
         buttons_dict[loc_data['delete']] = f'item delete {code}'
