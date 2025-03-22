@@ -64,7 +64,7 @@ items_names = load_items_names()
 def get_name(item_id: str, lang: str='en', abilities: dict | None = None) -> str:
     """Получение имени предмета"""
     if abilities is None: abilities = {}
-    
+
     name = ''
 
     if 'endurance' in abilities:
@@ -74,7 +74,9 @@ def get_name(item_id: str, lang: str='en', abilities: dict | None = None) -> str
     if item_id in items_names:
         if lang not in items_names[item_id]: lang = 'en'
 
-        if endurance and 'alternative_name' in items_names[item_id][lang]:
+        if 'name' in abilities: name = abilities['name']
+
+        elif endurance and 'alternative_name' in items_names[item_id][lang]:
             if str(endurance) in items_names[item_id][lang]['alternative_name']:
                 name = items_names[item_id][lang]['alternative_name'][str(endurance)]
             else: 
