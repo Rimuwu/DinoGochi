@@ -60,5 +60,14 @@
         "abilities": {
             "data_id": 0
         }
+    },
+    "custom_book": {
+        "image": "book",
+        "rank": "rare",
+        "type": "special",
+        "class": "custom_book",
+        "abilities": {
+            "content": ""
+        }
     }
 }
