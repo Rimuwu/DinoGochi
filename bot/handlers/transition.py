@@ -295,7 +295,9 @@ async def buy_ale(callback: CallbackQuery):
     if await take_coins(userid, -150, True):
         await AddItemToUser(friend, 'ale')
 
-        text = t('buy_ale.me', lang)
+        friend_lang = await get_lang(friend)
+
+        text = t('buy_ale.me', friend_lang)
         await bot.edit_message_reply_markup(None, chatid, callback.message.message_id, 
                                             reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
         await bot.answer_callback_query(callback.id, text, True)
