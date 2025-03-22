@@ -183,11 +183,13 @@ async def item_callback(call: CallbackQuery):
     preabil = {}
 
     item_base = await decode_item(item_id)
-    item = item_base['items_data']
+    if 'items_data' not in item_base:
+        item = item_base
+    else: item = item_base['items_data']
 
     if item:
         if call_data[1] == 'info':
-            await send_item_info(item, {'chatid': chatid, 'lang': lang, 'userid': userid}, False)
+            await send_item_info(item_base, {'chatid': chatid, 'lang': lang, 'userid': userid}, False)
         elif call_data[1] == 'use':
             await data_for_use_item(item, userid, chatid, lang)
         elif call_data[1] == 'delete':

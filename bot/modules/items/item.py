@@ -450,10 +450,15 @@ async def UseAutoRemove(userid: int, item: dict, count: int):
 
 async def item_code(item_dict: Optional[dict] = None, 
               item_id: Optional[ObjectId] = None, 
-              userid: Optional[int] = None) -> str:
+              userid: Optional[int] = None,
+              data_mode: bool = True) -> str:
     """Создаёт код-строку предмета, основываясь на его
        харрактеристиках.
+       
+       data_mode - если предмета нет в базе, то возвращает строку в формате ID-...:AB.uses-1:endurance-1
     """
+    if item_dict is None: item_dict = {}
+
     if item_dict is None and item_id is None:
         raise ValueError('item_code: item_dict or item_id must be not None')
 
@@ -462,7 +467,10 @@ async def item_code(item_dict: Optional[dict] = None,
         if find_res:
             text = find_res['_id'].__str__()
         else:
-            raise ValueError('Item not found for the given userid and item_dict')
+            if data_mode:
+                return convert_dict_to_string(item_dict)
+
+            raise ValueError(f'Item not found for the given userid[{userid}] and item_dict[{item_dict}]')
 
     elif item_id is not None:
         text = item_id.__str__()
@@ -476,11 +484,37 @@ async def decode_item(str_id: str) -> dict:
     """ Превращает код в словарь
     """
     item = {}
+    
+    if str_id.startswith('ID'): return convert_string_to_dict(str_id)
 
     _id = ObjectId(str_id)
     item = await items.find_one({'_id': _id}, comment='decode_item')
     if not item: return {}
     else: return item
+
+def convert_dict_to_string(item_dict: dict) -> str:
+    """Преобразует словарь в строку формата ID.item_id-...:uses-1-i:endurance-1-i"""
+
+    item_id = item_dict.get("item_id", "")
+    abilities = item_dict.get("abilities", {})
+    abilities_str = ":".join(f"{key}-{value}-{type(value).__name__[:3]}" for key, value in abilities.items())
+
+    return f"ID{item_id}:{abilities_str}"
+
+type_map = {"int": int, "str": str, "flo": float, "boo": bool}
+def convert_string_to_dict(item_string: str) -> dict:
+    """Преобразует строку в словарь формата ID.item_id-...:uses-1-int:endurance-1-int"""
+
+    item_id = item_string.split("ID")[1].split(":")[0]
+    abilities_str = item_string.split("ID")[1].split(":")[1:]
+    abilities = {}
+    for ability in abilities_str:
+        name, value, short_item_type = ability.split("-")
+
+        abilities[name] = type_map[short_item_type](value)
+
+    return {"item_id": item_id, "abilities": abilities}
+
 
 def sort_materials(not_sort_list: list, lang: str, 
                    separator: str = ',') -> str:

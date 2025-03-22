@@ -172,6 +172,7 @@ async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
+
     dev = userid in conf.bot_devs
 
     text, image = await item_info(item, lang, dev)

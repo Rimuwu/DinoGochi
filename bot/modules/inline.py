@@ -32,6 +32,7 @@ def inline_menu(markup_data, lang: str = 'en', **kwargs):
     return markup_inline.as_markup()
 
 async def item_info_markup(item: dict, lang: str, userid: int):
+
     item_data = get_item_data(item['item_id'])
     loc_data = get_loc_data('item_info.static.buttons', lang)
     code = await item_code(item_dict=item, userid=userid)
