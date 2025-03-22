@@ -417,7 +417,9 @@ class MiniGame:
 
     async def DeleteMessage(self, func_key: str = 'main') -> None:
         """ Удаляет сообщение """
-        data = self.session_masseges.get(func_key, SMessage(message_id=0, chat_id=0, data={}))
+        data = self.session_masseges.get(func_key, 
+                                         SMessage(message_id=0, chat_id=0, data={}))
+        self.D_log(f'DeleteMessage {func_key}')
 
         message_id = data.message_id
         chat_id = data.chat_id
@@ -430,6 +432,7 @@ class MiniGame:
                 )
             except: pass
             del self.session_masseges[func_key]
+            await self.Update()
 
     async def CreateMessage(self, user_id: int, chat_id: int, func_key: str = 'main', 
                             text = 'create message...') -> types.Message:
@@ -654,7 +657,7 @@ class MiniGame:
             button_function = getattr(self, button.function, None)
 
             if button_function:
-                self.D_log(f'button_function {key} {callback.data}')
+                self.D_log(f'button_function {key} {button_function.__name__} {callback.data}')
                 await button_function(callback)
                 return True
 
@@ -691,7 +694,7 @@ class MiniGame:
             return self.PLAYERS.get(
                 list(self.PLAYERS.keys())[0]
             ).user_id # type: ignore
-        return None
+        return 0
 
 
     def standart_player_data(self):

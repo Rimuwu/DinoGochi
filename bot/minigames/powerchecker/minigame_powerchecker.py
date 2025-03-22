@@ -16,7 +16,7 @@ class PowerChecker(MiniGame):
         self.time_wait = 600
 
         self.only_for: int = only_for
-        self.col_players: int = 2
+        self.max_players: int = 2
         self.bet: int = 0
 
         self.ButtonsRegister = {
@@ -230,18 +230,34 @@ class PowerChecker(MiniGame):
         await self.SetStage('wait_user')
 
     async def Endandleave(self, callback) -> None:
+        """ Покинуть игру или завершить если создатель"""
         if callback.from_user.id == self.owner_id:
             await self.EndGame()
         else:
             await self.DeletePlayer(callback.from_user.id)
             await callback.answer('Вы покинули игру')
+
+            await self.on_user_col_edit()
             await self.MessageGenerator('main', callback.from_user.id)
 
     async def waituser_inline(self, user_id):
-        buttons = [
-            {'text': 'Вступить', 'callback_data': self.CallbackGenerator('enter')},
-            {'text': '🚪', 'callback_data': self.CallbackGenerator('endandleave')},
-        ]
+        buttons = []
+
+        if self.ButtonsRegister['enter'].active and len(self.PLAYERS) < self.max_players:
+            buttons.append({'text': 'Вступить', 'callback_data': self.CallbackGenerator('enter')})
+
+        if self.ButtonsRegister['next_stage'].active:
+
+            ready = 0
+            col_p = len(self.PLAYERS)
+
+            for player in self.PLAYERS.values():
+                if player.data.get('ready', False):
+                    ready += 1
+
+            buttons.append({'text': f'{ready}/{col_p} ✅', 'callback_data': self.CallbackGenerator('next_stage')})
+
+        buttons.append({'text': '🚪', 'callback_data': self.CallbackGenerator('endandleave')})
         return self.list_to_inline(buttons, 2)
 
     async def WaitUsersStartGenerator(self, user_id: int) -> None:
@@ -256,6 +272,7 @@ class PowerChecker(MiniGame):
         await self.MesageUpdate(text=text, reply_markup=markup)
 
     async def waituser_Enter(self, callback: types.CallbackQuery) -> None:
+        """ Кнопка вступить в игру """
         user_id = callback.from_user.id
 
         user = await User().create(user_id)
@@ -269,13 +286,17 @@ class PowerChecker(MiniGame):
             await callback.answer('У вас нет свободных динозавров', show_alert=True)
             return
 
-        await self.AddPlayer(user_id, callback.message.chat.id, 
+        if len(self.PLAYERS) >= self.max_players:
+            await callback.answer('Максимальное количество игроков уже достигнуто', show_alert=True)
+            return
+
+        key = f'choose_dino_{user_id}'
+        if key not in self.message_generators:
+            await self.AddPlayer(user_id, callback.message.chat.id, 
                              await user_name(user_id),
                              self.STAGE
                              )
 
-        key = f'choose_dino_{user_id}'
-        if key not in self.message_generators:
             self.message_generators[key] = 'enter_dino_generator'
             await self.Update()
 
@@ -284,15 +305,23 @@ class PowerChecker(MiniGame):
                                     text='message')
             await self.MessageGenerator(key, user_id)
 
+        else:
+            await callback.answer('Вы уже в игре', show_alert=True)
+
     async def waituser_CancelChoose(self, callback) -> None:
         """ Отмена выбора динозавра и удаление сообщения с выбором """
         user_id = callback.from_user.id
 
         await self.DeletePlayer(user_id)
         await self.DeleteMessage(f'choose_dino_{user_id}')
+        self.message_generators.pop(f'choose_dino_{user_id}')
+        await self.Update()
+
         await self.MessageGenerator('main', user_id)
 
     async def waituser_ChooseDino_set(self, callback) -> None:
+        """ Установка выбранного динозавра вторым/третьим игроком """
+
         dino_name = callback.data.split(':')[3]
         user_id = callback.from_user.id
         player = await self.GetPlayer(user_id)
@@ -300,6 +329,7 @@ class PowerChecker(MiniGame):
             player.data['dino'] = dino_name
             await self.EditPlayer(user_id, player)
 
+        await self.on_user_col_edit()
         await self.DeleteMessage(f'choose_dino_{user_id}')
         await self.MessageGenerator('main', user_id)
 
@@ -308,6 +338,50 @@ class PowerChecker(MiniGame):
         text = f'{user_id} Выберите динозавра:'
         await self.MesageUpdate(f'choose_dino_{user_id}', 
                                 text=text, reply_markup=markup)
+
+    async def on_user_col_edit(self) -> None:
+        bt = self.ButtonsRegister['next_stage']
+        en = self.ButtonsRegister['enter']
+
+        if len(self.PLAYERS) >= self.max_players:
+            if not en.active:
+                en.active = False
+                await self.EditButton('enter', en)
+
+            all_have_dino = all([player.data.get('dino') for player in 
+                                 self.PLAYERS.values()])
+
+            if all_have_dino:
+                if not bt.active:
+                    bt.active = True
+                    await self.EditButton('next_stage', bt)
+
+        elif len(self.PLAYERS) == 1:
+
+            if bt.active:
+                bt.active = False
+                await self.EditButton('next_stage', bt)
+
+            if not en.active:
+                en.active = True
+                await self.EditButton('enter', en)
+
+    async def waituser_NextStage(self, callback) -> None:
+        ready = 0
+        for player in self.PLAYERS.values():
+            if player.data.get('ready'):
+                ready += 1
+        
+        this_player = await self.GetPlayer(callback.from_user.id)
+        if this_player:
+            this_player.data['ready'] = not this_player.data.get('ready', False)
+            ready += 1
+
+            await self.EditPlayer(callback.from_user.id, this_player)
+            await self.MessageGenerator('main', callback.from_user.id)
+
+        if ready == len(self.PLAYERS):
+            self.D_log('StartGame -------------', True)
 
 
 PowerChecker().RegistryMe() # Регистрация класса в реестре

@@ -13,7 +13,7 @@ async def on_preparation(self) -> None:
     owner_player = await self.GetPlayer(self.owner_id)
     owner_has_dino = 'dino' in owner_player.data and owner_player.data['dino']
 
-    if owner_has_dino and self.bet > 0 and self.col_players > 1:
+    if owner_has_dino and self.bet > 0 and self.max_players > 1:
         bt = self.ButtonsRegister['wait_users_start']
         bt.active = True
 
@@ -34,7 +34,7 @@ async def PreparationMarkup(self):
     owner_player = await self.GetPlayer(self.owner_id)
     owner_has_dino = 'dino' in owner_player.data and owner_player.data['dino']
 
-    if owner_has_dino and self.bet > 0 and self.col_players > 1:
+    if owner_has_dino and self.bet > 0 and self.max_players > 1:
         buttons.append({
             'text': 'Начать игру', 'callback_data': self.CallbackGenerator('wait_users_start')})
 
@@ -60,7 +60,7 @@ async def PreparationGenerator(self, user_id) -> None:
     time_left = self.time_wait - (time.time() - self.LAST_ACTION)
     time_left_text = f'Время до удаления игры: {int(time_left)} секунд'
 
-    text = f'Динозавр: {dino_name}\nСтавка: {bet_text}\nМакс. игроков: {self.col_players}\n{time_left_text}'
+    text = f'Динозавр: {dino_name}\nСтавка: {bet_text}\nМакс. игроков: {self.max_players}\n{time_left_text}'
     markup = await self.PreparationMarkup()
     await self.MesageUpdate('main', text=text, reply_markup=markup)
 
@@ -84,9 +84,9 @@ async def MaxPlayersGenerator(self, user_id) -> None:
 
 @register_method(PowerChecker)
 async def ColPlayers_set(self, callback) -> None:
-    col_players = callback.data.split(':')[3]
+    max_players = callback.data.split(':')[3]
 
-    self.col_players = int(col_players)
+    self.max_players = int(max_players)
     await self.Update()
     await self.SetStage('preparation')
 
