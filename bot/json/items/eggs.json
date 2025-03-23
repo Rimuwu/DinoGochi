@@ -90,5 +90,12 @@
         },
         "rank": "legendary",
         "type": "egg"
+    },
+    "fake_legendary_egg": {
+        "image": "item24",
+        "inc_type": "com",
+        "incub_time": 396000,
+        "rank": "legendary",
+        "type": "egg"
     }
 }
