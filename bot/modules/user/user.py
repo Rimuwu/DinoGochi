@@ -10,6 +10,7 @@ from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
 from bot.modules.data_format import escape_markdown, item_list, seconds_to_str
 from bot.modules.dinosaur.dinosaur import Dino, Egg
+from bot.modules.managment.events import check_event, get_event
 from bot.modules.user.advert import create_ads_data
 from bot.modules.items.item import AddItemToUser, get_item_dict
 from bot.modules.items.item import get_data as get_item_data
@@ -420,6 +421,8 @@ async def experience_enhancement(userid: int, xp: int):
     """
     user = await User().create(userid)
     lang = await user.lang
+
+    if await check_event('april_5'): xp *= 2
 
     if user:
         lvl, xp = 0, user.xp + xp
