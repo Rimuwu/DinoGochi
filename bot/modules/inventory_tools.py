@@ -92,9 +92,7 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list | Non
     items_data = {}
 
     code_items = {}
-    key_ind = -1
     for base_item in items:
-        key_ind += 1
 
         if 'item' in base_item:
             item = base_item['item'] # Сам предмет
@@ -119,10 +117,19 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list | Non
             if add_item:
                 count = base_item['count']
 
-                if str(key_ind) in code_items:
-                    code_items[str(key_ind)]['count'] += count
+                key_code_parts = []
+                for k, v in item.items():
+                    if k == 'abilities' and isinstance(v, dict):
+                        for ability_key, ability_value in v.items():
+                            key_code_parts.append(f"{ability_key}-{ability_value}")
+                    else:
+                        key_code_parts.append(f"{k}-{v}")
+                key_code = ":".join(key_code_parts)
+
+                if key_code in code_items:
+                    code_items[key_code]['count'] += count
                 else:
-                    code_items[str(key_ind)] = {'item': item, 'count': count}
+                    code_items[key_code] = {'item': item, 'count': count}
 
     a = -1
     for code, data_item in code_items.items():
