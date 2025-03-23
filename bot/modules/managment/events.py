@@ -106,12 +106,12 @@ async def auto_event():
                 ev = await create_event(i, time_end)
                 ev['data']['items'] = ['fried_egg']
                 events_lst.append(ev)
-            
+
             await add_event(april_event)
 
             for i in events_lst: await add_event(i)
             await bot.send_message(conf.bot_group_id, t("events.april_1"))
-            
+
     if not await check_event('april_5'):
         today = datetime.date.today()
         day_n = int(time.strftime("%j"))
