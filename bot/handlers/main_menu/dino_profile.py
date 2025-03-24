@@ -9,7 +9,7 @@ from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      near_key_number, seconds_to_str)
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur import Dino, Egg, check_status, dead_check
-from bot.modules.managment.events import get_event
+from bot.modules.managment.events import check_event, get_event
 from bot.modules.images import async_open, create_skill_image
 from bot.modules.inline import dino_profile_markup, inline_menu
 from bot.modules.items.item import AddItemToUser, get_name
@@ -87,6 +87,12 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
         'em_rare': tem['rare'], 'qual': text_rare[dino.quality][1],
         'em_age': tem['age'], 'age': age
     }
+
+    if await check_event('april_1'):
+        for k, v in kwargs.items(): 
+            if k.startswith('em_'):
+                kwargs[k] = '🤡'
+
     text = t('p_profile.profile_text', lang, formating=False).format(**kwargs)
 
     if await dino.status == 'journey':
@@ -133,6 +139,7 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
     acsess = {
         'em_game': tem['ac_game'], 'em_coll': tem['ac_collecting'], 'em_jour': tem['ac_journey'], 'em_sleep': tem['ac_sleep'], 'em_weapon': tem['ac_weapon'], "em_armor": tem['ac_armor'], 'em_backpack': tem['ac_backpack']
     }
+
     for key, item in dino.activ_items.items():
         if not item:
            acsess[key] = t(f'p_profile.no_item', lang)
