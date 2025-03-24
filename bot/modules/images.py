@@ -11,6 +11,7 @@ from bot.modules.localization import get_data, t
 import asyncio
 
 from bot.modules.logs import log
+from bot.modules.managment.events import check_event
 
 # from concurrent.futures import ThreadPoolExecutor
 # POOL = ThreadPoolExecutor()
@@ -63,6 +64,29 @@ img_dates = {
     'mys': (230, 103, 175),
     'leg': (255, 212, 59)
 }
+
+
+def clown_nose(image, radius=15):
+    alpha = image.getchannel("A")
+
+    non_transparent_pixels = [
+        (x, y) for y in range(alpha.height) for x in range(alpha.width) 
+        if alpha.getpixel((x, y)) > 0 and y < alpha.height - alpha.height // 8
+    ]
+
+    # Поиск самого левого и верхнего непрозрачного пикселя
+    if non_transparent_pixels:
+        top_left_pixel = min(non_transparent_pixels, key=lambda p: (p[0], p[1]))  # Сначала сортируем по X, затем по Y
+        x, y = top_left_pixel
+
+        # Создание объекта для рисования
+        draw = ImageDraw.Draw(image)
+
+        # Рисование красного круга радиусом 2
+        draw.rectangle((x - radius, y - radius, x + radius, y + radius), outline="red", fill="red")
+
+    return image
+
 
 def centre_var(image, font, message, start_var=0, end_var=250):
     """ Возвращает координату середины для текста 
@@ -324,6 +348,10 @@ async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', p
     # idraw.rectangle((y + x, y, sz + y + x, sz + y), outline=(255, 0, 0))
 
     dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
+
+    if await check_event('april_1'):
+        dino_image = clown_nose(dino_image, age // 4)
+
     img = await trans_paste(dino_image, img, 1.0, (y + x, y, sz + y + x, sz + y))
 
     return pil_image_to_file(img, quality='maximum')
