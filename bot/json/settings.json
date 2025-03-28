@@ -430,7 +430,7 @@
         "ec": {"items": ["egg_case"], "price": 200},
         "rc": {"items": ["recipe_chest"], "price": 200},
         "cf": {"items": ["chest_food"], "price": 200},
-        "dh": {"items": ["transport_egg"], "price": 200}
+        "dh": {"items": ["transport_egg"], "price": 100}
     },
 
     "buyer": {
