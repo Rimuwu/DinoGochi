@@ -190,7 +190,7 @@ async def transition(element, transmitted_data: dict):
 
     if isinstance(element, Dino):
 
-        if element.profile['background_type'] == 'custom':
+        if element.profile['background_type'] == 'custom' and await premium(userid):
             custom_url = element.profile['background_id']
 
         if element.profile['background_type'] == 'saved':
