@@ -976,6 +976,10 @@
             "transport_egg": {
                 "name": "🦖 Transport Egg",
                 "description": "An egg for transporting a dinosaur. Use: If there is no dinosaur, place the dinosaur and freeze it. If there is a dinosaur: pulls out and thaws the dinosaur. Deleted after 1 cycle of use."
+            },
+            "fake_legendary_egg": {
+                "name": "🥚 Legendary Egg",
+                "description": "Ha, ha, ha!"
             }
         },
         "notifications": {
@@ -3191,7 +3195,7 @@
             "new_year": "🎄 It's time to celebrate and give gifts to friends! Check out your friends list!",
             "info": "🎨 | Active Events\n\n",
             "april_1": "❓ It is not recommended to wear white.",
-            "april_5": "🎂 Happy Birthday DinoGochi!"
+            "april_5": "🎂 Happy Birthday DinoGochi! Check out the news channel and enjoy 2x XP and gifts in food gathering!"
         },
         "daily_award": {
             "info": "🎋 *|* *Daily Reward* \n By logging in every day, you can get nice bonuses\n\n 🏮 *|* *Level 1*: *Player* - Nice login bonuses, here's what you can get: _{lvl_1} 🪙 _\n\n 🎏 *Level 2*: *Trainer* - Nice bonuses for logging in and subscribing to the channel, here's what you can get by clicking on the button: {lvl_2} 🪙",
@@ -4680,6 +4684,20 @@
         },
         "minigames_drive": {
             "error_handler_waiter": "🎈 There was an error searching for minigame data, try replying to the main message of the minigame or use the command {command}"
+        },
+        "lottery": {
+            "cap": "*🦕 |* The *in-game items* giveaway begins! \n\nParticipants can *All Bot Players*, and to try your luck, you just need to click on the button below. No risks, just a chance to get something delicious! \n\n",
+            "prizes_text": "*🎁 | And here are our prizes:* \n",
+            "time_end_text": "\n🕒 | The giveaway started at {now_time} and will end at {time_text}",
+            "end_text": "\n*🕒 |* The draw is over, thank you all for participating! A message with the winners can be found below!",
+            "button": "🎁 Participate ({user_now} / {max_users})",
+            "lottery_full": "👥 The maximum number of people is already participating in the lottery!",
+            "lottery_not_found": "❌ Lottery not found!",
+            "lottery_member_exist": "❌ You are already participating in this lottery!",
+            "lottery_member_created": "✅ Now you are participating in the giveaway!",
+            "winners_cap": "🪙 | The draw is over! And here are our lucky ones who have already received their prizes! \n\n",
+            "winners_footer": "\n🎉 | Thank you all for participating in the giveaway!",
+            "user_cap": "♾️ | Congratulations, you have become one of the winners of the draw! \n\n🎁 | You have obtained: \n"
         }
     }
 }

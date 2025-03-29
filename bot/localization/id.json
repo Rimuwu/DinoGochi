@@ -976,6 +976,10 @@
             "transport_egg": {
                 "name": "🦖 Telur Transportasi",
                 "description": "Telur untuk mengangkut dinosaurus. Penggunaan: Jika tidak ada dinosaurus, letakkan dinosaurus dan bekukan. Jika ada dinosaurus: tarik keluar dan cairkan dinosaurus. Dihapus setelah 1 siklus penggunaan."
+            },
+            "fake_legendary_egg": {
+                "name": "🥚 Telur Legendaris",
+                "description": "Ha ha ha!"
             }
         },
         "notifications": {
@@ -3191,7 +3195,7 @@
             "new_year": "🎄 Saatnya merayakan dan memberikan hadiah kepada teman-teman! Lihat daftar teman Anda!",
             "info": "🎨 | Acara Aktif\n\n",
             "april_1": "❓ Tidak disarankan memakai pakaian putih.",
-            "april_5": "🎂 Selamat Ulang Tahun DinoGochi!"
+            "april_5": "🎂 Selamat Ulang Tahun DinoGochi! Lihat saluran berita dan nikmati 2x XP dan hadiah dalam pengumpulan makanan!"
         },
         "daily_award": {
             "info": "🎋 *|* *Hadiah Harian*\nDengan masuk setiap hari, Anda bisa mendapatkan bonus menarik\n\n🏮 *|* *Tingkat 1*: *Pemain* - Bonus login yang bagus, inilah yang bisa Anda dapatkan: _{lvl_1} 🪙_\n\n🎏 *Tingkat 2*: *Pelatih* - Bonus bagus untuk masuk dan berlangganan saluran, inilah yang bisa Anda dapatkan dengan mengklik tombol: {lvl_2} 🪙",
@@ -4680,6 +4684,20 @@
         },
         "minigames_drive": {
             "error_handler_waiter": "🎈 Terjadi kesalahan dalam mencari data minigame, coba balas pesan utama minigame atau gunakan perintah {command}"
+        },
+        "lottery": {
+            "cap": "*🦕 |* Hadiah *Item dalam game* dimulai! \n\nPeserta dapat *Semua Pemain Bot*, dan untuk mencoba keberuntungan Anda, Anda hanya perlu mengklik tombol di bawah ini. Tidak ada risiko, hanya kesempatan untuk mendapatkan sesuatu yang enak! \n\n",
+            "prizes_text": "*🎁 | Dan inilah hadiah kami:* \n",
+            "time_end_text": "\n🕒 | Giveaway dimulai di {now_time} dan akan berakhir di {time_text}",
+            "end_text": "\n*🕒 |* Pengundian telah berakhir, terima kasih semua telah berpartisipasi! Pesan dengan para pemenang dapat ditemukan di bawah ini!",
+            "button": "🎁 Berpartisipasi ({user_now} / {max_users})",
+            "lottery_full": "👥 Jumlah maksimum orang yang sudah berpartisipasi dalam lotere!",
+            "lottery_not_found": "❌ Lotere tidak ditemukan!",
+            "lottery_member_exist": "❌ Anda sudah berpartisipasi dalam lotere ini!",
+            "lottery_member_created": "✅ Sekarang Anda berpartisipasi dalam giveaway!",
+            "winners_cap": "🪙 | Pengundian sudah berakhir! Dan inilah orang-orang beruntung kami yang telah menerima hadiahnya! \n\n",
+            "winners_footer": "\n🎉 | Terima kasih semua telah berpartisipasi dalam giveaway!",
+            "user_cap": "♾️ | Selamat, Anda telah menjadi salah satu pemenang undian! \n\n🎁 | Anda telah memperoleh: \n"
         }
     }
 }

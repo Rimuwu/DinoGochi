@@ -976,6 +976,10 @@
             "transport_egg": {
                 "name": "🦖 Huevo de transporte",
                 "description": "Un huevo para transportar a un dinosaurio. Uso: Si no hay dinosaurio, coloca el dinosaurio y congélalo. Si hay un dinosaurio: saca y descongela el dinosaurio. Se elimina después de 1 ciclo de uso."
+            },
+            "fake_legendary_egg": {
+                "name": "🥚 Huevo legendario",
+                "description": "¡Je je je!"
             }
         },
         "notifications": {
@@ -3191,7 +3195,7 @@
             "new_year": "🎄 ¡Es hora de celebrar y dar regalos a los amigos! ¡Echa un vistazo a tu lista de amigos!",
             "info": "🎨 | Eventos Activos\n\n",
             "april_1": "❓ No se recomienda vestir de blanco.",
-            "april_5": "🎂 ¡Feliz cumpleaños DinoGochi!"
+            "april_5": "🎂 ¡Feliz cumpleaños DinoGochi! ¡Echa un vistazo al canal de noticias y disfruta de 2x XP y regalos en la recolección de comida!"
         },
         "daily_award": {
             "info": "🎋 *|* **\nAl iniciar sesión todos los días, puede obtener buenos bonos\n\n🏮 *|* **: ** - Buenas bonificaciones de inicio de sesión, esto es lo que puede obtener: _{lvl_1} 🪙_\n\n🎏 **: ** - Buenas bonificaciones por iniciar sesión y suscribirse al canal, esto es lo que puede obtener haciendo clic en el botón: {lvl_2} 🪙",
@@ -4680,6 +4684,20 @@
         },
         "minigames_drive": {
             "error_handler_waiter": "🎈 Hubo un error al buscar datos del minijuego, intente responder al mensaje principal del minijuego o use el comando {command}"
+        },
+        "lottery": {
+            "cap": "*🦕 |* ¡Comienza el sorteo *Objetos del juego*! \n\nLos participantes pueden *Todos los jugadores bot*, y para probar suerte, solo necesita hacer clic en el botón de abajo. ¡Sin riesgos, solo la oportunidad de obtener algo delicioso! \n\n",
+            "prizes_text": "*🎁 | Y aquí están nuestros premios:* \n",
+            "time_end_text": "\n🕒 | El sorteo comenzó en el {now_time} y terminará en el {time_text}",
+            "end_text": "\n*🕒 |* El sorteo ha terminado, ¡gracias a todos por participar! ¡Un mensaje con los ganadores se puede encontrar a continuación!",
+            "button": "🎁 Participa ({user_now} / {max_users})",
+            "lottery_full": "👥 ¡El número máximo de personas ya está participando en la lotería!",
+            "lottery_not_found": "❌ ¡Lotería no encontrada!",
+            "lottery_member_exist": "❌ ¡Ya estás participando en esta lotería!",
+            "lottery_member_created": "✅ ¡Ahora estás participando en el sorteo!",
+            "winners_cap": "🪙 | ¡Se acabó el sorteo! ¡Y aquí están nuestros afortunados que ya han recibido sus premios! \n\n",
+            "winners_footer": "\n🎉 | ¡Gracias a todos por participar en el sorteo!",
+            "user_cap": "♾️ | ¡Enhorabuena, te has convertido en uno de los ganadores del sorteo! \n\n🎁 | Has obtenido: \n"
         }
     }
 }
