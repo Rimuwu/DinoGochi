@@ -28,6 +28,8 @@ from . import companies
 from . import works
 from . import inside_shop
 
+from . import channel_lottery
+
 from . import minigames_handler
 
 from . import stars_invoice

@@ -1,0 +1,91 @@
+from random import choice, randint, uniform
+from time import time
+from asyncio import sleep
+
+from bot.dbmanager import mongo_client
+from bot.exec import main_router, bot
+
+from bot.handlers.companies import end
+from bot.modules.localization import get_lang, t
+from bot.modules.overwriting.DataCalsses import DBconstructor
+from aiogram.filters import Command
+from aiogram.types import Message
+from aiogram.types import CallbackQuery
+from aiogram import F
+from bot.filters.authorized import IsAuthorizedUser
+from bot.modules.logs import log
+
+from bot.filters.admin import IsAdminUser
+
+from bot.modules.lottery.lottery import create_lottery, create_lottery_member, create_message, end_lottery
+
+lottery = DBconstructor(mongo_client.lottery.lottery)
+lottery_members = DBconstructor(mongo_client.lottery.members)
+
+
+@main_router.message(Command(commands=['lottery_create']), IsAdminUser())
+async def lottery_create(message: Message):
+    
+    await create_lottery(-1001950032976, 0, 3600 * 3, 
+                         {
+                             '1': {
+                                 'items': [{'items_data': {'item_id': 'medicinal_drink'}, 'count': 1}],
+                                 'coins': 1000,
+                                 'count': 1
+                             },
+                             '2': {
+                                 'items': [{'items_data': {'item_id': 'medicinal_drink'}, 'count': 2}, {'items_data': {'item_id': 'therapeutic_mixture'}, 'count': 2}],
+                                 'coins': 0,
+                                 'count': 2
+                             }
+                             
+                         }, 'en', 0)
+
+
+@main_router.message(Command(commands=['update_lottery']), IsAdminUser())
+async def update_lottery(message: Message):
+    
+    args = message.text.split(' ')[1:]
+    alt_id = args[0]
+    
+    lotter = await lottery.find_one({'alt_id': alt_id}, comment='update_lottery')
+    
+    if lotter:
+        await create_message(lotter['alt_id'])
+
+@main_router.message(Command(commands=['end_lottery']), IsAdminUser())
+async def end_lottery_com(message: Message):
+    
+    args = message.text.split(' ')[1:]
+    alt_id = args[0]
+    
+    lotter = await lottery.find_one({'alt_id': alt_id}, comment='update_lottery')
+
+    if lotter:
+        await end_lottery(lotter['_id'])
+
+@main_router.callback_query(F.data.startswith('lottery_enter'), IsAuthorizedUser())
+async def company_info(callback: CallbackQuery):
+
+    chatid = callback.message.chat.id
+    userid = callback.from_user.id
+
+    lang = await get_lang(callback.from_user.id)
+    data = callback.data.split(':')[1:]
+
+    alt_id = data[0]
+
+    success, message = await create_lottery_member(userid, alt_id)
+
+    if success: 
+        await callback.answer(t(f'lottery.{message}', lang), show_alert=True)
+
+        try:
+            await create_message(alt_id)
+        except Exception as e:
+            await sleep(5)
+            try:
+                await create_message(alt_id)
+            except Exception as e:
+                log(f'except in create_message lottery {e}', 3)
+
