@@ -81,13 +81,15 @@ async def send_action_invite(userid: int, friendid: int, action: str, dino_alt: 
     """
     chat2_user = await get_friend_data(friendid, userid)
     username = chat2_user['name'] # Имя друга / отправителя
+    my = await bot.get_chat_member(userid, userid)
+    my_name = f'@{my.user.username}'
 
     if chat2_user:
         friend_lang = await get_lang(friendid)
     else: friend_lang = 'en'
 
     send_text = t(f'send_action.{action}.send', friend_lang, 
-                  username=username)
+                  username=my_name)
     button = t(f'send_action.{action}.send_button', friend_lang)
     markup = list_to_inline([
         {button: f'join_to_action {action} {dino_alt} {userid}'}])
@@ -100,7 +102,7 @@ async def send_action_invite(userid: int, friendid: int, action: str, dino_alt: 
 
     if chat2_user and ok:
         for_me = t(f'send_action.{action}.for_me', lang, 
-                   friendname=chat2_user['name'])
+                   friendname=username)
         await bot.send_message(userid, for_me)
     else:
         await bot.send_message(userid, t('send_action.error', lang))

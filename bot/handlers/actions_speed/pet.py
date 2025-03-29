@@ -2,6 +2,7 @@ from random import choice, randint, uniform
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
+from bot.filters.private import IsPrivateChat
 from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.dinosaur.skills import add_skill_point
 from bot.modules.decorators import HDMessage
