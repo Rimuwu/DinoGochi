@@ -8,7 +8,8 @@
         "tavern": ["quests", "tavern", "daily_award", "inside_shop"],
         "dungeon": ["lobby", "dungeon_statistic"],
         "other": ["management", "statistic", "events", "promo", "dead_users", "companies", "message_log"],
-        "minigames": ["online"]
+        "minigames": ["online"],
+        "lottery": ["lottery", "members"]
     },
 
     "indexes": [
