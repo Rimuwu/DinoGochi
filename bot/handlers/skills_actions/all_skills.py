@@ -95,7 +95,7 @@ async def start_skill(last_dino: Dino, userid, chatid, lang, skill):
     await auto_ads(mes)
 
 @HDMessage
-@main_router.message(StartWith('commands_name.skills_actions.gym'), DinoPassStatus(), KDCheck('gym'))
+@main_router.message(IsPrivateChat(), StartWith('commands_name.skills_actions.gym'), DinoPassStatus(), KDCheck('gym'))
 async def gym(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
@@ -110,7 +110,7 @@ async def gym(message: Message):
     await start_skill(last_dino, userid, chatid, lang, 'gym')
 
 @HDMessage
-@main_router.message(StartWith('commands_name.skills_actions.library'), DinoPassStatus(), KDCheck('library'))
+@main_router.message(IsPrivateChat(), StartWith('commands_name.skills_actions.library'), DinoPassStatus(), KDCheck('library'))
 async def library(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
@@ -125,7 +125,7 @@ async def library(message: Message):
     await start_skill(last_dino, userid, chatid, lang, 'library')
 
 @HDMessage
-@main_router.message(StartWith('commands_name.skills_actions.park'), DinoPassStatus(), KDCheck('park'))
+@main_router.message(IsPrivateChat(), StartWith('commands_name.skills_actions.park'), DinoPassStatus(), KDCheck('park'))
 async def park(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
@@ -140,7 +140,7 @@ async def park(message: Message):
     await start_skill(last_dino, userid, chatid, lang, 'park')
 
 @HDMessage
-@main_router.message(StartWith('commands_name.skills_actions.swimming_pool'), DinoPassStatus(), KDCheck('swimming_pool'))
+@main_router.message(IsPrivateChat(), StartWith('commands_name.skills_actions.swimming_pool'), DinoPassStatus(), KDCheck('swimming_pool'))
 async def swimming_pool(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
@@ -155,7 +155,7 @@ async def swimming_pool(message: Message):
     await start_skill(last_dino, userid, chatid, lang, 'swimming_pool')
 
 @HDMessage
-@main_router.message(StartWith('commands_name.skills_actions.stop_work'))
+@main_router.message(IsPrivateChat(), StartWith('commands_name.skills_actions.stop_work'))
 async def stop_work(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
@@ -183,7 +183,7 @@ async def stop_work(message: Message):
 
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('stop_work'))
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('stop_work'))
 async def stop_work_calb(call: CallbackQuery):
     userid = call.from_user.id
     chatid = call.message.chat.id
@@ -217,7 +217,7 @@ async def stop_work_calb(call: CallbackQuery):
         await bot.delete_message(chatid, messageid)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('use_energy'))
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('use_energy'))
 async def use_energy_calb(call: CallbackQuery):
 
     alt_code = call.data.split()[1]

@@ -15,8 +15,8 @@ from aiogram.filters import Command
 users = DBconstructor(mongo_client.user.users)
 
 @HDMessage
-@main_router.message(Text('commands_name.profile.information'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.profile.information'), 
+                     IsAuthorizedUser())
 async def infouser(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id

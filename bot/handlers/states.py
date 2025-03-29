@@ -42,7 +42,7 @@ async def cancel_c(message: Message):
     await cancel(message)
 
 @HDMessage
-@main_router.message(Command(commands=['state']))
+@main_router.message(IsPrivateChat(), Command(commands=['state']))
 async def get_state_cm(message: Message):
     """Состояние
     """

@@ -44,7 +44,7 @@ async def cancel(message):
     if state: await state.clear()
 
 @HDMessage
-@main_router.message(Text('commands_name.profile.inventory'), IsAuthorizedUser(), NothingState(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.profile.inventory'), IsAuthorizedUser(), NothingState())
 async def open_inventory(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -53,7 +53,7 @@ async def open_inventory(message: Message):
     await start_inv(None, userid, chatid, lang)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('inventory_start'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('inventory_start'))
 async def start_callback(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id
@@ -62,7 +62,7 @@ async def start_callback(call: CallbackQuery):
     await start_inv(None, userid, chatid, lang)
 
 @HDMessage
-@main_router.message(StateFilter(InventoryStates.Inventory), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), StateFilter(InventoryStates.Inventory), IsAuthorizedUser())
 async def inventory(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
@@ -107,8 +107,8 @@ async def inventory(message: Message):
     else: await cancel(message)
 
 @HDCallback
-@main_router.callback_query(StateFilter(InventoryStates.Inventory), 
-                            F.data.startswith('inventory_menu'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.Inventory), 
+                            F.data.startswith('inventory_menu'))
 async def inv_callback(call: CallbackQuery):
     call_data = call.data.split()[1]
     chatid = call.message.chat.id
@@ -173,7 +173,7 @@ async def inv_callback(call: CallbackQuery):
         await bot.delete_message(chatid, main_message)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('item'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('item'))
 async def item_callback(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -232,8 +232,8 @@ async def item_callback(call: CallbackQuery):
 
 # Поиск внутри инвентаря
 @HDCallback
-@main_router.callback_query(StateFilter(InventoryStates.InventorySearch), 
-                            F.data.startswith('inventory_search'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.InventorySearch), 
+                            F.data.startswith('inventory_search'))
 async def search_callback(call: CallbackQuery):
     call_data = call.data.split()[1]
     chatid = call.message.chat.id
@@ -246,7 +246,7 @@ async def search_callback(call: CallbackQuery):
         await swipe_page(chatid, userid)
 
 @HDMessage
-@main_router.message(StateFilter(InventoryStates.InventorySearch), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), StateFilter(InventoryStates.InventorySearch), IsAuthorizedUser())
 async def search_message(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -285,8 +285,8 @@ async def search_message(message: Message):
 
 #Фильтры
 @HDCallback
-@main_router.callback_query(StateFilter(InventoryStates.InventorySetFilters), 
-                            F.data.startswith('inventory_filter'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.InventorySetFilters), 
+                            F.data.startswith('inventory_filter'))
 async def filter_callback(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -346,7 +346,7 @@ async def filter_callback(call: CallbackQuery):
             await filter_menu(chatid, False)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('book'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('book'))
 async def book(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -361,7 +361,7 @@ async def book(call: CallbackQuery):
         log(message=f'Book edit error {e}', lvl=2)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('ns_craft'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('ns_craft'))
 async def ns_craft(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -487,7 +487,7 @@ async def ns_end(count, transmitted_data: dict):
                            reply_markup = await m(userid, 'last_menu', lang))
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('buyer'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('buyer'))
 async def buyer(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -549,7 +549,7 @@ async def buyer_end(count, transmitted_data: dict):
                            reply_markup=await m(userid, 'last_menu', lang))
 
 @HDCallback
-@main_router.callback_query(StateFilter(InventoryStates.Inventory), IsAuthorizedUser(), 
+@main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.Inventory), IsAuthorizedUser(), 
                             F.data.startswith('inventoryinline'))
 async def InventoryInline(callback: CallbackQuery):
     code = callback.data.split()

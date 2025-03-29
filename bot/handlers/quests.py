@@ -29,7 +29,7 @@ quests_data = DBconstructor(mongo_client.tavern.quests)
 users = DBconstructor(mongo_client.user.users)
 
 @HDMessage
-@main_router.message(Text('commands_name.dino_tavern.quests'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.dino_tavern.quests'), IsAuthorizedUser())
 async def check_quests(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -50,7 +50,7 @@ async def check_quests(message: Message):
             await sleep(0.3)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('quest'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('quest'))
 async def quest(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id

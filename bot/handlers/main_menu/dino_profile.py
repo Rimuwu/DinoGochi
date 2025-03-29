@@ -217,11 +217,10 @@ async def dino_handler(message: Message):
             await bot.send_message(userid, t(f'p_profile.no_dino_no_egg', lang))
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('dino_profile'))
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('dino_profile'))
 async def dino_profile_callback(call: types.CallbackQuery):
     dino_data = call.data.split()[1]
     # await bot.delete_state(call.from_user.id, call.message.chat.id)
-
 
     userid = call.from_user.id
     chatid = call.message.chat.id
@@ -236,7 +235,7 @@ async def dino_profile_callback(call: types.CallbackQuery):
     await transition(dino, trans_data)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('dino_menu'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('dino_menu'))
 async def dino_menu(call: types.CallbackQuery):
     split_d = call.data.split()
     action = split_d[1]
@@ -425,7 +424,7 @@ async def remove_accessory(option: list, transmitted_data:dict):
                            reply_markup= await m(userid, 'last_menu', lang))
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('kindergarten'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('kindergarten'))
 async def kindergarten(call: types.CallbackQuery):
     split_d = call.data.split()
     action = split_d[1]

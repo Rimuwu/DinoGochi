@@ -26,7 +26,7 @@ dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 @HDMessage
-@main_router.message(StartWith('commands_name.action_ask.dino_button'))
+@main_router.message(IsPrivateChat(), StartWith('commands_name.action_ask.dino_button'))
 async def edit_dino_buttom(message: Message):
     """ Изменение последнего динозавра (команда)
     """
@@ -45,7 +45,7 @@ async def edit_dino_buttom(message: Message):
                            reply_markup=inline)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('activ_dino'))
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('activ_dino'))
 async def answer_edit(callback: CallbackQuery):
     """ Изменение последнего динозавра (кнопка)
     """
@@ -84,7 +84,7 @@ async def invite_adp(friend, transmitted_data: dict):
                        reply_markup= await m(userid, 'last_menu', lang))
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('invite_to_action'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('invite_to_action'))
 async def invite_to_action(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id
@@ -129,7 +129,7 @@ async def join_adp(dino: Dino, transmitted_data):
                                  dino, friend, True, friend_dino)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('join_to_action'))
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('join_to_action'))
 async def join(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     chatid = callback.message.chat.id

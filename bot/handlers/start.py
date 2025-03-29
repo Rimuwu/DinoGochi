@@ -70,7 +70,7 @@ async def start_command_auth(message: types.Message):
             await bot.send_message(message.chat.id, text)
 
 @HDMessage
-@main_router.message(Text('commands_name.start_game'), IsAuthorizedUser(False))
+@main_router.message(IsPrivateChat(), Text('commands_name.start_game'), IsAuthorizedUser(False))
 async def start_game(message: types.Message, code: str = '', code_type: str = ''):
     if message.from_user:
         #Сообщение-реклама
@@ -100,7 +100,7 @@ async def start_game(message: types.Message, code: str = '', code_type: str = ''
                             reply_markup=markup_inline.as_markup(resize_keyboard=True))
 
 @HDMessage
-@main_router.message(Command(commands=['start']), IsAuthorizedUser(False))
+@main_router.message(IsPrivateChat(), Command(commands=['start']), IsAuthorizedUser(False))
 async def start_game_message(message: types.Message):
     langue_code = message.from_user.language_code
     if not langue_code: langue_code = 'en'

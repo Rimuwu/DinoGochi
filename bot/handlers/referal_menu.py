@@ -29,7 +29,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 referals = DBconstructor(mongo_client.user.referals)
 
 @HDMessage
-@main_router.message(Text('commands_name.referal.code'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.referal.code'), IsAuthorizedUser())
 async def code(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -93,7 +93,7 @@ async def custom_handler(message: Message, transmitted_data: dict):
     return status, code
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('generate_referal'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('generate_referal'))
 async def generate_code(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id
@@ -122,7 +122,7 @@ async def generate_code(call: CallbackQuery):
 
 
 @HDMessage
-@main_router.message(StartWith('commands_name.referal.my_code'), IsPrivateChat())
+@main_router.message(IsPrivateChat(), StartWith('commands_name.referal.my_code'))
 async def my_code(message: Message):
     """ Кнопка - мой код ...
     """
@@ -162,7 +162,7 @@ async def check_code(code: str, transmitted_data: dict, send: bool = True):
                         reply_markup= await m(userid, 'last_menu', lang, True))
 
 @HDMessage
-@main_router.message(Text('commands_name.referal.enter_code'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.referal.enter_code'), IsAuthorizedUser())
 async def enter_code(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)

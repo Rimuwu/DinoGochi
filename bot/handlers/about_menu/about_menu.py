@@ -25,8 +25,8 @@ from aiogram.filters import Command
 from aiogram import F
 
 @HDMessage
-@main_router.message(Text('commands_name.about.team'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.about.team'), 
+                     IsAuthorizedUser())
 async def team(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -40,8 +40,8 @@ async def team(message: Message):
                                     ), parse_mode='html')
 
 @HDMessage
-@main_router.message(Text('commands_name.about.links'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.about.links'), 
+                     IsAuthorizedUser())
 async def links(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -49,8 +49,8 @@ async def links(message: Message):
     await bot.send_message(chatid, t('about_menu.links', lang), parse_mode='Markdown')
 
 @HDMessage
-@main_router.message(Text('commands_name.about.faq'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.about.faq'), 
+                     IsAuthorizedUser())
 async def faq(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -68,7 +68,7 @@ async def faq(message: Message):
     await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline.as_markup(resize_keyboard=True))
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('faq'))
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('faq'))
 async def faq_buttons(call: CallbackQuery):
     data = call.data.split()[1]
     chatid = call.message.chat.id

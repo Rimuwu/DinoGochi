@@ -20,8 +20,8 @@ management = DBconstructor(mongo_client.other.management)
 users = DBconstructor(mongo_client.user.users)
 
 @HDMessage
-@main_router.message(Text('commands_name.profile.rayting'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.profile.rayting'), 
+                     IsAuthorizedUser())
 async def rayting(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
@@ -46,7 +46,7 @@ async def rayting(message: Message):
             await bot.send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('rayting'))
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('rayting'))
 async def rayting_call(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id

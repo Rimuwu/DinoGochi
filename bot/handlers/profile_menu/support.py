@@ -47,8 +47,8 @@ async def main_support_menu(lang: str):
     return image, text, markup_inline.as_markup(resize_keyboard=True)
 
 @HDMessage
-@main_router.message(Text('commands_name.profile.support'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.profile.support'), 
+                     IsAuthorizedUser())
 async def support(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -58,8 +58,8 @@ async def support(message: Message):
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
 
 @HDMessage
-@main_router.message(Command(commands=['premium']),
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Command(commands=['premium']),
+                     IsAuthorizedUser())
 async def support_com(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -70,7 +70,7 @@ async def support_com(message: Message):
 
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('support'))
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('support'))
 async def support_buttons(call: CallbackQuery):
     action = call.data.split()[1]
     product_key = call.data.split()[2]

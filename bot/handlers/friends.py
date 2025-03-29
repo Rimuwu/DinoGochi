@@ -32,7 +32,7 @@ events = DBconstructor(mongo_client.other.events)
 sellers = DBconstructor(mongo_client.market.sellers)
 
 @HDMessage
-@main_router.message(Text('commands_name.friends.add_friend'), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.friends.add_friend'))
 async def add_friend(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
@@ -103,7 +103,7 @@ async def add_friend_end(friendid: int, transmitted_data: dict):
                                 reply_markup= await m(userid, 'last_menu', lang))
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('add_friend'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('add_friend'))
 async def add_friend_callback(call: CallbackQuery):
     chatid = call.message.chat.id
     user_id = call.from_user.id
@@ -122,7 +122,7 @@ async def add_friend_callback(call: CallbackQuery):
                             transmitted_data)
 
 @HDMessage
-@main_router.message(Text('commands_name.friends.friends_list'), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.friends.friends_list'))
 async def friend_list(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -199,7 +199,7 @@ async def request_open(userid: int, chatid: int, lang: str):
         autoanswer=False, one_element=False)
 
 @HDMessage
-@main_router.message(Text('commands_name.friends.requests'), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.friends.requests'))
 async def requests_list(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -209,7 +209,7 @@ async def requests_list(message: Message):
     await request_open(userid, chatid, lang)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('requests'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('requests'))
 async def requests_callback(call: CallbackQuery):
     chatid = call.message.chat.id
     user_id = call.from_user.id
@@ -247,7 +247,7 @@ async def adp_delte(friendid: int, transmitted_data: dict):
                            (lang))
 
 @HDMessage
-@main_router.message(Text('commands_name.friends.remove_friend'), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.friends.remove_friend'))
 async def remove_friend(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -304,7 +304,7 @@ async def joint(return_data: dict,
     await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang))
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('joint_dinosaur'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('joint_dinosaur'))
 async def joint_dinosaur(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
     chatid = call.message.chat.id
@@ -328,7 +328,7 @@ async def joint_dinosaur(call: CallbackQuery):
     await ChooseStepState(joint, userid, chatid, lang, steps, {'friendid': int(data[1]), 'username': await user_name(userid)})
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('take_dino'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('take_dino'))
 async def take_dino(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
     chatid = call.message.chat.id
@@ -367,7 +367,7 @@ async def take_dino(call: CallbackQuery):
                 if owner: await bot.send_message(owner, text_to_owner)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('take_money'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('take_money'))
 async def take_money(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
     chatid = call.message.chat.id
@@ -393,7 +393,7 @@ async def take_money(call: CallbackQuery):
             await bot.send_message(chatid, text)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('take_coins'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('take_coins'))
 async def take_super_coins(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
     chatid = call.message.chat.id
@@ -490,7 +490,7 @@ async def send_request(call: CallbackQuery):
         await bot.answer_callback_query(call.id, '❌')
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('new_year'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('new_year'))
 async def new_year(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
     data = call.data.split()
@@ -515,7 +515,7 @@ async def new_year(call: CallbackQuery):
             await bot.send_message(friendid, text)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('change_friend_name'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('change_friend_name'))
 async def change_name(call: CallbackQuery):
 
     lang = await get_lang(call.from_user.id)
@@ -572,7 +572,7 @@ async def edit_name(new_name: str, transmitted_data: dict):
                             reply_markup=await m(userid, 'last_menu', lang))
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('open_market'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('open_market'))
 async def open_market_friend(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id

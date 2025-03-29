@@ -10,7 +10,7 @@ from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 
 @HDMessage
-@main_router.message(Text('commands_name.map-bt'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.map-bt'), IsAuthorizedUser())
 async def map(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)

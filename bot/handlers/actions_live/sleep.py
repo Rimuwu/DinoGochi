@@ -108,7 +108,7 @@ async def end_choice(option: str, transmitted_data: dict):
             dino_alt_id_markup=last_dino.alt_id))
 
 @HDMessage
-@main_router.message(Text('commands_name.actions.put_to_bed'), DinoPassStatus())
+@main_router.message(IsPrivateChat(), Text('commands_name.actions.put_to_bed'), DinoPassStatus())
 async def put_to_bed(message: Message):
     """Уложить спать динозавра
     """
@@ -152,7 +152,7 @@ async def put_to_bed(message: Message):
                 reply_markup= await m(userid, 'last_menu', lang))
 
 @HDMessage
-@main_router.message(Text('commands_name.actions.awaken'))
+@main_router.message(IsPrivateChat(), Text('commands_name.actions.awaken'))
 async def awaken(message: Message):
     """Пробуждение динозавра
     """

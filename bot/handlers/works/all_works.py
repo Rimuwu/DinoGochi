@@ -32,7 +32,7 @@ long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 
 @HDMessage
-@main_router.message(Text('commands_name.extraction_actions.progress'))
+@main_router.message(IsPrivateChat(), Text('commands_name.extraction_actions.progress'))
 async def progress(message: Message):
     if not message or not message.from_user:
         return
@@ -84,7 +84,7 @@ async def progress(message: Message):
             await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=rmk)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('progress_work'))
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('progress_work'))
 async def progress_work(call: CallbackQuery):
 
     if not call or not call.message or not call.from_user or not call.data:
@@ -134,7 +134,7 @@ async def progress_work(call: CallbackQuery):
                            reply_markup = await m(userid, 'last_menu', lang))
 
 @HDMessage
-@main_router.message(Text('commands_name.extraction_actions.stop_work'))
+@main_router.message(IsPrivateChat(), Text('commands_name.extraction_actions.stop_work'))
 async def stop_work(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
@@ -167,7 +167,7 @@ async def stop_work(message: Message):
 
 
 @HDMessage
-@main_router.message(Text('commands_name.extraction_actions.mine'), 
+@main_router.message(IsPrivateChat(), Text('commands_name.extraction_actions.mine'), 
                      DinoPassStatus())
 async def mine(message: Message):
     userid = message.from_user.id
@@ -215,7 +215,7 @@ async def end_mine(data, transmitted_data: dict):
     await auto_ads(mes)
 
 @HDMessage
-@main_router.message(StartWith('commands_name.extraction_actions.bank'), 
+@main_router.message(IsPrivateChat(), StartWith('commands_name.extraction_actions.bank'), 
                      DinoPassStatus())
 async def bank(message: Message):
     userid = message.from_user.id
@@ -263,7 +263,7 @@ async def end_bank(data, transmitted_data: dict):
     await auto_ads(mes)
 
 @HDMessage
-@main_router.message(StartWith('commands_name.extraction_actions.sawmill'), 
+@main_router.message(IsPrivateChat(), StartWith('commands_name.extraction_actions.sawmill'), 
                      DinoPassStatus())
 async def sawmill(message: Message):
     userid = message.from_user.id

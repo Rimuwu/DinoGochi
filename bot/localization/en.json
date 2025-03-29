@@ -1319,7 +1319,7 @@
         },
         "no_use_interface": "❌ While in the dungeon, use the dungeon interface! \n\n If there is an error and you are out of the dungeon, type /check_dinos",
         "no_account": "You do not have a registered account in the bot, please go to the bot and register to get access to this command.",
-        "add_me": "❤ | Anyone can send a friend request <a href='tg://user?id={userid}' >{username})</a> by clicking on the button below!",
+        "add_me": "❤ | Anyone can send a friend request <a href='tg://user?id={userid}' >{username}</a> by clicking on the button below!",
         "in_development": "This feature is under development, stay tuned to find out when the team will be up and running!",
         "start_command": {
             "referal": "🔗 I noticed a click on the current referral link!",

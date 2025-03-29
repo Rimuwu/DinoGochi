@@ -80,8 +80,8 @@ async def transition_back(dino: Dino, transmitted_data: dict):
     await bot.send_message(userid, text, reply_markup=markup)
 
 @HDMessage
-@main_router.message(Text('commands_name.backgrounds.custom_profile'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.backgrounds.custom_profile'), 
+                     IsAuthorizedUser())
 async def custom_profile(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -94,8 +94,8 @@ async def custom_profile(message: Message):
         await bot.send_message(userid, text)
 
 @HDMessage
-@main_router.message(Text('commands_name.backgrounds.standart'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.backgrounds.standart'), 
+                     IsAuthorizedUser())
 async def standart(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -168,8 +168,8 @@ async def back_page(userid: int, page: int, lang: str):
     return text, markup, image
 
 @HDMessage
-@main_router.message(Text('commands_name.backgrounds.backgrounds'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.backgrounds.backgrounds'), 
+                     IsAuthorizedUser())
 async def backgrounds(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -179,7 +179,7 @@ async def backgrounds(message: Message):
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('back_m '), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('back_m '))
 async def background_menu(call: CallbackQuery):
     split_d = call.data.split()
     action = split_d[1]

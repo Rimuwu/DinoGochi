@@ -1,5 +1,6 @@
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
+from bot.filters.private import IsPrivateChat
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino
 from bot.modules.inventory_tools import start_inv
@@ -82,7 +83,7 @@ async def inventory_adapter(item, transmitted_data):
                               transmitted_data=transmitted_data)
 
 @HDMessage
-@main_router.message(Text('commands_name.actions.feed'))
+@main_router.message(IsPrivateChat(), Text('commands_name.actions.feed'))
 async def feed(message: Message):
     if message.from_user:
         userid = message.from_user.id
@@ -105,7 +106,7 @@ async def feed(message: Message):
         await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('feed_inl'))
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('feed_inl'))
 async def feed_inl(callback: CallbackQuery):
     if callback.message:
         lang = await get_lang(callback.from_user.id)

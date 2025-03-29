@@ -47,8 +47,8 @@ async def notification(result: bool, transmitted_data: dict):
                            )
 
 @HDMessage
-@main_router.message(Text('commands_name.settings.notification'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.settings.notification'), 
+                     IsAuthorizedUser())
 async def notification_set(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -82,8 +82,8 @@ async def dino_profile(result: bool, transmitted_data: dict):
                            )
 
 @HDMessage
-@main_router.message(Text('commands_name.settings.dino_profile'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.settings.dino_profile'), 
+                     IsAuthorizedUser())
 async def dino_profile_set(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -121,8 +121,8 @@ async def inventory(result: list, transmitted_data: dict):
                            )
 
 @HDMessage
-@main_router.message(Text('commands_name.settings.inventory'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.settings.inventory'), 
+                     IsAuthorizedUser())
 async def inventory_set(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -175,8 +175,8 @@ async def transition(dino: Dino, transmitted_data: dict):
     await bot.send_message(userid, text, reply_markup=markup)
 
 @HDMessage
-@main_router.message(Text('commands_name.settings.dino_name'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.settings.dino_name'), 
+                     IsAuthorizedUser())
 async def rename_dino(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -184,7 +184,7 @@ async def rename_dino(message: Message):
     await ChooseDinoState(transition, userid, message.chat.id, lang, False)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('rename_dino'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('rename_dino'), IsAuthorizedUser())
 async def rename_button(callback: CallbackQuery):
     dino_data = callback.data.split()[1]
     lang = await get_lang(callback.from_user.id)
@@ -219,8 +219,8 @@ async def adapter_delete(return_data, transmitted_data):
                                reply_markup=r)
 
 @HDMessage
-@main_router.message(Text('commands_name.settings.delete_me'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.settings.delete_me'), 
+                     IsAuthorizedUser())
 async def delete_me(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -288,7 +288,7 @@ async def my_name_end(content: str, transmitted_data: dict):
                            )
 
 @HDMessage
-@main_router.message(Text('commands_name.settings2.my_name'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.settings2.my_name'), IsAuthorizedUser())
 async def my_name(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -312,7 +312,7 @@ async def lang_set(new_lang: str, transmitted_data: dict):
                                reply_markup= await m(userid, 'last_menu', new_lang))
 
 @HDMessage
-@main_router.message(Text('commands_name.settings2.lang'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.settings2.lang'), IsAuthorizedUser())
 async def lang(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -344,8 +344,8 @@ async def dino_talk_set(result: bool, transmitted_data: dict):
                            )
 
 @HDMessage
-@main_router.message(Text('commands_name.settings2.dino_talk'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.settings2.dino_talk'), 
+                     IsAuthorizedUser())
 async def dino_talk(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -386,8 +386,8 @@ async def my_nick_set(nick: str, transmitted_data: dict):
                         reply_markup= await m(userid, 'last_menu', lang))
 
 @HDMessage
-@main_router.message(Text('commands_name.settings2.nick'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.settings2.nick'), 
+                     IsAuthorizedUser())
 async def my_nick(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -398,8 +398,8 @@ async def my_nick(message: Message):
                            reply_markup=cancel_markup(lang))
 
 @HDMessage
-@main_router.message(Text('commands_name.settings2.reset_avatar'), 
-                     IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.settings2.reset_avatar'), 
+                     IsAuthorizedUser())
 async def reset_avatar(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)

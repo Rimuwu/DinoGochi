@@ -83,7 +83,7 @@ async def custom_name(message: Message, transmitted_data):
     return False, None
 
 @HDMessage
-@main_router.message(Text('commands_name.seller_profile.create_market'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.seller_profile.create_market'), IsAuthorizedUser())
 async def create_market(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -122,7 +122,7 @@ async def create_market(message: Message):
                               transmitted_data=transmitted_data)
 
 @HDMessage
-@main_router.message(Text('commands_name.seller_profile.my_market'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.seller_profile.my_market'), IsAuthorizedUser())
 async def my_market(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -137,7 +137,7 @@ async def my_market(message: Message):
             await bot.send_photo(chatid, image, caption=text, reply_markup=markup, parse_mode=None)
 
 @HDMessage
-@main_router.message(Text('commands_name.seller_profile.add_product'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.seller_profile.add_product'), IsAuthorizedUser())
 async def add_product_com(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -159,7 +159,7 @@ async def add_product_com(message: Message):
     await ChooseOptionState(prepare_data_option, userid, chatid, lang, options)
 
 @HDMessage
-@main_router.message(Text('commands_name.seller_profile.my_products'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.seller_profile.my_products'), IsAuthorizedUser())
 async def my_products(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -183,7 +183,7 @@ async def my_products(message: Message):
         await bot.send_message(chatid, text,  parse_mode='Markdown')
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('product_info'))
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('product_info'))
 async def product_info(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -238,7 +238,7 @@ async def product_info(call: CallbackQuery):
                                         call.message.message_id)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('seller'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('seller'))
 async def seller(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -293,7 +293,7 @@ async def seller(call: CallbackQuery):
                                None, False, False)
 
 @HDMessage
-@main_router.message(Text('commands_name.market.random'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.market.random'), IsAuthorizedUser())
 async def random_products(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -323,7 +323,7 @@ async def random_products(message: Message):
     else:
         await bot.send_message(chatid, t('products.null', lang))
 
-@main_router.message(Text('commands_name.market.find'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.market.find'), IsAuthorizedUser())
 @HDMessage
 async def find_products(message: Message):
     userid = message.from_user.id
@@ -332,7 +332,7 @@ async def find_products(message: Message):
 
     await find_prepare(userid, chatid, lang)
 
-@main_router.callback_query(F.data.startswith('create_push'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('create_push'))
 @HDCallback
 async def push(call: CallbackQuery):
     call_data = call.data.split()
@@ -356,7 +356,7 @@ async def push(call: CallbackQuery):
     await bot.edit_message_reply_markup(None, chatid, call.message.message_id, 
                                         reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
 
-@main_router.message(Text('commands_name.market.search_markets'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.market.search_markets'), IsAuthorizedUser())
 @HDMessage
 async def search_markets(message: Message):
     userid = message.from_user.id
@@ -373,7 +373,7 @@ async def search_markets(message: Message):
     await bot.send_message(chatid, t('search_markets.text', lang),
                           reply_markup=mrk)
 
-@main_router.callback_query(F.data.startswith('random_markets'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('random_markets'))
 @HDCallback
 async def random_markets(call: CallbackQuery):
     call_data = call.data.split()
@@ -415,7 +415,7 @@ async def send_seller_info(option, transmitted_data: dict):
     except:
         await bot.send_photo(chatid, image, caption=text, reply_markup=markup, parse_mode=None)
 
-@main_router.callback_query(F.data.startswith('find_markets'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('find_markets'))
 @HDCallback
 async def find_markets(call: CallbackQuery):
     call_data = call.data.split()

@@ -40,7 +40,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 events = DBconstructor(mongo_client.other.events)
 
 @HDMessage
-@main_router.message(Text('commands_name.dino_tavern.events'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.dino_tavern.events'), IsAuthorizedUser())
 async def events_c(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -114,14 +114,14 @@ async def bonus_message(user, message, lang):
     await send_SmartPhoto(message.chat.id, photo, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
 
 @HDMessage
-@main_router.message(Text('commands_name.dino_tavern.daily_award'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.dino_tavern.daily_award'), IsAuthorizedUser())
 async def bonus(message: Message):
     lang = await get_lang(message.from_user.id)
     user = message.from_user
     await bonus_message(user, message, lang)
 
 @HDCallback
-@main_router.callback_query(F.data == 'daily_message', IsAuthorizedUser())
+@main_router.callback_query(IsPrivateChat(), F.data == 'daily_message', IsAuthorizedUser())
 async def daily_message(callback: CallbackQuery):
     user = callback.from_user
     lang = await get_lang(callback.from_user.id)
@@ -129,7 +129,7 @@ async def daily_message(callback: CallbackQuery):
     await bonus_message(user, message, lang)
 
 @HDCallback
-@main_router.callback_query(F.data == 'daily_award', IsAuthorizedUser())
+@main_router.callback_query(IsPrivateChat(), F.data == 'daily_award', IsAuthorizedUser())
 async def daily_award(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
@@ -169,7 +169,7 @@ async def daily_award(callback: CallbackQuery):
         await bot.send_message(chatid, text, parse_mode='Markdown')
 
 @HDMessage
-@main_router.message(Text('commands_name.dino_tavern.edit'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.dino_tavern.edit'), IsAuthorizedUser())
 async def edit(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -320,7 +320,7 @@ async def reset_chars(return_data, transmitted_data):
                                 reply_markup= await m(userid, 'last_menu', lang))
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('transformation') , IsAuthorizedUser())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('transformation') , IsAuthorizedUser())
 async def transformation(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id

@@ -26,7 +26,7 @@ long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 
 @HDMessage
-@main_router.message(Text('commands_name.speed_actions.fighting'), DinoPassStatus(), 
+@main_router.message(IsPrivateChat(), Text('commands_name.speed_actions.fighting'), DinoPassStatus(), 
              KDCheck('fighting'))
 async def fighting(message: Message):
     userid = message.from_user.id

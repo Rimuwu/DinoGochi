@@ -58,7 +58,7 @@ async def page_context(userid, lang):
     return text, rmk
 
 @HDMessage
-@main_router.message(Text('commands_name.dino_tavern.hoarder'), IsAuthorizedUser(), IsPrivateChat())
+@main_router.message(IsPrivateChat(), Text('commands_name.dino_tavern.hoarder'), IsAuthorizedUser())
 async def hoarder(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
@@ -69,7 +69,7 @@ async def hoarder(message: Message):
           reply_markup = rmk)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('hoarder'), IsPrivateChat())
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('hoarder'))
 async def hoarder_calb(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id

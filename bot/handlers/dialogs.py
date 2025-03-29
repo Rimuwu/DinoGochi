@@ -18,7 +18,7 @@ from aiogram.filters import Command
 from bot.modules.user.user import user_name
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('dialog'),   
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('dialog'),   
                             IsAuthorizedUser())
 async def dialog(callback: CallbackQuery):
     dialog_key = callback.data.split()[1]
