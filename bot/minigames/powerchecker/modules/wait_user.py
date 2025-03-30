@@ -199,6 +199,7 @@ async def on_user_col_edit(self) -> None:
 
 @register_method(PowerChecker)
 async def waituser_NextStage(self, callback) -> None:
+    self.D_log('waituser_NextStage', True)
     ready = 0
     for player in self.PLAYERS.values():
         if player.data.get('ready'):
@@ -207,10 +208,11 @@ async def waituser_NextStage(self, callback) -> None:
     this_player = await self.GetPlayer(callback.from_user.id)
     if this_player:
         this_player.data['ready'] = not this_player.data.get('ready', False)
-        ready += 1
-
-        await self.EditPlayer(callback.from_user.id, this_player)
-        await self.MessageGenerator('main', callback.from_user.id)
+        if this_player.data['ready']: ready += 1
+        
+        if ready != len(self.PLAYERS):
+            await self.EditPlayer(callback.from_user.id, this_player)
+            await self.MessageGenerator('main', callback.from_user.id)
 
     if ready == len(self.PLAYERS):
         self.D_log('StartGame -------------', True)

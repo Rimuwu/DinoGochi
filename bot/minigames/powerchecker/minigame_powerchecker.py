@@ -1,6 +1,8 @@
 import random
 import time
 
+from bot.exec import bot
+
 from aiogram import types
 from bot.minigames.minigame import MiniGame, Button, PlayerData, SMessage, Stage, Thread, Waiter, stageButton, stageThread, stageWaiter
 from bot.modules.user.user import User, take_coins, user_name
@@ -161,6 +163,12 @@ class PowerChecker(MiniGame):
 
         await self.EditPlayer(user_id, owner_player)
         await self.SetStage('preparation')
+    
+    async def Custom_ContinueGame(self) -> None:
+        
+        if self.STAGE == 'game':
+            stage = self.Stages['game']
+            await self.MessageGenerator(stage.stage_generator, int(self.active_player))
 
     async def Custom_EndGame(self) -> None:
 
@@ -186,11 +194,181 @@ class PowerChecker(MiniGame):
 
     async def game_StartGame(self) -> None:
         self.WaiterRegister = {}
-        self.ButtonsRegister = {}
-        self.message_generators = {}
-        self.Stages = {}
+
+        self.ButtonsRegister = {
+            "exit": Button(function='game_ExitGame', filters=['player_filter'], active=False),
+            "simple_hit": Button(function='game_SimpleHit', filters=['active_player_filter'], active=False),
+            "powerful_hit": Button(function='game_PowerfulHit', filters=['active_player_filter'], active=False),
+            "net_dino": Button(function='game_NetDino', filters=['active_player_filter'], active=False),
+            "take_axe": Button(function='game_TakeAxe', filters=['active_player_filter'], active=False),
+            "pass": Button(function='game_Pass', filters=['active_player_filter'], active=False),
+            "set_dino_to_attack": Button(function='game_ChooseDinoToAttack', filters=['active_player_filter'], active=False),
+            "cancel": Button(function='game_CancelToMain', filters=['active_player_filter'], active=False),
+            "roll_dice_button": Button(function='game_RollDice', filters=['active_player_filter'], active=False),
+        }
+
+        self.message_generators = {
+            'main': 'game_GameGenerator',
+            'dice': 'game_DiceGenerator',
+            'choose_dino': 'game_ChooseDinoGenerator',
+        }
+
+        self.Stages = {
+            'game': Stage(
+                threads_active=[],
+                buttons_active=[
+                    stageButton(button='exit', data={'active': True}),
+                    stageButton(button='simple_hit', data={'active': True}),
+                    stageButton(button='powerful_hit', data={'active': True}),
+                    stageButton(button='net_dino', data={'active': True}),
+                    stageButton(button='take_axe', data={'active': True}),
+                    stageButton(button='pass', data={'active': True}),
+                ],
+                waiter_active=[],
+                stage_generator='main',
+                to_function='',
+                data={}
+            ),
+            'choose_dino': Stage(
+                threads_active=[],
+                buttons_active=[
+                    stageButton(button='set_dino_to_attack', data={'active': True}),
+                    stageButton(button='cancel', data={'active': True}),
+                ],
+                waiter_active=[],
+                stage_generator='choose_dino',
+                to_function='',
+                data={
+                    'next_function': '',
+                }
+            ),
+            'roll_dice': Stage(
+                threads_active=[],
+                buttons_active=[
+                    stageButton(button='roll_dice_button', data={'active': True}),
+                    stageButton(button='cancel', data={'active': True}),
+                ],
+                waiter_active=[],
+                stage_generator='dice',
+                to_function='',
+                data={}
+            )
+        }
         
+        del self.ThreadsRegister['service_deleter']
+        del self.ThreadsRegister['end_game_timer']
+
+        self.active_player: str = list(self.PLAYERS.keys())[0]
+        self.power = random.randint(80, 140)
+
+        for player_id, player_data in self.PLAYERS.items():
+            player_data.data['units'] = self.power
+            await self.EditPlayer(int(player_id), player_data)
         
+        await self.Update()
+
+        await self.SetStage('game')
+        await self.MessageGenerator('main', self.owner_id)
+
+    async def active_player_filter(self, callback: types.CallbackQuery) -> bool:
+        if int(callback.from_user.id) != int(self.active_player):
+            await callback.answer('Сейчас не ваш ход или вы не участник игры!')
+            return False
+
+        return True
+
+    async def game_ExitGame(self, callback: types.CallbackQuery) -> None:
+        pass
+
+    async def game_SimpleHit(self, callback: types.CallbackQuery) -> None:
+        pass
+
+    async def game_PowerfulHit(self, callback: types.CallbackQuery) -> None:
+        pass
+
+    async def game_NetDino(self, callback: types.CallbackQuery) -> None:
+        pass
+
+    async def game_TakeAxe(self, callback: types.CallbackQuery) -> None:
+        pass
+
+    async def game_Pass(self, callback: types.CallbackQuery) -> None:
+        pass
+
+    async def game_ChooseDinoToAttack(self, callback: types.CallbackQuery) -> None:
+        pass
+
+    async def game_CancelToMain(self, callback: types.CallbackQuery) -> None:
+        pass
+
+    async def set_dino_to_attack(self, callback: types.CallbackQuery) -> None:
+        pass
+
+    async def cancel_dino_choose(self, callback: types.CallbackQuery) -> None:
+        pass
+
+    async def game_RollDice(self, callback: types.CallbackQuery) -> None:
+
+        res = await bot.send_dice(callback.from_user.id, '🎲', reply_markup=None)
+        res2 = await bot.send_dice(callback.from_user.id, '🎲', reply_markup=None)
+        
+        self.D_log(f'Roll dice: {res.dice.value}')
+        self.D_log(f'Roll dice: {res2.dice.value}')
+
+    async def game_ChooseDinoGenerator(self, user_id: int) -> None:
+        pass
+    
+    async def game_dice_reply_markup(self, user_id: int):
+        buttons = [
+            {'text': '🎲 Бросить кубик', 'callback_data': self.CallbackGenerator('roll_dice_button')},
+            {'text': 'Отмена', 'callback_data': self.CallbackGenerator('cancel')},
+        ]
+        
+        return self.list_to_inline(buttons, 2)
+
+    async def game_DiceGenerator(self, user_id: int) -> None:
+        text = '🎲 Бросок кубика 🎲\n\n' \
+               'Выберите действие:\n' \
+               '- Бросить кубик: Бросить кубик и узнать результат\n' \
+               '- Отмена: Вернуться назад'
+
+        await self.MesageUpdate('dice', text=text, 
+                                reply_markup=await self.game_dice_reply_markup(user_id))
+
+    async def game_main_reply_markup(self, user_id: int):
+        buttons = [
+            {'text': 'Удар', 'callback_data': self.CallbackGenerator('simple_hit')},
+            {'text': 'Мощный удар', 'callback_data': self.CallbackGenerator('powerful_hit')},
+            {'text': 'Паутина', 'callback_data': self.CallbackGenerator('net_dino')},
+            {'text': 'Отобрать топор', 'callback_data': self.CallbackGenerator('take_axe')},
+            {'text': 'Пропустить ход', 'callback_data': self.CallbackGenerator('pass')},
+            {'text': 'Выйти', 'callback_data': self.CallbackGenerator('exit'), 'ignore_row': 'true'},
+        ]
+        return self.list_to_inline(buttons, 3)
+
+    async def game_GameGenerator(self, user_id: int) -> None:
+        data_act_player = self.PLAYERS[self.active_player]
+        text = f"Активный игрок: {data_act_player.user_name}\n\n"
+
+        text += "Игроки:\n"
+        for player_id, player_data in self.PLAYERS.items():
+            remaining_power = player_data.data['units']
+            percentage = int((remaining_power / self.power) * 100)
+            if player_id == self.active_player: my_percent = percentage
+
+            activ_emoji = '-'
+            if player_id == self.active_player: activ_emoji = '>'
+
+            text += f"{activ_emoji} {player_data.user_name}: {percentage}%\n"
+
+        text += '\nВыберите действие:\n' \
+                '- Удар: Нанести удар по дереву\n' \
+                '- Мощный удар: Исползует всю силу динозавра\n' \
+                '- Паутина: В случае успеха противник пропустит ход\n' \
+                '- Отобрать топор: В случае успеха противник не сможет использовать топор\n' 
+
+        await self.MesageUpdate('main', text=text, 
+                                reply_markup=await self.game_main_reply_markup(user_id))
 
 
 PowerChecker().RegistryMe() # Регистрация класса в реестре

@@ -322,3 +322,15 @@ async def f(fileID, transmitted_data: dict):
     await bot.send_photo(transmitted_data['chatid'], file.file_id, 
                         caption=f'size {file.file_size}'
                         )
+
+
+@main_router.message(Command(commands=['dice']), IsAdminUser())
+@HDMessage
+async def save_users_handler(message: Message):
+    r1 = await bot.send_dice(message.from_user.id, emoji='🎲')
+    r2 = await bot.send_dice(message.from_user.id, emoji='🎲')
+    await bot.edit_message_text(
+        chat_id=message.from_user.id,
+        message_id=r1.message_id,
+        text=f"🎲🎲 Results: Dice 1: {r1.dice.value}, Dice 2: {r2.dice.value}"
+    )

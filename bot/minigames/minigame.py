@@ -7,6 +7,7 @@ from bot.exec import bot
 import random
 from bot.minigames.minigame_registartor import Registry
 from aiogram import types
+from bot.modules.data_format import escape_markdown
 from bot.modules.localization import get_lang
 from bot.modules.logs import log
 from bot.dbmanager import mongo_client
@@ -352,7 +353,13 @@ class MiniGame:
         self.LAST_ACTION = time.time()
         await self.__LoadData()
 
+        await self.Custom_ContinueGame()
+
         asyncio.create_task(self.__run_threads())
+    
+    async def Custom_ContinueGame(self) -> None:
+        """ Когда игра продолжается после неожиданного завершения (Создан, чтобы не переписывать ContinueGame) """
+        pass
 
     # ======== END ======== #
     """ Когда игра завершена """
@@ -705,12 +712,12 @@ class MiniGame:
     async def AddPlayer(self, user_id: int, chat_id: int, user_name: str, stage: str = '', data: Optional[dict] = None):
         """ Добавление игрока + данные из standart_player_data"""
         self.PLAYERS[str(user_id)] = PlayerData(
-            user_id=user_id, chat_id=chat_id,   
-            user_name=user_name, stage=stage, data=data or self.standart_player_data())
+            user_id=user_id, chat_id=chat_id, 
+            user_name=escape_markdown(user_name), stage=stage, data=data or self.standart_player_data())
 
         await self.Update()
         self.D_log(f'AddPlayer {user_id}')
-    
+
     async def DeletePlayer(self, user_id: int):
         """ Удаление игрока """
         if str(user_id) in self.PLAYERS:
@@ -824,7 +831,7 @@ async def update_session(_id: ObjectId, data: dict) -> None:
 
     await database.update_one({'_id': _id}, 
                               {'$set': data},
-                              comment='update_session_minigame')
+                comment='update_session_minigame')
 
 async def insert_session(data: dict) -> ObjectId:
     data['_id'] = ObjectId()
@@ -837,6 +844,7 @@ async def delete_session(_id: ObjectId) -> None:
     await database.delete_one({'_id': _id}, comment='delete_session_minigame')
 
 async def get_session(session_key: str) -> dict:
+    
     data = await database.find_one({'session_key': session_key},
                                    comment='get_session_minigame')
     if data: return data
