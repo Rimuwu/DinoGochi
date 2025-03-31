@@ -61,8 +61,9 @@
                 ]
             }
         },
-        "rank": "common",
-        "type": "eat"
+        "rank": "mystical",
+        "type": "eat",
+        "groups": ["collecting-activity"]
     },
     "fish": {
         "act": 16,
@@ -132,7 +133,8 @@
             }
         },
         "rank": "common",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["collecting-activity"]
     },
     "seafood": {
         "act": 9,
@@ -175,8 +177,9 @@
                 ]
             }
         },
-        "rank": "common",
-        "type": "eat"
+        "rank": "rare",
+        "type": "eat",
+        "groups": ["collecting-activity"]
     },
     "chicken_leg": {
         "act": 10,
@@ -303,22 +306,25 @@
         "act": 12,
         "class": "Herbivore",
         "image": "null",
-        "rank": "common",
-        "type": "eat"
+        "rank": "rare",
+        "type": "eat",
+        "groups": ["collecting-activity"]
     },
     "tomato": {
         "act": 16,
         "class": "Herbivore",
         "image": "null",
-        "rank": "common",
-        "type": "eat"
+        "rank": "mystical",
+        "type": "eat",
+        "groups": ["collecting-activity"]
     },
     "potato": {
         "act": 18,
         "class": "Herbivore",
         "image": "null",
-        "rank": "common",
-        "type": "eat"
+        "rank": "legendary",
+        "type": "eat",
+        "groups": ["collecting-activity"]
     },
     "croissant": {
         "buffs": {
@@ -471,15 +477,17 @@
         "act": 8,
         "class": "Herbivore",
         "image": "item85",
-        "rank": "common",
-        "type": "eat"
+        "rank": "uncommon",
+        "type": "eat",
+        "groups": ["collecting-activity"]
     },
     "banana": {
         "act": 7,
         "class": "Herbivore",
         "image": "item79",
         "rank": "common",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["collecting-activity"]
     },
     "crab": {
         "act": 36,
@@ -508,8 +516,9 @@
         "act": 10,
         "class": "Herbivore",
         "image": "item82",
-        "rank": "uncommon",
-        "type": "eat"
+        "rank": "legendary",
+        "type": "eat",
+        "groups": ["collecting-activity"]
     },
     "broth": {
         "buffs": {
@@ -529,7 +538,8 @@
         "class": "Herbivore",
         "image": "item76",
         "rank": "common",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["collecting-activity"]
     },
     "spicy_steak": {
         "act": 46,
@@ -553,8 +563,9 @@
         "act": 7,
         "class": "Herbivore",
         "image": "item71",
-        "rank": "common",
-        "type": "eat"
+        "rank": "uncommon",
+        "type": "eat",
+        "groups": ["collecting-activity"]
     },
     "popcorn": {
         "buffs": {

@@ -4,7 +4,17 @@
         "inc_type": "random",
         "incub_time": 43200,
         "rank": "rare",
-        "type": "egg"
+        "type": "egg",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "fried_egg"
+                ],
+                "materials": [
+                    {"item_id": "mysterious_egg", "count": 1}
+                ]
+            }
+        }
     },
     "regular_egg": {
         "image": "item21",
@@ -17,6 +27,14 @@
                 ],
                 "materials": [
                     {"item_id": "regular_egg", "count": 10}
+                ]
+            },
+            "2": {
+                "create": [
+                    "fried_egg"
+                ],
+                "materials": [
+                    {"item_id": "regular_egg", "count": 1}
                 ]
             }
         },
@@ -35,6 +53,14 @@
                 "materials": [
                     {"item_id": "unusual_egg", "count": 10}
                 ]
+            },
+            "2": {
+                "create": [
+                    "fried_egg"
+                ],
+                "materials": [
+                    {"item_id": "unusual_egg", "count": 1}
+                ]
             }
         },
         "rank": "mystical",
@@ -51,6 +77,14 @@
                 ],
                 "materials": [
                     {"item_id": "rare_egg", "count": 10}
+                ]
+            },
+            "2": {
+                "create": [
+                    "fried_egg"
+                ],
+                "materials": [
+                    {"item_id": "rare_egg", "count": 1}
                 ]
             }
         },
@@ -69,6 +103,14 @@
                 "materials": [
                     {"item_id": "mystic_egg", "count": 10}
                 ]
+            },
+            "2": {
+                "create": [
+                    "fried_egg", "fried_egg"
+                ],
+                "materials": [
+                    {"item_id": "mystic_egg", "count": 1}
+                ]
             }
         },
         "rank": "mystical",
@@ -82,6 +124,14 @@
             "1": {
                 "create": [
                     "egg_case"
+                ],
+                "materials": [
+                    {"item_id": "legendary_egg", "count": 1}
+                ]
+            },
+            "2": {
+                "create": [
+                    "fried_egg", "fried_egg", "fried_egg"
                 ],
                 "materials": [
                     {"item_id": "legendary_egg", "count": 1}

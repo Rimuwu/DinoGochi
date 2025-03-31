@@ -15,11 +15,13 @@ from asyncio import sleep as asleep
 
 from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            InlineQueryResultContact, Message, LabeledPrice)
+
 from bot.modules.dinosaur import dinosaur
 from bot.modules.get_state import get_state
 from bot.modules.images_save import send_SmartPhoto
 
 from bot.modules.inline import inline_menu
+from bot.modules.items.items_groups import get_group
 from bot.modules.logs import log
 
 from bot.config import conf
@@ -72,6 +74,7 @@ from bot.modules.decorators import HDMessage
 
 from bson.objectid import ObjectId
 from bson.son import SON
+from bot.modules.items.item import get_data as get_item_data
 
 from bot.modules.states_tools import ChooseImageState
 
@@ -329,8 +332,53 @@ async def f(fileID, transmitted_data: dict):
 async def save_users_handler(message: Message):
     r1 = await bot.send_dice(message.from_user.id, emoji='🎲')
     r2 = await bot.send_dice(message.from_user.id, emoji='🎲')
-    await bot.edit_message_text(
+    await bot.send_message(
         chat_id=message.from_user.id,
-        message_id=r1.message_id,
         text=f"🎲🎲 Results: Dice 1: {r1.dice.value}, Dice 2: {r2.dice.value}"
     )
+    
+rarity_to_int = {
+    "common": 0, "uncommon": 1, 
+    "rare": 2, "mystical": 3,
+    "legendary": 4, "mythical": 5
+}
+
+def sort_f(item_id: str):
+    """ Функция сортирует список с id предметов по их редкости
+    """
+    dt = get_item_data(item_id)
+    return rarity_to_int[dt['rank']]
+
+def rare_sort(items: list[str]):
+    """ Функция сортирует список с id предметов по их редкости. От обычного к легендарному
+    """
+
+    new_list = items.copy()
+    new_list.sort(key=lambda x: sort_f(x))
+
+    return new_list
+
+def add_to_rare_sort(items: list[str], item_id: str):
+    new_list = items.copy()
+    
+    dt = get_item_data(item_id)
+    if not dt: return items
+
+    rarity = rarity_to_int[dt['rank']]
+    for i, item in enumerate(new_list):
+        if rarity_to_int[get_item_data(item)['rank']] >= rarity:
+            new_list.insert(i, item_id)
+            return new_list
+
+
+@main_router.message(Command(commands=['sort_rar']), IsAdminUser())
+@HDMessage
+async def sort_rar(message: Message):
+    
+    group = get_group('collecting-activity')
+    
+    sort_g = rare_sort(group)
+    await message.answer(str(sort_g))
+    
+    sort_g = add_to_rare_sort(sort_g, 'gourmet_herbs')
+    await message.answer(str(sort_g))

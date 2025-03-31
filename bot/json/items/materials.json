@@ -24,7 +24,7 @@
         "image": "item27",
         "rank": "common",
         "type": "material",
-        "groups": ["wood"]
+        "groups": ["wood", "collecting-activity"]
     },
     "rope": {
         "image": "rope",
