@@ -1,4 +1,4 @@
-from random import choice, randint, shuffle
+from random import choice, choices, randint, random, shuffle
 import time
 
 from bot.dbmanager import mongo_client
@@ -26,7 +26,7 @@ from bot.modules.quests import quest_process
 from bot.modules.states_tools import ChooseStepState
 from bot.modules.get_state import get_state
 from bot.modules.user.user import User, col_dinos, get_dead_dinos, max_dino_col, max_eat, count_inventory_items, award_premium
-from typing import Union
+from typing import Optional, Union
 
 from bson import ObjectId
 
@@ -687,3 +687,85 @@ async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
         await bot.send_message(chatid, t('delete_action.error', lang), 
                                reply_markup=
                                await markups_menu(userid, 'last_menu', lang))
+
+rarity_chances = {
+    "common": 50,
+    "uncommon": 25,
+    "rare": 15,
+    "mystical": 9,
+    "legendary": 1,
+    "mythical": 0.1
+}
+
+def rare_random(items: list[str], count: int = 1, 
+                chances_add: Optional[dict[str, int]] = None,
+                special_chances: Optional[dict[str, int]] = None
+                ) -> list[str]:
+    """Функция выбирает случайные предметы из списка на основе их редкости.
+       chances_add - словарь с шансами, которые нужно добавить к основным шансам
+       special_chances - словарь с шансами, которые нужно использовать вместо основных для определённых предметов
+    """
+
+    if chances_add:
+        # Добавляем шансы из переданного словаря
+        # Если ключ уже существует, то изменяем его значение
+        for key, value in chances_add.items():
+            if key in rarity_chances:
+                rarity_chances[key] += value
+            else:
+                rarity_chances[key] = value
+
+    # Получаем данные о редкости предметов
+    item_chances = []
+    for item in items:
+        rank = get_data(item)['rank']
+        if special_chances and item in special_chances:
+            # Используем специальные шансы, если они указаны для предмета
+            item_chances.append(special_chances[item])
+        else:
+            # Используем стандартные шансы
+            item_chances.append(rarity_chances[rank])
+
+    # Нормализуем шансы
+    total_chance = sum(item_chances)
+    weights = [chance / total_chance for chance in item_chances]
+
+    # Выбираем случайные предметы
+    shuffle(items)
+    selected_items = choices(items, weights=weights, k=count)
+    return selected_items
+
+rarity_to_int = {
+    "common": 0, "uncommon": 1, 
+    "rare": 2, "mystical": 3,
+    "legendary": 4, "mythical": 5
+}
+
+def sort_f(item_id: str):
+    """ Функция сортирует список с id предметов по их редкости
+    """
+    dt = get_data(item_id)
+    return rarity_to_int[dt['rank']]
+
+def rare_sort(items: list[str]):
+    """ Функция сортирует список с id предметов по их редкости. От обычного к легендарному
+    """
+
+    new_list = items.copy()
+    new_list.sort(key=lambda x: sort_f(x))
+
+    return new_list
+
+def add_to_rare_sort(items: list[str], item_id: str):
+    new_list = items.copy()
+    
+    dt = get_data(item_id)
+    if not dt: return items
+
+    rarity = rarity_to_int[dt['rank']]
+    for i, item in enumerate(new_list):
+        if rarity_to_int[get_data(item)['rank']] >= rarity:
+            new_list.insert(i, item_id)
+            break
+
+    return new_list
