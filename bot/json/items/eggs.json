@@ -3,8 +3,6 @@
         "image": "item3",
         "inc_type": "random",
         "incub_time": 43200,
-        "rank": "rare",
-        "type": "egg",
         "ns_craft": {
             "1": {
                 "create": [
@@ -14,7 +12,9 @@
                     {"item_id": "mysterious_egg", "count": 1}
                 ]
             }
-        }
+        },
+        "rank": "rare",
+        "type": "egg"
     },
     "regular_egg": {
         "image": "item21",
@@ -38,7 +38,7 @@
                 ]
             }
         },
-        "rank": "mystical",
+        "rank": "common",
         "type": "egg"
     },
     "unusual_egg": {
@@ -63,7 +63,7 @@
                 ]
             }
         },
-        "rank": "mystical",
+        "rank": "uncommon",
         "type": "egg"
     },
     "rare_egg": {
@@ -88,7 +88,7 @@
                 ]
             }
         },
-        "rank": "mystical",
+        "rank": "rare",
         "type": "egg"
     },
     "mystic_egg": {

@@ -43,9 +43,9 @@
                 ]
             }
         },
-        "rank": "common",
+        "rank": "rare",
         "type": "eat",
-        "groups": ["meat"]
+        "groups": ["meat", "hunt-activity"]
     },
     "bunch_herbs": {
         "act": 14,
@@ -87,8 +87,9 @@
                 ]
             }
         },
-        "rank": "common",
-        "type": "eat"
+        "rank": "mystical",
+        "type": "eat",
+        "groups": ["fishing-activity"]
     },
     "wolf_meat": {
         "act": 8,
@@ -107,7 +108,7 @@
         },
         "rank": "common",
         "type": "eat",
-        "groups": ["meat"]
+        "groups": ["meat", "hunt-activity"]
     },
     "grasses_from_fields": {
         "act": 6,
@@ -152,7 +153,8 @@
             }
         },
         "rank": "common",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["fishing-activity"]
     },
     "berries": {
         "act": 12,
@@ -204,9 +206,9 @@
                 ]
             }
         },
-        "rank": "common",
+        "rank": "uncommon",
         "type": "eat",
-        "groups": ["meat"]
+        "groups": ["meat", "hunt-activity"]
     },
     "small_fish": {
         "act": 13,
@@ -231,8 +233,9 @@
                 ]
             }
         },
-        "rank": "common",
-        "type": "eat"
+        "rank": "rare",
+        "type": "eat",
+        "groups": ["fishing-activity"]
     },
     "slice_pizza": {
         "buffs": {
@@ -279,8 +282,9 @@
         "act": 20,
         "class": "Herbivore",
         "image": "item35",
-        "rank": "rare",
-        "type": "eat"
+        "rank": "legendary",
+        "type": "eat",
+        "groups": ["collecting-activity"]
     },
     "tea": {
         "buffs": {
@@ -493,8 +497,9 @@
         "act": 36,
         "class": "Flying",
         "image": "item80",
-        "rank": "rare",
-        "type": "eat"
+        "rank": "legendary",
+        "type": "eat",
+        "groups": ["fishing-activity"]
     },
     "coffee": {
         "buffs": {

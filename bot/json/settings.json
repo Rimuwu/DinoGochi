@@ -350,43 +350,6 @@
             "items": []
         }
     },
-    
-
-    "collecting_items": {
-
-        "collecting": {
-            "com": ["grasses_from_fields", "maize", "carrot"],
-            "unc": ["grasses_from_fields", "banana", "grain"],
-            "rar": ["twigs_tree", "berries", "tomato", "potato"], 
-            "mys": ["bunch_herbs", "berries", "rice"],
-            "leg": ["bunch_herbs", "spices", "mushroom"]
-        },
-
-        "hunt": {
-            "com": ["wolf_meat"],
-            "unc": ["wolf_meat"],
-            "rar": ["skin", "chicken_leg"],
-            "mys": ["wild_boar_meat", "chicken_leg"],
-            "leg": ["wild_boar_meat"]
-        },
-
-        "fishing": {
-            "com": ["seafood"],
-            "unc": ["seafood"],
-            "rar": ["fish_oil", "small_fish"],
-            "mys": ["small_fish", "fish", "small_fish"],
-            "leg": ["fish", "crab"]
-        },
-
-        "all": {
-            "com": ["cookie", "chocolate", "grasses_from_fields", "maize", "wolf_meat", "seafood", "carrot"],
-            "unc": ["cookie", "chocolate", "grasses_from_fields", "banana", "grain", "wolf_meat", "seafood"],
-            "rar": ["cookie", "dango", "twigs_tree", "berries", "skin", "chicken_leg", "fish_oil", "small_fish", "potato", "tomato"],
-            "mys": ["sweet_pancakes", "slice_pizza", "bunch_herbs", "berries", "rice", "wild_boar_meat", "chicken_leg", "small_fish", "fish", "small_fish"],
-            "leg": ["slice_pizza", "coffee", "bunch_herbs", "spices", "mushroom", "wild_boar_meat", "fish", "crab"]
-        }
-
-    },
 
     "back_button": "◀",
     "forward_button": "▶",

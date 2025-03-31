@@ -17,12 +17,13 @@
     },
     "skin": {
         "image": "item26",
-        "rank": "common",
-        "type": "material"
+        "rank": "rare",
+        "type": "material",
+        "groups": ["hunt-activity"]
     },
     "twigs_tree": {
         "image": "item27",
-        "rank": "common",
+        "rank": "rare",
         "type": "material",
         "groups": ["wood", "collecting-activity"]
     },
@@ -45,7 +46,8 @@
     "fish_oil": {
         "image": "item28",
         "rank": "common",
-        "type": "material"
+        "type": "material",
+        "groups": ["fishing-activity"]
     },
 
     "flour": {
