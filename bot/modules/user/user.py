@@ -337,18 +337,15 @@ async def last_dino(user: User) -> Union[Dino, None]:
         dino_data = await dinosaurs.find_one({'_id': last_dino_id}, {"_id": 1}, comment='last_dino')
         if dino_data:
             return await Dino().create(dino_data['_id'])
-        else:
-            await user.update({'$set': {'settings.last_dino': None}})
-            return await last_dino(user)
+
+    dino_list = await user.get_dinos()
+    if dino_list:
+        first_dino = dino_list[0]
+        await user.update({'$set': {'settings.last_dino': first_dino._id}})
+        return first_dino
     else:
-        dino_list = await user.get_dinos()
-        if dino_list:
-            first_dino = dino_list[0]
-            await user.update({'$set': {'settings.last_dino': first_dino._id}})
-            return first_dino
-        else:
-            await user.update({'$set': {'settings.last_dino': None}})
-            return None
+        await user.update({'$set': {'settings.last_dino': None}})
+        return None
 
 async def award_premium(userid:int, end_time):
     """
