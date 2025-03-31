@@ -978,8 +978,11 @@
                 "description": "An egg for transporting a dinosaur. Use: If there is no dinosaur, place the dinosaur and freeze it. If there is a dinosaur: pulls out and thaws the dinosaur. Deleted after 1 cycle of use."
             },
             "fake_legendary_egg": {
-                "name": "🥚 Legendary Egg",
+                "name": "🥚 Legendary Egg!",
                 "description": "Ha, ha, ha!"
+            },
+            "custom_book": {
+                "name": "📙 Notebook"
             }
         },
         "notifications": {

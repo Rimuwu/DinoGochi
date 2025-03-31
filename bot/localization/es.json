@@ -978,8 +978,11 @@
                 "description": "Un huevo para transportar a un dinosaurio. Uso: Si no hay dinosaurio, coloca el dinosaurio y congélalo. Si hay un dinosaurio: saca y descongela el dinosaurio. Se elimina después de 1 ciclo de uso."
             },
             "fake_legendary_egg": {
-                "name": "🥚 Huevo legendario",
+                "name": "🥚 ¡Huevo legendario!",
                 "description": "¡Je je je!"
+            },
+            "custom_book": {
+                "name": "📙 Cuaderno"
             }
         },
         "notifications": {
