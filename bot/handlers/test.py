@@ -9,7 +9,7 @@ from asyncio import sleep
 from pprint import pprint
 from time import time
 import json
-from random import choice
+from random import choice, choices
 from time import sleep
 from asyncio import sleep as asleep
 
@@ -368,17 +368,47 @@ def add_to_rare_sort(items: list[str], item_id: str):
     for i, item in enumerate(new_list):
         if rarity_to_int[get_item_data(item)['rank']] >= rarity:
             new_list.insert(i, item_id)
-            return new_list
+            break
 
+    return new_list
+
+def rare_random(items: list[str], count: int = 1):
+    """Функция выбирает случайные предметы из списка на основе их редкости."""
+    rarity_chances = {
+        "common": 50,
+        "uncommon": 25,
+        "rare": 15,
+        "mystical": 9,
+        "legendary": 1
+    }
+
+    # Получаем данные о редкости предметов
+    item_chances = [rarity_chances[get_item_data(item)['rank']] for item in items]
+
+    # Нормализуем шансы
+    total_chance = sum(item_chances)
+    weights = [chance / total_chance for chance in item_chances]
+
+    # Выбираем случайные предметы
+    selected_items = choices(items, weights=weights, k=count)
+    return selected_items
 
 @main_router.message(Command(commands=['sort_rar']), IsAdminUser())
 @HDMessage
 async def sort_rar(message: Message):
     
-    group = get_group('collecting-activity')
-    
+    group = get_group('egg')
     sort_g = rare_sort(group)
-    await message.answer(str(sort_g))
-    
-    sort_g = add_to_rare_sort(sort_g, 'gourmet_herbs')
-    await message.answer(str(sort_g))
+
+    # Проверка на шанс функции rare_random
+    item_counts = {item: 0 for item in sort_g}
+    iterations = 100_000
+
+    for _ in range(iterations):
+        selected_items = rare_random(sort_g, count=5)
+        for item in selected_items:
+            item_counts[item] += 1
+
+    chances = {item: (count / (iterations * 5)) * 100 for item, count in item_counts.items()}
+    result = "\n".join([f"{item}: {chance:.2f}%" for item, chance in chances.items()])
+    await message.answer(f"Item chances after {iterations} iterations:\n{result}")
