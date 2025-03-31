@@ -9,7 +9,7 @@ services:
       - ./bot/data:/bot/bot/data # Проброс каталога данных
       - ./config.json:/bot/config.json:ro # Проброс конфига
       - /etc/localtime:/etc/localtime:ro # Проброс времени
-    # restart: unless-stopped
+    restart: unless-stopped
 
   mongo:
     image: mongo:latest # Имя образа
