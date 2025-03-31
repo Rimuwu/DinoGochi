@@ -4,8 +4,7 @@ import re
 import string
 from typing import Union
 
-from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
-                           ReplyKeyboardMarkup, User, KeyboardButton, InputFile)
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, User, KeyboardButton
 
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
@@ -455,3 +454,4 @@ def pil_image_to_file(image, extension='JPEG', quality='web_low'):
     photoBuffer.seek(0)
 
     return BufferedInputFile(photoBuffer.read(), filename=f"DinoGochi.{extension}")
+
