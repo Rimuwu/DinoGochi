@@ -2,11 +2,13 @@ import json
 import uuid
 import os
 from copy import deepcopy
-
+import pathlib
 
 # Загрузка локализации
+
 localization_data = {}
-localization_path = r"C:\Папки\коды\Telegram DinoGochi\DinoGochi\bot\localization\ru.json"
+base_path = pathlib.Path(__file__).parent.parent.parent
+localization_path = base_path / "bot"  / "localization" / "ru.json"
 with open(localization_path, "r", encoding="utf-8") as loc_file:
     localization = json.load(loc_file)
 
@@ -28,7 +30,7 @@ def gather_json_files(directory):
 
     return json_data
 
-directory_path = r"C:\Папки\коды\Telegram DinoGochi\DinoGochi\bot\json\items"
+directory_path = base_path / "bot" / "json" / "items"
 ITEMS = gather_json_files(directory_path)
 
 def get_all_items() -> dict: 
@@ -297,8 +299,8 @@ def generate_recipes_canvas(recipes_data, output_file):
         json.dump(canvas_data, f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
-    recipes_file = r"C:\Папки\коды\Telegram DinoGochi\DinoGochi\tools\visualize\items\recipes.json"
-    output_canvas = r"C:\Папки\коды\Telegram DinoGochi\DinoGochi\tools\visualize\bot-value\recipes_canvas.canvas"
+    recipes_file = base_path / "bot" / "json" / "items" / "recipes.json"
+    output_canvas = base_path / "tools" / "visualize" / "bot-value" / "recipes_canvas.canvas"
 
     with open(recipes_file, "r", encoding="utf-8") as f:
         recipes_data = json.load(f)
