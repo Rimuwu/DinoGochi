@@ -170,7 +170,7 @@ def generate_recipes_canvas(recipes_data, output_file):
             for created_item in recipe.get("create", {}).get("main", []):
                 if created_item["item"] == material_id:
                     # Добавляем связь от рецепта к материалу
-                    recipe_node_id = process_recipe(recipe_id, x - 400, y)
+                    recipe_node_id = process_recipe(recipe_id, x - 300, y)
                     add_edge(recipe_node_id, material_node_id)  # Стрелка справа
 
         return material_node_id
@@ -225,10 +225,9 @@ def generate_recipes_canvas(recipes_data, output_file):
 
             if isinstance(material_id, str):
                 material_label = f"{get_item_name(material_id)} x{count}"  # Добавлено количество материала
-                material_node_id = add_node(material_id, material_label, x_offset - 400, y_offset, color='#ffc261')
-                material_id_str = str(material_id)
-                
-                add_edge(material_node_id, recipe_node_id, from_side='right')  # Стрелка справа
+                material_node_id = add_node(material_id, material_label, x_offset - 300, y_offset, color='#ffc261')
+
+                add_edge(material_node_id, recipe_node_id, from_side='right', to_side='left')  # Стрелка справа
 
             elif isinstance(material_id, list):
                 # Создаем общий узел для группы материалов
