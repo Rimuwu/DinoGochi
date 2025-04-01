@@ -511,6 +511,11 @@
             {
                 "item": "rice",
                 "type": "delete",
+                "count": 5
+            },
+            {
+                "item": {"group": "fish"},
+                "type": "delete",
                 "count": 1
             }
         ],

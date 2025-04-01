@@ -89,7 +89,7 @@
         },
         "rank": "mystical",
         "type": "eat",
-        "groups": ["fishing-activity"]
+        "groups": ["fishing-activity", "fish"]
     },
     "wolf_meat": {
         "act": 8,
@@ -154,7 +154,7 @@
         },
         "rank": "common",
         "type": "eat",
-        "groups": ["fishing-activity"]
+        "groups": ["fishing-activity", "fish"]
     },
     "berries": {
         "act": 12,
@@ -235,7 +235,7 @@
         },
         "rank": "rare",
         "type": "eat",
-        "groups": ["fishing-activity"]
+        "groups": ["fishing-activity", "fish"]
     },
     "slice_pizza": {
         "buffs": {
