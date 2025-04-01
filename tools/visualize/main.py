@@ -4,50 +4,14 @@ import os
 from copy import deepcopy
 
 
-from bot.modules.items.collect_items import get_all_items
-ITEMS = get_all_items()
-
-def load_groups():
-    """ Загружает и формирует группы
-    """
-    items_groups, type_groups = {}, {}
-
-    for key, item in ITEMS.items():
-        typ = item['type']
-        if 'groups' in item.keys():
-            for group in item['groups']:
-                items_groups[group] = items_groups.get(group, [])
-
-                if key not in items_groups[group]:
-                    items_groups[group].append(key)
-
-        type_groups[typ] = type_groups.get(typ, [])
-        if key not in type_groups[typ]:
-            type_groups[typ].append(key)
-
-    return items_groups, type_groups
-
-items_groups, type_groups = load_groups()
-
-def get_group(group: str):
-    """Возвращает список с id всех предметов в ней
-    """
-    result = []
-
-    if group in items_groups:
-        result = items_groups[group].copy()
-    if group in type_groups:
-        result = list(set(result) | set(type_groups[group]))
-
-    return result
-
-
 # Загрузка локализации
 localization_data = {}
 localization_path = r"C:\Папки\коды\Telegram DinoGochi\DinoGochi\bot\localization\ru.json"
 with open(localization_path, "r", encoding="utf-8") as loc_file:
-    localization_data = json.load(loc_file)
-localization_data = localization_data['ru']['items_names']
+    localization = json.load(loc_file)
+
+localization_data = localization['ru']['items_names']
+loc_group_data = localization['ru']['groups']
 
 def gather_json_files(directory):
     json_data = {}
@@ -98,14 +62,60 @@ def get_item_name(item_key) -> str:
     item_info = localization_data.get(item_key, {})
     return item_info.get("name", str(item_key))
 
+def load_groups():
+    """ Загружает и формирует группы
+    """
+    items_groups, type_groups = {}, {}
+
+    for key, item in ITEMS.items():
+        typ = item['type']
+        if 'groups' in item.keys():
+            for group in item['groups']:
+                items_groups[group] = items_groups.get(group, [])
+
+                if key not in items_groups[group]:
+                    items_groups[group].append(key)
+
+        type_groups[typ] = type_groups.get(typ, [])
+        if key not in type_groups[typ]:
+            type_groups[typ].append(key)
+
+    return items_groups, type_groups
+
+items_groups, type_groups = load_groups()
+
+def get_group(group: str):
+    """Возвращает список с id всех предметов в ней
+    """
+    result = []
+
+    if group in items_groups:
+        result = items_groups[group].copy()
+    if group in type_groups:
+        result = list(set(result) | set(type_groups[group]))
+
+    return result
+
 def generate_recipes_canvas(recipes_data, output_file):
     nodes = []
     edges = []
+    node_positions = {}  # Для отслеживания координат узлов
+    occupied_positions = set()  # Для предотвращения наложений
 
-    def add_node(item_id, label, x, y):
+    def find_free_position(x, y):
+        """
+        Находит свободные координаты, если текущие заняты.
+        """
+        while (x, y) in occupied_positions:
+            y += 100  # Сдвигаем вниз
+        occupied_positions.add((x, y))
+        return x, y
+
+    def add_node(item_id, label, x, y, color = None):
         """
         Добавляет узел, если он ещё не существует.
         """
+        x, y = find_free_position(x, y)
         node_id = str(uuid.uuid4())
         nodes.append({
             "id": node_id,
@@ -114,26 +124,65 @@ def generate_recipes_canvas(recipes_data, output_file):
             "y": y,
             "width": 200,
             "height": 80,
-            "text": label
+            "text": label,
+            "color": color
         })
+        node_positions[item_id] = (x, y)
         return node_id
+    
+    # def add_node(item_id, label, x, y):
+    #     """
+    #     Добавляет узел, если он ещё не существует.
+    #     Если узел с таким же текстом уже существует в радиусе 100 пикселей, возвращает его ID.
+    #     """
+    #     # Проверяем, есть ли уже узел с таким текстом в радиусе 100 пикселей
+    #     for node in nodes:
+    #         node_x, node_y = node["x"], node["y"]
+    #         if node["text"] == label and abs(node_x - x) <= 100 and abs(node_y - y) <= 100:
+    #             return node["id"]
 
-    def add_edge(from_id, to_id):
+    #     # Если узел не найден, создаём новый
+    #     x, y = find_free_position(x, y)
+    #     node_id = str(uuid.uuid4())
+    #     nodes.append({
+    #         "id": node_id,
+    #         "type": "text",
+    #         "x": x,
+    #         "y": y,
+    #         "width": 200,
+    #         "height": 80,
+    #         "text": label
+    #     })
+    #     node_positions[item_id] = (x, y)
+    #     return node_id
+
+    def add_edge(from_id, to_id, from_offset_x=0, from_offset_y=0, to_offset_x=0, to_offset_y=0, color=None, label=None):
         """
-        Добавляет связь между узлами.
+        Добавляет связь между узлами с учётом смещения начала и конца стрелки, поддержкой цвета и текста.
         """
-        edges.append({
+        from_node = next(node for node in nodes if node["id"] == from_id)
+        to_node = next(node for node in nodes if node["id"] == to_id)
+
+        edge = {
             "id": str(uuid.uuid4()),
             "fromNode": from_id,
-            "toNode": to_id
-        })
+            "toNode": to_id,
+            "fromOffsetX": from_node["x"] + from_offset_x,
+            "fromOffsetY": from_node["y"] + from_offset_y,
+            "toOffsetX": to_node["x"] + to_offset_x,
+            "toOffsetY": to_node["y"] + to_offset_y,
+            "color": color,
+            'label': label
+        }
+
+        edges.append(edge)
 
     def process_material(material_id, x, y):
         """
         Рекурсивно обрабатывает материал, добавляя его к графу.
         """
         material_label = get_item_name(material_id)
-        material_node_id = add_node(material_id, material_label, x, y)
+        material_node_id = add_node(material_id, material_label, x, y, color='#ff7538')
 
         # Проверяем, если материал сам является результатом другого крафта
         for recipe_id, recipe in recipes_data.items():
@@ -141,9 +190,27 @@ def generate_recipes_canvas(recipes_data, output_file):
                 if created_item["item"] == material_id:
                     # Добавляем связь от рецепта к материалу
                     recipe_node_id = process_recipe(recipe_id, x - 400, y)
-                    add_edge(recipe_node_id, material_node_id)
+                    add_edge(recipe_node_id, material_node_id)  # Стрелка справа
 
         return material_node_id
+
+    def process_group(group_id, x, y):
+        """
+        Рекурсивно обрабатывает группу, добавляя предметы из неё к графу.
+        """
+        group_items = get_group(group_id)
+        group_name = loc_group_data.get(group_id, group_id)
+
+        group_node_id = add_node(group_name, group_id + ' (GROUP)', x - 200, y + 200, '#f5d033')
+
+        # Добавляем предметы из группы
+        y_offset = y
+        for item in group_items:
+            item_node_id = process_material(item, x - 400, y_offset)
+            add_edge(item_node_id, group_node_id)
+            y_offset += 200
+
+        return group_node_id
 
     def process_recipe(recipe_id, x, y):
         """
@@ -154,20 +221,54 @@ def generate_recipes_canvas(recipes_data, output_file):
 
         # Добавляем материалы рецепта
         y_offset = y
+        x_offset = x
         for material in recipes_data[recipe_id].get("materials", []):
             material_id = material["item"]
-            material_node_id = process_material(material_id, x - 400, y_offset)
-            add_edge(material_node_id, recipe_node_id)
-            y_offset += 200
 
-        # Добавляем создаваемые предметы
+            if isinstance(material_id, str):
+                material_node_id = add_node(material_id, get_item_name(material_id), x_offset - 400, y_offset, color='#ffc261')
+                material_id_str = str(material_id)
+                
+                add_edge(material_node_id, recipe_node_id, from_offset_x=200)  # Стрелка справа
+
+            elif isinstance(material_id, list):
+                # Создаем общий узел для группы материалов
+                y_offset += 100
+                group_label = "Список - 1 из"
+                group_node_id = add_node(f"group_{recipe_id}_{material_id}", group_label, x_offset - 300, y_offset, color='#a1c4fd')
+
+                for single_material_id in material_id:
+                    single_material_node_id = process_material(single_material_id, x_offset - 600, y_offset)
+                    add_edge(single_material_node_id, group_node_id, from_offset_x=200)  # Стрелка справа
+                    y_offset += 200
+
+                # Добавляем связь от общего узла группы к рецепту
+                add_edge(group_node_id, recipe_node_id, from_offset_x=200)
+
+            elif isinstance(material_id, dict):
+                group_id = material_id['group']
+
+                # Если материал является группой, то обрабатываем группу
+                if group_id in items_groups:
+                    group_items = get_group(group_id)
+                    group_name = loc_group_data.get(group_id, group_id)
+
+                    group_node_id = add_node(group_name, group_id + ' (GROUP)', x - 200, y + 200, '#f5d033')
+
+                    add_edge(group_node_id, recipe_node_id, from_offset_x=200)  # Стрелка справа
+                    y_offset += 200
+
+        # Добавляем создаваемые предметы из всех ключей в "create"
         y_offset = y
-        for created_item in recipes_data[recipe_id].get("create", {}).get("main", []):
-            created_item_id = created_item["item"]
-            created_item_label = get_item_name(created_item_id)
-            created_item_node_id = add_node(created_item_id, created_item_label, x + 400, y_offset)
-            add_edge(recipe_node_id, created_item_node_id)
-            y_offset += 200
+        x_offset = x 
+        for create_key, created_items in recipes_data[recipe_id].get("create", {}).items():
+            for created_item in created_items:
+                created_item_id = created_item["item"]
+                created_item_label = get_item_name(created_item_id)
+                created_item_node_id = add_node(created_item_id, created_item_label, x_offset + 400, y_offset)
+                add_edge(recipe_node_id, created_item_node_id)  # Стрелка по умолчанию
+                y_offset += 100
+                # x_offset += 200
 
         return recipe_node_id
 
@@ -176,7 +277,12 @@ def generate_recipes_canvas(recipes_data, output_file):
     y_offset = 0
     for recipe_id in recipes_data.keys():
         process_recipe(recipe_id, x_offset, y_offset)
-        y_offset += 400  # Смещаемся вниз для следующего рецепта
+        y_offset += 700  # Смещаемся вниз для следующего рецепта
+
+        # Если достигли y равного 5000, обнуляем y и смещаемся по x
+        if y_offset >= 5000:
+            y_offset = 0
+            x_offset += 2000
 
     # Формируем данные для Canvas
     canvas_data = {
@@ -198,3 +304,4 @@ if __name__ == "__main__":
         recipes_data = json.load(f)
 
     generate_recipes_canvas(recipes_data, output_canvas)
+

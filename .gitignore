@@ -11,3 +11,6 @@ config.json
 mongodb
 bot/json/file_base.json
 docker-compose.yml
+# tools/visualize/bot-value
+tools/visualize/items
+.obsidian
