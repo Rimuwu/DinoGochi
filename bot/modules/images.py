@@ -67,6 +67,8 @@ img_dates = {
 
 
 def clown_nose(image, radius=15):
+    if radius > 15: radius = 15
+    
     alpha = image.getchannel("A")
 
     non_transparent_pixels = [
