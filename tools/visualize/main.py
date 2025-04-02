@@ -297,14 +297,17 @@ def generate_recipes_canvas(recipes_data, output_file):
         """
         Рекурсивно обрабатывает группу, добавляя предметы из неё к графу.
         """
-        y_offset = y
+        y_offset = y + 100
         x_offset = x
         group_items = get_group(group_id)
         group_name = loc_group_data.get(group_id, group_id)
 
-        y_offset += 200
-        # x_offset -= 50
+        # Создаём узел группы
         group_node_id = add_node(group_id, group_name + ' (GROUP)', x_offset, y_offset, '#f5d033')
+
+        # Инициализируем границы группы
+        min_x, min_y = x_offset, y_offset
+        max_x, max_y = x_offset, y_offset
 
         # Добавляем предметы из группы
         col, max_col = 0, 2
@@ -312,17 +315,42 @@ def generate_recipes_canvas(recipes_data, output_file):
             col += 1
 
             if col <= max_col:
-
+                # Обрабатываем каждый предмет в группе
                 item_node_id = process_material_with_craft(item, x_offset - 400, y_offset, count)
                 add_edge(item_node_id, group_node_id, to_side='left', from_side='right')  # Стрелка вниз
-                y_offset += 200
+
+                # Обновляем границы группы
+                min_x = min(min_x, x_offset - 400)
+                min_y = min(min_y, y_offset)
+                max_x = max(max_x, x_offset - 400 + 200)  # 200 - ширина узла
+                max_y = max(max_y, y_offset + 80)  # 80 - высота узла
+
+                y_offset += 100
 
         if col > max_col:
-            # Если предметов больше max_col, добавляем стрелку к группе
-            res = add_node(f'group_{group_id}_more', 
-                     f'И ещё {col - max_col} предметов', 
-                     x_offset, y + 380, color='#00ff00')
-            add_edge(res, group_node_id, to_side='bottom')  # Стрелка вниз
+            # Если предметов больше max_col, добавляем узел "И ещё N предметов"
+            more_label = f'И ещё {col - max_col} предметов'
+            more_node_id = add_node(f'group_{group_id}_more', more_label, x_offset, y_offset, color='#00ff00')
+            add_edge(more_node_id, group_node_id, to_side='bottom')  # Стрелка вниз
+
+            # Обновляем границы группы
+            min_x = min(min_x, x_offset)
+            min_y = min(min_y, y_offset)
+            max_x = max(max_x, x_offset + 200)
+            max_y = max(max_y, y_offset + 80)
+
+        # Создаём узел группы, покрывающий все связанные узлы
+        group_bounds_node = {
+            "id": f"group_bounds_{group_id}",
+            "type": "group",
+            "x": min_x - 50,  # Добавляем отступ
+            "y": min_y - 50,  # Добавляем отступ
+            "width": max_x - min_x + 100,  # Ширина группы с отступами
+            "height": max_y - min_y + 100,  # Высота группы с отступами
+            "label": group_name,
+            "backgroundStyle": "ratio"
+        }
+        nodes.append(group_bounds_node)
 
         return group_node_id
 
@@ -432,7 +460,7 @@ def generate_recipes_canvas(recipes_data, output_file):
     y_offset = 0
     for recipe_id in recipes_data.keys():
         process_recipe(recipe_id, x_offset, y_offset)
-        y_offset += 700  # Смещаемся вниз для следующего рецепта
+        y_offset += 800  # Смещаемся вниз для следующего рецепта
 
         # Если достигли y равного 5000, обнуляем y и смещаемся по x
         if y_offset >= 5000:
