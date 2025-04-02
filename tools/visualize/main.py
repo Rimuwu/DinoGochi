@@ -158,20 +158,123 @@ def generate_recipes_canvas(recipes_data, output_file):
 
         edges.append(edge)
 
-    def process_material(material_id, x, y, count):
+    def process_material_with_craft(material_id, x, y, count):
         """
-        Рекурсивно обрабатывает материал, добавляя его к графу.
+        Обрабатывает материал с учётом его "настольного крафта" (ns_craft).
         """
+        material_data = ITEMS.get(material_id, {})
         material_label = f"{get_item_name(material_id)} x{count}"  # Добавлено количество материала
         material_node_id = add_node(material_id, material_label, x, y, color='#ff7538')
 
-        # Проверяем, если материал сам является результатом другого крафта
-        for recipe_id, recipe in recipes_data.items():
-            for created_item in recipe.get("create", {}).get("main", []):
-                if created_item["item"] == material_id:
-                    # Добавляем связь от рецепта к материалу
-                    recipe_node_id = process_recipe(recipe_id, x - 300, y)
-                    add_edge(recipe_node_id, material_node_id)  # Стрелка справа
+        # Проверяем наличие "настольного крафта"
+        if "ns_craft" in material_data:
+            y_offset = y
+            for craft_id, craft_data in material_data["ns_craft"].items():
+                # Проверяем, создаёт ли этот крафт текущий материал
+                creates_current_material = any(
+                    (item == material_id if isinstance(item, str) else item.get("item_id") == material_id)
+                    for item in craft_data.get("create", [])
+                )
+                if not creates_current_material:
+                    continue  # Пропускаем крафт, если он не создаёт текущий материал
+
+                # Узел для крафта
+                craft_label = f"Настольный крафт {craft_id}"
+                # Уникальный идентификатор узла крафта, включающий ID материала и создаваемый предмет
+                craft_node_id = add_node(f"{material_id}_craft_{craft_id}_{created_item_id}", craft_label, x - 400, y_offset, color='#e0b3ff')
+
+                # Подсчитываем количество каждого материала
+                material_counts = {}
+                for material in craft_data.get("materials", []):
+                    if isinstance(material, str):  # Если материал представлен строкой
+                        input_material_id = material
+                        input_material_count = 1
+                    elif isinstance(material, dict):  # Если материал представлен словарём
+                        input_material_id = material["item_id"]
+                        input_material_count = material.get("count", 1)
+                    else:
+                        continue
+
+                    # Суммируем количество материала
+                    if input_material_id in material_counts:
+                        material_counts[input_material_id] += input_material_count
+                    else:
+                        material_counts[input_material_id] = input_material_count
+
+                # Добавляем материалы для крафта
+                for input_material_id, total_count in material_counts.items():
+                    input_material_label = f"{get_item_name(input_material_id)} x{total_count}"
+                    input_material_node_id = add_node(input_material_id, input_material_label, x - 800, y_offset, color='#ffc261')
+
+                    # Связь от материала к крафту
+                    add_edge(input_material_node_id, craft_node_id, from_side='right', to_side='left')
+                    y_offset += 200
+
+                # Добавляем создаваемые предметы
+                for created_item in craft_data.get("create", []):
+                    if isinstance(created_item, str):  # Если создаваемый предмет представлен строкой
+                        created_item_id = created_item
+                        created_item_count = 1
+                    elif isinstance(created_item, dict):  # Если создаваемый предмет представлен словарём
+                        created_item_id = created_item["item_id"]
+                        created_item_count = created_item.get("count", 1)
+                    else:
+                        continue
+
+                    created_item_label = f"{get_item_name(created_item_id)} x{created_item_count}"
+                    created_item_node_id = add_node(created_item_id, created_item_label, x, y_offset, color='#ff7538')
+
+                    # Связь от крафта к создаваемому предмету
+                    add_edge(craft_node_id, created_item_node_id, from_side='right', to_side='left')
+                    y_offset += 200
+
+        # Проверяем, является ли материал результатом "настольного крафта" другого материала
+        for other_material_id, other_material_data in ITEMS.items():
+            if "ns_craft" not in other_material_data:
+                continue
+
+            for craft_id, craft_data in other_material_data["ns_craft"].items():
+                creates_current_material = any(
+                    (item == material_id if isinstance(item, str) else item.get("item_id") == material_id)
+                    for item in craft_data.get("create", [])
+                )
+                if not creates_current_material:
+                    continue  # Пропускаем, если крафт не создаёт текущий материал
+
+                # Узел для крафта
+                craft_label = f"Настольный крафт {craft_id} ({get_item_name(other_material_id)})"
+                # Уникальный идентификатор узла крафта, включающий ID материала, создаваемый предмет и ID крафта
+                craft_node_id = add_node(f"{other_material_id}_craft_{craft_id}_{material_id}", craft_label, x - 400, y, color='#a1c4fd')
+
+                # Подсчитываем количество каждого материала
+                material_counts = {}
+                for material in craft_data.get("materials", []):
+                    if isinstance(material, str):  # Если материал представлен строкой
+                        input_material_id = material
+                        input_material_count = 1
+                    elif isinstance(material, dict):  # Если материал представлен словарём
+                        input_material_id = material["item_id"]
+                        input_material_count = material.get("count", 1)
+                    else:
+                        continue
+
+                    # Суммируем количество материала
+                    if input_material_id in material_counts:
+                        material_counts[input_material_id] += input_material_count
+                    else:
+                        material_counts[input_material_id] = input_material_count
+
+                # Добавляем материалы для крафта
+                for input_material_id, total_count in material_counts.items():
+                    input_material_label = f"{get_item_name(input_material_id)} x{total_count}"
+                    input_material_node_id = add_node(input_material_id, input_material_label, x - 800, y, color='#ffc261')
+
+                    # Связь от материала к крафту
+                    add_edge(input_material_node_id, craft_node_id, from_side='right', to_side='left')
+                    y += 200
+
+                # Связь от крафта к текущему материалу
+                add_edge(craft_node_id, material_node_id, from_side='right', to_side='left')
 
         return material_node_id
 
@@ -194,8 +297,8 @@ def generate_recipes_canvas(recipes_data, output_file):
             col += 1
 
             if col <= max_col:
-                
-                item_node_id = process_material(item, x_offset - 400, y_offset, count)
+
+                item_node_id = process_material_with_craft(item, x_offset - 400, y_offset, count)
                 add_edge(item_node_id, group_node_id, to_side='left', from_side='right')  # Стрелка вниз
                 y_offset += 200
 
@@ -236,7 +339,8 @@ def generate_recipes_canvas(recipes_data, output_file):
                 group_node_id = add_node(f"group_{recipe_id}_{material_id}", group_label, x_offset - 300, y_offset, color='#a1c4fd')
 
                 for single_material_id in material_id:
-                    single_material_node_id = process_material(single_material_id, x_offset - 600, y_offset, count)
+                    # Рекурсивно обрабатываем каждый материал в списке
+                    single_material_node_id = process_material_with_craft(single_material_id, x_offset - 600, y_offset, count)
                     add_edge(single_material_node_id, group_node_id, from_side='right')  # Стрелка справа
                     y_offset += 100
 
@@ -249,14 +353,6 @@ def generate_recipes_canvas(recipes_data, output_file):
 
                 # Если материал является группой, то обрабатываем группу
                 if group_id in items_groups:
-                    # group_items = get_group(group_id)
-                    # group_name = loc_group_data.get(group_id, group_id)
-
-                    # group_node_id = add_node(group_id, group_name + ' (GROUP)', x - 200, y + 200, '#f5d033')
-
-                    # add_edge(group_node_id, recipe_node_id, from_offset_x=200)  # Стрелка справа
-                    # y_offset += 200
-                    
                     group_node_id = process_group(group_id, x_offset - 400, y_offset, count)
                     # Добавляем предметы из группы
                     
@@ -269,7 +365,7 @@ def generate_recipes_canvas(recipes_data, output_file):
             for created_item in created_items:
                 created_item_id = created_item["item"]
                 created_item_label = f"{get_item_name(created_item_id)} x{created_item['count']}"  # Добавлено количество создаваемого предмета
-                created_item_node_id = add_node(created_item_id, created_item_label, x_offset + 400, y_offset)
+                created_item_node_id = add_node(created_item_id, created_item_label, x_offset + 400, y_offset, color='#fb7efd')
                 add_edge(recipe_node_id, created_item_node_id, from_side='right', to_side='left')  # Стрелка по умолчанию
                 y_offset += 100
                 # x_offset += 200
@@ -286,7 +382,7 @@ def generate_recipes_canvas(recipes_data, output_file):
         # Если достигли y равного 5000, обнуляем y и смещаемся по x
         if y_offset >= 5000:
             y_offset = 0
-            x_offset += 2000
+            x_offset += 2500
 
     # Формируем данные для Canvas
     canvas_data = {
