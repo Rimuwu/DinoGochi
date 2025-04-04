@@ -455,6 +455,109 @@ def generate_recipes_canvas(recipes_data, output_file):
 
         return recipe_group_id
 
+    def process_all_items_with_craft(x_offset, y_offset):
+        """
+        Обрабатывает все предметы в боте и выводит их настольные крафты.
+        """
+        col_count = 0  # Счётчик колонок
+        row_count = 0  # Счётчик строк
+        max_rows = 5  # Максимальное количество строк в одной колонке
+
+        for item_id, item_data in ITEMS.items():
+            if "ns_craft" not in item_data:
+                continue  # Пропускаем предметы без настольного крафта
+
+            # Узел для предмета
+            item_label = get_item_name(item_id)
+            item_node_id = add_node(item_id, item_label, x_offset, y_offset, color='#ff7538')
+
+            # Координаты для определения размеров группы
+            min_x, min_y = x_offset, y_offset
+            max_x, max_y = x_offset, y_offset
+
+            # Обрабатываем каждый настольный крафт
+            for craft_id, craft_data in item_data["ns_craft"].items():
+                # Узел для крафта
+                craft_label = f"Настольный крафт {craft_id}"
+                craft_node_id = add_node(f"{item_id}_craft_{craft_id}", craft_label, x_offset + 400, y_offset, color='#a1c4fd')
+                add_edge(item_node_id, craft_node_id, from_side='right', to_side='left')  # Связь от предмета к крафту
+
+                # Добавляем материалы для крафта
+                material_y_offset = y_offset
+                for material in craft_data.get("materials", []):
+                    if isinstance(material, str):  # Если материал представлен строкой
+                        material_id = material
+                        material_count = 1
+                    elif isinstance(material, dict):  # Если материал представлен словарём
+                        material_id = material["item_id"]
+                        material_count = material.get("count", 1)
+                    else:
+                        continue
+
+                    material_label = f"{get_item_name(material_id)} x{material_count}"
+                    material_node_id = add_node(material_id, material_label, x_offset + 800, material_y_offset, color='#ffc261')
+                    add_edge(material_node_id, craft_node_id, from_side='right', to_side='left')  # Связь от материала к крафту
+
+                    # Обновляем границы группы
+                    min_x = min(min_x, x_offset + 800)
+                    min_y = min(min_y, material_y_offset)
+                    max_x = max(max_x, x_offset + 800 + 200)
+                    max_y = max(max_y, material_y_offset + 80)
+
+                    material_y_offset += 200
+
+                # Добавляем создаваемые предметы
+                created_y_offset = y_offset
+                for created_item in craft_data.get("create", []):
+                    if isinstance(created_item, str):  # Если создаваемый предмет представлен строкой
+                        created_item_id = created_item
+                        created_item_count = 1
+                    elif isinstance(created_item, dict):  # Если создаваемый предмет представлен словарём
+                        created_item_id = created_item["item_id"]
+                        created_item_count = created_item.get("count", 1)
+                    else:
+                        continue
+
+                    # Исключаем дублирование текущего предмета
+                    if created_item_id == item_id:
+                        continue
+
+                    created_item_label = f"{get_item_name(created_item_id)} x{created_item_count}"
+                    created_item_node_id = add_node(created_item_id, created_item_label, x_offset + 1200, created_y_offset, color='#fb7efd')
+                    add_edge(craft_node_id, created_item_node_id, from_side='right', to_side='left')  # Связь от крафта к создаваемому предмету
+
+                    # Обновляем границы группы
+                    min_x = min(min_x, x_offset + 1200)
+                    min_y = min(min_y, created_y_offset)
+                    max_x = max(max_x, x_offset + 1200 + 200)
+                    max_y = max(max_y, created_y_offset + 80)
+
+                    created_y_offset += 200
+
+            # Создаём узел группы, покрывающий все связанные узлы
+            craft_group_id = f"group_craft_{item_id}"
+            craft_group_node = {
+                "id": craft_group_id,
+                "type": "group",
+                "x": min_x - 50,  # Добавляем отступ
+                "y": min_y - 50,  # Добавляем отступ
+                "width": max_x - min_x + 100,  # Ширина группы с отступами
+                "height": max_y - min_y + 100,  # Высота группы с отступами
+                "label": f"Крафт: {item_label}",
+                "backgroundStyle": "ratio"
+            }
+            nodes.append(craft_group_node)
+
+            # Смещаемся вниз для следующего предмета
+            row_count += 1
+            if row_count >= max_rows:  # Если достигли максимального количества строк
+                row_count = 0
+                col_count += 1
+                x_offset += 2500  # Смещаемся вправо для новой колонки
+                y_offset = 6000  # Сбрасываем вертикальное смещение
+            else:
+                y_offset += 800  # Смещаемся вниз для следующей строки
+
     # Обрабатываем все рецепты
     x_offset = 0
     y_offset = 0
@@ -466,6 +569,11 @@ def generate_recipes_canvas(recipes_data, output_file):
         if y_offset >= 5000:
             y_offset = 0
             x_offset += 2500
+
+    # Обрабатываем все предметы с настольными крафтами
+    x_offset = 0  # Сбрасываем x_offset для настольных крафтов
+    y_offset = 6000  # Начинаем с y = 6000
+    process_all_items_with_craft(x_offset, y_offset)
 
     # Формируем данные для Canvas
     canvas_data = {
