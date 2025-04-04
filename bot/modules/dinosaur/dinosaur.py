@@ -55,13 +55,9 @@ class Dino:
                 'intelligence': 0.0, 'charisma': 0.0
         }
 
-        self.activ_items = {
-                'game': None, 'collecting': None,
-                'journey': None, 'sleep': None,
-
-                'armor': None,  'weapon': None,
-                'backpack': None
-        }
+        self.activ_items = [
+            # {'item_id': ..., 'abilities': ...}
+        ]
 
         self.mood = {
             'breakdown': 0, # очки срыва
@@ -138,8 +134,9 @@ class Dino:
             }
             await dead_dinos.insert_one(save_data, comment='dead')
 
-            for key, item in self.activ_items.items():
-                if item: await AddItemToUser(owner['owner_id'], item['item_id'], 1)
+            for item in self.activ_items:
+                if item: 
+                    await AddItemToUser(owner['owner_id'], item['item_id'], 1, item.get('abilities', {}))
 
             if user:
                 if await dead_check(owner['owner_id']):
