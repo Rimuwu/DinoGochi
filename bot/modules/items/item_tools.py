@@ -172,19 +172,25 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             return_text = t('item_use.accessory.no_change', lang)
             use_status = False
         else:
-            if dino.activ_items[type_item] != None:
-                abil = dino.activ_items[type_item].get('abilities', {}) # type: ignore
-                await AddItemToUser(userid, 
-                              dino.activ_items[type_item]['item_id'], 1, # type: ignore
-                              abil)
-            if is_standart(item):
+
+            if len(dino.activ_items) >= 5:
+                # Превышено максимальное количество аксессуаров
+                return_text = t('item_use.accessory.max_items', lang)
+                use_status = False
+
+            elif any(i['item_id'] == item['item_id'] for i in dino.activ_items):
+                # Если предмет с таким item_id уже есть в activ_items
+                return_text = t('item_use.accessory.already_have', lang)
+                use_status = False
+
+            elif is_standart(item):
                 # Защита от вечных аксессуаров
                 dino_update_list.append({
-                    '$set': {f'activ_items.{type_item}': get_item_dict(item['item_id'])}})
+                    '$pull': {f'activ_items': get_item_dict(item['item_id'])}})
             else:
                 dino_update_list.append({
-                    '$set': {f'activ_items.{type_item}': item}})
-            
+                    '$pull': {f'activ_items': item}})
+
             return_text = t('item_use.accessory.change', lang)
 
     elif type_item == 'recipe':
