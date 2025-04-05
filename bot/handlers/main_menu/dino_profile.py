@@ -12,7 +12,7 @@ from bot.modules.dinosaur.dinosaur import Dino, Egg, check_status, dead_check
 from bot.modules.managment.events import check_event, get_event
 from bot.modules.images import async_open, create_skill_image
 from bot.modules.inline import dino_profile_markup, inline_menu
-from bot.modules.items.item import AddItemToUser, get_name
+from bot.modules.items.item import AddItemToUser, get_item_dict, get_name
 from bot.modules.dinosaur.kindergarten import (check_hours, dino_kind, hours_now,
                                       m_hours, minus_hours)
 from bot.modules.localization import get_data, get_lang, t
@@ -35,6 +35,8 @@ from bot.filters.kd import KDCheck
 from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
+
+from bot.modules.items.item import get_data as get_item_data
 
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
@@ -133,33 +135,39 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
                 f'p_profile.collecting.progress.{data["collecting_type"]}', lang,
                 now = data['now_count'], max_count=data['max_count'])
 
-    text += '\n\n' + stats_text
+    text += '\n\n' + stats_text + '\n'
+
     # Генерация блока с аксессуарами
-    add_blok = False
     acsess = {
-        'em_game': tem['ac_game'], 'em_coll': tem['ac_collecting'], 'em_jour': tem['ac_journey'], 'em_sleep': tem['ac_sleep'], 'em_weapon': tem['ac_weapon'], "em_armor": tem['ac_armor'], 'em_backpack': tem['ac_backpack']
+        'game': tem['ac_game'], 'collecting': tem['ac_collecting'], 'journey': tem['ac_journey'], 'sleep': tem['ac_sleep'], 'weapon': tem['ac_weapon'], "armor": tem['ac_armor'], 'backpack': tem['ac_backpack']
     }
 
-    for key, item in dino.activ_items.items():
-        if not item:
-           acsess[key] = t(f'p_profile.no_item', lang)
-        else:
-            add_blok = True
-            name = get_name(item['item_id'], lang, item.get('abilities', {}))
-            if 'abilities' in item.keys() and 'endurance' in item['abilities'].keys():
-               acsess[key] = f'{name} \[ *{item["abilities"]["endurance"]}* ]'
-            else: acsess[key] = f'{name}'
+    for key, item in enumerate(dino.activ_items):
 
-    menu = dino_profile_markup(add_blok, lang, dino.alt_id, joint_dino, my_joint)
-    if add_blok:
-        text += t('p_profile.accs', lang, formating=False).format(**acsess)
+        item_type = get_item_data(item['item_id'])['type']
+
+        name = get_name(item['item_id'], lang, item.get('abilities', {}))
+        if 'abilities' in item.keys() and 'endurance' in item['abilities'].keys():
+               name = f'{name} \[ *{item["abilities"]["endurance"]}* ]'
+
+        separat = '-'
+        if len(dino.activ_items) > 1:
+            if key == 0:
+                separat = '┌'
+            elif key == len(dino.activ_items) - 1:
+                separat = '└'
+            else:
+                separat = '├'
+
+        text +=  t(f'p_profile.accs.{item_type}', lang, separator=separat, item=name, emoji=acsess[item_type]) + '\n'
+
+    menu = dino_profile_markup(bool(len(dino.activ_items)), lang, dino.alt_id, joint_dino, my_joint)
 
     # затычка на случай если не сгенерируется изображение
     generate_image = 'images/remain/no_generate.png'
     msg = await send_SmartPhoto(chatid, generate_image, text, 'Markdown', reply_markup=menu)
 
-    await bot.send_message(chatid, t('p_profile.return', lang), 
-                reply_markup= await m(userid, 'last_menu', lang))
+    await bot.send_message(chatid, t('p_profile.return', lang), reply_markup= await m(userid, 'last_menu', lang))
 
     # изменение сообщения с уже нужным изображением
     image = await dino.image(user.settings['profile_view'], custom_url)
@@ -171,7 +179,6 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
             parse_mode='Markdown', caption=text),
         reply_markup=menu
         )
-    
 
 async def egg_profile(chatid: int, egg: Egg, lang: str):
     text = t('p_profile.incubation_text', lang, 
@@ -253,8 +260,9 @@ async def dino_menu(call: types.CallbackQuery):
         if res:
             if action == 'reset_activ_item':
                 activ_items = {}
-                for key, item in dino['activ_items'].items():
-                    if item: activ_items[get_name(item['item_id'], 
+                for key, item in enumerate(dino['activ_items']):
+                    if item: 
+                        activ_items[get_name(item['item_id'], 
                                     lang, item.get('abilities', {}))] = [key, item]
 
                 result, sn = await ChooseOptionState(remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']})
@@ -415,8 +423,13 @@ async def remove_accessory(option: list, transmitted_data:dict):
     dino_id = transmitted_data['dino_id']
     key, item = option
 
-    await dinosaurs.update_one({'_id': dino_id}, 
-                         {'$set': {f'activ_items.{key}': None}}, comment='remove_accessory')
+    dino_data = await dinosaurs.find_one({'_id': dino_id}, comment='check_activ_items')
+    if isinstance(dino_data.get('activ_items'), list):
+        await dinosaurs.update_one({'_id': dino_id}, 
+                             {'$pull': {f'activ_items': item}}, comment='remove_accessory')
+    else:
+        raise ValueError("The 'activ_items' field is not an array.")
+
     abil = item.get('abilities', {})
     await AddItemToUser(userid, item['item_id'], 1, abil)
 
