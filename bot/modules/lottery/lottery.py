@@ -1,3 +1,4 @@
+from re import A
 from bson import ObjectId
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
@@ -6,7 +7,7 @@ from random import shuffle
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.data_format import list_to_inline, random_code
-from bot.modules.items.item import AddItemToUser, get_items_names
+from bot.modules.items.item import AddItemToUser, get_item_dict, get_items_names
 from bot.modules.localization import get_lang, t
 
 from time import time, strftime, localtime
@@ -234,16 +235,21 @@ async def items_to_winer(user_id: int, win_data: dict):
 
     if win_data.get('items', []):
         for item in win_data['items']:
-            item_id = item['items_data']['item_id']
+
+            item_dict = get_item_dict(
+                item['items_data']['item_id'], 
+                item['items_data'].get('abilities', {})
+            )
+            item_id = item_dict['items_data']['item_id']
+            abilities = item_dict['items_data'].get(
+                'abilities', {})
             count = item.get('count', 1)
-            abilities = item['items_data'].get('abilities', {})
 
             await AddItemToUser(user_id, item_id, count,
                                 abilities)
 
     coins = win_data.get('coins', 0)
-    if coins:
-        await take_coins(user_id, coins, True)
+    if coins: await take_coins(user_id, coins, True)
 
 async def end_lottery(lot_id: ObjectId):
     

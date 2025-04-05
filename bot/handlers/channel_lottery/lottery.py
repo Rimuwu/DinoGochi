@@ -26,20 +26,65 @@ lottery_members = DBconstructor(mongo_client.lottery.members)
 @main_router.message(Command(commands=['lottery_create']), IsAdminUser())
 async def lottery_create(message: Message):
     
-    await create_lottery(-1001950032976, 0, 3600 * 3, 
-                         {
-                             '1': {
-                                 'items': [{'items_data': {'item_id': 'medicinal_drink'}, 'count': 1}],
-                                 'coins': 1000,
-                                 'count': 1
-                             },
-                             '2': {
-                                 'items': [{'items_data': {'item_id': 'medicinal_drink'}, 'count': 2}, {'items_data': {'item_id': 'therapeutic_mixture'}, 'count': 2}],
-                                 'coins': 0,
-                                 'count': 2
-                             }
-                             
-                         }, 'en', 0)
+    await create_lottery(-1001673242031, 0, 86400 * 7, 
+        {
+            '1': {
+                'items': [
+                    {'items_data': {
+                        'item_id': 'legendary_egg',
+                        'abilities': {'interact': False}
+                    }, 
+                    'count': 1}
+                ],
+                'coins': 0,
+                'count': 3
+            },
+            '2': {
+                'items': [
+                    {'items_data': {
+                        'item_id': 'premium_activator',
+                        'abilities': {'interact': False}
+                    }, 
+                    'count': 1}
+                ],
+                'coins': 0,
+                'count': 5
+            },
+            '3': {
+                'items': [
+                    {'items_data': {
+                        'item_id': 'stone_resurrection',
+                        'abilities': {'interact': False}
+                    }, 
+                    'count': 1}
+                ],
+                'coins': 0,
+                'count': 10
+            },
+            '4': {
+                'items': [
+                    {'items_data': {
+                        'item_id': 'transport_egg',
+                        'abilities': {'interact': False}
+                    }, 
+                    'count': 1}
+                ],
+                'coins': 0,
+                'count': 20
+            },
+            '5': {
+                'items': [
+                    {'items_data': {
+                        'item_id': '3_days_premium',
+                        'abilities': {'interact': False}
+                    },
+                    'count': 1}
+                ],
+                'coins': 0,
+                'count': 30
+            },
+            
+        }, 'en', 0)
 
 
 @main_router.message(Command(commands=['update_lottery']), IsAdminUser())
@@ -58,7 +103,7 @@ async def end_lottery_com(message: Message):
     
     args = message.text.split(' ')[1:]
     alt_id = args[0]
-    
+
     lotter = await lottery.find_one({'alt_id': alt_id}, comment='update_lottery')
 
     if lotter:
