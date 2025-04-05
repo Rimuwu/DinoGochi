@@ -983,6 +983,12 @@
             },
             "custom_book": {
                 "name": "📙 Cuaderno"
+            },
+            "ink": {
+                "name": "✒️ Tinta"
+            },
+            "custom_book_recipe": {
+                "name": "📜 Notas Receta"
             }
         },
         "notifications": {
@@ -1795,7 +1801,6 @@
                 }
             },
             "no_item": "No hay problema",
-            "accs": "\n{em_game}*┌* Viajes: {journey}\n{em_coll}*├* Forrajeo: {collecting}\n{em_jour}*├* Juego: {game}\n{em_sleep}*├* Dormir: {sleep}\n{em_weapon}*├* Arma: {weapon}\n{em_armor}*├* Defensa: {armor}\n{em_backpack}*└* Almacenamiento: {backpack}\n",
             "return": "🔮 | ¡De vuelta al menú principal!",
             "inline_menu": {
                 "reset_activ_item": {
@@ -1827,7 +1832,16 @@
                     "data": "dino_menu skills {dino}"
                 }
             },
-            "joint": "(Articulación)"
+            "joint": "(Articulación)",
+            "accs": {
+                "journey": "{emoji} *{separator}* Viaje: {item}",
+                "collecting": "{emoji} *{separator}* Recolectando comida: {item}",
+                "game": "{emoji} *{separator}* Juego: {item}",
+                "sleep": "{emoji} *{separator}* Dormir: {item}",
+                "weapon": "{emoji} *{separator}* Armas: {item}",
+                "armor": "{emoji} *{separator}* Defensa: {item}",
+                "backpack": "{emoji} *{separator}* Almacenamiento: {item}"
+            }
         },
         "inventory": {
             "null": "💥 | El inventario está vacío.",
@@ -4377,7 +4391,8 @@
             "recipe": "📜 Cualquier receta",
             "eat": "🍔 Comida",
             "egg": "🥚 Huevos",
-            "meat": "🥩 Cualquier carne"
+            "meat": "🥩 Cualquier carne",
+            "fish": "🐟 Cualquier pez"
         },
         "all_skills": {
             "stoping": {

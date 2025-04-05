@@ -983,6 +983,12 @@
             },
             "custom_book": {
                 "name": "📙 Notebook"
+            },
+            "ink": {
+                "name": "✒️ Ink"
+            },
+            "custom_book_recipe": {
+                "name": "📜 Notes Recipe"
             }
         },
         "notifications": {
@@ -1795,7 +1801,6 @@
                 }
             },
             "no_item": "No problem",
-            "accs": "\n {em_game} *┌* Travel: {journey} \n {em_coll} *├* Foraging: {collecting} \n {em_jour} *├* Game: {game} \n {em_sleep} *├* Dream: {sleep} \n {em_weapon} *├* Weapons: {weapon} \n {em_armor} *├* Protection: {armor} \n {em_backpack} *└* Storage: {backpack} \n",
             "return": "🔮 | Back to the main menu!",
             "inline_menu": {
                 "reset_activ_item": {
@@ -1827,7 +1832,16 @@
                     "data": "dino_menu skills {dino}"
                 }
             },
-            "joint": "(Joint)"
+            "joint": "(Joint)",
+            "accs": {
+                "journey": "{emoji} *{separator}* Travel: {item}",
+                "collecting": "{emoji} *{separator}* Gathering food: {item}",
+                "game": "{emoji} *{separator}* Game: {item}",
+                "sleep": "{emoji} *{separator}* Sleep: {item}",
+                "weapon": "{emoji} *{separator}* Weapons: {item}",
+                "armor": "{emoji} *{separator}* Defense: {item}",
+                "backpack": "{emoji} *{separator}* Storage: {item}"
+            }
         },
         "inventory": {
             "null": "💥 | The inventory is empty.",
@@ -4377,7 +4391,8 @@
             "recipe": "📜 Any recipe",
             "eat": "🍔 Food",
             "egg": "🥚 Eggs",
-            "meat": "🥩 Any meat"
+            "meat": "🥩 Any meat",
+            "fish": "🐟 Any fish"
         },
         "all_skills": {
             "stoping": {

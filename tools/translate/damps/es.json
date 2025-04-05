@@ -984,6 +984,12 @@
             },
             "custom_book": {
                 "name": "📙 Книга для записей"
+            },
+            "ink": {
+                "name": "✒️ Чернила"
+            },
+            "custom_book_recipe": {
+                "name": "📜 Рецепт записок"
             }
         },
         "notifications": {
@@ -1796,7 +1802,6 @@
                 }
             },
             "no_item": "Ничего",
-            "accs": "\n{em_game}*┌* Путешествие: {journey}\n{em_coll}*├* Сбор пищи: {collecting}\n{em_jour}*├* Игра: {game}\n{em_sleep}*├* Сон: {sleep}\n{em_weapon}*├* Оружие: {weapon}\n{em_armor}*├* Защита: {armor}\n{em_backpack}*└* Хранилище: {backpack}\n",
             "return": "🔮 | Возвращение в главное меню!",
             "inline_menu": {
                 "reset_activ_item": {
@@ -1828,7 +1833,16 @@
                     "data": "dino_menu skills {dino}"
                 }
             },
-            "joint": "(Совместный)"
+            "joint": "(Совместный)",
+            "accs": {
+                "journey": "{emoji} *{separator}* Путешествие: {item}",
+                "collecting": "{emoji} *{separator}* Сбор пищи: {item}",
+                "game": "{emoji} *{separator}* Игра: {item}",
+                "sleep": "{emoji} *{separator}* Сон: {item}",
+                "weapon": "{emoji} *{separator}* Оружие: {item}",
+                "armor": "{emoji} *{separator}* Защита: {item}",
+                "backpack": "{emoji} *{separator}* Хранилище: {item}"
+            }
         },
         "inventory": {
             "null": "💥 | Инвентарь пуст.",
@@ -4378,7 +4392,8 @@
             "recipe": "📜 Любой рецепт",
             "eat": "🍔 Еда",
             "egg": "🥚 Яйца",
-            "meat": "🥩 Любое мясо"
+            "meat": "🥩 Любое мясо",
+            "fish": "🐟 Любая рыба"
         },
         "all_skills": {
             "stoping": {

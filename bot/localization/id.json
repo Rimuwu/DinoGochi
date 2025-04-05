@@ -983,6 +983,12 @@
             },
             "custom_book": {
                 "name": "📙 Buku Catatan"
+            },
+            "ink": {
+                "name": "✒️ Tinta"
+            },
+            "custom_book_recipe": {
+                "name": "📜 Resep Catatan"
             }
         },
         "notifications": {
@@ -1795,7 +1801,6 @@
                 }
             },
             "no_item": "Tidak ada masalah",
-            "accs": "\n{em_game}*┌* Perjalanan: {journey}\n{em_coll}*├* Mencari Makan: {collecting}\n{em_jour}*├* Game: {game}\n{em_sleep}*├* Tidur: {sleep}\n{em_weapon}*├* Senjata: {weapon}\n{em_armor}*├* Pertahanan: {armor}\n{em_backpack}*└* Penyimpanan: {backpack}\n",
             "return": "🔮 | Kembali ke menu utama!",
             "inline_menu": {
                 "reset_activ_item": {
@@ -1827,7 +1832,16 @@
                     "data": "dino_menu skills {dino}"
                 }
             },
-            "joint": "(Bersama)"
+            "joint": "(Bersama)",
+            "accs": {
+                "journey": "{emoji} *{separator}* Perjalanan: {item}",
+                "collecting": "{emoji} *{separator}* Mengumpulkan makanan: {item}",
+                "game": "{emoji} *{separator}* Permainan: {item}",
+                "sleep": "{emoji} *{separator}* Tidur: {item}",
+                "weapon": "{emoji} *{separator}* Senjata: {item}",
+                "armor": "{emoji} *{separator}* Pertahanan: {item}",
+                "backpack": "{emoji} *{separator}* Penyimpanan: {item}"
+            }
         },
         "inventory": {
             "null": "💥 | Persediaan kosong.",
@@ -4377,7 +4391,8 @@
             "recipe": "📜 Resep apa saja",
             "eat": "🍔 Makanan",
             "egg": "🥚 Telur",
-            "meat": "🥩 Daging apa pun"
+            "meat": "🥩 Daging apa pun",
+            "fish": "🐟 Ikan apa pun"
         },
         "all_skills": {
             "stoping": {
