@@ -982,7 +982,8 @@
                 "description": "Ha ha ha!"
             },
             "custom_book": {
-                "name": "📙 Buku Catatan"
+                "name": "📙 Buku Catatan",
+                "description": "Buku catatan pribadi Anda. Tuliskan pemikiran dan ide Anda, dan bagikan dengan teman-teman Anda!"
             },
             "ink": {
                 "name": "✒️ Tinta"
@@ -2047,10 +2048,14 @@
                     "delete": "🗑 Buang",
                     "exchange": "🔁 Lulus",
                     "created_item": "🛠 Item yang Dapat Diciptakan: {item}",
-                    "buyer": "💰 Pemain anggar"
+                    "buyer": "💰 Pemain anggar",
+                    "custom_book": "✒ Timpa",
+                    "read_custom_book": "📖 Baca"
                 },
                 "time_craft": "*├* Waktu pembuatan: ⏳ {times}",
-                "trs_dino": "*├* Dinosaurus: {dino} {hp} / 100 ❤\n"
+                "trs_dino": "*├* Dinosaurus: {dino} {hp} / 100 ❤\n",
+                "author": "*├* Penulis Item: {author}",
+                "unnamed_author": "Tidak diketahui / Tidak ada"
             },
             "bonuses": {
                 "+heal": "Peningkatan Kesehatan: {0}%",
@@ -2085,7 +2090,9 @@
             },
             "accessory": {
                 "no_change": "⚒ Anda tidak dapat mengubah aksesori untuk aktivitas yang sedang dilakukan dinosaurus!",
-                "change": "🎴 | Item Aktif Terpasang!"
+                "change": "🎴 | Item Aktif Terpasang!",
+                "max_items": "🐊 Dinosaurus sudah menggunakan jumlah aksesori maksimal!",
+                "already_have": "🧠 Dinosaurus tidak dapat menggunakan 2 item identik secara bersamaan!"
             },
             "recipe": {
                 "not_enough_m": "❗ | Bahan hilang: {materials}",
@@ -2144,7 +2151,8 @@
             "dino": "🦕 Pilih dinosaurus / telur dari daftar",
             "friend": "🎮 Pilih teman ->",
             "inactive_dino": "🦕 Pilih hanya dinosaurus beku!",
-            "no_photo": "📷 | Bot tidak dapat mendeteksi foto dalam pesan Anda."
+            "no_photo": "📷 | Bot tidak dapat mendeteksi foto dalam pesan Anda.",
+            "content_str": "📦 | Masukkan teks yang tidak melebihi panjang karakter {max_len}:"
         },
         "about_menu": {
             "team": "<b>🎭 | Bot Team</b>\n<i>Kita semua melakukan banyak hal sekaligus, tetapi setiap orang memiliki peran untuk dimainkan... </i> \n\n💻 @AS1AW - Pengembang\n💻 @magecode - Pengembang\n💽 @KatranLife - Penyediaan Host\n\n🎨 @unknown_cat13 - Desainer\n\n⚽️ @despating - Penguji\n\n<b>🗝 | Penulis pelokalan</b>\n<i>Setiap orang dapat menerjemahkan bot ke dalam bahasa ibu mereka. \n Maukah Saudara membantu menerjemahkannya? Lihat @AS1AW\n\n</i>{lang_name} - {author}",
@@ -4716,6 +4724,9 @@
             "winners_cap": "🪙 | Pengundian sudah berakhir! Dan inilah orang-orang beruntung kami yang telah menerima hadiahnya! \n\n",
             "winners_footer": "\n🎉 | Terima kasih semua telah berpartisipasi dalam giveaway!",
             "user_cap": "♾️ | Selamat, Anda telah menjadi salah satu pemenang undian! \n\n🎁 | Anda telah memperoleh: \n"
+        },
+        "custom_book": {
+            "confirm_edit": "📜 | Apakah Anda yakin ingin mengganti buku? Jika ada teks dalam buku sebelumnya - itu akan hilang selamanya!"
         }
     }
 }

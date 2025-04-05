@@ -982,7 +982,8 @@
                 "description": "Ha, ha, ha!"
             },
             "custom_book": {
-                "name": "📙 Notebook"
+                "name": "📙 Notebook",
+                "description": "Your personal record book. Write down your thoughts and ideas, and share them with your friends!"
             },
             "ink": {
                 "name": "✒️ Ink"
@@ -2047,10 +2048,14 @@
                     "delete": "🗑 Throw away",
                     "exchange": "🔁 Give",
                     "created_item": "🛠 Craftable Item: {item}",
-                    "buyer": "💰 Fence"
+                    "buyer": "💰 Fence",
+                    "custom_book": "✒ Overwrite",
+                    "read_custom_book": "📖 Read"
                 },
                 "time_craft": "*├* Creation time: ⏳ {times}",
-                "trs_dino": "*├* Dinosaur: {dino} {hp} / 100 ❤\n"
+                "trs_dino": "*├* Dinosaur: {dino} {hp} / 100 ❤\n",
+                "author": "*├* Item Author: {author}",
+                "unnamed_author": "Unknown / None"
             },
             "bonuses": {
                 "+heal": "Health Boost: {0} %",
@@ -2085,7 +2090,9 @@
             },
             "accessory": {
                 "no_change": "⚒ You can't change the accessory for the activity that the dinosaur is currently doing!",
-                "change": "🎴 | Active Item Installed!"
+                "change": "🎴 | Active Item Installed!",
+                "max_items": "🐊 The dinosaur already uses the maximum number of accessories!",
+                "already_have": "🧠 A dinosaur cannot use 2 identical items at the same time!"
             },
             "recipe": {
                 "not_enough_m": "❗ | Missing materials: {materials}",
@@ -2144,7 +2151,8 @@
             "dino": "🦕 Select a dinosaur/egg from the list",
             "friend": "🎮 Choose a friend ->",
             "inactive_dino": "🦕 Choose only frozen dinosaurs!",
-            "no_photo": "📷 | The bot was unable to detect the photo in your message."
+            "no_photo": "📷 | The bot was unable to detect the photo in your message.",
+            "content_str": "📦 | Enter a text not exceeding the length of {max_len} characters:"
         },
         "about_menu": {
             "team": "<b>🎭 | Bot Team</b>\n<i>We all do a lot of things at once, but everyone has a role to play... </i> \n\n💻 @AS1AW - Developer\n💻 @magecode - Developer\n💽 @KatranLife - Host Provisioning\n\n🎨 @unknown_cat13 - Designer\n\n⚽️ @despating - Tester\n\n<b>🗝 | Author of localization</b>\n<i>Everyone can translate the bot into their native language. \n Would you like to help with the translation? Refer to @AS1AW\n\n</i>{lang_name} - {author}",
@@ -4716,6 +4724,9 @@
             "winners_cap": "🪙 | The draw is over! And here are our lucky ones who have already received their prizes! \n\n",
             "winners_footer": "\n🎉 | Thank you all for participating in the giveaway!",
             "user_cap": "♾️ | Congratulations, you have become one of the winners of the draw! \n\n🎁 | You have obtained: \n"
+        },
+        "custom_book": {
+            "confirm_edit": "📜 | Are you sure you want to change the book? If there was any text in the book before - it will be lost forever!"
         }
     }
 }
