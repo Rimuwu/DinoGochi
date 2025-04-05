@@ -26,8 +26,10 @@ from bot.modules.logs import log
 from bot.modules.items.collect_items import get_all_items
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+
 items = DBconstructor(mongo_client.items.items)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+users = DBconstructor(mongo_client.user.users)
 
 ITEMS: dict = get_all_items()
 
@@ -722,6 +724,18 @@ async def item_info(item: dict, lang: str, owner: bool = False):
     # Тип предмета
     type_name = loc_d['type_info'][type_loc]['type_name']
     text += loc_d['static']['type'].format(type=type_name) + '\n'
+
+    if 'abilities' in item.keys():
+        if 'author' in item['abilities'].keys():
+            author_user = await users.find_one(
+                {'userid': item['abilities']['author']})
+
+            if author_user: author_name = author_user['name']
+            else: author_name = loc_d['static']['unnamed_author']
+
+            text += loc_d['static']['author'].format(
+                author=author_name
+                ) + '\n'
 
     # Быстрая обработка предметов без фич
     if type_item in standart:
