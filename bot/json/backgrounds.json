@@ -141,5 +141,33 @@
         },
         "show": false,
         "author": "unknown_cat13"
+    },
+    "21": {
+        "price": {
+            "coins": 1,
+            "super_coins": 1
+        },
+        "show": false
+    },
+    "22": {
+        "price": {
+            "coins": 10000,
+            "super_coins": 15
+        },
+        "show": true
+    },
+    "23": {
+        "price": {
+            "coins": 10000,
+            "super_coins": 15
+        },
+        "show": true
+    },
+    "24": {
+        "price": {
+            "coins": 10000,
+            "super_coins": 15
+        },
+        "show": true
     }
 }
