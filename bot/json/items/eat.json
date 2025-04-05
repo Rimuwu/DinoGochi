@@ -177,6 +177,15 @@
                     "berries",
                     "berries"
                 ]
+            },
+            "3": {
+                "time_craft": 1800, 
+                "create": [
+                    "juice"
+                ],
+                "materials": [
+                    {"item_id": "berries", "count": 10}
+                ]
             }
         },
         "rank": "rare",
@@ -284,6 +293,17 @@
         "image": "item35",
         "rank": "legendary",
         "type": "eat",
+        "ns_craft": {
+            "1": {
+                "time_craft": 1200, 
+                "create": [
+                    "tea"
+                ],
+                "materials": [
+                    {"item_id": "gourmet_herbs", "count": 5}
+                ]
+            }
+        },
         "groups": ["collecting-activity"]
     },
     "tea": {
@@ -591,6 +611,17 @@
         "image": "item68",
         "rank": "common",
         "type": "eat",
+        "ns_craft": {
+            "1": {
+                "time_craft": 900, 
+                "create": [
+                    {"item_id": "candy", "count": 1}
+                ],
+                "materials": [
+                    {"item_id": "chocolate", "count": 2}
+                ]
+            }
+        },
         "groups": ["energy_eat"]
     },
     "candy": {

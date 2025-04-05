@@ -47,13 +47,36 @@
         "image": "item28",
         "rank": "common",
         "type": "material",
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "medicinal_drink"
+                ],
+                "materials": [
+                    {"item_id": "fish_oil",
+                     "count": 5}
+                ]
+            }
+        },
         "groups": ["fishing-activity"]
     },
 
     "flour": {
         "image": "flour",
         "rank": "uncommon",
-        "type": "material"
+        "type": "material",
+        "ns_craft": {
+            "1": {
+                "time_craft": 7200,
+                "create": [
+                    "bread"
+                ],
+                "materials": [
+                    {"item_id": "flour",
+                     "count": 5}
+                ]
+            }
+        }
     },
 
     "magic_stone": {

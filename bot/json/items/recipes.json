@@ -316,6 +316,11 @@
                 "item": "skin",
                 "type": "delete",
                 "count": 15
+            },
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 5
             }
         ],
         "rank": "rare",
@@ -340,6 +345,11 @@
                 "item": "skin",
                 "type": "delete",
                 "count": 15
+            },
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 5
             },
             {
                 "item": ["iron-ingot", "copper-ingot"],
@@ -422,7 +432,7 @@
             {
                 "item": "berries",
                 "type": "delete",
-                "count": 1
+                "count": 10
             }
         ],
         "rank": "uncommon",
@@ -541,6 +551,12 @@
                 "item": "chocolate",
                 "type": "delete",
                 "count": 2
+            },
+            {
+                "item": "torch",
+                "type": "endurance",
+                "act": 10,
+                "count": 1
             }
         ],
         "rank": "uncommon",
@@ -909,6 +925,12 @@
                 "item": "rope",
                 "type": "delete",
                 "count": 5
+            },
+            {
+                "item": "tooling",
+                "type": "endurance",
+                "act": 20,
+                "count": 1
             }
         ],
         "rank": "rare",
@@ -1338,6 +1360,11 @@
                 "item": "wool",
                 "type": "delete",
                 "count": 5
+            },
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 3
             }
         ],
         "rank": "rare",
