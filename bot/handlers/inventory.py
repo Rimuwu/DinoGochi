@@ -228,6 +228,16 @@ async def item_callback(call: CallbackQuery):
                 await bot.send_message(chatid, 
                         t('item_use.cannot_be_used', lang),  
                           reply_markup= await m(userid, 'last_menu', lang))
+        elif call_data[1] == 'custom_book_read':
+
+            if 'abilities' in item:
+                if 'content' in item['abilities']:
+                    content = item['abilities']['content']
+
+                    await bot.send_message(chatid, content, reply_markup=list_to_inline([
+                        {'🗑': 'delete_message'}]
+                        )) 
+
         else: print('item_callback', call_data[1])
 
 # Поиск внутри инвентаря

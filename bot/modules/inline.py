@@ -40,10 +40,17 @@ async def item_info_markup(item: dict, lang: str, userid: int):
 
     if item_data['type'] not in ['material', 'ammunition', 'dummy']:
         use_text = loc_data['use'][item_data['type']]
-        
+
         if 'abilities' in item and 'uses' in item['abilities'] and item['abilities']['uses'] != -666:
             use_text += f' ({item["abilities"]["uses"]}/{item_data["abilities"]["uses"]})'
-        
+
+        if item_data['type'] == 'special' and item_data['class'] == 'custom_book':
+            use_text = loc_data['custom_book']
+
+            if 'abilities' in item and 'content' in item['abilities'] and item['abilities']['content']:
+                # Кнопка прочитать если внутри есть текст
+                buttons_dict[ loc_data['read_custom_book'] ] = f'item custom_book_read {code}'
+
         buttons_dict[use_text] = f'item use {code}'
 
     if not('abilities' in item and 'interact' in item['abilities'] and not(item['abilities']['interact'])):
@@ -51,7 +58,6 @@ async def item_info_markup(item: dict, lang: str, userid: int):
 
         if 'cant_sell' not in item_data or ('cant_sell' in item_data and not item_data['cant_sell']):
             buttons_dict[loc_data['exchange']] = f'item exchange {code}'
-
 
     if is_standart(item):
         if 'buyer' not in item_data or (item_data['buyer'] == True):
