@@ -7,7 +7,7 @@ from bot.dbmanager import mongo_client
 from bot.modules.data_format import transform
 from bot.modules.dinosaur.dinosaur import set_status, start_game, Dino
 from bot.modules.dinosaur.skills import check_skill
-from bot.modules.items.accessory import downgrade_accessory
+from bot.modules.items.accessory import downgrade_accessory, downgrade_type_accessory, find_accessory
 from bot.modules.notifications import dino_notification
 from bot.const import GAME_SETTINGS
 
@@ -218,14 +218,10 @@ async def dino_breakdown(dino: ObjectId):
     elif action == 'downgrade':
         dino_cl = await Dino().create(dino)
 
-        allowed = []
-        for i in ['game', 'collecting', 'journey', 'sleep', 'armor', 'weapon', 'backpack']:
-            if dino_cl.activ_items[i]: allowed.append(i)
-
+        allowed = await find_accessory(dino_cl)
         if allowed:
-            await downgrade_accessory(dino_cl, choice(allowed), 30)
+            await downgrade_accessory(dino_cl, choice(allowed)[0], 30)
 
-    # print('dino_nervous_breakdown', action, duration_s)
     return action
 
 async def dino_inspiration(dino: ObjectId): 
