@@ -12,7 +12,7 @@ from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, t
 from bot.modules.dinosaur.mood import add_mood
 from bot.modules.user.user import get_frineds
-from bot.modules.items.accessory import check_accessory, weapon_damage, armor_protection, downgrade_accessory
+from bot.modules.items.accessory import check_accessory, downgrade_type_accessory, weapon_damage, armor_protection, downgrade_accessory
 from bot.modules.logs import log
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -631,7 +631,7 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
                     data['mobs'].append(mob['key'])
 
                     if (dam_col * mob['damage']) > 0:
-                        await downgrade_accessory(dino, 'armor')
+                        await downgrade_type_accessory(dino, 'armor')
                         dino_hp -= (dam_col * mob['damage']) - protection
 
                     if dino.stats['heal'] - dino_hp > 10:
