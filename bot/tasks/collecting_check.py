@@ -118,7 +118,7 @@ async def collecting_process():
                     items = []
                     for i in ['collecting', 'hunt', 'fishing']:
                         items += get_group(f'{i}-activity')
-                else: 
+                else:
                     items = get_group(f'{coll_type}-activity')
 
                 # Установка количества предметов
