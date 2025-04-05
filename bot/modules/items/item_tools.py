@@ -19,11 +19,12 @@ from bot.modules.items.item import (AddItemToUser, CalculateDowngradeitem,
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import get_data as get_loca_data
 from bot.modules.localization import t
-from bot.modules.markup import (confirm_markup, count_markup,
+from bot.modules.logs import log
+from bot.modules.markup import (cancel_markup, confirm_markup, count_markup,
                                 feed_count_markup, markups_menu)
 from bot.modules.dinosaur.mood import add_mood
 from bot.modules.quests import quest_process
-from bot.modules.states_tools import ChooseStepState
+from bot.modules.states_tools import ChooseConfirmState, ChooseStepState
 from bot.modules.get_state import get_state
 from bot.modules.user.user import User, col_dinos, get_dead_dinos, max_dino_col, max_eat, count_inventory_items, award_premium
 from typing import Optional, Union
@@ -186,12 +187,14 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             elif is_standart(item):
                 # Защита от вечных аксессуаров
                 dino_update_list.append({
-                    '$pull': {f'activ_items': get_item_dict(item['item_id'])}})
+                    '$push': {f'activ_items': get_item_dict(item['item_id'])}})
+
+                return_text = t('item_use.accessory.change', lang)
             else:
                 dino_update_list.append({
-                    '$pull': {f'activ_items': item}})
-
-            return_text = t('item_use.accessory.change', lang)
+                    '$push': {f'activ_items': item}})
+                
+                return_text = t('item_use.accessory.change', lang)
 
     elif type_item == 'recipe':
         send_status, use_status = False, False 
@@ -567,13 +570,13 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                             'message': t('css.inactive_dino', lang)
                     }]
 
-            if data_item['class'] in ['defrosting']:
+            elif data_item['class'] in ['defrosting']:
                 steps = [{"type": 'dino', 
                          "name": 'dino', 
                          "data": {"add_egg": False}, 
                          'message': t('css.inactive_dino', lang)}]
 
-            if data_item['class'] in ['freezing']:
+            elif data_item['class'] in ['freezing']:
                 steps = [{"type": 'dino', 
                          "name": 'dino', 
                          "data": {"add_egg": False}, 
@@ -613,6 +616,17 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                     await bot.send_message(chatid, 
                                            t('item_use.special.reborn.no_dinos', lang))
                     return
+
+            elif data_item['class'] in ['custom_book']:
+                adapter_function = edit_custom_book
+                steps = [
+                    {"type": 'str', "name": 'content', "data":
+                        {"max_len": 900}, 
+                        'message': {
+                            'text': t('css.content_str', lang, max_len=900), 
+                            'reply_markup': cancel_markup(lang)}}
+                ]
+                transmitted_data['item_base_id'] = base_item['_id']
 
         elif type_item == 'book':
             text, markup = book_page(item_id, 0, lang)
@@ -775,3 +789,39 @@ def add_to_rare_sort(items: list[str], item_id: str):
             break
 
     return new_list
+
+
+async def edit_custom_book(return_data: dict, transmitted_data: dict):
+    """ Функция редактирует кастомную книгу
+    """
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    lang = transmitted_data['lang']
+
+    item = transmitted_data['items_data']
+
+    transmitted_data['content'] = return_data['content']
+
+    await ChooseConfirmState(
+        edit_custom_book_confirm, userid, chatid, lang, True, transmitted_data=transmitted_data,
+    )
+    await bot.send_message(chatid, t('custom_book.confirm_edit', lang),
+                           reply_markup=confirm_markup(lang))
+
+async def edit_custom_book_confirm(_: bool, transmitted_data: dict):
+    """ Функция редактирует кастомную книгу
+    """
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    lang = transmitted_data['lang']
+
+    item_base_id = transmitted_data['item_base_id']
+    content = transmitted_data['content']
+
+    await items.update_one({'_id': item_base_id}, {'$set': {
+        'items_data.abilities.content': content,
+        'items_data.abilities.author': userid,
+    }}, comment='edit_custom_book_confirm')
+
+    await bot.send_message(chatid, '✅', 
+            reply_markup=await markups_menu(userid, 'last_menu', lang))
