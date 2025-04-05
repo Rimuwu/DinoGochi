@@ -68,7 +68,6 @@
         "class": "custom_book",
         "abilities": {
             "content": ""
-        },
-        "cant_sell": true
+        }
     }
 }

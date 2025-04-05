@@ -191,5 +191,12 @@
         "rank": "uncommon",
         "type": "material",
         "groups": ["ingot_group"]
+    },
+
+    "ink": {
+        "image": "",
+        "rank": "rare",
+        "type": "material",
+        "groups": ["fishing-activity"]
     }
 }

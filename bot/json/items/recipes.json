@@ -1840,5 +1840,40 @@
         "rank": "rare",
         "type": "recipe",
         "time_craft": 1300
+    },
+    "custom_book_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "custom_book",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "skin",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "blank_piece_paper",
+                "type": "delete",
+                "count": 10
+            },
+            {
+                "item": "ink",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "mystical",
+        "type": "recipe",
+        "time_craft": 3600
     }
 }
