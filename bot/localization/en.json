@@ -227,6 +227,12 @@
                 "months",
                 "months",
                 "M."
+            ],
+            "year": [
+                "year",
+                "Year",
+                "Years",
+                "y."
             ]
         },
         "owner": "Master",

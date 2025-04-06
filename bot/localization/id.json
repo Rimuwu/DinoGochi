@@ -227,6 +227,12 @@
                 "Bulan",
                 "Bulan",
                 "B."
+            ],
+            "year": [
+                "tahun",
+                "Tahun",
+                "Tahun",
+                "t."
             ]
         },
         "owner": "Tuan",

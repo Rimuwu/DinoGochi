@@ -196,7 +196,7 @@
                 "segundo",
                 "Sobras",
                 "Sobras",
-                "con."
+                "s."
             ],
             "minute": [
                 "minuto",
@@ -220,13 +220,19 @@
                 "semana",
                 "Semana",
                 "Semanas",
-                "N."
+                "S."
             ],
             "month": [
                 "mes",
                 "Mes",
                 "Meses",
-                "Por mes."
+                "mes."
+            ],
+            "year": [
+                "año",
+                "Año",
+                "Años",
+                "a."
             ]
         },
         "owner": "Maestro",
