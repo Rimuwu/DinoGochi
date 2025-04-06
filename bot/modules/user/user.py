@@ -517,12 +517,16 @@ async def user_info(userid: int, lang: str, secret: bool = False,
                 dino_owner = t(f'user_profile.dino_owner.noowner', lang)
 
             age = await dino.age()
+            if age.days == 0:
+                age = seconds_to_str(age.seconds, lang, True)
+            else: age = seconds_to_str(age.days * 86400, lang, True)
+
             return_text += t('user_profile.dino', lang,
                             dino_name=escape_markdown(dino.name), 
                             dino_status=dino_status,
                             dino_rare=dino_rare,
                             owner=dino_owner,
-                            age=seconds_to_str(age.seconds, lang, True)
+                            age=age
                         )
 
         for egg in eggs:
