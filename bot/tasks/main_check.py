@@ -1,4 +1,8 @@
+from itertools import islice
+from time import time
 from random import choice, randint, random
+import math
+import asyncio
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
@@ -12,6 +16,7 @@ from bot.modules.dinosaur.mood import check_inspiration, mood_while_if, calculat
 from bot.modules.user.user import experience_enhancement
 from bot.exec import bot
 from bot.modules.user.user import User
+from bot.modules.logs import log
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
@@ -42,16 +47,30 @@ P_MOOD = 0.2 * REPEAT_MINUTS
 P_HEAL_EAT = 0.1 * REPEAT_MINUTS
 EVENT_CHANCE = 0.05 * REPEAT_MINUTS
 
-async def main_checks():
-    """Главная проверка динозавров
-    """
+async def kindergarten_check(dino):
+    if random() <= P_EAT_SLEEP:
+        r = await mutate_dino_stat(dino, 'eat', randint(*EAT_CHANGE))
 
-    dinos: list[dict] = await dinosaurs.find({}, comment='main_checks_dinos')
+    if random() <= P_GAME:
+        r = await mutate_dino_stat(dino, 'game', randint(*GAME_CHANGE))
+
+    if random() <= P_ENERGY:
+        r = await mutate_dino_stat(dino, 'energy', randint(*ENERGY_CHANGE))
+
+    return r
+
+async def main_checks_task(dinos):
+    """Проверка динозавров для отдельного таска"""
+
+    log(prefix='main_checks_task', message=f'Проверка динозавров: {len(dinos)}', lvl=0)
+    time_start = time()
+
     for dino in dinos:
         r = 0
 
         status = await check_status(dino['_id'])
-        if status == 'inactive': continue
+        if status == 'inactive':
+            continue
         is_sleeping = status == 'sleep'
         skill_activ = status in ['gym', 'library', 'swimming_pool', 'park']
 
@@ -60,15 +79,7 @@ async def main_checks():
             await dino_cl.dead()
             continue
 
-        if status == 'kindergarten':
-            if random() <= P_EAT_SLEEP:
-                r = await mutate_dino_stat(dino, 'eat', randint(*EAT_CHANGE))
-
-            if random() <= P_GAME:
-                r = await mutate_dino_stat(dino, 'game', randint(*GAME_CHANGE))
-
-            if random() <= P_ENERGY:
-                r = await mutate_dino_stat(dino, 'energy', randint(*ENERGY_CHANGE))
+        if status == 'kindergarten': r = await kindergarten_check(dino)
 
         else:
             # Понижение здоровья
@@ -209,6 +220,21 @@ async def main_checks():
                                 owner['owner_id'], f'🦕 {dino["name"]}: {text}'
                             )
                         except: pass
+    
+    log(prefix='main_checks_task', message=f'Конец проверки за {time() - time_start}', lvl=0)
+
+async def main_checks():
+    """Главная проверка динозавров"""
+    dinos: list[dict] = await dinosaurs.find({}, comment='main_checks_dinos')
+    num_tasks = 4  # Количество тасков
+
+    tasks = [main_checks_task(chunk) for chunk in chunked(dinos, math.ceil(len(dinos) / num_tasks))]
+    await asyncio.gather(*tasks)
+
+def chunked(iterable, size):
+    """Разделение списка на чанки фиксированного размера"""
+    it = iter(iterable)
+    return iter(lambda: list(islice(it, size)), [])
 
 if __name__ != '__main__':
     if conf.active_tasks:
