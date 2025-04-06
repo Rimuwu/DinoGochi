@@ -50,7 +50,7 @@ async def collecting_process():
             dino = await Dino().create(coll_data['dino_id'])
 
             special_chance = {}
-            chances_add = {'common': 0, 'uncommon': 0, 'rare': 0, 'mystical': 0, 'legendary': 0}
+            chances_add = {'common': 50, 'uncommon': 25, 'rare': 15, 'mystical': 9, 'legendary': 1}
 
             # Понижение энергии
             if random() <= ENERGY_DOWN:
