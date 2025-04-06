@@ -35,7 +35,6 @@ async def work():
     for work in res_list:
         save, insp = True, False
         dp_chance = 0
-        main_chance = random() <= 0.5
 
         work_percent = ((int(time()) - work['start_time']) / (work['end_time'] - work['start_time'])) * 100 # Процент времени работы
 
