@@ -78,7 +78,8 @@ async def downgrade_type_accessory(dino: Dino, acc_type: str, max_unit: int = 2)
 
     return updated
 
-async def check_accessory(dino: Dino, item_id: str, downgrade: bool = False) -> bool:
+async def check_accessory(dino: Dino, item_id: str, downgrade: bool = False,
+                          max_down: int = 2) -> bool:
     """Проверяет, активирован ли аксессуар с id - item_id
        downgrade - если активирован, то вызывает понижение прочности предмета
     """
@@ -88,7 +89,7 @@ async def check_accessory(dino: Dino, item_id: str, downgrade: bool = False) -> 
     for acces_item, _ in acces_items:
         if acces_item['item_id'] == item_id:
             if downgrade:
-                return await downgrade_accessory(dino, item_id)
+                return await downgrade_accessory(dino, item_id, max_down)
             return True
     return False
 
