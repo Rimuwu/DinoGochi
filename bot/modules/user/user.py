@@ -56,7 +56,7 @@ class User:
         """Создание объекта пользователя
         """
         self.userid = 0
-        self.name = '' # Имя пользователя
+        self.name = 'noname' # Имя пользователя
         self.avatar = '' # file_id аватара
 
         self.last_message_time = 0
@@ -268,6 +268,7 @@ async def insert_user(userid: int, lang: str, name = '', avatar = ''):
         user = await User().create(userid)
         if name != '': 
             user.name = escape_markdown(name)
+            if user.name == '': user.name = 'noname'
         if avatar == '': user.avatar = avatar
 
         await create_ads_data(userid, 1800)
@@ -565,7 +566,7 @@ async def user_info(userid: int, lang: str, secret: bool = False,
 async def user_name(userid: int):
     user = await users.find_one({'userid': int(userid)}, comment='user_name')
     if user: 
-        if user['name'] or user['name'] != '':
+        if user['name'] or user['name'] != '' or user['name'] != 'noname':
             return user['name']
         else:
             chat_user = await bot.get_chat_member(userid, userid)
