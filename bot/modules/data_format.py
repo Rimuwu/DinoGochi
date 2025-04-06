@@ -141,11 +141,13 @@ def seconds_to_time(seconds: int) -> dict:
     """ Преобразует число в словарь
     """
     time_calculation = {
+        'year': 31_536_000,
         'month': 2_592_000, 'weekly': 604800,
         'day': 86400, 'hour': 3600, 
         'minute': 60, 'second': 1
     }
     time_dict = {
+        'year': 0,
         'month': 0, 'weekly': 0,
         'day': 0, 'hour': 0, 
         'minute': 0, 'second': 0
@@ -160,7 +162,7 @@ def seconds_to_time(seconds: int) -> dict:
 
     return time_dict 
 
-def seconds_to_str(seconds: int, lang: str='en', mini: bool=False, max_lvl='second'):
+def seconds_to_str(seconds: int, lang: str='en', mini: bool=False, max_lvl='auto'):
     """ Преобразует число секунд в строку
        Example:
        > seconds=10000 lang='ru'
@@ -202,6 +204,19 @@ def seconds_to_str(seconds: int, lang: str='en', mini: bool=False, max_lvl='seco
         return result
 
     data = seconds_to_time(seconds=seconds)
+    if max_lvl == 'auto':
+        max_lvl, a, lst_n = 'second', 0, 'second'
+
+        for tp, unit in data.items():
+            if unit: 
+                a += 1
+                lst_n = tp
+            if a >= 3:
+                max_lvl = tp
+                break
+
+        if a < 3: max_lvl = lst_n
+
     for tp, unit in data.items():
         if unit:
             if mini:
@@ -213,7 +228,7 @@ def seconds_to_str(seconds: int, lang: str='en', mini: bool=False, max_lvl='seco
     if result[:-1]: return result[:-1]
     else: 
         result = '0'
-        if max_lvl != 'seconds': 
+        if max_lvl != 'second': 
             return f'0 {time_format[max_lvl][3]}'
         return result
 
