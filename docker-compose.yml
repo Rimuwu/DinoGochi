@@ -10,6 +10,8 @@ services:
       - ./config.json:/bot/config.json:ro # Проброс конфига
       - /etc/localtime:/etc/localtime:ro # Проброс времени
     restart: unless-stopped
+    networks:
+      - shared_network
 
   mongo:
     image: mongo:latest # Имя образа
@@ -22,3 +24,9 @@ services:
       - ./mongodb:/data/db # Каталог с данными
     restart: unless-stopped
     command: mongod --quiet --logpath /dev/null
+    networks:
+      - shared_network
+
+networks:
+  shared_network:
+    name: shared_network
