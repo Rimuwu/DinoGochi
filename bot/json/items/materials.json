@@ -13,7 +13,8 @@
                      "count": 50}
                 ]
             }
-        }
+        },
+        "groups": ["add_bank_items"]
     },
     "skin": {
         "image": "item26",
