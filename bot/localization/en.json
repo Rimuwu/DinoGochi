@@ -1726,11 +1726,11 @@
             "text_ost": "Left:",
             "rare_name": "Rarity:",
             "time_position": [
-                465,
+                355,
                 220
             ],
             "rare_position": [
-                465,
+                395,
                 280
             ],
             "incubation_text": "🥚 | Egg incubated, left: {time_end}",

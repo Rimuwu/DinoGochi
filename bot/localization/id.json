@@ -1726,11 +1726,11 @@
             "text_ost": "Kiri:",
             "rare_name": "Kelangkaan:",
             "time_position": [
-                465,
+                325,
                 220
             ],
             "rare_position": [
-                465,
+                525,
                 280
             ],
             "incubation_text": "🥚 | Telur diinkubasi, tersisa: {time_end}",
