@@ -29,6 +29,7 @@ from aiogram import F
 from aiogram.filters import Command, StateFilter
 
 from aiogram.fsm.context import FSMContext
+import re
 
 users = DBconstructor(mongo_client.user.users)
 langs = DBconstructor(mongo_client.user.lang)
@@ -369,7 +370,21 @@ async def my_nick_set(nick: str, transmitted_data: dict):
     chatid = transmitted_data['chatid']
 
     nick = escape_markdown(nick)
-    if not nick:
+    print(list(nick))
+    for i in list(nick):
+        if i in ['\n', '\r', '\t', ' ', 'ᅠ']:
+            nick = nick.replace(i, ' ')
+
+    if 'ᅠ' in nick: nick.replace('ᅠ', '')
+
+    if not nick.strip() or nick.isspace():
+        await bot.send_message(chatid, t('null_nick', lang), 
+                    reply_markup= await m(userid, 'last_menu', lang))
+        return
+
+
+    # Regex to allow only letters, numbers, emojis, and spaces
+    if not re.match(r'^[\w\s\U0001F300-\U0001FAD6\U0001F600-\U0001F64F\U0001F680-\U0001F6FF\U0001F700-\U0001F77F\U0001F780-\U0001F7FF\U0001F800-\U0001F8FF\U0001F900-\U0001F9FF\U0001FA00-\U0001FA6F\U0001FA70-\U0001FAFF]+$', nick):
         await bot.send_message(chatid, t('null_nick', lang), 
                     reply_markup= await m(userid, 'last_menu', lang))
         return
@@ -393,7 +408,7 @@ async def my_nick(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await ChooseStringState(my_nick_set, userid, chatid, lang, max_len=20)
+    await ChooseStringState(my_nick_set, userid, chatid, lang, max_len=20, min_len=3)
     await bot.send_message(userid, t('edit_nick', lang), 
                            reply_markup=cancel_markup(lang))
 
