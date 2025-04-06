@@ -61,4 +61,4 @@ async def check_items():
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(check_items, 10.0, 1.0)
+        add_task(check_items, 30.0, 10.0)
