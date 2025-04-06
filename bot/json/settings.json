@@ -399,27 +399,27 @@
 
     "buyer": {
         "common": {
-            "price": 10,
+            "price": 5,
             "one_col": 6
         },
         "uncommon": {
-            "price": 50,
+            "price": 25,
             "one_col": 4
         },
         "rare": {
-            "price": 250,
+            "price": 175,
             "one_col": 5
         },
         "mystical": {
-            "price": 3000,
+            "price": 1500,
             "one_col": 3
         },
         "legendary": {
-            "price": 10000,
+            "price": 5000,
             "one_col": 2
         },
         "mythical": {
-            "price": 20000,
+            "price": 10000,
             "one_col": 1
         }
     },
