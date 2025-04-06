@@ -92,7 +92,8 @@
         "capacity": 10,
         "image": "item45",
         "rank": "rare",
-        "type": "backpack"
+        "type": "backpack",
+        "groups": ["repairing", "backpacks"]
     },
     "reinforced_backpack": {
         "abilities": {
@@ -101,7 +102,8 @@
         "capacity": 20,
         "image": "item45",
         "rank": "mystical",
-        "type": "backpack"
+        "type": "backpack",
+        "groups": ["repairing", "backpacks"]
     },
 
     "bone_pickaxe": {
@@ -117,7 +119,7 @@
         "image": "item64",
         "rank": "uncommon",
         "type": "weapon",
-        "groups": ["repairing"]
+        "groups": ["repairing", "pickaxes"]
     },
     "iron_pickaxe": {
         "abilities": {
@@ -132,7 +134,7 @@
         "image": "item64",
         "rank": "uncommon",
         "type": "weapon",
-        "groups": ["repairing"]
+        "groups": ["repairing", "pickaxes"]
     },
     "copper_pickaxe": {
         "abilities": {
@@ -147,7 +149,7 @@
         "image": "item64",
         "rank": "uncommon",
         "type": "weapon",
-        "groups": ["repairing"]
+        "groups": ["repairing", "pickaxes"]
     },
 
     "wood_shield": {
@@ -204,7 +206,7 @@
         "image": "",
         "rank": "uncommon",
         "type": "weapon",
-        "groups": ["repairing"]
+        "groups": ["repairing", "axes"]
     },
     "iron_axe": {
         "abilities": {
@@ -219,7 +221,7 @@
         "image": "",
         "rank": "mystical",
         "type": "weapon",
-        "groups": ["repairing"]
+        "groups": ["repairing", "axes"]
     },
     "copper_axe": {
         "abilities": {
@@ -234,6 +236,6 @@
         "image": "",
         "rank": "rare",
         "type": "weapon",
-        "groups": ["repairing"]
+        "groups": ["repairing", "axes"]
     }
 }
