@@ -36,7 +36,7 @@ async def show_advert_gramads(user_id: int):
 
     res = 6
     if conf.advert_token:
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=10)) as session:
 
             async with session.post(
                 'https://api.gramads.net/ad/SendPost',
