@@ -10,6 +10,7 @@ from bot.modules.dinosaur.mood import check_inspiration
 from bot.modules.dinosaur.skills import check_skill
 from bot.modules.dinosaur.works import end_work
 from bot.modules.items.item import get_items_names
+from bot.modules.items.item_tools import rare_random
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import get_lang, t
 from bot.modules.notifications import dino_notification
@@ -20,15 +21,15 @@ dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 data = {
-    'bank': 'recipe',
-    'mine': 'ore',
-    'sawmill': 'wood'
+    'bank': ['recipe', 'add_bank_items'],
+    'mine': ['ore'],
+    'sawmill': ['wood']
 }
 
-async def work():
+async def work_task():
     res_list = await long_activity.find(
         {'activity_type': {'$in': ['bank', 'mine', 'sawmill']},
-         'last_check': {'$lte': int(time()) - 600}
+         'last_check': {'$lte': int(time()) - 1}
          }
     )
 
@@ -110,16 +111,20 @@ async def work():
                         if not insp: count = randint(1, 2)
                         else: count = randint(1, 4)
 
-                    items_group_ids = get_group(data[work["activity_type"]])
-                    random_item = choice(items_group_ids)
+                    items_group_ids = []
+                    for group in data[work["activity_type"]]:
+                        items_group_ids += get_group(group)
 
-                    if random_item not in work['items']:
-                        work['items'][random_item] = {
-                            'items_data': {'item_id': random_item},
-                            'count': count
-                        }
-                    else:
-                        work['items'][random_item]['count'] += count
+                    random_items = rare_random(items_group_ids, count)
+
+                    for random_item in random_items:
+                        if random_item in work['items']:
+                            work['items'][random_item]['count'] += 1
+                        else:
+                            work['items'][random_item] = {
+                                'items_data': {'item_id': random_item},
+                                'count': 1
+                            }
 
                     await long_activity.update_one({'_id': work['_id']}, {
                         '$set': {
@@ -169,4 +174,4 @@ async def work():
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(work, 300.0, 10.0)
+        add_task(work_task, 300.0, 10.0)
