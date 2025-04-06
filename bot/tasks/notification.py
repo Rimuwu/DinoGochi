@@ -40,7 +40,7 @@ async def dino_notifications_task(dinos):
 async def dino_notifications():
     """Главная функция уведомлений динозавров"""
     dinos = await dinosaurs.find({}, comment='dino_notifications_dinos')
-    num_tasks = 4  # Количество тасков
+    num_tasks = 16  # Количество тасков
     chunk_size = math.ceil(len(dinos) / num_tasks)
 
     tasks = [dino_notifications_task(dinos[i * chunk_size:(i + 1) * chunk_size]) for i in range(num_tasks)]
