@@ -506,7 +506,7 @@ async def user_info(userid: int, lang: str, secret: bool = False,
                         )
         return_text += '\n\n'
         for iter_data in dinos:
-            dino = iter_data['dino']
+            dino: Dino = iter_data['dino']
             dino_status = t(f'user_profile.stats.{await dino.status}', lang)
             dino_rare_dict = get_data(f'rare.{dino.quality}', lang)
             dino_rare = f'{dino_rare_dict[2]} {dino_rare_dict[1]}'
@@ -522,7 +522,7 @@ async def user_info(userid: int, lang: str, secret: bool = False,
                             dino_status=dino_status,
                             dino_rare=dino_rare,
                             owner=dino_owner,
-                            age=seconds_to_str(age.days * 86400, lang, True)
+                            age=seconds_to_str(age.seconds, lang, True)
                         )
 
         for egg in eggs:
