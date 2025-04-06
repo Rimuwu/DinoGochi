@@ -587,6 +587,97 @@ def generate_recipes_canvas(recipes_data, output_file):
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(canvas_data, f, ensure_ascii=False, indent=2)
 
+def generate_groups_canvas(output_file):
+    """Генерирует Canvas с группами и их предметами."""
+    nodes = []
+    edges = []
+    x_offset = 0
+    y_offset = 0
+
+    for group_id, items in items_groups.items():
+        # Создаём узел группы
+        group_node_id = str(uuid.uuid4())
+        group_name = loc_group_data.get(group_id, group_id)
+        nodes.append({
+            "id": group_node_id,
+            "type": "text",
+            "x": x_offset,
+            "y": y_offset,
+            "width": 200,
+            "height": 80,
+            "text": group_name,
+            "color": "#f5d033"
+        })
+
+        # Добавляем узлы для предметов в группе
+        item_y_offset = y_offset + 150
+        min_x, min_y = x_offset, y_offset
+        max_x, max_y = x_offset, y_offset
+        previous_node_id = group_node_id  # Начинаем с узла группы
+
+        for item_id in items:
+            item_node_id = str(uuid.uuid4())
+            nodes.append({
+                "id": item_node_id,
+                "type": "text",
+                "x": x_offset + 300,
+                "y": item_y_offset,
+                "width": 200,
+                "height": 80,
+                "text": get_item_name(item_id),
+                "color": "#ff7538"
+            })
+
+            # Добавляем связь от предыдущего узла к текущему
+            edges.append({
+                "id": str(uuid.uuid4()),
+                "fromNode": previous_node_id,
+                "toNode": item_node_id,
+                "fromSide": "bottom",
+                "toSide": "top"
+            })
+
+            # Обновляем предыдущий узел
+            previous_node_id = item_node_id
+
+            # Обновляем границы группы
+            min_x = min(min_x, x_offset + 300)
+            min_y = min(min_y, item_y_offset)
+            max_x = max(max_x, x_offset + 300 + 200)  # 200 - ширина узла
+            max_y = max(max_y, item_y_offset + 80)   # 80 - высота узла
+
+            item_y_offset += 150
+
+        # Добавляем рамку для группы
+        nodes.append({
+            "id": f"group_bounds_{group_id}",
+            "type": "group",
+            "x": min_x - 50,  # Добавляем отступ
+            "y": min_y - 50,  # Добавляем отступ
+            "width": max_x - min_x + 100,  # Ширина группы с отступами
+            "height": max_y - min_y + 100,  # Высота группы с отступами
+            "label": group_name,
+            "backgroundStyle": "ratio"
+        })
+
+        # Смещаемся для следующей группы
+        y_offset += max(400, item_y_offset - y_offset + 100)
+        if y_offset > 5000:  # Если достигли нижней границы, переносим в новую колонку
+            y_offset = 0
+            x_offset += 800
+
+    # Формируем данные для Canvas
+    canvas_data = {
+        "type": "canvas",
+        "version": "0.1.6",
+        "nodes": nodes,
+        "edges": edges
+    }
+
+    # Сохраняем в файл
+    with open(output_file, "w", encoding="utf-8") as f:
+        json.dump(canvas_data, f, ensure_ascii=False, indent=2)
+
 if __name__ == "__main__":
     recipes_file = base_path / "bot" / "json" / "items" / "recipes.json"
     output_canvas = base_path / "tools" / "visualize" / "bot-value" / "recipes_canvas.canvas"
@@ -595,4 +686,7 @@ if __name__ == "__main__":
         recipes_data = json.load(f)
 
     generate_recipes_canvas(recipes_data, output_canvas)
+
+    groups_canvas_file = base_path / "tools" / "visualize" / "bot-value" / "groups_and_items.canvas"
+    generate_groups_canvas(groups_canvas_file)
 

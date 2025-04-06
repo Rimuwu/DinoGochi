@@ -1,0 +1,1980 @@
+{
+  "type": "canvas",
+  "version": "0.1.6",
+  "nodes": [
+    {
+      "id": "168b1534-83b2-423c-b0f0-ef1d43420d92",
+      "type": "text",
+      "x": 0,
+      "y": 0,
+      "width": 200,
+      "height": 80,
+      "text": "🔧 Ремонтируемые предметы",
+      "color": "#f5d033"
+    },
+    {
+      "id": "127b3373-246c-47ba-a471-d1af32d56c23",
+      "type": "text",
+      "x": 300,
+      "y": 150,
+      "width": 200,
+      "height": 80,
+      "text": "🎣 Удочка",
+      "color": "#ff7538"
+    },
+    {
+      "id": "432798e8-6a36-4894-8596-82cd6daddbbc",
+      "type": "text",
+      "x": 300,
+      "y": 300,
+      "width": 200,
+      "height": 80,
+      "text": "🕸 Сеть",
+      "color": "#ff7538"
+    },
+    {
+      "id": "abfd84bf-3625-4aca-aced-5411505f7586",
+      "type": "text",
+      "x": 300,
+      "y": 450,
+      "width": 200,
+      "height": 80,
+      "text": "👒 Корзина",
+      "color": "#ff7538"
+    },
+    {
+      "id": "e4ea9130-9f1f-4e7e-8c55-65d46b9d7167",
+      "type": "text",
+      "x": 300,
+      "y": 600,
+      "width": 200,
+      "height": 80,
+      "text": "🔥 Факел",
+      "color": "#ff7538"
+    },
+    {
+      "id": "f9c4547d-59f1-4827-8305-4cf2a7ae4a74",
+      "type": "text",
+      "x": 300,
+      "y": 750,
+      "width": 200,
+      "height": 80,
+      "text": "🗡 Костяной меч",
+      "color": "#ff7538"
+    },
+    {
+      "id": "3316f5db-f225-4d1b-81e7-3848e027e765",
+      "type": "text",
+      "x": 300,
+      "y": 900,
+      "width": 200,
+      "height": 80,
+      "text": "🗡 Железный меч",
+      "color": "#ff7538"
+    },
+    {
+      "id": "fcdc3a0a-3087-45f5-b169-e9976ddde714",
+      "type": "text",
+      "x": 300,
+      "y": 1050,
+      "width": 200,
+      "height": 80,
+      "text": "🗡 Медный меч",
+      "color": "#ff7538"
+    },
+    {
+      "id": "5105b595-ce78-49b5-8a89-1ab265555891",
+      "type": "text",
+      "x": 300,
+      "y": 1200,
+      "width": 200,
+      "height": 80,
+      "text": "🏹 Костяной лук",
+      "color": "#ff7538"
+    },
+    {
+      "id": "e34231a9-6f6c-4ef7-99b6-adb48c3b416a",
+      "type": "text",
+      "x": 300,
+      "y": 1350,
+      "width": 200,
+      "height": 80,
+      "text": "🏹 Арбалет",
+      "color": "#ff7538"
+    },
+    {
+      "id": "de55afe0-dace-4faa-be3e-6b3332fbed7d",
+      "type": "text",
+      "x": 300,
+      "y": 1500,
+      "width": 200,
+      "height": 80,
+      "text": "🎒 Обычный рюкзак",
+      "color": "#ff7538"
+    },
+    {
+      "id": "49961725-ede7-4486-82e4-f63d64bc1dc3",
+      "type": "text",
+      "x": 300,
+      "y": 1650,
+      "width": 200,
+      "height": 80,
+      "text": "🎒 Усиленный рюкзак",
+      "color": "#ff7538"
+    },
+    {
+      "id": "b6c72a5b-40a8-486f-94ea-638684c2a154",
+      "type": "text",
+      "x": 300,
+      "y": 1800,
+      "width": 200,
+      "height": 80,
+      "text": "⛏ Костяная кирка",
+      "color": "#ff7538"
+    },
+    {
+      "id": "f36ece22-329a-4c83-ace5-30cae9663132",
+      "type": "text",
+      "x": 300,
+      "y": 1950,
+      "width": 200,
+      "height": 80,
+      "text": "⛏ Железная кирка",
+      "color": "#ff7538"
+    },
+    {
+      "id": "7795db45-bd5f-4d31-adab-afe436e247ff",
+      "type": "text",
+      "x": 300,
+      "y": 2100,
+      "width": 200,
+      "height": 80,
+      "text": "⛏ Медная кирка",
+      "color": "#ff7538"
+    },
+    {
+      "id": "a96de802-38df-4740-a683-6971f7963dc7",
+      "type": "text",
+      "x": 300,
+      "y": 2250,
+      "width": 200,
+      "height": 80,
+      "text": "🛡 Деревянный щит",
+      "color": "#ff7538"
+    },
+    {
+      "id": "354cdbad-cb43-4a70-a914-fbe14a0b7137",
+      "type": "text",
+      "x": 300,
+      "y": 2400,
+      "width": 200,
+      "height": 80,
+      "text": "🛡 Железный щит",
+      "color": "#ff7538"
+    },
+    {
+      "id": "9192e359-61d9-40ad-93b9-c8e27caba5ef",
+      "type": "text",
+      "x": 300,
+      "y": 2550,
+      "width": 200,
+      "height": 80,
+      "text": "🛡 Медный щит",
+      "color": "#ff7538"
+    },
+    {
+      "id": "b4a3febb-2dd0-4330-996a-db57c949a91d",
+      "type": "text",
+      "x": 300,
+      "y": 2700,
+      "width": 200,
+      "height": 80,
+      "text": "🧥 Кожаная куртка",
+      "color": "#ff7538"
+    },
+    {
+      "id": "df3bdd49-19c4-4b53-a7ef-caceb5b34d1c",
+      "type": "text",
+      "x": 300,
+      "y": 2850,
+      "width": 200,
+      "height": 80,
+      "text": "🪓 Костяной топор",
+      "color": "#ff7538"
+    },
+    {
+      "id": "bb70a157-7e44-43d1-a08f-3927cee2ccbb",
+      "type": "text",
+      "x": 300,
+      "y": 3000,
+      "width": 200,
+      "height": 80,
+      "text": "🪓 Железный топор",
+      "color": "#ff7538"
+    },
+    {
+      "id": "2cba0353-4e52-48d7-9fea-b7a64325ea70",
+      "type": "text",
+      "x": 300,
+      "y": 3150,
+      "width": 200,
+      "height": 80,
+      "text": "🪓 Медный топор",
+      "color": "#ff7538"
+    },
+    {
+      "id": "521e98f7-6150-473a-bc02-e854002f9fc6",
+      "type": "text",
+      "x": 300,
+      "y": 3300,
+      "width": 200,
+      "height": 80,
+      "text": "⏲ Таймер",
+      "color": "#ff7538"
+    },
+    {
+      "id": "2c80d9a6-849a-4e4a-8c83-c565f320759f",
+      "type": "text",
+      "x": 300,
+      "y": 3450,
+      "width": 200,
+      "height": 80,
+      "text": "🧩 Настольные игры",
+      "color": "#ff7538"
+    },
+    {
+      "id": "d643fdc5-9ce9-4cc2-b429-cf68b9a4445a",
+      "type": "text",
+      "x": 300,
+      "y": 3600,
+      "width": 200,
+      "height": 80,
+      "text": "🎮 Контроллер",
+      "color": "#ff7538"
+    },
+    {
+      "id": "4fbe5b55-55ab-4348-8cca-c9e9e88e5f2b",
+      "type": "text",
+      "x": 300,
+      "y": 3750,
+      "width": 200,
+      "height": 80,
+      "text": "🧥 Плащ",
+      "color": "#ff7538"
+    },
+    {
+      "id": "6c95bf36-842e-4891-8e43-d759e609d50d",
+      "type": "text",
+      "x": 300,
+      "y": 3900,
+      "width": 200,
+      "height": 80,
+      "text": "🧤 Кожаная одежда",
+      "color": "#ff7538"
+    },
+    {
+      "id": "8fe73fee-b414-41df-9fdc-d7dbf04c067e",
+      "type": "text",
+      "x": 300,
+      "y": 4050,
+      "width": 200,
+      "height": 80,
+      "text": "👜 Походный мешочек",
+      "color": "#ff7538"
+    },
+    {
+      "id": "9e9a012c-15e6-4410-936f-8b3bbf657eed",
+      "type": "text",
+      "x": 300,
+      "y": 4200,
+      "width": 200,
+      "height": 80,
+      "text": "👜 Сумка с вкусняшками",
+      "color": "#ff7538"
+    },
+    {
+      "id": "c600e8bb-9837-47a3-a505-3c1c93e0a0f6",
+      "type": "text",
+      "x": 300,
+      "y": 4350,
+      "width": 200,
+      "height": 80,
+      "text": "🎲 Кубик рубика",
+      "color": "#ff7538"
+    },
+    {
+      "id": "c0179b67-9f56-466c-a4bf-35a3dd84c8e1",
+      "type": "text",
+      "x": 300,
+      "y": 4500,
+      "width": 200,
+      "height": 80,
+      "text": "👜 Сумка с замком",
+      "color": "#ff7538"
+    },
+    {
+      "id": "f3aae666-e592-474a-b481-1a0e9f72421f",
+      "type": "text",
+      "x": 300,
+      "y": 4650,
+      "width": 200,
+      "height": 80,
+      "text": "🔪 Нож для снятия шкур",
+      "color": "#ff7538"
+    },
+    {
+      "id": "05a947bc-c027-40ac-bacc-a3238d27efbb",
+      "type": "text",
+      "x": 300,
+      "y": 4800,
+      "width": 200,
+      "height": 80,
+      "text": "🧸 Мишка",
+      "color": "#ff7538"
+    },
+    {
+      "id": "93e03021-61c2-4ca0-b0ab-725a8258a6a3",
+      "type": "text",
+      "x": 300,
+      "y": 4950,
+      "width": 200,
+      "height": 80,
+      "text": "🧸 Подушка",
+      "color": "#ff7538"
+    },
+    {
+      "id": "92993702-3b83-4881-b6eb-36a0715292cf",
+      "type": "text",
+      "x": 300,
+      "y": 5100,
+      "width": 200,
+      "height": 80,
+      "text": "❤️‍🩹 Одеяло",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_repairing",
+      "type": "group",
+      "x": -50,
+      "y": -50,
+      "width": 600,
+      "height": 5280,
+      "label": "🔧 Ремонтируемые предметы",
+      "backgroundStyle": "ratio"
+    },
+    {
+      "id": "b4085fab-ed85-40b6-aae0-9f39e21718ae",
+      "type": "text",
+      "x": 800,
+      "y": 0,
+      "width": 200,
+      "height": 80,
+      "text": "backpacks",
+      "color": "#f5d033"
+    },
+    {
+      "id": "b6f7b75d-c470-4d02-86f0-b00bd9cc03a4",
+      "type": "text",
+      "x": 1100,
+      "y": 150,
+      "width": 200,
+      "height": 80,
+      "text": "🎒 Обычный рюкзак",
+      "color": "#ff7538"
+    },
+    {
+      "id": "47c05cb6-a7b5-48f7-a350-7839b29aad5d",
+      "type": "text",
+      "x": 1100,
+      "y": 300,
+      "width": 200,
+      "height": 80,
+      "text": "🎒 Усиленный рюкзак",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_backpacks",
+      "type": "group",
+      "x": 750,
+      "y": -50,
+      "width": 600,
+      "height": 480,
+      "label": "backpacks",
+      "backgroundStyle": "ratio"
+    },
+    {
+      "id": "c566ec61-67e4-4cd8-9e6f-f5f01de5739c",
+      "type": "text",
+      "x": 800,
+      "y": 550,
+      "width": 200,
+      "height": 80,
+      "text": "pickaxes",
+      "color": "#f5d033"
+    },
+    {
+      "id": "0e5dd7fa-7ba2-4859-8f86-bbc67b769d72",
+      "type": "text",
+      "x": 1100,
+      "y": 700,
+      "width": 200,
+      "height": 80,
+      "text": "⛏ Костяная кирка",
+      "color": "#ff7538"
+    },
+    {
+      "id": "b508e348-91cc-48ce-b875-79c241d72f84",
+      "type": "text",
+      "x": 1100,
+      "y": 850,
+      "width": 200,
+      "height": 80,
+      "text": "⛏ Железная кирка",
+      "color": "#ff7538"
+    },
+    {
+      "id": "45e4d5f2-b526-4938-9ba5-69d71a295918",
+      "type": "text",
+      "x": 1100,
+      "y": 1000,
+      "width": 200,
+      "height": 80,
+      "text": "⛏ Медная кирка",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_pickaxes",
+      "type": "group",
+      "x": 750,
+      "y": 500,
+      "width": 600,
+      "height": 630,
+      "label": "pickaxes",
+      "backgroundStyle": "ratio"
+    },
+    {
+      "id": "0bde2272-c27c-404b-abe1-e381f71ffc2a",
+      "type": "text",
+      "x": 800,
+      "y": 1250,
+      "width": 200,
+      "height": 80,
+      "text": "axes",
+      "color": "#f5d033"
+    },
+    {
+      "id": "54ff0e69-b225-409f-8755-1c28f686bbd1",
+      "type": "text",
+      "x": 1100,
+      "y": 1400,
+      "width": 200,
+      "height": 80,
+      "text": "🪓 Костяной топор",
+      "color": "#ff7538"
+    },
+    {
+      "id": "82cd947b-e653-4376-bb60-1e874cbb71da",
+      "type": "text",
+      "x": 1100,
+      "y": 1550,
+      "width": 200,
+      "height": 80,
+      "text": "🪓 Железный топор",
+      "color": "#ff7538"
+    },
+    {
+      "id": "dac189a7-2081-49ac-84b4-801e62aa5266",
+      "type": "text",
+      "x": 1100,
+      "y": 1700,
+      "width": 200,
+      "height": 80,
+      "text": "🪓 Медный топор",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_axes",
+      "type": "group",
+      "x": 750,
+      "y": 1200,
+      "width": 600,
+      "height": 630,
+      "label": "axes",
+      "backgroundStyle": "ratio"
+    },
+    {
+      "id": "f0374ac2-cf53-407d-9d84-893dba61cc6a",
+      "type": "text",
+      "x": 800,
+      "y": 1950,
+      "width": 200,
+      "height": 80,
+      "text": "🥩 Любое мясо",
+      "color": "#f5d033"
+    },
+    {
+      "id": "694a7a3d-63b6-4c2b-aab9-6317efdbf27b",
+      "type": "text",
+      "x": 1100,
+      "y": 2100,
+      "width": 200,
+      "height": 80,
+      "text": "🍖 Мясо кабана",
+      "color": "#ff7538"
+    },
+    {
+      "id": "79f61d14-4c4f-4f47-ad14-297797179bff",
+      "type": "text",
+      "x": 1100,
+      "y": 2250,
+      "width": 200,
+      "height": 80,
+      "text": "🥩 Мясо волка",
+      "color": "#ff7538"
+    },
+    {
+      "id": "d2614922-dd61-407c-a6fa-36e4d5e47092",
+      "type": "text",
+      "x": 1100,
+      "y": 2400,
+      "width": 200,
+      "height": 80,
+      "text": "🍗 Куриная ножка",
+      "color": "#ff7538"
+    },
+    {
+      "id": "27b10581-0b89-45a3-be90-a927f75682d8",
+      "type": "text",
+      "x": 1100,
+      "y": 2550,
+      "width": 200,
+      "height": 80,
+      "text": "🥩 Жареное мясо",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_meat",
+      "type": "group",
+      "x": 750,
+      "y": 1900,
+      "width": 600,
+      "height": 780,
+      "label": "🥩 Любое мясо",
+      "backgroundStyle": "ratio"
+    },
+    {
+      "id": "d97ec7c0-64db-44b8-a495-3402f9c33f75",
+      "type": "text",
+      "x": 800,
+      "y": 2800,
+      "width": 200,
+      "height": 80,
+      "text": "hunt-activity",
+      "color": "#f5d033"
+    },
+    {
+      "id": "7f65550d-153a-4b2a-9c2f-4dbcdc5ab3b8",
+      "type": "text",
+      "x": 1100,
+      "y": 2950,
+      "width": 200,
+      "height": 80,
+      "text": "🍖 Мясо кабана",
+      "color": "#ff7538"
+    },
+    {
+      "id": "9680dfcb-2fed-4245-bd13-86ad3cf72c2f",
+      "type": "text",
+      "x": 1100,
+      "y": 3100,
+      "width": 200,
+      "height": 80,
+      "text": "🥩 Мясо волка",
+      "color": "#ff7538"
+    },
+    {
+      "id": "7c002f9e-4e29-424b-a10d-208ca98578ed",
+      "type": "text",
+      "x": 1100,
+      "y": 3250,
+      "width": 200,
+      "height": 80,
+      "text": "🍗 Куриная ножка",
+      "color": "#ff7538"
+    },
+    {
+      "id": "45d1446a-4f27-46e0-bfa7-94a16743881c",
+      "type": "text",
+      "x": 1100,
+      "y": 3400,
+      "width": 200,
+      "height": 80,
+      "text": "👢 Кожа",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_hunt-activity",
+      "type": "group",
+      "x": 750,
+      "y": 2750,
+      "width": 600,
+      "height": 780,
+      "label": "hunt-activity",
+      "backgroundStyle": "ratio"
+    },
+    {
+      "id": "025b8b5d-0d8b-4f6f-9df0-47cff104b8af",
+      "type": "text",
+      "x": 800,
+      "y": 3650,
+      "width": 200,
+      "height": 80,
+      "text": "collecting-activity",
+      "color": "#f5d033"
+    },
+    {
+      "id": "15bc57b2-5df3-4e08-b4e3-72427cbea395",
+      "type": "text",
+      "x": 1100,
+      "y": 3800,
+      "width": 200,
+      "height": 80,
+      "text": "🌿 Связка трав",
+      "color": "#ff7538"
+    },
+    {
+      "id": "c18e5aa0-4a5b-4e69-a820-3aff43fad488",
+      "type": "text",
+      "x": 1100,
+      "y": 3950,
+      "width": 200,
+      "height": 80,
+      "text": "🌾 Травы с полей",
+      "color": "#ff7538"
+    },
+    {
+      "id": "ffcb02c6-9e87-4d4d-9389-9111d05fcdd7",
+      "type": "text",
+      "x": 1100,
+      "y": 4100,
+      "width": 200,
+      "height": 80,
+      "text": "🍒 Ягоды",
+      "color": "#ff7538"
+    },
+    {
+      "id": "d187f37a-52f0-4b98-9dfa-954ee046b4d8",
+      "type": "text",
+      "x": 1100,
+      "y": 4250,
+      "width": 200,
+      "height": 80,
+      "text": "🍀 Изысканные травы",
+      "color": "#ff7538"
+    },
+    {
+      "id": "5c254b0a-306d-428b-8190-b3005aa14a3d",
+      "type": "text",
+      "x": 1100,
+      "y": 4400,
+      "width": 200,
+      "height": 80,
+      "text": "🥕 Морковь",
+      "color": "#ff7538"
+    },
+    {
+      "id": "b3bb8bc0-50c2-4b2f-aaca-68084519006d",
+      "type": "text",
+      "x": 1100,
+      "y": 4550,
+      "width": 200,
+      "height": 80,
+      "text": "🍅 Помидор",
+      "color": "#ff7538"
+    },
+    {
+      "id": "0e529353-98e8-4b67-8e21-f3fa3d80a773",
+      "type": "text",
+      "x": 1100,
+      "y": 4700,
+      "width": 200,
+      "height": 80,
+      "text": "🥔 Картошка",
+      "color": "#ff7538"
+    },
+    {
+      "id": "be5c28b6-1ac9-4e0d-a1dd-6358ca4c349c",
+      "type": "text",
+      "x": 1100,
+      "y": 4850,
+      "width": 200,
+      "height": 80,
+      "text": "🍚 Рис",
+      "color": "#ff7538"
+    },
+    {
+      "id": "67333e9e-4fed-4d9a-a3be-b2c643ba6e8c",
+      "type": "text",
+      "x": 1100,
+      "y": 5000,
+      "width": 200,
+      "height": 80,
+      "text": "🍌 Банан",
+      "color": "#ff7538"
+    },
+    {
+      "id": "1cf0c2ac-665d-4d58-b6c1-06a690310a80",
+      "type": "text",
+      "x": 1100,
+      "y": 5150,
+      "width": 200,
+      "height": 80,
+      "text": "🍄 Гриб",
+      "color": "#ff7538"
+    },
+    {
+      "id": "ffed3a37-14cf-4c04-bacd-de6f5e450633",
+      "type": "text",
+      "x": 1100,
+      "y": 5300,
+      "width": 200,
+      "height": 80,
+      "text": "🌶️ Специи",
+      "color": "#ff7538"
+    },
+    {
+      "id": "fb837d7c-ca30-4b16-80ca-0e8f62cdf6c7",
+      "type": "text",
+      "x": 1100,
+      "y": 5450,
+      "width": 200,
+      "height": 80,
+      "text": "🌽 Кукуруза",
+      "color": "#ff7538"
+    },
+    {
+      "id": "7ae091a0-7f2f-46ec-84ec-16a8b8557fee",
+      "type": "text",
+      "x": 1100,
+      "y": 5600,
+      "width": 200,
+      "height": 80,
+      "text": "🥢 Веточки дерева",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_collecting-activity",
+      "type": "group",
+      "x": 750,
+      "y": 3600,
+      "width": 600,
+      "height": 2130,
+      "label": "collecting-activity",
+      "backgroundStyle": "ratio"
+    },
+    {
+      "id": "a35304b7-e6c6-4601-a966-8b47af505362",
+      "type": "text",
+      "x": 1600,
+      "y": 0,
+      "width": 200,
+      "height": 80,
+      "text": "fishing-activity",
+      "color": "#f5d033"
+    },
+    {
+      "id": "bcdde45c-bc3f-47d2-9f65-21d69f2539e9",
+      "type": "text",
+      "x": 1900,
+      "y": 150,
+      "width": 200,
+      "height": 80,
+      "text": "🍤 Рыба",
+      "color": "#ff7538"
+    },
+    {
+      "id": "6eebdaee-d04e-4345-a05c-39869b30b0d0",
+      "type": "text",
+      "x": 1900,
+      "y": 300,
+      "width": 200,
+      "height": 80,
+      "text": "🍣 Морепродукты",
+      "color": "#ff7538"
+    },
+    {
+      "id": "5536b121-52d1-4df0-b9a8-57aff8781ca3",
+      "type": "text",
+      "x": 1900,
+      "y": 450,
+      "width": 200,
+      "height": 80,
+      "text": "🦪 Мелкая рыба",
+      "color": "#ff7538"
+    },
+    {
+      "id": "282b7ecb-803b-4942-bbeb-1210cc41fce0",
+      "type": "text",
+      "x": 1900,
+      "y": 600,
+      "width": 200,
+      "height": 80,
+      "text": "🦀 Краб",
+      "color": "#ff7538"
+    },
+    {
+      "id": "07b2473b-5534-444a-8e91-59e2371fa490",
+      "type": "text",
+      "x": 1900,
+      "y": 750,
+      "width": 200,
+      "height": 80,
+      "text": "🐡 Рыбий жир",
+      "color": "#ff7538"
+    },
+    {
+      "id": "04d2874b-9756-4e78-ab83-d77722b35013",
+      "type": "text",
+      "x": 1900,
+      "y": 900,
+      "width": 200,
+      "height": 80,
+      "text": "✒️ Чернила",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_fishing-activity",
+      "type": "group",
+      "x": 1550,
+      "y": -50,
+      "width": 600,
+      "height": 1080,
+      "label": "fishing-activity",
+      "backgroundStyle": "ratio"
+    },
+    {
+      "id": "44d0c893-4441-46ac-b8aa-1b285a0bf104",
+      "type": "text",
+      "x": 1600,
+      "y": 1150,
+      "width": 200,
+      "height": 80,
+      "text": "🐟 Любая рыба",
+      "color": "#f5d033"
+    },
+    {
+      "id": "57adc35d-6703-4066-8084-b7ebf04fa656",
+      "type": "text",
+      "x": 1900,
+      "y": 1300,
+      "width": 200,
+      "height": 80,
+      "text": "🍤 Рыба",
+      "color": "#ff7538"
+    },
+    {
+      "id": "f374ccad-0950-4a98-925f-37a8b85ebe10",
+      "type": "text",
+      "x": 1900,
+      "y": 1450,
+      "width": 200,
+      "height": 80,
+      "text": "🍣 Морепродукты",
+      "color": "#ff7538"
+    },
+    {
+      "id": "d43e4e31-d979-48a8-a731-d405f2ed1025",
+      "type": "text",
+      "x": 1900,
+      "y": 1600,
+      "width": 200,
+      "height": 80,
+      "text": "🦪 Мелкая рыба",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_fish",
+      "type": "group",
+      "x": 1550,
+      "y": 1100,
+      "width": 600,
+      "height": 630,
+      "label": "🐟 Любая рыба",
+      "backgroundStyle": "ratio"
+    },
+    {
+      "id": "ae1298ff-1bed-4aa9-a669-eb30c2761441",
+      "type": "text",
+      "x": 1600,
+      "y": 1850,
+      "width": 200,
+      "height": 80,
+      "text": "energy_eat",
+      "color": "#f5d033"
+    },
+    {
+      "id": "dd2fac66-159f-4895-874c-9e89b4f4796b",
+      "type": "text",
+      "x": 1900,
+      "y": 2000,
+      "width": 200,
+      "height": 80,
+      "text": "🍵 Чай",
+      "color": "#ff7538"
+    },
+    {
+      "id": "3c299736-4dba-47bc-8c38-02c00bc1217f",
+      "type": "text",
+      "x": 1900,
+      "y": 2150,
+      "width": 200,
+      "height": 80,
+      "text": "🥐 Круассан",
+      "color": "#ff7538"
+    },
+    {
+      "id": "87e5f0e9-9f4e-4c45-a2da-07c9cecc4d79",
+      "type": "text",
+      "x": 1900,
+      "y": 2300,
+      "width": 200,
+      "height": 80,
+      "text": "🍺 Эль",
+      "color": "#ff7538"
+    },
+    {
+      "id": "ffa5327a-f168-4a8a-983a-f49b6b092095",
+      "type": "text",
+      "x": 1900,
+      "y": 2450,
+      "width": 200,
+      "height": 80,
+      "text": "☕️ Горячий шоколад",
+      "color": "#ff7538"
+    },
+    {
+      "id": "6a4ae4f0-04a6-449d-a810-b967eb17a5c9",
+      "type": "text",
+      "x": 1900,
+      "y": 2600,
+      "width": 200,
+      "height": 80,
+      "text": "☕️ Кофе",
+      "color": "#ff7538"
+    },
+    {
+      "id": "7bed7f0e-863c-451d-952d-e6941e17cc69",
+      "type": "text",
+      "x": 1900,
+      "y": 2750,
+      "width": 200,
+      "height": 80,
+      "text": "🍫 Шоколад",
+      "color": "#ff7538"
+    },
+    {
+      "id": "5686d12b-d36c-4501-b5d3-003d0a1bcb37",
+      "type": "text",
+      "x": 1900,
+      "y": 2900,
+      "width": 200,
+      "height": 80,
+      "text": "🍬 Конфеты",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_energy_eat",
+      "type": "group",
+      "x": 1550,
+      "y": 1800,
+      "width": 600,
+      "height": 1230,
+      "label": "energy_eat",
+      "backgroundStyle": "ratio"
+    },
+    {
+      "id": "31b53c2e-ed90-4866-ad0f-dad9f8f36d14",
+      "type": "text",
+      "x": 1600,
+      "y": 3150,
+      "width": 200,
+      "height": 80,
+      "text": "add_bank_items",
+      "color": "#f5d033"
+    },
+    {
+      "id": "2aa2846b-bd2e-4c6f-8224-0d98d2b79ca4",
+      "type": "text",
+      "x": 1900,
+      "y": 3300,
+      "width": 200,
+      "height": 80,
+      "text": "📄 Пустая бумажка",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_add_bank_items",
+      "type": "group",
+      "x": 1550,
+      "y": 3100,
+      "width": 600,
+      "height": 330,
+      "label": "add_bank_items",
+      "backgroundStyle": "ratio"
+    },
+    {
+      "id": "e0bc1e6d-1af2-42e0-bd3b-7dc45e97093a",
+      "type": "text",
+      "x": 1600,
+      "y": 3550,
+      "width": 200,
+      "height": 80,
+      "text": "wood",
+      "color": "#f5d033"
+    },
+    {
+      "id": "db3cc4f7-19df-4452-a490-0ee84143b4f4",
+      "type": "text",
+      "x": 1900,
+      "y": 3700,
+      "width": 200,
+      "height": 80,
+      "text": "🥢 Веточки дерева",
+      "color": "#ff7538"
+    },
+    {
+      "id": "28d26855-6936-4481-8e3d-a12b5c316ef0",
+      "type": "text",
+      "x": 1900,
+      "y": 3850,
+      "width": 200,
+      "height": 80,
+      "text": "🪵 Дерево",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_wood",
+      "type": "group",
+      "x": 1550,
+      "y": 3500,
+      "width": 600,
+      "height": 480,
+      "label": "wood",
+      "backgroundStyle": "ratio"
+    },
+    {
+      "id": "7d960a71-04ca-47a1-9675-328bc55e8cb9",
+      "type": "text",
+      "x": 1600,
+      "y": 4100,
+      "width": 200,
+      "height": 80,
+      "text": "🎞 Прочные материалы",
+      "color": "#f5d033"
+    },
+    {
+      "id": "069eaf09-2284-4617-8aa1-2d7f52df0edd",
+      "type": "text",
+      "x": 1900,
+      "y": 4250,
+      "width": 200,
+      "height": 80,
+      "text": "🦴 Кость",
+      "color": "#ff7538"
+    },
+    {
+      "id": "464ad1b7-17a4-4d22-94cb-ce2ac9fdc6bc",
+      "type": "text",
+      "x": 1900,
+      "y": 4400,
+      "width": 200,
+      "height": 80,
+      "text": "🧱 Железо",
+      "color": "#ff7538"
+    },
+    {
+      "id": "a29e530e-1662-42b1-81d5-3df9b0cf2e88",
+      "type": "text",
+      "x": 1900,
+      "y": 4550,
+      "width": 200,
+      "height": 80,
+      "text": "🧱 Медь",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_durable_materials",
+      "type": "group",
+      "x": 1550,
+      "y": 4050,
+      "width": 600,
+      "height": 630,
+      "label": "🎞 Прочные материалы",
+      "backgroundStyle": "ratio"
+    },
+    {
+      "id": "2677866c-6a07-4e4a-91c8-9e54cc6d0ac9",
+      "type": "text",
+      "x": 1600,
+      "y": 4800,
+      "width": 200,
+      "height": 80,
+      "text": "ore",
+      "color": "#f5d033"
+    },
+    {
+      "id": "2a3fa094-13dc-4cff-a587-07b9277460bf",
+      "type": "text",
+      "x": 1900,
+      "y": 4950,
+      "width": 200,
+      "height": 80,
+      "text": "🦴 Кость",
+      "color": "#ff7538"
+    },
+    {
+      "id": "96582d41-379e-49ef-8d2e-6f698b8e47d9",
+      "type": "text",
+      "x": 1900,
+      "y": 5100,
+      "width": 200,
+      "height": 80,
+      "text": "🧱 Железо",
+      "color": "#ff7538"
+    },
+    {
+      "id": "5a482bf6-8b82-489e-9b87-2bd6c9e109d9",
+      "type": "text",
+      "x": 1900,
+      "y": 5250,
+      "width": 200,
+      "height": 80,
+      "text": "🧱 Медь",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_ore",
+      "type": "group",
+      "x": 1550,
+      "y": 4750,
+      "width": 600,
+      "height": 630,
+      "label": "ore",
+      "backgroundStyle": "ratio"
+    },
+    {
+      "id": "dcc08e8e-b172-4885-8dd8-e3e2df87c737",
+      "type": "text",
+      "x": 2400,
+      "y": 0,
+      "width": 200,
+      "height": 80,
+      "text": "🦯 Стержни или кости",
+      "color": "#f5d033"
+    },
+    {
+      "id": "31b613f3-b1a8-4f35-9d0b-1410c8084e4c",
+      "type": "text",
+      "x": 2700,
+      "y": 150,
+      "width": 200,
+      "height": 80,
+      "text": "🦴 Кость",
+      "color": "#ff7538"
+    },
+    {
+      "id": "366b42fc-af42-46a9-9aa3-e5af2203f23f",
+      "type": "text",
+      "x": 2700,
+      "y": 300,
+      "width": 200,
+      "height": 80,
+      "text": "🦯 Железный стержень",
+      "color": "#ff7538"
+    },
+    {
+      "id": "1493d095-5046-478d-82b3-bde0542a1fc3",
+      "type": "text",
+      "x": 2700,
+      "y": 450,
+      "width": 200,
+      "height": 80,
+      "text": "🦯 Медный стержень",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_rod_group",
+      "type": "group",
+      "x": 2350,
+      "y": -50,
+      "width": 600,
+      "height": 630,
+      "label": "🦯 Стержни или кости",
+      "backgroundStyle": "ratio"
+    },
+    {
+      "id": "c92698f5-05b7-46f9-819c-69b248d608f0",
+      "type": "text",
+      "x": 2400,
+      "y": 700,
+      "width": 200,
+      "height": 80,
+      "text": "📦 Корпуса",
+      "color": "#f5d033"
+    },
+    {
+      "id": "029725df-3b54-4e9d-be44-fd2b978f8342",
+      "type": "text",
+      "x": 2700,
+      "y": 850,
+      "width": 200,
+      "height": 80,
+      "text": "📦 Деревянный корпус",
+      "color": "#ff7538"
+    },
+    {
+      "id": "6c9b1c12-359f-494a-9c5f-809415df4670",
+      "type": "text",
+      "x": 2700,
+      "y": 1000,
+      "width": 200,
+      "height": 80,
+      "text": "📦 Железный корпус",
+      "color": "#ff7538"
+    },
+    {
+      "id": "c835e9fe-aaa5-4dd2-aef2-f26ab52ab02e",
+      "type": "text",
+      "x": 2700,
+      "y": 1150,
+      "width": 200,
+      "height": 80,
+      "text": "📦 Медный корпус",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_bodys",
+      "type": "group",
+      "x": 2350,
+      "y": 650,
+      "width": 600,
+      "height": 630,
+      "label": "📦 Корпуса",
+      "backgroundStyle": "ratio"
+    },
+    {
+      "id": "67049f04-b3bc-40e6-a579-64c2f73e25e0",
+      "type": "text",
+      "x": 2400,
+      "y": 1400,
+      "width": 200,
+      "height": 80,
+      "text": "🧱 Слитки",
+      "color": "#f5d033"
+    },
+    {
+      "id": "b9cf90a5-4bdc-4300-a2fc-12eba4c60813",
+      "type": "text",
+      "x": 2700,
+      "y": 1550,
+      "width": 200,
+      "height": 80,
+      "text": "🧱 Железный слиток",
+      "color": "#ff7538"
+    },
+    {
+      "id": "e1f3081a-a020-4f4e-9922-0904d6930d80",
+      "type": "text",
+      "x": 2700,
+      "y": 1700,
+      "width": 200,
+      "height": 80,
+      "text": "🧱 Медный слиток",
+      "color": "#ff7538"
+    },
+    {
+      "id": "group_bounds_ingot_group",
+      "type": "group",
+      "x": 2350,
+      "y": 1350,
+      "width": 600,
+      "height": 480,
+      "label": "🧱 Слитки",
+      "backgroundStyle": "ratio"
+    }
+  ],
+  "edges": [
+    {
+      "id": "9686d734-c650-45da-9308-dcfbc53342c1",
+      "fromNode": "168b1534-83b2-423c-b0f0-ef1d43420d92",
+      "toNode": "127b3373-246c-47ba-a471-d1af32d56c23",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "b9a1ce05-587d-4d55-ab6d-0e444a15607d",
+      "fromNode": "127b3373-246c-47ba-a471-d1af32d56c23",
+      "toNode": "432798e8-6a36-4894-8596-82cd6daddbbc",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "805041bf-b938-42e2-b43b-020e8719461b",
+      "fromNode": "432798e8-6a36-4894-8596-82cd6daddbbc",
+      "toNode": "abfd84bf-3625-4aca-aced-5411505f7586",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "d5e9b078-deae-4aa1-9f53-6f86a432a244",
+      "fromNode": "abfd84bf-3625-4aca-aced-5411505f7586",
+      "toNode": "e4ea9130-9f1f-4e7e-8c55-65d46b9d7167",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "4f809883-a318-4b1e-b09b-5a0e9c411cf3",
+      "fromNode": "e4ea9130-9f1f-4e7e-8c55-65d46b9d7167",
+      "toNode": "f9c4547d-59f1-4827-8305-4cf2a7ae4a74",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "4de41f6b-de90-44fa-ade4-0afb55497e25",
+      "fromNode": "f9c4547d-59f1-4827-8305-4cf2a7ae4a74",
+      "toNode": "3316f5db-f225-4d1b-81e7-3848e027e765",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "f9bc4bb0-fe74-43ec-a124-f2a808f4834b",
+      "fromNode": "3316f5db-f225-4d1b-81e7-3848e027e765",
+      "toNode": "fcdc3a0a-3087-45f5-b169-e9976ddde714",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "573a546d-a455-46fd-83f4-f29f45254ff6",
+      "fromNode": "fcdc3a0a-3087-45f5-b169-e9976ddde714",
+      "toNode": "5105b595-ce78-49b5-8a89-1ab265555891",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "2789c6be-5028-415c-8b4e-5be101991837",
+      "fromNode": "5105b595-ce78-49b5-8a89-1ab265555891",
+      "toNode": "e34231a9-6f6c-4ef7-99b6-adb48c3b416a",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e9a2a41c-f2c0-401e-ac86-0bfe3d1b1ffc",
+      "fromNode": "e34231a9-6f6c-4ef7-99b6-adb48c3b416a",
+      "toNode": "de55afe0-dace-4faa-be3e-6b3332fbed7d",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "aa913f11-6d41-4227-8490-87cbb67b7111",
+      "fromNode": "de55afe0-dace-4faa-be3e-6b3332fbed7d",
+      "toNode": "49961725-ede7-4486-82e4-f63d64bc1dc3",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "7a9fd75e-801f-4ea7-8ab5-e8ec1c5789f2",
+      "fromNode": "49961725-ede7-4486-82e4-f63d64bc1dc3",
+      "toNode": "b6c72a5b-40a8-486f-94ea-638684c2a154",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "3c5c3450-466d-4126-a098-405a0cc9ff77",
+      "fromNode": "b6c72a5b-40a8-486f-94ea-638684c2a154",
+      "toNode": "f36ece22-329a-4c83-ace5-30cae9663132",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "2d207c97-37e0-4ec1-86a5-77198027c2a3",
+      "fromNode": "f36ece22-329a-4c83-ace5-30cae9663132",
+      "toNode": "7795db45-bd5f-4d31-adab-afe436e247ff",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "04d6a809-85db-409a-9741-b24ca46e36a5",
+      "fromNode": "7795db45-bd5f-4d31-adab-afe436e247ff",
+      "toNode": "a96de802-38df-4740-a683-6971f7963dc7",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "42706538-016a-465d-86c4-7ee004299afe",
+      "fromNode": "a96de802-38df-4740-a683-6971f7963dc7",
+      "toNode": "354cdbad-cb43-4a70-a914-fbe14a0b7137",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "be1e834f-81cc-43ff-ab66-357e0f30fe18",
+      "fromNode": "354cdbad-cb43-4a70-a914-fbe14a0b7137",
+      "toNode": "9192e359-61d9-40ad-93b9-c8e27caba5ef",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "50271bd2-54c9-4648-8897-aee6227c9c48",
+      "fromNode": "9192e359-61d9-40ad-93b9-c8e27caba5ef",
+      "toNode": "b4a3febb-2dd0-4330-996a-db57c949a91d",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "f28f396f-ab93-415d-bee4-b53ecc9d129f",
+      "fromNode": "b4a3febb-2dd0-4330-996a-db57c949a91d",
+      "toNode": "df3bdd49-19c4-4b53-a7ef-caceb5b34d1c",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "ce616aa1-9fde-4a9d-bb73-ff01cba5114a",
+      "fromNode": "df3bdd49-19c4-4b53-a7ef-caceb5b34d1c",
+      "toNode": "bb70a157-7e44-43d1-a08f-3927cee2ccbb",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "8dd446e7-7505-49a8-a550-f07a918cf32c",
+      "fromNode": "bb70a157-7e44-43d1-a08f-3927cee2ccbb",
+      "toNode": "2cba0353-4e52-48d7-9fea-b7a64325ea70",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "b7bf0043-8dba-4c2c-ae27-147cd5941a4a",
+      "fromNode": "2cba0353-4e52-48d7-9fea-b7a64325ea70",
+      "toNode": "521e98f7-6150-473a-bc02-e854002f9fc6",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "350f298a-520e-4a2c-88a3-5657d7d45c7e",
+      "fromNode": "521e98f7-6150-473a-bc02-e854002f9fc6",
+      "toNode": "2c80d9a6-849a-4e4a-8c83-c565f320759f",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "2c927126-b877-4415-8137-fcff8dc88930",
+      "fromNode": "2c80d9a6-849a-4e4a-8c83-c565f320759f",
+      "toNode": "d643fdc5-9ce9-4cc2-b429-cf68b9a4445a",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "4dd03ac0-5e8d-49a4-9c6a-9d66d0878c57",
+      "fromNode": "d643fdc5-9ce9-4cc2-b429-cf68b9a4445a",
+      "toNode": "4fbe5b55-55ab-4348-8cca-c9e9e88e5f2b",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "157dba5a-1718-47fc-a14d-81f975a283d7",
+      "fromNode": "4fbe5b55-55ab-4348-8cca-c9e9e88e5f2b",
+      "toNode": "6c95bf36-842e-4891-8e43-d759e609d50d",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "3e787d01-d7ec-4e00-a4d1-2975017988d3",
+      "fromNode": "6c95bf36-842e-4891-8e43-d759e609d50d",
+      "toNode": "8fe73fee-b414-41df-9fdc-d7dbf04c067e",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c577ed51-202a-437e-a736-c856f6012d47",
+      "fromNode": "8fe73fee-b414-41df-9fdc-d7dbf04c067e",
+      "toNode": "9e9a012c-15e6-4410-936f-8b3bbf657eed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "b9cb9434-53e4-4f56-af3a-42e086ab35bb",
+      "fromNode": "9e9a012c-15e6-4410-936f-8b3bbf657eed",
+      "toNode": "c600e8bb-9837-47a3-a505-3c1c93e0a0f6",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "324a6395-3f6c-46c1-8ab6-ad6f6aa82bc3",
+      "fromNode": "c600e8bb-9837-47a3-a505-3c1c93e0a0f6",
+      "toNode": "c0179b67-9f56-466c-a4bf-35a3dd84c8e1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "79a9cbbe-3291-43f9-ac07-00031fe80eeb",
+      "fromNode": "c0179b67-9f56-466c-a4bf-35a3dd84c8e1",
+      "toNode": "f3aae666-e592-474a-b481-1a0e9f72421f",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "0275a849-ff51-4a7e-9db0-91ac6403f5c1",
+      "fromNode": "f3aae666-e592-474a-b481-1a0e9f72421f",
+      "toNode": "05a947bc-c027-40ac-bacc-a3238d27efbb",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "098491c0-8206-4893-a24f-fb375348c6eb",
+      "fromNode": "05a947bc-c027-40ac-bacc-a3238d27efbb",
+      "toNode": "93e03021-61c2-4ca0-b0ab-725a8258a6a3",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "19d1f88b-071a-4189-ada2-0a5e42ee06fd",
+      "fromNode": "93e03021-61c2-4ca0-b0ab-725a8258a6a3",
+      "toNode": "92993702-3b83-4881-b6eb-36a0715292cf",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "0945e4b2-ba20-460c-a9c3-37cb53b11933",
+      "fromNode": "b4085fab-ed85-40b6-aae0-9f39e21718ae",
+      "toNode": "b6f7b75d-c470-4d02-86f0-b00bd9cc03a4",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "d07724ce-cc7b-47f6-af0e-e3c1abd18e1c",
+      "fromNode": "b6f7b75d-c470-4d02-86f0-b00bd9cc03a4",
+      "toNode": "47c05cb6-a7b5-48f7-a350-7839b29aad5d",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "1e503e6e-1f20-4d37-b3b8-f2d471fdde89",
+      "fromNode": "c566ec61-67e4-4cd8-9e6f-f5f01de5739c",
+      "toNode": "0e5dd7fa-7ba2-4859-8f86-bbc67b769d72",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "8992d584-8742-4f88-adf7-dcbf22b0dbfc",
+      "fromNode": "0e5dd7fa-7ba2-4859-8f86-bbc67b769d72",
+      "toNode": "b508e348-91cc-48ce-b875-79c241d72f84",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "3c3969cd-1b01-499a-8519-702e8cae64fb",
+      "fromNode": "b508e348-91cc-48ce-b875-79c241d72f84",
+      "toNode": "45e4d5f2-b526-4938-9ba5-69d71a295918",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "4a3474d0-1e60-46c9-b329-5356bed15c78",
+      "fromNode": "0bde2272-c27c-404b-abe1-e381f71ffc2a",
+      "toNode": "54ff0e69-b225-409f-8755-1c28f686bbd1",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "f26306b6-aa6e-4d0c-9d95-787048f25fcd",
+      "fromNode": "54ff0e69-b225-409f-8755-1c28f686bbd1",
+      "toNode": "82cd947b-e653-4376-bb60-1e874cbb71da",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "835b29ce-19ec-4794-a7d6-d06e655157ef",
+      "fromNode": "82cd947b-e653-4376-bb60-1e874cbb71da",
+      "toNode": "dac189a7-2081-49ac-84b4-801e62aa5266",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "5dc79ded-2aa3-4a82-939a-97ef70983047",
+      "fromNode": "f0374ac2-cf53-407d-9d84-893dba61cc6a",
+      "toNode": "694a7a3d-63b6-4c2b-aab9-6317efdbf27b",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "bf36b977-c679-4976-8802-59799d16e506",
+      "fromNode": "694a7a3d-63b6-4c2b-aab9-6317efdbf27b",
+      "toNode": "79f61d14-4c4f-4f47-ad14-297797179bff",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "d20f2300-95ac-403e-b7cf-1cf0524ab31d",
+      "fromNode": "79f61d14-4c4f-4f47-ad14-297797179bff",
+      "toNode": "d2614922-dd61-407c-a6fa-36e4d5e47092",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "016eeb8b-a045-44be-842d-95a7dc8d98ac",
+      "fromNode": "d2614922-dd61-407c-a6fa-36e4d5e47092",
+      "toNode": "27b10581-0b89-45a3-be90-a927f75682d8",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "29e5a4b3-c1f2-425e-adac-9f927edc241f",
+      "fromNode": "d97ec7c0-64db-44b8-a495-3402f9c33f75",
+      "toNode": "7f65550d-153a-4b2a-9c2f-4dbcdc5ab3b8",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "041ebafe-2209-440f-9952-9121e97cccb5",
+      "fromNode": "7f65550d-153a-4b2a-9c2f-4dbcdc5ab3b8",
+      "toNode": "9680dfcb-2fed-4245-bd13-86ad3cf72c2f",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "79d4cd0c-9ad1-44d8-897d-10ea02d05949",
+      "fromNode": "9680dfcb-2fed-4245-bd13-86ad3cf72c2f",
+      "toNode": "7c002f9e-4e29-424b-a10d-208ca98578ed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "4abeace8-3396-40aa-9097-820797b8227a",
+      "fromNode": "7c002f9e-4e29-424b-a10d-208ca98578ed",
+      "toNode": "45d1446a-4f27-46e0-bfa7-94a16743881c",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "910b1c94-d918-4e00-8d4d-89a1ce9f9f61",
+      "fromNode": "025b8b5d-0d8b-4f6f-9df0-47cff104b8af",
+      "toNode": "15bc57b2-5df3-4e08-b4e3-72427cbea395",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "3c29a3c8-daa6-467a-b2d3-5a86823dc6ab",
+      "fromNode": "15bc57b2-5df3-4e08-b4e3-72427cbea395",
+      "toNode": "c18e5aa0-4a5b-4e69-a820-3aff43fad488",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "824517f2-d66d-442c-bf29-462615e6c54b",
+      "fromNode": "c18e5aa0-4a5b-4e69-a820-3aff43fad488",
+      "toNode": "ffcb02c6-9e87-4d4d-9389-9111d05fcdd7",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "3b9f62d9-1340-4b10-b0f4-bc85da023948",
+      "fromNode": "ffcb02c6-9e87-4d4d-9389-9111d05fcdd7",
+      "toNode": "d187f37a-52f0-4b98-9dfa-954ee046b4d8",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "ddb11648-b5a5-43f2-bbf5-8fd8614ae179",
+      "fromNode": "d187f37a-52f0-4b98-9dfa-954ee046b4d8",
+      "toNode": "5c254b0a-306d-428b-8190-b3005aa14a3d",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "9c70e2b0-0094-4889-b9d1-a1ed927ac6eb",
+      "fromNode": "5c254b0a-306d-428b-8190-b3005aa14a3d",
+      "toNode": "b3bb8bc0-50c2-4b2f-aaca-68084519006d",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e1c83bbb-3bad-48c8-b19d-227091203253",
+      "fromNode": "b3bb8bc0-50c2-4b2f-aaca-68084519006d",
+      "toNode": "0e529353-98e8-4b67-8e21-f3fa3d80a773",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "e656f80a-e9a2-4c1f-937b-fc89fb136dc2",
+      "fromNode": "0e529353-98e8-4b67-8e21-f3fa3d80a773",
+      "toNode": "be5c28b6-1ac9-4e0d-a1dd-6358ca4c349c",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "f4d96fd5-dc09-4cd8-959e-f381a4d5b8b0",
+      "fromNode": "be5c28b6-1ac9-4e0d-a1dd-6358ca4c349c",
+      "toNode": "67333e9e-4fed-4d9a-a3be-b2c643ba6e8c",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "bc3994b6-088f-483f-b5b5-131ac49896e5",
+      "fromNode": "67333e9e-4fed-4d9a-a3be-b2c643ba6e8c",
+      "toNode": "1cf0c2ac-665d-4d58-b6c1-06a690310a80",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "d6a771d7-3ed5-4c10-9374-1cefb4da3bde",
+      "fromNode": "1cf0c2ac-665d-4d58-b6c1-06a690310a80",
+      "toNode": "ffed3a37-14cf-4c04-bacd-de6f5e450633",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "9367d7e8-661a-47fd-8c9c-91676f1f05aa",
+      "fromNode": "ffed3a37-14cf-4c04-bacd-de6f5e450633",
+      "toNode": "fb837d7c-ca30-4b16-80ca-0e8f62cdf6c7",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "b2a35a1a-0899-4db3-ad4b-4c4a9a2e2504",
+      "fromNode": "fb837d7c-ca30-4b16-80ca-0e8f62cdf6c7",
+      "toNode": "7ae091a0-7f2f-46ec-84ec-16a8b8557fee",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c915093b-ba17-4e0d-8d8d-421325feef06",
+      "fromNode": "a35304b7-e6c6-4601-a966-8b47af505362",
+      "toNode": "bcdde45c-bc3f-47d2-9f65-21d69f2539e9",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "21af4151-4f0d-4f9f-a2e6-a4ac425432ff",
+      "fromNode": "bcdde45c-bc3f-47d2-9f65-21d69f2539e9",
+      "toNode": "6eebdaee-d04e-4345-a05c-39869b30b0d0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "220ee8c6-995b-44f5-bd2d-a4364dd00120",
+      "fromNode": "6eebdaee-d04e-4345-a05c-39869b30b0d0",
+      "toNode": "5536b121-52d1-4df0-b9a8-57aff8781ca3",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "bc1737f0-5893-4aa5-ad8a-bb159c816fb1",
+      "fromNode": "5536b121-52d1-4df0-b9a8-57aff8781ca3",
+      "toNode": "282b7ecb-803b-4942-bbeb-1210cc41fce0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "7af72a45-3c47-4b47-93a8-3ebdb9d484fa",
+      "fromNode": "282b7ecb-803b-4942-bbeb-1210cc41fce0",
+      "toNode": "07b2473b-5534-444a-8e91-59e2371fa490",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "32ce4f55-85dd-40d8-bda0-6ea9abd43e57",
+      "fromNode": "07b2473b-5534-444a-8e91-59e2371fa490",
+      "toNode": "04d2874b-9756-4e78-ab83-d77722b35013",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "8d9fb58a-b380-4c2d-b285-939ff9ac6656",
+      "fromNode": "44d0c893-4441-46ac-b8aa-1b285a0bf104",
+      "toNode": "57adc35d-6703-4066-8084-b7ebf04fa656",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "7420108f-a80e-4ebb-81a0-4f055d69162d",
+      "fromNode": "57adc35d-6703-4066-8084-b7ebf04fa656",
+      "toNode": "f374ccad-0950-4a98-925f-37a8b85ebe10",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "aabfda91-fd9e-4f24-af03-b6a179cabddc",
+      "fromNode": "f374ccad-0950-4a98-925f-37a8b85ebe10",
+      "toNode": "d43e4e31-d979-48a8-a731-d405f2ed1025",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "d02284f7-f06a-4ab8-8cdd-8869840cd040",
+      "fromNode": "ae1298ff-1bed-4aa9-a669-eb30c2761441",
+      "toNode": "dd2fac66-159f-4895-874c-9e89b4f4796b",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "ee8da84c-4ef3-45b2-9b95-4af75af8a230",
+      "fromNode": "dd2fac66-159f-4895-874c-9e89b4f4796b",
+      "toNode": "3c299736-4dba-47bc-8c38-02c00bc1217f",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c23113e6-9564-4b10-b242-cc47ad3c6d24",
+      "fromNode": "3c299736-4dba-47bc-8c38-02c00bc1217f",
+      "toNode": "87e5f0e9-9f4e-4c45-a2da-07c9cecc4d79",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "089736d9-ba24-490e-8e00-6a33fcec3f30",
+      "fromNode": "87e5f0e9-9f4e-4c45-a2da-07c9cecc4d79",
+      "toNode": "ffa5327a-f168-4a8a-983a-f49b6b092095",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "a9d53ad8-b086-4901-88ff-d31af6ff9607",
+      "fromNode": "ffa5327a-f168-4a8a-983a-f49b6b092095",
+      "toNode": "6a4ae4f0-04a6-449d-a810-b967eb17a5c9",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "95d4ed72-31ec-4283-8296-28d26470d72c",
+      "fromNode": "6a4ae4f0-04a6-449d-a810-b967eb17a5c9",
+      "toNode": "7bed7f0e-863c-451d-952d-e6941e17cc69",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "18ccf36c-93a5-4fab-97ea-9f2e4101834c",
+      "fromNode": "7bed7f0e-863c-451d-952d-e6941e17cc69",
+      "toNode": "5686d12b-d36c-4501-b5d3-003d0a1bcb37",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "26745a25-7930-433e-aafb-6f2812689900",
+      "fromNode": "31b53c2e-ed90-4866-ad0f-dad9f8f36d14",
+      "toNode": "2aa2846b-bd2e-4c6f-8224-0d98d2b79ca4",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "d5fa5555-3406-47e9-af5b-2eeb1c91567c",
+      "fromNode": "e0bc1e6d-1af2-42e0-bd3b-7dc45e97093a",
+      "toNode": "db3cc4f7-19df-4452-a490-0ee84143b4f4",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "a2317cac-e7d1-4c2c-8a8c-d264d3afaeaf",
+      "fromNode": "db3cc4f7-19df-4452-a490-0ee84143b4f4",
+      "toNode": "28d26855-6936-4481-8e3d-a12b5c316ef0",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "8d817b56-d4d7-40e5-9ad2-9faf90393b7a",
+      "fromNode": "7d960a71-04ca-47a1-9675-328bc55e8cb9",
+      "toNode": "069eaf09-2284-4617-8aa1-2d7f52df0edd",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "ee765d3b-48fd-47f0-b5c9-30a65a3a750a",
+      "fromNode": "069eaf09-2284-4617-8aa1-2d7f52df0edd",
+      "toNode": "464ad1b7-17a4-4d22-94cb-ce2ac9fdc6bc",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "6eae3c0e-94b8-470a-9d84-ee9a682a41fa",
+      "fromNode": "464ad1b7-17a4-4d22-94cb-ce2ac9fdc6bc",
+      "toNode": "a29e530e-1662-42b1-81d5-3df9b0cf2e88",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "47f84dca-6eaf-4321-8f1c-d55ba4831c65",
+      "fromNode": "2677866c-6a07-4e4a-91c8-9e54cc6d0ac9",
+      "toNode": "2a3fa094-13dc-4cff-a587-07b9277460bf",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "89b5d996-13a0-4ff0-9d89-2e950f427299",
+      "fromNode": "2a3fa094-13dc-4cff-a587-07b9277460bf",
+      "toNode": "96582d41-379e-49ef-8d2e-6f698b8e47d9",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "4ba91ea4-500d-43ef-bbb5-b3f3d291ae86",
+      "fromNode": "96582d41-379e-49ef-8d2e-6f698b8e47d9",
+      "toNode": "5a482bf6-8b82-489e-9b87-2bd6c9e109d9",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "121623ba-ad54-4bca-b9c0-86b343cc5fdf",
+      "fromNode": "dcc08e8e-b172-4885-8dd8-e3e2df87c737",
+      "toNode": "31b613f3-b1a8-4f35-9d0b-1410c8084e4c",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "318f22dc-0466-403b-ba40-5e19a1747c05",
+      "fromNode": "31b613f3-b1a8-4f35-9d0b-1410c8084e4c",
+      "toNode": "366b42fc-af42-46a9-9aa3-e5af2203f23f",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "6f615b88-e8d2-4bfc-97f6-304ae77ea7f2",
+      "fromNode": "366b42fc-af42-46a9-9aa3-e5af2203f23f",
+      "toNode": "1493d095-5046-478d-82b3-bde0542a1fc3",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "eed4a640-7d7e-475f-8022-3e339b462148",
+      "fromNode": "c92698f5-05b7-46f9-819c-69b248d608f0",
+      "toNode": "029725df-3b54-4e9d-be44-fd2b978f8342",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "8aafc069-4136-4c0d-b0b1-b6c7b158add8",
+      "fromNode": "029725df-3b54-4e9d-be44-fd2b978f8342",
+      "toNode": "6c9b1c12-359f-494a-9c5f-809415df4670",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "4539d314-c195-4d75-a259-df0f16d53313",
+      "fromNode": "6c9b1c12-359f-494a-9c5f-809415df4670",
+      "toNode": "c835e9fe-aaa5-4dd2-aef2-f26ab52ab02e",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "a7350feb-9ba1-4520-898a-ece80d75e7ee",
+      "fromNode": "67049f04-b3bc-40e6-a579-64c2f73e25e0",
+      "toNode": "b9cf90a5-4bdc-4300-a2fc-12eba4c60813",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "75d71461-7bf3-4961-8ea9-d27858cc1b5e",
+      "fromNode": "b9cf90a5-4bdc-4300-a2fc-12eba4c60813",
+      "toNode": "e1f3081a-a020-4f4e-9922-0904d6930d80",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ]
+}
