@@ -9,7 +9,7 @@ services:
       - ./bot/data:/bot/bot/data # Проброс каталога данных
       - ./config.json:/bot/config.json:ro # Проброс конфига
       - /etc/localtime:/etc/localtime:ro # Проброс времени
-    restart: unless-stopped
+    restart: always # Перезапускать контейнер при падении
     networks:
       - shared_network
 
@@ -22,7 +22,7 @@ services:
       - "27017:27017"
     volumes:
       - ./mongodb:/data/db # Каталог с данными
-    restart: unless-stopped
+    restart: always # Перезапускать контейнер при падении
     command: mongod --quiet --logpath /dev/null
     networks:
       - shared_network
