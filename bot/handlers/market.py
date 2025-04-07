@@ -183,7 +183,7 @@ async def my_products(message: Message):
         await bot.send_message(chatid, text,  parse_mode='Markdown')
 
 @HDCallback
-@main_router.callback_query(IsPrivateChat(), F.data.startswith('product_info'))
+@main_router.callback_query(F.data.startswith('product_info'))
 async def product_info(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -232,6 +232,14 @@ async def product_info(call: CallbackQuery):
                 text, markup = await product_ui(lang, product['_id'], 
                                           product['owner_id'] == userid)
                 await bot.send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
+                
+                if userid != call.message.chat.id:
+
+                    await call.answer(
+                        t('product_info.call_channel', lang),
+                        show_alert=True
+                    )
+
 
             elif call_type == 'promotion' and product['owner_id'] == userid:
                 await promotion_prepare(userid, chatid, lang, product['_id'], 
