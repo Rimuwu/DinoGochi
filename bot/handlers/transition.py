@@ -212,7 +212,7 @@ async def tavern_menu(message: Message):
                     text += f' • {friend["name"]}\n'
                     text_to_friend = t('menu_text.dino_tavern.went', 
                                     friend_lang, 
-                                    name=friend["name"])
+                                    name=user.name)
                     try:
                         await bot.send_message(
                             friendid, text_to_friend, reply_markup=buttons)
