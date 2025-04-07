@@ -174,7 +174,7 @@ async def on_user_col_edit(self) -> None:
     bt = self.ButtonsRegister['next_stage']
     en = self.ButtonsRegister['enter']
 
-    if len(self.PLAYERS) >= self.max_players:
+    if len(self.PLAYERS) >= 2:
         if not en.active:
             en.active = False
             await self.EditButton('enter', en)
