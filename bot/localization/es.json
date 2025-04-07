@@ -4161,7 +4161,8 @@
             "update_price": "🧵 ¡Precio del artículo actualizado!",
             "not_coins": "❌ ¡No tienes tantas monedas!",
             "no_items": "💥 No tienes todos los artículos para agregar a tu inventario",
-            "stock": "❣ ¡Se ha actualizado el stock de productos!"
+            "stock": "❣ ¡Se ha actualizado el stock de productos!",
+            "call_channel": "♾️ ¡La información del producto se ha enviado a mensajes privados con el bot!"
         },
         "seller": {
             "confirm_delete_all": "🍚 ¿Estás convencido de que quieres retirar todos tus productos del mercado?",

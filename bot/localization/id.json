@@ -4161,7 +4161,8 @@
             "update_price": "🧵 Harga barang diperbarui!",
             "not_coins": "❌ Anda tidak memiliki banyak koin!",
             "no_items": "💥 Anda tidak memiliki semua item untuk ditambahkan ke inventaris Anda",
-            "stock": "❣ Stok produk telah diperbarui!"
+            "stock": "❣ Stok produk telah diperbarui!",
+            "call_channel": "♾️ Informasi produk telah dikirim ke pesan pribadi dengan bot!"
         },
         "seller": {
             "confirm_delete_all": "🍚 Apakah Anda yakin bahwa Anda ingin menghapus semua produk Anda dari pasar?",
