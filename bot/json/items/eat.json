@@ -305,7 +305,7 @@
             }
         },
         "groups": ["collecting-activity"],
-        "buyer_price": 200
+        "buyer_price": 500
     },
     "tea": {
         "buffs": {

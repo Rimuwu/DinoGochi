@@ -512,7 +512,12 @@ async def buyer(call: CallbackQuery):
 
     buyer_data = GAME_SETTINGS['buyer'][item_rank]
     one_col = buyer_data['one_col']
-    price = buyer_data['price']
+    
+    if 'buyer_price' in item:
+        price = item['buyer_price']
+    else:
+        price = buyer_data['price']
+
     emoji = get_name(item_decode['item_id'], lang)[0]
 
     transmitted_data = {
