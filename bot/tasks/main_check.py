@@ -47,7 +47,8 @@ P_MOOD = 0.2 * REPEAT_MINUTS
 P_HEAL_EAT = 0.1 * REPEAT_MINUTS
 EVENT_CHANCE = 0.05 * REPEAT_MINUTS
 
-async def kindergarten_check(dino):
+async def kindergarten_check(dino, r):
+    
     if random() <= P_EAT_SLEEP:
         r = await mutate_dino_stat(dino, 'eat', randint(*EAT_CHANGE))
 
@@ -79,7 +80,7 @@ async def main_checks_task(dinos):
             await dino_cl.dead()
             continue
 
-        if status == 'kindergarten': r = await kindergarten_check(dino)
+        if status == 'kindergarten': r = await kindergarten_check(dino, r)
 
         else:
             # Понижение здоровья
