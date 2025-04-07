@@ -52,7 +52,10 @@ async def update_shop(ins_id: ObjectId) -> dict:
                 item_data = get_item_data(item)
                 items_group.remove(item)
 
-                price = GAME_SETTINGS['buyer'][item_data['rank']]['price']
+                if 'buyer_price' in item_data:
+                    price = item_data['buyer_price']
+                else:
+                    price = GAME_SETTINGS['buyer'][item_data['rank']]['price']
 
                 new_price = int(int(price * 3) + randint(int(price * 0.1), price))
 

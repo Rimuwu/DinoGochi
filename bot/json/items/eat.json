@@ -304,7 +304,8 @@
                 ]
             }
         },
-        "groups": ["collecting-activity"]
+        "groups": ["collecting-activity"],
+        "buyer_price": 200
     },
     "tea": {
         "buffs": {
@@ -346,9 +347,10 @@
         "act": 18,
         "class": "Herbivore",
         "image": "null",
-        "rank": "legendary",
+        "rank": "mystical",
         "type": "eat",
-        "groups": ["collecting-activity"]
+        "groups": ["collecting-activity"],
+        "buyer_price": 200
     },
     "croissant": {
         "buffs": {
@@ -519,7 +521,8 @@
         "image": "item80",
         "rank": "legendary",
         "type": "eat",
-        "groups": ["fishing-activity"]
+        "groups": ["fishing-activity"],
+        "buyer_price": 200
     },
     "coffee": {
         "buffs": {
@@ -543,7 +546,8 @@
         "image": "item82",
         "rank": "legendary",
         "type": "eat",
-        "groups": ["collecting-activity"]
+        "groups": ["collecting-activity"],
+        "buyer_price": 666
     },
     "broth": {
         "buffs": {
