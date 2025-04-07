@@ -240,7 +240,6 @@ async def product_info(call: CallbackQuery):
                         show_alert=True
                     )
 
-
             elif call_type == 'promotion' and product['owner_id'] == userid:
                 await promotion_prepare(userid, chatid, lang, product['_id'], 
                                         call.message.message_id)
