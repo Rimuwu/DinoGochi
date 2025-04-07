@@ -63,7 +63,8 @@
         },
         "rank": "mystical",
         "type": "eat",
-        "groups": ["collecting-activity"]
+        "groups": ["collecting-activity"],
+        "buyer_price": 300
     },
     "fish": {
         "act": 16,
@@ -89,7 +90,8 @@
         },
         "rank": "mystical",
         "type": "eat",
-        "groups": ["fishing-activity", "fish"]
+        "groups": ["fishing-activity", "fish"],
+        "buyer_price": 300
     },
     "wolf_meat": {
         "act": 8,
@@ -341,7 +343,8 @@
         "image": "null",
         "rank": "mystical",
         "type": "eat",
-        "groups": ["collecting-activity"]
+        "groups": ["collecting-activity"],
+        "buyer_price": 300
     },
     "potato": {
         "act": 18,
@@ -350,7 +353,7 @@
         "rank": "mystical",
         "type": "eat",
         "groups": ["collecting-activity"],
-        "buyer_price": 200
+        "buyer_price": 300
     },
     "croissant": {
         "buffs": {
