@@ -443,7 +443,7 @@ async def new_participant(baseid: ObjectId, userid: int, coins: int, name: str, 
             }
             for i in list(product['users']):
                 if i['userid'] == userid: 
-                    await take_coins(userid, i['coins'])
+                    await take_coins(userid, i['coins'], True)
                     ind = product['users'].index(i)
                     break
 
