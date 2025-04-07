@@ -12,6 +12,7 @@ from bot.const import GAME_SETTINGS
 from bot.modules.items.item import get_data as get_item_data
 
 
+from bot.modules.logs import log
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import take_coins
 inside_shop = DBconstructor(mongo_client.tavern.inside_shop)
@@ -52,7 +53,8 @@ async def update_shop(ins_id: ObjectId) -> dict:
                 items_group.remove(item)
 
                 price = GAME_SETTINGS['buyer'][item_data['rank']]['price']
-                new_price = int(price * 1.5 + randint(price * 0.1, price))
+
+                new_price = int(int(price * 3) + randint(int(price * 0.1), price))
 
                 items[item] = {
                     'items_data': get_item_dict(item),
