@@ -325,7 +325,8 @@ class MiniGame:
     # ======== START ======== #
     """ Когда объект создан первый раз """
 
-    async def StartGame(self, chat_id: int, user_id: int, message: Message) -> None:
+    async def StartGame(self, chat_id: int, user_id: int, 
+                        message: Message, **kwargs) -> None:
         """ Когда игра запускается впервые """
         await self.AddPlayer(user_id, chat_id, await user_name(user_id))
         self.LANGUAGE = await get_lang(user_id)
@@ -339,11 +340,11 @@ class MiniGame:
         await self.CreateMessage(user_id, chat_id, 'main', 
                                  'preparation message for start game...')
 
-        await self.Custom_StartGame(user_id, chat_id, message)
+        await self.Custom_StartGame(user_id, chat_id, message, **kwargs)
 
         asyncio.create_task(self.__run_threads())
 
-    async def Custom_StartGame(self, user_id: int, chat_id: int, message: Message) -> None:
+    async def Custom_StartGame(self, user_id: int, chat_id: int, message: Message, **kwargs) -> None:
         """ Когда игра запускается впервые (Создан, чтобы не переписывать StartGame) """
         pass 
 
