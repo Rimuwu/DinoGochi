@@ -7,6 +7,7 @@ from bot.modules.decorators import register_method
 from bot.modules.user.user import User, take_coins
 from aiogram import types
 from bot.modules.dinosaur.dinosaur import Dino
+from bot.exec import bot
 
 @register_method(PowerChecker)
 async def on_preparation(self) -> None:
@@ -29,7 +30,7 @@ async def PreparationMarkup(self):
         {'text': '🚪', 'callback_data': self.CallbackGenerator('end_game'), 'ignore_row': 'True'},
     ]
 
-    if self.only_for != 0: buttons.pop(0)
+    # if self.only_for != 0: buttons.pop(0)
 
     owner_player = await self.GetPlayer(self.owner_id)
     owner_has_dino = 'dino' in owner_player.data and owner_player.data['dino']
@@ -76,9 +77,36 @@ async def max_playersMarkup(self):
     return self.list_to_inline(buttons, 3)
 
 @register_method(PowerChecker)
+async def delete_only_for(self):
+    buttons = [
+        {'text': '🔓 Открыть доступ для всех', 'callback_data': self.CallbackGenerator('delete_only_for', '2')},
+        {'text': 'back', 'callback_data': self.CallbackGenerator('to_preparation')},
+    ]
+    return self.list_to_inline(buttons, 1)
+
+@register_method(PowerChecker)
+async def DeleteOnlyFor(self, callback) -> None:
+    self.only_for = 0
+    await self.Update()
+
+    await self.MessageGenerator('max_players', callback.from_user.id)
+
+@register_method(PowerChecker)
 async def MaxPlayersGenerator(self, user_id) -> None:
     markup = await self.max_playersMarkup()
     text = 'Выберите максимальное количество игроков:'
+
+    if self.only_for != 0:
+        player_data = await self.GetPlayer(user_id)
+        if player_data is not None:
+            onl_user = await bot.get_chat_member(chat_id=player_data.chat_id, user_id=self.only_for)
+
+            onl_name = onl_user.user.first_name if onl_user.user.first_name else 'пользователь'
+
+            text = f"Игра доступна только для {onl_name}.\n\n" \
+                f"Вы можете сбросить защищённый режим нажав на кнопку ниже."
+            markup = await self.delete_only_for()
+
     await self.MesageUpdate('main', text=text, reply_markup=markup)
 
 

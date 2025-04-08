@@ -35,6 +35,9 @@ class PowerChecker(MiniGame):
             # Кнопка для выбора количества игроков
             'col_players': Button(function='ColPlayers_set', filters=['owner_filter'], active=False),
 
+            # Кнопка для удаления защищённого режима входа
+            'delete_only_for': Button(function='DeleteOnlyFor', filters=['owner_filter'], active=False),
+
             # Кнопка для выбора динозавра
             'dino_set': Button(function='ChooseDino_set', filters=['owner_filter'], active=False),
 
@@ -82,6 +85,7 @@ class PowerChecker(MiniGame):
                 buttons_active=[
                     stageButton(button='col_players', data={'active': True}),
                     stageButton(button='to_preparation', data={'active': True}),
+                    stageButton(button='delete_only_for', data={'active': True}),
                 ],
                 waiter_active=[],
                 stage_generator='max_players',
@@ -155,7 +159,10 @@ class PowerChecker(MiniGame):
                     await self.MessageGenerator('preparation', user_id)
                 await self.Update()
 
-    async def Custom_StartGame(self, user_id, chat_id, message) -> None:
+    async def Custom_StartGame(self, user_id, chat_id, message, 
+                               only_for = None) -> None:
+        print(only_for)
+        if only_for: self.only_for = only_for
 
         owner_player = await self.GetPlayer(user_id)
         if owner_player is None:
@@ -317,8 +324,9 @@ class PowerChecker(MiniGame):
 
                 self.log.append(
                     [int(self.active_player), 
-                     'simplehit', [f'🎲 {d1}', f'🎲 {d1}', f'💪 {power // 50}'], 'wood']
+                     'simplehit', [f'🎲 {d1}', f'🎲 {d1}', f'💪 {int(power // 50)}'], 'wood']
                 )
+                self.log = self.log[-3:]
                 await self.Update()
 
                 await self.next_player()
@@ -354,6 +362,7 @@ class PowerChecker(MiniGame):
 
         res2 = await bot.send_dice(callback.message.chat.id, emoji='🎲', reply_markup=None, reply_to_message_id=callback.message.message_thread_id)
 
+        await self.MessageGenerator('main', int(self.active_player), action_type='simplehit')
         await sleep(7)
 
         try:
@@ -394,11 +403,9 @@ class PowerChecker(MiniGame):
         ]
         return self.list_to_inline(buttons, 3)
 
-    async def game_GameGenerator(self, user_id: int) -> None:
+    async def game_GameGenerator(self, user_id: int, action_type: str | None = None) -> None:
         data_act_player = self.PLAYERS[self.active_player]
-        text = f"Активный игрок: {data_act_player.user_name}\n\n"
-
-        text += "Игроки:\n"
+        text = "Игроки:\n"
         for player_id, player_data in self.PLAYERS.items():
             remaining_power = player_data.data['units']
             percentage = int((remaining_power / self.power) * 100)
@@ -421,11 +428,16 @@ class PowerChecker(MiniGame):
                         text += f'{who_player.user_name} 🪓 -> {" + ".join(list_units)} -> 🪵'
                     text += '\n'
 
-        text += '\nВыберите действие:\n' \
-                '- Удар: Нанести удар по дереву\n' \
-                '- Мощный удар: Исползует всю силу динозавра\n' \
-                '- Паутина: В случае успеха противник пропустит ход\n' \
-                '- Отобрать топор: В случае успеха противник не сможет использовать топор\n' 
+        if not action_type:
+            text += f'\n{data_act_player.user_name} Выберите действие:\n' \
+                    '- Удар: Нанести удар по дереву\n' \
+                    '- Мощный удар: Исползует всю силу динозавра\n' \
+                    '- Паутина: В случае успеха противник пропустит ход\n' \
+                    '- Отобрать топор: В случае успеха противник не сможет использовать топор\n'
+        if action_type == 'simplehit':
+            text += '\nВыбранное действие: Удар по дереву\n' \
+                    '- Ожидайте пока кубики упадут, после чего динозавр нанесёт удар по дереву.' 
+
 
         await self.MesageUpdate('main', text=text, 
                                 reply_markup=await self.game_main_reply_markup(user_id))

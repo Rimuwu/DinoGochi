@@ -96,6 +96,10 @@ async def MiniGame_start(message: types.Message):
 @HDMessage
 @main_router.message(Command(commands=['power']))
 async def power_start(message: types.Message):
-    
+    only_for = None
+
+    if message.reply_to_message and not message.reply_to_message.from_user.is_bot:  # type: ignore
+        only_for = message.reply_to_message.from_user.id
+
     game = PowerChecker()
-    await game.StartGame(message.chat.id, message.from_user.id, message)
+    await game.StartGame(message.chat.id, message.from_user.id, message, only_for=only_for)
