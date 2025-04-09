@@ -390,6 +390,7 @@ async def cnacel_joint(_:bool, transmitted_data:dict):
                                  comment='cnacel_joint')
     await bot.send_message(userid, '✅', 
                            reply_markup = await m(userid, 'last_menu', lang))
+
     await users.update_one({"userid": userid}, 
                            {"$set": {"settings.last_dino": None}}, 
                            comment='cnacel_joint')
@@ -410,7 +411,8 @@ async def cnacel_myjoint(_:bool, transmitted_data:dict):
         text = t("my_joint.m_for_add_owner", lang, username=myname_for_friend)
         await bot.send_message(res['owner_id'], text, 
                                reply_markup = await m(userid, 'last_menu', lang))
-        await users.update_one({"userid": userid}, 
+
+        await users.update_one({"userid": res['owner_id']}, 
                                {"$set": {"settings.last_dino": None}}, 
                                comment='cnacel_myjoint')
 
