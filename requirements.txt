@@ -8,5 +8,6 @@ python-Levenshtein==0.27.1
 Pillow==11.1.0
 colorama==0.4.6
 emoji==2.14.1
-langdetect==1.0.9
+# wheel==0.46.1
+# langdetect==1.0.9
 aiofiles==24.1.0
