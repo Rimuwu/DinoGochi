@@ -7,7 +7,8 @@
         "class": "ALL",
         "image": "item1",
         "rank": "common",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["all-activity"]
     },
     "cookie": {
         "buffs": {
@@ -27,7 +28,8 @@
             }
         },
         "rank": "common",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["all-activity"]
     },
     "wild_boar_meat": {
         "act": 12,
@@ -266,7 +268,8 @@
             }
         },
         "rank": "common",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["all-activity"]
     },
     "sweet_pancakes": {
         "buffs": {
@@ -379,14 +382,15 @@
         "image": "item114",
         "rank": "common",
         "type": "eat",
-        "groups": ["energy_eat"]
+        "groups": ["energy_eat", "all-activity"]
     },
     "sandwich": {
         "act": 25,
         "class": "ALL",
         "image": "item108",
-        "rank": "rare",
-        "type": "eat"
+        "rank": "mystical",
+        "type": "eat",
+        "groups": ["all-activity"]
     },
     "bento": {
         "buffs": {
@@ -407,7 +411,8 @@
         "class": "Carnivore",
         "image": "item104",
         "rank": "uncommon",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["hunt-activity", "all-activity"]
     },
     "berry_pie": {
         "buffs": {
@@ -535,9 +540,9 @@
         "class": "ALL",
         "drink": true,
         "image": "item81",
-        "rank": "rare",
+        "rank": "mystical",
         "type": "eat",
-        "groups": ["energy_eat"]
+        "groups": ["energy_eat", "all-activity"]
     },
     "mushroom": {
         "buffs": {
@@ -629,7 +634,7 @@
                 ]
             }
         },
-        "groups": ["energy_eat"]
+        "groups": ["energy_eat", "all-activity"]
     },
     "candy": {
         "buffs": {
@@ -642,9 +647,9 @@
         "act": 3,
         "class": "ALL",
         "image": "item69",
-        "rank": "uncommon",
+        "rank": "rare",
         "type": "eat",
-        "groups": ["energy_eat"]
+        "groups": ["energy_eat", "all-activity"]
     },
     "set_cookies": {
         "buffs": {

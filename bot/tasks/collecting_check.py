@@ -118,6 +118,7 @@ async def collecting_process():
                     items = []
                     for i in ['collecting', 'hunt', 'fishing']:
                         items += get_group(f'{i}-activity')
+                    items += get_group('all-activity')
                 else:
                     items = get_group(f'{coll_type}-activity')
 
