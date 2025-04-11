@@ -477,7 +477,7 @@ async def item_code(item_dict: Optional[dict] = None,
             raise ValueError(f'Item not found for the given userid[{userid}] and item_dict[{item_dict}]')
 
     elif item_id is not None:
-        text = item_id.__str__()
+        text = 'ID' + item_id.__str__()
 
     if len(text) > 128:
         log("item_code получился больше чем 128 символов, возможно что он не будет работать в callback data", 4)
@@ -501,7 +501,7 @@ def convert_dict_to_string(item_dict: dict) -> str:
 
     item_id = item_dict.get("item_id", "")
     abilities = item_dict.get("abilities", {})
-    abilities_str = ":".join(f"{key}-{value}-{type(value).__name__[:3]}" for key, value in abilities.items())
+    abilities_str = ":".join(f"{key}#{value}#{type(value).__name__[:3]}" for key, value in abilities.items())
 
     return f"ID{item_id}:{abilities_str}"
 
@@ -513,7 +513,9 @@ def convert_string_to_dict(item_string: str) -> dict:
     abilities_str = item_string.split("ID")[1].split(":")[1:]
     abilities = {}
     for ability in abilities_str:
-        name, value, short_item_type = ability.split("-")
+        if ability == "": continue
+
+        name, value, short_item_type = ability.split("#")
 
         abilities[name] = type_map[short_item_type](value)
 
