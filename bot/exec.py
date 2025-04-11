@@ -41,13 +41,18 @@ def run():
     log('Кстати, в создании бота поучаствовал ChatGPT')
     log('Ой, да что там ваш ChatGPT?! *Stable Diffusion подключился*')
 
-    # Проверка готовности
-    check()
+    try:
+        # Проверка готовности
+        check()
 
-    # Запуск тасков и бота
-    add_task(report_devs_start) # Уведомление запуска для разрабов
-    add_task(dp.start_polling, bots=[bot], 
-             allowed_updates=dp.resolve_used_update_types())
+        # Запуск тасков и бота
+        add_task(report_devs_start) # Уведомление запуска для разрабов
+        add_task(dp.start_polling, bots=[bot], 
+                 allowed_updates=dp.resolve_used_update_types())
 
-    log('Все готово! Взлетаем!', prefix='Start')
-    run_taskmanager()
+        log('Все готово! Взлетаем!', prefix='Start')
+        run_taskmanager()
+    except Exception as e:
+        log(f'Ошибка в работе бота: {e}', prefix='Error', lvl=4)
+        asyncio.run(bot.send_message(conf.bot_report_id, f'❌ Бот упал с ошибкой: {e}'))
+        raise
