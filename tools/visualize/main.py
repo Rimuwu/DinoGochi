@@ -123,7 +123,7 @@ def generate_recipes_canvas(recipes_data, output_file):
         Добавляет узел, если он ещё не существует.
         Если узел с таким же текстом уже существует в радиусе 100 пикселей, возвращает его ID.
         """
-        near = 100  # Радиус поиска 1000 - будут создаваться срелки между двумя блоками  
+        near = 200  # Радиус поиска 1000 - будут создаваться срелки между двумя блоками  
         
         # Проверяем, есть ли уже узел с таким текстом в радиусе 100 пикселей
         for node in nodes:
@@ -496,7 +496,7 @@ def generate_recipes_canvas(recipes_data, output_file):
 
                     material_label = f"{get_item_name(material_id)} x{material_count}"
                     material_node_id = add_node(material_id, material_label, x_offset + 800, material_y_offset, color='#ffc261')
-                    add_edge(material_node_id, craft_node_id, from_side='right', to_side='left')  # Связь от материала к крафту
+                    add_edge(craft_node_id, material_node_id, from_side='right', to_side='left')  # Связь от крафта к материалу
 
                     # Обновляем границы группы
                     min_x = min(min_x, x_offset + 800)
@@ -518,13 +518,9 @@ def generate_recipes_canvas(recipes_data, output_file):
                     else:
                         continue
 
-                    # Исключаем дублирование текущего предмета
-                    if created_item_id == item_id:
-                        continue
-
                     created_item_label = f"{get_item_name(created_item_id)} x{created_item_count}"
                     created_item_node_id = add_node(created_item_id, created_item_label, x_offset + 1200, created_y_offset, color='#fb7efd')
-                    add_edge(craft_node_id, created_item_node_id, from_side='right', to_side='left')  # Связь от крафта к создаваемому предмету
+                    add_edge(material_node_id, created_item_node_id, from_side='right', to_side='left')  # Связь от материала к создаваемому предмету
 
                     # Обновляем границы группы
                     min_x = min(min_x, x_offset + 1200)

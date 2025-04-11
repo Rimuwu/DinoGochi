@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from email import message
+from typing import Optional
 
 
 @dataclass
@@ -7,6 +8,7 @@ class SMessage:
     message_id: int
     chat_id: int
     data: dict
+    parse_mode: Optional[str]
 
 @dataclass
 class PlayerData:

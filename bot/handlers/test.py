@@ -412,27 +412,3 @@ async def sort_rar(message: Message):
     chances = {item: (count / (iterations * 5)) * 100 for item, count in item_counts.items()}
     result = "\n".join([f"{item}: {chance:.2f}%" for item, chance in chances.items()])
     await message.answer(f"Item chances after {iterations} iterations:\n{result}")
-
-
-@main_router.message(Command(commands=['upd_acs']), IsAdminUser())
-@HDMessage
-async def upd_acs(message: Message):
-
-    dinos = await dinosaurs.find({})
-    len_dinos = len(dinos)
-    a = 0
-
-    for dino in dinos:
-        a += 1
-        log(f'{a}/{len_dinos}')
-
-        if "activ_items" in dino:
-            if not isinstance(dino['activ_items'], list):
-                lst_acs = []
-                
-                for key, value in dino['activ_items'].items():
-                    if isinstance(value, dict):
-                        lst_acs.append(value)
-
-                await dinosaurs.update_one({"_id": dino["_id"]}, {"$set": {"activ_items": lst_acs}})
-

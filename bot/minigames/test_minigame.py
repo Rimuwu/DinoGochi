@@ -95,4 +95,4 @@ class TestMiniGame(MiniGame):
         await self.__on_score_change()
 
 
-TestMiniGame().RegistryMe() # Регистрация класса в реестре
+# TestMiniGame().RegistryMe() # Регистрация класса в реестре

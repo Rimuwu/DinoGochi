@@ -413,7 +413,7 @@ class MiniGame:
 
     # ======== MESSAGE ======== #
     """ Код для генерации собщения и меню """
-    
+
     async def EndGameGenerator(self):
         text = f'Игра {self.session_key} завершена'
         await self.MesageUpdate('main', text=text)
@@ -426,7 +426,9 @@ class MiniGame:
     async def DeleteMessage(self, func_key: str = 'main') -> None:
         """ Удаляет сообщение """
         data = self.session_masseges.get(func_key, 
-                                         SMessage(message_id=0, chat_id=0, data={}))
+                                         SMessage(message_id=0, chat_id=0, 
+                                                  data={}, parse_mode=None
+                                                  ))
         self.D_log(f'DeleteMessage {func_key}')
 
         message_id = data.message_id
@@ -442,18 +444,18 @@ class MiniGame:
             del self.session_masseges[func_key]
             await self.Update()
 
-    async def CreateMessage(self, user_id: int, chat_id: int, func_key: str = 'main', 
-                            text = 'create message...') -> types.Message:
+    async def CreateMessage(self, user_id: int, chat_id: int, func_key: str = 'main', text = 'create message...', parse_mode: Optional[str] = 'Markdown') -> types.Message:
         """ Создает сообщение """
         self.D_log(f'CreateMessage {func_key}')
 
         msg = await bot.send_message(
             text=text,
             chat_id=chat_id,
-            reply_markup=self.list_to_inline([]) # Пустая клавиатура
+            reply_markup=self.list_to_inline([]), # Пустая клавиатура
+            parse_mode=parse_mode
         )
         self.session_masseges[func_key] = SMessage(message_id=msg.message_id,
-                                                   chat_id=msg.chat.id, data={'author': user_id})
+                                                   chat_id=msg.chat.id, data={'author': user_id}, parse_mode=parse_mode)
         await self.Update()
 
         return msg
@@ -463,11 +465,12 @@ class MiniGame:
         if not text: return
         # self.D_log(f'MesageUpdate {func_key}')
 
-        data = self.session_masseges.get(func_key, SMessage(message_id=0, chat_id=0, data={}))
+        data = self.session_masseges.get(func_key, SMessage(message_id=0, chat_id=0, data={}, parse_mode=None))
         # self.D_log(f'MesageUpdate {func_key} data {data}')
 
         message_id = data.message_id
         chat_id = data.chat_id
+        parse_mode = data.parse_mode
 
         if not chat_id:
             self.D_log(f'MesageUpdate {func_key} failed: chat_id is {chat_id} message_id is {message_id}')
@@ -479,7 +482,8 @@ class MiniGame:
                     text=text,
                     chat_id=chat_id,
                     message_id=message_id,
-                    reply_markup=reply_markup
+                    reply_markup=reply_markup,
+                    parse_mode=parse_mode
                 )
             except Exception as e:
                 if 'message is not modified' in str(e):

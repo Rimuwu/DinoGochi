@@ -272,12 +272,14 @@ class PowerChecker(MiniGame):
         for player_id, player_data in self.PLAYERS.items():
             dino: Dino = await Dino().create(player_data.data['dino'])
 
+            # Игровые данные
             player_data.data['units'] = self.power
             player_data.data['dino_power'] = dino.stats['power']
             player_data.data['dino_dexterity'] = dino.stats['dexterity']
             player_data.data['dino_overload'] = 0
             player_data.data['in_net'] = False
-            player_data.data['without_axe'] = False
+            player_data.data['without_tools'] = False
+            player_data.data['without_limit'] = 2
 
             await self.EditPlayer(int(player_id), player_data)
 
@@ -333,7 +335,25 @@ class PowerChecker(MiniGame):
                 await self.MessageGenerator('main', int(self.active_player))
 
     async def game_PowerfulHit(self, callback: types.CallbackQuery) -> None:
-        pass
+        
+        active_player = await self.GetPlayer(int(self.active_player))
+
+        if active_player:
+            power = active_player.data['dino_power']
+
+            active_player.data['units'] -= power
+            active_player.data['dino_overload'] += 1
+            await self.EditPlayer(int(self.active_player), active_player)
+
+            self.log.append(
+                [int(self.active_player), 
+                    'powerfulhit', [f'💪 {int(power)}'], 'wood']
+            )
+            self.log = self.log[-3:]
+            await self.Update()
+
+            await self.next_player()
+            await self.MessageGenerator('main', int(self.active_player))
 
     async def game_NetDino(self, callback: types.CallbackQuery) -> None:
         pass
@@ -424,7 +444,8 @@ class PowerChecker(MiniGame):
                 who_player = await self.GetPlayer(who)
                 if who_player:
                     # ['simplehit', [d1, d2, power // 50], 'wood']
-                    if act_type == 'simplehit':
+                    # ['powerfulhit', [power], 'wood']
+                    if act_type in ['simplehit', 'powerfulhit']:
                         text += f'{who_player.user_name} 🪓 -> {" + ".join(list_units)} -> 🪵'
                     text += '\n'
 
