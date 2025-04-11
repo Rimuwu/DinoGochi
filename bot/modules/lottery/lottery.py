@@ -177,7 +177,11 @@ async def winers_text(winers: dict, lang: str):
 
                 if user:
                     users_len += 1
-                    winers_text += f"@{user.user.username} "
+                    if user.user.username:
+                        winers_text += f"@{user.user.username} "
+                    else:
+                        winers_text += f"{user.user.first_name} "
+    
             winers_text += '\n'
 
     footer = t('lottery.winners_footer', lang)

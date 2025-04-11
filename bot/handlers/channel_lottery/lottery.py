@@ -110,7 +110,7 @@ async def end_lottery_com(message: Message):
         await end_lottery(lotter['_id'])
 
 @main_router.callback_query(F.data.startswith('lottery_enter'), IsAuthorizedUser())
-async def company_info(callback: CallbackQuery):
+async def lottery_enter(callback: CallbackQuery):
 
     chatid = callback.message.chat.id
     userid = callback.from_user.id
@@ -121,13 +121,13 @@ async def company_info(callback: CallbackQuery):
     alt_id = data[0]
 
     success, message = await create_lottery_member(userid, alt_id)
+    await callback.answer(t(f'lottery.{message}', lang), show_alert=True)
 
     if success: 
-        await callback.answer(t(f'lottery.{message}', lang), show_alert=True)
-
         try:
             await create_message(alt_id)
         except Exception as e:
+
             await sleep(5)
             try:
                 await create_message(alt_id)
