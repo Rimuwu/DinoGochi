@@ -1827,14 +1827,21 @@
             "uses": 3
         },
         "create": {
-            "iron-body": [
+            "main": [
+                {
+                    "item": "SYSTEM_ITEM_BODY",
+                    "type": "preview",
+                    "count": 1
+                }
+            ],
+            "iron-ingot": [
                 {
                     "item": "iron-body",
                     "type": "create",
                     "count": 1
                 }
             ],
-            "copper-body": [
+            "copper-ingot": [
                 {
                     "item": "copper-body",
                     "type": "create",
@@ -1859,7 +1866,8 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 1300
+        "time_craft": 1300,
+        "ignore_preview": ["main"]
     },
     "custom_book_recipe": {
         "abilities": {
