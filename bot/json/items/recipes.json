@@ -1827,21 +1827,14 @@
             "uses": 3
         },
         "create": {
-            "main": [
-                {
-                    "item": "SYSTEM_ITEM_BODY",
-                    "type": "preview",
-                    "count": 1
-                }
-            ],
-            "iron-ingot": [
+            "iron-body": [
                 {
                     "item": "iron-body",
                     "type": "create",
                     "count": 1
                 }
             ],
-            "copper-ingot": [
+            "copper-body": [
                 {
                     "item": "copper-body",
                     "type": "create",
@@ -1859,7 +1852,7 @@
         "image": "recipe",
         "materials": [
             {
-                "item": ["iron-ingot", "copper-ingot", "wood"],
+                "item": ["iron-body", "copper-body", "wood"],
                 "type": "delete",
                 "count": 3
             }
