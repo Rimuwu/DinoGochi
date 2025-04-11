@@ -12,6 +12,9 @@ services:
     restart: always # Перезапускать контейнер при падении
     networks:
       - shared_network
+    dns:
+      - 1.1.1.1
+      - 8.8.4.4
 
   mongo:
     image: mongo:latest # Имя образа
