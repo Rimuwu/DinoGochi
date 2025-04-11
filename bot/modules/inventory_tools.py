@@ -144,7 +144,7 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list | Non
         end_name = name_end(item, name, count_name)
 
         if end_name in items_data and items_data[end_name] != item:
-            a =+ 1
+            a += 1
             name += f' #{a}'
             end_name = name_end(item, name, count_name)
 
