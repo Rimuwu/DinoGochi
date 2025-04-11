@@ -1852,7 +1852,7 @@
         "image": "recipe",
         "materials": [
             {
-                "item": ["iron-body", "copper-body", "wood"],
+                "item": ["iron-ingot", "copper-ingot", "wood"],
                 "type": "delete",
                 "count": 3
             }
