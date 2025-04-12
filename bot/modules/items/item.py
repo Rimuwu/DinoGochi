@@ -699,6 +699,9 @@ async def item_info(item: dict, lang: str, owner: bool = False):
     """
     standart = ['dummy', 'material']
     image = None
+    
+    if 'item_id' not in item and 'items_data' in item:
+        item = item['items_data']
 
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id)
