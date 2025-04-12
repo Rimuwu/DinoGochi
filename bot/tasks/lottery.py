@@ -27,6 +27,6 @@ async def lottery_process():
             log(f'except in lottery_process {e}', 3)
 
 
-# if __name__ != '__main__':
-#     if conf.active_tasks:
-        # add_task(lottery_process, 60.0, 10.0)
+if __name__ != '__main__':
+    if conf.active_tasks:
+        add_task(lottery_process, 60.0, 10.0)

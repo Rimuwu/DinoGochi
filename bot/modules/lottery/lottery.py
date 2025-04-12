@@ -244,8 +244,8 @@ async def items_to_winer(user_id: int, win_data: dict):
                 item['items_data']['item_id'], 
                 item['items_data'].get('abilities', {})
             )
-            item_id = item_dict['items_data']['item_id']
-            abilities = item_dict['items_data'].get(
+            item_id = item['items_data']['item_id']
+            abilities = item_dict.get(
                 'abilities', {})
             count = item.get('count', 1)
 
@@ -272,6 +272,8 @@ async def end_lottery(lot_id: ObjectId):
 
         text = await winers_text(winers, lotter['lang'])
 
-        await bot.send_message(lotter['channel_id'], text)
+        try:
+            await bot.send_message(lotter['channel_id'], text)
+        except: pass
 
         await delete_lottery(lot_id)
