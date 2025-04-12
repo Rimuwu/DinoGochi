@@ -29,4 +29,4 @@ async def lottery_process():
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(lottery_process, 60.0, 10.0)
+        # add_task(lottery_process, 60.0, 10.0)
