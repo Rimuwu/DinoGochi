@@ -3,7 +3,7 @@ import io
 import os
 
 import aiofiles
-import aiogram.types
+import aiogram.types as types
 
 from bot.config import conf
 from bot.exec import main_router, bot
@@ -37,10 +37,10 @@ async def report_file(file_path: str, file_name: str):
     tasks = []
     # Формируем задачи для отправки логов
     try:
-            # Открываем последний лог файл
+        # Открываем последний лог файл
         async with aiofiles.open(f'{file_path}/{file_name}', mode='rb') as f:
             last_log_content = await f.read()  # Читаем содержимое файла
-            last_log = aiogram.types.InputFile(io.BytesIO(last_log_content), filename=file_name)
+            last_log = types.BufferedInputFile(last_log_content, filename=file_name)
             if isinstance(report_id, str):
                 channel_id, topic_id = report_id.split('_', 2)
                 tasks.append(bot.send_document(channel_id, last_log, message_thread_id=int(topic_id)))
