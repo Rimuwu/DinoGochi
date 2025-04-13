@@ -87,6 +87,8 @@ async def check_accessory(dino: Dino, item_id: str, downgrade: bool = False,
     acces_items = await find_accessory(dino, data_item['type'])
 
     for acces_item, _ in acces_items:
+        if 'item_id' not in acces_item: continue
+
         if acces_item['item_id'] == item_id:
             if downgrade:
                 return await downgrade_accessory(dino, item_id, max_down)
