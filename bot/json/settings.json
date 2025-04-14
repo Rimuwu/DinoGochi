@@ -9,7 +9,8 @@
         "dungeon": ["lobby", "dungeon_statistic"],
         "other": ["management", "statistic", "events", "promo", "dead_users", "companies", "message_log"],
         "minigames": ["online"],
-        "lottery": ["lottery", "members"]
+        "lottery": ["lottery", "members"],
+        "tracking": ["links", "members"]
     },
 
     "indexes": [
@@ -23,10 +24,6 @@
     "please_create_this": {
         "other": {
             "management": [
-                {
-                    "_id": "tracking_links",
-                    "links": {}
-                },
                 {
                     "_id": "rayting_coins",
                     "data": [],

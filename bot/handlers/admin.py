@@ -16,7 +16,7 @@ from bot.modules.managment.promo import (create_promo_start, get_promo_pages, pr
                                use_promo)
 from bot.modules.states_tools import (ChooseConfirmState, ChoosePagesState,
                                       ChooseStringState)
-from bot.modules.managment.tracking import creat_track, get_track_pages, track_info
+from bot.modules.managment.tracking import creat_track, delete_track, get_track_pages, track_info
 from bot.modules.user.user import award_premium
 from aiogram.types import CallbackQuery, Message, BufferedInputFile
 
@@ -96,13 +96,15 @@ async def track(call: CallbackQuery):
         text = '-'
         if action == 'delete':
             text = t("track_delete", lang)
-            await management.update_one({'_id': 'tracking_links'}, 
-                                {'$unset': {f'links.{code}': 0}}, comment='track2')
+            
+            await delete_track(code)
 
-        elif action == 'clear':
-            text = t("track_clear", lang)
-            await management.update_one({'_id': 'tracking_links'}, 
-                                {'$set': {f'links.{code}.col': 0}}, comment='track3')
+        elif action == 'view_users':
+            
+        elif action == 'view_concern_links':
+
+        elif action == 'detailed_statistics':
+
 
         await bot.send_message(chatid, text)
 
