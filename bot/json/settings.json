@@ -43,6 +43,16 @@
                     "ids": []
                 },
                 {
+                    "_id": "rayting_dontaion_all",
+                    "data": [],
+                    "ids": []
+                },
+                {
+                    "_id": "rayting_dontaion_30d",
+                    "data": [],
+                    "ids": []
+                },
+                {
                     "_id": "rayt_update",
                     "time": 0
                 }

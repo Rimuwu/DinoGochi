@@ -2,6 +2,7 @@
 # Дабы не собирать информацию каждый раз при запросе пользователя
 from bot.config import conf
 from bot.dbmanager import mongo_client
+from bot.modules.donation import get_history
 from bot.taskmanager import add_task
 from datetime import datetime
 from bot.modules.user.user import max_lvl_xp
@@ -11,6 +12,7 @@ from bot.modules.dinosaur.dinosaur  import get_owner, get_dino_language, set_sta
 
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from collections import defaultdict
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 users = DBconstructor(mongo_client.user.users)
 items = DBconstructor(mongo_client.items.items)
@@ -35,6 +37,16 @@ async def statistic_check():
 
     await statistic.insert_one(data, comment='statistic_check_1')
 
+def calculate_donations(history):
+    user_amounts = defaultdict(int)
+    for entry in history:
+        user_amounts[entry['userid']] += entry['amount']
+    return sorted(
+        [{'userid': uid, 'amount': amount} for uid, amount in user_amounts.items()],
+        key=lambda x: x['amount'],
+        reverse=True
+    )
+
 async def rayting_check():
     loc_users = list(await users.find({}, 
                     {'userid': 1, 'lvl': 1, 'xp': 1, 'coins': 1, 'super_coins': 1}, 
@@ -46,12 +58,10 @@ async def rayting_check():
         (x['lvl'] - 1) * max_lvl_xp(x['lvl']) + x['xp'], reverse=True))
     super_list = list(sorted(loc_users, key=lambda x: x['super_coins'], reverse=True))
 
-    coins_ids, lvl_ids, super_ids = [], [], []
-
-    for i in coins_list: coins_ids.append(i['userid'])
-    for i in lvl_list: lvl_ids.append(i['userid'])
-    for i in super_list: super_ids.append(i['userid'])
-
+    coins_ids = [user['userid'] for user in coins_list]
+    lvl_ids = [user['userid'] for user in lvl_list]
+    super_ids = [user['userid'] for user in super_list]
+    
     await management.update_one({'_id': 'rayting_coins'}, 
                           {'$set': {'data': coins_list, 'ids': coins_ids}}, comment='rayting_check_1')
     await management.update_one({'_id': 'rayting_lvl'}, 
@@ -59,6 +69,21 @@ async def rayting_check():
     await management.update_one({'_id': 'rayting_super'}, 
                           {'$set': {'data': super_list, 'ids': super_ids}}, comment='rayting_check_3')
 
+    # Обновление рейтинга донатов 
+    history_all = await get_history()
+    history_30 = await get_history(30)
+
+    donat_all_list = calculate_donations(history_all)
+    donat_30_list = calculate_donations(history_30)
+
+    donat_all_ids = [i['userid'] for i in donat_all_list]
+    donat_30_ids = [i['userid'] for i in donat_30_list]
+
+    await management.update_one({'_id': 'rayting_donat_all'},
+                          {'$set': {'data': donat_all_list, 'ids': donat_all_ids}}, comment='rayting_check_5')
+    await management.update_one({'_id': 'rayting_donat_30d'},
+                          {'$set': {'data': donat_30_list, 'ids': donat_30_ids}}, comment='rayting_check_6')
+    
     await management.update_one({'_id': 'rayt_update'}, 
                           {'$set': {'time': int(time())}}, comment='rayting_check_4')
 
