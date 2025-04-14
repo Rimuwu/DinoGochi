@@ -38,18 +38,24 @@ async def events():
         {'journey_end': {'$gte': int(time())}, 'activity_type': 'journey'}, comment='events_data')
 
     for i in data:
+        event_random = random()
+
         chance = EVENT_CHANCE
         dino = await Dino().create(i['dino_id'])
 
         res = await check_inspiration(i['dino_id'], 'journey')
         if res: chance *= 2
 
-        if await check_accessory(dino, 'hiking_bag'):
-            chance += 0.6 * REPEAT_MINUTS
+        hik_flag = False
+        if event_random >= chance:
+            if await check_accessory(dino, 'hiking_bag'):
+                chance += 0.6 * REPEAT_MINUTS
+                hik_flag = True
 
-        if random() <= chance:
+        if event_random <= chance:
             await random_event(i['dino_id'], i['location'])
-            await check_accessory(dino, 'hiking_bag', True)
+            if hik_flag:
+                await check_accessory(dino, 'hiking_bag', True)
 
             if randint(0, 1):
                 if await check_inspiration(dino._id, 'exp_boost'):
