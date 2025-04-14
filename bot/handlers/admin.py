@@ -18,7 +18,7 @@ from bot.modules.states_tools import (ChooseConfirmState, ChoosePagesState,
                                       ChooseStringState)
 from bot.modules.managment.tracking import creat_track, get_track_pages, track_info
 from bot.modules.user.user import award_premium
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message, BufferedInputFile
 
 from bot.filters.translated_text import StartWith, Text
 from bot.filters.states import NothingState
@@ -33,6 +33,7 @@ from aiogram.filters import Command
 management = DBconstructor(mongo_client.other.management)
 promo = DBconstructor(mongo_client.other.promo)
 langs = DBconstructor(mongo_client.user.lang)
+users = DBconstructor(mongo_client.user.users)
 
 @HDMessage
 @main_router.message(Command(commands=['create_tracking']), IsAdminUser())
@@ -374,3 +375,15 @@ async def get_log(message):
     if not errors_text: errors_text = 'Ошибок нет, так держать!'
     
     await bot.send_message(message.chat.id, errors_text, parse_mode='Markdown')
+
+@main_router.message(Command(commands=['save_users']), IsAdminUser())
+@HDMessage
+async def save_users_handler(message: Message):
+    cursor = await users.find({}, {"userid": 1})
+    with open("bot/data/users.txt", "w", encoding="utf-8") as f:
+        for doc in cursor:
+            f.write(str(doc["userid"]) + "\n")
+    await message.answer("User IDs saved.")
+
+    with open("bot/data/users.txt", "rb") as f:
+        await bot.send_document(message.chat.id, BufferedInputFile(f.read(), filename="users.txt"))
