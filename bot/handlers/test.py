@@ -77,6 +77,7 @@ from bson.son import SON
 from bot.modules.items.item import get_data as get_item_data
 
 from bot.modules.states_tools import ChooseImageState
+from bot.tasks.incubation import incubation
 
 users = mongo_client.user.users
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
@@ -423,3 +424,9 @@ async def donations(message: Message):
         response += f"Пользователь: {user_id} ({name}), Сумма: {amount}⭐, Дата: {date}\n"
 
     await message.answer(response)
+
+@main_router.message(Command(commands=['incubation']), IsAdminUser())
+@HDMessage
+async def incubation_d(message: Message):
+    
+    await incubation()
