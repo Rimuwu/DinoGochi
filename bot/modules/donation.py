@@ -12,6 +12,7 @@ from bot.modules.user.user import award_premium
 from bot.dbmanager import mongo_client
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+import time
 
 users = DBconstructor(mongo_client.user.users)
 
@@ -113,3 +114,18 @@ async def send_inv(user_id: int, product_id: str, col: str, lang: str, cost: int
         user_id, name, short + f' (x{col})', f"{product_id}#{col}", 'XTR', [product_label],
         photo_url=photo_url, photo_size=512, photo_height=360, photo_width=720, 
     )
+
+async def get_history(timeline: int = 0):
+    """Получает историю донатов за timeline дней
+    """
+    donations = OpenDonatData()
+    result = []
+    current_time = time.time()
+    if donations:
+        for key, donation in donations.items():
+            if timeline == 0 or (current_time - donation['time'] <= timeline * 86400):
+                useri_id = key.split('_')[1]  # Извлекаем useri_id из ключа
+                donation['username'] = donation.pop('userid')  # Заменяем userid на username
+                donation['userid'] = useri_id  # Добавляем useri_id в элемент
+                result.append(donation)
+    return result
