@@ -150,8 +150,10 @@ async def seller_ui(owner_id: int, lang: str, my_market: bool, name: str = ''):
         img = await async_open(f'images/remain/market/{status}.png', True)
 
         if 'custom_image' in seller and seller['custom_image'] and await premium(owner_id):
-            if await bot.get_file(seller['custom_image']):
-                img = seller['custom_image']
+            try:
+                if await bot.get_file(seller['custom_image']):
+                    img = seller['custom_image']
+            except Exception as e: pass
 
     return text, markup, img
 
