@@ -1,3 +1,4 @@
+from curses.ascii import isdigit
 import json
 import os
 from bot.exec import bot
@@ -124,8 +125,10 @@ async def get_history(timeline: int = 0):
     if donations:
         for key, donation in donations.items():
             if timeline == 0 or (current_time - donation['time'] <= timeline * 86400):
-                useri_id = key.split('_')[1]  # Извлекаем useri_id из ключа
-                donation['username'] = donation.pop('userid')  # Заменяем userid на username
-                donation['userid'] = useri_id  # Добавляем useri_id в элемент
-                result.append(donation)
+
+                user_id = int(key.split('_')[1])  # Извлекаем user_id из ключа
+                if isdigit(user_id):
+                    donation['username'] = donation.pop('userid')  # Заменяем userid на username
+                    donation['userid'] = user_id  # Добавляем user_id в элемент
+                    result.append(donation)
     return result
