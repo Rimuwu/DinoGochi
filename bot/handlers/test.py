@@ -32,7 +32,7 @@ from bot.modules.companies import nextinqueue, save_message
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, item_list
 from bot.modules.dinosaur.dinosaur import check_status
 from bot.modules.dinosaur.kd_activity import save_kd
-from bot.modules.donation import send_inv
+from bot.modules.donation import get_history, send_inv
 from bot.modules.images import create_egg_image, create_skill_image, dino_collecting, dino_game
 from bot.modules.inventory_tools import inventory_pages
 from bot.modules.items.item import (AddItemToUser, DowngradeItem, get_data,
@@ -230,6 +230,7 @@ async def super_test(message: Message):
 
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state, StatesGroup, State
+from datetime import datetime, timedelta
 
 class Form(StatesGroup):
     name = State()
@@ -298,18 +299,6 @@ async def check(message: Message):
                 await msg.edit_text(str(i))
             except Exception as e:
                 log(f"ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR {e}")
-
-
-@main_router.message(Command(commands=['save_users']), IsAdminUser())
-@HDMessage
-async def save_users_handler(message: Message):
-    cursor = users.find({}, {"userid": 1})
-    with open("bot/data/users.txt", "w", encoding="utf-8") as f:
-        async for doc in cursor:
-            f.write(str(doc["userid"]) + "\n")
-    await message.answer("User IDs saved.")
-    
-
 
 @main_router.message(Command(commands=['size']), IsAdminUser())
 @HDMessage
@@ -412,3 +401,25 @@ async def sort_rar(message: Message):
     chances = {item: (count / (iterations * 5)) * 100 for item, count in item_counts.items()}
     result = "\n".join([f"{item}: {chance:.2f}%" for item, chance in chances.items()])
     await message.answer(f"Item chances after {iterations} iterations:\n{result}")
+
+@main_router.message(Command(commands=['donations']), IsAdminUser())
+@HDMessage
+async def donations(message: Message):
+
+    # Получаем историю донатов за последние 3 дня
+    recent_donations = await get_history(timeline=3)
+
+    if not recent_donations:
+        await message.answer("За последние 3 дня донатов не было.")
+        return
+
+    # Форматируем данные для вывода
+    response = "Донаты за последние 3 дня:\n"
+    for donation in recent_donations:
+        user_id = donation.get("userid", "Неизвестно")
+        name = donation.get("username", "Неизвестно")
+        amount = donation.get("amount", 0)
+        date = datetime.utcfromtimestamp(donation.get("time", 0)).strftime('%Y-%m-%d %H:%M:%S')
+        response += f"Пользователь: {user_id} ({name}), Сумма: {amount}⭐, Дата: {date}\n"
+
+    await message.answer(response)
