@@ -11,6 +11,7 @@ from bot.exec import bot
 from bot.modules.data_format import escape_markdown, item_list, seconds_to_str
 from bot.modules.dinosaur.dinosaur import Dino, Egg
 from bot.modules.managment.events import check_event, get_event
+from bot.modules.managment.tracking import update_all_user_track
 from bot.modules.user.advert import create_ads_data
 from bot.modules.items.item import AddItemToUser, get_item_dict
 from bot.modules.items.item import get_data as get_item_data
@@ -211,6 +212,9 @@ class User:
 
         for conn in [friends_conn, friends_conn2]:
             for obj in conn: await friends.delete_one({'_id': obj['_id']}, comment='full_delete_conn')
+
+        # Обновляем трекеры
+        await update_all_user_track(self.userid, 'delete_account')
 
         # Удаляем юзера
         await self.delete()

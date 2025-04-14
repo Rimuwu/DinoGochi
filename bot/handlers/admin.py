@@ -36,7 +36,7 @@ langs = DBconstructor(mongo_client.user.lang)
 users = DBconstructor(mongo_client.user.users)
 
 @HDMessage
-@main_router.message(Command(commands=['create_tracking']), IsAdminUser())
+@main_router.message(Command(commands=['create_tracking', 'create_track']), IsAdminUser())
 async def create_tracking(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
@@ -45,23 +45,15 @@ async def create_tracking(message: Message):
     await ChooseStringState(create_track, userid, chatid, lang, 1, 0)
     await bot.send_message(chatid, t("create_tracking.name", lang), parse_mode='Markdown')
 
-async def create_track(name, transmitted_data: dict):
+async def create_track(code, transmitted_data: dict):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
-    res, text = await creat_track(name.lower()), '-'
-    if res == 1:
-        iambot = await bot.get_me()
-        bot_name = iambot.username
-
-        url = f'https://t.me/{bot_name}/?promo={name}'
-        text = t("create_tracking.ok", lang, url=url)
-    elif res == 0: text = 'error no document'
-    elif res == -1: text = 'error name find'
-    elif res == 1: text = t("create_tracking.already", lang)
-
-    await bot.send_message(chatid, text, parse_mode='Markdown')
+    await creat_track(code, 'admin')
+    text, markup = await track_info(code, lang)
+    
+    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
 @HDMessage
 @main_router.message(Command(commands=['tracking']), IsAdminUser())
@@ -79,7 +71,10 @@ async def track_info_adp(data, transmitted_data: dict):
     lang = transmitted_data['lang']
 
     text, markup = await track_info(data, lang)
-    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+    try:
+        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+    except:
+        await bot.send_message(chatid, text, reply_markup=markup)
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('track'), IsPrivateChat())
@@ -99,11 +94,11 @@ async def track(call: CallbackQuery):
             
             await delete_track(code)
 
-        elif action == 'view_users':
+        # elif action == 'view_users':
             
-        elif action == 'view_concern_links':
+        # elif action == 'view_concern_links':
 
-        elif action == 'detailed_statistics':
+        # elif action == 'detailed_statistics':
 
 
         await bot.send_message(chatid, text)

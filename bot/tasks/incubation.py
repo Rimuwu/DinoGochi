@@ -4,6 +4,7 @@ from time import time
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.modules.dinosaur.dinosaur  import insert_dino
+from bot.modules.managment.tracking import update_all_user_track
 from bot.modules.notifications import user_notification
 from bot.modules.user.user import User
 from bot.taskmanager import add_task
@@ -33,6 +34,8 @@ async def incubation():
         await user_notification(egg['owner_id'], 
                     'incubation_ready', lang, 
                     user_name=user.name, dino_alt_id_markup=alt_id)
+
+        await update_all_user_track(user.userid, 'gaming')
 
 if __name__ != '__main__':
     if conf.active_tasks:

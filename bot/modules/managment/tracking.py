@@ -1,18 +1,25 @@
 
 from typing import Optional
 
+from bson import ObjectId
+
 
 from bot.dbmanager import mongo_client
 
 from bot.modules.data_format import list_to_inline
-from time import time
+from time import time, strftime, gmtime
 
+from bot.modules.dinosaur import dinosaur
 from bot.modules.overwriting.DataCalsses import DBconstructor
+
+
 links = DBconstructor(mongo_client.tracking.links)
 members = DBconstructor(mongo_client.tracking.members)
 users = DBconstructor(mongo_client.user.users)
+dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
+incubation = DBconstructor(mongo_client.dinosaur.incubation)
 
-async def creat_track(code: str, who_create: str):
+async def creat_track(code: str, who_create: str = "system"):
     """Создаёт ссылку отслеживания и добавляет её в БД
         None - уже отслеживается
         dict - создано
@@ -27,6 +34,8 @@ async def creat_track(code: str, who_create: str):
  
         И соответсвенно в concern будет хранится id ссылки KJHk354
     """
+
+    assert who_create in ["system", "admin"], f"who_create {who_create} not in list" 
 
     concern = None
     if "@@" in code:
@@ -47,7 +56,23 @@ async def creat_track(code: str, who_create: str):
     else:
         return await links.insert_one(data, comment='create_track')
 
-async def add_track_user(code:str, userid: int, first_status = "click_start"):
+async def user_first_status(userid: int):
+
+    user_b = await users.find_one({'userid': userid}, comment='user_status')
+
+    if not user_b:
+        return 'click_start'
+    else:
+        dinos = await dino_owners.find_one({'owner_id': userid}, comment='user_first_status_dinos')
+        eggs = await incubation.find_one({'owner_id': userid}, comment='user_first_status_eggs')
+
+        if dinos: return 'gaming'
+        elif eggs: return 'incubate'
+
+    return 'create_account'
+
+
+async def add_track_user(code: str, userid: int):
     """
 
     status:
@@ -56,7 +81,6 @@ async def add_track_user(code:str, userid: int, first_status = "click_start"):
     - incubate - пользователь инкубирует динозавра
     - gaming - пользователь играет в игру
     - delete_account - пользователь удалил аккаунт
-    - afk - пользователь неактивен
 
     returns:
     - True - добавлено
@@ -73,6 +97,8 @@ async def add_track_user(code:str, userid: int, first_status = "click_start"):
             already_in_bot = await users.find_one(
                 {'userid': userid}, comment='add_track_user_already_in_bot')
 
+            first_status = await user_first_status(userid)
+
             data = {
                 "track_id": track_id,
                 "userid": userid,
@@ -82,9 +108,8 @@ async def add_track_user(code:str, userid: int, first_status = "click_start"):
                 "already_in_bot": bool(already_in_bot)
             }
 
-            await members.insert_one(data, comment='add_track_user_insert')
-            return True
-    return False
+            return await members.insert_one(data, comment='add_track_user_insert')
+    return None
 
 async def edit_track_user(code: str, userid: int, status: str):
     """Изменяет статус пользователя по ссылке отслеживания"""
@@ -94,7 +119,6 @@ async def edit_track_user(code: str, userid: int, status: str):
         "create_account",
         "incubate",
         "delete_account",
-        "afk",
         "gaming",
     ], f"Status {status} not in list"
 
@@ -114,10 +138,10 @@ async def get_track_data(code: str):
     res = await links.find_one({'code': code}, comment='get_track_data')
     if res:
         members_track = await members.find(
-            {'track_id': res['_id']}, comment='get_track_data_members').to_list(None)
+            {'track_id': res['_id']}, comment='get_track_data_members')
 
         concern_links = await links.find(
-            {'concern': res['_id']}, comment='get_track_data_concern_links').to_list(None)
+            {'concern': res['_id']}, comment='get_track_data_concern_links')
 
         data = {
             'code': res['code'],
@@ -163,7 +187,7 @@ async def statistic_track(code: str) -> Optional[dict]:
         for concern_link in data['concern_links']:
             concern_members = await members.find(
                 {'track_id': concern_link['_id']}, comment='statistic_track_concern_members'
-            ).to_list(None)
+            )
 
             total_concern_members = len(concern_members)
             if total_concern_members == 0:
@@ -235,8 +259,12 @@ async def track_info(code: str, lang: str):
 
         # Формирование текста
         text = (
-            f"Трек-ссылка: {data['code']}\n"
-            f"Дата создания: {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(data['start']))}\n"
+            f"Код: {data['code']}\n"
+            f"Трек-ссылка: `https://t.me/DinoGochi_bot?start={data['code']}`\n"
+            f"Дата создания: {strftime('%Y-%m-%d %H:%M:%S', gmtime(data['start']))}\n\n"
+            f"Кто создал: {data['who_create']}\n"
+            f"Зависимость от: {data['concern']}\n\n"
+            f"Количество пользователей: {len(data['members'])}\n"
             f"Количество пользователей на каждый статус:\n"
         )
 
@@ -245,42 +273,42 @@ async def track_info(code: str, lang: str):
             status_counts[member['status']] = status_counts.get(member['status'], 0) + 1
 
         for status, count in status_counts.items():
-            text += f"  {status}: {count}\n"
+            text += f"  `{status}`: {count}\n"
 
         text += (
-            f"Количество переходов за последний день: {last_day_count}\n"
+            f"\nКоличество переходов за последний день: {last_day_count}\n"
             f"Количество переходов за последние 7 дней: {last_week_count}\n"
             f"Количество переходов за последние 30 дней: {last_month_count}\n"
-            f"Количество concern_links: {concern_links_count}\n"
-            f"Первые 3 concern_links: {', '.join(first_three_concern_links)}\n"
+            f"\nКоличество `concern_links`: {concern_links_count}\n"
+            f"Первые 3 `concern_links`: `{', '.join(first_three_concern_links)}`\n"
         )
 
         if statistics:
             text += "\nСтатистика:\n"
             text += "Процентное соотношение статусов:\n"
             for status, percentage in statistics['status_percentages'].items():
-                text += f"  {status}: {percentage:.2f}%\n"
+                text += f"  `{status}`: {percentage:1f}%\n"
 
-            text += "\nПроцентное соотношение first_status:\n"
+            text += "\nПроцентное соотношение `first_status`:\n"
             for status, percentage in statistics['first_status_percentages'].items():
-                text += f"  {status}: {percentage:.2f}%\n"
+                text += f"  `{status}`: {percentage:1f}%\n"
 
-            text += "\nПроцентное соотношение already_in_bot:\n"
+            text += "\nПроцентное соотношение `already_in_bot`:\n"
             for status, percentage in statistics['already_in_bot_percentages'].items():
-                text += f"  {status}: {percentage:.2f}%\n"
+                text += f"  `{status}`: {percentage:1f}%\n"
 
-            text += "\nСтатистика по concern_links:\n"
+            text += "\nСтатистика по `concern_links`:\n"
             for link_code, link_stats in statistics['concern_links_statistics'].items():
-                text += f"  Concern link: {link_code}\n"
+                text += f"  Concern link: `{link_code}`\n"
                 text += "    Процентное соотношение статусов:\n"
                 for status, percentage in link_stats['status_percentages'].items():
-                    text += f"      {status}: {percentage:.2f}%\n"
-                text += "    Процентное соотношение first_status:\n"
+                    text += f"      `{status}`: {percentage:1f}%\n"
+                text += "    Процентное соотношение `first_status`:\n"
                 for status, percentage in link_stats['first_status_percentages'].items():
-                    text += f"      {status}: {percentage:.2f}%\n"
-                text += "    Процентное соотношение already_in_bot:\n"
+                    text += f"      `{status}`: {percentage:1f}%\n"
+                text += "    Процентное соотношение `already_in_bot`:\n"
                 for status, percentage in link_stats['already_in_bot_percentages'].items():
-                    text += f"      {status}: {percentage:.2f}%\n"
+                    text += f"      `{status}`: {percentage:1f}%\n"
 
         # Формирование кнопок
         markup = list_to_inline([
@@ -328,3 +356,58 @@ async def detailed_statistics(code: str):
     }
 
 
+async def auto_action(code: str, userid: int):
+    """
+    Automatically handles tracking actions:
+    - Creates a tracking link if it doesn't exist.
+    - Adds a user to the tracking link.
+
+    """
+    # Attempt to create the tracking link
+    track_res = await creat_track(code, who_create='system')
+    if track_res:
+        tracking_link_id = track_res.inserted_id
+    else:
+        # Retrieve the existing tracking link ID
+        existing_track = await links.find_one({'code': code}, comment='auto_action_existing_track')
+        tracking_link_id = existing_track['_id'] if existing_track else None
+
+    # Add the user to the tracking link
+    user_res = await add_track_user(code, userid)
+    user_tracking_id = user_res.inserted_id if user_res else None
+
+    return tracking_link_id, user_tracking_id
+
+async def get_track_pages(traks_dt: Optional[list[ObjectId]] = None) -> dict:
+    """
+    """
+    
+    if traks_dt is None:
+        traks = await links.find({}, comment='get_track_pages')
+    else:
+        tracks = []
+        for track_id in traks_dt:
+            track = await links.find_one({'_id': track_id}, comment='get_track_pages')
+            if track:
+                tracks.append(track)
+
+    buttons = {}
+    for track in traks:
+        buttons[track['code']] = track['code']
+
+    return buttons
+
+def update_all_user_track(userid: int, status: str):
+    """Обновляет статус пользователя в трекинге, если он отличается от текущего"""
+    assert status in [
+        "click_start",
+        "create_account",
+        "incubate",
+        "delete_account",
+        "gaming",
+    ], f"Status {status} not in list"
+
+    return members.update_many(
+        {'userid': userid, 'status': {'$ne': status}},  # Обновляем только если статус отличается
+        {'$set': {'status': status}}, comment='update_all_user_track'
+    )

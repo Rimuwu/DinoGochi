@@ -18,7 +18,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.managment.promo import use_promo
 from bot.modules.managment.referals import connect_referal
-from bot.modules.managment.tracking import add_track
+from bot.modules.managment.tracking import auto_action, edit_track_user
 from bot.modules.user.user import award_premium, insert_user
 from aiogram import types
 
@@ -51,6 +51,7 @@ async def start_command_auth(message: types.Message):
     content = str(message.text).split()
     if len(content) > 1:
         referal = str(content[1])
+        await auto_action(referal, message.from_user.id)
 
         await check_code(referal, 
                          {'userid': message.from_user.id,
@@ -115,7 +116,7 @@ async def start_game_message(message: types.Message):
     if len(content) > 1: 
         referal = str(content[1])
         if await referals.find_one({'code': referal}, comment='start_game_message'): add_referal = True
-        await add_track(content[1])
+        await auto_action(referal, message.from_user.id)
 
     if not add_referal:
         buttons_list = [get_data('commands_name.start_game', locale=langue_code)]
@@ -165,6 +166,8 @@ async def egg_answer_callback(callback: types.CallbackQuery):
         if callback.data.split()[2] == 'promo':
             code = callback.data.split()[3]
             await use_promo(code, userid, lang)
+
+    await edit_track_user(referal, userid, 'incubate')
 
 @HDCallback
 @main_router.callback_query(IsAuthorizedUser(), 
