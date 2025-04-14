@@ -127,8 +127,7 @@ async def get_history(timeline: int = 0):
             if timeline == 0 or (current_time - donation['time'] <= timeline * 86400):
 
                 user_id = int(key.split('_')[1])  # Извлекаем user_id из ключа
-                if isdigit(user_id):
-                    donation['username'] = donation.pop('userid')  # Заменяем userid на username
-                    donation['userid'] = user_id  # Добавляем user_id в элемент
-                    result.append(donation)
+                donation['username'] = donation.pop('userid')  # Заменяем userid на username
+                donation['userid'] = int(user_id)  # Добавляем user_id в элемент
+                result.append(donation)
     return result
