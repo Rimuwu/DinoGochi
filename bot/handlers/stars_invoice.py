@@ -20,7 +20,7 @@ async def checkout(pre_checkout_query: PreCheckoutQuery):
     res = await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True,
                                   error_message=t('notifications.donation.pre_check_error', lang, formating=False))
 
-    log(f'Был выдан ответ на pre_checkout_query_handler -> {res}, user: {pre_checkout_query.from_user.id}', 4)
+    # log(f'Был выдан ответ на pre_checkout_query_handler -> {res}, user: {pre_checkout_query.from_user.id}', 4)
 
 @main_router.message(F.successful_payment)
 async def got_payment(message: Message):
