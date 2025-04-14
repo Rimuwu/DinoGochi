@@ -586,7 +586,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
 
                     await take_coins(userid, col_price, True)
 
-            elif p_tp == 'item_items':
+            elif p_tp == 'items_items':
                 items_status, n = [], 0
 
                 col_items = item_list(product['items'])
