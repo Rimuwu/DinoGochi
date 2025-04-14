@@ -1701,7 +1701,14 @@
             "rayting_lvl": "*┌* 🎢 Peringkat berdasarkan level:",
             "rayting_coins": "*┌* 🎢 Peringkat Koin:",
             "rayting_super": "*┌* 🎢 Peringkat Super Coin:",
-            "premium": "*├* Pelanggan ✨ DinoUltima"
+            "premium": "*├* Pelanggan ✨ DinoUltima",
+            "donate": "💰 Dukungan",
+            "rayting_donate_all": "*┌* 🎢 Peringkat dukungan:",
+            "rayting_donate_30d": "*┌* 🎢 Peringkat Dukungan: (lebih dari 30 hari)",
+            "donate_text": "*└* {stars} ⭐",
+            "donate_choose": "💰 | Periode apa yang kita lihat?",
+            "donate_30d": "⭐ 30 hari",
+            "donate_all": "✨ Sepanjang Masa"
         },
         "put_to_bed": {
             "dont_want": "🌙 Dinosaurus tidak mau tidur!",

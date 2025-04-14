@@ -79,9 +79,9 @@ async def rayting_check():
     donat_all_ids = [i['userid'] for i in donat_all_list]
     donat_30_ids = [i['userid'] for i in donat_30_list]
 
-    await management.update_one({'_id': 'rayting_donat_all'},
+    await management.update_one({'_id': 'rayting_dontaion_all'},
                           {'$set': {'data': donat_all_list, 'ids': donat_all_ids}}, comment='rayting_check_5')
-    await management.update_one({'_id': 'rayting_donat_30d'},
+    await management.update_one({'_id': 'rayting_dontaion_30d'},
                           {'$set': {'data': donat_30_list, 'ids': donat_30_ids}}, comment='rayting_check_6')
     
     await management.update_one({'_id': 'rayt_update'}, 

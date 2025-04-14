@@ -1701,7 +1701,14 @@
             "rayting_lvl": "*┌* 🎢 Clasificación por nivel:",
             "rayting_coins": "*┌* 🎢 Calificación de monedas:",
             "rayting_super": "*┌* 🎢 Calificación de Super Moneda:",
-            "premium": "*├* Suscriptor ✨ DinoUltima"
+            "premium": "*├* Suscriptor ✨ DinoUltima",
+            "donate": "💰 Soporte",
+            "rayting_donate_all": "*┌* 🎢 Calificación de soporte:",
+            "rayting_donate_30d": "*┌* 🎢 Calificación de soporte: (más de 30 días)",
+            "donate_text": "*└* {stars} ⭐",
+            "donate_choose": "💰 | ¿A qué período nos referimos?",
+            "donate_30d": "⭐ 30 días",
+            "donate_all": "✨ Todos los tiempos"
         },
         "put_to_bed": {
             "dont_want": "🌙 ¡El dinosaurio no quiere dormir!",

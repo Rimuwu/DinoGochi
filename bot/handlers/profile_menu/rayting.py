@@ -42,6 +42,8 @@ async def rayting(message: Message):
             for i in ['lvl', 'coins', 'super']: # 'dungeon',
                 buttons[text_data[i]] = f'rayting {i}'
 
+            buttons[text_data['donate']] = f'donate_rayting'
+
             markup = list_to_inline([buttons])
             await bot.send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
 
@@ -103,3 +105,58 @@ async def rayting_call(callback: CallbackQuery):
             await bot.edit_message_text(text, None, chatid, callback.message.message_id, parse_mode='Markdown', reply_markup=markup)
         except Exception as e:
             log(message=f'Rayting edit error {e}', lvl=2)
+
+@HDCallback
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('donate_rayting'))
+async def donate_rayting(callback: CallbackQuery):
+    chatid = callback.message.chat.id
+    userid = callback.from_user.id
+    data = callback.data.split()
+    lang = await get_lang(callback.from_user.id)
+    message = callback.message
+    
+    if isinstance(message, Message):
+        
+        if len(data) == 1:
+            mark = list_to_inline([
+                {t('rayting.donate_30d', lang): 'donate_rayting 30d'},
+                {t('rayting.donate_all', lang): 'donate_rayting all'}
+            ])
+
+            await message.edit_text(t("rayting.donate_choose", lang), parse_mode='Markdown', reply_markup=mark)
+
+        else:
+            code = data[1]
+            rayt_data = await management.find_one({'_id': f'rayting_dontaion_{code}'}, comment='rayting_call_rayt_data')
+            
+            if rayt_data:
+                top_30 = rayt_data['data'][:30]
+                text = t(f"rayting.rayting_donate_{code}", lang) + '\n\n'
+
+                for user in top_30:
+                    sign, add_text = '*├*', ''
+                    if user == top_30[-1]: sign = '*└*'
+
+                    rayt_user = await users.find_one({'userid': user['userid']}, 
+                                                     comment='rayt_user')
+                    if rayt_user: 
+                        name = await user_name(user['userid'])
+                        if name == 'NoName_NoUser': name = str(user['userid'])
+                    else:
+                        name = str(user['userid'])
+
+                    n = rayt_data['ids'].index(user['userid']) + 1
+                    if n == 1: n = '🥇'
+                    elif n == 2: n = '🥈'
+                    elif n == 3: n = '🥉'
+
+                    if await premium(user['userid']):
+                        add_text += t(f"rayting.premium", lang) + '\n     '
+
+                    add_text += t(f"rayting.donate_text", lang, stars=user['amount'])
+                    text += f'{sign} #{n} *{name}*\n     {add_text}\n'
+
+                try:
+                    await message.edit_text(text, parse_mode='Markdown')
+                except Exception as e:
+                    log(message=f'Donation rayting edit error {e}', lvl=2)

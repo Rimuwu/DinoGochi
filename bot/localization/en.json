@@ -436,7 +436,7 @@
                 "description": "Recipe for a sharpened sword."
             },
             "onion_recipe": {
-                "name": "📜 Onion Recipe",
+                "name": "📜 Bow Recipe",
                 "description": "A bow made of a pair of bones, shoots properly."
             },
             "arrow_recipe": {
@@ -709,7 +709,7 @@
                 "description": "Recipe for creating a basket for collecting food."
             },
             "net_recipe": {
-                "name": "📜 Recipe Network",
+                "name": "📜 Recipe Net",
                 "description": "A recipe for creating a net for hunting."
             },
             "rod_recipe": {
@@ -1701,7 +1701,14 @@
             "rayting_lvl": "*┌* 🎢 Level Rating:",
             "rayting_coins": "*┌* 🎢 Coin Rating:",
             "rayting_super": "*┌* 🎢 Super Coin Rating:",
-            "premium": "*├* Subscriber ✨ DinoUltima"
+            "premium": "*├* Subscriber ✨ DinoUltima",
+            "donate": "💰 Support",
+            "rayting_donate_all": "*┌* 🎢 Support rating:",
+            "rayting_donate_30d": "*┌* 🎢 Support Rating: (over 30 days)",
+            "donate_text": "*└* {stars} ⭐",
+            "donate_choose": "💰 | What period are we looking at?",
+            "donate_30d": "⭐ 30 days",
+            "donate_all": "✨ All Time"
         },
         "put_to_bed": {
             "dont_want": "🌙 The dinosaur doesn't want to sleep!",
