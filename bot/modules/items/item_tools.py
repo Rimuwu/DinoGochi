@@ -378,6 +378,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                     return_text = t('transport.add_dino', lang)
 
                 else:
+                    log(f'transport egg error {userid} {item} {dino}', lvl=3)
                     return_text = t('transport.error', lang)
 
             else:
@@ -566,20 +567,20 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                 if item['abilities']['data_id'] == 0:
                     steps = [{"type": 'dino', 
                             "name": 'dino', 
-                            "data": {"add_egg": False}, 
+                            "data": {"add_egg": False, "all_dinos": False}, 
                             'message': t('css.inactive_dino', lang)
                     }]
 
             elif data_item['class'] in ['defrosting']:
                 steps = [{"type": 'dino', 
                          "name": 'dino', 
-                         "data": {"add_egg": False}, 
+                         "data": {"add_egg": False, "all_dinos": False}, 
                          'message': t('css.inactive_dino', lang)}]
 
             elif data_item['class'] in ['freezing']:
                 steps = [{"type": 'dino', 
                          "name": 'dino', 
-                         "data": {"add_egg": False}, 
+                         "data": {"add_egg": False, "all_dinos": False}, 
                          'message': None}]
 
             elif data_item['class'] in ['premium']:
