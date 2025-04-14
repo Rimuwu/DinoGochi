@@ -130,7 +130,7 @@ async def donate_rayting(callback: CallbackQuery):
             rayt_data = await management.find_one({'_id': f'rayting_dontaion_{code}'}, comment='rayting_call_rayt_data')
             
             if rayt_data:
-                top_30 = rayt_data['data'][:30]
+                top_30 = rayt_data['data'][:15]
                 text = t(f"rayting.rayting_donate_{code}", lang) + '\n\n'
 
                 for user in top_30:
