@@ -1,4 +1,4 @@
-
+from os import link
 from typing import Optional
 
 from bson import ObjectId
@@ -9,6 +9,8 @@ from bot.dbmanager import mongo_client
 from bot.modules.data_format import list_to_inline
 from time import time, strftime, gmtime
 
+from bot.modules.localization import t
+
 from bot.modules.dinosaur import dinosaur
 from bot.modules.overwriting.DataCalsses import DBconstructor
 
@@ -18,6 +20,7 @@ members = DBconstructor(mongo_client.tracking.members)
 users = DBconstructor(mongo_client.user.users)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 incubation = DBconstructor(mongo_client.dinosaur.incubation)
+langs = DBconstructor(mongo_client.user.langs)
 
 async def creat_track(code: str, who_create: str = "system"):
     """Создаёт ссылку отслеживания и добавляет её в БД
@@ -38,7 +41,7 @@ async def creat_track(code: str, who_create: str = "system"):
     assert who_create in ["system", "admin"], f"who_create {who_create} not in list" 
 
     concern = None
-    if "@@" in code:
+    if "__" in code:
         base_code, concern_code = code.split("__", 1)
         concern_track = await links.find_one({'code': concern_code}, comment='find_base_track')
         if concern_track:
@@ -210,7 +213,8 @@ async def statistic_track(code: str) -> Optional[dict]:
             concern_links_statistics[concern_link['code']] = {
                 'status_percentages': {k: (v / total_concern_members) * 100 for k, v in concern_status_counts.items()},
                 'first_status_percentages': {k: (v / total_concern_members) * 100 for k, v in concern_first_status_counts.items()},
-                'already_in_bot_percentages': {k: (v / total_concern_members) * 100 for k, v in concern_already_in_bot_counts.items()}
+                'already_in_bot_percentages': {k: (v / total_concern_members) * 100 for k, v in concern_already_in_bot_counts.items()},
+                'members_count': len(concern_members)
             }
 
         return {
@@ -232,13 +236,13 @@ async def delete_track(code: str):
 
 async def track_info(code: str, lang: str):
     res = await links.find_one({'code': code}, comment='track_info_res')
-    text, markup = 'not found', None
+    text, markup = t("create_tracking.track_info.not_found", lang), None
 
     if res:
         # Получение данных о ссылке
         data = await get_track_data(code)
         if not data:
-            return 'not found', None
+            return t("create_tracking.track_info.not_found", lang), None
 
         # Подсчёт количества переходов за последние 1, 7 и 30 дней
         current_time = int(time())
@@ -250,78 +254,93 @@ async def track_info(code: str, lang: str):
         last_week_count = sum(1 for member in data['members'] if member['enter'] >= seven_days_ago)
         last_month_count = sum(1 for member in data['members'] if member['enter'] >= thirty_days_ago)
 
-        # Подсчёт количества concern_links и получение первых трёх
+        # Подсчёт количества concern_links
         concern_links_count = len(data['concern_links'])
-        first_three_concern_links = [link['code'] for link in data['concern_links'][:3]]
 
         # Получение статистики
         statistics = await statistic_track(code)
 
+        concern_name = t("create_tracking.track_info.dependency", lang, concern_name="нет зависимости")
+        if data['concern']:
+            concern_data = await links.find_one({'_id': data['concern']}, comment='track_info_concern_name')
+            if concern_data:
+                concern_name = concern_data['code']
+
         # Формирование текста
         text = (
-            f"Код: {data['code']}\n"
-            f"Трек-ссылка: `https://t.me/DinoGochi_bot?start={data['code']}`\n"
-            f"Дата создания: {strftime('%Y-%m-%d %H:%M:%S', gmtime(data['start']))}\n\n"
-            f"Кто создал: {data['who_create']}\n"
-            f"Зависимость от: {data['concern']}\n\n"
-            f"Количество пользователей: {len(data['members'])}\n"
-            f"Количество пользователей на каждый статус:\n"
+            f"{t('create_tracking.track_info.code', lang, code=data['code'])}\n"
+            f"{t('create_tracking.track_info.track_link', lang, code=data['code'])}\n"
+            f"{t('create_tracking.track_info.creation_date', lang, creation_date=strftime('%Y-%m-%d %H:%M:%S', gmtime(data['start'])))}\n\n"
+            f"{t('create_tracking.track_info.created_by', lang, who_create=data['who_create'])}\n"
+            f"{t('create_tracking.track_info.dependency', lang, concern_name=concern_name)}\n\n"
+            f"{t('create_tracking.track_info.user_count', lang, user_count=len(data['members']))}\n"
+            f"{t('create_tracking.track_info.status_count', lang)}\n"
         )
 
         status_counts = {}
         for member in data['members']:
             status_counts[member['status']] = status_counts.get(member['status'], 0) + 1
 
+        total_members = len(data['members'])
         for status, count in status_counts.items():
-            text += f"  `{status}`: {count}\n"
+            percentage = (count / total_members) * 100 if total_members > 0 else 0
+            text += t("create_tracking.track_info.status_entry", lang, status=status, count=count, percentage=int(percentage)) + "\n"
 
         text += (
-            f"\nКоличество переходов за последний день: {last_day_count}\n"
-            f"Количество переходов за последние 7 дней: {last_week_count}\n"
-            f"Количество переходов за последние 30 дней: {last_month_count}\n"
-            f"\nКоличество `concern_links`: {concern_links_count}\n"
-            f"Первые 3 `concern_links`: `{', '.join(first_three_concern_links)}`\n"
+            f"\n{t('create_tracking.track_info.last_day_transitions', lang, last_day_count=last_day_count)}\n"
+            f"{t('create_tracking.track_info.last_week_transitions', lang, last_week_count=last_week_count)}\n"
+            f"{t('create_tracking.track_info.last_month_transitions', lang, last_month_count=last_month_count)}\n"
         )
 
+        if concern_links_count:
+            text += f"\n{t('create_tracking.track_info.concern_links_count', lang, concern_links_count=concern_links_count)}\n"
+
         if statistics:
-            text += "\nСтатистика:\n"
-            text += "Процентное соотношение статусов:\n"
-            for status, percentage in statistics['status_percentages'].items():
-                text += f"  `{status}`: {percentage:1f}%\n"
-
-            text += "\nПроцентное соотношение `first_status`:\n"
+            # Статистика для главной ссылки
+            text += f"\n{t('create_tracking.track_info.main_link_statistics', lang)}\n"
+            text += f"{t('create_tracking.track_info.first_status_percentages', lang)}\n"
             for status, percentage in statistics['first_status_percentages'].items():
-                text += f"  `{status}`: {percentage:1f}%\n"
+                text += t("create_tracking.track_info.first_status_entry", lang, status=status, percentage=int(percentage)) + "\n"
 
-            text += "\nПроцентное соотношение `already_in_bot`:\n"
+            text += f"\n{t('create_tracking.track_info.already_in_bot_percentages', lang)}\n"
             for status, percentage in statistics['already_in_bot_percentages'].items():
-                text += f"  `{status}`: {percentage:1f}%\n"
+                text += t("create_tracking.track_info.already_in_bot_entry", lang, status=status, percentage=int(percentage)) + "\n"
 
-            text += "\nСтатистика по `concern_links`:\n"
-            for link_code, link_stats in statistics['concern_links_statistics'].items():
-                text += f"  Concern link: `{link_code}`\n"
-                text += "    Процентное соотношение статусов:\n"
-                for status, percentage in link_stats['status_percentages'].items():
-                    text += f"      `{status}`: {percentage:1f}%\n"
-                text += "    Процентное соотношение `first_status`:\n"
-                for status, percentage in link_stats['first_status_percentages'].items():
-                    text += f"      `{status}`: {percentage:1f}%\n"
-                text += "    Процентное соотношение `already_in_bot`:\n"
-                for status, percentage in link_stats['already_in_bot_percentages'].items():
-                    text += f"      `{status}`: {percentage:1f}%\n"
+            # Суммарная статистика для concern_links
+            if concern_links_count:
+                text += f"\n{t('create_tracking.track_info.concern_links_summary', lang)}\n"
+                total_concern_first_status_counts = {}
+                total_concern_already_in_bot_counts = {'True': 0, 'False': 0}
+                total_concern_members = 0
+
+                for link_stats in statistics['concern_links_statistics'].values():
+                    total_concern_members += link_stats['members_count']
+                    for status, percentage in link_stats['first_status_percentages'].items():
+                        total_concern_first_status_counts[status] = total_concern_first_status_counts.get(status, 0) + percentage
+                    for status, percentage in link_stats['already_in_bot_percentages'].items():
+                        total_concern_already_in_bot_counts[status] += percentage
+
+                text += t("create_tracking.track_info.total_concern_links", lang, concern_links_count=concern_links_count) + "\n"
+                text += t("create_tracking.track_info.total_concern_users", lang, total_concern_members=total_concern_members) + "\n"
+
+                text += f"{t('create_tracking.track_info.concern_first_status_percentages', lang)}\n"
+                for status, percentage in total_concern_first_status_counts.items():
+                    text += t("create_tracking.track_info.concern_first_status_entry", lang, status=status, percentage=int(percentage / concern_links_count)) + "\n"
+
+                text += f"\n{t('create_tracking.track_info.concern_already_in_bot_percentages', lang)}\n"
+                for status, percentage in total_concern_already_in_bot_counts.items():
+                    text += t("create_tracking.track_info.concern_already_in_bot_entry", lang, status=status, percentage=int(percentage / concern_links_count)) + "\n"
+
+                # Вывод первых трёх ссылок
+                text += f"\n{t('create_tracking.track_info.top_three_links', lang)}\n"
+                for i, concern_link in enumerate(data['concern_links'][:3], start=1):
+                    text += t("create_tracking.track_info.top_three_entry", lang, index=i, code=concern_link['code']) + "\n"
 
         # Формирование кнопок
         markup = list_to_inline([
             {
-                'Удалить': f'track delete {code}',
+                t('create_tracking.track_info.delete', lang): f'track delete {code}',
             },
-            {
-                'Просмотр юзеров': f'track view_users {code}',
-                'Просмотреть concern_links': f'track view_concern_links {code}'
-            },
-            {
-                'Просмотр подробной статистики': f'track detailed_statistics {code}'
-            }
         ])
 
     return text, markup
@@ -338,7 +357,8 @@ async def detailed_statistics(code: str):
         return {
             'average_level': 0,
             'total_coins': 0,
-            'total_super_coins': 0
+            'total_super_coins': 0,
+            'language_statistics': {}
         }
 
     total_level = sum(user.get('level', 0) for user in gaming_users)
@@ -349,30 +369,37 @@ async def detailed_statistics(code: str):
     average_coins = total_coins / len(gaming_users)
     average_super_coins = total_super_coins / len(gaming_users)
 
+    # Подсчёт статистики по языкам
+    language_counts = {}
+    for user in gaming_users:
+        user_lang = await langs.find_one({'userid': user['userid']}, comment='detailed_statistics_language')
+        if user_lang:
+            lang_code = user_lang.get('lang', 'unknown')
+            language_counts[lang_code] = language_counts.get(lang_code, 0) + 1
+
     return {
         'average_level': average_level,
         'average_coins': average_coins,
-        'average_super_coins': average_super_coins
+        'average_super_coins': average_super_coins,
+        'language_statistics': language_counts
     }
 
 
 async def auto_action(code: str, userid: int):
     """
-    Automatically handles tracking actions:
-    - Creates a tracking link if it doesn't exist.
-    - Adds a user to the tracking link.
+
 
     """
-    # Attempt to create the tracking link
+
     track_res = await creat_track(code, who_create='system')
     if track_res:
         tracking_link_id = track_res.inserted_id
     else:
-        # Retrieve the existing tracking link ID
+
         existing_track = await links.find_one({'code': code}, comment='auto_action_existing_track')
         tracking_link_id = existing_track['_id'] if existing_track else None
 
-    # Add the user to the tracking link
+
     user_res = await add_track_user(code, userid)
     user_tracking_id = user_res.inserted_id if user_res else None
 
