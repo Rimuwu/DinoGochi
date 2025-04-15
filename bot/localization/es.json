@@ -4254,15 +4254,39 @@
         "create_tracking": {
             "name": "⛏ Introduce el código de seguimiento",
             "already": "👿 El código ya está siendo rastreado",
-            "ok": "🍡 El código ha sido añadido, puede ver la información de los códigos escribiendo /tracking\n\nLink - `{url}`"
-        },
-        "track": {
-            "text": "☄ | Seguimiento\n\n🧮 Usado: {use}\n\n🍜 Referencia: `{url}`\n🔎 Código: `{code}`\n🥞 Creado: {t}",
-            "delete": "❌ Eliminar",
-            "clear": "⛏ Restablecer"
+            "ok": "🍡 El código ha sido añadido, puede ver la información de los códigos escribiendo /tracking\n\nLink - `{url}`",
+            "track_info": {
+                "not_found": "not found",
+                "code": "Código: {code}",
+                "track_link": "Enlace de pista: `https://t.me/DinoGochi_bot?start={code}`",
+                "creation_date": "Fecha de creación: {creation_date}",
+                "created_by": "Creador: {who_create}",
+                "dependency": "Dependía de: {concern_name}",
+                "user_count": "Número de usuarios: {user_count}",
+                "status_count": "Número de usuarios por estado:",
+                "status_entry": "`{status}`: {count} ({percentage}%)",
+                "last_day_transitions": "Número de clics en el último día: {last_day_count}",
+                "last_week_transitions": "Número de clics en los últimos 7 días: {last_week_count}",
+                "last_month_transitions": "Número de clics en los últimos 30 días: {last_month_count}",
+                "concern_links_count": "Cantidad `concern_links`: {concern_links_count}",
+                "main_link_statistics": "*▢ Estadísticas para el enlace principal*:",
+                "first_status_percentages": "Porcentaje `first_status`:",
+                "first_status_entry": "`{status}`: {percentage}%",
+                "already_in_bot_percentages": "Porcentaje `already_in_bot`:",
+                "already_in_bot_entry": "`{status}`: {percentage}%",
+                "concern_links_summary": "*▢ Resumen estadístico de los enlaces concernientes_*:",
+                "total_concern_links": "Número total de referencias: {concern_links_count}",
+                "total_concern_users": "Número total de usuarios: {total_concern_members}",
+                "concern_first_status_percentages": "Porcentaje `first_status`:",
+                "concern_first_status_entry": "`{status}`: {percentage}%",
+                "concern_already_in_bot_percentages": "Porcentaje `already_in_bot`:",
+                "concern_already_in_bot_entry": "`{status}`: {percentage}%",
+                "top_three_links": "Los tres primeros enlaces son:",
+                "top_three_entry": "{index}. Código: `{code}`",
+                "delete": "❌ Eliminar enlace"
+            }
         },
         "track_open": "🎀 El menú de seguimiento está abierto",
-        "track_clear": "🥠 El número de visitas se restablece a cero",
         "track_delete": "🎩 Eliminado",
         "string_to_str": {
             "info": "⚽ En algunos comandos, es conveniente indicar la hora no en números, sino en texto, aquí hay una nota. \n\n Si se le envía aquí, puede utilizar los métodos de introducción de la hora con texto. Puedes probarlo aquí mismo, escribe `/string_to_sec` `1d` `1h` `12m`\nRecibirás 90720 en respuesta: estos son los segundos que se calculan a partir de tu mensaje. \n\n ¿Qué símbolos pueden utilizarse? \n`w` - semana, `d` - día, `h` - hora, `m` - minuto, `s` - segundo (no es necesario especificar una letra)\n\n_By el camino, puede especificar 1 y el mismo signo tantas veces como desee y en cualquier order._"

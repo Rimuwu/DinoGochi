@@ -4254,15 +4254,38 @@
         "create_tracking": {
             "name": "⛏ Enter the tracking code",
             "already": "👿 The code is already being tracked",
-            "ok": "🍡 The code has been added, you can view the information on the codes by writing /tracking\n\n Link - `{url}`"
-        },
-        "track": {
-            "text": "☄ | Tracking\n\n 🧮 Used: {use} \n\n 🍜 Link: `{url}` \n 🔎 Code: `{code}` \n 🥞 Created: {t}",
-            "delete": "❌ Delete",
-            "clear": "⛏ Zero"
+            "track_info": {
+                "not_found": "not found",
+                "code": "Code: {code}",
+                "track_link": "Track link: `https://t.me/DinoGochi_bot?start={code}`",
+                "creation_date": "Дата создания: {creation_date}",
+                "created_by": "Creator: {who_create}",
+                "dependency": "Depended on: {concern_name}",
+                "user_count": "Number of users: {user_count}",
+                "status_count": "Number of users per status:",
+                "status_entry": "`{status}`: {count} ({percentage}%)",
+                "last_day_transitions": "Number of clicks in the last day: {last_day_count}",
+                "last_week_transitions": "Number of clicks in the last 7 days: {last_week_count}",
+                "last_month_transitions": "Number of clicks in the last 30 days: {last_month_count}",
+                "concern_links_count": "Quantity `concern_links`: {concern_links_count}",
+                "main_link_statistics": "*▢ Statistics for the main link*:",
+                "first_status_percentages": "Percentage `first_status`:",
+                "first_status_entry": "`{status}`: {percentage}%",
+                "already_in_bot_percentages": "Percentage `already_in_bot`:",
+                "already_in_bot_entry": "`{status}`: {percentage}%",
+                "concern_links_summary": "*▢ Summary statistics for concern_links*:",
+                "total_concern_links": "Total number of references: {concern_links_count}",
+                "total_concern_users": "Total number of users: {total_concern_members}",
+                "concern_first_status_percentages": "Percentage `first_status`:",
+                "concern_first_status_entry": "`{status}`: {percentage}%",
+                "concern_already_in_bot_percentages": "Percentage `already_in_bot`:",
+                "concern_already_in_bot_entry": "`{status}`: {percentage}%",
+                "top_three_links": "The first three links are:",
+                "top_three_entry": "{index}. Code: `{code}`",
+                "delete": "❌ Delete link"
+            }
         },
         "track_open": "🎀 The tracking menu is open",
-        "track_clear": "🥠 Number of clicks reset to zero",
         "track_delete": "🎩 Removed",
         "string_to_str": {
             "info": "⚽ In some commands, it is convenient to indicate the time not in numbers, but in text, here is a reminder. \n\n If you've been sent here, then you can use text time input methods. You can try it right here, write '/string_to_sec` ` 1d` ` 1h` ` 12m`\n You will receive in response 90720 - these are the number of seconds that are calculated from your message. \n\n What symbols can I use? \n` w`-Week` d`-day` h`-hour` m`-minute` s' - second (you don't have to specify a letter)\n\n _By the way, you can specify 1 and the same character as many times as you want and in any order._"

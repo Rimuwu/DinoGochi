@@ -4254,15 +4254,39 @@
         "create_tracking": {
             "name": "⛏ Masukkan kode pelacakan",
             "already": "👿 Kode sudah dilacak",
-            "ok": "🍡 Kode telah ditambahkan, Anda dapat melihat informasi pada kode dengan menulis /tracking\n\nLink - `{url}`"
-        },
-        "track": {
-            "text": "☄ | Pelacakan\n\n🧮 Digunakan: {use}\n\n🍜 Referensi: `{url}`\n🔎 Kode: `{code}`\n🥞 Dibuat: {t}",
-            "delete": "❌ Hapus",
-            "clear": "⛏ ulang"
+            "ok": "🍡 Kode telah ditambahkan, Anda dapat melihat informasi pada kode dengan menulis /tracking\n\nLink - `{url}`",
+            "track_info": {
+                "not_found": "not found",
+                "code": "Kode: {code}",
+                "track_link": "Tautan trek: `https://t.me/DinoGochi_bot?start={code}`",
+                "creation_date": "Tanggal Dibuat: {creation_date}",
+                "created_by": "Pencipta: {who_create}",
+                "dependency": "Bergantung pada: {concern_name}",
+                "user_count": "Jumlah pengguna: {user_count}",
+                "status_count": "Jumlah pengguna per status:",
+                "status_entry": "`{status}`: {count} ({percentage}%)",
+                "last_day_transitions": "Jumlah klik dalam hari terakhir: {last_day_count}",
+                "last_week_transitions": "Количество переходов за последние 7 дней: {last_week_count}",
+                "last_month_transitions": "Jumlah klik dalam 30 hari terakhir: {last_month_count}",
+                "concern_links_count": "Kuantitas `concern_links`: {concern_links_count}",
+                "main_link_statistics": "*▢ Statistik untuk tautan utama*:",
+                "first_status_percentages": "Persentase `first_status`:",
+                "first_status_entry": "`{status}`: {percentage}%",
+                "already_in_bot_percentages": "Persentase `already_in_bot`:",
+                "already_in_bot_entry": "`{status}`: {percentage}%",
+                "concern_links_summary": "*▢ Statistik ringkasan untuk perhatian_tautan*:",
+                "total_concern_links": "Jumlah total referensi: {concern_links_count}",
+                "total_concern_users": "Jumlah total pengguna: {total_concern_members}",
+                "concern_first_status_percentages": "Persentase `first_status`:",
+                "concern_first_status_entry": "`{status}`: {percentage}%",
+                "concern_already_in_bot_percentages": "Persentase `already_in_bot`:",
+                "concern_already_in_bot_entry": "`{status}`: {percentage}%",
+                "top_three_links": "Tiga tautan pertama adalah:",
+                "top_three_entry": "{index}. Kode: `{code}`",
+                "delete": "❌ Hapus tautan"
+            }
         },
         "track_open": "🎀 Menu pelacakan terbuka",
-        "track_clear": "🥠 Jumlah klik diatur ulang ke nol",
         "track_delete": "🎩 Dihapus",
         "string_to_str": {
             "info": "⚽ Dalam beberapa perintah, akan lebih mudah untuk menunjukkan waktu bukan dalam angka, tetapi dalam teks, inilah memo. \n\n Jika Anda dikirim ke sini, maka Anda dapat menggunakan metode memasukkan waktu dengan teks. Anda dapat mencobanya di sini, tulis `/string_to_sec` `1d` `1j` `12m`\nAnda akan menerima 90720 sebagai tanggapan - ini adalah jumlah detik yang dihitung dari pesan Anda. \n\n Simbol apa yang dapat digunakan? \n`w` - Minggu, `d` - hari, `h` - jam, `m` - menit, `s` - detik (Anda tidak perlu menentukan huruf)\n\n_By caranya, Anda dapat menentukan 1 dan tanda yang sama sebanyak yang Anda inginkan dan dalam order._"
