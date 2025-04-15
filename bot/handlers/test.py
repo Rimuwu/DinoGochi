@@ -268,6 +268,13 @@ async def check(message: Message):
     
     state = await get_state(message.from_user.id, message.chat.id)
     r = await state.set_state(Form.name)
+    
+    await state.set_data({'name': message.from_user.id, 'mef': message.chat.id})
+    await message.answer(f"{await state.get_data()}")
+
+    await state.clear()
+    await state.set_state(Form.age)
+    await message.answer(f"{await state.get_data()}")
 
 @HDMessage
 @main_router.message(Command(commands=['res_state']), StateFilter(Form.name))
