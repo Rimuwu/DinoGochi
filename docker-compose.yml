@@ -13,8 +13,10 @@ services:
     networks:
       - shared_network
     dns:
+      - 8.8.8.8
       - 1.1.1.1
       - 8.8.4.4
+      - 1.0.0.1
 
   mongo:
     image: mongo:latest # Имя образа
