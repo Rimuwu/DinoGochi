@@ -397,6 +397,7 @@ async def start_inv(function, userid: int, chatid: int, lang: str,
             # Если не передана функция, то вызывается функция информация о передмете
             if function is None: function = send_item_info
 
+        await state.clear()
         await state.set_state(InventoryStates.Inventory)
 
         data['pages'] = pages
@@ -430,6 +431,7 @@ async def open_inv(chatid: int, userid: int):
     """
 
     state = await get_state(userid, chatid)
+    await state.clear()
     await state.set_state(InventoryStates.Inventory)
     await swipe_page(chatid, userid)
 

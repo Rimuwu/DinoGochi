@@ -78,12 +78,14 @@ async def ChooseDinoState(function,
 
     elif ret_data['case'] == 2:# Несколько динозавров / яиц
         # Устанавливаем состояния и передаём данные
-        await state.set_state(GeneralStates.ChooseDino)
+        await state.clear()
 
         data = {}
         data['function'] = function
         data['dino_names'] = ret_data['data_names']
         data['transmitted_data'] = transmitted_data
+
+        await state.set_state(GeneralStates.ChooseDino)
         await state.set_data(data)
 
         await bot.send_message(chatid, t('css.dino', lang), reply_markup=ret_data['keyboard'])
@@ -112,6 +114,7 @@ async def ChooseIntState(function,
     transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
 
     if min_int != max_int or not autoanswer:
+        await state.clear()
         await state.set_state(GeneralStates.ChooseInt)
 
         data = {}
@@ -142,6 +145,7 @@ async def ChooseStringState(function,
     if not transmitted_data: transmitted_data = {}
 
     transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
+    await state.clear()
     await state.set_state(GeneralStates.ChooseString)
 
     data = {}
@@ -170,6 +174,7 @@ async def ChooseTimeState(function,
     if not transmitted_data: transmitted_data = {}
 
     transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
+    await state.clear()
     await state.set_state(GeneralStates.ChooseTime)
 
     data = {}
@@ -201,6 +206,7 @@ async def ChooseConfirmState(function,
     transmitted_data['cancel'] = cancel
 
     transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
+    await state.clear()
     await state.set_state(GeneralStates.ChooseConfirm)
 
     data = {}
@@ -233,6 +239,7 @@ async def ChooseOptionState(function,
     transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
 
     if len(options) > 1:
+        await state.clear()
         await state.set_state(GeneralStates.ChooseOption)
 
         data = {}
@@ -266,6 +273,7 @@ async def ChooseInlineState(function,
 
     transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
 
+    await state.clear()
     await state.set_state(GeneralStates.ChooseInline)
 
     data = {}
@@ -296,6 +304,7 @@ async def ChooseCustomState(function,
     if not transmitted_data: transmitted_data = {}
     transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
 
+    await state.clear()
     await state.set_state(GeneralStates.ChooseCustom)
 
     data = {}
@@ -357,6 +366,7 @@ async def ChoosePagesState(function,
     pages = chunk_pages(options, horizontal, vertical)
 
     if len(options) > 1 or not autoanswer:
+        await state.clear()
         await state.set_state(GeneralStates.ChoosePagesState)
 
         data = {}
@@ -460,6 +470,7 @@ async def ChooseImageState(function,
     if not transmitted_data: transmitted_data = {}
 
     transmitted_data = add_if_not(transmitted_data, userid, chatid, lang)
+    await state.clear()
     await state.set_state(GeneralStates.ChooseImage)
 
     data = {}
