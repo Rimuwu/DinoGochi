@@ -83,6 +83,7 @@ users = mongo_client.user.users
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 items = DBconstructor(mongo_client.items.items)
+management = DBconstructor(mongo_client.other.management)
 
 @main_router.message(Command(commands=['add_item', 'item_add']), IsAdminUser())
 async def command(message):
@@ -430,3 +431,15 @@ async def donations(message: Message):
 async def incubation_d(message: Message):
     
     await incubation()
+    
+
+@main_router.message(Command(commands=['delete_tracking_links']), IsAdminUser())
+@HDMessage
+async def fdjg(message: Message):
+                #     {
+                #     "_id": "tracking_links",
+                #     "links": {}
+                # },
+
+    await management.delete_one({'_id': 'tracking_links'})
+    await message.answer('ok')
