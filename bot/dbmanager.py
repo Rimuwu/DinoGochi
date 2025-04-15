@@ -17,12 +17,21 @@ mongo_client = motor.motor_asyncio.AsyncIOMotorClient(conf.mongo_url)
 async def check_db(client: AgnosticClient):
     if not client.server_info():
         raise ConnectionError("Failed to connect to MongoDB server")
-    
+
     print(f"{client.HOST}, mongo connected")
 
+    print('Checking the database...')
     await create_collections(client)
+    print('Collections checked.')
+
+    print('Creating necessary documents...')
     await create_necessary_documents(client)
-    
+    print('Necessary documents created.')
+
+    print('Creating indexes...')
+    await check_and_create_indexes(client)
+    print('Indexes created.')
+
     print('The databases are checked and prepared for use.')
 
 # Создание необходимых коллекций
@@ -47,6 +56,49 @@ async def create_necessary_documents(client: AgnosticClient):
 async def create_document_if_not_exists(collection, doc: Dict):
     if not await collection.find_one({"_id": doc['_id']}, {'_id': 1}):
         await collection.insert_one(doc)
+
+# Проверка и создание индексов для коллекций
+async def check_and_create_indexes(client: AgnosticClient):
+    for index_config in GAME_SETTINGS['indexes']:
+        database = client[index_config['collection']]
+        collection = database[index_config['base']]
+        existing_indexes = await collection.index_information()
+
+        for index in index_config['indexes']:
+            index_name = index.get('name') or index['field']
+            if index_name not in existing_indexes:
+                index_options = {
+                    'name': index_name,
+                    'unique': index.get('unique', False),
+                    'sparse': index.get('sparse', False),
+                    'expireAfterSeconds': index.get('ttl'),
+                }
+
+                # Убираем None значения из опций
+                index_options = {k: v for k, v in index_options.items() if v is not None}
+
+                # Исключаем wildcardProjection, если тип индекса не wildcard
+                if index['type'] == 'wildcard':
+                    index_options['wildcardProjection'] = index.get('wildcardProjection')
+
+                # Исключаем collation, если он пуст
+                collation = index.get('collation')
+                if collation:
+                    index_options['collation'] = collation
+
+                # Исключаем partialFilterExpression, если он пуст
+                partial_filter_expression = index.get('partialFilterExpression')
+                if partial_filter_expression:
+                    index_options['partialFilterExpression'] = partial_filter_expression
+
+                if index['type'] in ['1', '-1']:
+                    await collection.create_index([(index['field'], int(index['type']))], **index_options)
+                elif index['type'] == '2dsphere':
+                    await collection.create_index([(index['field'], '2dsphere')], **index_options)
+                elif index['type'] == 'text':
+                    await collection.create_index([(index['field'], 'text')], **index_options)
+                elif index['type'] == 'wildcard':
+                    await collection.create_index([(index['field'], 'wildcard')], **index_options)
 
 
 def check():
