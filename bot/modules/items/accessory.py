@@ -22,6 +22,11 @@ async def find_accessory(dino: Dino, acc_type: Optional[str] = None) -> list[lis
             result.append([item, ind])
     return result
 
+async def clean_none_items(dino: Dino):
+    """Удаляет все элементы со значением None из активных предметов динозавра."""
+    dino.activ_items = [item for item in dino.activ_items if item is not None]
+    await dino.update({"$set": {"activ_items": dino.activ_items}})
+
 async def downgrade_accessory(dino: Dino, item_id: str, max_unit: int = 2):
     """Понижает прочность аксессуара с указанным item_id
        Return
@@ -35,15 +40,15 @@ async def downgrade_accessory(dino: Dino, item_id: str, max_unit: int = 2):
                 num = randint(0, max_unit)
 
                 if item['abilities']['endurance'] <= 0:
-                    # Удаляем аксессуар, если его прочность равна или меньше 0
-                    del dino.activ_items[index]
+                    # Устанавливаем None вместо удаления аксессуара
+                    dino.activ_items[index] = None
                     await dino.update({"$set": {"activ_items": dino.activ_items}})
                     await dino_notification(dino._id, 'broke_accessory', item_id=item['item_id'])
                 else:
                     # Понижаем прочность аксессуара
                     item['abilities']['endurance'] -= num
-                    await dino.update({"$set": {f'activ_items.{index}.abilities.endurance': 
-                                                    item['abilities']['endurance']}})
+
+                    await dino.update({"$inc": {f'activ_items.{index}.abilities.endurance': num}})
                 return True
             return False
     return False
@@ -65,17 +70,21 @@ async def downgrade_type_accessory(dino: Dino, acc_type: str, max_unit: int = 2)
             num = randint(0, max_unit)
 
             if item['abilities']['endurance'] <= 0:
-                # Удаляем аксессуар, если его прочность равна или меньше 0
-                del dino.activ_items[index]
+                # Устанавливаем None вместо удаления аксессуара
+                dino.activ_items[index] = None
                 await dino.update({"$set": {"activ_items": dino.activ_items}})
                 await dino_notification(dino._id, 'broke_accessory', item_id=item['item_id'])
+
             else:
                 # Понижаем прочность аксессуара
                 item['abilities']['endurance'] -= num
+                
                 await dino.update({"$set": {f'activ_items.{index}.abilities.endurance': 
                                                 item['abilities']['endurance']}})
             updated = True
 
+    # Очищаем None элементы
+    await clean_none_items(dino)
     return updated
 
 async def check_accessory(dino: Dino, item_id: str, downgrade: bool = False,
