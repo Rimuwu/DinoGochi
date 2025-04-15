@@ -167,7 +167,7 @@ async def egg_answer_callback(callback: types.CallbackQuery):
             code = callback.data.split()[3]
             await use_promo(code, userid, lang)
 
-    await edit_track_user(referal, userid, 'incubate')
+        await edit_track_user(callback.data.split()[3], userid, 'incubate')
 
 @HDCallback
 @main_router.callback_query(IsAuthorizedUser(), 
