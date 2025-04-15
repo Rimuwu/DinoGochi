@@ -159,15 +159,19 @@ async def egg_answer_callback(callback: types.CallbackQuery):
     await incubation_egg(egg_id, callback.from_user.id, quality=GAME_SETTINGS['first_egg_rarity'])
 
     if len(callback.data.split()) > 2:
+        ref_res = False
         if callback.data.split()[2] == 'referal':
             referal = callback.data.split()[3]
-            await connect_referal(referal, callback.from_user.id)
+            ref_res = await connect_referal(referal, callback.from_user.id)
 
         if callback.data.split()[2] == 'promo':
             code = callback.data.split()[3]
-            await use_promo(code, userid, lang)
+            promo_res, _ = await use_promo(code, userid, lang)
+            if promo_res not in ['not_found']:
+                ref_res = True
 
-        await edit_track_user(callback.data.split()[3], userid, 'incubate')
+        if not ref_res:
+            await edit_track_user(callback.data.split()[3], userid, 'incubate')
 
 @HDCallback
 @main_router.callback_query(IsAuthorizedUser(), 
