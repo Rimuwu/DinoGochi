@@ -11,3 +11,4 @@ emoji==2.14.1
 # wheel==0.46.1
 # langdetect==1.0.9
 aiofiles==24.1.0
+json5==0.12.0
