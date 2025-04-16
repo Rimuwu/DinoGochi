@@ -21,7 +21,7 @@
                 {
                     "field": "activity_type", // Укажите имя поля
                     "type": "text", // Тип индекса: 1 (asc), -1 (desc), 2dsphere, text
-                    "unique": true, // Уникальность индекса
+                    "unique": false, // Уникальность индекса
                     "name": "activity_type", // Имя индекса (опционально)
                     "ttl": null, // Время жизни (TTL) в секундах (опционально)
                     "partialFilterExpression": {}, // Условие для частичного индекса (опционально)
