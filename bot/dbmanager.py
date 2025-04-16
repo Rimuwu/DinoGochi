@@ -66,7 +66,17 @@ async def check_and_create_indexes(client: AgnosticClient):
 
         for index in index_config['indexes']:
             index_name = index.get('name') or index['field']
-            if index_name not in existing_indexes:
+            index_key = [(index['field'], int(index['type']))] if index['type'] in ['1', '-1', 1, -1] else [(index['field'], index['type'])]
+
+            # Проверяем, существует ли индекс с другим именем
+            conflicting_index = next((name for name, details in existing_indexes.items() if details['key'] == dict(index_key)), None)
+
+            if conflicting_index and conflicting_index != index_name:
+                # Удаляем конфликтующий индекс
+                print(f"Dropping conflicting index {conflicting_index} for {index_name}.")
+                await collection.drop_index(conflicting_index)
+
+            if index_name not in existing_indexes or conflicting_index:
                 index_options = {
                     'name': index_name,
                     'unique': index.get('unique', False),
@@ -89,17 +99,24 @@ async def check_and_create_indexes(client: AgnosticClient):
                 # Исключаем partialFilterExpression, если он пуст
                 partial_filter_expression = index.get('partialFilterExpression')
                 if partial_filter_expression:
+                    # Удаляем $ne: null, оставляем только $exists: true
+                    if '$ne' in partial_filter_expression.get('userid', {}):
+                        partial_filter_expression = {"userid": {"$exists": True}}
                     index_options['partialFilterExpression'] = partial_filter_expression
 
                 try:
                     if index['type'] in ['1', '-1', 1, -1]:
-                        await collection.create_index([(index['field'], int(index['type']))], **index_options)
+                        await collection.create_index(index_key, **index_options)
                     elif index['type'] == '2dsphere':
-                        await collection.create_index([(index['field'], '2dsphere')], **index_options)
+                        await collection.create_index(index_key, **index_options)
                     elif index['type'] == 'text':
-                        await collection.create_index([(index['field'], 'text')], **index_options)
+                        # Проверяем, есть ли уже текстовый индекс
+                        if any(idx.get('key', {}).get(index['field']) == 'text' for idx in existing_indexes.values()):
+                            print(f"Text index for field {index['field']} already exists, skipping creation.")
+                            continue
+                        await collection.create_index(index_key, **index_options)
                     elif index['type'] == 'wildcard':
-                        await collection.create_index([(index['field'], 'wildcard')], **index_options)
+                        await collection.create_index(index_key, **index_options)
                 except Exception as e:
                     print(f"Failed to create index {index_name}: {e}")
 
