@@ -1,7 +1,7 @@
 {
     "collections": {
         "user": ["users", "lang", "referals", "friends", "subscriptions", "ads"],
-        "dinosaur": ["dinosaurs", "dead_dinos", "incubation", "dino_owners", "dino_mood", "states"],
+        "dinosaur": ["dinosaurs", "dead_dinos", "incubation", "dino_owners", "dino_mood", "state"],
         "dino_activity": ["kd_activity", "long_activity", "kindergarten"],
         "market": ["products", "sellers", "preferential", "puhs"],
         "items": ["items", "farm", "item_craft"],
@@ -15,8 +15,8 @@
 
     "indexes": [
         {
-            "collection": "dino_activity",
-            "base": "kd_activity",
+            "database": "dino_activity",
+            "collection": "kd_activity",
             "indexes": [
                 {
                     "field": "activity_type", // Укажите имя поля
@@ -28,6 +28,462 @@
                     "wildcardProjection": {}, // Проекция для wildcard индекса (опционально)
                     "collation": {}, // Настройки сортировки (опционально)
                     "sparse": false // Разреженный индекс
+                },
+                {
+                    "field": "dino_id",
+                    "type": 1,
+                    "name": "dino_id"
+                }
+            ]
+        },
+        {
+            "database": "dino_activity",
+            "collection": "kindergarten",
+            "indexes": [
+                {
+                    "field": "userid",
+                    "type": 1,
+                    "unique": true,
+                    "name": "userid"
+                }
+            ]
+        },
+        {
+            "database": "dino_activity",
+            "collection": "long_activity",
+            "indexes": [
+                {
+                    "field": "dino_id",
+                    "type": 1,
+                    "unique": true,
+                    "name": "dino_id"
+                }
+            ]
+        },
+        {
+            "database": "dinosaur",
+            "collection": "dead_dinos",
+            "indexes": [
+                {
+                    "field": "owner_id",
+                    "type": 1,
+                    "name": "owner_id"
+                }
+            ]
+        },
+        {
+            "database": "dinosaur",
+            "collection": "dino_mood",
+            "indexes": [
+                {
+                    "field": "dino_id",
+                    "type": 1,
+                    "name": "dino_id"
+                }
+            ]
+        },
+        {
+            "database": "dinosaur",
+            "collection": "dino_owners",
+            "indexes": [
+                {
+                    "field": "dino_id",
+                    "type": 1,
+                    "name": "dino_id"
+                },
+                {
+                    "field": "owner_id",
+                    "type": 1,
+                    "name": "owner_id"
+                }
+            ]
+        },
+        {
+            "database": "dinosaur",
+            "collection": "dinosaurs",
+            "indexes": [
+                {
+                    "field": "alt_id",
+                    "type": "text",
+                    "name": "alt_id",
+                    "unique": true
+                }
+            ]
+        },
+        {
+            "database": "dinosaur",
+            "collection": "incubation",
+            "indexes": [
+                {
+                    "field": "owner_id",
+                    "type": 1,
+                    "name": "owner_id"
+                },
+                {
+                    "field": "incubation_time",
+                    "type": 1,
+                    "name": "incubation_time"
+                }
+            ]
+        },
+        {
+            "database": "dinosaur",
+            "collection": "state",
+            "indexes": [
+                {
+                    "field": "dino_id",
+                    "type": 1,
+                    "name": "dino_id"
+                },
+                {
+                    "field": "last_check",
+                    "type": 1,
+                    "name": "last_check"
+                }
+            ]
+        },
+        {
+            "database": "items",
+            "collection": "item_craft",
+            "indexes": [
+                {
+                    "field": "alt_code",
+                    "type": "text",
+                    "name": "alt_code",
+                    "unique": true
+                },
+                {
+                    "field": "userid",
+                    "type": 1,
+                    "name": "userid"
+                },
+                {
+                    "field": "dino_id",
+                    "type": 1,
+                    "name": "dino_id"
+                },
+                {
+                    "field": "time_end",
+                    "type": 1,
+                    "name": "time_end"
+                }
+            ]
+        },
+        {
+            "database": "items",
+            "collection": "items",
+            "indexes": [
+                {
+                    "field": "owner_id",
+                    "type": 1,
+                    "name": "owner_id"
+                }
+            ]
+        },
+        {
+            "database": "lottery",
+            "collection": "lottery",
+            "indexes": []
+        },
+        {
+            "database": "lottery",
+            "collection": "members",
+            "indexes": []
+        },
+        {
+            "database": "market",
+            "collection": "preferential",
+            "indexes": [
+                {
+                    "field": "userid",
+                    "type": 1,
+                    "name": "userid"
+                },
+                {
+                    "field": "end",
+                    "type": 1,
+                    "name": "end"
+                },
+                {
+                    "field": "product_id",
+                    "type": 1,
+                    "name": "product_id",
+                    "unique": true
+                }
+            ]
+        },
+        {
+            "database": "market",
+            "collection": "products",
+            "indexes": [
+                {
+                    "field": "alt_id",
+                    "type": "text",
+                    "name": "alt_id",
+                    "unique": true
+                },
+                // {
+                //     "field": "type",
+                //     "type": "text",
+                //     "name": "type"
+                // },
+                {
+                    "field": "add_time",
+                    "type": 1,
+                    "name": "add_time"
+                },
+                {
+                    "field": "owner_id",
+                    "type": 1,
+                    "name": "owner_id"
+                }
+            ]
+        },
+        {
+            "database": "market",
+            "collection": "sellers",
+            "indexes": [
+                {
+                    "field": "name",
+                    "type": "text",
+                    "name": "name"
+                },
+                {
+                    "field": "owner_id",
+                    "type": 1,
+                    "name": "owner_id"
+                }
+            ]
+        },
+        {
+            "database": "minigames",
+            "collection": "online",
+            "indexes": []
+        },
+        {
+            "database": "other",
+            "collection": "companies",
+            "indexes": [
+                {
+                    "field": "time_end",
+                    "type": 1,
+                    "name": "time_end"
+                }
+            ]
+        },
+        {
+            "database": "other",
+            "collection": "dead_users",
+            "indexes": [
+                {
+                    "field": "userid",
+                    "type": 1,
+                    "name": "userid"
+                },
+                {
+                    "field": "last_m",
+                    "type": 1,
+                    "name": "last_m"
+                }
+            ]
+        },
+        {
+            "database": "other",
+            "collection": "message_log",
+            "indexes": [
+                {
+                    "field": "userid",
+                    "type": 1,
+                    "name": "userid"
+                },
+                {
+                    "field": "advert_id",
+                    "type": 1,
+                    "name": "advert_id"
+                },
+                {
+                    "field": "message_log",
+                    "type": 1,
+                    "name": "message_log"
+                }
+            ]
+        },
+        {
+            "database": "tavern",
+            "collection": "daily_award",
+            "indexes": [
+                {
+                    "field": "owner_id",
+                    "type": 1,
+                    "name": "owner_id",
+                    "unique": true
+                },
+                {
+                    "field": "time_end",
+                    "type": 1,
+                    "name": "time_end"
+                }
+            ]
+        },
+        {
+            "database": "tavern",
+            "collection": "inside_shop",
+            "indexes": [
+                {
+                    "field": "owner_id",
+                    "type": 1,
+                    "name": "owner_id",
+                    "unique": true
+                }
+            ]
+        },
+        {
+            "database": "tavern",
+            "collection": "quests",
+            "indexes": [
+                {
+                    "field": "owner_id",
+                    "type": 1,
+                    "name": "owner_id"
+                },
+                {
+                    "field": "alt_id",
+                    "type": "text",
+                    "name": "alt_id",
+                    "unique": true
+                },
+                {
+                    "field": "time_end",
+                    "type": 1,
+                    "name": "time_end"
+                }
+            ]
+        },
+        {
+            "database": "tracking",
+            "collection": "links",
+            "indexes": [
+                {
+                    "field": "code",
+                    "type": "text",
+                    "name": "code"
+                },
+                {
+                    "field": "concert",
+                    "type": 1,
+                    "name": "concert"
+                }
+            ]
+        },
+        {
+            "database": "tracking",
+            "collection": "members",
+            "indexes": [
+                {
+                    "field": "track_id",
+                    "type": 1,
+                    "name": "track_id"
+                },
+                {
+                    "field": "userid",
+                    "type": 1,
+                    "name": "userid"
+                }
+            ]
+        },
+        {
+            "database": "user",
+            "collection": "ads",
+            "indexes": [
+                {
+                    "field": "userid",
+                    "type": 1,
+                    "name": "userid",
+                    "unique": true
+                },
+                {
+                    "field": "last_ads",
+                    "type": 1,
+                    "name": "last_ads"
+                }
+            ]
+        },
+        {
+            "database": "user",
+            "collection": "friends",
+            "indexes": [
+                {
+                    "field": "userid",
+                    "type": 1,
+                    "name": "userid"
+                },
+                {
+                    "field": "friendid",
+                    "type": 1,
+                    "name": "friendid"
+                }
+            ]
+        },
+        {
+            "database": "user",
+            "collection": "lang",
+            "indexes": [
+                {
+                    "field": "userid",
+                    "type": 1,
+                    "name": "userid",
+                    "unique": true
+                },
+                {
+                    "field": "lang",
+                    "type": "text",
+                    "name": "lang"
+                }
+            ]
+        },
+        {
+            "database": "user",
+            "collection": "referals",
+            "indexes": [
+                {
+                    "field": "userid",
+                    "type": 1,
+                    "name": "userid",
+                    "unique": true
+                },
+                {
+                    "field": "code",
+                    "type": "text",
+                    "name": "code"
+                }
+            ]
+        },
+        {
+            "database": "user",
+            "collection": "subscriptions",
+            "indexes": [
+                {
+                    "field": "userid",
+                    "type": 1,
+                    "name": "userid",
+                    "unique": true
+                },
+                {
+                    "field": "sub_start",
+                    "type": 1,
+                    "name": "sub_start"
+                }
+            ]
+        },
+        {
+            "database": "user",
+            "collection": "users",
+            "indexes": [
+                {
+                    "field": "userid",
+                    "type": 1,
+                    "name": "userid",
+                    "unique": true
                 }
             ]
         }
