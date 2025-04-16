@@ -450,9 +450,7 @@
                 {
                     "field": "userid",
                     "type": 1,
-                    "name": "userid",
-                    "unique": true,
-                    "partialFilterExpression": { "userid": { "$exists": true, "$ne": null } }
+                    "name": "userid"
                 },
                 {
                     "field": "code",
