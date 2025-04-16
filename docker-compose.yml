@@ -29,6 +29,7 @@ services:
       - ./mongodb:/data/db # Каталог с данными
     restart: always # Перезапускать контейнер при падении
     command: mongod --quiet --logpath /dev/null
+    stop_signal: SIGINT
     networks:
       - shared_network
 
