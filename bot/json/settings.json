@@ -44,7 +44,8 @@
                     "field": "userid",
                     "type": 1,
                     "unique": true,
-                    "name": "userid"
+                    "name": "userid",
+                    "partialFilterExpression": { "userid": { "$exists": true, "$ne": null } }
                 }
             ]
         },
@@ -399,7 +400,8 @@
                     "field": "userid",
                     "type": 1,
                     "name": "userid",
-                    "unique": true
+                    "unique": true,
+                    "partialFilterExpression": { "userid": { "$exists": true, "$ne": null } }
                 },
                 {
                     "field": "last_ads",
@@ -449,7 +451,8 @@
                     "field": "userid",
                     "type": 1,
                     "name": "userid",
-                    "unique": true
+                    "unique": true,
+                    "partialFilterExpression": { "userid": { "$exists": true, "$ne": null } }
                 },
                 {
                     "field": "code",
