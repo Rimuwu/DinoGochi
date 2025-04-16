@@ -60,8 +60,8 @@ async def create_document_if_not_exists(collection, doc: Dict):
 # Проверка и создание индексов для коллекций
 async def check_and_create_indexes(client: AgnosticClient):
     for index_config in GAME_SETTINGS['indexes']:
-        database = client[index_config['collection']]
-        collection = database[index_config['base']]
+        database = client[index_config['database']]
+        collection = database[index_config['collection']]
         existing_indexes = await collection.index_information()
 
         for index in index_config['indexes']:
@@ -92,7 +92,7 @@ async def check_and_create_indexes(client: AgnosticClient):
                     index_options['partialFilterExpression'] = partial_filter_expression
 
                 try:
-                    if index['type'] in ['1', '-1']:
+                    if index['type'] in ['1', '-1', 1, -1]:
                         await collection.create_index([(index['field'], int(index['type']))], **index_options)
                     elif index['type'] == '2dsphere':
                         await collection.create_index([(index['field'], '2dsphere')], **index_options)
