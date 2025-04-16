@@ -34,7 +34,7 @@ async def check_items():
             stat = dino.stats['intelligence']
             # Формула отвечает на вопрос - создать ли ещё 1 предмет
             # Главное условие - 20 уровень = 40% успеха
-            suc =  transform(stat, 20, 0.4) + random() >= 0.8
+            suc = transform(stat, 20, 0.4) + random() >= 0.8
 
             if suc:
                 r_item = choice(craft['items'])
