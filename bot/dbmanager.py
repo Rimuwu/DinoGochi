@@ -91,14 +91,17 @@ async def check_and_create_indexes(client: AgnosticClient):
                 if partial_filter_expression:
                     index_options['partialFilterExpression'] = partial_filter_expression
 
-                if index['type'] in ['1', '-1']:
-                    await collection.create_index([(index['field'], int(index['type']))], **index_options)
-                elif index['type'] == '2dsphere':
-                    await collection.create_index([(index['field'], '2dsphere')], **index_options)
-                elif index['type'] == 'text':
-                    await collection.create_index([(index['field'], 'text')], **index_options)
-                elif index['type'] == 'wildcard':
-                    await collection.create_index([(index['field'], 'wildcard')], **index_options)
+                try:
+                    if index['type'] in ['1', '-1']:
+                        await collection.create_index([(index['field'], int(index['type']))], **index_options)
+                    elif index['type'] == '2dsphere':
+                        await collection.create_index([(index['field'], '2dsphere')], **index_options)
+                    elif index['type'] == 'text':
+                        await collection.create_index([(index['field'], 'text')], **index_options)
+                    elif index['type'] == 'wildcard':
+                        await collection.create_index([(index['field'], 'wildcard')], **index_options)
+                except Exception as e:
+                    print(f"Failed to create index {index_name}: {e}")
 
 
 def check():
