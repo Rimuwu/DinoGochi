@@ -109,7 +109,7 @@ async def check_and_create_indexes(client: AgnosticClient):
                         await collection.create_index([(index['field'], 'wildcard')], **index_options)
                 except Exception as e:
                     if 'IndexOptionsConflict' in str(e):
-                        print(f"Index conflict detected for {database}.{collection}.{index_name}, skip.")
+                        print(f"Index conflict detected for {index_config['database']}.{index_config['collection']}.{index_name}, skip.")
                     else:
                         print(f"Failed to create index {index_name}: {e}")
                     
