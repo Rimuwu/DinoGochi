@@ -46,9 +46,9 @@ async def downgrade_accessory(dino: Dino, item_id: str, max_unit: int = 2):
                     await dino_notification(dino._id, 'broke_accessory', item_id=item['item_id'])
                 else:
                     # Понижаем прочность аксессуара
-                    item['abilities']['endurance'] -= num
+                    # item['abilities']['endurance'] -= num
 
-                    await dino.update({"$inc": {f'activ_items.{index}.abilities.endurance': num}})
+                    await dino.update({"$inc": {f'activ_items.{index}.abilities.endurance': -num}})
                 return True
             return False
     return False
@@ -77,10 +77,11 @@ async def downgrade_type_accessory(dino: Dino, acc_type: str, max_unit: int = 2)
 
             else:
                 # Понижаем прочность аксессуара
-                item['abilities']['endurance'] -= num
-                
-                await dino.update({"$set": {f'activ_items.{index}.abilities.endurance': 
-                                                item['abilities']['endurance']}})
+                # item['abilities']['endurance'] -= num
+
+                # await dino.update({"$set": {f'activ_items.{index}.abilities.endurance': 
+                #                                 item['abilities']['endurance']}})
+                await dino.update({"$inc": {f'activ_items.{index}.abilities.endurance': -num}})
             updated = True
 
     # Очищаем None элементы
