@@ -42,6 +42,7 @@ async def events():
 
         chance = EVENT_CHANCE
         dino = await Dino().create(i['dino_id'])
+        if not dino: continue
 
         res = await check_inspiration(i['dino_id'], 'journey')
         if res: chance *= 2
