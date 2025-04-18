@@ -25,7 +25,7 @@ incubations = DBconstructor(mongo_client.dinosaur.incubation)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
-states = DBconstructor(mongo_client.dinosaur.states)
+states = DBconstructor(mongo_client.dinosaur.state)
 
 kindergarten = DBconstructor(mongo_client.dino_activity.kindergarten)
 kd_activity = DBconstructor(mongo_client.dino_activity.kd_activity)

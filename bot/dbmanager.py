@@ -60,8 +60,8 @@ async def create_document_if_not_exists(collection, doc: Dict):
 # Проверка и создание индексов для коллекций
 async def check_and_create_indexes(client: AgnosticClient):
     for index_config in GAME_SETTINGS['indexes']:
-        database = client[index_config['collection']]
-        collection = database[index_config['base']]
+        database = client[index_config['database']]
+        collection = database[index_config['collection']]
         existing_indexes = await collection.index_information()
 
         for index in index_config['indexes']:
@@ -89,16 +89,30 @@ async def check_and_create_indexes(client: AgnosticClient):
                 # Исключаем partialFilterExpression, если он пуст
                 partial_filter_expression = index.get('partialFilterExpression')
                 if partial_filter_expression:
+                    # Удаляем $ne: null, оставляем только $exists: true
+                    if '$ne' in partial_filter_expression.get('userid', {}):
+                        partial_filter_expression = {"userid": {"$exists": True}}
                     index_options['partialFilterExpression'] = partial_filter_expression
 
-                if index['type'] in ['1', '-1']:
-                    await collection.create_index([(index['field'], int(index['type']))], **index_options)
-                elif index['type'] == '2dsphere':
-                    await collection.create_index([(index['field'], '2dsphere')], **index_options)
-                elif index['type'] == 'text':
-                    await collection.create_index([(index['field'], 'text')], **index_options)
-                elif index['type'] == 'wildcard':
-                    await collection.create_index([(index['field'], 'wildcard')], **index_options)
+                try:
+                    if index['type'] in ['1', '-1', 1, -1]:
+                        await collection.create_index([(index['field'], int(index['type']))], **index_options)
+                    elif index['type'] == '2dsphere':
+                        await collection.create_index([(index['field'], '2dsphere')], **index_options)
+                    elif index['type'] == 'text':
+                        # Проверяем, есть ли уже текстовый индекс
+                        if any(idx.get('key', {}).get(index['field']) == 'text' for idx in existing_indexes.values()):
+                            print(f"Text index for field {index['field']} already exists, skipping creation.")
+                            continue
+                        await collection.create_index([(index['field'], 'text')], **index_options)
+                    elif index['type'] == 'wildcard':
+                        await collection.create_index([(index['field'], 'wildcard')], **index_options)
+                except Exception as e:
+                    if 'IndexOptionsConflict' in str(e):
+                        print(f"Index conflict detected for {index_config['database']}.{index_config['collection']}.{index_name}, skip.")
+                    else:
+                        print(f"Failed to create index {index_name}: {e}")
+                    
 
 
 def check():

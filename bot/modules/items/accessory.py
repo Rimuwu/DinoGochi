@@ -24,8 +24,7 @@ async def find_accessory(dino: Dino, acc_type: Optional[str] = None) -> list[lis
 
 async def clean_none_items(dino: Dino):
     """Удаляет все элементы со значением None из активных предметов динозавра."""
-    dino.activ_items = [item for item in dino.activ_items if item is not None]
-    await dino.update({"$set": {"activ_items": dino.activ_items}})
+    await dino.update({"$pull": {"activ_items": None}})
 
 async def downgrade_accessory(dino: Dino, item_id: str, max_unit: int = 2):
     """Понижает прочность аксессуара с указанным item_id
