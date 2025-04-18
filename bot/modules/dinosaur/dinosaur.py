@@ -83,6 +83,7 @@ class Dino:
             self.UpdateData(find_result)
         else:
             await dino_owners.delete_one({"dino_id": baseid}, comment='delete_because_not_found')
+            return None
         return self
 
     def UpdateData(self, data):
