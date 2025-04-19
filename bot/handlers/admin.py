@@ -9,6 +9,7 @@ from bot.modules.data_format import list_to_inline, str_to_seconds, user_name_fr
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log, latest_errors
+from bot.modules.managment.events import add_event, create_event
 from bot.modules.markup import confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -384,3 +385,29 @@ async def save_users_handler(message: Message):
 
     with open("bot/data/users.txt", "rb") as f:
         await bot.send_document(message.chat.id, BufferedInputFile(f.read(), filename="users.txt"))
+
+@main_router.message(Command(commands=['start_easter']), IsAdminUser())
+@HDMessage
+async def start_easter(message: Message):
+
+    time_end = int(time()) + 86400 * 1
+
+    events_lst = []
+    add_hunting = await create_event('add_hunting', time_end)
+    add_hunting['data']['items'] = ['easter_egg']
+    events_lst.append(add_hunting)
+
+    add_fishing = await create_event('add_fishing', time_end)
+    add_fishing['data']['items'] = ['easter_egg']
+    events_lst.append(add_fishing)
+
+    add_collecting = await create_event('add_collecting', time_end)
+    add_collecting['data']['items'] = ['easter_egg']
+    events_lst.append(add_collecting)
+
+    add_all = await create_event('add_all', time_end)
+    add_all['data']['items'] = ['easter_egg']
+    events_lst.append(add_all)
+
+    for i in events_lst: await add_event(i, True)
+    await bot.send_message(conf.bot_group_id, t("events.easter"))
