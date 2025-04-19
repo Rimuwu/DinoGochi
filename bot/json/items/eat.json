@@ -700,5 +700,23 @@
         "image": "item40",
         "rank": "rare",
         "type": "eat"
+    },
+    "easter_egg": {
+        "buffs": {
+            "mood": 100
+        },
+        "abilities": {
+            "uses": 3
+        },
+        "states": [
+            { "char": "heal", "unit": 10, "time": 1800 },
+            { "char": "energy", "unit": 10, "time": 1800 },
+            { "char": "mood", "unit": 10, "time": 1800 }
+        ],
+        "act": 23,
+        "class": "ALL",
+        "image": "easter_cake",
+        "rank": "legendary",
+        "type": "eat"
     }
 }
