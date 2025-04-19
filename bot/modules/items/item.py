@@ -878,6 +878,24 @@ async def item_info(item: dict, lang: str, owner: bool = False):
             else: text += '*├* '
             text += i
 
+    item_states = data_item.get('states', [])
+    if item_states:
+        text += loc_d['static']['add_states']
+
+        for state in item_states:
+            unit = state.get('unit', 0)
+            str_time = seconds_to_str(state['time'], lang)
+
+            state_text: str = loc_d['item_states'][
+                '-' if unit < 0 else '+' + state['char']
+                ]
+            state_text = state_text.format(unit, str_time)
+
+            if state == item_states[-1]:
+                text += f'*└* {state_text}'
+            else:
+                text += f'*├* {state_text}\n'
+
     # Картиночка
     if 'image' in data_item.keys() and data_item['image']:
         try:
