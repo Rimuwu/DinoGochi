@@ -63,12 +63,17 @@ async def create_event(event_type: str = '', time_end: int = 0):
             event['time_end'] = int(time.time()) + choice(GS['events']['random_data']['random_time'])
     return event
 
-async def add_event(event: dict):
+async def add_event(event: dict, delete_old: bool = False) -> bool:
     res = await events.find_one({'type': event['type']}, comment='add_event_res')
     if not res:
         await events.insert_one(event, comment='add_event')
         return True
-    else: return False
+    else: 
+        if delete_old:
+            await events.delete_one({'type': event['type']}, comment='add_event')
+            await events.insert_one(event, comment='add_event')
+            return True
+        return False
 
 async def auto_event():
     """ Проверка системных событий
@@ -109,9 +114,10 @@ async def auto_event():
 
             await add_event(april_event)
 
-            for i in events_lst: await add_event(i)
+            for i in events_lst: await add_event(i, True)
             await bot.send_message(conf.bot_group_id, t("events.april_1"))
 
+    # День рождения бота
     if not await check_event('april_5'):
         today = datetime.date.today()
         day_n = int(time.strftime("%j"))
@@ -138,6 +144,6 @@ async def auto_event():
             events_lst.append(add_all)
 
             await add_event(april_event)
-            for i in events_lst: await add_event(i)
+            for i in events_lst: await add_event(i, True)
 
             await bot.send_message(conf.bot_group_id, t("events.april_5"))
