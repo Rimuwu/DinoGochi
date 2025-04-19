@@ -995,7 +995,11 @@
                 "name": "✒️ Ink"
             },
             "custom_book_recipe": {
-                "name": "📜 Notes Recipe"
+                "name": "📜 Notes Recipe",
+                "description": "Recipe for creating a book for records."
+            },
+            "easter_egg": {
+                "name": "🍰 Easter Egg"
             }
         },
         "notifications": {
@@ -2068,7 +2072,8 @@
                 "time_craft": "*├* Creation time: ⏳ {times}",
                 "trs_dino": "*├* Dinosaur: {dino} {hp} / 100 ❤\n",
                 "author": "*├* Item Author: {author}",
-                "unnamed_author": "Unknown / None"
+                "unnamed_author": "Unknown / None",
+                "add_states": "\n\n*┌* *⭐ Overlay States*\n"
             },
             "bonuses": {
                 "+heal": "Health Boost: {0} %",
@@ -2081,6 +2086,16 @@
                 "-energy": "Energy Reduction: {0} %",
                 "-eat": "Decreased satiety: {0} %",
                 "-mood": "Low mood: {0} %"
+            },
+            "item_states": {
+                "+heal": "Health Regeneration by {0} for {1}",
+                "+energy": "Energy Surge at {0} for {1}",
+                "+eat": "Increase in satiety by {0} during {1}",
+                "+mood": "Improved mood on {0} during {1}",
+                "-heal": "Health Loss at {0} for {1}",
+                "-energy": "Exhaust at {0} for {1}",
+                "-eat": "Fasting at {0} for {1}",
+                "-mood": "Mood deterioration at {0} during {1}"
             }
         },
         "item_use": {
@@ -3233,7 +3248,8 @@
             "new_year": "🎄 It's time to celebrate and give gifts to friends! Check out your friends list!",
             "info": "🎨 | Active Events\n\n",
             "april_1": "❓ It is not recommended to wear white.",
-            "april_5": "🎂 Happy Birthday DinoGochi! Check out the news channel and enjoy 2x XP and gifts in food gathering!"
+            "april_5": "🎂 Happy Birthday DinoGochi! Check out the news channel and enjoy 2x XP and gifts in food gathering!",
+            "easter": "🐣 Easter holiday! Look for Easter eggs!"
         },
         "daily_award": {
             "info": "🎋 *|* *Daily Reward* \n By logging in every day, you can get nice bonuses\n\n 🏮 *|* *Level 1*: *Player* - Nice login bonuses, here's what you can get: _{lvl_1} 🪙 _\n\n 🎏 *Level 2*: *Trainer* - Nice bonuses for logging in and subscribing to the channel, here's what you can get by clicking on the button: {lvl_2} 🪙",

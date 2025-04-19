@@ -995,7 +995,11 @@
                 "name": "✒️ Tinta"
             },
             "custom_book_recipe": {
-                "name": "📜 Resep Catatan"
+                "name": "📜 Resep Catatan",
+                "description": "Resep untuk membuat buku untuk catatan."
+            },
+            "easter_egg": {
+                "name": "🍰 Telur Paskah"
             }
         },
         "notifications": {
@@ -2068,7 +2072,8 @@
                 "time_craft": "*├* Waktu pembuatan: ⏳ {times}",
                 "trs_dino": "*├* Dinosaurus: {dino} {hp} / 100 ❤\n",
                 "author": "*├* Penulis Item: {author}",
-                "unnamed_author": "Tidak diketahui / Tidak ada"
+                "unnamed_author": "Tidak diketahui / Tidak ada",
+                "add_states": "\n\n*┌* *⭐ Status Overlay*\n"
             },
             "bonuses": {
                 "+heal": "Peningkatan Kesehatan: {0}%",
@@ -2081,6 +2086,16 @@
                 "-energy": "Pengurangan Energi: {0}%",
                 "-eat": "Penurunan rasa kenyang: {0}%",
                 "-mood": "Suasana hati rendah: {0}%"
+            },
+            "item_states": {
+                "+heal": "Regenerasi Kesehatan oleh {0} untuk {1}",
+                "+energy": "Lonjakan Energi di {0} untuk {1}",
+                "+eat": "Peningkatan rasa kenyang sebesar {0} selama {1}",
+                "+mood": "Suasana hati yang ditingkatkan pada {0} selama {1}",
+                "-heal": "Kehilangan Kesehatan di {0} untuk {1}",
+                "-energy": "Knalpot di {0} untuk {1}",
+                "-eat": "Puasa di {0} untuk {1}",
+                "-mood": "Penurunan suasana hati di {0} selama {1}"
             }
         },
         "item_use": {
@@ -3233,7 +3248,8 @@
             "new_year": "🎄 Saatnya merayakan dan memberikan hadiah kepada teman-teman! Lihat daftar teman Anda!",
             "info": "🎨 | Acara Aktif\n\n",
             "april_1": "❓ Tidak disarankan memakai pakaian putih.",
-            "april_5": "🎂 Selamat Ulang Tahun DinoGochi! Lihat saluran berita dan nikmati 2x XP dan hadiah dalam pengumpulan makanan!"
+            "april_5": "🎂 Selamat Ulang Tahun DinoGochi! Lihat saluran berita dan nikmati 2x XP dan hadiah dalam pengumpulan makanan!",
+            "easter": "🐣 Liburan Paskah! Cari telur Paskah!"
         },
         "daily_award": {
             "info": "🎋 *|* *Hadiah Harian*\nDengan masuk setiap hari, Anda bisa mendapatkan bonus menarik\n\n🏮 *|* *Tingkat 1*: *Pemain* - Bonus login yang bagus, inilah yang bisa Anda dapatkan: _{lvl_1} 🪙_\n\n🎏 *Tingkat 2*: *Pelatih* - Bonus bagus untuk masuk dan berlangganan saluran, inilah yang bisa Anda dapatkan dengan mengklik tombol: {lvl_2} 🪙",

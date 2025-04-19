@@ -995,7 +995,11 @@
                 "name": "✒️ Tinta"
             },
             "custom_book_recipe": {
-                "name": "📜 Notas Receta"
+                "name": "📜 Notas Receta",
+                "description": "Receta para crear un libro de discos."
+            },
+            "easter_egg": {
+                "name": "🍰 Huevo de Pascua"
             }
         },
         "notifications": {
@@ -2068,7 +2072,8 @@
                 "time_craft": "*├* Tiempo de creación: ⏳ {times}",
                 "trs_dino": "*├* Dinosaurio: {dino} {hp} / 100 ❤\n",
                 "author": "*├* Autor del artículo: {author}",
-                "unnamed_author": "Desconocido / Ninguno"
+                "unnamed_author": "Desconocido / Ninguno",
+                "add_states": "\n\n*┌* *⭐ Estados de superposición*\n"
             },
             "bonuses": {
                 "+heal": "Aumento de salud: {0}%",
@@ -2081,6 +2086,16 @@
                 "-energy": "Reducción de energía: {0}%",
                 "-eat": "Disminución de la saciedad: {0}%",
                 "-mood": "Estado de ánimo bajo: {0}%"
+            },
+            "item_states": {
+                "+heal": "Regeneración de salud por {0} por {1}",
+                "+energy": "Прилив энергии на {0} в течение {1}",
+                "+eat": "Aumento de la saciedad en {0} durante {1}",
+                "+mood": "Mejoró el estado de ánimo en {0} durante {1}",
+                "-heal": "Pérdida de vida en {0} para {1}",
+                "-energy": "Escape en {0} para {1}",
+                "-eat": "Ayunando en {0} para {1}",
+                "-mood": "Deterioro del estado de ánimo en {0} durante {1}"
             }
         },
         "item_use": {
@@ -3233,7 +3248,8 @@
             "new_year": "🎄 ¡Es hora de celebrar y dar regalos a los amigos! ¡Echa un vistazo a tu lista de amigos!",
             "info": "🎨 | Eventos Activos\n\n",
             "april_1": "❓ No se recomienda vestir de blanco.",
-            "april_5": "🎂 ¡Feliz cumpleaños DinoGochi! ¡Echa un vistazo al canal de noticias y disfruta de 2x XP y regalos en la recolección de comida!"
+            "april_5": "🎂 ¡Feliz cumpleaños DinoGochi! ¡Echa un vistazo al canal de noticias y disfruta de 2x XP y regalos en la recolección de comida!",
+            "easter": "🐣 ¡Vacaciones de Semana Santa! ¡Busca huevos de Pascua!"
         },
         "daily_award": {
             "info": "🎋 *|* **\nAl iniciar sesión todos los días, puede obtener buenos bonos\n\n🏮 *|* **: ** - Buenas bonificaciones de inicio de sesión, esto es lo que puede obtener: _{lvl_1} 🪙_\n\n🎏 **: ** - Buenas bonificaciones por iniciar sesión y suscribirse al canal, esto es lo que puede obtener haciendo clic en el botón: {lvl_2} 🪙",
