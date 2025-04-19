@@ -39,8 +39,7 @@ async def stop_collect(coll_data):
                                  items_names)
 
     await quest_process(coll_data['sended'], coll_data['collecting_type'], coll_data['now_count'])
-    
-    
+
 async def collecting_work(coll_data: dict):
     coll_type = coll_data["collecting_type"]
 

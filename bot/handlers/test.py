@@ -21,6 +21,7 @@ from bot.modules.get_state import get_state
 from bot.modules.images_save import send_SmartPhoto
 
 from bot.modules.inline import inline_menu
+from bot.modules.items.accessory import downgrade_type_accessory
 from bot.modules.items.items_groups import get_group
 from bot.modules.logs import log
 
@@ -440,13 +441,48 @@ async def incubation_d(message: Message):
     await incubation()
     
 
-@main_router.message(Command(commands=['delete_tracking_links']), IsAdminUser())
+@main_router.message(Command(commands=['downgrade_200']), IsAdminUser())
 @HDMessage
-async def fdjg(message: Message):
-                #     {
-                #     "_id": "tracking_links",
-                #     "links": {}
-                # },
+async def downgrade(message: Message):
+    
+    user = await User().create(message.from_user.id)
+    dinos = await user.get_dinos()
+    if dinos:
+        dino = dinos[0]
+        await message.answer(f"Первый динозавр: {dino}")
+    else:
+        await message.answer("У пользователя нет динозавров.")
+        return
 
-    await management.delete_one({'_id': 'tracking_links'})
-    await message.answer('ok')
+    await downgrade_type_accessory(dino, 'weapon', 200)
+    
+
+@main_router.message(Command(commands=['downgrade_50']), IsAdminUser())
+@HDMessage
+async def downgrade(message: Message):
+    
+    user = await User().create(message.from_user.id)
+    dinos = await user.get_dinos()
+    if dinos:
+        dino = dinos[0]
+        await message.answer(f"Первый динозавр: {dino}")
+    else:
+        await message.answer("У пользователя нет динозавров.")
+        return
+
+    await downgrade_type_accessory(dino, 'weapon', 50)
+
+@main_router.message(Command(commands=['downgrade_49']), IsAdminUser())
+@HDMessage
+async def downgrade(message: Message):
+    
+    user = await User().create(message.from_user.id)
+    dinos = await user.get_dinos()
+    if dinos:
+        dino = dinos[0]
+        await message.answer(f"Первый динозавр: {dino}")
+    else:
+        await message.answer("У пользователя нет динозавров.")
+        return
+
+    await downgrade_type_accessory(dino, 'weapon', 49)
