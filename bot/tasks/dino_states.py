@@ -18,6 +18,10 @@ async def states_check():
 
     for state in res_list:
 
+        if time() >= state['time_end']:
+            await states.delete_one({'_id': state['_id']})
+            continue
+
         dino = await dinosaurs.find_one({'_id': state['dino_id']})
         if dino:
             await mutate_dino_stat(dino, 
