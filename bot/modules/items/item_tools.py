@@ -8,6 +8,7 @@ from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      random_dict, seconds_to_str)
 from bot.modules.dinosaur.dino_status import check_status
 from bot.modules.dinosaur.dinosaur  import Dino, create_dino_connection, edited_stats, insert_dino, set_status
+from bot.modules.dinosaur.rpg_states import add_state
 from bot.modules.images import async_open, create_eggs_image
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.items.craft_recipe import craft_recipe
@@ -407,7 +408,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                         use_status = False
                         return_text = t('transport.error', lang)
 
-    if data_item.get('buffs', []) and use_status and use_baff_status and dino:
+    if data_item.get('buffs', {}) and use_status and use_baff_status and dino:
         # Применяем бонусы от предметов
         return_text += '\n\n'
 
@@ -425,6 +426,13 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     if dino_update_list and dino:
         # Обновляем данные, не связанные с харрактеристиками, например активные предметы
         for i in dino_update_list: await dino.update(i)
+
+    if data_item.get('sates', []) and use_status and use_baff_status and dino:
+        # Применяем временные состояния
+
+        for state in data_item['sates']:
+            await add_state(dino._id, state['char'], state['unit'] * count, 
+                            state['time'] * count)
 
     if dino and type(dino) == Dino:
         # Обновляем данные харрактеристик
