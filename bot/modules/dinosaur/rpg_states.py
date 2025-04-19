@@ -11,8 +11,18 @@ dino_states = DBconstructor(mongo_client.dinosaur.state)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 
 async def add_state(dino_id: ObjectId, char: str, unit: int, time_state: int):
-    """ Выдача раз в 10 минут
+    """ Выдача временного состояния динозавру
+    :param dino_id: ID динозавра
+    :param char: Название состояния
+    :param unit: Количество состояния
+    :param time_state: Время действия состояния в секундах
+    :return: None
+    
+    Раз в 10 минут выдаёт состояние динозавру
     """
+    
+    assert char in ['heal', 'eat', 'game', 'mood', 'energy'], \
+        f'Unknown state {char}'
 
     data = {
         "dino_id": dino_id,
