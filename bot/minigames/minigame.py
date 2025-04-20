@@ -30,6 +30,11 @@ class MiniGame:
         # ======== GAME ======== #
         self.GAME_ID: str = self.get_GAME_ID() # Этот пункт обязательно должен быть изменён через перезаписанную функцию GET_GAME_ID
 
+        # Список переменных, которые не будут сохраняться в базе данных
+        self._excluded_from_save: list[str] = [
+            '_excluded_from_save', '_MiniGame__threads_work', 'active_threads', 'DEACTIVATE_NOT_ACTIVE_BUTTONS', 'DEBUG_MODE', 'THREAD_TICK',
+            ]
+
         self.active_threads: bool = True # Служит для паузы тасков
         self.__threads_work: bool = True # Служит для отключения цикла
 
@@ -532,6 +537,8 @@ class MiniGame:
 
     async def __LoadData(self) -> None:
         """ Загрузка данных из базы"""
+        
+        self.D_log(f'{self.GAME_ID}')
 
         # Получаем данные сессии из базы данных
         data = await get_session(self.session_key)
@@ -557,12 +564,29 @@ class MiniGame:
         for key, value in data.items():
             if key not in ['PLAYERS', 'session_masseges', 'ButtonsRegister', 'WaiterRegister', 'ThreadsRegister', 'Stages']: 
                 setattr(self, key, value)
+    
+    async def DeleteVar(self, data_key: str) -> None:
+        """ Удаление переменной из базы данных """
+        if data_key in self.__dict__:
+            del self.__dict__[data_key]
+
+            await database.update_one({'session_key': self.session_key},
+                                      {'$unset': {data_key: ''}},
+                                  comment='delete_var_minigame')
+            self.D_log(f'DeleteVar {data_key}')
+        else:
+            self.D_log(f'DeleteVar {data_key} not found')
+
 
     async def Update(self):
         """ Обновление данных в базе """
 
         # Сериализация данных
-        serialized_data = {key: serialize(value) for key, value in self.__dict__.items() if not callable(value)}
+        serialized_data = {
+            key: serialize(value) 
+            for key, value in self.__dict__.items() 
+            if not callable(value) and key not in self._excluded_from_save
+        }
 
         # Красивый вывод логов
         if self.DEBUG_MODE:
@@ -839,8 +863,11 @@ async def update_session(_id: ObjectId, data: dict) -> None:
                 comment='update_session_minigame')
 
 async def insert_session(data: dict) -> ObjectId:
-    data['_id'] = ObjectId()
-    serialized_data = {key: serialize(value) for key, value in data.items() if not callable(value)}
+    upd_data = data.copy()
+    for var_key in upd_data['_excluded_from_save'].copy():
+        if var_key in upd_data: del upd_data[var_key]
+
+    serialized_data = {key: serialize(value) for key, value in upd_data.items() if not callable(value)}
 
     result = await database.insert_one(serialized_data, comment='insert_session_minigame')
     return result.inserted_id
