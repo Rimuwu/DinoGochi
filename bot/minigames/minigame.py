@@ -832,11 +832,17 @@ class MiniGame:
     # ======== SERVICE ======== #
     """ Служебные функции """
 
-    def list_to_inline(self, buttons, row_width=3):
+    def list_to_inline(self, buttons, row_width=3, add_disable_buttons=True):
         """ Преобразует список кнопок в inline-клавиатуру """
         inline_keyboard = []
         row = []
         for button in buttons:
+            if not add_disable_buttons:
+                button_key = button['callback_data'].split(':')[2]
+                button_data = self.ButtonsRegister.get(button_key)
+                if button_data and not button_data.active:
+                    continue
+
             if 'ignore_row' in button and button['ignore_row'].lower() == 'true':
                 inline_keyboard.append(row)
                 row = []
