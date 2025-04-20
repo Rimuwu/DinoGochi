@@ -359,7 +359,7 @@ class PowerChecker(MiniGame):
 
                 self.log.append(
                     [int(self.active_player), 
-                     'simplehit', [f'🎲 {d1}', f'🎲 {d1}', f'💪 {int(power // 50)}'], 'wood']
+                     'simplehit', [f'🎲 {d1}+{d2}', f'💪 {int(power // 50)}'], 'wood']
                 )
                 self.log = self.log[-3:]
                 await self.Update()
@@ -372,7 +372,8 @@ class PowerChecker(MiniGame):
         active_player = await self.GetPlayer(int(self.active_player))
 
         if active_player:
-            power = active_player.data['dino_power']
+            d_p = active_player.data['dino_power']
+            power = random.randint(int(d_p // 100 * 20), int(d_p))
 
             active_player.data['units'] -= power
             active_player.data['dino_overload'] += 1
@@ -416,9 +417,17 @@ class PowerChecker(MiniGame):
 
     async def game_RollDice(self, callback: types.CallbackQuery):
 
-        res = await bot.send_dice(callback.message.chat.id, emoji='🎲', reply_markup=None, reply_to_message_id=callback.message.message_thread_id)
+        for i in self.ButtonsRegister.keys():
+            self.ButtonsRegister[i].active = False
+            await self.EditButton(i, self.ButtonsRegister[i])
 
-        res2 = await bot.send_dice(callback.message.chat.id, emoji='🎲', reply_markup=None, reply_to_message_id=callback.message.message_thread_id)
+        try:
+            res = await bot.send_dice(callback.message.chat.id, emoji='🎲', reply_markup=None, reply_to_message_id=callback.message.message_thread_id)
+
+            res2 = await bot.send_dice(callback.message.chat.id, emoji='🎲', reply_markup=None, reply_to_message_id=callback.message.message_thread_id)
+        except Exception as e:
+            self.D_log(f'game_RollDice: {e}')
+            return 0, 0
 
         await self.MessageGenerator('main', int(self.active_player), action_type='simplehit')
         await sleep(7)
@@ -459,7 +468,7 @@ class PowerChecker(MiniGame):
             {'text': 'Пропустить ход', 'callback_data': self.CallbackGenerator('pass')},
             {'text': 'Выйти', 'callback_data': self.CallbackGenerator('exit'), 'ignore_row': 'true'},
         ]
-        return self.list_to_inline(buttons, 3, False)
+        return self.list_to_inline(buttons, 2, False)
 
     async def game_GameGenerator(self, user_id: int, action_type: str | None = None) -> None:
         data_act_player = self.PLAYERS[self.active_player]
@@ -474,7 +483,12 @@ class PowerChecker(MiniGame):
             activ_emoji = '-'
             if player_id == self.active_player: activ_emoji = '>'
 
-            text += f"{activ_emoji} {player_data.user_name}: {percentage}% {overload}💥\n"
+            text += f"{activ_emoji} {player_data.user_name}: {percentage}% {overload}💥"
+            
+            if player_data.data['in_net']:
+                text += '🕸️'
+
+            text += '\n'
 
         if self.log:
             text += '\nПоследние действия:\n'
@@ -486,7 +500,7 @@ class PowerChecker(MiniGame):
                     # ['simplehit', [d1, d2, power // 50], 'wood']
                     # ['powerfulhit', [power], 'wood']
                     if act_type in ['simplehit', 'powerfulhit']:
-                        text += f'{who_player.user_name} 🪓 -> {" + ".join(list_units)} -> 🪵'
+                        text += f'{who_player.user_name} 🪓 {" ".join(list_units)} -> 🪵'
 
                     elif act_type == 'overload':
                         text += f'{who_player.user_name} 💥 -> Пропускает ход'

@@ -493,6 +493,10 @@ class MiniGame:
             except Exception as e:
                 if 'message is not modified' in str(e):
                     return None
+                elif 'Flood control exceeded on method':
+                    self.D_log(f'MesageUpdate1 {func_key} failed: Flood control exceeded on method')
+                    await asyncio.sleep(5)
+                    return await self.MesageUpdate(func_key, text, reply_markup)
                 else:
                     self.D_log(f'MesageUpdate1 {func_key} failed: {e}')
                     # await self.DeleteMessage(func_key)
