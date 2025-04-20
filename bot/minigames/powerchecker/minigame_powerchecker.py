@@ -8,15 +8,18 @@ from aiogram import types
 from bot.minigames.minigame import MiniGame, Button, PlayerData, SMessage, Stage, Thread, Waiter, stageButton, stageThread, stageWaiter
 from bot.modules.user.user import User, take_coins, user_name
 from bot.modules.dinosaur.dinosaur import Dino
-from typing import Optional
+from typing import Optional, overload
 
 class PowerChecker(MiniGame):
 
     def get_GAME_ID(self): return 'PowerChecker'
-
-    async def initialization(self, only_for: int = 0):
+    
+    async def initialization(self):
+        self._excluded_from_save += ['time_wait']
         self.DEBUG_MODE = True
         self.time_wait = 600
+
+    async def start_data(self, only_for: int = 0):
 
         self.only_for: int = only_for
         self.max_players: int = 2
@@ -161,8 +164,7 @@ class PowerChecker(MiniGame):
 
     async def Custom_StartGame(self, user_id, chat_id, message, 
                                only_for = None) -> None:
-        print(only_for)
-        if only_for: self.only_for = only_for
+        await self.start_data(only_for if only_for else 0)
 
         owner_player = await self.GetPlayer(user_id)
         if owner_player is None:
@@ -171,7 +173,7 @@ class PowerChecker(MiniGame):
 
         await self.EditPlayer(user_id, owner_player)
         await self.SetStage('preparation')
-    
+
     async def Custom_ContinueGame(self) -> None:
         
         if self.STAGE == 'game':
@@ -264,6 +266,9 @@ class PowerChecker(MiniGame):
         
         del self.ThreadsRegister['service_deleter']
         del self.ThreadsRegister['end_game_timer']
+        
+        await self.DeleteVar('only_for')
+        await self.DeleteVar('max_players')
 
         self.active_player: str = list(self.PLAYERS.keys())[0]
         self.power = random.randint(50, 80)
@@ -280,6 +285,7 @@ class PowerChecker(MiniGame):
             player_data.data['in_net'] = False
             player_data.data['without_tools'] = False
             player_data.data['without_limit'] = 2
+            del player_data.data['ready']
 
             await self.EditPlayer(int(player_id), player_data)
 
@@ -287,6 +293,23 @@ class PowerChecker(MiniGame):
 
         await self.SetStage('game')
         await self.MessageGenerator('main', self.owner_id)
+    
+    async def button_control(self, userid: int):
+        """
+        Функция отключает кнопки, если динозавр в паутине, без топора или перегружен
+        """
+
+        player = await self.GetPlayer(userid)
+        if player:
+            if player.data['dino_overload'] == 3 or player.data['in_net']:
+                for i in ['simple_hit', 'powerful_hit', 'net_dino', 'take_axe']:
+                    self.ButtonsRegister[i].active = False
+                    await self.EditButton(i, self.ButtonsRegister[i])
+
+            else:
+                for i in ['simple_hit', 'powerful_hit', 'net_dino', 'take_axe']:
+                    self.ButtonsRegister[i].active = True
+                    await self.EditButton(i, self.ButtonsRegister[i])
 
     async def next_player(self):
 
@@ -301,6 +324,16 @@ class PowerChecker(MiniGame):
             ]
 
         await self.Update()
+        await self.button_control(int(self.active_player))
+
+        next_player = await self.GetPlayer(int(self.active_player))
+        if next_player: 
+
+            # Проверка на перегрузку
+            if next_player.data['dino_overload'] == 3:
+                next_player.data['dino_overload'] -= random.randint(1, 3)
+                await self.EditPlayer(int(self.active_player), next_player)
+
 
     async def active_player_filter(self, callback: types.CallbackQuery) -> bool:
         if int(callback.from_user.id) != int(self.active_player):
@@ -362,7 +395,12 @@ class PowerChecker(MiniGame):
         pass
 
     async def game_Pass(self, callback: types.CallbackQuery) -> None:
-        pass
+        self.log.append(
+                    [int(self.active_player), 'overload', [], None]
+                )
+        await self.Update()
+        await self.next_player()
+        await self.MessageGenerator('main', int(self.active_player))
 
     async def game_ChooseDinoToAttack(self, callback: types.CallbackQuery) -> None:
         pass
@@ -421,21 +459,23 @@ class PowerChecker(MiniGame):
             {'text': 'Пропустить ход', 'callback_data': self.CallbackGenerator('pass')},
             {'text': 'Выйти', 'callback_data': self.CallbackGenerator('exit'), 'ignore_row': 'true'},
         ]
-        return self.list_to_inline(buttons, 3)
+        return self.list_to_inline(buttons, 3, False)
 
     async def game_GameGenerator(self, user_id: int, action_type: str | None = None) -> None:
         data_act_player = self.PLAYERS[self.active_player]
         text = "Игроки:\n"
         for player_id, player_data in self.PLAYERS.items():
             remaining_power = player_data.data['units']
+            overload = player_data.data['dino_overload']
+            
             percentage = int((remaining_power / self.power) * 100)
             if player_id == self.active_player: my_percent = percentage
 
             activ_emoji = '-'
             if player_id == self.active_player: activ_emoji = '>'
 
-            text += f"{activ_emoji} {player_data.user_name}: {percentage}%\n"
-        
+            text += f"{activ_emoji} {player_data.user_name}: {percentage}% {overload}💥\n"
+
         if self.log:
             text += '\nПоследние действия:\n'
 
@@ -447,6 +487,9 @@ class PowerChecker(MiniGame):
                     # ['powerfulhit', [power], 'wood']
                     if act_type in ['simplehit', 'powerfulhit']:
                         text += f'{who_player.user_name} 🪓 -> {" + ".join(list_units)} -> 🪵'
+
+                    elif act_type == 'overload':
+                        text += f'{who_player.user_name} 💥 -> Пропускает ход'
                     text += '\n'
 
         if not action_type:
