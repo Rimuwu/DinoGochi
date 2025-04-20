@@ -6,7 +6,7 @@ from bot.exec import bot
 from bot.modules.data_format import escape_markdown, list_to_inline
 from bot.modules.images import create_eggs_image
 from bot.modules.items.item import get_item_dict, item_code
-from bot.modules.items.item_tools import AddItemToUser
+from bot.modules.items.item_tools import AddItemToUser, use_item
 from bot.modules.localization import get_data, t
 from bot.modules.dinosaur.dinosaur  import dead_check
 
@@ -85,19 +85,12 @@ async def dead_last_dino(userid: int, name: str, lang: str,
                 await take_coins(userid, -coins, True)
                 await items.delete_many({'owner_id': userid}, comment='dead_last_dino')
 
-                code_res, ins_id = await AddItemToUser(userid, GS['dead_dialog_item'], 1, {'interact': False})
+                await AddItemToUser(userid, GS['dead_dialog_item'], 1,
+                                    {'interact': False})
+                item_egg_data = get_item_dict(
+                    GS['dead_dialog_item'], {'interact': False})
 
-                buttons = {}
-                image, eggs = await create_eggs_image()
-                code = await item_code(item_id=ins_id)
-
-                for i in range(3):
-                    buttons[f'🥚 {i+1}'] = f'item egg {code} {eggs[i]}'
-                buttons = list_to_inline([buttons])
-
-                await bot.send_photo(userid, image, 
-                                    caption=t('item_use.egg.egg_answer', lang), 
-                                    parse_mode='Markdown', reply_markup=buttons)
+                await use_item(userid, userid, lang, item_egg_data, 1)
 
     return status, text, markup
 
