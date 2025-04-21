@@ -54,7 +54,9 @@ async def send_SmartPhoto(chat_id: int | str,
 
     if photo_way in storage:
         file_id = storage[photo_way]
-        if await bot.get_file(file_id, request_timeout=20):
+        try:
+            # Пытаемся проверить доступность file_id
+            await bot.get_file(file_id, request_timeout=20)
             # Отпрляем файл по file_id
             mes = await bot.send_photo(chat_id, file_id, caption=caption, 
                             parse_mode=parse_mode, reply_markup=reply_markup,
@@ -68,8 +70,12 @@ async def send_SmartPhoto(chat_id: int | str,
                             reply_to_message_id=reply_to_message_id,
                             request_timeout=request_timeout)
             return mes
+        except Exception:
+            # Если возникла любая ошибка при проверке file_id, значит он недействителен или устарел
+            # Удаляем некорректный file_id из хранилища
+            storage.pop(photo_way, None)
 
-    # Либо файла нет, либо file_id устарело
+    # Либо файла нет, либо file_id устарело
     # Отправяем файл с пк + сохраняем file_id
     if isinstance(photo_way, str):
         file_photo = await async_open(photo_way, True)
@@ -102,14 +108,20 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
 
     if photo_way in storage:
         file_id = storage[photo_way]
-        if await bot.get_file(file_id):
-            # Отпряем файл по file_id
+        try:
+            # Пытаемся проверить доступность file_id
+            await bot.get_file(file_id, request_timeout=20)
+            # Отправляем файл по file_id
             mes = await bot.edit_message_media(
                 media=aiogram.types.InputMediaPhoto(media=file_id, caption=caption, parse_mode=parse_mode), 
                 chat_id=chatid, message_id=message_id, reply_markup=reply_markup)
             return mes
+        except Exception:
+            # Если возникла любая ошибка при проверке file_id, значит он недействителен или устарел
+            # Удаляем некорректный file_id из хранилища
+            storage.pop(photo_way, None)
 
-    # Либо файла нет, либо file_id устарело
+    # Либо файла нет, либо file_id устарело
     # Отправляем файл с пк + сохраняем file_id
     if isinstance(photo_way, str):
         file_photo = await async_open(photo_way, True)
