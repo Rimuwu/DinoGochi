@@ -71,15 +71,15 @@ async def check_and_create_indexes(client: AgnosticClient):
                     'name': index_name,
                     'unique': index.get('unique', False),
                     'sparse': index.get('sparse', False),
-                    'expireAfterSeconds': index.get('ttl'),
                 }
 
-                # Убираем None значения из опций
-                index_options = {k: v for k, v in index_options.items() if v is not None}
+                # Добавляем TTL только если он указан
+                if 'ttl' in index and index['ttl'] is not None:
+                    index_options['expireAfterSeconds'] = index['ttl']
 
                 # Исключаем wildcardProjection, если тип индекса не wildcard
-                if index['type'] == 'wildcard':
-                    index_options['wildcardProjection'] = index.get('wildcardProjection')
+                if index.get('type') == 'wildcard' and 'wildcardProjection' in index:
+                    index_options['wildcardProjection'] = index['wildcardProjection']
 
                 # Исключаем collation, если он пуст
                 collation = index.get('collation')
@@ -90,23 +90,38 @@ async def check_and_create_indexes(client: AgnosticClient):
                 partial_filter_expression = index.get('partialFilterExpression')
                 if partial_filter_expression:
                     # Удаляем $ne: null, оставляем только $exists: true
-                    if '$ne' in partial_filter_expression.get('userid', {}):
+                    if isinstance(partial_filter_expression.get('userid', {}), dict) and '$ne' in partial_filter_expression.get('userid', {}):
                         partial_filter_expression = {"userid": {"$exists": True}}
                     index_options['partialFilterExpression'] = partial_filter_expression
 
                 try:
-                    if index['type'] in ['1', '-1', 1, -1]:
-                        await collection.create_index([(index['field'], int(index['type']))], **index_options)
-                    elif index['type'] == '2dsphere':
+                    index_type = index.get('type')
+                    
+                    if index_type in ['1', '-1', 1, -1]:
+                        # Числовой индекс (восходящий или нисходящий)
+                        await collection.create_index([(index['field'], int(index_type))], **index_options)
+                    elif index_type == '2dsphere':
+                        # Геопространственный индекс
                         await collection.create_index([(index['field'], '2dsphere')], **index_options)
-                    elif index['type'] == 'text':
-                        # Проверяем, есть ли уже текстовый индекс
-                        if any(idx.get('key', {}).get(index['field']) == 'text' for idx in existing_indexes.values()):
+                    elif index_type == 'text':
+                        # Проверяем, есть ли уже текстовый индекс в коллекции
+                        has_text_index = False
+                        for idx_info in existing_indexes.values():
+                            for key_field, key_type in idx_info.get('key', {}).items():
+                                if key_field == index['field'] and key_type == 'text':
+                                    has_text_index = True
+                                    break
+                        
+                        if not has_text_index:
+                            await collection.create_index([(index['field'], 'text')], **index_options)
+                        else:
                             print(f"Text index for field {index['field']} already exists, skipping creation.")
-                            continue
-                        await collection.create_index([(index['field'], 'text')], **index_options)
-                    elif index['type'] == 'wildcard':
+                    elif index_type == 'wildcard':
+                        # Индекс с подстановочным знаком
                         await collection.create_index([(index['field'], 'wildcard')], **index_options)
+                    else:
+                        # Если тип не указан, создаем индекс по умолчанию - восходящий
+                        await collection.create_index([(index['field'], 1)], **index_options)
                 except Exception as e:
                     if 'IndexOptionsConflict' in str(e):
                         print(f"Index conflict detected for {index_config['database']}.{index_config['collection']}.{index_name}, skip.")
