@@ -89,7 +89,7 @@ async def progress_work(call: CallbackQuery):
 
     if not call or not call.message or not call.from_user or not call.data:
         return
-        
+
     chatid = call.message.chat.id
     userid = call.from_user.id
 
@@ -101,6 +101,9 @@ async def progress_work(call: CallbackQuery):
 
     lang = await get_lang(userid)
     dino = await Dino().create(alt_code)
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     res = await long_activity.find_one(
         {'activity_type': {'$in': ['bank', 'mine', 'sawmill']}, 'dino_id': dino._id}

@@ -173,7 +173,9 @@ async def remove_accessory(dino_id: ObjectId, item_id: str) -> bool:
     """Удаляет аксессуар из активных предметов динозавра
        Возвращает True, если аксессуар был успешно удалён, иначе False
     """
-    dino: Dino = await Dino().create(dino_id)
+    dino = await Dino().create(dino_id)
+    if not dino:
+        return False  # Динозавр не найден
 
     for index, item in enumerate(dino.activ_items):
         if item['item_id'] == item_id:

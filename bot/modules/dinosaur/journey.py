@@ -513,6 +513,8 @@ async def activate_event(dinoid, event: dict, friend_dino = None):
     """
     journey_base = await long_activity.find_one({'dino_id': dinoid, 'activity_type': 'journey'}, comment='activate_event_journey_base')
     dino = await Dino().create(dinoid)
+    if not dino: return False
+
     active_consequences = True
     event_data = events[event['type']]
 

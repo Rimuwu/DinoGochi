@@ -218,9 +218,10 @@ async def dino_breakdown(dino: ObjectId):
     elif action == 'downgrade':
         dino_cl = await Dino().create(dino)
 
-        allowed = await find_accessory(dino_cl)
-        if allowed:
-            await downgrade_accessory(dino_cl, choice(allowed)[0], 30)
+        if dino_cl:
+            allowed = await find_accessory(dino_cl)
+            if allowed:
+                await downgrade_accessory(dino_cl, choice(allowed)[0], 30)
 
     return action
 

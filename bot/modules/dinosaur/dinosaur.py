@@ -83,7 +83,7 @@ class Dino:
             self.UpdateData(find_result)
         else:
             await dino_owners.delete_one({"dino_id": baseid}, comment='delete_because_not_found')
-            # return None
+            return None
         return self
 
     def UpdateData(self, data):
@@ -316,7 +316,7 @@ async def insert_dino(owner_id: int=0, dino_id: int=0, quality: str='random'):
     if not dino_id: dino_id = random_dino(quality)
 
     dino_data = get_dino_data(dino_id)
-    dino = await Dino().create()
+    dino = Dino()
 
     dino.data_id = dino_id
     dino.alt_id = await generation_code(owner_id)
@@ -514,7 +514,8 @@ async def mutate_dino_stat(dino: dict, key: str, value: int):
 
     if key == 'heal' and now <= 0:
         dino_d = await Dino().create(dino['_id'])
-        await dino_d.dead()
+        if dino_d:
+            await dino_d.dead()
     else:
         r = await notification_manager(dino['_id'], key, now)
         await dinosaurs.update_one({'_id': dino['_id']}, 

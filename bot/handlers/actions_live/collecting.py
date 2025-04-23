@@ -159,6 +159,9 @@ async def collecting_callback(callback: CallbackQuery):
         lang = await get_lang(callback.from_user.id)
 
         dino = await Dino().create(dino_data)
+        if not dino:
+            await bot.send_message(callback.from_user.id, t('css.no_dino', lang), reply_markup=await m(callback.from_user.id, 'last_menu', lang))
+            return
         data = await long_activity.find_one({'dino_id': dino._id, 
                                             'activity_type': 'collecting'},
                                             comment="collecting_callback")

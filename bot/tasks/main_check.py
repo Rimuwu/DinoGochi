@@ -77,7 +77,7 @@ async def main_checks_task(dinos):
 
         if dino['stats']['heal'] <= 0:
             dino_cl = await Dino().create(dino['_id'])
-            await dino_cl.dead()
+            if dino_cl: await dino_cl.dead()
             continue
 
         if status == 'kindergarten': r = await kindergarten_check(dino, r)

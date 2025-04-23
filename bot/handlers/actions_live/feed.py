@@ -115,11 +115,16 @@ async def feed_inl(callback: CallbackQuery):
         if callback.data:
             alt_id = callback.data.split()[1]
             userid = callback.from_user.id
+            
+            dino_d = await Dino().create(alt_id)
+            if not dino_d:
+                await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+                return
 
             transmitted_data = {
                 'chatid': chatid,
                 'lang': lang,
-                'dino': await Dino().create(alt_id)
+                'dino': dino_d
             }
 
             await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)

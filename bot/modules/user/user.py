@@ -199,7 +199,8 @@ class User:
                 else:
                     # Если пустой, то удаляем динозавра (связи уже нет)
                     dino_d = await Dino().create(conn['dino_id'])
-                    await dino_d.delete()
+                    if dino_d:
+                        await dino_d.delete()
 
             #Удаляем его связь
             await dino_owners.delete_one({'_id': conn['_id']}, comment='full_delete_2')
@@ -292,7 +293,8 @@ async def get_dinos(userid: int, all_dinos: bool = True) -> list[Dino]:
             {'owner_id': userid, 'type': 'owner'}, {'dino_id': 1}, comment='get_dinos_res')
 
     for dino_obj in res:
-        dino_list.append(await Dino().create(dino_obj['dino_id']))
+        dd = await Dino().create(dino_obj['dino_id'])
+        if dd: dino_list.append(dd)
 
     return dino_list
 
@@ -300,7 +302,9 @@ async def get_dinos_and_owners(userid: int) -> list:
     """Возвращает список с объектами динозавров, а так же правами на динозавра"""
     data = []
     for dino_obj in await dino_owners.find({'owner_id': userid}, comment='get_dinos_and_owners'):
-        data.append({'dino': await Dino().create(dino_obj['dino_id']), 'owner_type': dino_obj['type']})
+        dd = await Dino().create(dino_obj['dino_id'])
+        if dd:
+            data.append({'dino': dd, 'owner_type': dino_obj['type']})
 
     return data
 

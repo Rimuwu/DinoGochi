@@ -66,19 +66,20 @@ async def start_mine(dino_baseid: ObjectId, owner_id: int, action_type: str):
         data['item_per_hour'] = 3
 
         dino = await Dino().create(dino_baseid)
-        for key in get_group('backpacks'):
-            if await check_accessory(
-                dino, key, True, 10
-            ):
-                item_data = get_data(key)
-                data['max_items'] += item_data['capacity']
+        if dino:
+            for key in get_group('backpacks'):
+                if await check_accessory(
+                    dino, key, True, 10
+                ):
+                    item_data = get_data(key)
+                    data['max_items'] += item_data['capacity']
 
-        for key in get_group('pickaxes'):
-            if await check_accessory(
-                dino, key, True, 15
-            ):
-                item_data = get_data(key)
-                data['item_per_hour'] += item_data['effectiv']
+            for key in get_group('pickaxes'):
+                if await check_accessory(
+                    dino, key, True, 15
+                ):
+                    item_data = get_data(key)
+                    data['item_per_hour'] += item_data['effectiv']
 
     await long_activity.insert_one(data)
 
@@ -108,12 +109,13 @@ async def start_bank(dino_baseid: ObjectId, owner_id: int, action_type: str):
         data['item_per_hour'] = 1
 
         dino = await Dino().create(dino_baseid)
-        for key in get_group('backpacks'):
-            if await check_accessory(
-                dino, key, True, 10
-            ):
-                item_data = get_data(key)
-                data['max_items'] += item_data['capacity']
+        if dino:
+            for key in get_group('backpacks'):
+                if await check_accessory(
+                    dino, key, True, 10
+                ):
+                    item_data = get_data(key)
+                    data['max_items'] += item_data['capacity']
 
     await long_activity.insert_one(data)
 
@@ -143,19 +145,20 @@ async def start_sawmill(dino_baseid: ObjectId, owner_id: int, action_type: str):
         data['item_per_hour'] = 5
 
         dino = await Dino().create(dino_baseid)
-        for key in get_group('backpacks'):
-            if await check_accessory(
-                dino, key, True, 10
-            ):
-                item_data = get_data(key)
-                data['max_items'] += item_data['capacity']
+        if dino:
+            for key in get_group('backpacks'):
+                if await check_accessory(
+                    dino, key, True, 10
+                ):
+                    item_data = get_data(key)
+                    data['max_items'] += item_data['capacity']
 
-        for key in get_group('axes'):
-            if await check_accessory(
-                dino, key, True, 15
-            ):
-                item_data = get_data(key)
-                data['item_per_hour'] += item_data['effectiv']
+            for key in get_group('axes'):
+                if await check_accessory(
+                    dino, key, True, 15
+                ):
+                    item_data = get_data(key)
+                    data['item_per_hour'] += item_data['effectiv']
 
     await long_activity.insert_one(data)
 

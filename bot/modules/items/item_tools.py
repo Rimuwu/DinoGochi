@@ -437,13 +437,14 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     if dino and type(dino) == Dino:
         # Обновляем данные харрактеристик
         upd_values = {}
-        dino_now: Dino = await Dino().create(dino._id)
-        if dino_now.stats != dino.stats:
-            for i in dino_now.stats:
-                if dino_now.stats[i] != dino.stats[i]:
-                    upd_values['stats.'+i] = dino.stats[i] - dino_now.stats[i]
+        dino_now = await Dino().create(dino._id)
+        if dino_now:
+            if dino_now.stats != dino.stats:
+                for i in dino_now.stats:
+                    if dino_now.stats[i] != dino.stats[i]:
+                        upd_values['stats.'+i] = dino.stats[i] - dino_now.stats[i]
 
-        if upd_values: await dino_now.update({'$inc': upd_values})
+            if upd_values: await dino_now.update({'$inc': upd_values})
 
     if use_status and delete: await UseAutoRemove(userid, item, count)
     return send_status, return_text

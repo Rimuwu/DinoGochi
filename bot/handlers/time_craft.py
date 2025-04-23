@@ -74,8 +74,11 @@ async def info_craft(data, transmitted_data: dict):
 
         if craft['dino_id']:
             dino_acc = await Dino().create(craft['dino_id'])
-            name = dino_acc.name
-        else:
+            if dino_acc:
+                name = dino_acc.name
+                craft['dino_id'] = None
+
+        if not craft['dino_id']:
             name = '-'
             b_l.append({
                 t('time_craft.button', lang): f'time_craft {alt_code} send_dino'

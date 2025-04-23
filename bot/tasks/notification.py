@@ -24,7 +24,7 @@ async def dino_notifications_task(dinos):
 
                 if dino['stats']['heal'] <= 0:
                     dino_cl = await Dino().create(dino['_id'])
-                    await dino_cl.dead()
+                    if dino_cl: await dino_cl.dead()
                     continue
 
                 unit = dino['stats'][stat]

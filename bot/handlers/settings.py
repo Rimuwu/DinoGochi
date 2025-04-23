@@ -198,6 +198,9 @@ async def rename_button(callback: CallbackQuery):
         'lang': lang
     }
     dino = await Dino().create(dino_data)
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
     await transition(dino, trans_data)
 
 async def adapter_delete(return_data, transmitted_data):

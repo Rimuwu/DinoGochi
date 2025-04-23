@@ -239,7 +239,8 @@ async def dino_profile_callback(call: types.CallbackQuery):
         'lang': lang
     }
     dino = await Dino().create(dino_data)
-    await transition(dino, trans_data)
+    if dino:
+        await transition(dino, trans_data)
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('dino_menu'))
@@ -365,6 +366,9 @@ async def dino_menu(call: types.CallbackQuery):
 
 async def skills_profile(userid, chatid, dino_data: dict, lang):
     dino = await Dino().create(dino_data['_id'])
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
     age = await dino.age()
     image = await create_skill_image(dino.data_id, 
                                      age.days, lang, dino.stats)

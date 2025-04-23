@@ -50,7 +50,6 @@ async def work_task():
 
         if int(time()) >= work['end_time']:
             save = False
-            dino = await Dino().create(work['dino_id'])
             lang = await get_lang(work['sended'])
 
             if 'coins' in work:
@@ -59,8 +58,8 @@ async def work_task():
             elif 'items' in work:
                 text = t('works.stop.items', lang, items=get_items_names(list(work['items'].values()), lang))
 
-            await end_work(dino._id)
-            await dino_notification(dino._id, 
+            await end_work(work['dino_id'])
+            await dino_notification(work['dino_id'], 
                                     f'{work["activity_type"]}_end', 
                                     results=text
                                     )

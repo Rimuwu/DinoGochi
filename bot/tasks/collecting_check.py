@@ -47,6 +47,7 @@ async def collecting_work(coll_data: dict):
         await stop_collect(coll_data)
     else:
         dino = await Dino().create(coll_data['dino_id'])
+        if not dino: return
 
         special_chance = {}
         chances_add = {'common': 0, 'uncommon': 0, 'rare': 0, 'mystical': 0, 'legendary': 0}
