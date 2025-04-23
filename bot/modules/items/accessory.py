@@ -18,6 +18,8 @@ async def find_accessory(dino: Dino, acc_type: Optional[str] = None) -> list[lis
     result = []
     ind = -1
     for item in dino.activ_items:
+        if 'item_id' not in item: continue
+
         data_item = get_data(item['item_id']) #Получаем данные из json
         ind += 1
         if data_item['type'] == acc_type or acc_type is None:
