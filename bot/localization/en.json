@@ -1246,7 +1246,7 @@
             },
             "about": "🤖 | Hello! I'm @{bot_name}, but here's some information about me! \n\n 🗝️ | Stats: 👥 <code> {col_u} </code> 🦕 <code> {col_d} </code> 🔮 <code> {col_i} </code> \n <i> {update_time} Back. </i>",
             "referal": "🤍 | Redirect to the referral system menu! \n\n 💜 | *Upon reaching level {lvl}* your friend, you'll get {award_text}! \n\n ❤️ | A friend will receive a bonus in the amount of: {coins} coins, {items}",
-            "referal_separator": "or",
+            "referal_separator": " or",
             "settings2": "🔧 | Settings Menu (Page 2)\n\n 🦕 Address: {my_name}",
             "seller": "🎇 Go to the store management menu",
             "bot_market": "🎍 | What will the bot offer today? Take a look!",

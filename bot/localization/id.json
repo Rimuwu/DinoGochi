@@ -1246,7 +1246,7 @@
             },
             "about": "🤖 | Halo! Saya @{bot_name}, dan inilah beberapa informasi tentang saya! \n\n🗝️ | Statistik: 👥 <code>{col_u}</code> 🦕 <code>{col_d}</code> 🔮 <code>{col_i}</code>\n<i>{update_time} yang lalu. </i>",
             "referal": "🤍 | Redirect ke menu sistem referral! \n\n💜 | *Setelah mencapai level {lvl}* teman Anda, Anda akan mendapatkan {award_text}! \n\n❤️ | Seorang teman akan menerima bonus sejumlah: {coins} koin, {items}",
-            "referal_separator": "atau",
+            "referal_separator": " atau",
             "settings2": "🔧 | Menu Pengaturan (Halaman 2)\n\n🦕 Akses: {my_name}",
             "seller": "🎇 Buka menu manajemen toko",
             "bot_market": "🎍 | Apa yang akan ditawarkan bot hari ini? Coba lihat!",
