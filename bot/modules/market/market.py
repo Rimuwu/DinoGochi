@@ -516,7 +516,12 @@ async def upd_data(p_tp:str, col: int, product: dict, owner:int, pro_id: ObjectI
     owner_lang = await get_lang(owner)
     preview = preview_product(
         product['items'], product['price'], product['type'], owner_lang)
-    await user_notification(owner, 'product_buy', owner_lang,
+    
+    if product['type'] == 'items_items':
+        await user_notification(owner, 'items_items_buy', owner_lang,
+                            preview=preview, col=col, name=name, alt_id=product['alt_id'])
+    else:
+        await user_notification(owner, 'product_buy', owner_lang,
                             preview=preview, col=col, price=col * product['price'], name=name, alt_id=product['alt_id'])
 
 

@@ -1191,6 +1191,10 @@
             "sawmill_end": {
                 "text": "🌲 | {dino_name} ¡De vuelta del aserradero! Estos son los resultados de su trabajo: {results}",
                 "inline_menu": "dino_profile"
+            },
+            "items_items_buy": {
+                "text": "🍜 El producto ({preview}) fue comprado {col} veces, por el usuario {name}",
+                "inline_menu": "product_info"
             }
         },
         "breakdown": {

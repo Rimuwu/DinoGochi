@@ -1191,6 +1191,10 @@
             "sawmill_end": {
                 "text": "🌲 | {dino_name} Kembali dari Penggergajian! Berikut adalah hasil karyanya: {results}",
                 "inline_menu": "dino_profile"
+            },
+            "items_items_buy": {
+                "text": "🍜 Produk ({preview}) dibeli {col} kali, oleh pengguna {name}",
+                "inline_menu": "product_info"
             }
         },
         "breakdown": {

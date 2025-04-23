@@ -1192,6 +1192,10 @@
             "sawmill_end": {
                 "text": "🌲 | {dino_name} вернулся с лесопилки! Вот результаты его работы: {results}",
                 "inline_menu": "dino_profile"
+            },
+            "items_items_buy": {
+                "text": "🍜 Продукт ({preview}) был куплен {col} раз, пользователем {name}",
+                "inline_menu": "product_info"
             }
         },
         "breakdown": {
