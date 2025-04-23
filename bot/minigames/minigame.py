@@ -32,7 +32,7 @@ class MiniGame:
 
         # Список переменных, которые не будут сохраняться в базе данных
         self._excluded_from_save: list[str] = [
-            '_excluded_from_save', '_MiniGame__threads_work', 'active_threads', 'DEACTIVATE_NOT_ACTIVE_BUTTONS', 'DEBUG_MODE', 'THREAD_TICK',
+            '_excluded_from_save', '_MiniGame__threads_work', 'active_threads', 'DEACTIVATE_NOT_ACTIVE_BUTTONS', 'DEBUG_MODE', 'THREAD_TICK', 'NextButtonTimeActivation', 'NextButtonTimeActivationDelay', 'ButtonsQueue'
             ]
 
         self.active_threads: bool = True # Служит для паузы тасков
@@ -64,6 +64,10 @@ class MiniGame:
                           filters=['simple_filter'], 
                           active=True)
         }
+
+        self.ButtonsQueue: list = []  # очередь для кнопок (первый вошедший выходит первым)
+        self.NextButtonTimeActivation: float = 0 # Время активации следующей кнопки
+        self.NextButtonTimeActivationDelay: float = 0 # Задержка между активацией кнопок
 
         # ======== ContentWaiter ======== #
         # str, int, image, sticker
@@ -348,6 +352,7 @@ class MiniGame:
         await self.Custom_StartGame(user_id, chat_id, message, **kwargs)
 
         asyncio.create_task(self.__run_threads())
+        asyncio.create_task(self.process_buttons_queue())
 
     async def Custom_StartGame(self, user_id: int, chat_id: int, message: Message, **kwargs) -> None:
         """ Когда игра запускается впервые (Создан, чтобы не переписывать StartGame) """
@@ -362,6 +367,7 @@ class MiniGame:
         await self.Custom_ContinueGame()
 
         asyncio.create_task(self.__run_threads())
+        asyncio.create_task(self.process_buttons_queue())
     
     async def Custom_ContinueGame(self) -> None:
         """ Когда игра продолжается после неожиданного завершения (Создан, чтобы не переписывать ContinueGame) """
@@ -677,13 +683,12 @@ class MiniGame:
         self.D_log('ClearButtons')
 
     async def ActiveButton(self, key: str, callback: types.CallbackQuery):
-        """ Запускает функции отвечающей за кнопку """
+        """ Добавляет кнопку в очередь для последовательной активации """
         self.LAST_ACTION = time.time()
         await self.Update()
+        self.D_log(f'ActiveButton (queue) {key} {callback.data}')
 
-        self.D_log(f'ActiveButton {key} {callback.data}')
-
-        if key not in self.ButtonsRegister: 
+        if key not in self.ButtonsRegister:
             self.D_log(f'ActiveButton {key} not found')
             return False
 
@@ -694,23 +699,39 @@ class MiniGame:
         filter_results = [await getattr(self, filter_func)(callback) for filter_func in filters]
 
         if all(filter_results) and button.active:
-            button_function = getattr(self, button.function, None)
-
-            if button_function:
-                self.D_log(f'button_function {key} {button_function.__name__} {callback.data}')
-                await button_function(callback)
-                return True
-
-            if button.stage and button.stage in self.Stages:
-                self.D_log(f'button_stage {key} {callback.data}')
-                await self.SetStage(button.stage, callback.from_user.id)
-                return True
-
-            if not button.stage and button.stage not in self.Stages:
-                self.D_log(f'button_function {key} stage not found')
+            # Добавляем в очередь кортеж (key, callback)
+            self.ButtonsQueue.append((key, callback))
+            self.D_log(f'Button {key} добавлена в очередь. Текущая очередь: {len(self.ButtonsQueue)}')
+            return True
         else:
             self.D_log(f'button_function {key} not active[{button.active}] or filters{filter_results} not passed')
         return False
+
+    async def process_buttons_queue(self):
+        """Обрабатывает очередь кнопок с задержкой NextButtonTimeActivation"""
+        while True:
+            if self.ButtonsQueue:
+                now = time.time()
+                if now >= self.NextButtonTimeActivation:
+                    key, callback = self.ButtonsQueue.pop(0)
+                    button = self.ButtonsRegister.get(key)
+
+                    if button:
+                        button_function = getattr(self, button.function, None)
+                        if button_function:
+                            self.D_log(f'button_function {key} {button_function.__name__} {callback.data}')
+                            await button_function(callback)
+
+                        if button.stage and button.stage in self.Stages:
+                            self.D_log(f'button_stage {key} {callback.data}')
+                            await self.SetStage(button.stage, callback.from_user.id)
+
+                        if not button.stage and button.stage not in self.Stages:
+                            self.D_log(f'button_function {key} stage not found')
+
+                    # Устанавливаем время следующей активации
+                    self.NextButtonTimeActivation = time.time() + self.NextButtonTimeActivationDelay
+            await asyncio.sleep(0.1)
 
     async def DEV_BUTTON(self, callback: types.CallbackQuery):
         pass
