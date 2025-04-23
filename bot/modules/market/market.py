@@ -612,6 +612,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                         if 'abilities' in item: abil = item['abilities']
                         else: abil = {}
                         await RemoveItemFromUser(userid, item_id, itme_col * col, abil)
+                        await AddItemToUser(owner, item_id, itme_col * col, abil)
 
                     col_items = item_list(product['items'])
                     for item in col_items:
