@@ -589,7 +589,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
             elif p_tp == 'items_items':
                 items_status, n = [], 0
 
-                col_items = item_list(product['items'])
+                col_items = item_list(product['price'])
                 for item in col_items:
                     item_id = item['item_id']
                     if 'abilities' in item: abil = item['abilities']
@@ -611,7 +611,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                         item_id = item['item_id']
                         if 'abilities' in item: abil = item['abilities']
                         else: abil = {}
-                        await AddItemToUser(userid, item_id, itme_col * col, abil)
+                        await RemoveItemFromUser(userid, item_id, itme_col * col, abil)
 
                     col_items = item_list(product['items'])
                     for item in col_items:
