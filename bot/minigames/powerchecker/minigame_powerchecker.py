@@ -275,7 +275,8 @@ class PowerChecker(MiniGame):
         self.log: list = []
 
         for player_id, player_data in self.PLAYERS.items():
-            dino: Dino = await Dino().create(player_data.data['dino'])
+            dino = await Dino().create(player_data.data['dino'])
+            if not dino: continue
 
             # Игровые данные
             player_data.data['units'] = self.power
@@ -421,6 +422,8 @@ class PowerChecker(MiniGame):
             self.ButtonsRegister[i].active = False
             await self.EditButton(i, self.ButtonsRegister[i])
 
+        await self.Update()
+
         try:
             res = await bot.send_dice(callback.message.chat.id, emoji='🎲', reply_markup=None, reply_to_message_id=callback.message.message_thread_id)
 
@@ -436,6 +439,12 @@ class PowerChecker(MiniGame):
             await res.delete()
             await res2.delete()
         except: pass
+
+        for i in self.ButtonsRegister.keys():
+            self.ButtonsRegister[i].active = False
+            await self.EditButton(i, self.ButtonsRegister[i])
+        
+        await self.Update()
 
         return res.dice.value, res2.dice.value
 
