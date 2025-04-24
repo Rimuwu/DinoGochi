@@ -1117,6 +1117,10 @@
                 "text": "🍜 Продукт ({preview}) был куплен {col} раз на сумму {price} 🪙, пользователем {name}",
                 "inline_menu": "product_info"
             },
+            "items_items_buy": {
+                "text": "🍜 Продукт ({preview}) был куплен {col} раз, пользователем {name}",
+                "inline_menu": "product_info"
+            },
             "kindergarten": {
                 "text": "🎈 | {dino_name} вернулся из детского садика.",
                 "inline_menu": "dino_profile"

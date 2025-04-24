@@ -436,7 +436,7 @@ async def experience_enhancement(userid: int, xp: int):
         lvl_messages = get_data('notifications.lvl_up', lang)
 
         while xp > 0:
-            max_xp = max_lvl_xp(user.lvl)
+            max_xp = max_lvl_xp(user.lvl + lvl)
             if max_xp <= xp:
                 xp -= max_xp
                 lvl += 1

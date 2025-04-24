@@ -1191,6 +1191,10 @@
             "sawmill_end": {
                 "text": "🌲 | {dino_name} Back from the Sawmill! Here are the results of his work: {results}",
                 "inline_menu": "dino_profile"
+            },
+            "items_items_buy": {
+                "text": "🍜 Product ({preview}) was bought {col} times, by user {name}",
+                "inline_menu": "product_info"
             }
         },
         "breakdown": {

@@ -516,7 +516,12 @@ async def upd_data(p_tp:str, col: int, product: dict, owner:int, pro_id: ObjectI
     owner_lang = await get_lang(owner)
     preview = preview_product(
         product['items'], product['price'], product['type'], owner_lang)
-    await user_notification(owner, 'product_buy', owner_lang,
+    
+    if product['type'] == 'items_items':
+        await user_notification(owner, 'items_items_buy', owner_lang,
+                            preview=preview, col=col, name=name, alt_id=product['alt_id'])
+    else:
+        await user_notification(owner, 'product_buy', owner_lang,
                             preview=preview, col=col, price=col * product['price'], name=name, alt_id=product['alt_id'])
 
 
@@ -589,7 +594,7 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
             elif p_tp == 'items_items':
                 items_status, n = [], 0
 
-                col_items = item_list(product['items'])
+                col_items = item_list(product['price'])
                 for item in col_items:
                     item_id = item['item_id']
                     if 'abilities' in item: abil = item['abilities']
@@ -611,7 +616,8 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                         item_id = item['item_id']
                         if 'abilities' in item: abil = item['abilities']
                         else: abil = {}
-                        await AddItemToUser(userid, item_id, itme_col * col, abil)
+                        await RemoveItemFromUser(userid, item_id, itme_col * col, abil)
+                        await AddItemToUser(owner, item_id, itme_col * col, abil)
 
                     col_items = item_list(product['items'])
                     for item in col_items:
