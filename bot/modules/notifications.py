@@ -197,6 +197,7 @@ async def user_notification(user_id: int, not_type: str,
         'send_request', #необходим user_name
         'not_independent_dead', 'independent_dead', 'daily_award',
         'product_buy', # необходим col, price, name, alt_id
+        'items_items_buy',  # необходим col, name, alt_id
         'kindergarten', # dino_name dino_alt_id_markup
     ]
     add_way = '.'+kwargs.get('add_way', '')
