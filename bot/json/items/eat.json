@@ -459,7 +459,8 @@
         "class": "Herbivore",
         "image": "item95",
         "rank": "common",
-        "type": "eat"
+        "type": "eat",
+        "groups": ["collecting-activity"]
     },
     "bread": {
         "act": 40,
