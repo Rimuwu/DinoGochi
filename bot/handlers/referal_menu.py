@@ -161,6 +161,8 @@ async def check_code(code: str, transmitted_data: dict, send: bool = True):
         await bot.send_message(chatid, text, parse_mode='Markdown', 
                         reply_markup= await m(userid, 'last_menu', lang, True))
 
+    return result
+
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.referal.enter_code'), IsAuthorizedUser())
 async def enter_code(message: Message):

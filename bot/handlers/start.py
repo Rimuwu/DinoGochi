@@ -51,12 +51,14 @@ async def start_command_auth(message: types.Message):
     content = str(message.text).split()
     if len(content) > 1:
         referal = str(content[1])
-        await auto_action(referal, message.from_user.id)
 
-        await check_code(referal, 
+        check_result = await check_code(referal, 
                          {'userid': message.from_user.id,
                           'chatid': message.chat.id,
                           'lang': await get_lang(message.from_user.id)}, False)
+        
+        if not check_result:
+            await auto_action(referal, message.from_user.id)
 
         track = await management.find_one({'_id': 'tracking_links'}, comment='start_command_auth_track')
         if referal in track['links']: # type: ignore
@@ -115,8 +117,8 @@ async def start_game_message(message: types.Message):
 
     if len(content) > 1: 
         referal = str(content[1])
-        if await referals.find_one({'code': referal}, comment='start_game_message'): add_referal = True
-        await auto_action(referal, message.from_user.id)
+        if await referals.find_one({'code': referal}, comment='start_game_message'): 
+            add_referal = True
 
     if not add_referal:
         buttons_list = [get_data('commands_name.start_game', locale=langue_code)]
@@ -131,7 +133,9 @@ async def start_game_message(message: types.Message):
         text = t('start_command.referal', langue_code, username=username)
         await bot.send_message(message.chat.id, text)
 
-        await start_game(message, referal, 'referal') 
+        await start_game(message, referal, 'referal')
+    else:
+        await auto_action(referal, message.from_user.id)
 
 @HDCallback
 @main_router.callback_query(IsAuthorizedUser(False), 
