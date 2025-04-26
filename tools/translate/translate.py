@@ -4,6 +4,7 @@ import random
 import os
 import emoji
 from pprint import pprint
+import requests
 
 import translators
 from langdetect import DetectorFactory, detect
@@ -30,6 +31,20 @@ with open(f'{ex}/settings.json', encoding='utf-8') as f:
 
     zero_translator = settings['zero_translator']
     ignore_translate_keys = settings['ignore_translate_keys']
+
+# --- Добавляем списки user_agents и proxies ---
+user_agents = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    # Добавьте больше user-agent по желанию
+]
+proxies = [
+
+    # Пример: 'http://user:pass@proxy_ip:port',
+    # 'http://proxy_ip:port',
+    # Оставьте пустым если не используете прокси, либо добавьте свои
+]
 
 def undoreplace(text: str, to_lang: str):
     """ Функция из закодированного для переводчика текста, превращает его в читаемый
@@ -186,21 +201,35 @@ def translator(text: str, to_lang:str, trans='bing') -> str:
         if text in base_names: 
             return base_names[text]
         else:
-            # Попытка не отхватывать люлей
-            r_t = random.uniform(0, 2)
-            time.sleep(r_t)
-
             try:
-                # Перевод
-                ret = translators.translate_text(text, 
-                    from_language=from_language,
-                    to_language=to_lang, translator=trans)
+                # --- Случайный user-agent и proxy ---
+                headers = {'User-Agent': random.choice(user_agents)}
+                proxy = None
+                if proxies:
+                    proxy_url = random.choice(proxies)
+                    proxy = {
+                        'http': proxy_url,
+                        'https': proxy_url
+                    }
+                # --- Передаём headers и proxies если поддерживается ---
+                kwargs = {
+                    'from_language': from_language,
+                    'to_language': to_lang,
+                    'translator': trans
+                }
+                # translators.translate_text поддерживает proxies и headers только для некоторых сервисов
+                if proxy:
+                    kwargs['proxies'] = proxy
+                if headers:
+                    kwargs['headers'] = headers
+                ret = translators.translate_text(text, **kwargs)
 
                 pprint({
                     "Text in": text, 'translator': trans, 
                     'Text out': ret, 'from_language': from_language,
-                    'to_lang': to_lang, 'detect': lang}
-                )
+                    'to_lang': to_lang, 'detect': lang,
+                    'proxy': proxy, 'headers': headers
+                })
                 
                 if ret:  # Проверка на пустой результат перевода
                     base_names[text] = ret
@@ -210,7 +239,8 @@ def translator(text: str, to_lang:str, trans='bing') -> str:
             except Exception as e: 
                 print(e)
                 print(trans)
-                return text
+                return translator(text, to_lang, translators_names[ 
+                                translators_names.index(trans) - 1])
     return text
 
 def text_translate(text: str, to_lang: str, 
