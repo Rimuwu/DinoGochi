@@ -39,8 +39,8 @@
 
     "one_replace_s": ["*", "`"],
 
-    "translators": ["bing", "myMemory", "modernMt"],
-    "zero_translator": "bing",
+    "translators": ["deepl", "myMemory", "modernMt", "bing"],
+    "zero_translator": "deepl",
 
     "main_code": "ru",
     "langs_path": "/../../bot/localization",
