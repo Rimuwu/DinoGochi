@@ -1561,6 +1561,14 @@
                     "dev": true,
                     "dm": true,
                     "group": false
+                },
+                "faq": {
+                    "short": "Справочник",
+                    "long": "📖 Справочник по функционалу бота.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 }
             }
         },
