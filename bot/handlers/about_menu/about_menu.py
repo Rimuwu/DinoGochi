@@ -59,11 +59,30 @@ async def faq(message: Message):
     buttons = faq_data['inline_buttons']
 
     markup_inline = InlineKeyboardBuilder()
-    markup_inline.row(*[
-        InlineKeyboardButton(
-            text=name, 
-            callback_data=key
-        ) for key, name in buttons.items()], width=2)
+    row = []
+    for key, name in buttons.items():
+        if key.startswith('null'):
+            markup_inline.row(*row, width=3)
+            row = []
+            row.append(
+                InlineKeyboardButton(
+                    text=' ', 
+                    callback_data='faq ' + key
+                )
+            )
+            markup_inline.row(*row, width=3)
+            row = []
+        else:
+            if len(name) > 10 and len(row) == 2:
+                markup_inline.row(*row, width=3)
+                row = []
+            row.append(
+                InlineKeyboardButton(
+                    text=name, 
+                    callback_data='faq ' + key
+                )
+            )
+    markup_inline.row(*row, width=3)
 
     await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline.as_markup(resize_keyboard=True))
 
@@ -74,5 +93,8 @@ async def faq_buttons(call: CallbackQuery):
     chatid = call.message.chat.id
     lang = await get_lang(call.from_user.id)
 
-    text = t(f'faq.{data}', lang)
-    await bot.send_message(chatid, text, parse_mode='Markdown')
+    if data and not data.startswith('null'):
+        text = t(f'faq.{data}', lang)
+        await bot.send_message(chatid, text, parse_mode='Markdown')
+    else:
+        await call.answer()
