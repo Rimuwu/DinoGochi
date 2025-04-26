@@ -96,7 +96,8 @@ async def add_friend_end(friendid: int, transmitted_data: dict):
             await bot.send_message(chatid, text, 
                                 reply_markup= await m(userid, 'last_menu', lang))
 
-            await user_notification(friendid, 'send_request', lang, user_name=user_name)
+            friend_lang = await get_lang(friendid)
+            await user_notification(friendid, 'send_request', friend_lang, user_name=user_name)
         else:
             text = t('add_friend.already', lang)
             await bot.send_message(chatid, text, 
