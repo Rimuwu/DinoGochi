@@ -650,6 +650,26 @@ class MiniGame:
 
     # ======== BUTTONS ======== #
     """ Функции кнопок """
+    
+    async def OffButtons(self, list_buttons: list[str]):
+        """ Выключает кнопки """
+        for key in list_buttons:
+            if key in self.ButtonsRegister:
+                self.ButtonsRegister[key].active = False
+                await self.Update()
+                self.D_log(f'OffButtons {key}')
+            else:
+                self.D_log(f'OffButtons {key} not found')
+    
+    async def OnButtons(self, list_buttons: list[str]):
+        """ Включает кнопки """
+        for key in list_buttons:
+            if key in self.ButtonsRegister:
+                self.ButtonsRegister[key].active = True
+                await self.Update()
+                self.D_log(f'OnButtons {key}')
+            else:
+                self.D_log(f'OnButtons {key} not found')
 
     async def AddButton(self, key: str, button: Button):
         """ Добавление кнопки """
@@ -726,7 +746,7 @@ class MiniGame:
                             self.D_log(f'button_stage {key} {callback.data}')
                             await self.SetStage(button.stage, callback.from_user.id)
 
-                        if not button.stage and button.stage not in self.Stages:
+                        if not button.stage and button.stage not in self.Stages and not button_function:
                             self.D_log(f'button_function {key} stage not found')
 
                     # Устанавливаем время следующей активации
