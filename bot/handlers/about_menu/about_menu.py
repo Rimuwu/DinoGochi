@@ -89,9 +89,8 @@ async def faq(message: Message):
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Command(commands=['faq']))
-async def faq(message: Message):
+async def faq_com(message: Message):
     await faq_func(await get_lang(message.from_user.id), message.chat.id)
-
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('open_faq'))
