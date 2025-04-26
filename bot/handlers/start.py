@@ -7,7 +7,7 @@ from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.handlers.referal_menu import check_code
 from bot.handlers.states import cancel
-from bot.modules.data_format import list_to_keyboard, seconds_to_str, user_name_from_telegram
+from bot.modules.data_format import list_to_inline, list_to_keyboard, seconds_to_str, user_name_from_telegram
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur import incubation_egg
 from bot.modules.images import async_open, create_eggs_image
@@ -150,8 +150,17 @@ async def egg_answer_callback(callback: types.CallbackQuery):
     send_text = t('start_command.end_answer.send_text', lang, inc_time=
                   seconds_to_str(GAME_SETTINGS['first_dino_time_incub'], lang))
 
-    await bot.edit_message_caption(None, caption=edited_text, chat_id=callback.message.chat.id, message_id=callback.message.message_id)
-    await bot.send_message(callback.message.chat.id, send_text, parse_mode='Markdown', reply_markup= await m(callback.from_user.id, language_code=lang))
+    await bot.edit_message_caption(None, caption=edited_text, chat_id=callback.message.chat.id, 
+                                   message_id=callback.message.message_id)
+    await bot.send_message(callback.message.chat.id, send_text, 
+                           parse_mode='Markdown', 
+                           reply_markup=list_to_inline([
+                               {t('start_command.end_answer.faq_button', lang): 'open_faq'},])
+                           )
+
+    await bot.send_message(callback.message.chat.id, 
+                           t('start_command.end_answer.main_menu', lang),
+                           reply_markup=await m(callback.from_user.id, language_code=lang))
 
     # Создание юзера и добавляем динозавра в инкубацию
     photos = await bot.get_user_profile_photos(userid, limit=1)
