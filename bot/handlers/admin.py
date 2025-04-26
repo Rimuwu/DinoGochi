@@ -338,7 +338,7 @@ async def evaling(message):
 
     log(f"userid: {message.from_user.id} command: {text} result: {result}", 4)
     try:
-        await bot.send_message(message.from_user.id, result)
+        await bot.send_message(message.from_user.id, str(result))
     except:
         await bot.send_message(message.from_user.id, 'moretext')
 
@@ -411,3 +411,22 @@ async def start_easter(message: Message):
 
     for i in events_lst: await add_event(i, True)
     await bot.send_message(conf.bot_group_id, t("events.easter"))
+
+@main_router.message(Command(commands=['count_items']), IsAdminUser())
+@HDMessage
+async def count_items(message: Message):
+    
+    msg_args = message.text.split()
+    msg_args.pop(0)
+    item_id = ' '.join(msg_args)
+    
+    find_items = await mongo_client.items.items.find({"items_data.item_id": item_id}).to_list(length=None)
+    count = 0
+    max_count, max_id_user = 0, 0
+    for i in find_items:
+        count += i['count']
+        if i['count'] > max_count:
+            max_count = i['count']
+            max_id_user = i['userid']
+    
+    await bot.send_message(message.chat.id, f"Count: {count}\nMax: {max_count} ({max_id_user})")
