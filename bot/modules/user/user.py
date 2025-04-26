@@ -446,7 +446,8 @@ async def experience_enhancement(userid: int, xp: int):
                     add_way = str(user.lvl + lvl)
                 else: add_way = 'standart'
 
-                await user_notification(userid, 'lvl_up', lang, 
+                friend_lang = await get_lang(userid)
+                await user_notification(userid, 'lvl_up', friend_lang, 
                                         user_name=user.name,
                                         lvl=user.lvl + lvl, 
                                         add_way=add_way)
@@ -484,7 +485,7 @@ async def user_info(userid: int, lang: str, secret: bool = False,
             if find['sub_end'] == 'inf': premium = '♾'
             else:
                 premium = seconds_to_str(
-                    find['sub_end'] - find['sub_start'], lang)
+                    find['sub_end'] - int(time()), lang)
 
     friends = await get_frineds(userid)
     friends_count = len(friends['friends'])
