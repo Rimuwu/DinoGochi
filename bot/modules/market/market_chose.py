@@ -333,6 +333,7 @@ async def promotion_prepare(userid: int, chatid: int, lang: str, product_id, mes
     user = await users.find_one({'userid': userid}, comment='promotion_prepare_user')
     if user:
         coins = GAME_SETTINGS['promotion_price']
+        # Скидка на продвижение
         max_charisma = await max_skill(userid, 'charisma')
         discount = transform(max_charisma, 20, 60)
 

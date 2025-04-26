@@ -72,6 +72,7 @@ async def collecting_work(coll_data: dict):
                 await experience_enhancement(coll_data['sended'], 
                                             randint(1, 3))
 
+        # Шанс на доп опыт при высокой харизме
         if random() + transform(dino.stats['charisma'], 20, 0.3) >= 90:
             await experience_enhancement(coll_data['sended'], randint(1, 5))
 
