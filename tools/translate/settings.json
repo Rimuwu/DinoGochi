@@ -39,7 +39,7 @@
 
     "one_replace_s": ["*", "`"],
 
-    "translators": ["deepl", "myMemory", "modernMt", "bing"],
+    "translators": ["deepl", "bing"],
     "zero_translator": "deepl",
 
     "main_code": "ru",
