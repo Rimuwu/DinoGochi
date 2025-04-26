@@ -221,7 +221,7 @@ locations = {
     "forest": {
         "danger": 1.0,
         "items": {
-            'com': ['rustycan', 'wornoutticket', 'brokenkey', 'lostglove', 'shatteredbottle', 'oldbucket', 'crumpledpaper', 'wiltedleaf', 'jar_honey', 'cookie', 'blank_piece_paper', 'feather'],
+            'com': ['rustycan', 'wornoutticket', 'brokenkey', 'lostglove', 'shatteredbottle', 'oldbucket', 'crumpledpaper', 'wiltedleaf', 'jar_honey', 'cookie', 'blank_piece_paper', 'feather', 'rope'],
             'unc': ['therapeutic_mixture', 'sweet_pancakes', 'blank_piece_paper', 'drink_recipe', 'rod_recipe'],
             'rar': ['bento_recipe', 'candy_recipe', 'drink_recipe', 'gear_recipe'],
             'mys': ['salad_recipe', 'torch_recipe', 'popcorn_recipe'],
@@ -258,7 +258,7 @@ locations = {
             'mobs': ['dolphin', 'lobster', 'narwhal', 'orca', 'otter_pup', 'pelican', 'swan', 'whale', 'toucan', 'squid', 'seahorse', 'shark', 'octopus', 'wombat', 'turtle', 'snail', 'sloth', 'skunk', 'sheep', 'seagull', 'rooster', 'pigeon', 'peacock', 'parrot', 'ostrich', 'opossum', 'monkey', 'kangaroo', 'jaguar']
         },
         "items": {
-            'com': ['rustycan', 'wornoutticket', 'brokenkey', 'lostglove', 'shatteredbottle', 'oldbucket', 'crumpledpaper', 'wiltedleaf', 'slice_pizza', 'fish_oil', 'twigs_tree', 'skin', 'blank_piece_paper'],
+            'com': ['rustycan', 'wornoutticket', 'brokenkey', 'lostglove', 'shatteredbottle', 'oldbucket', 'crumpledpaper', 'wiltedleaf', 'slice_pizza', 'fish_oil', 'twigs_tree', 'skin', 'blank_piece_paper', 'rope'],
             'unc': ['therapeutic_mixture', 'sweet_pancakes', 'drink_recipe'],
             'rar': ['curry_recipe', 'bread_recipe', 'tea_recipe', 'flour_recipe', 'blank_piece_paper'],
             'mys': ['clothing_recipe', 'meat_recipe'],
@@ -291,7 +291,7 @@ locations = {
         "danger": 1.4,
         "items": {
             'com': ['rustycan', 'wornoutticket', 'brokenkey', 'lostglove', 'shatteredbottle','chocolate', 'candy', 'dango', 'flour_recipe', 'rope', 'blank_piece_paper'],
-            'unc': ['juice_recipe', 'hot_chocolate_recipe', 'cake_recipe'],
+            'unc': ['juice_recipe', 'hot_chocolate_recipe', 'cake_recipe', 'rope'],
             'rar': ['pouch_recipe', 'sword_recipe', 'onion_recipe', 'arrow_recipe'],
             'mys': ['backpack_recipe', 'shield_recipe', 'pickaxe_recipe', 'drink_recipe', 'magic_stone'],
             'leg': ['steak_recipe', 'broth_recipe', 'sushi_recipe', 'book_desert', 'magic_stone', 'transport_egg']
@@ -326,7 +326,7 @@ locations = {
     "mountains": {
         "danger": 1.8,
         "items": {
-            'com': ['rustycan', 'wornoutticket', 'brokenkey', 'lostglove', 'sandwich', 'dango', 'mushroom', 'therapeutic_mixture', 'blank_piece_paper', 'drink_recipe'],
+            'com': ['rustycan', 'wornoutticket', 'brokenkey', 'lostglove', 'sandwich', 'dango', 'mushroom', 'therapeutic_mixture', 'blank_piece_paper', 'drink_recipe', 'rope'],
             'unc': ['bacon_recipe', 'bento_recipe', 'sandwich_recipe'],
             'rar': ['berry_pie_recipe', 'fish_pie_recipe', 'meat_pie_recipe'],
             'mys': ['basket_recipe', 'net_recipe', 'rod_recipe', 'magic_stone'],
