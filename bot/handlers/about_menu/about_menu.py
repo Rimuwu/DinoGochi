@@ -48,13 +48,7 @@ async def links(message: Message):
 
     await bot.send_message(chatid, t('about_menu.links', lang), parse_mode='Markdown')
 
-@HDMessage
-@main_router.message(IsPrivateChat(), Text('commands_name.about.faq'), 
-                     IsAuthorizedUser())
-async def faq(message: Message):
-    lang = await get_lang(message.from_user.id)
-    chatid = message.chat.id
-
+async def faq_func(lang, chatid):
     faq_data = get_data('faq', lang)
     buttons = faq_data['inline_buttons']
 
@@ -85,6 +79,18 @@ async def faq(message: Message):
     markup_inline.row(*row, width=3)
 
     await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline.as_markup(resize_keyboard=True))
+
+
+@HDMessage
+@main_router.message(IsPrivateChat(), Text('commands_name.about.faq'), 
+                     IsAuthorizedUser())
+async def faq(message: Message):
+    await faq_func(await get_lang(message.from_user.id), message.chat.id)
+
+@HDCallback
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('open_faq'))
+async def open_faq(call: CallbackQuery):
+    await faq_func(await get_lang(call.from_user.id), call.message.chat.id)
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('faq'))
