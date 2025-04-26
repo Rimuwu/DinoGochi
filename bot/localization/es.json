@@ -1603,10 +1603,6 @@
         "faq": {
             "text": "🍿 | Oye, nuestro bot es bastante grande y hay un montón de información. Aquí hay un par de categorías para ti, elige qué información quieres obtener >",
             "inline_buttons": {
-                "faq general": "🎈 Generalidades",
-                "faq eat": "🥙 Comida",
-                "faq accessories": "🧵 Accesorios",
-                "faq dungeon": "🗻 Mazmorra",
                 "general": "🎈 Generalidades",
                 "null1": "",
                 "eat": "🥙 Comida",

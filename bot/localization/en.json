@@ -1603,10 +1603,6 @@
         "faq": {
             "text": "🍿 | Hey, our bot is pretty big and there's a ton of information. Here are a couple of categories for you, choose what information you want to get >",
             "inline_buttons": {
-                "faq general": "🎈 Total",
-                "faq eat": "🥙 Meal",
-                "faq accessories": "🧵 Accessories",
-                "faq dungeon": "🗻 Dungeon",
                 "general": "🎈 General",
                 "game_point": "♾️ About Game",
                 "null1": "",

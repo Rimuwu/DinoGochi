@@ -1603,10 +1603,6 @@
         "faq": {
             "text": "🍿 | Hei, bot kami cukup besar dan ada banyak informasi. Berikut adalah beberapa kategori untuk Anda, pilih informasi apa yang ingin Anda dapatkan >",
             "inline_buttons": {
-                "faq general": "🎈 Umum",
-                "faq eat": "🥙 Makanan",
-                "faq accessories": "🧵 Aksesori",
-                "faq dungeon": "🗻 Ruang bawah tanah",
                 "general": "🎈 Umum",
                 "game_point": "♾️ Tentang apa permainannya",
                 "null1": "",
