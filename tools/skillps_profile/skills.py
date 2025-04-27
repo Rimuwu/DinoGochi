@@ -19,11 +19,11 @@ def trans_paste(fg_img, bg_img,
 
 
 def centre_var(image, font, message, start_var=0, end_var=250):
-        draw = ImageDraw.Draw(image)
-        _, _, w, h = draw.textbbox((0, 0), message, font=font)
-        var = (end_var - start_var - w) / 2 + start_var
+    draw = ImageDraw.Draw(image)
+    _, _, w, h = draw.textbbox((0, 0), message, font=font)
+    var = (end_var - start_var - w) / 2 + start_var
 
-        return var
+    return var
 
 def text_on_image():
     def centre_var(image, font, message, start_var=0, end_var=250):
