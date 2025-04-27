@@ -20,6 +20,7 @@ from bot.modules.managment.events import check_event
 FONTS = {
     'line30': ImageFont.truetype('fonts/Aqum.otf', size=30),
     'line25': ImageFont.truetype('fonts/Aqum.otf', size=25),
+    'line20': ImageFont.truetype('fonts/Aqum.otf', size=20),
     'line35': ImageFont.truetype('fonts/Aqum.otf', size=35),
     'line45': ImageFont.truetype('fonts/Aqum.otf', size=45),
     'line55': ImageFont.truetype('fonts/Aqum.otf', size=55),
@@ -201,7 +202,7 @@ def horizontal_resizing(age: int, max_size, max_x, max_y, days = 30):
     return f, x, y
 
 async def trans_paste(fg_img: Image.Image, bg_img: Image.Image, 
-                alpha=10.0, box=(0, 0)):
+                alpha=1.0, box=(0, 0)):
     """Накладывает одно изображение на другое.
     """
     fg_img_trans = Image.new('RGBA', fg_img.size)
