@@ -13,11 +13,13 @@ from random import choice, choices
 from time import sleep
 from asyncio import sleep as asleep
 
+import aiogram
 from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            InlineQueryResultContact, Message, LabeledPrice)
 
 from bot.modules.dinosaur import dinosaur
 from bot.modules.get_state import get_state
+from bot.modules.images_creators.more_dinos import MiniGame_image
 from bot.modules.images_save import send_SmartPhoto
 
 from bot.modules.inline import inline_menu
@@ -33,7 +35,7 @@ from bot.modules.companies import nextinqueue, save_message
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, item_list
 from bot.modules.dinosaur.dinosaur import check_status
 from bot.modules.dinosaur.kd_activity import save_kd
-from bot.modules.donation import get_history, send_inv
+from bot.modules.donation import get_history, give_reward, save_donation, send_inv
 from bot.modules.images import create_egg_image, create_skill_image, dino_collecting, dino_game
 from bot.modules.inventory_tools import inventory_pages
 from bot.modules.items.item import (AddItemToUser, DowngradeItem, get_data,
@@ -486,3 +488,13 @@ async def downgrade(message: Message):
         return
 
     await downgrade_type_accessory(dino, 'weapon', 49)
+
+from aiogram.types import StarTransaction
+
+@main_router.message(Command(commands=['story_stars']), IsAdminUser())
+@HDMessage
+async def story_stars(message: Message):
+
+    res = await bot.get_star_transactions()
+
+    print(res)
