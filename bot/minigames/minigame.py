@@ -67,7 +67,7 @@ class MiniGame:
 
         self.ButtonsQueue: list = []  # очередь для кнопок (первый вошедший выходит первым)
         self.NextButtonTimeActivation: float = 0 # Время активации следующей кнопки
-        self.NextButtonTimeActivationDelay: float = 0 # Задержка между активацией кнопок
+        self.NextButtonTimeActivationDelay: float = 1 # Задержка между активацией кнопок
 
         # ======== ContentWaiter ======== #
         # str, int, image, sticker
@@ -96,6 +96,12 @@ class MiniGame:
                 '', # Какую функцию запускает при переходе
                 {}
             )
+        }
+
+        # ======== IMAGES ======== #
+        self.Images: dict[str, bytes] = {}
+        self.ImageGenerators: dict[str, str] = {
+            # 'image': 'image_generator' # Код генератора: имя функции
         }
 
         # ======== SETTINGS ======== #
@@ -427,11 +433,12 @@ class MiniGame:
 
     async def EndGameGenerator(self):
         text = f'Игра {self.session_key} завершена'
+        self.session_masseges['main'].image = None
+
         await self.MesageUpdate('main', text=text)
 
     async def GetMessageGenerator(self, func_key: str = 'main'):
         generator = self.message_generators.get(func_key, 'error_find_generator')
-        # self.D_log(f'GetMessageGenerator {func_key} -> {generator}')
         return generator
 
     async def DeleteMessage(self, func_key: str = 'main') -> None:
@@ -455,33 +462,60 @@ class MiniGame:
             del self.session_masseges[func_key]
             await self.Update()
 
-    async def CreateMessage(self, user_id: int, chat_id: int, func_key: str = 'main', text = 'create message...', parse_mode: Optional[str] = 'Markdown') -> types.Message:
+    async def CreateMessage(self, user_id: int, chat_id: int, func_key: str = 'main', text = 'create message...', parse_mode: Optional[str] = 'Markdown',
+                         image_name: Optional[str] = None) -> types.Message:
         """ Создает сообщение """
         self.D_log(f'CreateMessage {func_key}')
 
-        msg = await bot.send_message(
-            text=text,
-            chat_id=chat_id,
-            reply_markup=self.list_to_inline([]), # Пустая клавиатура
-            parse_mode=parse_mode
-        )
+        if image_name:
+            image = self.Images.get(image_name, None)
+            if isinstance(image, bytes):
+                file = types.BufferedInputFile(image, filename=image_name)
+                msg = await bot.send_photo(
+                    chat_id=chat_id,
+                    photo=file,
+                    caption=text,
+                    parse_mode=parse_mode,
+                    reply_markup=self.list_to_inline([]) # Пустая клавиатура
+                )
+            else:
+                self.D_log(f'CreateMessage {func_key} image {image_name} not found')
+                image_name = None
+
+        if not image_name:
+            msg = await bot.send_message(
+                text=text,
+                chat_id=chat_id,
+                reply_markup=self.list_to_inline([]), # Пустая клавиатура
+                parse_mode=parse_mode
+            )
+
         self.session_masseges[func_key] = SMessage(message_id=msg.message_id,
-                                                   chat_id=msg.chat.id, data={'author': user_id}, parse_mode=parse_mode)
+                                                   chat_id=msg.chat.id, data={'author': user_id}, parse_mode=parse_mode, image=image_name)
         await self.Update()
 
         return msg
 
-    async def MesageUpdate(self, func_key: str = 'main', text: str = '', reply_markup = None):
+    async def MesageUpdate(self, func_key: str = 'main', text: str = '', reply_markup = None, stop_repeat: bool = False):
         """ Обновляет сообщение """
         if not text: return
         # self.D_log(f'MesageUpdate {func_key}')
 
-        data = self.session_masseges.get(func_key, SMessage(message_id=0, chat_id=0, data={}, parse_mode=None))
+        data = self.session_masseges.get(func_key, 
+                        SMessage(message_id=0, chat_id=0, data={}, parse_mode=None))
         # self.D_log(f'MesageUpdate {func_key} data {data}')
 
         message_id = data.message_id
         chat_id = data.chat_id
         parse_mode = data.parse_mode
+        image_direct = data.image
+        image = None
+
+        if image_direct:
+            image_bytes = self.Images.get(image_direct, None)
+            if isinstance(image_bytes, bytes):
+                image = types.BufferedInputFile(image_bytes, 
+                                                filename=f'DinoGochi {image_direct}')
 
         if not chat_id:
             self.D_log(f'MesageUpdate {func_key} failed: chat_id is {chat_id} message_id is {message_id}')
@@ -489,22 +523,38 @@ class MiniGame:
 
         if message_id:
             try:
-                msg = await bot.edit_message_text(
-                    text=text,
-                    chat_id=chat_id,
-                    message_id=message_id,
-                    reply_markup=reply_markup,
-                    parse_mode=parse_mode
-                )
+                if image:
+                    msg = await bot.edit_message_media(
+                        media=types.InputMediaPhoto(
+                            media=image, caption=text, parse_mode=parse_mode),
+                        chat_id=chat_id,
+                        message_id=message_id,
+                        reply_markup=reply_markup
+                    )
+                else:
+                    msg = await bot.edit_message_text(
+                        text=text,
+                        chat_id=chat_id,
+                        message_id=message_id,
+                        reply_markup=reply_markup,
+                        parse_mode=parse_mode
+                    )
+                self.D_log(f'MesageUpdate {func_key} success')
             except Exception as e:
+                if stop_repeat: raise e
+
                 if 'message is not modified' in str(e):
                     return None
-                elif 'Flood control exceeded on method':
+                elif 'Flood control exceeded on method' in str(e):
                     self.D_log(f'MesageUpdate1 {func_key} failed: Flood control exceeded on method')
                     await asyncio.sleep(5)
-                    return await self.MesageUpdate(func_key, text, reply_markup)
+                    try:
+                        await self.MesageUpdate(func_key, text, reply_markup, stop_repeat=True)
+                    except Exception as e: 
+                        self.D_log(f'MesageUpdate2 {func_key} failed: {e}', True)
+                        return None
                 else:
-                    self.D_log(f'MesageUpdate1 {func_key} failed: {e}')
+                    self.D_log(f'MesageUpdate1 {func_key} failed: {e}', True)
                     # await self.DeleteMessage(func_key)
                     return None
         else:
@@ -856,6 +906,7 @@ class MiniGame:
         """ Запускает функции отвечающей за ожидающие определённый контент """
         self.LAST_ACTION = time.time()
         await self.Update()
+
         self.D_log(f'ActiveWaiter {key}')
 
         if key not in self.WaiterRegister: 
@@ -901,6 +952,76 @@ class MiniGame:
             inline_keyboard.append(row)
         return types.InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 
+    # ======== IMAGES ======== #
+    """ Функции для работы с изображениями """
+
+    async def GetImageGenerator(self, image_name: str) -> Optional[str]:
+        """ Получение изображения по имени """
+        func_name = self.ImageGenerators.get(image_name, None)
+        return func_name
+
+    async def GetImage(self, image_name: str) -> Optional[types.BufferedInputFile]:
+
+        """ Получение изображения по имени """
+        if image_name in self.Images:
+            return types.BufferedInputFile(self.Images[image_name], 
+                                           filename=f'DinoGochi {image_name}')
+        return None
+
+    async def UpdateImage(self, image_name: str, **kwargs) -> bool:
+        """ Обновление изображения """
+
+        generator_name = await self.GetImageGenerator(image_name)
+        if generator_name:
+            generator = getattr(self, generator_name, None)
+            if generator:
+                gen_image: types.BufferedInputFile = await generator(**kwargs)
+                if isinstance(gen_image, types.BufferedInputFile):
+                    self.Images[image_name] = gen_image.data
+                    await self.Update()
+
+                    self.D_log(f'UpdateImage {image_name}')
+                    return True
+                else:
+                    self.D_log(f'UpdateImage {image_name} failed: image is not BufferedInputFile')
+            else:
+                self.D_log(f'UpdateImage {image_name} failed: generator is None')
+        else:
+            self.D_log(f'UpdateImage {image_name} failed: generator not found')
+        return False
+
+    async def FileToBytes(self, file) -> bytes:
+        """ Преобразование файла в байты """
+
+        if isinstance(file, bytes):
+            return file
+        elif isinstance(file, str):
+            with open(file, 'rb') as f:
+                return f.read()
+        elif hasattr(file, 'read'):
+            return file.read()
+        else:
+            raise ValueError('File must be bytes, str or file-like object')
+
+    async def SetImage(self, image_name: str, file) -> None:
+        """ Установка изображения """
+        if isinstance(file, bytes):
+            self.Images[image_name] = file
+            await self.Update()
+            self.D_log(f'SetImage {image_name}')
+        else:
+            im_bytes = await self.FileToBytes(file)
+            if isinstance(im_bytes, bytes):
+                self.Images[image_name] = im_bytes
+                await self.Update()
+                self.D_log(f'SetImage {image_name}')
+            else:
+                self.D_log(f'SetImage {image_name} failed: file is not bytes')
+
+    async def LinkImageToMessage(self, image_name: str, message: str):
+        """ Привязывает изображение к сообщению """
+        self.session_masseges[message].image = image_name
+        await self.Update()
 
 async def check_session(session_key: str) -> bool:
     res = await database.find_one({'session_key': session_key},
