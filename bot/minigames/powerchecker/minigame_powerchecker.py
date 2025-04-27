@@ -8,6 +8,8 @@ from bot.exec import bot
 
 from aiogram import types
 from bot.minigames.minigame import MiniGame, Button, PlayerData, SMessage, Stage, Thread, Waiter, stageButton, stageThread, stageWaiter
+from bot.modules.dinosaur import dinosaur
+from bot.modules.images_creators.more_dinos import MiniGame_image
 from bot.modules.user.user import User, take_coins, user_name
 from bot.modules.dinosaur.dinosaur import Dino
 from typing import Optional, overload
@@ -53,7 +55,7 @@ class PowerChecker(MiniGame):
             'wait_users_start': Button(function='WaitUsersStart', filters=['owner_filter'], active=False),
         }
 
-        self.ThreadsRegister['end_game_timer'] = Thread(repeat=20, col_repeat='inf', 
+        self.ThreadsRegister['end_game_timer'] = Thread(repeat=60, col_repeat='inf', 
                                      function='end_game_timer', last_start=0, active=True)
         self.ThreadsRegister['service_deleter'] = Thread(repeat=20, col_repeat='inf',
                                      function='service_deleter', last_start=0, active=True)
@@ -122,7 +124,25 @@ class PowerChecker(MiniGame):
             ),
         }
 
+        self.ImageGenerators['main'] = 'main_image'
+
         await self.Update()
+
+    async def main_image(self):
+        """
+        Генерация изображения для главного меню игры
+        """
+        dinosaurs = []
+        for player_id, player_data in self.PLAYERS.items():
+            dino = await Dino().create(player_data.data['dino'])
+            if dino:
+                dinosaurs.append({
+                    'dino_id': dino.data_id,
+                    'name': dino.name,
+                })
+
+        image = await MiniGame_image(dinosaurs, 'backgrounds/1.png')
+        return image
 
     def standart_player_data(self):
         return {'dino': '', 'ready': False}
@@ -162,11 +182,12 @@ class PowerChecker(MiniGame):
 
                 if player.stage == 'preparation': # type: ignore
                     await self.MessageGenerator('preparation', user_id)
-                await self.Update()
 
     async def Custom_StartGame(self, user_id, chat_id, message, 
                                only_for = None) -> None:
         await self.start_data(only_for if only_for else 0)
+        await self.LinkImageToMessage('main', 'main')
+        await self.UpdateImage('main')
 
         owner_player = await self.GetPlayer(user_id)
         if owner_player is None:
@@ -265,10 +286,10 @@ class PowerChecker(MiniGame):
                 data={}
             )
         }
-        
-        del self.ThreadsRegister['service_deleter']
-        del self.ThreadsRegister['end_game_timer']
-        
+
+        self.ThreadsRegister['service_deleter'].active = False
+        self.ThreadsRegister['end_game_timer'].active = False
+
         await self.DeleteVar('only_for')
         await self.DeleteVar('max_players')
 
@@ -382,6 +403,7 @@ class PowerChecker(MiniGame):
         if active_player:
             d_p = active_player.data['dino_power']
             power = random.randint(int(d_p // 100 * 20), int(d_p))
+            power += 3
 
             active_player.data['units'] -= power
             active_player.data['dino_overload'] += 1
@@ -389,7 +411,7 @@ class PowerChecker(MiniGame):
 
             self.log.append(
                 [int(self.active_player), 
-                    'powerfulhit', [f'💪 {int(power)}'], 'wood']
+                    'powerfulhit', [f'💪 {int(power)}+3'], 'wood']
             )
             self.log = self.log[-3:]
             await self.Update()

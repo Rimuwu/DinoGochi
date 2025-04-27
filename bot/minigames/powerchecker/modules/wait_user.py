@@ -63,6 +63,10 @@ async def Endandleave(self, callback) -> None:
 
         await self.on_user_col_edit()
         await self.MessageGenerator('main', callback.from_user.id)
+        
+        self.message_generators.pop(f'choose_dino_{callback.from_user.id}')
+        await self.Update()
+        await self.DeleteMessage(f'choose_dino_{callback.from_user.id}')
 
 @register_method(PowerChecker)
 async def waituser_inline(self, user_id):
@@ -157,6 +161,7 @@ async def waituser_ChooseDino_set(self, callback) -> None:
     if player:
         player.data['dino'] = dino_name
         await self.EditPlayer(user_id, player)
+        await self.UpdateImage('main')
 
     await self.on_user_col_edit()
     await self.DeleteMessage(f'choose_dino_{user_id}')

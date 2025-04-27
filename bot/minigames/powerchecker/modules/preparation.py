@@ -124,8 +124,12 @@ async def ChooseDino_set(self, callback) -> None:
     user_id = callback.from_user.id
     player = await self.GetPlayer(user_id)
     if player:
-        player.data['dino'] = dino_name
-        await self.EditPlayer(user_id, player)
+        old_dino = player.data.get('dino', None)
+        if old_dino != dino_name:
+            player.data['dino'] = dino_name
+            await self.EditPlayer(user_id, player)
+            await self.UpdateImage('main')
+
     await self.Update()
     await self.SetStage('preparation')
 
