@@ -1,6 +1,7 @@
 from aiogram import types
 from aiogram import F
 from bot.exec import main_router, bot
+from bot.filters.admin import IsAdminUser
 from bot.filters.authorized import IsAuthorizedUser
 from bot.filters.reply_message import IsReply
 from bot.handlers.test import command
@@ -28,12 +29,15 @@ async def MiniGame_button(callback: types.CallbackQuery):
 
     code = callback.data.split(':')[1]
     session = await get_session(code)
+
     if session:
         game_id = session['GAME_ID']
         game = Registry.get_class_object(game_id, code)
 
         if game:
             await game.ActiveButton(callback.data.split(':')[2], callback)
+        else:
+            await callback.answer("Игра не найдена")
 
     else:
         return await callback.answer("Игра не найдена")
@@ -94,7 +98,7 @@ async def MiniGame_start(message: types.Message):
     return await message.answer("Игра начата")
 
 @HDMessage
-@main_router.message(Command(commands=['power']))
+@main_router.message(Command(commands=['power']), IsAdminUser())
 async def power_start(message: types.Message):
     only_for = None
 
