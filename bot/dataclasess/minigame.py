@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from email import message
+from email.mime import image
 from typing import Optional
 
 
@@ -9,6 +10,8 @@ class SMessage:
     chat_id: int
     data: dict
     parse_mode: Optional[str]
+    image: Optional[str] = field(default=None)
+    last_update: Optional[float] = field(default=0.0)
 
 @dataclass
 class PlayerData:
