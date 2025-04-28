@@ -62,8 +62,9 @@ async def Endandleave(self, callback) -> None:
         await callback.answer('Вы покинули игру')
 
         await self.on_user_col_edit()
+        await self.UpdateImage('main')
         await self.MessageGenerator('main', callback.from_user.id)
-        
+
         self.message_generators.pop(f'choose_dino_{callback.from_user.id}')
         await self.Update()
         await self.DeleteMessage(f'choose_dino_{callback.from_user.id}')
@@ -92,7 +93,7 @@ async def waituser_inline(self, user_id):
 @register_method(PowerChecker)
 async def WaitUsersStartGenerator(self, user_id: int) -> None:
     markup = await self.waituser_inline(user_id)
-    text = 'Ожидание игроков'
+    text = f'Ожидание игроков...\nСтавка: {self.bet} 🪙\n'
     players = self.PLAYERS.values()
 
     table = "\n".join(
@@ -170,7 +171,9 @@ async def waituser_ChooseDino_set(self, callback) -> None:
 @register_method(PowerChecker)
 async def enter_dino_generator(self, user_id) -> None:
     markup = await self.dino_markup(user_id) # type: ignore
-    text = f'{user_id} Выберите динозавра:'
+    
+    player = await self.GetPlayer(user_id)
+    text = f'{player.user_name} Выберите динозавра:'
     await self.MesageUpdate(f'choose_dino_{user_id}', 
                             text=text, reply_markup=markup)
 
