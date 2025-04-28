@@ -14,6 +14,12 @@ from bot.modules.user.user import User, take_coins, user_name
 from bot.modules.dinosaur.dinosaur import Dino
 from typing import Optional, overload
 
+hards_lvl = {
+    1: (20, 40),
+    2: (50, 80),
+    3: (80, 150),
+}
+
 class PowerChecker(MiniGame):
 
     def get_GAME_ID(self): return 'PowerChecker'
@@ -23,11 +29,19 @@ class PowerChecker(MiniGame):
         self.DEBUG_MODE = True
         self.time_wait = 600
 
+        self.start_image_generator = 'main'
+        self.start_image_name = 'main'
+
+        self.ImageGenerators = {
+            'main': 'main_image',
+        }
+
     async def start_data(self, only_for: int = 0):
 
         self.only_for: int = only_for
-        self.max_players: int = 2
-        self.bet: int = 10
+        self.max_players: int = 4
+        self.bet: int = 0
+        self.hard_lvl: int = 2
 
         self.ButtonsRegister = {
             'max_col': Button(stage='max_players', filters=['owner_filter'], active=False),
@@ -35,9 +49,14 @@ class PowerChecker(MiniGame):
             'choose_bet': Button(stage='choose_bet', filters=['owner_filter'], active=False),
             'end_game': Button(function='EndGame_c', filters=['owner_filter'], active=True),
             'start_game': Button(function='StartGame', filters=['owner_filter'], active=False),
+            'change_language': Button(stage='choose_language', 
+                                filters=['owner_filter'], active=False),
+            'hard_lvl': Button(stage='choose_hard_lvl', 
+                               filters=['owner_filter'], active=False),
 
             # Кнопка для возвращения в меню подготовки
-            'to_preparation': Button(stage='preparation', filters=['owner_filter'], active=False),
+            'to_preparation': Button(function='ToPreparation',
+                            stage='preparation', filters=['owner_filter'], active=False),
 
             # Кнопка для выбора количества игроков
             'col_players': Button(function='ColPlayers_set', filters=['owner_filter'], active=False),
@@ -53,6 +72,12 @@ class PowerChecker(MiniGame):
 
             # Кнопка для начала игры
             'wait_users_start': Button(function='WaitUsersStart', filters=['owner_filter'], active=False),
+
+            # Кнопка для установки уровня сложности
+            'hard_lvl_set': Button(function='HardLvl_set', filters=['owner_filter'], active=False),
+
+            # Кнопка для выбора языка
+            'choose_language_set': Button(function='ChangeLanguage_set', filters=['owner_filter'], active=False),
         }
 
         self.ThreadsRegister['end_game_timer'] = Thread(repeat=60, col_repeat='inf', 
@@ -71,6 +96,8 @@ class PowerChecker(MiniGame):
             'choose_dino': 'ChooseDinoGenerator',
             'choose_bet': 'ChooseBetGenerator',
             'service': 'ServiceGenerator',
+            'change_language': 'ChangeLanguageGenerator',
+            'hard_lvl': 'HardLvlGenerator',
         }
 
         self.Stages = {
@@ -81,6 +108,8 @@ class PowerChecker(MiniGame):
                     stageButton(button='choose_dino', data={'active': True}),
                     stageButton(button='choose_bet', data={'active': True}),
                     stageButton(button='end_game', data={'active': True}),
+                    stageButton(button='change_language', data={'active': True}),
+                    stageButton(button='hard_lvl', data={'active': True}),
                 ],
                 waiter_active=[],
                 stage_generator='preparation',
@@ -114,6 +143,7 @@ class PowerChecker(MiniGame):
                 threads_active=[],
                 buttons_active=[
                     stageButton(button='to_preparation', data={'active': True}),
+                    stageButton(button='choose_bet_set', data={'active': True}),
                 ],
                 waiter_active=[
                     stageWaiter(waiter='int', data={'active': True}),
@@ -122,9 +152,29 @@ class PowerChecker(MiniGame):
                 to_function='',
                 data={}
             ),
+            'choose_language': Stage(
+                threads_active=[],
+                buttons_active=[
+                    stageButton(button='to_preparation', data={'active': True}),
+                    stageButton(button='choose_language_set', data={'active': True}),
+                ],
+                waiter_active=[],
+                stage_generator='change_language',
+                to_function='',
+                data={}
+            ),
+            'choose_hard_lvl': Stage(
+                threads_active=[],
+                buttons_active=[
+                    stageButton(button='to_preparation', data={'active': True}),
+                    stageButton(button='hard_lvl_set', data={'active': True}),
+                ],
+                waiter_active=[],
+                stage_generator='hard_lvl',
+                to_function='',
+                data={}
+            ),
         }
-
-        self.ImageGenerators['main'] = 'main_image'
 
         await self.Update()
 
@@ -186,8 +236,6 @@ class PowerChecker(MiniGame):
     async def Custom_StartGame(self, user_id, chat_id, message, 
                                only_for = None) -> None:
         await self.start_data(only_for if only_for else 0)
-        await self.LinkImageToMessage('main', 'main')
-        await self.UpdateImage('main')
 
         owner_player = await self.GetPlayer(user_id)
         if owner_player is None:
@@ -236,7 +284,7 @@ class PowerChecker(MiniGame):
             "take_axe": Button(function='game_TakeAxe', filters=['active_player_filter'], active=False),
             "pass": Button(function='game_Pass', filters=['active_player_filter'], active=False),
             "set_dino_to_attack": Button(function='game_ChooseDinoToAttack', filters=['active_player_filter'], active=False),
-            "cancel": Button(function='game_CancelToMain', filters=['active_player_filter'], active=False)
+            "cancel": Button(stage='game', filters=['active_player_filter'], active=False)
         }
 
         self.message_generators = {
@@ -290,11 +338,13 @@ class PowerChecker(MiniGame):
         self.ThreadsRegister['service_deleter'].active = False
         self.ThreadsRegister['end_game_timer'].active = False
 
+        self.power = random.randint(*hards_lvl[self.hard_lvl])
+
         await self.DeleteVar('only_for')
         await self.DeleteVar('max_players')
+        await self.DeleteVar('hard_lvl')
 
         self.active_player: str = list(self.PLAYERS.keys())[0]
-        self.power = random.randint(50, 80)
         self.log: list = []
         self.max_net_lim = 2
 
@@ -303,15 +353,16 @@ class PowerChecker(MiniGame):
             if not dino: continue
 
             # Игровые данные
-            player_data.data['units'] = self.power
-            player_data.data['dino_power'] = dino.stats['power']
-            player_data.data['dino_dexterity'] = dino.stats['dexterity']
-            player_data.data['dino_overload'] = 0
-            player_data.data['in_net'] = False
-            player_data.data['without_tools'] = False
-            player_data.data['without_limit'] = 2
-            player_data.data['net_limit'] = 2
-            del player_data.data['ready']
+            player_data.data = {
+                'units': self.power,
+                'dino_power': dino.stats['power'],
+                'dino_dexterity': dino.stats['dexterity'],
+                'dino_overload': 0,
+                'in_net': False,
+                'without_tools': False,
+                'without_limit': 2,
+                'net_limit': 2,
+            }
 
             await self.EditPlayer(int(player_id), player_data)
 
@@ -330,13 +381,14 @@ class PowerChecker(MiniGame):
             if player.data['dino_overload'] == 3 or player.data['in_net']:
                 await self.OffButtons(['simple_hit', 'powerful_hit', 'net_dino', 'take_axe'])
 
+            elif player.data['without_tools']:
+                await self.OffButtons(['simple_hit', 'net_dino', 'take_axe'])
+
             else:
-                for i in ['simple_hit', 'powerful_hit', 'net_dino', 'take_axe']:
-                    self.ButtonsRegister[i].active = True
-                    await self.EditButton(i, self.ButtonsRegister[i])
+                await self.OnButtons(['simple_hit', 'powerful_hit', 'net_dino', 'take_axe'])
 
     async def next_player(self):
-        
+
         now_player = await self.GetPlayer(int(self.active_player))
         if now_player and now_player.data['in_net']:
             now_player.data['in_net'] = False
@@ -452,20 +504,29 @@ class PowerChecker(MiniGame):
         if not dinos:
             text += 'Нет доступных динозавров для атаки.'
 
-        await self.MesageUpdate('main', text=text, 
-                    reply_markup=await self.game_choose_dino_reply(dinos, 'net'))
+        us_stage = await self.UserStage(user_id)
+        if us_stage:
+            action = us_stage.data.get('action', 'net')
+
+            await self.MesageUpdate('main', text=text, 
+                        reply_markup=await self.game_choose_dino_reply(dinos, action))
 
     async def game_NetDino(self, callback: types.CallbackQuery) -> None:
         
         player = await self.GetPlayer(int(self.active_player))
         if player:
             if player.data['net_limit'] > 0:
-                await self.SetStage('choose_dino', callback.from_user.id)
+                await self.SetStage('choose_dino', callback.from_user.id, {'action': 'net'})
             else:
                 await callback.answer('У вас закончились паутины!')
 
     async def game_TakeAxe(self, callback: types.CallbackQuery) -> None:
-        pass
+        player = await self.GetPlayer(int(self.active_player))
+        if player:
+            if player.data['without_limit'] > 0:
+                await self.SetStage('choose_dino', callback.from_user.id, {'action': 'take_axe'})
+            else:
+                await callback.answer('У вас закончился крюк!')
 
     async def game_Pass(self, callback: types.CallbackQuery) -> None:
         self.log.append(
@@ -476,7 +537,7 @@ class PowerChecker(MiniGame):
         await self.MessageGenerator('main', int(self.active_player))
 
     async def game_ChooseDinoToAttack(self, callback: types.CallbackQuery) -> None:
-        
+
         player = await self.GetPlayer(int(self.active_player))
         if player:
             data = callback.data.split(':')
@@ -514,15 +575,6 @@ class PowerChecker(MiniGame):
             await self.next_player()
             await self.MessageGenerator('main', int(self.active_player))
 
-
-    async def game_CancelToMain(self, callback: types.CallbackQuery) -> None:
-
-        await self.SetStage('game', callback.from_user.id)
-        # await self.MessageGenerator('main', int(self.active_player))
-
-    async def cancel_dino_choose(self, callback: types.CallbackQuery) -> None:
-        pass
-
     async def game_RollDice(self, callback: types.CallbackQuery):
 
         await self.OffButtons(list(self.ButtonsRegister.keys()))
@@ -536,7 +588,7 @@ class PowerChecker(MiniGame):
             return 0, 0
 
         await self.MessageGenerator('main', int(self.active_player), action_type='simplehit')
-        await sleep(7)
+        await sleep(5)
 
         try:
             await res.delete()
@@ -549,6 +601,7 @@ class PowerChecker(MiniGame):
     async def game_main_reply_markup(self, user_id: int):
         
         player = await self.GetPlayer(user_id)
+
         dat = player.data
         buttons = [
             {'text': 'Удар', 'callback_data': self.CallbackGenerator('simple_hit')},
