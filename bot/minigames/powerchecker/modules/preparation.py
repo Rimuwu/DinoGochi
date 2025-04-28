@@ -4,6 +4,7 @@
 import time
 from bot.minigames.powerchecker.minigame_powerchecker import PowerChecker
 from bot.modules.decorators import register_method
+from bot.modules.localization import t, get_all_locales
 from bot.modules.user.user import User, take_coins
 from aiogram import types
 from bot.modules.dinosaur.dinosaur import Dino
@@ -24,20 +25,26 @@ async def on_preparation(self) -> None:
 @register_method(PowerChecker)
 async def PreparationMarkup(self):
     buttons = [
-        {'text': 'max players', 'callback_data': self.CallbackGenerator('max_col')},
-        {'text': '🦕', 'callback_data': self.CallbackGenerator('choose_dino')},
-        {'text': '💰', 'callback_data': self.CallbackGenerator('choose_bet')},
-        {'text': '🚪', 'callback_data': self.CallbackGenerator('end_game'), 'ignore_row': 'True'},
+        {'text': '👥 Игроки', 'callback_data': self.CallbackGenerator('max_col')},
+        {'text': '🦕 Динозавр', 'callback_data': self.CallbackGenerator('choose_dino')},
+        {'text': '💰 Ставка', 'callback_data': self.CallbackGenerator('choose_bet')},
+        {'text': '💢 Сложность', 'callback_data': self.CallbackGenerator('hard_lvl')},
+        {'text': '🚪 Завершить игру', 'callback_data': self.CallbackGenerator('end_game'), 
+         'ignore_row': 'True'},
     ]
 
-    # if self.only_for != 0: buttons.pop(0)
+    language_name = t('language_name', self.LANGUAGE)
+    buttons.insert(3, {
+        'text': language_name, 'callback_data': self.CallbackGenerator('change_language')
+    })
 
     owner_player = await self.GetPlayer(self.owner_id)
     owner_has_dino = 'dino' in owner_player.data and owner_player.data['dino']
 
     if owner_has_dino and self.bet > 0 and self.max_players > 1:
-        buttons.append({
-            'text': 'Начать игру', 'callback_data': self.CallbackGenerator('wait_users_start')})
+        buttons.insert(0, {
+            'text': '🌐 Начать игру', 'callback_data': self.CallbackGenerator('wait_users_start'), 'ignore_row': 'true'
+            })
 
     return self.list_to_inline(buttons)
 
@@ -69,11 +76,15 @@ async def PreparationGenerator(self, user_id) -> None:
 @register_method(PowerChecker)
 async def max_playersMarkup(self):
     buttons = [
-        {'text': '2 players', 'callback_data': self.CallbackGenerator('col_players', '2')},
-        {'text': '3 players', 'callback_data': self.CallbackGenerator('col_players', '3')},
-        {'text': '4 players', 'callback_data': self.CallbackGenerator('col_players', '4')},
+        {'text': '2 игрока', 'callback_data': self.CallbackGenerator('col_players', '2')},
+        {'text': '3 игрока', 'callback_data': self.CallbackGenerator('col_players', '3')},
+        {'text': '4 игрока', 'callback_data': self.CallbackGenerator('col_players', '4')},
         {'text': 'back', 'callback_data': self.CallbackGenerator('to_preparation')},
     ]
+    
+    buttons[self.max_players - 2]['text'] = '✅ ' + buttons[self.max_players - 2]['text']
+        
+    
     return self.list_to_inline(buttons, 3)
 
 @register_method(PowerChecker)
@@ -88,8 +99,7 @@ async def delete_only_for(self):
 async def DeleteOnlyFor(self, callback) -> None:
     self.only_for = 0
     await self.Update()
-
-    await self.MessageGenerator('max_players', callback.from_user.id)
+    await self.MyMessGenerator(callback.from_user.id)
 
 @register_method(PowerChecker)
 async def MaxPlayersGenerator(self, user_id) -> None:
@@ -113,10 +123,10 @@ async def MaxPlayersGenerator(self, user_id) -> None:
 @register_method(PowerChecker)
 async def ColPlayers_set(self, callback) -> None:
     max_players = callback.data.split(':')[3]
-
     self.max_players = int(max_players)
     await self.Update()
-    await self.SetStage('preparation')
+
+    await self.MyMessGenerator(callback.from_user.id)
 
 @register_method(PowerChecker)
 async def ChooseDino_set(self, callback) -> None:
@@ -143,29 +153,26 @@ async def ChooseDinoGenerator(self, user_id) -> None:
 @register_method(PowerChecker)
 async def choose_betMarkup(self):
     buttons = [
+        {'text': '🪙 1000', 'callback_data': self.CallbackGenerator('choose_bet_set', '1000')},
+        {'text': '🪙 5000', 'callback_data': self.CallbackGenerator('choose_bet_set', '5000')},
+        {'text': '🪙 10000', 'callback_data': self.CallbackGenerator('choose_bet_set', '10000')},
         {'text': 'back', 'callback_data': self.CallbackGenerator('to_preparation')},
     ]
-    return self.list_to_inline(buttons, 1)
-
-@register_method(PowerChecker)
-async def ChooseBetGenerator(self, user_id) -> None:
-    markup = await self.choose_betMarkup()
-    text = 'Выберите ставку:'
-    await self.MesageUpdate('main', text=text, reply_markup=markup)
-
-
-@register_method(PowerChecker)
-async def IntWaiter(self, message: types.Message, command: bool = False):
-    if command: 
-        coins = int(message.text.split(' ')[3]) # type: ignore
+    
+    bet_lst = [1000, 5000, 10000]
+    if self.bet in bet_lst:
+        buttons[bet_lst.index(self.bet)]['text'] = f'✅ {buttons[bet_lst.index(self.bet)]["text"][2:]}'
     else:
-        coins = int(message.text) # type: ignore
+        buttons.insert(3, {
+            'text': '✅ ' + str(self.bet), 
+            'callback_data': self.CallbackGenerator('choose_bet_set', str(self.bet)),
+            'ignore_row': 'true'
+        })
 
-    try:
-        await message.delete()
-    except: pass
+    return self.list_to_inline(buttons, 3)
 
-    user_id = message.from_user.id # type: ignore
+@register_method(PowerChecker)
+async def bet_check(self, user_id, coins):
     user = await User().create(user_id)
     current_balance = user.coins
 
@@ -192,14 +199,116 @@ async def IntWaiter(self, message: types.Message, command: bool = False):
         else:
             await take_coins(user_id, -coins, update=True)
 
-        await self.SetStage('preparation')
+        await self.MessageGenerator('choose_bet', user_id)
 
-        waiter = self.WaiterRegister['int']
-        waiter.active = False
 
-        await self.EditWaiter('wait_bet', waiter)
+@register_method(PowerChecker)
+async def ChooseBetGenerator(self, user_id) -> None:
+    markup = await self.choose_betMarkup()
+    text = 'Выберите ставку:'
+    await self.MesageUpdate('main', text=text, reply_markup=markup)
 
+@register_method(PowerChecker)
+async def ChooseBet_set(self, callback) -> None:
+    bet = callback.data.split(':')[3]
+
+    await self.bet_check(callback.from_user.id, int(bet))
+
+@register_method(PowerChecker)
+async def IntWaiter(self, message: types.Message, command: bool = False):
+    if command: 
+        coins = int(message.text.split(' ')[3]) # type: ignore
+    else:
+        coins = int(message.text) # type: ignore
+
+    try:
+        await message.delete()
+    except: pass
+
+    await self.bet_check(message.from_user.id, coins)
 
 @register_method(PowerChecker)
 async def EndGame_c(self, callback) -> None:
     await self.EndGame()
+
+@register_method(PowerChecker)
+async def language_markup(self):
+    
+    buttons = []
+    langs = get_all_locales('language_name')
+
+    for lang_key, lang_name in langs.items():
+        if lang_key == self.LANGUAGE:
+            lang_name = '✅ ' + lang_name[2:]
+        buttons.append({
+            'text': lang_name, 
+            'callback_data': self.CallbackGenerator('choose_language_set', lang_key)
+        })
+
+    buttons.append({
+        'text': 'back',
+        'callback_data': self.CallbackGenerator('to_preparation'),
+        'ignore_row': 'true'
+    })
+
+    return self.list_to_inline(buttons, 3)
+
+@register_method(PowerChecker)
+async def ChangeLanguageGenerator(self, user_id) -> None:
+    markup = await self.language_markup()
+    text = 'Выберите язык (для всех):'
+    await self.MesageUpdate('main', text=text, reply_markup=markup)
+
+@register_method(PowerChecker)
+async def ChangeLanguage_set(self, callback) -> None:
+    lang_key = callback.data.split(':')[3]
+
+    self.LANGUAGE = lang_key
+    await self.Update()
+
+    # await self.MessageGenerator('change_language', callback.from_user.id)
+    await self.MyMessGenerator(callback.from_user.id)
+
+@register_method(PowerChecker)
+async def hard_lvl_markup(self):
+    buttons = [
+        {'text': 'Легкий', 'callback_data': self.CallbackGenerator('hard_lvl_set', '1')},
+        {'text': 'Средний', 'callback_data': self.CallbackGenerator('hard_lvl_set', '2')},
+        {'text': 'Сложный', 'callback_data': self.CallbackGenerator('hard_lvl_set', '3')},
+        {'text': 'back', 'callback_data': self.CallbackGenerator('to_preparation'),
+         'ignore_row': 'true'},
+    ]
+
+    buttons[ self.hard_lvl - 1 ]['text'] = \
+        f'✅ {buttons[ self.hard_lvl - 1 ]["text"]}'
+
+    return self.list_to_inline(buttons, 3)
+
+@register_method(PowerChecker)
+async def HardLvlGenerator(self, user_id) -> None:
+
+    markup = await self.hard_lvl_markup()
+    text = 'От сложности зависит прочность древа.\n' \
+           'Выберите сложность:\n' \
+           '1 - Легкий (20 - 40)\n' \
+           '2 - Средний (50 - 80)\n' \
+           '3 - Сложный (80 - 150)\n'
+    await self.MesageUpdate('main', text=text, reply_markup=markup)
+
+@register_method(PowerChecker)
+async def HardLvl_set(self, callback) -> None:
+
+    hard_lvl = callback.data.split(':')[3]
+
+    self.hard_lvl = int(hard_lvl)
+    await self.Update()
+
+    await self.MessageGenerator('hard_lvl', callback.from_user.id)
+
+@register_method(PowerChecker)
+async def ToPreparation(self, callback) -> None:
+
+    waiter = self.WaiterRegister['int']
+    waiter.active = False
+
+    await self.EditWaiter('wait_bet', waiter)
