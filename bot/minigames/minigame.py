@@ -32,7 +32,9 @@ class MiniGame:
 
         # Список переменных, которые не будут сохраняться в базе данных
         self._excluded_from_save: list[str] = [
-            '_excluded_from_save', '_MiniGame__threads_work', 'active_threads', 'DEACTIVATE_NOT_ACTIVE_BUTTONS', 'DEBUG_MODE', 'THREAD_TICK', 'NextButtonTimeActivation', 'NextButtonTimeActivationDelay', 'ButtonsQueue'
+            '_excluded_from_save', '_MiniGame__threads_work', 'active_threads', 'DEACTIVATE_NOT_ACTIVE_BUTTONS', 'DEBUG_MODE', 'THREAD_TICK', 'NextButtonTimeActivation', 'NextButtonTimeActivationDelay', 'ButtonsQueue',
+            'start_name', 'start_message', 'start_message_text', 'start_parse_mode', 'start_image_generator',
+            'start_image_name'
             ]
 
         self.active_threads: bool = True # Служит для паузы тасков
@@ -92,9 +94,9 @@ class MiniGame:
                 [ stageThread(thread='check_session', data={'active': True}) ], # Какие треды активировать
                 [ stageButton(button='bn1', data={'active': True}) ], # Какие кнопки активировать 
                 [ stageWaiter(waiter='str', data={'active': True}) ], # Какие вейтеры активиров
-                'main', # Ключ сообщения для
+                'main', # Ключ имени генератора сообщения
                 '', # Какую функцию запускает при переходе
-                {}
+                {} # Дополнительные данные для состояния
             )
         }
 
@@ -111,13 +113,23 @@ class MiniGame:
         self.LANGUAGE: str = 'en'
         self.STAGE = ''
 
+        self.start_name = 'main' # Имя стартового сообщения / состояния
+
+        self.start_message: bool = True
+        self.start_message_text: str = 'preparation message for start game...' # Текст стартового сообщения
+        self.start_parse_mode: str = 'Markdown' # Пресет стартового сообщения
+
+        # Изображение создастся и запишется в базу автоматически
+        self.start_image_generator: Optional[str] = None # Изображение стартового сообщения
+        self.start_image_name: str = 'start_image' # Имя стартового изображения
+
         self.edit_settings() # Функция только для изменения настроек
 
         asyncio.get_event_loop().create_task(self.initialization())
         self.D_log(f'Create MiniGame {self.__str__()}')
 
     def get_GAME_ID(self): 
-        """ ВОзвращает идентификатор игры """
+        """ Возвращает идентификатор игры """
         return 'BASEMINIGAME'
 
     def edit_settings(self): 
@@ -126,7 +138,6 @@ class MiniGame:
 
     async def initialization(self):
         """ Вызывается при инициализации, создан для того, чтобы не переписывать init """
-        # ======== DATA ======== #
         pass
 
     def __str__(self):
@@ -153,11 +164,15 @@ class MiniGame:
         """ Возвращает текущий этап пользователя """
         player = self.PLAYERS.get(str(user_id))
         if player:
-            return player.stage
+            return self.Stages.get(player.stage)
         return None
 
-    async def SetStage(self, stage: str, user_id: Optional[int] = None):
+    async def SetStage(self, stage: str, user_id: Optional[int] = None, data: Optional[dict] = None):
         """ Переходит к этапу для всех пользователей или для одного """ 
+
+        if data:
+            self.Stages[stage].data = data
+            await self.Update()
 
         await self.HandleStageChange(stage)
 
@@ -206,7 +221,7 @@ class MiniGame:
 
         # Управление потоками
         await self.ManageThreads(current_stage.threads_active)
-        
+
         # Управление ожиданиями
         await self.ManageWaiters(current_stage.waiter_active)
 
@@ -352,8 +367,17 @@ class MiniGame:
         await insert_session(self.__dict__)
 
         # Отправляем сообщение
-        await self.CreateMessage(user_id, chat_id, 'main', 
-                                 'preparation message for start game...')
+        if self.start_message:
+            if self.start_image_generator:
+                image_generator = await self.GetImageGenerator(self.start_image_generator)
+                if image_generator:
+                    generator_func = getattr(self, image_generator, None)
+                    if generator_func:
+                        image = await generator_func()
+                        await self.SetImage(self.start_image_name, image)
+
+            await self.CreateMessage(user_id, chat_id, self.start_name, 
+                                     self.start_message_text, self.start_parse_mode, self.start_image_name)
 
         await self.Custom_StartGame(user_id, chat_id, message, **kwargs)
 
@@ -368,6 +392,7 @@ class MiniGame:
         """ Когда игра продолжается после неожиданного завершения """
         self.session_key = code
         self.LAST_ACTION = time.time()
+        self.D_log(f'ContinueGame {self.session_key}', True)
         await self.__LoadData()
 
         await self.Custom_ContinueGame()
@@ -394,7 +419,7 @@ class MiniGame:
         
         # Вызов функции EndGameGenerator
         await self.EndGameGenerator()
-        
+
         # Удаление всех сообщений, кроме 'main'
         keys_to_delete = [key for key in self.session_masseges if key != 'main']
         for key in keys_to_delete:
@@ -433,11 +458,10 @@ class MiniGame:
 
     async def EndGameGenerator(self):
         text = f'Игра {self.session_key} завершена'
-        self.session_masseges['main'].image = None
 
         await self.MesageUpdate('main', text=text)
 
-    async def GetMessageGenerator(self, func_key: str = 'main'):
+    async def GetMessageGenerator(self, func_key: str = 'main') -> str:
         generator = self.message_generators.get(func_key, 'error_find_generator')
         return generator
 
@@ -499,11 +523,9 @@ class MiniGame:
     async def MesageUpdate(self, func_key: str = 'main', text: str = '', reply_markup = None, stop_repeat: bool = False):
         """ Обновляет сообщение """
         if not text: return
-        # self.D_log(f'MesageUpdate {func_key}')
 
         data = self.session_masseges.get(func_key, 
                         SMessage(message_id=0, chat_id=0, data={}, parse_mode=None))
-        # self.D_log(f'MesageUpdate {func_key} data {data}')
 
         message_id = data.message_id
         chat_id = data.chat_id
@@ -543,8 +565,8 @@ class MiniGame:
             except Exception as e:
                 if stop_repeat: raise e
 
-                if 'message is not modified' in str(e):
-                    return None
+                if 'message is not modified' in str(e): return None
+
                 elif 'Flood control exceeded on method' in str(e):
                     self.D_log(f'MesageUpdate1 {func_key} failed: Flood control exceeded on method')
                     await asyncio.sleep(5)
@@ -562,12 +584,45 @@ class MiniGame:
 
         return msg
 
+    # ======= Пример генератора ======== #
+
     async def MainGenerator(self, user_id: int) -> None:
         """ Генерирует сообщение """
-        text = f'MesageGenerator {self.session_key}'
+        text = f'MesageGenerator {self.session_key} {user_id}'
         markup = await self.MarkupGenerator()
 
         await self.MesageUpdate(text=text, reply_markup=markup)
+
+    @property
+    def global_messgen(self):
+        """ Возвращает генератор сообщения для глобального этапа """
+        stage = self.Stages.get(self.STAGE)
+        if not stage or not stage.stage_generator:
+            self.D_log(f'global_messgen {self.STAGE} not found')
+            return None
+        return stage.stage_generator
+
+    def user_messgen(self, user_id: int):
+        """ Возвращает генератор сообщения для пользователя """
+        player = self.PLAYERS.get(str(user_id))
+        if player:
+            stage = self.Stages.get(player.stage)
+            stage_generator = stage.stage_generator if stage else None
+            if stage_generator: 
+                return stage_generator
+
+        self.D_log(f'user_messgen {user_id} not found')
+        return None
+
+    async def MyMessGenerator(self, user_id: int, *args, **kwargs):
+        """ Генерация сообщения для пользователя (автоматическое определение этапа)"""
+        usmg = self.user_messgen(user_id)
+
+        if usmg:
+            self.D_log(f'MyMessGenerator {usmg}')
+            await self.MessageGenerator(usmg, user_id, *args, **kwargs)
+        else:
+            self.D_log(f'MyMessGenerator {user_id} not found')
 
     async def MessageGenerator(self, func_key: str = 'main',
                                user_id: int = 0,
@@ -678,13 +733,13 @@ class MiniGame:
     async def owner_filter(self, callback: types.CallbackQuery) -> bool:
         status = callback.from_user.id == self.owner_id
         if not status:
-            await callback.answer('Only for owner!')
+            await callback.answer('Only for owner!', True)
         return status
 
     async def player_filter(self, callback: types.CallbackQuery) -> bool:
         status = str(callback.from_user.id) in self.PLAYERS
         if not status:
-            await callback.answer('Only for players!')
+            await callback.answer('Only for players!', True)
         return status
 
     async def message_author_filter(self, callback) -> bool:
@@ -695,29 +750,31 @@ class MiniGame:
                     if message_data.data['author'] == callback.from_user.id:
                         return True
 
-        await callback.answer('Only for message author!')
+        await callback.answer('Only for message author!', True)
         return False
 
     # ======== BUTTONS ======== #
     """ Функции кнопок """
-    
+
     async def OffButtons(self, list_buttons: list[str]):
         """ Выключает кнопки """
         for key in list_buttons:
             if key in self.ButtonsRegister:
-                self.ButtonsRegister[key].active = False
-                await self.Update()
-                self.D_log(f'OffButtons {key}')
+                if self.ButtonsRegister[key].active:
+                    self.ButtonsRegister[key].active = False
+                    await self.Update()
+                    self.D_log(f'OffButton {key}')
             else:
                 self.D_log(f'OffButtons {key} not found')
-    
+
     async def OnButtons(self, list_buttons: list[str]):
         """ Включает кнопки """
         for key in list_buttons:
             if key in self.ButtonsRegister:
-                self.ButtonsRegister[key].active = True
-                await self.Update()
-                self.D_log(f'OnButtons {key}')
+                if not self.ButtonsRegister[key].active:
+                    self.ButtonsRegister[key].active = True
+                    await self.Update()
+                    self.D_log(f'OnButton {key}')
             else:
                 self.D_log(f'OnButtons {key} not found')
 
@@ -755,8 +812,8 @@ class MiniGame:
     async def ActiveButton(self, key: str, callback: types.CallbackQuery):
         """ Добавляет кнопку в очередь для последовательной активации """
         self.LAST_ACTION = time.time()
-        await self.Update()
         self.D_log(f'ActiveButton (queue) {key} {callback.data}')
+        await self.Update()
 
         if key not in self.ButtonsRegister:
             self.D_log(f'ActiveButton {key} not found')
@@ -905,9 +962,9 @@ class MiniGame:
                            command: bool = False):
         """ Запускает функции отвечающей за ожидающие определённый контент """
         self.LAST_ACTION = time.time()
+        self.D_log(f'ActiveWaiter {key} {message.text}')
         await self.Update()
 
-        self.D_log(f'ActiveWaiter {key}')
 
         if key not in self.WaiterRegister: 
             return False
@@ -995,6 +1052,8 @@ class MiniGame:
 
         if isinstance(file, bytes):
             return file
+        if isinstance(file, types.BufferedInputFile):
+            return file.data
         elif isinstance(file, str):
             with open(file, 'rb') as f:
                 return f.read()
