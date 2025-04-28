@@ -37,12 +37,14 @@
     "wool": {
         "image": "wool",
         "rank": "common",
-        "type": "material"
+        "type": "material",
+        "groups": ["hunt-activity"]
     },
     "feather": {
         "image": "feather",
         "rank": "common",
-        "type": "material"
+        "type": "material",
+        "groups": ["hunt-activity"]
     },
     "fish_oil": {
         "image": "item28",
