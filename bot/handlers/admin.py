@@ -54,7 +54,7 @@ async def create_track(code, transmitted_data: dict):
     await creat_track(code, 'admin')
     text, markup = await track_info(code, lang)
     
-    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+    await bot.send_message(chatid, text, parse_mode='html', reply_markup=markup)
 
 @HDMessage
 @main_router.message(Command(commands=['tracking']), IsAdminUser())
@@ -65,7 +65,7 @@ async def tracking(message: Message):
 
     options = await get_track_pages()
     res = await ChoosePagesState(track_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False)
-    await bot.send_message(chatid, t("track_open", lang), parse_mode='Markdown')
+    await bot.send_message(chatid, t("track_open", lang), parse_mode='html')
 
 async def track_info_adp(data, transmitted_data: dict):
     chatid = transmitted_data['chatid']
@@ -73,7 +73,7 @@ async def track_info_adp(data, transmitted_data: dict):
 
     text, markup = await track_info(data, lang)
     try:
-        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+        await bot.send_message(chatid, text, parse_mode='html', reply_markup=markup)
     except:
         await bot.send_message(chatid, text, reply_markup=markup)
 

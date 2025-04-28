@@ -457,7 +457,7 @@ async def downgrade(message: Message):
         return
 
     await downgrade_type_accessory(dino, 'weapon', 200)
-    
+
 
 @main_router.message(Command(commands=['downgrade_50']), IsAdminUser())
 @HDMessage
