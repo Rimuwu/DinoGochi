@@ -9,7 +9,7 @@ from bot.modules.items.item import counts_items, get_item_dict, AddItemToUser, C
 from bot.modules.items.item import get_data as get_item_data
 from bot.modules.images import async_open
 from bot.modules.localization import get_data, t, get_lang
-from bot.modules.user.user import get_inventory, take_coins, premium
+from bot.modules.user.user import get_inventory, take_coins, premium, user_name
 from bot.modules.localization import t
 from bot.modules.notifications import user_notification
 from bot.modules.items.collect_items import get_all_items
@@ -112,7 +112,10 @@ async def seller_ui(owner_id: int, lang: str, my_market: bool, name: str = ''):
         products_col = await products.count_documents({'owner_id': owner_id}, comment='seller_ui_products_col')
 
         if my_market: owner = data['me_owner']
-        else: owner = name
+        else: 
+            if not name:
+                name = await user_name(owner_id)
+            owner = name
 
         status = ''
         if seller['earned'] <= 1000: status = 'needy'

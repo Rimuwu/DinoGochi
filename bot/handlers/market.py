@@ -271,15 +271,10 @@ async def seller(call: CallbackQuery):
     # Кнопки вызываемые не владельцем
     elif call_type == 'info':
         my_status = owner_id == userid
-
         seller = await sellers.find_one({'owner_id': owner_id}, comment='seller_seller')
-        if seller:
-            seller_user = await users.find_one({'_id': owner_id}, comment='seller_user')
-            if seller_user: 
-                name = seller_user['name']
-            else: name = 'NoName'
 
-            text, markup, image = await seller_ui(owner_id, lang, my_status, name)
+        if seller:
+            text, markup, image = await seller_ui(owner_id, lang, my_status)
             try:
                 await bot.send_photo(chatid, image, caption=text, parse_mode='Markdown', reply_markup=markup)
             except:
