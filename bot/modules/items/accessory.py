@@ -33,7 +33,10 @@ async def downgrade_accessory(dino: Dino, item_id: str, max_unit: int = 2):
        >>> False - неправильный предмет / нет предмета
 
     """
-    for index, item in enumerate(dino.activ_items):
+    old_acs = dino.activ_items.copy()
+    for item in old_acs:
+        index = dino.activ_items.index(item)
+
         if item['item_id'] == item_id:
             if 'abilities' in item and 'endurance' in item['abilities']:
                 num = randint(0, max_unit)
@@ -42,6 +45,7 @@ async def downgrade_accessory(dino: Dino, item_id: str, max_unit: int = 2):
 
                 if item['abilities']['endurance'] <= 0:
                     await remove_accessory(dino._id, dino.activ_items[index]['item_id'])
+                    del dino.activ_items[index]
 
                     await dino_notification(dino._id, 'broke_accessory', item_id=item['item_id'])
                 else:
@@ -71,7 +75,9 @@ async def downgrade_type_accessory(dino: Dino, acc_type: str, max_unit: int = 2)
         return False  # Нет аксессуаров указанного типа
 
     updated = False
-    for item, index in accessories:
+    for item, _ in accessories:
+        index = dino.activ_items.index(item)
+
         if 'abilities' in item and 'endurance' in item['abilities']:
             num = randint(0, max_unit)
             item['abilities']['endurance'] -= num
@@ -80,6 +86,7 @@ async def downgrade_type_accessory(dino: Dino, acc_type: str, max_unit: int = 2)
 
             if item['abilities']['endurance'] <= 0:
                 await remove_accessory(dino._id, dino.activ_items[index]['item_id'])
+                del dino.activ_items[index]
 
                 item_id = item['item_id']
                 await dino_notification(dino._id, 'broke_accessory', item_id=item_id)
