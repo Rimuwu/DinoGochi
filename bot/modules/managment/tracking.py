@@ -310,26 +310,38 @@ async def track_info(code: str, lang: str):
             if concern_links_count:
                 text += f"\n{t('create_tracking.track_info.concern_links_summary', lang)}\n"
                 total_concern_first_status_counts = {}
+                total_concern_status_counts = {}
                 total_concern_already_in_bot_counts = {'True': 0, 'False': 0}
                 total_concern_members = 0
 
                 for link_stats in statistics['concern_links_statistics'].values():
                     total_concern_members += link_stats['members_count']
+                    
+                    for status, percentage in link_stats['status_percentages'].items():
+                        total_concern_status_counts[status] = \
+                            total_concern_status_counts.get(status, 0) + percentage
+
                     for status, percentage in link_stats['first_status_percentages'].items():
-                        total_concern_first_status_counts[status] = total_concern_first_status_counts.get(status, 0) + percentage
+                        total_concern_first_status_counts[status] = \
+                            total_concern_first_status_counts.get(status, 0) + percentage
+
                     for status, percentage in link_stats['already_in_bot_percentages'].items():
                         total_concern_already_in_bot_counts[status] += percentage
 
                 text += t("create_tracking.track_info.total_concern_links", lang, concern_links_count=concern_links_count) + "\n"
-                text += t("create_tracking.track_info.total_concern_users", lang, total_concern_members=total_concern_members) + "\n"
+                text += t("create_tracking.track_info.total_concern_users", lang, total_concern_members=total_concern_members) + "\n\n"
 
                 text += f"{t('create_tracking.track_info.concern_first_status_percentages', lang)}\n"
                 for status, percentage in total_concern_first_status_counts.items():
-                    text += t("create_tracking.track_info.concern_first_status_entry", lang, status=status, percentage=int(percentage / concern_links_count)) + "\n"
+                    text += f'<code>{status}</code>: {int(percentage / concern_links_count)}%\n'
+
+                text += "Процентное соотношение статуса\n"#f"{t('create_tracking.track_info.concern_first_status_percentages', lang)}\n"
+                for status, percentage in total_concern_status_counts.items():
+                    text += f'<code>{status}</code>: {int(percentage / concern_links_count)}%\n'
 
                 text += f"\n{t('create_tracking.track_info.concern_already_in_bot_percentages', lang)}\n"
                 for status, percentage in total_concern_already_in_bot_counts.items():
-                    text += t("create_tracking.track_info.concern_already_in_bot_entry", lang, status=status, percentage=int(percentage / concern_links_count)) + "\n"
+                    text += f'<code>{status}</code>: {int(percentage / concern_links_count)}%\n'
 
                 # Вывод первых трёх ссылок
                 text += f"\n{t('create_tracking.track_info.top_three_links', lang)}\n"
