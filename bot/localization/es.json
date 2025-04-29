@@ -1379,7 +1379,7 @@
                 },
                 "cancel": {
                     "short": "Cancelación de un estado",
-                    "long": "🛡️ Cancelar cualquier estado de selección. \n🪀 Ejemplo: Está creando un producto para el mercado para deshacerlo en cualquier etapa - use este comando.",
+                    "long": "🛡️ Cancelar cualquier estado de selección. \n× 🪀 Ejemplo: Está creando un producto para el mercado para deshacerlo en cualquier etapa - use este comando.",
                     "arguments": "",
                     "dev": false,
                     "dm": true,
@@ -1395,7 +1395,7 @@
                 },
                 "profile": {
                     "short": "Perfil de usuario",
-                    "long": "🎋 Una alternativa al comando de información, un resumen general del usuario.",
+                    "long": "🎋 Una alternativa al equipo de información, un resumen general del usuario. Al responder al mensaje de otro usuario, mostrará información sobre él.",
                     "arguments": "",
                     "dev": false,
                     "dm": true,
@@ -1507,7 +1507,7 @@
                 },
                 "add_premium": {
                     "short": "Emisión de una suscripción premium",
-                    "long": "🛡️ Emitir una suscripción premium para time\n0 - darse una suscripción premium a usted mismo, str_time - formato de hora. El segundo argumento es que si está vacío, entonces para siempre, de lo contrario, por un tiempo.",
+                    "long": "🛡️ Emitir una suscripción premium por un tiempo\n× 0 - darse una suscripción premium a usted mismo, str_time - formato de tiempo. El segundo argumento es que si está vacío, entonces para siempre, de lo contrario por un tiempo.",
                     "arguments": "(0/userid) (/str_time)",
                     "dev": true,
                     "dm": true,
@@ -1568,6 +1568,14 @@
                     "dev": false,
                     "dm": true,
                     "group": false
+                },
+                "group_settings": {
+                    "short": "Configuración de grupo",
+                    "long": "🌐 Administrar la configuración del grupo. Establecer el tema de trabajo, tiempo de eliminación.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
                 }
             }
         },
@@ -4826,6 +4834,37 @@
         },
         "custom_book": {
             "confirm_edit": "📜 | ¿Estás seguro de que quieres cambiar el libro? Si había algún texto en el libro antes, ¡se perderá para siempre!"
+        },
+        "group_filter": {
+            "incorrect_topic_user": "🦕 El administrador del canal ha configurado otro tema para que el bot funcione, vaya a él para interactuar.",
+            "incorrect_topic_admin": "🦕 El bot está configurado para trabajar en un tema diferente, eliminar las restricciones de trabajo o ir al tema correcto.",
+            "null_topic": "🕸 Eliminar restricciones",
+            "to_topic": "🔗 Ir a",
+            "no_account": "🦕 No tienes una cuenta en el bot, para crear una, ¡haz clic en el botón de abajo!",
+            "to_bot": "✨ ¡Empieza a jugar!"
+        },
+        "groups_setting": {
+            "null_topic": "🕸 Se han levantado las restricciones, ¡ahora el bot funciona en todo el grupo!",
+            "set_topic": "🔗 Se establecen restricciones, ¡el bot funciona solo en este tema!",
+            "no_message": "🧨 ¡Notificación de tema no válido deshabilitada!",
+            "message": "💢 ¡La notificación de tema incorrecto está habilitada!",
+            "no_delete": "🗑 ¡La limpieza de mensajes está desactivada!",
+            "main_message": "*👻 Configuración de grupo*\n\n× 🔗 Tema de trabajo: {topic_status}\n× 💢 Notificación de tema: {mess_status}\n× 🗑 Limpieza de mensajes: {delete_status}\n× 🦕 Jugadores en grupo: {count}\n\n\n*🕸 Comandos para la configuración*\n\n× `{com1} (0-240)` - Establecer el tiempo de eliminación\n× _El bot revisa los mensajes una vez cada 5 minutos_",
+            "all_topics": "En todas partes",
+            "one_topic": "Solo aquí",
+            "none_delete": "Deshabilitado",
+            "true_delete": "Vía {time}",
+            "delete_time_set": "🗑 Tiempo de eliminación de mensajes establecido en {time} minutos",
+            "invalid_time": "🗑 ¡El tiempo de eliminación de mensajes debe estar entre 0 y 240 minutos!",
+            "buttons": {
+                "topic": "🔗 Establecer tema",
+                "delete_topic": "❌ Trabaja en todas partes",
+                "mess": "💢 Notificación de tema",
+                "no_mess": "❌ No notificar",
+                "no_delete": "❌ No borrar",
+                "delete": "🗑 Desactivar la limpieza"
+            },
+            "no_delete_rights": "❌ ¡El bot debe tener derecho a eliminar mensajes!"
         }
     }
 }

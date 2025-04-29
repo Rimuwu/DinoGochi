@@ -1379,7 +1379,7 @@
                 },
                 "cancel": {
                     "short": "Canceling a state",
-                    "long": "🛡️ Cancel any selection state. \n🪀 Example: You are creating a product for the market to undo it at any stage - use this command.",
+                    "long": "🛡️ Cancel any selection state.\n× 🪀 Example: You are creating a product for the market, to cancel its creation at any stage - use this command.",
                     "arguments": "",
                     "dev": false,
                     "dm": true,
@@ -1395,7 +1395,7 @@
                 },
                 "profile": {
                     "short": "User Profile",
-                    "long": "🎋 An alternative to the information command, a general summary of the user.",
+                    "long": "🎋 Alternative to the info command, a general summary of the user. When replying to another user's message - displays information about that user.",
                     "arguments": "",
                     "dev": false,
                     "dm": true,
@@ -1507,7 +1507,7 @@
                 },
                 "add_premium": {
                     "short": "Issuance of a premium subscription",
-                    "long": "🛡️ Issuing a premium subscription for time\n0 - give a premium subscription to yourself, str_time - time format. The second argument is that if it is empty, then forever, otherwise for a while.",
+                    "long": "🛡️ Issuing a premium subscription for a time\n× 0 - give a premium subscription to yourself, str_time - time format. The second argument is that if it is empty, then forever, otherwise for a while.",
                     "arguments": "(0/userid) (/str_time)",
                     "dev": true,
                     "dm": true,
@@ -1568,6 +1568,14 @@
                     "dev": false,
                     "dm": true,
                     "group": false
+                },
+                "group_settings": {
+                    "short": "Group Settings",
+                    "long": "🌐 Manage group settings. Setting the working topic, deletion time.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
                 }
             }
         },
@@ -4826,6 +4834,37 @@
         },
         "custom_book": {
             "confirm_edit": "📜 | Are you sure you want to change the book? If there was any text in the book before - it will be lost forever!"
+        },
+        "group_filter": {
+            "incorrect_topic_user": "🦕 The channel administrator has set up another topic for the bot to work, go to it for interaction.",
+            "incorrect_topic_admin": "🦕 The bot is configured to work in a different topic, remove the restrictions on work or go to the correct topic.",
+            "null_topic": "🕸 Remove restrictions",
+            "to_topic": "🔗 Go to",
+            "no_account": "🦕 You don't have an account in the bot, to create one - click on the button below!",
+            "to_bot": "✨ Start playing!"
+        },
+        "groups_setting": {
+            "null_topic": "🕸 Restrictions have been lifted, now the bot works in the whole group!",
+            "set_topic": "🔗 Restrictions are set, the bot works only in this topic!",
+            "no_message": "🧨 Invalid topic notification disabled!",
+            "message": "💢 Incorrect topic notification is enabled!",
+            "no_delete": "🗑 Message cleaning is disabled!",
+            "main_message": "*👻 Group Settings*\n\n× 🔗 Working topic: {topic_status}\n× 💢 Topic notification: {mess_status}\n× 🗑 Message cleaning: {delete_status}\n× 🦕 Players in group: {count}\n\n\n*🕸 Commands for configuration*\n\n× `{com1} (0-240)` - Set deletion time\n× _Bot checks messages once every 5 minutes_",
+            "all_topics": "Everywhere",
+            "one_topic": "Only here",
+            "none_delete": "Disabled",
+            "true_delete": "Via {time}",
+            "delete_time_set": "🗑 Message deletion time set to {time} minutes",
+            "invalid_time": "🗑 Message deletion time should be between 0 and 240 minutes!",
+            "buttons": {
+                "topic": "🔗 Set Topic",
+                "delete_topic": "❌ Work everywhere",
+                "mess": "💢 Topic Notification",
+                "no_mess": "❌ Do Not Notify",
+                "no_delete": "❌ Do not delete",
+                "delete": "🗑 Disable cleaning"
+            },
+            "no_delete_rights": "❌ The bot must have the right to delete messages!"
         }
     }
 }

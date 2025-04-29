@@ -1379,7 +1379,7 @@
                 },
                 "cancel": {
                     "short": "Membatalkan status",
-                    "long": "🛡️ Batalkan status pilihan apa pun. \n🪀 Contoh: Anda membuat produk untuk pasar untuk membatalkannya pada tahap apa pun - gunakan perintah ini.",
+                    "long": "🛡️ Batalkan status pilihan apa pun. \n× 🪀 Contoh: Anda membuat produk untuk pasar untuk membatalkannya pada tahap apa pun - gunakan perintah ini.",
                     "arguments": "",
                     "dev": false,
                     "dm": true,
@@ -1395,7 +1395,7 @@
                 },
                 "profile": {
                     "short": "Profil Pengguna",
-                    "long": "🎋 Alternatif untuk perintah informasi, ringkasan umum pengguna.",
+                    "long": "🎋 Alternatif untuk tim informasi, ringkasan umum pengguna. Saat membalas pesan pengguna lain, itu akan menampilkan informasi tentang dia.",
                     "arguments": "",
                     "dev": false,
                     "dm": true,
@@ -1507,7 +1507,7 @@
                 },
                 "add_premium": {
                     "short": "Penerbitan langganan premium",
-                    "long": "🛡️ Mengeluarkan langganan premium untuk time\n0 - berikan langganan premium untuk diri sendiri, str_time - format waktu. Argumen kedua adalah bahwa jika kosong, maka selamanya, sebaliknya untuk sementara waktu.",
+                    "long": "🛡️ Mengeluarkan langganan premium untuk waktu \n× 0 - berikan langganan premium untuk diri Anda sendiri, format waktu str_time - waktu. Argumen kedua adalah bahwa jika kosong, maka selamanya, sebaliknya untuk sementara waktu.",
                     "arguments": "(0/userid) (/str_time)",
                     "dev": true,
                     "dm": true,
@@ -1568,6 +1568,14 @@
                     "dev": false,
                     "dm": true,
                     "group": false
+                },
+                "group_settings": {
+                    "short": "Pengaturan Grup",
+                    "long": "🌐 Kelola pengaturan grup. Mengatur topik kerja, waktu penghapusan.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
                 }
             }
         },
@@ -4827,6 +4835,37 @@
         },
         "custom_book": {
             "confirm_edit": "📜 | Apakah Anda yakin ingin mengganti buku? Jika ada teks dalam buku sebelumnya - itu akan hilang selamanya!"
+        },
+        "group_filter": {
+            "incorrect_topic_user": "🦕 Administrator saluran telah menyiapkan topik lain agar bot bekerja, buka untuk berinteraksi.",
+            "incorrect_topic_admin": "🦕 Bot dikonfigurasi untuk bekerja dalam topik yang berbeda, menghapus batasan pekerjaan atau pergi ke topik yang benar.",
+            "null_topic": "🕸 Hapus batasan",
+            "to_topic": "🔗 Pergi ke",
+            "no_account": "🦕 Anda tidak memiliki akun di bot, untuk membuatnya - klik tombol di bawah ini!",
+            "to_bot": "✨ Mulai bermain!"
+        },
+        "groups_setting": {
+            "null_topic": "🕸 Pembatasan telah dicabut, sekarang bot bekerja di seluruh grup!",
+            "set_topic": "🔗 Pembatasan ditetapkan, bot hanya berfungsi dalam topik ini!",
+            "no_message": "🧨 Pemberitahuan topik tidak valid dinonaktifkan!",
+            "message": "💢 Pemberitahuan topik yang salah diaktifkan!",
+            "no_delete": "🗑 Pembersihan pesan dinonaktifkan!",
+            "main_message": "*👻 Pengaturan Grup*\n\n× 🔗 Topik kerja: {topic_status}\n× 💢 Pemberitahuan topik: {mess_status}\n× 🗑 Pembersihan pesan: {delete_status}\n× 🦕 Pemain dalam grup: {count}\n\n\n*🕸 Perintah untuk konfigurasi*\n\n× `{com1} (0-240)` - Atur waktu penghapusan\n× _Bot memeriksa pesan setiap 5 menit sekali_",
+            "all_topics": "Mana-mana",
+            "one_topic": "Hanya di sini",
+            "none_delete": "Cacat",
+            "true_delete": "Melalui {time}",
+            "delete_time_set": "🗑 Waktu penghapusan pesan diatur ke {time} menit",
+            "invalid_time": "🗑 Waktu penghapusan pesan harus antara 0 dan 240 menit!",
+            "buttons": {
+                "topic": "🔗 Tetapkan Topik",
+                "delete_topic": "❌ Bekerja di mana saja",
+                "mess": "💢 Pemberitahuan topik",
+                "no_mess": "❌ Jangan beri tahu",
+                "no_delete": "❌ Jangan hapus",
+                "delete": "🗑 Nonaktifkan pembersihan"
+            },
+            "no_delete_rights": "❌ Bot harus memiliki hak untuk menghapus pesan!"
         }
     }
 }
