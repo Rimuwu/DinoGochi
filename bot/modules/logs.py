@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from logging.handlers import RotatingFileHandler
 from time import strftime
@@ -75,7 +76,22 @@ def get_latest_errors_dif() -> int:
 def get_errors_count() -> int:
     return errors_counter
 
-
 # Получить последние ошибки
 def get_latest_errors() -> list[str]:
     return latest_errors
+
+async def report_devs_start(bot):
+    tasks = []
+    report_id = conf.bot_report_id
+
+    if report_id == 0: return
+    text = '✅ Бот запущен!'
+
+    if isinstance(report_id, str):
+        channel_id, topic_id = report_id.split('_', 1)
+        tasks.append(bot.send_message(channel_id, text, 
+                                      message_thread_id=int(topic_id)))
+    else: 
+        tasks.append(bot.send_message(report_id, text))
+
+    await asyncio.gather(*tasks)
