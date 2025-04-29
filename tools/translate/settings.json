@@ -40,7 +40,7 @@
     "one_replace_s": ["*", "`"],
 
     "translators": ["deepl", "bing"],
-    "zero_translator": "deepl",
+    "zero_translator": "bing",
 
     "main_code": "ru",
     "langs_path": "/../../bot/localization",
