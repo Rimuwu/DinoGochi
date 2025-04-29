@@ -3,7 +3,7 @@
 from bot.dataclasess.minigame import Button, Stage, stageButton
 from bot.minigames.powerchecker.minigame_powerchecker import PowerChecker
 from bot.modules.decorators import register_method
-from bot.modules.user.user import User, user_name
+from bot.modules.user.user import User, take_coins, user_name
 from aiogram import types
 
 @register_method(PowerChecker)
@@ -59,6 +59,7 @@ async def Endandleave(self, callback) -> None:
         await self.EndGame()
     else:
         await self.DeletePlayer(callback.from_user.id)
+        await take_coins(callback.from_user.id, self.bet, True)
         await callback.answer('Вы покинули игру')
 
         await self.on_user_col_edit()
@@ -93,7 +94,7 @@ async def waituser_inline(self, user_id):
 @register_method(PowerChecker)
 async def WaitUsersStartGenerator(self, user_id: int) -> None:
     markup = await self.waituser_inline(user_id)
-    text = f'Ожидание игроков...\nСтавка: {self.bet} 🪙\n'
+    text = f'Ожидание игроков...\nСтавка: {self.bet} 🪙'
     players = self.PLAYERS.values()
 
     table = "\n".join(
@@ -128,6 +129,7 @@ async def waituser_Enter(self, callback: types.CallbackQuery) -> None:
                             await user_name(user_id),
                             self.STAGE
                             )
+        await take_coins(user_id, -self.bet, True)
 
         self.message_generators[key] = 'enter_dino_generator'
         await self.Update()
@@ -146,6 +148,8 @@ async def waituser_CancelChoose(self, callback) -> None:
     user_id = callback.from_user.id
 
     await self.DeletePlayer(user_id)
+    await take_coins(user_id, self.bet, True)
+
     await self.DeleteMessage(f'choose_dino_{user_id}')
     self.message_generators.pop(f'choose_dino_{user_id}')
     await self.Update()
