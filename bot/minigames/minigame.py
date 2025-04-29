@@ -19,7 +19,7 @@ from aiogram.types import Message
 from bot.modules.user import user
 from bot.modules.user.user import user_name
 
-database = DBconstructor(mongo_client.minigames.online)
+database = DBconstructor(mongo_client.minigame.online)
 
 class MiniGame:
 
