@@ -1,3 +1,5 @@
+from bot.filters.group_filter import GroupRules
+from bot.modules.groups import add_message
 from bot.modules.localization import get_data
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
@@ -78,19 +80,20 @@ async def delete_push(message: Message):
     await bot.send_message(chatid, '👍', parse_mode='Markdown')
 
 @HDMessage
-@main_router.message(Command(commands=['add_me']), IsPrivateChat(False))
+@main_router.message(Command(commands=['add_me']), GroupRules())
 async def add_me_с(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
     user = await User().create(userid)
     text = t("add_me", lang, userid=userid, username=user.name)
-    await message.reply(text, parse_mode='HTML',
+    await message.answer(text, parse_mode='HTML',
                     reply_markup=inline_menu('send_request', lang, userid=userid)
                     )
+    await add_message(message.chat.id, message.message_id)
 
 @HDMessage
-@main_router.message(Command(commands=['promo']))
+@main_router.message(Command(commands=['promo']), IsPrivateChat(True))
 async def promo(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -114,8 +117,9 @@ async def help(message: Message):
     userid = message.from_user.id
 
     text, inl_m = await help_generate(userid, message.chat.type, 1, lang)
-    await bot.send_message(chatid, text, parse_mode='HTML', 
+    await message.answer(text, parse_mode='HTML', 
                            reply_markup=inl_m)
+    await add_message(chatid, message.message_id)
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('help'), IsPrivateChat())
@@ -156,6 +160,7 @@ async def help_generate(userid: int, chat_type: str, page: int, lang = None):
                     help_keys.append(key)
 
     items_per_page = 5
+    total_pages = (len(help_keys) - 1) // items_per_page + 1
     start_index = (page - 1) * items_per_page
     end_index = start_index + items_per_page
 
@@ -171,20 +176,23 @@ async def help_generate(userid: int, chat_type: str, page: int, lang = None):
             text += t('help_command.for_dm', lang) + ' '
         if com['group']:
             text += t('help_command.for_group', lang) + ' '
-        text += ')\n\n'
+        text = text[:-1] + ')\n\n'
 
+    # Навигация по страницам
     if page - 1 == 0:
-        left = help_keys.index(help_keys[-1]) // items_per_page
-    else: left = page - 1
+        left = total_pages
+    else:
+        left = page - 1
 
-    if page + 1 > len(help_keys) / items_per_page + 1:
+    if page + 1 > total_pages:
         right = 1
-    else: right = page + 1
+    else:
+        right = page + 1
 
     inl_m = list_to_inline([
         {'◀': f'help {left}',
          '▶': f'help {right}'}
     ])
 
-    text += f'{page} | {len(help_keys) // items_per_page + 1}'
+    text += f'{page} | {total_pages}'
     return text, inl_m
