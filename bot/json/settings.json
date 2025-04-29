@@ -1,5 +1,7 @@
 {
     "collections": {
+        // БД - единственная, коллекции - множественное / единственное
+        // items - исключение
         "user": ["users", "lang", "referals", "friends", "subscriptions", "ads"],
         "dinosaur": ["dinosaurs", "dead_dinos", "incubation", "dino_owners", "dino_mood", "state"],
         "dino_activity": ["kd_activity", "long_activity", "kindergarten"],
@@ -8,9 +10,10 @@
         "tavern": ["quests", "tavern", "daily_award", "inside_shop"],
         "dungeon": ["lobby", "dungeon_statistic"],
         "other": ["management", "statistic", "events", "promo", "dead_users", "companies", "message_log"],
-        "minigames": ["online"],
+        "minigame": ["online"],
         "lottery": ["lottery", "members"],
-        "tracking": ["links", "members"]
+        "tracking": ["links", "members"],
+        "group": ["groups", "messages", "users"]
     },
 
     "indexes": [
