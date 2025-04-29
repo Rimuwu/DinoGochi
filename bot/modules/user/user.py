@@ -719,3 +719,9 @@ async def get_inventory_from_i(userid: int, items_l: list[dict] | None = None,
 
     result = item_list(find_i)
     return result
+
+async def user_have_account(userid: int) -> bool:
+    """ Проверяет есть ли у юзера аккаунт в базе данных
+    """
+    user = await users.find_one({'userid': userid}, comment='user_have_account')
+    return bool(user)
