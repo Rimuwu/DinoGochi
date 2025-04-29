@@ -7,3 +7,5 @@ from . import status
 from . import private
 from . import kd
 from . import reply_message
+from . import group_filter
+from . import group_admin
