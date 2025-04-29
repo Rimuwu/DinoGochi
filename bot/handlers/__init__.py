@@ -30,6 +30,8 @@ from . import inside_shop
 
 from . import channel_lottery
 
+from . import group_settings
+
 from . import minigames_handler
 
 from . import stars_invoice
