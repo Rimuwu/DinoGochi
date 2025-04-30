@@ -92,7 +92,7 @@ async def delete_messages(group_id: int, ignore_time: bool):
             cursor = await messages.find({"group_id": group_id}, 
                                         comment='delete_messages')
             for message in cursor:
-                if ignore_time or (message['time_sended'] + group['delete_message'] * 60 < int(time.time())):
+                if ignore_time or (message['time_sended'] + group['delete_message'] * 60 <= int(time.time())):
                     await sleep(0.5)
                     await delete_message(group_id, message['message_id'])
 
@@ -152,8 +152,9 @@ async def group_info(group_id: int, lang: str):
                  delete_status=delete_message,
                  count=count,
                  com1='/setdeletetime',
+                 com2='/deleteallmessages'
                 )
-        
+
         buttons = []
         if res['topic_link'] == 0:
             buttons.append(
