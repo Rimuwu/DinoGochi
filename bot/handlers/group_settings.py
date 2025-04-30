@@ -113,7 +113,9 @@ async def group_settings_commands(message: Message):
 
     text, reply = await group_info(chatid, lang)
     mes = await message.answer(text, parse_mode='Markdown', reply_markup=reply)
+    
     await add_message(chatid, mes.message_id)
+    await add_message(chatid, message.message_id)
 
 @main_router.message(Command(commands=['setdeletetime']),
                      GroupRules(True), IsGroupAdmin(True))
@@ -158,4 +160,24 @@ async def set_delete_time(message: Message):
                 mes = await message.answer(t('groups_setting.invalid_time', lang))
             await add_message(chatid, mes.message_id)
 
+    await add_message(chatid, message.message_id)
+
+
+@main_router.message(Command(commands=['deleteallmessages']),
+                     GroupRules(True), IsGroupAdmin(True))
+async def deleteallmessages(message: Message):
+    chatid = message.chat.id
+    lang = await get_lang(message.from_user.id)
+
+    me = await bot.me()
+    me_in_chat = await bot.get_chat_member(chatid, me.id)
+
+    if me_in_chat and not me_in_chat.can_delete_messages:
+        mes = await message.answer(t('no_delete_rights', lang), parse_mode='Markdown')
+
+    else:
+        await delete_messages(chatid, True)
+        mes = await message.answer(t('groups_setting.delete_all_messages', lang))
+
+    await add_message(chatid, mes.message_id)
     await add_message(chatid, message.message_id)
