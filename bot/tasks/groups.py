@@ -20,7 +20,7 @@ async def delete_messages_task():
 
         if delete_time == 0: continue
         else:
-            await delete_messages(group_id, delete_time)
+            await delete_messages(group_id, False)
 
 if __name__ != '__main__':
     if conf.active_tasks:
