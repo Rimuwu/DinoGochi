@@ -17,7 +17,7 @@ class Text(BaseFilter):
             lang = await get_lang(message.from_user.id, lang_n)
             text = t(self.key, lang)
 
-            if text == message.text: return True
+            if text.lower() == message.text.lower(): return True
         return False
 
 class StartWith(BaseFilter):
