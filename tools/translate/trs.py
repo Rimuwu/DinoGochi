@@ -311,6 +311,7 @@ def set_by_path(dct, path, value):
     """
     Устанавливает значение по пути вида 'a.b.0.c' в словаре/списке.
     Корректно работает с вложенными списками и словарями.
+    Если на последнем уровне ожидается список, но найден dict — индекс становится ключом.
     """
     keys = path.split('.')
     cur = dct
@@ -350,23 +351,15 @@ def set_by_path(dct, path, value):
     last = keys[-1]
     if last.isdigit():
         last = int(last)
-        if not isinstance(cur, list):
-            # Если cur пустой dict, превращаем в список
-            if isinstance(cur, dict) and not cur:
-                cur = []
-                # Обновляем ссылку в родителе
-                parent = dct
-                for pk in keys[:-1]:
-                    parent = parent[int(pk)] if pk.isdigit() else parent[pk]
-                if keys[-2].isdigit():
-                    parent[int(keys[-2])] = cur
-                else:
-                    parent[keys[-2]] = cur
-            else:
-                raise TypeError(f"Ожидался список на последнем уровне, но найден dict: {cur}")
-        while len(cur) <= last:
-            cur.append(None)
-        cur[last] = value
+        if isinstance(cur, list):
+            while len(cur) <= last:
+                cur.append(None)
+            cur[last] = value
+        elif isinstance(cur, dict):
+            # Если на последнем уровне dict, индекс становится ключом-строкой
+            cur[str(last)] = value
+        else:
+            raise TypeError(f"Ожидался список или dict на последнем уровне, но найден: {type(cur)}")
     else:
         if not isinstance(cur, dict):
             raise TypeError(f"Ожидался dict на последнем уровне, но найден список: {cur}")
