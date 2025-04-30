@@ -87,10 +87,11 @@ async def add_me_с(message: Message):
 
     user = await User().create(userid)
     text = t("add_me", lang, userid=userid, username=user.name)
-    await message.answer(text, parse_mode='HTML',
+    mes = await message.answer(text, parse_mode='HTML',
                     reply_markup=inline_menu('send_request', lang, userid=userid)
                     )
     await add_message(message.chat.id, message.message_id)
+    await add_message(message.chat.id, mes.message_id)
 
 @HDMessage
 @main_router.message(Command(commands=['promo']), IsPrivateChat(True))
@@ -110,16 +111,17 @@ async def promo(message: Message):
             await start_game(message, code, 'promo')
 
 @HDMessage
-@main_router.message(Command(commands=['help']))
+@main_router.message(Command(commands=['help']), GroupRules())
 async def help(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
     userid = message.from_user.id
 
     text, inl_m = await help_generate(userid, message.chat.type, 1, lang)
-    await message.answer(text, parse_mode='HTML', 
+    mes = await message.answer(text, parse_mode='HTML', 
                            reply_markup=inl_m)
     await add_message(chatid, message.message_id)
+    await add_message(chatid, mes.message_id)
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('help'), IsPrivateChat())
@@ -169,7 +171,13 @@ async def help_generate(userid: int, chat_type: str, page: int, lang = None):
     page_items = help_keys[start_index:end_index]
     for c_item in page_items:
         com = commands[c_item]
-        text += f'× /{c_item} {com["arguments"]}\n× {com["long"]}\n× ('
+        alternativ = com.get('alternative', None)
+        if alternativ:
+            text += f'/{c_item} {com["arguments"]} | <code>{alternativ}</code>'
+        else:
+            text += f'/{c_item} {com["arguments"]}'
+        
+        text += f'\n× {com["long"]}\n× ('
         if com['dev']:
             text += t('help_command.for_dev', lang) + ' '
         if com['dm']:
@@ -189,10 +197,13 @@ async def help_generate(userid: int, chat_type: str, page: int, lang = None):
     else:
         right = page + 1
 
-    inl_m = list_to_inline([
-        {'◀': f'help {left}',
-         '▶': f'help {right}'}
-    ])
+    if total_pages != 1:
+        inl_m = list_to_inline([
+            {'◀': f'help {left}',
+            '▶': f'help {right}'}
+        ])
+    else:
+        inl_m = None
 
     text += f'{page} | {total_pages}'
     return text, inl_m
