@@ -1395,11 +1395,12 @@
                 },
                 "profile": {
                     "short": "User Profile",
-                    "long": "🎋 Alternative to the info command, a general summary of the user. When replying to another user's message - displays information about that user.",
-                    "arguments": "",
+                    "long": "🎋 An alternative to the team information, a general summary of the user. When replying to another user's message, it will display information about him. If you type \"me\", it will display information about you.",
+                    "arguments": "(me)",
                     "dev": false,
                     "dm": true,
-                    "group": true
+                    "group": true,
+                    "alternative": "my profile"
                 },
                 "add_me": {
                     "short": "Add me!",
@@ -1572,6 +1573,14 @@
                 "group_settings": {
                     "short": "Group Settings",
                     "long": "🌐 Manage group settings. Setting the working topic, deletion time.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
+                },
+                "deleteallmessages": {
+                    "short": "Deletes all messages from the bot",
+                    "long": "🌐 Deletes absolutely all messages",
                     "arguments": "",
                     "dev": false,
                     "dm": false,
@@ -4849,7 +4858,7 @@
             "no_message": "🧨 Invalid topic notification disabled!",
             "message": "💢 Incorrect topic notification is enabled!",
             "no_delete": "🗑 Message cleaning is disabled!",
-            "main_message": "*👻 Group Settings*\n\n× 🔗 Working topic: {topic_status}\n× 💢 Topic notification: {mess_status}\n× 🗑 Message cleaning: {delete_status}\n× 🦕 Players in group: {count}\n\n\n*🕸 Commands for configuration*\n\n× `{com1} (0-240)` - Set deletion time\n× _Bot checks messages once every 5 minutes_",
+            "main_message": "*👻 Group Settings*\n\n× 🔗 Working topic: {topic_status}\n× 💢 Topic notification: {mess_status}\n× 🗑 Clearing messages: {delete_status}\n× 🦕 Players in group: {count}\n\n\n*🕸 Commands for configuration*\n\n× `{com1} (0-240)` - Setting deletion time\n× _The bot checks messages once every 5 minutes_\n\n× `{com2}` - Delete all messages from the bot.",
             "all_topics": "Everywhere",
             "one_topic": "Only here",
             "none_delete": "Disabled",
@@ -4864,7 +4873,8 @@
                 "no_delete": "❌ Do not delete",
                 "delete": "🗑 Disable cleaning"
             },
-            "no_delete_rights": "❌ The bot must have the right to delete messages!"
+            "no_delete_rights": "❌ The bot must have the right to delete messages!",
+            "delete_all_messages": "🗑 All messages from the bot in the group have been deleted!"
         }
     }
 }

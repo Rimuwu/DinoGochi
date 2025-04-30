@@ -1395,11 +1395,12 @@
                 },
                 "profile": {
                     "short": "Profil Pengguna",
-                    "long": "🎋 Alternatif untuk tim informasi, ringkasan umum pengguna. Saat membalas pesan pengguna lain, itu akan menampilkan informasi tentang dia.",
-                    "arguments": "",
+                    "long": "🎋 Alternatif untuk informasi tim, ringkasan umum pengguna. Saat membalas pesan pengguna lain, itu akan menampilkan informasi tentang dia. Jika Anda mengetik \"saya\", itu akan menampilkan informasi tentang Anda.",
+                    "arguments": "(me)",
                     "dev": false,
                     "dm": true,
-                    "group": true
+                    "group": true,
+                    "alternative": "profil saya"
                 },
                 "add_me": {
                     "short": "Tambahkan saya!",
@@ -1572,6 +1573,14 @@
                 "group_settings": {
                     "short": "Pengaturan Grup",
                     "long": "🌐 Kelola pengaturan grup. Mengatur topik kerja, waktu penghapusan.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
+                },
+                "deleteallmessages": {
+                    "short": "Menghapus semua pesan dari bot",
+                    "long": "🌐 Menghapus semua pesan",
                     "arguments": "",
                     "dev": false,
                     "dm": false,
@@ -4850,7 +4859,7 @@
             "no_message": "🧨 Pemberitahuan topik tidak valid dinonaktifkan!",
             "message": "💢 Pemberitahuan topik yang salah diaktifkan!",
             "no_delete": "🗑 Pembersihan pesan dinonaktifkan!",
-            "main_message": "*👻 Pengaturan Grup*\n\n× 🔗 Topik kerja: {topic_status}\n× 💢 Pemberitahuan topik: {mess_status}\n× 🗑 Pembersihan pesan: {delete_status}\n× 🦕 Pemain dalam grup: {count}\n\n\n*🕸 Perintah untuk konfigurasi*\n\n× `{com1} (0-240)` - Atur waktu penghapusan\n× _Bot memeriksa pesan setiap 5 menit sekali_",
+            "main_message": "*👻 Pengaturan Grup*\n\n× 🔗 Topik kerja: {topic_status}\n× 💢 Pemberitahuan topik: {mess_status}\n× 🗑 Menghapus pesan: {delete_status}\n× 🦕 Pemain dalam grup: {count}\n\n\n*🕸 Perintah untuk konfigurasi*\n\n× `{com1} (0-240)` - Mengatur waktu penghapusan\n× _Bot memeriksa pesan setiap 5 menit sekali_\n\n× `{com2}` - Hapus semua pesan dari bot.",
             "all_topics": "Mana-mana",
             "one_topic": "Hanya di sini",
             "none_delete": "Cacat",
@@ -4865,7 +4874,8 @@
                 "no_delete": "❌ Jangan hapus",
                 "delete": "🗑 Nonaktifkan pembersihan"
             },
-            "no_delete_rights": "❌ Bot harus memiliki hak untuk menghapus pesan!"
+            "no_delete_rights": "❌ Bot harus memiliki hak untuk menghapus pesan!",
+            "delete_all_messages": "🗑 Semua pesan dari bot dalam grup telah dihapus!"
         }
     }
 }

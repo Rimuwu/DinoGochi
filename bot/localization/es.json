@@ -1395,11 +1395,12 @@
                 },
                 "profile": {
                     "short": "Perfil de usuario",
-                    "long": "🎋 Una alternativa al equipo de información, un resumen general del usuario. Al responder al mensaje de otro usuario, mostrará información sobre él.",
-                    "arguments": "",
+                    "long": "🎋 Una alternativa a la información del equipo, un resumen general del usuario. Al responder al mensaje de otro usuario, mostrará información sobre él. Si escribe \"me\", mostrará información sobre usted.",
+                    "arguments": "(me)",
                     "dev": false,
                     "dm": true,
-                    "group": true
+                    "group": true,
+                    "alternative": "mi perfil"
                 },
                 "add_me": {
                     "short": "¡Añádeme!",
@@ -1572,6 +1573,14 @@
                 "group_settings": {
                     "short": "Configuración de grupo",
                     "long": "🌐 Administrar la configuración del grupo. Establecer el tema de trabajo, tiempo de eliminación.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
+                },
+                "deleteallmessages": {
+                    "short": "Elimina todos los mensajes del bot",
+                    "long": "🌐 Borra absolutamente todos los mensajes",
                     "arguments": "",
                     "dev": false,
                     "dm": false,
@@ -4849,7 +4858,7 @@
             "no_message": "🧨 ¡Notificación de tema no válido deshabilitada!",
             "message": "💢 ¡La notificación de tema incorrecto está habilitada!",
             "no_delete": "🗑 ¡La limpieza de mensajes está desactivada!",
-            "main_message": "*👻 Configuración de grupo*\n\n× 🔗 Tema de trabajo: {topic_status}\n× 💢 Notificación de tema: {mess_status}\n× 🗑 Limpieza de mensajes: {delete_status}\n× 🦕 Jugadores en grupo: {count}\n\n\n*🕸 Comandos para la configuración*\n\n× `{com1} (0-240)` - Establecer el tiempo de eliminación\n× _El bot revisa los mensajes una vez cada 5 minutos_",
+            "main_message": "*👻 Configuración de grupo*\n\n× 🔗 Tema de trabajo: {topic_status}\n× 💢 Notificación de tema: {mess_status}\n× 🗑 Borrando mensajes: {delete_status}\n× 🦕 Jugadores en grupo: {count}\n\n\n*🕸 Comandos para la configuración*\n\n× `{com1} (0-240)` - Estableciendo el tiempo de eliminación\n× _El bot revisa los mensajes una vez cada 5 minutos_\n\n× `{com2}` - Eliminar todos los mensajes del bot.",
             "all_topics": "En todas partes",
             "one_topic": "Solo aquí",
             "none_delete": "Deshabilitado",
@@ -4864,7 +4873,8 @@
                 "no_delete": "❌ No borrar",
                 "delete": "🗑 Desactivar la limpieza"
             },
-            "no_delete_rights": "❌ ¡El bot debe tener derecho a eliminar mensajes!"
+            "no_delete_rights": "❌ ¡El bot debe tener derecho a eliminar mensajes!",
+            "delete_all_messages": "🗑 ¡Todos los mensajes del bot en el grupo han sido eliminados!"
         }
     }
 }
