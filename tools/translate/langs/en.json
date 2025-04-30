@@ -1,1 +1,1014 @@
-{}
+{
+    "en": {
+        "language_name": "🇷🇺 Russian",
+        "localization_author": "System Localization",
+        "buttons_name": {
+            "back": "↪️ Back",
+            "enable": "✅ Turn On",
+            "disable": "❌ Turn Off",
+            "confirm": "✅ Confirm",
+            "yes": "✅ Yes",
+            "no": "❌ No",
+            "cancel": "❌ Cancel",
+            "refresh": "🔄 Refresh"
+        },
+        "commands_name": {
+            "start_game": "🍡 Start playing",
+            "dino_profile": "🦖 Dinosaur",
+            "settings_menu": "🔧 Settings",
+            "friends_menu": "👥 Friends",
+            "actions_menu": "🕹 Actions",
+            "profile_menu": "👁‍🗨 Profile",
+            "map-bt": "🗺 Map",
+            "map": {
+                "market": "🛒 Market",
+                "dino-tavern_menu": "🍺 Dino Tavern"
+            },
+            "settings": {
+                "notification": "❗ Notifications",
+                "dino_name": "💬 Rename a dinosaur",
+                "inventory": "🎞 Inventory",
+                "dino_profile": "🦕 Profile",
+                "delete_me": "🗑 Delete account",
+                "settings_page_2": "➡ Page 2"
+            },
+            "settings2": {
+                "my_name": "🎠 Call Me",
+                "lang": "👅 Tongue",
+                "dino_talk": "✉ Talking to a dinosaur",
+                "nick": "🎃 Nick",
+                "reset_avatar": "🎨 Reset Avatar"
+            },
+            "profile": {
+                "information": "📜 Information",
+                "inventory": "🎮 Inventory",
+                "rayting": "🎢 Rating",
+                "about": "🤖 About the bot",
+                "support": "💸 Support"
+            },
+            "friends": {
+                "add_friend": "➕ Add",
+                "friends_list": "📜 List",
+                "remove_friend": "➖ Delete",
+                "requests": "💌 Enquiries",
+                "referal": "❤ Refer a friend"
+            },
+            "market": {
+                "random": "🛒 Random Items",
+                "find": "🔍 Product search",
+                "seller_profile": "🛒 My Store",
+                "background_market": "🖼️ Background menu",
+                "search_markets": "🍶 Store Finder"
+            },
+            "backgrounds": {
+                "backgrounds": "🖼️ Backgrounds",
+                "standart": "🗝️ Standard",
+                "custom_profile": "🌟 Your own background"
+            },
+            "seller_profile": {
+                "add_product": "☄ Add a product",
+                "my_market": "📜 My Store",
+                "my_products": "🌂 My products",
+                "create_market": "🛍 Create a store"
+            },
+            "action_ask": {
+                "speed_actions": "⛸ Quick actions",
+                "skills_actions": "📍 Skills",
+                "live_actions": "🍬 Life",
+                "extraction": "👔 Work",
+                "no_dino": "🧵 You don't have a dinosaur",
+                "dino_button": "🦖 Dinosaur:"
+            },
+            "actions": {
+                "entertainments": "🎮 Entertainment",
+                "stop_game": "❌ Stop the game",
+                "feed": "🍣 Feed",
+                "journey": "🎋 Journey",
+                "events": "🎋 Events",
+                "put_to_bed": "🌙 Put to bed",
+                "awaken": "🌙 Awaken",
+                "collecting": "🍕 Gathering food",
+                "progress": "🍕 Progress"
+            },
+            "speed_actions": {
+                "pet": "🖐 Stroke",
+                "fighting": "🎯 Struggle",
+                "talk": "🦜 Talk"
+            },
+            "skills_actions": {
+                "gym": "🥏 Gymnasium",
+                "library": "📚 Library",
+                "park": "🌳 Park",
+                "swimming_pool": "💧 Pool",
+                "stop_work": "💥 Return from training"
+            },
+            "extraction_actions": {
+                "mine": "⛏️ Mine",
+                "sawmill": "🪵 Sawmill",
+                "bank": "🏦 Bank",
+                "farm": "🧺 Farm",
+                "stop_work": "⌛ Return from work",
+                "progress": "🌯 Progress"
+            },
+            "farm": {
+                "sow": "🧑‍🌾 Sow",
+                "plant_care": "⛏️ Plant care",
+                "plants": "🎋 Plants",
+                "stop_work": "💥 Return from the fields"
+            },
+            "dino_tavern": {
+                "dungeon": "🗻 Dungeons",
+                "edit": "♻ Transformation",
+                "quests": "⛓ Quests",
+                "daily_award": "🎁 Bonus",
+                "events": "🎈 Events",
+                "hoarder": "🪈 The Hoarder"
+            },
+            "about": {
+                "team": "🤼 Team",
+                "faq": "❗ Handbook",
+                "links": "🔗 Links"
+            },
+            "referal": {
+                "code": "🎲 Generate code",
+                "enter_code": "🎞 Enter the code",
+                "my_code": "🎲 My Code:",
+                "friend_code": "🎞 A Friend:"
+            }
+        },
+        "rare": {
+            "com": [
+                "Usual",
+                "Usual",
+                "🤍",
+                "Normal"
+            ],
+            "unc": [
+                "Unusual",
+                "Unusual",
+                "💚",
+                "Unusual"
+            ],
+            "rar": [
+                "Rare",
+                "Rare",
+                "💙",
+                "Rare"
+            ],
+            "mys": [
+                "Mystic",
+                "Mystical",
+                "💜",
+                "Mystical"
+            ],
+            "leg": [
+                "Legendary",
+                "Legendary",
+                "🧡",
+                "Legendary"
+            ],
+            "myt": [
+                "Mythical",
+                "Mythical",
+                "❤",
+                "Mythical"
+            ],
+            "random": [
+                "Accidental",
+                "Random",
+                "🎲",
+                "Random"
+            ]
+        },
+        "time_format": {
+            "second": [
+                "second",
+                "seconds",
+                "seconds",
+                "with."
+            ],
+            "minute": [
+                "minute",
+                "minutes",
+                "minutes",
+                "m."
+            ],
+            "hour": [
+                "hour",
+                "hours",
+                "hours",
+                "h."
+            ],
+            "day": [
+                "day",
+                "day",
+                "days",
+                "d."
+            ],
+            "weekly": [
+                "week",
+                "week",
+                "weeks",
+                "n."
+            ],
+            "month": [
+                "month",
+                "month",
+                "months",
+                "per month."
+            ],
+            "year": [
+                "year",
+                "year",
+                "years",
+                "g."
+            ]
+        },
+        "owner": "Master",
+        "items_names": {
+            "jar_honey": {
+                "name": "🍯 A jar of honey"
+            },
+            "cookie": {
+                "name": "🍪 Cookie"
+            },
+            "mysterious_egg": {
+                "name": "🥚 Mysterious Egg"
+            },
+            "timer": {
+                "name": "⏲ Timer",
+                "description": "Allows you to find out how long the game will last."
+            },
+            "timer_recipe": {
+                "name": "📜 Timer Recipe",
+                "description": "Timer recipe."
+            },
+            "wild_boar_meat": {
+                "name": "🍖 Wild boar meat"
+            },
+            "bunch_herbs": {
+                "name": "🌿 A bunch of herbs"
+            },
+            "fish": {
+                "name": "🍤 Fish"
+            },
+            "wolf_meat": {
+                "name": "🥩 Wolf meat"
+            },
+            "grasses_from_fields": {
+                "name": "🌾 Grasses from the fields"
+            },
+            "seafood": {
+                "name": "🍣 Seafood"
+            },
+            "berries": {
+                "name": "🍒 Berries"
+            },
+            "chicken_leg": {
+                "name": "🍗 Chicken Leg"
+            },
+            "small_fish": {
+                "name": "🦪 Small fish"
+            },
+            "cloak": {
+                "name": "🧥 Cloak",
+                "description": "Cancels the penalty for the rain event."
+            },
+            "cloak_recipe": {
+                "name": "📜 Cloak Recipe",
+                "description": "Raincoat recipe."
+            },
+            "tooling": {
+                "name": "🛠 Tooling",
+                "description": "Speed up the collection of food."
+            },
+            "bear": {
+                "name": "🧸 Bear",
+                "description": "Adds sleep modes."
+            },
+            "bear_recipe": {
+                "name": "📜 Teddy bear recipe",
+                "description": "Recipe for creating a bear for sleep."
+            },
+            "tooling_recipe": {
+                "name": "📜 Tools Recipe",
+                "description": "Recipe for creating tools."
+            },
+            "therapeutic_mixture": {
+                "name": "🧪 Therapeutic mixture"
+            },
+            "slice_pizza": {
+                "name": "🍕 Slice of pizza"
+            },
+            "sweet_pancakes": {
+                "name": "🥞 Sweet pancakes"
+            },
+            "unusual_egg": {
+                "name": "🥚 Unusual egg"
+            },
+            "regular_egg": {
+                "name": "🥚 Regular Egg"
+            },
+            "rare_egg": {
+                "name": "🥚 Rare Egg"
+            },
+            "mystic_egg": {
+                "name": "🥚 Mystic Egg"
+            },
+            "legendary_egg": {
+                "name": "🥚 Legendary Egg"
+            },
+            "fake_legendary_egg": {
+                "name": "🥚 Legendary Egg!"
+            },
+            "blank_piece_paper": {
+                "name": "📄 Blank paper"
+            },
+            "skin": {
+                "name": "👢 Skin"
+            },
+            "ink": {
+                "name": "✒️ Ink"
+            },
+            "wool": {
+                "name": "🐑 Wool"
+            },
+            "rope": {
+                "name": "🎗 Rope"
+            },
+            "feather": {
+                "name": "🐦 Feather"
+            },
+            "twigs_tree": {
+                "name": "🥢 Tree twigs"
+            },
+            "fish_oil": {
+                "name": "🐡 Fish oil"
+            },
+            "leather_clothing": {
+                "name": "🧤 Leather clothing",
+                "description": "Warms the dinosaur."
+            },
+            "leather_clothing_recipe": {
+                "name": "📜 Leather clothing recipe",
+                "description": "Leather clothing recipe."
+            },
+            "clothing_recipe": {
+                "name": "📜 Clothing Recipe",
+                "description": "Recipe for creating a beautiful leather jacket."
+            },
+            "torch": {
+                "name": "🔥 Torch",
+                "description": "While gathering food, there is a chance to find more exquisite herbs."
+            },
+            "torch_recipe": {
+                "name": "📜 Torch Recipe",
+                "description": "A recipe for creating a torch that will light your way."
+            },
+            "medicinal_drink": {
+                "name": "🍵 Medicinal drink"
+            },
+            "drink_recipe": {
+                "name": "📜 Drink recipe",
+                "description": "Recipe for making a disgusting tasting, but medicinal drink."
+            },
+            "gourmet_herbs": {
+                "name": "🍀 Exquisite herbs"
+            },
+            "tea": {
+                "name": "🍵 Tea"
+            },
+            "tea_recipe": {
+                "name": "📜 Tea Recipe",
+                "description": "Recipe for making fragrant tea."
+            },
+            "roasted_meat": {
+                "name": "🥩 Roast meat"
+            },
+            "meat_recipe": {
+                "name": "📜 Meat Recipe",
+                "description": "Who doesn't love to eat a piece of well-cooked meat? The dinosaur will not refuse either."
+            },
+            "salad": {
+                "name": "🥗 Salad"
+            },
+            "salad_recipe": {
+                "name": "📜 Salad Recipe",
+                "description": "Isn't the dinosaur tired of eating only grass? Maybe it's better to make a salad from several herbs? My dinosaur loved the result!"
+            },
+            "soup": {
+                "name": "🥣 Soup"
+            },
+            "soup_recipe": {
+                "name": "📜 Soup Recipe",
+                "description": "'Fish live in water, why do I eat it dry?' - That's what every dinosaur probably thinks, he just hasn't tried fish soup yet."
+            },
+            "board_games": {
+                "name": "🧩 Table Games",
+                "description": "Adds 4 dinosaur board games!"
+            },
+            "board_games_recipe": {
+                "name": "📜 Board game recipe",
+                "description": "Recipe for creating board games."
+            },
+            "hiking_bag": {
+                "name": "👜 Camping pouch",
+                "description": "Increases the chance of travel events."
+            },
+            "pouch_recipe": {
+                "name": "📜 Pouch recipe",
+                "description": "During the journey, the dinosaur needs a place to store all the things he finds, a camping bag will help us here!"
+            },
+            "set_cookies": {
+                "name": "🍪 Set of cookies"
+            },
+            "pizza": {
+                "name": "🍕 Pizza"
+            },
+            "magic_stone": {
+                "name": "🔮 Magic Stone"
+            },
+            "taco": {
+                "name": "🌮 Taco"
+            },
+            "bone": {
+                "name": "🦴 Bone"
+            },
+            "iron": {
+                "name": "🧱 Iron"
+            },
+            "wood-body": {
+                "name": "📦 Wooden case"
+            },
+            "iron-body": {
+                "name": "📦 Iron Case"
+            },
+            "copper-body": {
+                "name": "📦 Copper Case"
+            },
+            "body_recipe": {
+                "name": "📜 Hull Recipe"
+            },
+            "metal-gear": {
+                "name": "⚙ Metal Gear"
+            },
+            "wood-gear": {
+                "name": "⚙ Wooden Gear"
+            },
+            "iron-rod": {
+                "name": "🦯 Iron rod"
+            },
+            "copper-rod": {
+                "name": "🦯 Copper rod"
+            },
+            "iron-ingot": {
+                "name": "🧱 Iron Ingot"
+            },
+            "copper-ingot": {
+                "name": "🧱 Copper Ingot"
+            },
+            "copper": {
+                "name": "🧱 Copper"
+            },
+            "bone_sword": {
+                "name": "🗡 Bone Sword"
+            },
+            "iron_sword": {
+                "name": "🗡 Iron Sword"
+            },
+            "wood": {
+                "name": "🪵 Tree"
+            },
+            "gear_recipe": {
+                "name": "📜 Gear Recipe",
+                "description": "The most important component in the mechanism."
+            },
+            "copper_sword": {
+                "name": "🗡 Copper Sword"
+            },
+            "bone_arrow": {
+                "name": "💘 Bone Arrow"
+            },
+            "bone_onions": {
+                "name": "🏹 Bone Bow"
+            },
+            "crossbow": {
+                "name": "🏹 Crossbow"
+            },
+            "crossbow_recipe": {
+                "name": "📜 Crossbow Recipe",
+                "description": "Crossbow - powerful, fast, durable. Perfect for hunting!"
+            },
+            "taco_recipe": {
+                "name": "📜 Taco Recipe",
+                "description": "Tacos, a superb food that all dinosaurs of all kinds adore!"
+            },
+            "sword_recipe": {
+                "name": "📜 Sword Recipe",
+                "description": "Recipe for a sharpened sword."
+            },
+            "onion_recipe": {
+                "name": "📜 Onion Recipe",
+                "description": "A bow made of a couple of bones, shoots properly."
+            },
+            "arrow_recipe": {
+                "name": "📜 Arrow Recipe",
+                "description": "Bone that breaks bones."
+            },
+            "regular_backpack": {
+                "name": "🎒 Regular Backpack"
+            },
+            "backpack_recipe": {
+                "name": "📜 Backpack Recipe",
+                "description": "A school backpack equipped for the dungeon."
+            },
+            "wood_shield": {
+                "name": "🛡 Wooden Shield"
+            },
+            "iron_shield": {
+                "name": "🛡 Iron Shield"
+            },
+            "copper_shield": {
+                "name": "🛡 Copper Shield"
+            },
+            "leather_jacket": {
+                "name": "🧥 Leather jacket"
+            },
+            "leather_jacket_recipe": {
+                "name": "📜 Leather jacket",
+                "description": "Almost like a shield, but much lighter."
+            },
+            "shield_recipe": {
+                "name": "📜 Shield Recipe",
+                "description": "A shield, just a shield."
+            },
+            "bone_pickaxe": {
+                "name": "⛏ Bone Pickaxe"
+            },
+            "iron_pickaxe": {
+                "name": "⛏ Iron Pickaxe"
+            },
+            "copper_pickaxe": {
+                "name": "⛏ Copper Pickaxe"
+            },
+            "bone_axe": {
+                "name": "🪓 Bone Axe"
+            },
+            "iron_axe": {
+                "name": "🪓 Iron Axe"
+            },
+            "copper_axe": {
+                "name": "🪓 Copper Axe"
+            },
+            "pickaxe_recipe": {
+                "name": "📜 Pickaxe Recipe",
+                "description": "The pickaxe is not effective in battle, because everyone knows that the axe is a more formidable weapon. But it is effective in the extraction of resources."
+            },
+            "axe_recipe": {
+                "name": "📜 Axe Recipe",
+                "description": "An axe is not effective in battle, because everyone knows that a sword is a faster weapon. But it is effective in the extraction of resources."
+            },
+            "chocolate": {
+                "name": "🍫 Chocolate"
+            },
+            "candy": {
+                "name": "🍬 Candy"
+            },
+            "candy_recipe": {
+                "name": "📜 Candy Recipe",
+                "description": "Recipe for creating a whole bunch of chocolates"
+            },
+            "maize": {
+                "name": "🌽 Maize"
+            },
+            "popcorn": {
+                "name": "🍿 Popcorn"
+            },
+            "popcorn_recipe": {
+                "name": "📜 Popcorn Recipe",
+                "description": "Recipe for creating popcorn. It's time to watch the movie!"
+            },
+            "juice": {
+                "name": "🧃 Juice"
+            },
+            "juice_recipe": {
+                "name": "📜 Juice recipe",
+                "description": "Recipe for creating freshly squeezed juice"
+            },
+            "spices": {
+                "name": "🌶️ Spices"
+            },
+            "spicy_steak": {
+                "name": "🥩 Spicy steak"
+            },
+            "steak_recipe": {
+                "name": "📜 Steak Recipe",
+                "description": "Recipe for creating a spicy but delicious steak"
+            },
+            "banana": {
+                "name": "🍌 Banana"
+            },
+            "crab": {
+                "name": "🦀 Crab"
+            },
+            "coffee": {
+                "name": "☕️ Coffee"
+            },
+            "mushroom": {
+                "name": "🍄 Mushroom"
+            },
+            "broth": {
+                "name": "🍲 Broth"
+            },
+            "broth_recipe": {
+                "name": "📜 Broth Recipe",
+                "description": "Recipe for creating a rich meat broth"
+            },
+            "rice": {
+                "name": "🍚 Rice"
+            },
+            "sushi": {
+                "name": "🍣 Sushi"
+            },
+            "sushi_recipe": {
+                "name": "📜 Sushi Recipe",
+                "description": "Recipe for creating sushi. They say it's a perfectly balanced meal"
+            },
+            "hot_chocolate": {
+                "name": "☕️ Hot Chocolate"
+            },
+            "hot_chocolate_recipe": {
+                "name": "📜 Hot Chocolate Recipe",
+                "description": "Recipe for creating hot chocolate. Perfect to keep warm in winter"
+            },
+            "cake": {
+                "name": "🎂 Cake"
+            },
+            "cake_recipe": {
+                "name": "📜 Cake Recipe",
+                "description": "Recipe for creating a large cake. Cake is a lie"
+            },
+            "curry": {
+                "name": "🍛 Curry"
+            },
+            "curry_recipe": {
+                "name": "📜 Curry Recipe",
+                "description": "Recipe for creating curry. This is such a spicy dish with rice"
+            },
+            "dango": {
+                "name": "🍡 Dango"
+            },
+            "grain": {
+                "name": "🥜 Grains"
+            },
+            "bread": {
+                "name": "🍞 Bread"
+            },
+            "bread_recipe": {
+                "name": "📜 Bread Recipe",
+                "description": "Recipe for creating bread"
+            },
+            "berry_pie": {
+                "name": "🥧 Berry pie"
+            },
+            "fish_cake": {
+                "name": "🥘 Fish pie"
+            },
+            "meat_pie": {
+                "name": "🍲 Meat pie"
+            },
+            "berry_pie_recipe": {
+                "name": "📜 Berry pie recipe",
+                "description": "Recipe for creating the sweetest pie"
+            },
+            "fish_pie_recipe": {
+                "name": "📜 Fish pie recipe",
+                "description": "Recipe for creating the healthiest pie"
+            },
+            "meat_pie_recipe": {
+                "name": "📜 Meat pie recipe",
+                "description": "Recipe for creating the most hearty pie"
+            },
+            "bacon": {
+                "name": "🥓 Bacon"
+            },
+            "bacon_recipe": {
+                "name": "📜 Bacon Recipe",
+                "description": "Recipe for creating bacon"
+            },
+            "bento": {
+                "name": "🍱 Bento"
+            },
+            "bento_recipe": {
+                "name": "📜 Bento Recipe",
+                "description": "Recipe for creating bento. Everything for a full snack is collected here."
+            },
+            "sandwich": {
+                "name": "🥪 Sandwich"
+            },
+            "sandwich_recipe": {
+                "name": "📜 Sandwich recipe",
+                "description": "Recipe for creating a sandwich. Convenient for a quick snack"
+            },
+            "chest_food": {
+                "name": "📦 Food Chest"
+            },
+            "recipe_chest": {
+                "name": "📦 Recipe Chest"
+            },
+            "recipe_chest_simple": {
+                "name": "📦 Random Recipe"
+            },
+            "gift_2023": {
+                "name": "🎁 Gift 2023"
+            },
+            "gift_2024": {
+                "name": "🎁 Gift 2024",
+                "description": "For the most beautiful people on the planet! ❤"
+            },
+            "gift_2025": {
+                "name": "🎁 Gift 2025",
+                "description": "For dreamers and believers!"
+            },
+            "fishing-rod": {
+                "name": "🎣 Rod",
+                "description": "A great fishing rod for fishing. Increases the Dinosaur's Mastery."
+            },
+            "fishing-rod_recipe": {
+                "name": "📜 Fishing rod recipe",
+                "description": "Fishing rod recipe."
+            },
+            "stone_resurrection": {
+                "name": "💎 Resurrection Stone",
+                "description": "A stone that can take any dinosaur out of the memory of the universe!"
+            },
+            "ale": {
+                "name": "🍺 Ale"
+            },
+            "basket": {
+                "name": "👒 Basket",
+                "description": "Basket for picking berries. Increases the maximum amount of food gathered."
+            },
+            "net": {
+                "name": "🕸 Net",
+                "description": "Trap net for hunting animals."
+            },
+            "book_forest": {
+                "name": "📔 A book about the forest",
+                "description": "A book by a long-forgotten adventurer. He talks about the forest."
+            },
+            "book_lost-islands": {
+                "name": "📔 Book of Islands",
+                "description": "A book by a long-forgotten adventurer. He talks about lost islands."
+            },
+            "book_desert": {
+                "name": "📔 The Book of the Desert",
+                "description": "A book by a long-forgotten adventurer."
+            },
+            "book_mountains": {
+                "name": "📔 The Book of Mountains",
+                "description": "A book by a long-forgotten adventurer."
+            },
+            "book_magic-forest": {
+                "name": "📔 The Book of the Magic Forest",
+                "description": "A book by a long-forgotten adventurer."
+            },
+            "bag_goodies": {
+                "name": "👜 Bag with goodies",
+                "description": "Storage for goodies on a trip."
+            },
+            "bag_goodies_recipe": {
+                "name": "📜 Bag with goodies",
+                "description": "Recipe for creating a storage for goodies."
+            },
+            "rubik_cube": {
+                "name": "🎲 Rubik's Cube",
+                "description": "The dinosaur always has his favorite game with him."
+            },
+            "rubik_cube_recipe": {
+                "name": "📜 Rubik's Cube",
+                "description": "Recipe for creating a Rubik's Cube."
+            },
+            "lock_bag": {
+                "name": "👜 Bag with lock",
+                "description": "A more secure travel bag."
+            },
+            "lock_bag_recipe": {
+                "name": "📜 Bag with lock",
+                "description": "Recipe for creating a bag with a lock."
+            },
+            "skinning_knife": {
+                "name": "🔪 Skinning knife",
+                "description": "It helps to collect the skin from animals more accurately. Without losing its parts."
+            },
+            "skinning_knife_recipe": {
+                "name": "📜 Skinning knife",
+                "description": "Recipe for creating a skinning knife."
+            },
+            "flour": {
+                "name": "🌫 Flour"
+            },
+            "flour_recipe": {
+                "name": "📜 Flour Recipe",
+                "description": "Recipe for creating flour for sweets."
+            },
+            "croissant": {
+                "name": "🥐 Croissant"
+            },
+            "croissant_recipe": {
+                "name": "📜 Croissant recipe",
+                "description": "Recipe for creating a hot and appetizing croissant."
+            },
+            "carrot": {
+                "name": "🥕 Carrot"
+            },
+            "tomato": {
+                "name": "🍅 Tomato"
+            },
+            "potato": {
+                "name": "🥔 Potato"
+            },
+            "basket_recipe": {
+                "name": "📜 Basket Recipe",
+                "description": "Recipe for creating a basket for collecting food."
+            },
+            "net_recipe": {
+                "name": "📜 Net Recipe",
+                "description": "Recipe for creating a hunting net."
+            },
+            "rod_recipe": {
+                "name": "📜 Rod Recipe",
+                "description": "Necessary material for creating weapons."
+            },
+            "fishing_rod_recipe": {
+                "name": "📜 Fishing rod recipe",
+                "description": "Recipe for creating a fishing rod."
+            },
+            "meow_book": {
+                "name": "📔 Meow Edition",
+                "description": "mi mi, mi mi mi... mi!"
+            },
+            "premium_activator": {
+                "name": "✨ Premium Activator",
+                "description": "Activates a premium subscription for 1 month"
+            },
+            "egg_case": {
+                "name": "📦 Egg Case"
+            },
+            "fried_egg": {
+                "name": "🍳 Scrambled Eggs"
+            },
+            "3_days_premium": {
+                "name": "✨ Trial subscription",
+                "description": "Activates a premium subscription for 3 days"
+            },
+            "background": {
+                "name": "🖼 Background",
+                "description": "Adds a background to the collection."
+            },
+            "repair_tool": {
+                "name": "🔧 Repair Kit",
+                "description": "A set for repairing accessories, weapons, armor. Repairs only broken items!"
+            },
+            "repair_tool_recipe": {
+                "name": "📜 Repair Kit",
+                "description": "Recipe for creating a repair kit."
+            },
+            "SYSTEM_ITEM_REPAIR": {
+                "name": "🔧 Repaired Item"
+            },
+            "SYSTEM_ITEM_SWORD": {
+                "name": "🗡 Sword"
+            },
+            "SYSTEM_ITEM_AXE": {
+                "name": "🪓 Axe"
+            },
+            "SYSTEM_ITEM_PICKAXE": {
+                "name": "⛏ Pickaxe"
+            },
+            "SYSTEM_ITEM_SHIELD": {
+                "name": "🛡 Shield"
+            },
+            "SYSTEM_ITEM_GEAR": {
+                "name": "⚙ Gear"
+            },
+            "SYSTEM_ITEM_ROD": {
+                "name": "🦯 Rod"
+            },
+            "SYSTEM_ITEM_BODY": {
+                "name": "📦 Corps"
+            },
+            "rustycan": {
+                "name": "🥫 Rusty Jar"
+            },
+            "wornoutticket": {
+                "name": "🎟️ Worn-out ticket"
+            },
+            "brokenkey": {
+                "name": "🔧 Broken Key"
+            },
+            "lostglove": {
+                "name": "🧤 The Lost Glove"
+            },
+            "shatteredbottle": {
+                "name": "🍾 Broken Bottle"
+            },
+            "oldbucket": {
+                "name": "🪣 Old bucket"
+            },
+            "crumpledpaper": {
+                "name": "🧻 Crumpled piece of paper"
+            },
+            "wiltedleaf": {
+                "name": "🍂 Withered Leaf"
+            },
+            "freezing_1moth": {
+                "name": "🧊 Freezing for a month"
+            },
+            "freezing": {
+                "name": "❄ Freezing"
+            },
+            "defrost": {
+                "name": "🔥 Defrost"
+            },
+            "reinforced_backpack": {
+                "name": "🎒 Reinforced backpack"
+            },
+            "reinforced_backpack_recipe": {
+                "name": "📜 Reinforced backpack",
+                "description": "Recipe for a reinforced backpack."
+            },
+            "pillow": {
+                "name": "🧸 Pillow",
+                "description": "After the sleep ends, the dinosaur receives a temporary energy boost."
+            },
+            "pillow_recipe": {
+                "name": "📜 Pillow recipe",
+                "description": "Pillow recipe"
+            },
+            "blanket": {
+                "name": "❤️‍🩹 Blanket",
+                "description": "After the sleep ends, the dinosaur gains a temporary health boost."
+            },
+            "blanket_recipe": {
+                "name": "📜 Blanket Recipe",
+                "description": "Blanket Recipe"
+            },
+            "toy_solider": {
+                "name": "🪀 Toy Soldier",
+                "description": "Relieves stress points during sleep."
+            },
+            "toy_solider_recipe": {
+                "name": "📜 Soldier Recipe",
+                "description": "Toy soldier recipe."
+            },
+            "controller": {
+                "name": "🎮 Controller",
+                "description": "Speeds up the game time."
+            },
+            "controller_recipe": {
+                "name": "📜 Controller Recipe",
+                "description": "Recipe for creating a controller."
+            },
+            "transport_egg": {
+                "name": "🦖 Transport egg",
+                "description": "An egg for transporting a dinosaur. Use: If there is no dinosaur, place the dinosaur and freeze it. If there is a dinosaur: pulls out and thaws the dinosaur. Deleted after 1 cycle of use."
+            },
+            "custom_book": {
+                "name": "📙 Notebook",
+                "description": "Your personal record book. Write down your thoughts and ideas, and share them with your friends!"
+            },
+            "custom_book_recipe": {
+                "name": "📜 Notes Recipe",
+                "description": "Recipe for creating a book for records."
+            },
+            "easter_egg": {
+                "name": "🍰 Easter egg"
+            }
+        },
+        "notifications": {
+            "daily_award": {
+                "text": "🎩 | Don't forget to claim your daily bonus! \nDaily notifications can be turned off in Settings.",
+                "inline_menu": [
+                    "daily_award"
+                ]
+            },
+            "incubation_ready": {
+                "text": "🦖 {user_name}, your dinosaur has hatched! 🎉",
+                "inline_menu": [
+                    "dino_profile",
+                    "dino_rename"
+                ]
+            },
+            "donation": {
+                "reward": "🦕 Payment received! \n\n❤ We are grateful to you for supporting the bot, we promise to continue to try for you! Free the dinosaurs!",
+                "subscription_end_day": "❤ | Hey! Your subscription ends in {end_text}, if you like the subscription features, then pay for the next month!",
+                "subscription_end": "❤ | Your subscription is over, thank you for being with us!",
+                "pre_check_error": "🐱‍🐉 Something went wrong, try again in a few minutes."
+            },
+            "lvl_up": {
+                "standart": "🎉 |118, your level is up! ({lvl})"
+            }
+        }
+    }
+}
