@@ -5,7 +5,8 @@ import emoji
 from pprint import pprint
 
 import translators
-from langdetect import DetectorFactory, detect
+from langdetect import DetectorFactory, detect, detect_langs
+import re
 
 DetectorFactory.seed = 0
 ex = os.path.dirname(__file__) # Путь к этому файлу
@@ -30,6 +31,7 @@ with open(f'{ex}/settings.json', encoding='utf-8') as f:
 
     zero_translator = settings['zero_translator']
     ignore_translate_keys = settings['ignore_translate_keys']
+    sp_sym = settings['sp_sym']
 
 # --- Добавляем списки user_agents и proxies ---
 user_agents = [
@@ -123,34 +125,103 @@ def compare_structures(base, damp, path=""):
             changed_keys.append(path)
     return new_keys, changed_keys, deleted_keys
 
+def save_replace(code: int, text: str, translate: bool):
+    global cash_replaces
+    """
+    Сохраняет замену в словаре cash_replaces.
+    """
+    if code not in cash_replaces:
+        cash_replaces[code] = {"text": text, 
+                               "translate": translate}
+        return code
+    else:
+        return save_replace(code + 1, text, translate)
 
 def replace_specials(text):
+    # "(121)": {"text": "_", "translate": false},
+    # "(801)": {"text": "</code>", "translate": false},
+    #     "(800)": {"text": "<code>", "translate": false},
+    #     "(901)": {"text": "<i>", "translate": false},
+    #     "(900)": {"text": "</i>", "translate": false},
+    #     "(700)": {"text": "<b>", "translate": false},
+    #     "(701)": {"text": "</b>", "translate": false}
     """
     Заменяет спецсимволы и эмодзи на коды для защиты от перевода.
     """
     if not isinstance(text, str):
         return text
-    # Заменяем спецсимволы
-    for key, item in replace_words.items():
-        text = text.replace(item['text'], key)
-    # Прячем эмодзи
-    for em in emoji.emoji_list(text):
-        code = f"#EMOJI{ord(em['emoji'][0])}#"
-        text = text.replace(em['emoji'], code)
-    # Прячем переменные вида {name}
-    # (можно доработать под ваш стиль)
+    
+    for _ in range(6):
+        # Заменяем спецсимволы
+        for key, item in replace_words.items():
+            text = text.replace(item['text'], key)
+
+        # Прячем эмодзи
+        for em in emoji.emoji_list(text):
+            code = save_replace(int(ord(em['emoji'][0])), 
+                                em['emoji'], False)
+            text_code = f"{sp_sym}{code}{sp_sym}"
+            text = text.replace(em['emoji'], text_code)
+
+        # Прячем переменные вида {name}
+        matches = re.findall(r'\{.*?\}', text)
+        for match in matches:
+            code = save_replace(int(ord(match[1])), 
+                                match, False)
+            text_code = f"{sp_sym}{code}{sp_sym}"
+            text = text.replace(match, text_code)
+        
+        # Прячем переменные вида /слово
+        matches = re.findall(r'\/[^\/]+', text)
+        for match in matches:
+            code = save_replace(int(ord(match[1])), 
+                                match, False)
+            text_code = f"{sp_sym}{code}{sp_sym}"
+            text = text.replace(match, text_code)
+        
+        # Прячем переменные вида <b>word</b>
+        matches = re.findall(r'<\s*[^<>]+\s*>', text)
+        for match in matches:
+            code = save_replace(int(ord(match[1])),
+                    match, True)
+            text_code = f"{sp_sym}{code}{sp_sym}"
+            text = text.replace(match, text_code)
+
+        # Прячем переменные вида *Слово*
+        for one_repl in one_replace_s:
+            tx = fr'\{one_repl}\s*.*?\s*\{one_repl}'
+            matches = re.findall(tx, text)
+            for match in matches:
+                code = save_replace(int(ord(match[1])),
+                                    match, True)
+                text_code = f"{sp_sym}{code}{sp_sym}"
+                text = text.replace(match, text_code)
+
     return text
 
 
-def restore_specials(text):
+def restore_specials(text, to_lang):
     """
     Восстанавливает спецсимволы и эмодзи после перевода.
     """
     if not isinstance(text, str):
         return text
+
     for key, item in replace_words.items():
-        text = text.replace(key, item['text'])
-    # Восстановление эмодзи (пример: #EMOJI128512# -> 😀)
+        text = item['text']
+        if item['translate']:
+            text = translate_text(item['text'], to_lang)
+        text = text.replace(key, text)
+
+    for code, item in cash_replaces.items():
+        text = item['text']
+        if item['translate']:
+            text = translate_text(item['text'], to_lang)
+
+        text = text.replace(f"{sp_sym}{code}{sp_sym}", 
+                            text)
+
+    # Восстановление эмодзи (пример: #128512# -> 😀)
     # (реализация зависит от вашего подхода к кодированию эмодзи)
     return text
 
@@ -162,13 +233,30 @@ def translate_text(text, to_lang, trans=zero_translator):
     if not isinstance(text, str) or not text.strip():
         return text
     safe_text = replace_specials(text)
+
     try:
-        translated = translators.translate_text(safe_text, from_language=main_code, to_language=to_lang, translator=trans)
-        print(safe_text, '->', translated)
+        lang = detect(safe_text)
+        langs = detect_langs(safe_text)
     except Exception as e:
-        print(f"Ошибка перевода: {text} - {str(e)}")
+        lang = None
+        langs = []
+
+    if lang in ['en', 'it'] and len(langs) == 1:
         translated = safe_text
-    return restore_specials(translated)
+        print(f"Не переводим: {text} - {lang}")
+
+    elif lang:
+        try:
+            translated = translators.translate_text(safe_text, from_language=main_code, to_language=to_lang, translator=trans)
+            print(safe_text, '->', translated, '\n', lang, '->', to_lang)
+        except Exception as e:
+            print(f"Ошибка перевода: {text} - {str(e)}")
+            translated = safe_text
+
+    else:
+        translated = safe_text
+        print(f"Не переведено -> {text}")
+    return restore_specials(translated, to_lang)
 
 
 def read_json(path):
@@ -273,10 +361,28 @@ def main():
 
             # 6. Перевести новые/изменённые ключи
             def update_callback(path, value):
-                if path in new_keys or path in changed_keys:
+                # Проверяем, начинается ли path с любого из new_keys или changed_keys
+                def is_prefix_in_keys(keys, path):
+                    for key in keys:
+                        if path == key or path.startswith(f"{key}."):
+                            return True
+                    return False
+
+                if is_prefix_in_keys(new_keys, path) or is_prefix_in_keys(changed_keys, path):
                     if isinstance(value, str):
-                        translated = translate_text(value, lang)
+                        path_set = set(path.split('.'))
+                        ignore_set = set(ignore_translate_keys)
+
+                        if path_set & ignore_set:
+                            translated = value  # Не переводим, если есть совпадение
+                            print(f"Пропускаем перевод для {path}: {value}")
+                        else:
+                            translated = translate_text(value, lang)
+
                         set_by_path(lang_data, path, translated)
+                        set_by_path(damp_data, path, value)
+                    else:
+                        set_by_path(lang_data, path, value)
                         set_by_path(damp_data, path, value)
             walk_keys(main_data, update_callback)
 

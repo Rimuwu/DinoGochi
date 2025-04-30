@@ -1,11 +1,32 @@
 {
     "en": {
-        "farewell": "До свидания",
-        "greeting": "Привет",
-        "welcome": "Добро пожаловать",
+        "farewell": "NOTEXT",
+        "greeting": "NOTEXT",
+        "welcome": "NOTEXT",
         "me": {
-            "name": "Имя",
-            "age": "Возраст"
-        }
+            "3r": "NOTEXT",
+            "name": "NOTEXT",
+            "ff": {
+                "name": "NOTEXT",
+                "age": "NOTEXT",
+                "f1": "NOTEXT"
+            },
+            "age": "NOTEXT",
+            "f1": "NOTEXT"
+        },
+        "fff": "NOTEXT",
+        "fdd": "NOTEXT",
+        "test": "NOTEXT",
+        "w": "NOTEXT",
+        "2f": "NOTEXT",
+        "ffw": "NOTEXT",
+        "fddw": "NOTEXT",
+        "callback": "NOTEXT",
+        "meow": "NOTEXT",
+        "meow2": "NOTEXT",
+        "meow3": "NOTEXT",
+        "meow4": "NOTEXT",
+        "meow5": "NOTEXT",
+        "meow6": "NOTEXT"
     }
 }
