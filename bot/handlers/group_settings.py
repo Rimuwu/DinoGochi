@@ -146,7 +146,7 @@ async def set_delete_time(message: Message):
             num = data[1]
             if num.isdigit():
 
-                if int(num) >= 0 and int(num) < 240:
+                if int(num) >= 0 and int(num) <= 240:
                     await groups.update_one({"group_id": chatid},
                                         {"$set": {"delete_message": int(num)}}, 
                                         comment='set_delete_time')

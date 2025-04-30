@@ -407,7 +407,7 @@ async def max_dino_col(lvl: int, user_id: int=0, premium_st: bool=False):
     }
 
     if premium_st: col['standart']['limit'] += 1
-    col['standart']['limit'] += ((lvl // 20 + 1) - lvl // 80)
+    col['standart']['limit'] += ((lvl // 20 + 1) - lvl // 100)
 
     if user_id:
         dinos = await dino_owners.find({'owner_id': user_id}, comment='max_dino_col_dinos')
