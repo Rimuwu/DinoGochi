@@ -18,7 +18,7 @@
             "settings_menu": "🔧 Settings",
             "friends_menu": "👥 Friends",
             "actions_menu": "🕹 Actions",
-            "profile_menu": "👁‍🗨 Profile",
+            "profile_menu": "👁 🗨 Profile",
             "map-bt": "🗺 Map",
             "map": {
                 "market": "🛒 Market",
@@ -111,7 +111,7 @@
                 "progress": "🌯 Progress"
             },
             "farm": {
-                "sow": "🧑‍🌾 Sow",
+                "sow": "🧑 🌾 Sow",
                 "plant_care": "⛏️ Plant care",
                 "plants": "🎋 Plants",
                 "stop_work": "💥 Return from the fields"
@@ -635,7 +635,7 @@
                 "description": "Recipe for creating sushi. They say it's a perfectly balanced meal"
             },
             "hot_chocolate": {
-                "name": "☕️ Hot Chocolate"
+                "name": "☕️ Hot chocolate"
             },
             "hot_chocolate_recipe": {
                 "name": "📜 Hot Chocolate Recipe",
@@ -947,7 +947,7 @@
                 "description": "Pillow recipe"
             },
             "blanket": {
-                "name": "❤️‍🩹 Blanket",
+                "name": "❤️ 🩹 Blanket",
                 "description": "After the sleep ends, the dinosaur gains a temporary health boost."
             },
             "blanket_recipe": {
@@ -994,58 +994,58 @@
                 ]
             },
             "incubation_ready": {
-                "text": "🦖 {user_name}, your dinosaur has hatched! 🎉",
+                "text": "🦖 | {user_name}, your dinosaur has hatched! 🎉",
                 "inline_menu": [
                     "dino_profile",
                     "dino_rename"
                 ]
             },
             "donation": {
-                "reward": "🦕 Payment received! \n\n❤ We are grateful to you for supporting the bot, we promise to continue to try for you! Free the dinosaurs!",
+                "reward": "🦕 Payment received! \n\n ❤ We are grateful to you for supporting the bot, we promise to continue to try for you! Free the dinosaurs!",
                 "subscription_end_day": "❤ | Hey! Your subscription ends in {end_text}, if you like the subscription features, then pay for the next month!",
                 "subscription_end": "❤ | Your subscription is over, thank you for being with us!",
-                "pre_check_error": "🐱‍🐉 Something went wrong, try again in a few minutes."
+                "pre_check_error": "🐱 🐉 Something went wrong, try again in a few minutes."
             },
             "lvl_up": {
-                "standart": "🎉 |118, your level is up! ({lvl})",
-                "20": "🎉 |117, your level is up! ({lvl})\n✨ | Now you have +1 dinosaur slot!",
-                "40": "🎉 |118, your level is up! ({lvl})\n✨ | Now you have +1 dinosaur slot!",
-                "50": "🎉 |119, your level is up! ({lvl})\n🎴 | You're halfway to the max level, keep it up!",
-                "60": "🎉 |120, your level is up! ({lvl})\n✨ | Now you have +1 dinosaur slot!",
-                "80": "🎉 |121, your level is up! ({lvl})\n✨ | Now you have +1 dinosaur slot!",
-                "100": "🎉 |122, your level is up! ({lvl})\n🎴 | You have reached the maximum level!"
+                "standart": "🎉 | {user_name}, your level is up! ({lvl})",
+                "20": "🎉 | {user_name}, your level is up! ({lvl})\n✨ | Now you have +1 dinosaur slot!",
+                "40": "🎉 | {user_name}, your level is up! ({lvl})\n✨ | Now you have +1 dinosaur slot!",
+                "50": "🎉 | {user_name}, your level is up! ({lvl})\n🎴 | You're halfway to the max level, keep it up!",
+                "60": "🎉 | {user_name}, your level is up! ({lvl})\n✨ | Now you have +1 dinosaur slot!",
+                "80": "🎉 | {user_name}, your level is up! ({lvl})\n✨ | Now you have +1 dinosaur slot!",
+                "100": "🎉 | {user_name}, your level is up! ({lvl})\n🎴 | You have reached the maximum level!"
             },
             "send_request": {
-                "text": "💞 | You've received a friend request from {user_name}, check the requests!",
+                "text": "💞 | You have received an offer of friendship from {user_name}, check the requests!",
                 "inline_menu": "requests"
             },
             "referal_award": {
-                "text": "🎁 | Your Friend {user_name} Reached level {lvl}, thank you so much for inviting your friends, you were rewarded with {item_name}!"
+                "text": "🎁 | Your friend {user_name} has reached level {lvl}, thank you so much for inviting your friends, you were rewarded with {item_name}!"
             },
             "sleep_end": {
-                "text": "🦕 | {dino_name} I woke up and was full of energy. \n⌛ | The dinosaur slept {time_end}.",
+                "text": "🦕 | {dino_name} I woke up and was full of energy. \n⌛ | Dinosaur slept {time_end}.",
                 "inline_menu": "dino_profile"
             },
             "game_end": {
                 "replics": [
-                    "🎮 *Hello!*: *{owner_name}*, i stopped playing!",
-                    "🎮 *{dino_name}*: *{owner_name}*, i've played!",
-                    "🎮 *{dino_name}*: *{owner_name}*, i've had enough!"
+                    "🎮 *{dino_name}*: *{owner_name}*, i stopped playing!",
+                    "🎮 *{dino_name}*: *{owner_name}*, i played!",
+                    "🎮 *{dino_name}*: *{owner_name}*, i've had enough of playing!"
                 ],
                 "inline_menu": "dino_profile"
             },
             "end_collecting": {
-                "text": "🍱 | {dino_name} finished collecting food. \n\n🍡 | Collected items: {items_names}",
+                "text": "🍱 | {dino_name} finished gathering food. \n\n🍡 | Collected items: {items_names}",
                 "inline_menu": "dino_profile"
             },
             "broke_accessory": {
-                "text": "💥 | Active Item {item_name} dinosaur {dino_name} Broke.",
+                "text": "💥 | Dinosaur Active Item {item_name} {dino_name} broke.",
                 "inline_menu": "dino_profile"
             },
             "need_heal": {
                 "replics": [
                     "💔 *{dino_name}*: Cough, cough, *{owner_name}*, I'm feeling really bad... ({unit}%)",
-                    "💔 *{dino_name}*: *140*, i feel very bad, help me... ({unit}%)",
+                    "💔 *{dino_name}*: *{owner_name}*, i feel very bad, help me... ({unit}%)",
                     "💔 *{dino_name}*: *{owner_name}*, i think i need help, i feel very bad... ({unit}%)"
                 ],
                 "inline_menu": "rescue"
@@ -1053,8 +1053,8 @@
             "need_eat": {
                 "replics": [
                     "🥕 *{dino_name}*: *{owner_name}*, i'm hungry, what will i try today? ({unit}%)",
-                    "🥕 *{dino_name}*: *{owner_name}*, i am hungry! ({unit}%)",
-                    "🥕 *The provided text does not contain any Russian sentences to translate.*: Feed me, *{owner_name}*. ({unit}%)"
+                    "🥕 *{dino_name}*: *{owner_name}*, i'm hungry! ({unit}%)",
+                    "🥕 *{dino_name}*: Feed me, *{owner_name}*. ({unit}%)"
                 ],
                 "inline_menu": "feed_start"
             },
@@ -1069,7 +1069,7 @@
             "need_game": {
                 "replics": [
                     "🎮 *{dino_name}*: *{owner_name}*, i haven't played for so long... ({unit}%)",
-                    "🎮 *184*: *{owner_name}*, play with me! ({unit}%)",
+                    "🎮 *{dino_name}*: *{owner_name}*, play with me! ({unit}%)",
                     "🎮 *{dino_name}*: *{owner_name}*, i wish i could play now... ({unit}%)"
                 ],
                 "inline_menu": "dino_profile"
@@ -1106,31 +1106,31 @@
             },
             "inspiration": {
                 "replics": [
-                    "😀 *{dino_name}*: *{owner_name}*, i feel so great! \n\n_239_",
+                    "😀 *{dino_name}*: *{owner_name}*, i feel so great! \n\n_{message}_",
                     "😀 *{dino_name}*: *{owner_name}*, i'm in a great mood, now i'm ready for adventure! \n\n_{message}_",
-                    "😀 *{dino_name}*: *{owner_name}*, i'm ready to move mountains! \n\n_251_"
+                    "😀 *{dino_name}*: *{owner_name}*, i'm ready to move mountains! \n\n_{message}_"
                 ],
                 "inline_menu": "dino_profile"
             },
-            "product_delete": "🍟 The product ({preview}) has been removed from the market.",
+            "product_delete": "🍟 Product ({preview}) has been removed from the market.",
             "product_buy": {
-                "text": "🍜 Product ({preview}) was purchased {col} times in the amount of {price} 🪙, by user {name}",
+                "text": "🍜 The product ({preview}) was bought {col} times for the amount of {price} 🪙 , by user {name}",
                 "inline_menu": "product_info"
             },
             "items_items_buy": {
-                "text": "🍜 Product ({preview}) was purchased by {col} times, by {name}",
+                "text": "🍜 The product ({preview}) has been purchased {col} times, by {name}",
                 "inline_menu": "product_info"
             },
             "kindergarten": {
-                "text": "🎈 | {dino_name} i returned from kindergarten.",
+                "text": "🎈 | {dino_name} returned from kindergarten.",
                 "inline_menu": "dino_profile"
             },
             "item_crafted": {
-                "standart": "🧨 Crafting items is complete. \n🪀 The following were created: {items}",
-                "bonus": "🧨 Crafting items is complete. \n🪀 The following were created: {items}\n_🪈 Thanks to his high skills, the dinosaur was able to craft an additional item from surplus materials!_"
+                "standart": "🧨 Crafting items is complete. \n 🪀 Created: {items}",
+                "bonus": "🧨 Crafting items is complete. \n 🪀 Created: {items}\n_🪈 Thanks to his high skills, the dinosaur was able to craft an additional item from surplus materials!_"
             },
             "gym_end": {
-                "text": "🥏 | {dino_name} I returned from the gym. The dinosaur has been training long and hard, now he feels much stronger! (+{add_unit})",
+                "text": "🥏 | {dino_name} returned from the gym. The dinosaur has been training long and hard, now he feels much stronger! (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "library_end": {
@@ -1142,27 +1142,27 @@
                 "inline_menu": "dino_profile"
             },
             "park_end": {
-                "text": "🌳 | {dino_name} I returned from a walk in the park. The dinosaur learned a lot about its relatives and memorized new words! (+{add_unit})",
+                "text": "🌳 | {dino_name} returned from a walk in the park. The dinosaur learned a lot about its relatives and memorized new words! (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "gym_end_negative": {
-                "text": "🥏 | {dino_name} I returned from the gym. \n❗ The training was done incorrectly, so the stats were reduced. (-50% of purchased) (+{add_unit})",
+                "text": "🥏 | {dino_name} returned from the gym. \n ❗ The training was done incorrectly, so the stats were reduced. (-50% of purchased) (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "library_end_negative": {
-                "text": "📖 | {dino_name} returned from the library. \n❗ The training was done incorrectly, so the stats were reduced. (-50% of purchased) (+{add_unit})",
+                "text": "📖 | {dino_name} returned from the library. \n ❗ The training was done incorrectly, so the stats were reduced. (-50% of purchased) (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "swimming_pool_end_negative": {
-                "text": "🌊 | {dino_name} returned from the pool. \n❗ The training was done incorrectly, so the stats were reduced. (-50% of purchased) (+{add_unit})",
+                "text": "🌊 | {dino_name} returned from the pool. \n ❗ The training was done incorrectly, so the stats were reduced. (-50% of purchased) (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "park_end_negative": {
-                "text": "🌳 | {dino_name} I returned from a walk in the park. \n❗ The training was done incorrectly, so the stats were reduced. (-50% of purchased) (+{add_unit})",
+                "text": "🌳 | {dino_name} returned from a walk in the park. \n ❗ The training was done incorrectly, so the stats were reduced. (-50% of purchased) (+{add_unit})",
                 "inline_menu": "dino_profile"
             },
             "craft_end": {
-                "text": "⛏️ | {dino_name} returned from the workshop! You can check active crafts by commanding /craftlist",
+                "text": "⛏️ | {dino_name} Back from the workshop! You can check active crafts by commanding /craftlist",
                 "inline_menu": "dino_profile"
             },
             "bank_end": {
@@ -1170,7 +1170,7 @@
                 "inline_menu": "dino_profile"
             },
             "mine_end": {
-                "text": "⛏️ | {dino_name} returned from the mine! Here are the results of his work: {results}",
+                "text": "⛏️ | {dino_name} Returned from the mine! Here are the results of his work: {results}",
                 "inline_menu": "dino_profile"
             },
             "sawmill_end": {
@@ -1185,20 +1185,20 @@
             "downgrade": "💥 | Due to his bad mood, the dinosaur threw the object very hard. This item could be an accessory."
         },
         "inspiration": {
-            "game": "🥭 | Due to the great mood, the dinosaur receives the x{bonus} to the mastery of the game! 💚 Send a dinosaur to play to use inspiration!",
-            "collecting": "🍍 | Due to the great mood, the dinosaur receives the x{bonus} to the speed of gathering food! 💚 Send a dinosaur to collect food to use inspiration!",
-            "journey": "🌽 | Due to the great mood, the dinosaur receives the x{bonus} to the number of events in the journey! 💚 Send a dinosaur on a journey to use inspiration!",
-            "sleep": "🍏 | Due to the great mood, the dinosaur receives the x{bonus} to the quality of sleep! 💚 Send the dinosaur to sleep to use inspiration!",
-            "craft": "🥝 | Due to the great mood, the dinosaur receives the x{bonus} crafting speed! 💚 Send a dinosaur to craft an item to use inspiration!",
-            "farm": "🥬 | Due to the great mood, the dinosaur receives the x{bonus} to the skill of plant care! 💚 Send a dinosaur to the farm to use inspiration!",
-            "mine": "🍒 | Due to the great mood, the dinosaur receives the x{bonus} to the speed of work in the mine! 💚 Send the dinosaur to the mine to use inspiration!",
-            "bank": "🥭 | Due to the great mood, the dinosaur receives the x{bonus} to the quality of work in the bank! 💚 Send the dinosaur to the bank to use inspiration!",
-            "sawmill": "🌽 | Due to the great mood, the dinosaur receives the x{bonus} to the speed of work in the sawmill! 💚 Send the dinosaur to the sawmill to use inspiration!",
-            "gym": "🌶 | Due to the great mood, the dinosaur receives the x{bonus} to the speed of increasing strength! 💚 Send a dinosaur to the hall to use inspiration!",
-            "library": "🍇 | Due to the great mood, the dinosaur receives the x{bonus} to the speed of increasing intelligence! 💚 Send a dinosaur to the library to use inspiration!",
-            "park": "🥕 | Due to the great mood, the dinosaur receives the x{bonus} to the speed of Charisma leveling! 💚 Send a dinosaur to the park to use inspiration!",
-            "swimming_pool": "🍎 | Due to the great mood, the dinosaur receives the x{bonus} to the speed of leveling agility! 💚 Send the dinosaur to the pool to use inspiration!",
-            "exp_boost": "🍌 | Due to the great mood, the dinosaur receives the x{bonus} to gaining experience!"
+            "game": "🥭 | Due to the great mood, the dinosaur receives an x{bonus} bonus to the skill of the game! 💚 Send a dinosaur to play to use inspiration!",
+            "collecting": "🍍 | Due to the great mood, the dinosaur receives an x{bonus} bonus to the speed of gathering food! 💚 Send a dinosaur to collect food to use inspiration!",
+            "journey": "🌽 | Due to the great mood, the dinosaur receives an x{bonus} bonus to the number of events in the journey! 💚 Send a dinosaur on a journey to use inspiration!",
+            "sleep": "🍏 | Due to the great mood, the dinosaur receives a bonus of x{bonus} to the quality of sleep! 💚 Send the dinosaur to sleep to use inspiration!",
+            "craft": "🥝 | Due to the great mood, the dinosaur receives an x{bonus} bonus to the crafting speed! 💚 Send a dinosaur to craft an item to use inspiration!",
+            "farm": "🥬 | Due to the great mood, the dinosaur receives a bonus x{bonus} to the skill of caring for plants! 💚 Send a dinosaur to the farm to use inspiration!",
+            "mine": "🍒 | Due to the great mood, the dinosaur receives an x{bonus} bonus to the speed of working in the mine! 💚 Send the dinosaur to the mine to use inspiration!",
+            "bank": "🥭 | Due to the great mood, the dinosaur receives an x{bonus} bonus to the quality of work in the bank! 💚 Send the dinosaur to the bank to use inspiration!",
+            "sawmill": "🌽 | Due to the great mood, the dinosaur receives an x{bonus} bonus to the speed of work in the sawmill! 💚 Send the dinosaur to the sawmill to use inspiration!",
+            "gym": "🌶 | Due to the great mood, the dinosaur receives an x{bonus} bonus to the speed of increasing strength! 💚 Send a dinosaur to the hall to use inspiration!",
+            "library": "🍇 | Due to the great mood, the dinosaur receives an x{bonus} bonus to the speed of increasing intelligence! 💚 Send a dinosaur to the library to use inspiration!",
+            "park": "🥕 | Due to the great mood, the dinosaur receives a bonus of x{bonus} to the speed of leveling charisma! 💚 Send a dinosaur to the park to use inspiration!",
+            "swimming_pool": "🍎 | Due to the great mood, the dinosaur receives a bonus of x{bonus} to the speed of leveling agility! 💚 Send the dinosaur to the pool to use inspiration!",
+            "exp_boost": "🍌 | Due to the great mood, the dinosaur receives an x{bonus} bonus to gaining experience!"
         },
         "back_text": {
             "main_menu": "🦕 | Return to the main menu",
@@ -1214,23 +1214,23 @@
             "actions": "🕹 | The action bar is open!",
             "profile": "👁‍🗨 | The profile panel is open!",
             "friends": "👥 | The Friends Panel is open!",
-            "settings": "🔧 | Settings menu activated\n\n🔔 Daily Notifications: {notif}\n🎞 Profile Mode: {profile_view}\n📚 Inventory Mode: {inv_view}",
+            "settings": "🔧 | Settings Menu Activated\n\n 🔔 Daily Notifications: {notif}\n 🎞 Profile Mode: {profile_view}\n 📚 Inventory Mode: {inv_view}",
             "market": {
                 "info": "🛒 | The Market Panel is open! \n_Promoted products may appear here_",
                 "products": "📯 | And here are a few items that you might find useful!"
             },
             "dino_tavern": {
-                "info": "🍺 You've entered the Dino Tavern! \n\n📜 While in the tavern, you can get a quest or hear useful information!",
+                "info": "🍺 You've entered the Dino Tavern! \n\n 📜 While in the tavern, you can get a quest or hear useful information!",
                 "friends": "🍺 Tavern Friends: Search the Crowd...",
                 "friends2": "🍺 Friends in the tavern:",
                 "tavern_col": "🔮 Total in the tavern: {col}",
-                "went": "🍺 {name} went into the tavern...",
-                "button": "🍻 Buy Ale for 150 🪙"
+                "went": "🍺 {name} i went into the tavern...",
+                "button": "🍻 Buy ale for 150 🪙"
             },
-            "about": "🤖 | Hello! I'm @{bot_name}, and here's some information about me! \n\n🗝️ | Statistics: 👥 <code>{col_u}</code> 🦕 <code>{col_d}</code> 🔮 <code>{col_i}</code>\n<i>{update_time} Back. </i>",
-            "referal": "🤍 | Redirection to the referral system menu! \n\n💜 | *Upon reaching level {lvl}* your friend, you will get {award_text}! \n\n❤️ | A friend will receive a bonus in the amount of: {coins} coins, {items}",
+            "about": "🤖 | Hello! I'm @{bot_name}, and here's some information about me! \n\n🗝️ | Statistics: 👥 <code>{col_u}</code> 🦕 <code>{col_d}</code> 🔮 <code>{col_i}</code>\n<i>{update_time} ago. </i>",
+            "referal": "🤍 | Redirection to the referral system menu! \n\n💜 | *Upon reaching level {lvl}* your friend, you will receive {award_text}! \n\n❤️ | A friend will receive a bonus of: {coins} coins, {items}",
             "referal_separator": "or",
-            "settings2": "🔧 | Settings Menu (Page 2)\n\n🦕 Address: {my_name}",
+            "settings2": "🔧 | Settings Menu (Page 2)\n\n 🦕 Handling: {my_name}",
             "seller": "🎇 Go to the store management menu",
             "backgrounds_menu": "🎩 | The background management menu is open!",
             "live_actions": "🌸 | Go to the life activities menu!",
@@ -1238,7 +1238,7 @@
             "skills_actions": "📍 | Go to the skill leveling menu! \n\n💪 | Leveling up skills is a difficult and long process, when sending a dinosaur to training, make sure that he is full, and also has enough strength to train! \n\n❗ | Keep in mind that the dinosaur does not return from training on its own without consequences, you must do it. Keep an eye on the condition of the dinosaur and follow the recommendations!",
             "speed_actions": "⌚ | Quick actions - works instantly, but can be used again after a while."
         },
-        "no_text_key": "❌ Text matching key {key} Not detected, contact the developer @AS1AW!",
+        "no_text_key": "❌ The text corresponding to key {key} is not found, contact the developer @AS1AW!",
         "edit_dino_button": {
             "edit": "🦕 | Select an active dinosaur ->",
             "notfouned": "❌ | Dinosaur not found",
@@ -1296,30 +1296,1451 @@
         },
         "states": {
             "ChooseDino": {
-                "error_not_dino": "❓ | Dinosaurs are not a number, text or emojis, they are a living creature, try again. Or type /cancel for cancellation."
+                "error_not_dino": "❓ | Dinosaurs are not a number, text or emojis, they are a living creature, try again. Or enter /cancel to cancel."
             },
             "ChooseInt": {
-                "error_not_int": "❓ | After conducting a structural analysis of the data, we determined that you did not enter a number, try again. Or type /cancel for cancellation.",
-                "error_max_int": "❓ | The specified number is greater than the maximum ({number} > {max}), try again. Or type /cancel for cancellation.",
-                "error_min_int": "❓ | The specified number is less than the minimum ({number} < {min}), try again. Or type /cancel for cancellation."
+                "error_not_int": "❓ | After conducting a structural analysis of the data, we determined that you did not enter a number, try again. Or enter /cancel to cancel.",
+                "error_max_int": "❓ | The specified number is greater than the maximum ({number} > {max}), try again. Or enter /cancel to cancel.",
+                "error_min_int": "❓ | The specified number is less than the minimum ({number} < {min}), try again. Or enter /cancel to cancel."
             },
             "ChooseString": {
-                "error_max_len": "❓ | The message length is longer than the allowed length ({number} > {max}), try again. Or type /cancel for cancellation.",
-                "error_min_len": "❓ | The message length is less than the allowed length ({number} < {min}), try again. Or type /cancel for cancellation."
+                "error_max_len": "❓ | The message length is longer than the allowed length ({number} > {max}), try again. Or enter /cancel to cancel.",
+                "error_min_len": "❓ | The message length is less than the allowed length ({number} < {min}), try again. Or enter /cancel to cancel."
             },
             "ChooseConfirm": {
-                "error_not_confirm": "❓ | Select one of the options provided. Or type /cancel for cancellation."
+                "error_not_confirm": "❓ | Select one of the options provided. Or enter /cancel to cancel."
             },
             "ChooseOption": {
-                "error_not_option": "❓ | Are you trying to go beyond the world? It is not worth it. Choose from the available options. Or type /cancel for cancellation."
+                "error_not_option": "❓ | Are you trying to go beyond the world? It is not worth it. Choose from the available options. Or enter /cancel to cancel."
             },
             "ChooseTime": {
-                "zero_seconds": "❓ | You need to enter a message in time format, use the memo - /string_to_sec click\nOr type /cancel for cancellation.",
-                "error_max_int": "❓ | The time you specified is longer than the maximum ({number} > {max}), try again. Or type /cancel for cancellation.",
-                "error_min_int": "❓ | The time you specified is less than the minimum time ({number} < |341), try again. Or type /cancel for cancellation."
+                "zero_seconds": "❓ | It is required to enter a message in time format, use the memo - /string_to_sec click\nOr enter /cancel to cancel.",
+                "error_max_int": "❓ | The time you specified is longer than the maximum ({number} > {max}), try again. Or enter /cancel to cancel.",
+                "error_min_int": "❓ | The time you specified is less than the minimum ({number} < {min}), try again. Or enter /cancel to cancel."
             }
         },
-        "no_use_interface": "❌ While in a dungeon, use the dungeon interface! \n\nIf there is an error and you leave the dungeon, write /check_dinos",
-        "no_account": "You do not have a registered account in the bot, please go to the bot and register for access to this command."
+        "no_use_interface": "❌ While in a dungeon, use the dungeon interface! \n\n If there is a mistake and you leave the dungeon, write down /check_dinos",
+        "no_account": "You do not have a registered account in the bot, please go to the bot and register for access to this command.",
+        "add_me": "❤ | Everyone can send a friend request <a href='tg://user?id={userid}'>{username}</a> by clicking on the button below!",
+        "in_development": "This feature is in development, stay tuned to find out when the team will start working!",
+        "start_command": {
+            "referal": "🔗 I noticed a click on an up-to-date referral link!",
+            "first_message": "🦖 | Hey <b>{username}</b>, glad to see you! \n I'm a little game bot like Tamagotchi, only with dinosaurs! \n\n<b>🥚 | What is Tamagotchi? </b>\n Tamagotchi is a game with a virtual pet that needs to be fed, cared for, played, etc. \n\n<b>🗻 | What kind of bot? </b>\n In this bot, you have to take care of your pet, travel, conquer the dungeon and fully immerse yourself in this RPG world! \n\n<b>🎮 | How do I start playing? </b>\nClick the <b>🍡 Start Playing button</b>! \n\n<b>❤ | Get ready to pay attention to your dinosaur, happy playing! </b>",
+            "request_subscribe": {
+                "text": "📜 | Dear User! \n\n🎭 | The bot has an official telegram channel and a group, go to the group to find a topic for conversation or ask questions, as well as subscribe to the channel to receive interesting bonuses and news! \n\n❤ | It is not necessary, but we will be very grateful to you! \n\n⏳ | Wait a bit, an image will be generated now...",
+                "buttons": [
+                    "🦖 | Subscribe",
+                    "🔮 | Join"
+                ]
+            },
+            "start_game": "🥚 | Choose a dinosaur egg! \n\n🦖 | No matter which egg you choose, you will get a cute dinosaur.",
+            "end_answer": {
+                "edited_text": "🥚 | Congratulations, your egg is incubating!",
+                "send_text": "🧸 | Congratulations, you have your first dinosaur! \n\n🍱 | At the moment, the egg is incubating, and in `{inc_time}` it will hatch into a dinosaur! \n\n🎋 | To see the latest information about the egg, press the button `129430 Dinosaur`! \n\n📔 | While you wait, study the interface, read the FAQ, customize the bot for yourself!",
+                "faq_button": "📖 Read FAQ",
+                "main_menu": "🦕 The main menu is open!"
+            }
+        },
+        "help_command": {
+            "all": "🥡 Command Reference",
+            "for_dm": "🧤 Personal Chat",
+            "for_group": "🍇 For groups",
+            "for_dev": "🧧 For developers",
+            "commands": {
+                "help": {
+                    "short": "List of all bot commands",
+                    "long": "🥏 List of all commands in the bot.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": true
+                },
+                "cancel": {
+                    "short": "Canceling a state",
+                    "long": "🛡️ Cancel any selection state. \n× 🪀 Example: You are creating a product for the market to undo it at any stage - use this command.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "start": {
+                    "short": "Start Bot / Main Menu",
+                    "long": "💥 The first thing the bot sees from you is start, but in other cases, you can go to the main menu with this command.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "profile": {
+                    "short": "User Profile",
+                    "long": "🎋 An alternative to the information command, a general summary of the user. When replying to another user's message, it will display information about him.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": true
+                },
+                "add_me": {
+                    "short": "Add me!",
+                    "long": "🎃 A command to quickly add friends through a group.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
+                },
+                "promo": {
+                    "short": "Redeem Promo Code",
+                    "long": "⛏️ Follow the news in the channel to get promo codes more often!",
+                    "arguments": "(code)",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "super": {
+                    "short": "Super Coin Menu",
+                    "long": "🧺 Watch ads - get super coins - exchange them in the premium store!",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "timer": {
+                    "short": "Converts seconds to time",
+                    "long": "⏳ Enter the number of seconds that will be converted to time in the output.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "string_to_sec": {
+                    "short": "Prompt for entering the time",
+                    "long": "🪵 Prompt for entering the time in places such as creating an auction.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "pushinfo": {
+                    "short": "Tooltip for publishing products in the channel",
+                    "long": "🪵 Prompt for entering the time in places such as creating an auction.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "delete_push": {
+                    "short": "Delete a product notification",
+                    "long": "🪵 Delete a notification in a channel.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "craftlist": {
+                    "short": "List of craftable items",
+                    "long": "🎀 List of craftable items",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "create_tracking": {
+                    "short": "Creating a Track Link",
+                    "long": "💥 Creating a Track Link to Track Login Through /start",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "tracking": {
+                    "short": "List of Track Links",
+                    "long": "🛡️ List of track links tracked through /start",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "create_promo": {
+                    "short": "Creating a promo code",
+                    "long": "🏦 Creating a promo code",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "promos": {
+                    "short": "List and manage promo codes",
+                    "long": "🛡️ List and management of promo codes",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "link_promo": {
+                    "short": "Linking the promo code button",
+                    "long": "🛡️ To bind the promo code button to a message, you need to respond to the message with a command, and the bot must also be in the channel.",
+                    "arguments": "(promo) (name)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "add_premium": {
+                    "short": "Issuance of a premium subscription",
+                    "long": "🛡️ Issuance of a premium time subscription\n× 0 - issue a premium to yourself, str_time - time format. The second argument is that if it is empty, then forever, otherwise for a while.",
+                    "arguments": "(0/userid) (/str_time)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "copy_m": {
+                    "short": "Language Newsletter",
+                    "long": "🛡️ Argument - language code (ru en id)",
+                    "arguments": "(lang_code)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "eval": {
+                    "short": "Code execution",
+                    "long": "🛡️ Code Execution",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "get_username": {
+                    "short": "Returning the User class by userid",
+                    "long": "🛡️ Returning the User class by userid",
+                    "arguments": "(userid)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "add_item": {
+                    "short": "Adding Items",
+                    "long": "🛡️ Adding Items",
+                    "arguments": "(userid) (item_id) (col)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "create_company": {
+                    "short": "Set up a company",
+                    "long": "🛡️ Create an advertising campaign",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "companies": {
+                    "short": "View Companies",
+                    "long": "🛡️ Viewing advertising campaigns",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "group_settings": {
+                    "short": "Group Settings",
+                    "long": "🌐 Manage group settings. Setting the working topic, deletion time.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
+                }
+            }
+        },
+        "additem_command": {
+            "err": "Input format:\nitem id\nquantity\nuser id",
+            "user": "💎 | Yo, the system was generous and gave you {item}",
+            "dev": "💚 | Command completed\n🧨 | Item {item}\n🎭 | User {username}\n🌐 | Status Messages {message_status}"
+        },
+        "promo_commands": {
+            "ui": {
+                "text": "🔮 Promo Code: `{code}`\n\nActivity: {status}\nUses: {col}\nEnding in: {txt_time}\nCoins: {coins}\nItems: {items}",
+                "buttons": [
+                    "9989 Activate",
+                    "🗑 Delete",
+                    "🎋 Use"
+                ]
+            },
+            "link": {
+                "button_name": "🥙 Redeem promo code!",
+                "create": "The button is created!",
+                "not_found": "No promo code found!"
+            },
+            "unlink": {
+                "delete": "Button removed!",
+                "not_found": "Message not found!"
+            },
+            "promo_open": "♾ Select the code to view the information",
+            "activate": "🎁 | The promo code is activated! \n\n",
+            "coins": "🎟 | Coins: {coins}\n",
+            "items": "📦 | Items: {items}",
+            "already_use": "🧸 | You've already used this promo code!",
+            "time_end": "🎨 | The time for this promo code is up...",
+            "max_col": "🧨 | The promo code has already been used the maximum number of times!",
+            "deactivated": "✨ | This promo code is currently deactivated!",
+            "not_found": "🎍 | Promo code not found, try entering it again!",
+            "no_user": "🎩 | You are not registered in the bot!"
+        },
+        "dungeon_err": "Cleanup completed.",
+        "start_game": "🥚 | Choose a dinosaur egg!",
+        "command_dino_prof": "🥚 | You don't have any dinosaurs at the moment, please check your inventory. You should have an egg in your inventory that you can incubate!",
+        "faq": {
+            "text": "🍿 | Hey, our bot is quite large, and there is a lot of information. Here are a couple of categories for you, choose what information you want to get >",
+            "inline_buttons": {
+                "general": "127880 General",
+                "game_point": "♾️ What the game is about",
+                "null1": "",
+                "eat": "🥙 Food",
+                "dino_height": "9201 Height",
+                "dino_mood": "😃 Mood",
+                "accessories": "🧵 Accessories",
+                "kindergarten": "🪀 Kindergarten",
+                "dino_skills": "9889 Skills",
+                "null2": "",
+                "settings": "⚙️",
+                "friends": "👥 Friends",
+                "referal": "💞 Referrals",
+                "market": "129530 Market",
+                "dino_tavern": "🍺 Tavern",
+                "events": "🦈 Events",
+                "null5": "",
+                "donate": "🪙 Support",
+                "super_coins": "🪙 Super Coins",
+                "more_dinos": "🦕 More dinosaurs",
+                "craft": "🔨 Crafting"
+            },
+            "game_point": "🦕 In DinoGochi, you become the owner of a unique dinosaur. Our game combines the atmosphere of classic Tamagotchi with elements of a role-playing game (RPG): you take care of your pet, develop his skills, participate in adventures and competitions. \n\n🎋 However, DinoGochi is not only about caring. Your path is determined by you:\n- You can focus on developing your dinosaur by training it and unlocking new abilities. \n - Or engage in trade in rare resources, building their own economy. \n- Or maybe you want to explore the world, participate in events, team up with other players, or compete for the title of the strongest. \n\n✨ DinoGochi is an open sandbox where you choose your own playstyle. \n Grow, trade, explore, conquer — or just enjoy life with your dinosaur.",
+            "dino_mood": "🎈 *What is dinosaur mood?* \n The mood reflects the general state of your dinosaur: how happy, satisfied and ready for new adventures he is. It is important to monitor the mood so that the pet develops faster and is more effective in traveling. \n\n🍎 *What does the mood depend on?*\nYour mood depends on your attention: play with the dinosaur, take care of it, feed it its favorite foods, and don't forget about communication. The more care, the better the mood! \n\n👀 *Where to see the dinosaur's mood?*\nYou can see the current mood in your dinosaur's profile. We display it through special indicators and color labels. \n\n💥 *What gives a good or bad mood?*\nIn a good mood, the dinosaur receives useful bonuses: it develops faster, fights more successfully and copes with tasks more easily. With low mood, nervous breakdowns are possible: the dinosaur may refuse to follow commands or lose motivation.",
+            "dino_height": "*🌱 What about the growth of dinosaurs?*\n A dinosaur grows within 30 days of birth. However, each dinosaur is unique: some can grow into large creatures, and some will remain small.",
+            "kindergarten": "🏫 *What is a kindergarten?*\nKindergarten is a premium feature that allows you to send your dinosaur to kindergarten for a few hours a day. At this time, the pet is cared for and he remains in a good mood.",
+            "dino_skills": "🎯 *What are dinosaur skills?*\nSkills are characteristics that directly affect the success of your dinosaur in different activities. They are pumped through training and unlock various bonuses. \n\n🌟 *What bonuses do skills give?*\n- With high charisma, there is a chance to cancel a bad mood. \n - Agility reduces the time to complete tasks. \n - Charisma gives a discount on promotion. \n- High Charisma increases the chance of gaining additional experience in gathering, playing, traveling, and sleeping. \n- Gathering resources increases the chance of finding rarer items. \n- In games, the dinosaur receives an additional bonus with high charisma. \n- With high intelligence, there is a chance to create 1 more item at once. \n\n💪 *How to upgrade skills?*\nSkills can be leveled up by sending the dinosaur to training. Different workouts develop different skills!",
+            "settings": "⚙️ *What can be customized in the game?*\nThere are many options available in DinoGochi to make the game even more convenient:\n\n- Turn off daily reward notifications. \n- Adjust the size of the inventory page. \n- Rename the dinosaur. \n- Configure the interface view for the profile. \n- Delete the account. \n- Customize how dinosaurs will name the host. \n- Select the language of the bot. \n- Establish permission to talk to the owner. \n- Set a nickname in the bot. \n- Reset the avatar. \n\n All settings are available in a special section of the menu.",
+            "friends": "🤝 *What are friends in DinoGochi?*\nFriends allow you to interact with other players and develop a cooperative game. Friends Features:\n\n- View a friend's profile. \n- Share coins and objects. \n - Have dinosaurs together. \n- Change a friend's name for convenience. \n- Send dinosaurs to play together. \n\n👥 *How to become friends?*\nYou can add a friend through the special menu or by using the command `/add_me` in the group.",
+            "referal": "💎 *What is a referral system?*\nThe referral system allows you to receive bonuses for inviting friends to the game. \n\n🤍 *How does the referral system work?*\nAfter clicking on the referral link, you immediately become friends with the inviting player. \n\n💜 *What do I get when my friend reaches level 5?*\nYou get a rare or uncommon egg! \n\n❤️ *What will my friend get?*\nA friend will receive the following bonuses: 255 coins, 🍯 Jar of Honey x2, 🍪 Cookies x2, 🧸 Teddy Bear, 🍗 Chicken Leg x2, 🍒 Berries x2, 🦪 Small Fish x2, 🎂 Cake",
+            "market": "🏪 *What is a market?*\nThe market is a completely independent system for the exchange of items and coins. Each player can customize their store profile. \n\n🖼️ *Can I install a profile picture on the market?*\nYes, if you have a subscription, you can set your profile picture. \n\n💸 *What exchanges are available on the market?*\nThe following exchanges are available on the market:\n- Exchange of items for coins and vice versa. \n - Exchange of objects for objects. \n- Auction of items where the highest bid wins.",
+            "dino_tavern": "🍻 *What is a tavern?*\nA tavern is a place where you can get quests and hear fascinating stories. \n\n🎯 *What can you do in the tavern?*\n- Get a quest that will give you additional tasks and bonuses. \n- Hear interesting stories that can provide clues for future adventures.",
+            "events": "🎉 *What are events?*\nEvents are special events in the game that can appear both in the bot and as additional events. \n\n🎮 *What events are there?*\n- Events in the bot are temporary tasks and activities that appear for a certain time. \n- Side events may include power-ups, new mechanics, or unique items that are available for a limited time.",
+            "donate": "💖 *What do donations go to?*\nFunds received from players are used for the following needs:\n\n- Payment for hosting so that the bot always works stably. \n- Advertising to attract new players. \n- Rewards for the work of people who are engaged in the development of the bot. \n- A little for goodies to keep the team motivated.",
+            "super_coins": "💎 *What are Super Coins?*\nSuper Coins are a special currency that can be obtained for watching ads or for donations.\n\n🎁 *What can you buy with super coins?*\nSuper Coins can be spent on special items available by command `/super`",
+            "more_dinos": "🐾 *How do you get more dinosaurs?*\nThe number of dinosaurs you can contain depends on the level and subscription:\n\n- Every 20th level gives +1 dinosaur slot.\n- For a premium subscription you get +1 slot.\n- 1 co-op dinosaur slot is also always available.",
+            "craft": "⚒️ *What is crafting?*\nCrafting is the process of crafting items using recipes and materials. Some recipes take time to create.\n\n📝 *Where can I find recipes?*\nRecipes can be found at the market, from a hoarder, or on a trip.",
+            "breakdown": "😣 *What is a nervous breakdown in a dinosaur?*\nA nervous breakdown is a condition that can occur if a dinosaur is in too bad a mood.\n\n⚠️ *How to prevent a nervous breakdown?*\nTo prevent a nervous breakdown, you need to boost your dinosaur's mood by paying attention, feeding, or doing other activities. If it doesn't work right away, just wait and your mood will improve over time.",
+            "general": "🎈 *Rarity*\nEvents and dinosaurs are divided into rarities.\nThe higher the rarity, the sweeter the reward.\n\n 1. Regular - 50%\n 2. Uncommon - 25%\n 3. Rare - 15%\n 4. Mystical - 9%\n 5. Legendary - 1%\n\n🕹 *Interaction*\nTo interact with the dinosaur, go to `🕹 Actions`.\n\n 1. In order to feed the dinosaur, you need to get food, click on `🕹 Actions` > `🍕 Food Gathering` and follow the instructions.\n\n 2. To feed the dinosaur, click on `🕹 Actions` > `🍣 Feed` and select the appropriate food.\n\n 3. In `🎮 Entertainment` you can choose a game and entertain the dinosaur to cheer him up.\n\n 4. In `🎑 Travel` you can find different items, meet friends and see a lot of interesting things!\n\n 5. `🌙 Put to bed` the dinosaur needs sleep every day, don't forget to put it to sleep!\n\n🎮 *Profile*\n To view the inventory or find out your stats, go to `👁‍🗨 Profile`",
+            "eat": "🥙 *What does my dinosaur eat?*\nLook at your dinosaur's profile, dinosaurs live in their native environment.\n\nHerbivores where there are a lot of grasses, predators in forests/jungles, and those who love fish fly in the clouds.\n\n🍕 *Sweets*\n🍯 Jar of honey, 🥞 Sweet pancakes - dinosaurs love treats and regardless of their species, they will gladly eat them!\n\nThis food also gives bonuses to mood / health, etc.\n\nYou can find out all the information about the item in the inventory!",
+            "accessories": "🏓 *Accessories*\nAccessories open up additional opportunities or speed up the type of activity. \nAccessories can be installed while the dinosaur is doing nothing by using it in the inventory.\nAccessories can be found in travels or dungeons.\n\n🎲 *Here are some of them...*\n 🧸 Teddy Bear - allows you to choose a sleep mode.\n 🛠 Tools - speed up food gathering."
+        },
+        "not_set": {
+            "info": "❗ Interaction with notification setting, select notification activity >",
+            "True": "🔧 Notifications have been activated!",
+            "False": "🔧 Notifications have been disabled!"
+        },
+        "inv_set_pages": {
+            "info": "🎞 Select the inventory display mode (Standard 2 | 3)",
+            "accept": "♠ Horizontal: {gr}\n♣ Vertical: {vr}",
+            "ans": [
+                "2 | 3",
+                "3 | 3",
+                "2 | 2",
+                "2 | 4",
+                "1 | 4",
+                "1 | 10"
+            ]
+        },
+        "profile_view": {
+            "info": "🦕 Select the type of panel display in the dinosaur profile:",
+            "result": "👁 Mode selected: {res}",
+            "ans": [
+                "▶ Side",
+                "🔽 Bottom",
+                "🔼 Top",
+                "❌ Without Panel"
+            ]
+        },
+        "rename_dino": {
+            "info": "🦖 | Enter a new name for {last_name}\nSize: no more than 20 characters >",
+            "rename": "🦖 | The dinosaur was renamed {last_name} > {dino_name}"
+        },
+        "my_name": {
+            "info": "🎩 Enter what your dinosaurs will call you. This can be your name, words, or a phrase of no more than 20 characters ->",
+            "end": "🦕 Now your dinosaurs will call you \"{owner_name}\""
+        },
+        "add_friend": {
+            "var": "*👥 | Choose how you want to add a friend.*\n\n🎣 1. *Via ID*. There is an individual user number in the user profile, select a method and forward it to the bot.\n\n💬 2. *Via message*. Forward any message from the user to me. Keep in mind that your future friend has a telegram privacy in the settings, the item \"Message forwarding\" should be set to \"All\".",
+            "var_buttons": {
+                "add_friend id": "🎣 ID",
+                "add_friend message": "💬 Message"
+            },
+            "check": {
+                "nonint": "😣 You didn't send me an id! Id is a number, here is your id - {userid}\n\nTry again!",
+                "nonbase": "❓ I couldn't find this person among the players, maybe he hasn't started incubating the egg yet.\n\nTry again!",
+                "notyou": "🎲 Unfortunately, you can't add yourself as a friend. We promise we'll fix this bug someday!\n\nTry again!",
+                "forward": "😣 I couldn't get the data of the author of the message.\n\nTry again!",
+                "friends": "👥 After checking and interviewing suspects, we found out that you are already friends!",
+                "requests": "👥 After checking and interviewing suspects, we found out that some of you have already sent a friend request!"
+            },
+            "var_messages": {
+                "id": "🎣 Okay, send me the user ID, and I'll do routine things like checking in the database and the existence of the user.",
+                "message": "💬 Okay, send me a message from your friend, and I'll do routine things like checking in the database and the existence of the user."
+            },
+            "correct": "✅ Friend request sent to user!",
+            "already": "🧨 The person has already received a friend request from you!"
+        },
+        "friend_list": {
+            "wait": "👥 | Uploading your friends",
+            "new_year": {
+                "button": "🎁 Send a gift",
+                "send": "🎁 | Hey {name}, your friend {friend} sent you a gift!",
+                "no_send": "🎁 | This user has already received a holiday gift!"
+            },
+            "buttons": {
+                "take_money": "✨ Transfer coins",
+                "take_coins": "🪔 Transfer Coins",
+                "joint_dinosaur": "🦕 Share a dinosaur",
+                "new_year": "🎁 Send a gift",
+                "change_friend_name": "👥 Change Name",
+                "open_market": "🏪 Open a store"
+            }
+        },
+        "requests": {
+            "wait": "👥 | Loading requests",
+            "accept": "✅ | {user_name} and you are friends now!",
+            "decline": "❌ | Friend request {user_name} was declined."
+        },
+        "friend_delete": {
+            "delete_info": "➖ | Select a user to unfriend >",
+            "confirm": "✅ | Are you sure you want to unfriend {name}?",
+            "delete": "👥 | The user has been unfriended!"
+        },
+        "rayting": {
+            "info": "👁‍🗨 | What rating are you interested in?",
+            "lvl": "🎢 Level",
+            "coins": "🪙 Coins",
+            "dungeon": "🗻 Dungeon",
+            "super": "👑 Super Coins",
+            "donate": "💰 Support",
+            "no_rayting": "❌ Rating is not available yet...",
+            "place": "*├* Your rank in the ranking: #{place}",
+            "my_place": "🦕 My Rivals",
+            "lvl_text": "*└* Level: {lvl} EXP: {xp}",
+            "coins_text": "*└* Coins: {coins}",
+            "super_text": "*└* Coins: {super_coins}",
+            "rayting_lvl": "*┌* 🎢 Rating by level:",
+            "rayting_coins": "*┌* 🎢 Coin rating:",
+            "rayting_super": "*┌* 🎢 Ranking by Super Coins:",
+            "rayting_donate_all": "*┌* 🎢 Support rating:",
+            "rayting_donate_30d": "*┌* 🎢 Support rating: (for 30 days)",
+            "donate_text": "*└* {stars} ⭐",
+            "premium": "*├* Subscriber ✨ DinoUltima",
+            "donate_choose": "💰 | What period are we looking at?",
+            "donate_30d": "⭐ 30 days",
+            "donate_all": "✨ All Time"
+        },
+        "put_to_bed": {
+            "dont_want": "🌙 Dinosaur doesn't want to sleep!",
+            "sleep": "🌙 You've put the dinosaur to sleep!",
+            "buttons": [
+                {
+                    "0": "🛌 Long Sleep",
+                    "1": "🛌 Short sleep"
+                }
+            ],
+            "choice": "🌙 | Choose a dream type for a dinosaur >",
+            "choice_time": "🌙 | Specify REM sleep time (sleep is 2 times faster than long sleep) in minutes >"
+        },
+        "awaken": {
+            "down_mood": "🌙 Your dinosaur has awakened. He's very unhappy that you woke him up!\n8987# Dinosaur was sleeping {time_end}.",
+            "not_sleep": "🌙 Dinosaur does not sleep!"
+        },
+        "p_profile": {
+            "no_dino_no_egg": "🦕 | You don't have dinosaurs/eggs to watch! Check the inventory, there should be an egg.",
+            "dialog": "🍭 You have a letter from the corporation, we are talking about dinosaurs...",
+            "text_info": "Information",
+            "text_ost": "Left:",
+            "rare_name": "Rarity:",
+            "time_position": [
+                465,
+                220
+            ],
+            "rare_position": [
+                465,
+                280
+            ],
+            "incubation_text": "🥚 | Egg incubating, left: {time_end}",
+            "stats": {
+                "pass": "I don't do anything 💭",
+                "sleep": "Sleeping 🌙",
+                "game": "Playing 🎮",
+                "journey": "Travels 🎴",
+                "collecting": "Gathering Food 🥞",
+                "dungeon": "Conquering the Dungeon 🗻",
+                "inactive": "I'm frozen ❄",
+                "kindergarten": "In kindergarten 🏡",
+                "hysteria": "I'm hysterical! 💥",
+                "farm": "Farm 🥕",
+                "mine": "In the mine ⛏️",
+                "bank": "In the bank 👛",
+                "sawmill": "At the Woodcutter 🪚",
+                "gym": "In hall 🏋️",
+                "library": "In Library 📚",
+                "park": "Walking 🏞️",
+                "swimming_pool": "Swimming 💦",
+                "craft": "Crafting Item ⚒️",
+                "unrestrained_play": "I play non-stop 😟"
+            },
+            "replics": {
+                "heal": [
+                    "*┌* __I'm Dying...__",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "*┌* Cough, cough, I'm not feeling well...",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "*┌* Healthy",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "*┌* Wow, how good!"
+                ],
+                "eat": [
+                    "*├* __Dying of hunger!__",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "*├* Hungry",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "*├* Syst",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "*├* With a full tummy"
+                ],
+                "game": [
+                    "*├* __Dying of boredom!__",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "*├* I Miss You...",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "*├* I don't want to play",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "*├* I'm Spider-Man!"
+                ],
+                "mood": [
+                    "*├* __I'm sad...__",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "*├* Everything is fine",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "*├* In a great mood",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "*├* I want to do good"
+                ],
+                "energy": [
+                    "*└* __I'm insanely tired :(__",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "*└* I have the strength",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "*└* Full of strength!",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "*└* I'm ready to move mountains!"
+                ]
+            },
+            "profile_text": "{em_name}*┌* Name: {dino_name}\n{em_status}*├* Status: {status}\n{em_rare}*├* Rarity: {qual}\n{em_age}*└* Age: {age}",
+            "journey": {
+                "text": "{em_journey_act} *┌* Travel",
+                "info": "🏮 *├* Location: {location}\n⌛ *├* Travels {journey_time}\n🍭 *└* Events: {col}"
+            },
+            "game": {
+                "text": "\n\n{em_game_act} *┌* Game",
+                "game_end": "\n🎟 *├* Will stop in {end}",
+                "game_duration": "\n⏳ *└* past {duration}"
+            },
+            "collecting": {
+                "text": "\n\n{em_coll_act} *┌* Gathering food\n",
+                "progress": {
+                    "collecting": "🌿 *└* Dinosaur collected {now} / {max_count} herbs.",
+                    "hunt": "🍖 *└* Dinosaur collected {now} / {max_count}.",
+                    "fishing": "🍤 *└* Dinosaur fished {now} / {max_count} fish.",
+                    "all": "🥗 *└* Dinosaur collected {now} / {max_count}."
+                }
+            },
+            "no_item": "No Problem",
+            "accs": {
+                "journey": "{emoji} *{separator}* Travel: {item}",
+                "collecting": "{emoji} *{separator}* Food Gathering: {item}",
+                "game": "{emoji} *{separator}* Game: {item}",
+                "sleep": "{emoji} *{separator}* Sleep: {item}",
+                "weapon": "{emoji} *{separator}* Weapons: {item}",
+                "armor": "{emoji} *{separator}* Defense: {item}",
+                "backpack": "{emoji} *{separator}* Storage: {item}"
+            },
+            "return": "🔮 | Back to the main menu!",
+            "inline_menu": {
+                "reset_activ_item": {
+                    "text": "💍 Снять предмет",
+                    "data": "dino_menu reset_activ_item {dino}"
+                },
+                "mood_log": {
+                    "text": "📜 О настроении",
+                    "data": "dino_menu mood_log {dino}"
+                },
+                "joint_dino": {
+                    "text": "❌ Отказаться",
+                    "data": "dino_menu joint_cancel {dino}"
+                },
+                "my_joint": {
+                    "text": "❌ Общий доступ",
+                    "data": "dino_menu my_joint_cancel {dino}"
+                },
+                "kindergarten": {
+                    "text": "🏡 Детский сад (⭐)",
+                    "data": "dino_menu kindergarten {dino}"
+                },
+                "backgrounds": {
+                    "text": "🖼️ Фон",
+                    "data": "dino_menu backgrounds_menu {dino}"
+                },
+                "skills": {
+                    "text": "⚡ Навыки",
+                    "data": "dino_menu skills {dino}"
+                }
+            },
+            "joint": "(Joint)"
+        },
+        "inventory": {
+            "null": "💥 | The inventory is empty.",
+            "no_filter": "❌",
+            "filters_data": {
+                "fb12": {
+                    "name": "🍕",
+                    "keys": [
+                        "eat"
+                    ]
+                },
+                "fb45": {
+                    "name": "🥚",
+                    "keys": [
+                        "egg"
+                    ]
+                },
+                "k63d": {
+                    "name": "💍",
+                    "keys": [
+                        "game",
+                        "journey",
+                        "collecting",
+                        "sleep"
+                    ]
+                },
+                "jd34": {
+                    "name": "👢",
+                    "keys": [
+                        "material"
+                    ]
+                },
+                "ns83": {
+                    "name": "📜",
+                    "keys": [
+                        "recipe"
+                    ]
+                },
+                "n48s": {
+                    "name": "🗻",
+                    "keys": [
+                        "weapon",
+                        "armor",
+                        "ammunition"
+                    ]
+                },
+                "n41s": {
+                    "name": "🔮",
+                    "keys": [
+                        "case",
+                        "special",
+                        "book"
+                    ]
+                },
+                "null": {
+                    "name": "📚 Unfiltered",
+                    "keys": [
+                        "null"
+                    ]
+                }
+            },
+            "choice_filter": "⚙️ | Select an inventory filter below\n\n*List:*\n🥚 | Eggs\n🔮 | Other\n📜 | Recipes\n💍 | Accessories\n⛰ | For the dungeon\n🍕 | Food\n👢 | Crafting Materials\n\n_✅ | Click on the checkmark at the bottom to save the filter settings._",
+            "search": "🔎 | Enter the name of the item to search:\n❌ | Click on the cross below the message to exit the search.",
+            "search_null": "❌ | Nothing found for the search, try entering a more accurate name!",
+            "menu": "🎍 | Page *{page}* / *{col}*\n\n📜 | Use *arrows* to move.\n🔎 | Use the button with *magnifier* to activate the search.\n⚙️ | Use the *gear* button to select a filter.\n♻️ | Refresh the page.",
+            "clear_filters": "\n🗑 | Click on the trash can to clear the filters.",
+            "update_page": "🔁 | Page updated",
+            "update_search": "🔁 | Search Activated",
+            "update_filter": "🔁 | Filter selection is active",
+            "filter_null": "❌ | There are no items for this filter."
+        },
+        "copy_m": {
+            "info": "A reply to a message with text for mailing is required",
+            "no_message": "There must be a response to the message!"
+        },
+        "item_info": {
+            "type_info": {
+                "ALL": {
+                    "type_name": "🍔 Food",
+                    "add_text": "*└* Efficiency: {act}"
+                },
+                "Flying": {
+                    "type_name": "🐟 Food",
+                    "add_text": "*└* Efficiency: {act}"
+                },
+                "Herbivore": {
+                    "type_name": "🌾 Food",
+                    "add_text": "*└* Efficiency: {act}"
+                },
+                "Carnivore": {
+                    "type_name": "🥩 Food",
+                    "add_text": "*└* Efficiency: {act}"
+                },
+                "freezing": {
+                    "type_name": "❄ Freeze",
+                    "add_text": "*└* This item stops the dinosaur's metabolism, freezing it."
+                },
+                "defrosting": {
+                    "type_name": "🔥 Defrosting",
+                    "add_text": "*└* This item restores the dinosaur's metabolism."
+                },
+                "egg": {
+                    "type_name": "🥚 dinosaur egg",
+                    "add_text": "*├* Incubation: {inc_time}\n*└* Egg rarity: {rarity}"
+                },
+                "game": {
+                    "type_name": "🎮 Active Item",
+                    "add_text": "*└* {item_description}"
+                },
+                "sleep": {
+                    "type_name": "🌙 Active Item",
+                    "add_text": "*└* {item_description}"
+                },
+                "journey": {
+                    "type_name": "🎍 Active Item",
+                    "add_text": "*└* {item_description}"
+                },
+                "collecting": {
+                    "type_name": "🕸 Active Item",
+                    "add_text": "*└* {item_description}"
+                },
+                "dummy": {
+                    "type_name": "🕳 Pacifier",
+                    "add_text": "*└* Does nothing and is not needed for anything"
+                },
+                "material": {
+                    "type_name": "🧱 Material",
+                    "add_text": "*└* This item is needed for crafting."
+                },
+                "recipe": {
+                    "type_name": "📜 Recipe for creation",
+                    "add_text": "*├* Creates: {create}\n*└* Content: {materials}\n\n📚 {item_description}"
+                },
+                "far": {
+                    "type_name": "🔫 Weapons",
+                    "add_text": "*├* Ammo: {ammunition}\n*└* Damage: {min} - {max}"
+                },
+                "near": {
+                    "type_name": "🗡 Weapons",
+                    "add_text": "*├* Stamina: {endurance}\n*└* Damage: {min} - {max}"
+                },
+                "ammunition": {
+                    "type_name": "🌠 Ammunition",
+                    "add_text": "*├* Add. Damage: {add_damage}\n*└* Effect: ..."
+                },
+                "armor": {
+                    "type_name": "🛡 Armor",
+                    "add_text": "*└* Reflection: {reflection}\n"
+                },
+                "backpack": {
+                    "type_name": "🎒 Storage",
+                    "add_text": "*└* Capacity: {capacity}"
+                },
+                "case": {
+                    "type_name": "📦 Lucky Box",
+                    "add_text": "*└* Contents:\n{content}"
+                },
+                "book": {
+                    "type_name": "📚 Entries",
+                    "add_text": "*└* {item_description}"
+                },
+                "special": {
+                    "type_name": "🐠 Unique Item",
+                    "add_text": "*└* {item_description}"
+                }
+            },
+            "rank": {
+                "common": "🤍 Normal",
+                "uncommon": "💚 Uncommon",
+                "rare": "💙 Rare",
+                "mystical": "💜 Mystic",
+                "legendary": "💛 Legendary",
+                "mythical": "❤ Mythic (Beyond)",
+                "null": "➖ None"
+            },
+            "static": {
+                "cap": "*┌* *🎴 Item Info*",
+                "name": "*├* Name: {name}",
+                "rank": "*├* Rank: {rank}",
+                "type": "*├* Type: {type}",
+                "uses": "*├* Uses: 🎞 {0} / {1}",
+                "endurance": "*├* Durability: 💎 {0} / {1}",
+                "mana": "*├* Mana: 🔮 {0} / {1}",
+                "time_craft": "*├* Creation time: ⏳ {times}",
+                "stack": "*├* Includes: 🧊 {stack} pcs.",
+                "add_bonus": "\n\n*┌* *🍡 Additional bonuses*\n",
+                "add_penaltie": "\n\n*┌* *📌 Additional penalties*\n",
+                "add_states": "\n\n*┌* *⭐ Overlapping states*\n",
+                "author": "*├* Item Author: {author}",
+                "unnamed_author": "Unknown / None",
+                "buttons": {
+                    "use": {
+                        "eat": "🍔 Feed",
+                        "egg": "🥚 Incubate",
+                        "game": "👒 Apply",
+                        "sleep": "👒 Apply",
+                        "journey": "👒 Apply",
+                        "collecting": "👒 Apply",
+                        "recipe": "⚒ Create",
+                        "weapon": "🛡 Equip",
+                        "backpack": "🛡 Equip",
+                        "armor": "🛡 Equip",
+                        "case": "📦 Open",
+                        "special": "🔮 Use",
+                        "book": "📕 Read"
+                    },
+                    "delete": "🗑 Throw Away",
+                    "exchange": "🔁 Transfer",
+                    "created_item": "🛠 Craftable: {item}",
+                    "buyer": "💰 Fence",
+                    "custom_book": "✒ Overwrite",
+                    "read_custom_book": "📖 Read"
+                },
+                "trs_dino": "*├* Dinosaur: {dino} {hp} / 100 ❤\n"
+            },
+            "bonuses": {
+                "+heal": "Health Boost: {0}%",
+                "+energy": "Energy Boost: {0}%",
+                "+eat": "Satiety Boost: {0}%",
+                "+mood": "Mood boost: {0}%"
+            },
+            "penalties": {
+                "-heal": "Health Reduction: {0}%",
+                "-energy": "Energy Decrease: {0}%",
+                "-eat": "Satiety decrease: {0}%",
+                "-mood": "Mood drop: {0}%"
+            },
+            "item_states": {
+                "+heal": "Health regeneration by {0} for {1}",
+                "+energy": "Energy Surge at {0} for {1}",
+                "+eat": "Increase in satiety by {0} during {1}",
+                "+mood": "Mood improvement on {0} during {1}",
+                "-heal": "Health loss at {0} for {1}",
+                "-energy": "Exhaustion at {0} for {1}",
+                "-eat": "Fasting at {0} for {1}",
+                "-mood": "Mood deterioration at {0} during {1}"
+            }
+        },
+        "item_use": {
+            "cannot_be_used": "❌ This item cannot be used!",
+            "no_item": "❓ The item has been changed or is no longer in the inventory, and interaction with it is not available.",
+            "eat": {
+                "great": "🍕 | {dino_name} {activ} {item_name}, he is fed up at {eat_stat}%",
+                "bad": "🍕 | {dino_name} doesn't taste {item_name}, it loses {loses_eat}% satiety!",
+                "sleep": "🌙 Do not feed a dinosaur while sleeping.",
+                "repeat": {
+                    "m0": "❤ | Dinosaur tried something new, nutrition bonus {percent}%",
+                    "m1": "❣ | Dinosaur is satisfied with food, nutritional {percent}%",
+                    "m2": "🌯 | Dinosaur doesn't mind trying something new, nutritional value {percent}%",
+                    "m3": "🥙 | The dinosaur is a little tired of eating the same food, nutrition {percent}%",
+                    "m4": "🥞 | The dinosaur is a little tired of eating the same food, nutrition {percent}%",
+                    "m5": "🥙 | The dinosaur has been eating the same thing for a long time, he is not satisfied, nutritional value {percent}%"
+                },
+                "eat": "ate",
+                "drink": "drank"
+            },
+            "accessory": {
+                "no_change": "⚒ You cannot change the accessory for the type of activity that the dinosaur is currently engaged in!",
+                "change": "🎴 | The active item is set!",
+                "max_items": "🐊 The dinosaur already uses the maximum number of accessories!",
+                "already_have": "🧠 A dinosaur cannot use 2 identical items at the same time!"
+            },
+            "recipe": {
+                "not_enough_m": "❗ | Missing Materials: {materials}",
+                "consumable_item": "🧶 | Choose an item to be used in crafting (the result may change from the choice) ->",
+                "create": "🛠 Recipe was used, items that were created: {items}",
+                "enough_characteristics": "❗ | Item {item_name} doesn't have enough to use!",
+                "not_choosed": "💥 | No items to choose from to use in crafting!",
+                "choose_copy": "🍿 | Select a variation for item {item_name}\n(After clicking, information about the item will be displayed, click on the button below the message to confirm)",
+                "inl_button_conf": "✅ Select"
+            },
+            "case": {
+                "drop_item": "📦 | From the magic box you got {item_name} x{col}!"
+            },
+            "egg": {
+                "egg_limit": "🥚 | At the moment, you can only have {limit} dinosaur(s). Take a look at the handbook for more information.",
+                "egg_answer": "🥚 | Choose a dinosaur egg!",
+                "plug": "🏝 | The buttons are always active, but only work if you have an egg in your inventory.",
+                "incubation": "{item_name} sent for incubation!\n⌛ | End in {end_time}",
+                "edit_content": "🥚 | The egg is chosen!"
+            },
+            "ammunition": {
+                "one_item": "❌ | It is impossible to unite an object with itself.",
+                "combination": "🛠 | The items were connected!",
+                "comb_err": "❌ | An error occurred during the combination, contact the developer!"
+            },
+            "special": {
+                "reborn": {
+                    "ok": "🦕 Dinosaur is reborn!",
+                    "limit": "🦕 | At the moment, you can only have {limit} dinosaur(s). Take a look at the handbook for more information.",
+                    "no_dinos": "🦕 | You are such a wonderful person, the world does not remember your lost dinosaurs!"
+                },
+                "premium": "🎆 | Congratulations on activating Premium on {premium_time}!",
+                "defrost": {
+                    "notinc": "🦕 This dinosaur is not frozen!",
+                    "ok": "🧉 | The dinosaur has been thawed!"
+                },
+                "freez": "🧊 Dinosaur is frozen!"
+            },
+            "buff": {
+                "+mood": "😀 | Dinosaur received +{unit}% mood!\n",
+                "-mood": "😥 | Dinosaur received {unit}% to mood!\n",
+                "+eat": "🥪 | Dinosaur regained {unit}% satiety!\n",
+                "-eat": "🥪 | Dinosaur loses {unit}% satiety!\n",
+                "+energy": "⚡ | Dinosaur regained {unit}% energy!\n",
+                "-energy": "⚡ | The dinosaur lost {unit}% of energy!\n",
+                "+heal": "❤ | Dinosaur restored {unit}% Health!\n",
+                "-heal": "❤ | Your Dinosaur has lost {unit}% Health!\n"
+            }
+        },
+        "css": {
+            "no_dino": "🧵 You don't have a dinosaur to interact with",
+            "wait_count": "📅 Enter the number of uses or select it from the suggested list ->",
+            "confirm": "🛠 Confirm use {name}",
+            "combine": "⚒ Select an item to combine with {name} ->",
+            "delete": "🗑 Confirm deletion {name}",
+            "dino": "🦕 Select a dinosaur / egg from the list",
+            "friend": "🎮 Choose a friend ->",
+            "inactive_dino": "🦕 Choose only frozen dinosaurs!",
+            "no_photo": "📷 | The bot was unable to detect the photo in your message.",
+            "content_str": "📦 | Enter the text not exceeding the length of {max_len} characters:"
+        },
+        "about_menu": {
+            "team": "<b>🎭 | Bot Team</b>\n<i>We all do a lot of things at once, but everyone has their own role...</i>\n\n💻 @AS1AW - Developer\n💻 @magecode - Developer\n💽 @KatranLife - Host provision\n\n🎨 @unknown_cat13 - Designer\n\n⚽️ @despating - Tester\n\n<b>🗝 | Author of localization</b>\n<i>Everyone can translate the bot into their native language.\nWant to help with the translation? Refer to @AS1AW\n\n</i>{lang_name} - {author}",
+            "links": "**🔗 | The Great Connection**\nHorror dinosaurs are everywhere!\n\n📢 News channel - @DinoGochi\n\n👥 Forum - @DinoForum"
+        },
+        "support_command": {
+            "info": "💸 | Coin support\nWe are a team working on the bot only on our own. The bot is free and constantly evolving for you. If you like the bot, you could support it with a coin!\n\n🎨 | Support Methods\n\n",
+            "buy": "🦕 Your order has been placed, a message for payment has appeared at the bottom!",
+            "items": "🎨 Items in the set: {items}",
+            "col_answer": "🌟 Select quantity by clicking on the button below ->",
+            "free_enter": "🎥 Enter below how many stars you want to send to the developer.",
+            "create_invoice": "🎩 Account created!",
+            "products_bio": {
+                "non_repayable": {
+                    "name": "☕ Gratuitous",
+                    "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/non_repayable.png?raw=true",
+                    "image": "images/remain/support/non_repayable.png",
+                    "short": "We are grateful for any amount!",
+                    "description": "🔮 Any amount gives us faith in a tomorrow where we play and travel with our dinosaurs!"
+                },
+                "dino_ultima": {
+                    "name": "⚡ dinultima",
+                    "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true",
+                    "image": "images/remain/support/dinoultima.png",
+                    "short": "Ultra subscription for you and your dinosaurs!",
+                    "description": "🖼 Ability to set any picture instead of background!\n🍼 Look after my dinosaur - send the dinosaur to kindergarten for any time!\n✨ Display Ultra status in all lists.\n🧶 Increase in food collection limits.\n🏝 Additional locations on the trip.\n🎮 Additional games.\n🦕 +1 to the dinosaur limit.\n🎠 Set any picture for the store menu.\n🕹 Increase in promotion limits.\n🎟️  You can turn off ads."
+                },
+                "rescue_kit": {
+                    "name": "❤ Rescue Kit",
+                    "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/rescue_kit.png?raw=true",
+                    "image": "images/remain/support/rescue_kit.png",
+                    "short": "Save my dinosaur!",
+                    "description": "😣 Вы забыли о своём динозавре и теперь ему очень плохо и надо срочно что-то сделать?!\n❤ Тут вам поможет спасательный набор! Тут есть всё необходимое!"
+                },
+                "reborn": {
+                    "name": "💥 Dinosaur Rebirth",
+                    "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/reborn.png?raw=true",
+                    "image": "images/remain/support/reborn.png",
+                    "short": "Revive my dinosaur!",
+                    "description": "🔮 Level 10 magic will revive your dinosaur!"
+                },
+                "moth_rest": {
+                    "name": "🧊 Freeze a dinosaur (1 month)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/freezing.png",
+                    "image": "images/remain/support/freezing.png",
+                    "short": "A break from a dinosaur for 1 month!",
+                    "description": "🧊 Everyone needs a break sometimes, take a break for a month and don't worry that something will happen to the dinosaur!"
+                },
+                "pause": {
+                    "name": "🧊 Freeze Dinosaur",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/freezing.png",
+                    "image": "images/remain/support/freezing.png",
+                    "short": "Freeze my dinosaur!",
+                    "description": "🧊 Take a break from the dinosaur indefinitely, take care of your own life!"
+                },
+                "super_coins": {
+                    "name": "✨ Super Coins",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/super_coins.png",
+                    "image": "images/remain/support/super_coins.png",
+                    "short": "Super coins for super users!",
+                    "description": "✨ Top up your Super Coins balance to unlock Super Items!"
+                }
+            }
+        },
+        "delete_action": {
+            "delete": "🗑 | Item {name} x{count} removed!",
+            "error": "❌ | Item not removed, it may not be in the inventory"
+        },
+        "user_profile": {
+            "user": "Hello, how are you?",
+            "level": "*┌*🏮 *ʟᴇᴠᴇʟ*\n*├* *Уровень:* {lvl}\n*├* *Experience:* {xp_now} | {max_xp}\n*├* *Super Coins:* {super_coins}\n*└* *Coins:* {coins}",
+            "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Forgotten*: {dead}\n*├* *Living:* {dino_col}",
+            "dino": "The code provided is not a translatable sentence but a set of numeric identifiers or references. Please provide a meaningful sentence or phrase for translation.",
+            "egg": "I am sorry, but I cannot translate this text as it appears to be a sequence of numbers and symbols without context.",
+            "dino_owner": {
+                "owner": "Its",
+                "noowner": "Joint"
+            },
+            "friends": "Hello! How are you?",
+            "inventory": "I love you",
+            "no_premium": "❌",
+            "stats": {
+                "pass": "💭 Rests",
+                "sleep": "🌙 Sleeps",
+                "game": "🎮 Playing",
+                "journey": "🎴 Travels",
+                "collecting": "🥞 Collects food",
+                "dungeon": "🗻 Conquers the Dungeon",
+                "inactive": "❄ Frozen",
+                "kindergarten": "🏡 In kindergarten",
+                "hysteria": "💥 Hysterical",
+                "farm": "🥕 On the farm",
+                "mine": "⛏️ In the mine",
+                "bank": "👛 In the bank",
+                "sawmill": "🪚 At the logging",
+                "gym": "🏋️ In the Hall",
+                "library": "📚 In the library",
+                "park": "🏞️ In the Park",
+                "swimming_pool": "💦 Swims",
+                "craft": "⚒️ Creates an item",
+                "unrestrained_play": "😟 Plays to calm down"
+            },
+            "market": {
+                "caption": "*┌* 🛍️ *market*",
+                "market_name": "*├* *Name:* {market_name}",
+                "earned": "*└* *Earned:* {coins}"
+            }
+        },
+        "custom_profile": {
+            "manual": "🖼 | Send an image to the bot (if the bot did not respond to your message with an image, then such an image is not suitable)\n\nIf you want to delete the image, enter 0",
+            "ok": "✨ | Photo set",
+            "error": "🦕 | The bot tried to install the image and received an error ("
+        },
+        "delete_me": {
+            "confirm": "❓ | Are you sure you want to delete ALL account data?",
+            "dead_dino": "❓ | Are you ready to be held responsible for killing all living dinosaurs, as well as removing all old dinosaurs from your memory?",
+            "rex_boss": "❓ | Are you sure you give all your coins and items to RexBoss?",
+            "code": "🎞 | Enter `{code}` to confirm your actions (this is definitely the last captcha)",
+            "incorrect_code": "... I see you don't really want to delete your account, but I'll still give your items and coins to the boss.",
+            "delete": "🎨 Thanks for playing if we are always here."
+        },
+        "tavern_dialogs": [
+            "They say terrible monsters roam in the dungeons...",
+            "My dinosaur can kill 20 of these!",
+            "Don't tell me, ha ha ha!",
+            "They say the items in the dungeon are high-end...",
+            "Yesterday I walked, some kind of glowing stone fell out to me...",
+            "Have you seen what a terrible face this goblin has?!",
+            "Yes, I eat them for breakfast!",
+            "How do they fight with these blunt swords?",
+            "I'm not going back there!",
+            "Are you afraid to go down to the dungeon?!",
+            "My friend Bari went there 21 years ago, I'm still waiting...",
+            "Yesterday I saw the Hero coming out of the dungeon with a golden sword!",
+            "Don't tell tales, there's no one scary there!",
+            "Tell me how you lost your eye in this dungeon...",
+            "Let me not be afraid! There are just no coins to enter...",
+            "What time will it be, the 21st? And how much have you already taken out of there?",
+            "Yes, uh...",
+            "No, no...",
+            "Kidding?",
+            "AHA HA HA!",
+            "Ho ho ho...",
+            "Are You Running Into Trouble?!",
+            "Drink?!",
+            "Good news, pour!",
+            "Piggy Piggy",
+            "Demon....",
+            "They say that there are many treasures hidden in the dungeons...",
+            "My dinosaur can cut any monster into pieces!",
+            "It is said that ancient evil spirits dwell in the dungeons...",
+            "I found 2 gold coins in the dungeon!",
+            "I heard that in the dungeon you can find a secret passage to the treasures..."
+        ]
     }
 }

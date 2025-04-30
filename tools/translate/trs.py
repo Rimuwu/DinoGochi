@@ -32,7 +32,7 @@ with open(f'{ex}/settings.json', encoding='utf-8') as f:
 
     zero_translator = settings['zero_translator']
     ignore_translate_keys = settings['ignore_translate_keys']
-    sp_sym = settings['sp_sym']
+    strat_sym, end_sym = settings['sp_sym']
 
 # --- Добавляем списки user_agents и proxies ---
 user_agents = [
@@ -131,12 +131,13 @@ def save_replace(code: int, text: str, translate: bool, data = '' ):
     """
     Сохраняет замену в словаре cash_replaces.
     """
-    if code not in cash_replaces:
-        cash_replaces[code] = {"text": text, 
+    new_code = f'{code}'
+    if new_code not in cash_replaces and new_code not in cash_replaces.keys():
+        cash_replaces[new_code] = {"text": text, 
                                "translate": translate, "data": data}
-        return code
+        return new_code
     else:
-        return save_replace(code + 1, text, translate, data)
+        return save_replace(random.randint(1, 10000), text, translate, data)
 
 def replace_specials(text):
     # "(121)": {"text": "_", "translate": false},
@@ -149,13 +150,15 @@ def replace_specials(text):
     for _ in range(6):
         # Заменяем спецсимволы
         for key, item in replace_words.items():
-            text = text.replace(item['text'], key)
+            code = save_replace(int(key), item['text'], item['translate'])
+            text = text.replace(
+                item['text'], f"{strat_sym}{code}{end_sym}")
 
         # Прячем эмодзи
         for em in emoji.emoji_list(text):
             code = save_replace(int(ord(em['emoji'][0])), 
                                 em['emoji'], False)
-            text_code = f"{sp_sym}{code}{sp_sym}"
+            text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(em['emoji'], text_code)
 
         # Прячем переменные вида {name}
@@ -163,7 +166,7 @@ def replace_specials(text):
         for match in matches:
             code = save_replace(int(ord(match[1])), 
                                 match, False)
-            text_code = f"{sp_sym}{code}{sp_sym}"
+            text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(match, text_code)
 
         # Прячем переменные вида /слово (только первое целое слово после /)
@@ -171,7 +174,14 @@ def replace_specials(text):
         for match in matches:
             code = save_replace(int(ord(match[1])),
                     match, False)
-            text_code = f"{sp_sym}{code}{sp_sym}"
+            text_code = f"{strat_sym}{code}{end_sym}"
+            text = text.replace(match, text_code)
+        
+        matches = re.findall(r'<\s*[^<>]+\s*>', text)
+        for match in matches:
+            code = save_replace(int(ord(match[1])),
+                    match, True)
+            text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(match, text_code)
         
         # Прячем переменные вида <b>word</b>
@@ -179,7 +189,7 @@ def replace_specials(text):
         for match in matches:
             code = save_replace(int(ord(match[1])),
                     match, True)
-            text_code = f"{sp_sym}{code}{sp_sym}"
+            text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(match, text_code)
 
         # Прячем переменные вида *Слово*
@@ -189,7 +199,7 @@ def replace_specials(text):
             for match in matches:
                 code = save_replace(int(ord(match[1])),
                                     match[1:-1], True, one_repl)
-                text_code = f"{sp_sym}{code}{sp_sym}"
+                text_code = f"{strat_sym}{code}{end_sym}"
                 text = text.replace(match, text_code)
 
     return text
@@ -209,35 +219,44 @@ def restore_specials(text, to_lang, from_lang):
     if not isinstance(text, str): return text
 
     for _ in range(6):
-        for key, item in replace_words.items():
+        # for key, item in replace_words.items():
+        #     word_text = item['text']
+
+        #     if smart_contains(text, key):
+        #         if item['translate']:
+        #             stage_text = translate_text(word_text, to_lang, from_lang)
+        #             if not isinstance(stage_text, str):
+        #                 stage_text = str(stage_text)
+        #             text = text.replace(key, stage_text)
+        #         else:
+        #             text = text.replace(key, word_text)
+
+        for code, item in cash_replaces.copy().items():
             word_text = item['text']
+            for code_in_text in [
+                f'{strat_sym}{code}{end_sym}',
+                f'{strat_sym} {code}{end_sym}',
+                f'{strat_sym}{code} {end_sym}',
+                f'{strat_sym} {code} {end_sym}',
+                # f'{code}{end_sym}',
+                # f'{strat_sym}{code}',
+                # f'{code} {end_sym}',
+                # f'{strat_sym} {code}',
+            ]:
+            
+                if smart_contains(text, code_in_text):
+                    if item['translate']:
+                        stage_text = translate_text(word_text, to_lang, from_lang)
+                        if not isinstance(stage_text, str):
+                            stage_text = str(stage_text)
+                        if item['data']:
+                            # Оборачиваем только восстановленный текст, а не весь text
+                            stage_text = f"{item['data']}{stage_text}{item['data']}"
+                        text = text.replace(code_in_text, stage_text)
+                    else:
+                        text = text.replace(code_in_text, word_text)
 
-            if smart_contains(text, key):
-                if item['translate']:
-                    stage_text = translate_text(word_text, to_lang, from_lang)
-                    if not isinstance(stage_text, str):
-                        stage_text = str(stage_text)
-                    text = text.replace(key, stage_text)
-                else:
-                    text = text.replace(key, word_text)
-
-        for code, item in cash_replaces.items():
-            word_text = item['text']
-            code_in_text = f"{sp_sym}{code}{sp_sym}"
-
-            if smart_contains(text, code_in_text):
-                if item['translate']:
-                    stage_text = translate_text(word_text, to_lang, from_lang)
-                    if not isinstance(stage_text, str):
-                        stage_text = str(stage_text)
-                    if item['data']:
-                        # Оборачиваем только восстановленный текст, а не весь text
-                        stage_text = f"{item['data']}{stage_text}{item['data']}"
-                    text = text.replace(code_in_text, stage_text)
-                else:
                     text = text.replace(code_in_text, word_text)
-
-                text = text.replace(code_in_text, word_text)
 
     # Восстановление эмодзи (пример: #128512# -> 😀)
     return text
@@ -254,6 +273,7 @@ def match_case(original, translated):
         return translated
 
 def translate_text(text, to_lang, from_lang, trans=zero_translator):
+    global cash_replaces
     """
     Переводит текст, защищая спецсимволы и эмодзи.
     """
@@ -273,6 +293,11 @@ def translate_text(text, to_lang, from_lang, trans=zero_translator):
     if lang in ['en', 'it'] and len(langs) == 1:
         translated = safe_text
         print(f"Не переводим: {text} - {lang}")
+    
+    elif safe_text[1:-1] in cash_replaces.keys():
+        cash_replaces[safe_text[1:-1]]['translated'] = False
+        translated = safe_text
+        print(f"Не переводим (замена): {text} - {lang}")
 
     elif lang or len(langs) == 0:
         try:
@@ -389,11 +414,13 @@ def del_by_path(dct, path):
 # Проверяем, начинается ли path с любого из new_keys или changed_keys
 def is_prefix_in_keys(keys, path):
     for key in keys:
-        if path == key or path.startswith(f"{key}."):
+        if path.endswith(f"{key}") or path == key:
             return True
     return False
 
 def main():
+    global cash_replaces
+
     # 1. Загрузка главного словаря
     main_lang_path = f"{ex}{langs_path}/{main_code}.json"
     main_data = read_json(main_lang_path).get(main_code, {})
@@ -436,6 +463,7 @@ def main():
 
             # 6. Перевести новые/изменённые ключи
             def update_callback(path, value):
+                global cash_replaces
 
                 if is_prefix_in_keys(new_keys, path) or is_prefix_in_keys(changed_keys, path):
                     if isinstance(value, str):
@@ -451,6 +479,9 @@ def main():
                         else:
                             translated = translate_text(value, lang, main_code)
                             print(f"Переводим {path}: {value} -> {translated}")
+                        
+                        # Сброс тегов
+                        cash_replaces = {}
 
                         set_by_path(lang_data, path, translated)
                         set_by_path(damp_data, f'{lang}.'+path, value)
