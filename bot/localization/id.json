@@ -2246,7 +2246,7 @@
             "content_str": "📦 | Masukkan teks yang tidak melebihi panjang karakter {max_len}:"
         },
         "about_menu": {
-            "team": "<b>🎭 | Bot Team</b>\n<i>Kita semua melakukan banyak hal sekaligus, tetapi kita semua memiliki peran untuk dimainkan... </i>\n\n💻 @AS1AW - Developer\n💻 @magecode - Developer\n💾 @debastersplay - Penyediaan host\n\n🎨 @unknown_cat13 - Designer\n⚽️ @despating - Tester\n\n<b>🗝 | Penulis localization</b>\n<i>Setiap orang dapat menerjemahkan bot ke dalam bahasa ibu mereka.\nIngin membantu menerjemahkan? Lihat @AS1AW\n\n</i>{lang_name} - {author}",
+            "team": "<b>🎭 | Bot Team</b>\n<i>Kita semua melakukan banyak hal sekaligus, tetapi kita semua memiliki peran untuk dimainkan... </i>\n\n💻 @AS1AW - Developer\n🎨 @unknown_cat13 - Designer\n💻 @magecode - Developer\n💾 @debastersplay - Penyediaan host\n⚽️ @despating - Tester\n\n<b>🗝 | Penulis localization</b>\n<i>Setiap orang dapat menerjemahkan bot ke dalam bahasa ibu mereka.\nIngin membantu menerjemahkan? Lihat @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "**🔗 | Koneksi Besar**\nDinosaurus horor ada di mana-mana!\n\n📢 Saluran berita - @DinoGochi\n👥 Forum - @DinoForum\n💢 Tentang pengembangan - @DevGochi\n⭐ Lowongan - @DinoPoint"
         },
         "support_command": {

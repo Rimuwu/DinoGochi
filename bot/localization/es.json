@@ -2245,7 +2245,7 @@
             "content_str": "📦 | Introduzca un texto que no supere la longitud de los caracteres {max_len}:"
         },
         "about_menu": {
-            "team": "<b>🎭 | Bot Team</b>\n<i>Todos hacemos muchas cosas a la vez, pero todos tenemos un papel que desempeñar... </i>\n\n💻 @AS1AW - Desarrollador\n💻 @magecode - Desarrollador\n💾 @debastersplay - Aprovisionamiento de host\n\n🎨 @unknown_cat13 - Diseñador\n⚽️ @despating - Probador\n\n<b>🗝 | Autor de la localización</b>\n<i>Todos pueden traducir el bot a su idioma nativo.\n¿Quieres ayudar con la traducción? Consulte @AS1AW\n\n</i>{lang_name} - {author}",
+            "team": "<b>🎭 | Bot Team</b>\n<i>Todos hacemos muchas cosas a la vez, pero todos tenemos un papel que desempeñar... </i>\n\n💻 @AS1AW - Desarrollador\n🎨 @unknown_cat13 - Diseñador\n💻 @magecode - Desarrollador\n💾 @debastersplay - Aprovisionamiento de host\n⚽️ @despating - Probador\n\n<b>🗝 | Autor de la localización</b>\n<i>Todos pueden traducir el bot a su idioma nativo.\n¿Quieres ayudar con la traducción? Consulte @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "**🔗 | La Gran Conexión**\n¡Los dinosaurios de terror están en todas partes!\n\n📢 Canal de noticias - @DinoGochi\n👥 Foro - @DinoForum\n💢 Sobre el desarrollo - @DevGochi\n⭐ Vacantes - @DinoPoint"
         },
         "support_command": {
