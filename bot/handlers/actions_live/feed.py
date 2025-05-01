@@ -102,8 +102,12 @@ async def feed(message: Message):
             'lang': lang,
             'dino': last_dino
         }
-
-        await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
+        if await last_dino.status != 'sleep':
+            await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
+        
+        else:
+            await bot.send_message(chatid, t('item_use.eat.sleep', lang), reply_markup=await m(userid, 'last_menu', lang))
+            return
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('feed_inl'))
