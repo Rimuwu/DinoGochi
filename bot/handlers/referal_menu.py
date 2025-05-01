@@ -27,6 +27,7 @@ from aiogram.filters import Command
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 referals = DBconstructor(mongo_client.user.referals)
+tracking = DBconstructor(mongo_client.tracking.links)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.referal.code'), IsAuthorizedUser())
@@ -84,7 +85,8 @@ async def custom_handler(message: Message, transmitted_data: dict):
         text = t('referals.custom_code.min_len', lang)
     else:
         res = await referals.find_one({'code': code}, comment='custom_handler_refer_res')
-        if res:
+        ref = await referals.find_one({'code': code}, comment='custom_handler_refer')
+        if res or ref:
             text = t('referals.custom_code.found_code', lang)
         else: status = True
 
