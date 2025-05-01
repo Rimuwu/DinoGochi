@@ -2246,8 +2246,8 @@
             "content_str": "📦 | Enter a text not exceeding the length of {max_len} characters:"
         },
         "about_menu": {
-            "team": "<b>🎭 | Bot Team</b>\n<i>We all do a lot of things at once, but everyone has a role to play... </i> \n\n💻 @AS1AW - Developer\n💻 @magecode - Developer\n💽 @KatranLife - Host Provisioning\n\n🎨 @unknown_cat13 - Designer\n\n⚽️ @despating - Tester\n\n<b>🗝 | Author of localization</b>\n<i>Everyone can translate the bot into their native language. \n Would you like to help with the translation? Refer to @AS1AW\n\n</i>{lang_name} - {author}",
-            "links": "**🔗 | The Great Connection**\nHorror dinosaurs are everywhere! \n\n📢 News channel - @DinoGochi\n\n👥 Forum - @DinoForum"
+            "team": "<b>🎭 | Bot Team</b>\n<i>We all do a lot of things at once, but we all have a role to play... </i>\n\n💻 @AS1AW - Developer\n💻 @magecode - Developer\n💾 @debastersplay - Host provisioning\n\n🎨 @unknown_cat13 - Designer\n⚽️ @despating - Tester\n\n<b>🗝 | Author of localization</b>\n<i>Everyone can translate the bot into their native language.\nWant to help with the translation? Refer to @AS1AW\n\n</i>{lang_name} - {author}",
+            "links": "**🔗 | The Great Connection**\nHorror dinosaurs are everywhere!\n\n📢 News channel - @DinoGochi\n👥 Forum - @DinoForum\n💢 About development - @DevGochi\n⭐ Vacancies - @DinoPoint"
         },
         "support_command": {
             "info": "💸 | Coin support\nWe are a team working on the bot only on our own. The bot is free and constantly evolving for you. If you like the bot, then you could support it with a coin! \n\n🎨 | Support Methods\n\n",
@@ -2928,7 +2928,7 @@
                 "💥 Refuse"
             ],
             "max_owners": "🦕 | A dinosaur can't have more than 2 hosts!",
-            "max_dino": "🎋 | This user already has a joint dinosvr!",
+            "max_dino": "🎋 | This user already has a dinosaur together!",
             "ok": "🎮 | The offer has been sent to the user!"
         },
         "take_dino": {
