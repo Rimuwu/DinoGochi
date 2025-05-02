@@ -361,9 +361,10 @@ def set_by_path(dct, path, value):
                 else:
                     # Если не пустой dict, то ошибка структуры
                     raise TypeError(f"Ожидался список на уровне {k}, но найден dict с данными: {cur}")
-            while len(cur) <= k:
-                cur.append({})
-            cur = cur[k]
+            if isinstance(cur, list):
+                while len(cur) <= k:
+                    cur.append({})
+                cur = cur[k]
         else:
             if not isinstance(cur, dict):
                 # Если cur список, но нужен dict
@@ -409,6 +410,8 @@ def del_by_path(dct, path):
         last = int(last)
         del cur[last]
     else:
+        if last not in cur:
+            print(f'Нет ключа {last} в {cur}')
         del cur[last]
 
 # Проверяем, начинается ли path с любого из new_keys или changed_keys
@@ -457,6 +460,9 @@ def main():
         for key in deleted_keys:
             del_by_path(lang_data, key)
             del_by_path(damp_data[lang], key)
+
+        write_json(damp_path_, damp_data)
+        write_json(lang_path, {lang: lang_data})
 
         if new_keys or changed_keys:
             print(f'\nНачало перевода...')
