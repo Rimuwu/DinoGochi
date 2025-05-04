@@ -1,7 +1,9 @@
 # Исполнитель бота
-from bot.dbmanager import check
+from pydoc import cli
+from bot.dbmanager import check, mongo_client
 from aiogram import Bot, Dispatcher, Router 
 from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.fsm.storage.mongo import MongoStorage
 
 from bot.config import conf
 from bot.modules.logs import log, report_devs_start
@@ -10,8 +12,10 @@ from bot.taskmanager import run as run_taskmanager
 import asyncio
 
 bot = Bot(conf.bot_token)
-STORAGE = MemoryStorage()
-dp = Dispatcher(storage=STORAGE) #storage=MongoStorage(mongo_client)
+STORAGE = MongoStorage(client=mongo_client, 
+                       db_name='other',
+                       collection_name='states')
+dp = Dispatcher(storage=STORAGE)
 
 main_router = Router(name='MainRouter')
 dp.include_router(main_router)

@@ -43,6 +43,7 @@ from bot.modules.items.item import (AddItemToUser, DowngradeItem, get_data,
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import answer_markup, cancel_markup, count_markup, down_menu, list_to_keyboard, confirm_markup
 from bot.modules.notifications import user_notification, notification_manager
+from bot.modules.state_handlers import ChooseIntHandler
 from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
 from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement, take_coins
@@ -81,6 +82,7 @@ from bot.modules.items.item import get_data as get_item_data
 
 from bot.modules.states_tools import ChooseImageState
 from bot.tasks.incubation import incubation
+
 
 users = mongo_client.user.users
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
@@ -498,3 +500,16 @@ async def story_stars(message: Message):
     res = await bot.get_star_transactions()
 
     print(res)
+
+
+@main_router.message(Command(commands=['test_new_int']), IsAdminUser())
+@HDMessage
+async def test_new_int(message: Message):
+
+    handler = ChooseIntHandler(function=some_function, 
+            userid=message.from_user.id, chatid=message.chat.id, lang='ru')
+    res = await handler.start()
+    await message.answer(f"Handler result: {res}")
+
+def some_function(value: int, transmitted_data: dict):
+    print(f"Selected value: {value}", transmitted_data)
