@@ -18,6 +18,7 @@ from aiogram.types import Message
 
 from bot.modules.user import user
 from bot.modules.user.user import user_name
+import re
 
 database = DBconstructor(mongo_client.minigame.online)
 
@@ -34,7 +35,7 @@ class MiniGame:
         self._excluded_from_save: list[str] = [
             '_excluded_from_save', '_MiniGame__threads_work', 'active_threads', 'DEACTIVATE_NOT_ACTIVE_BUTTONS', 'DEBUG_MODE', 'THREAD_TICK', 'NextButtonTimeActivation', 'NextButtonTimeActivationDelay', 'ButtonsQueue',
             'start_name', 'start_message', 'start_message_text', 'start_parse_mode', 'start_image_generator',
-            'start_image_name'
+            'start_image_name', 'NextUpdateMessageTimeDelay', 'NextUpdateMessageTime', 'MessagesQueue'
             ]
 
         self.active_threads: bool = True # Служит для паузы тасков
@@ -58,6 +59,10 @@ class MiniGame:
         self.message_generators: dict[str, str] = {
             'main': 'MainGenerator' # Код генератора: имя функции
         }
+
+        self.MessagesQueue: list = [] # Очередь сообщений (первый вошедший выходит первым)
+        self.NextUpdateMessageTime: float = 0 # Время активации следующего сообщения
+        self.NextUpdateMessageTimeDelay: float = 1 # Задержка между активацией сообщений
 
         # ======== BUTTONS ======== #
         self.ButtonsRegister: dict[str, Button] = {
@@ -166,6 +171,16 @@ class MiniGame:
         if player:
             return self.Stages.get(player.stage)
         return None
+
+    async def AllHaveOneStage(self, stage: str) -> bool:
+        """ Проверяет, есть ли у всех игроков один и тот же этап """
+        return all(player.stage == stage for player in self.PLAYERS.values())
+
+    @property
+    async def AllHaveGeneralStage(self) -> bool:
+        """ Проверяет, соответсвует ли у всех игроков этап с этапом STAGE"""
+
+        return all(player.stage == self.STAGE for player in self.PLAYERS.values())
 
     async def SetStage(self, stage: str, user_id: Optional[int] = None, data: Optional[dict] = None):
         """ Переходит к этапу для всех пользователей или для одного """ 
@@ -383,6 +398,7 @@ class MiniGame:
 
         asyncio.create_task(self.__run_threads())
         asyncio.create_task(self.process_buttons_queue())
+        asyncio.create_task(self.process_messages_queue())
 
     async def Custom_StartGame(self, user_id: int, chat_id: int, message: Message, **kwargs) -> None:
         """ Когда игра запускается впервые (Создан, чтобы не переписывать StartGame) """
@@ -391,14 +407,18 @@ class MiniGame:
     async def ContinueGame(self, code: str) -> None:
         """ Когда игра продолжается после неожиданного завершения """
         self.session_key = code
-        self.LAST_ACTION = time.time()
         self.D_log(f'ContinueGame {self.session_key}', True)
+
         await self.__LoadData()
+
+        self.LAST_ACTION = time.time()
+        await self.Update()
 
         await self.Custom_ContinueGame()
 
         asyncio.create_task(self.__run_threads())
         asyncio.create_task(self.process_buttons_queue())
+        asyncio.create_task(self.process_messages_queue())
     
     async def Custom_ContinueGame(self) -> None:
         """ Когда игра продолжается после неожиданного завершения (Создан, чтобы не переписывать ContinueGame) """
@@ -416,7 +436,7 @@ class MiniGame:
             await self.Custom_EndGame()
         except Exception as e:
             self.D_log(f'CustomEndGame error {e}')
-        
+
         # Вызов функции EndGameGenerator
         await self.EndGameGenerator()
 
@@ -458,11 +478,11 @@ class MiniGame:
 
     async def EndGameGenerator(self):
         text = f'Игра {self.session_key} завершена'
-
-        await self.MesageUpdate('main', text=text)
+        await self.MessageUpdate('main', text=text)
 
     async def GetMessageGenerator(self, func_key: str = 'main') -> str:
         generator = self.message_generators.get(func_key, 'error_find_generator')
+        self.D_log(f'GetMessageGenerator {func_key} -> {generator}')
         return generator
 
     async def DeleteMessage(self, func_key: str = 'main') -> None:
@@ -520,7 +540,7 @@ class MiniGame:
 
         return msg
 
-    async def MesageUpdate(self, func_key: str = 'main', text: str = '', reply_markup = None, stop_repeat: bool = False):
+    async def MessageUpdate(self, func_key: str = 'main', text: str = '', reply_markup = None, stop_repeat: bool = False):
         """ Обновляет сообщение """
         if not text: return
 
@@ -540,7 +560,7 @@ class MiniGame:
                                                 filename=f'DinoGochi {image_direct}')
 
         if not chat_id:
-            self.D_log(f'MesageUpdate {func_key} failed: chat_id is {chat_id} message_id is {message_id}')
+            self.D_log(f'MessageUpdate {func_key} failed: chat_id is {chat_id} message_id is {message_id}')
             return None
 
         if message_id:
@@ -561,17 +581,20 @@ class MiniGame:
                         reply_markup=reply_markup,
                         parse_mode=parse_mode
                     )
-                self.D_log(f'MesageUpdate {func_key} success')
+                self.D_log(f'MessageUpdate {func_key} success')
             except Exception as e:
                 if stop_repeat: raise e
 
                 if 'message is not modified' in str(e): return None
 
                 elif 'Flood control exceeded on method' in str(e):
-                    self.D_log(f'MesageUpdate1 {func_key} failed: Flood control exceeded on method')
-                    await asyncio.sleep(5)
+                    match = re.search(r"Retry in (\d+) seconds", str(e))
+                    delay = int(match.group(1)) if match else 5
+
+                    self.D_log(f'MesageUpdate1 {func_key} failed: Flood control exceeded on method, retry in {delay} seconds', True)
+                    await asyncio.sleep(delay)
                     try:
-                        await self.MesageUpdate(func_key, text, reply_markup, stop_repeat=True)
+                        msg = await self.MessageUpdate(func_key, text, reply_markup, stop_repeat=True)
                     except Exception as e: 
                         self.D_log(f'MesageUpdate2 {func_key} failed: {e}', True)
                         return None
@@ -580,9 +603,35 @@ class MiniGame:
                     # await self.DeleteMessage(func_key)
                     return None
         else:
-            await self.CreateMessage(404, chat_id, func_key)
+            msg = await self.CreateMessage(404, chat_id, func_key)
 
         return msg
+
+    async def AddMessageToQueue(self, func_key: str = 'main', text: str = '', reply_markup=None, stop_repeat: bool = False):
+        """Добавляет задачу на обновление сообщения в очередь"""
+        self.MessagesQueue.append({
+            'func_key': func_key,
+            'text': text,
+            'reply_markup': reply_markup,
+            'stop_repeat': stop_repeat
+        })
+        self.D_log(f'AddMessageToQueue {func_key} (очередь: {len(self.MessagesQueue)})')
+
+    async def process_messages_queue(self):
+        """Обрабатывает очередь сообщений с задержкой NextUpdateMessageTimeDelay"""
+        while True:
+            if self.MessagesQueue:
+                now = time.time()
+                if now >= self.NextUpdateMessageTime:
+                    msg_data = self.MessagesQueue.pop(0)
+                    await self.MessageUpdate(
+                        func_key=msg_data['func_key'],
+                        text=msg_data['text'],
+                        reply_markup=msg_data['reply_markup'],
+                        stop_repeat=msg_data['stop_repeat']
+                    )
+                    self.NextUpdateMessageTime = time.time() + self.NextUpdateMessageTimeDelay
+            await asyncio.sleep(0.1)
 
     # ======= Пример генератора ======== #
 
@@ -591,7 +640,7 @@ class MiniGame:
         text = f'MesageGenerator {self.session_key} {user_id}'
         markup = await self.MarkupGenerator()
 
-        await self.MesageUpdate(text=text, reply_markup=markup)
+        await self.MessageUpdate(text=text, reply_markup=markup)
 
     @property
     def global_messgen(self):
