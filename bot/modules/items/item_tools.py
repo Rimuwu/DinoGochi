@@ -375,6 +375,11 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                     }
                     await long_activity.delete_many({'dino_id': dino._id})
                     await long_activity.insert_one(data)
+
+                    if user.settings['last_dino'] == dino._id:
+                        await users.update_one({'userid': userid}, {
+                            '$set': {'settings.last_dino': None}}, comment='use_item_transport_1')
+
                     await dino_owners.delete_many({'dino_id': dino._id})
 
                     return_text = t('transport.add_dino', lang)
