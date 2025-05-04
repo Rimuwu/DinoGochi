@@ -9,6 +9,8 @@ class Text(BaseFilter):
         self.key: str = key
 
     async def __call__(self, message: Message):
+        if message.text is None: return False
+
         if message.from_user:
             if isinstance(message.from_user.language_code, str):
                 lang_n = message.from_user.language_code

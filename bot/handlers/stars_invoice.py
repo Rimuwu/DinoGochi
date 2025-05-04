@@ -23,6 +23,9 @@ async def checkout(pre_checkout_query: PreCheckoutQuery):
 @main_router.message(F.successful_payment)
 async def got_payment(message: Message):
     """ Выдача товара за покупку """
+    
+    log(f'Начата обработка {message.successful_payment}', 4)
+
     if message.successful_payment:
         payload = message.successful_payment.invoice_payload # Делаем строчку с кодом товара и количеством "dino_ultima#2"
         total_price = message.successful_payment.total_amount
