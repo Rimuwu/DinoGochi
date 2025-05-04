@@ -19,7 +19,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.minigames.minigame_registartor import Registry
 from aiogram.filters import Command
 
-database = DBconstructor(mongo_client.minigames.online)
+database = DBconstructor(mongo_client.minigame.online)
 
 @HDCallback
 @main_router.callback_query(IsAuthorizedUser(), 
