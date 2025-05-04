@@ -70,7 +70,7 @@ class TestMiniGame(MiniGame):
                 text = 'You LOSE!'
             markup = None
 
-        await self.MesageUpdate(text=text, reply_markup=markup)
+        await self.MessageUpdate(text=text, reply_markup=markup)
 
     # ======== LOGIC ======== #
     """ Логика миниигры """

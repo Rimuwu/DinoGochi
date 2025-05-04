@@ -8,6 +8,7 @@ from bot.exec import bot
 
 from aiogram import types
 from bot.minigames.minigame import MiniGame, Button, PlayerData, SMessage, Stage, Thread, Waiter, stageButton, stageThread, stageWaiter
+from bot.modules.data_format import seconds_to_str
 from bot.modules.dinosaur import dinosaur
 from bot.modules.images_creators.more_dinos import MiniGame_image
 from bot.modules.user.user import User, take_coins, user_name
@@ -27,7 +28,7 @@ class PowerChecker(MiniGame):
     async def initialization(self):
         self._excluded_from_save += ['time_wait']
         self.DEBUG_MODE = True
-        self.time_wait = 600
+        self.time_wait = 120
 
         self.start_image_generator = 'main'
         self.start_image_name = 'main'
@@ -35,6 +36,9 @@ class PowerChecker(MiniGame):
         self.ImageGenerators = {
             'main': 'main_image',
         }
+        
+        self.NextButtonTimeActivationDelay = 0.5
+        self.NextUpdateMessageTimeDelay = 0.5
 
     async def start_data(self, only_for: int = 0):
 
@@ -173,7 +177,7 @@ class PowerChecker(MiniGame):
                 stage_generator='hard_lvl',
                 to_function='',
                 data={}
-            ),
+            )
         }
 
         await self.Update()
@@ -222,16 +226,45 @@ class PowerChecker(MiniGame):
             await self.DeleteMessage('service')
 
     async def end_game_timer(self):
-        if time.time() - self.LAST_ACTION >= self.time_wait and self.LAST_ACTION != 0:
-            await self.EndGame()
-        else:
-            if 'main' in self.session_masseges and 'author' in self.session_masseges['main'].data:
+        if self.STAGE in ['preparation', 'wait_user']:
+            if time.time() - self.LAST_ACTION >= self.time_wait and self.LAST_ACTION != 0:
+                await self.EndGame()
+            else:
+                if 'main' in self.session_masseges and 'author' in self.session_masseges['main'].data:
 
-                user_id = self.session_masseges['main'].data['author']
-                player = await self.GetPlayer(user_id)
+                    user_id = self.session_masseges['main'].data['author']
+                    player = await self.GetPlayer(user_id)
 
-                if player.stage == 'preparation': # type: ignore
-                    await self.MessageGenerator('preparation', user_id)
+                    if player.stage == 'preparation': # type: ignore
+                        await self.MessageGenerator('preparation', user_id)
+
+        if self.STAGE == 'game':
+            player = await self.GetPlayer(int(self.active_player))
+            if time.time() - self.LAST_ACTION >= self.time_wait and self.LAST_ACTION != 0:
+                self.LAST_ACTION = time.time()
+                await self.Update()
+
+                if player:
+                    player.data['sleep'] += 1
+                    await self.EditPlayer(int(self.active_player), player)
+
+                    if player.data['sleep'] >= 3:
+                        self.D_log(f'Игрок {player.user_name} пропускает ход и кикается')
+                        res = await self.playerexit(int(self.active_player))
+                        if res:
+                            await self.MessageGenerator('main', int(self.active_player))
+                    else:
+                        await self.game_Pass(None)
+                else:
+                    await self.next_player()
+                    user_id = int(self.active_player)
+                    await self.MessageGenerator('main', user_id)
+
+            else:
+                if await self.AllHaveGeneralStage:
+
+                    user_id = int(self.active_player)
+                    await self.MessageGenerator('main', user_id)
 
     async def Custom_StartGame(self, user_id, chat_id, message, 
                                only_for = None) -> None:
@@ -257,6 +290,12 @@ class PowerChecker(MiniGame):
             for player in self.PLAYERS.values():
                 await take_coins(player.user_id, self.bet, update=True)
 
+        if self.STAGE == 'game':
+            for player in self.PLAYERS.values():
+                if player.user_id != int(self.active_player):
+                    await self.DeletePlayer(player.user_id)
+                else:
+                    await take_coins(player.user_id, self.bet, update=True)
 
     async def enter_filter(self, callback: types.CallbackQuery) -> bool:
         if self.only_for != 0 and callback.from_user.id != self.only_for:
@@ -289,7 +328,6 @@ class PowerChecker(MiniGame):
 
         self.message_generators = {
             'main': 'game_GameGenerator',
-            'dice': 'game_DiceGenerator',
             'choose_dino': 'game_ChooseDinoGenerator',
         }
 
@@ -336,17 +374,22 @@ class PowerChecker(MiniGame):
         }
 
         self.ThreadsRegister['service_deleter'].active = False
-        self.ThreadsRegister['end_game_timer'].active = False
-
+        # self.ThreadsRegister['end_game_timer'].active = True
+        
+        self.active_player: str = list(self.PLAYERS.keys())[0]
         self.power = random.randint(*hards_lvl[self.hard_lvl])
 
         await self.DeleteVar('only_for')
         await self.DeleteVar('max_players')
         await self.DeleteVar('hard_lvl')
 
-        self.active_player: str = list(self.PLAYERS.keys())[0]
         self.log: list = []
+
         self.max_net_lim = 2
+        self.max_without_lim = 2
+
+        # Общая победная ставка
+        self.bet = self.bet * len(self.PLAYERS)
 
         for player_id, player_data in self.PLAYERS.items():
             dino = await Dino().create(player_data.data['dino'])
@@ -354,23 +397,28 @@ class PowerChecker(MiniGame):
 
             # Игровые данные
             player_data.data = {
+                'dino': dino.alt_id,
                 'units': self.power,
                 'dino_power': dino.stats['power'],
                 'dino_dexterity': dino.stats['dexterity'],
+                'intelligence': dino.stats['intelligence'],
                 'dino_overload': 0,
                 'in_net': False,
                 'without_tools': False,
                 'without_limit': 2,
                 'net_limit': 2,
+                'sleep': 0
             }
 
             await self.EditPlayer(int(player_id), player_data)
+
+        self.active_player = random.choice(list(self.PLAYERS.keys()))
 
         await self.Update()
 
         await self.SetStage('game')
         await self.MessageGenerator('main', self.owner_id)
-    
+
     async def button_control(self, userid: int):
         """
         Функция отключает кнопки, если динозавр в паутине, без топора или перегружен
@@ -390,31 +438,41 @@ class PowerChecker(MiniGame):
     async def next_player(self):
 
         now_player = await self.GetPlayer(int(self.active_player))
+
+        if now_player and now_player.data['units'] <= 0:
+            await self.EndGame()
+            return
+
         if now_player and now_player.data['in_net']:
             now_player.data['in_net'] = False
+            await self.EditPlayer(int(self.active_player), now_player)
+
+        elif now_player and now_player.data['without_tools']:
+            now_player.data['without_tools'] = False
             await self.EditPlayer(int(self.active_player), now_player)
 
         now = self.active_player
         keys = list(self.PLAYERS.keys())
 
-        if now == keys[-1]:
-            self.active_player = keys[0]
-        else:
-            self.active_player = keys[
-                keys.index(now) + 1
-            ]
+        if len(keys) != 1:
 
-        await self.Update()
-        await self.button_control(int(self.active_player))
+            if now == keys[-1]:
+                self.active_player = keys[0]
+            else:
+                self.active_player = keys[
+                    keys.index(now) + 1
+                ]
 
-        next_player = await self.GetPlayer(int(self.active_player))
-        if next_player: 
+            await self.Update()
+            await self.button_control(int(self.active_player))
 
-            # Проверка на перегрузку
-            if next_player.data['dino_overload'] == 3:
-                next_player.data['dino_overload'] -= random.randint(1, 3)
-                await self.EditPlayer(int(self.active_player), next_player)
+            next_player = await self.GetPlayer(int(self.active_player))
+            if next_player: 
 
+                # Проверка на перегрузку
+                if next_player.data['dino_overload'] == 3:
+                    next_player.data['dino_overload'] -= random.randint(1, 3)
+                    await self.EditPlayer(int(self.active_player), next_player)
 
     async def active_player_filter(self, callback: types.CallbackQuery) -> bool:
         if int(callback.from_user.id) != int(self.active_player):
@@ -423,11 +481,42 @@ class PowerChecker(MiniGame):
 
         return True
 
+    async def EndGameGenerator(self) -> None:
+        text = f'Игра {self.session_key} завершена'
+
+        if self.STAGE == 'game':
+            player = await self.GetPlayer(int(self.active_player))
+            if player:
+                dino = await Dino().create(player.data['dino'])
+                if dino:
+                    text = f'Игра {self.session_key} завершена\n' \
+                        f'Выиграл игрок: {player.user_name} с динозавром {dino.name}\n' \
+                        f'Выигрыш {self.bet} монет.'
+
+        await self.MessageUpdate('main', text=text)
+
+    async def playerexit(self, user_id: int) -> bool:
+        if user_id == int(self.active_player): 
+            await self.next_player()
+
+        await self.DeletePlayer(user_id)
+        # Снятие статуса с динозавра
+
+        if len(self.PLAYERS) == 1:
+            await self.EndGame()
+            return False
+
+        return True
+
     async def game_ExitGame(self, callback: types.CallbackQuery) -> None:
-        pass
+
+        who_click = callback.from_user.id
+        res = await self.playerexit(who_click)
+        if res:
+            await self.MessageGenerator('main', who_click)
 
     async def game_SimpleHit(self, callback: types.CallbackQuery) -> None:
-        d1, d2 = await self.game_RollDice(callback)
+        d1, d2 = await self.game_RollDice(callback, 'simplehit')
 
         if d1 and d2:
             active_player = await self.GetPlayer(int(self.active_player))
@@ -442,7 +531,6 @@ class PowerChecker(MiniGame):
                     [int(self.active_player), 
                      'simplehit', [f'🎲 {d1}+{d2}', f'💪 {int(power // 50)}'], 'wood']
                 )
-                self.log = self.log[-3:]
                 await self.Update()
 
                 await self.next_player()
@@ -465,7 +553,6 @@ class PowerChecker(MiniGame):
                 [int(self.active_player), 
                     'powerfulhit', [f'💪 {int(power)}+3'], 'wood']
             )
-            self.log = self.log[-3:]
             await self.Update()
 
             await self.next_player()
@@ -508,7 +595,7 @@ class PowerChecker(MiniGame):
         if us_stage:
             action = us_stage.data.get('action', 'net')
 
-            await self.MesageUpdate('main', text=text, 
+            await self.AddMessageToQueue('main', text=text, 
                         reply_markup=await self.game_choose_dino_reply(dinos, action))
 
     async def game_NetDino(self, callback: types.CallbackQuery) -> None:
@@ -528,9 +615,9 @@ class PowerChecker(MiniGame):
             else:
                 await callback.answer('У вас закончился крюк!')
 
-    async def game_Pass(self, callback: types.CallbackQuery) -> None:
+    async def game_Pass(self, callback: types.CallbackQuery | None) -> None:
         self.log.append(
-                    [int(self.active_player), 'overload', [], None]
+                    [int(self.active_player), 'pass', [], None]
                 )
         await self.Update()
         await self.next_player()
@@ -560,43 +647,85 @@ class PowerChecker(MiniGame):
                             break
 
                     if attack_player:
+
                         attack_player = await self.GetPlayer(int(attack_player))
                         if attack_player:
                             attack_player.data['in_net'] = True
                             await self.EditPlayer(int(attack_player.user_id), attack_player)
-                            
+
                             dino = await Dino().create(dino_alt_id)
                             if dino:
                                 self.log.append(
-                                    [int(self.active_player), 'net', [f'🕸️ {dino.name}'], 'wood']
+                                    [int(self.active_player), 'net', [], attack_player.user_id]
                                 )
+            
+            if action == 'take_axe':
+                if player.data['without_limit'] > 0:
+                    player.data['without_limit'] -= 1
+                    await self.EditPlayer(int(self.active_player), player)
+
+                    attack_player = 0
+                    for pid, pdata in self.PLAYERS.items():
+                        if pdata.data['dino'] == dino_alt_id:
+                            attack_player = pid
+                            break
+
+                    if attack_player:
+                        attack_player = await self.GetPlayer(int(attack_player))
+
+                        d1, d2 = await self.game_RollDice(callback, action_type='take_axe')
+
+                        result = d1 + (player.data['dino_dexterity'] // 2)
+                        result2 = d2 + (attack_player.data['intelligence'] // 2)
+
+                        if result > result2:
+
+                            if attack_player:
+                                attack_player.data['without_tools'] = True
+                                await self.EditPlayer(int(attack_player.user_id), attack_player)
+
+                                dino = await Dino().create(dino_alt_id)
+                                if dino:
+                                    self.log.append(
+                                        [int(self.active_player), 'take_axe', [[d1, (player.data['dino_dexterity'] // 2)], [d2, (attack_player.data['intelligence'] // 2)]], attack_player.user_id]
+                                    )
+                                    await self.Update()
+                        else:
+                            if attack_player:
+                                self.log.append(
+                                        [int(self.active_player), 'no_take_axe', [[d1, (player.data['dino_dexterity'] // 2)], [d2, (attack_player.data['intelligence'] // 2)]], attack_player.user_id]
+                                    )
+                                await callback.answer('Атака не удалась! Динозавр был слишком внимательным!')
 
             await self.OnButtons(list(self.ButtonsRegister.keys()))
             await self.next_player()
             await self.MessageGenerator('main', int(self.active_player))
 
-    async def game_RollDice(self, callback: types.CallbackQuery):
+    async def game_RollDice(self, callback: types.CallbackQuery, action_type: str):
 
         await self.OffButtons(list(self.ButtonsRegister.keys()))
 
-        try:
-            res = await bot.send_dice(callback.message.chat.id, emoji='🎲', reply_markup=None, reply_to_message_id=callback.message.message_thread_id)
+        # try:
+        #     res = await bot.send_dice(callback.message.chat.id, emoji='🎲', reply_markup=None, reply_to_message_id=callback.message.message_thread_id)
 
-            res2 = await bot.send_dice(callback.message.chat.id, emoji='🎲', reply_markup=None, reply_to_message_id=callback.message.message_thread_id)
-        except Exception as e:
-            self.D_log(f'game_RollDice: {e}')
-            return 0, 0
+        #     res2 = await bot.send_dice(callback.message.chat.id, emoji='🎲', reply_markup=None, reply_to_message_id=callback.message.message_thread_id)
+        # except Exception as e:
+        #     self.D_log(f'game_RollDice: {e}')
+        #     return 0, 0
 
-        await self.MessageGenerator('main', int(self.active_player), action_type='simplehit')
-        await sleep(5)
+        await self.MessageGenerator('main', int(self.active_player), action_type=action_type)
+        
+        res1, res2 = random.randint(1, 6), random.randint(1, 6)
+        await sleep(3)
 
-        try:
-            await res.delete()
-            await res2.delete()
-        except: pass
+        # try:
+        #     await res.delete()
+        #     await res2.delete()
+        # except: pass
 
         await self.OnButtons(list(self.ButtonsRegister.keys()))
-        return res.dice.value, res2.dice.value
+        # return res.dice.value, res2.dice.value
+        return res1, res2
 
     async def game_main_reply_markup(self, user_id: int):
         
@@ -608,64 +737,107 @@ class PowerChecker(MiniGame):
             {'text': 'Мощный удар', 'callback_data': self.CallbackGenerator('powerful_hit')},
             {'text': f'Паутина ({dat["net_limit"]} / {self.max_net_lim})', 
                 'callback_data': self.CallbackGenerator('net_dino')},
-            {'text': 'Отобрать топор', 'callback_data': self.CallbackGenerator('take_axe')},
-            {'text': 'Пропустить ход', 'callback_data': self.CallbackGenerator('pass')},
-            {'text': 'Выйти', 'callback_data': self.CallbackGenerator('exit'), 'ignore_row': 'true'},
+            {'text': f'Крюк ({dat["without_limit"]} / {self.max_without_lim})', 'callback_data': self.CallbackGenerator('take_axe')},
+            {'text': 'Пропустить', 'callback_data': self.CallbackGenerator('pass')},
+            {'text': 'Выйти', 'callback_data': self.CallbackGenerator('exit')},
         ]
         return self.list_to_inline(buttons, 2, False)
 
+    async def log_generator(self):
+        text = ''
+
+        logs = self.log[-3:]
+        for who, act_type, list_units, to_object in logs:
+            who_player = await self.GetPlayer(who)
+
+            if who_player:
+                my_dino = await Dino().create(who_player.data['dino'])
+                # ['simplehit', [d1, d2, power // 50], 'wood']
+                # ['powerfulhit', [power], 'wood']
+                text += '• '
+
+                if act_type in ['simplehit']:
+                    text += f'`{who_player.user_name}` ▷ Нанёс удар по 🪵 с силой {" ".join(list_units)}'
+                    # text += f'{who_player.user_name} 🪓 {" ".join(list_units)} ▷ 🪵'
+
+                elif act_type in ['powerfulhit']:
+                    text += f'`{who_player.user_name}` ▷ Нанёс мощный удар по 🪵 с силой {" ".join(list_units)}'
+                    # text += f'{who_player.user_name} 🪓 {" ".join(list_units)} ▷ 🪵'
+
+                elif act_type == 'net':
+                    to_player = await self.GetPlayer(to_object)
+                    attack_dino = await Dino().create(to_player.data['dino'])
+                    if attack_dino:
+                        text += f'`{who_player.user_name}` 🕸️ ▷ {attack_dino.name} попал в паутину'
+                    # text += f'{who_player.user_name} ▷ {" ".join(list_units)}'
+
+                elif act_type == 'overload':
+                    text += f'`{who_player.user_name}` 💥 ▷ Перегружен, пропускает ход'
+
+                elif act_type == 'pass':
+                    text += f'`{who_player.user_name}` ▷ Пропускает ход'
+
+                elif act_type == 'take_axe':
+                    to_player = await self.GetPlayer(to_object)
+                    attack_dino = await Dino().create(to_player.data['dino'])
+                    if attack_dino:
+                        text += f'`{who_player.user_name}` ▷ Отобрал топор у {attack_dino.name}\n' \
+                            f'• 🎲 {list_units[0][0]} 🍃 {list_units[0][1]} > 🎲 {list_units[1][0]} 🧠 {list_units[1][1]}'
+
+                elif act_type == 'no_take_axe':
+                    to_player = await self.GetPlayer(to_object)
+                    attack_dino = await Dino().create(to_player.data['dino'])
+                    if attack_dino:
+                        text += f'`{who_player.user_name}` ▷ Не удалось отобрать топор у {attack_dino.name}\n' \
+                            f'• 🎲 {list_units[0][0]} 🍃 {list_units[0][1]} < 🎲 {list_units[1][0]} 🧠 {list_units[1][1]}'
+
+                text += '\n'
+        return text #[:-1]
+
     async def game_GameGenerator(self, user_id: int, action_type: str | None = None) -> None:
         data_act_player = self.PLAYERS[self.active_player]
-        text = "Игроки:\n"
+        text = "Игроки\n"
         for player_id, player_data in self.PLAYERS.items():
             remaining_power = player_data.data['units']
             overload = player_data.data['dino_overload']
-            
+
             percentage = int((remaining_power / self.power) * 100)
             # if player_id == self.active_player: my_percent = percentage
 
-            activ_emoji = '-'
-            if player_id == self.active_player: activ_emoji = '>'
+            activ_emoji = '○'
+            if player_id == self.active_player: activ_emoji = '▷'
 
-            text += f"{activ_emoji} {player_data.user_name}: {percentage}% {overload}💥"
-            
+            text += f"{activ_emoji} `{player_data.user_name}` ── 🪵 {percentage}% 💥 {overload}"
+
             if player_data.data['in_net']:
-                text += '🕸️'
+                text += ' 🕸️'
+
+            if player_data.data['without_tools']:
+                text += ' 🪓'
 
             text += '\n'
 
         if self.log:
-            text += '\nПоследние действия:\n'
-
-            logs = self.log[-3:]
-            for who, act_type, list_units, to_object in logs:
-                who_player = await self.GetPlayer(who)
-                if who_player:
-                    # ['simplehit', [d1, d2, power // 50], 'wood']
-                    # ['powerfulhit', [power], 'wood']
-                    if act_type in ['simplehit', 'powerfulhit']:
-                        text += f'{who_player.user_name} 🪓 {" ".join(list_units)} -> 🪵'
-                    
-                    if act_type == 'net':
-                        text += f'{who_player.user_name} -> {" ".join(list_units)}'
-
-                    elif act_type == 'overload':
-                        text += f'{who_player.user_name} 💥 -> Пропускает ход'
-                    text += '\n'
+            text += '\nПоследние действия\n'
+            text += await self.log_generator()
 
         if not action_type:
-            text += f'\n{data_act_player.user_name} Выберите действие:\n' \
-                    '- Удар: Нанести удар по дереву\n' \
-                    '- Мощный удар: Исползует всю силу динозавра\n' \
-                    '- Паутина: В случае успеха противник пропустит ход\n' \
-                    '- Отобрать топор: В случае успеха противник не сможет использовать топор\n'
+            wait = self.time_wait - (time.time() - self.LAST_ACTION) if self.time_wait - (time.time() - self.LAST_ACTION) > 0 else 0
+            str_wait = seconds_to_str(int(wait), self.LANGUAGE)
+            
+            text += f'\n`{data_act_player.user_name}` Выбирает действие... (`{str_wait} до пропуска`)\n' 
+
         if action_type == 'simplehit':
             text += '\nВыбранное действие: Удар по дереву\n' \
                     '- Ожидайте пока кубики упадут, после чего динозавр нанесёт удар по дереву.' 
+        elif action_type == 'take_axe':
+            text += '\nВыбранное действие: Отобрать топор\n' \
+                    '- Ожидайте пока кубики упадут, после чего динозавр попытается отобрать топор.\n' \
+                    '- Если ловкость вашего динозавра больше, чем интеллект противника, то атака будет успешной.' 
 
         # await self.button_control(int(self.active_player))
 
-        await self.MesageUpdate('main', text=text, 
+        await self.AddMessageToQueue('main', text=text, 
                                 reply_markup=await self.game_main_reply_markup(user_id))
 
 

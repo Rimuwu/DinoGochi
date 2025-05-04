@@ -70,7 +70,7 @@ async def PreparationGenerator(self, user_id) -> None:
 
     text = f'Динозавр: {dino_name}\nСтавка: {bet_text}\nМакс. игроков: {self.max_players}\n{time_left_text}'
     markup = await self.PreparationMarkup()
-    await self.MesageUpdate('main', text=text, reply_markup=markup)
+    await self.AddMessageToQueue('main', text=text, reply_markup=markup)
 
 
 @register_method(PowerChecker)
@@ -117,7 +117,7 @@ async def MaxPlayersGenerator(self, user_id) -> None:
                 f"Вы можете сбросить защищённый режим нажав на кнопку ниже."
             markup = await self.delete_only_for()
 
-    await self.MesageUpdate('main', text=text, reply_markup=markup)
+    await self.AddMessageToQueue('main', text=text, reply_markup=markup)
 
 
 @register_method(PowerChecker)
@@ -147,7 +147,7 @@ async def ChooseDino_set(self, callback) -> None:
 async def ChooseDinoGenerator(self, user_id) -> None:
     markup = await self.dino_markup(user_id)
     text = 'Выберите динозавра:'
-    await self.MesageUpdate('main', text=text, reply_markup=markup)
+    await self.AddMessageToQueue('main', text=text, reply_markup=markup)
 
 
 @register_method(PowerChecker)
@@ -206,7 +206,7 @@ async def bet_check(self, user_id, coins):
 async def ChooseBetGenerator(self, user_id) -> None:
     markup = await self.choose_betMarkup()
     text = 'Выберите ставку:'
-    await self.MesageUpdate('main', text=text, reply_markup=markup)
+    await self.AddMessageToQueue('main', text=text, reply_markup=markup)
 
 @register_method(PowerChecker)
 async def ChooseBet_set(self, callback) -> None:
@@ -257,7 +257,7 @@ async def language_markup(self):
 async def ChangeLanguageGenerator(self, user_id) -> None:
     markup = await self.language_markup()
     text = 'Выберите язык (для всех):'
-    await self.MesageUpdate('main', text=text, reply_markup=markup)
+    await self.AddMessageToQueue('main', text=text, reply_markup=markup)
 
 @register_method(PowerChecker)
 async def ChangeLanguage_set(self, callback) -> None:
@@ -293,7 +293,7 @@ async def HardLvlGenerator(self, user_id) -> None:
            '1 - Легкий (20 - 40)\n' \
            '2 - Средний (50 - 80)\n' \
            '3 - Сложный (80 - 150)\n'
-    await self.MesageUpdate('main', text=text, reply_markup=markup)
+    await self.AddMessageToQueue('main', text=text, reply_markup=markup)
 
 @register_method(PowerChecker)
 async def HardLvl_set(self, callback) -> None:
