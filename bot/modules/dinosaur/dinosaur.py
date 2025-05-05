@@ -552,6 +552,8 @@ async def set_status(dino_id: ObjectId, new_status: str, now_status: str = ''):
     """
 
     assert new_status in ['sleep', 'game', 'journey', 'collecting', 'dungeon', 'kindergarten', 'hysteria', 'farm', 'mine', 'bank', 'sawmill', 'gym', 'library', 'park', 'swimming_pool', 'craft', 'unrestrained_play', 'pass'], f'Состояние {new_status} не найдено!'
+    
+    # hysteria farm unrestrained_play
 
     if not now_status:
         now_status = await check_status(dino_id)

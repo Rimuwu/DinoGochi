@@ -43,7 +43,8 @@ from bot.modules.items.item import (AddItemToUser, DowngradeItem, get_data,
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import answer_markup, cancel_markup, count_markup, down_menu, list_to_keyboard, confirm_markup
 from bot.modules.notifications import user_notification, notification_manager
-from bot.modules.state_handlers import ChooseIntHandler
+from bot.modules.states_fabric.state_handlers import ChooseIntHandler
+from bot.modules.states_fabric.steps_datatype import IntStepData, StepMessage
 from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
 from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement, take_coins
@@ -513,3 +514,38 @@ async def test_new_int(message: Message):
 
 def some_function(value: int, transmitted_data: dict):
     print(f"Selected value: {value}", transmitted_data)
+
+
+
+@main_router.message(Command(commands=['check_save']), IsAdminUser())
+@HDMessage
+async def check_save(message: Message):
+    
+    mrk = list_to_keyboard(['yes', 'no'])
+    nw = StepMessage(
+        'meow', mrk,
+        False, None
+    )
+    
+    nnwnw = StepMessage(**nw.to_dict())
+
+    await message.answer(nnwnw.text, reply_markup=nnwnw.reply_markup)
+    
+
+@main_router.message(Command(commands=['test3']), IsAdminUser())
+@HDMessage
+async def test3(message: Message):
+    
+    # "type": 'int', "name": 'trade_col', "data": {"max_int": 20},
+    #         "translate_message": True,
+    #         'message': {'text': 'add_product.wait_count', 
+    #                     'reply_markup': count_markup(20, lang)}
+
+    nw = StepMessage(
+        'add_product.wait_count',
+        count_markup(20, 'ru'),
+        True
+    )
+    dt = IntStepData('trade_col', nw, max_int=20)
+    
+    pprint(dt.to_dict())

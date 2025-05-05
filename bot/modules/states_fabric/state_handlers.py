@@ -1,25 +1,27 @@
 
+import time
 from typing import Callable, Dict, Optional, Type
 from aiogram.fsm.state import StatesGroup, State
-from aiogram.types import InlineKeyboardMarkup
 from bot.exec import bot
 from bot.modules.data_format import (chunk_pages, list_to_inline,
                                      list_to_keyboard)
 from bot.modules.functransport import func_to_str, str_to_func
 from bot.modules.get_state import get_state
-from bot.modules.images import async_open
-from bot.modules.inventory_tools import start_inv
+from bot.modules.inventory_tools import InventoryStates, generate, inventory_pages, send_item_info, swipe_page
 from bot.modules.localization import get_data, t
+from bot.modules.logs import log
 from bot.modules.markup import down_menu, get_answer_keyboard
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.friends import get_friend_data
-from bot.modules.user.user import User, get_frineds, user_info
+from bot.modules.user.user import User, get_frineds, get_inventory, user_info
 from bot.modules.managment.events import check_event
 import inspect
 from bot.dbmanager import mongo_client
 
 sellers = DBconstructor(mongo_client.market.sellers)
+states_data = DBconstructor(mongo_client.other.states)
+users = DBconstructor(mongo_client.user.users)
 
 class GeneralStates(StatesGroup):
     zero = State() # Состояние по умолчанию
@@ -38,14 +40,17 @@ class BaseStateHandler():
     """
     Абстрактный базовый класс для обработчиков состояний выбора.
     """
+    group_name = GeneralStates
     state_name = 'zero'
     indenf: str = 'zero'
+    deleted_keys: list[str] = []
 
     def setState(self):
         """
         Получение состояния из группы состояний и установка его в качестве типового состояния.
         """
-        return getattr(GeneralStates, 
+
+        return getattr(self.group_name, 
                        self.state_name, None)
 
     def __init__(self, function: Callable | str, 
@@ -67,12 +72,22 @@ class BaseStateHandler():
 
     async def call_function(self, *args, **kwargs):
         func = str_to_func(self.function)
+
+        transmitted_data = self.transmitted_data.copy()
+        transmitted_data.update(
+            {
+                'userid': self.userid,
+                'chatid': self.chatid,
+                'lang': self.lang
+            }
+        )
+
         if inspect.iscoroutinefunction(func):
             return await func(*args, **kwargs, 
-                              transmitted_data=self.transmitted_data)
+                              transmitted_data=transmitted_data)
         else:
             return func(*args, **kwargs, 
-                              transmitted_data=self.transmitted_data)
+                              transmitted_data=transmitted_data)
 
     async def setup(self) -> tuple[bool, str]:
         """
@@ -97,7 +112,12 @@ class BaseStateHandler():
 
     def get_data(self) -> dict:
         data = self.__dict__.copy()
+
         del data['state_type']
+        for i in self.deleted_keys: del data[i]
+
+        if 'time_start' not in data:
+            data['time_start'] = int(time.time())
 
         return data
 
@@ -359,7 +379,7 @@ class ChoosePagesStateHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang,
                     options=None, horizontal=2, vertical=3,
-                    transmitted_data=None, autoanswer=True, one_element=True,
+                    transmitted_data=None, autoanswer=True, one_element=True, settings: Optional[dict]=None,
                     update_page_function=update_page):
         """ Устанавливает состояние ожидания выбора опции
     
@@ -401,6 +421,9 @@ class ChoosePagesStateHandler(BaseStateHandler):
             'vertical': vertical
         }
 
+        if settings:
+            self.settings.update(settings)
+
     async def setup(self):
         # Чанкует страницы и добавляем пустые элементы для сохранения структуры
         self.pages = chunk_pages(self.options, 
@@ -419,6 +442,33 @@ class ChoosePagesStateHandler(BaseStateHandler):
                 element = self.options[list(self.options.keys())[0]]
             await self.call_function(element)
             return False, self.pages
+
+
+class ChooseImageHandler(BaseStateHandler):
+    state_name = 'ChooseImage'
+    indenf = 'image'
+
+    def __init__(self, function, userid, chatid, lang,
+                    need_image=True, transmitted_data=None):
+        """
+            Устанавливает состояние ожидания ввода изображения
+
+            need_image - если True, разрешает ответ 'no_image' вместо file_id
+
+            В function передаёт:
+            >>> image_url: str, transmitted_data: dict
+
+            Return:
+                True, 'image'
+        """
+        super().__init__(function, userid, chatid, lang, transmitted_data)
+        self.need_image = need_image
+
+    async def setup(self):
+        await self.set_state()
+        await self.set_data()
+        return True, self.indenf
+
 
 
 async def friend_handler(friend: dict, transmitted_data: dict):
@@ -447,12 +497,12 @@ async def friend_handler(friend: dict, transmitted_data: dict):
         await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
 class ChooseFriendHandler(ChoosePagesStateHandler):
-    state_name = 'ChooseFriend'
+    state_name = 'ChoosePagesState'
     indenf = 'friend'
 
-    async def __init__(self, function, userid, chatid, lang,
-                 one_element: bool = True,
-                 transmitted_data=None):
+    def __init__(self, function, userid, chatid, lang,
+                    one_element: bool=False,
+                    transmitted_data=None):
         """
             Устанавливает состояние ожидания выбора друга
 
@@ -460,47 +510,153 @@ class ChooseFriendHandler(ChoosePagesStateHandler):
             >>> friend: dict, transmitted_data: dict
 
             Return:
-                Возвращает True если был создано состояние, False если завершилось автоматически (1 вариант выбора)
-        """
-        friends = await get_frineds(self.userid)
-        if len(friends) > 1:
-            await self.set_state()
-            await self.set_data()
-
-        else:
-            friend = None
-            if len(friends) > 0:
-                friend = friends[list(friends.keys())[0]]
-
-        super().__init__(function, userid, chatid, lang, one_element, transmitted_data)
-
-
-
-
-class ChooseImageHandler(BaseStateHandler):
-    state_name = 'ChooseImage'
-    indenf = 'image'
-
-    def __init__(self, function, userid, chatid, lang,
-                    need_image=True, transmitted_data=None):
-        """
-            Устанавливает состояние ожидания ввода изображения
-
-            need_image - если True, разрешает ответ 'no_image' вместо file_id
-
-            В function передаёт:
-            >>> image_url: str, transmitted_data: dict
-
-            Return:
-                True, 'image'
+                Возвращает True если был создано состояние
         """
         super().__init__(function, userid, chatid, lang, transmitted_data)
-        self.need_image = need_image
+        self.options: dict = {}
+        self.autoanswer: bool = False
+        self.one_element: bool = one_element
+        self.update_page_function: Callable = friend_handler
+        self.pages: list = []
+        self.page: int = 0
+        self.settings: dict = {
+            'horizontal': 2,
+            'vertical': 3
+        }
 
     async def setup(self):
+        res = await get_frineds(self.userid)
+        friends = res['friends']
+        options = {}
+
+        a = 0
+        for friend_id in friends:
+            friend_res = await get_friend_data(friend_id, self.userid)
+            if friend_res:
+                if friend_res['name'] in options:
+                    a += 1 
+                    options[friend_res['name'] + f'# {a}'] = {
+                        'userid': friend_id, 
+                        'name': friend_res['name']}
+                else:
+                    options[friend_res['name']] = {
+                        'userid': friend_id, 
+                        'name': friend_res['name']}
+
         await self.set_state()
         await self.set_data()
         return True, self.indenf
+
+class ChooseInventoryHandler(BaseStateHandler):
+    group_name = InventoryStates
+    state_name = 'Inventory'
+    indenf = 'inv'
+    deleted_keys = ['exclude_ids', 'inventory']
+    
+    def __init__(self, function, userid, chatid, lang,
+                    type_filter: list | None = None, 
+                    item_filter: list | None = None, 
+                    exclude_ids: list | None = None,
+                    start_page: int = 0, 
+                    changing_filters: bool = True,
+                    inventory: list | None = None, 
+                    delete_search: bool = False,
+                    transmitted_data = None,
+                    settings: dict = {},
+                    inline_func = None, inline_code = ''
+                ):
+        """ Функция запуска инвентаря
+            type_filter - фильтр типов предметов
+            item_filter - фильтр по id предметам
+            start_page - стартовая страница
+            exclude_ids - исключаемые id
+            changing_filters - разрешено ли изменять фильтры
+            one_time_pages - сколько генерировать страниц за раз, все если 0
+            delete_search - Убрать поиск
+            inventory - Возможность закинуть уже обработанный инвентарь, если пусто - сам сгенерирует инвентарь
+
+
+            >> Создано для steps, при активации перенаправляет данные при нажатии
+            на inline_func, а при нажатии на кнопку начинающийся на inventoryinline {inline_code}
+            перенаправляет данные, выбранные по кнопке в function
+
+            >> В inline_func так же передаётся inline_code в transmitted_data
+
+            inline_func - Если нужна функция для обработки калбек запросов 
+                - Все кнопки должны начинаться с "inventoryinline {inline_code}" 
+        """
+        if function is None: function = send_item_info
+
+        super().__init__(function, userid, chatid, lang, transmitted_data)
+        self.pages = []
+        self.items_data = {}
+
+        self.filters = type_filter
+        self.items = item_filter
+
+        self.settings = {
+            'view': [2, 3], 'lang': lang, 
+            'row': 1, 'page': start_page,
+            'changing_filters': changing_filters,
+            'delete_search': delete_search
+                            }
+        self.main_message = 0
+        self.up_message = 0
+
+        self.function = function
+
+        if inline_func is not None:
+            self.settings['inline_func'] = inline_func
+            self.settings['inline_code'] = inline_code
+
+        self.inventory = inventory
+        self.exclude_ids = exclude_ids
+        
+        if settings:
+            self.settings.update(settings)
+    
+    async def setup(self):
+        user_settings = await users.find_one(
+            {'userid': self.userid}, 
+            {'settings': 1}, comment='start_inv_user_settings')
+        if user_settings: 
+            self.settings['inv_view'] = user_settings['settings']['inv_view']
+
+
+        if not self.inventory:
+            inventory, count = await get_inventory(self.userid, 
+                                                   self.exclude_ids)
+        else:
+            inventory = self.inventory
+            count = len(inventory)
+
+        self.items_data = await inventory_pages(inventory, 
+                                           self.lang, self.filters, 
+                                           self.items)
+        self.pages, self.settings['row'] = await generate(self.items_data, 
+                                         *self.settings['inv_view'])
+        if not self.pages:
+            await bot.send_message(self.chatid, t('inventory.null', self.lang), 
+                           reply_markup=await m(self.chatid, 'last_menu', language_code=self.lang))
+            return False, 'cancel'
+
+        else:
+            await self.set_state()
+            await self.set_data()
+
+            log(f'open inventory userid {self.userid} count {count}')
+            await swipe_page(self.chatid, self.userid)
+            return True, self.indenf
+
+class ChooseStepHandler(BaseStateHandler):
+    group_name = None
+    state_name = None
+    indenf = 'step'
+    deleted_keys = []
+    
+    def __init__(self, function, userid, chatid, lang, transmitted_data = None):
+        super().__init__(function, userid, chatid, lang, transmitted_data)
+
 
 # Пример реестра классов-состояний
 state_handler_registry: Dict[str, Type[BaseStateHandler]] = {
@@ -513,9 +669,9 @@ state_handler_registry: Dict[str, Type[BaseStateHandler]] = {
     'inline': ChooseInlineHandler,
     'custom': ChooseCustomHandler,
     'pages': ChoosePagesStateHandler,
-    # 'inv': start_inv,
-    'friend': start_friend_menu,
-    'image': ChooseImageHandler
+    'friend': ChooseFriendHandler,
+    'image': ChooseImageHandler,
+    'inv': ChooseInventoryHandler
 }
 
 # Пример функции для запуска состояния по типу

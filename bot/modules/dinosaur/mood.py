@@ -14,7 +14,6 @@ from bot.const import GAME_SETTINGS
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 max_stack = 5
 

@@ -8,7 +8,7 @@ from bot.modules.get_state import get_state
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.markup import markups_menu as m
-from bot.modules.state_handlers import ChooseIntHandler
+from bot.modules.states_fabric.state_handlers import ChooseIntHandler
 from bot.modules.states_tools import GeneralStates
 from aiogram.types import CallbackQuery, Message
 
@@ -122,8 +122,8 @@ async def ChooseInt(message: Message):
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
         else: transmitted_data['umessageid'] = message.message_id
 
-        # await ChooseIntHandler(**data).call_function(number)
-        await func(number, transmitted_data=transmitted_data)
+        await ChooseIntHandler(**data).call_function(number)
+        # await func(number, transmitted_data=transmitted_data)
 
 @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseString), IsAuthorizedUser())
