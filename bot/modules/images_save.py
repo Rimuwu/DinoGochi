@@ -5,14 +5,13 @@
 #
 
 import json
-from math import fabs
 import os
-from typing import Union, List
-from bot.exec import main_router, bot
+from typing import Union
+from bot.exec import bot
 from bot.modules.images import async_open
 import aiogram
-from aiogram.types import InputFile, MessageEntity, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, ReplyParameters
-
+from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, ReplyParameters
+from bot.modules.logs import log
 
 storage = {}
 DIRECTORY = 'bot/data/file_base.json'
@@ -140,5 +139,6 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
 
     return mes
 
-if __name__ != '__main__':
-    storage = get_storage()
+storage = get_storage()
+log('Загружен модуль для сохранения изображений', 1)
+log(f'В базе изображений - {len(storage)} картинок', 1)

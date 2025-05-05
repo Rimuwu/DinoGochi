@@ -157,7 +157,7 @@ class FishingGame(MiniGame):
             text += await self.AreaToMessage()
 
 
-        await self.MesageUpdate(text=text, reply_markup=markup)
+        await self.MessageUpdate(text=text, reply_markup=markup)
 
     # ======== LOGIC ======== #
     """ Логика миниигры """

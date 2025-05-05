@@ -1,10 +1,11 @@
 # from bot.minigames.minigame import MiniGame
+from math import e
 from bot.dbmanager import mongo_client
 from bot.modules.logs import log
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.taskmanager import add_task
 
-minigames = DBconstructor(mongo_client.minigames.online)
+minigames = DBconstructor(mongo_client.minigame.online)
 
 class MiniGameRegistrator:
     def __init__(self):
@@ -51,8 +52,12 @@ class MiniGameRegistrator:
             game_class = self.get_game(session['GAME_ID'])
 
             if game_class:
-                await game_class.ContinueGame(session_key)
+                try:
+                    await game_class.ContinueGame(session_key)
+                except Exception as e:
+                    log(f"Error while continuing game {session_key}: {e}")
+
                 self.save_class_object(session['GAME_ID'], session_key, game_class)
 
 Registry = MiniGameRegistrator()
-add_task(Registry.on_start, 0, 5.0)
+add_task(Registry.on_start, 0, 1.0)

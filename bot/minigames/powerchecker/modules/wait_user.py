@@ -101,7 +101,7 @@ async def WaitUsersStartGenerator(self, user_id: int) -> None:
         [f"{player.user_name} - {'Готов' if player.data.get('dino') else 'Не готов'}" for player in players]
     )
     text += f"\n\nСостояние игроков:\n{table}"
-    await self.MesageUpdate(text=text, reply_markup=markup)
+    await self.AddMessageToQueue(text=text, reply_markup=markup)
 
 @register_method(PowerChecker)
 async def waituser_Enter(self, callback: types.CallbackQuery) -> None:
@@ -136,7 +136,7 @@ async def waituser_Enter(self, callback: types.CallbackQuery) -> None:
 
         await self.MessageGenerator('main', user_id)
         await self.CreateMessage(user_id, callback.message.chat.id, key, 
-                                text='message')
+                                text='message preparing...')
         await self.MessageGenerator(key, user_id)
 
     else:
@@ -178,7 +178,7 @@ async def enter_dino_generator(self, user_id) -> None:
     
     player = await self.GetPlayer(user_id)
     text = f'{player.user_name} Выберите динозавра:'
-    await self.MesageUpdate(f'choose_dino_{user_id}', 
+    await self.MessageUpdate(f'choose_dino_{user_id}', 
                             text=text, reply_markup=markup)
 
 @register_method(PowerChecker)
