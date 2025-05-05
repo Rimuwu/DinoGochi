@@ -1,18 +1,21 @@
 
 import time
-from typing import Callable, Dict, Optional, Type
+from typing import Any, Callable, Dict, Optional, Type, Union
 from aiogram.fsm.state import StatesGroup, State
+from aiogram.types import InlineKeyboardMarkup
 from bot.exec import bot
 from bot.modules.data_format import (chunk_pages, list_to_inline,
                                      list_to_keyboard)
 from bot.modules.functransport import func_to_str, str_to_func
 from bot.modules.get_state import get_state
+from bot.modules.images import async_open
 from bot.modules.inventory_tools import InventoryStates, generate, inventory_pages, send_item_info, swipe_page
 from bot.modules.localization import get_data, t
 from bot.modules.logs import log
 from bot.modules.markup import down_menu, get_answer_keyboard
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.states_fabric.steps_datatype import BaseDataType, BaseUpdateType, InlineStepData, get_step_data
 from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, get_frineds, get_inventory, user_info
 from bot.modules.managment.events import check_event
@@ -50,8 +53,7 @@ class BaseStateHandler():
         Получение состояния из группы состояний и установка его в качестве типового состояния.
         """
 
-        return getattr(self.group_name, 
-                       self.state_name, None)
+        return getattr(self.group_name, self.state_name, None)
 
     def __init__(self, function: Callable | str, 
                  userid: int, chatid: int, lang: str, 
@@ -356,7 +358,30 @@ class ChooseCustomHandler(BaseStateHandler):
                 result - второе возвращаемое из custom_handler
         """
         super().__init__(function, userid, chatid, lang, transmitted_data)
-        self.custom_handler = custom_handler
+
+        if isinstance(custom_handler, str):
+            self.custom_handler = custom_handler
+        elif callable(custom_handler):
+            self.custom_handler = func_to_str(custom_handler)
+
+    async def call_custom_handler(self, *args, **kwargs):
+        func = str_to_func(self.custom_handler)
+
+        transmitted_data = self.transmitted_data.copy()
+        transmitted_data.update(
+            {
+                'userid': self.userid,
+                'chatid': self.chatid,
+                'lang': self.lang
+            }
+        )
+
+        if inspect.iscoroutinefunction(func):
+            return await func(*args, **kwargs, 
+                              transmitted_data=transmitted_data)
+        else:
+            return func(*args, **kwargs, 
+                              transmitted_data=transmitted_data)
 
     async def setup(self):
         await self.set_state()
@@ -377,10 +402,13 @@ class ChoosePagesStateHandler(BaseStateHandler):
     state_name = 'ChoosePagesState'
     indenf = 'pages'
 
-    def __init__(self, function, userid, chatid, lang,
-                    options=None, horizontal=2, vertical=3,
-                    transmitted_data=None, autoanswer=True, one_element=True, settings: Optional[dict]=None,
-                    update_page_function=update_page):
+    def __init__(self, function, userid, 
+                 chatid, lang,
+                 options=None, 
+                 horizontal=2, vertical=3,
+                 transmitted_data=None, autoanswer=True, one_element=True, 
+                 settings: Optional[dict]=None,
+                 update_page_function: Optional[Callable]=None):
         """ Устанавливает состояние ожидания выбора опции
     
             options = {
@@ -413,7 +441,14 @@ class ChoosePagesStateHandler(BaseStateHandler):
         self.options: dict = options or {}
         self.autoanswer: bool = autoanswer
         self.one_element: bool = one_element
-        self.update_page_function: Callable = update_page_function
+
+        if update_page_function is None:
+            self.update_page_function = str_to_func(update_page)
+        elif isinstance(update_page_function, str):
+            self.update_page_function = update_page_function
+        elif callable(update_page_function):
+            self.update_page_function = func_to_str(update_page_function)
+
         self.pages: list = []
         self.page: int = 0
         self.settings: dict = {
@@ -423,6 +458,14 @@ class ChoosePagesStateHandler(BaseStateHandler):
 
         if settings:
             self.settings.update(settings)
+    
+    async def call_update_page_function(self, *args, **kwargs):
+        func = str_to_func(self.update_page_function)
+
+        if inspect.iscoroutinefunction(func):
+            return await func(self.pages, 0, self.chatid, self.lang)
+        else:
+            return func(self.pages, 0, self.chatid, self.lang)
 
     async def setup(self):
         # Чанкует страницы и добавляем пустые элементы для сохранения структуры
@@ -433,7 +476,8 @@ class ChoosePagesStateHandler(BaseStateHandler):
             await self.set_state()
             await self.set_data()
 
-            await self.update_page_function(self.pages, 0, self.chatid, self.lang)
+            await self.call_update_page_function(self.pages, 
+                                self.page, self.chatid, self.lang)
             return True, self.pages
         else:
             if len(self.options) == 0:
@@ -552,7 +596,7 @@ class ChooseInventoryHandler(BaseStateHandler):
     state_name = 'Inventory'
     indenf = 'inv'
     deleted_keys = ['exclude_ids', 'inventory']
-    
+
     def __init__(self, function, userid, chatid, lang,
                     type_filter: list | None = None, 
                     item_filter: list | None = None, 
@@ -648,15 +692,29 @@ class ChooseInventoryHandler(BaseStateHandler):
             await swipe_page(self.chatid, self.userid)
             return True, self.indenf
 
-class ChooseStepHandler(BaseStateHandler):
-    group_name = None
-    state_name = None
-    indenf = 'step'
-    deleted_keys = []
-    
-    def __init__(self, function, userid, chatid, lang, transmitted_data = None):
-        super().__init__(function, userid, chatid, lang, transmitted_data)
+class BaseUpdateHandler():
 
+    def __init__(self, function: Callable | str, 
+                 transmitted_data: Optional[dict] = None,
+                 ):
+
+        if isinstance(function, str):
+            self.function = function
+        elif callable(function):
+            self.function = func_to_str(function)
+
+        self.transmitted_data: dict = transmitted_data or {}
+
+    async def start(self) -> tuple[dict[str, Any], bool]:
+        func = str_to_func(self.function)
+
+        if inspect.iscoroutinefunction(func):
+            return await func(self.transmitted_data)
+        else:
+            return func(self.transmitted_data)
+
+    async def get_data(self) -> dict[str, Any]:
+        return self.__dict__
 
 # Пример реестра классов-состояний
 state_handler_registry: Dict[str, Type[BaseStateHandler]] = {
@@ -671,7 +729,7 @@ state_handler_registry: Dict[str, Type[BaseStateHandler]] = {
     'pages': ChoosePagesStateHandler,
     'friend': ChooseFriendHandler,
     'image': ChooseImageHandler,
-    'inv': ChooseInventoryHandler
+    'inv': ChooseInventoryHandler,
 }
 
 # Пример функции для запуска состояния по типу
@@ -681,3 +739,296 @@ async def run_state_handler(state_type: str, *args, **kwargs):
         raise ValueError(f"State handler for type '{state_type}' not found.")
     handler = handler_cls(*args, **kwargs)
     return await handler.setup()
+
+class ChooseStepHandler():
+
+    def __init__(self, function: Callable | str, 
+                 userid: int, chatid: int, 
+                 lang: str, 
+                 steps: list[Union[Type[BaseDataType], Type[BaseUpdateType]]],
+                 transmitted_data: Optional[dict] = None):
+        """ Конвейерная Система Состояний (КСС)
+            Устанавливает ожидание нескольких ответов, запуская состояния по очереди.
+
+            steps = [
+                DinoStepData('step_name', # тут лежит type состояния
+                    StepMessage('text', markup), # отсюда получается текст через get_text
+                    data={
+                        'add_egg': True, 'all_dinos': True,
+                    }
+                ),
+                IntStepData('step_name_int',
+                    StepMessage('text_int', markup_int),
+                    data={
+                        'min_value': 0, 'max_value': 100,
+                    }
+                ),
+            ]
+            type - тип опроса пользователя (BaseDataType)
+            или BaseUpdateType c функцией для обновления данных 
+            (получает и возвращает transmitted_data) + возвращает ответ для сохранения
+
+            Функция автоматически вызывается асинхронно, если она не является корутиной.
+
+            Возвращает:
+                name - имя ключа в возвращаемом инвентаре (при повторении, будет создан список с записями)
+
+            data - данные для функции создания опроса
+            message - данные для отправляемо сообщения перед опросом
+            translate_message (bool, optional) - если наш текст это чистый ключ из данных, то можно переводить на ходу
+                translate_args - словарь с аргументами для перевода
+            image (str, optional) - если нам надо отправить картинку, то добавляем сюда путь к ней
+
+            ТОЛЬКО ДЛЯ Inline
+            delete_markup  (bool, optional) - удаляет клавиатуру после завершения
+
+            delete_user_message (boll, optional) - удалить сообщение пользователя на следующем этапе
+            delete_message (boll, optional) - удалить сообщения бота на следующем этапе
+
+            transmitted_data
+            edit_message (bool, optional) - если нужно не отсылать сообщения, а обновлять, то можно добавить этот ключ.
+            delete_steps (bool, optional) - можно добавить для удаления данных отработанных шагов
+
+            В function передаёт 
+            >>> answer: dict, transmitted_data: dict
+        """
+
+        for i in steps:
+            if not isinstance(i, Union[(BaseDataType), BaseUpdateType]):
+                raise TypeError("Шаги должны быть наследниками BaseDataType")
+
+        self.steps = steps
+
+        if isinstance(function, str):
+            self.function = function
+        elif callable(function):
+            self.function = func_to_str(function)
+        else:
+            raise TypeError("Функция должна быть строкой или вызываемым объектом.")
+
+        self.transmitted_data: dict = transmitted_data or {}
+        self.userid: int = userid
+        self.chatid: int = chatid
+        self.lang: str = lang
+
+    async def start(self) -> None:
+        steps_data = []
+        for step in self.steps:
+            if isinstance(step, BaseDataType) or isinstance(step, BaseUpdateType):
+                steps_data.append(
+                    step.to_dict()
+                )
+            else:
+                log(f"Step {step} is not a BaseDataType instance.")
+                steps_data.append(
+                    step.__dict__
+                )
+
+        self.transmitted_data.update(
+            {
+                'userid': self.userid,
+                'chatid': self.chatid,
+                'lang': self.lang,
+                'return_function': self.function,
+                'steps': steps_data,
+                'process': 0,
+                'return_data': {}
+            }
+        )
+
+async def exit_chose(state, transmitted_data: dict):
+    await state.clear()
+
+    return_function: str = transmitted_data['return_function']
+    return_data = transmitted_data['return_data']
+    for i in ['return_function', 'return_data', 'process']:
+        del transmitted_data[i]
+
+    call_func = str_to_func(return_function)
+    if inspect.iscoroutinefunction(call_func):
+        await call_func(return_data, transmitted_data)
+    else:
+        call_func(return_data, transmitted_data)
+
+async def next_step(answer: Any, 
+                    transmitted_data: dict, 
+                    start: bool = False):
+    """Обработчик КСС*
+
+    Args:
+        answer (_type_): Ответ переданный из функции ожидания
+        transmitted_data (dict): Переданная дата
+        start (bool, optional): Является ли функция стартом КСС Defaults to False.
+
+        Для фото, добавить в message ключ image с путём до фото
+
+        Для edit_message требуется добавление message_data в transmitted_data.temp
+        (Использовать только для inline состояний, не подойдёт для MessageSteps)
+    """
+
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    lang = transmitted_data['lang']
+    steps_raw = transmitted_data['steps']
+    process = transmitted_data['process']
+    return_data = transmitted_data['return_data']
+
+    user_state = await get_state(userid, chatid)
+    temp = {}
+
+    steps: list[Union[Type[BaseDataType], BaseUpdateType]] = []
+    for raw_step in steps_raw:
+        step = get_step_data(**raw_step)
+        steps.append(step)
+    current_step: Union[Type[BaseDataType], BaseUpdateType] = steps[process]
+
+    # Обновление внутренних данных
+    if not start:
+
+        if isinstance(current_step, (BaseDataType)):
+            name = current_step.name
+            if name:
+                # Добавление данных в return_data
+                if name in return_data:
+                    if isinstance(return_data[name], list):
+                        return_data[name].append(answer)
+                    else:
+                        return_data[name] = [
+                            return_data[name], answer
+                            ]
+                else: 
+                    return_data[name] = answer
+                process += 1
+            else:
+                log(f"Step {current_step} has no name.")
+
+        # Иначе тут был шаг обновления, который не возвращшает данные
+
+    # Выполнение работы для последнего выполненного шага
+    if process - 1 >= 0:
+        last_step: Union[Type[BaseDataType], BaseUpdateType] = steps[process - 1]
+
+        if isinstance(last_step, InlineStepData):
+            if last_step.delete_markup:
+                messageid = getattr(last_step, 'messageid', None)
+                if messageid:
+                    await bot.edit_message_reply_markup(None, chatid, 
+                            messageid, 
+                            reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
+
+            if last_step.delete_message:
+                messageid = getattr(last_step, 'bmessageid', None)
+                if messageid:
+                    await bot.delete_message(chatid, messageid)
+
+            if last_step.delete_user_message:
+                messageid = getattr(last_step, 'umessageid', None)
+                if messageid:
+                    await bot.delete_message(chatid, messageid)
+
+    # Работа с новым шагом
+    if process < len(steps):
+        next_step_obj: Union[Type[BaseDataType], BaseUpdateType] = steps[process]
+
+        step_data = next_step_obj.to_dict() # type: ignore
+
+        if isinstance(next_step_obj, BaseUpdateType):
+            # Обновление данных между запросами
+            handler = BaseUpdateHandler
+
+            self_handler = handler(**step_data)
+            transmitted_data, answer = await self_handler.start()
+            if process >= len(steps):
+                # Если это последний шаг, то удаляем состояние и завершаем работу
+                return await exit_chose(user_state, transmitted_data)
+
+        # Удаляем шаги, которые уже отработали
+        if transmitted_data.get('delete_steps', False):
+            steps = steps[process:]
+            transmitted_data['steps'] = steps
+        
+        if transmitted_data.get('temp', False):
+            # Если это inline состояние, то обновляем сообщение
+            temp = transmitted_data['temp'].copy()
+            del transmitted_data['temp']
+
+        if isinstance(next_step_obj, (BaseDataType)):
+            # Запуск следующего состояния
+            type_handler = next_step_obj.type
+            handler = state_handler_registry[type_handler]
+            self_handler = handler(**step_data)
+
+            func_answer, func_type = await self_handler.start()
+
+            # Если состояние завершилось автоматически, то удаляем состояние
+            if func_type == 'cancel': await user_state.clear()
+
+            if func_answer:
+                # Отправка сообщения / фото из image, если None - ничего
+                edit_message, last_message = False, None
+                bmessage = None
+                message_data = next_step_obj.message
+
+                if 'edit_message' in transmitted_data:
+                    edit_message = transmitted_data['edit_message']
+
+                if 'message_data' in temp:
+                    last_message = temp['message_data']
+
+                if message_data:
+                    step_0: (BaseDataType) = steps[0] # type: ignore
+                    if edit_message and process - 1 != 0 and last_message:
+                        if step_0.message and step_0.message.image:
+                            markup = None
+                            if isinstance(message_data.markup, InlineKeyboardMarkup):
+                                markup = message_data.markup
+
+                            await bot.edit_message_caption(
+                                chat_id=chatid, message_id=last_message.message_id,
+                                parse_mode='Markdown', 
+                                caption=message_data.get_text(lang),
+                                reply_markup=markup,
+                                )
+ 
+                        if step_0.message and not step_0.message.image:
+
+                            markup = None
+                            if isinstance(message_data.markup, InlineKeyboardMarkup):
+                                markup = message_data.markup
+
+                            await bot.edit_message_text(text=message_data.get_text(lang), 
+                                chat_id=chatid, message_id=last_message.message_id,
+                                parse_mode='Markdown', 
+                                reply_markup=markup,
+                                )
+
+                        bmessage = last_message.message_id
+
+                    else:
+                        if message_data.image:
+                            photo = await async_open(message_data.image, True)
+                            bmessage = await bot.send_photo(chatid, 
+                                photo=photo, parse_mode='Markdown', 
+                                caption=message_data.get_text(lang),
+                                reply_markup=message_data.markup,
+                            )
+                        else:
+                            try:
+                                bmessage = await bot.send_message(chatid, 
+                                        parse_mode='Markdown', text=message_data.get_text(lang), reply_markup=message_data.markup)
+                            except:
+                                bmessage = await bot.send_message(chatid,          
+                                        text=message_data.get_text(lang), reply_markup=message_data.markup)
+
+                if bmessage:
+                    steps_raw[process]['bmessageid'] = bmessage.message_id
+
+            # Обновление данных состояния
+            if not start and func_answer:
+
+                transmitted_data['steps'] = steps_raw
+                transmitted_data['process'] = process
+                await user_state.update_data(transmitted_data)
+
+    else:
+        return await exit_chose(user_state, transmitted_data)
