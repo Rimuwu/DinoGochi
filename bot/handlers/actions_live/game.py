@@ -1,5 +1,8 @@
 from random import randint
 from time import time
+from typing import Optional
+
+from bson import ObjectId
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
@@ -18,7 +21,9 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.dinosaur.mood import add_mood, check_breakdown, check_inspiration, repeat_activity
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
-from bot.modules.states_tools import ChooseStepState
+# from bot.modules.states_tools import ChooseStepState
+from bot.modules.states_fabric.state_handlers import ChooseStepHandler
+from bot.modules.states_fabric.steps_datatype import BaseUpdateType, DataType, InlineStepData, IntStepData, PagesStepData, StepMessage
 from bot.modules.user.user import User, premium
 from aiogram.types import Message, InputFile
 
@@ -43,7 +48,7 @@ async def start_game_ent(userid: int, chatid: int,
         join - присоединяется ли человек к игре
     """
     transmitted_data = {
-        'dino': dino, 
+        'dino': dino._id, 
         'friend': friend, 'join': join,
         'join_dino': join_dino
     }
@@ -77,28 +82,45 @@ async def start_game_ent(userid: int, chatid: int,
         buttons[value['text']] = f'chooseinline {cc} {key}'
     markup = list_to_inline([buttons])
 
+    # steps = [
+    #     {"type": 'pages', "name": 'game', 
+    #       "data": {"options": options}, 
+    #       'translate_message': True,
+    #       'translate_args': {'last_game': last_game},
+    #       'message': {'text': 'entertainments.answer_game'}
+    #     },
+    #     {
+    #         "type": 'update_data', 'name': 'zero',
+    #         'function': delete_markup,
+    #         'async': True
+    #     },
+    #     {"type": 'inline', "name": 'time', "data": {'custom_code': cc}, 
+    #       'translate_message': True,
+    #       'delete_message': True,
+    #       'message': {'text': 'entertainments.answer_text',
+    #                   'reply_markup': markup
+    #           }
+    #     }
+    # ]
+    
     steps = [
-        {"type": 'pages', "name": 'game', 
-          "data": {"options": options}, 
-          'translate_message': True,
-          'translate_args': {'last_game': last_game},
-          'message': {'text': 'entertainments.answer_game'}
-        },
-        {
-            "type": 'update_data', 'name': 'zero',
-            'function': delete_markup,
-            'async': True
-        },
-        {"type": 'inline', "name": 'time', "data": {'custom_code': cc}, 
-          'translate_message': True,
-          'delete_message': True,
-          'message': {'text': 'entertainments.answer_text',
-                      'reply_markup': markup
-              }
-        }
+        PagesStepData('game',
+            StepMessage('entertainments.answer_game', translate_message=True, text_data={'last_game': last_game}),
+            options=options
+        ),
+        BaseUpdateType(delete_markup),
+        InlineStepData('time',
+            StepMessage('entertainments.answer_text', translate_message=True,
+                        markup=markup),
+            delete_message=True,
+            custom_code=str(cc)
+        )
     ]
 
-    await ChooseStepState(game_start, userid, chatid, lang, steps, transmitted_data)
+    await ChooseStepHandler(game_start, userid, chatid, lang, steps, 
+                            transmitted_data
+                        ).start()
+    # await ChooseStepState(game_start, userid, chatid, lang, steps, transmitted_data)
 
 async def delete_markup(transmitted_data):
     chatid = transmitted_data['chatid']
@@ -113,11 +135,16 @@ async def game_start(return_data: dict,
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
-    dino: Dino = transmitted_data['dino']
+    dino_id = transmitted_data['dino']
+
+    dino = await Dino().create(dino_id)
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     friend = transmitted_data['friend']
     join_status = transmitted_data['join']
-    join_dino = transmitted_data['join_dino']
+    join_dino: str = transmitted_data['join_dino']
     friend_dino_id = 0
 
     game = return_data['game']

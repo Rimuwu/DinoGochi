@@ -16,7 +16,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 
 from bot.modules.states_fabric.state_handlers import ChooseInventoryHandler, ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import DataType, IntStepData, StepMessage
-from bot.modules.user.user import User, last_dino
+from bot.modules.user.user import User
 from aiogram.types import CallbackQuery, Message
 
 from bot.filters.translated_text import Text

@@ -273,7 +273,7 @@ async def ChooseOptionPages(message: Message):
         pages: list = data['pages']
         page: int = data['page']
         one_element: bool = data['one_element']
-        
+
         settings: dict = data['settings']
 
     handler = ChoosePagesStateHandler(**data)

@@ -647,6 +647,7 @@ async def next_step(answer,
                 transmitted_data, answer = await ret_data['function'](transmitted_data, **add_data)
             else:
                 transmitted_data, answer = ret_data['function'](transmitted_data, **add_data)
+
             steps = transmitted_data.get('steps', [])
             if ret_data['name']:
                 transmitted_data['return_data'][ret_data['name']] = answer

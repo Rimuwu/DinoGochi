@@ -1,11 +1,12 @@
 
+from pprint import pprint
 from typing import Optional, Type, Union, Callable
 from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup
-from bson import ObjectId
+
 
 from bot.modules.functransport import func_to_str
 from bot.modules.localization import t
-from typing import Any, Dict, List, Union
+from typing import Union
 
 class BaseUpdateType():
 
@@ -34,7 +35,6 @@ class BaseUpdateType():
             ret_data['data'][i] = getattr(self, i)
             del ret_data[i]
 
-        # del ret_data['data_keys']
         ret_data['type'] = self.type
         return ret_data
 
@@ -60,8 +60,12 @@ class StepMessage():
         self.text_data: dict = text_data or {}
         self.image: Optional[str] = image
 
+
         if isinstance(markup, dict):
-            self.markup = ReplyKeyboardMarkup(**markup)
+            if 'inline_keyboard' in markup:
+                self.markup = InlineKeyboardMarkup(**markup)
+            else:
+                self.markup = ReplyKeyboardMarkup(**markup)
         else:
             self.markup = markup
 
@@ -69,6 +73,8 @@ class StepMessage():
         data = self.__dict__.copy()
 
         if isinstance(self.markup, ReplyKeyboardMarkup):
+            data['markup'] = self.markup.model_dump()
+        elif isinstance(self.markup, InlineKeyboardMarkup):
             data['markup'] = self.markup.model_dump()
 
         return data
@@ -214,7 +220,7 @@ class OptionStepData(BaseDataType):
 
 class InlineStepData(BaseDataType):
     type: str = 'inline'
-    data_keys: list[str] = ['custom_code']
+    data_keys: list[str] = ['custom_code', 'delete_markup', 'delete_user_message', 'delete_message']
 
     def __init__(self, name: Optional[str], 
                  message: StepMessage, 

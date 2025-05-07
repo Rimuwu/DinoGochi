@@ -449,8 +449,12 @@ async def update_page(pages: list, page: int, chat_id: int, lang: str):
     """
         Стандартная функция обновления страницы, которая будет передаваться в состояние выбора страниц.
     """
-    keyboard = list_to_keyboard(pages[page])
-    keyboard = down_menu(keyboard, len(pages) > 1, lang)
+    if page <= len(pages) - 1:
+        keyboard = list_to_keyboard(pages[page])
+        keyboard = down_menu(keyboard, len(pages) > 1, lang)
+    else:
+        keyboard = list_to_keyboard(pages[page-1])
+        keyboard = down_menu(keyboard, len(pages) > 1, lang)
 
     await bot.send_message(chat_id, t('optionplus.update_page', lang), reply_markup=keyboard)
 
@@ -466,7 +470,9 @@ class ChoosePagesStateHandler(BaseStateHandler):
                  transmitted_data:Optional[dict[str, MongoValueType]]=None, 
                  autoanswer=True, one_element=True, 
                  settings: Optional[dict]=None,
-                 update_page_function: Optional[Callable]=None, 
+                 update_page_function: Optional[Callable]=None,
+                 pages: Optional[list] = None,
+                 page: int = 0,
                  **kwargs):
         """ Устанавливает состояние ожидания выбора опции
     
@@ -508,8 +514,8 @@ class ChoosePagesStateHandler(BaseStateHandler):
         elif callable(update_page_function):
             self.update_page_function = func_to_str(update_page_function)
 
-        self.pages: list = []
-        self.page: int = 0
+        self.pages: list = pages or []
+        self.page: int = page
         self.settings: dict = {
             'horizontal': horizontal,
             'vertical': vertical
@@ -886,15 +892,9 @@ class ChooseStepHandler():
     async def start(self) -> None:
         steps_data = []
         for step in self.steps:
-            if isinstance(step, (BaseDataType)) or isinstance(step, BaseUpdateType):
-                steps_data.append(
-                    step.to_dict()
-                )
-            else:
-                log(f"Step {step} is not a BaseDataType instance.")
-                steps_data.append(
-                    step.__dict__
-                )
+            steps_data.append(
+                step.to_dict()
+            )
 
         self.transmitted_data.update(
             {
@@ -953,8 +953,14 @@ async def next_step(answer: Any,
 
     # Преобразование в дата классы для удобной работы
     steps: list[Union[Type[BaseDataType], BaseUpdateType]] = []
-    for raw_step in steps_raw:
-        step = get_step_data(**raw_step)
+    for raw_step in steps_raw.copy():
+        if raw_step['type'] in state_handler_registry.keys():
+            step = get_step_data(**raw_step)
+        else:
+            new_step: dict = raw_step.copy()
+            new_step.pop('type', None)
+            step = BaseUpdateType(**new_step)
+
         steps.append(step)
     current_step: Union[Type[BaseDataType], BaseUpdateType] = steps[process]
 
@@ -980,22 +986,23 @@ async def next_step(answer: Any,
     # Выполнение работы для последнего выполненного шага
     if process - 1 >= 0:
         last_step: Union[Type[BaseDataType], BaseUpdateType] = steps[process - 1]
+        raw_dat = steps_raw[process - 1]
 
         if isinstance(last_step, InlineStepData):
             if last_step.delete_markup:
-                messageid = getattr(last_step, 'messageid', None)
+                messageid = raw_dat.get('messageid', None)
                 if messageid:
                     await bot.edit_message_reply_markup(None, chatid, 
                             messageid, 
                             reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
 
             if last_step.delete_message:
-                messageid = getattr(last_step, 'bmessageid', None)
+                messageid = raw_dat.get('bmessageid', None)
                 if messageid:
                     await bot.delete_message(chatid, messageid)
 
             if last_step.delete_user_message:
-                messageid = getattr(last_step, 'umessageid', None)
+                messageid = raw_dat.get('umessageid', None)
                 if messageid:
                     await bot.delete_message(chatid, messageid)
 
@@ -1008,11 +1015,15 @@ async def next_step(answer: Any,
             # Обновление данных между запросами
             handler = BaseUpdateHandler
 
-            self_handler = handler(**step_data)
+            self_handler = handler(**step_data, transmitted_data=transmitted_data)
             transmitted_data, answer = await self_handler.start()
             if process >= len(steps):
                 # Если это последний шаг, то удаляем состояние и завершаем работу
                 return await exit_chose(user_state, transmitted_data)
+            else:
+                transmitted_data['process'] = process
+                await user_state.update_data(transmitted_data=transmitted_data)
+                return await next_step(answer, transmitted_data)
 
         # Удаляем шаги, которые уже отработали
         if transmitted_data.get('delete_steps', False):
