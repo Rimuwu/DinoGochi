@@ -1,26 +1,12 @@
-from bot.const import GAME_SETTINGS
-from bot.exec import main_router, bot
-from bot.modules.data_format import seconds_to_str
-from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.donation import send_inv
-from bot.modules.images import async_open
-from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
-from bot.modules.items.item import counts_items
-from bot.modules.localization import get_data, get_lang, t
-from bot.modules.logs import log
-from bot.modules.markup import cancel_markup
-from bot.modules.markup import markups_menu as m
-from bot.modules.states_tools import ChooseIntState
-from aiogram.types import (CallbackQuery, InlineKeyboardButton,
-                           InlineKeyboardMarkup, InputMedia, Message, inline_keyboard_markup)
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
+from bot.exec import main_router, bot
+from bot.modules.decorators import HDCallback, HDMessage
+from bot.modules.localization import get_data, get_lang, t
+from aiogram.types import (CallbackQuery, InlineKeyboardButton, Message)
+from aiogram.utils.keyboard import  InlineKeyboardBuilder
+from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
 from aiogram.filters import Command
 from aiogram import F
 
