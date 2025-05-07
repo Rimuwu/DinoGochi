@@ -1,3 +1,4 @@
+from bson import ObjectId
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
@@ -14,7 +15,10 @@ from bot.modules.markup import count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
-from bot.modules.states_tools import ChooseStepState
+# from bot.modules.states_tools import ChooseStepState
+from bot.modules.states_fabric.state_handlers import ChooseStepHandler
+from bot.modules.states_fabric.steps_datatype import IntStepData, OptionStepData, StepMessage
+
 from bot.modules.user.user import User, count_inventory_items, max_eat
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
@@ -30,12 +34,17 @@ dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 async def collecting_adapter(return_data, transmitted_data):
-    dino = transmitted_data['dino'] # type: Dino
+    dino_id: ObjectId = transmitted_data['dino'] # type: Dino
     count: int = return_data['count']
     option = return_data['option']
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
+    
+    dino = await Dino().create(dino_id)
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     eat_count = await count_inventory_items(userid, ['eat'])
     if eat_count + count > await max_eat(userid):
@@ -100,22 +109,20 @@ async def collecting_button(message: Message):
                                         [t('buttons_name.cancel', lang)]], 2)
 
                 steps = [
-                    {"type": 'option', "name": 'option', 
-                    "data": {"options": options}, 
-                    "translate_message": True,
-                        'message': {'text': 'collecting.way', 
-                        'reply_markup': markup}
-                    },
-                    {"type": 'int', "name": 'count', 
-                    "data": {"max_int": max_count}, 
-                    "translate_message": True,
-                        'message': {'text': 'collecting.wait_count', 
-                        'reply_markup': count_markup(max_count, lang)}
-                    }
+                    OptionStepData('option', 
+                                StepMessage('collecting.way', markup, True),
+                                options=options
+                                ),
+                    IntStepData('count', 
+                                StepMessage('collecting.wait_count',
+                                   count_markup(max_count, lang), True),
+                                max_int=max_count,
+                                )
                 ]
-                await ChooseStepState(collecting_adapter, userid, chatid, 
-                                            lang, steps, 
-                                        transmitted_data={'dino': last_dino, 'delete_steps': True})
+                await ChooseStepHandler(collecting_adapter, userid, chatid,
+                                        lang, steps, 
+                                        transmitted_data={'dino': last_dino._id}
+                                    ).start()
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.actions.progress'))
