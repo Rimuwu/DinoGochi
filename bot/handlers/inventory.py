@@ -20,6 +20,7 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.markup import count_markup
 from bot.modules.markup import markups_menu as m
+from bot.modules.states_fabric.state_handlers import ChooseInventoryHandler
 from bot.modules.states_tools import ChooseIntState
 from bot.modules.user.user import User, take_coins, user_name
 from fuzzywuzzy import fuzz
@@ -101,9 +102,11 @@ async def inventory(message: Message):
     elif content in names:
         if 'inline_func' in settings:
             transmitted_data['inline_code'] = settings['inline_code'] 
-            await settings['inline_func'](items_data[content], transmitted_data)
+            await ChooseInventoryHandler(**data).call_inline_func(items_data[content], transmitted_data)
+            # await settings['inline_func'](items_data[content], transmitted_data)
         else:
-            await function(items_data[content], transmitted_data)
+            await ChooseInventoryHandler(**data).call_function(items_data[content])
+            # await function(items_data[content], transmitted_data)
     else: await cancel(message)
 
 @HDCallback
