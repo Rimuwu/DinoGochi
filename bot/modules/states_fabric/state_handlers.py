@@ -1,11 +1,13 @@
 
 import time
-from typing import Any, Callable, Dict, Optional, Type, Union
+from typing import Any, Callable, Dict, Optional, Type, Union, List
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import InlineKeyboardMarkup
+from bson import ObjectId
 from bot.exec import bot
 from bot.modules.data_format import (chunk_pages, list_to_inline,
                                      list_to_keyboard)
+from bot.modules.dinosaur.dinosaur import Dino, Egg
 from bot.modules.functransport import func_to_str, str_to_func
 from bot.modules.get_state import get_state
 from bot.modules.images import async_open
@@ -15,16 +17,41 @@ from bot.modules.logs import log
 from bot.modules.markup import down_menu, get_answer_keyboard
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.states_fabric.steps_datatype import BaseDataType, BaseUpdateType, InlineStepData, get_step_data
+from bot.modules.states_fabric.steps_datatype import BaseDataType, BaseUpdateType, DataType, InlineStepData, get_step_data
+from bot.modules.user import user
 from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, get_frineds, get_inventory, user_info
 from bot.modules.managment.events import check_event
 import inspect
 from bot.dbmanager import mongo_client
+from bson import (
+    Binary, Code, Decimal128, Int64, MaxKey, MinKey, Regex, Timestamp
+)
 
 sellers = DBconstructor(mongo_client.market.sellers)
 states_data = DBconstructor(mongo_client.other.states)
 users = DBconstructor(mongo_client.user.users)
+
+MongoValueType = Union[
+    str,
+    int,
+    float,
+    bool,
+    None,
+    Dict[str, Any],
+    List[Any],
+    ObjectId,
+    bytes,
+    Binary,
+    Code,
+    Decimal128,
+    Int64,
+    MaxKey,
+    MinKey,
+    Regex,
+    Timestamp,
+]
+
 
 class GeneralStates(StatesGroup):
     zero = State() # Состояние по умолчанию
@@ -57,7 +84,7 @@ class BaseStateHandler():
 
     def __init__(self, function: Callable | str, 
                  userid: int, chatid: int, lang: str, 
-                 transmitted_data: Optional[dict] = None):
+                 transmitted_data: Optional[dict[str, MongoValueType]] = None):
         if isinstance(function, str):
             self.function = function
         elif callable(function):
@@ -68,11 +95,19 @@ class BaseStateHandler():
         self.userid: int = userid
         self.chatid: int = chatid
         self.lang: str = lang
-        self.transmitted_data: dict = transmitted_data or {}
+        self.transmitted_data = transmitted_data or {}
 
         self.state_type = self.setState()
 
-    async def call_function(self, *args, **kwargs):
+    async def pre_data(self, value: Any) -> Any:
+        """
+        Предварительная обработка данных перед вызовом функции.
+        """
+        # Здесь можно добавить логику предварительной обработки данных, если необходимо.
+        return value
+
+    async def call_function(self, value: Any):
+        value = await self.pre_data(value)
         func = str_to_func(self.function)
 
         transmitted_data = self.transmitted_data.copy()
@@ -85,11 +120,11 @@ class BaseStateHandler():
         )
 
         if inspect.iscoroutinefunction(func):
-            return await func(*args, **kwargs, 
+            return await func(value, 
                               transmitted_data=transmitted_data)
         else:
-            return func(*args, **kwargs, 
-                              transmitted_data=transmitted_data)
+            return func(value, 
+                        transmitted_data=transmitted_data)
 
     async def setup(self) -> tuple[bool, str]:
         """
@@ -130,10 +165,11 @@ class BaseStateHandler():
 class ChooseDinoHandler(BaseStateHandler):
     state_name = 'ChooseDino'
     indenf = 'dino'
+    deleted_keys = ['add_egg', 'all_dinos', 'send_error']
 
     def __init__(self, function, userid, chatid, lang,
                  add_egg=True, all_dinos=True,
-                 transmitted_data=None, send_error=True):
+                 transmitted_data:Optional[dict[str, MongoValueType]]=None, send_error=True, **kwargs):
         """ Устанавливает состояние ожидания динозавра
             all_dinos - Если False то не будет совместных динозавров 
             send_error - Если True то будет уведомлять о том, что нет динозавров / яиц
@@ -149,6 +185,16 @@ class ChooseDinoHandler(BaseStateHandler):
         self.all_dinos: bool = all_dinos
         self.send_error: bool = send_error
         self.dino_names: dict = {}
+
+    # async def pre_data(self, value: list[ObjectId | str]) -> Dino | Egg | None:
+
+    #     objid, objvalue = value
+    #     if objvalue == 'Dino':
+    #         dino = await Dino().create(objid)
+    #         return dino
+    #     else:
+    #         egg = await Egg().create(objid) # type: ignore
+    #         return egg
 
     async def setup(self):
         user = await User().create(self.userid)
@@ -171,12 +217,15 @@ class ChooseDinoHandler(BaseStateHandler):
             return False, self.indenf
 
         elif ret_data['case'] == 2:
-            self.dino_names = ret_data['data_names']
+            # self.dino_names = ret_data['data_names']
+            for name, dino in ret_data['data_names'].items():
+                self.dino_names[name] = [dino._id, dino.__class__.__name__]
+
             await self.set_state()
             await self.set_data()
 
             await bot.send_message(self.chatid, t('css.dino', self.lang), reply_markup=ret_data['keyboard'])
-            return True, 'dino'
+            return True, self.indenf
 
         else:
             return False, 'error'
@@ -184,9 +233,11 @@ class ChooseDinoHandler(BaseStateHandler):
 class ChooseIntHandler(BaseStateHandler):
     state_name =  'ChooseInt'
     indenf = 'int'
+    deleted_keys = ['autoanswer']
 
     def __init__(self, function, userid, chatid, lang, 
-                 min_int=1, max_int=10, autoanswer=True, transmitted_data=None):
+                 min_int=1, max_int=10, autoanswer=True, 
+                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
         """
             Устанавливает состояние ожидания числа
 
@@ -220,7 +271,7 @@ class ChooseStringHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang, 
                  min_len=1, max_len=10, 
-                 transmitted_data=None):
+                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
         """ Устанавливает состояние ожидания сообщения
 
             В function передаёт 
@@ -243,7 +294,8 @@ class ChooseTimeHandler(BaseStateHandler):
     indenf = 'time'
 
     def __init__(self, function, userid, chatid, lang,
-                 min_int=1, max_int=10, transmitted_data=None):
+                 min_int=1, max_int=10, 
+                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
         """ Устанавливает состояние ожидания сообщения в формате времени
 
             В function передаёт 
@@ -266,7 +318,7 @@ class ChooseConfirmHandler(BaseStateHandler):
     indenf = 'confirm'
 
     def __init__(self, function, userid, chatid, lang, 
-                 cancel=False, transmitted_data=None):
+                 cancel=False, transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
         """ Устанавливает состояние ожидания подтверждения действия
 
             В function передаёт 
@@ -290,7 +342,8 @@ class ChooseOptionHandler(BaseStateHandler):
     indenf = 'option'
 
     def __init__(self, function, userid, chatid, lang, 
-                 options: Optional[dict] = None, transmitted_data=None):
+                 options: Optional[dict] = None, 
+                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
         """ Устанавливает состояние ожидания выбора опции
 
             В function передаёт 
@@ -324,7 +377,7 @@ class ChooseInlineHandler(BaseStateHandler):
     indenf = 'inline'
 
     def __init__(self, function, userid, chatid, lang, 
-                 custom_code, transmitted_data=None):
+                 custom_code, transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
         """ Устанавливает состояние ожидания нажатия кнопки
             Все ключи callback должны начинаться с 'chooseinline'
             custom_code - код сессии запроса кнопок (индекс 1)
@@ -344,7 +397,10 @@ class ChooseCustomHandler(BaseStateHandler):
     state_name = 'ChooseCustom'
     indenf = 'custom'
 
-    def __init__(self, function, custom_handler, userid, chatid, lang, transmitted_data=None):
+    def __init__(self, function, 
+                 custom_handler, userid, 
+                 chatid, lang, 
+                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
         """
             Устанавливает состояние ожидания чего-либо, все проверки идут через custom_handler.
 
@@ -364,7 +420,7 @@ class ChooseCustomHandler(BaseStateHandler):
         elif callable(custom_handler):
             self.custom_handler = func_to_str(custom_handler)
 
-    async def call_custom_handler(self, *args, **kwargs):
+    async def call_custom_handler(self, *args, **kwargs) -> tuple[bool, Any]:
         func = str_to_func(self.custom_handler)
 
         transmitted_data = self.transmitted_data.copy()
@@ -401,14 +457,17 @@ async def update_page(pages: list, page: int, chat_id: int, lang: str):
 class ChoosePagesStateHandler(BaseStateHandler):
     state_name = 'ChoosePagesState'
     indenf = 'pages'
+    deleted_keys = ['autoanswer']
 
     def __init__(self, function, userid, 
                  chatid, lang,
                  options=None, 
                  horizontal=2, vertical=3,
-                 transmitted_data=None, autoanswer=True, one_element=True, 
+                 transmitted_data:Optional[dict[str, MongoValueType]]=None, 
+                 autoanswer=True, one_element=True, 
                  settings: Optional[dict]=None,
-                 update_page_function: Optional[Callable]=None):
+                 update_page_function: Optional[Callable]=None, 
+                 **kwargs):
         """ Устанавливает состояние ожидания выбора опции
     
             options = {
@@ -443,7 +502,7 @@ class ChoosePagesStateHandler(BaseStateHandler):
         self.one_element: bool = one_element
 
         if update_page_function is None:
-            self.update_page_function = str_to_func(update_page)
+            self.update_page_function = func_to_str(update_page)
         elif isinstance(update_page_function, str):
             self.update_page_function = update_page_function
         elif callable(update_page_function):
@@ -458,7 +517,7 @@ class ChoosePagesStateHandler(BaseStateHandler):
 
         if settings:
             self.settings.update(settings)
-    
+
     async def call_update_page_function(self, *args, **kwargs):
         func = str_to_func(self.update_page_function)
 
@@ -486,34 +545,6 @@ class ChoosePagesStateHandler(BaseStateHandler):
                 element = self.options[list(self.options.keys())[0]]
             await self.call_function(element)
             return False, self.pages
-
-
-class ChooseImageHandler(BaseStateHandler):
-    state_name = 'ChooseImage'
-    indenf = 'image'
-
-    def __init__(self, function, userid, chatid, lang,
-                    need_image=True, transmitted_data=None):
-        """
-            Устанавливает состояние ожидания ввода изображения
-
-            need_image - если True, разрешает ответ 'no_image' вместо file_id
-
-            В function передаёт:
-            >>> image_url: str, transmitted_data: dict
-
-            Return:
-                True, 'image'
-        """
-        super().__init__(function, userid, chatid, lang, transmitted_data)
-        self.need_image = need_image
-
-    async def setup(self):
-        await self.set_state()
-        await self.set_data()
-        return True, self.indenf
-
-
 
 async def friend_handler(friend: dict, transmitted_data: dict):
     lang = transmitted_data['lang']
@@ -546,7 +577,7 @@ class ChooseFriendHandler(ChoosePagesStateHandler):
 
     def __init__(self, function, userid, chatid, lang,
                     one_element: bool=False,
-                    transmitted_data=None):
+                    transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
         """
             Устанавливает состояние ожидания выбора друга
 
@@ -556,11 +587,12 @@ class ChooseFriendHandler(ChoosePagesStateHandler):
             Return:
                 Возвращает True если был создано состояние
         """
+        if function is None: function = friend_handler
+
         super().__init__(function, userid, chatid, lang, transmitted_data)
         self.options: dict = {}
         self.autoanswer: bool = False
         self.one_element: bool = one_element
-        self.update_page_function: Callable = friend_handler
         self.pages: list = []
         self.page: int = 0
         self.settings: dict = {
@@ -571,6 +603,7 @@ class ChooseFriendHandler(ChoosePagesStateHandler):
     async def setup(self):
         res = await get_frineds(self.userid)
         friends = res['friends']
+
         options = {}
 
         a = 0
@@ -587,6 +620,31 @@ class ChooseFriendHandler(ChoosePagesStateHandler):
                         'userid': friend_id, 
                         'name': friend_res['name']}
 
+        self.options = options
+        return await super().setup()
+
+class ChooseImageHandler(BaseStateHandler):
+    state_name = 'ChooseImage'
+    indenf = 'image'
+
+    def __init__(self, function, userid, chatid, lang,
+                    need_image=True, 
+                    transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+        """
+            Устанавливает состояние ожидания ввода изображения
+
+            need_image - если True, разрешает ответ 'no_image' вместо file_id
+
+            В function передаёт:
+            >>> image_url: str, transmitted_data: dict
+
+            Return:
+                True, 'image'
+        """
+        super().__init__(function, userid, chatid, lang, transmitted_data)
+        self.need_image = need_image
+
+    async def setup(self):
         await self.set_state()
         await self.set_data()
         return True, self.indenf
@@ -605,9 +663,10 @@ class ChooseInventoryHandler(BaseStateHandler):
                     changing_filters: bool = True,
                     inventory: list | None = None, 
                     delete_search: bool = False,
-                    transmitted_data = None,
+                    transmitted_data: Optional[dict[str, MongoValueType]] = None,
                     settings: dict = {},
-                    inline_func = None, inline_code = ''
+                    inline_func = None, inline_code = '',
+                    **kwargs
                 ):
         """ Функция запуска инвентаря
             type_filter - фильтр типов предметов
@@ -647,25 +706,35 @@ class ChooseInventoryHandler(BaseStateHandler):
         self.main_message = 0
         self.up_message = 0
 
-        self.function = function
-
         if inline_func is not None:
-            self.settings['inline_func'] = inline_func
+            if isinstance(inline_func, str):
+                self.settings['inline_func'] = inline_func
+            elif callable(inline_func):
+                self.settings['inline_func'] = func_to_str(inline_func)
+            elif inline_func is None:
+                self.settings['inline_func'] = None
             self.settings['inline_code'] = inline_code
 
         self.inventory = inventory
         self.exclude_ids = exclude_ids
-        
+
         if settings:
             self.settings.update(settings)
     
+    async def call_inline_func(self, *args, **kwargs):
+        func = str_to_func(self.settings['inline_func'])
+
+        if inspect.iscoroutinefunction(func):
+            return await func(*args, **kwargs)
+        else:
+            return func(*args, **kwargs)
+
     async def setup(self):
         user_settings = await users.find_one(
             {'userid': self.userid}, 
             {'settings': 1}, comment='start_inv_user_settings')
         if user_settings: 
             self.settings['inv_view'] = user_settings['settings']['inv_view']
-
 
         if not self.inventory:
             inventory, count = await get_inventory(self.userid, 
@@ -745,8 +814,8 @@ class ChooseStepHandler():
     def __init__(self, function: Callable | str, 
                  userid: int, chatid: int, 
                  lang: str, 
-                 steps: list[Union[Type[BaseDataType], Type[BaseUpdateType]]],
-                 transmitted_data: Optional[dict] = None):
+                 steps: list[DataType],
+                 transmitted_data:Optional[dict[str, MongoValueType]] = None):
         """ Конвейерная Система Состояний (КСС)
             Устанавливает ожидание нескольких ответов, запуская состояния по очереди.
 
@@ -792,9 +861,13 @@ class ChooseStepHandler():
             В function передаёт 
             >>> answer: dict, transmitted_data: dict
         """
+        self.transmitted_data: dict = transmitted_data or {}
+        for key, value in self.transmitted_data.items():
+            if not isinstance(value, (str, int, float, bool, type(None), dict, list, ObjectId, bytes, Binary, Code, Decimal128, Int64, MaxKey, MinKey, Regex, Timestamp)):
+                raise TypeError(f"Value for key '{key}' is not a valid MongoValueType: {type(value)}")
 
         for i in steps:
-            if not isinstance(i, Union[(BaseDataType), BaseUpdateType]):
+            if not isinstance(i, DataType):
                 raise TypeError("Шаги должны быть наследниками BaseDataType")
 
         self.steps = steps
@@ -806,7 +879,6 @@ class ChooseStepHandler():
         else:
             raise TypeError("Функция должна быть строкой или вызываемым объектом.")
 
-        self.transmitted_data: dict = transmitted_data or {}
         self.userid: int = userid
         self.chatid: int = chatid
         self.lang: str = lang
@@ -814,7 +886,7 @@ class ChooseStepHandler():
     async def start(self) -> None:
         steps_data = []
         for step in self.steps:
-            if isinstance(step, BaseDataType) or isinstance(step, BaseUpdateType):
+            if isinstance(step, (BaseDataType)) or isinstance(step, BaseUpdateType):
                 steps_data.append(
                     step.to_dict()
                 )
@@ -835,6 +907,9 @@ class ChooseStepHandler():
                 'return_data': {}
             }
         )
+
+        await next_step(0, self.transmitted_data, start=True)
+
 
 async def exit_chose(state, transmitted_data: dict):
     await state.clear()
@@ -876,6 +951,7 @@ async def next_step(answer: Any,
     user_state = await get_state(userid, chatid)
     temp = {}
 
+    # Преобразование в дата классы для удобной работы
     steps: list[Union[Type[BaseDataType], BaseUpdateType]] = []
     for raw_step in steps_raw:
         step = get_step_data(**raw_step)
@@ -885,6 +961,7 @@ async def next_step(answer: Any,
     # Обновление внутренних данных
     if not start:
 
+        # Обновляем данные в return_data если есть имя
         if isinstance(current_step, (BaseDataType)):
             name = current_step.name
             if name:
@@ -898,11 +975,7 @@ async def next_step(answer: Any,
                             ]
                 else: 
                     return_data[name] = answer
-                process += 1
-            else:
-                log(f"Step {current_step} has no name.")
-
-        # Иначе тут был шаг обновления, который не возвращшает данные
+        process += 1
 
     # Выполнение работы для последнего выполненного шага
     if process - 1 >= 0:
@@ -928,9 +1001,8 @@ async def next_step(answer: Any,
 
     # Работа с новым шагом
     if process < len(steps):
-        next_step_obj: Union[Type[BaseDataType], BaseUpdateType] = steps[process]
-
-        step_data = next_step_obj.to_dict() # type: ignore
+        next_step_obj: DataType = steps[process]
+        step_data = next_step_obj.to_handler_data()
 
         if isinstance(next_step_obj, BaseUpdateType):
             # Обновление данных между запросами
@@ -944,9 +1016,9 @@ async def next_step(answer: Any,
 
         # Удаляем шаги, которые уже отработали
         if transmitted_data.get('delete_steps', False):
-            steps = steps[process:]
-            transmitted_data['steps'] = steps
-        
+            steps_raw = steps_raw[process:]
+            transmitted_data['steps'] = steps_raw
+
         if transmitted_data.get('temp', False):
             # Если это inline состояние, то обновляем сообщение
             temp = transmitted_data['temp'].copy()
@@ -956,7 +1028,9 @@ async def next_step(answer: Any,
             # Запуск следующего состояния
             type_handler = next_step_obj.type
             handler = state_handler_registry[type_handler]
-            self_handler = handler(**step_data)
+
+            self_handler = handler(**step_data, userid=userid, chatid=chatid, 
+                                   lang=lang, function=next_step, transmitted_data=transmitted_data)
 
             func_answer, func_type = await self_handler.start()
 
@@ -1028,7 +1102,7 @@ async def next_step(answer: Any,
 
                 transmitted_data['steps'] = steps_raw
                 transmitted_data['process'] = process
-                await user_state.update_data(transmitted_data)
+                await user_state.update_data(transmitted_data=transmitted_data)
 
     else:
         return await exit_chose(user_state, transmitted_data)

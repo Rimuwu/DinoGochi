@@ -1,10 +1,11 @@
-from optparse import Option
+
 from typing import Optional, Type, Union, Callable
 from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup
-from matplotlib.pyplot import step
+from bson import ObjectId
 
 from bot.modules.functransport import func_to_str
 from bot.modules.localization import t
+from typing import Any, Dict, List, Union
 
 class BaseUpdateType():
 
@@ -22,8 +23,8 @@ class BaseUpdateType():
         self.data: dict = data or {}
 
         # Приоритет значениям из data
-        for key in self.data_keys:
-            if key in self.data:
+        for key in self.data.keys():
+            if key in self.data_keys:
                 setattr(self, key, self.data[key])
 
     def to_dict(self):
@@ -34,6 +35,16 @@ class BaseUpdateType():
             del ret_data[i]
 
         # del ret_data['data_keys']
+        ret_data['type'] = self.type
+        return ret_data
+
+    def to_handler_data(self):
+        ret_data = self.__dict__.copy()
+
+        for i in self.data.keys():
+            ret_data[i] = getattr(self, i)
+
+        del ret_data['data']
         return ret_data
 
 class StepMessage():
@@ -58,7 +69,7 @@ class StepMessage():
         data = self.__dict__.copy()
 
         if isinstance(self.markup, ReplyKeyboardMarkup):
-            data['markup'] = self.markup.__dict__
+            data['markup'] = self.markup.model_dump()
 
         return data
 
@@ -88,8 +99,8 @@ class BaseDataType():
             self.message: Optional[StepMessage] = message
 
         # Приоритет значениям из data
-        for key in self.data_keys:
-            if key in self.data:
+        for key in self.data.keys():
+            if key in self.data_keys:
                 setattr(self, key, self.data[key])
 
     def to_dict(self):
@@ -99,10 +110,21 @@ class BaseDataType():
             ret_data['data'][i] = getattr(self, i)
             del ret_data[i]
 
-        # del ret_data['data_keys']
         if isinstance(self.message, StepMessage):
             ret_data['message'] = self.message.to_dict()
 
+        ret_data['type'] = self.type
+        return ret_data
+    
+    def to_handler_data(self):
+        ret_data = self.__dict__.copy()
+
+        for i in self.data.keys():
+            ret_data[i] = getattr(self, i)
+
+        del ret_data['data']
+        del ret_data['message']
+        del ret_data['name']
         return ret_data
 
 class DinoStepData(BaseDataType):
@@ -130,15 +152,17 @@ class IntStepData(BaseDataType):
     def __init__(self, name: Optional[str], 
                  message: StepMessage, 
                  data: Optional[dict] = None,
-                 max_int: int = 1,
-                 min_int: int = 10
+                 max_int: int = 10,
+                 min_int: int = 1,
+                 autoanswer: bool = False
                  ) -> None:
-        super().__init__(name, message, data)
         self.max_int: int = max_int
         self.min_int: int = min_int
+        self.autoanswer: bool = autoanswer
+        super().__init__(name, message, data)
 
 class StringStepData(BaseDataType):
-    type: str = 'string'
+    type: str = 'str'
     data_keys: list[str] = ['min_len', 'max_len']
 
     def __init__(self, name: Optional[str], 
@@ -147,9 +171,9 @@ class StringStepData(BaseDataType):
                  min_len: int = 1,
                  max_len: int = 10
                  ) -> None:
-        super().__init__(name, message, data)
         self.min_len: int = min_len
         self.max_len: int = max_len
+        super().__init__(name, message, data)
 
 class TimeStepData(BaseDataType):
     type: str = 'time'
@@ -161,12 +185,12 @@ class TimeStepData(BaseDataType):
                  min_int: int = 1,
                  max_int: int = 10
                  ) -> None:
-        super().__init__(name, message, data)
         self.min_int: int = min_int
         self.max_int: int = max_int
+        super().__init__(name, message, data)
 
 class ConfirmStepData(BaseDataType):
-    type: str = 'confirm'
+    type: str = 'bool'
     data_keys: list[str] = ['cancel']
 
     def __init__(self, name: Optional[str], 
@@ -174,16 +198,19 @@ class ConfirmStepData(BaseDataType):
                  data: Optional[dict] = None,
                  cancel: bool = False
                  ) -> None:
-        super().__init__(name, message, data)
         self.cancel: bool = cancel
+        super().__init__(name, message, data)
 
 class OptionStepData(BaseDataType):
     type: str = 'option'
     data_keys: list[str] = ['options']
 
-    def __init__(self, name: Optional[str], message: StepMessage, data: Optional[dict] = None, options: Optional[dict] = None):
-        super().__init__(name, message, data)
+    def __init__(self, name: Optional[str], 
+                 message: StepMessage, 
+                 data: Optional[dict] = None, 
+                 options: Optional[dict] = None):
         self.options: dict = options or {}
+        super().__init__(name, message, data)
 
 class InlineStepData(BaseDataType):
     type: str = 'inline'
@@ -197,11 +224,11 @@ class InlineStepData(BaseDataType):
                  delete_user_message: bool = False,
                  delete_message: bool = False,
                  ):
-        super().__init__(name, message, data)
         self.custom_code: str = custom_code
         self.delete_markup: bool = delete_markup
         self.delete_user_message: bool = delete_user_message
         self.delete_message: bool = delete_message
+        super().__init__(name, message, data)
 
 class CustomStepData(BaseDataType):
     type: str = 'custom'
@@ -211,12 +238,12 @@ class CustomStepData(BaseDataType):
                  message: StepMessage, 
                  data: Optional[dict] = None, 
                  custom_handler: Optional[Callable] = None):
-        super().__init__(name, message, data)
-
         if isinstance(custom_handler, str):
             self.custom_handler = custom_handler
         elif callable(custom_handler):
             self.custom_handler = func_to_str(custom_handler)
+
+        super().__init__(name, message, data)
 
 class PagesStepData(BaseDataType):
     type: str = 'pages'
@@ -232,14 +259,20 @@ class PagesStepData(BaseDataType):
                  settings: Optional[dict] = None,
                  update_page_function: Optional[Callable] = None,
                 ):
-        super().__init__(name, message, data)
         self.options: dict = options or {}
         self.horizontal: int = horizontal
         self.vertical: int = vertical
         self.autoanswer: bool = autoanswer
         self.one_element: bool = one_element
         self.settings: dict = settings or {}
-        self.update_page_function: Optional[Callable] = update_page_function
+        if isinstance(update_page_function, str):
+            self.update_page_function = update_page_function
+        elif callable(update_page_function):
+            self.update_page_function = func_to_str(update_page_function)
+        if update_page_function is None:
+            self.update_page_function = None
+
+        super().__init__(name, message, data)
 
 class ImageStepData(BaseDataType):
     type: str = 'image'
@@ -249,8 +282,8 @@ class ImageStepData(BaseDataType):
                  message: StepMessage, 
                  data: Optional[dict] = None, 
                  need_image: bool = True):
-        super().__init__(name, message, data)
         self.need_image: bool = need_image
+        super().__init__(name, message, data)
 
 class FriendStepData(BaseDataType):
     type: str = 'friend'
@@ -260,8 +293,8 @@ class FriendStepData(BaseDataType):
                  message: StepMessage, 
                  data: Optional[dict] = None, 
                  one_element: bool = False):
-        super().__init__(name, message, data)
         self.one_element: bool = one_element
+        super().__init__(name, message, data)
 
 class InventoryStepData(BaseDataType):
     type: str = 'inv'
@@ -278,7 +311,6 @@ class InventoryStepData(BaseDataType):
                  changing_filters: bool = True,
                  inventory: Optional[list] = None, delete_search: bool = False, settings: Optional[dict] = None,
                  inline_func=None, inline_code: str = ''):
-        super().__init__(name, message, data)
         self.type_filter = type_filter
         self.item_filter = item_filter
         self.exclude_ids = exclude_ids
@@ -287,15 +319,21 @@ class InventoryStepData(BaseDataType):
         self.inventory = inventory
         self.delete_search = delete_search
         self.settings = settings or {}
-        self.inline_func = inline_func
+        if isinstance(inline_func, str):
+            self.inline_func = inline_func
+        elif callable(inline_func):
+            self.inline_func = func_to_str(inline_func)
+        if inline_func is None:
+            self.inline_func = None
         self.inline_code = inline_code
+        super().__init__(name, message, data)
 
 steps_data_registry = {
     'dino': DinoStepData,
     'int': IntStepData,
-    'string': StringStepData,
+    'str': StringStepData,
     'time': TimeStepData,
-    'confirm': ConfirmStepData,
+    'bool': ConfirmStepData,
     'option': OptionStepData,
     'inline': InlineStepData,
     'custom': CustomStepData,
@@ -306,10 +344,17 @@ steps_data_registry = {
     'update': BaseUpdateType,
 }
 
+DataType = Union[
+    DinoStepData, IntStepData, StringStepData, TimeStepData, ConfirmStepData,
+    OptionStepData, InlineStepData, CustomStepData, PagesStepData,
+    ImageStepData, FriendStepData, InventoryStepData, BaseUpdateType
+]
+
 def get_step_data(type: str, 
                   name: Optional[str], 
                   message: StepMessage, 
-                  data: Optional[dict] = None) -> Type[BaseDataType]:
+                  data: Optional[dict] = None,
+                  **kwargs) -> Type[BaseDataType]:
 
     step_class = steps_data_registry.get(type, BaseDataType)
     if step_class:
