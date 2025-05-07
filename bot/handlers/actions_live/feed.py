@@ -1,9 +1,10 @@
+from bson import ObjectId
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.filters.private import IsPrivateChat
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino
-from bot.modules.inventory_tools import start_inv
+# from bot.modules.inventory_tools import start_inv
 from bot.modules.items.item import get_data as get_item_data
 from bot.modules.items.item import get_name
 from bot.modules.items.item_tools import use_item
@@ -11,7 +12,10 @@ from bot.modules.localization import get_lang, t
 from bot.modules.markup import feed_count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.states_tools import ChooseStepState
+# from bot.modules.states_tools import ChooseStepState
+
+from bot.modules.states_fabric.state_handlers import ChooseInventoryHandler, ChooseStepHandler
+from bot.modules.states_fabric.steps_datatype import DataType, IntStepData, StepMessage
 from bot.modules.user.user import User, last_dino
 from aiogram.types import CallbackQuery, Message
 
@@ -27,8 +31,13 @@ async def adapter_function(return_dict, transmitted_data):
     item = transmitted_data['item']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
-    dino = transmitted_data['dino']
+    dino_id = transmitted_data['dino']
     lang = transmitted_data['lang']
+
+    dino = await Dino().create(dino_id)
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     send_status, return_text = await use_item(userid, chatid, lang, item, count, dino)
 
@@ -40,7 +49,12 @@ async def inventory_adapter(item, transmitted_data):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
-    dino: Dino = transmitted_data['dino']
+    dino_id: ObjectId = transmitted_data['dino']
+
+    dino = await Dino().create(dino_id)
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     transmitted_data['item'] = item
 
@@ -70,17 +84,16 @@ async def inventory_adapter(item, transmitted_data):
         if age.days >= 10:
             percent, repeat = await dino.memory_percent('eat', item['item_id'], False)
 
-        steps = [
-            {"type": 'int', "name": 'count', "data": {
-                "max_int": max_count, "autoanswer": False}, 
-             "translate_message": True,
-                'message': {'text': 'css.wait_count', 
-                            'reply_markup': feed_count_markup(
-                                dino.stats['eat'], int(item_data['act'] * percent), max_count, item_name, lang)}}
-                ]
-        await ChooseStepState(adapter_function, userid, chatid, 
-                              lang, steps, 
-                              transmitted_data=transmitted_data)
+        steps: list[DataType] = [
+            IntStepData('count', max_int=max_count, autoanswer=False,
+                        message=StepMessage('css.wait_count', 
+                                feed_count_markup(dino.stats['eat'], int(item_data['act'] * percent), max_count, item_name, lang), True))
+        ]
+        
+        await ChooseStepHandler(
+            adapter_function, userid, chatid, lang, steps,
+            transmitted_data=transmitted_data
+        ).start()
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.actions.feed'))
@@ -100,10 +113,13 @@ async def feed(message: Message):
         transmitted_data = {
             'chatid': chatid,
             'lang': lang,
-            'dino': last_dino
+            'dino': last_dino._id
         }
         if await last_dino.status != 'sleep':
-            await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
+            await ChooseInventoryHandler(
+                inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data
+            ).start()
+            # await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
         
         else:
             await bot.send_message(chatid, t('item_use.eat.sleep', lang), reply_markup=await m(userid, 'last_menu', lang))
@@ -128,7 +144,11 @@ async def feed_inl(callback: CallbackQuery):
             transmitted_data = {
                 'chatid': chatid,
                 'lang': lang,
-                'dino': dino_d
+                'dino': dino_d._id
             }
 
-            await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data)
+            await ChooseInventoryHandler(
+                inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data
+            ).start()
+
+            # await start_inv(inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data).start()
