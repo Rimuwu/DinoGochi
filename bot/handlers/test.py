@@ -43,9 +43,9 @@ from bot.modules.items.item import (AddItemToUser, DowngradeItem, get_data,
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import answer_markup, cancel_markup, count_markup, down_menu, list_to_keyboard, confirm_markup
 from bot.modules.notifications import user_notification, notification_manager
-from bot.modules.states_fabric.state_handlers import ChooseIntHandler
+from bot.modules.states_fabric.state_handlers import *
 from bot.modules.states_fabric.steps_datatype import IntStepData, StepMessage
-from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
+# from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
 from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement, take_coins
 from bot.modules.managment.statistic import get_now_statistic
@@ -81,7 +81,7 @@ from bson.objectid import ObjectId
 from bson.son import SON
 from bot.modules.items.item import get_data as get_item_data
 
-from bot.modules.states_tools import ChooseImageState
+# from bot.modules.states_tools import ChooseImageState
 from bot.tasks.incubation import incubation
 
 
@@ -315,12 +315,12 @@ async def check(message: Message):
             except Exception as e:
                 log(f"ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR {e}")
 
-@main_router.message(Command(commands=['size']), IsAdminUser())
-@HDMessage
-async def size(message: Message):
+# @main_router.message(Command(commands=['size']), IsAdminUser())
+# @HDMessage
+# async def size(message: Message):
     
-    await ChooseImageState(f, message.from_user.id, message.chat.id, 'ru')
-    await bot.send_message(message.from_user.id, 'send photo')
+#     await ChooseImageState(f, message.from_user.id, message.chat.id, 'ru')
+#     await bot.send_message(message.from_user.id, 'send photo')
 
 
 async def f(fileID, transmitted_data: dict):
@@ -512,8 +512,8 @@ async def test_new_int(message: Message):
     res = await handler.start()
     await message.answer(f"Handler result: {res}")
 
-def some_function(value: int, transmitted_data: dict):
-    print(f"Selected value: {value}", transmitted_data)
+def some_function(value, transmitted_data: dict):
+    pprint(f"Selected value: {value}", transmitted_data)
 
 
 
@@ -549,3 +549,27 @@ async def test3(message: Message):
     dt = IntStepData('trade_col', nw, max_int=20)
     
     pprint(dt.to_dict())
+
+from bot.modules.states_fabric.steps_datatype import *
+
+@main_router.message(Command(commands=['csstest']), IsAdminUser())
+@HDMessage
+async def test3(message: Message):
+
+    steps = [
+        DinoStepData('dino', StepMessage('message', None) ),
+        IntStepData('int', StepMessage('message2', None), 
+                    max_int=20),
+        StringStepData('str', StepMessage('message3', None), max_len=20),
+        TimeStepData('time', StepMessage('message5', None), max_int=3600),
+        ConfirmStepData('bool', StepMessage('message4', None) ),
+        OptionStepData('option', StepMessage('message6', None),
+            options={'1': 1, '2': 2} ),
+        PagesStepData('pages', StepMessage('message7', None),
+                      options={'1': 1, '2': 2} ),
+        FriendStepData('friend', StepMessage('message8', None) ),
+        InventoryStepData('inventory', StepMessage('message9', None) )
+    ]
+
+    await ChooseStepHandler(some_function, 
+        message.from_user.id, message.chat.id, 'ru', steps, {"bon": 1}).start()
