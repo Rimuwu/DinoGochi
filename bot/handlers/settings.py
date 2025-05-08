@@ -1,6 +1,8 @@
 
 from random import randint
 
+from bson import ObjectId
+
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.data_format import chunks, escape_markdown, list_to_keyboard
@@ -12,9 +14,11 @@ from bot.modules.markup import cancel_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.markup import tranlate_data
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
-                                      ChooseOptionState, ChooseStepState,
-                                      ChooseStringState)
+# from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
+#                                       ChooseOptionState, ChooseStepState,
+#                                       ChooseStringState)
+from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseDinoHandler, ChooseOptionHandler, ChooseStepHandler, ChooseStringHandler
+from bot.modules.states_fabric.steps_datatype import ConfirmStepData, StepMessage, StringStepData
 from bot.modules.user.user import User, take_coins
 from aiogram.types import CallbackQuery, Message
 
@@ -63,7 +67,8 @@ async def notification_set(message: Message):
     translated = tranlate_data(buttons, lang, prefix)
     keyboard = list_to_keyboard(translated, 2)
     
-    await ChooseConfirmState(notification, userid, chatid, lang)
+    # await ChooseConfirmState(notification, userid, chatid, lang)
+    await ChooseConfirmHandler(notification, userid, chatid, lang).start()
     await bot.send_message(userid, t('not_set.info', lang), 
                            reply_markup=keyboard)
 
@@ -101,7 +106,8 @@ async def dino_profile_set(message: Message):
     buttons.append([t('buttons_name.cancel', lang)])
 
     keyboard = list_to_keyboard(buttons, 2)
-    await ChooseOptionState(dino_profile, userid, chatid, lang, settings_data)
+    # await ChooseOptionState(dino_profile, userid, chatid, lang, settings_data)
+    await ChooseOptionHandler(dino_profile, userid, chatid, lang).start()
     await bot.send_message(userid, t('profile_view.info', lang), 
                            reply_markup=keyboard)
 
@@ -139,7 +145,8 @@ async def inventory_set(message: Message):
     buttons.append([t('buttons_name.cancel', lang)])
     keyboard = list_to_keyboard(buttons, 2)
 
-    await ChooseOptionState(inventory, userid, chatid, lang, settings_data)
+    # await ChooseOptionState(inventory, userid, chatid, lang, settings_data)
+    await ChooseOptionHandler(inventory, userid, chatid, lang, settings_data).start()
     await bot.send_message(userid, t('inv_set_pages.info', lang), 
                            reply_markup=keyboard)
 
@@ -147,7 +154,12 @@ async def rename_dino_post_state(content: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
-    dino = transmitted_data['dino']
+    dino_id = transmitted_data['dino'][0]
+
+    dino = await Dino().create(dino_id)
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     last_name = dino.name
     await dino.update({'$set': {'name': content}})
@@ -158,20 +170,28 @@ async def rename_dino_post_state(content: str, transmitted_data: dict):
                     reply_markup= await m(userid, 'last_menu', lang))
 
 
-async def transition(dino: Dino, transmitted_data: dict):
+async def transition(dino_data: tuple, transmitted_data: dict):
+    dino_id = dino_data[0]
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
+    
+    dino = await Dino().create(dino_id)
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     text = t('rename_dino.info', lang, last_name=dino.name)
     keyboard = [t('buttons_name.cancel', lang)]
     markup = list_to_keyboard(keyboard, one_time_keyboard=True)
 
     data = {
-        'dino': dino
+        'dino': dino_id
     }
-    await ChooseStringState(rename_dino_post_state, userid, 
-                            chatid, lang, max_len=20, transmitted_data=data)
+
+    # await ChooseStringState(rename_dino_post_state, userid, chatid, lang, max_len=20, transmitted_data=data)
+    await ChooseStringHandler(rename_dino_post_state, userid, 
+                            chatid, lang, max_len=20, transmitted_data=data).start()
 
     await bot.send_message(userid, text, reply_markup=markup)
 
@@ -182,7 +202,8 @@ async def rename_dino(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    await ChooseDinoState(transition, userid, message.chat.id, lang, False)
+    # await ChooseDinoState(transition, userid, message.chat.id, lang, False)
+    await ChooseDinoHandler(transition, userid, message.chat.id, lang, False).start()
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('rename_dino'), IsAuthorizedUser())
@@ -201,7 +222,7 @@ async def rename_button(callback: CallbackQuery):
     if not dino:
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
         return
-    await transition(dino, trans_data)
+    await transition((dino._id, 'Dino'), trans_data)
 
 async def adapter_delete(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
@@ -231,49 +252,70 @@ async def delete_me(message: Message):
     chatid = message.chat.id
     
     code = str(randint(100, 1000))
-    transmitted_data = {'code': code, 'delete_steps': False}
     
     conf3 = confirm_markup(lang)
     conf3.one_time_keyboard = True
 
-    steps = [
-        {
-        "type": 'bool', "name": 'confirm', 
-        "data": {'cancel': True}, 
-        "translate_message": True,
-        'message': {
-            'text': 'delete_me.confirm', 
-            'reply_markup': confirm_markup(lang)
-            }
-        },
-        {
-        "type": 'bool', "name": 'confirm2', 
-        "data": {'cancel': True}, 
-        "translate_message": True,
-        'message': {
-            'text': 'delete_me.dead_dino',
-            'reply_markup': confirm_markup(lang)
-            }
-        },
-        {
-        "type": 'bool', "name": 'confirm3', 
-        "data": {'cancel': True}, 
-        "translate_message": True,
-        'message': {
-            'text': 'delete_me.rex_boss', 
-            'reply_markup': conf3
-            }
-        },
-        {"type": 'str', "name": 'code', "data": {}, 
-            'message': {
-                'text': t('delete_me.code', lang, code=code),
-                'reply_markup': cancel_markup(lang)}
-        }
-    ]
+    # steps = [
+    #     {
+    #     "type": 'bool', "name": 'confirm', 
+    #     "data": {'cancel': True}, 
+    #     "translate_message": True,
+    #     'message': {
+    #         'text': 'delete_me.confirm', 
+    #         'reply_markup': confirm_markup(lang)
+    #         }
+    #     },
+    #     {
+    #     "type": 'bool', "name": 'confirm2', 
+    #     "data": {'cancel': True}, 
+    #     "translate_message": True,
+    #     'message': {
+    #         'text': 'delete_me.dead_dino',
+    #         'reply_markup': confirm_markup(lang)
+    #         }
+    #     },
+    #     {
+    #     "type": 'bool', "name": 'confirm3', 
+    #     "data": {'cancel': True}, 
+    #     "translate_message": True,
+    #     'message': {
+    #         'text': 'delete_me.rex_boss', 
+    #         'reply_markup': conf3
+    #         }
+    #     },
+    #     {"type": 'str', "name": 'code', "data": {}, 
+    #         'message': {
+    #             'text': t('delete_me.code', lang, code=code),
+    #             'reply_markup': cancel_markup(lang)}
+    #     }
+    # ]
     
-    await ChooseStepState(adapter_delete, userid, chatid, 
-                                  lang, steps, 
-                                transmitted_data=transmitted_data)
+    steps = [
+        ConfirmStepData('confirm', StepMessage('delete_me.confirm', 
+                                            confirm_markup(lang), True),
+                        cancel=True
+                        ),
+        ConfirmStepData('confirm2', StepMessage('delete_me.dead_dino', 
+                                            confirm_markup(lang), True),
+                        cancel=True
+                        ),
+        ConfirmStepData('confirm3', StepMessage('delete_me.rex_boss', 
+                                            confirm_markup(lang), True),
+                        cancel=True
+                        ),
+        StringStepData('code', StepMessage(t('delete_me.code', lang, code=code),
+                                            cancel_markup(lang), False),
+                        max_len=10
+                        )
+    ]
+
+    await ChooseStepHandler(adapter_delete, userid, chatid, lang, steps,
+                            transmitted_data={'code': code}).start()
+
+    # await ChooseStepState(adapter_delete, userid, chatid, 
+    #                               lang, steps, 
+    #                             transmitted_data=transmitted_data)
     
 async def my_name_end(content: str, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -302,7 +344,8 @@ async def my_name(message: Message):
                                parse_mode='Markdown', 
                                reply_markup=cancel_markup(lang))
 
-    await ChooseStringState(my_name_end, userid, chatid, lang, max_len=20)
+    # await ChooseStringState(my_name_end, userid, chatid, lang, max_len=20)
+    await ChooseStringHandler(my_name_end, userid, chatid, lang, max_len=20).start()
 
 async def lang_set(new_lang: str, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -332,7 +375,8 @@ async def lang(message: Message):
     await bot.send_message(chatid, t('lang_set', lang),
                                reply_markup=buttons)
 
-    await ChooseOptionState(lang_set, userid, chatid, lang, options)
+    # await ChooseOptionState(lang_set, userid, chatid, lang, options)
+    await ChooseOptionHandler(lang_set, userid, chatid, lang, options).start()
 
 async def dino_talk_set(result: bool, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -363,7 +407,8 @@ async def dino_talk(message: Message):
     translated = tranlate_data(buttons, lang, prefix)
     keyboard = list_to_keyboard(translated, 2)
 
-    await ChooseConfirmState(dino_talk_set, userid, chatid, lang)
+    # await ChooseConfirmState(dino_talk_set, userid, chatid, lang)
+    await ChooseConfirmHandler(dino_talk_set, userid, chatid, lang).start()
     await bot.send_message(userid, t('no_talk.info', lang), 
                            reply_markup=keyboard)
 
@@ -411,7 +456,8 @@ async def my_nick(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await ChooseStringState(my_nick_set, userid, chatid, lang, max_len=20, min_len=3)
+    # await ChooseStringState(my_nick_set, userid, chatid, lang, max_len=20, min_len=3)
+    await ChooseStringHandler(my_nick_set, userid, chatid, lang, max_len=20, min_len=3).start()
     await bot.send_message(userid, t('edit_nick', lang), 
                            reply_markup=cancel_markup(lang))
 

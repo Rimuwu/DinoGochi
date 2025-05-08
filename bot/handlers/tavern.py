@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 from random import randint
 from time import time
 
+from bson import ObjectId
+
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
@@ -18,7 +20,9 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.states_tools import ChooseInlineState, ChooseStepState
+# from bot.modules.states_tools import ChooseInlineState, ChooseStepState
+from bot.modules.states_fabric.state_handlers import ChooseInlineHandler, ChooseStepHandler
+from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DataType, DinoStepData, StepMessage
 from bot.modules.user.user import (AddItemToUser, check_name, daily_award_con,
                               get_dinos, take_coins, user_in_chat)
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
@@ -220,12 +224,19 @@ async def end_edit(code, transmitted_data):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
-    dino: Dino = transmitted_data['dino']
+    dino_id, _ = transmitted_data['dino']
     o_type = transmitted_data['type']
+
+    dino = await Dino().create(dino_id)
+    if not dino:
+        text = t('css.no_dino', lang)
+        await bot.send_message(chatid, text, parse_mode='Markdown', 
+                               reply_markup= await m(userid, 'last_menu', lang))
+        return
 
     m_id = transmitted_data['bmessageid']
     await bot.delete_message(chatid, m_id)
-    
+
     coins = GS['change_rarity'][code]['coins']
     items = GS['change_rarity'][code]['materials']
 
@@ -286,7 +297,9 @@ async def dino_now(return_data, transmitted_data):
     mark = list_to_inline([buttons], 2)
     await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=mark)
 
-    await ChooseInlineState(end_edit, userid, chatid, lang, str(code), {'dino': dino, 'type': o_type})
+    # await ChooseInlineState(end_edit, userid, chatid, lang, str(code), {'dino': dino, 'type': o_type})
+    await ChooseInlineHandler(end_edit, userid, chatid, lang, str(code), 
+                              {'dino': dino._id, 'type': o_type}).start()
     await bot.send_message(chatid,  t('edit_dino.new_rare', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
 
 async def reset_chars(return_data, transmitted_data):
@@ -327,29 +340,32 @@ async def transformation(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     data = callback.data.split()
 
-    steps = [
-            {
-            "type": 'dino', "name": 'dino', "data": {"add_egg": False}, 
-            "translate_message": True,
-            'message': {'text': 'edit_dino.dino'}
-            }
+    # steps = [
+    #         {
+    #         "type": 'dino', "name": 'dino', "data": {"add_egg": False}, 
+    #         "translate_message": True,
+    #         'message': {'text': 'edit_dino.dino'}
+    #         }
+    # ]
+    
+    steps: list[DataType] = [
+        DinoStepData('dino', StepMessage('edit_dino.dino', None, True),
+                     add_egg=False)
     ]
+    
     ret_f = dino_now
 
     if data[1] == 'appearance':
         items_text = counts_items(GS['change_appearance']['items'], lang)
         coins = GS['change_appearance']['coins']
         ret_f = edit_appearance
-
+        
         steps.append(
-            {
-            "type": 'bool', "name": 'confirm', 
-            "data": {'cancel': True}, 
-            'message': {
-                'text': t('edit_dino.appearance', lang, items=items_text, coins=coins),
-                'reply_markup': confirm_markup(lang)
-                }
-            }
+            ConfirmStepData('confirm', StepMessage(
+                t('edit_dino.appearance', lang, items=items_text, coins=coins), 
+                confirm_markup(lang)),
+                cancel = True
+            )
         )
 
     elif data[1] == 'chars':
@@ -357,14 +373,14 @@ async def transformation(callback: CallbackQuery):
         ret_f = reset_chars
 
         steps.append(
-            {
-            "type": 'bool', "name": 'confirm', 
-            "data": {'cancel': True}, 
-            'message': {
-                'text': t('edit_dino.reset_chars', lang, coins=coins),
-                'reply_markup': confirm_markup(lang)
-                }
-            }
+            ConfirmStepData('confirm',
+                StepMessage(
+                    t('edit_dino.reset_chars', lang, coins=coins),
+                    confirm_markup(lang)
+                ),
+                cancel=True
+            )
         )
 
-    await ChooseStepState(ret_f, userid, chatid, lang, steps, {'type': data[1]})
+    await ChooseStepHandler(ret_f, userid, chatid, lang, steps, {'type': data[1]}).start()
+    # await ChooseStepState(ret_f, userid, chatid, lang, steps, {'type': data[1]})

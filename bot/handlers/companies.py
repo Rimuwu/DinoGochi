@@ -1,3 +1,4 @@
+from ast import In
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.handlers.start import start_game
@@ -9,7 +10,10 @@ from bot.modules.localization import get_all_locales, get_lang, t
 from bot.modules.managment.promo import use_promo
 from bot.modules.markup import answer_markup, cancel_markup, confirm_markup
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.states_tools import ChoosePagesState, ChooseStepState
+# from bot.modules.states_tools import ChoosePagesState, ChooseStepState
+# from bot.modules.states_tools import ChooseStepState
+from bot.modules.states_fabric.state_handlers import ChoosePagesStateHandler, ChooseStepHandler
+from bot.modules.states_fabric.steps_datatype import *
 from aiogram.types import CallbackQuery, Message
 
 from bot.filters.translated_text import StartWith, Text
@@ -49,94 +53,110 @@ async def new_cycle(userid, chatid, lang, transmitted_data):
         lang_options[
             value + f' ({col})'
         ] = key
-
+    
     steps = [
-        {
-            'type': 'pages', 'name': 'lang',
-            'data': {
-                'options': lang_options,
-                'horizontal': 2
-            },
-            'translate_message': True,
-            'message': {
-                'text': 'companies.lang'
-            }
-        },
-
-        {
-            'type': 'str', 'name': 'text',
-            'data': {
-                'max_len': 1024
-            },
-            'translate_message': True,
-            'message': {
-                'text': 'companies.text',
-                'reply_markup': cancel_markup(lang)
-            }
-        },
-
-        {
-            'type': 'str', 'name': 'name_button',
-            'data': {
-                'max_len': 100
-            },
-            'translate_message': True,
-            'message': {
-                'text': 'companies.name_button',
-                'reply_markup': cancel_markup(lang)
-            }
-        },
-
-        {
-            'type': 'str', 'name': 'button_url',
-            'data': {
-                'max_len': 1000
-            },
-            'translate_message': True,
-            'message': {
-                'text': 'companies.button_url',
-                'reply_markup': cancel_markup(lang)
-            }
-        },
-
-        {
-            'type': 'pages', 'name': 'parse_mode',
-            'data': {
-                'options': {
-                    'HTML': 'HTML',
-                    'Markdown': 'Markdown',
-                    t('companies.no_parse', lang): None
-                }
-            },
-            'translate_message': True,
-            'message': {
-                'text': 'companies.parse_mode'
-            }
-        },
-
-        {
-            'type': 'image', 'name': 'image',
-            'data': {},
-            'translate_message': True,
-            'message': {
-                'text': 'companies.image_choose',
-                'reply_markup': cancel_markup(lang)
-            }
-        },
-
-        {
-            'type': 'bool', 'name': 'add_lang',
-            'data': {},
-            'translate_message': True,
-            'message': {
-                'text': 'companies.add_new_lang',
-                'reply_markup': answer_markup(lang)
-            }
-        }
-
+        PagesStepData('pages', StepMessage('companies.lang', None, True), options=lang_options, horizontal=2),
+        StringStepData('text', StepMessage('companies.text', cancel_markup(lang), True), max_len=1024),
+        StringStepData('name_button', StepMessage('companies.name_button', cancel_markup(lang), True), max_len=100),
+        StringStepData('button_url', StepMessage('companies.button_url', cancel_markup(lang), True), max_len=1000),
+        PagesStepData('parse_mode', StepMessage('companies.parse_mode', None, True), options={
+            'HTML': 'HTML',
+            'Markdown': 'Markdown',
+            t('companies.no_parse', lang): None
+        }),
+        ImageStepData('image', StepMessage('companies.image_choose', cancel_markup(lang), True)),
+        ConfirmStepData('add_lang', StepMessage('companies.add_new_lang', answer_markup(lang), True))
     ]
 
-    await ChooseStepState(pre_check, userid, chatid, lang, steps, transmitted_data)
+    # steps = [
+    #     {
+    #         'type': 'pages', 'name': 'lang',
+    #         'data': {
+    #             'options': lang_options,
+    #             'horizontal': 2
+    #         },
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.lang'
+    #         }
+    #     },
+
+    #     {
+    #         'type': 'str', 'name': 'text',
+    #         'data': {
+    #             'max_len': 1024
+    #         },
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.text',
+    #             'reply_markup': cancel_markup(lang)
+    #         }
+    #     },
+
+    #     {
+    #         'type': 'str', 'name': 'name_button',
+    #         'data': {
+    #             'max_len': 100
+    #         },
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.name_button',
+    #             'reply_markup': cancel_markup(lang)
+    #         }
+    #     },
+
+    #     {
+    #         'type': 'str', 'name': 'button_url',
+    #         'data': {
+    #             'max_len': 1000
+    #         },
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.button_url',
+    #             'reply_markup': cancel_markup(lang)
+    #         }
+    #     },
+
+    #     {
+    #         'type': 'pages', 'name': 'parse_mode',
+    #         'data': {
+    #             'options': {
+    #                 'HTML': 'HTML',
+    #                 'Markdown': 'Markdown',
+    #                 t('companies.no_parse', lang): None
+    #             }
+    #         },
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.parse_mode'
+    #         }
+    #     },
+
+    #     {
+    #         'type': 'image', 'name': 'image',
+    #         'data': {},
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.image_choose',
+    #             'reply_markup': cancel_markup(lang)
+    #         }
+    #     },
+
+    #     {
+    #         'type': 'bool', 'name': 'add_lang',
+    #         'data': {},
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.add_new_lang',
+    #             'reply_markup': answer_markup(lang)
+    #         }
+    #     }
+
+    # ]
+
+    # await ChooseStepState(pre_check, userid, chatid, lang, steps, transmitted_data)
+    await ChooseStepHandler(
+        pre_check, userid, chatid, lang, steps, transmitted_data).start()
 
 
 async def pre_check(data, transmitted_data):
@@ -160,137 +180,151 @@ async def pre_check(data, transmitted_data):
     if data['add_lang']:
         await new_cycle(userid, chatid, lang, transmitted_data)
         return
-
+    
     steps = [
-        {
-            'type': 'int', 'name': 'owner',
-            'data': {
-                'max_int': 1000000000000,
-                'min_int': 0
-            },
-            'translate_message': True,
-            'message': {
-                'text': 'companies.owner',
-                'reply_markup': cancel_markup(lang)
-            }
-        },
-        
-        {
-            'type': 'time', 'name': 'time_end',
-            'data': {
-                'max_int': 1000000000000,
-                'min_int': 0
-                },
-            'translate_message': True,
-            'message': {
-                'text': 'companies.time_end',
-                'reply_markup': cancel_markup(lang)
-            }
-        },
-
-        {
-            'type': 'int', 'name': 'max_count',
-            'data': {
-                'max_int': 1000000000000,
-                'min_int': 0
-            },
-            'translate_message': True,
-            'message': {
-                'text': 'companies.max_count',
-                'reply_markup': cancel_markup(lang)
-            }
-        },
-
-        {
-            'type': 'bool', 'name': 'priority',
-            'data': {},
-            'translate_message': True,
-            'message': {
-                'text': 'companies.priority',
-                'reply_markup': answer_markup(lang)
-            }
-        },
-
-        {
-            'type': 'bool', 'name': 'one_message',
-            'data': {},
-            'translate_message': True,
-            'message': {
-                'text': 'companies.one_message',
-                'reply_markup': answer_markup(lang)
-            }
-        },
-
-        {
-            'type': 'bool', 'name': 'pin_message',
-            'data': {},
-            'translate_message': True,
-            'message': {
-                'text': 'companies.pin_message',
-                'reply_markup': answer_markup(lang)
-            }
-        },
-
-        {
-            'type': 'int', 'name': 'coin_price',
-            'data': {
-                'max_int': 100,
-                'min_int': 0
-            },
-            'translate_message': True,
-            'message': {
-                'text': 'companies.coin_price',
-                'reply_markup': cancel_markup(lang)
-            }
-        },
-
-        {
-            'type': 'bool', 'name': 'delete_after',
-            'data': {},
-            'translate_message': True,
-            'message': {
-                'text': 'companies.delete_after',
-                'reply_markup': answer_markup(lang)
-            }
-        },
-
-        {
-            'type': 'bool', 'name': 'ignore_system_timeout',
-            'data': {},
-            'translate_message': True,
-            'message': {
-                'text': 'companies.ignore_system_timeout',
-                'reply_markup': answer_markup(lang)
-            }
-        },
-
-        {
-            'type': 'int', 'name': 'min_timeout',
-            'data': {
-                'max_int': 1000000000000,
-                'min_int': 0
-            },
-            'translate_message': True,
-            'message': {
-                'text': 'companies.min_timeout',
-                'reply_markup': cancel_markup(lang)
-            }
-        },
-        
-        {
-            'type': 'str', 'name': 'name',
-            'data': {
-                'max_len': 200
-            },
-            'translate_message': True,
-            'message': {
-                'text': 'companies.name',
-                'reply_markup': cancel_markup(lang)
-            }
-        },
+        IntStepData('owner', StepMessage('companies.owner', cancel_markup(lang), True), min_int=0, max_int=1000000000000),
+        TimeStepData('time_end', StepMessage('companies.time_end', cancel_markup(lang), True), min_int=0, max_int=1000000000000),
+        IntStepData('max_count', StepMessage('companies.max_count', cancel_markup(lang), True), min_int=0, max_int=1000000000000),
+        ConfirmStepData('priority', StepMessage('companies.priority', answer_markup(lang), True)),
+        ConfirmStepData('one_message', StepMessage('companies.one_message', answer_markup(lang), True)),
+        ConfirmStepData('pin_message', StepMessage('companies.pin_message', answer_markup(lang), True)),
+        IntStepData('coin_price', StepMessage('companies.coin_price', cancel_markup(lang), True), min_int=0, max_int=100),
+        ConfirmStepData('delete_after', StepMessage('companies.delete_after', answer_markup(lang), True)),
+        ConfirmStepData('ignore_system_timeout', StepMessage('companies.ignore_system_timeout', answer_markup(lang), True)),
+        IntStepData('min_timeout', StepMessage('companies.min_timeout', cancel_markup(lang), True), min_int=0, max_int=1000000000000),
+        StringStepData('name', StepMessage('companies.name', cancel_markup(lang), True), max_len=200),
     ]
 
-    await ChooseStepState(end, userid, chatid, lang, steps, transmitted_data)
+    # steps = [
+    #     {
+    #         'type': 'int', 'name': 'owner',
+    #         'data': {
+    #             'max_int': 1000000000000,
+    #             'min_int': 0
+    #         },
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.owner',
+    #             'reply_markup': cancel_markup(lang)
+    #         }
+    #     },
+        
+    #     {
+    #         'type': 'time', 'name': 'time_end',
+    #         'data': {
+    #             'max_int': 1000000000000,
+    #             'min_int': 0
+    #             },
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.time_end',
+    #             'reply_markup': cancel_markup(lang)
+    #         }
+    #     },
+
+    #     {
+    #         'type': 'int', 'name': 'max_count',
+    #         'data': {
+    #             'max_int': 1000000000000,
+    #             'min_int': 0
+    #         },
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.max_count',
+    #             'reply_markup': cancel_markup(lang)
+    #         }
+    #     },
+
+    #     {
+    #         'type': 'bool', 'name': 'priority',
+    #         'data': {},
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.priority',
+    #             'reply_markup': answer_markup(lang)
+    #         }
+    #     },
+
+    #     {
+    #         'type': 'bool', 'name': 'one_message',
+    #         'data': {},
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.one_message',
+    #             'reply_markup': answer_markup(lang)
+    #         }
+    #     },
+
+    #     {
+    #         'type': 'bool', 'name': 'pin_message',
+    #         'data': {},
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.pin_message',
+    #             'reply_markup': answer_markup(lang)
+    #         }
+    #     },
+
+    #     {
+    #         'type': 'int', 'name': 'coin_price',
+    #         'data': {
+    #             'max_int': 100,
+    #             'min_int': 0
+    #         },
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.coin_price',
+    #             'reply_markup': cancel_markup(lang)
+    #         }
+    #     },
+
+    #     {
+    #         'type': 'bool', 'name': 'delete_after',
+    #         'data': {},
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.delete_after',
+    #             'reply_markup': answer_markup(lang)
+    #         }
+    #     },
+
+    #     {
+    #         'type': 'bool', 'name': 'ignore_system_timeout',
+    #         'data': {},
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.ignore_system_timeout',
+    #             'reply_markup': answer_markup(lang)
+    #         }
+    #     },
+
+    #     {
+    #         'type': 'int', 'name': 'min_timeout',
+    #         'data': {
+    #             'max_int': 1000000000000,
+    #             'min_int': 0
+    #         },
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.min_timeout',
+    #             'reply_markup': cancel_markup(lang)
+    #         }
+    #     },
+        
+    #     {
+    #         'type': 'str', 'name': 'name',
+    #         'data': {
+    #             'max_len': 200
+    #         },
+    #         'translate_message': True,
+    #         'message': {
+    #             'text': 'companies.name',
+    #             'reply_markup': cancel_markup(lang)
+    #         }
+    #     },
+    # ]
+    await ChooseStepHandler(
+        end, userid, chatid, lang, steps, transmitted_data).start() 
 
 async def end(data, transmitted_data):
     userid = transmitted_data['userid']
@@ -329,8 +363,11 @@ async def companies_c(message: Message):
 
     for i in comps:
         options[i['name']] = i['_id']
+        
+    await ChoosePagesStateHandler(
+        comp_info, userid, chatid, lang, options).start()
 
-    await ChoosePagesState(comp_info, userid, chatid, lang, options)
+    # await ChoosePagesState(comp_info, userid, chatid, lang, options)
 
 async def comp_info(com_id, transmitted_data):
     userid = transmitted_data['userid']

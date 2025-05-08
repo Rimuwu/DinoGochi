@@ -1,6 +1,5 @@
 
 from bot.modules.add_product.auction import auction
-from bot.modules.states_tools import ChooseStepState
 
 from bot.modules.market.market import generate_sell_pages, generate_items_pages
 
@@ -9,6 +8,7 @@ from bot.modules.add_product.items_coins import circle_data as is_circle_data
 from bot.modules.add_product.coins_items import circle_data as si_circle_data
 from bot.modules.add_product.auction import circle_data as au_circle_data
 from bot.modules.add_product.items_items import items_items, trade_circle
+from bot.modules.states_fabric.state_handlers import ChooseStepHandler
 
 MAX_PRICE = 10_000_000
 
@@ -45,7 +45,10 @@ async def prepare_data_option(option, transmitted_data):
         'exclude': exclude, 'option': option
     }
 
-    steps = circle_fun(userid, chatid, lang, items, option, False)
-    await ChooseStepState(ret_function, userid, chatid, 
-                          lang, steps, 
-                          transmitted_data=transmitted_data)
+    steps = circle_fun(lang, items, option)
+    # await ChooseStepState(ret_function, userid, chatid, 
+    #                       lang, steps, 
+    #                       transmitted_data=transmitted_data)
+    await ChooseStepHandler(ret_function, userid, chatid,
+                            lang, steps,
+                            transmitted_data=transmitted_data).start()

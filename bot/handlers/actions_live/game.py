@@ -23,7 +23,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
 # from bot.modules.states_tools import ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
-from bot.modules.states_fabric.steps_datatype import BaseUpdateType, DataType, InlineStepData, IntStepData, PagesStepData, StepMessage
+from bot.modules.states_fabric.steps_datatype import BaseUpdateType, InlineStepData, PagesStepData, StepMessage
 from bot.modules.user.user import User, premium
 from aiogram.types import Message, InputFile
 
@@ -82,27 +82,6 @@ async def start_game_ent(userid: int, chatid: int,
         buttons[value['text']] = f'chooseinline {cc} {key}'
     markup = list_to_inline([buttons])
 
-    # steps = [
-    #     {"type": 'pages', "name": 'game', 
-    #       "data": {"options": options}, 
-    #       'translate_message': True,
-    #       'translate_args': {'last_game': last_game},
-    #       'message': {'text': 'entertainments.answer_game'}
-    #     },
-    #     {
-    #         "type": 'update_data', 'name': 'zero',
-    #         'function': delete_markup,
-    #         'async': True
-    #     },
-    #     {"type": 'inline', "name": 'time', "data": {'custom_code': cc}, 
-    #       'translate_message': True,
-    #       'delete_message': True,
-    #       'message': {'text': 'entertainments.answer_text',
-    #                   'reply_markup': markup
-    #           }
-    #     }
-    # ]
-    
     steps = [
         PagesStepData('game',
             StepMessage('entertainments.answer_game', translate_message=True, text_data={'last_game': last_game}),
@@ -120,7 +99,6 @@ async def start_game_ent(userid: int, chatid: int,
     await ChooseStepHandler(game_start, userid, chatid, lang, steps, 
                             transmitted_data
                         ).start()
-    # await ChooseStepState(game_start, userid, chatid, lang, steps, transmitted_data)
 
 async def delete_markup(transmitted_data):
     chatid = transmitted_data['chatid']
@@ -166,7 +144,7 @@ async def game_start(return_data: dict,
             friend_dino_id = dino_f['data_id']
             res = await long_activity.find_one({'dino_id': dino_f['_id'], 'activity_type': 'game'}, comment="game_start_res1")
             if not res: 
-                join_dino = 0
+                join_dino = ''
                 text_m = t('entertainments.join_end', lang)
                 await bot.send_message(chatid, text_m)
             else: 

@@ -1,40 +1,23 @@
-from datetime import datetime, timedelta
-from random import randint
-from time import time
 
-from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.const import GAME_SETTINGS as GS
 from bot.exec import main_router, bot
-from bot.handlers.states import ChooseInt
-from bot.modules.data_format import list_to_inline, seconds_to_str
+from bot.modules.data_format import list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur  import Dino, get_dino_data, random_dino, random_quality, set_standart_specifications
-from bot.modules.images import async_open
-from bot.modules.inline import inline_menu
-from bot.modules.items.item import (CheckCountItemFromUser, RemoveItemFromUser,
-                              counts_items, get_name)
-from bot.modules.localization import get_data, get_lang, t
-from bot.modules.markup import cancel_markup, confirm_markup, count_markup
+from bot.modules.items.item import get_name
+from bot.modules.localization import get_lang, t
+from bot.modules.markup import count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.states_tools import ChooseInlineState, ChooseIntState, ChooseStepState
+# from bot.modules.states_tools import ChooseInlineState, ChooseIntState, ChooseStepState
+from bot.modules.states_fabric.state_handlers import ChooseIntHandler
 from bot.modules.user.inside_shop import get_content, item_buyed
-from bot.modules.user.user import (AddItemToUser, check_name, daily_award_con,
-                              get_dinos, take_coins, user_in_chat)
-from aiogram.types import (CallbackQuery, InlineKeyboardButton,
-                           InlineKeyboardMarkup, Message)
+from aiogram.types import CallbackQuery, Message
 from bot.modules.markup import markups_menu as m
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
+from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command
 
 inside_shop = DBconstructor(mongo_client.tavern.inside_shop)
 
@@ -85,7 +68,9 @@ async def hoarder_calb(call: CallbackQuery):
             'item': key,
             'messageid': call.message.message_id
         }
-        await ChooseIntState(buy_item, userid, chatid, lang, max_int=item['count'], autoanswer=False, transmitted_data=transmitted_data)
+        # await ChooseIntState(buy_item, userid, chatid, lang, max_int=item['count'], autoanswer=False, transmitted_data=transmitted_data)
+        await ChooseIntHandler(buy_item, userid, chatid, lang, max_int=item['count'], autoanswer=False, transmitted_data=transmitted_data).start()
+        
         await bot.send_message(chatid, t('inside_shop.count', lang), 
                                parse_mode='Markdown', 
                                reply_markup=count_markup(item['count'], lang))

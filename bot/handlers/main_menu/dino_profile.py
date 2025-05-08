@@ -1,4 +1,7 @@
+from math import e
 from time import time
+
+from bson import ObjectId
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
@@ -19,8 +22,9 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
-                                      ChooseOptionState)
+# from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
+#                                       ChooseOptionState)
+from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseDinoHandler, ChooseOptionHandler
 from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, premium
 from aiogram import types
@@ -194,19 +198,29 @@ async def transition(element, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     custom_url = ''
+    oid: ObjectId = element[0]
+    cl_name: str = element[1]
+    
+    print(element)
 
-    if isinstance(element, Dino):
+    if cl_name == 'Dino':
+        element = await Dino().create(oid)
+        if element:
 
-        if element.profile['background_type'] == 'custom' and await premium(userid):
-            custom_url = element.profile['background_id']
+            if element.profile['background_type'] == 'custom' and await premium(userid):
+                custom_url = element.profile['background_id']
 
-        if element.profile['background_type'] == 'saved':
-            idm = element.profile['background_id']
-            custom_url = await async_open(f'images/backgrounds/{idm}.png')
+            if element.profile['background_type'] == 'saved':
+                idm = element.profile['background_id']
+                custom_url = await async_open(f'images/backgrounds/{idm}.png')
 
-    if type(element) == Dino:
-        await dino_profile(userid, chatid, element, lang, custom_url)
-    elif type(element) == Egg:
+    if cl_name == 'Dino':
+        element = await Dino().create(oid)
+        if element:
+            await dino_profile(userid, chatid, element, lang, custom_url)
+
+    elif cl_name == 'Egg':
+        element = await Egg().create(oid)
         await egg_profile(chatid, element, lang)
 
 @HDMessage
@@ -215,7 +229,7 @@ async def dino_handler(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    bstatus, status = await ChooseDinoState(transition, userid, message.chat.id, lang, send_error=False) 
+    bstatus, status = await ChooseDinoHandler(transition, userid, message.chat.id, lang, send_error=False).start()
 
     if not bstatus and status == 'cancel':
         if await dead_check(userid):
@@ -266,7 +280,8 @@ async def dino_menu(call: types.CallbackQuery):
                         activ_items[get_name(item['item_id'], 
                                     lang, item.get('abilities', {}))] = [key, item]
 
-                result, sn = await ChooseOptionState(remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']})
+                # result, sn = await ChooseOptionState(remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']})
+                result = await ChooseOptionHandler(remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']}).start()
 
                 if result:
                     reply_buttons = [list(activ_items.keys()), [t(f'buttons_name.cancel', lang)]]
@@ -320,15 +335,19 @@ async def dino_menu(call: types.CallbackQuery):
                 # Октазать от совместного динозавра
                 text = t('cancle_joint.confirm', lang)
                 await bot.send_message(userid, text, parse_mode='Markdown', reply_markup=confirm_markup(lang))
-                await ChooseConfirmState(cnacel_joint, userid, chatid, lang, transmitted_data={'dinoid': dino['_id']})
+                # await ChooseConfirmState(cnacel_joint, userid, chatid, lang, transmitted_data={'dinoid': dino['_id']})
+                await ChooseConfirmHandler(cnacel_joint, userid, chatid, lang, transmitted_data={'dinoid': dino['_id']}).start()
 
             elif action == 'my_joint_cancel':
                 # Октазать от совместного динозавра
                 text = t('my_joint.confirm', lang)
                 await bot.send_message(userid, text, parse_mode='Markdown', reply_markup=confirm_markup(lang))
-                await ChooseConfirmState(cnacel_myjoint, userid, chatid, lang, transmitted_data={
+                # await ChooseConfirmState(cnacel_myjoint, userid, chatid, lang, transmitted_data={
+                #     'dinoid': dino['_id'], 
+                #     'user': call.from_user})
+                await ChooseConfirmHandler(cnacel_myjoint, userid, chatid, lang, transmitted_data={
                     'dinoid': dino['_id'], 
-                    'user': call.from_user})
+                    'user': call.from_user.id}).start()
 
             elif action == 'kindergarten':
                 if not await premium(userid): 
@@ -400,8 +419,7 @@ async def cnacel_joint(_:bool, transmitted_data:dict):
                            comment='cnacel_joint')
 
 async def cnacel_myjoint(_:bool, transmitted_data:dict):
-    user = transmitted_data['user']
-    userid = user.id
+    userid = transmitted_data['user']
     lang = transmitted_data['lang']
     dinoid = transmitted_data['dinoid']
 
@@ -474,9 +492,11 @@ async def kindergarten(call: types.CallbackQuery):
                         list(options.keys()), [t('buttons_name.cancel', lang)]
                     ], 2)
 
-                    await ChooseOptionState(start_kind, userid, chatid, lang, options,
-                                            transmitted_data={'dino': dino['_id']}
-                                            )
+                    # await ChooseOptionState(start_kind, userid, chatid, lang, options,
+                    #                         transmitted_data={'dino': dino['_id']}
+                    #                         )
+                    await ChooseOptionHandler(start_kind, userid, chatid, lang, options,
+                                              transmitted_data={'dino': dino['_id']}).start()
                     await bot.send_message(userid, t('kindergarten.choose_house', lang),
                                            reply_markup=bb)
                 else:

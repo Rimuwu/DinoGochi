@@ -34,7 +34,7 @@ dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 
 async def collecting_adapter(return_data, transmitted_data):
-    dino_id: ObjectId = transmitted_data['dino'] # type: Dino
+    dino_id: ObjectId = transmitted_data['dino']
     count: int = return_data['count']
     option = return_data['option']
     chatid = transmitted_data['chatid']

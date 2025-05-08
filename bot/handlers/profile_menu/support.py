@@ -10,7 +10,8 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.states_tools import ChooseIntState
+# from bot.modules.states_tools import ChooseIntState
+from bot.modules.states_fabric.state_handlers import ChooseIntHandler
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, InputMedia, Message, inline_keyboard_markup)
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
@@ -123,7 +124,9 @@ async def support_buttons(call: CallbackQuery):
                         width=2)
 
             else:
-                await ChooseIntState(tips, user_id, chatid, lang, 1, 500_000)
+                # await ChooseIntState(tips, user_id, chatid, lang, 1, 500_000)
+                await ChooseIntHandler(tips, user_id, chatid, lang, 1, 500_000
+                                       ).start()
                 await bot.send_message(chatid, text_data['free_enter'], reply_markup=cancel_markup(lang))
 
             markup_inline.row(

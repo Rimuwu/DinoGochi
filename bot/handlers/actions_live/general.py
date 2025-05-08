@@ -1,4 +1,5 @@
 
+from bson import ObjectId
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.handlers.actions_live.game import start_game_ent
@@ -10,7 +11,9 @@ from bot.modules.user.friends import send_action_invite
 from bot.modules.localization import get_lang, t
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.states_tools import ChooseDinoState, start_friend_menu
+# from bot.modules.states_tools import ChooseDinoState, start_friend_menu
+from bot.modules.states_fabric.state_handlers import ChooseDinoHandler, ChooseFriendHandler
+
 from bot.modules.user.user import User
 from aiogram.types import CallbackQuery, Message
 
@@ -100,12 +103,12 @@ async def invite_to_action(callback: CallbackQuery):
     if dino:
         res = await long_activity.find_one({'dino_id': dino['_id'], 'activity_type': 'game'}, comment='invite_to_action_res')
         if res: 
-            await start_friend_menu(invite_adp, userid, chatid, lang, True, transmitted_data)
+            await ChooseFriendHandler(invite_adp, userid, chatid, lang, True, transmitted_data=transmitted_data).start()
 
             text = t('invite_to_action', lang)
             await bot.send_message(chatid, text, parse_mode='Markdown')
 
-async def join_adp(dino: Dino, transmitted_data):
+async def join_adp(dino_ID: ObjectId, transmitted_data):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
@@ -114,6 +117,11 @@ async def join_adp(dino: Dino, transmitted_data):
     friend_dino = transmitted_data['friend_dino']
     friend = transmitted_data['friendid']
     text = ''
+
+    dino = await Dino().create(dino_ID)
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     if dino.alt_id == friend_dino:
         text = t('join_to_action.one_dino', lang)
@@ -154,4 +162,4 @@ async def join(callback: CallbackQuery):
                 'friendid': friendid
             }
 
-            await ChooseDinoState(join_adp, userid, chatid, lang, False, transmitted_data=transmitted_data)
+            await ChooseDinoHandler(join_adp, userid, chatid, lang, False, transmitted_data=transmitted_data).start()

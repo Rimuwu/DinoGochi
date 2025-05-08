@@ -1,6 +1,7 @@
 from time import time
 
 from aiogram.types import Message
+from bson import ObjectId
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
@@ -12,7 +13,8 @@ from bot.modules.inline import inline_menu
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import markups_menu as m
 from bot.modules.dinosaur.mood import add_mood
-from bot.modules.states_tools import ChooseIntState, ChooseOptionState
+# from bot.modules.states_tools import ChooseIntState, ChooseOptionState
+from bot.modules.states_fabric.state_handlers import ChooseIntHandler, ChooseOptionHandler
 from bot.modules.user.user import User
 from bot.modules.decorators import HDMessage
 
@@ -35,7 +37,8 @@ async def short_sleep(number: int, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
-    dino: Dino = transmitted_data['last_dino']
+    dino_id: ObjectId = transmitted_data['last_dino']
+    dino = await Dino().create(dino_id)
     
     if not dino:
         await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
@@ -55,9 +58,14 @@ async def short_sleep(number: int, transmitted_data: dict):
                 )
     await auto_ads(message)
 
-async def long_sleep(dino: Dino, userid: int, lang: str):
+async def long_sleep(dino_id: ObjectId, userid: int, lang: str):
     """ Отправляем дино в длинный сон
     """
+    dino = await Dino().create(dino_id)
+    
+    if not dino:
+        await bot.send_message(userid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
+        return
 
     res_dino_status = await check_status(dino._id)
     if res_dino_status:
@@ -90,10 +98,11 @@ async def end_choice(option: str, transmitted_data: dict):
             cancel_button = t('buttons_name.cancel', lang)
             buttons = list_to_keyboard([cancel_button])
             transmitted_data = { 
-                    'last_dino': last_dino
+                    'last_dino': last_dino._id
                 }
-            await ChooseIntState(short_sleep, userid, 
-                                chatid, lang, min_int=5, max_int=480, transmitted_data=transmitted_data)
+            await ChooseIntHandler(short_sleep, userid, chatid, lang, min_int=5, max_int=480, transmitted_data=transmitted_data).start()
+            # await ChooseIntState(short_sleep, userid, 
+            #                     chatid, lang, min_int=5, max_int=480, transmitted_data=transmitted_data)
 
             await bot.send_message(userid, 
                                 t('put_to_bed.choice_time', lang), 
@@ -127,7 +136,7 @@ async def put_to_bed(message: Message):
         else:
             if not await check_accessory(last_dino, 'bear'):
                 # Если нет мишки, то просто длинный сон
-                await long_sleep(last_dino, userid, lang)
+                await long_sleep(last_dino._id, userid, lang)
             else:
                 # Даём выбор сна
                 sl_buttons = get_data('put_to_bed.buttons', lang).copy()
@@ -140,10 +149,10 @@ async def put_to_bed(message: Message):
                     sl_buttons[0][1]: 'short'
                 }
                 trans_data = { 
-                    'last_dino': last_dino
+                    'last_dino': last_dino._id
                 }
 
-                await ChooseOptionState(end_choice, userid, chatid, lang, options, trans_data) # Ожидаем выбор варианта
+                await ChooseOptionHandler(end_choice, userid, chatid, lang, options, trans_data).start() # Ожидаем выбор варианта
                 await bot.send_message(userid, 
                         t('put_to_bed.choice', lang), 
                         reply_markup=buttons)

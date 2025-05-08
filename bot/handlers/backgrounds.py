@@ -1,4 +1,5 @@
 
+from bson import ObjectId
 from bot.dbmanager import mongo_client
 from bot.const import BACKGROUNDS
 from bot.exec import main_router, bot
@@ -12,8 +13,9 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import confirm_markup, count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState, ChooseImageState,
-                                      ChooseIntState, ChooseStringState)
+# from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState, ChooseImageState,
+#                                       ChooseIntState, ChooseStringState)
+from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseDinoHandler, ChooseImageHandler, ChooseIntHandler
 from bot.modules.user.user import premium, take_coins
 from aiogram.types import CallbackQuery, InputMedia, Message
 
@@ -30,10 +32,15 @@ from aiogram.filters import Command
 users = DBconstructor(mongo_client.user.users)
 
 async def back_edit(content, transmitted_data: dict):
-    dino = transmitted_data['dino']
+    dino_id = transmitted_data['dino']
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
+    dino = await Dino().create(dino_id)
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang),
+                               reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     if content == 'no_image':
         content = 1
@@ -63,20 +70,26 @@ async def back_edit(content, transmitted_data: dict):
     await bot.send_message(chatid, text, 
                             reply_markup= await m(userid, 'last_menu', lang))
 
-async def transition_back(dino: Dino, transmitted_data: dict):
+async def transition_back(dino_data: tuple, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
-    
+    dino_id, _ = dino_data
+    dino = await Dino().create(dino_id)
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang),
+                               reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     text = t('custom_profile.manual', lang)
     keyboard = [t('buttons_name.cancel', lang)]
     markup = list_to_keyboard(keyboard, one_time_keyboard=True)
 
     data = {
-        'dino': dino
+        'dino': dino_id
     }
-    await ChooseImageState(back_edit, userid, chatid, lang, True, transmitted_data=data)
+    # await ChooseImageState(back_edit, userid, chatid, lang, True, transmitted_data=data)
+    await ChooseImageHandler(back_edit, userid, chatid, lang, True, transmitted_data=data).start()
     await bot.send_message(userid, text, reply_markup=markup)
 
 @HDMessage
@@ -88,7 +101,8 @@ async def custom_profile(message: Message):
     chatid = message.chat.id
 
     if await premium(userid):
-        await ChooseDinoState(transition_back, userid, chatid, lang, False)
+        # await ChooseDinoState(transition_back, userid, chatid, lang, False)
+        await ChooseDinoHandler(transition_back, userid, chatid, lang, False).start()
     else:
         text = t('no_premium', lang)
         await bot.send_message(userid, text)
@@ -101,7 +115,8 @@ async def standart(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await ChooseDinoState(standart_end, userid, chatid, lang, False)
+    # await ChooseDinoState(standart_end, userid, chatid, lang, False)
+    await ChooseDinoHandler(standart_end, userid, chatid, lang, False).start()
 
 async def standart_end(dino: Dino, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -202,10 +217,12 @@ async def background_menu(call: CallbackQuery):
                                      reply_markup=count_markup(max_int, lang)
                                      )
 
-        data = { 'message_id': call.message.message_id, 'delete_id': mes.message_id }
-        await ChooseIntState(page_n, userid, chatid, lang,
-                             max_int=max_int, 
-                             transmitted_data=data)
+        data = { 'message_id': call.message.message_id, 
+                'delete_id': mes.message_id }
+        # await ChooseIntState(page_n, userid, chatid, lang,
+        #                      max_int=max_int, 
+        #                      transmitted_data=data)
+        await ChooseIntHandler(page_n, userid, chatid, lang, max_int=max_int, transmitted_data=data).start()
 
 
     elif action in ['buy_coins', 'buy_super_coins']:
@@ -223,19 +240,29 @@ async def background_menu(call: CallbackQuery):
                                         reply_markup=confirm_markup(lang)
                                         )
             data['delete_id'] = mes.message_id
-            await ChooseConfirmState(buy, userid, chatid, lang, transmitted_data=data)
+            # await ChooseConfirmState(buy, userid, chatid, lang, transmitted_data=data)
+            await ChooseConfirmHandler(buy, userid, chatid, lang, transmitted_data=data).start()
     
     elif action == 'set':
         # mes = await bot.send_message(chatid, t('backgrounds.choose_dino', lang),
         #                                 reply_markup=confirm_markup(lang)
         #                                 )
         data = { 'page': b_id } # 'delete_id': mes.message_id,
-        await ChooseDinoState(set_back, userid, chatid, lang, False, True, data)
+        # await ChooseDinoState(set_back, userid, chatid, lang, False, True, data)
+        await ChooseDinoHandler(set_back, userid, chatid, lang, False, True, 
+                                data).start()
         
-async def set_back(dino: Dino, transmitted_data: dict):
+async def set_back(dino_data: tuple, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
+    dino_id, _ = dino_data
+    dino = await Dino().create(dino_id)
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang),
+                               reply_markup=await m(userid, 'last_menu', lang))
+        return
+    
 
     page = transmitted_data['page']
 

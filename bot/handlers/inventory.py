@@ -20,8 +20,8 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.markup import count_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.states_fabric.state_handlers import ChooseInventoryHandler
-from bot.modules.states_tools import ChooseIntState
+from bot.modules.states_fabric.state_handlers import ChooseIntHandler, ChooseInventoryHandler
+# from bot.modules.states_tools import ChooseIntState
 from bot.modules.user.user import User, take_coins, user_name
 from fuzzywuzzy import fuzz
 from aiogram.types import CallbackQuery, Message
@@ -391,7 +391,9 @@ async def ns_craft(call: CallbackQuery):
         'item': item,
         'ns_id': ns_id
     }
-    await ChooseIntState(ns_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
+    # await ChooseIntState(ns_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
+    await ChooseIntHandler(ns_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data).start()
+    
     await bot.send_message(chatid, t('css.wait_count', lang), 
                        reply_markup=count_markup(25, lang))
 
@@ -528,7 +530,8 @@ async def buyer(call: CallbackQuery):
         'one_col': one_col,
         'price': price
     }
-    await ChooseIntState(buyer_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
+    # await ChooseIntState(buyer_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
+    await ChooseIntHandler(buyer_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data).start()
 
     await bot.send_message(chatid, t('buyer.choose', lang,
                                  emoji=emoji, one_col=one_col,

@@ -474,7 +474,7 @@ async def pre_adapter(return_data: dict, transmitted_data: dict):
 
 async def eat_adapter(return_data: dict, transmitted_data: dict):
     dino: Dino = return_data['dino']
-    transmitted_data['dino'] = dino
+    transmitted_data['dino'] = dino._id
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']

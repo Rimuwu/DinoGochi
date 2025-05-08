@@ -20,8 +20,10 @@ from bot.modules.market.market_chose import (buy_item, find_prepare,
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.states_tools import (ChooseOptionState, ChoosePagesState,
-                                      ChooseStepState, ChooseStringState)
+# from bot.modules.states_tools import (ChooseOptionState, ChoosePagesState,
+#                                       ChooseStepState, ChooseStringState)
+from bot.modules.states_fabric.state_handlers import ChoosePagesStateHandler, ChooseOptionHandler, ChooseStepHandler, ChooseStringHandler
+from bot.modules.states_fabric.steps_datatype import CustomStepData, StepMessage, StringStepData
 from bot.modules.user.user import premium, user_name
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
@@ -98,28 +100,44 @@ async def create_market(message: Message):
     elif user['lvl'] < 2:
         await bot.send_message(message.chat.id, t('market_create.lvl', lang))
     else:
-        transmitted_data = {}
+        # steps = [
+        #     {
+        #      "type": 'custom', "name": 'name',
+        #         "data": {'custom_handler': custom_name},
+        #      "translate_message": True,
+        #      'message': {
+        #         'text': "market_create.name",
+        #         'reply_markup': cancel_markup(lang)}
+        #     },
+        #     {
+        #      "type": 'str', "name": 'description', "data": {'max_len': 500}, 
+        #      "translate_message": True,
+        #      'message': {
+        #         'text': "market_create.description",
+        #         'reply_markup': cancel_markup(lang)}
+        #     }
+        # ]
+        
         steps = [
-            {
-             "type": 'custom', "name": 'name',
-                "data": {'custom_handler': custom_name},
-             "translate_message": True,
-             'message': {
-                'text': "market_create.name",
-                'reply_markup': cancel_markup(lang)}
-            },
-            {
-             "type": 'str', "name": 'description', "data": {'max_len': 500}, 
-             "translate_message": True,
-             'message': {
-                'text': "market_create.description",
-                'reply_markup': cancel_markup(lang)}
-            }
+            CustomStepData('name', StepMessage('market_create.name',
+                markup=cancel_markup(lang), 
+                translate_message=True),
+                custom_handler=custom_name, 
+            ),
+            StringStepData('description', StepMessage('market_create.description',
+                markup=cancel_markup(lang), 
+                translate_message=True),
+                max_len=500, 
+            )
         ]
+        
+        await ChooseStepHandler(
+            create_adapter, userid, chatid, lang, steps
+        ).start()
 
-        await ChooseStepState(create_adapter, userid, chatid, 
-                              lang, steps, 
-                              transmitted_data=transmitted_data)
+        # await ChooseStepState(create_adapter, userid, chatid, 
+        #                       lang, steps, 
+        #                       transmitted_data=transmitted_data)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.seller_profile.my_market'), IsAuthorizedUser())
@@ -156,7 +174,9 @@ async def add_product_com(message: Message):
     )
 
     await bot.send_message(chatid, t('add_product.options_info', lang), reply_markup=markup)
-    await ChooseOptionState(prepare_data_option, userid, chatid, lang, options)
+    # await ChooseOptionState(prepare_data_option, userid, chatid, lang, options)
+    await ChooseOptionHandler(
+        prepare_data_option, userid, chatid, lang, options).start()
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.seller_profile.my_products'), IsAuthorizedUser())
@@ -176,8 +196,10 @@ async def my_products(message: Message):
             ] = product['_id']
 
         await bot.send_message(chatid, t('products.search', lang))
-        await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
-                               None, False, False)
+        # await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
+        #                        None, False, False)
+        await ChoosePagesStateHandler(
+            send_info_pr, userid, chatid, lang, rand_p, 1, 3, None, False, False).start()
     else:
         text = t('no_products', lang)
         await bot.send_message(chatid, text,  parse_mode='Markdown')
@@ -291,8 +313,10 @@ async def seller(call: CallbackQuery):
             ] = product['_id']
 
         await bot.send_message(chatid, t('products.search', lang))
-        await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
-                               None, False, False)
+        # await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
+        #                        None, False, False)
+        await ChoosePagesStateHandler(
+            send_info_pr, userid, chatid, lang, rand_p, 1, 3, None, False, False).start()
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.market.random'), IsAuthorizedUser())
@@ -320,8 +344,10 @@ async def random_products(message: Message):
             else: break
 
         await bot.send_message(chatid, t('products.search', lang))
-        await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
-                               None, False, False)
+        # await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
+        #                        None, False, False)
+        await ChoosePagesStateHandler(
+            send_info_pr, userid, chatid, lang, rand_p, 1, 3, None, False, False).start()
     else:
         await bot.send_message(chatid, t('products.null', lang))
 
@@ -402,9 +428,11 @@ async def random_markets(call: CallbackQuery):
     market_list = {}
     for market in markets: market_list[market['name']] = market['owner_id']
 
-    await ChoosePagesState(send_seller_info, userid, chatid, lang, 
-                           market_list, 1, 3, 
-                           None, False, False)
+    # await ChoosePagesState(send_seller_info, userid, chatid, lang, 
+    #                        market_list, 1, 3, 
+    #                        None, False, False)
+    await ChoosePagesStateHandler(
+            send_seller_info, userid, chatid, lang, market_list, 1, 3, None, False, False).start()
 
 async def send_seller_info(option, transmitted_data: dict):
     chatid = transmitted_data['chatid']
@@ -432,7 +460,9 @@ async def find_markets(call: CallbackQuery):
         reply_markup=cancel_markup(lang)
     )
 
-    await ChooseStringState(find_prepare_mk, userid, chatid, lang, 3, 50)
+    # await ChooseStringState(find_prepare_mk, userid, chatid, lang, 3, 50)
+    await ChooseStringHandler(
+        find_prepare_mk, userid, chatid, lang, 3, 50).start()
 
 async def find_prepare_mk(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
@@ -463,9 +493,11 @@ async def find_prepare_mk(return_data, transmitted_data):
             market_list[market['name']] = market['owner_id']
 
     if market_list:
-        await ChoosePagesState(send_seller_info, userid, chatid, lang,
-                              market_list, 1, 3,
-                              None, False, False)
+        # await ChoosePagesState(send_seller_info, userid, chatid, lang,
+        #                       market_list, 1, 3,
+        #                       None, False, False)
+        await ChoosePagesStateHandler(
+            send_seller_info, userid, chatid, lang, market_list, 1, 3, None, False, False).start()
     else:
         await bot.send_message(chatid, t('search_markets.no_markets', lang),
                                reply_markup=await m(userid, 'last_menu', lang))

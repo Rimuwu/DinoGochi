@@ -3,7 +3,7 @@ from time import time
 
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
-from bot.modules.donation import give_reward, save_donation, send_donat_notification
+from bot.modules.donation import give_reward, save_donation
 from bot.modules.localization import get_lang, t
 from bot.modules.logs import log
 from aiogram.types import Message, PreCheckoutQuery

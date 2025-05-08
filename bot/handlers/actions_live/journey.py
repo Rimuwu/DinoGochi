@@ -3,6 +3,8 @@ from random import randint
 
 from time import time
 
+from bson import ObjectId
+
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.dinosaur.mood import repeat_activity
@@ -19,7 +21,9 @@ from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
-from bot.modules.states_tools import ChooseStepState
+# from bot.modules.states_tools import ChooseStepState
+from bot.modules.states_fabric.state_handlers import ChooseStepHandler
+from bot.modules.states_fabric.steps_datatype import BaseUpdateType, InlineStepData, PagesStepData, StepMessage
 from bot.modules.user.user import User
 from aiogram.types import (CallbackQuery, InlineKeyboardMarkup, InputMediaPhoto,
                            Message)
@@ -38,11 +42,17 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
-    dino: Dino = transmitted_data['last_dino']
+    dino_id: ObjectId = transmitted_data['last_dino']
     friend = transmitted_data['friend']
     location = return_data['location']
     time_key = return_data['time_key']
     last_mess_id = transmitted_data['steps'][-1]['bmessageid']
+
+    dino = await Dino().create(dino_id)
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang),
+                               reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     data_time = get_data(f'journey_start.time_text.{time_key}', lang)
     res = await action_journey(dino._id, userid, data_time['time'], location)
@@ -109,17 +119,25 @@ async def start_journey(userid: int, chatid: int, lang: str,
     m3_reply = list_to_inline(buttons_time)
 
     steps = [
-        {"type": 'inline', "name": 'location', "data": {'custom_code': cc}, 
-         "image": 'images/actions/journey/preview.png',
-         "message": {"caption": text, "reply_markup": m2_reply}
-        },
-        {"type": 'inline', "name": 'time_key', "data": {'custom_code': cc2}, 
-         "message": {"caption": content_data['time_info'], "reply_markup": m3_reply}
-        }
+        InlineStepData(
+            name='location',
+            custom_code=str(cc),
+            message=StepMessage(text=text, markup=m2_reply,
+                                image='images/actions/journey/preview.png'),
+
+        ),
+        InlineStepData(
+            name='time_key',
+            custom_code=str(cc2),
+            message=StepMessage(text=content_data['time_info'], markup=m3_reply)
+        )
     ]
 
-    await ChooseStepState(journey_start_adp, userid, chatid, lang, steps, 
-                          {'last_dino': last_dino, "edit_message": True, 'friend': friend, 'delete_steps': True})
+    await ChooseStepHandler(
+        journey_start_adp, userid, chatid, lang, steps,
+        {'last_dino': last_dino._id, "edit_message": True, 'friend': friend}
+    ).start()
+
     await bot.send_message(chatid, t('journey_start.cancel_text', lang), 
                            reply_markup=cancel_markup(lang))
 

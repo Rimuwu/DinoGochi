@@ -5,7 +5,8 @@ from bot.exec import main_router, bot
 
 from bot.modules.markup import answer_markup, cancel_markup, count_markup
  
-from bot.modules.states_tools import (ChooseIntState, ChooseStepState, prepare_steps)
+from bot.modules.states_fabric.state_handlers import ChooseStepHandler
+from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage, TimeStepData
 
 from bot.modules.market.market import generate_items_pages, generate_sell_pages
 from bot.modules.add_product.general import end
@@ -16,34 +17,48 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 items = DBconstructor(mongo_client.items.items)
 
 
-def trade_circle(userid, chatid, lang, items, option, prepare: bool = True):
+def trade_circle(lang, items, option):
     """ Создаёт данные для круга получения данных предметов ПОЛЬЗОВАТЕЛЯ
     """
-    not_p_steps = [
-        {
-            "type": 'inv', "name": 'items', "data": {'inventory': items}, 
-            "translate_message": True,
-            'message': {'text': f'add_product.chose_item.{option}'}
-        },
-        {
-            "type": 'update_data', "name": None, "data": {}, 
-            'function': trade_update_col
-        },
-        {
-            "type": 'int', "name": 'col', "data": {"max_int": 20},
-            "translate_message": True,
-            'message': {'text': 'add_product.wait_count', 
-                        'reply_markup': count_markup(20, lang)}
-        },
-        {
-            "type": 'update_data', "name": None, "data": {}, 
-            'function': check_items_for_items
-        }
+    # not_p_steps = [
+    #     {
+    #         "type": 'inv', "name": 'items', "data": {'inventory': items}, 
+    #         "translate_message": True,
+    #         'message': {'text': f'add_product.chose_item.{option}'}
+    #     },
+    #     {
+    #         "type": 'update_data', "name": None, "data": {}, 
+    #         'function': trade_update_col
+    #     },
+    #     {
+    #         "type": 'int', "name": 'col', "data": {"max_int": 20},
+    #         "translate_message": True,
+    #         'message': {'text': 'add_product.wait_count', 
+    #                     'reply_markup': count_markup(20, lang)}
+    #     },
+    #     {
+    #         "type": 'update_data', "name": None, "data": {}, 
+    #         'function': check_items_for_items
+    #     }
+    # ]
+    steps = [
+        InventoryStepData('items', StepMessage(
+            text=f'add_product.chose_item.{option}',
+            translate_message=True,
+            ),
+            inventory=items
+        ),
+        BaseUpdateType(trade_update_col),
+        IntStepData('col', StepMessage(
+            text='add_product.wait_count',
+            translate_message=True,
+            markup=count_markup(20, lang)
+        )),
+        BaseUpdateType(check_items_for_items)
     ]
-    if prepare:
-        steps = prepare_steps(not_p_steps, userid, chatid, lang)
-        return steps
-    else: return not_p_steps
+
+    return steps
+
 
 async def trade_update_col(transmitted_data):
     """ Функция выставляет максимальное количетсво предмета, а так же очищает некоторые данные
@@ -89,19 +104,28 @@ def check_items_for_items(transmitted_data):
     if type(transmitted_data['return_data']['items']) == list and len(transmitted_data['return_data']['items']) >= 3: res = False
 
     if res:
-        not_p_steps = [
-            {
-                "type": 'bool', "name": 'add_item', "data": {},
-                "translate_message": True,
-                'message': {'text': 'add_product.add_item',
-                             'reply_markup': answer_markup(lang)}
-            },
-            {
-                "type": 'update_data', "name": None, "data": {}, 
-                'function': new_circle
-            }
+        # not_p_steps = [
+        #     {
+        #         "type": 'bool', "name": 'add_item', "data": {},
+        #         "translate_message": True,
+        #         'message': {'text': 'add_product.add_item',
+        #                      'reply_markup': answer_markup(lang)}
+        #     },
+        #     {
+        #         "type": 'update_data', "name": None, "data": {}, 
+        #         'function': new_circle
+        #     }
+        # ]
+        
+        steps = [
+            ConfirmStepData('add_item', StepMessage(
+                text='add_product.add_item',
+                translate_message=True,
+                markup=answer_markup(lang)
+            )),
+            BaseUpdateType(new_circle)
         ]
-        steps = prepare_steps(not_p_steps, userid, chatid, lang)
+        
         transmitted_data['steps'] += steps
 
     return transmitted_data, True

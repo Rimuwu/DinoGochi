@@ -9,7 +9,7 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseCustomHandler, ChooseDinoHandler, ChooseImageHandler, ChooseInlineHandler, ChooseIntHandler, ChooseOptionHandler, ChoosePagesStateHandler, ChooseStringHandler, ChooseTimeHandler
-from bot.modules.states_tools import GeneralStates
+from bot.modules.states_fabric.state_handlers import GeneralStates
 from aiogram.types import CallbackQuery, Message
 
 from bot.filters.translated_text import Text
@@ -329,17 +329,37 @@ async def ChooseOptionPages(message: Message):
         if page == 0: page = len(pages) - 1
         else: page -= 1
 
+        if data.get('last_user_message'):
+            await bot.delete_message(chatid, data['last_user_message'])
+
         await state.update_data(page=page)
         # await update_page(pages, page, chatid, lang)
-        await handler.call_update_page_function(pages, page, chatid, lang)
+        mes = await handler.call_update_page_function(pages, page, chatid, lang)
+        if isinstance(mes, Message):
+            mes_id = mes.message_id
+
+            if data.get('last_updated_message'):
+                await bot.delete_message(chatid, data['last_updated_message'])
+
+            await state.update_data(last_updated_message=mes_id, last_user_message=message.message_id)
 
     elif message.text == gs['forward_button'] and len(pages) > 1:
         if page >= len(pages) - 1: page = 0
         else: page += 1
 
+        if data.get('last_user_message'):
+            await bot.delete_message(chatid, data['last_user_message'])
+
         await state.update_data(page=page)
         # await update_page(pages, page, chatid, lang)
-        await handler.call_update_page_function(pages, page, chatid, lang)
+        mes = await handler.call_update_page_function(pages, page, chatid, lang)
+        if isinstance(mes, Message):
+            mes_id = mes.message_id
+            
+            if data.get('last_updated_message'):
+                await bot.delete_message(chatid, data['last_updated_message'])
+
+            await state.update_data(last_updated_message=mes_id, last_user_message=message.message_id)
     else:
         await bot.send_message(message.chat.id, 
                 t('states.ChooseOption.error_not_option', lang))

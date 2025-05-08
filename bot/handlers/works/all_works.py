@@ -1,5 +1,7 @@
 from time import time
 
+from bson import ObjectId
+
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.dinosaur.dinosaur import Dino
@@ -11,9 +13,10 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.dinosaur.mood import repeat_activity
 from bot.modules.notifications import dino_notification
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.states_tools import ChooseOptionState
+# from bot.modules.states_tools import ChooseOptionState
+from bot.modules.states_fabric.state_handlers import ChooseOptionHandler
 from bot.modules.user.advert import auto_ads
-from bot.modules.user.user import User
+from bot.modules.user.user import User, last_dino
 from aiogram.types import Message, CallbackQuery
 from bot.modules.data_format import list_to_inline, list_to_keyboard, progress_bar
 
@@ -195,17 +198,23 @@ async def mine(message: Message):
     text = t('works.choosy_type', lang)
 
     transmitted_data = {
-        'last_dino': last_dino
+        'last_dino': last_dino._id
     }
 
-    await ChooseOptionState(end_mine, userid, chatid, lang, options, transmitted_data)
+    # await ChooseOptionState(end_mine, userid, chatid, lang, options, transmitted_data)
+    await ChooseOptionHandler(end_mine, userid, chatid, lang, options,
+                              transmitted_data).start()
     await bot.send_message(chatid, text, reply_markup=rmk)
 
 async def end_mine(data, transmitted_data: dict):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
-    last_dino = transmitted_data['last_dino']
+    last_dino_id: ObjectId = transmitted_data['last_dino']
+    last_dino = await Dino().create(last_dino_id)
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     percent, _ = await last_dino.memory_percent('action', 'mine', True)
     await repeat_activity(last_dino._id, percent)
@@ -243,17 +252,23 @@ async def bank(message: Message):
     text = t('works.choosy_type', lang)
 
     transmitted_data = {
-        'last_dino': last_dino
+        'last_dino': last_dino._id
     }
 
-    await ChooseOptionState(end_bank, userid, chatid, lang, options, transmitted_data)
+    # await ChooseOptionState(end_bank, userid, chatid, lang, options, transmitted_data)
+    await ChooseOptionHandler(end_bank, userid, chatid, lang, options,
+                              transmitted_data).start()
     await bot.send_message(chatid, text, reply_markup=rmk)
 
 async def end_bank(data, transmitted_data: dict):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
-    last_dino = transmitted_data['last_dino']
+    last_dino_id: ObjectId = transmitted_data['last_dino']
+    last_dino = await Dino().create(last_dino_id)
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     percent, _ = await last_dino.memory_percent('action', 'bank', True)
     await repeat_activity(last_dino._id, percent)
@@ -291,17 +306,23 @@ async def sawmill(message: Message):
     text = t('works.choosy_type', lang)
 
     transmitted_data = {
-        'last_dino': last_dino
+        'last_dino': last_dino._id
     }
 
-    await ChooseOptionState(end_sawmill, userid, chatid, lang, options, transmitted_data)
+    # await ChooseOptionState(end_sawmill, userid, chatid, lang, options, transmitted_data)
+    await ChooseOptionHandler(end_sawmill, userid, chatid, lang, options,
+                              transmitted_data).start()
     await bot.send_message(chatid, text, reply_markup=rmk)
 
 async def end_sawmill(data, transmitted_data: dict):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
-    last_dino = transmitted_data['last_dino']
+    last_dino_id: ObjectId = transmitted_data['last_dino']
+    last_dino = await Dino().create(last_dino_id)
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     percent, _ = await last_dino.memory_percent('action', 'sawmill', True)
     await repeat_activity(last_dino._id, percent)

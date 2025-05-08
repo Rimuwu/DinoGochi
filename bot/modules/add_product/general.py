@@ -1,10 +1,12 @@
 from bot.modules.data_format import item_list
 from bot.modules.items.item import CheckCountItemFromUser, RemoveItemFromUser
 from bot.modules.localization import t
-from bot.exec import main_router, bot, log
+from bot.exec import bot, log
 from bot.modules.market.market import add_product, product_ui
+
+from bot.modules.states_fabric.state_handlers import ChooseStepHandler
+from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage, TimeStepData
  
-from bot.modules.states_tools import ChooseStepState
 from bot.modules.user.user import take_coins
 from bot.modules.markup import cancel_markup, markups_menu as m
 
@@ -23,19 +25,34 @@ async def coins_stock(return_data, transmitted_data):
         return_data['items'] = [return_data['items']]
         return_data['col'] = [return_data['col']]
 
+    # steps = [
+    #     {
+    #         "type": 'int', "name": 'price', "data": {"max_int": MAX_PRICE},
+    #         "translate_message": True,
+    #         'message': {'text': f'add_product.coins.{option}', 
+    #                     'reply_markup': cancel_markup(lang)}
+    #     },
+    #     {
+    #         "type": 'int', "name": 'in_stock', "data": {"max_int": 100},
+    #         "translate_message": True,
+    #         'message': {'text': f'add_product.stock.{option}', 
+    #                     'reply_markup': cancel_markup(lang)}
+    #     }
+    # ]
+    
     steps = [
-        {
-            "type": 'int', "name": 'price', "data": {"max_int": MAX_PRICE},
-            "translate_message": True,
-            'message': {'text': f'add_product.coins.{option}', 
-                        'reply_markup': cancel_markup(lang)}
-        },
-        {
-            "type": 'int', "name": 'in_stock', "data": {"max_int": 100},
-            "translate_message": True,
-            'message': {'text': f'add_product.stock.{option}', 
-                        'reply_markup': cancel_markup(lang)}
-        }
+        IntStepData('price', StepMessage(
+            text=f'add_product.coins.{option}',
+            translate_message=True,
+            markup=cancel_markup(lang)),
+            max_int=MAX_PRICE
+        ),
+        IntStepData('in_stock', StepMessage(
+            text=f'add_product.stock.{option}',
+            translate_message=True,
+            markup=cancel_markup(lang)),
+            max_int=100
+        ),
     ]
 
     transmitted_data = {
@@ -44,9 +61,12 @@ async def coins_stock(return_data, transmitted_data):
         'option': transmitted_data['option']
     }
 
-    await ChooseStepState(end, userid, chatid, 
-                          lang, steps, 
-                          transmitted_data=transmitted_data)
+    # await ChooseStepState(end, userid, chatid, 
+    #                       lang, steps, 
+    #                       transmitted_data=transmitted_data)
+    await ChooseStepHandler(end, userid, chatid,
+                          lang, steps,
+                          transmitted_data=transmitted_data).start()
 
 async def end(return_data, transmitted_data):
     """ Последняя функция, создаёт продукт и проверяте монеты / предметы

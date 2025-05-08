@@ -175,8 +175,8 @@ class ChooseDinoHandler(BaseStateHandler):
             send_error - Если True то будет уведомлять о том, что нет динозавров / яиц
 
             В function передаёт 
-            >>> element: Dino | Egg, transmitted_data: dict
-            
+            >>> element: (Dino | Egg, class_name: str), transmitted_data: dict
+
             Return:
                 Возвращает 2 если был создано состояние, 1 если завершилось автоматически (1 вариант выбора), 0 - невозможно завершить
             """
@@ -212,7 +212,7 @@ class ChooseDinoHandler(BaseStateHandler):
             return False, 'cancel'
 
         elif ret_data['case'] == 1:
-            element = ret_data['element']
+            element = [ret_data['element'], type(ret_data['element'])]
             await self.call_function(element)
             return False, self.indenf
 
@@ -377,7 +377,8 @@ class ChooseInlineHandler(BaseStateHandler):
     indenf = 'inline'
 
     def __init__(self, function, userid, chatid, lang, 
-                 custom_code, transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 custom_code, 
+                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
         """ Устанавливает состояние ожидания нажатия кнопки
             Все ключи callback должны начинаться с 'chooseinline'
             custom_code - код сессии запроса кнопок (индекс 1)
@@ -449,14 +450,11 @@ async def update_page(pages: list, page: int, chat_id: int, lang: str):
     """
         Стандартная функция обновления страницы, которая будет передаваться в состояние выбора страниц.
     """
-    if page <= len(pages) - 1:
-        keyboard = list_to_keyboard(pages[page])
-        keyboard = down_menu(keyboard, len(pages) > 1, lang)
-    else:
-        keyboard = list_to_keyboard(pages[page-1])
-        keyboard = down_menu(keyboard, len(pages) > 1, lang)
 
-    await bot.send_message(chat_id, t('optionplus.update_page', lang), reply_markup=keyboard)
+    keyboard = list_to_keyboard(pages[page])
+    keyboard = down_menu(keyboard, len(pages) > 1, lang)
+
+    return await bot.send_message(chat_id, t('optionplus.update_page', lang), reply_markup=keyboard)
 
 class ChoosePagesStateHandler(BaseStateHandler):
     state_name = 'ChoosePagesState'
@@ -528,9 +526,9 @@ class ChoosePagesStateHandler(BaseStateHandler):
         func = str_to_func(self.update_page_function)
 
         if inspect.iscoroutinefunction(func):
-            return await func(self.pages, 0, self.chatid, self.lang)
+            return await func(self.pages, self.page, self.chatid, self.lang)
         else:
-            return func(self.pages, 0, self.chatid, self.lang)
+            return func(self.pages, self.page, self.chatid, self.lang)
 
     async def setup(self):
         # Чанкует страницы и добавляем пустые элементы для сохранения структуры
@@ -583,7 +581,7 @@ class ChooseFriendHandler(ChoosePagesStateHandler):
 
     def __init__(self, function, userid, chatid, lang,
                     one_element: bool=False,
-                    transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                    transmitted_data:Optional[dict[str, MongoValueType]] = None, **kwargs):
         """
             Устанавливает состояние ожидания выбора друга
 
@@ -595,7 +593,7 @@ class ChooseFriendHandler(ChoosePagesStateHandler):
         """
         if function is None: function = friend_handler
 
-        super().__init__(function, userid, chatid, lang, transmitted_data)
+        super().__init__(function, userid, chatid, lang, transmitted_data=transmitted_data)
         self.options: dict = {}
         self.autoanswer: bool = False
         self.one_element: bool = one_element
@@ -1062,9 +1060,10 @@ async def next_step(answer: Any,
 
                 if message_data:
                     step_0: (BaseDataType) = steps[0] # type: ignore
-                    if edit_message and process - 1 != 0 and last_message:
+                    if edit_message and last_message:
                         if step_0.message and step_0.message.image:
                             markup = None
+
                             if isinstance(message_data.markup, InlineKeyboardMarkup):
                                 markup = message_data.markup
 
@@ -1087,7 +1086,7 @@ async def next_step(answer: Any,
                                 reply_markup=markup,
                                 )
 
-                        bmessage = last_message.message_id
+                        bmessage = last_message
 
                     else:
                         if message_data.image:

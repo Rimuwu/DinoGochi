@@ -2,9 +2,11 @@ from bot.dbmanager import mongo_client
 from bot.modules.add_product.general import end
 
 from bot.modules.markup import answer_markup, cancel_markup, count_markup
-from bot.modules.states_tools import ChooseStepState, prepare_steps
+# from bot.modules.states_tools import ChooseStepState, prepare_steps
 
 from bot.modules.market.market import generate_sell_pages
+from bot.modules.states_fabric.state_handlers import ChooseStepHandler
+from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage, TimeStepData
 
 MAX_PRICE = 10_000_000
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -12,34 +14,48 @@ items = DBconstructor(mongo_client.items.items)
 
 # Все функции расположены в порядке вызова
 
-def circle_data(userid, chatid, lang, items, option, prepare: bool = True):
+def circle_data(lang, items, option):
     """ Создай данные для запроса: предмета, количества, надо ли повторить
     """
-    not_p_steps = [
-        {
-            "type": 'inv', "name": 'items', "data": {'inventory': items}, 
-            "translate_message": True,
-            'message': {'text': f'add_product.chose_item.{option}'}
-        },
-        {
-            "type": 'update_data', "name": None, "data": {}, 
-            'function': update_col
-        },
-        {
-            "type": 'int', "name": 'col', "data": {"max_int": 1},
-            "translate_message": True,
-            'message': {'text': 'add_product.wait_count', 
-                        'reply_markup': count_markup(1, lang)}
-        },
-        {
-            "type": 'update_data', "name": None, "data": {}, 
-            'function': check_items
-        }
+    # not_p_steps = [
+    #     {
+    #         "type": 'inv', "name": 'items', "data": {'inventory': items}, 
+    #         "translate_message": True,
+    #         'message': {'text': f'add_product.chose_item.{option}'}
+    #     },
+    #     {
+    #         "type": 'update_data', "name": None, "data": {}, 
+    #         'function': update_col
+    #     },
+    #     {
+    #         "type": 'int', "name": 'col', "data": {"max_int": 1},
+    #         "translate_message": True,
+    #         'message': {'text': 'add_product.wait_count', 
+    #                     'reply_markup': count_markup(1, lang)}
+    #     },
+    #     {
+    #         "type": 'update_data', "name": None, "data": {}, 
+    #         'function': check_items
+    #     }
+    # ]
+    
+    steps = [
+        InventoryStepData('items', StepMessage(
+            text=f'add_product.chose_item.{option}',
+            translate_message=True,
+            ),
+            inventory=items
+        ),
+        BaseUpdateType(update_col),
+        IntStepData('col', StepMessage(
+            text='add_product.wait_count',
+            translate_message=True,
+            markup=count_markup(1, lang)
+        )),
+        BaseUpdateType(check_items)
     ]
-    if prepare:
-        steps = prepare_steps(not_p_steps, userid, chatid, lang)
-        return steps
-    else: return not_p_steps
+
+    return steps
 
 async def update_col(transmitted_data):
     """ Определяет сколько можно предметов можно выставить
@@ -78,25 +94,31 @@ def check_items(transmitted_data):
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
-    
 
     res = True
     if type(transmitted_data['return_data']['items']) == list and len(transmitted_data['return_data']['items']) >= 3: res = False
 
     if res:
-        not_p_steps = [
-            {
-                "type": 'bool', "name": 'add_item', "data": {},
-                "translate_message": True,
-                'message': {'text': 'add_product.add_item',
-                             'reply_markup': answer_markup(lang)}
-            },
-            {
-                "type": 'update_data', "name": None, "data": {}, 
-                'function': new_circle
-            }
+        # not_p_steps = [
+        #     {
+        #         "type": 'bool', "name": 'add_item', "data": {},
+        #         "translate_message": True,
+        #         'message': {'text': 'add_product.add_item',
+        #                      'reply_markup': answer_markup(lang)}
+        #     },
+        #     {
+        #         "type": 'update_data', "name": None, "data": {}, 
+        #         'function': new_circle
+        #     }
+        # ]
+        steps = [
+            ConfirmStepData('add_item', StepMessage(
+                text='add_product.add_item',
+                translate_message=True,
+                markup=answer_markup(lang)
+            )),
+            BaseUpdateType(new_circle)
         ]
-        steps = prepare_steps(not_p_steps, userid, chatid, lang)
         transmitted_data['steps'] += steps
 
     return transmitted_data, True
@@ -114,7 +136,7 @@ async def new_circle(transmitted_data):
 
     if add_res:
         items, exclude = await generate_sell_pages(userid, exclude_ids)
-        steps = circle_data(userid, chatid, lang, items, option)
+        steps = circle_data(lang, items, option)
 
         transmitted_data['exclude'] = exclude
 
@@ -139,25 +161,46 @@ async def auction(return_data, transmitted_data):
         return_data['items'] = [return_data['items']]
         return_data['col'] = [return_data['col']]
 
+    # steps = [
+    #     {
+    #         "type": 'int', "name": 'price', "data": {"max_int": MAX_PRICE},
+    #         "translate_message": True,
+    #         'message': {'text': 'add_product.coins.auction', 
+    #                     'reply_markup': cancel_markup(lang)}
+    #     },
+    #     {
+    #         "type": 'int', "name": 'min_add', "data": {"max_int": 1_000_000},
+    #         "translate_message": True,
+    #         'message': {'text': 'add_product.min_add', 
+    #                     'reply_markup': cancel_markup(lang)}
+    #     },
+    #     {
+    #         "type": 'time', "name": 'time_end', "data": {"max_int": 2_592_000},
+    #         "translate_message": True,
+    #         'message': {'text': 'add_product.time_end', 
+    #                     'reply_markup': cancel_markup(lang)}
+    #     }
+    # ]
+
     steps = [
-        {
-            "type": 'int', "name": 'price', "data": {"max_int": MAX_PRICE},
-            "translate_message": True,
-            'message': {'text': 'add_product.coins.auction', 
-                        'reply_markup': cancel_markup(lang)}
-        },
-        {
-            "type": 'int', "name": 'min_add', "data": {"max_int": 1_000_000},
-            "translate_message": True,
-            'message': {'text': 'add_product.min_add', 
-                        'reply_markup': cancel_markup(lang)}
-        },
-        {
-            "type": 'time', "name": 'time_end', "data": {"max_int": 2_592_000},
-            "translate_message": True,
-            'message': {'text': 'add_product.time_end', 
-                        'reply_markup': cancel_markup(lang)}
-        }
+        IntStepData('price', StepMessage(
+            text='add_product.coins.auction',
+            translate_message=True,
+            markup=cancel_markup(lang)),
+            max_int=MAX_PRICE
+        ),
+        IntStepData('min_add', StepMessage(
+            text='add_product.min_add',
+            translate_message=True,
+            markup=cancel_markup(lang)),
+            max_int=1_000_000
+        ),
+        TimeStepData('time_end', StepMessage(
+            text='add_product.time_end',
+            translate_message=True,
+            markup=cancel_markup(lang)),
+            max_int=2_592_000
+        )
     ]
 
     transmitted_data = {
@@ -167,6 +210,9 @@ async def auction(return_data, transmitted_data):
         'in_stock': 1
     }
 
-    await ChooseStepState(end, userid, chatid, 
-                          lang, steps, 
-                          transmitted_data=transmitted_data)
+    # await ChooseStepState(end, userid, chatid, 
+    #                       lang, steps, 
+    #                       transmitted_data=transmitted_data)
+    await ChooseStepHandler(end, userid, chatid,
+                          lang, steps,
+                          transmitted_data=transmitted_data).start()
