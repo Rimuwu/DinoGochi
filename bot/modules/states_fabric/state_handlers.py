@@ -1,4 +1,5 @@
 
+
 import time
 from typing import Any, Callable, Dict, Optional, Type, Union, List
 from aiogram.fsm.state import StatesGroup, State
@@ -186,16 +187,6 @@ class ChooseDinoHandler(BaseStateHandler):
         self.send_error: bool = send_error
         self.dino_names: dict = {}
 
-    # async def pre_data(self, value: list[ObjectId | str]) -> Dino | Egg | None:
-
-    #     objid, objvalue = value
-    #     if objvalue == 'Dino':
-    #         dino = await Dino().create(objid)
-    #         return dino
-    #     else:
-    #         egg = await Egg().create(objid) # type: ignore
-    #         return egg
-
     async def setup(self):
         user = await User().create(self.userid)
         elements = await user.get_dinos(self.all_dinos)
@@ -212,14 +203,13 @@ class ChooseDinoHandler(BaseStateHandler):
             return False, 'cancel'
 
         elif ret_data['case'] == 1:
-            element = [ret_data['element'], type(ret_data['element'])]
-            await self.call_function(element)
+            await self.call_function(ret_data['element'])
             return False, self.indenf
 
         elif ret_data['case'] == 2:
             # self.dino_names = ret_data['data_names']
             for name, dino in ret_data['data_names'].items():
-                self.dino_names[name] = [dino._id, dino.__class__.__name__]
+                self.dino_names[name] = dino._id
 
             await self.set_state()
             await self.set_data()
@@ -1011,17 +1001,28 @@ async def next_step(answer: Any,
 
         if isinstance(next_step_obj, BaseUpdateType):
             # Обновление данных между запросами
+            transmitted_data['process'] = process
+            transmitted_data['return_data'] = return_data
             handler = BaseUpdateHandler
 
             self_handler = handler(**step_data, transmitted_data=transmitted_data)
             transmitted_data, answer = await self_handler.start()
+
+            new_steps: list[dict] = []
+            for raw_step in steps_raw.copy():
+                if not isinstance(raw_step, dict):
+                    new_steps.append(raw_step.to_dict())
+                else:
+                    new_steps.append(raw_step)
+
+            transmitted_data['steps'] = new_steps
+
             if process >= len(steps):
                 # Если это последний шаг, то удаляем состояние и завершаем работу
                 return await exit_chose(user_state, transmitted_data)
-            else:
-                transmitted_data['process'] = process
-                await user_state.update_data(transmitted_data=transmitted_data)
-                return await next_step(answer, transmitted_data)
+
+            await user_state.update_data(transmitted_data=transmitted_data)
+            return await next_step(answer, transmitted_data)
 
         # Удаляем шаги, которые уже отработали
         if transmitted_data.get('delete_steps', False):
@@ -1109,7 +1110,7 @@ async def next_step(answer: Any,
 
             # Обновление данных состояния
             if not start and func_answer:
-
+                transmitted_data['return_data'] = return_data
                 transmitted_data['steps'] = steps_raw
                 transmitted_data['process'] = process
                 await user_state.update_data(transmitted_data=transmitted_data)

@@ -1,3 +1,4 @@
+from optparse import Option
 from random import choice, choices, randint, random, shuffle
 import time
 
@@ -25,8 +26,10 @@ from bot.modules.markup import (cancel_markup, confirm_markup, count_markup,
                                 feed_count_markup, markups_menu)
 from bot.modules.dinosaur.mood import add_mood
 from bot.modules.quests import quest_process
-from bot.modules.states_tools import ChooseConfirmState, ChooseStepState
+# from bot.modules.states_tools import ChooseConfirmState, ChooseStepState
 from bot.modules.get_state import get_state
+from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseStepHandler
+from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DataType, DinoStepData, FriendStepData, IntStepData, OptionStepData, StepMessage, StringStepData
 from bot.modules.user.user import User, col_dinos, get_dead_dinos, max_dino_col, max_eat, count_inventory_items, award_premium
 from typing import Optional, Union
 
@@ -82,27 +85,47 @@ async def exchange_item(userid: int, chatid: int, item: dict,
     if items_data:
         item_name = get_name(item['item_id'], lang, item.get("abilities", {}))
 
+        # steps = [
+        #     {"type": 'bool', "name": 'confirm', "data": {'cancel': True}, 
+        #      'message': {'text': t('confirm_exchange', lang, name=item_name), 
+        #                  'reply_markup': confirm_markup(lang)}},
+
+        #     {"type": 'int', "name": 'count', "data": {
+        #         "max_int": max_count, 'autoanswer': False}, 
+        #     'message': {'text': t('css.wait_count', lang), 
+        #                 'reply_markup': count_markup(max_count, lang)}},
+
+        #     {"type": 'friend', 'name': 'friend', 'data': {'one_element': True},
+        #      "message": None
+        #      }
+        # ]
+        
         steps = [
-            {"type": 'bool', "name": 'confirm', "data": {'cancel': True}, 
-             'message': {'text': t('confirm_exchange', lang, name=item_name), 
-                         'reply_markup': confirm_markup(lang)}},
-
-            {"type": 'int', "name": 'count', "data": {
-                "max_int": max_count, 'autoanswer': False}, 
-            'message': {'text': t('css.wait_count', lang), 
-                        'reply_markup': count_markup(max_count, lang)}},
-
-            {"type": 'friend', 'name': 'friend', 'data': {'one_element': True},
-             "message": None
-             }
+            ConfirmStepData('confirm', StepMessage(
+                text=t('confirm_exchange', lang, name=item_name),
+                translate_message=False,
+                markup=confirm_markup(lang)
+            )),
+            IntStepData('count', StepMessage(
+                text=t('css.wait_count', lang),
+                translate_message=True,
+                markup=count_markup(max_count, lang)),
+                autoanswer=False
+            ),
+            FriendStepData('friend', None,
+                one_element=True
+            )
         ]
 
         transmitted_data = {'item': item, 'username': username}
-        await ChooseStepState(exchange, userid, 
-                                      chatid, lang, steps, transmitted_data)
+        # await ChooseStepState(exchange, userid, 
+        #                               chatid, lang, steps, transmitted_data)
+        await ChooseStepHandler(exchange, userid, 
+                                chatid, lang, steps,
+                                transmitted_data).start()
 
 async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1, 
-                   dino: Union[Dino, None]=None, delete: bool = True):
+                   dino: Optional[Union[ObjectId, Dino]] = None, delete: bool = True):
     """ Использование предмета
 
         delete - Принудительно не удалять предмет послле использования
@@ -116,6 +139,9 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     abilities = item.get("abilities", {})
     item_name: str = get_name(item_id, lang, abilities)
     type_item: str = data_item['type']
+
+    if isinstance(dino, ObjectId):
+        dino = await Dino().create(dino)
 
     if type_item == 'eat' and dino:
 
@@ -167,7 +193,8 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                 await add_mood(dino._id, 'bad_eat', -1, 1200)
             await quest_process(userid, 'feed', items=[item_id] * count)
 
-    elif type_item in ['game', "journey", "collecting", "sleep", 'weapon', 'armor', 'backpack'] and dino:
+    elif type_item in \
+    ['game', "journey", "collecting", "sleep", 'weapon', 'armor', 'backpack'] and dino:
 
         if await dino.status == type_item:
             # Запрещает менять активный предмет во время совпадающий с его типом активности
@@ -473,8 +500,9 @@ async def pre_adapter(return_data: dict, transmitted_data: dict):
     await adapter(return_data, transmitted_data)
 
 async def eat_adapter(return_data: dict, transmitted_data: dict):
-    dino: Dino = return_data['dino']
-    transmitted_data['dino'] = dino._id
+    dino_id = return_data['dino']
+    transmitted_data['dino'] = dino_id
+
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
@@ -483,21 +511,39 @@ async def eat_adapter(return_data: dict, transmitted_data: dict):
     item = transmitted_data['items_data']
     item_data = get_data(item['item_id'])
     item_name = get_name(item['item_id'], lang, item.get("abilities", {}))
+    
+    dino = await Dino().create(dino_id)
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await markups_menu(userid, 'last_menu', lang))
+        return
 
     percent = 1
     age = await dino.age()
     if age.days >= 10:
         percent, repeat = await dino.memory_percent('games', item['item_id'], False)
 
+    # steps = [
+    #     {"type": 'int', "name": 'count', "data": {"max_int": max_count}, 
+    #      "translate_message": True,
+    #         'message': {'text': 'css.wait_count', 
+    #                     'reply_markup': feed_count_markup(
+    #                         dino.stats['eat'], int(item_data['act'] * percent), max_count, item_name, lang)}}
+    #         ]
+    
     steps = [
-        {"type": 'int', "name": 'count', "data": {"max_int": max_count}, 
-         "translate_message": True,
-            'message': {'text': 'css.wait_count', 
-                        'reply_markup': feed_count_markup(
-                            dino.stats['eat'], int(item_data['act'] * percent), max_count, item_name, lang)}}
-            ]
-    await ChooseStepState(pre_adapter, userid, chatid, lang, steps, 
-                                transmitted_data=transmitted_data)
+        IntStepData('count', StepMessage(
+            text='css.wait_count',
+            translate_message=True,
+            markup=feed_count_markup(
+                dino.stats['eat'], int(item_data['act'] * percent), max_count, item_name, lang)),
+            max_int=max_count
+        )
+    ]
+    
+    # await ChooseStepState(pre_adapter, userid, chatid, lang, steps, 
+    #                             transmitted_data=transmitted_data)
+    await ChooseStepHandler(pre_adapter, userid, chatid, lang, steps,
+                            transmitted_data=transmitted_data).start()
 
 def book_page(book_id: str, page: int, lang: str):
     pages = get_loca_data(f'books.{book_id}', lang)
@@ -525,7 +571,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                                   comment='data_for_use_item_bases_item')
     transmitted_data = {'items_data': item}
     item_name = get_name(item_id, lang, item.get("abilities", {}))
-    steps = []
+    steps: list[DataType] = []
     ok = True
 
     if not bases_item:
@@ -544,33 +590,54 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
             adapter_function = eat_adapter
             transmitted_data['max_count'] = max_count  # type: ignore
 
-            steps = [
-                {"type": 'dino', "name": 'dino', "data": {"add_egg": False}, 
-                    'message': None}
+            steps += [
+                # {"type": 'dino', "name": 'dino', "data": {"add_egg": False}, 
+                #     'message': None}
+                DinoStepData('dino', None,
+                    add_egg=False, all_dinos=True
+                )
             ]
         elif type_item in ['game', 'sleep', 
                            'journey', 'collecting', 
                            'weapon', 'backpack', 'armor']:
-            steps = [
-                {"type": 'dino', "name": 'dino', "data": {"add_egg": False}, 
-                    'message': None}
+            steps += [
+                # {"type": 'dino', "name": 'dino', "data": {"add_egg": False}, 
+                #     'message': None}
+                DinoStepData('dino', None,
+                    add_egg=False, all_dinos=True
+                )
             ]
         elif type_item == 'recipe':
             steps = [
-                {"type": 'int', "name": 'count', "data": {"max_int": max_count}, 
-                    'message': {'text': t('css.wait_count', lang), 
-                                'reply_markup': count_markup(max_count, lang)}}
+                # {"type": 'int', "name": 'count', "data": {"max_int": max_count}, 
+                #     'message': {'text': t('css.wait_count', lang), 
+                #                 'reply_markup': count_markup(max_count, lang)}}
+                IntStepData('count', StepMessage(
+                    text=t('css.wait_count', lang),
+                    translate_message=True,
+                    markup=count_markup(max_count, lang)),
+                    max_int=max_count
+                )
             ]
         elif type_item == 'weapon':
-            steps = [
-                {"type": 'dino', "name": 'dino', "data": {"add_egg": False}, 
-                    'message': None}
+            steps += [
+                # {"type": 'dino', "name": 'dino', "data": {"add_egg": False}, 
+                #     'message': None}
+                DinoStepData('dino', None,
+                    add_egg=False, all_dinos=True
+                )
             ]
         elif type_item == 'case':
             steps = [
-                {"type": 'int', "name": 'count', "data": {"max_int": max_count}, 
-                    'message': {'text': t('css.wait_count', lang), 
-                                'reply_markup': count_markup(max_count, lang)}}
+                # {"type": 'int', "name": 'count', "data": {"max_int": max_count}, 
+                #     'message': {'text': t('css.wait_count', lang), 
+                #                 'reply_markup': count_markup(max_count, lang)}}
+                IntStepData('count', StepMessage(
+                    text=t('css.wait_count', lang),
+                    translate_message=True,
+                    markup=count_markup(max_count, lang)),
+                    max_int=max_count
+                )
             ]
         elif type_item == 'egg':
             steps = []
@@ -580,31 +647,54 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
             if data_item['class'] in ['transport']:
 
                 if item['abilities']['data_id'] == 0:
-                    steps = [{"type": 'dino', 
-                            "name": 'dino', 
-                            "data": {"add_egg": False, "all_dinos": False}, 
-                            'message': t('css.inactive_dino', lang)
-                    }]
+                    steps += [
+                    #     {"type": 'dino', 
+                    #         "name": 'dino', 
+                    #         "data": {"add_egg": False, "all_dinos": False}, 
+                    #         'message': t('css.inactive_dino', lang)
+                    # }
+                        DinoStepData('dino', StepMessage(
+                            text=t('css.dino', lang)),
+                            add_egg=False, all_dinos=False
+                        )
+                    ]
 
             elif data_item['class'] in ['defrosting']:
-                steps = [{"type": 'dino', 
-                         "name": 'dino', 
-                         "data": {"add_egg": False, "all_dinos": False}, 
-                         'message': t('css.inactive_dino', lang)}]
+                steps += [
+                    # {"type": 'dino', 
+                    #      "name": 'dino', 
+                    #      "data": {"add_egg": False, "all_dinos": False}, 
+                    #      'message': t('css.inactive_dino', lang)}
+                    DinoStepData('dino', StepMessage(
+                            text=t('css.inactive_dino', lang)),
+                            add_egg=False, all_dinos=False
+                        )
+                ]
 
             elif data_item['class'] in ['freezing']:
-                steps = [{"type": 'dino', 
-                         "name": 'dino', 
-                         "data": {"add_egg": False, "all_dinos": False}, 
-                         'message': None}]
+                steps += [
+                    # {"type": 'dino', 
+                    #      "name": 'dino', 
+                    #      "data": {"add_egg": False, "all_dinos": False}, 
+                    #      'message': None}
+                    DinoStepData('dino', None,
+                            add_egg=False, all_dinos=False
+                        )
+                    ]
 
             elif data_item['class'] in ['premium']:
                 steps = [
-                    {"type": 'int', "name": 'count', "data":
-                        {"max_int": max_count}, 
-                        'message': {
-                            'text': t('css.wait_count', lang), 
-                            'reply_markup': count_markup(max_count, lang)}}
+                    # {"type": 'int', "name": 'count', "data":
+                    #     {"max_int": max_count}, 
+                    #     'message': {
+                    #         'text': t('css.wait_count', lang), 
+                    #         'reply_markup': count_markup(max_count, lang)}}
+                    IntStepData('count', StepMessage(
+                        text=t('css.wait_count', lang),
+                        translate_message=False,
+                        markup=count_markup(max_count, lang)),
+                        max_int=max_count
+                    )
                 ]
 
             elif data_item['class'] in ['reborn']:
@@ -617,15 +707,20 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                         a += 1
                         name = f'{a}🦕 {i["name"]}'
                         markup.append(name)
-                        options[name] = i
+                        options[name] = i['_id']
 
                     markup.append([t('buttons_name.cancel', lang)])
 
                     steps = [
-                        {"type": 'option', "name": 'dino', "data": 
-                            {"options": options}, 
-                            'message': {'text': t('css.dino', lang), 
-                                        'reply_markup': list_to_keyboard(markup, 2)}}
+                        # {"type": 'option', "name": 'dino', "data": 
+                        #     {"options": options}, 
+                        #     'message': {'text': t('css.dino', lang), 
+                        #                 'reply_markup': list_to_keyboard(markup, 2)}}
+                        OptionStepData('dino', StepMessage(
+                            text=t('css.dino', lang),
+                            markup=list_to_keyboard(markup, 2)),
+                            options=options
+                        )
                     ]
 
                 else:
@@ -636,11 +731,17 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
             elif data_item['class'] in ['custom_book']:
                 adapter_function = edit_custom_book
                 steps = [
-                    {"type": 'str', "name": 'content', "data":
-                        {"max_len": 900}, 
-                        'message': {
-                            'text': t('css.content_str', lang, max_len=900), 
-                            'reply_markup': cancel_markup(lang)}}
+                    # {"type": 'str', "name": 'content', "data":
+                    #     {"max_len": 900}, 
+                    #     'message': {
+                    #         'text': t('css.content_str', lang, max_len=900), 
+                    #         'reply_markup': cancel_markup(lang)}}
+                    StringStepData('content', StepMessage(
+                        text=t('css.content_str', lang, max_len=900),
+                        translate_message=False,
+                        markup=cancel_markup(lang)),
+                        max_len=900
+                    )
                 ]
                 transmitted_data['item_base_id'] = base_item['_id']
 
@@ -655,17 +756,27 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
 
         if ok:
             if confirm:
-                steps.insert(0, {
-                    "type": 'bool', "name": 'confirm', 
-                    "data": {'cancel': True}, 
-                    'message': {
-                        'text': t('css.confirm', lang, name=item_name), 'reply_markup': confirm_markup(lang)
-                        }
-                    })
+                steps.insert(0, 
+                    # {"type": 'bool', "name": 'confirm', 
+                    # "data": {'cancel': True}, 
+                    # 'message': {
+                    #     'text': t('css.confirm', lang, name=item_name), 'reply_markup': confirm_markup(lang)
+                    #     }
+                    # }
+                    ConfirmStepData('confirm', StepMessage(
+                        text=t('css.confirm', lang, name=item_name),
+                        translate_message=False,
+                        markup=confirm_markup(lang))
+                    )
+                )
 
-            await ChooseStepState(adapter_function, userid, chatid, 
-                                  lang, steps, 
-                                transmitted_data=transmitted_data)
+            # await ChooseStepState(adapter_function, userid, chatid, 
+            #                       lang, steps, 
+            #                     transmitted_data=transmitted_data)
+            await ChooseStepHandler(adapter_function, userid, chatid, 
+                                    lang, steps, 
+                                    transmitted_data=transmitted_data).start()
+
 
 async def delete_action(return_data: dict, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -704,21 +815,41 @@ async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
         item_name = get_name(item_id, lang, item.get("abilities", {}))
         transmitted_data['item_name'] = item_name
 
-        steps.append({"type": 'int', "name": 'count', 
-                        "data": {"max_int": max_count}, 
-                        'message': {'text': t('css.wait_count', lang), 
-                                    'reply_markup': count_markup(max_count, lang)}}
-        )
-        steps.insert(0, {
-                "type": 'bool', "name": 'confirm', 
-                "data": {'cancel': True}, 
-                'message': {
-                    'text': t('css.delete', lang, name=item_name), 'reply_markup': confirm_markup(lang)
-                    }
-                })
+        # steps.append(
+        #     # {"type": 'int', "name": 'count', 
+        #     #  "data": {"max_int": max_count}, 
+        #     #  'message': {'text': t('css.wait_count', lang), 
+        #     # 'reply_markup': count_markup(max_count, lang)}}
+            
+        # )
+        # steps.insert(0, {
+        #         "type": 'bool', "name": 'confirm', 
+        #         "data": {'cancel': True}, 
+        #         'message': {
+        #             'text': t('css.delete', lang, name=item_name), 'reply_markup': confirm_markup(lang)
+        #             }
+        #         })
+        
+        steps = [
+            ConfirmStepData('confirm', StepMessage(
+                text=t('css.delete', lang, name=item_name),
+                translate_message=False,
+                markup=confirm_markup(lang)),
+                cancel=True
+            ),
+            IntStepData('count', StepMessage(
+                text='css.wait_count',
+                translate_message=True,
+                markup=count_markup(max_count, lang)),
+                max_int=max_count
+            )
+        ]
+        
+        await ChooseStepHandler(delete_action, userid, chatid, lang, steps,
+                                transmitted_data=transmitted_data).start()
 
-        await ChooseStepState(delete_action, userid, chatid, lang, steps, 
-                            transmitted_data=transmitted_data)
+        # await ChooseStepState(delete_action, userid, chatid, lang, steps, 
+        #                     transmitted_data=transmitted_data)
     else:
         await bot.send_message(chatid, t('delete_action.error', lang), 
                                reply_markup=
@@ -818,9 +949,13 @@ async def edit_custom_book(return_data: dict, transmitted_data: dict):
 
     transmitted_data['content'] = return_data['content']
 
-    await ChooseConfirmState(
-        edit_custom_book_confirm, userid, chatid, lang, True, transmitted_data=transmitted_data,
-    )
+    # await ChooseConfirmState(
+    #     edit_custom_book_confirm, userid, chatid, lang, True, transmitted_data=transmitted_data,
+    # )
+    await ChooseConfirmHandler(
+        edit_custom_book_confirm, userid, chatid, lang, True, 
+        transmitted_data=transmitted_data).start()
+    
     await bot.send_message(chatid, t('custom_book.confirm_edit', lang),
                            reply_markup=confirm_markup(lang))
 

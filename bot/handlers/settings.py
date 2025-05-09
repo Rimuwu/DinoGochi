@@ -154,7 +154,7 @@ async def rename_dino_post_state(content: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
-    dino_id = transmitted_data['dino'][0]
+    dino_id = transmitted_data['dino']
 
     dino = await Dino().create(dino_id)
     if not dino:
@@ -170,12 +170,11 @@ async def rename_dino_post_state(content: str, transmitted_data: dict):
                     reply_markup= await m(userid, 'last_menu', lang))
 
 
-async def transition(dino_data: tuple, transmitted_data: dict):
-    dino_id = dino_data[0]
+async def transition(dino_id: ObjectId, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
-    
+
     dino = await Dino().create(dino_id)
     if not dino:
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))

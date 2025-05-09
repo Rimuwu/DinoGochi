@@ -70,11 +70,10 @@ async def back_edit(content, transmitted_data: dict):
     await bot.send_message(chatid, text, 
                             reply_markup= await m(userid, 'last_menu', lang))
 
-async def transition_back(dino_data: tuple, transmitted_data: dict):
+async def transition_back(dino_id: ObjectId, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
-    dino_id, _ = dino_data
     dino = await Dino().create(dino_id)
     if not dino:
         await bot.send_message(chatid, t('css.no_dino', lang),
@@ -118,10 +117,15 @@ async def standart(message: Message):
     # await ChooseDinoState(standart_end, userid, chatid, lang, False)
     await ChooseDinoHandler(standart_end, userid, chatid, lang, False).start()
 
-async def standart_end(dino: Dino, transmitted_data: dict):
+async def standart_end(dino_id: ObjectId, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
+    dino = await Dino().create(dino_id)
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang),
+                               reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     await dino.update({
             '$set': {
@@ -252,11 +256,10 @@ async def background_menu(call: CallbackQuery):
         await ChooseDinoHandler(set_back, userid, chatid, lang, False, True, 
                                 data).start()
         
-async def set_back(dino_data: tuple, transmitted_data: dict):
+async def set_back(dino_id: ObjectId, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
-    dino_id, _ = dino_data
     dino = await Dino().create(dino_id)
     if not dino:
         await bot.send_message(chatid, t('css.no_dino', lang),

@@ -296,7 +296,7 @@ async def joint(return_data: dict,
     userid = transmitted_data['userid']
     friendid = transmitted_data['friendid']
     username = transmitted_data['username']
-    dino_id: ObjectId = return_data['dino'][0]
+    dino_id: ObjectId = return_data['dino']
     dino = await Dino().create(dino_id)
 
     if not dino:

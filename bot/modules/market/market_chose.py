@@ -2,6 +2,8 @@ from aiogram.types import InputMedia, InputMediaPhoto
 
 from bot.dbmanager import mongo_client
 from bot.exec import bot
+from bot.filters import status
+from bot.handlers.states import ChooseImage
 from bot.modules.data_format import (list_to_keyboard, escape_markdown, transform)
 from bot.modules.dinosaur.skills import max_skill
 from bot.modules.items.item import (CheckCountItemFromUser,
@@ -10,9 +12,11 @@ from bot.modules.localization import t
 from bot.modules.market.market import buy_product, check_preferential, create_preferential, delete_product, generate_items_pages, preview_product, product_ui, seller_ui
 
 from bot.modules.markup import cancel_markup, count_markup, confirm_markup
-from bot.modules.states_tools import (ChooseImageState, ChooseIntState, ChooseStringState,
-                                      ChooseStepState, ChooseConfirmState, ChoosePagesState)
+# from bot.modules.states_tools import (ChooseImageState, ChooseIntState, ChooseStringState,
+#                                       ChooseStepState, ChooseConfirmState, ChoosePagesState)
 from bot.modules.markup import markups_menu as m
+from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseImageHandler, ChooseIntHandler, ChoosePagesStateHandler, ChooseStepHandler, ChooseStringHandler
+from bot.modules.states_fabric.steps_datatype import InventoryStepData, OptionStepData, StepMessage
 from bot.modules.user.user import take_coins
 from random import choice
  
@@ -56,7 +60,8 @@ async def prepare_edit_price(userid: int, chatid: int, lang: str, productid: str
 
     await bot.send_message(chatid, t('product_info.new_price', lang), 
                            reply_markup=cancel_markup(lang))
-    await ChooseIntState(edit_price, userid, chatid, lang, 1, MAX_PRICE, transmitted_data=transmitted_data)
+    # await ChooseIntState(edit_price, userid, chatid, lang, 1, MAX_PRICE, transmitted_data=transmitted_data)
+    await ChooseIntHandler(edit_price, userid, chatid, lang, 1, MAX_PRICE, transmitted_data=transmitted_data).start()
 
 async def add_stock(in_stock: int, transmitted_data: dict):
     chatid = transmitted_data['chatid']
@@ -121,7 +126,8 @@ async def prepare_add(userid: int, chatid: int, lang: str, productid: str):
 
     await bot.send_message(chatid, t('product_info.add_stock', lang), 
                            reply_markup=cancel_markup(lang))
-    await ChooseIntState(add_stock, userid, chatid, lang, 1, MAX_PRICE, transmitted_data=transmitted_data)
+    # await ChooseIntState(add_stock, userid, chatid, lang, 1, MAX_PRICE, transmitted_data=transmitted_data)
+    await ChooseIntHandler(add_stock, userid, chatid, lang, 1, MAX_PRICE, transmitted_data=transmitted_data).start()
 
 async def delete_all(_: bool, transmitted_data: dict):
     chatid = transmitted_data['chatid']
@@ -148,7 +154,8 @@ async def prepare_delete_all(userid: int, chatid: int, lang: str, message_id: in
 
     await bot.send_message(chatid, t('seller.confirm_delete_all', lang), 
                            reply_markup=confirm_markup(lang))
-    await ChooseConfirmState(delete_all, userid, chatid, lang, True, transmitted_data=transmitted_data)
+    # await ChooseConfirmState(delete_all, userid, chatid, lang, True, transmitted_data=transmitted_data)
+    await ChooseConfirmHandler(delete_all, userid, chatid, lang, True, transmitted_data=transmitted_data).start()
 
 async def edit_name(name: str, transmitted_data: dict):
     chatid = transmitted_data['chatid']
@@ -179,7 +186,8 @@ async def pr_edit_name(userid: int, chatid: int, lang: str, message_id: int):
 
     await bot.send_message(chatid, t('seller.edit_name', lang), 
                            reply_markup=cancel_markup(lang))
-    await ChooseStringState(edit_name, userid, chatid, lang, min_len=3, max_len=50, transmitted_data=transmitted_data)
+    # await ChooseStringState(edit_name, userid, chatid, lang, min_len=3, max_len=50, transmitted_data=transmitted_data)
+    await ChooseStringHandler(edit_name, userid, chatid, lang, min_len=3, max_len=50, transmitted_data=transmitted_data).start()
 
 async def edit_description(description: str, transmitted_data: dict):
     chatid = transmitted_data['chatid']
@@ -205,7 +213,8 @@ async def pr_edit_description(userid: int, chatid: int, lang: str, message_id: i
 
     await bot.send_message(chatid, t('seller.edit_description', lang), 
                            reply_markup=cancel_markup(lang))
-    await ChooseStringState(edit_description, userid, chatid, lang, max_len=500, transmitted_data=transmitted_data)
+    # await ChooseStringState(edit_description, userid, chatid, lang, max_len=500, transmitted_data=transmitted_data)
+    await ChooseStringHandler(edit_description, userid, chatid, lang, max_len=500, transmitted_data=transmitted_data).start()
 
 async def edit_image(new_image: str, transmitted_data: dict):
     chatid = transmitted_data['chatid']
@@ -241,7 +250,8 @@ async def pr_edit_image(userid: int, chatid: int, lang: str, message_id: int):
 
     await bot.send_message(chatid, t('seller.edit_image', lang), 
                            reply_markup=cancel_markup(lang))
-    await ChooseImageState(edit_image, userid, chatid, lang, True, transmitted_data=transmitted_data)
+    # await ChooseImageState(edit_image, userid, chatid, lang, True, transmitted_data=transmitted_data)
+    await ChooseImageHandler(edit_image, userid, chatid, lang, True, transmitted_data=transmitted_data).start()
 
 
 async def end_buy(unit: int, transmitted_data: dict):
@@ -288,7 +298,9 @@ async def buy_item(userid: int, chatid: int, lang: str, product: dict, name: str
             text = t('buy.common_buy', lang)
 
         if max_int > min_int or max_int == min_int:
-            status, _ = await ChooseIntState(end_buy, userid, chatid, lang, min_int=min_int, max_int=max_int, transmitted_data=transmitted_data, autoanswer=False)
+            # status, _ = await ChooseIntState(end_buy, userid, chatid, lang, min_int=min_int, max_int=max_int, transmitted_data=transmitted_data, autoanswer=False)
+            status, _ = await ChooseIntHandler(end_buy, userid, chatid, lang, min_int=min_int, max_int=max_int, transmitted_data=transmitted_data, autoanswer=False).start()
+
             if status:
                 if product['type'] != 'auction':
                     await bot.send_message(chatid, text, 
@@ -352,7 +364,9 @@ async def promotion_prepare(userid: int, chatid: int, lang: str, product_id, mes
 
         await bot.send_message(chatid, t('promotion.buy', lang) + text_price, 
                                 reply_markup=confirm_markup(lang))
-        await ChooseConfirmState(promotion, userid, chatid, lang, True, transmitted_data)
+        # await ChooseConfirmState(promotion, userid, chatid, lang, True, transmitted_data)
+        await ChooseConfirmHandler(promotion, userid, chatid, lang, True, 
+                                   transmitted_data).start()
 
 async def send_info_pr(option, transmitted_data: dict):
     chatid = transmitted_data['chatid']
@@ -382,21 +396,35 @@ async def find_prepare(userid: int, chatid: int, lang: str):
 
     markup = list_to_keyboard([list(options.keys()), t('buttons_name.cancel', lang)], 2)
     items, exc = generate_items_pages()
+    # steps = [
+    #     {
+    #         "type": 'inv', "name": 'item', "data": {'inventory': items}, 
+    #         "translate_message": True,
+    #         'message': {'text': f'find_product.choose'}
+    #     },
+    #     {
+    #         "type": 'option', "name": 'option', 
+    #         "data": {"options": options}, 
+    #         "translate_message": True,
+    #         'message': {'text': 'find_product.info', 'reply_markup': markup}
+    #     }
+    # ]
     steps = [
-        {
-            "type": 'inv', "name": 'item', "data": {'inventory': items}, 
-            "translate_message": True,
-            'message': {'text': f'find_product.choose'}
-        },
-        {
-            "type": 'option', "name": 'option', 
-            "data": {"options": options}, 
-            "translate_message": True,
-            'message': {'text': 'find_product.info', 'reply_markup': markup}
-        }
+        InventoryStepData('item', StepMessage(
+            text='find_product.choose',
+            translate_message=True,
+            ),
+            inventory=items
+        ),
+        OptionStepData('option', StepMessage(
+            text='find_product.info',
+            translate_message=True,
+            markup=markup
+        ))
     ]
 
-    await ChooseStepState(find_end, userid, chatid, lang, steps)
+    # await ChooseStepState(find_end, userid, chatid, lang, steps)
+    await ChooseStepHandler(find_end, userid, chatid, lang, steps).start()
 
 async def find_end(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
@@ -432,8 +460,10 @@ async def find_end(return_data, transmitted_data):
             else: break
 
         await bot.send_message(chatid, t('products.search', lang))
-        await ChoosePagesState(send_info_pr, userid, chatid, lang, prd, 1, 3, 
-                               None, False, False)
+        # await ChoosePagesState(send_info_pr, userid, chatid, lang, prd, 1, 3, 
+        #                     #    None, False, False)
+        await ChoosePagesStateHandler(send_info_pr, userid, chatid, lang, prd, 1, 3,
+                                   None, False, False).start()
     else:
         await bot.send_message(chatid, t('find_product.not_found', lang), 
                                reply_markup= await m(userid, 'last_menu', lang))

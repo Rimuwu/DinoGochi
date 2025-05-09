@@ -329,102 +329,103 @@ async def filter_menu(chatid: int, upd_up_m: bool = True):
     else:
         await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
 
-async def start_inv(function, userid: int, chatid: int, lang: str, 
-                    type_filter: list | None = None, item_filter: list | None = None, 
-                    exclude_ids: list | None = None,
-                    start_page: int = 0, changing_filters: bool = True,
-                    inventory: list | None = None, delete_search: bool = False,
-                    transmitted_data = None,
-                    inline_func = None, inline_code = ''
-                    ):
-    """ Функция запуска инвентаря
-        type_filter - фильтр типов предметов
-        item_filter - фильтр по id предметам
-        start_page - стартовая страница
-        exclude_ids - исключаемые id
-        changing_filters - разрешено ли изменять фильтры
-        one_time_pages - сколько генерировать страниц за раз, все если 0
-        delete_search - Убрать поиск
-        inventory - Возможность закинуть уже обработанный инвентарь, если пусто - сам сгенерирует инвентарь
+# async def start_inv(function, userid: int, chatid: int, lang: str, 
+#                     type_filter: list | None = None, item_filter: list | None = None, 
+#                     exclude_ids: list | None = None,
+#                     start_page: int = 0, changing_filters: bool = True,
+#                     inventory: list | None = None, delete_search: bool = False,
+#                     transmitted_data = None,
+#                     inline_func = None, inline_code = ''
+#                     ):
+#     """ Функция запуска инвентаря
+#         type_filter - фильтр типов предметов
+#         item_filter - фильтр по id предметам
+#         start_page - стартовая страница
+#         exclude_ids - исключаемые id
+#         changing_filters - разрешено ли изменять фильтры
+#         one_time_pages - сколько генерировать страниц за раз, все если 0
+#         delete_search - Убрать поиск
+#         inventory - Возможность закинуть уже обработанный инвентарь, если пусто - сам сгенерирует инвентарь
 
 
-        >> Создано для steps, при активации перенаправляет данные при нажатии
-        на inline_func, а при нажатии на кнопку начинающийся на inventoryinline {inline_code}
-        перенаправляет данные, выбранные по кнопке в function
+#         >> Создано для steps, при активации перенаправляет данные при нажатии
+#         на inline_func, а при нажатии на кнопку начинающийся на inventoryinline {inline_code}
+#         перенаправляет данные, выбранные по кнопке в function
 
-        >> В inline_func так же передаётся inline_code в transmitted_data
+#         >> В inline_func так же передаётся inline_code в transmitted_data
 
-        inline_func - Если нужна функция для обработки калбек запросов 
-            - Все кнопки должны начинаться с "inventoryinline {inline_code}" 
-    """
+#         inline_func - Если нужна функция для обработки калбек запросов 
+#             - Все кнопки должны начинаться с "inventoryinline {inline_code}" 
+#     """
 
-    if type_filter is None: type_filter = []
-    if item_filter is None: item_filter = []
-    if exclude_ids is None: exclude_ids = []
-    if inventory is None: inventory = []
 
-    state = await get_state(userid, chatid)
-    if not transmitted_data: transmitted_data = {}
-    count = 0
+    # if type_filter is None: type_filter = []
+    # if item_filter is None: item_filter = []
+    # if exclude_ids is None: exclude_ids = []
+    # if inventory is None: inventory = []
 
-    if 'userid' not in transmitted_data: transmitted_data['userid'] = userid
-    if 'chatid' not in transmitted_data: transmitted_data['chatid'] = chatid
-    if 'lang' not in transmitted_data: transmitted_data['lang'] = lang
+    # state = await get_state(userid, chatid)
+    # if not transmitted_data: transmitted_data = {}
+    # count = 0
 
-    user_settings = await users.find_one({'userid': userid}, {'settings': 1}, comment='start_inv_user_settings')
-    if user_settings: inv_view = user_settings['settings']['inv_view']
-    else: inv_view = [2, 3]
+    # if 'userid' not in transmitted_data: transmitted_data['userid'] = userid
+    # if 'chatid' not in transmitted_data: transmitted_data['chatid'] = chatid
+    # if 'lang' not in transmitted_data: transmitted_data['lang'] = lang
 
-    if not inventory:
-        inventory, count = await get_inventory(userid, exclude_ids)
-    items_data = await inventory_pages(inventory, lang, type_filter, item_filter)
-    pages, row = await generate(items_data, *inv_view)
+    # user_settings = await users.find_one({'userid': userid}, {'settings': 1}, comment='start_inv_user_settings')
+    # if user_settings: inv_view = user_settings['settings']['inv_view']
+    # else: inv_view = [2, 3]
 
-    if not pages:
-        await bot.send_message(chatid, t('inventory.null', lang), 
-                           reply_markup=await m(chatid, 'last_menu', language_code=lang))
-        return False, 'cancel'
-    else:
-        try:
-            data = await state.get_data() or {}
-            if data:
-                old_function = data['function']
-                old_transmitted_data = data['transmitted_data']
+    # if not inventory:
+    #     inventory, count = await get_inventory(userid, exclude_ids)
+    # items_data = await inventory_pages(inventory, lang, type_filter, item_filter)
+    # pages, row = await generate(items_data, *inv_view)
 
-            if old_function: function = old_function
-            if old_transmitted_data: transmitted_data = old_transmitted_data
-        except: 
-            # Если не передана функция, то вызывается функция информация о передмете
-            if function is None: function = send_item_info
+    # if not pages:
+    #     await bot.send_message(chatid, t('inventory.null', lang), 
+    #                        reply_markup=await m(chatid, 'last_menu', language_code=lang))
+    #     return False, 'cancel'
+    # else:
+    #     try:
+    #         data = await state.get_data() or {}
+    #         if data:
+    #             old_function = data['function']
+    #             old_transmitted_data = data['transmitted_data']
 
-        await state.clear()
-        await state.set_state(InventoryStates.Inventory)
+    #         if old_function: function = old_function
+    #         if old_transmitted_data: transmitted_data = old_transmitted_data
+    #     except: 
+    #         # Если не передана функция, то вызывается функция информация о передмете
+    #         if function is None: function = send_item_info
 
-        data['pages'] = pages
-        data['items_data'] = items_data
-        data['filters'] = type_filter
-        data['items'] = item_filter
+    #     await state.clear()
+    #     await state.set_state(InventoryStates.Inventory)
 
-        data['settings'] = {'view': inv_view, 'lang': lang, 
-                            'row': row, 'page': start_page,
-                            'changing_filters': changing_filters,
-                            'delete_search': delete_search
-                            }
-        data['main_message'] = 0
-        data['up_message'] = 0
+    #     data['pages'] = pages
+    #     data['items_data'] = items_data
+    #     data['filters'] = type_filter
+    #     data['items'] = item_filter
 
-        data['function'] = function
-        data['transmitted_data'] = transmitted_data
+    #     data['settings'] = {'view': inv_view, 'lang': lang, 
+    #                         'row': row, 'page': start_page,
+    #                         'changing_filters': changing_filters,
+    #                         'delete_search': delete_search
+    #                         }
+    #     data['main_message'] = 0
+    #     data['up_message'] = 0
 
-        if inline_func is not None:
-            data['settings']['inline_func'] = inline_func
-            data['settings']['inline_code'] = inline_code
+    #     data['function'] = function
+    #     data['transmitted_data'] = transmitted_data
 
-        await state.set_data(data)
-        log(f'open inventory userid {userid} count {count}')
+    #     if inline_func is not None:
+    #         data['settings']['inline_func'] = inline_func
+    #         data['settings']['inline_code'] = inline_code
 
-        await swipe_page(chatid, userid)
-        return True, 'inv'
+    #     await state.set_data(data)
+    #     log(f'open inventory userid {userid} count {count}')
+
+    #     await swipe_page(chatid, userid)
+    #     return True, 'inv'
 
 async def open_inv(chatid: int, userid: int):
     """ Внутренняя фунция для возврата в инвентарь

@@ -12,6 +12,7 @@ from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      near_key_number, seconds_to_str)
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur import Dino, Egg, check_status, dead_check
+from bot.modules.logs import log
 from bot.modules.managment.events import check_event, get_event
 from bot.modules.images import async_open, create_skill_image
 from bot.modules.inline import dino_profile_markup, inline_menu
@@ -147,6 +148,10 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
     }
 
     for key, item in enumerate(dino.activ_items):
+        
+        if 'item_id' not in item.keys(): 
+            log(f'Ошибка в аксессуарах динозавра {dino._id} - {item}', 4)
+            continue
 
         item_type = get_item_data(item['item_id'])['type']
 
@@ -193,15 +198,19 @@ async def egg_profile(chatid: int, egg: Egg, lang: str):
     await bot.send_photo(chatid, img, caption=text, 
                          reply_markup=await m(chatid, 'last_menu', language_code=lang))
 
-async def transition(element, transmitted_data: dict):
+async def transition(oid, transmitted_data: dict):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     custom_url = ''
-    oid: ObjectId = element[0]
-    cl_name: str = element[1]
-    
-    print(element)
+    egg_find = None
+
+    cl_name = 'Dino'
+    dino_find = await Dino().create(oid)
+    if not dino_find:
+        egg_find = await Egg().create(oid)
+        if egg_find:
+            cl_name = 'Egg'
 
     if cl_name == 'Dino':
         element = await Dino().create(oid)
@@ -219,9 +228,9 @@ async def transition(element, transmitted_data: dict):
         if element:
             await dino_profile(userid, chatid, element, lang, custom_url)
 
-    elif cl_name == 'Egg':
+    elif cl_name == 'Egg' and egg_find:
         element = await Egg().create(oid)
-        await egg_profile(chatid, element, lang)
+        await egg_profile(chatid, egg_find, lang)
 
 @HDMessage
 @main_router.message(Text('commands_name.dino_profile'), IsAuthorizedUser(), IsPrivateChat())
@@ -513,7 +522,14 @@ async def start_kind(col, transmitted_data):
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
-    dino = transmitted_data['dino']
+    # dino = transmitted_data['dino']
+    dino_id = transmitted_data['dino']
+    dino = await Dino().create(dino_id)
+
+    if dino is None:
+        await bot.send_message(chatid, t('kindergarten.error', lang), 
+                               reply_markup= await m(userid, 'last_menu', lang))
+        return
 
     await minus_hours(userid, col)
     await dino_kind(dino, col)

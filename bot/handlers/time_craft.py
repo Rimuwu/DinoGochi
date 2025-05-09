@@ -1,5 +1,6 @@
 from time import time
 from aiogram.types import CallbackQuery
+from bson import ObjectId
 from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
@@ -121,13 +122,12 @@ async def time_craft(callback: CallbackQuery):
         await stop_craft(alt_code)
         await bot.delete_message(chatid, callback.message.message_id)
 
-async def send_dino_to_craft(dino_data: tuple, transmitted_data: dict):
+async def send_dino_to_craft(dino_id: ObjectId, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     ms_id = transmitted_data['ms_id']
     alt_code = transmitted_data['alt_code']
-    dino_id, _ = dino_data
 
     dino = await Dino().create(dino_id)
     if not dino:

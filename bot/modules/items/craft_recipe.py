@@ -12,7 +12,11 @@ from bot.modules.items.time_craft import add_time_craft
 from bot.modules.localization import t
 from bot.modules.logs import log
 from bot.modules.markup import markups_menu
-from bot.modules.states_tools import ChooseStepState
+# from bot.modules.states_tools import ChooseStepState
+
+from bot.modules.states_fabric.state_handlers import ChooseStepHandler
+from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage, TimeStepData
+
 from bot.modules.get_state import get_state
 from bot.modules.user.user import get_inventory_from_i
 from bot.exec import main_router, bot
@@ -150,17 +154,25 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
             elif len(inv) > 1:
                 a += 1
                 name = f'{a}_step'
+                # steps.append(
+                #     {
+                #         'type': 'inv',
+                #         'name': name,
+                #         'data': {
+                #             'inventory': inv,
+                #             'changing_filters': False
+                #         },
+                #         'translate_message': True,
+                #         'message': {'text': 'item_use.recipe.consumable_item'}
+                #     }
+                # )
                 steps.append(
-                    {
-                        'type': 'inv',
-                        'name': name,
-                        'data': {
-                            'inventory': inv,
-                            'changing_filters': False
-                        },
-                        'translate_message': True,
-                        'message': {'text': 'item_use.recipe.consumable_item'}
-                    }
+                    InventoryStepData(name, StepMessage(
+                        text='item_use.recipe.consumable_item',
+                        translate_message=True
+                        ),
+                        inventory=inv, changing_filters=False,
+                    )
                 )
 
                 copy_mat['item'] = name
@@ -174,7 +186,9 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
             'count': count,
             'item': item
         }
-        await ChooseStepState(end_choose_items, userid, chatid, lang, steps, transmitted_data)
+        # await ChooseStepState(end_choose_items, userid, chatid, lang, steps, transmitted_data)
+        await ChooseStepHandler(end_choose_items, userid, chatid, lang, steps, 
+                                transmitted_data).start()
 
     else:
         data = {
@@ -273,22 +287,35 @@ async def check_items_in_inventory(materials, item, count,
             elif len(find_set) > 1:
                 a += 1
                 name = f'{a}_step'
+                # steps.append(
+                #     {
+                #         'type': 'inv',
+                #         'name': name,
+                #         'data': {
+                #             'inventory': find_items,
+                #             'changing_filters': False,
+                #             'inline_func': send_item_info,
+                #             'inline_code': random_code()
+                #         },
+                #         'translate_message': False,
+                #         'message': {'text': t('item_use.recipe.choose_copy', lang, 
+                #                               item_name=get_name(
+                #                                   material['item'], lang, 
+                #                                   material.get('abilities', {})))}
+                #     }
+                # )
                 steps.append(
-                    {
-                        'type': 'inv',
-                        'name': name,
-                        'data': {
-                            'inventory': find_items,
-                            'changing_filters': False,
-                            'inline_func': send_item_info,
-                            'inline_code': random_code()
-                        },
-                        'translate_message': False,
-                        'message': {'text': t('item_use.recipe.choose_copy', lang, 
-                                              item_name=get_name(
-                                                  material['item'], lang, 
-                                                  material.get('abilities', {})))}
-                    }
+                    InventoryStepData(name, StepMessage(
+                        text=t('item_use.recipe.choose_copy', lang, 
+                              item_name=get_name(
+                                  material['item'], lang, 
+                                  material.get('abilities', {}))),
+                        translate_message=False
+                        ),
+                        inventory=find_items, changing_filters=False,
+                        inline_func=send_item_info,
+                        inline_code=random_code()
+                    )
                 )
                 finded_items.append({'item': name, 
                                      'count': material['count']})
@@ -322,8 +349,10 @@ async def check_items_in_inventory(materials, item, count,
             'item': item
         }
 
-        await ChooseStepState(pre_check, userid, chatid, lang, 
-                              steps, transmitted_data)
+        # await ChooseStepState(pre_check, userid, chatid, lang, 
+                            #   steps, transmitted_data)
+        await ChooseStepHandler(pre_check, userid, chatid, lang, 
+                                steps, transmitted_data).start()
 
     else:
         await check_endurance_and_col(finded_items, count, item, 

@@ -222,8 +222,11 @@ class Egg:
         self.dino_id = 0
 
     async def create(self, baseid: ObjectId):
-        self.UpdateData(await incubations.find_one({"_id": baseid}, comment='Egg_create'))
-        return self
+        res = await incubations.find_one({"_id": baseid}, comment='Egg_create')
+        if res:
+            self.UpdateData(res)
+            return self
+        return None
 
     def UpdateData(self, data):
         if data: self.__dict__ = data

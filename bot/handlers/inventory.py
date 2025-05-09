@@ -7,7 +7,7 @@ from bot.modules.dinosaur.dinosaur  import incubation_egg
 from bot.modules.inventory_tools import (InventoryStates, back_button,
                                          filter_items_data, filter_menu,
                                          forward_button, generate, search_menu,
-                                         send_item_info, start_inv, swipe_page)
+                                         send_item_info, swipe_page)
 from bot.modules.items.item import (CheckCountItemFromUser, CheckItemFromUser,
                               RemoveItemFromUser, counts_items, decode_item, get_items_names)
 from bot.modules.items.item import get_data as get_item_data
@@ -51,7 +51,8 @@ async def open_inventory(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await start_inv(None, userid, chatid, lang)
+    # await start_inv(None, userid, chatid, lang)
+    await ChooseInventoryHandler(None, userid, chatid, lang).start()
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('inventory_start'))
@@ -60,7 +61,8 @@ async def start_callback(call: CallbackQuery):
     userid = call.from_user.id
     lang = await get_lang(call.from_user.id)
 
-    await start_inv(None, userid, chatid, lang)
+    # await start_inv(None, userid, chatid, lang)
+    await ChooseInventoryHandler(None, userid, chatid, lang).start()
 
 @HDMessage
 @main_router.message(IsPrivateChat(), StateFilter(InventoryStates.Inventory), IsAuthorizedUser())

@@ -5,7 +5,7 @@ from bot.exec import main_router, bot
 
 from bot.modules.markup import answer_markup, cancel_markup, count_markup
  
-from bot.modules.states_fabric.state_handlers import ChooseStepHandler
+from bot.modules.states_fabric.state_handlers import ChooseIntHandler, ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage, TimeStepData
 
 from bot.modules.market.market import generate_items_pages, generate_sell_pages
@@ -81,7 +81,7 @@ async def trade_update_col(transmitted_data):
 
         # Добавление данных для выбора количества
         transmitted_data['steps'][step+1]['data']['max_int'] = max_count
-        transmitted_data['steps'][step+1]['message']['reply_markup'] = count_markup(max_count, lang)
+        transmitted_data['steps'][step+1]['message']['markup'] = count_markup(max_count, lang).model_dump()
         transmitted_data['exclude'].append(item_data['item_id'])
 
         # Очистка лишних данных
@@ -143,7 +143,7 @@ async def new_circle(transmitted_data):
 
     if add_res:
         items, exclude = await generate_sell_pages(userid, exclude_ids)
-        steps = trade_circle(userid, chatid, lang, items, option)
+        steps = trade_circle(lang, items, option)
 
         transmitted_data['exclude'] = exclude
 
@@ -174,38 +174,54 @@ async def items_items(return_data, transmitted_data):
     steps = received_circle(userid, chatid, lang, inv_items, "trade_items", False)
     transmitted_data['exclude'] = exclude
 
-    await ChooseStepState(stock, userid, chatid, 
-                          lang, steps, 
-                          transmitted_data=transmitted_data)
+    # await ChooseStepState(stock, userid, chatid, 
+    #                       lang, steps, 
+    #                       transmitted_data=transmitted_data)
+    await ChooseStepHandler(stock, userid, chatid, lang, steps,
+                            transmitted_data=transmitted_data).start()
 
 def received_circle(userid, chatid, lang, items, option, prepare: bool = True):
     """ Создаёт данные для круга получения данных ЗАПРАШИВАЕМЫХ предметов
     """
-    not_p_steps = [
-        {
-            "type": 'inv', "name": 'trade_items', "data": {'inventory': items}, 
-            "translate_message": True,
-            'message': {'text': f'add_product.chose_item.{option}'}
-        },
-        {
-            "type": 'update_data', "name": None, "data": {}, 
-            'function': received_upd
-        },
-        {
-            "type": 'int', "name": 'trade_col', "data": {"max_int": 20},
-            "translate_message": True,
-            'message': {'text': 'add_product.wait_count', 
-                        'reply_markup': count_markup(20, lang)}
-        },
-        {
-            "type": 'update_data', "name": None, "data": {}, 
-            'function': chect_items_received
-        }
+    # not_p_steps = [
+    #     {
+    #         "type": 'inv', "name": 'trade_items', "data": {'inventory': items}, 
+    #         "translate_message": True,
+    #         'message': {'text': f'add_product.chose_item.{option}'}
+    #     },
+    #     {
+    #         "type": 'update_data', "name": None, "data": {}, 
+    #         'function': received_upd
+    #     },
+    #     {
+    #         "type": 'int', "name": 'trade_col', "data": {"max_int": 20},
+    #         "translate_message": True,
+    #         'message': {'text': 'add_product.wait_count', 
+    #                     'reply_markup': count_markup(20, lang)}
+    #     },
+    #     {
+    #         "type": 'update_data', "name": None, "data": {}, 
+    #         'function': chect_items_received
+    #     }
+    # ]
+    steps = [
+        InventoryStepData('trade_items', StepMessage(
+            text=f'add_product.chose_item.{option}',
+            translate_message=True,
+            ),
+            inventory=items
+        ),
+        BaseUpdateType(received_upd),
+        IntStepData('trade_col', StepMessage(
+            text='add_product.wait_count',
+            translate_message=True,
+            markup=count_markup(20, lang)
+        )),
+        BaseUpdateType(chect_items_received)
     ]
-    if prepare:
-        steps = prepare_steps(not_p_steps, userid, chatid, lang)
-        return steps
-    else: return not_p_steps
+
+    return steps
+
 
 async def received_upd(transmitted_data):
     """ Функция добавляет предмет в игнор страницы, а так же очищает некоторые данные
@@ -237,19 +253,28 @@ def chect_items_received(transmitted_data):
     if type(transmitted_data['return_data']['trade_items']) == list and len(transmitted_data['return_data']['trade_items']) >= 3: res = False
 
     if res:
-        not_p_steps = [
-            {
-                "type": 'bool', "name": 'add_item', "data": {},
-                "translate_message": True,
-                'message': {'text': 'add_product.add_item',
-                             'reply_markup': answer_markup(lang)}
-            },
-            {
-                "type": 'update_data', "name": None, "data": {}, 
-                'function': new_received_circle
-            }
+        # not_p_steps = [
+        #     {
+        #         "type": 'bool', "name": 'add_item', "data": {},
+        #         "translate_message": True,
+        #         'message': {'text': 'add_product.add_item',
+        #                      'reply_markup': answer_markup(lang)}
+        #     },
+        #     {
+        #         "type": 'update_data', "name": None, "data": {}, 
+        #         'function': new_received_circle
+        #     }
+        # ]
+        steps = [
+            ConfirmStepData('add_item', StepMessage(
+                text='add_product.add_item',
+                translate_message=True,
+                markup=answer_markup(lang)
+            )),
+            BaseUpdateType(new_received_circle)
         ]
-        steps = prepare_steps(not_p_steps, userid, chatid, lang)
+        
+        
         transmitted_data['steps'] += steps
 
     return transmitted_data, True
@@ -294,7 +319,8 @@ async def stock(return_data, transmitted_data):
 
     for key, item in return_data.items(): transmitted_data[key] = item
 
-    await ChooseIntState(stock_adapter, userid, chatid, lang, 1, 20, transmitted_data=transmitted_data)
+    # await ChooseIntState(stock_adapter, userid, chatid, lang, 1, 20, transmitted_data=transmitted_data)
+    await ChooseIntHandler(stock_adapter, userid, chatid, lang, 1, 20, transmitted_data=transmitted_data).start()
 
     await bot.send_message(chatid, t(f'add_product.stock.{option}', lang), reply_markup=cancel_markup(lang), parse_mode='Markdown')
 
