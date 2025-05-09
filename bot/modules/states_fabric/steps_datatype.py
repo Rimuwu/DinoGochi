@@ -100,7 +100,8 @@ class BaseDataType():
 
         self.message: Optional[StepMessage] = None
         if isinstance(message, dict):
-            self.message: Optional[StepMessage] = StepMessage(**message)
+            if message != {}:
+                self.message: Optional[StepMessage] = StepMessage(**message)
         elif isinstance(message, StepMessage):
             self.message: Optional[StepMessage] = message
 
@@ -118,6 +119,8 @@ class BaseDataType():
 
         if isinstance(self.message, StepMessage):
             ret_data['message'] = self.message.to_dict()
+        else:
+            ret_data['message'] = {}
 
         ret_data['type'] = self.type
         return ret_data
