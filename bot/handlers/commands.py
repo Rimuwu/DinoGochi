@@ -111,7 +111,7 @@ async def promo(message: Message):
             await start_game(message, code, 'promo')
 
 @HDMessage
-@main_router.message(Command(commands=['help']), GroupRules())
+@main_router.message(Command(commands=['help']), GroupRules(True))
 async def help(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id

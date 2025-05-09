@@ -683,6 +683,10 @@ class ChooseInventoryHandler(BaseStateHandler):
                 - Все кнопки должны начинаться с "inventoryinline {inline_code}" 
         """
         if function is None: function = send_item_info
+        if type_filter is None: type_filter = []
+        if item_filter is None: item_filter = []
+        if exclude_ids is None: exclude_ids = []
+        if inventory is None: inventory = []
 
         super().__init__(function, userid, chatid, lang, transmitted_data)
         self.pages = []
@@ -691,12 +695,16 @@ class ChooseInventoryHandler(BaseStateHandler):
         self.filters = type_filter
         self.items = item_filter
 
-        self.settings = {
-            'view': [2, 3], 'lang': lang, 
-            'row': 1, 'page': start_page,
-            'changing_filters': changing_filters,
-            'delete_search': delete_search
-                            }
+        if settings == {}:
+            self.settings = {
+                'view': [2, 3], 'lang': lang, 
+                'row': 1, 'page': start_page,
+                'changing_filters': changing_filters,
+                'delete_search': delete_search
+            }
+        else:
+            self.settings = settings
+
         self.main_message = 0
         self.up_message = 0
 
@@ -714,7 +722,7 @@ class ChooseInventoryHandler(BaseStateHandler):
 
         if settings:
             self.settings.update(settings)
-    
+
     async def call_inline_func(self, *args, **kwargs):
         func = str_to_func(self.settings['inline_func'])
 

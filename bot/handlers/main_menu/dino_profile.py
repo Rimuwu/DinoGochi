@@ -263,7 +263,7 @@ async def dino_profile_callback(call: types.CallbackQuery):
     }
     dino = await Dino().create(dino_data)
     if dino:
-        await transition(dino, trans_data)
+        await transition(dino._id, trans_data)
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('dino_menu'))
