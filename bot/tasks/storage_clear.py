@@ -1,45 +1,45 @@
-import pickle
+
 from time import time
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.exec import main_router, bot
+from bot.exec import bot
+from bot.modules.get_state import get_state
 from bot.modules.localization import get_lang
 from bot.modules.markup import markups_menu as m
 from bot.taskmanager import add_task
 from bot.modules.logs import log
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
-users = DBconstructor(mongo_client.user.users)
+states = DBconstructor(mongo_client.other.states)
 
-# async def storage_clear():
+async def storage_clear():
 
-#     with open('.state-save/states.pkl', 'rb') as file:
-#         data = pickle.load(file)
+    states_data = await states.find({})
+    for state in states_data:
+        send_message = False
+        fsm, userid, chatid = state['_id'].split(':') # fsm:1191252229:1191252229
 
-#     for chat_key in data:
+        if 'data' not in state:
+            await states.delete_one({'_id': state['_id']})
+            send_message = True
+        else:
+            if 'time_start' in state['data']:
+               if state['data']['time_start'] + 3600 <= time():
+                   await states.delete_one({'_id': state['_id']})
+                   send_message = True
 
-#         for user_key in data[chat_key]:
+        if send_message:
+            lang = await get_lang(int(userid))
+            try:
+                await bot.send_message(int(chatid), '❌', 
+                    reply_markup= await m(int(userid), 'last_menu', lang))
+            except Exception as e:
+                continue
 
-#             res = await users.find_one({'userid': user_key}, 
-#                                        {'last_message_time': 1})
-#             if res is None or int(time()) - res['last_message_time'] > 3600:
-#                 lang = await get_lang(user_key)
-#                 try:
-#                     await bot.send_message(chat_key, '❌', 
-#                         reply_markup= await m(user_key, 'last_menu', lang))
-#                 except Exception as e:
-#                     log(f"[storage_clear] Error on send message: {e}", 1)
-#                 try:
-#                     await bot.delete_state(user_key, chat_key)
-#                 except Exception as e:
-#                     log(f"[storage_clear] Error on delete state: {e}", 2)
-#                 try:
-#                     await bot.reset_data(user_key, chat_key)
-#                 except Exception as e:
-#                     log(f"[storage_clear] Error on reset data: {e}", 2)
+            state = await get_state(int(userid), int(chatid))
+            if state: await state.clear()
 
-
-# if __name__ != '__main__':
-#     if conf.active_tasks:
-#         add_task(storage_clear, 7200, 200)
+if __name__ != '__main__':
+    if conf.active_tasks:
+        add_task(storage_clear, 1800, 15)
