@@ -17,6 +17,7 @@ import aiogram
 from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            InlineQueryResultContact, Message, LabeledPrice)
 
+from bot.modules.dino_uniqueness import get_dino_uniqueness_factor
 from bot.modules.dinosaur import dinosaur
 from bot.modules.get_state import get_state
 from bot.modules.images_creators.more_dinos import MiniGame_image
@@ -557,7 +558,7 @@ from bot.modules.states_fabric.steps_datatype import *
 async def test3(message: Message):
 
     steps = [
-        DinoStepData('dino', StepMessage('message', None) ),
+        DinoStepData('dino', None, message_key= 'message' ),
         IntStepData('int', StepMessage('message2', None), 
                     max_int=20),
         StringStepData('str', StepMessage('message3', None), max_len=20),
@@ -573,3 +574,10 @@ async def test3(message: Message):
 
     await ChooseStepHandler(some_function, 
         message.from_user.id, message.chat.id, 'ru', steps, {"bon": 1}).start()
+
+
+@main_router.message(Command(commands=['tu']), IsAdminUser())
+@HDMessage
+async def test4(message: Message):
+    res = await get_dino_uniqueness_factor(int(message.text.split()[1]))
+    await message.answer(f"Uniqueness factor: {res}")
