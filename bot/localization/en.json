@@ -4894,7 +4894,7 @@
             "no_num": "You need to specify the number of coins as the second argument!",
             "no_reply": "Reply to the message of the user to whom you want to transfer coins!",
             "answer_no": "The operation has been canceled...",
-            "answer_yes": "Coins have been sent! Received 3636 coins.",
+            "answer_yes": "Coins have been sent! Received {coins} coins.",
             "no_coins": "❌ | The operation failed, {self_username} does not have enough coins for the transfer!",
             "no_user": "One of the participants in the transaction does not have an account in the bot!"
         }
