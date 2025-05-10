@@ -230,7 +230,7 @@ async def end_edit(code, transmitted_data):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
-    dino_id, _ = transmitted_data['dino']
+    dino_id = transmitted_data['dino']
     o_type = transmitted_data['type']
 
     dino = await Dino().create(dino_id)
@@ -371,14 +371,14 @@ async def transformation(callback: CallbackQuery):
         DinoStepData('dino', None, message_key='edit_dino.dino',
         add_egg=False)
     ]
-    
+
     ret_f = dino_now
 
     if data[1] == 'appearance':
         items_text = counts_items(GS['change_appearance']['items'], lang)
         coins = GS['change_appearance']['coins']
         ret_f = edit_appearance
-        
+
         steps.append(
             ConfirmStepData('confirm', StepMessage(
                 t('edit_dino.appearance', lang, items=items_text, coins=coins), 
@@ -401,5 +401,5 @@ async def transformation(callback: CallbackQuery):
             )
         )
 
-    await ChooseStepHandler(ret_f, userid, chatid, lang, steps, {'type': data[1]}).start()
-    # await ChooseStepState(ret_f, userid, chatid, lang, steps, {'type': data[1]})
+    await ChooseStepHandler(ret_f, userid, chatid, lang, steps, 
+                            {'type': data[1]}).start()
