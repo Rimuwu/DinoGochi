@@ -41,42 +41,39 @@
     },
     "rustycan": {
         "type": "dummy",
-        "rank": "common",
-        "cant_sell": true
+        "rank": "common"
     },
     "wornoutticket": {
         "type": "dummy",
-        "rank": "common",
-        "cant_sell": true
+        "rank": "common"
     },
     "brokenkey": {
         "type": "dummy",
-        "rank": "common",
-        "cant_sell": true
+        "rank": "common"
     },
     "lostglove": {
         "type": "dummy",
-        "rank": "common",
-        "cant_sell": true
+        "rank": "common"
     },
     "shatteredbottle": {
         "type": "dummy",
-        "rank": "common",
-        "cant_sell": true
+        "rank": "common"
     },
     "oldbucket": {
         "type": "dummy",
-        "rank": "common",
-        "cant_sell": true
+        "rank": "common"
     },
     "crumpledpaper": {
         "type": "dummy",
-        "rank": "common",
-        "cant_sell": true
+        "rank": "common"
     },
     "wiltedleaf": {
         "type": "dummy",
+        "rank": "common"
+    },
+    "corrupted_document": {
+        "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "groups": ["add_bank_items"]
     }
 }
