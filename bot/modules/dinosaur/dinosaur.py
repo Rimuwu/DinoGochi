@@ -272,7 +272,7 @@ def random_dino(quality: str='com') -> int:
 async def incubation_egg(egg_id: int, owner_id: int, inc_time: int=0, quality: str='random', dino_id: int=0):
     """Создание инкубируемого динозавра
     """
-    egg = await Egg().create(ObjectId())
+    egg = Egg()
 
     egg.incubation_time = inc_time + int(time())
     egg.egg_id = egg_id
