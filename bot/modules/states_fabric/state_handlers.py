@@ -8,7 +8,7 @@ from bson import ObjectId
 from bot.exec import bot
 from bot.modules.data_format import (chunk_pages, list_to_inline,
                                      list_to_keyboard)
-from bot.modules.dinosaur.dinosaur import Dino, Egg
+from aiogram.types import Message
 from bot.modules.functransport import func_to_str, str_to_func
 from bot.modules.get_state import get_state
 from bot.modules.images import async_open
@@ -170,7 +170,10 @@ class ChooseDinoHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang,
                  add_egg=True, all_dinos=True,
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, send_error=True, **kwargs):
+                 transmitted_data: Optional[dict[str, MongoValueType]]=None, send_error=True,
+                 message_key: Optional[str] = None,
+                 **kwargs
+                 ):
         """ Устанавливает состояние ожидания динозавра
             all_dinos - Если False то не будет совместных динозавров 
             send_error - Если True то будет уведомлять о том, что нет динозавров / яиц
@@ -186,6 +189,11 @@ class ChooseDinoHandler(BaseStateHandler):
         self.all_dinos: bool = all_dinos
         self.send_error: bool = send_error
         self.dino_names: dict = {}
+
+        if message_key is None:
+            self.message_key = 'css.dino'
+        else:
+            self.message_key = message_key
 
     async def setup(self):
         user = await User().create(self.userid)
@@ -203,7 +211,7 @@ class ChooseDinoHandler(BaseStateHandler):
             return False, 'cancel'
 
         elif ret_data['case'] == 1:
-            await self.call_function(ret_data['element'])
+            await self.call_function(ret_data['element']._id)
             return False, self.indenf
 
         elif ret_data['case'] == 2:
@@ -214,7 +222,7 @@ class ChooseDinoHandler(BaseStateHandler):
             await self.set_state()
             await self.set_data()
 
-            await bot.send_message(self.chatid, t('css.dino', self.lang), reply_markup=ret_data['keyboard'])
+            await bot.send_message(self.chatid, t(self.message_key, self.lang), reply_markup=ret_data['keyboard'])
             return True, self.indenf
 
         else:
@@ -411,7 +419,7 @@ class ChooseCustomHandler(BaseStateHandler):
         elif callable(custom_handler):
             self.custom_handler = func_to_str(custom_handler)
 
-    async def call_custom_handler(self, *args, **kwargs) -> tuple[bool, Any]:
+    async def call_custom_handler(self, message: Message) -> tuple[bool, Any]:
         func = str_to_func(self.custom_handler)
 
         transmitted_data = self.transmitted_data.copy()
@@ -424,11 +432,9 @@ class ChooseCustomHandler(BaseStateHandler):
         )
 
         if inspect.iscoroutinefunction(func):
-            return await func(*args, **kwargs, 
-                              transmitted_data=transmitted_data)
+            return await func(message, transmitted_data=transmitted_data)
         else:
-            return func(*args, **kwargs, 
-                              transmitted_data=transmitted_data)
+            return func(message, transmitted_data=transmitted_data)
 
     async def setup(self):
         await self.set_state()
@@ -512,13 +518,14 @@ class ChoosePagesStateHandler(BaseStateHandler):
         if settings:
             self.settings.update(settings)
 
-    async def call_update_page_function(self, *args, **kwargs):
+    async def call_update_page_function(self, pages: 
+        list, page: int, chatid: int, lang: str):
         func = str_to_func(self.update_page_function)
 
         if inspect.iscoroutinefunction(func):
-            return await func(self.pages, self.page, self.chatid, self.lang)
+            return await func(pages, page, chatid, lang)
         else:
-            return func(self.pages, self.page, self.chatid, self.lang)
+            return func(pages, page, chatid, lang)
 
     async def setup(self):
         # Чанкует страницы и добавляем пустые элементы для сохранения структуры
@@ -823,13 +830,13 @@ class ChooseStepHandler():
 
             steps = [
                 DinoStepData('step_name', # тут лежит type состояния
-                    StepMessage('text', markup), # отсюда получается текст через get_text
+                    None,
                     data={
                         'add_egg': True, 'all_dinos': True,
                     }
                 ),
                 IntStepData('step_name_int',
-                    StepMessage('text_int', markup_int),
+                    StepMessage('text_int', markup_int), # отсюда получается текст через get_text
                     data={
                         'min_value': 0, 'max_value': 100,
                     }
@@ -1027,15 +1034,12 @@ async def next_step(answer: Any,
 
             if process >= len(steps):
                 # Если это последний шаг, то удаляем состояние и завершаем работу
-                return await exit_chose(user_state, transmitted_data)
+                await exit_chose(user_state, transmitted_data)
+                return
 
             await user_state.update_data(transmitted_data=transmitted_data)
-            return await next_step(answer, transmitted_data)
-
-        # Удаляем шаги, которые уже отработали
-        if transmitted_data.get('delete_steps', False):
-            steps_raw = steps_raw[process:]
-            transmitted_data['steps'] = steps_raw
+            await next_step(answer, transmitted_data)
+            return
 
         if transmitted_data.get('temp', False):
             # Если это inline состояние, то обновляем сообщение
@@ -1046,6 +1050,9 @@ async def next_step(answer: Any,
             # Запуск следующего состояния
             type_handler = next_step_obj.type
             handler = state_handler_registry[type_handler]
+
+            transmitted_data['process'] = process
+            transmitted_data['return_data'] = return_data
 
             self_handler = handler(**step_data, userid=userid, chatid=chatid, 
                                    lang=lang, function=next_step, transmitted_data=transmitted_data)
@@ -1118,10 +1125,8 @@ async def next_step(answer: Any,
 
             # Обновление данных состояния
             if not start and func_answer:
-                transmitted_data['return_data'] = return_data
                 transmitted_data['steps'] = steps_raw
-                transmitted_data['process'] = process
                 await user_state.update_data(transmitted_data=transmitted_data)
 
     else:
-        return await exit_chose(user_state, transmitted_data)
+        await exit_chose(user_state, transmitted_data)

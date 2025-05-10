@@ -107,8 +107,7 @@ class BaseDataType():
 
         # Приоритет значениям из data
         for key in self.data.keys():
-            if key in self.data_keys:
-                setattr(self, key, self.data[key])
+            setattr(self, key, self.data[key])
 
     def to_dict(self):
         ret_data = self.__dict__.copy()
@@ -129,7 +128,7 @@ class BaseDataType():
         ret_data = self.__dict__.copy()
 
         for i in self.data.keys():
-            ret_data[i] = getattr(self, i)
+            ret_data[i] = self.data[i]
 
         del ret_data['data']
         del ret_data['message']
@@ -139,19 +138,21 @@ class BaseDataType():
 class DinoStepData(BaseDataType):
 
     type: str = 'dino'
-    data_keys: list[str] = ['add_egg', 'all_dinos', 'send_error']
+    data_keys: list[str] = ['add_egg', 'all_dinos', 'send_error', 'message_key']
 
     def __init__(self, name: Optional[str], 
-                 message: StepMessage, 
+                 message: None, 
                  data: Optional[dict] = None,
                  add_egg: bool = True,
                  all_dinos: bool = True,
-                 send_error: bool = True
+                 send_error: bool = True,
+                 message_key: Optional[str] = None,
                  ) -> None:
-        super().__init__(name, message, data)
+        super().__init__(name, None, data)
         self.add_egg: bool = add_egg
         self.all_dinos: bool = all_dinos
         self.send_error: bool = send_error
+        self.message_key: Optional[str] = message_key
 
 class IntStepData(BaseDataType):
 
