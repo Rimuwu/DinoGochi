@@ -190,8 +190,8 @@ def update_col(transmitted_data):
         transmitted_data['exclude'] = []
     transmitted_data['exclude'].append(item_data['item_id'])
 
-    # Очистка лишних данных
-    transmitted_data['steps'][step-1] = {}
+    # # Очистка лишних данных
+    # transmitted_data['steps'][step-1] = {}
 
     return transmitted_data, True
 
