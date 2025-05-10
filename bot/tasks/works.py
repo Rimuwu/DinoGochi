@@ -26,6 +26,16 @@ data = {
     'sawmill': ['wood']
 }
 
+data_add_chance = {
+    'bank': {},
+    'mine': {
+        'bone': 10
+    },
+    'sawmill': {
+        'twigs_tree': 15
+    }
+}
+
 async def work_task():
     res_list = await long_activity.find(
         {'activity_type': {'$in': ['bank', 'mine', 'sawmill']},
@@ -114,7 +124,7 @@ async def work_task():
                     for group in data[work["activity_type"]]:
                         items_group_ids += get_group(group)
 
-                    random_items = rare_random(items_group_ids, count)
+                    random_items = rare_random(items_group_ids, count, data_add_chance[work["activity_type"]])
 
                     for random_item in random_items:
                         if random_item in work['items']:
