@@ -74,8 +74,8 @@ async def exchange_item(userid: int, chatid: int, item: dict,
     items_data = await items.find({'items_data': item, 
                                    "owner_id": userid}, comment='exchange_item_items_data')
     max_count = 0
-
     for i in items_data: max_count += i['count']
+    if max_count > 1000: max_count = 1000
 
     if items_data:
         item_name = get_name(item['item_id'], lang, item.get("abilities", {}))
@@ -105,7 +105,8 @@ async def exchange_item(userid: int, chatid: int, item: dict,
                 text='css.wait_count',
                 translate_message=True,
                 markup=count_markup(max_count, lang)),
-                autoanswer=False
+                autoanswer=False,
+                max_int=max_count
             ),
             FriendStepData('friend', None,
                 one_element=True
