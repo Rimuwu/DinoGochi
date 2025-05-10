@@ -113,7 +113,7 @@ async def end_choice(option: str, transmitted_data: dict):
                                 reply_markup=buttons)
 
         elif option == 'long':
-            await long_sleep(last_dino, userid, lang)
+            await long_sleep(last_dino._id, userid, lang)
 
     else:
         await bot.send_message(userid, t('alredy_busy', lang),
