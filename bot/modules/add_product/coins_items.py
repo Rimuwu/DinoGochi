@@ -63,8 +63,6 @@ async def order_update_col(transmitted_data):
 
     # Добавление данных для выбора количества
     transmitted_data['exclude'].append(item_data['item_id'])
-    # Очистка лишних данных
-    transmitted_data['steps'][step-1] = {}
 
     return transmitted_data, True
 

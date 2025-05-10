@@ -84,9 +84,6 @@ async def trade_update_col(transmitted_data):
         transmitted_data['steps'][step+1]['message']['markup'] = count_markup(max_count, lang).model_dump()
         transmitted_data['exclude'].append(item_data['item_id'])
 
-        # Очистка лишних данных
-        transmitted_data['steps'][step-1] = {}
-
         return transmitted_data, True
     else: return transmitted_data, False
 
@@ -171,7 +168,7 @@ async def items_items(return_data, transmitted_data):
     for key, item in return_data.items(): transmitted_data[key] = item
 
     inv_items, exclude = generate_items_pages()
-    steps = received_circle(userid, chatid, lang, inv_items, "trade_items", False)
+    steps = received_circle(lang, inv_items, "trade_items")
     transmitted_data['exclude'] = exclude
 
     # await ChooseStepState(stock, userid, chatid, 
@@ -180,7 +177,7 @@ async def items_items(return_data, transmitted_data):
     await ChooseStepHandler(stock, userid, chatid, lang, steps,
                             transmitted_data=transmitted_data).start()
 
-def received_circle(userid, chatid, lang, items, option, prepare: bool = True):
+def received_circle(lang, items, option):
     """ Создаёт данные для круга получения данных ЗАПРАШИВАЕМЫХ предметов
     """
     # not_p_steps = [
@@ -235,8 +232,8 @@ async def received_upd(transmitted_data):
 
     # Добавление данных для выбора количества
     transmitted_data['exclude'].append(item_data['item_id'])
-    # Очистка лишних данных
-    transmitted_data['steps'][step-1] = {}
+    # # Очистка лишних данных
+    # transmitted_data['steps'][step-1] = {}
 
     return transmitted_data, True
 
@@ -292,7 +289,7 @@ async def new_received_circle(transmitted_data):
 
     if add_res:
         items, exclude = generate_items_pages(exclude_ids)
-        steps = received_circle(userid, chatid, lang, items, option)
+        steps = received_circle(lang, items, option)
 
         transmitted_data['exclude'] = exclude
 

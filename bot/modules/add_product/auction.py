@@ -81,9 +81,6 @@ async def update_col(transmitted_data):
         transmitted_data['steps'][step+1]['message']['markup'] = count_markup(max_count, lang).model_dump()
         transmitted_data['exclude'].append(item_data['item_id'])
 
-        # Очистка лишних данных
-        transmitted_data['steps'][step-1] = {}
-
         return transmitted_data, True
     else: return transmitted_data, False
 
