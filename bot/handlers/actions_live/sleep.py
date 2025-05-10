@@ -86,7 +86,11 @@ async def end_choice(option: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
-    last_dino = transmitted_data['last_dino']
+    last_dino_id: ObjectId = transmitted_data['last_dino']
+    last_dino = await Dino().create(last_dino_id)
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup= await m(userid, 'last_menu', lang))
+        return
     
     if not last_dino:
         await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
