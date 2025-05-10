@@ -238,25 +238,27 @@ async def about_menu(message: Message):
 
     iambot = await bot.get_me()
     bot_name = iambot.username
-    col_u, col_d, col_i, update_time = '?', '?', '?', '?'
+    col_u, col_d, col_i, col_g, update_time = '?', '?', '?', '?', '?'
 
     statistic = await get_now_statistic()
     if statistic:
         col_u = statistic['users']
         col_d = statistic['dinosaurs']
         col_i = statistic['items']
+        col_g = statistic['groups']
 
         create = statistic['_id'].generation_time
         now = datetime.now(timezone.utc)
         delta: timedelta = now - create
-        
+
         update_time = seconds_to_str(delta.seconds, lang, True)
 
     photo = 'images/remain/about/menu.png'
     await send_SmartPhoto(message.chat.id, photo, 
             t('menu_text.about', lang, bot_name=bot_name,
               col_u=col_u, col_d=col_d, 
-              col_i=col_i, update_time=update_time), 'HTML',
+              col_i=col_i, col_g=col_g,
+              update_time=update_time), 'HTML',
             await m(userid, 'about_menu', lang)
         )
 
