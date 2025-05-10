@@ -1,12 +1,12 @@
-from math import e
+from email import message
 from time import time
-
-from bson import ObjectId
+from typing import Optional
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
-from bot.modules.images_save import send_SmartPhoto
+from bot.modules.dino_uniqueness import get_dino_uniqueness_factor
+from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
 from bot.modules.items.accessory import check_accessory
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      near_key_number, seconds_to_str)
@@ -23,23 +23,16 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-# from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
-#                                       ChooseOptionState)
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseDinoHandler, ChooseOptionHandler
 from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, premium
 from aiogram import types
 from aiogram.types import Message
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
+from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command
 
 from bot.modules.items.item import get_data as get_item_data
 
@@ -52,7 +45,10 @@ users = DBconstructor(mongo_client.user.users)
 kindergarten_bd = DBconstructor(mongo_client.dino_activity.kindergarten)
 
 
-async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_url):
+async def dino_profile(userid: int, 
+                       chatid:int, dino: Dino, lang: str, 
+                       custom_url, 
+                       message_to_edit: Optional[Message] = None):
     text = ''
 
     text_rare = get_data('rare', lang)
@@ -88,13 +84,17 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
     dino_name = dino.name
     if joint_dino: dino_name += t('p_profile.joint', lang)
 
+    unique = await get_dino_uniqueness_factor(dino.data_id)
+
     kwargs = {
         'em_name': tem['name'], 'dino_name': dino_name,
         'em_status': tem['status'], 'status': status_rep,
         'em_rare': tem['rare'], 'qual': text_rare[dino.quality][1],
-        'em_age': tem['age'], 'age': age
+        'em_age': tem['age'], 'age': age,
+        'em_uniqueness': tem['uniqueness'], 'uniqueness': unique,
     }
 
+    # Первое апреля
     if await check_event('april_1'):
         for k, v in kwargs.items(): 
             if k.startswith('em_'):
@@ -174,9 +174,15 @@ async def dino_profile(userid: int, chatid:int, dino: Dino, lang: str, custom_ur
 
     # затычка на случай если не сгенерируется изображение
     generate_image = 'images/remain/no_generate.png'
-    msg = await send_SmartPhoto(chatid, generate_image, text, 'Markdown', reply_markup=menu)
+    if message_to_edit is None:
+        msg = await send_SmartPhoto(chatid, generate_image, 
+                                    text, 'Markdown', reply_markup=menu)
+    else:
+        msg = await edit_SmartPhoto(chatid, 
+                    message_to_edit.message_id, generate_image, text, 'Markdown', reply_markup=menu)
 
-    await bot.send_message(chatid, t('p_profile.return', lang), reply_markup= await m(userid, 'last_menu', lang))
+    if message_to_edit is None:
+        await bot.send_message(chatid, t('p_profile.return', lang), reply_markup= await m(userid, 'last_menu', lang))
 
     # изменение сообщения с уже нужным изображением
     image = await dino.image(user.settings['profile_view'], custom_url)
@@ -280,123 +286,140 @@ async def dino_menu(call: types.CallbackQuery):
     if dino:
         res = await dino_owners.find_one({'dino_id': dino['_id'], 
                                     'owner_id': userid}, comment='dino_menu')
+        if not res:
+            await bot.send_message(userid, t('p_profile.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+            return
 
-        if res:
-            if action == 'reset_activ_item':
-                activ_items = {}
-                for key, item in enumerate(dino['activ_items']):
-                    if item: 
-                        activ_items[get_name(item['item_id'], 
-                                    lang, item.get('abilities', {}))] = [key, item]
+        if action == 'reset_activ_item':
+            activ_items = {}
+            for key, item in enumerate(dino['activ_items']):
+                if item: 
+                    activ_items[get_name(item['item_id'], 
+                                lang, item.get('abilities', {}))] = [key, item]
 
-                # result, sn = await ChooseOptionState(remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']})
-                result = await ChooseOptionHandler(remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']}).start()
+            # result, sn = await ChooseOptionState(remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']})
+            result = await ChooseOptionHandler(remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']}).start()
 
-                if result:
-                    reply_buttons = [list(activ_items.keys()), [t(f'buttons_name.cancel', lang)]]
+            if result:
+                reply_buttons = [list(activ_items.keys()), [t(f'buttons_name.cancel', lang)]]
 
-                    reply = list_to_keyboard(reply_buttons, 2)
-                    text = t('remove_accessory.choose_item', lang)
-                    await bot.send_message(userid, text, reply_markup=reply)
+                reply = list_to_keyboard(reply_buttons, 2)
+                text = t('remove_accessory.choose_item', lang)
+                await bot.send_message(userid, text, reply_markup=reply)
 
-            elif action == 'mood_log':
-                mood_list = await dino_mood.find(
-                    {'dino_id': dino['_id']}, comment='dino_profile_dino_profile')
-                mood_dict, text, event_text = {}, '', ''
-                res, event_end = 0, 0
+        elif action == 'mood_log':
+            mood_list = await dino_mood.find(
+                {'dino_id': dino['_id']}, comment='dino_profile_dino_profile')
+            mood_dict, text, event_text = {}, '', ''
+            res, event_end = 0, 0
 
-                for mood in mood_list:
-                    if mood['type'] not in ['breakdown', 'inspiration']:
-                    
-                        key = mood['action']
-                        if key not in mood_dict:
-                            mood_dict[key] = {'col': 1, 'unit': mood['unit']}
-                        else:
-                            mood_dict[key]['col'] += 1
-                        res += mood['unit']
-
+            for mood in mood_list:
+                if mood['type'] not in ['breakdown', 'inspiration']:
+                
+                    key = mood['action']
+                    if key not in mood_dict:
+                        mood_dict[key] = {'col': 1, 'unit': mood['unit']}
                     else:
-                        event_text = t(f'mood_log.{mood["type"]}.{mood["action"]}', lang)
-                        event_end = mood['end_time'] -mood['start_time'] 
+                        mood_dict[key]['col'] += 1
+                    res += mood['unit']
 
-                text = t('mood_log.info', lang, result=res)
-                if event_text: 
-                    event_time = seconds_to_str(event_end, lang, True)
-                    text += t('mood_log.event_info', lang, action=event_text, event_time=event_time)
+                else:
+                    event_text = t(f'mood_log.{mood["type"]}.{mood["action"]}', lang)
+                    event_end = mood['end_time'] -mood['start_time'] 
 
+            text = t('mood_log.info', lang, result=res)
+            if event_text: 
+                event_time = seconds_to_str(event_end, lang, True)
+                text += t('mood_log.event_info', lang, action=event_text, event_time=event_time)
+
+            text += '\n'
+
+            for key, data_m in mood_dict.items():
+                em = '💚'
+                if data_m['unit'] <= 0: em = '💔'
+                act = t(f'mood_log.{key}', lang)
+                
+                unit = str(data_m['unit'] * data_m['col'])
+                if data_m['unit'] > 0: unit = '+'+unit
+
+                text += f'{em} {act}: `{unit}` '
+                if data_m['col'] > 1: text += f'x{data_m["col"]}'
                 text += '\n'
 
-                for key, data_m in mood_dict.items():
-                    em = '💚'
-                    if data_m['unit'] <= 0: em = '💔'
-                    act = t(f'mood_log.{key}', lang)
-                    
-                    unit = str(data_m['unit'] * data_m['col'])
-                    if data_m['unit'] > 0: unit = '+'+unit
+            await bot.send_message(userid, text, parse_mode='Markdown')
 
-                    text += f'{em} {act}: `{unit}` '
-                    if data_m['col'] > 1: text += f'x{data_m["col"]}'
-                    text += '\n'
+        elif action == 'joint_cancel':
+            # Октазать от совместного динозавра
+            text = t('cancle_joint.confirm', lang)
+            await bot.send_message(userid, text, parse_mode='Markdown', reply_markup=confirm_markup(lang))
+            # await ChooseConfirmState(cnacel_joint, userid, chatid, lang, transmitted_data={'dinoid': dino['_id']})
+            await ChooseConfirmHandler(cnacel_joint, userid, chatid, lang, transmitted_data={'dinoid': dino['_id']}).start()
 
-                await bot.send_message(userid, text, parse_mode='Markdown')
+        elif action == 'my_joint_cancel':
+            # Октазать от совместного динозавра
+            text = t('my_joint.confirm', lang)
+            await bot.send_message(userid, text, parse_mode='Markdown', reply_markup=confirm_markup(lang))
+            # await ChooseConfirmState(cnacel_myjoint, userid, chatid, lang, transmitted_data={
+            #     'dinoid': dino['_id'], 
+            #     'user': call.from_user})
+            await ChooseConfirmHandler(cnacel_myjoint, userid, chatid, lang, transmitted_data={
+                'dinoid': dino['_id'], 
+                'user': call.from_user.id}).start()
 
-            elif action == 'joint_cancel':
-                # Октазать от совместного динозавра
-                text = t('cancle_joint.confirm', lang)
-                await bot.send_message(userid, text, parse_mode='Markdown', reply_markup=confirm_markup(lang))
-                # await ChooseConfirmState(cnacel_joint, userid, chatid, lang, transmitted_data={'dinoid': dino['_id']})
-                await ChooseConfirmHandler(cnacel_joint, userid, chatid, lang, transmitted_data={'dinoid': dino['_id']}).start()
+        elif action == 'kindergarten':
+            if not await premium(userid): 
+                text = t('no_premium', lang)
+                await bot.send_message(userid, text)
+            else:
+                total, end = await check_hours(userid)
+                hours = await hours_now(userid)
+                text = t('kindergarten.info', lang,
+                            hours_now=m_hours - total,
+                            remained=total,
+                            days=seconds_to_str(end - int(time()), lang, False, 'hour'),
+                            hours=hours, remained_today=6
+                            )
 
-            elif action == 'my_joint_cancel':
-                # Октазать от совместного динозавра
-                text = t('my_joint.confirm', lang)
-                await bot.send_message(userid, text, parse_mode='Markdown', reply_markup=confirm_markup(lang))
-                # await ChooseConfirmState(cnacel_myjoint, userid, chatid, lang, transmitted_data={
-                #     'dinoid': dino['_id'], 
-                #     'user': call.from_user})
-                await ChooseConfirmHandler(cnacel_myjoint, userid, chatid, lang, transmitted_data={
-                    'dinoid': dino['_id'], 
-                    'user': call.from_user.id}).start()
-
-            elif action == 'kindergarten':
-                if not await premium(userid): 
-                    text = t('no_premium', lang)
-                    await bot.send_message(userid, text)
+                if await check_status(dino['_id']) == 'kindergarten':
+                    reply_buttons = list_to_inline([
+                        {
+                            t('kindergarten.cancel_name', lang): f'kindergarten stop {alt_key}'
+                        }])
                 else:
-                    total, end = await check_hours(userid)
-                    hours = await hours_now(userid)
-                    text = t('kindergarten.info', lang,
-                             hours_now=m_hours - total,
-                             remained=total,
-                             days=seconds_to_str(end - int(time()), lang, False, 'hour'),
-                             hours=hours, remained_today=6
-                             )
+                    reply_buttons = list_to_inline([
+                        {
+                            t('kindergarten.button_name', lang): f'kindergarten start {alt_key}'
+                        }])
+                await bot.send_message(userid, text, parse_mode='Markdown', 
+                                        reply_markup=reply_buttons)
+        
+        elif action == 'backgrounds_menu':
+            await bot.send_message(chatid, t('menu_text.backgrounds_menu', lang), 
+                        reply_markup= await m(userid, 'backgrounds_menu', lang))
 
-                    if await check_status(dino['_id']) == 'kindergarten':
-                        reply_buttons = list_to_inline([
-                            {
-                                t('kindergarten.cancel_name', lang): f'kindergarten stop {alt_key}'
-                            }])
-                    else:
-                        reply_buttons = list_to_inline([
-                            {
-                                t('kindergarten.button_name', lang): f'kindergarten start {alt_key}'
-                            }])
-                    await bot.send_message(userid, text, parse_mode='Markdown', 
-                                           reply_markup=reply_buttons)
-            
-            elif action == 'backgrounds_menu':
-                await bot.send_message(chatid, t('menu_text.backgrounds_menu', lang), 
-                           reply_markup= await m(userid, 'backgrounds_menu', lang))
+        elif action == 'skills':
+            await skills_profile(dino, lang, call.message)
 
-            elif action == 'skills':
-                await skills_profile(userid, chatid, dino, lang)
+        elif action == 'main_message':
+            dino = await Dino().create(alt_key)
+            if dino:
+                if dino.profile['background_type'] == 'custom' and await premium(userid):
+                    custom_url = dino.profile['background_id']
 
-async def skills_profile(userid, chatid, dino_data: dict, lang):
+                if dino.profile['background_type'] == 'saved':
+                    idm = dino.profile['background_id']
+                    custom_url = await async_open(f'images/backgrounds/{idm}.png')
+                
+                # await dino_profile(userid, chatid, dino, lang)
+                await dino_profile(userid, chatid, dino, lang, custom_url, 
+                                    call.message)
+
+async def skills_profile(dino_data: dict, lang, message: Message):
     dino = await Dino().create(dino_data['_id'])
     if not dino:
-        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        await bot.send_message(message.chat.id, t('skills_profile.error', lang))
         return
+
     age = await dino.age()
     image = await create_skill_image(dino.data_id, 
                                      age.days, lang, dino.stats)
@@ -409,8 +432,20 @@ async def skills_profile(userid, chatid, dino_data: dict, lang):
         data_skills[i+'_u'] = round(dino.stats[i], 4)
 
     text = t('skills_profile.info', lang, **data_skills)
-    await bot.send_photo(chatid, image,
-                         caption=text, parse_mode='Markdown')
+
+    markup = list_to_inline([
+        {
+            t('skills_profile.button_name', lang): f'dino_menu main_message {dino.alt_id}'
+        }
+    ])
+
+    await message.edit_media(
+        types.InputMediaPhoto(
+            media=image, parse_mode='Markdown', caption=text),
+        reply_markup=markup
+    )
+    # await bot.send_photo(chatid, image,
+    #                      caption=text, parse_mode='Markdown')
 
 
 async def cnacel_joint(_:bool, transmitted_data:dict):
