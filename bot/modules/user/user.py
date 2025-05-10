@@ -369,7 +369,7 @@ async def award_premium(userid:int, end_time):
     user_doc = await subscriptions.find_one({'userid': userid}, comment='award_premium_user_doc')
     if user_doc:
         if type(user_doc['sub_end']) == str and type(end_time) == int:
-            user_doc['sub_end'] = int(time()) + end_time
+            pass
         elif type(end_time) == str:
             user_doc['sub_end'] = end_time
         elif type(end_time) == int:
