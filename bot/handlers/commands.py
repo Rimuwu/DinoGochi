@@ -124,7 +124,7 @@ async def help(message: Message):
     await add_message(chatid, mes.message_id)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('help'), IsPrivateChat())
+@main_router.callback_query(F.data.startswith('help'))
 async def help_query(call: CallbackQuery):
     split_d = call.data.split()
     page = int(split_d[1])
