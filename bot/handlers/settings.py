@@ -202,7 +202,8 @@ async def rename_dino(message: Message):
     lang = await get_lang(message.from_user.id)
 
     # await ChooseDinoState(transition, userid, message.chat.id, lang, False)
-    await ChooseDinoHandler(transition, userid, message.chat.id, lang, False).start()
+    await ChooseDinoHandler(transition, userid, 
+                            message.chat.id, lang, False).start()
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('rename_dino'), IsAuthorizedUser())
@@ -221,7 +222,7 @@ async def rename_button(callback: CallbackQuery):
     if not dino:
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
         return
-    await transition((dino._id, 'Dino'), trans_data)
+    await transition(dino._id, trans_data)
 
 async def adapter_delete(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
@@ -417,7 +418,6 @@ async def my_nick_set(nick: str, transmitted_data: dict):
     chatid = transmitted_data['chatid']
 
     nick = escape_markdown(nick)
-    print(list(nick))
     for i in list(nick):
         if i in ['\n', '\r', '\t', ' ', 'ᅠ']:
             nick = nick.replace(i, ' ')

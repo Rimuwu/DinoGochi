@@ -38,9 +38,7 @@ async def create_company_com(message: Message):
     lang = await get_lang(message.from_user.id)
 
     await new_cycle(userid, chatid, lang,
-                    {'message': {},
-                     'delete_steps': True
-                     }
+                    {'message': {}}
                     )
 
 async def new_cycle(userid, chatid, lang, transmitted_data):

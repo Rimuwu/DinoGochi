@@ -119,12 +119,14 @@ async def create_market(message: Message):
         # ]
         
         steps = [
-            CustomStepData('name', StepMessage('market_create.name',
+            CustomStepData('name', StepMessage(
+                'market_create.name',
                 markup=cancel_markup(lang), 
                 translate_message=True),
                 custom_handler=custom_name, 
             ),
-            StringStepData('description', StepMessage('market_create.description',
+            StringStepData('description', StepMessage(
+                'market_create.description',
                 markup=cancel_markup(lang), 
                 translate_message=True),
                 max_len=500, 
@@ -244,6 +246,8 @@ async def product_info(call: CallbackQuery):
 
                         if image:
                             await send_SmartPhoto(chatid, image, text, 'Markdown')
+                        else:
+                            await bot.send_message(chatid, text, parse_mode='Markdown')
 
             elif call_type == 'buy' and product['owner_id'] != userid:
                 if product['owner_id'] != userid:

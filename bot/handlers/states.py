@@ -242,7 +242,7 @@ async def ChooseCustom(message: Message):
 
     handler = ChooseCustomHandler(**data)
 
-    result, answer = await handler.call_custom_handler() # Обязан возвращать bool, Any
+    result, answer = await handler.call_custom_handler(message) # Обязан возвращать bool, Any
 
     if result:
         if 'steps' in transmitted_data and 'process' in transmitted_data:
@@ -368,6 +368,9 @@ async def ChooseOptionPages(message: Message):
 @main_router.callback_query(StateFilter(GeneralStates.ChooseInline), IsAuthorizedUser(), 
                             F.data.startswith('chooseinline'))
 async def ChooseInline(callback: CallbackQuery):
+    """
+    chooseinline <custom_code> <data>
+    """
     code = callback.data.split()
 
     state = await get_state(callback.from_user.id, callback.message.chat.id)
@@ -464,7 +467,7 @@ async def ChooseImage(message: Message):
     state = await get_state(userid, message.chat.id)
 
     if state and (data := await state.get_data()):
-        func = dat['function']
+        func = data['function']
         transmitted_data = data.get('transmitted_data', {})
 
         await state.clear()

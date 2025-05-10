@@ -353,11 +353,10 @@ async def joint_dinosaur(call: CallbackQuery):
             'joint_dinosaur.check', markup=confirm_markup(lang), translate_message=True),
             cancel=True
         ),
-        
-        DinoStepData('dino', StepMessage(
-            'joint_dinosaur.dino', markup=confirm_markup(lang), translate_message=True),
+
+        DinoStepData('dino', None,
             add_egg=False, all_dinos=False
-        ),
+        )
     ]
 
     # await ChooseStepState(joint, userid, chatid, lang, steps, 

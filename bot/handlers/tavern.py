@@ -190,7 +190,13 @@ async def edit_appearance(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
-    dino: Dino = return_data['dino']
+    dino_id: ObjectId = return_data['dino']
+    dino = await Dino().create(dino_id)
+    if not dino:
+        text = t('css.no_dino', lang)
+        await bot.send_message(chatid, text, parse_mode='Markdown', 
+                               reply_markup= await m(userid, 'last_menu', lang))
+        return
 
     coins_st = await take_coins(userid, -GS['change_appearance']['coins'])
     if coins_st:
@@ -281,9 +287,15 @@ async def dino_now(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
-    dino: Dino = return_data['dino']
+    dino_id: ObjectId = return_data['dino']
     o_type = transmitted_data['type']
     
+    dino = await Dino().create(dino_id)
+    if not dino:
+        text = t('css.no_dino', lang)
+        await bot.send_message(chatid, text, parse_mode='Markdown',
+                                reply_markup= await m(userid, 'last_menu', lang))
+        return
 
     text = t(f'edit_dino.{o_type}', lang)
     buttons = {}
@@ -306,7 +318,14 @@ async def reset_chars(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
-    dino: Dino = return_data['dino']
+    dino_id: ObjectId = return_data['dino']
+    dino = await Dino().create(dino_id)
+
+    if not dino:
+        text = t('css.no_dino', lang)
+        await bot.send_message(chatid, text, parse_mode='Markdown', 
+                               reply_markup= await m(userid, 'last_menu', lang))
+        return
 
     coins_st = await take_coins(userid, -GS['reset_chars']['coins'])
     if coins_st:
@@ -349,8 +368,8 @@ async def transformation(callback: CallbackQuery):
     # ]
     
     steps: list[DataType] = [
-        DinoStepData('dino', StepMessage('edit_dino.dino', None, True),
-                     add_egg=False)
+        DinoStepData('dino', None, message_key='edit_dino.dino',
+        add_egg=False)
     ]
     
     ret_f = dino_now

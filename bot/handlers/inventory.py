@@ -12,7 +12,7 @@ from bot.modules.items.item import (CheckCountItemFromUser, CheckItemFromUser,
                               RemoveItemFromUser, counts_items, decode_item, get_items_names)
 from bot.modules.items.item import get_data as get_item_data
 from bot.modules.items.item import get_item_dict, get_name
-from bot.modules.items.item_tools import (AddItemToUser, CheckItemFromUser,
+from bot.modules.items.item_tools import (AddItemToUser,
                                     book_page, data_for_use_item,
                                     delete_item_action, exchange_item)
 from bot.modules.items.time_craft import add_time_craft
