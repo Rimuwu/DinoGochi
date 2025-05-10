@@ -248,7 +248,7 @@
             },
             "timer": {
                 "name": "⏲ Temporizador",
-                "description": "Te permite saber cuánto durará el juego."
+                "description": "Permite saber cuánto tiempo durará el juego."
             },
             "wild_boar_meat": {
                 "name": "🍖 Carne de jabalí"
@@ -386,7 +386,7 @@
             },
             "soup_recipe": {
                 "name": "📜 Receta de sopa",
-                "description": "'Los peces viven en el agua, ¿por qué los como secos?' - Eso es lo que probablemente piensen todos los dinosaurios, solo que aún no han probado la sopa de pescado."
+                "description": "Así piensa, probablemente, cada dinosaurio, ¡eso es porque aún no ha probado la sopa de pescado!"
             },
             "board_games": {
                 "name": "🧩 Juegos de mesa",
@@ -429,7 +429,7 @@
             },
             "taco_recipe": {
                 "name": "📜 Receta de tacos",
-                "description": "¡Tacos, una comida magnífica que adoran todos los dinosaurios de todas las especies!"
+                "description": "¡El taco es una comida excelente que adoran todos los dinosaurios de cualquier tipo!"
             },
             "sword_recipe": {
                 "name": "📜 Receta de espada",
@@ -545,7 +545,7 @@
             },
             "cake_recipe": {
                 "name": "📜 Receta de pastel",
-                "description": "Receta para hacer un gran pastel. El pastel es una mentira"
+                "description": "Receta para hacer un gran pastel. El pastel es una mentira."
             },
             "curry": {
                 "name": "🍛 Curry"
@@ -651,7 +651,7 @@
             },
             "book_lost-islands": {
                 "name": "📔 Libro de las Islas",
-                "description": "Un libro de un aventurero olvidado. Habla de las islas perdidas."
+                "description": "El libro de un buscador de aventuras desde hace mucho tiempo olvidado. Habla sobre islas perdidas."
             },
             "book_desert": {
                 "name": "📔 El Libro del Desierto",
@@ -856,7 +856,7 @@
             },
             "bag_goodies_recipe": {
                 "name": "📜 Bolsa con golosinas",
-                "description": "Receta para crear un almacén de golosinas."
+                "description": "Receta para crear un almacenamiento para deliciosos."
             },
             "rubik_cube_recipe": {
                 "name": "📜 Cubo de Rubik",
@@ -1000,6 +1000,9 @@
             },
             "easter_egg": {
                 "name": "🍰 Huevo de Pascua"
+            },
+            "corrupted_document": {
+                "name": "📄 Documento dañado"
             }
         },
         "notifications": {
@@ -1248,7 +1251,7 @@
                 "went": "🍺 {name} fue a la taberna...",
                 "button": "🍻 Comprar cerveza por 150 🪙"
             },
-            "about": "🤖 | ¡Hola! Soy @{bot_name}, ¡y aquí hay información sobre mí! \n\n🗝️ | Estadísticas: 👥 <code>{col_u}</code> 🦕 <code>{col_d}</code> 🔮 <code>{col_i}</code>\n<i>{update_time} ago. </i>",
+            "about": "🤖 | ¡Hola! Soy @{bot_name}, ¡y aquí hay información sobre mí! \n\n🗝️ | Estadísticas: 👥 <code>{col_u}</code> 🦕 <code>{col_d}</code> 🔮 <code>{col_i}</code> 🌐 <code>{col_g}</code>\n\n<i>{update_time} ago. </i>",
             "referal": "🤍 | ¡Redirige al menú del sistema de referidos! \n\n💜 | *Al alcanzar el nivel {lvl}* tu amigo, obtendrás {award_text}! \n\n❤️ | Un amigo recibirá un bono por la cantidad de: {coins} monedas, {items}",
             "referal_separator": " o",
             "settings2": "🔧 | Menú de configuración (página 2)\n\n🦕 Acceso: {my_name}",
@@ -1585,6 +1588,15 @@
                     "dev": false,
                     "dm": false,
                     "group": true
+                },
+                "give_coins": {
+                    "short": "Transferencia de la moneda al jugador",
+                    "long": "🧨 Transferencia de monedas al usuario. Se requiere una respuesta obligatoria al mensaje.",
+                    "arguments": "(monedas)",
+                    "dev": false,
+                    "dm": false,
+                    "group": true,
+                    "alternative": "transferir monedas"
                 }
             }
         },
@@ -1861,7 +1873,7 @@
                     "0": "*└* __I estoy locamente cansada :(__"
                 }
             },
-            "profile_text": "{em_name}*┌* Nombre: {dino_name}\n{em_status}*├* Estado: {status}\n{em_rare}*├* Rareza: {qual}\n{em_age}*└* Edad: {age}",
+            "profile_text": "Nombre: {dino_name}\n{em_status} Estatus: {status}\n{em_rare} Rareza: {qual}\n{em_age} Edad: {age}\n{em_uniqueness} Unicidad: {uniqueness}",
             "journey": {
                 "text": "{em_journey_act} *┌* Viajes",
                 "info": "🏮 *├* Ubicación: {location}\n⌛ *├* Viajes {journey_time}\n🍭 *└* Eventos: {col}"
@@ -2602,7 +2614,7 @@
             },
             "dino_join": "🦕 ¡El dinosaurio {dinoname} se ha unido al juego!",
             "join_end": "🦕 ¡El dinosaurio ya ha dejado de jugar!",
-            "zero": "🎮 El dinosaurio elegirá cuánto jugará en este intervalo. \n\n⏲ Si el dinosaurio tiene un temporizador en los elementos activos, podrás ver cuánto tiempo queda hasta el final del juego."
+            "zero": "El dinosaurio elegirá por sí mismo cuánto tiempo jugará en este intervalo. Si el dinosaurio tiene un temporizador en los objetos activos, se podrá saber en el perfil cuánto tiempo queda hasta el final del juego."
         },
         "stop_game": {
             "dislike": "🎮 | Al dinosaurio no le gustaba mucho jugar, no pierde el ánimo.",
@@ -2926,13 +2938,13 @@
                 "🔮 Aceptar",
                 "💥 Rechazar"
             ],
-            "max_owners": "🦕 | ¡Un dinosaurio no puede tener más de 2 huéspedes!",
+            "max_owners": "¡Un dinosaurio no puede tener más de 2 dueños!",
             "max_dino": "🎋 | ¡Este usuario ya tiene un dinosvr articulado!",
             "ok": "🎮 | ¡La oferta ha sido enviada al usuario!"
         },
         "take_dino": {
             "max_dino": "🎋 | ¡Ya tenéis un dinosaurio juntos!",
-            "max_owners": "🦕 | ¡Un dinosaurio no puede tener más de 2 huéspedes!",
+            "max_owners": "¡Un dinosaurio no puede tener más de 2 dueños!",
             "ok": "🦕 | ¡Felicidades! ¡Ahora {dinoname} está disponible en tu lista de dinosaurios!",
             "message_to_owner": "🦕 | ¡{username} ahora puedes controlar a tu dinosaurio {dinoname}!"
         },
@@ -4423,7 +4435,7 @@
         "no_dinos": "⚡ ¡No puedes usar esta función porque no tienes dinosaurios! \n✨ Para obtener información sobre primas, escriba /premium",
         "buyer": {
             "choose": "👑 El comprador le da la bienvenida, en este momento está listo para comprarle el producto en una proporción de `{emoji} x{one_col} = {price} 🪙`",
-            "ok": "🎏 Dinero transferido a tu cuenta, vuelve de nuevo.",
+            "ok": "Las monedas han sido transferidas a tu cuenta, ¡vuelve pronto!",
             "no": "✨ No tienes suficientes artículos en tu inventario."
         },
         "standart_background": "🗝️ El fondo del perfil se ha establecido en estándar.",
@@ -4786,7 +4798,8 @@
                 "18": "Carisma de época, cambia el entorno.",
                 "19": "El carisma legendario permanece en la memoria.",
                 "20": "Carisma absoluto, la encarnación del atractivo."
-            }
+            },
+            "button_name": "Sobre un dinosaurio"
         },
         "inside_shop": {
             "info": "📦 ¿Interesado en el producto? ¡Entonces échale un vistazo por ti mismo! \n\n",
@@ -4875,6 +4888,15 @@
             },
             "no_delete_rights": "❌ ¡El bot debe tener derecho a eliminar mensajes!",
             "delete_all_messages": "🗑 ¡Todos los mensajes del bot en el grupo han sido eliminados!"
+        },
+        "group_transfer": {
+            "question": "¿Está seguro de que desea transferir {coins} monedas al usuario {user_name}?",
+            "no_num": "¡El segundo argumento debe indicar la cantidad de monedas!",
+            "no_reply": "¡Responde al mensaje del usuario al que deseas enviar monedas!",
+            "answer_no": "La operación ha sido cancelada...",
+            "answer_yes": "¡Las monedas han sido enviadas! Recibí monedas.",
+            "no_coins": "¡La operación ha fallado, {self_username} no tiene suficientes monedas para la transferencia!",
+            "no_user": "❌ | ¡Uno de los participantes de la transacción no tiene cuenta en el bot!"
         }
     }
 }

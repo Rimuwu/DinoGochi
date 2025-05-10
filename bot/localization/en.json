@@ -248,7 +248,7 @@
             },
             "timer": {
                 "name": "⏲ Timer",
-                "description": "Allows you to find out how long the game will last."
+                "description": "It allows you to know how long the game will last."
             },
             "wild_boar_meat": {
                 "name": "🍖 Wild boar meat"
@@ -386,7 +386,7 @@
             },
             "soup_recipe": {
                 "name": "📜 Soup Recipe",
-                "description": "'Fish live in water, why do I eat it dry?' - That's what every dinosaur probably thinks, he just hasn't tasted fish soup yet."
+                "description": "That's probably what every dinosaur thinks, it's because it hasn't tried fish soup yet!"
             },
             "board_games": {
                 "name": "🧩 Table Games",
@@ -429,7 +429,7 @@
             },
             "taco_recipe": {
                 "name": "📜 Taco Recipe",
-                "description": "Tacos, a superb food that all dinosaurs of all species adore!"
+                "description": "Tacos are excellent food that all dinosaurs of any kind love!"
             },
             "sword_recipe": {
                 "name": "📜 Sword Recipe",
@@ -545,7 +545,7 @@
             },
             "cake_recipe": {
                 "name": "📜 Cake Recipe",
-                "description": "Recipe for making a big cake. Cake is a lie"
+                "description": "A recipe for making a big cake. The cake is a lie."
             },
             "curry": {
                 "name": "🍛 Curry"
@@ -651,7 +651,7 @@
             },
             "book_lost-islands": {
                 "name": "📔 The Book of the Islands",
-                "description": "A book by a long-forgotten adventurer. He tells about the lost islands."
+                "description": "A book by a long-forgotten adventurer. It tells about the lost islands."
             },
             "book_desert": {
                 "name": "📔 The Book of the Desert",
@@ -856,7 +856,7 @@
             },
             "bag_goodies_recipe": {
                 "name": "📜 Bag with goodies",
-                "description": "Recipe for creating a storage for goodies."
+                "description": "Recipe for creating a stash for treats."
             },
             "rubik_cube_recipe": {
                 "name": "📜 Rubik's Cube",
@@ -1000,6 +1000,9 @@
             },
             "easter_egg": {
                 "name": "🍰 Easter Egg"
+            },
+            "corrupted_document": {
+                "name": "📄 Spoiled document"
             }
         },
         "notifications": {
@@ -1248,7 +1251,7 @@
                 "went": "🍺 {name} went to the tavern...",
                 "button": "🍻 Buy ale for 150 🪙"
             },
-            "about": "🤖 | Hello! I'm @{bot_name}, but here's some information about me! \n\n 🗝️ | Stats: 👥 <code> {col_u} </code> 🦕 <code> {col_d} </code> 🔮 <code> {col_i} </code> \n <i> {update_time} Back. </i>",
+            "about": "Hello! I am @{bot_name}, and here is a little information about me!\n\n🗝️ | Statistics:\n× 👥 Players <code>{col_u}</code>\n× 🦕 Dinosaurs <code>{col_d}</code>\n× 🔮 Items <code>{col_i}</code>\n× 🌐 Groups <code>{col_g}</code>\n\n<i>{update_time} back.</i>",
             "referal": "🤍 | Redirect to the referral system menu! \n\n 💜 | *Upon reaching level {lvl}* your friend, you'll get {award_text}! \n\n ❤️ | A friend will receive a bonus in the amount of: {coins} coins, {items}",
             "referal_separator": " or",
             "settings2": "🔧 | Settings Menu (Page 2)\n\n 🦕 Address: {my_name}",
@@ -1585,6 +1588,15 @@
                     "dev": false,
                     "dm": false,
                     "group": true
+                },
+                "give_coins": {
+                    "short": "Transfer of the coin to the player",
+                    "long": "🧨 Transferring coins to the user. A mandatory response to the message is required.",
+                    "arguments": "(coins)",
+                    "dev": false,
+                    "dm": false,
+                    "group": true,
+                    "alternative": "transfer coins"
                 }
             }
         },
@@ -1862,7 +1874,7 @@
                     "0": "*└* __I'm insanely tired :(__"
                 }
             },
-            "profile_text": "{em_name} *┌* Name: {dino_name} \n {em_status} *├* Status: {status} \n {em_rare} *├* Rarity: {qual} \n {em_age} *└* Age: {age}",
+            "profile_text": "Name: {dino_name}\n{em_status} Status: {status}\n{em_rare} Rarity: {qual}\n{em_age} Age: {age}\n{em_uniqueness} Uniqueness: {uniqueness}",
             "journey": {
                 "text": "{em_journey_act} *┌* Journey",
                 "info": "🏮 *├* Location: {location} \n ⌛ *├* Travels {journey_time} \n 🍭 *└* Events: {col}"
@@ -2603,7 +2615,7 @@
             },
             "dino_join": "🦕 Dinosaur {dinoname} has joined the game!",
             "join_end": "🦕 The dinosaur has already stopped playing!",
-            "zero": "🎮 The dinosaur itself will choose how much it will play in this interim. \n\n ⏲ If the dinosaur has a timer in active items, you will be able to find out how much time is left until the end of the game in the profile."
+            "zero": "The dinosaur will choose how long to play within this timeframe. If the dinosaur has a timer on active items, one can find out how much time is left until the end of the game in the profile."
         },
         "stop_game": {
             "dislike": "🎮 | The dinosaur didn't really like to play, he doesn't lose his spirits.",
@@ -2927,13 +2939,13 @@
                 "🔮 Accept",
                 "💥 Refuse"
             ],
-            "max_owners": "🦕 | A dinosaur can't have more than 2 hosts!",
+            "max_owners": "A dinosaur cannot have more than 2 owners!",
             "max_dino": "🎋 | This user already has a dinosaur together!",
             "ok": "🎮 | The offer has been sent to the user!"
         },
         "take_dino": {
             "max_dino": "🎋 | You already have a dinosaur together!",
-            "max_owners": "🦕 | A dinosaur can't have more than 2 hosts!",
+            "max_owners": "A dinosaur cannot have more than 2 owners!",
             "ok": "🦕 | Congratulations! {dinoname} is now available on your dinosaur list!",
             "message_to_owner": "🦕 | {username} can now control your dinosaur {dinoname}!"
         },
@@ -4198,7 +4210,7 @@
                 "coins_items": "🎨 How many times can the order be executed\n\n_For example, if you specify 2 and you want to exchange 2 carrots for 100 coins in the reader, you will spend a total of 400 coins for 4 carrots._",
                 "items_items": "🎨 Specify the number of times you can share resources."
             },
-            "time_end": "🎩 Specify the end time of the auction, you are required to enter the time in the form of text. \n\n ⏰ Write '/string_to_sec' to receive a memo.",
+            "time_end": "🎩 Specify the end time of the auction, you are required to enter the time in the form of text. \n\n ⏰ Write `/string_to_sec` to receive a memo.",
             "min_add": "☄ Specify the minimum bid, this is the number by which the minimum person must raise the price in order to participate in the auction.",
             "few_coins": "❌ You don't have enough {coins} coins to place a buy order!",
             "all_good": "🎩 Your product is on the market!",
@@ -4423,7 +4435,7 @@
         "no_dinos": "⚡ You can't use this feature because you don't have any dinosaurs! \n ✨ For premium information, type /premium",
         "buyer": {
             "choose": "👑 The buyer welcomes you, right now he is ready to buy the goods from you in the ratio of `{emoji} x{one_col} = {price} 🪙`",
-            "ok": "🎏 The money has been transferred to your account, come back again.",
+            "ok": "Coins have been transferred to your account, come back again!",
             "no": "✨ You don't have enough items in your inventory."
         },
         "standart_background": "🗝️ The profile background has been set to standard.",
@@ -4786,7 +4798,8 @@
                 "18": "Epochal charisma, changes the environment.",
                 "19": "The legendary charisma remains in the memory.",
                 "20": "Absolute charisma, the embodiment of attractiveness."
-            }
+            },
+            "button_name": "About the dinosaur"
         },
         "inside_shop": {
             "info": "📦 Interested in the product? Then take a look at it for yourself! \n\n",
@@ -4875,6 +4888,15 @@
             },
             "no_delete_rights": "❌ The bot must have the right to delete messages!",
             "delete_all_messages": "🗑 All messages from the bot in the group have been deleted!"
+        },
+        "group_transfer": {
+            "question": "🌐 | {self_username}, Are you sure you want to transfer {coins} coins to user {user_name}?",
+            "no_num": "You need to specify the number of coins as the second argument!",
+            "no_reply": "Reply to the message of the user to whom you want to transfer coins!",
+            "answer_no": "The operation has been canceled...",
+            "answer_yes": "Coins have been sent! Received 3636 coins.",
+            "no_coins": "❌ | The operation failed, {self_username} does not have enough coins for the transfer!",
+            "no_user": "One of the participants in the transaction does not have an account in the bot!"
         }
     }
 }

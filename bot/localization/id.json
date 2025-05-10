@@ -248,7 +248,7 @@
             },
             "timer": {
                 "name": "⏲ Timer",
-                "description": "Memungkinkan Anda mengetahui berapa lama permainan akan berlangsung."
+                "description": "Memberikan kesempatan untuk mengetahui berapa lama permainan akan berlangsung."
             },
             "wild_boar_meat": {
                 "name": "🍖 Daging babi hutan"
@@ -386,7 +386,7 @@
             },
             "soup_recipe": {
                 "name": "📜 Resep Sup",
-                "description": "'Ikan hidup di air, mengapa saya memakannya kering?' - Itulah yang mungkin dipikirkan setiap dinosaurus, dia hanya belum mencicipi sup ikan."
+                "description": "Nah, mungkin itulah yang dipikirkan setiap dinosaurus, itu karena dia belum mencoba sup ikan!"
             },
             "board_games": {
                 "name": "🧩 Permainan Meja",
@@ -429,7 +429,7 @@
             },
             "taco_recipe": {
                 "name": "📜 Resep taco",
-                "description": "Taco, makanan luar biasa yang disukai semua dinosaurus dari semua spesies!"
+                "description": "Taco - makanan yang luar biasa, yang disukai semua dinosaurus dari segala jenis!"
             },
             "sword_recipe": {
                 "name": "📜 Resep Pedang",
@@ -545,7 +545,7 @@
             },
             "cake_recipe": {
                 "name": "📜 Resep Kue",
-                "description": "Resep untuk membuat kue besar. Kue itu bohong"
+                "description": "Resep membuat kue besar. Kue adalah kebohongan."
             },
             "curry": {
                 "name": "🍛 Kari"
@@ -651,7 +651,7 @@
             },
             "book_lost-islands": {
                 "name": "📔 Kitab Kepulauan",
-                "description": "Sebuah buku karya petualang yang sudah lama terlupakan. Dia bercerita tentang pulau-pulau yang hilang."
+                "description": "Buku tentang pencari petualangan yang sudah lama terlupakan. Menceritakan tentang pulau-pulau yang hilang."
             },
             "book_desert": {
                 "name": "📔 Kitab Gurun",
@@ -856,7 +856,7 @@
             },
             "bag_goodies_recipe": {
                 "name": "📜 Tas dengan barang",
-                "description": "Resep untuk membuat penyimpanan barang."
+                "description": "Resep untuk membuat tempat penyimpanan makanan lezat."
             },
             "rubik_cube_recipe": {
                 "name": "📜 Kubus Rubik",
@@ -1000,6 +1000,9 @@
             },
             "easter_egg": {
                 "name": "🍰 Telur Paskah"
+            },
+            "corrupted_document": {
+                "name": "Dokumen yang rusak"
             }
         },
         "notifications": {
@@ -1248,7 +1251,7 @@
                 "went": "🍺 {name} pergi ke kedai ...",
                 "button": "🍻 Beli bir seharga 150 🪙"
             },
-            "about": "🤖 | Halo! Saya @{bot_name}, dan inilah beberapa informasi tentang saya! \n\n🗝️ | Statistik: 👥 <code>{col_u}</code> 🦕 <code>{col_d}</code> 🔮 <code>{col_i}</code>\n<i>{update_time} yang lalu. </i>",
+            "about": "🤖 | Halo! Saya @{bot_name}, dan inilah beberapa informasi tentang saya! \n\n🗝️ | Statistik: 👥 <code>{col_u}</code> 🦕 <code>{col_d}</code> 🔮 <code>{col_i}</code> 🌐 <code>{col_g}</code>\n<i>{update_time} yang lalu. </i>",
             "referal": "🤍 | Redirect ke menu sistem referral! \n\n💜 | *Setelah mencapai level {lvl}* teman Anda, Anda akan mendapatkan {award_text}! \n\n❤️ | Seorang teman akan menerima bonus sejumlah: {coins} koin, {items}",
             "referal_separator": " atau",
             "settings2": "🔧 | Menu Pengaturan (Halaman 2)\n\n🦕 Akses: {my_name}",
@@ -1585,6 +1588,15 @@
                     "dev": false,
                     "dm": false,
                     "group": true
+                },
+                "give_coins": {
+                    "short": "Penyerahan koin kepada pemain",
+                    "long": "Pengiriman koin ke pengguna. Diperlukan tanggapan wajib terhadap pesan.",
+                    "arguments": "(koin)",
+                    "dev": false,
+                    "dm": false,
+                    "group": true,
+                    "alternative": "menyerahkan koin"
                 }
             }
         },
@@ -1862,7 +1874,7 @@
                     "0": "*└* __I sangat lelah :(__"
                 }
             },
-            "profile_text": "{em_name}*┌* Nama: {dino_name}\n{em_status}*├* Status: {status}\n{em_rare}*├* Kelangkaan: {qual}\n{em_age}*└* Umur: {age}",
+            "profile_text": "Nama: {dino_name}\n{em_status}*├* Status: {status}\n{em_rare}*├* Rarity: {qual}\n{em_age}*├* Usia: {age}\n{em_uniqueness}*└* Keunikan: {uniqueness}",
             "journey": {
                 "text": "{em_journey_act} *┌* Perjalanan",
                 "info": "🏮 *├* Lokasi: {location}\n⌛ *├* Perjalanan {journey_time}\n🍭 *└* Acara: {col}"
@@ -2603,7 +2615,7 @@
             },
             "dino_join": "🦕 Dinosaurus {dinoname} telah bergabung dengan permainan!",
             "join_end": "🦕 Dinosaurus sudah berhenti bermain!",
-            "zero": "🎮 Dinosaurus akan memilih berapa banyak yang akan dimainkannya dalam interval ini. \n\n⏲ Jika dinosaurus memiliki timer di item aktif, Anda akan dapat melihat berapa banyak waktu yang tersisa hingga akhir permainan."
+            "zero": "Dinosaurus sendiri akan memilih berapa lama ia akan bermain dalam interval ini. Jika dinosaurus memiliki timer pada item aktif, di profil dapat diketahui berapa waktu yang tersisa hingga akhir permainan."
         },
         "stop_game": {
             "dislike": "🎮 | Dinosaurus tidak terlalu suka bermain, dia tidak kehilangan semangatnya.",
@@ -2927,13 +2939,13 @@
                 "🔮 Terima",
                 "💥 Menolak"
             ],
-            "max_owners": "🦕 | Seekor dinosaurus tidak dapat memiliki lebih dari 2 inang!",
+            "max_owners": "Dinosaurus tidak bisa memiliki lebih dari 2 tuan!",
             "max_dino": "🎋 | Pengguna ini sudah memiliki dinosvr bersama!",
             "ok": "🎮 | Penawaran telah dikirim ke pengguna!"
         },
         "take_dino": {
             "max_dino": "🎋 | Anda sudah memiliki dinosaurus bersama!",
-            "max_owners": "🦕 | Seekor dinosaurus tidak dapat memiliki lebih dari 2 inang!",
+            "max_owners": "Dinosaurus tidak bisa memiliki lebih dari 2 tuan!",
             "ok": "🦕 | Selamat! Sekarang {dinoname} tersedia di daftar dinosaurus Anda!",
             "message_to_owner": "🦕 | {username} sekarang dapat mengontrol dinosaurus Anda {dinoname}!"
         },
@@ -4424,7 +4436,7 @@
         "no_dinos": "⚡ Anda tidak dapat menggunakan fitur ini karena Anda tidak memiliki dinosaurus! \n✨ Untuk informasi premium, ketik /premium",
         "buyer": {
             "choose": "👑 Pembeli menyambut Anda, saat ini dia siap membeli produk dari Anda dengan rasio `{emoji} x{one_col} = {price} 🪙`",
-            "ok": "🎏 Uang telah ditransfer ke akun Anda, silakan kunjungi lagi.",
+            "ok": "Koin telah ditransfer ke akun Anda, silakan datang lagi!",
             "no": "✨ Anda tidak memiliki cukup item dalam inventaris Anda."
         },
         "standart_background": "🗝️ Latar belakang profil telah ditetapkan ke standar.",
@@ -4787,7 +4799,8 @@
                 "18": "Karisma ezaman, mengubah lingkungan.",
                 "19": "Karisma legendaris tetap ada dalam ingatan.",
                 "20": "Karisma mutlak, perwujudan daya tarik."
-            }
+            },
+            "button_name": "Tentang dinosaurus"
         },
         "inside_shop": {
             "info": "📦 Tertarik dengan produknya? Kemudian lihat sendiri! \n\n",
@@ -4876,6 +4889,15 @@
             },
             "no_delete_rights": "❌ Bot harus memiliki hak untuk menghapus pesan!",
             "delete_all_messages": "🗑 Semua pesan dari bot dalam grup telah dihapus!"
+        },
+        "group_transfer": {
+            "question": "Apakah Anda yakin ingin mengirim {coins} koin kepada pengguna {user_name}?",
+            "no_num": "Argumen kedua harus menyebutkan jumlah koin!",
+            "no_reply": "Tanggapi pesan pengguna yang ingin Anda kirimi koin!",
+            "answer_no": "Operasi dibatalkan...",
+            "answer_yes": "Koin telah dikirim! Menerima koin.",
+            "no_coins": "Operasi gagal, {self_username} tidak memiliki cukup koin untuk mentransfer!",
+            "no_user": "Salah satu peserta transaksi tidak memiliki akun di bot!"
         }
     }
 }
