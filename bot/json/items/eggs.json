@@ -21,7 +21,8 @@
             }
         },
         "rank": "common",
-        "type": "egg"
+        "type": "egg",
+        "buyer_price": 60000
     },
     "unusual_egg": {
         "image": "item20",
