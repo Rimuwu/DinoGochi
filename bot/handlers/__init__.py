@@ -31,6 +31,7 @@ from . import inside_shop
 from . import channel_lottery
 
 from . import group_settings
+from . import group_commands
 
 from . import minigames_handler
 
