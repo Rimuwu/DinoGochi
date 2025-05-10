@@ -1,20 +1,17 @@
-from optparse import Option
-from random import choice, choices, randint, random, shuffle
+from random import choice, choices, randint,  shuffle
 import time
 
 from bot.dbmanager import mongo_client
-from bot.const import GAME_SETTINGS
-from bot.exec import main_router, bot
+from bot.exec import bot
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      random_dict, seconds_to_str)
 from bot.modules.dinosaur.dino_status import check_status
-from bot.modules.dinosaur.dinosaur  import Dino, create_dino_connection, edited_stats, insert_dino, set_status
+from bot.modules.dinosaur.dinosaur  import Dino, create_dino_connection, edited_stats, insert_dino
 from bot.modules.dinosaur.rpg_states import add_state
-from bot.modules.images import async_open, create_eggs_image
+from bot.modules.images import create_eggs_image
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.items.craft_recipe import craft_recipe
-from bot.modules.items.item import (AddItemToUser, CalculateDowngradeitem,
-                              CheckItemFromUser, EditItemFromUser,
+from bot.modules.items.item import (AddItemToUser, EditItemFromUser,
                               RemoveItemFromUser, UseAutoRemove, counts_items,
                               get_data, get_item_dict, get_name, is_standart,
                               item_code)
@@ -26,11 +23,9 @@ from bot.modules.markup import (cancel_markup, confirm_markup, count_markup,
                                 feed_count_markup, markups_menu)
 from bot.modules.dinosaur.mood import add_mood
 from bot.modules.quests import quest_process
-# from bot.modules.states_tools import ChooseConfirmState, ChooseStepState
-from bot.modules.get_state import get_state
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DataType, DinoStepData, FriendStepData, IntStepData, OptionStepData, StepMessage, StringStepData
-from bot.modules.user.user import User, col_dinos, get_dead_dinos, max_dino_col, max_eat, count_inventory_items, award_premium
+from bot.modules.user.user import User, get_dead_dinos, max_eat, count_inventory_items, award_premium
 from typing import Optional, Union
 
 from bson import ObjectId
@@ -107,7 +102,7 @@ async def exchange_item(userid: int, chatid: int, item: dict,
                 markup=confirm_markup(lang)
             )),
             IntStepData('count', StepMessage(
-                text=t('css.wait_count', lang),
+                text='css.wait_count',
                 translate_message=True,
                 markup=count_markup(max_count, lang)),
                 autoanswer=False
@@ -613,7 +608,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                 #     'message': {'text': t('css.wait_count', lang), 
                 #                 'reply_markup': count_markup(max_count, lang)}}
                 IntStepData('count', StepMessage(
-                    text=t('css.wait_count', lang),
+                    text='css.wait_count',
                     translate_message=True,
                     markup=count_markup(max_count, lang)),
                     max_int=max_count
@@ -633,7 +628,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                 #     'message': {'text': t('css.wait_count', lang), 
                 #                 'reply_markup': count_markup(max_count, lang)}}
                 IntStepData('count', StepMessage(
-                    text=t('css.wait_count', lang),
+                    text='css.wait_count',
                     translate_message=True,
                     markup=count_markup(max_count, lang)),
                     max_int=max_count
@@ -653,8 +648,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                     #         "data": {"add_egg": False, "all_dinos": False}, 
                     #         'message': t('css.inactive_dino', lang)
                     # }
-                        DinoStepData('dino', StepMessage(
-                            text=t('css.dino', lang)),
+                        DinoStepData('dino', None,
                             add_egg=False, all_dinos=False
                         )
                     ]
@@ -665,8 +659,8 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                     #      "name": 'dino', 
                     #      "data": {"add_egg": False, "all_dinos": False}, 
                     #      'message': t('css.inactive_dino', lang)}
-                    DinoStepData('dino', StepMessage(
-                            text=t('css.inactive_dino', lang)),
+                    DinoStepData('dino', 
+                                 'css.inactive_dino',
                             add_egg=False, all_dinos=False
                         )
                 ]
@@ -690,8 +684,8 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                     #         'text': t('css.wait_count', lang), 
                     #         'reply_markup': count_markup(max_count, lang)}}
                     IntStepData('count', StepMessage(
-                        text=t('css.wait_count', lang),
-                        translate_message=False,
+                        text='css.wait_count',
+                        translate_message=True,
                         markup=count_markup(max_count, lang)),
                         max_int=max_count
                     )
