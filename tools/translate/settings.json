@@ -52,7 +52,7 @@
         "1344": {"text": "<a href='tg://user?id={userid}'>{username}</a>", "translate": false}
     },
 
-    "one_replace_s": ["*", "`", "~", "_", "'"],
+    "one_replace_s": ["```", "*", "`", "~", "_", "'"],
 
     "translators": ["deepl", "bing"],
     "zero_translator": "bing",
