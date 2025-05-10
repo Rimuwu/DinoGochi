@@ -524,6 +524,11 @@
                 {
                     "_id": "rayt_update",
                     "time": 0
+                },
+                {
+                    "_id": "dino_statistic",
+                    "data": {},
+                    "all_count": 0
                 }
             ]
         }
@@ -645,7 +650,7 @@
         "time_year": {
             "standart": {
                 "name": "🦖", "status": "👁‍🗨", "rare": "🧿",
-                "age": "🎂", 
+                "age": "🎂", "uniqueness": "🦕",
 
                 "em_coll_act": "🏹", "em_game_act": "🧩",
                 "em_journey_act": "🎑",
@@ -663,7 +668,7 @@
             },
             "winter":  {
                 "name": "🧊", "status": "❄️", "rare": "☃️",
-                "age": "🧵",
+                "age": "🧵", "uniqueness": "🎫",
 
                 "em_coll_act": "🏹", "em_game_act": "🧩",
                 "em_journey_act": "🎑",
@@ -681,7 +686,7 @@
             },
             "spring":  {
                 "name": "🌸", "status": "💮", "rare": "🌿",
-                "age": "🥭",
+                "age": "🥭", "uniqueness": "🎀",
 
                 "em_coll_act": "🏹", "em_game_act": "🧩",
                 "em_journey_act": "🎑",
@@ -699,7 +704,7 @@
             },
             "summer":  {
                 "name": "🍹", "status": "💐", "rare": "🥀",
-                "age": "🥕",
+                "age": "🥕", "uniqueness": "🎖",
 
                 "em_coll_act": "🏹", "em_game_act": "🧩",
                 "em_journey_act": "🎑",
@@ -717,7 +722,7 @@
             },
             "autumn":  {
                 "name": "🏮", "status": "🍁", "rare": "🥧",
-                "age": "🍒",
+                "age": "🍒", "uniqueness": "🥊",
 
                 "em_coll_act": "🏹", "em_game_act": "🧩",
                 "em_journey_act": "🎑",
