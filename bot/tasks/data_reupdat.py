@@ -16,6 +16,7 @@ from collections import defaultdict
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 users = DBconstructor(mongo_client.user.users)
 items = DBconstructor(mongo_client.items.items)
+groups = DBconstructor(mongo_client.group.groups)
 statistic = DBconstructor(mongo_client.other.statistic)
 management = DBconstructor(mongo_client.other.management)
 kindergarten = DBconstructor(mongo_client.dino_activity.kindergarten)
@@ -25,12 +26,14 @@ async def statistic_check():
     items_len = await items.count_documents({}, comment='statistic_check_items_len')
     users_len = await users.count_documents({}, comment='statistic_check_users_len')
     dinosaurs_len = await dinosaurs.count_documents({}, comment='statistic_check_dinosaurs_len')
+    groups_len = await groups.count_documents({}, comment='statistic_check_groups_len')
 
     data = {
         'date': str(datetime.now().date()),
         'dinosaurs': dinosaurs_len,
         'users': users_len,
-        'items': items_len
+        'items': items_len,
+        'groups': groups_len
     }
     if res := await statistic.find_one({'date': data['date']}, comment='statistic_check_res'):
         await statistic.delete_one({'_id': res['_id']}, comment='statistic_check_2')
@@ -113,9 +116,25 @@ async def dino_kindergarten():
                                 dino_name=dino['name'], 
                                 dino_alt_id_markup=dino['alt_id'])
 
+async def dino_statistic():
+    upd_data = {}
+    dinos = list(await dinosaurs.find({}, 
+                    {'data_id': 1}, 
+                    comment='dino_statistic_dinosaurs'
+                    ))
+
+    for i in dinos:
+        data_id = i['data_id']
+        upd_data[str(data_id)] = upd_data.get(str(data_id), 0) + 1
+
+    await management.update_one({'_id': 'dino_statistic'}, 
+                          {'$set': {'data': upd_data, 'all_count': len(dinos)}}, 
+                          comment='dino_statistic_1')
+
 if __name__ != '__main__':
     if conf.active_tasks:
         add_task(rayting_check, 3600, 15.0)
         add_task(statistic_check, 3600, 30.0)
         add_task(dino_kindergarten, 1800, 15.0)
         add_task(kindergarten_update, 43200, 30.0)
+        add_task(dino_statistic, 7200, 60.0)
