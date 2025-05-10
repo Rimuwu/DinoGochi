@@ -14,8 +14,6 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.managment.promo import (create_promo_start, get_promo_pages, promo_ui,
                                use_promo)
-# from bot.modules.states_tools import (ChooseConfirmState, ChoosePagesState,
-#                                     #   ChooseStringState)
 from bot.modules.states_fabric.state_handlers import (ChooseConfirmHandler,
     ChoosePagesStateHandler, ChooseStringHandler)
 from bot.modules.managment.tracking import creat_track, delete_track, get_track_pages, track_info
