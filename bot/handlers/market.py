@@ -20,8 +20,6 @@ from bot.modules.market.market_chose import (buy_item, find_prepare,
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-# from bot.modules.states_tools import (ChooseOptionState, ChoosePagesState,
-#                                       ChooseStepState, ChooseStringState)
 from bot.modules.states_fabric.state_handlers import ChoosePagesStateHandler, ChooseOptionHandler, ChooseStepHandler, ChooseStringHandler
 from bot.modules.states_fabric.steps_datatype import CustomStepData, StepMessage, StringStepData
 from bot.modules.user.user import premium, user_name

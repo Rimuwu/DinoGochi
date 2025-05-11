@@ -419,8 +419,9 @@ async def find_prepare(userid: int, chatid: int, lang: str):
         OptionStepData('option', StepMessage(
             text='find_product.info',
             translate_message=True,
-            markup=markup
-        ))
+            markup=markup),
+            options=options
+        )
     ]
 
     # await ChooseStepState(find_end, userid, chatid, lang, steps)
