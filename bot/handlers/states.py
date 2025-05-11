@@ -474,7 +474,9 @@ async def ChooseImage(message: Message):
 
         if message.photo:
             fileID = message.photo[-1].file_id
-            transmitted_data['file'] = message.photo[-1]
+            if 'temp' not in transmitted_data:
+                transmitted_data['temp'] = {}
+            transmitted_data['temp']['file'] = message.photo[-1]
         else:
             lang = await get_lang(message.from_user.id)
             await bot.send_message(message.chat.id, t('css.no_photo', lang))
