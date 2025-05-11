@@ -79,6 +79,7 @@ async def info_craft(data, transmitted_data: dict):
             dino_acc = await Dino().create(craft['dino_id'])
             if dino_acc:
                 name = dino_acc.name
+            else:
                 craft['dino_id'] = None
 
         if not craft['dino_id']:
@@ -116,7 +117,9 @@ async def time_craft(callback: CallbackQuery):
         # await ChooseDinoState(send_dino_to_craft, userid, chatid, 
         #                       lang, False, False, transmitted_data)
         await ChooseDinoHandler(send_dino_to_craft, userid, chatid,
-                               lang, False, False, transmitted_data).start()
+                               lang, False, False, 
+                               transmitted_data,
+                               status_filter='pass').start()
 
     elif action == 'cancel_craft':
         await stop_craft(alt_code)
@@ -146,7 +149,9 @@ async def send_dino_to_craft(dino_id: ObjectId, transmitted_data: dict):
                 'lang': lang
             }
             info, mrk = await info_craft(alt_code, transmitted_data) # type: ignore
-            await bot.edit_message_text(info, None, chatid, ms_id, reply_markup=mrk, parse_mode='Markdown')
+            try:
+                await bot.edit_message_text(info, None, chatid, ms_id, reply_markup=mrk, parse_mode='Markdown')
+            except: pass
 
             await bot.send_message(chatid, text, parse_mode='Markdown',
                                 reply_markup=await m(userid, 'last_menu', lang))
