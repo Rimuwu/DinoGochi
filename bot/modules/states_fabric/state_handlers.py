@@ -166,12 +166,13 @@ class BaseStateHandler():
 class ChooseDinoHandler(BaseStateHandler):
     state_name = 'ChooseDino'
     indenf = 'dino'
-    deleted_keys = ['add_egg', 'all_dinos', 'send_error']
+    deleted_keys = ['add_egg', 'all_dinos', 'send_error', 'status_filter']
 
     def __init__(self, function, userid, chatid, lang,
                  add_egg=True, all_dinos=True,
                  transmitted_data: Optional[dict[str, MongoValueType]]=None, send_error=True,
                  message_key: Optional[str] = None,
+                 status_filter: Optional[str] = None,
                  **kwargs
                  ):
         """ Устанавливает состояние ожидания динозавра
@@ -189,6 +190,7 @@ class ChooseDinoHandler(BaseStateHandler):
         self.all_dinos: bool = all_dinos
         self.send_error: bool = send_error
         self.dino_names: dict = {}
+        self.status_filter: Optional[str] = status_filter
 
         if message_key is None:
             self.message_key = 'css.dino'
@@ -198,6 +200,9 @@ class ChooseDinoHandler(BaseStateHandler):
     async def setup(self):
         user = await User().create(self.userid)
         elements = await user.get_dinos(self.all_dinos)
+
+        if self.status_filter is not None:
+            elements = [dino for dino in elements if await dino.status == self.status_filter]
 
         if self.add_egg: elements += await user.get_eggs
 
@@ -1021,7 +1026,8 @@ async def next_step(answer: Any,
             handler = BaseUpdateHandler
 
             self_handler = handler(**step_data, transmitted_data=transmitted_data)
-            transmitted_data, answer = await self_handler.start()
+            transmitted_data, answer = await self_handler.start() # Передаём transmitted_data,
+            # Получаем transmitted_data и ответ для сохранения
 
             new_steps: list[dict] = []
             for raw_step in steps_raw.copy():
