@@ -121,11 +121,13 @@ async def exchange_item(userid: int, chatid: int, item: dict,
                                 transmitted_data).start()
 
 async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1, 
-                   dino: Optional[Union[ObjectId, Dino]] = None, delete: bool = True):
+                   dino: Optional[Union[ObjectId, Dino]] = None, delete: bool = True,
+                   **kwargs):
     """ Использование предмета
 
         delete - Принудительно не удалять предмет послле использования
     """
+
     return_text = ''
     dino_update_list = []
     use_status, send_status, use_baff_status = True, True, True
@@ -137,6 +139,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     type_item: str = data_item['type']
 
     if isinstance(dino, ObjectId):
+        dino_id = dino
         dino = await Dino().create(dino)
 
     if type_item == 'eat' and dino:
@@ -338,33 +341,37 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                             premium_time=seconds_to_str(data_item['premium_time'] * count, lang))
 
         elif data_item['class'] == 'reborn':
-            dct_dino: dict = dino #type: ignore
-            dino_limit_col = await user.max_dino_col()
-            dino_limit = dino_limit_col['standart']  
+            reborn_id = kwargs.get('reborn_data', None)
+            dct_dino = await dead_dinos.find_one({'_id': reborn_id}, comment='use_item_reborn')
+            if dct_dino:
 
-            if dino_limit['now'] < dino_limit['limit']:
-                res, alt_id = await insert_dino(userid, dct_dino['data_id'], 
-                                          dct_dino['quality'])
-                if res:
-                    await dinosaurs.update_one({'_id': res.inserted_id}, 
-                                               {'$set': {'name': dct_dino['name']}}, 
-                                               comment='use_item_reborn')
+                dino_limit_col = await user.max_dino_col()
+                dino_limit = dino_limit_col['standart']  
 
-                    if 'stats' in dct_dino:
-                        for i in dct_dino['stats']:
-                            await dinosaurs.update_one({'_id': res.inserted_id}, 
-                                {'$set': {f'stats.{i}': 
-                                    dct_dino['stats'][i]}}, 
-                            comment='use_item_reborn_1')
+                if dino_limit['now'] < dino_limit['limit']:
+                    res, alt_id = await insert_dino(userid, dct_dino['data_id'], 
+                                            dct_dino['quality'])
+                    if res:
+                        await dinosaurs.update_one({'_id': res.inserted_id}, 
+                                                {'$set': {'name': dct_dino['name']}}, 
+                                                comment='use_item_reborn')
 
-                    await dead_dinos.delete_one({'_id': dct_dino['_id']}, comment='use_item_reborn') 
-                    return_text = t('item_use.special.reborn.ok', lang, 
-                            limit=dino_limit['limit'])
-                else: use_status = False
-            else:
-                return_text = t('item_use.special.reborn.limit', lang, 
-                            limit=dino_limit['limit'])
-                use_status = False
+                        if 'stats' in dct_dino:
+                            for i in dct_dino['stats']:
+                                await dinosaurs.update_one({'_id': res.inserted_id}, 
+                                    {'$set': {f'stats.{i}': 
+                                        dct_dino['stats'][i]}}, 
+                                comment='use_item_reborn_1')
+
+                        await dead_dinos.delete_one({'_id': dct_dino['_id']}, comment='use_item_reborn') 
+                        return_text = t('item_use.special.reborn.ok', lang, 
+                                limit=dino_limit['limit'])
+                    else: use_status = False
+                else:
+                    return_text = t('item_use.special.reborn.limit', lang, 
+                                limit=dino_limit['limit'])
+                    use_status = False
+            else: use_status = False
 
         elif data_item['class'] == 'background':
             user = await users.find_one({"userid": userid}, comment='use_item_background')
@@ -711,7 +718,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                         #     {"options": options}, 
                         #     'message': {'text': t('css.dino', lang), 
                         #                 'reply_markup': list_to_keyboard(markup, 2)}}
-                        OptionStepData('dino', StepMessage(
+                        OptionStepData('reborn_data', StepMessage(
                             text=t('css.dino', lang),
                             markup=list_to_keyboard(markup, 2)),
                             options=options
