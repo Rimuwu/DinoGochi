@@ -21,7 +21,7 @@
         "abilities": {
             "endurance": 90
         },
-        "image": "",
+        "image": "controller",
         "rank": "rare",
         "type": "game",
         "groups": ["repairing"]

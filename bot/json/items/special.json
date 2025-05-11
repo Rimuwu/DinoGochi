@@ -47,7 +47,7 @@
         "class": "defrosting"
     },
     "stone_resurrection": {
-        "image": "null",
+        "image": "stone_resurrection",
         "rank": "legendary",
         "type": "special",
         "class": "reborn"

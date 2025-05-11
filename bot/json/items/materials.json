@@ -116,7 +116,7 @@
         }
     },
     "copper": {
-        "image": "",
+        "image": "copper",
         "rank": "rare",
         "type": "material",
         "groups": ["durable_materials", "ore"],
@@ -135,7 +135,7 @@
     },
 
     "wood": {
-        "image": "",
+        "image": "wood",
         "rank": "uncommon",
         "type": "material",
         "groups": ["wood"],
@@ -162,65 +162,65 @@
     },
 
     "wood-body": {
-        "image": "",
+        "image": "body",
         "rank": "uncommon",
         "type": "material",
         "groups": ["bodys"]
     },
     "iron-body": {
-        "image": "",
+        "image": "body",
         "rank": "uncommon",
         "type": "material",
         "groups": ["bodys"]
     },
     "copper-body": {
-        "image": "",
+        "image": "body",
         "rank": "uncommon",
         "type": "material",
         "groups": ["bodys"]
     },
 
     "metal-gear": {
-        "image": "",
+        "image": "gear",
         "rank": "uncommon",
         "type": "material",
         "groups": []
     },
     "wood-gear": {
-        "image": "",
+        "image": "gear",
         "rank": "uncommon",
         "type": "material",
         "groups": []
     },
 
     "iron-rod": {
-        "image": "",
+        "image": "rod",
         "rank": "uncommon",
         "type": "material",
         "groups": ["rod_group"]
     },
     "copper-rod": {
-        "image": "",
+        "image": "rod",
         "rank": "uncommon",
         "type": "material",
         "groups": ["rod_group"]
     },
 
     "iron-ingot": {
-        "image": "",
+        "image": "iron-ingot",
         "rank": "uncommon",
         "type": "material",
         "groups": ["ingot_group"]
     },
     "copper-ingot": {
-        "image": "",
+        "image": "copper-ingot",
         "rank": "uncommon",
         "type": "material",
         "groups": ["ingot_group"]
     },
 
     "ink": {
-        "image": "",
+        "image": "ink",
         "rank": "rare",
         "type": "material",
         "groups": ["fishing-activity"]

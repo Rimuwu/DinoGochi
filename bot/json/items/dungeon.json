@@ -186,7 +186,7 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "",
+        "image": "leather_jacket",
         "rank": "rare",
         "reflection": 3,
         "type": "armor",
@@ -203,7 +203,7 @@
             "min": 0
         },
         "effectiv": 2,
-        "image": "",
+        "image": "axe",
         "rank": "uncommon",
         "type": "weapon",
         "groups": ["repairing", "axes"]
@@ -218,7 +218,7 @@
             "min": 0
         },
         "effectiv": 3,
-        "image": "",
+        "image": "axe",
         "rank": "mystical",
         "type": "weapon",
         "groups": ["repairing", "axes"]
@@ -233,7 +233,7 @@
             "min": 0
         },
         "effectiv": 3,
-        "image": "",
+        "image": "axe",
         "rank": "rare",
         "type": "weapon",
         "groups": ["repairing", "axes"]

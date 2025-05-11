@@ -335,7 +335,7 @@
     "carrot": {
         "act": 12,
         "class": "Herbivore",
-        "image": "null",
+        "image": "carrot",
         "rank": "rare",
         "type": "eat",
         "groups": ["collecting-activity"]
@@ -343,7 +343,7 @@
     "tomato": {
         "act": 16,
         "class": "Herbivore",
-        "image": "null",
+        "image": "tomato",
         "rank": "mystical",
         "type": "eat",
         "groups": ["collecting-activity"],
@@ -352,7 +352,7 @@
     "potato": {
         "act": 18,
         "class": "Herbivore",
-        "image": "null",
+        "image": "potato",
         "rank": "mystical",
         "type": "eat",
         "groups": ["collecting-activity"],
@@ -365,7 +365,7 @@
         },
         "act": 14,
         "class": "ALL",
-        "image": "null",
+        "image": "croissant",
         "rank": "rare",
         "type": "eat",
         "groups": ["energy_eat"]

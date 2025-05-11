@@ -12,7 +12,7 @@
         "abilities": {
             "endurance": 20
         },
-        "image": "",
+        "image": "pillow",
         "rank": "rare",
         "type": "sleep",
         "groups": ["repairing"]
@@ -21,7 +21,7 @@
         "abilities": {
             "endurance": 20
         },
-        "image": "",
+        "image": "blanket",
         "rank": "rare",
         "type": "sleep",
         "groups": ["repairing"]
@@ -30,7 +30,7 @@
         "abilities": {
             "endurance": 80
         },
-        "image": "",
+        "image": "toy_solider",
         "rank": "uncommon",
         "type": "sleep",
         "groups": []
