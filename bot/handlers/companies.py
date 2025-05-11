@@ -1,4 +1,5 @@
 from ast import In
+from re import M
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.handlers.start import start_game
@@ -41,6 +42,16 @@ async def create_company_com(message: Message):
                     {'message': {}}
                     )
 
+async def button_check(transmitted_data: dict):
+    
+    return_data = transmitted_data['return_data']
+    if return_data['name_button'] == '0':
+        del transmitted_data['steps'][4]
+        transmitted_data['return_data']['button_url'] = None
+        transmitted_data['return_data']['name_button'] = None
+
+    return transmitted_data, True
+
 async def new_cycle(userid, chatid, lang, transmitted_data):
     
     lang_data = get_all_locales('language_name')
@@ -53,9 +64,10 @@ async def new_cycle(userid, chatid, lang, transmitted_data):
         ] = key
     
     steps = [
-        PagesStepData('pages', StepMessage('companies.lang', None, True), options=lang_options, horizontal=2),
+        PagesStepData('lang', StepMessage('companies.lang', None, True), options=lang_options, horizontal=2),
         StringStepData('text', StepMessage('companies.text', cancel_markup(lang), True), max_len=1024),
         StringStepData('name_button', StepMessage('companies.name_button', cancel_markup(lang), True), max_len=100),
+        BaseUpdateType(button_check),
         StringStepData('button_url', StepMessage('companies.button_url', cancel_markup(lang), True), max_len=1000),
         PagesStepData('parse_mode', StepMessage('companies.parse_mode', None, True), options={
             'HTML': 'HTML',
@@ -162,23 +174,24 @@ async def pre_check(data, transmitted_data):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     message = transmitted_data['message']
-    
 
-    message[data['lang']
-    ] = {
+    message[data['lang']] = {
         'text': data['text'],
-        'markup': [
-            {data['name_button']: data['button_url']}
-        ],
         'parse_mode': data['parse_mode'],
+        'markup': [],
         'image': data['image']
     }
+    if data['button_url'] is not None:
+        message[data['lang']]['markup'] = [
+            {data['name_button']: data['button_url']}
+        ]
+
     transmitted_data['message'] = message
 
     if data['add_lang']:
         await new_cycle(userid, chatid, lang, transmitted_data)
         return
-    
+
     steps = [
         IntStepData('owner', StepMessage('companies.owner', cancel_markup(lang), True), min_int=0, max_int=1000000000000),
         TimeStepData('time_end', StepMessage('companies.time_end', cancel_markup(lang), True), min_int=0, max_int=1000000000000),
