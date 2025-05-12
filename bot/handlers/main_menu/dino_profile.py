@@ -250,7 +250,7 @@ async def dino_handler(message: Message):
         if await dead_check(userid):
             await bot.send_message(userid, t(f'p_profile.dialog', lang), reply_markup=inline_menu('dead_dialog', lang))
         else:
-            await bot.send_message(userid, t(f'p_profile.no_dino_no_egg', lang))
+            await bot.send_message(userid, t(f'css.no_dino_no_egg', lang))
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('dino_profile'))
@@ -287,7 +287,7 @@ async def dino_menu(call: types.CallbackQuery):
         res = await dino_owners.find_one({'dino_id': dino['_id'], 
                                     'owner_id': userid}, comment='dino_menu')
         if not res:
-            await bot.send_message(userid, t('p_profile.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+            await bot.send_message(userid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
             return
 
         if action == 'reset_activ_item':
