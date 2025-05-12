@@ -42,7 +42,7 @@ def OpenDonatData():
             log(prefix='OpenDonatData', message=f'Error: {error}', lvl=4)
     return processed_donations
 
-def save_donation(userid: int, user_first_name: str, amount: int, product: Optional[str], time_data: int, col: int, donation_id) -> str:
+def save_donation(userid: int, user_first_name: str, amount: int, product: Optional[str], time_data: int, col: int | str, donation_id) -> str:
     code = f"{random_code(5)}_{userid}"
 
     data = {
@@ -82,18 +82,26 @@ async def send_donat_notification(userid:int, message_key:str, info_code:str):
         donat_data[info_code]['send_notification'] = True
         save(donat_data)
 
-async def give_reward(userid:int, product_key:str, col:int, info_code: str):
+async def give_reward(userid:int, product_key:str, col: int | str, info_code: str):
     product = products[product_key]
 
     if product['type'] == 'subscription':
-        await award_premium(userid, product['time'] * col)
-    
+        if col == 'inf':
+            await award_premium(userid, 'inf')
+        else:
+            await award_premium(userid, product['time'] * col)
+
     elif product['type'] == 'super_coins':
+        if col == 'inf': 
+            col = 1
+            log(f'Ошибка количества {userid} {product_key} inf {info_code}', 4)
+
         await users.update_one({'userid': userid}, 
             {'$inc': {'super_coins': col}}, comment='give_reward')
 
-    for item_id in product['items'] * col:
-        await AddItemToUser(userid, item_id)
+    if col != 'inf': 
+        for item_id in product['items'] * col:
+            await AddItemToUser(userid, item_id)
 
     donat_data = OpenDonatData()
     if info_code in donat_data:
@@ -120,9 +128,14 @@ async def send_inv(user_id: int, product_id: str, col: str, lang: str, cost: int
     photo_url = product_t_data['photo_url']
 
     product_label = LabeledPrice(label=name, amount=product['cost'][str(col)]['XTR'])
+    
+    if col == 'inf':
+        dp_text = ' (∞)'
+    else:
+        dp_text = f' (x{col})'
 
     await bot.send_invoice(
-        user_id, name, short + f' (x{col})', f"{product_id}#{col}", 'XTR', [product_label],
+        user_id, name, short + dp_text, f"{product_id}#{col}", 'XTR', [product_label],
         photo_url=photo_url, photo_size=512, photo_height=360, photo_width=720, 
     )
 
