@@ -109,7 +109,11 @@ async def support_buttons(call: CallbackQuery):
 
                 if product['type'] == 'subscription':
                     for key, item in product['cost'].items():
-                        name = f'{seconds_to_str(product["time"]*int(key), lang)} = {item[currency]}🌟'
+                        if key.isdigit():
+                            name = f'{seconds_to_str(product["time"]*int(key), lang)} = {item[currency]}🌟'
+
+                        if key == 'inf':
+                            name = f'♾ = {item[currency]}🌟'
 
                         buttons[name] = f'support buy {product_key} {key}'
                 elif product['type'] in ['kit', 'super_coins']:
