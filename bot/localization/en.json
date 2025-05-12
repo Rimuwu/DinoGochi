@@ -1003,6 +1003,22 @@
             },
             "corrupted_document": {
                 "name": "📄 Spoiled document"
+            },
+            "all_or_nothing_case_eggs": {
+                "name": "🩸 All or nothing (Eggs)",
+                "description": "The risk is justified, as the chances of obtaining a legendary item are so high..."
+            },
+            "infinity_activator": {
+                "name": "♾️ Activator of Infinity",
+                "description": "Activates infinite subscription!"
+            },
+            "dino_slot": {
+                "name": "🦖 Slot for a dinosaur",
+                "description": "Adds a slot for a dinosaur to your account."
+            },
+            "full_recovery_potion": {
+                "name": "🍓 Complete recovery",
+                "description": "Restores the health and energy of the dinosaur."
             }
         },
         "notifications": {
@@ -2232,7 +2248,10 @@
                     "notinc": "🦕 This dinosaur is not frozen!",
                     "ok": "🧉 | The dinosaur has been thawed!"
                 },
-                "freez": "🧊 Dinosaur is frozen!"
+                "freez": "🧊 Dinosaur is frozen!",
+                "infinity_premium": "♾ You have already activated a premium subscription for an unlimited amount of time!",
+                "error_slot": "❌ | Error, failed to add the slot...",
+                "add_slot": "🦕 | Slot added! You can view the number of filled slots in your profile!"
             },
             "buff": {
                 "+mood": "😀 | Dinosaur got +{unit} % to Mood! \n",
@@ -2330,7 +2349,7 @@
         "user_profile": {
             "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Name:* {name}\n*├* *ID:* `{userid}`\n*└* *Subscription:* {premium_status} ",
             "level": "*┌*🏮 *ʟᴇᴠᴇʟ*\n*├* *Level:* {lvl}\n*├* *Experience:* {xp_now} | {max_xp}\n*├* *Super Coins:* {super_coins}\n*└* *Coins:* {coins}",
-            "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Forgotten*: {dead}\n*├* *Living:* {dino_col}",
+            "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Forgotten*: {dead}\n*├* *Living:* {dino_col}\n*├* *Slots:* {dino_slots}",
             "dino": "   *└* 🦕 *{dino_name}* ({owner})\n      *├* *Status:* {dino_status}\n      *├* *Rarity:* {dino_rare}\n      *└* *Age:* {age}\n\n",
             "egg": "   *└* 🥚 *{egg_quality}*\n      *└* *Left:* {remained}\n\n",
             "dino_owner": {
@@ -4428,9 +4447,12 @@
                 },
                 "info": "☄ Select the minimum amount of time you want to pass between running your ad ->"
             },
-            "shop": "🎍 Welcome to the Super Coin Store! \n\n _(There is no confirmation at the time of purchase)_",
-            "buy": "🎎 Thank you for watching the ads!",
-            "moder_reward": "🎋 You received *+{coin} Super Coin(s)* for viewing a message. \nCheck your balance with the /super command"
+            "shop": "🎍 Welcome to the store for super coins! \n_(There is confirmation upon purchase!)_",
+            "buy": "🎎 Thank you for watching the advertisement! The following items have been purchased: `{items}`",
+            "moder_reward": "🎋 You received *+{coin} Super Coin(s)* for viewing a message. \nCheck your balance with the /super command",
+            "product_info": "🧠 By clicking the button below, you are purchasing `{items}` at the price of `{price} super coins`. \n\n You can familiarize yourself with the items being purchased by clicking the button below.",
+            "buy_button": "🛒 Buy",
+            "no_coins": "❌ You do not have enough super coins to make a purchase!"
         },
         "no_dinos": "⚡ You can't use this feature because you don't have any dinosaurs! \n ✨ For premium information, type /premium",
         "buyer": {
@@ -4563,13 +4585,13 @@
             "owner": "Enter the id of the user - the creator of the company or \"0\" if you make yourself the owner.",
             "text": "Enter the company text (max 1024)",
             "lang": "Select which language the company will be for (if there is already a company for the language, then it will be overwritten)",
-            "name_button": "Enter the button text (max 100 characters)",
+            "name_button": "Enter the button text (max 100 characters) or '0' if the button is not needed",
             "button_url": "Enter the url buttons",
             "parse_mode": "Select Formatting Type -",
             "no_parse": "No formatting",
             "image_choose": "Set the image or type \"0\"",
             "add_new_lang": "Add a language for the mailing list?",
-            "time_end": "Enter the time after which the company will end in the format specified in /string_to_sec (e.g. 1d) or 0",
+            "time_end": "Enter the time when the campaign will end in the format specified in `/string_to_sec` (for example, 1d) or 0",
             "max_count": "Enter the maximum number of impressions or 0 for infinity",
             "priority": "Does the company have priority over gramads?",
             "one_message": "Whether to limit the display of the message to 1 for each user",

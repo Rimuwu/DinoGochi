@@ -1003,6 +1003,22 @@
             },
             "corrupted_document": {
                 "name": "Dokumen yang rusak"
+            },
+            "all_or_nothing_case_eggs": {
+                "name": "🩸 Segalanya atau tidak sama sekali (Telur)",
+                "description": "Risikonya sepadan, karena peluang untuk mendapatkan item legendaris begitu besar..."
+            },
+            "infinity_activator": {
+                "name": "♾️ Pengaktif Ketidakhabisan",
+                "description": "Mengaktifkan langganan tidak terbatas!"
+            },
+            "dino_slot": {
+                "name": "🦖 Slot untuk dinosaurus",
+                "description": "Menambahkan slot untuk dinosaurus ke akun Anda."
+            },
+            "full_recovery_potion": {
+                "name": "🍓 Pemulihan penuh",
+                "description": "Memulihkan kesehatan dan energi dinosaurus."
             }
         },
         "notifications": {
@@ -2232,7 +2248,10 @@
                     "notinc": "🦕 Dinosaurus ini tidak membeku!",
                     "ok": "🧉 | Dinosaurus telah dicairkan!"
                 },
-                "freez": "🧊 Dinosaurus membeku!"
+                "freez": "🧊 Dinosaurus membeku!",
+                "infinity_premium": "♾ Anda sudah mengaktifkan langganan premium tanpa batas waktu!",
+                "error_slot": "❌ | Kesalahan, tidak dapat menambahkan slot...",
+                "add_slot": "🦕 | Slot ditambahkan! Jumlah slot yang terisi dapat dilihat di profil Anda!"
             },
             "buff": {
                 "+mood": "😀 | Dinosaurus mendapat +{unit}% untuk suasana hati! \n",
@@ -2330,7 +2349,7 @@
         "user_profile": {
             "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Nama:* {name}\n*├* *ID:* `{userid}`\n*└* *Abonemen:* {premium_status} ",
             "level": "*┌*🏮 *ʟᴇᴠᴇʟ*\n*├* *Tingkat:* {lvl}\n*├* *Mengalami:* {xp_now} | {max_xp}\n*├* *Koin Super:* {super_coins}\n*└* *Koin:* {coins}",
-            "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Lupa*: {dead}\n*├* *Hidup:* {dino_col}",
+            "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Terlupakan*: {dead}\n*├* *Hidup:* {dino_col}\n*├* *Slot:* {dino_slots}",
             "dino": "   *└* 🦕 *{dino_name}* ({owner})\n      *├* *Keadaan:* {dino_status}\n      *├* *Kelangkaan:* {dino_rare}\n      *└* *Umur:* {age}\n\n",
             "egg": "   *└* 🥚 *{egg_quality}*\n      *└* *Kiri:* {remained}\n\n",
             "dino_owner": {
@@ -4429,9 +4448,12 @@
                 },
                 "info": "☄ Pilih jumlah waktu minimum yang ingin Anda lewati di antara tayangan iklan ->"
             },
-            "shop": "🎍 Selamat datang di Super Coin Store! \n\n_(Tidak ada konfirmasi pada saat pembelian)_",
-            "buy": "🎎 Terima kasih telah menonton iklannya!",
-            "moder_reward": "🎋 Anda menerima *+{coin} Koin Super* untuk melihat pesan. \nPeriksa saldo Anda dengan perintah /super"
+            "shop": "Selamat datang di toko untuk super koin!\n_(Ada konfirmasi saat pembelian!)_",
+            "buy": "Terima kasih telah menonton iklan! Barang-barang berikut telah dibeli:",
+            "moder_reward": "🎋 Anda menerima *+{coin} Koin Super* untuk melihat pesan. \nPeriksa saldo Anda dengan perintah /super",
+            "product_info": "🧠 Dengan mengklik tombol di bawah, Anda membeli `{items}` dengan harga `{price} super koin`.\n\n Anda dapat melihat barang yang dibeli melalui tombol di bawah.",
+            "buy_button": "🛒 Beli",
+            "no_coins": "❌ Anda tidak memiliki cukup super coin untuk melakukan pembelian!"
         },
         "no_dinos": "⚡ Anda tidak dapat menggunakan fitur ini karena Anda tidak memiliki dinosaurus! \n✨ Untuk informasi premium, ketik /premium",
         "buyer": {
@@ -4564,13 +4586,13 @@
             "owner": "Masukkan id pengguna - pencipta perusahaan atau \"0\" jika Anda menjadikan diri Anda sebagai pemilik.",
             "text": "Masukkan teks perusahaan (maks 1024)",
             "lang": "Pilih bahasa mana yang akan digunakan perusahaan (jika sudah ada perusahaan untuk bahasa tersebut, maka akan ditimpa)",
-            "name_button": "Masukkan teks tombol (maksimal 100 karakter)",
+            "name_button": "Masukkan teks tombol (maks 100 karakter) atau \"0\" jika tombol tidak diperlukan",
             "button_url": "Masukkan tombol url",
             "parse_mode": "Pilih Jenis Pemformatan -",
             "no_parse": "Tidak ada pemformatan",
             "image_choose": "Atur gambar atau ketik \"0\"",
             "add_new_lang": "Tambahkan bahasa untuk milis?",
-            "time_end": "Masukkan waktu setelah perusahaan akan berakhir dalam format yang ditentukan dalam /string_to_sec (misalnya 1d) atau 0",
+            "time_end": "Masukkan waktu, dalam format yang ditentukan di `/string_to_sec` (misalnya 1d) atau 0",
             "max_count": "Masukkan jumlah tayangan maksimum atau 0 untuk tak terbatas",
             "priority": "Apakah perusahaan memiliki prioritas di atas gramad?",
             "one_message": "Apakah akan membatasi tampilan pesan hingga 1 untuk setiap pengguna",

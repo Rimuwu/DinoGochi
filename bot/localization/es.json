@@ -1003,6 +1003,22 @@
             },
             "corrupted_document": {
                 "name": "📄 Documento dañado"
+            },
+            "all_or_nothing_case_eggs": {
+                "name": "🩸 Todo o nada (Huevos)",
+                "description": "El riesgo vale la pena, ya que las posibilidades de obtener un objeto legendario son tan grandes..."
+            },
+            "infinity_activator": {
+                "name": "♾️ Activador de la infinitud",
+                "description": "¡Activa la suscripción infinita!"
+            },
+            "dino_slot": {
+                "name": "🦖 Ranura para dinosaurio",
+                "description": "Agrega un espacio para un dinosaurio a tu cuenta."
+            },
+            "full_recovery_potion": {
+                "name": "🍓 Recuperación completa",
+                "description": "Restaura la salud y energía del dinosaurio."
             }
         },
         "notifications": {
@@ -2231,7 +2247,10 @@
                     "notinc": "🦕 ¡Este dinosaurio no está congelado!",
                     "ok": "🧉 | ¡El dinosaurio ha sido descongelado!"
                 },
-                "freez": "🧊 ¡El dinosaurio está congelado!"
+                "freez": "🧊 ¡El dinosaurio está congelado!",
+                "infinity_premium": "♾  ¡Ya tienes una suscripción premium activada por tiempo indefinido!",
+                "error_slot": "❌ | Error, no se pudo agregar el slot...",
+                "add_slot": "🦕 | ¡Slot añadido! Puedes ver la cantidad de slots llenos en tu perfil!"
             },
             "buff": {
                 "+mood": "😀 | ¡El dinosaurio tiene +{unit}% en el estado de ánimo! \n",
@@ -2329,7 +2348,7 @@
         "user_profile": {
             "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Nombre:* {name}\n*├* *IDENTIFICACIÓN:* `{userid}`\n*└* *Suscripción:* {premium_status} ",
             "level": "*┌*🏮 *ʟᴇᴠᴇʟ*\n*├* *Nivel:* {lvl}\n*├* *Experiencia:* {xp_now} | {max_xp}\n*├* *Súper Monedas:* {super_coins}\n*└* *Monedas:* {coins}",
-            "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* **: {dead}\n*├* *Viviente:* {dino_col}",
+            "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Olvidados*: {dead}\n*├* *Vivos:* {dino_col}\n*├* *Slots:* {dino_slots}",
             "dino": "   *└* 🦕 *{dino_name}* ({owner})\n      *├* *Estado:* {dino_status}\n      *├* *Rareza:* {dino_rare}\n      *└* *Edad:* {age}\n\n",
             "egg": "   *└* 🥚 *{egg_quality}*\n      *└* *Izquierda:* {remained}\n\n",
             "dino_owner": {
@@ -4428,9 +4447,12 @@
                 },
                 "info": "☄ Seleccione la cantidad mínima de tiempo que desea transcurrir entre impresiones de anuncios ->"
             },
-            "shop": "🎍 ¡Bienvenido a la tienda Super Coin! \n\n_(No hay confirmación en el momento de la compra)_",
-            "buy": "🎎 ¡Gracias por ver el anuncio!",
-            "moder_reward": "🎋 Recibiste *+{coin} Súper Moneda(s)* por ver un mensaje. \nVerifique su saldo con el comando /super"
+            "shop": "🎍 ¡Bienvenido a la tienda de super monedas! \n_(¡La compra tiene confirmación!)_",
+            "buy": "🎎 ¡Gracias por ver los anuncios! Se han adquirido los siguientes artículos: `{items}`",
+            "moder_reward": "🎋 Recibiste *+{coin} Súper Moneda(s)* por ver un mensaje. \nVerifique su saldo con el comando /super",
+            "product_info": "🧠 Al hacer clic en el botón de abajo, compras `{items}` por el precio de `{price} super monedas`.\n\n Puedes consultar los artículos adquiridos a través del botón de abajo.",
+            "buy_button": "🛒 Comprar",
+            "no_coins": "❌ ¡No tienes suficientes super monedas para comprar!"
         },
         "no_dinos": "⚡ ¡No puedes usar esta función porque no tienes dinosaurios! \n✨ Para obtener información sobre primas, escriba /premium",
         "buyer": {
@@ -4563,13 +4585,13 @@
             "owner": "Ingrese el id del usuario: el creador de la empresa o \"0\" si se convierte en el propietario.",
             "text": "Introduzca el texto de la empresa (máx. 1024)",
             "lang": "Seleccione el idioma para el que será la empresa (si ya hay una empresa para el idioma, se sobrescribirá)",
-            "name_button": "Introduzca el texto del botón (máximo 100 caracteres)",
+            "name_button": "Introduce el texto del botón (máx 100 caracteres) o '0' si no se necesita botón.",
             "button_url": "Entra en los botones de url",
             "parse_mode": "Seleccione el tipo de formato -",
             "no_parse": "Sin formato",
             "image_choose": "Establezca la imagen o escriba \"0\"",
             "add_new_lang": "¿Agregar un idioma para la lista de correo?",
-            "time_end": "Introduzca el tiempo después del cual la empresa terminará en el formato especificado en /string_to_sec (por ejemplo, 1d) o 0",
+            "time_end": "Introduzca el tiempo, en cuánto terminará la empresa en el formato indicado en `/string_to_sec` (por ejemplo, 1d) o 0",
             "max_count": "Introduzca el número máximo de impresiones o 0 para infinito",
             "priority": "¿La empresa tiene prioridad sobre los gramads?",
             "one_message": "Si se debe limitar la visualización del mensaje a 1 para cada usuario",
