@@ -20,5 +20,21 @@
         "image": "item33",
         "rank": "rare",
         "type": "eat"
+    },
+    "full_recovery_potion": {
+        "buffs": {
+            "heal": 100,
+            "energy": 100
+        },
+        "states": [
+            { "char": "heal", "unit": 10, "time": 21600 },
+            { "char": "energy", "unit": 10, "time": 21600 }
+        ],
+        "act": 50,
+        "class": "ALL",
+        "image": "null",
+        "rank": "legendary",
+        "type": "eat",
+        "cant_sell": true
     }
 }
