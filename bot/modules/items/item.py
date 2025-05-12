@@ -458,6 +458,7 @@ async def item_code(item_dict: Optional[dict] = None,
        
        data_mode - если предмета нет в базе, то возвращает строку в формате ID-...:AB.uses-1:endurance-1
     """
+    text = ''
     if item_dict is None: item_dict = {}
 
     if item_dict is None and item_id is None:
@@ -475,6 +476,9 @@ async def item_code(item_dict: Optional[dict] = None,
 
     elif item_id is not None:
         text = 'ID' + item_id.__str__()
+
+    else:
+        return convert_dict_to_string(item_dict)
 
     if len(text) > 128:
         log("item_code получился больше чем 128 символов, возможно что он не будет работать в callback data", 4)
