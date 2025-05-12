@@ -708,10 +708,12 @@ async def get_inventory_from_i(userid: int, items_l: list[dict] | None = None,
                     id_list.append(i['item']['item_id'])
 
                     item = get_item_dict(i['item']['item_id'])
+                    # Считаем общее количество предметов с таким же item_id
+                    total_count = sum(j['count'] for j in pre_l if j['item']['item_id'] == i['item']['item_id'])
                     find_i.append(
                         {
                             "item": item,
-                            "count": i['count']
+                            "count": total_count
                         }
                     )
         else:
