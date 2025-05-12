@@ -107,18 +107,47 @@ async def support_buttons(call: CallbackQuery):
 
                 text += f'\n{text_data["col_answer"]}'
 
+                # Calculate base price for discount calculation
+                cost_dict = product['cost']
+                keys_list = list(cost_dict.keys())
+                base_key = None
+                for k in keys_list:
+                    if k.isdigit():
+                        base_key = k
+                        break
+
+                if base_key is not None:
+                    base_price = cost_dict[base_key][currency] / int(base_key)
+                else:
+                    base_price = None
+
                 if product['type'] == 'subscription':
-                    for key, item in product['cost'].items():
+                    for key, item in cost_dict.items():
                         if key.isdigit():
                             name = f'{seconds_to_str(product["time"]*int(key), lang)} = {item[currency]}🌟'
-
-                        if key == 'inf':
+                            # Discount calculation
+                            if base_price is not None and int(key) > 0:
+                                expected_price = base_price * int(key)
+                                actual_price = item[currency]
+                                if expected_price > actual_price:
+                                    discount = int(round((1 - actual_price / expected_price) * 100))
+                                    if discount > 0:
+                                        name += f' (-{discount}%)'
+                        elif key == 'inf':
                             name = f'♾ = {item[currency]}🌟'
-
                         buttons[name] = f'support buy {product_key} {key}'
+
                 elif product['type'] in ['kit', 'super_coins']:
-                    for key, item in product['cost'].items():
+                    for key, item in cost_dict.items():
                         name = f'x{key} = {item[currency]}🌟'
+                        # Discount calculation
+                        if base_price is not None and key.isdigit() and int(key) > 0:
+                            expected_price = base_price * int(key)
+                            actual_price = item[currency]
+                            if expected_price > actual_price:
+                                discount = int(round((1 - actual_price / expected_price) * 100))
+                                if discount > 0:
+                                    name += f' (-{discount}%)'
                         buttons[name] = f'support buy {product_key} {key}'
 
                 markup_inline.row(*[
@@ -130,7 +159,7 @@ async def support_buttons(call: CallbackQuery):
             else:
                 # await ChooseIntState(tips, user_id, chatid, lang, 1, 500_000)
                 await ChooseIntHandler(tips, user_id, chatid, lang, 1, 500_000
-                                       ).start()
+                                        ).start()
                 await bot.send_message(chatid, text_data['free_enter'], reply_markup=cancel_markup(lang))
 
             markup_inline.row(
@@ -162,6 +191,7 @@ async def support_buttons(call: CallbackQuery):
                 await edit_SmartPhoto(chatid, messageid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
             except Exception as e:
                 log(f'edit_SmartPhoto error: {e}', 2) 
+
 
 
 async def tips(col, transmitted_data):
