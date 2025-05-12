@@ -1,4 +1,77 @@
+
 {
+    "new": {
+        "replace_codes": {
+            "myMemory": {
+                "ru": "ru-RU",
+                "uk": "uk-UA",
+                "es": "es-ES",
+                "id": "id-ID"
+            },
+            "modernMt": {
+                "es": "es-ES"
+            }
+        },
+
+        "start_symbols": [
+            "/", "@"
+        ],
+
+        "replace_words": {
+            "801": {"text": "</code>", "translate": false},
+            "800": {"text": "<code>", "translate": false},
+            "901": {"text": "<i>", "translate": false},
+            "900": {"text": "</i>", "translate": false},
+            "700": {"text": "<b>", "translate": false},
+            "701": {"text": "</b>", "translate": false},
+            "600": {"text": "<u>", "translate": false},
+            "601": {"text": "</u>", "translate": false},
+            "502": {"text": "<s>", "translate": false},
+            "501": {"text": "</s>", "translate": false},
+            "402": {"text": "<br>", "translate": false},
+            "401": {"text": "</br>", "translate": false},
+            "3320": {"text": "            ", "translate": false},
+            "3120": {"text": "           ", "translate": false},
+            "320": {"text": "          ", "translate": false},
+            "220": {"text": "         ", "translate": false},
+            "120": {"text": "        ", "translate": false},
+            "119": {"text": "       ", "translate": false},
+            "118": {"text": "      ", "translate": false},
+            "117": {"text": "     ", "translate": false},
+            "116": {"text": "    ", "translate": false},
+            "115": {"text": "   ", "translate": false},
+            "314": {"text": "\n\n\n\n\n\n", "translate": false},
+            "3114": {"text": "\n\n\n\n\n", "translate": false},
+            "114": {"text": "\n\n\n\n", "translate": false},
+            "113": {"text": "\n\n\n", "translate": false},
+            "112": {"text": "\n\n", "translate": false},
+            "111": {"text": "\n", "translate": false},
+            "100": {"text": "ᴜsᴇʀ ᴘʀᴏғɪʟᴇ", "translate": false},
+            "200": {"text": "ʟᴇᴠᴇʟ", "translate": false},
+            "300": {"text": "ᴅɪɴᴏsᴀᴜʀs", "translate": false},
+            "400": {"text": "ɪɴᴠᴇɴᴛᴏʀʏ", "translate": false},
+            "500": {"text": "->", "translate": false},
+            "1344": {"text": "<a href='tg://user?id={userid}'>{username}</a>", "translate": false}
+        },
+
+        "one_replace_s": ["```", "*", "`", "~", "_", "'"],
+
+        "translators": ["deepl", "bing"],
+        "zero_translator": "bing",
+
+        "main_code": "ru",
+        "langs_path": "/../../bot/localization",
+        "damp_path": "/damps/",
+
+        "ignore_translate_keys": ["data", "callback", "inline_menu", "keys", "previous", "image", "photo_url", "url"],
+
+        "sp_sym": ["#", "#"]
+    },
+
+
+
+    
+
     "replace_codes": {
         "myMemory": {
             "ru": "ru-RU",
@@ -11,57 +84,40 @@
         }
     },
 
-    "start_symbols": [
-        "/", "@"
-    ],
-
     "replace_words": {
-        "801": {"text": "</code>", "translate": false},
-        "800": {"text": "<code>", "translate": false},
-        "901": {"text": "<i>", "translate": false},
-        "900": {"text": "</i>", "translate": false},
-        "700": {"text": "<b>", "translate": false},
-        "701": {"text": "</b>", "translate": false},
-        "600": {"text": "<u>", "translate": false},
-        "601": {"text": "</u>", "translate": false},
-        "502": {"text": "<s>", "translate": false},
-        "501": {"text": "</s>", "translate": false},
-        "402": {"text": "<br>", "translate": false},
-        "401": {"text": "</br>", "translate": false},
-        "3320": {"text": "            ", "translate": false},
-        "3120": {"text": "           ", "translate": false},
-        "320": {"text": "          ", "translate": false},
-        "220": {"text": "         ", "translate": false},
-        "120": {"text": "        ", "translate": false},
-        "119": {"text": "       ", "translate": false},
-        "118": {"text": "      ", "translate": false},
-        "117": {"text": "     ", "translate": false},
-        "116": {"text": "    ", "translate": false},
-        "115": {"text": "   ", "translate": false},
-        "314": {"text": "\n\n\n\n\n\n", "translate": false},
-        "3114": {"text": "\n\n\n\n\n", "translate": false},
-        "114": {"text": "\n\n\n\n", "translate": false},
-        "113": {"text": "\n\n\n", "translate": false},
-        "112": {"text": "\n\n", "translate": false},
-        "111": {"text": "\n", "translate": false},
-        "100": {"text": "ᴜsᴇʀ ᴘʀᴏғɪʟᴇ", "translate": false},
-        "200": {"text": "ʟᴇᴠᴇʟ", "translate": false},
-        "300": {"text": "ᴅɪɴᴏsᴀᴜʀs", "translate": false},
-        "400": {"text": "ɪɴᴠᴇɴᴛᴏʀʏ", "translate": false},
-        "500": {"text": "->", "translate": false},
-        "1344": {"text": "<a href='tg://user?id={userid}'>{username}</a>", "translate": false}
+        "(121)": {"text": "_", "translate": false},
+        "(120)": {"text": "        ", "translate": false},
+        "(119)": {"text": "       ", "translate": false},
+        "(118)": {"text": "      ", "translate": false},
+        "(117)": {"text": "     ", "translate": false},
+        "(116)": {"text": "    ", "translate": false},
+        "(115)": {"text": "   ", "translate": false},
+        "(114)": {"text": "\n\n\n\n", "translate": false},
+        "(113)": {"text": "\n\n\n", "translate": false},
+        "(112)": {"text": "\n\n", "translate": false},
+        "(111)": {"text": "\n", "translate": false},
+        "(100)": {"text": "ᴜsᴇʀ ᴘʀᴏғɪʟᴇ", "translate": false},
+        "(200)": {"text": "ʟᴇᴠᴇʟ", "translate": false},
+        "(300)": {"text": "ᴅɪɴᴏsᴀᴜʀs", "translate": false},
+        "(400)": {"text": "ɪɴᴠᴇɴᴛᴏʀʏ", "translate": false},
+        "(500)": {"text": "->", "translate": false},
+        "(801)": {"text": "</code>", "translate": false},
+        "(800)": {"text": "<code>", "translate": false},
+        "(901)": {"text": "<i>", "translate": false},
+        "(900)": {"text": "</i>", "translate": false},
+        "(700)": {"text": "<b>", "translate": false},
+        "(701)": {"text": "</b>", "translate": false}
+
     },
 
-    "one_replace_s": ["```", "*", "`", "~", "_", "'"],
+    "one_replace_s": ["*", "`"],
 
-    "translators": ["deepl", "bing"],
+    "translators": ["bing", "myMemory", "modernMt"],
     "zero_translator": "bing",
 
     "main_code": "ru",
     "langs_path": "/../../bot/localization",
     "damp_path": "/damps/",
 
-    "ignore_translate_keys": ["data", "callback", "inline_menu", "keys", "previous", "image", "photo_url", "url"],
-
-    "sp_sym": ["#", "#"]
+    "ignore_translate_keys": ["data", "callback", "inline_menu", "keys", "previous", "image", "photo_url", "url"]
 }
