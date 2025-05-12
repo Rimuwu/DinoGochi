@@ -70,5 +70,24 @@
             "content": ""
         },
         "buyer": false
+    },
+    "infinity_activator": {
+        "image": "activator",
+        "rank": "mythical",
+        "type": "special",
+        "class": "premium",
+        "premium_time": "inf",
+        "cant_sell": true,
+        "buyer": false
+    },
+    "dino_slot": {
+        "image": "null",
+        "rank": "legendary",
+        "type": "special",
+        "class": "dino_slot",
+        "abilities": {
+            "count": 1,
+            "slot_type": "dino"
+        }
     }
 }
