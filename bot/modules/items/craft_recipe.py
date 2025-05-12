@@ -1,12 +1,13 @@
 
 
 
+from hmac import new
 from typing import Any
 from bot.const import GAME_SETTINGS
 from bot.dbmanager import mongo_client
 from bot.modules.data_format import deepcopy, list_to_inline, random_code, random_data, seconds_to_str
 from bot.modules.images_save import send_SmartPhoto
-from bot.modules.items.item import AddItemToUser, DeleteAbilItem, UseAutoRemove, check_and_return_dif, get_item_dict, get_items_names, get_name, get_data, item_code, item_info
+from bot.modules.items.item import AddItemToUser, DeleteAbilItem, EditItemFromUser, RemoveItemFromUser, UseAutoRemove, check_and_return_dif, get_item_dict, get_items_names, get_name, get_data, item_code, item_info
 from bot.modules.items.items_groups import get_group
 from bot.modules.items.time_craft import add_time_craft
 from bot.modules.localization import t
@@ -201,7 +202,13 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
 async def end_choose_items(items: dict, transmitted_data: dict[str, Any]):
     """ Смотрим на данные, преобразовываем так, чтобы они подошли под check_items_in_inventory
     """
-    materials, count, item, userid, chatid, lang, steps = transmitted_data.values()
+    materials = transmitted_data['materials']
+    count = transmitted_data['count']
+    item = transmitted_data['item']
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    lang = transmitted_data['lang']
+
     choosed_items = [] # Записываем какие предметы были выбраны
 
     # Заменяем данные в материалах на выбранные предметы
@@ -275,11 +282,13 @@ async def check_items_in_inventory(materials, item, count,
                                 material['act'], count, userid)
                     if status:
                         finded_items.append(
-                            {'item': i['items_data'],
-                            'count': material['count']}
+                            {
+                            'item': i['items_data'],
+                            'count': material['count']
+                            }
                         )
                     else:
-                        count_material = len(dct_data['delete'])
+                        count_material = dct_data['delete_count']
                         not_find.append({'item': i['items_data'], 
                                         'diff': material['count'] - count_material})
 
@@ -287,23 +296,6 @@ async def check_items_in_inventory(materials, item, count,
             elif len(find_set) > 1:
                 a += 1
                 name = f'{a}_step'
-                # steps.append(
-                #     {
-                #         'type': 'inv',
-                #         'name': name,
-                #         'data': {
-                #             'inventory': find_items,
-                #             'changing_filters': False,
-                #             'inline_func': send_item_info,
-                #             'inline_code': random_code()
-                #         },
-                #         'translate_message': False,
-                #         'message': {'text': t('item_use.recipe.choose_copy', lang, 
-                #                               item_name=get_name(
-                #                                   material['item'], lang, 
-                #                                   material.get('abilities', {})))}
-                #     }
-                # )
                 steps.append(
                     InventoryStepData(name, StepMessage(
                         text=t('item_use.recipe.choose_copy', lang, 
@@ -379,7 +371,14 @@ async def send_item_info(item: dict, transmitted_data: dict):
         await send_SmartPhoto(chatid, image, text, 'Markdown', markup)
 
 async def pre_check(items: dict, transmitted_data):
-    finded_items, data, count, item, userid, chatid, lang, steps = transmitted_data.values()
+    finded_items = transmitted_data['finded_items']
+    data = transmitted_data['data']
+    count = transmitted_data['count']
+    item = transmitted_data['item']
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    lang = transmitted_data['lang']
+
     result_list = []
 
     for i in finded_items:
@@ -462,7 +461,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
 
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id)
-    super_create = deepcopy(data_item['create'])
+    super_create: dict = deepcopy(data_item['create']) # type: ignore
 
     # Оперделение цели крафта
     choosed_items = data['choosed_items']
@@ -494,14 +493,18 @@ async def end_craft(count, item, userid, chatid, lang, data):
             await UseAutoRemove(userid, material['item'], material['count'])
 
         elif material['type'] == 'endurance':
-            for i in material['delete']:
-                await items.delete_one({'_id': i})
+            item_id = material['item']['item_id']
+            item_abil = material['item'].get('abilities', {})
 
-            if material['edit']:
-                await items.update_one({'_id': material['edit']}, 
-                         {'$set': {'items_data.abilities.endurance': 
-                             material['set']} 
-                          })
+            if material['delete_count'] > 0:
+                await RemoveItemFromUser(userid, item_id, 
+                                     material['delete_count'], item_abil)
+
+            if material['set']:
+                new_item: dict = deepcopy(material['item']) # type: ignore
+                new_item['abilities']['endurance'] = material['set']
+
+                await EditItemFromUser(userid, material['item'], new_item)
 
         elif material['type'] == 'to_create':
             r = await UseAutoRemove(userid, material['item'], material['count'])
