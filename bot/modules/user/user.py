@@ -80,6 +80,8 @@ class User:
         self.lvl = 0
         self.xp = 0
 
+        self.add_slots = 0
+
         self.dungeon = { 
             'quest_ended': 0,
             'dungeon_ended': 0
@@ -410,6 +412,9 @@ async def max_dino_col(lvl: int, user_id: int=0, premium_st: bool=False):
     col['standart']['limit'] += ((lvl // 20 + 1) - lvl // 100)
 
     if user_id:
+        user = await User().create(user_id)
+        col['standart']['limit'] += user.add_slots
+
         dinos = await dino_owners.find({'owner_id': user_id}, comment='max_dino_col_dinos')
         for dino in dinos:
             if dino['type'] == 'owner': col['standart']['now'] += 1
@@ -511,8 +516,11 @@ async def user_info(userid: int, lang: str, secret: bool = False,
     return_text += '\n\n'
     if not secret:
         dd = await dead_dinos.find({'owner_id': user.userid}, comment='user_info_dd')
+
+        slots = await max_dino_col(user.lvl, user.userid, await user.premium)
+        dino_slots = f'{slots["standart"]["now"]}/{slots["standart"]["limit"]}'
         return_text += t(f'user_profile.dinosaurs', lang,
-                        dead=len(list(dd)), dino_col = len(dinos)
+                        dead=len(list(dd)), dino_col = len(dinos), dino_slots=dino_slots
                         )
         return_text += '\n\n'
         for iter_data in dinos:
