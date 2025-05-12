@@ -4,7 +4,7 @@ from bot.exec import main_router, bot
 from bot.modules.user.advert import create_ads_data
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.items.item import AddItemToUser, counts_items
+from bot.modules.items.item import AddItemToUser, counts_items, get_item_dict, get_name, item_code
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import premium
@@ -57,12 +57,13 @@ async def super_c(message: Message):
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('super_coins'), IsPrivateChat())
-async def super_coins(call: CallbackQuery):
+async def super_coins(call: CallbackQuery, state: FSMContext):
     chatid = call.message.chat.id
     user_id = call.from_user.id
     lang = await get_lang(call.from_user.id)
 
-    code = call.data.split()[1]
+    data = call.data.split()
+    code = data[1]
 
     if code == "view":
         text = t("super_coins.view.info", lang)
@@ -71,32 +72,85 @@ async def super_coins(call: CallbackQuery):
         inl_buttons = dict(zip(
             map(lambda a: a['text'], buttons.values()), 
             map(lambda b: f"ads_limit {b}", buttons.keys())
-                               ))
+        ))
         markup = list_to_inline([inl_buttons], 2)
 
         await bot.edit_message_text(text, None, chatid, call.message.message_id,
-                                    reply_markup=markup)
+                                   reply_markup=markup)
 
     elif code == "products":
+        # Pagination logic
+        shop_items = list(GAME_SETTINGS['super_shop'].items())
+        items_per_page = 8
 
-        shop_items = GAME_SETTINGS['super_shop']
+        # Get page number from callback data, default to 1
+        page = 1
+        if len(data) > 2 and data[2].isdigit():
+            page = int(data[2])
+        total_pages = (len(shop_items) + items_per_page - 1) // items_per_page
+
+        start = (page - 1) * items_per_page
+        end = start + items_per_page
+        current_items = shop_items[start:end]
+
         text = t("super_coins.shop", lang) + '\n\n'
+
         mrk_list = []
 
-        a = 0
-        for key, value in shop_items.items():
-            a += 1
+        for idx, (key, value) in enumerate(current_items, start=start + 1):
             key_text = f'{value["price"]} ➞ {counts_items(value["items"], lang)}\n'
-            text += f'*{a}.* ' + key_text
+            text += f'*{idx}.* ' + key_text
+            mrk_list.append({f'{idx}. ' + key_text: f"super_coins info {key} {page}"})
 
-            mrk_list.append({f'{a}. ' + key_text: f"super_shop buy {key}"})
+        text +=  f'\n{page}/{total_pages}'
 
-        mrk_list.append(
-            {t('buttons_name.back',lang): 'super_shop back'})
+        # Pagination buttons
+        nav_buttons = {}
+        if page > 1:
+            nav_buttons[GAME_SETTINGS['back_button']] = f"super_coins products {page-1}"
+        nav_buttons[t('buttons_name.back', lang)] = 'super_shop back'
+        if page < total_pages:
+            nav_buttons[GAME_SETTINGS['forward_button']] = f"super_coins products {page+1}"
 
-        markup = list_to_inline(mrk_list, 2)
+        mrk_list.append(nav_buttons)
+        markup = list_to_inline(mrk_list, 3)
         await bot.edit_message_text(text, None, chatid, call.message.message_id,
-                                    reply_markup=markup, parse_mode='Markdown')
+                                   reply_markup=markup, parse_mode='Markdown')
+
+    elif code == "info":
+        # data: super_coins info <product_key> <page>
+        if len(data) < 3: return
+
+        product_key = data[2]
+        page = int(data[3]) if len(data) > 3 and data[3].isdigit() else 1
+        products = GAME_SETTINGS['super_shop']
+        product = products.get(product_key)
+        if not product: return
+
+        item_desc = counts_items(product['items'], lang)
+        price = product['price']
+        text = t("super_coins.product_info", lang, price=price, items=item_desc)
+
+        # Кнопки: Купить и Назад
+        buttons = []
+
+        for iem_id in set(product['items']):
+            item_dct = get_item_dict(iem_id)
+            abil = item_dct.get('abilities', {})
+
+            code = await item_code(item_dct)
+            buttons.append(
+                {f"{get_name(iem_id, lang, abil)}": f"item info {code}"}
+                )
+
+        buttons.append(
+            {
+                t("buttons_name.back", lang): f"super_coins products {page}",
+                t("super_coins.buy_button", lang): f"super_shop buy {product_key}"
+             })
+        markup = list_to_inline(buttons, 2)
+        await bot.edit_message_text(text, None, chatid, call.message.message_id,
+                                   reply_markup=markup, parse_mode='Markdown')
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('ads_limit'), IsPrivateChat())
@@ -151,8 +205,14 @@ async def super_shop(call: CallbackQuery):
                                    {'$inc': {'super_coins': -price}}, comment='super_shop_price')
             for i in items: await AddItemToUser(user_id, i)
 
-            await bot.send_message(chatid, t('super_coins.buy', lang))
+            await bot.send_message(chatid, t('super_coins.buy', lang,
+                                            items=counts_items(items, lang),
+                                             ),
+                                   message_effect_id='5046509860389126442',
+                                   parse_mode='Markdown')
 
             text, markup = await main_message(user_id)
             await bot.edit_message_text(text, None, chatid, call.message.message_id,
                                     reply_markup=markup, parse_mode="Markdown")
+        else:
+            await call.answer(t('super_coins.no_coins', lang), show_alert=True)
