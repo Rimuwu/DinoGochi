@@ -86,8 +86,9 @@ async def stop_craft(craft_id: Union[ObjectId, str]):
         craft_data = await item_craft.find_one({'_id': craft_id})
     else:
         craft_data = await item_craft.find_one({'alt_code': craft_id})
+
     if craft_data:
         if craft_data['dino_id']:
 
             await dino_notification(craft_data['dino_id'], 'craft_end')
-            await item_craft.delete_one({'_id': craft_data['_id']})
+        await item_craft.delete_one({'_id': craft_data['_id']})
