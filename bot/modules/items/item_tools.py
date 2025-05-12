@@ -38,6 +38,7 @@ items = DBconstructor(mongo_client.items.items)
 dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
 users = DBconstructor(mongo_client.user.users)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
+subscriptions = DBconstructor(mongo_client.user.subscriptions)
 
 async def exchange(return_data: dict, transmitted_data: dict):
     item = transmitted_data['item']
@@ -386,6 +387,20 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
                 return_text = t('backgrounds.add_to_storage', lang)
 
+        elif data_item['class'] == 'dino_slot':
+            use_status = False
+            return_text = t('item_use.special.error_slot', lang)
+            user = await User().create(userid)
+
+            col_add = abilities.get('count', 1)
+            type_add = abilities.get('slot_type', 'dino')
+            if user:
+                if type_add == 'dino':
+                    await user.update({'$inc': {'add_slots': col_add}})
+
+                    use_status = True
+                    return_text = t('item_use.special.add_slot', lang)
+
         elif data_item['class'] == 'transport':
 
             if abilities.get('data_id', 0) == 0:
@@ -567,7 +582,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
     item_id = item['item_id']
     data_item = get_data(item_id)
     type_item = data_item['type']
-    limiter = 100 # Ограничение по количеству использований за раз
+    limiter = 1000 # Ограничение по количеству использований за раз
     adapter_function = adapter
 
     bases_item = await items.find({'owner_id': userid, 'items_data': item}, 
@@ -667,8 +682,8 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                     #      "name": 'dino', 
                     #      "data": {"add_egg": False, "all_dinos": False}, 
                     #      'message': t('css.inactive_dino', lang)}
-                    DinoStepData('dino', 
-                                 'css.inactive_dino',
+                    DinoStepData('dino', None,
+                                 message_key='css.inactive_dino',
                             add_egg=False, all_dinos=False
                         )
                 ]
@@ -685,6 +700,12 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                     ]
 
             elif data_item['class'] in ['premium']:
+                res = await subscriptions.find_one({'userid': userid}, comment='premium_res')
+                if res: 
+                    if res['sub_end'] == 'inf':
+                        await bot.send_message(chatid, t('item_use.special.infinity_premium', lang), reply_markup=await markups_menu(userid, 'last_menu', lang))
+                        return
+
                 steps = [
                     # {"type": 'int', "name": 'count', "data":
                     #     {"max_int": max_count}, 
@@ -698,6 +719,9 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                         max_int=max_count
                     )
                 ]
+
+            elif data_item['class'] in ['dino_slot']:
+                steps = []
 
             elif data_item['class'] in ['reborn']:
                 dead = await get_dead_dinos(userid)
