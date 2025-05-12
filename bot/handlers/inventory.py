@@ -594,7 +594,8 @@ async def InventoryInline(callback: CallbackQuery):
     code.pop(0)
     if code and code[0] == str(custom_code):
         code.pop(0)
-        if len(code) == 1: code = code[0]
+        if len(code) == 1: 
+            code: str = code[0]
 
         transmitted_data['temp'] = {}
         transmitted_data['temp']['message_data'] = callback.message
@@ -605,10 +606,11 @@ async def InventoryInline(callback: CallbackQuery):
             except Exception as e:
                 log(f'Inline edit error {e}', lvl=2, prefix='InventoryInline')
         else: transmitted_data['bmessageid'] = callback.message.message_id
-        del transmitted_data['inline_code']
 
+        item_base = await decode_item(code)
+        handler = ChooseInventoryHandler(**data)
         try:
-            item_base = await decode_item(code)
-            await function(item_base['items_data'], transmitted_data=transmitted_data)
+            await handler.call_function(item_base['items_data'])
+            # await function(item_base['items_data'], transmitted_data=transmitted_data)
         except Exception as e:
             log(f'InventoryInline error {e}', lvl=2, prefix='InventoryInline')
