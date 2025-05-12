@@ -34,7 +34,10 @@ async def got_payment(message: Message):
 
         message_split = payload.split('#')
         product_key = message_split[0]
-        col = int(message_split[1])
+        if message_split[1] != 'inf':
+            col = int(message_split[1])
+        else:
+            col = 'inf'
 
         if product_key in products:
             code = save_donation(
