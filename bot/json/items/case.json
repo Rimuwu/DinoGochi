@@ -686,5 +686,41 @@
         "image": "case",
         "rank": "legendary",
         "type": "case"
+    },
+    "all_or_nothing_case_eggs": {
+        "cant_sell": false,
+        "col_repit": {
+            "act": 1,
+            "type": "static"
+        },
+        "drop_items": [
+            {
+                "abilities": {},
+                "chance": [
+                    95,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "regular_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    5,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "legendary_egg"
+            }
+        ],
+        "image": "case",
+        "rank": "legendary",
+        "type": "case"
     }
 }
