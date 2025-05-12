@@ -752,7 +752,10 @@
                     "XTR": 90
                 },
                 "3": {
-                    "XTR": 120
+                    "XTR": 130
+                },
+                "inf": {
+                    "XTR": 1000
                 }
             }, 
             "time": 2592000,
@@ -769,9 +772,15 @@
                 },
                 "3": {
                     "XTR": 60
+                },
+                "4": {
+                    "XTR": 85
+                },
+                "5": {
+                    "XTR": 100
                 }
             },
-            "items": ["jar_honey", "jar_honey", "jar_honey", "jar_honey", "therapeutic_mixture", "therapeutic_mixture", "therapeutic_mixture", "medicinal_drink", "medicinal_drink", "meat_pie", "fish_cake", "berry_pie", "mushroom"]
+            "items": ["full_recovery_potion"]
         },
         "reborn": {
             "type": "kit",
@@ -872,13 +881,22 @@
     },
 
     "super_shop": {
+        "dk": {"items": ["infinity_activator"], "price": 4000},
         "pa": {"items": ["premium_activator"], "price": 700},
+        "sc": {"items": ["3_days_premium"], "price": 50},
+
+        "gh": {"items": ["dino_slot"], "price": 1000},
+
         "ny": {"items": ["freezing_1moth", "defrost"], "price": 1000},
         "sr": {"items": ["stone_resurrection"], "price": 450},
+
+        "m4": {"items": ["all_or_nothing_case_eggs"], "price": 250},
         "ec": {"items": ["egg_case"], "price": 200},
         "rc": {"items": ["recipe_chest"], "price": 200},
         "cf": {"items": ["chest_food"], "price": 200},
-        "dh": {"items": ["transport_egg"], "price": 100}
+
+        "dh": {"items": ["transport_egg"], "price": 100},
+        "n5": {"items": ["full_recovery_potion"], "price": 100}
     },
 
     "buyer": {
