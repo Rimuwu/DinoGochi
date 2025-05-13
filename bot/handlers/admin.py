@@ -65,7 +65,7 @@ async def tracking(message: Message):
 
     options = await get_track_pages()
     # res = await ChoosePagesState(track_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False)
-    res = await ChoosePagesHandler(track_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False).start()
+    res = await ChoosePagesStateHandler(track_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False).start()
     await bot.send_message(chatid, t("track_open", lang), parse_mode='html')
 
 async def track_info_adp(data, transmitted_data: dict):
@@ -124,7 +124,7 @@ async def promos(message: Message):
     options = await get_promo_pages()
     # res = await ChoosePagesState(promo_info_adp, userid, chatid, lang, options, 
     #                              one_element=False, autoanswer=False)
-    res = await ChoosePagesHandler(promo_info_adp, userid, chatid, lang, options, 
+    res = await ChoosePagesStateHandler(promo_info_adp, userid, chatid, lang, options, 
                                    one_element=False, autoanswer=False).start()
     await bot.send_message(chatid, t("promo_commands.promo_open", lang), parse_mode='Markdown')
 
