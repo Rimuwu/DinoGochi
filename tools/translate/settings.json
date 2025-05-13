@@ -30,6 +30,7 @@
         ],
 
         "replace_words": {
+            "#041#": {"text": "<a href='tg://user?id={userid}'>{username}</a>", "translate": false},
             "#01#": {"text": " > ", "translate": false},
             "#02#": {"text": "</code>", "translate": false},
             "#03#": {"text": "<code>", "translate": false},
@@ -69,8 +70,7 @@
             "#037#": {"text": "ʟᴇᴠᴇʟ", "translate": false},
             "#038#": {"text": "ᴅɪɴᴏsᴀᴜʀs", "translate": false},
             "#039#": {"text": "ɪɴᴠᴇɴᴛᴏʀʏ", "translate": false},
-            "#040#": {"text": "->", "translate": false},
-            "#041#": {"text": "<a href='tg://user?id={userid}'>{username}</a>", "translate": false}
+            "#040#": {"text": "->", "translate": false}
         },
 
         "one_replace_s": ["```", "*", "`", "~", "_", "'"],

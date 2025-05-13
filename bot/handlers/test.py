@@ -583,78 +583,10 @@ async def test4(message: Message):
     res = await get_dino_uniqueness_factor(int(message.text.split()[1]))
     await message.answer(f"Uniqueness factor: {res}")
 
-import math
-from asyncio import gather
-from collections import defaultdict
-
-def create_items_dump(items_list):
-    """
-    Принимает список предметов (dict), объединяет одинаковые по (items_data, owner_id), возвращает список с owner_id, items_data, count.
-    """
-    from collections import defaultdict
-    dump_map = defaultdict(lambda: {"owner_id": None, "items_data": None, "count": 0})
-    for item in items_list:
-        key = (str(item["items_data"]), str(item.get("owner_id")))
-        dump_map[key]["owner_id"] = item.get("owner_id")
-        dump_map[key]["items_data"] = item["items_data"]
-        dump_map[key]["count"] += item.get("count", 1)
-    return list(dump_map.values())
-
-@main_router.message(Command(commands=['update_items']), IsAdminUser())
+@main_router.message(Command(commands=['tets']), IsAdminUser())
 @HDMessage
 async def test4(message: Message):
-
-    all_items = await items.find({})
     
-    print(f"Всего предметов: {len(all_items)}")
-    dump = create_items_dump(all_items)
-    print(f"Дамп создан")
-
-    # Группируем предметы по (items_data, owner_id)
-    item_map = defaultdict(lambda: {"_ids": [], "count": 0, "sample": None})
-    
-    a = 0
-    for item in all_items:
-        key = (str(item["items_data"]), str(item.get("owner_id")))
-        item_map[key]["_ids"].append(item["_id"])
-        item_map[key]["count"] += item.get("count", 1)
-        if not item_map[key]["sample"]:
-            item_map[key]["sample"] = item
-
-        a += 1
-        print(f'{a} / {len(all_items)} формирование структуры')
-
-    # Преобразуем в обычный dict для избежания проблем с defaultdict
-    item_map = dict(item_map)
-
-    async def process_chunk(chunk, total_len):
-        merged = 0
-        for idx, (key, data) in enumerate(chunk):
-            if len(data["_ids"]) > 1:
-                main_id = data["_ids"][0]
-                total_count = data["count"]
-                await items.update_one({"_id": main_id}, {"$set": {"count": total_count}})
-                for del_id in data["_ids"][1:]:
-                    await items.delete_one({"_id": del_id})
-                merged += 1
-            if (idx + 1) % 100 == 0:
-                print(f"[Поток] Объединено {merged} / {idx+1} / {total_len}")
-        return merged
-
-    N = 16  # Количество параллельных задач
-    items_list = list(item_map.items())
-    chunk_size = math.ceil(len(items_list) / N)
-    chunks = [items_list[i*chunk_size:(i+1)*chunk_size] for i in range(N) if i*chunk_size < len(items_list)]
-
-    results = await gather(*[process_chunk(chunk, len(chunk)) for chunk in chunks])
-    merged_total = sum(results)
-
-    await message.answer(f"Объединено {merged_total} предметов по items_data и owner_id.")
-    
-    all_items = await items.find({})
-    
-    print(f"Всего предметов: {len(all_items)}")
-    new_dump = create_items_dump(all_items)
-    print(f"Дамп создан")
-
-    print(f'Равен', new_dump == dump)
+    await give_reward(
+        message.from_user.id, 'dino_ultima', 'inf', 'test'
+    )

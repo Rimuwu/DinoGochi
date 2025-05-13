@@ -150,6 +150,7 @@ def save_replace(code: int, text: str, translate: bool, data = '' ):
         #     pass
         # else:
         #     new_code = r_code
+        # new_code = f'{new_code}0{new_code}0'
         cash_replaces[new_code] = {"text": text, 
                                "translate": translate, "data": data}
         return new_code
@@ -172,17 +173,17 @@ def replace_specials(text):
     if not isinstance(text, str):
         return text
 
-    for _ in range(6):
+    for _ in range(1):
         # Заменяем спецсимволы
-        # for key, item in replace_words.items():
-        #     if item['text'] in text:
-        #         code = save_replace(1, item['text'], item['translate'])
-        #         text = text.replace(
-        #             item['text'], f"{code}")
+        for key, item in replace_words.items():
+            if item['text'] in text:
+                code = save_replace(800, item['text'], item['translate'])
+                text = text.replace(
+                    item['text'], f"{strat_sym}{code}{end_sym}")
 
         # Прячем эмодзи
         for em in emoji.emoji_list(text):
-            code = save_replace(1, 
+            code = save_replace(100, 
                                 em['emoji'], False)
             text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(em['emoji'], text_code)
@@ -190,7 +191,7 @@ def replace_specials(text):
         # Прячем переменные вида {name}
         matches = re.findall(r'\{.*?\}', text)
         for match in matches:
-            code = save_replace(1, 
+            code = save_replace(200, 
                                 match, False)
             text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(match, text_code)
@@ -198,14 +199,14 @@ def replace_specials(text):
         # Прячем переменные вида /слово (только первое целое слово после /)
         matches = re.findall(r'/\w+', text)
         for match in matches:
-            code = save_replace(1,
+            code = save_replace(300,
                     match, False)
             text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(match, text_code)
         
         matches = re.findall(r'<\s*[^<>]+\s*>', text)
         for match in matches:
-            code = save_replace(1,
+            code = save_replace(400,
                     match, True)
             text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(match, text_code)
@@ -213,7 +214,7 @@ def replace_specials(text):
         # Прячем переменные вида <b>word</b>
         matches = re.findall(r'<\s*[^<>]+\s*>', text)
         for match in matches:
-            code = save_replace(1,
+            code = save_replace(500,
                     match, True)
             text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(match, text_code)
@@ -223,26 +224,23 @@ def replace_specials(text):
             tx = fr'\{one_repl}\s*.*?\s*\{one_repl}'
             matches = re.findall(tx, text)
             for match in matches:
-                code = save_replace(1,
+                code = save_replace(600,
                                     match[1:-1], True, one_repl)
                 text_code = f"{strat_sym}{code}{end_sym}"
                 text = text.replace(match, text_code)
 
-    # Прячем конструкции вида #число##число#... (любое количество подряд)
-    # Защита: если уже есть такие конструкции, не заменяем их снова
-    pattern = r'(?:#\d+#){3,}'
-    matches = re.findall(pattern, text)
-    for match in matches:
-        # Если уже обернуто в strat_sym/end_sym — пропускаем
-        already_wrapped = f"{strat_sym}{1}{end_sym}" in text or match.startswith(strat_sym) and match.endswith(end_sym)
-        if already_wrapped:
-            continue
-        # Если внутри match есть strat_sym/end_sym — пропускаем
-        if strat_sym in match or end_sym in match:
-            continue
-        code = save_replace(1, match, False)
-        text_code = f"{strat_sym}{code}{end_sym}"
-        text = text.replace(match, text_code)
+    # # Прячем конструкции вида #число##число#... (любое количество подряд)
+    # # Новый паттерн: ищет одну или более групп #число#, подряд идущих
+
+    # matches = re.findall(r'(#[0-9]+#)+', text)
+    # for match in matches:
+    #     if strat_sym in match or end_sym in match:
+    #         continue
+    #     if len(match) >= 6:
+    #         code = save_replace(700, match, False)
+    #         text_code = f"{strat_sym}{code}{end_sym}"
+    #         text = text.replace(match, text_code)
+    #         print(f"Заменено: {match} -> {text_code}")
 
     return text
 
@@ -260,26 +258,26 @@ def restore_specials(text, to_lang, from_lang):
     """
     if not isinstance(text, str): return text
 
-    for _ in range(12):
-        for key, item in replace_words.items():
-            word_text = item['text']
+    for _ in range(6):
+        # for key, item in replace_words.items():
+        #     word_text = item['text']
 
-            fr_key = key[1:-1]
-            for code_in_text in [
-                f'{strat_sym}{fr_key}{end_sym}',
-                f'{strat_sym} {fr_key}{end_sym}',
-                f'{strat_sym}{fr_key} {end_sym}',
-                f'{strat_sym} {fr_key} {end_sym}',
-                # f'{fr_key}{end_sym}',
-                # f'{strat_sym}{fr_key}',
-                # f'{fr_key} {end_sym}',
-                # f'{strat_sym} {fr_key}',
-                # f'{fr_key}{end_sym}',
-                # f'{strat_sym}{fr_key}',
-            ]:
+        #     fr_key = key[1:-1]
+        #     for code_in_text in [
+        #         f'{strat_sym}{fr_key}{end_sym}',
+        #         f'{strat_sym} {fr_key}{end_sym}',
+        #         f'{strat_sym}{fr_key} {end_sym}',
+        #         f'{strat_sym} {fr_key} {end_sym}',
+        #         # f'{fr_key}{end_sym}',
+        #         # f'{strat_sym}{fr_key}',
+        #         # f'{fr_key} {end_sym}',
+        #         # f'{strat_sym} {fr_key}',
+        #         # f'{fr_key}{end_sym}',
+        #         # f' {strat_sym}{fr_key}'
+        #     ]:
 
-                if smart_contains(text, code_in_text):
-                    text = text.replace(code_in_text, word_text)
+        #         if smart_contains(text, code_in_text):
+        #             text = text.replace(code_in_text, word_text)
 
         for code, item in cash_replaces.copy().items():
             word_text = item['text']
@@ -300,7 +298,7 @@ def restore_specials(text, to_lang, from_lang):
                 # f'{code} {end_sym}',
                 # f'{strat_sym} {code}',
                 # f'{code}{end_sym}',
-                # f'{strat_sym}{code}',
+                # f' {strat_sym}{code}',
             ]:
 
                 if smart_contains(text, code_in_text):
@@ -332,10 +330,7 @@ def match_case(original, translated, lang):
         result = []
         for i, word in enumerate(trans_words):
             if orig_words[i].isupper():
-                if len(word) == 1:
-                    result.append(word.capitalize())
-                    continue
-                result.append(word.upper())
+                result.append(word.capitalize())
             elif orig_words[i].islower():
                 result.append(word.lower())
             elif orig_words[i].istitle():
@@ -355,12 +350,12 @@ def match_case(original, translated, lang):
     ):
         # Если перевод состоит из нескольких слов, делаем capitalize только первое слово
         if translated:
-            return translated[0].upper() + translated[1:].lower()
+            return translated[0].capitalize() + translated[1:].lower()
         return translated
 
     # Если не совпадает — применяем общий стиль
     if original.isupper():
-        return translated.upper()
+        return translated.capitalize()
     if original.istitle():
         return translated.title()
     return translated
@@ -609,11 +604,14 @@ def main():
                         set_by_path(damp_data, f'{lang}.'+path, value)
 
                 a_c_upd += 1
-                # if a_c_upd % 5 == 0:
-                write_json(lang_path, {lang: lang_data})
-                write_json(damp_path_, damp_data)
+                if a_c_upd % 3 == 0:
+                    write_json(lang_path, {lang: lang_data})
+                    write_json(damp_path_, damp_data)
 
             walk_keys(main_data, update_callback)
+            
+            write_json(lang_path, {lang: lang_data})
+            write_json(damp_path_, damp_data)
 
 if __name__ == '__main__':
     main()

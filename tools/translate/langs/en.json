@@ -1,7 +1,5 @@
 {
     "en": {
-        "1": "I'M the coolest!",
-        "2": "i'm not cool at all...",
-        "3": "🎮 Walrus fish"
+        "abou2t": "🤖 | Hello! I'm @{bot_name}, here's some information about me!\n\n🗝️ | Statistics\n× 👥 Players <code>{col_u}</code>\n× 🦕 Dinosaurs <code>{col_d}</code>\n× 🔮 Items <code>{col_i}</code>\n× 🌐 Groups <code>{col_g}</code>\n\n<i>{update_time} back.</i>"
     }
 }
