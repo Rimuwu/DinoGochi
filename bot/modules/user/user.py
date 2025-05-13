@@ -2,14 +2,15 @@ from random import choice
 from time import time
 from typing import Union
 
-from bson import ObjectId
 from aiogram.types import User as teleUser
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
-from bot.modules.data_format import escape_markdown, item_list, seconds_to_str
+from bot.modules.data_format import escape_markdown, item_list, list_to_inline, seconds_to_str, user_name_from_telegram
+from bot.modules.dino_uniqueness import get_dino_uniqueness_factor
 from bot.modules.dinosaur.dinosaur import Dino, Egg
+from bot.modules.images import async_open
 from bot.modules.managment.events import check_event, get_event
 from bot.modules.managment.tracking import update_all_user_track
 from bot.modules.user.advert import create_ads_data
@@ -64,12 +65,13 @@ class User:
         self.last_markup = 'main_menu'
 
         self.settings = {
-            'notifications': True,
+            'notifications': True, # Уведомления 
             'last_dino': None, #храним ObjectId
-            'profile_view': 1,
-            'inv_view': [2, 3],
+            'profile_view': 1, # Вид UI для профиля динозавров
+            'inv_view': [2, 3], # Размер UI инвентаря
             'my_name': '', # Как вас называет динозавр
-            'no_talk': False
+            'no_talk': False, # Сообщения типо общения в рандомный момент
+            'confidentiality': False # Если True то устанавливает уровень secret в профиле в группах + не отображается в локальном рейтинге
             }
 
         self.notifications = {}
@@ -243,14 +245,15 @@ class User:
         """
         return await max_dino_col(self.lvl, self.userid, await self.premium)
 
-    async def get_avatar(self) -> str:
+    async def get_avatar(self):
         """Возвращает аватарку пользователя, если файл устарел - обновляет и возвращает новую."""
         try:
             file = await bot.get_file(self.avatar)
             file = None
         except:
-            self.avatar = ''
+            avatar = await async_open('images/remain/dinogochi_user.png', True)
             await self.update({'$set': {'avatar': ''}})
+            return avatar
 
         if not self.avatar or not file:
             # Файла уже не существует, удаляем данные для обновления
@@ -478,6 +481,118 @@ async def experience_enhancement(userid: int, xp: int):
                                         user_name=user.name,
                                         lvl=user.lvl + lvl, item_name=item_name)
 
+async def user_profile_markup(userid: int, lang: str, 
+                        page_type: str, page: int = 0):
+    buttons = []
+
+    if page_type == 'main':
+        # Кнопка перехода в меню просмотра динозавров
+        buttons.append(
+            {'🦕': f'user_profile dino {userid} 0'}
+        )
+
+    elif page_type == 'dino':
+        per_page = GS['profiles_dinos_per_page']
+
+        dinos = await get_dinos_and_owners(userid)
+        eggs = await get_eggs(userid)
+
+        total = len(dinos) + len(eggs)
+        max_page = (total + per_page - 1) // per_page
+
+        page_plus = page + 1 if page + 1 < max_page else 0
+        page_minus = page - 1 if page - 1 >= 0 else max_page - 1
+
+        bts_dct = {
+            GS['back_button']: f'user_profile dino {userid} {page_minus}',
+            '👤': f'user_profile main {userid} 0',
+            GS['forward_button']: f'user_profile dino {userid} {page_plus}'
+        }
+        if total == 1:
+            bts_dct = {
+                '👤': f'user_profile main {userid} 0'
+            }
+
+        buttons.append(bts_dct)
+
+    return list_to_inline(buttons, 3)
+
+async def user_dinos_info(userid: int, lang: str, page: int = 0):
+    user = await User().create(userid)
+    return_text = ''
+    per_page = GS['profiles_dinos_per_page']
+
+    dd = await dead_dinos.find({'owner_id': user.userid}, comment='user_info_dd')
+
+    dinos = await get_dinos_and_owners(userid)
+    eggs = await get_eggs(userid)
+
+    slots = await max_dino_col(user.lvl, user.userid, await user.premium)
+    dino_slots = f'{slots["standart"]["now"]}/{slots["standart"]["limit"]}'
+    return_text += t(f'user_profile.dinosaurs', lang,
+                    dead=len(list(dd)), dino_col=len(dinos), dino_slots=dino_slots
+                    )
+    return_text += '\n\n'
+
+    # Pagination for dinos and eggs
+    all_items = dinos + eggs
+    total_items = len(all_items)
+    total_pages = (total_items + per_page - 1) // per_page
+    page = max(0, min(page, total_pages - 1))
+
+    start = page * per_page
+    end = start + per_page
+    page_items = all_items[start:end]
+
+    for iter_data in page_items:
+        if isinstance(iter_data, dict):  # Dino
+            dino: Dino = iter_data['dino']
+            dino_status = t(f'user_profile.stats.{await dino.status}', lang)
+            dino_rare_dict = get_data(f'rare.{dino.quality}', lang)
+            dino_rare = f'{dino_rare_dict[2]} {dino_rare_dict[1]}'
+
+            dino_uniqueness = await get_dino_uniqueness_factor(dino.data_id)
+
+            if iter_data['owner_type'] == 'owner':
+                dino_owner = t(f'user_profile.dino_owner.owner', lang)
+            else:
+                dino_owner = t(f'user_profile.dino_owner.noowner', lang)
+
+            age = await dino.age()
+            if age.days == 0:
+                age = seconds_to_str(age.seconds, lang, True)
+            else:
+                age = seconds_to_str(age.days * 86400, lang, True)
+
+            return_text += t('user_profile.dino', lang,
+                            dino_name=escape_markdown(dino.name),
+                            dino_status=dino_status,
+                            dino_rare=dino_rare,
+                            owner=dino_owner,
+                            age=age,
+                            dino_uniqueness=dino_uniqueness,
+                            heal=dino.stats['heal'],
+                            eat=dino.stats['eat'],
+                            mood=dino.stats['mood'],
+                            game=dino.stats['game'],
+                            energy=dino.stats['energy']
+                        )
+        else:  # Egg
+            egg = iter_data
+            egg_rare_dict = get_data(f'rare.{egg.quality}', lang)
+            egg_rare = f'{egg_rare_dict[3]}'
+            return_text += t('user_profile.egg', lang,
+                            egg_quality=egg_rare,
+                            remained=seconds_to_str(egg.incubation_time - int(time()), lang, True)
+                        )
+
+    # Add page info if more than one page
+    if total_pages > 1:
+        return_text += f"{page + 1}/{total_pages}"
+
+    image = await user.get_avatar()
+    return return_text, image
+
 async def user_info(userid: int, lang: str, secret: bool = False, 
                     name: str | None = None):
     user = await User().create(userid)
@@ -496,87 +611,95 @@ async def user_info(userid: int, lang: str, secret: bool = False,
     friends_count = len(friends['friends'])
     request_count = len(friends['requests'])
 
-    dinos = await get_dinos_and_owners(userid)
-    eggs = await get_eggs(userid)
+    if not secret:
+        if name is None or name == '': name = user.name
+        if not name: name = await user_name(userid)
+        name = escape_markdown(name)
+    else:
+        try:
+            chat_user = await bot.get_chat_member(userid, userid)
+            user_in_c = chat_user.user
+            name = user_name_from_telegram(user_in_c)
+        except: name = 'noname'
+        
+    user_coins = user.coins
+    user_super_coins = user.super_coins
+    
+    hide_text = t('user_profile.hide', lang)
 
-    if name is None or name == '': name = user.name
-    if not name: name = await user_name(userid)
+    if secret:
+        id_for_text = hide_text
+        name_for_text = hide_text
+        premium = '`' + hide_text + '`'
+        request_count = '`' + hide_text + '`'
+        user_coins = '`' + hide_text + '`'
+        user_super_coins = '`' + hide_text + '`'
+    else:
+        id_for_text = str(userid)
+        name_for_text = escape_markdown(name)
+
     return_text += t('user_profile.user', lang,
-                     name = escape_markdown(name),
-                     userid = userid,
+                     name = name_for_text,
+                     userid = id_for_text,
                      premium_status = premium
                      )
     return_text += '\n\n'
     return_text += t('user_profile.level', lang,
                      lvl=user.lvl, xp_now=user.xp,
                      max_xp=max_lvl_xp(user.lvl),
-                     coins=user.coins,
-                     super_coins=user.super_coins
+                     coins=user_coins,
+                     super_coins=user_super_coins
                      )
     return_text += '\n\n'
-    if not secret:
-        dd = await dead_dinos.find({'owner_id': user.userid}, comment='user_info_dd')
-
-        slots = await max_dino_col(user.lvl, user.userid, await user.premium)
-        dino_slots = f'{slots["standart"]["now"]}/{slots["standart"]["limit"]}'
-        return_text += t(f'user_profile.dinosaurs', lang,
-                        dead=len(list(dd)), dino_col = len(dinos), dino_slots=dino_slots
-                        )
-        return_text += '\n\n'
-        for iter_data in dinos:
-            dino: Dino = iter_data['dino']
-            dino_status = t(f'user_profile.stats.{await dino.status}', lang)
-            dino_rare_dict = get_data(f'rare.{dino.quality}', lang)
-            dino_rare = f'{dino_rare_dict[2]} {dino_rare_dict[1]}'
-            
-            if iter_data['owner_type'] == 'owner': 
-                dino_owner = t(f'user_profile.dino_owner.owner', lang)
-            else:
-                dino_owner = t(f'user_profile.dino_owner.noowner', lang)
-
-            age = await dino.age()
-            if age.days == 0:
-                age = seconds_to_str(age.seconds, lang, True)
-            else: age = seconds_to_str(age.days * 86400, lang, True)
-
-            return_text += t('user_profile.dino', lang,
-                            dino_name=escape_markdown(dino.name), 
-                            dino_status=dino_status,
-                            dino_rare=dino_rare,
-                            owner=dino_owner,
-                            age=age
-                        )
-
-        for egg in eggs:
-            egg_rare_dict = get_data(f'rare.{egg.quality}', lang)
-            egg_rare = f'{egg_rare_dict[3]}'
-            return_text += t('user_profile.egg', lang,
-                            egg_quality=egg_rare, 
-                            remained=
-                            seconds_to_str(egg.incubation_time - int(time()), lang, True)
-                        )
 
     return_text += t('user_profile.friends', lang,
                      friends_col=friends_count,
                      requests_col=request_count
                      )
 
+    items, count = await user.get_inventory()
+
+    # Подсчёт предметов по редкостям
+    rarity_counts = {
+        'common': 0,
+        'uncommon': 0,
+        'rare': 0,
+        'mystical': 0,
+        'legendary': 0,
+        'mythical': 0
+    }
+
     if not secret:
-        items, count = await user.get_inventory()
 
-        return_text += '\n\n'
-        return_text += t('user_profile.inventory', lang,
-                        items_col=count
-                        )
+        for item in items:
+            item_data = get_item_data(item['items_data']['item_id'])
+            rarity = item_data.get('rank', 'common')
+            if rarity in rarity_counts:
+                rarity_counts[rarity] += item['count']
 
-    market = await sellers.find_one({'owner_id': userid}, comment='user_info_market')
-    if market:
+    if secret:
+        count = '`' + hide_text + '`'
+        rarity_counts = {key: '`' + hide_text + '`' for key in rarity_counts.keys()}
+
+    return_text += '\n\n'
+    return_text += t('user_profile.inventory', lang,
+                    items_col=count,
+                    **rarity_counts
+                    )
+
+    if not secret:
+        market = await sellers.find_one({'owner_id': userid}, comment='user_info_market')
+        if market:
+            return_text += '\n\n'
+            return_text += t('user_profile.market.caption', lang)
+            return_text += '\n'
+            return_text += t('user_profile.market.market_name', lang, market_name=escape_markdown(market['name']))
+            return_text += '\n'
+            return_text += t('user_profile.market.earned', lang, coins=market['earned'])
+
+    if secret:
         return_text += '\n\n'
-        return_text += t('user_profile.market.caption', lang)
-        return_text += '\n'
-        return_text += t('user_profile.market.market_name', lang, market_name=escape_markdown(market['name']))
-        return_text += '\n'
-        return_text += t('user_profile.market.earned', lang, coins=market['earned'])
+        return_text += t('user_profile.secret', lang)
 
     return return_text, await user.get_avatar()
 
