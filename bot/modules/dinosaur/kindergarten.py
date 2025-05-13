@@ -1,10 +1,11 @@
+from bson import ObjectId
 from bot.dbmanager import mongo_client
 from time import time, strftime
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 kindergarten = DBconstructor(mongo_client.dino_activity.kindergarten)
 
-m_hours = 120
+m_hours = 240
 
 async def add_moth_data(userid: int):
     data = {
@@ -20,7 +21,7 @@ async def add_moth_data(userid: int):
     }
     await kindergarten.insert_one(data, comment='add_moth_data')
 
-async def dino_kind(dinoid, hours: int = 1):
+async def dino_kind(dinoid: ObjectId, hours: int = 1):
     data = {
         "dinoid": dinoid,
         "type": "dino",

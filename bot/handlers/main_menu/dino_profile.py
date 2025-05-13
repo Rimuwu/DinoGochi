@@ -377,7 +377,7 @@ async def dino_menu(call: types.CallbackQuery):
                             hours_now=m_hours - total,
                             remained=total,
                             days=seconds_to_str(end - int(time()), lang, False, 'hour'),
-                            hours=hours, remained_today=6
+                            hours=hours, remained_today=12
                             )
 
                 if await check_status(dino['_id']) == 'kindergarten':
@@ -522,7 +522,7 @@ async def kindergarten(call: types.CallbackQuery):
                 all_h, end = await check_hours(userid)
                 h = await hours_now(userid)
 
-                if h != 6 and all_h:
+                if h < 12 and all_h:
                     options = {}
 
                     if 6 - h != 0:
@@ -536,9 +536,6 @@ async def kindergarten(call: types.CallbackQuery):
                         list(options.keys()), [t('buttons_name.cancel', lang)]
                     ], 2)
 
-                    # await ChooseOptionState(start_kind, userid, chatid, lang, options,
-                    #                         transmitted_data={'dino': dino['_id']}
-                    #                         )
                     await ChooseOptionHandler(start_kind, userid, chatid, lang, options,
                                               transmitted_data={'dino': dino['_id']}).start()
                     await bot.send_message(userid, t('kindergarten.choose_house', lang),
@@ -567,6 +564,6 @@ async def start_kind(col, transmitted_data):
         return
 
     await minus_hours(userid, col)
-    await dino_kind(dino, col)
+    await dino_kind(dino_id, col)
     await bot.send_message(chatid, t('kindergarten.ok', lang), 
                            reply_markup= await m(userid, 'last_menu', lang))

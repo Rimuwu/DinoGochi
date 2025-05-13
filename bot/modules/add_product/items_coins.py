@@ -134,7 +134,6 @@ async def new_circle(transmitted_data):
     add_res = transmitted_data['return_data']['add_item']
     exclude_ids = transmitted_data['exclude']
     option = transmitted_data['option']
-    
 
     if add_res:
         items, exclude = await generate_sell_pages(userid, exclude_ids)
