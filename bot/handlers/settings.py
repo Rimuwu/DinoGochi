@@ -3,6 +3,7 @@ from random import randint
 
 from bson import ObjectId
 
+from bot.const import GAME_SETTINGS
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.data_format import chunks, escape_markdown, list_to_keyboard
@@ -475,3 +476,55 @@ async def reset_avatar(message: Message):
     await bot.send_message(chatid, t('reset_avatar', lang), 
                            reply_markup= await m(userid, 'last_menu', lang))
     log(f'User {userid} reset avatar', 1)
+
+async def confidentiality_set(result: bool, transmitted_data: dict):
+    userid = transmitted_data['userid']
+    lang = transmitted_data['lang']
+    chatid = transmitted_data['chatid']
+    price = GAME_SETTINGS['conf_set_price']
+    
+    have_coins = False
+    user = await User().create(userid)
+    if user.super_coins >= price:
+        have_coins = True
+        await user.update({'$inc': {'super_coins': -price}})
+
+    if await user.premium or have_coins:
+
+        text = t(f'confidentiality.{result}', lang)
+        await bot.send_message(chatid, text, 
+                        reply_markup= await m(userid, 'last_menu', lang))
+        await users.update_one({'userid': userid}, 
+                            {"$set": {'settings.confidentiality': result}}, 
+                            comment='confidentiality_1'
+                            )
+
+    else:
+        text = t(f'confidentiality.no_coins', lang,
+                 price=price
+                 )
+        await bot.send_message(chatid, text, 
+                        reply_markup= await m(userid, 'last_menu', lang))
+
+@HDMessage
+@main_router.message(IsPrivateChat(), Text('commands_name.settings2.confidentiality'), 
+                     IsAuthorizedUser())
+async def confidentiality(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+    chatid = message.chat.id
+
+    prefix = 'buttons_name.'
+    buttons = [
+        ['enable', 'disable'],
+        ['cancel']
+    ]
+    translated = tranlate_data(buttons, lang, prefix)
+    keyboard = list_to_keyboard(translated, 2)
+
+    await ChooseConfirmHandler(confidentiality_set, userid, chatid, lang).start()
+    await bot.send_message(userid, t('confidentiality.info', lang,
+                                     price=GAME_SETTINGS['conf_set_price']
+                                     ), 
+                           reply_markup=keyboard
+                           )
