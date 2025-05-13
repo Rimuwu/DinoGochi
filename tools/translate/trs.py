@@ -321,14 +321,13 @@ def restore_specials(text, to_lang, from_lang):
                     text = text.replace(code_in_text, word_text)
 
     # Восстановление эмодзи (пример: #128512# -> 😀)
-    print(text)
     return text
 
 
 def match_case(original, translated, lang):
-    # Если количество слов совпадает, применяем стиль регистра для каждого слова
     orig_words = original.split()
     trans_words = translated.split()
+    # Если количество слов совпадает, применяем стиль регистра для каждого слова
     if len(orig_words) == len(trans_words):
         result = []
         for i, word in enumerate(trans_words):
@@ -345,11 +344,23 @@ def match_case(original, translated, lang):
                 result.append(word)
         return ' '.join(result)
 
+    # Новое: если весь оригинал в нижнем регистре — вернуть перевод в нижнем регистре
+    if original.islower():
+        return translated.lower()
+    # Новое: если только первое слово с большой буквы, остальные маленькие
+    if (
+        original
+        and original[0].isupper()
+        and (len(original) == 1 or original[1:].islower())
+    ):
+        # Если перевод состоит из нескольких слов, делаем capitalize только первое слово
+        if translated:
+            return translated[0].upper() + translated[1:].lower()
+        return translated
+
     # Если не совпадает — применяем общий стиль
     if original.isupper():
         return translated.upper()
-    if original.islower():
-        return translated.lower()
     if original.istitle():
         return translated.title()
     return translated
