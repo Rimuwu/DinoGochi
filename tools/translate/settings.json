@@ -2,14 +2,26 @@
 {
     "new": {
         "replace_codes": {
-            "myMemory": {
+            "mymemory": {
                 "ru": "ru-RU",
                 "uk": "uk-UA",
                 "es": "es-ES",
                 "id": "id-ID"
             },
-            "modernMt": {
+            "modernmt": {
                 "es": "es-ES"
+            },
+            "apertium": {
+                "ru": "rus",
+                "en": "eng",
+                "es": "spa",
+                "id": "ind"
+            },
+            "lingvanex": {
+                "ru": "ru_RU",
+                "uk": "uk_UA",
+                "es": "es_ES",
+                "id": "id_ID"
             }
         },
 
@@ -18,59 +30,63 @@
         ],
 
         "replace_words": {
-            "801": {"text": "</code>", "translate": false},
-            "800": {"text": "<code>", "translate": false},
-            "901": {"text": "<i>", "translate": false},
-            "900": {"text": "</i>", "translate": false},
-            "700": {"text": "<b>", "translate": false},
-            "701": {"text": "</b>", "translate": false},
-            "600": {"text": "<u>", "translate": false},
-            "601": {"text": "</u>", "translate": false},
-            "502": {"text": "<s>", "translate": false},
-            "501": {"text": "</s>", "translate": false},
-            "402": {"text": "<br>", "translate": false},
-            "401": {"text": "</br>", "translate": false},
-            "3320": {"text": "            ", "translate": false},
-            "3120": {"text": "           ", "translate": false},
-            "320": {"text": "          ", "translate": false},
-            "220": {"text": "         ", "translate": false},
-            "120": {"text": "        ", "translate": false},
-            "119": {"text": "       ", "translate": false},
-            "118": {"text": "      ", "translate": false},
-            "117": {"text": "     ", "translate": false},
-            "116": {"text": "    ", "translate": false},
-            "115": {"text": "   ", "translate": false},
-            "314": {"text": "\n\n\n\n\n\n", "translate": false},
-            "3114": {"text": "\n\n\n\n\n", "translate": false},
-            "114": {"text": "\n\n\n\n", "translate": false},
-            "113": {"text": "\n\n\n", "translate": false},
-            "112": {"text": "\n\n", "translate": false},
-            "111": {"text": "\n", "translate": false},
-            "100": {"text": "ᴜsᴇʀ ᴘʀᴏғɪʟᴇ", "translate": false},
-            "200": {"text": "ʟᴇᴠᴇʟ", "translate": false},
-            "300": {"text": "ᴅɪɴᴏsᴀᴜʀs", "translate": false},
-            "400": {"text": "ɪɴᴠᴇɴᴛᴏʀʏ", "translate": false},
-            "500": {"text": "->", "translate": false},
-            "1344": {"text": "<a href='tg://user?id={userid}'>{username}</a>", "translate": false}
+            "#01#": {"text": " > ", "translate": false},
+            "#02#": {"text": "</code>", "translate": false},
+            "#03#": {"text": "<code>", "translate": false},
+            "#04#": {"text": "<i>", "translate": false},
+            "#05#": {"text": "</i>", "translate": false},
+            "#06#": {"text": "<b>", "translate": false},
+            "#07#": {"text": "</b>", "translate": false},
+            "#08#": {"text": "<u>", "translate": false},
+            "#09#": {"text": "</u>", "translate": false},
+            "#010#": {"text": "<s>", "translate": false},
+            "#011#": {"text": "</s>", "translate": false},
+            "#012#": {"text": "<br>", "translate": false},
+            "#013#": {"text": "</br>", "translate": false},
+            "#014#": {"text": "            ", "translate": false},
+            "#015#": {"text": "           ", "translate": false},
+            "#016#": {"text": "          ", "translate": false},
+            "#017#": {"text": "         ", "translate": false},
+            "#018#": {"text": "        ", "translate": false},
+            "#019#": {"text": "       ", "translate": false},
+            "#020#": {"text": "      ", "translate": false},
+            "#021#": {"text": "     ", "translate": false},
+            "#022#": {"text": "    ", "translate": false},
+            "#023#": {"text": "   ", "translate": false},
+            "#030#": {"text": "\n\n\n\n\n\n ", "translate": false},
+            "#031#": {"text": "\n\n\n\n\n ", "translate": false},
+            "#032#": {"text": "\n\n\n\n" , "translate": false},
+            "#033#": {"text": "\n\n\n ", "translate": false},
+            "#034#": {"text": "\n\n ", "translate": false},
+            "#035#": {"text": "\n ", "translate": false},
+            "#024#": {"text": "\n\n\n\n\n\n", "translate": false},
+            "#025#": {"text": "\n\n\n\n\n", "translate": false},
+            "#026#": {"text": "\n\n\n\n", "translate": false},
+            "#027#": {"text": "\n\n\n", "translate": false},
+            "#028#": {"text": "\n\n", "translate": false},
+            "#029#": {"text": "\n", "translate": false},
+            "#036#": {"text": "ᴜsᴇʀ ᴘʀᴏғɪʟᴇ", "translate": false},
+            "#037#": {"text": "ʟᴇᴠᴇʟ", "translate": false},
+            "#038#": {"text": "ᴅɪɴᴏsᴀᴜʀs", "translate": false},
+            "#039#": {"text": "ɪɴᴠᴇɴᴛᴏʀʏ", "translate": false},
+            "#040#": {"text": "->", "translate": false},
+            "#041#": {"text": "<a href='tg://user?id={userid}'>{username}</a>", "translate": false}
         },
 
         "one_replace_s": ["```", "*", "`", "~", "_", "'"],
 
-        "translators": ["deepl", "bing"],
-        "zero_translator": "bing",
+        "translators": ["lingvanex"],
+        "zero_translator": "lingvanex",
 
         "main_code": "ru",
         "langs_path": "/../../bot/localization",
         "damp_path": "/damps/",
 
-        "ignore_translate_keys": ["data", "callback", "inline_menu", "keys", "previous", "image", "photo_url", "url"],
+        "ignore_translate_keys": ["data", "callback", "inline_menu", "keys", "previous", "image", "photo_url", "url", "meow_book"],
 
         "sp_sym": ["#", "#"]
     },
 
-
-
-    
 
     "replace_codes": {
         "myMemory": {
