@@ -13,12 +13,14 @@ ex = os.path.dirname(__file__) # Путь к этому файлу
 langs_path = "/langs"
 damp_path = "/damp_test"
 
-base_names = {}
+# base_names = {}
 cash_replaces = {}
+
 
 with open(f'{ex}/settings.json', encoding='utf-8') as f: 
     """ Загружаем константы из файла найстроек """
     settings = json.load(f) # type: dict
+    settings = settings['new']
 
     replace_codes = settings['replace_codes']
     replace_words = settings['replace_words']
@@ -132,12 +134,35 @@ def save_replace(code: int, text: str, translate: bool, data = '' ):
     Сохраняет замену в словаре cash_replaces.
     """
     new_code = f'{code}'
-    if new_code not in cash_replaces and new_code not in cash_replaces.keys():
+    r_code = f'{strat_sym}{code}{end_sym}'
+
+    s_1 = new_code not in cash_replaces
+    s_2 = r_code not in cash_replaces
+    s_3 = new_code not in replace_words
+    s_4 = r_code not in replace_words
+
+    # for k, v in cash_replaces.items():
+    #     if v["text"] == text and v["translate"] == translate and v.get("data", "") == data:
+    #         return k
+
+    if all([s_1, s_3, s_2, s_4]):
+        # if new_code.startswith(strat_sym) and new_code.endswith(end_sym):
+        #     pass
+        # else:
+        #     new_code = r_code
         cash_replaces[new_code] = {"text": text, 
                                "translate": translate, "data": data}
         return new_code
     else:
-        return save_replace(random.randint(1, 10000), text, translate, data)
+        r = 0
+        if type(code) == int:
+            r = code + 1
+        elif code.isdigit():
+            r += int(code) + 1
+        else:
+            r = int(code[1:-1]) + 1
+        # r = random.randint(1, 1000)
+        return save_replace(r, text, translate, data)
 
 def replace_specials(text):
     # "(121)": {"text": "_", "translate": false},
@@ -149,14 +174,15 @@ def replace_specials(text):
 
     for _ in range(6):
         # Заменяем спецсимволы
-        for key, item in replace_words.items():
-            code = save_replace(int(key), item['text'], item['translate'])
-            text = text.replace(
-                item['text'], f"{strat_sym}{code}{end_sym}")
+        # for key, item in replace_words.items():
+        #     if item['text'] in text:
+        #         code = save_replace(1, item['text'], item['translate'])
+        #         text = text.replace(
+        #             item['text'], f"{code}")
 
         # Прячем эмодзи
         for em in emoji.emoji_list(text):
-            code = save_replace(int(ord(em['emoji'][0])), 
+            code = save_replace(1, 
                                 em['emoji'], False)
             text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(em['emoji'], text_code)
@@ -164,7 +190,7 @@ def replace_specials(text):
         # Прячем переменные вида {name}
         matches = re.findall(r'\{.*?\}', text)
         for match in matches:
-            code = save_replace(int(ord(match[1])), 
+            code = save_replace(1, 
                                 match, False)
             text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(match, text_code)
@@ -172,14 +198,14 @@ def replace_specials(text):
         # Прячем переменные вида /слово (только первое целое слово после /)
         matches = re.findall(r'/\w+', text)
         for match in matches:
-            code = save_replace(int(ord(match[1])),
+            code = save_replace(1,
                     match, False)
             text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(match, text_code)
         
         matches = re.findall(r'<\s*[^<>]+\s*>', text)
         for match in matches:
-            code = save_replace(int(ord(match[1])),
+            code = save_replace(1,
                     match, True)
             text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(match, text_code)
@@ -187,7 +213,7 @@ def replace_specials(text):
         # Прячем переменные вида <b>word</b>
         matches = re.findall(r'<\s*[^<>]+\s*>', text)
         for match in matches:
-            code = save_replace(int(ord(match[1])),
+            code = save_replace(1,
                     match, True)
             text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(match, text_code)
@@ -197,10 +223,26 @@ def replace_specials(text):
             tx = fr'\{one_repl}\s*.*?\s*\{one_repl}'
             matches = re.findall(tx, text)
             for match in matches:
-                code = save_replace(int(ord(match[1])),
+                code = save_replace(1,
                                     match[1:-1], True, one_repl)
                 text_code = f"{strat_sym}{code}{end_sym}"
                 text = text.replace(match, text_code)
+
+    # Прячем конструкции вида #число##число#... (любое количество подряд)
+    # Защита: если уже есть такие конструкции, не заменяем их снова
+    pattern = r'(?:#\d+#){3,}'
+    matches = re.findall(pattern, text)
+    for match in matches:
+        # Если уже обернуто в strat_sym/end_sym — пропускаем
+        already_wrapped = f"{strat_sym}{1}{end_sym}" in text or match.startswith(strat_sym) and match.endswith(end_sym)
+        if already_wrapped:
+            continue
+        # Если внутри match есть strat_sym/end_sym — пропускаем
+        if strat_sym in match or end_sym in match:
+            continue
+        code = save_replace(1, match, False)
+        text_code = f"{strat_sym}{code}{end_sym}"
+        text = text.replace(match, text_code)
 
     return text
 
@@ -218,32 +260,49 @@ def restore_specials(text, to_lang, from_lang):
     """
     if not isinstance(text, str): return text
 
-    for _ in range(6):
-        # for key, item in replace_words.items():
-        #     word_text = item['text']
+    for _ in range(12):
+        for key, item in replace_words.items():
+            word_text = item['text']
 
-        #     if smart_contains(text, key):
-        #         if item['translate']:
-        #             stage_text = translate_text(word_text, to_lang, from_lang)
-        #             if not isinstance(stage_text, str):
-        #                 stage_text = str(stage_text)
-        #             text = text.replace(key, stage_text)
-        #         else:
-        #             text = text.replace(key, word_text)
+            fr_key = key[1:-1]
+            for code_in_text in [
+                f'{strat_sym}{fr_key}{end_sym}',
+                f'{strat_sym} {fr_key}{end_sym}',
+                f'{strat_sym}{fr_key} {end_sym}',
+                f'{strat_sym} {fr_key} {end_sym}',
+                # f'{fr_key}{end_sym}',
+                # f'{strat_sym}{fr_key}',
+                # f'{fr_key} {end_sym}',
+                # f'{strat_sym} {fr_key}',
+                # f'{fr_key}{end_sym}',
+                # f'{strat_sym}{fr_key}',
+            ]:
+
+                if smart_contains(text, code_in_text):
+                    text = text.replace(code_in_text, word_text)
 
         for code, item in cash_replaces.copy().items():
             word_text = item['text']
+            # repl = False
+
             for code_in_text in [
                 f'{strat_sym}{code}{end_sym}',
                 f'{strat_sym} {code}{end_sym}',
                 f'{strat_sym}{code} {end_sym}',
                 f'{strat_sym} {code} {end_sym}',
+                f'{strat_sym}{strat_sym}{code}{end_sym}',
+                f'{strat_sym}{code}{end_sym}{end_sym}',
+                f'{strat_sym}{strat_sym} {code}{end_sym}',
+                f'{strat_sym}{code} {end_sym}{end_sym}',
+                f'{strat_sym} {code}{end_sym}{end_sym}',
                 # f'{code}{end_sym}',
                 # f'{strat_sym}{code}',
                 # f'{code} {end_sym}',
                 # f'{strat_sym} {code}',
+                # f'{code}{end_sym}',
+                # f'{strat_sym}{code}',
             ]:
-            
+
                 if smart_contains(text, code_in_text):
                     if item['translate']:
                         stage_text = translate_text(word_text, to_lang, from_lang)
@@ -256,27 +315,58 @@ def restore_specials(text, to_lang, from_lang):
                     else:
                         text = text.replace(code_in_text, word_text)
 
+                    # text = text.replace(code_in_text, word_text)
+                    # continue
+                else:
                     text = text.replace(code_in_text, word_text)
 
     # Восстановление эмодзи (пример: #128512# -> 😀)
+    print(text)
     return text
 
-# Проверяем стиль регистра исходного текста
-def match_case(original, translated):
+
+def match_case(original, translated, lang):
+    # Если количество слов совпадает, применяем стиль регистра для каждого слова
+    orig_words = original.split()
+    trans_words = translated.split()
+    if len(orig_words) == len(trans_words):
+        result = []
+        for i, word in enumerate(trans_words):
+            if orig_words[i].isupper():
+                if len(word) == 1:
+                    result.append(word.capitalize())
+                    continue
+                result.append(word.upper())
+            elif orig_words[i].islower():
+                result.append(word.lower())
+            elif orig_words[i].istitle():
+                result.append(word.title())
+            else:
+                result.append(word)
+        return ' '.join(result)
+
+    # Если не совпадает — применяем общий стиль
     if original.isupper():
         return translated.upper()
-    elif original.istitle():
-        return translated.title()
-    elif original.islower():
+    if original.islower():
         return translated.lower()
-    else:
-        return translated
+    if original.istitle():
+        return translated.title()
+    return translated
+
+def repl_code(trans, lang):
+    code = replace_codes.get(trans.lower(), {}).get(lang, lang)
+    return code
 
 def translate_text(text, to_lang, from_lang, trans=zero_translator):
     global cash_replaces
     """
     Переводит текст, защищая спецсимволы и эмодзи.
     """
+    
+    if to_lang is None and from_lang is None:
+        return text
+    
     if not isinstance(text, str) or not text.strip():
         return text
     safe_text = replace_specials(text)
@@ -293,27 +383,38 @@ def translate_text(text, to_lang, from_lang, trans=zero_translator):
     if lang in ['en', 'it'] and len(langs) == 1:
         translated = safe_text
         print(f"Не переводим: {text} - {lang}")
-    
+
     elif safe_text[1:-1] in cash_replaces.keys():
         cash_replaces[safe_text[1:-1]]['translated'] = False
         translated = safe_text
         print(f"Не переводим (замена): {text} - {lang}")
+        return restore_specials(translated, None, None)
+
+    elif safe_text in replace_words.keys():
+        cash_replaces[safe_text]['translated'] = False
+        translated = safe_text
+        print(f"Не переводим (замена): {text} - {lang}")
+        return restore_specials(translated, None, None)
 
     elif lang or len(langs) == 0:
         try:
-            translated = translators.translate_text(safe_text, from_language=from_lang, to_language=to_lang, translator=trans)
+            # translators.translators_pool = translators_names
+            translated = translators.translate_text(safe_text,
+                                    from_language=repl_code(trans, from_lang), to_language=repl_code(trans, to_lang),
+                                    translator=trans, 
+                                    headers={'User-Agent': random.choice(user_agents)})
+            translated = match_case(text, translated, to_lang)
             dict_data = {
                 "text": safe_text,
                 "lang": lang,
                 "to_lang": to_lang,
-                "translated": translated
+                "translated": translated,
+                "trans": trans
             }
             pprint(dict_data)
         except Exception as e:
             print(f"Ошибка перевода: {text} - {str(e)}")
             translated = safe_text
-
-        translated = match_case(text, translated)
 
     else:
         translated = safe_text
@@ -340,56 +441,34 @@ def set_by_path(dct, path, value):
     """
     keys = path.split('.')
     cur = dct
-
     for idx, k in enumerate(keys[:-1]):
         next_k = keys[idx + 1]
-        if k.isdigit():
-            k = int(k)
-            # Если текущий уровень - не список, преобразуем
-            if not isinstance(cur, list):
-                # Если cur пустой, превращаем в список
-                if isinstance(cur, dict) and not cur:
-                    cur = []
-                    # Нужно обновить ссылку в родителе
-                    parent = dct
-                    for pk in keys[:idx]:
-                        parent = parent[int(pk)] if pk.isdigit() else parent[pk]
-                    if keys[idx-1].isdigit():
-                        parent[int(keys[idx-1])] = cur
-                    else:
-                        parent[keys[idx-1]] = cur
-                else:
-                    # Если не пустой dict, то ошибка структуры
-                    raise TypeError(f"Ожидался список на уровне {k}, но найден dict с данными: {cur}")
-            if isinstance(cur, list):
-                while len(cur) <= k:
-                    cur.append({})
-                cur = cur[k]
-        else:
-            if not isinstance(cur, dict):
-                # Если cur список, но нужен dict
-                raise TypeError(f"Ожидался dict на уровне {k}, но найден список: {cur}")
-            if k not in cur:
-                # Если следующий ключ - число, создаём список, иначе dict
-                cur[k] = [] if next_k.isdigit() else {}
-            cur = cur[k]
-
-    last = keys[-1]
-    if last.isdigit():
-        last = int(last)
+        # Если текущий уровень — список, используем int-индекс
         if isinstance(cur, list):
-            while len(cur) <= last:
-                cur.append(None)
-            cur[last] = value
+            if not k.isdigit():
+                raise TypeError(f"Ожидался числовой индекс для списка, но получен ключ '{k}'")
+            k_int = int(k)
+            while len(cur) <= k_int:
+                cur.append({} if not next_k.isdigit() else [])
+            cur = cur[k_int]
+        # Если текущий уровень — словарь, используем строковый ключ (даже если он выглядит как число)
         elif isinstance(cur, dict):
-            # Если на последнем уровне dict, индекс становится ключом-строкой
-            cur[str(last)] = value
+            if k not in cur:
+                # Никогда не создаём список в словаре, даже если ключ выглядит как число
+                cur[k] = {} if not next_k.isdigit() else {}
+            cur = cur[k]
         else:
-            raise TypeError(f"Ожидался список или dict на последнем уровне, но найден: {type(cur)}")
-    else:
-        if not isinstance(cur, dict):
-            raise TypeError(f"Ожидался dict на последнем уровне, но найден список: {cur}")
+            raise TypeError(f"Неожиданный тип: {type(cur)} для ключа {k}")
+    last = keys[-1]
+    if isinstance(cur, list) and last.isdigit():
+        last = int(last)
+        while len(cur) <= last:
+            cur.append(None)
         cur[last] = value
+    elif isinstance(cur, dict):
+        cur[last] = value  # last всегда строка для словаря
+    else:
+        raise TypeError(f"Неожиданный тип на последнем уровне: {type(cur)} для ключа {last}")
 
 
 def del_by_path(dct, path):
@@ -399,30 +478,40 @@ def del_by_path(dct, path):
     keys = path.split('.')
     cur = dct
     for k in keys[:-1]:
-        if k.isdigit():
-            k = int(k)
+        if isinstance(cur, list) and k.isdigit():
+            cur = cur[int(k)]
+        elif isinstance(cur, dict):
             cur = cur[k]
         else:
-            cur = cur[k]
+            raise TypeError(f"Неожиданный тип: {type(cur)} для ключа {k}")
 
     last = keys[-1]
-    if last.isdigit():
+    if isinstance(cur, list) and last.isdigit():
         last = int(last)
         del cur[last]
-    else:
+    elif isinstance(cur, dict):
         if last not in cur:
-            print(f'Нет ключа {last} в {cur}')
+            raise KeyError(f"Ключ {last} не найден в словаре")
         del cur[last]
+    else:
+        raise TypeError(f"Неожиданный тип на последнем уровне: {type(cur)} для ключа {last}")
 
 # Проверяем, начинается ли path с любого из new_keys или changed_keys
 def is_prefix_in_keys(keys, path):
+    """
+    Проверяет, начинается ли path с любого из путей в keys.
+    Например: keys = ['a.b', 'c'], path = 'a.b.1.d' -> True
+    """
     for key in keys:
-        if path.endswith(f"{key}") or path == key:
+        if path == key or path.startswith(f"{key}."):
             return True
     return False
+    
+
+a_c_upd = 0
 
 def main():
-    global cash_replaces
+    global cash_replaces, a_c_upd
 
     # 1. Загрузка главного словаря
     main_lang_path = f"{ex}{langs_path}/{main_code}.json"
@@ -432,9 +521,11 @@ def main():
     langs_dir = ex + langs_path
     lang_files = [f for f in os.listdir(langs_dir) if f.endswith('.json')]
     lang_codes = [f.replace('.json', '') for f in lang_files if f.replace('.json', '') != main_code]
+    print(translators.translators_pool)
     print(f"Языки для перевода: {lang_codes}")
 
     for lang in lang_codes:
+        a_c_upd = 0
         print(f"\n=== Перевод для {lang} ===")
         lang_path = f"{ex}{langs_path}/{lang}.json"
         damp_path_ = f"{ex}{damp_path}/{lang}.json"
@@ -458,34 +549,45 @@ def main():
 
         # 5. Удалить лишние ключи
         for key in deleted_keys:
-            del_by_path(lang_data, key)
-            del_by_path(damp_data[lang], key)
+            try:
+                del_by_path(lang_data, key)
+            except Exception as e:
+                print(f"Ошибка удаления {key} из lang_data: {e}")
+            try:
+                del_by_path(damp_data[lang], key)
+            except Exception as e:
+                print(f"Ошибка удаления {key} из damp_data: {e}")
 
-        write_json(damp_path_, damp_data)
-        write_json(lang_path, {lang: lang_data})
+            write_json(damp_path_, damp_data)
+            write_json(lang_path, {lang: lang_data})
 
         if new_keys or changed_keys:
             print(f'\nНачало перевода...')
 
             # 6. Перевести новые/изменённые ключи
             def update_callback(path, value):
-                global cash_replaces
+                global cash_replaces, a_c_upd
 
-                if is_prefix_in_keys(new_keys, path) or is_prefix_in_keys(changed_keys, path):
+                # Проверяем, начинается ли path с любого из new_keys или changed_keys
+                if is_prefix_in_keys(new_keys + changed_keys, path):
                     if isinstance(value, str):
                         path_set = set(path.split('.'))
                         ignore_set = set(ignore_translate_keys)
 
                         if path_set & ignore_set:
-                            translated = value  # Не переводим, если есть совпадение
-                            print(f"Пропускаем перевод для {path}: {value}")
+                            if path.endswith('text'):
+                                translated = translate_text(value, lang, main_code)
+                                print(f"Переводим {path}: {value} -> {translated}")
+                            else:
+                                translated = value  # Не переводим, если есть совпадение
+                                print(f"Пропускаем перевод для {path}: {value}")
                         elif len(value) < 2:
                             translated = value
                             print(f"Пропускаем перевод для {path} (малая длинна): {value}")
                         else:
                             translated = translate_text(value, lang, main_code)
                             print(f"Переводим {path}: {value} -> {translated}")
-                        
+
                         # Сброс тегов
                         cash_replaces = {}
 
@@ -494,15 +596,13 @@ def main():
                     else:
                         set_by_path(lang_data, path, value)
                         set_by_path(damp_data, f'{lang}.'+path, value)
-    
-                    write_json(lang_path, {lang: lang_data})
-                    write_json(damp_path_, damp_data)
+
+                a_c_upd += 1
+                # if a_c_upd % 5 == 0:
+                write_json(lang_path, {lang: lang_data})
+                write_json(damp_path_, damp_data)
 
             walk_keys(main_data, update_callback)
-
-        # # 7. Сохранить результат
-        # write_json(lang_path, {lang: lang_data})
-        # write_json(damp_path_, {lang: damp_data})
 
 if __name__ == '__main__':
     main()
