@@ -970,6 +970,7 @@ async def next_step(answer: Any,
             step = BaseUpdateType(**new_step)
 
         steps.append(step)
+
     current_step: Union[Type[BaseDataType], BaseUpdateType] = steps[process]
 
     # Обновление внутренних данных
@@ -1029,8 +1030,10 @@ async def next_step(answer: Any,
             transmitted_data, answer = await self_handler.start() # Передаём transmitted_data,
             # Получаем transmitted_data и ответ для сохранения
 
+            process = transmitted_data['process']
+
             new_steps: list[dict] = []
-            for raw_step in steps_raw.copy():
+            for raw_step in transmitted_data['steps'].copy():
                 if not isinstance(raw_step, dict):
                     new_steps.append(raw_step.to_dict())
                 else:
