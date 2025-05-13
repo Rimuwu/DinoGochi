@@ -87,12 +87,20 @@ async def settings2_menu(message: Message):
 
         if 'my_name' in settings: my_name = settings['my_name']
         if not my_name: my_name = t('owner', lang)
-        
-        text = t('menu_text.settings2', lang, my_name=my_name)
 
-        await bot.send_message(message.chat.id, text, 
+        talk_mode = user['settings'].get('no_talk', False)
+        confidentiality = user['settings'].get('confidentiality', False)
+
+        text = t('menu_text.settings2', lang, 
+                 my_name=my_name,
+                 lang=t('language_name', lang),
+                 talk_mode=str(talk_mode).replace('True', '✅').replace('False', '❌'),
+                 conf_mode=str(confidentiality).replace('True', '✅').replace('False', '❌')
+                 )
+
+        await bot.send_message(message.chat.id, text,
                                reply_markup= await m(userid, 'settings2_menu', lang))
-        
+
         await auto_ads(message)
 
 @HDMessage
