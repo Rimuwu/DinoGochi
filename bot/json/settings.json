@@ -936,5 +936,8 @@
     "ignore_items_inside_shop": ["repair_tool"],
 
     "bot_channel": "https://t.me/DinoGochi",
-    "bot_forum": "https://t.me/+pq9_21HXXYY4ZGQy"
+    "bot_forum": "https://t.me/+pq9_21HXXYY4ZGQy",
+
+    "profiles_dinos_per_page": 3,
+    "conf_set_price": 20
 }
