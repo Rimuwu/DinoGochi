@@ -250,7 +250,7 @@ async def dino_handler(message: Message):
         if await dead_check(userid):
             await bot.send_message(userid, t(f'p_profile.dialog', lang), reply_markup=inline_menu('dead_dialog', lang))
         else:
-            await bot.send_message(userid, t(f'css.no_dino_no_egg', lang))
+            await bot.send_message(userid, t(f'p_profile.no_dino_no_egg', lang))
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('dino_profile'))
