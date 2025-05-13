@@ -123,7 +123,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         buttons = [
             ['my_name', 'lang'],
             ['dino_talk', 'nick'],
-            ['reset_avatar'],
+            ['reset_avatar', 'confidentiality'],
         ]
 
     elif markup_key == 'profile_menu':
