@@ -449,13 +449,13 @@ def set_by_path(dct, path, value):
                 raise TypeError(f"Ожидался числовой индекс для списка, но получен ключ '{k}'")
             k_int = int(k)
             while len(cur) <= k_int:
-                cur.append({} if not next_k.isdigit() else [])
+                # Если следующий ключ — число, создаём список, иначе — словарь
+                cur.append([] if next_k.isdigit() else {})
             cur = cur[k_int]
-        # Если текущий уровень — словарь, используем строковый ключ (даже если он выглядит как число)
         elif isinstance(cur, dict):
+            # Если следующий ключ — число, создаём список, иначе — словарь
             if k not in cur:
-                # Никогда не создаём список в словаре, даже если ключ выглядит как число
-                cur[k] = {} if not next_k.isdigit() else {}
+                cur[k] = [] if next_k.isdigit() else {}
             cur = cur[k]
         else:
             raise TypeError(f"Неожиданный тип: {type(cur)} для ключа {k}")
