@@ -392,7 +392,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             return_text = t('item_use.special.error_slot', lang)
             user = await User().create(userid)
 
-            col_add = abilities.get('count', 1)
+            col_add = abilities.get('count', 1) * count
             type_add = abilities.get('slot_type', 'dino')
             if user:
                 if type_add == 'dino':
