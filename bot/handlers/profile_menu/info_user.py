@@ -92,12 +92,13 @@ async def infouser_alt(message: Message):
         secret = True
 
     text, avatar = await user_info(userid, lang, secret)
+    markup = await user_profile_markup(userid, lang, 'main', 0)
 
     if avatar:
-        mes = await message.answer_photo(avatar, caption=text, parse_mode='Markdown')
+        mes = await message.answer_photo(avatar, caption=text, parse_mode='Markdown', reply_markup=markup)
     else:
-        mes = await message.answer(text, parse_mode='Markdown')
-    
+        mes = await message.answer(text, parse_mode='Markdown', reply_markup=markup)
+
     await add_message(message.chat.id, message.message_id)
     await add_message(message.chat.id, mes.message_id)
 
