@@ -20,6 +20,11 @@ dp = Dispatcher(storage=STORAGE)
 main_router = Router(name='MainRouter')
 dp.include_router(main_router)
 
+@dp.errors()
+async def on_error(event, exception):
+    log(f'Ошибка в обработчике событий: {exception}', 
+        prefix='AiogramError', lvl=4)
+
 def run():
     log('# ====== Inicialization Start ====== #', 2)
     log('Привет! Я вижу ты так и не починил тот самый баг на 46-ой строчке...')
