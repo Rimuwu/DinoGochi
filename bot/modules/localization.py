@@ -10,6 +10,7 @@ languages = {}
 available_locales = []
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+import re
 langs = DBconstructor(mongo_client.user.lang)
 users = DBconstructor(mongo_client.user.users)
 
@@ -35,6 +36,26 @@ def alternative_language(lang: str):
     except:
         log(f"Not found lang {lang}", 3)
     return lang
+
+def resolve_translate_urls(data: Any, locale: str) -> Any:
+    """
+    Рекурсивно проходит по всем ключам локализации, ищет текстовые значения,
+    заменяет {translate_url:...} на переводы.
+    """
+    if isinstance(data, dict):
+        return {k: resolve_translate_urls(v, locale) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [resolve_translate_urls(item, locale) for item in data]
+    elif isinstance(data, str):
+        text = data
+        matches = list(re.finditer(r'\{translate_url:([^}]+)\}', text))
+        for match in matches:
+            inner_key = match.group(1)
+            translated = str(get_data(inner_key, locale))
+            text = text.replace(match.group(0), translated, 1)
+        return text
+    else:
+        return data
 
 def get_data(key: str, locale: str | None) -> Any:
     """Возвращает данные локализации
@@ -67,11 +88,12 @@ def get_data(key: str, locale: str | None) -> Any:
             log(f'Ключ {key} ({locale}) не найден!', 4)
             return languages[locale]["no_text_key"].format(key=key)
 
+    localed_data = resolve_translate_urls(localed_data, locale)
     return localed_data
-
 
 def t(key: str, locale: str | None = "en", formating: bool = True, **kwargs) -> str:
     """Возвращает текст на нужном языке
+    Ключи типа "text {translate_url:key.key}" это внутренние ключи на какой либо текст
 
     Args:
         key (str): ключ для текста
@@ -80,8 +102,18 @@ def t(key: str, locale: str | None = "en", formating: bool = True, **kwargs) -> 
     Returns:
         str: текст на нужном языке
     """
-    if not locale: locale = 'en'
-    text = str(get_data(key, locale)) #Добавляем переменные в текст
+    if not locale:
+        locale = 'en'
+    text = str(get_data(key, locale))  # Добавляем переменные в текст
+
+    # Ищем все вхождения {translate_url:...} и заменяем их на перевод
+    matches = list(re.finditer(r'\{translate_url:([^}]+)\}', text))
+    for match in matches:
+        inner_key = match.group(1)
+        translated = str(get_data(inner_key, locale))
+        # Заменяем только первое вхождение, чтобы избежать повторной замены уже изменённого текста
+        text = text.replace(match.group(0), translated, 1)
+
     if formating:
         try:
             text = text.format(**kwargs)
