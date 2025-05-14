@@ -36,5 +36,5 @@ class StartWith(BaseFilter):
             text = t(self.key, lang, False)
 
             if isinstance(message.text, str):
-                if message.text.startswith(text): return True
+                if message.text.lower().startswith(text.lower()): return True
         return False

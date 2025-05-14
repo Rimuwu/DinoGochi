@@ -327,6 +327,6 @@ async def group_rating_page_handler(callback: CallbackQuery):
     await callback.message.edit_text(text, parse_mode='Markdown', reply_markup=markup)
 
 @main_router.message(
-    Text('help_command.commands.rating.alternative'), GroupRules())
+    StartWith('help_command.commands.rating.alternative'), GroupRules())
 async def group_rating_alt(message: Message):
     await group_rating(message)
