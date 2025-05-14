@@ -121,7 +121,7 @@ async def user_profile_menu(callback: CallbackQuery):
     if page_type == 'dino':
         text, image = await user_dinos_info(who_userid, lang, page)
 
-    markup = await user_profile_markup(userid, lang, page_type, page)
+    markup = await user_profile_markup(who_userid, lang, page_type, page)
 
     if callback.message.photo is None:
         await callback.message.edit_text(text=text, 
