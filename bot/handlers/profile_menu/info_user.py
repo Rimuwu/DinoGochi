@@ -85,7 +85,7 @@ async def infouser_alt(message: Message):
     lang = await get_lang(message.from_user.id)
 
     secret = False
-    user_exists = await users.find_one({'userid': user_id}, comment='check_user_exists')
+    user_exists = await users.find_one({'userid': userid}, comment='check_user_exists')
     if not user_exists: return
 
     confidentiality = user_exists['settings'].get('confidentiality', False)

@@ -292,17 +292,13 @@ async def group_rating(message: Message):
     await add_message(chatid, mes.message_id)
 
 def get_rating_markup(ret_type, page, max_pages):
-    buttons = []
+    buttons = {}
     if page > 1:
-        buttons.append({
-            GAME_SETTINGS['back_button']: f"group_rating {ret_type} {page-1}"
-        })
+        buttons[GAME_SETTINGS['back_button']] = f"group_rating {ret_type} {page-1}"
     if page < max_pages:
-        buttons.append({
-            GAME_SETTINGS['forward_button']: f"group_rating {ret_type} {page+1}"
-        })
+        buttons[GAME_SETTINGS['forward_button']] = f"group_rating {ret_type} {page+1}"
     if buttons:
-        return list_to_inline(buttons)
+        return list_to_inline([buttons])
     return None
 
 @main_router.callback_query(F.data.startswith("group_rating"))
