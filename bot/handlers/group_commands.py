@@ -196,8 +196,7 @@ async def generate_group_rating_message(top_users, ret_type, lang,
         if ret_type == 'lvl':
             value = f"{user.get('lvl', 0)} ({user.get('xp', 0)}) ⚡"
         elif ret_type == 'coins':
-            value = f"{user.get('coins', 0)} 🪙"
-        elif ret_type == 'super_coins':
+            value = f"{user.get('coins', 0):,}".replace(",", ".") + " 🪙"    elif ret_type == 'super_coins':
             value = f"{user.get('super_coins', 0)} ⭐"
 
         lines.append(f"{idx_str} `{uname}` — {value}")
