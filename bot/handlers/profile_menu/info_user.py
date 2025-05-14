@@ -103,7 +103,7 @@ async def infouser_alt(message: Message):
     await add_message(message.chat.id, mes.message_id)
 
 @HDCallback
-@main_router.callback_query(IsPrivateChat(), F.data.startswith('user_profile'))
+@main_router.callback_query(F.data.startswith('user_profile'))
 async def user_profile_menu(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
