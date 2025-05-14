@@ -10,8 +10,8 @@ import re
 
 DetectorFactory.seed = 0
 ex = os.path.dirname(__file__) # Путь к этому файлу
-langs_path = "/langs"
-damp_path = "/damp_test"
+# langs_path = "/langs"
+# dump_path = "/dump_test"
 
 # base_names = {}
 cash_replaces = {}
@@ -28,8 +28,8 @@ with open(f'{ex}/settings.json', encoding='utf-8') as f:
     translators_names = settings['translators']
 
     main_code = settings['main_code']
-    # langs_path = settings['langs_path']
-    # damp_path = settings['damp_path']
+    langs_path = settings['langs_path']
+    dump_path = settings['dump_path']
     start_symbols = settings['start_symbols']
 
     zero_translator = settings['zero_translator']
@@ -81,50 +81,50 @@ def build_structure(data):
         return 'NOTEXT'
 
 
-def compare_structures(base, damp, path=""):
+def compare_structures(base, dump, path=""):
     """
-    Сравнивает структуру base (исходный словарь) и damp (дамп перевода).
+    Сравнивает структуру base (исходный словарь) и dump (дамп перевода).
     Возвращает:
-      - новые ключи (есть в base, нет в damp)
+      - новые ключи (есть в base, нет в dump)
       - изменённые (значения отличаются)
-      - удалённые (есть в damp, нет в base)
+      - удалённые (есть в dump, нет в base)
     """
     new_keys, changed_keys, deleted_keys = [], [], []
     if isinstance(base, dict):
         base_keys = set(base.keys())
-        damp_keys = set(damp.keys()) if isinstance(damp, dict) else set()
+        dump_keys = set(dump.keys()) if isinstance(dump, dict) else set()
 
         for k in base_keys:
             new_path = f"{path}.{k}" if path else k
-            if k not in damp_keys:
+            if k not in dump_keys:
                 new_keys.append(new_path)
             else:
-                n, c, d = compare_structures(base[k], damp[k], new_path)
+                n, c, d = compare_structures(base[k], dump[k], new_path)
                 new_keys += n
                 changed_keys += c
                 deleted_keys += d
 
-        for k in damp_keys - base_keys:
+        for k in dump_keys - base_keys:
             new_path = f"{path}.{k}" if path else k
             deleted_keys.append(new_path)
 
-    elif isinstance(base, list) and isinstance(damp, list):
+    elif isinstance(base, list) and isinstance(dump, list):
         for idx, v in enumerate(base):
             new_path = f"{path}.{idx}" if path else str(idx)
 
-            if idx >= len(damp):
+            if idx >= len(dump):
                 new_keys.append(new_path)
             else:
-                n, c, d = compare_structures(v, damp[idx], new_path)
+                n, c, d = compare_structures(v, dump[idx], new_path)
                 new_keys += n
                 changed_keys += c
                 deleted_keys += d
 
-        for idx in range(len(base), len(damp)):
+        for idx in range(len(base), len(dump)):
             new_path = f"{path}.{idx}" if path else str(idx)
             deleted_keys.append(new_path)
     else:
-        if base != damp:
+        if base != dump:
             changed_keys.append(path)
     return new_keys, changed_keys, deleted_keys
 
@@ -173,7 +173,7 @@ def replace_specials(text):
     if not isinstance(text, str):
         return text
 
-    for _ in range(1):
+    for _ in range(3):
         # Заменяем спецсимволы
         for key, item in replace_words.items():
             if item['text'] in text:
@@ -293,12 +293,12 @@ def restore_specials(text, to_lang, from_lang):
                 f'{strat_sym}{strat_sym} {code}{end_sym}',
                 f'{strat_sym}{code} {end_sym}{end_sym}',
                 f'{strat_sym} {code}{end_sym}{end_sym}',
-                # f'{code}{end_sym}',
-                # f'{strat_sym}{code}',
-                # f'{code} {end_sym}',
-                # f'{strat_sym} {code}',
-                # f'{code}{end_sym}',
-                # f' {strat_sym}{code}',
+                f'{code}{end_sym}',
+                f'{strat_sym}{code}',
+                f'{code} {end_sym}',
+                f'{strat_sym} {code}',
+                f'{code}{end_sym}',
+                f' {strat_sym}{code}',
             ]:
 
                 if smart_contains(text, code_in_text):
@@ -410,6 +410,13 @@ def translate_text(text, to_lang, from_lang, trans=zero_translator):
                                     translator=trans, 
                                     headers={'User-Agent': random.choice(user_agents)})
             translated = match_case(text, translated, to_lang)
+            new_lang = detect(translated)
+            if new_lang == 'ru':
+                translated = translate_text(
+                    translated, to_lang, from_lang,
+                    trans=trans
+                )
+
             dict_data = {
                 "text": safe_text,
                 "lang": lang,
@@ -417,6 +424,7 @@ def translate_text(text, to_lang, from_lang, trans=zero_translator):
                 "translated": translated,
                 "trans": trans
             }
+
             pprint(dict_data)
         except Exception as e:
             print(f"Ошибка перевода: {text} - {str(e)}")
@@ -439,42 +447,96 @@ def write_json(path, data):
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-def set_by_path(dct, path, value):
+def set_by_path(dct, path, value, dump=None):
     """
     Устанавливает значение по пути вида 'a.b.0.c' в словаре/списке.
-    Корректно работает с вложенными списками и словарями.
+    Если передан dump, сверяет ожидаемый тип на каждом уровне с dump.
     Если на последнем уровне ожидается список, но найден dict — индекс становится ключом.
     """
     keys = path.split('.')
     cur = dct
+    dump_cur = dump
     for idx, k in enumerate(keys[:-1]):
         next_k = keys[idx + 1]
+        # Определяем ожидаемый тип на этом уровне
+        expected_type = None
+        if dump_cur is not None:
+            try:
+                if isinstance(dump_cur, dict):
+                    dump_next = dump_cur.get(k)
+                elif isinstance(dump_cur, list) and k.isdigit():
+                    dump_next = dump_cur[int(k)] if int(k) < len(dump_cur) else None
+                else:
+                    dump_next = None
+                if isinstance(dump_next, list):
+                    expected_type = list
+                elif isinstance(dump_next, dict):
+                    expected_type = dict
+                else:
+                    expected_type = None
+            except Exception:
+                expected_type = None
         # Если текущий уровень — список, используем int-индекс
         if isinstance(cur, list):
             if not k.isdigit():
                 raise TypeError(f"Ожидался числовой индекс для списка, но получен ключ '{k}'")
             k_int = int(k)
             while len(cur) <= k_int:
-                # Если следующий ключ — число, создаём список, иначе — словарь
-                cur.append([] if next_k.isdigit() else {})
+                # Если dump подсказывает тип, используем его, иначе по next_k
+                if expected_type is not None:
+                    cur.append([] if expected_type is list else {})
+                else:
+                    cur.append([] if next_k.isdigit() else {})
             cur = cur[k_int]
+            if dump_cur is not None and isinstance(dump_cur, list) and k_int < len(dump_cur):
+                dump_cur = dump_cur[k_int]
+            else:
+                dump_cur = None
         elif isinstance(cur, dict):
-            # Если следующий ключ — число, создаём список, иначе — словарь
+            # Если dump подсказывает тип, используем его, иначе по next_k
             if k not in cur:
-                cur[k] = [] if next_k.isdigit() else {}
+                if expected_type is not None:
+                    cur[k] = [] if expected_type is list else {}
+                else:
+                    cur[k] = [] if next_k.isdigit() else {}
             cur = cur[k]
+            if dump_cur is not None and isinstance(dump_cur, dict):
+                dump_cur = dump_cur.get(k)
+            else:
+                dump_cur = None
         else:
             raise TypeError(f"Неожиданный тип: {type(cur)} для ключа {k}")
     last = keys[-1]
-    if isinstance(cur, list) and last.isdigit():
-        last = int(last)
-        while len(cur) <= last:
-            cur.append(None)
-        cur[last] = value
-    elif isinstance(cur, dict):
-        cur[last] = value  # last всегда строка для словаря
+    # На последнем уровне сверяем с dump, если возможно
+    if dump_cur is not None:
+        if isinstance(cur, list) and last.isdigit() and isinstance(dump_cur, list):
+            last = int(last)
+            while len(cur) <= last:
+                cur.append(None)
+            cur[last] = value
+        elif isinstance(cur, dict) and isinstance(dump_cur, dict):
+            cur[last] = value
+        else:
+            # Если типы не совпадают, всё равно пытаемся записать
+            if isinstance(cur, list) and last.isdigit():
+                last = int(last)
+                while len(cur) <= last:
+                    cur.append(None)
+                cur[last] = value
+            elif isinstance(cur, dict):
+                cur[last] = value
+            else:
+                raise TypeError(f"Неожиданный тип на последнем уровне: {type(cur)} для ключа {last}")
     else:
-        raise TypeError(f"Неожиданный тип на последнем уровне: {type(cur)} для ключа {last}")
+        if isinstance(cur, list) and last.isdigit():
+            last = int(last)
+            while len(cur) <= last:
+                cur.append(None)
+            cur[last] = value
+        elif isinstance(cur, dict):
+            cur[last] = value
+        else:
+            raise TypeError(f"Неожиданный тип на последнем уровне: {type(cur)} для ключа {last}")
 
 
 def del_by_path(dct, path):
@@ -534,20 +596,24 @@ def main():
         a_c_upd = 0
         print(f"\n=== Перевод для {lang} ===")
         lang_path = f"{ex}{langs_path}/{lang}.json"
-        damp_path_ = f"{ex}{damp_path}/{lang}.json"
+        dump_path_ = f"{ex}{dump_path}/{lang}.json"
 
         lang_data = read_json(lang_path).get(lang, {})
-        damp_data = read_json(damp_path_)
+        dump_data = read_json(dump_path_)
 
         # 3. Создать структуру дампа
         main_struct = build_structure(main_data)
         # Если дамп пустой, создаём структуру только для новых/изменённых ключей
-        if not damp_data:
-            damp_data = {lang: main_struct}
-            write_json(damp_path_, damp_data)
+        if not dump_data:
+            dump_data = {lang: main_struct}
+            write_json(dump_path_, dump_data)
+        
+        # if not lang_data:
+        #     lang_data = {lang: main_struct}
+        #     write_json(lang_path, lang_data)
 
         # 4. Сравнить структуры
-        new_keys, changed_keys, deleted_keys = compare_structures(main_data, damp_data[lang])
+        new_keys, changed_keys, deleted_keys = compare_structures(main_data, dump_data[lang])
 
         print(f'Новые ключи: {new_keys}')
         print(f'Изменённые ключи: {changed_keys}')
@@ -560,11 +626,11 @@ def main():
             except Exception as e:
                 print(f"Ошибка удаления {key} из lang_data: {e}")
             try:
-                del_by_path(damp_data[lang], key)
+                del_by_path(dump_data[lang], key)
             except Exception as e:
-                print(f"Ошибка удаления {key} из damp_data: {e}")
+                print(f"Ошибка удаления {key} из dump_data: {e}")
 
-            write_json(damp_path_, damp_data)
+            write_json(dump_path_, dump_data)
             write_json(lang_path, {lang: lang_data})
 
         if new_keys or changed_keys:
@@ -597,21 +663,21 @@ def main():
                         # Сброс тегов
                         cash_replaces = {}
 
-                        set_by_path(lang_data, path, translated)
-                        set_by_path(damp_data, f'{lang}.'+path, value)
+                        set_by_path(lang_data, path, translated, dump_data[lang])
+                        set_by_path(dump_data, f'{lang}.'+path, value)
                     else:
-                        set_by_path(lang_data, path, value)
-                        set_by_path(damp_data, f'{lang}.'+path, value)
+                        set_by_path(lang_data, path, value, dump_data[lang])
+                        set_by_path(dump_data, f'{lang}.'+path, value)
 
                 a_c_upd += 1
                 if a_c_upd % 3 == 0:
                     write_json(lang_path, {lang: lang_data})
-                    write_json(damp_path_, damp_data)
+                    write_json(dump_path_, dump_data)
 
             walk_keys(main_data, update_callback)
             
             write_json(lang_path, {lang: lang_data})
-            write_json(damp_path_, damp_data)
+            write_json(dump_path_, dump_data)
 
 if __name__ == '__main__':
     main()
