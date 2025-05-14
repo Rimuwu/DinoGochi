@@ -17,7 +17,7 @@ ex = os.path.dirname(__file__) # Путь к этому файлу
 cash_replaces = {}
 
 
-with open(f'{ex}/settings.json', encoding='utf-8') as f: 
+with open(os.path.join(ex, 'settings.json'), encoding='utf-8') as f: 
     """ Загружаем константы из файла найстроек """
     settings = json.load(f) # type: dict
     settings = settings['new']
@@ -158,10 +158,10 @@ def save_replace(code: int, text: str, translate: bool, data = '' ):
         r = 0
         if type(code) == int:
             r = code + 1
-        elif code.isdigit():
+        elif code.isdigit(): # type: ignore
             r += int(code) + 1
         else:
-            r = int(code[1:-1]) + 1
+            r = int(code[1:-1]) + 1 # type: ignore
         # r = random.randint(1, 1000)
         return save_replace(r, text, translate, data)
 
@@ -582,11 +582,11 @@ def main():
     global cash_replaces, a_c_upd
 
     # 1. Загрузка главного словаря
-    main_lang_path = f"{ex}{langs_path}/{main_code}.json"
+    main_lang_path = os.path.normpath(os.path.join(ex, langs_path, f"{main_code}.json"))
     main_data = read_json(main_lang_path).get(main_code, {})
 
     # 2. Получение всех языков для перевода
-    langs_dir = ex + langs_path
+    langs_dir = os.path.normpath(os.path.join(ex, langs_path))
     lang_files = [f for f in os.listdir(langs_dir) if f.endswith('.json')]
     lang_codes = [f.replace('.json', '') for f in lang_files if f.replace('.json', '') != main_code]
     print(translators.translators_pool)
@@ -595,8 +595,17 @@ def main():
     for lang in lang_codes:
         a_c_upd = 0
         print(f"\n=== Перевод для {lang} ===")
-        lang_path = f"{ex}{langs_path}/{lang}.json"
-        dump_path_ = f"{ex}{dump_path}/{lang}.json"
+        # Определяем главный язык для перевода
+        if lang == "en":
+            main_lang = "ru"
+        else:
+            main_lang = "en"
+        lang_path = os.path.normpath(os.path.join(ex, langs_path, f"{lang}.json"))
+        dump_path_ = os.path.normpath(os.path.join(ex, dump_path, f"{lang}.json"))
+
+        # Загружаем главный словарь для текущего языка
+        main_lang_path = os.path.normpath(os.path.join(ex, langs_path, f"{main_lang}.json"))
+        main_data = read_json(main_lang_path).get(main_lang, {})
 
         lang_data = read_json(lang_path).get(lang, {})
         dump_data = read_json(dump_path_)
@@ -648,7 +657,9 @@ def main():
 
                         if path_set & ignore_set:
                             if path.endswith('text'):
-                                translated = translate_text(value, lang, main_code)
+                                translated = translate_text(value, lang, main_lang)
+                                if translated == value:
+                                    translated = translate_text(value, lang, main_lang)
                                 print(f"Переводим {path}: {value} -> {translated}")
                             else:
                                 translated = value  # Не переводим, если есть совпадение
@@ -657,7 +668,9 @@ def main():
                             translated = value
                             print(f"Пропускаем перевод для {path} (малая длинна): {value}")
                         else:
-                            translated = translate_text(value, lang, main_code)
+                            translated = translate_text(value, lang, main_lang)
+                            if translated == value:
+                                translated = translate_text(value, lang, main_lang)
                             print(f"Переводим {path}: {value} -> {translated}")
 
                         # Сброс тегов
@@ -669,13 +682,13 @@ def main():
                         set_by_path(lang_data, path, value, dump_data[lang])
                         set_by_path(dump_data, f'{lang}.'+path, value)
 
-                a_c_upd += 1
-                if a_c_upd % 3 == 0:
-                    write_json(lang_path, {lang: lang_data})
-                    write_json(dump_path_, dump_data)
+                    a_c_upd += 1
+                    if a_c_upd % 3 == 0:
+                        write_json(lang_path, {lang: lang_data})
+                        write_json(dump_path_, dump_data)
 
             walk_keys(main_data, update_callback)
-            
+
             write_json(lang_path, {lang: lang_data})
             write_json(dump_path_, dump_data)
 
