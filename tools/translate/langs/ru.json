@@ -1,5 +1,0 @@
-{
-    "ru": {
-        "abou2t": "🤖 | Привет! Я @{bot_name}, а вот немного информации обо мне!\n\n🗝️ | Статистика\n× 👥 Игроков <code>{col_u}</code>\n× 🦕 Динозавров <code>{col_d}</code>\n× 🔮 Предметов <code>{col_i}</code>\n× 🌐 Групп <code>{col_g}</code>\n\n<i>{update_time} назад.</i>"
-    }
-}
