@@ -75,12 +75,12 @@
 
         "one_replace_s": ["```", "*", "`", "~", "_", "'"],
 
-        "translators": ["lingvanex"],
-        "zero_translator": "lingvanex",
+        "translators": ["lingvanex", "reverso"],
+        "zero_translator": "reverso",
 
         "main_code": "ru",
-        "langs_path": "/../../bot/localization",
-        "dump_path": "/dumps/",
+        "langs_path": "../../bot/localization",
+        "dump_path": "dumps/",
 
         "ignore_translate_keys": ["data", "callback", "inline_menu", "keys", "previous", "image", "photo_url", "url", "meow_book", "localization_author", "language_name", "arguments"],
 
