@@ -108,7 +108,7 @@ async def dino_profile_set(message: Message):
 
     keyboard = list_to_keyboard(buttons, 2)
     # await ChooseOptionState(dino_profile, userid, chatid, lang, settings_data)
-    await ChooseOptionHandler(dino_profile, userid, chatid, lang).start()
+    await ChooseOptionHandler(dino_profile, userid, chatid, lang, settings_data).start()
     await bot.send_message(userid, t('profile_view.info', lang), 
                            reply_markup=keyboard)
 
