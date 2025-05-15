@@ -452,6 +452,16 @@ def translate_text(text, to_lang, from_lang, rep=0):
                                     translator=trans, 
                                     headers={'User-Agent': random.choice(user_agents)})
             
+            # Проверка на наличие запрещённых слов в результате перевода
+            forbidden = ["Error: HTTP", "ERR_CHALLENGE"]
+            if any(f in translated for f in forbidden):
+                print(f"Обнаружено запрещённое слово в переводе: {translated}")
+                if rep < 10:
+                    return translate_text(text, to_lang, from_lang, rep=rep + 1)
+                else:
+                    print(f"Не удалось получить корректный перевод после {rep} попыток.")
+                    translated = safe_text
+
             count1, count2 = check_count_unicode(translated)
             count_01, count_02 = check_count_unicode(safe_text)
             if count1 != count_01 or count2 != count_02:
@@ -744,7 +754,10 @@ def main():
                         cash_replaces = {}
 
                         set_by_path(lang_data, path, translated, dump_data[lang])
-                        set_by_path(dump_data, f'{lang}.'+path, value)
+                        if translated == "NOTEXT":
+                            set_by_path(dump_data, f'{lang}.'+path, "NOTEXT")
+                        else:
+                            set_by_path(dump_data, f'{lang}.'+path, value)
                     else:
                         set_by_path(lang_data, path, value, dump_data[lang])
                         set_by_path(dump_data, f'{lang}.'+path, value)
