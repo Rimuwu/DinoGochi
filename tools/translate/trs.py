@@ -10,8 +10,6 @@ import re
 
 DetectorFactory.seed = 0
 ex = os.path.dirname(__file__) # Путь к этому файлу
-# langs_path = "/langs"
-# dump_path = "/dump_test"
 
 # base_names = {}
 cash_replaces = {}
@@ -28,13 +26,16 @@ with open(os.path.join(ex, 'settings.json'), encoding='utf-8') as f:
     translators_names = settings['translators']
 
     main_code = settings['main_code']
-    langs_path = settings['langs_path']
-    dump_path = settings['dump_path']
+    # langs_path = settings['langs_path']
+    # dump_path = settings['dump_path']
     start_symbols = settings['start_symbols']
 
     zero_translator = settings['zero_translator']
     ignore_translate_keys = settings['ignore_translate_keys']
     strat_sym, end_sym = settings['sp_sym']
+
+langs_path = "./test/langs"
+dump_path = "./test/dumps"
 
 # --- Добавляем списки user_agents и proxies ---
 user_agents = [
@@ -49,8 +50,48 @@ proxies = [
     # 'http://proxy_ip:port',
     # Оставьте пустым если не используете прокси, либо добавьте свои
 ]
+from g4f import Client
 
-# --- Новая реализация перевода по схеме ---
+client = Client()
+# response = client.chat.completions.create(
+#     model="gpt-4o-mini",
+#     messages=[{"role": "user", "content": "Hello"}],
+#     web_search=False
+# )
+
+
+def only_translate(text, from_language, to_language, translator, **kwargs):
+
+    response = client.chat.completions.create(
+        model='gpt-4o-mini',
+        messages=[
+            {
+                "role": "user",
+                "content": f'Do not guess. Do not rephrase. Do not autocorrect. Do not explain. Just translate. Do not translate and in any case do not change emoji, consonance #1042# (inside # can be any number), construction {{var_name}} (inside can be any text in English or numbers), unicode characters (something that is not standard letters). If you don’t understand how to translate it and can’t find a single option, return NOTEXT. Translate the text from language "{from_language}" to language "{to_language}", return only the translation of the text, keep the maximum text style. If there is no text, or it already translates, then return (ONLY) the translated text. Markdown formatting may be present in the text, do not forget that it must be fully restored. You translate the text for the bot’s telegrams. If the source text is very short - for example 1-2 words, then it can be a button, and it should remain approximately the same short. Text: {text}'
+            }
+        ])
+
+    return response.choices[0].message.content
+
+    # return translators.translate_text(
+    #     text,
+    #     from_language=from_language,
+    #     to_language=to_language,
+    #     translator=translator,
+    #     **kwargs
+    # )
+
+def check_count_unicode(text):
+    """
+    Возвращает кортеж (count_special, count_emoji):
+    - count_special: количество всех символов из one_replace_s в тексте
+    - count_emoji: количество эмодзи в тексте
+    """
+    if not isinstance(text, str):
+        return 0, 0
+    count_special = sum(text.count(sym) for sym in one_replace_s)
+    count_emoji = len(emoji.emoji_list(text))
+    return count_special, count_emoji
 
 def walk_keys(data, callback, path=""):
     """
@@ -181,20 +222,20 @@ def replace_specials(text):
                 text = text.replace(
                     item['text'], f"{strat_sym}{code}{end_sym}")
 
-        # Прячем эмодзи
-        for em in emoji.emoji_list(text):
-            code = save_replace(100, 
-                                em['emoji'], False)
-            text_code = f"{strat_sym}{code}{end_sym}"
-            text = text.replace(em['emoji'], text_code)
+        # # Прячем эмодзи
+        # for em in emoji.emoji_list(text):
+        #     code = save_replace(100, 
+        #                         em['emoji'], False)
+        #     text_code = f"{strat_sym}{code}{end_sym}"
+        #     text = text.replace(em['emoji'], text_code)
 
-        # Прячем переменные вида {name}
-        matches = re.findall(r'\{.*?\}', text)
-        for match in matches:
-            code = save_replace(200, 
-                                match, False)
-            text_code = f"{strat_sym}{code}{end_sym}"
-            text = text.replace(match, text_code)
+        # # Прячем переменные вида {name}
+        # matches = re.findall(r'\{.*?\}', text)
+        # for match in matches:
+        #     code = save_replace(200, 
+        #                         match, False)
+        #     text_code = f"{strat_sym}{code}{end_sym}"
+        #     text = text.replace(match, text_code)
 
         # Прячем переменные вида /слово (только первое целое слово после /)
         matches = re.findall(r'/\w+', text)
@@ -203,7 +244,7 @@ def replace_specials(text):
                     match, False)
             text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(match, text_code)
-        
+
         matches = re.findall(r'<\s*[^<>]+\s*>', text)
         for match in matches:
             code = save_replace(400,
@@ -219,15 +260,15 @@ def replace_specials(text):
             text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(match, text_code)
 
-        # Прячем переменные вида *Слово*
-        for one_repl in one_replace_s:
-            tx = fr'\{one_repl}\s*.*?\s*\{one_repl}'
-            matches = re.findall(tx, text)
-            for match in matches:
-                code = save_replace(600,
-                                    match[1:-1], True, one_repl)
-                text_code = f"{strat_sym}{code}{end_sym}"
-                text = text.replace(match, text_code)
+        # # Прячем переменные вида *Слово*
+        # for one_repl in one_replace_s:
+        #     tx = fr'\{one_repl}\s*.*?\s*\{one_repl}'
+        #     matches = re.findall(tx, text)
+        #     for match in matches:
+        #         code = save_replace(600,
+        #                             match[1:-1], True, one_repl)
+        #         text_code = f"{strat_sym}{code}{end_sym}"
+        #         text = text.replace(match, text_code)
 
     # # Прячем конструкции вида #число##число#... (любое количество подряд)
     # # Новый паттерн: ищет одну или более групп #число#, подряд идущих
@@ -323,52 +364,53 @@ def restore_specials(text, to_lang, from_lang):
 
 
 def match_case(original, translated, lang):
-    orig_words = original.split()
-    trans_words = translated.split()
-    # Если количество слов совпадает, применяем стиль регистра для каждого слова
-    if len(orig_words) == len(trans_words):
-        result = []
-        for i, word in enumerate(trans_words):
-            if orig_words[i].isupper():
-                result.append(word.capitalize())
-            elif orig_words[i].islower():
-                result.append(word.lower())
-            elif orig_words[i].istitle():
-                result.append(word.title())
-            else:
-                result.append(word)
-        return ' '.join(result)
+    # orig_words = original.split()
+    # trans_words = translated.split()
+    # # Если количество слов совпадает, применяем стиль регистра для каждого слова
+    # if len(orig_words) == len(trans_words):
+    #     result = []
+    #     for i, word in enumerate(trans_words):
+    #         if orig_words[i].isupper():
+    #             result.append(word.capitalize())
+    #         elif orig_words[i].islower():
+    #             result.append(word.lower())
+    #         elif orig_words[i].istitle():
+    #             result.append(word.title())
+    #         else:
+    #             result.append(word)
+    #     return ' '.join(result)
 
-    # Новое: если весь оригинал в нижнем регистре — вернуть перевод в нижнем регистре
-    if original.islower():
-        return translated.lower()
-    # Новое: если только первое слово с большой буквы, остальные маленькие
-    if (
-        original
-        and original[0].isupper()
-        and (len(original) == 1 or original[1:].islower())
-    ):
-        # Если перевод состоит из нескольких слов, делаем capitalize только первое слово
-        if translated:
-            return translated[0].capitalize() + translated[1:].lower()
-        return translated
+    # # Новое: если весь оригинал в нижнем регистре — вернуть перевод в нижнем регистре
+    # if original.islower():
+    #     return translated.lower()
+    # # Новое: если только первое слово с большой буквы, остальные маленькие
+    # if (
+    #     original
+    #     and original[0].isupper()
+    #     and (len(original) == 1 or original[1:].islower())
+    # ):
+    #     # Если перевод состоит из нескольких слов, делаем capitalize только первое слово
+    #     if translated:
+    #         return translated[0].capitalize() + translated[1:].lower()
+    #     return translated
 
-    # Если не совпадает — применяем общий стиль
-    if original.isupper():
-        return translated.capitalize()
-    if original.istitle():
-        return translated.title()
+    # # Если не совпадает — применяем общий стиль
+    # if original.isupper():
+    #     return translated.capitalize()
+    # if original.istitle():
+    #     return translated.title()
     return translated
 
 def repl_code(trans, lang):
     code = replace_codes.get(trans.lower(), {}).get(lang, lang)
     return code
 
-def translate_text(text, to_lang, from_lang, trans=zero_translator):
-    global cash_replaces
+def translate_text(text, to_lang, from_lang, rep=0):
+    global cash_replaces, zero_translator
     """
     Переводит текст, защищая спецсимволы и эмодзи.
     """
+    trans = zero_translator
     
     if to_lang is None and from_lang is None:
         return text
@@ -405,16 +447,29 @@ def translate_text(text, to_lang, from_lang, trans=zero_translator):
     elif lang or len(langs) == 0:
         try:
             # translators.translators_pool = translators_names
-            translated = translators.translate_text(safe_text,
+            translated = only_translate(safe_text,
                                     from_language=repl_code(trans, from_lang), to_language=repl_code(trans, to_lang),
                                     translator=trans, 
                                     headers={'User-Agent': random.choice(user_agents)})
-            translated = match_case(text, translated, to_lang)
-            new_lang = detect(translated)
-            if new_lang == 'ru':
+            
+            count1, count2 = check_count_unicode(translated)
+            count_01, count_02 = check_count_unicode(safe_text)
+            if count1 != count_01 or count2 != count_02:
+                # print(f"Перевод: {translated} - {lang}")
+                # print(f"Оригинал: {safe_text} - {lang}")
                 translated = translate_text(
-                    translated, to_lang, from_lang,
-                    trans=trans
+                    translated, to_lang, from_lang, rep=rep + 1
+                )
+
+            # translated = translators.translate_text(safe_text,
+            #                         from_language=repl_code(trans, from_lang), to_language=repl_code(trans, to_lang),
+            #                         translator=trans, 
+            #                         headers={'User-Agent': random.choice(user_agents)})
+            translated = match_case(text, translated, to_lang)
+
+            if translated == safe_text and rep < 10:
+                translated = translate_text(
+                    translated, to_lang, from_lang, rep=rep + 1
                 )
 
             dict_data = {
@@ -428,7 +483,13 @@ def translate_text(text, to_lang, from_lang, trans=zero_translator):
             pprint(dict_data)
         except Exception as e:
             print(f"Ошибка перевода: {text} - {str(e)}")
-            translated = safe_text
+            if rep < 10:
+                translated = translate_text(
+                        safe_text, to_lang, from_lang, rep=rep + 1
+                    )
+            else:
+                translated = safe_text
+                print(f"Не переведено {rep} {lang} -> {text}")
 
     else:
         translated = safe_text
@@ -579,7 +640,7 @@ def is_prefix_in_keys(keys, path):
 a_c_upd = 0
 
 def main():
-    global cash_replaces, a_c_upd
+    global cash_replaces, a_c_upd, zero_translator, main_lang
 
     # 1. Загрузка главного словаря
     main_lang_path = os.path.normpath(os.path.join(ex, langs_path, f"{main_code}.json"))
@@ -598,8 +659,14 @@ def main():
         # Определяем главный язык для перевода
         if lang == "en":
             main_lang = "ru"
+            zero_translator = 'yandex'
+        elif lang == "id":
+            main_lang = "ru"
+            zero_translator = 'google'
         else:
-            main_lang = "en"
+            main_lang = "ru"
+            zero_translator = 'yandex'
+
         lang_path = os.path.normpath(os.path.join(ex, langs_path, f"{lang}.json"))
         dump_path_ = os.path.normpath(os.path.join(ex, dump_path, f"{lang}.json"))
 
