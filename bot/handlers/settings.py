@@ -138,7 +138,7 @@ async def inventory_set(message: Message):
 
     settings_data, time_list = {}, []
 
-    for i in get_data('inv_set_pages.ans', lang):
+    for i in get_data('inv_set_pages.data', lang):
         time_list.append(i)
         settings_data[i] = list(int(strn) for strn in i.split(' | '))
 

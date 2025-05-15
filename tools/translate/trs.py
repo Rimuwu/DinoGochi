@@ -51,6 +51,8 @@ proxies = [
     # Оставьте пустым если не используете прокси, либо добавьте свои
 ]
 from g4f import Client
+import time
+from tqdm import tqdm
 
 client = Client()
 # response = client.chat.completions.create(
@@ -723,15 +725,38 @@ def main():
             print(f'\nНачало перевода...')
 
             # 6. Перевести новые/изменённые ключи
+            # Собираем все пути, которые будут переводиться
+            paths_to_translate = []
+
+            def collect_paths_callback(path, value):
+                if is_prefix_in_keys(new_keys + changed_keys, path):
+                    if isinstance(value, str):
+                        paths_to_translate.append(path)
+
+            walk_keys(main_data, collect_paths_callback)
+
+            total = len(paths_to_translate)
+            if total == 0:
+                print("Нет новых или изменённых ключей для перевода.")
+            else:
+                print(f"Всего ключей для перевода: {total}")
+
+            # Для оценки времени
+            start_time = time.time()
+            times = []
+
+            # tqdm для прогресса
+            pbar = tqdm(paths_to_translate, desc="Перевод", unit="ключ")
+
             def update_callback(path, value):
                 global cash_replaces, a_c_upd
 
-                # Проверяем, начинается ли path с любого из new_keys или changed_keys
                 if is_prefix_in_keys(new_keys + changed_keys, path):
                     if isinstance(value, str):
                         path_set = set(path.split('.'))
                         ignore_set = set(ignore_translate_keys)
 
+                        t0 = time.time()
                         if path_set & ignore_set:
                             if path.endswith('text'):
                                 translated = translate_text(value, lang, main_lang)
@@ -739,7 +764,7 @@ def main():
                                     translated = translate_text(value, lang, main_lang)
                                 print(f"Переводим {path}: {value} -> {translated}")
                             else:
-                                translated = value  # Не переводим, если есть совпадение
+                                translated = value
                                 print(f"Пропускаем перевод для {path}: {value}")
                         elif len(value) < 2:
                             translated = value
@@ -750,7 +775,17 @@ def main():
                                 translated = translate_text(value, lang, main_lang)
                             print(f"Переводим {path}: {value} -> {translated}")
 
-                        # Сброс тегов
+                        t1 = time.time()
+                        times.append(t1 - t0)
+                        avg_time = sum(times) / len(times)
+                        done = pbar.n + 1
+                        left = total - done
+                        est = avg_time * left
+                        pbar.set_postfix({
+                            "avg_sec": f"{avg_time:.2f}",
+                            "eta_min": f"{est/60:.1f}"
+                        })
+
                         cash_replaces = {}
 
                         set_by_path(lang_data, path, translated, dump_data[lang])
@@ -766,8 +801,14 @@ def main():
                     if a_c_upd % 3 == 0:
                         write_json(lang_path, {lang: lang_data})
                         write_json(dump_path_, dump_data)
+                    pbar.update(1)
+                else:
+                    # Не переводим, но для прогресса обновим
+                    if path in paths_to_translate:
+                        pbar.update(1)
 
             walk_keys(main_data, update_callback)
+            pbar.close()
 
             write_json(lang_path, {lang: lang_data})
             write_json(dump_path_, dump_data)

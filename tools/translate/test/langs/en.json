@@ -186,7 +186,7 @@
                 "second",
                 "seconds",
                 "seconds",
-                "NOTEXT"
+                "s."
             ],
             "minute": [
                 "minute",
@@ -204,7 +204,7 @@
                 "day",
                 "day",
                 "days",
-                "NOTEXT"
+                "d."
             ],
             "weekly": [
                 "week",
@@ -451,7 +451,7 @@
                 "name": "📜 Recipe of the case"
             },
             "metal-gear": {
-                "name": "Error: HTTP 418 - {\"action\":\"error\",\"status\":418,\"type\":\"ERR_CHALLENGE\",\"overrideCode\":\"334c\",\"cd\":{\"q\":\"\",\"cc\":\"duckchat\",\"s\":\"index\",\"iadb\":\"1\",\"r\":\"euw\",\"e\":0,\"er\":null,\"gk\":\"d4cd0dabcf4caa22ad92fab40844c786\",\"i\":\"3\",\"o\":\"BwJ%2FnWagnax1DtKhpvMFknRKlHxR%2BRyfhA5%2Btn67Nf4%3D%0A\",\"p\":\"7642706ae65b4d13a2a647320cbdbf43-4e8e16c05404429093737c694b94d622-d1d323d91b5440a18999ea35cdf08c15-f8e054c5a58d410f9f85ff836a8251e7-ffd9b913214744bf9a9147758a589934-6909c88b7e6f4596aac43147553e2cfe-c9dec22f36904d8c831835cf4c76f899-ea1114bf437e420b8b827cafe82553f8-82bb9993846647628996e41963e6c423\",\"sc\":1}}"
+                "name": "⚙ Metal gear"
             },
             "wood-gear": {
                 "name": "⚙ Wooden gear"
@@ -460,7 +460,7 @@
                 "name": "🦯 Iron rod"
             },
             "copper-rod": {
-                "name": "Error: HTTP 418 - {\"action\":\"error\",\"status\":418,\"type\":\"ERR_CHALLENGE\",\"overrideCode\":\"334c\",\"cd\":{\"q\":\"\",\"cc\":\"duckchat\",\"s\":\"index\",\"iadb\":\"1\",\"r\":\"euw\",\"e\":0,\"er\":null,\"gk\":\"d4cd0dabcf4caa22ad92fab40844c786\",\"i\":\"3\",\"o\":\"gpl2t764nWKjUCLwovy%2B3VdGkxnvZ4%2F4Ntz972CH5FQ%3D%0A\",\"p\":\"0b5ff38c50a448868e72183482fa8df4-5f41225f75ce4a429c90cd9bfb587f7a-82cc79af9a3d42799a5059d572da5297-b5585a1fb8e7486ca362a752d5a45965-bb8d1549a30d4cada43b31146ebfc7ba-a62aa9a3e32b417eac2838f4bf66c04f-72a60e66124c4c88a126f2a6d717b0ee-824ba9d16b99445f9caf5523ef92dbaf-aba51dbc3cdf4a07809f6fdabe4a5909\",\"sc\":1}}"
+                "name": "🦯 Copper rod"
             },
             "iron-ingot": {
                 "name": "🧱 Iron ingot"
@@ -501,8 +501,1282 @@
                 "description": "Crossbow - powerful, fast, durable. Just right for hunting!"
             },
             "taco_recipe": {
-                "name": "📜 Taco recipe"
+                "name": "📜 Taco recipe",
+                "description": "Tacos are excellent food that all dinosaurs of any kind adore!"
+            },
+            "sword_recipe": {
+                "name": "📜 Sword recipe",
+                "description": "Recipe for a finely sharpened sword."
+            },
+            "onion_recipe": {
+                "name": "📜 onion recipe",
+                "description": "The onion made from a pair of bones fires correctly."
+            },
+            "arrow_recipe": {
+                "name": "📜 Recipe of arrows",
+                "description": "Bone that breaks bones."
+            },
+            "regular_backpack": {
+                "name": "🎒 Ordinary backpack"
+            },
+            "backpack_recipe": {
+                "name": "📜 Backpack recipe",
+                "description": "School backpack equipped for the dungeon."
+            },
+            "wood_shield": {
+                "name": "🛡 Wooden shield"
+            },
+            "iron_shield": {
+                "name": "🛡 Iron shield"
+            },
+            "copper_shield": {
+                "name": "🛡 Copper shield"
+            },
+            "leather_jacket": {
+                "name": "🧥 Leather jacket"
+            },
+            "leather_jacket_recipe": {
+                "name": "📜 Leather jacket",
+                "description": "Almost like a shield, but much lighter."
+            },
+            "shield_recipe": {
+                "name": "📜 Shield recipe",
+                "description": "Shield, just a shield."
+            },
+            "bone_pickaxe": {
+                "name": "⛏ Bone pickaxe"
+            },
+            "iron_pickaxe": {
+                "name": "⛏ Iron pickaxe"
+            },
+            "copper_pickaxe": {
+                "name": "⛏ Copper pickaxe"
+            },
+            "bone_axe": {
+                "name": "🪓 Bone axe"
+            },
+            "iron_axe": {
+                "name": "🪓 Iron axe"
+            },
+            "copper_axe": {
+                "name": "🪓 Copper axe"
+            },
+            "pickaxe_recipe": {
+                "name": "📜 Pickaxe recipe",
+                "description": "The pickaxe is not effective in battle, as everyone knows that the axe is a more formidable weapon. However, it is effective in resource gathering."
+            },
+            "axe_recipe": {
+                "name": "📜 Axe recipe",
+                "description": "The axe is not effective in battle, because everyone knows that the sword is a faster weapon. But it is effective in resource gathering."
+            },
+            "chocolate": {
+                "name": "🍫 Chocolate"
+            },
+            "candy": {
+                "name": "🍬 Candies"
+            },
+            "candy_recipe": {
+                "name": "📜 Candy recipe",
+                "description": "Recipe for making a whole bunch of chocolate candies"
+            },
+            "maize": {
+                "name": "🌽 Corn"
+            },
+            "popcorn": {
+                "name": "🍿 Popcorn"
+            },
+            "popcorn_recipe": {
+                "name": "📜 Popcorn recipe",
+                "description": "Popcorn creation recipe. Time to watch a movie!"
+            },
+            "juice": {
+                "name": "Juice"
+            },
+            "juice_recipe": {
+                "name": "📜 Juice recipe",
+                "description": "Recipe for making freshly squeezed juice"
+            },
+            "spices": {
+                "name": "🌶️ Spices"
+            },
+            "spicy_steak": {
+                "name": "🥩 Spicy steak"
+            },
+            "steak_recipe": {
+                "name": "📜 Steak recipe",
+                "description": "Recipe for making a spicy but tasty steak"
+            },
+            "banana": {
+                "name": "🍌 Banana"
+            },
+            "crab": {
+                "name": "🦀 Crab"
+            },
+            "coffee": {
+                "name": "☕️ Coffee"
+            },
+            "mushroom": {
+                "name": "🍄 Mushroom"
+            },
+            "broth": {
+                "name": "🍲 Broth"
+            },
+            "broth_recipe": {
+                "name": "📜 Recipe for broth",
+                "description": "Recipe for making hearty meat broth"
+            },
+            "rice": {
+                "name": "🍚 Rice"
+            },
+            "sushi": {
+                "name": "🍣 Sushi"
+            },
+            "sushi_recipe": {
+                "name": "📜 Sushi recipe",
+                "description": "Recipe for making sushi. They say it's perfectly balanced food."
+            },
+            "hot_chocolate": {
+                "name": "☕️ Hot chocolate"
+            },
+            "hot_chocolate_recipe": {
+                "name": "📜 Hot chocolate recipe",
+                "description": "Recipe for making hot chocolate. Perfect for warming up in winter."
+            },
+            "cake": {
+                "name": "🎂 Cake"
+            },
+            "cake_recipe": {
+                "name": "📜 Cake recipe",
+                "description": "Recipe for making a big cake. The cake is a lie."
+            },
+            "curry": {
+                "name": "🍛 Curry"
+            },
+            "curry_recipe": {
+                "name": "📜 Curry recipe",
+                "description": "Recipe for creating curry. It’s a spicy dish with rice"
+            },
+            "dango": {
+                "name": "🍡 Dango"
+            },
+            "grain": {
+                "name": "🥜 Seeds"
+            },
+            "bread": {
+                "name": "🍞 Bread"
+            },
+            "bread_recipe": {
+                "name": "📜 Bread recipe",
+                "description": "Bread recipe"
+            },
+            "berry_pie": {
+                "name": "🥧 Berry pie"
+            },
+            "fish_cake": {
+                "name": "🥘 Fish pie"
+            },
+            "meat_pie": {
+                "name": "🍲 Meat pie"
+            },
+            "berry_pie_recipe": {
+                "name": "📜 Berry pie recipe",
+                "description": "Recipe for making the sweetest pie"
+            },
+            "fish_pie_recipe": {
+                "name": "📜 Fish pie recipe",
+                "description": "Recipe for making the healthiest pie"
+            },
+            "meat_pie_recipe": {
+                "name": "📜 Meat pie recipe",
+                "description": "Recipe for creating the most filling pie"
+            },
+            "bacon": {
+                "name": "🥓 Bacon"
+            },
+            "bacon_recipe": {
+                "name": "📜 Bacon recipe",
+                "description": "Recipe for making bacon"
+            },
+            "bento": {
+                "name": "🍱 Bento"
+            },
+            "bento_recipe": {
+                "name": "📜 Bento recipe",
+                "description": "Bento creation recipe. Everything for a full snack is gathered here."
+            },
+            "sandwich": {
+                "name": "🥪 Sandwich"
+            },
+            "sandwich_recipe": {
+                "name": "📜 Sandwich recipe",
+                "description": "Recipe for making a sandwich. Convenient for a quick snack."
+            },
+            "chest_food": {
+                "name": "📦 Chest with food"
+            },
+            "recipe_chest": {
+                "name": "📦 Recipe Chest"
+            },
+            "recipe_chest_simple": {
+                "name": "📦 Random recipe"
+            },
+            "gift_2023": {
+                "name": "🎁 Gift 2023"
+            },
+            "gift_2024": {
+                "name": "🎁 Gift 2024",
+                "description": "For the most wonderful people on the planet! ❤"
+            },
+            "gift_2025": {
+                "name": "🎁 Gift 2025",
+                "description": "For dreamers and believers!"
+            },
+            "fishing-rod": {
+                "name": "🎣 Fishing rod",
+                "description": "A wonderful fishing rod. Increases the dinosaur's skill."
+            },
+            "fishing-rod_recipe": {
+                "name": "📜 Fishing rod recipe",
+                "description": "Fishing rod recipe."
+            },
+            "stone_resurrection": {
+                "name": "💎 resurrection stone",
+                "description": "The stone that can retrieve any dinosaur from the memory of the universe!"
+            },
+            "ale": {
+                "name": "🍺 Ale"
+            },
+            "basket": {
+                "name": "👒 Basket",
+                "description": "Berry picking basket. Increases the maximum amount of food collected."
+            },
+            "net": {
+                "name": "🕸 Network",
+                "description": "Trap grid for hunting animals."
+            },
+            "book_forest": {
+                "name": "📔 A book about the forest",
+                "description": "The book of a long-forgotten adventurer. It tells about the forest."
+            },
+            "book_lost-islands": {
+                "name": "📔 A book about islands",
+                "description": "The book of a long-forgotten adventurer. It tells about lost islands."
+            },
+            "book_desert": {
+                "name": "📔 Book about the desert",
+                "description": "The book of a long-forgotten adventurer."
+            },
+            "book_mountains": {
+                "name": "📔 A book about mountains",
+                "description": "The book of a long-forgotten adventurer."
+            },
+            "book_magic-forest": {
+                "name": "📔 Book about the magical forest",
+                "description": "The book of a long-forgotten adventurer."
+            },
+            "bag_goodies": {
+                "name": "👜 Bag with treats",
+                "description": "Storage for treats on the journey."
+            },
+            "bag_goodies_recipe": {
+                "name": "📜 Bag with treats",
+                "description": "Recipe for creating a storage for goodies."
+            },
+            "rubik_cube": {
+                "name": "🎲 Rubik's Cube",
+                "description": "The dinosaur always has its favorite game with it."
+            },
+            "rubik_cube_recipe": {
+                "name": "📜 Rubik's Cube",
+                "description": "Recipe for creating a Rubik's cube."
+            },
+            "lock_bag": {
+                "name": "👜 Bag with a lock",
+                "description": "More secure travel bag"
+            },
+            "lock_bag_recipe": {
+                "name": "📜 Bag with a lock",
+                "description": "Recipe for creating a bag with a lock."
+            },
+            "skinning_knife": {
+                "name": "🔪 Skinning knife",
+                "description": "Helps to collect animal skins more accurately. Without losing any parts."
+            },
+            "skinning_knife_recipe": {
+                "name": "📜 Skinning knife",
+                "description": ""
+            },
+            "flour": {
+                "name": "🌫 Flour"
+            },
+            "flour_recipe": {
+                "name": "📜 Flour recipe",
+                "description": "Recipe for creating flour for treats."
+            },
+            "croissant": {
+                "name": "🥐 Croissant"
+            },
+            "croissant_recipe": {
+                "name": "📜 Croissant recipe",
+                "description": "Recipe for creating a hot and appetizing croissant."
+            },
+            "carrot": {
+                "name": "🥕 Carrot"
+            },
+            "tomato": {
+                "name": "🍅 Tomato"
+            },
+            "potato": {
+                "name": "🥔 Potato"
+            },
+            "basket_recipe": {
+                "name": "📜 Basket recipe",
+                "description": "Recipe for creating a basket for food collection."
+            },
+            "net_recipe": {
+                "name": "📜 Network recipe",
+                "description": "Recipe for creating a hunting network."
+            },
+            "rod_recipe": {
+                "name": "📜 Stick recipe",
+                "description": ""
+            },
+            "fishing_rod_recipe": {
+                "name": "📜 Fishing rod recipe",
+                "description": "Recipe for making a fishing rod."
+            },
+            "meow_book": {
+                "name": "📔 Мяу издание",
+                "description": "Meow meow, meow meow meow... Meow!"
+            },
+            "premium_activator": {
+                "name": "✨ Premium activator",
+                "description": "Activates premium subscription for 1 month"
+            },
+            "egg_case": {
+                "name": "📦 Egg case"
+            },
+            "fried_egg": {
+                "name": "🍳 Fried eggs"
+            },
+            "3_days_premium": {
+                "name": "✨ Trial subscription",
+                "description": "Activates a premium subscription for 3 days"
+            },
+            "background": {
+                "name": "🖼 Background",
+                "description": "Adds a background to the collection."
+            },
+            "repair_tool": {
+                "name": "🔧 Repair kit",
+                "description": "Repair kit for accessories, weapons, armor. Repairs only broken items!"
+            },
+            "repair_tool_recipe": {
+                "name": "📜 Repair kit",
+                "description": "Recipe for creating a repair kit."
+            },
+            "SYSTEM_ITEM_REPAIR": {
+                "name": "🔧 Repaired item"
+            },
+            "SYSTEM_ITEM_SWORD": {
+                "name": "🗡 Sword"
+            },
+            "SYSTEM_ITEM_AXE": {
+                "name": "🪓 Axe"
+            },
+            "SYSTEM_ITEM_PICKAXE": {
+                "name": "⛏ Pickaxe"
+            },
+            "SYSTEM_ITEM_SHIELD": {
+                "name": "🛡 Shield"
+            },
+            "SYSTEM_ITEM_GEAR": {
+                "name": "⚙ Gear"
+            },
+            "SYSTEM_ITEM_ROD": {
+                "name": "🦯 Rod"
+            },
+            "SYSTEM_ITEM_BODY": {
+                "name": "📦 Case"
+            },
+            "rustycan": {
+                "name": "🥫 Rusty can"
+            },
+            "wornoutticket": {
+                "name": "🎟️ Worn ticket"
+            },
+            "brokenkey": {
+                "name": "🔧 Broken key"
+            },
+            "lostglove": {
+                "name": "🧤 Lost glove"
+            },
+            "shatteredbottle": {
+                "name": "🍾 Broken bottle"
+            },
+            "oldbucket": {
+                "name": "🪣 Old bucket"
+            },
+            "crumpledpaper": {
+                "name": "🧻 Crumpled piece of paper"
+            },
+            "wiltedleaf": {
+                "name": "🍂 Withered leaf"
+            },
+            "freezing_1moth": {
+                "name": "🧊 Freezing for a month"
+            },
+            "freezing": {
+                "name": "❄ Freezing"
+            },
+            "defrost": {
+                "name": "🔥 Thawing"
+            },
+            "reinforced_backpack": {
+                "name": "🎒 Reinforced backpack"
+            },
+            "reinforced_backpack_recipe": {
+                "name": "📜 Reinforced backpack",
+                "description": "Recipe for a reinforced backpack."
+            },
+            "pillow": {
+                "name": "🧸 Pillow",
+                "description": "After the end of sleep, the dinosaur receives a temporary bonus to energy boost."
+            },
+            "pillow_recipe": {
+                "name": "📜 Pillow recipe",
+                "description": "Pillow recipe"
+            },
+            "blanket": {
+                "name": "❤️‍🩹 Blanket",
+                "description": "After the end of sleep, the dinosaur receives a temporary bonus to health increase."
+            },
+            "blanket_recipe": {
+                "name": "📜 Blanket recipe",
+                "description": "Blanket recipe"
+            },
+            "toy_solider": {
+                "name": "🪀 Toy soldier",
+                "description": "Removes stress glasses during sleep."
+            },
+            "toy_solider_recipe": {
+                "name": "📜 Recipe of a little soldier",
+                "description": "Toy soldier recipe."
+            },
+            "controller": {
+                "name": "🎮 Controller",
+                "description": "Accelerates game time."
+            },
+            "controller_recipe": {
+                "name": "📜 Controller recipe",
+                "description": "Recipe for creating a controller."
+            },
+            "transport_egg": {
+                "name": "🦖 Transport egg",
+                "description": "Egg for transporting the dinosaur. Usage: If there is no dinosaur - places the dinosaur and freezes it. If the dinosaur is present: pulls out and thaws the dinosaur. Removed after 1 usage cycle."
+            },
+            "custom_book": {
+                "name": "📙 Notebook",
+                "description": "Your personal journal. Write down your thoughts and ideas, and share them with friends!"
+            },
+            "custom_book_recipe": {
+                "name": "📜 Recipe of notes",
+                "description": "Recipe for creating a notebook."
+            },
+            "easter_egg": {
+                "name": "🍰 Easter egg"
+            },
+            "corrupted_document": {
+                "name": "📄 Corrupted document"
+            },
+            "all_or_nothing_case_eggs": {
+                "name": "🩸 All or nothing (Eggs)",
+                "description": "The risk is justified, as the chances of getting a legendary item are so high..."
+            },
+            "infinity_activator": {
+                "name": "♾️ Infinity Activator",
+                "description": "Activates the infinite subscription!"
+            },
+            "dino_slot": {
+                "name": "🦖 Slot for the dinosaur",
+                "description": "Adds a slot for a dinosaur to your account."
+            },
+            "full_recovery_potion": {
+                "name": "🍓 Full recovery",
+                "description": "Restores the health and energy of the dinosaur."
             }
+        },
+        "notifications": {
+            "daily_award": {
+                "text": "🎩 | Don't forget to claim your daily bonus!\n Daily notifications can be turned off in the settings.",
+                "inline_menu": [
+                    "daily_award"
+                ]
+            },
+            "incubation_ready": {
+                "text": "🦖 | {user_name}, your dinosaur has hatched! 🎉",
+                "inline_menu": [
+                    "dino_profile",
+                    "dino_rename"
+                ]
+            },
+            "donation": {
+                "reward": "🦕 Payment received!\n\n❤ We are grateful for your support of the bot and promise to keep striving for you! Freedom for the little dinosaurs!",
+                "subscription_end_day": "❤ | Hey! Your subscription ends in {end_text}, if you like the subscription features, please pay for the next month!",
+                "subscription_end": "❤ | Your subscription has ended, thank you for being with us!",
+                "pre_check_error": "🐱‍🐉 Something went wrong, please try again in a few minutes."
+            },
+            "lvl_up": {
+                "standart": "🎉 | {user_name}, your level has been increased! ({lvl})",
+                "20": "🎉 | {user_name}, your level has been increased! ({lvl})\n✨ | Now you have +1 slot for dinosaurs!",
+                "40": "🎉 | {user_name}, your level has increased! ({lvl})\n✨ | You now have +1 slot for dinosaurs!",
+                "50": "🎉 | {user_name}, your level has been raised! ({lvl})\n🎴 | You're halfway to the maximum level, keep it up!",
+                "60": "🎉 | {user_name}, your level has increased! ({lvl})\n✨ | You now have +1 slot for dinosaurs!",
+                "80": "🎉 | {user_name}, your level has been increased! ({lvl})\n✨ | Now you have +1 slot for dinosaurs!",
+                "100": "🎉 | {user_name}, your level has been increased! ({lvl})\n🎴 | You have reached the maximum level!"
+            },
+            "send_request": {
+                "text": "💞 | You received a friend request from {user_name}, check your requests!",
+                "inline_menu": "requests"
+            },
+            "referal_award": {
+                "text": "🎁 | Your friend {user_name} has reached level {lvl}, thank you so much for inviting friends, as a reward you have received {item_name}!"
+            },
+            "sleep_end": {
+                "text": "🦕 | {dino_name} woke up and is full of energy. \n⌛ | The dinosaur slept {time_end}.",
+                "inline_menu": "dino_profile"
+            },
+            "game_end": {
+                "replics": [
+                    "🎮 *{dino_name}*: *{owner_name}*, I stopped playing!",
+                    "🎮 *{dino_name}*: *{owner_name}*, I played!",
+                    "🎮 *{dino_name}*: *{owner_name}*, I'm done playing!"
+                ],
+                "inline_menu": "dino_profile"
+            },
+            "end_collecting": {
+                "text": "🍱 | {dino_name} finished gathering food.\n\n🍡 | Collected items: {items_names}",
+                "inline_menu": "dino_profile"
+            },
+            "broke_accessory": {
+                "text": "💥 | The active item {item_name} of the dinosaur {dino_name} is broken.",
+                "inline_menu": "dino_profile"
+            },
+            "need_heal": {
+                "replics": [
+                    "💔 *{dino_name}*: Cough, cough, *{owner_name}*, I feel very bad... ({unit}%)",
+                    "💔 *{dino_name}*: *{owner_name}*, I feel very bad, help me... ({unit}%)",
+                    "💔 *{dino_name}*: *{owner_name}*, I think I need help, I feel very bad... ({unit}%)"
+                ],
+                "inline_menu": "rescue"
+            },
+            "need_eat": {
+                "replics": [
+                    "🥕 *{dino_name}*: *{owner_name}*, I want to eat, what should I try today? ({unit}%)",
+                    "🥕 *{dino_name}*: *{owner_name}*, I want to eat! ({unit}%)",
+                    "🥕 *{dino_name}*: Feed me, *{owner_name}*. ({unit}%)"
+                ],
+                "inline_menu": "feed_start"
+            },
+            "need_mood": {
+                "replics": [
+                    "😥 *{dino_name}*: *{owner_name}*, I feel a bit sad... ({unit}%)",
+                    "😥 *{dino_name}*: *{owner_name}*, why is this day so boring? ({unit}%)",
+                    "😥 *{dino_name}*: *{owner_name}*, so boring... ({unit}%)"
+                ],
+                "inline_menu": "dino_profile"
+            },
+            "need_game": {
+                "replics": [
+                    "🎮 *{dino_name}*: *{owner_name}*, I haven't played in so long... ({unit}%)",
+                    "🎮 *{dino_name}*: *{owner_name}*, play with me! ({unit}%)",
+                    "🎮 *{dino_name}*: *{owner_name}*, wish I could play right now... ({unit}%)"
+                ],
+                "inline_menu": "dino_profile"
+            },
+            "need_energy": {
+                "replics": [
+                    "✨ *{dino_name}*: *{owner_name}*, I want to sleep... ({unit}%)",
+                    "✨ *{dino_name}*: *{owner_name}*, I am very tired, shall we go to sleep? ({unit}%)",
+                    "✨ *{dino_name}*: *{owner_name}*, I am a bit tired... ({unit}%)"
+                ],
+                "inline_menu": "dino_profile"
+            },
+            "independent_dead": {
+                "text": "❤ Unfortunately... your dinosaur *{dino_name}*... has died...\n\n🥚 | Don't be upset, you have been given another egg, check your inventory!",
+                "inline_menu": [
+                    "inventory",
+                    "reborn"
+                ]
+            },
+            "not_independent_dead": {
+                "text": "❤ Unfortunately... your dinosaur *{dino_name}*... has died...\n\n✉ | You have an email from the organization. Open it.",
+                "inline_menu": [
+                    "dead_dialog",
+                    "reborn"
+                ]
+            },
+            "breakdown": {
+                "replics": [
+                    "😭 *{dino_name}*: *{owner_name}*, you don't love me at all, how can you neglect your friend? \n 😭 *{dino_name}*: _Crying_ \n\n _{message}_",
+                    "😭 *{dino_name}*: *{owner_name}*, how can you treat me so badly?!\n😭 *{dino_name}*: _Cries_\n\n_{message}_",
+                    "😭 *{dino_name}*: *{owner_name}*, you don’t love me at all!\n😭 *{dino_name}*: _Crying_\n\n_{message}_"
+                ],
+                "inline_menu": "dino_profile"
+            },
+            "inspiration": {
+                "replics": [
+                    "😀 *{dino_name}*: *{owner_name}*, I feel so great!\n\n_{message}_",
+                    "😀 *{dino_name}*: *{owner_name}*, I'm in a great mood, now I'm ready for adventures!\n\n_{message}_",
+                    "😀 *{dino_name}*: *{owner_name}*, I'm ready to move mountains!\n\n_{message}_"
+                ],
+                "inline_menu": "dino_profile"
+            },
+            "product_delete": "🍟 The product ({preview}) has been removed from the market.",
+            "product_buy": {
+                "text": "🍜 Product ({preview}) was purchased {col} times for the amount of {price} 🪙, by user {name}",
+                "inline_menu": "product_info"
+            },
+            "items_items_buy": {
+                "text": "🍜 The product ({preview}) was purchased {col} times by the user {name}",
+                "inline_menu": "product_info"
+            },
+            "kindergarten": {
+                "text": "🎈 | {dino_name} has returned from kindergarten.",
+                "inline_menu": "dino_profile"
+            },
+            "item_crafted": {
+                "standart": "🧨 Crafting completed.\n🪀 Created: {items}",
+                "bonus": "🧨 Item crafting is complete.\n🪀 Created: {items}\n_🪈 Thanks to high skills, the dinosaur was able to craft an additional item from excess materials!_"
+            },
+            "gym_end": {
+                "text": "🥏 | {dino_name} has returned from the gym. The dinosaur trained hard and diligently, now he feels much stronger! (+{add_unit})",
+                "inline_menu": "dino_profile"
+            },
+            "library_end": {
+                "text": "📖 | {dino_name} has returned from the library. The dinosaur's head is full of knowledge, he wants to create and invent! (+{add_unit})",
+                "inline_menu": "dino_profile"
+            },
+            "swimming_pool_end": {
+                "text": "🌊 | {dino_name} has returned from the pool. After training, he feels more flexible! (+{add_unit})",
+                "inline_menu": "dino_profile"
+            },
+            "park_end": {
+                "text": "🌳 | {dino_name} has returned from a walk in the park. The dinosaur learned a lot about its relatives and remembered new words! (+{add_unit})",
+                "inline_menu": "dino_profile"
+            },
+            "gym_end_negative": {
+                "text": "🥏 | {dino_name} has returned from the gym.\n❗ The workout was conducted incorrectly, so the stats have been reduced. (-50% from acquired) (+{add_unit})",
+                "inline_menu": "dino_profile"
+            },
+            "library_end_negative": {
+                "text": "📖 | {dino_name} has returned from the library.\n❗ The training was conducted incorrectly, so the stats have been decreased. (-50% of acquired) (+{add_unit})",
+                "inline_menu": "dino_profile"
+            },
+            "swimming_pool_end_negative": {
+                "text": "🌊 | {dino_name} has returned from the pool.\n❗ The training was conducted incorrectly, so the stats have been reduced. (-50% from acquired) (+{add_unit})",
+                "inline_menu": "dino_profile"
+            },
+            "park_end_negative": {
+                "text": "🌳 | {dino_name} has returned from a park walk.\n❗ The training was conducted improperly, so the stats were decreased. (-50% of acquired) (+{add_unit})",
+                "inline_menu": "dino_profile"
+            },
+            "craft_end": {
+                "text": "⛏️ | {dino_name} has returned from the workshop! You can check active crafts with the command /craftlist",
+                "inline_menu": "dino_profile"
+            },
+            "bank_end": {
+                "text": "🏦 | {dino_name} has returned from the bank! Here are the results of his work: {results}",
+                "inline_menu": "dino_profile"
+            },
+            "mine_end": {
+                "text": "⛏️ | {dino_name} has returned from the mine! Here are the results of his work: {results}",
+                "inline_menu": "dino_profile"
+            },
+            "sawmill_end": {
+                "text": "🌲 | {dino_name} has returned from the sawmill! Here are the results of his work: {results}",
+                "inline_menu": "dino_profile"
+            }
+        },
+        "breakdown": {
+            "seclusion": "🔇 | The dinosaur refuses to talk to you for a while, so you won't receive notifications from it.",
+            "hysteria": "❌ | The dinosaur is very upset, he locked himself in his room and is crying.",
+            "unrestrained_play": "🎮 | The dinosaur is very upset, he decided to go play to lift his spirits.",
+            "downgrade": "💥 | Due to bad mood, the dinosaur threw an object very hard. This object could have been an accessory."
+        },
+        "inspiration": {
+            "game": "🥭 | Due to excellent mood, the dinosaur receives a bonus x{bonus} to game mastery! 💚 Send the dinosaur to play to use inspiration!",
+            "collecting": "🍍 | Due to the great mood, the dinosaur receives a bonus x{bonus} to food gathering speed! 💚 Send the dinosaur to gather food to use the inspiration!",
+            "journey": "🌽 | Due to the excellent mood, the dinosaur receives a bonus x{bonus} to the number of events in the journey! 💚 Send the dinosaur on a trip to use inspiration!",
+            "sleep": "🍏 | Due to the great mood, the dinosaur receives a bonus x{bonus} to sleep quality! 💚 Send the dinosaur to sleep to use the inspiration!",
+            "craft": "🥝 | Due to the great mood, the dinosaur receives a bonus x{bonus} to item creation speed! 💚 Send the dinosaur to create an item to use the inspiration!",
+            "farm": "🥬 | Due to great mood, the dinosaur receives a bonus x{bonus} to plant care mastery! 💚 Send the dinosaur to the farm to use inspiration!",
+            "mine": "🍒 | Due to the great mood, the dinosaur receives a bonus x{bonus} to mining speed! 💚 Send the dinosaur to the mine to use the inspiration!",
+            "bank": "🥭 | Due to the great mood, the dinosaur receives a bonus x{bonus} to work quality at the bank! 💚 Send the dinosaur to the bank to use the inspiration!",
+            "sawmill": "🌽 | Due to the great mood, the dinosaur receives a bonus x{bonus} to the working speed at the sawmill! 💚 Send the dinosaur to the sawmill to use the inspiration!",
+            "gym": "🌶 | Due to excellent mood, the dinosaur receives a bonus x{bonus} to strength increase speed! 💚 Send the dinosaur to the gym to use inspiration!",
+            "library": "🍇 | Due to the excellent mood, the dinosaur receives a bonus x{bonus} to the speed of intelligence increase! 💚 Send the dinosaur to the library to use the inspiration!",
+            "park": "🥕 | Due to excellent mood, the dinosaur receives a bonus x{bonus} to charm level-up speed! 💚 Send the dinosaur to the park to use inspiration!",
+            "swimming_pool": "🍎 | Due to the great mood, the dinosaur receives a bonus x{bonus} to agility upgrade speed! 💚 Send the dinosaur to the pool to use inspiration!",
+            "exp_boost": "🍌 | Due to the great mood, the dinosaur receives a bonus x{bonus} to experience gain!"
+        },
+        "back_text": {
+            "main_menu": "🦕 | Return to main menu",
+            "profile_menu": "🎮 | Return to profile menu",
+            "friends_menu": "👥 | Return to friends menu",
+            "actions_menu": "🦕 | Return to activities menu",
+            "dungeon_menu": "🗻 | Return to the dungeon menu",
+            "dino_tavern_menu": "🍻 | Return to tavern menu",
+            "settings_menu": "🔗 | Settings menu (Page 1)",
+            "market_menu": "🛒 | Return to the market menu"
+        },
+        "menu_text": {
+            "actions": "🕹 | Action panel is open!",
+            "profile": "👁‍🗨 | Profile panel is open!",
+            "friends": "👥 | The friends panel is open!",
+            "settings": "🔧 | Settings menu activated\n\n🔔 Daily notifications: {notif}\n🎞 Profile mode: {profile_view}\n📚 Inventory mode: {inv_view}",
+            "market": {
+                "info": "🛒 | The market panel is open!\n_Promoted products may appear here_",
+                "products": "📯 | Here are a few products that might be useful to you!"
+            },
+            "dino_tavern": {
+                "info": "🍺 You have entered the dino-tavern!\n\n📜 While in the tavern, you can receive a quest or hear useful information!",
+                "friends": "🍺 Friends in the tavern: Searching among the crowd...",
+                "friends2": "🍺 Friends in the tavern:",
+                "tavern_col": "🔮 Total in the tavern: {col}",
+                "went": "🍺 {name} entered the tavern...",
+                "button": "🍻 Buy ale for 150 🪙"
+            },
+            "about": "🤖 | Hello! I am @{bot_name}, and here is some information about me!\n\n🗝️ | Statistics\n× 👥 Players <code>{col_u}</code>\n× 🦕 Dinosaurs <code>{col_d}</code>\n× 🔮 Items <code>{col_i}</code>\n× 🌐 Groups <code>{col_g}</code>\n\n<i>{update_time} ago.</i>",
+            "referal": "🤍 | Redirecting to the referral system menu!\n\n💜 | *When your friend reaches level {lvl}*, you will receive {award_text}!\n\n❤️ | The friend will receive a bonus of: {coins} coins, {items}",
+            "referal_separator": "or",
+            "settings2": "🔧 | Settings menu (Page 2)\n\n🦕 Greeting: {my_name}\n🏴 Language: {lang}\n🛩 Random messages: {talk_mode}\n🎭 Privacy: {conf_mode}",
+            "seller": "🎇 Go to the store management menu",
+            "backgrounds_menu": "🎩 | Background management menu is open!",
+            "live_actions": "🌸 | Go to the life activities menu!",
+            "extraction": "⛏️ | Transition to work menu! To get the result, you need to see the matter through to the end.",
+            "skills_actions": "📍 | Go to the skills upgrade menu!\n\n💪 | Skill upgrading is a complex and lengthy process; when sending the dinosaur for training, make sure it is full and has enough strength to train!\n\n❗ | Keep in mind that the dinosaur does not return from training on its own without consequences; you must do it. Monitor the dinosaur's condition and follow the recommendations!",
+            "speed_actions": "⌚ | Quick actions - act instantly, but can be reused after some time."
+        },
+        "no_text_key": "❌ The text corresponding to the key {key} was not found, please contact the developer @AS1AW!",
+        "edit_dino_button": {
+            "edit": "🦕 | Choose an active dinosaur ->",
+            "notfouned": "❌ | Dinosaur not found",
+            "susseful": "🦕 | Active dinosaur changed to {name}"
+        },
+        "inline_menu": {
+            "delete_message": {
+                "text": "⚙ Delete message",
+                "callback": "delete_message"
+            },
+            "dino_profile": {
+                "text": "🦕 Open profile",
+                "callback": "dino_profile {dino_alt_id_markup}"
+            },
+            "dino_rename": {
+                "text": "💬 Give a name",
+                "callback": "rename_dino {dino_alt_id_markup}"
+            },
+            "send_request": {
+                "text": "💎 Send request",
+                "callback": "send_request {userid}"
+            },
+            "requests": {
+                "text": "👥 Requests",
+                "callback": "requests"
+            },
+            "inventory": {
+                "text": "🍭 Open inventory",
+                "callback": "inventory_start"
+            },
+            "rescue": {
+                "text": "❤ Save the dinosaur",
+                "callback": "support info rescue_kit"
+            },
+            "reborn": {
+                "text": "❤ Revive",
+                "callback": "support info reborn"
+            },
+            "dead_dialog": {
+                "text": "✉ Open",
+                "callback": "dialog dead_last_dino start"
+            },
+            "daily_award": {
+                "text": "🎁 Pick up",
+                "callback": "daily_message"
+            },
+            "product_info": {
+                "text": "🍜 About the product",
+                "callback": "product_info info {alt_id}"
+            },
+            "feed_start": {
+                "text": "🥙 Feed",
+                "callback": "feed_inl {alt_id}"
+            }
+        },
+        "states": {
+            "ChooseDino": {
+                "error_not_dino": "❓ | Dinosaurs are not a number, text, or emoji; they are a living creature. Please try again. Or enter /cancel to cancel."
+            },
+            "ChooseInt": {
+                "error_not_int": "❓ | By conducting a structural analysis of the data, we determined that you did not enter a number, please try again. Or enter /cancel to cancel.",
+                "error_max_int": "❓ | The specified number is greater than the maximum ({number} > {max}), please try again. Or enter /cancel to cancel.",
+                "error_min_int": "❓ | The specified number is less than the minimum ({number} < {min}), please try again. Or enter /cancel to cancel."
+            },
+            "ChooseString": {
+                "error_max_len": "❓ | The message length exceeds the allowed limit ({number} > {max}), please try again. Or enter /cancel to cancel.",
+                "error_min_len": "❓ | The message length is less than allowed ({number} < {min}), please try again. Or enter /cancel to cancel."
+            },
+            "ChooseConfirm": {
+                "error_not_confirm": "❓ | Choose one of the options provided. Or enter /cancel to cancel."
+            },
+            "ChooseOption": {
+                "error_not_option": "❓ | Are you trying to go beyond the edge of the world? Don't. Choose from the available options. Or enter /cancel to cancel."
+            },
+            "ChooseTime": {
+                "zero_seconds": "❓ | You need to enter a message in the time format, use the reminder - /string_to_sec click\nOr enter /cancel to cancel.",
+                "error_max_int": "❓ | The time you specified is greater than the maximum ({number} > {max}), please try again. Or enter /cancel to cancel.",
+                "error_min_int": "❓ | The time you specified is less than the minimum ({number} < {min}), please try again. Or enter /cancel to cancel."
+            }
+        },
+        "no_use_interface": "❌ While in the dungeon, use the dungeon interface!\n\n If an error occurred and you exited the dungeon, type /check_dinos",
+        "no_account": "You do not have a registered account in the bot, please go to the bot and register to gain access to this command.",
+        "add_me": "❤ | Anyone who wishes can send a friend request <a href='tg://user?id={userid}'>{username}</a>, by clicking the button below!",
+        "in_development": "This feature is under development, stay tuned for updates to find out when the team will be operational!",
+        "start_command": {
+            "referal": "🔗 Noticed the transition using the relevant referral link!",
+            "first_message": "🦖 | Hey <b>{username}</b>, glad to see you!\nI'm a small game bot like a tamagotchi, but with dinosaurs!\n\n<b>🥚 | What is a tamagotchi?</b>\nA tamagotchi is a game with a virtual pet that you need to feed, take care of, play with, etc.\n\n<b>🗻 | What kind of bot is this?</b>\nIn this bot, you will take care of your pet, travel, conquer dungeons, and fully immerse yourself in this RPG world!\n\n<b>🎮 | How to start playing?</b>\nPress the button <b>🍡 Start playing</b>!\n\n<b>❤ | Be ready to pay attention to your dinosaur, have a good game!</b>",
+            "request_subscribe": {
+                "text": "📜 | Dear user!\n\n🎭 | The bot has an official Telegram channel and group, join the group to find a topic for conversation or ask questions, and also subscribe to the channel to receive interesting bonuses and news!\n\n❤ | This is not mandatory, but we would be very grateful to you!\n\n⏳ | Please wait a moment, the image is being generated...",
+                "buttons": [
+                    "🦖 | Subscribe",
+                    "🔮 | Join"
+                ]
+            },
+            "start_game": "🥚 | Choose an egg with a dinosaur!\n\n🦖 | Regardless of which egg you choose, you will get a cute little dinosaur.",
+            "end_answer": {
+                "edited_text": "🥚 | Congratulations, your egg is incubating!",
+                "send_text": "🧸 | Congratulations, you got your first dinosaur!\n\n🍱 | The egg is currently incubating, and in `{inc_time}`, a little dinosaur will hatch from it!\n\n🎋 | To see current information about the egg, press the `🦖 Dinosaur` button!\n\n📔 | While waiting, explore the interface, read the FAQ, and customize the bot for yourself!",
+                "faq_button": "📖 Read FAQ",
+                "main_menu": "🦕 Main menu opened!"
+            }
+        },
+        "help_command": {
+            "all": "🥡 Command Reference",
+            "for_dm": "🧤 Personal chat",
+            "for_group": "🍇 For groups",
+            "for_dev": "🧧 For developers",
+            "commands": {
+                "help": {
+                    "short": "List of all bot commands",
+                    "long": "🥏 List of all commands in the bot.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": true
+                },
+                "cancel": {
+                    "short": "Cancel state",
+                    "long": "🛡️ Cancel any selection state.\n× 🪀 Example: You create a product for the market, to cancel its creation at any stage - use this command.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "start": {
+                    "short": "Start bot / Main menu",
+                    "long": "💥 The first thing the bot sees from you is start, but in other cases, you can go to the main menu using this command.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "profile": {
+                    "short": "User profile",
+                    "long": "🎋 Alternative to the info command, a general summary about the user. When replying to another user's message - it will display their information. If you enter - \"me\", it will display your information.",
+                    "arguments": "(me)",
+                    "dev": false,
+                    "dm": true,
+                    "group": true,
+                    "alternative": "my profile"
+                },
+                "add_me": {
+                    "short": "Add me!",
+                    "long": "🎃 Command for quick adding friends through the group.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
+                },
+                "promo": {
+                    "short": "Activate promo code",
+                    "long": "⛏️ Follow the news in the channel to receive promo codes more often!",
+                    "arguments": "(code)",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "super": {
+                    "short": "Super coins menu",
+                    "long": "🧺 Watch ads - get super coins - exchange them in the premium shop!",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "timer": {
+                    "short": "Converts seconds into time",
+                    "long": "⏳ Enter the number of seconds that will be converted into time at output.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "string_to_sec": {
+                    "short": "Hint for entering time",
+                    "long": "🪵 Hint for entering time in places like, for example, creating an auction.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "pushinfo": {
+                    "short": "Product posting tip in the channel",
+                    "long": "🪵 Hint for entering time in places like, for example, creating an auction.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "delete_push": {
+                    "short": "Remove product notification",
+                    "long": "🪵 Deletion notification in the channel.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "craftlist": {
+                    "short": "List of created items",
+                    "long": "🎀 List of created items",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "create_tracking": {
+                    "short": "Creating a track link",
+                    "long": "💥 Creating a tracking link for monitoring entry through /start",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "tracking": {
+                    "short": "List of track links",
+                    "long": "🛡️ List of track links monitored via /start",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "create_promo": {
+                    "short": "Creating a promo code",
+                    "long": "🏦 Creating a promo code",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "promos": {
+                    "short": "List and management of promo codes",
+                    "long": "🛡️ List and management of promo codes",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "link_promo": {
+                    "short": "Binding the promo code button",
+                    "long": "🛡️ To attach the promo code button to the message, you need to reply with a command to the message, and the bot must also be in the channel.",
+                    "arguments": "(promo) (name)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "add_premium": {
+                    "short": "Issuance of premium subscription",
+                    "long": "🛡️ Premium subscription issuance for time\n× 0 - issue premium to yourself, str_time - time format. The second argument - if empty, then forever, otherwise for a duration.",
+                    "arguments": "(0/userid) (/str_time)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "copy_m": {
+                    "short": "Language distribution",
+                    "long": "🛡️ Argument - language code (ru en id)",
+                    "arguments": "(lang_code)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "eval": {
+                    "short": "Code execution",
+                    "long": "🛡️ Code execution",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "get_username": {
+                    "short": "Return User class by userid",
+                    "long": "🛡️ Return of User class by userid",
+                    "arguments": "(userid)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "add_item": {
+                    "short": "Adding items",
+                    "long": "🛡️ Adding items",
+                    "arguments": "(userid) (item_id) (col)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "create_company": {
+                    "short": "Create a company",
+                    "long": "🛡️ Create an advertising campaign",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "companies": {
+                    "short": "Company Overview",
+                    "long": "🛡️ View advertising campaigns",
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
+                },
+                "group_settings": {
+                    "short": "Group settings",
+                    "long": "🌐 Group settings management. Setting the active topic, deletion time.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
+                },
+                "deleteallmessages": {
+                    "short": "Deletes all messages from the bot",
+                    "long": "🌐 Deletes absolutely all messages",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
+                },
+                "give_coins": {
+                    "short": "Transfer of the coin to the player",
+                    "long": "🧨 Sending coins to the user. A mandatory response to the message is required.",
+                    "arguments": "(coins)",
+                    "dev": false,
+                    "dm": false,
+                    "group": true,
+                    "alternative": "transfer coins"
+                },
+                "rating": {
+                    "short": "Top players",
+                    "long": "🧨 Top players by coins, level, and super coins. The rating does not display users with anonymous mode enabled",
+                    "arguments": "({translate_url:group_rating.commands_args.coins.1}/{translate_url:group_rating.commands_args.lvl.1}/{translate_url:group_rating.commands_args.super_coins.1})",
+                    "dev": false,
+                    "dm": false,
+                    "group": true,
+                    "alternative": "rating"
+                }
+            }
+        },
+        "additem_command": {
+            "err": "Input format: \nitem id\nquantity\nuser id",
+            "user": "💎 | Yo, the system has been generous and gave you {item}",
+            "dev": "💚 | Command completed\n🧨 | Item {item}\n🎭 | User {username}\n🌐 | Status-message {message_status}"
+        },
+        "promo_commands": {
+            "ui": {
+                "text": "🔮 Promo code: `{code}`\n\nActivity: {status}\nUses: {col}\nEnds in: {txt_time}\nCoins: {coins}\nItems: {items}",
+                "buttons": [
+                    "✅ Activate",
+                    "🗑 Delete",
+                    "🎋 Use"
+                ]
+            },
+            "link": {
+                "button_name": "🥙 Activate promo code!",
+                "create": "Button created!",
+                "not_found": "Promo code not found!"
+            },
+            "unlink": {
+                "delete": "Button removed!",
+                "not_found": "Message not found!"
+            },
+            "promo_open": "♾ Select a code to view information.",
+            "activate": "🎁 | Promo code activated!\n\n",
+            "coins": "🎟 | Coins: {coins}\n",
+            "items": "📦 | Items: {items}",
+            "already_use": "🧸 | You have already used this promo code!",
+            "time_end": "🎨 | The time for this promo code has expired...",
+            "max_col": "🧨 | The promo code has already been used the maximum number of times!",
+            "deactivated": "✨ | This promo code is currently deactivated!",
+            "not_found": "🎍 | Promo code not found, please try entering it again!",
+            "no_user": "🎩 | You are not registered in the bot!"
+        },
+        "dungeon_err": "Clearing completed.",
+        "start_game": "🥚 | Choose the dinosaur egg!",
+        "command_dino_prof": "🥚 | You currently have no dinosaurs, please check your inventory. You should have an egg in your inventory that you can incubate!",
+        "faq": {
+            "text": "🍿 | Hey, our bot is quite large, and there's a lot of information. Here are a couple of categories, choose what information you want to receive >",
+            "inline_buttons": {
+                "general": "🎈 Total",
+                "game_point": "♾️ What is the game about",
+                "null1": "",
+                "eat": "🥙 Food",
+                "dino_height": "⏱️ Growth",
+                "dino_mood": "😃 Mood",
+                "accessories": "🧵 Accessories",
+                "kindergarten": "🪀 Kindergarten",
+                "dino_skills": "⚡ Skills",
+                "null2": "",
+                "settings": "⚙️ Settings",
+                "friends": "👥 Friends",
+                "referal": "💞 Referrals",
+                "market": "🧺 Market",
+                "dino_tavern": "🍺 Tavern",
+                "events": "🦈 Events",
+                "null5": "",
+                "donate": "🪙 Support",
+                "super_coins": "🪙 Super coins",
+                "more_dinos": "🦕 More dinosaurs",
+                "craft": "🔨 Item creation"
+            },
+            "game_point": "🦕 In DinoGochi you become the owner of a unique dinosaur. Our game combines the atmosphere of a classic Tamagotchi and RPG elements: you take care of your pet, develop its skills, participate in adventures and competitions.\n\n🎋 However, DinoGochi is not only about care. Your path is determined by you:\n- You can focus on developing your dinosaur, training it and unlocking new abilities.\n- Or engage in trading rare resources, building your own economy.\n- Or perhaps, you want to explore the world, participate in events, unite with other players, or compete for the title of the strongest.\n\n✨ DinoGochi is an open sandbox where you choose your own playstyle.\n Grow, trade, explore, win — or just enjoy life with your dinosaur.",
+            "dino_mood": "🎈 *What is the mood of a dinosaur?*\nThe mood reflects your dinosaur's overall state: how happy, satisfied, and ready for new adventures it is. Monitoring the mood is important for the pet to develop faster and be more effective in travels.\n\n🍎 *What does the mood depend on?*\nThe mood depends on your attention: play with the dinosaur, care for it, feed it your favorite dishes, and don't forget about communication. The more care — the better the mood!\n\n👀 *Where to see the dinosaur's mood?*\nYou can see the current mood in your dinosaur's profile. We display it through special indicators and color labels.\n\n💥 *What does good or bad mood give?*\nWith a good mood, the dinosaur receives useful bonuses: develops faster, fights more successfully, and handles tasks more easily. At low mood, nervous breakdowns are possible: the dinosaur may refuse to follow commands or lose motivation.",
+            "dino_height": "*🌱 What's up with dinosaur growth?*\nA dinosaur grows for 30 days after birth. However, each dinosaur is unique: some may grow into large creatures, while others will remain small.",
+            "kindergarten": "🏫 *What is a kindergarten?*\nKindergarten is a premium feature that allows you to send your dinosaur to the kindergarten for a few hours a day. During this time, your pet is cared for and stays in a good mood.",
+            "dino_skills": "🎯 *What are dinosaur skills?*\nSkills are characteristics that directly affect your dinosaur's success in various activities. They are leveled up through training and unlock various bonuses.\n\n🌟 *What bonuses do skills provide?*\n- With high charisma, there is a chance to cancel bad moods.\n- Agility reduces the time to complete tasks.\n- Charisma gives a discount on promotions.\n- High charisma increases the chance of gaining additional experience in gathering food, games, travels, and sleep.\n- When gathering resources, the chance of finding rarer items increases.\n- In games, the dinosaur receives an additional bonus with high charisma.\n- With high intelligence, there is a chance to create one more item at once.\n\n💪 *How to level up skills?*\nSkills can be leveled up by sending the dinosaur to training. Different trainings develop different skills!",
+            "settings": "⚙️ *What can be configured in the game?*\nMany settings are available in DinoGochi to make the game even more comfortable:\n\n- Turn off daily reward notifications.\n- Adjust inventory page size.\n- Rename the dinosaur.\n- Customize profile interface view.\n- Delete account.\n- Configure how dinosaurs will call the owner.\n- Select bot language.\n- Set permission to talk with the owner.\n- Set nickname in the bot.\n- Reset avatar.\n\nAll settings are available in a special menu section.",
+            "friends": "🤝 *What are friends in DinoGochi?*\nFriends allow interaction with other players and developing multiplayer gameplay. Friend features:\n\n- View friend's profile.\n- Share coins and items.\n- Hatch joint dinosaurs.\n- Change friend's name for convenience.\n- Send dinosaurs to play together.\n\n👥 *How to become friends?*\nYou can add a friend through the special menu or with the command `/add_me` in the group.",
+            "referal": "💎 *What is the referral system?*\nThe referral system allows you to earn bonuses for inviting friends to the game.\n\n🤍 *How does the referral system work?*\nAfter clicking the referral link, you immediately become friends with the inviting player.\n\n💜 *What do I get when my friend reaches level 5?*\nYou receive a rare or unusual egg!\n\n❤️ *What will my friend get?*\nThe friend will receive the following bonuses: 255 coins, 🍯 Honey Jar x2, 🍪 Cookies x2, 🧸 Teddy bear, 🍗 Chicken leg x2, 🍒 Berries x2, 🦪 Small fish x2, 🎂 Cake",
+            "market": "🏪 *What is a market?*\nA market is a completely independent system for exchanging items and coins. Each player can customize their shop profile.\n\n🖼️ *Can I set a profile picture in the market?*\nYes, if you have a subscription, you can set your profile picture.\n\n💸 *What exchanges are available in the market?*\nThe following exchanges are available in the market:\n- Exchange items for coins and vice versa.\n- Exchange items for items.\n- Auction of items, where the highest bid wins.",
+            "dino_tavern": "🍻 *What is a tavern?*\nA tavern is a place where you can get quests and hear fascinating stories.\n\n🎯 *What can you do in a tavern?*\n- Get a quest that will give you additional tasks and bonuses.\n- Hear interesting stories that may provide hints for future adventures.",
+            "events": "🎉 *What are events?*\nEvents are special events in the game that can appear both in the bot and as additional events.\n\n🎮 *What types of events are there?*\n- Bot events are temporary tasks and activities that appear for a certain period of time.\n- Additional events may include bonuses, new mechanics, or unique items that are available for a limited time.",
+            "donate": "💖 *What are donations used for?*\nThe funds received from players are used for the following needs:\n\n- Payment for hosting, so the bot always works stably.\n- Advertising to attract new players.\n- Rewards for the work of people who are involved in the development of the bot.\n- A little for treats to keep the team's motivation up.",
+            "super_coins": "💎 *What are super coins?*\nSuper coins are a special currency that can be earned by watching ads or making donations.\n\n🎁 *What can you buy with super coins?*\nSuper coins can be spent on special items available via the command `/super`",
+            "more_dinos": "🐾 *How to get more dinosaurs?*\nThe number of dinosaurs you can keep depends on your level and subscription:\n\n- Every 20th level gives +1 slot for a dinosaur.\n- With a premium subscription, you get +1 slot.\n- There is also always 1 slot available for a shared dinosaur.",
+            "craft": "⚒️ *What is crafting?*\nCrafting is the process of creating items using recipes and materials. Some recipes require time to create.\n\n📝 *Where to find recipes?*\nRecipes can be found at the market, from the junk dealer, or while traveling.",
+            "breakdown": "😣 *What is a nervous breakdown in a dinosaur?*\nA nervous breakdown is a state that can occur if a dinosaur is in a very bad mood.\n\n⚠️ *How to prevent a nervous breakdown?*\nTo prevent a nervous breakdown, you need to lift the dinosaur's spirits by giving it attention, feeding it, or engaging in other activities. If this doesn't work right away, just wait, and the mood will improve over time.",
+            "general": "🎈 *Rarities*\nEvents and dinosaurs are divided into rarities.\nThe higher the rarity, the sweeter the reward.\n\n 1. Common - 50%\n 2. Uncommon - 25%\n 3. Rare - 15%\n 4. Mystical - 9%\n 5. Legendary - 1%\n\n🕹 *Interactions*\nTo interact with a dinosaur, go to `🕹 Actions`.\n\n 1. To feed the dinosaur, you need to gather food, click on `🕹 Actions` > `🍕 Gather food` and follow the instructions.\n\n 2. To feed the dinosaur, click on `🕹 Actions` > `🍣 Feed` and choose the appropriate food.\n\n 3. In `🎮 Entertainment`, you can choose a game and entertain the dinosaur to improve its mood.\n\n 4. In `🎑 Journey`, you can find various items, meet friends, and see many interesting things!\n\n 5. `🌙 Put to sleep` the dinosaur needs sleep daily, don't forget to put it to bed!\n\n🎮 *Profile*\n To view your inventory or check your statistics, go to `👁‍🗨 Profile`",
+            "eat": "🥙 *What does my dinosaur eat?*\nCheck your dinosaur's profile, dinosaurs live in their natural habitat.\n\nHerbivores are where there is a lot of grass, predators in forests/jungles, and those who love fish fly in the clouds.\n\n🍕 *Treats*\n🍯 A jar of honey, 🥞 Sweet pancakes - dinosaurs love treats and regardless of their type, they will happily eat them!\n\nThis food also gives bonuses to mood/health, etc.\n\nYou can find all the information about the item in the inventory!",
+            "accessories": "🏓 *Accessories*\nAccessories open up additional opportunities or speed up the activity. \nAccessories can be installed while the dinosaur is doing nothing, by using it in the inventory.\nAccessories can be found in travels or dungeons.\n\n🎲 *Here are some of them...*\n 🧸 Teddy bear - allows you to choose sleep mode.\n 🛠 Tools - speed up food collection."
+        },
+        "not_set": {
+            "info": "❗ Interaction with notification settings, select notification activity >",
+            "True": "🔧 Notifications have been activated!",
+            "False": "🔧 Notifications have been disabled!"
+        },
+        "inv_set_pages": {
+            "info": "🎞 Select inventory display mode (Standard 2 | 3)",
+            "accept": "♠ Horizontally: {gr}\n♣ Vertically: {vr}",
+            "data": [
+                "2 | 3",
+                "3 | 3",
+                "2 | 2",
+                "2 | 4",
+                "1 | 4",
+                "1 | 10"
+            ]
+        },
+        "profile_view": {
+            "info": "🦕 Choose the display type of the panel in the dinosaur profile:",
+            "result": "👁 Selected mode: {res}",
+            "ans": [
+                "▶ Side",
+                "🔽 Down",
+                "🔼 Above",
+                "❌ Without panel"
+            ]
+        },
+        "rename_dino": {
+            "info": "🦖 | Enter a new name for {last_name}\nSize: no more than 20 characters >",
+            "rename": "🦖 | The dinosaur has been renamed {last_name} > {dino_name}"
+        },
+        "my_name": {
+            "info": "🎩 Enter how your dinosaurs will call you. It can be your name, words, or a phrase no longer than 20 characters ->",
+            "end": "🦕 Now your dinosaurs will call you \"{owner_name}\""
+        },
+        "add_friend": {
+            "var": "*👥 | Choose a way to add friends.*\n\n🎣 1. *Via ID*. The user profile has a unique user number, select a method and forward it to the bot.\n\n💬 2. *Via message*. Forward me any message from the user. Keep in mind, your future friend's Telegram privacy settings should have \"Message forwarding\" set to \"Everyone\".",
+            "var_buttons": {
+                "add_friend id": "🎣 ID",
+                "add_friend message": "💬 Message"
+            },
+            "check": {
+                "nonint": "😣 You sent me not an id! Id is a number, here is your id - {userid}\n\nTry again!",
+                "nonbase": "❓ I couldn't find this person among the players, maybe they haven't started incubating the egg yet. \n\n Please try again!",
+                "notyou": "🎲 Unfortunately, you cannot add yourself as a friend. We promise that we will fix this bug someday! \n\n Please try again!",
+                "forward": "😣 I couldn't get the message author's data.\n\nTry again!",
+                "friends": "👥 After checking and questioning the suspects, we found out that you are already friends!",
+                "requests": "👥 After checking and surveying the suspects, we found out that someone among you has already sent a friend request!"
+            },
+            "var_messages": {
+                "id": "🎣 Okay, send me the user ID, and I'll handle routine tasks like checking in the database and verifying the user's existence.",
+                "message": "💬 Okay, forward me the message from your friend, and I'll take care of routine tasks like checking the database and the existence of the user."
+            },
+            "correct": "✅ Friend request sent to the user!",
+            "already": "🧨 The person has already received a friend request from you!"
+        },
+        "friend_list": {
+            "wait": "👥 | Loading your friends",
+            "new_year": {
+                "button": "🎁 Send gift",
+                "send": "🎁 | Hey {name}, your friend {friend} sent you a gift!",
+                "no_send": "🎁 | This user has already received the holiday gift!"
+            },
+            "buttons": {
+                "take_money": "✨ Transfer coins",
+                "take_coins": "🪔 Transfer coins",
+                "joint_dinosaur": "🦕 Share a dinosaur",
+                "new_year": "🎁 Send a gift",
+                "change_friend_name": "👥 Change name",
+                "open_market": "🏪 Open store"
+            }
+        },
+        "requests": {
+            "wait": "👥 | Loading requests",
+            "accept": "✅ | {user_name} and now you are friends!",
+            "decline": "❌ | Friend request from {user_name} was declined."
+        },
+        "friend_delete": {
+            "delete_info": "➖ | Select a user to remove from friends >",
+            "confirm": "✅ | Are you sure you want to remove {name} from friends?",
+            "delete": "👥 | User removed from friends!"
+        },
+        "rayting": {
+            "info": "👁‍🗨 | Which rating are you interested in?",
+            "lvl": "🎢 Level",
+            "coins": "🪙 Coins",
+            "dungeon": "🗻 Dungeon",
+            "super": "👑 Super coins",
+            "donate": "💰 Support",
+            "no_rayting": "❌ Rating not available yet...",
+            "place": "*├* Your place in the ranking: #{place}",
+            "my_place": "🦕 My opponents",
+            "lvl_text": "*└* Level: {lvl} Experience: {xp}",
+            "coins_text": "*└* Coins: {coins}",
+            "super_text": "*└* Coins: {super_coins}",
+            "rayting_lvl": "*┌* 🎢 Rating by level:",
+            "rayting_coins": "*┌* 🎢 Rating by coins:#1042#",
+            "rayting_super": "*┌* 🎢 Super Coin Rating:",
+            "rayting_donate_all": "*┌* 🎢 Support Rating:"
         }
     }
 }
