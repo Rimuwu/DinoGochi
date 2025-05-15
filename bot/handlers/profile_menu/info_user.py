@@ -81,13 +81,12 @@ async def infouser_com(message: Message):
                      GroupRules())
 async def infouser_alt(message: Message):
     userid = message.from_user.id
-    chatid = message.chat.id
-    lang = await get_lang(message.from_user.id)
 
     secret = False
     user_exists = await users.find_one({'userid': userid}, comment='check_user_exists')
     if not user_exists: return
 
+    lang = await get_lang(userid)
     markup = await user_profile_markup(userid, lang, 'main', 0)
     confidentiality = user_exists['settings'].get('confidentiality', False)
     if confidentiality and message.chat.type != 'private':
