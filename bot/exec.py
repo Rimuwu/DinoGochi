@@ -1,8 +1,8 @@
 # Исполнитель бота
-from pydoc import cli
+
 from bot.dbmanager import check, mongo_client
 from aiogram import Bot, Dispatcher, Router 
-from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.types import ErrorEvent
 from aiogram.fsm.storage.mongo import MongoStorage
 
 from bot.config import conf
@@ -20,10 +20,17 @@ dp = Dispatcher(storage=STORAGE)
 main_router = Router(name='MainRouter')
 dp.include_router(main_router)
 
-@dp.errors()
-async def on_error(event, exception):
-    log(f'Ошибка в обработчике событий: {exception}', 
-        prefix='AiogramError', lvl=4)
+# @dp.errors() 
+# async def on_error(error_event: ErrorEvent):
+#     text = f'error: {error_event.exception.args} <{error_event.exception}>'
+#     if error_event.update.message:
+#         text = f'message_text: {error_event.update.message.text} - {text}'
+
+#         if error_event.update.message.from_user:
+#             user = error_event.update.message.from_user
+#             text = f'userid: {user.id} - {text}'
+
+#     log(text, prefix='AiogramError', lvl=4)
 
 def run():
     log('# ====== Inicialization Start ====== #', 2)
