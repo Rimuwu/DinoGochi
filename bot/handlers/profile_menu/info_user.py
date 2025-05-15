@@ -88,12 +88,13 @@ async def infouser_alt(message: Message):
     user_exists = await users.find_one({'userid': userid}, comment='check_user_exists')
     if not user_exists: return
 
+    markup = await user_profile_markup(userid, lang, 'main', 0)
     confidentiality = user_exists['settings'].get('confidentiality', False)
     if confidentiality and message.chat.type != 'private':
         secret = True
+        markup = None
 
     text, avatar = await user_info(userid, lang, secret)
-    markup = await user_profile_markup(userid, lang, 'main', 0)
 
     if avatar:
         mes = await message.answer_photo(avatar, caption=text, parse_mode='Markdown', reply_markup=markup)
