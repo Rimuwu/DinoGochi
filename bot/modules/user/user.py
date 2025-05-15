@@ -24,6 +24,7 @@ from bot.modules.managment.referals import get_code_owner, get_user_sub
 from datetime import datetime, timedelta
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.user.avatar import get_avatar
 from bot.modules.user.friends import get_frineds
 
 users = DBconstructor(mongo_client.user.users)
@@ -247,23 +248,8 @@ class User:
 
     async def get_avatar(self):
         """Возвращает аватарку пользователя, если файл устарел - обновляет и возвращает новую."""
-        try:
-            file = await bot.get_file(self.avatar)
-            file = None
-        except:
-            avatar = await async_open('images/remain/dinogochi_user.png', True)
-            await self.update({'$set': {'avatar': ''}})
-            return avatar
 
-        if not self.avatar or not file:
-            # Файла уже не существует, удаляем данные для обновления
-            photos = await bot.get_user_profile_photos(self.userid, limit=1)
-            if photos.photos:
-                photo_id = photos.photos[0][0].file_id
-
-                self.avatar = photo_id
-                await self.update({'$set': {'avatar': photo_id}})
-        return self.avatar
+        return await get_avatar(self.userid)
 
 async def insert_user(userid: int, lang: str, name = '', avatar = ''):
     """Создание пользователя"""
