@@ -92,7 +92,7 @@
                 "progress": "🍕 Progress"
             },
             "speed_actions": {
-                "pet": "🖐 Iron",
+                "pet": "🖐 Pet",
                 "fighting": "🎯 Fighting",
                 "talk": "🦜 Talk"
             },
@@ -4371,12 +4371,12 @@
         "track_open": "🎀 Tracking menu is open",
         "track_delete": "🎩 Deleted",
         "string_to_str": {
-            "info": "⚽ In some commands, it is convenient to indicate the time not in numbers, but in text, here is a memo.\n\nIf you were sent here, then you can use text time input methods. You can try right here, write down '/string_to_sec' `1d` `1h` `12m`\n You will receive 90720 in response - these are the second of the colicests that are calculated from your message.\n\nWhat symbols can be used?\n`w` - Week, `d` - day, `h` - hour, `m` - minute, `s` - second (you don't have to specify a letter) \n\n_By the way, you can indicate 1 and the same sign as many times as you like and in any order._"
+            "info": "⚽ In some commands, it is convenient to indicate the time not in numbers, but in text, here is a memo.\n\nIf you were sent here, then you can use text time input methods. You can try right here, write down `/string_to_sec` `1d` `1h` `12m`\n You will receive 90720 in response - these are the second of the colicests that are calculated from your message.\n\nWhat symbols can be used?\n`w` - Week, `d` - day, `h` - hour, `m` - minute, `s` - second (you don't have to specify a letter) \n\n_By the way, you can indicate 1 and the same sign as many times as you like and in any order._"
         },
         "promo": {
             "coins": "🍡 Enter the number of coins or 0",
             "count": "☄ Enter the number of uses, 0 - infinitely",
-            "time_end": "🎠 Enter end time, 0 - infinite. '/string_to_sec' - Don't forget about the memo.",
+            "time_end": "🎠 Enter end time, 0 - infinite. `/string_to_sec` - Don't forget about the memo.",
             "code": "🎃 Enter tracking code.",
             "chose_item": "🧮 Choose an item to add",
             "abilities": "🧵 Type capabilities for item or \"0\""
