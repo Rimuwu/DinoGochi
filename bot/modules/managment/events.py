@@ -3,11 +3,12 @@ from bot.modules.data_format import random_dict
 from bot.const import GAME_SETTINGS as GS
 from random import choice, randint
 from bot.dbmanager import mongo_client, conf
-from bot.exec import main_router, bot
+from bot.exec import bot
 from bot.modules.localization import t
 import datetime
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from random import choices
 events = DBconstructor(mongo_client.other.events)
 
 async def get_event(event_type: str=''):
@@ -23,7 +24,18 @@ async def check_event(event_type: str='') -> bool:
 async def create_event(event_type: str = '', time_end: int = 0):
 
     if not event_type:
-        event_type = choice(['add_hunting', 'add_fishing', 'add_collecting', 'add_all'])
+        event_types = {
+            'add_hunting': 20,
+            'add_fishing': 20,
+            'add_collecting': 20,
+            'add_all': 10,
+            'xp_boost': 5,
+            'xp_premium_boost': 5
+        }
+        event_type = choices(
+            list(event_types.keys()),
+            list(event_types.values())
+        )[0]
 
     event = {
         'type': event_type,
@@ -61,6 +73,13 @@ async def create_event(event_type: str = '', time_end: int = 0):
         event['data']['items'] = items
         if time_end == 0:
             event['time_end'] = int(time.time()) + choice(GS['events']['random_data']['random_time'])
+
+    elif event_type == 'xp_boost':
+        event['data']['xp_boost'] = round(randint(1, 2) / 10, 1)
+    
+    elif event_type == 'xp_premium_boost':
+        event['data']['xp_boost'] = round(randint(1, 2) / 10, 1)
+
     return event
 
 async def add_event(event: dict, delete_old: bool = False) -> bool:
@@ -142,6 +161,10 @@ async def auto_event():
             add_all = await create_event('add_all', time_end)
             add_all['data']['items'] += ['berry_pie', 'fish_cake', 'meat_pie', 'ale', 'cake']
             events_lst.append(add_all)
+            
+            xp_boost = await create_event('xp_boost', time_end)
+            xp_boost['data']['xp_boost'] = 1
+            events_lst.append(xp_boost)
 
             await add_event(april_event)
             for i in events_lst: await add_event(i, True)

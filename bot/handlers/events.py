@@ -1,19 +1,23 @@
 from bot.config import conf
 
 from aiogram import Bot, Dispatcher
+from bot.const import GAME_SETTINGS
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline
 from bot.modules.groups import add_group_user, delete_group, delete_group_user, insert_group
 from bot.modules.localization import get_lang, t
 from bot.modules.logs import log
+from bot.modules.managment.boost_spy import create_boost, delete_boost
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import user_in_chat
-from aiogram.types import ChatMemberUpdated, Message
+from aiogram.types import ChatMemberUpdated, Message, ChatBoostUpdated, ChatBoostRemoved
 from aiogram.filters.chat_member_updated import \
     ChatMemberUpdatedFilter, MEMBER, KICKED, LEFT, ADMINISTRATOR, CREATOR, IS_NOT_MEMBER, IS_MEMBER
+from aiogram.enums import ChatBoostSource
 
 from bot.tasks.bot_report import create_report
+from aiogram import F
 
 puhs = DBconstructor(mongo_client.market.puhs)
 
@@ -91,3 +95,20 @@ async def bot_stop(bot: Bot, dispatcher: Dispatcher, bots: tuple[Bot], router):
                      message_thread_id=int(topic_id)
     )
     await create_report()
+
+@main_router.chat_boost(
+    F.chat.id == GAME_SETTINGS['channel_id'])
+async def on_chat_boost(event: ChatBoostUpdated, bot: Bot):
+    expiration_timestamp = int(event.boost.expiration_date.timestamp())
+
+    if isinstance(event.boost.source, ChatBoostSource.PREMIUM):
+        user = event.boost.source.user
+        if user:
+            await create_boost(user.id, expiration_timestamp)
+
+@main_router.removed_chat_boost(
+    F.chat.id == GAME_SETTINGS['channel_id'])
+async def on_removed_chat_boost(event: ChatBoostRemoved, bot: Bot):
+    user = event.source.user
+    if user:
+        await delete_boost(user.id)

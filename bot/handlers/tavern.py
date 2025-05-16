@@ -64,9 +64,14 @@ async def events_c(message: Message):
 
         if 'items' in event['data'].keys():
             event_text += f"\n _{counts_items(event['data']['items'], lang)}_"
-        
+
         if event["time_end"] != 0:
             text += f'_{seconds_to_str(event["time_end"] - int(time()), lang, max_lvl="minute")}_\n'
+        
+        if event['type'] in ['xp_boost', 'xp_premium_boost']:
+            event_text = t(f"events.{event['type']}", lang, 
+                           xp_boost=1 + event['data']['xp_boost'])
+
         text += f'{a}. {event_text}\n\n'
 
     await bot.send_message(chatid, text, parse_mode='Markdown')
@@ -85,7 +90,7 @@ async def bonus_message(user, message, lang):
         + f', ' + str(award_data['lvl2']['coins'])
 
     res = await user_in_chat(userid, -1001673242031)
-    res2 = check_name(user)
+    res2 = await check_name(user)
 
     if res: add_text += t('daily_award.2', lang)
     else: add_text += t('daily_award.1', lang)
@@ -149,7 +154,7 @@ async def daily_award(callback: CallbackQuery):
         award_data = GS['daily_award']
         res = await user_in_chat(userid, -1001673242031)
 
-        key, add_bonus = 'lvl1', check_name(callback.from_user)
+        key, add_bonus = 'lvl1', await check_name(callback.from_user)
         if res: key = 'lvl2'
 
         items, coins = [], 0
