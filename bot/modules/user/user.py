@@ -2,8 +2,6 @@ from random import choice
 from time import time
 from typing import Union
 
-from aiogram.types import User as teleUser
-
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
@@ -26,6 +24,8 @@ from datetime import datetime, timedelta
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.avatar import get_avatar
 from bot.modules.user.friends import get_frineds
+from bot.modules.user.premium import premium
+from bot.modules.user.rtl_name import check_name
 
 users = DBconstructor(mongo_client.user.users)
 items = DBconstructor(mongo_client.items.items)
@@ -421,7 +421,7 @@ async def experience_enhancement(userid: int, xp: int):
     user = await User().create(userid)
     lang = await user.lang
 
-    if await check_event('april_5'): xp *= 2
+    # if await check_event('april_5'): xp *= 2
 
     if user:
         lvl, xp = 0, user.xp + xp
@@ -702,10 +702,6 @@ async def user_name(userid: int):
                 return name
     return 'NoName_NoUser'
 
-async def premium(userid: int):
-    res = await subscriptions.find_one({'userid': userid}, comment='premium_res')
-    return bool(res)
-
 async def take_coins(userid: int, col: int, update: bool = False) -> bool:
     """Функция проверяет, можно ли отнять / добавить col монет у / к пользователя[ю]
        Если updatе - то обновляет данные
@@ -749,13 +745,6 @@ async def user_in_chat(userid: int, chatid: int):
     except Exception as e: return False
 
     if result.status in statuss: return result.status
-    return False
-
-def check_name(user: teleUser):
-    """ Проверяет есть ли в нике надпись DinoGochi
-    """
-    text = user.full_name.lower()
-    if 'dinogochi' in text: return True
     return False
 
 async def daily_award_con(userid: int):
