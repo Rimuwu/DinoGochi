@@ -48,9 +48,10 @@ user_agents = [
     # Добавьте больше user-agent по желанию
 ]
 proxies = [
-
     # Пример: 'http://user:pass@proxy_ip:port',
-    # 'http://proxy_ip:port',
+    # 'http://KxxvFT:Kg0MSmP7iv@45.147.192.2:6070',
+    # 'http://KxxvFT:Kg0MSmP7iv@77.94.1.194:6070',
+    # 'http://KxxvFT:Kg0MSmP7iv@77.83.148.232:6070',
     # Оставьте пустым если не используете прокси, либо добавьте свои
 ]
 from g4f import Client
@@ -64,23 +65,57 @@ from g4f.Provider import (
     Yqcloud # + gpt-4
 )
 providers = [
-    DDG,
+    # DDG,
     # Pizzagpt,
     PollinationsAI,
     # Yqcloud,
-    None
+    # None
 ]
 
-client = Client()
+# client = Client()
 # response = client.chat.completions.create(
 #     model="gpt-4o-mini",
 #     messages=[{"role": "user", "content": "Hello"}],
 #     web_search=False
 # )
 
-
-def only_translate(text, from_language, to_language, translator, text_key, **kwargs):
-
+def only_translate(text, from_language, to_language, translator, text_key, client: Client, **kwargs):
+    import time
+    # --- Ротация user-agent, прокси, дополнительных заголовков и задержка ---
+    user_agent = random.choice(user_agents)
+    proxy = random.choice(proxies) if proxies else None
+    # Дополнительные заголовки
+    accept_list = [
+        'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'application/json, text/plain, */*',
+        '*/*',
+    ]
+    accept_language_list = [
+        'en-US,en;q=0.9',
+        'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+        'en;q=0.8',
+    ]
+    connection_list = ['keep-alive', 'close']
+    dnt_list = ['1', '0']
+    # Генерация случайного Referer
+    referers = [
+        'https://www.google.com/',
+        'https://www.bing.com/',
+        'https://duckduckgo.com/',
+        'https://yandex.ru/',
+        'https://www.yahoo.com/',
+        'https://www.ecosia.org/',
+    ]
+    headers = {
+        'User-Agent': user_agent,
+        'Accept': random.choice(accept_list),
+        'Accept-Language': random.choice(accept_language_list),
+        'Connection': random.choice(connection_list),
+        'DNT': random.choice(dnt_list),
+        'Referer': random.choice(referers),
+    }
+    # Случайная задержка 0.5-2.5 сек
+    time.sleep(random.uniform(0.1, 0.5))
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -89,18 +124,12 @@ def only_translate(text, from_language, to_language, translator, text_key, **kwa
                 "content": f'You are a strict translation module for a Telegram bot. Your task is to translate text from language "{from_language}" to language "{to_language}". Rules: 1. Do NOT guess, reword, paraphrase, or autocorrect. 2. Do NOT explain anything. Just return the translation. 3. Do NOT translate, remove, reorder, or change: - #1042# (any number inside # symbols) — this must be preserved exactly, in the same form and position, without any alterations. It is **mandatory** that if #1042# (or similar) exists in the input, it is present in the output **exactly as is**. 4. Markdown formatting (e.g., **bold**, _italic_, [link](url)) must be preserved fully. 5. Always preserve the original style, structure, and order of elements — especially punctuation placement. 6. If the input consists only of untranslatable elements — return it unchanged. 7. If you cannot translate or the text makes no sense — return exactly: NOTEXT. 8. If the text is already in the target language — return it unchanged. 9. If the text is very short (1–2 words), treat it as a button label — translate briefly and preserve its format and tone. 10. You also receive a key {text_key} (format: word.word.word) — if the meaning of the text is unclear, you may consider this key as context (but do not output it). Output only the translated text — no explanations, no changes. Text to translate: {text}'
             },
         ],
-        headers = {'User-Agent': random.choice(user_agents)}
+        headers = headers,
+        proxy=proxy
         )
 
     return response.choices[0].message.content
-
-    # return translators.translate_text(
-    #     text,
-    #     from_language=from_language,
-    #     to_language=to_language,
-    #     translator=translator,
-    #     **kwargs
-    # )
+    # return f'{text} - {from_language} -> {to_language}'
 
 def check_count_unicode(text):
     """
@@ -201,6 +230,8 @@ def save_replace(code: int, text: str, translate: bool, data = '', cash_replaces
     
     if cash_replaces is None:
         cash_replaces = {}
+    else:
+        cash_replaces = cash_replaces.copy()
 
     s_1 = new_code not in cash_replaces
     s_2 = r_code not in cash_replaces
@@ -229,7 +260,7 @@ def save_replace(code: int, text: str, translate: bool, data = '', cash_replaces
         else:
             r = int(code[1:-1]) + 1 # type: ignore
         # r = random.randint(1, 1000)
-        return save_replace(r, text, translate, data), cash_replaces
+        return save_replace(r, text, translate, data, cash_replaces=cash_replaces)
 
 def replace_specials(text: str, cash_replaces: dict):
     # "(121)": {"text": "_", "translate": false},
@@ -238,19 +269,21 @@ def replace_specials(text: str, cash_replaces: dict):
     """
     if not isinstance(text, str):
         return text
-
+    
     for _ in range(3):
         # Заменяем спецсимволы
         for key, item in replace_words.items():
             if item['text'] in text:
                 code, cash_replaces = save_replace(int(key), item['text'], item['translate'], cash_replaces=cash_replaces)
+
                 text = text.replace(
                     item['text'], f"{strat_sym}{code}{end_sym}")
 
         # Прячем эмодзи
         for em in emoji.emoji_list(text):
-            code, cash_replaces = save_replace(100, 
+            code, cash_replaces = save_replace(100,
                                 em['emoji'], False, cash_replaces=cash_replaces)
+
             text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(em['emoji'], text_code)
 
@@ -259,16 +292,17 @@ def replace_specials(text: str, cash_replaces: dict):
         for match in matches:
             code, cash_replaces = save_replace(200, 
                                 match, False, cash_replaces=cash_replaces)
+
             text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(match, text_code)
 
-        # Прячем переменные вида /слово (только первое целое слово после /)
-        matches = re.findall(r'/\w+', text)
-        for match in matches:
-            code, cash_replaces = save_replace(300,
-                    match, False, cash_replaces=cash_replaces)
-            text_code = f"{strat_sym}{code}{end_sym}"
-            text = text.replace(match, text_code)
+        # # Прячем переменные вида /слово (только первое целое слово после /)
+        # matches = re.findall(r'/\w+', text)
+        # for match in matches:
+        #     code, cash_replaces = save_replace(300,
+        #             match, False, cash_replaces=cash_replaces)
+        #     text_code = f"{strat_sym}{code}{end_sym}"
+        #     text = text.replace(match, text_code)
 
         # matches = re.findall(r'<\s*[^<>]+\s*>', text)
         # for match in matches:
@@ -298,15 +332,15 @@ def replace_specials(text: str, cash_replaces: dict):
     # # Прячем конструкции вида #число##число#... (любое количество подряд)
     # # Новый паттерн: ищет одну или более групп #число#, подряд идущих
 
-    matches = re.findall(r'(#[0-9]+#)+', text)
-    for match in matches:
-        if strat_sym in match or end_sym in match:
-            continue
-        if len(match) >= 6:
-            code, cash_replaces = save_replace(700, match, False, cash_replaces=cash_replaces)
-            text_code = f"{strat_sym}{code}{end_sym}"
-            text = text.replace(match, text_code)
-            print(f"Заменено: {match} -> {text_code}")
+    # matches = re.findall(r'(#[0-9]+#)+', text)
+    # for match in matches:
+    #     if strat_sym in match or end_sym in match:
+    #         continue
+    #     if len(match) >= 6:
+    #         code, cash_replaces = save_replace(700, match, False, cash_replaces=cash_replaces)
+    #         text_code = f"{strat_sym}{code}{end_sym}"
+    #         text = text.replace(match, text_code)
+    #         print(f"Заменено: {match} -> {text_code}")
 
     return text, cash_replaces
 
@@ -439,11 +473,9 @@ def repl_code(trans, lang):
 
 def translate_text(text: str, to_lang: str, from_lang: str, text_key: str, 
                    cash_replaces: dict, rep: int = 0, client = None, **kwargs):
-    # global zero_translator, client, prv_name
     """
     Переводит текст, защищая спецсимволы и эмодзи.
     """
-    # trans = zero_translator
     if cash_replaces is None:
         cash_replaces = {}
     
@@ -483,22 +515,25 @@ def translate_text(text: str, to_lang: str, from_lang: str, text_key: str,
 
     elif lang or len(langs) == 0:
         try:
-            # translators.translators_pool = translators_names
+            forbidden = [
+                "Error: HTTP", "ERR_CHALLENGE", "Blocked by DuckDuckGo", "Bot limit exceeded", "ERR_BN_LIMIT",
+                "Misuse detected. Please get in touch, we can   come up with a solution for your use case.",
+                "Too Many Requests", "Misuse", "message='Too", "AI-powered", 'more](https://pollinations.ai/redirect/2699274)'
+            ]
+            # --- Основной вызов перевода ---
             translated = only_translate(safe_text,
                                     from_language=repl_code(trans, from_lang), 
                                     to_language=repl_code(trans, to_lang),
                                     translator=trans,
                                     text_key=text_key,
+                                    client=client,
                                     **kwargs)
 
             # Проверка на наличие запрещённых слов в результате перевода
-            forbidden = ["Error: HTTP", "ERR_CHALLENGE", "Blocked by DuckDuckGo", "Bot limit exceeded", "ERR_BN_LIMIT", "Misuse detected. Please get in touch, we can   come up with a solution for your use case.", "Too Many Requests", "Misuse", "message='Too", "AI-powered", 'more](https://pollinations.ai/redirect/2699274)']
             if any(f in translated for f in forbidden):
                 print(f"Обнаружено запрещённое слово в переводе: {translated}")
-                
                 prv = random.choice(providers)
                 client = Client(prv)
-
                 if rep < 10:
                     return translate_text(safe_text, to_lang, from_lang, text_key, 
                                           cash_replaces, rep=rep + 1, client=client, **kwargs)
@@ -511,21 +546,14 @@ def translate_text(text: str, to_lang: str, from_lang: str, text_key: str,
                 return translate_text(safe_text, to_lang, from_lang, text_key, 
                                       cash_replaces, rep=rep + 1, client=client, **kwargs)
 
-
             count1, count2 = check_count_unicode(translated)
             count_01, count_02 = check_count_unicode(safe_text)
             if count1 != count_01 or count2 != count_02:
-                # print(f"Перевод: {translated} - {lang}")
-                # print(f"Оригинал: {safe_text} - {lang}")
                 return translate_text(
                     safe_text, to_lang, from_lang, text_key, cash_replaces, 
                     rep=rep + 1, client=client, **kwargs
                 )
 
-            # translated = translators.translate_text(safe_text,
-            #                         from_language=repl_code(trans, from_lang), to_language=repl_code(trans, to_lang),
-            #                         translator=trans, 
-            #                         headers={'User-Agent': random.choice(user_agents)})
             translated = match_case(text, translated, to_lang)
 
             if translated == safe_text and rep < 10:
@@ -533,7 +561,6 @@ def translate_text(text: str, to_lang: str, from_lang: str, text_key: str,
                     safe_text, to_lang, from_lang, text_key, cash_replaces, rep=rep + 1,
                     client=client, **kwargs
                 )
-            
             if translated == safe_text:
                 print(f"Перевод не изменился за {rep} попыток: {text} - {lang}")
 
@@ -544,18 +571,32 @@ def translate_text(text: str, to_lang: str, from_lang: str, text_key: str,
                 "translated": translated,
                 "trans": trans
             }
-
             pprint(dict_data)
         except Exception as e:
-            print(f"Ошибка перевода: {text} - {str(e)}")
-            if rep < 10:
-                return translate_text(
+            # --- Обработка ошибок HTTP 418 и ERR_CHALLENGE ---
+            err_str = str(e)
+            if any(code in err_str for code in ["418", "ERR_CHALLENGE", "Blocked by DuckDuckGo", "ERR_BN_LIMIT", "Too Many Requests"]):
+                print(f"[RETRY] Перехвачена ошибка провайдера: {err_str}")
+                prv = random.choice(providers)
+                client = Client(prv)
+                if rep < 10:
+                    return translate_text(
                         safe_text, to_lang, from_lang, text_key, cash_replaces, 
                         rep=rep + 1, client=client, **kwargs
                     )
+                else:
+                    print(f"[FAIL] Не удалось получить корректный перевод после {rep} попыток (ошибка провайдера).")
+                    translated = safe_text
             else:
-                translated = safe_text
-                print(f"Не переведено {rep} {lang} -> {text}")
+                print(f"Ошибка перевода: {text} - {err_str}")
+                if rep < 10:
+                    return translate_text(
+                            safe_text, to_lang, from_lang, text_key, cash_replaces, 
+                            rep=rep + 1, client=client, **kwargs
+                        )
+                else:
+                    translated = safe_text
+                    print(f"Не переведено {rep} {lang} -> {text}")
 
     else:
         translated = safe_text
