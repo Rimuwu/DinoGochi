@@ -1,19 +1,22 @@
+from calendar import c
 import json
 import random
 import os
+import sys
 import emoji
 from pprint import pprint
 
 import translators
 from langdetect import DetectorFactory, detect, detect_langs
 import re
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
 
 DetectorFactory.seed = 0
 ex = os.path.dirname(__file__) # Путь к этому файлу
 
 # base_names = {}
-cash_replaces = {}
-
+# cash_replaces = {}
 
 with open(os.path.join(ex, 'settings.json'), encoding='utf-8') as f: 
     """ Загружаем константы из файла найстроек """
@@ -54,6 +57,20 @@ from g4f import Client
 import time
 from tqdm import tqdm
 
+from g4f.Provider import (
+    DDG, # +
+    Pizzagpt, # +
+    PollinationsAI, # +
+    Yqcloud # + gpt-4
+)
+providers = [
+    DDG,
+    # Pizzagpt,
+    PollinationsAI,
+    # Yqcloud,
+    None
+]
+
 client = Client()
 # response = client.chat.completions.create(
 #     model="gpt-4o-mini",
@@ -62,16 +79,18 @@ client = Client()
 # )
 
 
-def only_translate(text, from_language, to_language, translator, **kwargs):
+def only_translate(text, from_language, to_language, translator, text_key, **kwargs):
 
     response = client.chat.completions.create(
-        model='gpt-4o-mini',
+        model="gpt-4o-mini",
         messages=[
-            {
+            { # - {{var_name}} (any content inside double curly braces) 
                 "role": "user",
-                "content": f'Do not guess. Do not rephrase. Do not autocorrect. Do not explain. Just translate. Do not translate and in any case do not change emoji, consonance #1042# (inside # can be any number), construction {{var_name}} (inside can be any text in English or numbers), unicode characters (something that is not standard letters). If you don’t understand how to translate it and can’t find a single option, return NOTEXT. Translate the text from language "{from_language}" to language "{to_language}", return only the translation of the text, keep the maximum text style. If there is no text, or it already translates, then return (ONLY) the translated text. Markdown formatting may be present in the text, do not forget that it must be fully restored. You translate the text for the bot’s telegrams. If the source text is very short - for example 1-2 words, then it can be a button, and it should remain approximately the same short. Text: {text}'
-            }
-        ])
+                "content": f'You are a strict translation module for a Telegram bot. Your task is to translate text from language "{from_language}" to language "{to_language}". Rules: 1. Do NOT guess, reword, paraphrase, or autocorrect. 2. Do NOT explain anything. Just return the translation. 3. Do NOT translate, remove, reorder, or change: - #1042# (any number inside # symbols) — this must be preserved exactly, in the same form and position, without any alterations. It is **mandatory** that if #1042# (or similar) exists in the input, it is present in the output **exactly as is**. 4. Markdown formatting (e.g., **bold**, _italic_, [link](url)) must be preserved fully. 5. Always preserve the original style, structure, and order of elements — especially punctuation placement. 6. If the input consists only of untranslatable elements — return it unchanged. 7. If you cannot translate or the text makes no sense — return exactly: NOTEXT. 8. If the text is already in the target language — return it unchanged. 9. If the text is very short (1–2 words), treat it as a button label — translate briefly and preserve its format and tone. 10. You also receive a key {text_key} (format: word.word.word) — if the meaning of the text is unclear, you may consider this key as context (but do not output it). Output only the translated text — no explanations, no changes. Text to translate: {text}'
+            },
+        ],
+        headers = {'User-Agent': random.choice(user_agents)}
+        )
 
     return response.choices[0].message.content
 
@@ -91,7 +110,9 @@ def check_count_unicode(text):
     """
     if not isinstance(text, str):
         return 0, 0
-    count_special = sum(text.count(sym) for sym in one_replace_s)
+
+    special_one_replace_s = one_replace_s + ['{', '}', '#']
+    count_special = sum(text.count(sym) for sym in special_one_replace_s)
     count_emoji = len(emoji.emoji_list(text))
     return count_special, count_emoji
 
@@ -171,13 +192,15 @@ def compare_structures(base, dump, path=""):
             changed_keys.append(path)
     return new_keys, changed_keys, deleted_keys
 
-def save_replace(code: int, text: str, translate: bool, data = '' ):
-    global cash_replaces
+def save_replace(code: int, text: str, translate: bool, data = '', cash_replaces: None | dict = None):
     """
     Сохраняет замену в словаре cash_replaces.
     """
     new_code = f'{code}'
     r_code = f'{strat_sym}{code}{end_sym}'
+    
+    if cash_replaces is None:
+        cash_replaces = {}
 
     s_1 = new_code not in cash_replaces
     s_2 = r_code not in cash_replaces
@@ -196,7 +219,7 @@ def save_replace(code: int, text: str, translate: bool, data = '' ):
         # new_code = f'{new_code}0{new_code}0'
         cash_replaces[new_code] = {"text": text, 
                                "translate": translate, "data": data}
-        return new_code
+        return new_code, cash_replaces
     else:
         r = 0
         if type(code) == int:
@@ -206,9 +229,9 @@ def save_replace(code: int, text: str, translate: bool, data = '' ):
         else:
             r = int(code[1:-1]) + 1 # type: ignore
         # r = random.randint(1, 1000)
-        return save_replace(r, text, translate, data)
+        return save_replace(r, text, translate, data), cash_replaces
 
-def replace_specials(text):
+def replace_specials(text: str, cash_replaces: dict):
     # "(121)": {"text": "_", "translate": false},
     """
     Заменяет спецсимволы и эмодзи на коды для защиты от перевода.
@@ -220,54 +243,54 @@ def replace_specials(text):
         # Заменяем спецсимволы
         for key, item in replace_words.items():
             if item['text'] in text:
-                code = save_replace(800, item['text'], item['translate'])
+                code, cash_replaces = save_replace(int(key), item['text'], item['translate'], cash_replaces=cash_replaces)
                 text = text.replace(
                     item['text'], f"{strat_sym}{code}{end_sym}")
 
-        # # Прячем эмодзи
-        # for em in emoji.emoji_list(text):
-        #     code = save_replace(100, 
-        #                         em['emoji'], False)
-        #     text_code = f"{strat_sym}{code}{end_sym}"
-        #     text = text.replace(em['emoji'], text_code)
+        # Прячем эмодзи
+        for em in emoji.emoji_list(text):
+            code, cash_replaces = save_replace(100, 
+                                em['emoji'], False, cash_replaces=cash_replaces)
+            text_code = f"{strat_sym}{code}{end_sym}"
+            text = text.replace(em['emoji'], text_code)
 
-        # # Прячем переменные вида {name}
-        # matches = re.findall(r'\{.*?\}', text)
-        # for match in matches:
-        #     code = save_replace(200, 
-        #                         match, False)
-        #     text_code = f"{strat_sym}{code}{end_sym}"
-        #     text = text.replace(match, text_code)
+        # Прячем переменные вида {name}
+        matches = re.findall(r'\{.*?\}', text)
+        for match in matches:
+            code, cash_replaces = save_replace(200, 
+                                match, False, cash_replaces=cash_replaces)
+            text_code = f"{strat_sym}{code}{end_sym}"
+            text = text.replace(match, text_code)
 
         # Прячем переменные вида /слово (только первое целое слово после /)
         matches = re.findall(r'/\w+', text)
         for match in matches:
-            code = save_replace(300,
-                    match, False)
+            code, cash_replaces = save_replace(300,
+                    match, False, cash_replaces=cash_replaces)
             text_code = f"{strat_sym}{code}{end_sym}"
             text = text.replace(match, text_code)
 
-        matches = re.findall(r'<\s*[^<>]+\s*>', text)
-        for match in matches:
-            code = save_replace(400,
-                    match, True)
-            text_code = f"{strat_sym}{code}{end_sym}"
-            text = text.replace(match, text_code)
+        # matches = re.findall(r'<\s*[^<>]+\s*>', text)
+        # for match in matches:
+        #     code, cash_replaces = save_replace(400,
+        #             match, True)
+        #     text_code = f"{strat_sym}{code}{end_sym}"
+        #     text = text.replace(match, text_code)
         
-        # Прячем переменные вида <b>word</b>
-        matches = re.findall(r'<\s*[^<>]+\s*>', text)
-        for match in matches:
-            code = save_replace(500,
-                    match, True)
-            text_code = f"{strat_sym}{code}{end_sym}"
-            text = text.replace(match, text_code)
+        # # Прячем переменные вида <b>word</b>
+        # matches = re.findall(r'<\s*[^<>]+\s*>', text)
+        # for match in matches:
+        #     code, cash_replaces = save_replace(500,
+        #             match, True)
+        #     text_code = f"{strat_sym}{code}{end_sym}"
+        #     text = text.replace(match, text_code)
 
         # # Прячем переменные вида *Слово*
         # for one_repl in one_replace_s:
         #     tx = fr'\{one_repl}\s*.*?\s*\{one_repl}'
         #     matches = re.findall(tx, text)
         #     for match in matches:
-        #         code = save_replace(600,
+        #         code, cash_replaces = save_replace(600,
         #                             match[1:-1], True, one_repl)
         #         text_code = f"{strat_sym}{code}{end_sym}"
         #         text = text.replace(match, text_code)
@@ -275,17 +298,17 @@ def replace_specials(text):
     # # Прячем конструкции вида #число##число#... (любое количество подряд)
     # # Новый паттерн: ищет одну или более групп #число#, подряд идущих
 
-    # matches = re.findall(r'(#[0-9]+#)+', text)
-    # for match in matches:
-    #     if strat_sym in match or end_sym in match:
-    #         continue
-    #     if len(match) >= 6:
-    #         code = save_replace(700, match, False)
-    #         text_code = f"{strat_sym}{code}{end_sym}"
-    #         text = text.replace(match, text_code)
-    #         print(f"Заменено: {match} -> {text_code}")
+    matches = re.findall(r'(#[0-9]+#)+', text)
+    for match in matches:
+        if strat_sym in match or end_sym in match:
+            continue
+        if len(match) >= 6:
+            code, cash_replaces = save_replace(700, match, False, cash_replaces=cash_replaces)
+            text_code = f"{strat_sym}{code}{end_sym}"
+            text = text.replace(match, text_code)
+            print(f"Заменено: {match} -> {text_code}")
 
-    return text
+    return text, cash_replaces
 
 def smart_contains(text, word):
     """
@@ -295,7 +318,7 @@ def smart_contains(text, word):
         return False
     return word in text
 
-def restore_specials(text, to_lang, from_lang):
+def restore_specials(text, to_lang, from_lang, text_key, cash_replaces):
     """
     Восстанавливает спецсимволы и эмодзи после перевода.
     """
@@ -346,7 +369,7 @@ def restore_specials(text, to_lang, from_lang):
 
                 if smart_contains(text, code_in_text):
                     if item['translate']:
-                        stage_text = translate_text(word_text, to_lang, from_lang)
+                        stage_text = translate_text(word_text, to_lang, from_lang, text_key, cash_replaces)
                         if not isinstance(stage_text, str):
                             stage_text = str(stage_text)
                         if item['data']:
@@ -360,6 +383,13 @@ def restore_specials(text, to_lang, from_lang):
                     # continue
                 else:
                     text = text.replace(code_in_text, word_text)
+
+    raw_code_pattern = r'#(\d+)#'
+    matches = re.findall(raw_code_pattern, text)
+    for code in matches:
+        if code in cash_replaces:
+            word_text = cash_replaces[code]['text']
+            text = text.replace(f'#{code}#', word_text)
 
     # Восстановление эмодзи (пример: #128512# -> 😀)
     return text
@@ -407,19 +437,24 @@ def repl_code(trans, lang):
     code = replace_codes.get(trans.lower(), {}).get(lang, lang)
     return code
 
-def translate_text(text, to_lang, from_lang, rep=0):
-    global cash_replaces, zero_translator
+def translate_text(text: str, to_lang: str, from_lang: str, text_key: str, 
+                   cash_replaces: dict, rep: int = 0, client = None, **kwargs):
+    # global zero_translator, client, prv_name
     """
     Переводит текст, защищая спецсимволы и эмодзи.
     """
-    trans = zero_translator
+    # trans = zero_translator
+    if cash_replaces is None:
+        cash_replaces = {}
     
+    trans = 'google'
+
     if to_lang is None and from_lang is None:
         return text
-    
+
     if not isinstance(text, str) or not text.strip():
         return text
-    safe_text = replace_specials(text)
+    safe_text, cash_replaces = replace_specials(text, cash_replaces)
 
     try:
         lang = detect(safe_text)
@@ -430,7 +465,7 @@ def translate_text(text, to_lang, from_lang, rep=0):
 
     if lang is None: lang = from_lang
 
-    if lang in ['en', 'it'] and len(langs) == 1:
+    if lang in ['en', 'it', 'sv'] and len(langs) == 1:
         translated = safe_text
         print(f"Не переводим: {text} - {lang}")
 
@@ -438,39 +473,53 @@ def translate_text(text, to_lang, from_lang, rep=0):
         cash_replaces[safe_text[1:-1]]['translated'] = False
         translated = safe_text
         print(f"Не переводим (замена): {text} - {lang}")
-        return restore_specials(translated, None, None)
+        return restore_specials(translated, None, None, text_key, cash_replaces)
 
     elif safe_text in replace_words.keys():
         cash_replaces[safe_text]['translated'] = False
         translated = safe_text
         print(f"Не переводим (замена): {text} - {lang}")
-        return restore_specials(translated, None, None)
+        return restore_specials(translated, None, None, text_key, cash_replaces)
 
     elif lang or len(langs) == 0:
         try:
             # translators.translators_pool = translators_names
             translated = only_translate(safe_text,
-                                    from_language=repl_code(trans, from_lang), to_language=repl_code(trans, to_lang),
-                                    translator=trans, 
-                                    headers={'User-Agent': random.choice(user_agents)})
-            
+                                    from_language=repl_code(trans, from_lang), 
+                                    to_language=repl_code(trans, to_lang),
+                                    translator=trans,
+                                    text_key=text_key,
+                                    **kwargs)
+
             # Проверка на наличие запрещённых слов в результате перевода
-            forbidden = ["Error: HTTP", "ERR_CHALLENGE"]
+            forbidden = ["Error: HTTP", "ERR_CHALLENGE", "Blocked by DuckDuckGo", "Bot limit exceeded", "ERR_BN_LIMIT", "Misuse detected. Please get in touch, we can   come up with a solution for your use case.", "Too Many Requests", "Misuse", "message='Too", "AI-powered", 'more](https://pollinations.ai/redirect/2699274)']
             if any(f in translated for f in forbidden):
                 print(f"Обнаружено запрещённое слово в переводе: {translated}")
+                
+                prv = random.choice(providers)
+                client = Client(prv)
+
                 if rep < 10:
-                    return translate_text(text, to_lang, from_lang, rep=rep + 1)
+                    return translate_text(safe_text, to_lang, from_lang, text_key, 
+                                          cash_replaces, rep=rep + 1, client=client, **kwargs)
                 else:
                     print(f"Не удалось получить корректный перевод после {rep} попыток.")
                     translated = safe_text
+
+            if translated == "" and rep < 10:
+                print(f"Пустой перевод, пробую ещё раз: {text}")
+                return translate_text(safe_text, to_lang, from_lang, text_key, 
+                                      cash_replaces, rep=rep + 1, client=client, **kwargs)
+
 
             count1, count2 = check_count_unicode(translated)
             count_01, count_02 = check_count_unicode(safe_text)
             if count1 != count_01 or count2 != count_02:
                 # print(f"Перевод: {translated} - {lang}")
                 # print(f"Оригинал: {safe_text} - {lang}")
-                translated = translate_text(
-                    translated, to_lang, from_lang, rep=rep + 1
+                return translate_text(
+                    safe_text, to_lang, from_lang, text_key, cash_replaces, 
+                    rep=rep + 1, client=client, **kwargs
                 )
 
             # translated = translators.translate_text(safe_text,
@@ -480,9 +529,13 @@ def translate_text(text, to_lang, from_lang, rep=0):
             translated = match_case(text, translated, to_lang)
 
             if translated == safe_text and rep < 10:
-                translated = translate_text(
-                    translated, to_lang, from_lang, rep=rep + 1
+                return translate_text(
+                    safe_text, to_lang, from_lang, text_key, cash_replaces, rep=rep + 1,
+                    client=client, **kwargs
                 )
+            
+            if translated == safe_text:
+                print(f"Перевод не изменился за {rep} попыток: {text} - {lang}")
 
             dict_data = {
                 "text": safe_text,
@@ -496,8 +549,9 @@ def translate_text(text, to_lang, from_lang, rep=0):
         except Exception as e:
             print(f"Ошибка перевода: {text} - {str(e)}")
             if rep < 10:
-                translated = translate_text(
-                        safe_text, to_lang, from_lang, rep=rep + 1
+                return translate_text(
+                        safe_text, to_lang, from_lang, text_key, cash_replaces, 
+                        rep=rep + 1, client=client, **kwargs
                     )
             else:
                 translated = safe_text
@@ -506,7 +560,7 @@ def translate_text(text, to_lang, from_lang, rep=0):
     else:
         translated = safe_text
         print(f"Не переведено {len(langs)} {lang} -> {text}")
-    return restore_specials(translated, to_lang, from_lang)
+    return restore_specials(translated, to_lang, from_lang, text_key, cash_replaces)
 
 
 def read_json(path):
@@ -650,9 +704,85 @@ def is_prefix_in_keys(keys, path):
     
 
 a_c_upd = 0
+STOP_BY_CTRL_C = False  # глобальный флаг
+
+def ctrl_c_watcher():
+    global STOP_BY_CTRL_C
+    try:
+        input("\n[LOG] Для остановки перевода нажмите Enter...\n")
+        STOP_BY_CTRL_C = True
+        print("[LOG] Остановка по Enter. Завершаю работу после текущих операций...")
+    except Exception:
+        STOP_BY_CTRL_C = True
+        print("[LOG] Остановка по ошибке в watcher.")
+
+def translate_worker(args):
+    global a_c_upd, STOP_BY_CTRL_C
+    path, value, lang, main_lang, dump_data, lang_data, dump_path_, lang_path, new_keys, changed_keys, ignore_translate_keys, total, times, pbar = args
+
+    # Для каждого потока свой клиент с рандомным провайдером
+    local_client = Client(random.choice(providers))
+    translated = value
+    if STOP_BY_CTRL_C:
+        return (path, translated, value)
+    if is_prefix_in_keys(new_keys + changed_keys, path):
+        if isinstance(value, str):
+            path_set = set(path.split('.'))
+            ignore_set = set(ignore_translate_keys)
+
+            t0 = time.time()
+            if path_set & ignore_set:
+                if path.endswith('text'):
+                    translated = translate_text(value, lang, main_lang, path, {}, client=local_client)
+                    if translated == value:
+                        translated = translate_text(value, lang, main_lang, path, {}, client=local_client)
+                else:
+                    translated = value
+            elif len(value) < 2:
+                translated = value
+            else:
+                if STOP_BY_CTRL_C:
+                    return (path, translated, value)
+                translated = translate_text(value, lang, main_lang, path, {}, client=local_client)
+                if translated == value and not STOP_BY_CTRL_C:
+                    translated = translate_text(value, lang, main_lang, path, {}, client=local_client)
+            t1 = time.time()
+            times.append(t1 - t0)
+            cash_replaces = {}
+            return (path, translated, value)
+    return (path, translated, value)
+
+def get_by_path(dct, path):
+    """Получить значение по пути вида 'a.b.0.c' из словаря/списка."""
+    keys = path.split('.')
+    cur = dct
+    for k in keys:
+        if isinstance(cur, list) and k.isdigit():
+            idx = int(k)
+            if idx < len(cur):
+                cur = cur[idx]
+            else:
+                return None
+        elif isinstance(cur, dict):
+            if k in cur:
+                cur = cur[k]
+            else:
+                return None
+        else:
+            return None
+    return cur
 
 def main():
-    global cash_replaces, a_c_upd, zero_translator, main_lang
+    global a_c_upd, zero_translator, main_lang, STOP_BY_CTRL_C
+
+    # Запускаем watcher в отдельном потоке
+    watcher_thread = threading.Thread(target=ctrl_c_watcher, daemon=True)
+    watcher_thread.start()
+
+    # Получаем язык из аргументов командной строки
+    lang_arg = None
+    if len(sys.argv) > 1:
+        lang_arg = sys.argv[1].lower()
 
     # 1. Загрузка главного словаря
     main_lang_path = os.path.normpath(os.path.join(ex, langs_path, f"{main_code}.json"))
@@ -662,6 +792,14 @@ def main():
     langs_dir = os.path.normpath(os.path.join(ex, langs_path))
     lang_files = [f for f in os.listdir(langs_dir) if f.endswith('.json')]
     lang_codes = [f.replace('.json', '') for f in lang_files if f.replace('.json', '') != main_code]
+
+    # Если указан язык, фильтруем только его
+    if lang_arg:
+        lang_codes = [lang for lang in lang_codes if lang == lang_arg]
+        if not lang_codes:
+            print(f"Язык {lang_arg} не найден для перевода.")
+            return
+
     print(translators.translators_pool)
     print(f"Языки для перевода: {lang_codes}")
 
@@ -718,98 +856,90 @@ def main():
             except Exception as e:
                 print(f"Ошибка удаления {key} из dump_data: {e}")
 
-            write_json(dump_path_, dump_data)
-            write_json(lang_path, {lang: lang_data})
+        # Добавляем новые ключи в lang_data, если их нет
+        for key in new_keys:
+            try:
+                set_by_path(lang_data, key, 'NOTEXT', dump_data[lang])
+            except Exception as e:
+                print(f"Ошибка добавления {key} в lang_data: {e}")
+
+        # Сохраняем только после удаления всех ключей
+        write_json(dump_path_, dump_data)
+        write_json(lang_path, {lang: lang_data})
 
         if new_keys or changed_keys:
             print(f'\nНачало перевода...')
 
-            # 6. Перевести новые/изменённые ключи
-            # Собираем все пути, которые будут переводиться
             paths_to_translate = []
-
             def collect_paths_callback(path, value):
                 if is_prefix_in_keys(new_keys + changed_keys, path):
                     if isinstance(value, str):
-                        paths_to_translate.append(path)
+                        existing = get_by_path(lang_data, path)
+                        if existing not in (None, 'NOTEXT'):
+                            # Уже переведено — пропускаем
+                            return
+                        paths_to_translate.append((path, value))
 
             walk_keys(main_data, collect_paths_callback)
-
             total = len(paths_to_translate)
+
             if total == 0:
                 print("Нет новых или изменённых ключей для перевода.")
             else:
                 print(f"Всего ключей для перевода: {total}")
 
-            # Для оценки времени
-            start_time = time.time()
             times = []
+            pbar = tqdm(total=total, desc="Перевод", unit="ключ")
 
-            # tqdm для прогресса
-            pbar = tqdm(paths_to_translate, desc="Перевод", unit="ключ")
+            worker_args = [
+                (path, value, lang, main_lang, dump_data, lang_data, dump_path_, lang_path, new_keys, changed_keys, ignore_translate_keys, total, times, pbar)
+                for path, value in paths_to_translate
+            ]
 
-            def update_callback(path, value):
-                global cash_replaces, a_c_upd
+            try:
+                save_counter = 0  # счетчик для промежуточного сохранения
+                with ThreadPoolExecutor(max_workers=6) as executor:
+                    future_to_path = {executor.submit(translate_worker, arg): arg[0] for arg in worker_args}
+                    for future in as_completed(future_to_path):
+                        if STOP_BY_CTRL_C:
+                            print("[LOG] Получен сигнал остановки. Завершаю перевод.")
+                            break
 
-                if is_prefix_in_keys(new_keys + changed_keys, path):
-                    if isinstance(value, str):
-                        path_set = set(path.split('.'))
-                        ignore_set = set(ignore_translate_keys)
-
-                        t0 = time.time()
-                        if path_set & ignore_set:
-                            if path.endswith('text'):
-                                translated = translate_text(value, lang, main_lang)
-                                if translated == value:
-                                    translated = translate_text(value, lang, main_lang)
-                                print(f"Переводим {path}: {value} -> {translated}")
-                            else:
-                                translated = value
-                                print(f"Пропускаем перевод для {path}: {value}")
-                        elif len(value) < 2:
-                            translated = value
-                            print(f"Пропускаем перевод для {path} (малая длинна): {value}")
-                        else:
-                            translated = translate_text(value, lang, main_lang)
-                            if translated == value:
-                                translated = translate_text(value, lang, main_lang)
-                            print(f"Переводим {path}: {value} -> {translated}")
-
-                        t1 = time.time()
-                        times.append(t1 - t0)
-                        avg_time = sum(times) / len(times)
-                        done = pbar.n + 1
-                        left = total - done
-                        est = avg_time * left
-                        pbar.set_postfix({
-                            "avg_sec": f"{avg_time:.2f}",
-                            "eta_min": f"{est/60:.1f}"
-                        })
-
-                        cash_replaces = {}
-
+                        path, translated, value = future.result()
                         set_by_path(lang_data, path, translated, dump_data[lang])
-                        if translated == "NOTEXT":
-                            set_by_path(dump_data, f'{lang}.'+path, "NOTEXT")
-                        else:
-                            set_by_path(dump_data, f'{lang}.'+path, value)
-                    else:
-                        set_by_path(lang_data, path, value, dump_data[lang])
-                        set_by_path(dump_data, f'{lang}.'+path, value)
-
-                    a_c_upd += 1
-                    if a_c_upd % 3 == 0:
-                        write_json(lang_path, {lang: lang_data})
-                        write_json(dump_path_, dump_data)
-                    pbar.update(1)
-                else:
-                    # Не переводим, но для прогресса обновим
-                    if path in paths_to_translate:
+                        set_by_path(dump_data, f'{lang}.'+path, value)  # теперь value определён!
                         pbar.update(1)
+                        save_counter += 1
+                        # Сохраняем прогресс каждые 10 ключей (можно изменить)
+                        if save_counter % 5 == 0:
+                            write_json(lang_path, {lang: lang_data})
+                            write_json(dump_path_, dump_data)
 
-            walk_keys(main_data, update_callback)
+                        # time.sleep(0.5)
+
+                # --- ГАРАНТИРОВАННОЕ СОХРАНЕНИЕ ---
+                pbar.close()
+                write_json(lang_path, {lang: lang_data})
+                write_json(dump_path_, dump_data)
+                if STOP_BY_CTRL_C:
+                    print("[LOG] Работа остановлена пользователем.")
+                    return
+
+            except KeyboardInterrupt:
+                STOP_BY_CTRL_C = True
+                print("\n[LOG] Остановка по Ctrl+C. Сохраняю прогресс и завершаю работу...")
+                pbar.close()
+
+                write_json(lang_path, {lang: lang_data})
+                write_json(dump_path_, dump_data)
+                sys.exit(0)
+
+            if STOP_BY_CTRL_C:
+                print("[LOG] Работа остановлена пользователем.")
+                return
+
             pbar.close()
-
+            # Сохраняем только один раз после всех переводов
             write_json(lang_path, {lang: lang_data})
             write_json(dump_path_, dump_data)
 
