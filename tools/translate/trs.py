@@ -516,9 +516,9 @@ def translate_text(text: str, to_lang: str, from_lang: str, text_key: str,
     elif lang or len(langs) == 0:
         try:
             forbidden = [
-                "Error: HTTP", "ERR_CHALLENGE", "Blocked by DuckDuckGo", "Bot limit exceeded", "ERR_BN_LIMIT",
+                "HTTP", "ERR_CHALLENGE", "Blocked by DuckDuckGo", "Bot limit exceeded", "ERR_BN_LIMIT",
                 "Misuse detected. Please get in touch, we can   come up with a solution for your use case.",
-                "Too Many Requests", "Misuse", "message='Too", "AI-powered", 'more](https://pollinations.ai/redirect/2699274)', "module—no guesswork"
+                "Too Many Requests", "Misuse", "message='Too", "AI-powered", 'more](https://pollinations.ai/redirect/2699274)', "module—no guesswork", '\n\n---\n', 'Telegram bot'
             ]
             # --- Основной вызов перевода ---
             translated = only_translate(safe_text,
@@ -598,11 +598,11 @@ def translate_text(text: str, to_lang: str, from_lang: str, text_key: str,
                             rep=rep + 1, client=client, **kwargs
                         )
                 else:
-                    translated = safe_text
+                    translated = 'NOTEXT'
                     print(f"Не переведено {rep} {lang} -> {text}")
 
     else:
-        translated = safe_text
+        translated = 'NOTEXT'
         print(f"Не переведено {len(langs)} {lang} -> {text}")
     return restore_specials(translated, to_lang, from_lang, text_key, cash_replaces)
 
@@ -738,14 +738,22 @@ def del_by_path(dct, path):
 # Проверяем, начинается ли path с любого из new_keys или changed_keys
 def is_prefix_in_keys(keys, path):
     """
-    Проверяет, начинается ли path с любого из путей в keys.
-    Например: keys = ['a.b', 'c'], path = 'a.b.1.d' -> True
+    Проверяет, заканчивается ли path на любой из путей в keys,
+    либо если path заканчивается на key, либо если key — предпоследний элемент в path.
+    Например: keys = ['a.b', 'c'], path = 'a.b.1.d' -> True если 'a.b' или 'a.b.1' в keys.
     """
-    for key in keys:
-        if path == key or path.startswith(f"{key}."):
-            return True
-    return False
     
+    path_parts = path.split('.')
+    for key in keys:
+        if path == key:
+            return True
+        if path.endswith(f".{key}"):
+            return True
+
+        if len(path_parts) > 1 and path_parts[-2] == key:
+            return True
+
+    return False
 
 a_c_upd = 0
 STOP_BY_CTRL_C = False  # глобальный флаг
@@ -792,7 +800,6 @@ def translate_worker(args):
                     translated = translate_text(value, lang, main_lang, path, {}, client=local_client)
             t1 = time.time()
             times.append(t1 - t0)
-            cash_replaces = {}
             return (path, translated, value)
     return (path, translated, value)
 
@@ -916,8 +923,12 @@ def main():
 
             paths_to_translate = []
             def collect_paths_callback(path, value):
+                # Добавляем только если путь действительно новый/изменённый
                 if is_prefix_in_keys(new_keys + changed_keys, path):
                     if isinstance(value, str):
+                        # Игнорируем ключи из ignore_translate_keys
+                        if is_prefix_in_keys(ignore_translate_keys, path):
+                            return
                         existing = get_by_path(lang_data, path)
                         if existing not in (None, 'NOTEXT'):
                             # Уже переведено — пропускаем
@@ -950,6 +961,9 @@ def main():
                             break
 
                         path, translated, value = future.result()
+                        
+                        print(f"Переведено: {path} -> {translated}")
+                        
                         set_by_path(lang_data, path, translated, dump_data[lang])
                         set_by_path(dump_data, f'{lang}.'+path, value)  # теперь value определён!
                         pbar.update(1)
@@ -986,6 +1000,33 @@ def main():
             # Сохраняем только один раз после всех переводов
             write_json(lang_path, {lang: lang_data})
             write_json(dump_path_, dump_data)
+
+            # --- Проверка на не переведённые значения ---
+            not_translated = []
+            def check_untranslated_callback(path, value):
+                # Проверяем только строки, которые не равны 'NOTEXT'
+                if isinstance(value, str) and value != 'NOTEXT':
+                    # Игнорируем ключи из ignore_translate_keys
+                    if is_prefix_in_keys(ignore_translate_keys, path):
+                        return
+                    # Получаем оригинал из main_data
+                    orig = get_by_path(main_data, path)
+                    # Если значение совпадает с оригиналом — значит не переведено
+                    if value == orig:
+                        not_translated.append(path)
+
+            walk_keys(lang_data, check_untranslated_callback)
+
+            if not_translated:
+                print(f"\n[LOG] Найдено не переведённых ключей: {len(not_translated)}")
+                for path in not_translated:
+                    print(f"  [NOT TRANSLATED] {path}: {get_by_path(lang_data, path)}")
+                    set_by_path(lang_data, path, 'NOTEXT', dump_data[lang])
+                    set_by_path(dump_data, f'{lang}.'+path, get_by_path(main_data, path))
+                write_json(lang_path, {lang: lang_data})
+                write_json(dump_path_, dump_data)
+            else:
+                print("[LOG] Все строки переведены.")
 
 if __name__ == '__main__':
     main()

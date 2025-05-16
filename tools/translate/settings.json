@@ -83,7 +83,7 @@
         "langs_path": "../../bot/localization",
         "dump_path": "dumps/",
 
-        "ignore_translate_keys": ["data", "callback", "inline_menu", "keys", "previous", "image", "photo_url", "url", "meow_book", "localization_author", "language_name", "arguments"],
+        "ignore_translate_keys": ["data", "callback", "inline_menu", "keys", "previous", "image", "photo_url", "url", "meow_book", "localization_author", "language_name", "arguments", "commands_args"],
 
         "sp_sym": ["#", "#"]
     },
