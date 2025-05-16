@@ -70,13 +70,14 @@
             "#1037#": {"text": "ʟᴇᴠᴇʟ", "translate": false},
             "#1038#": {"text": "ᴅɪɴᴏsᴀᴜʀs", "translate": false},
             "#1039#": {"text": "ɪɴᴠᴇɴᴛᴏʀʏ", "translate": false},
+            "#1042#": {"text": "ᴍᴀʀᴋᴇᴛ", "translate": false},
             "#1040#": {"text": "->", "translate": false}
         },
 
         "one_replace_s": ["```", "*", "`", "~", "_", "'"],
 
-        "translators": ["lingvanex", "reverso"],
-        "zero_translator": "reverso",
+        "translators": ["lingvanex", "yandex"],
+        "zero_translator": "yandex",
 
         "main_code": "ru",
         "langs_path": "../../bot/localization",

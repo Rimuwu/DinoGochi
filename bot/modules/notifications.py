@@ -8,6 +8,7 @@ from bot.dbmanager import mongo_client, conf
 from bot.exec import main_router, bot
 from bot.modules.data_format import seconds_to_str
 from bot.modules.dinosaur.dino_status import check_status
+from bot.modules.images_creators.lvl_up import lvl_up_image
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.logs import log
@@ -15,6 +16,8 @@ from bot.modules.items.item import get_name
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.user.avatar import get_avatar
+
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 users = DBconstructor(mongo_client.user.users)
@@ -202,9 +205,11 @@ async def user_notification(user_id: int, not_type: str,
     ]
     add_way = '.'+kwargs.get('add_way', '')
     effect_id = None
-    
+    image = None
+
     if not_type in ['lvl_up']:
         effect_id = '5046509860389126442'
+        image = await lvl_up_image(await get_avatar(user_id))
 
     if not lang:
         lang = await get_lang(user_id)
@@ -226,12 +231,20 @@ async def user_notification(user_id: int, not_type: str,
     log(prefix='Notification', 
         message=f'User: {user_id}, Data: {not_type} Kwargs: {kwargs}', lvl=0)
     try:
-        try:
-            await bot.send_message(user_id, text, reply_markup=markup_inline, parse_mode='Markdown', message_effect_id=effect_id)
-            return True
-        except Exception:
-            await bot.send_message(user_id, text, reply_markup=markup_inline, message_effect_id=effect_id)
-            return True
+        if image is None:
+            try:
+                await bot.send_message(user_id, text, reply_markup=markup_inline, parse_mode='Markdown', message_effect_id=effect_id)
+                return True
+            except Exception:
+                await bot.send_message(user_id, text, reply_markup=markup_inline, message_effect_id=effect_id)
+                return True
+        else:
+            try:
+                await bot.send_photo(user_id, image, caption=text, reply_markup=markup_inline, parse_mode='Markdown', message_effect_id=effect_id)
+                return True
+            except Exception:
+                await bot.send_photo(user_id, image, caption=text, reply_markup=markup_inline, message_effect_id=effect_id)
+                return True
     except Exception as error: 
         log(prefix='Notification Error', 
             message=f'User: {user_id}, Data: {not_type} Error: {error}', 

@@ -24,6 +24,7 @@ from bot.modules.managment.referals import get_code_owner, get_user_sub
 from datetime import datetime, timedelta
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.user.avatar import get_avatar
 from bot.modules.user.friends import get_frineds
 
 users = DBconstructor(mongo_client.user.users)
@@ -243,27 +244,12 @@ class User:
              'additional': {'now': 0, 'limit': 1}
             }
         """
-        return await max_dino_col(self.lvl, self.userid, await self.premium)
+        return await max_dino_col(self.lvl, self.userid, await self.premium, self.add_slots)
 
     async def get_avatar(self):
         """Возвращает аватарку пользователя, если файл устарел - обновляет и возвращает новую."""
-        try:
-            file = await bot.get_file(self.avatar)
-            file = None
-        except:
-            avatar = await async_open('images/remain/dinogochi_user.png', True)
-            await self.update({'$set': {'avatar': ''}})
-            return avatar
 
-        if not self.avatar or not file:
-            # Файла уже не существует, удаляем данные для обновления
-            photos = await bot.get_user_profile_photos(self.userid, limit=1)
-            if photos.photos:
-                photo_id = photos.photos[0][0].file_id
-
-                self.avatar = photo_id
-                await self.update({'$set': {'avatar': photo_id}})
-        return self.avatar
+        return await get_avatar(self.userid)
 
 async def insert_user(userid: int, lang: str, name = '', avatar = ''):
     """Создание пользователя"""
@@ -394,7 +380,7 @@ async def award_premium(userid:int, end_time):
         }
         await subscriptions.insert_one(user_doc, comment='award_premium_2')
 
-async def max_dino_col(lvl: int, user_id: int=0, premium_st: bool=False):
+async def max_dino_col(lvl: int, user_id: int=0, premium_st: bool=False, add_slots: int=0):
     """Возвращает доступное количесвто динозавров, беря во внимание уровень и статус
        Если передаётся user_id то считает сколько динозавров у юзера вместе с лимитом
        {
@@ -413,10 +399,9 @@ async def max_dino_col(lvl: int, user_id: int=0, premium_st: bool=False):
 
     if premium_st: col['standart']['limit'] += 1
     col['standart']['limit'] += ((lvl // 20 + 1) - lvl // 100)
+    col['standart']['limit'] += add_slots
 
     if user_id:
-        user = await User().create(user_id)
-        col['standart']['limit'] += user.add_slots
 
         dinos = await dino_owners.find({'owner_id': user_id}, comment='max_dino_col_dinos')
         for dino in dinos:
@@ -527,7 +512,7 @@ async def user_dinos_info(userid: int, lang: str, page: int = 0):
     dinos = await get_dinos_and_owners(userid)
     eggs = await get_eggs(userid)
 
-    slots = await max_dino_col(user.lvl, user.userid, await user.premium)
+    slots = await user.max_dino_col()
     dino_slots = f'{slots["standart"]["now"]}/{slots["standart"]["limit"]}'
     return_text += t(f'user_profile.dinosaurs', lang,
                     dead=len(list(dd)), dino_col=len(dinos), dino_slots=dino_slots

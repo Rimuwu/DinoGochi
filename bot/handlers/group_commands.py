@@ -227,11 +227,8 @@ async def get_data_for_rayting(chatid, ret_type, lang, message):
     # Получаем пользователей из базы
     users_list = await users.find({
         "userid": {"$in": user_ids},
-        "$or": [
-            {"setting.confidentiality": False},
-            {"setting.confidentiality": None}
-        ]
-    }, comment="get_group_rating")
+        "settings.confidentiality": {"$ne": True}
+        }, comment="get_group_rating")
 
     # Сортируем по нужному полю
     if ret_type == 'lvl':

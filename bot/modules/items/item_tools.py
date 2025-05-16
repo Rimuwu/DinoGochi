@@ -435,9 +435,9 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
             else:
                 user = await User().create(userid)
-                cuds = await user.get_col_dinos
-                cuds += len(await user.get_eggs)
                 max_dc = await user.max_dino_col()
+
+                cuds = max_dc['standart']['now']
                 max_dc_st = max_dc['standart']['limit']
 
                 if cuds + 1 > max_dc_st:

@@ -138,7 +138,7 @@ async def inventory_set(message: Message):
 
     settings_data, time_list = {}, []
 
-    for i in get_data('inv_set_pages.ans', lang):
+    for i in get_data('inv_set_pages.data', lang):
         time_list.append(i)
         settings_data[i] = list(int(strn) for strn in i.split(' | '))
 
@@ -482,14 +482,17 @@ async def confidentiality_set(result: bool, transmitted_data: dict):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
     price = GAME_SETTINGS['conf_set_price']
-    
-    have_coins = False
     user = await User().create(userid)
-    if user.super_coins >= price:
+    premium_st = await user.premium
+
+    have_coins = False
+    if premium_st: have_coins = True
+
+    if not have_coins and user.super_coins >= price:
         have_coins = True
         await user.update({'$inc': {'super_coins': -price}})
 
-    if await user.premium or have_coins:
+    if have_coins:
 
         text = t(f'confidentiality.{result}', lang)
         await bot.send_message(chatid, text, 
