@@ -518,7 +518,7 @@ def translate_text(text: str, to_lang: str, from_lang: str, text_key: str,
             forbidden = [
                 "Error: HTTP", "ERR_CHALLENGE", "Blocked by DuckDuckGo", "Bot limit exceeded", "ERR_BN_LIMIT",
                 "Misuse detected. Please get in touch, we can   come up with a solution for your use case.",
-                "Too Many Requests", "Misuse", "message='Too", "AI-powered", 'more](https://pollinations.ai/redirect/2699274)'
+                "Too Many Requests", "Misuse", "message='Too", "AI-powered", 'more](https://pollinations.ai/redirect/2699274)', "module—no guesswork"
             ]
             # --- Основной вызов перевода ---
             translated = only_translate(safe_text,
@@ -545,6 +545,9 @@ def translate_text(text: str, to_lang: str, from_lang: str, text_key: str,
                 print(f"Пустой перевод, пробую ещё раз: {text}")
                 return translate_text(safe_text, to_lang, from_lang, text_key, 
                                       cash_replaces, rep=rep + 1, client=client, **kwargs)
+            elif translated == "":
+                print(f"Пустой перевод, пробую ещё раз: {text}")
+                return 'NOTEXT'
 
             count1, count2 = check_count_unicode(translated)
             count_01, count_02 = check_count_unicode(safe_text)
