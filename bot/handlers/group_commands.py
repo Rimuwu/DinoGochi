@@ -52,7 +52,7 @@ async def successful_transfer_coins(st:str, transmitted_data: dict):
         await message_data.edit_text(text, parse_mode='Markdown')
         return
 
-    if not await take_coins(userid, coins):
+    if not await take_coins(userid, -coins):
         text = t('group_transfer.no_coins', lang,
                  self_username=self_name
                  )
@@ -72,88 +72,88 @@ async def successful_transfer_coins(st:str, transmitted_data: dict):
         text = t('group_transfer.answer_no', lang)
         await message_data.edit_text(text, parse_mode='Markdown')
 
-# @main_router.message(Command(commands=['give_coins']),
-#                      GroupRules())
-# async def give_coins(message: Message, message_text: str = None):
-#     chatid = message.chat.id
-#     userid = message.from_user.id
-#     lang = await get_lang(userid)
+@main_router.message(Command(commands=['give_coins']),
+                     GroupRules())
+async def give_coins(message: Message, message_text: str = None):
+    chatid = message.chat.id
+    userid = message.from_user.id
+    lang = await get_lang(userid)
     
-#     await add_message(chatid, message.message_id)
+    await add_message(chatid, message.message_id)
 
-#     if not message_text:
-#         args = message.text.split(' ')[1:]
-#     else:
-#         args = message_text.split(' ')[1:]
+    if not message_text:
+        args = message.text.split(' ')[1:]
+    else:
+        args = message_text.split(' ')[1:]
 
-#     if not len(args):
-#         mes = await message.answer(t('group_transfer.no_num', lang))
-#         await add_message(chatid, mes.message_id)
-#         return
+    if not len(args):
+        mes = await message.answer(t('group_transfer.no_num', lang))
+        await add_message(chatid, mes.message_id)
+        return
 
-#     coins = args[0]
-#     if not coins.isdigit():
-#         mes = await message.answer(t('group_transfer.no_num', lang))
-#         await add_message(chatid, mes.message_id)
-#         return
-#     coins = int(coins)
+    coins = args[0]
+    if not coins.isdigit():
+        mes = await message.answer(t('group_transfer.no_num', lang))
+        await add_message(chatid, mes.message_id)
+        return
+    coins = int(coins)
 
-#     if coins <= 0: return
+    if coins <= 0: return
 
-#     reply_message = message.reply_to_message
-#     if not reply_message:
-#         mes = await message.answer(t('group_transfer.no_reply', lang))
-#         await add_message(chatid, mes.message_id)
-#         return
+    reply_message = message.reply_to_message
+    if not reply_message:
+        mes = await message.answer(t('group_transfer.no_reply', lang))
+        await add_message(chatid, mes.message_id)
+        return
 
-#     reply_author = reply_message.from_user
-#     if reply_author and message.from_user:
+    reply_author = reply_message.from_user
+    if reply_author and message.from_user:
 
-#         if reply_author.id == message.from_user.id:
-#             return
+        if reply_author.id == message.from_user.id:
+            return
 
-#         custom_code = random_code()
-#         self_name = user_name_from_telegram(message.from_user, True)
-#         user_name = user_name_from_telegram(reply_author, True)
+        custom_code = random_code()
+        self_name = user_name_from_telegram(message.from_user, True)
+        user_name = user_name_from_telegram(reply_author, True)
 
-#         text = t('group_transfer.question', lang, 
-#                  self_username=self_name, user_name=user_name, coins=coins)
-#         markup = list_to_inline(
-#             [
-#                 {
-#                 t('buttons_name.yes', lang): f"chooseinline {custom_code} yes",
-#                 t('buttons_name.no', lang): f"chooseinline {custom_code} no"
-#                 }
-#             ]
-#         )
+        text = t('group_transfer.question', lang, 
+                 self_username=self_name, user_name=user_name, coins=coins)
+        markup = list_to_inline(
+            [
+                {
+                t('buttons_name.yes', lang): f"chooseinline {custom_code} yes",
+                t('buttons_name.no', lang): f"chooseinline {custom_code} no"
+                }
+            ]
+        )
 
-#         await ChooseInlineHandler(
-#             successful_transfer_coins,
-#             userid, chatid,
-#             lang, custom_code,
-#             {
-#                 "coins": coins,
-#                 "reply_author": reply_author.id,
-#                 "self_name": self_name,
-#                 "user_name": user_name
-#             }
-#         ).start()
+        await ChooseInlineHandler(
+            successful_transfer_coins,
+            userid, chatid,
+            lang, custom_code,
+            {
+                "coins": coins,
+                "reply_author": reply_author.id,
+                "self_name": self_name,
+                "user_name": user_name
+            }
+        ).start()
 
-#         mes = await message.answer(text, parse_mode='Markdown', reply_markup=markup)
-#         await add_message(chatid, mes.message_id)
+        mes = await message.answer(text, parse_mode='Markdown', reply_markup=markup)
+        await add_message(chatid, mes.message_id)
 
-# @main_router.message(
-#     StartWith('help_command.commands.give_coins.alternative'), GroupRules())
-# async def give_coins_alt(message: Message):
-#     userid = message.from_user.id
-#     chatid = message.chat.id
-#     lang = await get_lang(message.from_user.id)
+@main_router.message(
+    StartWith('help_command.commands.give_coins.alternative'), GroupRules())
+async def give_coins_alt(message: Message):
+    userid = message.from_user.id
+    chatid = message.chat.id
+    lang = await get_lang(message.from_user.id)
 
-#     txt = t('help_command.commands.give_coins.alternative', lang)
-#     text = str(message.text)
-#     text = text.replace(txt, 'give_coins')
+    txt = t('help_command.commands.give_coins.alternative', lang)
+    text = str(message.text)
+    text = text.replace(txt, 'give_coins')
 
-#     await give_coins(message, text)
+    await give_coins(message, text)
 
 users_page_page = 10
 
