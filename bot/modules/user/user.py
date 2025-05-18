@@ -26,6 +26,7 @@ from bot.modules.user.avatar import get_avatar
 from bot.modules.user.friends import get_frineds
 from bot.modules.user.premium import premium
 from bot.modules.user.rtl_name import check_name
+from bot.modules.user.xp_boost import xpboost_percent
 
 users = DBconstructor(mongo_client.user.users)
 items = DBconstructor(mongo_client.items.items)
@@ -421,7 +422,7 @@ async def experience_enhancement(userid: int, xp: int):
     user = await User().create(userid)
     lang = await user.lang
 
-    # if await check_event('april_5'): xp *= 2
+    xp = int(xp * await xpboost_percent(userid))
 
     if user:
         lvl, xp = 0, user.xp + xp
@@ -433,7 +434,6 @@ async def experience_enhancement(userid: int, xp: int):
             if max_xp <= xp:
                 xp -= max_xp
                 lvl += 1
-                if lvl >= 100: break
 
                 if str(user.lvl + lvl) in lvl_messages: 
                     add_way = str(user.lvl + lvl)
