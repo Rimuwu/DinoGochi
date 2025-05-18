@@ -402,6 +402,7 @@ async def dino_menu(call: types.CallbackQuery):
 
         elif action == 'main_message':
             dino = await Dino().create(alt_key)
+            custom_url = ''
             if dino:
                 if dino.profile['background_type'] == 'custom' and await premium(userid):
                     custom_url = dino.profile['background_id']
