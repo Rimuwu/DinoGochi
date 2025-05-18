@@ -1,140 +1,89 @@
 
 {
-    "new": {
-        "replace_codes": {
-            "mymemory": {
-                "ru": "ru-RU",
-                "uk": "uk-UA",
-                "es": "es-ES",
-                "id": "id-ID"
-            },
-            "modernmt": {
-                "es": "es-ES"
-            },
-            "apertium": {
-                "ru": "rus",
-                "en": "eng",
-                "es": "spa",
-                "id": "ind"
-            },
-            "lingvanex": {
-                "ru": "ru_RU",
-                "uk": "uk_UA",
-                "es": "es_ES",
-                "id": "id_ID"
-            }
-        },
-
-        "start_symbols": [
-            "/", "@"
-        ],
-
-        "replace_words": {
-            "1041": {"text": "<a href='tg://user?id={userid}'>{username}</a>", "translate": false},
-            "101": {"text": " > ", "translate": false},
-            "102": {"text": "</code>", "translate": false},
-            "103": {"text": "<code>", "translate": false},
-            "104": {"text": "<i>", "translate": false},
-            "105": {"text": "</i>", "translate": false},
-            "106": {"text": "<b>", "translate": false},
-            "107": {"text": "</b>", "translate": false},
-            "108": {"text": "<u>", "translate": false},
-            "109": {"text": "</u>", "translate": false},
-            "1010": {"text": "<s>", "translate": false},
-            "1011": {"text": "</s>", "translate": false},
-            "1012": {"text": "<br>", "translate": false},
-            "1013": {"text": "</br>", "translate": false},
-            "1014": {"text": "            ", "translate": false},
-            "1015": {"text": "           ", "translate": false},
-            "1016": {"text": "          ", "translate": false},
-            "1017": {"text": "         ", "translate": false},
-            "1018": {"text": "        ", "translate": false},
-            "1019": {"text": "       ", "translate": false},
-            "1020": {"text": "      ", "translate": false},
-            "1021": {"text": "     ", "translate": false},
-            "1022": {"text": "    ", "translate": false},
-            "1023": {"text": "   ", "translate": false},
-            "1030": {"text": "\n\n\n\n\n\n ", "translate": false},
-            "1031": {"text": "\n\n\n\n\n ", "translate": false},
-            "1032": {"text": "\n\n\n\n" , "translate": false},
-            "1033": {"text": "\n\n\n ", "translate": false},
-            "1034": {"text": "\n\n ", "translate": false},
-            "1035": {"text": "\n ", "translate": false},
-            "1024": {"text": "\n\n\n\n\n\n", "translate": false},
-            "1025": {"text": "\n\n\n\n\n", "translate": false},
-            "1026": {"text": "\n\n\n\n", "translate": false},
-            "1027": {"text": "\n\n\n", "translate": false},
-            "1028": {"text": "\n\n", "translate": false},
-            "1029": {"text": "\n", "translate": false},
-            "1036": {"text": "ᴜsᴇʀ ᴘʀᴏғɪʟᴇ", "translate": false},
-            "1037": {"text": "ʟᴇᴠᴇʟ", "translate": false},
-            "1038": {"text": "ᴅɪɴᴏsᴀᴜʀs", "translate": false},
-            "1039": {"text": "ɪɴᴠᴇɴᴛᴏʀʏ", "translate": false},
-            "1042": {"text": "ᴍᴀʀᴋᴇᴛ", "translate": false},
-            "1040": {"text": "->", "translate": false}
-        },
-
-        "one_replace_s": ["```", "*", "`", "~", "_", "'"],
-
-        "translators": ["lingvanex", "yandex"],
-        "zero_translator": "yandex",
-
-        "main_code": "ru",
-        "langs_path": "../../bot/localization",
-        "dump_path": "dumps/",
-
-        "ignore_translate_keys": ["data", "callback", "inline_menu", "keys", "previous", "image", "photo_url", "url", "meow_book", "localization_author", "language_name", "arguments", "commands_args"],
-
-        "sp_sym": ["#", "#"]
-    },
-
-
     "replace_codes": {
-        "myMemory": {
+        "mymemory": {
             "ru": "ru-RU",
             "uk": "uk-UA",
             "es": "es-ES",
             "id": "id-ID"
         },
-        "modernMt": {
+        "modernmt": {
             "es": "es-ES"
+        },
+        "apertium": {
+            "ru": "rus",
+            "en": "eng",
+            "es": "spa",
+            "id": "ind"
+        },
+        "lingvanex": {
+            "ru": "ru_RU",
+            "uk": "uk_UA",
+            "es": "es_ES",
+            "id": "id_ID"
         }
     },
 
-    "replace_words": {
-        "(121)": {"text": "_", "translate": false},
-        "(120)": {"text": "        ", "translate": false},
-        "(119)": {"text": "       ", "translate": false},
-        "(118)": {"text": "      ", "translate": false},
-        "(117)": {"text": "     ", "translate": false},
-        "(116)": {"text": "    ", "translate": false},
-        "(115)": {"text": "   ", "translate": false},
-        "(114)": {"text": "\n\n\n\n", "translate": false},
-        "(113)": {"text": "\n\n\n", "translate": false},
-        "(112)": {"text": "\n\n", "translate": false},
-        "(111)": {"text": "\n", "translate": false},
-        "(100)": {"text": "ᴜsᴇʀ ᴘʀᴏғɪʟᴇ", "translate": false},
-        "(200)": {"text": "ʟᴇᴠᴇʟ", "translate": false},
-        "(300)": {"text": "ᴅɪɴᴏsᴀᴜʀs", "translate": false},
-        "(400)": {"text": "ɪɴᴠᴇɴᴛᴏʀʏ", "translate": false},
-        "(500)": {"text": "->", "translate": false},
-        "(801)": {"text": "</code>", "translate": false},
-        "(800)": {"text": "<code>", "translate": false},
-        "(901)": {"text": "<i>", "translate": false},
-        "(900)": {"text": "</i>", "translate": false},
-        "(700)": {"text": "<b>", "translate": false},
-        "(701)": {"text": "</b>", "translate": false}
+    "start_symbols": [
+        "/", "@"
+    ],
 
+    "replace_words": {
+        "1041": {"text": "<a href='tg://user?id={userid}'>{username}</a>", "translate": false},
+        "101": {"text": " > ", "translate": false},
+        "102": {"text": "</code>", "translate": false},
+        "103": {"text": "<code>", "translate": false},
+        "104": {"text": "<i>", "translate": false},
+        "105": {"text": "</i>", "translate": false},
+        "106": {"text": "<b>", "translate": false},
+        "107": {"text": "</b>", "translate": false},
+        "108": {"text": "<u>", "translate": false},
+        "109": {"text": "</u>", "translate": false},
+        "1010": {"text": "<s>", "translate": false},
+        "1011": {"text": "</s>", "translate": false},
+        "1012": {"text": "<br>", "translate": false},
+        "1013": {"text": "</br>", "translate": false},
+        "1014": {"text": "            ", "translate": false},
+        "1015": {"text": "           ", "translate": false},
+        "1016": {"text": "          ", "translate": false},
+        "1017": {"text": "         ", "translate": false},
+        "1018": {"text": "        ", "translate": false},
+        "1019": {"text": "       ", "translate": false},
+        "1020": {"text": "      ", "translate": false},
+        "1021": {"text": "     ", "translate": false},
+        "1022": {"text": "    ", "translate": false},
+        "1023": {"text": "   ", "translate": false},
+        "1030": {"text": "\n\n\n\n\n\n ", "translate": false},
+        "1031": {"text": "\n\n\n\n\n ", "translate": false},
+        "1032": {"text": "\n\n\n\n" , "translate": false},
+        "1033": {"text": "\n\n\n ", "translate": false},
+        "1034": {"text": "\n\n ", "translate": false},
+        "1035": {"text": "\n ", "translate": false},
+        "1024": {"text": "\n\n\n\n\n\n", "translate": false},
+        "1025": {"text": "\n\n\n\n\n", "translate": false},
+        "1026": {"text": "\n\n\n\n", "translate": false},
+        "1027": {"text": "\n\n\n", "translate": false},
+        "1028": {"text": "\n\n", "translate": false},
+        "1029": {"text": "\n", "translate": false},
+        "1036": {"text": "ᴜsᴇʀ ᴘʀᴏғɪʟᴇ", "translate": false},
+        "1037": {"text": "ʟᴇᴠᴇʟ", "translate": false},
+        "1038": {"text": "ᴅɪɴᴏsᴀᴜʀs", "translate": false},
+        "1039": {"text": "ɪɴᴠᴇɴᴛᴏʀʏ", "translate": false},
+        "1042": {"text": "ᴍᴀʀᴋᴇᴛ", "translate": false},
+        "1040": {"text": "->", "translate": false}
     },
 
-    "one_replace_s": ["*", "`"],
+    "one_replace_s": ["```", "*", "`", "~", "_"],
 
-    "translators": ["bing", "myMemory", "modernMt"],
-    "zero_translator": "bing",
+    "translators": ["lingvanex", "yandex"],
+    "zero_translator": "yandex",
 
     "main_code": "ru",
-    "langs_path": "/../../bot/localization",
-    "damp_path": "/damps/",
+    "langs_path": "../../bot/localization",
+    "dump_path": "dumps/",
 
-    "ignore_translate_keys": ["data", "callback", "inline_menu", "keys", "previous", "image", "photo_url", "url"]
+    "ignore_translate_keys": ["data", "callback", "inline_menu", "keys", "previous", "image", "photo_url", "url", "localization_author", "language_name", "arguments", "market.caption", "market_ui.had", "commands_args.coins.1", "commands_args.super_coins.1", "commands_args.lvl.1"],
+
+    "sp_sym": ["#", "#"]
+    
 }
