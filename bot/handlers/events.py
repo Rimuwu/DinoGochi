@@ -11,10 +11,9 @@ from bot.modules.logs import log
 from bot.modules.managment.boost_spy import create_boost, delete_boost
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import user_in_chat
-from aiogram.types import ChatMemberUpdated, Message, ChatBoostUpdated, ChatBoostRemoved
+from aiogram.types import ChatMemberUpdated, Message, ChatBoostUpdated, ChatBoostRemoved, ChatBoostSourcePremium
 from aiogram.filters.chat_member_updated import \
     ChatMemberUpdatedFilter, MEMBER, KICKED, LEFT, ADMINISTRATOR, CREATOR, IS_NOT_MEMBER, IS_MEMBER
-# from aiogram.enums import ChatBoostSource
 
 from bot.tasks.bot_report import create_report
 from aiogram import F
@@ -96,15 +95,15 @@ async def bot_stop(bot: Bot, dispatcher: Dispatcher, bots: tuple[Bot], router):
     )
     await create_report()
 
-# @main_router.chat_boost(
-#     F.chat.id == GAME_SETTINGS['channel_id'])
-# async def on_chat_boost(event: ChatBoostUpdated, bot: Bot):
-#     expiration_timestamp = int(event.boost.expiration_date.timestamp())
+@main_router.chat_boost(
+    F.chat.id == GAME_SETTINGS['channel_id'])
+async def on_chat_boost(event: ChatBoostUpdated, bot: Bot):
+    expiration_timestamp = int(event.boost.expiration_date.timestamp())
 
-#     if isinstance(event.boost.source, ChatBoostSource.PREMIUM):
-#         user = event.boost.source.user
-#         if user:
-#             await create_boost(user.id, expiration_timestamp)
+    if isinstance(event.boost.source, ChatBoostSourcePremium):
+        user = event.boost.source.user
+        if user:
+            await create_boost(user.id, expiration_timestamp)
 
 @main_router.removed_chat_boost(
     F.chat.id == GAME_SETTINGS['channel_id'])
