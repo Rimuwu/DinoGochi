@@ -7,10 +7,12 @@ from bot.const import GAME_SETTINGS
 boosters = DBconstructor(mongo_client.other.boosters)
 
 async def user_boost_channel_status(userid: int):
-    res = await bot.get_user_chat_boosts(GAME_SETTINGS['channel_id'], userid)
-    if res and len(res.boosts) > 0:
-        return True
-    return False
+    try:
+        res = await bot.get_user_chat_boosts(GAME_SETTINGS['channel_id'], userid)
+        if res and len(res.boosts) > 0:
+            return True
+        return False
+    except: return False
 
 async def create_boost(userid: int, end_time: int = 0) -> dict:
     """ Создание бустера
