@@ -94,7 +94,7 @@ async def bonus_message(user, message, lang):
 
     if res: add_text += t('daily_award.2', lang)
     else: add_text += t('daily_award.1', lang)
-    if res2: add_text += t('daily_award.bonus', lang)
+    if res2: add_text += ' ' + t('daily_award.bonus', lang)
 
     text = t('daily_award.info', lang, lvl_1=lvl1, lvl_2=lvl2)
     if not res2:
