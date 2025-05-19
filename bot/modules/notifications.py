@@ -192,7 +192,8 @@ async def user_notification(user_id: int, not_type: str,
     standart_notification = [
         'donation', 'lvl_up',
         'item_crafted', # необходим items
-        'product_delete' # необходим preview
+        'product_delete', # необходим preview
+        'leave_sub_award'
     ]
     unstandart_notification = [
         'referal_award',
@@ -204,6 +205,7 @@ async def user_notification(user_id: int, not_type: str,
         'kindergarten', # dino_name dino_alt_id_markup
     ]
     add_way = '.'+kwargs.get('add_way', '')
+    if add_way == '.': add_way = ''
     effect_id = None
     image = None
 
