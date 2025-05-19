@@ -1816,11 +1816,11 @@
             "text_ost": "Tersisa:",
             "rare_name": "Langka:",
             "time_position": [
-                465,
+                325,
                 220
             ],
             "rare_position": [
-                465,
+                525,
                 280
             ],
             "incubation_text": "🥚 | Telur sedang dierami, tersisa: {time_end}",
