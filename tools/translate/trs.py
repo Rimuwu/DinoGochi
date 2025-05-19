@@ -66,6 +66,8 @@ with open(os.path.join(ex, 'settings.json'), encoding='utf-8') as f:
     zero_translator = settings['zero_translator']
     ignore_translate_keys = settings['ignore_translate_keys']
     strat_sym, end_sym = settings['sp_sym']
+    
+    no_edit = settings['no_edit']
 
 # langs_path = "./test/langs"
 # dump_path = "./test/dumps"
@@ -144,7 +146,7 @@ def only_translate(text, from_language, to_language, translator, text_key, clien
             messages=[
                 {
                     "role": "user",
-                    "content": f'You are a strict translation module for Telegram bot. Your task is to translate the text from language "{from_language}" to language "{to_language}". Rules: 1. DO NOT guess, rephrase or autocorrect. 2. DO NOT explain anything. Just return the translation. 3. DO NOT translate, delete, rearrange or change: - #1042# (any number within # characters) - this must be kept exactly, in the same form and position, without any changes. This is **mandatory** the fact that if #1042# (or similar) exists in the input, it is present in the output **exactly as it is**. 4. Markdown formatting (for example, **bold**, _italic_, [link](url)) should be fully saved. 5. Always keep the original style, structure and order of the elements - especially the arrangement of punctuation. 6. If the input consists only of untranslated elements, return it unchanged. 7. If you cannot translate or the text does not make sense - return exactly the text that needs to be translated without changes. 8. If the text is already in the target language - return it unchanged. 9. If the text is very short (1-2 words), consider it as a button icon - translate it briefly and keep its format and tone. 10. You also get a key "{text_key}" - if the text value is unclear, you can consider this key as context (but do not output it). 11. If the text is short, then it may be a button, you have to stick to the same length for translation. 12. Output only translated text - no explanation, no changes. 13. If you cant translate, return the "NOTEXT". Text to translate (text inside "): "{text}"'
+                    "content": f'You are a strict translation module for Telegram bot. Your task is to translate the text from language "{from_language}" to language "{to_language}". Rules: 1. DO NOT guess, rephrase or autocorrect. 2. DO NOT explain anything. Just return the translation. 3. DO NOT translate, delete, rearrange or change: - #1042# (any number within # characters) - this must be kept exactly, in the same form and position, without any changes. This is **mandatory** the fact that if #1042# (or similar) exists in the input, it is present in the output **exactly as it is**. 4. Markdown formatting (for example, **bold**, _italic_, [link](url)) should be fully saved. 5. Always keep the original style, structure and order of the elements - especially the arrangement of punctuation. 6. If the input consists only of untranslated elements, return it unchanged. 7. If you cannot translate or the text does not make sense - return exactly the text that needs to be translated without changes. 8. If the text is already in the target language - return it unchanged. 9. If the text is very short (1-2 words), consider it as a button icon - translate it briefly and keep its format and tone. 10. You also get a key "{text_key}" - if the text value is unclear, you can consider this key as context (but do not output it). 11. If the text is short, then it may be a button, you have to stick to the same length for translation. 12. Output only translated text - no explanation, no changes. 13. If you cant translate, return the "NOTEXT". Text to translate: {text}'
                 },
             ],
             headers=headers,
@@ -200,8 +202,8 @@ def build_structure(data):
         return {k: build_structure(v) for k, v in data.items()}
     elif isinstance(data, list):
         return [build_structure(v) for v in data]
-    elif isinstance(data, (int, float, bool)):
-        return data
+    # elif isinstance(data, (int, float, bool)):
+    #     return data
     else:
         return 'NOTEXT'
 
@@ -226,7 +228,16 @@ def compare_structures(base, dump, path=""):
             else:
                 n, c, d = compare_structures(base[k], dump[k], new_path)
                 new_keys += n
-                changed_keys += c
+                
+                # Проверяем, что последний или предпоследний элемент пути не находится в no_edit
+                path_parts = new_path.split('.')
+                last = path_parts[-1]
+                second_last = path_parts[-2] if len(path_parts) > 1 else None
+                if last in no_edit or (second_last and second_last in no_edit):
+                    pass  # пропускаем добавление в changed_keys
+                else:
+                    changed_keys += c
+
                 deleted_keys += d
 
         for k in dump_keys - base_keys:
@@ -242,13 +253,24 @@ def compare_structures(base, dump, path=""):
             else:
                 n, c, d = compare_structures(v, dump[idx], new_path)
                 new_keys += n
-                changed_keys += c
+                
+                # Проверяем, что последний или предпоследний элемент пути не находится в no_edit
+                path_parts = new_path.split('.')
+                last = path_parts[-1]
+                second_last = path_parts[-2] if len(path_parts) > 1 else None
+                if last in no_edit or (second_last and second_last in no_edit):
+                    pass  # пропускаем добавление в changed_keys
+                else:
+                    changed_keys += c
+
                 deleted_keys += d
 
         for idx in range(len(base), len(dump)):
             new_path = f"{path}.{idx}" if path else str(idx)
             deleted_keys.append(new_path)
     else:
+        # if isinstance(base, (int, float, bool)):
+        #     new_keys.append(path)
         if base != dump:
             changed_keys.append(path)
     return new_keys, changed_keys, deleted_keys
@@ -362,7 +384,7 @@ def replace_specials(text: str, cash_replaces: dict):
         #         text = text.replace(match, text_code)
 
     # # Прячем конструкции вида #число##число#... (любое количество подряд)
-    # # Новый паттерн: ищет одну или более групп #число#, подряд идущих
+    # # Новый паттерн: ищет одну или более групп #число#, подряд и
 
     # matches = re.findall(r'(#[0-9]+#)+', text)
     # for match in matches:
@@ -831,53 +853,54 @@ def translate_worker(args):
     if STOP_BY_CTRL_C:
         return (path, translated, value)
 
-    if is_prefix_in_keys(new_keys + changed_keys, path):
-        if isinstance(value, str):
-            path_set = set(path.split('.'))
-            ignore_set = set(ignore_translate_keys)
+    if isinstance(value, str):
+        path_set = set(path.split('.'))
+        ignore_set = set(ignore_translate_keys)
 
-            t0 = time.time()
-            skip_translate = False
+        t0 = time.time()
+        skip_translate = False
 
-            # Если хотя бы один ключ из пути в ignore_translate_keys — не переводим
-            if path_set & ignore_set:
-                if path.endswith('text'):
-                    translated = translate_text(value, lang, main_lang, path, {}, client=local_client)
-                    if translated == value:
-                        translated = translate_text(value, lang, main_lang, path, {}, client=local_client)
-                else:
-                    translated = value
-                skip_translate = True
-                logger.info(f'SKIP_TRANSLATE (ignore_keys): lang {lang} to {main_lang} key {path}')
+        # Если хотя бы один ключ из пути в ignore_translate_keys — не переводим
 
-            # Если длина значения <= 2 — не переводим
-            if not skip_translate and len(value) <= 2:
-                translated = value
-                skip_translate = True
-                logger.info(f'SKIP_TRANSLATE (<= 2): lang {lang} to {main_lang} key {path}')
-
-            # Если весь текст состоит только из эмодзи — не переводим
-            if (
-                not skip_translate
-                and isinstance(value, str)
-                and value.strip()
-                and all(c in [e['emoji'] for e in emoji.emoji_list(value)] for c in value if not c.isspace())
-            ):
-                translated = value
-                skip_translate = True
-                logger.info(f'SKIP_TRANSLATE (only_emoji): lang {lang} to {main_lang} key {path}')
-
-            # Если не было причин пропустить — переводим
-            if not skip_translate:
-                if STOP_BY_CTRL_C:
-                    return (path, translated, value)
+        if path_set & ignore_set:
+            if path.endswith('text'):
                 translated = translate_text(value, lang, main_lang, path, {}, client=local_client)
-                if translated == value and not STOP_BY_CTRL_C:
+                if translated == value:
                     translated = translate_text(value, lang, main_lang, path, {}, client=local_client)
 
-            t1 = time.time()
-            times.append(t1 - t0)
-            return (path, translated, value)
+            skip_translate = True
+            logger.info(f'SKIP_TRANSLATE (ignore_keys): lang {lang} to {main_lang} key {path}')
+
+        # Если длина значения <= 2 — не переводим
+        if not skip_translate and len(value) <= 2:
+            translated = value
+            skip_translate = True
+            logger.info(f'SKIP_TRANSLATE (<= 2): lang {lang} to {main_lang} key {path}')
+
+        # Если весь текст состоит только из эмодзи — не переводим
+        if (
+            not skip_translate
+            and isinstance(value, str)
+            and value.strip()
+            and all(c in [e['emoji'] for e in emoji.emoji_list(value)] for c in value if not c.isspace())
+        ):
+            translated = value
+            skip_translate = True
+            logger.info(f'SKIP_TRANSLATE (only_emoji): lang {lang} to {main_lang} key {path}')
+
+        # Если не было причин пропустить — переводим
+        if not skip_translate:
+            if STOP_BY_CTRL_C:
+                return (path, translated, value)
+
+            translated = translate_text(value, lang, main_lang, path, {}, client=local_client)
+            if translated == value and not STOP_BY_CTRL_C:
+                translated = translate_text(value, lang, main_lang, path, {}, client=local_client)
+
+        t1 = time.time()
+        times.append(t1 - t0)
+        return (path, translated, value)
+    
     return (path, translated, value)
 
 def get_by_path(dct, path):
@@ -1045,35 +1068,31 @@ def main():
             logging.info(f'{time.strftime("%Y-%m-%d %H:%M:%S")} - Начало перевода для {lang}')
             logging.info(f'---------------------------------------')
 
-
             # Собираем пути для перевода: новые или изменённые ключи, либо если значение None или "NOTEXT"
             paths_to_translate = []
-            # def collect_paths(path, value):
-            #     # Проверяем, что ключ новый или изменённый
-            #     if path in new_keys or path in changed_keys:
-            #         # Берём значение из main_data (оригинал)
-            #         orig_value = get_by_path(main_data, path)
-            #         # Если значение строка и не пустое, добавляем в список для перевода
-            #         if isinstance(orig_value, str) and orig_value.strip():
-            #             # Если в lang_data по этому пути None или "NOTEXT", тоже добавляем
-            #             cur_val = get_by_path(lang_data, path)
-            #             if cur_val is None or cur_val == "NOTEXT" or cur_val != orig_value:
-            #                 paths_to_translate.append((path, orig_value))
-            #         else:
-            #             # Если это int или bool, просто копируем/обновляем в lang_data
-            #             if isinstance(orig_value, (int, bool)):
-            #                 set_by_path(lang_data, path, orig_value, dump_data[lang])
-            #                 set_by_path(dump_data, path, orig_value, dump_data[lang])
 
-            # walk_keys(main_data, collect_paths)
-            
-            # Собираем пути для перевода: новые или изменённые ключи, либо если значение None или "NOTEXT"
+            # --- Собираем только переводимые пути (строки, а также int, float, bool) ---
+            def collect_leaf_paths(data, base_path=""):
+                result = []
+                if isinstance(data, dict):
+                    for k, v in data.items():
+                        new_path = f"{base_path}.{k}" if base_path else k
+                        result.extend(collect_leaf_paths(v, new_path))
+                elif isinstance(data, list):
+                    for idx, v in enumerate(data):
+                        new_path = f"{base_path}.{idx}" if base_path else str(idx)
+                        result.extend(collect_leaf_paths(v, new_path))
+                elif isinstance(data, (str, int, float, bool)):
+                    result.append((base_path, data))
+                return result
+
             paths_to_translate = []
             for path in new_keys + changed_keys:
                 orig_value = get_by_path(main_data, path)
-                # Добавляем только если значение строка и не пустое
-                # if isinstance(orig_value, str) and orig_value.strip():
-                paths_to_translate.append((path, orig_value))
+                if isinstance(orig_value, (dict, list)):
+                    paths_to_translate.extend(collect_leaf_paths(orig_value, path))
+                else:
+                    paths_to_translate.append((path, orig_value))
             
             total = len(paths_to_translate)
 
@@ -1104,7 +1123,8 @@ def main():
                         if translated == "NOTEXT":
                             value = "NOTEXT"
 
-                        print(f"Переведено: {path} -> {translated}")
+                        if not isinstance(translated, (bool, int, float)):
+                            print(f"Переведено: {path} -> {translated}")
 
                         set_by_path(lang_data, path, translated, dump_data[lang])
                         set_by_path(dump_data, f'{lang}.'+path, value)

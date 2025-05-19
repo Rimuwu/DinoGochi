@@ -82,7 +82,9 @@
     "langs_path": "../../bot/localization",
     "dump_path": "./dumps/",
 
-    "ignore_translate_keys": ["data", "callback", "inline_menu", "keys", "previous", "image", "photo_url", "url", "localization_author", "language_name", "arguments", "market.caption", "market_ui.had", "commands_args.coins.1", "commands_args.super_coins.1", "commands_args.lvl.1"],
+    "ignore_translate_keys": ["data", "callback", "inline_menu", "keys", "previous", "image", "photo_url", "url", "localization_author", "language_name", "arguments"],
+
+    "no_edit": ["rare_position", "time_position"],
 
     "sp_sym": ["#", "#"]
     
