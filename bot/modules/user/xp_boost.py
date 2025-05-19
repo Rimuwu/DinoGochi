@@ -19,7 +19,7 @@ async def xpboost_percent(userid: int):
     xp_boost = 1
 
     if await user_boost_channel_status(userid):
-        xp_boost += 1.0
+        xp_boost += 0.5
 
     if await premium(userid):
         xp_boost += 0.5
@@ -35,4 +35,4 @@ async def xpboost_percent(userid: int):
 
     # Бустер опыта
 
-    return max(xp_boost, 2.5)
+    return min(xp_boost, 2.5)
