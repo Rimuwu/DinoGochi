@@ -21,14 +21,15 @@ async def xpboost_percent(userid: int):
     if await user_boost_channel_status(userid):
         xp_boost += 0.5
 
-    if await premium(userid):
-        xp_boost += 0.5
+    premium_st = await premium(userid)
+    if premium_st: xp_boost += 0.5
 
     if event_data := await get_event('xp_boost'):
         xp_boost += event_data['data']['xp_boost']
 
     if event_data := await get_event('xp_premium_boost'):
-        xp_boost += event_data['data']['xp_boost']
+        if premium_st:
+            xp_boost += event_data['data']['xp_boost']
 
     if await check_name(userid):
         xp_boost += 0.2
