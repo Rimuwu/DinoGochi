@@ -1196,7 +1196,8 @@
             "sawmill_end": {
                 "text": "🌲 | {dino_name} kembali dari pabrik kayu! Berikut hasil pekerjaannya: {results}",
                 "inline_menu": "dino_profile"
-            }
+            },
+            "leave_sub_award": "😩 | Sayangnya kami harus menghapus penghargaan masuk ke obrolan yang kamu tinggalkan..."
         },
         "breakdown": {
             "seclusion": "🔇 | Dinosaur menolak berbicara dengan Anda untuk sementara waktu, jadi Anda tidak akan menerima pemberitahuan darinya.",
@@ -1370,144 +1371,236 @@
                 "help": {
                     "short": "Daftar semua perintah bot",
                     "long": "🥏 Daftar semua perintah di bot.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": true
                 },
                 "cancel": {
                     "short": "Batalkan status",
                     "long": "🛡️ Batalkan setiap kondisi pilihan.\n× 🪀 Contoh: Anda membuat produk untuk pasar, untuk membatalkan pembuatannya di setiap tahap - gunakan perintah ini.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "start": {
                     "short": "Mulai bot / Menu utama",
                     "long": "💥 Hal pertama yang dilihat bot dari Anda - start, tetapi dalam kasus lain, Anda bisa pergi ke menu utama dengan menggunakan perintah ini.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "profile": {
                     "short": "Profil pengguna",
                     "long": "🎋 Alternatif untuk perintah informasi, ringkasan umum tentang pengguna. Saat membalas pesan pengguna lain - akan menampilkan informasi tentang dia. Jika memasukkan - \"me\", maka akan menampilkan informasi tentang Anda.",
                     "arguments": "(me)",
+                    "dev": false,
+                    "dm": true,
+                    "group": true,
                     "alternative": "profil saya"
+                },
+                "links": {
+                    "short": "Tautan ke sumber daya",
+                    "long": "🔗 Tautan ke obrolan dengan imbalan masuk.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "add_me": {
                     "short": "Tambahkan aku!",
                     "long": "🎃 Perintah untuk penambahan cepat ke teman melalui grup.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
                 },
                 "promo": {
                     "short": "Aktivasi kode promo",
                     "long": "⛏️ Ikuti berita di saluran untuk mendapatkan kode promo lebih sering!",
-                    "arguments": "(code)"
+                    "arguments": "(code)",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "super": {
                     "short": "Menu super koin",
                     "long": "🧺 Tonton iklan - dapatkan super koin - tukar di toko premium!",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "timer": {
                     "short": "Mengubah detik menjadi waktu",
                     "long": "⏳ Masukkan jumlah detik yang akan diubah menjadi waktu.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "string_to_sec": {
                     "short": "Petunjuk untuk memasukkan waktu",
                     "long": "🪵 Petunjuk untuk memasukkan waktu di tempat seperti, misalnya, pembuatan lelang.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "pushinfo": {
                     "short": "Petunjuk untuk mempublikasikan barang di saluran",
                     "long": "🪵 Petunjuk untuk memasukkan waktu di tempat seperti, misalnya, pembuatan lelang.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "delete_push": {
                     "short": "Hapus pemberitahuan tentang produk",
                     "long": "🪵 Penghapusan pemberitahuan di saluran.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "craftlist": {
                     "short": "Daftar item yang dibuat",
                     "long": "🎀 Daftar item yang dibuat",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "create_tracking": {
                     "short": "Pembuatan tautan pelacakan",
                     "long": "💥 Membuat tautan pelacakan untuk melacak masuk melalui /start",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "tracking": {
                     "short": "Daftar tautan pelacakan",
                     "long": "🛡️ Daftar tautan jejak yang dipantau melalui /start",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "create_promo": {
                     "short": "Pembuatan kode promo",
                     "long": "🏦 Membuat kode promo",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "promos": {
                     "short": "Daftar dan pengelolaan kode promo",
                     "long": "🛡️ Daftar dan pengelolaan kode promo",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "link_promo": {
                     "short": "Tautan tombol kode promo",
                     "long": "🛡️ Untuk mengaitkan tombol kode promo dengan pesan, harus menjawab pesan dengan perintah, dan bot juga harus berada di saluran.",
-                    "arguments": "(promo) (name)"
+                    "arguments": "(promo) (name)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "add_premium": {
                     "short": "Pemberian langganan premium",
                     "long": "🛡️ Pemberian langganan premium sementara\n× 0 - berikan premium ke diri sendiri, str_time - format waktu. Argumen kedua - jika kosong, maka selamanya, jika tidak, untuk sementara waktu.",
-                    "arguments": "(0/userid) (/str_time)"
+                    "arguments": "(0/userid) (/str_time)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "copy_m": {
                     "short": "Pengiriman berdasarkan bahasa",
                     "long": "🛡️ Argumen - kode bahasa (ru en id)",
-                    "arguments": "(lang_code)"
+                    "arguments": "(lang_code)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "eval": {
                     "short": "Eksekusi kode",
                     "long": "🛡️ Menjalankan kode",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "get_username": {
                     "short": "Pengembalian kelas User berdasarkan userid",
                     "long": "🛡️ Pengembalian kelas User berdasarkan userid",
-                    "arguments": "(userid)"
+                    "arguments": "(userid)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "add_item": {
                     "short": "Menambahkan item",
                     "long": "🛡️ Penambahan item",
-                    "arguments": "(userid) (item_id) (col)"
+                    "arguments": "(userid) (item_id) (col)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "create_company": {
                     "short": "Buat perusahaan",
                     "long": "🛡️ Membuat kampanye iklan",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "companies": {
                     "short": "Tinjauan perusahaan",
                     "long": "🛡️ Melihat perusahaan iklan",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "group_settings": {
                     "short": "Pengaturan grup",
                     "long": "🌐 Pengaturan pengaturan grup. Pengaturan topik kerja, waktu penghapusan.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
                 },
                 "deleteallmessages": {
                     "short": "Menghapus semua pesan dari bot",
                     "long": "🌐 Menghapus semua pesan secara absolut",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
                 },
                 "give_coins": {
                     "short": "Pengiriman koin kepada pemain",
                     "long": "🧨 Pengiriman koin kepada pengguna. Diperlukan balasan wajib ke pesan.",
                     "arguments": "(coins)",
+                    "dev": false,
+                    "dm": false,
+                    "group": true,
                     "alternative": "kirim koin"
                 },
                 "rating": {
                     "short": "Pemain teratas",
                     "long": "🧨 Pemain teratas berdasarkan koin, level, dan super koin. Peringkat tidak menampilkan pengguna dengan mode anonim aktif",
                     "arguments": "({translate_url:group_rating.commands_args.coins.1}/{translate_url:group_rating.commands_args.lvl.1}/{translate_url:group_rating.commands_args.super_coins.1})",
+                    "dev": false,
+                    "dm": false,
+                    "group": true,
                     "alternative": "peringkat"
                 }
             }
@@ -1722,6 +1815,14 @@
             "text_info": "Informasi",
             "text_ost": "Tersisa:",
             "rare_name": "Langka:",
+            "time_position": [
+                465,
+                220
+            ],
+            "rare_position": [
+                465,
+                280
+            ],
             "incubation_text": "🥚 | Telur sedang dierami, tersisa: {time_end}",
             "stats": {
                 "pass": "Tidak melakukan apa-apa 💭",
@@ -2164,7 +2265,13 @@
         },
         "about_menu": {
             "team": "<b>🎭 | Perintah bot</b>\n<i>Semua dari kita melakukan banyak hal sekaligus, tetapi setiap orang memiliki perannya sendiri...</i>\n\n💻 @AS1AW - Pengembang\n🎨 @unknown_cat13 - Desainer\n💻 @magecode - Pengembang\n💾 @debastersplay - Penyedia host\n⚽️ @despating - Penguji\n\n<b>🗝 | Penulis lokalisi</b>\n<i>Setiap orang dapat menerjemahkan bot ke dalam bahasa ibunya sendiri.\nIngin membantu dengan terjemahan? Hubungi @AS1AW\n\n</i>{lang_name} - {author}",
-            "links": "**🔗 | Ikatan besar**\nDinosaurus yang menakutkan ada di mana-mana!\n\n📢 Kanal berita - @DinoGochi\n👥 Forum - @DinoForum\n💢 Tentang pengembangan - @DevGochi\n⭐ Lowongan pekerjaan - @DinoPoint"
+            "links": "*🔗 | Hubungan besar*\nDinosaurus yang mengerikan ada di mana-mana! Dan juga dinosaurus mendapatkan hadiah masuk!\n\n× 📢 Saluran berita @DinoGochi\n— Hadiah masuk: {channel_reward} ⭐\n— Hadiah boost: pengalaman x1.5 ⚡\n\n× 👥 Forum @DinoForum\n— Hadiah masuk: {forum_reward} ⭐\n\n× 💢 Tentang pengembangan @DevGochi\n",
+            "buttons": {
+                "channel": "🎩 Baca berita!",
+                "forum": "🦕 Berkomunikasi!",
+                "boost": "⭐ Berikan suara!",
+                "check": "🎊 Dapatkan hadiah masuk"
+            }
         },
         "support_command": {
             "info": "💸 | Dukung dengan koin\nKami - tim yang bekerja pada bot ini hanya dengan kekuatan sendiri. Bot ini gratis dan terus berkembang untuk Anda. Jika Anda menyukai bot ini, Anda bisa mendukungnya dengan koin!\n\n🎨 | Metode dukungan\n\n",
@@ -2186,7 +2293,7 @@
                     "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "Langganan Ultra untuk Anda dan dinosaurus Anda!",
-                    "description": "🖼 Kemungkinan untuk mengatur gambar apa saja sebagai latar belakang!\n🍼 Perhatikan dinosaurus saya - kirim dinosaurus ke taman kanak-kanak kapan saja!\n✨ Tampilan status Ultra di semua daftar.\n🧶 Peningkatan batas pengumpulan makanan.\n🏝 Lokasi tambahan dalam perjalanan.\n🎮 Permainan tambahan.\n🦕 +1 ke batas dinosaurus.\n🎠 Mengatur gambar apa saja untuk menu toko.\n🕹 Peningkatan batas untuk promosi.\n🎟️ Iklan dapat dimatikan."
+                    "description": "🖼 Kemampuan untuk memasang gambar apa pun sebagai latar belakang!\n🍼 Pantau dinosaurus saya - kirim dinosaurus ke taman kanak-kanak kapan saja!\n✨ Menampilkan status Ultra di semua daftar.\n🧶 Peningkatan batas pengumpulan makanan.\n🏝 Lokasi tambahan dalam perjalanan.\n🎮 Permainan tambahan.\n🦕 +1 ke batas dinosaurus.\n🎠 Menyetel gambar apa pun untuk menu toko.\n🕹 Peningkatan batas promosi.\n🎟️ Iklan dapat dimatikan.\n⭐ Pengalaman x1.5\n🎭 Kontrol kebebasan anonimitas.\n🌶 Acara khusus."
                 },
                 "rescue_kit": {
                     "name": "❤ Kit penyelamat",
@@ -2484,16 +2591,32 @@
             "answer_text": "🎮 Tentukan rentang waktu bermain yang diizinkan, dan dinosaurus akan memilih berapa lama dia akan bermain >",
             "time": {
                 "sdj4": {
-                    "text": "15 - 30 menit"
+                    "text": "15 - 30 menit",
+                    "data": [
+                        15,
+                        30
+                    ]
                 },
                 "34ns": {
-                    "text": "30 - 60 menit"
+                    "text": "30 - 60 menit",
+                    "data": [
+                        30,
+                        60
+                    ]
                 },
                 "sd4s": {
-                    "text": "60 - 90 menit"
+                    "text": "60 - 90 menit",
+                    "data": [
+                        60,
+                        90
+                    ]
                 },
                 "fso3": {
-                    "text": "90 - 120 menit"
+                    "text": "90 - 120 menit",
+                    "data": [
+                        90,
+                        120
+                    ]
                 }
             },
             "invite_friend": {
@@ -2570,6 +2693,7 @@
             "dead_last_dino": {
                 "people_name": "👤 Tidak Dikenal",
                 "start": {
+                    "system": true,
                     "text": "✉ Anda menerima pesan dari sumber yang tidak dikenal.",
                     "buttons": {
                         "m1": {
@@ -2615,6 +2739,7 @@
                 "m3-n": {
                     "text": "{people_name} tersenyum melihat Anda. Sudah jelas, dia tahu bahwa Anda berbohong.",
                     "previous": "m2-n",
+                    "system": true,
                     "buttons": {
                         "m2-y": {
                             "text": "❌ Mengakui",
@@ -2649,6 +2774,7 @@
                 "m4-y": {
                     "text": "📃 Setelah membaca kontrak, Anda mengetahui bahwa Anda menyerahkan 80% dari tabungan Anda dan seluruh inventaris organisasi, dan sebagai gantinya, organisasi memberikan Anda telur dengan ketidakpastian tingkat kelangkaan.",
                     "previous": "m3-y",
+                    "system": true,
                     "buttons": {
                         "end-y": {
                             "text": "🖋 Tandatangani",
@@ -2659,6 +2785,7 @@
                 "m5-n": {
                     "text": "📃 Setelah membaca kontrak, Anda mengetahui bahwa Anda menyerahkan 70% tabungan Anda dan seluruh inventaris organisasi, dan sebagai gantinya, organisasi memberikan Anda telur dengan tingkat kelangkaan yang tidak pasti.",
                     "previous": "m4-n",
+                    "system": true,
                     "buttons": {
                         "end-n": {
                             "text": "🖋 Langganan",
@@ -2769,22 +2896,28 @@
             "time_info": "⌛ | Pilih berapa lama dinosaurus akan menjelajahi lokasi",
             "time_text": {
                 "t10": {
-                    "text": "10 menit."
+                    "text": "10 menit.",
+                    "time": 600
                 },
                 "t30": {
-                    "text": "30 menit"
+                    "text": "30 menit",
+                    "time": 1800
                 },
                 "t60": {
-                    "text": "60 menit"
+                    "text": "60 menit",
+                    "time": 3600
                 },
                 "t90": {
-                    "text": "90 menit"
+                    "text": "90 menit",
+                    "time": 5400
                 },
                 "t120": {
-                    "text": "120 menit"
+                    "text": "120 menit",
+                    "time": 7200
                 },
                 "t240": {
-                    "text": "240 menit"
+                    "text": "240 menit",
+                    "time": 14400
                 }
             },
             "start": "🎏 | Dinosaur pergi ke {loc_name} di {time_text}",
@@ -3207,10 +3340,10 @@
         },
         "daily_award": {
             "info": "🎋 *|* *Hadiah Harian*\nMasuk setiap hari, Anda dapat mendapatkan bonus yang menyenangkan\n\n🏮 *|* *Level 1*: *Pemain* - Bonus masuk yang menyenangkan, ini yang bisa didapatkan: _{lvl_1} 🪙_\n\n🎏 *Level 2*: *Pelatih* - Bonus masuk dan berlangganan saluran yang menyenangkan, ini yang bisa didapatkan dengan menekan tombol: {lvl_2} 🪙",
-            "bonus_text": "\n\n🎍 *|* *Tambahan*: - Jika Anda menambahkan *DinoGochi* ke nama Anda, maka tambahan hadiah harian akan bertambah: _{bonus}_ 🪙\n\n🎍 Contoh penambahan:\n{name_dino}",
+            "bonus_text": "\n\n🎍 *|* *Tambahan*: - Jika Anda menambahkan *DinoGochi* atau \"🦕\" ke nama Anda, maka bonus harian akan bertambah: _{bonus}_ 🪙, dan pengalaman akan diperoleh dengan kecepatan 1.2x\n\n🎍 Contoh penambahan:\n{name_dino}",
             "lvl_now": "\n\n👑 Saat ini Anda akan menerima hadiah tingkat\n",
             "1": "*🏮 Pemain*",
-            "2": "*🎏 Penjinak*",
+            "2": "*🎏 Pelatih*",
             "bonus": "+ *🎍 Bonus tambahan untuk nama*",
             "buttons": {
                 "channel_url": "🗝️ Berlangganan",
@@ -4283,19 +4416,24 @@
             "view": {
                 "buttons": {
                     "d845": {
-                        "text": "⌛ 30 menit"
+                        "text": "⌛ 30 menit",
+                        "data": 1800
                     },
                     "s98j": {
-                        "text": "⌛ 60 menit"
+                        "text": "⌛ 60 menit",
+                        "data": 3600
                     },
                     "erlt": {
-                        "text": "⌛ 90 menit"
+                        "text": "⌛ 90 menit",
+                        "data": 5400
                     },
                     "74js": {
-                        "text": "⌛ 120 menit"
+                        "text": "⌛ 120 menit",
+                        "data": 7200
                     },
                     "no_ads": {
-                        "text": "❌ Nonaktifkan iklan"
+                        "text": "❌ Nonaktifkan iklan",
+                        "data": 0
                     }
                 },
                 "info": "☄ Pilih waktu minimum yang harus berlalu antara tampilan iklan ->"
@@ -4801,6 +4939,11 @@
                 ]
             }
         },
-        "test": "Tes2"
+        "link_reward": {
+            "alredy_award": "🌹 | Kamu sudah mendapatkan hadiah masuk!",
+            "susseful": "🎉 | Kamu berhasil mendapatkan hadiah masuk!",
+            "no_in_chat": "🌹 | Anda tidak dapat menerima hadiah masuk, karena Anda tidak berada di obrolan!",
+            "already_awarded": "Diterima"
+        }
     }
 }

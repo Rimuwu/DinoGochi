@@ -1196,7 +1196,8 @@
             "sawmill_end": {
                 "text": "🌲 | {dino_name} volvió de la serrería! Aquí los resultados de su trabajo: {results}",
                 "inline_menu": "dino_profile"
-            }
+            },
+            "leave_sub_award": "😩 | Lamentablemente tuvimos que retirar la recompensa por entrar en el chat que abandonaste..."
         },
         "breakdown": {
             "seclusion": "🔇 | El dinosaurio se niega a hablar contigo durante un tiempo, por lo que no recibirás notificaciones de él.",
@@ -1370,144 +1371,236 @@
                 "help": {
                     "short": "Lista de todos los comandos del bot",
                     "long": "🥏 Lista de todos los comandos en el bot.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": true
                 },
                 "cancel": {
                     "short": "Cancelar estado",
                     "long": "🛡️ Cancelar cualquier estado de selección.\n× 🪀 Ejemplo: Creas un producto para el mercado, para cancelar su creación en cualquier etapa, utiliza este comando.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "start": {
                     "short": "Inicio del bot / Menú principal",
                     "long": "💥 Lo primero que ve el bot de ti es /start, pero en otros casos, puedes acceder al menú principal con este comando.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "profile": {
                     "short": "Perfil del usuario",
                     "long": "🎋 Alternativa al comando de información, resumen general del usuario. Al responder a un mensaje de otro usuario, mostrará su información. Si ingresas - \"me\", mostrará información sobre ti.",
                     "arguments": "(me)",
+                    "dev": false,
+                    "dm": true,
+                    "group": true,
                     "alternative": "mi perfil"
+                },
+                "links": {
+                    "short": "Enlaces a recursos",
+                    "long": "🔗 Enlaces a los chats con recompensa por entrada.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "add_me": {
                     "short": "¡Agrégame!",
                     "long": "🎃 Comando para añadir rápidamente a amigos a través del grupo.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
                 },
                 "promo": {
                     "short": "Activar código promocional",
                     "long": "⛏️ Siga las noticias en el canal para recibir códigos promocionales con más frecuencia!",
-                    "arguments": "(code)"
+                    "arguments": "(code)",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "super": {
                     "short": "Menú de super monedas",
                     "long": "🧺 Mira la publicidad - recibe super monedas - ¡cámbialas en la tienda premium!",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "timer": {
                     "short": "Convierte segundos en tiempo",
                     "long": "⏳ Introduzca la cantidad de segundos que se convertirán en hora en la salida.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "string_to_sec": {
                     "short": "Sugerencia para ingresar la hora",
                     "long": "🪵 Sugerencia para ingresar la hora en lugares como, por ejemplo, la creación de una subasta.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "pushinfo": {
                     "short": "Sugerencia para publicar productos en el canal",
                     "long": "🪵 Pista para ingresar la hora en lugares como la creación de una subasta.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "delete_push": {
                     "short": "Eliminar notificación de producto",
                     "long": "🪵 Eliminación de notificación en el canal.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "craftlist": {
                     "short": "Lista de objetos creados",
                     "long": "🎀 Lista de elementos creados",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "create_tracking": {
                     "short": "Creación de enlace de seguimiento",
                     "long": "💥 Creación de enlace de rastreo para seguimiento de entrada a través de /start",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "tracking": {
                     "short": "Lista de enlaces de seguimiento",
                     "long": "🛡️ Lista de enlaces de seguimiento que se rastrean a través de /start",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "create_promo": {
                     "short": "Creación de código promocional",
                     "long": "🏦 Creación de código promocional",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "promos": {
                     "short": "Lista y gestión de códigos promocionales",
                     "long": "🛡️ Lista y gestión de códigos promocionales",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "link_promo": {
                     "short": "Vinculación del botón de código promocional",
                     "long": "🛡️ Para vincular el botón del código promocional al mensaje, debes responder con el comando al mensaje, además el bot también debe estar en el canal.",
-                    "arguments": "(promo) (name)"
+                    "arguments": "(promo) (name)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "add_premium": {
                     "short": "Entrega de suscripción premium",
                     "long": "🛡️ Entrega de suscripción premium por tiempo\n× 0 - otorgar premium a ti mismo, str_time - formato de tiempo. Segundo argumento - si está vacío, para siempre, de lo contrario por tiempo.",
-                    "arguments": "(0/userid) (/str_time)"
+                    "arguments": "(0/userid) (/str_time)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "copy_m": {
                     "short": "Envío por idioma",
                     "long": "🛡️ Argumento - código de idioma (ru en id)",
-                    "arguments": "(lang_code)"
+                    "arguments": "(lang_code)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "eval": {
                     "short": "Ejecución de código",
                     "long": "🛡️ Ejecución del código",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "get_username": {
                     "short": "Devolver la clase User por userid",
                     "long": "🛡️ Devolver clase User por userid",
-                    "arguments": "(userid)"
+                    "arguments": "(userid)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "add_item": {
                     "short": "Agregar artículos",
                     "long": "🛡️ Añadir elementos",
-                    "arguments": "(userid) (item_id) (col)"
+                    "arguments": "(userid) (item_id) (col)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "create_company": {
                     "short": "Crear empresa",
                     "long": "🛡️ Crear una campaña publicitaria",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "companies": {
                     "short": "Visualización de empresas",
                     "long": "🛡️ Visualización de campañas publicitarias",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "group_settings": {
                     "short": "Configuración del grupo",
                     "long": "🌐 Gestión de la configuración del grupo. Configuración del tema de trabajo, tiempo de eliminación.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
                 },
                 "deleteallmessages": {
                     "short": "Elimina todos los mensajes del bot",
                     "long": "🌐 Elimina todos los mensajes por completo",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
                 },
                 "give_coins": {
                     "short": "Transferir moneda al jugador",
                     "long": "🧨 Transferencia de monedas al usuario. Se requiere una respuesta obligatoria al mensaje.",
                     "arguments": "(coins)",
+                    "dev": false,
+                    "dm": false,
+                    "group": true,
                     "alternative": " transferir monedas"
                 },
                 "rating": {
                     "short": "Top jugadores",
                     "long": "🧨 Los mejores jugadores por monedas, nivel y super monedas. La clasificación no muestra a los usuarios con modo anónimo activado",
                     "arguments": "({translate_url:group_rating.commands_args.coins.1}/{translate_url:group_rating.commands_args.lvl.1}/{translate_url:group_rating.commands_args.super_coins.1})",
+                    "dev": false,
+                    "dm": false,
+                    "group": true,
                     "alternative": "clasificación"
                 }
             }
@@ -1722,6 +1815,14 @@
             "text_info": "Información",
             "text_ost": "Queda:",
             "rare_name": "Rareza:",
+            "time_position": [
+                465,
+                220
+            ],
+            "rare_position": [
+                465,
+                280
+            ],
             "incubation_text": "🥚 | El huevo está en incubación,queda:{time_end}",
             "stats": {
                 "pass": "No hago nada 💭",
@@ -2164,7 +2265,13 @@
         },
         "about_menu": {
             "team": "<b>🎭 | Comando del bot</b>\n<i>Todos hacemos muchas cosas a la vez, pero cada uno tiene su papel...</i>\n\n💻 @AS1AW - Desarrollador\n🎨 @unknown_cat13 - Diseñador\n💻 @magecode - Desarrollador\n💾 @debastersplay - Proveedor de hosting\n⚽️ @despating - Probador</b>\n<i> | Autor de la localización</b>\n<i>Cada uno puede traducir el bot a su idioma natal.\n¿Quieres ayudar con la traducción? Contacta a @AS1AW\n\n</i>{lang_name} - {author}",
-            "links": "**🔗 | Gran conexión**\n¡Los dinosaurios horribles están en todas partes!\n\n📢 Canal de noticias - @DinoGochi\n👥 Foro - @DinoForum\n💢 Sobre el desarrollo - @DevGochi\n⭐ Vacantes - @DinoPoint"
+            "links": "*🔗 | Gran conexión*\n¡Los dinosaurios horribles están en todos lados! Y también los dinosaurios reciben la recompensa de entrada!\n\n× 📢 Canal de noticias @DinoGochi\n— Recompensa por entrada: {channel_reward} ⭐\n— Recompensa por impulso: experiencia x1.5 ⚡\n\n× 👥 Foro @DinoForum\n— Recompensa por entrada: {forum_reward} ⭐\n\n× 💢 Sobre el desarrollo @DevGochi\n",
+            "buttons": {
+                "channel": "🎩 ¡Leer noticias!",
+                "forum": "🦕 ¡Comunicar!",
+                "boost": "⭐ ¡Votar!",
+                "check": "🎊 Reclamar premio por entrada"
+            }
         },
         "support_command": {
             "info": "💸 | Soporte con moneda\nSomos un equipo que trabaja en el bot solo con nuestros propios recursos. El bot es gratuito y se desarrolla constantemente para ti. ¡Si te gusta el bot, podrías apoyarlo con una moneda!\n\n🎨 | Métodos de soporte\n\n",
@@ -2186,7 +2293,7 @@
                     "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "¡Suscripción ultrawidget para ti y tus dinosaurios!",
-                    "description": "🖼 ¡La posibilidad de poner cualquier imagen en lugar del fondo!\n🍼 ¡Vigila a mi dinosaurio - envía a tu dinosaurio a la guardería en cualquier momento!\n✨ Visualización del estado Ultra en todas las listas.\n🧶 Aumento de límites en la recolección de comida.\n🏝 ubicaciones adicionales en el viaje.\n🎮 Juegos adicionales.\n🦕 +1 al límite de dinosaurios.\n🎠 Configura cualquier imagen para el menú de la tienda.\n🕹 Aumento de límites para el promoción.\n🎟️ La publicidad se puede desactivar."
+                    "description": "🖼 ¡La posibilidad de poner cualquier imagen en lugar del fondo!\n🍼 ¡Vigila a mi dinosaurio - envía a tu dinosaurio a la guardería por cualquier tiempo!\n✨ Visualización del estado Ultra en todas las listas.\n🧶 Aumento de límites en la recolección de comida.\n🏝 Ubicaciones adicionales en el viaje.\n🎮 Juegos adicionales.\n🦕 +1 al límite de dinosaurios.\n🎠 Configura cualquier imagen para el menú de la tienda.\n🕹 Aumento de límites en la promoción.\n🎟️ La publicidad se puede desactivar.\n⭐ Experiencia x1.5\n🎭 Control libre de anonimato.\n🌶 Eventos especiales."
                 },
                 "rescue_kit": {
                     "name": "❤ Kit de emergencia",
@@ -2484,16 +2591,32 @@
             "answer_text": "🎮 Indique el intervalo de tiempo permitido para jugar, y el dinosaurio elegirá cuánto jugará >",
             "time": {
                 "sdj4": {
-                    "text": "15 - 30 min."
+                    "text": "15 - 30 min.",
+                    "data": [
+                        15,
+                        30
+                    ]
                 },
                 "34ns": {
-                    "text": "30 - 60 min."
+                    "text": "30 - 60 min.",
+                    "data": [
+                        30,
+                        60
+                    ]
                 },
                 "sd4s": {
-                    "text": "60 - 90 min."
+                    "text": "60 - 90 min.",
+                    "data": [
+                        60,
+                        90
+                    ]
                 },
                 "fso3": {
-                    "text": "90 - 120 min."
+                    "text": "90 - 120 min.",
+                    "data": [
+                        90,
+                        120
+                    ]
                 }
             },
             "invite_friend": {
@@ -2570,6 +2693,7 @@
             "dead_last_dino": {
                 "people_name": "👤 Desconocido",
                 "start": {
+                    "system": true,
                     "text": "✉ Tienes un mensaje de una fuente desconocida.",
                     "buttons": {
                         "m1": {
@@ -2615,6 +2739,7 @@
                 "m3-n": {
                     "text": "{people_name} te mira con una sonrisa. Ya está todo claro, sabe que estás mintiendo.",
                     "previous": "m2-n",
+                    "system": true,
                     "buttons": {
                         "m2-y": {
                             "text": "❌ Confesarse",
@@ -2649,6 +2774,7 @@
                 "m4-y": {
                     "text": "📃 Tras leer el contrato, has descubierto que entregas el 80% de tus ahorros y todo el inventario de la organización, y a cambio, la organización te proporciona un huevo de rareza indefinida.",
                     "previous": "m3-y",
+                    "system": true,
                     "buttons": {
                         "end-y": {
                             "text": "🖋 Suscribir",
@@ -2659,6 +2785,7 @@
                 "m5-n": {
                     "text": "📃 Tras leer el contrato, descubriste que entregas el 70% de tus ahorros y todo el inventario de la organización, y a cambio, la organización te proporciona un huevo de rareza indefinida.",
                     "previous": "m4-n",
+                    "system": true,
                     "buttons": {
                         "end-n": {
                             "text": "🖋 Suscribir",
@@ -2769,22 +2896,28 @@
             "time_info": "⌛ | Seleccione cuánto tiempo el dinosaurio investigará la ubicación",
             "time_text": {
                 "t10": {
-                    "text": "10 min."
+                    "text": "10 min.",
+                    "time": 600
                 },
                 "t30": {
-                    "text": "30 min."
+                    "text": "30 min.",
+                    "time": 1800
                 },
                 "t60": {
-                    "text": "60 min."
+                    "text": "60 min.",
+                    "time": 3600
                 },
                 "t90": {
-                    "text": "90 min."
+                    "text": "90 min.",
+                    "time": 5400
                 },
                 "t120": {
-                    "text": "120 min."
+                    "text": "120 min.",
+                    "time": 7200
                 },
                 "t240": {
-                    "text": "240 min."
+                    "text": "240 min.",
+                    "time": 14400
                 }
             },
             "start": "🎏 | El dinosaurio fue a {loc_name} en {time_text}",
@@ -3207,7 +3340,7 @@
         },
         "daily_award": {
             "info": "🎋 *|* *Recompensa diaria*\nAl entrar todos los días, se pueden recibir bonificaciones agradables\n\n🏮 *|* *Nivel 1*: *Jugador* - Bonificaciones agradables por ingreso, esto es lo que puedes obtener: _{lvl_1} 🪙_\n\n🎏 *Nivel 2*: *Entrenador* - Bonificaciones agradables por ingreso y suscripción al canal, esto es lo que puedes obtener pulsando el botón: {lvl_2} 🪙",
-            "bonus_text": "\n\n🎍 *|* *Adicional*: - Si añades *DinoGochi* a tu nombre, se añadirá a la recompensa diaria: _{bonus}_ 🪙\n\n🎍 Ejemplo de adición:\n{name_dino}",
+            "bonus_text": "\n\n🎍 *|* *Adicional*: - Si añades *DinoGochi* o \"🦕\" a tu nombre, se añadirá a la recompensa diaria: _{bonus}_ 🪙, y la experiencia se obtiene a una velocidad de 1.2x\n\n🎍 Ejemplo de adición:\n{name_dino}",
             "lvl_now": "\n\n👑 En este momento recibirás la recompensa de nivel\n",
             "1": "*🏮 Jugador*",
             "2": "*🎏 Entrenador*",
@@ -4283,19 +4416,24 @@
             "view": {
                 "buttons": {
                     "d845": {
-                        "text": "⌛ 30 minutos"
+                        "text": "⌛ 30 minutos",
+                        "data": 1800
                     },
                     "s98j": {
-                        "text": "⌛ 60 minutos"
+                        "text": "⌛ 60 minutos",
+                        "data": 3600
                     },
                     "erlt": {
-                        "text": "⌛ 90 minutos"
+                        "text": "⌛ 90 minutos",
+                        "data": 5400
                     },
                     "74js": {
-                        "text": "⌛ 120 minutos"
+                        "text": "⌛ 120 minutos",
+                        "data": 7200
                     },
                     "no_ads": {
-                        "text": "❌ Desactivar anuncios"
+                        "text": "❌ Desactivar anuncios",
+                        "data": 0
                     }
                 },
                 "info": "☄ Elige el tiempo mínimo que debe pasar entre la visualización de anuncios ->"
@@ -4801,6 +4939,11 @@
                 ]
             }
         },
-        "test": "Test2"
+        "link_reward": {
+            "alredy_award": "🌹 | ¡Ya has recibido la recompensa por ingresar!",
+            "susseful": "🎉 | ¡Has recibido correctamente la recompensa por ingresar!",
+            "no_in_chat": "🌹 | No puedes recibir la recompensa por entrar, ¡porque no estás en el chat!",
+            "already_awarded": "Recibido"
+        }
     }
 }

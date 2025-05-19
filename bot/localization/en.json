@@ -1196,7 +1196,8 @@
             "sawmill_end": {
                 "text": "🌲 | {dino_name} returned from the sawmill! Here are the results of his work: {results}",
                 "inline_menu": "dino_profile"
-            }
+            },
+            "leave_sub_award": "😩 | Unfortunately, we had to remove the reward for entering the chat you left..."
         },
         "breakdown": {
             "seclusion": "🔇 | The dinosaur refuses to talk to you for a while, so you will not receive notifications from it.",
@@ -1370,144 +1371,236 @@
                 "help": {
                     "short": "List of all bot commands",
                     "long": "🥏 List of all commands in the bot.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": true
                 },
                 "cancel": {
                     "short": "Cancel state",
                     "long": "🛡️ Cancel any selection state.\n× 🪀 Example: You are creating a product for the market, to cancel its creation at any stage - use this command.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "start": {
                     "short": "Start the bot / Main menu",
                     "long": "💥 The first thing the bot sees from you is start, but in other cases, you can go to the main menu using this command.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "profile": {
                     "short": "User profile",
                     "long": "🎋 Alternative to the info command, a general summary of the user. When replying to another user's message - will display information about them. If you enter - \"me\", it will display information about you.",
                     "arguments": "(me)",
+                    "dev": false,
+                    "dm": true,
+                    "group": true,
                     "alternative": "my profile"
+                },
+                "links": {
+                    "short": "Links to resources",
+                    "long": "🔗 Links to chats with reward for entry.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "add_me": {
                     "short": "Add me!",
                     "long": "🎃 Command for quick adding to friends via group.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
                 },
                 "promo": {
                     "short": "Activate promo code",
                     "long": "⛏️ Follow the news in the channel to receive promo codes more often!",
-                    "arguments": "(code)"
+                    "arguments": "(code)",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "super": {
                     "short": "Super Coins Menu",
                     "long": "🧺 Watch ads - get super coins - exchange them in the premium store!",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "timer": {
                     "short": "Converts seconds into time",
                     "long": "⏳ Enter the number of seconds, which will be converted to time on output.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "string_to_sec": {
                     "short": "Hint for entering time",
                     "long": "🪵 Hint for entering the time in places such as, for example, creating an auction.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "pushinfo": {
                     "short": "Product publication tip in the channel",
                     "long": "🪵 Hint for entering time in places like creating an auction.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "delete_push": {
                     "short": "Deleting product notification",
                     "long": "🪵 Delete notification in the channel.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "craftlist": {
                     "short": "List of created items",
                     "long": "🎀 List of created items",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 },
                 "create_tracking": {
                     "short": "Creating a tracking link",
                     "long": "💥 Creating a track link for tracking entry via /start",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "tracking": {
                     "short": "List of track links",
                     "long": "🛡️ List of tracked track links via /start",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "create_promo": {
                     "short": "Creating a promo code",
                     "long": "🏦 Creating a promo code",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "promos": {
                     "short": "List and management of promo codes",
                     "long": "🛡️ List and management of promo codes",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "link_promo": {
                     "short": "Link promo code button",
                     "long": "🛡️ To link the promo code button to a message, you need to reply with a command to the message, and the bot must also be in the channel.",
-                    "arguments": "(promo) (name)"
+                    "arguments": "(promo) (name)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "add_premium": {
                     "short": "Issuance of a premium subscription",
                     "long": "🛡️ Premium subscription issuance for a limited time\n× 0 - give premium to yourself, str_time - time format. The second argument - if empty, then forever, otherwise for a limited time.",
-                    "arguments": "(0/userid) (/str_time)"
+                    "arguments": "(0/userid) (/str_time)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "copy_m": {
                     "short": "Language mailing",
                     "long": "🛡️ Argument - language code (ru en id)",
-                    "arguments": "(lang_code)"
+                    "arguments": "(lang_code)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "eval": {
                     "short": "Code execution",
                     "long": "🛡️ Code execution",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "get_username": {
                     "short": "Return of User class by userid",
                     "long": "🛡️ Return User class by userid",
-                    "arguments": "(userid)"
+                    "arguments": "(userid)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "add_item": {
                     "short": "Adding items",
                     "long": "🛡️ Adding items",
-                    "arguments": "(userid) (item_id) (col)"
+                    "arguments": "(userid) (item_id) (col)",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "create_company": {
                     "short": "Create a company",
                     "long": "🛡️ Create an advertising campaign",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "companies": {
                     "short": "Company overview",
                     "long": "🛡️ View advertising campaigns",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": true,
+                    "dm": true,
+                    "group": false
                 },
                 "group_settings": {
                     "short": "Group settings",
                     "long": "🌐 Group settings management. Setting the working topic, deletion time.",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
                 },
                 "deleteallmessages": {
                     "short": "Deletes all messages from the bot",
                     "long": "🌐 Deletes all messages",
-                    "arguments": ""
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
                 },
                 "give_coins": {
                     "short": "Transfer coin to the player",
                     "long": "🧨 Transferring coins to the user. A mandatory reply to the message is required.",
                     "arguments": "(coins)",
+                    "dev": false,
+                    "dm": false,
+                    "group": true,
                     "alternative": "transfer coins"
                 },
                 "rating": {
                     "short": "Top players",
                     "long": "🧨 Top players by coins, level, and super coins. The rating does not display users with anonymous mode enabled",
                     "arguments": "({translate_url:group_rating.commands_args.coins.1}/{translate_url:group_rating.commands_args.lvl.1}/{translate_url:group_rating.commands_args.super_coins.1})",
+                    "dev": false,
+                    "dm": false,
+                    "group": true,
                     "alternative": "rating"
                 }
             }
@@ -1722,6 +1815,14 @@
             "text_info": "Information",
             "text_ost": "Remaining:",
             "rare_name": "Rarity:",
+            "time_position": [
+                465,
+                220
+            ],
+            "rare_position": [
+                465,
+                280
+            ],
             "incubation_text": "🥚 | The egg is incubating, remaining: {time_end}",
             "stats": {
                 "pass": "I do nothing 💭",
@@ -2164,7 +2265,13 @@
         },
         "about_menu": {
             "team": "<b>🎭 | Bot command</b>\n<i>We all do many things at once, but everyone has their own role...</i>\n\n💻 @AS1AW - Developer\n🎨 @unknown_cat13 - Designer\n💻 @magecode - Developer\n💾 @debastersplay - Host provision\n⚽️ @despating - Tester</b>\n<i> | Localization author</b>\n<i>Anyone can translate the bot into their native language.\nWant to help with the translation? Contact @AS1AW\n\n</i>{lang_name} - {author}",
-            "links": "**🔗 | Great connection**\nHorrible dinosaurs are everywhere!\n\n📢 News channel - @DinoGochi\n👥 Forum - @DinoForum\n💢 About development - @DevGochi\n⭐ Jobs - @DinoPoint"
+            "links": "*🔗 | Great connection*\nGreat dinosaurs are everywhere! And also dinosaurs receive entrance reward!\n\n× 📢 News channel @DinoGochi\n— Entrance reward: {channel_reward} ⭐\n— Boost reward: experience x1.5 ⚡\n\n× 👥 Forum @DinoForum\n— Entrance reward: {forum_reward} ⭐\n\n× 💢 About development @DevGochi\n",
+            "buttons": {
+                "channel": "🎩 Read news!",
+                "forum": "🦕 Communicate!",
+                "boost": "⭐ Vote!",
+                "check": "🎊 Get daily reward"
+            }
         },
         "support_command": {
             "info": "💸 | Support with a coin\nWe are a team working on the bot solely with our own efforts. The bot is free and constantly evolving for you. If you like the bot, you could support it with a coin!\n\n🎨 | Support methods\n\n",
@@ -2186,7 +2293,7 @@
                     "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "Ultra subscription for you and your dinosaurs!",
-                    "description": "🖼 The ability to set any picture instead of the background!\n🍼 Take care of my dinosaur - send the dinosaur to kindergarten for any time!\n✨ Display Ultra status in all lists.\n🧶 Increasing food collection limits.\n🏝 Additional locations in travel.\n🎮 Additional games.\n🦕 +1 to the dinosaur limit.\n🎠 Set any picture for the store menu.\n🕹 Increase promotion limits.\n🎟️ Advertising can be turned off."
+                    "description": "🖼 The ability to set any picture instead of the background!\n🍼 Watch over my dinosaur - send the dinosaur to kindergarten for any time!\n✨ Display of Ultra status in all lists.\n🧶 Increasing food collection limits.\n🏝 Additional locations in travel.\n🎮 Additional games.\n🦕 +1 to the dinosaur limit.\n🎠 Set any picture for the store menu.\n🕹 Increase promotion limits.\n🎟️ Ads can be disabled.\n⭐ Experience x1.5\n🎭 Free management of anonymity.\n🌶 Special events."
                 },
                 "rescue_kit": {
                     "name": "❤ Rescue kit",
@@ -2484,16 +2591,32 @@
             "answer_text": "🎮 Specify the allowed gaming time interval, and the dinosaur will choose how long it will play >",
             "time": {
                 "sdj4": {
-                    "text": "15 - 30 min."
+                    "text": "15 - 30 min.",
+                    "data": [
+                        15,
+                        30
+                    ]
                 },
                 "34ns": {
-                    "text": "30 - 60 min."
+                    "text": "30 - 60 min.",
+                    "data": [
+                        30,
+                        60
+                    ]
                 },
                 "sd4s": {
-                    "text": "60 - 90 min."
+                    "text": "60 - 90 min.",
+                    "data": [
+                        60,
+                        90
+                    ]
                 },
                 "fso3": {
-                    "text": "90 - 120 min."
+                    "text": "90 - 120 min.",
+                    "data": [
+                        90,
+                        120
+                    ]
                 }
             },
             "invite_friend": {
@@ -2570,6 +2693,7 @@
             "dead_last_dino": {
                 "people_name": "👤 Unknown",
                 "start": {
+                    "system": true,
                     "text": "✉ You have a message from an unknown source.",
                     "buttons": {
                         "m1": {
@@ -2615,6 +2739,7 @@
                 "m3-n": {
                     "text": "{people_name} smiles at you. It’s already clear, he knows that you are lying.",
                     "previous": "m2-n",
+                    "system": true,
                     "buttons": {
                         "m2-y": {
                             "text": "❌ To confess",
@@ -2649,6 +2774,7 @@
                 "m4-y": {
                     "text": "📃 Reading the contract, you found out that you give away 80% of your savings and all the organization’s inventory, and in return, the organization allocates you an egg of uncertain rarity.",
                     "previous": "m3-y",
+                    "system": true,
                     "buttons": {
                         "end-y": {
                             "text": "🖋 Sign up",
@@ -2659,6 +2785,7 @@
                 "m5-n": {
                     "text": "📃 After reading the contract, you found out that you give away 70% of your savings and all the organization's inventory, and in return, the organization assigns you an egg of uncertain rarity.",
                     "previous": "m4-n",
+                    "system": true,
                     "buttons": {
                         "end-n": {
                             "text": "🖋 Sign",
@@ -2769,22 +2896,28 @@
             "time_info": "⌛ | Choose how long the dinosaur will explore the location",
             "time_text": {
                 "t10": {
-                    "text": "10 min."
+                    "text": "10 min.",
+                    "time": 600
                 },
                 "t30": {
-                    "text": "30 min."
+                    "text": "30 min.",
+                    "time": 1800
                 },
                 "t60": {
-                    "text": "60 min."
+                    "text": "60 min.",
+                    "time": 3600
                 },
                 "t90": {
-                    "text": "90 min"
+                    "text": "90 min",
+                    "time": 5400
                 },
                 "t120": {
-                    "text": "120 min."
+                    "text": "120 min.",
+                    "time": 7200
                 },
                 "t240": {
-                    "text": "240 min"
+                    "text": "240 min",
+                    "time": 14400
                 }
             },
             "start": "🎏 | The dinosaur went to {loc_name} on {time_text}",
@@ -3207,10 +3340,10 @@
         },
         "daily_award": {
             "info": "🎋 *|* *Daily Reward*\nBy logging in every day, you can receive pleasant bonuses\n\n🏮 *|* *Level 1*: *Player* - Pleasant bonuses for logging in, here's what you can get: _{lvl_1} 🪙_\n\n🎏 *Level 2*: *Trainer* - Pleasant bonuses for logging in and subscribing to the channel, here's what you can get by pressing the button: {lvl_2} 🪙",
-            "bonus_text": "\n\n🎍 *|* *Additionally*: - If you add *DinoGochi* to your name, the daily reward will be increased by: _{bonus}_ 🪙\n\n🎍 Example of addition:\n{name_dino}",
+            "bonus_text": "\n\n🎍 *|* *Additionally*: - If you add *DinoGochi* or \"🦕\" to your name, the daily reward will be increased by: _{bonus}_ 🪙, and experience will be gained at a rate of 1.2x\n\n🎍 Example of adding:\n{name_dino}",
             "lvl_now": "\n\n👑 You will receive the level reward at the moment\n",
             "1": "*🏮 Player*",
-            "2": "*🎏 Trainer*",
+            "2": "*🎏 Tamer*",
             "bonus": "+ *🎍 Additional bonus for the name*",
             "buttons": {
                 "channel_url": "🗝️ Subscribe",
@@ -4283,19 +4416,24 @@
             "view": {
                 "buttons": {
                     "d845": {
-                        "text": "⌛ 30 minutes"
+                        "text": "⌛ 30 minutes",
+                        "data": 1800
                     },
                     "s98j": {
-                        "text": "⌛ 60 minutes"
+                        "text": "⌛ 60 minutes",
+                        "data": 3600
                     },
                     "erlt": {
-                        "text": "⌛ 90 minutes"
+                        "text": "⌛ 90 minutes",
+                        "data": 5400
                     },
                     "74js": {
-                        "text": "⌛ 120 minutes"
+                        "text": "⌛ 120 minutes",
+                        "data": 7200
                     },
                     "no_ads": {
-                        "text": "❌ Disable ads"
+                        "text": "❌ Disable ads",
+                        "data": 0
                     }
                 },
                 "info": "☄ Select the minimum time that must pass between showing ads ->"
@@ -4801,6 +4939,11 @@
                 ]
             }
         },
-        "test": "Test2"
+        "link_reward": {
+            "alredy_award": "🌹 | You have already received the login reward!",
+            "susseful": "🎉 | You have successfully received the login reward!",
+            "no_in_chat": "🌹 | You cannot receive the reward for entering, as you are not in the chat!",
+            "already_awarded": "Received"
+        }
     }
 }
