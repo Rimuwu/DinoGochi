@@ -17,14 +17,20 @@ async def user_boost_channel_status(userid: int):
 async def create_boost(userid: int, end_time: int = 0) -> dict:
     """ Создание бустера
     """
+
+    check = await boosters.find_one({'user_id': userid}, comment='create_boost')
+    if check:
+        # message
+        return check
+
     boost = {
         'user_id': userid,
         'end_time': end_time,
         'time': int(time.time())
     }
-    
+
     # message
-    
+    await boosters.insert_one(boost, comment='create_boost')
     return boost
 
 async def delete_boost(userid: int):
