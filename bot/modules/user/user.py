@@ -54,6 +54,8 @@ item_craft = DBconstructor(mongo_client.items.item_craft)
 preferential = DBconstructor(mongo_client.market.preferential)
 inside_shop = DBconstructor(mongo_client.market.inside_shop)
 
+group_users = DBconstructor(mongo_client.group.users)
+
 class User:
 
     def __init__(self):
@@ -176,11 +178,14 @@ class User:
         """Удаление юзера и всё с ним связанное из базы.
         """
 
-        for collection in [items, products, dead_dinos, incubations, sellers, puhs, daily_award_data, quests, inside_shop]:
+        for collection in [items, products, dead_dinos, incubations, sellers, puhs, daily_award_data, quests, inside_shop, preferential, inside_shop]:
             await collection.delete_many({'owner_id': self.userid}, comment='User_full_delete')
 
-        for collection in [referals, langs, ads, dead_users, subscriptions, tavern, dead_users, message_log, item_craft, preferential, inside_shop]:
+        for collection in [referals, langs, ads, dead_users, subscriptions, tavern, message_log, item_craft]:
             await collection.delete_many({'userid': self.userid}, comment='User_full_delete_1')
+        
+        for collection in [group_users]:
+            await collection.delete_many({'user_id': self.userid}, comment='User_full_delete_2')
 
         """ При полном удалении есть возможность, что у динозавра
             есть другие владельцы, значит мы должны передать им полные права
@@ -633,7 +638,8 @@ async def user_info(userid: int, lang: str, secret: bool = False,
                      lvl=user.lvl, xp_now=user.xp,
                      max_xp=max_lvl_xp(user.lvl),
                      coins=user_coins,
-                     super_coins=user_super_coins
+                     super_coins=user_super_coins,
+                     boost=await xpboost_percent(userid),
                      )
     return_text += '\n\n'
 
