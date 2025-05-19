@@ -600,4 +600,6 @@ def main(pp=False):
     return data
 
 if __name__ == '__main__':
-    main()
+    
+    print('Это старый переводчик, который не поддерживает новые функции. Использейте trs.py')
+    # main()
