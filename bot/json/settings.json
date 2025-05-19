@@ -9,7 +9,7 @@
         "items": ["items", "farm", "item_craft"],
         "tavern": ["quests", "tavern", "daily_award", "inside_shop"],
         "dungeon": ["lobby", "dungeon_statistic"],
-        "other": ["management", "statistic", "events", "promo", "dead_users", "companies", "message_log", "states", "boosters"],
+        "other": ["management", "statistic", "events", "promo", "dead_users", "companies", "message_log", "states", "boosters", "onetime_rewards"],
         "minigame": ["online"],
         "lottery": ["lottery", "members"],
         "tracking": ["links", "members"],
@@ -938,11 +938,14 @@
     "bot_channel": "https://t.me/DinoGochi",
     "channel_id": -1001673242031, // с -100 начинается!
     "forum_id": -1001677105612,
-    "bot_forum": "https://t.me/+pq9_21HXXYY4ZGQy",
+    "bot_forum": "https://t.me/dinoforum",
 
     "profiles_dinos_per_page": 3,
     "conf_set_price": 20,
     "rtl_name": ["🦕", "dinogochi"],
+
+    "channel_subs_reward": 100,
+    "forum_subs_reward": 100,
 
     "lvl_award": {
         "1": {
