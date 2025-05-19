@@ -256,41 +256,6 @@ async def delete_me(message: Message):
     
     conf3 = confirm_markup(lang)
     conf3.one_time_keyboard = True
-
-    # steps = [
-    #     {
-    #     "type": 'bool', "name": 'confirm', 
-    #     "data": {'cancel': True}, 
-    #     "translate_message": True,
-    #     'message': {
-    #         'text': 'delete_me.confirm', 
-    #         'reply_markup': confirm_markup(lang)
-    #         }
-    #     },
-    #     {
-    #     "type": 'bool', "name": 'confirm2', 
-    #     "data": {'cancel': True}, 
-    #     "translate_message": True,
-    #     'message': {
-    #         'text': 'delete_me.dead_dino',
-    #         'reply_markup': confirm_markup(lang)
-    #         }
-    #     },
-    #     {
-    #     "type": 'bool', "name": 'confirm3', 
-    #     "data": {'cancel': True}, 
-    #     "translate_message": True,
-    #     'message': {
-    #         'text': 'delete_me.rex_boss', 
-    #         'reply_markup': conf3
-    #         }
-    #     },
-    #     {"type": 'str', "name": 'code', "data": {}, 
-    #         'message': {
-    #             'text': t('delete_me.code', lang, code=code),
-    #             'reply_markup': cancel_markup(lang)}
-    #     }
-    # ]
     
     steps = [
         ConfirmStepData('confirm', StepMessage('delete_me.confirm', 
@@ -310,6 +275,10 @@ async def delete_me(message: Message):
                         max_len=10
                         )
     ]
+    
+
+    user: User = await User().create(userid)
+    if user.super_coins < 0: return
 
     await ChooseStepHandler(adapter_delete, userid, chatid, lang, steps,
                             transmitted_data={'code': code}).start()
