@@ -10,6 +10,7 @@ from bot.modules.localization import get_lang, t
 from bot.modules.logs import log
 from bot.modules.managment.boost_spy import create_boost, delete_boost
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.sub_award import leave_from_chat
 from bot.modules.user.user import user_in_chat
 from aiogram.types import ChatMemberUpdated, Message, ChatBoostUpdated, ChatBoostRemoved, ChatBoostSourcePremium
 from aiogram.filters.chat_member_updated import \
@@ -73,6 +74,14 @@ async def on_user_leave(event: ChatMemberUpdated):
                 return
 
         await delete_group_user(event.chat.id, event.new_chat_member.user.id)
+    
+    if event.chat.id in [GAME_SETTINGS['channel_id'], GAME_SETTINGS['forum_id']]:
+        if event.new_chat_member.user.is_bot or \
+            event.new_chat_member.user.id == bot.id:
+                return
+
+        en_type = 'channel' if event.chat.id == GAME_SETTINGS['channel_id'] else 'forum'
+        await leave_from_chat(event.old_chat_member.user.id, en_type)
 
 @main_router.chat_member(ChatMemberUpdatedFilter(IS_NOT_MEMBER >> IS_MEMBER))
 async def on_user_join(event: ChatMemberUpdated): 
