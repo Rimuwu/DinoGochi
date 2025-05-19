@@ -1,10 +1,10 @@
 
 from bot.exec import bot
-from aiogram.types import User as teleUser
+from aiogram.types import User
 from bot.const import GAME_SETTINGS
 from bot.modules.logs import log
 
-async def check_name(user: teleUser | int):
+async def check_name(user: User | int):
     """ Проверяет есть ли в нике надпись DinoGochi
     """
     if isinstance(user, (int, float)): 
@@ -14,11 +14,11 @@ async def check_name(user: teleUser | int):
         else:
             return False
     
-    if not isinstance(user, teleUser):
+    if isinstance(user, User):
         text = user.full_name.lower()
         for word in GAME_SETTINGS['rtl_name']:
             if word in text:
                 return True
     else:
-        log(f"В check_name передано {user}", 4)
+        log(f"В check_name передано {user} {type(user)}", 4)
     return False
