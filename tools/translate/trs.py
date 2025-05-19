@@ -59,16 +59,16 @@ with open(os.path.join(ex, 'settings.json'), encoding='utf-8') as f:
     translators_names = settings['translators']
 
     main_code = settings['main_code']
-    # langs_path = settings['langs_path']
-    # dump_path = settings['dump_path']
+    langs_path = settings['langs_path']
+    dump_path = settings['dump_path']
     start_symbols = settings['start_symbols']
 
     zero_translator = settings['zero_translator']
     ignore_translate_keys = settings['ignore_translate_keys']
     strat_sym, end_sym = settings['sp_sym']
 
-langs_path = "./test/langs"
-dump_path = "./test/dumps"
+# langs_path = "./test/langs"
+# dump_path = "./test/dumps"
 
 # --- Добавляем списки user_agents и proxies ---
 user_agents = [
@@ -144,7 +144,7 @@ def only_translate(text, from_language, to_language, translator, text_key, clien
             messages=[
                 {
                     "role": "user",
-                    "content": f'You are a strict translation module for Telegram bot. Your task is to translate the text from language "{from_language}" to language "{to_language}". Rules: 1. DO NOT guess, rephrase or autocorrect. 2. DO NOT explain anything. Just return the translation. 3. DO NOT translate, delete, rearrange or change: - #1042# (any number within # characters) - this must be kept exactly, in the same form and position, without any changes. This is **mandatory** the fact that if #1042# (or similar) exists in the input, it is present in the output **exactly as it is**. 4. Markdown formatting (for example, **bold**, _italic_, [link](url)) should be fully saved. 5. Always keep the original style, structure and order of the elements - especially the arrangement of punctuation. 6. If the input consists only of untranslated elements, return it unchanged. 7. If you cannot translate or the text does not make sense - return exactly the text that needs to be translated without changes. 8. If the text is already in the target language - return it unchanged. 9. If the text is very short (1-2 words), consider it as a button icon - translate it briefly and keep its format and tone. 10. You also get a key "{text_key}" - if the text value is unclear, you can consider this key as context (but do not output it). 11. If the text is short, then it may be a button, you have to stick to the same length for translation. 12. Output only translated text - no explanation, no changes. Text to be translated: {text}'
+                    "content": f'You are a strict translation module for Telegram bot. Your task is to translate the text from language "{from_language}" to language "{to_language}". Rules: 1. DO NOT guess, rephrase or autocorrect. 2. DO NOT explain anything. Just return the translation. 3. DO NOT translate, delete, rearrange or change: - #1042# (any number within # characters) - this must be kept exactly, in the same form and position, without any changes. This is **mandatory** the fact that if #1042# (or similar) exists in the input, it is present in the output **exactly as it is**. 4. Markdown formatting (for example, **bold**, _italic_, [link](url)) should be fully saved. 5. Always keep the original style, structure and order of the elements - especially the arrangement of punctuation. 6. If the input consists only of untranslated elements, return it unchanged. 7. If you cannot translate or the text does not make sense - return exactly the text that needs to be translated without changes. 8. If the text is already in the target language - return it unchanged. 9. If the text is very short (1-2 words), consider it as a button icon - translate it briefly and keep its format and tone. 10. You also get a key "{text_key}" - if the text value is unclear, you can consider this key as context (but do not output it). 11. If the text is short, then it may be a button, you have to stick to the same length for translation. 12. Output only translated text - no explanation, no changes. 13. If you cant translate, return the "NOTEXT". Text to translate (text inside "): "{text}"'
                 },
             ],
             headers=headers,
@@ -170,7 +170,7 @@ def check_count_unicode(text):
     if not isinstance(text, str):
         return 0, 0
 
-    special_one_replace_s = one_replace_s + ['{', '}', '#']
+    special_one_replace_s = one_replace_s + ['{', '}', '#', '\n', '\\']
     count_special = sum(text.count(sym) for sym in special_one_replace_s)
     count_emoji = len(emoji.emoji_list(text))
     return count_special, count_emoji
@@ -559,7 +559,7 @@ def translate_text(text: str, to_lang: str, from_lang: str, text_key: str,
             forbidden = [
                 "HTTP", "ERR_CHALLENGE", "Blocked by DuckDuckGo", "Bot limit exceeded", "ERR_BN_LIMIT",
                 "Misuse detected. Please get in touch, we can   come up with a solution for your use case.",
-                "Too Many Requests", "Misuse", "message='Too", "AI-powered", 'more](https://pollinations.ai/redirect/2699274)', "module—no guesswork", '\n\n---\n', 'Telegram bot'
+                "Too Many Requests", "Misuse", "message='Too", "AI-powered", 'more](https://pollinations.ai/redirect/2699274)', "module—no guesswork", '\n\n---\n', 'Telegram bot', '\u0000'
             ]
 
             # --- Основной вызов перевода ---
@@ -991,6 +991,23 @@ def main():
         print(f'Изменённые ключи: {changed_keys}')
         print(f'Удалённые ключи: {deleted_keys}')
 
+        # --- ДОБАВЛЯЕМ КЛЮЧИ, где в lang_data стоит 'NOTEXT' ---
+        def collect_notext_paths(data, path=""):
+            if isinstance(data, dict):
+                for k, v in data.items():
+                    new_path = f"{path}.{k}" if path else k
+                    collect_notext_paths(v, new_path)
+            elif isinstance(data, list):
+                for idx, v in enumerate(data):
+                    new_path = f"{path}.{idx}" if path else str(idx)
+                    collect_notext_paths(v, new_path)
+            else:
+                if data == "NOTEXT":
+                    if path not in changed_keys:
+                        changed_keys.append(path)
+
+        collect_notext_paths(lang_data)
+
         # 5. Удалить лишние ключи
         for key in deleted_keys:
             try:
@@ -1075,7 +1092,7 @@ def main():
 
             try:
                 save_counter = 0  # счетчик для промежуточного сохранения
-                with ThreadPoolExecutor(max_workers=3) as executor:
+                with ThreadPoolExecutor(max_workers=6) as executor:
                     future_to_path = {executor.submit(translate_worker, arg): arg[0] for arg in worker_args}
                     for future in as_completed(future_to_path):
                         if STOP_BY_CTRL_C:
