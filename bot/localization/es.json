@@ -4591,7 +4591,8 @@
             "ignore_system_timeout": "Ignorar el tiempo de espera del usuario (configuración de publicidad) SE RECOMIENDA para mensajes del sistema",
             "min_timeout": "Timeout mínimo entre mensajes o 0 para configuración por el usuario (formato de tiempo (1d) )",
             "name": "Nombre de su empresa",
-            "info": "🏦 Empresa {name}\n⏳ Fin en: {end} ({delta})\n🪵 Visualizaciones: {show} | {max_c}\n👑 Recompensa: {coin}\n🎃 Prioridad: {priority}\n💬 Fijación: {pin}\n🎀 Retraso entre visualizaciones: {timeout}\n🛡️ Ignorar timeout del sistema: {sys_timeout}\n❤️‍🩹 Eliminación al finalizar: {dlete_after}\n\n⛏️ Estado: {status}",
+            "info": "🏦 Compañía {name}\n⏳ Fin en: {end} ({delta})\n🪵 Exhibiciones: {show} | {max_c}\n👑 Recompensa: {coin}\n🎃 Prioridad: {priority}\n💬 Fijación: {pin}\n🎀 Retardo entre exhibiciones: {timeout}\n🛡️ Ignorar tiempo de espera del sistema: {sys_timeout}\n❤️‍🩹 Eliminación al terminar: {dlete_after}\n🎉 Tiempo mínimo de registro: {min_time}\n\n⛏️ Estado: {status}",
+            "min_reg_time": "Ingrese el tiempo mínimo de registro en el bot (por ejemplo 1d) o 0",
             "buttons": {
                 "delete": "Finalizar",
                 "activate": "Activar",

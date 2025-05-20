@@ -6,11 +6,11 @@
             "back": "↪️ Back",
             "enable": "✅ Enable",
             "disable": "❌ Disable",
-            "confirm": "✅ I confirm",
+            "confirm": "✅ Confirm",
             "yes": "✅ Yes",
             "no": "❌ No",
             "cancel": "❌ Cancel",
-            "refresh": "🔄 Refresh"
+            "refresh": "🔄 Update"
         },
         "commands_name": {
             "start_game": "🍡 Start playing",
@@ -4591,7 +4591,8 @@
             "ignore_system_timeout": "Ignore user timeout (ad setting) RECOMMENDED for system messages",
             "min_timeout": "Minimum timeout between messages or 0 for user settings (time format (1d))",
             "name": "Name your company",
-            "info": "🏦 Company {name}\n⏳ End in: {end} ({delta})\n🪵 Displays: {show} | {max_c}\n👑 Reward: {coin}\n🎃 Priority: {priority}\n💬 Pinning: {pin}\n🎀 Delay between displays: {timeout}\n🛡️ Ignore sys. timeout: {sys_timeout}\n❤️‍🩹 Remove on completion: {dlete_after}\n\n⛏️ Status: {status}",
+            "info": "🏦 Company {name}\n⏳ End in: {end} ({delta})\n🪵 Shows: {show} | {max_c}\n👑 Reward: {coin}\n🎃 Priority: {priority}\n💬 Pinning: {pin}\n🎀 Delay between shows: {timeout}\n🛡️ Ignore system timeout: {sys_timeout}\n❤️‍🩹 Removal upon completion: {dlete_after}\n🎉 Minimum registration time: {min_time}\n\n⛏️ Status: {status}",
+            "min_reg_time": "Enter the minimum registration time in the bot (for example 1d) or 0",
             "buttons": {
                 "delete": "Finish",
                 "activate": "Activate",

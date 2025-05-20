@@ -4591,7 +4591,8 @@
             "ignore_system_timeout": "Abaikan waktu habis pengguna (pengaturan iklan) DISARANKAN untuk pesan sistem",
             "min_timeout": "Batas waktu minimum antara pesan atau 0 untuk pengaturan dari pengguna (format waktu (1d) )",
             "name": "Sebutkan perusahaan Anda",
-            "info": "🏦 Perusahaan {name}\n⏳ Akhir dalam: {end} ({delta})\n🪵 Tampilan: {show} | {max_c}\n👑 Hadiah: {coin}\n🎃 Prioritas: {priority}\n💬 Penempelan: {pin}\n🎀 Penundaan antar tampilan: {timeout}\n🛡️ Abaikan timeout sistem: {sys_timeout}\n❤️‍🩹 Penghapusan saat selesai: {dlete_after}\n\n⛏️ Status: {status}",
+            "info": "🏦 Perusahaan {name}\n⏳ Akhir dalam: {end} ({delta})\n🪵 Tayang: {show} | {max_c}\n👑 Hadiah: {coin}\n🎃 Prioritas: {priority}\n💬 Penempatan: {pin}\n🎀 Delay antar tayangan: {timeout}\n🛡️ Abaikan timeout sistem: {sys_timeout}\n❤️‍🩹 Hapus setelah selesai: {dlete_after}\n🎉 Waktu minimum pendaftaran: {min_time}\n\n⛏️ Status: {status}",
+            "min_reg_time": "Masukkan waktu minimum pendaftaran di bot (misalnya 1d) atau 0",
             "buttons": {
                 "delete": "Selesai",
                 "activate": "Aktifkan",
