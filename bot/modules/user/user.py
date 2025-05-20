@@ -25,7 +25,6 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.avatar import get_avatar
 from bot.modules.user.friends import get_frineds
 from bot.modules.user.premium import premium
-from bot.modules.user.rtl_name import check_name
 from bot.modules.user.xp_boost import xpboost_percent
 
 users = DBconstructor(mongo_client.user.users)
