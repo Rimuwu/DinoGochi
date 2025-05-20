@@ -266,7 +266,11 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
             drop_item_data = get_data(item_id)
             item_name = get_name(item_id, lang, abilities)
-            image = f"images/items/{drop_item_data['image']}.png"
+            if 'image' in drop_item_data:
+                image = f"images/items/{drop_item_data['image']}.png"
+            else:
+                print(drop_item_data)
+                image = f"images/items/null.png"
 
             await send_SmartPhoto(userid, image, 
                 t('item_use.case.drop_item', lang, 

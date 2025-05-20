@@ -583,7 +583,67 @@
                     "act": 1,
                     "type": "static"
                 },
-                "id": {"group": "egg"}
+                "id": "regular_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    25,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "unusual_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    15,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "rare_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    9,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "mystic_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "legendary_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
+                    1,
+                    1000
+                ],
+                "col": {
+                    "act": 2,
+                    "type": "static"
+                },
+                "id": "egg_case"
             }
         ],
         "image": "case",
