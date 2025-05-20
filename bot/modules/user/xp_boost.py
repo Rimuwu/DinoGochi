@@ -3,7 +3,7 @@ from bot.modules.managment.events import get_event
 from bot.modules.user.premium import premium
 from bot.modules.user.rtl_name import check_name
 
-from bot.modules.managment.boost_spy import user_boost_channel_status
+from bot.modules.managment.boost_spy import base_boost_check
 
 async def xpboost_percent(userid: int):
     """
@@ -18,7 +18,7 @@ async def xpboost_percent(userid: int):
     """
     xp_boost = 1
 
-    if await user_boost_channel_status(userid):
+    if await base_boost_check(userid):
         xp_boost += 0.5
 
     premium_st = await premium(userid)

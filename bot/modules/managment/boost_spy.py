@@ -14,6 +14,20 @@ async def user_boost_channel_status(userid: int):
         return False
     except: return False
 
+async def base_boost_check(userid: int):
+    """ Проверка на наличие бустера
+    """
+
+    check = await boosters.find_one({'user_id': userid}, comment='base_boost_check')
+    if check:
+        if check['end_time'] > int(time.time()):
+            return True
+        else:
+            res = await delete_boost(userid)
+            return not res
+    else:
+        return False
+
 async def create_boost(userid: int, end_time: int = 0) -> dict:
     """ Создание бустера
     """
@@ -41,3 +55,6 @@ async def delete_boost(userid: int):
     if not res:
         await boosters.delete_one({'user_id': userid}, comment='delete_boost')
         # message
+        return True
+    else:
+        return False
