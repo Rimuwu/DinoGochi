@@ -43,7 +43,10 @@ class PassWorker(BaseMiddleware):
                 last_ads_time = await check_ads(user_id)
                 send = False
 
-                if daily == None and last_ads_time >= 10:
+                if user['_id'].generation_time.days <= 1:
+                    pass
+
+                elif daily == None and last_ads_time >= 10:
                     if user['settings']['notifications']:
                         for key, value in user['notifications'].items():
 
@@ -59,7 +62,7 @@ class PassWorker(BaseMiddleware):
                                     {'$set': {'notifications.daily_award': int(time_now())}}, 
                                     comment='post_process_2')
 
-                if last_ads_time >= 10 and not send:
+                elif last_ads_time >= 10 and not send:
                     # Рекламные сообщения
                     await auto_ads(message, True)
 
