@@ -1,4 +1,5 @@
 
+from calendar import c
 import aiohttp
 from bot.config import conf
 from bot.modules.companies import generate_message, nextinqueue, priority_and_timeout
@@ -78,7 +79,7 @@ async def check_limit(user_id:int):
 
     last = ads_cabinet['last_ads']
     limit = ads_cabinet['limit']
-    
+
     if limit != "inf":
         if int(time_now()) >= last + limit: return True
     return False 
@@ -108,6 +109,8 @@ async def auto_ads(message, only_parthner: bool = False):
                 lang = await get_lang(user_id)
                 comp_id = await nextinqueue(user_id, lang)
                 lim = await check_limit(user_id)
+                
+                print(comp_id)
 
                 create = user['_id'].generation_time
                 now = datetime.now(timezone.utc)
@@ -115,9 +118,10 @@ async def auto_ads(message, only_parthner: bool = False):
 
                 if comp_id and delta.days >= 1:
                     priory, ign_timeout = await priority_and_timeout(comp_id)
+
                     if ign_timeout or lim:
                         state = await get_state(user_id, message.chat.id)
-                        if not state:
+                        if not await state.get_state():
                             await generate_message(user_id, comp_id, lang)
 
             elif conf.show_advert:
