@@ -10,7 +10,6 @@ from bot.modules.localization import get_lang, t
 from bot.modules.logs import log
 from bot.modules.managment.boost_spy import create_boost, delete_boost
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.sub_award import leave_from_chat
 from bot.modules.user.user import user_in_chat
 from aiogram.types import ChatMemberUpdated, Message, ChatBoostUpdated, ChatBoostRemoved, ChatBoostSourcePremium
 from aiogram.filters.chat_member_updated import \
