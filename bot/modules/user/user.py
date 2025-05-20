@@ -639,7 +639,7 @@ async def user_info(userid: int, lang: str, secret: bool = False,
                      max_xp=max_lvl_xp(user.lvl),
                      coins=user_coins,
                      super_coins=user_super_coins,
-                     boost=await xpboost_percent(userid),
+                     boost=round(await xpboost_percent(userid), 1),
                      )
     return_text += '\n\n'
 
