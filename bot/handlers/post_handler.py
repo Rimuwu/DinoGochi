@@ -40,9 +40,10 @@ async def not_found(call: types.CallbackQuery):
 async def not_authorized(message: types.Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
-
-    text = t('not_authorized', lang)
-    await bot.send_message(chatid, text)
+    
+    if not message.from_user.bot:
+        text = t('not_authorized', lang)
+        await bot.send_message(chatid, text)
 
 # @main_router.message()
 # async def not_found_text(message: types.Message):
