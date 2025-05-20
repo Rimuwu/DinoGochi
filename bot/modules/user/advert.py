@@ -109,8 +109,6 @@ async def auto_ads(message, only_parthner: bool = False):
                 lang = await get_lang(user_id)
                 comp_id = await nextinqueue(user_id, lang)
                 lim = await check_limit(user_id)
-                
-                print(comp_id)
 
                 create = user['_id'].generation_time
                 now = datetime.now(timezone.utc)
