@@ -19,7 +19,7 @@ long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 
 REPEAT_MINUTS = 6
-EVENT_CHANCE = 0.17 * REPEAT_MINUTS
+EVENT_CHANCE = 0.08 * REPEAT_MINUTS
 
 async def end_journey_time():
     data = await long_activity.find(
@@ -38,7 +38,7 @@ async def events():
         {'journey_end': {'$gte': int(time())}, 'activity_type': 'journey'}, comment='events_data')
 
     for i in data:
-        event_random = random()
+        event_random = round(random(), 3)
 
         chance = EVENT_CHANCE
         dino = await Dino().create(i['dino_id'])
@@ -50,7 +50,7 @@ async def events():
         hik_flag = False
         if event_random >= chance:
             if await check_accessory(dino, 'hiking_bag'):
-                chance += 0.6 * REPEAT_MINUTS
+                chance += 0.05 * REPEAT_MINUTS
                 hik_flag = True
 
         if event_random <= chance:
