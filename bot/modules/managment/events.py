@@ -74,11 +74,11 @@ async def create_event(event_type: str = '', time_end: int = 0):
         if time_end == 0:
             event['time_end'] = int(time.time()) + choice(GS['events']['random_data']['random_time'])
 
-    elif event_type == 'xp_boost':
+    elif event_type in ['xp_premium_boost', 'xp_boost']:
         event['data']['xp_boost'] = round(randint(1, 2) / 10, 1)
-    
-    elif event_type == 'xp_premium_boost':
-        event['data']['xp_boost'] = round(randint(1, 2) / 10, 1)
+
+        if time_end == 0:
+            event['time_end'] = int(time.time()) + choice([14_400, 28_800, 7200, 3600])
 
     return event
 
