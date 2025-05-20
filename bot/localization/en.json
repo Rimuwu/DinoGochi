@@ -123,7 +123,7 @@
                 "quests": "⛓ Quests",
                 "daily_award": "🎁 Bonus",
                 "events": "🎈 Events",
-                "hoarder": "🪈 Flea market vendor"
+                "hoarder": "🪈 Hoarder"
             },
             "about": {
                 "team": "🤼 Team",
@@ -442,13 +442,13 @@
                 "name": "📦 Wooden case"
             },
             "iron-body": {
-                "name": "📦 Iron body"
+                "name": "📦 Iron case"
             },
             "copper-body": {
                 "name": "📦 Copper case"
             },
             "body_recipe": {
-                "name": "📜 Body shell recipe"
+                "name": "📜 Case recipe"
             },
             "metal-gear": {
                 "name": "⚙ Metal gear"
@@ -751,7 +751,7 @@
                 "description": "Berry-picking basket. Increases the maximum food gathering amount."
             },
             "net": {
-                "name": "🕸 Network",
+                "name": "🕸 Net",
                 "description": "Trap-net for hunting animals."
             },
             "book_forest": {
@@ -897,7 +897,7 @@
                 "name": "🦯 Rod"
             },
             "SYSTEM_ITEM_BODY": {
-                "name": "📦 Body"
+                "name": "📦 Case"
             },
             "rustycan": {
                 "name": "🥫 Rusty can"
