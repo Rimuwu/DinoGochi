@@ -23,7 +23,8 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 # from bot.modules.states_tools import ChooseInlineState, ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChooseInlineHandler, ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DataType, DinoStepData, StepMessage
-from bot.modules.user.user import (AddItemToUser, check_name, daily_award_con,
+from bot.modules.user.rtl_name import check_name
+from bot.modules.user.user import (AddItemToUser, daily_award_con,
                               get_dinos, take_coins, user_in_chat)
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message)
@@ -90,7 +91,7 @@ async def bonus_message(user, message, lang):
         + f', ' + str(award_data['lvl2']['coins'])
 
     res = await user_in_chat(userid, -1001673242031)
-    res2 = await check_name(user)
+    res2 = await check_name(user.id)
 
     if res: add_text += t('daily_award.2', lang)
     else: add_text += t('daily_award.1', lang)
@@ -154,7 +155,7 @@ async def daily_award(callback: CallbackQuery):
         award_data = GS['daily_award']
         res = await user_in_chat(userid, -1001673242031)
 
-        key, add_bonus = 'lvl1', await check_name(callback.from_user)
+        key, add_bonus = 'lvl1', await check_name(callback.from_user.id)
         if res: key = 'lvl2'
 
         items, coins = [], 0
