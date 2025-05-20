@@ -275,10 +275,6 @@ async def delete_me(message: Message):
                         max_len=10
                         )
     ]
-    
-
-    user: User = await User().create(userid)
-    if user.super_coins < 0: return
 
     await ChooseStepHandler(adapter_delete, userid, chatid, lang, steps,
                             transmitted_data={'code': code}).start()

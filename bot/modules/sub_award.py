@@ -43,22 +43,3 @@ async def award_for_entry(user_id: int, en_type: str):
 
         return await onetime_rewards.insert_one(data, comment='award_for_entry')
     return False
-
-async def leave_from_chat(user_id: int, en_type: str):
-    assert en_type in ['channel', 'forum'], "Invalid en_type provided"
-
-    check = await onetime_rewards.find_one({'user_id': user_id, 'type': en_type}, comment='leave_from_chat_check')
-
-    if check:
-        coins = check['coins']
-
-        await onetime_rewards.delete_one({'_id': check['_id']}, comment='leave_from_chat_delete')
-
-        await users.update_one({'userid': user_id},
-                                {'$inc': {'super_coins': -coins}}, comment='leave_from_chat_update')
-        log(f'User {user_id} left from {en_type} and lost {coins} super_coins', 1, 'leave_from_chat')
-
-        await user_notification(user_id, 'leave_sub_award')
-
-        return True
-    return False
