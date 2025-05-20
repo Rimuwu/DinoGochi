@@ -37,7 +37,9 @@ async def generation_code(owner_id):
 async def create_company(owner: int, message: dict, time_end: int, 
                         count: int, coin_price: int, priority: bool, 
                         one_message: bool, pin_message: bool, min_timeout: int,
-                        delete_after: bool, ignore_system_timeout: bool, name: str):
+                        delete_after: bool, ignore_system_timeout: bool, name: str,
+                        min_reg_time: int = 0
+                        ):
     """
     owner: int
 
@@ -99,7 +101,8 @@ async def create_company(owner: int, message: dict, time_end: int,
 
         'status': False,
         'name': name,
-        'alt_id': await generation_code(owner)
+        'alt_id': await generation_code(owner),
+        'min_reg_time': min_reg_time
     }
 
     await companies.insert_one(data)
@@ -221,10 +224,7 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None,
 
         # Закрепляем
         if companie['pin_message'] and save:
-            s = await bot.pin_chat_message(m.chat.id, m.message_id)
-            try:
-                if s: await bot.delete_message(m.chat.id, m.message_id + 1)
-            except: pass
+            await bot.pin_chat_message(m.chat.id, m.message_id)
 
         # Награда
         if companie['coin_price'] > 0 and m and save:
@@ -290,8 +290,17 @@ async def nextinqueue(userid: int, lang = None) -> Union[ObjectId, None]:
         result_dct = count_dct.copy()
         for key, value in count_dct.items():
             if value > 0:
+
+                # Проверяем, что у пользователя достаточно времени регистрации
+                if not await user_reg_min(userid, key):
+                    del result_dct[key]
+                    continue
+
                 # Если уже отправлено 1 сообщение по этой рассылке, то не выдаём его в очереди
-                if permissions[key]['one_message']: del result_dct[key]
+                if permissions[key]['one_message']: 
+                    del result_dct[key]
+                    continue
+
                 # Если компания ещё не отдохнула от прошлого оповещения, то удаляем
                 if permissions[key]['last_send'] < permissions[key]['min_timeout']:
                     if key in result_dct:
@@ -311,11 +320,30 @@ async def priority_and_timeout(companie_id: ObjectId):
     if f: return f['priority'], f['ignore_system_timeout']
     return False, False
 
+async def user_reg_min(userid: int, companie_id: ObjectId) -> bool:
+    """ Проверяем, что юзер соответсвует условию минимального времени регистрации
+    """
+    user = await users.find_one({'userid': userid}, {'_id': 1, 'create_time': 1})
+    if user:
+        create = user['_id'].generation_time
+        now = datetime.now(timezone.utc)
+        delta = now - create
+
+        companie = await companies.find_one({'_id': companie_id}, {'_id': 1, 'min_reg_time': 1})
+        if companie:
+            if delta.seconds >= companie['min_reg_time']:
+                return True
+    return False
+
 async def info(companie_id: ObjectId, lang = None):
     c = await companies.find_one({'_id': companie_id})
     text, mrk = '', None
 
     if c:
+        min_time = 0
+        if 'min_reg_time' in c.keys():
+            min_time = seconds_to_str(c['min_reg_time'], lang)
+
         if not lang: lang = await get_lang(c['owner'])
         text = t('companies.info', lang,
                  name=c['name'],
@@ -329,7 +357,9 @@ async def info(companie_id: ObjectId, lang = None):
                  timeout=c['min_timeout'],
                  sys_timeout=c['ignore_system_timeout'],
                  dlete_after=c['delete_after'],
-                 status=c['status'])
+                 status=c['status'],
+                 min_time=min_time,
+                 )
 
         btn = get_data('companies.buttons', lang)
         new_btn = {}
