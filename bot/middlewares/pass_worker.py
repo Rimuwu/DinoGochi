@@ -61,6 +61,6 @@ class PassWorker(BaseMiddleware):
 
                 if last_ads_time >= 10 and not send:
                     # Рекламные сообщения
-                    if random() <= 0.5: await auto_ads(message, True)
+                    await auto_ads(message, True)
 
 main_router.message.middleware(PassWorker())
