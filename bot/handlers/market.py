@@ -37,6 +37,7 @@ from aiogram.filters import Command, StateFilter
 from fuzzywuzzy import fuzz
 
 from aiogram.fsm.context import FSMContext
+import random
 
 users = DBconstructor(mongo_client.user.users)
 sellers = DBconstructor(mongo_client.market.sellers)
@@ -413,10 +414,11 @@ async def random_markets(call: CallbackQuery):
     lang = await get_lang(userid)
 
     # Получаем случайные магазины
-    markets = await sellers.find(
-        {"owner_id": {"$ne": userid}}, 
-        comment='random_markets_markets', 
-        max_col=15)
+    all_markets = await sellers.find(
+        {"owner_id": {"$ne": userid}},
+        comment='random_markets_markets'
+    )
+    markets = random.sample(all_markets, min(15, len(all_markets))) if all_markets else []
 
     if not markets:
         await bot.edit_message_text(
