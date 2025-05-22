@@ -1816,7 +1816,7 @@
             "text_ost": "Remaining:",
             "rare_name": "Rarity:",
             "time_position": [
-                355,
+                455,
                 220
             ],
             "rare_position": [
@@ -2264,7 +2264,7 @@
             "content_str": "📦 | Enter text not exceeding {max_len} characters in length:"
         },
         "about_menu": {
-            "team": "<b>🎭 | Bot command</b>\n<i>We all do many things at once, but everyone has their own role...</i>\n\n💻 @AS1AW - Developer\n🎨 @unknown_cat13 - Designer\n💻 @magecode - Developer\n💾 @debastersplay - Host provision\n⚽️ @despating - Tester</b>\n<i> | Localization author</b>\n<i>Anyone can translate the bot into their native language.\nWant to help with the translation? Contact @AS1AW\n\n</i>{lang_name} - {author}",
+            "team": "<b>🎭 | Bot command</b>\n<i>We all do many things at once, but everyone has their own role...</i>\n\n💻 @AS1AW - Developer\n🎨 @unknown_cat13 - Designer\n💻 @magecode - Developer\n💾 @debastersplay - Host provision\n⚽️ @despating - Tester\n<b> | Localization author</b>\n<i>Anyone can translate the bot into their native language.\nWant to help with the translation? Contact @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "*🔗 | Great connection*\nGreat dinosaurs are everywhere! And also dinosaurs receive entrance reward!\n\n× 📢 News channel @DinoGochi\n— Entrance reward: {channel_reward} ⭐\n— Boost reward: experience x1.5 ⚡\n\n× 👥 Forum @DinoForum\n— Entrance reward: {forum_reward} ⭐\n\n× 💢 About development @DevGochi\n",
             "buttons": {
                 "channel": "🎩 Read news!",
