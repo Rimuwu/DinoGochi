@@ -21,7 +21,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_fabric.steps_datatype import BaseDataType, BaseUpdateType, DataType, InlineStepData, get_step_data
 from bot.modules.user import user
 from bot.modules.user.friends import get_friend_data
-from bot.modules.user.user import User, get_frineds, get_inventory, user_info
+from bot.modules.user.user import User, get_frineds, get_inventory, user_info, user_profile_markup
 from bot.modules.managment.events import check_event
 import inspect
 from bot.dbmanager import mongo_client
@@ -558,6 +558,8 @@ async def friend_handler(friend: dict, transmitted_data: dict):
     friend_id = friend['userid']
 
     text, avatar = await user_info(friend_id, lang)
+    profile_mrk = await user_profile_markup(friend_id,
+                                            lang, 'main', 0)
     buttons = {}
 
     for key, text_b in get_data('friend_list.buttons', lang).items():
@@ -571,11 +573,14 @@ async def friend_handler(friend: dict, transmitted_data: dict):
         del buttons[get_data(f'friend_list.buttons.open_market', lang)]
 
     markup = list_to_inline([buttons], 2)
+    msg = t('friend_list.friend_menu', lang, name=friend['name'])
 
     if avatar:
-        await bot.send_photo(chatid, avatar, caption=text, parse_mode='Markdown', reply_markup=markup)
+        await bot.send_photo(chatid, avatar, caption=text, parse_mode='Markdown', reply_markup=profile_mrk)
     else:
-        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=profile_mrk)
+
+    await bot.send_message(chatid, msg, reply_markup=markup)
 
 class ChooseFriendHandler(ChoosePagesStateHandler):
     state_name = 'ChoosePagesState'
