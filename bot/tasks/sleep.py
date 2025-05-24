@@ -56,7 +56,7 @@ async def one_time(sleeper, one_time_unit):
                     await experience_enhancement(owner['owner_id'], randint(1, 2))
 
                 if randint(1, 100) + transform(dino['stats']['charisma'], 20, 30) >= 80:
-                    await experience_enhancement(owner, randint(1, 2))
+                    await experience_enhancement(owner['owner_id'], randint(1, 2))
 
         energy = dino['stats']['energy']
         if energy >= 100:

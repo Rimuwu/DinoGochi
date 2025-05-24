@@ -16,7 +16,7 @@ async def xpboost_percent(userid: int):
 
         Максимум *2.5
     """
-    assert isinstance(userid, int), f'userid must be int, not {type(userid)} {userid}'
+    assert isinstance(userid, (int, float)), f'userid must be int, not {type(userid)} {userid}'
 
     xp_boost = 1
 
