@@ -2,13 +2,14 @@ from random import random
 from typing import Awaitable, Callable, Any
 from aiogram import BaseMiddleware
 from aiogram.types import Message
-from bot.exec import main_router, bot
+from bot.exec import main_router
 from bot.dbmanager import mongo_client
 from time import time as time_now
 from bot.middlewares.antiflood import check_ads
 from bot.modules.notifications import user_notification
 
 from bot.modules.user.advert import auto_ads
+from datetime import datetime
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 users = DBconstructor(mongo_client.user.users)
@@ -43,8 +44,8 @@ class PassWorker(BaseMiddleware):
                 last_ads_time = await check_ads(user_id)
                 send = False
 
-                if user['_id'].generation_time.days <= 1:
-                    pass
+                dt: datetime = user['_id'].generation_time
+                if dt.hour <= 24: pass
 
                 elif daily == None and last_ads_time >= 10:
                     if user['settings']['notifications']:
