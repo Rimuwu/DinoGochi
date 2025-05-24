@@ -70,7 +70,11 @@
         "1038": {"text": "ᴅɪɴᴏsᴀᴜʀs", "translate": false},
         "1039": {"text": "ɪɴᴠᴇɴᴛᴏʀʏ", "translate": false},
         "1042": {"text": "ᴍᴀʀᴋᴇᴛ", "translate": false},
-        "1040": {"text": "->", "translate": false}
+        "1040": {"text": "->", "translate": false},
+        "1043": {"text": "└", "translate": false},
+        "1044": {"text": "├", "translate": false},
+        "1045": {"text": "┘", "translate": false},
+        "1046": {"text": "┌ ", "translate": false}
     },
 
     "one_replace_s": ["```", "*", "`", "~", "_"],
