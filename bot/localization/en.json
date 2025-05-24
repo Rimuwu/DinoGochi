@@ -2077,7 +2077,7 @@
                 },
                 "near": {
                     "type_name": "🗡 Weapon",
-                    "add_text": "*└* Endurance: {endurance}\n*┘* Damage: {min} - {max}"
+                    "add_text": "*├* Endurance: {endurance}\n*└* Damage: {min} - {max}"
                 },
                 "ammunition": {
                     "type_name": "🌠 Ammunition",
