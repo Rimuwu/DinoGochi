@@ -1757,7 +1757,8 @@
                 "new_year": "🎁 Send gift",
                 "change_friend_name": "👥 Change name",
                 "open_market": "🏪 Open shop"
-            }
+            },
+            "friend_menu": "👥 | Interaction with {name}"
         },
         "requests": {
             "wait": "👥 | Loading requests",
@@ -4474,8 +4475,8 @@
                 "game": "🔮 Play!",
                 "promo": "🎩 Quick start!"
             },
-            "situation1": "❤️ | Hi, we noticed that you haven't been playing the bot for a long time. Perhaps this is because your dinosaur suddenly died. How about trying again, but with more responsibility? We believe in you!\n\n🦕 | If you are not playing for some other reason (for example, due to errors in the bot), then write to @dinogochi_bugs.",
-            "situation2": "🦕 | Hello, you haven't played in the bot for a very long time ({st_time}), we miss you... Don't want to return?\n\n❤️ | Here's a promo code for 3 days of premium!\n\n🦕 | If you don't play for some other reason (for example, due to errors in the bot), then write to @dinogochi_bugs."
+            "situation1": "❤️ | Hi, we noticed that you haven't played with the bot for a long time. Perhaps this is because your dinosaur suddenly died. How about trying again, but with more responsibility? We believe in you!\n\n🦕 | If you are not playing for some other reason (for example, due to errors in the bot), then write @AS1AW.",
+            "situation2": "🦕 | Hello, you haven't played the bot for a very long time ({st_time}), we miss you... Don't want to come back?\n\n❤️ | Here's a promo code for 3 days of премиум!\n\n🦕 | If you are not playing for some other reason (for example, due to errors in the bot), then write to @AS1AW."
         },
         "kd_coldown": "🪈 | This activity is reloading, try again in {ss}",
         "pet": {

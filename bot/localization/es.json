@@ -1757,7 +1757,8 @@
                 "new_year": "🎁 Enviar regalo",
                 "change_friend_name": "👥 Cambiar nombre",
                 "open_market": "🏪 Abrir tienda"
-            }
+            },
+            "friend_menu": "👥 | Interacción con {name}"
         },
         "requests": {
             "wait": "👥 | Cargando solicitudes",
@@ -4474,8 +4475,8 @@
                 "game": "🔮 ¡Jugar!",
                 "promo": "🎩 ¡Inicio rápido!"
             },
-            "situation1": "❤️ | Hola, hemos notado que hace mucho que no juegas con el bot. Tal vez esto se deba a que tu dinosaurio murió repentinamente. ¿Qué tal si lo intentas de nuevo, pero con más responsabilidad? ¡Creemos en ti!\n\n🦕 | Si no juegas por alguna otra razón (por ejemplo, debido a errores en el bot), escribe a @dinogochi_bugs.",
-            "situation2": "🦕 | Hola, hace muchísimo tiempo ({st_time}) que no juegas con el bot, te extrañamos... ¿No quieres volver?\n\n❤️ | ¡Aquí tienes un código promocional para 3 días de premium!\n\n🦕 | Si no juegas por otra razón (por ejemplo, debido a errores en el bot), escribe a @dinogochi_bugs."
+            "situation1": "❤️ | Hola, hemos notado que no juegas en el bot hace mucho tiempo. Quizás esto se deba a que tu dinosaurio murió repentinamente. ¿Qué tal si lo intentas otra vez, pero con más responsabilidad? ¡Creemos en ti!\n\n🦕 | Si no juegas por alguna otra razón (por ejemplo, debido a errores en el bot), escribe a @AS1AW.",
+            "situation2": "🦕 | Hola, hace mucho tiempo que no ({st_time}) no juegas en el bot, te extrañamos... ¿No quieres volver?\n\n❤️ | Aquí tienes un código promo por 3 días de premium!\n\n🦕 | Si no juegas por otra razón (por ejemplo, debido a errores en el bot), escribe a @AS1AW."
         },
         "kd_coldown": "🪈 | Esta actividad se está recargando, inténtalo de nuevo en {ss}",
         "pet": {
