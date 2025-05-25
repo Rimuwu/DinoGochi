@@ -2,9 +2,9 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import random
 import json
 
-comf = ImageFont.truetype('fonts/Comfortaa.ttf', size=35)
+comf = ImageFont.truetype('../../fonts/Comfortaa.ttf', size=35)
 
-with open('bot/json/dino_data.json', encoding='utf-8') as f: 
+with open('../../bot/json/dino_data.json', encoding='utf-8') as f: 
         DINOS = json.load(f) # type: dict
 
 def trans_paste(fg_img, bg_img, 
@@ -125,8 +125,8 @@ def replace_right_with_transparency(image_path, replace_percentage):
     return new_image
 
 def generate_bar(p):
-    img = replace_right_with_transparency('images/skills/power.png', p)
-    mask = Image.open('images/skills/progress_mask.png')
+    img = replace_right_with_transparency('../../images/skills/power.png', p)
+    mask = Image.open('../../images/skills/progress_mask.png')
     ret = apply_mask(mask, img)
 
     return ret
@@ -176,8 +176,8 @@ bar_position = {
     'charisma': 289
 }
 
-def create_skill_image(dino_id, lang, chars: dict):
-    img = Image.open('images/skills/bg.png')
+def create_skill_image(dino_id, lang, chars: dict, max_chars: dict):
+    img = Image.open('../../images/skills/bg.png')
     idraw = ImageDraw.Draw(img)
 
     dino_data = DINOS['elements'][str(dino_id)]
@@ -195,16 +195,25 @@ def create_skill_image(dino_id, lang, chars: dict):
             (x, y + (y_plus * a)), text, 'white', font=comf, stroke_width=0
         )
 
-        percnet = chars[char] * 5
-        char_fill = replace_right_with_transparency(f'images/skills/{char}.png', 
-                                              100 - percnet)
-        mask = Image.open('images/skills/progress_mask.png')
+        percent = chars[char] * 5
+        char_fill = replace_right_with_transparency(f'../../images/skills/{char}.png',
+                                              100 - percent)
+        mask = Image.open('../../images/skills/progress_mask.png')
 
         bar = apply_mask(mask, char_fill)
         width, height = bar.size
         bar = bar.resize((width // 2, height // 2))
 
         img = trans_paste(bar, img, 1, (450, bar_position[char]) )
+
+        if char in max_chars:
+            # Максимальный процент для линии
+            max_percent = max_chars[char] * 5
+            bar_width = bar.size[0]
+            line_x = 450 + int(bar_width * (max_percent / 100))
+            line_y1 = bar_position[char]
+            line_y2 = bar_position[char] + bar.size[1]
+            idraw.line([(line_x, line_y1), (line_x, line_y2)], fill="white", width=3)
 
     return img
 
@@ -215,5 +224,12 @@ chars = {
     'charisma': 18
 }
 
-img = create_skill_image(1, 'lang', chars)
+max_chars = {
+    'power': 2,
+    'dexterity': 17,
+    'intelligence': 20,
+    # 'charisma': 18
+}
+
+img = create_skill_image(1, 'lang', chars, max_chars)
 img.show()
