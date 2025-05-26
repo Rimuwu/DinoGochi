@@ -612,6 +612,18 @@
             {
                 "abilities": {},
                 "chance": [
+                    10,
+                    100
+                ],
+                "col": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "id": "mysterious_egg"
+            },
+            {
+                "abilities": {},
+                "chance": [
                     9,
                     100
                 ],
