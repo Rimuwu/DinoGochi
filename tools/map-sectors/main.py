@@ -1,12 +1,14 @@
-from pprint import pprint
+
 from typing import Optional, Union
 from PIL import Image, ImageDraw
 import os
 from PIL import ImageFont
 from PIL.ImageFont import FreeTypeFont
 import string
+import math
 
-def draw_grid_func(draw, cells, cell_size, cell_width, line_color): 
+def draw_grid_func(draw, cells, cell_size, 
+                   cell_width, line_color): 
     for cell in cells:
         x, y = cell
         left = x * cell_size
@@ -19,7 +21,8 @@ def draw_grid_func(draw, cells, cell_size, cell_width, line_color):
         draw.line([(left, top), (left, bottom)], fill=line_color, width=cell_width)  # левый
         draw.line([(right, top), (right, bottom)], fill=line_color, width=cell_width)  # правый
 
-def draw_cell_name(draw, cells_to_draw, cell_size, 
+def draw_cell_name(image, draw, cells_to_draw,
+                   cell_size, 
                    font, text_color, 
                    letter_mode=False,
                    centered=False):
@@ -30,7 +33,8 @@ def draw_cell_name(draw, cells_to_draw, cell_size,
             number = str(y + 1)
             text = f"{letter}{number}"
         else:
-            text = f"{x},{y}"
+            text = f"{x}:{y}"
+
         text_bbox = draw.textbbox((0, 0), text, font=font)
         if centered:
             pos_x = x * cell_size + cell_size // 2 - text_bbox[2] // 2
@@ -38,10 +42,35 @@ def draw_cell_name(draw, cells_to_draw, cell_size,
         else:
             pos_x = x * cell_size + 4  # небольшой отступ от левого края
             pos_y = y * cell_size + 4  # небольшой отступ от верхнего края
-        draw.text((pos_x, pos_y), text, fill=text_color, font=font)
 
-def draw_rows_and_columns_names(draw, cols, rows, cell_size, font, text_color, 
-                                letter_mode=False):
+        # Определяем, больше ли половины пикселей под текстом белые для адаптации цвета текста
+        text_w, text_h = text_bbox[2], text_bbox[3]
+        # Ограничиваем область, чтобы не выйти за границы изображения
+        left = max(0, min(pos_x, image.width - text_w))
+        top = max(0, min(pos_y, image.height - text_h))
+        right = min(left + text_w, image.width)
+        bottom = min(top + text_h, image.height)
+        # Получаем пиксели под текстом
+        region = image.crop((left, top, right, bottom))
+        pixels = list(region.getdata())
+        if pixels:
+            white_count = sum(1 for px in pixels if px[0] > 240 and px[1] > 240 and px[2] > 240)
+            white_ratio = white_count / len(pixels)
+        else:
+            white_ratio = 0
+
+        if text_color == 'white' or text_color == (255, 255, 255, 255):
+            if white_ratio > 0.3:
+                draw.text((pos_x, pos_y), text, fill='black', font=font)
+            else:
+                draw.text((pos_x, pos_y), text, fill=text_color, font=font)
+        else:
+            draw.text((pos_x, pos_y), text, fill=text_color, font=font)
+
+def draw_rows_and_columns_names(
+    image, draw, cols, rows, cell_size, font, text_color,
+    letter_mode=False
+):
     # Рисуем подписи для первой строки (x-координаты)
     for x in range(cols):
         if letter_mode:
@@ -128,13 +157,13 @@ def create_grid_with_labels(
         cells_to_draw = cell_list
 
     # Рисуем имена клеток
-    draw_cell_name(draw, cells_to_draw, cell_size, 
-                   font, text_color, 
-                   letter_mode, centered=False)
+    draw_cell_name(grid_img, draw, cells_to_draw,
+                   cell_size, font, text_color,
+                   letter_mode, centered=True)
 
     # Рисуем подписи для строк и столбцов
-    draw_rows_and_columns_names(
-        draw, cols, rows, cell_size, font, text_color, letter_mode
+    draw_rows_and_columns_names(grid_img, draw,
+        cols, rows, cell_size, font, text_color, letter_mode
     )
 
     # grid_img.save(os.path.join(current_dir, output_filename))
@@ -264,7 +293,8 @@ def draw_sector_names_on_image(
     font: Optional[FreeTypeFont] = None,
     color_cell_names: Union[tuple, str] = (0, 0, 0, 255),
     color_table_names: Union[tuple, str] = (0, 0, 0, 255),
-    font_size: int = 20
+    font_size: int = 20,
+    letter_mode: bool = True
     ):
     """
     Рисует имена секторов (буквенно-числовые) на указанных клетках и подписи строк/столбцов.
@@ -282,37 +312,263 @@ def draw_sector_names_on_image(
             font = ImageFont.truetype(ImageFont._default_font, font_size)
 
     # Рисуем имена клеток
-    draw_cell_name(draw, cells, cell_size, font, 
-                   color_cell_names, True, centered=False)
+    draw_cell_name(img, draw, cells, cell_size, font, 
+                   color_cell_names, letter_mode, centered=False)
 
     cols = width // cell_size
     rows = height // cell_size
 
     # Рисуем подписи для строк и столбцов
-    draw_rows_and_columns_names(draw, cols, rows, cell_size, 
-                                font, color_table_names, True)
+    draw_rows_and_columns_names(img, draw, cols, rows, cell_size, 
+                                font, color_table_names, letter_mode)
 
     return img
 
-if __name__ == "__main__":
-    
+def draw_dotted_arc_on_cells(
+    img: Image.Image,
+    cells: list,
+    cell_size: int = 100,
+    color: Union[tuple, str] = (0, 0, 0, 255),
+    width: int = 4,
+    dot_length: int = 10,
+    gap_length: int = 10
+    ):
+    """
+    Рисует сглаженную пунктирную дугу по центрам указанных ячеек.
+    cells: список [x, y] координат ячеек (дуга идет по порядку).
+    color: цвет дуги.
+    width: толщина дуги.
+    dot_length: длина штриха.
+    gap_length: длина промежутка между штрихами.
+    """
+
+    draw = ImageDraw.Draw(img)
+
+    # Получаем список центров ячеек
+    centers = [
+        (
+            x * cell_size + cell_size // 2,
+            y * cell_size + cell_size // 2
+        )
+        for x, y in cells
+    ]
+
+    if len(centers) < 2:
+        return img  # нечего рисовать
+
+    # Используем сглаженную кривую Catmull-Rom для плавности
+    def catmull_rom_spline(P, n_points=500):
+        """P - список точек, n_points - сколько точек на кривой"""
+        if len(P) < 2:
+            return P
+        # Добавляем фиктивные точки в начало и конец для плавности
+        points = [P[0]] + P + [P[-1]]
+        curve = []
+        for i in range(1, len(points) - 2):
+            p0, p1, p2, p3 = points[i-1], points[i], points[i+1], points[i+2]
+            for t in [j / n_points for j in range(n_points)]:
+                t2 = t * t
+                t3 = t2 * t
+                x = 0.5 * (
+                    (2 * p1[0]) +
+                    (-p0[0] + p2[0]) * t +
+                    (2*p0[0] - 5*p1[0] + 4*p2[0] - p3[0]) * t2 +
+                    (-p0[0] + 3*p1[0] - 3*p2[0] + p3[0]) * t3
+                )
+                y = 0.5 * (
+                    (2 * p1[1]) +
+                    (-p0[1] + p2[1]) * t +
+                    (2*p0[1] - 5*p1[1] + 4*p2[1] - p3[1]) * t2 +
+                    (-p0[1] + 3*p1[1] - 3*p2[1] + p3[1]) * t3
+                )
+                curve.append((x, y))
+        curve.append(P[-1])
+        return curve
+
+    if len(centers) == 2:
+        arc_points = [centers[0], centers[1]]
+    else:
+        arc_points = catmull_rom_spline(centers, n_points=200)
+
+    # Теперь рисуем пунктир по дуге
+    # Сначала вычисляем длину всей дуги и создаём список сегментов
+    segments = []
+    for i in range(len(arc_points) - 1):
+        p1 = arc_points[i]
+        p2 = arc_points[i + 1]
+        seg_len = math.hypot(p2[0] - p1[0], p2[1] - p1[1])
+        segments.append((p1, p2, seg_len))
+
+    total_len = sum(seg[2] for seg in segments)
+    if total_len == 0:
+        return img
+
+    # Теперь идём по дуге, чередуя dot_length и gap_length
+    pos_on_curve = 0
+    seg_idx = 0
+    seg_pos = 0
+
+    while pos_on_curve < total_len:
+        # Рисуем штрих
+        draw_len = min(dot_length, total_len - pos_on_curve)
+        start = None
+        end = None
+        draw_left = draw_len
+        curr_pos = pos_on_curve
+
+        # Найти начальную точку
+        while seg_idx < len(segments):
+            p1, p2, seg_len = segments[seg_idx]
+            if seg_pos + draw_left <= seg_len:
+                # В пределах текущего сегмента
+                ratio_start = seg_pos / seg_len if seg_len != 0 else 0
+                ratio_end = (seg_pos + draw_left) / seg_len if seg_len != 0 else 0
+                start = (
+                    p1[0] + (p2[0] - p1[0]) * ratio_start,
+                    p1[1] + (p2[1] - p1[1]) * ratio_start
+                )
+                end = (
+                    p1[0] + (p2[0] - p1[0]) * ratio_end,
+                    p1[1] + (p2[1] - p1[1]) * ratio_end
+                )
+                draw.line([start, end], fill=color, width=width)
+                seg_pos += draw_left
+                if seg_pos >= seg_len:
+                    seg_idx += 1
+                    seg_pos = 0
+                break
+            else:
+                # Заканчиваем сегмент, переходим к следующему
+                if seg_len - seg_pos > 0:
+                    ratio_start = seg_pos / seg_len if seg_len != 0 else 0
+                    start = (
+                        p1[0] + (p2[0] - p1[0]) * ratio_start,
+                        p1[1] + (p2[1] - p1[1]) * ratio_start
+                    )
+                    end = p2
+                    draw.line([start, end], fill=color, width=width)
+                    draw_left -= (seg_len - seg_pos)
+                seg_idx += 1
+                seg_pos = 0
+
+        pos_on_curve += draw_len
+
+        # Пропускаем gap
+        gap_left = gap_length
+        while gap_left > 0 and seg_idx < len(segments):
+            p1, p2, seg_len = segments[seg_idx]
+            if seg_pos + gap_left <= seg_len:
+                seg_pos += gap_left
+                gap_left = 0
+                if seg_pos >= seg_len:
+                    seg_idx += 1
+                    seg_pos = 0
+            else:
+                gap_left -= (seg_len - seg_pos)
+                seg_idx += 1
+                seg_pos = 0
+        pos_on_curve += gap_length
+
+    return img
+
+def draw_weight_map_on_card(
+    img: Image.Image,
+    weight_map: dict,
+    cell_size: int = 100,
+    font: Optional[FreeTypeFont] = None,
+    font_size: int = 18,
+    color: Union[tuple, str] = (0, 0, 0, 255)
+):
+    """
+    weight_map: {'x.y': [left, top, right, bottom]}
+    Рисует веса на каждой ячейке: left (слева), top (сверху), right (справа), bottom (снизу).
+    """
+    draw = ImageDraw.Draw(img)
+    if font is None:
+        try:
+            font = ImageFont.truetype("arial.ttf", font_size)
+        except Exception:
+            font = ImageFont.load_default()
+
+    offset = 6  # отступ от края клетки
+    for key, weights in weight_map.items():
+        # Преобразуем ключ 'x.y' в x, y
+        try:
+            x_str, y_str = key.split('.')
+            x, y = int(x_str), int(y_str)
+        except Exception:
+            continue
+
+        left = x * cell_size
+        top = y * cell_size
+        right = left + cell_size
+        bottom = top + cell_size
+
+        # Слева
+        if len(weights) > 0 and weights[0] is not None:
+            text = str(weights[0])
+            bbox = draw.textbbox((0, 0), text, font=font)
+            draw.text(
+                (left + offset, top + cell_size // 2 - bbox[3] // 2),
+                text, fill=color, font=font
+            )
+        # Сверху
+        if len(weights) > 1 and weights[1] is not None:
+            text = str(weights[1])
+            bbox = draw.textbbox((0, 0), text, font=font)
+            draw.text(
+                (left + cell_size // 2 - bbox[2] // 2, top + offset),
+                text, fill=color, font=font
+            )
+        # Справа
+        if len(weights) > 2 and weights[2] is not None:
+            text = str(weights[2])
+            bbox = draw.textbbox((0, 0), text, font=font)
+            draw.text(
+                (right - bbox[2] - offset, top + cell_size // 2 - bbox[3] // 2),
+                text, fill=color, font=font
+            )
+        # Снизу
+        if len(weights) > 3 and weights[3] is not None:
+            text = str(weights[3])
+            bbox = draw.textbbox((0, 0), text, font=font)
+            draw.text(
+                (left + cell_size // 2 - bbox[2] // 2, bottom - bbox[3] - offset),
+                text, fill=color, font=font
+            )
+    return img
+
+from navigate import find_fastest_path, weight_map
+
+def main():
+    cell_size = 100
     current_dir = os.path.dirname(os.path.abspath(__file__))
     
     grid_lst = get_colored_cells_from_image(
         image_filename="null_map.png",
-        cell_size=100,
+        cell_size=cell_size,
+        fill_percent_threshold=0.43
         # color_threshold=10
     )
 
     result_img = create_grid_with_labels(
         image_filename="Остров 1.png",
         # output_filename="sector_map.png",
-        cell_size=100,
+        cell_size=cell_size,
         cell_width=4,
         line_color=(0, 0, 0, 100),
         text_color=(0, 0, 0, 255),
         cell_list=grid_lst,
-        letter_mode=True  # Используем буквы для координат
+        letter_mode=False  # Используем буквы для координат
+    )
+    
+    result_img = draw_weight_map_on_card(
+        result_img,
+        weight_map=weight_map,
+        cell_size=cell_size,
+        font=None,  # Используем стандартный шрифт PIL
+        font_size=18,
+        color=(0, 0, 0, 255)  # Чёрный цвет для весов
     )
     
     result_img.save(os.path.join(current_dir, 
@@ -321,7 +577,7 @@ if __name__ == "__main__":
     result_img = draw_grid_on_image(
         image_filename="Остров 1.png",
         # output_filename="sector_map_with_grid.png",
-        cell_size=100,
+        cell_size=cell_size,
         cell_width=4,
         line_color=(0, 0, 0, 100),
         cells=grid_lst
@@ -334,20 +590,21 @@ if __name__ == "__main__":
         image_filename="sector_map_with_grid.png",
         # output_filename="sector_map_colored_cells.png",
         cells=[
-            {"cell": [3, 2], "color": (255, 0, 0, 100),
-             "icon": "flag"},
-            {"cell": [2, 4], "color": (255, 0, 0, 100)},
-            {"cell": [3, 4], "color": (255, 0, 0, 100),
-             "icon": "flag"},
-            {"cell": [4, 4], "color": (255, 0, 0, 100),
-             "icon": "battle"},
-            {"cell": [3, 3], "color": (255, 0, 0, 100)},
-            {"cell": [4, 3], "color": (255, 0, 0, 100)},
-            {"cell": [4, 2], "color": (255, 0, 0, 100)},
+            # {"cell": [3, 2], "color": (255, 0, 0, 100),
+            #  "icon": "flag"},
+            # {"cell": [2, 4], "color": (255, 0, 0, 100)},
+            # {"cell": [3, 4], "color": (255, 0, 0, 100),
+            #  "icon": "flag"},
+            # {"cell": [4, 4], "color": (255, 0, 0, 100),
+            #  "icon": "battle"},
+            # {"cell": [3, 3], "color": (255, 0, 0, 100)},
+            # {"cell": [4, 3], "color": (255, 0, 0, 100)},
+            # {"cell": [4, 2], "color": (255, 0, 0, 100)},
             # Добавьте другие клетки по необходимости
         ],
-        cell_size=100
+        cell_size=cell_size
     )
+    
     # Используем более жирный шрифт, если доступен
     try:
         bold_font = ImageFont.truetype("arialbd.ttf", 24)
@@ -357,10 +614,40 @@ if __name__ == "__main__":
     result_img = draw_sector_names_on_image(
         result_img,
         grid_lst,
-        cell_size=100,
+        cell_size=cell_size,
         font=bold_font,
         color_cell_names='white',
         color_table_names='white',
-        font_size=24
+        font_size=24,
+        letter_mode=True  # Используем числа для координат
     )
+    
+    # result_img = draw_weight_map_on_card(
+    #     result_img,
+    #     weight_map=weight_map,
+    #     cell_size=100,
+    #     font=None,  # Используем стандартный шрифт PIL
+    #     font_size=32,
+    #     color='red'  # Чёрный цвет для весов
+    # )
+    
+    lst = find_fastest_path(
+        start=[10, 8],
+        goal=[12, 6]
+    )
+
+    if lst: 
+        result_img = draw_dotted_arc_on_cells(
+            result_img,
+            cells=lst,
+            width=5,
+            dot_length=20,
+            cell_size=cell_size,
+            gap_length=10,
+            color='red'  # Цвет дуги
+        )
+    
     result_img.save(os.path.join(current_dir, "sector_map_colored_cells.png"))
+
+if __name__ == "__main__":
+    main()
