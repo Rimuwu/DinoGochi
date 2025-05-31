@@ -9,6 +9,8 @@ services:
       - ./bot/data:/bot/bot/data # Проброс каталога данных
       - ./config.json:/bot/config.json:ro # Проброс конфига
       - /etc/localtime:/etc/localtime:ro # Проброс времени
+      # - /images:/images
+      - ./bot/temp:/bot/temp # Проброс папки temp
     restart: always # Перезапускать контейнер при падении
     networks:
       - shared_network
