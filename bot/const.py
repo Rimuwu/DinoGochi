@@ -21,10 +21,13 @@ def load_const():
     with open('bot/json/backgrounds.json', encoding='utf-8') as f: 
         BACKGROUNDS = json5.load(f) # type: dict
 
-    return DINOS, MOBS, FLOORS, QUESTS, GAME_SETTINGS, BACKGROUNDS
+    with open('bot/json/achievements.json', encoding='utf-8') as f:
+        ACHIEVEMENTS = json5.load(f) # type: dict
 
-DINOS, MOBS, FLOORS, QUESTS, GAME_SETTINGS, BACKGROUNDS = load_const()
+    return DINOS, MOBS, FLOORS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS
+
+DINOS, MOBS, FLOORS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS = load_const()
 
 def reload_const():
-    global DINOS, MOBS, FLOORS, QUESTS, GAME_SETTINGS, BACKGROUNDS
-    DINOS, MOBS, FLOORS, QUESTS, GAME_SETTINGS, BACKGROUNDS = load_const()
+    global DINOS, MOBS, FLOORS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS
+    DINOS, MOBS, FLOORS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS = load_const()
