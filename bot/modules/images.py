@@ -288,6 +288,37 @@ async def create_egg_image(egg_id: int, rare: str='random',
     rss = await result
     return rss
 
+async def create_dino_centered_image(dino_id: int):
+    """
+    Генерирует изображение динозавра, расположенного по центру стандартного фона по классу динозавра.
+    Args:
+        dino_id: id картинки динозавра
+    Returns:
+        Файл изображения в формате, пригодном для отправки
+    """
+    dino_data = DINOS['elements'][str(dino_id)]
+    # Открываем фон по классу динозавра
+    bg_img = await async_open(f'images/remain/backgrounds/{dino_data["class"].lower()}.png')
+    bg_img = bg_img.convert("RGBA")
+    bg_width, bg_height = bg_img.size
+
+    # Открываем динозавра
+    dino_img = await async_open(f'images/{dino_data["image"]}')
+    dino_img = dino_img.resize((1024, 1024), Image.Resampling.LANCZOS)
+
+    # Размер динозавра фиксированный (не зависит от возраста)
+    sz = min(bg_width, bg_height)
+    dino_img = dino_img.resize((sz, sz), Image.Resampling.LANCZOS)
+
+    # Центрируем динозавра на фоне
+    x = (bg_width - sz) // 2
+    y = (bg_height - sz) // 2 - 50
+
+    # Накладываем динозавра на фон
+    result_img = await trans_paste(dino_img, bg_img, 1.0, (x, y, x + sz, y + sz))
+
+    return pil_image_to_file(result_img, quality='maximum')
+
 async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', profile_view: int=1, age: int = 30, custom_url = ''):
     """Создание изображения динозавра
        Args:
