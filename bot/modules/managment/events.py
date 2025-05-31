@@ -71,6 +71,8 @@ async def create_event(event_type: str = '', time_end: int = 0):
                     items.append(key)
 
         event['data']['items'] = items
+        event['data']['special_chance'] = {}
+
         if time_end == 0:
             event['time_end'] = int(time.time()) + choice(GS['events']['random_data']['random_time'])
 
