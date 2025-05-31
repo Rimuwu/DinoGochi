@@ -331,7 +331,8 @@ def draw_dotted_arc_on_cells(
     color: Union[tuple, str] = (0, 0, 0, 255),
     width: int = 4,
     dot_length: int = 10,
-    gap_length: int = 10
+    gap_length: int = 10,
+    cell_points: list = None  # Новый параметр: список словарей {"cell": [x, y], "percent": float (0..1)}
     ):
     """
     Рисует сглаженную пунктирную дугу по центрам указанных ячеек.
@@ -340,6 +341,7 @@ def draw_dotted_arc_on_cells(
     width: толщина дуги.
     dot_length: длина штриха.
     gap_length: длина промежутка между штрихами.
+    cell_points: список {"cell": [x, y], "percent": float (0..1)} — для каждой клетки рисует точку на соответствующем проценте прохода этой клетки.
     """
 
     draw = ImageDraw.Draw(img)
@@ -361,6 +363,7 @@ def draw_dotted_arc_on_cells(
         """P - список точек, n_points - сколько точек на кривой"""
         if len(P) < 2:
             return P
+
         # Добавляем фиктивные точки в начало и конец для плавности
         points = [P[0]] + P + [P[-1]]
         curve = []
@@ -388,7 +391,7 @@ def draw_dotted_arc_on_cells(
     if len(centers) == 2:
         arc_points = [centers[0], centers[1]]
     else:
-        arc_points = catmull_rom_spline(centers, n_points=200)
+        arc_points = catmull_rom_spline(centers, n_points=100)
 
     # Теперь рисуем пунктир по дуге
     # Сначала вычисляем длину всей дуги и создаём список сегментов
@@ -402,6 +405,27 @@ def draw_dotted_arc_on_cells(
     total_len = sum(seg[2] for seg in segments)
     if total_len == 0:
         return img
+
+    # Для поиска позиции точки внутри клетки
+    def get_cell_arc_range(cells, arc_points):
+        """
+        Возвращает список (start_idx, end_idx) для каждой клетки,
+        где start_idx - индекс первой точки дуги внутри клетки,
+        end_idx - индекс последней точки дуги внутри клетки.
+        """
+        cell_ranges = []
+        for idx, (x, y) in enumerate(cells):
+            left = x * cell_size
+            top = y * cell_size
+            right = (x + 1) * cell_size
+            bottom = (y + 1) * cell_size
+            indices = [i for i, (px, py) in enumerate(arc_points)
+                        if left <= px < right and top <= py < bottom]
+            if indices:
+                cell_ranges.append((min(indices), max(indices)))
+            else:
+                cell_ranges.append((None, None))
+        return cell_ranges
 
     # Теперь идём по дуге, чередуя dot_length и gap_length
     pos_on_curve = 0
@@ -469,6 +493,33 @@ def draw_dotted_arc_on_cells(
                 seg_pos = 0
         pos_on_curve += gap_length
 
+    # --- Добавляем точки с процентом прохода клетки ---
+    if cell_points:
+        # Получаем диапазоны индексов дуги для каждой клетки
+        cell_ranges = get_cell_arc_range(cells, arc_points)
+        for cp in cell_points:
+            cell = cp.get("cell")
+            percent = cp.get("percent", 0.5)
+            if not cell or percent is None:
+                continue
+            try:
+                idx = cells.index(cell)
+            except ValueError:
+                continue
+            start_idx, end_idx = cell_ranges[idx]
+            if start_idx is None or end_idx is None or end_idx <= start_idx:
+                continue
+            arc_idx = int(start_idx + (end_idx - start_idx) * percent)
+            arc_idx = max(start_idx, min(end_idx, arc_idx))
+            px, py = arc_points[arc_idx]
+            # Рисуем точку (круг)
+            r = width * 2  # радиус точки (можно настроить)
+            r = max(6, width * 2)
+            draw.ellipse(
+                [px - r, py - r, px + r, py + r],
+                fill=color if isinstance(color, tuple) else (255, 0, 0, 255)
+            )
+
     return img
 
 def draw_weight_map_on_card(
@@ -478,7 +529,7 @@ def draw_weight_map_on_card(
     font: Optional[FreeTypeFont] = None,
     font_size: int = 18,
     color: Union[tuple, str] = (0, 0, 0, 255)
-):
+    ):
     """
     weight_map: {'x.y': [left, top, right, bottom]}
     Рисует веса на каждой ячейке: left (слева), top (сверху), right (справа), bottom (снизу).
@@ -644,7 +695,11 @@ def main():
             dot_length=20,
             cell_size=cell_size,
             gap_length=10,
-            color='red'  # Цвет дуги
+            color='red',  # Цвет дуги
+            cell_points=[
+                {"cell": [9, 7], "percent": 0.0},  # Точка в середине первой клетки
+                {"cell": [12, 6], "percent": 0.5}   # Точка в середине последней клетки
+            ]
         )
     
     result_img.save(os.path.join(current_dir, "sector_map_colored_cells.png"))
