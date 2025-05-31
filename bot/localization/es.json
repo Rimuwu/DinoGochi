@@ -128,7 +128,8 @@
             "about": {
                 "team": "🤼 Comando",
                 "faq": "❗ Manual",
-                "links": "🔗 Enlaces"
+                "links": "🔗 Enlaces",
+                "grafs": "📊 Estadísticas"
             },
             "referal": {
                 "code": "🎲 Generar código",
@@ -4946,6 +4947,36 @@
             "susseful": "🎉 | ¡Has recibido correctamente la recompensa por ingresar!",
             "no_in_chat": "🌹 | No puedes recibir la recompensa por entrar, ¡porque no estás en el chat!",
             "already_awarded": "Recibido"
+        },
+        "grafs": {
+            "dinosaurs": "Dinosaurios",
+            "users": "Usuarios",
+            "items": "Objetos",
+            "groups": "Grupos",
+            "diff": "(crecimiento)",
+            "percent": "(% cambio)",
+            "title": "{name_graf} en los últimos {days} días{title_suffix}",
+            "date": "Fecha"
+        },
+        "about_bot_grafs": {
+            "title": "📊 | Gráficos del bot",
+            "category": {
+                "dinosaurs": "🦕 Dinosaurios",
+                "users": "👤 Usuarios",
+                "items": "📦 Objetos",
+                "groups": "👥 Grupos"
+            },
+            "days": {
+                "7days": "En 7 días",
+                "30days": "En 30 días",
+                "90days": "En 90 días"
+            },
+            "types": {
+                "normal": "➖ Común",
+                "diff": "📈 Aumento",
+                "percent": "📊 Porcentaje"
+            },
+            "title_suffix": "El gráfico muestra la evolución de los últimos {days} días."
         }
     }
 }
