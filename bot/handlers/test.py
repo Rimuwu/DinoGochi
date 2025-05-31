@@ -84,13 +84,14 @@ from bot.modules.items.item import get_data as get_item_data
 
 # from bot.modules.states_tools import ChooseImageState
 from bot.tasks.incubation import incubation
-
+from bot.modules.user.dinocollection import add_to_collection_dino
 
 users = mongo_client.user.users
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 items = DBconstructor(mongo_client.items.items)
 management = DBconstructor(mongo_client.other.management)
+dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
 
 @main_router.message(Command(commands=['add_item', 'item_add']), IsAdminUser())
 async def command(message):
@@ -510,3 +511,24 @@ async def test4(message: Message):
     
     fil = await get_simple_graf(days=30, data_type='dinosaurs', filter_mode=None, lang='ru')
     await bot.send_photo(message.from_user.id, fil, caption='test')
+
+@main_router.message(Command(commands=['add_collection_to_all']), IsAdminUser())
+@HDMessage
+async def test4(message: Message):
+    
+    for owner in await dino_owners.find({'type': 'owner'}):
+        dino = await dinosaurs.find_one({'_id': owner['dino_id']})
+        if dino:
+            user_id = owner['owner_id']
+            dino_id = dino['data_id']
+
+            await add_to_collection_dino(user_id, dino_id)
+
+    dead_dino = await dead_dinos.find()
+    for dino in dead_dino:
+        user_id = dino['owner_id']
+        dino_id = dino['data_id']
+
+        await add_to_collection_dino(user_id, dino_id)
+
+    await message.answer("Коллекции обновлены для всех владельцев.")
