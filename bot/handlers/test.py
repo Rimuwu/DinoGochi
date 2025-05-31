@@ -49,7 +49,7 @@ from bot.modules.states_fabric.steps_datatype import IntStepData, StepMessage
 # from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
 from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement, take_coins
-from bot.modules.managment.statistic import get_now_statistic
+from bot.modules.managment.statistic import get_now_statistic, get_simple_graf
 from bot.modules.quests import create_quest, quest_ui, save_quest
 from bot.modules.dinosaur.journey import create_event, random_event, activate_event
 
@@ -508,4 +508,5 @@ async def story_stars(message: Message):
 @HDMessage
 async def test4(message: Message):
     
-    await experience_enhancement(message.from_user.id, 10000)
+    fil = await get_simple_graf(days=30, data_type='dinosaurs', filter_mode=None, lang='ru')
+    await bot.send_photo(message.from_user.id, fil, caption='test')

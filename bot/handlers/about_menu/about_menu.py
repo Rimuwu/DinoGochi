@@ -14,6 +14,7 @@ from bot.filters.authorized import IsAuthorizedUser
 from aiogram.filters import Command
 from aiogram import F
 from bot.const import GAME_SETTINGS as GS
+from bot.modules.managment.statistic import get_simple_graf
 from bot.modules.sub_award import award_for_entry, check_award, check_for_entry
 
 @HDMessage
@@ -182,3 +183,89 @@ async def faq_buttons(call: CallbackQuery):
         await bot.send_message(chatid, text, parse_mode='Markdown')
     else:
         await call.answer()
+
+GRAF_CATEGORIES = [
+    ("dinosaurs", "about_bot_grafs.category.dinosaurs"),
+    ("users", "about_bot_grafs.category.users"),
+    ("groups", "about_bot_grafs.category.groups"),
+    ("items", "about_bot_grafs.category.items"),
+]
+GRAF_PERIODS = [
+    ("7", "about_bot_grafs.days.7days"),
+    ("30", "about_bot_grafs.days.30days"),
+    ("90", "about_bot_grafs.days.90days"),
+]
+GRAF_TYPES = [
+    ("normal", "about_bot_grafs.types.normal"),
+    ("diff", "about_bot_grafs.types.diff"),
+    ("percent", "about_bot_grafs.types.percent"),
+]
+
+def build_graf_markup(lang, category, period, view_type):
+    kb = InlineKeyboardBuilder()
+    # Periods (время) — первая строка
+    period_buttons = [
+        InlineKeyboardButton(
+            text=("✅ " if per == period else "") + t(loc, lang),
+            callback_data=f"graf {category} {per} {view_type}"
+        )
+        for per, loc in GRAF_PERIODS
+    ]
+    kb.row(*period_buttons, width=len(period_buttons))
+
+    # Types (тип) — вторая строка
+    type_buttons = [
+        InlineKeyboardButton(
+            text=("✅ " if typ == view_type else "") + t(loc, lang),
+            callback_data=f"graf {category} {period} {typ}"
+        )
+        for typ, loc in GRAF_TYPES
+    ]
+    kb.row(*type_buttons, width=len(type_buttons))
+
+    # Categories (категория) — третья строка
+    category_buttons = [
+        InlineKeyboardButton(
+            text=("✅ " if cat == category else "") + t(loc, lang),
+            callback_data=f"graf {cat} {period} {view_type}"
+        )
+        for cat, loc in GRAF_CATEGORIES
+    ]
+    kb.row(*category_buttons, width=2)
+
+    return kb.as_markup(resize_keyboard=True)
+
+async def graf_send_or_edit(chatid, lang, category, 
+                            period, view_type, mes_edit=None):
+    image = await get_simple_graf(int(period), category, view_type, lang)
+    graf_data = get_data('about_bot_grafs', lang)
+    title = graf_data['title']
+
+    title_suffix = graf_data.get('title_suffix', '').format(days=period)
+    full_text = f"{title}\n_{title_suffix}_"
+    markup = build_graf_markup(lang, category, period, view_type)
+
+    if mes_edit:
+        await edit_SmartPhoto(chatid, mes_edit, image, full_text, 'Markdown', reply_markup=markup)
+    else:
+        await send_SmartPhoto(chatid, image, full_text, 'Markdown', reply_markup=markup)
+
+@HDMessage
+@main_router.message(IsPrivateChat(), Text('commands_name.about.grafs'), IsAuthorizedUser())
+async def grafs(message: Message):
+    lang = await get_lang(message.from_user.id)
+    await graf_send_or_edit(
+        message.chat.id, lang,
+        category="dinosaurs", period="7", view_type="normal"
+    )
+
+@HDCallback
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('graf'))
+async def grafs_callback(call: CallbackQuery):
+    _, category, period, view_type = call.data.split()
+    lang = await get_lang(call.from_user.id)
+    await graf_send_or_edit(
+        call.message.chat.id, lang,
+        category, period, view_type, mes_edit=call.message.message_id
+    )
+    await call.answer()
