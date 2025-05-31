@@ -1,0 +1,34 @@
+{
+    "groups": {
+        "lvl_group": {
+            "10": "lvl_10"
+        },
+        "simple_quests": {
+            "50": "simple_quests_50"
+        }
+    },
+
+
+    "achievements": {
+
+        "example": {
+            "type": "", 
+            "name": "", 
+            "title": "", 
+            "description": "", 
+            "short_description": "", 
+            "secret": false,
+            "first_user": false, 
+            "stack": false,
+            "award": {
+                "coins": 0,
+                "exp": 0,
+                "items": []
+            },
+            "progress_check": ""
+        },
+
+        "all_eat_for_dino": {}
+        
+    }
+}
