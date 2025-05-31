@@ -128,7 +128,8 @@
             "about": {
                 "team": "🤼 Team",
                 "faq": "❗ Directory",
-                "links": "🔗 Links"
+                "links": "🔗 Links",
+                "grafs": "📊 Statistics"
             },
             "referal": {
                 "code": "🎲 Generate code",
@@ -4946,6 +4947,36 @@
             "susseful": "🎉 | You have successfully received the login reward!",
             "no_in_chat": "🌹 | You cannot receive the reward for entering, as you are not in the chat!",
             "already_awarded": "Received"
+        },
+        "grafs": {
+            "dinosaurs": "Dinosaurs",
+            "users": "Users",
+            "items": "Items",
+            "groups": "Groups",
+            "diff": "growth",
+            "percent": "(% change)",
+            "title": "{name_graf} in the last {days} days{title_suffix}",
+            "date": "Date"
+        },
+        "about_bot_grafs": {
+            "title": "📊 | Bot charts",
+            "category": {
+                "dinosaurs": "🦕 Dinosaurs",
+                "users": "👤 Users",
+                "items": "📦 Items",
+                "groups": "👥 Groups"
+            },
+            "days": {
+                "7days": "In 7 days",
+                "30days": "In 30 days",
+                "90days": "In 90 days"
+            },
+            "types": {
+                "normal": "➖ Normal",
+                "diff": "📈 Growth",
+                "percent": "📊 Percent"
+            },
+            "title_suffix": "The schedule shows the dynamics over the last {days} days."
         }
     }
 }

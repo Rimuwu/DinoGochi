@@ -19,6 +19,7 @@ from bot.modules.notifications import (dino_notification, notification_manager,
 from typing import Union
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.modules.user.dinocollection import add_to_collection_dino
 users = DBconstructor(mongo_client.user.users)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 incubations = DBconstructor(mongo_client.dinosaur.incubation)
@@ -345,7 +346,8 @@ async def insert_dino(owner_id: int=0, dino_id: int=0, quality: str='random'):
     if owner_id != 0:
         # Создание связи, если передан id владельца
         await create_dino_connection(result.inserted_id, owner_id)
-
+    
+    await add_to_collection_dino(owner_id, dino_id)
     return result, dino.alt_id
 
 

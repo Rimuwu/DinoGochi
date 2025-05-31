@@ -128,7 +128,8 @@
             "about": {
                 "team": "🤼 Perintah",
                 "faq": "❗ Panduan",
-                "links": "🔗 Tautan"
+                "links": "🔗 Tautan",
+                "grafs": "📊 Statistik"
             },
             "referal": {
                 "code": "🎲 Buat kode",
@@ -4946,6 +4947,36 @@
             "susseful": "🎉 | Kamu berhasil mendapatkan hadiah masuk!",
             "no_in_chat": "🌹 | Anda tidak dapat menerima hadiah masuk, karena Anda tidak berada di obrolan!",
             "already_awarded": "Diterima"
+        },
+        "grafs": {
+            "dinosaurs": "Dinosaurus",
+            "users": "Pengguna",
+            "items": "Item",
+            "groups": "Grup",
+            "diff": "(peningkatan)",
+            "percent": "(% perubahan)",
+            "title": "{name_graf} dalam {days} hari terakhir{title_suffix}",
+            "date": "Tanggal"
+        },
+        "about_bot_grafs": {
+            "title": "📊 | Grafik bot",
+            "category": {
+                "dinosaurs": "🦕 dinosaurus",
+                "users": "👤 Pengguna",
+                "items": "📦 Item",
+                "groups": "👥 Grup"
+            },
+            "days": {
+                "7days": "Dalam 7 hari",
+                "30days": "Dalam 30 hari",
+                "90days": "Dalam 90 hari"
+            },
+            "types": {
+                "normal": "➖ Biasa",
+                "diff": "📈 Pertumbuhan",
+                "percent": "📊 Persentase"
+            },
+            "title_suffix": "Grafik menunjukkan dinamika selama {days} hari terakhir."
         }
     }
 }

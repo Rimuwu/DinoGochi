@@ -35,7 +35,7 @@ sellers = DBconstructor(mongo_client.market.sellers)
 puhs = DBconstructor(mongo_client.market.puhs)
 dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
 tavern = DBconstructor(mongo_client.tavern.tavern)
-
+dino_collection = DBconstructor(mongo_client.user.dino_collection)
 
 incubations = DBconstructor(mongo_client.dinosaur.incubation)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
@@ -183,7 +183,7 @@ class User:
         for collection in [referals, langs, ads, dead_users, subscriptions, tavern, message_log, item_craft]:
             await collection.delete_many({'userid': self.userid}, comment='User_full_delete_1')
         
-        for collection in [group_users]:
+        for collection in [group_users, dino_collection]:
             await collection.delete_many({'user_id': self.userid}, comment='User_full_delete_2')
 
         """ При полном удалении есть возможность, что у динозавра

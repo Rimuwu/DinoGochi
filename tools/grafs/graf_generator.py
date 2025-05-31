@@ -1,8 +1,8 @@
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import random
 
-l = ImageFont.truetype('fonts/Aqum.otf', size=15)
-b = ImageFont.truetype('fonts/Aqum.otf', size=100)
+l = ImageFont.truetype('../../fonts/Aqum.otf', size=15)
+b = ImageFont.truetype('../../fonts/Aqum.otf', size=100)
 
 def trans_paste(fg_img: Image.Image, bg_img: Image.Image, 
                 alpha=10.0, box=(0, 0)):

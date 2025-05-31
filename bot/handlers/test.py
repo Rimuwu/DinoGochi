@@ -49,7 +49,7 @@ from bot.modules.states_fabric.steps_datatype import IntStepData, StepMessage
 # from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
 from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement, take_coins
-from bot.modules.managment.statistic import get_now_statistic
+from bot.modules.managment.statistic import get_now_statistic, get_simple_graf
 from bot.modules.quests import create_quest, quest_ui, save_quest
 from bot.modules.dinosaur.journey import create_event, random_event, activate_event
 
@@ -84,13 +84,14 @@ from bot.modules.items.item import get_data as get_item_data
 
 # from bot.modules.states_tools import ChooseImageState
 from bot.tasks.incubation import incubation
-
+from bot.modules.user.dinocollection import add_to_collection_dino
 
 users = mongo_client.user.users
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 items = DBconstructor(mongo_client.items.items)
 management = DBconstructor(mongo_client.other.management)
+dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
 
 @main_router.message(Command(commands=['add_item', 'item_add']), IsAdminUser())
 async def command(message):
@@ -508,4 +509,26 @@ async def story_stars(message: Message):
 @HDMessage
 async def test4(message: Message):
     
-    await experience_enhancement(message.from_user.id, 10000)
+    fil = await get_simple_graf(days=30, data_type='dinosaurs', filter_mode=None, lang='ru')
+    await bot.send_photo(message.from_user.id, fil, caption='test')
+
+@main_router.message(Command(commands=['add_collection_to_all']), IsAdminUser())
+@HDMessage
+async def test4(message: Message):
+    
+    for owner in await dino_owners.find({'type': 'owner'}):
+        dino = await dinosaurs.find_one({'_id': owner['dino_id']})
+        if dino:
+            user_id = owner['owner_id']
+            dino_id = dino['data_id']
+
+            await add_to_collection_dino(user_id, dino_id)
+
+    dead_dino = await dead_dinos.find()
+    for dino in dead_dino:
+        user_id = dino['owner_id']
+        dino_id = dino['data_id']
+
+        await add_to_collection_dino(user_id, dino_id)
+
+    await message.answer("Коллекции обновлены для всех владельцев.")

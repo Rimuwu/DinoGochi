@@ -140,8 +140,8 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.about.'
         add_back_button = True
         buttons = [
-            ['team'],
-            ['links', 'faq'],
+            ['team', 'grafs'],
+            ['links', 'my_collection', 'faq'],
         ]
 
     elif markup_key == 'friends_menu':
