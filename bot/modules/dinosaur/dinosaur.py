@@ -270,7 +270,9 @@ def random_dino(quality: str='com') -> int:
     """
     return choice(DINOS[quality])
     
-async def incubation_egg(egg_id: int, owner_id: int, inc_time: int=0, quality: str='random', dino_id: int=0):
+async def incubation_egg(egg_id: int, owner_id: int, 
+                         inc_time: int=0, quality: str='random', 
+                         dino_id: int=0):
     """Создание инкубируемого динозавра
     """
     egg = Egg()
@@ -279,7 +281,12 @@ async def incubation_egg(egg_id: int, owner_id: int, inc_time: int=0, quality: s
     egg.egg_id = egg_id
     egg.owner_id = owner_id
     egg.quality = quality
-    egg.dino_id = dino_id
+
+    if dino_id == 0:
+        egg_data = get_dino_data(egg.egg_id)
+        egg.dino_id = choice(egg_data.get('dino', [0]))
+    else:
+        egg.dino_id = dino_id
 
     if inc_time == 0: #Стандартное время инкцбации 
         egg.incubation_time = int(time()) + GS['first_dino_time_incub']
