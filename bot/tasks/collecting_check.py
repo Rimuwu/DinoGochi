@@ -50,7 +50,8 @@ async def collecting_work(coll_data: dict):
         if not dino: return
 
         special_chance = {}
-        chances_add = {'common': 0, 'uncommon': 0, 'rare': 0, 'mystical': 0, 'legendary': 0}
+        chances_add = {'common': 0, 'uncommon': 0, 
+                       'rare': 0, 'mystical': 0, 'legendary': 0}
 
         # Понижение энергии
         if random() <= ENERGY_DOWN:
@@ -132,6 +133,8 @@ async def collecting_work(coll_data: dict):
             event = await get_event(f'add_{coll_type}')
             if event: 
                 items += event['data']['items']
+                if 'special_chance' in event['data']:
+                    special_chance.update(event['data']['special_chance'])
 
             # Добавление в шанс предметов из аксессуара
             trc_flag = False
