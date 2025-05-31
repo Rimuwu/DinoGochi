@@ -23,6 +23,7 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 # from bot.modules.states_tools import ChooseInlineState, ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChooseInlineHandler, ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DataType, DinoStepData, StepMessage
+from bot.modules.user.dinocollection import add_to_collection_dino
 from bot.modules.user.rtl_name import check_name
 from bot.modules.user.user import (AddItemToUser, daily_award_con,
                               get_dinos, take_coins, user_in_chat)
@@ -218,6 +219,7 @@ async def edit_appearance(return_data, transmitted_data):
             n_id = dino.data_id
             while n_id == dino.data_id: n_id = random_dino(dino.quality)
             await dino.update({'$set': {'data_id': n_id}})
+            await add_to_collection_dino(userid, n_id)
 
             text = t('edit_dino.new', lang)
             await bot.send_message(chatid, text, parse_mode='Markdown', 
@@ -270,6 +272,7 @@ async def end_edit(code, transmitted_data):
                 n_id = dino.data_id
                 while n_id == dino.data_id: n_id = random_dino(quality)
                 await dino.update({'$set': {'data_id': n_id, 'quality': quality}})
+                await add_to_collection_dino(userid, n_id)
 
             elif o_type == 'rare': 
                 await dino.update({'$set': {'quality': quality}})
