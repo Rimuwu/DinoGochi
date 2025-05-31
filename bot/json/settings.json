@@ -2,7 +2,7 @@
     "collections": {
         // БД - единственная, коллекции - множественное / единственное
         // items - исключение
-        "user": ["users", "lang", "referals", "friends", "subscriptions", "ads", "dino_collection"],
+        "user": ["users", "lang", "referals", "friends", "subscriptions", "ads", "dino_collection", "achievements"],
         "dinosaur": ["dinosaurs", "dead_dinos", "incubation", "dino_owners", "dino_mood", "state"],
         "dino_activity": ["kd_activity", "long_activity", "kindergarten"],
         "market": ["products", "sellers", "preferential", "puhs"],
