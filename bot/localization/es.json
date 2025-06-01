@@ -5013,7 +5013,8 @@
             "title_suffix": "El gráfico muestra la evolución de los últimos {days} días."
         },
         "dino_collection": {
-            "info": "📜 | La colección de dinosaurios es la lista de todos los dinosaurios que alguna vez hayas visto en el bot.\n\n🦕 | Sobre el dinosaurio\n× Familia: `{rod}`\n× Únicos: `{uniq}`\n× Obtenido por primera vez: `{date}`\n× Id: `{dino_id}`\n\n💫 | Finalización de la colección\n× Familias `{all_families}`\n{rod_bar}\n× Dinosaurios `{all_dinos}`\n{dinos_bar}"
+            "info": "📜 | La colección de dinosaurios es la lista de todos los dinosaurios que alguna vez hayas visto en el bot.\n\n🦕 | Sobre el dinosaurio\n× Familia: `{rod}`\n× Únicos: `{uniq}`\n× Obtenido por primera vez: `{date}`\n× Id: `{dino_id}`\n\n💫 | Finalización de la colección\n× Familias `{all_families}`\n{rod_bar}\n× Dinosaurios `{all_dinos}`\n{dinos_bar}",
+            "empty": "🦕 | La colección de dinosaurios está vacía."
         }
     }
 }

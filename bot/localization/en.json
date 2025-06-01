@@ -5013,7 +5013,8 @@
             "title_suffix": "The schedule shows the dynamics over the last {days} days."
         },
         "dino_collection": {
-            "info": "📜 | Dinosaur collection - this is a list of all dinosaurs you have ever seen in the bot.\n\n🦕 | About the dinosaur\n× Family: `{rod}`\n× Rarity: `{uniq}`\n× First obtained: `{date}`\n× Id: `{dino_id}`\n\n💫 | Collection completion\n× Families `{all_families}`\n{rod_bar}\n× Dinosaurs `{all_dinos}`\n{dinos_bar}"
+            "info": "📜 | Dinosaur collection - this is a list of all dinosaurs you have ever seen in the bot.\n\n🦕 | About the dinosaur\n× Family: `{rod}`\n× Rarity: `{uniq}`\n× First obtained: `{date}`\n× Id: `{dino_id}`\n\n💫 | Collection completion\n× Families `{all_families}`\n{rod_bar}\n× Dinosaurs `{all_dinos}`\n{dinos_bar}",
+            "empty": "🦕 | The dinosaur collection is empty."
         }
     }
 }

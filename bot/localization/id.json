@@ -5013,7 +5013,8 @@
             "title_suffix": "Grafik menunjukkan dinamika selama {days} hari terakhir."
         },
         "dino_collection": {
-            "info": "📜 | Koleksi dinosaurus - ini daftar semua dinosaurus yang pernah Anda lihat di bot.\n\n🦕 | Tentang dinosaurus\n× Familia: `{rod}`\n× Keunikan: `{uniq}`\n× Pertama kali didapat: `{date}`\n× Id: `{dino_id}`\n\n💫 | Kelengkapan koleksi\n× Familia `{all_families}`\n{rod_bar}\n× Dinosaurus `{all_dinos}`\n{dinos_bar}"
+            "info": "📜 | Koleksi dinosaurus - ini daftar semua dinosaurus yang pernah Anda lihat di bot.\n\n🦕 | Tentang dinosaurus\n× Familia: `{rod}`\n× Keunikan: `{uniq}`\n× Pertama kali didapat: `{date}`\n× Id: `{dino_id}`\n\n💫 | Kelengkapan koleksi\n× Familia `{all_families}`\n{rod_bar}\n× Dinosaurus `{all_dinos}`\n{dinos_bar}",
+            "empty": "🦕 | Koleksi dinosaurus kosong."
         }
     }
 }
