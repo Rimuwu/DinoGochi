@@ -282,11 +282,11 @@ async def incubation_egg(egg_id: int, owner_id: int,
     egg.owner_id = owner_id
     egg.quality = quality
 
-    if dino_id == 0:
-        egg_data = get_dino_data(egg.egg_id)
-        egg.dino_id = choice(egg_data.get('dino', [0]))
-    else:
-        egg.dino_id = dino_id
+    # if dino_id == 0:
+    #     egg_data = get_dino_data(egg.egg_id)
+    #     egg.dino_id = choice(egg_data.get('dino', [0]))
+    # else:
+    egg.dino_id = dino_id
 
     if inc_time == 0: #Стандартное время инкцбации 
         egg.incubation_time = int(time()) + GS['first_dino_time_incub']
