@@ -419,7 +419,7 @@ async def start_easter(message: Message):
 @main_router.message(Command(commands=['count_items']), IsAdminUser())
 @HDMessage
 async def count_items(message: Message):
-    
+
     msg_args = message.text.split()
     msg_args.pop(0)
     item_id = ' '.join(msg_args)
@@ -434,3 +434,33 @@ async def count_items(message: Message):
             max_id_user = i['userid']
     
     await bot.send_message(message.chat.id, f"Count: {count}\nMax: {max_count} ({max_id_user})")
+
+@main_router.message(Command(commands=['start_summer_event']), IsAdminUser())
+@HDMessage
+async def start_summer_event(message: Message):
+
+    time_end = int(time()) + 86400 * 2
+
+    events_lst = []
+    add_hunting = await create_event('add_hunting', time_end)
+    add_hunting['data']['items'] = ['mysterious_egg']
+    add_hunting['data']['special_chance']['mysterious_egg'] = 1
+    events_lst.append(add_hunting)
+
+    add_fishing = await create_event('add_fishing', time_end)
+    add_fishing['data']['items'] = ['mysterious_egg']
+    add_fishing['data']['special_chance']['mysterious_egg'] = 1
+    events_lst.append(add_fishing)
+
+    add_collecting = await create_event('add_collecting', time_end)
+    add_collecting['data']['items'] = ['mysterious_egg']
+    add_collecting['data']['special_chance']['mysterious_egg'] = 1
+    events_lst.append(add_collecting)
+
+    add_all = await create_event('add_all', time_end)
+    add_all['data']['items'] = ['mysterious_egg']
+    add_all['data']['special_chance']['mysterious_egg'] = 1
+    events_lst.append(add_all)
+
+    for i in events_lst: await add_event(i, True)
+    # await bot.send_message(conf.bot_group_id, t("events.easter"))
