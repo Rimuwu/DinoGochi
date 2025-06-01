@@ -1,4 +1,3 @@
-from email import message
 from time import time
 from typing import Optional
 
@@ -44,6 +43,87 @@ long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 users = DBconstructor(mongo_client.user.users)
 kindergarten_bd = DBconstructor(mongo_client.dino_activity.kindergarten)
 
+
+async def add_activity_info(dino, lang, text, tem):
+    status = await dino.status
+
+    # Journey activity
+    if status == 'journey':
+        text += '\n\n'
+        journey_data = await long_activity.find_one({'dino_id': dino._id, 
+                                    'activity_type': 'journey'}, comment='dino_profile_journey')
+
+        if journey_data:
+            st = journey_data['journey_start']
+            journey_time = seconds_to_str(int(time()) - st, lang)
+            loc = journey_data['location']
+            loc_name = get_data(f'journey_start.locations.{loc}', lang)['name']
+            col = len(journey_data['journey_log'])
+
+            text += t('p_profile.journey.text', lang, 
+                      em_journey_act = tem['em_journey_act']) + '\n'
+            text += t('p_profile.journey.info', lang, journey_time=journey_time, location=loc_name, col=col)
+
+    # Game activity
+    elif status == 'game':
+        data = await long_activity.find_one({'dino_id': dino._id, 'activity_type': 'game'}, comment='dino_profile_game')
+        text += t(
+                f'p_profile.game.text', lang, em_game_act=tem['em_game_act'])
+        if data:
+            if await check_accessory(dino, 'timer', True):
+                end = seconds_to_str(data['game_end'] - int(time()), lang)
+                text += t(f'p_profile.game.game_end', lang, end=end)
+
+            duration = seconds_to_str(int(time()) - data['game_start'], lang)
+            text += t(
+                f'p_profile.game.game_duration', lang, duration=duration)
+
+    # Collecting activity
+    elif status == 'collecting':
+        data = await long_activity.find_one({'dino_id': dino._id, 'activity_type': 'collecting'}, comment='dino_profile_collecting')
+        if data:
+            text += t(
+                f'p_profile.collecting.text', lang, em_coll_act=tem['em_coll_act'])
+            text += t(
+                f'p_profile.collecting.progress.{data["collecting_type"]}', lang,
+                now = data['now_count'], max_count=data['max_count'])
+
+    # Sleep activity
+    elif status == 'sleep':
+        data = await long_activity.find_one({'dino_id': dino._id,
+                                'activity_type': 'sleep'}, comment='dino_profile_sleep')
+        if data:
+            text += t(
+                f'p_profile.sleep.{data["sleep_type"]}', lang, em_sleep_act=tem['em_sleep_act'])
+            text += t(
+                f'p_profile.sleep.sleep_duration', lang,
+                duration=seconds_to_str(int(time()) - data['sleep_start'], lang))
+
+    # Work activity
+    elif status in ['bank', 'sawmill', 'mine']:
+        data = await long_activity.find_one({'dino_id': dino._id, 
+                            'activity_type': status}, comment='dino_profile_work')
+        text += t(
+                f'p_profile.work.text', lang, em_work_act=tem[f'em_{status}_act'],
+                work_type=t(f'p_profile.work.work_type.{status}', lang))
+        if data:
+            duration = seconds_to_str(int(time()) - data['start_time'], lang)
+            text += t(
+                f'p_profile.work.work_duration', lang, duration=duration)
+
+    # Training activity
+    elif status in ['swimming_pool', 'gym', 'library', 'park']:
+        data = await long_activity.find_one({'dino_id': dino._id, 
+                            'activity_type': status}, comment='dino_profile_training')
+        text += t(
+                f'p_profile.training.text', lang, em_training_act=tem[f'em_{status}_act'],
+                training_type=t(f'p_profile.training.training_type.{status}', lang))
+        if data:
+            duration = seconds_to_str(int(time()) - data['start_time'], lang)
+            text += t(
+                f'p_profile.training.training_duration', lang, duration=duration)
+
+    return text
 
 async def dino_profile(userid: int, 
                        chatid:int, dino: Dino, lang: str, 
@@ -102,44 +182,7 @@ async def dino_profile(userid: int,
 
     text = t('p_profile.profile_text', lang, formating=False).format(**kwargs)
 
-    if await dino.status == 'journey':
-        text += '\n\n'
-        journey_data = await long_activity.find_one({'dino_id': dino._id, 
-                                'activity_type': 'journey'}, comment='dino_profile_journey')
-
-        if journey_data:
-            st = journey_data['journey_start']
-            journey_time = seconds_to_str(int(time()) - st, lang)
-            loc = journey_data['location']
-            loc_name = get_data(f'journey_start.locations.{loc}', lang)['name']
-            col = len(journey_data['journey_log'])
-
-            text += t('p_profile.journey.text', lang, 
-                      em_journey_act = tem['em_journey_act']) + '\n'
-            text += t('p_profile.journey.info', lang, journey_time=journey_time, location=loc_name, col=col)
-
-    if await dino.status == 'game':
-        data = await long_activity.find_one({'dino_id': dino._id, 'activity_type': 'game'}, comment='dino_profile_game')
-        text += t(
-                f'p_profile.game.text', lang, em_game_act=tem['em_game_act'])
-        if data:
-            if await check_accessory(dino, 'timer', True):
-                end = seconds_to_str(data['game_end'] - int(time()), lang)
-                text += t(f'p_profile.game.game_end', lang, end=end)
-
-            duration = seconds_to_str(int(time()) - data['game_start'], lang)
-            text += t(
-                f'p_profile.game.game_duration', lang, duration=duration)
-
-    if await dino.status == 'collecting':
-        data = await long_activity.find_one({'dino_id': dino._id, 'activity_type': 'collecting'}, comment='dino_profile_collecting')
-        if data:
-            text += t(
-                f'p_profile.collecting.text', lang, em_coll_act=tem['em_coll_act'])
-            text += t(
-                f'p_profile.collecting.progress.{data["collecting_type"]}', lang,
-                now = data['now_count'], max_count=data['max_count'])
-
+    text = await add_activity_info(dino, lang, text, tem)
     text += '\n\n' + stats_text + '\n'
 
     # Генерация блока с аксессуарами
