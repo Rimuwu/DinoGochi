@@ -129,7 +129,8 @@
                 "team": "🤼 Comando",
                 "faq": "❗ Manual",
                 "links": "🔗 Enlaces",
-                "grafs": "📊 Estadísticas"
+                "grafs": "📊 Estadísticas",
+                "my_collection": "🖼 Mi colección"
             },
             "referal": {
                 "code": "🎲 Generar código",
@@ -1603,6 +1604,14 @@
                     "dm": false,
                     "group": true,
                     "alternative": "clasificación"
+                },
+                "my_collection": {
+                    "short": "Mi colección",
+                    "long": "🦕 Mi colección de dinosaurios",
+                    "arguments": "(page_num)",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 }
             }
         },
@@ -1896,6 +1905,31 @@
                     "hunt": "🍖 *└* Dinosaurio reunió {now} / {max_count}.",
                     "fishing": "🍤 *└* Dinosaurio pescó {now} / {max_count} peces.",
                     "all": "🥗 *└* El dinosaurio recopiló {now} / {max_count}."
+                }
+            },
+            "sleep": {
+                "sleep_duration": "\n⏳ *└* Han pasado {duration}",
+                "long": "\n\n{em_sleep_act} *┌* Sueño largo",
+                "short": "\n\n{em_sleep_act} *┌* Sueño corto"
+            },
+            "work": {
+                "text": "\n\n{em_work_act} *┌* Trabajo ({work_type})",
+                "work_end": "\n🎟 *├* Finaliza en {end}",
+                "work_duration": "\n⏳ *└* Pasaron {duration}",
+                "work_type": {
+                    "mine": " Mina",
+                    "bank": "Banco",
+                    "sawmill": " Tala de madera"
+                }
+            },
+            "training": {
+                "text": "\n\n{em_training_act} *┌* Entrenamiento ({training_type})",
+                "training_duration": "\n⏳ *└* Han pasado {duration}",
+                "training_type": {
+                    "swimming_pool": "Piscina",
+                    "gym": "Gimnasio",
+                    "library": "Biblioteca",
+                    "park": "Parque"
                 }
             },
             "no_item": "Nada",
@@ -4977,6 +5011,9 @@
                 "percent": "📊 Porcentaje"
             },
             "title_suffix": "El gráfico muestra la evolución de los últimos {days} días."
+        },
+        "dino_collection": {
+            "info": "📜 | La colección de dinosaurios es la lista de todos los dinosaurios que alguna vez hayas visto en el bot.\n\n🦕 | Sobre el dinosaurio\n× Familia: `{rod}`\n× Únicos: `{uniq}`\n× Obtenido por primera vez: `{date}`\n× Id: `{dino_id}`\n\n💫 | Finalización de la colección\n× Familias `{all_families}`\n{rod_bar}\n× Dinosaurios `{all_dinos}`\n{dinos_bar}"
         }
     }
 }

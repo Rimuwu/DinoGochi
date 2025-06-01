@@ -129,7 +129,8 @@
                 "team": "🤼 Perintah",
                 "faq": "❗ Panduan",
                 "links": "🔗 Tautan",
-                "grafs": "📊 Statistik"
+                "grafs": "📊 Statistik",
+                "my_collection": "🖼 Koleksi saya"
             },
             "referal": {
                 "code": "🎲 Buat kode",
@@ -1603,6 +1604,14 @@
                     "dm": false,
                     "group": true,
                     "alternative": "peringkat"
+                },
+                "my_collection": {
+                    "short": " koleksi saya",
+                    "long": "🦕 Koleksi dinosaurus saya",
+                    "arguments": "(page_num)",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 }
             }
         },
@@ -1896,6 +1905,31 @@
                     "hunt": "🍖 *└* Dinosaur mengumpulkan {now} / {max_count}.",
                     "fishing": "🍤 *└* Dinosaurus menangkap ikan {now} / {max_count} ikan.",
                     "all": "🥗 *└* Dinosaur mengumpulkan {now} / {max_count}."
+                }
+            },
+            "sleep": {
+                "sleep_duration": "\n⏳ *└* Sudah berlalu {duration}",
+                "long": "\n\n{em_sleep_act} *┌* Tidur panjang",
+                "short": "\n\n{em_sleep_act} *┌* Tidur singkat"
+            },
+            "work": {
+                "text": "\n\n{em_work_act} *┌* Pekerjaan ({work_type})",
+                "work_end": "\n🎟 *├* Akan dihentikan melalui {end}",
+                "work_duration": "\n⏳ *└* Telah berlalu {duration}",
+                "work_type": {
+                    "mine": "Tambang",
+                    "bank": "Bank",
+                    "sawmill": "Penebangan kayu"
+                }
+            },
+            "training": {
+                "text": "\n\n{em_training_act} *┌* Pelatihan ({training_type})",
+                "training_duration": "\n⏳ *└* Sudah berlalu {duration}",
+                "training_type": {
+                    "swimming_pool": "Kolam renang",
+                    "gym": "Gym",
+                    "library": "Perpustakaan",
+                    "park": "Taman"
                 }
             },
             "no_item": "Tidak ada apa-apa",
@@ -4977,6 +5011,9 @@
                 "percent": "📊 Persentase"
             },
             "title_suffix": "Grafik menunjukkan dinamika selama {days} hari terakhir."
+        },
+        "dino_collection": {
+            "info": "📜 | Koleksi dinosaurus - ini daftar semua dinosaurus yang pernah Anda lihat di bot.\n\n🦕 | Tentang dinosaurus\n× Familia: `{rod}`\n× Keunikan: `{uniq}`\n× Pertama kali didapat: `{date}`\n× Id: `{dino_id}`\n\n💫 | Kelengkapan koleksi\n× Familia `{all_families}`\n{rod_bar}\n× Dinosaurus `{all_dinos}`\n{dinos_bar}"
         }
     }
 }

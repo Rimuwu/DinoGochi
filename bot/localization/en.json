@@ -129,7 +129,8 @@
                 "team": "🤼 Team",
                 "faq": "❗ Directory",
                 "links": "🔗 Links",
-                "grafs": "📊 Statistics"
+                "grafs": "📊 Statistics",
+                "my_collection": "🖼 My collection"
             },
             "referal": {
                 "code": "🎲 Generate code",
@@ -1603,6 +1604,14 @@
                     "dm": false,
                     "group": true,
                     "alternative": "rating"
+                },
+                "my_collection": {
+                    "short": "My collection",
+                    "long": "🦕 My collection of dinosaurs",
+                    "arguments": "(page_num)",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 }
             }
         },
@@ -1896,6 +1905,31 @@
                     "hunt": "🍖 *└* The dinosaur collected {now} / {max_count}.",
                     "fishing": "🍤 *└* Dinosaur caught {now} / {max_count} fish.",
                     "all": "🥗 *└* Dinosaur collected {now} / {max_count}."
+                }
+            },
+            "sleep": {
+                "sleep_duration": "\n⏳ *└* Time elapsed {duration}",
+                "long": "\n\n{em_sleep_act} *┌* Long sleep",
+                "short": "\n\n{em_sleep_act} *┌* Short nap"
+            },
+            "work": {
+                "text": "\n\n{em_work_act} *┌* Work ({work_type})",
+                "work_end": "\n🎟 *├* Will end in {end}",
+                "work_duration": "\n⏳ *└* Duration of {duration}",
+                "work_type": {
+                    "mine": "Mine",
+                    "bank": "Bank",
+                    "sawmill": "Lumberjack"
+                }
+            },
+            "training": {
+                "text": "\n\n{em_training_act} *┌* Training ({training_type})",
+                "training_duration": "\n⏳ *└* Has passed {duration}",
+                "training_type": {
+                    "swimming_pool": "Swimming pool",
+                    "gym": "Gym",
+                    "library": "Library",
+                    "park": "Park"
                 }
             },
             "no_item": "Nothing",
@@ -4977,6 +5011,9 @@
                 "percent": "📊 Percent"
             },
             "title_suffix": "The schedule shows the dynamics over the last {days} days."
+        },
+        "dino_collection": {
+            "info": "📜 | Dinosaur collection - this is a list of all dinosaurs you have ever seen in the bot.\n\n🦕 | About the dinosaur\n× Family: `{rod}`\n× Rarity: `{uniq}`\n× First obtained: `{date}`\n× Id: `{dino_id}`\n\n💫 | Collection completion\n× Families `{all_families}`\n{rod_bar}\n× Dinosaurs `{all_dinos}`\n{dinos_bar}"
         }
     }
 }

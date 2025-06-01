@@ -1604,6 +1604,14 @@
                     "dm": false,
                     "group": true,
                     "alternative": "рейтинг"
+                },
+                "my_collection": {
+                    "short": "Моя коллекция",
+                    "long": "🦕 Моя коллекция динозавров",
+                    "arguments": "(page_num)",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
                 }
             }
         },
@@ -1899,6 +1907,31 @@
                     "hunt": "🍖 *└* Динозавр собрал {now} / {max_count}.",
                     "fishing": "🍤 *└* Динозавр нарыбачел {now} / {max_count} рыб.",
                     "all": "🥗 *└* Динозавр собрал {now} / {max_count}."
+                }
+            },
+            "sleep": {
+                "sleep_duration": "\n⏳ *└* Прошло {duration}",
+                "long": "\n\n{em_sleep_act} *┌* Долгий сон",
+                "short": "\n\n{em_sleep_act} *┌* Короткий сон"
+            },
+            "work": {
+                "text": "\n\n{em_work_act} *┌* Работа ({work_type})",
+                "work_end": "\n🎟 *├* Прекратит через {end}",
+                "work_duration": "\n⏳ *└* Прошло {duration}",
+                "work_type": {
+                    "mine": "Шахта",
+                    "bank": "Банк",
+                    "sawmill": "Лесорубка"
+                }
+            },
+            "training": {
+                "text": "\n\n{em_training_act} *┌* Тренировка ({training_type})",
+                "training_duration": "\n⏳ *└* Прошло {duration}",
+                "training_type": {
+                    "swimming_pool": "Бассейн",
+                    "gym": "Зал",
+                    "library": "Библиотека",
+                    "park": "Парк"
                 }
             },
             "no_item": "Ничего",
