@@ -929,7 +929,6 @@ def rare_random(items: list[str], count: int = 1,
     weights = [chance / total_chance for chance in item_chances]
 
     # Выбираем случайные предметы
-    shuffle(items)
     selected_items = choices(items, weights=weights, k=count)
     return selected_items
 
