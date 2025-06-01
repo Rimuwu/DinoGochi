@@ -31,56 +31,56 @@ async def lottery_create(message: Message):
             '1': {
                 'items': [
                     {'items_data': {
-                        'item_id': 'legendary_egg',
+                        'item_id': 'premium_activator',
                         'abilities': {'interact': False}
                     }, 
-                    'count': 1}
+                    'count': 3}
                 ],
-                'coins': 0,
-                'count': 3
+                'coins': 50000,
+                'count': 1
             },
             '2': {
                 'items': [
                     {'items_data': {
-                        'item_id': 'premium_activator',
+                        'item_id': 'dino_slot',
                         'abilities': {'interact': False}
                     }, 
                     'count': 1}
                 ],
-                'coins': 0,
-                'count': 5
+                'coins': 15000,
+                'count': 3
             },
             '3': {
                 'items': [
                     {'items_data': {
-                        'item_id': 'stone_resurrection',
-                        'abilities': {'interact': False}
+                        'item_id': 'all_or_nothing_case_eggs',
+                        # 'abilities': {'interact': False}
                     }, 
                     'count': 1}
                 ],
-                'coins': 0,
-                'count': 10
+                'coins': 10000,
+                'count': 5
             },
             '4': {
                 'items': [
                     {'items_data': {
-                        'item_id': 'transport_egg',
-                        'abilities': {'interact': False}
+                        'item_id': 'egg_case',
+                        # 'abilities': {'interact': False}
                     }, 
                     'count': 1}
                 ],
-                'coins': 0,
-                'count': 20
+                'coins': 5000,
+                'count': 10
             },
             '5': {
                 'items': [
                     {'items_data': {
                         'item_id': '3_days_premium',
-                        'abilities': {'interact': False}
+                        # 'abilities': {'interact': False}
                     },
                     'count': 1}
                 ],
-                'coins': 0,
+                'coins': 1000,
                 'count': 30
             },
             

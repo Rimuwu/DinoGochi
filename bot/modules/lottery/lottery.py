@@ -165,9 +165,11 @@ async def winers_text(winers: dict, lang: str):
         users_len = 0
         if len(value) != 0: 
             winers_text += f"#{key} | "
+    
             for user_id in value:
                 if users_len >= 10:
                     winers_text += '...'
+                    users_len = 0
                     break
 
                 try:
