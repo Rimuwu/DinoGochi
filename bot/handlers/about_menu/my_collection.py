@@ -96,6 +96,8 @@ async def my_collection_message(message: Message):
 
     collection = await get_dino_collection_by_user(user_id)
     lang = await get_lang(user_id)
+    page = 0
+
 
     if message.text.startswith("/my_collection"):
         try:
