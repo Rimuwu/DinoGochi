@@ -18,7 +18,10 @@ from bot.modules.dino_uniqueness import get_dino_uniqueness_factor
 from bot.modules.dinosaur.dino_count import families, all_dinos
 
 async def get_collection_page_data(user_id, collection, page, lang):
+    if page < 0 or page >= len(collection):
+        page = 0
     entry = collection[page]
+
     data_id = entry["data_id"]
     image_path = f"bot/temp/dino_collection_{data_id}.png"
 
@@ -93,7 +96,12 @@ async def my_collection_message(message: Message):
 
     collection = await get_dino_collection_by_user(user_id)
     lang = await get_lang(user_id)
-    page = 0
+
+    if message.text.startswith("/my_collection"):
+        try:
+            page = int(message.text.split()[1]) - 1
+        except (IndexError, ValueError):
+            page = 0
 
     if not collection:
         await message.answer(t("dino_collection.empty", lang))
