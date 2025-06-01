@@ -653,7 +653,11 @@
                 "age": "🎂", "uniqueness": "🦕",
 
                 "em_coll_act": "🏹", "em_game_act": "🧩",
-                "em_journey_act": "🎑",
+                "em_journey_act": "🎑", "em_sleep_act": "🛌",
+                "em_bank_act": "🏦", "em_sawmill_act": "🪵",
+                "em_mine_act": "⛏️", "em_swimming_pool_act": "🏊",
+                "em_gym_act": "🏋️", "em_library_act": "📚",
+                "em_park_act": "🌳",
 
                 "heal": "❤️", "eat": "🍕", "game": "🎮",
                 "mood": "🎈", "energy": "🌙",
@@ -661,17 +665,18 @@
                 "ac_sleep": "🌙", "ac_game": "🎮",
                 "ac_collecting": "🌿", "ac_journey": "🎍",
                 "ac_weapon": "⚔", "ac_armor": "🛡", 
-                "ac_backpack": "🎒",
-
-                "activ_journey": "📙", "activ_game": "🏀",
-                "activ_hunting": "🎯"
+                "ac_backpack": "🎒"
             },
             "winter":  {
                 "name": "🧊", "status": "❄️", "rare": "☃️",
                 "age": "🧵", "uniqueness": "🎫",
 
                 "em_coll_act": "🏹", "em_game_act": "🧩",
-                "em_journey_act": "🎑",
+                "em_journey_act": "🎑", "em_sleep_act": "🛌",
+                "em_bank_act": "🏦", "em_sawmill_act": "🪵",
+                "em_mine_act": "⛏️", "em_swimming_pool_act": "🏊",
+                "em_gym_act": "🏋️", "em_library_act": "📚",
+                "em_park_act": "🌳",
 
                 "heal": "☁️", "eat": "🥂", "game": "🎄",
                 "mood": "❄️", "energy": "🕯",
@@ -679,17 +684,18 @@
                 "ac_sleep": "🕯", "ac_game": "✨",
                 "ac_collecting": "🌿",  "ac_journey": "🌨",
                 "ac_weapon": "⚔", "ac_armor": "🛡", 
-                "ac_backpack": "🎒",
-
-                "activ_journey": "📙", "activ_game": "🏀",
-                "activ_hunting": "🎯"
+                "ac_backpack": "🎒"
             },
             "spring":  {
                 "name": "🌸", "status": "💮", "rare": "🌿",
                 "age": "🥭", "uniqueness": "🎀",
 
                 "em_coll_act": "🏹", "em_game_act": "🧩",
-                "em_journey_act": "🎑",
+                "em_journey_act": "🎑", "em_sleep_act": "🛌",
+                "em_bank_act": "🏦", "em_sawmill_act": "🪵",
+                "em_mine_act": "⛏️", "em_swimming_pool_act": "🏊",
+                "em_gym_act": "🏋️", "em_library_act": "📚",
+                "em_park_act": "🌳",
 
                 "heal": "🏵", "eat": "🥞", "game": "💐",
                 "mood": "🍯", "energy": "✨",
@@ -697,17 +703,18 @@
                 "ac_sleep": "🌙", "ac_game": "🌾",
                 "ac_collecting": "🌻", "ac_journey": "🏔",
                 "ac_weapon": "⚔", "ac_armor": "🛡", 
-                "ac_backpack": "🎒",
-
-                "activ_journey": "📙", "activ_game": "🏀",
-                "activ_hunting": "🎯"
+                "ac_backpack": "🎒"
             },
             "summer":  {
                 "name": "🍹", "status": "💐", "rare": "🥀",
                 "age": "🥕", "uniqueness": "🎖",
 
                 "em_coll_act": "🏹", "em_game_act": "🧩",
-                "em_journey_act": "🎑",
+                "em_journey_act": "🎑", "em_sleep_act": "🛌",
+                "em_bank_act": "🏦", "em_sawmill_act": "🪵",
+                "em_mine_act": "⛏️", "em_swimming_pool_act": "🏊",
+                "em_gym_act": "🏋️", "em_library_act": "📚",
+                "em_park_act": "🌳",
 
                 "heal": "🌴", "eat": "🥜", "game": "🍨",
                 "mood": "⛺️", "energy": "🍯",
@@ -715,17 +722,18 @@
                 "ac_sleep": "🎗", "ac_game": "🌾",
                 "ac_collecting": "🫐",  "ac_journey": "🏔",
                 "ac_weapon": "⚔", "ac_armor": "🛡", 
-                "ac_backpack": "🎒",
-
-                "activ_journey": "📙", "activ_game": "🏀",
-                "activ_hunting": "🎯"
+                "ac_backpack": "🎒"
             },
             "autumn":  {
                 "name": "🏮", "status": "🍁", "rare": "🥧",
                 "age": "🍒", "uniqueness": "🥊",
 
                 "em_coll_act": "🏹", "em_game_act": "🧩",
-                "em_journey_act": "🎑",
+                "em_journey_act": "🎑", "em_sleep_act": "🛌",
+                "em_bank_act": "🏦", "em_sawmill_act": "🪵",
+                "em_mine_act": "⛏️", "em_swimming_pool_act": "🏊",
+                "em_gym_act": "🏋️", "em_library_act": "📚",
+                "em_park_act": "🌳",
 
                 "heal": "🍂", "eat": "🍷", "game": "🍁",
                 "mood": "🍃", "energy": "🥀",
@@ -733,10 +741,7 @@
                 "ac_sleep": "🍂", "ac_game": "🍁",
                 "ac_collecting": "🍊", "ac_journey": "🏔",
                 "ac_weapon": "⚔", "ac_armor": "🛡", 
-                "ac_backpack": "🎒",
-
-                "activ_journey": "📙", "activ_game": "🏀",
-                "activ_hunting": "🎯"
+                "ac_backpack": "🎒"
             }
         }
     },
