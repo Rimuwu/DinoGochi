@@ -21,7 +21,6 @@ from bot.filters.kd import KDCheck
 from aiogram import F
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 
 @HDMessage
@@ -66,10 +65,15 @@ async def pet(message: Message):
     owner = await user_name(userid)
     rand_d_act = choice(get_data('pet.lst', lang))
     mes = rand_d_act['message'].format(
-        owner=owner)
+        owner=f'`{owner}`')
+
     text = f"🦕 | __{rand_d_act['reaction']}__\n🪈 | {mes}"
-    mes = await bot.send_message(chatid, text,  parse_mode='Markdown',
-        reply_markup=await m(userid, 'speed_actions_menu', lang, True))
+    try:
+        mes = await bot.send_message(chatid, text, parse_mode='Markdown',
+            reply_markup=await m(userid, 'speed_actions_menu', lang, True))
+    except Exception as e:
+        mes = await bot.send_message(chatid, text, 
+            reply_markup=await m(userid, 'speed_actions_menu', lang, True))
 
     if cancel_break:
         await bot.send_message(chatid, t('pet.cancel_breakdown', lang), parse_mode='Markdown')
