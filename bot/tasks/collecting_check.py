@@ -49,7 +49,13 @@ async def collecting_work(coll_data: dict):
         dino = await Dino().create(coll_data['dino_id'])
         if not dino: return
 
-        special_chance = {}
+        special_chance = {
+            "twigs_tree": 5,
+            "wool": 5,
+            "feathers": 5,
+            "fish_oil": 5,
+            "ink": 3
+        }
         chances_add = {'common': 0, 'uncommon': 0, 
                        'rare': 0, 'mystical': 0, 'legendary': 0}
 
