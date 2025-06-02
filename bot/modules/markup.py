@@ -4,7 +4,7 @@ from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as gs
 from bot.modules.data_format import chunks, crop_text, list_to_keyboard, seconds_to_str
 from bot.modules.dinosaur.dinosaur import Dino, Egg
-from bot.modules.dinosaur.kd_activity import check_all_activity
+from bot.modules.dinosaur.kd_activity import check_activity, check_all_activity
 from bot.modules.localization import t, tranlate_data
 from bot.modules.logs import log
 from bot.modules.managment.referals import get_user_code, get_user_sub
@@ -256,6 +256,13 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
                 [dp_buttons[3], dp_buttons[0], dp_buttons[2]],
                 ["noprefix.buttons_name.back"]
             ]
+
+            kd_coll_time = await check_activity(dino._id, 'collecting')
+            if kd_coll_time != 0 and dp_buttons[2] == 'collecting':
+                buttons[1][2] = (
+                    f"notranslate.{t('commands_name.actions.collecting', language_code)} "
+                    f"({seconds_to_str(kd_coll_time, language_code, True, 'hour')})"
+                )
 
     elif markup_key == 'extraction_actions_menu':
         # Меню работ
