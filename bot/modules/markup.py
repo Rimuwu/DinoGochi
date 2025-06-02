@@ -257,12 +257,12 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
                 ["noprefix.buttons_name.back"]
             ]
 
-            kd_coll_time = await check_activity(dino._id, 'collecting')
-            if kd_coll_time != 0 and dp_buttons[2] == 'collecting':
-                buttons[1][2] = (
-                    f"notranslate.{t('commands_name.actions.collecting', language_code)} "
-                    f"({seconds_to_str(kd_coll_time, language_code, True, 'hour')})"
-                )
+            # kd_coll_time = await check_activity(dino._id, 'collecting')
+            # if kd_coll_time != 0 and dp_buttons[2] == 'collecting':
+            #     buttons[1][2] = (
+            #         f"notranslate.{t('commands_name.actions.collecting', language_code)} "
+            #         f"({seconds_to_str(kd_coll_time, language_code, True, 'hour')})"
+            #     )
 
     elif markup_key == 'extraction_actions_menu':
         # Меню работ

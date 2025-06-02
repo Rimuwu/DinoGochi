@@ -83,13 +83,12 @@ async def collecting_adapter(return_data, transmitted_data):
                                         )
 
             await auto_ads(message)
-            await save_kd(dino._id, 'collecting', 7200)
 
 @HDMessage
 @main_router.message(
     IsPrivateChat(), 
     StartWith('commands_name.actions.collecting'),
-    DinoPassStatus(), KDCheck('collecting')
+    DinoPassStatus()
 )
 async def collecting_button(message: Message):
     if message.from_user:
