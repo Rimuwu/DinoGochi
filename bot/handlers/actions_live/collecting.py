@@ -2,6 +2,8 @@ from bson import ObjectId
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
+from bot.filters.kd import KDCheck
+from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.dinosaur.mood import repeat_activity
 from bot.modules.items.accessory import check_accessory
 from bot.modules.user.advert import auto_ads
@@ -23,7 +25,7 @@ from bot.modules.user.user import User, count_inventory_items, max_eat
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 
-from bot.filters.translated_text import Text
+from bot.filters.translated_text import StartWith, Text
 from bot.filters.states import NothingState
 from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
@@ -81,11 +83,14 @@ async def collecting_adapter(return_data, transmitted_data):
                                         )
 
             await auto_ads(message)
-
+            await save_kd(dino._id, 'collecting', 7200)
 
 @HDMessage
-@main_router.message(IsPrivateChat(), Text('commands_name.actions.collecting'),
-             DinoPassStatus())
+@main_router.message(
+    IsPrivateChat(), 
+    StartWith('commands_name.actions.collecting'),
+    DinoPassStatus(), KDCheck('collecting')
+)
 async def collecting_button(message: Message):
     if message.from_user:
         userid = message.from_user.id
