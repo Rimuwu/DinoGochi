@@ -54,7 +54,8 @@ async def collecting_work(coll_data: dict):
             "wool": 5,
             "feathers": 5,
             "fish_oil": 5,
-            "ink": 3
+            "ink": 3,
+            "skin": 5
         }
         chances_add = {'common': 0, 'uncommon': 0, 
                        'rare': 0, 'mystical': 0, 'legendary': 0}
