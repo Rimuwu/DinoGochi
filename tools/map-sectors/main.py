@@ -175,12 +175,14 @@ def draw_grid_on_image(
     cell_size: int = 100,
     cell_width: int = 4,
     line_color: tuple = (0, 0, 0, 100),
-    cells: Optional[list] = None
+    cells: Optional[list] = None,
+    fill_alpha: Optional[int] = None  # Новый параметр: прозрачность заливки (0-255)
     ):
     """
     Накладывает сетку на изображение.
     Если cells не передан или пуст, рисует полную сетку.
     Если cells передан, рисует сетку только в указанных клетках (список [x, y]).
+    fill_alpha: если задано (0-255), заливает внутренность клетки полупрозрачным чёрным.
     """
     current_dir = os.path.dirname(os.path.abspath(__file__))
     image_path = os.path.join(current_dir, image_filename)
@@ -197,7 +199,23 @@ def draw_grid_on_image(
             draw.line([(x, 0), (x, height)], fill=line_color, width=cell_width)
         for y in range(0, height, cell_size):
             draw.line([(0, y), (width, y)], fill=line_color, width=cell_width)
+        if fill_alpha is not None:
+            # Затемняем все клетки
+            for y in range(height // cell_size):
+                for x in range(width // cell_size):
+                    left = x * cell_size
+                    top = y * cell_size
+                    right = left + cell_size
+                    bottom = top + cell_size
+                    draw.rectangle([left, top, right, bottom], fill=(0, 0, 0, fill_alpha))
     else:
+        if fill_alpha is not None:
+            for x, y in cells:
+                left = x * cell_size
+                top = y * cell_size
+                right = left + cell_size
+                bottom = top + cell_size
+                draw.rectangle([left, top, right, bottom], fill=(0, 0, 0, fill_alpha))
         draw_grid_func(draw, cells, cell_size, cell_width, line_color)
 
     result = Image.alpha_composite(img, grid_layer)
@@ -205,7 +223,7 @@ def draw_grid_on_image(
     return result
 
 def draw_colored_cells_on_image(
-    image_filename: str,
+    img: Image.Image,
     # output_filename: str,
     cells: list,
     cell_size: int = 100,
@@ -213,13 +231,10 @@ def draw_colored_cells_on_image(
     ):
     """
     Накладывает закрашенные квадраты на изображение на основе данных в cells.
+    img: PIL.Image.Image — изображение, на которое накладываются клетки.
     cells: список словарей вида {"cell": [x, y], "color": (R, G, B, A), "text": str (опционально)}
     margin: отступ пикселей от краёв клетки (по умолчанию 6)
     """
-
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    image_path = os.path.join(current_dir, image_filename)
-    img = Image.open(image_path).convert("RGBA")
 
     overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
@@ -533,6 +548,8 @@ def draw_weight_map_on_card(
     """
     weight_map: {'x.y': [left, top, right, bottom]}
     Рисует веса на каждой ячейке: left (слева), top (сверху), right (справа), bottom (снизу).
+    Если значение -1, 0, 1, 2, 3 — рисует линию по стороне соответствующего цвета:
+    -1: красный, 0: зелёный, 1: синий, 2: оранжевый, 3: фиолетовый.
     """
     draw = ImageDraw.Draw(img)
     if font is None:
@@ -541,7 +558,25 @@ def draw_weight_map_on_card(
         except Exception:
             font = ImageFont.load_default()
 
-    offset = 6  # отступ от края клетки
+    # Цвета для линий
+    color_map = {
+        -1: "#CF2F07",      # красный
+        0: '#00C800',      # зелёный
+        1: "#FFFFFF",      # синий
+        2: '#FF8C00',    # оранжевый
+        3: "#560768",    # фиолетовый
+    }
+
+    # Смещения для размещения текста внутри клетки
+    text_offsets = {
+        0: (cell_size * 0.18, cell_size // 2),  # left
+        1: (cell_size // 2, cell_size * 0.18),  # top
+        2: (cell_size * 0.82, cell_size // 2),  # right
+        3: (cell_size // 2, cell_size * 0.82),  # bottom
+    }
+    
+    margin_line = 0.1
+
     for key, weights in weight_map.items():
         # Преобразуем ключ 'x.y' в x, y
         try:
@@ -555,38 +590,46 @@ def draw_weight_map_on_card(
         right = left + cell_size
         bottom = top + cell_size
 
-        # Слева
-        if len(weights) > 0 and weights[0] is not None:
-            text = str(weights[0])
-            bbox = draw.textbbox((0, 0), text, font=font)
-            draw.text(
-                (left + offset, top + cell_size // 2 - bbox[3] // 2),
-                text, fill=color, font=font
-            )
-        # Сверху
-        if len(weights) > 1 and weights[1] is not None:
-            text = str(weights[1])
-            bbox = draw.textbbox((0, 0), text, font=font)
-            draw.text(
-                (left + cell_size // 2 - bbox[2] // 2, top + offset),
-                text, fill=color, font=font
-            )
-        # Справа
-        if len(weights) > 2 and weights[2] is not None:
-            text = str(weights[2])
-            bbox = draw.textbbox((0, 0), text, font=font)
-            draw.text(
-                (right - bbox[2] - offset, top + cell_size // 2 - bbox[3] // 2),
-                text, fill=color, font=font
-            )
-        # Снизу
-        if len(weights) > 3 and weights[3] is not None:
-            text = str(weights[3])
-            bbox = draw.textbbox((0, 0), text, font=font)
-            draw.text(
-                (left + cell_size // 2 - bbox[2] // 2, bottom - bbox[3] - offset),
-                text, fill=color, font=font
-            )
+        # Для каждой стороны
+        for idx, w in enumerate(weights):
+            if w is None:
+                continue
+            # Координаты для текста внутри клетки
+            tx, ty = text_offsets.get(idx, (cell_size // 2, cell_size // 2))
+            tx = int(left + tx)
+            ty = int(top + ty)
+            if w in color_map:
+                # Рисуем линию внутри клетки, не на границе
+                margin = int(cell_size * margin_line)
+                if idx == 0:  # left
+                    draw.line(
+                        [(left + margin, top + margin), (left + margin, bottom - margin)],
+                        fill=color_map[w], width=4
+                    )
+                elif idx == 1:  # top
+                    draw.line(
+                        [(left + margin, top + margin), (right - margin, top + margin)],
+                        fill=color_map[w], width=4
+                    )
+                elif idx == 2:  # right
+                    draw.line(
+                        [(right - margin, top + margin), (right - margin, bottom - margin)],
+                        fill=color_map[w], width=4
+                    )
+                elif idx == 3:  # bottom
+                    draw.line(
+                        [(left + margin, bottom - margin), (right - margin, bottom - margin)],
+                        fill=color_map[w], width=4
+                    )
+            else:
+                text = str(w)
+                bbox = draw.textbbox((0, 0), text, font=font)
+                text_x = tx - bbox[2] // 2
+                text_y = ty - bbox[3] // 2
+                draw.text(
+                    (text_x, text_y),
+                    text, fill=color, font=font
+                )
     return img
 
 from navigate import find_fastest_path, weight_map
@@ -631,14 +674,46 @@ def main():
         cell_size=cell_size,
         cell_width=4,
         line_color=(0, 0, 0, 100),
-        cells=grid_lst
+        cells=grid_lst,
+        fill_alpha=100
+    )
+    
+    draw_cell_name(
+        result_img, 
+        draw=ImageDraw.Draw(result_img), 
+        cells_to_draw=grid_lst,
+        cell_size=cell_size,
+        font=ImageFont.truetype("arial.ttf", 36),  # Используем стандартный шрифт PIL
+        text_color='white',
+        letter_mode=False,  # Используем буквы для координат
+        centered=True
+    )
+    
+    result_img = draw_weight_map_on_card(
+        result_img,
+        weight_map=weight_map,
+        cell_size=cell_size,
+        font=None,
+        font_size=18,
+        color=(0, 0, 0, 255)  # Чёрный цвет для весов
     )
 
     result_img.save(os.path.join(current_dir, 
                                  "sector_map_with_grid.png"))
 
-    result_img = draw_colored_cells_on_image(
-        image_filename="sector_map_with_grid.png",
+
+    result1_img = draw_grid_on_image(
+        image_filename="Остров 1.png",
+        # output_filename="sector_map_with_grid.png",
+        cell_size=cell_size,
+        cell_width=4,
+        line_color=(0, 0, 0, 100),
+        cells=grid_lst,
+        fill_alpha=0
+    )
+
+    result1_img = draw_colored_cells_on_image(
+        result1_img,
         # output_filename="sector_map_colored_cells.png",
         cells=[
             # {"cell": [3, 2], "color": (255, 0, 0, 100),
@@ -662,8 +737,8 @@ def main():
     except Exception:
         bold_font = ImageFont.truetype("arial.ttf", 24)
 
-    result_img = draw_sector_names_on_image(
-        result_img,
+    result1_img = draw_sector_names_on_image(
+        result1_img,
         grid_lst,
         cell_size=cell_size,
         font=bold_font,
@@ -688,8 +763,8 @@ def main():
     )
 
     if lst: 
-        result_img = draw_dotted_arc_on_cells(
-            result_img,
+        result1_img = draw_dotted_arc_on_cells(
+            result1_img,
             cells=lst,
             width=5,
             dot_length=20,
@@ -702,7 +777,7 @@ def main():
             ]
         )
     
-    result_img.save(os.path.join(current_dir, "sector_map_colored_cells.png"))
+    result1_img.save(os.path.join(current_dir, "sector_map_colored_cells.png"))
 
 if __name__ == "__main__":
     main()
