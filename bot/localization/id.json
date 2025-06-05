@@ -1356,7 +1356,7 @@
                     "🔮 | Bergabung"
                 ]
             },
-            "start_game": "🥚 | Pilih telur dengan dinosaurus!\n\n🦖 | Tidak peduli telur mana yang Anda pilih, Anda akan mendapatkan dinosaurus kecil yang lucu.",
+            "start_game": "🥚 | Pilih telur dengan dinosaurus!\n\n🦖 | Apapun telur yang kamu pilih — pada akhirnya kamu tetap akan ditemani oleh dinosaurus kecil yang lucu!",
             "end_answer": {
                 "edited_text": "🥚 | Selamat, telur Anda sedang menetas!",
                 "send_text": "🧸 | Selamat, kamu memiliki dinosaurus pertamamu!\n\n🍱 | Saat ini telur sedang dierami, dan melalui `{inc_time}` seekor dinosaurus kecil akan menetas!\n\n🎋 | Untuk melihat informasi terbaru tentang telur, tekan tombol `🦖 Dinosaurus`!\n\n📔 | Sambil menunggu, pelajari antarmuka, baca FAQ, atur bot sesuai keinginanmu!",

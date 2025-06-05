@@ -1356,7 +1356,7 @@
                     "🔮 | Unirse"
                 ]
             },
-            "start_game": "🥚 | ¡Elige un huevo con un dinosaurio!\n\n🦖 | Independientemente de qué huevo elijas, obtendrás un adorable dinosaurio.",
+            "start_game": "🥚 | ¡Elige un huevo con un dinosaurio!\n\n🦖 | ¡Cualquier huevo que elijas, al final te espera un adorable dinosaurio!",
             "end_answer": {
                 "edited_text": "🥚 | ¡Felicidades, tu huevo está incubándose!",
                 "send_text": "🧸 | ¡Felicidades, tienes tu primer dinosaurio!\n\n🍱 | Actualmente, el huevo está en incubación, y a través de `{inc_time}` ¡saldrá un pequeño dinosaurio!\n\n🎋 | Para ver información actualizada sobre el huevo, ¡pulsa el botón `🦖 Dinosaurio`!\n\n📔 | Mientras tanto, explora la interfaz, lee las FAQ, ¡configura el bot a tu medida!",

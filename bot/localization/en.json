@@ -1356,7 +1356,7 @@
                     "🔮 | Subscribe"
                 ]
             },
-            "start_game": "🥚 | Choose a dinosaur egg!\n\n🦖 | No matter which egg you choose, you will get a cute little dinosaur.",
+            "start_game": "🥚 | Choose an egg with a dinosaur!\n\n🦖 | No matter which egg you choose — in the end, a cute dinosaur will still be waiting for you!",
             "end_answer": {
                 "edited_text": "🥚 | Congratulations, your egg is incubating!",
                 "send_text": "🧸 | Congratulations, you have your first dinosaur!\n\n🍱 | The egg is currently incubating, and from it, a dinosaur will hatch in `{inc_time}`!\n\n🎋 | To view the current information about the egg, press the button `🦖 Dinosaur`!\n\n📔 | While waiting, explore the interface, read the FAQ, customize the bot for yourself!",
