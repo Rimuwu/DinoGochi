@@ -92,6 +92,7 @@ dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 items = DBconstructor(mongo_client.items.items)
 management = DBconstructor(mongo_client.other.management)
 dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
+inc = DBconstructor(mongo_client.dinosaur.incubation)
 
 @main_router.message(Command(commands=['add_item', 'item_add']), IsAdminUser())
 async def command(message):
@@ -445,6 +446,7 @@ async def donations(message: Message):
 @HDMessage
 async def incubation_d(message: Message):
     
+    await inc.update_many({}, {'$set': {'incubation_time': 0}}, comment='incubation_update')
     await incubation()
     
 
