@@ -9,7 +9,7 @@ from bot.handlers.referal_menu import check_code
 from bot.handlers.states import cancel
 from bot.modules.data_format import list_to_inline, list_to_keyboard, seconds_to_str, user_name_from_telegram
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur import incubation_egg
+from bot.modules.dinosaur.dinosaur import Egg, incubation_egg
 from bot.modules.images import async_open, create_eggs_image
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.localization import get_data, get_lang, t
@@ -37,6 +37,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 referals = DBconstructor(mongo_client.user.referals)
 management = DBconstructor(mongo_client.other.management)
 dead_users = DBconstructor(mongo_client.other.dead_users)
+incubation = DBconstructor(mongo_client.dinosaur.incubation)
 
 @HDMessage
 @main_router.message(Command(commands=['start']), IsAuthorizedUser(), IsPrivateChat())
@@ -75,6 +76,7 @@ async def start_command_auth(message: types.Message):
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.start_game'), IsAuthorizedUser(False))
 async def start_game(message: types.Message, code: str = '', code_type: str = ''):
+
     if message.from_user:
         #Сообщение-реклама
         text = t('start_command.request_subscribe.text', message.from_user.language_code)
@@ -89,18 +91,42 @@ async def start_game(message: types.Message, code: str = '', code_type: str = ''
         await bot.send_message(message.chat.id, text, parse_mode='html', 
                             reply_markup=markup_inline.as_markup(resize_keyboard=True))
 
+
+        res_egg_choose = await incubation.find_one({
+            'owner_id': message.from_user.id, 
+            'stage': 'choosing',
+            'quality': GAME_SETTINGS['first_egg_rarity'] })
+
+        if not res_egg_choose:
+            egg_data = Egg()
+            egg_data.choose_eggs()
+            egg_data.stage = 'choosing'
+            egg_data.owner_id = message.from_user.id
+            egg_data.quality = GAME_SETTINGS['first_egg_rarity']
+
+        else:
+            egg_data = Egg()
+            egg_data.__dict__.update(res_egg_choose)
+
+            if egg_data.id_message:
+                try:
+                    await bot.delete_message(message.from_user.id, egg_data.id_message)
+                except Exception as e: pass
+
         #Создание изображения
-        img, id_l = await create_eggs_image()
+        img = await create_eggs_image(egg_data.eggs)
 
         markup_inline = InlineKeyboardBuilder()
         markup_inline.add(*[types.InlineKeyboardButton(
-                text=f'🥚 {id_l.index(i) + 1}', 
-                callback_data=f'start_egg {i} {code_type} {code}') for i in id_l]
+                text=f'🥚 {egg_data.eggs.index(i) + 1}', 
+                callback_data=f'start_egg {i} {code_type} {code}') for i in egg_data.eggs]
         )
 
         start_game_text = t('start_command.start_game', message.from_user.language_code)
         await bot.send_photo(message.chat.id, img, caption=start_game_text, 
                             reply_markup=markup_inline.as_markup(resize_keyboard=True))
+
+        if not res_egg_choose: await egg_data.insert()
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Command(commands=['start']), IsAuthorizedUser(False))
@@ -169,7 +195,8 @@ async def egg_answer_callback(callback: types.CallbackQuery):
     else: photo_id = ''
     await insert_user(callback.from_user.id, lang, callback.from_user.first_name, photo_id)
 
-    await incubation_egg(egg_id, callback.from_user.id, quality=GAME_SETTINGS['first_egg_rarity'])
+    await incubation_egg(egg_id, callback.from_user.id, 
+                         quality=GAME_SETTINGS['first_egg_rarity'])
 
     if len(callback.data.split()) > 2:
         ref_res = False
