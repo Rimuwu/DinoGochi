@@ -211,27 +211,26 @@ async def trans_paste(fg_img: Image.Image, bg_img: Image.Image,
 
     return bg_img
 
-async def create_eggs_image_pst():
+async def create_eggs_image_pst(eggs: list[int]):
     """Создаёт изображение выбора яиц.
     """
-    id_l = [] #Хранит id яиц
+
     bg_p = await async_open(
         f'images/remain/egg_ask/{choice(GAME_SETTINGS["egg_ask_backs"])}.png'
         ) #Случайный фон
 
     for i in range(3):
-        rid = str(choice(list(DINOS['data']['egg']))) #Выбираем рандомное яйцо
+        rid = str(eggs[i])
         image = await async_open('images/' + str(DINOS['elements'][rid]['image']))
         bg_p = await trans_paste(image, bg_p, 1.0, (i * 512, 0)) #Накладываем изображение
-        id_l.append(rid)
 
-    return pil_image_to_file(bg_p, quality='maximum'), id_l
+    return pil_image_to_file(bg_p, quality='maximum')
 
-async def create_eggs_image():
+async def create_eggs_image(eggs: list[int]):
     """Создаёт изображение выбора яиц.
     """
     loop = asyncio.get_running_loop()
-    result = await loop.run_in_executor(None, create_eggs_image_pst)
+    result = await loop.run_in_executor(None, create_eggs_image_pst, eggs)
 
     rss = await result
     return rss
