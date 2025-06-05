@@ -228,7 +228,8 @@ async def item_callback(call: CallbackQuery):
                         await incubation_egg(int(egg_id), userid, item_data['incub_time'], item_data['inc_type'])
 
                         new_text = t('item_use.egg.edit_content', lang)
-                        await bot.edit_message_caption(None, chat_id=chatid, message_id=call.message.message_id, caption=new_text, reply_markup=None)
+                        await bot.edit_message_caption(None, chat_id=chatid, message_id=call.message.message_id, 
+                                    caption=new_text, reply_markup=None)
             else:
                 await bot.send_message(chatid, 
                         t('item_use.cannot_be_used', lang),  
