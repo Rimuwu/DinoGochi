@@ -6,7 +6,7 @@ from bot.exec import bot
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      random_dict, seconds_to_str)
 from bot.modules.dinosaur.dino_status import check_status
-from bot.modules.dinosaur.dinosaur  import Dino, create_dino_connection, edited_stats, insert_dino
+from bot.modules.dinosaur.dinosaur  import Dino, Egg, create_dino_connection, edited_stats, insert_dino
 from bot.modules.dinosaur.rpg_states import add_state
 from bot.modules.images import create_eggs_image
 from bot.modules.images_save import send_SmartPhoto
@@ -33,6 +33,7 @@ from bson import ObjectId
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+incubation = DBconstructor(mongo_client.dinosaur.incubation)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 items = DBconstructor(mongo_client.items.items)
 dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
@@ -286,15 +287,43 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
         if dino_limit['now'] < dino_limit['limit']:
             send_status = False
             buttons = {}
-            image, eggs = await create_eggs_image()
+
+            res_egg_choose = await incubation.find_one({'owner_id': userid, 
+                                           'stage': 'choosing',
+                                           'quality': data_item['inc_type'] })
+
+            if not res_egg_choose:
+                egg_data = Egg()
+                egg_data.choose_eggs()
+                egg_data.stage = 'choosing'
+                egg_data.owner_id = userid
+                egg_data.quality = data_item['inc_type']
+
+            else:
+                egg_data = Egg()
+                egg_data.__dict__.update(res_egg_choose)
+
+                if egg_data.id_message:
+                    try:
+                        await bot.delete_message(userid, egg_data.id_message)
+                    except Exception as e: pass
+
+            image = await create_eggs_image(egg_data.eggs)
             code = await item_code(item_dict=item, userid=userid)
 
-            for i in range(3): buttons[f'🥚 {i+1}'] = f'item egg {code} {eggs[i]}'
+            for i in range(3): 
+                buttons[f'🥚 {i+1}'] = f'item egg {code} {egg_data.eggs[i]}'
             buttons = list_to_inline([buttons])
 
-            await bot.send_photo(userid, image, 
+            mes = await bot.send_photo(userid, image, 
                                  caption=t('item_use.egg.egg_answer', lang), 
                                  parse_mode='Markdown', reply_markup=buttons)
+
+            egg_data.id_message = mes.message_id
+            egg_data.start_choosing = int(time.time())
+
+            if not res_egg_choose: await egg_data.insert()
+
             await bot.send_message(userid, 
                                    t('item_use.egg.plug', lang),     
                                    reply_markup=await markups_menu(userid, 'last_menu', lang))
@@ -545,14 +574,6 @@ async def eat_adapter(return_data: dict, transmitted_data: dict):
     if age.days >= 10:
         percent, repeat = await dino.memory_percent('games', item['item_id'], False)
 
-    # steps = [
-    #     {"type": 'int', "name": 'count', "data": {"max_int": max_count}, 
-    #      "translate_message": True,
-    #         'message': {'text': 'css.wait_count', 
-    #                     'reply_markup': feed_count_markup(
-    #                         dino.stats['eat'], int(item_data['act'] * percent), max_count, item_name, lang)}}
-    #         ]
-    
     steps = [
         IntStepData('count', StepMessage(
             text='css.wait_count',
@@ -562,9 +583,7 @@ async def eat_adapter(return_data: dict, transmitted_data: dict):
             max_int=max_count
         )
     ]
-    
-    # await ChooseStepState(pre_adapter, userid, chatid, lang, steps, 
-    #                             transmitted_data=transmitted_data)
+
     await ChooseStepHandler(pre_adapter, userid, chatid, lang, steps,
                             transmitted_data=transmitted_data).start()
 
@@ -788,12 +807,6 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
         if ok:
             if confirm:
                 steps.insert(0, 
-                    # {"type": 'bool', "name": 'confirm', 
-                    # "data": {'cancel': True}, 
-                    # 'message': {
-                    #     'text': t('css.confirm', lang, name=item_name), 'reply_markup': confirm_markup(lang)
-                    #     }
-                    # }
                     ConfirmStepData('confirm', StepMessage(
                         text=t('css.confirm', lang, name=item_name),
                         translate_message=False,
@@ -801,13 +814,9 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                     )
                 )
 
-            # await ChooseStepState(adapter_function, userid, chatid, 
-            #                       lang, steps, 
-            #                     transmitted_data=transmitted_data)
             await ChooseStepHandler(adapter_function, userid, chatid, 
                                     lang, steps, 
                                     transmitted_data=transmitted_data).start()
-
 
 async def delete_action(return_data: dict, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -975,7 +984,7 @@ async def edit_custom_book(return_data: dict, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
-    item = transmitted_data['items_data']
+    # item = transmitted_data['items_data']
 
     transmitted_data['content'] = return_data['content']
 
