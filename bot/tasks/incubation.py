@@ -9,6 +9,7 @@ from bot.modules.notifications import user_notification
 from bot.modules.user.user import User
 from bot.taskmanager import add_task
 from bot.modules.localization import get_lang
+from bot.exec import bot
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 incubations = DBconstructor(mongo_client.dinosaur.incubation)
@@ -19,7 +20,15 @@ async def incubation():
     """
 
     data = await incubations.find(
-        {'incubation_time': {'$lte': int(time())}}, comment='incubation_data') #$lte - incubation_time <= time()
+        {
+            'incubation_time': {'$lte': int(time())},
+            '$or': [
+                {'stage': None},
+                {'stage': 'incubation'}
+            ]
+        },
+        comment='incubation_data'
+    )
 
     for egg in data:
         #создаём динозавра
@@ -37,6 +46,30 @@ async def incubation():
 
         await update_all_user_track(user.userid, 'gaming')
 
+async def delete_choosing():
+    """Проверка инкубируемых яиц
+    """
+
+    data = await incubations.find(
+        {
+            'start_choosing': {'$lte': int(time()) - 12 * 60 * 60},
+            'stage': 'choosing',
+            'id_message': {'$ne': 0}
+        },
+        comment='incubation_data'
+    )
+
+    for message_egg in data:
+        #удаляем динозавра из инкубаций
+        await incubations.delete_one({'_id': message_egg['_id']}, comment='incubation_2')
+
+        if message_egg['id_message']:
+            try:
+                await bot.delete_message(message_egg['owner_id'], 
+                                         message_egg['id_message'])
+            except Exception as e: pass
+
 if __name__ != '__main__':
     if conf.active_tasks:
         add_task(incubation, 20.0, 1.0)
+        add_task(delete_choosing, 3600.0, 15.0)
