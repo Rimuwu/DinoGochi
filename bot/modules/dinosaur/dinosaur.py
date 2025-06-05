@@ -1,6 +1,6 @@
 import datetime
 from datetime import datetime, timezone
-from random import choice, randint, uniform
+from random import choice, randint, sample, uniform
 from time import time
 
 from bson.objectid import ObjectId
@@ -213,14 +213,49 @@ class Dino:
 class Egg:
 
     def __init__(self):
-        """Создание объекта яйца."""
+        """Создание объекта яйца.
+
+            Логика:
+            - Сначалао создаётся сообщение с выбором яйца и заносятся данные для взаимодействия с ним
+            (Если предмет использован повторно, то прошлое сообщение удаляется и создаётся новое)
+            - Если сообщение висит больше 12 часов, то сообщение удаляется и данные очищаются
+            - Если пользователь выбрал яйцо, то начинается инкубация (удаляются данные после # ---)
+
+        """
 
         self._id = ObjectId()
         self.incubation_time = 0
-        self.egg_id = 0
+
         self.owner_id = 0
+
+        self.egg_id = 0
         self.quality = 'random'
         self.dino_id = 0
+
+        self.stage: str = 'incubation'  # incubation / choosing
+
+        # --- Данные удаляемые после выбора яйца ---
+        self.id_message: int = 0  # Сообщение с выбором яйца
+        self.eggs = [0, 0, 0] # Список яиц, которые были выбраны
+        self.dinos = [0, 0, 0] # Список динозавров, которые были выбраны
+
+        self.start_choosing: int = 0  # Время начала выбора яйца
+
+    def choose_eggs(self):
+        """Выбор трёх яиц для инкубации.
+        """
+
+        if self.quality == 'random':
+            dinos_qual = DINOS['data']['dino']
+        else:
+            dinos_qual = DINOS[self.quality]
+
+        self.dinos = sample(dinos_qual, 3)
+        self.eggs = []
+        for dino_id in self.dinos:
+            dino_data = get_dino_data(dino_id)
+            egg_id = dino_data.get('egg', 0)
+            self.eggs.append(egg_id)
 
     async def create(self, baseid: ObjectId):
         res = await incubations.find_one({"_id": baseid}, comment='Egg_create')
@@ -244,6 +279,15 @@ class Egg:
         # self.UpdateData(data) #Не получается конвертировать в словарь возвращаемый объект
         return data
 
+    async def insert(self):
+        """Вставка яйца в базу данных.
+        """
+        log(prefix='InsertEgg',
+            message=f'owner_id: {self.owner_id} data: {self.__dict__}',
+            lvl=0)
+
+        return await incubations.insert_one(self.__dict__, comment='Egg_insert')
+
     async def delete(self):
         await incubations.delete_one({'_id': self._id}, comment='Egg_delete')
 
@@ -254,8 +298,7 @@ class Egg:
         return await create_egg_image(egg_id=self.egg_id, rare=self.quality, seconds=t_inc, lang=lang)
 
     def remaining_incubation_time(self):
-        return self.incubation_time - int(time())
-
+        return max(0, self.incubation_time - int(time()))
 
 def get_dino_data(data_id: int):
     data = {}
@@ -275,24 +318,42 @@ async def incubation_egg(egg_id: int, owner_id: int,
                          dino_id: int=0):
     """Создание инкубируемого динозавра
     """
-    egg = Egg()
+    
+    res = await incubations.find_one(
+        {'owner_id': owner_id, 
+         'stage': 'choosing',
+         'quality': quality
+        }, comment='incubation_egg_find')
 
-    egg.incubation_time = inc_time + int(time())
-    egg.egg_id = egg_id
-    egg.owner_id = owner_id
-    egg.quality = quality
+    if res:
+        egg = Egg()
+        egg.__dict__ = res
 
-    # if dino_id == 0:
-    #     egg_data = get_dino_data(egg.egg_id)
-    #     egg.dino_id = choice(egg_data.get('dino', [0]))
-    # else:
-    egg.dino_id = dino_id
+        egg.incubation_time = inc_time + int(time())
+        egg.egg_id = egg_id
+        egg.owner_id = owner_id
+        egg.quality = quality
 
-    if inc_time == 0: #Стандартное время инкцбации 
-        egg.incubation_time = int(time()) + GS['first_dino_time_incub']
+        if not dino_id:
+            egg.dino_id = egg.dinos[egg.eggs.index(egg_id)]
+        else:
+            egg.dino_id = dino_id
 
-    log(prefix='InsertEgg', message=f'owner_id: {owner_id} data: {egg.__dict__}', lvl=0)
-    return await incubations.insert_one(egg.__dict__, comment='incubation_egg')
+        if inc_time == 0: #Стандартное время инкцбации
+            egg.incubation_time = int(time()) + GS['first_dino_time_incub']
+
+        # del egg.id_message
+        # del egg.eggs
+        # del egg.dinos
+        # del egg.start_choosing
+        egg.stage = 'incubation'  # Устанавливаем стадию инкубации
+
+        log(prefix='InsertEgg', 
+            message=f'owner_id: {owner_id} data: {egg.__dict__}', lvl=0)
+        return await incubations.update_one(
+            {'_id': egg._id}, {'$set': egg.__dict__})
+    else:
+        log(prefix='InsertEgg ERROR', message=f'owner_id: {owner_id} data: {res}', lvl=0)
 
 async def create_dino_connection(dino_baseid: ObjectId, owner_id: int, con_type: str='owner'):
     """ Создаёт связь в базе между пользователем и динозавром
