@@ -25,6 +25,7 @@ from bot.modules.images_save import send_SmartPhoto
 
 from bot.modules.inline import inline_menu
 from bot.modules.items.accessory import downgrade_type_accessory
+from bot.modules.items.item_tools import rare_random
 from bot.modules.items.items_groups import get_group
 from bot.modules.logs import log
 
@@ -379,26 +380,26 @@ def add_to_rare_sort(items: list[str], item_id: str):
 
     return new_list
 
-def rare_random(items: list[str], count: int = 1):
-    """Функция выбирает случайные предметы из списка на основе их редкости."""
-    rarity_chances = {
-        "common": 50,
-        "uncommon": 25,
-        "rare": 15,
-        "mystical": 9,
-        "legendary": 1
-    }
+# def rare_random(items: list[str], count: int = 1):
+#     """Функция выбирает случайные предметы из списка на основе их редкости."""
+#     rarity_chances = {
+#         "common": 50,
+#         "uncommon": 25,
+#         "rare": 15,
+#         "mystical": 9,
+#         "legendary": 1
+#     }
 
-    # Получаем данные о редкости предметов
-    item_chances = [rarity_chances[get_item_data(item)['rank']] for item in items]
+#     # Получаем данные о редкости предметов
+#     item_chances = [rarity_chances[get_item_data(item)['rank']] for item in items]
 
-    # Нормализуем шансы
-    total_chance = sum(item_chances)
-    weights = [chance / total_chance for chance in item_chances]
+#     # Нормализуем шансы
+#     total_chance = sum(item_chances)
+#     weights = [chance / total_chance for chance in item_chances]
 
-    # Выбираем случайные предметы
-    selected_items = choices(items, weights=weights, k=count)
-    return selected_items
+#     # Выбираем случайные предметы
+#     selected_items = choices(items, weights=weights, k=count)
+#     return selected_items
 
 @main_router.message(Command(commands=['sort_rar']), IsAdminUser())
 @HDMessage
@@ -514,23 +515,75 @@ async def test4(message: Message):
     fil = await get_simple_graf(days=30, data_type='dinosaurs', filter_mode=None, lang='ru')
     await bot.send_photo(message.from_user.id, fil, caption='test')
 
-@main_router.message(Command(commands=['add_collection_to_all']), IsAdminUser())
+@main_router.message(Command(commands=['sdr34']), IsAdminUser())
 @HDMessage
-async def test4(message: Message):
+async def sdr34(message: Message):
     
-    for owner in await dino_owners.find({'type': 'owner'}):
-        dino = await dinosaurs.find_one({'_id': owner['dino_id']})
-        if dino:
-            user_id = owner['owner_id']
-            dino_id = dino['data_id']
+    arg = message.text.split()
+    if len(arg) < 2:
+        await message.answer("Пожалуйста, укажите название группы предметов.")
+        return
+    else:
+        group_name = arg[1]
+    
+    count = 100000
+    if len(arg) > 2:
+        try:
+            count = int(arg[2])
+        except ValueError:
+            await message.answer("Некорректное значение для count, используется 100000.")
+        
+    
+    advanced_rank_for_items = {
+        # "mystical": ["ink", "skin", "fish_oil", "twigs_tree", "feather", "wool"],
+    }
 
-            await add_to_collection_dino(user_id, dino_id)
+    group = get_group(group_name)
+    r = rare_random(group, count=count, advanced_rank_for_items=advanced_rank_for_items)
+    
+    rare_dct = {}
+    for item_id in group:
+        item = get_item_data(item_id)
+        if item['rank'] not in rare_dct:
+            rare_dct[item['rank']] = []
+        rare_dct[item['rank']].append(item_id)
 
-    dead_dino = await dead_dinos.find()
-    for dino in dead_dino:
-        user_id = dino['owner_id']
-        dino_id = dino['data_id']
+    # Подсчёт количества выпадений по редкости
+    rarity_counts = {rank: 0 for rank in rare_dct}
+    for item_id in r:
+        item = get_item_data(item_id)
+        rarity_counts[item['rank']] += 1
 
-        await add_to_collection_dino(user_id, dino_id)
+    # Подсчёт процентов по редкости
+    rarity_percents = {rank: (count / len(r)) * 100 for rank, count in rarity_counts.items()}
 
-    await message.answer("Коллекции обновлены для всех владельцев.")
+    # Подсчёт выпадений и процентов по каждому предмету
+    item_counts = {item_id: 0 for item_id in group}
+    for item_id in r:
+        item_counts[item_id] += 1
+    item_percents = {item_id: (count / len(r)) * 100 for item_id, count in item_counts.items()}
+
+    # Формируем строку для вывода по редкости
+    result = "\n".join([
+        f"{rank}: {count} ({rarity_percents[rank]:.2f}%)"
+        for rank, count in rarity_counts.items()
+    ])
+
+    # Формируем строку для вывода по каждому предмету
+    items_result = "\n".join([
+        f"{get_item_data(item_id)['rank']} {item_id}: {item_counts[item_id]} ({item_percents[item_id]:.2f}%)"
+        for item_id in group
+    ])
+
+    items_result = items_result.replace('uncommon', '💚') \
+        .replace('common', '🤍') \
+        .replace('rare', '💙') \
+        .replace('mystical', '💜') \
+        .replace('legendary', '🧡') \
+        .replace('mythical', '❤️')
+
+    pprint(rarity_counts)
+    await message.answer(
+        f"Выпадения по редкости из {count}:\n{result}\n\n"
+        f"Выпадения по каждому предмету:\n{items_result}"
+    )
