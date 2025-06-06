@@ -895,7 +895,7 @@ async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
                                reply_markup=
                                await markups_menu(userid, 'last_menu', lang))
 
-rarity_chances = {
+standart_rarity_chances = {
     "common": 50,
     "uncommon": 25,
     "rare": 15,
@@ -906,12 +906,23 @@ rarity_chances = {
 
 def rare_random(items: list[str], count: int = 1, 
                 chances_add: Optional[dict[str, int]] = None,
-                special_chances: Optional[dict[str, int]] = None
+                special_chances: Optional[dict[str, int]] = None,
+                rarity_chances: Optional[dict[str, int]] = None,
+                advanced_rank_for_items: Optional[dict[str, list[str]]] = None
                 ) -> list[str]:
     """Функция выбирает случайные предметы из списка на основе их редкости.
        chances_add - словарь с шансами, которые нужно добавить к основным шансам
        special_chances - словарь с шансами, которые нужно использовать вместо основных для определённых предметов (0-100)
     """
+    shuffle(items)
+
+    if not rarity_chances:
+        # Если не переданы шансы редкости, используем стандартные
+        rarity_chances = standart_rarity_chances.copy()
+    
+    if not advanced_rank_for_items:
+        # Если не переданы продвинутые редкости, используем пустой словарь
+        advanced_rank_for_items = {}
 
     if chances_add:
         # Добавляем шансы из переданного словаря
@@ -925,7 +936,16 @@ def rare_random(items: list[str], count: int = 1,
     # Получаем данные о редкости предметов
     item_chances = []
     for item in items:
-        rank = get_data(item)['rank']
+        # Проверяем, есть ли предмет в каком-либо списке значений advanced_rank_for_items
+        rank = None
+        if advanced_rank_for_items:
+            for adv_rank, adv_items in advanced_rank_for_items.items():
+                if item in adv_items:
+                    rank = adv_rank
+                    break
+        if not rank:
+            rank = get_data(item)['rank']
+
         if special_chances and item in special_chances:
             # Используем специальные шансы, если они указаны для предмета
             item_chances.append(special_chances[item])
