@@ -26,6 +26,11 @@ REPEAT_MINUTS = 2
 ENERGY_DOWN = 0.1 * REPEAT_MINUTS
 LVL_CHANCE = 0.125 * REPEAT_MINUTS
 
+advanced_rank_for_items = {
+    "mystical": ["ink", "skin", "fish_oil", "twigs_tree", "feather", "wool"],
+}
+
+
 async def stop_collect(coll_data):
     lang = await get_lang(coll_data['sended'])
 
@@ -49,14 +54,7 @@ async def collecting_work(coll_data: dict):
         dino = await Dino().create(coll_data['dino_id'])
         if not dino: return
 
-        special_chance = {
-            "twigs_tree": 5,
-            "wool": 5,
-            "feathers": 5,
-            "fish_oil": 5,
-            "ink": 3,
-            "skin": 5
-        }
+        special_chance = {}
         chances_add = {'common': 0, 'uncommon': 0, 
                        'rare': 0, 'mystical': 0, 'legendary': 0}
 
@@ -151,7 +149,8 @@ async def collecting_work(coll_data: dict):
                 special_chance['gourmet_herbs'] = 15
                 trc_flag = True
 
-            rand_items = rare_random(items, count, chances_add, special_chance)
+            rand_items = rare_random(items, count, chances_add, 
+                            special_chance, None, advanced_rank_for_items)
 
             for item in rand_items:
 
