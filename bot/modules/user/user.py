@@ -311,7 +311,11 @@ async def col_dinos(userid: int) -> int:
 async def get_eggs(userid: int) -> list:
     """Возвращает список с объектами динозавров."""
     eggs_list = []
-    for egg in await incubations.find({'owner_id': userid}, comment='get_eggs'):
+    for egg in await incubations.find({'owner_id': userid,
+            '$or': [
+                {'stage': None},
+                {'stage': 'incubation'}
+            ]}, comment='get_eggs'):
         eggs_list.append(await Egg().create(egg['_id']))
 
     return eggs_list
@@ -413,7 +417,11 @@ async def max_dino_col(lvl: int, user_id: int=0, premium_st: bool=False, add_slo
             if dino['type'] == 'owner': col['standart']['now'] += 1
             else: col['additional']['now'] += 1
 
-        eggs = await incubations.find({'owner_id': user_id}, comment='max_dino_col_eggs')
+        eggs = await incubations.find({'owner_id': user_id,
+            '$or': [
+                {'stage': None},
+                {'stage': 'incubation'}
+            ]}, comment='max_dino_col_eggs')
         for _ in eggs: col['standart']['now'] += 1
  
     return col
