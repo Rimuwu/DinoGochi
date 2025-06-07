@@ -1,28 +1,29 @@
+
+from asyncio import sleep
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.get_state import get_state
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur  import incubation_egg
-from bot.modules.groups import delete_message
-from bot.modules.inventory_tools import (InventoryStates, back_button,
-                                         filter_items_data, filter_menu,
+from bot.modules.dinosaur.dinosaur  import Egg, incubation_egg
+from bot.modules.images import create_eggs_image
+from bot.modules.inventory_tools import (InventoryStates, back_button, filter_items_data,
+                                         filter_menu,
                                          forward_button, generate, search_menu,
                                          send_item_info, swipe_page)
 from bot.modules.items.item import (CheckCountItemFromUser, CheckItemFromUser,
-                              RemoveItemFromUser, counts_items, decode_item, get_items_names)
+                              RemoveItemFromUser, counts_items, decode_item, get_items_names, item_code)
 from bot.modules.items.item import get_data as get_item_data
-from bot.modules.items.item import get_item_dict, get_name
-from bot.modules.items.item_tools import (AddItemToUser,
-                                    book_page, data_for_use_item,
+from bot.modules.items.item import  get_name
+from bot.modules.items.item_tools import (AddItemToUser, book_page,
+                                     data_for_use_item,
                                     delete_item_action, exchange_item)
 from bot.modules.items.time_craft import add_time_craft
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
-from bot.modules.markup import count_markup
-from bot.modules.markup import markups_menu as m
+from bot.modules.markup import count_markup, markups_menu as m
 from bot.modules.states_fabric.state_handlers import ChooseIntHandler, ChooseInventoryHandler
-# from bot.modules.states_tools import ChooseIntState
+
 from bot.modules.user.user import User, take_coins, user_name
 from fuzzywuzzy import fuzz
 from aiogram.types import CallbackQuery, Message
@@ -33,8 +34,12 @@ from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
 from aiogram.filters import StateFilter
+from aiogram.types import InputMediaPhoto
 
-from aiogram.fsm.context import FSMContext
+from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.dbmanager import mongo_client
+
+incubation = DBconstructor(mongo_client.dinosaur.incubation)
 
 
 async def cancel(message):
@@ -196,13 +201,17 @@ async def item_callback(call: CallbackQuery):
     if item:
         if call_data[1] == 'info':
             await send_item_info(item_base, {'chatid': chatid, 'lang': lang, 'userid': userid}, False)
+            
         elif call_data[1] == 'use':
             await data_for_use_item(item, userid, chatid, lang)
+            
         elif call_data[1] == 'delete':
             await delete_item_action(userid, chatid, item, lang)
+            
         elif call_data[1] == 'exchange':
             await exchange_item(userid, chatid, item, lang, 
                                 await user_name(userid))
+            
         elif call_data[1] == 'egg':
             ret_data = await CheckItemFromUser(userid, item)
             if 'abilities' in item:
@@ -210,7 +219,7 @@ async def item_callback(call: CallbackQuery):
 
             if ret_data['status']:
                 user = await User().create(userid)
-                
+
                 limit = await user.max_dino_col()
                 limit_now = limit['standart']['limit'] - limit['standart']['now']
                 
@@ -240,6 +249,74 @@ async def item_callback(call: CallbackQuery):
                 await bot.send_message(chatid, 
                         t('item_use.cannot_be_used', lang),  
                           reply_markup= await m(userid, 'last_menu', lang))
+
+        elif call_data[1] == 'egg_edit':
+            mag_stone = get_item_data('magic_stone')
+            item_data = get_item_data(item['item_id'])
+
+            preabil = mag_stone.get('abilities', {})
+            if await RemoveItemFromUser(userid, 'magic_stone', 1, preabil):
+                await call.message.delete_reply_markup()
+
+                res_egg_choose = await incubation.find_one({
+                    'owner_id': userid, 
+                    'stage': 'choosing',
+                    'quality': item_data['inc_type']
+                })
+
+                if res_egg_choose:
+                    old_eggs = res_egg_choose['eggs']
+
+                    egg = Egg()
+                    egg.__dict__.update(res_egg_choose)
+                    egg.choose_eggs()
+                    await egg.update({'$set': {
+                                'eggs': egg.eggs}
+                                        }
+                    )
+                    
+                    await call.message.edit_caption(
+                        caption=t('item_use.egg.edit_eggs', lang)
+                    )
+
+                    for i in range(3):
+                        old_eggs[i] = egg.eggs[i]
+                        image = await create_eggs_image(old_eggs)
+
+                        await call.message.edit_media(
+                            media=InputMediaPhoto(
+                                media=image,
+                                caption=t('item_use.egg.edit_eggs', lang)
+                            )
+                        )
+                        await sleep(1)
+
+                    buttons = {}
+                    code = await item_code(item_dict=item, userid=userid)
+
+                    for i in range(3): 
+                        buttons[f'🥚 {i+1}'] = (
+                            f'item egg {code} {egg.eggs[i]}'
+                    )
+
+                    btn = {
+                        t('item_use.egg.edit_buttons', lang):  f'item egg_edit {code}'
+                    }
+
+                    buttons = list_to_inline([btn, buttons])
+                    await call.message.edit_caption(
+                        caption=t('item_use.egg.egg_answer', lang),
+                        reply_markup=buttons
+                    )
+
+                else:
+                    await AddItemToUser(userid, mag_stone['item_id'], 1, preabil)
+                    await call.message.delete()
+
+            else: 
+                await bot.send_message(chatid,
+                                       t('item_use.egg.no_magic_stone', lang))
+
         elif call_data[1] == 'custom_book_read':
 
             if 'abilities' in item:

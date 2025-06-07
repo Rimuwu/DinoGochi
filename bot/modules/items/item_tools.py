@@ -311,9 +311,13 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             image = await create_eggs_image(egg_data.eggs)
             code = await item_code(item_dict=item, userid=userid)
 
+            btn = {
+                t('item_use.egg.edit_buttons', lang):  f'item egg_edit {code}'
+            }
+
             for i in range(3): 
                 buttons[f'🥚 {i+1}'] = f'item egg {code} {egg_data.eggs[i]}'
-            buttons = list_to_inline([buttons])
+            buttons = list_to_inline([btn, buttons])
 
             mes = await bot.send_photo(userid, image, 
                                  caption=t('item_use.egg.egg_answer', lang), 
