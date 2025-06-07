@@ -252,6 +252,7 @@ class Egg:
 
         self.dinos = sample(dinos_qual, 3)
         self.eggs = []
+
         for dino_id in self.dinos:
             dino_data = get_dino_data(dino_id)
             egg_id = dino_data.get('egg', 0)
@@ -325,35 +326,45 @@ async def incubation_egg(egg_id: int, owner_id: int,
          'quality': quality
         }, comment='incubation_egg_find')
 
+    egg = Egg()
     if res:
-        egg = Egg()
         egg.__dict__ = res
-
-        egg.incubation_time = inc_time + int(time())
-        egg.egg_id = egg_id
-        egg.owner_id = owner_id
-        egg.quality = quality
-
-        if not dino_id:
-            egg.dino_id = egg.dinos[egg.eggs.index(egg_id)]
-        else:
-            egg.dino_id = dino_id
-
-        if inc_time == 0: #Стандартное время инкцбации
-            egg.incubation_time = int(time()) + GS['first_dino_time_incub']
-
-        # del egg.id_message
-        # del egg.eggs
-        # del egg.dinos
-        # del egg.start_choosing
-        egg.stage = 'incubation'  # Устанавливаем стадию инкубации
-
-        log(prefix='InsertEgg', 
-            message=f'owner_id: {owner_id} data: {egg.__dict__}', lvl=0)
-        return await incubations.update_one(
-            {'_id': egg._id}, {'$set': egg.__dict__})
     else:
         log(prefix='InsertEgg ERROR', message=f'owner_id: {owner_id} data: {res}', lvl=0)
+        return None
+
+    egg.incubation_time = inc_time + int(time())
+    egg.egg_id = egg_id
+    egg.owner_id = owner_id
+    egg.quality = quality
+
+    if not dino_id:
+        egg.dino_id = egg.dinos[egg.eggs.index(egg_id)]
+    else:
+        egg.dino_id = dino_id
+
+    if inc_time == 0: #Стандартное время инкцбации
+        egg.incubation_time = int(time()) + GS['first_dino_time_incub']
+
+    egg.stage = 'incubation'  # Устанавливаем стадию инкубации
+    del egg.id_message
+    del egg.eggs
+    del egg.dinos
+    del egg.start_choosing
+
+    log(prefix='InsertEgg', 
+        message=f'owner_id: {owner_id} data: {egg.__dict__}', lvl=0)
+    
+    return await incubations.update_one(
+        {'_id': egg._id}, {'$set': egg.__dict__,
+                           '$unset': {
+                               'id_message': 1,
+                               'eggs': 1,
+                               'dinos': 1,
+                               'start_choosing': 1,
+                           }
+                        }
+        )
 
 async def create_dino_connection(dino_baseid: ObjectId, owner_id: int, con_type: str='owner'):
     """ Создаёт связь в базе между пользователем и динозавром

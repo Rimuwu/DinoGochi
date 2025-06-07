@@ -294,10 +294,10 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
             if not res_egg_choose:
                 egg_data = Egg()
-                egg_data.choose_eggs()
                 egg_data.stage = 'choosing'
                 egg_data.owner_id = userid
                 egg_data.quality = data_item['inc_type']
+                egg_data.choose_eggs()
 
             else:
                 egg_data = Egg()

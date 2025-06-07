@@ -4,6 +4,7 @@ from bot.modules.get_state import get_state
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import incubation_egg
+from bot.modules.groups import delete_message
 from bot.modules.inventory_tools import (InventoryStates, back_button,
                                          filter_items_data, filter_menu,
                                          forward_button, generate, search_menu,
@@ -225,7 +226,12 @@ async def item_callback(call: CallbackQuery):
                             item_name = i_name, end_time=end_time),  
                             reply_markup= await m(userid, 'last_menu', lang))
 
-                        await incubation_egg(int(egg_id), userid, item_data['incub_time'], item_data['inc_type'])
+                        res = await incubation_egg(int(egg_id), userid, item_data['incub_time'], item_data['inc_type'])
+
+                        if res is None:
+                            await call.message.delete()
+                            await AddItemToUser(userid, item['item_id'], 1, preabil)
+                            return
 
                         new_text = t('item_use.egg.edit_content', lang)
                         await bot.edit_message_caption(None, chat_id=chatid, message_id=call.message.message_id, 
