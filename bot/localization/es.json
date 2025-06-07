@@ -2253,7 +2253,10 @@
                 "egg_answer": "🥚 | ¡Elige un huevo de dinosaurio!",
                 "plug": "🏝 | Los botones siempre están activos, pero solo funcionan si tienes un huevo en el inventario.",
                 "incubation": "{item_name} enviado a la incubación!\n⌛ | Fin en {end_time}",
-                "edit_content": "🥚 | ¡Huevo seleccionado!"
+                "edit_content": "🥚 | ¡Huevo seleccionado!",
+                "edit_eggs": "🥚 | Los huevos se están redefiniendo, espere a que aparezcan los botones...",
+                "edit_buttons": "🍧 Otros huevos por {translate_url:items_names.magic_stone.name}",
+                "no_magic_stone": "❌ | No tienes el elemento {translate_url:items_names.magic_stone.name}!"
             },
             "ammunition": {
                 "one_item": "❌ | No se puede combinar el objeto contigo mismo.",

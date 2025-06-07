@@ -2253,7 +2253,10 @@
                 "egg_answer": "🥚 | Choose an egg with a dinosaur!",
                 "plug": "🏝 | Buttons are always active, but work only if an egg is in the inventory.",
                 "incubation": "{item_name} sent for incubation!\n⌛ | End in {end_time}",
-                "edit_content": "🥚 | Egg selected!"
+                "edit_content": "🥚 | Egg selected!",
+                "edit_eggs": "🥚 | Eggs are being overridden, please wait for the buttons to appear...",
+                "edit_buttons": "🍧 Other eggs for {translate_url:items_names.magic_stone.name}",
+                "no_magic_stone": "❌ | You do not have item {translate_url:items_names.magic_stone.name}!"
             },
             "ammunition": {
                 "one_item": "❌ | Cannot combine an item with itself.",

@@ -2253,7 +2253,10 @@
                 "egg_answer": "🥚 | Pilih telur dengan dinosaurus!",
                 "plug": "🏝 | Tombol selalu aktif, tetapi hanya bekerja jika telur ada di inventaris.",
                 "incubation": "{item_name} terkirim ke inkubasi!\n⌛ | Akhir dalam {end_time}",
-                "edit_content": "🥚 | Telur dipilih!"
+                "edit_content": "🥚 | Telur dipilih!",
+                "edit_eggs": "🥚 | Telur sedang diperbarui, tunggu hingga tombol muncul...",
+                "edit_buttons": "🍧 Telur lain seharga {translate_url:items_names.magic_stone.name}",
+                "no_magic_stone": "❌ | Anda tidak memiliki item {translate_url:items_names.magic_stone.name}!"
             },
             "ammunition": {
                 "one_item": "❌ | Tidak bisa menggabungkan item dengan dirinya sendiri.",
