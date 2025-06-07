@@ -251,12 +251,13 @@ async def item_callback(call: CallbackQuery):
                           reply_markup= await m(userid, 'last_menu', lang))
 
         elif call_data[1] == 'egg_edit':
+            await call.message.delete_reply_markup()
+
             mag_stone = get_item_data('magic_stone')
             item_data = get_item_data(item['item_id'])
 
             preabil = mag_stone.get('abilities', {})
             if await RemoveItemFromUser(userid, 'magic_stone', 1, preabil):
-                await call.message.delete_reply_markup()
 
                 res_egg_choose = await incubation.find_one({
                     'owner_id': userid, 
@@ -289,7 +290,7 @@ async def item_callback(call: CallbackQuery):
                                 caption=t('item_use.egg.edit_eggs', lang)
                             )
                         )
-                        await sleep(1)
+                        await sleep(2)
 
                     buttons = {}
                     code = await item_code(item_dict=item, userid=userid)
@@ -314,8 +315,8 @@ async def item_callback(call: CallbackQuery):
                     await call.message.delete()
 
             else: 
-                await bot.send_message(chatid,
-                                       t('item_use.egg.no_magic_stone', lang))
+                await call.message.edit_caption(
+                                       caption=t('item_use.egg.no_magic_stone', lang))
 
         elif call_data[1] == 'custom_book_read':
 
