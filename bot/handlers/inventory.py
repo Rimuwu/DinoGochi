@@ -12,7 +12,7 @@ from bot.modules.inventory_tools import (InventoryStates, back_button, filter_it
                                          forward_button, generate, search_menu,
                                          send_item_info, swipe_page)
 from bot.modules.items.item import (CheckCountItemFromUser, CheckItemFromUser,
-                              RemoveItemFromUser, counts_items, decode_item, get_items_names, item_code)
+                              RemoveItemFromUser, counts_items, decode_item, get_item_dict, get_items_names, item_code)
 from bot.modules.items.item import get_data as get_item_data
 from bot.modules.items.item import  get_name
 from bot.modules.items.item_tools import (AddItemToUser, book_page,
