@@ -241,12 +241,23 @@ def draw_colored_cells_on_image(
 
     for cell_info in cells:
         x, y = cell_info["cell"]
-        color = cell_info["color"]
         left = x * cell_size + margin
         top = y * cell_size + margin
         right = (x + 1) * cell_size - margin
         bottom = (y + 1) * cell_size - margin
-        draw.rectangle([left+1, top+1, right, bottom], fill=color)
+
+        if 'color' in cell_info:
+            color = cell_info["color"]
+            draw.rectangle([left+1, top+1, right, bottom], fill=color)
+            
+        if 'text' in cell_info:
+            text = cell_info["text"]
+            # Используем стандартный шрифт PIL, если не передан
+            font = ImageFont.truetype("arialbd.ttf", 24)
+            text_bbox = draw.textbbox((0, 0), text, font=font)
+            text_x = left + (right - left - text_bbox[2]) // 2
+            text_y = top + (bottom - top - text_bbox[3]) // 2
+            draw.text((text_x, text_y), text, fill=(255, 255, 255, 255), font=font)
 
         # Если есть ключ icon, накладываем иконку из папки icons
         if "icon" in cell_info:
@@ -716,9 +727,10 @@ def main():
         result1_img,
         # output_filename="sector_map_colored_cells.png",
         cells=[
-            # {"cell": [3, 2], "color": (255, 0, 0, 100),
-            #  "icon": "flag"},
-            # {"cell": [2, 4], "color": (255, 0, 0, 100)},
+            {"cell": [3, 2], "color": (255, 0, 0, 100),
+             "icon": "flag"},
+            {"cell": [2, 4], "color": (255, 0, 0, 100)},
+            {"cell": [2, 4], "text": '5', "icon": 'circle'},
             # {"cell": [3, 4], "color": (255, 0, 0, 100),
             #  "icon": "flag"},
             # {"cell": [4, 4], "color": (255, 0, 0, 100),
