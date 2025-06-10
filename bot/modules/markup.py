@@ -102,9 +102,9 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
     if markup_key == 'main_menu':
         # Главное меню
         buttons = [
-            ['dino_profile', 'actions_menu', 'profile_menu'],
-            ['settings_menu', 'friends_menu'],
-            ['map-bt']
+            ['map-bt', 'dino_profile', 'profile_menu'],
+                ['settings_menu', 'friends_menu'],
+                            ['home-bt']
         ]
 
     elif markup_key == 'settings_menu':
@@ -121,8 +121,8 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.settings2.'
         add_back_button = True
         buttons = [
-            ['my_name', 'lang'],
-            ['dino_talk', 'nick'],
+                    ['my_name', 'lang'],
+                    ['dino_talk', 'nick'],
             ['reset_avatar', 'confidentiality'],
         ]
 
@@ -132,7 +132,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         add_back_button = True
         buttons = [
             ['information', 'inventory', 'rayting'],
-            ['about', 'support'],
+                    ['about', 'support'],
         ]
 
     elif markup_key == 'about_menu':
@@ -140,7 +140,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.about.'
         add_back_button = True
         buttons = [
-            ['team', 'grafs'],
+                    ['team', 'grafs'],
             ['links', 'my_collection', 'faq'],
         ]
 
@@ -150,7 +150,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         add_back_button = True
         buttons = [
             ['add_friend', 'friends_list', 'remove_friend'],
-            ['requests', 'referal'],
+                    ['requests', 'referal'],
         ]
 
     elif markup_key == 'market_menu':
@@ -158,7 +158,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.market.'
         add_back_button = True
         buttons = [
-            ['random', 'find'],
+                    ['random', 'find'],
             ['seller_profile', 'search_markets'],
         ]
     
@@ -192,7 +192,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.dino_tavern.'
         add_back_button = True
         buttons = [
-            ['hoarder', 'quests'],
+                 ['hoarder', 'quests'],
             ['edit', 'daily_award', 'events'],
         ]
 
@@ -226,7 +226,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
             ]
         if col_dinos == 1:
             buttons = [
-                ['speed_actions'],
+                                ['speed_actions'],
                 ['skills_actions', 'live_actions', 'extraction']
             ]
 
@@ -237,7 +237,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
                 dino_button = f'notranslate.{t("commands_name.action_ask.dino_button", language_code)} {crop_text(dino.name, 6)}'
 
                 buttons = [
-                    ['speed_actions'],
+                                ['speed_actions'],
                     ['skills_actions', 'live_actions', 'extraction'],
                     [dino_button, "noprefix.buttons_name.back"]
                 ]
@@ -348,9 +348,16 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         # Меню перехода в разные меню
         prefix = 'commands_name.map.'
         add_back_button = True
+        
+        user = await User().create(userid)
+        dino = await user.get_last_dino()
+        if dino:
+            dino_button = f'notranslate.{t("commands_name.map.dino_button", language_code)} {crop_text(dino.name, 20)}'
 
         buttons = [
-            ['market', 'dino-tavern_menu']
+            [dino_button],
+            ['location', 'island', 'guild'],
+            
         ]
 
     else:
