@@ -70,7 +70,8 @@ async def create_report():
     else: errors_text = 'Ошибок нет, так держать!'
     errors_report_text = f'Отчет по работе бота за `{REPEAT_MINUTES}м`:\nВсего ошибок `{get_errors_count()}`\nОшибок с последнего отчета: `{get_latest_errors_dif()}`\nПоследние `{errors_count}` ошибок:\n\n{errors_text}'
 
-    await report_message(errors_report_text)
+    if errors_count:
+        await report_message(errors_report_text)
 
     # Получаем список файлов логов
     log_files = os.listdir(conf.logs_dir)
