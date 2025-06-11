@@ -1,4 +1,5 @@
 
+import json
 from typing import Optional, Union
 from PIL import Image, ImageDraw
 import os
@@ -6,6 +7,11 @@ from PIL import ImageFont
 from PIL.ImageFont import FreeTypeFont
 import string
 import math
+
+
+
+with open('../../bot/json/dino_data.json', encoding='utf-8') as f: 
+    DINOS = json.load(f)['elements'] # type: dict
 
 def draw_grid_func(draw, cells, cell_size, 
                    cell_width, line_color): 
@@ -239,38 +245,141 @@ def draw_colored_cells_on_image(
     overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
 
+    # Группируем все элементы по клеткам
+    cell_map = defaultdict(list)
     for cell_info in cells:
-        x, y = cell_info["cell"]
+        cell_tuple = tuple(cell_info["cell"])
+        cell_map[cell_tuple].append(cell_info)
+
+    for cell, cell_items in cell_map.items():
+        x, y = cell
         left = x * cell_size + margin
         top = y * cell_size + margin
         right = (x + 1) * cell_size - margin
         bottom = (y + 1) * cell_size - margin
 
-        if 'color' in cell_info:
-            color = cell_info["color"]
-            draw.rectangle([left+1, top+1, right, bottom], fill=color)
-            
-        if 'text' in cell_info:
-            text = cell_info["text"]
-            # Используем стандартный шрифт PIL, если не передан
-            font = ImageFont.truetype("arialbd.ttf", 24)
-            text_bbox = draw.textbbox((0, 0), text, font=font)
-            text_x = left + (right - left - text_bbox[2]) // 2
-            text_y = top + (bottom - top - text_bbox[3]) // 2
-            draw.text((text_x, text_y), text, fill=(255, 255, 255, 255), font=font)
+        # Рисуем цвет фона, если есть хотя бы один с color
+        for cell_info in cell_items:
+            if 'color' in cell_info:
+                color = cell_info["color"]
+                draw.rectangle([left+1, top+1, right, bottom], fill=color)
+                break  # только один раз
 
-        # Если есть ключ icon, накладываем иконку из папки icons
-        if "icon" in cell_info:
-            icon_name = cell_info["icon"]
-            icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icons", f"{icon_name}.png")
-            if os.path.exists(icon_path):
-                icon_img = Image.open(icon_path).convert("RGBA")
-                # Масштабируем иконку под размер клетки с учетом margin
+        # Рисуем текст, если есть
+        for cell_info in cell_items:
+            if 'text' in cell_info:
+                text = cell_info["text"]
+                try:
+                    font = ImageFont.truetype("arialbd.ttf", 24)
+                except Exception:
+                    font = ImageFont.truetype("arial.ttf", 24)
+                text_bbox = draw.textbbox((0, 0), text, font=font)
+                text_x = left + (right - left - text_bbox[2]) // 2
+                text_y = top + (bottom - top - text_bbox[3]) // 2
+                draw.text((text_x, text_y), text, fill=(255, 255, 255, 255), font=font)
+
+        # Собираем все иконки для этой клетки
+        icons = []
+        for cell_info in cell_items:
+            if "icon" in cell_info:
+                icons.append(cell_info["icon"])
+
+        # Рисуем иконки, если есть
+        if icons:
+            icon_paths = []
+            for icon_name in icons:
+                icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icons", f"{icon_name}.png")
+                if os.path.exists(icon_path):
+                    icon_paths.append(icon_path)
+            n = len(icon_paths)
+
+            if n == 1:
+                icon_img = Image.open(icon_paths[0]).convert("RGBA")
                 icon_size = ((right - left) // 2, (bottom - top) // 2)
                 icon_img = icon_img.resize(icon_size, Image.LANCZOS)
                 icon_left = left + ((right - left) - icon_size[0]) // 2
                 icon_top = top + ((bottom - top) - icon_size[1]) // 2
                 overlay.paste(icon_img, (icon_left, icon_top), icon_img)
+
+            elif n == 2:
+                # Две иконки: уменьшить и поставить рядом по центру
+                icon_size = ((right - left) // 2 - 10, (bottom - top) // 2 - 10)
+
+                for i, icon_path in enumerate(icon_paths):
+                    icon_img = Image.open(icon_path).convert("RGBA")
+                    icon_img = icon_img.resize(icon_size, Image.LANCZOS)
+                    # Слева и справа
+                    icon_left = left + (right - left) // 4 - icon_size[0] // 2 if i == 0 else left + 3 * (right - left) // 4 - icon_size[0] // 2
+                    icon_top = top + ((bottom - top) - icon_size[1]) // 2
+                    overlay.paste(icon_img, (icon_left, icon_top), icon_img)
+
+            elif n == 3:
+                # Три иконки: перевёрнутый треугольник
+                icon_size = ((right - left) // 3 - 2, (bottom - top) // 3 - 2)
+                positions = [
+                    (left + 3 * (right - left) // 4 - icon_size[0] // 2, top + 3 * (bottom - top) // 4 - icon_size[1] // 2),
+                    (left + 3 * (right - left) // 4 - icon_size[0] // 2, top + (bottom - top) // 4 - icon_size[1] // 2),
+                    (left + (right - left) // 4 - icon_size[0] // 2, top + 3 * (bottom - top) // 4 - icon_size[1] // 2)
+                ]
+
+                for i, icon_path in enumerate(icon_paths):
+                    icon_img = Image.open(icon_path).convert("RGBA")
+                    icon_img = icon_img.resize(icon_size, Image.LANCZOS)
+                    overlay.paste(icon_img, positions[i], icon_img)
+
+        # Если есть ключ dino, накладываем картинку динозавра из DINOS
+        for cell_info in cell_items:
+            if "dino" in cell_info:
+                dino_name = cell_info["dino"]
+                dino_path = DINOS.get(dino_name, {}).get('image')
+                if dino_path and os.path.exists(r'../../images/' + dino_path):
+                    dino_img = Image.open(r'../../images/' + dino_path).convert("RGBA")
+                    dino_scale = cell_info.get("dino_scale", 1.1)
+                    dino_w = int((right - left) * dino_scale)
+                    dino_h = int((bottom - top) * dino_scale)
+                    dino_size = (dino_w, dino_h)
+                    dino_img = dino_img.resize(dino_size, Image.LANCZOS)
+                    dino_left = left + ((right - left) - dino_size[0]) // 2
+                    vertical_shift = int(((dino_scale - 1) * (bottom - top)) * 0.5)
+                    dino_top = top + ((bottom - top) - dino_size[1]) // 2 - vertical_shift
+                    overlay.paste(dino_img, (dino_left, dino_top), dino_img)
+                else:
+                    print(f"Warning: Dino image for '{dino_name}' not found in DINOS data or file path is incorrect.")
+
+        # Если есть стены
+        for cell_info in cell_items:
+            if 'walls' in cell_info:
+                x, y = cell_info["cell"]
+                left0 = x * cell_size
+                top0 = y * cell_size
+                right0 = left0 + cell_size
+                bottom0 = top0 + cell_size
+
+                walls = cell_info['walls']
+                wall_color = cell_info.get('wall_color', (255, 255, 255, 255))
+                wall_width = cell_info.get('wall_width', 3)
+                if len(walls) == 4:
+                    margin0 = cell_info.get('wall_margin', 0)
+                    if walls[0]:
+                        draw.line(
+                            [(left0 + margin0, top0 + margin0), (left0 + margin0, bottom0 - margin0)],
+                            fill=wall_color, width=wall_width
+                        )
+                    if walls[1]:
+                        draw.line(
+                            [(left0 + margin0, top0 + margin0), (right0 - margin0, top0 + margin0)],
+                            fill=wall_color, width=wall_width
+                        )
+                    if walls[2]:
+                        draw.line(
+                            [(right0 - margin0, top0 + margin0), (right0 - margin0, bottom0 - margin0)],
+                            fill=wall_color, width=wall_width
+                        )
+                    if walls[3]:
+                        draw.line(
+                            [(left0 + margin0, bottom0 - margin0), (right0 - margin0, bottom0 - margin0)],
+                            fill=wall_color, width=wall_width
+                        )
 
     result = Image.alpha_composite(img, overlay)
     # result.save(os.path.join(current_dir, output_filename))
@@ -644,6 +753,7 @@ def draw_weight_map_on_card(
     return img
 
 from navigate import find_fastest_path, weight_map
+from collections import defaultdict
 
 def main():
     cell_size = 100
@@ -731,6 +841,8 @@ def main():
              "icon": "flag"},
             {"cell": [2, 4], "color": (255, 0, 0, 100)},
             {"cell": [2, 4], "text": '5', "icon": 'circle'},
+            {"cell": [6, 6], 'dino': '16948'},
+            {"cell": [7, 6], 'dino': '16948'},
             # {"cell": [3, 4], "color": (255, 0, 0, 100),
             #  "icon": "flag"},
             # {"cell": [4, 4], "color": (255, 0, 0, 100),
