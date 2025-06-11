@@ -27,6 +27,7 @@ from . import time_craft
 from . import companies
 from . import works
 from . import inside_shop
+from . import map
 
 from . import channel_lottery
 
