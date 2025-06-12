@@ -84,12 +84,12 @@ def t(key: str, locale: str = "en", formating: bool = True, **kwargs) -> str:
 
 load()
 
-@main_router.message_handler(commands=['help', 'start'])
+@bot.message_handler(commands=['help', 'start'])
 def send_welcome(message):
     bot.reply_to(message, "Hi!")
 
 
-@main_router.message_handler(commands=['translatem2', 'tm2'])
+@bot.message_handler(commands=['translatem2', 'tm2'])
 def translate2(message):
     args = message.text.split()
     lang = args[1]
@@ -99,7 +99,7 @@ def translate2(message):
 
     bot.send_message(chat_id, t(text, lang, False), parse_mode='Markdown')
 
-@main_router.message_handler(commands=['translate', 't'])
+@bot.message_handler(commands=['translate', 't'])
 def translate(message):
     args = message.text.split()
     lang = args[1]
