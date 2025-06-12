@@ -233,8 +233,9 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
 
     elif data_item['type'] == 'case':
         send_status = False
-        drop = data_item['drop_items']
-        shuffle(drop)
+        drop: list = data_item['drop_items']
+
+        drop = drop[::-1]
         drop_items = {}
 
         col_repit = random_dict(data_item['col_repit'])
