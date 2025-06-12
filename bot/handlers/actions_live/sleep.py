@@ -8,7 +8,8 @@ from bot.exec import main_router, bot
 from bot.modules.items.accessory import check_accessory
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_keyboard, seconds_to_str
-from bot.modules.dinosaur.dinosaur  import Dino, check_status, end_sleep, set_status, start_sleep
+from bot.modules.dinosaur.dinosaur  import Dino, check_status, end_sleep, start_sleep
+from bot.modules.dinosaur.dino_status import set_status
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import markups_menu as m

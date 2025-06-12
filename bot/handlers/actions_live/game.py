@@ -12,7 +12,8 @@ from bot.modules.items.accessory import check_accessory
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline
 from bot.modules.decorators import HDMessage
-from bot.modules.dinosaur.dinosaur  import Dino, end_game, set_status
+from bot.modules.dinosaur.dinosaur  import Dino, end_game
+from bot.modules.dinosaur.dino_status import set_status
 from bot.modules.user.friends import send_action_invite
 from bot.modules.images import dino_game
 from bot.modules.localization import get_data, get_lang, t

@@ -6,7 +6,7 @@ from bot.filters.private import IsPrivateChat
 from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.dinosaur.skills import add_skill_point
 from bot.modules.decorators import HDMessage
-from bot.modules.dinosaur.dinosaur import set_status
+from bot.modules.dinosaur.dino_status import set_status
 from bot.modules.localization import get_data, t
 from bot.modules.markup import markups_menu as m
 from bot.modules.dinosaur.mood import add_mood, repeat_activity
