@@ -106,7 +106,6 @@ class ItemData:
             "abilities": self.abilities
         }
 
-    @property
     def name(self, lang: str = 'en') -> str:
         """Получение имени предмета (c кешированием)"""
         if not hasattr(self, '_name'):
@@ -142,7 +141,6 @@ class ItemData:
 
         return name
 
-    @property
     def description(self, lang: str = 'en') -> str:
         """Получение описания предмета (c кешированием)"""
         if not hasattr(self, '_description'):
@@ -384,10 +382,13 @@ class ItemInBase:
 
             new_abilities = dict(self.items_data.abilities)
             new_abilities[characteristic] = durability - remainder
+            new_item = ItemData(
+                self.items_data.item_id, new_abilities)
 
-            await AddItemToUser(self.owner_id, 
-                                self.items_data.item_id, 1, 
-                                new_abilities, self.location['type'],
+            await AddItemToUser(self.owner_id,
+                                new_item,
+                                1, 
+                                self.location['type'],
                                 self.location['link']
                             )
             actions.append({'edit': durability - remainder})
@@ -402,6 +403,77 @@ class ItemInBase:
         await items.update_one({"_id": self._id}, {"$set": self.to_dict()})
         return self
 
+    async def UsesRemove(self, count: int = 1) -> bool:
+        """Автоматически определяет что делать с предметом, удалить или понизить количество использований
+        """
+        assert self.link_with_real_item, "Предмет должен быть связан с реальным предметом в базе данных"
+        
+        if 'uses' not in self.items_data.abilities:
+            await self.minus(count)
+            return True
+
+        else:
+            res = await self.downgrade('uses', count)
+            return res['status']
+
+    def code(self, data_mode: bool = True) -> str:
+        """Создаёт код-строку предмета, основываясь на его
+           характеристиках.
+
+           data_mode - даже если предмет есть в базе, то возвращает строку в формате ID-...:AB.uses-1:endurance-1
+        """
+        
+        if self.link_with_real_item:
+            if data_mode:
+                return convert_dict_to_string(
+                    self.items_data.to_dict())
+            else:
+                # Возвращает ID предмета в виде строки
+                return self._id.__str__()
+        
+        else:
+            return convert_dict_to_string(
+                    self.items_data.to_dict())
+
+def convert_dict_to_string(item_dict: dict) -> str:
+    """Преобразует словарь в строку формата ID.item_id-...:uses-1-i:endurance-1-i"""
+
+    item_id = item_dict.get("item_id", "")
+    abilities = item_dict.get("abilities", {})
+    abilities_str = ":".join(f"{key}#{value}#{type(value).__name__[:3]}" for key, value in abilities.items())
+
+    return f"ID{item_id}:{abilities_str}"
+
+type_map = {"int": int, "str": str, "flo": float, "boo": bool}
+
+def convert_string_to_dict(item_string: str) -> ItemData:
+    """Преобразует строку в словарь формата ID.item_id-...:uses-1-int:endurance-1-int"""
+
+    item_id = item_string.split("ID")[1].split(":")[0]
+    abilities_str = item_string.split("ID")[1].split(":")[1:]
+    abilities = {}
+    for ability in abilities_str:
+        if ability == "": continue
+
+        name, value, short_item_type = ability.split("#")
+
+        abilities[name] = type_map[short_item_type](value)
+
+    return ItemData(item_id, abilities)
+
+async def decode_item(str_id: str):
+    """ Превращает код в словарь
+    """
+
+    if str_id.startswith('ID'):
+        return convert_string_to_dict(str_id)
+    
+    else:
+        _id = ObjectId(str_id)
+        item = ItemInBase()
+
+        await item.link_for_id(_id)
+        return item
 
 async def AddItemToUser(owner_id: int, 
                         item_data: ItemData,
@@ -625,3 +697,403 @@ async def EditItemFromUser(owner_id: int,
             await item.update()
         return True
     return False
+
+
+def sort_materials(not_sort_list: list, lang: str, 
+                   separator: str = ',') -> str:
+    """Создание сообщение нужных материалов для крафта
+
+    Args:
+        not_sort_list (list): Список с материалами из базы предметов
+          example: [{"item": "26", "type": "delete"}, 
+                    {"item": "26", "type": "delete"}]
+        lang (str): язык
+        separator (str, optional): Разделитель материалов. Defaults to ','.
+
+    Returns:
+        str: Возвращает строку для вывода материалов крафта
+    """
+    col_dict, items_list, check_items = {}, [], []
+
+    # Считает предметы
+    for i in not_sort_list:
+        item = i['item']
+
+        if isinstance(item, list) or isinstance(item, dict):
+            item = json.dumps(item)
+
+        if item not in col_dict:
+            if 'count' in i:
+                col_dict[item] = i['count']
+            else: col_dict[item] = 1
+        else: 
+            if 'count' in i:
+                col_dict[item] += i['count']
+            else: col_dict[item] += 1
+
+    # Собирает текст
+    for i in not_sort_list:
+        item = i['item']
+        abilities = i.get('abilities', {})
+        text = ''
+
+        if i not in check_items:
+            if isinstance(item, str):
+                itemdata = ItemData(item, abilities)
+                col = col_dict[item]
+                text = itemdata.name(lang)
+
+            elif isinstance(item, list):
+                lst = []
+                col = col_dict[json.dumps(i['item'])]
+                for i_item in item:
+                    itemdata = ItemData(i_item, abilities)
+                    lst.append(
+                        itemdata.name(lang)
+                    )
+
+                text = f'({" | ".join(lst)})'
+
+            elif isinstance(item, dict):
+                col = col_dict[json.dumps(item)]
+                text = "(" + t(f'groups.{item["group"]}', lang) + ")"
+
+            if i['type'] == 'endurance':
+                text += f" (⬇ -{i['act']})"
+            if col > 1:
+                text += f' x{col}'
+
+            items_list.append(text)
+            check_items.append(i)
+
+    return f"{separator} ".join(items_list)
+
+def get_case_content(content: list, lang: str, separator: str = ' |'):
+    items_list = []
+
+    for item in content:
+        
+        if isinstance(item['id'], str):
+            itemdata = ItemData(item['id'])
+            name = itemdata.name(lang)
+
+        if isinstance(item['id'], dict):
+            # В материалах указана группа
+            group = item["id"]["group"]
+            name = "(" + t(f'groups.{group}', lang) + ")"
+
+        elif isinstance(item['id'], list):
+            # В материалах указан список предметов которых можно использовать
+            names = []
+            for i in item['id']: 
+                itemdata = ItemData(i)
+                names.append(itemdata.name(lang))
+            name = '(' + ', '.join(names) + ')'
+
+        percent = round((item['chance'][0] / item['chance'][1]) * 100, 4)
+        if item['col']['type'] == 'random':
+            col = f"x({item['col']['min']} - {item['col']['max']})"
+        else:
+            col = f"x{item['col']['act']}"
+        
+        items_list.append(
+            f'{name} {col} {percent}%'
+        )
+    return f"{separator} ".join(items_list)
+
+def counts_items(id_list: list, lang: str, separator: str = ','):
+    """Считает предмете, полученные в формате строки, 
+       и преобразовывает в текс.
+
+    Args:
+        id_list (list): Список с предметами в формате строки
+            example: ["1", "12"]
+        lang (str): Язык
+        separator (str, optional): Символы, разделяющие элементы. Defaults to ','.
+
+    Returns:
+        str: Возвращает строку для вывода материалов крафта
+    """
+    dct, items_list = {}, []
+    for i in id_list:
+        if isinstance(i, str):
+            dct[i] = dct.get(i, 0) + 1
+
+        elif isinstance(i, dict):
+            item_i = i['item_id']
+            count_i = i['count']
+
+            dct[item_i] = dct.get(item_i, 0) + count_i
+
+
+    for item, col in dct.items():
+        itemdata = ItemData(item)
+        name = itemdata.name(lang)
+        if col > 1: name += f" x{col}"
+
+        items_list.append(name)
+
+    if items_list:
+        return f"{separator} ".join(items_list)
+    else: return '-'
+
+def get_items_names(items_list: list[dict], lang: str, separator: str = ','):
+    """Считает предмете, полученные в формате строки, 
+       и преобразовывает в текс.
+
+    Args:
+        id_list (list): Список с предметами
+            example: [{'items_data': {'item_id'}, 'count': Optional[int]}]
+        lang (str): Язык
+        separator (str, optional): Символы, разделяющие элементы. Defaults to ','.
+
+    Returns:
+        str: Возвращает строку с предметами
+    """
+    dct, i_names = {}, []
+    for i in items_list: 
+        add_count = i.get('count', 1)
+        dct_to_str = json.dumps(i)
+        dct[dct_to_str] = dct.get(dct_to_str, 0) + add_count
+
+    for item_s, col in dct.items():
+        item = json.loads(item_s)
+        item_data = item.get(
+            'items_data', item.get('item', {})
+        )
+
+        items_id = item_data['item_id']
+        abilities = item_data.get('abilities', {})
+        
+        itemdata = ItemData(items_id, abilities)
+        name = itemdata.name(lang)
+
+        if col > 1: name += f" x{col}"
+        i_names.append(name)
+
+    if i_names:
+        return f"{separator} ".join(i_names)
+    else: return '-'
+
+
+async def item_info(item: ItemData, lang: str, 
+                    owner: bool = False):
+    """Собирает информацию и предмете, пригодную для чтения
+
+    Args:
+        item (dict): Сгенерированный словарь данных предмета
+        lang (str): Язык
+
+    Returns:
+        Str, Image
+    """
+    standart = ['dummy', 'material']
+    image = None
+
+    item_id: str = item.item_id
+    data_item: dict = get_data(item_id)
+    item_name: str = item.name(lang)
+    rank_item: str = data_item['rank']
+    type_item: str = data_item['type']
+    loc_d = get_loc_data('item_info', lang)
+
+    if 'class' in data_item and data_item['class'] in loc_d['type_info']:
+        type_loc: str = data_item['class']
+    else:
+        type_loc: str = data_item['type']
+
+    text = ''
+    dp_text = ''
+
+    # Шапка и название
+    text += loc_d['static']['cap'] + '\n'
+    text += loc_d['static']['name'].format(name=item_name) + '\n'
+
+    # Ранг предмета
+    rank = loc_d['rank'][rank_item]
+    text += loc_d['static']['rank'].format(rank=rank) + '\n'
+
+    # Тип предмета
+    type_name = loc_d['type_info'][type_loc]['type_name']
+    text += loc_d['static']['type'].format(type=type_name) + '\n'
+
+    if 'author' in item.abilities.keys():
+        author_user = await users.find_one(
+            {'userid': item.abilities['author']})
+
+        if author_user: author_name = author_user['name']
+        else: author_name = loc_d['static']['unnamed_author']
+
+        text += loc_d['static']['author'].format(
+            author=author_name
+            ) + '\n'
+
+    # Быстрая обработка предметов без фич
+    if type_item in standart:
+        dp_text += loc_d['type_info'][type_loc]['add_text']
+
+    #Еда
+    elif type_item == 'eat':
+        dp_text += loc_d['type_info'][
+            type_loc]['add_text'].format(act=data_item['act'])
+
+    # Аксы
+    elif type_item in ['game', 'sleep', 'journey', 'collecting']:
+        dp_text += loc_d['type_info'][
+            type_loc]['add_text'].format(
+                item_description=item.description(lang))
+
+    # Книга
+    elif type_item == 'book':
+        dp_text += loc_d['type_info'][
+            type_loc]['add_text'].format(
+                item_description=item.description(lang))
+
+    # Специальные предметы
+    elif type_item == 'special':
+        dp_text += loc_d['type_info'][
+            type_loc]['add_text'].format(
+                item_description=item.description(lang))
+
+        if data_item['class'] == 'transport':
+            if item.abilities['data_id'] != 0:
+                dino = await dinosaurs.find_one({'alt_id': item.abilities['data_id']})
+                if dino:
+                    text += loc_d['static']['trs_dino'].format(
+                        dino=escape_markdown(dino['name']), hp=dino['stats']['heal']
+                    )
+
+    # Рецепты
+    elif type_item == 'recipe':
+        cr_list = []
+        ignore_craft = data_item.get('ignore_preview', [])
+        for key, value in data_item['create'].items():
+            if key not in ignore_craft:
+                cr_list.append(sort_materials(value, lang))
+
+        if 'time_craft' in data_item:
+            dp_text += loc_d['static']['time_craft'].format(
+                times=seconds_to_str(data_item['time_craft'], lang))
+            dp_text += '\n'
+
+        dp_text += loc_d['type_info'][
+            type_loc]['add_text'].format(
+                create=' | '.join(cr_list),
+                materials=sort_materials(data_item['materials'], lang),
+                item_description=item.description(lang))
+    # Оружие
+    elif type_item == 'weapon':
+        if type_loc == 'near':
+            dp_text += loc_d['type_info'][
+                type_loc]['add_text'].format(
+                    endurance=item.abilities['endurance'],
+                    min=data_item['damage']['min'],
+                    max=data_item['damage']['max'])
+        else:
+            dp_text += loc_d['type_info'][
+                type_loc]['add_text'].format(
+                    ammunition=counts_items(data_item['ammunition'], lang),
+                    min=data_item['damage']['min'],
+                    max=data_item['damage']['max'])
+    # Боеприпасы
+    elif type_item == 'ammunition':
+        dp_text += loc_d['type_info'][
+            type_loc]['add_text'].format(
+                add_damage=data_item['add_damage'])
+    # Броня
+    elif type_item == 'armor':
+        dp_text += loc_d['type_info'][
+            type_loc]['add_text'].format(
+                reflection=data_item['reflection'])
+    # Рюкзаки
+    elif type_item == 'backpack':
+        dp_text += loc_d['type_info'][
+            type_loc]['add_text'].format(
+                capacity=data_item['capacity'])
+    # Кейсы
+    elif type_item == 'case':
+        dp_text += loc_d['type_info'][
+            type_loc]['add_text'].format(
+                content=get_case_content(data_item['drop_items'], lang, '\n'))
+        desc = item.description(lang)
+        if desc: dp_text += f"\n\n{desc}"
+
+    # Яйца
+    elif type_item == 'egg':
+        end_time = seconds_to_str(data_item['incub_time'], lang)
+        dp_text += loc_d['type_info'][
+            type_loc]['add_text'].format(
+                inc_time=end_time, 
+                rarity=get_loc_data(f'rare.{data_item["inc_type"]}', lang)[1])
+
+    # Информация о внутренних свойствах
+
+    for iterable_key in ['uses', 'endurance', 'mana']:
+        if iterable_key in item.abilities.keys():
+            text += loc_d['static'][iterable_key].format(
+                item.abilities[iterable_key], data_item['abilities'][iterable_key]
+            ) + '\n'
+
+    text += dp_text
+    item_bonus = data_item.get('buffs', [])
+    add_bonus, add_penaltie = [], []
+
+    for bonus in item_bonus:
+        if item_bonus[bonus] > 0:
+            add_bonus.append(loc_d['bonuses']['+' + bonus].format(
+                item_bonus[bonus]))
+        else:
+            add_penaltie.append(loc_d['penalties']['-' + bonus].format(
+                item_bonus[bonus]))
+
+    if add_bonus:
+        text += loc_d['static']['add_bonus']
+
+        for i in add_bonus:
+            if i == add_bonus[-1]:
+                text += f'*└* {i}'
+            else: 
+                text += f'*├* {i}\n'
+
+    if add_penaltie:
+        text += loc_d['static']['add_penaltie']
+
+        for i in add_penaltie:
+            if i == add_penaltie[-1]:
+                text += '*└* '
+            else: text += '*├* '
+            text += i
+
+    item_states = data_item.get('states', [])
+    if item_states:
+        text += loc_d['static']['add_states']
+
+        for state in item_states:
+            unit = state.get('unit', 0)
+            str_time = seconds_to_str(state['time'], lang)
+
+            state_text: str = loc_d['item_states'][
+                '-' if unit < 0 else '+' + state['char']
+                ]
+            state_text = state_text.format(unit, str_time)
+
+            if state == item_states[-1]:
+                text += f'*└* {state_text}'
+            else:
+                text += f'*├* {state_text}\n'
+
+    # Картиночка
+    if 'image' in data_item.keys() and data_item['image']:
+        try:
+            image = f"images/items/{data_item['image']}.png"
+        except:
+            log(f'Item {item_id} image incorrect', 4)
+
+    if type_item == 'special' and data_item['class'] == 'background':
+        data_id = item.abilities['data_id']
+        image = f"images/backgrounds/{data_id}.png"
+
+    if owner:
+        text += f'\n\n`{item} {data_item}`'
+
+    return text, image
