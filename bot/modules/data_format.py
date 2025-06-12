@@ -2,7 +2,7 @@ from io import BytesIO
 import random
 import re
 import string
-from typing import Union
+from typing import Any, Union
 
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, User, KeyboardButton
 
@@ -233,7 +233,7 @@ def seconds_to_str(seconds: int, lang: str='en', mini: bool=False, max_lvl='auto
         return result
 
 
-def near_key_number(n: int, data: dict, alternative: int=1):
+def near_key_number(n: int, data: dict, alternative: Any = 1):
     """ Находит ближайшее меньшее число среди ключей.
        В словаре ключи должны быть str(числами), в порядке убывания
 
