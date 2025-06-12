@@ -176,26 +176,12 @@ async def AddItemToUser(userid: int, item_id: str, count: int = 1, abilities: di
     item = get_item_dict(item_id, abilities)
     find_res = await items.find_one({'owner_id': userid, 
                                      'items_data': item}, {'_id': 1}, comment='AddItemToUser_find_res')
-    # action = 'new_item'
-
-    # if find_res: action = 'plus_count'
-    # if 'abilities' in item or abilities: action = 'new_edited_item' # Хочешь сломать всего бота? Поменяй if на elif
-    # if not action: action = 'new_item'
-
+ 
     if find_res:
         res = await items.update_one({'_id': find_res['_id']}, {'$inc': {'count': count}}, comment='AddItemToUser_1')
         ret_id = res.upserted_id
         action = 'plus_count'
 
-    # elif action == 'new_edited_item':
-    #     for _ in range(count):
-    #         item_dict = {
-    #             'owner_id': userid,
-    #             'items_data': item,
-    #             'count': 1
-    #         }
-    #         res = await items.insert_one(item_dict, True, comment='AddItemToUser_new_edited_item')
-    #         ret_id = res.inserted_id
     else:
         item_dict = {
             'owner_id': userid,
@@ -266,6 +252,7 @@ async def RemoveItemFromUser(userid: int, item_id: str,
 
 async def DeleteAbilItem(item_data: dict, characteristic: str, unit: int, count: int, userid: int):
     """
+    Функция рассчитывает нужно ли удалять предметы или понижать прочность.
     Возвращает:
         - False, {'ost': ...} - не хватает прочности
         - True, {'delete_count': int, 'edit_id': ObjectId или None, 'set': int или None}
