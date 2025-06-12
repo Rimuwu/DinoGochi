@@ -107,11 +107,19 @@ async def check_and_create_indexes(client: AgnosticClient):
                         # Проверяем, есть ли уже текстовый индекс в коллекции
                         has_text_index = False
                         for idx_info in existing_indexes.values():
-                            for key_field, key_type in idx_info.get('key', {}).items():
-                                if key_field == index['field'] and key_type == 'text':
-                                    has_text_index = True
-                                    break
-                        
+ 
+                            if isinstance(idx_info.get('key'), list):
+                                for key_field, key_type in idx_info['key']:
+                                    if key_field == index['field'] and key_type == 'text':
+                                        has_text_index = True
+                                        break
+
+                            else:
+                                for key_field, key_type in idx_info.get('key', {}).items():
+                                    if key_field == index['field'] and key_type == 'text':
+                                        has_text_index = True
+                                        break
+
                         if not has_text_index:
                             await collection.create_index([(index['field'], 'text')], **index_options)
                         else:
