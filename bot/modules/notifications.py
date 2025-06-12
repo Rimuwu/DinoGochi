@@ -2,18 +2,17 @@ from random import choice
 from time import time
 
 from bson.objectid import ObjectId
-from aiogram.types import InlineKeyboardMarkup
 
 from bot.dbmanager import mongo_client, conf
-from bot.exec import main_router, bot
+from bot.exec import bot
 from bot.modules.data_format import seconds_to_str
-from bot.modules.dinosaur.dino_status import check_status
+from bot.modules.dinosaur.dino_status import check_status  # оставить только этот импорт, если нужен check_status
 from bot.modules.images_creators.lvl_up import lvl_up_image
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.logs import log
 from bot.modules.items.item import get_name
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.avatar import get_avatar
