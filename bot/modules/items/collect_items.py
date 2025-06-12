@@ -24,4 +24,6 @@ directory_path = 'bot/json/items'
 ITEMS = gather_json_files(directory_path)
 log(f'Предметы загружены в колличестве {len(ITEMS)} шутк.')
 
-def get_all_items() -> dict: return deepcopy(ITEMS) # type: ignore
+def get_all_items() -> dict: 
+    """Возвращает все предметы из json"""
+    return deepcopy(ITEMS) # type: ignore
