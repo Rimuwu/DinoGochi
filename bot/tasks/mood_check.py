@@ -2,7 +2,8 @@ from time import time
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.modules.dinosaur.dinosaur  import mutate_dino_stat, set_status
+from bot.modules.dinosaur.dinosaur  import mutate_dino_stat
+from bot.modules.dinosaur.dino_status import set_status
 from bot.taskmanager import add_task
 from bot.modules.logs import log
 

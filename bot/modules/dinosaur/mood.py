@@ -5,7 +5,8 @@ from bson.objectid import ObjectId
 
 from bot.dbmanager import mongo_client
 from bot.modules.data_format import transform
-from bot.modules.dinosaur.dinosaur import set_status, start_game, Dino
+from bot.modules.dinosaur.dinosaur import start_game, Dino
+from bot.modules.dinosaur.dino_status import set_status
 from bot.modules.dinosaur.skills import check_skill
 from bot.modules.items.accessory import downgrade_accessory, downgrade_type_accessory, find_accessory
 from bot.modules.notifications import dino_notification
