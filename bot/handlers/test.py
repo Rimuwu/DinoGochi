@@ -587,3 +587,13 @@ async def sdr34(message: Message):
         f"Выпадения по редкости из {count}:\n{result}\n\n"
         f"Выпадения по каждому предмету:\n{items_result}"
     )
+
+from bot.modules.items.items import AddItemToUser
+
+@main_router.message(Command(commands=['test_add']), IsAdminUser())
+@HDMessage
+async def test_add(message: Message):
+    user_id = message.from_user.id
+
+    item = await AddItemToUser(user_id, item_id='cookie', count=1)
+    await message.answer(f"Добавлен предмет: {item}")
