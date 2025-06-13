@@ -58,9 +58,9 @@ class Dino:
                 'intelligence': 0.0, 'charisma': 0.0
         }
 
-        self.activ_items = [
-            # {'item_id': ..., 'abilities': ...}
-        ]
+        # self.activ_items = [
+        #     # {'item_id': ..., 'abilities': ...}
+        # ] # Запрос активных предметов через инвентарь с типом аксессуар
 
         self.mood = {
             'breakdown': 0, # очки срыва
