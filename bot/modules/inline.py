@@ -44,7 +44,7 @@ async def item_info_markup(item: dict, lang: str, userid: int):
         if 'abilities' in item and 'uses' in item['abilities'] and item['abilities']['uses'] != -666:
             use_text += f' ({item["abilities"]["uses"]}/{item_data["abilities"]["uses"]})'
 
-        if item_data['type'] == 'special' and item_data['class'] == 'custom_book':
+        if item_data['type'] == 'special' and item_data['item_class'] == 'custom_book':
             use_text = loc_data['custom_book']
 
             if 'abilities' in item and 'content' in item['abilities'] and item['abilities']['content']:

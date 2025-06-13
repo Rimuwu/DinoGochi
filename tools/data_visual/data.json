@@ -4,7 +4,7 @@
             "heal": 15
         },
         "act": 4,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item1",
         "rank": "common",
         "type": "eat",
@@ -19,7 +19,7 @@
             "mood": 10
         },
         "act": 4,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item2",
         "ns_craft": {
             "1": {
@@ -78,7 +78,7 @@
     },
     {
         "act": 17,
-        "class": "Carnivore",
+        "item_class": "Carnivore",
         "image": "item5",
         "ns_craft": {
             "1": {
@@ -101,7 +101,7 @@
     },
     {
         "act": 18,
-        "class": "Herbivore",
+        "item_class": "Herbivore",
         "image": "item6",
         "ns_craft": {
             "1": {
@@ -123,7 +123,7 @@
     },
     {
         "act": 19,
-        "class": "Flying",
+        "item_class": "Flying",
         "image": "item7",
         "ns_craft": {
             "1": {
@@ -155,7 +155,7 @@
     },
     {
         "act": 11,
-        "class": "Carnivore",
+        "item_class": "Carnivore",
         "image": "item8",
         "ns_craft": {
             "1": {
@@ -182,7 +182,7 @@
     },
     {
         "act": 12,
-        "class": "Herbivore",
+        "item_class": "Herbivore",
         "image": "item9",
         "ns_craft": {
             "1": {
@@ -216,7 +216,7 @@
     },
     {
         "act": 13,
-        "class": "Flying",
+        "item_class": "Flying",
         "image": "item10",
         "ns_craft": {
             "1": {
@@ -239,7 +239,7 @@
     },
     {
         "act": 16,
-        "class": "Herbivore",
+        "item_class": "Herbivore",
         "image": "item11",
         "ns_craft": {
             "1": {
@@ -273,7 +273,7 @@
     },
     {
         "act": 14,
-        "class": "Carnivore",
+        "item_class": "Carnivore",
         "image": "item12",
         "ns_craft": {
             "1": {
@@ -301,7 +301,7 @@
     },
     {
         "act": 16,
-        "class": "Flying",
+        "item_class": "Flying",
         "image": "item13",
         "ns_craft": {
             "1": {
@@ -372,7 +372,7 @@
             "heal": 15
         },
         "act": 1,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item17",
         "rank": "uncommon",
         "type": "eat",
@@ -384,7 +384,7 @@
             "mood": 13
         },
         "act": 8,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item18",
         "ns_craft": {
             "1": {
@@ -414,7 +414,7 @@
             "mood": 20
         },
         "act": 16,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item19",
         "rank": "common",
         "type": "eat",
@@ -715,7 +715,7 @@
             "mood": -10
         },
         "act": 5,
-        "class": "ALL",
+        "item_class": "ALL",
         "drink": true,
         "image": "item33",
         "rank": "rare",
@@ -767,7 +767,7 @@
     },
     {
         "act": 30,
-        "class": "Herbivore",
+        "item_class": "Herbivore",
         "image": "item35",
         "rank": "rare",
         "type": "eat",
@@ -782,7 +782,7 @@
             "energy": 25
         },
         "act": -30,
-        "class": "ALL",
+        "item_class": "ALL",
         "drink": true,
         "image": "item36",
         "rank": "rare",
@@ -834,7 +834,7 @@
     },
     {
         "act": 40,
-        "class": "Carnivore",
+        "item_class": "Carnivore",
         "image": "item38",
         "rank": "rare",
         "type": "eat",
@@ -881,7 +881,7 @@
     },
     {
         "act": 53,
-        "class": "Herbivore",
+        "item_class": "Herbivore",
         "image": "item40",
         "rank": "rare",
         "type": "eat",
@@ -927,7 +927,7 @@
     },
     {
         "act": 55,
-        "class": "Flying",
+        "item_class": "Flying",
         "image": "item42",
         "rank": "rare",
         "type": "eat",
@@ -1050,7 +1050,7 @@
             "uses": 15
         },
         "act": 5,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item47",
         "rank": "uncommon",
         "type": "eat",
@@ -1065,7 +1065,7 @@
             "uses": 9
         },
         "act": 10,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item48",
         "rank": "uncommon",
         "type": "eat",
@@ -1087,7 +1087,7 @@
             "mood": 40
         },
         "act": 65,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item50",
         "rank": "rare",
         "type": "eat",
@@ -1119,7 +1119,7 @@
         "abilities": {
             "endurance": 50
         },
-        "class": "near",
+        "item_class": "near",
         "damage": {
             "max": 3,
             "min": 1
@@ -1146,7 +1146,7 @@
         "ammunition": [
             "bone_arrow"
         ],
-        "class": "far",
+        "item_class": "far",
         "damage": {
             "max": 5,
             "min": 1
@@ -1514,7 +1514,7 @@
         "abilities": {
             "endurance": 20
         },
-        "class": "near",
+        "item_class": "near",
         "damage": {
             "max": 1,
             "min": 0
@@ -1582,7 +1582,7 @@
         "rank": "mythical",
         "time": "forever",
         "type": "special",
-        "class": "freezing",
+        "item_class": "freezing",
         "name": "❄ Заморозка",
         "original_key": "freezing"
     },
@@ -1591,7 +1591,7 @@
         "image": "item67",
         "rank": "mythical",
         "type": "special",
-        "class": "defrosting",
+        "item_class": "defrosting",
         "name": "🔥 Разморозка",
         "original_key": "defrost"
     },
@@ -1600,7 +1600,7 @@
             "energy": 5
         },
         "act": 8,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item68",
         "rank": "common",
         "type": "eat",
@@ -1622,7 +1622,7 @@
             "uses": 10
         },
         "act": 3,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item69",
         "rank": "uncommon",
         "type": "eat",
@@ -1661,7 +1661,7 @@
     },
     {
         "act": 7,
-        "class": "Herbivore",
+        "item_class": "Herbivore",
         "image": "item71",
         "rank": "common",
         "type": "eat",
@@ -1676,7 +1676,7 @@
             "mood": 25
         },
         "act": 17,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item72",
         "rank": "uncommon",
         "type": "eat",
@@ -1723,7 +1723,7 @@
             "mood": 20
         },
         "act": 10,
-        "class": "ALL",
+        "item_class": "ALL",
         "drink": true,
         "image": "item74",
         "rank": "uncommon",
@@ -1762,7 +1762,7 @@
             "heal": 1
         },
         "act": 5,
-        "class": "Herbivore",
+        "item_class": "Herbivore",
         "image": "item76",
         "rank": "common",
         "type": "eat",
@@ -1775,7 +1775,7 @@
     },
     {
         "act": 39,
-        "class": "Carnivore",
+        "item_class": "Carnivore",
         "image": "item77",
         "rank": "rare",
         "type": "eat",
@@ -1823,7 +1823,7 @@
     },
     {
         "act": 11,
-        "class": "Herbivore",
+        "item_class": "Herbivore",
         "image": "item79",
         "rank": "common",
         "type": "eat",
@@ -1832,7 +1832,7 @@
     },
     {
         "act": 46,
-        "class": "Flying",
+        "item_class": "Flying",
         "image": "item80",
         "rank": "rare",
         "type": "eat",
@@ -1844,7 +1844,7 @@
             "energy": 30
         },
         "act": 5,
-        "class": "ALL",
+        "item_class": "ALL",
         "drink": true,
         "image": "item81",
         "rank": "rare",
@@ -1858,7 +1858,7 @@
             "mood": 12
         },
         "act": 13,
-        "class": "Herbivore",
+        "item_class": "Herbivore",
         "image": "item82",
         "rank": "uncommon",
         "type": "eat",
@@ -1870,7 +1870,7 @@
             "heal": 10
         },
         "act": 38,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item83",
         "rank": "rare",
         "type": "eat",
@@ -1914,7 +1914,7 @@
     },
     {
         "act": 10,
-        "class": "Herbivore",
+        "item_class": "Herbivore",
         "image": "item85",
         "rank": "common",
         "type": "eat",
@@ -1927,7 +1927,7 @@
     },
     {
         "act": 30,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item86",
         "rank": "common",
         "type": "eat",
@@ -1972,7 +1972,7 @@
             "energy": 20
         },
         "act": 10,
-        "class": "ALL",
+        "item_class": "ALL",
         "drink": true,
         "image": "item88",
         "rank": "uncommon",
@@ -2018,7 +2018,7 @@
             "uses": 6
         },
         "act": 40,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item90",
         "rank": "mystical",
         "type": "eat",
@@ -2097,7 +2097,7 @@
     },
     {
         "act": 46,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item92",
         "rank": "rare",
         "type": "eat",
@@ -2147,7 +2147,7 @@
             "mood": 15
         },
         "act": 20,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item94",
         "rank": "rare",
         "type": "eat",
@@ -2156,7 +2156,7 @@
     },
     {
         "act": 10,
-        "class": "Herbivore",
+        "item_class": "Herbivore",
         "image": "item95",
         "rank": "common",
         "type": "eat",
@@ -2168,7 +2168,7 @@
     },
     {
         "act": 27,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item96",
         "rank": "uncommon",
         "type": "eat",
@@ -2209,7 +2209,7 @@
             "mood": 20
         },
         "act": 50,
-        "class": "Herbivore",
+        "item_class": "Herbivore",
         "image": "item98",
         "rank": "uncommon",
         "type": "eat",
@@ -2221,7 +2221,7 @@
             "energy": 10
         },
         "act": 50,
-        "class": "Flying",
+        "item_class": "Flying",
         "image": "item99",
         "rank": "uncommon",
         "type": "eat",
@@ -2233,7 +2233,7 @@
             "heal": 10
         },
         "act": 50,
-        "class": "Carnivore",
+        "item_class": "Carnivore",
         "image": "item100",
         "rank": "uncommon",
         "type": "eat",
@@ -2344,7 +2344,7 @@
     },
     {
         "act": 14,
-        "class": "Carnivore",
+        "item_class": "Carnivore",
         "image": "item104",
         "rank": "uncommon",
         "type": "eat",
@@ -2395,7 +2395,7 @@
             "uses": 2
         },
         "act": 100,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item106",
         "rank": "mystical",
         "type": "eat",
@@ -2438,7 +2438,7 @@
     },
     {
         "act": 31,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item108",
         "rank": "rare",
         "type": "eat",
@@ -3264,7 +3264,7 @@
         "image": "null",
         "rank": "legendary",
         "type": "special",
-        "class": "reborn",
+        "item_class": "reborn",
         "cant_sell": true,
         "name": "💎 Камень воскрешения",
         "original_key": "stone_resurrection",
@@ -3277,7 +3277,7 @@
             "mood": 5
         },
         "act": 1,
-        "class": "ALL",
+        "item_class": "ALL",
         "drink": true,
         "image": "item114",
         "rank": "common",
@@ -3481,7 +3481,7 @@
             "mood": 19
         },
         "act": 17,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "null",
         "rank": "rare",
         "type": "eat",
@@ -3647,7 +3647,7 @@
     },
     {
         "act": 16,
-        "class": "Herbivore",
+        "item_class": "Herbivore",
         "image": "null",
         "rank": "common",
         "type": "eat",
@@ -3656,7 +3656,7 @@
     },
     {
         "act": 21,
-        "class": "Herbivore",
+        "item_class": "Herbivore",
         "image": "null",
         "rank": "common",
         "type": "eat",
@@ -3665,7 +3665,7 @@
     },
     {
         "act": 22,
-        "class": "Herbivore",
+        "item_class": "Herbivore",
         "image": "null",
         "rank": "common",
         "type": "eat",
@@ -3783,7 +3783,7 @@
         "image": "activator",
         "rank": "mythical",
         "type": "special",
-        "class": "premium",
+        "item_class": "premium",
         "premium_time": 2592000,
         "cant_sell": true,
         "buyer": false,
@@ -3871,7 +3871,7 @@
             "mood": -666
         },
         "act": 100,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "unknown",
         "rank": "legendary",
         "type": "eat",
@@ -3883,7 +3883,7 @@
         "image": "activator",
         "rank": "mythical",
         "type": "special",
-        "class": "premium",
+        "item_class": "premium",
         "premium_time": 259200,
         "cant_sell": true,
         "name": "✨ Пробная подписка",
@@ -3894,7 +3894,7 @@
         "buyer": false,
         "rank": "legendary",
         "type": "special",
-        "class": "background",
+        "item_class": "background",
         "abilities": {
             "data_id": 1
         },
