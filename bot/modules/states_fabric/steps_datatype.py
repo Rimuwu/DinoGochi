@@ -162,7 +162,7 @@ class IntStepData(BaseDataType):
     data_keys: list[str] = ['max_int', 'min_int']
 
     def __init__(self, name: Optional[str], 
-                 message: StepMessage, 
+                 message: StepMessage | None,  
                  data: Optional[dict] = None,
                  max_int: int = 10,
                  min_int: int = 1,
@@ -178,7 +178,7 @@ class StringStepData(BaseDataType):
     data_keys: list[str] = ['min_len', 'max_len']
 
     def __init__(self, name: Optional[str], 
-                 message: StepMessage, 
+                 message: StepMessage | None,  
                  data: Optional[dict] = None,
                  min_len: int = 1,
                  max_len: int = 10
@@ -192,7 +192,7 @@ class TimeStepData(BaseDataType):
     data_keys: list[str] = ['min_int', 'max_int']
 
     def __init__(self, name: Optional[str], 
-                 message: StepMessage, 
+                 message: StepMessage | None,  
                  data: Optional[dict] = None,
                  min_int: int = 1,
                  max_int: int = 10
@@ -206,7 +206,7 @@ class ConfirmStepData(BaseDataType):
     data_keys: list[str] = ['cancel']
 
     def __init__(self, name: Optional[str], 
-                 message: StepMessage, 
+                 message: StepMessage | None,  
                  data: Optional[dict] = None,
                  cancel: bool = False
                  ) -> None:
@@ -218,7 +218,7 @@ class OptionStepData(BaseDataType):
     data_keys: list[str] = ['options']
 
     def __init__(self, name: Optional[str], 
-                 message: StepMessage, 
+                 message: StepMessage | None,  
                  data: Optional[dict] = None, 
                  options: Optional[dict] = None):
         self.options: dict = options or {}
@@ -229,7 +229,7 @@ class InlineStepData(BaseDataType):
     data_keys: list[str] = ['custom_code', 'delete_markup', 'delete_user_message', 'delete_message']
 
     def __init__(self, name: Optional[str], 
-                 message: StepMessage, 
+                 message: StepMessage,  
                  data: Optional[dict] = None, 
                  custom_code: str = '',
                  delete_markup: bool = False,
@@ -247,7 +247,7 @@ class CustomStepData(BaseDataType):
     data_keys: list[str] = ['custom_handler']
 
     def __init__(self, name: Optional[str], 
-                 message: StepMessage, 
+                 message: StepMessage | None,  
                  data: Optional[dict] = None, 
                  custom_handler: Optional[Callable] = None):
         if isinstance(custom_handler, str):
@@ -262,7 +262,7 @@ class PagesStepData(BaseDataType):
     data_keys: list[str] = ['options', 'horizontal', 'vertical', 'autoanswer', 'one_element', 'settings', 'update_page_function']
 
     def __init__(self, name: Optional[str], 
-                 message: StepMessage, 
+                 message: StepMessage | None,  
                  data: Optional[dict] = None, 
                  options: Optional[dict] = None,
                  horizontal: int = 2, vertical: int = 3,
@@ -291,7 +291,7 @@ class ImageStepData(BaseDataType):
     data_keys: list[str] = ['need_image']
 
     def __init__(self, name: Optional[str], 
-                 message: StepMessage, 
+                 message: StepMessage | None,  
                  data: Optional[dict] = None, 
                  need_image: bool = True):
         self.need_image: bool = need_image
@@ -302,7 +302,7 @@ class FriendStepData(BaseDataType):
     data_keys: list[str] = ['one_element']
 
     def __init__(self, name: Optional[str], 
-                 message: StepMessage, 
+                 message: StepMessage | None,  
                  data: Optional[dict] = None, 
                  one_element: bool = False):
         self.one_element: bool = one_element
@@ -316,7 +316,7 @@ class InventoryStepData(BaseDataType):
     ]
 
     def __init__(self, name: Optional[str], 
-                 message: StepMessage, 
+                 message: StepMessage | None,  
                  data: Optional[dict] = None,
                  type_filter: Optional[list] = None, item_filter: Optional[list] = None,
                  exclude_ids: Optional[list] = None, start_page: int = 0, 
@@ -364,7 +364,7 @@ DataType = Union[
 
 def get_step_data(type: str, 
                   name: Optional[str], 
-                  message: StepMessage, 
+                  message: StepMessage | None,  
                   data: Optional[dict] = None,
                   **kwargs) -> Type[BaseDataType]:
 
