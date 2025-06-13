@@ -1,14 +1,18 @@
 
 
 
-from hmac import new
+
 from typing import Any
+
+from bson import ObjectId
 from bot.const import GAME_SETTINGS
 from bot.dbmanager import mongo_client
 from bot.modules.data_format import deepcopy, list_to_inline, random_code, random_data, seconds_to_str
 from bot.modules.images_save import send_SmartPhoto
-from bot.modules.items.item import AddItemToUser, DeleteAbilItem, EditItemFromUser, RemoveItemFromUser, UseAutoRemove, check_and_return_dif, get_item_dict, get_items_names, get_name, get_data, item_code, item_info
+from bot.modules.items.items import AddItemToUser, DeleteAbilItem, EditItemFromUser, ItemData, RemoveItemFromUser, get_items_names, get_name, item_info
+from bot.modules.items.items import ItemInBase
 from bot.modules.items.items_groups import get_group
+from bot.modules.items.json_item import Recipe
 from bot.modules.items.time_craft import add_time_craft
 from bot.modules.localization import t
 from bot.modules.logs import log
@@ -98,18 +102,30 @@ items = DBconstructor(mongo_client.items.items)
     }
 """
 
-async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: int=1):
+async def craft_recipe(
+    userid: int, chatid: int, lang: str, 
+    item_data: ItemInBase | ObjectId,
+    count: int=1
+    ):
     """ Сформировать список проверяемых предметов, подготовить данные для выбора предметов
     """
 
-    item_id: str = item['item_id']
-    data_item: dict = get_data(item_id)
+    if isinstance(item_data, ObjectId):
+        item_base_id = item_data
+        item: ItemInBase = ItemInBase()
+        await item.link_for_id(item_base_id)
+
+    else:
+        item: ItemInBase = item_data
+
+    data_item: Recipe = item.items_data.data # type: ignore
 
     materials, steps = [], []
     choosed_items = []
     a = -1
 
-    for material in data_item['materials']:
+    # Собираем и подготавливаем данные материалов
+    for material in data_item.materials:
         if 'count' not in material: material['count'] = 1
         copy_mat = {**material}
 
@@ -117,6 +133,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
         if 'abilities' in material:
             copy_mat['abilities'] = {**material['abilities']}
 
+        # Если предмет не конкретный id, то подготавливаем данные для выбора
         if not isinstance(material['item'], str):
 
             if isinstance(material['item'], dict):
@@ -139,7 +156,9 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
                         map(lambda i: {'item_id': i}, find_items)
                     )
 
-            inv = await get_inventory_from_i(userid, find_items, one_count=True)
+            # Ищем предметы для выбора
+            inv = await get_inventory_from_i(
+                userid, find_items, one_count=True)
 
             if not inv:
                 await bot.send_message(chatid, 
@@ -148,25 +167,15 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
                     reply_markup=await markups_menu(userid, 'last_menu', lang))
                 return
 
+            # Если на выбор только один предмет
             elif len(inv) == 1:
                 copy_mat['item'] = inv[0]['item']['item_id']
                 choosed_items.append(inv[0]['item'])
 
+            # Если на выбор несколько предметов
             elif len(inv) > 1:
                 a += 1
                 name = f'{a}_step'
-                # steps.append(
-                #     {
-                #         'type': 'inv',
-                #         'name': name,
-                #         'data': {
-                #             'inventory': inv,
-                #             'changing_filters': False
-                #         },
-                #         'translate_message': True,
-                #         'message': {'text': 'item_use.recipe.consumable_item'}
-                #     }
-                # )
                 steps.append(
                     InventoryStepData(name, StepMessage(
                         text='item_use.recipe.consumable_item',
@@ -185,9 +194,9 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
         transmitted_data = {
             'materials': materials,
             'count': count,
-            'item': item
+            'item_id': item
         }
-        # await ChooseStepState(end_choose_items, userid, chatid, lang, steps, transmitted_data)
+
         await ChooseStepHandler(end_choose_items, userid, chatid, lang, steps, 
                                 transmitted_data).start()
 
@@ -204,7 +213,7 @@ async def end_choose_items(items: dict, transmitted_data: dict[str, Any]):
     """
     materials = transmitted_data['materials']
     count = transmitted_data['count']
-    item = transmitted_data['item']
+    item_id = transmitted_data['item_id']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
@@ -228,11 +237,11 @@ async def end_choose_items(items: dict, transmitted_data: dict[str, Any]):
     data = {
         "choosed_items": choosed_items
     }
-    await check_items_in_inventory(materials, item, count, 
+    await check_items_in_inventory(materials, item_id, count, 
                                    userid, chatid, lang, data)
 
 
-async def check_items_in_inventory(materials, item, count, 
+async def check_items_in_inventory(materials, item_base_id, to_next_count, 
                                    userid, chatid, lang, data: dict):
     
     """ Должна проверить предметы, выявить есть ли у игрока для каждого предмета разные вариации и если да - дать выбрать их (сделать через выдачу краткой информации и кнопки - применить)
@@ -241,6 +250,7 @@ async def check_items_in_inventory(materials, item, count,
 
     a = -1
     for material in materials:
+
         if 'abilities' in material:
             find_data = {'owner_id': userid, 
                          'items_data.item_id': material['item'],
@@ -250,12 +260,15 @@ async def check_items_in_inventory(materials, item, count,
             find_data = {'owner_id': userid, 
                          'items_data.item_id': material['item']}
 
-        find_items = await items.find(find_data, {'_id': 0, 'owner_id': 0},
+        # Ищем предметы в инвентаре
+        find_items = await items.find(find_data, 
+                                      {'_id': 0, 'owner_id': 0},
                      comment='check_items_in_inventory')
 
         # Нет предметов
         if len(find_items) == 0:
-            not_find.append({'item': material['item'], 'diff': material['count']})
+            not_find.append({'item': material['item'], 
+                             'diff': material['count']})
 
         else:
             find_set = []
@@ -267,19 +280,26 @@ async def check_items_in_inventory(materials, item, count,
             if len(find_set) == 1:
 
                 if material['type'] in ['delete', 'to_create']:
-                    count_material = await check_and_return_dif(userid, **find_set[a])
-                    if count_material >= material['count']:
+
+                    item = await ItemInBase().link_from_base(**find_set[0])
+
+                    if item.count >= material['count']:
                         finded_items.append(
                             {'item': i['items_data'],
                             'count': material['count']}
                         )
                     else:
                         not_find.append({'item': i['items_data'], 
-                                        'diff': material['count'] - count_material})
+                                        'diff': material['count'] - item.count})
 
                 elif material['type'] == 'endurance':
-                    status, dct_data = await DeleteAbilItem(find_set[a], 'endurance', 
-                                material['act'], count, userid)
+                    status, dct_data = await DeleteAbilItem(
+                        find_set[a]['owner_id'],
+                        ItemData(**find_set[a]['items_data']),
+                        characteristic='endurance', unit=material['act'], count=find_set[a]['count'],
+                        **find_set[a]['location']
+                        )
+
                     if status:
                         finded_items.append(
                             {
@@ -337,17 +357,16 @@ async def check_items_in_inventory(materials, item, count,
         transmitted_data = {
             'finded_items': finded_items,
             'data': data,
-            'count': count,
-            'item': item
+            'count': to_next_count,
+            'item_id': item_base_id
         }
 
-        # await ChooseStepState(pre_check, userid, chatid, lang, 
-                            #   steps, transmitted_data)
         await ChooseStepHandler(pre_check, userid, chatid, lang, 
                                 steps, transmitted_data).start()
 
     else:
-        await check_endurance_and_col(finded_items, count, item, 
+        await check_endurance_and_col(finded_items,
+                                      to_next_count, item_base_id, 
                                       userid, chatid, lang, data)
 
 async def send_item_info(item: dict, transmitted_data: dict):
