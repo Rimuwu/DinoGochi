@@ -436,7 +436,7 @@ class ItemInBase:
 
            data_mode - даже если предмет есть в базе, то возвращает строку в формате ID-...:AB.uses-1:endurance-1
         """
-        
+
         if self.link_with_real_item:
             if data_mode:
                 return convert_dict_to_string(

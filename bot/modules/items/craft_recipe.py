@@ -326,8 +326,9 @@ async def check_items_in_inventory(materials, item_base_id, to_next_count,
                         ),
                         inventory=find_items, changing_filters=False,
                         inline_func=send_item_info,
-                        inline_code=random_code()
-                    )
+                        inline_code=random_code(),
+                        return_objectid=False
+                    )0
                 )
                 finded_items.append({'item': name, 
                                      'count': material['count']})
@@ -369,13 +370,15 @@ async def check_items_in_inventory(materials, item_base_id, to_next_count,
                                       to_next_count, item_base_id, 
                                       userid, chatid, lang, data)
 
-async def send_item_info(item: dict, transmitted_data: dict):
+async def send_item_info(item_data: dict, transmitted_data: dict):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
 
     custom_code = transmitted_data['inline_code']
-    code = await item_code(item_dict=item, userid=userid)
+
+    item = await ItemInBase().link_for_id(item_data['_id'])
+    code = item.code()
 
     text, image = await item_info(item, lang)
     markup = list_to_inline([
