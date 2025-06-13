@@ -3,7 +3,7 @@
         "abilities": {
             "endurance": 50
         },
-        "class": "near",
+        "item_class": "near",
         "damage": {
             "max": 3,
             "min": 1
@@ -17,7 +17,7 @@
         "abilities": {
             "endurance": 120
         },
-        "class": "near",
+        "item_class": "near",
         "damage": {
             "max": 5,
             "min": 2
@@ -31,7 +31,7 @@
         "abilities": {
             "endurance": 80
         },
-        "class": "near",
+        "item_class": "near",
         "damage": {
             "max": 6,
             "min": 1
@@ -57,7 +57,7 @@
         "ammunition": [
             "bone_arrow"
         ],
-        "class": "far",
+        "item_class": "far",
         "damage": {
             "max": 5,
             "min": 1
@@ -74,7 +74,7 @@
         "ammunition": [
             "bone_arrow"
         ],
-        "class": "far",
+        "item_class": "far",
         "damage": {
             "max": 8,
             "min": 1
@@ -110,7 +110,7 @@
         "abilities": {
             "endurance": 20
         },
-        "class": "near",
+        "item_class": "near",
         "damage": {
             "max": 1,
             "min": 0
@@ -125,7 +125,7 @@
         "abilities": {
             "endurance": 60
         },
-        "class": "near",
+        "item_class": "near",
         "damage": {
             "max": 1,
             "min": 0
@@ -140,7 +140,7 @@
         "abilities": {
             "endurance": 40
         },
-        "class": "near",
+        "item_class": "near",
         "damage": {
             "max": 1,
             "min": 0
@@ -197,7 +197,7 @@
         "abilities": {
             "endurance": 20
         },
-        "class": "near",
+        "item_class": "near",
         "damage": {
             "max": 1,
             "min": 0
@@ -212,7 +212,7 @@
         "abilities": {
             "endurance": 60
         },
-        "class": "near",
+        "item_class": "near",
         "damage": {
             "max": 1,
             "min": 0
@@ -227,7 +227,7 @@
         "abilities": {
             "endurance": 40
         },
-        "class": "near",
+        "item_class": "near",
         "damage": {
             "max": 1,
             "min": 0

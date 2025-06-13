@@ -33,6 +33,6 @@
         "image": "toy_solider",
         "rank": "uncommon",
         "type": "sleep",
-        "groups": []
+        "groups": ["repairing"]
     }
 }

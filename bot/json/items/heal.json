@@ -4,7 +4,7 @@
             "heal": 15
         },
         "act": 1,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "item17",
         "rank": "uncommon",
         "type": "eat"
@@ -15,7 +15,7 @@
             "mood": -10
         },
         "act": 5,
-        "class": "ALL",
+        "item_class": "ALL",
         "drink": true,
         "image": "item33",
         "rank": "rare",
@@ -31,7 +31,7 @@
             { "char": "energy", "unit": 10, "time": 21600 }
         ],
         "act": 50,
-        "class": "ALL",
+        "item_class": "ALL",
         "image": "null",
         "rank": "legendary",
         "type": "eat",
