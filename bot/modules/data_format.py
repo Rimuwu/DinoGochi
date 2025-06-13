@@ -46,7 +46,9 @@ def random_dict(data: dict) -> int:
     """
 
     if type(data) == dict:
-        if data["type"] == "static": return data['act']
+        if "type" not in data: return data['act']
+
+        elif data["type"] == "static": return data['act']
 
         elif data["type"] == "random":
             if data['min'] < data['max']:
@@ -56,6 +58,7 @@ def random_dict(data: dict) -> int:
         elif data["type"] == "choice":
             if data['act']: return random.choice(data['act'])
             else: return 0
+
     elif type(data) == int: return data
     return 0
 
