@@ -19,7 +19,8 @@ from typing import Any, Literal, Optional, Union
 
 from bson import ObjectId
 from bot.dbmanager import mongo_client
-from bot.modules.data_format import deepcopy, escape_markdown, random_dict, seconds_to_str, near_key_number
+from bot.modules.data_format import escape_markdown, random_dict, seconds_to_str, near_key_number
+from bot.modules.items.json_item import *
 from bot.modules.localization import get_all_locales, t
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
@@ -32,16 +33,6 @@ dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 users = DBconstructor(mongo_client.user.users)
 
 ITEMS: dict = get_all_items()
-
-def get_data(item_id: str) -> dict:
-    """Получение данных из json"""
-
-    # Проверяем еть ли предмет с таким ключём в items.json
-    if item_id in ITEMS.keys():
-        item_data = deepcopy(ITEMS[item_id])
-        return item_data # type: ignore
-    else: 
-        raise ValueError(f"Предмет с ID {item_id} не найден в базе данных предметов.")
 
 def load_items_names() -> dict:
     """Загружает все имена предметов из локализации в один словарь. 
@@ -62,7 +53,7 @@ def load_items_names() -> dict:
     return items_names
 
 ITEMS_NAMES = load_items_names()
-LOCATIONS_TYPES = Literal["home", "market", "dino", "guild"]
+LOCATIONS_TYPES = Literal["home", "market", "accessory", "guild", "backpack"]
 ABILITIES_DATA_TYPES = Union[int, float, str, bool]
 
 class ItemData:
@@ -71,14 +62,17 @@ class ItemData:
     def __init__(self, item_id: str, abilities: Optional[dict] = None):
 
         self.item_id = item_id
-        self.data = get_data(self.item_id)
+        self.data = GetItem(self.item_id)
 
         self.abilities = self.abilities_processing(abilities)
+
+    def __str__(self) -> str:
+        return f"ItemData(item_id={self.item_id}, abilities={self.abilities}, data={self.data})"
 
     def abilities_processing(self, abilities: Optional[dict]) -> dict:
         """ Обрабатывает характеристики предмета, если они есть и добавляет стандартные харрактеристики из json файла предметов """
 
-        abl: dict = self.data.get('abilities', {})
+        abl: dict = getattr(self.data, 'abilities', {}).copy()
         abl.update(abilities or {})
 
         if abl:
@@ -94,8 +88,8 @@ class ItemData:
             assert isinstance(key, ABILITIES_DATA_TYPES), f"Ключ {key} в характеристиках предмета должен быть из типов {ABILITIES_DATA_TYPES}"
 
             # Обновляем локальные данные предмета данными харрактеристик
-            if key in self.data:
-                self.data[key] = abl[key]
+            if key in self.data.__dict__:
+                self.data.__dict__[key] = abl[key]
 
         return abl
 
@@ -109,37 +103,8 @@ class ItemData:
     def name(self, lang: str = 'en') -> str:
         """Получение имени предмета (c кешированием)"""
         if not hasattr(self, '_name'):
-            self._name = self.get_name(lang)
+            self._name = get_name(self.item_id, lang, self.abilities)
         return self._name
-
-    def get_name(self, lang: str='en') -> str:
-        """Получение имени предмета"""
-        name = ''
-
-        if 'endurance' in self.abilities:
-            endurance = self.abilities['endurance']
-        else: endurance = 0
-
-        if self.item_id in ITEMS_NAMES:
-            if lang not in ITEMS_NAMES[self.item_id]: lang = 'en'
-
-            if 'name' in self.abilities: name = self.abilities['name']
-
-            elif endurance and 'alternative_name' in ITEMS_NAMES[self.item_id][lang]:
-                if str(endurance) in ITEMS_NAMES[self.item_id][lang]['alternative_name']:
-                    name = ITEMS_NAMES[self.item_id][lang]['alternative_name'][str(endurance)]
-                else: 
-                    name = near_key_number(endurance, 
-                                           ITEMS_NAMES[self.item_id][lang], 'name')
-            else:
-                try:
-                    name = ITEMS_NAMES[self.item_id][lang]['name']
-                except:
-                    log(f'Имя для {self.item_id} {lang} не найдено!', 4)
-        else:
-            log(f'Имя для {self.item_id} не найдено')
-
-        return name
 
     def description(self, lang: str = 'en') -> str:
         """Получение описания предмета (c кешированием)"""
@@ -157,6 +122,7 @@ class ItemData:
             description = ITEMS_NAMES[self.item_id][lang].get('description', '')
         return description
 
+    @property
     def is_standart(self) -> bool:
         """Определяем стандартный ли предмет*.
 
@@ -170,9 +136,9 @@ class ItemData:
 
         # Проверяем, что все характеристики соответствуют стандартным
         for key, value in self.abilities.items():
-            if key not in self.data.get('abilities', {}):
+            if key not in self.data.abilities:
                 return False
-            if self.data['abilities'][key] != value:
+            if self.data.abilities[key] != value:
                 return False
 
         return True
@@ -210,6 +176,9 @@ class ItemInBase:
             "type": location_type,  # Тип места хранения (home, market, dino)
             "link": location_link,  # Ссылка на место хранения (Id динозавра, клетка с магазином, ...)
         }
+    
+    def __str__(self) -> str:
+        return f"ItemInBase(owner_id={self.owner_id}, item_id={self.item_id}, count={self.count}, location={self.location}, _id={self._id}, items_data={self.items_data})"
 
     def to_dict(self) -> dict:
         """Преобразование в словарь для сохранения в базу данных"""
@@ -300,13 +269,56 @@ class ItemInBase:
         self.item_id = self.items_data.item_id
         return self
 
-    async def add_to_db(self) -> ObjectId:
+    async def link_from_base(self, 
+            owner_id: int, count: int, 
+            items_data: dict, location: dict,
+            _id: ObjectId | None = None,
+            update_data: bool = False
+        ):
+        """ Линк на основе данных из базы данных. 
+            update_data - если True, то обновляет данные предмета в базе данных
+            Если нет, то просто заменяет данные предмета в этом классе
+        """
+
+        if _id is None or update_data:
+
+            find_dct = {
+                "owner_id": owner_id,
+                "items_data.item_id": items_data['item_id'],
+                "items_data.abilities": items_data['abilities'],
+                "count": count,
+                "location.type": location['type'],
+                "location.link": location['link']
+            }
+
+            result = await items.find_one(find_dct, comment='link_item_from_base')
+            if result is None:
+                raise ValueError(f"Предмет с данными {find_dct} не найден в базе данных.")
+
+            self._id = result['_id']
+            self.__dict__.update(result)
+            self.items_data = ItemData(**result['items_data'])
+            self.item_id = self.items_data.item_id
+            return self
+
+        else:
+            self._id = _id
+            self.owner_id = owner_id
+            self.items_data = ItemData(**items_data)
+            self.count = count
+            self.location = location
+
+            self.item_id = self.items_data.item_id
+
+            return self
+
+    async def add_to_db(self) -> ObjectId | None:
         """Добавляет предмет в базу данных и возвращает его ID"""
 
         assert self.link_with_real_item is False, "Предмет уже связан с реальным предметом в базе данных"
         assert isinstance(self.owner_id, int) and self.owner_id > 0, "owner_id должен быть привязан к реальному пользователю"
 
-        if not self.items_data.is_standart():
+        if not self.items_data.is_standart:
             raise ValueError("Предмет должен быть стандартным для добавления в базу данных")
 
         result = await items.insert_one(self.to_dict(), comment='add_item_to_db')
@@ -319,7 +331,8 @@ class ItemInBase:
         assert self.link_with_real_item, "Предмет должен быть связан с реальным предметом в базе данных"
 
         self.count += count
-        await items.update_one({"_id": self._id}, {"$set": {"count": self.count}})
+        await items.update_one(
+            {"_id": self._id}, {"$set": {"count": self.count}})
         return self.count
 
     async def minus(self, count: int = 1) -> int:
@@ -338,7 +351,8 @@ class ItemInBase:
 
         else:
             self.count -= count
-            await items.update_one({"_id": self._id}, {"$set": {"count": self.count}})
+            await items.update_one({"_id": self._id}, 
+                                   {"$set": {"count": self.count}})
         return self.count
 
     async def downgrade(self, characteristic: str, amount: int) -> dict:
@@ -474,6 +488,35 @@ async def decode_item(str_id: str):
 
         await item.link_for_id(_id)
         return item
+
+def get_name(item_id: str, lang: str, abilities: dict) -> str:
+    """Получение имени предмета"""
+    name = ''
+
+    if 'endurance' in abilities:
+        endurance = abilities['endurance']
+    else: endurance = 0
+
+    if item_id in ITEMS_NAMES:
+        if lang not in ITEMS_NAMES[item_id]: lang = 'en'
+
+        if 'name' in abilities: name = abilities['name']
+
+        elif endurance and 'alternative_name' in ITEMS_NAMES[item_id][lang]:
+            if str(endurance) in ITEMS_NAMES[item_id][lang]['alternative_name']:
+                name = ITEMS_NAMES[item_id][lang]['alternative_name'][str(endurance)]
+            else: 
+                name = near_key_number(endurance, 
+                                        ITEMS_NAMES[item_id][lang], 'name')
+        else:
+            try:
+                name = ITEMS_NAMES[item_id][lang]['name']
+            except:
+                log(f'Имя для {item_id} {lang} не найдено!', 4)
+    else:
+        log(f'Имя для {item_id} не найдено')
+
+    return name
 
 async def AddItemToUser(owner_id: int, 
                         item_data: ItemData,
@@ -612,49 +655,32 @@ async def CheckItemFromUser(owner_id: int, item_id: str,
         else:
             return {"status": False, "difference": count}
 
-async def CheckCountItemFromUser(owner_id: int, 
-                                 item_data: ItemData, 
-                                 count: int,
-                                 location_type: LOCATIONS_TYPES = "home",
-                                 location_link: Any = None
-                                 ) -> bool:
-    """ TODO: удалить. Проверяет есть ли count предметов у человека """
+# async def CheckCountItemFromUser(owner_id: int, 
+#                                  item_data: ItemData, 
+#                                  count: int,
+#                                  location_type: LOCATIONS_TYPES = "home",
+#                                  location_link: Any = None
+#                                  ) -> bool:
+#     """ TODO: удалить. Проверяет есть ли count предметов у человека """
 
-    result = await CheckItemFromUser(
-        owner_id, 
-        item_data.item_id, 
-        item_data.abilities, 
-        count, 
-        location_type, 
-        location_link
-    )
-    return result['status']
+#     result = await CheckItemFromUser(
+#         owner_id, 
+#         item_data.item_id, 
+#         item_data.abilities, 
+#         count, 
+#         location_type, 
+#         location_link
+#     )
+#     return result['status']
 
-async def check_and_return_dif(owner_id: int, 
-                               item_data: ItemData, 
-                               count: int,
-                               location_type: LOCATIONS_TYPES = "home",
-                               location_link: Any = None
-                            ) -> int:
-    """ TODO: удалить. Проверяет не конкретный документ на count а всю базу, возвращая количество
-    """
-    item = ItemInBase(owner_id=owner_id, 
-                      item_id=item_data.item_id, 
-                      abilities=item_data.abilities, 
-                      count=count, 
-                      location_type=location_type, 
-                      location_link=location_link)
-    await item.link_yourself()
 
-    if item.link_with_real_item: return item.count
-    else: return 0
 
 async def EditItemFromUser(owner_id: int, 
                            location_type: LOCATIONS_TYPES,
                            location_link: Any,
                            now_item: ItemData, new_data: ItemData
                            ) -> bool:
-    """ TODO: удалить.
+    """
        Функция ищет предмет по now_item и в случае успеха изменяет его данные на new_data.
        Если предметов больше одного, то создаёт новый предмет с новыми данными и удаляет старый.
        (Или добавляет колличество, если новый предмет уже в базе)
@@ -801,7 +827,7 @@ def get_case_content(content: list, lang: str, separator: str = ' |'):
         )
     return f"{separator} ".join(items_list)
 
-def counts_items(id_list: list, lang: str, separator: str = ','):
+def counts_items(id_list: list[str] | None, lang: str, separator: str = ','):
     """Считает предмете, полученные в формате строки, 
        и преобразовывает в текс.
 
@@ -815,6 +841,8 @@ def counts_items(id_list: list, lang: str, separator: str = ','):
         str: Возвращает строку для вывода материалов крафта
     """
     dct, items_list = {}, []
+    if id_list is None: return '-'
+    
     for i in id_list:
         if isinstance(i, str):
             dct[i] = dct.get(i, 0) + 1
@@ -876,7 +904,7 @@ def get_items_names(items_list: list[dict], lang: str, separator: str = ','):
     else: return '-'
 
 
-async def item_info(item: ItemData, lang: str, 
+async def item_info(item: ItemData | ItemInBase, lang: str, 
                     owner: bool = False):
     """Собирает информацию и предмете, пригодную для чтения
 
@@ -891,16 +919,27 @@ async def item_info(item: ItemData, lang: str,
     image = None
 
     item_id: str = item.item_id
-    data_item: dict = get_data(item_id)
-    item_name: str = item.name(lang)
-    rank_item: str = data_item['rank']
-    type_item: str = data_item['type']
+    if isinstance(item, ItemInBase):
+        # Если передан предмет из базы, то получаем его данные
+        data_item = item.items_data.data
+        item_name: str = item.items_data.name(lang)
+        description: str = item.items_data.description(lang)
+        abilities = item.items_data.abilities
+    else:
+        # Если передан предмет из ItemData, то получаем его данные
+        data_item = item.data
+        item_name: str = item.name(lang)
+        description: str = item.description(lang)
+        abilities = item.abilities
+
+    rank_item: str = data_item.rank
+    type_item: str = data_item.type
     loc_d = get_loc_data('item_info', lang)
 
-    if 'class' in data_item and data_item['class'] in loc_d['type_info']:
-        type_loc: str = data_item['class']
+    if hasattr(data_item, 'item_class') and getattr(data_item, 'item_class', None) in loc_d['type_info']:
+        type_loc: str = getattr(data_item, 'item_class')
     else:
-        type_loc: str = data_item['type']
+        type_loc: str = getattr(data_item, 'type')
 
     text = ''
     dp_text = ''
@@ -917,9 +956,9 @@ async def item_info(item: ItemData, lang: str,
     type_name = loc_d['type_info'][type_loc]['type_name']
     text += loc_d['static']['type'].format(type=type_name) + '\n'
 
-    if 'author' in item.abilities.keys():
+    if 'author' in abilities.keys():
         author_user = await users.find_one(
-            {'userid': item.abilities['author']})
+            {'userid': abilities['author']})
 
         if author_user: author_name = author_user['name']
         else: author_name = loc_d['static']['unnamed_author']
@@ -933,109 +972,110 @@ async def item_info(item: ItemData, lang: str,
         dp_text += loc_d['type_info'][type_loc]['add_text']
 
     #Еда
-    elif type_item == 'eat':
+    elif isinstance(data_item, Eat):
         dp_text += loc_d['type_info'][
-            type_loc]['add_text'].format(act=data_item['act'])
+            type_loc]['add_text'].format(act=data_item.act)
 
     # Аксы
-    elif type_item in ['game', 'sleep', 'journey', 'collecting']:
+    elif isinstance(data_item, (Game, Sleep, Journey, Collecting)):
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                item_description=item.description(lang))
+                item_description=description)
 
     # Книга
-    elif type_item == 'book':
+    elif isinstance(data_item, Book):
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                item_description=item.description(lang))
+                item_description=description)
 
     # Специальные предметы
-    elif type_item == 'special':
+    elif isinstance(data_item, Special):
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                item_description=item.description(lang))
+                item_description=description)
 
-        if data_item['class'] == 'transport':
-            if item.abilities['data_id'] != 0:
-                dino = await dinosaurs.find_one({'alt_id': item.abilities['data_id']})
+        if getattr(data_item, 'item_class', None) == 'transport':
+            if abilities.get('data_id', 0) != 0:
+                dino = await dinosaurs.find_one({'alt_id': abilities['data_id']})
                 if dino:
                     text += loc_d['static']['trs_dino'].format(
                         dino=escape_markdown(dino['name']), hp=dino['stats']['heal']
                     )
 
     # Рецепты
-    elif type_item == 'recipe':
+    elif isinstance(data_item, Recipe):
         cr_list = []
-        ignore_craft = data_item.get('ignore_preview', [])
-        for key, value in data_item['create'].items():
+        ignore_craft = data_item.ignore_preview
+
+        for key, value in data_item.create.items():
             if key not in ignore_craft:
                 cr_list.append(sort_materials(value, lang))
 
-        if 'time_craft' in data_item:
+        if data_item.time_craft > 0:
             dp_text += loc_d['static']['time_craft'].format(
-                times=seconds_to_str(data_item['time_craft'], lang))
+                times=seconds_to_str(data_item.time_craft, lang))
             dp_text += '\n'
 
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
                 create=' | '.join(cr_list),
-                materials=sort_materials(data_item['materials'], lang),
-                item_description=item.description(lang))
+                materials=sort_materials(data_item.materials, lang),
+                item_description=description)
     # Оружие
-    elif type_item == 'weapon':
+    elif isinstance(data_item, Weapon):
         if type_loc == 'near':
             dp_text += loc_d['type_info'][
                 type_loc]['add_text'].format(
-                    endurance=item.abilities['endurance'],
-                    min=data_item['damage']['min'],
-                    max=data_item['damage']['max'])
+                    endurance=abilities['endurance'],
+                    min=data_item.damage['min'],
+                    max=data_item.damage['max'])
         else:
             dp_text += loc_d['type_info'][
                 type_loc]['add_text'].format(
-                    ammunition=counts_items(data_item['ammunition'], lang),
-                    min=data_item['damage']['min'],
-                    max=data_item['damage']['max'])
+                    ammunition=counts_items(data_item.ammunition, lang),
+                    min=data_item.damage['min'],
+                    max=data_item.damage['max'])
     # Боеприпасы
-    elif type_item == 'ammunition':
+    elif isinstance(data_item, Ammunition):
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                add_damage=data_item['add_damage'])
+                add_damage=data_item.add_damage)
     # Броня
-    elif type_item == 'armor':
+    elif isinstance(data_item, Armor):
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                reflection=data_item['reflection'])
+                reflection=data_item.reflection)
     # Рюкзаки
-    elif type_item == 'backpack':
+    elif isinstance(data_item, Backpack):
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                capacity=data_item['capacity'])
+                capacity=data_item.capacity)
     # Кейсы
-    elif type_item == 'case':
+    elif isinstance(data_item, Case):
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                content=get_case_content(data_item['drop_items'], lang, '\n'))
-        desc = item.description(lang)
-        if desc: dp_text += f"\n\n{desc}"
+                content=get_case_content(data_item.drop_items, lang, '\n'))
+
+        if description: dp_text += f"\n\n{description}"
 
     # Яйца
-    elif type_item == 'egg':
-        end_time = seconds_to_str(data_item['incub_time'], lang)
+    elif isinstance(data_item, Egg):
+        end_time = seconds_to_str(data_item.incub_time, lang)
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                inc_time=end_time, 
-                rarity=get_loc_data(f'rare.{data_item["inc_type"]}', lang)[1])
+                inc_time=end_time,
+                rarity=get_loc_data(f'rare.{data_item.inc_type}', lang)[1])
 
     # Информация о внутренних свойствах
 
     for iterable_key in ['uses', 'endurance', 'mana']:
-        if iterable_key in item.abilities.keys():
+        if iterable_key in abilities.keys():
             text += loc_d['static'][iterable_key].format(
-                item.abilities[iterable_key], data_item['abilities'][iterable_key]
+                abilities[iterable_key], data_item.abilities[iterable_key]
             ) + '\n'
 
     text += dp_text
-    item_bonus = data_item.get('buffs', [])
+    item_bonus = data_item.buffs
     add_bonus, add_penaltie = [], []
 
     for bonus in item_bonus:
@@ -1064,7 +1104,7 @@ async def item_info(item: ItemData, lang: str,
             else: text += '*├* '
             text += i
 
-    item_states = data_item.get('states', [])
+    item_states = data_item.states
     if item_states:
         text += loc_d['static']['add_states']
 
@@ -1083,14 +1123,13 @@ async def item_info(item: ItemData, lang: str,
                 text += f'*├* {state_text}\n'
 
     # Картиночка
-    if 'image' in data_item.keys() and data_item['image']:
-        try:
-            image = f"images/items/{data_item['image']}.png"
-        except:
-            log(f'Item {item_id} image incorrect', 4)
+    try:
+        image = f"images/items/{data_item.image}.png"
+    except:
+        log(f'Item {item_id} image incorrect', 4)
 
-    if type_item == 'special' and data_item['class'] == 'background':
-        data_id = item.abilities['data_id']
+    if type_item == 'special' and type_loc == 'background':
+        data_id = abilities['data_id']
         image = f"images/backgrounds/{data_id}.png"
 
     if owner:
