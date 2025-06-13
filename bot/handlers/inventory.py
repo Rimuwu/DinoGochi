@@ -85,7 +85,6 @@ async def inventory(message: Message):
         main_message = data['main_message']
         settings = data['settings']
 
-        function = data['function']
         transmitted_data = data['transmitted_data']
 
     names = list(items_data.keys())
