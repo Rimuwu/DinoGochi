@@ -10,7 +10,7 @@ from pprint import pprint
 from time import time
 import json
 from random import choice, choices
-from time import sleep
+# from time import sleep  # Remove this line to avoid overwriting asyncio.sleep
 from asyncio import sleep as asleep
 
 import aiogram
@@ -25,6 +25,7 @@ from bot.modules.images_save import send_SmartPhoto
 
 from bot.modules.inline import inline_menu
 from bot.modules.items.accessory import downgrade_type_accessory
+from bot.modules.items.collect_items import get_all_items
 from bot.modules.items.item_tools import rare_random
 from bot.modules.items.items_groups import get_group
 from bot.modules.logs import log
@@ -588,12 +589,45 @@ async def sdr34(message: Message):
         f"Выпадения по каждому предмету:\n{items_result}"
     )
 
-from bot.modules.items.items import AddItemToUser
+from bot.modules.items.items import AddItemToUser, ItemInBase, item_info
+ITEMS: dict = get_all_items()
 
-@main_router.message(Command(commands=['test_add']), IsAdminUser())
+@main_router.message(Command(commands=['all_info']), IsAdminUser())
 @HDMessage
 async def test_add(message: Message):
     user_id = message.from_user.id
+    lang = await get_lang(user_id)
 
-    item = await AddItemToUser(user_id, item_id='cookie', count=1)
-    await message.answer(f"Добавлен предмет: {item}")
+    for key in ITEMS:
+        item = ItemInBase(
+            owner_id=user_id,
+            item_id=key,
+            count=10
+        )
+        res = await item.add_to_db()
+        await message.answer(
+            f"Добавлен предмет: {item.items_data.name} {res}")
+
+        text, image = await item_info(
+            item, lang, True
+        )
+
+        try:
+            await send_SmartPhoto(
+                user_id, image, text, 'Markdown', None
+            )
+            await sleep(0.5)
+        except:
+            # Разбиваем текст на две части
+            half = len(text) // 2
+            first_half = text[:half]
+            second_half = text[half:]
+
+            # Отправляем первую половину с фото
+            await send_SmartPhoto(
+                user_id, image, first_half, None
+            )
+
+            # Отправляем вторую половину без фото
+            await bot.send_message(user_id, second_half)
+            await sleep(0.5)
