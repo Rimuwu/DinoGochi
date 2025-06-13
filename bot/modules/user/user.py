@@ -320,7 +320,8 @@ async def get_eggs(userid: int) -> list:
 
     return eggs_list
 
-async def get_inventory(userid: int, exclude_ids: list  | None = None):
+async def get_inventory(userid: int, exclude_ids: list  | None = None,
+                        return_objectid: bool = False):
     if exclude_ids is None: exclude_ids = []
     
     inv, count = [], 0
@@ -331,6 +332,9 @@ async def get_inventory(userid: int, exclude_ids: list  | None = None):
             inv.append(item_dict)
 
             count += item_dict['count']
+
+    if return_objectid:
+        return [item['_id'] for item in inv]
     return inv, count
 
 async def items_count(userid: int):

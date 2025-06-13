@@ -677,6 +677,7 @@ class ChooseInventoryHandler(BaseStateHandler):
                     transmitted_data: Optional[dict[str, MongoValueType]] = None,
                     settings: dict = {},
                     inline_func = None, inline_code = '',
+                    return_objectid: bool = False,
                     **kwargs
                 ):
         """ Функция запуска инвентаря
@@ -688,7 +689,7 @@ class ChooseInventoryHandler(BaseStateHandler):
             one_time_pages - сколько генерировать страниц за раз, все если 0
             delete_search - Убрать поиск
             inventory - Возможность закинуть уже обработанный инвентарь, если пусто - сам сгенерирует инвентарь
-
+            return_objectid - Если True, то возвращает ObjectId предмета, иначе возвращает данные предмета
 
             >> Создано для steps, при активации перенаправляет данные при нажатии
             на inline_func, а при нажатии на кнопку начинающийся на inventoryinline {inline_code}
@@ -736,6 +737,7 @@ class ChooseInventoryHandler(BaseStateHandler):
 
         self.inventory = inventory
         self.exclude_ids = exclude_ids
+        self.return_objectid = return_objectid
 
         if settings:
             self.settings.update(settings)
@@ -757,7 +759,9 @@ class ChooseInventoryHandler(BaseStateHandler):
 
         if not self.inventory:
             inventory, count = await get_inventory(self.userid, 
-                                                   self.exclude_ids)
+                                                   self.exclude_ids,
+                                                   self.return_objectid
+                                                   )
         else:
             inventory = self.inventory
             count = len(inventory)

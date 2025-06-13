@@ -322,7 +322,8 @@ class InventoryStepData(BaseDataType):
                  exclude_ids: Optional[list] = None, start_page: int = 0, 
                  changing_filters: bool = True,
                  inventory: Optional[list] = None, delete_search: bool = False, settings: Optional[dict] = None,
-                 inline_func=None, inline_code: str = ''):
+                 inline_func=None, inline_code: str = '',
+                 return_objectid: bool = False):
         self.type_filter = type_filter
         self.item_filter = item_filter
         self.exclude_ids = exclude_ids
@@ -338,6 +339,7 @@ class InventoryStepData(BaseDataType):
         if inline_func is None:
             self.inline_func = None
         self.inline_code = inline_code
+        self.return_objectid = return_objectid
         super().__init__(name, message, data)
 
 steps_data_registry = {
