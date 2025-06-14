@@ -5,7 +5,9 @@ from aiogram.types import Message
 from bot.exec import main_router
 from bot.dbmanager import mongo_client
 from time import time as time_now
+from time import strftime
 from bot.middlewares.antiflood import check_ads
+from bot.modules.daytemp_data import add_int_value
 from bot.modules.notifications import user_notification
 
 from bot.modules.user.advert import auto_ads
@@ -28,6 +30,10 @@ class PassWorker(BaseMiddleware):
         return result
 
     async def post_process(self, message: Message, data):
+
+        add_int_value('user_activity.messages', 1)
+        add_int_value(f'user_activity.time.{strftime("%H")}', 1)
+
         user_id = message.from_user.id
         if message.chat.type == "private":
             user = await users.find_one({'userid': user_id}, {"_id": 1, 

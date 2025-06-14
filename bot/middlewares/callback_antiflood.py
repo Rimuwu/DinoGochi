@@ -4,6 +4,7 @@ from typing import Awaitable, Callable, Any
 from aiogram.types import CallbackQuery
 from aiogram import BaseMiddleware
 from bot.exec import main_router, bot
+from bot.modules.daytemp_data import add_int_value
 from bot.modules.localization import get_lang, t
 from bot.config import conf
 
@@ -22,7 +23,9 @@ class CallbackQueryAntiFloodMiddleware(BaseMiddleware):
         if conf.only_dev and message.from_user.id not in conf.bot_devs:
             lang = await get_lang(message.from_user.id)
             await message.answer(t('only_dev_mode', lang), True)
-            return 
+            return
+
+        add_int_value('user_activity.callback', 1)
 
         now = time.time()
         if message.from_user.id not in self.last_query:
