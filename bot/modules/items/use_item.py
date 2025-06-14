@@ -1,20 +1,33 @@
 
 
 
-from random import randint
+from random import choice, randint
+import time
 from typing import Optional, Union
 
 from bson import ObjectId
 
+from bot.modules.data_format import list_to_inline, random_dict
 from bot.modules.dinosaur.mood import add_mood
-from bot.modules.items.items import Eat
+from bot.modules.images import create_eggs_image
+from bot.modules.images_save import send_SmartPhoto
+from bot.modules.items.items import AddItemToUser, Eat, ItemData
 from bot.modules.dinosaur.dinosaur import Dino, edited_stats
 from bot.modules.items.items import ItemInBase
-from bot.modules.items.json_item import Armor, Backpack, Collecting, Game, Journey, NullItem, Sleep, Weapon
+from bot.modules.items.items_groups import get_group
+from bot.modules.items.json_item import Armor, Backpack, Case, Collecting, Game, Journey, NullItem, Recipe, Sleep, Weapon
+from bot.modules.items.json_item import Egg as EggItem
 from bot.modules.localization import t
+from bot.modules.markup import markups_menu
 from bot.modules.quests import quest_process
 from bot.modules.items.craft_recipe import craft_recipe
+from bot.modules.user.user import User
+from bot.exec import bot
+from bot.modules.egg import Egg
 
+from bot.dbmanager import mongo_client
+from bot.modules.overwriting.DataCalsses import DBconstructor
+incubation = DBconstructor(mongo_client.items.incubation)
 
 async def use_item(
         userid: int, chatid: int, 
@@ -49,54 +62,8 @@ async def use_item(
 
     if isinstance(data_item, Eat) and dino:
 
-        if await dino.status == 'sleep':
-            # Если динозавр спит, отменяем использование и говорим что он спит.
-            return_text = t('item_use.eat.sleep', lang)
-            use_status = False
-
-        else:
-            # Если динозавр не спит, то действует в соответсвии с класом предмета.
-            if data_item.item_class == 'ALL' or (
-                data_item.item_class == dino.data['class']):
-                # Получаем конечную характеристику
-                percent = 1
-
-                age = await dino.age()
-                if age.days >= 10:
-                    percent, repeat = await dino.memory_percent('eat', item_id)
-                    return_text = t(f'item_use.eat.repeat.m{repeat}', lang, percent=int(percent*100)) + '\n'
-
-                    if repeat >= 3: await add_mood(dino._id, 'repeat_eat', -1, 900)
-
-                dino.stats['eat'] = edited_stats(dino.stats['eat'], 
-                                    int((data_item.act * count)*percent))
-
-                # Определяем текст Выпил / Съел
-                activ_text = t(f'item_use.eat.eat', lang)
-                if data_item.drink:
-                    activ_text = t(f'item_use.eat.drink', lang)
-
-                return_text += t('item_use.eat.great', lang,
-                         item_name=item_name, eat_stat=dino.stats['eat'],
-                         dino_name=dino.name, activ=activ_text
-                         )
-                await add_mood(dino._id, 'good_eat', 1, 900)
-
-            else:
-                # Если еда не соответствует классу, то убираем дполнительные бафы.
-                use_baff_status = False
-                loses_eat = randint(0, (data_item.act * count) // 2) * -1
-
-                # Получаем конечную характеристики
-                dino.stats['eat'] = edited_stats(dino.stats['eat'], loses_eat)
-
-                return_text = t('item_use.eat.bad', lang, 
-                                item_name=item_name, loses_eat=loses_eat,
-                                dino_name=dino.name
-                                )
-
-                await add_mood(dino._id, 'bad_eat', -1, 1200)
-            await quest_process(userid, 'feed', items=[item_id] * count)
+        return_text, use_status, use_baff_status, send_status = await EatItem(
+            item, userid, data_item, dino, lang, count, return_text)
 
     elif isinstance(data_item, (Game, Journey, Collecting, Sleep, Weapon, Armor, Backpack)) and dino:
         
@@ -130,116 +97,21 @@ async def use_item(
                 
         #         return_text = t('item_use.accessory.change', lang)
 
-    elif type_item == 'recipe':
+    elif isinstance(data_item, Recipe):
         send_status, use_status = False, False 
         # Проверка может завершится позднее завершения функции, отправим текст самостоятельно, так же юзер может и отказаться, удалим предмет сами
 
         await craft_recipe(userid, chatid, lang, item, count)
 
-    elif data_item['type'] == 'case':
+    elif isinstance(data_item, Case):
+        
+        # Использование кейса
+        await CaseItem(userid, chatid, data_item, lang, count)
         send_status = False
-        drop: list = data_item['drop_items']
 
-        drop = drop[::-1]
-        drop_items = {}
-
-        col_repit = random_dict(data_item['col_repit'])
-        for _ in range(count):
-            for _ in range(col_repit):
-                drop_item = None
-                while drop_item == None:
-                    for iterable_data in drop:
-                        if iterable_data['chance'][1] == iterable_data['chance'][0] or randint(1, iterable_data['chance'][1]) <= iterable_data['chance'][0]:
-                            drop_item = iterable_data.copy()
-
-                            if isinstance(drop_item['id'], dict):
-                                # В материалах указана группа
-                                drop_item['id'] = choice(get_group(drop_item['id']['group']))
-
-                            elif isinstance(drop_item['id'], list):
-                                # В материалах указан список предметов которых можно использовать
-                                drop_item['id'] = choice(drop_item['id'])
-
-                            break
-
-            drop_col = random_dict(drop_item['col'])
-            if drop_item['id'] in drop_items:
-                drop_items[drop_item['id']]['col'] += drop_col
-            else: drop_items[drop_item['id']] = {
-                "col": drop_col, "abilities": drop_item['abilities']}
-
-        for item_id, data in drop_items.items():
-            await AddItemToUser(userid, item_id, data['col'], data['abilities'])
-
-            drop_item_data = get_data(item_id)
-            item_name = get_name(item_id, lang, abilities)
-            if 'image' in drop_item_data:
-                image = f"images/items/{drop_item_data['image']}.png"
-            else:
-                print(drop_item_data)
-                image = f"images/items/null.png"
-
-            await send_SmartPhoto(userid, image, 
-                t('item_use.case.drop_item', lang, 
-                  item_name=item_name, col=data['col']), 
-                'Markdown', await markups_menu(userid, 'last_menu', lang))
-
-    elif data_item['type'] == 'egg':
-        user = await User().create(userid)
-        dino_limit_col = await user.max_dino_col()
-        dino_limit = dino_limit_col['standart']  
-        use_status = False
-
-        if dino_limit['now'] < dino_limit['limit']:
-            send_status = False
-            buttons = {}
-
-            res_egg_choose = await incubation.find_one({'owner_id': userid, 
-                                           'stage': 'choosing',
-                                           'quality': data_item['inc_type'] })
-
-            if not res_egg_choose:
-                egg_data = Egg()
-                egg_data.stage = 'choosing'
-                egg_data.owner_id = userid
-                egg_data.quality = data_item['inc_type']
-                egg_data.choose_eggs()
-
-            else:
-                egg_data = Egg()
-                egg_data.__dict__.update(res_egg_choose)
-
-                if egg_data.id_message:
-                    try:
-                        await bot.delete_message(userid, egg_data.id_message)
-                    except Exception as e: pass
-
-            image = await create_eggs_image(egg_data.eggs)
-            code = await item_code(item_dict=item, userid=userid)
-
-            btn = {
-                t('item_use.egg.edit_buttons', lang):  f'item egg_edit {code}'
-            }
-
-            for i in range(3): 
-                buttons[f'🥚 {i+1}'] = f'item egg {code} {egg_data.eggs[i]}'
-            buttons = list_to_inline([btn, buttons])
-
-            mes = await bot.send_photo(userid, image, 
-                                 caption=t('item_use.egg.egg_answer', lang), 
-                                 parse_mode='Markdown', reply_markup=buttons)
-
-            egg_data.id_message = mes.message_id
-            egg_data.start_choosing = int(time.time())
-
-            if not res_egg_choose: await egg_data.insert()
-
-            await bot.send_message(userid, 
-                                   t('item_use.egg.plug', lang),     
-                                   reply_markup=await markups_menu(userid, 'last_menu', lang))
-        else:
-            return_text = t('item_use.egg.egg_limit', lang, 
-                            limit=dino_limit['limit'])
+    elif isinstance(data_item, EggItem):
+        
+        
 
     elif data_item['type'] == 'special':
         user = await User().create(userid)
@@ -443,3 +315,174 @@ async def use_item(
 
     if use_status and delete: await UseAutoRemove(userid, item, count)
     return send_status, return_text
+
+# UseItem Eat
+async def EatItem(item: ItemInBase, userid: int,
+                  data_item: Eat, dino: Dino, lang: str, count: int, 
+                  return_text: str = ''):
+    send_status = True
+    use_status = True
+    return_text = ''
+    
+    item_name = item.items_data.name(lang=lang)
+    item_id = item.item_id
+
+    if await dino.status == 'sleep':
+        # Если динозавр спит, отменяем использование и говорим что он спит.
+        return_text = t('item_use.eat.sleep', lang)
+        use_status = False
+
+    else:
+        # Если динозавр не спит, то действует в соответсвии с класом предмета.
+        if data_item.item_class == 'ALL' or (
+            data_item.item_class == dino.data['class']):
+            # Получаем конечную характеристику
+            percent = 1
+
+            age = await dino.age()
+            if age.days >= 10:
+                percent, repeat = await dino.memory_percent('eat', item_id)
+                return_text = t(f'item_use.eat.repeat.m{repeat}', lang, percent=int(percent*100)) + '\n'
+
+                if repeat >= 3: await add_mood(dino._id, 'repeat_eat', -1, 900)
+
+            dino.stats['eat'] = edited_stats(dino.stats['eat'], 
+                                int((data_item.act * count)*percent))
+
+            # Определяем текст Выпил / Съел
+            activ_text = t(f'item_use.eat.eat', lang)
+            if data_item.drink:
+                activ_text = t(f'item_use.eat.drink', lang)
+
+            return_text += t('item_use.eat.great', lang,
+                        item_name=item_name, eat_stat=dino.stats['eat'],
+                        dino_name=dino.name, activ=activ_text
+                )
+            await add_mood(dino._id, 'good_eat', 1, 900)
+
+        else:
+            # Если еда не соответствует классу, то убираем дполнительные бафы.
+            use_baff_status = False
+            loses_eat = randint(0, (data_item.act * count) // 2) * -1
+
+            # Получаем конечную характеристики
+            dino.stats['eat'] = edited_stats(dino.stats['eat'], loses_eat)
+
+            return_text = t('item_use.eat.bad', lang, 
+                            item_name=item_name, loses_eat=loses_eat,
+                            dino_name=dino.name
+                            )
+
+            await add_mood(dino._id, 'bad_eat', -1, 1200)
+        await quest_process(userid, 'feed', items=[item_id] * count)
+    
+    return return_text, use_status, use_baff_status, send_status
+
+async def CaseItem(userid: int, chatid: int,
+                  data_item: Case, lang: str, count: int):
+
+    drop: list = data_item.drop_items
+
+    drop = drop[::-1]
+    drop_items = {}
+
+    col_repit = random_dict(data_item.col_repit)
+    for _ in range(count):
+        for _ in range(col_repit):
+            drop_item = None
+            while drop_item == None:
+                for iterable_data in drop:
+                    if iterable_data['chance'][1] == iterable_data['chance'][0] or randint(1, iterable_data['chance'][1]) <= iterable_data['chance'][0]:
+                        drop_item = iterable_data.copy()
+
+                        if isinstance(drop_item['id'], dict):
+                            # В материалах указана группа
+                            drop_item['id'] = choice(get_group(drop_item['id']['group']))
+
+                        elif isinstance(drop_item['id'], list):
+                            # В материалах указан список предметов которых можно использовать
+                            drop_item['id'] = choice(drop_item['id'])
+
+                        break
+
+        drop_col = random_dict(drop_item['col'])
+        if drop_item['id'] in drop_items:
+            drop_items[drop_item['id']]['col'] += drop_col
+        else: drop_items[drop_item['id']] = {
+            "col": drop_col, "abilities": drop_item['abilities']}
+
+    for item_id, data in drop_items.items():
+        drop_item = ItemData(item_id=item_id, abilities=data['abilities'])
+        await AddItemToUser(userid, drop_item, data['col'])
+
+        item_name = drop_item.name(lang=lang)
+        image = f"images/items/{drop_item.data.image}.png"
+
+        await send_SmartPhoto(chatid, image, 
+            t('item_use.case.drop_item', lang, 
+                item_name=item_name, col=data['col']), 
+            'Markdown', await markups_menu(userid, 'last_menu', lang))
+
+
+async def EggItem_use(userid: int, lang: str, data_item: EggItem,
+                      item: ItemInBase
+                      ):
+    use_status, send_status = False, True
+    return_text = ''
+    user = await User().create(userid)
+    dino_limit_col = await user.max_dino_col()
+
+    dino_limit = dino_limit_col['standart']  
+
+    if dino_limit['now'] < dino_limit['limit']:
+        send_status = False
+        buttons = {}
+
+        res_egg_choose = await incubation.find_one({'owner_id': userid, 
+                                        'stage': 'choosing',
+                                        'quality': data_item.inc_type })
+
+        if not res_egg_choose:
+            egg_data = Egg()
+            egg_data.stage = 'choosing'
+            egg_data.owner_id = userid
+            egg_data.quality = data_item.inc_type
+            egg_data.choose_eggs()
+
+        else:
+            egg_data = Egg()
+            egg_data.__dict__.update(res_egg_choose)
+
+            if egg_data.id_message:
+                try:
+                    await bot.delete_message(userid, egg_data.id_message)
+                except Exception as e: pass
+
+        image = await create_eggs_image(egg_data.eggs)
+        code = item.code()
+
+        btn = {
+            t('item_use.egg.edit_buttons', lang):  f'item egg_edit {code}'
+        }
+
+        for i in range(3): 
+            buttons[f'🥚 {i+1}'] = f'item egg {code} {egg_data.eggs[i]}'
+        buttons = list_to_inline([btn, buttons])
+
+        mes = await bot.send_photo(userid, image, 
+                                caption=t('item_use.egg.egg_answer', lang), 
+                                parse_mode='Markdown', reply_markup=buttons)
+
+        egg_data.id_message = mes.message_id
+        egg_data.start_choosing = int(time.time())
+
+        if not res_egg_choose: await egg_data.insert()
+
+        await bot.send_message(userid, 
+                                t('item_use.egg.plug', lang),     
+                                reply_markup=await markups_menu(userid, 'last_menu', lang))
+    else:
+        return_text = t('item_use.egg.egg_limit', lang, 
+                        limit=dino_limit['limit'])
+
+    return return_text, use_status, send_status
