@@ -9,21 +9,32 @@ from bot.modules.overwriting.DataCalsses import DBconstructor
 statistic = DBconstructor(mongo_client.other.statistic)
 
 async def get_now_statistic():
-    """ {'items': 0, 'users': 0, 'dinosaurs': 0, 'groups': 0}
+    """ {'items': 0, 'users': 0, 'dinosaurs': 0, 'groups': 0, 
+        'user_activity': {}, 'advert': {}}
     """
     now = datetime.now()
-    res, repets = None, -1
+    res = {
+        'items': 0, 'users': 0, 
+        'dinosaurs': 0, 'groups': 0,
+        'user_activity': {}, 'advert': {}
+        }
+    repets = -1
 
     while not res and repets < 25:
         repets += 1
 
-        res = await statistic.find_one({'date': str(now.date())}, comment='get_now_statistic')
-        if not res: 
+        res2 = await statistic.find_one({'date': str(now.date())}, comment='get_now_statistic')
+        if not res2: 
             now -= timedelta(days=1.0)
+        else:
+            res.update(res2)
+            break
 
     return res
 
-def plot_stats(data, days=30, data_type='dinosaurs', output_file='output.png', 
+def plot_stats(data, days=30, 
+               data_type='dinosaurs', 
+               output_file='output.png', 
                filter_mode=None, lang='ru'):
     """
     filter_mode: None (default) - обычный режим
@@ -41,6 +52,7 @@ def plot_stats(data, days=30, data_type='dinosaurs', output_file='output.png',
     for entry in data:
         if not isinstance(entry['date'], datetime):
             entry['date'] = datetime.strptime(entry['date'], "%Y-%m-%d")
+
         if 'groups' not in entry:
             entry['groups'] = 0
 
@@ -74,7 +86,6 @@ def plot_stats(data, days=30, data_type='dinosaurs', output_file='output.png',
             color='#4caf50', linewidth=2, markersize=8,
             markerfacecolor='#81c784')
     
-    
     name_graf = type_map.get(data_type, data_type)
     text = loc_data['title'].format(name_graf=name_graf, days=days, title_suffix=title_suffix)
     ax.set_title(text, color='white')
@@ -92,7 +103,9 @@ def plot_stats(data, days=30, data_type='dinosaurs', output_file='output.png',
     plt.savefig(output_file, facecolor=fig.get_facecolor())
     plt.close()
 
-async def get_simple_graf(days=30, data_type='dinosaurs', filter_mode=None, lang='ru'):
+async def get_simple_graf(days=30, 
+                          data_type='dinosaurs', 
+                          filter_mode=None, lang='ru'):
     """
     Возвращает данные за последние `days` дней.
     filter_mode: None (default) - обычный режим
