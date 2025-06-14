@@ -9,6 +9,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, User, Keyb
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 from bot.const import GAME_SETTINGS
+from bot.dataclasess.random_dict import RandomDict
 from bot.modules.localization import get_data
 from aiogram.types import BufferedInputFile
 
@@ -32,7 +33,7 @@ def chunks(lst: list, n: int) -> list:
             yield lst[i:i + n]
     return list(work())
     
-def random_dict(data: dict) -> int:
+def random_dict(data: dict | int | RandomDict) -> int:
     """ Предоставляет общий формат данных, подерживающий 
        случайные и статичные элементы.
 
@@ -45,7 +46,10 @@ def random_dict(data: dict) -> int:
     >>> Статичное число 1
     """
 
-    if type(data) == dict:
+    if isinstance(data, RandomDict):
+        data = data.__dict__
+
+    if isinstance(data, dict):
         if "type" not in data: return data['act']
 
         elif data["type"] == "static": return data['act']
@@ -59,7 +63,7 @@ def random_dict(data: dict) -> int:
             if data['act']: return random.choice(data['act'])
             else: return 0
 
-    elif type(data) == int: return data
+    elif isinstance(data, int): return data
     return 0
 
 
