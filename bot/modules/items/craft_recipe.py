@@ -9,10 +9,10 @@ from bot.const import GAME_SETTINGS
 from bot.dbmanager import mongo_client
 from bot.modules.data_format import deepcopy, list_to_inline, random_code, random_data, seconds_to_str
 from bot.modules.images_save import send_SmartPhoto
-from bot.modules.items.items import AddItemToUser, DeleteAbilItem, EditItemFromUser, ItemData, RemoveItemFromUser, get_items_names, get_name, item_info
+from bot.modules.items.items import AddItemToUser, CheckItemFromUser, DeleteAbilItem, EditItemFromUser, ItemData, RemoveItemFromUser, get_items_names, get_name, item_info
 from bot.modules.items.items import ItemInBase
 from bot.modules.items.items_groups import get_group
-from bot.modules.items.json_item import Recipe
+from bot.modules.items.json_item import GetItem, Recipe
 from bot.modules.items.time_craft import add_time_craft
 from bot.modules.localization import t
 from bot.modules.logs import log
@@ -28,6 +28,7 @@ from bot.exec import main_router, bot
 from bot.modules.user.user import experience_enhancement
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.tasks import time_craft
 items = DBconstructor(mongo_client.items.items)
 
 """
@@ -328,7 +329,7 @@ async def check_items_in_inventory(materials, item_base_id, to_next_count,
                         inline_func=send_item_info,
                         inline_code=random_code(),
                         return_objectid=False
-                    )0
+                    )
                 )
                 finded_items.append({'item': name, 
                                      'count': material['count']})
@@ -373,7 +374,7 @@ async def check_items_in_inventory(materials, item_base_id, to_next_count,
 async def send_item_info(item_data: dict, transmitted_data: dict):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
-    userid = transmitted_data['userid']
+    # userid = transmitted_data['userid']
 
     custom_code = transmitted_data['inline_code']
 
@@ -396,7 +397,7 @@ async def pre_check(items: dict, transmitted_data):
     finded_items = transmitted_data['finded_items']
     data = transmitted_data['data']
     count = transmitted_data['count']
-    item = transmitted_data['item']
+    item_id = transmitted_data['item_id']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
@@ -411,31 +412,39 @@ async def pre_check(items: dict, transmitted_data):
             result_list.append({'item': items[i['item']], 'count': i['count']})
 
     await check_endurance_and_col(result_list, count, 
-                                  item, userid, chatid, lang, data)
+                                  item_id, userid, chatid, lang, data)
 
-async def check_endurance_and_col(finded_items, count, item,
+async def check_endurance_and_col(materials, count, item_id,
                                   userid, chatid, lang, data):
 
-    item_id: str = item['item_id']
-    data_item: dict = get_data(item_id)
-    materials = finded_items
-
+    data_item: ItemInBase = await ItemInBase().link_for_id(item_id)
     data['end'] = []
 
-    for material in data_item['materials']:
-        ind = data_item['materials'].index(material)
+    if not isinstance(data_item.items_data.data, Recipe):
+        return
+
+    for material in data_item.items_data.data.materials:
+        ind = data_item.items_data.data.materials.index(material)
         materials[ind]['type'] = material['type']
 
     not_found = [] 
     for material in materials:
         ind = materials.index(material)
+        mat_dat = ItemData(material['item'],
+                           material.get('abilities', {}))
 
         if material['type'] in ['delete', 'to_create']:
-            mat_col = await check_and_return_dif(userid, **material['item'])
-            if mat_col < material['count']:
+            
+            col_res = await CheckItemFromUser(
+                userid, mat_dat.item_id, mat_dat.abilities, 
+                material['count']
+                )
+
+            if col_res['status']:
                 not_found.append(
-                    {'item': material['item']['item_id'], 'type': material['type'],
-                     'count': material['count'] - mat_col
+                    {'item': mat_dat, 
+                     'type': material['type'],
+                     'count': col_res['difference']
                      }
                 )
             else:
@@ -444,11 +453,15 @@ async def check_endurance_and_col(finded_items, count, item,
                 data['end'].append(dct_data)
 
         elif material['type'] == 'endurance':
-            status, dct_data = await DeleteAbilItem(material['item'], 'endurance', 
-                    data_item['materials'][ind]['act'], count, userid)
+            status, dct_data = await DeleteAbilItem(
+                userid, mat_dat, characteristic='endurance',
+                unit=data_item.items_data.data.materials[ind]['act'], count=material['count'],
+            )
+
             if not status:
                 not_found.append(
-                    {'item': material['item']['item_id'], 'type': material['type'],
+                    {'item': mat_dat, 
+                     'type': material['type'],
                      'count': dct_data['ost']
                      }
                 )
@@ -460,13 +473,14 @@ async def check_endurance_and_col(finded_items, count, item,
     if not_found:
         nt_materials = []
         for i in not_found:
+            nf_item: ItemData = i['item']
             if i['type'] in ['delete', 'to_create']:
                 nt_materials.append(
-                    f'{get_name(i["item"], lang)} x{i["count"]}'
+                    f'{nf_item.name(lang)} x{i["count"]}'
                 )
         if i['type'] == 'endurance':
             nt_materials.append(
-                    f'{get_name(i["item"], lang)} (⬇ -{i["count"]} )'
+                    f'{nf_item.name(lang)} (⬇ -{i["count"]} )'
                 )
 
         text = t('item_use.recipe.not_enough_m', lang, materials=', '.join(nt_materials))
@@ -477,13 +491,18 @@ async def check_endurance_and_col(finded_items, count, item,
         return
 
     else:
-        await end_craft(count, item, userid, chatid, lang, data)
+        await end_craft(count, item_id, userid, chatid, lang, data)
 
-async def end_craft(count, item, userid, chatid, lang, data):
+async def end_craft(count, item_id: ObjectId, userid, chatid, lang, data):
 
-    item_id: str = item['item_id']
-    data_item: dict = get_data(item_id)
-    super_create: dict = deepcopy(data_item['create']) # type: ignore
+    # item_id: str = item['item_id']
+    data_item = await ItemInBase().link_for_id(item_id)
+    if not isinstance(data_item.items_data.data, Recipe):
+        return
+
+    super_create: dict = deepcopy(
+        data_item.items_data.data.create
+        ) # type: ignore
 
     # Оперделение цели крафта
     choosed_items = data['choosed_items']
@@ -511,25 +530,41 @@ async def end_craft(count, item, userid, chatid, lang, data):
     # Удаление материалов
     for material in data['end']:
 
+        material_inbase = ItemInBase(
+                owner_id=userid,
+                item_id=material['item'],
+                abilities=None,
+                count=material['count']
+            )
+        await material_inbase.link_yourself()
+
         if material['type'] == 'delete':
-            await UseAutoRemove(userid, material['item'], material['count'])
+            await material_inbase.UsesRemove(material['count'])
+            # await UseAutoRemove(userid, material['item'], material['count'])
 
         elif material['type'] == 'endurance':
-            item_id = material['item']['item_id']
-            item_abil = material['item'].get('abilities', {})
+            endur_item = ItemData(material['item'],
+                                material.get('abilities', {}))
 
             if material['delete_count'] > 0:
-                await RemoveItemFromUser(userid, item_id, 
-                                     material['delete_count'], item_abil)
+                await RemoveItemFromUser(userid, endur_item,
+                                     material['delete_count']
+                                     )
 
             if material['set']:
-                new_item: dict = deepcopy(material['item']) # type: ignore
-                new_item['abilities']['endurance'] = material['set']
+                new_item = endur_item.copy()
+                new_item.abilities['endurance'] = material['set']
 
-                await EditItemFromUser(userid, material['item'], new_item)
+                await EditItemFromUser(userid, 
+                                       location_type='home',
+                                       location_link=None,
+                                       now_item=endur_item,
+                                       new_data=new_item
+                                       )
 
         elif material['type'] == 'to_create':
-            r = await UseAutoRemove(userid, material['item'], material['count'])
+            r = await material_inbase.UsesRemove(material['count'])
+            # r = await UseAutoRemove(userid, material['item'], material['count'])
             if r:
                 super_create[way].append( {
                     "type": "create",
@@ -548,14 +583,15 @@ async def end_craft(count, item, userid, chatid, lang, data):
     # Сохранение характеристик предмета и подготовка создаваемых редметов
     for material in data['end']:
         ind = data['end'].index(material)
-        material_data = data_item['materials'][ind]
+        material_data = data_item.items_data.data.materials[ind]
 
-        if 'copy_abilities' in material_data and 'abilities' in material['item']:
+        if 'copy_abilities' in material_data and \
+                'abilities' in material['item']:
             data_cop = material_data['copy_abilities']
 
             for cr_item in data_cop['to_items']:
-                standart_item = get_item_dict(to_create[cr_item]['item'])
-                standart_abil = standart_item.get('abilities', {})
+                standart_item = GetItem(to_create[cr_item]['item'])
+                standart_abil = standart_item.abilities
 
                 for abil in data_cop['copy']:
                     if abil in material['item']['abilities']:
@@ -594,7 +630,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
                 for key, value in preabil.items():
                     preabil[key] = random_data(value)
 
-            add_count = count * data_item['create'][way][a]['count']
+            add_count = count * data_item.items_data.data.create[way][a]['count']
 
             create.append({'item': {'item_id': create_data['item'], 
                                     'abilities': preabil}, 
@@ -602,22 +638,21 @@ async def end_craft(count, item, userid, chatid, lang, data):
                            })
 
     # Понижение прочности рецепта
-    await UseAutoRemove(userid, item, count)
+    await data_item.UsesRemove(count)
+    # await UseAutoRemove(userid, item, count)
 
     # Вычисление опыта за крафт
-    if 'rank' in data_item.keys():
-        xp = GAME_SETTINGS['xp_craft'][data_item['rank']] * count
-    else:
-        xp = GAME_SETTINGS['xp_craft']['common'] * count
+    xp = GAME_SETTINGS['xp_craft'][data_item.items_data.data.rank] * count
 
     # Начисление опыта за крафт
     await experience_enhancement(userid, xp)
 
-    if 'time_craft' in data_item:
-        tc = await add_time_craft(userid, data_item['time_craft'], create)
+    time_craft = data_item.items_data.data.time_craft
+    if time_craft > 0:
+        tc = await add_time_craft(userid, time_craft, create)
         text = t('time_craft.text_start', lang, 
                  items=get_items_names(create, lang),
-                 craft_time=seconds_to_str(data_item['time_craft'], lang)
+                 craft_time=seconds_to_str(time_craft, lang)
                  )
         markup = list_to_inline(
             [
@@ -637,7 +672,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
     await bot.send_message(chatid, text, parse_mode='Markdown', 
                            reply_markup = markup)
 
-    if 'time_craft' in data_item:
+    if time_craft > 0:
         text = t('time_craft.text2', lang,
                  command='/craftlist')
         markup = await markups_menu(userid, 'last_menu', lang)
