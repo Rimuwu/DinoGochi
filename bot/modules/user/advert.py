@@ -3,6 +3,7 @@ from calendar import c
 import aiohttp
 from bot.config import conf
 from bot.modules.companies import generate_message, nextinqueue, priority_and_timeout
+from bot.modules.daytemp_data import add_int_value
 from bot.modules.logs import log
 from bot.dbmanager import mongo_client
 import json
@@ -53,8 +54,11 @@ async def show_advert_gramads(user_id: int):
                 if not response.ok:
                     log('Gramads: %s' % str(await response.json()), 2)
 
-        if res == 1: await save_last_ads(user_id)
-        else: 
+        if res == 1:
+            add_int_value('advert.sended', 1)
+            await save_last_ads(user_id)
+        else:
+            add_int_value(f'advert.codes.{res}', 1)
             if res not in [8, 7]:
                 log(f'gramads status - {res}', 4)
     return res
