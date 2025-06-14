@@ -2,6 +2,7 @@
 # Дабы не собирать информацию каждый раз при запросе пользователя
 from bot.config import conf
 from bot.dbmanager import mongo_client
+from bot.modules.daytemp_data import get_daytemp_cache
 from bot.modules.donation import get_history
 from bot.taskmanager import add_task
 from datetime import datetime
@@ -34,8 +35,19 @@ async def statistic_check():
         'dinosaurs': dinosaurs_len,
         'users': users_len,
         'items': items_len,
-        'groups': groups_len
+        'groups': groups_len,
+        'user_activity': {},
+        'advert': {}
     }
+
+    daytemp = get_daytemp_cache()
+    if daytemp:
+        if 'user_activity' in daytemp:
+            data['user_activity'] = daytemp['user_activity']
+
+        if 'advert' in daytemp:
+            data['advert'] = daytemp['advert']
+
     if res := await statistic.find_one({'date': data['date']}, comment='statistic_check_res'):
         await statistic.delete_one({'_id': res['_id']}, comment='statistic_check_2')
 
