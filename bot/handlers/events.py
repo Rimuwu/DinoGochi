@@ -5,6 +5,7 @@ from bot.const import GAME_SETTINGS
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline
+from bot.modules.daytemp_data import flush_daytemp_cache
 from bot.modules.groups import add_group_user, delete_group, delete_group_user, insert_group
 from bot.modules.localization import get_lang, t
 from bot.modules.logs import log
@@ -99,6 +100,7 @@ async def bot_stop(bot: Bot, dispatcher: Dispatcher, bots: tuple[Bot], router):
                      message_thread_id=int(topic_id)
     )
     await create_report()
+    flush_daytemp_cache()
 
 @main_router.chat_boost(
     F.chat.id == GAME_SETTINGS['channel_id'])
