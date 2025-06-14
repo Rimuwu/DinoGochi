@@ -8,7 +8,7 @@ ITEMS: dict = get_all_items()
 
 RANKS = Literal[
     'common', 'uncommon', 'rare', 'mystical', 
-    'legendary', 'mythical', 'NO_RANK'
+    'legendary', 'mythical'
     ]
 
 TYPES = Literal[
@@ -40,7 +40,7 @@ class NullItem:
         self.item_id: str = item_id
         self.type: TYPES = 'NO_TYPE'
         self.image: str = 'null'
-        self.rank: RANKS = 'NO_RANK'
+        self.rank: RANKS = 'common'
         # Вес предмета в киллограммах
         self.weight: float = 0.0
 
@@ -78,7 +78,7 @@ class NullItem:
         #     ]
         # }
 
-    def from_json(self):
+    def from_json(self) -> Union['Eat', 'Book', 'Case', 'Collecting', 'Game', 'Journey', 'Sleep', 'Weapon', 'Backpack', 'Ammunition', 'Armor', 'Egg', 'Dummy', 'Material', 'Recipe', 'Special', 'NullItem']:
         self.__dict__.update(ITEMS.get(self.item_id, {}))
 
         clas = get_item_class(self.type)(self.item_id)
@@ -92,7 +92,7 @@ ITEM_CLASSES: Dict[str, Type[NullItem]] = {}
 def register_item_class(cls):
     global ITEM_CLASSES
     """ Декоратор для регистрации класса предмета в ITEM_CLASSES """
-    
+
     ITEM_CLASSES[getattr(cls, 'type')] = cls
     return cls
 
@@ -113,7 +113,7 @@ class Book(NullItem):
 @register_item_class
 class Case(NullItem):
     type = 'case'
-    col_repit: RandomDict | int = 0
+    col_repit: RandomDict | int | dict = 0
     drop_items: List[str] = []
 
     def __init__(self, item_id: str) -> None:
