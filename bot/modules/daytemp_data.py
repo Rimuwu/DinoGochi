@@ -15,7 +15,7 @@ directory = 'bot/data/daytemp_data.json'
 # Глобальный кэш и счётчик изменений
 _daytemp_cache = None
 _daytemp_cache_dirty = 0
-_daytemp_cache_save_threshold = 10
+_daytemp_cache_save_threshold = 100
 
 
 def save(donat_data, force=False):
