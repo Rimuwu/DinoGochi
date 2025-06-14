@@ -66,6 +66,12 @@ class ItemData:
 
         self.abilities = self.abilities_processing(abilities)
 
+    def copy(self):
+        """Создаёт копию предмета"""
+        new_item = ItemData(self.item_id, self.abilities.copy())
+        new_item.data.__dict__.update(self.data.__dict__)
+        return new_item
+
     def __str__(self) -> str:
         return f"ItemData(item_id={self.item_id}, abilities={self.abilities}, data={self.data})"
 
@@ -100,19 +106,19 @@ class ItemData:
             "abilities": self.abilities
         }
 
-    def name(self, lang: str = 'en') -> str:
+    def name(self, lang: str) -> str:
         """Получение имени предмета (c кешированием)"""
         if not hasattr(self, '_name'):
             self._name = get_name(self.item_id, lang, self.abilities)
         return self._name
 
-    def description(self, lang: str = 'en') -> str:
+    def description(self, lang: str) -> str:
         """Получение описания предмета (c кешированием)"""
         if not hasattr(self, '_description'):
             self._description = self.get_description(lang)
         return self._description
 
-    def get_description(self, lang: str='en') -> str:
+    def get_description(self, lang: str) -> str:
         """Получение описания предмета"""
         description = ''
 
@@ -578,11 +584,11 @@ async def RemoveItemFromUser(owner_id: int,
 async def DeleteAbilItem(
         owner_id: int,
         item_data: ItemData,
-        location_type: LOCATIONS_TYPES,
-        location_link: Any,
-        characteristic: str,
-        unit: int,
-        count: int
+        location_type: LOCATIONS_TYPES = 'home',
+        location_link: Any = None,
+        characteristic: str = 'endurance',
+        unit: int = 1,
+        count: int = 1
     ):
     """
     Функция рассчитывает нужно ли удалять предметы или понижать прочность.
@@ -678,7 +684,8 @@ async def CheckItemFromUser(owner_id: int, item_id: str,
 async def EditItemFromUser(owner_id: int, 
                            location_type: LOCATIONS_TYPES,
                            location_link: Any,
-                           now_item: ItemData, new_data: ItemData
+                           now_item: ItemData, 
+                           new_data: ItemData
                            ) -> bool:
     """
        Функция ищет предмет по now_item и в случае успеха изменяет его данные на new_data.
