@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from random import randint
+from matplotlib.dates import DateFormatter
 
 import matplotlib.pyplot as plt
 
@@ -18,6 +19,7 @@ def plot_stats(data, days=30, data_type='dinosaurs', output_file='output.png', f
     for entry in data:
         if not isinstance(entry['date'], datetime):
             entry['date'] = datetime.strptime(entry['date'], "%Y-%m-%d")
+
         if 'groups' not in entry:
             entry['groups'] = 0
 
@@ -52,11 +54,15 @@ def plot_stats(data, days=30, data_type='dinosaurs', output_file='output.png', f
             markerfacecolor='#81c784')
 
     ax.set_title(f"{type_map.get(data_type, data_type)} за последние {days} дней{title_suffix}",
-                 color='white')
-    ax.set_xlabel("Дата", color='white')
-    ax.set_ylabel(type_map.get(data_type, data_type), color='white')
+                 color='white', fontsize=16)
+    ax.set_xlabel("Дата (день.месяц)", color='white', fontsize=14)
+    ax.set_ylabel(type_map.get(data_type, data_type), color='white', fontsize=14)
+
+    # Отключаем отображение года
+    ax.xaxis.set_major_formatter(DateFormatter('%d.%m'))
+
     ax.grid(True, color='#a5d6a7')
-    ax.tick_params(colors='white')
+    ax.tick_params(colors='white', labelsize=12)
     for spine in ax.spines.values():
         spine.set_color('#a5d6a7')
 
