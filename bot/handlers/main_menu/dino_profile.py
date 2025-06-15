@@ -15,7 +15,7 @@ from bot.modules.logs import log
 from bot.modules.managment.events import check_event, get_event
 from bot.modules.images import async_open, create_skill_image
 from bot.modules.inline import dino_profile_markup, inline_menu
-from bot.modules.items.item import AddItemToUser, get_item_dict, get_name
+from bot.modules.items.item import AddItemToUser, get_name
 from bot.modules.dinosaur.kindergarten import (check_hours, dino_kind, hours_now,
                                       m_hours, minus_hours)
 from bot.modules.localization import get_data, get_lang, t
@@ -32,8 +32,6 @@ from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
-
-from bot.modules.items.item import get_data as get_item_data
 
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
@@ -190,30 +188,31 @@ async def dino_profile(userid: int,
         'game': tem['ac_game'], 'collecting': tem['ac_collecting'], 'journey': tem['ac_journey'], 'sleep': tem['ac_sleep'], 'weapon': tem['ac_weapon'], "armor": tem['ac_armor'], 'backpack': tem['ac_backpack']
     }
 
-    for key, item in enumerate(dino.activ_items):
+    # for key, item in enumerate(dino.activ_items):
         
-        if 'item_id' not in item.keys(): 
-            log(f'Ошибка в аксессуарах динозавра {dino._id} - {item}', 4)
-            continue
+    #     if 'item_id' not in item.keys(): 
+    #         log(f'Ошибка в аксессуарах динозавра {dino._id} - {item}', 4)
+    #         continue
 
-        item_type = get_item_data(item['item_id'])['type']
+    #     item_type = get_item_data(item['item_id'])['type']
 
-        name = get_name(item['item_id'], lang, item.get('abilities', {}))
-        if 'abilities' in item.keys() and 'endurance' in item['abilities'].keys():
-               name = f'{name} \[ *{item["abilities"]["endurance"]}* ]'
+    #     name = get_name(item['item_id'], lang, item.get('abilities', {}))
+    #     if 'abilities' in item.keys() and 'endurance' in item['abilities'].keys():
+    #            name = f'{name} \[ *{item["abilities"]["endurance"]}* ]'
 
-        separat = '-'
-        if len(dino.activ_items) > 1:
-            if key == 0:
-                separat = '┌'
-            elif key == len(dino.activ_items) - 1:
-                separat = '└'
-            else:
-                separat = '├'
+    #     separat = '-'
+    #     if len(dino.activ_items) > 1:
+    #         if key == 0:
+    #             separat = '┌'
+    #         elif key == len(dino.activ_items) - 1:
+    #             separat = '└'
+    #         else:
+    #             separat = '├'
 
-        text +=  t(f'p_profile.accs.{item_type}', lang, separator=separat, item=name, emoji=acsess[item_type]) + '\n'
+    #     text +=  t(f'p_profile.accs.{item_type}', lang, separator=separat, item=name, emoji=acsess[item_type]) + '\n'
 
-    menu = dino_profile_markup(bool(len(dino.activ_items)), lang, dino.alt_id, joint_dino, my_joint)
+    # bool(len(dino.activ_items))
+    menu = dino_profile_markup(False, lang, dino.alt_id, joint_dino, my_joint)
 
     # затычка на случай если не сгенерируется изображение
     generate_image = 'images/remain/no_generate.png'
