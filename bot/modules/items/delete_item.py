@@ -7,7 +7,7 @@ from bot.modules.localization import t
 from bot.modules.markup import confirm_markup, count_markup, markups_menu
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import ConfirmStepData, IntStepData, StepMessage
-from bot.modules.items.items import ItemInBase
+from bot.modules.items.item import ItemInBase
 
 
 async def delete_action(return_data: dict, transmitted_data: dict):

@@ -2,8 +2,9 @@
 
 
 
-from bot.modules.items.items import ItemInBase
-from bot.modules.localization import t
+from bot.modules.data_format import list_to_inline
+from bot.modules.items.item import ItemInBase, get_name
+from bot.modules.localization import t, get_data
 from bot.modules.markup import confirm_markup, markups_menu
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler
 from bot.exec import bot
@@ -48,3 +49,19 @@ async def edit_custom_book(return_data: dict, transmitted_data: dict):
 
     await bot.send_message(chatid, t('custom_book.confirm_edit', lang),
                            reply_markup=confirm_markup(lang))
+
+
+def book_page(book_id: str, page: int, lang: str):
+    pages = get_data(f'books.{book_id}', lang)
+    name = get_name(book_id, lang)
+    if page >= len(pages): page = 0
+    elif page < 0: page = len(pages) - 1
+
+    text = pages[page]
+    text += f'\n\n{page+1} | {len(pages)}\n_{name}_'
+    
+    markup = list_to_inline(
+        [{'◀': f'book {book_id} {page-1}', '▶': f'book {book_id} {page+1}'}, 
+         {'🗑': 'delete_message'}]
+    )
+    return text, markup

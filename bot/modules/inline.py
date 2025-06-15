@@ -1,9 +1,10 @@
+from tokenize import Special
 from aiogram.types import InlineKeyboardButton
 
 from bot.modules.data_format import list_to_inline
-from bot.modules.items.item import counts_items, is_standart
-from bot.modules.items.item import get_data as get_item_data
-from bot.modules.items.item import get_item_dict, get_name, item_code
+from bot.modules.items.item import ItemData, ItemInBase, counts_items
+from bot.modules.items.item import get_name
+from bot.modules.items.json_item import Recipe, Special
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.localization import t
 from bot.modules.logs import log
@@ -31,52 +32,53 @@ def inline_menu(markup_data, lang: str = 'en', **kwargs):
             InlineKeyboardButton(text=text, callback_data=callback))
     return markup_inline.as_markup()
 
-async def item_info_markup(item: dict, lang: str, userid: int):
+async def item_info_markup(item: ItemInBase, lang: str):
 
-    item_data = get_item_data(item['item_id'])
     loc_data = get_loc_data('item_info.static.buttons', lang)
-    code = await item_code(item_dict=item, userid=userid)
+    code = item.code()
+    item_data = item.items_data.data
+    abilities = item.items_data.abilities
     buttons_dict = {}
 
-    if item_data['type'] not in ['material', 'ammunition', 'dummy']:
-        use_text = loc_data['use'][item_data['type']]
+    if item_data.type not in ['material', 'ammunition', 'dummy']:
+        use_text = loc_data['use'][item_data.type]
 
-        if 'abilities' in item and 'uses' in item['abilities'] and item['abilities']['uses'] != -666:
-            use_text += f' ({item["abilities"]["uses"]}/{item_data["abilities"]["uses"]})'
+        if abilities.get('uses', None):
+            use_text += f' ({abilities["uses"]}/{item_data.abilities["uses"]})'
 
-        if item_data['type'] == 'special' and item_data['item_class'] == 'custom_book':
+        if isinstance(item_data, Special) and item_data.item_class == 'custom_book':
             use_text = loc_data['custom_book']
 
-            if 'abilities' in item and 'content' in item['abilities'] and item['abilities']['content']:
+            if abilities.get('content', None):
                 # Кнопка прочитать если внутри есть текст
                 buttons_dict[ loc_data['read_custom_book'] ] = f'item custom_book_read {code}'
 
         buttons_dict[use_text] = f'item use {code}'
 
-    if not('abilities' in item and 'interact' in item['abilities'] and not(item['abilities']['interact'])):
+    if not abilities.get('interact', True):
         buttons_dict[loc_data['delete']] = f'item delete {code}'
 
-        if 'cant_sell' not in item_data or ('cant_sell' in item_data and not item_data['cant_sell']):
+        if not item_data.cant_sell:
             buttons_dict[loc_data['exchange']] = f'item exchange {code}'
 
-    if is_standart(item):
-        if 'buyer' not in item_data or (item_data['buyer'] == True):
+    if item.items_data.is_standart:
+        if item_data.buyer:
             # Скупщик
-
             buttons_dict[loc_data['buyer']] = f'buyer {code}'
 
     markup_st = list_to_inline([buttons_dict], 2)
     markup_inline = InlineKeyboardBuilder().from_markup(markup_st)
 
-    if item_data['type'] == 'recipe':
-        ignore_craft = item_data.get('ignore_preview', [])
-        
-        for rep in item_data['create']:
-            if rep not in ignore_craft:
-                for item_cr in item_data['create'][rep]:
-                    data = get_item_dict(item_cr['item'])
-                    code_for_item = await item_code(item_dict=data, userid=userid)
+    if isinstance(item_data, Recipe):
+        ignore_craft = item_data.ignore_preview
 
+        for rep in item_data.create:
+            if rep not in ignore_craft:
+                for item_cr in item_data.create[rep]:
+
+                    data = ItemData(item_cr['item'])
+                    code_for_item = data.code()
+                    
                     if item_cr['type'] != 'preview':
                         name = loc_data['created_item'].format(
                                     item=get_name(item_cr['item'], 
@@ -85,10 +87,10 @@ async def item_info_markup(item: dict, lang: str, userid: int):
                         markup_inline.row(InlineKeyboardButton(text=name,
                                     callback_data=f'item info {code_for_item}'), width=2)
 
-    if 'ns_craft' in item_data:
-        for cr_dct_id in item_data['ns_craft'].keys():
+    if item_data.ns_craft:
+        for cr_dct_id in item_data.ns_craft.keys():
             bt_text = ''
-            cr_dct = item_data['ns_craft'][cr_dct_id]
+            cr_dct = item_data.ns_craft[cr_dct_id]
 
             bt_text += counts_items(cr_dct['materials'], lang)
             bt_text += ' = '

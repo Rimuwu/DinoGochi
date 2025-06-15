@@ -2,7 +2,7 @@
 from bson import ObjectId
 from bot.dbmanager import mongo_client
 from bot.exec import bot
-from bot.modules.items.items import (AddItemToUser, 
+from bot.modules.items.item import (AddItemToUser, 
                                      counts_items,
                                      ItemInBase)
 from bot.modules.localization import t
