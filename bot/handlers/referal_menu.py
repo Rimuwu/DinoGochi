@@ -9,21 +9,15 @@ from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.managment.referals import connect_referal, create_referal
-# from bot.modules.states_tools import ChooseCustomState, ChooseStringState
 from bot.modules.states_fabric.state_handlers import ChooseCustomHandler, ChooseStringHandler
 from bot.modules.user.user import take_coins
 from bot.modules.decorators import HDCallback, HDMessage
 
 
 from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command
 
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
