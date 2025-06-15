@@ -9,8 +9,8 @@ from bot.const import GAME_SETTINGS
 from bot.dbmanager import mongo_client
 from bot.modules.data_format import deepcopy, list_to_inline, random_code, random_data, seconds_to_str
 from bot.modules.images_save import send_SmartPhoto
-from bot.modules.items.items import AddItemToUser, CheckItemFromUser, DeleteAbilItem, EditItemFromUser, ItemData, RemoveItemFromUser, get_items_names, get_name, item_info
-from bot.modules.items.items import ItemInBase
+from bot.modules.items.item import AddItemToUser, CheckItemFromUser, DeleteAbilItem, EditItemFromUser, ItemData, RemoveItemFromUser, get_items_names, get_name, item_info
+from bot.modules.items.item import ItemInBase
 from bot.modules.items.items_groups import get_group
 from bot.modules.items.json_item import GetItem, Recipe
 from bot.modules.items.time_craft import add_time_craft
