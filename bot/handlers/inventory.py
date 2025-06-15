@@ -11,18 +11,18 @@ from bot.modules.inventory_tools import (InventoryStates, back_button, filter_it
                                          filter_menu,
                                          forward_button, generate, search_menu,
                                          send_item_info, swipe_page)
-from bot.modules.items.item import (CheckCountItemFromUser, CheckItemFromUser,
-                              RemoveItemFromUser, counts_items, decode_item, get_item_dict, get_items_names, item_code)
-from bot.modules.items.item import get_data as get_item_data
-from bot.modules.items.item import  get_name
-from bot.modules.items.item_tools import (AddItemToUser, book_page,
-                                     data_for_use_item,
-                                    delete_item_action, exchange_item)
+from bot.modules.items.item import (CheckItemFromUser, ItemData, ItemInBase,
+                              RemoveItemFromUser, counts_items, decode_item, get_items_names, AddItemToUser, get_name)
+from bot.modules.items.custom_book import book_page
+from bot.modules.items.use_item import data_for_use_item
+from bot.modules.items.exchange import exchange_item
+from bot.modules.items.delete_item import delete_item_action
 from bot.modules.items.time_craft import add_time_craft
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.markup import count_markup, markups_menu as m
 from bot.modules.states_fabric.state_handlers import ChooseIntHandler, ChooseInventoryHandler
+from bot.modules.items.json_item import Egg as EggType, GetItem
 
 from bot.modules.user.user import User, take_coins, user_name
 from fuzzywuzzy import fuzz
@@ -46,7 +46,7 @@ async def cancel(message):
     lang = await get_lang(message.from_user.id)
     await bot.send_message(message.chat.id, "❌", 
           reply_markup= await m(message.from_user.id, 'last_menu', lang))
-    
+
     state = await get_state(message.from_user.id, message.chat.id)
     if state: await state.clear()
 
@@ -57,8 +57,7 @@ async def open_inventory(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    # await start_inv(None, userid, chatid, lang)
-    await ChooseInventoryHandler(None, userid, chatid, lang).start()
+    await ChooseInventoryHandler(None, userid, chatid, lang, return_objectid=True).start()
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('inventory_start'))
@@ -67,8 +66,7 @@ async def start_callback(call: CallbackQuery):
     userid = call.from_user.id
     lang = await get_lang(call.from_user.id)
 
-    # await start_inv(None, userid, chatid, lang)
-    await ChooseInventoryHandler(None, userid, chatid, lang).start()
+    await ChooseInventoryHandler(None, userid, chatid, lang, return_objectid=True).start()
 
 @HDMessage
 @main_router.message(IsPrivateChat(), StateFilter(InventoryStates.Inventory), IsAuthorizedUser())
@@ -110,10 +108,8 @@ async def inventory(message: Message):
         if 'inline_func' in settings:
             transmitted_data['inline_code'] = settings['inline_code'] 
             await ChooseInventoryHandler(**data).call_inline_func(items_data[content], transmitted_data)
-            # await settings['inline_func'](items_data[content], transmitted_data)
         else:
             await ChooseInventoryHandler(**data).call_function(items_data[content])
-            # await function(items_data[content], transmitted_data)
     else: await cancel(message)
 
 @HDCallback
@@ -188,57 +184,70 @@ async def item_callback(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
     userid = call.from_user.id
+
     lang = await get_lang(call.from_user.id)
     item_id = call_data[2]
-    preabil = {}
 
     item_base = await decode_item(item_id)
-    if 'items_data' not in item_base:
+    if isinstance(item_base, ItemInBase):
         item = item_base
-    else: item = item_base['items_data']
+
+    elif isinstance(item_base, ItemData):
+        item = ItemInBase(userid, 
+                          item_base.item_id, item_base.abilities)
+        await item.link_yourself()
 
     if item:
         if call_data[1] == 'info':
-            await send_item_info(item_base, {'chatid': chatid, 'lang': lang, 'userid': userid}, False)
-            
+            await send_item_info(item, 
+                {'chatid': chatid, 'lang': lang, 
+                 'userid': userid}, False)
+
         elif call_data[1] == 'use':
-            await data_for_use_item(item, userid, chatid, lang)
-            
+            if item._id:
+                await data_for_use_item(item._id, userid, 
+                                        chatid, lang)
+
         elif call_data[1] == 'delete':
-            await delete_item_action(userid, chatid, item, lang)
-            
+            if item._id:
+                await delete_item_action(userid, chatid, item._id, lang)
+
         elif call_data[1] == 'exchange':
-            await exchange_item(userid, chatid, item, lang, 
-                                await user_name(userid))
-            
-        elif call_data[1] == 'egg':
-            ret_data = await CheckItemFromUser(userid, item)
-            if 'abilities' in item:
-                preabil = item['abilities']
+            if item._id:
+                await exchange_item(userid, chatid, item._id, lang, 
+                                    await user_name(userid))
+
+        elif call_data[1] == 'egg' and \
+                isinstance(item.items_data.data, EggType):
+            ret_data = await CheckItemFromUser(userid, 
+                                item.item_id,
+                                item.items_data.abilities, 1)
 
             if ret_data['status']:
                 user = await User().create(userid)
 
                 limit = await user.max_dino_col()
                 limit_now = limit['standart']['limit'] - limit['standart']['now']
-                
+
                 if limit_now > 0:
                     egg_id = call_data[3]
-                    item_data = get_item_data(item['item_id'])
-                    end_time = seconds_to_str(item_data['incub_time'], lang)
-                    i_name = get_name(item['item_id'], lang, item.get('abilities', {}))
+                    end_time = seconds_to_str(
+                        item.items_data.data.incub_time, lang)
+                    i_name = item.items_data.name
 
-                    if await RemoveItemFromUser(userid, item['item_id'], 1, preabil):
+                    if await item.minus(1):
                         await bot.send_message(chatid, 
                             t('item_use.egg.incubation', lang, 
                             item_name = i_name, end_time=end_time),  
-                            reply_markup= await m(userid, 'last_menu', lang))
+                            reply_markup = await m(userid, 'last_menu', lang))
 
-                        res = await incubation_egg(int(egg_id), userid, item_data['incub_time'], item_data['inc_type'])
+                        res = await incubation_egg(int(egg_id), userid, 
+                                                   item.items_data.data.incub_time, 
+                                                   item.items_data.data.inc_type)
 
                         if res is None:
                             await call.message.delete()
-                            await AddItemToUser(userid, item['item_id'], 1, preabil)
+                            await item.add_to_db()
                             return
 
                         new_text = t('item_use.egg.edit_content', lang)
@@ -249,19 +258,18 @@ async def item_callback(call: CallbackQuery):
                         t('item_use.cannot_be_used', lang),  
                           reply_markup= await m(userid, 'last_menu', lang))
 
-        elif call_data[1] == 'egg_edit':
+        elif call_data[1] == 'egg_edit' and \
+                isinstance(item.items_data.data, EggType):
             await call.message.delete_reply_markup()
 
-            mag_stone = get_item_data('magic_stone')
-            item_data = get_item_data(item['item_id'])
+            mag_stone = ItemData('magic_stone')
 
-            preabil = mag_stone.get('abilities', {})
-            if await RemoveItemFromUser(userid, 'magic_stone', 1, preabil):
+            if await RemoveItemFromUser(userid, mag_stone, 1):
 
                 res_egg_choose = await incubation.find_one({
                     'owner_id': userid, 
                     'stage': 'choosing',
-                    'quality': item_data['inc_type']
+                    'quality': item.items_data.data.inc_type,
                 })
 
                 if res_egg_choose:
@@ -292,7 +300,7 @@ async def item_callback(call: CallbackQuery):
                         await sleep(2)
 
                     buttons = {}
-                    code = await item_code(item_dict=item, userid=userid)
+                    code = item.code()
 
                     for i in range(3): 
                         buttons[f'🥚 {i+1}'] = (
@@ -310,7 +318,7 @@ async def item_callback(call: CallbackQuery):
                     )
 
                 else:
-                    await AddItemToUser(userid, mag_stone['item_id'], 1, preabil)
+                    await AddItemToUser(userid, mag_stone, 1)
                     await call.message.delete()
 
             else: 
@@ -319,9 +327,9 @@ async def item_callback(call: CallbackQuery):
 
         elif call_data[1] == 'custom_book_read':
 
-            if 'abilities' in item:
-                if 'content' in item['abilities']:
-                    content = item['abilities']['content']
+            if item.items_data.abilities:
+                if 'content' in item.items_data.abilities:
+                    content = item.items_data.abilities['content']
 
                     await bot.send_message(chatid, content, reply_markup=list_to_inline([
                         {'🗑': 'delete_message'}]
@@ -508,8 +516,8 @@ async def ns_end(count, transmitted_data: dict):
 
     check_lst = []
     for key, value in materials.items():
-        item_data = get_item_dict(key)
-        res = await CheckItemFromUser(userid, item_data, value)
+        item_data = GetItem(key)
+        res = await CheckItemFromUser(userid, item_data.item_id, item_data.abilities, value)
         check_lst.append(res['status'])
 
     if all(check_lst):
@@ -574,7 +582,8 @@ async def ns_end(count, transmitted_data: dict):
 
                 elif isinstance(iid, str):
                     craft_list.append(iid)
-                    await AddItemToUser(userid, iid, count)
+                    item_d = ItemData(iid)
+                    await AddItemToUser(userid, item_d, count)
 
             for key, value in materials.items():
                 await RemoveItemFromUser(userid, key, value)
@@ -596,28 +605,33 @@ async def buyer(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
 
     item_base = await decode_item(call_data[1])
-    item_decode = item_base['items_data']
+    if not isinstance(item_base, ItemInBase):
+        return
 
-    item = get_item_data(item_decode['item_id'])
-    item_rank = item['rank']
+    if not item_base.link_with_real_item:
+        return
+
+    item_decode = item_base.items_data.data
+    item_rank = item_decode.rank
 
     buyer_data = GAME_SETTINGS['buyer'][item_rank]
     one_col = buyer_data['one_col']
-    
-    if 'buyer_price' in item:
-        price = item['buyer_price']
+
+    if item_decode.buyer_price:
+        price = item_decode.buyer_price
     else:
         price = buyer_data['price']
 
-    emoji = get_name(item_decode['item_id'], lang)[0]
+    emoji = item_base.items_data.name(lang)[0]
 
     transmitted_data = {
-        'item': item_decode,
+        'item_id': item_base._id,
         'one_col': one_col,
         'price': price
     }
-    # await ChooseIntState(buyer_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
-    await ChooseIntHandler(buyer_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data).start()
+
+    await ChooseIntHandler(buyer_end, userid, chatid, lang, max_int=25, 
+                           transmitted_data=transmitted_data).start()
 
     await bot.send_message(chatid, t('buyer.choose', lang,
                                  emoji=emoji, one_col=one_col,
@@ -629,24 +643,20 @@ async def buyer(call: CallbackQuery):
 async def buyer_end(count, transmitted_data: dict):
 
     userid = transmitted_data['userid']
-    item = transmitted_data['item']
+    item_id = transmitted_data['item_id']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
 
     one_col = transmitted_data['one_col']
     price = transmitted_data['price'] * count
-
-    if 'abilities' in item:
-        preabil = item['abilities']
-    else: preabil = {}
+    
+    item = await ItemInBase().link_for_id(item_id)
 
     need_col = one_col * count
-    status = await CheckCountItemFromUser(userid, need_col, 
-                                          item['item_id'], preabil.copy())
+    status = item.count >= need_col
 
     if status:
-
-        await RemoveItemFromUser(userid, item['item_id'], need_col, preabil)
+        await item.minus(need_col)
         await take_coins(userid, price, True)
 
         await bot.send_message(chatid, t('buyer.ok', lang), 
@@ -695,6 +705,5 @@ async def InventoryInline(callback: CallbackQuery):
         handler = ChooseInventoryHandler(**data)
         try:
             await handler.call_function(item_base['items_data'])
-            # await function(item_base['items_data'], transmitted_data=transmitted_data)
         except Exception as e:
             log(f'InventoryInline error {e}', lvl=2, prefix='InventoryInline')
