@@ -4,7 +4,7 @@
 
 from random import choices, shuffle
 from typing import Optional
-from bot.modules.items.items import GetItem
+from bot.modules.items.item import GetItem
 
 standart_rarity_chances = {
     "common": 50,
