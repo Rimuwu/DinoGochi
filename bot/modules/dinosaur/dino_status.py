@@ -39,25 +39,7 @@ async def check_status(dino_id: Union[ObjectId, dict]) -> str:
             status: str = activity['activity_type']
 
         on_craft = await item_craft.find_one({'dino_id': dino_id}) != None
-        on_farm = status == 'farm'
 
-        in_mine = status == 'mine'
-        in_bank = status == 'bank'
-        in_sawmill = status == 'sawmill'
-
-        in_gym = status == 'gym'
-        in_library = status == 'library'
-        in_park = status == 'park'
-        in_swimming_pool = status == 'swimming_pool'
-
-        in_sleep = status == 'sleep'
-        in_game = status == 'game'
-        in_journey = status == 'journey'
-        in_collecting = status == 'collecting'
-
-        inactive = status == 'inactive'
-
-        dungeon = False
         in_kindergarten = await kindergarten.find_one({'dinoid': dino_id}, 
                                     comment='check_status_in_kindergarten')
 
@@ -66,11 +48,36 @@ async def check_status(dino_id: Union[ObjectId, dict]) -> str:
         unrestrained_play = await dino_mood.find_one({'dino_id': dino_id, 
                               'type': 'breakdown', 'action': 'unrestrained_play'}, comment='check_status_unrestrained_play')
 
-        data = ['sleep', 'unrestrained_play', 'game', 'journey', 'collecting', 'dungeon', 'kindergarten', 'hysteria', 'farm', 'mine', 'bank', 'sawmill', 'gym', 'library', 'park', 'swimming_pool', 'craft', 'inactive']
-        checks = [bool(in_sleep), bool(unrestrained_play), bool(in_game), bool(in_journey), bool(in_collecting), bool(dungeon), bool(in_kindergarten), bool(hysteria),  bool(on_farm), bool(in_mine), bool(in_bank), bool(in_sawmill), bool(in_gym), bool(in_library), bool(in_park), bool(in_swimming_pool), bool(on_craft), bool(inactive)]
+        status_checks = {
+            'sleep': status == 'sleep',
 
-        if True in checks: status = data[checks.index(True)]
-        return status
+            'unrestrained_play': bool(unrestrained_play),
+            'game': status == 'game',
+
+            'journey': status == 'journey',
+            'collecting': status == 'collecting',
+            'dungeon': status == 'dungeon',
+
+            'kindergarten': bool(in_kindergarten),
+            'hysteria': bool(hysteria),
+
+            'farm': status == 'farm',
+            'mine': status == 'mine',
+            'bank': status == 'bank',
+            'sawmill': status == 'sawmill',
+            
+            'gym': status == 'gym',
+            'library': status == 'library',
+            'park': status == 'park',
+            'swimming_pool': status == 'swimming_pool',
+
+            'craft': on_craft,
+            'inactive': status == 'inactive'
+        }
+
+        for key, value in status_checks.items():
+            if value: return key
+
     return 'pass'
 
 
@@ -81,7 +88,7 @@ skill_time = {
     "park": [1200, 7200],
 }
 
-def get_skill_time(skill: str): return deepcopy(skill_time[skill])
+def get_skill_time(skill: str) -> list[int]: return deepcopy(skill_time[skill]) # type: ignore
 
 async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, down: str, 
                                up_unit: list[float], down_unit: list[float],
