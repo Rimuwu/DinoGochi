@@ -4,7 +4,7 @@ from bot.exec import main_router, bot
 from bot.modules.user.advert import create_ads_data
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.items.item import AddItemToUser, counts_items, get_item_dict, get_name, item_code
+from bot.modules.items.item import AddItemToUser, ItemData, counts_items, get_name
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import premium
@@ -135,12 +135,10 @@ async def super_coins(call: CallbackQuery, state: FSMContext):
         buttons = []
 
         for iem_id in set(product['items']):
-            item_dct = get_item_dict(iem_id)
-            abil = item_dct.get('abilities', {})
+            item_dct = ItemData(iem_id)
 
-            code = await item_code(item_dct)
             buttons.append(
-                {f"{get_name(iem_id, lang, abil)}": f"item info {code}"}
+                {f"{item_dct.name(lang)}": f"item info {item_dct.code()}"}
                 )
 
         buttons.append(
@@ -203,7 +201,9 @@ async def super_shop(call: CallbackQuery):
         if user and user['super_coins'] >= price:
             await users.update_one({'_id': user['_id']}, 
                                    {'$inc': {'super_coins': -price}}, comment='super_shop_price')
-            for i in items: await AddItemToUser(user_id, i)
+            for i in items:
+                item = ItemData(i)
+                await AddItemToUser(user_id, item)
 
             await bot.send_message(chatid, t('super_coins.buy', lang,
                                             items=counts_items(items, lang),
@@ -212,7 +212,8 @@ async def super_shop(call: CallbackQuery):
                                    parse_mode='Markdown')
 
             text, markup = await main_message(user_id)
-            await bot.edit_message_text(text, None, chatid, call.message.message_id,
+            await bot.edit_message_text(text, None, 
+                                        chatid, call.message.message_id,
                                     reply_markup=markup, parse_mode="Markdown")
         else:
             await call.answer(t('super_coins.no_coins', lang), show_alert=True)
