@@ -137,7 +137,7 @@ async def set_delete_time(message: Message):
         if not me_in_chat: return
 
         if not me_in_chat.can_delete_messages:
-            mes = await message.answer(t('no_delete_rights', lang), parse_mode='Markdown')
+            mes = await message.answer(t('groups_setting.no_delete_rights', lang), parse_mode='Markdown')
             await add_message(chatid, mes.message_id)
 
         elif no_arg:
@@ -173,7 +173,7 @@ async def deleteallmessages(message: Message):
     me_in_chat = await bot.get_chat_member(chatid, me.id)
 
     if me_in_chat and not me_in_chat.can_delete_messages:
-        mes = await message.answer(t('no_delete_rights', lang), parse_mode='Markdown')
+        mes = await message.answer(t('groups_setting.no_delete_rights', lang), parse_mode='Markdown')
 
     else:
         await delete_messages(chatid, True)
