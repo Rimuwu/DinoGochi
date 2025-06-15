@@ -10,7 +10,7 @@ from bot.modules.dinosaur.dinosaur import Dino
 from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.dinosaur.mood import add_mood, check_inspiration
 from bot.modules.dinosaur.skills import add_skill_point
-from bot.modules.items.item_tools import use_item
+from bot.modules.items.item_tools_lost import use_item
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import get_lang, t
 from bot.modules.notifications import dino_notification

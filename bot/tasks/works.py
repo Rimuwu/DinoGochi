@@ -10,7 +10,7 @@ from bot.modules.dinosaur.mood import check_inspiration
 from bot.modules.dinosaur.skills import check_skill
 from bot.modules.dinosaur.works import end_work
 from bot.modules.items.item import get_items_names
-from bot.modules.items.item_tools import rare_random
+from bot.modules.items.item_tools_lost import rare_random
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import get_lang, t
 from bot.modules.notifications import dino_notification
