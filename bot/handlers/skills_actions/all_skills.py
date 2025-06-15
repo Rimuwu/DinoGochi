@@ -18,11 +18,9 @@ from bot.modules.user.user import User
 from aiogram.types import Message, CallbackQuery
 from bot.modules.data_format import list_to_inline, seconds_to_str
 
-from bot.filters.translated_text import Text, StartWith
-from bot.filters.states import NothingState
+from bot.filters.translated_text import StartWith
 from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
-from bot.filters.authorized import IsAuthorizedUser
 from bot.filters.kd import KDCheck
 from aiogram import F
 

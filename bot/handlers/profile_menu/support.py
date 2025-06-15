@@ -3,25 +3,20 @@ from bot.exec import main_router, bot
 from bot.modules.data_format import seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.donation import send_inv
-from bot.modules.images import async_open
 from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
 from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
-# from bot.modules.states_tools import ChooseIntState
 from bot.modules.states_fabric.state_handlers import ChooseIntHandler
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
-                           InlineKeyboardMarkup, InputMedia, Message, inline_keyboard_markup)
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+                           Message)
+from aiogram.utils.keyboard import  InlineKeyboardBuilder
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
+from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
 from aiogram.filters import Command
 from aiogram import F
 
@@ -107,7 +102,7 @@ async def support_buttons(call: CallbackQuery):
 
                 text += f'\n{text_data["col_answer"]}'
 
-                # Calculate base price for discount calculation
+                # Рассчет базовой цены
                 cost_dict = product['cost']
                 keys_list = list(cost_dict.keys())
                 base_key = None
@@ -125,7 +120,8 @@ async def support_buttons(call: CallbackQuery):
                     for key, item in cost_dict.items():
                         if key.isdigit():
                             name = f'{seconds_to_str(product["time"]*int(key), lang)} = {item[currency]}🌟'
-                            # Discount calculation
+
+                            # Рассчет скидки
                             if base_price is not None and int(key) > 0:
                                 expected_price = base_price * int(key)
                                 actual_price = item[currency]
@@ -140,7 +136,8 @@ async def support_buttons(call: CallbackQuery):
                 elif product['type'] in ['kit', 'super_coins']:
                     for key, item in cost_dict.items():
                         name = f'x{key} = {item[currency]}🌟'
-                        # Discount calculation
+
+                        # Рассчет скидки
                         if base_price is not None and key.isdigit() and int(key) > 0:
                             expected_price = base_price * int(key)
                             actual_price = item[currency]
@@ -157,7 +154,6 @@ async def support_buttons(call: CallbackQuery):
                         width=2)
 
             else:
-                # await ChooseIntState(tips, user_id, chatid, lang, 1, 500_000)
                 await ChooseIntHandler(tips, user_id, chatid, lang, 1, 500_000
                                         ).start()
                 await bot.send_message(chatid, text_data['free_enter'], reply_markup=cancel_markup(lang))
@@ -173,7 +169,6 @@ async def support_buttons(call: CallbackQuery):
             count = call.data.split()[3]
 
             image_way = 'images/remain/support/placeholder.png'
-
             text = text_data['buy']
 
             markup_inline.row(
@@ -191,8 +186,6 @@ async def support_buttons(call: CallbackQuery):
                 await edit_SmartPhoto(chatid, messageid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
             except Exception as e:
                 log(f'edit_SmartPhoto error: {e}', 2) 
-
-
 
 async def tips(col, transmitted_data):
     userid = transmitted_data['userid']

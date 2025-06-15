@@ -106,8 +106,6 @@ async def infouser_alt(message: Message):
 @HDCallback
 @main_router.callback_query(F.data.startswith('user_profile'))
 async def user_profile_menu(callback: CallbackQuery):
-    chatid = callback.message.chat.id
-    userid = callback.from_user.id
     data = callback.data.split()
     lang = await get_lang(callback.from_user.id)
 

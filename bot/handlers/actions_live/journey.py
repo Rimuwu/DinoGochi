@@ -1,8 +1,6 @@
 
 from random import randint
-
 from time import time
-
 from bson import ObjectId
 
 from bot.dbmanager import mongo_client
@@ -21,9 +19,8 @@ from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
-# from bot.modules.states_tools import ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
-from bot.modules.states_fabric.steps_datatype import BaseUpdateType, InlineStepData, PagesStepData, StepMessage
+from bot.modules.states_fabric.steps_datatype import InlineStepData, StepMessage
 from bot.modules.user.user import User
 from aiogram.types import (CallbackQuery, InlineKeyboardMarkup, InputMediaPhoto,
                            Message)

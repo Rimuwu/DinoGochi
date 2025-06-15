@@ -13,22 +13,16 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.dinosaur.mood import repeat_activity
 from bot.modules.notifications import dino_notification
 from bot.modules.overwriting.DataCalsses import DBconstructor
-# from bot.modules.states_tools import ChooseOptionState
 from bot.modules.states_fabric.state_handlers import ChooseOptionHandler
 from bot.modules.user.advert import auto_ads
-from bot.modules.user.user import User, last_dino
+from bot.modules.user.user import User
 from aiogram.types import Message, CallbackQuery
 from bot.modules.data_format import list_to_inline, list_to_keyboard, progress_bar
 
 from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
 from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
-from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
 from aiogram import F
-
-from aiogram.fsm.context import FSMContext
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
@@ -201,7 +195,6 @@ async def mine(message: Message):
         'last_dino': last_dino._id
     }
 
-    # await ChooseOptionState(end_mine, userid, chatid, lang, options, transmitted_data)
     await ChooseOptionHandler(end_mine, userid, chatid, lang, options,
                               transmitted_data).start()
     await bot.send_message(chatid, text, reply_markup=rmk)
@@ -255,7 +248,6 @@ async def bank(message: Message):
         'last_dino': last_dino._id
     }
 
-    # await ChooseOptionState(end_bank, userid, chatid, lang, options, transmitted_data)
     await ChooseOptionHandler(end_bank, userid, chatid, lang, options,
                               transmitted_data).start()
     await bot.send_message(chatid, text, reply_markup=rmk)
@@ -309,7 +301,6 @@ async def sawmill(message: Message):
         'last_dino': last_dino._id
     }
 
-    # await ChooseOptionState(end_sawmill, userid, chatid, lang, options, transmitted_data)
     await ChooseOptionHandler(end_sawmill, userid, chatid, lang, options,
                               transmitted_data).start()
     await bot.send_message(chatid, text, reply_markup=rmk)

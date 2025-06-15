@@ -14,19 +14,13 @@ from bot.modules.inline import inline_menu
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import markups_menu as m
 from bot.modules.dinosaur.mood import add_mood
-# from bot.modules.states_tools import ChooseIntState, ChooseOptionState
 from bot.modules.states_fabric.state_handlers import ChooseIntHandler, ChooseOptionHandler
 from bot.modules.user.user import User
 from bot.modules.decorators import HDMessage
 
 from bot.filters.translated_text import Text
-from bot.filters.states import NothingState
 from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
-from bot.filters.authorized import IsAuthorizedUser
-from aiogram import F
-
-from aiogram.fsm.context import FSMContext
  
 from bot.modules.overwriting.DataCalsses import DBconstructor
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
@@ -157,7 +151,8 @@ async def put_to_bed(message: Message):
                     'last_dino': last_dino._id
                 }
 
-                await ChooseOptionHandler(end_choice, userid, chatid, lang, options, trans_data).start() # Ожидаем выбор варианта
+                await ChooseOptionHandler(end_choice, userid, chatid, lang, options, 
+                                          trans_data).start() # Ожидаем выбор варианта
                 await bot.send_message(userid, 
                         t('put_to_bed.choice', lang), 
                         reply_markup=buttons)

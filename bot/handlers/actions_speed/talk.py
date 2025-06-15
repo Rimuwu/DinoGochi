@@ -1,4 +1,4 @@
-from random import choice, randint, uniform
+from random import choice, uniform
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
@@ -14,12 +14,9 @@ from bot.modules.user.user import User
 from aiogram.types import Message
 
 from bot.filters.translated_text import Text
-from bot.filters.states import NothingState
 from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
-from bot.filters.authorized import IsAuthorizedUser
 from bot.filters.kd import KDCheck
-from aiogram import F
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)

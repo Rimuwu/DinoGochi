@@ -18,13 +18,17 @@ from aiogram.types import Message
 from bot.filters.translated_text import Text
 from bot.filters.status import DinoPassStatus
 from bot.filters.kd import KDCheck
-from aiogram import F
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
 
 @HDMessage
-@main_router.message(IsPrivateChat(), Text('commands_name.speed_actions.pet'), DinoPassStatus(), KDCheck('pet'))
+@main_router.message(
+    IsPrivateChat(), 
+    Text('commands_name.speed_actions.pet'), 
+    DinoPassStatus(), 
+    KDCheck('pet')
+)
 async def pet(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
