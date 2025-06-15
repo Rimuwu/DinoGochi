@@ -10,7 +10,7 @@ from bot.modules.data_format import (chunks, deepcopy, filling_with_emptiness,
 from bot.modules.get_state import get_state
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import item_info_markup
-from bot.modules.items.item import (get_data, get_name, is_standart, item_code,
+from bot.modules.items.item import (ItemInBase, get_data, get_name, is_standart, item_code,
                               item_info)
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.localization import t
@@ -170,7 +170,8 @@ def name_end(item, name, count_name):
             end_name = f"{name}{count_name}"
     return end_name
 
-async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
+async def send_item_info(item: ItemInBase,
+                         transmitted_data: dict, mark: bool=True):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
@@ -178,9 +179,7 @@ async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
     dev = userid in conf.bot_devs
 
     text, image = await item_info(item, lang, dev)
-
-    if mark: markup = await item_info_markup(item, 
-                        lang, userid)
+    if mark: markup = await item_info_markup(item, lang)
     else: markup = None
 
     if not image:
