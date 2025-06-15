@@ -26,7 +26,7 @@ from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import inline_menu
 from bot.modules.items.accessory import downgrade_type_accessory
 from bot.modules.items.collect_items import get_all_items
-from bot.modules.items.item_tools import rare_random
+from bot.modules.items.item_tools_lost import rare_random
 from bot.modules.items.items_groups import get_group
 from bot.modules.logs import log
 
@@ -589,7 +589,7 @@ async def sdr34(message: Message):
         f"Выпадения по каждому предмету:\n{items_result}"
     )
 
-from bot.modules.items.items import AddItemToUser, ItemInBase, item_info
+from bot.modules.items.item import AddItemToUser, ItemInBase, item_info
 ITEMS: dict = get_all_items()
 
 @main_router.message(Command(commands=['all_info']), IsAdminUser())

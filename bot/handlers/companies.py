@@ -1,28 +1,17 @@
-from ast import In
-from re import M
+
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
-from bot.handlers.start import start_game
 from bot.modules.companies import create_company, end_company, generate_message, info
-from bot.modules.data_format import seconds_to_str, str_to_seconds
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.inline import inline_menu
 from bot.modules.localization import get_all_locales, get_lang, t
-from bot.modules.managment.promo import use_promo
-from bot.modules.markup import answer_markup, cancel_markup, confirm_markup
+from bot.modules.markup import answer_markup, cancel_markup
 from bot.modules.overwriting.DataCalsses import DBconstructor
-# from bot.modules.states_tools import ChoosePagesState, ChooseStepState
-# from bot.modules.states_tools import ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChoosePagesStateHandler, ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import *
 from aiogram.types import CallbackQuery, Message
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
-from bot.filters.private import IsPrivateChat
+
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
 from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
@@ -78,93 +67,6 @@ async def new_cycle(userid, chatid, lang, transmitted_data):
         ConfirmStepData('add_lang', StepMessage('companies.add_new_lang', answer_markup(lang), True))
     ]
 
-    # steps = [
-    #     {
-    #         'type': 'pages', 'name': 'lang',
-    #         'data': {
-    #             'options': lang_options,
-    #             'horizontal': 2
-    #         },
-    #         'translate_message': True,
-    #         'message': {
-    #             'text': 'companies.lang'
-    #         }
-    #     },
-
-    #     {
-    #         'type': 'str', 'name': 'text',
-    #         'data': {
-    #             'max_len': 1024
-    #         },
-    #         'translate_message': True,
-    #         'message': {
-    #             'text': 'companies.text',
-    #             'reply_markup': cancel_markup(lang)
-    #         }
-    #     },
-
-    #     {
-    #         'type': 'str', 'name': 'name_button',
-    #         'data': {
-    #             'max_len': 100
-    #         },
-    #         'translate_message': True,
-    #         'message': {
-    #             'text': 'companies.name_button',
-    #             'reply_markup': cancel_markup(lang)
-    #         }
-    #     },
-
-    #     {
-    #         'type': 'str', 'name': 'button_url',
-    #         'data': {
-    #             'max_len': 1000
-    #         },
-    #         'translate_message': True,
-    #         'message': {
-    #             'text': 'companies.button_url',
-    #             'reply_markup': cancel_markup(lang)
-    #         }
-    #     },
-
-    #     {
-    #         'type': 'pages', 'name': 'parse_mode',
-    #         'data': {
-    #             'options': {
-    #                 'HTML': 'HTML',
-    #                 'Markdown': 'Markdown',
-    #                 t('companies.no_parse', lang): None
-    #             }
-    #         },
-    #         'translate_message': True,
-    #         'message': {
-    #             'text': 'companies.parse_mode'
-    #         }
-    #     },
-
-    #     {
-    #         'type': 'image', 'name': 'image',
-    #         'data': {},
-    #         'translate_message': True,
-    #         'message': {
-    #             'text': 'companies.image_choose',
-    #             'reply_markup': cancel_markup(lang)
-    #         }
-    #     },
-
-    #     {
-    #         'type': 'bool', 'name': 'add_lang',
-    #         'data': {},
-    #         'translate_message': True,
-    #         'message': {
-    #             'text': 'companies.add_new_lang',
-    #             'reply_markup': answer_markup(lang)
-    #         }
-    #     }
-
-    # ]
-
-    # await ChooseStepState(pre_check, userid, chatid, lang, steps, transmitted_data)
     await ChooseStepHandler(
         pre_check, userid, chatid, lang, steps, transmitted_data).start()
 
@@ -251,7 +153,6 @@ async def companies_c(message: Message):
     await ChoosePagesStateHandler(
         comp_info, userid, chatid, lang, options).start()
 
-    # await ChoosePagesState(comp_info, userid, chatid, lang, options)
 
 async def comp_info(com_id, transmitted_data):
     userid = transmitted_data['userid']

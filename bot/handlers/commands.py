@@ -13,13 +13,7 @@ from bot.modules.managment.promo import use_promo
 from aiogram.types import Message, CallbackQuery
 from bot.config import conf
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
-from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
 

@@ -5,15 +5,9 @@ from bot.modules.dialogs import dialogs
 from bot.modules.localization import get_lang
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command
 
 from bot.modules.user.user import user_name
 

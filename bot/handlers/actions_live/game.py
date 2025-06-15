@@ -1,8 +1,5 @@
 from random import randint
 from time import time
-from typing import Optional
-
-from bson import ObjectId
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
@@ -22,19 +19,14 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.dinosaur.mood import add_mood, check_breakdown, check_inspiration, repeat_activity
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
-# from bot.modules.states_tools import ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import BaseUpdateType, InlineStepData, PagesStepData, StepMessage
 from bot.modules.user.user import User, premium
-from aiogram.types import Message, InputFile
+from aiogram.types import Message
 
 from bot.filters.translated_text import Text
-from bot.filters.states import NothingState
 from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
-from bot.filters.authorized import IsAuthorizedUser
-from aiogram import F
-from aiogram.fsm.context import FSMContext
 
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 

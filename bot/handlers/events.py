@@ -8,13 +8,12 @@ from bot.modules.data_format import list_to_inline
 from bot.modules.daytemp_data import flush_daytemp_cache
 from bot.modules.groups import add_group_user, delete_group, delete_group_user, insert_group
 from bot.modules.localization import get_lang, t
-from bot.modules.logs import log
 from bot.modules.managment.boost_spy import create_boost, delete_boost
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import user_in_chat
-from aiogram.types import ChatMemberUpdated, Message, ChatBoostUpdated, ChatBoostRemoved, ChatBoostSourcePremium
+from aiogram.types import ChatMemberUpdated, ChatBoostUpdated, ChatBoostRemoved, ChatBoostSourcePremium
 from aiogram.filters.chat_member_updated import \
-    ChatMemberUpdatedFilter, MEMBER, KICKED, LEFT, ADMINISTRATOR, CREATOR, IS_NOT_MEMBER, IS_MEMBER
+    ChatMemberUpdatedFilter, IS_NOT_MEMBER, IS_MEMBER
 
 from bot.tasks.bot_report import create_report
 from aiogram import F

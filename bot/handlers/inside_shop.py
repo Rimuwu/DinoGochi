@@ -8,7 +8,6 @@ from bot.modules.localization import get_lang, t
 from bot.modules.markup import count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-# from bot.modules.states_tools import ChooseInlineState, ChooseIntState, ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChooseIntHandler
 from bot.modules.user.inside_shop import get_content, item_buyed
 from aiogram.types import CallbackQuery, Message
@@ -68,7 +67,6 @@ async def hoarder_calb(call: CallbackQuery):
             'item': key,
             'messageid': call.message.message_id
         }
-        # await ChooseIntState(buy_item, userid, chatid, lang, max_int=item['count'], autoanswer=False, transmitted_data=transmitted_data)
         await ChooseIntHandler(buy_item, userid, chatid, lang, max_int=item['count'], autoanswer=False, transmitted_data=transmitted_data).start()
         
         await bot.send_message(chatid, t('inside_shop.count', lang), 

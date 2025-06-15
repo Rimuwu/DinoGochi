@@ -1,5 +1,6 @@
 
 from asyncio import sleep
+import re
 from bot.exec import main_router, bot
 from bot.modules import markup
 from bot.modules.data_format import list_to_inline
@@ -21,6 +22,9 @@ from bot.modules.sub_award import award_for_entry, check_award, check_for_entry
 @main_router.message(IsPrivateChat(), Text('commands_name.about.team'), 
                      IsAuthorizedUser())
 async def team(message: Message):
+    
+    if not message.from_user: return
+    
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
@@ -38,6 +42,8 @@ async def team(message: Message):
                      IsAuthorizedUser())
 async def links(message: Message, mes_edit: int = 0, 
                 lang: str = '', userid: int = 0):
+    if not message.from_user: return
+    
     if not lang:
         lang = await get_lang(message.from_user.id)
     if not userid:
@@ -93,8 +99,7 @@ async def links(message: Message, mes_edit: int = 0,
 @main_router.callback_query(IsPrivateChat(), F.data == 'link_reward')
 async def link_reward(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
-    chatid = call.message.chat.id
-    
+
     checks = ['channel', 'forum']
     # Проверяем наличие пользователя в обоих каналах
     in_channel = await check_for_entry(call.from_user.id, 'channel')
@@ -156,24 +161,23 @@ async def faq_func(lang, chatid):
 
 
 @HDMessage
-@main_router.message(IsPrivateChat(), Text('commands_name.about.faq'), 
-                     IsAuthorizedUser())
-async def faq(message: Message):
-    await faq_func(await get_lang(message.from_user.id), message.chat.id)
-
-@HDMessage
 @main_router.message(IsPrivateChat(), Command(commands=['faq']))
-async def faq_com(message: Message):
+@main_router.message(IsPrivateChat(), Text('commands_name.about.faq'))
+async def faq(message: Message):
+    if not message.from_user: return
     await faq_func(await get_lang(message.from_user.id), message.chat.id)
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('open_faq'))
 async def open_faq(call: CallbackQuery):
+    if not call.message: return
     await faq_func(await get_lang(call.from_user.id), call.message.chat.id)
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('faq'))
 async def faq_buttons(call: CallbackQuery):
+    if not call.data or not call.message or not call.message.chat: return
+    
     data = call.data.split()[1]
     chatid = call.message.chat.id
     lang = await get_lang(call.from_user.id)

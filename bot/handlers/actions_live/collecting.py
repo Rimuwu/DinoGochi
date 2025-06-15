@@ -2,8 +2,6 @@ from bson import ObjectId
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
-from bot.filters.kd import KDCheck
-from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.dinosaur.mood import repeat_activity
 from bot.modules.items.accessory import check_accessory
 from bot.modules.user.advert import auto_ads
@@ -17,16 +15,13 @@ from bot.modules.markup import count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
-# from bot.modules.states_tools import ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import IntStepData, OptionStepData, StepMessage
 
 from bot.modules.user.user import User, count_inventory_items, max_eat
 from aiogram.types import CallbackQuery, Message
-from aiogram.fsm.context import FSMContext
 
 from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
 from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser

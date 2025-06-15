@@ -1,13 +1,12 @@
 
 
+from typing import Optional
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
-from bot.filters.reply_message import IsReply
-from bot.filters.translated_text import StartWith, Text
+from bot.filters.translated_text import StartWith
 from bot.modules.data_format import list_to_inline, random_code, user_name_from_telegram
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.get_state import get_state
-from bot.modules.groups import add_message, delete_messages, get_group, get_group_by_chat, group_info, insert_group
+from bot.modules.groups import add_message, get_group_by_chat
 from bot.modules.localization import get_lang, t, get_data
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from aiogram.types import CallbackQuery, Message
@@ -19,12 +18,8 @@ from aiogram.filters import Command
 from bot.const import GAME_SETTINGS
 
 from bot.filters.group_filter import GroupRules
-from bot.filters.group_admin import IsGroupAdmin
-from bot.filters.private import IsPrivateChat
 from bot.modules.states_fabric.state_handlers import ChooseInlineHandler
 from bot.modules.user.user import take_coins, user_name
-from aiogram.utils.keyboard import InlineKeyboardBuilder
-from aiogram import Router
 
 users = DBconstructor(mongo_client.user.users)
 groups = DBconstructor(mongo_client.group.groups)
@@ -74,7 +69,7 @@ async def successful_transfer_coins(st:str, transmitted_data: dict):
 
 @main_router.message(Command(commands=['give_coins']),
                      GroupRules())
-async def give_coins(message: Message, message_text: str = None):
+async def give_coins(message: Message, message_text: Optional[str] = None):
     chatid = message.chat.id
     userid = message.from_user.id
     lang = await get_lang(userid)

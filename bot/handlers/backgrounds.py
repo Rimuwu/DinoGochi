@@ -6,28 +6,20 @@ from bot.exec import main_router, bot
 from bot.modules.data_format import escape_markdown, list_to_keyboard
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino
-from bot.modules.images import async_open
 from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
 from bot.modules.inline import list_to_inline
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import confirm_markup, count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-# from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState, ChooseImageState,
-#                                       ChooseIntState, ChooseStringState)
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseDinoHandler, ChooseImageHandler, ChooseIntHandler
 from bot.modules.user.user import premium, take_coins
-from aiogram.types import CallbackQuery, InputMedia, Message
+from aiogram.types import CallbackQuery, Message
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
+from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command
 
 users = DBconstructor(mongo_client.user.users)
 
@@ -87,7 +79,7 @@ async def transition_back(dino_id: ObjectId, transmitted_data: dict):
     data = {
         'dino': dino_id
     }
-    # await ChooseImageState(back_edit, userid, chatid, lang, True, transmitted_data=data)
+
     await ChooseImageHandler(back_edit, userid, chatid, lang, True, transmitted_data=data).start()
     await bot.send_message(userid, text, reply_markup=markup)
 
@@ -100,7 +92,6 @@ async def custom_profile(message: Message):
     chatid = message.chat.id
 
     if await premium(userid):
-        # await ChooseDinoState(transition_back, userid, chatid, lang, False)
         await ChooseDinoHandler(transition_back, userid, chatid, lang, False).start()
     else:
         text = t('no_premium', lang)
@@ -114,7 +105,6 @@ async def standart(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    # await ChooseDinoState(standart_end, userid, chatid, lang, False)
     await ChooseDinoHandler(standart_end, userid, chatid, lang, False).start()
 
 async def standart_end(dino_id: ObjectId, transmitted_data: dict):
@@ -223,10 +213,9 @@ async def background_menu(call: CallbackQuery):
 
         data = { 'message_id': call.message.message_id, 
                 'delete_id': mes.message_id }
-        # await ChooseIntState(page_n, userid, chatid, lang,
-        #                      max_int=max_int, 
-        #                      transmitted_data=data)
-        await ChooseIntHandler(page_n, userid, chatid, lang, max_int=max_int, transmitted_data=data).start()
+
+        await ChooseIntHandler(page_n, userid, chatid, lang, max_int=max_int, 
+                               transmitted_data=data).start()
 
 
     elif action in ['buy_coins', 'buy_super_coins']:
@@ -244,15 +233,10 @@ async def background_menu(call: CallbackQuery):
                                         reply_markup=confirm_markup(lang)
                                         )
             data['delete_id'] = mes.message_id
-            # await ChooseConfirmState(buy, userid, chatid, lang, transmitted_data=data)
             await ChooseConfirmHandler(buy, userid, chatid, lang, transmitted_data=data).start()
     
     elif action == 'set':
-        # mes = await bot.send_message(chatid, t('backgrounds.choose_dino', lang),
-        #                                 reply_markup=confirm_markup(lang)
-        #                                 )
         data = { 'page': b_id } # 'delete_id': mes.message_id,
-        # await ChooseDinoState(set_back, userid, chatid, lang, False, True, data)
         await ChooseDinoHandler(set_back, userid, chatid, lang, False, True, 
                                 data).start()
         
@@ -278,8 +262,6 @@ async def set_back(dino_id: ObjectId, transmitted_data: dict):
                         reply_markup= await m(userid, 'last_menu', lang))
     if 'umessageid' in transmitted_data:
         await bot.delete_message(chatid, transmitted_data['umessageid'])
-
-    # await bot.delete_message(chatid, transmitted_data['delete_id'])
 
 async def buy(_: bool, transmitted_data: dict):
     userid = transmitted_data['userid']

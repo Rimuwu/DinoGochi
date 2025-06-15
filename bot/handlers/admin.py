@@ -1,5 +1,4 @@
 from asyncio import sleep
-from email import message
 from time import time
 from bot.config import conf
 from bot.dbmanager import mongo_client
@@ -20,12 +19,7 @@ from bot.modules.managment.tracking import creat_track, delete_track, get_track_
 from bot.modules.user.user import award_premium
 from aiogram.types import CallbackQuery, Message, BufferedInputFile
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
-from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
 from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
@@ -42,12 +36,10 @@ async def create_tracking(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    # await ChooseStringState(create_track, userid, chatid, lang, 1, 0)
     await ChooseStringHandler(create_track, userid, chatid, lang, 1, 0).start()
     await bot.send_message(chatid, t("create_tracking.name", lang), parse_mode='Markdown')
 
 async def create_track(code, transmitted_data: dict):
-    userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
@@ -64,8 +56,9 @@ async def tracking(message: Message):
     lang = await get_lang(message.from_user.id)
 
     options = await get_track_pages()
-    # res = await ChoosePagesState(track_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False)
-    res = await ChoosePagesStateHandler(track_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False).start()
+
+    await ChoosePagesStateHandler(track_info_adp, userid, chatid, lang, options, 
+                                  one_element=False, autoanswer=False).start()
     await bot.send_message(chatid, t("track_open", lang), parse_mode='html')
 
 async def track_info_adp(data, transmitted_data: dict):
@@ -122,9 +115,8 @@ async def promos(message: Message):
     lang = await get_lang(message.from_user.id)
 
     options = await get_promo_pages()
-    # res = await ChoosePagesState(promo_info_adp, userid, chatid, lang, options, 
-    #                              one_element=False, autoanswer=False)
-    res = await ChoosePagesStateHandler(promo_info_adp, userid, chatid, lang, options, 
+
+    await ChoosePagesStateHandler(promo_info_adp, userid, chatid, lang, options, 
                                    one_element=False, autoanswer=False).start()
     await bot.send_message(chatid, t("promo_commands.promo_open", lang), parse_mode='Markdown')
 
@@ -289,7 +281,6 @@ async def copy_m(message):
 
     users_sends = await langs.find({'lang': arg_list[0]}, comment='copy_m_users_sends')
 
-    # await ChooseConfirmState(confirm_send, userid, chatid, lang, True, trs_data)
     await ChooseConfirmHandler(confirm_send, userid, chatid, lang, True, trs_data).start()
     await bot.send_message(chatid, f"Confirm the newsletter for {len(users_sends)} users with language {arg_list[0]}", reply_markup=confirm_markup(lang))
 

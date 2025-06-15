@@ -5,7 +5,6 @@ from bot.exec import main_router, bot
 from bot.modules.data_format import escape_markdown, list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino, create_dino_connection
-from bot.modules.logs import log
 from bot.modules.managment.events import get_event
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseCustomHandler, ChooseFriendHandler, ChooseIntHandler, ChoosePagesStateHandler, ChooseStepHandler, ChooseStringHandler
 from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DinoStepData, StepMessage
@@ -16,7 +15,7 @@ from bot.modules.markup import cancel_markup, confirm_markup, count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.notifications import user_notification
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.user.user import take_coins, user_info, user_name
+from bot.modules.user.user import take_coins, user_name
 from aiogram.types import CallbackQuery, Message
 from bot.modules.market.market import seller_ui
 
@@ -521,7 +520,7 @@ async def new_year(call: CallbackQuery):
 
             lang = await get_lang(friendid)
             text = t('new_year.to_friend', lang, 
-                     item=get_name(GAME_SETTINGS['new_year_item'], lang))
+                     item=get_name(GAME_SETTINGS['new_year_item'], lang, {}))
             await bot.send_message(friendid, text)
 
 @HDCallback
