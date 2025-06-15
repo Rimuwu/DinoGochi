@@ -6,7 +6,6 @@ import time
 from typing import Optional, Union
 
 from bson import ObjectId
-from numpy import long
 
 from bot.modules.data_format import list_to_inline, list_to_keyboard, random_dict, seconds_to_str
 from bot.modules.dinosaur.dino_status import check_status
