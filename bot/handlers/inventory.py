@@ -14,6 +14,7 @@ from bot.modules.inventory_tools import (InventoryStates, back_button, filter_it
 from bot.modules.items.item import (CheckItemFromUser, ItemData, ItemInBase,
                               RemoveItemFromUser, counts_items, decode_item, get_items_names, AddItemToUser, get_name)
 from bot.modules.items.custom_book import book_page
+from bot.modules.items.ns_craft import ns_craft
 from bot.modules.items.use_item import data_for_use_item
 from bot.modules.items.exchange import exchange_item
 from bot.modules.items.delete_item import delete_item_action
@@ -469,132 +470,36 @@ async def book(call: CallbackQuery):
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('ns_craft'))
-async def ns_craft(call: CallbackQuery):
+async def ns_craft_c(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
     userid = call.from_user.id
     lang = await get_lang(call.from_user.id)
 
     item_base = await decode_item(call_data[1])
-    item_ns = item_base['items_data']
+    if not isinstance(item_base, ItemInBase): return
 
-    item = get_item_data(item_ns['item_id'])
     ns_id = call_data[2]
 
     transmitted_data = {
-        'item': item,
+        'item_id': item_base._id,
         'ns_id': ns_id
     }
-    # await ChooseIntState(ns_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
-    await ChooseIntHandler(ns_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data).start()
-    
+
+    await ChooseIntHandler(ns_end, userid, chatid, lang, max_int=25, 
+                           transmitted_data=transmitted_data).start()
+
     await bot.send_message(chatid, t('css.wait_count', lang), 
                        reply_markup=count_markup(25, lang))
 
 
 async def ns_end(count, transmitted_data: dict):
-
-    userid = transmitted_data['userid']
-    item = transmitted_data['item']
+    item_id = transmitted_data['item_id']
     ns_id = transmitted_data['ns_id']
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
 
-    nd_data = item['ns_craft'][ns_id]
-    materials = {}
-    for i in nd_data['materials']: 
-        if isinstance(i, str):
-            materials[i] = materials.get(i, 0) + 1
-
-        elif isinstance(i, dict):
-            item_i = i['item_id']
-            count_i = i['count']
-
-            materials[item_i] = materials.get(item_i, 0) + count_i
-
-    for key, col in materials.items(): materials[key] = col * count
-
-    check_lst = []
-    for key, value in materials.items():
-        item_data = GetItem(key)
-        res = await CheckItemFromUser(userid, item_data.item_id, item_data.abilities, value)
-        check_lst.append(res['status'])
-
-    if all(check_lst):
-        craft_list = []
-
-        if 'time_craft' in item['ns_craft'][ns_id]:
-
-            for key, value in materials.items():
-                await RemoveItemFromUser(userid, key, value)
-
-            items_tcraft = []
-            for iid in item['ns_craft'][ns_id]['create']:
-                if isinstance(iid, dict):
-                    items_tcraft.append(
-                        {'item': {
-                            'item_id': iid['item_id'] 
-                            },
-                         'count': iid['count'] * count
-                        }
-                    )
-
-                elif isinstance(iid, str):
-                    items_tcraft.append(
-                        {'item': {
-                            'item_id': iid 
-                            },
-                         'count': 1 * count
-                        }
-                    )
-
-            tt = item['ns_craft'][ns_id]['time_craft']
-            tc = await add_time_craft(userid, 
-                                 tt, 
-                                 items_tcraft)
-            text = t('time_craft.text_start', lang, 
-                    items=get_items_names(items_tcraft, lang),
-                    craft_time=seconds_to_str(tt, lang)
-                    )
-            markup = list_to_inline(
-                [
-                    {t('time_craft.button', lang): f"time_craft {tc['alt_code']}  send_dino"}
-                ]
-            )
-
-            await bot.send_message(chatid, text, parse_mode='Markdown', 
-                           reply_markup = markup)
-
-            text = t('time_craft.text2', lang,
-                    command='/craftlist')
-            markup = await m(userid, 'last_menu', lang)
-            await bot.send_message(chatid, text, parse_mode='Markdown', 
-                            reply_markup = markup)
-        
-        else:
-            for iid in item['ns_craft'][ns_id]['create']:
-                if isinstance(iid, dict):
-                    item_i = iid['item_id']
-                    count_i = iid['count']
-                    craft_list.append(item_i)
-
-                    await AddItemToUser(userid, item_i, count_i * count)
-
-                elif isinstance(iid, str):
-                    craft_list.append(iid)
-                    item_d = ItemData(iid)
-                    await AddItemToUser(userid, item_d, count)
-
-            for key, value in materials.items():
-                await RemoveItemFromUser(userid, key, value)
-
-            text = t('ns_craft.create', lang, 
-                    items = counts_items(craft_list, lang))
-            await bot.send_message(chatid, text, 
-                            reply_markup = await m(userid, 'last_menu', lang))
-    else:
-        await bot.send_message(chatid, t('ns_craft.not_materials', lang),
-                           reply_markup = await m(userid, 'last_menu', lang))
+    await ns_craft(item_id, ns_id, chatid, lang, count)
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('buyer'))
@@ -702,8 +607,14 @@ async def InventoryInline(callback: CallbackQuery):
         else: transmitted_data['bmessageid'] = callback.message.message_id
 
         item_base = await decode_item(code)
+        
+        if isinstance(item_base, ItemInBase):
+            ret_data = item_base.items_data.to_dict()
+        else:
+            ret_data = item_base.to_dict()
+
         handler = ChooseInventoryHandler(**data)
         try:
-            await handler.call_function(item_base['items_data'])
+            await handler.call_function(ret_data)
         except Exception as e:
             log(f'InventoryInline error {e}', lvl=2, prefix='InventoryInline')
