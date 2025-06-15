@@ -1,46 +1,35 @@
-from datetime import datetime, timedelta
+
 from random import randint
 from time import time
 
 from bson import ObjectId
 
-from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino, get_dino_data, random_dino, random_quality, set_standart_specifications
-from bot.modules.images import async_open
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import inline_menu
-from bot.modules.items.item import (CheckCountItemFromUser, RemoveItemFromUser,
+from bot.modules.items.item import (CheckItemFromUser, RemoveItemFromUser,
                               counts_items)
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-# from bot.modules.states_tools import ChooseInlineState, ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChooseInlineHandler, ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DataType, DinoStepData, StepMessage
 from bot.modules.user.dinocollection import add_to_collection_dino
 from bot.modules.user.rtl_name import check_name
 from bot.modules.user.user import (AddItemToUser, daily_award_con,
                               get_dinos, take_coins, user_in_chat)
-from aiogram.types import (CallbackQuery, InlineKeyboardButton,
-                           InlineKeyboardMarkup, Message)
+from aiogram.types import CallbackQuery, InlineKeyboardButton, Message
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
+from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command, StateFilter
-
-from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 events = DBconstructor(mongo_client.other.events)
