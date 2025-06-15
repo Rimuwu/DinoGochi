@@ -45,7 +45,7 @@ class NullItem:
         self.weight: float = 0.0
 
         # Можно ли продать предмет боту
-        self.buyer: bool = False
+        self.buyer: bool = True
         # Переназначение цены скупщика
         self.buyer_price: Optional[int] = None
         # Запрет на продажу
@@ -87,6 +87,11 @@ class NullItem:
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__}(item_id={self.item_id}, type={self.type}, rank={self.rank})"
+
+    def copy(self):
+        new_item = get_item_class(self.type)(self.item_id)
+        new_item.__dict__.update(self.__dict__)
+        return new_item
 
 ITEM_CLASSES: Dict[str, Type[NullItem]] = {}
 def register_item_class(cls):
