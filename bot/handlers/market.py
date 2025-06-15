@@ -432,9 +432,6 @@ async def random_markets(call: CallbackQuery):
     market_list = {}
     for market in markets: market_list[market['name']] = market['owner_id']
 
-    # await ChoosePagesState(send_seller_info, userid, chatid, lang, 
-    #                        market_list, 1, 3, 
-    #                        None, False, False)
     await ChoosePagesStateHandler(
             send_seller_info, userid, chatid, lang, market_list, 1, 3, None, False, False).start()
 
@@ -464,7 +461,6 @@ async def find_markets(call: CallbackQuery):
         reply_markup=cancel_markup(lang)
     )
 
-    # await ChooseStringState(find_prepare_mk, userid, chatid, lang, 3, 50)
     await ChooseStringHandler(
         find_prepare_mk, userid, chatid, lang, 3, 50).start()
 
@@ -497,9 +493,6 @@ async def find_prepare_mk(return_data, transmitted_data):
             market_list[market['name']] = market['owner_id']
 
     if market_list:
-        # await ChoosePagesState(send_seller_info, userid, chatid, lang,
-        #                       market_list, 1, 3,
-        #                       None, False, False)
         await ChoosePagesStateHandler(
             send_seller_info, userid, chatid, lang, market_list, 1, 3, None, False, False).start()
     else:
