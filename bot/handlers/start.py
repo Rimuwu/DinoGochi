@@ -1,19 +1,15 @@
 from random import choice
 
-import aiogram
-
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.handlers.referal_menu import check_code
-from bot.handlers.states import cancel
 from bot.modules.data_format import list_to_inline, list_to_keyboard, seconds_to_str, user_name_from_telegram
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur import Egg, incubation_egg
 from bot.modules.images import async_open, create_eggs_image
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.localization import get_data, get_lang, t
-from bot.modules.logs import log
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.managment.promo import use_promo
@@ -22,17 +18,13 @@ from bot.modules.managment.tracking import auto_action, edit_track_user
 from bot.modules.user.user import award_premium, insert_user
 from aiogram import types
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
+from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
 
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 referals = DBconstructor(mongo_client.user.referals)
 management = DBconstructor(mongo_client.other.management)
