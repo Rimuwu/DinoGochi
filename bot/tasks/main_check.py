@@ -70,8 +70,8 @@ async def main_checks_task(dinos):
         r = 0
 
         status = await check_status(dino['_id'])
-        if status == 'inactive':
-            continue
+        if status == 'inactive': continue
+
         is_sleeping = status == 'sleep'
         skill_activ = status in ['gym', 'library', 'swimming_pool', 'park']
 
