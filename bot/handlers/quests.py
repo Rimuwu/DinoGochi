@@ -6,24 +6,17 @@ from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.items.item import AddItemToUser
-from bot.modules.localization import get_data, get_lang, t
+from bot.modules.localization import get_lang, t
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import check_quest, quest_resampling, quest_ui
 from bot.modules.user.user import take_coins
 from aiogram.types import (CallbackQuery,
                            InlineKeyboardMarkup, Message)
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
+from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command, StateFilter
-
-from aiogram.fsm.context import FSMContext
 
 quests_data = DBconstructor(mongo_client.tavern.quests)
 users = DBconstructor(mongo_client.user.users)
