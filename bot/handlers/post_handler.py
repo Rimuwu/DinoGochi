@@ -6,17 +6,9 @@ from bot.modules.logs import log
 from bot.modules.localization import t, get_lang
 from bot.modules.decorators import HDCallback, HDMessage
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command, StateFilter
-
-from aiogram.fsm.context import FSMContext
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('delete_message'))
