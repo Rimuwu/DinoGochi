@@ -1,4 +1,4 @@
-from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from PIL import Image, ImageDraw, ImageFilter
 
 from bot.modules.data_format import crop_text, pil_image_to_file
 from bot.modules.images import async_open, centre_var, trans_paste

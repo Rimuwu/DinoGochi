@@ -7,11 +7,9 @@ from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import main_router, bot
 from bot.modules.images_save import send_SmartPhoto
-from bot.modules.logs import log
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.images import async_open
 from bot.modules.items.item import AddItemToUser, counts_items
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.market.market import preview_product
@@ -23,17 +21,10 @@ from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, take_coins, user_name
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
+from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command, StateFilter
-
-from aiogram.fsm.context import FSMContext
 
 users = DBconstructor(mongo_client.user.users)
 tavern = DBconstructor(mongo_client.tavern.tavern)
@@ -156,8 +147,6 @@ async def market_menu(message: Message):
             markup = list_to_inline([rand_p], 1)
             await bot.send_message(message.chat.id, t('menu_text.market.products', lang), 
                                 reply_markup=markup, parse_mode='Markdown')
-    
-    await auto_ads(message)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.actions_menu'), IsAuthorizedUser())

@@ -3,7 +3,7 @@ from bot.modules.logs import log
 from bot.const import GAME_SETTINGS as gs
 from bot.modules.data_format import random_code
 from bot.modules.user.friends import insert_friend_connect
-from bot.modules.items.item import AddItemToUser
+from bot.modules.items.item import AddItemToUser, ItemData
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 referals = DBconstructor(mongo_client.user.referals)
@@ -18,7 +18,8 @@ async def get_referal_award(userid: int):
     await users.update_one({'userid': userid}, 
                         {'$inc': {'coins': coins}}, comment='get_referal_award')
     log(f"Edit coins: user: {userid} col: {coins}", 0, "take_coins")
-    for item in items: await AddItemToUser(userid, item)
+    for item in items: 
+        await AddItemToUser(userid, ItemData(item))
 
 async def create_referal(userid: int, code: str = ''):
     """ Создаёт связь между кодом и владельцем, 

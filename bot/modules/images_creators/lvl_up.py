@@ -2,9 +2,8 @@
 
 
 import io
-from typing import Any
 from PIL import Image
-from PIL import ImageDraw, ImageFont, ImageFilter
+from PIL import ImageDraw, ImageFilter
 
 from bot.exec import bot
 from bot.modules.data_format import pil_image_to_file

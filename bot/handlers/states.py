@@ -70,7 +70,6 @@ async def ChoseDino(message: Message):
     state = await get_state(userid, message.chat.id)
     if data := await state.get_data():
         ret_data = data['dino_names']
-        func = data['function']
         transmitted_data = data['transmitted_data']
 
     if message.text in ret_data.keys():
@@ -81,7 +80,6 @@ async def ChoseDino(message: Message):
         else: transmitted_data['umessageid'] = message.message_id
 
         await ChooseDinoHandler(**data).call_function(ret_data[message.text])
-        # await func(ret_data[message.text], transmitted_data=transmitted_data)
     else:
         await bot.send_message(message.chat.id, 
                 t('states.ChooseDino.error_not_dino', lang))
@@ -98,7 +96,6 @@ async def ChooseInt(message: Message):
     if data := await state.get_data():
         min_int: int = data['min_int']
         max_int: int = data['max_int']
-        func = data['function']
         transmitted_data = data['transmitted_data']
 
     for iter_word in str(message.text).split():
@@ -124,7 +121,6 @@ async def ChooseInt(message: Message):
         else: transmitted_data['umessageid'] = message.message_id
 
         await ChooseIntHandler(**data).call_function(number)
-        # await func(number, transmitted_data=transmitted_data)
 
 @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseString), IsAuthorizedUser())
@@ -137,7 +133,6 @@ async def ChooseString(message: Message):
     if data := await state.get_data():
         max_len: int = data['max_len']
         min_len: int = data['min_len']
-        func = data['function']
         transmitted_data = data['transmitted_data']
 
     content = str(message.text)
@@ -159,7 +154,6 @@ async def ChooseString(message: Message):
         else: transmitted_data['umessageid'] = message.message_id
 
         await ChooseStringHandler(**data).call_function(content)
-        # await func(content, transmitted_data=transmitted_data)
 
 @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseConfirm), IsAuthorizedUser())
@@ -171,7 +165,6 @@ async def ChooseConfirm(message: Message):
 
     state = await get_state(message.from_user.id, message.chat.id)
     if data := await state.get_data():
-        func = data['function']
         transmitted_data = data['transmitted_data']
         cancel_status = data['cancel']
 
@@ -197,7 +190,6 @@ async def ChooseConfirm(message: Message):
             else: transmitted_data['umessageid'] = message.message_id
 
             await ChooseConfirmHandler(**data).call_function(buttons_data[content])
-            # await func(buttons_data[content], transmitted_data=transmitted_data)
 
     else:
         await bot.send_message(message.chat.id, 
@@ -213,7 +205,6 @@ async def ChooseOption(message: Message):
     state = await get_state(message.from_user.id, message.chat.id)
     if data := await state.get_data():
         options: dict = data['options']
-        func = data['function']
         transmitted_data = data['transmitted_data']
 
     if message.text in options.keys():
@@ -222,7 +213,6 @@ async def ChooseOption(message: Message):
         else: transmitted_data['umessageid'] = message.message_id
 
         await state.clear()
-        # await func(options[message.text], transmitted_data=transmitted_data)
         await ChooseOptionHandler(**data).call_function(options[message.text])
     else:
         await bot.send_message(message.chat.id, 
@@ -236,8 +226,6 @@ async def ChooseCustom(message: Message):
 
     state = await get_state(message.from_user.id, message.chat.id)
     if data := await state.get_data():
-        custom_handler = data['custom_handler']
-        func = data['function']
         transmitted_data = data['transmitted_data']
 
     handler = ChooseCustomHandler(**data)
@@ -250,7 +238,6 @@ async def ChooseCustom(message: Message):
         else: transmitted_data['umessageid'] = message.message_id
 
         await state.clear()
-        # await func(answer, transmitted_data=transmitted_data)
         await ChooseCustomHandler(**data).call_function(answer)
 
 # @HDMessage
@@ -264,9 +251,6 @@ async def ChooseOptionPages(message: Message):
 
     state = await get_state(message.from_user.id, message.chat.id)
     if data := await state.get_data():
-        func = data['function']
-        update_page = data['update_page_function']
-
         options: dict = data['options']
         transmitted_data: dict = data['transmitted_data']
 
@@ -289,8 +273,6 @@ async def ChooseOptionPages(message: Message):
         else: transmitted_data['umessageid'] = message.message_id
 
         res = await ChoosePagesStateHandler(**data).call_function(options[message.text])
-        # res = await func(
-            # options[message.text], transmitted_data=transmitted_data)
 
         if not one_element and res and type(res) == dict and 'status' in res:
             # Удаляем состояние
@@ -305,7 +287,6 @@ async def ChooseOptionPages(message: Message):
 
                 await state.update_data(options=res['options'], pages=pages, page=page)
                 await handler.call_update_page_function(pages, page, chatid, lang)
-                # await update_page(pages, page, chatid, lang)
 
             # Добавить или удалить элемент
             elif res['status'] == 'edit' and 'elements' in res:
@@ -323,7 +304,6 @@ async def ChooseOptionPages(message: Message):
 
                 await state.update_data(options=options, pages=pages, page=page)
                 await handler.call_update_page_function(pages, page, chatid, lang)
-                # await update_page(pages, page, chatid, lang)
 
     elif message.text == gs['back_button'] and len(pages) > 1:
         if page == 0: page = len(pages) - 1
@@ -333,7 +313,6 @@ async def ChooseOptionPages(message: Message):
             await bot.delete_message(chatid, data['last_user_message'])
 
         await state.update_data(page=page)
-        # await update_page(pages, page, chatid, lang)
         mes = await handler.call_update_page_function(pages, page, chatid, lang)
         if isinstance(mes, Message):
             mes_id = mes.message_id
@@ -351,7 +330,6 @@ async def ChooseOptionPages(message: Message):
             await bot.delete_message(chatid, data['last_user_message'])
 
         await state.update_data(page=page)
-        # await update_page(pages, page, chatid, lang)
         mes = await handler.call_update_page_function(pages, page, chatid, lang)
         if isinstance(mes, Message):
             mes_id = mes.message_id
@@ -404,7 +382,6 @@ async def ChooseInline(callback: CallbackQuery):
 
         try:
             await ChooseInlineHandler(**data).call_function(code)
-            # await func(code, transmitted_data=transmitted_data)
         except Exception as e:
             log(f'ChooseInline error {e}', lvl=3, prefix='ChooseInline')
 
@@ -421,7 +398,6 @@ async def ChooseTime(message: Message):
     if data := await state.get_data():
         min_int: int = data['min_int']
         max_int: int = data['max_int']
-        func = data['function']
         transmitted_data = data['transmitted_data']
 
     number = str_to_seconds(str(message.text))
@@ -447,7 +423,6 @@ async def ChooseTime(message: Message):
         else: transmitted_data['umessageid'] = message.message_id
 
         await ChooseTimeHandler(**data).call_function(number)
-        # await func(number, transmitted_data=transmitted_data)
 
 @HDMessage
 @main_router.message(F.photo, IsAuthorizedUser(), 
@@ -467,7 +442,6 @@ async def ChooseImage(message: Message):
     state = await get_state(userid, message.chat.id)
 
     if state and (data := await state.get_data()):
-        func = data['function']
         transmitted_data = data.get('transmitted_data', {})
 
         await state.clear()
@@ -483,7 +457,6 @@ async def ChooseImage(message: Message):
             return
 
         await ChooseImageHandler(**data).call_function(fileID)
-        # await func(fileID, transmitted_data=transmitted_data)
 
 @HDMessage
 @main_router.message(IsAuthorizedUser(), StateFilter(GeneralStates.ChooseImage))
@@ -494,15 +467,11 @@ async def ChooseImage_0(message: Message):
     state = await get_state(message.from_user.id, message.chat.id)
     if message.text == '0':
         if data := await state.get_data():
-            func = data['function']
-            transmitted_data = data['transmitted_data']
             need_image = data['need_image']
 
         if need_image:
             await state.clear()
 
             await ChooseImageHandler(**data).call_function('no_image')
-            # await func('no_image', transmitted_data=transmitted_data)
-
 
 

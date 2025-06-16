@@ -26,7 +26,6 @@ from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import inline_menu
 from bot.modules.items.accessory import downgrade_type_accessory
 from bot.modules.items.collect_items import get_all_items
-from bot.modules.items.item_tools_lost import rare_random
 from bot.modules.items.items_groups import get_group
 from bot.modules.logs import log
 
@@ -41,8 +40,7 @@ from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.donation import get_history, give_reward, save_donation, send_inv
 from bot.modules.images import create_egg_image, create_skill_image, dino_collecting, dino_game
 from bot.modules.inventory_tools import inventory_pages
-from bot.modules.items.item import (AddItemToUser, DowngradeItem, get_data,
-                              get_item_dict, get_name, RemoveItemFromUser)
+from bot.modules.items.item import (AddItemToUser, get_name, RemoveItemFromUser)
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import answer_markup, cancel_markup, count_markup, down_menu, list_to_keyboard, confirm_markup
 from bot.modules.notifications import user_notification, notification_manager

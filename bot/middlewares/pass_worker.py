@@ -1,4 +1,3 @@
-from random import random
 from typing import Awaitable, Callable, Any
 from aiogram import BaseMiddleware
 from aiogram.types import Message

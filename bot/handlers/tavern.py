@@ -12,8 +12,7 @@ from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino, get_dino_data, random_dino, random_quality, set_standart_specifications
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import inline_menu
-from bot.modules.items.item import (CheckItemFromUser, RemoveItemFromUser,
-                              counts_items)
+from bot.modules.items.item import (RemoveItemFromUser, counts_items)
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
@@ -357,14 +356,6 @@ async def transformation(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     data = callback.data.split()
 
-    # steps = [
-    #         {
-    #         "type": 'dino', "name": 'dino', "data": {"add_egg": False}, 
-    #         "translate_message": True,
-    #         'message': {'text': 'edit_dino.dino'}
-    #         }
-    # ]
-    
     steps: list[DataType] = [
         DinoStepData('dino', None, message_key='edit_dino.dino',
         add_egg=False)

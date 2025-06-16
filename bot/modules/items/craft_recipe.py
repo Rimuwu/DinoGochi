@@ -15,16 +15,14 @@ from bot.modules.items.items_groups import get_group
 from bot.modules.items.json_item import GetItem, Recipe
 from bot.modules.items.time_craft import add_time_craft
 from bot.modules.localization import t
-from bot.modules.logs import log
 from bot.modules.markup import markups_menu
-# from bot.modules.states_tools import ChooseStepState
 
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
-from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage, TimeStepData
+from bot.modules.states_fabric.steps_datatype import InventoryStepData, StepMessage
 
 from bot.modules.get_state import get_state
 from bot.modules.user.user import get_inventory_from_i
-from bot.exec import main_router, bot
+from bot.exec import  bot
 from bot.modules.user.user import experience_enhancement
 
 from bot.modules.overwriting.DataCalsses import DBconstructor

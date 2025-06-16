@@ -540,7 +540,9 @@ async def AddItemToUser(owner_id: int,
                         location_type: LOCATIONS_TYPES = "home",
                         location_link: Any = None
                         ):
+    
     """Добавление стандартного предмета в инвентарь
+        TODO: Проверить все добавления предметов на передачу правильного формата и указания локации
     """
 
     assert count >= 0, f'AddItemToUser, count == {count}'

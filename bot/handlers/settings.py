@@ -58,7 +58,6 @@ async def notification_set(message: Message):
     translated = tranlate_data(buttons, lang, prefix)
     keyboard = list_to_keyboard(translated, 2)
     
-    # await ChooseConfirmState(notification, userid, chatid, lang)
     await ChooseConfirmHandler(notification, userid, chatid, lang).start()
     await bot.send_message(userid, t('not_set.info', lang), 
                            reply_markup=keyboard)

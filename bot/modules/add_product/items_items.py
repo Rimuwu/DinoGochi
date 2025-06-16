@@ -1,12 +1,12 @@
 from bot.dbmanager import mongo_client
 from bot.modules.localization import t
 
-from bot.exec import main_router, bot
+from bot.exec import bot
 
 from bot.modules.markup import answer_markup, cancel_markup, count_markup
  
 from bot.modules.states_fabric.state_handlers import ChooseIntHandler, ChooseStepHandler
-from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage, TimeStepData
+from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage
 
 from bot.modules.market.market import generate_items_pages, generate_sell_pages
 from bot.modules.add_product.general import end
@@ -20,27 +20,7 @@ items = DBconstructor(mongo_client.items.items)
 def trade_circle(lang, items, option):
     """ Создаёт данные для круга получения данных предметов ПОЛЬЗОВАТЕЛЯ
     """
-    # not_p_steps = [
-    #     {
-    #         "type": 'inv', "name": 'items', "data": {'inventory': items}, 
-    #         "translate_message": True,
-    #         'message': {'text': f'add_product.chose_item.{option}'}
-    #     },
-    #     {
-    #         "type": 'update_data', "name": None, "data": {}, 
-    #         'function': trade_update_col
-    #     },
-    #     {
-    #         "type": 'int', "name": 'col', "data": {"max_int": 20},
-    #         "translate_message": True,
-    #         'message': {'text': 'add_product.wait_count', 
-    #                     'reply_markup': count_markup(20, lang)}
-    #     },
-    #     {
-    #         "type": 'update_data', "name": None, "data": {}, 
-    #         'function': check_items_for_items
-    #     }
-    # ]
+
     steps = [
         InventoryStepData('items', StepMessage(
             text=f'add_product.chose_item.{option}',
@@ -95,25 +75,12 @@ def check_items_for_items(transmitted_data):
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
-    
 
     res = True
     if type(transmitted_data['return_data']['items']) == list and len(transmitted_data['return_data']['items']) >= 3: res = False
 
     if res:
-        # not_p_steps = [
-        #     {
-        #         "type": 'bool', "name": 'add_item', "data": {},
-        #         "translate_message": True,
-        #         'message': {'text': 'add_product.add_item',
-        #                      'reply_markup': answer_markup(lang)}
-        #     },
-        #     {
-        #         "type": 'update_data', "name": None, "data": {}, 
-        #         'function': new_circle
-        #     }
-        # ]
-        
+
         steps = [
             ConfirmStepData('add_item', StepMessage(
                 text='add_product.add_item',
@@ -171,36 +138,13 @@ async def items_items(return_data, transmitted_data):
     steps = received_circle(lang, inv_items, "trade_items")
     transmitted_data['exclude'] = exclude
 
-    # await ChooseStepState(stock, userid, chatid, 
-    #                       lang, steps, 
-    #                       transmitted_data=transmitted_data)
     await ChooseStepHandler(stock, userid, chatid, lang, steps,
                             transmitted_data=transmitted_data).start()
 
 def received_circle(lang, items, option):
     """ Создаёт данные для круга получения данных ЗАПРАШИВАЕМЫХ предметов
     """
-    # not_p_steps = [
-    #     {
-    #         "type": 'inv', "name": 'trade_items', "data": {'inventory': items}, 
-    #         "translate_message": True,
-    #         'message': {'text': f'add_product.chose_item.{option}'}
-    #     },
-    #     {
-    #         "type": 'update_data', "name": None, "data": {}, 
-    #         'function': received_upd
-    #     },
-    #     {
-    #         "type": 'int', "name": 'trade_col', "data": {"max_int": 20},
-    #         "translate_message": True,
-    #         'message': {'text': 'add_product.wait_count', 
-    #                     'reply_markup': count_markup(20, lang)}
-    #     },
-    #     {
-    #         "type": 'update_data', "name": None, "data": {}, 
-    #         'function': chect_items_received
-    #     }
-    # ]
+
     steps = [
         InventoryStepData('trade_items', StepMessage(
             text=f'add_product.chose_item.{option}',
@@ -244,24 +188,12 @@ def chect_items_received(transmitted_data):
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
-    
 
     res = True
     if type(transmitted_data['return_data']['trade_items']) == list and len(transmitted_data['return_data']['trade_items']) >= 3: res = False
 
     if res:
-        # not_p_steps = [
-        #     {
-        #         "type": 'bool', "name": 'add_item', "data": {},
-        #         "translate_message": True,
-        #         'message': {'text': 'add_product.add_item',
-        #                      'reply_markup': answer_markup(lang)}
-        #     },
-        #     {
-        #         "type": 'update_data', "name": None, "data": {}, 
-        #         'function': new_received_circle
-        #     }
-        # ]
+
         steps = [
             ConfirmStepData('add_item', StepMessage(
                 text='add_product.add_item',
@@ -316,7 +248,6 @@ async def stock(return_data, transmitted_data):
 
     for key, item in return_data.items(): transmitted_data[key] = item
 
-    # await ChooseIntState(stock_adapter, userid, chatid, lang, 1, 20, transmitted_data=transmitted_data)
     await ChooseIntHandler(stock_adapter, userid, chatid, lang, 1, 20, transmitted_data=transmitted_data).start()
 
     await bot.send_message(chatid, t(f'add_product.stock.{option}', lang), reply_markup=cancel_markup(lang), parse_mode='Markdown')

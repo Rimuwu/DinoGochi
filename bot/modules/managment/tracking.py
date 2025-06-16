@@ -1,4 +1,3 @@
-from os import link
 from typing import Optional
 
 from bson import ObjectId
@@ -11,7 +10,6 @@ from time import time, strftime, gmtime
 
 from bot.modules.localization import t
 
-from bot.modules.dinosaur import dinosaur
 from bot.modules.overwriting.DataCalsses import DBconstructor
 
 

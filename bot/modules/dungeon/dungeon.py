@@ -4,7 +4,7 @@ from bson.objectid import ObjectId
 from typing import Union, Any
 from bot.exec import main_router, bot
 from bot.modules.user.user import take_coins
-from bot.modules.items.item import AddListItems
+# from bot.modules.items.item import AddListItems
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 lobbys = DBconstructor(mongo_client.dungeon.lobby)
@@ -152,7 +152,7 @@ class Lobby:
 
         if self.stage == 'preparation':
             await take_coins(user_id, player.coins, True)
-            await AddListItems(user_id, player.inventory)
+            # await AddListItems(user_id, player.inventory)
 
         del self['users'][str(user_id)]
         await lobbys.update_one({"_id": self._id}, 

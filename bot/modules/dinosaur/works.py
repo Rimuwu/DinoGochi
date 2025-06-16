@@ -4,7 +4,7 @@ from bot.dbmanager import mongo_client
 
 from bot.modules.dinosaur.dinosaur import Dino
 from bot.modules.items.accessory import check_accessory
-from bot.modules.items.item import AddItemToUser, get_item_dict, get_data
+from bot.modules.items.item import AddItemToUser, ItemData
 from bot.modules.items.items_groups import get_group
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from time import time
@@ -71,15 +71,15 @@ async def start_mine(dino_baseid: ObjectId, owner_id: int, action_type: str):
                 if await check_accessory(
                     dino, key, True, 10
                 ):
-                    item_data = get_data(key)
-                    data['max_items'] += item_data['capacity']
+                    item_data = ItemData(key)
+                    data['max_items'] += item_data.data.capacity
 
             for key in get_group('pickaxes'):
                 if await check_accessory(
                     dino, key, True, 15
                 ):
-                    item_data = get_data(key)
-                    data['item_per_hour'] += item_data['effectiv']
+                    item_data = ItemData(key)
+                    data['item_per_hour'] += item_data.data.effectiv
 
     await long_activity.insert_one(data)
 
@@ -114,8 +114,8 @@ async def start_bank(dino_baseid: ObjectId, owner_id: int, action_type: str):
                 if await check_accessory(
                     dino, key, True, 10
                 ):
-                    item_data = get_data(key)
-                    data['max_items'] += item_data['capacity']
+                    item_data = ItemData(key)
+                    data['max_items'] += item_data.data.capacity
 
     await long_activity.insert_one(data)
 
@@ -150,15 +150,15 @@ async def start_sawmill(dino_baseid: ObjectId, owner_id: int, action_type: str):
                 if await check_accessory(
                     dino, key, True, 10
                 ):
-                    item_data = get_data(key)
-                    data['max_items'] += item_data['capacity']
+                    item_data = ItemData(key)
+                    data['max_items'] += item_data.data.capacity
 
             for key in get_group('axes'):
                 if await check_accessory(
                     dino, key, True, 15
                 ):
-                    item_data = get_data(key)
-                    data['item_per_hour'] += item_data['effectiv']
+                    item_data = ItemData(key)
+                    data['item_per_hour'] += item_data.data.effectiv
 
     await long_activity.insert_one(data)
 
@@ -181,10 +181,8 @@ async def end_work(dino_baseid: ObjectId):
             """
 
             for key, item in res['items'].items():
-                data = get_item_dict(key)
+                data = ItemData(key, item.get('abilities', {}))
 
-                item_id = data['item_id']
-                abilities = data.get('abilities', {})
-                await AddItemToUser(sended, item_id, item['count'], abilities)
+                await AddItemToUser(sended, data, item['count'])
 
         await long_activity.delete_one({'_id': res['_id']})

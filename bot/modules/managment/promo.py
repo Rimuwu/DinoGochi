@@ -1,13 +1,11 @@
 
 from bot.dbmanager import mongo_client
-from bot.exec import main_router, bot
+from bot.exec import bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
-from bot.modules.get_state import get_state
-from bot.modules.items.item import counts_items, AddItemToUser
+from bot.modules.items.item import ItemData, counts_items, AddItemToUser
 from bot.modules.localization import get_data, t
 from bot.modules.market.market import generate_items_pages
 from bot.modules.markup import answer_markup, cancel_markup, count_markup
-# from bot.modules.states_tools import ChooseStepState, prepare_steps
 from bot.modules.markup import markups_menu as m
 from bot.modules.market.market import generate_items_pages
 from time import time
@@ -23,33 +21,6 @@ users = DBconstructor(mongo_client.user.users)
 
 
 async def create_promo_start(userid: int, chatid: int, lang: str):
-    # steps = [
-    #     {
-    #         "type": 'str', "name": 'code', "data": {"max_len": 0, "min_len": 1},
-    #         "translate_message": True,
-    #         'message': {'text': 'promo.code', 
-    #                     'reply_markup': cancel_markup(lang)}
-    #     },
-    #     {
-    #         "type": 'int', "name": 'coins', "data": {"max_int": 100_000, 'min_int': 0},
-    #         "translate_message": True,
-    #         'message': {'text': 'promo.coins', 
-    #                     'reply_markup': cancel_markup(lang)}
-    #     },
-    #     {
-    #         "type": 'int', "name": 'count', "data": {"max_int": 1_000_000, 'min_int': 0},
-    #         "translate_message": True,
-    #         'message': {'text': 'promo.count', 
-    #                     'reply_markup': cancel_markup(lang)}
-    #     },
-    #     {
-    #         "type": 'time', "name": 'time_end', "data": {"max_int": 0, "min_int": 0},
-    #         "translate_message": True,
-    #         'message': {'text': 'promo.time_end', 
-    #                     'reply_markup': cancel_markup(lang)}
-    #     }
-    # ]
-    
     steps = [
         StringStepData('code', StepMessage(
             text='promo.code',
@@ -77,7 +48,6 @@ async def create_promo_start(userid: int, chatid: int, lang: str):
         )
     ]
 
-    # await ChooseStepState(start_items, userid, chatid, lang, steps)
     await ChooseStepHandler(start_items, userid, chatid, 
                             lang, steps).start()
 
@@ -96,10 +66,6 @@ async def start_items(return_data, transmitted_data):
     items, exclude = generate_items_pages(ignore_cant=True)
     steps = circle_data(userid, chatid, lang, items)
 
-    # await ChooseStepState(end, userid, chatid, lang, steps,
-    #                       transmitted_data={'code': code, 'coins': coins,
-    #                                         'count': count, 'time_end': time_end}
-    #                       )
     await ChooseStepHandler(end, userid, chatid, lang, steps,
                           transmitted_data={'code': code, 'coins': coins,
                                             'count': count, 'time_end': time_end}
@@ -108,34 +74,6 @@ async def start_items(return_data, transmitted_data):
 """ Создаёт данные для круга получения данных для типа coins_items
 """
 def circle_data(userid, chatid, lang, items, prepare: bool = True):
-    # not_p_steps = [
-    #     {
-    #         "type": 'inv', "name": 'items', "data": {'inventory': items}, 
-    #         "translate_message": True,
-    #         'message': {'text': f'promo.chose_item'}
-    #     },
-    #     {
-    #         "type": 'str', "name": 'abilities', "data": {"max_len": 0, "min_len": 1},
-    #         "translate_message": True,
-    #         'message': {'text': 'promo.abilities', 
-    #                     'reply_markup': cancel_markup(lang)}
-    #     },
-    #     {
-    #         "type": 'update_data', "name": None, "data": {}, 
-    #         'function': update_col
-    #     },
-    #     {
-    #         "type": 'int', "name": 'col', "data": {"max_int": 10},
-    #         "translate_message": True,
-    #         'message': {'text': 'css.wait_count', 
-    #                     'reply_markup': None}
-    #     },
-    #     {
-    #         "type": 'update_data', "name": None, "data": {}, 
-    #         'function': check_items
-    #     }
-    # ]
-    
     steps = [
         InventoryStepData('items', StepMessage(
             text='promo.chose_item',
@@ -190,29 +128,13 @@ def update_col(transmitted_data):
         transmitted_data['exclude'] = []
     transmitted_data['exclude'].append(item_data['item_id'])
 
-    # # Очистка лишних данных
-    # transmitted_data['steps'][step-1] = {}
-
     return transmitted_data, True
 
 def check_items(transmitted_data):
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
-    
 
-    # not_p_steps = [
-    #     {
-    #         "type": 'bool', "name": 'add_item', "data": {},
-    #         "translate_message": True,
-    #         'message': {'text': 'add_product.add_item',
-    #                         'reply_markup': answer_markup(lang)}
-    #     },
-    #     {
-    #         "type": 'update_data', "name": None, "data": {}, 
-    #         'function': new_circle
-    #     }
-    # ]
     steps = [
         ConfirmStepData('add_item', StepMessage(
             text='add_product.add_item',
@@ -385,8 +307,9 @@ async def use_promo(code: str, userid: int, lang: str):
                                     if 'abilities' in item: abil = item['abilities']
 
                                     item_id = item['item_id']
+                                    item_data = ItemData(item_id, abil)
  
-                                    await AddItemToUser(userid, item_id, count, abil)
+                                    await AddItemToUser(userid, item_data, count)
                                     id_list.append(item_id)
 
                                 text += t('promo_commands.items', lang,

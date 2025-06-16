@@ -9,23 +9,15 @@ from bot.modules.items.item import get_items_names
 from bot.modules.items.time_craft import dino_craft, stop_craft
 from bot.modules.localization import get_lang
 from bot.modules.localization import t
-# from bot.modules.states_tools import ChooseDinoState, ChoosePagesState
 from bot.modules.markup import markups_menu as m
 
-from bot.config import conf
 from bot.dbmanager import mongo_client
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import Command
 
-from aiogram.fsm.context import FSMContext
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_fabric.state_handlers import ChooseDinoHandler, ChoosePagesStateHandler
@@ -50,7 +42,6 @@ async def craftlist(message):
             name += f' #{a}'
         options[name] = craft['_id']
     if options:
-        # await ChoosePagesState(info_craft, userid, chatid, lang, options, one_element=False, autoanswer=False)
         await ChoosePagesStateHandler(info_craft, userid, chatid, lang, options, one_element=False, autoanswer=False).start()
     else:
         await bot.send_message(chatid, '❌')
@@ -114,8 +105,6 @@ async def time_craft(callback: CallbackQuery):
 
     if action == 'send_dino':
         transmitted_data = {'ms_id': callback.message.message_id, 'alt_code': alt_code}
-        # await ChooseDinoState(send_dino_to_craft, userid, chatid, 
-        #                       lang, False, False, transmitted_data)
         await ChooseDinoHandler(send_dino_to_craft, userid, chatid,
                                lang, False, False, 
                                transmitted_data,

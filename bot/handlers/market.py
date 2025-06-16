@@ -9,7 +9,6 @@ from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.items.item import item_info
 from bot.modules.localization import get_lang, t
-from bot.modules.logs import log
 from bot.modules.market.market import (create_push, create_seller, delete_product,
                                 preview_product, product_ui, seller_ui)
 from bot.modules.market.market_chose import (buy_item, find_prepare,
@@ -25,18 +24,12 @@ from bot.modules.states_fabric.steps_datatype import CustomStepData, StepMessage
 from bot.modules.user.user import premium, user_name
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
+from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command, StateFilter
 from fuzzywuzzy import fuzz
 
-from aiogram.fsm.context import FSMContext
 import random
 
 users = DBconstructor(mongo_client.user.users)
@@ -99,24 +92,6 @@ async def create_market(message: Message):
     elif user['lvl'] < 2:
         await bot.send_message(message.chat.id, t('market_create.lvl', lang))
     else:
-        # steps = [
-        #     {
-        #      "type": 'custom', "name": 'name',
-        #         "data": {'custom_handler': custom_name},
-        #      "translate_message": True,
-        #      'message': {
-        #         'text': "market_create.name",
-        #         'reply_markup': cancel_markup(lang)}
-        #     },
-        #     {
-        #      "type": 'str', "name": 'description', "data": {'max_len': 500}, 
-        #      "translate_message": True,
-        #      'message': {
-        #         'text': "market_create.description",
-        #         'reply_markup': cancel_markup(lang)}
-        #     }
-        # ]
-        
         steps = [
             CustomStepData('name', StepMessage(
                 'market_create.name',
@@ -135,10 +110,6 @@ async def create_market(message: Message):
         await ChooseStepHandler(
             create_adapter, userid, chatid, lang, steps
         ).start()
-
-        # await ChooseStepState(create_adapter, userid, chatid, 
-        #                       lang, steps, 
-        #                       transmitted_data=transmitted_data)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.seller_profile.my_market'), IsAuthorizedUser())
@@ -175,7 +146,6 @@ async def add_product_com(message: Message):
     )
 
     await bot.send_message(chatid, t('add_product.options_info', lang), reply_markup=markup)
-    # await ChooseOptionState(prepare_data_option, userid, chatid, lang, options)
     await ChooseOptionHandler(
         prepare_data_option, userid, chatid, lang, options).start()
 
@@ -197,8 +167,6 @@ async def my_products(message: Message):
             ] = product['_id']
 
         await bot.send_message(chatid, t('products.search', lang))
-        # await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
-        #                        None, False, False)
         await ChoosePagesStateHandler(
             send_info_pr, userid, chatid, lang, rand_p, 1, 3, None, False, False).start()
     else:
@@ -316,8 +284,6 @@ async def seller(call: CallbackQuery):
             ] = product['_id']
 
         await bot.send_message(chatid, t('products.search', lang))
-        # await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
-        #                        None, False, False)
         await ChoosePagesStateHandler(
             send_info_pr, userid, chatid, lang, rand_p, 1, 3, None, False, False).start()
 
@@ -347,8 +313,6 @@ async def random_products(message: Message):
             else: break
 
         await bot.send_message(chatid, t('products.search', lang))
-        # await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
-        #                        None, False, False)
         await ChoosePagesStateHandler(
             send_info_pr, userid, chatid, lang, rand_p, 1, 3, None, False, False).start()
     else:

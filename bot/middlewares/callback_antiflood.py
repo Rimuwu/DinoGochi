@@ -3,7 +3,7 @@ from typing import Awaitable, Callable, Any
 
 from aiogram.types import CallbackQuery
 from aiogram import BaseMiddleware
-from bot.exec import main_router, bot
+from bot.exec import main_router
 from bot.modules.daytemp_data import add_int_value
 from bot.modules.localization import get_lang, t
 from bot.config import conf

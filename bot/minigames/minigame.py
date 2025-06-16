@@ -1,5 +1,4 @@
 import asyncio
-from math import e
 
 from bson import ObjectId
 from bot.dataclasess.minigame import Button, PlayerData, SMessage, Stage, Thread, Waiter, stageButton, stageThread, stageWaiter

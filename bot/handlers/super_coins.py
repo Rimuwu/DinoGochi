@@ -4,21 +4,15 @@ from bot.exec import main_router, bot
 from bot.modules.user.advert import create_ads_data
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.items.item import AddItemToUser, ItemData, counts_items, get_name
+from bot.modules.items.item import AddItemToUser, ItemData, counts_items
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import premium
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
-from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import Command
 
 from aiogram.fsm.context import FSMContext
 
