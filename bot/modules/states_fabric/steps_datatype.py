@@ -1,8 +1,6 @@
 
-from pprint import pprint
 from typing import Optional, Type, Union, Callable
 from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup
-
 
 from bot.modules.functransport import func_to_str
 from bot.modules.localization import t
@@ -54,12 +52,13 @@ class StepMessage():
                  translate_message: bool = False, 
                  text_data: Optional[dict] = None,
                  image: Optional[str] = None,
+                 parse_mode: Optional[str] = None
                  ):
         self.translate_message: bool = translate_message
         self.text = text
         self.text_data: dict = text_data or {}
         self.image: Optional[str] = image
-
+        self.parse_mode: Optional[str] = parse_mode
 
         if isinstance(markup, dict):
             if 'inline_keyboard' in markup:
@@ -226,7 +225,7 @@ class OptionStepData(BaseDataType):
 
 class InlineStepData(BaseDataType):
     type: str = 'inline'
-    data_keys: list[str] = ['custom_code', 'delete_markup', 'delete_user_message', 'delete_message']
+    data_keys: list[str] = ['custom_code', 'delete_markup', 'delete_user_message', 'delete_message', 'one_element']
 
     def __init__(self, name: Optional[str], 
                  message: StepMessage,  
@@ -235,11 +234,13 @@ class InlineStepData(BaseDataType):
                  delete_markup: bool = False,
                  delete_user_message: bool = False,
                  delete_message: bool = False,
+                 one_element: bool = True
                  ):
         self.custom_code: str = custom_code
         self.delete_markup: bool = delete_markup
         self.delete_user_message: bool = delete_user_message
         self.delete_message: bool = delete_message
+        self.one_element: bool = one_element
         super().__init__(name, message, data)
 
 class CustomStepData(BaseDataType):
