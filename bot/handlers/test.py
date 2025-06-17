@@ -10,7 +10,6 @@ from pprint import pprint
 from time import time
 import json
 from random import choice, choices
-# from time import sleep  # Remove this line to avoid overwriting asyncio.sleep
 from asyncio import sleep as asleep
 
 import aiogram
