@@ -358,10 +358,10 @@ async def ChooseInline(callback: CallbackQuery):
             return
 
         func = data.get('function')
-        transmitted_data = data.get('transmitted_data')
+        transmitted_data = data.get('transmitted_data', {})
         custom_code = data.get('custom_code')
 
-        if not func or not transmitted_data or custom_code is None:
+        if not func or custom_code is None:
             log(f'ChooseInline data corrupted', lvl=2, prefix='ChooseInline')
             return
 
@@ -379,6 +379,8 @@ async def ChooseInline(callback: CallbackQuery):
             except Exception as e:
                 log(f'ChooseInline error {e}', lvl=2, prefix='ChooseInline')
         else: transmitted_data['bmessageid'] = callback.message.message_id
+        
+        if data['one_element']: await state.clear()
 
         try:
             await ChooseInlineHandler(**data).call_function(code)
