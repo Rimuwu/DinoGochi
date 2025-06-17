@@ -1,5 +1,8 @@
 # Исполнитель бота
 
+# Инициализация московской временной зоны
+from bot.modules.moscow_time import set_moscow_timezone
+
 from bot.dbmanager import check, mongo_client
 from aiogram import Bot, Dispatcher, Router 
 from aiogram.types import ErrorEvent
@@ -33,6 +36,7 @@ dp.include_router(main_router)
 #     log(text, prefix='AiogramError', lvl=4)
 
 def run():
+    set_moscow_timezone()
     log('# ====== Inicialization Start ====== #', 2)
     log('Привет! Я вижу ты так и не починил тот самый баг на 46-ой строчке...')
     log('Это не баг, а фича!')

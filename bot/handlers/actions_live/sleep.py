@@ -5,7 +5,7 @@ from bson import ObjectId
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
-from bot.modules.items.accessory import check_accessory
+# from bot.modules.items.accessory import check_accessory
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_keyboard, seconds_to_str
 from bot.modules.dinosaur.dinosaur  import Dino, check_status, end_sleep, start_sleep
@@ -45,7 +45,7 @@ async def short_sleep(number: int, transmitted_data: dict):
             await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
             return
 
-    await check_accessory(dino, 'bear', True)
+    # await check_accessory(dino, 'bear', True)
     await start_sleep(dino._id, 'short', number * 60)
     message = await bot.send_message(chatid, 
                 t('put_to_bed.sleep', lang),
@@ -133,10 +133,10 @@ async def put_to_bed(message: Message):
                                     t('put_to_bed.dont_want', lang)
                                     )
         else:
-            if not await check_accessory(last_dino, 'bear'):
-                # Если нет мишки, то просто длинный сон
-                await long_sleep(last_dino._id, userid, lang)
-            else:
+            # if not await check_accessory(last_dino, 'bear'):
+            #     # Если нет мишки, то просто длинный сон
+            #     await long_sleep(last_dino._id, userid, lang)
+            # else:
                 # Даём выбор сна
                 sl_buttons = get_data('put_to_bed.buttons', lang).copy()
                 cancel_button = t('buttons_name.cancel', lang)

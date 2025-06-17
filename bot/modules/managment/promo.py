@@ -4,10 +4,9 @@ from bot.exec import bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.items.item import ItemData, counts_items, AddItemToUser
 from bot.modules.localization import get_data, t
-from bot.modules.market.market import generate_items_pages
 from bot.modules.markup import answer_markup, cancel_markup, count_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.market.market import generate_items_pages
+# from bot.modules.market.market import generate_items_pages
 from time import time
 import json
 
@@ -63,13 +62,13 @@ async def start_items(return_data, transmitted_data):
     count = return_data['count']
     time_end = return_data['time_end']
 
-    items, exclude = generate_items_pages(ignore_cant=True)
-    steps = circle_data(userid, chatid, lang, items)
+    # items, exclude = generate_items_pages(ignore_cant=True)
+    # steps = circle_data(userid, chatid, lang, items)
 
-    await ChooseStepHandler(end, userid, chatid, lang, steps,
-                          transmitted_data={'code': code, 'coins': coins,
-                                            'count': count, 'time_end': time_end}
-                          ).start()
+    # await ChooseStepHandler(end, userid, chatid, lang, steps,
+    #                       transmitted_data={'code': code, 'coins': coins,
+    #                                         'count': count, 'time_end': time_end}
+    #                       ).start()
 
 """ Создаёт данные для круга получения данных для типа coins_items
 """
@@ -158,19 +157,19 @@ def new_circle(transmitted_data):
     exclude_ids = transmitted_data['exclude']
     
 
-    if add_res:
-        items, exclude = generate_items_pages(exclude_ids, ignore_cant=True)
-        steps = circle_data(userid, chatid, lang, items)
+    # if add_res:
+    #     items, exclude = generate_items_pages(exclude_ids, ignore_cant=True)
+    #     steps = circle_data(userid, chatid, lang, items)
 
-        transmitted_data['exclude'] = exclude
+    #     transmitted_data['exclude'] = exclude
 
-        transmitted_data['steps'].clear()
-        transmitted_data['steps'] = steps
-        del transmitted_data['return_data']['add_item']
+    #     transmitted_data['steps'].clear()
+    #     transmitted_data['steps'] = steps
+    #     del transmitted_data['return_data']['add_item']
 
-        transmitted_data['process'] = -1
+    #     transmitted_data['process'] = -1
 
-        return transmitted_data, True
+    #     return transmitted_data, True
     return transmitted_data, False
 
 async def end(return_data, transmitted_data):

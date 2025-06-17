@@ -4,7 +4,6 @@ from bot.exec import main_router, bot
 from bot.filters.admin import IsAdminUser
 from bot.filters.authorized import IsAuthorizedUser
 from bot.filters.reply_message import IsReply
-from bot.handlers.test import command
 from bot.minigames.minigame_fishing import FishingGame
 from bot.minigames.powerchecker.minigame_powerchecker import PowerChecker
 from bot.modules.decorators import HDCallback, HDMessage

@@ -1,116 +1,116 @@
-from bot.dbmanager import mongo_client
+# from bot.dbmanager import mongo_client
 
-from bot.modules.markup import answer_markup, count_markup
-from bot.modules.market.market import generate_sell_pages
+# from bot.modules.markup import answer_markup, count_markup
+# from bot.modules.market.market import generate_sell_pages
 
-from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage
+# from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage
 
-MAX_PRICE = 10_000_000
+# MAX_PRICE = 10_000_000
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-items = DBconstructor(mongo_client.items.items)
+# from bot.modules.overwriting.DataCalsses import DBconstructor
+# items = DBconstructor(mongo_client.items.items)
 
-# Все функции расположены в порядке вызова
-def circle_data(lang, items, option):
-    """ Создай данные для запроса: предмета, количества, надо ли повторить
-    """
+# # Все функции расположены в порядке вызова
+# def circle_data(lang, items, option):
+#     """ Создай данные для запроса: предмета, количества, надо ли повторить
+#     """
 
-    steps = [
-        InventoryStepData('items', StepMessage(
-            text=f'add_product.chose_item.{option}',
-            translate_message=True,
-            ),
-            inventory=items
-        ),
-        BaseUpdateType(update_col),
-        IntStepData('col', StepMessage(
-            text='add_product.wait_count',
-            translate_message=True,
-            markup=count_markup(1, lang)
-        )),
-        BaseUpdateType(check_items)
-    ]
+#     steps = [
+#         InventoryStepData('items', StepMessage(
+#             text=f'add_product.chose_item.{option}',
+#             translate_message=True,
+#             ),
+#             inventory=items
+#         ),
+#         BaseUpdateType(update_col),
+#         IntStepData('col', StepMessage(
+#             text='add_product.wait_count',
+#             translate_message=True,
+#             markup=count_markup(1, lang)
+#         )),
+#         BaseUpdateType(check_items)
+#     ]
 
-    return steps
+#     return steps
 
-async def update_col(transmitted_data):
-    """ Определяет сколько можно предметов можно выставить
-    """
-    userid = transmitted_data['userid']
-    lang = transmitted_data['lang']
-    step = transmitted_data['process']
+# async def update_col(transmitted_data):
+#     """ Определяет сколько можно предметов можно выставить
+#     """
+#     userid = transmitted_data['userid']
+#     lang = transmitted_data['lang']
+#     step = transmitted_data['process']
 
-    if type(transmitted_data['return_data']['items']) == list:
-        item_data = transmitted_data['return_data']['items'][-1]
-    else:
-        item_data = transmitted_data['return_data']['items']
+#     if type(transmitted_data['return_data']['items']) == list:
+#         item_data = transmitted_data['return_data']['items'][-1]
+#     else:
+#         item_data = transmitted_data['return_data']['items']
 
-    items_res = await items.find({'items_data': item_data, 
-                            "owner_id": userid}, comment= 'update_col_items_res_1')
-    if items_res:
-        max_count = 0
-        for i in items_res: max_count += i['count']
-        if max_count > 100: max_count = 100
+#     items_res = await items.find({'items_data': item_data, 
+#                             "owner_id": userid}, comment= 'update_col_items_res_1')
+#     if items_res:
+#         max_count = 0
+#         for i in items_res: max_count += i['count']
+#         if max_count > 100: max_count = 100
 
-        # Добавление данных для выбора количества
-        transmitted_data['steps'][step+1]['data']['max_int'] = max_count
-        transmitted_data['steps'][step+1]['message']['markup'] = count_markup(max_count, lang).model_dump()
-        transmitted_data['exclude'].append(item_data['item_id'])
+#         # Добавление данных для выбора количества
+#         transmitted_data['steps'][step+1]['data']['max_int'] = max_count
+#         transmitted_data['steps'][step+1]['message']['markup'] = count_markup(max_count, lang).model_dump()
+#         transmitted_data['exclude'].append(item_data['item_id'])
 
-        # # Очистка лишних данных
-        # transmitted_data['steps'][step-1] = {}
+#         # # Очистка лишних данных
+#         # transmitted_data['steps'][step-1] = {}
 
-        return transmitted_data, True
-    else: return transmitted_data, False
+#         return transmitted_data, True
+#     else: return transmitted_data, False
 
-def check_items(transmitted_data):
-    """ Функция создаёт проверку на дополнительные предметы, 
-        если предметов меньше чем 3 то спрашивает - добавить ли ещё предмет
-    """
-    lang = transmitted_data['lang']
-    userid = transmitted_data['userid']
-    chatid = transmitted_data['chatid']
+# def check_items(transmitted_data):
+#     """ Функция создаёт проверку на дополнительные предметы, 
+#         если предметов меньше чем 3 то спрашивает - добавить ли ещё предмет
+#     """
+#     lang = transmitted_data['lang']
+#     userid = transmitted_data['userid']
+#     chatid = transmitted_data['chatid']
 
-    res = True
-    if type(transmitted_data['return_data']['items']) == list and len(transmitted_data['return_data']['items']) >= 3: res = False
+#     res = True
+#     if type(transmitted_data['return_data']['items']) == list and len(transmitted_data['return_data']['items']) >= 3: res = False
 
-    if res:
-        steps = [
-            ConfirmStepData('add_item', StepMessage(
-                text='add_product.add_item',
-                translate_message=True,
-                markup=answer_markup(lang)
-            )),
-            BaseUpdateType(new_circle)
-        ]
+#     if res:
+#         steps = [
+#             ConfirmStepData('add_item', StepMessage(
+#                 text='add_product.add_item',
+#                 translate_message=True,
+#                 markup=answer_markup(lang)
+#             )),
+#             BaseUpdateType(new_circle)
+#         ]
 
-        transmitted_data['steps'] += steps
+#         transmitted_data['steps'] += steps
 
-    return transmitted_data, True
+#     return transmitted_data, True
 
-async def new_circle(transmitted_data):
-    """ Функция создаёт круг запроса (активируется когда человек хочет добавить 2-ой и 3-ий товар в продукт)
-    """
-    lang = transmitted_data['lang']
-    userid = transmitted_data['userid']
-    chatid = transmitted_data['chatid']
-    add_res = transmitted_data['return_data']['add_item']
-    exclude_ids = transmitted_data['exclude']
-    option = transmitted_data['option']
+# async def new_circle(transmitted_data):
+#     """ Функция создаёт круг запроса (активируется когда человек хочет добавить 2-ой и 3-ий товар в продукт)
+#     """
+#     lang = transmitted_data['lang']
+#     userid = transmitted_data['userid']
+#     chatid = transmitted_data['chatid']
+#     add_res = transmitted_data['return_data']['add_item']
+#     exclude_ids = transmitted_data['exclude']
+#     option = transmitted_data['option']
 
-    if add_res:
-        items, exclude = await generate_sell_pages(userid, exclude_ids)
-        steps = circle_data(lang, items, option)
+#     if add_res:
+#         items, exclude = await generate_sell_pages(userid, exclude_ids)
+#         steps = circle_data(lang, items, option)
 
-        transmitted_data['exclude'] = exclude
+#         transmitted_data['exclude'] = exclude
 
-        transmitted_data['steps'].clear()
-        transmitted_data['steps'] = steps
-        del transmitted_data['return_data']['add_item']
+#         transmitted_data['steps'].clear()
+#         transmitted_data['steps'] = steps
+#         del transmitted_data['return_data']['add_item']
 
-        transmitted_data['process'] = -1
+#         transmitted_data['process'] = -1
 
-        return transmitted_data, True
-    return transmitted_data, False
+#         return transmitted_data, True
+#     return transmitted_data, False
 
-# Дальше данные отправляются в функцию end где создаётся товар
+# # Дальше данные отправляются в функцию end где создаётся товар

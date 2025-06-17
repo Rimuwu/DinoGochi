@@ -7,7 +7,7 @@ from bot.modules.data_format import transform
 from bot.modules.dinosaur.dinosaur  import Dino, end_game, mutate_dino_stat, get_owner
 from bot.modules.dinosaur.mood import add_mood, check_breakdown, check_inspiration
 from bot.modules.dinosaur.rpg_states import add_state
-from bot.modules.items.accessory import check_accessory
+# from bot.modules.items.accessory import check_accessory
 from bot.modules.user.user import experience_enhancement
 from bot.taskmanager import add_task
 from bot.modules.quests import quest_process
@@ -77,11 +77,11 @@ async def game_process():
 
                         if randint(1, 4) == 4:
                             dino_class = await Dino().create(dino['_id'])
-                            if dino_class:
-                                if await check_accessory(
-                                    dino_class, 'controller', True
-                                    ):
-                                        add_unit = randint(1, 5)
+                            # if dino_class:
+                            #     if await check_accessory(
+                            #         dino_class, 'controller', True
+                            #         ):
+                            #             add_unit = randint(1, 5)
 
                         await mutate_dino_stat(dino, 'game', int(add_unit + randint(2, 10) * percent))
 

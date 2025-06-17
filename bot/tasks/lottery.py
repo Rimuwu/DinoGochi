@@ -7,7 +7,6 @@ from time import time
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.taskmanager import add_task
-from bot.modules.quests import quest_process
 from bot.modules.logs import log
 
 lottery = DBconstructor(mongo_client.lottery.lottery)

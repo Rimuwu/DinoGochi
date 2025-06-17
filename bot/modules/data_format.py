@@ -13,8 +13,6 @@ from bot.dataclasess.random_dict import RandomDict
 from bot.modules.localization import get_data
 from aiogram.types import BufferedInputFile
 
-from bot.modules.logs import log
-
 def escape_markdown(content: str) -> str:
     """ Экранирует символы Markdown в строке.
     """

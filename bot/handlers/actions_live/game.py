@@ -5,7 +5,7 @@ from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.filters.status import DinoPassStatus
-from bot.modules.items.accessory import check_accessory
+# from bot.modules.items.accessory import check_accessory
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline
 from bot.modules.decorators import HDMessage
@@ -52,8 +52,8 @@ async def start_game_ent(userid: int, chatid: int,
     last_game = '-'
     need = ['console', 'snake', 'pin-pong', 'ball']
 
-    if await check_accessory(dino, 'board_games'):
-        need += ["puzzles", "chess", "jenga", "dnd"]
+    # if await check_accessory(dino, 'board_games'):
+    #     need += ["puzzles", "chess", "jenga", "dnd"]
 
     if await premium(userid):
         need += ["monopolia", "bowling", "darts", "golf"]

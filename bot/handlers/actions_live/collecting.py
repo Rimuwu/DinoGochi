@@ -3,7 +3,7 @@ from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.dinosaur.mood import repeat_activity
-from bot.modules.items.accessory import check_accessory
+# from bot.modules.items.accessory import check_accessory
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline, list_to_keyboard
 from bot.modules.decorators import HDCallback, HDMessage
@@ -61,7 +61,7 @@ async def collecting_adapter(return_data, transmitted_data):
                 return
 
             await dino.collecting(userid, option, count)
-            await check_accessory(dino, 'basket', True)
+            # await check_accessory(dino, 'basket', True)
             percent, _ = await dino.memory_percent('action', f'collecting.{option}', True)
             await repeat_activity(dino._id, percent)
 
@@ -99,7 +99,7 @@ async def collecting_button(message: Message):
                     max_count = GAME_SETTINGS['premium_max_collecting']
                 else: max_count = GAME_SETTINGS['max_collecting']
 
-                have_basket = await check_accessory(last_dino, 'basket')
+                # have_basket = await check_accessory(last_dino, 'basket')
                 if have_basket: max_count += 20
 
                 data_options = get_data('collecting.buttons', lang)

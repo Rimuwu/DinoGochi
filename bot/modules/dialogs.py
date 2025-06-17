@@ -1,11 +1,10 @@
-from aiogram.types import InlineKeyboardMarkup
+
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
-from bot.exec import bot
 from bot.modules.data_format import escape_markdown, list_to_inline
-from bot.modules.items.item import get_item_dict, item_code
-from bot.modules.items.item_tools_lost import AddItemToUser, use_item
+from bot.modules.items.item import AddItemToUser, ItemData
+from bot.modules.items.use_item import use_item
 from bot.modules.localization import get_data, t
 from bot.modules.dinosaur.dinosaur  import dead_check
 
@@ -84,12 +83,10 @@ async def dead_last_dino(userid: int, name: str, lang: str,
                 await take_coins(userid, -coins, True)
                 await items.delete_many({'owner_id': userid}, comment='dead_last_dino')
 
-                await AddItemToUser(userid, GS['dead_dialog_item'], 1,
-                                    {'interact': False})
-                item_egg_data = get_item_dict(
-                    GS['dead_dialog_item'], {'interact': False})
+                item = ItemData(GS['dead_dialog_item'], {'interact': False})
+                st, obj = await AddItemToUser(userid, item, 1)
 
-                await use_item(userid, userid, lang, item_egg_data, 1)
+                await use_item(userid, lang, obj, 1)
 
     return status, text, markup
 

@@ -6,7 +6,7 @@ from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.dino_uniqueness import get_dino_uniqueness_factor
 from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
-from bot.modules.items.accessory import check_accessory
+# from bot.modules.items.accessory import check_accessory
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      near_key_number, seconds_to_str)
 from bot.modules.decorators import HDCallback, HDMessage
@@ -68,9 +68,9 @@ async def add_activity_info(dino, lang, text, tem):
         text += t(
                 f'p_profile.game.text', lang, em_game_act=tem['em_game_act'])
         if data:
-            if await check_accessory(dino, 'timer', True):
-                end = seconds_to_str(data['game_end'] - int(time()), lang)
-                text += t(f'p_profile.game.game_end', lang, end=end)
+            # if await check_accessory(dino, 'timer', True):
+            #     end = seconds_to_str(data['game_end'] - int(time()), lang)
+            #     text += t(f'p_profile.game.game_end', lang, end=end)
 
             duration = seconds_to_str(int(time()) - data['game_start'], lang)
             text += t(

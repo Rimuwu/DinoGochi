@@ -4,13 +4,13 @@ from time import time
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.exec import main_router, bot
+from bot.exec import bot
 from bot.modules.dinosaur.dino_status import end_skill_activity
 from bot.modules.dinosaur.dinosaur import Dino
 from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.dinosaur.mood import add_mood, check_inspiration
 from bot.modules.dinosaur.skills import add_skill_point
-from bot.modules.items.item_tools_lost import use_item
+# from bot.modules.items.item_tools_lost import use_item
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import get_lang, t
 from bot.modules.notifications import dino_notification
@@ -124,13 +124,13 @@ async def skills_work():
                         energy_item = choice(energy_items)
 
                         lang = await get_lang(sended)
-                        send_status, return_text = await use_item(sended, sended, lang, 
-                                    energy_item['item'], 1, dino)
-                        if send_status:
-                            return_text += t('all_skills.use_item', lang)
-                            try:
-                                await bot.send_message(sended, return_text, parse_mode='Markdown')
-                            except: pass
+                        # send_status, return_text = await use_item(sended, sended, lang, 
+                        #             energy_item['item'], 1, dino)
+                        # if send_status:
+                        #     return_text += t('all_skills.use_item', lang)
+                        #     try:
+                        #         await bot.send_message(sended, return_text, parse_mode='Markdown')
+                        #     except: pass
 
                 if not send_status and (dino.stats['energy'] <= 30 or dino.stats['eat'] <= 15):
                     # ...иначе тренировка заканчивается

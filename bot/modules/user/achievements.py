@@ -174,7 +174,7 @@ async def add_achievement(userid: int, achievement_type: str,
                 # Если да, то добавляет данные
                 # Если чекер выводит True то ничего не делает
                 
-                func_checker = 
+                # func_checker = 
                 
 
         if add_reward:
@@ -193,3 +193,4 @@ async def ach_progress_goal(userid: int, achievement_type: str,
                             data: Union[list, int]) -> bool:
     """ Отвечает на вопрос, выполнены ли условия достижения"""
     
+    pass

@@ -12,7 +12,7 @@ from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.items.item import AddItemToUser, counts_items
 from bot.modules.localization import get_data, get_lang, t
-from bot.modules.market.market import preview_product
+# from bot.modules.market.market import preview_product
 from bot.modules.markup import back_menu
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -137,11 +137,11 @@ async def market_menu(message: Message):
 
                 product = await products.find_one({'_id': prd['product_id']}, 
                                                   comment='market_menu_product')
-                if product:
-                    rand_p[
-                        preview_product(product['items'], product['price'], 
-                                        product['type'], lang)
-                    ] = f'product_info info {product["alt_id"]}'
+                # if product:
+                #     rand_p[
+                #         preview_product(product['items'], product['price'], 
+                #                         product['type'], lang)
+                #     ] = f'product_info info {product["alt_id"]}'
 
         if rand_p:
             markup = list_to_inline([rand_p], 1)

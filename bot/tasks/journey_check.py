@@ -5,13 +5,12 @@ from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.handlers.actions_live.journey import send_logs
 from bot.modules.data_format import transform
-from bot.modules.items.accessory import check_accessory
 from bot.modules.dinosaur.dinosaur  import Dino, end_journey, get_dino_language
-from bot.modules.dinosaur.journey import random_event
+# from bot.modules.dinosaur.journey import random_event
 from bot.modules.quests import quest_process
 from bot.modules.user.user import experience_enhancement
 from bot.taskmanager import add_task
-from bot.modules.items.accessory import check_accessory
+# from bot.modules.items.accessory import check_accessory
 from bot.modules.dinosaur.mood import check_inspiration
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -47,16 +46,16 @@ async def events():
         res = await check_inspiration(i['dino_id'], 'journey')
         if res: chance *= 2
 
-        hik_flag = False
-        if event_random >= chance:
-            if await check_accessory(dino, 'hiking_bag'):
-                chance += 0.3
-                hik_flag = True
+        # hik_flag = False
+        # if event_random >= chance:
+        #     if await check_accessory(dino, 'hiking_bag'):
+        #         chance += 0.3
+        #         hik_flag = True
 
         if event_random <= chance:
-            await random_event(i['dino_id'], i['location'])
-            if hik_flag:
-                await check_accessory(dino, 'hiking_bag', True)
+            # await random_event(i['dino_id'], i['location'])
+            # if hik_flag:
+            #     await check_accessory(dino, 'hiking_bag', True)
 
             if randint(0, 1):
                 if await check_inspiration(dino._id, 'exp_boost'):

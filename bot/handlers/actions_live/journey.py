@@ -13,7 +13,7 @@ from bot.modules.dinosaur.dinosaur  import Dino, check_status, end_journey
 from bot.modules.dinosaur.dinosaur  import start_journey as action_journey
 from bot.modules.images import dino_journey
 from bot.modules.items.item import counts_items
-from bot.modules.dinosaur.journey import all_log, generate_event_message
+# from bot.modules.dinosaur.journey import all_log, generate_event_message
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
@@ -176,8 +176,8 @@ async def events(message: Message):
             loc_name = get_data(f'journey_start.locations.{loc}', lang)['name']
             col = len(journey_data['journey_log'])
 
-            if journey_data['journey_log']:
-                last_event = await generate_event_message(journey_data['journey_log'][-1], lang, journey_data['_id'], True)
+            # if journey_data['journey_log']:
+                # last_event = await generate_event_message(journey_data['journey_log'][-1], lang, journey_data['_id'], True)
 
             text = t('journey_last_event.info', lang, journey_time=journey_time, location=loc_name, col=col, last_event=last_event)
             button_name = t('journey_last_event.button', lang)
@@ -213,9 +213,9 @@ async def journey_stop(callback: CallbackQuery):
 
 async def send_logs(chatid: int, lang: str, data: dict, dino_name: str):
     logs = data['journey_log']
-    if logs:
-        for i in await all_log(logs, lang, data['_id']):
-            await bot.send_message(chatid, i, parse_mode='html')
+    # if logs:
+    #     for i in await all_log(logs, lang, data['_id']):
+    #         await bot.send_message(chatid, i, parse_mode='html')
 
     items_text = '-'
     coins = data['coins']

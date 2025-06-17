@@ -17,7 +17,7 @@ from bot.modules.notifications import user_notification
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import take_coins, user_name
 from aiogram.types import CallbackQuery, Message
-from bot.modules.market.market import seller_ui
+# from bot.modules.market.market import seller_ui
 
 from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
@@ -590,12 +590,12 @@ async def open_market_friend(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
 
     friendid = int(call.data.split()[1])
-    text, markup, img = await seller_ui(friendid, lang, False)
-    if text:
-        try:
-            await bot.send_photo(chatid, img, caption=text, parse_mode="Markdown", reply_markup=markup)
-        except:
-            await bot.send_photo(chatid, img, caption=text, reply_markup=markup, parse_mode=None)
-    else:
-        await bot.send_message(chatid, '❌', 
-                    reply_markup=await m(userid, 'last_menu', lang))
+    # text, markup, img = await seller_ui(friendid, lang, False)
+    # if text:
+    #     try:
+    #         await bot.send_photo(chatid, img, caption=text, parse_mode="Markdown", reply_markup=markup)
+    #     except:
+    #         await bot.send_photo(chatid, img, caption=text, reply_markup=markup, parse_mode=None)
+    # else:
+    #     await bot.send_message(chatid, '❌', 
+    #                 reply_markup=await m(userid, 'last_menu', lang))

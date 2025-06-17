@@ -8,7 +8,7 @@ from bot.modules.data_format import transform
 from bot.modules.dinosaur.dinosaur import start_game, Dino
 from bot.modules.dinosaur.dino_status import set_status
 from bot.modules.dinosaur.skills import check_skill
-from bot.modules.items.accessory import downgrade_accessory, find_accessory
+# from bot.modules.items.accessory import downgrade_accessory, find_accessory
 from bot.modules.notifications import dino_notification
 from bot.const import GAME_SETTINGS
 
@@ -218,10 +218,10 @@ async def dino_breakdown(dino: ObjectId):
     elif action == 'downgrade':
         dino_cl = await Dino().create(dino)
 
-        if dino_cl:
-            allowed = await find_accessory(dino_cl)
-            if allowed:
-                await downgrade_accessory(dino_cl, choice(allowed)[0], 30)
+        # if dino_cl:
+        #     allowed = await find_accessory(dino_cl)
+        #     if allowed:
+        #         await downgrade_accessory(dino_cl, choice(allowed)[0], 30)
 
     return action
 

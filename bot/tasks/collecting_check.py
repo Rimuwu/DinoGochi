@@ -5,10 +5,10 @@ from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.data_format import transform
-from bot.modules.items.accessory import check_accessory
+# from bot.modules.items.accessory import check_accessory
 from bot.modules.dinosaur.dinosaur import Dino, end_collecting, mutate_dino_stat
 from bot.modules.items.item import counts_items
-from bot.modules.items.item_tools_lost import rare_random
+from bot.modules.items.item_dataformat import rare_random
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import  get_lang
 from bot.modules.dinosaur.mood import check_inspiration
@@ -67,7 +67,7 @@ async def collecting_work(coll_data: dict):
         if res: chance = 0.9
         else: chance = 0.45
 
-        if await check_accessory(dino, 'tooling'): chance += 0.25
+        # if await check_accessory(dino, 'tooling'): chance += 0.25
 
         # Выдача опыта
         if random() <= LVL_CHANCE:
@@ -84,22 +84,22 @@ async def collecting_work(coll_data: dict):
 
         # Выдача еды
         if random() <= chance:
-            await check_accessory(dino, 'tooling', True)
+            # await check_accessory(dino, 'tooling', True)
 
             # Повышение шанса редкости
-            if coll_type == 'fishing' and \
-                await check_accessory(dino, 'fishing-rod', True):
-                    # Аксессуар удочка задействован
-                    chances_add['rare'] += 10
-                    chances_add['mystical'] += 5
-                    chances_add['legendary'] += 2
+            # if coll_type == 'fishing' and \
+            #     await check_accessory(dino, 'fishing-rod', True):
+            #         # Аксессуар удочка задействован
+            #         chances_add['rare'] += 10
+            #         chances_add['mystical'] += 5
+            #         chances_add['legendary'] += 2
 
-            elif coll_type == 'hunt' and \
-                await check_accessory(dino, 'net', True):
-                    # Аксессуар сеть задействован
-                    chances_add['rare'] += 10
-                    chances_add['mystical'] += 5
-                    chances_add['legendary'] += 2
+            # elif coll_type == 'hunt' and \
+            #     await check_accessory(dino, 'net', True):
+            #         # Аксессуар сеть задействован
+            #         chances_add['rare'] += 10
+            #         chances_add['mystical'] += 5
+            #         chances_add['legendary'] += 2
 
             # # ==== Повышение шанса в зависимости от навыка === #
             if coll_type == 'collecting':
@@ -142,19 +142,19 @@ async def collecting_work(coll_data: dict):
                     special_chance.update(event['data']['special_chance'])
 
             # Добавление в шанс предметов из аксессуара
-            trc_flag = False
-            if coll_type == 'collecting' and await check_accessory(dino, 'torch'):
-                # Шанс на изысканные травы равен 15% если есть факел
-                # Иначе шанс от редкости
-                special_chance['gourmet_herbs'] = 15
-                trc_flag = True
+            # trc_flag = False
+            # if coll_type == 'collecting' and await check_accessory(dino, 'torch'):
+            #     # Шанс на изысканные травы равен 15% если есть факел
+            #     # Иначе шанс от редкости
+            #     special_chance['gourmet_herbs'] = 15
+            #     trc_flag = True
 
             rand_items = rare_random(items, count, chances_add, 
                             special_chance, None, advanced_rank_for_items)
 
             for item in rand_items:
 
-                if trc_flag: await check_accessory(dino, 'torch', True)
+                # if trc_flag: await check_accessory(dino, 'torch', True)
 
                 if item in coll_data['items']:
                     coll_data['items'][item] += 1

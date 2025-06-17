@@ -8,12 +8,10 @@ from bot.exec import bot
 from bot.modules.data_format import escape_markdown, item_list, list_to_inline, seconds_to_str, user_name_from_telegram
 from bot.modules.dino_uniqueness import get_dino_uniqueness_factor
 from bot.modules.dinosaur.dinosaur import Dino, Egg
-from bot.modules.images import async_open
-from bot.modules.managment.events import check_event, get_event
+from bot.modules.items.json_item import GetItem
 from bot.modules.managment.tracking import update_all_user_track
 from bot.modules.user.advert import create_ads_data
-from bot.modules.items.item import AddItemToUser, get_item_dict
-from bot.modules.items.item import get_data as get_item_data
+from bot.modules.items.item import AddItemToUser
 from bot.modules.items.item import get_name
 from bot.modules.localization import get_data, t, get_lang, available_locales
 from bot.modules.logs import log
@@ -674,8 +672,8 @@ async def user_info(userid: int, lang: str, secret: bool = False,
     if not secret:
 
         for item in items:
-            item_data = get_item_data(item['items_data']['item_id'])
-            rarity = item_data.get('rank', 'common')
+            item_data = GetItem(item['items_data']['item_id'])
+            rarity = item_data.rank
             if rarity in rarity_counts:
                 rarity_counts[rarity] += item['count']
 
@@ -746,9 +744,9 @@ async def count_inventory_items(userid: int, find_type: list):
     result = 0
     for item in await items.find({'owner_id': userid}, 
                                 {'_id': 0, 'owner_id': 0}, comment='count_inventory_items'):
-        item_data = get_item_data(item['items_data']['item_id'])
+        item_data = GetItem(item['items_data']['item_id'])
         try:
-            item_type = item_data['type']
+            item_type = item_data.type
         except Exception as E:
             item_type = None
 
@@ -829,12 +827,11 @@ async def get_inventory_from_i(userid: int, items_l: list[dict] | None = None,
                 if i['item']['item_id'] not in id_list:
                     id_list.append(i['item']['item_id'])
 
-                    item = get_item_dict(i['item']['item_id'])
                     # Считаем общее количество предметов с таким же item_id
                     total_count = sum(j['count'] for j in pre_l if j['item']['item_id'] == i['item']['item_id'])
                     find_i.append(
                         {
-                            "item": item,
+                            "item": i['item'],
                             "count": total_count
                         }
                     )

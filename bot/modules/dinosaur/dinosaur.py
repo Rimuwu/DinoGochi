@@ -10,7 +10,7 @@ from bot.const import DINOS, GAME_SETTINGS as GS
 from bot.modules.data_format import random_code, random_quality
 from bot.modules.dinosaur.dino_status import check_status, end_collecting, end_game, end_journey, end_skill_activity, end_sleep, start_collecting, start_game, start_journey, start_sleep
 from bot.modules.images import create_dino_image
-from bot.modules.items.item import AddItemToUser
+from bot.modules.items.item import AddItemToUser, ItemData
 from bot.modules.localization import get_lang
 from bot.modules.logs import log
 from bot.modules.notifications import (dino_notification, notification_manager,
@@ -43,6 +43,7 @@ class Dino:
 
         self.data_id = 0
         self.alt_id = 'alt_id' #альтернативный id
+        self.age: int = 0 # Время рождения дино в секундах
 
         self.name = 'name'
         self.quality = 'com'
@@ -144,17 +145,18 @@ class Dino:
             }
             await dead_dinos.insert_one(save_data, comment='dead')
 
-            for item in self.activ_items:
-                if item: 
-                    await AddItemToUser(owner['owner_id'], item['item_id'], 1, item.get('abilities', {}))
+            # for item in self.activ_items:
+            #     if item: 
+            #         await AddItemToUser(owner['owner_id'], item['item_id'], 1, item.get('abilities', {}))
 
             if user:
                 if await dead_check(owner['owner_id']):
                     way = 'not_independent_dead'
                 else: 
                     way = 'independent_dead'
+                    item = ItemData(GS['dead_dialog_item'], {'interact': False})
                     await AddItemToUser(user['userid'], 
-                                        GS['dead_dino_item'], 1, {'interact': False})
+                                        item, 1)
 
                 await user_notification(owner['owner_id'], way, 
                             dino_name=self.name)
@@ -164,7 +166,7 @@ class Dino:
     async def image(self, profile_view: int=1, custom_url: str=''):
         """Сгенерировать изображение объекта
         """
-        age = await self.age()
+        # age = await self.age()
         return await create_dino_image(self.data_id, self.stats, self.quality, profile_view, age.days, custom_url)
 
     async def collecting(self, owner_id: int, coll_type: str, max_count: int):
@@ -211,7 +213,7 @@ class Dino:
     @property
     async def status(self): return await check_status(self) #type: ignore
 
-    async def age(self): return await get_age(self._id)
+    # async def age(self): return await get_age(self._id)
 
     async def get_owner(self): return await get_owner(self._id)
 

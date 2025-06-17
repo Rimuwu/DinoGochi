@@ -2,7 +2,6 @@ from time import time
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.exec import main_router, bot
 from bot.modules.data_format import seconds_to_str
 from bot.modules.notifications import user_notification
 from bot.taskmanager import add_task
@@ -40,4 +39,3 @@ if __name__ != '__main__':
     if conf.active_tasks:
         add_task(subscription_notification, 1800.0, 1.0)
         add_task(subscription_check, 300.0, 1.0)
-        # add_task(check_donations, 120.0, 1.0)

@@ -1,12 +1,11 @@
 from datetime import datetime, timezone
-from random import choice, randint, choices, random
+from random import choice, choices, random
 from time import time
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.exec import main_router, bot
+from bot.exec import bot
 from bot.modules.localization import get_data, t
-from bot.modules.logs import log
 from bot.modules.quests import create_quest, quest_resampling, save_quest
 from bot.taskmanager import add_task
  

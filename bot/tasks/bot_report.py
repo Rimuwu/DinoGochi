@@ -1,13 +1,12 @@
 import asyncio
-import io
 import os
 
 import aiofiles
 import aiogram.types as types
 
 from bot.config import conf
-from bot.exec import main_router, bot
-from bot.modules.logs import (MAX_ERRORS, get_errors_count,
+from bot.exec import bot
+from bot.modules.logs import (get_errors_count,
                               get_latest_errors_dif, get_latest_errors, log)
 from bot.taskmanager import add_task
 

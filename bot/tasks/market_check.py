@@ -2,7 +2,7 @@ from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.taskmanager import add_task
 from time import time
-from bot.modules.market.market import delete_product
+# from bot.modules.market.market import delete_product
 
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -15,7 +15,7 @@ async def market_delete():
     # Удаляет старые продукты
     data = await products.find({'add_time': {'$lte': int(time()) - 86_400 * 31}}, comment='market_delete_data'
                                     )
-    for i in data: await delete_product(i['_id'])
+    # for i in data: await delete_product(i['_id'])
 
 async def auction_end():
     # Завершение аукциона
@@ -39,7 +39,7 @@ async def auction_end():
                     {'$set': {f'users.{winner}.status': 'win'}}, comment='auction_end_s')
             s.raw_result
 
-        await delete_product(i['_id'])
+        # await delete_product(i['_id'])
 
 async def preferential_delete():
     # Удаляет продвижение

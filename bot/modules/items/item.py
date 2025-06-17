@@ -323,7 +323,7 @@ class ItemInBase:
 
             return self
 
-    async def add_to_db(self) -> ObjectId | None:
+    async def add_to_db(self) -> ObjectId:
         """Добавляет предмет в базу данных и возвращает его ID"""
 
         assert self.link_with_real_item is False, "Предмет уже связан с реальным предметом в базе данных"
@@ -333,11 +333,12 @@ class ItemInBase:
         if res:
             self._id = res.inserted_id
             await self.plus(1)
+            return self._id # type: ignore
 
         else:
             result = await items.insert_one(self.to_dict(), comment='add_item_to_db')
             self._id = result.inserted_id
-            return self._id
+            return self._id # type: ignore
 
     async def plus(self, count: int = 1) -> int:
         """Увеличивает количество предметов в базе данных"""
@@ -539,7 +540,7 @@ async def AddItemToUser(owner_id: int,
                         count: int = 1, 
                         location_type: LOCATIONS_TYPES = "home",
                         location_link: Any = None
-                        ):
+                        ) -> tuple[str, ObjectId]:
     
     """Добавление стандартного предмета в инвентарь
         TODO: Проверить все добавления предметов на передачу правильного формата и указания локации
@@ -566,7 +567,7 @@ async def AddItemToUser(owner_id: int,
         await item.add_to_db()
         action = 'new_item'
 
-    return action, item._id
+    return action, item._id # type: ignore
 
 async def RemoveItemFromUser(owner_id: int, 
                              item_data: ItemData,

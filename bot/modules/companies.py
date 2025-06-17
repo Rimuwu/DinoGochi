@@ -12,8 +12,8 @@ from time import time
 from typing import Union
 from bson import ObjectId
 from bot.dbmanager import mongo_client, conf
-from bot.exec import main_router, bot
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from bot.exec import bot
+from aiogram.types import InlineKeyboardButton
 
 from bot.modules.data_format import list_to_inline, random_code, seconds_to_str
 from bot.modules.localization import get_lang, t, get_data
@@ -21,7 +21,7 @@ from bot.modules.localization import get_lang, t, get_data
 from bot.modules.logs import log
 from bot.modules.overwriting.DataCalsses import DBconstructor
 
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 companies = DBconstructor(mongo_client.other.companies)
 message_log = DBconstructor(mongo_client.other.message_log)
@@ -338,7 +338,7 @@ async def user_reg_min(userid: int, companie_id: ObjectId) -> bool:
                 return True
     return False
 
-async def info(companie_id: ObjectId, lang = None):
+async def info(companie_id: ObjectId, lang):
     c = await companies.find_one({'_id': companie_id})
     text, mrk = '', None
 
