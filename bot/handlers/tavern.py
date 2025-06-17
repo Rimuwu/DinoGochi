@@ -305,8 +305,6 @@ async def dino_now(return_data, transmitted_data):
     
     mark = list_to_inline([buttons], 2)
     await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=mark)
-
-    # await ChooseInlineState(end_edit, userid, chatid, lang, str(code), {'dino': dino, 'type': o_type})
     await ChooseInlineHandler(end_edit, userid, chatid, lang, str(code), 
                               {'dino': dino._id, 'type': o_type}).start()
     await bot.send_message(chatid,  t('edit_dino.new_rare', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
